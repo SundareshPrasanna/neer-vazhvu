@@ -35,7 +35,7 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
           >
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-3">
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm">{r.displayName}</h3>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm truncate mr-2">{r.displayName}</h3>
                 <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
                   {formatPct(r.storagePct)}
                 </span>
@@ -59,7 +59,7 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
               </div>
 
               {/* Inflow/outflow */}
-              <div className="flex justify-between mt-3 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex flex-col xs:flex-row justify-between mt-3 text-xs text-slate-500 dark:text-slate-400 gap-0.5">
                 <span>
                   In: <span className="font-medium text-green-600">{formatNumber(r.inflowCusecs)}</span> cusecs
                 </span>

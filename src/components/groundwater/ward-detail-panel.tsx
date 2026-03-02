@@ -31,7 +31,7 @@ export function WardDetailPanel({ ward, onClose }: WardDetailPanelProps) {
   const trend = TREND_ICONS[ward.trend];
 
   return (
-    <div className="bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-700 w-80 p-6 overflow-y-auto">
+    <div className="bg-white dark:bg-slate-900 w-full h-full p-4 sm:p-6 overflow-y-auto">
       <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">{ward.wardName}</h3>

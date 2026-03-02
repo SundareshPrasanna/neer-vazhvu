@@ -60,18 +60,18 @@ export default function GroundwaterPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] flex">
+    <div className="h-[calc(100vh-64px)] flex flex-col md:flex-row">
       {/* Map area */}
-      <div className="flex-1 relative">
+      <div className={`relative flex-1 ${selectedWard ? "h-[55vh] md:h-full" : "h-full"}`}>
         <WardMap groundwaterData={wardMap} onWardSelect={setSelectedWard} />
 
         {/* Legend overlay */}
-        <div className="absolute bottom-4 left-4 z-[1000]">
+        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000]">
           <GroundwaterLegend />
         </div>
 
         {/* Period info overlay */}
-        <div className="absolute top-4 left-4 z-[1000] bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
+        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000] bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
           <div className="text-xs text-slate-500 dark:text-slate-400">
             Showing data for{" "}
             <span className="font-semibold text-slate-700 dark:text-slate-300">
@@ -89,9 +89,11 @@ export default function GroundwaterPage() {
         </div>
       </div>
 
-      {/* Detail panel */}
+      {/* Detail panel — bottom sheet on mobile, sidebar on desktop */}
       {selectedWard && (
-        <WardDetailPanel ward={selectedWard} onClose={() => setSelectedWard(null)} />
+        <div className="h-[45vh] md:h-full md:w-80 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+          <WardDetailPanel ward={selectedWard} onClose={() => setSelectedWard(null)} />
+        </div>
       )}
     </div>
   );

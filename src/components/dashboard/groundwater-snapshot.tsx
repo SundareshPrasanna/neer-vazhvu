@@ -61,14 +61,14 @@ export function GroundwaterSnapshot({ data }: GroundwaterSnapshotProps) {
             )}
 
             {healthiest && (
-              <div className="text-sm">
+              <div className="text-sm truncate">
                 <span className="text-green-600 font-medium">Healthiest:</span>{" "}
                 {healthiest.wardName} ({healthiest.depthM!.toFixed(1)}m)
               </div>
             )}
 
             {mostStressed && (
-              <div className="text-sm">
+              <div className="text-sm truncate">
                 <span className="text-red-600 font-medium">Most stressed:</span>{" "}
                 {mostStressed.wardName} ({mostStressed.depthM!.toFixed(1)}m)
               </div>
@@ -101,7 +101,7 @@ export function GroundwaterSnapshot({ data }: GroundwaterSnapshotProps) {
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-slate-600 dark:text-slate-400">
+            <div className="flex flex-wrap gap-x-2 sm:gap-x-3 gap-y-1 mt-2 text-xs text-slate-600 dark:text-slate-400">
               {summary.healthy > 0 && (
                 <span>
                   <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1" />

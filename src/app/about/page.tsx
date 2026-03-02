@@ -49,37 +49,39 @@ export default function AboutPage() {
 
       <section className="space-y-4">
         <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Default Assumptions</h2>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
-              <th className="pb-2 font-medium">Parameter</th>
-              <th className="pb-2 font-medium">Default</th>
-              <th className="pb-2 font-medium">Source</th>
-            </tr>
-          </thead>
-          <tbody className="text-slate-700 dark:text-slate-300">
-            <tr className="border-b border-slate-100 dark:border-slate-800">
-              <td className="py-2">Daily consumption</td>
-              <td className="py-2 font-mono">830 MLD</td>
-              <td className="py-2 text-slate-500 dark:text-slate-400">CMWSSB annual report</td>
-            </tr>
-            <tr className="border-b border-slate-100 dark:border-slate-800">
-              <td className="py-2">Desalination output</td>
-              <td className="py-2 font-mono">190 MLD</td>
-              <td className="py-2 text-slate-500 dark:text-slate-400">Minjur (100) + Nemmeli (100)</td>
-            </tr>
-            <tr className="border-b border-slate-100 dark:border-slate-800">
-              <td className="py-2">Groundwater supply</td>
-              <td className="py-2 font-mono">Not modeled</td>
-              <td className="py-2 text-slate-500 dark:text-slate-400">Conservative assumption</td>
-            </tr>
-            <tr className="border-b border-slate-100 dark:border-slate-800">
-              <td className="py-2">Evaporation losses</td>
-              <td className="py-2 font-mono">Not modeled</td>
-              <td className="py-2 text-slate-500 dark:text-slate-400">Planned for V2</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
+                <th className="pb-2 font-medium">Parameter</th>
+                <th className="pb-2 font-medium">Default</th>
+                <th className="pb-2 font-medium">Source</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-700 dark:text-slate-300">
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2">Daily consumption</td>
+                <td className="py-2 font-mono">830 MLD</td>
+                <td className="py-2 text-slate-500 dark:text-slate-400">CMWSSB annual report</td>
+              </tr>
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2">Desalination output</td>
+                <td className="py-2 font-mono">190 MLD</td>
+                <td className="py-2 text-slate-500 dark:text-slate-400">Minjur (100) + Nemmeli (100)</td>
+              </tr>
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2">Groundwater supply</td>
+                <td className="py-2 font-mono">Not modeled</td>
+                <td className="py-2 text-slate-500 dark:text-slate-400">Conservative assumption</td>
+              </tr>
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2">Evaporation losses</td>
+                <td className="py-2 font-mono">Not modeled</td>
+                <td className="py-2 text-slate-500 dark:text-slate-400">Planned for V2</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <p className="text-sm text-slate-500 dark:text-slate-400">
           Users can adjust consumption and desalination values via sliders on the dashboard.
         </p>
@@ -187,32 +189,34 @@ export default function AboutPage() {
         </ul>
 
         <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Training Data</h3>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
-              <th className="pb-2 font-medium">Source</th>
-              <th className="pb-2 font-medium">Period</th>
-              <th className="pb-2 font-medium">Data</th>
-            </tr>
-          </thead>
-          <tbody className="text-slate-700 dark:text-slate-300">
-            <tr className="border-b border-slate-100 dark:border-slate-800">
-              <td className="py-2">OpenCity CKAN (lake storage)</td>
-              <td className="py-2 font-mono">2003–2021</td>
-              <td className="py-2">Monthly storage only</td>
-            </tr>
-            <tr className="border-b border-slate-100 dark:border-slate-800">
-              <td className="py-2">CMWSSB scraper (backfill)</td>
-              <td className="py-2 font-mono">2022–present</td>
-              <td className="py-2">Storage + inflow/outflow</td>
-            </tr>
-            <tr className="border-b border-slate-100 dark:border-slate-800">
-              <td className="py-2">CMWSSB scraper (daily)</td>
-              <td className="py-2 font-mono">Ongoing</td>
-              <td className="py-2">Storage + inflow/outflow</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
+                <th className="pb-2 font-medium">Source</th>
+                <th className="pb-2 font-medium">Period</th>
+                <th className="pb-2 font-medium">Data</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-700 dark:text-slate-300">
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2">OpenCity CKAN (lake storage)</td>
+                <td className="py-2 font-mono">2003–2021</td>
+                <td className="py-2">Monthly storage only</td>
+              </tr>
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2">CMWSSB scraper (backfill)</td>
+                <td className="py-2 font-mono">2022–present</td>
+                <td className="py-2">Storage + inflow/outflow</td>
+              </tr>
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2">CMWSSB scraper (daily)</td>
+                <td className="py-2 font-mono">Ongoing</td>
+                <td className="py-2">Storage + inflow/outflow</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">What the Forecast Does Not Model</h3>
         <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-1.5 text-sm">
