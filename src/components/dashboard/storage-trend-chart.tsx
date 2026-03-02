@@ -12,12 +12,16 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  ReferenceLine,
 } from "recharts";
 import { formatNumber } from "@/lib/utils/format";
 import type { HistoricalYearData } from "@/lib/mock-data";
 
 interface StorageTrendChartProps {
   history: Array<{ date: string; totalStorage: number }>;
+  title?: string;
+  capacity?: number;
+  onBack?: () => void;
   comparisonYears?: Array<{ year: number; label: string }>;
   getHistoricalData?: (year: number) => HistoricalYearData;
 }
@@ -41,14 +45,30 @@ const YEAR_COLORS: Record<number, string> = {
 
 export function StorageTrendChart({
   history,
+  title = "Combined Storage Trend",
+  capacity,
+  onBack,
   comparisonYears,
   getHistoricalData,
 }: StorageTrendChartProps) {
-  const [activeDays, setActiveDays] = useState(90);
+  const [activeDays, setActiveDays] = useState(0);
   const [selectedYears, setSelectedYears] = useState<number[]>([]);
 
-  const filtered =
-    activeDays === 0 ? history : history.slice(-activeDays);
+  const filtered = useMemo(() => {
+    if (activeDays === 0) return history;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - activeDays);
+    const cutoffStr = cutoff.toISOString().split("T")[0];
+    return history.filter((h) => h.date >= cutoffStr);
+  }, [history, activeDays]);
+
+  // Determine if we're showing multi-year data (>2 years span)
+  const isMultiYear = useMemo(() => {
+    if (filtered.length < 2) return false;
+    const firstYear = new Date(filtered[0].date + "T00:00:00").getFullYear();
+    const lastYear = new Date(filtered[filtered.length - 1].date + "T00:00:00").getFullYear();
+    return lastYear - firstYear > 1;
+  }, [filtered]);
 
   // Build comparison data aligned by day-of-year
   const chartData = useMemo(() => {
@@ -57,18 +77,28 @@ export function StorageTrendChart({
       .map((year) => getHistoricalData?.(year))
       .filter(Boolean) as HistoricalYearData[];
 
-    return filtered.map((h, idx) => {
-      const entry: Record<string, string | number> = {
+    const result: Record<string, string | number | undefined>[] = [];
+
+    for (let i = 0; i < filtered.length; i++) {
+      const h = filtered[i];
+      const currentDate = new Date(h.date + "T00:00:00");
+
+      // Insert gap marker if >120 days between consecutive points
+      // This breaks the line/area so it doesn't falsely connect across years of missing data
+      if (i > 0) {
+        const prevDate = new Date(filtered[i - 1].date + "T00:00:00");
+        const gapDays = (currentDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
+        if (gapDays > 120) {
+          result.push({ date: "", storage: undefined });
+        }
+      }
+
+      const entry: Record<string, string | number | undefined> = {
         date: h.date,
-        label: new Date(h.date + "T00:00:00").toLocaleDateString("en-IN", {
-          day: "numeric",
-          month: "short",
-        }),
         storage: h.totalStorage,
       };
 
       // For each comparison year, find the matching day-of-year
-      const currentDate = new Date(h.date + "T00:00:00");
       const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
       const dayOfYear = Math.floor(
         (currentDate.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)
@@ -81,9 +111,26 @@ export function StorageTrendChart({
         }
       }
 
-      return entry;
-    });
-  }, [filtered, selectedYears, getHistoricalData]);
+      result.push(entry);
+    }
+
+    return result;
+  }, [filtered, selectedYears, getHistoricalData, isMultiYear]);
+
+  // Compute x-axis tick interval to show ~10-15 labels
+  const xAxisInterval = useMemo(() => {
+    const len = chartData.length;
+    if (len <= 15) return 0;
+    return Math.max(1, Math.floor(len / 12));
+  }, [chartData]);
+
+  // Format date for x-axis labels
+  const formatTick = (date: string) => {
+    if (!date) return "";
+    const d = new Date(date + "T00:00:00");
+    if (isMultiYear) return String(d.getFullYear());
+    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+  };
 
   const toggleYear = (year: number) => {
     setSelectedYears((prev) =>
@@ -96,9 +143,19 @@ export function StorageTrendChart({
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-          Combined Storage Trend
-        </h2>
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-1 transition-colors"
+            >
+              <span>&#8592;</span> All Reservoirs
+            </button>
+          )}
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            {title}
+          </h2>
+        </div>
         <div className="flex gap-1">
           {TABS.map((tab) => (
             <button
@@ -148,16 +205,22 @@ export function StorageTrendChart({
       )}
 
       <div className="h-64 sm:h-80">
+        {filtered.length < 2 ? (
+          <div className="h-full flex items-center justify-center text-slate-400 dark:text-slate-500 text-sm">
+            Not enough data for this time range. Try &quot;All&quot; to see historical trends.
+          </div>
+        ) : (
         <ResponsiveContainer width="100%" height="100%">
           {selectedYears.length > 0 ? (
             // Multi-line chart when comparing years
             <LineChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis
-                dataKey="label"
+                dataKey="date"
                 tick={{ fontSize: 11, fill: "#94a3b8" }}
                 tickLine={false}
-                interval="preserveStartEnd"
+                tickFormatter={formatTick}
+                interval={xAxisInterval}
               />
               <YAxis
                 tick={{ fontSize: 11, fill: "#94a3b8" }}
@@ -209,6 +272,14 @@ export function StorageTrendChart({
                   return comparisonYears?.find((c) => c.year === year)?.label || value;
                 }}
               />
+              {capacity && (
+                <ReferenceLine
+                  y={capacity}
+                  stroke="#94a3b8"
+                  strokeDasharray="6 4"
+                  label={{ value: "Capacity", position: "right", fontSize: 10, fill: "#94a3b8" }}
+                />
+              )}
               {/* Current year line */}
               <Line
                 type="monotone"
@@ -217,6 +288,7 @@ export function StorageTrendChart({
                 strokeWidth={2.5}
                 dot={false}
                 name="storage"
+                connectNulls={false}
               />
               {/* Historical year lines */}
               {selectedYears.map((year) => (
@@ -243,10 +315,11 @@ export function StorageTrendChart({
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis
-                dataKey="label"
+                dataKey="date"
                 tick={{ fontSize: 11, fill: "#94a3b8" }}
                 tickLine={false}
-                interval="preserveStartEnd"
+                tickFormatter={formatTick}
+                interval={xAxisInterval}
               />
               <YAxis
                 tick={{ fontSize: 11, fill: "#94a3b8" }}
@@ -258,6 +331,7 @@ export function StorageTrendChart({
                 content={({ active, payload }) => {
                   if (!active || !payload?.[0]) return null;
                   const d = payload[0].payload;
+                  if (!d.date) return null;
                   return (
                     <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-3 text-sm">
                       <div className="text-slate-500 dark:text-slate-400">{d.date}</div>
@@ -268,16 +342,26 @@ export function StorageTrendChart({
                   );
                 }}
               />
+              {capacity && (
+                <ReferenceLine
+                  y={capacity}
+                  stroke="#94a3b8"
+                  strokeDasharray="6 4"
+                  label={{ value: "Capacity", position: "right", fontSize: 10, fill: "#94a3b8" }}
+                />
+              )}
               <Area
                 type="monotone"
                 dataKey="storage"
                 stroke="#3b82f6"
                 strokeWidth={2}
                 fill="url(#storageGradient)"
+                connectNulls={false}
               />
             </AreaChart>
           )}
         </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { formatNumber, formatPct } from "@/lib/utils/format";
 import type { ReservoirSummary } from "@/types/reservoir";
