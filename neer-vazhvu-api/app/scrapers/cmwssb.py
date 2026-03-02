@@ -26,17 +26,22 @@ def _parse_num(value: str) -> float | None:
         return None
 
 
-async def scrape_cmwssb() -> ScrapeResult:
-    """Scrape the CMWSSB lake level page for current reservoir data."""
+async def scrape_cmwssb_date(target_date: str) -> ScrapeResult:
+    """Scrape CMWSSB lake level page for a specific date (YYYY-MM-DD format)."""
+    url = f"{CMWSSB_URL}?date={target_date}"
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            CMWSSB_URL,
+            url,
             headers={"User-Agent": USER_AGENT},
             timeout=30.0,
         )
         response.raise_for_status()
 
-    html = response.text
+    return _parse_cmwssb_html(response.text)
+
+
+def _parse_cmwssb_html(html: str) -> ScrapeResult:
+    """Parse CMWSSB HTML and return structured reservoir data."""
     soup = BeautifulSoup(html, "html.parser")
 
     # Extract date — looks for DD/MM/YYYY pattern anywhere in the page
@@ -85,3 +90,16 @@ async def scrape_cmwssb() -> ScrapeResult:
         )
 
     return ScrapeResult(date=date_str, readings=readings)
+
+
+async def scrape_cmwssb() -> ScrapeResult:
+    """Scrape the CMWSSB lake level page for current reservoir data."""
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            CMWSSB_URL,
+            headers={"User-Agent": USER_AGENT},
+            timeout=30.0,
+        )
+        response.raise_for_status()
+
+    return _parse_cmwssb_html(response.text)

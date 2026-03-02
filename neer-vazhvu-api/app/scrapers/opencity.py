@@ -97,11 +97,21 @@ async def fetch_groundwater(year: int) -> list[GroundwaterRecord]:
     raw_records = await fetch_ckan_resource(resource_id)
     results: list[GroundwaterRecord] = []
 
+    # Month column names to search for
+    month_names = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ]
+
     for record in raw_records:
+        # Try multiple column name patterns for ward number
         ward_num = _parse_ward_number(
             _find_column(
                 record,
-                ["Ward No", "Ward_No", "ward_no", "WARD_NO", "Ward Number"],
+                [
+                    "Ward No", "Ward_No", "ward_no", "WARD_NO", "Ward Number",
+                    "S.No.", "S.No", "S. No.", "S. No", "Sl.No.",
+                ],
             )
         )
         if ward_num is None:
@@ -109,18 +119,12 @@ async def fetch_groundwater(year: int) -> list[GroundwaterRecord]:
 
         ward_name = _find_column(
             record,
-            ["Ward Name", "Ward_Name", "ward_name", "WARD_NAME"],
+            ["Ward Name", "Ward_Name", "ward_name", "WARD_NAME", "Location"],
         )
         zone_name = _find_column(
             record,
-            ["Zone", "zone", "ZONE", "Zone Name", "zone_name"],
+            ["Zone", "zone", "ZONE", "Zone Name", "zone_name", "Area No.", "Area No"],
         )
-
-        # Try each month column (Jan=1 through Dec=12)
-        month_names = [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-        ]
 
         for month_idx, month_name in enumerate(month_names, start=1):
             depth = _parse_depth(
