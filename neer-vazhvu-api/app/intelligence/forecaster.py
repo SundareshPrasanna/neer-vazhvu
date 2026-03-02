@@ -57,7 +57,11 @@ def _fetch_reservoir_history(reservoir: str) -> pd.DataFrame:
     df["unique_id"] = reservoir
 
     # Drop duplicates (keep last per date) and sort
-    df = df.drop_duplicates(subset=["ds"], keep="last").sort_values("ds").reset_index(drop=True)
+    df = (
+        df.drop_duplicates(subset=["ds"], keep="last")
+        .sort_values("ds")
+        .reset_index(drop=True)
+    )
 
     return df[["unique_id", "ds", "y", "inflow", "outflow"]]
 
@@ -97,7 +101,11 @@ def _resample_to_monthly(df: pd.DataFrame) -> pd.DataFrame:
         .reset_index()
     )
     monthly = monthly.rename(columns={"month_start": "ds"})
-    return monthly[["unique_id", "ds", "y", "inflow", "outflow"]].sort_values("ds").reset_index(drop=True)
+    return (
+        monthly[["unique_id", "ds", "y", "inflow", "outflow"]]
+        .sort_values("ds")
+        .reset_index(drop=True)
+    )
 
 
 def _compute_future_exog(
@@ -128,7 +136,9 @@ def _compute_future_exog(
         df_copy["doy"] = df_copy["ds"].dt.dayofyear
         seasonal = df_copy.groupby("doy")[["inflow", "outflow"]].mean()
 
-        future_dates = pd.date_range(last_date + pd.Timedelta(days=1), periods=horizon, freq="D")
+        future_dates = pd.date_range(
+            last_date + pd.Timedelta(days=1), periods=horizon, freq="D"
+        )
         future = pd.DataFrame({"ds": future_dates})
         future["doy"] = future["ds"].dt.dayofyear
         future = future.merge(seasonal, left_on="doy", right_index=True, how="left")
@@ -151,7 +161,9 @@ def _compute_future_exog(
         df_copy["month"] = df_copy["ds"].dt.month
         seasonal = df_copy.groupby("month")[["inflow", "outflow"]].mean()
 
-        future_dates = pd.date_range(last_date + pd.offsets.MonthBegin(1), periods=horizon, freq="MS")
+        future_dates = pd.date_range(
+            last_date + pd.offsets.MonthBegin(1), periods=horizon, freq="MS"
+        )
         future = pd.DataFrame({"ds": future_dates})
         future["month"] = future["ds"].dt.month
         future = future.merge(seasonal, left_on="month", right_index=True, how="left")
@@ -212,7 +224,9 @@ def _forecast_single_reservoir(reservoir: str) -> list[dict]:
 
     if use_exog:
         future_exog = _compute_future_exog(df, freq, horizon, reservoir)
-        forecasts = sf.forecast(df=df, h=horizon, X_df=future_exog, level=[CONFIDENCE_LEVEL])
+        forecasts = sf.forecast(
+            df=df, h=horizon, X_df=future_exog, level=[CONFIDENCE_LEVEL]
+        )
     else:
         # Fallback: pure ARIMA without exogenous columns
         df_no_exog = df[["unique_id", "ds", "y"]]
@@ -221,7 +235,11 @@ def _forecast_single_reservoir(reservoir: str) -> list[dict]:
     forecasts = forecasts.reset_index()
 
     # Find column names dynamically
-    model_col = [c for c in forecasts.columns if c not in ("index", "unique_id", "ds") and "-lo-" not in c and "-hi-" not in c][0]
+    model_col = [
+        c
+        for c in forecasts.columns
+        if c not in ("index", "unique_id", "ds") and "-lo-" not in c and "-hi-" not in c
+    ][0]
     lo_col = [c for c in forecasts.columns if "-lo-" in c][0]
     hi_col = [c for c in forecasts.columns if "-hi-" in c][0]
 

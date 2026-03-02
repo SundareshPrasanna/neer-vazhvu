@@ -304,42 +304,43 @@ export default async function DashboardPage() {
   }
 
   // Try to fetch real data; fall back to demo on any error
+  let reservoirData = null;
+  let groundwaterData = null;
   try {
-    const [reservoirData, groundwaterData] = await Promise.all([
+    [reservoirData, groundwaterData] = await Promise.all([
       getReservoirData(),
       getGroundwaterData(),
     ]);
-
-    if (!reservoirData) {
-      return <DemoDashboard />;
-    }
-
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <DaysLeftHero
-          totalStorageMcft={reservoirData.totalStorage}
-          totalCapacityMcft={reservoirData.totalCapacity}
-          recentAvgInflowMcftPerDay={reservoirData.recentAvgInflowMcftPerDay}
-          seasonalAvgInflowMcftPerDay={reservoirData.seasonalAvgInflowMcftPerDay}
-          lastUpdated={formatDate(reservoirData.lastUpdated)}
-          comparison2019Storage={reservoirData.comparison2019Storage}
-        />
-
-        <DashboardContent
-          reservoirs={reservoirData.reservoirs.filter((r) =>
-            (RESERVOIR_DISPLAY_ORDER as readonly string[]).includes(r.name)
-          )}
-          history={reservoirData.history}
-          perReservoirHistory={reservoirData.perReservoirHistory}
-          forecast={reservoirData.forecast}
-          perReservoirForecast={reservoirData.perReservoirForecast}
-        />
-
-        {groundwaterData && <GroundwaterSnapshot data={groundwaterData} />}
-      </div>
-    );
   } catch {
     // Supabase connection failed — show demo mode
+  }
+
+  if (!reservoirData) {
     return <DemoDashboard />;
   }
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <DaysLeftHero
+        totalStorageMcft={reservoirData.totalStorage}
+        totalCapacityMcft={reservoirData.totalCapacity}
+        recentAvgInflowMcftPerDay={reservoirData.recentAvgInflowMcftPerDay}
+        seasonalAvgInflowMcftPerDay={reservoirData.seasonalAvgInflowMcftPerDay}
+        lastUpdated={formatDate(reservoirData.lastUpdated)}
+        comparison2019Storage={reservoirData.comparison2019Storage}
+      />
+
+      <DashboardContent
+        reservoirs={reservoirData.reservoirs.filter((r) =>
+          (RESERVOIR_DISPLAY_ORDER as readonly string[]).includes(r.name)
+        )}
+        history={reservoirData.history}
+        perReservoirHistory={reservoirData.perReservoirHistory}
+        forecast={reservoirData.forecast}
+        perReservoirForecast={reservoirData.perReservoirForecast}
+      />
+
+      {groundwaterData && <GroundwaterSnapshot data={groundwaterData} />}
+    </div>
+  );
 }
