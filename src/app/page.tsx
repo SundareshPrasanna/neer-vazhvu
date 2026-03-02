@@ -53,17 +53,28 @@ async function getReservoirData() {
     });
 
   // Historical data (all available — chart tabs handle filtering client-side)
-  const { data: historyRaw } = await supabase
-    .from("reservoir_daily")
-    .select("date, reservoir, current_storage_mcft")
-    .not("current_storage_mcft", "is", null)
-    .order("date", { ascending: true });
+  // Supabase/PostgREST caps at 1000 rows per request; paginate to get all
+  const historyRaw: { date: string; reservoir: string; current_storage_mcft: number }[] = [];
+  let offset = 0;
+  const PAGE_SIZE = 1000;
+  while (true) {
+    const { data: page } = await supabase
+      .from("reservoir_daily")
+      .select("date, reservoir, current_storage_mcft")
+      .not("current_storage_mcft", "is", null)
+      .order("date", { ascending: true })
+      .range(offset, offset + PAGE_SIZE - 1);
+    if (!page || page.length === 0) break;
+    historyRaw.push(...page);
+    if (page.length < PAGE_SIZE) break;
+    offset += PAGE_SIZE;
+  }
 
   // Combined totals per date
   const historyMap = new Map<string, number>();
   // Per-reservoir history
   const perReservoirMap = new Map<string, Map<string, number>>();
-  for (const row of historyRaw || []) {
+  for (const row of historyRaw) {
     historyMap.set(row.date, (historyMap.get(row.date) || 0) + (row.current_storage_mcft || 0));
     if (row.reservoir) {
       if (!perReservoirMap.has(row.reservoir)) {
@@ -82,6 +93,54 @@ async function getReservoirData() {
       date,
       totalStorage,
     }));
+  }
+
+  // Forecast data from reservoir_forecast table
+  type ForecastPoint = { date: string; predicted: number; lower: number; upper: number };
+  const forecast: ForecastPoint[] = [];
+  const perReservoirForecast: Record<string, ForecastPoint[]> = {};
+
+  const { data: latestForecastRow } = await supabase
+    .from("reservoir_forecast")
+    .select("forecast_date")
+    .order("forecast_date", { ascending: false })
+    .limit(1);
+
+  if (latestForecastRow && latestForecastRow.length > 0) {
+    const { data: forecastRaw } = await supabase
+      .from("reservoir_forecast")
+      .select("reservoir, target_date, predicted_storage_mcft, confidence_lower_mcft, confidence_upper_mcft")
+      .eq("forecast_date", latestForecastRow[0].forecast_date)
+      .order("target_date", { ascending: true });
+
+    // Build per-reservoir forecast
+    const combinedMap = new Map<string, { predicted: number; lower: number; upper: number }>();
+    for (const row of forecastRaw || []) {
+      const point: ForecastPoint = {
+        date: row.target_date,
+        predicted: row.predicted_storage_mcft || 0,
+        lower: row.confidence_lower_mcft || 0,
+        upper: row.confidence_upper_mcft || 0,
+      };
+      if (!perReservoirForecast[row.reservoir]) {
+        perReservoirForecast[row.reservoir] = [];
+      }
+      perReservoirForecast[row.reservoir].push(point);
+
+      // Sum for combined forecast
+      const existing = combinedMap.get(row.target_date);
+      if (existing) {
+        existing.predicted += point.predicted;
+        existing.lower += point.lower;
+        existing.upper += point.upper;
+      } else {
+        combinedMap.set(row.target_date, { ...point });
+      }
+    }
+    for (const [date, vals] of combinedMap) {
+      forecast.push({ date, ...vals });
+    }
+    forecast.sort((a, b) => a.date.localeCompare(b.date));
   }
 
   // 7-day avg inflow
@@ -132,6 +191,8 @@ async function getReservoirData() {
     totalCapacity,
     history,
     perReservoirHistory,
+    forecast,
+    perReservoirForecast,
     lastUpdated: mostRecentDate,
     recentAvgInflowMcftPerDay,
     seasonalAvgInflowMcftPerDay,
@@ -234,6 +295,8 @@ export default async function DashboardPage() {
           )}
           history={reservoirData.history}
           perReservoirHistory={reservoirData.perReservoirHistory}
+          forecast={reservoirData.forecast}
+          perReservoirForecast={reservoirData.perReservoirForecast}
         />
 
         {groundwaterData && <GroundwaterSnapshot data={groundwaterData} />}

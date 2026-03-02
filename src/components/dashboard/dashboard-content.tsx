@@ -5,22 +5,37 @@ import { ReservoirCards } from "./reservoir-cards";
 import { StorageTrendChart } from "./storage-trend-chart";
 import type { ReservoirSummary } from "@/types/reservoir";
 
+interface ForecastPoint {
+  date: string;
+  predicted: number;
+  lower: number;
+  upper: number;
+}
+
 interface DashboardContentProps {
   reservoirs: ReservoirSummary[];
   history: Array<{ date: string; totalStorage: number }>;
   perReservoirHistory: Record<string, Array<{ date: string; totalStorage: number }>>;
+  forecast?: ForecastPoint[];
+  perReservoirForecast?: Record<string, ForecastPoint[]>;
 }
 
 export function DashboardContent({
   reservoirs,
   history,
   perReservoirHistory,
+  forecast,
+  perReservoirForecast,
 }: DashboardContentProps) {
   const [selectedReservoir, setSelectedReservoir] = useState<ReservoirSummary | null>(null);
 
   const chartHistory = selectedReservoir
     ? perReservoirHistory[selectedReservoir.name] || []
     : history;
+
+  const chartForecast = selectedReservoir
+    ? perReservoirForecast?.[selectedReservoir.name] || []
+    : forecast || [];
 
   const chartTitle = selectedReservoir
     ? `${selectedReservoir.displayName} Storage`
@@ -35,6 +50,7 @@ export function DashboardContent({
 
       <StorageTrendChart
         history={chartHistory}
+        forecast={chartForecast}
         title={chartTitle}
         capacity={selectedReservoir?.capacity}
         onBack={selectedReservoir ? () => setSelectedReservoir(null) : undefined}

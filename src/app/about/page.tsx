@@ -136,13 +136,6 @@ export default function AboutPage() {
         </p>
         <div className="space-y-3">
           <div className="flex gap-3">
-            <span className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-            <div>
-              <span className="font-semibold text-slate-800 dark:text-slate-200">Reservoir Forecasting:</span>
-              <span className="text-slate-600 dark:text-slate-400"> Uses AutoARIMA (statsforecast) trained on 19+ years of storage data to predict each reservoir&apos;s level 6 months ahead, with 80% confidence intervals. Re-trained daily as new data arrives.</span>
-            </div>
-          </div>
-          <div className="flex gap-3">
             <span className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0" />
             <div>
               <span className="font-semibold text-slate-800 dark:text-slate-200">Ward Risk Scoring:</span>
@@ -157,6 +150,99 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      <Separator className="my-8" />
+
+      <section className="space-y-6">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Reservoir Forecasting</h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          The dashed violet line on the storage trend chart shows an ARIMA-based forecast for each reservoir, extending 6 months into the future. The shaded band around it represents an 80% confidence interval — the range within which actual storage is expected to fall, 4 out of 5 times.
+        </p>
+
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Technique</h3>
+        <p className="text-slate-600 dark:text-slate-400">
+          We use <span className="font-mono text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">AutoARIMA</span> from
+          the <a href="https://nixtla.github.io/statsforecast/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">statsforecast</a> library. AutoARIMA automatically selects the best ARIMA(p,d,q) order and seasonal component by testing multiple model configurations and choosing the one with the lowest information criterion (AICc).
+        </p>
+        <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-1.5 text-sm">
+          <li>Each reservoir is forecasted independently — six separate models are fitted.</li>
+          <li>The model is re-trained daily as new data arrives from the CMWSSB scraper.</li>
+          <li>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Seasonal detection:</span> The pipeline auto-detects data frequency. With weekly CMWSSB data (median gap &le; 15 days), it uses daily frequency with a 365-day seasonal period. With monthly OpenCity data, it uses a 12-month seasonal period.
+          </li>
+          <li>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Minimum data requirement:</span> At least 24 historical data points per reservoir. If fewer than 2 full seasonal cycles are available, the model falls back to non-seasonal ARIMA.
+          </li>
+          <li>All predictions are clamped to [0, reservoir capacity] — the model cannot predict negative storage or more than 100% full.</li>
+        </ul>
+
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Training Data</h3>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
+              <th className="pb-2 font-medium">Source</th>
+              <th className="pb-2 font-medium">Period</th>
+              <th className="pb-2 font-medium">Granularity</th>
+            </tr>
+          </thead>
+          <tbody className="text-slate-700 dark:text-slate-300">
+            <tr className="border-b border-slate-100 dark:border-slate-800">
+              <td className="py-2">OpenCity CKAN (lake storage)</td>
+              <td className="py-2 font-mono">2003–2021</td>
+              <td className="py-2">Monthly</td>
+            </tr>
+            <tr className="border-b border-slate-100 dark:border-slate-800">
+              <td className="py-2">CMWSSB scraper (backfill)</td>
+              <td className="py-2 font-mono">2022–present</td>
+              <td className="py-2">Weekly</td>
+            </tr>
+            <tr className="border-b border-slate-100 dark:border-slate-800">
+              <td className="py-2">CMWSSB scraper (daily)</td>
+              <td className="py-2 font-mono">Ongoing</td>
+              <td className="py-2">Daily</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">What the Forecast Does Not Model</h3>
+        <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-1.5 text-sm">
+          <li>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Rainfall predictions:</span> The model learns seasonal patterns from historical data but does not incorporate weather forecasts. An unusually dry or wet spell will widen the actual vs. predicted gap.
+          </li>
+          <li>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Policy decisions:</span> Emergency releases, inter-basin transfers (e.g. Krishna water), or rationing orders are not captured.
+          </li>
+          <li>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Demand changes:</span> The model forecasts supply (storage levels), not demand. Population growth, industrial usage shifts, or seasonal consumption patterns are not inputs.
+          </li>
+          <li>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Evaporation:</span> While implicitly captured in historical depletion patterns, explicit evaporation modeling (which varies with temperature and surface area) is not included.
+          </li>
+        </ul>
+
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Reading the Chart</h3>
+        <div className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-0.5 bg-blue-500 flex-shrink-0" />
+            <span><span className="font-medium text-slate-700 dark:text-slate-300">Solid blue line:</span> Actual recorded storage (historical data)</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-0.5 border-t-2 border-dashed border-violet-500 flex-shrink-0" />
+            <span><span className="font-medium text-slate-700 dark:text-slate-300">Dashed violet line:</span> ARIMA forecast (predicted storage)</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-3 bg-violet-500/10 rounded flex-shrink-0" />
+            <span><span className="font-medium text-slate-700 dark:text-slate-300">Violet shaded band:</span> 80% confidence interval — actual values are expected to fall within this range most of the time</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-0.5 border-t-2 border-dashed border-slate-400 flex-shrink-0" />
+            <span><span className="font-medium text-slate-700 dark:text-slate-300">Dashed grey line:</span> Reservoir capacity (when viewing a single reservoir)</span>
+          </div>
+        </div>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          The forecast updates automatically each time the daily pipeline runs. Click any reservoir card to see its individual forecast; click &quot;All Reservoirs&quot; to return to the combined view.
+        </p>
       </section>
 
       <Separator className="my-8" />

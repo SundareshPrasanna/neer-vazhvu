@@ -17,8 +17,16 @@ import {
 import { formatNumber } from "@/lib/utils/format";
 import type { HistoricalYearData } from "@/lib/mock-data";
 
+interface ForecastPoint {
+  date: string;
+  predicted: number;
+  lower: number;
+  upper: number;
+}
+
 interface StorageTrendChartProps {
   history: Array<{ date: string; totalStorage: number }>;
+  forecast?: ForecastPoint[];
   title?: string;
   capacity?: number;
   onBack?: () => void;
@@ -45,6 +53,7 @@ const YEAR_COLORS: Record<number, string> = {
 
 export function StorageTrendChart({
   history,
+  forecast,
   title = "Combined Storage Trend",
   capacity,
   onBack,
@@ -61,6 +70,16 @@ export function StorageTrendChart({
     const cutoffStr = cutoff.toISOString().split("T")[0];
     return history.filter((h) => h.date >= cutoffStr);
   }, [history, activeDays]);
+
+  // Filter forecast to match the active time range
+  const filteredForecast = useMemo(() => {
+    if (!forecast || forecast.length === 0) return [];
+    if (activeDays === 0) return forecast;
+    // For time-ranged views, include forecast if it falls within range
+    // The forecast extends into the future, so always include it
+    // as long as there's recent historical data in the range
+    return forecast;
+  }, [forecast, activeDays]);
 
   // Determine if we're showing multi-year data (>2 years span)
   const isMultiYear = useMemo(() => {
@@ -84,7 +103,6 @@ export function StorageTrendChart({
       const currentDate = new Date(h.date + "T00:00:00");
 
       // Insert gap marker if >120 days between consecutive points
-      // This breaks the line/area so it doesn't falsely connect across years of missing data
       if (i > 0) {
         const prevDate = new Date(filtered[i - 1].date + "T00:00:00");
         const gapDays = (currentDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
@@ -114,8 +132,28 @@ export function StorageTrendChart({
       result.push(entry);
     }
 
+    // Append forecast data
+    if (filteredForecast.length > 0 && result.length > 0) {
+      // Add forecast fields to the last historical point so lines connect seamlessly
+      const lastEntry = result[result.length - 1];
+      if (lastEntry.storage !== undefined) {
+        lastEntry.forecast = lastEntry.storage as number;
+        lastEntry.forecastLower = lastEntry.storage as number;
+        lastEntry.forecastUpper = lastEntry.storage as number;
+      }
+
+      for (const f of filteredForecast) {
+        result.push({
+          date: f.date,
+          forecast: f.predicted,
+          forecastLower: f.lower,
+          forecastUpper: f.upper,
+        });
+      }
+    }
+
     return result;
-  }, [filtered, selectedYears, getHistoricalData, isMultiYear]);
+  }, [filtered, filteredForecast, selectedYears, getHistoricalData, isMultiYear]);
 
   // Compute x-axis tick interval to show ~10-15 labels
   const xAxisInterval = useMemo(() => {
@@ -139,6 +177,103 @@ export function StorageTrendChart({
   };
 
   const hasComparisons = comparisonYears && comparisonYears.length > 0 && getHistoricalData;
+  const hasForecast = filteredForecast.length > 0;
+
+  // Custom tooltip that handles both historical and forecast points
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const renderTooltip = ({ active, payload }: { active?: boolean; payload?: readonly any[] }) => {
+    if (!active || !payload?.length) return null;
+    const d = payload[0].payload as Record<string, unknown>;
+    if (!d?.date) return null;
+
+    const isForecastPoint = d.forecast !== undefined && d.storage === undefined;
+
+    return (
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-3 text-sm">
+        <div className="text-slate-500 dark:text-slate-400 mb-1">
+          {d.date as string}
+          {isForecastPoint && (
+            <span className="ml-2 text-violet-500 text-xs font-medium">Forecast</span>
+          )}
+        </div>
+        {d.storage !== undefined && (
+          <div className="font-semibold text-blue-700 dark:text-blue-400">
+            {formatNumber(d.storage as number)} mcft
+          </div>
+        )}
+        {d.forecast !== undefined && (
+          <>
+            <div className="font-semibold text-violet-600 dark:text-violet-400">
+              {formatNumber(d.forecast as number)} mcft
+            </div>
+            {d.forecastLower !== undefined && d.forecastUpper !== undefined && isForecastPoint && (
+              <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                Range: {formatNumber(d.forecastLower as number)} – {formatNumber(d.forecastUpper as number)}
+              </div>
+            )}
+          </>
+        )}
+        {/* Show comparison year values */}
+        {payload
+          .filter((p) => {
+            const key = String(p.dataKey);
+            return key !== "storage" && key !== "forecast" && key !== "forecastLower" && key !== "forecastUpper" && p.value !== undefined;
+          })
+          .map((p) => {
+            const key = String(p.dataKey);
+            const label = comparisonYears?.find((c) => `y${c.year}` === key)?.label || key;
+            return (
+              <div key={key} className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                <span className="text-slate-600 dark:text-slate-400">{label}:</span>
+                <span className="font-semibold">{formatNumber(p.value ?? 0)} mcft</span>
+              </div>
+            );
+          })}
+      </div>
+    );
+  };
+
+  // Forecast chart elements — shared between AreaChart and LineChart
+  const forecastElements = hasForecast ? (
+    <>
+      <defs>
+        <linearGradient id="forecastBandGradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.15} />
+          <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.03} />
+        </linearGradient>
+      </defs>
+      <Area
+        type="monotone"
+        dataKey="forecastUpper"
+        stroke="none"
+        fill="url(#forecastBandGradient)"
+        connectNulls={false}
+        legendType="none"
+        tooltipType="none"
+      />
+      <Area
+        type="monotone"
+        dataKey="forecastLower"
+        stroke="none"
+        fill="#ffffff"
+        fillOpacity={1}
+        connectNulls={false}
+        legendType="none"
+        tooltipType="none"
+      />
+      <Line
+        type="monotone"
+        dataKey="forecast"
+        stroke="#8b5cf6"
+        strokeWidth={2}
+        strokeDasharray="6 3"
+        dot={false}
+        name="forecast"
+        connectNulls={false}
+      />
+    </>
+  ) : null;
 
   return (
     <div>
@@ -228,46 +363,13 @@ export function StorageTrendChart({
                 axisLine={false}
                 tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
               />
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (!active || !payload?.length) return null;
-                  const d = payload[0].payload;
-                  return (
-                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-3 text-sm">
-                      <div className="text-slate-500 dark:text-slate-400 mb-1">{d.date}</div>
-                      {payload.map((p: { dataKey?: string | number; value?: number; color?: string }) => {
-                        const key = String(p.dataKey);
-                        const label =
-                          key === "storage"
-                            ? "Current"
-                            : comparisonYears?.find(
-                                (c) => `y${c.year}` === key
-                              )?.label || key;
-                        return (
-                          <div
-                            key={key}
-                            className="flex items-center gap-2"
-                          >
-                            <span
-                              className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: p.color }}
-                            />
-                            <span className="text-slate-600 dark:text-slate-400">{label}:</span>
-                            <span className="font-semibold">
-                              {formatNumber(p.value ?? 0)} mcft
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                }}
-              />
+              <Tooltip content={renderTooltip} />
               <Legend
                 iconSize={8}
                 wrapperStyle={{ fontSize: "11px" }}
                 formatter={(value: string) => {
                   if (value === "storage") return "Current (2026)";
+                  if (value === "forecast") return "Forecast";
                   const year = parseInt(value.replace("y", ""));
                   return comparisonYears?.find((c) => c.year === year)?.label || value;
                 }}
@@ -303,6 +405,8 @@ export function StorageTrendChart({
                   name={`y${year}`}
                 />
               ))}
+              {/* Forecast overlay */}
+              {forecastElements}
             </LineChart>
           ) : (
             // Original area chart when no comparisons
@@ -327,21 +431,18 @@ export function StorageTrendChart({
                 axisLine={false}
                 tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
               />
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (!active || !payload?.[0]) return null;
-                  const d = payload[0].payload;
-                  if (!d.date) return null;
-                  return (
-                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-3 text-sm">
-                      <div className="text-slate-500 dark:text-slate-400">{d.date}</div>
-                      <div className="font-semibold text-blue-700">
-                        {formatNumber(d.storage)} mcft
-                      </div>
-                    </div>
-                  );
-                }}
-              />
+              <Tooltip content={renderTooltip} />
+              {hasForecast && (
+                <Legend
+                  iconSize={8}
+                  wrapperStyle={{ fontSize: "11px" }}
+                  formatter={(value: string) => {
+                    if (value === "storage") return "Actual";
+                    if (value === "forecast") return "Forecast";
+                    return value;
+                  }}
+                />
+              )}
               {capacity && (
                 <ReferenceLine
                   y={capacity}
@@ -357,7 +458,10 @@ export function StorageTrendChart({
                 strokeWidth={2}
                 fill="url(#storageGradient)"
                 connectNulls={false}
+                name="storage"
               />
+              {/* Forecast overlay */}
+              {forecastElements}
             </AreaChart>
           )}
         </ResponsiveContainer>
