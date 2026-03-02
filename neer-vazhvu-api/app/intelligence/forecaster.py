@@ -106,11 +106,24 @@ def _compute_future_exog(
     horizon: int,
     reservoir: str,
 ) -> pd.DataFrame:
-    """Build future exogenous DataFrame using historical seasonal averages."""
+    """Build future exogenous DataFrame blending recent conditions with seasonal averages.
+
+    Near-term projections are anchored to recent actual conditions (last 14 days
+    for daily, last 3 months for monthly). Further-out projections gradually
+    transition toward historical seasonal averages. This prevents the model from
+    predicting recoveries during droughts (when recent inflow is near zero but
+    historical seasonal averages include monsoon months).
+    """
     last_date = df["ds"].max()
 
     if freq == "D":
-        # Compute mean inflow/outflow by day-of-year
+        # Recent conditions (last 14 days)
+        recent_window = min(14, len(df))
+        recent = df.tail(recent_window)
+        recent_inflow = recent["inflow"].mean()
+        recent_outflow = recent["outflow"].mean()
+
+        # Historical seasonal averages by day-of-year
         df_copy = df.copy()
         df_copy["doy"] = df_copy["ds"].dt.dayofyear
         seasonal = df_copy.groupby("doy")[["inflow", "outflow"]].mean()
@@ -119,11 +132,21 @@ def _compute_future_exog(
         future = pd.DataFrame({"ds": future_dates})
         future["doy"] = future["ds"].dt.dayofyear
         future = future.merge(seasonal, left_on="doy", right_index=True, how="left")
-        # Fill any missing day-of-year with overall means
         future["inflow"] = future["inflow"].fillna(df["inflow"].mean())
         future["outflow"] = future["outflow"].fillna(df["outflow"].mean())
+
+        # Blend: recent → seasonal over the forecast horizon
+        blend = np.linspace(0, 1, horizon)
+        future["inflow"] = (1 - blend) * recent_inflow + blend * future["inflow"]
+        future["outflow"] = (1 - blend) * recent_outflow + blend * future["outflow"]
     else:
-        # Monthly: mean by month (1-12)
+        # Recent conditions (last 3 months)
+        recent_window = min(3, len(df))
+        recent = df.tail(recent_window)
+        recent_inflow = recent["inflow"].mean()
+        recent_outflow = recent["outflow"].mean()
+
+        # Historical seasonal averages by month (1-12)
         df_copy = df.copy()
         df_copy["month"] = df_copy["ds"].dt.month
         seasonal = df_copy.groupby("month")[["inflow", "outflow"]].mean()
@@ -134,6 +157,11 @@ def _compute_future_exog(
         future = future.merge(seasonal, left_on="month", right_index=True, how="left")
         future["inflow"] = future["inflow"].fillna(df["inflow"].mean())
         future["outflow"] = future["outflow"].fillna(df["outflow"].mean())
+
+        # Blend: recent → seasonal over the forecast horizon
+        blend = np.linspace(0, 1, horizon)
+        future["inflow"] = (1 - blend) * recent_inflow + blend * future["inflow"]
+        future["outflow"] = (1 - blend) * recent_outflow + blend * future["outflow"]
 
     future["unique_id"] = reservoir
     return future[["unique_id", "ds", "inflow", "outflow"]]
@@ -161,8 +189,19 @@ def _forecast_single_reservoir(reservoir: str) -> list[dict]:
     non_zero_inflow = (recent["inflow"] > 0).sum()
     use_exog = len(recent) > 0 and non_zero_inflow >= len(recent) * MIN_EXOG_COVERAGE
 
-    # Choose model based on data points available
-    if len(df) >= season_length * 2:
+    # Crisis detection: when storage is critically low, the seasonal ARIMA
+    # component would predict recovery based on historical seasonal patterns
+    # (e.g. "April is normally 2000 mcft"). During a drought this is misleading.
+    # Drop the seasonal component so the model extrapolates current trajectory.
+    latest_storage = float(df["y"].iloc[-1])
+    in_crisis = latest_storage < capacity * 0.15
+
+    # Choose model based on data availability and crisis state
+    if in_crisis:
+        # Non-seasonal: prevents false seasonal recovery predictions
+        models = [AutoARIMA()]
+        model_name = "arimax_crisis" if use_exog else "auto_arima_crisis"
+    elif len(df) >= season_length * 2:
         models = [AutoARIMA(season_length=season_length)]
         model_name = "arimax" if use_exog else "auto_arima"
     else:

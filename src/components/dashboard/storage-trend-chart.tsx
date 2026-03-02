@@ -262,8 +262,8 @@ export function StorageTrendChart({
     <>
       <defs>
         <linearGradient id="forecastBandGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.15} />
-          <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.03} />
+          <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+          <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.08} />
         </linearGradient>
       </defs>
       <Area
@@ -281,7 +281,7 @@ export function StorageTrendChart({
         type="monotone"
         dataKey="forecastLower"
         stroke="none"
-        fill="#ffffff"
+        fill="var(--background)"
         fillOpacity={1}
         connectNulls={false}
         legendType="none"
@@ -333,7 +333,7 @@ export function StorageTrendChart({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
         <div className="flex items-center gap-3">
           {onBack && (
             <button
@@ -347,7 +347,7 @@ export function StorageTrendChart({
             {title}
           </h2>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           {/* Flow toggle checkboxes */}
           <div className="flex items-center gap-3">
             <label className="flex items-center gap-1.5 cursor-pointer text-xs">
@@ -381,7 +381,7 @@ export function StorageTrendChart({
               <button
                 key={tab.label}
                 onClick={() => setActiveDays(tab.days)}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                   activeDays === tab.days
                     ? "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
                     : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"

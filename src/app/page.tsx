@@ -70,16 +70,9 @@ async function getReservoirData() {
     offset += PAGE_SIZE;
   }
 
-  // Combined totals per date (storage + inflow + outflow)
-  const historyMap = new Map<string, { storage: number; inflow: number; outflow: number }>();
-  // Per-reservoir history
+  // Per-reservoir history (used for individual reservoir charts)
   const perReservoirMap = new Map<string, Map<string, { storage: number; inflow: number; outflow: number }>>();
   for (const row of historyRaw) {
-    const existing = historyMap.get(row.date) || { storage: 0, inflow: 0, outflow: 0 };
-    existing.storage += row.current_storage_mcft || 0;
-    existing.inflow += row.inflow_cusecs || 0;
-    existing.outflow += row.outflow_cusecs || 0;
-    historyMap.set(row.date, existing);
     if (row.reservoir) {
       if (!perReservoirMap.has(row.reservoir)) {
         perReservoirMap.set(row.reservoir, new Map());
@@ -91,12 +84,36 @@ async function getReservoirData() {
       });
     }
   }
-  const history = Array.from(historyMap.entries()).map(([date, vals]) => ({
-    date,
-    totalStorage: vals.storage,
-    totalInflow: vals.inflow,
-    totalOutflow: vals.outflow,
-  }));
+
+  // Combined totals per date — forward-fill storage for reservoirs with
+  // sparse (monthly) data so the combined chart doesn't drop to near-zero
+  // on dates where only daily-frequency reservoirs report.
+  const allDates = Array.from(new Set(historyRaw.map((r) => r.date))).sort();
+  const reservoirNames = Array.from(perReservoirMap.keys());
+  const lastKnownStorage = new Map<string, number>();
+  const history: Array<{ date: string; totalStorage: number; totalInflow: number; totalOutflow: number }> = [];
+
+  for (const date of allDates) {
+    let totalStorage = 0;
+    let totalInflow = 0;
+    let totalOutflow = 0;
+
+    for (const res of reservoirNames) {
+      const resMap = perReservoirMap.get(res)!;
+      if (resMap.has(date)) {
+        const val = resMap.get(date)!;
+        lastKnownStorage.set(res, val.storage);
+        totalStorage += val.storage;
+        totalInflow += val.inflow;
+        totalOutflow += val.outflow;
+      } else if (lastKnownStorage.has(res)) {
+        // Forward-fill storage only (inflow/outflow are instantaneous, not carried)
+        totalStorage += lastKnownStorage.get(res)!;
+      }
+    }
+
+    history.push({ date, totalStorage, totalInflow, totalOutflow });
+  }
   const perReservoirHistory: Record<string, Array<{ date: string; totalStorage: number; totalInflow: number; totalOutflow: number }>> = {};
   for (const [reservoir, dateMap] of perReservoirMap) {
     perReservoirHistory[reservoir] = Array.from(dateMap.entries()).map(([date, vals]) => ({
@@ -125,8 +142,9 @@ async function getReservoirData() {
       .eq("forecast_date", latestForecastRow[0].forecast_date)
       .order("target_date", { ascending: true });
 
-    // Build per-reservoir forecast
+    // Build per-reservoir forecast and count contributors per date
     const combinedMap = new Map<string, { predicted: number; lower: number; upper: number }>();
+    const dateContributors = new Map<string, number>();
     for (const row of forecastRaw || []) {
       const point: ForecastPoint = {
         date: row.target_date,
@@ -148,9 +166,15 @@ async function getReservoirData() {
       } else {
         combinedMap.set(row.target_date, { ...point });
       }
+      dateContributors.set(row.target_date, (dateContributors.get(row.target_date) || 0) + 1);
     }
+    // Only include dates where all forecasting reservoirs contribute.
+    // Partial sums (e.g. only 1 of 6 reservoirs) create misleading jumps.
+    const maxContributors = Math.max(...dateContributors.values(), 0);
     for (const [date, vals] of combinedMap) {
-      forecast.push({ date, ...vals });
+      if ((dateContributors.get(date) || 0) >= maxContributors) {
+        forecast.push({ date, ...vals });
+      }
     }
     forecast.sort((a, b) => a.date.localeCompare(b.date));
   }
