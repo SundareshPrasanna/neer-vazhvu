@@ -157,17 +157,26 @@ export default function AboutPage() {
       <section className="space-y-6">
         <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Reservoir Forecasting</h2>
         <p className="text-slate-600 dark:text-slate-400">
-          The dashed violet line on the storage trend chart shows an ARIMA-based forecast for each reservoir, extending 6 months into the future. The shaded band around it represents an 80% confidence interval — the range within which actual storage is expected to fall, 4 out of 5 times.
+          The dashed violet line on the storage trend chart shows an ARIMAX-based forecast for each reservoir, extending 6 months into the future. The shaded band around it represents an 80% confidence interval — the range within which actual storage is expected to fall, 4 out of 5 times.
         </p>
 
         <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Technique</h3>
         <p className="text-slate-600 dark:text-slate-400">
           We use <span className="font-mono text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">AutoARIMA</span> from
-          the <a href="https://nixtla.github.io/statsforecast/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">statsforecast</a> library. AutoARIMA automatically selects the best ARIMA(p,d,q) order and seasonal component by testing multiple model configurations and choosing the one with the lowest information criterion (AICc).
+          the <a href="https://nixtla.github.io/statsforecast/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">statsforecast</a> library with <span className="font-medium">exogenous regressors</span> (ARIMAX). AutoARIMA automatically selects the best ARIMA(p,d,q) order and seasonal component by testing multiple model configurations and choosing the one with the lowest information criterion (AICc).
         </p>
         <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-1.5 text-sm">
           <li>Each reservoir is forecasted independently — six separate models are fitted.</li>
           <li>The model is re-trained daily as new data arrives from the CMWSSB scraper.</li>
+          <li>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Exogenous variables:</span> Inflow and outflow (cusecs) are fed as external regressors alongside storage. This lets the model respond more quickly to changing flow conditions (e.g. early monsoon onset or unexpected dry spells) rather than relying solely on historical storage trends.
+          </li>
+          <li>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Future flow estimation:</span> Since future inflow/outflow are unknown, the model uses historical seasonal averages — mean flow for each day-of-year (daily) or month (monthly) — as proxy values for the forecast horizon.
+          </li>
+          <li>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Graceful fallback:</span> If a reservoir has sparse inflow/outflow data (less than 30% non-zero in the last 2 years), the model automatically falls back to pure ARIMA without exogenous variables.
+          </li>
           <li>
             <span className="font-medium text-slate-700 dark:text-slate-300">Seasonal detection:</span> The pipeline auto-detects data frequency. With weekly CMWSSB data (median gap &le; 15 days), it uses daily frequency with a 365-day seasonal period. With monthly OpenCity data, it uses a 12-month seasonal period.
           </li>
@@ -183,24 +192,24 @@ export default function AboutPage() {
             <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
               <th className="pb-2 font-medium">Source</th>
               <th className="pb-2 font-medium">Period</th>
-              <th className="pb-2 font-medium">Granularity</th>
+              <th className="pb-2 font-medium">Data</th>
             </tr>
           </thead>
           <tbody className="text-slate-700 dark:text-slate-300">
             <tr className="border-b border-slate-100 dark:border-slate-800">
               <td className="py-2">OpenCity CKAN (lake storage)</td>
               <td className="py-2 font-mono">2003–2021</td>
-              <td className="py-2">Monthly</td>
+              <td className="py-2">Monthly storage only</td>
             </tr>
             <tr className="border-b border-slate-100 dark:border-slate-800">
               <td className="py-2">CMWSSB scraper (backfill)</td>
               <td className="py-2 font-mono">2022–present</td>
-              <td className="py-2">Weekly</td>
+              <td className="py-2">Storage + inflow/outflow</td>
             </tr>
             <tr className="border-b border-slate-100 dark:border-slate-800">
               <td className="py-2">CMWSSB scraper (daily)</td>
               <td className="py-2 font-mono">Ongoing</td>
-              <td className="py-2">Daily</td>
+              <td className="py-2">Storage + inflow/outflow</td>
             </tr>
           </tbody>
         </table>
@@ -208,7 +217,7 @@ export default function AboutPage() {
         <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">What the Forecast Does Not Model</h3>
         <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-1.5 text-sm">
           <li>
-            <span className="font-medium text-slate-700 dark:text-slate-300">Rainfall predictions:</span> The model learns seasonal patterns from historical data but does not incorporate weather forecasts. An unusually dry or wet spell will widen the actual vs. predicted gap.
+            <span className="font-medium text-slate-700 dark:text-slate-300">Rainfall predictions:</span> The model uses historical seasonal flow patterns as future proxies but does not incorporate real-time weather forecasts. An unusually dry or wet spell will widen the actual vs. predicted gap.
           </li>
           <li>
             <span className="font-medium text-slate-700 dark:text-slate-300">Policy decisions:</span> Emergency releases, inter-basin transfers (e.g. Krishna water), or rationing orders are not captured.
@@ -225,15 +234,23 @@ export default function AboutPage() {
         <div className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-3">
             <div className="w-10 h-0.5 bg-blue-500 flex-shrink-0" />
-            <span><span className="font-medium text-slate-700 dark:text-slate-300">Solid blue line:</span> Actual recorded storage (historical data)</span>
+            <span><span className="font-medium text-slate-700 dark:text-slate-300">Solid blue line/area:</span> Actual recorded storage (historical data)</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-0.5 border-t-2 border-dashed border-violet-500 flex-shrink-0" />
-            <span><span className="font-medium text-slate-700 dark:text-slate-300">Dashed violet line:</span> ARIMA forecast (predicted storage)</span>
+            <span><span className="font-medium text-slate-700 dark:text-slate-300">Dashed violet line:</span> ARIMAX forecast (predicted storage)</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-3 bg-violet-500/10 rounded flex-shrink-0" />
             <span><span className="font-medium text-slate-700 dark:text-slate-300">Violet shaded band:</span> 80% confidence interval — actual values are expected to fall within this range most of the time</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-0.5 bg-green-600 flex-shrink-0" />
+            <span><span className="font-medium text-slate-700 dark:text-slate-300">Green line (toggle):</span> Inflow (cusecs) — right Y-axis</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-0.5 bg-red-600 flex-shrink-0" />
+            <span><span className="font-medium text-slate-700 dark:text-slate-300">Red line (toggle):</span> Outflow (cusecs) — right Y-axis</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-0.5 border-t-2 border-dashed border-slate-400 flex-shrink-0" />
@@ -241,7 +258,7 @@ export default function AboutPage() {
           </div>
         </div>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          The forecast updates automatically each time the daily pipeline runs. Click any reservoir card to see its individual forecast; click &quot;All Reservoirs&quot; to return to the combined view.
+          The forecast updates automatically each time the daily pipeline runs. Use the Inflow/Outflow checkboxes to overlay flow data on a dual Y-axis (storage in mcft on the left, flow in cusecs on the right). Click any reservoir card to see its individual forecast; click &quot;All Reservoirs&quot; to return to the combined view.
         </p>
       </section>
 
@@ -292,7 +309,7 @@ export default function AboutPage() {
           <li>CMWSSB data may occasionally be stale (weekends, holidays). The dashboard shows a freshness indicator.</li>
           <li>Groundwater data from OpenCity may lag by months. The map always shows the most recent available period.</li>
           <li>Ward boundaries are from GCC 2022 delimitation and may not perfectly match current administrative boundaries.</li>
-          <li>Forecasts use AutoARIMA and work best with 2+ years of daily data. With monthly historical data, predictions are at month-level granularity.</li>
+          <li>Forecasts use ARIMAX (AutoARIMA with inflow/outflow as exogenous regressors) and work best with 2+ years of daily data. Future inflow/outflow are estimated from historical seasonal averages, not real-time weather forecasts. With monthly historical data, predictions are at month-level granularity.</li>
           <li>Risk scores are relative indicators for comparison between wards, not absolute measures of water safety.</li>
         </ul>
       </section>
