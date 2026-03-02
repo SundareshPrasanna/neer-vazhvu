@@ -257,6 +257,55 @@ export function generateMockGroundwater(
 }
 
 // ============================================================
+// PER-WARD GROUNDWATER HISTORY — for trend chart in detail panel
+// ============================================================
+
+/** Generate mock monthly depth-to-water history for a single ward */
+export function generateMockWardHistory(wardNumber: number): {
+  wardNumber: number;
+  wardName: string;
+  history: Array<{ year: number; month: number; date: string; depthM: number | null }>;
+} {
+  const rand = seededRandom(wardNumber * 3571);
+  const history: Array<{ year: number; month: number; date: string; depthM: number | null }> = [];
+
+  // Base depth varies by ward number (higher wards tend deeper)
+  const baseDepth = 3 + (wardNumber / 200) * 10;
+
+  for (let year = 2021; year <= 2024; year++) {
+    for (let month = 1; month <= 12; month++) {
+      // ~8% chance of missing data
+      if (rand() < 0.08) continue;
+
+      // Seasonal pattern: shallower post-monsoon (Dec-Feb), deeper in summer (Apr-Jun)
+      const monthAngle = ((month - 1) / 12) * Math.PI * 2;
+      const seasonal = Math.sin(monthAngle - Math.PI / 3) * 2;
+      const yearTrend = (year - 2021) * (rand() > 0.5 ? 0.3 : -0.2);
+      const noise = (rand() - 0.5) * 2;
+      const depth = Math.max(0.5, baseDepth + seasonal + yearTrend + noise);
+
+      history.push({
+        year,
+        month,
+        date: `${year}-${String(month).padStart(2, "0")}`,
+        depthM: parseFloat(depth.toFixed(1)),
+      });
+    }
+  }
+
+  const wardNames = [
+    "Tiruvottiyur", "Kathivakkam", "Tiruvottiyur East", "Ernavoor", "Janakipuram",
+    "Mill Colony", "Kaladipet", "Theradi", "Tiruvottiyur West", "Wimco Nagar",
+  ];
+
+  return {
+    wardNumber,
+    wardName: wardNumber <= wardNames.length ? wardNames[wardNumber - 1] : `Ward ${wardNumber}`,
+    history,
+  };
+}
+
+// ============================================================
 // PER-RESERVOIR HISTORY — for drilldown view
 // ============================================================
 

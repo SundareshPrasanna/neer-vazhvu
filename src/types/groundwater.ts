@@ -40,6 +40,19 @@ export function getGroundwaterStatus(depthM: number | null): GroundwaterStatus {
   return 'crisis';
 }
 
+export interface WardHistoryPoint {
+  year: number;
+  month: number;
+  date: string;    // "YYYY-MM"
+  depthM: number | null;
+}
+
+export interface WardHistoryResponse {
+  wardNumber: number;
+  wardName: string;
+  history: WardHistoryPoint[];
+}
+
 export function getGroundwaterColor(depthM: number | null): string {
   if (depthM === null) return '#9ca3af';
   if (depthM <= 3) return '#22c55e';

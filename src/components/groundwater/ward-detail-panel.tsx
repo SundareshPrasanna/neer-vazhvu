@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { WardHistoryChart } from "@/components/groundwater/ward-history-chart";
 import { getGroundwaterStatus, getGroundwaterColor } from "@/types/groundwater";
 import type { GroundwaterWard } from "@/types/groundwater";
 
@@ -66,6 +67,10 @@ export function WardDetailPanel({ ward, onClose }: WardDetailPanelProps) {
               <span className={`text-2xl ${trend.color}`}>{trend.icon}</span>
               <span className={`text-sm ${trend.color} font-medium`}>{trend.label}</span>
             </div>
+          </div>
+
+          <div className="mb-6">
+            <WardHistoryChart wardNumber={ward.wardNumber} />
           </div>
 
           <div className="text-xs text-slate-400 dark:text-slate-500 space-y-1">
