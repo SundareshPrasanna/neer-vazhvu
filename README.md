@@ -1,36 +1,273 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Neer Vazhvu
+
+**Chennai Water Intelligence Dashboard** — An open-source platform that turns public water data into actionable intelligence for Chennai's 11 million residents.
+
+Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, and consumption patterns across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring**, and **daily intelligence briefings**.
+
+## Features
+
+### Dashboard
+- **Days of Water Left** — Three-scenario estimate (pessimistic / current trend / seasonal rains)
+- **Reservoir Cards** — Live storage, inflow, outflow, and rainfall for all 6 reservoirs
+- **Per-Reservoir Drilldown** — Click any reservoir for 365-day charts (storage, inflow vs outflow, rainfall)
+- **Historical Comparison** — Overlay any year from 2019–2025 on the storage trend chart
+- **Storage Trend Chart** — 90-day combined storage with interactive year comparison
+
+### Groundwater Map
+- **Choropleth Map** — Depth to water table across all 200 GCC wards
+- **Ward Detail Panel** — Click any ward for depth, status, and year-over-year trend
+- **Zone-level Aggregation** — Color-coded by CGWB classification (Healthy → Crisis)
+
+### Intelligence Layer (Python Service)
+- **Reservoir Forecasting** — 30-day storage predictions using AutoARIMA with confidence intervals
+- **Ward Risk Scoring** — Composite 0–100 risk score per ward (groundwater depth, trend, reservoir stress, seasonal vulnerability)
+- **Daily Briefing** — Template-based intelligence summary with headlines, alerts, and recommendations
+
+### Other
+- **Dark Mode** — Full dark mode with system preference detection
+- **Responsive** — Works on desktop, tablet, and mobile
+- **Demo Mode** — Runs with realistic mock data when Supabase isn't configured
+
+## Architecture
+
+```
+┌──────────────────────────────────────────────────┐
+│        Python FastAPI Service (Railway)           │
+│                                                  │
+│  Scrapers         ETL            Intelligence     │
+│  ├─ cmwssb.py     ├─ pipeline.py ├─ forecaster   │
+│  ├─ nasa_power.py ├─ estimate.py ├─ risk_scorer  │
+│  └─ opencity.py   └─ seed.py     └─ briefing     │
+│                                                  │
+│  Writes computed results to Supabase ────┐       │
+└──────────────────────────────────────────┘       │
+                                                   │
+┌──────────────────────────────────────────┐       │
+│       Next.js Frontend (Vercel)          │◄──────┘
+│  Reads from Supabase + renders UI        │
+└──────────────────────────────────────────┘
+```
+
+## Data Sources
+
+| Source | Data | Frequency |
+|--------|------|-----------|
+| [CMWSSB Lake Level Page](https://cmwssb.tn.gov.in/lake-level) | Reservoir levels, inflow, outflow, rainfall | Daily |
+| [NASA POWER](https://power.larc.nasa.gov/) | Precipitation, temperature, humidity | Daily (2-day lag) |
+| [OpenCity Chennai](https://data.opencity.in/) | Ward-wise groundwater levels (200 wards) | Monthly |
+| [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS v4, shadcn/ui |
+| Charts | Recharts |
+| Maps | Leaflet with GCC ward boundary GeoJSON |
+| Backend API | Python 3.12, FastAPI, statsforecast, pandas |
+| Database | Supabase (PostgreSQL) |
+| Deployment | Vercel (frontend), Railway (Python API) |
+| CI/CD | GitHub Actions (daily data pipeline) |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- Python 3.11+
+- [pyenv](https://github.com/pyenv/pyenv) (recommended)
+- A [Supabase](https://supabase.com/) project (free tier works)
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/SundareshPrasanna/neer-vazhvu.git
+cd neer-vazhvu
+```
+
+### 2. Frontend Setup
+
+```bash
+npm install
+```
+
+Create `.env.local` for the frontend:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+CRON_SECRET=your-secret
+```
+
+Run in demo mode (no Supabase required):
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app automatically falls back to demo mode with realistic mock data when Supabase isn't configured.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Database Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run both migrations against your Supabase project:
 
-## Learn More
+```sql
+-- In the Supabase SQL Editor, run in order:
+-- 1. supabase/migrations/001_initial_schema.sql
+-- 2. supabase/migrations/002_intelligence_tables.sql
+```
 
-To learn more about Next.js, take a look at the following resources:
+Or if using the Supabase CLI:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+supabase db push
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. Python Intelligence Service
 
-## Deploy on Vercel
+```bash
+cd neer-vazhvu-api
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Create a dedicated virtual environment
+pyenv virtualenv 3.12.2 neer-vazhvu-api
+pyenv local neer-vazhvu-api
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Install dependencies
+pip install -e ".[dev]"
+```
+
+Create `.env` in the `neer-vazhvu-api/` directory:
+
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_KEY=your-service-role-key
+CRON_SECRET=your-secret
+```
+
+Run the API locally:
+
+```bash
+uvicorn app.main:app --reload --port 8000
+# API docs at http://localhost:8000/docs
+```
+
+### 5. Seed Historical Data
+
+```bash
+# From the neer-vazhvu-api directory
+python -m scripts.seed_kaggle      # 15 years of reservoir data
+python -m scripts.seed_opencity    # Groundwater data (2021-2024)
+```
+
+## API Endpoints
+
+### Pipeline (protected — requires `Authorization: Bearer <CRON_SECRET>`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/pipeline/run-daily` | Full pipeline: scrape → ETL → forecast → briefing |
+| POST | `/pipeline/run-monthly` | Groundwater fetch + risk scoring |
+| POST | `/pipeline/run-intelligence` | Forecast + risk + briefing only (backfills) |
+
+### Intelligence (public read)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/intelligence/forecast?reservoir=all&horizon=30` | Reservoir storage forecasts |
+| GET | `/intelligence/risk-scores?date=latest` | Ward-level risk scores |
+| GET | `/intelligence/briefing?date=latest` | Daily intelligence briefing |
+| GET | `/health` | Service health + last pipeline status |
+
+## Project Structure
+
+```
+neer-vazhvu/
+├── src/                          # Next.js frontend
+│   ├── app/                      # App Router pages
+│   │   ├── page.tsx              # Main dashboard
+│   │   ├── groundwater/          # Groundwater map page
+│   │   └── about/                # About/methodology page
+│   ├── components/
+│   │   ├── dashboard/            # Dashboard components
+│   │   ├── groundwater/          # Map, legend, ward panel
+│   │   ├── layout/               # Header, footer
+│   │   └── ui/                   # shadcn/ui primitives
+│   ├── lib/
+│   │   ├── scrapers/             # TypeScript scrapers (legacy)
+│   │   ├── calculator/           # Days-left calculator
+│   │   └── mock-data.ts          # Demo mode data
+│   └── types/                    # TypeScript type definitions
+├── neer-vazhvu-api/              # Python intelligence service
+│   ├── app/
+│   │   ├── scrapers/             # CMWSSB, NASA POWER, OpenCity
+│   │   ├── etl/                  # Pipeline orchestrator, calculator
+│   │   ├── intelligence/         # Forecaster, risk scorer, briefing
+│   │   ├── models/               # Pydantic data models
+│   │   └── routers/              # FastAPI route handlers
+│   ├── Dockerfile
+│   └── pyproject.toml
+├── supabase/
+│   └── migrations/               # SQL migrations (001, 002)
+├── public/
+│   └── geojson/                  # GCC ward boundaries
+└── .github/
+    └── workflows/                # Daily data pipeline
+```
+
+## Default Assumptions
+
+| Parameter | Default | Source |
+|-----------|---------|--------|
+| Daily consumption | 830 MLD | CMWSSB annual report |
+| Desalination output | 190 MLD | Minjur (100) + Nemmeli (100) |
+| Groundwater supply | Not modeled | Conservative assumption |
+| Evaporation losses | Not modeled | Planned for V2 |
+
+Users can adjust consumption and desalination via sliders on the dashboard.
+
+## Risk Score Methodology
+
+Each ward receives a composite score from 0 (safe) to 100 (critical):
+
+| Component | Weight | What it measures |
+|-----------|--------|-----------------|
+| Groundwater depth | 40% | Current depth to water table (mbgl) |
+| Year-over-year trend | 30% | Is the water table rising or falling? |
+| Reservoir stress | 20% | City-wide reservoir storage percentage |
+| Seasonal vulnerability | 10% | Time of year (pre-monsoon = highest risk) |
+
+Risk levels: **Low** (0–25) · **Moderate** (26–50) · **High** (51–75) · **Critical** (76–100)
+
+## Limitations
+
+- This is an independent, educational project — not an official government tool.
+- Estimates are approximations. Actual water availability depends on factors not modeled (Krishna water transfer, distribution losses, industrial use).
+- CMWSSB data may occasionally be stale (weekends, holidays).
+- Groundwater data from OpenCity may lag by months.
+- Forecasts use AutoARIMA which works best with 90+ days of history.
+
+## Contributing
+
+Contributions are welcome! Areas where help is needed:
+
+- **Data quality** — Improving scraper resilience, handling CMWSSB page format changes
+- **Models** — Better forecasting (Prophet, LSTM), evaporation modeling
+- **Frontend** — Forecast chart overlays, risk map layer, briefing card component
+- **Tamil localization** — Translating the UI for local accessibility
+- **Testing** — Unit tests for scrapers, calculator, and intelligence modules
+
+Please open an issue first to discuss significant changes.
+
+## License
+
+MIT
+
+## Acknowledgments
+
+- **CMWSSB** for publishing daily reservoir data publicly
+- **NASA POWER** for free, open weather data
+- **OpenCity Chennai** for ward-level groundwater datasets
+- **GCC** for ward boundary delimitation data
+- Chennai's civic data community for making public data accessible

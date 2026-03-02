@@ -1,8 +1,8 @@
 """
 Reservoir Level Forecaster.
 
-Uses statsforecast AutoARIMA to predict storage levels 30 days ahead
-for each of Chennai's 6 reservoirs. Trains daily on all available history.
+Uses statsforecast AutoARIMA to predict reservoir storage levels.
+Automatically detects data frequency (daily vs monthly) and adjusts accordingly.
 """
 
 from datetime import date
@@ -10,14 +10,13 @@ from datetime import date
 import numpy as np
 import pandas as pd
 from statsforecast import StatsForecast
-from statsforecast.models import AutoARIMA, SeasonalExponentialSmoothingOptimized
+from statsforecast.models import AutoARIMA
 
 from app.db import get_supabase
 from app.etl.constants import RESERVOIR_CAPACITY
 
-FORECAST_HORIZON = 30  # days ahead
 CONFIDENCE_LEVEL = 80  # percent
-MIN_HISTORY_DAYS = 90  # minimum data points for AutoARIMA
+MIN_HISTORY_POINTS = 24  # minimum data points for forecasting
 
 RESERVOIRS = [
     "poondi",
@@ -56,39 +55,80 @@ def _fetch_reservoir_history(reservoir: str) -> pd.DataFrame:
     return df[["unique_id", "ds", "y"]]
 
 
+def _detect_frequency(df: pd.DataFrame) -> tuple[str, int, int]:
+    """
+    Detect whether the data is daily or monthly.
+
+    Returns:
+        (freq, season_length, forecast_horizon)
+        - Daily: ('D', 365, 30)
+        - Monthly: ('MS', 12, 6) — 6 months ahead
+    """
+    if len(df) < 3:
+        return "MS", 12, 6
+
+    # Check median gap between consecutive dates
+    gaps = df["ds"].diff().dt.days.dropna()
+    median_gap = gaps.median()
+
+    if median_gap > 15:
+        # Monthly data — resample to month start for clean frequency
+        return "MS", 12, 6
+    else:
+        return "D", 365, 30
+
+
+def _resample_to_monthly(df: pd.DataFrame) -> pd.DataFrame:
+    """Resample irregular dates to clean month-start frequency."""
+    df = df.copy()
+    df["month_start"] = df["ds"].dt.to_period("M").dt.to_timestamp()
+
+    # Take the last value per month
+    monthly = (
+        df.groupby(["unique_id", "month_start"])["y"]
+        .last()
+        .reset_index()
+    )
+    monthly = monthly.rename(columns={"month_start": "ds"})
+    return monthly[["unique_id", "ds", "y"]].sort_values("ds").reset_index(drop=True)
+
+
 def _forecast_single_reservoir(reservoir: str) -> list[dict]:
     """Generate forecast for a single reservoir."""
     today = date.today()
     df = _fetch_reservoir_history(reservoir)
 
-    if len(df) < 30:
-        # Not enough data even for basic forecasting
+    if len(df) < MIN_HISTORY_POINTS:
         return []
 
     capacity = RESERVOIR_CAPACITY.get(reservoir, 5000)
+    freq, season_length, horizon = _detect_frequency(df)
 
-    # Choose model based on data availability
-    if len(df) >= MIN_HISTORY_DAYS:
-        models = [AutoARIMA(season_length=365)]
+    # Resample to clean frequency if monthly
+    if freq == "MS":
+        df = _resample_to_monthly(df)
+
+    # Choose model based on data points available
+    if len(df) >= season_length * 2:
+        models = [AutoARIMA(season_length=season_length)]
         model_name = "auto_arima"
     else:
-        # Fallback to seasonal exponential smoothing with shorter season
-        models = [SeasonalExponentialSmoothingOptimized(season_length=30)]
-        model_name = "ses_optimized"
+        models = [AutoARIMA()]  # non-seasonal ARIMA
+        model_name = "auto_arima_nonseasonal"
 
-    sf = StatsForecast(models=models, freq="D", n_jobs=1)
+    sf = StatsForecast(models=models, freq=freq, n_jobs=1)
     sf.fit(df)
 
-    forecasts = sf.predict(h=FORECAST_HORIZON, level=[CONFIDENCE_LEVEL])
+    forecasts = sf.predict(h=horizon, level=[CONFIDENCE_LEVEL])
     forecasts = forecasts.reset_index()
+
+    # Find column names dynamically
+    model_col = [c for c in forecasts.columns if c not in ("index", "unique_id", "ds") and "-lo-" not in c and "-hi-" not in c][0]
+    lo_col = [c for c in forecasts.columns if "-lo-" in c][0]
+    hi_col = [c for c in forecasts.columns if "-hi-" in c][0]
 
     results = []
     for _, row in forecasts.iterrows():
-        # Get the predicted value and confidence bounds
-        model_col = forecasts.columns[2]  # First model column after unique_id and ds
-        lo_col = [c for c in forecasts.columns if "-lo-" in c][0]
-        hi_col = [c for c in forecasts.columns if "-hi-" in c][0]
-
         predicted = float(row[model_col])
         lower = float(row[lo_col])
         upper = float(row[hi_col])
@@ -102,7 +142,7 @@ def _forecast_single_reservoir(reservoir: str) -> list[dict]:
             {
                 "reservoir": reservoir,
                 "forecast_date": today.isoformat(),
-                "target_date": row["ds"].strftime("%Y-%m-%d"),
+                "target_date": pd.Timestamp(row["ds"]).strftime("%Y-%m-%d"),
                 "predicted_storage_mcft": round(predicted, 3),
                 "confidence_lower_mcft": round(lower, 3),
                 "confidence_upper_mcft": round(upper, 3),
@@ -114,7 +154,7 @@ def _forecast_single_reservoir(reservoir: str) -> list[dict]:
 
 
 async def forecast_reservoirs() -> list[dict]:
-    """Generate 30-day forecasts for all 6 reservoirs and store in Supabase."""
+    """Generate forecasts for all 6 reservoirs and store in Supabase."""
     supabase = get_supabase()
     all_results: list[dict] = []
 
@@ -123,12 +163,10 @@ async def forecast_reservoirs() -> list[dict]:
             results = _forecast_single_reservoir(reservoir)
             all_results.extend(results)
         except Exception as e:
-            # Log but don't fail the whole pipeline for one reservoir
             print(f"Forecast failed for {reservoir}: {e}")
             continue
 
     if all_results:
-        # Batch upsert (supabase-py handles chunking)
         supabase.table("reservoir_forecast").upsert(
             all_results, on_conflict="reservoir,forecast_date,target_date"
         ).execute()
