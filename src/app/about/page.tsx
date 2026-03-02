@@ -262,9 +262,32 @@ export default function AboutPage() {
       <Separator className="my-8" />
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Limitations & Disclaimers</h2>
-        <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
-          <li>This is an independent, educational project — not an official government tool.</li>
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Disclaimer</h2>
+        <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3 text-sm text-slate-600 dark:text-slate-400">
+          <p>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">Not an official government tool.</span>{" "}
+            Neer Vazhvu is an independent, open-source project. It is not affiliated with, endorsed by, or connected to CMWSSB, GCC, CGWB, or any government body.
+          </p>
+          <p>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">Informational purposes only.</span>{" "}
+            All data, estimates, and forecasts are provided &quot;as is&quot; for general awareness. They should not be used as the sole basis for emergency planning, policy decisions, or any action where inaccurate information could cause harm. Always refer to official CMWSSB advisories for critical decisions.
+          </p>
+          <p>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">No warranty.</span>{" "}
+            We make no guarantees about the accuracy, completeness, or timeliness of the data displayed. Upstream sources (CMWSSB, OpenCity, NASA POWER) may contain errors, lag, or go offline without notice.
+          </p>
+          <p>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">No personal data collected.</span>{" "}
+            Neer Vazhvu does not collect, store, or process any personal information. There are no user accounts, cookies, or analytics trackers. All data shown is derived from publicly available government sources.
+          </p>
+        </div>
+      </section>
+
+      <Separator className="my-8" />
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Known Limitations</h2>
+        <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2 text-sm">
           <li>Estimates are approximations. Actual water availability depends on factors not modeled (groundwater extraction, Krishna water transfer, distribution losses, industrial use).</li>
           <li>CMWSSB data may occasionally be stale (weekends, holidays). The dashboard shows a freshness indicator.</li>
           <li>Groundwater data from OpenCity may lag by months. The map always shows the most recent available period.</li>
@@ -279,9 +302,20 @@ export default function AboutPage() {
       <section className="space-y-4">
         <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Open Source</h2>
         <p className="text-slate-600 dark:text-slate-400">
-          Neer Vazhvu is open source. The code, data pipeline, and methodology are fully transparent.
+          Neer Vazhvu is fully open source. The code, data pipeline, and methodology are transparent and available on GitHub.
           Contributions, bug reports, and data corrections are welcome.
         </p>
+        <a
+          href="https://github.com/SundareshPrasanna/neer-vazhvu"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg text-sm font-medium hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors"
+        >
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+          </svg>
+          View on GitHub
+        </a>
       </section>
     </div>
   );
