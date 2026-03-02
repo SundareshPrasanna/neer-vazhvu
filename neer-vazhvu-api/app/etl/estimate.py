@@ -39,20 +39,28 @@ def compute_days_left(
         pessimistic = MAX_DAYS
 
     # Scenario 2: MODERATE — recent inflow trend continues
-    depletion_moderate = max(0, net_reservoir_demand_mcft - recent_avg_inflow_mcft_per_day)
+    depletion_moderate = max(
+        0, net_reservoir_demand_mcft - recent_avg_inflow_mcft_per_day
+    )
     if depletion_moderate > 0:
         moderate = max(0, int(total_storage_mcft / depletion_moderate))
     else:
         moderate = MAX_DAYS
 
     # Scenario 3: OPTIMISTIC — seasonal average inflow
-    depletion_optimistic = max(0, net_reservoir_demand_mcft - seasonal_avg_inflow_mcft_per_day)
+    depletion_optimistic = max(
+        0, net_reservoir_demand_mcft - seasonal_avg_inflow_mcft_per_day
+    )
     if depletion_optimistic > 0:
         optimistic = max(0, int(total_storage_mcft / depletion_optimistic))
     else:
         optimistic = MAX_DAYS
 
-    storage_pct = (total_storage_mcft / total_capacity_mcft * 100) if total_capacity_mcft > 0 else 0
+    storage_pct = (
+        (total_storage_mcft / total_capacity_mcft * 100)
+        if total_capacity_mcft > 0
+        else 0
+    )
 
     return {
         "pessimistic": min(pessimistic, MAX_DAYS),

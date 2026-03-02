@@ -79,9 +79,7 @@ def _build_summary(
     )
 
     if inflow_mcft_day > 0:
-        parts.append(
-            f"Average daily inflow is {inflow_mcft_day:.1f} mcft/day"
-        )
+        parts.append(f"Average daily inflow is {inflow_mcft_day:.1f} mcft/day")
 
     return ". ".join(parts) + "."
 
@@ -187,9 +185,7 @@ def _build_recommendations(
         )
 
     if not recs:
-        recs.append(
-            "No immediate action required. Continue regular monitoring."
-        )
+        recs.append("No immediate action required. Continue regular monitoring.")
 
     return recs
 
@@ -244,7 +240,9 @@ async def generate_briefing() -> dict:
         .execute()
     )
 
-    prev_storage_pct = float(prev_result.data[0]["storage_pct"]) if prev_result.data else storage_pct
+    prev_storage_pct = (
+        float(prev_result.data[0]["storage_pct"]) if prev_result.data else storage_pct
+    )
     change_7d = storage_pct - prev_storage_pct
 
     prev_inflow = (

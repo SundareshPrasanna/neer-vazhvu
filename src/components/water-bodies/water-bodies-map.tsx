@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON, LayersControl } from "react-leaflet";
 import L from "leaflet";
 import type { Layer } from "leaflet";
-import type { Feature, Point } from "geojson";
+import type { Feature } from "geojson";
 import type {
   CurrentWaterBodyProperties,
   LostWaterBodyProperties,
