@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ReservoirCards } from "./reservoir-cards";
 import { StorageTrendChart } from "./storage-trend-chart";
-import type { ReservoirSummary } from "@/types/reservoir";
+import type { ReservoirSummary, HistoryPoint } from "@/types/reservoir";
 
 interface ForecastPoint {
   date: string;
@@ -14,8 +14,8 @@ interface ForecastPoint {
 
 interface DashboardContentProps {
   reservoirs: ReservoirSummary[];
-  history: Array<{ date: string; totalStorage: number }>;
-  perReservoirHistory: Record<string, Array<{ date: string; totalStorage: number }>>;
+  history: HistoryPoint[];
+  perReservoirHistory: Record<string, HistoryPoint[]>;
   forecast?: ForecastPoint[];
   perReservoirForecast?: Record<string, ForecastPoint[]>;
 }

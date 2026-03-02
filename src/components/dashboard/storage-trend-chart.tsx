@@ -25,7 +25,7 @@ interface ForecastPoint {
 }
 
 interface StorageTrendChartProps {
-  history: Array<{ date: string; totalStorage: number }>;
+  history: Array<{ date: string; totalStorage: number; totalInflow?: number; totalOutflow?: number }>;
   forecast?: ForecastPoint[];
   title?: string;
   capacity?: number;
@@ -62,6 +62,9 @@ export function StorageTrendChart({
 }: StorageTrendChartProps) {
   const [activeDays, setActiveDays] = useState(0);
   const [selectedYears, setSelectedYears] = useState<number[]>([]);
+  const [showInflow, setShowInflow] = useState(false);
+  const [showOutflow, setShowOutflow] = useState(false);
+  const showFlowLines = showInflow || showOutflow;
 
   const filtered = useMemo(() => {
     if (activeDays === 0) return history;
@@ -114,6 +117,8 @@ export function StorageTrendChart({
       const entry: Record<string, string | number | undefined> = {
         date: h.date,
         storage: h.totalStorage,
+        inflow: h.totalInflow,
+        outflow: h.totalOutflow,
       };
 
       // For each comparison year, find the matching day-of-year
@@ -213,11 +218,29 @@ export function StorageTrendChart({
             )}
           </>
         )}
+        {showInflow && d.inflow !== undefined && (
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#16a34a" }} />
+            <span className="text-slate-600 dark:text-slate-400">Inflow:</span>
+            <span className="font-semibold text-green-600">
+              {formatNumber(d.inflow as number)} cusecs
+            </span>
+          </div>
+        )}
+        {showOutflow && d.outflow !== undefined && (
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#dc2626" }} />
+            <span className="text-slate-600 dark:text-slate-400">Outflow:</span>
+            <span className="font-semibold text-red-600">
+              {formatNumber(d.outflow as number)} cusecs
+            </span>
+          </div>
+        )}
         {/* Show comparison year values */}
         {payload
           .filter((p) => {
             const key = String(p.dataKey);
-            return key !== "storage" && key !== "forecast" && key !== "forecastLower" && key !== "forecastUpper" && p.value !== undefined;
+            return key !== "storage" && key !== "forecast" && key !== "forecastLower" && key !== "forecastUpper" && key !== "inflow" && key !== "outflow" && p.value !== undefined;
           })
           .map((p) => {
             const key = String(p.dataKey);
@@ -244,6 +267,7 @@ export function StorageTrendChart({
         </linearGradient>
       </defs>
       <Area
+        yAxisId="left"
         type="monotone"
         dataKey="forecastUpper"
         stroke="none"
@@ -253,6 +277,7 @@ export function StorageTrendChart({
         tooltipType="none"
       />
       <Area
+        yAxisId="left"
         type="monotone"
         dataKey="forecastLower"
         stroke="none"
@@ -263,6 +288,7 @@ export function StorageTrendChart({
         tooltipType="none"
       />
       <Line
+        yAxisId="left"
         type="monotone"
         dataKey="forecast"
         stroke="#8b5cf6"
@@ -274,6 +300,36 @@ export function StorageTrendChart({
       />
     </>
   ) : null;
+
+  // Inflow/outflow line elements — shared between AreaChart and LineChart
+  const flowElements = (
+    <>
+      {showInflow && (
+        <Line
+          yAxisId="right"
+          type="monotone"
+          dataKey="inflow"
+          stroke="#16a34a"
+          strokeWidth={1.5}
+          dot={false}
+          name="Inflow"
+          connectNulls={false}
+        />
+      )}
+      {showOutflow && (
+        <Line
+          yAxisId="right"
+          type="monotone"
+          dataKey="outflow"
+          stroke="#dc2626"
+          strokeWidth={1.5}
+          dot={false}
+          name="Outflow"
+          connectNulls={false}
+        />
+      )}
+    </>
+  );
 
   return (
     <div>
@@ -291,20 +347,50 @@ export function StorageTrendChart({
             {title}
           </h2>
         </div>
-        <div className="flex gap-1">
-          {TABS.map((tab) => (
-            <button
-              key={tab.label}
-              onClick={() => setActiveDays(tab.days)}
-              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                activeDays === tab.days
-                  ? "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
-                  : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-4">
+          {/* Flow toggle checkboxes */}
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs">
+              <input
+                type="checkbox"
+                checked={showInflow}
+                onChange={(e) => setShowInflow(e.target.checked)}
+                className="rounded border-slate-300 text-green-600 focus:ring-green-500 h-3.5 w-3.5"
+              />
+              <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+                <span className="w-3 h-0.5 bg-green-600 rounded inline-block" />
+                Inflow
+              </span>
+            </label>
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs">
+              <input
+                type="checkbox"
+                checked={showOutflow}
+                onChange={(e) => setShowOutflow(e.target.checked)}
+                className="rounded border-slate-300 text-red-600 focus:ring-red-500 h-3.5 w-3.5"
+              />
+              <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+                <span className="w-3 h-0.5 bg-red-600 rounded inline-block" />
+                Outflow
+              </span>
+            </label>
+          </div>
+          {/* Time range tabs */}
+          <div className="flex gap-1">
+            {TABS.map((tab) => (
+              <button
+                key={tab.label}
+                onClick={() => setActiveDays(tab.days)}
+                className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                  activeDays === tab.days
+                    ? "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -348,7 +434,7 @@ export function StorageTrendChart({
         <ResponsiveContainer width="100%" height="100%">
           {selectedYears.length > 0 ? (
             // Multi-line chart when comparing years
-            <LineChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+            <LineChart data={chartData} margin={{ top: 5, right: showFlowLines ? 50 : 10, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis
                 dataKey="date"
@@ -358,11 +444,23 @@ export function StorageTrendChart({
                 interval={xAxisInterval}
               />
               <YAxis
+                yAxisId="left"
                 tick={{ fontSize: 11, fill: "#94a3b8" }}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
               />
+              {showFlowLines && (
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  tick={{ fontSize: 11, fill: "#94a3b8" }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) => `${v}`}
+                  label={{ value: "cusecs", angle: 90, position: "insideRight", style: { fontSize: 10, fill: "#94a3b8" } }}
+                />
+              )}
               <Tooltip content={renderTooltip} />
               <Legend
                 iconSize={8}
@@ -370,12 +468,15 @@ export function StorageTrendChart({
                 formatter={(value: string) => {
                   if (value === "storage") return "Current (2026)";
                   if (value === "forecast") return "Forecast";
+                  if (value === "Inflow") return "Inflow (cusecs)";
+                  if (value === "Outflow") return "Outflow (cusecs)";
                   const year = parseInt(value.replace("y", ""));
                   return comparisonYears?.find((c) => c.year === year)?.label || value;
                 }}
               />
               {capacity && (
                 <ReferenceLine
+                  yAxisId="left"
                   y={capacity}
                   stroke="#94a3b8"
                   strokeDasharray="6 4"
@@ -384,6 +485,7 @@ export function StorageTrendChart({
               )}
               {/* Current year line */}
               <Line
+                yAxisId="left"
                 type="monotone"
                 dataKey="storage"
                 stroke="#3b82f6"
@@ -396,6 +498,7 @@ export function StorageTrendChart({
               {selectedYears.map((year) => (
                 <Line
                   key={year}
+                  yAxisId="left"
                   type="monotone"
                   dataKey={`y${year}`}
                   stroke={YEAR_COLORS[year] || "#6b7280"}
@@ -407,10 +510,12 @@ export function StorageTrendChart({
               ))}
               {/* Forecast overlay */}
               {forecastElements}
+              {/* Inflow/outflow overlay */}
+              {flowElements}
             </LineChart>
           ) : (
             // Original area chart when no comparisons
-            <AreaChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+            <AreaChart data={chartData} margin={{ top: 5, right: showFlowLines ? 50 : 10, left: 10, bottom: 5 }}>
               <defs>
                 <linearGradient id="storageGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
@@ -426,25 +531,40 @@ export function StorageTrendChart({
                 interval={xAxisInterval}
               />
               <YAxis
+                yAxisId="left"
                 tick={{ fontSize: 11, fill: "#94a3b8" }}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
               />
+              {showFlowLines && (
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  tick={{ fontSize: 11, fill: "#94a3b8" }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) => `${v}`}
+                  label={{ value: "cusecs", angle: 90, position: "insideRight", style: { fontSize: 10, fill: "#94a3b8" } }}
+                />
+              )}
               <Tooltip content={renderTooltip} />
-              {hasForecast && (
+              {(hasForecast || showFlowLines) && (
                 <Legend
                   iconSize={8}
                   wrapperStyle={{ fontSize: "11px" }}
                   formatter={(value: string) => {
                     if (value === "storage") return "Actual";
                     if (value === "forecast") return "Forecast";
+                    if (value === "Inflow") return "Inflow (cusecs)";
+                    if (value === "Outflow") return "Outflow (cusecs)";
                     return value;
                   }}
                 />
               )}
               {capacity && (
                 <ReferenceLine
+                  yAxisId="left"
                   y={capacity}
                   stroke="#94a3b8"
                   strokeDasharray="6 4"
@@ -452,6 +572,7 @@ export function StorageTrendChart({
                 />
               )}
               <Area
+                yAxisId="left"
                 type="monotone"
                 dataKey="storage"
                 stroke="#3b82f6"
@@ -462,6 +583,8 @@ export function StorageTrendChart({
               />
               {/* Forecast overlay */}
               {forecastElements}
+              {/* Inflow/outflow overlay */}
+              {flowElements}
             </AreaChart>
           )}
         </ResponsiveContainer>

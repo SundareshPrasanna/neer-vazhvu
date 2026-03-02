@@ -97,8 +97,8 @@ function seededRandom(seed: number): () => number {
 /** Generate mock storage history based on scenario style */
 export function generateMockHistory(
   style: "healthy" | "declining" | "crisis" | "recovering"
-): Array<{ date: string; totalStorage: number }> {
-  const history: Array<{ date: string; totalStorage: number }> = [];
+): Array<{ date: string; totalStorage: number; totalInflow: number; totalOutflow: number }> {
+  const history: Array<{ date: string; totalStorage: number; totalInflow: number; totalOutflow: number }> = [];
   // Use a fixed reference date so server and client produce the same output
   const refDate = new Date("2026-03-01T00:00:00");
   const rand = seededRandom(style.length * 7919);
@@ -130,7 +130,26 @@ export function generateMockHistory(
         break;
     }
 
-    history.push({ date: dateStr, totalStorage: Math.max(10, storage) });
+    // Inflow: seasonal monsoon pattern (~4x per-reservoir scale for combined view)
+    const monsoonFactor = Math.max(0, Math.sin((t - 0.7) * Math.PI * 2));
+    let inflow: number;
+    switch (style) {
+      case "healthy":   inflow = monsoonFactor * 1500 + rand() * 100; break;
+      case "declining":  inflow = monsoonFactor * 600 + rand() * 30; break;
+      case "crisis":     inflow = rand() * 15; break;
+      case "recovering": inflow = t > 0.7 ? monsoonFactor * 1800 + rand() * 150 : rand() * 25; break;
+    }
+
+    // Outflow: relatively steady, varies by scenario
+    const baseOutflow = style === "crisis" ? 30 : style === "declining" ? 250 : 400;
+    const outflow = baseOutflow + (rand() - 0.5) * 60;
+
+    history.push({
+      date: dateStr,
+      totalStorage: Math.max(10, storage),
+      totalInflow: Math.max(0, Math.round(inflow)),
+      totalOutflow: Math.max(0, Math.round(outflow)),
+    });
   }
 
   return history;

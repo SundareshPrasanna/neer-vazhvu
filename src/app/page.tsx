@@ -54,13 +54,13 @@ async function getReservoirData() {
 
   // Historical data (all available — chart tabs handle filtering client-side)
   // Supabase/PostgREST caps at 1000 rows per request; paginate to get all
-  const historyRaw: { date: string; reservoir: string; current_storage_mcft: number }[] = [];
+  const historyRaw: { date: string; reservoir: string; current_storage_mcft: number; inflow_cusecs: number | null; outflow_cusecs: number | null }[] = [];
   let offset = 0;
   const PAGE_SIZE = 1000;
   while (true) {
     const { data: page } = await supabase
       .from("reservoir_daily")
-      .select("date, reservoir, current_storage_mcft")
+      .select("date, reservoir, current_storage_mcft, inflow_cusecs, outflow_cusecs")
       .not("current_storage_mcft", "is", null)
       .order("date", { ascending: true })
       .range(offset, offset + PAGE_SIZE - 1);
@@ -70,28 +70,40 @@ async function getReservoirData() {
     offset += PAGE_SIZE;
   }
 
-  // Combined totals per date
-  const historyMap = new Map<string, number>();
+  // Combined totals per date (storage + inflow + outflow)
+  const historyMap = new Map<string, { storage: number; inflow: number; outflow: number }>();
   // Per-reservoir history
-  const perReservoirMap = new Map<string, Map<string, number>>();
+  const perReservoirMap = new Map<string, Map<string, { storage: number; inflow: number; outflow: number }>>();
   for (const row of historyRaw) {
-    historyMap.set(row.date, (historyMap.get(row.date) || 0) + (row.current_storage_mcft || 0));
+    const existing = historyMap.get(row.date) || { storage: 0, inflow: 0, outflow: 0 };
+    existing.storage += row.current_storage_mcft || 0;
+    existing.inflow += row.inflow_cusecs || 0;
+    existing.outflow += row.outflow_cusecs || 0;
+    historyMap.set(row.date, existing);
     if (row.reservoir) {
       if (!perReservoirMap.has(row.reservoir)) {
         perReservoirMap.set(row.reservoir, new Map());
       }
-      perReservoirMap.get(row.reservoir)!.set(row.date, row.current_storage_mcft || 0);
+      perReservoirMap.get(row.reservoir)!.set(row.date, {
+        storage: row.current_storage_mcft || 0,
+        inflow: row.inflow_cusecs || 0,
+        outflow: row.outflow_cusecs || 0,
+      });
     }
   }
-  const history = Array.from(historyMap.entries()).map(([date, totalStorage]) => ({
+  const history = Array.from(historyMap.entries()).map(([date, vals]) => ({
     date,
-    totalStorage,
+    totalStorage: vals.storage,
+    totalInflow: vals.inflow,
+    totalOutflow: vals.outflow,
   }));
-  const perReservoirHistory: Record<string, Array<{ date: string; totalStorage: number }>> = {};
+  const perReservoirHistory: Record<string, Array<{ date: string; totalStorage: number; totalInflow: number; totalOutflow: number }>> = {};
   for (const [reservoir, dateMap] of perReservoirMap) {
-    perReservoirHistory[reservoir] = Array.from(dateMap.entries()).map(([date, totalStorage]) => ({
+    perReservoirHistory[reservoir] = Array.from(dateMap.entries()).map(([date, vals]) => ({
       date,
-      totalStorage,
+      totalStorage: vals.storage,
+      totalInflow: vals.inflow,
+      totalOutflow: vals.outflow,
     }));
   }
 

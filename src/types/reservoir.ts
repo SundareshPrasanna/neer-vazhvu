@@ -39,6 +39,13 @@ export interface ReservoirSummary {
   rainfallMm: number;
 }
 
+export interface HistoryPoint {
+  date: string;
+  totalStorage: number;
+  totalInflow?: number;   // cusecs (summed across reservoirs for combined view)
+  totalOutflow?: number;  // cusecs
+}
+
 export interface ReservoirApiResponse {
   lastUpdated: string;
   reservoirs: ReservoirSummary[];
@@ -47,5 +54,5 @@ export interface ReservoirApiResponse {
     capacity: number;
     storagePct: number;
   };
-  history: Array<{ date: string; totalStorage: number }>;
+  history: HistoryPoint[];
 }
