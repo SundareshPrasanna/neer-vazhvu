@@ -1,0 +1,327 @@
+"""
+Daily Pipeline Orchestrator.
+
+Replaces the 4 separate Next.js cron endpoints with a single Python orchestrator.
+Steps run sequentially; each step logs to pipeline_log.
+"""
+
+import time
+from collections.abc import Callable, Coroutine
+from datetime import date, datetime, timedelta, timezone
+from typing import Any
+
+from app.db import get_supabase
+from app.etl.constants import (
+    CUSEC_DAY_TO_MCFT,
+    DEFAULT_CONSUMPTION_MLD,
+    DEFAULT_DESALINATION_MLD,
+    MLD_TO_MCFT,
+)
+from app.etl.estimate import compute_days_left
+from app.scrapers.cmwssb import scrape_cmwssb
+from app.scrapers.nasa_power import fetch_nasa_power
+from app.scrapers.opencity import fetch_groundwater, GROUNDWATER_RESOURCES
+
+
+async def _run_step(
+    step_name: str,
+    fn: Callable[[], Coroutine[Any, Any, dict]],
+    *,
+    required: bool = True,
+) -> dict:
+    """Run a pipeline step with timing and logging."""
+    supabase = get_supabase()
+    today = date.today().isoformat()
+    start = time.time()
+
+    try:
+        result = await fn()
+        duration_ms = int((time.time() - start) * 1000)
+
+        supabase.table("pipeline_log").insert(
+            {
+                "run_date": today,
+                "step": step_name,
+                "status": "success",
+                "rows_affected": result.get("rows_affected", 0),
+                "duration_ms": duration_ms,
+                "completed_at": datetime.now(timezone.utc).isoformat(),
+            }
+        ).execute()
+
+        return {
+            "name": step_name,
+            "status": "success",
+            "duration_ms": duration_ms,
+            "rows_affected": result.get("rows_affected", 0),
+        }
+
+    except Exception as e:
+        duration_ms = int((time.time() - start) * 1000)
+        error_msg = str(e)
+
+        supabase.table("pipeline_log").insert(
+            {
+                "run_date": today,
+                "step": step_name,
+                "status": "error",
+                "error_message": error_msg,
+                "duration_ms": duration_ms,
+                "completed_at": datetime.now(timezone.utc).isoformat(),
+            }
+        ).execute()
+
+        if required:
+            return {
+                "name": step_name,
+                "status": "error",
+                "duration_ms": duration_ms,
+                "error": error_msg,
+            }
+        # Non-required steps just log and continue
+        return {
+            "name": step_name,
+            "status": "skipped",
+            "duration_ms": duration_ms,
+            "error": error_msg,
+        }
+
+
+# --- Step implementations ---
+
+
+async def _step_scrape_cmwssb() -> dict:
+    """Step 1: Scrape CMWSSB for daily reservoir levels."""
+    supabase = get_supabase()
+    result = await scrape_cmwssb()
+
+    rows = []
+    for r in result.readings:
+        rows.append(
+            {
+                "reservoir": r.reservoir,
+                "date": r.date,
+                "current_level_ft": r.current_level_ft,
+                "current_storage_mcft": r.current_storage_mcft,
+                "capacity_mcft": r.capacity_mcft,
+                "storage_pct": r.storage_pct,
+                "inflow_cusecs": r.inflow_cusecs,
+                "outflow_cusecs": r.outflow_cusecs,
+                "rainfall_mm": r.rainfall_mm,
+                "source": "cmwssb_scrape",
+            }
+        )
+
+    supabase.table("reservoir_daily").upsert(
+        rows, on_conflict="reservoir,date"
+    ).execute()
+
+    return {"rows_affected": len(rows)}
+
+
+async def _step_fetch_nasa() -> dict:
+    """Step 2: Fetch NASA POWER weather data (5 days back to fill gaps)."""
+    supabase = get_supabase()
+    today = date.today()
+    start_date = (today - timedelta(days=5)).isoformat()
+    end_date = (today - timedelta(days=2)).isoformat()  # 2-day lag
+
+    days = await fetch_nasa_power(start_date, end_date)
+
+    rows = [
+        {
+            "date": d.date,
+            "precipitation_mm": d.precipitation_mm,
+            "temp_max_c": d.temp_max_c,
+            "temp_min_c": d.temp_min_c,
+            "humidity_pct": d.humidity_pct,
+            "source": "nasa_power",
+        }
+        for d in days
+    ]
+
+    if rows:
+        supabase.table("weather_daily").upsert(rows, on_conflict="date").execute()
+
+    return {"rows_affected": len(rows)}
+
+
+async def _step_fetch_opencity() -> dict:
+    """Step 3: Fetch OpenCity groundwater (only runs days 1-3 of month)."""
+    today = date.today()
+    if today.day > 3:
+        return {"rows_affected": 0}
+
+    supabase = get_supabase()
+    # Fetch the most recent year available
+    latest_year = max(GROUNDWATER_RESOURCES.keys())
+    records = await fetch_groundwater(latest_year)
+
+    rows = [
+        {
+            "ward_number": r.ward_number,
+            "ward_name": r.ward_name,
+            "zone_name": r.zone_name,
+            "year": r.year,
+            "month": r.month,
+            "depth_to_water_m": r.depth_to_water_m,
+            "source": "opencity_ckan",
+        }
+        for r in records
+    ]
+
+    if rows:
+        supabase.table("groundwater_monthly").upsert(
+            rows, on_conflict="ward_number,year,month"
+        ).execute()
+
+    return {"rows_affected": len(rows)}
+
+
+async def _step_compute_estimate() -> dict:
+    """Step 4: Compute daily days-left estimate."""
+    supabase = get_supabase()
+    today = date.today().isoformat()
+
+    # 1. Get latest reservoir data
+    res = (
+        supabase.table("reservoir_daily")
+        .select("reservoir, current_storage_mcft, capacity_mcft, inflow_cusecs, date")
+        .order("date", desc=True)
+        .limit(12)
+        .execute()
+    )
+
+    if not res.data:
+        raise ValueError("No reservoir data available for estimate computation")
+
+    most_recent_date = res.data[0]["date"]
+    today_reservoirs = [r for r in res.data if r["date"] == most_recent_date]
+
+    total_storage = sum(r["current_storage_mcft"] or 0 for r in today_reservoirs)
+    total_capacity = sum(r["capacity_mcft"] or 0 for r in today_reservoirs)
+
+    # 2. Compute 7-day rolling average inflow
+    seven_days_ago = (date.today() - timedelta(days=7)).isoformat()
+    recent_res = (
+        supabase.table("reservoir_daily")
+        .select("date, inflow_cusecs")
+        .gte("date", seven_days_ago)
+        .not_.is_("inflow_cusecs", "null")
+        .execute()
+    )
+
+    recent_avg_inflow_mcft_per_day = 0.0
+    if recent_res.data:
+        by_date: dict[str, float] = {}
+        for row in recent_res.data:
+            d = row["date"]
+            by_date[d] = by_date.get(d, 0) + (row["inflow_cusecs"] or 0)
+        daily_totals = list(by_date.values())
+        avg_cusecs = sum(daily_totals) / len(daily_totals)
+        recent_avg_inflow_mcft_per_day = avg_cusecs * CUSEC_DAY_TO_MCFT
+
+    # 3. Get seasonal average inflow
+    current_month = date.today().month
+    seasonal_res = supabase.rpc(
+        "avg_monthly_inflow", {"target_month": current_month}
+    ).execute()
+    seasonal_avg = (
+        seasonal_res.data[0]["avg_inflow_mcft_per_day"]
+        if seasonal_res.data
+        else 0
+    ) or 0
+
+    # 4. Compute
+    result = compute_days_left(
+        total_storage_mcft=total_storage,
+        total_capacity_mcft=total_capacity,
+        daily_consumption_mld=DEFAULT_CONSUMPTION_MLD,
+        desalination_mld=DEFAULT_DESALINATION_MLD,
+        recent_avg_inflow_mcft_per_day=recent_avg_inflow_mcft_per_day,
+        seasonal_avg_inflow_mcft_per_day=seasonal_avg,
+    )
+
+    # 5. Store
+    net_demand_mcft = (DEFAULT_CONSUMPTION_MLD - DEFAULT_DESALINATION_MLD) * MLD_TO_MCFT
+    supabase.table("water_estimate_daily").upsert(
+        {
+            "date": today,
+            "total_storage_mcft": total_storage,
+            "total_capacity_mcft": total_capacity,
+            "storage_pct": result["storage_pct"],
+            "consumption_mld": DEFAULT_CONSUMPTION_MLD,
+            "consumption_mcft_day": round(net_demand_mcft, 3),
+            "avg_inflow_mcft_day": round(recent_avg_inflow_mcft_per_day, 3),
+            "net_depletion_mcft_day": result["net_depletion_rate_mcft_per_day"],
+            "days_left_pessimistic": result["pessimistic"],
+            "days_left_moderate": result["moderate"],
+            "days_left_optimistic": result["optimistic"],
+        },
+        on_conflict="date",
+    ).execute()
+
+    return {"rows_affected": 1}
+
+
+async def _step_forecast() -> dict:
+    """Step 5: Run reservoir forecasting."""
+    from app.intelligence.forecaster import forecast_reservoirs
+
+    results = await forecast_reservoirs()
+    return {"rows_affected": len(results)}
+
+
+async def _step_risk_scoring() -> dict:
+    """Step 6: Compute ward risk scores."""
+    from app.intelligence.risk_scorer import compute_risk_scores
+
+    results = await compute_risk_scores()
+    return {"rows_affected": len(results)}
+
+
+async def _step_briefing() -> dict:
+    """Step 7: Generate daily briefing."""
+    from app.intelligence.briefing import generate_briefing
+
+    await generate_briefing()
+    return {"rows_affected": 1}
+
+
+# --- Pipeline entry points ---
+
+
+async def run_daily() -> list[dict]:
+    """Run the full daily pipeline."""
+    steps = []
+
+    # Data collection (fail-independent)
+    steps.append(await _run_step("scrape_cmwssb", _step_scrape_cmwssb))
+    steps.append(await _run_step("fetch_nasa", _step_fetch_nasa))
+    steps.append(await _run_step("fetch_opencity", _step_fetch_opencity, required=False))
+
+    # ETL (depends on fresh data but runs even if scraping had issues)
+    steps.append(await _run_step("compute_estimate", _step_compute_estimate))
+
+    # Intelligence (depends on ETL)
+    steps.append(await _run_step("forecast", _step_forecast))
+    steps.append(await _run_step("briefing", _step_briefing))
+
+    return steps
+
+
+async def run_monthly() -> list[dict]:
+    """Run monthly jobs: OpenCity groundwater + risk scoring."""
+    steps = []
+    steps.append(await _run_step("fetch_opencity", _step_fetch_opencity))
+    steps.append(await _run_step("risk_scoring", _step_risk_scoring))
+    return steps
+
+
+async def run_intelligence_only() -> list[dict]:
+    """Run only intelligence steps (for backfills/manual triggers)."""
+    steps = []
+    steps.append(await _run_step("forecast", _step_forecast))
+    steps.append(await _run_step("risk_scoring", _step_risk_scoring))
+    steps.append(await _run_step("briefing", _step_briefing))
+    return steps

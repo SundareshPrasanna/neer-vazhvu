@@ -1,0 +1,44 @@
+name: Daily Data Pipeline
+
+on:
+  schedule:
+    - cron: '30 0 * * *'   # 00:30 UTC = 06:00 IST
+  workflow_dispatch:         # Manual trigger for debugging
+
+jobs:
+  daily-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Run Daily Pipeline (scrape + ETL + intelligence)
+        run: |
+          curl -X POST "${{ secrets.PYTHON_API_URL }}/pipeline/run-daily" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --fail --max-time 300 \
+            --retry 2 --retry-delay 120
+
+  # Monthly job runs on days 1-3 for groundwater + risk scoring
+  monthly-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event.schedule == '30 0 * * *' && (github.event_name == 'schedule')
+    steps:
+      - name: Check if day 1-3 of month
+        id: check-day
+        run: |
+          DAY=$(date +%d)
+          if [ "$DAY" -le 3 ]; then
+            echo "run=true" >> $GITHUB_OUTPUT
+          else
+            echo "run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Monthly Pipeline (groundwater + risk scoring)
+        if: steps.check-day.outputs.run == 'true'
+        run: |
+          curl -X POST "${{ secrets.PYTHON_API_URL }}/pipeline/run-monthly" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --fail --max-time 120 \
+            --retry 2 --retry-delay 60
