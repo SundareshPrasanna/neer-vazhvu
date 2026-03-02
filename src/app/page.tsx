@@ -1,11 +1,10 @@
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
-import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
-import { StorageTrendChart } from "@/components/dashboard/storage-trend-chart";
+import { DashboardContent } from "@/components/dashboard/dashboard-content";
 import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
 import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
 import { CUSEC_DAY_TO_MCFT, RESERVOIR_DISPLAY_ORDER } from "@/lib/utils/constants";
 import { getGroundwaterStatus } from "@/types/groundwater";
-import type { ReservoirSummary } from "@/types/reservoir";
+import type { ReservoirSummary, ReservoirName } from "@/types/reservoir";
 import type { GroundwaterApiResponse } from "@/types/groundwater";
 import { formatDate } from "@/lib/utils/format";
 
@@ -37,7 +36,7 @@ async function getReservoirData() {
     .map((r: Record<string, unknown>) => {
       const m = metaMap.get(r.reservoir as string) as Record<string, unknown> | undefined;
       return {
-        name: r.reservoir as string,
+        name: r.reservoir as ReservoirName,
         displayName: (m?.display_name as string) || (r.reservoir as string),
         currentStorage: (r.current_storage_mcft as number) || 0,
         capacity: (r.capacity_mcft as number) || (m?.full_capacity_mcft as number) || 0,
@@ -53,23 +52,37 @@ async function getReservoirData() {
       return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
     });
 
-  // Historical data (up to 1 year for the trend chart)
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 365);
+  // Historical data (all available — chart tabs handle filtering client-side)
   const { data: historyRaw } = await supabase
     .from("reservoir_daily")
-    .select("date, current_storage_mcft")
-    .gte("date", cutoff.toISOString().split("T")[0])
+    .select("date, reservoir, current_storage_mcft")
+    .not("current_storage_mcft", "is", null)
     .order("date", { ascending: true });
 
+  // Combined totals per date
   const historyMap = new Map<string, number>();
+  // Per-reservoir history
+  const perReservoirMap = new Map<string, Map<string, number>>();
   for (const row of historyRaw || []) {
     historyMap.set(row.date, (historyMap.get(row.date) || 0) + (row.current_storage_mcft || 0));
+    if (row.reservoir) {
+      if (!perReservoirMap.has(row.reservoir)) {
+        perReservoirMap.set(row.reservoir, new Map());
+      }
+      perReservoirMap.get(row.reservoir)!.set(row.date, row.current_storage_mcft || 0);
+    }
   }
   const history = Array.from(historyMap.entries()).map(([date, totalStorage]) => ({
     date,
     totalStorage,
   }));
+  const perReservoirHistory: Record<string, Array<{ date: string; totalStorage: number }>> = {};
+  for (const [reservoir, dateMap] of perReservoirMap) {
+    perReservoirHistory[reservoir] = Array.from(dateMap.entries()).map(([date, totalStorage]) => ({
+      date,
+      totalStorage,
+    }));
+  }
 
   // 7-day avg inflow
   const sevenDaysAgo = new Date();
@@ -118,6 +131,7 @@ async function getReservoirData() {
     totalStorage,
     totalCapacity,
     history,
+    perReservoirHistory,
     lastUpdated: mostRecentDate,
     recentAvgInflowMcftPerDay,
     seasonalAvgInflowMcftPerDay,
@@ -214,13 +228,13 @@ export default async function DashboardPage() {
           comparison2019Storage={reservoirData.comparison2019Storage}
         />
 
-        <ReservoirCards
+        <DashboardContent
           reservoirs={reservoirData.reservoirs.filter((r) =>
             (RESERVOIR_DISPLAY_ORDER as readonly string[]).includes(r.name)
           )}
+          history={reservoirData.history}
+          perReservoirHistory={reservoirData.perReservoirHistory}
         />
-
-        <StorageTrendChart history={reservoirData.history} />
 
         {groundwaterData && <GroundwaterSnapshot data={groundwaterData} />}
       </div>

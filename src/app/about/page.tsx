@@ -88,32 +88,74 @@ export default function AboutPage() {
       <Separator className="my-8" />
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Data Sources</h2>
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Data Sources &amp; Aggregation</h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          All data is collected automatically by our Python pipeline, which runs daily at 06:00 IST.
+          Raw data is upserted into Supabase (PostgreSQL) and processed through ETL and intelligence stages.
+        </p>
         <div className="space-y-3">
           <DataSource
             name="CMWSSB Lake Level Page"
             url="https://cmwssb.tn.gov.in/lake-level"
-            description="Daily reservoir levels for 6 reservoirs (storage, inflow, outflow, rainfall)"
+            description="Daily reservoir levels for 6 reservoirs: Poondi, Cholavaram, Red Hills, Chembarambakkam, Veeranam, and Kannankottai. Includes storage (mcft), water level (ft), inflow/outflow (cusecs), and rainfall (mm)."
             frequency="Daily (scraped at 06:00 IST)"
           />
           <DataSource
             name="NASA POWER"
             url="https://power.larc.nasa.gov/"
-            description="Precipitation, temperature, humidity for Chennai coordinates"
+            description="Satellite-derived weather data for Chennai (13.08°N, 80.27°E): precipitation, max/min temperature, and relative humidity. No API key required."
             frequency="Daily (2-day lag)"
           />
           <DataSource
-            name="OpenCity Chennai"
+            name="OpenCity Chennai (Groundwater)"
             url="https://data.opencity.in/"
-            description="Ward-wise groundwater levels (200 wards) and historical lake storage"
-            frequency="Monthly"
+            description="Ward-wise depth to water table (metres below ground level) for all 200 GCC wards across 15 zones. Sourced from CGWB/GCC monitoring wells. Data available from 2021 onwards."
+            frequency="Monthly (fetched days 1–3)"
+          />
+          <DataSource
+            name="OpenCity Chennai (Lake Storage)"
+            url="https://data.opencity.in/"
+            description="Monthly reservoir storage data (mcft) for all 6 reservoirs, spanning 2003–2021. Used as historical seed for the forecasting model."
+            frequency="Historical (2003–2021)"
           />
           <DataSource
             name="Kaggle Chennai Water Management"
             url="https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management"
-            description="15 years of daily reservoir data (2004–2019) for historical seed"
-            frequency="One-time historical"
+            description="15 years of daily reservoir data (2004–2019) compiled by Sudalai Rajkumar. Used as additional historical training data for the forecasting model."
+            frequency="One-time historical seed"
           />
+        </div>
+      </section>
+
+      <Separator className="my-8" />
+
+      <section className="space-y-6">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Intelligence Layer</h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          Beyond raw data display, Neer Vazhvu runs three intelligence modules daily to generate actionable insights.
+        </p>
+        <div className="space-y-3">
+          <div className="flex gap-3">
+            <span className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+            <div>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">Reservoir Forecasting:</span>
+              <span className="text-slate-600 dark:text-slate-400"> Uses AutoARIMA (statsforecast) trained on 19+ years of storage data to predict each reservoir&apos;s level 6 months ahead, with 80% confidence intervals. Re-trained daily as new data arrives.</span>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0" />
+            <div>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">Ward Risk Scoring:</span>
+              <span className="text-slate-600 dark:text-slate-400"> Each of Chennai&apos;s 200 wards receives a composite risk score (0–100) based on groundwater depth (40%), year-over-year trend (30%), city-wide reservoir stress (20%), and seasonal vulnerability (10%). Scores are fully explainable.</span>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0" />
+            <div>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">Daily Briefing:</span>
+              <span className="text-slate-600 dark:text-slate-400"> A template-based intelligence summary generated each morning with a headline, key metrics, threshold-based alerts, and actionable recommendations. No LLM required — purely data-driven.</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -137,10 +179,12 @@ export default function AboutPage() {
         <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Limitations & Disclaimers</h2>
         <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
           <li>This is an independent, educational project — not an official government tool.</li>
-          <li>Estimates are approximations. Actual water availability depends on factors not modeled (groundwater, Krishna water transfer, distribution losses, industrial use).</li>
+          <li>Estimates are approximations. Actual water availability depends on factors not modeled (groundwater extraction, Krishna water transfer, distribution losses, industrial use).</li>
           <li>CMWSSB data may occasionally be stale (weekends, holidays). The dashboard shows a freshness indicator.</li>
-          <li>Groundwater data from OpenCity may be months behind. The map always shows the most recent available period.</li>
+          <li>Groundwater data from OpenCity may lag by months. The map always shows the most recent available period.</li>
           <li>Ward boundaries are from GCC 2022 delimitation and may not perfectly match current administrative boundaries.</li>
+          <li>Forecasts use AutoARIMA and work best with 2+ years of daily data. With monthly historical data, predictions are at month-level granularity.</li>
+          <li>Risk scores are relative indicators for comparison between wards, not absolute measures of water safety.</li>
         </ul>
       </section>
 
