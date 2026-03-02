@@ -250,7 +250,11 @@ Risk levels: **Low** (0–25) · **Moderate** (26–50) · **High** (51–75) ·
 
 ## Contributing
 
-Contributions are welcome! Areas where help is needed:
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions and guidelines.
+
+This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+
+Areas where help is needed:
 
 - **Data quality** — Improving scraper resilience, handling CMWSSB page format changes
 - **Models** — Better forecasting (Prophet, LSTM), evaporation modeling
@@ -262,7 +266,7 @@ Please open an issue first to discuss significant changes.
 
 ## License
 
-MIT
+[MIT](LICENSE)
 
 ## Acknowledgments
 
