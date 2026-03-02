@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "/", label: "Dashboard" },
   { href: "/groundwater", label: "Groundwater Map" },
+  { href: "/water-bodies", label: "Water Bodies" },
   { href: "/about", label: "About" },
 ];
 
