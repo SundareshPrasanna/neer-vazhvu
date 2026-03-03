@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { RiverQualityChart } from "@/components/rivers/river-quality-chart";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";

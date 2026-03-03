@@ -2,7 +2,7 @@
 
 **Chennai Water Intelligence Dashboard** — An open-source platform that turns public water data into actionable intelligence for Chennai's 11 million residents.
 
-Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring**, **daily intelligence briefings**, and an **interactive lost water bodies map**.
+Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, and an **interactive lost water bodies map**.
 
 ## Features
 
@@ -14,9 +14,10 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 - **Storage Trend Chart** — 90-day combined storage with interactive year comparison
 
 ### Groundwater Map
-- **Choropleth Map** — Depth to water table across all 200 GCC wards
-- **Ward Detail Panel** — Click any ward for depth, status, and year-over-year trend
-- **Zone-level Aggregation** — Color-coded by CGWB classification (Healthy → Crisis)
+- **Choropleth Map** — Depth to water table across all 200 GCC wards, color-coded by CGWB classification (Healthy → Crisis)
+- **Risk Score View** — Toggle between depth choropleth and composite risk score choropleth (Low / Moderate / High / Critical) when pipeline data is available
+- **Ward Detail Panel** — Click any ward for depth, year-over-year trend, historical chart, and composite risk score breakdown
+- **Risk Score Breakdown** — Each of the four components (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%) shown with weighted contribution bars
 
 ### Water Bodies Map
 - **1,635 Existing Water Bodies** — All current lakes, tanks, ponds, and reservoirs from OpenStreetMap
@@ -31,6 +32,7 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 - **Monitoring Station Markers** — 10 stations with individual DO/BOD readings
 - **DO/BOD Time-Series Chart** — Dual-axis line chart (2015–2024) per station with reference lines at the aquatic life minimum (DO = 4 mg/L) and clean river standard (BOD = 2 mg/L)
 - **River Detail Panel** — Status badge, CPCB class, station selector, embedded explainer for DO and BOD
+- **Industrial Pollution Sources Overlay** — 7 major facilities (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek) colour-coded by type; click for operator details, pollutant pills, incident timeline, and NGT orders. OSM `landuse=industrial` polygons shown as translucent overlay
 
 ### Intelligence Layer (Python Service)
 - **Reservoir Forecasting** — 30-day storage predictions using AutoARIMA with confidence intervals
@@ -71,9 +73,10 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 | [NASA POWER](https://power.larc.nasa.gov/) | Precipitation, temperature, humidity | Daily (2-day lag) |
 | [OpenCity Chennai](https://data.opencity.in/) | Ward-wise groundwater levels (200 wards) | Monthly |
 | [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
-| [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry | One-time fetch |
+| [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry + industrial zone polygons | One-time fetch |
 | Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
 | [CPCB NWMP Annual Reports](https://cpcb.nic.in/nwmp-data/) | DO, BOD, pH, conductivity at 10 river monitoring stations (2015–2024) | Annual (manual refresh) |
+| NGT Southern Bench / TNPCB / CPCB | 7 major industrial pollution sources — facility data, pollutant types, incident records, NGT orders | Manually curated |
 
 ## Tech Stack
 
@@ -179,15 +182,28 @@ python -m scripts.seed_kaggle      # 15 years of reservoir data
 python -m scripts.seed_opencity    # Groundwater data (2021-2024)
 ```
 
-### 6. Refresh Water Body Data (optional)
+### 6. Refresh Static GeoJSON Data (optional)
 
-The current water bodies GeoJSON (`public/geojson/chennai-water-bodies-current.geojson`) is pre-generated and committed. To re-fetch from OpenStreetMap:
+The water body, river, and industrial zone GeoJSON files are pre-generated and committed. Re-fetch from OpenStreetMap if you want the latest OSM edits:
 
 ```bash
+# Current water bodies (lakes, tanks, reservoirs, ponds)
 npx tsx scripts/fetch-water-bodies-osm.ts
+
+# River polylines (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar)
+npx tsx scripts/fetch-rivers-osm.ts
+
+# Industrial zone polygons (north Chennai bbox)
+npx tsx scripts/fetch-industrial-zones-osm.ts
 ```
 
-This queries the Overpass API for all water bodies within the Chennai bounding box and saves 1,600+ polygon features to `public/geojson/`.
+### 7. Refresh River Quality Data (optional, annual)
+
+`public/data/river-quality.json` is manually curated from CPCB annual reports. When a new report is published:
+
+1. Update the `readings` arrays with the new year's DO/BOD values
+2. Update `last_updated` (e.g. `"2026-01"`) and `data_year_range`
+3. Commit: `data: update river quality readings to 2025`
 
 ## API Endpoints
 
@@ -213,19 +229,22 @@ This queries the Overpass API for all water bodies within the Chennai bounding b
 ```
 neer-vazhvu/
 ├── scripts/                      # One-time data scripts
-│   └── fetch-water-bodies-osm.ts # Fetch current water bodies from Overpass API
+│   ├── fetch-water-bodies-osm.ts      # Fetch current water bodies from Overpass API
+│   ├── fetch-rivers-osm.ts            # Fetch river polylines from Overpass API
+│   └── fetch-industrial-zones-osm.ts  # Fetch industrial zone polygons from Overpass API
 ├── src/                          # Next.js frontend
 │   ├── app/                      # App Router pages
 │   │   ├── page.tsx              # Main dashboard
 │   │   ├── groundwater/          # Groundwater map page
 │   │   ├── water-bodies/         # Water bodies map page
-│   │   ├── rivers/               # River health map page
+│   │   ├── rivers/               # River health + industrial pollution map page
 │   │   └── about/                # About/methodology page
 │   ├── components/
 │   │   ├── dashboard/            # Dashboard components
 │   │   ├── groundwater/          # Map, legend, ward panel
 │   │   ├── water-bodies/         # Map, legend, detail panel
 │   │   ├── rivers/               # River map, panel, chart, legend
+│   │   ├── pollution/            # Industrial pollution map overlay, panel, legend
 │   │   ├── layout/               # Header, footer
 │   │   └── ui/                   # shadcn/ui primitives
 │   ├── lib/
@@ -233,6 +252,7 @@ neer-vazhvu/
 │   │   ├── calculator/           # Days-left calculator
 │   │   └── mock-data.ts          # Demo mode data
 │   └── types/                    # TypeScript type definitions
+│       └── industrial-pollution.ts  # Industrial source types, colours, labels
 ├── neer-vazhvu-api/              # Python intelligence service
 │   ├── app/
 │   │   ├── scrapers/             # CMWSSB, NASA POWER, OpenCity
@@ -246,12 +266,14 @@ neer-vazhvu/
 │   └── migrations/               # SQL migrations (001, 002)
 ├── public/
 │   ├── geojson/                  # Static GeoJSON data
-│   │   ├── gcc-wards.geojson     # GCC ward boundaries (choropleth)
-│   │   ├── chennai-water-bodies-current.geojson  # OSM water bodies (1,635 features)
-│   │   ├── chennai-water-bodies-lost.geojson     # Curated lost water bodies (15 entries)
-│   │   └── chennai-rivers.geojson               # River polylines (Cooum, Adyar, etc.)
+│   │   ├── gcc-wards.geojson                    # GCC ward boundaries (choropleth)
+│   │   ├── chennai-water-bodies-current.geojson # OSM water bodies (1,635 features)
+│   │   ├── chennai-water-bodies-lost.geojson    # Curated lost water bodies (15 entries)
+│   │   ├── chennai-rivers.geojson               # River polylines (Cooum, Adyar, etc.)
+│   │   └── chennai-industrial-zones.geojson     # OSM industrial zone polygons
 │   └── data/                     # Static JSON datasets
-│       └── river-quality.json    # CPCB monitoring station readings (2015–2024)
+│       ├── river-quality.json        # CPCB monitoring station readings (2015–2024)
+│       └── industrial-sources.json   # Industrial pollution sources (NGT/TNPCB/CPCB)
 └── .github/
     └── workflows/                # CI + daily data pipeline
 ```
@@ -317,6 +339,8 @@ Please open an issue first to discuss significant changes.
 - **GCC** for ward boundary delimitation data
 - **OpenStreetMap contributors** for water body polygon and river geometry data
 - **Care Earth Trust** for comprehensive water body surveys and documentation
-- **IIT Madras** and the **National Green Tribunal** for research and legal records on water body encroachments
+- **IIT Madras** and the **National Green Tribunal** for research and legal records on water body encroachments and industrial pollution
 - **CPCB** for annual river water quality monitoring reports
+- **TNPCB** for enforcement records and industrial consent data used in the pollution sources overlay
+- **Carbon Copy** and **The Wire** for investigative reporting on the Ennore-Manali industrial corridor
 - Chennai's civic data community for making public data accessible

@@ -1,5 +1,5 @@
 import type { ReservoirSummary, ReservoirName } from "@/types/reservoir";
-import type { GroundwaterApiResponse } from "@/types/groundwater";
+import type { GroundwaterApiResponse, RiskApiResponse, WardRiskData, RiskLevel } from "@/types/groundwater";
 
 // ============================================================
 // SCENARIOS — switch between these to see different UI states
@@ -516,4 +516,49 @@ export function generateHistoricalYear(year: number): HistoricalYearData {
 
   const yearLabel = COMPARISON_YEARS.find(y => y.year === year)?.label || `${year}`;
   return { year, label: yearLabel, data };
+}
+
+/** Mock ward risk scores — realistic distribution: 40% low, 35% moderate, 15% high, 10% critical */
+export function generateMockRiskScores(): RiskApiResponse {
+  const rand = seededRandom(8317);
+  const wards: WardRiskData[] = [];
+
+  for (let wardNumber = 1; wardNumber <= 200; wardNumber++) {
+    const r = rand();
+    let riskScore: number;
+    let riskLevel: RiskLevel;
+
+    if (r < 0.40) {
+      riskScore = rand() * 25;
+      riskLevel = 'low';
+    } else if (r < 0.75) {
+      riskScore = 26 + rand() * 24;
+      riskLevel = 'moderate';
+    } else if (r < 0.90) {
+      riskScore = 51 + rand() * 24;
+      riskLevel = 'high';
+    } else {
+      riskScore = 76 + rand() * 24;
+      riskLevel = 'critical';
+    }
+
+    // Components proportional to total, with ±20% variation per component
+    const v = () => 0.8 + rand() * 0.4;
+    const gw = Math.min(40, riskScore * 0.40 * v());
+    const trend = Math.min(30, riskScore * 0.30 * v());
+    const reservoir = Math.min(20, riskScore * 0.20 * v());
+    const seasonal = Math.min(10, riskScore * 0.10 * v());
+
+    wards.push({
+      wardNumber,
+      riskScore: parseFloat(riskScore.toFixed(2)),
+      riskLevel,
+      groundwaterComponent: parseFloat(gw.toFixed(2)),
+      trendComponent: parseFloat(trend.toFixed(2)),
+      reservoirComponent: parseFloat(reservoir.toFixed(2)),
+      seasonalComponent: parseFloat(seasonal.toFixed(2)),
+    });
+  }
+
+  return { computedDate: '2026-03-01', wards };
 }
