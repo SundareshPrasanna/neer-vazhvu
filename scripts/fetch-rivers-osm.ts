@@ -1,0 +1,301 @@
+/**
+ * One-time script: Fetch Chennai river paths from OpenStreetMap via Overpass API.
+ *
+ * Queries waterway=river for Cooum, Adyar, Kosasthalaiyar and canal for Buckingham Canal.
+ * Groups OSM ways by river name into MultiLineString GeoJSON features.
+ * Each feature has a `river_id` slug that joins to public/data/river-quality.json.
+ *
+ * Run: npx tsx scripts/fetch-rivers-osm.ts
+ * Output: public/geojson/chennai-rivers.geojson
+ */
+
+import { writeFileSync } from "fs";
+import { join } from "path";
+
+const OVERPASS_URL = "https://overpass.kumi.systems/api/interpreter";
+
+// Wider bbox than water bodies to capture full river lengths including upstream
+// [south, west, north, east]
+const BBOX = "12.6,79.8,13.5,80.5";
+
+// Clip all geometry to the Chennai city area (strips the Buckingham Canal
+// from its full 500 km national length down to the ~60 km city stretch)
+const CLIP = { south: 12.75, north: 13.35, west: 80.0, east: 80.35 };
+
+const QUERY = `
+[out:json][timeout:90];
+(
+  way["waterway"="river"]["name"~"Cooum|Adyar|Kosasthalaiyar",i](${BBOX});
+  relation["waterway"="river"]["name"~"Cooum|Adyar|Kosasthalaiyar",i](${BBOX});
+  way["waterway"="canal"]["name"~"Buckingham",i](${BBOX});
+  relation["waterway"="canal"]["name"~"Buckingham",i](${BBOX});
+);
+out body;
+>;
+out skel qt;
+`.trim();
+
+interface OsmNode {
+  id: number;
+  lat: number;
+  lon: number;
+}
+
+interface OsmWay {
+  id: number;
+  nodes: number[];
+  tags?: Record<string, string>;
+}
+
+interface OsmElement {
+  type: "node" | "way" | "relation";
+  id: number;
+  lat?: number;
+  lon?: number;
+  nodes?: number[];
+  members?: Array<{ type: string; ref: number; role: string }>;
+  tags?: Record<string, string>;
+}
+
+interface GeoJsonFeature {
+  type: "Feature";
+  geometry: {
+    type: "MultiLineString";
+    coordinates: number[][][];
+  };
+  properties: {
+    river_id: string;
+    name: string;
+    name_ta: string;
+    waterway: string;
+    length_km: number;
+    osm_ids: number[];
+  };
+}
+
+// Map a river name to a stable slug and Tamil name
+const RIVER_CONFIG: Record<string, { id: string; name_ta: string; waterway: string }> = {
+  cooum: {
+    id: "cooum",
+    name_ta: "கூவம் ஆறு",
+    waterway: "river",
+  },
+  adyar: {
+    id: "adyar",
+    name_ta: "அடையாறு",
+    waterway: "river",
+  },
+  kosasthalaiyar: {
+    id: "kosasthalaiyar",
+    name_ta: "கொசஸ்தலையாறு",
+    waterway: "river",
+  },
+  buckingham: {
+    id: "buckingham-canal",
+    name_ta: "பக்கிங்காம் கால்வாய்",
+    waterway: "canal",
+  },
+};
+
+function getRiverKey(name: string): string | null {
+  const lower = name.toLowerCase();
+  if (lower.includes("cooum") || lower.includes("koovam")) return "cooum";
+  if (lower.includes("adyar")) return "adyar";
+  if (lower.includes("kosasthalaiyar") || lower.includes("kosasthalai")) return "kosasthalaiyar";
+  if (lower.includes("buckingham")) return "buckingham";
+  return null;
+}
+
+function computeSegmentLengthKm(coords: number[][]): number {
+  let length = 0;
+  for (let i = 0; i < coords.length - 1; i++) {
+    const [lon1, lat1] = coords[i];
+    const [lon2, lat2] = coords[i + 1];
+    // Haversine approximation (good enough for short segments)
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) ** 2;
+    length += R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+  return length;
+}
+
+async function fetchOverpass(): Promise<OsmElement[]> {
+  console.log("Querying Overpass API...");
+  const response = await fetch(OVERPASS_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `data=${encodeURIComponent(QUERY)}`,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Overpass API error: ${response.status} ${response.statusText}`);
+  }
+
+  const data = (await response.json()) as { elements: OsmElement[] };
+  console.log(`Received ${data.elements.length} elements from Overpass`);
+  return data.elements;
+}
+
+function buildGeoJSON(elements: OsmElement[]): GeoJsonFeature[] {
+  // Build node lookup
+  const nodeMap = new Map<number, OsmNode>();
+  for (const el of elements) {
+    if (el.type === "node" && el.lat !== undefined && el.lon !== undefined) {
+      nodeMap.set(el.id, { id: el.id, lat: el.lat, lon: el.lon });
+    }
+  }
+
+  // Collect ways with their tags
+  const wayMap = new Map<number, OsmWay>();
+  for (const el of elements) {
+    if (el.type === "way" && el.nodes) {
+      wayMap.set(el.id, { id: el.id, nodes: el.nodes, tags: el.tags });
+    }
+  }
+
+  // Group line segments by river key
+  // riverKey → list of [lon, lat][] segments
+  const riverSegments = new Map<string, { segments: number[][][]; osm_ids: number[]; name: string }>();
+
+  // Process standalone ways (not part of a relation)
+  const waysInRelations = new Set<number>();
+  for (const el of elements) {
+    if (el.type === "relation" && el.members) {
+      for (const member of el.members) {
+        if (member.type === "way") waysInRelations.add(member.ref);
+      }
+    }
+  }
+
+  // Process ways (both standalone and those we'll catch via relations)
+  const processWay = (way: OsmWay): number[][] | null => {
+    const coords = way.nodes
+      .map((nid) => nodeMap.get(nid))
+      .filter((n): n is OsmNode => n !== undefined)
+      .map((n) => [n.lon, n.lat]);
+    return coords.length >= 2 ? coords : null;
+  };
+
+  // Standalone ways (not in relations)
+  for (const el of elements) {
+    if (el.type === "way" && el.tags && !waysInRelations.has(el.id)) {
+      const name = el.tags.name || el.tags["name:en"] || "";
+      const key = getRiverKey(name);
+      if (!key) continue;
+
+      const way = wayMap.get(el.id);
+      if (!way) continue;
+      const coords = processWay(way);
+      if (!coords) continue;
+
+      if (!riverSegments.has(key)) {
+        riverSegments.set(key, { segments: [], osm_ids: [], name });
+      }
+      const entry = riverSegments.get(key)!;
+      entry.segments.push(coords);
+      entry.osm_ids.push(el.id);
+    }
+  }
+
+  // Process relations — collect their member ways
+  for (const el of elements) {
+    if (el.type === "relation" && el.tags && el.members) {
+      const name = el.tags.name || el.tags["name:en"] || "";
+      const key = getRiverKey(name);
+      if (!key) continue;
+
+      for (const member of el.members) {
+        if (member.type !== "way") continue;
+        const way = wayMap.get(member.ref);
+        if (!way) continue;
+        const coords = processWay(way);
+        if (!coords) continue;
+
+        if (!riverSegments.has(key)) {
+          riverSegments.set(key, { segments: [], osm_ids: [], name });
+        }
+        const entry = riverSegments.get(key)!;
+        entry.segments.push(coords);
+        if (!entry.osm_ids.includes(el.id)) entry.osm_ids.push(el.id);
+      }
+    }
+  }
+
+  // Clip segments to Chennai city bbox
+  function clipSegment(seg: number[][]): number[][] {
+    return seg.filter(
+      ([lon, lat]) =>
+        lat >= CLIP.south && lat <= CLIP.north &&
+        lon >= CLIP.west && lon <= CLIP.east
+    );
+  }
+
+  // Build GeoJSON features
+  const features: GeoJsonFeature[] = [];
+
+  for (const [key, { segments, osm_ids, name }] of riverSegments) {
+    if (segments.length === 0) continue;
+
+    const config = RIVER_CONFIG[key];
+    if (!config) continue;
+
+    const clipped = segments.map(clipSegment).filter((s) => s.length >= 2);
+    if (clipped.length === 0) continue;
+
+    const totalLengthKm = clipped.reduce((sum, seg) => sum + computeSegmentLengthKm(seg), 0);
+
+    features.push({
+      type: "Feature",
+      geometry: {
+        type: "MultiLineString",
+        coordinates: clipped,
+      },
+      properties: {
+        river_id: config.id,
+        name,
+        name_ta: config.name_ta,
+        waterway: config.waterway,
+        length_km: Math.round(totalLengthKm * 10) / 10,
+        osm_ids,
+      },
+    });
+
+    console.log(
+      `  ${config.id}: ${segments.length} segments, ~${Math.round(totalLengthKm)} km`
+    );
+  }
+
+  return features;
+}
+
+async function main() {
+  const elements = await fetchOverpass();
+  const features = buildGeoJSON(elements);
+
+  if (features.length === 0) {
+    console.error("No river features found — check the Overpass query or bounding box");
+    process.exit(1);
+  }
+
+  const geojson = {
+    type: "FeatureCollection",
+    features,
+  };
+
+  const outPath = join(process.cwd(), "public/geojson/chennai-rivers.geojson");
+  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+
+  console.log(`\nWrote ${features.length} river features to public/geojson/chennai-rivers.geojson`);
+  console.log("Rivers found:", features.map((f) => f.properties.river_id).join(", "));
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

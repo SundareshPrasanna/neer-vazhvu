@@ -10,6 +10,8 @@ graph TB
         CMWSSB["CMWSSB Website<br/>(Reservoir levels)"]
         NASA["NASA POWER API<br/>(Weather)"]
         OC["OpenCity CKAN<br/>(Groundwater)"]
+        CPCB["CPCB Annual Reports<br/>(River quality — manual)"]
+        OSM["OpenStreetMap / Overpass<br/>(River geometry — one-time)"]
     end
 
     subgraph Backend ["Python API (FastAPI)"]
@@ -27,6 +29,7 @@ graph TB
     subgraph Frontend ["Next.js (App Router)"]
         Dashboard["Dashboard /"]
         GW["Groundwater /groundwater"]
+        Rivers["Rivers /rivers"]
         About["About /about"]
     end
 
@@ -38,6 +41,8 @@ graph TB
     CMWSSB -->|HTML scrape| Scrapers
     NASA -->|REST API| Scrapers
     OC -->|CKAN API| Scrapers
+    CPCB -->|manual JSON| StaticFiles["public/data/river-quality.json"]
+    OSM -->|fetch-rivers-osm.ts| StaticFiles2["public/geojson/chennai-rivers.geojson"]
 
     Scrapers --> ETL
     ETL -->|upsert| Core
@@ -49,6 +54,8 @@ graph TB
 
     Core -->|read| Frontend
     Computed -->|read| Frontend
+    StaticFiles -->|static| Frontend
+    StaticFiles2 -->|static| Frontend
 
     Cron -->|POST /pipeline/run-daily| ETL
     KA -->|GET /health| Backend
@@ -226,6 +233,7 @@ graph TD
 
     Layout --> Dashboard
     Layout --> GW["Groundwater Page"]
+    Layout --> RV["Rivers Page"]
     Layout --> About["About Page"]
 
     subgraph Dashboard["Dashboard Page /"]
@@ -247,6 +255,14 @@ graph TD
     end
 
     GW --> GW_Children
+
+    subgraph RV_Children["Rivers Page"]
+        RM["RiversMap<br/>(Leaflet polylines + station markers)"]
+        RP["RiverPanel<br/>(status, chart, DO/BOD explainer)"]
+        RQC["RiverQualityChart<br/>(Recharts dual-axis 2015–2024)"]
+    end
+
+    RV --> RV_Children
 ```
 
 **Data flow:** Supabase → Server Component (ISR, 15-min revalidation) → Client Components (charts, interactivity). Demo mode with mock data when Supabase is not configured.

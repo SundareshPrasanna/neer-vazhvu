@@ -126,6 +126,12 @@ export default function AboutPage() {
             description="15 years of daily reservoir data (2004–2019) compiled by Sudalai Rajkumar. Used as additional historical training data for the forecasting model."
             frequency="One-time historical seed"
           />
+          <DataSource
+            name="CPCB — Status of Water Quality in India"
+            url="https://cpcb.nic.in/nwmp-data/"
+            description="Annual reports from the Central Pollution Control Board's National Water Monitoring Programme. Source for DO, BOD, pH, and conductivity readings at monitoring stations on the Cooum, Adyar, Buckingham Canal, and Kosasthalaiyar rivers. Supplemented by IIT Madras / Anna University peer-reviewed studies and NGT Chennai bench orders."
+            frequency="Annual (manually refreshed)"
+          />
         </div>
       </section>
 
@@ -277,6 +283,74 @@ export default function AboutPage() {
         </p>
         <p className="text-slate-600 dark:text-slate-400">
           Year-over-year trends compare the same month across consecutive years. A change of more than 0.5m is classified as improving or declining.
+        </p>
+      </section>
+
+      <Separator className="my-8" />
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">River Health Map</h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          The river map shows four rivers — Cooum, Adyar, Buckingham Canal, and Kosasthalaiyar — colour-coded by overall water quality status derived from CPCB monitoring data.
+          Monitoring station dots show specific measurement locations; clicking either a river or a station opens a detail panel with time-series charts for 2015–2024.
+        </p>
+        <div className="space-y-3 text-sm">
+          <div>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">Dissolved Oxygen (DO):</span>
+            <span className="text-slate-600 dark:text-slate-400"> Oxygen dissolved in water, measured in mg/L. Fish and aquatic invertebrates need ≥ 4 mg/L to survive. Values near zero mean the river cannot support any aquatic life.</span>
+          </div>
+          <div>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">Biochemical Oxygen Demand (BOD):</span>
+            <span className="text-slate-600 dark:text-slate-400"> The amount of oxygen microbes need to break down organic matter in the water, measured in mg/L. A clean river scores &lt; 2 mg/L. Values above 30 mg/L indicate heavy sewage contamination.</span>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
+                <th className="pb-2 font-medium">Status</th>
+                <th className="pb-2 font-medium">DO (mg/L)</th>
+                <th className="pb-2 font-medium">BOD (mg/L)</th>
+                <th className="pb-2 font-medium">CPCB Class</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-700 dark:text-slate-300">
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2 flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-red-600 inline-block flex-shrink-0" />Dead</td>
+                <td className="py-2">&lt; 0.5</td>
+                <td className="py-2">&gt; 50</td>
+                <td className="py-2">Below E</td>
+              </tr>
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2 flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block flex-shrink-0" />Severely Degraded</td>
+                <td className="py-2">0.5 – 2</td>
+                <td className="py-2">10 – 50</td>
+                <td className="py-2">E</td>
+              </tr>
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2 flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block flex-shrink-0" />Degraded</td>
+                <td className="py-2">2 – 4</td>
+                <td className="py-2">5 – 10</td>
+                <td className="py-2">D</td>
+              </tr>
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2 flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-lime-500 inline-block flex-shrink-0" />Stressed</td>
+                <td className="py-2">4 – 6</td>
+                <td className="py-2">3 – 5</td>
+                <td className="py-2">C</td>
+              </tr>
+              <tr>
+                <td className="py-2 flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block flex-shrink-0" />Healthy</td>
+                <td className="py-2">&gt; 6</td>
+                <td className="py-2">&lt; 2</td>
+                <td className="py-2">A / B</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          River geometry (polylines) is sourced from OpenStreetMap via the Overpass API and clipped to the Chennai city boundary.
+          Quality readings are manually curated from CPCB annual reports and refreshed once a year when the new report is published.
         </p>
       </section>
 
