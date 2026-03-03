@@ -5,16 +5,19 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n/context";
+import { LanguageToggle } from "./language-toggle";
 
-const NAV_ITEMS = [
-  { href: "/", label: "Dashboard" },
-  { href: "/groundwater", label: "Groundwater Map" },
-  { href: "/water-bodies", label: "Water Bodies" },
-  { href: "/rivers", label: "Rivers" },
-  { href: "/about", label: "About" },
+const NAV_KEYS = [
+  { href: "/",            key: "nav.dashboard" },
+  { href: "/groundwater", key: "nav.groundwater" },
+  { href: "/water-bodies",key: "nav.water_bodies" },
+  { href: "/rivers",      key: "nav.rivers" },
+  { href: "/about",       key: "nav.about" },
 ];
 
 function ThemeToggle() {
+  const { t } = useLanguage();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -26,12 +29,13 @@ function ThemeToggle() {
   }
 
   const nextTheme = theme === "dark" ? "light" : "dark";
+  const ariaLabel = nextTheme === "dark" ? t("theme.switch_to_dark") : t("theme.switch_to_light");
 
   return (
     <button
       onClick={() => setTheme(nextTheme)}
       className="p-2 rounded-md text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-      aria-label={`Switch to ${nextTheme} mode`}
+      aria-label={ariaLabel}
     >
       {theme === "dark" ? (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -48,6 +52,7 @@ function ThemeToggle() {
 
 export function Header() {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   return (
     <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-50">
@@ -68,13 +73,13 @@ export function Header() {
             <div>
               <span className="font-bold text-lg text-slate-900 dark:text-slate-100">Neer Vazhvu</span>
               <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 ml-2">
-                Chennai Water Intelligence
+                {t("header.subtitle")}
               </span>
             </div>
           </Link>
 
           <nav className="flex items-center gap-1 sm:gap-2">
-            {NAV_ITEMS.map((item) => (
+            {NAV_KEYS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -85,9 +90,10 @@ export function Header() {
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
                 )}
               >
-                {item.label}
+                {t(item.key)}
               </Link>
             ))}
+            <LanguageToggle />
             <ThemeToggle />
           </nav>
         </div>

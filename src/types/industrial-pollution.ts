@@ -17,6 +17,7 @@ export type PollutantType =
 export interface IncidentRecord {
   date: string;       // "YYYY-MM"
   description: string;
+  description_ta?: string;
   volume?: string;
   source: string;
 }
@@ -32,7 +33,9 @@ export interface PollutionSource {
   rivers_affected: string[]; // river IDs from river-quality.json
   pollutants: PollutantType[];
   description: string;
+  description_ta?: string;
   ngt_orders?: string[];
+  ngt_orders_ta?: string[];
   incidents?: IncidentRecord[];
   source: string;
 }

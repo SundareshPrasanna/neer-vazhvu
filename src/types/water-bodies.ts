@@ -31,6 +31,7 @@ export interface LostWaterBodyProperties {
   approx_radius_m: number;
   source: string;
   notes: string;
+  notes_ta?: string;
 }
 
 export type SelectedWaterBody =

@@ -3,6 +3,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { formatNumber, formatPct } from "@/lib/utils/format";
 import type { ReservoirSummary } from "@/types/reservoir";
+import { useLanguage } from "@/lib/i18n/context";
+import { getReservoirDisplayName } from "@/lib/i18n/reservoir-name";
 
 interface ReservoirCardsProps {
   reservoirs: ReservoirSummary[];
@@ -17,10 +19,11 @@ function getBarColor(pct: number): string {
 }
 
 export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsProps) {
+  const { t } = useLanguage();
   return (
     <div>
       <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
-        Reservoir Status
+        {t("dash.reservoir_status")}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {reservoirs.map((r) => (
@@ -35,7 +38,9 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
           >
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-3">
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm truncate mr-2">{r.displayName}</h3>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm truncate mr-2">
+                  {getReservoirDisplayName(r.name, t, r.displayName)}
+                </h3>
                 <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
                   {formatPct(r.storagePct)}
                 </span>
@@ -47,7 +52,7 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
               </div>
 
               <div className="text-xs text-slate-500 dark:text-slate-400 mb-3">
-                of {formatNumber(r.capacity)} mcft capacity
+                {t("dash.capacity_of")} {formatNumber(r.capacity)} {t("dash.capacity_unit")}
               </div>
 
               {/* Storage bar */}
@@ -61,16 +66,16 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
               {/* Inflow/outflow */}
               <div className="flex flex-col xs:flex-row justify-between mt-3 text-xs text-slate-500 dark:text-slate-400 gap-0.5">
                 <span>
-                  In: <span className="font-medium text-green-600">{formatNumber(r.inflowCusecs)}</span> cusecs
+                  {t("dash.in_label")} <span className="font-medium text-green-600">{formatNumber(r.inflowCusecs)}</span> {t("dash.cusecs_unit")}
                 </span>
                 <span>
-                  Out: <span className="font-medium text-red-600">{formatNumber(r.outflowCusecs)}</span> cusecs
+                  {t("dash.out_label")} <span className="font-medium text-red-600">{formatNumber(r.outflowCusecs)}</span> {t("dash.cusecs_unit")}
                 </span>
               </div>
 
               {onReservoirClick && (
                 <div className="mt-3 text-xs text-blue-500 font-medium text-center">
-                  Click for details
+                  {t("dash.click_details")}
                 </div>
               )}
             </CardContent>

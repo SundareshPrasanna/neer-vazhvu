@@ -6,6 +6,7 @@ import type { Layer, LeafletMouseEvent } from "leaflet";
 import type { Feature } from "geojson";
 import { getGroundwaterColor, getRiskColor } from "@/types/groundwater";
 import type { GroundwaterWard, WardRiskData, ViewMode } from "@/types/groundwater";
+import { useLanguage } from "@/lib/i18n/context";
 import "leaflet/dist/leaflet.css";
 
 interface WardMapProps {
@@ -16,6 +17,7 @@ interface WardMapProps {
 }
 
 export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect }: WardMapProps) {
+  const { t, language } = useLanguage();
   const [geoJSON, setGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
 
   useEffect(() => {
@@ -44,16 +46,19 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect }: W
     const ward = groundwaterData.get(wardNum);
     const risk = riskData.get(wardNum);
 
-    const name = ward?.wardName || `Ward ${wardNum}`;
+    // In Tamil mode, avoid showing English locality names when Tamil names are unavailable.
+    const name = language === "ta"
+      ? (ward?.wardNameTa || `${t("ward.ward")} ${wardNum}`)
+      : (ward?.wardName || `${t("ward.ward")} ${wardNum}`);
     let detail: string;
-    if (viewMode === 'risk') {
+    if (viewMode === "risk") {
       detail = risk
-        ? `<br/><span style="font-size:11px;color:#64748b">Ward ${wardNum}</span><br/>Risk: ${risk.riskScore.toFixed(0)}/100`
-        : "<br/>No risk data";
+        ? `<br/><span style="font-size:11px;color:#64748b">${t("ward.ward")} ${wardNum}</span><br/>${t("ward.tooltip_risk")}: ${risk.riskScore.toFixed(0)}/100`
+        : `<br/>${t("ward.no_risk_data")}`;
     } else {
       detail = ward
-        ? `<br/><span style="font-size:11px;color:#64748b">Ward ${wardNum}</span><br/>${ward.depthM?.toFixed(1)}m depth`
-        : "<br/>No data";
+        ? `<br/><span style="font-size:11px;color:#64748b">${t("ward.ward")} ${wardNum}</span><br/>${ward.depthM?.toFixed(1)}m ${t("ward.tooltip_depth")}`
+        : `<br/>${t("gw.no_data_lc")}`;
     }
     layer.bindTooltip(`<strong>${name}</strong>${detail}`, { sticky: true });
 
@@ -71,7 +76,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect }: W
   if (!geoJSON) {
     return (
       <div className="h-full w-full bg-slate-100 flex items-center justify-center">
-        <span className="text-slate-500">Loading map...</span>
+        <span className="text-slate-500">{t("common.loading_map")}</span>
       </div>
     );
   }

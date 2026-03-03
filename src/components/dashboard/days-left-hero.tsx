@@ -6,6 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { DEFAULT_CONSUMPTION_MLD, DEFAULT_DESALINATION_MLD, MLD_TO_MCFT } from "@/lib/utils/constants";
 import { formatNumber, formatPct } from "@/lib/utils/format";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface DaysLeftHeroProps {
   totalStorageMcft: number;
@@ -38,11 +39,11 @@ function computeClientDaysLeft(
   };
 }
 
-function formatDays(days: number): string {
-  if (days >= 999) return "Won\u2019t run out";
-  if (days >= 730) return `${(days / 365).toFixed(1)} yrs`;
-  if (days >= 365) return `${(days / 365).toFixed(1)} yr`;
-  return `${days} days`;
+function formatDays(days: number, t: (key: string) => string): string {
+  if (days >= 999) return t("hero.wont_run_out");
+  if (days >= 730) return `${(days / 365).toFixed(1)} ${t("hero.yrs_unit")}`;
+  if (days >= 365) return `${(days / 365).toFixed(1)} ${t("hero.yr_unit")}`;
+  return `${days} ${t("hero.days_unit")}`;
 }
 
 function getSeverityColor(days: number): string {
@@ -67,6 +68,7 @@ export function DaysLeftHero({
   lastUpdated,
   comparison2019Storage,
 }: DaysLeftHeroProps) {
+  const { t } = useLanguage();
   const [consumption, setConsumption] = useState(DEFAULT_CONSUMPTION_MLD);
   const [desalination, setDesalination] = useState(DEFAULT_DESALINATION_MLD);
   const [showAssumptions, setShowAssumptions] = useState(false);
@@ -86,10 +88,10 @@ export function DaysLeftHero({
       <CardContent className="p-6 sm:p-8">
         <div className="flex items-start justify-between mb-2">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            Days of Water Left
+            {t("hero.title")}
           </h2>
           <Badge variant="outline" className="text-xs">
-            Updated {lastUpdated}
+            {t("hero.updated")} {lastUpdated}
           </Badge>
         </div>
 
@@ -99,7 +101,7 @@ export function DaysLeftHero({
             <div className={`text-5xl sm:text-6xl font-bold ${getSeverityColor(days.pessimistic)}`}>
               {days.pessimistic >= 999 ? (
                 // All scenarios safe — inflows sustain supply
-                <>Safe</>
+                <>{t("hero.safe")}</>
               ) : days.optimistic >= 999 ? (
                 // Worst case is finite but best case won't deplete
                 <>{days.pessimistic}<span className="text-2xl text-slate-400 dark:text-slate-500">+</span></>
@@ -109,7 +111,7 @@ export function DaysLeftHero({
               )}
             </div>
             <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {days.pessimistic >= 999 ? "inflows exceed demand" : "days remaining"}
+              {days.pessimistic >= 999 ? t("hero.inflows_exceed") : t("hero.days_remaining")}
             </div>
           </div>
 
@@ -117,18 +119,18 @@ export function DaysLeftHero({
           <div className="flex-1 space-y-1.5 text-sm">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-red-500" />
-              <span className="text-slate-600 dark:text-slate-400">Worst case (no rain):</span>
-              <span className="font-semibold">{formatDays(days.pessimistic)}</span>
+              <span className="text-slate-600 dark:text-slate-400">{t("hero.worst_case")}</span>
+              <span className="font-semibold">{formatDays(days.pessimistic, t)}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-yellow-500" />
-              <span className="text-slate-600 dark:text-slate-400">Current trend:</span>
-              <span className="font-semibold">{formatDays(days.moderate)}</span>
+              <span className="text-slate-600 dark:text-slate-400">{t("hero.current_trend")}</span>
+              <span className="font-semibold">{formatDays(days.moderate, t)}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-500" />
-              <span className="text-slate-600 dark:text-slate-400">If seasonal rains:</span>
-              <span className="font-semibold">{formatDays(days.optimistic)}</span>
+              <span className="text-slate-600 dark:text-slate-400">{t("hero.seasonal_rains")}</span>
+              <span className="font-semibold">{formatDays(days.optimistic, t)}</span>
             </div>
           </div>
         </div>
@@ -137,7 +139,7 @@ export function DaysLeftHero({
         <div className="mt-6">
           <div className="flex justify-between text-sm mb-1">
             <span className="text-slate-600 dark:text-slate-400">
-              Reservoir storage: {formatNumber(totalStorageMcft)} / {formatNumber(totalCapacityMcft)} mcft
+              {t("hero.reservoir_storage")} {formatNumber(totalStorageMcft)} / {formatNumber(totalCapacityMcft)} mcft
             </span>
             <span className="font-semibold">{formatPct(storagePct)}</span>
           </div>
@@ -150,11 +152,11 @@ export function DaysLeftHero({
 
           {comparison2019Storage !== null && (
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-              On this day in 2019: {formatNumber(comparison2019Storage)} mcft
+              {t("hero.2019_comparison")} {formatNumber(comparison2019Storage)} mcft
               {comparison2019Storage < totalStorageMcft ? (
-                <span className="text-green-600 ml-1">(better today)</span>
+                <span className="text-green-600 ml-1">{t("hero.better_today")}</span>
               ) : (
-                <span className="text-red-600 ml-1">(worse today)</span>
+                <span className="text-red-600 ml-1">{t("hero.worse_today")}</span>
               )}
             </div>
           )}
@@ -174,14 +176,14 @@ export function DaysLeftHero({
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
-            Adjust assumptions
+            {t("hero.adjust")}
           </button>
 
           {showAssumptions && (
             <div className="mt-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-4">
               <div>
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-slate-600 dark:text-slate-400">Daily consumption</span>
+                  <span className="text-slate-600 dark:text-slate-400">{t("hero.consumption")}</span>
                   <span className="font-mono font-semibold">{consumption} MLD</span>
                 </div>
                 <Slider
@@ -194,7 +196,7 @@ export function DaysLeftHero({
               </div>
               <div>
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-slate-600 dark:text-slate-400">Desalination output</span>
+                  <span className="text-slate-600 dark:text-slate-400">{t("hero.desalination")}</span>
                   <span className="font-mono font-semibold">{desalination} MLD</span>
                 </div>
                 <Slider
@@ -206,7 +208,7 @@ export function DaysLeftHero({
                 />
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500">
-                Days left updates in real time as you adjust. Default: 830 MLD consumption, 190 MLD desalination.
+                {t("hero.slider_note")}
               </p>
             </div>
           )}

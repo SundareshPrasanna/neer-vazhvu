@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import { formatNumber } from "@/lib/utils/format";
 import type { HistoricalYearData } from "@/lib/mock-data";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface ForecastPoint {
   date: string;
@@ -34,11 +35,11 @@ interface StorageTrendChartProps {
   getHistoricalData?: (year: number) => HistoricalYearData;
 }
 
-const TABS = [
-  { label: "30d", days: 30 },
-  { label: "90d", days: 90 },
-  { label: "1yr", days: 365 },
-  { label: "All", days: 0 },
+const TAB_DAYS = [
+  { key: "30d", days: 30 },
+  { key: "90d", days: 90 },
+  { key: "1yr", days: 365 },
+  { key: "all", days: 0 },
 ];
 
 const YEAR_COLORS: Record<number, string> = {
@@ -54,12 +55,15 @@ const YEAR_COLORS: Record<number, string> = {
 export function StorageTrendChart({
   history,
   forecast,
-  title = "Combined Storage Trend",
+  title,
   capacity,
   onBack,
   comparisonYears,
   getHistoricalData,
 }: StorageTrendChartProps) {
+  const { t, language } = useLanguage();
+  const locale = language === "ta" ? "ta-IN" : "en-IN";
+  const resolvedTitle = title ?? t("dash.combined_trend");
   const [activeDays, setActiveDays] = useState(0);
   const [selectedYears, setSelectedYears] = useState<number[]>([]);
   const [showInflow, setShowInflow] = useState(false);
@@ -158,7 +162,7 @@ export function StorageTrendChart({
     }
 
     return result;
-  }, [filtered, filteredForecast, selectedYears, getHistoricalData, isMultiYear]);
+  }, [filtered, filteredForecast, selectedYears, getHistoricalData]);
 
   // Compute x-axis tick interval to show ~10-15 labels
   const xAxisInterval = useMemo(() => {
@@ -172,8 +176,14 @@ export function StorageTrendChart({
     if (!date) return "";
     const d = new Date(date + "T00:00:00");
     if (isMultiYear) return String(d.getFullYear());
-    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+    return d.toLocaleDateString(locale, { day: "numeric", month: "short" });
   };
+
+  const currentDisplayYear = useMemo(() => {
+    const latest = filtered[filtered.length - 1]?.date;
+    if (!latest) return String(new Date().getFullYear());
+    return String(new Date(`${latest}T00:00:00`).getFullYear());
+  }, [filtered]);
 
   const toggleYear = (year: number) => {
     setSelectedYears((prev) =>
@@ -198,7 +208,7 @@ export function StorageTrendChart({
         <div className="text-slate-500 dark:text-slate-400 mb-1">
           {d.date as string}
           {isForecastPoint && (
-            <span className="ml-2 text-violet-500 text-xs font-medium">Forecast</span>
+            <span className="ml-2 text-violet-500 text-xs font-medium">{t("dash.forecast_label")}</span>
           )}
         </div>
         {d.storage !== undefined && (
@@ -213,7 +223,7 @@ export function StorageTrendChart({
             </div>
             {d.forecastLower !== undefined && d.forecastUpper !== undefined && isForecastPoint && (
               <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                Range: {formatNumber(d.forecastLower as number)} – {formatNumber(d.forecastUpper as number)}
+                {t("dash.range_label")} {formatNumber(d.forecastLower as number)} – {formatNumber(d.forecastUpper as number)}
               </div>
             )}
           </>
@@ -221,18 +231,18 @@ export function StorageTrendChart({
         {showInflow && d.inflow !== undefined && (
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#16a34a" }} />
-            <span className="text-slate-600 dark:text-slate-400">Inflow:</span>
+            <span className="text-slate-600 dark:text-slate-400">{t("dash.in_label")}</span>
             <span className="font-semibold text-green-600">
-              {formatNumber(d.inflow as number)} cusecs
+              {formatNumber(d.inflow as number)} {t("dash.cusecs_unit")}
             </span>
           </div>
         )}
         {showOutflow && d.outflow !== undefined && (
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#dc2626" }} />
-            <span className="text-slate-600 dark:text-slate-400">Outflow:</span>
+            <span className="text-slate-600 dark:text-slate-400">{t("dash.out_label")}</span>
             <span className="font-semibold text-red-600">
-              {formatNumber(d.outflow as number)} cusecs
+              {formatNumber(d.outflow as number)} {t("dash.cusecs_unit")}
             </span>
           </div>
         )}
@@ -312,7 +322,7 @@ export function StorageTrendChart({
           stroke="#16a34a"
           strokeWidth={1.5}
           dot={false}
-          name="Inflow"
+          name={t("dash.inflow")}
           connectNulls={false}
         />
       )}
@@ -324,7 +334,7 @@ export function StorageTrendChart({
           stroke="#dc2626"
           strokeWidth={1.5}
           dot={false}
-          name="Outflow"
+          name={t("dash.outflow")}
           connectNulls={false}
         />
       )}
@@ -340,11 +350,11 @@ export function StorageTrendChart({
               onClick={onBack}
               className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-1 transition-colors"
             >
-              <span>&#8592;</span> All Reservoirs
+              <span>&#8592;</span> {t("dash.all_reservoirs")}
             </button>
           )}
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {title}
+            {resolvedTitle}
           </h2>
         </div>
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
@@ -359,7 +369,7 @@ export function StorageTrendChart({
               />
               <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
                 <span className="w-3 h-0.5 bg-green-600 rounded inline-block" />
-                Inflow
+                {t("dash.inflow")}
               </span>
             </label>
             <label className="flex items-center gap-1.5 cursor-pointer text-xs">
@@ -371,15 +381,15 @@ export function StorageTrendChart({
               />
               <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
                 <span className="w-3 h-0.5 bg-red-600 rounded inline-block" />
-                Outflow
+                {t("dash.outflow")}
               </span>
             </label>
           </div>
           {/* Time range tabs */}
           <div className="flex gap-1">
-            {TABS.map((tab) => (
+            {TAB_DAYS.map((tab) => (
               <button
-                key={tab.label}
+                key={tab.key}
                 onClick={() => setActiveDays(tab.days)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                   activeDays === tab.days
@@ -387,7 +397,7 @@ export function StorageTrendChart({
                     : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                 }`}
               >
-                {tab.label}
+                {tab.key === "all" ? t("dash.tab_all") : tab.key}
               </button>
             ))}
           </div>
@@ -397,7 +407,7 @@ export function StorageTrendChart({
       {/* Year comparison selector */}
       {hasComparisons && (
         <div className="mb-4">
-          <div className="text-xs text-slate-500 dark:text-slate-400 mb-2">Compare with past years:</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-2">{t("dash.compare_years")}</div>
           <div className="flex flex-wrap gap-1.5">
             {comparisonYears.map((cy) => {
               const isSelected = selectedYears.includes(cy.year);
@@ -428,7 +438,7 @@ export function StorageTrendChart({
       <div className="h-64 sm:h-80">
         {filtered.length < 2 ? (
           <div className="h-full flex items-center justify-center text-slate-400 dark:text-slate-500 text-sm">
-            Not enough data for this time range. Try &quot;All&quot; to see historical trends.
+            {t("dash.no_data_range")}
           </div>
         ) : (
         <ResponsiveContainer width="100%" height="100%">
@@ -458,7 +468,7 @@ export function StorageTrendChart({
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(v) => `${v}`}
-                  label={{ value: "cusecs", angle: 90, position: "insideRight", style: { fontSize: 10, fill: "#94a3b8" } }}
+                  label={{ value: t("dash.cusecs_unit"), angle: 90, position: "insideRight", style: { fontSize: 10, fill: "#94a3b8" } }}
                 />
               )}
               <Tooltip content={renderTooltip} />
@@ -466,10 +476,10 @@ export function StorageTrendChart({
                 iconSize={8}
                 wrapperStyle={{ fontSize: "11px" }}
                 formatter={(value: string) => {
-                  if (value === "storage") return "Current (2026)";
-                  if (value === "forecast") return "Forecast";
-                  if (value === "Inflow") return "Inflow (cusecs)";
-                  if (value === "Outflow") return "Outflow (cusecs)";
+                  if (value === "storage") return `${t("dash.current_year")} (${currentDisplayYear})`;
+                  if (value === "forecast") return t("dash.forecast_label");
+                  if (value === t("dash.inflow")) return t("dash.inflow_cusecs");
+                  if (value === t("dash.outflow")) return t("dash.outflow_cusecs");
                   const year = parseInt(value.replace("y", ""));
                   return comparisonYears?.find((c) => c.year === year)?.label || value;
                 }}
@@ -480,7 +490,7 @@ export function StorageTrendChart({
                   y={capacity}
                   stroke="#94a3b8"
                   strokeDasharray="6 4"
-                  label={{ value: "Capacity", position: "right", fontSize: 10, fill: "#94a3b8" }}
+                  label={{ value: t("dash.capacity_ref"), position: "right", fontSize: 10, fill: "#94a3b8" }}
                 />
               )}
               {/* Current year line */}
@@ -545,7 +555,7 @@ export function StorageTrendChart({
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(v) => `${v}`}
-                  label={{ value: "cusecs", angle: 90, position: "insideRight", style: { fontSize: 10, fill: "#94a3b8" } }}
+                  label={{ value: t("dash.cusecs_unit"), angle: 90, position: "insideRight", style: { fontSize: 10, fill: "#94a3b8" } }}
                 />
               )}
               <Tooltip content={renderTooltip} />
@@ -554,10 +564,10 @@ export function StorageTrendChart({
                   iconSize={8}
                   wrapperStyle={{ fontSize: "11px" }}
                   formatter={(value: string) => {
-                    if (value === "storage") return "Actual";
-                    if (value === "forecast") return "Forecast";
-                    if (value === "Inflow") return "Inflow (cusecs)";
-                    if (value === "Outflow") return "Outflow (cusecs)";
+                    if (value === "storage") return t("dash.actual_label");
+                    if (value === "forecast") return t("dash.forecast_label");
+                    if (value === t("dash.inflow")) return t("dash.inflow_cusecs");
+                    if (value === t("dash.outflow")) return t("dash.outflow_cusecs");
                     return value;
                   }}
                 />
@@ -568,7 +578,7 @@ export function StorageTrendChart({
                   y={capacity}
                   stroke="#94a3b8"
                   strokeDasharray="6 4"
-                  label={{ value: "Capacity", position: "right", fontSize: 10, fill: "#94a3b8" }}
+                  label={{ value: t("dash.capacity_ref"), position: "right", fontSize: 10, fill: "#94a3b8" }}
                 />
               )}
               <Area
