@@ -469,6 +469,43 @@ export default function AboutPage() {
           Quality readings are manually curated from CPCB annual reports and refreshed once a year when the new report is published.
         </p>
 
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">3-Year Trend Indicator</h3>
+        <p className="text-slate-600 dark:text-slate-400 text-sm">
+          Each monitoring station panel shows a <span className="font-medium text-slate-700 dark:text-slate-300">3-year trend</span> derived from the existing annual CPCB readings — no new data required. The trend updates when you switch between station tabs.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
+                <th className="pb-2 font-medium">Direction</th>
+                <th className="pb-2 font-medium">Meaning</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-700 dark:text-slate-300 text-sm">
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2 font-semibold text-green-600 dark:text-green-400">↑ Improving</td>
+                <td className="py-2 text-slate-600 dark:text-slate-400">At least one metric improved beyond threshold; none worsened</td>
+              </tr>
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2 font-semibold text-red-600 dark:text-red-400">↓ Worsening</td>
+                <td className="py-2 text-slate-600 dark:text-slate-400">At least one metric worsened beyond threshold; none improved</td>
+              </tr>
+              <tr className="border-b border-slate-100 dark:border-slate-800">
+                <td className="py-2 font-semibold text-orange-500">~ Mixed</td>
+                <td className="py-2 text-slate-600 dark:text-slate-400">DO improved while BOD worsened (or vice versa)</td>
+              </tr>
+              <tr>
+                <td className="py-2 font-semibold text-slate-500 dark:text-slate-400">→ Stable</td>
+                <td className="py-2 text-slate-600 dark:text-slate-400">Both metrics changed less than the noise threshold</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-slate-600 dark:text-slate-400 text-sm">
+          <span className="font-medium text-slate-700 dark:text-slate-300">Computation:</span>{" "}
+          Delta = (most recent year) − (3 years prior). Noise thresholds: DO ± 0.3 mg/L · BOD ± 3 mg/L. These approximate the smallest shifts that reliably exceed year-to-year measurement variation in heavily polluted urban rivers. The 3-year window balances recency against single-year anomalies — for example, 2020 shows anomalously better DO/BOD readings across all stations, likely reflecting reduced industrial activity during COVID-19 lockdowns rather than genuine recovery.
+        </p>
+
         <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Industrial Pollution Sources Overlay</h3>
         <p className="text-slate-600 dark:text-slate-400 text-sm">
           The river map includes an always-on <span className="font-medium text-slate-700 dark:text-slate-300">Industrial Pollution Sources</span> overlay
