@@ -26,6 +26,12 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 - **Detail Panel** — Click any water body for historical area, surviving area, what replaced it, and source citations
 - **Area Loss Bar** — Visual indicator of how much of each water body survives
 
+### River Health Map
+- **Interactive Polyline Map** — 4 rivers (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) colour-coded by CPCB water quality status
+- **Monitoring Station Markers** — 10 stations with individual DO/BOD readings
+- **DO/BOD Time-Series Chart** — Dual-axis line chart (2015–2024) per station with reference lines at the aquatic life minimum (DO = 4 mg/L) and clean river standard (BOD = 2 mg/L)
+- **River Detail Panel** — Status badge, CPCB class, station selector, embedded explainer for DO and BOD
+
 ### Intelligence Layer (Python Service)
 - **Reservoir Forecasting** — 30-day storage predictions using AutoARIMA with confidence intervals
 - **Ward Risk Scoring** — Composite 0–100 risk score per ward (groundwater depth, trend, reservoir stress, seasonal vulnerability)
@@ -65,8 +71,9 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 | [NASA POWER](https://power.larc.nasa.gov/) | Precipitation, temperature, humidity | Daily (2-day lag) |
 | [OpenCity Chennai](https://data.opencity.in/) | Ward-wise groundwater levels (200 wards) | Monthly |
 | [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
-| [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) | One-time fetch (script: `scripts/fetch-water-bodies-osm.ts`) |
+| [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry | One-time fetch |
 | Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
+| [CPCB NWMP Annual Reports](https://cpcb.nic.in/nwmp-data/) | DO, BOD, pH, conductivity at 10 river monitoring stations (2015–2024) | Annual (manual refresh) |
 
 ## Tech Stack
 
@@ -212,11 +219,13 @@ neer-vazhvu/
 │   │   ├── page.tsx              # Main dashboard
 │   │   ├── groundwater/          # Groundwater map page
 │   │   ├── water-bodies/         # Water bodies map page
+│   │   ├── rivers/               # River health map page
 │   │   └── about/                # About/methodology page
 │   ├── components/
 │   │   ├── dashboard/            # Dashboard components
 │   │   ├── groundwater/          # Map, legend, ward panel
 │   │   ├── water-bodies/         # Map, legend, detail panel
+│   │   ├── rivers/               # River map, panel, chart, legend
 │   │   ├── layout/               # Header, footer
 │   │   └── ui/                   # shadcn/ui primitives
 │   ├── lib/
@@ -236,10 +245,13 @@ neer-vazhvu/
 ├── supabase/
 │   └── migrations/               # SQL migrations (001, 002)
 ├── public/
-│   └── geojson/                  # Static GeoJSON data
-│       ├── gcc-wards.geojson     # GCC ward boundaries (choropleth)
-│       ├── chennai-water-bodies-current.geojson  # OSM water bodies (1,635 features)
-│       └── chennai-water-bodies-lost.geojson     # Curated lost water bodies (15 entries)
+│   ├── geojson/                  # Static GeoJSON data
+│   │   ├── gcc-wards.geojson     # GCC ward boundaries (choropleth)
+│   │   ├── chennai-water-bodies-current.geojson  # OSM water bodies (1,635 features)
+│   │   ├── chennai-water-bodies-lost.geojson     # Curated lost water bodies (15 entries)
+│   │   └── chennai-rivers.geojson               # River polylines (Cooum, Adyar, etc.)
+│   └── data/                     # Static JSON datasets
+│       └── river-quality.json    # CPCB monitoring station readings (2015–2024)
 └── .github/
     └── workflows/                # CI + daily data pipeline
 ```
@@ -303,7 +315,8 @@ Please open an issue first to discuss significant changes.
 - **NASA POWER** for free, open weather data
 - **OpenCity Chennai** for ward-level groundwater datasets
 - **GCC** for ward boundary delimitation data
-- **OpenStreetMap contributors** for water body polygon data
+- **OpenStreetMap contributors** for water body polygon and river geometry data
 - **Care Earth Trust** for comprehensive water body surveys and documentation
 - **IIT Madras** and the **National Green Tribunal** for research and legal records on water body encroachments
+- **CPCB** for annual river water quality monitoring reports
 - Chennai's civic data community for making public data accessible

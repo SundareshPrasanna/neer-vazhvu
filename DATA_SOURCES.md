@@ -56,6 +56,56 @@
 - Measurement methodology may differ across wards
 - New year datasets require adding the resource ID to the scraper config
 
+## River Water Quality — CPCB
+
+| | |
+|---|---|
+| **Source** | [CPCB National Water Monitoring Programme](https://cpcb.nic.in/nwmp-data/) — "Status of Water Quality in India" annual reports |
+| **Method** | Manual curation (PDF/Excel → JSON) |
+| **Frequency** | Annual (refreshed when CPCB publishes the next report, typically Jan–Mar) |
+| **Coverage** | 4 rivers: Cooum, Adyar, Buckingham Canal, Kosasthalaiyar — 10 monitoring stations total |
+| **Fields** | Dissolved oxygen (DO, mg/L), Biochemical oxygen demand (BOD, mg/L), pH, conductivity (µS/cm) |
+| **File** | `public/data/river-quality.json` (static, served directly from Next.js `public/`) |
+| **Historical** | 2015–2024 |
+
+**Supplementary sources:**
+- IIT Madras and Anna University peer-reviewed studies on Chennai river water quality
+- NGT Chennai bench orders (which cite measured DO/BOD values)
+- Care Earth Trust / Coastal Management Society published reports
+
+**CPCB classification scale used:**
+
+| Status | DO (mg/L) | BOD (mg/L) | CPCB Class |
+|--------|-----------|-----------|------------|
+| Dead | < 0.5 | > 50 | Below E |
+| Severely Degraded | 0.5–2 | 10–50 | E |
+| Degraded | 2–4 | 5–10 | D |
+| Stressed | 4–6 | 3–5 | C |
+| Healthy | > 6 | < 2 | A / B |
+
+**Known limitations:**
+- CPCB reports are published as PDFs — no programmatic API; data must be extracted manually
+- Monitoring station locations and frequencies can change between annual reports
+- Pre-2015 data is sparse for smaller rivers (Buckingham Canal, Kosasthalaiyar)
+- The overall `status` field is a judgement call for the river reach, not a single measurement
+- To update: download the latest CPCB report, update `readings` in `river-quality.json`, bump `last_updated` and `data_year_range`, commit `data: update river quality readings to {year}`
+
+## River Geometry — OpenStreetMap
+
+| | |
+|---|---|
+| **Source** | [OpenStreetMap](https://www.openstreetmap.org/) via [Overpass API](https://overpass-api.de/) |
+| **Method** | Script: `scripts/fetch-rivers-osm.ts` (run once, re-run after major OSM edits) |
+| **Frequency** | One-time fetch; re-run manually if OSM geometry improves |
+| **Coverage** | 4 rivers clipped to Chennai city bbox (12.75–13.35°N, 80.0–80.35°E) |
+| **Fields** | MultiLineString geometry (way coordinate arrays grouped by river name tag) |
+| **File** | `public/geojson/chennai-rivers.geojson` (static GeoJSON, ~200 KB) |
+
+**Known limitations:**
+- OSM river way coverage varies — some urban stretches may be missing or misaligned
+- The Buckingham Canal is a national waterway; bbox clipping limits it to the Chennai stretch (~72 km)
+- Run `npx tsx scripts/fetch-rivers-osm.ts` to regenerate after OSM data improves
+
 ## Reservoir Metadata
 
 | | |
