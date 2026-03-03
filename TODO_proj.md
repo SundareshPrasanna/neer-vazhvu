@@ -16,40 +16,98 @@
 
 ---
 
-## River Health Dashboard (P1)
+## Risk Map Layer (P1)
 
-> Interactive map of Chennai's 4 major rivers color-coded by CPCB water quality class.
-> Station-level DO/BOD time-series charts 2015–2024.
-> Data: CPCB Annual Reports + IIT Madras studies. Static JSON, refreshed manually once per year.
+> Add a **Depth | Risk** toggle to the existing groundwater page. Risk mode recolors the 200-ward
+> choropleth by composite risk score (0–100) from `ward_risk_score`, showing Low/Moderate/High/Critical
+> instead of the 7-level depth scale. Ward detail panel gains a risk score breakdown section.
+> No new page or nav item — all within `/groundwater`.
 
-### Data & Infrastructure
-- [x] **OSM fetch script** — `scripts/fetch-rivers-osm.ts`: query Overpass for river ways/relations (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar), group by name into MultiLineString features, write `public/geojson/chennai-rivers.geojson`
-- [x] **Curate quality data** — `public/data/river-quality.json`: research DO/BOD values from CPCB annual reports (`cpcb.nic.in/nwmp-data/`), IIT Madras/Anna University studies, NGT bench orders — 4 rivers × ~3 stations × 10 years (2015–2024)
-- [x] **TypeScript types** — `src/types/river-quality.ts`: `RiverQualityStatus`, `RiverQualityReading`, `RiverStation`, `RiverData`, `RiverQualityData`, `SelectedRiver`, `QUALITY_COLORS`, `QUALITY_LABELS`
+### Data
 
-### Frontend Components
-- [x] **Legend** — `src/components/rivers/rivers-legend.tsx`: 5-item card (Dead/red · Severely Degraded/orange · Degraded/yellow · Stressed/lime · Healthy/green)
-- [x] **Quality chart** — `src/components/rivers/river-quality-chart.tsx`: Recharts `LineChart` with two lines (DO blue left-axis, BOD orange right-axis), reference lines at DO=4 and BOD=2, custom tooltip, `ResponsiveContainer`
-- [x] **Rivers map** — `src/components/rivers/rivers-map.tsx`: Leaflet `GeoJSON` polylines (colored by `overall_status` via `river_id` join), station `circleMarker` layer, `LayersControl` toggles, hover highlight, click → `onSelect`
-- [x] **River panel** — `src/components/rivers/river-panel.tsx`: status badge, stats row (length/CPCB class/latest DO), station tab selector, `RiverQualityChart`, callout note, description/notes, source + `last_updated`
-- [x] **Rivers page** — `src/app/rivers/page.tsx`: `"use client"`, fetch `river-quality.json`, stats bar (4 rivers · Cooum DO ~0 mg/L · last updated), `dynamic()` SSR-disabled map, panel bottom-sheet/sidebar layout
+Risk score schema (`ward_risk_score`): `ward_number`, `computed_date`, `risk_score` (0–100),
+`risk_level` (Low / Moderate / High / Critical), plus four component columns:
+`groundwater_component`, `trend_component`, `reservoir_component`, `seasonal_component`.
+Weights: groundwater 40%, trend 30%, reservoir 20%, seasonal 10%.
+Risk levels: Low 0–25 · Moderate 26–50 · High 51–75 · Critical 76–100.
 
-### Integration
-- [x] **Header nav** — add `{ href: "/rivers", label: "Rivers" }` between Groundwater Map and About in `src/components/layout/header.tsx`
+### Files to create (2)
 
-### Quality & Docs
-- [ ] **Lint + build** — `npm run lint && npm run build` zero errors; `ruff check . && ruff format --check .` clean
-- [ ] **Annual refresh process** — when CPCB publishes next report: update readings in `river-quality.json`, bump `last_updated` field, commit `data: update river quality readings to {year}`
+| File | Purpose |
+|------|---------|
+| `src/app/api/groundwater/risk/route.ts` | GET — fetch latest `ward_risk_score` from Supabase; mock fallback |
+| *(extend)* `src/lib/mock-data.ts` | Add `generateMockRiskScores()` with realistic spread across 200 wards |
+
+### Files to modify (4)
+
+| File | Change |
+|------|--------|
+| `src/types/groundwater.ts` | Add `WardRiskData` interface, `getRiskColor(level)`, `getRiskLabel(level)` helpers |
+| `src/components/groundwater/ward-map.tsx` | Accept `viewMode: 'depth' \| 'risk'` + `riskData: Map<number, WardRiskData>` props; branch coloring on `viewMode` |
+| `src/components/groundwater/legend.tsx` | Accept `viewMode` prop; show 4-level risk legend or existing 7-level depth legend |
+| `src/components/groundwater/ward-detail-panel.tsx` | When `riskData` available: show risk score badge + 4 component progress bars below depth stats |
+| `src/app/groundwater/page.tsx` | Add `viewMode` state; fetch `/api/groundwater/risk` in parallel with depth data; pass both to map + legend + panel; render toggle buttons above map |
+
+### Toggle UI
+
+Two-button pill toggle anchored top-right inside the map overlay (same area as the period label):
+
+```
+[ Depth ]  [ Risk Score ]
+```
+
+Active button: `bg-blue-600 text-white`, inactive: `bg-white text-slate-600 border`.
+
+### Risk color scale
+
+| Level | Score | Color | Tailwind |
+|-------|-------|-------|---------|
+| Low | 0–25 | `#22c55e` | green-500 |
+| Moderate | 26–50 | `#eab308` | yellow-500 |
+| High | 51–75 | `#f97316` | orange-500 |
+| Critical | 76–100 | `#dc2626` | red-600 |
+| No data | — | `#9ca3af` | gray-400 |
+
+### Ward panel risk section
+
+Below the existing depth/trend stats, add a collapsible (or always-visible) section:
+
+```
+Risk Score: 68 / 100          [HIGH badge]
+
+Groundwater depth    ████████░░  40/40
+Year-on-year trend   █████░░░░░  20/30
+Reservoir stress     ████░░░░░░  16/20
+Seasonal factor      ██░░░░░░░░   8/10
+```
+
+Progress bars: proportional fill, coloured by component contribution.
+Only shown when `riskData` has an entry for this ward.
+
+### API route — `GET /api/groundwater/risk`
+
+- Query `ward_risk_score` for the most recent `computed_date`
+- Return `{ computed_date, wards: Array<{ wardNumber, riskScore, riskLevel, groundwaterComponent, trendComponent, reservoirComponent, seasonalComponent }> }`
+- Mock fallback: `generateMockRiskScores()` with realistic distribution (40% low, 35% moderate, 15% high, 10% critical)
+
+### Implementation order
+
+1. Type additions (`src/types/groundwater.ts`)
+2. Mock data (`src/lib/mock-data.ts` — `generateMockRiskScores`)
+3. API route (`src/app/api/groundwater/risk/route.ts`)
+4. Map component — `viewMode` branch
+5. Legend — `viewMode` branch
+6. Ward panel — risk section
+7. Page — fetch + state + toggle UI
+8. `npm run lint && npm run build` — zero errors
 
 ---
 
 ## Water Dashboard Enhancements (P1)
 
-- [ ] **Rainfall visualization** — Dedicated rainfall chart/overlay using NASA POWER precipitation data (already fetched daily)
+- [ ] **Daily briefing card** — Display `daily_briefing` (headline, alerts, recommendations) on dashboard — API generates it, frontend doesn't surface it yet
 - [ ] **Day Zero comparison** — Prominent "Today vs 2019 Day Zero" widget (data already in `comparison2019Storage`)
-- [ ] **Daily briefing card** — Display `daily_briefing` (headline, alerts, recommendations) on dashboard — API generates it, frontend doesn't show it yet
-- [ ] **Risk map layer** — Visualize `ward_risk_score` on groundwater Leaflet map (color wards by risk level)
-- [ ] **Mobile responsiveness polish** — Dashboard is desktop-first; test and fix on mobile breakpoints
+- [ ] **Rainfall visualization** — Dedicated rainfall chart/overlay using NASA POWER precipitation data (already fetched daily)
 
 ## Tamil Localization (P1)
 
@@ -64,11 +122,16 @@
 - [ ] **Frontend build validation** — Add Vitest or Jest for component smoke tests
 - [ ] **Scraper resilience tests** — Mock CMWSSB HTML changes, NASA API failures
 
+## Annual Data Refresh
+
+- [ ] **River quality** — When CPCB publishes next annual report: update readings in `public/data/river-quality.json`, bump `last_updated` and `data_year_range`, commit `data: update river quality readings to {year}`
+- [ ] **Water bodies OSM** — Re-run `scripts/fetch-water-bodies-osm.ts` once a year to pull fresh polygon data from OpenStreetMap
+- [ ] **River geometry OSM** — Re-run `scripts/fetch-rivers-osm.ts` if river alignments change significantly in OSM
+
 ## V2 Features (P2)
 
 - [ ] **Personal water calculator** — "How much water does your household use vs. what's sustainable?"
 - [ ] **Citizen water quality reporting** — Report water issues with photo + geolocation
-- [x] **Lost water bodies map** — Interactive map showing 150+ lakes/tanks lost to development (OSM data)
 - [ ] **Flood risk overlay** — Address-based flood risk using elevation + proximity to water bodies
 - [ ] **Seawater intrusion map** — Coastal areas where borewell water is turning saline (CGWB data)
 - [ ] **Open data downloads** — Let researchers download cleaned datasets via API/CSV

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { WardDetailPanel } from "@/components/groundwater/ward-detail-panel";
 import { GroundwaterLegend } from "@/components/groundwater/legend";
-import type { GroundwaterWard, GroundwaterApiResponse } from "@/types/groundwater";
+import type { GroundwaterWard, GroundwaterApiResponse, WardRiskData, RiskApiResponse, ViewMode } from "@/types/groundwater";
 
 // Leaflet must be loaded client-side only (no SSR)
 const WardMap = dynamic(() => import("@/components/groundwater/ward-map").then((m) => m.WardMap), {
@@ -18,14 +18,19 @@ const WardMap = dynamic(() => import("@/components/groundwater/ward-map").then((
 
 export default function GroundwaterPage() {
   const [data, setData] = useState<GroundwaterApiResponse | null>(null);
+  const [riskApiData, setRiskApiData] = useState<RiskApiResponse | null>(null);
   const [selectedWard, setSelectedWard] = useState<GroundwaterWard | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('depth');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/groundwater")
-      .then((r) => r.json())
-      .then((d) => {
-        setData(d);
+    Promise.all([
+      fetch("/api/groundwater").then((r) => r.json()),
+      fetch("/api/groundwater/risk").then((r) => r.json()),
+    ])
+      .then(([gw, risk]: [GroundwaterApiResponse, RiskApiResponse]) => {
+        setData(gw);
+        setRiskApiData(risk);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -53,24 +58,36 @@ export default function GroundwaterPage() {
     );
   }
 
-  // Build a Map for quick lookup
   const wardMap = new Map<number, GroundwaterWard>();
   for (const w of data.wards) {
     wardMap.set(w.wardNumber, w);
   }
 
+  const riskMap = new Map<number, WardRiskData>();
+  for (const r of riskApiData?.wards ?? []) {
+    riskMap.set(r.wardNumber, r);
+  }
+
+  const selectedRisk = selectedWard ? riskMap.get(selectedWard.wardNumber) : undefined;
+  const hasRiskData = riskMap.size > 0;
+
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col md:flex-row">
       {/* Map area */}
       <div className={`relative flex-1 ${selectedWard ? "h-[55vh] md:h-full" : "h-full"}`}>
-        <WardMap groundwaterData={wardMap} onWardSelect={setSelectedWard} />
+        <WardMap
+          groundwaterData={wardMap}
+          riskData={riskMap}
+          viewMode={viewMode}
+          onWardSelect={setSelectedWard}
+        />
 
         {/* Legend overlay */}
         <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000]">
-          <GroundwaterLegend />
+          <GroundwaterLegend viewMode={viewMode} />
         </div>
 
-        {/* Period info overlay */}
+        {/* Period + view toggle overlay */}
         <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000] bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
           <div className="text-xs text-slate-500 dark:text-slate-400">
             Showing data for{" "}
@@ -87,12 +104,44 @@ export default function GroundwaterPage() {
             </div>
           )}
         </div>
+
+        {/* View mode toggle — only shown when risk data is available */}
+        {hasRiskData && (
+          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]">
+            <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-600 shadow-md text-xs font-medium">
+              <button
+                onClick={() => setViewMode('depth')}
+                className={`px-3 py-1.5 transition-colors ${
+                  viewMode === 'depth'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
+                }`}
+              >
+                Depth
+              </button>
+              <button
+                onClick={() => setViewMode('risk')}
+                className={`px-3 py-1.5 transition-colors border-l border-slate-200 dark:border-slate-600 ${
+                  viewMode === 'risk'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
+                }`}
+              >
+                Risk Score
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Detail panel — bottom sheet on mobile, sidebar on desktop */}
       {selectedWard && (
         <div className="h-[45vh] md:h-full md:w-80 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
-          <WardDetailPanel ward={selectedWard} onClose={() => setSelectedWard(null)} />
+          <WardDetailPanel
+            ward={selectedWard}
+            riskData={selectedRisk}
+            onClose={() => setSelectedWard(null)}
+          />
         </div>
       )}
     </div>

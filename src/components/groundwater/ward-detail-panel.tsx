@@ -1,10 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { WardHistoryChart } from "@/components/groundwater/ward-history-chart";
-import { getGroundwaterStatus, getGroundwaterColor } from "@/types/groundwater";
-import type { GroundwaterWard } from "@/types/groundwater";
+import { getGroundwaterStatus, getGroundwaterColor, getRiskColor, getRiskLabel } from "@/types/groundwater";
+import type { GroundwaterWard, WardRiskData } from "@/types/groundwater";
 
 interface WardDetailPanelProps {
   ward: GroundwaterWard;
+  riskData?: WardRiskData;
   onClose: () => void;
 }
 
@@ -20,12 +21,20 @@ const STATUS_LABELS: Record<string, string> = {
 
 const TREND_ICONS: Record<string, { icon: string; color: string; label: string }> = {
   improving: { icon: "↑", color: "text-green-600", label: "Improving (water table rising)" },
-  stable: { icon: "→", color: "text-yellow-600", label: "Stable" },
-  declining: { icon: "↓", color: "text-red-600", label: "Declining (water table falling)" },
-  unknown: { icon: "?", color: "text-slate-400", label: "Trend unknown (no prior year data)" },
+  stable:    { icon: "→", color: "text-yellow-600", label: "Stable" },
+  declining: { icon: "↓", color: "text-red-600",   label: "Declining (water table falling)" },
+  unknown:   { icon: "?", color: "text-slate-400",  label: "Trend unknown (no prior year data)" },
 };
 
-export function WardDetailPanel({ ward, onClose }: WardDetailPanelProps) {
+// Components are stored as raw 0–100 sub-scores; contribution = sub_score × weight
+const RISK_COMPONENTS = [
+  { key: "groundwaterComponent" as const, label: "Groundwater depth", weight: 0.40, max: 40 },
+  { key: "trendComponent"       as const, label: "Year-on-year trend", weight: 0.30, max: 30 },
+  { key: "reservoirComponent"   as const, label: "Reservoir stress",   weight: 0.20, max: 20 },
+  { key: "seasonalComponent"    as const, label: "Seasonal factor",    weight: 0.10, max: 10 },
+];
+
+export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProps) {
   const status = getGroundwaterStatus(ward.depthM);
   const color = getGroundwaterColor(ward.depthM);
   const trend = TREND_ICONS[ward.trend];
@@ -72,18 +81,67 @@ export function WardDetailPanel({ ward, onClose }: WardDetailPanelProps) {
           <div className="mb-6">
             <WardHistoryChart wardNumber={ward.wardNumber} />
           </div>
-
-          <div className="text-xs text-slate-400 dark:text-slate-500 space-y-1">
-            <p>Depth measured in metres below ground level (mbgl).</p>
-            <p>Lower values = water table closer to surface = healthier.</p>
-            <p>Trend compares same month, previous year.</p>
-          </div>
         </>
       ) : (
-        <div className="text-slate-500 dark:text-slate-400 text-sm">
+        <div className="text-slate-500 dark:text-slate-400 text-sm mb-6">
           No groundwater data available for this ward.
         </div>
       )}
+
+      {riskData && (
+        <div className="mb-6 border-t border-slate-100 dark:border-slate-800 pt-6">
+          <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase mb-3">
+            Composite Risk Score
+          </h4>
+          <div className="flex items-baseline gap-2 mb-4">
+            <span className="text-3xl font-bold" style={{ color: getRiskColor(riskData.riskLevel) }}>
+              {riskData.riskScore.toFixed(0)}
+            </span>
+            <span className="text-sm text-slate-400 dark:text-slate-500">/ 100</span>
+            <Badge
+              className="ml-1"
+              style={{ backgroundColor: getRiskColor(riskData.riskLevel), color: "white" }}
+            >
+              {getRiskLabel(riskData.riskLevel)}
+            </Badge>
+          </div>
+          <div className="space-y-3">
+            {RISK_COMPONENTS.map(({ key, label, weight, max }) => {
+              const subScore = riskData[key];                        // 0–100 raw sub-score
+              const contribution = subScore != null ? subScore * weight : null; // weighted points
+              const pct = contribution != null ? (contribution / max) * 100 : 0;
+              return (
+                <div key={key}>
+                  <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+                    <span>{label}</span>
+                    <span className="font-mono tabular-nums">
+                      {contribution != null ? contribution.toFixed(0) : "—"} / {max}
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${pct}%`,
+                        backgroundColor: getRiskColor(riskData.riskLevel),
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-3">
+            Weights: groundwater 40% · trend 30% · reservoir 20% · seasonal 10%
+          </p>
+        </div>
+      )}
+
+      <div className="text-xs text-slate-400 dark:text-slate-500 space-y-1">
+        <p>Depth measured in metres below ground level (mbgl).</p>
+        <p>Lower values = water table closer to surface = healthier.</p>
+        <p>Trend compares same month, previous year.</p>
+      </div>
     </div>
   );
 }

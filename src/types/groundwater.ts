@@ -62,3 +62,44 @@ export function getGroundwaterColor(depthM: number | null): string {
   if (depthM <= 25) return '#ef4444';
   return '#7f1d1d';
 }
+
+// ── Risk score types ────────────────────────────────────────────────────────
+
+export type RiskLevel = 'low' | 'moderate' | 'high' | 'critical' | 'noData';
+
+export type ViewMode = 'depth' | 'risk';
+
+export interface WardRiskData {
+  wardNumber: number;
+  riskScore: number;
+  riskLevel: RiskLevel;
+  groundwaterComponent: number | null;
+  trendComponent: number | null;
+  reservoirComponent: number | null;
+  seasonalComponent: number | null;
+}
+
+export interface RiskApiResponse {
+  computedDate: string;
+  wards: WardRiskData[];
+}
+
+export function getRiskColor(level: RiskLevel): string {
+  switch (level) {
+    case 'low': return '#22c55e';
+    case 'moderate': return '#eab308';
+    case 'high': return '#f97316';
+    case 'critical': return '#dc2626';
+    default: return '#9ca3af';
+  }
+}
+
+export function getRiskLabel(level: RiskLevel): string {
+  switch (level) {
+    case 'low': return 'Low Risk';
+    case 'moderate': return 'Moderate Risk';
+    case 'high': return 'High Risk';
+    case 'critical': return 'Critical';
+    default: return 'No Data';
+  }
+}

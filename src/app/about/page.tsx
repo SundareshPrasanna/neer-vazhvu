@@ -318,6 +318,16 @@ export default function AboutPage() {
         <p className="text-slate-600 dark:text-slate-400">
           Year-over-year trends compare the same month across consecutive years. A change of more than 0.5m is classified as improving or declining.
         </p>
+
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Depth vs. Risk Score View</h3>
+        <p className="text-slate-600 dark:text-slate-400">
+          When the daily pipeline has run, a <span className="font-medium text-slate-700 dark:text-slate-300">Depth / Risk Score</span> toggle appears in the top-right of the map.
+          Switching to Risk Score recolours each ward by its composite risk score (0–100) rather than raw depth.
+          This view is more useful during summer months when seasonal vulnerability amplifies the danger of moderately deep water tables.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          Clicking any ward opens a detail panel showing both the current depth and — when available — the full composite risk score with a breakdown bar for each component (groundwater depth, year-on-year trend, reservoir stress, seasonal factor) showing its weighted contribution out of the component&apos;s maximum.
+        </p>
       </section>
 
       <Separator className="my-8" />
