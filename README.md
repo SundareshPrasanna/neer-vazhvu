@@ -2,7 +2,7 @@
 
 **Chennai Water Intelligence Dashboard** — An open-source platform that turns public water data into actionable intelligence for Chennai's 11 million residents.
 
-Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, and consumption patterns across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring**, and **daily intelligence briefings**.
+Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring**, **daily intelligence briefings**, and an **interactive lost water bodies map**.
 
 ## Features
 
@@ -17,6 +17,14 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 - **Choropleth Map** — Depth to water table across all 200 GCC wards
 - **Ward Detail Panel** — Click any ward for depth, status, and year-over-year trend
 - **Zone-level Aggregation** — Color-coded by CGWB classification (Healthy → Crisis)
+
+### Water Bodies Map
+- **1,635 Existing Water Bodies** — All current lakes, tanks, ponds, and reservoirs from OpenStreetMap
+- **15 Documented Lost / Encroached Water Bodies** — Curated from Care Earth Trust, NGT records, and IIT Madras research
+- **Toggle Layers** — Show/hide current and lost water bodies independently
+- **Status-coded Circles** — Fully lost (red), severely reduced (orange), partially encroached (yellow)
+- **Detail Panel** — Click any water body for historical area, surviving area, what replaced it, and source citations
+- **Area Loss Bar** — Visual indicator of how much of each water body survives
 
 ### River Health Map
 - **Interactive Polyline Map** — 4 rivers (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) colour-coded by CPCB water quality status
@@ -51,6 +59,7 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 ┌──────────────────────────────────────────┐       │
 │       Next.js Frontend (Vercel)          │◄──────┘
 │  Reads from Supabase + renders UI        │
+│  Static GeoJSON served from /public      │
 └──────────────────────────────────────────┘
 ```
 
@@ -62,8 +71,9 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 | [NASA POWER](https://power.larc.nasa.gov/) | Precipitation, temperature, humidity | Daily (2-day lag) |
 | [OpenCity Chennai](https://data.opencity.in/) | Ward-wise groundwater levels (200 wards) | Monthly |
 | [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
+| [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry | One-time fetch |
+| Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
 | [CPCB NWMP Annual Reports](https://cpcb.nic.in/nwmp-data/) | DO, BOD, pH, conductivity at 10 river monitoring stations (2015–2024) | Annual (manual refresh) |
-| [OpenStreetMap / Overpass API](https://overpass-api.de/) | River polyline geometry (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) | One-time fetch |
 
 ## Tech Stack
 
@@ -71,7 +81,7 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 |-------|------------|
 | Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS v4, shadcn/ui |
 | Charts | Recharts |
-| Maps | Leaflet with GCC ward boundary GeoJSON |
+| Maps | Leaflet + react-leaflet — GCC ward boundaries (GeoJSON) + OSM water body polygons + curated lost bodies (GeoJSON) |
 | Backend API | Python 3.12, FastAPI, statsforecast, pandas |
 | Database | Supabase (PostgreSQL) |
 | Deployment | Vercel (frontend), Railway (Python API) |
@@ -169,6 +179,16 @@ python -m scripts.seed_kaggle      # 15 years of reservoir data
 python -m scripts.seed_opencity    # Groundwater data (2021-2024)
 ```
 
+### 6. Refresh Water Body Data (optional)
+
+The current water bodies GeoJSON (`public/geojson/chennai-water-bodies-current.geojson`) is pre-generated and committed. To re-fetch from OpenStreetMap:
+
+```bash
+npx tsx scripts/fetch-water-bodies-osm.ts
+```
+
+This queries the Overpass API for all water bodies within the Chennai bounding box and saves 1,600+ polygon features to `public/geojson/`.
+
 ## API Endpoints
 
 ### Pipeline (protected — requires `Authorization: Bearer <CRON_SECRET>`)
@@ -192,15 +212,19 @@ python -m scripts.seed_opencity    # Groundwater data (2021-2024)
 
 ```
 neer-vazhvu/
+├── scripts/                      # One-time data scripts
+│   └── fetch-water-bodies-osm.ts # Fetch current water bodies from Overpass API
 ├── src/                          # Next.js frontend
 │   ├── app/                      # App Router pages
 │   │   ├── page.tsx              # Main dashboard
 │   │   ├── groundwater/          # Groundwater map page
+│   │   ├── water-bodies/         # Water bodies map page
 │   │   ├── rivers/               # River health map page
 │   │   └── about/                # About/methodology page
 │   ├── components/
 │   │   ├── dashboard/            # Dashboard components
 │   │   ├── groundwater/          # Map, legend, ward panel
+│   │   ├── water-bodies/         # Map, legend, detail panel
 │   │   ├── rivers/               # River map, panel, chart, legend
 │   │   ├── layout/               # Header, footer
 │   │   └── ui/                   # shadcn/ui primitives
@@ -221,10 +245,15 @@ neer-vazhvu/
 ├── supabase/
 │   └── migrations/               # SQL migrations (001, 002)
 ├── public/
-│   ├── geojson/                  # GCC ward boundaries + river polylines
-│   └── data/                     # Static JSON datasets (river quality)
+│   ├── geojson/                  # Static GeoJSON data
+│   │   ├── gcc-wards.geojson     # GCC ward boundaries (choropleth)
+│   │   ├── chennai-water-bodies-current.geojson  # OSM water bodies (1,635 features)
+│   │   ├── chennai-water-bodies-lost.geojson     # Curated lost water bodies (15 entries)
+│   │   └── chennai-rivers.geojson               # River polylines (Cooum, Adyar, etc.)
+│   └── data/                     # Static JSON datasets
+│       └── river-quality.json    # CPCB monitoring station readings (2015–2024)
 └── .github/
-    └── workflows/                # Daily data pipeline
+    └── workflows/                # CI + daily data pipeline
 ```
 
 ## Default Assumptions
@@ -258,6 +287,7 @@ Risk levels: **Low** (0–25) · **Moderate** (26–50) · **High** (51–75) ·
 - CMWSSB data may occasionally be stale (weekends, holidays).
 - Groundwater data from OpenCity may lag by months.
 - Forecasts use AutoARIMA which works best with 90+ days of history.
+- Lost water body coordinates and historical areas are approximate, sourced from academic and civic studies.
 
 ## Contributing
 
@@ -269,7 +299,7 @@ Areas where help is needed:
 
 - **Data quality** — Improving scraper resilience, handling CMWSSB page format changes
 - **Models** — Better forecasting (Prophet, LSTM), evaporation modeling
-- **Frontend** — Forecast chart overlays, risk map layer, briefing card component
+- **Water bodies data** — Adding more documented lost water bodies with verified coordinates and sources
 - **Tamil localization** — Translating the UI for local accessibility
 - **Testing** — Unit tests for scrapers, calculator, and intelligence modules
 
@@ -285,6 +315,8 @@ Please open an issue first to discuss significant changes.
 - **NASA POWER** for free, open weather data
 - **OpenCity Chennai** for ward-level groundwater datasets
 - **GCC** for ward boundary delimitation data
+- **OpenStreetMap contributors** for water body polygon and river geometry data
+- **Care Earth Trust** for comprehensive water body surveys and documentation
+- **IIT Madras** and the **National Green Tribunal** for research and legal records on water body encroachments
 - **CPCB** for annual river water quality monitoring reports
-- **OpenStreetMap contributors** for Chennai river geometry
 - Chennai's civic data community for making public data accessible

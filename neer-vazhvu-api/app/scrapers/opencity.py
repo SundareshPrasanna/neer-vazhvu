@@ -99,8 +99,18 @@ async def fetch_groundwater(year: int) -> list[GroundwaterRecord]:
 
     # Month column names to search for
     month_names = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
     ]
 
     for record in raw_records:
@@ -109,8 +119,16 @@ async def fetch_groundwater(year: int) -> list[GroundwaterRecord]:
             _find_column(
                 record,
                 [
-                    "Ward No", "Ward_No", "ward_no", "WARD_NO", "Ward Number",
-                    "S.No.", "S.No", "S. No.", "S. No", "Sl.No.",
+                    "Ward No",
+                    "Ward_No",
+                    "ward_no",
+                    "WARD_NO",
+                    "Ward Number",
+                    "S.No.",
+                    "S.No",
+                    "S. No.",
+                    "S. No",
+                    "Sl.No.",
                 ],
             )
         )
@@ -130,7 +148,12 @@ async def fetch_groundwater(year: int) -> list[GroundwaterRecord]:
             depth = _parse_depth(
                 _find_column(
                     record,
-                    [month_name, month_name.upper(), month_name.lower(), f"{month_name}."],
+                    [
+                        month_name,
+                        month_name.upper(),
+                        month_name.lower(),
+                        f"{month_name}.",
+                    ],
                 )
             )
             if depth is not None:

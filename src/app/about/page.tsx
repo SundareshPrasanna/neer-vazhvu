@@ -1,5 +1,27 @@
 import { Separator } from "@/components/ui/separator";
 
+const LOST_WATER_BODY_SOURCES: {
+  name: string;
+  status: "Fully lost" | "Severely reduced" | "Partially encroached";
+  source: string;
+}[] = [
+  { name: "Long Tank (Otteri Nullah)", status: "Fully lost", source: "Care Earth Trust / IIT Madras Water Bodies Study" },
+  { name: "Nungambakkam Tank", status: "Fully lost", source: "Survey of India historical maps / CMDA" },
+  { name: "Kodambakkam Lake", status: "Fully lost", source: "Care Earth Trust water body survey" },
+  { name: "Virugambakkam Lake", status: "Severely reduced", source: "CMDA Master Plan / Care Earth Trust" },
+  { name: "Pallikaranai Marsh", status: "Severely reduced", source: "Care Earth Trust / Ashoka Trust for Research in Ecology" },
+  { name: "Perungudi Lake", status: "Fully lost", source: "Care Earth Trust / Greater Chennai Corporation records" },
+  { name: "Madipakkam Lake", status: "Partially encroached", source: "Madras High Court / NGT records" },
+  { name: "Sholinganallur Marshland", status: "Severely reduced", source: "Salim Ali Centre for Ornithology / Care Earth Trust" },
+  { name: "Villivakkam Lake", status: "Partially encroached", source: "CMDA / Revenue records / Care Earth Trust" },
+  { name: "Kolathur Lake", status: "Partially encroached", source: "Care Earth Trust water body inventory" },
+  { name: "Tambaram Tank", status: "Severely reduced", source: "Survey of India maps / Tamil Nadu PWD records" },
+  { name: "Manali Wetlands", status: "Severely reduced", source: "TNPCB / Tamil Nadu Pollution Control Board reports" },
+  { name: "Ennore Creek Wetlands", status: "Severely reduced", source: "Coastal Management Society / National Green Tribunal (Chennai)" },
+  { name: "Muttukadu Backwaters", status: "Partially encroached", source: "CMDA Coastal Regulation Zone / Care Earth Trust" },
+  { name: "Chetpet Lake", status: "Severely reduced", source: "GCC / Care Earth Trust / Madras High Court order 2018" },
+];
+
 export const metadata = {
   title: "About — Neer Vazhvu",
   description: "Methodology, data sources, and assumptions behind the Chennai Water Intelligence Dashboard.",
@@ -125,6 +147,18 @@ export default function AboutPage() {
             url="https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management"
             description="15 years of daily reservoir data (2004–2019) compiled by Sudalai Rajkumar. Used as additional historical training data for the forecasting model."
             frequency="One-time historical seed"
+          />
+          <DataSource
+            name="OpenStreetMap (Overpass API)"
+            url="https://overpass-api.de/"
+            description="All current water bodies (lakes, tanks, reservoirs, ponds, marshes) within the Chennai metropolitan bounding box. Queried via the Overpass API and saved as a static GeoJSON. 1,635 polygon features, ~95,000 ha total surface. Also source for river polyline geometry (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar). Data reflects OSM contributor edits as of the last script run."
+            frequency="Static GeoJSON (re-run script to refresh)"
+          />
+          <DataSource
+            name="Care Earth Trust / NGT / CMDA — Lost Water Bodies"
+            url="https://www.careearth.org/"
+            description="15 manually curated lost or encroached water bodies, compiled from published research, court records, and environmental organisation reports. See the Water Bodies Map section below for per-record provenance."
+            frequency="Manually curated (static)"
           />
           <DataSource
             name="CPCB — Status of Water Quality in India"
@@ -284,6 +318,72 @@ export default function AboutPage() {
         <p className="text-slate-600 dark:text-slate-400">
           Year-over-year trends compare the same month across consecutive years. A change of more than 0.5m is classified as improving or declining.
         </p>
+      </section>
+
+      <Separator className="my-8" />
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Water Bodies Map</h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          The Water Bodies page shows two overlapping datasets: surviving water bodies sourced live from OpenStreetMap,
+          and a curated set of 15 historically significant water bodies that have been lost or severely encroached upon.
+        </p>
+
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Current Water Bodies (OpenStreetMap)</h3>
+        <p className="text-slate-600 dark:text-slate-400 text-sm">
+          Extracted via the{" "}
+          <a href="https://overpass-api.de/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">Overpass API</a>{" "}
+          using tags <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">natural=water</span>,{" "}
+          <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">water=lake|reservoir|pond|tank</span>, and{" "}
+          <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">landuse=reservoir</span> within the Chennai bounding box.
+          The script (<span className="font-mono text-xs">scripts/fetch-water-bodies-osm.ts</span>) saves a static GeoJSON and can be re-run to pull fresh data.
+          Features smaller than 0.1 ha are excluded.
+        </p>
+
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Lost &amp; Encroached Water Bodies — Per-Record Sources</h3>
+        <p className="text-slate-600 dark:text-slate-400 text-sm">
+          Coordinates are approximate centres of the historical water body extent, cross-referenced against
+          Survey of India maps, OpenStreetMap, Wikipedia, and published research.
+          Area figures are the best available estimates from cited sources; many historical extents are themselves approximate.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
+                <th className="pb-2 font-medium">Water body</th>
+                <th className="pb-2 font-medium">Status</th>
+                <th className="pb-2 font-medium">Source / Reference</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-700 dark:text-slate-300">
+              {LOST_WATER_BODY_SOURCES.map((row) => (
+                <tr key={row.name} className="border-b border-slate-100 dark:border-slate-800">
+                  <td className="py-2 font-medium">{row.name}</td>
+                  <td className="py-2">
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
+                      row.status === "Fully lost"
+                        ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                        : row.status === "Severely reduced"
+                        ? "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300"
+                        : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300"
+                    }`}>
+                      {row.status}
+                    </span>
+                  </td>
+                  <td className="py-2 text-slate-500 dark:text-slate-400">{row.source}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Limitations</h3>
+        <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-1.5 text-sm">
+          <li>Lost water body positions are approximate centre-points, not precise historical polygon boundaries.</li>
+          <li>Historical area estimates vary across sources; figures shown represent the most commonly cited value.</li>
+          <li>The curated list of 15 entries is illustrative, not exhaustive. Chennai has lost 60–100+ water bodies depending on the methodology used to count.</li>
+          <li>The OSM current water bodies dataset reflects volunteer-contributed data and may be incomplete, especially for small seasonal ponds.</li>
+        </ul>
       </section>
 
       <Separator className="my-8" />

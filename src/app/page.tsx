@@ -304,8 +304,8 @@ export default async function DashboardPage() {
   }
 
   // Try to fetch real data; fall back to demo on any error
-  let reservoirData: Awaited<ReturnType<typeof getReservoirData>>;
-  let groundwaterData: Awaited<ReturnType<typeof getGroundwaterData>>;
+  let reservoirData = null;
+  let groundwaterData = null;
   try {
     [reservoirData, groundwaterData] = await Promise.all([
       getReservoirData(),
@@ -313,7 +313,6 @@ export default async function DashboardPage() {
     ]);
   } catch {
     // Supabase connection failed — show demo mode
-    return <DemoDashboard />;
   }
 
   if (!reservoirData) {

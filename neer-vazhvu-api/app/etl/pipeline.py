@@ -227,9 +227,7 @@ async def _step_compute_estimate() -> dict:
         "avg_monthly_inflow", {"target_month": current_month}
     ).execute()
     seasonal_avg = (
-        seasonal_res.data[0]["avg_inflow_mcft_per_day"]
-        if seasonal_res.data
-        else 0
+        seasonal_res.data[0]["avg_inflow_mcft_per_day"] if seasonal_res.data else 0
     ) or 0
 
     # 4. Compute
@@ -298,7 +296,9 @@ async def run_daily() -> list[dict]:
     # Data collection (fail-independent)
     steps.append(await _run_step("scrape_cmwssb", _step_scrape_cmwssb))
     steps.append(await _run_step("fetch_nasa", _step_fetch_nasa))
-    steps.append(await _run_step("fetch_opencity", _step_fetch_opencity, required=False))
+    steps.append(
+        await _run_step("fetch_opencity", _step_fetch_opencity, required=False)
+    )
 
     # ETL (depends on fresh data but runs even if scraping had issues)
     steps.append(await _run_step("compute_estimate", _step_compute_estimate))
