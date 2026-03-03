@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { RiverQualityChart } from "@/components/rivers/river-quality-chart";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
-import { QUALITY_COLORS, QUALITY_LABELS } from "@/types/river-quality";
+import {
+  QUALITY_COLORS,
+  QUALITY_LABELS,
+  TREND_DO_THRESHOLD,
+  TREND_BOD_THRESHOLD,
+  computeStationTrend,
+} from "@/types/river-quality";
 
 interface RiverPanelProps {
   selected: SelectedRiver;
@@ -34,6 +40,16 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
   // Latest DO reading from active station
   const latestReading = [...activeStation.readings].sort((a, b) => b.year - a.year)[0];
   const latestDO = latestReading?.do_mgl;
+
+  // 3-year trend for the active station
+  const trend = computeStationTrend(activeStation.readings);
+
+  const TREND_CONFIG = {
+    improving: { label: "↑ Improving", className: "text-green-600 dark:text-green-400" },
+    worsening: { label: "↓ Worsening", className: "text-red-600 dark:text-red-400" },
+    mixed:     { label: "~ Mixed",     className: "text-orange-500 dark:text-orange-400" },
+    stable:    { label: "→ Stable",    className: "text-slate-500 dark:text-slate-400" },
+  } as const;
 
   return (
     <div className="bg-white dark:bg-slate-900 w-full h-full p-4 sm:p-6 overflow-y-auto">
@@ -106,6 +122,66 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
           {river.cpcb_class}
         </span>
       </div>
+
+      {/* 3-year trend */}
+      {trend && (
+        <div className="border border-slate-100 dark:border-slate-800 rounded-lg px-3 py-2.5 mb-5">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+              3-year trend
+            </span>
+            <span className={`text-xs font-semibold ${TREND_CONFIG[trend.direction].className}`}>
+              {TREND_CONFIG[trend.direction].label}
+              <span className="font-normal text-slate-400 dark:text-slate-500 ml-1">
+                ({trend.start_year}–{trend.end_year})
+              </span>
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-x-3 text-xs">
+            {trend.do_delta !== null && (
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-slate-500 dark:text-slate-400">DO</span>
+                <span className={`font-mono ${
+                  trend.do_delta >= TREND_DO_THRESHOLD
+                    ? "text-green-600 dark:text-green-400"
+                    : trend.do_delta <= -TREND_DO_THRESHOLD
+                    ? "text-red-600 dark:text-red-400"
+                    : "text-slate-500 dark:text-slate-400"
+                }`}>
+                  {trend.do_delta > 0
+                    ? `↑ +${trend.do_delta.toFixed(1)}`
+                    : trend.do_delta < 0
+                    ? `↓ ${trend.do_delta.toFixed(1)}`
+                    : "→ 0.0"}{" "}
+                  mg/L
+                </span>
+              </div>
+            )}
+            {trend.bod_delta !== null && (
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-slate-500 dark:text-slate-400">BOD</span>
+                <span className={`font-mono ${
+                  trend.bod_delta <= -TREND_BOD_THRESHOLD
+                    ? "text-green-600 dark:text-green-400"
+                    : trend.bod_delta >= TREND_BOD_THRESHOLD
+                    ? "text-red-600 dark:text-red-400"
+                    : "text-slate-500 dark:text-slate-400"
+                }`}>
+                  {trend.bod_delta > 0
+                    ? `↑ +${trend.bod_delta.toFixed(1)}`
+                    : trend.bod_delta < 0
+                    ? `↓ ${trend.bod_delta.toFixed(1)}`
+                    : "→ 0.0"}{" "}
+                  mg/L
+                </span>
+              </div>
+            )}
+          </div>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 leading-snug">
+            DO ↑ = better &nbsp;·&nbsp; BOD ↓ = better
+          </p>
+        </div>
+      )}
 
       {/* Station selector */}
       {river.stations.length > 1 && (

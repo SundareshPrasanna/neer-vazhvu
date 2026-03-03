@@ -31,7 +31,8 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 - **Interactive Polyline Map** — 4 rivers (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) colour-coded by CPCB water quality status
 - **Monitoring Station Markers** — 10 stations with individual DO/BOD readings
 - **DO/BOD Time-Series Chart** — Dual-axis line chart (2015–2024) per station with reference lines at the aquatic life minimum (DO = 4 mg/L) and clean river standard (BOD = 2 mg/L)
-- **River Detail Panel** — Status badge, CPCB class, station selector, embedded explainer for DO and BOD
+- **River Detail Panel** — Status badge, CPCB class, 3-year trend indicator, station selector, embedded explainer for DO and BOD
+- **3-Year Trend** — Per monitoring station: direction badge (Improving / Worsening / Stable / Mixed) with signed DO and BOD deltas derived from the last 3 annual readings. Threshold: ≥ 0.3 mg/L DO or ≥ 3 mg/L BOD = meaningful change.
 - **Industrial Pollution Sources Overlay** — 7 major facilities (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek) colour-coded by type; click for operator details, pollutant pills, incident timeline, and NGT orders. OSM `landuse=industrial` polygons shown as translucent overlay
 
 ### Intelligence Layer (Python Service)
