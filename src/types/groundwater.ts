@@ -1,6 +1,7 @@
 export interface GroundwaterWard {
   wardNumber: number;
   wardName: string;
+  wardNameTa?: string;
   zone: string;
   depthM: number | null;
   trend: 'improving' | 'stable' | 'declining' | 'unknown';

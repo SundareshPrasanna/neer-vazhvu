@@ -9,6 +9,7 @@ import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
 import { QUALITY_COLORS } from "@/types/river-quality";
 import type { IndustrialPollutionData, PollutionSource } from "@/types/industrial-pollution";
 import { SOURCE_TYPE_COLORS } from "@/types/industrial-pollution";
+import { useLanguage } from "@/lib/i18n/context";
 import "leaflet/dist/leaflet.css";
 
 interface CombinedRiversMapProps {
@@ -26,6 +27,7 @@ export function CombinedRiversMap({
   onSelectRiver,
   onSelectSource,
 }: CombinedRiversMapProps) {
+  const { t, language } = useLanguage();
   const [riversGeoJSON, setRiversGeoJSON] = useState<FeatureCollection | null>(null);
   const [zonesGeoJSON, setZonesGeoJSON] = useState<FeatureCollection | null>(null);
 
@@ -65,8 +67,20 @@ export function CombinedRiversMap({
     features: pollutionData.sources.map((source) => ({
       type: "Feature" as const,
       geometry: { type: "Point" as const, coordinates: [source.lng, source.lat] },
-      properties: { id: source.id, name: source.name, type: source.type },
+      properties: { id: source.id, name: source.name, name_ta: source.name_ta, type: source.type },
     })),
+  };
+
+  const formatStretch = (stretch: string): string => {
+    const normalized = stretch.trim().toLowerCase();
+    if (normalized === "upper") return t("rivers.upper");
+    if (normalized === "middle") return t("rivers.middle");
+    if (normalized === "lower") return t("rivers.lower");
+    if (normalized === "estuary") return t("rivers.estuary");
+    if (normalized === "north chennai") return t("rivers.north_chennai");
+    if (normalized === "south chennai") return t("rivers.south_chennai");
+    if (normalized === "lower (ennore)" || normalized === "lower ennore") return t("rivers.lower_ennore");
+    return stretch;
   };
 
   // Industrial zone polygons — light orange wash, background context
@@ -81,7 +95,7 @@ export function CombinedRiversMap({
 
   const onEachZone = (feature: Feature, layer: Layer) => {
     const props = feature.properties as { name?: string };
-    layer.bindTooltip(props.name || "Industrial Zone", { sticky: true });
+    layer.bindTooltip(props.name || t("rivers_legend.industrial_zone"), { sticky: true });
   };
 
   // River polylines — quality-coloured, prominent
@@ -93,10 +107,11 @@ export function CombinedRiversMap({
   };
 
   const onEachRiver = (feature: Feature, layer: Layer) => {
-    const props = feature.properties as { river_id: string; name: string };
+    const props = feature.properties as { river_id: string; name: string; name_ta?: string };
     const river = qualityData.rivers.find((r) => r.id === props.river_id);
+    const riverLabel = language === "ta" ? (props.name_ta ?? props.name) : props.name;
     layer.bindTooltip(
-      `<strong>${props.name}</strong><br/><span style="font-size:11px;color:#64748b">${river?.cpcb_class ?? ""}</span>`,
+      `<strong>${riverLabel}</strong><br/><span style="font-size:11px;color:#64748b">${river?.cpcb_class ?? ""}</span>`,
       { sticky: true }
     );
     layer.on({
@@ -135,7 +150,7 @@ export function CombinedRiversMap({
       stretch: string;
     };
     layer.bindTooltip(
-      `<strong>${props.name}</strong><br/><span style="font-size:11px;color:#64748b">${props.stretch}</span>`,
+      `<strong>${props.name}</strong><br/><span style="font-size:11px;color:#64748b">${formatStretch(props.stretch)}</span>`,
       { sticky: true }
     );
     layer.on({
@@ -167,8 +182,9 @@ export function CombinedRiversMap({
   };
 
   const onEachSource = (feature: Feature, layer: Layer) => {
-    const props = feature.properties as { id: string; name: string };
-    layer.bindTooltip(`<strong>${props.name}</strong>`, { sticky: true });
+    const props = feature.properties as { id: string; name: string; name_ta?: string };
+    const sourceLabel = language === "ta" ? (props.name_ta ?? props.name) : props.name;
+    layer.bindTooltip(`<strong>${sourceLabel}</strong>`, { sticky: true });
     layer.on({
       click: () => {
         const source = pollutionData.sources.find((s) => s.id === props.id);
@@ -182,7 +198,7 @@ export function CombinedRiversMap({
   if (!riversGeoJSON || !zonesGeoJSON) {
     return (
       <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-slate-500 dark:text-slate-400">Loading map...</span>
+        <span className="text-slate-500 dark:text-slate-400">{t("common.loading_map")}</span>
       </div>
     );
   }

@@ -12,40 +12,53 @@ import {
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { WardHistoryPoint, WardHistoryResponse } from "@/types/groundwater";
-
-const MONTH_NAMES_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+import { useLanguage } from "@/lib/i18n/context";
 
 interface WardHistoryChartProps {
   wardNumber: number;
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-function renderTooltip({ active, payload }: { active?: boolean; payload?: readonly any[] }) {
-  if (!active || !payload?.length) return null;
-  const d = payload[0].payload as WardHistoryPoint;
-  if (!d?.date) return null;
-
-  const label = `${MONTH_NAMES[d.month - 1]} ${d.year}`;
-
-  return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 text-xs">
-      <div className="text-slate-500 dark:text-slate-400">{label}</div>
-      {d.depthM !== null ? (
-        <div className="font-semibold text-sky-600 dark:text-sky-400">
-          {d.depthM.toFixed(1)}m depth
-        </div>
-      ) : (
-        <div className="text-slate-400">No data</div>
-      )}
-    </div>
-  );
-}
-
 export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
+  const { t, language } = useLanguage();
+  const locale = language === "ta" ? "ta-IN" : "en-IN";
   const [history, setHistory] = useState<WardHistoryPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const parseMonthDate = (value: string): Date | null => {
+    const [year, month] = value.split("-").map(Number);
+    if (!Number.isFinite(year) || !Number.isFinite(month)) return null;
+    return new Date(year, month - 1, 1);
+  };
+
+  const formatMonthYear = (date: string) => {
+    const parsed = parseMonthDate(date);
+    if (!parsed) return date;
+    return parsed.toLocaleDateString(locale, {
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const renderTooltip = ({ active, payload }: { active?: boolean; payload?: readonly any[] }) => {
+    if (!active || !payload?.length) return null;
+    const d = payload[0].payload as WardHistoryPoint;
+    if (!d?.date) return null;
+
+    return (
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 text-xs">
+        <div className="text-slate-500 dark:text-slate-400">{formatMonthYear(d.date)}</div>
+        {d.depthM !== null ? (
+          <div className="font-semibold text-sky-600 dark:text-sky-400">
+            {d.depthM.toFixed(1)}m {t("ward.tooltip_depth")}
+          </div>
+        ) : (
+          <div className="text-slate-400">{t("gw.no_data_lc")}</div>
+        )}
+      </div>
+    );
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -76,7 +89,7 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
     return (
       <div>
         <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
-          Historical Trend
+          {t("ward.history_trend")}
         </h4>
         <Skeleton className="h-44 w-full rounded-lg" />
       </div>
@@ -87,10 +100,10 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
     return (
       <div>
         <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
-          Historical Trend
+          {t("ward.history_trend")}
         </h4>
         <div className="h-44 flex items-center justify-center text-slate-400 dark:text-slate-500 text-sm">
-          Unable to load historical data.
+          {t("ward.history_load_error")}
         </div>
       </div>
     );
@@ -102,10 +115,10 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
     return (
       <div>
         <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
-          Historical Trend
+          {t("ward.history_trend")}
         </h4>
         <div className="h-44 flex items-center justify-center text-slate-400 dark:text-slate-500 text-sm">
-          No historical data available for this ward.
+          {t("ward.history_none")}
         </div>
       </div>
     );
@@ -114,7 +127,7 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
   return (
     <div>
       <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
-        Historical Trend
+        {t("ward.history_trend")}
       </h4>
       <div className="h-44">
         <ResponsiveContainer width="100%" height="100%">
@@ -127,8 +140,12 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
               axisLine={false}
               interval={5}
               tickFormatter={(d: string) => {
-                const [y, m] = d.split("-");
-                return `${MONTH_NAMES_SHORT[parseInt(m, 10) - 1]} '${y.slice(2)}`;
+                const parsed = parseMonthDate(d);
+                if (!parsed) return d;
+                return parsed.toLocaleDateString(locale, {
+                  month: "short",
+                  year: "2-digit",
+                });
               }}
             />
             <YAxis
@@ -152,7 +169,7 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
         </ResponsiveContainer>
       </div>
       <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 text-center">
-        Y-axis inverted: higher = shallower (healthier)
+        {t("ward.history_yaxis_note")}
       </p>
     </div>
   );

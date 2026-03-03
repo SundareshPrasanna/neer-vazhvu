@@ -30,7 +30,9 @@ export interface RiverData {
   overall_status: RiverQualityStatus;
   cpcb_class: string;
   description: string;
+  description_ta?: string;
   notes: string;
+  notes_ta?: string;
   stations: RiverStation[];
 }
 

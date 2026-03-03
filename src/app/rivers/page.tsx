@@ -8,6 +8,16 @@ import { RiversLegend } from "@/components/rivers/rivers-legend";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
 import { QUALITY_COLORS } from "@/types/river-quality";
 import type { IndustrialPollutionData, PollutionSource } from "@/types/industrial-pollution";
+import { useLanguage } from "@/lib/i18n/context";
+
+function RiversMapLoading() {
+  const { t } = useLanguage();
+  return (
+    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+      <span className="text-slate-500 dark:text-slate-400">{t("rivers_page.loading_map")}</span>
+    </div>
+  );
+}
 
 // Leaflet must be loaded client-side only (no SSR)
 const CombinedRiversMap = dynamic(
@@ -17,15 +27,12 @@ const CombinedRiversMap = dynamic(
     ),
   {
     ssr: false,
-    loading: () => (
-      <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-slate-500 dark:text-slate-400">Loading map...</span>
-      </div>
-    ),
+    loading: () => <RiversMapLoading />,
   }
 );
 
 export default function RiversPage() {
+  const { t } = useLanguage();
   const [qualityData, setQualityData] = useState<RiverQualityData | null>(null);
   const [pollutionData, setPollutionData] = useState<IndustrialPollutionData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -49,7 +56,7 @@ export default function RiversPage() {
     return (
       <div className="h-[calc(100vh-64px)] flex items-center justify-center">
         <span className="text-slate-500 dark:text-slate-400">
-          Loading river data...
+          {t("rivers_page.loading")}
         </span>
       </div>
     );
@@ -60,9 +67,9 @@ export default function RiversPage() {
       <div className="h-[calc(100vh-64px)] flex items-center justify-center">
         <div className="text-center text-slate-500 dark:text-slate-400">
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-            River Health
+            {t("rivers_page.title")}
           </h1>
-          <p>River data not available.</p>
+          <p>{t("rivers_page.no_data")}</p>
         </div>
       </div>
     );
@@ -80,22 +87,22 @@ export default function RiversPage() {
       {/* Stats bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300">
-          {qualityData.rivers.length} rivers · {pollutionData.sources.length} pollution sources
+          {qualityData.rivers.length} {t("rivers_page.rivers")} · {pollutionData.sources.length} {t("rivers_page.poll_sources")}
         </span>
         {cooum && cooumLatestDO !== undefined && cooumLatestDO !== null && (
           <span className="text-slate-500 dark:text-slate-400">
-            Cooum DO:{" "}
+            {t("rivers_page.cooum_do")}{" "}
             <span
               className="font-semibold"
               style={{ color: QUALITY_COLORS[cooum.overall_status] }}
             >
               ~{cooumLatestDO} mg/L
             </span>{" "}
-            <span className="text-xs">(aquatic life needs ≥4 mg/L)</span>
+            <span className="text-xs">{t("rivers_page.aquatic_note")}</span>
           </span>
         )}
         <span className="text-slate-400 dark:text-slate-500 text-xs ml-auto">
-          Quality data: {qualityData.data_year_range[0]}–{qualityData.data_year_range[1]}
+          {t("rivers_page.quality_data")} {qualityData.data_year_range[0]}–{qualityData.data_year_range[1]}
         </span>
       </div>
 
@@ -119,15 +126,15 @@ export default function RiversPage() {
           {/* Source note overlay — top left */}
           <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000] bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
             <div className="text-xs text-slate-500 dark:text-slate-400">
-              Quality:{" "}
+              {t("rivers_page.quality_label")}{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-300">
-                CPCB Annual Reports
+                {t("rivers_page.quality_value")}
               </span>
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400">
-              Sources:{" "}
+              {t("rivers_page.sources_label")}{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-300">
-                NGT orders · CPCB · Academic studies
+                {t("rivers_page.sources_value")}
               </span>
             </div>
           </div>

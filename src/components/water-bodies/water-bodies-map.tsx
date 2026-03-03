@@ -11,6 +11,7 @@ import type {
   SelectedWaterBody,
 } from "@/types/water-bodies";
 import { STATUS_COLORS } from "@/types/water-bodies";
+import { useLanguage } from "@/lib/i18n/context";
 import "leaflet/dist/leaflet.css";
 
 interface WaterBodiesMapProps {
@@ -18,6 +19,7 @@ interface WaterBodiesMapProps {
 }
 
 export function WaterBodiesMap({ onSelect }: WaterBodiesMapProps) {
+  const { t, language } = useLanguage();
   const [currentGeoJSON, setCurrentGeoJSON] =
     useState<GeoJSON.FeatureCollection | null>(null);
   const [lostGeoJSON, setLostGeoJSON] =
@@ -60,11 +62,16 @@ export function WaterBodiesMap({ onSelect }: WaterBodiesMapProps) {
 
   const onEachCurrent = (feature: Feature, layer: Layer) => {
     const props = feature.properties as CurrentWaterBodyProperties;
-    const name = props.name || "Unnamed water body";
+    const name =
+      language === "ta"
+        ? (props.name_ta?.trim() || `${t("wb_panel.water_body")} #${props.osm_id}`)
+        : (props.name || t("wb_panel.unnamed"));
     const areaText = props.area_ha
       ? `${props.area_ha.toLocaleString()} ha`
-      : "unknown";
-    const type = props.water_type || "water";
+      : t("wb_panel.unknown");
+    const normalizedType = (props.water_type || "water").toLowerCase();
+    const typeLabel = t(`wb_type.${normalizedType}`);
+    const type = typeLabel.startsWith("wb_type.") ? props.water_type || t("wb_panel.water_body") : typeLabel;
 
     layer.bindTooltip(
       `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${type} · ${areaText}</span>`,
@@ -90,15 +97,19 @@ export function WaterBodiesMap({ onSelect }: WaterBodiesMapProps) {
 
   const onEachLost = (feature: Feature, layer: Layer) => {
     const props = feature.properties as LostWaterBodyProperties;
+    const name =
+      language === "ta"
+        ? (props.name_ta?.trim() || t("wb_panel.water_body"))
+        : props.name;
     const statusLabel =
       props.status === "fully_lost"
-        ? "Fully Lost"
+        ? t("wb_panel.fully_lost")
         : props.status === "severely_reduced"
-        ? "Severely Reduced"
-        : "Partially Encroached";
+        ? t("wb_panel.severely_reduced")
+        : t("wb_panel.partially_encroached");
 
     layer.bindTooltip(
-      `<strong>${props.name}</strong><br/><span style="font-size:11px;color:#64748b">${statusLabel} · was ${props.historical_area_ha} ha</span>`,
+      `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${statusLabel} · ${t("wb_map.was_area")} ${props.historical_area_ha} ha</span>`,
       { sticky: true }
     );
 
@@ -137,7 +148,7 @@ export function WaterBodiesMap({ onSelect }: WaterBodiesMapProps) {
   if (!currentGeoJSON && !lostGeoJSON) {
     return (
       <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-slate-500 dark:text-slate-400">Loading map...</span>
+        <span className="text-slate-500 dark:text-slate-400">{t("common.loading_map")}</span>
       </div>
     );
   }
@@ -155,7 +166,7 @@ export function WaterBodiesMap({ onSelect }: WaterBodiesMapProps) {
       />
       <LayersControl position="topright">
         {currentGeoJSON && (
-          <LayersControl.Overlay name="Existing water bodies" checked>
+          <LayersControl.Overlay name={t("wb_map.existing_layer")} checked>
             <GeoJSON
               data={currentGeoJSON}
               style={currentStyle}
@@ -164,7 +175,7 @@ export function WaterBodiesMap({ onSelect }: WaterBodiesMapProps) {
           </LayersControl.Overlay>
         )}
         {lostGeoJSON && (
-          <LayersControl.Overlay name="Lost / encroached" checked>
+          <LayersControl.Overlay name={t("wb_map.lost_layer")} checked>
             <GeoJSON
               data={lostGeoJSON}
               pointToLayer={pointToLayer}

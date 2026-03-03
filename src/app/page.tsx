@@ -278,6 +278,7 @@ async function getGroundwaterData(): Promise<GroundwaterApiResponse | null> {
     return {
       wardNumber: r.ward_number as number,
       wardName: (r.ward_name as string) || `Ward ${r.ward_number}`,
+      wardNameTa: (r.ward_name_ta as string) || (r.ward_name_tamil as string) || undefined,
       zone: (r.zone_name as string) || "",
       depthM: r.depth_to_water_m as number,
       trend,

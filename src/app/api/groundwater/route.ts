@@ -83,6 +83,7 @@ export async function GET(request: NextRequest) {
     return {
       wardNumber: r.ward_number,
       wardName: r.ward_name || `Ward ${r.ward_number}`,
+      wardNameTa: r.ward_name_ta || r.ward_name_tamil || undefined,
       zone: r.zone_name || '',
       depthM: r.depth_to_water_m,
       trend,

@@ -22,6 +22,8 @@ import {
 import { formatNumber, formatPct } from "@/lib/utils/format";
 import type { ReservoirSummary } from "@/types/reservoir";
 import type { ReservoirDailyRecord } from "@/lib/mock-data";
+import { useLanguage } from "@/lib/i18n/context";
+import { getReservoirDisplayName } from "@/lib/i18n/reservoir-name";
 
 interface ReservoirDetailDialogProps {
   reservoir: ReservoirSummary | null;
@@ -49,6 +51,8 @@ export function ReservoirDetailDialog({
   open,
   onOpenChange,
 }: ReservoirDetailDialogProps) {
+  const { t, language } = useLanguage();
+  const locale = language === "ta" ? "ta-IN" : "en-IN";
   const [activeDays, setActiveDays] = useState(90);
 
   if (!reservoir) return null;
@@ -57,7 +61,7 @@ export function ReservoirDetailDialog({
 
   const storageData = filtered.map((r) => ({
     date: r.date,
-    label: new Date(r.date + "T00:00:00").toLocaleDateString("en-IN", {
+    label: new Date(r.date + "T00:00:00").toLocaleDateString(locale, {
       day: "numeric",
       month: "short",
     }),
@@ -67,7 +71,7 @@ export function ReservoirDetailDialog({
 
   const flowData = filtered.map((r) => ({
     date: r.date,
-    label: new Date(r.date + "T00:00:00").toLocaleDateString("en-IN", {
+    label: new Date(r.date + "T00:00:00").toLocaleDateString(locale, {
       day: "numeric",
       month: "short",
     }),
@@ -77,7 +81,7 @@ export function ReservoirDetailDialog({
 
   const rainfallData = filtered.map((r) => ({
     date: r.date,
-    label: new Date(r.date + "T00:00:00").toLocaleDateString("en-IN", {
+    label: new Date(r.date + "T00:00:00").toLocaleDateString(locale, {
       day: "numeric",
       month: "short",
     }),
@@ -101,41 +105,49 @@ export function ReservoirDetailDialog({
   );
   const minStorage = Math.min(...history.map((r) => r.storage));
   const maxStorage = Math.max(...history.map((r) => r.storage));
+  const formatDate = (value: string) =>
+    new Date(`${value}T00:00:00`).toLocaleDateString(locale, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl sm:max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">{reservoir.displayName}</DialogTitle>
+          <DialogTitle className="text-xl">
+            {getReservoirDisplayName(reservoir.name, t, reservoir.displayName)}
+          </DialogTitle>
         </DialogHeader>
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
           <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-3">
-            <div className="text-xs text-slate-500 dark:text-slate-400">Current Storage</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("dash.current_storage")}</div>
             <div className="text-lg font-bold text-blue-700 dark:text-blue-400">
               {formatNumber(reservoir.currentStorage)} mcft
             </div>
             <div className="text-xs text-slate-400 dark:text-slate-500">
-              {formatPct(storagePct)} of capacity
+              {formatPct(storagePct)} {t("dash.of_capacity")}
             </div>
           </div>
           <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3">
-            <div className="text-xs text-slate-500 dark:text-slate-400">Full Capacity</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("dash.full_capacity")}</div>
             <div className="text-lg font-bold text-slate-700 dark:text-slate-300">
               {formatNumber(reservoir.capacity)} mcft
             </div>
           </div>
           <div className="bg-green-50 dark:bg-green-950 rounded-lg p-3">
-            <div className="text-xs text-slate-500 dark:text-slate-400">Avg Inflow (30d)</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("dash.avg_inflow_30d")}</div>
             <div className="text-lg font-bold text-green-700 dark:text-green-400">
-              {formatNumber(avgInflow30d)} cusecs
+              {formatNumber(avgInflow30d)} {t("dash.cusecs_unit")}
             </div>
           </div>
           <div className="bg-red-50 dark:bg-red-950 rounded-lg p-3">
-            <div className="text-xs text-slate-500 dark:text-slate-400">Avg Outflow (30d)</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("dash.avg_outflow_30d")}</div>
             <div className="text-lg font-bold text-red-700 dark:text-red-400">
-              {formatNumber(avgOutflow30d)} cusecs
+              {formatNumber(avgOutflow30d)} {t("dash.cusecs_unit")}
             </div>
           </div>
         </div>
@@ -143,9 +155,9 @@ export function ReservoirDetailDialog({
         {/* Quick facts row */}
         <div className="flex flex-wrap gap-4 text-xs text-slate-500 dark:text-slate-400 mt-1">
           <span>
-            Year range: {formatNumber(minStorage)}–{formatNumber(maxStorage)} mcft
+            {t("dash.year_range")} {formatNumber(minStorage)}–{formatNumber(maxStorage)} mcft
           </span>
-          <span>Rainfall (30d): {totalRainfall30d} mm</span>
+          <span>{t("dash.rainfall_30d")} {totalRainfall30d} mm</span>
         </div>
 
         {/* Storage bar */}
@@ -178,7 +190,7 @@ export function ReservoirDetailDialog({
         {/* Storage chart */}
         <div>
           <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
-            Storage Level
+            {t("dash.storage_level")}
           </h3>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
@@ -209,7 +221,7 @@ export function ReservoirDetailDialog({
                     const pct = d.capacity > 0 ? ((d.storage / d.capacity) * 100).toFixed(1) : "0";
                     return (
                       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 text-xs">
-                        <div className="text-slate-500">{d.date}</div>
+                        <div className="text-slate-500">{formatDate(d.date)}</div>
                         <div className="font-semibold text-blue-700">
                           {formatNumber(d.storage)} mcft ({pct}%)
                         </div>
@@ -232,7 +244,7 @@ export function ReservoirDetailDialog({
         {/* Inflow vs Outflow chart */}
         <div>
           <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
-            Inflow vs Outflow
+            {t("dash.inflow_vs_outflow")}
           </h3>
           <div className="h-40">
             <ResponsiveContainer width="100%" height="100%">
@@ -255,9 +267,9 @@ export function ReservoirDetailDialog({
                     const d = payload[0].payload;
                     return (
                       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 text-xs">
-                        <div className="text-slate-500">{d.date}</div>
-                        <div className="text-green-600">Inflow: {formatNumber(d.inflow)} cusecs</div>
-                        <div className="text-red-600">Outflow: {formatNumber(d.outflow)} cusecs</div>
+                        <div className="text-slate-500">{formatDate(d.date)}</div>
+                        <div className="text-green-600">{t("dash.inflow")}: {formatNumber(d.inflow)} {t("dash.cusecs_unit")}</div>
+                        <div className="text-red-600">{t("dash.outflow")}: {formatNumber(d.outflow)} {t("dash.cusecs_unit")}</div>
                       </div>
                     );
                   }}
@@ -272,7 +284,7 @@ export function ReservoirDetailDialog({
                   stroke="#16a34a"
                   strokeWidth={1.5}
                   dot={false}
-                  name="Inflow"
+                  name={t("dash.inflow")}
                 />
                 <Line
                   type="monotone"
@@ -280,7 +292,7 @@ export function ReservoirDetailDialog({
                   stroke="#dc2626"
                   strokeWidth={1.5}
                   dot={false}
-                  name="Outflow"
+                  name={t("dash.outflow")}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -290,7 +302,7 @@ export function ReservoirDetailDialog({
         {/* Rainfall chart */}
         <div>
           <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
-            Rainfall
+            {t("dash.rainfall")}
           </h3>
           <div className="h-32">
             <ResponsiveContainer width="100%" height="100%">
@@ -320,7 +332,7 @@ export function ReservoirDetailDialog({
                     const d = payload[0].payload;
                     return (
                       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 text-xs">
-                        <div className="text-slate-500">{d.date}</div>
+                        <div className="text-slate-500">{formatDate(d.date)}</div>
                         <div className="font-semibold text-cyan-600">{d.rainfall} mm</div>
                       </div>
                     );
@@ -339,7 +351,7 @@ export function ReservoirDetailDialog({
         </div>
 
         <div className="text-xs text-slate-400 dark:text-slate-500 mt-2">
-          <p>All data in demo mode is simulated. Connect Supabase for real CMWSSB data.</p>
+          <p>{t("dash.demo_data_note")}</p>
         </div>
       </DialogContent>
     </Dialog>

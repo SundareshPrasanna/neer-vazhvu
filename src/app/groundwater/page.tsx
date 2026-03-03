@@ -4,23 +4,38 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { WardDetailPanel } from "@/components/groundwater/ward-detail-panel";
 import { GroundwaterLegend } from "@/components/groundwater/legend";
-import type { GroundwaterWard, GroundwaterApiResponse, WardRiskData, RiskApiResponse, ViewMode } from "@/types/groundwater";
+import type {
+  GroundwaterWard,
+  GroundwaterApiResponse,
+  WardRiskData,
+  RiskApiResponse,
+  ViewMode,
+} from "@/types/groundwater";
+import { useLanguage } from "@/lib/i18n/context";
+
+function GroundwaterMapLoading() {
+  const { t } = useLanguage();
+  return (
+    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+      <span className="text-slate-500 dark:text-slate-400">{t("gw_page.loading_map")}</span>
+    </div>
+  );
+}
 
 // Leaflet must be loaded client-side only (no SSR)
 const WardMap = dynamic(() => import("@/components/groundwater/ward-map").then((m) => m.WardMap), {
   ssr: false,
-  loading: () => (
-    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-      <span className="text-slate-500 dark:text-slate-400">Loading map...</span>
-    </div>
-  ),
+  loading: () => <GroundwaterMapLoading />,
 });
 
 export default function GroundwaterPage() {
+  const { t, language } = useLanguage();
+  const locale = language === "ta" ? "ta-IN" : "en-IN";
+
   const [data, setData] = useState<GroundwaterApiResponse | null>(null);
   const [riskApiData, setRiskApiData] = useState<RiskApiResponse | null>(null);
   const [selectedWard, setSelectedWard] = useState<GroundwaterWard | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('depth');
+  const [viewMode, setViewMode] = useState<ViewMode>("depth");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +54,7 @@ export default function GroundwaterPage() {
   if (loading) {
     return (
       <div className="h-[calc(100vh-64px)] flex items-center justify-center">
-        <span className="text-slate-500 dark:text-slate-400">Loading groundwater data...</span>
+        <span className="text-slate-500 dark:text-slate-400">{t("gw_page.loading_data")}</span>
       </div>
     );
   }
@@ -48,8 +63,8 @@ export default function GroundwaterPage() {
     return (
       <div className="h-[calc(100vh-64px)] flex items-center justify-center">
         <div className="text-center text-slate-500 dark:text-slate-400">
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Groundwater Map</h1>
-          <p>No groundwater data available yet.</p>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t("gw_page.title")}</h1>
+          <p>{t("gw_page.no_data")}</p>
           <p className="text-sm mt-2 font-mono bg-slate-100 dark:bg-slate-800 inline-block px-3 py-1 rounded">
             npx tsx scripts/seed-opencity-groundwater.ts
           </p>
@@ -90,9 +105,9 @@ export default function GroundwaterPage() {
         {/* Period + view toggle overlay */}
         <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000] bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            Showing data for{" "}
+            {t("gw_page.showing_for")}{" "}
             <span className="font-semibold text-slate-700 dark:text-slate-300">
-              {new Date(data.period.year, data.period.month - 1).toLocaleDateString("en-IN", {
+              {new Date(data.period.year, data.period.month - 1).toLocaleDateString(locale, {
                 month: "long",
                 year: "numeric",
               })}
@@ -100,7 +115,7 @@ export default function GroundwaterPage() {
           </div>
           {data.cityAverage !== null && (
             <div className="text-xs text-slate-500 dark:text-slate-400">
-              City average: <span className="font-semibold">{data.cityAverage}m</span>
+              {t("gw_page.city_avg")} <span className="font-semibold">{data.cityAverage}m</span>
             </div>
           )}
         </div>
@@ -110,24 +125,24 @@ export default function GroundwaterPage() {
           <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]">
             <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-600 shadow-md text-xs font-medium">
               <button
-                onClick={() => setViewMode('depth')}
+                onClick={() => setViewMode("depth")}
                 className={`px-3 py-1.5 transition-colors ${
-                  viewMode === 'depth'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
+                  viewMode === "depth"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                 }`}
               >
-                Depth
+                {t("gw_page.depth_toggle")}
               </button>
               <button
-                onClick={() => setViewMode('risk')}
+                onClick={() => setViewMode("risk")}
                 className={`px-3 py-1.5 transition-colors border-l border-slate-200 dark:border-slate-600 ${
-                  viewMode === 'risk'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
+                  viewMode === "risk"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                 }`}
               >
-                Risk Score
+                {t("gw_page.risk_toggle")}
               </button>
             </div>
           </div>

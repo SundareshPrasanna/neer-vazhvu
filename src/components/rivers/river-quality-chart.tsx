@@ -12,6 +12,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { RiverQualityReading } from "@/types/river-quality";
+import { useLanguage } from "@/lib/i18n/context";
 
 interface RiverQualityChartProps {
   readings: RiverQualityReading[];
@@ -71,11 +72,13 @@ function renderTooltip({
 }
 
 export function RiverQualityChart({ readings, stationName }: RiverQualityChartProps) {
+  const { t } = useLanguage();
+
   if (!readings || readings.length === 0) {
     return (
       <div className="h-44 flex items-center justify-center">
         <span className="text-xs text-slate-400 dark:text-slate-500">
-          No readings available for this station
+          {t("rivers_chart.no_readings")}
         </span>
       </div>
     );
@@ -138,7 +141,7 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
             y={4}
             stroke="#94a3b8"
             strokeDasharray="4 3"
-            label={{ value: "DO min", fontSize: 8, fill: "#94a3b8", position: "insideTopRight" }}
+            label={{ value: t("rivers_chart.do_min_label"), fontSize: 8, fill: "#94a3b8", position: "insideTopRight" }}
           />
 
           {/* BOD reference line: 2 mg/L = clean river */}
@@ -147,7 +150,7 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
             y={2}
             stroke="#94a3b8"
             strokeDasharray="4 3"
-            label={{ value: "BOD clean", fontSize: 8, fill: "#94a3b8", position: "insideTopLeft" }}
+            label={{ value: t("rivers_chart.bod_clean_label"), fontSize: 8, fill: "#94a3b8", position: "insideTopLeft" }}
           />
 
           <Line
