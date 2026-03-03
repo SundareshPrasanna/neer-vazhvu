@@ -103,6 +103,20 @@ Only shown when `riskData` has an entry for this ward.
 
 ---
 
+## Industrial Pollution Sources Map (P1) ✓ DONE
+
+> Overlay on the `/rivers` page — 7 major industrial sources (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek Discharge Zone) plotted as always-on coloured markers over river polylines and OSM industrial zone polygons. Click any source for facility details, pollutant types, documented incidents, and NGT orders. Data: NGT orders · CPCB · academic studies · TNPCB records.
+
+- [x] OSM industrial zones fetch script (`scripts/fetch-industrial-zones-osm.ts`) → `public/geojson/chennai-industrial-zones.geojson`
+- [x] Curate pollution sources (`public/data/industrial-sources.json`) — 7 major facilities
+- [x] TypeScript types (`src/types/industrial-pollution.ts`)
+- [x] Legend component (`src/components/pollution/pollution-legend.tsx`)
+- [x] Pollution map — Leaflet overlay on `/rivers`: river polylines, industrial zone polygons, point sources
+- [x] Pollution panel — type badge, pollutant pills, incidents timeline, NGT orders
+- [x] Merged into `src/app/rivers/page.tsx` (no separate `/pollution` page)
+
+---
+
 ## Water Dashboard Enhancements (P1)
 
 - [ ] **Daily briefing card** — Display `daily_briefing` (headline, alerts, recommendations) on dashboard — API generates it, frontend doesn't surface it yet

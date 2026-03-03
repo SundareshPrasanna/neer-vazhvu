@@ -106,6 +106,45 @@
 - The Buckingham Canal is a national waterway; bbox clipping limits it to the Chennai stretch (~72 km)
 - Run `npx tsx scripts/fetch-rivers-osm.ts` to regenerate after OSM data improves
 
+## Industrial Pollution Sources — NGT / TNPCB / CPCB
+
+| | |
+|---|---|
+| **Source** | NGT Southern Bench orders (2017–2022); TNPCB consent records and enforcement reports; CPCB industrial discharge monitoring; academic studies (Global NEST Journal, Springer Nature); The Wire; Carbon Copy |
+| **Method** | Manual curation (PDF court orders, enforcement records, published studies → JSON) |
+| **Frequency** | Static dataset (updated when major new NGT orders or incidents are documented) |
+| **Coverage** | 7 major industrial facilities in north Chennai / Ennore-Manali corridor: NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek Discharge Zone |
+| **Fields** | Facility name (English + Tamil), type, coordinates, operator, rivers affected, pollutant types, incident records (date, volume, source), NGT order summaries |
+| **File** | `public/data/industrial-sources.json` (static, served directly from Next.js `public/`) |
+
+**Key evidence sources:**
+- NGT Southern Bench, Sept 2017: Expert committee findings on NCTPS fly ash — heavy metals (Cd, Hg, Cr, Cu, Mn, Se, Pb, Ni) in Seppakkam village borewells; 5.67 million tonnes ash deposited over 3.51 km²
+- TNPCB enforcement records, Dec 2023: CPCL Cyclone Michaung spill — 517 tonnes of oil into Buckingham Canal and Ennore Creek; ₹74 crore compensation demanded
+- Indian Coast Guard / Wikipedia: 2017 Ennore oil spill — BW Maple × Dawn Kanchipuram collision; ~75–196 tonnes bunker fuel; 25 miles of coastline affected
+- Global NEST Journal (2025): Heavy metal contamination in Ennore ecosystem sediments (16 parameters)
+- Springer Nature (2025): Microplastics in Kosasthalaiyar estuary
+
+**Known limitations:**
+- Incident descriptions summarised from primary sources; exact volumes are estimates in many cases
+- TNPCB consent records are not publicly searchable by facility — some data inferred from secondary sources
+- Coordinates represent facility centroid, not specific discharge points
+- To update: verify new NGT orders via egriwas.nic.in or TNPCB press releases; add new `incidents` entries and update `ngt_orders` array in `industrial-sources.json`
+
+## Industrial Zone Geometry — OpenStreetMap
+
+| | |
+|---|---|
+| **Source** | [OpenStreetMap](https://www.openstreetmap.org/) via [Overpass API](https://overpass-api.de/) |
+| **Method** | Script: `scripts/fetch-industrial-zones-osm.ts` (run once, re-run after major OSM edits) |
+| **Frequency** | One-time fetch; re-run manually if OSM industrial zone coverage improves |
+| **Coverage** | North Chennai industrial corridor (bbox: 13.0–13.4°N, 80.1–80.4°E) |
+| **Fields** | Polygon geometry for `landuse=industrial` ways and relations; properties: `osm_id`, `name`, `area_ha` |
+| **File** | `public/geojson/chennai-industrial-zones.geojson` (static GeoJSON, filtered to area > 5 ha) |
+
+**Known limitations:**
+- OSM industrial zone coverage varies — some facilities may be partially mapped or missing
+- Run `npx tsx scripts/fetch-industrial-zones-osm.ts` to regenerate after OSM data improves
+
 ## Reservoir Metadata
 
 | | |

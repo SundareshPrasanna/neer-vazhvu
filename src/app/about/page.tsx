@@ -151,7 +151,7 @@ export default function AboutPage() {
           <DataSource
             name="OpenStreetMap (Overpass API)"
             url="https://overpass-api.de/"
-            description="All current water bodies (lakes, tanks, reservoirs, ponds, marshes) within the Chennai metropolitan bounding box. Queried via the Overpass API and saved as a static GeoJSON. 1,635 polygon features, ~95,000 ha total surface. Also source for river polyline geometry (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar). Data reflects OSM contributor edits as of the last script run."
+            description="All current water bodies (lakes, tanks, reservoirs, ponds, marshes) within the Chennai metropolitan bounding box. Queried via the Overpass API and saved as a static GeoJSON. 1,635 polygon features, ~95,000 ha total surface. Also source for river polyline geometry (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) and industrial zone polygons (landuse=industrial) in the north Chennai corridor. Data reflects OSM contributor edits as of the last script run."
             frequency="Static GeoJSON (re-run script to refresh)"
           />
           <DataSource
@@ -165,6 +165,12 @@ export default function AboutPage() {
             url="https://cpcb.nic.in/nwmp-data/"
             description="Annual reports from the Central Pollution Control Board's National Water Monitoring Programme. Source for DO, BOD, pH, and conductivity readings at monitoring stations on the Cooum, Adyar, Buckingham Canal, and Kosasthalaiyar rivers. Supplemented by IIT Madras / Anna University peer-reviewed studies and NGT Chennai bench orders."
             frequency="Annual (manually refreshed)"
+          />
+          <DataSource
+            name="NGT Southern Bench / TNPCB / CPCB — Industrial Pollution Sources"
+            url="https://www.tnpcb.gov.in/"
+            description="7 major industrial facilities in the Ennore-Manali corridor, curated from NGT Southern Bench orders (2017–2022), TNPCB enforcement records, CPCB industrial monitoring reports, and academic studies (Global NEST Journal, Springer Nature). Each facility entry includes pollutant types, documented incidents with volumes and dates, and NGT order summaries. Key sources: NCTPS fly ash heavy metals in borewells (NGT 2017), CPCL Cyclone Michaung oil spill (TNPCB 2023), 2017 Ennore tanker collision (Indian Coast Guard)."
+            frequency="Manually curated (static)"
           />
         </div>
       </section>
@@ -461,6 +467,20 @@ export default function AboutPage() {
         <p className="text-sm text-slate-500 dark:text-slate-400">
           River geometry (polylines) is sourced from OpenStreetMap via the Overpass API and clipped to the Chennai city boundary.
           Quality readings are manually curated from CPCB annual reports and refreshed once a year when the new report is published.
+        </p>
+
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Industrial Pollution Sources Overlay</h3>
+        <p className="text-slate-600 dark:text-slate-400 text-sm">
+          The river map includes an always-on <span className="font-medium text-slate-700 dark:text-slate-300">Industrial Pollution Sources</span> overlay
+          showing 7 major facilities in the Ennore-Manali corridor: North Chennai Thermal Power Station (NCTPS), Chennai Petroleum Corporation Limited (CPCL),
+          Kamarajar Port, SIPCOT Manali Industrial Estate, Madras Fertilisers Limited (MFL), Tamil Nadu Petroproducts Limited (TPL),
+          and the Ennore Creek Discharge Zone. Each marker is colour-coded by facility type (thermal power, petrochemical, chemical, port, industrial estate, discharge zone).
+          Clicking a marker opens a panel with the operator, rivers affected, pollutant types, documented incidents (date, volume, source), and NGT order summaries.
+          OSM <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">landuse=industrial</span> polygons are shown as a translucent orange overlay for geographic context.
+        </p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          Source data: NGT Southern Bench orders (2017–2022), TNPCB enforcement records, CPCB industrial monitoring, and peer-reviewed studies
+          (Global NEST Journal 2025, Springer Nature 2025). See the Data Sources section above for full provenance.
         </p>
       </section>
 
