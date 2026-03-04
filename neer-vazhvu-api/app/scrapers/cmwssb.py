@@ -14,7 +14,18 @@ from app.etl.constants import RESERVOIR_NAME_MAP
 from app.models.reservoir import ScrapedReservoir, ScrapeResult
 
 CMWSSB_URL = "https://cmwssb.tn.gov.in/lake-level"
-USER_AGENT = "NeerVazhvu/1.0 (Chennai Water Dashboard; educational use)"
+# The CMWSSB site (Drupal) drops connections from non-browser user agents.
+# A standard browser UA is required to get a response.
+USER_AGENT = (
+    "Mozilla/5.0 (X11; Linux x86_64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/120.0.0.0 Safari/537.36"
+)
+HEADERS = {
+    "User-Agent": USER_AGENT,
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+}
 
 
 def _parse_num(value: str) -> float | None:
@@ -29,12 +40,8 @@ def _parse_num(value: str) -> float | None:
 async def scrape_cmwssb_date(target_date: str) -> ScrapeResult:
     """Scrape CMWSSB lake level page for a specific date (YYYY-MM-DD format)."""
     url = f"{CMWSSB_URL}?date={target_date}"
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            url,
-            headers={"User-Agent": USER_AGENT},
-            timeout=30.0,
-        )
+    async with httpx.AsyncClient(follow_redirects=True) as client:
+        response = await client.get(url, headers=HEADERS, timeout=30.0)
         response.raise_for_status()
 
     return _parse_cmwssb_html(response.text)
@@ -94,12 +101,8 @@ def _parse_cmwssb_html(html: str) -> ScrapeResult:
 
 async def scrape_cmwssb() -> ScrapeResult:
     """Scrape the CMWSSB lake level page for current reservoir data."""
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            CMWSSB_URL,
-            headers={"User-Agent": USER_AGENT},
-            timeout=30.0,
-        )
+    async with httpx.AsyncClient(follow_redirects=True) as client:
+        response = await client.get(CMWSSB_URL, headers=HEADERS, timeout=30.0)
         response.raise_for_status()
 
     return _parse_cmwssb_html(response.text)
