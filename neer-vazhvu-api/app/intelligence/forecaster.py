@@ -273,14 +273,19 @@ async def forecast_reservoirs() -> list[dict]:
     """Generate forecasts for all 6 reservoirs and store in Supabase."""
     supabase = get_supabase()
     all_results: list[dict] = []
+    failures: list[str] = []
 
     for reservoir in RESERVOIRS:
         try:
             results = _forecast_single_reservoir(reservoir)
             all_results.extend(results)
         except Exception as e:
-            print(f"Forecast failed for {reservoir}: {e}")
-            continue
+            failures.append(f"{reservoir}: {e}")
+
+    if failures:
+        raise RuntimeError(
+            "Forecast failed for one or more reservoirs: " + "; ".join(failures)
+        )
 
     if all_results:
         supabase.table("reservoir_forecast").upsert(
