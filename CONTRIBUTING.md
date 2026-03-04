@@ -92,7 +92,7 @@ neer-vazhvu/
 
 - **Data quality** — Improving scraper resilience, handling CMWSSB page format changes
 - **Models** — Better forecasting (Prophet, LSTM), evaporation modeling
-- **Frontend** — Risk map layer, briefing card component, mobile polish
+- **Frontend** — Daily briefing card integration, chart clarity, mobile polish
 - **Tamil localization** — Translating the UI for local accessibility
 - **Testing** — Unit tests for scrapers, calculator, and intelligence modules
 
