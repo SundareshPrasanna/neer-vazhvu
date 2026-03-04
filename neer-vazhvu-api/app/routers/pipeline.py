@@ -34,6 +34,22 @@ async def run_monthly_pipeline(authorization: str = Header(...)):
     return {"success": True, "steps": results}
 
 
+@router.post("/run-post-scrape")
+async def run_post_scrape_pipeline(authorization: str = Header(...)):
+    """Run all pipeline steps except scrape_cmwssb.
+
+    Call this after pushing reservoir data to the DB externally (e.g. from a
+    GitHub Actions job that scrapes CMWSSB from a non-blocked IP).
+    Steps: fetch_nasa → fetch_opencity → compute_estimate → forecast → briefing.
+    """
+    verify_cron_auth(authorization)
+
+    from app.etl.pipeline import run_post_scrape
+
+    results = await run_post_scrape()
+    return {"success": True, "steps": results}
+
+
 @router.post("/run-intelligence")
 async def run_intelligence(authorization: str = Header(...)):
     """Run only intelligence steps (forecast + risk + briefing). Useful for backfills."""

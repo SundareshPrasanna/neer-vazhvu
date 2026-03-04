@@ -8,11 +8,31 @@ on:
 jobs:
   daily-pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
-      - name: Run Daily Pipeline (scrape + ETL + intelligence)
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install API dependencies
+        working-directory: neer-vazhvu-api
+        run: pip install -e .
+
+      # Scrape runs here (GitHub runner IPs) because the deployed API server's
+      # IP is blocked by the CMWSSB website, causing 30-second timeouts.
+      - name: Scrape CMWSSB → Supabase
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/scrape_cmwssb.py
+
+      - name: Run post-scrape pipeline (ETL + intelligence)
         run: |
-          curl -X POST "${{ secrets.PYTHON_API_URL }}/pipeline/run-daily" \
+          curl -X POST "${{ secrets.PYTHON_API_URL }}/pipeline/run-post-scrape" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --fail --max-time 300 \

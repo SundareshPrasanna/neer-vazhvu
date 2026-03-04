@@ -318,6 +318,24 @@ async def run_monthly() -> list[dict]:
     return steps
 
 
+async def run_post_scrape() -> list[dict]:
+    """Run the pipeline after scraping is done externally (e.g. from GitHub Actions).
+
+    Runs: fetch_nasa → fetch_opencity → compute_estimate → forecast → briefing.
+    Skips scrape_cmwssb so callers that already pushed reservoir data to the DB
+    don't redundantly hit the CMWSSB website.
+    """
+    steps = []
+    steps.append(await _run_step("fetch_nasa", _step_fetch_nasa))
+    steps.append(
+        await _run_step("fetch_opencity", _step_fetch_opencity, required=False)
+    )
+    steps.append(await _run_step("compute_estimate", _step_compute_estimate))
+    steps.append(await _run_step("forecast", _step_forecast))
+    steps.append(await _run_step("briefing", _step_briefing))
+    return steps
+
+
 async def run_intelligence_only() -> list[dict]:
     """Run only intelligence steps (for backfills/manual triggers)."""
     steps = []
