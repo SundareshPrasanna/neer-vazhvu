@@ -69,7 +69,9 @@ async def main() -> int:
     ]
 
     supabase = create_client(supabase_url, supabase_key)
-    supabase.table("reservoir_daily").upsert(rows, on_conflict="reservoir,date").execute()
+    supabase.table("reservoir_daily").upsert(
+        rows, on_conflict="reservoir,date"
+    ).execute()
     print(f"  Upserted {len(rows)} rows to reservoir_daily ✓", flush=True)
     return 0
 
