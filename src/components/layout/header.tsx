@@ -59,15 +59,22 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-sm">
               <svg
                 viewBox="0 0 24 24"
-                fill="none"
                 className="w-5 h-5 text-white"
-                stroke="currentColor"
-                strokeWidth={2}
+                fill="none"
               >
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zM17.9 17.39c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                <path
+                  d="M12 3s-5 6.1-5 9.9A5 5 0 0 0 12 18a5 5 0 0 0 5-5.1C17 9.1 12 3 12 3z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M8.4 12.7c1 .8 2.2 1.2 3.6 1.2s2.6-.4 3.6-1.2"
+                  stroke="#0ea5e9"
+                  strokeWidth={1.8}
+                  strokeLinecap="round"
+                />
               </svg>
             </div>
             <div>
