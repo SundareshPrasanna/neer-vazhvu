@@ -15,6 +15,8 @@ Usage:
 import asyncio
 import os
 import sys
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
 
@@ -52,6 +54,82 @@ def _fmt_exc(exc: Exception) -> str:
     return f"{type(exc).__name__}: {repr(exc)}"
 
 
+def _is_connectivity_error(exc: Exception) -> bool:
+    return isinstance(
+        exc,
+        (
+            httpx.ConnectTimeout,
+            httpx.ConnectError,
+            httpx.ReadTimeout,
+            httpx.RemoteProtocolError,
+        ),
+    )
+
+
+def _latest_reservoir_date(supabase) -> date | None:
+    result = (
+        supabase.table("reservoir_daily")
+        .select("date")
+        .order("date", desc=True)
+        .limit(1)
+        .execute()
+    )
+    if not result.data:
+        return None
+
+    raw_date = result.data[0].get("date")
+    if not raw_date:
+        return None
+
+    try:
+        return date.fromisoformat(str(raw_date))
+    except ValueError:
+        return None
+
+
+def _today_ist() -> date:
+    return datetime.now(ZoneInfo("Asia/Kolkata")).date()
+
+
+def _allow_stale_data_fallback(supabase, max_stale_days: int) -> bool:
+    try:
+        latest_date = _latest_reservoir_date(supabase)
+    except Exception as exc:
+        print(
+            f"WARN: could not check latest reservoir_daily date for fallback — {_fmt_exc(exc)}",
+            file=sys.stderr,
+            flush=True,
+        )
+        return False
+
+    if latest_date is None:
+        print(
+            "WARN: no existing reservoir_daily data found; cannot use stale-data fallback",
+            file=sys.stderr,
+            flush=True,
+        )
+        return False
+
+    age_days = (_today_ist() - latest_date).days
+    if age_days <= max_stale_days:
+        print(
+            "WARN: scrape source unreachable; "
+            f"continuing with existing reservoir_daily data from {latest_date} "
+            f"(age={age_days}d, max={max_stale_days}d)",
+            file=sys.stderr,
+            flush=True,
+        )
+        return True
+
+    print(
+        "ERROR: scrape failed and existing reservoir_daily data is too stale — "
+        f"latest={latest_date}, age={age_days}d, max_allowed={max_stale_days}d",
+        file=sys.stderr,
+        flush=True,
+    )
+    return False
+
+
 async def _scrape_with_retries(max_attempts: int) -> ScrapeResult:
     last_exc: Exception | None = None
     for attempt in range(1, max_attempts + 1):
@@ -76,14 +154,20 @@ async def main() -> int:
     supabase_url = _get_env("SUPABASE_URL")
     supabase_key = _get_env("SUPABASE_SERVICE_KEY")
     max_attempts = _env_int("CMWSSB_SCRAPE_MAX_ATTEMPTS", 3)
+    max_stale_days = _env_int("CMWSSB_MAX_STALE_DAYS", 1)
+    supabase = create_client(supabase_url, supabase_key)
 
     print(
-        f"Scraping CMWSSB lake-level page (max_attempts={max_attempts})…",
+        f"Scraping CMWSSB lake-level page (max_attempts={max_attempts}, max_stale_days={max_stale_days})…",
         flush=True,
     )
     try:
         result = await _scrape_with_retries(max_attempts)
     except (httpx.HTTPError, ValueError) as exc:
+        if _is_connectivity_error(exc) and _allow_stale_data_fallback(
+            supabase, max_stale_days
+        ):
+            return 0
         print(f"ERROR: Scrape failed — {_fmt_exc(exc)}", file=sys.stderr, flush=True)
         return 1
 
@@ -108,7 +192,6 @@ async def main() -> int:
         for r in result.readings
     ]
 
-    supabase = create_client(supabase_url, supabase_key)
     supabase.table("reservoir_daily").upsert(
         rows, on_conflict="reservoir,date"
     ).execute()
