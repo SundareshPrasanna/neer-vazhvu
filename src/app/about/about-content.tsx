@@ -98,7 +98,7 @@ export function AboutContent() {
 
       <Separator className="my-8" />
 
-      <section className="space-y-4">
+      <section id="data-sources" className="space-y-4">
         <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t("about.assumptions")}</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">

@@ -37,6 +37,13 @@ export function Footer() {
             >
               OpenCity Chennai
             </a>
+            {" · "}
+            <a
+              href="/about#data-sources"
+              className="text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {t("footer.all_sources")}
+            </a>
           </div>
           <div>
             {t("footer.open_source")}

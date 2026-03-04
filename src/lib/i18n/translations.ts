@@ -21,7 +21,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "lang.view_in_tamil":     { en: "View in Tamil", ta: "தமிழில் பார்க்க" },
 
   // ── Footer ────────────────────────────────────────────────────────────────
-  "footer.data_sources":  { en: "Data sources:",             ta: "தரவு ஆதாரங்கள்:" },
+  "footer.data_sources":  { en: "Core live sources:",        ta: "முக்கிய நேரடி தரவு ஆதாரங்கள்:" },
+  "footer.all_sources":   { en: "All sources",               ta: "அனைத்து ஆதாரங்கள்" },
   "footer.open_source":   { en: "Open source · Built for Chennai", ta: "திறந்த மூலம் · சென்னைக்காக" },
 
   // ── Days Left Hero ────────────────────────────────────────────────────────
