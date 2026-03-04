@@ -140,7 +140,7 @@ export function AboutContent() {
 
       <Separator className="my-8" />
 
-      <section className="space-y-4">
+      <section id="data-sources" className="space-y-4">
         <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t("about.data_sources")}</h2>
         <p className="text-slate-600 dark:text-slate-400">
           {t("about.data_pipeline")}
