@@ -5,8 +5,6 @@ Computes a composite risk score (0–100) for each of Chennai's 200 wards.
 Components: groundwater depth (40%), trend (30%), reservoir stress (20%), seasonal (10%).
 """
 
-import json
-
 from app.db import get_supabase
 from app.utils.timezone import ist_today
 
@@ -206,7 +204,7 @@ async def compute_risk_scores() -> list[dict]:
                 "trend_component": tr_score,
                 "reservoir_component": res_score,
                 "seasonal_component": sea_score,
-                "factors": json.dumps(factors),
+                "factors": factors,
             }
         )
 

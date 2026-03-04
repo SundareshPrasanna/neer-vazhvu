@@ -5,7 +5,6 @@ Template-based (no LLM required). Pulls data from multiple tables
 and applies rule-based logic to produce a structured briefing.
 """
 
-import json
 from datetime import timedelta
 
 from app.db import get_supabase
@@ -212,9 +211,9 @@ async def generate_briefing() -> dict:
             "briefing_date": today.isoformat(),
             "headline": "No data available — waiting for pipeline to populate",
             "summary": "The daily data pipeline has not yet produced estimates.",
-            "key_metrics": json.dumps({}),
-            "alerts": json.dumps([]),
-            "recommendations": json.dumps(["Run the daily pipeline to generate data."]),
+            "key_metrics": {},
+            "alerts": [],
+            "recommendations": ["Run the daily pipeline to generate data."],
         }
         supabase.table("daily_briefing").upsert(
             briefing, on_conflict="briefing_date"
@@ -290,9 +289,9 @@ async def generate_briefing() -> dict:
         "briefing_date": today.isoformat(),
         "headline": headline,
         "summary": summary,
-        "key_metrics": json.dumps(key_metrics),
-        "alerts": json.dumps(alerts),
-        "recommendations": json.dumps(recommendations),
+        "key_metrics": key_metrics,
+        "alerts": alerts,
+        "recommendations": recommendations,
     }
 
     supabase.table("daily_briefing").upsert(

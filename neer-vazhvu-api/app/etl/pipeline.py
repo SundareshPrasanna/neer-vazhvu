@@ -294,19 +294,35 @@ async def run_daily() -> list[dict]:
     """Run the full daily pipeline."""
     steps = []
 
-    # Data collection (fail-independent)
-    steps.append(await _run_step("scrape_cmwssb", _step_scrape_cmwssb))
-    steps.append(await _run_step("fetch_nasa", _step_fetch_nasa))
+    # Data collection
+    step = await _run_step("scrape_cmwssb", _step_scrape_cmwssb)
+    steps.append(step)
+    if step["status"] == "error":
+        return steps
+
+    step = await _run_step("fetch_nasa", _step_fetch_nasa)
+    steps.append(step)
+    if step["status"] == "error":
+        return steps
+
     steps.append(
         await _run_step("fetch_opencity", _step_fetch_opencity, required=False)
     )
 
-    # ETL (depends on fresh data but runs even if scraping had issues)
-    steps.append(await _run_step("compute_estimate", _step_compute_estimate))
+    # ETL
+    step = await _run_step("compute_estimate", _step_compute_estimate)
+    steps.append(step)
+    if step["status"] == "error":
+        return steps
 
-    # Intelligence (depends on ETL)
-    steps.append(await _run_step("forecast", _step_forecast))
-    steps.append(await _run_step("briefing", _step_briefing))
+    # Intelligence
+    step = await _run_step("forecast", _step_forecast)
+    steps.append(step)
+    if step["status"] == "error":
+        return steps
+
+    step = await _run_step("briefing", _step_briefing)
+    steps.append(step)
 
     return steps
 
@@ -314,8 +330,13 @@ async def run_daily() -> list[dict]:
 async def run_monthly() -> list[dict]:
     """Run monthly jobs: OpenCity groundwater + risk scoring."""
     steps = []
-    steps.append(await _run_step("fetch_opencity", _step_fetch_opencity))
-    steps.append(await _run_step("risk_scoring", _step_risk_scoring))
+    step = await _run_step("fetch_opencity", _step_fetch_opencity)
+    steps.append(step)
+    if step["status"] == "error":
+        return steps
+
+    step = await _run_step("risk_scoring", _step_risk_scoring)
+    steps.append(step)
     return steps
 
 
@@ -327,20 +348,43 @@ async def run_post_scrape() -> list[dict]:
     don't redundantly hit the CMWSSB website.
     """
     steps = []
-    steps.append(await _run_step("fetch_nasa", _step_fetch_nasa))
+    step = await _run_step("fetch_nasa", _step_fetch_nasa)
+    steps.append(step)
+    if step["status"] == "error":
+        return steps
+
     steps.append(
         await _run_step("fetch_opencity", _step_fetch_opencity, required=False)
     )
-    steps.append(await _run_step("compute_estimate", _step_compute_estimate))
-    steps.append(await _run_step("forecast", _step_forecast))
-    steps.append(await _run_step("briefing", _step_briefing))
+
+    step = await _run_step("compute_estimate", _step_compute_estimate)
+    steps.append(step)
+    if step["status"] == "error":
+        return steps
+
+    step = await _run_step("forecast", _step_forecast)
+    steps.append(step)
+    if step["status"] == "error":
+        return steps
+
+    step = await _run_step("briefing", _step_briefing)
+    steps.append(step)
     return steps
 
 
 async def run_intelligence_only() -> list[dict]:
     """Run only intelligence steps (for backfills/manual triggers)."""
     steps = []
-    steps.append(await _run_step("forecast", _step_forecast))
-    steps.append(await _run_step("risk_scoring", _step_risk_scoring))
-    steps.append(await _run_step("briefing", _step_briefing))
+    step = await _run_step("forecast", _step_forecast)
+    steps.append(step)
+    if step["status"] == "error":
+        return steps
+
+    step = await _run_step("risk_scoring", _step_risk_scoring)
+    steps.append(step)
+    if step["status"] == "error":
+        return steps
+
+    step = await _run_step("briefing", _step_briefing)
+    steps.append(step)
     return steps

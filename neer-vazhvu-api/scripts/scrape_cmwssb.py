@@ -25,6 +25,7 @@ from supabase import create_client  # noqa: E402
 
 # Bootstrap the app package so we can reuse the existing scraper.
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from app.models.reservoir import ScrapeResult  # noqa: E402
 from app.scrapers.cmwssb import scrape_cmwssb  # noqa: E402
 
 
@@ -36,15 +37,54 @@ def _get_env(key: str) -> str:
     return value
 
 
+def _env_int(key: str, default: int) -> int:
+    raw = os.environ.get(key)
+    if not raw:
+        return default
+    try:
+        value = int(raw)
+        return value if value > 0 else default
+    except ValueError:
+        return default
+
+
+def _fmt_exc(exc: Exception) -> str:
+    return f"{type(exc).__name__}: {repr(exc)}"
+
+
+async def _scrape_with_retries(max_attempts: int) -> ScrapeResult:
+    last_exc: Exception | None = None
+    for attempt in range(1, max_attempts + 1):
+        try:
+            return await scrape_cmwssb()
+        except (httpx.HTTPError, ValueError) as exc:
+            last_exc = exc
+            print(
+                f"WARN: scrape attempt {attempt}/{max_attempts} failed — {_fmt_exc(exc)}",
+                file=sys.stderr,
+                flush=True,
+            )
+            if attempt < max_attempts:
+                # Keep retries short; GH Actions should recover quickly from transient blips.
+                await asyncio.sleep(min(2 * attempt, 8))
+
+    assert last_exc is not None
+    raise last_exc
+
+
 async def main() -> int:
     supabase_url = _get_env("SUPABASE_URL")
     supabase_key = _get_env("SUPABASE_SERVICE_KEY")
+    max_attempts = _env_int("CMWSSB_SCRAPE_MAX_ATTEMPTS", 3)
 
-    print("Scraping CMWSSB lake-level page…", flush=True)
+    print(
+        f"Scraping CMWSSB lake-level page (max_attempts={max_attempts})…",
+        flush=True,
+    )
     try:
-        result = await scrape_cmwssb()
+        result = await _scrape_with_retries(max_attempts)
     except (httpx.HTTPError, ValueError) as exc:
-        print(f"ERROR: Scrape failed — {exc}", file=sys.stderr)
+        print(f"ERROR: Scrape failed — {_fmt_exc(exc)}", file=sys.stderr, flush=True)
         return 1
 
     print(

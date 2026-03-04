@@ -4,6 +4,61 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { fetchCKANResource, OPENCITY_RESOURCES } from '@/lib/api-clients/opencity';
 import { todayIST, todayISTParts } from '@/lib/utils/date';
 
+type CKANValue = string | number | null | undefined;
+type CKANRecord = Record<string, CKANValue>;
+
+const MONTH_NAMES = [
+  'jan',
+  'feb',
+  'mar',
+  'apr',
+  'may',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'oct',
+  'nov',
+  'dec',
+] as const;
+
+function getField(record: CKANRecord, candidates: readonly string[]): CKANValue {
+  for (const key of candidates) {
+    const value = record[key];
+    if (value == null) continue;
+    if (typeof value === 'string' && value.trim() === '') continue;
+    return value;
+  }
+  return undefined;
+}
+
+function parseWardNumber(value: CKANValue): number | null {
+  if (value == null) return null;
+  const parsed = parseInt(String(value), 10);
+  if (!Number.isFinite(parsed)) return null;
+  if (parsed < 1 || parsed > 200) return null;
+  return parsed;
+}
+
+function parseDepth(value: CKANValue): number | null {
+  if (value == null) return null;
+  const normalized = String(value).trim();
+  if (!normalized || normalized === 'NA' || normalized === 'N/A') return null;
+  const parsed = parseFloat(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function parseMonth(value: CKANValue): number | null {
+  if (value == null) return null;
+  const raw = String(value).trim().toLowerCase();
+  const numeric = parseInt(raw, 10);
+  if (Number.isFinite(numeric) && numeric >= 1 && numeric <= 12) {
+    return numeric;
+  }
+  const idx = MONTH_NAMES.findIndex((m) => m === raw || `${m}.` === raw);
+  return idx >= 0 ? idx + 1 : null;
+}
+
 export async function POST(request: NextRequest) {
   const authError = verifyCronAuth(request);
   if (authError) return authError;
@@ -21,34 +76,96 @@ export async function POST(request: NextRequest) {
   try {
     let totalRows = 0;
 
-    // Fetch latest groundwater data (try current year first)
-    const yearKey = currentYear.toString();
-    const resourceId = (OPENCITY_RESOURCES.groundwater as Record<string, string>)[yearKey];
+    // Pick newest available CKAN resource not beyond current year.
+    const resourceMap = OPENCITY_RESOURCES.groundwater as Record<string, string>;
+    const availableYears = Object.keys(resourceMap)
+      .map((y) => parseInt(y, 10))
+      .filter((y) => Number.isFinite(y))
+      .sort((a, b) => b - a);
 
-    if (resourceId) {
-      const records = await fetchCKANResource<Record<string, string>>(resourceId);
+    const selectedYear =
+      availableYears.find((y) => y <= currentYear) ?? availableYears[0] ?? null;
+    if (!selectedYear) {
+      throw new Error('No OpenCity groundwater resource IDs configured');
+    }
 
-      const rows = records
-        .filter((r) => r['Ward No'] || r['ward_no'])
-        .map((r) => ({
-          ward_number: parseInt(r['Ward No'] || r['ward_no'], 10),
-          ward_name: r['Ward Name'] || r['ward_name'] || null,
-          zone_name: r['Zone'] || r['zone'] || null,
-          year: parseInt(r['Year'] || r['year'] || currentYear.toString(), 10),
-          month: parseInt(r['Month'] || r['month'] || '1', 10),
-          depth_to_water_m: parseFloat(r['Depth to Water Level (m)'] || r['depth_m'] || '0') || null,
-          source: 'opencity_ckan' as const,
-        }))
-        .filter((r) => !isNaN(r.ward_number));
+    const resourceId = resourceMap[String(selectedYear)];
+    const records = await fetchCKANResource<CKANRecord>(resourceId);
 
-      if (rows.length > 0) {
-        const { error } = await supabase
-          .from('groundwater_monthly')
-          .upsert(rows, { onConflict: 'ward_number,year,month' });
+    const rows: Array<{
+      ward_number: number;
+      ward_name: string | null;
+      zone_name: string | null;
+      year: number;
+      month: number;
+      depth_to_water_m: number | null;
+      source: 'opencity_ckan';
+    }> = [];
 
-        if (error) throw error;
-        totalRows = rows.length;
+    for (const record of records) {
+      const wardNumber = parseWardNumber(
+        getField(record, ['Ward No', 'Ward_No', 'ward_no', 'WARD_NO', 'Ward Number'])
+      );
+      if (!wardNumber) continue;
+
+      const wardName = getField(record, ['Ward Name', 'Ward_Name', 'ward_name', 'WARD_NAME']);
+      const zoneName = getField(record, ['Zone', 'zone', 'ZONE', 'Zone Name', 'zone_name']);
+      const yearOverride = parseInt(String(getField(record, ['Year', 'year']) ?? selectedYear), 10);
+      const rowYear = Number.isFinite(yearOverride) ? yearOverride : selectedYear;
+
+      let expanded = false;
+      for (let month = 1; month <= 12; month++) {
+        const monthKey = MONTH_NAMES[month - 1];
+        const depth = parseDepth(
+          getField(record, [monthKey, monthKey.toUpperCase(), `${monthKey}.`])
+        );
+        if (depth == null) continue;
+        rows.push({
+          ward_number: wardNumber,
+          ward_name: wardName ? String(wardName) : null,
+          zone_name: zoneName ? String(zoneName) : null,
+          year: rowYear,
+          month,
+          depth_to_water_m: depth,
+          source: 'opencity_ckan',
+        });
+        expanded = true;
       }
+
+      // Fallback for datasets that are already row-based instead of month-column based.
+      if (!expanded) {
+        const month = parseMonth(getField(record, ['Month', 'month', 'MONTH']));
+        const depth = parseDepth(
+          getField(record, [
+            'Depth to Water Level (m)',
+            'Depth_to_Water_Level_m',
+            'depth_m',
+            'Depth to Water Level(m)',
+            'Water Level (m)',
+            'Depth',
+          ])
+        );
+        if (month && depth != null) {
+          rows.push({
+            ward_number: wardNumber,
+            ward_name: wardName ? String(wardName) : null,
+            zone_name: zoneName ? String(zoneName) : null,
+            year: rowYear,
+            month,
+            depth_to_water_m: depth,
+            source: 'opencity_ckan',
+          });
+        }
+      }
+    }
+
+    if (rows.length > 0) {
+      const { error } = await supabase
+        .from('groundwater_monthly')
+        .upsert(rows, { onConflict: 'ward_number,year,month' });
+
+      if (error) throw error;
+      totalRows = rows.length;
     }
 
     await supabase.from('pipeline_log').insert({
@@ -63,6 +180,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       rows: totalRows,
+      sourceYear: selectedYear,
       duration_ms: Date.now() - startTime,
     });
   } catch (err) {
