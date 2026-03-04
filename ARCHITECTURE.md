@@ -57,13 +57,19 @@ graph TB
     StaticFiles -->|static| Frontend
     StaticFiles2 -->|static| Frontend
 
-    Cron -->|POST /pipeline/run-daily| ETL
+    Cron -->|POST /pipeline/run-post-scrape| ETL
     KA -->|GET /health| Backend
 ```
 
 ## Daily Pipeline
 
-Triggered by GitHub Actions at 06:00 IST, or manually via `POST /pipeline/run-daily`.
+Triggered by GitHub Actions at 06:00 IST.
+
+Production flow is:
+1. GitHub Actions runs `python scripts/scrape_cmwssb.py` from the runner.
+2. It then calls `POST /pipeline/run-post-scrape` for ETL + intelligence.
+
+You can still run `POST /pipeline/run-daily` manually when the API runtime can directly access CMWSSB.
 
 ```mermaid
 flowchart LR
@@ -272,7 +278,8 @@ graph TD
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | GET | `/health` | None | Service health + recent pipeline runs |
-| POST | `/pipeline/run-daily` | Bearer | Full daily pipeline |
+| POST | `/pipeline/run-daily` | Bearer | Full daily pipeline (includes scrape) |
+| POST | `/pipeline/run-post-scrape` | Bearer | Daily pipeline without scrape (used by GH Actions) |
 | POST | `/pipeline/run-monthly` | Bearer | Groundwater + risk scoring |
 | POST | `/pipeline/run-intelligence` | Bearer | Forecast + risk + briefing only |
 | GET | `/intelligence/forecast` | None | Latest reservoir forecasts |

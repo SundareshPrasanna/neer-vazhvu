@@ -83,7 +83,7 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS v4, shadcn/ui |
+| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS v4, shadcn/ui |
 | Charts | Recharts |
 | Maps | Leaflet + react-leaflet — GCC ward boundaries (GeoJSON) + OSM water body polygons + curated lost bodies (GeoJSON) |
 | Backend API | Python 3.12, FastAPI, statsforecast, pandas |
@@ -178,9 +178,10 @@ uvicorn app.main:app --reload --port 8000
 ### 5. Seed Historical Data
 
 ```bash
-# From the neer-vazhvu-api directory
-python -m scripts.seed_kaggle      # 15 years of reservoir data
-python -m scripts.seed_opencity    # Groundwater data (2021-2024)
+# From the repo root
+npx tsx scripts/seed-kaggle.ts                 # Reservoir history
+npx tsx scripts/seed-opencity-groundwater.ts   # Groundwater history
+npx tsx scripts/seed-opencity-lakes.ts         # Optional lake-level history
 ```
 
 ### 6. Refresh Static GeoJSON Data (optional)
@@ -212,7 +213,8 @@ npx tsx scripts/fetch-industrial-zones-osm.ts
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/pipeline/run-daily` | Full pipeline: scrape → ETL → forecast → briefing |
+| POST | `/pipeline/run-daily` | Full pipeline in API runtime: scrape → ETL → forecast → briefing |
+| POST | `/pipeline/run-post-scrape` | Pipeline without scrape (used by GitHub Actions after external CMWSSB scrape) |
 | POST | `/pipeline/run-monthly` | Groundwater fetch + risk scoring |
 | POST | `/pipeline/run-intelligence` | Forecast + risk + briefing only (backfills) |
 
@@ -267,7 +269,7 @@ neer-vazhvu/
 │   └── migrations/               # SQL migrations (001, 002)
 ├── public/
 │   ├── geojson/                  # Static GeoJSON data
-│   │   ├── gcc-wards.geojson                    # GCC ward boundaries (choropleth)
+│   │   ├── chennai-wards-2022.geojson           # GCC ward boundaries (choropleth)
 │   │   ├── chennai-water-bodies-current.geojson # OSM water bodies (1,635 features)
 │   │   ├── chennai-water-bodies-lost.geojson    # Curated lost water bodies (15 entries)
 │   │   ├── chennai-rivers.geojson               # River polylines (Cooum, Adyar, etc.)
@@ -284,7 +286,7 @@ neer-vazhvu/
 | Parameter | Default | Source |
 |-----------|---------|--------|
 | Daily consumption | 830 MLD | CMWSSB annual report |
-| Desalination output | 190 MLD | Minjur (100) + Nemmeli (100) |
+| Desalination output | 190 MLD | Model baseline constant (`DEFAULT_DESALINATION_MLD`) |
 | Groundwater supply | Not modeled | Conservative assumption |
 | Evaporation losses | Not modeled | Planned for V2 |
 
