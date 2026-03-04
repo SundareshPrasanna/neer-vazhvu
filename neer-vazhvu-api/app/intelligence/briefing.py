@@ -6,9 +6,10 @@ and applies rule-based logic to produce a structured briefing.
 """
 
 import json
-from datetime import date, timedelta
+from datetime import timedelta
 
 from app.db import get_supabase
+from app.utils.timezone import ist_today
 
 
 def _build_headline(
@@ -193,7 +194,7 @@ def _build_recommendations(
 async def generate_briefing() -> dict:
     """Generate today's intelligence briefing and store in Supabase."""
     supabase = get_supabase()
-    today = date.today()
+    today = ist_today()
     week_ago = today - timedelta(days=7)
 
     # 1. Get latest estimate

@@ -1,8 +1,7 @@
-from datetime import date
-
 from fastapi import APIRouter
 
 from app.db import get_supabase
+from app.utils.timezone import ist_today
 
 router = APIRouter()
 
@@ -22,7 +21,7 @@ async def health_check():
         return {
             "status": "ok",
             "service": "neer-vazhvu-api",
-            "date": date.today().isoformat(),
+            "date": ist_today().isoformat(),
             "recent_pipeline_runs": result.data,
         }
     except Exception as e:

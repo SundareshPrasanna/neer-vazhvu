@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyCronAuth } from '@/lib/cron-auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { fetchNASAPower } from '@/lib/api-clients/nasa-power';
-import { subtractDays } from '@/lib/utils/date';
+import { subtractDays, todayIST } from '@/lib/utils/date';
 
 export async function POST(request: NextRequest) {
   const authError = verifyCronAuth(request);
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
   const startTime = Date.now();
   const supabase = createAdminClient();
-  const today = new Date().toISOString().split('T')[0];
+  const today = todayIST();
 
   try {
     // NASA POWER has ~2 day lag, so fetch 5 days back to fill gaps

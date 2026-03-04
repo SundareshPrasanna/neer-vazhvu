@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyCronAuth } from '@/lib/cron-auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { scrapeCMWSSB } from '@/lib/scrapers/cmwssb';
+import { todayIST } from '@/lib/utils/date';
 
 export async function POST(request: NextRequest) {
   const authError = verifyCronAuth(request);
@@ -9,7 +10,7 @@ export async function POST(request: NextRequest) {
 
   const startTime = Date.now();
   const supabase = createAdminClient();
-  const today = new Date().toISOString().split('T')[0];
+  const today = todayIST();
 
   try {
     const { date, readings } = await scrapeCMWSSB();

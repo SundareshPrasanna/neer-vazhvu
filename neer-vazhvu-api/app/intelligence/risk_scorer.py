@@ -6,9 +6,9 @@ Components: groundwater depth (40%), trend (30%), reservoir stress (20%), season
 """
 
 import json
-from datetime import date
 
 from app.db import get_supabase
+from app.utils.timezone import ist_today
 
 # --- Component weights ---
 W_GROUNDWATER = 0.40
@@ -122,7 +122,7 @@ def _risk_level(score: float) -> str:
 async def compute_risk_scores() -> list[dict]:
     """Compute risk scores for all 200 wards and store in Supabase."""
     supabase = get_supabase()
-    today = date.today()
+    today = ist_today()
     current_month = today.month
 
     # 1. Get latest groundwater data

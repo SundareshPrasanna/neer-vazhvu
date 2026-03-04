@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyCronAuth } from '@/lib/cron-auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { fetchCKANResource, OPENCITY_RESOURCES } from '@/lib/api-clients/opencity';
+import { todayIST, todayISTParts } from '@/lib/utils/date';
 
 export async function POST(request: NextRequest) {
   const authError = verifyCronAuth(request);
@@ -9,8 +10,8 @@ export async function POST(request: NextRequest) {
 
   const startTime = Date.now();
   const supabase = createAdminClient();
-  const today = new Date().toISOString().split('T')[0];
-  const dayOfMonth = new Date().getDate();
+  const today = todayIST();
+  const { day: dayOfMonth, year: currentYear } = todayISTParts();
 
   // Only fetch on the 1st-3rd of the month (OpenCity updates monthly)
   if (dayOfMonth > 3) {
@@ -21,7 +22,6 @@ export async function POST(request: NextRequest) {
     let totalRows = 0;
 
     // Fetch latest groundwater data (try current year first)
-    const currentYear = new Date().getFullYear();
     const yearKey = currentYear.toString();
     const resourceId = (OPENCITY_RESOURCES.groundwater as Record<string, string>)[yearKey];
 
