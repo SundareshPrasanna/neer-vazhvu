@@ -7,7 +7,7 @@ Steps run sequentially; each step logs to pipeline_log.
 
 import time
 from collections.abc import Callable, Coroutine
-from datetime import date, datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from app.db import get_supabase
@@ -21,6 +21,7 @@ from app.etl.estimate import compute_days_left
 from app.scrapers.cmwssb import scrape_cmwssb
 from app.scrapers.nasa_power import fetch_nasa_power
 from app.scrapers.opencity import fetch_groundwater, GROUNDWATER_RESOURCES
+from app.utils.timezone import ist_today
 
 
 async def _run_step(
@@ -31,7 +32,7 @@ async def _run_step(
 ) -> dict:
     """Run a pipeline step with timing and logging."""
     supabase = get_supabase()
-    today = date.today().isoformat()
+    today = ist_today().isoformat()
     start = time.time()
 
     try:
@@ -122,7 +123,7 @@ async def _step_scrape_cmwssb() -> dict:
 async def _step_fetch_nasa() -> dict:
     """Step 2: Fetch NASA POWER weather data (5 days back to fill gaps)."""
     supabase = get_supabase()
-    today = date.today()
+    today = ist_today()
     start_date = (today - timedelta(days=5)).isoformat()
     end_date = (today - timedelta(days=2)).isoformat()  # 2-day lag
 
@@ -148,7 +149,7 @@ async def _step_fetch_nasa() -> dict:
 
 async def _step_fetch_opencity() -> dict:
     """Step 3: Fetch OpenCity groundwater (only runs days 1-3 of month)."""
-    today = date.today()
+    today = ist_today()
     if today.day > 3:
         return {"rows_affected": 0}
 
@@ -181,7 +182,7 @@ async def _step_fetch_opencity() -> dict:
 async def _step_compute_estimate() -> dict:
     """Step 4: Compute daily days-left estimate."""
     supabase = get_supabase()
-    today = date.today().isoformat()
+    today = ist_today().isoformat()
 
     # 1. Get latest reservoir data
     res = (
@@ -202,7 +203,7 @@ async def _step_compute_estimate() -> dict:
     total_capacity = sum(r["capacity_mcft"] or 0 for r in today_reservoirs)
 
     # 2. Compute 7-day rolling average inflow
-    seven_days_ago = (date.today() - timedelta(days=7)).isoformat()
+    seven_days_ago = (ist_today() - timedelta(days=7)).isoformat()
     recent_res = (
         supabase.table("reservoir_daily")
         .select("date, inflow_cusecs")
@@ -222,7 +223,7 @@ async def _step_compute_estimate() -> dict:
         recent_avg_inflow_mcft_per_day = avg_cusecs * CUSEC_DAY_TO_MCFT
 
     # 3. Get seasonal average inflow
-    current_month = date.today().month
+    current_month = ist_today().month
     seasonal_res = supabase.rpc(
         "avg_monthly_inflow", {"target_month": current_month}
     ).execute()

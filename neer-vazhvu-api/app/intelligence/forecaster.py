@@ -9,8 +9,6 @@ ARIMA when flow data is sparse.
 Automatically detects data frequency (daily vs monthly) and adjusts accordingly.
 """
 
-from datetime import date
-
 import numpy as np
 import pandas as pd
 from statsforecast import StatsForecast
@@ -18,6 +16,7 @@ from statsforecast.models import AutoARIMA
 
 from app.db import get_supabase
 from app.etl.constants import RESERVOIR_CAPACITY
+from app.utils.timezone import ist_today
 
 CONFIDENCE_LEVEL = 80  # percent
 MIN_HISTORY_POINTS = 24  # minimum data points for forecasting
@@ -181,7 +180,7 @@ def _compute_future_exog(
 
 def _forecast_single_reservoir(reservoir: str) -> list[dict]:
     """Generate forecast for a single reservoir using ARIMAX or ARIMA fallback."""
-    today = date.today()
+    today = ist_today()
     df = _fetch_reservoir_history(reservoir)
 
     if len(df) < MIN_HISTORY_POINTS:

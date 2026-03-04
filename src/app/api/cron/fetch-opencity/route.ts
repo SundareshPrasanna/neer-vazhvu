@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyCronAuth } from '@/lib/cron-auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { fetchCKANResource, OPENCITY_RESOURCES } from '@/lib/api-clients/opencity';
+import { todayIST, todayISTParts } from '@/lib/utils/date';
 
 type CKANValue = string | number | null | undefined;
 type CKANRecord = Record<string, CKANValue>;
@@ -64,8 +65,8 @@ export async function POST(request: NextRequest) {
 
   const startTime = Date.now();
   const supabase = createAdminClient();
-  const today = new Date().toISOString().split('T')[0];
-  const dayOfMonth = new Date().getDate();
+  const today = todayIST();
+  const { day: dayOfMonth, year: currentYear } = todayISTParts();
 
   // Only fetch on the 1st-3rd of the month (OpenCity updates monthly)
   if (dayOfMonth > 3) {
@@ -76,7 +77,6 @@ export async function POST(request: NextRequest) {
     let totalRows = 0;
 
     // Pick newest available CKAN resource not beyond current year.
-    const currentYear = new Date().getFullYear();
     const resourceMap = OPENCITY_RESOURCES.groundwater as Record<string, string>;
     const availableYears = Object.keys(resourceMap)
       .map((y) => parseInt(y, 10))

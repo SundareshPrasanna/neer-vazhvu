@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyCronAuth } from '@/lib/cron-auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { computeDaysLeft } from '@/lib/calculator/days-left';
+import { subtractDays, todayIST, todayISTParts } from '@/lib/utils/date';
 import {
   DEFAULT_CONSUMPTION_MLD,
   DEFAULT_DESALINATION_MLD,
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
 
   const startTime = Date.now();
   const supabase = createAdminClient();
-  const today = new Date().toISOString().split('T')[0];
+  const today = todayIST();
 
   try {
     // 1. Get latest reservoir data (most recent date)
@@ -44,12 +45,11 @@ export async function POST(request: NextRequest) {
     );
 
     // 2. Compute 7-day rolling average inflow
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysAgo = subtractDays(new Date(), 7);
     const { data: recentData } = await supabase
       .from('reservoir_daily')
       .select('date, inflow_cusecs')
-      .gte('date', sevenDaysAgo.toISOString().split('T')[0])
+      .gte('date', sevenDaysAgo)
       .not('inflow_cusecs', 'is', null);
 
     let recentAvgInflowMcftPerDay = 0;
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Get seasonal average inflow
-    const currentMonth = new Date().getMonth() + 1;
+    const currentMonth = todayISTParts().month;
     const { data: seasonalData } = await supabase.rpc('avg_monthly_inflow', {
       target_month: currentMonth,
     });
