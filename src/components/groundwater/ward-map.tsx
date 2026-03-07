@@ -7,6 +7,7 @@ import type { Feature } from "geojson";
 import { getGroundwaterColor, getRiskColor } from "@/types/groundwater";
 import type { GroundwaterWard, WardRiskData, ViewMode } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
+import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
 
 interface WardMapProps {
@@ -18,6 +19,7 @@ interface WardMapProps {
 
 export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect }: WardMapProps) {
   const { t, language } = useLanguage();
+  const tiles = useMapTiles();
   const [geoJSON, setGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
 
   useEffect(() => {
@@ -88,10 +90,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect }: W
       className="h-full w-full"
       scrollWheelZoom={true}
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      />
+      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       <GeoJSON key={viewMode} data={geoJSON} style={style} onEachFeature={onEachFeature} />
     </MapContainer>
   );
