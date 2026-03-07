@@ -23,6 +23,12 @@ export const metadata: Metadata = {
     description: "How many days of water does Chennai have left?",
     type: "website",
     locale: "en_IN",
+    siteName: "Neer Vazhvu",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Neer Vazhvu | Chennai Water Intelligence",
+    description: "How many days of water does Chennai have left?",
   },
   icons: {
     icon: [
