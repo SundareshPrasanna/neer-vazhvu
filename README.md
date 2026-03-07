@@ -27,6 +27,15 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 - **Detail Panel** — Click any water body for historical area, surviving area, what replaced it, and source citations
 - **Area Loss Bar** — Visual indicator of how much of each water body survives
 
+### Lake Restoration Priority Ranker
+- **1,635 Water Bodies Scored** — Every water body ranked on restoration priority using spatial analysis
+- **5-Component Scoring Model** — Water body size (25%), proximity to lost water bodies (20%), proximity to polluted rivers (20%), industrial pollution proximity (15%), water body type (20%)
+- **Priority Levels** — Critical (75–100), High (50–74), Moderate (25–49), Low (0–24)
+- **Map View** — Color-coded polygons (red → green) showing restoration priority across Chennai
+- **Ranking Table** — Sortable by score, area, or name; filterable to show top priorities or all water bodies
+- **Detail Panel** — Score breakdown with weighted component bars, nearest lost water body, nearest river station, nearest industrial source
+- **Designed for GCC** — Supports government budget allocation for lake restoration programmes
+
 ### River Health Map
 - **Interactive Polyline Map** — 4 rivers (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) colour-coded by CPCB water quality status
 - **Monitoring Station Markers** — 10 stations with individual DO/BOD readings
@@ -232,15 +241,17 @@ npx tsx scripts/fetch-industrial-zones-osm.ts
 ```
 neer-vazhvu/
 ├── scripts/                      # One-time data scripts
-│   ├── fetch-water-bodies-osm.ts      # Fetch current water bodies from Overpass API
-│   ├── fetch-rivers-osm.ts            # Fetch river polylines from Overpass API
-│   └── fetch-industrial-zones-osm.ts  # Fetch industrial zone polygons from Overpass API
+│   ├── fetch-water-bodies-osm.ts          # Fetch current water bodies from Overpass API
+│   ├── fetch-rivers-osm.ts                # Fetch river polylines from Overpass API
+│   ├── fetch-industrial-zones-osm.ts      # Fetch industrial zone polygons from Overpass API
+│   └── compute-restoration-priority.ts    # Score water bodies for restoration priority
 ├── src/                          # Next.js frontend
 │   ├── app/                      # App Router pages
 │   │   ├── page.tsx              # Main dashboard
 │   │   ├── groundwater/          # Groundwater map page
 │   │   ├── water-bodies/         # Water bodies map page
 │   │   ├── rivers/               # River health + industrial pollution map page
+│   │   ├── lake-restoration/     # Lake restoration priority ranker
 │   │   └── about/                # About/methodology page
 │   ├── components/
 │   │   ├── dashboard/            # Dashboard components
@@ -248,6 +259,7 @@ neer-vazhvu/
 │   │   ├── water-bodies/         # Map, legend, detail panel
 │   │   ├── rivers/               # River map, panel, chart, legend
 │   │   ├── pollution/            # Industrial pollution map overlay, panel, legend
+│   │   ├── lake-restoration/     # Restoration map, legend, detail panel, ranking table
 │   │   ├── layout/               # Header, footer
 │   │   └── ui/                   # shadcn/ui primitives
 │   ├── lib/
@@ -275,8 +287,9 @@ neer-vazhvu/
 │   │   ├── chennai-rivers.geojson               # River polylines (Cooum, Adyar, etc.)
 │   │   └── chennai-industrial-zones.geojson     # OSM industrial zone polygons
 │   └── data/                     # Static JSON datasets
-│       ├── river-quality.json        # CPCB monitoring station readings (2015–2024)
-│       └── industrial-sources.json   # Industrial pollution sources (NGT/TNPCB/CPCB)
+│       ├── river-quality.json            # CPCB monitoring station readings (2015–2024)
+│       ├── industrial-sources.json       # Industrial pollution sources (NGT/TNPCB/CPCB)
+│       └── restoration-priority.json     # Pre-computed restoration priority scores (1,635 water bodies)
 └── .github/
     └── workflows/                # CI + daily data pipeline
 ```
@@ -305,6 +318,22 @@ Each ward receives a composite score from 0 (safe) to 100 (critical):
 
 Risk levels: **Low** (0–25) · **Moderate** (26–50) · **High** (51–75) · **Critical** (76–100)
 
+## Restoration Priority Methodology
+
+Each of Chennai's 1,635 water bodies receives a composite priority score from 0 (low priority) to 100 (critical restoration candidate), computed from 5 weighted spatial components:
+
+| Component | Weight | What it measures |
+|-----------|--------|-----------------|
+| Water body size | 25% | Larger bodies provide greater recharge and flood mitigation impact |
+| Proximity to lost water bodies | 20% | Near historically lost lakes = stressed area needing compensation |
+| Proximity to polluted rivers | 20% | Near dead/degraded river stretches (by DO readings from CPCB stations) |
+| Industrial pollution proximity | 15% | Near industrial discharge zones = higher contamination risk |
+| Water body type | 20% | Reservoirs and lakes prioritised over canals, drains, wastewater ponds |
+
+Priority levels: **Low** (0–24) · **Moderate** (25–49) · **High** (50–74) · **Critical** (75–100)
+
+Scores are pre-computed by `scripts/compute-restoration-priority.ts` using Haversine distance calculations against all input datasets. Output is saved to `public/data/restoration-priority.json`.
+
 ## Limitations
 
 - This is an independent, educational project — not an official government tool.
@@ -313,6 +342,7 @@ Risk levels: **Low** (0–25) · **Moderate** (26–50) · **High** (51–75) ·
 - Groundwater data from OpenCity may lag by months.
 - Forecasts use AutoARIMA which works best with 90+ days of history.
 - Lost water body coordinates and historical areas are approximate, sourced from academic and civic studies.
+- Restoration priority scores use spatial proximity as a proxy; they do not account for population density, land ownership, or restoration cost — factors that require non-public data.
 
 ## Contributing
 

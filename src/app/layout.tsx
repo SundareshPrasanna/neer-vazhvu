@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/lib/i18n/context";
 
 export const metadata: Metadata = {
-  title: "Neer Vazhvu — Chennai Water Intelligence",
+  title: "Neer Vazhvu | Chennai Water Intelligence",
   description:
     "Real-time dashboard tracking Chennai's water reserves, groundwater health, and days of water remaining. Built with open data from CMWSSB, NASA, and OpenCity.",
   keywords: [
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     "Tamil Nadu",
   ],
   openGraph: {
-    title: "Neer Vazhvu — Chennai Water Intelligence",
+    title: "Neer Vazhvu | Chennai Water Intelligence",
     description: "How many days of water does Chennai have left?",
     type: "website",
     locale: "en_IN",

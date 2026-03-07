@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     const days = await fetchNASAPower(startDate, endDate);
 
     if (days.length === 0) {
-      // Not an error — NASA data might not be ready yet
+      // Not an error  -  NASA data might not be ready yet
       await supabase.from('pipeline_log').insert({
         run_date: today,
         step: 'nasa_fetch',

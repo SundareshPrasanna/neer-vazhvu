@@ -130,7 +130,7 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
               : t("common.not_available")}
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            DO ({latestReading?.year ?? "—"})
+            DO ({latestReading?.year ?? "-"})
           </div>
         </div>
       </div>
@@ -223,7 +223,7 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
       {/* Chart */}
       <div className="mb-3">
         <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
-          {t("rivers.water_quality")} — {activeStation.name}
+          {t("rivers.water_quality")}: {activeStation.name}
         </div>
         <RiverQualityChart
           readings={activeStation.readings}

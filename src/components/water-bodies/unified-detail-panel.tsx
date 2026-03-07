@@ -1,11 +1,15 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import type { SelectedWaterBody, WaterBodyStatus } from "@/types/water-bodies";
 import { STATUS_COLORS } from "@/types/water-bodies";
+import type { ScoredWaterBody } from "@/types/restoration";
+import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
 
-interface WaterBodyPanelProps {
+interface UnifiedDetailPanelProps {
   selected: SelectedWaterBody;
+  restorationData: ScoredWaterBody | null;
   onClose: () => void;
 }
 
@@ -14,6 +18,14 @@ const STATUS_TKEYS: Record<WaterBodyStatus, string> = {
   severely_reduced: "wb_panel.severely_reduced",
   partially_encroached: "wb_panel.partially_encroached",
 };
+
+const SCORE_COMPONENTS = [
+  { key: "size"                 as const, tKey: "lr.comp_size",       weight: 0.25, max: 25 },
+  { key: "lost_proximity"      as const, tKey: "lr.comp_lost",       weight: 0.20, max: 20 },
+  { key: "river_pollution"     as const, tKey: "lr.comp_river",      weight: 0.20, max: 20 },
+  { key: "industrial_proximity" as const, tKey: "lr.comp_industrial", weight: 0.15, max: 15 },
+  { key: "type_bonus"          as const, tKey: "lr.comp_type",       weight: 0.20, max: 20 },
+];
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -28,19 +40,126 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-const CLOSE_BTN = (onClose: () => void, ariaLabel: string) => (
-  <button
-    onClick={onClose}
-    className="ml-2 p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex-shrink-0"
-    aria-label={ariaLabel}
-  >
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-  </button>
-);
+function CloseButton({ onClose, ariaLabel }: { onClose: () => void; ariaLabel: string }) {
+  return (
+    <button
+      onClick={onClose}
+      className="ml-2 p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex-shrink-0"
+      aria-label={ariaLabel}
+    >
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  );
+}
 
-export function WaterBodyPanel({ selected, onClose }: WaterBodyPanelProps) {
+function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
+  const { t } = useLanguage();
+  const color = getPriorityColor(wb.priority_level);
+  const levelLabel = t(`lr.${wb.priority_level}`);
+
+  return (
+    <>
+      {/* Priority score */}
+      <div className="px-4 pt-4 pb-2 border-t border-slate-100 dark:border-slate-800">
+        <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
+          {t("lr.priority_score")}
+        </h4>
+        <div className="flex items-baseline gap-2">
+          <span className="text-3xl font-bold" style={{ color }}>
+            {wb.priority_score}
+          </span>
+          <span className="text-sm text-slate-400 dark:text-slate-500">/ 100</span>
+          <Badge className="ml-1" style={{ backgroundColor: color, color: "white" }}>
+            {levelLabel}
+          </Badge>
+        </div>
+      </div>
+
+      {/* Score breakdown */}
+      <div className="px-4 py-3">
+        <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-3">
+          {t("lr.score_breakdown")}
+        </h4>
+        <div className="space-y-3">
+          {SCORE_COMPONENTS.map(({ key, tKey, weight, max }) => {
+            const subScore = wb.components[key];
+            const contribution = subScore * weight;
+            const pct = (contribution / max) * 100;
+            return (
+              <div key={key}>
+                <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+                  <span>{t(tKey)}</span>
+                  <span className="font-mono tabular-nums">
+                    {contribution.toFixed(0)} / {max}
+                  </span>
+                </div>
+                <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all"
+                    style={{ width: `${pct}%`, backgroundColor: color }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Nearest features */}
+      <div className="px-4 pb-4 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-3">
+        {wb.nearest_lost_body && (
+          <div>
+            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">
+              {t("lr.nearest_lost")}
+            </div>
+            <div className="text-sm text-slate-700 dark:text-slate-300">
+              {wb.nearest_lost_body}
+              <span className="text-slate-400 dark:text-slate-500 ml-1">
+                ({wb.nearest_lost_km} {t("lr.km_away")})
+              </span>
+            </div>
+          </div>
+        )}
+        {wb.nearest_river_station && (
+          <div>
+            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">
+              {t("lr.nearest_river")}
+            </div>
+            <div className="text-sm text-slate-700 dark:text-slate-300">
+              {wb.nearest_river_station}
+              <span className="text-slate-400 dark:text-slate-500 ml-1">
+                ({wb.nearest_river_km} {t("lr.km_away")})
+              </span>
+            </div>
+          </div>
+        )}
+        {wb.nearest_industrial && (
+          <div>
+            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">
+              {t("lr.nearest_industrial")}
+            </div>
+            <div className="text-sm text-slate-700 dark:text-slate-300">
+              {wb.nearest_industrial}
+              <span className="text-slate-400 dark:text-slate-500 ml-1">
+                ({wb.nearest_industrial_km} {t("lr.km_away")})
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Methodology */}
+      <div className="px-4 pb-4 text-xs text-slate-400 dark:text-slate-500 space-y-1">
+        <p>{t("lr.methodology")}</p>
+        <p>{t("lr.source_note")}</p>
+      </div>
+    </>
+  );
+}
+
+export function UnifiedDetailPanel({ selected, restorationData, onClose }: UnifiedDetailPanelProps) {
   const { t, language } = useLanguage();
   const closeAria = t("common.close_panel");
 
@@ -82,7 +201,7 @@ export function WaterBodyPanel({ selected, onClose }: WaterBodyPanelProps) {
               </p>
             )}
           </div>
-          {CLOSE_BTN(onClose, closeAria)}
+          <CloseButton onClose={onClose} ariaLabel={closeAria} />
         </div>
 
         {/* Status */}
@@ -92,12 +211,15 @@ export function WaterBodyPanel({ selected, onClose }: WaterBodyPanelProps) {
           </span>
         </div>
 
-        {/* Stats */}
+        {/* Basic stats */}
         <div className="p-4 grid grid-cols-2 gap-4">
           <Row label={t("wb_panel.type")} value={type} />
           <Row label={t("wb_panel.area")} value={areaText} />
           <Row label={t("wb_panel.osm_id")} value={`#${props.osm_id}`} />
         </div>
+
+        {/* Restoration data (always shown when available) */}
+        {restorationData && <RestorationSection wb={restorationData} />}
       </div>
     );
   }
@@ -135,7 +257,7 @@ export function WaterBodyPanel({ selected, onClose }: WaterBodyPanelProps) {
             </p>
           )}
         </div>
-        {CLOSE_BTN(onClose, closeAria)}
+        <CloseButton onClose={onClose} ariaLabel={closeAria} />
       </div>
 
       {/* Status badge */}
@@ -150,10 +272,7 @@ export function WaterBodyPanel({ selected, onClose }: WaterBodyPanelProps) {
 
       {/* Stats grid */}
       <div className="p-4 grid grid-cols-2 gap-4">
-        <Row
-          label={t("wb_panel.type")}
-          value={localizeType(props.type)}
-        />
+        <Row label={t("wb_panel.type")} value={localizeType(props.type)} />
         <Row label={t("wb_panel.area_lost")} value={`~${pctLost}%`} />
         <Row
           label={t("wb_panel.historical_area")}

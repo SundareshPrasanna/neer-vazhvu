@@ -37,7 +37,7 @@ export async function scrapeCMWSSB(): Promise<ScrapeResult> {
   const html = await response.text();
   const $ = cheerio.load(html);
 
-  // Extract date from heading — looks for DD/MM/YYYY pattern
+  // Extract date from heading  -  looks for DD/MM/YYYY pattern
   const pageText = $('body').text();
   const dateMatch = pageText.match(/(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{4})/);
   if (!dateMatch) {
@@ -76,7 +76,7 @@ export async function scrapeCMWSSB(): Promise<ScrapeResult> {
   });
 
   if (readings.length === 0) {
-    throw new Error('No reservoir data found in CMWSSB page — HTML structure may have changed');
+    throw new Error('No reservoir data found in CMWSSB page. HTML structure may have changed');
   }
 
   return { date, readings };

@@ -29,7 +29,9 @@ graph TB
     subgraph Frontend ["Next.js (App Router)"]
         Dashboard["Dashboard /"]
         GW["Groundwater /groundwater"]
+        WB["Water Bodies /water-bodies"]
         Rivers["Rivers /rivers"]
+        LR["Lake Restoration /lake-restoration"]
         About["About /about"]
     end
 
@@ -231,6 +233,22 @@ Three scenarios computed daily from current storage and net demand:
 
 **Key constants:** Consumption = 830 MLD, Desalination = 190 MLD (Minjur + Nemmeli).
 
+### Restoration Priority Ranker
+
+Pre-computed (build-time) scoring of all 1,635 water bodies for restoration priority. Unlike the runtime intelligence layer, this uses only static spatial data and produces a static JSON file.
+
+**Script:** `scripts/compute-restoration-priority.ts` → `public/data/restoration-priority.json`
+
+| Component | Weight | Input |
+|-----------|--------|-------|
+| Water body size | 25% | `area_ha` from water bodies GeoJSON |
+| Proximity to lost water bodies | 20% | Haversine distance to 15 lost bodies |
+| Proximity to polluted rivers | 20% | Distance to 10 CPCB monitoring stations + latest DO |
+| Industrial pollution proximity | 15% | Distance to 7 industrial sources |
+| Water body type | 20% | OSM `water_type` tag (reservoir > lake > pond > canal) |
+
+**Output:** Ranked list with composite score (0–100), component breakdown, and nearest feature references per water body.
+
 ## Frontend
 
 ```mermaid
@@ -239,7 +257,9 @@ graph TD
 
     Layout --> Dashboard
     Layout --> GW["Groundwater Page"]
+    Layout --> WB["Water Bodies Page"]
     Layout --> RV["Rivers Page"]
+    Layout --> LR["Lake Restoration Page"]
     Layout --> About["About Page"]
 
     subgraph Dashboard["Dashboard Page /"]

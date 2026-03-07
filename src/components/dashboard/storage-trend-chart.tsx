@@ -43,11 +43,11 @@ const TAB_DAYS = [
 ];
 
 const YEAR_COLORS: Record<number, string> = {
-  2019: "#dc2626", // red — Day Zero
+  2019: "#dc2626", // red  -  Day Zero
   2020: "#f59e0b", // amber
   2021: "#84cc16", // lime
   2022: "#06b6d4", // cyan
-  2023: "#8b5cf6", // violet — flood year
+  2023: "#8b5cf6", // violet  -  flood year
   2024: "#ec4899", // pink
   2025: "#f97316", // orange
 };
@@ -164,7 +164,7 @@ export function StorageTrendChart({
     return result;
   }, [filtered, filteredForecast, selectedYears, getHistoricalData]);
 
-  // Compute x-axis tick interval — fewer labels on mobile to prevent overlap
+  // Compute x-axis tick interval  -  fewer labels on mobile to prevent overlap
   const xAxisInterval = useMemo(() => {
     const len = chartData.length;
     if (len <= 8) return 0;
@@ -269,7 +269,7 @@ export function StorageTrendChart({
     );
   };
 
-  // Forecast chart elements — shared between AreaChart and LineChart
+  // Forecast chart elements  -  shared between AreaChart and LineChart
   const forecastElements = hasForecast ? (
     <>
       <defs>
@@ -313,7 +313,7 @@ export function StorageTrendChart({
     </>
   ) : null;
 
-  // Inflow/outflow line elements — shared between AreaChart and LineChart
+  // Inflow/outflow line elements  -  shared between AreaChart and LineChart
   const flowElements = (
     <>
       {showInflow && (

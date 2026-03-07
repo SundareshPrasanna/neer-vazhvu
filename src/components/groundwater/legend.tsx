@@ -17,7 +17,7 @@ export function GroundwaterLegend({ viewMode }: GroundwaterLegendProps) {
     { color: "#f97316", label: "10–15m", tKey: "gw.stressed" },
     { color: "#ef4444", label: "15–25m", tKey: "gw.critical" },
     { color: "#7f1d1d", label: ">25m",   tKey: "gw.crisis" },
-    { color: "#9ca3af", label: "—",      tKey: "gw.no_data_lc" },
+    { color: "#9ca3af", label: "-",      tKey: "gw.no_data_lc" },
   ];
 
   const RISK_ITEMS = [
@@ -25,7 +25,7 @@ export function GroundwaterLegend({ viewMode }: GroundwaterLegendProps) {
     { color: "#eab308", label: "26–50",  tKey: "legend.moderate_risk" },
     { color: "#f97316", label: "51–75",  tKey: "legend.high_risk" },
     { color: "#dc2626", label: "76–100", tKey: "gw.critical" },
-    { color: "#9ca3af", label: "—",      tKey: "gw.no_data_lc" },
+    { color: "#9ca3af", label: "-",      tKey: "gw.no_data_lc" },
   ];
 
   const items = viewMode === "risk" ? RISK_ITEMS : DEPTH_ITEMS;

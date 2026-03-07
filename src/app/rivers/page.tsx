@@ -118,12 +118,12 @@ export default function RiversPage() {
             onSelectSource={(source) => { setSelectedSource(source); setSelectedRiver(null); }}
           />
 
-          {/* Legend overlay — bottom left */}
+          {/* Legend overlay  -  bottom left */}
           <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000]">
             <RiversLegend />
           </div>
 
-          {/* Source note overlay — top left */}
+          {/* Source note overlay  -  top left */}
           <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000] bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {t("rivers_page.quality_label")}{" "}
@@ -140,7 +140,7 @@ export default function RiversPage() {
           </div>
         </div>
 
-        {/* Detail panel — bottom sheet on mobile, sidebar on desktop */}
+        {/* Detail panel  -  bottom sheet on mobile, sidebar on desktop */}
         {hasPanel && (
           <div className="h-[45vh] md:h-full md:w-80 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
             {selectedRiver && (

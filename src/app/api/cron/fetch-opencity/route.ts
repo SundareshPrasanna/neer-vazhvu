@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
 
   // Only fetch on the 1st-3rd of the month (OpenCity updates monthly)
   if (dayOfMonth > 3) {
-    return NextResponse.json({ success: true, message: 'Skipped — not first 3 days of month' });
+    return NextResponse.json({ success: true, message: 'Skipped: not first 3 days of month' });
   }
 
   try {
