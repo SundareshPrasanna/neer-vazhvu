@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test \"src/**/*.test.ts\"",
-    "test:watch": "tsx --test --watch \"src/**/*.test.ts\"",
+    "test": "find src -name '*.test.ts' | xargs tsx --test",
+    "test:watch": "find src -name '*.test.ts' | xargs tsx --test --watch",
     "i18n:check": "node scripts/check-i18n.mjs"
   },
   "dependencies": {
