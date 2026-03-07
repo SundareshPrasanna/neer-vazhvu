@@ -140,7 +140,7 @@ export function PollutionPanel({ source, data, onClose }: PollutionPanelProps) {
                   </span>
                   {incident.volume && (
                     <span className="text-xs text-red-600 dark:text-red-400 font-medium">
-                      — {incident.volume}
+                      , {incident.volume}
                     </span>
                   )}
                 </div>

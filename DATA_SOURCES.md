@@ -145,6 +145,39 @@
 - OSM industrial zone coverage varies — some facilities may be partially mapped or missing
 - Run `npx tsx scripts/fetch-industrial-zones-osm.ts` to regenerate after OSM data improves
 
+## Restoration Priority Scores — Computed
+
+| | |
+|---|---|
+| **Source** | Pre-computed from existing project datasets using spatial analysis |
+| **Method** | Build script: `scripts/compute-restoration-priority.ts` (Haversine distance calculations) |
+| **Frequency** | Re-run when input data changes (water bodies GeoJSON, river quality, industrial sources) |
+| **Coverage** | All 1,635 current water bodies from OpenStreetMap |
+| **Fields** | Priority score (0–100), priority level, 5 component scores, centroid, nearest lost body / river station / industrial source with distances |
+| **File** | `public/data/restoration-priority.json` (static, served from Next.js `public/`) |
+
+**Input datasets used:**
+- `public/geojson/chennai-water-bodies-current.geojson` — water body polygons and area
+- `public/geojson/chennai-water-bodies-lost.geojson` — 15 lost/encroached water body locations
+- `public/data/river-quality.json` — 10 CPCB monitoring station locations and latest DO readings
+- `public/data/industrial-sources.json` — 7 industrial facility coordinates
+
+**Scoring components:**
+
+| Component | Weight | Logic |
+|-----------|--------|-------|
+| Water body size | 25% | Threshold-based on `area_ha` (capped at 200 ha): ≥50ha → 100, <0.5ha → 10 |
+| Proximity to lost water bodies | 20% | Distance to nearest of 15 lost bodies: ≤2km → 100, >10km → 10 |
+| Proximity to polluted rivers | 20% | Distance to CPCB stations weighted by DO: dead river <3km → 100 |
+| Industrial pollution proximity | 15% | Distance to nearest of 7 facilities: ≤2km → 100, >10km → 10 |
+| Water body type | 20% | reservoir → 100, lake → 95, water → 70, pond → 65, canal → 15, drain → 5 |
+
+**Known limitations:**
+- Scores are spatial proxies only — do not account for population density, land ownership, sedimentation, or restoration cost
+- Water body centroids are simple vertex averages (sufficient for km-scale distance calculations)
+- ~1,360 water bodies have no name in OSM — shown as "Unnamed water body"
+- To regenerate: `npx tsx scripts/compute-restoration-priority.ts`
+
 ## Reservoir Metadata
 
 | | |

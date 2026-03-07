@@ -136,7 +136,7 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
                   <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
                     <span>{t(tKey)}</span>
                     <span className="font-mono tabular-nums">
-                      {contribution != null ? contribution.toFixed(0) : "—"} / {max}
+                      {contribution != null ? contribution.toFixed(0) : "-"} / {max}
                     </span>
                   </div>
                   <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">

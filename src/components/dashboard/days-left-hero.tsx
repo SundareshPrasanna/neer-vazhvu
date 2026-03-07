@@ -100,7 +100,7 @@ export function DaysLeftHero({
           <div className="text-center sm:text-left">
             <div className={`text-5xl sm:text-6xl font-bold ${getSeverityColor(days.pessimistic)}`}>
               {days.pessimistic >= 999 ? (
-                // All scenarios safe — inflows sustain supply
+                // All scenarios safe  -  inflows sustain supply
                 <>{t("hero.safe")}</>
               ) : days.optimistic >= 999 ? (
                 // Worst case is finite but best case won't deplete

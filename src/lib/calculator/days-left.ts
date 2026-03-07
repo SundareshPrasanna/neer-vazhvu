@@ -28,21 +28,21 @@ export function computeDaysLeft(input: DaysLeftInput): DaysLeftOutput {
   const netReservoirDemandMLD = dailyConsumptionMLD - desalinationMLD;
   const netReservoirDemandMcft = netReservoirDemandMLD * MLD_TO_MCFT;
 
-  // Scenario 1: PESSIMISTIC — no rain, no inflow
+  // Scenario 1: PESSIMISTIC  -  no rain, no inflow
   const depletionPessimistic = netReservoirDemandMcft;
   const pessimistic =
     depletionPessimistic > 0
       ? Math.max(0, Math.floor(totalStorageMcft / depletionPessimistic))
       : MAX_DAYS;
 
-  // Scenario 2: MODERATE — recent inflow trend continues
+  // Scenario 2: MODERATE  -  recent inflow trend continues
   const depletionModerate = Math.max(0, netReservoirDemandMcft - recentAvgInflowMcftPerDay);
   const moderate =
     depletionModerate > 0
       ? Math.max(0, Math.floor(totalStorageMcft / depletionModerate))
       : MAX_DAYS;
 
-  // Scenario 3: OPTIMISTIC — seasonal average inflow
+  // Scenario 3: OPTIMISTIC  -  seasonal average inflow
   const depletionOptimistic = Math.max(0, netReservoirDemandMcft - seasonalAvgInflowMcftPerDay);
   const optimistic =
     depletionOptimistic > 0

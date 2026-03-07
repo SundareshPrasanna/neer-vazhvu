@@ -12,6 +12,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "nav.groundwater":    { en: "Groundwater Map",   ta: "நிலத்தடி நீர் வரைபடம்" },
   "nav.water_bodies":   { en: "Water Bodies",      ta: "நீர்நிலைகள்" },
   "nav.rivers":         { en: "Rivers",            ta: "ஆறுகள்" },
+  "nav.lake_restoration": { en: "Restoration",     ta: "மறுசீரமைப்பு" },
   "nav.about":          { en: "About",             ta: "எங்களைப் பற்றி" },
   "header.subtitle":    { en: "Chennai Water Intelligence", ta: "சென்னை நீர் அறிவுத்தளம்" },
   "theme.switch_to_light": { en: "Switch to light mode", ta: "ஒளிர் நிலையில் மாற்று" },
@@ -154,11 +155,13 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "wb.existing":           { en: "existing water bodies mapped",          ta: "தற்போதுள்ள நீர்நிலைகள் வரைபடத்தில்" },
   "wb.lost":               { en: "documented lost or encroached",          ta: "ஆவணப்படுத்தப்பட்ட இழந்த அல்லது ஆக்கிரமிக்கப்பட்டவை" },
   "wb.ha_lost":            { en: "of water surface lost",                  ta: "நீர் மேற்பரப்பு இழந்தது" },
-  "wb.tagline":            { en: "Lost water bodies cause both floods and droughts \u2014 no storage, no recharge.", ta: "இழந்த நீர்நிலைகள் வெள்ளம் மற்றும் வறட்சி இரண்டையும் ஏற்படுத்துகின்றன — சேமிப்பு இல்லை, நீர்ச்சேர்க்கை இல்லை." },
+  "wb.tagline":            { en: "Lost water bodies cause both floods and droughts: no storage, no recharge.", ta: "இழந்த நீர்நிலைகள் வெள்ளம் மற்றும் வறட்சி இரண்டையும் ஏற்படுத்துகின்றன: சேமிப்பு இல்லை, நீர்ச்சேர்க்கை இல்லை." },
   "wb.loading":            { en: "Loading map...",                         ta: "வரைபடம் ஏற்றுகிறது..." },
   "wb.osm_source":         { en: "Current water bodies from",              ta: "தற்போதைய நீர்நிலைகள் இதிலிருந்து:" },
   "wb.lost_source":        { en: "Lost bodies curated from",               ta: "இழந்த நீர்நிலைகள் இதிலிருந்து:" },
   "wb.lost_source_value":  { en: "Care Earth Trust & NGT records",         ta: "Care Earth Trust & NGT பதிவுகள்" },
+  "wb.view_bodies":        { en: "Water Bodies",                          ta: "நீர்நிலைகள்" },
+  "wb.view_restoration":   { en: "Restoration Priority",                  ta: "மறுசீரமைப்பு முன்னுரிமை" },
 
   // ── About Page ────────────────────────────────────────────────────────────
   "about.title":           { en: "About Neer Vazhvu",    ta: "நீர் வாழ்வு பற்றி" },
@@ -217,7 +220,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
     en: "(ARIMAX). AutoARIMA automatically selects the best ARIMA(p,d,q) order and seasonal component by testing multiple model configurations and choosing the one with the lowest information criterion (AICc).",
     ta: "(ARIMAX). பல்வேறு மாதிரி அமைப்புகளை சோதித்து, குறைந்த தகவல் அளவுகோல் (AICc) கொண்ட அமைப்பை தேர்வு செய்து AutoARIMA சிறந்த ARIMA(p,d,q) வரிசை மற்றும் பருவகால கூறை தானாக நிர்ணயிக்கிறது."
   },
-  "about.tech_bullet_independent": { en: "Each reservoir is forecasted independently — six separate models are fitted.", ta: "ஒவ்வொரு நீர்த்தேக்கத்திற்கும் தனித்தனியாக முன்கணிப்பு செய்யப்படுகிறது — ஆறு தனிப்பட்ட மாதிரிகள் பொருத்தப்படுகின்றன." },
+  "about.tech_bullet_independent": { en: "Each reservoir is forecasted independently; six separate models are fitted.", ta: "ஒவ்வொரு நீர்த்தேக்கத்திற்கும் தனித்தனியாக முன்கணிப்பு செய்யப்படுகிறது; ஆறு தனிப்பட்ட மாதிரிகள் பொருத்தப்படுகின்றன." },
   "about.tech_bullet_retrained": { en: "The model is re-trained daily as new data arrives from the CMWSSB scraper.", ta: "CMWSSB ஸ்க்ரேப்பரில் புதிய தரவு வந்தவுடன் மாதிரி தினசரி மீண்டும் பயிற்சியளிக்கப்படுகிறது." },
   "about.tech_exogenous_label": { en: "Exogenous variables:", ta: "வெளிப்புற மாறிகள்:" },
   "about.tech_exogenous_desc": { en: "Inflow and outflow (cusecs) are fed as external regressors alongside storage.", ta: "வரத்து மற்றும் வெளியேற்றம் (cusecs) சேமிப்புடன் சேர்த்து வெளிப்புற மாறிகளாக கொடுக்கப்படுகின்றன." },
@@ -243,6 +246,16 @@ export const translations: Record<string, { en: string; ta: string }> = {
 
   // River map
   "about.river_map_desc":  { en: "The river map shows four rivers \u2014 Cooum, Adyar, Buckingham Canal, and Kosasthalaiyar \u2014 colour-coded by overall water quality status derived from CPCB monitoring data.", ta: "ஆற்று வரைபடம் நான்கு ஆறுகளை காட்டுகிறது \u2014 கூவம், அடையாறு, பக்கிங்ஹாம் கால்வாய், மற்றும் கோசஸ்தலையாறு \u2014 CPCB கண்காணிப்பு தரவிலிருந்து பெறப்பட்ட ஒட்டுமொத்த நீர்த்தர நிலையால் வண்ண குறியீடு செய்யப்பட்டவை." },
+
+  // Lake Restoration (about page)
+  "about.restoration":         { en: "Lake Restoration Priority", ta: "ஏரி மறுசீரமைப்பு முன்னுரிமை" },
+  "about.restoration_desc":    { en: "The restoration ranker scores all 1,635 water bodies on restoration priority using a 5-component spatial analysis model. Each component is scored 0\u2013100 and combined as a weighted average:", ta: "மறுசீரமைப்பு தரவரிசை அனைத்து 1,635 நீர்நிலைகளையும் 5-கூறு இடஞ்சார்ந்த பகுப்பாய்வு மாதிரியைப் பயன்படுத்தி மறுசீரமைப்பு முன்னுரிமையில் மதிப்பிடுகிறது. ஒவ்வொரு கூறும் 0\u2013100 மதிப்பிடப்பட்டு, நிறையிடப்பட்ட சராசரியாக இணைக்கப்படுகிறது:" },
+  "about.restoration_comp_size":       { en: "Water Body Size (25%): Larger water bodies provide greater groundwater recharge and flood mitigation impact.", ta: "நீர்நிலை அளவு (25%): பெரிய நீர்நிலைகள் அதிக நிலத்தடி நீர் நிரப்புதல் மற்றும் வெள்ள தணிப்பு பலனை வழங்குகின்றன." },
+  "about.restoration_comp_lost":       { en: "Proximity to Lost Water Bodies (20%): Water bodies near historically lost lakes are in stressed areas where restoration compensates for lost water surface.", ta: "இழந்த நீர்நிலைகளுக்கு அருகாமை (20%): வரலாற்று ரீதியாக இழந்த ஏரிகளுக்கு அருகிலுள்ள நீர்நிலைகள் அழுத்தமான பகுதிகளில் உள்ளன, அங்கு மறுசீரமைப்பு இழந்த நீர்ப்பரப்பை ஈடுசெய்யும்." },
+  "about.restoration_comp_river":      { en: "Proximity to Polluted Rivers (20%): Water bodies near dead or degraded river stretches (by dissolved oxygen readings) could serve as settling or treatment wetlands.", ta: "மாசுபட்ட ஆறுகளுக்கு அருகாமை (20%): இறந்த அல்லது சீரழிந்த ஆற்றுப் பகுதிகளுக்கு (கரைந்த ஆக்சிஜன் அளவுகள் மூலம்) அருகிலுள்ள நீர்நிலைகள் வண்டல் அல்லது சுத்திகரிப்பு ஈரநிலங்களாக செயல்படலாம்." },
+  "about.restoration_comp_industrial": { en: "Industrial Pollution Proximity (15%): Water bodies near industrial discharge zones face greater contamination risk; restoring them helps protect groundwater.", ta: "தொழிற்சாலை மாசு அருகாமை (15%): தொழிற்சாலை கழிவுநீர் மண்டலங்களுக்கு அருகிலுள்ள நீர்நிலைகள் அதிக மாசுபாடு ஆபத்தை எதிர்கொள்கின்றன; அவற்றை மறுசீரமைப்பது நிலத்தடி நீரைப் பாதுகாக்க உதவுகிறது." },
+  "about.restoration_comp_type":       { en: "Water Body Type (20%): Reservoirs and natural lakes are prioritised over canals, drains, and wastewater infrastructure.", ta: "நீர்நிலை வகை (20%): நீர்த்தேக்கங்கள் மற்றும் இயற்கை ஏரிகள் கால்வாய்கள், வடிகால்கள் மற்றும் கழிவுநீர் உள்கட்டமைப்புகளை விட முன்னுரிமை பெறுகின்றன." },
+  "about.restoration_note":    { en: "Scores are computed from static spatial data and do not account for population density, land ownership, or restoration cost. Designed to support GCC budget allocation for lake restoration programmes.", ta: "மதிப்பெண்கள் நிலையான இடஞ்சார்ந்த தரவிலிருந்து கணக்கிடப்படுகின்றன மற்றும் மக்கள் தொகை அடர்த்தி, நில உரிமை, அல்லது மறுசீரமைப்பு செலவை கணக்கில் எடுத்துக்கொள்வதில்லை. ஏரி மறுசீரமைப்பு திட்டங்களுக்கான GCC பட்ஜெட் ஒதுக்கீட்டை ஆதரிக்க வடிவமைக்கப்பட்டது." },
 
   // Disclaimer
   "about.disclaimer_gov_title":    { en: "Not an official government tool.", ta: "அதிகாரப்பூர்வ அரசு கருவி அல்ல." },
@@ -428,4 +441,38 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "dash.actual_label":      { en: "Actual",                    ta: "உண்மை" },
   "dash.current_year":      { en: "Current",                   ta: "தற்போதைய ஆண்டு" },
   "dash.tab_all":           { en: "All",                       ta: "அனைத்தும்" },
+
+  // ── Lake Restoration Ranker ─────────────────────────────────────────────
+  "lr.title":              { en: "Lake Restoration Priority",      ta: "ஏரி மறுசீரமைப்பு முன்னுரிமை" },
+  "lr.tagline":            { en: "Which water bodies should Chennai restore first?", ta: "சென்னை முதலில் எந்த நீர்நிலைகளை மறுசீரமைக்க வேண்டும்?" },
+  "lr.loading":            { en: "Loading restoration data...",    ta: "மறுசீரமைப்பு தரவை ஏற்றுகிறது..." },
+  "lr.loading_map":        { en: "Loading map...",                 ta: "வரைபடம் ஏற்றப்படுகிறது..." },
+  "lr.tab_map":            { en: "Map View",                      ta: "வரைபட காட்சி" },
+  "lr.tab_ranking":        { en: "Ranking Table",                 ta: "தரவரிசை அட்டவணை" },
+  "lr.total_scored":       { en: "Scored",                        ta: "மதிப்பிடப்பட்டவை" },
+  "lr.critical":           { en: "Critical",                      ta: "மிக அவசரம்" },
+  "lr.high":               { en: "High",                          ta: "அதிகம்" },
+  "lr.moderate":           { en: "Moderate",                      ta: "மிதமான" },
+  "lr.low":                { en: "Low",                           ta: "குறைவு" },
+  "lr.priority_score":     { en: "Priority Score",                ta: "முன்னுரிமை மதிப்பெண்" },
+  "lr.priority_level":     { en: "Priority Level",                ta: "முன்னுரிமை நிலை" },
+  "lr.comp_size":          { en: "Water Body Size",               ta: "நீர்நிலை அளவு" },
+  "lr.comp_lost":          { en: "Near Lost Water Bodies",        ta: "அருகிலுள்ள இழந்த நீர்நிலைகள்" },
+  "lr.comp_river":         { en: "Near Polluted Rivers",          ta: "மாசுபட்ட ஆறுகள் அருகில்" },
+  "lr.comp_industrial":    { en: "Near Industrial Sources",       ta: "தொழிற்சாலை ஆதாரங்கள் அருகில்" },
+  "lr.comp_type":          { en: "Water Body Type",               ta: "நீர்நிலை வகை" },
+  "lr.score_breakdown":    { en: "Score Breakdown",               ta: "மதிப்பெண் விவரம்" },
+  "lr.nearest_lost":       { en: "Nearest lost water body",       ta: "அருகிலுள்ள இழந்த நீர்நிலை" },
+  "lr.nearest_river":      { en: "Nearest river station",         ta: "அருகிலுள்ள ஆற்று நிலையம்" },
+  "lr.nearest_industrial": { en: "Nearest industrial source",     ta: "அருகிலுள்ள தொழிற்சாலை ஆதாரம்" },
+  "lr.km_away":            { en: "km away",                       ta: "கிமீ தொலைவில்" },
+  "lr.unnamed":            { en: "Unnamed water body",            ta: "பெயரிடப்படாத நீர்நிலை" },
+  "lr.rank":               { en: "Rank",                          ta: "தரம்" },
+  "lr.name":               { en: "Name",                          ta: "பெயர்" },
+  "lr.type":               { en: "Type",                          ta: "வகை" },
+  "lr.area_ha":            { en: "Area (ha)",                     ta: "பரப்பு (ஹெ)" },
+  "lr.show_all":           { en: "Show all water bodies",         ta: "அனைத்து நீர்நிலைகளையும் காட்டு" },
+  "lr.show_top":           { en: "Show top priorities only",      ta: "முக்கிய முன்னுரிமைகளை மட்டும் காட்டு" },
+  "lr.methodology":        { en: "Scores computed from water body size, proximity to lost water bodies, river pollution levels, industrial source proximity, and water body type.", ta: "நீர்நிலை அளவு, இழந்த நீர்நிலைகளுக்கு அருகாமை, ஆற்று மாசு நிலைகள், தொழிற்சாலை ஆதாரங்கள் அருகாமை, மற்றும் நீர்நிலை வகை ஆகியவற்றின் அடிப்படையில் மதிப்பெண்கள் கணக்கிடப்படுகின்றன." },
+  "lr.source_note":        { en: "Data: OpenStreetMap, CPCB, Care Earth Trust", ta: "தரவு: OpenStreetMap, CPCB, Care Earth Trust" },
 };

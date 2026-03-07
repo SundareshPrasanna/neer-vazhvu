@@ -7,7 +7,7 @@ function isSupabaseConfigured(): boolean {
 }
 
 export async function GET() {
-  // Demo mode: Supabase not configured — use mock data so the full UI is exercisable
+  // Demo mode: Supabase not configured  -  use mock data so the full UI is exercisable
   if (!isSupabaseConfigured()) {
     return NextResponse.json(generateMockRiskScores());
   }
@@ -22,7 +22,7 @@ export async function GET() {
     .order('computed_date', { ascending: false })
     .limit(1);
 
-  // No risk data yet (pipeline hasn't run) — return empty so UI hides the toggle
+  // No risk data yet (pipeline hasn't run)  -  return empty so UI hides the toggle
   if (!latest || latest.length === 0) {
     return NextResponse.json({ computedDate: null, wards: [] });
   }

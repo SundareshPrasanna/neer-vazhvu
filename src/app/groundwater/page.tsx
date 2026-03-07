@@ -120,7 +120,7 @@ export default function GroundwaterPage() {
           )}
         </div>
 
-        {/* View mode toggle — only shown when risk data is available */}
+        {/* View mode toggle  -  only shown when risk data is available */}
         {hasRiskData && (
           <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]">
             <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-600 shadow-md text-xs font-medium">
@@ -149,7 +149,7 @@ export default function GroundwaterPage() {
         )}
       </div>
 
-      {/* Detail panel — bottom sheet on mobile, sidebar on desktop */}
+      {/* Detail panel  -  bottom sheet on mobile, sidebar on desktop */}
       {selectedWard && (
         <div className="h-[45vh] md:h-full md:w-80 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
           <WardDetailPanel

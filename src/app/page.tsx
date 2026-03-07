@@ -52,7 +52,7 @@ async function getReservoirData() {
       return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
     });
 
-  // Historical data (all available — chart tabs handle filtering client-side)
+  // Historical data (all available  -  chart tabs handle filtering client-side)
   // Supabase/PostgREST caps at 1000 rows per request; paginate to get all
   const historyRaw: { date: string; reservoir: string; current_storage_mcft: number; inflow_cusecs: number | null; outflow_cusecs: number | null }[] = [];
   let offset = 0;
@@ -85,7 +85,7 @@ async function getReservoirData() {
     }
   }
 
-  // Combined totals per date — forward-fill storage for reservoirs with
+  // Combined totals per date  -  forward-fill storage for reservoirs with
   // sparse (monthly) data so the combined chart doesn't drop to near-zero
   // on dates where only daily-frequency reservoirs report.
   const allDates = Array.from(new Set(historyRaw.map((r) => r.date))).sort();
@@ -313,7 +313,7 @@ export default async function DashboardPage() {
       getGroundwaterData(),
     ]);
   } catch {
-    // Supabase connection failed — show demo mode
+    // Supabase connection failed  -  show demo mode
   }
 
   if (!reservoirData) {

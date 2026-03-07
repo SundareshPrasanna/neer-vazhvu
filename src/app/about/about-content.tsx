@@ -184,19 +184,19 @@ export function AboutContent() {
             frequency={t("about.freq_static")}
           />
           <DataSource
-            name="Care Earth Trust / NGT / CMDA — Lost Water Bodies"
+            name="Care Earth Trust / NGT / CMDA: Lost Water Bodies"
             url="https://www.careearth.org/"
             description={t("about.ds_careearth_desc")}
             frequency={t("about.freq_manual")}
           />
           <DataSource
-            name="CPCB — Status of Water Quality in India"
+            name="CPCB: Status of Water Quality in India"
             url="https://cpcb.nic.in/nwmp-data/"
             description={t("about.ds_cpcb_desc")}
             frequency={t("about.freq_annual")}
           />
           <DataSource
-            name="NGT Southern Bench / TNPCB / CPCB — Industrial Pollution Sources"
+            name="NGT Southern Bench / TNPCB / CPCB: Industrial Pollution Sources"
             url="https://www.tnpcb.gov.in/"
             description={t("about.ds_ngt_desc")}
             frequency={t("about.freq_manual")}
@@ -322,6 +322,50 @@ export function AboutContent() {
         <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t("about.river_map")}</h2>
         <p className="text-slate-600 dark:text-slate-400">
           {t("about.river_map_desc")}
+        </p>
+      </section>
+
+      <Separator className="my-8" />
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t("about.restoration")}</h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          {t("about.restoration_desc")}
+        </p>
+        <div className="space-y-3">
+          <div className="flex gap-3">
+            <span className="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0" />
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.restoration_comp_size")}</span>
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <span className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0" />
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.restoration_comp_lost")}</span>
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <span className="w-2 h-2 rounded-full bg-yellow-500 mt-2 flex-shrink-0" />
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.restoration_comp_river")}</span>
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <span className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0" />
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.restoration_comp_industrial")}</span>
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <span className="w-2 h-2 rounded-full bg-green-500 mt-2 flex-shrink-0" />
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.restoration_comp_type")}</span>
+            </p>
+          </div>
+        </div>
+        <p className="text-sm text-slate-500 dark:text-slate-400 italic">
+          {t("about.restoration_note")}
         </p>
       </section>
 

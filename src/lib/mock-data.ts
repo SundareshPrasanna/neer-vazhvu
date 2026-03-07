@@ -2,7 +2,7 @@ import type { ReservoirSummary, ReservoirName } from "@/types/reservoir";
 import type { GroundwaterApiResponse, RiskApiResponse, WardRiskData, RiskLevel } from "@/types/groundwater";
 
 // ============================================================
-// SCENARIOS — switch between these to see different UI states
+// SCENARIOS  -  switch between these to see different UI states
 // ============================================================
 
 export type ScenarioKey = "post_monsoon" | "summer_stress" | "day_zero" | "recovery";
@@ -18,10 +18,10 @@ export interface MockScenario {
 }
 
 export const SCENARIOS: Record<ScenarioKey, MockScenario> = {
-  // Scenario 1: Post-monsoon — reservoirs full, everything green
+  // Scenario 1: Post-monsoon  -  reservoirs full, everything green
   post_monsoon: {
     label: "Post-Monsoon (Dec)",
-    description: "After northeast monsoon — reservoirs full, healthy groundwater",
+    description: "After northeast monsoon  -  reservoirs full, healthy groundwater",
     reservoirs: [
       { name: "poondi", displayName: "Poondi", currentStorage: 2845, capacity: 3231, storagePct: 88.1, inflowCusecs: 234, outflowCusecs: 180, rainfallMm: 12 },
       { name: "cholavaram", displayName: "Cholavaram", currentStorage: 756, capacity: 881, storagePct: 85.8, inflowCusecs: 45, outflowCusecs: 30, rainfallMm: 8 },
@@ -34,10 +34,10 @@ export const SCENARIOS: Record<ScenarioKey, MockScenario> = {
     historyStyle: "healthy",
   },
 
-  // Scenario 2: Summer stress — May/June, reservoirs declining fast
+  // Scenario 2: Summer stress  -  May/June, reservoirs declining fast
   summer_stress: {
     label: "Summer Stress (May)",
-    description: "Peak summer — no rain, reservoirs dropping, groundwater strained",
+    description: "Peak summer  -  no rain, reservoirs dropping, groundwater strained",
     reservoirs: [
       { name: "poondi", displayName: "Poondi", currentStorage: 420, capacity: 3231, storagePct: 13.0, inflowCusecs: 0, outflowCusecs: 85, rainfallMm: 0 },
       { name: "cholavaram", displayName: "Cholavaram", currentStorage: 98, capacity: 881, storagePct: 11.1, inflowCusecs: 0, outflowCusecs: 25, rainfallMm: 0 },
@@ -50,10 +50,10 @@ export const SCENARIOS: Record<ScenarioKey, MockScenario> = {
     historyStyle: "declining",
   },
 
-  // Scenario 3: Day Zero — 2019 crisis recreation
+  // Scenario 3: Day Zero  -  2019 crisis recreation
   day_zero: {
     label: "Day Zero Crisis (Jun 2019)",
-    description: "Reservoirs nearly empty — the 2019 water emergency",
+    description: "Reservoirs nearly empty  -  the 2019 water emergency",
     reservoirs: [
       { name: "poondi", displayName: "Poondi", currentStorage: 5, capacity: 3231, storagePct: 0.15, inflowCusecs: 0, outflowCusecs: 0, rainfallMm: 0 },
       { name: "cholavaram", displayName: "Cholavaram", currentStorage: 2, capacity: 881, storagePct: 0.23, inflowCusecs: 0, outflowCusecs: 0, rainfallMm: 0 },
@@ -66,10 +66,10 @@ export const SCENARIOS: Record<ScenarioKey, MockScenario> = {
     historyStyle: "crisis",
   },
 
-  // Scenario 4: Recovery — monsoon just started, reservoirs beginning to fill
+  // Scenario 4: Recovery  -  monsoon just started, reservoirs beginning to fill
   recovery: {
     label: "Early Recovery (Oct)",
-    description: "First monsoon rains — reservoirs slowly filling, hope returns",
+    description: "First monsoon rains  -  reservoirs slowly filling, hope returns",
     reservoirs: [
       { name: "poondi", displayName: "Poondi", currentStorage: 890, capacity: 3231, storagePct: 27.5, inflowCusecs: 450, outflowCusecs: 100, rainfallMm: 35 },
       { name: "cholavaram", displayName: "Cholavaram", currentStorage: 210, capacity: 881, storagePct: 23.8, inflowCusecs: 120, outflowCusecs: 40, rainfallMm: 28 },
@@ -155,71 +155,71 @@ export function generateMockHistory(
   return history;
 }
 
-/** Mock groundwater data — adjusts severity based on scenario */
+/** Mock groundwater data  -  adjusts severity based on scenario */
 export function generateMockGroundwater(
   style: "healthy" | "declining" | "crisis" | "recovering"
 ): GroundwaterApiResponse {
   const wards = [];
   // All 200 GCC ward localities across Chennai's 15 zones
   const wardNames = [
-    // Zone 1 — Tiruvottiyur (1–13)
+    // Zone 1  -  Tiruvottiyur (1–13)
     "Tiruvottiyur", "Kathivakkam", "Tiruvottiyur East", "Ernavoor", "Janakipuram",
     "Mill Colony", "Kaladipet", "Theradi", "Tiruvottiyur West", "Wimco Nagar",
     "MH Road", "Tollgate", "Nagammai Nagar",
-    // Zone 2 — Manali (14–21)
+    // Zone 2  -  Manali (14–21)
     "Manali", "Manali New Town", "Mathur MMDA", "Manali West", "Sadayankuppam",
     "Ennore", "Thirumullaivoyal", "Avadi Gate",
-    // Zone 3 — Madhavaram (22–32)
+    // Zone 3  -  Madhavaram (22–32)
     "Madhavaram", "Madhavaram Milk Colony", "Manjambakkam", "Naravarikuppam",
     "Moolakadai", "Erukkancheri", "Periyar Nagar", "MKB Nagar", "Mathur",
     "Kolathur East", "Sembium",
-    // Zone 4 — Tondiarpet (33–48)
+    // Zone 4  -  Tondiarpet (33–48)
     "Tondiarpet", "Washermanpet", "Royapuram", "Basin Bridge", "Park Town",
     "Old Washermanpet", "Kasimedu", "Korukkupet", "Stanley", "Seven Wells",
     "Mint", "Mannadi", "Sowcarpet", "Kondithope", "George Town", "Broadway",
-    // Zone 5 — Royapuram (49–63)
+    // Zone 5  -  Royapuram (49–63)
     "Royapuram North", "Thiruvika Nagar", "RK Nagar", "Otteri", "Perambur",
     "Ayanavaram", "Purasawalkam", "Vepery", "Kellys", "Chetpet",
     "Kilpauk", "Egmore", "Pudupet", "Choolai", "Puliyanthope",
-    // Zone 6 — Ambattur (64–82)
+    // Zone 6  -  Ambattur (64–82)
     "Ambattur", "Ambattur OT", "Korattur", "Padi", "Mogappair East",
     "Mogappair West", "Nolambur", "Maduravoyal", "Thirumangalam", "Anna Nagar West",
     "Anna Nagar East", "Shenoy Nagar", "Aminjikarai", "Arumbakkam", "Koyambedu",
     "Virugambakkam", "Alwarthirunagar", "Valasaravakkam", "Porur",
-    // Zone 7 — Anna Nagar (83–96)
+    // Zone 7  -  Anna Nagar (83–96)
     "Anna Nagar", "Anna Nagar Western Extension", "Thirumangalam East", "CMDA Colony",
     "Villivakkam", "Kolathur", "Agaram", "Retteri", "Villivakkam East",
     "Korattur South", "ICF Colony", "Perambur North", "Jawahar Nagar", "Nammalwarpet",
-    // Zone 8 — Teynampet (97–119)
+    // Zone 8  -  Teynampet (97–119)
     "Nungambakkam", "T. Nagar", "Kodambakkam", "West Mambalam", "Saidapet",
     "Ashok Nagar", "Vadapalani", "K.K. Nagar East", "K.K. Nagar West", "Teynampet",
     "Thousand Lights", "Royapettah", "Lloyds Road", "Alwarpet", "Gopalapuram",
     "Mylapore", "Mandaveli", "R.A. Puram", "Abhiramapuram", "CIT Colony",
     "Nandanam", "Santhome", "Foreshore Estate",
-    // Zone 9 — Kodambakkam (120–134)
+    // Zone 9  -  Kodambakkam (120–134)
     "Kodambakkam West", "Jafferkhanpet", "Ashok Pillar", "Manapakkam", "Ramapuram",
     "Mugalivakkam", "Moulivakkam", "Madanandapuram", "Nesapakkam", "KK Nagar South",
     "Saligramam", "Fairlands", "Choolaimedu", "Nerkundram", "Alapakkam",
-    // Zone 10 — Anna Nagar (135–150)
+    // Zone 10  -  Anna Nagar (135–150)
     "Kumaran Nagar", "Poonamallee", "Kundrathur", "Mangadu", "Kovur",
     "Alandur", "Nanganallur", "Adambakkam", "Pallavaram", "Chromepet",
     "Hasthinapuram", "Medavakkam", "Keelkattalai", "Pammal", "Anakaputhur",
     "Sembakkam",
-    // Zone 11 — Adyar (151–168)
+    // Zone 11  -  Adyar (151–168)
     "Adyar", "Thiruvanmiyur", "Besant Nagar", "Indira Nagar", "Kotturpuram",
     "Gandhi Nagar (Adyar)", "Ekkatuthangal", "Guindy", "Alandur North",
     "Meenambakkam", "Pallikaranai", "Madipakkam", "Keelkattalai East", "Ullagaram",
     "Puzhuthivakkam", "Nanmangalam", "Perungalathur", "Tambaram",
-    // Zone 12 — Perungudi (169–183)
+    // Zone 12  -  Perungudi (169–183)
     "Perungudi", "Taramani", "Velachery", "Vijayanagar", "TNHB Colony",
     "Kovilambakkam", "Selaiyur", "Rajakilpakkam", "Sithalapakkam", "Vengaivasal",
     "Narayanapuram", "Jalladianpet", "Madambakkam", "Semmancheri", "Kottivakkam",
-    // Zone 13 — Sholinganallur (184–193)
+    // Zone 13  -  Sholinganallur (184–193)
     "Sholinganallur", "Karapakkam", "OMR Thoraipakkam", "Perumbakkam",
     "Okkiampet", "Egattur", "Navallur", "Siruseri", "Kelambakkam", "Padur",
-    // Zone 14 — Tondiarpet-Fort (194–197)
+    // Zone 14  -  Tondiarpet-Fort (194–197)
     "Fort St George", "Parrys Corner", "Chennai Central", "Pattalam",
-    // Zone 15 — Harbour (198–200)
+    // Zone 15  -  Harbour (198–200)
     "Harbour", "Ennore Port", "Royapuram Harbour",
   ];
 
@@ -276,7 +276,7 @@ export function generateMockGroundwater(
 }
 
 // ============================================================
-// PER-WARD GROUNDWATER HISTORY — for trend chart in detail panel
+// PER-WARD GROUNDWATER HISTORY  -  for trend chart in detail panel
 // ============================================================
 
 /** Generate mock monthly depth-to-water history for a single ward */
@@ -325,7 +325,7 @@ export function generateMockWardHistory(wardNumber: number): {
 }
 
 // ============================================================
-// PER-RESERVOIR HISTORY — for drilldown view
+// PER-RESERVOIR HISTORY  -  for drilldown view
 // ============================================================
 
 /** Reservoir capacity for scaling per-reservoir mock data */
@@ -422,7 +422,7 @@ export function generateReservoirHistory(
 }
 
 // ============================================================
-// HISTORICAL YEAR COMPARISON — overlay past years on trend chart
+// HISTORICAL YEAR COMPARISON  -  overlay past years on trend chart
 // ============================================================
 
 export interface HistoricalYearData {
@@ -474,7 +474,7 @@ export function generateHistoricalYear(year: number): HistoricalYearData {
       monsoonStrength = 0.45;
       summerDrain = 0.20;
       break;
-    case 2023: // Flood year — very high storage
+    case 2023: // Flood year  -  very high storage
       baseLevel = 0.60;
       monsoonStrength = 0.55;
       summerDrain = 0.15;
@@ -518,7 +518,7 @@ export function generateHistoricalYear(year: number): HistoricalYearData {
   return { year, label: yearLabel, data };
 }
 
-/** Mock ward risk scores — realistic distribution: 40% low, 35% moderate, 15% high, 10% critical */
+/** Mock ward risk scores  -  realistic distribution: 40% low, 35% moderate, 15% high, 10% critical */
 export function generateMockRiskScores(): RiskApiResponse {
   const rand = seededRandom(8317);
   const wards: WardRiskData[] = [];

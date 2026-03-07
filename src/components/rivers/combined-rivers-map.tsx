@@ -85,7 +85,7 @@ export function CombinedRiversMap({
     return stretch;
   };
 
-  // Industrial zone polygons — light orange wash, background context
+  // Industrial zone polygons  -  light orange wash, background context
   const zoneStyle = (): PathOptions => ({
     fillColor: "#f97316",
     fillOpacity: 0.10,
@@ -100,7 +100,7 @@ export function CombinedRiversMap({
     layer.bindTooltip(props.name || t("rivers_legend.industrial_zone"), { sticky: true });
   };
 
-  // River polylines — quality-coloured, prominent
+  // River polylines  -  quality-coloured, prominent
   const riverStyle = (feature: Feature | undefined): PathOptions => {
     const riverId = feature?.properties?.river_id as string | undefined;
     const status = riverId ? statusMap.get(riverId) : undefined;
@@ -168,7 +168,7 @@ export function CombinedRiversMap({
     });
   };
 
-  // Pollution source markers — larger, type-coloured
+  // Pollution source markers  -  larger, type-coloured
   const sourcePointToLayer = (feature: Feature, latlng: L.LatLng) => {
     const props = feature.properties as { type: string };
     const color =

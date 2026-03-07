@@ -13,7 +13,7 @@ export function verifyCronAuth(request: NextRequest): NextResponse | null {
 
   if (!expectedToken) {
     if (allowDevBypass) {
-      console.warn('CRON_SECRET not set — allowing cron auth bypass in local development');
+      console.warn('CRON_SECRET not set  -  allowing cron auth bypass in local development');
       return null;
     }
     return NextResponse.json(
