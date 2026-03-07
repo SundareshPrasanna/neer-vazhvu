@@ -2,7 +2,7 @@
 
 > Where each dataset comes from, how often it refreshes, and what to watch out for.
 
-## Reservoir Levels — CMWSSB
+## Reservoir Levels -CMWSSB
 
 | | |
 |---|---|
@@ -15,12 +15,13 @@
 | **Historical** | Kaggle dataset back to 2004 (monthly storage only); daily inflow/outflow available from ~2022 onward |
 
 **Known limitations:**
-- Page format changes without notice — scraper needs periodic updates
+- Page format changes without notice; scraper needs periodic updates
 - Data may not update on weekends or public holidays
+- CMWSSB may block some datacenter IPs; the pipeline tolerates up to 4 days of stale data and continues with ETL/intelligence updates
 - Inflow/outflow fields were added later; pre-2022 records have nulls for these
 - Occasional duplicate or stale rows when CMWSSB delays their update
 
-## Weather — NASA POWER
+## Weather -NASA POWER
 
 | | |
 |---|---|
@@ -34,11 +35,11 @@
 
 **Known limitations:**
 - 2-day lag on data availability (today's weather appears day after tomorrow)
-- Single point for all of Chennai — no ward-level granularity
+- Single point for all of Chennai -no ward-level granularity
 - Satellite-derived precipitation can differ from ground-station readings
 - Free tier has rate limits (undocumented but generally generous)
 
-## Groundwater — OpenCity Chennai
+## Groundwater -OpenCity Chennai
 
 | | |
 |---|---|
@@ -52,18 +53,18 @@
 
 **Known limitations:**
 - Data lags by several months (latest available may be 3-6 months old)
-- Not all wards report every month — coverage varies
+- Not all wards report every month -coverage varies
 - Measurement methodology may differ across wards
 - New year datasets require adding the resource ID to the scraper config
 
-## River Water Quality — CPCB
+## River Water Quality -CPCB
 
 | | |
 |---|---|
-| **Source** | [CPCB National Water Monitoring Programme](https://cpcb.nic.in/nwmp-data/) — "Status of Water Quality in India" annual reports |
+| **Source** | [CPCB National Water Monitoring Programme](https://cpcb.nic.in/nwmp-data/) -"Status of Water Quality in India" annual reports |
 | **Method** | Manual curation (PDF/Excel → JSON) |
 | **Frequency** | Annual (refreshed when CPCB publishes the next report, typically Jan–Mar) |
-| **Coverage** | 4 rivers: Cooum, Adyar, Buckingham Canal, Kosasthalaiyar — 10 monitoring stations total |
+| **Coverage** | 4 rivers: Cooum, Adyar, Buckingham Canal, Kosasthalaiyar -10 monitoring stations total |
 | **Fields** | Dissolved oxygen (DO, mg/L), Biochemical oxygen demand (BOD, mg/L), pH, conductivity (µS/cm) |
 | **File** | `public/data/river-quality.json` (static, served directly from Next.js `public/`) |
 | **Historical** | 2015–2024 |
@@ -84,13 +85,13 @@
 | Healthy | > 6 | < 2 | A / B |
 
 **Known limitations:**
-- CPCB reports are published as PDFs — no programmatic API; data must be extracted manually
+- CPCB reports are published as PDFs -no programmatic API; data must be extracted manually
 - Monitoring station locations and frequencies can change between annual reports
 - Pre-2015 data is sparse for smaller rivers (Buckingham Canal, Kosasthalaiyar)
 - The overall `status` field is a judgement call for the river reach, not a single measurement
 - To update: download the latest CPCB report, update `readings` in `river-quality.json`, bump `last_updated` and `data_year_range`, commit `data: update river quality readings to {year}`
 
-## River Geometry — OpenStreetMap
+## River Geometry -OpenStreetMap
 
 | | |
 |---|---|
@@ -102,11 +103,11 @@
 | **File** | `public/geojson/chennai-rivers.geojson` (static GeoJSON, ~200 KB) |
 
 **Known limitations:**
-- OSM river way coverage varies — some urban stretches may be missing or misaligned
+- OSM river way coverage varies -some urban stretches may be missing or misaligned
 - The Buckingham Canal is a national waterway; bbox clipping limits it to the Chennai stretch (~72 km)
 - Run `npx tsx scripts/fetch-rivers-osm.ts` to regenerate after OSM data improves
 
-## Industrial Pollution Sources — NGT / TNPCB / CPCB
+## Industrial Pollution Sources -NGT / TNPCB / CPCB
 
 | | |
 |---|---|
@@ -118,19 +119,19 @@
 | **File** | `public/data/industrial-sources.json` (static, served directly from Next.js `public/`) |
 
 **Key evidence sources:**
-- NGT Southern Bench, Sept 2017: Expert committee findings on NCTPS fly ash — heavy metals (Cd, Hg, Cr, Cu, Mn, Se, Pb, Ni) in Seppakkam village borewells; 5.67 million tonnes ash deposited over 3.51 km²
-- TNPCB enforcement records, Dec 2023: CPCL Cyclone Michaung spill — 517 tonnes of oil into Buckingham Canal and Ennore Creek; ₹74 crore compensation demanded
-- Indian Coast Guard / Wikipedia: 2017 Ennore oil spill — BW Maple × Dawn Kanchipuram collision; ~75–196 tonnes bunker fuel; 25 miles of coastline affected
+- NGT Southern Bench, Sept 2017: Expert committee findings on NCTPS fly ash -heavy metals (Cd, Hg, Cr, Cu, Mn, Se, Pb, Ni) in Seppakkam village borewells; 5.67 million tonnes ash deposited over 3.51 km²
+- TNPCB enforcement records, Dec 2023: CPCL Cyclone Michaung spill -517 tonnes of oil into Buckingham Canal and Ennore Creek; ₹74 crore compensation demanded
+- Indian Coast Guard / Wikipedia: 2017 Ennore oil spill -BW Maple × Dawn Kanchipuram collision; ~75–196 tonnes bunker fuel; 25 miles of coastline affected
 - Global NEST Journal (2025): Heavy metal contamination in Ennore ecosystem sediments (16 parameters)
 - Springer Nature (2025): Microplastics in Kosasthalaiyar estuary
 
 **Known limitations:**
 - Incident descriptions summarised from primary sources; exact volumes are estimates in many cases
-- TNPCB consent records are not publicly searchable by facility — some data inferred from secondary sources
+- TNPCB consent records are not publicly searchable by facility -some data inferred from secondary sources
 - Coordinates represent facility centroid, not specific discharge points
 - To update: verify new NGT orders via egriwas.nic.in or TNPCB press releases; add new `incidents` entries and update `ngt_orders` array in `industrial-sources.json`
 
-## Industrial Zone Geometry — OpenStreetMap
+## Industrial Zone Geometry -OpenStreetMap
 
 | | |
 |---|---|
@@ -142,10 +143,10 @@
 | **File** | `public/geojson/chennai-industrial-zones.geojson` (static GeoJSON, filtered to area > 5 ha) |
 
 **Known limitations:**
-- OSM industrial zone coverage varies — some facilities may be partially mapped or missing
+- OSM industrial zone coverage varies -some facilities may be partially mapped or missing
 - Run `npx tsx scripts/fetch-industrial-zones-osm.ts` to regenerate after OSM data improves
 
-## Restoration Priority Scores — Computed
+## Restoration Priority Scores -Computed
 
 | | |
 |---|---|
@@ -157,10 +158,10 @@
 | **File** | `public/data/restoration-priority.json` (static, served from Next.js `public/`) |
 
 **Input datasets used:**
-- `public/geojson/chennai-water-bodies-current.geojson` — water body polygons and area
-- `public/geojson/chennai-water-bodies-lost.geojson` — 15 lost/encroached water body locations
-- `public/data/river-quality.json` — 10 CPCB monitoring station locations and latest DO readings
-- `public/data/industrial-sources.json` — 7 industrial facility coordinates
+- `public/geojson/chennai-water-bodies-current.geojson` -water body polygons and area
+- `public/geojson/chennai-water-bodies-lost.geojson` -15 lost/encroached water body locations
+- `public/data/river-quality.json` -10 CPCB monitoring station locations and latest DO readings
+- `public/data/industrial-sources.json` -7 industrial facility coordinates
 
 **Scoring components:**
 
@@ -173,9 +174,9 @@
 | Water body type | 20% | reservoir → 100, lake → 95, water → 70, pond → 65, canal → 15, drain → 5 |
 
 **Known limitations:**
-- Scores are spatial proxies only — do not account for population density, land ownership, sedimentation, or restoration cost
+- Scores are spatial proxies only -do not account for population density, land ownership, sedimentation, or restoration cost
 - Water body centroids are simple vertex averages (sufficient for km-scale distance calculations)
-- ~1,360 water bodies have no name in OSM — shown as "Unnamed water body"
+- ~1,360 water bodies have no name in OSM -shown as "Unnamed water body"
 - To regenerate: `npx tsx scripts/compute-restoration-priority.ts`
 
 ## Reservoir Metadata
@@ -201,8 +202,8 @@
 
 For initial database population, seed scripts in `scripts/` import from:
 
-- **Kaggle** (`seed-kaggle.ts`) — Monthly reservoir storage 2004–2024
-- **OpenCity** (`seed-opencity-groundwater.ts`) — Ward groundwater 2021–2024
-- **OpenCity** (`seed-opencity-lakes.ts`) — Historical lake-level readings
+- **Kaggle** (`seed-kaggle.ts`) -Monthly reservoir storage 2004–2024
+- **OpenCity** (`seed-opencity-groundwater.ts`) -Ward groundwater 2021–2024
+- **OpenCity** (`seed-opencity-lakes.ts`) -Historical lake-level readings
 
 These are one-time imports; daily pipeline keeps data current after seeding.

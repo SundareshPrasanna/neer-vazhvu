@@ -1,58 +1,62 @@
 # Neer Vazhvu
 
-**Chennai Water Intelligence Dashboard** — An open-source platform that turns public water data into actionable intelligence for Chennai's 11 million residents.
+**Chennai Water Intelligence Dashboard** - An open-source platform that turns public water data into actionable intelligence for Chennai's 11 million residents.
 
-Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, and an **interactive lost water bodies map**.
+Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, and an **interactive water bodies and restoration priority map**.
 
 ## Features
 
 ### Dashboard
-- **Days of Water Left** — Three-scenario estimate (pessimistic / current trend / seasonal rains)
-- **Reservoir Cards** — Live storage, inflow, outflow, and rainfall for all 6 reservoirs
-- **Per-Reservoir Drilldown** — Click any reservoir for 365-day charts (storage, inflow vs outflow, rainfall)
-- **Historical Comparison** — Overlay any year from 2019–2025 on the storage trend chart
-- **Storage Trend Chart** — 90-day combined storage with interactive year comparison
+- **Days of Water Left** - Three-scenario estimate (pessimistic / current trend / seasonal rains)
+- **Reservoir Cards** - Live storage, inflow, outflow, and rainfall for all 6 reservoirs
+- **Per-Reservoir Drilldown** - Click any reservoir for 365-day charts (storage, inflow vs outflow, rainfall)
+- **Historical Comparison** - Overlay any year from 2019-2025 on the storage trend chart
+- **Storage Trend Chart** - 90-day combined storage with interactive year comparison
 
 ### Groundwater Map
-- **Choropleth Map** — Depth to water table across all 200 GCC wards, color-coded by CGWB classification (Healthy → Crisis)
-- **Risk Score View** — Toggle between depth choropleth and composite risk score choropleth (Low / Moderate / High / Critical) when pipeline data is available
-- **Ward Detail Panel** — Click any ward for depth, year-over-year trend, historical chart, and composite risk score breakdown
-- **Risk Score Breakdown** — Each of the four components (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%) shown with weighted contribution bars
+- **Choropleth Map** - Depth to water table across all 200 GCC wards, color-coded by CGWB classification (Healthy to Crisis)
+- **Risk Score View** - Toggle between depth choropleth and composite risk score choropleth (Low / Moderate / High / Critical) when pipeline data is available
+- **Ward Detail Panel** - Click any ward for depth, year-over-year trend, historical chart, and composite risk score breakdown
+- **Risk Score Breakdown** - Each of the four components (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%) shown with weighted contribution bars
 
-### Water Bodies Map
-- **1,635 Existing Water Bodies** — All current lakes, tanks, ponds, and reservoirs from OpenStreetMap
-- **15 Documented Lost / Encroached Water Bodies** — Curated from Care Earth Trust, NGT records, and IIT Madras research
-- **Toggle Layers** — Show/hide current and lost water bodies independently
-- **Status-coded Circles** — Fully lost (red), severely reduced (orange), partially encroached (yellow)
-- **Detail Panel** — Click any water body for historical area, surviving area, what replaced it, and source citations
-- **Area Loss Bar** — Visual indicator of how much of each water body survives
+### Water Bodies and Restoration Map
+A unified map at `/water-bodies` with a **view-mode toggle** to switch between "Water Bodies" and "Restoration Priority" views. Both views share the same detail panel and data.
 
-### Lake Restoration Priority Ranker
-- **1,635 Water Bodies Scored** — Every water body ranked on restoration priority using spatial analysis
-- **5-Component Scoring Model** — Water body size (25%), proximity to lost water bodies (20%), proximity to polluted rivers (20%), industrial pollution proximity (15%), water body type (20%)
-- **Priority Levels** — Critical (75–100), High (50–74), Moderate (25–49), Low (0–24)
-- **Map View** — Color-coded polygons (red → green) showing restoration priority across Chennai
-- **Ranking Table** — Sortable by score, area, or name; filterable to show top priorities or all water bodies
-- **Detail Panel** — Score breakdown with weighted component bars, nearest lost water body, nearest river station, nearest industrial source
-- **Designed for GCC** — Supports government budget allocation for lake restoration programmes
+**Water Bodies view:**
+- **1,635 Existing Water Bodies** - All current lakes, tanks, ponds, and reservoirs from OpenStreetMap
+- **15 Documented Lost / Encroached Water Bodies** - Curated from Care Earth Trust, NGT records, and IIT Madras research
+- **Toggle Layers** - Show/hide current and lost water bodies independently
+- **Status-coded Circles** - Fully lost (red), severely reduced (orange), partially encroached (yellow)
+
+**Restoration Priority view:**
+- **1,635 Water Bodies Scored** - Every water body ranked on restoration priority using spatial analysis
+- **5-Component Scoring Model** - Water body size (25%), proximity to lost water bodies (20%), proximity to polluted rivers (20%), industrial pollution proximity (15%), water body type (20%)
+- **Priority Levels** - Critical (75-100), High (50-74), Moderate (25-49), Low (0-24)
+- **Color-coded Polygons** - Red to green showing restoration priority across Chennai
+
+**Shared features:**
+- **Ranking Table** - Sortable by score, area, or name; switch via Map/Ranking tabs
+- **Detail Panel** - Click any water body for basic info plus restoration score breakdown, nearest lost water body, nearest river station, nearest industrial source
+- **Stats Bar** - Adapts to show water body counts or priority breakdown based on view mode
 
 ### River Health Map
-- **Interactive Polyline Map** — 4 rivers (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) colour-coded by CPCB water quality status
-- **Monitoring Station Markers** — 10 stations with individual DO/BOD readings
-- **DO/BOD Time-Series Chart** — Dual-axis line chart (2015–2024) per station with reference lines at the aquatic life minimum (DO = 4 mg/L) and clean river standard (BOD = 2 mg/L)
-- **River Detail Panel** — Status badge, CPCB class, 3-year trend indicator, station selector, embedded explainer for DO and BOD
-- **3-Year Trend** — Per monitoring station: direction badge (Improving / Worsening / Stable / Mixed) with signed DO and BOD deltas derived from the last 3 annual readings. Threshold: ≥ 0.3 mg/L DO or ≥ 3 mg/L BOD = meaningful change.
-- **Industrial Pollution Sources Overlay** — 7 major facilities (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek) colour-coded by type; click for operator details, pollutant pills, incident timeline, and NGT orders. OSM `landuse=industrial` polygons shown as translucent overlay
+- **Interactive Polyline Map** - 4 rivers (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) colour-coded by CPCB water quality status
+- **Monitoring Station Markers** - 10 stations with individual DO/BOD readings
+- **DO/BOD Time-Series Chart** - Dual-axis line chart (2015-2024) per station with reference lines at the aquatic life minimum (DO = 4 mg/L) and clean river standard (BOD = 2 mg/L)
+- **River Detail Panel** - Status badge, CPCB class, 3-year trend indicator, station selector, embedded explainer for DO and BOD
+- **3-Year Trend** - Per monitoring station: direction badge (Improving / Worsening / Stable / Mixed) with signed DO and BOD deltas derived from the last 3 annual readings
+- **Industrial Pollution Sources Overlay** - 7 major facilities (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek) colour-coded by type; click for operator details, pollutant pills, incident timeline, and NGT orders. OSM `landuse=industrial` polygons shown as translucent overlay
 
 ### Intelligence Layer (Python Service)
-- **Reservoir Forecasting** — 30-day storage predictions using AutoARIMA with confidence intervals
-- **Ward Risk Scoring** — Composite 0–100 risk score per ward (groundwater depth, trend, reservoir stress, seasonal vulnerability)
-- **Daily Briefing** — Template-based intelligence summary with headlines, alerts, and recommendations
+- **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals
+- **Ward Risk Scoring** - Composite 0-100 risk score per ward (groundwater depth, trend, reservoir stress, seasonal vulnerability)
+- **Daily Briefing** - Template-based intelligence summary with headlines, alerts, and recommendations
 
 ### Other
-- **Dark Mode** — Full dark mode with system preference detection
-- **Responsive** — Works on desktop, tablet, and mobile
-- **Demo Mode** — Runs with realistic mock data when Supabase isn't configured
+- **Dark Mode** - Full dark mode with system preference detection
+- **Responsive** - Works on desktop, tablet, and mobile
+- **Demo Mode** - Runs with realistic mock data when Supabase isn't configured
+- **OG Image** - Auto-generated Open Graph image for social sharing (LinkedIn, Twitter)
 
 ## Architecture
 
@@ -69,10 +73,11 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 └──────────────────────────────────────────┘       │
                                                    │
 ┌──────────────────────────────────────────┐       │
-│       Next.js Frontend (Vercel)          │◄──────┘
+│       Next.js Frontend (Vercel)          │<──────┘
 │  Reads from Supabase + renders UI        │
 │  Static GeoJSON served from /public      │
 └──────────────────────────────────────────┘
+
 ```
 
 ## Data Sources
@@ -86,7 +91,7 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 | [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry + industrial zone polygons | One-time fetch |
 | Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
 | [CPCB NWMP Annual Reports](https://cpcb.nic.in/nwmp-data/) | DO, BOD, pH, conductivity at 10 river monitoring stations (2015–2024) | Annual (manual refresh) |
-| NGT Southern Bench / TNPCB / CPCB | 7 major industrial pollution sources — facility data, pollutant types, incident records, NGT orders | Manually curated |
+| NGT Southern Bench / TNPCB / CPCB | 7 major industrial pollution sources -facility data, pollutant types, incident records, NGT orders | Manually curated |
 
 ## Tech Stack
 
@@ -94,7 +99,7 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 |-------|------------|
 | Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS v4, shadcn/ui |
 | Charts | Recharts |
-| Maps | Leaflet + react-leaflet — GCC ward boundaries (GeoJSON) + OSM water body polygons + curated lost bodies (GeoJSON) |
+| Maps | Leaflet + react-leaflet -GCC ward boundaries (GeoJSON) + OSM water body polygons + curated lost bodies (GeoJSON) |
 | Backend API | Python 3.12, FastAPI, statsforecast, pandas |
 | Database | Supabase (PostgreSQL) |
 | Deployment | Vercel (frontend), Railway (Python API) |
@@ -218,7 +223,7 @@ npx tsx scripts/fetch-industrial-zones-osm.ts
 
 ## API Endpoints
 
-### Pipeline (protected — requires `Authorization: Bearer <CRON_SECRET>`)
+### Pipeline (protected -requires `Authorization: Bearer <CRON_SECRET>`)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -249,17 +254,17 @@ neer-vazhvu/
 │   ├── app/                      # App Router pages
 │   │   ├── page.tsx              # Main dashboard
 │   │   ├── groundwater/          # Groundwater map page
-│   │   ├── water-bodies/         # Water bodies map page
+│   │   ├── water-bodies/         # Unified water bodies + restoration map
 │   │   ├── rivers/               # River health + industrial pollution map page
-│   │   ├── lake-restoration/     # Lake restoration priority ranker
+│   │   ├── lake-restoration/     # Redirects to /water-bodies
 │   │   └── about/                # About/methodology page
 │   ├── components/
 │   │   ├── dashboard/            # Dashboard components
 │   │   ├── groundwater/          # Map, legend, ward panel
-│   │   ├── water-bodies/         # Map, legend, detail panel
+│   │   ├── water-bodies/         # Unified map, legend, detail panel, view-mode toggle
 │   │   ├── rivers/               # River map, panel, chart, legend
 │   │   ├── pollution/            # Industrial pollution map overlay, panel, legend
-│   │   ├── lake-restoration/     # Restoration map, legend, detail panel, ranking table
+│   │   ├── lake-restoration/     # Restoration ranking table
 │   │   ├── layout/               # Header, footer
 │   │   └── ui/                   # shadcn/ui primitives
 │   ├── lib/
@@ -267,7 +272,6 @@ neer-vazhvu/
 │   │   ├── calculator/           # Days-left calculator
 │   │   └── mock-data.ts          # Demo mode data
 │   └── types/                    # TypeScript type definitions
-│       └── industrial-pollution.ts  # Industrial source types, colours, labels
 ├── neer-vazhvu-api/              # Python intelligence service
 │   ├── app/
 │   │   ├── scrapers/             # CMWSSB, NASA POWER, OpenCity
@@ -287,7 +291,7 @@ neer-vazhvu/
 │   │   ├── chennai-rivers.geojson               # River polylines (Cooum, Adyar, etc.)
 │   │   └── chennai-industrial-zones.geojson     # OSM industrial zone polygons
 │   └── data/                     # Static JSON datasets
-│       ├── river-quality.json            # CPCB monitoring station readings (2015–2024)
+│       ├── river-quality.json            # CPCB monitoring station readings (2015-2024)
 │       ├── industrial-sources.json       # Industrial pollution sources (NGT/TNPCB/CPCB)
 │       └── restoration-priority.json     # Pre-computed restoration priority scores (1,635 water bodies)
 └── .github/
@@ -336,13 +340,13 @@ Scores are pre-computed by `scripts/compute-restoration-priority.ts` using Haver
 
 ## Limitations
 
-- This is an independent, educational project — not an official government tool.
+- This is an independent, educational project -not an official government tool.
 - Estimates are approximations. Actual water availability depends on factors not modeled (Krishna water transfer, distribution losses, industrial use).
-- CMWSSB data may occasionally be stale (weekends, holidays).
+- CMWSSB data may occasionally be stale (weekends, holidays, or when their site blocks datacenter IPs). The pipeline gracefully continues with existing data for up to 4 days.
 - Groundwater data from OpenCity may lag by months.
 - Forecasts use AutoARIMA which works best with 90+ days of history.
 - Lost water body coordinates and historical areas are approximate, sourced from academic and civic studies.
-- Restoration priority scores use spatial proximity as a proxy; they do not account for population density, land ownership, or restoration cost — factors that require non-public data.
+- Restoration priority scores use spatial proximity as a proxy; they do not account for population density, land ownership, or restoration cost -factors that require non-public data.
 
 ## Contributing
 
@@ -352,11 +356,11 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 
 Areas where help is needed:
 
-- **Data quality** — Improving scraper resilience, handling CMWSSB page format changes
-- **Models** — Better forecasting (Prophet, LSTM), evaporation modeling
-- **Water bodies data** — Adding more documented lost water bodies with verified coordinates and sources
-- **Tamil localization** — Translating the UI for local accessibility
-- **Testing** — Unit tests for scrapers, calculator, and intelligence modules
+- **Data quality** -Improving scraper resilience, handling CMWSSB page format changes
+- **Models** -Better forecasting (Prophet, LSTM), evaporation modeling
+- **Water bodies data** -Adding more documented lost water bodies with verified coordinates and sources
+- **Tamil localization** -Translating the UI for local accessibility
+- **Testing** -Unit tests for scrapers, calculator, and intelligence modules
 
 Please open an issue first to discuss significant changes.
 
