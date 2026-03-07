@@ -10,6 +10,7 @@ import { QUALITY_COLORS } from "@/types/river-quality";
 import type { IndustrialPollutionData, PollutionSource } from "@/types/industrial-pollution";
 import { SOURCE_TYPE_COLORS } from "@/types/industrial-pollution";
 import { useLanguage } from "@/lib/i18n/context";
+import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
 
 interface CombinedRiversMapProps {
@@ -28,6 +29,7 @@ export function CombinedRiversMap({
   onSelectSource,
 }: CombinedRiversMapProps) {
   const { t, language } = useLanguage();
+  const tiles = useMapTiles();
   const [riversGeoJSON, setRiversGeoJSON] = useState<FeatureCollection | null>(null);
   const [zonesGeoJSON, setZonesGeoJSON] = useState<FeatureCollection | null>(null);
 
@@ -210,10 +212,7 @@ export function CombinedRiversMap({
       className="h-full w-full"
       scrollWheelZoom={true}
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
+      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* Render order: zones (bottom) → rivers → stations → sources → highlight (top) */}
       <GeoJSON key="zones" data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />
       <GeoJSON key="rivers" data={riversGeoJSON} style={riverStyle} onEachFeature={onEachRiver} />

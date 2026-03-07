@@ -28,12 +28,12 @@ export const MAJOR_RESERVOIR_CAPACITY_MCFT = 3231.0 + 881.0 + 3300.0 + 3645.0; /
 /** Total capacity including all 6 reservoirs */
 export const TOTAL_RESERVOIR_CAPACITY_MCFT = 3231.0 + 881.0 + 3300.0 + 3645.0 + 1465.0 + 1574.0; // 14,096
 
-/** Reservoir display order */
+/** Reservoir display order — largest capacity first */
 export const RESERVOIR_DISPLAY_ORDER = [
+  'chembarambakkam',
+  'redhills',
   'poondi',
   'cholavaram',
-  'redhills',
-  'chembarambakkam',
 ] as const;
 
 /** Maps various CMWSSB names to our canonical reservoir names */

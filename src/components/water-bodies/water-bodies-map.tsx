@@ -12,6 +12,7 @@ import type {
 } from "@/types/water-bodies";
 import { STATUS_COLORS } from "@/types/water-bodies";
 import { useLanguage } from "@/lib/i18n/context";
+import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
 
 interface WaterBodiesMapProps {
@@ -20,6 +21,7 @@ interface WaterBodiesMapProps {
 
 export function WaterBodiesMap({ onSelect }: WaterBodiesMapProps) {
   const { t, language } = useLanguage();
+  const tiles = useMapTiles();
   const [currentGeoJSON, setCurrentGeoJSON] =
     useState<GeoJSON.FeatureCollection | null>(null);
   const [lostGeoJSON, setLostGeoJSON] =
@@ -160,10 +162,7 @@ export function WaterBodiesMap({ onSelect }: WaterBodiesMapProps) {
       className="h-full w-full"
       scrollWheelZoom={true}
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
+      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       <LayersControl position="topright">
         {currentGeoJSON && (
           <LayersControl.Overlay name={t("wb_map.existing_layer")} checked>

@@ -64,7 +64,7 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
               </div>
 
               {/* Inflow/outflow */}
-              <div className="flex flex-col xs:flex-row justify-between mt-3 text-xs text-slate-500 dark:text-slate-400 gap-0.5">
+              <div className="flex flex-row justify-between mt-3 text-xs text-slate-500 dark:text-slate-400 gap-0.5">
                 <span>
                   {t("dash.in_label")} <span className="font-medium text-green-600">{formatNumber(r.inflowCusecs)}</span> {t("dash.cusecs_unit")}
                 </span>

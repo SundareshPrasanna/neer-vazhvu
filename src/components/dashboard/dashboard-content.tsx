@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { ReservoirCards } from "./reservoir-cards";
 import { StorageTrendChart } from "./storage-trend-chart";
 import type { ReservoirSummary, HistoryPoint } from "@/types/reservoir";
@@ -31,6 +31,14 @@ export function DashboardContent({
 }: DashboardContentProps) {
   const { t } = useLanguage();
   const [selectedReservoir, setSelectedReservoir] = useState<ReservoirSummary | null>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  const handleReservoirClick = useCallback((reservoir: ReservoirSummary) => {
+    setSelectedReservoir(reservoir);
+    setTimeout(() => {
+      chartRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  }, []);
 
   const chartHistory = selectedReservoir
     ? perReservoirHistory[selectedReservoir.name] || []
@@ -48,16 +56,18 @@ export function DashboardContent({
     <>
       <ReservoirCards
         reservoirs={reservoirs}
-        onReservoirClick={setSelectedReservoir}
+        onReservoirClick={handleReservoirClick}
       />
 
-      <StorageTrendChart
-        history={chartHistory}
-        forecast={chartForecast}
-        title={chartTitle}
-        capacity={selectedReservoir?.capacity}
-        onBack={selectedReservoir ? () => setSelectedReservoir(null) : undefined}
-      />
+      <div ref={chartRef} className="scroll-mt-20">
+        <StorageTrendChart
+          history={chartHistory}
+          forecast={chartForecast}
+          title={chartTitle}
+          capacity={selectedReservoir?.capacity}
+          onBack={selectedReservoir ? () => setSelectedReservoir(null) : undefined}
+        />
+      </div>
     </>
   );
 }

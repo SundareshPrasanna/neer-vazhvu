@@ -400,7 +400,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "dash.capacity_unit":     { en: "mcft capacity",             ta: "mcft கொள்ளளவு" },
   "dash.in_label":          { en: "In:",                       ta: "வரத்து:" },
   "dash.out_label":         { en: "Out:",                      ta: "வெளியேற்றம்:" },
-  "dash.click_details":     { en: "Click for details",         ta: "விவரங்களுக்கு கிளிக் செய்யவும்" },
+  "dash.click_details":     { en: "Plot trends",               ta: "போக்குகளைக் காட்டு" },
   "dash.combined_trend":    { en: "Combined Storage Trend",    ta: "ஒருங்கிணைந்த சேமிப்பு போக்கு" },
   "dash.storage_suffix":    { en: "Storage",                   ta: "சேமிப்பு" },
   "dash.all_reservoirs":    { en: "All Reservoirs",            ta: "அனைத்து நீர்த்தேக்கங்களும்" },
