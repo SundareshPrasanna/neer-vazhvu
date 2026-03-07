@@ -164,11 +164,13 @@ export function StorageTrendChart({
     return result;
   }, [filtered, filteredForecast, selectedYears, getHistoricalData]);
 
-  // Compute x-axis tick interval to show ~10-15 labels
+  // Compute x-axis tick interval — fewer labels on mobile to prevent overlap
   const xAxisInterval = useMemo(() => {
     const len = chartData.length;
-    if (len <= 15) return 0;
-    return Math.max(1, Math.floor(len / 12));
+    if (len <= 8) return 0;
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const targetLabels = isMobile ? 5 : 12;
+    return Math.max(1, Math.floor(len / targetLabels));
   }, [chartData]);
 
   // Format date for x-axis labels
@@ -444,14 +446,17 @@ export function StorageTrendChart({
         <ResponsiveContainer width="100%" height="100%">
           {selectedYears.length > 0 ? (
             // Multi-line chart when comparing years
-            <LineChart data={chartData} margin={{ top: 5, right: showFlowLines ? 50 : 10, left: 10, bottom: 5 }}>
+            <LineChart data={chartData} margin={{ top: 5, right: showFlowLines ? 50 : 5, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis
                 dataKey="date"
-                tick={{ fontSize: 11, fill: "#94a3b8" }}
+                tick={{ fontSize: 10, fill: "#94a3b8" }}
                 tickLine={false}
                 tickFormatter={formatTick}
                 interval={xAxisInterval}
+                angle={isMultiYear ? -45 : 0}
+                textAnchor={isMultiYear ? "end" : "middle"}
+                height={isMultiYear ? 40 : 30}
               />
               <YAxis
                 yAxisId="left"
@@ -525,7 +530,7 @@ export function StorageTrendChart({
             </LineChart>
           ) : (
             // Original area chart when no comparisons
-            <AreaChart data={chartData} margin={{ top: 5, right: showFlowLines ? 50 : 10, left: 10, bottom: 5 }}>
+            <AreaChart data={chartData} margin={{ top: 5, right: showFlowLines ? 50 : 5, left: 0, bottom: 5 }}>
               <defs>
                 <linearGradient id="storageGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
@@ -535,10 +540,13 @@ export function StorageTrendChart({
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis
                 dataKey="date"
-                tick={{ fontSize: 11, fill: "#94a3b8" }}
+                tick={{ fontSize: 10, fill: "#94a3b8" }}
                 tickLine={false}
                 tickFormatter={formatTick}
                 interval={xAxisInterval}
+                angle={isMultiYear ? -45 : 0}
+                textAnchor={isMultiYear ? "end" : "middle"}
+                height={isMultiYear ? 40 : 30}
               />
               <YAxis
                 yAxisId="left"
