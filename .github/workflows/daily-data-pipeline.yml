@@ -5,6 +5,9 @@ on:
     - cron: '30 0 * * *'   # 00:30 UTC = 06:00 IST
   workflow_dispatch:         # Manual trigger for debugging
 
+permissions:
+  issues: write
+
 jobs:
   daily-pipeline:
     runs-on: ubuntu-latest
