@@ -87,12 +87,12 @@ export function CombinedRiversMap({
 
   // Industrial zone polygons  -  light orange wash, background context
   const zoneStyle = (): PathOptions => ({
-    fillColor: "#f97316",
-    fillOpacity: 0.10,
-    color: "#f97316",
-    weight: 1,
+    fillColor: "#ea580c",
+    fillOpacity: 0.18,
+    color: "#ea580c",
+    weight: 1.5,
     dashArray: "4, 4",
-    opacity: 0.5,
+    opacity: 0.7,
   });
 
   const onEachZone = (feature: Feature, layer: Layer) => {

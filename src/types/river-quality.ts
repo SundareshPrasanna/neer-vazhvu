@@ -52,8 +52,8 @@ export interface SelectedRiver {
 export const QUALITY_COLORS: Record<RiverQualityStatus, string> = {
   dead: "#dc2626",
   severely_degraded: "#f97316",
-  degraded: "#eab308",
-  stressed: "#84cc16",
+  degraded: "#a16207",
+  stressed: "#4d7c0f",
   healthy: "#22c55e",
 };
 
