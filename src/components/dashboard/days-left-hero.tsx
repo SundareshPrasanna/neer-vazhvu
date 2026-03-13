@@ -17,33 +17,45 @@ interface DaysLeftHeroProps {
   comparison2019Storage: number | null;
 }
 
+/** Upper display cap — anything above this is "won't run out" */
+const MAX_DAYS = 9999;
+
 function computeClientDaysLeft(
   storageMcft: number,
   consumptionMLD: number,
   desalinationMLD: number,
   recentInflowMcft: number,
-  seasonalInflowMcft: number
+  seasonalInflowMcft: number,
+  inflowPct: number
 ) {
   const netDemandMcft = (consumptionMLD - desalinationMLD) * MLD_TO_MCFT;
+  const inflowScale = inflowPct / 100;
 
-  const pessimistic = netDemandMcft > 0 ? Math.floor(storageMcft / netDemandMcft) : 999;
-  const depletionModerate = Math.max(0, netDemandMcft - recentInflowMcft);
-  const moderate = depletionModerate > 0 ? Math.floor(storageMcft / depletionModerate) : 999;
-  const depletionOptimistic = Math.max(0, netDemandMcft - seasonalInflowMcft);
-  const optimistic = depletionOptimistic > 0 ? Math.floor(storageMcft / depletionOptimistic) : 999;
+  const pessimistic = netDemandMcft > 0 ? Math.floor(storageMcft / netDemandMcft) : MAX_DAYS;
+  const depletionModerate = Math.max(0, netDemandMcft - recentInflowMcft * inflowScale);
+  const rawModerate = depletionModerate > 0 ? Math.floor(storageMcft / depletionModerate) : MAX_DAYS;
+  const depletionOptimistic = Math.max(0, netDemandMcft - seasonalInflowMcft * inflowScale);
+  const rawOptimistic = depletionOptimistic > 0 ? Math.floor(storageMcft / depletionOptimistic) : MAX_DAYS;
+
+  // Ensure ordering: pessimistic <= moderate <= optimistic
+  // (recent inflow can exceed seasonal average, flipping the two)
+  const moderate = Math.min(rawModerate, rawOptimistic);
+  const optimistic = Math.max(rawModerate, rawOptimistic);
 
   return {
-    pessimistic: Math.min(pessimistic, 999),
-    moderate: Math.min(moderate, 999),
-    optimistic: Math.min(optimistic, 999),
+    pessimistic: Math.min(pessimistic, MAX_DAYS),
+    moderate: Math.min(moderate, MAX_DAYS),
+    optimistic: Math.min(optimistic, MAX_DAYS),
   };
 }
 
 function formatDays(days: number, t: (key: string) => string): string {
-  if (days >= 999) return t("hero.wont_run_out");
-  if (days >= 730) return `${(days / 365).toFixed(1)} ${t("hero.yrs_unit")}`;
-  if (days >= 365) return `${(days / 365).toFixed(1)} ${t("hero.yr_unit")}`;
-  return `${days} ${t("hero.days_unit")}`;
+  if (days >= MAX_DAYS) return t("hero.wont_run_out");
+  if (days >= 365) {
+    const yrs = (days / 365).toFixed(1);
+    return `${yrs} ${parseFloat(yrs) >= 2 ? t("hero.yrs_unit") : t("hero.yr_unit")}`;
+  }
+  return `${days} ${days === 1 ? t("hero.day_unit") : t("hero.days_unit")}`;
 }
 
 function getSeverityColor(days: number): string {
@@ -71,6 +83,7 @@ export function DaysLeftHero({
   const { t } = useLanguage();
   const [consumption, setConsumption] = useState(DEFAULT_CONSUMPTION_MLD);
   const [desalination, setDesalination] = useState(DEFAULT_DESALINATION_MLD);
+  const [inflowPct, setInflowPct] = useState(100);
   const [showAssumptions, setShowAssumptions] = useState(false);
 
   const days = computeClientDaysLeft(
@@ -78,7 +91,8 @@ export function DaysLeftHero({
     consumption,
     desalination,
     recentAvgInflowMcftPerDay,
-    seasonalAvgInflowMcftPerDay
+    seasonalAvgInflowMcftPerDay,
+    inflowPct
   );
 
   const storagePct = totalCapacityMcft > 0 ? (totalStorageMcft / totalCapacityMcft) * 100 : 0;
@@ -99,19 +113,19 @@ export function DaysLeftHero({
           {/* Big number */}
           <div className="text-center sm:text-left">
             <div className={`text-5xl sm:text-6xl font-bold ${getSeverityColor(days.pessimistic)}`}>
-              {days.pessimistic >= 999 ? (
+              {days.pessimistic >= MAX_DAYS ? (
                 // All scenarios safe  -  inflows sustain supply
                 <>{t("hero.safe")}</>
-              ) : days.optimistic >= 999 ? (
+              ) : days.optimistic >= MAX_DAYS ? (
                 // Worst case is finite but best case won't deplete
-                <>{days.pessimistic}<span className="text-2xl text-slate-400 dark:text-slate-500">+</span></>
+                <>{formatDays(days.pessimistic, t)}<span className="text-2xl text-slate-400 dark:text-slate-500">+</span></>
               ) : (
                 // Normal range
-                <>{days.pessimistic}<span className="text-2xl text-slate-400 dark:text-slate-500 mx-1">–</span>{days.optimistic}</>
+                <>{formatDays(days.pessimistic, t)}<span className="text-2xl mx-1">–</span>{formatDays(days.optimistic, t)}</>
               )}
             </div>
             <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {days.pessimistic >= 999 ? t("hero.inflows_exceed") : t("hero.days_remaining")}
+              {days.pessimistic >= MAX_DAYS ? t("hero.inflows_exceed") : t("hero.days_remaining")}
             </div>
           </div>
 
@@ -206,6 +220,22 @@ export function DaysLeftHero({
                   max={400}
                   step={10}
                 />
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-slate-600 dark:text-slate-400">{t("hero.inflow_pct")}</span>
+                  <span className="font-mono font-semibold">{inflowPct}%</span>
+                </div>
+                <Slider
+                  value={[inflowPct]}
+                  onValueChange={([v]) => setInflowPct(v)}
+                  min={0}
+                  max={150}
+                  step={5}
+                />
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                  {t("hero.inflow_hint")}
+                </p>
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500">
                 {t("hero.slider_note")}
