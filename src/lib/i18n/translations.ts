@@ -36,6 +36,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "hero.current_trend":   { en: "Current trend:",            ta: "தற்போதைய போக்கு:" },
   "hero.seasonal_rains":  { en: "If seasonal rains:",        ta: "பருவமழை இருந்தால்:" },
   "hero.wont_run_out":    { en: "Won\u2019t run out",        ta: "தீர்ந்துவிடாது" },
+  "hero.day_unit":        { en: "day",                       ta: "நாள்" },
   "hero.days_unit":       { en: "days",                      ta: "நாட்கள்" },
   "hero.yr_unit":         { en: "yr",                        ta: "ஆண்டு" },
   "hero.yrs_unit":        { en: "yrs",                       ta: "ஆண்டுகள்" },
@@ -46,6 +47,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "hero.adjust":          { en: "Adjust assumptions",        ta: "அனுமானங்களை மாற்றவும்" },
   "hero.consumption":     { en: "Daily consumption",         ta: "தினசரி நுகர்வு" },
   "hero.desalination":    { en: "Desalination output",       ta: "கடல்நீர் குடிநீராக்க உற்பத்தி" },
+  "hero.inflow_pct":      { en: "Inflow scenario",           ta: "நீர்வரத்து சூழல்" },
+  "hero.inflow_hint":     { en: "Simulate drought (↓) or heavy rains (↑). 0% = no inflow, 100% = current actual.",  ta: "வறட்சி (↓) அல்லது கனமழை (↑) உருவகப்படுத்தவும். 0% = வரத்து இல்லை, 100% = தற்போதைய நிலை." },
   "hero.slider_note":     { en: "Days left updates in real time as you adjust. Default: 830 MLD consumption, 190 MLD desalination.", ta: "சரிசெய்யும்போது மீதமுள்ள நாட்கள் நேரடியாக புதுப்பிக்கப்படும். இயல்பு: 830 MLD நுகர்வு, 190 MLD கடல்நீர் நீக்கம்." },
 
   // ── Groundwater Snapshot ──────────────────────────────────────────────────

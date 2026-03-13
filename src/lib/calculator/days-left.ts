@@ -2,7 +2,7 @@ import { MLD_TO_MCFT } from '@/lib/utils/constants';
 import type { DaysLeftInput, DaysLeftOutput } from '@/types/calculator';
 
 /** Maximum days to report (when inflow exceeds consumption) */
-const MAX_DAYS = 999;
+const MAX_DAYS = 9999;
 
 /**
  * Computes estimated days of water remaining in Chennai's reservoirs.
@@ -37,17 +37,22 @@ export function computeDaysLeft(input: DaysLeftInput): DaysLeftOutput {
 
   // Scenario 2: MODERATE  -  recent inflow trend continues
   const depletionModerate = Math.max(0, netReservoirDemandMcft - recentAvgInflowMcftPerDay);
-  const moderate =
+  const rawModerate =
     depletionModerate > 0
       ? Math.max(0, Math.floor(totalStorageMcft / depletionModerate))
       : MAX_DAYS;
 
   // Scenario 3: OPTIMISTIC  -  seasonal average inflow
   const depletionOptimistic = Math.max(0, netReservoirDemandMcft - seasonalAvgInflowMcftPerDay);
-  const optimistic =
+  const rawOptimistic =
     depletionOptimistic > 0
       ? Math.max(0, Math.floor(totalStorageMcft / depletionOptimistic))
       : MAX_DAYS;
+
+  // Ensure ordering: pessimistic <= moderate <= optimistic
+  // (recent inflow can exceed seasonal average, flipping the two)
+  const moderate = Math.min(rawModerate, rawOptimistic);
+  const optimistic = Math.max(rawModerate, rawOptimistic);
 
   return {
     pessimistic: Math.min(pessimistic, MAX_DAYS),
