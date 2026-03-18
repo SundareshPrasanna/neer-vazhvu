@@ -19,6 +19,7 @@ export interface IncidentRecord {
   description: string;
   description_ta?: string;
   volume?: string;
+  volume_ta?: string;
   source: string;
 }
 

@@ -148,10 +148,10 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
               {t("rivers.trend_label")}
             </span>
-            <span className={`text-xs font-semibold ${TREND_CONFIG[trend.direction].className}`}>
+            <span className={`text-xs font-semibold whitespace-nowrap ${TREND_CONFIG[trend.direction].className}`}>
               {t(TREND_CONFIG[trend.direction].tKey)}
               <span className="font-normal text-slate-400 dark:text-slate-500 ml-1">
-                ({trend.start_year}–{trend.end_year})
+                ({trend.start_year}-{trend.end_year})
               </span>
             </span>
           </div>

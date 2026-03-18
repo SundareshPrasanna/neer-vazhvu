@@ -34,10 +34,13 @@ interface ScoredWaterBody {
     type_bonus: number;
   };
   nearest_lost_body: string | null;
+  nearest_lost_body_ta: string | null;
   nearest_lost_km: number | null;
   nearest_river_station: string | null;
+  nearest_river_station_ta: string | null;
   nearest_river_km: number | null;
   nearest_industrial: string | null;
+  nearest_industrial_ta: string | null;
   nearest_industrial_km: number | null;
 }
 
@@ -105,10 +108,11 @@ function sizeScore(areaHa: number): number {
 
 function lostProximityScore(
   centroid: Coord,
-  lostBodies: Array<{ name: string; coord: Coord; status: string }>
-): { score: number; nearestName: string | null; nearestKm: number | null } {
+  lostBodies: Array<{ name: string; name_ta: string; coord: Coord; status: string }>
+): { score: number; nearestName: string | null; nearestNameTa: string | null; nearestKm: number | null } {
   let minDist = Infinity;
   let nearestName: string | null = null;
+  let nearestNameTa: string | null = null;
   let bestScore = 10;
 
   for (const lb of lostBodies) {
@@ -116,6 +120,7 @@ function lostProximityScore(
     if (d < minDist) {
       minDist = d;
       nearestName = lb.name;
+      nearestNameTa = lb.name_ta;
     }
 
     let s: number;
@@ -136,16 +141,18 @@ function lostProximityScore(
   return {
     score: bestScore,
     nearestName,
+    nearestNameTa,
     nearestKm: minDist === Infinity ? null : Math.round(minDist * 10) / 10,
   };
 }
 
 function riverPollutionScore(
   centroid: Coord,
-  stations: Array<{ name: string; coord: Coord; latestDO: number }>
-): { score: number; nearestStation: string | null; nearestKm: number | null } {
+  stations: Array<{ name: string; name_ta: string; coord: Coord; latestDO: number }>
+): { score: number; nearestStation: string | null; nearestStationTa: string | null; nearestKm: number | null } {
   let minDist = Infinity;
   let nearestStation: string | null = null;
+  let nearestStationTa: string | null = null;
   let bestScore = 15;
 
   for (const st of stations) {
@@ -153,6 +160,7 @@ function riverPollutionScore(
     if (d < minDist) {
       minDist = d;
       nearestStation = st.name;
+      nearestStationTa = st.name_ta;
     }
 
     let s: number;
@@ -175,27 +183,35 @@ function riverPollutionScore(
   return {
     score: bestScore,
     nearestStation,
+    nearestStationTa,
     nearestKm: minDist === Infinity ? null : Math.round(minDist * 10) / 10,
   };
 }
 
 function industrialProximityScore(
   centroid: Coord,
-  sources: Array<{ name: string; coord: Coord }>
-): { score: number; nearestName: string | null; nearestKm: number | null } {
-  const nearest = findNearest(centroid, sources);
-  if (!nearest) return { score: 10, nearestName: null, nearestKm: null };
+  sources: Array<{ name: string; name_ta: string; coord: Coord }>
+): { score: number; nearestName: string | null; nearestNameTa: string | null; nearestKm: number | null } {
+  let best: { name: string; name_ta: string; distKm: number } | null = null;
+  for (const p of sources) {
+    const d = haversine(centroid, p.coord);
+    if (!best || d < best.distKm) {
+      best = { name: p.name, name_ta: p.name_ta, distKm: d };
+    }
+  }
+  if (!best) return { score: 10, nearestName: null, nearestNameTa: null, nearestKm: null };
 
   let score: number;
-  if (nearest.distKm <= 2) score = 100;
-  else if (nearest.distKm <= 5) score = 70;
-  else if (nearest.distKm <= 10) score = 40;
+  if (best.distKm <= 2) score = 100;
+  else if (best.distKm <= 5) score = 70;
+  else if (best.distKm <= 10) score = 40;
   else score = 10;
 
   return {
     score,
-    nearestName: nearest.name,
-    nearestKm: Math.round(nearest.distKm * 10) / 10,
+    nearestName: best.name,
+    nearestNameTa: best.name_ta,
+    nearestKm: Math.round(best.distKm * 10) / 10,
   };
 }
 
@@ -241,6 +257,7 @@ const lostGeo = JSON.parse(
 
 const lostBodies = lostGeo.features.map((f) => ({
   name: (f.properties as Record<string, unknown>).name as string,
+  name_ta: ((f.properties as Record<string, unknown>).name_ta as string) || "",
   coord: {
     lat: (f.geometry as GeoJSON.Point).coordinates[1],
     lng: (f.geometry as GeoJSON.Point).coordinates[0],
@@ -253,13 +270,14 @@ const riverQuality = JSON.parse(
   readFileSync(resolve(root, "public/data/river-quality.json"), "utf8")
 );
 
-const riverStations: Array<{ name: string; coord: Coord; latestDO: number }> = [];
+const riverStations: Array<{ name: string; name_ta: string; coord: Coord; latestDO: number }> = [];
 for (const river of riverQuality.rivers) {
   for (const station of river.stations) {
     const readings = station.readings as Array<{ do_mgl: number }>;
     const latestDO = readings[readings.length - 1].do_mgl;
     riverStations.push({
       name: station.name,
+      name_ta: station.name_ta || "",
       coord: { lat: station.lat, lng: station.lng },
       latestDO,
     });
@@ -272,8 +290,9 @@ const industrialData = JSON.parse(
 );
 
 const industrialSources = industrialData.sources.map(
-  (s: { name: string; lat: number; lng: number }) => ({
+  (s: { name: string; name_ta: string; lat: number; lng: number }) => ({
     name: s.name,
+    name_ta: s.name_ta || "",
     coord: { lat: s.lat, lng: s.lng },
   })
 );
@@ -328,10 +347,13 @@ for (const feature of waterBodies.features) {
       type_bonus: typeComp,
     },
     nearest_lost_body: lostComp.nearestName,
+    nearest_lost_body_ta: lostComp.nearestNameTa,
     nearest_lost_km: lostComp.nearestKm,
     nearest_river_station: riverComp.nearestStation,
+    nearest_river_station_ta: riverComp.nearestStationTa,
     nearest_river_km: riverComp.nearestKm,
     nearest_industrial: indComp.nearestName,
+    nearest_industrial_ta: indComp.nearestNameTa,
     nearest_industrial_km: indComp.nearestKm,
   });
 }

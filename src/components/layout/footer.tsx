@@ -1,9 +1,16 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/context";
+
+/** Full-screen map pages where the footer would cause a second scrollbar */
+const FULL_SCREEN_PAGES = ["/rivers", "/groundwater", "/water-bodies"];
 
 export function Footer() {
   const { t } = useLanguage();
+  const pathname = usePathname();
+
+  if (FULL_SCREEN_PAGES.includes(pathname)) return null;
 
   return (
     <footer className="border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 mt-12">

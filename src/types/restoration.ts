@@ -17,10 +17,13 @@ export interface ScoredWaterBody {
     type_bonus: number;
   };
   nearest_lost_body: string | null;
+  nearest_lost_body_ta: string | null;
   nearest_lost_km: number | null;
   nearest_river_station: string | null;
+  nearest_river_station_ta: string | null;
   nearest_river_km: number | null;
   nearest_industrial: string | null;
+  nearest_industrial_ta: string | null;
   nearest_industrial_km: number | null;
 }
 

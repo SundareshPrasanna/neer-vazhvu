@@ -14,6 +14,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "nav.rivers":         { en: "Rivers",            ta: "ஆறுகள்" },
   "nav.lake_restoration": { en: "Restoration",     ta: "மறுசீரமைப்பு" },
   "nav.about":          { en: "About",             ta: "எங்களைப் பற்றி" },
+  "header.title":       { en: "Neer Vazhvu",                ta: "நீர் வாழ்வு" },
   "header.subtitle":    { en: "Chennai Water Intelligence", ta: "சென்னை நீர் அறிவுத்தளம்" },
   "theme.switch_to_light": { en: "Switch to light mode", ta: "ஒளிர் நிலையில் மாற்று" },
   "theme.switch_to_dark":  { en: "Switch to dark mode", ta: "இருண்ட நிலையில் மாற்று" },
@@ -36,6 +37,10 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "hero.current_trend":   { en: "Current trend:",            ta: "தற்போதைய போக்கு:" },
   "hero.seasonal_rains":  { en: "If seasonal rains:",        ta: "பருவமழை இருந்தால்:" },
   "hero.wont_run_out":    { en: "Won\u2019t run out",        ta: "தீர்ந்துவிடாது" },
+  "hero.inflow":          { en: "inflow",                    ta: "வரத்து" },
+  "hero.of_demand":       { en: "of demand",                 ta: "தேவையின்" },
+  "hero.last_7d":         { en: "Last 7 days avg",            ta: "கடந்த 7 நாள் சராசரி" },
+  "hero.month_avg":       { en: "{month} historical avg",    ta: "{month} வரலாற்று சராசரி" },
   "hero.day_unit":        { en: "day",                       ta: "நாள்" },
   "hero.days_unit":       { en: "days",                      ta: "நாட்கள்" },
   "hero.yr_unit":         { en: "yr",                        ta: "ஆண்டு" },
@@ -63,6 +68,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "gw_snap.moderate":       { en: "moderate",                         ta: "மிதமான" },
   "gw_snap.stressed":       { en: "stressed",                         ta: "அழுத்தமான" },
   "gw_snap.critical":       { en: "critical",                         ta: "தீவிரமான" },
+  "gw_snap.stale_title":    { en: "Data may be outdated.",             ta: "தரவு காலாவதியாக இருக்கலாம்." },
+  "gw_snap.stale_msg":      { en: "Latest available from {source} is {date}. We're actively looking for newer sources.", ta: "{source} இலிருந்து கிடைக்கும் சமீபத்திய தரவு {date}. புதிய ஆதாரங்களைத் தேடிக்கொண்டிருக்கிறோம்." },
 
   // ── Groundwater Status Labels (shared) ───────────────────────────────────
   "gw.healthy":    { en: "Healthy",   ta: "ஆரோக்கியமான" },
@@ -126,9 +133,9 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "rivers.cpcb_class":     { en: "CPCB Class",    ta: "CPCB வகுப்பு" },
   "rivers.trend_label":    { en: "3-year trend",  ta: "3-ஆண்டு போக்கு" },
   "rivers.do_better":      { en: "DO \u2191 = better \u00a0\u00b7\u00a0 BOD \u2193 = better", ta: "DO \u2191 = சிறப்பு \u00a0\u00b7\u00a0 BOD \u2193 = சிறப்பு" },
-  "rivers.do_title":       { en: "DO \u2014 Dissolved Oxygen",           ta: "DO \u2014 கரைந்த ஆக்சிஜன்" },
+  "rivers.do_title":       { en: "DO  - Dissolved Oxygen",           ta: "DO  - கரைந்த ஆக்சிஜன்" },
   "rivers.do_desc":        { en: "Oxygen dissolved in water. Fish and aquatic life need \u2265 4 mg/L to survive. Near zero means the river is biologically dead.", ta: "நீரில் கரைந்த ஆக்சிஜன். மீன்களுக்கு ≥ 4 mg/L தேவை. பூஜ்யத்திற்கு அருகில் என்றால் ஆறு உயிரியலாக இறந்துவிட்டது." },
-  "rivers.bod_title":      { en: "BOD \u2014 Biochemical Oxygen Demand", ta: "BOD \u2014 உயிர்வேதியியல் ஆக்சிஜன் தேவை" },
+  "rivers.bod_title":      { en: "BOD  - Biochemical Oxygen Demand", ta: "BOD  - உயிர்வேதியியல் ஆக்சிஜன் தேவை" },
   "rivers.bod_desc":       { en: "Organic pollution load. A clean river has < 2 mg/L. Above 30 mg/L indicates severe sewage contamination.", ta: "கரிம மாசு சுமை. சுத்தமான ஆற்றில் < 2 mg/L. 30 mg/L-க்கு மேல் என்றால் கடுமையான கழிவு மாசு." },
   "rivers.source":         { en: "Source:",       ta: "ஆதாரம்:" },
   "rivers.last_updated":   { en: "Last updated:", ta: "கடைசியாக புதுப்பிக்கப்பட்டது:" },
@@ -209,12 +216,12 @@ export const translations: Record<string, { en: string; ta: string }> = {
   // Intelligence layer
   "about.intelligence_intro":      { en: "Beyond raw data display, Neer Vazhvu runs three intelligence modules daily to generate actionable insights.", ta: "மூல தரவு காட்சிக்கப்பால், நீர் வாழ்வு செயல்திறன் மிக்க நுண்ணறிவை உருவாக்க தினமும் மூன்று நுண்ணறிவு தொகுதிகளை இயக்குகிறது." },
   "about.ward_risk_title":         { en: "Ward Risk Scoring:", ta: "வார்டு ஆபத்து மதிப்பீடு:" },
-  "about.ward_risk_desc":          { en: "Each of Chennai\u2019s 200 wards receives a composite risk score (0\u2013100) based on groundwater depth (40%), year-over-year trend (30%), city-wide reservoir stress (20%), and seasonal vulnerability (10%). Scores are fully explainable.", ta: "சென்னையின் 200 வார்டுகள் ஒவ்வொன்றும் நிலத்தடி நீர் ஆழம் (40%), ஆண்டு-ஆண்டு போக்கு (30%), நகரம் முழுவதும் நீர்த்தேக்க அழுத்தம் (20%), மற்றும் பருவகால பாதிப்பு (10%) ஆகியவற்றின் அடிப்படையில் கூட்டு ஆபத்து மதிப்பெண் (0\u2013100) பெறுகிறது. மதிப்பெண்கள் முழுமையாக விளக்கக்கூடியவை." },
+  "about.ward_risk_desc":          { en: "Each of Chennai\u2019s 200 wards receives a composite risk score (0-100) based on groundwater depth (40%), year-over-year trend (30%), city-wide reservoir stress (20%), and seasonal vulnerability (10%). Scores are fully explainable.", ta: "சென்னையின் 200 வார்டுகள் ஒவ்வொன்றும் நிலத்தடி நீர் ஆழம் (40%), ஆண்டு-ஆண்டு போக்கு (30%), நகரம் முழுவதும் நீர்த்தேக்க அழுத்தம் (20%), மற்றும் பருவகால பாதிப்பு (10%) ஆகியவற்றின் அடிப்படையில் கூட்டு ஆபத்து மதிப்பெண் (0-100) பெறுகிறது. மதிப்பெண்கள் முழுமையாக விளக்கக்கூடியவை." },
   "about.daily_briefing_title":    { en: "Daily Briefing:", ta: "தினசரி அறிக்கை:" },
-  "about.daily_briefing_desc":     { en: "A template-based intelligence summary generated each morning with a headline, key metrics, threshold-based alerts, and actionable recommendations. No LLM required \u2014 purely data-driven.", ta: "ஒவ்வொரு காலையும் தலைப்பு, முக்கிய அளவீடுகள், வரம்பு அடிப்படையிலான எச்சரிக்கைகள் மற்றும் செயல்படக்கூடிய பரிந்துரைகளுடன் உருவாக்கப்படும் வார்ப்புரு அடிப்படையிலான நுண்ணறிவு சுருக்கம். LLM தேவையில்லை \u2014 முற்றிலும் தரவு சார்ந்தது." },
+  "about.daily_briefing_desc":     { en: "A template-based intelligence summary generated each morning with a headline, key metrics, threshold-based alerts, and actionable recommendations. No LLM required  - purely data-driven.", ta: "ஒவ்வொரு காலையும் தலைப்பு, முக்கிய அளவீடுகள், வரம்பு அடிப்படையிலான எச்சரிக்கைகள் மற்றும் செயல்படக்கூடிய பரிந்துரைகளுடன் உருவாக்கப்படும் வார்ப்புரு அடிப்படையிலான நுண்ணறிவு சுருக்கம். LLM தேவையில்லை  - முற்றிலும் தரவு சார்ந்தது." },
 
   // Forecasting
-  "about.forecast_intro":  { en: "The dashed violet line on the storage trend chart shows an ARIMAX-based forecast for each reservoir, extending 6 months into the future. The shaded band around it represents an 80% confidence interval \u2014 the range within which actual storage is expected to fall, 4 out of 5 times.", ta: "சேமிப்பு போக்கு விளக்கப்படத்தில் புள்ளியிட்ட ஊதா கோடு ஒவ்வொரு நீர்த்தேக்கத்திற்கும் ARIMAX அடிப்படையிலான 6 மாத முன்கணிப்பைக் காட்டுகிறது. அதைச் சுற்றியுள்ள நிழலான பட்டி 80% நம்பகத்தன்மை இடைவெளியைக் குறிக்கிறது \u2014 5 முறையில் 4 முறை உண்மையான சேமிப்பு இந்த வரம்பில் இருக்கும்." },
+  "about.forecast_intro":  { en: "The dashed violet line on the storage trend chart shows an ARIMAX-based forecast for each reservoir, extending 6 months into the future. The shaded band around it represents an 80% confidence interval  - the range within which actual storage is expected to fall, 4 out of 5 times.", ta: "சேமிப்பு போக்கு விளக்கப்படத்தில் புள்ளியிட்ட ஊதா கோடு ஒவ்வொரு நீர்த்தேக்கத்திற்கும் ARIMAX அடிப்படையிலான 6 மாத முன்கணிப்பைக் காட்டுகிறது. அதைச் சுற்றியுள்ள நிழலான பட்டி 80% நம்பகத்தன்மை இடைவெளியைக் குறிக்கிறது  - 5 முறையில் 4 முறை உண்மையான சேமிப்பு இந்த வரம்பில் இருக்கும்." },
   "about.technique":        { en: "Technique", ta: "நுட்பம்" },
   "about.technique_before_link": { en: "We use", ta: "நாங்கள் பயன்படுத்துவது" },
   "about.technique_after_link":  { en: "library with", ta: "நூலகத்தை, அதனுடன்" },
@@ -239,7 +246,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
 
   // Water bodies map
   "about.wb_map_desc":         { en: "The Water Bodies page shows two overlapping datasets: surviving water bodies sourced live from OpenStreetMap, and a curated set of 15 historically significant water bodies that have been lost or severely encroached upon.", ta: "நீர்நிலை பக்கம் இரண்டு மேல்படிந்த தரவுத்தொகுப்புகளைக் காட்டுகிறது: OpenStreetMap-ல் இருந்து நேரடியாக எடுக்கப்பட்ட தற்போதுள்ள நீர்நிலைகள், மற்றும் இழந்த அல்லது கடுமையாக ஆக்கிரமிக்கப்பட்ட வரலாற்று முக்கியத்துவம் வாய்ந்த 15 நீர்நிலைகளின் தொகுக்கப்பட்ட தொகுப்பு." },
-  "about.wb_lost_heading":     { en: "Lost & Encroached Water Bodies \u2014 Per-Record Sources", ta: "இழந்த & ஆக்கிரமிக்கப்பட்ட நீர்நிலைகள் \u2014 பதிவுக்கு ஆதாரம்" },
+  "about.wb_lost_heading":     { en: "Lost & Encroached Water Bodies  - Per-Record Sources", ta: "இழந்த & ஆக்கிரமிக்கப்பட்ட நீர்நிலைகள்  - பதிவுக்கு ஆதாரம்" },
   "about.wb_col_name":         { en: "Water body",        ta: "நீர்நிலை" },
   "about.wb_col_status":       { en: "Status",            ta: "நிலை" },
   "about.wb_col_source_ref":   { en: "Source / Reference", ta: "ஆதாரம் / குறிப்பு" },
@@ -248,11 +255,11 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.partially_encroached":{ en: "Partially encroached", ta: "பகுதியாக ஆக்கிரமிக்கப்பட்டது" },
 
   // River map
-  "about.river_map_desc":  { en: "The river map shows four rivers \u2014 Cooum, Adyar, Buckingham Canal, and Kosasthalaiyar \u2014 colour-coded by overall water quality status derived from CPCB monitoring data.", ta: "ஆற்று வரைபடம் நான்கு ஆறுகளை காட்டுகிறது \u2014 கூவம், அடையாறு, பக்கிங்ஹாம் கால்வாய், மற்றும் கோசஸ்தலையாறு \u2014 CPCB கண்காணிப்பு தரவிலிருந்து பெறப்பட்ட ஒட்டுமொத்த நீர்த்தர நிலையால் வண்ண குறியீடு செய்யப்பட்டவை." },
+  "about.river_map_desc":  { en: "The river map shows four rivers  - Cooum, Adyar, Buckingham Canal, and Kosasthalaiyar  - colour-coded by overall water quality status derived from CPCB monitoring data.", ta: "ஆற்று வரைபடம் நான்கு ஆறுகளை காட்டுகிறது  - கூவம், அடையாறு, பக்கிங்ஹாம் கால்வாய், மற்றும் கோசஸ்தலையாறு  - CPCB கண்காணிப்பு தரவிலிருந்து பெறப்பட்ட ஒட்டுமொத்த நீர்த்தர நிலையால் வண்ண குறியீடு செய்யப்பட்டவை." },
 
   // Lake Restoration (about page)
   "about.restoration":         { en: "Lake Restoration Priority", ta: "ஏரி மறுசீரமைப்பு முன்னுரிமை" },
-  "about.restoration_desc":    { en: "The restoration ranker scores all 1,635 water bodies on restoration priority using a 5-component spatial analysis model. Each component is scored 0\u2013100 and combined as a weighted average:", ta: "மறுசீரமைப்பு தரவரிசை அனைத்து 1,635 நீர்நிலைகளையும் 5-கூறு இடஞ்சார்ந்த பகுப்பாய்வு மாதிரியைப் பயன்படுத்தி மறுசீரமைப்பு முன்னுரிமையில் மதிப்பிடுகிறது. ஒவ்வொரு கூறும் 0\u2013100 மதிப்பிடப்பட்டு, நிறையிடப்பட்ட சராசரியாக இணைக்கப்படுகிறது:" },
+  "about.restoration_desc":    { en: "The restoration ranker scores all 1,635 water bodies on restoration priority using a 5-component spatial analysis model. Each component is scored 0-100 and combined as a weighted average:", ta: "மறுசீரமைப்பு தரவரிசை அனைத்து 1,635 நீர்நிலைகளையும் 5-கூறு இடஞ்சார்ந்த பகுப்பாய்வு மாதிரியைப் பயன்படுத்தி மறுசீரமைப்பு முன்னுரிமையில் மதிப்பிடுகிறது. ஒவ்வொரு கூறும் 0-100 மதிப்பிடப்பட்டு, நிறையிடப்பட்ட சராசரியாக இணைக்கப்படுகிறது:" },
   "about.restoration_comp_size":       { en: "Water Body Size (25%): Larger water bodies provide greater groundwater recharge and flood mitigation impact.", ta: "நீர்நிலை அளவு (25%): பெரிய நீர்நிலைகள் அதிக நிலத்தடி நீர் நிரப்புதல் மற்றும் வெள்ள தணிப்பு பலனை வழங்குகின்றன." },
   "about.restoration_comp_lost":       { en: "Proximity to Lost Water Bodies (20%): Water bodies near historically lost lakes are in stressed areas where restoration compensates for lost water surface.", ta: "இழந்த நீர்நிலைகளுக்கு அருகாமை (20%): வரலாற்று ரீதியாக இழந்த ஏரிகளுக்கு அருகிலுள்ள நீர்நிலைகள் அழுத்தமான பகுதிகளில் உள்ளன, அங்கு மறுசீரமைப்பு இழந்த நீர்ப்பரப்பை ஈடுசெய்யும்." },
   "about.restoration_comp_river":      { en: "Proximity to Polluted Rivers (20%): Water bodies near dead or degraded river stretches (by dissolved oxygen readings) could serve as settling or treatment wetlands.", ta: "மாசுபட்ட ஆறுகளுக்கு அருகாமை (20%): இறந்த அல்லது சீரழிந்த ஆற்றுப் பகுதிகளுக்கு (கரைந்த ஆக்சிஜன் அளவுகள் மூலம்) அருகிலுள்ள நீர்நிலைகள் வண்டல் அல்லது சுத்திகரிப்பு ஈரநிலங்களாக செயல்படலாம்." },
@@ -281,8 +288,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   // Data source frequencies (shared)
   "about.freq_daily_scraped": { en: "Daily (scraped at 06:00 IST)",            ta: "தினசரி (06:00 IST-ல் சேகரிக்கப்படுகிறது)" },
   "about.freq_daily_lag":     { en: "Daily (2-day lag)",                        ta: "தினசரி (2-நாள் தாமதம்)" },
-  "about.freq_monthly":       { en: "Monthly (fetched days 1\u20133)",          ta: "மாதாந்திர (1\u20133 நாட்களில் பெறப்படுகிறது)" },
-  "about.freq_historical":    { en: "Historical (2003\u20132021)",               ta: "வரலாற்று (2003\u20132021)" },
+  "about.freq_monthly":       { en: "Monthly (fetched days 1-3)",          ta: "மாதாந்திர (1-3 நாட்களில் பெறப்படுகிறது)" },
+  "about.freq_historical":    { en: "Historical (2003-2021)",               ta: "வரலாற்று (2003-2021)" },
   "about.freq_one_time":      { en: "One-time historical seed",                 ta: "ஒருமுறை வரலாற்று விதை" },
   "about.freq_static":        { en: "Static GeoJSON (re-run script to refresh)", ta: "நிலையான GeoJSON (புதுப்பிக்க ஸ்கிரிப்டை மீண்டும் இயக்கவும்)" },
   "about.freq_manual":        { en: "Manually curated (static)",                ta: "கைமுறையாக தொகுக்கப்பட்டது (நிலையான)" },
@@ -292,12 +299,12 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.ds_cmwssb_desc":      { en: "Daily reservoir levels for 6 reservoirs: Poondi, Cholavaram, Red Hills, Chembarambakkam, Veeranam, and Kannankottai. Includes storage (mcft), water level (ft), inflow/outflow (cusecs), and rainfall (mm).", ta: "6 நீர்த்தேக்கங்களுக்கான தினசரி நீர்த்தேக்க மட்டங்கள்: பூண்டி, சோளவரம், ரெட் ஹில்ஸ், செம்பரம்பாக்கம், வீராணம் மற்றும் கண்ணன்கோட்டை. சேமிப்பு (mcft), நீர்மட்டம் (ft), வரத்து/வெளியேற்றம் (cusecs) மற்றும் மழை (mm) ஆகியவை அடங்கும்." },
   "about.ds_nasa_desc":        { en: "Satellite-derived weather data for Chennai (13.08\u00b0N, 80.27\u00b0E): precipitation, max/min temperature, and relative humidity. No API key required.", ta: "சென்னைக்கான (13.08\u00b0N, 80.27\u00b0E) செயற்கைக்கோள் வானிலை தரவு: மழைவீழ்ச்சி, அதிகபட்ச/குறைந்தபட்ச வெப்பநிலை மற்றும் ஈரப்பதம். API கீ தேவையில்லை." },
   "about.ds_opencity_gw_desc": { en: "Ward-wise depth to water table (metres below ground level) for all 200 GCC wards across 15 zones. Sourced from CGWB/GCC monitoring wells. Data available from 2021 onwards.", ta: "15 மண்டலங்களிலுள்ள அனைத்து 200 GCC வார்டுகளுக்கும் வார்டுவாரியாக நீர்மட்டம் வரையிலான ஆழம் (மீட்டர்களில்). CGWB/GCC கண்காணிப்பு கிணறுகளிலிருந்து. 2021-ல் இருந்து தரவு கிடைக்கிறது." },
-  "about.ds_opencity_lake_desc":{ en: "Monthly reservoir storage data (mcft) for all 6 reservoirs, spanning 2003\u20132021. Used as historical seed for the forecasting model.", ta: "அனைத்து 6 நீர்த்தேக்கங்களுக்கும் மாதாந்திர சேமிப்பு தரவு (mcft), 2003\u20132021. முன்கணிப்பு மாதிரிக்கான வரலாற்று விதையாக பயன்படுத்தப்படுகிறது." },
-  "about.ds_kaggle_desc":      { en: "15 years of daily reservoir data (2004\u20132019) compiled by Sudalai Rajkumar. Used as additional historical training data for the forecasting model.", ta: "சுதலை ராஜ்குமாரால் தொகுக்கப்பட்ட 15 ஆண்டு தினசரி நீர்த்தேக்க தரவு (2004\u20132019). முன்கணிப்பு மாதிரிக்கான கூடுதல் வரலாற்று பயிற்சி தரவாக பயன்படுத்தப்படுகிறது." },
+  "about.ds_opencity_lake_desc":{ en: "Monthly reservoir storage data (mcft) for all 6 reservoirs, spanning 2003-2021. Used as historical seed for the forecasting model.", ta: "அனைத்து 6 நீர்த்தேக்கங்களுக்கும் மாதாந்திர சேமிப்பு தரவு (mcft), 2003-2021. முன்கணிப்பு மாதிரிக்கான வரலாற்று விதையாக பயன்படுத்தப்படுகிறது." },
+  "about.ds_kaggle_desc":      { en: "15 years of daily reservoir data (2004-2019) compiled by Sudalai Rajkumar. Used as additional historical training data for the forecasting model.", ta: "சுதலை ராஜ்குமாரால் தொகுக்கப்பட்ட 15 ஆண்டு தினசரி நீர்த்தேக்க தரவு (2004-2019). முன்கணிப்பு மாதிரிக்கான கூடுதல் வரலாற்று பயிற்சி தரவாக பயன்படுத்தப்படுகிறது." },
   "about.ds_osm_desc":         { en: "All current water bodies (lakes, tanks, reservoirs, ponds, marshes) within the Chennai metropolitan bounding box. Queried via the Overpass API and saved as a static GeoJSON. 1,635 polygon features, ~95,000 ha total surface. Also source for river polyline geometry (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) and industrial zone polygons in the north Chennai corridor. Data reflects OSM contributor edits as of the last script run.", ta: "சென்னை மெட்ரோபாலிட்டன் எல்லைக்குள் உள்ள அனைத்து நீர்நிலைகள் (ஏரிகள், குளங்கள், நீர்த்தேக்கங்கள், குட்டைகள், சதுப்புநிலங்கள்). Overpass API மூலம் வினவப்பட்டு நிலையான GeoJSON ஆக சேமிக்கப்பட்டது. 1,635 பலகோண அம்சங்கள், ~95,000 ஹெக்டேர் மொத்த மேற்பரப்பு. ஆற்று வரிக்கோட்டு வடிவியல் மற்றும் வடக்கு சென்னை தொழில்மண்டல பலகோணங்களுக்கும் ஆதாரம். கடைசி ஸ்கிரிப்ட் இயக்கத்தின்போது OSM திருத்தங்களை பிரதிபலிக்கிறது." },
   "about.ds_careearth_desc":   { en: "15 manually curated lost or encroached water bodies, compiled from published research, court records, and environmental organisation reports. See the Water Bodies Map section below for per-record provenance.", ta: "வெளியிடப்பட்ட ஆராய்ச்சி, நீதிமன்ற பதிவுகள் மற்றும் சுற்றுச்சூழல் அமைப்பு அறிக்கைகளிலிருந்து தொகுக்கப்பட்ட 15 இழந்த அல்லது ஆக்கிரமிக்கப்பட்ட நீர்நிலைகள். பதிவுக்கு ஆதாரம் கீழே நீர்நிலை வரைபட பகுதியில் காண்க." },
   "about.ds_cpcb_desc":        { en: "Annual reports from the Central Pollution Control Board's National Water Monitoring Programme. Source for DO, BOD, pH, and conductivity readings at monitoring stations on the Cooum, Adyar, Buckingham Canal, and Kosasthalaiyar rivers. Supplemented by IIT Madras / Anna University peer-reviewed studies and NGT Chennai bench orders.", ta: "மத்திய மாசுக்கட்டுப்பாட்டு வாரியத்தின் தேசிய நீர் கண்காணிப்பு திட்டத்தின் வருடாந்திர அறிக்கைகள். கூவம், அடையாறு, பக்கிங்ஹாம் கால்வாய் மற்றும் கோசஸ்தலையாறு ஆறுகளில் DO, BOD, pH மற்றும் கடத்துதிறன் அளவீடுகளுக்கான ஆதாரம். IIT மதராஸ் / அண்ணா பல்கலைக்கழக ஆய்வுகள் மற்றும் NGT சென்னை அமர்வு ஆணைகளால் கூடுதலாக்கப்பட்டது." },
-  "about.ds_ngt_desc":         { en: "7 major industrial facilities in the Ennore-Manali corridor, curated from NGT Southern Bench orders (2017\u20132022), TNPCB enforcement records, CPCB industrial monitoring reports, and academic studies. Each facility entry includes pollutant types, documented incidents with volumes and dates, and NGT order summaries.", ta: "NGT தென் அமர்வு ஆணைகள் (2017\u20132022), TNPCB அமல்படுத்தல் பதிவுகள், CPCB தொழில்துறை கண்காணிப்பு அறிக்கைகள் மற்றும் கல்வி ஆய்வுகளிலிருந்து தொகுக்கப்பட்ட என்னூர்-மணலி தொடரிடையிலுள்ள 7 முக்கிய தொழில் வசதிகள். ஒவ்வொரு பதிவிலும் மாசுபடுத்திகளின் வகைகள், ஆவணப்படுத்தப்பட்ட சம்பவங்கள் மற்றும் NGT ஆணை சுருக்கங்கள் அடங்கும்." },
+  "about.ds_ngt_desc":         { en: "7 major industrial facilities in the Ennore-Manali corridor, curated from NGT Southern Bench orders (2017-2022), TNPCB enforcement records, CPCB industrial monitoring reports, and academic studies. Each facility entry includes pollutant types, documented incidents with volumes and dates, and NGT order summaries.", ta: "NGT தென் அமர்வு ஆணைகள் (2017-2022), TNPCB அமல்படுத்தல் பதிவுகள், CPCB தொழில்துறை கண்காணிப்பு அறிக்கைகள் மற்றும் கல்வி ஆய்வுகளிலிருந்து தொகுக்கப்பட்ட என்னூர்-மணலி தொடரிடையிலுள்ள 7 முக்கிய தொழில் வசதிகள். ஒவ்வொரு பதிவிலும் மாசுபடுத்திகளின் வகைகள், ஆவணப்படுத்தப்பட்ட சம்பவங்கள் மற்றும் NGT ஆணை சுருக்கங்கள் அடங்கும்." },
 
   // ── Rivers page ───────────────────────────────────────────────────────────
   "rivers_page.loading":      { en: "Loading river data...",          ta: "ஆற்று தரவு ஏற்றுகிறது..." },
