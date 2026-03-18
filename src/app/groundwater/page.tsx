@@ -86,6 +86,12 @@ export default function GroundwaterPage() {
   const selectedRisk = selectedWard ? riskMap.get(selectedWard.wardNumber) : undefined;
   const hasRiskData = riskMap.size > 0;
 
+  // Calculate how stale the data is
+  const dataDate = new Date(data.period.year, data.period.month - 1);
+  const now = new Date();
+  const monthsStale = (now.getFullYear() - dataDate.getFullYear()) * 12 + (now.getMonth() - dataDate.getMonth());
+  const isStale = monthsStale > 6;
+
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col md:flex-row">
       {/* Map area */}
@@ -119,6 +125,18 @@ export default function GroundwaterPage() {
             </div>
           )}
         </div>
+
+        {/* Staleness warning */}
+        {isStale && (
+          <div className="absolute top-16 left-2 sm:top-20 sm:left-4 z-[1000] max-w-sm">
+            <div className="px-3 py-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300 shadow-lg">
+              <span className="font-semibold">{t("gw_snap.stale_title")}</span>{" "}
+              {t("gw_snap.stale_msg")
+                .replace("{date}", `${dataDate.toLocaleString("default", { month: "short" })} ${data.period.year}`)
+                .replace("{source}", "OpenCity / CMWSSB")}
+            </div>
+          </div>
+        )}
 
         {/* View mode toggle  -  only shown when risk data is available */}
         {hasRiskData && (

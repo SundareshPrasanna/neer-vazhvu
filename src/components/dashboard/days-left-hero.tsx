@@ -32,13 +32,14 @@ function computeClientDaysLeft(
   const inflowScale = inflowPct / 100;
 
   const pessimistic = netDemandMcft > 0 ? Math.floor(storageMcft / netDemandMcft) : MAX_DAYS;
-  const depletionModerate = Math.max(0, netDemandMcft - recentInflowMcft * inflowScale);
-  const rawModerate = depletionModerate > 0 ? Math.floor(storageMcft / depletionModerate) : MAX_DAYS;
-  const depletionOptimistic = Math.max(0, netDemandMcft - seasonalInflowMcft * inflowScale);
-  const rawOptimistic = depletionOptimistic > 0 ? Math.floor(storageMcft / depletionOptimistic) : MAX_DAYS;
+
+  const netModerate = netDemandMcft - recentInflowMcft * inflowScale;
+  const rawModerate = netModerate > 0 ? Math.floor(storageMcft / netModerate) : MAX_DAYS;
+
+  const netOptimistic = netDemandMcft - seasonalInflowMcft * inflowScale;
+  const rawOptimistic = netOptimistic > 0 ? Math.floor(storageMcft / netOptimistic) : MAX_DAYS;
 
   // Ensure ordering: pessimistic <= moderate <= optimistic
-  // (recent inflow can exceed seasonal average, flipping the two)
   const moderate = Math.min(rawModerate, rawOptimistic);
   const optimistic = Math.max(rawModerate, rawOptimistic);
 
@@ -46,6 +47,10 @@ function computeClientDaysLeft(
     pessimistic: Math.min(pessimistic, MAX_DAYS),
     moderate: Math.min(moderate, MAX_DAYS),
     optimistic: Math.min(optimistic, MAX_DAYS),
+    // Surplus info for display when inflow > demand
+    netDemandMcft,
+    recentInflowScaled: recentInflowMcft * inflowScale,
+    seasonalInflowScaled: seasonalInflowMcft * inflowScale,
   };
 }
 
@@ -72,6 +77,13 @@ function getBarColor(pct: number): string {
   return "bg-red-500";
 }
 
+/** Format mcft/day surplus as a readable ratio */
+function formatSurplus(inflowMcft: number, demandMcft: number): string {
+  if (demandMcft <= 0) return "";
+  const ratio = (inflowMcft / demandMcft).toFixed(1);
+  return `${ratio}x`;
+}
+
 export function DaysLeftHero({
   totalStorageMcft,
   totalCapacityMcft,
@@ -86,7 +98,7 @@ export function DaysLeftHero({
   const [inflowPct, setInflowPct] = useState(100);
   const [showAssumptions, setShowAssumptions] = useState(false);
 
-  const days = computeClientDaysLeft(
+  const result = computeClientDaysLeft(
     totalStorageMcft,
     consumption,
     desalination,
@@ -95,7 +107,12 @@ export function DaysLeftHero({
     inflowPct
   );
 
+  const days = { pessimistic: result.pessimistic, moderate: result.moderate, optimistic: result.optimistic };
   const storagePct = totalCapacityMcft > 0 ? (totalStorageMcft / totalCapacityMcft) * 100 : 0;
+
+  // Whether each inflow scenario exceeds demand
+  const moderateSurplus = result.recentInflowScaled > result.netDemandMcft;
+  const optimisticSurplus = result.seasonalInflowScaled > result.netDemandMcft;
 
   return (
     <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-blue-50 dark:from-slate-900 dark:to-slate-800">
@@ -114,14 +131,11 @@ export function DaysLeftHero({
           <div className="text-center sm:text-left">
             <div className={`text-5xl sm:text-6xl font-bold ${getSeverityColor(days.pessimistic)}`}>
               {days.pessimistic >= MAX_DAYS ? (
-                // All scenarios safe  -  inflows sustain supply
                 <>{t("hero.safe")}</>
               ) : days.optimistic >= MAX_DAYS ? (
-                // Worst case is finite but best case won't deplete
                 <>{formatDays(days.pessimistic, t)}<span className="text-2xl text-slate-400 dark:text-slate-500">+</span></>
               ) : (
-                // Normal range
-                <>{formatDays(days.pessimistic, t)}<span className="text-2xl mx-1">–</span>{formatDays(days.optimistic, t)}</>
+                <>{formatDays(days.pessimistic, t)}<span className="text-2xl mx-1">-</span>{formatDays(days.optimistic, t)}</>
               )}
             </div>
             <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -140,11 +154,21 @@ export function DaysLeftHero({
               <span className="w-2 h-2 rounded-full bg-yellow-500" />
               <span className="text-slate-600 dark:text-slate-400">{t("hero.current_trend")}</span>
               <span className="font-semibold">{formatDays(days.moderate, t)}</span>
+              {moderateSurplus && (
+                <span className="text-xs text-blue-600 dark:text-blue-400">
+                  ({t("hero.inflow")} {formatSurplus(result.recentInflowScaled, result.netDemandMcft)} {t("hero.of_demand")})
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-500" />
               <span className="text-slate-600 dark:text-slate-400">{t("hero.seasonal_rains")}</span>
               <span className="font-semibold">{formatDays(days.optimistic, t)}</span>
+              {optimisticSurplus && (
+                <span className="text-xs text-blue-600 dark:text-blue-400">
+                  ({t("hero.inflow")} {formatSurplus(result.seasonalInflowScaled, result.netDemandMcft)} {t("hero.of_demand")})
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -235,6 +259,9 @@ export function DaysLeftHero({
                 />
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
                   {t("hero.inflow_hint")}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+                  {t("hero.last_7d")}: {result.recentInflowScaled.toFixed(1)} mcft/{t("hero.day_unit")} &middot; {t("hero.month_avg").replace("{month}", new Date().toLocaleString("default", { month: "short" }))}: {result.seasonalInflowScaled.toFixed(1)} mcft/{t("hero.day_unit")}
                 </p>
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500">

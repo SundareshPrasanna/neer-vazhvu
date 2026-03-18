@@ -33,6 +33,8 @@ export const RESERVOIR_DISPLAY_ORDER = [
   'chembarambakkam',
   'redhills',
   'poondi',
+  'veeranam',
+  'kannankottai',
   'cholavaram',
 ] as const;
 

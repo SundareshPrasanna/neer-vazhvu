@@ -25,7 +25,7 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
       <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
         {t("dash.reservoir_status")}
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {reservoirs.map((r) => (
           <Card
             key={r.name}

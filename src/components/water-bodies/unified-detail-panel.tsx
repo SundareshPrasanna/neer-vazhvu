@@ -55,7 +55,7 @@ function CloseButton({ onClose, ariaLabel }: { onClose: () => void; ariaLabel: s
 }
 
 function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const color = getPriorityColor(wb.priority_level);
   const levelLabel = t(`lr.${wb.priority_level}`);
 
@@ -115,7 +115,7 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
               {t("lr.nearest_lost")}
             </div>
             <div className="text-sm text-slate-700 dark:text-slate-300">
-              {wb.nearest_lost_body}
+              {language === "ta" ? (wb.nearest_lost_body_ta || wb.nearest_lost_body) : wb.nearest_lost_body}
               <span className="text-slate-400 dark:text-slate-500 ml-1">
                 ({wb.nearest_lost_km} {t("lr.km_away")})
               </span>
@@ -128,7 +128,7 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
               {t("lr.nearest_river")}
             </div>
             <div className="text-sm text-slate-700 dark:text-slate-300">
-              {wb.nearest_river_station}
+              {language === "ta" ? (wb.nearest_river_station_ta || wb.nearest_river_station) : wb.nearest_river_station}
               <span className="text-slate-400 dark:text-slate-500 ml-1">
                 ({wb.nearest_river_km} {t("lr.km_away")})
               </span>
@@ -141,7 +141,7 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
               {t("lr.nearest_industrial")}
             </div>
             <div className="text-sm text-slate-700 dark:text-slate-300">
-              {wb.nearest_industrial}
+              {language === "ta" ? (wb.nearest_industrial_ta || wb.nearest_industrial) : wb.nearest_industrial}
               <span className="text-slate-400 dark:text-slate-500 ml-1">
                 ({wb.nearest_industrial_km} {t("lr.km_away")})
               </span>

@@ -83,7 +83,7 @@ export default function RiversPage() {
   const hasPanel = selectedRiver !== null || selectedSource !== null;
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col">
+    <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
       {/* Stats bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300">
@@ -102,7 +102,7 @@ export default function RiversPage() {
           </span>
         )}
         <span className="text-slate-400 dark:text-slate-500 text-xs ml-auto">
-          {t("rivers_page.quality_data")} {qualityData.data_year_range[0]}–{qualityData.data_year_range[1]}
+          {t("rivers_page.quality_data")} {qualityData.data_year_range[0]}-{qualityData.data_year_range[1]}
         </span>
       </div>
 

@@ -10,9 +10,13 @@ import {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const consumption = parseFloat(searchParams.get('consumption') || '') || DEFAULT_CONSUMPTION_MLD;
-  const desalination =
-    parseFloat(searchParams.get('desalination') || '') || DEFAULT_DESALINATION_MLD;
+  const rawConsumption = searchParams.get('consumption');
+  const consumption = rawConsumption !== null ? parseFloat(rawConsumption) : NaN;
+  const finalConsumption = Number.isFinite(consumption) ? consumption : DEFAULT_CONSUMPTION_MLD;
+
+  const rawDesalination = searchParams.get('desalination');
+  const desalination = rawDesalination !== null ? parseFloat(rawDesalination) : NaN;
+  const finalDesalination = Number.isFinite(desalination) ? desalination : DEFAULT_DESALINATION_MLD;
 
   const supabase = createServerClient();
 
@@ -70,8 +74,8 @@ export async function GET(request: NextRequest) {
   const result = computeDaysLeft({
     totalStorageMcft: totalStorage,
     totalCapacityMcft: totalCapacity,
-    dailyConsumptionMLD: consumption,
-    desalinationMLD: desalination,
+    dailyConsumptionMLD: finalConsumption,
+    desalinationMLD: finalDesalination,
     recentAvgInflowMcftPerDay,
     seasonalAvgInflowMcftPerDay,
   });
@@ -95,9 +99,9 @@ export async function GET(request: NextRequest) {
       optimistic: result.optimistic,
     },
     assumptions: {
-      consumptionMLD: consumption,
-      desalinationMLD: desalination,
-      netReservoirDemandMLD: consumption - desalination,
+      consumptionMLD: finalConsumption,
+      desalinationMLD: finalDesalination,
+      netReservoirDemandMLD: finalConsumption - finalDesalination,
       recentAvgInflowMcftPerDay,
       seasonalAvgInflowMcftPerDay,
     },

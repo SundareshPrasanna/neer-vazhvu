@@ -135,12 +135,12 @@ export function PollutionPanel({ source, data, onClose }: PollutionPanelProps) {
                 className="rounded-lg border border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950/30 p-3"
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-semibold text-red-700 dark:text-red-400">
+                  <span className="text-xs font-semibold text-red-700 dark:text-red-400 whitespace-nowrap shrink-0">
                     {incident.date}
                   </span>
                   {incident.volume && (
                     <span className="text-xs text-red-600 dark:text-red-400 font-medium">
-                      , {incident.volume}
+                      {language === "ta" ? (incident.volume_ta ?? incident.volume) : incident.volume}
                     </span>
                   )}
                 </div>
