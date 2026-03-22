@@ -1,7 +1,7 @@
 # Tamil Translation Gap TODOs
 
-Last updated: 2026-03-03
-Scope: translation quality and i18n implementation for Tamil (`ta`) across the current branch.
+Last updated: 2026-03-22
+Scope: translation quality and i18n implementation for Tamil (`ta`) across the project.
 
 ## Completed In This Branch
 

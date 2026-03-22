@@ -43,8 +43,8 @@ graph TB
     CMWSSB -->|HTML scrape| Scrapers
     NASA -->|REST API| Scrapers
     OC -->|CKAN API| Scrapers
-    CPCB -->|manual JSON| StaticFiles["public/data/river-quality.json"]
-    OSM -->|fetch-rivers-osm.ts| StaticFiles2["public/geojson/chennai-rivers.geojson"]
+    CPCB -->|manual JSON| StaticFiles["public/data/<br/>river-quality.json<br/>industrial-sources.json<br/>restoration-priority.json"]
+    OSM -->|fetch scripts| StaticFiles2["public/geojson/<br/>chennai-rivers.geojson<br/>chennai-water-bodies-current.geojson<br/>chennai-water-bodies-lost.geojson<br/>chennai-industrial-zones.geojson<br/>chennai-wards-2022.geojson"]
 
     Scrapers --> ETL
     ETL -->|upsert| Core
@@ -253,7 +253,7 @@ Pre-computed (build-time) scoring of all 1,635 water bodies for restoration prio
 
 ```mermaid
 graph TD
-    Layout["RootLayout<br/>(Header + ThemeProvider)"]
+    Layout["RootLayout<br/>(LanguageProvider + ThemeProvider + Header)"]
 
     Layout --> Dashboard
     Layout --> GW["Groundwater Page"]
@@ -289,7 +289,36 @@ graph TD
     end
 
     RV --> RV_Children
+
+    subgraph WB_Children["Water Bodies + Restoration Page"]
+        UM["UnifiedMap<br/>(Leaflet polygons, two view modes)"]
+        VMT["ViewModeToggle<br/>(Water Bodies / Restoration Priority)"]
+        UDP["UnifiedDetailPanel<br/>(info + restoration score breakdown)"]
+    end
+
+    WB --> WB_Children
 ```
+
+### Localization (i18n)
+
+Custom context-based i18n supporting English and Tamil. No external i18n library — lightweight implementation using React Context.
+
+```
+RootLayout
+  └─ LanguageProvider (React Context)
+       ├─ language state (persisted to localStorage as "neer-vazhvu-lang")
+       ├─ t(key) → looks up translations[key][language]
+       └─ setLanguage() → updates state + localStorage + document.lang
+```
+
+- **Translation file:** `src/lib/i18n/translations.ts` (~500 keys)
+- **Reservoir names:** `src/lib/i18n/reservoir-name.ts`
+- **Validation script:** `npm run i18n:check` (ensures Tamil translation exists for every key)
+- **Hydration safety:** Language loaded in `useEffect` after mount to avoid SSR mismatch
+
+### Demo Mode
+
+When Supabase is not configured (env vars missing), the dashboard falls back to `src/lib/mock-data.ts` with realistic synthetic data. This allows contributors to work on UI without database setup. The fallback is triggered at the page level — individual components receive data as props and are unaware of the data source.
 
 **Data flow:** Supabase → Server Component (ISR, 15-min revalidation) → Client Components (charts, interactivity). Demo mode with mock data when Supabase is not configured.
 
