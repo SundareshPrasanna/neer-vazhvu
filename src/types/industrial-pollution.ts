@@ -19,6 +19,7 @@ export interface IncidentRecord {
   description: string;
   description_ta?: string;
   volume?: string;
+  volume_ta?: string;
   source: string;
 }
 
@@ -51,7 +52,7 @@ export const SOURCE_TYPE_COLORS: Record<PollutionSourceType, string> = {
   petrochemical: "#7c3aed",     // purple
   chemical: "#f97316",          // orange
   port: "#0ea5e9",              // blue
-  industrial_estate: "#84cc16", // lime
+  industrial_estate: "#4d7c0f", // dark lime
   discharge_zone: "#64748b",    // slate
 };
 

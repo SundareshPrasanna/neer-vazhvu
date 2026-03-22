@@ -225,7 +225,7 @@ export function StorageTrendChart({
             </div>
             {d.forecastLower !== undefined && d.forecastUpper !== undefined && isForecastPoint && (
               <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                {t("dash.range_label")} {formatNumber(d.forecastLower as number)} – {formatNumber(d.forecastUpper as number)}
+                {t("dash.range_label")} {formatNumber(d.forecastLower as number)} - {formatNumber(d.forecastUpper as number)}
               </div>
             )}
           </>

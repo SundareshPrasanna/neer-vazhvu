@@ -20,7 +20,13 @@ const STATUS_COLORS = {
 
 export function GroundwaterSnapshot({ data }: GroundwaterSnapshotProps) {
   const { t, language } = useLanguage();
-  const { summary, cityAverage, wards } = data;
+  const { summary, cityAverage, wards, period } = data;
+
+  // Calculate how stale the data is
+  const dataDate = new Date(period.year, period.month - 1);
+  const now = new Date();
+  const monthsStale = (now.getFullYear() - dataDate.getFullYear()) * 12 + (now.getMonth() - dataDate.getMonth());
+  const isStale = monthsStale > 6;
   const totalWards = Object.values(summary).reduce((a, b) => a + b, 0);
   const statusLabels: Record<keyof typeof STATUS_COLORS, string> = {
     healthy: t("gw_snap.healthy"),
@@ -63,6 +69,15 @@ export function GroundwaterSnapshot({ data }: GroundwaterSnapshotProps) {
             </svg>
           </Link>
         </div>
+
+        {isStale && (
+          <div className="mb-4 px-3 py-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300">
+            <span className="font-semibold">{t("gw_snap.stale_title")}</span>{" "}
+            {t("gw_snap.stale_msg")
+              .replace("{date}", `${dataDate.toLocaleString("default", { month: "short" })} ${period.year}`)
+              .replace("{source}", "OpenCity / CMWSSB")}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {/* Stats */}

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker } from "react-leaflet";
+import { useEffect, useMemo, useState } from "react";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Polyline, Tooltip } from "react-leaflet";
 import L from "leaflet";
 import type { Layer, PathOptions } from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
@@ -35,7 +35,7 @@ export function CombinedRiversMap({
 
   useEffect(() => {
     Promise.all([
-      fetch("/geojson/chennai-rivers.geojson").then((r) => r.json()),
+      fetch("/geojson/chennai-rivers.geojson?v=6").then((r) => r.json()),
       fetch("/geojson/chennai-industrial-zones.geojson").then((r) => r.json()),
     ])
       .then(([rivers, zones]: [FeatureCollection, FeatureCollection]) => {
@@ -45,7 +45,10 @@ export function CombinedRiversMap({
       .catch(console.error);
   }, []);
 
-  const statusMap = new Map(qualityData.rivers.map((r) => [r.id, r.overall_status]));
+  const riverMetaMap = useMemo(
+    () => new Map(qualityData.rivers.map((river) => [river.id, river])),
+    [qualityData.rivers]
+  );
 
   const stationsGeoJSON: FeatureCollection = {
     type: "FeatureCollection",
@@ -87,12 +90,12 @@ export function CombinedRiversMap({
 
   // Industrial zone polygons  -  light orange wash, background context
   const zoneStyle = (): PathOptions => ({
-    fillColor: "#f97316",
-    fillOpacity: 0.10,
-    color: "#f97316",
-    weight: 1,
+    fillColor: "#ea580c",
+    fillOpacity: 0.18,
+    color: "#ea580c",
+    weight: 1.5,
     dashArray: "4, 4",
-    opacity: 0.5,
+    opacity: 0.7,
   });
 
   const onEachZone = (feature: Feature, layer: Layer) => {
@@ -100,34 +103,37 @@ export function CombinedRiversMap({
     layer.bindTooltip(props.name || t("rivers_legend.industrial_zone"), { sticky: true });
   };
 
-  // River polylines  -  quality-coloured, prominent
-  const riverStyle = (feature: Feature | undefined): PathOptions => {
-    const riverId = feature?.properties?.river_id as string | undefined;
-    const status = riverId ? statusMap.get(riverId) : undefined;
-    const color = QUALITY_COLORS[status ?? "degraded"];
-    return { color, weight: 4, opacity: 0.85 };
-  };
+  // Extract river polylines from GeoJSON for direct Polyline rendering
+  // (react-leaflet's GeoJSON component has rendering issues with long LineStrings)
+  const riverPolylines = useMemo(() => {
+    if (!riversGeoJSON) return [];
+    return riversGeoJSON.features.map((feature) => {
+      const props = feature.properties as { river_id: string; name: string; name_ta?: string };
+      const status = riverMetaMap.get(props.river_id)?.overall_status;
+      const color = QUALITY_COLORS[status ?? "degraded"];
 
-  const onEachRiver = (feature: Feature, layer: Layer) => {
-    const props = feature.properties as { river_id: string; name: string; name_ta?: string };
-    const river = qualityData.rivers.find((r) => r.id === props.river_id);
-    const riverLabel = language === "ta" ? (props.name_ta ?? props.name) : props.name;
-    layer.bindTooltip(
-      `<strong>${riverLabel}</strong><br/><span style="font-size:11px;color:#64748b">${river?.cpcb_class ?? ""}</span>`,
-      { sticky: true }
-    );
-    layer.on({
-      click: (e) => {
-        onSelectRiver({ riverId: props.river_id, latlng: [e.latlng.lat, e.latlng.lng] });
-      },
-      mouseover: (e) => {
-        (e.target as L.Polyline).setStyle({ weight: 7, opacity: 1 });
-      },
-      mouseout: (e) => {
-        (e.target as L.Polyline).setStyle({ weight: 4, opacity: 0.85 });
-      },
+      let segments: [number, number][][] = [];
+      if (feature.geometry.type === "LineString") {
+        const coords = (feature.geometry as { coordinates: number[][] }).coordinates;
+        const latLngs = coords.map((c) => [c[1], c[0]] as [number, number]);
+        // Split long LineStrings into overlapping chunks of ~80 points
+        // to work around Leaflet's viewport clipping bug with long paths
+        const CHUNK = 80;
+        if (latLngs.length > CHUNK) {
+          for (let i = 0; i < latLngs.length - 1; i += CHUNK - 1) {
+            segments.push(latLngs.slice(i, i + CHUNK));
+          }
+        } else {
+          segments = [latLngs];
+        }
+      } else if (feature.geometry.type === "MultiLineString") {
+        const multiCoords = (feature.geometry as { coordinates: number[][][] }).coordinates;
+        segments = multiCoords.map((seg) => seg.map((c) => [c[1], c[0]] as [number, number]));
+      }
+
+      return { ...props, color, segments };
     });
-  };
+  }, [riverMetaMap, riversGeoJSON]);
 
   // Monitoring station markers
   const stationPointToLayer = (feature: Feature, latlng: L.LatLng) => {
@@ -215,14 +221,44 @@ export function CombinedRiversMap({
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* Render order: zones (bottom) → rivers → stations → sources → highlight (top) */}
       <GeoJSON key="zones" data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />
-      <GeoJSON key="rivers" data={riversGeoJSON} style={riverStyle} onEachFeature={onEachRiver} />
+      {/* Rivers as direct Polylines (GeoJSON component has rendering bugs with long paths) */}
+      {riverPolylines.map((river) =>
+        river.segments.map((positions, segIdx) => {
+          const riverLabel = language === "ta" ? (river.name_ta ?? river.name) : river.name;
+          const cpcbClass = riverMetaMap.get(river.river_id)?.cpcb_class ?? "";
+          return (
+            <Polyline
+              key={`${river.river_id}-${segIdx}`}
+              positions={positions}
+              pathOptions={{ color: river.color, weight: 4, opacity: 0.85 }}
+              eventHandlers={{
+                click: (e) => {
+                  onSelectRiver({ riverId: river.river_id, latlng: [e.latlng.lat, e.latlng.lng] });
+                },
+                mouseover: (e) => {
+                  (e.target as L.Polyline).setStyle({ weight: 7, opacity: 1 });
+                },
+                mouseout: (e) => {
+                  (e.target as L.Polyline).setStyle({ weight: 4, opacity: 0.85 });
+                },
+              }}
+            >
+              <Tooltip sticky>
+                <strong>{riverLabel}</strong>
+                <br />
+                <span style={{ fontSize: "11px", color: "#64748b" }}>{cpcbClass}</span>
+              </Tooltip>
+            </Polyline>
+          );
+        })
+      )}
       <GeoJSON key="stations" data={stationsGeoJSON} pointToLayer={stationPointToLayer} onEachFeature={onEachStation} />
       <GeoJSON key="sources" data={sourcesGeoJSON} pointToLayer={sourcePointToLayer} onEachFeature={onEachSource} />
 
       {/* Selected station highlight ring */}
       {(() => {
         if (!selectedRiver?.stationId) return null;
-        const river = qualityData.rivers.find((r) => r.id === selectedRiver.riverId);
+        const river = riverMetaMap.get(selectedRiver.riverId);
         const station = river?.stations.find((s) => s.id === selectedRiver.stationId);
         if (!station || !river) return null;
         const color = QUALITY_COLORS[river.overall_status];

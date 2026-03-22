@@ -155,7 +155,7 @@ export function ReservoirDetailDialog({
         {/* Quick facts row */}
         <div className="flex flex-wrap gap-4 text-xs text-slate-500 dark:text-slate-400 mt-1">
           <span>
-            {t("dash.year_range")} {formatNumber(minStorage)}–{formatNumber(maxStorage)} mcft
+            {t("dash.year_range")} {formatNumber(minStorage)}-{formatNumber(maxStorage)} mcft
           </span>
           <span>{t("dash.rainfall_30d")} {totalRainfall30d} mm</span>
         </div>

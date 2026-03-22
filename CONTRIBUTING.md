@@ -44,14 +44,14 @@ If you need real data flowing through, you'll need a [Supabase](https://supabase
 ```
 neer-vazhvu/
 ├── src/                  # Next.js frontend (App Router)
-│   ├── app/              # Pages (dashboard, groundwater, about)
+│   ├── app/              # Pages (dashboard, groundwater, water-bodies, rivers, about)
 │   ├── components/       # React components
 │   ├── lib/              # Utilities, mock data, Supabase client
 │   └── types/            # TypeScript definitions
 ├── neer-vazhvu-api/      # Python API (FastAPI)
 │   ├── app/scrapers/     # CMWSSB, NASA POWER, OpenCity
 │   ├── app/etl/          # Pipeline orchestrator, constants
-│   ├── app/intelligence/  # ARIMAX forecaster, risk scorer, briefing
+│   ├── app/intelligence/ # ARIMAX forecaster, risk scorer, briefing
 │   └── app/routers/      # API endpoints
 ├── supabase/migrations/  # Database schema
 └── .github/workflows/    # CI (daily pipeline, keepalive)
@@ -91,11 +91,11 @@ neer-vazhvu/
 
 ## Areas Where Help Is Needed
 
-- **Data quality** — Improving scraper resilience, handling CMWSSB page format changes
-- **Models** — Better forecasting (Prophet, LSTM), evaporation modeling
-- **Frontend** — Daily briefing card integration, chart clarity, mobile polish
-- **Tamil localization** — Translating the UI for local accessibility
-- **Testing** — Unit tests for scrapers, calculator, and intelligence modules
+- **Data quality** - Improving scraper resilience, handling CMWSSB page format changes
+- **Models** - Better forecasting (Prophet, LSTM), evaporation modeling
+- **Frontend** - Daily briefing card integration, chart clarity, mobile polish
+- **Tamil localization** - Translating the UI for local accessibility
+- **Testing** - Unit tests for scrapers, calculator, and intelligence modules
 
 ## Submitting a Pull Request
 

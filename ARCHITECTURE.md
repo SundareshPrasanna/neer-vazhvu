@@ -1,6 +1,6 @@
 # Architecture
 
-> Technical overview of Neer Vazhvu — Chennai Water Intelligence Dashboard.
+> Technical overview of Neer Vazhvu - Chennai Water Intelligence Dashboard.
 
 ## System Overview
 
@@ -10,8 +10,8 @@ graph TB
         CMWSSB["CMWSSB Website<br/>(Reservoir levels)"]
         NASA["NASA POWER API<br/>(Weather)"]
         OC["OpenCity CKAN<br/>(Groundwater)"]
-        CPCB["CPCB Annual Reports<br/>(River quality — manual)"]
-        OSM["OpenStreetMap / Overpass<br/>(River geometry — one-time)"]
+        CPCB["CPCB Annual Reports<br/>(River quality, manual)"]
+        OSM["OpenStreetMap / Overpass<br/>(River geometry, one-time)"]
     end
 
     subgraph Backend ["Python API (FastAPI)"]
@@ -29,9 +29,8 @@ graph TB
     subgraph Frontend ["Next.js (App Router)"]
         Dashboard["Dashboard /"]
         GW["Groundwater /groundwater"]
-        WB["Water Bodies /water-bodies"]
+        WB["Water Bodies + Restoration /water-bodies"]
         Rivers["Rivers /rivers"]
-        LR["Lake Restoration /lake-restoration"]
         About["About /about"]
     end
 
@@ -68,7 +67,7 @@ graph TB
 Triggered by GitHub Actions at 06:00 IST.
 
 Production flow is:
-1. GitHub Actions runs `python scripts/scrape_cmwssb.py` from the runner.
+1. GitHub Actions runs `python scripts/scrape_cmwssb.py` from the runner. If CMWSSB is unreachable, the scraper tolerates up to 4 days of stale data.
 2. It then calls `POST /pipeline/run-post-scrape` for ETL + intelligence.
 
 You can still run `POST /pipeline/run-daily` manually when the API runtime can directly access CMWSSB.
@@ -257,9 +256,8 @@ graph TD
 
     Layout --> Dashboard
     Layout --> GW["Groundwater Page"]
-    Layout --> WB["Water Bodies Page"]
+    Layout --> WB["Water Bodies + Restoration Page"]
     Layout --> RV["Rivers Page"]
-    Layout --> LR["Lake Restoration Page"]
     Layout --> About["About Page"]
 
     subgraph Dashboard["Dashboard Page /"]
