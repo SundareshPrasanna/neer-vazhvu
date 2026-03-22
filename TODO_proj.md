@@ -24,16 +24,24 @@
 
 ## Tamil Localization (P1)
 
-- [ ] **i18n setup** — Add `next-intl` for Tamil + English toggle
-- [ ] **Translate UI** — Dashboard labels, hero text, nav, about page
+- [x] **i18n setup** — Custom context-based i18n with `LanguageProvider`, `useLanguage()` hook, localStorage persistence (done — no external library needed)
+- [x] **Translate UI** — ~500 translation keys covering dashboard, hero, nav, about, groundwater, rivers, water bodies, reservoir names, chart labels, ARIA labels
+- [x] **Locale-aware formatting** — Date formatting uses `ta-IN`/`en-IN` locales; reservoir names translated
+- [x] **i18n validation** — `npm run i18n:check` script ensures Tamil parity; see [TRANSLATION_GAP_TODOS.md](TRANSLATION_GAP_TODOS.md) for remaining edge cases
 - [ ] **Tamil typography** — Test line-height, flexible layouts (Tamil text is 20-40% longer)
-- [ ] **Indian number formatting** — Lakhs/crores where appropriate
+- [ ] **Typed translation keys** — Compile-time safety for translation key usage (see TRANSLATION_GAP_TODOS.md P2)
+- [ ] **Language flash** — Avoid first-paint English flash for Tamil users (see TRANSLATION_GAP_TODOS.md P3)
 
 ## Testing (P1)
 
-- [ ] **Python API tests** — Scrapers, ETL pipeline, forecaster, risk scorer (empty `tests/` dir exists, pytest installed)
-- [ ] **Frontend build validation** — Add Vitest or Jest for component smoke tests
-- [ ] **Scraper resilience tests** — Mock CMWSSB HTML changes, NASA API failures
+> See [todo_tests.md](todo_tests.md) for the detailed test coverage roadmap.
+
+- [x] **Baseline tests** — Frontend utility tests (`date.test.ts`, `format.test.ts`) and API tests (`test_estimate.py`, `test_timezone.py`) running in CI
+- [ ] **P0: Scraper resilience tests** — Mock CMWSSB HTML changes, fixture replay, retry behavior
+- [ ] **P0: Pipeline orchestration tests** — Idempotent upserts, date-window handling, partial failures
+- [ ] **P1: Forecast/risk scoring regression** — Deterministic golden-fixture tests
+- [ ] **P1: Frontend API route contracts** — Success/failure shape tests with mocked Supabase
+- [ ] **P2: Component smoke tests** — Critical panels with empty/partial/outlier data
 
 ## Annual Data Refresh
 
@@ -73,4 +81,4 @@
 
 ---
 
-*Last updated: 2026-03-03*
+*Last updated: 2026-03-22*

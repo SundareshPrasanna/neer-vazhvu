@@ -53,10 +53,11 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **Daily Briefing** - Template-based intelligence summary with headlines, alerts, and recommendations
 
 ### Other
-- **Dark Mode** - Full dark mode with system preference detection
-- **Responsive** - Works on desktop, tablet, and mobile
-- **Demo Mode** - Runs with realistic mock data when Supabase isn't configured
-- **OG Image** - Auto-generated Open Graph image for social sharing (LinkedIn, Twitter)
+- **Tamil Localization** — Full English/Tamil toggle with localStorage persistence; locale-aware date formatting and reservoir name translations
+- **Dark Mode** — Full dark mode with system preference detection
+- **Responsive** — Works on desktop, tablet, and mobile
+- **Demo Mode** — Runs with realistic mock data when Supabase isn't configured
+- **OG Image** — Auto-generated Open Graph image for social sharing (LinkedIn, Twitter)
 
 ## Architecture
 
@@ -67,15 +68,15 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 │  Scrapers         ETL            Intelligence     │
 │  ├─ cmwssb.py     ├─ pipeline.py ├─ forecaster   │
 │  ├─ nasa_power.py ├─ estimate.py ├─ risk_scorer  │
-│  └─ opencity.py   └─ seed.py     └─ briefing     │
+│  └─ opencity.py   └─ constants   └─ briefing     │
 │                                                  │
-│  Writes computed results to Supabase ────┐       │
-└──────────────────────────────────────────┘       │
-                                                   │
-┌──────────────────────────────────────────┐       │
-│       Next.js Frontend (Vercel)          │<──────┘
+│  Writes computed results to Supabase ────┐        │
+└──────────────────────────────────────────┘        │
+                                                    │
+┌──────────────────────────────────────────┐        │
+│       Next.js Frontend (Vercel)          │<───────┘
 │  Reads from Supabase + renders UI        │
-│  Static GeoJSON served from /public      │
+│  Static GeoJSON + JSON served from /public│
 └──────────────────────────────────────────┘
 
 ```
@@ -99,8 +100,8 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 |-------|------------|
 | Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS v4, shadcn/ui |
 | Charts | Recharts |
-| Maps | Leaflet + react-leaflet -GCC ward boundaries (GeoJSON) + OSM water body polygons + curated lost bodies (GeoJSON) |
-| Backend API | Python 3.12, FastAPI, statsforecast, pandas |
+| Maps | Leaflet + react-leaflet — GCC ward boundaries (GeoJSON) + OSM water body polygons + curated lost bodies (GeoJSON) |
+| Backend API | Python 3.11+, FastAPI, statsforecast, pandas |
 | Database | Supabase (PostgreSQL) |
 | Deployment | Vercel (frontend), Railway (Python API) |
 | CI/CD | GitHub Actions (daily data pipeline) |
@@ -110,7 +111,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 ### Prerequisites
 
 - Node.js 18+
-- Python 3.11+
+- Python 3.11+ (3.12 recommended; used in CI)
 - [pyenv](https://github.com/pyenv/pyenv) (recommended)
 - A [Supabase](https://supabase.com/) project (free tier works)
 
@@ -245,11 +246,15 @@ npx tsx scripts/fetch-industrial-zones-osm.ts
 
 ```
 neer-vazhvu/
-├── scripts/                      # One-time data scripts
+├── scripts/                      # One-time data + validation scripts
+│   ├── seed-kaggle.ts                     # Import historical reservoir data (2004–2019)
+│   ├── seed-opencity-groundwater.ts       # Import groundwater history (2021–2024)
+│   ├── seed-opencity-lakes.ts             # Import lake-level history (optional)
 │   ├── fetch-water-bodies-osm.ts          # Fetch current water bodies from Overpass API
 │   ├── fetch-rivers-osm.ts                # Fetch river polylines from Overpass API
 │   ├── fetch-industrial-zones-osm.ts      # Fetch industrial zone polygons from Overpass API
-│   └── compute-restoration-priority.ts    # Score water bodies for restoration priority
+│   ├── compute-restoration-priority.ts    # Score water bodies for restoration priority
+│   └── check-i18n.mjs                     # Validate Tamil translation coverage
 ├── src/                          # Next.js frontend
 │   ├── app/                      # App Router pages
 │   │   ├── page.tsx              # Main dashboard
@@ -268,8 +273,12 @@ neer-vazhvu/
 │   │   ├── layout/               # Header, footer
 │   │   └── ui/                   # shadcn/ui primitives
 │   ├── lib/
-│   │   ├── scrapers/             # TypeScript scrapers (legacy)
+│   │   ├── i18n/                 # English/Tamil translations + LanguageProvider context
+│   │   ├── supabase/             # Supabase client (admin + server)
+│   │   ├── api-clients/          # NASA POWER, OpenCity API clients
 │   │   ├── calculator/           # Days-left calculator
+│   │   ├── scrapers/             # TypeScript scrapers (legacy, superseded by Python)
+│   │   ├── utils/                # Formatting, date helpers, constants
 │   │   └── mock-data.ts          # Demo mode data
 │   └── types/                    # TypeScript type definitions
 ├── neer-vazhvu-api/              # Python intelligence service

@@ -9,7 +9,7 @@ Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 ### Prerequisites
 
 - Node.js 18+
-- Python 3.12+
+- Python 3.11+ (3.12 recommended; used in CI)
 - npm
 
 ### Frontend (Next.js)
@@ -84,9 +84,10 @@ neer-vazhvu/
 
 ## Testing
 
-- **Frontend**: Run `npm run build` to catch type errors and build issues
+- **Frontend**: `npm run test` (runs `tsx --test` for utility tests) and `npm run build` (catches type errors)
 - **Python API**: `cd neer-vazhvu-api && pytest`
-- Test coverage is thin — writing tests is a great way to contribute!
+- **i18n validation**: `npm run i18n:check` (verifies Tamil translations exist for all keys)
+- Test coverage is thin — writing tests is a great way to contribute! See [todo_tests.md](todo_tests.md) for the test roadmap.
 
 ## Areas Where Help Is Needed
 
@@ -101,9 +102,11 @@ neer-vazhvu/
 Before opening a PR, please check:
 
 - [ ] Branch is based on latest `main`
-- [ ] `npm run build` passes
 - [ ] `npm run lint` passes
+- [ ] `npm run build` passes
+- [ ] `npm run test` passes
+- [ ] `npm run i18n:check` passes (if UI text changed)
+- [ ] For Python changes: `ruff check .` and `pytest` pass
 - [ ] PR description explains **what** changed and **why**
-- [ ] For Python changes: `ruff check .` passes
 
 We aim to review PRs within a few days. Thank you for contributing!
