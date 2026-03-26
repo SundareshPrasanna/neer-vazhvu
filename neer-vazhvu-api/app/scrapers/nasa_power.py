@@ -9,7 +9,7 @@ No auth required.
 import httpx
 
 from app.etl.constants import CHENNAI_LAT, CHENNAI_LNG
-from app.models.reservoir import NASAPowerDay
+from app.models.weather import WeatherDay
 
 NASA_POWER_BASE = "https://power.larc.nasa.gov/api/temporal/daily/point"
 
@@ -24,7 +24,7 @@ def _nasa_to_iso(nasa_date: str) -> str:
     return f"{nasa_date[:4]}-{nasa_date[4:6]}-{nasa_date[6:8]}"
 
 
-async def fetch_nasa_power(start_date: str, end_date: str) -> list[NASAPowerDay]:
+async def fetch_nasa_power(start_date: str, end_date: str) -> list[WeatherDay]:
     """
     Fetch daily weather data from NASA POWER API.
 
@@ -54,13 +54,13 @@ async def fetch_nasa_power(start_date: str, end_date: str) -> list[NASAPowerDay]
 
     dates = list(properties["PRECTOTCORR"].keys())
 
-    results: list[NASAPowerDay] = []
+    results: list[WeatherDay] = []
     for d in dates:
         # -999 = missing data in NASA POWER
         if properties["PRECTOTCORR"][d] == -999:
             continue
         results.append(
-            NASAPowerDay(
+            WeatherDay(
                 date=_nasa_to_iso(d),
                 precipitation_mm=properties["PRECTOTCORR"][d],
                 temp_max_c=properties["T2M_MAX"][d],

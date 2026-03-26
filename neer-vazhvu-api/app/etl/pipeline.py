@@ -20,6 +20,7 @@ from app.etl.constants import (
 from app.etl.estimate import compute_days_left
 from app.scrapers.cmwssb import scrape_cmwssb
 from app.scrapers.nasa_power import fetch_nasa_power
+from app.scrapers.open_meteo import fetch_open_meteo
 from app.scrapers.opencity import fetch_groundwater, GROUNDWATER_RESOURCES
 from app.utils.timezone import ist_today
 
@@ -120,26 +121,46 @@ async def _step_scrape_cmwssb() -> dict:
     return {"rows_affected": len(rows)}
 
 
-async def _step_fetch_nasa() -> dict:
-    """Step 2: Fetch NASA POWER weather data (5 days back to fill gaps)."""
+async def _step_fetch_weather() -> dict:
+    """Step 2: Fetch weather data (Open-Meteo primary, NASA POWER fallback).
+
+    Open-Meteo provides same-day data with no lag and includes ET₀
+    (reference evapotranspiration). NASA POWER has a 2-day lag but serves
+    as a reliable fallback if Open-Meteo is unreachable.
+    """
+    import logging
+
+    logger = logging.getLogger(__name__)
     supabase = get_supabase()
     today = ist_today()
     start_date = (today - timedelta(days=5)).isoformat()
-    end_date = (today - timedelta(days=2)).isoformat()  # 2-day lag
+    end_date = today.isoformat()
 
-    days = await fetch_nasa_power(start_date, end_date)
+    source = "open_meteo"
+    try:
+        days = await fetch_open_meteo(start_date, end_date)
+    except Exception as e:
+        logger.warning("Open-Meteo failed (%s), falling back to NASA POWER", e)
+        source = "nasa_power"
+        # NASA POWER has a 2-day lag
+        nasa_end = (today - timedelta(days=2)).isoformat()
+        days = await fetch_nasa_power(start_date, nasa_end)
 
-    rows = [
-        {
+    rows = []
+    for d in days:
+        row = {
             "date": d.date,
             "precipitation_mm": d.precipitation_mm,
             "temp_max_c": d.temp_max_c,
             "temp_min_c": d.temp_min_c,
             "humidity_pct": d.humidity_pct,
-            "source": "nasa_power",
+            "source": source,
         }
-        for d in days
-    ]
+        if d.et0_mm is not None:
+            row["et0_mm"] = d.et0_mm
+        if d.wind_speed_max_kmh is not None:
+            row["wind_speed_max_kmh"] = d.wind_speed_max_kmh
+        rows.append(row)
 
     if rows:
         supabase.table("weather_daily").upsert(rows, on_conflict="date").execute()
@@ -300,7 +321,7 @@ async def run_daily() -> list[dict]:
     if step["status"] == "error":
         return steps
 
-    step = await _run_step("fetch_nasa", _step_fetch_nasa)
+    step = await _run_step("fetch_weather", _step_fetch_weather)
     steps.append(step)
     if step["status"] == "error":
         return steps
@@ -343,12 +364,12 @@ async def run_monthly() -> list[dict]:
 async def run_post_scrape() -> list[dict]:
     """Run the pipeline after scraping is done externally (e.g. from GitHub Actions).
 
-    Runs: fetch_nasa → fetch_opencity → compute_estimate → forecast → briefing.
+    Runs: fetch_weather → fetch_opencity → compute_estimate → forecast → briefing.
     Skips scrape_cmwssb so callers that already pushed reservoir data to the DB
     don't redundantly hit the CMWSSB website.
     """
     steps = []
-    step = await _run_step("fetch_nasa", _step_fetch_nasa)
+    step = await _run_step("fetch_weather", _step_fetch_weather)
     steps.append(step)
     if step["status"] == "error":
         return steps

@@ -154,7 +154,13 @@ export function AboutContent() {
             frequency={t("about.freq_daily_scraped")}
           />
           <DataSource
-            name="NASA POWER"
+            name="Open-Meteo"
+            url="https://open-meteo.com/"
+            description={t("about.ds_open_meteo_desc")}
+            frequency={t("about.freq_daily")}
+          />
+          <DataSource
+            name="NASA POWER (fallback)"
             url="https://power.larc.nasa.gov/"
             description={t("about.ds_nasa_desc")}
             frequency={t("about.freq_daily_lag")}

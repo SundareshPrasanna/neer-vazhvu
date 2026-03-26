@@ -32,8 +32,27 @@ RESERVOIRS = [
 ]
 
 
+def _fetch_weather_history() -> pd.DataFrame:
+    """Fetch all historical weather data (precipitation, ET₀)."""
+    supabase = get_supabase()
+    result = (
+        supabase.table("weather_daily")
+        .select("date, precipitation_mm, et0_mm")
+        .order("date")
+        .execute()
+    )
+    if not result.data:
+        return pd.DataFrame(columns=["ds", "precip", "et0"])
+
+    df = pd.DataFrame(result.data)
+    df["ds"] = pd.to_datetime(df["date"])
+    df["precip"] = pd.to_numeric(df["precipitation_mm"], errors="coerce").fillna(0)
+    df["et0"] = pd.to_numeric(df["et0_mm"], errors="coerce").fillna(0)
+    return df[["ds", "precip", "et0"]]
+
+
 def _fetch_reservoir_history(reservoir: str) -> pd.DataFrame:
-    """Fetch all historical storage, inflow, and outflow data for a reservoir."""
+    """Fetch all historical storage, inflow, outflow, and weather data for a reservoir."""
     supabase = get_supabase()
 
     result = (
@@ -62,7 +81,17 @@ def _fetch_reservoir_history(reservoir: str) -> pd.DataFrame:
         .reset_index(drop=True)
     )
 
-    return df[["unique_id", "ds", "y", "inflow", "outflow"]]
+    # Join weather data (precipitation + ET₀)
+    weather = _fetch_weather_history()
+    if not weather.empty:
+        df = df.merge(weather, on="ds", how="left")
+        df["precip"] = df["precip"].fillna(0)
+        df["et0"] = df["et0"].fillna(0)
+    else:
+        df["precip"] = 0.0
+        df["et0"] = 0.0
+
+    return df[["unique_id", "ds", "y", "inflow", "outflow", "precip", "et0"]]
 
 
 def _detect_frequency(df: pd.DataFrame) -> tuple[str, int, int]:
@@ -93,18 +122,17 @@ def _resample_to_monthly(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df["month_start"] = df["ds"].dt.to_period("M").dt.to_timestamp()
 
-    # Storage: take last value per month; flow: take mean per month
-    monthly = (
-        df.groupby(["unique_id", "month_start"])
-        .agg({"y": "last", "inflow": "mean", "outflow": "mean"})
-        .reset_index()
-    )
+    # Storage: take last value per month; flow/weather: take mean per month
+    agg_dict = {"y": "last", "inflow": "mean", "outflow": "mean"}
+    if "precip" in df.columns:
+        agg_dict["precip"] = "sum"  # total monthly precipitation
+        agg_dict["et0"] = "mean"  # average daily ET₀
+    monthly = df.groupby(["unique_id", "month_start"]).agg(agg_dict).reset_index()
     monthly = monthly.rename(columns={"month_start": "ds"})
-    return (
-        monthly[["unique_id", "ds", "y", "inflow", "outflow"]]
-        .sort_values("ds")
-        .reset_index(drop=True)
-    )
+    cols = ["unique_id", "ds", "y", "inflow", "outflow"]
+    if "precip" in monthly.columns:
+        cols.extend(["precip", "et0"])
+    return monthly[cols].sort_values("ds").reset_index(drop=True)
 
 
 def _compute_future_exog(
@@ -123,17 +151,28 @@ def _compute_future_exog(
     """
     last_date = df["ds"].max()
 
+    exog_cols = ["inflow", "outflow"]
+    # Only add weather regressors if they have meaningful variance
+    # (e.g. during dry spells, precip is all zeros → rank deficient)
+    has_weather = "precip" in df.columns
+    if has_weather:
+        precip_std = df["precip"].std()
+        et0_std = df["et0"].std()
+        if precip_std > 0.1:
+            exog_cols.append("precip")
+        if et0_std > 0.1:
+            exog_cols.append("et0")
+
     if freq == "D":
         # Recent conditions (last 14 days)
         recent_window = min(14, len(df))
         recent = df.tail(recent_window)
-        recent_inflow = recent["inflow"].mean()
-        recent_outflow = recent["outflow"].mean()
+        recent_vals = {col: recent[col].mean() for col in exog_cols}
 
         # Historical seasonal averages by day-of-year
         df_copy = df.copy()
         df_copy["doy"] = df_copy["ds"].dt.dayofyear
-        seasonal = df_copy.groupby("doy")[["inflow", "outflow"]].mean()
+        seasonal = df_copy.groupby("doy")[exog_cols].mean()
 
         future_dates = pd.date_range(
             last_date + pd.Timedelta(days=1), periods=horizon, freq="D"
@@ -141,24 +180,23 @@ def _compute_future_exog(
         future = pd.DataFrame({"ds": future_dates})
         future["doy"] = future["ds"].dt.dayofyear
         future = future.merge(seasonal, left_on="doy", right_index=True, how="left")
-        future["inflow"] = future["inflow"].fillna(df["inflow"].mean())
-        future["outflow"] = future["outflow"].fillna(df["outflow"].mean())
+        for col in exog_cols:
+            future[col] = future[col].fillna(df[col].mean())
 
         # Blend: recent → seasonal over the forecast horizon
         blend = np.linspace(0, 1, horizon)
-        future["inflow"] = (1 - blend) * recent_inflow + blend * future["inflow"]
-        future["outflow"] = (1 - blend) * recent_outflow + blend * future["outflow"]
+        for col in exog_cols:
+            future[col] = (1 - blend) * recent_vals[col] + blend * future[col]
     else:
         # Recent conditions (last 3 months)
         recent_window = min(3, len(df))
         recent = df.tail(recent_window)
-        recent_inflow = recent["inflow"].mean()
-        recent_outflow = recent["outflow"].mean()
+        recent_vals = {col: recent[col].mean() for col in exog_cols}
 
         # Historical seasonal averages by month (1-12)
         df_copy = df.copy()
         df_copy["month"] = df_copy["ds"].dt.month
-        seasonal = df_copy.groupby("month")[["inflow", "outflow"]].mean()
+        seasonal = df_copy.groupby("month")[exog_cols].mean()
 
         future_dates = pd.date_range(
             last_date + pd.offsets.MonthBegin(1), periods=horizon, freq="MS"
@@ -166,16 +204,16 @@ def _compute_future_exog(
         future = pd.DataFrame({"ds": future_dates})
         future["month"] = future["ds"].dt.month
         future = future.merge(seasonal, left_on="month", right_index=True, how="left")
-        future["inflow"] = future["inflow"].fillna(df["inflow"].mean())
-        future["outflow"] = future["outflow"].fillna(df["outflow"].mean())
+        for col in exog_cols:
+            future[col] = future[col].fillna(df[col].mean())
 
         # Blend: recent → seasonal over the forecast horizon
         blend = np.linspace(0, 1, horizon)
-        future["inflow"] = (1 - blend) * recent_inflow + blend * future["inflow"]
-        future["outflow"] = (1 - blend) * recent_outflow + blend * future["outflow"]
+        for col in exog_cols:
+            future[col] = (1 - blend) * recent_vals[col] + blend * future[col]
 
     future["unique_id"] = reservoir
-    return future[["unique_id", "ds", "inflow", "outflow"]]
+    return future[["unique_id", "ds"] + exog_cols]
 
 
 def _forecast_single_reservoir(reservoir: str) -> list[dict]:
@@ -223,8 +261,11 @@ def _forecast_single_reservoir(reservoir: str) -> list[dict]:
 
     if use_exog:
         future_exog = _compute_future_exog(df, freq, horizon, reservoir)
+        # Only pass columns that exist in both df and future_exog
+        exog_cols = [c for c in future_exog.columns if c not in ("unique_id", "ds")]
+        df_for_fit = df[["unique_id", "ds", "y"] + exog_cols]
         forecasts = sf.forecast(
-            df=df, h=horizon, X_df=future_exog, level=[CONFIDENCE_LEVEL]
+            df=df_for_fit, h=horizon, X_df=future_exog, level=[CONFIDENCE_LEVEL]
         )
     else:
         # Fallback: pure ARIMA without exogenous columns
