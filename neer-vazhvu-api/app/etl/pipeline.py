@@ -463,7 +463,9 @@ async def _step_fetch_census() -> dict:
         except Exception as batch_err:
             logger.error(
                 "Census upsert batch %d–%d failed: %s",
-                i, i + len(batch), batch_err,
+                i,
+                i + len(batch),
+                batch_err,
             )
             # Try row-by-row to skip bad records
             for row in batch:
@@ -475,7 +477,9 @@ async def _step_fetch_census() -> dict:
                 except Exception as row_err:
                     logger.error(
                         "Census row %s failed: %s — data: %s",
-                        row.get("census_code"), row_err, row,
+                        row.get("census_code"),
+                        row_err,
+                        row,
                     )
 
     return {"rows_affected": total_upserted}

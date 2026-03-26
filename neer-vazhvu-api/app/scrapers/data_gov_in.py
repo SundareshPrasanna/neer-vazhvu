@@ -152,9 +152,11 @@ async def fetch_water_bodies_census(
                         raise
                     logger.warning(
                         "data.gov.in timeout (attempt %d/3, offset=%d): %s",
-                        attempt + 1, offset, exc,
+                        attempt + 1,
+                        offset,
+                        exc,
                     )
-                    await asyncio.sleep(2 ** attempt)
+                    await asyncio.sleep(2**attempt)
 
             data = response.json()
             records = data.get("records", [])
