@@ -46,14 +46,16 @@ async def fetch_open_meteo(
         "longitude": str(CHENNAI_LNG),
         "start_date": start_date,
         "end_date": end_date,
-        "daily": ",".join([
-            "precipitation_sum",
-            "temperature_2m_max",
-            "temperature_2m_min",
-            "relative_humidity_2m_mean",
-            "et0_fao_evapotranspiration",
-            "wind_speed_10m_max",
-        ]),
+        "daily": ",".join(
+            [
+                "precipitation_sum",
+                "temperature_2m_max",
+                "temperature_2m_min",
+                "relative_humidity_2m_mean",
+                "et0_fao_evapotranspiration",
+                "wind_speed_10m_max",
+            ]
+        ),
         "timezone": "Asia/Kolkata",
     }
 

@@ -127,20 +127,12 @@ def _resample_to_monthly(df: pd.DataFrame) -> pd.DataFrame:
     if "precip" in df.columns:
         agg_dict["precip"] = "sum"  # total monthly precipitation
         agg_dict["et0"] = "mean"  # average daily ET₀
-    monthly = (
-        df.groupby(["unique_id", "month_start"])
-        .agg(agg_dict)
-        .reset_index()
-    )
+    monthly = df.groupby(["unique_id", "month_start"]).agg(agg_dict).reset_index()
     monthly = monthly.rename(columns={"month_start": "ds"})
     cols = ["unique_id", "ds", "y", "inflow", "outflow"]
     if "precip" in monthly.columns:
         cols.extend(["precip", "et0"])
-    return (
-        monthly[cols]
-        .sort_values("ds")
-        .reset_index(drop=True)
-    )
+    return monthly[cols].sort_values("ds").reset_index(drop=True)
 
 
 def _compute_future_exog(
