@@ -8,7 +8,7 @@ import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
 import { ViewModeToggle } from "@/components/water-bodies/view-mode-toggle";
 import type { ViewMode } from "@/components/water-bodies/view-mode-toggle";
 import { RestorationRankingTable } from "@/components/lake-restoration/restoration-ranking-table";
-import type { SelectedWaterBody, LostWaterBodyProperties } from "@/types/water-bodies";
+import type { SelectedWaterBody, LostWaterBodyProperties, CensusWaterBodyProperties } from "@/types/water-bodies";
 import type { RestorationPriorityData, ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
@@ -41,6 +41,8 @@ export default function WaterBodiesPage() {
   const [selected, setSelected] = useState<SelectedWaterBody | null>(null);
   const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
   const [lostStats, setLostStats] = useState<{ lostCount: number; totalHaLost: number } | null>(null);
+  const [censusData, setCensusData] = useState<CensusWaterBodyProperties[]>([]);
+  const [censusSummary, setCensusSummary] = useState<{ total: number; encroached: number; avgStorageLossPct: number | null } | null>(null);
 
   // Build osm_id lookup for restoration data
   const scoreLookup = useMemo(() => {
@@ -64,6 +66,17 @@ export default function WaterBodiesPage() {
     fetch("/data/restoration-priority.json")
       .then((r) => r.json())
       .then((d: RestorationPriorityData) => setRestorationData(d))
+      .catch(console.error);
+  }, []);
+
+  // Fetch census data
+  useEffect(() => {
+    fetch("/api/water-bodies-census")
+      .then((r) => r.json())
+      .then((d: { data: CensusWaterBodyProperties[]; summary: { total: number; encroached: number; avgStorageLossPct: number | null } }) => {
+        setCensusData(d.data ?? []);
+        setCensusSummary(d.summary ?? null);
+      })
       .catch(console.error);
   }, []);
 
@@ -137,6 +150,17 @@ export default function WaterBodiesPage() {
                 </span>
               </div>
             )}
+            {censusSummary && censusSummary.total > 0 && (
+              <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+                <span className="w-3 h-3 rounded-sm bg-emerald-500 opacity-70 flex-shrink-0" />
+                <span className="text-xs text-slate-600 dark:text-slate-400">
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">
+                    {censusSummary.total}
+                  </span>{" "}
+                  {t("wb.census_surveyed")}
+                </span>
+              </div>
+            )}
             <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
               {t("wb.tagline")}
             </p>
@@ -202,6 +226,7 @@ export default function WaterBodiesPage() {
             <UnifiedMap
               viewMode={viewMode}
               scoredData={restorationData?.water_bodies ?? []}
+              censusData={censusData}
               onSelectCurrent={setSelected}
               onSelectLost={setSelected}
             />
@@ -216,12 +241,22 @@ export default function WaterBodiesPage() {
                 </span>
               </div>
               {viewMode === "water-bodies" && (
-                <div className="text-xs text-slate-500 dark:text-slate-400">
-                  {t("wb.lost_source")}{" "}
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">
-                    {t("wb.lost_source_value")}
-                  </span>
-                </div>
+                <>
+                  <div className="text-xs text-slate-500 dark:text-slate-400">
+                    {t("wb.lost_source")}{" "}
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">
+                      {t("wb.lost_source_value")}
+                    </span>
+                  </div>
+                  {censusData.length > 0 && (
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                      {t("wb.census_source")}{" "}
+                      <span className="font-semibold text-slate-700 dark:text-slate-300">
+                        {t("wb.census_source_value")}
+                      </span>
+                    </div>
+                  )}
+                </>
               )}
               {viewMode === "restoration" && (
                 <div className="text-xs text-slate-500 dark:text-slate-400">

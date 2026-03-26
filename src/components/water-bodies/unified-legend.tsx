@@ -10,6 +10,9 @@ const WB_LEGEND_DEFS = [
   { id: "fully_lost",       color: "#dc2626", labelKey: "wb_legend.fully_lost",       descKey: "wb_legend.fully_lost_desc" },
   { id: "severely_reduced", color: "#f97316", labelKey: "wb_legend.severely_reduced", descKey: "wb_legend.severely_reduced_desc" },
   { id: "encroached",       color: "#eab308", labelKey: "wb_legend.encroached",       descKey: "wb_legend.encroached_desc" },
+  { id: "census_healthy",   color: "#10b981", labelKey: "wb_legend.census_healthy",   descKey: "wb_legend.census_healthy_desc" },
+  { id: "census_encroached", color: "#ef4444", labelKey: "wb_legend.census_encroached", descKey: "wb_legend.census_encroached_desc" },
+  { id: "census_degraded",  color: "#f97316", labelKey: "wb_legend.census_degraded",  descKey: "wb_legend.census_degraded_desc" },
 ] as const;
 
 const PRIORITY_ITEMS: Array<{ level: PriorityLevel; labelKey: string }> = [

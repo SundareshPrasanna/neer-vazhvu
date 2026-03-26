@@ -5,6 +5,7 @@ Replaces the 4 separate Next.js cron endpoints with a single Python orchestrator
 Steps run sequentially; each step logs to pipeline_log.
 """
 
+import logging
 import time
 from collections.abc import Callable, Coroutine
 from datetime import datetime, timedelta, timezone
@@ -23,6 +24,8 @@ from app.scrapers.nasa_power import fetch_nasa_power
 from app.scrapers.open_meteo import fetch_open_meteo
 from app.scrapers.opencity import fetch_groundwater, GROUNDWATER_RESOURCES
 from app.utils.timezone import ist_today
+
+logger = logging.getLogger(__name__)
 
 
 async def _run_step(
@@ -60,7 +63,8 @@ async def _run_step(
 
     except Exception as e:
         duration_ms = int((time.time() - start) * 1000)
-        error_msg = str(e)
+        error_msg = str(e) or repr(e)
+        logger.error("Step %s failed: %s", step_name, error_msg)
 
         supabase.table("pipeline_log").insert(
             {
@@ -128,9 +132,6 @@ async def _step_fetch_weather() -> dict:
     (reference evapotranspiration). NASA POWER has a 2-day lag but serves
     as a reliable fallback if Open-Meteo is unreachable.
     """
-    import logging
-
-    logger = logging.getLogger(__name__)
     supabase = get_supabase()
     today = ist_today()
     start_date = (today - timedelta(days=5)).isoformat()
@@ -389,6 +390,105 @@ async def run_post_scrape() -> list[dict]:
         return steps
 
     step = await _run_step("briefing", _step_briefing)
+    steps.append(step)
+    return steps
+
+
+async def _step_fetch_census() -> dict:
+    """Fetch water bodies census data from data.gov.in (one-time/periodic)."""
+    from app.config import get_settings
+    from app.scrapers.data_gov_in import fetch_water_bodies_census
+
+    settings = get_settings()
+    if not settings.data_gov_in_api_key:
+        raise ValueError("DATA_GOV_IN_API_KEY not configured")
+
+    supabase = get_supabase()
+    records = await fetch_water_bodies_census(settings.data_gov_in_api_key)
+
+    rows = []
+    for r in records:
+        orig = r.storage_capacity_original
+        pres = r.storage_capacity_present
+        loss_pct = None
+        if orig and pres and orig > 0:
+            loss_pct = round(((orig - pres) / orig) * 100, 2)
+            # Clamp to NUMERIC(5,2) range: -999.99 to 999.99
+            loss_pct = max(-999.99, min(999.99, loss_pct))
+
+        rows.append(
+            {
+                "census_code": r.census_code,
+                "name": r.name,
+                "district": r.district,
+                "taluk": r.taluk,
+                "block": r.block,
+                "village": r.village,
+                "ward_name": r.ward_name,
+                "water_body_type": r.water_body_type,
+                "nature": r.nature,
+                "ownership": r.ownership,
+                "latitude": r.latitude,
+                "longitude": r.longitude,
+                "storage_capacity_original": orig,
+                "storage_capacity_present": pres,
+                "storage_loss_pct": loss_pct,
+                "max_depth_m": r.max_depth_m,
+                "water_spread_area": r.water_spread_area,
+                "construction_year": r.construction_year,
+                "renovation_year": r.renovation_year,
+                "basin": r.basin,
+                "sub_basin": r.sub_basin,
+                "is_in_use": r.is_in_use,
+                "encroachment_status": r.encroachment_status,
+                "encroachment_pct": (
+                    max(-999.99, min(999.99, r.encroachment_pct))
+                    if r.encroachment_pct is not None
+                    else None
+                ),
+                "source": "data_gov_in",
+            }
+        )
+
+    # Upsert in batches of 50 to isolate errors
+    batch_size = 50
+    total_upserted = 0
+    for i in range(0, len(rows), batch_size):
+        batch = rows[i : i + batch_size]
+        try:
+            supabase.table("water_bodies_census").upsert(
+                batch, on_conflict="census_code"
+            ).execute()
+            total_upserted += len(batch)
+        except Exception as batch_err:
+            logger.error(
+                "Census upsert batch %d–%d failed: %s",
+                i,
+                i + len(batch),
+                batch_err,
+            )
+            # Try row-by-row to skip bad records
+            for row in batch:
+                try:
+                    supabase.table("water_bodies_census").upsert(
+                        [row], on_conflict="census_code"
+                    ).execute()
+                    total_upserted += 1
+                except Exception as row_err:
+                    logger.error(
+                        "Census row %s failed: %s — data: %s",
+                        row.get("census_code"),
+                        row_err,
+                        row,
+                    )
+
+    return {"rows_affected": total_upserted}
+
+
+async def run_census_fetch() -> list[dict]:
+    """Fetch water bodies census from data.gov.in (one-time/periodic)."""
+    steps = []
+    step = await _run_step("fetch_census", _step_fetch_census)
     steps.append(step)
     return steps
 

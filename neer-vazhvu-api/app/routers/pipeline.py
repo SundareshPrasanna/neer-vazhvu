@@ -59,3 +59,17 @@ async def run_intelligence(authorization: str = Header(...)):
 
     results = await run_intelligence_only()
     return {"success": True, "steps": results}
+
+
+@router.post("/run-census-fetch")
+async def run_census_fetch(authorization: str = Header(...)):
+    """One-time/periodic fetch of water bodies census from data.gov.in.
+
+    Requires DATA_GOV_IN_API_KEY to be configured.
+    """
+    verify_cron_auth(authorization)
+
+    from app.etl.pipeline import run_census_fetch
+
+    results = await run_census_fetch()
+    return {"success": True, "steps": results}

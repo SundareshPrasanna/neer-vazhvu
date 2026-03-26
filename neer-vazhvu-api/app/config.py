@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     supabase_service_key: str
     cron_secret: str
     environment: str = "development"
+    data_gov_in_api_key: str | None = None
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

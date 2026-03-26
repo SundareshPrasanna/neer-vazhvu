@@ -178,6 +178,12 @@ export function AboutContent() {
             frequency={t("about.freq_historical")}
           />
           <DataSource
+            name="First Census of Water Bodies (data.gov.in)"
+            url="https://data.gov.in/resource/state-wise-data-first-census-water-bodies-tamil-nadu"
+            description={t("about.ds_census_wb_desc")}
+            frequency={t("about.freq_one_time")}
+          />
+          <DataSource
             name="Kaggle Chennai Water Management"
             url="https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management"
             description={t("about.ds_kaggle_desc")}
@@ -406,6 +412,41 @@ export function AboutContent() {
           <li>{t("about.limit4")}</li>
           <li>{t("about.limit5")}</li>
         </ul>
+      </section>
+
+      <Separator className="my-8" />
+
+      <section id="data-quality" className="space-y-4">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t("about.data_quality")}</h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          {t("about.dq_intro")}
+        </p>
+        <div className="space-y-3">
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+            <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">
+              {t("about.dq_census_units_title")}
+            </h4>
+            <p className="text-sm text-amber-700 dark:text-amber-300">
+              {t("about.dq_census_units_desc")}
+            </p>
+          </div>
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+            <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">
+              {t("about.dq_census_capacity_title")}
+            </h4>
+            <p className="text-sm text-amber-700 dark:text-amber-300">
+              {t("about.dq_census_capacity_desc")}
+            </p>
+          </div>
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+            <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">
+              {t("about.dq_census_shape_title")}
+            </h4>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              {t("about.dq_census_shape_desc")}
+            </p>
+          </div>
+        </div>
       </section>
 
       <Separator className="my-8" />
