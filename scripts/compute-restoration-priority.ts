@@ -367,11 +367,18 @@ async function main() {
     readFileSync(resolve(root, "public/geojson/chennai-rivers.geojson"), "utf8")
   ) as GeoJSON.FeatureCollection;
 
-  const riverLinePoints: Coord[] = [];
+  interface RiverLinePoint extends Coord {
+    riverName: string;
+    riverNameTa: string;
+  }
+  const riverLinePoints: RiverLinePoint[] = [];
   for (const feat of riversGeo.features) {
+    const rProps = feat.properties as Record<string, unknown>;
+    const riverName = (rProps.name as string) || "";
+    const riverNameTa = (rProps.name_ta as string) || "";
     const geom = feat.geometry;
     const extractCoords = (coords: number[][]) => {
-      for (const c of coords) riverLinePoints.push({ lat: c[1], lng: c[0] });
+      for (const c of coords) riverLinePoints.push({ lat: c[1], lng: c[0], riverName, riverNameTa });
     };
     if (geom.type === "LineString") {
       extractCoords((geom as GeoJSON.LineString).coordinates);
@@ -417,6 +424,32 @@ async function main() {
     return false;
   }
 
+  /** Find the nearest river name for a polygon by checking vertex proximity to river line points */
+  function nearestRiverName(feat: GeoJSON.Feature): { name: string; name_ta: string } {
+    const geom = feat.geometry as GeoJSON.Polygon;
+    const ring = geom.coordinates[0];
+    const sampleVerts = ring.slice(0, 20);
+    let bestDist = Infinity;
+    let bestName = "";
+    let bestNameTa = "";
+    for (const [lng, lat] of sampleVerts) {
+      const pt: Coord = { lat, lng };
+      for (const rp of riverLinePoints) {
+        const d = haversineM(pt, rp);
+        if (d < bestDist) {
+          bestDist = d;
+          bestName = rp.riverName;
+          bestNameTa = rp.riverNameTa;
+        }
+      }
+    }
+    // Also check the polygon's own name/water_type
+    const props = feat.properties as Record<string, unknown>;
+    const ownName = (props.name as string) || "";
+    if (ownName && !bestName) return { name: ownName, name_ta: (props.name_ta as string) || "" };
+    return bestDist < 5000 ? { name: bestName, name_ta: bestNameTa } : { name: ownName || "River section", name_ta: "" };
+  }
+
   // 2b. Fetch census data from Supabase
   console.log("Fetching census data from Supabase...");
   const censusRows = await fetchCensusData();
@@ -424,10 +457,20 @@ async function main() {
 
   // 3. Build OSM centroids, filtering out river sections
   const osmCentroids: { osmId: number; centroid: Coord; areaHa: number; name: string; nameTa: string; waterType: string }[] = [];
+  const riverSections: { osm_id: number; name: string; name_ta: string; water_type: string; area_ha: number }[] = [];
   let riverSectionCount = 0;
   for (const feat of waterBodies.features) {
     if (isLikelyRiverSection(feat)) {
       riverSectionCount++;
+      const props = feat.properties as Record<string, unknown>;
+      const rn = nearestRiverName(feat);
+      riverSections.push({
+        osm_id: props.osm_id as number,
+        name: rn.name,
+        name_ta: rn.name_ta,
+        water_type: (props.water_type as string) || "water",
+        area_ha: (props.area_ha as number) ?? 0,
+      });
       continue;
     }
     const props = feat.properties as Record<string, unknown>;
@@ -609,6 +652,7 @@ async function main() {
     total_scored: scored.length,
     weights: WEIGHTS,
     water_bodies: scored,
+    river_sections: riverSections,
   };
 
   const outPath = resolve(root, "public/data/restoration-priority.json");

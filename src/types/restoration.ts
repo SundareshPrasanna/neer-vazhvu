@@ -31,11 +31,20 @@ export interface ScoredWaterBody {
   nearest_industrial_km: number | null;
 }
 
+export interface RiverSection {
+  osm_id: number;
+  name: string;
+  name_ta: string;
+  water_type: string;
+  area_ha: number;
+}
+
 export interface RestorationPriorityData {
   computed_at: string;
   total_scored: number;
   weights: Record<string, number>;
   water_bodies: ScoredWaterBody[];
+  river_sections: RiverSection[];
 }
 
 const PRIORITY_COLORS: Record<PriorityLevel, string> = {
