@@ -47,11 +47,15 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
   const [lostGeoJSON, setLostGeoJSON] =
     useState<GeoJSON.FeatureCollection | null>(null);
 
-  // Build lookup from osm_id to scored data
-  const scoreLookup = useMemo(() => {
-    const map = new Map<number, ScoredWaterBody>();
-    for (const wb of scoredData) map.set(wb.osm_id, wb);
-    return map;
+  // Build lookup from id to scored data, plus osm_id shortcut
+  const { scoreLookupById, scoreLookupByOsmId } = useMemo(() => {
+    const byId = new Map<string, ScoredWaterBody>();
+    const byOsm = new Map<number, ScoredWaterBody>();
+    for (const wb of scoredData) {
+      byId.set(wb.id, wb);
+      if (wb.osm_id != null) byOsm.set(wb.osm_id, wb);
+    }
+    return { scoreLookupById: byId, scoreLookupByOsmId: byOsm };
   }, [scoredData]);
 
   // Match census records to OSM polygons by proximity (200m threshold)
@@ -140,7 +144,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
   const currentStyle = (feature: Feature | undefined) => {
     if (viewMode === "restoration") {
       const osmId = feature?.properties?.osm_id as number | undefined;
-      const scored = osmId ? scoreLookup.get(osmId) : undefined;
+      const scored = osmId ? scoreLookupByOsmId.get(osmId) : undefined;
       const color = scored ? getPriorityColor(scored.priority_level) : "#94a3b8";
       return {
         fillColor: color,
@@ -193,7 +197,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
         : (props.name || t("wb_panel.unnamed"));
 
     if (viewMode === "restoration") {
-      const scored = scoreLookup.get(props.osm_id);
+      const scored = scoreLookupByOsmId.get(props.osm_id);
       if (scored) {
         const levelLabel = t(`lr.${scored.priority_level}`);
         layer.bindTooltip(
@@ -360,6 +364,52 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
                         {type}
                         {wb.ownership ? ` · ${wb.ownership}` : ""}
                       </span>
+                    </Tooltip>
+                  </Circle>
+                );
+              })}
+            </LayerGroup>
+          </LayersControl.Overlay>
+        )}
+        {unmatchedCensus.length > 0 && viewMode === "restoration" && (
+          <LayersControl.Overlay name={t("wb_map.census_layer")} checked>
+            <LayerGroup>
+              {unmatchedCensus.map((wb) => {
+                const scored = scoreLookupById.get(`census:${wb.id}`);
+                const color = scored ? getPriorityColor(scored.priority_level) : "#94a3b8";
+                const name = wb.name || t("wb_panel.unnamed");
+                return (
+                  <Circle
+                    key={wb.id}
+                    center={[wb.latitude, wb.longitude]}
+                    radius={CENSUS_RADIUS_M}
+                    pathOptions={{
+                      fillColor: color,
+                      color,
+                      weight: 1.5,
+                      fillOpacity: 0.7,
+                      opacity: 0.9,
+                    }}
+                    eventHandlers={{
+                      click: () => {
+                        onSelectCurrent({
+                          kind: "census",
+                          props: wb,
+                          latlng: [wb.latitude, wb.longitude],
+                        });
+                      },
+                    }}
+                  >
+                    <Tooltip sticky>
+                      <strong>{name}</strong>
+                      {scored && (
+                        <>
+                          <br />
+                          <span style={{ fontSize: "11px", color: "#64748b" }}>
+                            {t("lr.priority_score")}: {scored.priority_score} · {t(`lr.${scored.priority_level}`)}
+                          </span>
+                        </>
+                      )}
                     </Tooltip>
                   </Circle>
                 );

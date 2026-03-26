@@ -44,11 +44,15 @@ export default function WaterBodiesPage() {
   const [censusData, setCensusData] = useState<CensusWaterBodyProperties[]>([]);
   const [censusSummary, setCensusSummary] = useState<{ total: number; encroached: number; avgStorageLossPct: number | null } | null>(null);
 
-  // Build osm_id lookup for restoration data
+  // Build id lookup for restoration data
   const scoreLookup = useMemo(() => {
-    if (!restorationData) return new Map<number, ScoredWaterBody>();
-    const map = new Map<number, ScoredWaterBody>();
-    for (const wb of restorationData.water_bodies) map.set(wb.osm_id, wb);
+    if (!restorationData) return new Map<string, ScoredWaterBody>();
+    const map = new Map<string, ScoredWaterBody>();
+    for (const wb of restorationData.water_bodies) {
+      map.set(wb.id, wb);
+      // Also index by osm_id for quick polygon lookup
+      if (wb.osm_id != null) map.set(`osm_id:${wb.osm_id}`, wb);
+    }
     return map;
   }, [restorationData]);
 
@@ -96,25 +100,44 @@ export default function WaterBodiesPage() {
   }, []);
 
   // Find restoration data for the selected water body
-  const selectedRestoration =
-    selected?.kind === "current"
-      ? scoreLookup.get(selected.props.osm_id) ?? null
-      : null;
+  const selectedRestoration = useMemo(() => {
+    if (!selected) return null;
+    if (selected.kind === "current") {
+      return scoreLookup.get(`osm_id:${selected.props.osm_id}`) ?? null;
+    }
+    if (selected.kind === "census") {
+      return scoreLookup.get(`census:${selected.props.id}`) ?? null;
+    }
+    return null;
+  }, [selected, scoreLookup]);
 
   // When ranking table selects a ScoredWaterBody, convert to SelectedWaterBody
   const handleRankingSelect = (wb: ScoredWaterBody) => {
-    setSelected({
-      kind: "current",
-      props: {
-        osm_id: wb.osm_id,
-        osm_type: "",
-        name: wb.name,
-        name_ta: wb.name_ta,
-        water_type: wb.water_type,
-        area_ha: wb.area_ha,
-      },
-      latlng: wb.centroid,
-    });
+    if (wb.source === "census") {
+      // Census-only body
+      const censusMatch = censusData.find((c) => c.id === wb.census_id);
+      if (censusMatch) {
+        setSelected({
+          kind: "census",
+          props: censusMatch,
+          latlng: wb.centroid,
+        });
+      }
+    } else {
+      // OSM or matched body
+      setSelected({
+        kind: "current",
+        props: {
+          osm_id: wb.osm_id!,
+          osm_type: "",
+          name: wb.name,
+          name_ta: wb.name_ta,
+          water_type: wb.water_type,
+          area_ha: wb.area_ha,
+        },
+        latlng: wb.centroid,
+      });
+    }
   };
 
   return (
