@@ -48,9 +48,7 @@ def fetch_year(year: int) -> list[dict]:
     import pandas as pd
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        data = imd.get_data(
-            "rain", year, year, fn_format="yearwise", file_dir=tmpdir
-        )
+        data = imd.get_data("rain", year, year, fn_format="yearwise", file_dir=tmpdir)
         ds = data.get_xarray()
 
     chennai = ds.sel(lat=GRID_LAT, lon=GRID_LNG, method="nearest")
@@ -112,9 +110,7 @@ def main() -> None:
 
     # Compute long-term normals (START_YEAR to NORMAL_END)
     normal_years = [r for r in annual_records if r["year"] <= NORMAL_END]
-    annual_mean = round(
-        sum(r["total_mm"] for r in normal_years) / len(normal_years), 1
-    )
+    annual_mean = round(sum(r["total_mm"] for r in normal_years) / len(normal_years), 1)
 
     monthly_means = []
     for month in range(1, 13):
@@ -145,7 +141,9 @@ def main() -> None:
     OUTPUT_PATH.write_text(json.dumps(result, separators=(",", ":")))
     size_kb = OUTPUT_PATH.stat().st_size / 1024
     print(f"\nWritten {OUTPUT_PATH} ({size_kb:.0f} KB)")
-    print(f"  {len(monthly_records)} monthly records, {len(annual_records)} annual totals")
+    print(
+        f"  {len(monthly_records)} monthly records, {len(annual_records)} annual totals"
+    )
     print(f"  Long-term annual mean: {annual_mean} mm")
 
 
