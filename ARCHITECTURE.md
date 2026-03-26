@@ -8,7 +8,8 @@
 graph TB
     subgraph External Data Sources
         CMWSSB["CMWSSB Website<br/>(Reservoir levels)"]
-        NASA["NASA POWER API<br/>(Weather)"]
+        OM["Open-Meteo API<br/>(Weather + ET₀, primary)"]
+        NASA["NASA POWER API<br/>(Weather fallback)"]
         OC["OpenCity CKAN<br/>(Groundwater)"]
         CPCB["CPCB Annual Reports<br/>(River quality, manual)"]
         OSM["OpenStreetMap / Overpass<br/>(River geometry, one-time)"]
@@ -40,7 +41,8 @@ graph TB
     end
 
     CMWSSB -->|HTML scrape| Scrapers
-    NASA -->|REST API| Scrapers
+    OM -->|REST API, primary| Scrapers
+    NASA -->|REST API, fallback| Scrapers
     OC -->|CKAN API| Scrapers
     CPCB -->|manual JSON| StaticFiles["public/data/<br/>river-quality.json<br/>industrial-sources.json<br/>restoration-priority.json"]
     OSM -->|fetch scripts| StaticFiles2["public/geojson/<br/>chennai-rivers.geojson<br/>chennai-water-bodies-current.geojson<br/>chennai-water-bodies-lost.geojson<br/>chennai-industrial-zones.geojson<br/>chennai-wards-2022.geojson"]
@@ -75,7 +77,7 @@ You can still run `POST /pipeline/run-daily` manually when the API runtime can d
 ```mermaid
 flowchart LR
     S1["1. Scrape CMWSSB<br/>(6 reservoirs)"]
-    S2["2. Fetch NASA POWER<br/>(5-day backfill)"]
+    S2["2. Fetch Weather<br/>(Open-Meteo → NASA fallback)"]
     S3["3. Fetch OpenCity<br/>(days 1-3 only)"]
     S4["4. Compute Estimate<br/>(3 scenarios)"]
     S5["5. Forecast<br/>(ARIMAX × 6)"]
@@ -93,7 +95,7 @@ flowchart LR
 | Step | Source | Output Table | Frequency |
 |------|--------|-------------|-----------|
 | Scrape CMWSSB | cmwssb.tn.gov.in | `reservoir_daily` | Daily |
-| Fetch NASA POWER | power.larc.nasa.gov | `weather_daily` | Daily (2-day lag) |
+| Fetch Weather | open-meteo.com (primary) / power.larc.nasa.gov (fallback) | `weather_daily` | Daily (zero lag) |
 | Fetch OpenCity | data.opencity.in | `groundwater_monthly` | Monthly (days 1-3) |
 | Compute Estimate | Aggregated storage + inflow | `water_estimate_daily` | Daily |
 | Forecast | StatsForecast ARIMAX | `reservoir_forecast` | Daily |
@@ -122,6 +124,8 @@ erDiagram
         float temp_max_c
         float temp_min_c
         float humidity_pct
+        float et0_mm
+        float wind_speed_max_kmh
     }
 
     groundwater_monthly {
@@ -183,30 +187,46 @@ erDiagram
 
 ### ARIMAX Forecaster
 
-Predicts reservoir storage 30 days ahead using [statsforecast](https://nixtla.github.io/statsforecast/) AutoARIMA with optional exogenous regressors (inflow/outflow).
+Predicts reservoir storage 30 days ahead using [statsforecast](https://nixtla.github.io/statsforecast/) AutoARIMA with optional exogenous regressors (inflow/outflow + weather).
+
+**Exogenous regressors (when available):**
+- **Inflow/outflow** (cusecs) — always included when ≥30% non-zero coverage in last 2 years
+- **Precipitation** (mm/day) — included when variance > 0.1 (skipped during dry spells to avoid rank deficiency)
+- **ET₀** (mm/day) — reference evapotranspiration; included when variance > 0.1 (activates with seasonal temperature swings)
+
+Weather data is joined from `weather_daily` (sourced from Open-Meteo). Future exogenous values blend recent conditions with historical seasonal averages.
 
 ```mermaid
 flowchart TD
     A["Fetch reservoir history<br/>(storage + inflow + outflow)"]
+    AW["Fetch weather history<br/>(precipitation + ET₀)"]
+    AJ["Join by date"]
     B{"Data frequency?"}
     C["Daily<br/>season=365, horizon=30"]
     D["Monthly<br/>season=12, horizon=6"]
     E{"Inflow coverage<br/>≥30% in last 2 years?"}
-    F["ARIMAX<br/>(with exogenous inflow/outflow)"]
-    G["ARIMA<br/>(storage only)"]
-    H["Compute seasonal avg<br/>future inflow/outflow"]
-    I["Forecast → clamp to 0..capacity"]
+    F{"Weather variance<br/>check (std > 0.1)"}
+    G["ARIMAX<br/>(inflow + outflow + weather)"]
+    H["ARIMAX<br/>(inflow + outflow only)"]
+    I["ARIMA<br/>(storage only)"]
+    J["Compute future exog<br/>(blend recent → seasonal)"]
+    K["Forecast → clamp to 0..capacity"]
 
-    A --> B
+    A --> AJ
+    AW --> AJ
+    AJ --> B
     B -->|gap ≤ 15 days| C
     B -->|gap > 15 days| D
     C --> E
     D --> E
-    E -->|Yes| H
-    H --> F
-    E -->|No| G
-    F --> I
-    G --> I
+    E -->|Yes| F
+    F -->|precip/ET₀ have variance| J
+    J --> G
+    F -->|low variance (dry spell)| H
+    E -->|No| I
+    G --> K
+    H --> K
+    I --> K
 ```
 
 ### Risk Scorer

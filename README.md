@@ -48,7 +48,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **Industrial Pollution Sources Overlay** - 7 major facilities (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek) colour-coded by type; click for operator details, pollutant pills, incident timeline, and NGT orders. OSM `landuse=industrial` polygons shown as translucent overlay
 
 ### Intelligence Layer (Python Service)
-- **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals
+- **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals; uses inflow/outflow, precipitation, and ET₀ (evapotranspiration) as exogenous regressors when data variance is sufficient
 - **Ward Risk Scoring** - Composite 0-100 risk score per ward (groundwater depth, trend, reservoir stress, seasonal vulnerability)
 - **Daily Briefing** - Template-based intelligence summary with headlines, alerts, and recommendations
 
@@ -67,8 +67,9 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 │                                                  │
 │  Scrapers         ETL            Intelligence     │
 │  ├─ cmwssb.py     ├─ pipeline.py ├─ forecaster   │
-│  ├─ nasa_power.py ├─ estimate.py ├─ risk_scorer  │
-│  └─ opencity.py   └─ constants   └─ briefing     │
+│  ├─ open_meteo.py ├─ estimate.py ├─ risk_scorer  │
+│  ├─ nasa_power.py └─ constants   └─ briefing     │
+│  └─ opencity.py                                   │
 │                                                  │
 │  Writes computed results to Supabase ────┐        │
 └──────────────────────────────────────────┘        │
@@ -86,7 +87,8 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 | Source | Data | Frequency |
 |--------|------|-----------|
 | [CMWSSB Lake Level Page](https://cmwssb.tn.gov.in/lake-level) | Reservoir levels, inflow, outflow, rainfall | Daily |
-| [NASA POWER](https://power.larc.nasa.gov/) | Precipitation, temperature, humidity | Daily (2-day lag) |
+| [Open-Meteo](https://open-meteo.com/) | Precipitation, temperature, humidity, ET₀, wind speed | Daily (zero lag) |
+| [NASA POWER](https://power.larc.nasa.gov/) | Precipitation, temperature, humidity (fallback) | Daily (2-day lag) |
 | [OpenCity Chennai](https://data.opencity.in/) | Ward-wise groundwater levels (200 wards) | Monthly |
 | [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
 | [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry + industrial zone polygons | One-time fetch |
@@ -148,12 +150,13 @@ The app automatically falls back to demo mode with realistic mock data when Supa
 
 ### 3. Database Setup
 
-Run both migrations against your Supabase project:
+Run all migrations against your Supabase project:
 
 ```sql
 -- In the Supabase SQL Editor, run in order:
 -- 1. supabase/migrations/001_initial_schema.sql
 -- 2. supabase/migrations/002_intelligence_tables.sql
+-- 3. supabase/migrations/003_open_meteo_weather.sql
 ```
 
 Or if using the Supabase CLI:
@@ -283,7 +286,7 @@ neer-vazhvu/
 │   └── types/                    # TypeScript type definitions
 ├── neer-vazhvu-api/              # Python intelligence service
 │   ├── app/
-│   │   ├── scrapers/             # CMWSSB, NASA POWER, OpenCity
+│   │   ├── scrapers/             # CMWSSB, Open-Meteo, NASA POWER, OpenCity
 │   │   ├── etl/                  # Pipeline orchestrator, calculator
 │   │   ├── intelligence/         # Forecaster, risk scorer, briefing
 │   │   ├── models/               # Pydantic data models
@@ -291,7 +294,7 @@ neer-vazhvu/
 │   ├── Dockerfile
 │   └── pyproject.toml
 ├── supabase/
-│   └── migrations/               # SQL migrations (001, 002)
+│   └── migrations/               # SQL migrations (001, 002, 003)
 ├── public/
 │   ├── geojson/                  # Static GeoJSON data
 │   │   ├── chennai-wards-2022.geojson           # GCC ward boundaries (choropleth)
@@ -314,7 +317,7 @@ neer-vazhvu/
 | Daily consumption | 830 MLD | CMWSSB annual report |
 | Desalination output | 190 MLD | Model baseline constant (`DEFAULT_DESALINATION_MLD`) |
 | Groundwater supply | Not modeled | Conservative assumption |
-| Evaporation losses | Not modeled | Planned for V2 |
+| Evaporation losses | ET₀ from Open-Meteo (FAO Penman-Monteith) | Used as ARIMAX exogenous regressor when variance is sufficient |
 
 Users can adjust consumption and desalination via sliders on the dashboard.
 
@@ -366,7 +369,7 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 Areas where help is needed:
 
 - **Data quality** -Improving scraper resilience, handling CMWSSB page format changes
-- **Models** -Better forecasting (Prophet, LSTM), evaporation modeling
+- **Models** -Better forecasting (Prophet, LSTM), improved evaporation integration
 - **Water bodies data** -Adding more documented lost water bodies with verified coordinates and sources
 - **Tamil localization** -Translating the UI for local accessibility
 - **Testing** -Unit tests for scrapers, calculator, and intelligence modules
@@ -380,7 +383,8 @@ Please open an issue first to discuss significant changes.
 ## Acknowledgments
 
 - **CMWSSB** for publishing daily reservoir data publicly
-- **NASA POWER** for free, open weather data
+- **[Open-Meteo](https://open-meteo.com/)** for free, zero-lag weather data with evapotranspiration
+- **NASA POWER** for free, open weather data (fallback source)
 - **OpenCity Chennai** for ward-level groundwater datasets
 - **GCC** for ward boundary delimitation data
 - **OpenStreetMap contributors** for water body polygon and river geometry data

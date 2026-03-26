@@ -21,23 +21,29 @@
 - Inflow/outflow fields were added later; pre-2022 records have nulls for these
 - Occasional duplicate or stale rows when CMWSSB delays their update
 
-## Weather -NASA POWER
+## Weather — Open-Meteo (primary) + NASA POWER (fallback)
 
 | | |
 |---|---|
-| **Source** | [NASA POWER API](https://power.larc.nasa.gov/) (Prediction Of Worldwide Energy Resources) |
-| **Method** | REST API (`/api/temporal/daily/point`) |
-| **Frequency** | Daily (5-day backfill window, 2-day data lag) |
+| **Primary Source** | [Open-Meteo API](https://open-meteo.com/) (free, no auth required) |
+| **Fallback Source** | [NASA POWER API](https://power.larc.nasa.gov/) (Prediction Of Worldwide Energy Resources) |
+| **Method** | REST API (Open-Meteo: `/v1/forecast`; NASA POWER: `/api/temporal/daily/point`) |
+| **Frequency** | Daily (5-day backfill window; Open-Meteo has zero lag, NASA POWER has 2-day lag) |
 | **Coverage** | Single point: Chennai (13.0827°N, 80.2707°E) |
-| **Fields** | Precipitation (mm), temperature max/min (°C), relative humidity (%) |
+| **Fields** | Precipitation (mm), temperature max/min (°C), relative humidity (%), reference evapotranspiration ET₀ (mm/day), max wind speed (km/h) |
 | **Table** | `weather_daily` |
-| **Historical** | Available back to 1981 |
+| **Historical** | Open-Meteo archive API back to 1940; NASA POWER back to 1981 |
+
+**Why two sources?**
+- Open-Meteo provides same-day data (zero lag) and includes ET₀ (reference evapotranspiration, FAO Penman-Monteith method) — critical for reservoir evaporation modeling
+- NASA POWER serves as an automatic fallback if Open-Meteo is unreachable
+- The pipeline tries Open-Meteo first; on failure, logs a warning and falls back to NASA POWER
 
 **Known limitations:**
-- 2-day lag on data availability (today's weather appears day after tomorrow)
-- Single point for all of Chennai -no ward-level granularity
-- Satellite-derived precipitation can differ from ground-station readings
-- Free tier has rate limits (undocumented but generally generous)
+- Single point for all of Chennai — no ward-level granularity
+- Open-Meteo uses ERA5 reanalysis + weather model blends; can differ from ground-station readings
+- ET₀ is reference evapotranspiration (grass-based), not actual reservoir surface evaporation; still a strong proxy
+- NASA POWER fallback has a 2-day data lag
 
 ## Groundwater -OpenCity Chennai
 
