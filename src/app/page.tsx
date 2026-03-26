@@ -1,6 +1,7 @@
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
 import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
+import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
 import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
 import { CUSEC_DAY_TO_MCFT, RESERVOIR_DISPLAY_ORDER } from "@/lib/utils/constants";
 import { getGroundwaterStatus } from "@/types/groundwater";
@@ -342,6 +343,8 @@ export default async function DashboardPage() {
       />
 
       {groundwaterData && <GroundwaterSnapshot data={groundwaterData} />}
+
+      <RainfallTrends />
     </div>
   );
 }
