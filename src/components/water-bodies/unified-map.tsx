@@ -205,6 +205,15 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
           `<span style="font-size:11px;color:#64748b">${t("lr.priority_score")}: ${scored.priority_score} · ${levelLabel}</span>`,
           { sticky: true }
         );
+      } else {
+        // Unscored polygons (rivers, etc.) - still show the name
+        const normalizedType = (props.water_type || "water").toLowerCase();
+        const typeLabel = t(`wb_type.${normalizedType}`);
+        const type = typeLabel.startsWith("wb_type.") ? props.water_type || t("wb_panel.water_body") : typeLabel;
+        layer.bindTooltip(
+          `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${type}</span>`,
+          { sticky: true }
+        );
       }
     } else {
       const areaText = props.area_ha
