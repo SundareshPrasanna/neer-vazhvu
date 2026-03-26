@@ -54,22 +54,31 @@ export function RainfallTrends() {
   const monthLabels = language === "ta" ? MONTH_LABELS_TA : MONTH_LABELS_EN;
   const currentYear = new Date().getFullYear();
 
-  // Current year monthly vs normal
-  const monthlyComparison = useMemo(() => {
-    if (!data) return [];
+  const currentMonth = new Date().getMonth() + 1; // 1-indexed
+
+  // Current year monthly vs normal (only show months up to current month)
+  const { monthlyComparison, comparisonYear } = useMemo(() => {
+    if (!data) return { monthlyComparison: [], comparisonYear: currentYear };
     const currentYearData = data.monthly.filter((m) => m.year === currentYear);
-    // Fall back to most recent year with data
-    const yearToUse = currentYearData.length > 0 ? currentYear : data.year_range[1];
-    const yearData = currentYearData.length > 0
+    const hasCurrentYear = currentYearData.length > 0;
+    const yearToUse = hasCurrentYear ? currentYear : data.year_range[1];
+    const yearData = hasCurrentYear
       ? currentYearData
       : data.monthly.filter((m) => m.year === yearToUse);
 
-    return data.normals.monthly_mean_mm.map((normal, i) => ({
-      month: monthLabels[i],
-      normal: Math.round(normal),
-      actual: yearData.find((m) => m.month === i + 1)?.rainfall_mm ?? 0,
-    }));
-  }, [data, currentYear, monthLabels]);
+    // Only show months up to the current month for the display year
+    const maxMonth = yearToUse === currentYear ? currentMonth : 12;
+
+    const comparison = data.normals.monthly_mean_mm
+      .slice(0, maxMonth)
+      .map((normal, i) => ({
+        month: monthLabels[i],
+        normal: Math.round(normal),
+        actual: yearData.find((m) => m.month === i + 1)?.rainfall_mm ?? 0,
+      }));
+
+    return { monthlyComparison: comparison, comparisonYear: yearToUse };
+  }, [data, currentYear, currentMonth, monthLabels]);
 
   if (!data) return null;
 
@@ -86,9 +95,12 @@ export function RainfallTrends() {
 
         {/* Annual rainfall bar chart */}
         <div className="mb-6">
-          <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
-            {t("rain.annual_title")} ({data.year_range[0]}–{data.year_range[1]})
+          <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0">
+            {t("rain.annual_title")} ({data.year_range[0]}-{data.year_range[1]})
           </h3>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mb-2">
+            {t("rain.normal_line")}: {mean} {t("rain.mm")}
+          </p>
           <ResponsiveContainer width="100%" height={180}>
             <BarChart data={data.annual_totals} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
               <XAxis
@@ -123,12 +135,6 @@ export function RainfallTrends() {
                 stroke="#64748b"
                 strokeDasharray="4 4"
                 strokeWidth={1.5}
-                label={{
-                  value: `${t("rain.normal_line")}: ${mean} ${t("rain.mm")}`,
-                  position: "insideTopRight",
-                  fontSize: 10,
-                  fill: "#64748b",
-                }}
               />
               <Bar dataKey="total_mm" radius={[2, 2, 0, 0]} maxBarSize={12}>
                 {data.annual_totals.map((entry) => (
@@ -148,12 +154,16 @@ export function RainfallTrends() {
             <span><span className="inline-block w-2 h-2 rounded-sm bg-emerald-500 mr-1" />{t("rain.normal")}</span>
             <span><span className="inline-block w-2 h-2 rounded-sm bg-blue-500 mr-1" />{">"} 120%</span>
           </div>
+
+          <p className="mt-2 text-xs text-slate-400 dark:text-slate-500 italic">
+            {t("rain.day_zero_note")}
+          </p>
         </div>
 
         {/* Monthly comparison: current year vs normal */}
         <div>
           <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
-            {t("rain.monthly_title")}
+            {t("rain.monthly_title")} - {comparisonYear}
           </h3>
           <ResponsiveContainer width="100%" height={140}>
             <BarChart data={monthlyComparison} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
@@ -163,7 +173,7 @@ export function RainfallTrends() {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 formatter={(value: any, name: any) => [
                   `${value} ${t("rain.mm")}`,
-                  name === "normal" ? t("rain.normal") : t("rain.current_year"),
+                  name === "normal" ? t("rain.normal") : String(comparisonYear),
                 ]}
                 contentStyle={{
                   fontSize: "12px",
@@ -179,7 +189,7 @@ export function RainfallTrends() {
 
           <div className="flex gap-x-4 mt-1 text-xs text-slate-500 dark:text-slate-400">
             <span><span className="inline-block w-2 h-2 rounded-sm bg-slate-400 mr-1" />{t("rain.normal")}</span>
-            <span><span className="inline-block w-2 h-2 rounded-sm bg-blue-500 mr-1" />{t("rain.current_year")}</span>
+            <span><span className="inline-block w-2 h-2 rounded-sm bg-blue-500 mr-1" />{comparisonYear}</span>
           </div>
         </div>
 
