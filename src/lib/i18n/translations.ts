@@ -296,6 +296,21 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.dq_census_shape_desc":     { en: "The census provides only a single lat/lon point per water body, not boundary shapes. Where possible, census records are matched to nearby OpenStreetMap polygons (within 200m) so the actual water body shape is shown and census metadata (ownership, encroachment, capacity) appears in the detail panel. Unmatched census records are shown as small dots at the reported location.", ta: "கணக்கெடுப்பு ஒவ்வொரு நீர்நிலைக்கும் ஒரே ஒரு அட்சரேகை/தீர்க்கரேகை புள்ளியை மட்டுமே வழங்குகிறது, எல்லை வடிவங்களை அல்ல. முடிந்தவரை, கணக்கெடுப்பு பதிவுகள் அருகிலுள்ள OpenStreetMap பல்கோணங்களுடன் (200 மீட்டருக்குள்) பொருத்தப்படுகின்றன, எனவே உண்மையான நீர்நிலை வடிவம் காட்டப்படுகிறது மற்றும் கணக்கெடுப்பு மெட்டாடேட்டா (உரிமை, ஆக்கிரமிப்பு, திறன்) விவர பேனலில் தோன்றும். பொருத்தப்படாத கணக்கெடுப்பு பதிவுகள் புகாரளிக்கப்பட்ட இடத்தில் சிறிய புள்ளிகளாகக் காட்டப்படுகின்றன." },
   "wb_panel.point_location":        { en: "Location marker (census provides coordinates only, not boundary shape)", ta: "இருப்பிடக் குறிப்பான் (கணக்கெடுப்பு ஆயங்களை மட்டுமே வழங்குகிறது, எல்லை வடிவத்தை அல்ல)" },
 
+  // ── Rainfall Trends ─────────────────────────────────────────────────────
+  "rain.title":            { en: "Chennai Rainfall History", ta: "சென்னை மழைவீழ்ச்சி வரலாறு" },
+  "rain.annual_title":     { en: "Annual Rainfall", ta: "ஆண்டு மழைவீழ்ச்சி" },
+  "rain.monthly_title":    { en: "Monthly Pattern (Current Year vs Normal)", ta: "மாத வடிவம் (நடப்பு ஆண்டு vs சாதாரண)" },
+  "rain.normal_line":      { en: "Long-term average", ta: "நீண்டகால சராசரி" },
+  "rain.drought_year":     { en: "Drought year", ta: "வறட்சி ஆண்டு" },
+  "rain.day_zero":         { en: "Day Zero", ta: "நாள் பூஜ்ஜியம்" },
+  "rain.source_note":      { en: "Source: India Meteorological Department gridded rainfall dataset (0.25° resolution)", ta: "ஆதாரம்: இந்திய வானிலை ஆய்வு மையம் கிரிட் மழைவீழ்ச்சி தரவுத்தொகுப்பு (0.25° தெளிவுத்திறன்)" },
+  "rain.total":            { en: "Total", ta: "மொத்தம்" },
+  "rain.normal":           { en: "Normal", ta: "சாதாரணம்" },
+  "rain.current_year":     { en: "This year", ta: "இந்த ஆண்டு" },
+  "rain.mm":               { en: "mm", ta: "மிமீ" },
+  "rain.year":             { en: "Year", ta: "ஆண்டு" },
+  "rain.explore":          { en: "View details", ta: "விவரங்களைக் காண" },
+
   // Open source
   "about.open_source_desc": { en: "Neer Vazhvu is fully open source. The code, data pipeline, and methodology are transparent and available on GitHub. Contributions, bug reports, and data corrections are welcome.", ta: "நீர் வாழ்வு முழுமையாக திறந்த மூலமாக உள்ளது. குறியீடு, தரவு பைப்லைன் மற்றும் முறைமை வெளிப்படையானவை மற்றும் GitHub-ல் கிடைக்கின்றன. பங்களிப்புகள், பிழை அறிக்கைகள் மற்றும் தரவு திருத்தங்கள் வரவேற்கப்படுகின்றன." },
 
