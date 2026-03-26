@@ -525,6 +525,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "lr.comp_river":         { en: "Near Polluted Rivers",          ta: "மாசுபட்ட ஆறுகள் அருகில்" },
   "lr.comp_industrial":    { en: "Near Industrial Sources",       ta: "தொழிற்சாலை ஆதாரங்கள் அருகில்" },
   "lr.comp_type":          { en: "Water Body Type",               ta: "நீர்நிலை வகை" },
+  "lr.comp_census":        { en: "Census Condition",               ta: "கணக்கெடுப்பு நிலை" },
   "lr.score_breakdown":    { en: "Score Breakdown",               ta: "மதிப்பெண் விவரம்" },
   "lr.nearest_lost":       { en: "Nearest lost water body",       ta: "அருகிலுள்ள இழந்த நீர்நிலை" },
   "lr.nearest_river":      { en: "Nearest river station",         ta: "அருகிலுள்ள ஆற்று நிலையம்" },

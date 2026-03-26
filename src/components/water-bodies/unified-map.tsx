@@ -47,12 +47,19 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
   const [lostGeoJSON, setLostGeoJSON] =
     useState<GeoJSON.FeatureCollection | null>(null);
 
-  // Build lookup from osm_id to scored data
-  const scoreLookup = useMemo(() => {
-    const map = new Map<number, ScoredWaterBody>();
-    for (const wb of scoredData) map.set(wb.osm_id, wb);
-    return map;
+  // Build lookup from id to scored data, plus osm_id shortcut
+  const { scoreLookupById, scoreLookupByOsmId } = useMemo(() => {
+    const byId = new Map<string, ScoredWaterBody>();
+    const byOsm = new Map<number, ScoredWaterBody>();
+    for (const wb of scoredData) {
+      byId.set(wb.id, wb);
+      if (wb.osm_id != null) byOsm.set(wb.osm_id, wb);
+    }
+    return { scoreLookupById: byId, scoreLookupByOsmId: byOsm };
   }, [scoredData]);
+
+  // Load rivers GeoJSON and build a name lookup for unnamed water body polygons
+  const [riverNameByOsmId, setRiverNameByOsmId] = useState<Map<number, { name: string; name_ta: string }>>(new Map());
 
   // Match census records to OSM polygons by proximity (200m threshold)
   const { censusMatchByOsmId, unmatchedCensus } = useMemo(() => {
@@ -135,12 +142,77 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
       .catch(console.error);
   }, []);
 
+  // Match unnamed water body polygons to rivers by centroid proximity
+  useEffect(() => {
+    if (!currentGeoJSON) return;
+    fetch("/geojson/chennai-rivers.geojson")
+      .then((r) => r.json())
+      .then((riversGeo: GeoJSON.FeatureCollection) => {
+        // Extract river line sample points with names
+        const riverPoints: { lat: number; lng: number; name: string; name_ta: string }[] = [];
+        for (const feat of riversGeo.features) {
+          const rProps = feat.properties as { name?: string; name_ta?: string };
+          const name = rProps.name || "";
+          const name_ta = rProps.name_ta || "";
+          const addCoords = (coords: number[][]) => {
+            // Sample every 5th point to keep it fast
+            for (let i = 0; i < coords.length; i += 5) {
+              riverPoints.push({ lat: coords[i][1], lng: coords[i][0], name, name_ta });
+            }
+          };
+          const geom = feat.geometry;
+          if (geom.type === "LineString") addCoords((geom as GeoJSON.LineString).coordinates);
+          else if (geom.type === "MultiLineString") {
+            for (const line of (geom as GeoJSON.MultiLineString).coordinates) addCoords(line);
+          }
+        }
+
+        const toRad = (d: number) => (d * Math.PI) / 180;
+        const haversineM = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+          const dlat = toRad(lat2 - lat1), dlng = toRad(lng2 - lng1);
+          const a = Math.sin(dlat / 2) ** 2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dlng / 2) ** 2;
+          return 6371000 * 2 * Math.asin(Math.sqrt(a));
+        };
+
+        const lookup = new Map<number, { name: string; name_ta: string }>();
+        for (const feat of currentGeoJSON.features) {
+          const props = feat.properties as CurrentWaterBodyProperties;
+          // Only match unnamed polygons
+          if (props.name) continue;
+          // Compute centroid
+          const coords = feat.geometry.type === "Polygon"
+            ? (feat.geometry as GeoJSON.Polygon).coordinates[0]
+            : feat.geometry.type === "MultiPolygon"
+            ? (feat.geometry as GeoJSON.MultiPolygon).coordinates[0][0]
+            : null;
+          if (!coords || coords.length === 0) continue;
+          let latSum = 0, lngSum = 0;
+          for (const [lng, lat] of coords) { latSum += lat; lngSum += lng; }
+          const cLat = latSum / coords.length, cLng = lngSum / coords.length;
+
+          // Find nearest river point
+          let bestDist = Infinity, bestName = "", bestNameTa = "";
+          for (const rp of riverPoints) {
+            const d = haversineM(cLat, cLng, rp.lat, rp.lng);
+            if (d < bestDist) { bestDist = d; bestName = rp.name; bestNameTa = rp.name_ta; }
+          }
+          // Within 500m of a river line = label as that river
+          if (bestDist < 500 && bestName) {
+            lookup.set(props.osm_id, { name: bestName, name_ta: bestNameTa });
+          }
+        }
+        setRiverNameByOsmId(lookup);
+      })
+      .catch(console.error);
+  }, [currentGeoJSON]);
+
   // --- Styles ---
 
   const currentStyle = (feature: Feature | undefined) => {
     if (viewMode === "restoration") {
       const osmId = feature?.properties?.osm_id as number | undefined;
-      const scored = osmId ? scoreLookup.get(osmId) : undefined;
+      const scored = osmId ? scoreLookupByOsmId.get(osmId) : undefined;
       const color = scored ? getPriorityColor(scored.priority_level) : "#94a3b8";
       return {
         fillColor: color,
@@ -187,18 +259,31 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
 
   const onEachCurrent = (feature: Feature, layer: Layer) => {
     const props = feature.properties as CurrentWaterBodyProperties;
-    const name =
-      language === "ta"
-        ? (props.name_ta?.trim() || `${t("wb_panel.water_body")} #${props.osm_id}`)
-        : (props.name || t("wb_panel.unnamed"));
+    // Check if this unnamed polygon is near a river
+    const riverInfo = riverNameByOsmId.get(props.osm_id);
+    const name = (() => {
+      if (language === "ta") {
+        return props.name_ta?.trim() || riverInfo?.name_ta || riverInfo?.name || `${t("wb_panel.water_body")} #${props.osm_id}`;
+      }
+      return props.name || riverInfo?.name || t("wb_panel.unnamed");
+    })();
 
     if (viewMode === "restoration") {
-      const scored = scoreLookup.get(props.osm_id);
+      const scored = scoreLookupByOsmId.get(props.osm_id);
       if (scored) {
         const levelLabel = t(`lr.${scored.priority_level}`);
         layer.bindTooltip(
           `<strong>${name}</strong><br/>` +
           `<span style="font-size:11px;color:#64748b">${t("lr.priority_score")}: ${scored.priority_score} · ${levelLabel}</span>`,
+          { sticky: true }
+        );
+      } else {
+        // Unscored polygons (rivers, etc.) - show name
+        const normalizedType = (props.water_type || "water").toLowerCase();
+        const typeLabel = t(`wb_type.${normalizedType}`);
+        const type = typeLabel.startsWith("wb_type.") ? props.water_type || t("wb_panel.water_body") : typeLabel;
+        layer.bindTooltip(
+          `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${type}</span>`,
           { sticky: true }
         );
       }
@@ -360,6 +445,52 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
                         {type}
                         {wb.ownership ? ` · ${wb.ownership}` : ""}
                       </span>
+                    </Tooltip>
+                  </Circle>
+                );
+              })}
+            </LayerGroup>
+          </LayersControl.Overlay>
+        )}
+        {unmatchedCensus.length > 0 && viewMode === "restoration" && (
+          <LayersControl.Overlay name={t("wb_map.census_layer")} checked>
+            <LayerGroup>
+              {unmatchedCensus.map((wb) => {
+                const scored = scoreLookupById.get(`census:${wb.id}`);
+                const color = scored ? getPriorityColor(scored.priority_level) : "#94a3b8";
+                const name = wb.name || t("wb_panel.unnamed");
+                return (
+                  <Circle
+                    key={wb.id}
+                    center={[wb.latitude, wb.longitude]}
+                    radius={CENSUS_RADIUS_M}
+                    pathOptions={{
+                      fillColor: color,
+                      color,
+                      weight: 1.5,
+                      fillOpacity: 0.7,
+                      opacity: 0.9,
+                    }}
+                    eventHandlers={{
+                      click: () => {
+                        onSelectCurrent({
+                          kind: "census",
+                          props: wb,
+                          latlng: [wb.latitude, wb.longitude],
+                        });
+                      },
+                    }}
+                  >
+                    <Tooltip sticky>
+                      <strong>{name}</strong>
+                      {scored && (
+                        <>
+                          <br />
+                          <span style={{ fontSize: "11px", color: "#64748b" }}>
+                            {t("lr.priority_score")}: {scored.priority_score} · {t(`lr.${scored.priority_level}`)}
+                          </span>
+                        </>
+                      )}
                     </Tooltip>
                   </Circle>
                 );

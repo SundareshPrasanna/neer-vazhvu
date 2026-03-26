@@ -110,7 +110,7 @@ export function RestorationRankingTable({ data, onSelect }: RestorationRankingTa
               const color = getPriorityColor(wb.priority_level);
               return (
                 <tr
-                  key={wb.osm_id}
+                  key={wb.id}
                   onClick={() => onSelect(wb)}
                   className="border-b border-slate-100 dark:border-slate-800 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
@@ -146,7 +146,7 @@ export function RestorationRankingTable({ data, onSelect }: RestorationRankingTa
             const color = getPriorityColor(wb.priority_level);
             return (
               <div
-                key={wb.osm_id}
+                key={wb.id}
                 onClick={() => onSelect(wb)}
                 className="px-4 py-3 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800"
               >

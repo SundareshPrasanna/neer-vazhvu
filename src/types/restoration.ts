@@ -1,7 +1,10 @@
 export type PriorityLevel = "critical" | "high" | "moderate" | "low";
 
 export interface ScoredWaterBody {
-  osm_id: number;
+  id: string; // "osm:12345" or "census:67"
+  source: "osm" | "census" | "matched"; // "matched" = has both OSM polygon and census data
+  osm_id: number | null;
+  census_id: number | null;
   name: string;
   name_ta: string;
   water_type: string;
@@ -15,6 +18,7 @@ export interface ScoredWaterBody {
     river_pollution: number;
     industrial_proximity: number;
     type_bonus: number;
+    census_condition: number;
   };
   nearest_lost_body: string | null;
   nearest_lost_body_ta: string | null;
@@ -27,11 +31,20 @@ export interface ScoredWaterBody {
   nearest_industrial_km: number | null;
 }
 
+export interface RiverSection {
+  osm_id: number;
+  name: string;
+  name_ta: string;
+  water_type: string;
+  area_ha: number;
+}
+
 export interface RestorationPriorityData {
   computed_at: string;
   total_scored: number;
   weights: Record<string, number>;
   water_bodies: ScoredWaterBody[];
+  river_sections: RiverSection[];
 }
 
 const PRIORITY_COLORS: Record<PriorityLevel, string> = {

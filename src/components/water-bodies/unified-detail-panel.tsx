@@ -20,11 +20,12 @@ const STATUS_TKEYS: Record<WaterBodyStatus, string> = {
 };
 
 const SCORE_COMPONENTS = [
-  { key: "size"                 as const, tKey: "lr.comp_size",       weight: 0.25, max: 25 },
-  { key: "lost_proximity"      as const, tKey: "lr.comp_lost",       weight: 0.20, max: 20 },
-  { key: "river_pollution"     as const, tKey: "lr.comp_river",      weight: 0.20, max: 20 },
-  { key: "industrial_proximity" as const, tKey: "lr.comp_industrial", weight: 0.15, max: 15 },
-  { key: "type_bonus"          as const, tKey: "lr.comp_type",       weight: 0.20, max: 20 },
+  { key: "size"                 as const, tKey: "lr.comp_size",       weight: 0.20, max: 20 },
+  { key: "lost_proximity"      as const, tKey: "lr.comp_lost",       weight: 0.18, max: 18 },
+  { key: "river_pollution"     as const, tKey: "lr.comp_river",      weight: 0.18, max: 18 },
+  { key: "industrial_proximity" as const, tKey: "lr.comp_industrial", weight: 0.14, max: 14 },
+  { key: "type_bonus"          as const, tKey: "lr.comp_type",       weight: 0.15, max: 15 },
+  { key: "census_condition"    as const, tKey: "lr.comp_census",     weight: 0.15, max: 15 },
 ];
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
@@ -404,6 +405,9 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
             {t("wb_panel.point_location")}
           </p>
         </div>
+
+        {/* Restoration data (when available) */}
+        {restorationData && <RestorationSection wb={restorationData} />}
 
         {/* Source */}
         <div className="px-4 pb-4">
