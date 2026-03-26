@@ -63,6 +63,34 @@
 - Measurement methodology may differ across wards
 - New year datasets require adding the resource ID to the scraper config
 
+## Water Bodies Census — data.gov.in
+
+| | |
+|---|---|
+| **Source** | [First Census of Water Bodies — Tamil Nadu](https://data.gov.in/resource/state-wise-data-first-census-water-bodies-tamil-nadu) (Ministry of Jal Shakti) |
+| **Method** | REST API (data.gov.in Open Government Data Platform) |
+| **Frequency** | One-time / quarterly re-fetch (static 2018-19 census data) |
+| **Coverage** | 305 water bodies in Chennai district |
+| **Fields** | Name, type, ownership, lat/lon, storage capacity (original + present), encroachment status/%, depth, construction year, renovation year, basin/sub-basin, in-use status |
+| **Table** | `water_bodies_census` |
+| **API** | `https://api.data.gov.in/resource/f252ddd7-...?filters[district_name]=CHENNAI` |
+| **Auth** | Free API key from data.gov.in |
+
+**Why this source?**
+- Official government census data — authoritative ownership, encroachment, and capacity information
+- 305 individually geolocated water bodies with lat/lon coordinates
+- Storage capacity degradation (original vs present) shows water body health
+- Encroachment status is unique data not available from OSM
+- Complements the existing 1,635 OSM water body polygons with government metadata
+
+**Known limitations:**
+- Census data is from 2018-19 — not real-time; encroachment and capacity may have changed
+- Some records have missing lat/lon or capacity values (filtered out during import)
+- Storage capacity units in the census may not directly correspond to mcft
+- Not all 305 records will match to an OSM polygon (different names, geometries)
+- Requires a free data.gov.in API key (set `DATA_GOV_IN_API_KEY` env var)
+- To refresh: `POST /pipeline/run-census-fetch` (requires cron auth)
+
 ## River Water Quality -CPCB
 
 | | |

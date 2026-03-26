@@ -172,6 +172,9 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "wb.lost_source_value":  { en: "Care Earth Trust & NGT records",         ta: "Care Earth Trust & NGT பதிவுகள்" },
   "wb.view_bodies":        { en: "Water Bodies",                          ta: "நீர்நிலைகள்" },
   "wb.view_restoration":   { en: "Restoration Priority",                  ta: "மறுசீரமைப்பு முன்னுரிமை" },
+  "wb.census_surveyed":    { en: "govt. surveyed (2018-19)",               ta: "அரசு ஆய்வு (2018-19)" },
+  "wb.census_source":      { en: "Census data from",                      ta: "கணக்கெடுப்பு தரவு:" },
+  "wb.census_source_value": { en: "First Census of Water Bodies, Govt. of India", ta: "நீர்நிலைகளின் முதல் கணக்கெடுப்பு, இந்திய அரசு" },
 
   // ── About Page ────────────────────────────────────────────────────────────
   "about.title":           { en: "About Neer Vazhvu",    ta: "நீர் வாழ்வு பற்றி" },
@@ -282,6 +285,17 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.limit4": { en: "Forecasts use ARIMAX (AutoARIMA with inflow/outflow as exogenous regressors) and work best with 2+ years of daily data.", ta: "முன்கணிப்புகள் ARIMAX (வரத்து/வெளியேற்றத்தை வெளிப்புற மாறிகளாகக் கொண்ட AutoARIMA) பயன்படுத்துகின்றன மற்றும் 2+ ஆண்டு தினசரி தரவுகளுடன் சிறப்பாக செயல்படுகின்றன." },
   "about.limit5": { en: "Risk scores are relative indicators for comparison between wards, not absolute measures of water safety.", ta: "ஆபத்து மதிப்பெண்கள் வார்டுகளுக்கிடையே ஒப்பீட்டிற்கான தொடர்புடைய குறிகாட்டிகள், நீர் பாதுகாப்பின் முழுமையான அளவீடுகள் அல்ல." },
 
+  // Data quality
+  "about.data_quality":          { en: "Known Data Quality Issues", ta: "அறியப்பட்ட தரவு தர சிக்கல்கள்" },
+  "about.dq_intro":              { en: "Government census data is invaluable but not perfect. We document known issues here for transparency. If you spot an error, please report it on GitHub.", ta: "அரசு கணக்கெடுப்பு தரவு மதிப்புமிக்கது ஆனால் சரியானது அல்ல. வெளிப்படைத்தன்மைக்காக அறியப்பட்ட சிக்கல்களை இங்கே ஆவணப்படுத்துகிறோம். பிழையைக் கண்டால், GitHub-ல் தெரிவிக்கவும்." },
+  "about.dq_census_units_title": { en: "Census: Mixed units in water_spread_area", ta: "கணக்கெடுப்பு: water_spread_area-ல் கலப்பு அலகுகள்" },
+  "about.dq_census_units_desc":  { en: "The MoJS census methodology specifies hectares for water spread area, but 39 of 286 Chennai records appear to use square meters instead. Example: RETTAI ERI is recorded as 1,053,177 — this is sq m (~105 ha), confirmed against satellite imagery and Wikipedia (87–114 ha actual). Due to this inconsistency, census markers on the map use a uniform size as location indicators rather than representing actual water body area.", ta: "MoJS கணக்கெடுப்பு நீர் பரப்பளவுக்கு ஹெக்டேர்களைக் குறிப்பிடுகிறது, ஆனால் 286 சென்னை பதிவுகளில் 39 சதுர மீட்டர்களைப் பயன்படுத்துவதாகத் தெரிகிறது. உதாரணம்: ரெட்டை ஏரி 1,053,177 என பதிவு செய்யப்பட்டுள்ளது — இது சதுர மீ (~105 ஹெக்டேர்), செயற்கைக்கோள் படங்கள் மற்றும் விக்கிப்பீடியா (87–114 ஹெக்டேர்) மூலம் உறுதிப்படுத்தப்பட்டது. இந்த முரண்பாட்டின் காரணமாக, வரைபடத்தில் கணக்கெடுப்பு குறிப்பான்கள் உண்மையான நீர்நிலை பரப்பளவைக் காட்டாமல் இருப்பிடக் குறிகாட்டிகளாக ஒரே அளவில் காட்டப்படுகின்றன." },
+  "about.dq_census_capacity_title": { en: "Census: Encroachment vs. storage capacity mismatch", ta: "கணக்கெடுப்பு: ஆக்கிரமிப்பு vs சேமிப்பு திறன் பொருத்தமின்மை" },
+  "about.dq_census_capacity_desc":  { en: "Storage capacity and encroachment were surveyed independently. Some water bodies show 70%+ encroachment but 100% storage capacity remaining — the capacity figure was not revised to reflect lost area. These cases are flagged with an amber warning in the detail panel.", ta: "சேமிப்பு திறன் மற்றும் ஆக்கிரமிப்பு தனித்தனியாக ஆய்வு செய்யப்பட்டன. சில நீர்நிலைகள் 70%+ ஆக்கிரமிப்பு ஆனால் 100% சேமிப்பு திறன் மீதம் காட்டுகின்றன — இழந்த பகுதியை பிரதிபலிக்க திறன் எண் திருத்தப்படவில்லை. இந்த நிகழ்வுகள் விவர பலகத்தில் ஆம்பர் எச்சரிக்கையுடன் குறிக்கப்படுகின்றன." },
+  "about.dq_census_shape_title":    { en: "Census: Point coordinates only, no boundary polygons", ta: "கணக்கெடுப்பு: புள்ளி ஆயங்கள் மட்டுமே, எல்லை பல்கோணங்கள் இல்லை" },
+  "about.dq_census_shape_desc":     { en: "The census provides only a single lat/lon point per water body, not boundary shapes. Where possible, census records are matched to nearby OpenStreetMap polygons (within 200m) so the actual water body shape is shown and census metadata (ownership, encroachment, capacity) appears in the detail panel. Unmatched census records are shown as small dots at the reported location.", ta: "கணக்கெடுப்பு ஒவ்வொரு நீர்நிலைக்கும் ஒரே ஒரு அட்சரேகை/தீர்க்கரேகை புள்ளியை மட்டுமே வழங்குகிறது, எல்லை வடிவங்களை அல்ல. முடிந்தவரை, கணக்கெடுப்பு பதிவுகள் அருகிலுள்ள OpenStreetMap பல்கோணங்களுடன் (200 மீட்டருக்குள்) பொருத்தப்படுகின்றன, எனவே உண்மையான நீர்நிலை வடிவம் காட்டப்படுகிறது மற்றும் கணக்கெடுப்பு மெட்டாடேட்டா (உரிமை, ஆக்கிரமிப்பு, திறன்) விவர பேனலில் தோன்றும். பொருத்தப்படாத கணக்கெடுப்பு பதிவுகள் புகாரளிக்கப்பட்ட இடத்தில் சிறிய புள்ளிகளாகக் காட்டப்படுகின்றன." },
+  "wb_panel.point_location":        { en: "Location marker (census provides coordinates only, not boundary shape)", ta: "இருப்பிடக் குறிப்பான் (கணக்கெடுப்பு ஆயங்களை மட்டுமே வழங்குகிறது, எல்லை வடிவத்தை அல்ல)" },
+
   // Open source
   "about.open_source_desc": { en: "Neer Vazhvu is fully open source. The code, data pipeline, and methodology are transparent and available on GitHub. Contributions, bug reports, and data corrections are welcome.", ta: "நீர் வாழ்வு முழுமையாக திறந்த மூலமாக உள்ளது. குறியீடு, தரவு பைப்லைன் மற்றும் முறைமை வெளிப்படையானவை மற்றும் GitHub-ல் கிடைக்கின்றன. பங்களிப்புகள், பிழை அறிக்கைகள் மற்றும் தரவு திருத்தங்கள் வரவேற்கப்படுகின்றன." },
 
@@ -302,6 +316,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.ds_nasa_desc":        { en: "Fallback weather source. Satellite-derived data for Chennai: precipitation, max/min temperature, and relative humidity. Activated automatically when Open-Meteo is unreachable. 2-day data lag.", ta: "காப்பு வானிலை ஆதாரம். சென்னைக்கான செயற்கைக்கோள் தரவு: மழைவீழ்ச்சி, அதிகபட்ச/குறைந்தபட்ச வெப்பநிலை மற்றும் ஈரப்பதம். Open-Meteo அணுக முடியாதபோது தானாக செயல்படுத்தப்படும். 2 நாள் தரவு தாமதம்." },
   "about.ds_opencity_gw_desc": { en: "Ward-wise depth to water table (metres below ground level) for all 200 GCC wards across 15 zones. Sourced from CGWB/GCC monitoring wells. Data available from 2021 onwards.", ta: "15 மண்டலங்களிலுள்ள அனைத்து 200 GCC வார்டுகளுக்கும் வார்டுவாரியாக நீர்மட்டம் வரையிலான ஆழம் (மீட்டர்களில்). CGWB/GCC கண்காணிப்பு கிணறுகளிலிருந்து. 2021-ல் இருந்து தரவு கிடைக்கிறது." },
   "about.ds_opencity_lake_desc":{ en: "Monthly reservoir storage data (mcft) for all 6 reservoirs, spanning 2003-2021. Used as historical seed for the forecasting model.", ta: "அனைத்து 6 நீர்த்தேக்கங்களுக்கும் மாதாந்திர சேமிப்பு தரவு (mcft), 2003-2021. முன்கணிப்பு மாதிரிக்கான வரலாற்று விதையாக பயன்படுத்தப்படுகிறது." },
+  "about.ds_census_wb_desc":   { en: "305 Chennai water bodies from the First Census of Water Bodies (2018-19) by the Ministry of Jal Shakti. Includes ownership, storage capacity (original vs present), encroachment status, depth, construction year, and basin information. Overlaid as markers on the Water Bodies map.", ta: "ஜல் சக்தி அமைச்சகத்தின் நீர்நிலைகளின் முதல் கணக்கெடுப்பிலிருந்து (2018-19) 305 சென்னை நீர்நிலைகள். உரிமை, சேமிப்பு திறன் (அசல் vs தற்போது), ஆக்கிரமிப்பு நிலை, ஆழம், கட்டுமான ஆண்டு மற்றும் நீர்ப்பிடிப்பு தகவல்கள் அடங்கும். நீர்நிலை வரைபடத்தில் குறிப்பான்களாக மேலடுக்கப்படுகிறது." },
   "about.ds_kaggle_desc":      { en: "15 years of daily reservoir data (2004-2019) compiled by Sudalai Rajkumar. Used as additional historical training data for the forecasting model.", ta: "சுதலை ராஜ்குமாரால் தொகுக்கப்பட்ட 15 ஆண்டு தினசரி நீர்த்தேக்க தரவு (2004-2019). முன்கணிப்பு மாதிரிக்கான கூடுதல் வரலாற்று பயிற்சி தரவாக பயன்படுத்தப்படுகிறது." },
   "about.ds_osm_desc":         { en: "All current water bodies (lakes, tanks, reservoirs, ponds, marshes) within the Chennai metropolitan bounding box. Queried via the Overpass API and saved as a static GeoJSON. 1,635 polygon features, ~95,000 ha total surface. Also source for river polyline geometry (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) and industrial zone polygons in the north Chennai corridor. Data reflects OSM contributor edits as of the last script run.", ta: "சென்னை மெட்ரோபாலிட்டன் எல்லைக்குள் உள்ள அனைத்து நீர்நிலைகள் (ஏரிகள், குளங்கள், நீர்த்தேக்கங்கள், குட்டைகள், சதுப்புநிலங்கள்). Overpass API மூலம் வினவப்பட்டு நிலையான GeoJSON ஆக சேமிக்கப்பட்டது. 1,635 பலகோண அம்சங்கள், ~95,000 ஹெக்டேர் மொத்த மேற்பரப்பு. ஆற்று வரிக்கோட்டு வடிவியல் மற்றும் வடக்கு சென்னை தொழில்மண்டல பலகோணங்களுக்கும் ஆதாரம். கடைசி ஸ்கிரிப்ட் இயக்கத்தின்போது OSM திருத்தங்களை பிரதிபலிக்கிறது." },
   "about.ds_careearth_desc":   { en: "15 manually curated lost or encroached water bodies, compiled from published research, court records, and environmental organisation reports. See the Water Bodies Map section below for per-record provenance.", ta: "வெளியிடப்பட்ட ஆராய்ச்சி, நீதிமன்ற பதிவுகள் மற்றும் சுற்றுச்சூழல் அமைப்பு அறிக்கைகளிலிருந்து தொகுக்கப்பட்ட 15 இழந்த அல்லது ஆக்கிரமிக்கப்பட்ட நீர்நிலைகள். பதிவுக்கு ஆதாரம் கீழே நீர்நிலை வரைபட பகுதியில் காண்க." },
@@ -363,8 +378,15 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "wb_legend.severely_reduced_desc":{ en: ">70% area lost",        ta: ">70% பரப்பு இழந்தது" },
   "wb_legend.encroached":           { en: "Encroached",            ta: "ஆக்கிரமிக்கப்பட்டது" },
   "wb_legend.encroached_desc":      { en: "Partially built over",  ta: "பகுதியாக கட்டிடமாக்கப்பட்டது" },
+  "wb_legend.census_healthy":       { en: "Census: healthy",       ta: "கணக்கெடுப்பு: ஆரோக்கியமான" },
+  "wb_legend.census_healthy_desc":  { en: "Govt. surveyed, in use", ta: "அரசு ஆய்வு, பயன்பாட்டில்" },
+  "wb_legend.census_encroached":    { en: "Census: encroached",    ta: "கணக்கெடுப்பு: ஆக்கிரமிக்கப்பட்டது" },
+  "wb_legend.census_encroached_desc": { en: "Officially encroached", ta: "அதிகாரப்பூர்வமாக ஆக்கிரமிக்கப்பட்டது" },
+  "wb_legend.census_degraded":     { en: "Census: degraded",      ta: "கணக்கெடுப்பு: சிதைந்தது" },
+  "wb_legend.census_degraded_desc": { en: ">50% storage lost",    ta: ">50% சேமிப்பு இழப்பு" },
   "wb_map.existing_layer":          { en: "Existing water bodies", ta: "தற்போதுள்ள நீர்நிலைகள்" },
   "wb_map.lost_layer":              { en: "Lost / encroached",     ta: "இழந்த / ஆக்கிரமிக்கப்பட்டவை" },
+  "wb_map.census_layer":            { en: "Govt. Census (2018-19)", ta: "அரசு கணக்கெடுப்பு (2018-19)" },
   "wb_map.was_area":                { en: "was",                   ta: "முன்பு" },
 
   // ── Water Body Panel ──────────────────────────────────────────────────────
@@ -385,6 +407,20 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "wb_panel.fully_lost":       { en: "Fully Lost",         ta: "முழுவதும் இழந்தது" },
   "wb_panel.severely_reduced": { en: "Severely Reduced",   ta: "கடுமையாக குறைந்தது" },
   "wb_panel.partially_encroached": { en: "Partially Encroached", ta: "பகுதியாக ஆக்கிரமிக்கப்பட்டது" },
+  "wb_panel.census_record":        { en: "Govt. Census",         ta: "அரசு கணக்கெடுப்பு" },
+  "wb_panel.encroached":           { en: "Encroached",            ta: "ஆக்கிரமிக்கப்பட்டது" },
+  "wb_panel.not_in_use":           { en: "Not in Use",            ta: "பயன்பாட்டில் இல்லை" },
+  "wb_panel.ownership":            { en: "Ownership",             ta: "உரிமை" },
+  "wb_panel.nature":               { en: "Nature",                ta: "தன்மை" },
+  "wb_panel.depth":                { en: "Max Depth",             ta: "அதிகபட்ச ஆழம்" },
+  "wb_panel.basin":                { en: "Basin",                 ta: "நீர்ப்பிடிப்பு" },
+  "wb_panel.built":                { en: "Built",                 ta: "கட்டப்பட்ட ஆண்டு" },
+  "wb_panel.storage_capacity":     { en: "Storage Capacity",      ta: "சேமிப்பு திறன்" },
+  "wb_panel.capacity_remaining":   { en: "Capacity remaining",    ta: "மீதமுள்ள திறன்" },
+  "wb_panel.original":             { en: "Original",              ta: "அசல்" },
+  "wb_panel.present":              { en: "Present",               ta: "தற்போது" },
+  "wb_panel.capacity_vs_encroach": { en: "Note: Storage capacity was not revised to reflect encroachment in the census data.", ta: "குறிப்பு: கணக்கெடுப்பு தரவில் ஆக்கிரமிப்பை பிரதிபலிக்கும் வகையில் சேமிப்பு திறன் மாற்றப்படவில்லை." },
+  "wb_panel.census_source_label":  { en: "First Census of Water Bodies (2018-19), Govt. of India", ta: "நீர்நிலைகளின் முதல் கணக்கெடுப்பு (2018-19), இந்திய அரசு" },
   "wb_type.lake":              { en: "Lake",               ta: "ஏரி" },
   "wb_type.tank":              { en: "Tank",               ta: "குளம்" },
   "wb_type.eri":               { en: "Eri",                ta: "ஏரி" },

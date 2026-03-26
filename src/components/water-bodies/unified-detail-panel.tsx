@@ -218,8 +218,200 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
           <Row label={t("wb_panel.osm_id")} value={`#${props.osm_id}`} />
         </div>
 
+        {/* Census data (when matched to an OSM polygon) */}
+        {selected.censusMatch && (() => {
+          const cm = selected.censusMatch;
+          const hasCapacity = cm.storage_capacity_original != null && cm.storage_capacity_original > 0;
+          const capacityPct = hasCapacity && cm.storage_capacity_present != null
+            ? Math.round((cm.storage_capacity_present / cm.storage_capacity_original!) * 100)
+            : null;
+          const isEncroached = cm.encroachment_status === "yes" && (cm.encroachment_pct ?? 0) > 0;
+          const capacityEncroachMismatch = isEncroached && capacityPct != null && capacityPct >= 90;
+
+          return (
+            <div className="border-t border-slate-200 dark:border-slate-700">
+              <div className="px-4 pt-3 pb-1 flex items-center gap-2">
+                <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                  {t("wb_panel.census_record")}
+                </h3>
+                {cm.encroachment_status === "yes" && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
+                    {t("wb_panel.encroached")}
+                    {cm.encroachment_pct != null && ` (${cm.encroachment_pct}%)`}
+                  </span>
+                )}
+                {cm.is_in_use === false && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200">
+                    {t("wb_panel.not_in_use")}
+                  </span>
+                )}
+              </div>
+
+              <div className="px-4 py-3 grid grid-cols-2 gap-4">
+                <Row label={t("wb_panel.ownership")} value={cm.ownership || "-"} />
+                {cm.nature && <Row label={t("wb_panel.nature")} value={cm.nature} />}
+                {cm.max_depth_m != null && (
+                  <Row label={t("wb_panel.depth")} value={`${cm.max_depth_m} m`} />
+                )}
+                {cm.basin && <Row label={t("wb_panel.basin")} value={cm.basin} />}
+                {cm.construction_year != null && cm.construction_year > 0 && (
+                  <Row label={t("wb_panel.built")} value={String(cm.construction_year)} />
+                )}
+              </div>
+
+              {hasCapacity && (
+                <div className="px-4 pb-4">
+                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+                    <span>{t("wb_panel.capacity_remaining")}</span>
+                    <span>{capacityPct ?? 0}%</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${capacityPct ?? 0}%`,
+                        backgroundColor: capacityEncroachMismatch
+                          ? "#f59e0b"
+                          : (capacityPct ?? 0) > 70 ? "#10b981" : (capacityPct ?? 0) > 40 ? "#f59e0b" : "#ef4444",
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-1">
+                    <span>{t("wb_panel.original")}: {cm.storage_capacity_original}</span>
+                    <span>{t("wb_panel.present")}: {cm.storage_capacity_present ?? 0}</span>
+                  </div>
+                  {capacityEncroachMismatch && (
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 leading-snug">
+                      {t("wb_panel.capacity_vs_encroach")}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="px-4 pb-3">
+                <p className="text-xs text-slate-400 dark:text-slate-500">
+                  <span className="font-medium">{t("wb_panel.source")}</span>{" "}
+                  {t("wb_panel.census_source_label")}
+                </p>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Restoration data (always shown when available) */}
         {restorationData && <RestorationSection wb={restorationData} />}
+      </div>
+    );
+  }
+
+  if (selected.kind === "census") {
+    const { props } = selected;
+    const name = props.name || t("wb_panel.unnamed");
+    const type = localizeType(props.water_body_type ?? undefined);
+    const hasCapacity = props.storage_capacity_original != null && props.storage_capacity_original > 0;
+    const capacityPct = hasCapacity && props.storage_capacity_present != null
+      ? Math.round((props.storage_capacity_present / props.storage_capacity_original!) * 100)
+      : null;
+    const isEncroached = props.encroachment_status === "yes" && (props.encroachment_pct ?? 0) > 0;
+    // Flag when encroachment is significant but capacity shows no loss
+    const capacityEncroachMismatch = isEncroached && capacityPct != null && capacityPct >= 90;
+
+    return (
+      <div className="h-full flex flex-col bg-white dark:bg-slate-900 overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-start justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex-1 min-w-0">
+            <h2 className="font-bold text-slate-900 dark:text-slate-100 text-base leading-tight truncate">
+              {name}
+            </h2>
+            {props.village && (
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                {props.village}
+              </p>
+            )}
+          </div>
+          <CloseButton onClose={onClose} ariaLabel={closeAria} />
+        </div>
+
+        {/* Status badges */}
+        <div className="px-4 pt-3 flex flex-wrap gap-2">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200">
+            {t("wb_panel.census_record")}
+          </span>
+          {props.encroachment_status === "yes" && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
+              {t("wb_panel.encroached")}
+              {props.encroachment_pct != null && ` (${props.encroachment_pct}%)`}
+            </span>
+          )}
+          {props.is_in_use === false && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200">
+              {t("wb_panel.not_in_use")}
+            </span>
+          )}
+        </div>
+
+        {/* Basic stats */}
+        <div className="p-4 grid grid-cols-2 gap-4">
+          <Row label={t("wb_panel.type")} value={type} />
+          <Row label={t("wb_panel.ownership")} value={props.ownership || "-"} />
+          {props.nature && <Row label={t("wb_panel.nature")} value={props.nature} />}
+          {props.max_depth_m != null && (
+            <Row label={t("wb_panel.depth")} value={`${props.max_depth_m} m`} />
+          )}
+          {props.basin && <Row label={t("wb_panel.basin")} value={props.basin} />}
+          {props.construction_year != null && props.construction_year > 0 && (
+            <Row label={t("wb_panel.built")} value={String(props.construction_year)} />
+          )}
+        </div>
+
+        {/* Storage capacity bar */}
+        {hasCapacity && (
+          <div className="px-4 pb-4">
+            <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
+              {t("wb_panel.storage_capacity")}
+            </h4>
+            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+              <span>{t("wb_panel.capacity_remaining")}</span>
+              <span>{capacityPct ?? 0}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${capacityPct ?? 0}%`,
+                  backgroundColor: capacityEncroachMismatch
+                    ? "#f59e0b"  // amber — capacity not revised despite encroachment
+                    : (capacityPct ?? 0) > 70 ? "#10b981" : (capacityPct ?? 0) > 40 ? "#f59e0b" : "#ef4444",
+                }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-1">
+              <span>{t("wb_panel.original")}: {props.storage_capacity_original}</span>
+              <span>{t("wb_panel.present")}: {props.storage_capacity_present ?? 0}</span>
+            </div>
+            {capacityEncroachMismatch && (
+              <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 leading-snug">
+                {t("wb_panel.capacity_vs_encroach")}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Point location note */}
+        <div className="px-4 pb-2">
+          <p className="text-xs text-slate-400 dark:text-slate-500 italic">
+            {t("wb_panel.point_location")}
+          </p>
+        </div>
+
+        {/* Source */}
+        <div className="px-4 pb-4">
+          <p className="text-xs text-slate-400 dark:text-slate-500">
+            <span className="font-medium">{t("wb_panel.source")}</span>{" "}
+            {t("wb_panel.census_source_label")}
+          </p>
+        </div>
       </div>
     );
   }

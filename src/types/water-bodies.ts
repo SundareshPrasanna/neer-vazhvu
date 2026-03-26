@@ -34,9 +34,35 @@ export interface LostWaterBodyProperties {
   notes_ta?: string;
 }
 
+export interface CensusWaterBodyProperties {
+  id: number;
+  census_code: string | null;
+  name: string | null;
+  water_body_type: string | null;
+  nature: string | null;
+  ownership: string | null;
+  latitude: number;
+  longitude: number;
+  storage_capacity_original: number | null;
+  storage_capacity_present: number | null;
+  storage_loss_pct: number | null;
+  max_depth_m: number | null;
+  water_spread_area: number | null;
+  construction_year: number | null;
+  renovation_year: number | null;
+  basin: string | null;
+  sub_basin: string | null;
+  is_in_use: boolean | null;
+  encroachment_status: string | null;
+  encroachment_pct: number | null;
+  ward_name: string | null;
+  village: string | null;
+}
+
 export type SelectedWaterBody =
-  | { kind: "current"; props: CurrentWaterBodyProperties; latlng: [number, number] }
-  | { kind: "lost"; props: LostWaterBodyProperties; latlng: [number, number] };
+  | { kind: "current"; props: CurrentWaterBodyProperties; latlng: [number, number]; censusMatch?: CensusWaterBodyProperties }
+  | { kind: "lost"; props: LostWaterBodyProperties; latlng: [number, number] }
+  | { kind: "census"; props: CensusWaterBodyProperties; latlng: [number, number] };
 
 export const STATUS_LABELS: Record<WaterBodyStatus, string> = {
   fully_lost: "Fully Lost",

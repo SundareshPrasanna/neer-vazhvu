@@ -22,7 +22,7 @@ graph TB
     end
 
     subgraph Database ["Supabase (PostgreSQL)"]
-        Core["Core Tables<br/>reservoir_daily<br/>weather_daily<br/>groundwater_monthly"]
+        Core["Core Tables<br/>reservoir_daily<br/>weather_daily<br/>groundwater_monthly<br/>water_bodies_census"]
         Computed["Computed Tables<br/>water_estimate_daily<br/>reservoir_forecast<br/>ward_risk_score<br/>daily_briefing"]
         Log["pipeline_log"]
     end
@@ -101,6 +101,7 @@ flowchart LR
 | Forecast | StatsForecast ARIMAX | `reservoir_forecast` | Daily |
 | Risk Scores | Groundwater + reservoir stress | `ward_risk_score` | Monthly |
 | Briefing | Template-based rules | `daily_briefing` | Daily |
+| Fetch Census | data.gov.in (Water Bodies Census) | `water_bodies_census` | One-time / periodic |
 
 ## Data Model
 
@@ -176,6 +177,20 @@ erDiagram
         json key_metrics
         json alerts
         json recommendations
+    }
+
+    water_bodies_census {
+        text census_code PK
+        text name
+        text water_body_type
+        text ownership
+        float latitude
+        float longitude
+        float storage_capacity_original
+        float storage_capacity_present
+        float storage_loss_pct
+        text encroachment_status
+        float encroachment_pct
     }
 
     reservoir_daily ||--o{ water_estimate_daily : "aggregated into"

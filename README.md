@@ -90,6 +90,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 | [Open-Meteo](https://open-meteo.com/) | Precipitation, temperature, humidity, ET₀, wind speed | Daily (zero lag) |
 | [NASA POWER](https://power.larc.nasa.gov/) | Precipitation, temperature, humidity (fallback) | Daily (2-day lag) |
 | [OpenCity Chennai](https://data.opencity.in/) | Ward-wise groundwater levels (200 wards) | Monthly |
+| [First Census of Water Bodies (data.gov.in)](https://data.gov.in/resource/state-wise-data-first-census-water-bodies-tamil-nadu) | 305 Chennai water bodies — ownership, capacity, encroachment | One-time fetch |
 | [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
 | [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry + industrial zone polygons | One-time fetch |
 | Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
@@ -386,6 +387,7 @@ Please open an issue first to discuss significant changes.
 - **[Open-Meteo](https://open-meteo.com/)** for free, zero-lag weather data with evapotranspiration
 - **NASA POWER** for free, open weather data (fallback source)
 - **OpenCity Chennai** for ward-level groundwater datasets
+- **[data.gov.in](https://data.gov.in/)** / **Ministry of Jal Shakti** for the First Census of Water Bodies (2018-19)
 - **GCC** for ward boundary delimitation data
 - **OpenStreetMap contributors** for water body polygon and river geometry data
 - **Care Earth Trust** for comprehensive water body surveys and documentation
