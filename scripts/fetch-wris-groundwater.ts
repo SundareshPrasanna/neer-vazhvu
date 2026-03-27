@@ -61,7 +61,7 @@ interface NormalizedBlock {
 // Normalize block names across years (2011-2017 had sub-blocks like "Mambalam - Guindy-I")
 function normalizeBlockName(raw: string): string {
   // Remove trailing roman numeral suffixes and clean up
-  let name = raw.trim();
+  const name = raw.trim();
 
   // Map old compound names to 2024 block names
   const mappings: Record<string, string> = {
