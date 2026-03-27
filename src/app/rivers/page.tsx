@@ -48,6 +48,12 @@ export default function RiversPage() {
         setQualityData(quality);
         setPollutionData(pollution);
         setLoading(false);
+        // Pre-select Cooum (most polluted) so users see the panel on load
+        const cooum = quality.rivers.find((r: { id: string }) => r.id === "cooum");
+        if (cooum && cooum.stations.length > 0) {
+          const s = cooum.stations[0];
+          setSelectedRiver({ riverId: "cooum", stationId: s.id, latlng: [s.lat, s.lng] });
+        }
       })
       .catch(() => setLoading(false));
   }, []);
@@ -142,7 +148,7 @@ export default function RiversPage() {
 
         {/* Detail panel  -  bottom sheet on mobile, sidebar on desktop */}
         {hasPanel && (
-          <div className="h-[45vh] md:h-full md:w-80 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+          <div className="h-[45vh] md:h-full md:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
             {selectedRiver && (
               <RiverPanel
                 key={`${selectedRiver.riverId}-${selectedRiver.stationId ?? ""}`}

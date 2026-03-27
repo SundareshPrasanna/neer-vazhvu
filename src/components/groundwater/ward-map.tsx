@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip } from "react-leaflet";
+import { MapResizer } from "@/components/map-resizer";
 import type { Layer, LeafletMouseEvent } from "leaflet";
 import type { Feature } from "geojson";
 import { getGroundwaterColor, getRiskColor, getBlockClassColor } from "@/types/groundwater";
@@ -149,6 +150,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
       className="h-full w-full"
       scrollWheelZoom={true}
     >
+      <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {viewMode === "exploitation" ? (
         <>

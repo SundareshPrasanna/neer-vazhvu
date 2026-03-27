@@ -69,7 +69,25 @@ export default function WaterBodiesPage() {
   useEffect(() => {
     fetch("/data/restoration-priority.json")
       .then((r) => r.json())
-      .then((d: RestorationPriorityData) => setRestorationData(d))
+      .then((d: RestorationPriorityData) => {
+        setRestorationData(d);
+        // Pre-select Chembarambakkam Lake so users see the panel on load
+        const chembarambakkam = d.water_bodies.find((w) => w.osm_id === 25453624);
+        if (chembarambakkam) {
+          setSelected({
+            kind: "current",
+            props: {
+              osm_id: chembarambakkam.osm_id!,
+              osm_type: "",
+              name: chembarambakkam.name,
+              name_ta: chembarambakkam.name_ta,
+              water_type: chembarambakkam.water_type,
+              area_ha: chembarambakkam.area_ha,
+            },
+            latlng: chembarambakkam.centroid,
+          });
+        }
+      })
       .catch(console.error);
   }, []);
 
@@ -289,7 +307,7 @@ export default function WaterBodiesPage() {
             </div>
           </div>
           {selected && (
-            <div className="h-[45vh] md:h-full md:w-80 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+            <div className="h-[45vh] md:h-full md:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
               <UnifiedDetailPanel
                 selected={selected}
                 restorationData={selectedRestoration}
@@ -310,7 +328,7 @@ export default function WaterBodiesPage() {
             )}
           </div>
           {selected && (
-            <div className="h-[45vh] md:h-full md:w-80 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+            <div className="h-[45vh] md:h-full md:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
               <UnifiedDetailPanel
                 selected={selected}
                 restorationData={selectedRestoration}

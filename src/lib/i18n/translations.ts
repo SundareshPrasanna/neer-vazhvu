@@ -172,6 +172,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "rivers.metals_title":   { en: "Heavy Metals", ta: "கனரக உலோகங்கள்" },
   "rivers.metals_desc":    { en: "Chromium, Lead, Cadmium from industrial discharge. Toxic even at trace levels. Accumulates in fish and sediment.", ta: "தொழிற்சாலை வெளியேற்றத்தின் குரோமியம், ஈயம், காட்மியம். சிறிய அளவிலும் நச்சு. மீன் மற்றும் வண்டலில் குவிகிறது." },
   "rivers.pollution_profile": { en: "Pollution Profile", ta: "மாசு விவரக்குறிப்பு" },
+  "rivers.limit":          { en: "limit", ta: "வரம்பு" },
+  "rivers.limits":         { en: "limits", ta: "வரம்புகள்" },
   "rivers.sewage":         { en: "Sewage",     ta: "கழிவுநீர்" },
   "rivers.industrial":     { en: "Industrial", ta: "தொழிற்சாலை" },
   "rivers.source":         { en: "Source:",       ta: "ஆதாரம்:" },
