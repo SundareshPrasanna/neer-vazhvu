@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/lib/i18n/context";
-import { HAZARD_COLORS, VULNERABILITY_COLORS, DRAINAGE_COLORS } from "@/types/flood-risk";
+import { HAZARD_COLORS, VULNERABILITY_COLORS, DRAINAGE_COLORS, SEWERAGE_COLORS } from "@/types/flood-risk";
 import type {
   SelectedFloodFeature,
   HazardCategory,
@@ -11,6 +11,9 @@ import type {
   Hotspot2020Properties,
   DrainageProperties,
   ReturnPeriodProperties,
+  STPProperties,
+  SPSProperties,
+  PumpingMainProperties,
 } from "@/types/flood-risk";
 
 interface FloodDetailPanelProps {
@@ -32,6 +35,9 @@ export function FloodDetailPanel({ selected, onClose }: FloodDetailPanelProps) {
           {selected.kind === "hotspot2020" && t("flood.flood_hotspot")}
           {selected.kind === "drainage" && t("flood.drainage_feature")}
           {selected.kind === "return_period" && t("flood.return_period")}
+          {selected.kind === "stp" && t("flood.stp_name")}
+          {selected.kind === "sps" && t("flood.sps_name")}
+          {selected.kind === "pumping_main" && t("flood.legend_pm")}
         </h3>
         <button
           onClick={onClose}
@@ -50,6 +56,9 @@ export function FloodDetailPanel({ selected, onClose }: FloodDetailPanelProps) {
         {selected.kind === "hotspot2020" && <Hotspot2020Content props={selected.props as Hotspot2020Properties} />}
         {selected.kind === "drainage" && <DrainageContent props={selected.props as DrainageProperties} />}
         {selected.kind === "return_period" && <ReturnPeriodContent props={selected.props as ReturnPeriodProperties} />}
+        {selected.kind === "stp" && <STPContent props={selected.props as STPProperties} />}
+        {selected.kind === "sps" && <SPSContent props={selected.props as SPSProperties} />}
+        {selected.kind === "pumping_main" && <PumpingMainContent props={selected.props as PumpingMainProperties} />}
       </div>
     </div>
   );
@@ -269,6 +278,120 @@ function ReturnPeriodContent({ props }: { props: { return_period: number; risk_l
       </div>
       <p className="text-xs text-slate-400 dark:text-slate-500">
         {t("flood.hazard_source")}
+      </p>
+    </>
+  );
+}
+
+function STPContent({ props }: { props: STPProperties }) {
+  const { t } = useLanguage();
+  return (
+    <>
+      <div>
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SEWERAGE_COLORS.stp }} />
+          <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{props.name}</span>
+        </div>
+      </div>
+      {props.capacity_mld != null && props.capacity_mld > 0 && (
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.capacity")}</div>
+          <div className="text-2xl font-bold font-mono text-green-600 dark:text-green-400">
+            {props.capacity_mld} <span className="text-sm font-normal">MLD</span>
+          </div>
+        </div>
+      )}
+      {props.effluent && (
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">Effluent quality</div>
+          <div className="text-sm text-slate-700 dark:text-slate-300">{props.effluent}</div>
+        </div>
+      )}
+      {props.road && (
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.location")}</div>
+          <div className="text-sm text-slate-700 dark:text-slate-300">{props.road}</div>
+        </div>
+      )}
+      <p className="text-xs text-slate-400 dark:text-slate-500">
+        Source: CMWSSB Sewerage Collection System
+      </p>
+    </>
+  );
+}
+
+function SPSContent({ props }: { props: SPSProperties }) {
+  const { t } = useLanguage();
+  return (
+    <>
+      <div>
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: SEWERAGE_COLORS.sps }} />
+          <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{props.name}</span>
+        </div>
+      </div>
+      {props.stp_name && (
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.feeds_to")}</div>
+          <div className="text-sm font-medium text-green-600 dark:text-green-400">{props.stp_name}</div>
+        </div>
+      )}
+      {props.streets_served != null && props.streets_served > 0 && (
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.streets_served")}</div>
+          <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.streets_served}</div>
+        </div>
+      )}
+      {props.road && (
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.location")}</div>
+          <div className="text-sm text-slate-700 dark:text-slate-300">{props.road}</div>
+        </div>
+      )}
+      <p className="text-xs text-slate-400 dark:text-slate-500">
+        Source: CMWSSB Sewerage Collection System
+      </p>
+    </>
+  );
+}
+
+function PumpingMainContent({ props }: { props: PumpingMainProperties }) {
+  const { t } = useLanguage();
+  return (
+    <>
+      <div className="space-y-2">
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.origin")}</div>
+          <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{props.origin || "-"}</div>
+        </div>
+        <div className="text-center text-slate-400">&darr;</div>
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.destination")}</div>
+          <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{props.destination || "-"}</div>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        {props.size_mm != null && (
+          <div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.pipe_size")}</div>
+            <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.size_mm} mm</div>
+          </div>
+        )}
+        {props.length_m != null && (
+          <div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.pipe_length")}</div>
+            <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.length_m} m</div>
+          </div>
+        )}
+      </div>
+      {props.material && (
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.material")}</div>
+          <div className="text-sm text-slate-700 dark:text-slate-300">{props.material}</div>
+        </div>
+      )}
+      <p className="text-xs text-slate-400 dark:text-slate-500">
+        Source: CMWSSB Sewage Pumping Network
       </p>
     </>
   );

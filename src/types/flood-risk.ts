@@ -1,6 +1,6 @@
 /* ── Flood Risk types and constants ─────────────────────────── */
 
-export type FloodViewMode = "hazard" | "historical" | "drainage";
+export type FloodViewMode = "hazard" | "historical" | "drainage" | "sewerage";
 
 export type HazardCategory = "very_high" | "high" | "moderate" | "low" | "very_low";
 
@@ -95,6 +95,48 @@ export interface ReturnPeriodProperties {
   risk_level: string;
 }
 
+/* ── Sewerage property interfaces ──────────────────────────── */
+
+export type SewerageLayer = "stp" | "sps" | "pumping_main";
+
+export interface STPProperties {
+  layer: "stp";
+  name: string;
+  capacity_mld: number | null;
+  treatment_process: string;
+  road: string;
+  effluent: string;
+  disposal_point: string;
+}
+
+export interface SPSProperties {
+  layer: "sps";
+  name: string;
+  stp_name: string;
+  category: string;
+  type: string;
+  road: string;
+  streets_served: number | null;
+  ground_water_level: string;
+}
+
+export interface PumpingMainProperties {
+  layer: "pumping_main";
+  origin: string;
+  destination: string;
+  material: string;
+  size_mm: number | null;
+  length_m: number | null;
+}
+
+export type SewerageProperties = STPProperties | SPSProperties | PumpingMainProperties;
+
+export const SEWERAGE_COLORS: Record<SewerageLayer, string> = {
+  stp: "#16a34a",
+  sps: "#7c3aed",
+  pumping_main: "#ea580c",
+};
+
 /* ── Selected feature discriminated union ──────────────────── */
 
 export type SelectedFloodFeature =
@@ -103,4 +145,7 @@ export type SelectedFloodFeature =
   | { kind: "hotspot2015"; props: Hotspot2015Properties; latlng: [number, number] }
   | { kind: "hotspot2020"; props: Hotspot2020Properties; latlng: [number, number] }
   | { kind: "drainage"; props: DrainageProperties; latlng: [number, number] }
-  | { kind: "return_period"; props: ReturnPeriodProperties; latlng: [number, number] };
+  | { kind: "return_period"; props: ReturnPeriodProperties; latlng: [number, number] }
+  | { kind: "stp"; props: STPProperties; latlng: [number, number] }
+  | { kind: "sps"; props: SPSProperties; latlng: [number, number] }
+  | { kind: "pumping_main"; props: PumpingMainProperties; latlng: [number, number] };

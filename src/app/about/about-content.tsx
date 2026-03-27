@@ -225,6 +225,12 @@ export function AboutContent() {
             description={t("about.ds_swd_desc")}
             frequency={t("about.freq_static")}
           />
+          <DataSource
+            name="CMWSSB Sewerage Network"
+            url="https://data.opencity.in/dataset/chennai-sewerage-collection-system"
+            description={t("about.ds_sewerage_desc")}
+            frequency={t("about.freq_static")}
+          />
         </div>
       </section>
 

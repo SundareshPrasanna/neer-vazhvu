@@ -107,6 +107,23 @@ export default function FloodRiskPage() {
             </p>
           </>
         )}
+
+        {viewMode === "sewerage" && (
+          <>
+            <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
+              <span className="font-semibold text-slate-900 dark:text-slate-100">8</span> {t("flood.stp_count")}
+            </span>
+            <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
+              <span className="font-semibold text-slate-900 dark:text-slate-100">348</span> {t("flood.sps_count")}
+            </span>
+            <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
+              <span className="font-semibold text-slate-900 dark:text-slate-100">3,834</span> {t("flood.pm_count")}
+            </span>
+            <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
+              {t("flood.tagline_sewerage")}
+            </p>
+          </>
+        )}
       </div>
 
       {/* View toggle bar */}
@@ -129,7 +146,11 @@ export default function FloodRiskPage() {
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {t("flood.source_flood")}{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-300">
-                {viewMode === "drainage" ? t("flood.source_gcc") : t("flood.source_opencity")}
+                {viewMode === "drainage"
+                  ? t("flood.source_gcc")
+                  : viewMode === "sewerage"
+                    ? t("flood.source_cmwssb")
+                    : t("flood.source_opencity")}
               </span>
             </div>
           </div>

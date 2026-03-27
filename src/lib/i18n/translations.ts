@@ -380,6 +380,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
 
   "about.ds_flood_desc":      { en: "CFLOWS model flood hazard zones (5 categories), 2015 Chennai flood hotspots with vulnerability ratings, 2015 inundation depth readings, 2020 Cyclone Nivar hotspots, and return period flood maps (5-200yr).", ta: "CFLOWS மாதிரி வெள்ள ஆபத்து மண்டலங்கள் (5 வகைகள்), 2015 சென்னை வெள்ள புள்ளிகள், 2015 நீர்மூழ்கு ஆழ அளவீடுகள், 2020 சூறாவளி நிவர் புள்ளிகள், மற்றும் திரும்ப காலம் வெள்ள வரைபடங்கள் (5-200 ஆண்டு)." },
   "about.ds_swd_desc":        { en: "10,308 official storm water drain segments from GCC survey (2023) across 197 wards, with street name, drain type, depth, width, length, material, and condition status.", ta: "GCC ஆய்வின் (2023) 197 வார்டுகளில் 10,308 அதிகாரபூர்வ மழைநீர் வடிகால் பகுதிகள், தெரு பெயர், வடிகால் வகை, ஆழம், அகலம், நீளம், பொருள் மற்றும் நிலை." },
+  "about.ds_sewerage_desc":   { en: "CMWSSB sewerage infrastructure: 8 sewage treatment plants (STPs) with capacity, 348 pumping stations (SPS) linked to STPs, and 3,834 pumping main segments with pipe material and size.", ta: "CMWSSB கழிவுநீர் உள்கட்டமைப்பு: 8 கழிவுநீர் சுத்திகரிப்பு நிலையங்கள் (STP), 348 பம்பிங் நிலையங்கள் (SPS), மற்றும் 3,834 பம்பிங் முக்கிய குழாய் பகுதிகள்." },
 
   // ── Rivers page ───────────────────────────────────────────────────────────
   "rivers_page.loading":      { en: "Loading river data...",          ta: "ஆற்று தரவு ஏற்றுகிறது..." },
@@ -668,4 +669,26 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "flood.material":         { en: "Material",                      ta: "பொருள்" },
   "flood.source_gcc":       { en: "GCC",                            ta: "GCC" },
   "flood.source_osm":       { en: "OpenStreetMap",                  ta: "OpenStreetMap" },
+
+  // Sewerage view mode
+  "flood.sewerage":         { en: "Sewerage",                       ta: "கழிவுநீர்" },
+  "flood.view_sewerage":    { en: "Sewerage Network",               ta: "கழிவுநீர் வலையமைப்பு" },
+  "flood.tagline_sewerage": { en: "CMWSSB sewerage infrastructure", ta: "CMWSSB கழிவுநீர் உள்கட்டமைப்பு" },
+  "flood.legend_sewerage":  { en: "Sewerage Network",               ta: "கழிவுநீர் வலையமைப்பு" },
+  "flood.legend_stp":       { en: "Treatment Plant (STP)",          ta: "சுத்திகரிப்பு நிலையம்" },
+  "flood.legend_sps":       { en: "Pumping Station (SPS)",          ta: "பம்பிங் நிலையம்" },
+  "flood.legend_pm":        { en: "Pumping Main",                   ta: "பம்பிங் முக்கிய குழாய்" },
+  "flood.stp_count":        { en: "treatment plants",               ta: "சுத்திகரிப்பு நிலையங்கள்" },
+  "flood.sps_count":        { en: "pumping stations",               ta: "பம்பிங் நிலையங்கள்" },
+  "flood.pm_count":         { en: "pumping mains",                  ta: "பம்பிங் முக்கிய குழாய்கள்" },
+  "flood.source_cmwssb":    { en: "CMWSSB",                         ta: "CMWSSB" },
+  "flood.stp_name":         { en: "Treatment Plant",                ta: "சுத்திகரிப்பு நிலையம்" },
+  "flood.sps_name":         { en: "Pumping Station",                ta: "பம்பிங் நிலையம்" },
+  "flood.capacity":         { en: "Capacity",                       ta: "கொள்ளளவு" },
+  "flood.feeds_to":         { en: "Feeds to",                       ta: "இணைக்கும்" },
+  "flood.streets_served":   { en: "Streets served",                 ta: "சேவை செய்யும் தெருக்கள்" },
+  "flood.pipe_size":        { en: "Pipe size",                      ta: "குழாய் அளவு" },
+  "flood.origin":           { en: "From",                           ta: "இலிருந்து" },
+  "flood.destination":      { en: "To",                             ta: "நோக்கி" },
+  "flood.pipe_length":      { en: "Length",                         ta: "நீளம்" },
 };

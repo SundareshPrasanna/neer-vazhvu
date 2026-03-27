@@ -1,8 +1,8 @@
 "use client";
 
 import { useLanguage } from "@/lib/i18n/context";
-import { HAZARD_COLORS, DRAINAGE_COLORS } from "@/types/flood-risk";
-import type { FloodViewMode, HazardCategory } from "@/types/flood-risk";
+import { HAZARD_COLORS, DRAINAGE_COLORS, SEWERAGE_COLORS } from "@/types/flood-risk";
+import type { FloodViewMode, HazardCategory, SewerageLayer } from "@/types/flood-risk";
 
 const HAZARD_ITEMS: Array<{ cat: HazardCategory; key: string }> = [
   { cat: "very_high", key: "flood.very_high" },
@@ -34,7 +34,9 @@ export function FloodLegend({ viewMode }: FloodLegendProps) {
           ? t("flood.legend_hazard")
           : viewMode === "historical"
             ? t("flood.legend_impact")
-            : t("flood.legend_drainage")}
+            : viewMode === "sewerage"
+              ? t("flood.legend_sewerage")
+              : t("flood.legend_drainage")}
       </h4>
       <div className="space-y-1">
         {viewMode === "hazard" &&
@@ -87,6 +89,38 @@ export function FloodLegend({ viewMode }: FloodLegendProps) {
               <span className="w-4 h-0 border-t-2 border-cyan-500" />
               <span className="font-medium text-slate-700 dark:text-slate-300">
                 {t("flood.legend_river")}
+              </span>
+            </div>
+          </>
+        )}
+
+        {viewMode === "sewerage" && (
+          <>
+            <div className="flex items-center gap-2 text-xs">
+              <span
+                className="w-4 h-3 rounded-sm border"
+                style={{ backgroundColor: SEWERAGE_COLORS.stp + "80", borderColor: SEWERAGE_COLORS.stp }}
+              />
+              <span className="font-medium text-slate-700 dark:text-slate-300">
+                {t("flood.legend_stp")}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span
+                className="w-3 h-3 rounded-full border"
+                style={{ backgroundColor: SEWERAGE_COLORS.sps + "80", borderColor: SEWERAGE_COLORS.sps }}
+              />
+              <span className="font-medium text-slate-700 dark:text-slate-300">
+                {t("flood.legend_sps")}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span
+                className="w-4 h-0 border-t-2"
+                style={{ borderColor: SEWERAGE_COLORS.pumping_main }}
+              />
+              <span className="font-medium text-slate-700 dark:text-slate-300">
+                {t("flood.legend_pm")}
               </span>
             </div>
           </>

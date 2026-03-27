@@ -272,6 +272,37 @@
 - Drain depth/width values are nominal design values, not field measurements
 - File size is 4.3MB; may be slow to render all 10,308 segments on lower-end devices
 
+## CMWSSB Sewerage Network
+
+| | |
+|---|---|
+| **Source** | [Chennai Sewerage Collection System](https://data.opencity.in/dataset/chennai-sewerage-collection-system) + [Chennai Sewage Pumping Network](https://data.opencity.in/dataset/chennai-sewage-pumping-network) + [Chennai Sewage Treatment Plants](https://data.opencity.in/dataset/chennai-sewage-treatment-plants) |
+| **Method** | KML/KMZ download + Python conversion to GeoJSON (`scripts/convert-sewerage-kml.py`) |
+| **Frequency** | Static (CMWSSB infrastructure data) |
+| **Coverage** | City-wide sewerage infrastructure |
+| **Features** | 4,190 features: 8 STPs + 348 pumping stations + 3,834 pumping main segments |
+| **File** | `public/geojson/chennai-sewerage.geojson` (~1.2 MB) |
+
+**Layers:**
+
+| Layer | Count | Geometry | Key fields |
+|-------|-------|----------|------------|
+| Treatment Plants (STP) | 8 | Point (centroid) | Name, capacity (MLD), effluent quality, disposal point |
+| Pumping Stations (SPS) | 348 | Point (centroid) | Name, linked STP, streets served, ground water level |
+| Pumping Mains | 3,834 | LineString | Origin SPS/STP, destination SPS/STP, pipe material, pipe size (mm) |
+
+**Why this source?**
+- Official CMWSSB infrastructure data - the only source for sewerage network geometry in Chennai
+- SPS-to-STP linkage shows how sewage flows through the city
+- Pipe material and size codes decoded from CMWSSB lookup tables
+- Directly relevant to flood risk: SPS failures during floods cause raw sewage overflows
+
+**Known limitations:**
+- The full sewer main network (181,147 segments, 237 MB KML) is too large for web delivery; only trunk infrastructure (STPs, SPS, pumping mains) is included
+- Release points (372,223 individual household connections) are excluded for the same reason
+- Some STP capacity values are missing in the source data
+- Pipe material and size are stored as codes in the source; decoded using the sewer-codes.txt lookup table
+
 ## Restoration Priority Scores -Computed
 
 | | |

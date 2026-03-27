@@ -12,6 +12,7 @@ const MODES: Array<{ mode: FloodViewMode; key: string }> = [
   { mode: "hazard", key: "flood.view_hazard" },
   { mode: "historical", key: "flood.view_historical" },
   { mode: "drainage", key: "flood.view_drainage" },
+  { mode: "sewerage", key: "flood.view_sewerage" },
 ];
 
 export function FloodViewToggle({ value, onChange }: FloodViewToggleProps) {
