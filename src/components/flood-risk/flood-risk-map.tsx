@@ -53,6 +53,7 @@ export function FloodRiskMap({
   const [hotspot2020Geo, setHotspot2020Geo] = useState<GeoJSON.FeatureCollection | null>(null);
   const [drainageGeo, setDrainageGeo] = useState<GeoJSON.FeatureCollection | null>(null);
   const [riversGeo, setRiversGeo] = useState<GeoJSON.FeatureCollection | null>(null);
+  const [wardsGeo, setWardsGeo] = useState<GeoJSON.FeatureCollection | null>(null);
 
   // Fetch data on mount
   useEffect(() => {
@@ -85,6 +86,11 @@ export function FloodRiskMap({
       .then((r) => r.json())
       .then(setRiversGeo)
       .catch(console.error);
+
+    fetch("/geojson/chennai-wards-2022.geojson")
+      .then((r) => r.json())
+      .then(setWardsGeo)
+      .catch(console.error);
   }, []);
 
   // Hazard zone style
@@ -103,9 +109,15 @@ export function FloodRiskMap({
     []
   );
 
-  // Hazard click handler
+  // Hazard click + hover handler
   const onEachHazard = useCallback(
     (feature: Feature, layer: Layer) => {
+      const cat = (feature.properties?.category ?? "low") as HazardCategory;
+      const label = t(`flood.${cat}`);
+      layer.bindTooltip(label, {
+        sticky: true,
+        className: "leaflet-tooltip-custom",
+      });
       layer.on("click", (e) => {
         const latlng = e.latlng;
         onSelect({
@@ -115,7 +127,7 @@ export function FloodRiskMap({
         });
       });
     },
-    [onSelect]
+    [onSelect, t]
   );
 
   // Drainage style
@@ -173,6 +185,30 @@ export function FloodRiskMap({
     []
   );
 
+  // Ward boundary style - thin dashed outlines for area context
+  const wardStyle = useCallback(() => ({
+    color: "#475569",
+    weight: 1.5,
+    opacity: 0.5,
+    fillOpacity: 0,
+    dashArray: "4 4",
+  }), []);
+
+  const onEachWard = useCallback(
+    (feature: Feature, layer: Layer) => {
+      const props = feature.properties;
+      const zoneName = props?.Zone_Name ?? "";
+      const wardNo = props?.Ward_No ?? "";
+      if (zoneName) {
+        layer.bindTooltip(`${zoneName} - Ward ${wardNo}`, {
+          sticky: true,
+          className: "leaflet-tooltip-custom",
+        });
+      }
+    },
+    []
+  );
+
   return (
     <MapContainer
       center={CHENNAI_CENTER}
@@ -183,6 +219,16 @@ export function FloodRiskMap({
     >
       <MapResizer />
       <TileLayer url={tiles.url} attribution={tiles.attribution} />
+
+      {/* ── Ward boundaries (all modes) ───────── */}
+      {wardsGeo && (
+        <GeoJSON
+          key="ward-boundaries"
+          data={wardsGeo}
+          style={wardStyle}
+          onEachFeature={onEachWard}
+        />
+      )}
 
       {/* ── Hazard mode ─────────────────────────── */}
       {viewMode === "hazard" && hazardGeo && (
