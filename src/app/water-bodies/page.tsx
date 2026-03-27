@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { Suspense, useEffect, useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { UnifiedDetailPanel } from "@/components/water-bodies/unified-detail-panel";
@@ -36,8 +37,19 @@ interface LostGeoJSON {
 const PRIORITY_LEVELS = ["critical", "high", "moderate", "low"] as const;
 
 export default function WaterBodiesPage() {
+  return (
+    <Suspense>
+      <WaterBodiesPageContent />
+    </Suspense>
+  );
+}
+
+function WaterBodiesPageContent() {
   const { t } = useLanguage();
-  const [viewMode, setViewMode] = useState<ViewMode>("water-bodies");
+  const searchParams = useSearchParams();
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    searchParams.get("mode") === "restoration" ? "restoration" : "water-bodies"
+  );
   const [selected, setSelected] = useState<SelectedWaterBody | null>(null);
   const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
   const [lostStats, setLostStats] = useState<{ lostCount: number; totalHaLost: number } | null>(null);
@@ -203,7 +215,7 @@ export default function WaterBodiesPage() {
               </div>
             )}
             <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
-              {t("wb.tagline")}
+              {t("wb.tagline").replace("{lostCount}", String(lostStats?.lostCount ?? 15))}
             </p>
           </>
         ) : (
@@ -229,7 +241,7 @@ export default function WaterBodiesPage() {
               </div>
             ))}
             <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
-              {t("lr.tagline")}
+              {t("lr.tagline").replace("{criticalCount}", String(priorityCounts.critical + priorityCounts.high))}
             </p>
           </>
         )}

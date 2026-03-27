@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -14,6 +14,7 @@ import {
   Legend,
   ReferenceLine,
 } from "recharts";
+import { useTheme } from "next-themes";
 import { formatNumber } from "@/lib/utils/format";
 import type { HistoricalYearData } from "@/lib/mock-data";
 import { useLanguage } from "@/lib/i18n/context";
@@ -62,6 +63,10 @@ export function StorageTrendChart({
   getHistoricalData,
 }: StorageTrendChartProps) {
   const { t, language } = useLanguage();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isDark = mounted && resolvedTheme === "dark";
   const locale = language === "ta" ? "ta-IN" : "en-IN";
   const resolvedTitle = title ?? t("dash.combined_trend");
   const [activeDays, setActiveDays] = useState(0);
@@ -234,7 +239,7 @@ export function StorageTrendChart({
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#16a34a" }} />
             <span className="text-slate-600 dark:text-slate-400">{t("dash.in_label")}</span>
-            <span className="font-semibold text-green-600">
+            <span className="font-semibold text-green-600 dark:text-green-400">
               {formatNumber(d.inflow as number)} {t("dash.cusecs_unit")}
             </span>
           </div>
@@ -243,7 +248,7 @@ export function StorageTrendChart({
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#dc2626" }} />
             <span className="text-slate-600 dark:text-slate-400">{t("dash.out_label")}</span>
-            <span className="font-semibold text-red-600">
+            <span className="font-semibold text-red-600 dark:text-red-400">
               {formatNumber(d.outflow as number)} {t("dash.cusecs_unit")}
             </span>
           </div>
@@ -447,7 +452,7 @@ export function StorageTrendChart({
           {selectedYears.length > 0 ? (
             // Multi-line chart when comparing years
             <LineChart data={chartData} margin={{ top: 5, right: showFlowLines ? 50 : 5, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
               <XAxis
                 dataKey="date"
                 tick={{ fontSize: 10, fill: "#94a3b8" }}
@@ -537,7 +542,7 @@ export function StorageTrendChart({
                   <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
               <XAxis
                 dataKey="date"
                 tick={{ fontSize: 10, fill: "#94a3b8" }}

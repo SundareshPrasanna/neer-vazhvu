@@ -56,6 +56,45 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "hero.inflow_hint":     { en: "Simulate drought (↓) or heavy rains (↑). 0% = no inflow, 100% = current actual.",  ta: "வறட்சி (↓) அல்லது கனமழை (↑) உருவகப்படுத்தவும். 0% = வரத்து இல்லை, 100% = தற்போதைய நிலை." },
   "hero.slider_note":     { en: "Days left updates in real time as you adjust. Default: 830 MLD consumption, 190 MLD desalination.", ta: "சரிசெய்யும்போது மீதமுள்ள நாட்கள் நேரடியாக புதுப்பிக்கப்படும். இயல்பு: 830 MLD நுகர்வு, 190 MLD கடல்நீர் நீக்கம்." },
 
+  // ── City Story (dashboard narrative) ──────────────────────────────────────
+  "city_story.heading":           { en: "Chennai's water at a glance",                                      ta: "சென்னையின் நீர் நிலை ஒரு பார்வை" },
+  "city_story.crisis_headline":   { en: "Chennai's reservoirs are critically low.",                          ta: "சென்னையின் நீர்த்தேக்கங்கள் மிகவும் குறைவான நிலையில் உள்ளன." },
+  "city_story.stress_headline":   { en: "Reservoir storage is under half capacity.",                         ta: "நீர்த்தேக்க சேமிப்பு பாதி கொள்ளளவுக்கும் கீழே உள்ளது." },
+  "city_story.mixed_headline":    { en: "Reservoirs hold adequate supply, but groundwater tells a different story.", ta: "நீர்த்தேக்கங்களில் போதுமான நீர் உள்ளது, ஆனால் நிலத்தடி நீர் வேறு கதை சொல்கிறது." },
+  "city_story.stable_headline":   { en: "Chennai's water position is relatively stable.",                    ta: "சென்னையின் நீர் நிலை ஒப்பீட்டளவில் நிலையானது." },
+  "city_story.reservoir_context": { en: "Reservoirs hold {pct}% of capacity.",                               ta: "நீர்த்தேக்கங்கள் {pct}% கொள்ளளவில் உள்ளன." },
+  "city_story.gw_pressure":      { en: "{stressedCount} of {totalWards} groundwater wards show stressed or critical levels.", ta: "{totalWards} நிலத்தடி நீர் வார்டுகளில் {stressedCount} அழுத்தமான அல்லது தீவிர நிலையில் உள்ளன." },
+  "city_story.gw_declining":     { en: "{declineCount} wards are declining year-over-year.",                 ta: "{declineCount} வார்டுகளில் ஆண்டுக்காண்டு சரிவு உள்ளது." },
+  "city_story.restoration_action": { en: "{actionCount} water bodies near degraded rivers are flagged for priority restoration.", ta: "சீரழிந்த ஆறுகளுக்கு அருகிலுள்ள {actionCount} நீர்நிலைகள் முன்னுரிமை மறுசீரமைப்புக்கு அடையாளம் காணப்பட்டுள்ளன." },
+  "city_story.freshness":        { en: "Reservoirs: {reservoirDate} | Groundwater: {gwMonth} {gwYear}",      ta: "நீர்த்தேக்கங்கள்: {reservoirDate} | நிலத்தடி நீர்: {gwMonth} {gwYear}" },
+  "city_story.explore_gw":       { en: "Explore groundwater",                                                ta: "நிலத்தடி நீரை ஆராயுங்கள்" },
+  "city_story.see_restoration":  { en: "See restoration priorities",                                         ta: "மறுசீரமைப்பு முன்னுரிமைகளைக் காண்க" },
+  "city_story.see_flood_risk":   { en: "Flood risk and drainage",                                            ta: "வெள்ள அபாயம் மற்றும் வடிகால்" },
+
+  // ── Connected Insights (detail panels) ──────────────────────────────────
+  "connected.ward_reservoir":     { en: "Reservoir stress contributes {n}/{max} to this ward's risk score. When reservoir storage drops, groundwater extraction tends to increase.", ta: "நீர்த்தேக்க அழுத்தம் இந்த வார்டின் ஆபத்து மதிப்பெண்ணில் {n}/{max} பங்களிக்கிறது. நீர்த்தேக்க சேமிப்பு குறையும்போது, நிலத்தடி நீர் எடுப்பு அதிகரிக்கும் போக்கு உள்ளது." },
+  "connected.ward_reservoir_link": { en: "See reservoir levels",                                              ta: "நீர்த்தேக்க நிலைகளைக் காண்க" },
+  "connected.wb_river_pollution": { en: "This body scores {n}/{max} on river pollution proximity. The nearest station ({station}) shows {status} quality.", ta: "இந்த நீர்நிலை ஆற்று மாசு அருகாமையில் {n}/{max} மதிப்பெண் பெற்றுள்ளது. அருகிலுள்ள நிலையம் ({station}) {status} தரத்தைக் காட்டுகிறது." },
+  "connected.wb_river_link":      { en: "See river quality",                                                  ta: "ஆற்றின் தரத்தைக் காண்க" },
+  "connected.river_recharge":     { en: "When a river's water quality is this degraded, nearby water bodies cannot rely on it for natural recharge.", ta: "ஒரு ஆற்றின் நீர்த்தரம் இவ்வளவு சீரழிந்திருக்கும்போது, அருகிலுள்ள நீர்நிலைகள் இயற்கையான நீர் நிரப்புதலுக்கு அதை நம்ப இயலாது." },
+  "connected.river_wb_link":      { en: "See water bodies",                                                   ta: "நீர்நிலைகளைக் காண்க" },
+  "connected.flood_hazard_gw":    { en: "High flood hazard zones with depleting groundwater face compound risk - waterlogging blocks natural recharge pathways.", ta: "நிலத்தடி நீர் குறைந்து வரும் அதிக வெள்ள அபாய மண்டலங்கள் கூட்டு ஆபத்தை எதிர்கொள்கின்றன - நீர் தேக்கம் இயற்கையான நிரப்புதல் பாதைகளைத் தடுக்கிறது." },
+  "connected.flood_hazard_gw_link": { en: "See groundwater map",                                               ta: "நிலத்தடி நீர் வரைபடத்தைக் காண்க" },
+  "connected.flood_drainage_wb":  { en: "Poor drainage capacity is associated with loss of natural water bodies that once absorbed excess rainfall.", ta: "மோசமான வடிகால் திறன் ஒரு காலத்தில் அதிகப்படியான மழையை உறிஞ்சிய இயற்கை நீர்நிலைகளின் இழப்புடன் தொடர்புடையது." },
+  "connected.flood_drainage_wb_link": { en: "See lost water bodies",                                           ta: "இழக்கப்பட்ட நீர்நிலைகளைக் காண்க" },
+  "connected.flood_hotspot_gw":  { en: "This area flooded in ward {ward}. Check whether groundwater in this ward is also under stress - flood-prone areas with depleting aquifers face compound water risk.", ta: "இந்த பகுதி வார்டு {ward}-ல் வெள்ளத்தில் மூழ்கியது. இந்த வார்டில் நிலத்தடி நீரும் அழுத்தத்தில் உள்ளதா என சரிபாருங்கள் - நிலத்தடி நீர் குறையும் வெள்ளப்பகுதிகள் கூட்டு நீர் ஆபத்தை எதிர்கொள்கின்றன." },
+  "connected.flood_hotspot_gw_link": { en: "See ward groundwater",                                             ta: "வார்டு நிலத்தடி நீரைக் காண்க" },
+  "connected.flood_stp_river":   { en: "Treated effluent from this plant is discharged into nearby waterways. When plant capacity is exceeded during heavy rain, untreated overflow degrades river quality.", ta: "இந்த நிலையத்திலிருந்து சுத்திகரிக்கப்பட்ட கழிவு நீர் அருகிலுள்ள நீர்வழிகளில் வெளியேற்றப்படுகிறது. கடும் மழையின் போது நிலையத்தின் கொள்ளளவை மீறும்போது, சுத்திகரிக்கப்படாத கழிவு ஆற்றின் தரத்தை சீரழிக்கிறது." },
+  "connected.flood_stp_river_link": { en: "See river quality",                                                 ta: "ஆற்றின் தரத்தைக் காண்க" },
+
+  // ── Page Context Lines ──────────────────────────────────────────────────
+  "context.gw_stress":            { en: "{stressedCount} wards under stress | City avg: {avg}m below ground",  ta: "{stressedCount} வார்டுகள் அழுத்தத்தில் | நகர சராசரி: {avg}m நிலத்திற்கு கீழ்" },
+  "context.gw_risk_explain":      { en: "Risk score combines groundwater depth, trend, reservoir stress, and seasonal factors", ta: "ஆபத்து மதிப்பெண் நிலத்தடி நீர் ஆழம், போக்கு, நீர்த்தேக்க அழுத்தம், பருவகால காரணிகளை இணைக்கிறது" },
+  "context.rivers_recharge":      { en: "Degraded rivers cannot recharge groundwater or support nearby water bodies", ta: "சீரழிந்த ஆறுகள் நிலத்தடி நீரை நிரப்பவோ அருகிலுள்ள நீர்நிலைகளை ஆதரிக்கவோ இயலாது" },
+  "context.wb_lost":              { en: "{lostCount} water bodies lost to urbanization - their absence increases flood vulnerability and reduces groundwater recharge", ta: "நகரமயமாக்கலால் {lostCount} நீர்நிலைகள் இழப்பு - அவற்றின் இன்மை வெள்ள பாதிப்பை அதிகரிக்கிறது, நிலத்தடி நீர் நிரப்புதலைக் குறைக்கிறது" },
+  "context.wb_restoration":       { en: "{criticalCount} bodies near degraded rivers flagged for priority restoration", ta: "சீரழிந்த ஆறுகளுக்கு அருகிலுள்ள {criticalCount} நீர்நிலைகள் முன்னுரிமை மறுசீரமைப்புக்கு அடையாளம் காணப்பட்டுள்ளன" },
+  "context.flood_narrative":      { en: "Flooding, drainage, and sewerage are connected to groundwater depletion and water body loss - each system's failure amplifies the others", ta: "வெள்ளம், வடிகால், கழிவுநீர் ஆகியவை நிலத்தடி நீர் குறைவு மற்றும் நீர்நிலை இழப்புடன் இணைக்கப்பட்டுள்ளன - ஒவ்வொரு அமைப்பின் தோல்வியும் மற்றவற்றை பெருக்குகிறது" },
+
   // ── Groundwater Snapshot ──────────────────────────────────────────────────
   "gw_snap.title":          { en: "Groundwater Health",               ta: "நிலத்தடி நீர் ஆரோக்கியம்" },
   "gw_snap.explore":        { en: "Explore map",                      ta: "வரைபடம் காண்க" },
@@ -204,7 +243,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "wb.existing":           { en: "existing water bodies mapped",          ta: "தற்போதுள்ள நீர்நிலைகள் வரைபடத்தில்" },
   "wb.lost":               { en: "documented lost or encroached",          ta: "ஆவணப்படுத்தப்பட்ட இழந்த அல்லது ஆக்கிரமிக்கப்பட்டவை" },
   "wb.ha_lost":            { en: "of water surface lost",                  ta: "நீர் மேற்பரப்பு இழந்தது" },
-  "wb.tagline":            { en: "Lost water bodies cause both floods and droughts: no storage, no recharge.", ta: "இழந்த நீர்நிலைகள் வெள்ளம் மற்றும் வறட்சி இரண்டையும் ஏற்படுத்துகின்றன: சேமிப்பு இல்லை, நீர்ச்சேர்க்கை இல்லை." },
+  "wb.tagline":            { en: "{lostCount} water bodies lost to urbanization - their absence increases flood vulnerability and reduces groundwater recharge", ta: "நகரமயமாக்கலால் {lostCount} நீர்நிலைகள் இழப்பு - அவற்றின் இன்மை வெள்ள பாதிப்பை அதிகரிக்கிறது, நிலத்தடி நீர் நிரப்புதலைக் குறைக்கிறது" },
   "wb.loading":            { en: "Loading map...",                         ta: "வரைபடம் ஏற்றுகிறது..." },
   "wb.osm_source":         { en: "Current water bodies from",              ta: "தற்போதைய நீர்நிலைகள் இதிலிருந்து:" },
   "wb.lost_source":        { en: "Lost bodies curated from",               ta: "இழந்த நீர்நிலைகள் இதிலிருந்து:" },
@@ -551,7 +590,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
 
   // ── Lake Restoration Ranker ─────────────────────────────────────────────
   "lr.title":              { en: "Lake Restoration Priority",      ta: "ஏரி மறுசீரமைப்பு முன்னுரிமை" },
-  "lr.tagline":            { en: "Which water bodies should Chennai restore first?", ta: "சென்னை முதலில் எந்த நீர்நிலைகளை மறுசீரமைக்க வேண்டும்?" },
+  "lr.tagline":            { en: "{criticalCount} bodies near degraded rivers flagged for priority restoration", ta: "சீரழிந்த ஆறுகளுக்கு அருகிலுள்ள {criticalCount} நீர்நிலைகள் முன்னுரிமை மறுசீரமைப்புக்கு அடையாளம் காணப்பட்டுள்ளன" },
   "lr.loading":            { en: "Loading restoration data...",    ta: "மறுசீரமைப்பு தரவை ஏற்றுகிறது..." },
   "lr.loading_map":        { en: "Loading map...",                 ta: "வரைபடம் ஏற்றப்படுகிறது..." },
   "lr.tab_map":            { en: "Map View",                      ta: "வரைபட காட்சி" },
@@ -655,9 +694,9 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "flood.year_flood":       { en: "-year flood",                    ta: "-ஆண்டு வெள்ளம்" },
 
   // Taglines
-  "flood.tagline_hazard":   { en: "CFLOWS model - flood hazard classification", ta: "CFLOWS மாதிரி - வெள்ள ஆபத்து வகைப்பாடு" },
-  "flood.tagline_historical": { en: "2015 Dec floods and 2020 Cyclone Nivar",   ta: "2015 டிசம்பர் வெள்ளம் மற்றும் 2020 நிவர் புயல்" },
-  "flood.tagline_drainage": { en: "Storm water drainage infrastructure",        ta: "மழைநீர் வடிகால் உள்கட்டமைப்பு" },
+  "flood.tagline_hazard":   { en: "Lost water bodies and concretized floodplains increase hazard in these zones", ta: "இழக்கப்பட்ட நீர்நிலைகள் மற்றும் கான்கிரீட் மயமான வெள்ளச்சமவெளிகள் இந்த மண்டலங்களில் ஆபத்தை அதிகரிக்கின்றன" },
+  "flood.tagline_historical": { en: "Same areas flooded in both events - the underlying vulnerabilities persist", ta: "இரண்டு நிகழ்வுகளிலும் அதே பகுதிகள் வெள்ளத்தில் மூழ்கின - அடிப்படை பாதிப்புகள் நீடிக்கின்றன" },
+  "flood.tagline_drainage": { en: "Where drains are absent or degraded, waterlogging blocks groundwater recharge", ta: "வடிகால்கள் இல்லாத அல்லது சீரழிந்த இடங்களில், நீர் தேக்கம் நிலத்தடி நீர் நிரப்புதலைத் தடுக்கிறது" },
 
   // Source overlay
   "flood.source_flood":     { en: "Flood data:",                    ta: "வெள்ள தரவு:" },
@@ -673,7 +712,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   // Sewerage view mode
   "flood.sewerage":         { en: "Sewerage",                       ta: "கழிவுநீர்" },
   "flood.view_sewerage":    { en: "Sewerage Network",               ta: "கழிவுநீர் வலையமைப்பு" },
-  "flood.tagline_sewerage": { en: "CMWSSB sewerage infrastructure", ta: "CMWSSB கழிவுநீர் உள்கட்டமைப்பு" },
+  "flood.tagline_sewerage": { en: "Untreated sewage overflows into rivers during heavy rain, degrading water quality downstream", ta: "கடும் மழையின் போது சுத்திகரிக்கப்படாத கழிவுநீர் ஆறுகளில் வழிந்து, கீழ்நிலை நீர்த்தரத்தை சீரழிக்கிறது" },
   "flood.legend_sewerage":  { en: "Sewerage Network",               ta: "கழிவுநீர் வலையமைப்பு" },
   "flood.legend_stp":       { en: "Treatment Plant (STP)",          ta: "சுத்திகரிப்பு நிலையம்" },
   "flood.legend_sps":       { en: "Pumping Station (SPS)",          ta: "பம்பிங் நிலையம்" },

@@ -93,14 +93,14 @@ export function GroundwaterSnapshot({ data }: GroundwaterSnapshotProps) {
 
             {healthiest && (
               <div className="text-sm truncate">
-                <span className="text-green-600 font-medium">{t("gw_snap.healthiest")}</span>{" "}
+                <span className="text-green-600 dark:text-green-400 font-medium">{t("gw_snap.healthiest")}</span>{" "}
                 {getWardDisplayName(healthiest)} ({healthiest.depthM!.toFixed(1)}m)
               </div>
             )}
 
             {mostStressed && (
               <div className="text-sm truncate">
-                <span className="text-red-600 font-medium">{t("gw_snap.most_stressed")}</span>{" "}
+                <span className="text-red-600 dark:text-red-400 font-medium">{t("gw_snap.most_stressed")}</span>{" "}
                 {getWardDisplayName(mostStressed)} ({mostStressed.depthM!.toFixed(1)}m)
               </div>
             )}

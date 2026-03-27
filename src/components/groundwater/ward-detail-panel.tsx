@@ -2,9 +2,11 @@
 
 import { Badge } from "@/components/ui/badge";
 import { WardHistoryChart } from "@/components/groundwater/ward-history-chart";
+import { ConnectedInsight } from "@/components/insights/connected-insight";
 import { getGroundwaterStatus, getGroundwaterColor, getRiskColor } from "@/types/groundwater";
 import type { GroundwaterWard, WardRiskData } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
+import { RESERVOIR_COMPONENT_THRESHOLD, RESERVOIR_COMPONENT_MAX } from "@/lib/insights/constants";
 
 interface WardDetailPanelProps {
   ward: GroundwaterWard;
@@ -155,6 +157,19 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-3">
             {t("ward.weights_note")}
           </p>
+
+          {/* Connected insight: reservoir stress contribution */}
+          {riskData.reservoirComponent != null && riskData.reservoirComponent >= RESERVOIR_COMPONENT_THRESHOLD && (
+            <ConnectedInsight
+              messageKey="connected.ward_reservoir"
+              params={{
+                n: Math.round(riskData.reservoirComponent * 0.20),
+                max: RESERVOIR_COMPONENT_MAX,
+              }}
+              linkHref="/"
+              linkKey="connected.ward_reservoir_link"
+            />
+          )}
         </div>
       )}
 

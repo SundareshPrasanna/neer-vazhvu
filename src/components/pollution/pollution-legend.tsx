@@ -43,7 +43,7 @@ export function PollutionLegend() {
               borderColor: "#f97316",
             }}
           />
-          <span className="text-xs text-slate-500 dark:text-slate-500">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
             Industrial zone
           </span>
         </div>

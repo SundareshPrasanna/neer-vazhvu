@@ -11,6 +11,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import type { RiverQualityReading } from "@/types/river-quality";
 import { useLanguage } from "@/lib/i18n/context";
 
@@ -97,6 +99,10 @@ function renderTooltip({
 
 export function RiverQualityChart({ readings, stationName }: RiverQualityChartProps) {
   const { t } = useLanguage();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isDark = mounted && resolvedTheme === "dark";
 
   if (!readings || readings.length === 0) {
     return (
@@ -118,11 +124,11 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
       </p>
       <ResponsiveContainer width="100%" height="90%">
         <LineChart data={sorted} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+          <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
 
           <XAxis
             dataKey="year"
-            tick={{ fontSize: 9, fill: "#94a3b8" }}
+            tick={{ fontSize: 9, fill: isDark ? "#94a3b8" : "#64748b" }}
             tickLine={false}
             axisLine={false}
           />

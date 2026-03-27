@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { WardDetailPanel } from "@/components/groundwater/ward-detail-panel";
 import { BlockDetailPanel } from "@/components/groundwater/block-detail-panel";
@@ -31,18 +32,31 @@ const WardMap = dynamic(() => import("@/components/groundwater/ward-map").then((
 });
 
 export default function GroundwaterPage() {
+  return (
+    <Suspense>
+      <GroundwaterPageContent />
+    </Suspense>
+  );
+}
+
+function GroundwaterPageContent() {
   const { t, language } = useLanguage();
   const locale = language === "ta" ? "ta-IN" : "en-IN";
+  const searchParams = useSearchParams();
 
   const [data, setData] = useState<GroundwaterApiResponse | null>(null);
   const [riskApiData, setRiskApiData] = useState<RiskApiResponse | null>(null);
   const [blocks, setBlocks] = useState<GWBlock[]>([]);
   const [selectedWard, setSelectedWard] = useState<GroundwaterWard | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<GWBlock | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("depth");
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    (searchParams.get("view") as ViewMode) || "depth"
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const wardParam = searchParams.get("ward");
+
     Promise.all([
       fetch("/api/groundwater").then((r) => r.json()),
       fetch("/api/groundwater/risk").then((r) => r.json()),
@@ -53,13 +67,25 @@ export default function GroundwaterPage() {
         setRiskApiData(risk);
         setBlocks(gwrBlocks.blocks ?? []);
         setLoading(false);
-        // Pre-select the ward with deepest water level so panel opens on load
+
+        // Deep link: pre-select ward from ?ward= param
+        if (wardParam && gw.wards) {
+          const wardNum = parseInt(wardParam, 10);
+          const targetWard = gw.wards.find((w) => w.wardNumber === wardNum);
+          if (targetWard) {
+            setSelectedWard(targetWard);
+            return;
+          }
+        }
+
+        // Default: pre-select the ward with deepest water level
         if (gw.wards && gw.wards.length > 0) {
           const deepest = [...gw.wards].sort((a, b) => (b.depthM ?? 0) - (a.depthM ?? 0))[0];
           if (deepest) setSelectedWard(deepest);
         }
       })
       .catch(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -103,8 +129,28 @@ export default function GroundwaterPage() {
   const monthsStale = (now.getFullYear() - dataDate.getFullYear()) * 12 + (now.getMonth() - dataDate.getMonth());
   const isStale = monthsStale > 6;
 
+  const stressedCount = data.summary.stressed + data.summary.critical + data.summary.crisis;
+
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col md:flex-row">
+    <div className="h-[calc(100vh-64px)] flex flex-col">
+      {/* Context bar */}
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 items-center text-sm shrink-0">
+        <span className="font-semibold text-slate-700 dark:text-slate-300">
+          {viewMode === "exploitation"
+            ? t("gw_page.source_cgwb")
+            : t("context.gw_stress")
+                .replace("{stressedCount}", String(stressedCount))
+                .replace("{avg}", String(data.cityAverage ?? "-"))
+          }
+        </span>
+        {viewMode === "risk" && (
+          <span className="text-slate-400 dark:text-slate-500 text-xs hidden sm:inline">
+            {t("context.gw_risk_explain")}
+          </span>
+        )}
+      </div>
+
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
       {/* Map area */}
       <div className={`relative flex-1 ${(selectedWard || selectedBlock) ? "h-[55vh] md:h-full" : "h-full"}`}>
         <WardMap
@@ -239,6 +285,7 @@ export default function GroundwaterPage() {
           />
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -47,7 +47,7 @@ export function RiversLegend() {
         </div>
         <div className="mt-1.5 flex items-center gap-2">
           <span className="w-3 h-3 rounded-full border-2 border-slate-400 bg-white dark:bg-slate-600 flex-shrink-0" />
-          <span className="text-xs text-slate-500 dark:text-slate-500">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
             {t("rivers_legend.monitoring_station")}
           </span>
         </div>
@@ -82,7 +82,7 @@ export function RiversLegend() {
               borderColor: "#f97316",
             }}
           />
-          <span className="text-xs text-slate-500 dark:text-slate-500">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
             {t("rivers_legend.industrial_zone")}
           </span>
         </div>
