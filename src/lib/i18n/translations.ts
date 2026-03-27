@@ -123,6 +123,29 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "gw_page.city_avg":      { en: "City average:",                  ta: "நகர சராசரி:" },
   "gw_page.depth_toggle":  { en: "Depth",                          ta: "ஆழம்" },
   "gw_page.risk_toggle":   { en: "Risk Score",                     ta: "ஆபத்து மதிப்பெண்" },
+  "gw_page.exploit_toggle": { en: "Exploitation",                  ta: "சுரண்டல்" },
+  "gw_page.source_cgwb":   { en: "Source: CGWB via India WRIS",    ta: "ஆதாரம்: CGWB, India WRIS வழி" },
+  "gw_page.blocks_assessed": { en: "blocks assessed",              ta: "தொகுதிகள் மதிப்பீடு" },
+
+  // ── GW Block Exploitation ──────────────────────────────────────────────────
+  "gw_block.safe":           { en: "Safe",                         ta: "பாதுகாப்பான" },
+  "gw_block.semi_critical":  { en: "Semi Critical",                ta: "அரை-தீவிரம்" },
+  "gw_block.critical":       { en: "Critical",                     ta: "தீவிரம்" },
+  "gw_block.over_exploited": { en: "Over Exploited",               ta: "அதிக சுரண்டல்" },
+  "gw_block.development":    { en: "GW Development",               ta: "நிலத்தடி நீர் சுரண்டல்" },
+  "gw_block.availability":   { en: "Net Annual Availability",      ta: "ஆண்டு நிகர கிடைப்பு" },
+  "gw_block.draft":          { en: "Annual Draft (Total)",         ta: "ஆண்டு எடுப்பு (மொத்தம்)" },
+  "gw_block.trend":          { en: "Exploitation Trend",           ta: "சுரண்டல் போக்கு" },
+  "gw_block.ham":            { en: "HAM",                          ta: "ஹெக்டேர் மீ" },
+  "gw_block.stations":       { en: "Monitoring Wells",             ta: "கண்காணிப்பு கிணறுகள்" },
+  "gw_block.year":           { en: "Year",                         ta: "ஆண்டு" },
+  "gw_block.cgwb_note":      { en: "GW development >100% means extraction exceeds natural recharge - the aquifer is being depleted.", ta: "நிலத்தடி நீர் சுரண்டல் >100% என்றால் எடுப்பு இயற்கை நிரப்பீட்டை மீறுகிறது - நிலத்தடி நீர்வளம் குறைகிறது." },
+
+  "legend.exploit_title":    { en: "GW Exploitation",              ta: "நிலத்தடி நீர் சுரண்டல்" },
+  "legend.safe":             { en: "Safe (<70%)",                   ta: "பாதுகாப்பான (<70%)" },
+  "legend.semi_critical_lbl": { en: "Semi Critical (70-90%)",      ta: "அரை-தீவிரம் (70-90%)" },
+  "legend.critical_lbl":     { en: "Critical (90-100%)",            ta: "தீவிரம் (90-100%)" },
+  "legend.over_exploited":   { en: "Over Exploited (>100%)",        ta: "அதிக சுரண்டல் (>100%)" },
 
   // ── Rivers Panel ──────────────────────────────────────────────────────────
   "rivers.improving":      { en: "↑ Improving", ta: "↑ மேம்படுகிறது" },

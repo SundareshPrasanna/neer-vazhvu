@@ -28,8 +28,15 @@ export function GroundwaterLegend({ viewMode }: GroundwaterLegendProps) {
     { color: "#9ca3af", label: "-",      tKey: "gw.no_data_lc" },
   ];
 
-  const items = viewMode === "risk" ? RISK_ITEMS : DEPTH_ITEMS;
-  const title = viewMode === "risk" ? t("legend.risk_title") : t("legend.depth_title");
+  const EXPLOIT_ITEMS = [
+    { color: "#22c55e", label: "<70%",    tKey: "legend.safe" },
+    { color: "#eab308", label: "70-90%",  tKey: "legend.semi_critical_lbl" },
+    { color: "#f97316", label: "90-100%", tKey: "legend.critical_lbl" },
+    { color: "#dc2626", label: ">100%",   tKey: "legend.over_exploited" },
+  ];
+
+  const items = viewMode === "exploitation" ? EXPLOIT_ITEMS : viewMode === "risk" ? RISK_ITEMS : DEPTH_ITEMS;
+  const title = viewMode === "exploitation" ? t("legend.exploit_title") : viewMode === "risk" ? t("legend.risk_title") : t("legend.depth_title");
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-3">
