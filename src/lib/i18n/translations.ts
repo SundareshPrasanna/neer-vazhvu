@@ -579,4 +579,79 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "lr.show_top":           { en: "Show top priorities only",      ta: "முக்கிய முன்னுரிமைகளை மட்டும் காட்டு" },
   "lr.methodology":        { en: "Scores computed from water body size, proximity to lost water bodies, river pollution levels, industrial source proximity, and water body type.", ta: "நீர்நிலை அளவு, இழந்த நீர்நிலைகளுக்கு அருகாமை, ஆற்று மாசு நிலைகள், தொழிற்சாலை ஆதாரங்கள் அருகாமை, மற்றும் நீர்நிலை வகை ஆகியவற்றின் அடிப்படையில் மதிப்பெண்கள் கணக்கிடப்படுகின்றன." },
   "lr.source_note":        { en: "Data: OpenStreetMap, CPCB, Care Earth Trust", ta: "தரவு: OpenStreetMap, CPCB, Care Earth Trust" },
+
+  // ── Flood Risk page ──────────────────────────────────────
+  "nav.flood_risk":         { en: "Flood Risk",                     ta: "வெள்ள அபாயம்" },
+  "flood.loading":          { en: "Loading flood data...",           ta: "வெள்ள தரவு ஏற்றப்படுகிறது..." },
+  "flood.loading_map":      { en: "Loading flood risk map...",       ta: "வெள்ள அபாய வரைபடம் ஏற்றப்படுகிறது..." },
+
+  // View toggle
+  "flood.view_hazard":      { en: "Hazard Zones",                   ta: "ஆபத்து மண்டலங்கள்" },
+  "flood.view_historical":  { en: "Historical Floods",              ta: "வரலாற்று வெள்ளங்கள்" },
+  "flood.view_drainage":    { en: "Drainage Network",               ta: "வடிகால் வலையமைப்பு" },
+
+  // Hazard categories
+  "flood.very_high":        { en: "Very High",                      ta: "மிக அதிகம்" },
+  "flood.high":             { en: "High",                           ta: "அதிகம்" },
+  "flood.moderate":         { en: "Moderate",                       ta: "மிதமான" },
+  "flood.low":              { en: "Low",                            ta: "குறைவு" },
+  "flood.very_low":         { en: "Very Low",                       ta: "மிகக் குறைவு" },
+  "flood.zones":            { en: "zones",                          ta: "மண்டலங்கள்" },
+
+  // Stats bar
+  "flood.hazard_source":    { en: "Source: OpenCity Chennai / CFLOWS flood model",  ta: "ஆதாரம்: OpenCity சென்னை / CFLOWS வெள்ள மாதிரி" },
+  "flood.hotspots":         { en: "hotspots",                       ta: "வெள்ள புள்ளிகள்" },
+  "flood.depth_readings":   { en: "depth readings",                 ta: "ஆழ அளவீடுகள்" },
+  "flood.historical_note":  { en: "Dec 2015: 490mm in 24hrs",       ta: "டிச 2015: 24 மணி நேரத்தில் 490மிமீ" },
+  "flood.canals":           { en: "canals",                         ta: "கால்வாய்கள்" },
+  "flood.drains":           { en: "drains",                         ta: "வடிகால்கள்" },
+  "flood.ditches":          { en: "ditches",                        ta: "அகழிகள்" },
+  "flood.total_features":   { en: "drainage features",              ta: "வடிகால் அம்சங்கள்" },
+  "flood.drainage_source":  { en: "Source: OpenStreetMap",           ta: "ஆதாரம்: OpenStreetMap" },
+
+  // Legend
+  "flood.legend_hazard":    { en: "Flood Hazard Level",             ta: "வெள்ள ஆபத்து நிலை" },
+  "flood.legend_impact":    { en: "Flood Impact",                   ta: "வெள்ள தாக்கம்" },
+  "flood.legend_drainage":  { en: "Drainage Network",               ta: "வடிகால் வலையமைப்பு" },
+  "flood.legend_canal":     { en: "Canal",                          ta: "கால்வாய்" },
+  "flood.legend_drain":     { en: "Drain",                          ta: "வடிகால்" },
+  "flood.legend_ditch":     { en: "Ditch",                          ta: "அகழி" },
+  "flood.legend_river":     { en: "River",                          ta: "ஆறு" },
+  "flood.legend_depth":     { en: "Inundation depth",               ta: "வெள்ள ஆழம்" },
+  "flood.legend_hotspot":   { en: "Flood hotspot",                  ta: "வெள்ள புள்ளி" },
+
+  // Detail panel
+  "flood.hazard_zone":      { en: "Flood Hazard Zone",              ta: "வெள்ள ஆபத்து மண்டலம்" },
+  "flood.category":         { en: "Category",                       ta: "வகைப்பாடு" },
+  "flood.area":             { en: "Area",                           ta: "பரப்பு" },
+  "flood.location":         { en: "Location",                       ta: "இடம்" },
+  "flood.vulnerability":    { en: "Vulnerability",                  ta: "பாதிப்புநிலை" },
+  "flood.inundation":       { en: "Inundation",                     ta: "வெள்ளமடைதல்" },
+  "flood.depth_ft":         { en: "Depth (ft)",                     ta: "ஆழம் (அடி)" },
+  "flood.depth_m":          { en: "Depth (m)",                      ta: "ஆழம் (மீ)" },
+  "flood.remarks":          { en: "Remarks",                        ta: "குறிப்புகள்" },
+  "flood.ward":             { en: "Ward",                           ta: "வார்டு" },
+  "flood.zone_label":       { en: "Zone",                           ta: "மண்டலம்" },
+  "flood.waterway_type":    { en: "Type",                           ta: "வகை" },
+  "flood.neighborhood":     { en: "Neighborhood",                   ta: "பகுதி" },
+  "flood.event_2015":       { en: "2015 Chennai Floods",            ta: "2015 சென்னை வெள்ளம்" },
+  "flood.event_2020":       { en: "2020 Cyclone Nivar",             ta: "2020 நிவர் புயல்" },
+  "flood.flood_hotspot":    { en: "Flood Hotspot",                  ta: "வெள்ள புள்ளி" },
+  "flood.inundation_point": { en: "Inundation Point",               ta: "வெள்ள ஆழப்புள்ளி" },
+  "flood.drainage_feature": { en: "Drainage Feature",               ta: "வடிகால் அம்சம்" },
+
+  // Return period
+  "flood.return_period":    { en: "Return Period",                  ta: "மீள்வரவு காலம்" },
+  "flood.return_overlay":   { en: "Flood extent overlay",           ta: "வெள்ள பரப்பு மேலடுக்கு" },
+  "flood.year_flood":       { en: "-year flood",                    ta: "-ஆண்டு வெள்ளம்" },
+
+  // Taglines
+  "flood.tagline_hazard":   { en: "CFLOWS model - flood hazard classification", ta: "CFLOWS மாதிரி - வெள்ள ஆபத்து வகைப்பாடு" },
+  "flood.tagline_historical": { en: "2015 Dec floods and 2020 Cyclone Nivar",   ta: "2015 டிசம்பர் வெள்ளம் மற்றும் 2020 நிவர் புயல்" },
+  "flood.tagline_drainage": { en: "Storm water drainage infrastructure",        ta: "மழைநீர் வடிகால் உள்கட்டமைப்பு" },
+
+  // Source overlay
+  "flood.source_flood":     { en: "Flood data:",                    ta: "வெள்ள தரவு:" },
+  "flood.source_opencity":  { en: "OpenCity Chennai",               ta: "OpenCity சென்னை" },
+  "flood.source_osm":       { en: "OpenStreetMap",                  ta: "OpenStreetMap" },
 };
