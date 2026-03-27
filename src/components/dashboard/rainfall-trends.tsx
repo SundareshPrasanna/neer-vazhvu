@@ -45,6 +45,7 @@ export function RainfallTrends() {
   const { t, language } = useLanguage();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
   const [data, setData] = useState<IMDRainfallData | null>(null);
