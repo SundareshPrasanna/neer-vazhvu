@@ -39,6 +39,8 @@ function renderTooltip({
 
   const do_val = payload.find((p) => p.dataKey === "do_mgl");
   const bod_val = payload.find((p) => p.dataKey === "bod_mgl");
+  const cod_val = payload.find((p) => p.dataKey === "cod_mgl");
+  const fc_val = payload.find((p) => p.dataKey === "fecal_coliform_mpn");
 
   return (
     <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 text-xs">
@@ -63,6 +65,28 @@ function renderTooltip({
             BOD:{" "}
             <span className="font-medium text-orange-600 dark:text-orange-400">
               {bod_val.value.toFixed(0)} mg/L
+            </span>
+          </span>
+        </div>
+      )}
+      {cod_val?.value != null && (
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0" />
+          <span className="text-slate-600 dark:text-slate-400">
+            COD:{" "}
+            <span className="font-medium text-purple-600 dark:text-purple-400">
+              {cod_val.value.toFixed(0)} mg/L
+            </span>
+          </span>
+        </div>
+      )}
+      {fc_val?.value != null && (
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0" />
+          <span className="text-slate-600 dark:text-slate-400">
+            FC:{" "}
+            <span className="font-medium text-rose-600 dark:text-rose-400">
+              {fc_val.value.toLocaleString()} MPN
             </span>
           </span>
         </div>
@@ -114,11 +138,11 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
             width={22}
           />
 
-          {/* Right axis: BOD (0–200 mg/L) */}
+          {/* Right axis: BOD + COD (0–400 mg/L) */}
           <YAxis
             yAxisId="bod"
             orientation="right"
-            domain={[0, 200]}
+            domain={[0, 400]}
             tick={{ fontSize: 9, fill: "#f97316" }}
             tickLine={false}
             axisLine={false}
@@ -130,9 +154,12 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
 
           <Legend
             wrapperStyle={{ fontSize: 9, paddingTop: 2 }}
-            formatter={(value: string) =>
-              value === "do_mgl" ? "DO (mg/L)" : "BOD (mg/L)"
-            }
+            formatter={(value: string) => {
+              if (value === "do_mgl") return "DO (mg/L)";
+              if (value === "bod_mgl") return "BOD (mg/L)";
+              if (value === "cod_mgl") return "COD (mg/L)";
+              return value;
+            }}
           />
 
           {/* DO reference line: 4 mg/L = minimum for aquatic life */}
@@ -173,6 +200,19 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
             dot={{ r: 2.5, fill: "#f97316" }}
             connectNulls={false}
             name="bod_mgl"
+          />
+
+          {/* COD shares the BOD axis (both mg/L, similar scale) */}
+          <Line
+            yAxisId="bod"
+            type="monotone"
+            dataKey="cod_mgl"
+            stroke="#a855f7"
+            strokeWidth={1.5}
+            strokeDasharray="4 2"
+            dot={{ r: 2, fill: "#a855f7" }}
+            connectNulls={false}
+            name="cod_mgl"
           />
         </LineChart>
       </ResponsiveContainer>

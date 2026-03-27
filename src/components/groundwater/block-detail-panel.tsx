@@ -113,11 +113,16 @@ export function BlockDetailPanel({ block, onClose }: BlockDetailPanelProps) {
         </div>
       </div>
 
-      {/* Note */}
-      <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-700">
+      {/* Notes */}
+      <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-700 space-y-2">
         <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
           {t("gw_block.cgwb_note")}
         </p>
+        {history.length < 7 && (
+          <p className="text-xs text-amber-600 dark:text-amber-400 leading-relaxed">
+            {t("gw_block.boundary_caveat")}
+          </p>
+        )}
         <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
           {t("gw_page.source_cgwb")}
         </p>

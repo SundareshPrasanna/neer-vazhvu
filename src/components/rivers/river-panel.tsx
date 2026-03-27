@@ -231,7 +231,77 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
         />
       </div>
 
-      {/* DO / BOD explainer */}
+      {/* Pollution profile - latest readings */}
+      {latestReading && (
+        <div className="mb-5">
+          <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
+            {t("rivers.pollution_profile")} ({latestReading.year})
+          </h4>
+          <div className="grid grid-cols-2 gap-1.5 text-xs">
+            {/* COD */}
+            {latestReading.cod_mgl != null && (
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-lg px-2.5 py-1.5">
+                <div className="text-slate-500 dark:text-slate-400">COD</div>
+                <div className={`font-mono font-bold ${latestReading.cod_mgl > 250 ? "text-red-600 dark:text-red-400" : latestReading.cod_mgl > 100 ? "text-orange-600 dark:text-orange-400" : "text-slate-900 dark:text-slate-100"}`}>
+                  {latestReading.cod_mgl} <span className="font-normal text-slate-400">mg/L</span>
+                </div>
+              </div>
+            )}
+            {/* Fecal Coliform */}
+            {latestReading.fecal_coliform_mpn != null && (
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-lg px-2.5 py-1.5">
+                <div className="text-slate-500 dark:text-slate-400">{t("rivers.fc_title")}</div>
+                <div className={`font-mono font-bold ${latestReading.fecal_coliform_mpn > 10000 ? "text-red-600 dark:text-red-400" : latestReading.fecal_coliform_mpn > 500 ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"}`}>
+                  {latestReading.fecal_coliform_mpn.toLocaleString()} <span className="font-normal text-slate-400">MPN</span>
+                </div>
+              </div>
+            )}
+            {/* TDS */}
+            {latestReading.tds_mgl != null && (
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-lg px-2.5 py-1.5">
+                <div className="text-slate-500 dark:text-slate-400">TDS</div>
+                <div className={`font-mono font-bold ${latestReading.tds_mgl > 2000 ? "text-red-600 dark:text-red-400" : latestReading.tds_mgl > 500 ? "text-orange-600 dark:text-orange-400" : "text-slate-900 dark:text-slate-100"}`}>
+                  {latestReading.tds_mgl.toLocaleString()} <span className="font-normal text-slate-400">mg/L</span>
+                </div>
+              </div>
+            )}
+            {/* Nitrate */}
+            {latestReading.nitrate_mgl != null && (
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-lg px-2.5 py-1.5">
+                <div className="text-slate-500 dark:text-slate-400">{t("rivers.nitrate_title")}</div>
+                <div className={`font-mono font-bold ${latestReading.nitrate_mgl > 45 ? "text-red-600 dark:text-red-400" : latestReading.nitrate_mgl > 20 ? "text-orange-600 dark:text-orange-400" : "text-slate-900 dark:text-slate-100"}`}>
+                  {latestReading.nitrate_mgl} <span className="font-normal text-slate-400">mg/L</span>
+                </div>
+              </div>
+            )}
+          </div>
+          {/* Heavy metals row */}
+          {(latestReading.chromium_mgl != null || latestReading.lead_mgl != null || latestReading.cadmium_mgl != null) && (
+            <div className="mt-1.5 bg-slate-50 dark:bg-slate-800 rounded-lg px-2.5 py-1.5">
+              <div className="text-slate-500 dark:text-slate-400 mb-0.5">{t("rivers.metals_title")}</div>
+              <div className="flex gap-3 font-mono text-xs">
+                {latestReading.chromium_mgl != null && (
+                  <span className={latestReading.chromium_mgl > 0.05 ? "text-red-600 dark:text-red-400 font-bold" : "text-slate-700 dark:text-slate-300"}>
+                    Cr: {latestReading.chromium_mgl} mg/L
+                  </span>
+                )}
+                {latestReading.lead_mgl != null && (
+                  <span className={latestReading.lead_mgl > 0.01 ? "text-red-600 dark:text-red-400 font-bold" : "text-slate-700 dark:text-slate-300"}>
+                    Pb: {latestReading.lead_mgl} mg/L
+                  </span>
+                )}
+                {latestReading.cadmium_mgl != null && (
+                  <span className={latestReading.cadmium_mgl > 0.003 ? "text-red-600 dark:text-red-400 font-bold" : "text-slate-700 dark:text-slate-300"}>
+                    Cd: {latestReading.cadmium_mgl} mg/L
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Parameter explainers */}
       <div className="grid grid-cols-2 gap-2 mb-5 text-xs">
         <div className="rounded-lg border border-sky-100 dark:border-sky-900 bg-sky-50 dark:bg-sky-950/30 p-2.5">
           <span className="font-semibold text-sky-700 dark:text-sky-400">{t("rivers.do_title")}</span>
@@ -243,6 +313,18 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
           <span className="font-semibold text-orange-700 dark:text-orange-400">{t("rivers.bod_title")}</span>
           <p className="text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">
             {t("rivers.bod_desc")}
+          </p>
+        </div>
+        <div className="rounded-lg border border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950/30 p-2.5">
+          <span className="font-semibold text-purple-700 dark:text-purple-400">{t("rivers.cod_title")}</span>
+          <p className="text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">
+            {t("rivers.cod_desc")}
+          </p>
+        </div>
+        <div className="rounded-lg border border-rose-100 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/30 p-2.5">
+          <span className="font-semibold text-rose-700 dark:text-rose-400">{t("rivers.fc_title")}</span>
+          <p className="text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">
+            {t("rivers.fc_desc")}
           </p>
         </div>
       </div>
