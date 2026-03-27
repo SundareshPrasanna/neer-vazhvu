@@ -21,15 +21,15 @@ export const VULNERABILITY_COLORS: Record<string, string> = {
 };
 
 export const DRAINAGE_COLORS: Record<string, string> = {
-  canal: "#3b82f6",
-  drain: "#64748b",
-  ditch: "#94a3b8",
+  canal: "#2563eb",
+  drain: "#f59e0b",
+  ditch: "#a855f7",
 };
 
 export const DRAINAGE_WIDTHS: Record<string, number> = {
-  canal: 3,
-  drain: 2,
-  ditch: 1,
+  canal: 3.5,
+  drain: 2.5,
+  ditch: 1.5,
 };
 
 export const RETURN_PERIODS = [5, 10, 25, 50, 100, 200] as const;

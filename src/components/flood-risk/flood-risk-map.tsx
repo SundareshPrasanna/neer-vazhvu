@@ -136,8 +136,8 @@ export function FloodRiskMap({
       const type = feature?.properties?.waterway_type ?? "drain";
       return {
         color: DRAINAGE_COLORS[type] ?? "#64748b",
-        weight: DRAINAGE_WIDTHS[type] ?? 2,
-        opacity: 0.8,
+        weight: DRAINAGE_WIDTHS[type] ?? 2.5,
+        opacity: 0.9,
       };
     },
     []
