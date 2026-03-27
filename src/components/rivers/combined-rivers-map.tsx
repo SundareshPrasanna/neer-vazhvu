@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Polyline, Tooltip } from "react-leaflet";
+import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer, PathOptions } from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
@@ -218,6 +219,7 @@ export function CombinedRiversMap({
       className="h-full w-full"
       scrollWheelZoom={true}
     >
+      <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* Render order: zones (bottom) → rivers → stations → sources → highlight (top) */}
       <GeoJSON key="zones" data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />

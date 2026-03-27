@@ -11,6 +11,13 @@ export interface RiverQualityReading {
   bod_mgl: number | null; // Biochemical oxygen demand mg/L
   ph: number | null;
   conductivity_us: number | null; // µS/cm
+  cod_mgl: number | null; // Chemical oxygen demand mg/L
+  fecal_coliform_mpn: number | null; // Fecal coliform MPN/100ml
+  tds_mgl: number | null; // Total dissolved solids mg/L
+  nitrate_mgl: number | null; // Nitrate mg/L
+  chromium_mgl: number | null; // Chromium mg/L (heavy metal)
+  lead_mgl: number | null; // Lead mg/L (heavy metal)
+  cadmium_mgl: number | null; // Cadmium mg/L (heavy metal)
 }
 
 export interface RiverStation {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { MapContainer, TileLayer, GeoJSON, LayersControl, Tooltip, LayerGroup, Circle } from "react-leaflet";
+import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer } from "leaflet";
 import type { Feature } from "geojson";
@@ -386,6 +387,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
       className="h-full w-full"
       scrollWheelZoom={true}
     >
+      <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       <LayersControl position="topright">
         {currentGeoJSON && (

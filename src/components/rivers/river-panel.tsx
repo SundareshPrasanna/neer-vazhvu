@@ -231,7 +231,188 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
         />
       </div>
 
-      {/* DO / BOD explainer */}
+      {/* Pollution profile - latest readings */}
+      {latestReading && (
+        <div className="mb-5">
+          <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
+            {t("rivers.pollution_profile")} ({latestReading.year})
+          </h4>
+          <div className="grid grid-cols-2 gap-1.5 text-xs">
+            {/* COD */}
+            {latestReading.cod_mgl != null && (() => {
+              const limit = 250;
+              const val = latestReading.cod_mgl;
+              const ratio = val / limit;
+              const exceeded = val > limit;
+              const warning = val > 100;
+              return (
+                <div className={`rounded-lg px-2.5 py-1.5 ${exceeded ? "bg-red-50 dark:bg-red-950/30 ring-1 ring-red-200 dark:ring-red-800" : "bg-slate-50 dark:bg-slate-800"}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500 dark:text-slate-400">COD</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit} mg/L</span>
+                  </div>
+                  <div className={`font-mono font-bold ${exceeded ? "text-red-600 dark:text-red-400" : warning ? "text-orange-600 dark:text-orange-400" : "text-slate-900 dark:text-slate-100"}`}>
+                    {val} <span className="font-normal text-slate-400">mg/L</span>
+                    {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(1)}x</span>}
+                  </div>
+                  {/* severity bar */}
+                  <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div className={`h-full rounded-full ${exceeded ? "bg-red-500" : warning ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min(ratio * 100, 100)}%` }} />
+                  </div>
+                </div>
+              );
+            })()}
+            {/* Fecal Coliform */}
+            {latestReading.fecal_coliform_mpn != null && (() => {
+              const limit = 500;
+              const val = latestReading.fecal_coliform_mpn;
+              const ratio = val / limit;
+              const exceeded = val > limit;
+              const severe = val > 10000;
+              return (
+                <div className={`rounded-lg px-2.5 py-1.5 ${exceeded ? "bg-red-50 dark:bg-red-950/30 ring-1 ring-red-200 dark:ring-red-800" : "bg-slate-50 dark:bg-slate-800"}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500 dark:text-slate-400">{t("rivers.fc_title")}</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit} MPN</span>
+                  </div>
+                  <div className={`font-mono font-bold ${severe ? "text-red-600 dark:text-red-400" : exceeded ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"}`}>
+                    {val.toLocaleString()} <span className="font-normal text-slate-400">MPN</span>
+                    {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(0)}x</span>}
+                  </div>
+                  <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div className={`h-full rounded-full ${severe ? "bg-red-500" : exceeded ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min((ratio / 20) * 100, 100)}%` }} />
+                  </div>
+                </div>
+              );
+            })()}
+            {/* TDS */}
+            {latestReading.tds_mgl != null && (() => {
+              const limit = 500;
+              const val = latestReading.tds_mgl;
+              const ratio = val / limit;
+              const exceeded = val > limit;
+              const severe = val > 2000;
+              return (
+                <div className={`rounded-lg px-2.5 py-1.5 ${exceeded ? "bg-red-50 dark:bg-red-950/30 ring-1 ring-red-200 dark:ring-red-800" : "bg-slate-50 dark:bg-slate-800"}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500 dark:text-slate-400">TDS</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit} mg/L</span>
+                  </div>
+                  <div className={`font-mono font-bold ${severe ? "text-red-600 dark:text-red-400" : exceeded ? "text-orange-600 dark:text-orange-400" : "text-slate-900 dark:text-slate-100"}`}>
+                    {val.toLocaleString()} <span className="font-normal text-slate-400">mg/L</span>
+                    {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(1)}x</span>}
+                  </div>
+                  <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div className={`h-full rounded-full ${severe ? "bg-red-500" : exceeded ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min((ratio / 4) * 100, 100)}%` }} />
+                  </div>
+                </div>
+              );
+            })()}
+            {/* Nitrate */}
+            {latestReading.nitrate_mgl != null && (() => {
+              const limit = 45;
+              const val = latestReading.nitrate_mgl;
+              const ratio = val / limit;
+              const exceeded = val > limit;
+              const warning = val > 20;
+              return (
+                <div className={`rounded-lg px-2.5 py-1.5 ${exceeded ? "bg-red-50 dark:bg-red-950/30 ring-1 ring-red-200 dark:ring-red-800" : "bg-slate-50 dark:bg-slate-800"}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500 dark:text-slate-400">{t("rivers.nitrate_title")}</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit} mg/L</span>
+                  </div>
+                  <div className={`font-mono font-bold ${exceeded ? "text-red-600 dark:text-red-400" : warning ? "text-orange-600 dark:text-orange-400" : "text-slate-900 dark:text-slate-100"}`}>
+                    {val} <span className="font-normal text-slate-400">mg/L</span>
+                    {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(1)}x</span>}
+                  </div>
+                  <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div className={`h-full rounded-full ${exceeded ? "bg-red-500" : warning ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min(ratio * 100, 100)}%` }} />
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+          {/* Heavy metals row */}
+          {(latestReading.chromium_mgl != null || latestReading.lead_mgl != null || latestReading.cadmium_mgl != null) && (
+            <div className={`mt-1.5 rounded-lg px-2.5 py-1.5 ${
+              (latestReading.chromium_mgl != null && latestReading.chromium_mgl > 0.05) ||
+              (latestReading.lead_mgl != null && latestReading.lead_mgl > 0.01) ||
+              (latestReading.cadmium_mgl != null && latestReading.cadmium_mgl > 0.003)
+                ? "bg-red-50 dark:bg-red-950/30 ring-1 ring-red-200 dark:ring-red-800"
+                : "bg-slate-50 dark:bg-slate-800"
+            }`}>
+              <div className="flex items-center justify-between mb-0.5">
+                <span className="text-slate-500 dark:text-slate-400">{t("rivers.metals_title")}</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500">BIS {t("rivers.limits")}</span>
+              </div>
+              <div className="space-y-1 font-mono text-xs">
+                {latestReading.chromium_mgl != null && (() => {
+                  const limit = 0.05;
+                  const val = latestReading.chromium_mgl;
+                  const ratio = val / limit;
+                  const exceeded = val > limit;
+                  return (
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className={exceeded ? "text-red-600 dark:text-red-400 font-bold" : "text-slate-700 dark:text-slate-300"}>
+                          Cr: {val} mg/L
+                          {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(1)}x above limit</span>}
+                        </span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit}</span>
+                      </div>
+                      <div className="mt-0.5 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                        <div className={`h-full rounded-full ${exceeded ? "bg-red-500" : "bg-green-400"}`} style={{ width: `${Math.min(ratio * 100, 100)}%` }} />
+                      </div>
+                    </div>
+                  );
+                })()}
+                {latestReading.lead_mgl != null && (() => {
+                  const limit = 0.01;
+                  const val = latestReading.lead_mgl;
+                  const ratio = val / limit;
+                  const exceeded = val > limit;
+                  return (
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className={exceeded ? "text-red-600 dark:text-red-400 font-bold" : "text-slate-700 dark:text-slate-300"}>
+                          Pb: {val} mg/L
+                          {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(1)}x above limit</span>}
+                        </span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit}</span>
+                      </div>
+                      <div className="mt-0.5 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                        <div className={`h-full rounded-full ${exceeded ? "bg-red-500" : "bg-green-400"}`} style={{ width: `${Math.min(ratio * 100, 100)}%` }} />
+                      </div>
+                    </div>
+                  );
+                })()}
+                {latestReading.cadmium_mgl != null && (() => {
+                  const limit = 0.003;
+                  const val = latestReading.cadmium_mgl;
+                  const ratio = val / limit;
+                  const exceeded = val > limit;
+                  return (
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className={exceeded ? "text-red-600 dark:text-red-400 font-bold" : "text-slate-700 dark:text-slate-300"}>
+                          Cd: {val} mg/L
+                          {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(1)}x above limit</span>}
+                        </span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit}</span>
+                      </div>
+                      <div className="mt-0.5 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                        <div className={`h-full rounded-full ${exceeded ? "bg-red-500" : "bg-green-400"}`} style={{ width: `${Math.min(ratio * 100, 100)}%` }} />
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Parameter explainers */}
       <div className="grid grid-cols-2 gap-2 mb-5 text-xs">
         <div className="rounded-lg border border-sky-100 dark:border-sky-900 bg-sky-50 dark:bg-sky-950/30 p-2.5">
           <span className="font-semibold text-sky-700 dark:text-sky-400">{t("rivers.do_title")}</span>
@@ -243,6 +424,18 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
           <span className="font-semibold text-orange-700 dark:text-orange-400">{t("rivers.bod_title")}</span>
           <p className="text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">
             {t("rivers.bod_desc")}
+          </p>
+        </div>
+        <div className="rounded-lg border border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950/30 p-2.5">
+          <span className="font-semibold text-purple-700 dark:text-purple-400">{t("rivers.cod_title")}</span>
+          <p className="text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">
+            {t("rivers.cod_desc")}
+          </p>
+        </div>
+        <div className="rounded-lg border border-rose-100 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/30 p-2.5">
+          <span className="font-semibold text-rose-700 dark:text-rose-400">{t("rivers.fc_title")}</span>
+          <p className="text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">
+            {t("rivers.fc_desc")}
           </p>
         </div>
       </div>

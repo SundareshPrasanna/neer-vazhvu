@@ -68,7 +68,7 @@ export function getGroundwaterColor(depthM: number | null): string {
 
 export type RiskLevel = 'low' | 'moderate' | 'high' | 'critical' | 'noData';
 
-export type ViewMode = 'depth' | 'risk';
+export type ViewMode = 'depth' | 'risk' | 'exploitation';
 
 export interface WardRiskData {
   wardNumber: number;
@@ -103,4 +103,62 @@ export function getRiskLabel(level: RiskLevel): string {
     case 'critical': return 'Critical';
     default: return 'No Data';
   }
+}
+
+// ── WRIS / CGWB block-level groundwater resource types ────────────────────────
+
+export type GWBlockClass = "Safe" | "Semi Critical" | "Critical" | "Over Exploited";
+
+export interface GWBlockHistory {
+  year: number;
+  class: GWBlockClass;
+  development_pct: number;
+  availability_ham: number | null;
+  draft_total_ham: number | null;
+}
+
+export interface GWBlock {
+  name: string;
+  history: GWBlockHistory[];
+  latest: {
+    class: GWBlockClass;
+    development_pct: number;
+    availability_ham: number | null;
+    draft_total_ham: number | null;
+  };
+}
+
+export interface GWRData {
+  source: string;
+  source_url: string;
+  fetched_at: string;
+  years: number[];
+  blocks: GWBlock[];
+}
+
+export interface GWStation {
+  name: string;
+  lat: number;
+  lng: number;
+  agency: string;
+  block: string;
+  station_code: string;
+  data_types: string;
+}
+
+export interface GWStationsData {
+  source: string;
+  fetched_at: string;
+  stations: GWStation[];
+}
+
+const BLOCK_CLASS_COLORS: Record<GWBlockClass, string> = {
+  "Safe": "#22c55e",
+  "Semi Critical": "#eab308",
+  "Critical": "#f97316",
+  "Over Exploited": "#dc2626",
+};
+
+export function getBlockClassColor(cls: string): string {
+  return BLOCK_CLASS_COLORS[cls as GWBlockClass] || "#94a3b8";
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { WardDetailPanel } from "@/components/groundwater/ward-detail-panel";
+import { BlockDetailPanel } from "@/components/groundwater/block-detail-panel";
 import { GroundwaterLegend } from "@/components/groundwater/legend";
 import type {
   GroundwaterWard,
@@ -10,6 +11,7 @@ import type {
   WardRiskData,
   RiskApiResponse,
   ViewMode,
+  GWBlock,
 } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 
@@ -34,7 +36,9 @@ export default function GroundwaterPage() {
 
   const [data, setData] = useState<GroundwaterApiResponse | null>(null);
   const [riskApiData, setRiskApiData] = useState<RiskApiResponse | null>(null);
+  const [blocks, setBlocks] = useState<GWBlock[]>([]);
   const [selectedWard, setSelectedWard] = useState<GroundwaterWard | null>(null);
+  const [selectedBlock, setSelectedBlock] = useState<GWBlock | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("depth");
   const [loading, setLoading] = useState(true);
 
@@ -42,11 +46,18 @@ export default function GroundwaterPage() {
     Promise.all([
       fetch("/api/groundwater").then((r) => r.json()),
       fetch("/api/groundwater/risk").then((r) => r.json()),
+      fetch("/data/gwr-blocks.json").then((r) => r.json()),
     ])
-      .then(([gw, risk]: [GroundwaterApiResponse, RiskApiResponse]) => {
+      .then(([gw, risk, gwrBlocks]: [GroundwaterApiResponse, RiskApiResponse, { blocks: GWBlock[] }]) => {
         setData(gw);
         setRiskApiData(risk);
+        setBlocks(gwrBlocks.blocks ?? []);
         setLoading(false);
+        // Pre-select the ward with deepest water level so panel opens on load
+        if (gw.wards && gw.wards.length > 0) {
+          const deepest = [...gw.wards].sort((a, b) => (b.depthM ?? 0) - (a.depthM ?? 0))[0];
+          if (deepest) setSelectedWard(deepest);
+        }
       })
       .catch(() => setLoading(false));
   }, []);
@@ -95,12 +106,13 @@ export default function GroundwaterPage() {
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col md:flex-row">
       {/* Map area */}
-      <div className={`relative flex-1 ${selectedWard ? "h-[55vh] md:h-full" : "h-full"}`}>
+      <div className={`relative flex-1 ${(selectedWard || selectedBlock) ? "h-[55vh] md:h-full" : "h-full"}`}>
         <WardMap
           groundwaterData={wardMap}
           riskData={riskMap}
           viewMode={viewMode}
-          onWardSelect={setSelectedWard}
+          onWardSelect={(w) => { setSelectedWard(w); setSelectedBlock(null); }}
+          onBlockSelect={(b) => { setSelectedBlock(b); setSelectedWard(null); }}
         />
 
         {/* Legend overlay */}
@@ -108,26 +120,34 @@ export default function GroundwaterPage() {
           <GroundwaterLegend viewMode={viewMode} />
         </div>
 
-        {/* Period + view toggle overlay */}
+        {/* Period + source overlay */}
         <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000] bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
-          <div className="text-xs text-slate-500 dark:text-slate-400">
-            {t("gw_page.showing_for")}{" "}
-            <span className="font-semibold text-slate-700 dark:text-slate-300">
-              {new Date(data.period.year, data.period.month - 1).toLocaleDateString(locale, {
-                month: "long",
-                year: "numeric",
-              })}
-            </span>
-          </div>
-          {data.cityAverage !== null && (
+          {viewMode === "exploitation" ? (
             <div className="text-xs text-slate-500 dark:text-slate-400">
-              {t("gw_page.city_avg")} <span className="font-semibold">{data.cityAverage}m</span>
+              {t("gw_page.source_cgwb")}
             </div>
+          ) : (
+            <>
+              <div className="text-xs text-slate-500 dark:text-slate-400">
+                {t("gw_page.showing_for")}{" "}
+                <span className="font-semibold text-slate-700 dark:text-slate-300">
+                  {new Date(data.period.year, data.period.month - 1).toLocaleDateString(locale, {
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
+              {data.cityAverage !== null && (
+                <div className="text-xs text-slate-500 dark:text-slate-400">
+                  {t("gw_page.city_avg")} <span className="font-semibold">{data.cityAverage}m</span>
+                </div>
+              )}
+            </>
           )}
         </div>
 
-        {/* Staleness warning */}
-        {isStale && (
+        {/* Staleness warning - only for ward views */}
+        {isStale && viewMode !== "exploitation" && (
           <div className="absolute top-16 left-2 sm:top-20 sm:left-4 z-[1000] max-w-sm">
             <div className="px-3 py-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300 shadow-lg">
               <span className="font-semibold">{t("gw_snap.stale_title")}</span>{" "}
@@ -138,22 +158,38 @@ export default function GroundwaterPage() {
           </div>
         )}
 
-        {/* View mode toggle  -  only shown when risk data is available */}
-        {hasRiskData && (
-          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]">
-            <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-600 shadow-md text-xs font-medium">
+        {/* View mode toggle */}
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]">
+          <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-600 shadow-md text-xs font-medium">
+            <button
+              onClick={() => {
+                setViewMode("depth");
+                setSelectedBlock(null);
+                // Re-select deepest ward
+                if (data && data.wards.length > 0) {
+                  const deepest = [...data.wards].sort((a, b) => (b.depthM ?? 0) - (a.depthM ?? 0))[0];
+                  if (deepest) setSelectedWard(deepest);
+                }
+              }}
+              className={`px-3 py-1.5 transition-colors ${
+                viewMode === "depth"
+                  ? "bg-blue-600 text-white"
+                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+              }`}
+            >
+              {t("gw_page.depth_toggle")}
+            </button>
+            {hasRiskData && (
               <button
-                onClick={() => setViewMode("depth")}
-                className={`px-3 py-1.5 transition-colors ${
-                  viewMode === "depth"
-                    ? "bg-blue-600 text-white"
-                    : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
-                }`}
-              >
-                {t("gw_page.depth_toggle")}
-              </button>
-              <button
-                onClick={() => setViewMode("risk")}
+                onClick={() => {
+                  setViewMode("risk");
+                  setSelectedBlock(null);
+                  // Re-select deepest ward for risk view
+                  if (data && data.wards.length > 0) {
+                    const deepest = [...data.wards].sort((a, b) => (b.depthM ?? 0) - (a.depthM ?? 0))[0];
+                    if (deepest) setSelectedWard(deepest);
+                  }
+                }}
                 className={`px-3 py-1.5 transition-colors border-l border-slate-200 dark:border-slate-600 ${
                   viewMode === "risk"
                     ? "bg-blue-600 text-white"
@@ -162,18 +198,44 @@ export default function GroundwaterPage() {
               >
                 {t("gw_page.risk_toggle")}
               </button>
-            </div>
+            )}
+            <button
+              onClick={() => {
+                setViewMode("exploitation");
+                setSelectedWard(null);
+                // Pre-select most over-exploited block
+                if (blocks.length > 0) {
+                  const mostExploited = [...blocks].sort((a, b) => b.latest.development_pct - a.latest.development_pct)[0];
+                  if (mostExploited) setSelectedBlock(mostExploited);
+                }
+              }}
+              className={`px-3 py-1.5 transition-colors border-l border-slate-200 dark:border-slate-600 ${
+                viewMode === "exploitation"
+                  ? "bg-blue-600 text-white"
+                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+              }`}
+            >
+              {t("gw_page.exploit_toggle")}
+            </button>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Detail panel  -  bottom sheet on mobile, sidebar on desktop */}
+      {/* Detail panel - bottom sheet on mobile, sidebar on desktop */}
       {selectedWard && (
-        <div className="h-[45vh] md:h-full md:w-80 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+        <div className="h-[45vh] md:h-full md:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
           <WardDetailPanel
             ward={selectedWard}
             riskData={selectedRisk}
             onClose={() => setSelectedWard(null)}
+          />
+        </div>
+      )}
+      {selectedBlock && (
+        <div className="h-[45vh] md:h-full md:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+          <BlockDetailPanel
+            block={selectedBlock}
+            onClose={() => setSelectedBlock(null)}
           />
         </div>
       )}
