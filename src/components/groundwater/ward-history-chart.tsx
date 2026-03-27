@@ -23,6 +23,7 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
   const { t, language } = useLanguage();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
   const locale = language === "ta" ? "ta-IN" : "en-IN";
