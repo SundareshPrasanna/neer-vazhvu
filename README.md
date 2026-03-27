@@ -12,12 +12,16 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 - **Per-Reservoir Drilldown** - Click any reservoir for 365-day charts (storage, inflow vs outflow, rainfall)
 - **Historical Comparison** - Overlay any year from 2019-2025 on the storage trend chart
 - **Storage Trend Chart** - 90-day combined storage with interactive year comparison
+- **Rainfall Trends** - 56-year IMD rainfall history (1970-2025) with annual bar chart color-coded for drought/flood/Day Zero years, plus monthly actual vs long-term normal comparison
 
 ### Groundwater Map
 - **Choropleth Map** - Depth to water table across all 200 GCC wards, color-coded by CGWB classification (Healthy to Crisis)
 - **Risk Score View** - Toggle between depth choropleth and composite risk score choropleth (Low / Moderate / High / Critical) when pipeline data is available
+- **CGWB Exploitation View** - Block-level groundwater exploitation from India WRIS/CGWB (2011-2024), showing Safe/Semi-Critical/Critical/Over-Exploited classification with development percentage trends
 - **Ward Detail Panel** - Click any ward for depth, year-over-year trend, historical chart, and composite risk score breakdown
+- **Block Detail Panel** - Click any exploitation block for development %, availability, draft totals, and historical trend bar chart with 100% threshold line
 - **Risk Score Breakdown** - Each of the four components (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%) shown with weighted contribution bars
+- **Panel Pre-selection** - Each view mode auto-selects a notable item on load (deepest ward, highest-risk ward, or most over-exploited block) so users see the detail panel immediately
 
 ### Water Bodies and Restoration Map
 A unified map at `/water-bodies` with a **view-mode toggle** to switch between "Water Bodies" and "Restoration Priority" views. Both views share the same detail panel and data.
@@ -29,8 +33,8 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **Status-coded Circles** - Fully lost (red), severely reduced (orange), partially encroached (yellow)
 
 **Restoration Priority view:**
-- **1,635 Water Bodies Scored** - Every water body ranked on restoration priority using spatial analysis
-- **5-Component Scoring Model** - Water body size (25%), proximity to lost water bodies (20%), proximity to polluted rivers (20%), industrial pollution proximity (15%), water body type (20%)
+- **1,787 Water Bodies Scored** - OSM and census water bodies ranked on restoration priority using spatial analysis
+- **6-Component Scoring Model** - Water body size (25%), proximity to lost water bodies (18%), proximity to polluted rivers (18%), industrial pollution proximity (14%), water body type (15%), census condition (15%)
 - **Priority Levels** - Critical (75-100), High (50-74), Moderate (25-49), Low (0-24)
 - **Color-coded Polygons** - Red to green showing restoration priority across Chennai
 
@@ -43,6 +47,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **Interactive Polyline Map** - 4 rivers (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) colour-coded by CPCB water quality status
 - **Monitoring Station Markers** - 10 stations with individual DO/BOD readings
 - **DO/BOD Time-Series Chart** - Dual-axis line chart (2015-2024) per station with reference lines at the aquatic life minimum (DO = 4 mg/L) and clean river standard (BOD = 2 mg/L)
+- **Pollution Profile with BIS Limits** - COD, fecal coliform, TDS, nitrate, and heavy metals (Cr, Pb, Cd) shown as severity cards with BIS drinking water limit baselines, ratio bars, and multiplier labels (e.g., "22x above limit")
 - **River Detail Panel** - Status badge, CPCB class, 3-year trend indicator, station selector, embedded explainer for DO and BOD
 - **3-Year Trend** - Per monitoring station: direction badge (Improving / Worsening / Stable / Mixed) with signed DO and BOD deltas derived from the last 3 annual readings
 - **Industrial Pollution Sources Overlay** - 7 major facilities (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek) colour-coded by type; click for operator details, pollutant pills, incident timeline, and NGT orders. OSM `landuse=industrial` polygons shown as translucent overlay
@@ -94,8 +99,10 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 | [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
 | [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry + industrial zone polygons | One-time fetch |
 | Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
-| [CPCB NWMP Annual Reports](https://cpcb.nic.in/nwmp-data/) | DO, BOD, pH, conductivity at 10 river monitoring stations (2015–2024) | Annual (manual refresh) |
-| NGT Southern Bench / TNPCB / CPCB | 7 major industrial pollution sources -facility data, pollutant types, incident records, NGT orders | Manually curated |
+| [CPCB NWMP Annual Reports](https://cpcb.nic.in/nwmp-data/) | DO, BOD, pH, conductivity, COD, fecal coliform, TDS, nitrate, heavy metals (Cr, Pb, Cd) at 10 river monitoring stations (2015-2024) | Annual (manual refresh) |
+| NGT Southern Bench / TNPCB / CPCB | 7 major industrial pollution sources - facility data, pollutant types, incident records, NGT orders | Manually curated |
+| [IMD Gridded Rainfall (via imdlib)](https://imdlib.readthedocs.io/) | Monthly rainfall at 0.25 deg resolution for Chennai (1970-2025), long-term normals | One-time generation |
+| [India WRIS / CGWB](https://indiawris.gov.in/) | Block-level groundwater exploitation (%), classification (Safe to Over-Exploited), block boundaries (2011-2024) | Static fetch |
 
 ## Tech Stack
 
@@ -158,6 +165,8 @@ Run all migrations against your Supabase project:
 -- 1. supabase/migrations/001_initial_schema.sql
 -- 2. supabase/migrations/002_intelligence_tables.sql
 -- 3. supabase/migrations/003_open_meteo_weather.sql
+-- 4. supabase/migrations/004_water_bodies_census.sql
+-- 5. supabase/migrations/005_water_bodies_census_table.sql
 ```
 
 Or if using the Supabase CLI:
@@ -258,6 +267,7 @@ neer-vazhvu/
 │   ├── fetch-rivers-osm.ts                # Fetch river polylines from Overpass API
 │   ├── fetch-industrial-zones-osm.ts      # Fetch industrial zone polygons from Overpass API
 │   ├── compute-restoration-priority.ts    # Score water bodies for restoration priority
+│   ├── fetch-wris-groundwater.ts          # Fetch CGWB groundwater exploitation from India WRIS
 │   └── check-i18n.mjs                     # Validate Tamil translation coverage
 ├── src/                          # Next.js frontend
 │   ├── app/                      # App Router pages
@@ -287,26 +297,33 @@ neer-vazhvu/
 │   └── types/                    # TypeScript type definitions
 ├── neer-vazhvu-api/              # Python intelligence service
 │   ├── app/
-│   │   ├── scrapers/             # CMWSSB, Open-Meteo, NASA POWER, OpenCity
+│   │   ├── scrapers/             # CMWSSB, Open-Meteo, NASA POWER, OpenCity, data.gov.in
 │   │   ├── etl/                  # Pipeline orchestrator, calculator
 │   │   ├── intelligence/         # Forecaster, risk scorer, briefing
 │   │   ├── models/               # Pydantic data models
 │   │   └── routers/              # FastAPI route handlers
+│   ├── scripts/
+│   │   ├── scrape_cmwssb.py              # CMWSSB scraper (used by GitHub Actions)
+│   │   └── generate_imd_rainfall.py      # Generate IMD rainfall data from imdlib
 │   ├── Dockerfile
 │   └── pyproject.toml
 ├── supabase/
-│   └── migrations/               # SQL migrations (001, 002, 003)
+│   └── migrations/               # SQL migrations (001-005)
 ├── public/
 │   ├── geojson/                  # Static GeoJSON data
 │   │   ├── chennai-wards-2022.geojson           # GCC ward boundaries (choropleth)
 │   │   ├── chennai-water-bodies-current.geojson # OSM water bodies (1,635 features)
 │   │   ├── chennai-water-bodies-lost.geojson    # Curated lost water bodies (15 entries)
 │   │   ├── chennai-rivers.geojson               # River polylines (Cooum, Adyar, etc.)
-│   │   └── chennai-industrial-zones.geojson     # OSM industrial zone polygons
+│   │   ├── chennai-industrial-zones.geojson     # OSM industrial zone polygons
+│   │   └── chennai-gwr-blocks.geojson           # CGWB groundwater resource block boundaries
 │   └── data/                     # Static JSON datasets
 │       ├── river-quality.json            # CPCB monitoring station readings (2015-2024)
 │       ├── industrial-sources.json       # Industrial pollution sources (NGT/TNPCB/CPCB)
-│       └── restoration-priority.json     # Pre-computed restoration priority scores (1,635 water bodies)
+│       ├── restoration-priority.json     # Pre-computed restoration priority scores (1,787 water bodies)
+│       ├── imd-rainfall-monthly.json     # IMD historical rainfall (1970-2025, monthly + annual)
+│       ├── gwr-blocks.json              # CGWB block-level groundwater exploitation data (2011-2024)
+│       └── gw-stations.json             # CGWB groundwater monitoring station locations
 └── .github/
     └── workflows/                # CI + daily data pipeline
 ```
@@ -337,15 +354,16 @@ Risk levels: **Low** (0–25) · **Moderate** (26–50) · **High** (51–75) ·
 
 ## Restoration Priority Methodology
 
-Each of Chennai's 1,635 water bodies receives a composite priority score from 0 (low priority) to 100 (critical restoration candidate), computed from 5 weighted spatial components:
+Each of Chennai's 1,787 water bodies (1,635 OSM + 152 census-only) receives a composite priority score from 0 (low priority) to 100 (critical restoration candidate), computed from 6 weighted spatial components:
 
 | Component | Weight | What it measures |
 |-----------|--------|-----------------|
 | Water body size | 25% | Larger bodies provide greater recharge and flood mitigation impact |
-| Proximity to lost water bodies | 20% | Near historically lost lakes = stressed area needing compensation |
-| Proximity to polluted rivers | 20% | Near dead/degraded river stretches (by DO readings from CPCB stations) |
-| Industrial pollution proximity | 15% | Near industrial discharge zones = higher contamination risk |
-| Water body type | 20% | Reservoirs and lakes prioritised over canals, drains, wastewater ponds |
+| Proximity to lost water bodies | 18% | Near historically lost lakes = stressed area needing compensation |
+| Proximity to polluted rivers | 18% | Near dead/degraded river stretches (by DO readings from CPCB stations) |
+| Industrial pollution proximity | 14% | Near industrial discharge zones = higher contamination risk |
+| Water body type | 15% | Reservoirs and lakes prioritised over canals, drains, wastewater ponds |
+| Census condition | 15% | Encroachment status and storage capacity loss from government census data |
 
 Priority levels: **Low** (0–24) · **Moderate** (25–49) · **High** (50–74) · **Critical** (75–100)
 
@@ -393,6 +411,8 @@ Please open an issue first to discuss significant changes.
 - **Care Earth Trust** for comprehensive water body surveys and documentation
 - **IIT Madras** and the **National Green Tribunal** for research and legal records on water body encroachments and industrial pollution
 - **CPCB** for annual river water quality monitoring reports
+- **IMD (Indian Meteorological Department)** for historical gridded rainfall data (via imdlib)
+- **CGWB / India WRIS** for block-level groundwater exploitation data and monitoring station locations
 - **TNPCB** for enforcement records and industrial consent data used in the pollution sources overlay
 - **Carbon Copy** and **The Wire** for investigative reporting on the Ennore-Manali industrial corridor
 - Chennai's civic data community for making public data accessible

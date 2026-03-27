@@ -180,6 +180,50 @@
 - OSM industrial zone coverage varies -some facilities may be partially mapped or missing
 - Run `npx tsx scripts/fetch-industrial-zones-osm.ts` to regenerate after OSM data improves
 
+## IMD Historical Rainfall
+
+| | |
+|---|---|
+| **Source** | [IMD Gridded Rainfall](https://imdlib.readthedocs.io/) (Indian Meteorological Department, via imdlib Python library) |
+| **Method** | Script: `neer-vazhvu-api/scripts/generate_imd_rainfall.py` (extracts 0.25-degree grid cell for Chennai) |
+| **Frequency** | One-time generation; re-run when new years of IMD data become available |
+| **Coverage** | Monthly rainfall for Chennai (13.0°N, 80.25°E grid cell), 1970-2025 |
+| **Fields** | Year, month, rainfall (mm), annual total, long-term monthly normals |
+| **File** | `public/data/imd-rainfall-monthly.json` (static, served from Next.js `public/`) |
+
+**Why this source?**
+- 56 years of monthly rainfall history enables drought/flood/Day Zero year identification
+- Long-term normals provide a baseline for comparing current year's monsoon performance
+- IMD is the authoritative source for Indian precipitation data
+
+**Known limitations:**
+- Gridded data at 0.25-degree resolution - represents area average, not point measurements
+- imdlib downloads binary `.grd` files from IMD servers; availability depends on IMD maintaining these archives
+- Data for the most recent year may be incomplete until IMD finalizes it
+
+## CGWB Groundwater Exploitation - India WRIS
+
+| | |
+|---|---|
+| **Source** | [India WRIS](https://indiawris.gov.in/) / Central Ground Water Board (CGWB) |
+| **Method** | Script: `scripts/fetch-wris-groundwater.ts` (ArcGIS REST API query for Chennai-area blocks) |
+| **Frequency** | Static fetch; re-run when CGWB publishes updated assessment data |
+| **Coverage** | ~15 blocks in and around Chennai district (2011-2024 assessments) |
+| **Fields** | Block name, assessment year, classification (Safe/Semi-Critical/Critical/Over-Exploited), development %, net availability, existing draft, domestic/industrial draft |
+| **Files** | `public/data/gwr-blocks.json` (exploitation data), `public/data/gw-stations.json` (monitoring stations), `public/geojson/chennai-gwr-blocks.geojson` (block boundaries) |
+
+**Why this source?**
+- CGWB is the authoritative national agency for groundwater assessment
+- Block-level exploitation classification shows which areas are drawing more groundwater than is recharged
+- Development percentage trends over multiple assessment years reveal long-term sustainability
+- Complements the ward-level depth data from OpenCity with a broader resource sustainability view
+
+**Known limitations:**
+- Assessment data is periodic (not real-time) - latest available may be from 2023 or 2024
+- Block boundaries from India WRIS ArcGIS may not align exactly with GCC administrative boundaries
+- Some blocks cover areas beyond Chennai city limits
+- To regenerate: `npx tsx scripts/fetch-wris-groundwater.ts`
+
 ## Restoration Priority Scores -Computed
 
 | | |
@@ -187,8 +231,8 @@
 | **Source** | Pre-computed from existing project datasets using spatial analysis |
 | **Method** | Build script: `scripts/compute-restoration-priority.ts` (Haversine distance calculations) |
 | **Frequency** | Re-run when input data changes (water bodies GeoJSON, river quality, industrial sources) |
-| **Coverage** | All 1,635 current water bodies from OpenStreetMap |
-| **Fields** | Priority score (0–100), priority level, 5 component scores, centroid, nearest lost body / river station / industrial source with distances |
+| **Coverage** | 1,787 water bodies (1,635 OSM + 152 census-only) |
+| **Fields** | Priority score (0–100), priority level, 6 component scores, centroid, nearest lost body / river station / industrial source with distances |
 | **File** | `public/data/restoration-priority.json` (static, served from Next.js `public/`) |
 
 **Input datasets used:**
@@ -196,21 +240,24 @@
 - `public/geojson/chennai-water-bodies-lost.geojson` -15 lost/encroached water body locations
 - `public/data/river-quality.json` -10 CPCB monitoring station locations and latest DO readings
 - `public/data/industrial-sources.json` -7 industrial facility coordinates
+- Water Bodies Census (data.gov.in) -305 census records with encroachment and capacity data
 
 **Scoring components:**
 
 | Component | Weight | Logic |
 |-----------|--------|-------|
 | Water body size | 25% | Threshold-based on `area_ha` (capped at 200 ha): ≥50ha → 100, <0.5ha → 10 |
-| Proximity to lost water bodies | 20% | Distance to nearest of 15 lost bodies: ≤2km → 100, >10km → 10 |
-| Proximity to polluted rivers | 20% | Distance to CPCB stations weighted by DO: dead river <3km → 100 |
-| Industrial pollution proximity | 15% | Distance to nearest of 7 facilities: ≤2km → 100, >10km → 10 |
-| Water body type | 20% | reservoir → 100, lake → 95, water → 70, pond → 65, canal → 15, drain → 5 |
+| Proximity to lost water bodies | 18% | Distance to nearest of 15 lost bodies: ≤2km → 100, >10km → 10 |
+| Proximity to polluted rivers | 18% | Distance to CPCB stations weighted by DO: dead river <3km → 100 |
+| Industrial pollution proximity | 14% | Distance to nearest of 7 facilities: ≤2km → 100, >10km → 10 |
+| Water body type | 15% | reservoir → 100, lake → 95, water → 70, pond → 65, canal → 15, drain → 5 |
+| Census condition | 15% | Encroachment status + storage capacity loss from government census (matched by proximity) |
 
 **Known limitations:**
 - Scores are spatial proxies only -do not account for population density, land ownership, sedimentation, or restoration cost
 - Water body centroids are simple vertex averages (sufficient for km-scale distance calculations)
-- ~1,360 water bodies have no name in OSM -shown as "Unnamed water body"
+- ~1,360 water bodies have no name in OSM -shown as "Unnamed water body"; unnamed polygon water bodies are labeled with the nearest river name
+- Census records are matched to OSM polygons by proximity; 152 census water bodies with no OSM match are included as point-only entries
 - To regenerate: `npx tsx scripts/compute-restoration-priority.ts`
 
 ## Reservoir Metadata
