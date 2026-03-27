@@ -21,15 +21,23 @@ export const VULNERABILITY_COLORS: Record<string, string> = {
 };
 
 export const DRAINAGE_COLORS: Record<string, string> = {
-  canal: "#2563eb",
-  drain: "#f59e0b",
-  ditch: "#a855f7",
+  "Macro Drain": "#dc2626",
+  "Micro Drain": "#f97316",
+  "SWD": "#3b82f6",
+  "Side Drain": "#8b5cf6",
+  "Side drain": "#8b5cf6",
+  "Open Drain": "#f59e0b",
+  "Closed": "#64748b",
 };
 
 export const DRAINAGE_WIDTHS: Record<string, number> = {
-  canal: 3.5,
-  drain: 2.5,
-  ditch: 1.5,
+  "Macro Drain": 4,
+  "Micro Drain": 3,
+  "SWD": 2,
+  "Side Drain": 1.5,
+  "Side drain": 1.5,
+  "Open Drain": 2,
+  "Closed": 1.5,
 };
 
 export const RETURN_PERIODS = [5, 10, 25, 50, 100, 200] as const;
@@ -67,9 +75,19 @@ export interface Hotspot2020Properties {
 }
 
 export interface DrainageProperties {
-  osm_id: number;
-  name: string | null;
-  waterway_type: string;
+  street: string;
+  location: string;
+  ward: string;
+  zone: string;
+  drain_type: string;
+  detail: string;
+  material: string;
+  status: string;
+  cover: string;
+  drain_dep: number;
+  drain_wid: number;
+  drain_len: number;
+  source: string;
 }
 
 export interface ReturnPeriodProperties {

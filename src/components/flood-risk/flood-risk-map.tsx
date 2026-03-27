@@ -133,11 +133,11 @@ export function FloodRiskMap({
   // Drainage style
   const drainageStyle = useCallback(
     (feature: Feature | undefined) => {
-      const type = feature?.properties?.waterway_type ?? "drain";
+      const type = feature?.properties?.drain_type ?? "SWD";
       return {
-        color: DRAINAGE_COLORS[type] ?? "#64748b",
-        weight: DRAINAGE_WIDTHS[type] ?? 2.5,
-        opacity: 0.9,
+        color: DRAINAGE_COLORS[type] ?? "#3b82f6",
+        weight: DRAINAGE_WIDTHS[type] ?? 2,
+        opacity: 0.85,
       };
     },
     []
@@ -147,8 +147,9 @@ export function FloodRiskMap({
   const onEachDrainage = useCallback(
     (feature: Feature, layer: Layer) => {
       const props = feature.properties;
-      if (props?.name) {
-        layer.bindTooltip(props.name, {
+      const label = props?.street || props?.location || props?.drain_type || "";
+      if (label) {
+        layer.bindTooltip(label, {
           sticky: true,
           className: "leaflet-tooltip-custom",
         });

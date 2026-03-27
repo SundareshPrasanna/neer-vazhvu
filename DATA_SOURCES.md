@@ -224,6 +224,54 @@
 - Some blocks cover areas beyond Chennai city limits
 - To regenerate: `npx tsx scripts/fetch-wris-groundwater.ts`
 
+## Flood Risk Data - OpenCity Chennai
+
+| | |
+|---|---|
+| **Source** | [OpenCity Chennai](https://data.opencity.in/) (multiple flood-related KML datasets) |
+| **Method** | KML download + conversion to simplified GeoJSON via `scripts/simplify-flood-geojson.ts` |
+| **Frequency** | One-time fetch; static datasets |
+| **Coverage** | Chennai metropolitan area |
+| **Datasets** | 6 GeoJSON files derived from OpenCity KML resources |
+| **Files** | `public/geojson/chennai-flood-hazard-zones.geojson`, `chennai-flood-2015-hotspots.geojson`, `chennai-flood-2020-hotspots.geojson`, `chennai-flood-inundation-depth.geojson`, `chennai-flood-return-periods.geojson` |
+
+**Sub-datasets:**
+- **Flood Hazard Zones** (CFLOWS model): 15,524 polygons in 5 categories (very high, high, moderate, low, very low). Simplified from 35MB to 3.6MB.
+- **2015 Flood Hotspots**: 327 GCC-identified flood-affected points with vulnerability ratings (Very High/High/Low), ward and zone numbers
+- **2015 Inundation Depth**: 192 crowd-sourced depth readings (5-60 ft) with location remarks
+- **2020 Cyclone Nivar Hotspots**: 53 named flood-affected neighborhoods
+- **Return Period Maps**: 5/10/25/50/100/200-year flood extents, merged from 6 KMLs into 1.1MB file
+
+**Known limitations:**
+- CFLOWS hazard zones are model outputs, not observed flood extents
+- 2015 depth points are crowd-sourced and may have accuracy variations
+- Return period maps are planning-grade, not site-specific predictions
+- Hazard zone polygons have no location names; ward boundary overlay provides spatial context
+
+## GCC Storm Water Drain Network
+
+| | |
+|---|---|
+| **Source** | [GCC Storm Water Drain Survey](https://data.opencity.in/dataset/chennai-stormwater-drain-swd-maps) + [Chennai Basin Drainage Maps](https://data.opencity.in/dataset/chennai-basin-drainage-maps) |
+| **Method** | KML download + Python conversion to GeoJSON |
+| **Frequency** | Static (survey data from 2023) |
+| **Coverage** | 197 wards across Greater Chennai Corporation |
+| **Features** | 10,308 drain segments (8,092 SWD + 2,089 side drains + 62 open drains + 15 macro + 37 micro + others) |
+| **Fields** | Street name, location, ward, zone, drain type, open/closed detail, depth (m), width (m), length (m), material, condition status (Good/Bad), cover |
+| **File** | `public/geojson/chennai-drainage.geojson` (~4.3 MB) |
+
+**Why this source?**
+- Official GCC survey data with street-level drain detail across nearly all wards
+- Includes condition status (Good/Bad) and construction type - useful for maintenance prioritization
+- Ward and zone assignment enables cross-referencing with groundwater and flood hazard data
+- Replaces the earlier OSM drainage data (739 features) with 14x more features and richer attributes
+
+**Known limitations:**
+- Survey data from 2023 - new construction or repairs since then are not reflected
+- Some fields (CONST_DATE, CONTRACTOR, FUND) are sparsely populated
+- Drain depth/width values are nominal design values, not field measurements
+- File size is 4.3MB; may be slow to render all 10,308 segments on lower-end devices
+
 ## Restoration Priority Scores -Computed
 
 | | |

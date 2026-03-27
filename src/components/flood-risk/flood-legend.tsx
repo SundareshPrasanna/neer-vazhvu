@@ -13,9 +13,11 @@ const HAZARD_ITEMS: Array<{ cat: HazardCategory; key: string }> = [
 ];
 
 const DRAINAGE_ITEMS: Array<{ type: string; key: string }> = [
-  { type: "canal", key: "flood.legend_canal" },
-  { type: "drain", key: "flood.legend_drain" },
-  { type: "ditch", key: "flood.legend_ditch" },
+  { type: "Macro Drain", key: "flood.legend_macro" },
+  { type: "Micro Drain", key: "flood.legend_micro" },
+  { type: "SWD", key: "flood.legend_swd" },
+  { type: "Side Drain", key: "flood.legend_side" },
+  { type: "Open Drain", key: "flood.legend_open" },
 ];
 
 interface FloodLegendProps {

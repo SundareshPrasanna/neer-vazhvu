@@ -166,9 +166,9 @@ function Hotspot2020Content({ props }: { props: { name: string } }) {
   );
 }
 
-function DrainageContent({ props }: { props: { osm_id: number; name: string | null; waterway_type: string } }) {
+function DrainageContent({ props }: { props: DrainageProperties }) {
   const { t } = useLanguage();
-  const color = DRAINAGE_COLORS[props.waterway_type] ?? "#64748b";
+  const color = DRAINAGE_COLORS[props.drain_type] ?? "#3b82f6";
 
   return (
     <>
@@ -176,17 +176,75 @@ function DrainageContent({ props }: { props: { osm_id: number; name: string | nu
         <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.waterway_type")}</div>
         <div className="flex items-center gap-2">
           <span className="inline-block w-6 h-0 border-t-2" style={{ borderColor: color }} />
-          <span className="text-sm font-semibold capitalize" style={{ color }}>{props.waterway_type}</span>
+          <span className="text-sm font-semibold" style={{ color }}>{props.drain_type}</span>
         </div>
       </div>
-      {props.name && (
+      {props.street && (
         <div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">{t("lr.name")}</div>
-          <div className="text-sm text-slate-900 dark:text-slate-100">{props.name}</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.street")}</div>
+          <div className="text-sm text-slate-900 dark:text-slate-100">{props.street}</div>
+        </div>
+      )}
+      {props.location && (
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.location")}</div>
+          <div className="text-sm text-slate-900 dark:text-slate-100">{props.location}</div>
+        </div>
+      )}
+      {(props.ward || props.zone) && (
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.ward")} / {t("flood.zone_label")}</div>
+          <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.ward} / {props.zone}</div>
+        </div>
+      )}
+      <div className="grid grid-cols-3 gap-2">
+        {props.drain_len > 0 && (
+          <div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.length")}</div>
+            <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{Math.round(props.drain_len)} m</div>
+          </div>
+        )}
+        {props.drain_wid > 0 && (
+          <div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.width")}</div>
+            <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.drain_wid} m</div>
+          </div>
+        )}
+        {props.drain_dep > 0 && (
+          <div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.depth_m")}</div>
+            <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.drain_dep} m</div>
+          </div>
+        )}
+      </div>
+      {props.detail && (
+        <div className="flex gap-3">
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+            props.detail.toLowerCase().includes("open")
+              ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
+              : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+          }`}>
+            {props.detail}
+          </span>
+          {props.status && props.status !== "" && (
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+              props.status === "Good"
+                ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+            }`}>
+              {props.status}
+            </span>
+          )}
+        </div>
+      )}
+      {props.material && (
+        <div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.material")}</div>
+          <div className="text-sm text-slate-700 dark:text-slate-300">{props.material}</div>
         </div>
       )}
       <p className="text-xs text-slate-400 dark:text-slate-500">
-        OSM ID: {props.osm_id}
+        {t("flood.source_gcc_swd")}
       </p>
     </>
   );

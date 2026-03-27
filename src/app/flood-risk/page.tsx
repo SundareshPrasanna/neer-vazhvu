@@ -94,13 +94,13 @@ export default function FloodRiskPage() {
         {viewMode === "drainage" && (
           <>
             <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
-              <span className="font-semibold text-slate-900 dark:text-slate-100">104</span> {t("flood.canals")}
+              <span className="font-semibold text-slate-900 dark:text-slate-100">8,092</span> {t("flood.swd_count")}
             </span>
             <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
-              <span className="font-semibold text-slate-900 dark:text-slate-100">560</span> {t("flood.drains")}
+              <span className="font-semibold text-slate-900 dark:text-slate-100">2,089</span> {t("flood.side_drains")}
             </span>
             <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
-              <span className="font-semibold text-slate-900 dark:text-slate-100">75</span> {t("flood.ditches")}
+              <span className="font-semibold text-slate-900 dark:text-slate-100">52</span> {t("flood.macro_micro")}
             </span>
             <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
               {t("flood.tagline_drainage")}
@@ -129,7 +129,7 @@ export default function FloodRiskPage() {
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {t("flood.source_flood")}{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-300">
-                {viewMode === "drainage" ? t("flood.source_osm") : t("flood.source_opencity")}
+                {viewMode === "drainage" ? t("flood.source_gcc") : t("flood.source_opencity")}
               </span>
             </div>
           </div>
