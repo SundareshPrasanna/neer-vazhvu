@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import {
   Dialog,
   DialogContent,
@@ -53,6 +54,11 @@ export function ReservoirDetailDialog({
 }: ReservoirDetailDialogProps) {
   const { t, language } = useLanguage();
   const locale = language === "ta" ? "ta-IN" : "en-IN";
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+  const isDark = mounted && resolvedTheme === "dark";
   const [activeDays, setActiveDays] = useState(90);
 
   if (!reservoir) return null;
@@ -201,7 +207,7 @@ export function ReservoirDetailDialog({
                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
                 <XAxis
                   dataKey="label"
                   tick={{ fontSize: 10, fill: "#94a3b8" }}
@@ -221,8 +227,8 @@ export function ReservoirDetailDialog({
                     const pct = d.capacity > 0 ? ((d.storage / d.capacity) * 100).toFixed(1) : "0";
                     return (
                       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 text-xs">
-                        <div className="text-slate-500">{formatDate(d.date)}</div>
-                        <div className="font-semibold text-blue-700">
+                        <div className="text-slate-500 dark:text-slate-400">{formatDate(d.date)}</div>
+                        <div className="font-semibold text-blue-700 dark:text-blue-400">
                           {formatNumber(d.storage)} mcft ({pct}%)
                         </div>
                       </div>
@@ -249,7 +255,7 @@ export function ReservoirDetailDialog({
           <div className="h-40">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={flowData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
                 <XAxis
                   dataKey="label"
                   tick={{ fontSize: 10, fill: "#94a3b8" }}
@@ -267,9 +273,9 @@ export function ReservoirDetailDialog({
                     const d = payload[0].payload;
                     return (
                       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 text-xs">
-                        <div className="text-slate-500">{formatDate(d.date)}</div>
-                        <div className="text-green-600">{t("dash.inflow")}: {formatNumber(d.inflow)} {t("dash.cusecs_unit")}</div>
-                        <div className="text-red-600">{t("dash.outflow")}: {formatNumber(d.outflow)} {t("dash.cusecs_unit")}</div>
+                        <div className="text-slate-500 dark:text-slate-400">{formatDate(d.date)}</div>
+                        <div className="text-green-600 dark:text-green-400">{t("dash.inflow")}: {formatNumber(d.inflow)} {t("dash.cusecs_unit")}</div>
+                        <div className="text-red-600 dark:text-red-400">{t("dash.outflow")}: {formatNumber(d.outflow)} {t("dash.cusecs_unit")}</div>
                       </div>
                     );
                   }}
@@ -313,7 +319,7 @@ export function ReservoirDetailDialog({
                     <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
                 <XAxis
                   dataKey="label"
                   tick={{ fontSize: 10, fill: "#94a3b8" }}
@@ -332,8 +338,8 @@ export function ReservoirDetailDialog({
                     const d = payload[0].payload;
                     return (
                       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 text-xs">
-                        <div className="text-slate-500">{formatDate(d.date)}</div>
-                        <div className="font-semibold text-cyan-600">{d.rainfall} mm</div>
+                        <div className="text-slate-500 dark:text-slate-400">{formatDate(d.date)}</div>
+                        <div className="font-semibold text-cyan-600 dark:text-cyan-400">{d.rainfall} mm</div>
                       </div>
                     );
                   }}

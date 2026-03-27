@@ -66,10 +66,10 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
               {/* Inflow/outflow */}
               <div className="flex flex-row justify-between mt-3 text-xs text-slate-500 dark:text-slate-400 gap-0.5">
                 <span>
-                  {t("dash.in_label")} <span className="font-medium text-green-600">{formatNumber(r.inflowCusecs)}</span> {t("dash.cusecs_unit")}
+                  {t("dash.in_label")} <span className="font-medium text-green-600 dark:text-green-400">{formatNumber(r.inflowCusecs)}</span> {t("dash.cusecs_unit")}
                 </span>
                 <span>
-                  {t("dash.out_label")} <span className="font-medium text-red-600">{formatNumber(r.outflowCusecs)}</span> {t("dash.cusecs_unit")}
+                  {t("dash.out_label")} <span className="font-medium text-red-600 dark:text-red-400">{formatNumber(r.outflowCusecs)}</span> {t("dash.cusecs_unit")}
                 </span>
               </div>
 

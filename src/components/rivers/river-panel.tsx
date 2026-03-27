@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { RiverQualityChart } from "@/components/rivers/river-quality-chart";
+import { ConnectedInsight } from "@/components/insights/connected-insight";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
 import {
   QUALITY_COLORS,
@@ -198,6 +199,17 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 leading-snug">
             {t("rivers.do_better")}
           </p>
+        </div>
+      )}
+
+      {/* Connected insight: degraded river blocks recharge */}
+      {(river.overall_status === "dead" || river.overall_status === "severely_degraded") && (
+        <div className="mb-4">
+          <ConnectedInsight
+            messageKey="connected.river_recharge"
+            linkHref="/water-bodies"
+            linkKey="connected.river_wb_link"
+          />
         </div>
       )}
 

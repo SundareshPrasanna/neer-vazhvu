@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { RiverPanel } from "@/components/rivers/river-panel";
 import { PollutionPanel } from "@/components/pollution/pollution-panel";
@@ -32,7 +33,16 @@ const CombinedRiversMap = dynamic(
 );
 
 export default function RiversPage() {
+  return (
+    <Suspense>
+      <RiversPageContent />
+    </Suspense>
+  );
+}
+
+function RiversPageContent() {
   const { t } = useLanguage();
+  const searchParams = useSearchParams();
   const [qualityData, setQualityData] = useState<RiverQualityData | null>(null);
   const [pollutionData, setPollutionData] = useState<IndustrialPollutionData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,6 +50,9 @@ export default function RiversPage() {
   const [selectedSource, setSelectedSource] = useState<PollutionSource | null>(null);
 
   useEffect(() => {
+    const riverParam = searchParams.get("river");
+    const stationParam = searchParams.get("station");
+
     Promise.all([
       fetch("/data/river-quality.json").then((r) => r.json()),
       fetch("/data/industrial-sources.json").then((r) => r.json()),
@@ -48,7 +61,20 @@ export default function RiversPage() {
         setQualityData(quality);
         setPollutionData(pollution);
         setLoading(false);
-        // Pre-select Cooum (most polluted) so users see the panel on load
+
+        // Deep link: pre-select river + station from ?river= and ?station= params
+        if (riverParam) {
+          const river = quality.rivers.find((r: { id: string }) => r.id === riverParam);
+          if (river && river.stations.length > 0) {
+            const station = stationParam
+              ? river.stations.find((s: { id: string }) => s.id === stationParam) ?? river.stations[0]
+              : river.stations[0];
+            setSelectedRiver({ riverId: riverParam, stationId: station.id, latlng: [station.lat, station.lng] });
+            return;
+          }
+        }
+
+        // Default: pre-select Cooum (most polluted)
         const cooum = quality.rivers.find((r: { id: string }) => r.id === "cooum");
         if (cooum && cooum.stations.length > 0) {
           const s = cooum.stations[0];
@@ -56,6 +82,7 @@ export default function RiversPage() {
         }
       })
       .catch(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -107,7 +134,10 @@ export default function RiversPage() {
             <span className="text-xs">{t("rivers_page.aquatic_note")}</span>
           </span>
         )}
-        <span className="text-slate-400 dark:text-slate-500 text-xs ml-auto">
+        <span className="text-slate-400 dark:text-slate-500 text-xs hidden sm:inline">
+          {t("context.rivers_recharge")}
+        </span>
+        <span className="text-slate-400 dark:text-slate-500 text-xs ml-auto whitespace-nowrap">
           {t("rivers_page.quality_data")} {qualityData.data_year_range[0]}-{qualityData.data_year_range[1]}
         </span>
       </div>

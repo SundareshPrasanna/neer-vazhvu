@@ -10,6 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useTheme } from "next-themes";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { WardHistoryPoint, WardHistoryResponse } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
@@ -20,6 +21,11 @@ interface WardHistoryChartProps {
 
 export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
   const { t, language } = useLanguage();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+  const isDark = mounted && resolvedTheme === "dark";
   const locale = language === "ta" ? "ta-IN" : "en-IN";
   const [history, setHistory] = useState<WardHistoryPoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -132,10 +138,10 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
       <div className="h-44">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={history} margin={{ top: 5, right: 5, left: -10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 9, fill: "#94a3b8" }}
+              tick={{ fontSize: 9, fill: isDark ? "#94a3b8" : "#64748b" }}
               tickLine={false}
               axisLine={false}
               interval={5}
@@ -150,7 +156,7 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
             />
             <YAxis
               reversed
-              tick={{ fontSize: 9, fill: "#94a3b8" }}
+              tick={{ fontSize: 9, fill: isDark ? "#94a3b8" : "#64748b" }}
               tickLine={false}
               axisLine={false}
               tickFormatter={(v: number) => `${v}m`}

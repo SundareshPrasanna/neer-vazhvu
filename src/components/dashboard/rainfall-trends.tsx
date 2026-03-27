@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { useTheme } from "next-themes";
 import {
   BarChart,
   Bar,
@@ -42,6 +43,11 @@ function getBarColor(total: number, mean: number, year: number): string {
 
 export function RainfallTrends() {
   const { t, language } = useLanguage();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+  const isDark = mounted && resolvedTheme === "dark";
   const [data, setData] = useState<IMDRainfallData | null>(null);
 
   useEffect(() => {
@@ -125,10 +131,13 @@ export function RainfallTrends() {
                 }}
                 contentStyle={{
                   fontSize: "12px",
-                  backgroundColor: "rgba(255,255,255,0.95)",
-                  border: "1px solid #e2e8f0",
+                  backgroundColor: isDark ? "rgba(30,41,59,0.95)" : "rgba(255,255,255,0.95)",
+                  border: `1px solid ${isDark ? "#334155" : "#e2e8f0"}`,
                   borderRadius: "6px",
+                  color: isDark ? "#e2e8f0" : "#1e293b",
                 }}
+                itemStyle={{ color: isDark ? "#e2e8f0" : "#1e293b" }}
+                labelStyle={{ color: isDark ? "#f1f5f9" : "#0f172a" }}
               />
               <ReferenceLine
                 y={mean}
@@ -177,10 +186,13 @@ export function RainfallTrends() {
                 ]}
                 contentStyle={{
                   fontSize: "12px",
-                  backgroundColor: "rgba(255,255,255,0.95)",
-                  border: "1px solid #e2e8f0",
+                  backgroundColor: isDark ? "rgba(30,41,59,0.95)" : "rgba(255,255,255,0.95)",
+                  border: `1px solid ${isDark ? "#334155" : "#e2e8f0"}`,
                   borderRadius: "6px",
+                  color: isDark ? "#e2e8f0" : "#1e293b",
                 }}
+                itemStyle={{ color: isDark ? "#e2e8f0" : "#1e293b" }}
+                labelStyle={{ color: isDark ? "#f1f5f9" : "#0f172a" }}
               />
               <Bar dataKey="normal" fill="#94a3b8" radius={[2, 2, 0, 0]} maxBarSize={16} name="normal" />
               <Bar dataKey="actual" fill="#3b82f6" radius={[2, 2, 0, 0]} maxBarSize={16} name="actual" />

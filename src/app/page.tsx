@@ -3,11 +3,16 @@ import { DashboardContent } from "@/components/dashboard/dashboard-content";
 import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
 import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
 import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
+import { CityStory } from "@/components/insights/city-story";
 import { CUSEC_DAY_TO_MCFT, RESERVOIR_DISPLAY_ORDER } from "@/lib/utils/constants";
 import { getGroundwaterStatus } from "@/types/groundwater";
 import type { ReservoirSummary, ReservoirName } from "@/types/reservoir";
 import type { GroundwaterApiResponse } from "@/types/groundwater";
 import { formatDate } from "@/lib/utils/format";
+import { deriveReservoirMetrics, deriveGroundwaterMetrics, deriveRestorationMetrics } from "@/lib/insights/derive-metrics";
+import { selectNarrative } from "@/lib/insights/select-narrative";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
 export const revalidate = 900; // ISR: revalidate every 15 minutes
 
@@ -321,6 +326,28 @@ export default async function DashboardPage() {
     return <DemoDashboard />;
   }
 
+  // Compute CityStory narrative from available data
+  let cityStoryNarrative = null;
+  if (groundwaterData) {
+    try {
+      const restorationPath = join(process.cwd(), "public", "data", "restoration-priority.json");
+      const restorationRaw = JSON.parse(await readFile(restorationPath, "utf-8"));
+
+      const metrics = {
+        reservoir: deriveReservoirMetrics(
+          reservoirData.totalStorage,
+          reservoirData.totalCapacity,
+          reservoirData.lastUpdated,
+        ),
+        groundwater: deriveGroundwaterMetrics(groundwaterData),
+        restoration: deriveRestorationMetrics(restorationRaw),
+      };
+      cityStoryNarrative = selectNarrative(metrics);
+    } catch {
+      // Restoration data unavailable - skip CityStory
+    }
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <DaysLeftHero
@@ -331,6 +358,8 @@ export default async function DashboardPage() {
         lastUpdated={formatDate(reservoirData.lastUpdated)}
         comparison2019Storage={reservoirData.comparison2019Storage}
       />
+
+      {cityStoryNarrative && <CityStory narrative={cityStoryNarrative} />}
 
       <DashboardContent
         reservoirs={reservoirData.reservoirs.filter((r) =>

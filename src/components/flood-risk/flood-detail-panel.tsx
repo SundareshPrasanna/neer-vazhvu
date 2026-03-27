@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/lib/i18n/context";
+import { ConnectedInsight } from "@/components/insights/connected-insight";
 import { HAZARD_COLORS, VULNERABILITY_COLORS, DRAINAGE_COLORS, SEWERAGE_COLORS } from "@/types/flood-risk";
 import type {
   SelectedFloodFeature,
@@ -89,6 +90,13 @@ function HazardContent({ props }: { props: HazardZoneProperties }) {
       <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
         {t("flood.hazard_source")}
       </p>
+      {(cat === "very_high" || cat === "high") && (
+        <ConnectedInsight
+          messageKey="connected.flood_hazard_gw"
+          linkHref="/groundwater"
+          linkKey="connected.flood_hazard_gw_link"
+        />
+      )}
     </>
   );
 }
@@ -155,6 +163,14 @@ function Hotspot2015Content({ props }: { props: { location: string; vulnerabilit
       <p className="text-xs text-slate-400 dark:text-slate-500">
         {t("flood.event_2015")}
       </p>
+      {props.ward > 0 && (
+        <ConnectedInsight
+          messageKey="connected.flood_hotspot_gw"
+          params={{ ward: props.ward }}
+          linkHref={`/groundwater?ward=${props.ward}`}
+          linkKey="connected.flood_hotspot_gw_link"
+        />
+      )}
     </>
   );
 }
@@ -255,6 +271,11 @@ function DrainageContent({ props }: { props: DrainageProperties }) {
       <p className="text-xs text-slate-400 dark:text-slate-500">
         {t("flood.source_gcc_swd")}
       </p>
+      <ConnectedInsight
+        messageKey="connected.flood_drainage_wb"
+        linkHref="/water-bodies?mode=lost"
+        linkKey="connected.flood_drainage_wb_link"
+      />
     </>
   );
 }
@@ -316,6 +337,11 @@ function STPContent({ props }: { props: STPProperties }) {
       <p className="text-xs text-slate-400 dark:text-slate-500">
         Source: CMWSSB Sewerage Collection System
       </p>
+      <ConnectedInsight
+        messageKey="connected.flood_stp_river"
+        linkHref="/rivers"
+        linkKey="connected.flood_stp_river_link"
+      />
     </>
   );
 }

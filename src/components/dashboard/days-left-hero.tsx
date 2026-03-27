@@ -64,10 +64,10 @@ function formatDays(days: number, t: (key: string) => string): string {
 }
 
 function getSeverityColor(days: number): string {
-  if (days > 180) return "text-green-600";
-  if (days > 90) return "text-yellow-600";
-  if (days > 45) return "text-orange-500";
-  return "text-red-600";
+  if (days > 180) return "text-green-600 dark:text-green-400";
+  if (days > 90) return "text-yellow-600 dark:text-yellow-400";
+  if (days > 45) return "text-orange-500 dark:text-orange-400";
+  return "text-red-600 dark:text-red-400";
 }
 
 function getBarColor(pct: number): string {
@@ -192,9 +192,9 @@ export function DaysLeftHero({
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-2">
               {t("hero.2019_comparison")} {formatNumber(comparison2019Storage)} mcft
               {comparison2019Storage < totalStorageMcft ? (
-                <span className="text-green-600 ml-1">{t("hero.better_today")}</span>
+                <span className="text-green-600 dark:text-green-400 ml-1">{t("hero.better_today")}</span>
               ) : (
-                <span className="text-red-600 ml-1">{t("hero.worse_today")}</span>
+                <span className="text-red-600 dark:text-red-400 ml-1">{t("hero.worse_today")}</span>
               )}
             </div>
           )}

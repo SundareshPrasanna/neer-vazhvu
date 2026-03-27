@@ -1,11 +1,13 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { ConnectedInsight } from "@/components/insights/connected-insight";
 import type { SelectedWaterBody, WaterBodyStatus } from "@/types/water-bodies";
 import { STATUS_COLORS } from "@/types/water-bodies";
 import type { ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
+import { RIVER_POLLUTION_COMPONENT_THRESHOLD, RIVER_POLLUTION_COMPONENT_MAX } from "@/lib/insights/constants";
 
 interface UnifiedDetailPanelProps {
   selected: SelectedWaterBody;
@@ -107,6 +109,23 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
           })}
         </div>
       </div>
+
+      {/* Connected insight: river pollution proximity */}
+      {wb.components.river_pollution >= RIVER_POLLUTION_COMPONENT_THRESHOLD && wb.nearest_river_station && (
+        <div className="px-4">
+          <ConnectedInsight
+            messageKey="connected.wb_river_pollution"
+            params={{
+              n: Math.round(wb.components.river_pollution * 0.18),
+              max: RIVER_POLLUTION_COMPONENT_MAX,
+              station: wb.nearest_river_station,
+              status: wb.components.river_pollution >= 70 ? "degraded" : "stressed",
+            }}
+            linkHref="/rivers"
+            linkKey="connected.wb_river_link"
+          />
+        </div>
+      )}
 
       {/* Nearest features */}
       <div className="px-4 pb-4 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-3">
