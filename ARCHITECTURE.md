@@ -12,10 +12,12 @@ graph TB
         NASA["NASA POWER API<br/>(Weather fallback)"]
         OC["OpenCity CKAN<br/>(Groundwater)"]
         CPCB["CPCB Annual Reports<br/>(River quality, manual)"]
-        OSM["OpenStreetMap / Overpass<br/>(River geometry, one-time)"]
+        OSM["OpenStreetMap / Overpass<br/>(River geometry, drainage, one-time)"]
+        GCC["GCC SWD Survey<br/>(Storm water drains, one-time)"]
         IMD["IMD Gridded Rainfall<br/>(via imdlib, one-time)"]
         WRIS["India WRIS / CGWB<br/>(GW exploitation, one-time)"]
         DGI["data.gov.in<br/>(Water Bodies Census)"]
+        CMWSSB_SEW["CMWSSB Sewerage<br/>(STPs, SPS, pumping mains, one-time)"]
     end
 
     subgraph Backend ["Python API (FastAPI)"]
@@ -49,7 +51,9 @@ graph TB
     OC -->|CKAN API| Scrapers
     DGI -->|REST API| Scrapers
     CPCB -->|manual JSON| StaticFiles["public/data/<br/>river-quality.json<br/>industrial-sources.json<br/>restoration-priority.json<br/>imd-rainfall-monthly.json<br/>gwr-blocks.json<br/>gw-stations.json"]
-    OSM -->|fetch scripts| StaticFiles2["public/geojson/<br/>chennai-rivers.geojson<br/>chennai-water-bodies-current.geojson<br/>chennai-water-bodies-lost.geojson<br/>chennai-industrial-zones.geojson<br/>chennai-wards-2022.geojson<br/>chennai-gwr-blocks.geojson"]
+    OSM -->|fetch scripts| StaticFiles2["public/geojson/<br/>chennai-rivers.geojson<br/>chennai-water-bodies-current.geojson<br/>chennai-water-bodies-lost.geojson<br/>chennai-industrial-zones.geojson<br/>chennai-wards-2022.geojson<br/>chennai-gwr-blocks.geojson<br/>chennai-flood-*.geojson<br/>chennai-drainage.geojson<br/>chennai-sewerage.geojson"]
+    GCC -->|KML conversion| StaticFiles2
+    CMWSSB_SEW -->|KML/KMZ conversion| StaticFiles2
     IMD -->|imdlib script| StaticFiles
     WRIS -->|ArcGIS REST| StaticFiles
 
@@ -299,6 +303,7 @@ graph TD
     Layout --> GW["Groundwater Page"]
     Layout --> WB["Water Bodies + Restoration Page"]
     Layout --> RV["Rivers Page"]
+    Layout --> FR["Flood Risk Page"]
     Layout --> About["About Page"]
 
     subgraph Dashboard["Dashboard Page /"]
@@ -338,6 +343,15 @@ graph TD
     end
 
     WB --> WB_Children
+
+    subgraph FR_Children["Flood Risk Page"]
+        FRM["FloodRiskMap<br/>(Leaflet: hazard zones, hotspots,<br/>drainage, sewerage, ward boundaries)"]
+        FVT["FloodViewToggle<br/>(Hazard / Historical / Drainage / Sewerage)"]
+        FDP["FloodDetailPanel<br/>(hazard, depth, hotspot, drain, STP/SPS info)"]
+        FLG["FloodLegend"]
+    end
+
+    FR --> FR_Children
 ```
 
 ### Localization (i18n)

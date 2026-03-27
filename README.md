@@ -2,7 +2,7 @@
 
 **Chennai Water Intelligence Dashboard** - An open-source platform that turns public water data into actionable intelligence for Chennai's 11 million residents.
 
-Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, and an **interactive water bodies and restoration priority map**.
+Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, flood risk, sewerage infrastructure, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, an **interactive water bodies and restoration priority map**, and a **flood risk, drainage, and sewerage network map**.
 
 ## Features
 
@@ -51,6 +51,16 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **River Detail Panel** - Status badge, CPCB class, 3-year trend indicator, station selector, embedded explainer for DO and BOD
 - **3-Year Trend** - Per monitoring station: direction badge (Improving / Worsening / Stable / Mixed) with signed DO and BOD deltas derived from the last 3 annual readings
 - **Industrial Pollution Sources Overlay** - 7 major facilities (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek) colour-coded by type; click for operator details, pollutant pills, incident timeline, and NGT orders. OSM `landuse=industrial` polygons shown as translucent overlay
+
+### Flood Risk, Drainage, and Sewerage
+- **Hazard Zone Map** - CFLOWS model flood hazard zones (Very High to Very Low) from OpenCity Chennai, with ward boundary overlay for area context
+- **Historical Flood Events** - Toggle between 2015 Chennai floods (327 hotspots with vulnerability ratings, 192 inundation depth points) and 2020 Cyclone Nivar (53 hotspots)
+- **GCC Storm Water Drain Network** - 10,308 official drain segments from Greater Chennai Corporation survey (2023), showing street-level detail with drain type, depth, width, material, and condition status
+- **Macro and Micro Drains** - 52 major drainage channels from Chennai Basin Drainage Maps
+- **Drain Detail Panel** - Click any drain for street name, ward/zone, dimensions, open/closed status, condition (Good/Bad), and material type
+- **CMWSSB Sewerage Network** - 8 treatment plants (STPs) with capacity, 348 pumping stations (SPS) with STP linkage, and 3,834 pumping main segments with pipe material and size
+- **Return Period Maps** - 5/10/25/50/100/200-year flood extent polygons
+- **Ward Boundary Overlay** - 200 GCC wards with zone names on hover across all view modes
 
 ### Intelligence Layer (Python Service)
 - **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals; uses inflow/outflow, precipitation, and ET₀ (evapotranspiration) as exogenous regressors when data variance is sufficient
@@ -103,6 +113,9 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 | NGT Southern Bench / TNPCB / CPCB | 7 major industrial pollution sources - facility data, pollutant types, incident records, NGT orders | Manually curated |
 | [IMD Gridded Rainfall (via imdlib)](https://imdlib.readthedocs.io/) | Monthly rainfall at 0.25 deg resolution for Chennai (1970-2025), long-term normals | One-time generation |
 | [India WRIS / CGWB](https://indiawris.gov.in/) | Block-level groundwater exploitation (%), classification (Safe to Over-Exploited), block boundaries (2011-2024) | Static fetch |
+| [OpenCity Chennai (Flood Data)](https://data.opencity.in/) | CFLOWS flood hazard zones, 2015 flood hotspots/depth, 2020 Cyclone Nivar hotspots, return period maps | Static fetch |
+| [GCC Storm Water Drain Survey](https://data.opencity.in/) | 10,308 drain segments with type, depth, width, material, status across 197 wards | Static fetch |
+| [CMWSSB Sewerage Network](https://data.opencity.in/) | 8 STPs, 348 pumping stations, 3,834 pumping mains with pipe material and size | Static fetch |
 
 ## Tech Stack
 
@@ -110,7 +123,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 |-------|------------|
 | Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS v4, shadcn/ui |
 | Charts | Recharts |
-| Maps | Leaflet + react-leaflet — GCC ward boundaries (GeoJSON) + OSM water body polygons + curated lost bodies (GeoJSON) |
+| Maps | Leaflet + react-leaflet — GCC ward boundaries, flood hazard zones, storm water drains, sewerage network, water body polygons, river polylines (GeoJSON) |
 | Backend API | Python 3.11+, FastAPI, statsforecast, pandas |
 | Database | Supabase (PostgreSQL) |
 | Deployment | Vercel (frontend), Railway (Python API) |
@@ -225,7 +238,15 @@ npx tsx scripts/fetch-rivers-osm.ts
 
 # Industrial zone polygons (north Chennai bbox)
 npx tsx scripts/fetch-industrial-zones-osm.ts
+
+# Drainage network from OSM (supplementary)
+npx tsx scripts/fetch-drainage-osm.ts
+
+# CMWSSB sewerage network (STPs, pumping stations, pumping mains)
+python3 scripts/convert-sewerage-kml.py
 ```
+
+Flood hazard zones and GCC storm water drain data are converted from OpenCity KML files via `scripts/simplify-flood-geojson.ts`. CMWSSB sewerage data is converted via `python3 scripts/convert-sewerage-kml.py`.
 
 ### 7. Refresh River Quality Data (optional, annual)
 
@@ -275,6 +296,7 @@ neer-vazhvu/
 │   │   ├── groundwater/          # Groundwater map page
 │   │   ├── water-bodies/         # Unified water bodies + restoration map
 │   │   ├── rivers/               # River health + industrial pollution map page
+│   │   ├── flood-risk/           # Flood risk, historical events, and drainage network
 │   │   ├── lake-restoration/     # Redirects to /water-bodies
 │   │   └── about/                # About/methodology page
 │   ├── components/
@@ -283,6 +305,7 @@ neer-vazhvu/
 │   │   ├── water-bodies/         # Unified map, legend, detail panel, view-mode toggle
 │   │   ├── rivers/               # River map, panel, chart, legend
 │   │   ├── pollution/            # Industrial pollution map overlay, panel, legend
+│   │   ├── flood-risk/           # Flood risk map, legend, detail panel, view toggle
 │   │   ├── lake-restoration/     # Restoration ranking table
 │   │   ├── layout/               # Header, footer
 │   │   └── ui/                   # shadcn/ui primitives
@@ -316,7 +339,14 @@ neer-vazhvu/
 │   │   ├── chennai-water-bodies-lost.geojson    # Curated lost water bodies (15 entries)
 │   │   ├── chennai-rivers.geojson               # River polylines (Cooum, Adyar, etc.)
 │   │   ├── chennai-industrial-zones.geojson     # OSM industrial zone polygons
-│   │   └── chennai-gwr-blocks.geojson           # CGWB groundwater resource block boundaries
+│   │   ├── chennai-gwr-blocks.geojson           # CGWB groundwater resource block boundaries
+│   │   ├── chennai-flood-hazard-zones.geojson   # CFLOWS flood hazard zones (5 categories)
+│   │   ├── chennai-flood-2015-hotspots.geojson  # 2015 flood hotspots (327 points)
+│   │   ├── chennai-flood-2020-hotspots.geojson  # 2020 Cyclone Nivar hotspots (53 points)
+│   │   ├── chennai-flood-inundation-depth.geojson # 2015 inundation depth points (192)
+│   │   ├── chennai-flood-return-periods.geojson # Return period flood maps (5-200yr)
+│   │   ├── chennai-drainage.geojson             # GCC storm water drains (10,308 segments)
+│   │   └── chennai-sewerage.geojson             # CMWSSB sewerage network (8 STPs, 348 SPS, 3,834 mains)
 │   └── data/                     # Static JSON datasets
 │       ├── river-quality.json            # CPCB monitoring station readings (2015-2024)
 │       ├── industrial-sources.json       # Industrial pollution sources (NGT/TNPCB/CPCB)
@@ -401,12 +431,12 @@ Please open an issue first to discuss significant changes.
 
 ## Acknowledgments
 
-- **CMWSSB** for publishing daily reservoir data publicly
+- **CMWSSB** for publishing daily reservoir data publicly and for sewerage infrastructure data (STPs, pumping stations, pumping mains)
 - **[Open-Meteo](https://open-meteo.com/)** for free, zero-lag weather data with evapotranspiration
 - **NASA POWER** for free, open weather data (fallback source)
 - **OpenCity Chennai** for ward-level groundwater datasets
 - **[data.gov.in](https://data.gov.in/)** / **Ministry of Jal Shakti** for the First Census of Water Bodies (2018-19)
-- **GCC** for ward boundary delimitation data
+- **GCC** for ward boundary delimitation data and storm water drain survey data (10,308 drain segments)
 - **OpenStreetMap contributors** for water body polygon and river geometry data
 - **Care Earth Trust** for comprehensive water body surveys and documentation
 - **IIT Madras** and the **National Green Tribunal** for research and legal records on water body encroachments and industrial pollution

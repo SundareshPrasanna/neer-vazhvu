@@ -378,6 +378,10 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.ds_cpcb_desc":        { en: "Annual reports from the Central Pollution Control Board's National Water Monitoring Programme. Source for DO, BOD, pH, and conductivity readings at monitoring stations on the Cooum, Adyar, Buckingham Canal, and Kosasthalaiyar rivers. Supplemented by IIT Madras / Anna University peer-reviewed studies and NGT Chennai bench orders.", ta: "மத்திய மாசுக்கட்டுப்பாட்டு வாரியத்தின் தேசிய நீர் கண்காணிப்பு திட்டத்தின் வருடாந்திர அறிக்கைகள். கூவம், அடையாறு, பக்கிங்ஹாம் கால்வாய் மற்றும் கோசஸ்தலையாறு ஆறுகளில் DO, BOD, pH மற்றும் கடத்துதிறன் அளவீடுகளுக்கான ஆதாரம். IIT மதராஸ் / அண்ணா பல்கலைக்கழக ஆய்வுகள் மற்றும் NGT சென்னை அமர்வு ஆணைகளால் கூடுதலாக்கப்பட்டது." },
   "about.ds_ngt_desc":         { en: "7 major industrial facilities in the Ennore-Manali corridor, curated from NGT Southern Bench orders (2017-2022), TNPCB enforcement records, CPCB industrial monitoring reports, and academic studies. Each facility entry includes pollutant types, documented incidents with volumes and dates, and NGT order summaries.", ta: "NGT தென் அமர்வு ஆணைகள் (2017-2022), TNPCB அமல்படுத்தல் பதிவுகள், CPCB தொழில்துறை கண்காணிப்பு அறிக்கைகள் மற்றும் கல்வி ஆய்வுகளிலிருந்து தொகுக்கப்பட்ட என்னூர்-மணலி தொடரிடையிலுள்ள 7 முக்கிய தொழில் வசதிகள். ஒவ்வொரு பதிவிலும் மாசுபடுத்திகளின் வகைகள், ஆவணப்படுத்தப்பட்ட சம்பவங்கள் மற்றும் NGT ஆணை சுருக்கங்கள் அடங்கும்." },
 
+  "about.ds_flood_desc":      { en: "CFLOWS model flood hazard zones (5 categories), 2015 Chennai flood hotspots with vulnerability ratings, 2015 inundation depth readings, 2020 Cyclone Nivar hotspots, and return period flood maps (5-200yr).", ta: "CFLOWS மாதிரி வெள்ள ஆபத்து மண்டலங்கள் (5 வகைகள்), 2015 சென்னை வெள்ள புள்ளிகள், 2015 நீர்மூழ்கு ஆழ அளவீடுகள், 2020 சூறாவளி நிவர் புள்ளிகள், மற்றும் திரும்ப காலம் வெள்ள வரைபடங்கள் (5-200 ஆண்டு)." },
+  "about.ds_swd_desc":        { en: "10,308 official storm water drain segments from GCC survey (2023) across 197 wards, with street name, drain type, depth, width, length, material, and condition status.", ta: "GCC ஆய்வின் (2023) 197 வார்டுகளில் 10,308 அதிகாரபூர்வ மழைநீர் வடிகால் பகுதிகள், தெரு பெயர், வடிகால் வகை, ஆழம், அகலம், நீளம், பொருள் மற்றும் நிலை." },
+  "about.ds_sewerage_desc":   { en: "CMWSSB sewerage infrastructure: 8 sewage treatment plants (STPs) with capacity, 348 pumping stations (SPS) linked to STPs, and 3,834 pumping main segments with pipe material and size.", ta: "CMWSSB கழிவுநீர் உள்கட்டமைப்பு: 8 கழிவுநீர் சுத்திகரிப்பு நிலையங்கள் (STP), 348 பம்பிங் நிலையங்கள் (SPS), மற்றும் 3,834 பம்பிங் முக்கிய குழாய் பகுதிகள்." },
+
   // ── Rivers page ───────────────────────────────────────────────────────────
   "rivers_page.loading":      { en: "Loading river data...",          ta: "ஆற்று தரவு ஏற்றுகிறது..." },
   "rivers_page.loading_map":  { en: "Loading map...",                 ta: "வரைபடம் ஏற்றப்படுகிறது..." },
@@ -579,4 +583,112 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "lr.show_top":           { en: "Show top priorities only",      ta: "முக்கிய முன்னுரிமைகளை மட்டும் காட்டு" },
   "lr.methodology":        { en: "Scores computed from water body size, proximity to lost water bodies, river pollution levels, industrial source proximity, and water body type.", ta: "நீர்நிலை அளவு, இழந்த நீர்நிலைகளுக்கு அருகாமை, ஆற்று மாசு நிலைகள், தொழிற்சாலை ஆதாரங்கள் அருகாமை, மற்றும் நீர்நிலை வகை ஆகியவற்றின் அடிப்படையில் மதிப்பெண்கள் கணக்கிடப்படுகின்றன." },
   "lr.source_note":        { en: "Data: OpenStreetMap, CPCB, Care Earth Trust", ta: "தரவு: OpenStreetMap, CPCB, Care Earth Trust" },
+
+  // ── Flood Risk page ──────────────────────────────────────
+  "nav.flood_risk":         { en: "Flood Risk",                     ta: "வெள்ள அபாயம்" },
+  "flood.loading":          { en: "Loading flood data...",           ta: "வெள்ள தரவு ஏற்றப்படுகிறது..." },
+  "flood.loading_map":      { en: "Loading flood risk map...",       ta: "வெள்ள அபாய வரைபடம் ஏற்றப்படுகிறது..." },
+
+  // View toggle
+  "flood.view_hazard":      { en: "Hazard Zones",                   ta: "ஆபத்து மண்டலங்கள்" },
+  "flood.view_historical":  { en: "Historical Floods",              ta: "வரலாற்று வெள்ளங்கள்" },
+  "flood.view_drainage":    { en: "Drainage Network",               ta: "வடிகால் வலையமைப்பு" },
+
+  // Hazard categories
+  "flood.very_high":        { en: "Very High",                      ta: "மிக அதிகம்" },
+  "flood.high":             { en: "High",                           ta: "அதிகம்" },
+  "flood.moderate":         { en: "Moderate",                       ta: "மிதமான" },
+  "flood.low":              { en: "Low",                            ta: "குறைவு" },
+  "flood.very_low":         { en: "Very Low",                       ta: "மிகக் குறைவு" },
+  "flood.zones":            { en: "zones",                          ta: "மண்டலங்கள்" },
+
+  // Stats bar
+  "flood.hazard_source":    { en: "Source: OpenCity Chennai / CFLOWS flood model",  ta: "ஆதாரம்: OpenCity சென்னை / CFLOWS வெள்ள மாதிரி" },
+  "flood.hotspots":         { en: "hotspots",                       ta: "வெள்ள புள்ளிகள்" },
+  "flood.depth_readings":   { en: "depth readings",                 ta: "ஆழ அளவீடுகள்" },
+  "flood.historical_note":  { en: "Dec 2015: 490mm in 24hrs",       ta: "டிச 2015: 24 மணி நேரத்தில் 490மிமீ" },
+  "flood.canals":           { en: "canals",                         ta: "கால்வாய்கள்" },
+  "flood.drains":           { en: "drains",                         ta: "வடிகால்கள்" },
+  "flood.ditches":          { en: "ditches",                        ta: "அகழிகள்" },
+  "flood.swd_count":        { en: "storm water drains",             ta: "மழைநீர் வடிகால்கள்" },
+  "flood.side_drains":      { en: "side drains",                    ta: "பக்க வடிகால்கள்" },
+  "flood.macro_micro":      { en: "macro/micro drains",             ta: "பெரு/நுண் வடிகால்கள்" },
+  "flood.total_features":   { en: "drainage features",              ta: "வடிகால் அம்சங்கள்" },
+  "flood.drainage_source":  { en: "Source: OpenStreetMap",           ta: "ஆதாரம்: OpenStreetMap" },
+
+  // Legend
+  "flood.legend_hazard":    { en: "Flood Hazard Level",             ta: "வெள்ள ஆபத்து நிலை" },
+  "flood.legend_impact":    { en: "Flood Impact",                   ta: "வெள்ள தாக்கம்" },
+  "flood.legend_drainage":  { en: "Drainage Network",               ta: "வடிகால் வலையமைப்பு" },
+  "flood.legend_macro":     { en: "Macro Drain",                    ta: "பெரு வடிகால்" },
+  "flood.legend_micro":     { en: "Micro Drain",                    ta: "நுண் வடிகால்" },
+  "flood.legend_swd":       { en: "Storm Water Drain",              ta: "மழைநீர் வடிகால்" },
+  "flood.legend_side":      { en: "Side Drain",                     ta: "பக்க வடிகால்" },
+  "flood.legend_open":      { en: "Open Drain",                     ta: "திறந்த வடிகால்" },
+  "flood.legend_river":     { en: "River",                          ta: "ஆறு" },
+  "flood.legend_depth":     { en: "Inundation depth",               ta: "வெள்ள ஆழம்" },
+  "flood.legend_hotspot":   { en: "Flood hotspot",                  ta: "வெள்ள புள்ளி" },
+
+  // Detail panel
+  "flood.hazard_zone":      { en: "Flood Hazard Zone",              ta: "வெள்ள ஆபத்து மண்டலம்" },
+  "flood.category":         { en: "Category",                       ta: "வகைப்பாடு" },
+  "flood.area":             { en: "Area",                           ta: "பரப்பு" },
+  "flood.location":         { en: "Location",                       ta: "இடம்" },
+  "flood.vulnerability":    { en: "Vulnerability",                  ta: "பாதிப்புநிலை" },
+  "flood.inundation":       { en: "Inundation",                     ta: "வெள்ளமடைதல்" },
+  "flood.depth_ft":         { en: "Depth (ft)",                     ta: "ஆழம் (அடி)" },
+  "flood.depth_m":          { en: "Depth (m)",                      ta: "ஆழம் (மீ)" },
+  "flood.remarks":          { en: "Remarks",                        ta: "குறிப்புகள்" },
+  "flood.ward":             { en: "Ward",                           ta: "வார்டு" },
+  "flood.zone_label":       { en: "Zone",                           ta: "மண்டலம்" },
+  "flood.waterway_type":    { en: "Type",                           ta: "வகை" },
+  "flood.neighborhood":     { en: "Neighborhood",                   ta: "பகுதி" },
+  "flood.event_2015":       { en: "2015 Chennai Floods",            ta: "2015 சென்னை வெள்ளம்" },
+  "flood.event_2020":       { en: "2020 Cyclone Nivar",             ta: "2020 நிவர் புயல்" },
+  "flood.flood_hotspot":    { en: "Flood Hotspot",                  ta: "வெள்ள புள்ளி" },
+  "flood.inundation_point": { en: "Inundation Point",               ta: "வெள்ள ஆழப்புள்ளி" },
+  "flood.drainage_feature": { en: "Drainage Feature",               ta: "வடிகால் அம்சம்" },
+
+  // Return period
+  "flood.return_period":    { en: "Return Period",                  ta: "மீள்வரவு காலம்" },
+  "flood.return_overlay":   { en: "Flood extent overlay",           ta: "வெள்ள பரப்பு மேலடுக்கு" },
+  "flood.year_flood":       { en: "-year flood",                    ta: "-ஆண்டு வெள்ளம்" },
+
+  // Taglines
+  "flood.tagline_hazard":   { en: "CFLOWS model - flood hazard classification", ta: "CFLOWS மாதிரி - வெள்ள ஆபத்து வகைப்பாடு" },
+  "flood.tagline_historical": { en: "2015 Dec floods and 2020 Cyclone Nivar",   ta: "2015 டிசம்பர் வெள்ளம் மற்றும் 2020 நிவர் புயல்" },
+  "flood.tagline_drainage": { en: "Storm water drainage infrastructure",        ta: "மழைநீர் வடிகால் உள்கட்டமைப்பு" },
+
+  // Source overlay
+  "flood.source_flood":     { en: "Flood data:",                    ta: "வெள்ள தரவு:" },
+  "flood.source_opencity":  { en: "OpenCity Chennai",               ta: "OpenCity சென்னை" },
+  "flood.source_gcc_swd":   { en: "Source: GCC Storm Water Drain Survey", ta: "ஆதாரம்: GCC மழைநீர் வடிகால் ஆய்வு" },
+  "flood.street":           { en: "Street",                         ta: "தெரு" },
+  "flood.length":           { en: "Length",                         ta: "நீளம்" },
+  "flood.width":            { en: "Width",                          ta: "அகலம்" },
+  "flood.material":         { en: "Material",                      ta: "பொருள்" },
+  "flood.source_gcc":       { en: "GCC",                            ta: "GCC" },
+  "flood.source_osm":       { en: "OpenStreetMap",                  ta: "OpenStreetMap" },
+
+  // Sewerage view mode
+  "flood.sewerage":         { en: "Sewerage",                       ta: "கழிவுநீர்" },
+  "flood.view_sewerage":    { en: "Sewerage Network",               ta: "கழிவுநீர் வலையமைப்பு" },
+  "flood.tagline_sewerage": { en: "CMWSSB sewerage infrastructure", ta: "CMWSSB கழிவுநீர் உள்கட்டமைப்பு" },
+  "flood.legend_sewerage":  { en: "Sewerage Network",               ta: "கழிவுநீர் வலையமைப்பு" },
+  "flood.legend_stp":       { en: "Treatment Plant (STP)",          ta: "சுத்திகரிப்பு நிலையம்" },
+  "flood.legend_sps":       { en: "Pumping Station (SPS)",          ta: "பம்பிங் நிலையம்" },
+  "flood.legend_pm":        { en: "Pumping Main",                   ta: "பம்பிங் முக்கிய குழாய்" },
+  "flood.stp_count":        { en: "treatment plants",               ta: "சுத்திகரிப்பு நிலையங்கள்" },
+  "flood.sps_count":        { en: "pumping stations",               ta: "பம்பிங் நிலையங்கள்" },
+  "flood.pm_count":         { en: "pumping mains",                  ta: "பம்பிங் முக்கிய குழாய்கள்" },
+  "flood.source_cmwssb":    { en: "CMWSSB",                         ta: "CMWSSB" },
+  "flood.stp_name":         { en: "Treatment Plant",                ta: "சுத்திகரிப்பு நிலையம்" },
+  "flood.sps_name":         { en: "Pumping Station",                ta: "பம்பிங் நிலையம்" },
+  "flood.capacity":         { en: "Capacity",                       ta: "கொள்ளளவு" },
+  "flood.feeds_to":         { en: "Feeds to",                       ta: "இணைக்கும்" },
+  "flood.streets_served":   { en: "Streets served",                 ta: "சேவை செய்யும் தெருக்கள்" },
+  "flood.pipe_size":        { en: "Pipe size",                      ta: "குழாய் அளவு" },
+  "flood.origin":           { en: "From",                           ta: "இலிருந்து" },
+  "flood.destination":      { en: "To",                             ta: "நோக்கி" },
+  "flood.pipe_length":      { en: "Length",                         ta: "நீளம்" },
 };

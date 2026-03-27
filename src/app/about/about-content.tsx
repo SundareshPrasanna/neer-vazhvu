@@ -213,6 +213,24 @@ export function AboutContent() {
             description={t("about.ds_ngt_desc")}
             frequency={t("about.freq_manual")}
           />
+          <DataSource
+            name="OpenCity Chennai (Flood Hazard Data)"
+            url="https://data.opencity.in/"
+            description={t("about.ds_flood_desc")}
+            frequency={t("about.freq_static")}
+          />
+          <DataSource
+            name="GCC Storm Water Drain Survey"
+            url="https://data.opencity.in/dataset/chennai-stormwater-drain-swd-maps"
+            description={t("about.ds_swd_desc")}
+            frequency={t("about.freq_static")}
+          />
+          <DataSource
+            name="CMWSSB Sewerage Network"
+            url="https://data.opencity.in/dataset/chennai-sewerage-collection-system"
+            description={t("about.ds_sewerage_desc")}
+            frequency={t("about.freq_static")}
+          />
         </div>
       </section>
 

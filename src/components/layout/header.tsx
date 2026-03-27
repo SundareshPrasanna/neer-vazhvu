@@ -13,6 +13,7 @@ const NAV_KEYS = [
   { href: "/groundwater", key: "nav.groundwater" },
   { href: "/water-bodies",key: "nav.water_bodies" },
   { href: "/rivers",      key: "nav.rivers" },
+  { href: "/flood-risk",  key: "nav.flood_risk" },
   { href: "/about",       key: "nav.about" },
 ];
 
