@@ -13,6 +13,9 @@ graph TB
         OC["OpenCity CKAN<br/>(Groundwater)"]
         CPCB["CPCB Annual Reports<br/>(River quality, manual)"]
         OSM["OpenStreetMap / Overpass<br/>(River geometry, one-time)"]
+        IMD["IMD Gridded Rainfall<br/>(via imdlib, one-time)"]
+        WRIS["India WRIS / CGWB<br/>(GW exploitation, one-time)"]
+        DGI["data.gov.in<br/>(Water Bodies Census)"]
     end
 
     subgraph Backend ["Python API (FastAPI)"]
@@ -44,8 +47,11 @@ graph TB
     OM -->|REST API, primary| Scrapers
     NASA -->|REST API, fallback| Scrapers
     OC -->|CKAN API| Scrapers
-    CPCB -->|manual JSON| StaticFiles["public/data/<br/>river-quality.json<br/>industrial-sources.json<br/>restoration-priority.json"]
-    OSM -->|fetch scripts| StaticFiles2["public/geojson/<br/>chennai-rivers.geojson<br/>chennai-water-bodies-current.geojson<br/>chennai-water-bodies-lost.geojson<br/>chennai-industrial-zones.geojson<br/>chennai-wards-2022.geojson"]
+    DGI -->|REST API| Scrapers
+    CPCB -->|manual JSON| StaticFiles["public/data/<br/>river-quality.json<br/>industrial-sources.json<br/>restoration-priority.json<br/>imd-rainfall-monthly.json<br/>gwr-blocks.json<br/>gw-stations.json"]
+    OSM -->|fetch scripts| StaticFiles2["public/geojson/<br/>chennai-rivers.geojson<br/>chennai-water-bodies-current.geojson<br/>chennai-water-bodies-lost.geojson<br/>chennai-industrial-zones.geojson<br/>chennai-wards-2022.geojson<br/>chennai-gwr-blocks.geojson"]
+    IMD -->|imdlib script| StaticFiles
+    WRIS -->|ArcGIS REST| StaticFiles
 
     Scrapers --> ETL
     ETL -->|upsert| Core
@@ -299,6 +305,7 @@ graph TD
         DLH["DaysLeftHero<br/>Storage ring + 3 scenarios"]
         DC["DashboardContent<br/>(client component)"]
         GWS["GroundwaterSnapshot"]
+        RT["RainfallTrends<br/>(IMD 1970-2025)"]
     end
 
     subgraph DC_Children["DashboardContent"]
@@ -309,8 +316,9 @@ graph TD
     DC --> DC_Children
 
     subgraph GW_Children["Groundwater Page"]
-        GM["GroundwaterMap<br/>(Leaflet choropleth)"]
+        GM["GroundwaterMap<br/>(Leaflet choropleth)<br/>Depth / Risk / Exploitation views"]
         GT["GroundwaterTrendChart"]
+        BDP["BlockDetailPanel<br/>(CGWB exploitation data)"]
     end
 
     GW --> GW_Children
