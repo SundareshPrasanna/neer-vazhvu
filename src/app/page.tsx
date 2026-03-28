@@ -309,11 +309,13 @@ async function getAiNarrative(): Promise<AiNarrative | null> {
   const { createServerClient } = await import("@/lib/supabase/server");
   const supabase = createServerClient();
 
+  // Scope to today's briefing (IST) so stale AI narratives trigger template fallback
+  const todayIST = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date());
   const { data } = await supabase
     .from("daily_briefing")
     .select("briefing_date, ai_headline_en, ai_headline_ta, ai_body_en, ai_body_ta, ai_source_dates, ai_model")
+    .eq("briefing_date", todayIST)
     .not("ai_headline_en", "is", null)
-    .order("briefing_date", { ascending: false })
     .limit(1);
 
   if (!data?.[0]) return null;
