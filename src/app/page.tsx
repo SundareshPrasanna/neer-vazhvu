@@ -5,7 +5,11 @@ import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
 import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
 import { CityStory } from "@/components/insights/city-story";
 import type { AiNarrative } from "@/components/insights/city-story";
-import { CUSEC_DAY_TO_MCFT, RESERVOIR_DISPLAY_ORDER } from "@/lib/utils/constants";
+import {
+  CUSEC_DAY_TO_MCFT,
+  RESERVOIR_DISPLAY_ORDER,
+  RESERVOIR_METADATA,
+} from "@/lib/utils/constants";
 import { getGroundwaterStatus } from "@/types/groundwater";
 import type { ReservoirSummary, ReservoirName } from "@/types/reservoir";
 import type { GroundwaterApiResponse } from "@/types/groundwater";
@@ -36,17 +40,14 @@ async function getReservoirData() {
   const mostRecentDate = latest[0].date;
   const todayReservoirs = latest.filter((r: { date: string }) => r.date === mostRecentDate);
 
-  const { data: meta } = await supabase.from("reservoir_meta").select("*");
-  const metaMap = new Map(meta?.map((m: { reservoir: string }) => [m.reservoir, m]) || []);
-
   const reservoirs: ReservoirSummary[] = todayReservoirs
     .map((r: Record<string, unknown>) => {
-      const m = metaMap.get(r.reservoir as string) as Record<string, unknown> | undefined;
+      const m = RESERVOIR_METADATA[r.reservoir as ReservoirName];
       return {
         name: r.reservoir as ReservoirName,
-        displayName: (m?.display_name as string) || (r.reservoir as string),
+        displayName: m?.displayName || (r.reservoir as string),
         currentStorage: (r.current_storage_mcft as number) || 0,
-        capacity: (r.capacity_mcft as number) || (m?.full_capacity_mcft as number) || 0,
+        capacity: (r.capacity_mcft as number) || m?.fullCapacityMcft || 0,
         storagePct: (r.storage_pct as number) || 0,
         inflowCusecs: (r.inflow_cusecs as number) || 0,
         outflowCusecs: (r.outflow_cusecs as number) || 0,
@@ -64,7 +65,8 @@ async function getReservoirData() {
   const historyRaw: { date: string; reservoir: string; current_storage_mcft: number; inflow_cusecs: number | null; outflow_cusecs: number | null }[] = [];
   let offset = 0;
   const PAGE_SIZE = 1000;
-  while (true) {
+  const MAX_ROWS = 20000; // Safety cap: ~9 years of daily data for 6 reservoirs
+  while (historyRaw.length < MAX_ROWS) {
     const { data: page } = await supabase
       .from("reservoir_daily")
       .select("date, reservoir, current_storage_mcft, inflow_cusecs, outflow_cusecs")

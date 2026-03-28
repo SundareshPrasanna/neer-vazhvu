@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -22,9 +23,17 @@ export function verifyCronAuth(request: NextRequest): NextResponse | null {
     );
   }
 
-  if (authHeader !== `Bearer ${expectedToken}`) {
+  const expectedHeader = `Bearer ${expectedToken}`;
+  if (!authHeader || !secureCompare(authHeader, expectedHeader)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   return null;
+}
+
+function secureCompare(left: string, right: string) {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+
+  return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
 }

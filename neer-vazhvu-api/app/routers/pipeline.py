@@ -1,3 +1,5 @@
+import hmac
+
 from fastapi import APIRouter, Header, HTTPException
 
 from app.config import get_settings
@@ -5,15 +7,18 @@ from app.config import get_settings
 router = APIRouter()
 
 
-def verify_cron_auth(authorization: str = Header(...)):
+def verify_cron_auth(authorization: str | None = Header(default=None)):
     """Verify the cron secret matches."""
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Missing authorization")
+
     expected = f"Bearer {get_settings().cron_secret}"
-    if authorization != expected:
+    if not hmac.compare_digest(authorization, expected):
         raise HTTPException(status_code=401, detail="Invalid cron secret")
 
 
 @router.post("/run-daily")
-async def run_daily_pipeline(authorization: str = Header(...)):
+async def run_daily_pipeline(authorization: str | None = Header(default=None)):
     """Run the full daily pipeline: scrape → ETL → intelligence."""
     verify_cron_auth(authorization)
 
@@ -24,7 +29,7 @@ async def run_daily_pipeline(authorization: str = Header(...)):
 
 
 @router.post("/run-monthly")
-async def run_monthly_pipeline(authorization: str = Header(...)):
+async def run_monthly_pipeline(authorization: str | None = Header(default=None)):
     """Run monthly jobs: OpenCity groundwater fetch + risk scoring."""
     verify_cron_auth(authorization)
 
@@ -35,7 +40,7 @@ async def run_monthly_pipeline(authorization: str = Header(...)):
 
 
 @router.post("/run-post-scrape")
-async def run_post_scrape_pipeline(authorization: str = Header(...)):
+async def run_post_scrape_pipeline(authorization: str | None = Header(default=None)):
     """Run all pipeline steps except scrape_cmwssb.
 
     Call this after pushing reservoir data to the DB externally (e.g. from a
@@ -51,7 +56,7 @@ async def run_post_scrape_pipeline(authorization: str = Header(...)):
 
 
 @router.post("/run-intelligence")
-async def run_intelligence(authorization: str = Header(...)):
+async def run_intelligence(authorization: str | None = Header(default=None)):
     """Run only intelligence steps (forecast + risk + briefing). Useful for backfills."""
     verify_cron_auth(authorization)
 
@@ -62,7 +67,7 @@ async def run_intelligence(authorization: str = Header(...)):
 
 
 @router.post("/run-census-fetch")
-async def run_census_fetch(authorization: str = Header(...)):
+async def run_census_fetch(authorization: str | None = Header(default=None)):
     """One-time/periodic fetch of water bodies census from data.gov.in.
 
     Requires DATA_GOV_IN_API_KEY to be configured.

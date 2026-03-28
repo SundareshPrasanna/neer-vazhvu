@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { internalServerError, logRouteError } from '@/lib/api-error';
 import { generateMockRiskScores } from '@/lib/mock-data';
 import type { RiskLevel } from '@/types/groundwater';
 
@@ -33,10 +34,12 @@ export async function GET() {
     .from('ward_risk_score')
     .select('ward_number, risk_score, risk_level, groundwater_component, trend_component, reservoir_component, seasonal_component')
     .eq('computed_date', computedDate)
-    .order('ward_number', { ascending: true });
+    .order('ward_number', { ascending: true })
+    .limit(200);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    logRouteError('/api/groundwater/risk', error);
+    return internalServerError();
   }
 
   const wards = (data || []).map((r) => ({
