@@ -28,6 +28,7 @@ export function WardNarrative({ wardNumber }: WardNarrativeProps) {
 
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset state on wardNumber change
     setLoading(true);
     setData(null);
 
