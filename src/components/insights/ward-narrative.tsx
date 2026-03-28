@@ -28,12 +28,8 @@ export function WardNarrative({ wardNumber }: WardNarrativeProps) {
 
   useEffect(() => {
     let cancelled = false;
-
-    Promise.resolve().then(() => {
-      if (cancelled) return;
-      setLoading(true);
-      setData(null);
-    });
+    setLoading(true);
+    setData(null);
 
     fetch(`/api/narratives/ward?ward=${wardNumber}`)
       .then((r) => r.json())

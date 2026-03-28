@@ -97,15 +97,9 @@ function haversine(a: Coord, b: Coord): number {
   return 2 * R_EARTH_KM * Math.asin(Math.sqrt(h));
 }
 
-function polygonCentroid(coordinates: number[][][]): Coord {
-  const ring = coordinates[0];
-  let latSum = 0;
-  let lngSum = 0;
-  for (const [lng, lat] of ring) {
-    latSum += lat;
-    lngSum += lng;
-  }
-  return { lat: latSum / ring.length, lng: lngSum / ring.length };
+function featureCentroid(feat: GeoJSON.Feature): Coord {
+  const c = centroid(feat);
+  return { lat: c.geometry.coordinates[1], lng: c.geometry.coordinates[0] };
 }
 
 // ── Spatial grid index ───────────────────────────────────────────────────────
@@ -255,8 +249,7 @@ function main() {
 
   let waterBodyAssigned = 0;
   for (const feat of waterBodies.features) {
-    const geom = feat.geometry as GeoJSON.Polygon;
-    const c = polygonCentroid(geom.coordinates);
+    const c = featureCentroid(feat);
     const ward = findWard(c.lng, c.lat, wards, grid);
     if (ward != null) {
       profiles.get(ward)!.waterBodyCount++;
@@ -333,8 +326,7 @@ function main() {
 
   let hazardAssigned = 0;
   for (const feat of hazardGeo.features) {
-    const geom = feat.geometry as GeoJSON.Polygon;
-    const c = polygonCentroid(geom.coordinates);
+    const c = featureCentroid(feat);
     const props = feat.properties as Record<string, unknown>;
     const category = (props.category as string) || "unknown";
     const ward = findWard(c.lng, c.lat, wards, grid);
@@ -453,8 +445,7 @@ function main() {
 
   let industrialAssigned = 0;
   for (const feat of industrialGeo.features) {
-    const geom = feat.geometry as GeoJSON.Polygon;
-    const c = polygonCentroid(geom.coordinates);
+    const c = featureCentroid(feat);
     const ward = findWard(c.lng, c.lat, wards, grid);
     if (ward != null) {
       profiles.get(ward)!.industrialCount++;
