@@ -111,7 +111,7 @@ jobs:
   # Monthly job runs on days 1-3 for groundwater + risk scoring + ward narratives
   monthly-pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     if: (github.event_name == 'schedule') || (github.event_name == 'workflow_dispatch')
     steps:
       - uses: actions/checkout@v4
