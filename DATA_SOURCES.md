@@ -339,6 +339,79 @@
 - Census records are matched to OSM polygons by proximity; 152 census water bodies with no OSM match are included as point-only entries
 - To regenerate: `npx tsx scripts/compute-restoration-priority.ts`
 
+## Ward Profiles - Computed
+
+| | |
+|---|---|
+| **Source** | Pre-computed spatial join from all existing project datasets |
+| **Method** | Build script: `scripts/compute-ward-profiles.ts` (centroid point-in-polygon attribution) |
+| **Frequency** | Re-run when any input GeoJSON changes; CI reruns and diffs to catch staleness |
+| **Coverage** | All 200 GCC wards |
+| **Fields** | Water body count (OSM + census), restoration priority counts, lost water body count/names, flood hazard zones by category, drainage line count, sewerage infrastructure (STP/SPS/pumping main counts + STP capacity), nearest river station (ID + distance), industrial zone count |
+| **File** | `public/data/ward-profiles.json` (static, committed, ~100 KB) |
+
+**Input datasets used:**
+- `public/geojson/chennai-wards-2022.geojson` - 200 ward polygons (boundaries)
+- `public/geojson/chennai-water-bodies-current.geojson` - 1,635 water body polygons
+- `public/data/restoration-priority.json` - 1,787 scored water bodies (including census records)
+- `public/geojson/chennai-water-bodies-lost.geojson` - 15 lost water bodies
+- `public/geojson/chennai-flood-hazard-zones.geojson` - 15,524 flood hazard zone polygons
+- `public/geojson/chennai-flood-2015-hotspots.geojson` - 327 flood hotspots
+- `public/geojson/chennai-flood-2020-hotspots.geojson` - 53 flood hotspots
+- `public/geojson/chennai-drainage.geojson` - 10,308 drainage lines
+- `public/geojson/chennai-sewerage.geojson` - 4,190 sewerage features
+- `public/data/river-quality.json` - river monitoring station locations
+- `public/geojson/chennai-industrial-zones.geojson` - 218 industrial zone polygons
+
+**Determinism:** No Supabase dependency. No `computed_at` field. Identical inputs produce byte-identical output. Deterministic ordering: wards by number, top_bodies by score (then name for ties), lost_bodies.names alphabetically. CI reruns the script and `git diff --exit-code` catches stale profiles.
+
+**Known limitations:**
+- Centroid attribution assigns each feature to exactly one ward - cross-ward features are counted in one ward only
+- Counts only, no derived areas or lengths (centroid attribution makes area/length calculations misleading)
+- To regenerate: `npx tsx scripts/compute-ward-profiles.ts`
+
+## AI-Generated Narratives - Anthropic Claude API
+
+| | |
+|---|---|
+| **Source** | [Anthropic Claude API](https://docs.anthropic.com/) |
+| **Method** | Script: `scripts/generate-narratives.ts` (reads Supabase live data + ward profiles, calls Claude API) |
+| **Frequency** | City narrative: daily (after post-scrape pipeline). Ward narratives: monthly (IST days 1-3) |
+| **Coverage** | 1 city-level narrative + 200 ward-level narratives |
+| **Models** | Claude Sonnet (city narrative), Claude Haiku (ward narratives, batched 5 wards per API call) |
+| **Tables** | `daily_briefing` (AI columns: `ai_headline_en/ta`, `ai_body_en/ta`, `ai_source_dates`, `ai_model`), `ward_narrative` (full table) |
+| **Cost** | ~$0.75/month |
+
+**City narrative context includes:**
+- Reservoir storage %, days-left estimates (3 scenarios), average inflow
+- Ward risk distribution (low/moderate/high/critical counts)
+- Alerts from daily briefing
+- Source data freshness dates
+
+**Ward narrative context includes:**
+- Ward profile data (water bodies, flood hazard, drainage, sewerage, river proximity)
+- Live groundwater depth and trend (from `groundwater_monthly`)
+- Risk score and level (from `ward_risk_score`)
+- Ward locality name (from `groundwater_monthly.ward_name`, not zone name)
+
+**Output format:**
+- Bilingual: English + Tamil (translated naturally, not literally)
+- City: headline + 3-5 bullet points
+- Ward: headline + 2-3 sentence body + 2-3 key facts
+- Source date freshness tracked per narrative (reservoir date, groundwater period, risk date)
+
+**IST day gating:**
+- Daily job exits on IST days 1-3 (monthly job handles city narrative on those days)
+- Prevents race conditions between daily and monthly city narrative writes
+- `--monthly` flag generates both ward (200 wards) and city narratives
+
+**Known limitations:**
+- Ward names come from `groundwater_monthly.ward_name` - wards without groundwater data fall back to zone name from `ward-profiles.json`
+- Haiku occasionally wraps JSON output in markdown code fences; stripped by `stripCodeFences()` before parsing
+- Tamil translations are AI-generated and may vary in quality; reviewed periodically
+- To regenerate: `npx tsx scripts/generate-narratives.ts` (city only) or `npx tsx scripts/generate-narratives.ts --monthly` (all)
+- Requires `ANTHROPIC_API_KEY` environment variable
+
 ## Reservoir Metadata
 
 | | |

@@ -20,6 +20,12 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
+
+      - name: Verify ward-profiles.json is up-to-date
+        run: |
+          npx tsx scripts/compute-ward-profiles.ts
+          git diff --exit-code public/data/ward-profiles.json
+
       - run: npm run build
       - run: npm run test
 

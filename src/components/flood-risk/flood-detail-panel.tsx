@@ -1,7 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
 import { ConnectedInsight } from "@/components/insights/connected-insight";
+import { WardContext } from "@/components/insights/ward-context";
+import { WardNarrative } from "@/components/insights/ward-narrative";
+import { useWardLookup } from "@/lib/hooks/use-ward-lookup";
 import { HAZARD_COLORS, VULNERABILITY_COLORS, DRAINAGE_COLORS, SEWERAGE_COLORS } from "@/types/flood-risk";
 import type {
   SelectedFloodFeature,
@@ -24,6 +28,24 @@ interface FloodDetailPanelProps {
 
 export function FloodDetailPanel({ selected, onClose }: FloodDetailPanelProps) {
   const { t } = useLanguage();
+  const wardLookup = useWardLookup();
+  const [resolvedWard, setResolvedWard] = useState<number | null>(null);
+
+  // Resolve ward from latlng, or use direct ward property for hotspot2015
+  useEffect(() => {
+    let cancelled = false;
+    if (selected.kind === "hotspot2015") {
+      const ward = (selected.props as { ward: number }).ward;
+      if (ward > 0) Promise.resolve().then(() => { if (!cancelled) setResolvedWard(ward); });
+    } else if (selected.latlng) {
+      wardLookup(selected.latlng[0], selected.latlng[1]).then((w) => {
+        if (!cancelled) setResolvedWard(w);
+      });
+    } else {
+      Promise.resolve().then(() => { if (!cancelled) setResolvedWard(null); });
+    }
+    return () => { cancelled = true; };
+  }, [selected, wardLookup]);
 
   return (
     <div className="h-full flex flex-col bg-white dark:bg-slate-900 overflow-y-auto">
@@ -60,6 +82,8 @@ export function FloodDetailPanel({ selected, onClose }: FloodDetailPanelProps) {
         {selected.kind === "stp" && <STPContent props={selected.props as STPProperties} />}
         {selected.kind === "sps" && <SPSContent props={selected.props as SPSProperties} />}
         {selected.kind === "pumping_main" && <PumpingMainContent props={selected.props as PumpingMainProperties} />}
+        {resolvedWard && <WardContext wardNumber={resolvedWard} />}
+        {resolvedWard && <WardNarrative wardNumber={resolvedWard} />}
       </div>
     </div>
   );

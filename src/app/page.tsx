@@ -4,6 +4,7 @@ import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot
 import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
 import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
 import { CityStory } from "@/components/insights/city-story";
+import type { AiNarrative } from "@/components/insights/city-story";
 import { CUSEC_DAY_TO_MCFT, RESERVOIR_DISPLAY_ORDER } from "@/lib/utils/constants";
 import { getGroundwaterStatus } from "@/types/groundwater";
 import type { ReservoirSummary, ReservoirName } from "@/types/reservoir";
@@ -304,6 +305,31 @@ async function getGroundwaterData(): Promise<GroundwaterApiResponse | null> {
   return { period: { year, month }, cityAverage, wards, summary };
 }
 
+async function getAiNarrative(): Promise<AiNarrative | null> {
+  const { createServerClient } = await import("@/lib/supabase/server");
+  const supabase = createServerClient();
+
+  const { data } = await supabase
+    .from("daily_briefing")
+    .select("briefing_date, ai_headline_en, ai_headline_ta, ai_body_en, ai_body_ta, ai_source_dates, ai_model")
+    .not("ai_headline_en", "is", null)
+    .order("briefing_date", { ascending: false })
+    .limit(1);
+
+  if (!data?.[0]) return null;
+
+  const row = data[0];
+  return {
+    date: row.briefing_date,
+    headline_en: row.ai_headline_en,
+    headline_ta: row.ai_headline_ta,
+    body_en: row.ai_body_en,
+    body_ta: row.ai_body_ta,
+    source_dates: row.ai_source_dates,
+    model: row.ai_model,
+  };
+}
+
 export default async function DashboardPage() {
   // If Supabase is not configured, render demo mode with scenario switcher
   if (!isSupabaseConfigured()) {
@@ -313,10 +339,12 @@ export default async function DashboardPage() {
   // Try to fetch real data; fall back to demo on any error
   let reservoirData = null;
   let groundwaterData = null;
+  let aiNarrative: AiNarrative | null = null;
   try {
-    [reservoirData, groundwaterData] = await Promise.all([
+    [reservoirData, groundwaterData, aiNarrative] = await Promise.all([
       getReservoirData(),
       getGroundwaterData(),
+      getAiNarrative(),
     ]);
   } catch {
     // Supabase connection failed  -  show demo mode
@@ -359,7 +387,7 @@ export default async function DashboardPage() {
         comparison2019Storage={reservoirData.comparison2019Storage}
       />
 
-      {cityStoryNarrative && <CityStory narrative={cityStoryNarrative} />}
+      {cityStoryNarrative && <CityStory narrative={cityStoryNarrative} aiNarrative={aiNarrative} />}
 
       <DashboardContent
         reservoirs={reservoirData.reservoirs.filter((r) =>
