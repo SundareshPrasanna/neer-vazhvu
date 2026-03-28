@@ -143,7 +143,7 @@ export function CombinedRiversMap({
       QUALITY_COLORS[props.overall_status as keyof typeof QUALITY_COLORS] ?? "#94a3b8";
     return L.circleMarker(latlng, {
       radius: 6,
-      fillColor: tiles.stroke === "#475569" ? "#1e293b" : "white",
+      fillColor: tiles.isDark ? "#1e293b" : "white",
       color,
       weight: 2.5,
       fillOpacity: 0.95,
@@ -183,7 +183,7 @@ export function CombinedRiversMap({
     return L.circleMarker(latlng, {
       radius: 10,
       fillColor: color,
-      color: tiles.stroke === "#475569" ? "#0f172a" : "white",
+      color: tiles.isDark ? "#0f172a" : "white",
       weight: 2,
       fillOpacity: 0.9,
       opacity: 1,
