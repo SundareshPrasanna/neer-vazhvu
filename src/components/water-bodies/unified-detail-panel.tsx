@@ -567,6 +567,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
       {resolvedWard && (
         <div className="px-4">
           <WardContext wardNumber={resolvedWard} />
+          <WardNarrative wardNumber={resolvedWard} />
         </div>
       )}
     </div>
