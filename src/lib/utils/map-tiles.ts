@@ -14,8 +14,9 @@ export function useMapTiles() {
   return {
     url: isDark ? DARK_TILES : LIGHT_TILES,
     attribution: isDark ? DARK_ATTR : LIGHT_ATTR,
-    stroke: isDark ? "#475569" : "#374151",       // slate-600 / gray-700
-    strokeLight: isDark ? "#334155" : "#1e293b",   // slate-700 / slate-800
-    hoverStroke: isDark ? "#60a5fa" : "#1e40af",   // blue-400 / blue-800
+    isDark,
+    stroke: isDark ? "#94a3b8" : "#374151",       // slate-400 / gray-700
+    strokeLight: isDark ? "#64748b" : "#1e293b",   // slate-500 / slate-800
+    hoverStroke: isDark ? "#93c5fd" : "#1e40af",   // blue-300 / blue-800
   };
 }

@@ -4,7 +4,7 @@ const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value:
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.tile.openstreetmap.org; font-src 'self'; connect-src 'self' https://*.supabase.co; base-uri 'self'; frame-ancestors 'none'; object-src 'none'",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; font-src 'self'; connect-src 'self' https://*.supabase.co https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; base-uri 'self'; frame-ancestors 'none'; object-src 'none'",
   },
   {
     key: "Permissions-Policy",
