@@ -37,7 +37,7 @@ jobs:
         working-directory: neer-vazhvu-api
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           CMWSSB_MAX_STALE_DAYS: '4'
         run: python scripts/scrape_cmwssb.py
 
