@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
       completed_at: new Date().toISOString(),
     });
 
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    console.error('[cron/scrape-cmwssb]', message);
+    return NextResponse.json({ success: false, error: 'Pipeline step failed' }, { status: 500 });
   }
 }

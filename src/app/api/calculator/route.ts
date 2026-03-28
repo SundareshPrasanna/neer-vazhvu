@@ -12,11 +12,11 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const rawConsumption = searchParams.get('consumption');
   const consumption = rawConsumption !== null ? parseFloat(rawConsumption) : NaN;
-  const finalConsumption = Number.isFinite(consumption) ? consumption : DEFAULT_CONSUMPTION_MLD;
+  const finalConsumption = Number.isFinite(consumption) ? Math.max(0, Math.min(10000, consumption)) : DEFAULT_CONSUMPTION_MLD;
 
   const rawDesalination = searchParams.get('desalination');
   const desalination = rawDesalination !== null ? parseFloat(rawDesalination) : NaN;
-  const finalDesalination = Number.isFinite(desalination) ? desalination : DEFAULT_DESALINATION_MLD;
+  const finalDesalination = Number.isFinite(desalination) ? Math.max(0, Math.min(10000, desalination)) : DEFAULT_DESALINATION_MLD;
 
   const supabase = createServerClient();
 
@@ -50,7 +50,8 @@ export async function GET(request: NextRequest) {
     .from('reservoir_daily')
     .select('date, inflow_cusecs')
     .gte('date', sevenDaysAgo.toISOString().split('T')[0])
-    .not('inflow_cusecs', 'is', null);
+    .not('inflow_cusecs', 'is', null)
+    .limit(50);
 
   let recentAvgInflowMcftPerDay = 0;
   if (recentData && recentData.length > 0) {

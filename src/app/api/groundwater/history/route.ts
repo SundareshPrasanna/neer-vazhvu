@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { internalServerError, logRouteError } from "@/lib/api-error";
 import { generateMockWardHistory } from "@/lib/mock-data";
 
 function isSupabaseConfigured(): boolean {
@@ -30,10 +31,12 @@ export async function GET(request: NextRequest) {
     .select("ward_number, ward_name, year, month, depth_to_water_m")
     .eq("ward_number", wardNumber)
     .order("year", { ascending: true })
-    .order("month", { ascending: true });
+    .order("month", { ascending: true })
+    .limit(240);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    logRouteError("/api/groundwater/history", error);
+    return internalServerError();
   }
 
   const history = (data || []).map((r: Record<string, unknown>) => ({

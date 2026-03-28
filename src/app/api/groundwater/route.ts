@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { internalServerError, logRouteError } from '@/lib/api-error';
 import { getGroundwaterStatus } from '@/types/groundwater';
 import { generateMockGroundwater } from '@/lib/mock-data';
 
@@ -10,7 +11,9 @@ export async function GET(request: NextRequest) {
   // If Supabase is not configured, return mock data
   if (!isSupabaseConfigured()) {
     const { searchParams } = new URL(request.url);
-    const style = (searchParams.get('style') as 'healthy' | 'declining' | 'crisis' | 'recovering') || 'healthy';
+    const VALID_STYLES = ['healthy', 'declining', 'crisis', 'recovering'] as const;
+    const rawStyle = searchParams.get('style');
+    const style = VALID_STYLES.includes(rawStyle as typeof VALID_STYLES[number]) ? (rawStyle as typeof VALID_STYLES[number]) : 'healthy';
     const mockData = generateMockGroundwater(style);
     return NextResponse.json(mockData);
   }
@@ -30,6 +33,9 @@ export async function GET(request: NextRequest) {
   if (yearParam && monthParam) {
     year = parseInt(yearParam, 10);
     month = parseInt(monthParam, 10);
+    if (isNaN(year) || isNaN(month) || month < 1 || month > 12 || year < 2000 || year > 2100) {
+      return NextResponse.json({ error: 'Invalid year or month' }, { status: 400 });
+    }
   } else {
     const { data: latest } = await supabase
       .from('groundwater_monthly')
@@ -51,10 +57,12 @@ export async function GET(request: NextRequest) {
     .select('*')
     .eq('year', year)
     .eq('month', month)
-    .order('ward_number', { ascending: true });
+    .order('ward_number', { ascending: true })
+    .limit(200);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    logRouteError('/api/groundwater', error);
+    return internalServerError();
   }
 
   // Fetch previous year same month for trend
@@ -62,7 +70,8 @@ export async function GET(request: NextRequest) {
     .from('groundwater_monthly')
     .select('ward_number, depth_to_water_m')
     .eq('year', year - 1)
-    .eq('month', month);
+    .eq('month', month)
+    .limit(200);
 
   const prevYearMap = new Map(
     prevYearData?.map((r) => [r.ward_number, r.depth_to_water_m]) || []

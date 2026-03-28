@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { internalServerError, logRouteError } from "@/lib/api-error";
 
 function isSupabaseConfigured(): boolean {
   return !!(
@@ -44,6 +45,15 @@ export async function GET(request: NextRequest) {
   const typeFilter = searchParams.get("type");
   const encroachmentFilter = searchParams.get("encroached");
 
+  // Validate filters - reject LIKE wildcards and overly long values
+  const VALID_ENCROACHMENT = ["yes", "no", "partial"];
+  if (typeFilter && typeFilter !== "all" && (typeFilter.length > 50 || /[%_]/.test(typeFilter))) {
+    return NextResponse.json({ error: "Invalid type filter" }, { status: 400 });
+  }
+  if (encroachmentFilter && encroachmentFilter !== "all" && !VALID_ENCROACHMENT.includes(encroachmentFilter)) {
+    return NextResponse.json({ error: "Invalid encroachment filter" }, { status: 400 });
+  }
+
   let query = supabase
     .from("water_bodies_census")
     .select(
@@ -64,10 +74,11 @@ export async function GET(request: NextRequest) {
     query = query.eq("encroachment_status", encroachmentFilter);
   }
 
-  const { data: rawData, error } = await query.order("name", { ascending: true });
+  const { data: rawData, error } = await query.order("name", { ascending: true }).limit(1000);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    logRouteError("/api/water-bodies-census", error);
+    return internalServerError();
   }
 
   const data = (rawData ?? []) as unknown as CensusRow[];

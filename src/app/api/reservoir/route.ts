@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { internalServerError, logRouteError } from '@/lib/api-error';
 import { createServerClient } from '@/lib/supabase/server';
+import { RESERVOIR_METADATA } from '@/lib/utils/constants';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const days = parseInt(searchParams.get('days') || '90', 10);
+  const rawDays = parseInt(searchParams.get('days') || '90', 10);
+  const days = isNaN(rawDays) ? 90 : Math.max(1, Math.min(365, rawDays));
 
   const supabase = createServerClient();
 
@@ -15,7 +18,8 @@ export async function GET(request: NextRequest) {
     .limit(6); // 6 reservoirs
 
   if (latestErr) {
-    return NextResponse.json({ error: latestErr.message }, { status: 500 });
+    logRouteError('/api/reservoir', latestErr);
+    return internalServerError();
   }
 
   if (!latest || latest.length === 0) {
@@ -26,17 +30,15 @@ export async function GET(request: NextRequest) {
   const todayReservoirs = latest.filter((r) => r.date === mostRecentDate);
 
   // Get reservoir metadata for display names
-  const { data: meta } = await supabase.from('reservoir_meta').select('*');
-  const metaMap = new Map(meta?.map((m) => [m.reservoir, m]) || []);
-
   // Build reservoir summaries
   const reservoirs = todayReservoirs.map((r) => {
-    const m = metaMap.get(r.reservoir);
+    const reservoirName = r.reservoir as keyof typeof RESERVOIR_METADATA;
+    const m = RESERVOIR_METADATA[reservoirName];
     return {
-      name: r.reservoir,
-      displayName: m?.display_name || r.reservoir,
+      name: reservoirName,
+      displayName: m?.displayName || reservoirName,
       currentStorage: r.current_storage_mcft || 0,
-      capacity: r.capacity_mcft || m?.full_capacity_mcft || 0,
+      capacity: r.capacity_mcft || m?.fullCapacityMcft || 0,
       storagePct: r.storage_pct || 0,
       inflowCusecs: r.inflow_cusecs || 0,
       outflowCusecs: r.outflow_cusecs || 0,
@@ -55,7 +57,8 @@ export async function GET(request: NextRequest) {
     .from('reservoir_daily')
     .select('date, current_storage_mcft')
     .gte('date', cutoffDate.toISOString().split('T')[0])
-    .order('date', { ascending: true });
+    .order('date', { ascending: true })
+    .limit(2500);
 
   // Aggregate by date (sum all reservoirs per day)
   const historyMap = new Map<string, number>();
