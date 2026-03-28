@@ -67,7 +67,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
       const ward = groundwaterData.get(wardNum);
       fillColor = getGroundwaterColor(ward?.depthM ?? null);
     }
-    return { fillColor, weight: 1, opacity: 0.7, color: "#374151", fillOpacity: 0.75 };
+    return { fillColor, weight: 1, opacity: 0.7, color: tiles.stroke, fillOpacity: 0.75 };
   };
 
   // Block styles
@@ -76,7 +76,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
     const blockName = feature.properties?.block as string;
     const block = blockLookup.get(blockName);
     const fillColor = block ? getBlockClassColor(block.latest.class) : "#94a3b8";
-    return { fillColor, weight: 2, opacity: 0.9, color: "#1e293b", fillOpacity: 0.65 };
+    return { fillColor, weight: 2, opacity: 0.9, color: tiles.strokeLight, fillOpacity: 0.65 };
   };
 
   const onEachWard = (feature: Feature, layer: Layer) => {
@@ -102,10 +102,10 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
     layer.on({
       click: () => { onWardSelect(ward || null); },
       mouseover: (e: LeafletMouseEvent) => {
-        e.target.setStyle({ weight: 3, color: "#1e40af", fillOpacity: 0.9 });
+        e.target.setStyle({ weight: 3, color: tiles.hoverStroke, fillOpacity: 0.9 });
       },
       mouseout: (e: LeafletMouseEvent) => {
-        e.target.setStyle({ weight: 1, color: "#374151", fillOpacity: 0.75 });
+        e.target.setStyle({ weight: 1, color: tiles.stroke, fillOpacity: 0.75 });
       },
     });
   };
@@ -127,10 +127,10 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
     layer.on({
       click: () => { onBlockSelect?.(block); },
       mouseover: (e: LeafletMouseEvent) => {
-        e.target.setStyle({ weight: 3, color: "#1e40af", fillOpacity: 0.8 });
+        e.target.setStyle({ weight: 3, color: tiles.hoverStroke, fillOpacity: 0.8 });
       },
       mouseout: (e: LeafletMouseEvent) => {
-        e.target.setStyle({ weight: 2, color: "#1e293b", fillOpacity: 0.65 });
+        e.target.setStyle({ weight: 2, color: tiles.strokeLight, fillOpacity: 0.65 });
       },
     });
   };
@@ -155,7 +155,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
       {viewMode === "exploitation" ? (
         <>
           {blockGeoJSON && (
-            <GeoJSON key="blocks" data={blockGeoJSON} style={blockStyle} onEachFeature={onEachBlock} />
+            <GeoJSON key={`blocks-${tiles.url}`} data={blockGeoJSON} style={blockStyle} onEachFeature={onEachBlock} />
           )}
           {stations.map((s) => (
             <CircleMarker
@@ -177,7 +177,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
       ) : (
         <>
           {wardGeoJSON && (
-            <GeoJSON key={viewMode} data={wardGeoJSON} style={wardStyle} onEachFeature={onEachWard} />
+            <GeoJSON key={`${viewMode}-${tiles.url}`} data={wardGeoJSON} style={wardStyle} onEachFeature={onEachWard} />
           )}
         </>
       )}

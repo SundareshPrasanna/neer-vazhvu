@@ -202,12 +202,12 @@ export function FloodRiskMap({
 
   // Ward boundary style - thin dashed outlines for area context
   const wardStyle = useCallback(() => ({
-    color: "#475569",
+    color: tiles.stroke,
     weight: 1.5,
     opacity: 0.5,
     fillOpacity: 0,
     dashArray: "4 4",
-  }), []);
+  }), [tiles.stroke]);
 
   const onEachWard = useCallback(
     (feature: Feature, layer: Layer) => {
@@ -283,12 +283,12 @@ export function FloodRiskMap({
       scrollWheelZoom={true}
     >
       <MapResizer />
-      <TileLayer url={tiles.url} attribution={tiles.attribution} />
+      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
       {/* ── Ward boundaries (all modes) ───────── */}
       {wardsGeo && (
         <GeoJSON
-          key="ward-boundaries"
+          key={`ward-boundaries-${tiles.url}`}
           data={wardsGeo}
           style={wardStyle}
           onEachFeature={onEachWard}
@@ -298,7 +298,7 @@ export function FloodRiskMap({
       {/* ── Hazard mode ─────────────────────────── */}
       {viewMode === "hazard" && hazardGeo && (
         <GeoJSON
-          key="hazard-zones"
+          key={`hazard-zones-${tiles.url}`}
           data={hazardGeo}
           style={hazardStyle}
           onEachFeature={onEachHazard}
@@ -389,7 +389,7 @@ export function FloodRiskMap({
           {/* Rivers overlay */}
           {riversGeo && (
             <GeoJSON
-              key="rivers-overlay"
+              key={`rivers-overlay-${tiles.url}`}
               data={riversGeo}
               style={riverStyle}
               onEachFeature={onEachRiver}
@@ -398,7 +398,7 @@ export function FloodRiskMap({
           {/* Drainage network - canvas renderer for 10px click tolerance */}
           {drainageGeo && (
             <GeoJSON
-              key="drainage-network"
+              key={`drainage-network-${tiles.url}`}
               data={drainageGeo}
               style={drainageStyle}
               onEachFeature={onEachDrainage}
@@ -414,7 +414,7 @@ export function FloodRiskMap({
           {/* Rivers overlay for context */}
           {riversGeo && (
             <GeoJSON
-              key="rivers-sewer"
+              key={`rivers-sewer-${tiles.url}`}
               data={riversGeo}
               style={riverStyle}
               onEachFeature={onEachRiver}
@@ -423,7 +423,7 @@ export function FloodRiskMap({
           {/* Pumping mains (lines) - canvas renderer for 10px click tolerance */}
           {sewerageMains && (
             <GeoJSON
-              key="pumping-mains"
+              key={`pumping-mains-${tiles.url}`}
               data={sewerageMains}
               style={pumpingMainStyle}
               onEachFeature={onEachPumpingMain}
