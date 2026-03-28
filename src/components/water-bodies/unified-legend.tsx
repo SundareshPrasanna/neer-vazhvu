@@ -30,7 +30,7 @@ export function UnifiedLegend({ viewMode }: UnifiedLegendProps) {
   const { t } = useLanguage();
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-3">
+    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-3 max-h-[40vh] overflow-y-auto">
       <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
         {viewMode === "water-bodies" ? t("wb_legend.title") : t("lr.priority_level")}
       </h4>

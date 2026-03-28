@@ -164,7 +164,7 @@ export default function FloodRiskPage() {
         </div>
 
         {hasPanel && (
-          <div className="h-[45vh] md:h-full md:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+          <div className="h-[45vh] md:h-full md:w-80 lg:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
             <FloodDetailPanel
               selected={selected}
               onClose={() => setSelected(null)}
