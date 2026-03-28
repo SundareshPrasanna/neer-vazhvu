@@ -96,7 +96,7 @@ export function CombinedRiversMap({
     color: "#ea580c",
     weight: 1.5,
     dashArray: "4, 4",
-    opacity: 0.7,
+    opacity: tiles.url.includes("dark") ? 0.5 : 0.7,
   });
 
   const onEachZone = (feature: Feature, layer: Layer) => {
@@ -143,7 +143,7 @@ export function CombinedRiversMap({
       QUALITY_COLORS[props.overall_status as keyof typeof QUALITY_COLORS] ?? "#94a3b8";
     return L.circleMarker(latlng, {
       radius: 6,
-      fillColor: "white",
+      fillColor: tiles.stroke === "#475569" ? "#1e293b" : "white",
       color,
       weight: 2.5,
       fillOpacity: 0.95,
@@ -183,7 +183,7 @@ export function CombinedRiversMap({
     return L.circleMarker(latlng, {
       radius: 10,
       fillColor: color,
-      color: "white",
+      color: tiles.stroke === "#475569" ? "#0f172a" : "white",
       weight: 2,
       fillOpacity: 0.9,
       opacity: 1,
@@ -222,7 +222,7 @@ export function CombinedRiversMap({
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* Render order: zones (bottom) → rivers → stations → sources → highlight (top) */}
-      <GeoJSON key="zones" data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />
+      <GeoJSON key={`zones-${tiles.url}`} data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />
       {/* Rivers as direct Polylines (GeoJSON component has rendering bugs with long paths) */}
       {riverPolylines.map((river) =>
         river.segments.map((positions, segIdx) => {
@@ -254,8 +254,8 @@ export function CombinedRiversMap({
           );
         })
       )}
-      <GeoJSON key="stations" data={stationsGeoJSON} pointToLayer={stationPointToLayer} onEachFeature={onEachStation} />
-      <GeoJSON key="sources" data={sourcesGeoJSON} pointToLayer={sourcePointToLayer} onEachFeature={onEachSource} />
+      <GeoJSON key={`stations-${tiles.url}`} data={stationsGeoJSON} pointToLayer={stationPointToLayer} onEachFeature={onEachStation} />
+      <GeoJSON key={`sources-${tiles.url}`} data={sourcesGeoJSON} pointToLayer={sourcePointToLayer} onEachFeature={onEachSource} />
 
       {/* Selected station highlight ring */}
       {(() => {

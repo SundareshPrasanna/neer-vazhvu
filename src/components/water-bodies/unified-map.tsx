@@ -393,7 +393,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
         {currentGeoJSON && (
           <LayersControl.Overlay name={viewMode === "restoration" ? t("lr.priority_level") : t("wb_map.existing_layer")} checked>
             <GeoJSON
-              key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}`}
+              key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}-${tiles.url}`}
               data={currentGeoJSON}
               style={currentStyle}
               onEachFeature={onEachCurrent}
@@ -403,7 +403,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
         {lostGeoJSON && (
           <LayersControl.Overlay name={t("wb_map.lost_layer")} checked>
             <GeoJSON
-              key={`lost-${language}`}
+              key={`lost-${language}-${tiles.url}`}
               data={lostGeoJSON}
               pointToLayer={pointToLayer}
               style={lostStyle}
