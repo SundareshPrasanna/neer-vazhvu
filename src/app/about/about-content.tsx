@@ -231,6 +231,12 @@ export function AboutContent() {
             description={t("about.ds_sewerage_desc")}
             frequency={t("about.freq_static")}
           />
+          <DataSource
+            name="Anthropic Claude API"
+            url="https://docs.anthropic.com/"
+            description={t("about.ds_anthropic_desc")}
+            frequency={t("about.freq_daily_monthly")}
+          />
         </div>
       </section>
 
@@ -254,6 +260,20 @@ export function AboutContent() {
             <div>
               <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.daily_briefing_title")}</span>
               <span className="text-slate-600 dark:text-slate-400"> {t("about.daily_briefing_desc")}</span>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+            <div>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.ai_narrative_title")}</span>
+              <span className="text-slate-600 dark:text-slate-400"> {t("about.ai_narrative_desc")}</span>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="w-2 h-2 rounded-full bg-indigo-500 mt-2 flex-shrink-0" />
+            <div>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.ward_profile_title")}</span>
+              <span className="text-slate-600 dark:text-slate-400"> {t("about.ward_profile_desc")}</span>
             </div>
           </div>
         </div>

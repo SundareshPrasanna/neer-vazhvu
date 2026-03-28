@@ -7,6 +7,8 @@ import { getGroundwaterStatus, getGroundwaterColor, getRiskColor } from "@/types
 import type { GroundwaterWard, WardRiskData } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 import { RESERVOIR_COMPONENT_THRESHOLD, RESERVOIR_COMPONENT_MAX } from "@/lib/insights/constants";
+import { WardContext } from "@/components/insights/ward-context";
+import { WardNarrative } from "@/components/insights/ward-narrative";
 
 interface WardDetailPanelProps {
   ward: GroundwaterWard;
@@ -172,6 +174,11 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
           )}
         </div>
       )}
+
+      <div className="px-0">
+        <WardContext wardNumber={ward.wardNumber} hideGroundwater />
+        <WardNarrative wardNumber={ward.wardNumber} />
+      </div>
 
       <div className="text-xs text-slate-400 dark:text-slate-500 space-y-1">
         <p>{t("ward.depth_note1")}</p>

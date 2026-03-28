@@ -8,6 +8,7 @@ import type { Feature } from "geojson";
 import { getGroundwaterColor, getRiskColor, getBlockClassColor } from "@/types/groundwater";
 import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
+import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
 
@@ -28,8 +29,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
   const [stations, setStations] = useState<GWStation[]>([]);
 
   useEffect(() => {
-    fetch("/geojson/chennai-wards-2022.geojson")
-      .then((r) => r.json())
+    getWardGeoJSON()
       .then(setWardGeoJSON)
       .catch(console.error);
 

@@ -10,6 +10,7 @@ import {
 } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import type { Layer } from "leaflet";
+import L from "leaflet";
 import type { Feature } from "geojson";
 import {
   HAZARD_COLORS,
@@ -31,6 +32,7 @@ import type {
 } from "@/types/flood-risk";
 import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import "leaflet/dist/leaflet.css";
 
 interface FloodRiskMapProps {
@@ -49,6 +51,9 @@ export function FloodRiskMap({
 }: FloodRiskMapProps) {
   const { t } = useLanguage();
   const tiles = useMapTiles();
+
+  // Canvas renderer with tolerance for easier clicking on thin lines
+  const canvasRenderer = useMemo(() => L.canvas({ tolerance: 10 }), []);
 
   // GeoJSON data state
   const [hazardGeo, setHazardGeo] = useState<GeoJSON.FeatureCollection | null>(null);
@@ -92,8 +97,7 @@ export function FloodRiskMap({
       .then(setRiversGeo)
       .catch(console.error);
 
-    fetch("/geojson/chennai-wards-2022.geojson")
-      .then((r) => r.json())
+    getWardGeoJSON()
       .then(setWardsGeo)
       .catch(console.error);
 
@@ -391,13 +395,14 @@ export function FloodRiskMap({
               onEachFeature={onEachRiver}
             />
           )}
-          {/* Drainage network */}
+          {/* Drainage network - canvas renderer for 10px click tolerance */}
           {drainageGeo && (
             <GeoJSON
               key="drainage-network"
               data={drainageGeo}
               style={drainageStyle}
               onEachFeature={onEachDrainage}
+              {...{ renderer: canvasRenderer } as Record<string, unknown>}
             />
           )}
         </>
@@ -415,13 +420,14 @@ export function FloodRiskMap({
               onEachFeature={onEachRiver}
             />
           )}
-          {/* Pumping mains (lines) */}
+          {/* Pumping mains (lines) - canvas renderer for 10px click tolerance */}
           {sewerageMains && (
             <GeoJSON
               key="pumping-mains"
               data={sewerageMains}
               style={pumpingMainStyle}
               onEachFeature={onEachPumpingMain}
+              {...{ renderer: canvasRenderer } as Record<string, unknown>}
             />
           )}
           {/* Pumping stations (points) */}

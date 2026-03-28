@@ -22,6 +22,8 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 - **Block Detail Panel** - Click any exploitation block for development %, availability, draft totals, and historical trend bar chart with 100% threshold line
 - **Risk Score Breakdown** - Each of the four components (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%) shown with weighted contribution bars
 - **Panel Pre-selection** - Each view mode auto-selects a notable item on load (deepest ward, highest-risk ward, or most over-exploited block) so users see the detail panel immediately
+- **Ward Context Panel** - Cross-domain intelligence for each ward showing groundwater depth/trend, water body count with restoration needs, dominant flood hazard, nearest river station, and drainage line count - all clickable links to the relevant page
+- **AI Ward Analysis** - AI-generated narrative per ward connecting groundwater, infrastructure, and risk data into a contextual story (refreshed monthly)
 
 ### Water Bodies and Restoration Map
 A unified map at `/water-bodies` with a **view-mode toggle** to switch between "Water Bodies" and "Restoration Priority" views. Both views share the same detail panel and data.
@@ -41,6 +43,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 **Shared features:**
 - **Ranking Table** - Sortable by score, area, or name; switch via Map/Ranking tabs
 - **Detail Panel** - Click any water body for basic info plus restoration score breakdown, nearest lost water body, nearest river station, nearest industrial source
+- **Ward Context + AI Analysis** - Each detail panel shows the ward's cross-domain water context and AI-generated narrative
 - **Stats Bar** - Adapts to show water body counts or priority breakdown based on view mode
 
 ### River Health Map
@@ -61,11 +64,18 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **CMWSSB Sewerage Network** - 8 treatment plants (STPs) with capacity, 348 pumping stations (SPS) with STP linkage, and 3,834 pumping main segments with pipe material and size
 - **Return Period Maps** - 5/10/25/50/100/200-year flood extent polygons
 - **Ward Boundary Overlay** - 200 GCC wards with zone names on hover across all view modes
+- **Ward Context + AI Analysis** - Detail panels show ward-level cross-domain context and AI narrative for any clicked feature
+- **Click Tolerance** - Drainage lines and pumping mains use a Canvas renderer with 10px tolerance for easier interaction with thin features
 
 ### Intelligence Layer (Python Service)
 - **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals; uses inflow/outflow, precipitation, and ET₀ (evapotranspiration) as exogenous regressors when data variance is sufficient
 - **Ward Risk Scoring** - Composite 0-100 risk score per ward (groundwater depth, trend, reservoir stress, seasonal vulnerability)
-- **Daily Briefing** - Template-based intelligence summary with headlines, alerts, and recommendations
+- **Daily Briefing** - Template-based intelligence summary with headlines, alerts, and recommendations; optionally enhanced with an AI-generated city narrative using Claude (Sonnet for city, Haiku for 200 ward narratives)
+
+### Ward Profile Index
+- **Build-Time Spatial Join** - Every data layer (water bodies, flood zones, drainage, sewerage, rivers, industrial zones) is mapped to each of Chennai's 200 wards using centroid point-in-polygon attribution
+- **Deterministic Output** - `scripts/compute-ward-profiles.ts` reads only committed repo files (no Supabase), producing `public/data/ward-profiles.json` with byte-identical output for identical inputs
+- **CI Freshness Check** - Reruns the script and diffs output; catches stale profiles when source GeoJSON changes
 
 ### Other
 - **Tamil Localization** — Full English/Tamil toggle with localStorage persistence; locale-aware date formatting and reservoir name translations
@@ -116,6 +126,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 | [OpenCity Chennai (Flood Data)](https://data.opencity.in/) | CFLOWS flood hazard zones, 2015 flood hotspots/depth, 2020 Cyclone Nivar hotspots, return period maps | Static fetch |
 | [GCC Storm Water Drain Survey](https://data.opencity.in/) | 10,308 drain segments with type, depth, width, material, status across 197 wards | Static fetch |
 | [CMWSSB Sewerage Network](https://data.opencity.in/) | 8 STPs, 348 pumping stations, 3,834 pumping mains with pipe material and size | Static fetch |
+| [Anthropic Claude API](https://docs.anthropic.com/) | AI-generated city and ward narratives (Sonnet for city, Haiku for wards) | Daily (city) / Monthly (wards) |
 
 ## Tech Stack
 
@@ -128,6 +139,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 | Database | Supabase (PostgreSQL) |
 | Deployment | Vercel (frontend), Railway (Python API) |
 | CI/CD | GitHub Actions (daily data pipeline) |
+| AI Narratives | Anthropic Claude API (Sonnet 4 for city, Haiku 4.5 for ward narratives) |
 
 ## Getting Started
 
@@ -158,6 +170,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 CRON_SECRET=your-secret
+ANTHROPIC_API_KEY=your-anthropic-key  # Required for AI narrative generation only
 ```
 
 Run in demo mode (no Supabase required):
@@ -180,6 +193,7 @@ Run all migrations against your Supabase project:
 -- 3. supabase/migrations/003_open_meteo_weather.sql
 -- 4. supabase/migrations/004_water_bodies_census.sql
 -- 5. supabase/migrations/005_water_bodies_census_table.sql
+-- 6. supabase/migrations/006_ward_narratives.sql
 ```
 
 Or if using the Supabase CLI:
@@ -289,6 +303,8 @@ neer-vazhvu/
 │   ├── fetch-industrial-zones-osm.ts      # Fetch industrial zone polygons from Overpass API
 │   ├── compute-restoration-priority.ts    # Score water bodies for restoration priority
 │   ├── fetch-wris-groundwater.ts          # Fetch CGWB groundwater exploitation from India WRIS
+│   ├── compute-ward-profiles.ts         # Spatial join: map all data layers to 200 wards
+│   ├── generate-narratives.ts           # AI narrative generation (city + ward, uses Claude API)
 │   └── check-i18n.mjs                     # Validate Tamil translation coverage
 ├── src/                          # Next.js frontend
 │   ├── app/                      # App Router pages
@@ -306,6 +322,7 @@ neer-vazhvu/
 │   │   ├── rivers/               # River map, panel, chart, legend
 │   │   ├── pollution/            # Industrial pollution map overlay, panel, legend
 │   │   ├── flood-risk/           # Flood risk map, legend, detail panel, view toggle
+│   │   ├── insights/               # Cross-domain ward context, AI narratives, connected insights
 │   │   ├── lake-restoration/     # Restoration ranking table
 │   │   ├── layout/               # Header, footer
 │   │   └── ui/                   # shadcn/ui primitives
@@ -315,6 +332,8 @@ neer-vazhvu/
 │   │   ├── api-clients/          # NASA POWER, OpenCity API clients
 │   │   ├── calculator/           # Days-left calculator
 │   │   ├── scrapers/             # TypeScript scrapers (legacy, superseded by Python)
+│   │   ├── data/                   # Shared data loaders (ward GeoJSON cache)
+│   │   ├── hooks/                  # Ward lookup (PIP), ward profile loader
 │   │   ├── utils/                # Formatting, date helpers, constants
 │   │   └── mock-data.ts          # Demo mode data
 │   └── types/                    # TypeScript type definitions
@@ -331,7 +350,7 @@ neer-vazhvu/
 │   ├── Dockerfile
 │   └── pyproject.toml
 ├── supabase/
-│   └── migrations/               # SQL migrations (001-005)
+│   └── migrations/               # SQL migrations (001-006)
 ├── public/
 │   ├── geojson/                  # Static GeoJSON data
 │   │   ├── chennai-wards-2022.geojson           # GCC ward boundaries (choropleth)
@@ -353,7 +372,8 @@ neer-vazhvu/
 │       ├── restoration-priority.json     # Pre-computed restoration priority scores (1,787 water bodies)
 │       ├── imd-rainfall-monthly.json     # IMD historical rainfall (1970-2025, monthly + annual)
 │       ├── gwr-blocks.json              # CGWB block-level groundwater exploitation data (2011-2024)
-│       └── gw-stations.json             # CGWB groundwater monitoring station locations
+│       ├── gw-stations.json             # CGWB groundwater monitoring station locations
+│       └── ward-profiles.json             # Build-time ward spatial profiles (200 wards, all layers)
 └── .github/
     └── workflows/                # CI + daily data pipeline
 ```
@@ -445,4 +465,5 @@ Please open an issue first to discuss significant changes.
 - **CGWB / India WRIS** for block-level groundwater exploitation data and monitoring station locations
 - **TNPCB** for enforcement records and industrial consent data used in the pollution sources overlay
 - **Carbon Copy** and **The Wire** for investigative reporting on the Ennore-Manali industrial corridor
+- **[Anthropic](https://www.anthropic.com/)** for Claude API powering city and ward AI narratives
 - Chennai's civic data community for making public data accessible

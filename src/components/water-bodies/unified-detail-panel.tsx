@@ -1,7 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { ConnectedInsight } from "@/components/insights/connected-insight";
+import { WardContext } from "@/components/insights/ward-context";
+import { WardNarrative } from "@/components/insights/ward-narrative";
+import { useWardLookup } from "@/lib/hooks/use-ward-lookup";
 import type { SelectedWaterBody, WaterBodyStatus } from "@/types/water-bodies";
 import { STATUS_COLORS } from "@/types/water-bodies";
 import type { ScoredWaterBody } from "@/types/restoration";
@@ -182,6 +186,20 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
 export function UnifiedDetailPanel({ selected, restorationData, onClose }: UnifiedDetailPanelProps) {
   const { t, language } = useLanguage();
   const closeAria = t("common.close_panel");
+  const wardLookup = useWardLookup();
+  const [resolvedWard, setResolvedWard] = useState<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (selected.latlng) {
+      wardLookup(selected.latlng[0], selected.latlng[1]).then((w) => {
+        if (!cancelled) setResolvedWard(w);
+      });
+    } else {
+      Promise.resolve().then(() => { if (!cancelled) setResolvedWard(null); });
+    }
+    return () => { cancelled = true; };
+  }, [selected, wardLookup]);
 
   const localizeType = (value: string | undefined): string => {
     if (!value) return t("wb_panel.water_body");
@@ -320,6 +338,12 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
 
         {/* Restoration data (always shown when available) */}
         {restorationData && <RestorationSection wb={restorationData} />}
+        {resolvedWard && (
+          <div className="px-4">
+            <WardContext wardNumber={resolvedWard} />
+            <WardNarrative wardNumber={resolvedWard} />
+          </div>
+        )}
       </div>
     );
   }
@@ -435,6 +459,12 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
             {t("wb_panel.census_source_label")}
           </p>
         </div>
+        {resolvedWard && (
+          <div className="px-4">
+            <WardContext wardNumber={resolvedWard} />
+            <WardNarrative wardNumber={resolvedWard} />
+          </div>
+        )}
       </div>
     );
   }
@@ -534,6 +564,11 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
           <span className="font-medium">{t("wb_panel.source")}</span> {props.source}
         </p>
       </div>
+      {resolvedWard && (
+        <div className="px-4">
+          <WardContext wardNumber={resolvedWard} />
+        </div>
+      )}
     </div>
   );
 }

@@ -300,6 +300,10 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.ward_risk_desc":          { en: "Each of Chennai\u2019s 200 wards receives a composite risk score (0-100) based on groundwater depth (40%), year-over-year trend (30%), city-wide reservoir stress (20%), and seasonal vulnerability (10%). Scores are fully explainable.", ta: "சென்னையின் 200 வார்டுகள் ஒவ்வொன்றும் நிலத்தடி நீர் ஆழம் (40%), ஆண்டு-ஆண்டு போக்கு (30%), நகரம் முழுவதும் நீர்த்தேக்க அழுத்தம் (20%), மற்றும் பருவகால பாதிப்பு (10%) ஆகியவற்றின் அடிப்படையில் கூட்டு ஆபத்து மதிப்பெண் (0-100) பெறுகிறது. மதிப்பெண்கள் முழுமையாக விளக்கக்கூடியவை." },
   "about.daily_briefing_title":    { en: "Daily Briefing:", ta: "தினசரி அறிக்கை:" },
   "about.daily_briefing_desc":     { en: "A template-based intelligence summary generated each morning with a headline, key metrics, threshold-based alerts, and actionable recommendations. No LLM required  - purely data-driven.", ta: "ஒவ்வொரு காலையும் தலைப்பு, முக்கிய அளவீடுகள், வரம்பு அடிப்படையிலான எச்சரிக்கைகள் மற்றும் செயல்படக்கூடிய பரிந்துரைகளுடன் உருவாக்கப்படும் வார்ப்புரு அடிப்படையிலான நுண்ணறிவு சுருக்கம். LLM தேவையில்லை  - முற்றிலும் தரவு சார்ந்தது." },
+  "about.ai_narrative_title":      { en: "AI-Generated Narratives", ta: "AI உருவாக்கிய கதையாடல்கள்" },
+  "about.ai_narrative_desc":       { en: "Claude AI reads live reservoir, groundwater, and risk data to generate a daily city briefing and monthly ward-level analysis in both English and Tamil. Each narrative includes source data freshness dates.", ta: "Claude AI நேரடி நீர்த்தேக்கம், நிலத்தடி நீர் மற்றும் ஆபத்து தரவுகளைப் படித்து, ஆங்கிலம் மற்றும் தமிழில் தினசரி நகர சுருக்கம் மற்றும் மாதாந்திர வார்டு அளவிலான பகுப்பாய்வை உருவாக்குகிறது. ஒவ்வொரு கதையாடலும் மூல தரவு புத்தம்புதிய தேதிகளை உள்ளடக்கியது." },
+  "about.ward_profile_title":      { en: "Ward Profile Index", ta: "வார்டு சுயவிவர குறியீடு" },
+  "about.ward_profile_desc":       { en: "Every data layer - water bodies, flood zones, drainage, sewerage, rivers, industrial zones - is spatially mapped to each of Chennai's 200 wards. This enables cross-domain context: click any feature on any map to see its ward's complete water picture.", ta: "நீர்நிலைகள், வெள்ள மண்டலங்கள், வடிகால், கழிவுநீர், ஆறுகள், தொழிற்சாலை மண்டலங்கள் - அனைத்து தரவு அடுக்குகளும் சென்னையின் 200 வார்டுகளுக்கு இடஞ்சார்ந்ததாக வரைபடமாக்கப்பட்டுள்ளன. இது குறுக்கு-களம் சூழலை செயல்படுத்துகிறது." },
 
   // Forecasting
   "about.forecast_intro":  { en: "The dashed violet line on the storage trend chart shows an ARIMAX-based forecast for each reservoir, extending 6 months into the future. The shaded band around it represents an 80% confidence interval  - the range within which actual storage is expected to fall, 4 out of 5 times.", ta: "சேமிப்பு போக்கு விளக்கப்படத்தில் புள்ளியிட்ட ஊதா கோடு ஒவ்வொரு நீர்த்தேக்கத்திற்கும் ARIMAX அடிப்படையிலான 6 மாத முன்கணிப்பைக் காட்டுகிறது. அதைச் சுற்றியுள்ள நிழலான பட்டி 80% நம்பகத்தன்மை இடைவெளியைக் குறிக்கிறது  - 5 முறையில் 4 முறை உண்மையான சேமிப்பு இந்த வரம்பில் இருக்கும்." },
@@ -420,6 +424,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.ds_flood_desc":      { en: "CFLOWS model flood hazard zones (5 categories), 2015 Chennai flood hotspots with vulnerability ratings, 2015 inundation depth readings, 2020 Cyclone Nivar hotspots, and return period flood maps (5-200yr).", ta: "CFLOWS மாதிரி வெள்ள ஆபத்து மண்டலங்கள் (5 வகைகள்), 2015 சென்னை வெள்ள புள்ளிகள், 2015 நீர்மூழ்கு ஆழ அளவீடுகள், 2020 சூறாவளி நிவர் புள்ளிகள், மற்றும் திரும்ப காலம் வெள்ள வரைபடங்கள் (5-200 ஆண்டு)." },
   "about.ds_swd_desc":        { en: "10,308 official storm water drain segments from GCC survey (2023) across 197 wards, with street name, drain type, depth, width, length, material, and condition status.", ta: "GCC ஆய்வின் (2023) 197 வார்டுகளில் 10,308 அதிகாரபூர்வ மழைநீர் வடிகால் பகுதிகள், தெரு பெயர், வடிகால் வகை, ஆழம், அகலம், நீளம், பொருள் மற்றும் நிலை." },
   "about.ds_sewerage_desc":   { en: "CMWSSB sewerage infrastructure: 8 sewage treatment plants (STPs) with capacity, 348 pumping stations (SPS) linked to STPs, and 3,834 pumping main segments with pipe material and size.", ta: "CMWSSB கழிவுநீர் உள்கட்டமைப்பு: 8 கழிவுநீர் சுத்திகரிப்பு நிலையங்கள் (STP), 348 பம்பிங் நிலையங்கள் (SPS), மற்றும் 3,834 பம்பிங் முக்கிய குழாய் பகுதிகள்." },
+  "about.ds_anthropic_desc":  { en: "AI-generated city and ward narratives connecting reservoir, groundwater, and risk data (Claude Sonnet for city, Haiku for wards)", ta: "நீர்த்தேக்கம், நிலத்தடி நீர் மற்றும் ஆபத்து தரவுகளை இணைக்கும் AI-உருவாக்கிய நகர மற்றும் வார்டு கதையாடல்கள்" },
+  "about.freq_daily_monthly": { en: "Daily / Monthly", ta: "தினசரி / மாதாந்திர" },
 
   // ── Rivers page ───────────────────────────────────────────────────────────
   "rivers_page.loading":      { en: "Loading river data...",          ta: "ஆற்று தரவு ஏற்றுகிறது..." },
@@ -730,4 +736,26 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "flood.origin":           { en: "From",                           ta: "இலிருந்து" },
   "flood.destination":      { en: "To",                             ta: "நோக்கி" },
   "flood.pipe_length":      { en: "Length",                         ta: "நீளம்" },
+
+  // ── Ward context ──────────────────────────────────────────────
+  "ward_ctx.title":            { en: "Ward context",                       ta: "வார்டு சூழல்" },
+  "ward_ctx.groundwater":      { en: "Groundwater",                        ta: "நிலத்தடி நீர்" },
+  "ward_ctx.water_bodies":     { en: "Water bodies",                       ta: "நீர் நிலைகள்" },
+  "ward_ctx.flood":            { en: "Flood risk",                         ta: "வெள்ள அபாயம்" },
+  "ward_ctx.river":            { en: "Nearest river",                      ta: "அருகிலுள்ள ஆறு" },
+  "ward_ctx.drainage":         { en: "Drainage",                           ta: "வடிகால்" },
+  "ward_ctx.trend_improving":  { en: "improving",                          ta: "மேம்படுகிறது" },
+  "ward_ctx.trend_stable":     { en: "stable",                             ta: "நிலையானது" },
+  "ward_ctx.trend_declining":  { en: "declining",                          ta: "குறைகிறது" },
+  "ward_ctx.trend_unknown":    { en: "unknown",                            ta: "தெரியாது" },
+  "ward_ctx.wb_with_critical": { en: "{count} water bodies, {critical} need restoration", ta: "{count} நீர் நிலைகள், {critical} மறுசீரமைப்பு தேவை" },
+  "ward_ctx.wb_count":         { en: "{count} water bodies",               ta: "{count} நீர் நிலைகள்" },
+  "ward_ctx.dominant_hazard":  { en: "Dominant: {level}",                  ta: "முக்கிய: {level}" },
+  "ward_ctx.drain_count":      { en: "{count} drainage lines",             ta: "{count} வடிகால் பாதைகள்" },
+
+  // ── AI Narratives ──────────────────────────────────────────────────────────
+  "ai_narrative.ward_heading":  { en: "AI ward analysis",                   ta: "AI வார்டு பகுப்பாய்வு" },
+  "ai_narrative.reservoirs":    { en: "Reservoirs",                          ta: "நீர்த்தேக்கங்கள்" },
+  "ai_narrative.groundwater":   { en: "Groundwater",                         ta: "நிலத்தடி நீர்" },
+  "ai_narrative.risk_scores":   { en: "Risk scores",                         ta: "ஆபத்து மதிப்பெண்கள்" },
 };

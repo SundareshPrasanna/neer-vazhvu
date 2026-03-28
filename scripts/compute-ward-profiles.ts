@@ -1,0 +1,592 @@
+/**
+ * Compute ward profiles by spatially joining all data layers to Chennai's 200 wards.
+ *
+ * Fully deterministic from repo contents - no Supabase calls, no live data.
+ * Identical inputs produce byte-identical output (no timestamps).
+ *
+ * Run: npx tsx scripts/compute-ward-profiles.ts
+ * Output: public/data/ward-profiles.json (committed)
+ */
+
+import { readFileSync, writeFileSync } from "fs";
+import { resolve } from "path";
+import centroid from "@turf/centroid";
+import bbox from "@turf/bbox";
+import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
+import { point as turfPoint } from "@turf/helpers";
+import along from "@turf/along";
+import length from "@turf/length";
+
+// ── Types ────────────────────────────────────────────────────────────────────
+
+interface Coord {
+  lat: number;
+  lng: number;
+}
+
+interface WardInfo {
+  ward_number: number;
+  zone_no: string;
+  zone_name: string;
+  centroid: [number, number]; // [lng, lat] for GeoJSON consistency
+  feature: GeoJSON.Feature<GeoJSON.Polygon>;
+  bbox: [number, number, number, number]; // [minX, minY, maxX, maxY]
+}
+
+interface WardProfile {
+  ward_number: number;
+  zone_no: string;
+  zone_name: string;
+  centroid: [number, number];
+
+  water_bodies: {
+    current_count: number;
+    census_records: number;
+    restoration_critical: number;
+    restoration_high: number;
+    top_bodies: { name: string; score: number; level: string }[];
+  };
+
+  lost_bodies: {
+    count: number;
+    names: string[];
+  };
+
+  flood: {
+    hazard_zone_count: number;
+    by_category: Record<string, number>;
+    dominant_hazard: string | null;
+    hotspot_2015_count: number;
+    hotspot_2020_count: number;
+  };
+
+  drainage: { line_count: number };
+
+  sewerage: {
+    stp_count: number;
+    sps_count: number;
+    pumping_main_count: number;
+    total_stp_capacity_mld: number;
+  };
+
+  rivers: {
+    nearest_station_id: string | null;
+    nearest_river_id: string | null;
+    nearest_km: number | null;
+  };
+
+  industrial: { zone_count: number };
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+const R_EARTH_KM = 6371;
+
+function toRad(deg: number): number {
+  return (deg * Math.PI) / 180;
+}
+
+function haversine(a: Coord, b: Coord): number {
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const sinLat = Math.sin(dLat / 2);
+  const sinLng = Math.sin(dLng / 2);
+  const h =
+    sinLat * sinLat +
+    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * sinLng * sinLng;
+  return 2 * R_EARTH_KM * Math.asin(Math.sqrt(h));
+}
+
+function polygonCentroid(coordinates: number[][][]): Coord {
+  const ring = coordinates[0];
+  let latSum = 0;
+  let lngSum = 0;
+  for (const [lng, lat] of ring) {
+    latSum += lat;
+    lngSum += lng;
+  }
+  return { lat: latSum / ring.length, lng: lngSum / ring.length };
+}
+
+// ── Spatial grid index ───────────────────────────────────────────────────────
+// 20x20 grid over Chennai bounding box for fast candidate ward lookup
+
+interface GridIndex {
+  minLng: number;
+  minLat: number;
+  cellW: number;
+  cellH: number;
+  cols: number;
+  rows: number;
+  cells: Map<string, number[]>; // "col,row" -> ward indices
+}
+
+function buildGridIndex(wards: WardInfo[], gridSize = 20): GridIndex {
+  // Find bounding box of all wards
+  let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+  for (const w of wards) {
+    if (w.bbox[0] < minLng) minLng = w.bbox[0];
+    if (w.bbox[1] < minLat) minLat = w.bbox[1];
+    if (w.bbox[2] > maxLng) maxLng = w.bbox[2];
+    if (w.bbox[3] > maxLat) maxLat = w.bbox[3];
+  }
+
+  const cellW = (maxLng - minLng) / gridSize;
+  const cellH = (maxLat - minLat) / gridSize;
+  const cells = new Map<string, number[]>();
+
+  for (let i = 0; i < wards.length; i++) {
+    const [wMinX, wMinY, wMaxX, wMaxY] = wards[i].bbox;
+    const colStart = Math.max(0, Math.floor((wMinX - minLng) / cellW));
+    const colEnd = Math.min(gridSize - 1, Math.floor((wMaxX - minLng) / cellW));
+    const rowStart = Math.max(0, Math.floor((wMinY - minLat) / cellH));
+    const rowEnd = Math.min(gridSize - 1, Math.floor((wMaxY - minLat) / cellH));
+
+    for (let col = colStart; col <= colEnd; col++) {
+      for (let row = rowStart; row <= rowEnd; row++) {
+        const key = `${col},${row}`;
+        const arr = cells.get(key);
+        if (arr) arr.push(i);
+        else cells.set(key, [i]);
+      }
+    }
+  }
+
+  return { minLng, minLat, cellW, cellH, cols: gridSize, rows: gridSize, cells };
+}
+
+function findWard(lng: number, lat: number, wards: WardInfo[], grid: GridIndex): number | null {
+  const col = Math.floor((lng - grid.minLng) / grid.cellW);
+  const row = Math.floor((lat - grid.minLat) / grid.cellH);
+  const key = `${Math.max(0, Math.min(grid.cols - 1, col))},${Math.max(0, Math.min(grid.rows - 1, row))}`;
+
+  const candidates = grid.cells.get(key);
+  if (!candidates) return null;
+
+  const pt = turfPoint([lng, lat]);
+  for (const idx of candidates) {
+    if (booleanPointInPolygon(pt, wards[idx].feature)) {
+      return wards[idx].ward_number;
+    }
+  }
+  return null;
+}
+
+// ── Main ─────────────────────────────────────────────────────────────────────
+
+function main() {
+  const root = resolve(new URL(".", import.meta.url).pathname, "..");
+  console.log("Computing ward profiles...");
+
+  // 1. Load ward GeoJSON
+  const wardGeo = JSON.parse(
+    readFileSync(resolve(root, "public/geojson/chennai-wards-2022.geojson"), "utf8")
+  ) as GeoJSON.FeatureCollection;
+
+  const wards: WardInfo[] = wardGeo.features.map((f) => {
+    const props = f.properties as Record<string, unknown>;
+    const wardNum = (props.ward_number as number) ?? (props.Ward_No as number);
+    const feat = f as GeoJSON.Feature<GeoJSON.Polygon>;
+    const c = centroid(feat);
+    const b = bbox(feat);
+    return {
+      ward_number: wardNum,
+      zone_no: (props.Zone_No as string) || "",
+      zone_name: (props.Zone_Name as string) || "",
+      centroid: c.geometry.coordinates as [number, number],
+      feature: feat,
+      bbox: b as [number, number, number, number],
+    };
+  });
+
+  // Sort wards by number for deterministic processing
+  wards.sort((a, b) => a.ward_number - b.ward_number);
+
+  const grid = buildGridIndex(wards);
+
+  // Initialize profile accumulators per ward
+  const profiles = new Map<number, {
+    waterBodyCount: number;
+    censusRecords: number;
+    restorationCritical: number;
+    restorationHigh: number;
+    topBodies: { name: string; score: number; level: string }[];
+    lostCount: number;
+    lostNames: string[];
+    hazardZoneCount: number;
+    hazardByCategory: Record<string, number>;
+    hotspot2015Count: number;
+    hotspot2020Count: number;
+    drainageCount: number;
+    stpCount: number;
+    spsCount: number;
+    pumpingMainCount: number;
+    totalStpCapacityMld: number;
+    industrialCount: number;
+  }>();
+
+  for (const w of wards) {
+    profiles.set(w.ward_number, {
+      waterBodyCount: 0,
+      censusRecords: 0,
+      restorationCritical: 0,
+      restorationHigh: 0,
+      topBodies: [],
+      lostCount: 0,
+      lostNames: [],
+      hazardZoneCount: 0,
+      hazardByCategory: {},
+      hotspot2015Count: 0,
+      hotspot2020Count: 0,
+      drainageCount: 0,
+      stpCount: 0,
+      spsCount: 0,
+      pumpingMainCount: 0,
+      totalStpCapacityMld: 0,
+      industrialCount: 0,
+    });
+  }
+
+  // 2. Water bodies (OSM) - centroid PIP
+  console.log("Processing water bodies...");
+  const waterBodies = JSON.parse(
+    readFileSync(resolve(root, "public/geojson/chennai-water-bodies-current.geojson"), "utf8")
+  ) as GeoJSON.FeatureCollection;
+
+  let waterBodyAssigned = 0;
+  for (const feat of waterBodies.features) {
+    const geom = feat.geometry as GeoJSON.Polygon;
+    const c = polygonCentroid(geom.coordinates);
+    const ward = findWard(c.lng, c.lat, wards, grid);
+    if (ward != null) {
+      profiles.get(ward)!.waterBodyCount++;
+      waterBodyAssigned++;
+    }
+  }
+  console.log(`  ${waterBodyAssigned}/${waterBodies.features.length} water bodies assigned`);
+
+  // 3. Restoration priority - centroid PIP
+  console.log("Processing restoration priority...");
+  const restorationData = JSON.parse(
+    readFileSync(resolve(root, "public/data/restoration-priority.json"), "utf8")
+  );
+  const restorationBodies = restorationData.water_bodies as Array<{
+    source: string;
+    name: string;
+    centroid: [number, number]; // [lat, lng]
+    priority_score: number;
+    priority_level: string;
+  }>;
+
+  let restorationAssigned = 0;
+  for (const body of restorationBodies) {
+    const [lat, lng] = body.centroid;
+    const ward = findWard(lng, lat, wards, grid);
+    if (ward != null) {
+      const p = profiles.get(ward)!;
+      restorationAssigned++;
+
+      // Census records count
+      if (body.source === "census" || body.source === "matched") {
+        p.censusRecords++;
+      }
+
+      // Critical/high counts
+      if (body.priority_level === "critical") p.restorationCritical++;
+      else if (body.priority_level === "high") p.restorationHigh++;
+
+      // Track for top 3
+      p.topBodies.push({
+        name: body.name || "(unnamed)",
+        score: body.priority_score,
+        level: body.priority_level,
+      });
+    }
+  }
+  console.log(`  ${restorationAssigned}/${restorationBodies.length} restoration records assigned`);
+
+  // 4. Lost water bodies
+  console.log("Processing lost water bodies...");
+  const lostGeo = JSON.parse(
+    readFileSync(resolve(root, "public/geojson/chennai-water-bodies-lost.geojson"), "utf8")
+  ) as GeoJSON.FeatureCollection;
+
+  for (const feat of lostGeo.features) {
+    const geom = feat.geometry as GeoJSON.Point;
+    const [lng, lat] = geom.coordinates;
+    const props = feat.properties as Record<string, unknown>;
+    const ward = findWard(lng, lat, wards, grid);
+    if (ward != null) {
+      const p = profiles.get(ward)!;
+      p.lostCount++;
+      const name = (props.name as string) || "";
+      if (name) p.lostNames.push(name);
+    }
+  }
+  console.log(`  ${lostGeo.features.length} lost water bodies processed`);
+
+  // 5. Flood hazard zones - centroid PIP
+  console.log("Processing flood hazard zones...");
+  const hazardGeo = JSON.parse(
+    readFileSync(resolve(root, "public/geojson/chennai-flood-hazard-zones.geojson"), "utf8")
+  ) as GeoJSON.FeatureCollection;
+
+  let hazardAssigned = 0;
+  for (const feat of hazardGeo.features) {
+    const geom = feat.geometry as GeoJSON.Polygon;
+    const c = polygonCentroid(geom.coordinates);
+    const props = feat.properties as Record<string, unknown>;
+    const category = (props.category as string) || "unknown";
+    const ward = findWard(c.lng, c.lat, wards, grid);
+    if (ward != null) {
+      const p = profiles.get(ward)!;
+      p.hazardZoneCount++;
+      p.hazardByCategory[category] = (p.hazardByCategory[category] || 0) + 1;
+      hazardAssigned++;
+    }
+  }
+  console.log(`  ${hazardAssigned}/${hazardGeo.features.length} hazard zones assigned`);
+
+  // 6. Flood hotspots 2015 - direct ward property
+  console.log("Processing 2015 flood hotspots...");
+  const hotspot2015Geo = JSON.parse(
+    readFileSync(resolve(root, "public/geojson/chennai-flood-2015-hotspots.geojson"), "utf8")
+  ) as GeoJSON.FeatureCollection;
+
+  for (const feat of hotspot2015Geo.features) {
+    const props = feat.properties as Record<string, unknown>;
+    const ward = props.ward as number;
+    if (ward != null && profiles.has(ward)) {
+      profiles.get(ward)!.hotspot2015Count++;
+    }
+  }
+  console.log(`  ${hotspot2015Geo.features.length} hotspots processed`);
+
+  // 7. Flood hotspots 2020 - PIP
+  console.log("Processing 2020 flood hotspots...");
+  const hotspot2020Geo = JSON.parse(
+    readFileSync(resolve(root, "public/geojson/chennai-flood-2020-hotspots.geojson"), "utf8")
+  ) as GeoJSON.FeatureCollection;
+
+  let hotspot2020Assigned = 0;
+  for (const feat of hotspot2020Geo.features) {
+    const geom = feat.geometry as GeoJSON.Point;
+    const [lng, lat] = geom.coordinates;
+    const ward = findWard(lng, lat, wards, grid);
+    if (ward != null) {
+      profiles.get(ward)!.hotspot2020Count++;
+      hotspot2020Assigned++;
+    }
+  }
+  console.log(`  ${hotspot2020Assigned}/${hotspot2020Geo.features.length} hotspots assigned`);
+
+  // 8. Drainage lines - true midpoint via @turf/along at half length
+  console.log("Processing drainage lines...");
+  const drainageGeo = JSON.parse(
+    readFileSync(resolve(root, "public/geojson/chennai-drainage.geojson"), "utf8")
+  ) as GeoJSON.FeatureCollection;
+
+  let drainageAssigned = 0;
+  for (const feat of drainageGeo.features) {
+    const geom = feat.geometry as GeoJSON.LineString;
+    const line = { type: "Feature" as const, properties: {}, geometry: geom };
+    const len = length(line, { units: "kilometers" });
+    if (len === 0) continue;
+    const midpoint = along(line, len / 2, { units: "kilometers" });
+    const [lng, lat] = midpoint.geometry.coordinates;
+    const ward = findWard(lng, lat, wards, grid);
+    if (ward != null) {
+      profiles.get(ward)!.drainageCount++;
+      drainageAssigned++;
+    }
+  }
+  console.log(`  ${drainageAssigned}/${drainageGeo.features.length} drainage lines assigned`);
+
+  // 9. Sewerage - STPs/SPS are Points (direct PIP), pumping mains are LineStrings (midpoint)
+  console.log("Processing sewerage...");
+  const sewerageGeo = JSON.parse(
+    readFileSync(resolve(root, "public/geojson/chennai-sewerage.geojson"), "utf8")
+  ) as GeoJSON.FeatureCollection;
+
+  let sewerageAssigned = 0;
+  for (const feat of sewerageGeo.features) {
+    const props = feat.properties as Record<string, unknown>;
+    const layer = (props.layer as string) || "";
+
+    let lng: number, lat: number;
+    if (feat.geometry.type === "Point") {
+      [lng, lat] = (feat.geometry as GeoJSON.Point).coordinates;
+    } else if (feat.geometry.type === "LineString") {
+      // Pumping mains - true midpoint
+      const geom = feat.geometry as GeoJSON.LineString;
+      const line = { type: "Feature" as const, properties: {}, geometry: geom };
+      const len = length(line, { units: "kilometers" });
+      if (len === 0) continue;
+      const midpoint = along(line, len / 2, { units: "kilometers" });
+      [lng, lat] = midpoint.geometry.coordinates;
+    } else {
+      continue;
+    }
+
+    const ward = findWard(lng, lat, wards, grid);
+    if (ward != null) {
+      const p = profiles.get(ward)!;
+      if (layer === "stp") {
+        p.stpCount++;
+        const capacity = (props.capacity_mld as number) ?? 0;
+        p.totalStpCapacityMld += capacity;
+      } else if (layer === "sps") {
+        p.spsCount++;
+      } else if (layer === "pumping_main") {
+        p.pumpingMainCount++;
+      }
+      sewerageAssigned++;
+    }
+  }
+  console.log(`  ${sewerageAssigned}/${sewerageGeo.features.length} sewerage features assigned`);
+
+  // 10. Industrial zones - centroid PIP
+  console.log("Processing industrial zones...");
+  const industrialGeo = JSON.parse(
+    readFileSync(resolve(root, "public/geojson/chennai-industrial-zones.geojson"), "utf8")
+  ) as GeoJSON.FeatureCollection;
+
+  let industrialAssigned = 0;
+  for (const feat of industrialGeo.features) {
+    const geom = feat.geometry as GeoJSON.Polygon;
+    const c = polygonCentroid(geom.coordinates);
+    const ward = findWard(c.lng, c.lat, wards, grid);
+    if (ward != null) {
+      profiles.get(ward)!.industrialCount++;
+      industrialAssigned++;
+    }
+  }
+  console.log(`  ${industrialAssigned}/${industrialGeo.features.length} industrial zones assigned`);
+
+  // 11. River stations - nearest station per ward centroid (haversine)
+  console.log("Processing river stations...");
+  const riverQuality = JSON.parse(
+    readFileSync(resolve(root, "public/data/river-quality.json"), "utf8")
+  );
+
+  const stations: Array<{ id: string; riverId: string; coord: Coord }> = [];
+  for (const river of riverQuality.rivers) {
+    for (const station of river.stations) {
+      stations.push({
+        id: station.id,
+        riverId: river.id,
+        coord: { lat: station.lat, lng: station.lng },
+      });
+    }
+  }
+
+  // Map ward -> nearest river info
+  const wardRivers = new Map<number, { stationId: string; riverId: string; km: number }>();
+  for (const w of wards) {
+    const wardCentroid: Coord = { lat: w.centroid[1], lng: w.centroid[0] };
+    let bestDist = Infinity;
+    let bestStation: { id: string; riverId: string } | null = null;
+    for (const st of stations) {
+      const d = haversine(wardCentroid, st.coord);
+      if (d < bestDist) {
+        bestDist = d;
+        bestStation = { id: st.id, riverId: st.riverId };
+      }
+    }
+    if (bestStation) {
+      wardRivers.set(w.ward_number, {
+        stationId: bestStation.id,
+        riverId: bestStation.riverId,
+        km: Math.round(bestDist * 10) / 10,
+      });
+    }
+  }
+
+  // 12. Build output
+  console.log("Building output...");
+  const output: WardProfile[] = [];
+
+  for (const w of wards) {
+    const p = profiles.get(w.ward_number)!;
+    const river = wardRivers.get(w.ward_number);
+
+    // Top 3 bodies: sort by score desc, then name asc for ties
+    const topBodies = p.topBodies
+      .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+      .slice(0, 3)
+      .map((b) => ({ name: b.name, score: b.score, level: b.level }));
+
+    // Lost body names sorted alphabetically
+    const lostNames = [...p.lostNames].sort();
+
+    // Dominant hazard: highest count, alphabetical tie-break
+    let dominantHazard: string | null = null;
+    let maxCount = 0;
+    const sortedCategories = Object.entries(p.hazardByCategory).sort(([a], [b]) =>
+      a.localeCompare(b)
+    );
+    for (const [cat, count] of sortedCategories) {
+      if (count > maxCount) {
+        maxCount = count;
+        dominantHazard = cat;
+      }
+    }
+
+    output.push({
+      ward_number: w.ward_number,
+      zone_no: w.zone_no,
+      zone_name: w.zone_name,
+      centroid: w.centroid,
+      water_bodies: {
+        current_count: p.waterBodyCount,
+        census_records: p.censusRecords,
+        restoration_critical: p.restorationCritical,
+        restoration_high: p.restorationHigh,
+        top_bodies: topBodies,
+      },
+      lost_bodies: {
+        count: p.lostCount,
+        names: lostNames,
+      },
+      flood: {
+        hazard_zone_count: p.hazardZoneCount,
+        by_category: Object.fromEntries(sortedCategories),
+        dominant_hazard: dominantHazard,
+        hotspot_2015_count: p.hotspot2015Count,
+        hotspot_2020_count: p.hotspot2020Count,
+      },
+      drainage: { line_count: p.drainageCount },
+      sewerage: {
+        stp_count: p.stpCount,
+        sps_count: p.spsCount,
+        pumping_main_count: p.pumpingMainCount,
+        total_stp_capacity_mld: Math.round(p.totalStpCapacityMld * 10) / 10,
+      },
+      rivers: {
+        nearest_station_id: river?.stationId ?? null,
+        nearest_river_id: river?.riverId ?? null,
+        nearest_km: river?.km ?? null,
+      },
+      industrial: { zone_count: p.industrialCount },
+    });
+  }
+
+  const outPath = resolve(root, "public/data/ward-profiles.json");
+  writeFileSync(outPath, JSON.stringify(output, null, 2));
+
+  // Summary
+  const totalWaterBodies = output.reduce((s, w) => s + w.water_bodies.current_count, 0);
+  const totalDrainage = output.reduce((s, w) => s + w.drainage.line_count, 0);
+  const totalSewerage = output.reduce(
+    (s, w) => s + w.sewerage.stp_count + w.sewerage.sps_count + w.sewerage.pumping_main_count,
+    0
+  );
+
+  console.log(`\nWard profiles written to ${outPath}`);
+  console.log(`  200 wards profiled`);
+  console.log(`  Water bodies: ${totalWaterBodies} assigned`);
+  console.log(`  Drainage lines: ${totalDrainage} assigned`);
+  console.log(`  Sewerage features: ${totalSewerage} assigned`);
+}
+
+main();
