@@ -21,8 +21,10 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 - **Ward Detail Panel** - Click any ward for depth, year-over-year trend, historical chart, and composite risk score breakdown
 - **Block Detail Panel** - Click any exploitation block for development %, availability, draft totals, and historical trend bar chart with 100% threshold line
 - **Risk Score Breakdown** - Each of the four components (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%) shown with weighted contribution bars
+- **Connected Insights** - Threshold-gated cross-domain intelligence blocks that surface when a risk component is dominant (e.g., "Reservoir stress contributes X/20 to this ward's risk score") with deep links to the relevant page
+- **Action Nudges** - Context-aware action recommendations based on the dominant risk factor (rainwater harvesting, recharge wells, or reservoir advocacy)
 - **Panel Pre-selection** - Each view mode auto-selects a notable item on load (deepest ward, highest-risk ward, or most over-exploited block) so users see the detail panel immediately
-- **Ward Context Panel** - Cross-domain intelligence for each ward showing groundwater depth/trend, water body count with restoration needs, dominant flood hazard, nearest river station, and drainage line count - all clickable links to the relevant page
+- **Ward Context Panel** - Cross-domain intelligence for each ward showing groundwater depth/trend, water body count with restoration needs, dominant flood hazard, nearest river station, and drainage line count - all clickable deep links that navigate to the relevant page and pre-select the ward
 - **AI Ward Analysis** - AI-generated narrative per ward connecting groundwater, infrastructure, and risk data into a contextual story (refreshed monthly)
 
 ### Water Bodies and Restoration Map
@@ -42,8 +44,9 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 
 **Shared features:**
 - **Ranking Table** - Sortable by score, area, or name; switch via Map/Ranking tabs
-- **Detail Panel** - Click any water body for basic info plus restoration score breakdown, nearest lost water body, nearest river station, nearest industrial source
+- **Detail Panel** - Click any water body for basic info plus restoration score breakdown, nearest lost water body, nearest river station, nearest industrial source. Connected insights surface when lost-proximity or industrial-proximity scores are dominant
 - **Ward Context + AI Analysis** - Each detail panel shows the ward's cross-domain water context and AI-generated narrative
+- **Deep Linking** - Ward context links navigate to the water bodies page and pre-select the ward's top water body (`?mode=restoration&ward=N`)
 - **Stats Bar** - Adapts to show water body counts or priority breakdown based on view mode
 
 ### River Health Map
@@ -65,6 +68,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **Return Period Maps** - 5/10/25/50/100/200-year flood extent polygons
 - **Ward Boundary Overlay** - 200 GCC wards with zone names on hover across all view modes
 - **Ward Context + AI Analysis** - Detail panels show ward-level cross-domain context and AI narrative for any clicked feature
+- **Deep Linking** - Ward context links navigate to the flood risk page and fly to the ward centroid (`?ward=N`), with view mode preserved (`?view=drainage`)
 - **Click Tolerance** - Drainage lines and pumping mains use a Canvas renderer with 10px tolerance for easier interaction with thin features
 
 ### Intelligence Layer (Python Service)
@@ -78,11 +82,11 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **CI Freshness Check** - Reruns the script and diffs output; catches stale profiles when source GeoJSON changes
 
 ### Other
-- **Tamil Localization** — Full English/Tamil toggle with localStorage persistence; locale-aware date formatting and reservoir name translations
-- **Dark Mode** — Full dark mode with system preference detection
-- **Responsive** — Works on desktop, tablet, and mobile
-- **Demo Mode** — Runs with realistic mock data when Supabase isn't configured
-- **OG Image** — Auto-generated Open Graph image for social sharing (LinkedIn, Twitter)
+- **Tamil Localization** - Full English/Tamil toggle (~665 translation keys) with localStorage persistence; locale-aware date formatting and reservoir name translations
+- **Dark Mode** - Full dark mode with system preference detection; maps use OSM tiles with CSS invert filter for consistent label coverage across themes
+- **Responsive** - Works on desktop, tablet, and mobile
+- **Demo Mode** - Runs with realistic mock data when Supabase isn't configured
+- **OG Image** - Auto-generated Open Graph image for social sharing (LinkedIn, Twitter)
 
 ## Architecture
 

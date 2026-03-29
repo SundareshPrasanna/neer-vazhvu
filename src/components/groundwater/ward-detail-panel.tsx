@@ -6,7 +6,13 @@ import { ConnectedInsight } from "@/components/insights/connected-insight";
 import { getGroundwaterStatus, getGroundwaterColor, getRiskColor } from "@/types/groundwater";
 import type { GroundwaterWard, WardRiskData } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
-import { RESERVOIR_COMPONENT_THRESHOLD, RESERVOIR_COMPONENT_MAX } from "@/lib/insights/constants";
+import {
+  RESERVOIR_COMPONENT_THRESHOLD,
+  RESERVOIR_COMPONENT_MAX,
+  GW_DEPTH_COMPONENT_THRESHOLD,
+  TREND_COMPONENT_THRESHOLD,
+  SEASONAL_COMPONENT_THRESHOLD,
+} from "@/lib/insights/constants";
 import { WardContext } from "@/components/insights/ward-context";
 import { WardNarrative } from "@/components/insights/ward-narrative";
 
@@ -172,6 +178,58 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
               linkKey="connected.ward_reservoir_link"
             />
           )}
+
+          {/* Connected insight: groundwater depth is dominant */}
+          {riskData.groundwaterComponent != null && riskData.groundwaterComponent >= GW_DEPTH_COMPONENT_THRESHOLD && (
+            <ConnectedInsight
+              messageKey="connected.ward_gw_depth"
+              linkHref="/groundwater"
+              linkKey="connected.ward_gw_depth_link"
+            />
+          )}
+
+          {/* Connected insight: declining trend */}
+          {riskData.trendComponent != null && riskData.trendComponent >= TREND_COMPONENT_THRESHOLD && (
+            <ConnectedInsight
+              messageKey="connected.ward_trend"
+              linkHref={`/groundwater?ward=${ward.wardNumber}`}
+              linkKey="connected.ward_trend_link"
+            />
+          )}
+
+          {/* Connected insight: seasonal variation */}
+          {riskData.seasonalComponent != null && riskData.seasonalComponent >= SEASONAL_COMPONENT_THRESHOLD && (
+            <ConnectedInsight
+              messageKey="connected.ward_seasonal"
+              linkHref={`/groundwater?ward=${ward.wardNumber}`}
+              linkKey="connected.ward_seasonal_link"
+            />
+          )}
+
+          {/* Action nudge based on dominant risk factor */}
+          {(() => {
+            const gw = riskData.groundwaterComponent ?? 0;
+            const tr = riskData.trendComponent ?? 0;
+            const rv = riskData.reservoirComponent ?? 0;
+            const sn = riskData.seasonalComponent ?? 0;
+            const max = Math.max(gw, tr, rv, sn);
+            if (max < 50) return null;
+            const actionKey =
+              max === rv ? "action.ward_reservoir" :
+              max === sn ? "action.ward_harvest" :
+              max === tr ? "action.ward_recharge" :
+              "action.ward_harvest";
+            return (
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-3 mt-3">
+                <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
+                  {t("action.heading")}
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  {t(actionKey)}
+                </p>
+              </div>
+            );
+          })()}
         </div>
       )}
 

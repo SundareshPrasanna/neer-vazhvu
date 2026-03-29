@@ -7,6 +7,7 @@ import {
   GeoJSON,
   CircleMarker,
   Tooltip,
+  useMap,
 } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import type { Layer } from "leaflet";
@@ -39,6 +40,17 @@ interface FloodRiskMapProps {
   viewMode: FloodViewMode;
   historicalEvent: "2015" | "2020";
   onSelect: (feat: SelectedFloodFeature | null) => void;
+  focusCenter?: [number, number];
+}
+
+/** Flies the map to a given center when it changes */
+function FlyToCenter({ center }: { center: [number, number] }) {
+  const map = useMap();
+  useEffect(() => {
+    map.flyTo(center, 14, { duration: 1 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [center[0], center[1]]);
+  return null;
 }
 
 const CHENNAI_CENTER: [number, number] = [13.06, 80.24];
@@ -48,6 +60,7 @@ export function FloodRiskMap({
   viewMode,
   historicalEvent,
   onSelect,
+  focusCenter,
 }: FloodRiskMapProps) {
   const { t } = useLanguage();
   const tiles = useMapTiles();
@@ -283,6 +296,7 @@ export function FloodRiskMap({
       scrollWheelZoom={true}
     >
       <MapResizer />
+      {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
       {/* ── Ward boundaries (all modes) ───────── */}

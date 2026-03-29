@@ -70,7 +70,7 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
         {/* Water bodies */}
         {profile.water_bodies.current_count > 0 && (
           <ContextRow
-            href="/water-bodies?mode=restoration"
+            href={`/water-bodies?mode=restoration&ward=${wardNumber}`}
             label={t("ward_ctx.water_bodies")}
             value={
               profile.water_bodies.restoration_critical > 0
@@ -85,7 +85,7 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
         {/* Flood */}
         {profile.flood.dominant_hazard && (
           <ContextRow
-            href="/flood-risk"
+            href={`/flood-risk?ward=${wardNumber}`}
             label={t("ward_ctx.flood")}
             value={t("ward_ctx.dominant_hazard").replace("{level}", t(`flood.${profile.flood.dominant_hazard}`))}
           />
@@ -107,7 +107,7 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
         {/* Drainage */}
         {profile.drainage.line_count > 0 && (
           <ContextRow
-            href="/flood-risk"
+            href={`/flood-risk?ward=${wardNumber}&view=drainage`}
             label={t("ward_ctx.drainage")}
             value={t("ward_ctx.drain_count").replace("{count}", String(profile.drainage.line_count))}
           />

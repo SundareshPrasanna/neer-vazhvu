@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { Suspense, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { FloodViewToggle } from "@/components/flood-risk/flood-view-toggle";
 import { FloodLegend } from "@/components/flood-risk/flood-legend";
@@ -8,6 +9,7 @@ import { FloodDetailPanel } from "@/components/flood-risk/flood-detail-panel";
 import { HAZARD_COLORS } from "@/types/flood-risk";
 import type { FloodViewMode, HazardCategory, SelectedFloodFeature } from "@/types/flood-risk";
 import { useLanguage } from "@/lib/i18n/context";
+import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -27,10 +29,39 @@ const FloodRiskMap = dynamic(
 const HAZARD_CATS: HazardCategory[] = ["very_high", "high", "moderate", "low", "very_low"];
 
 export default function FloodRiskPage() {
+  return (
+    <Suspense>
+      <FloodRiskPageContent />
+    </Suspense>
+  );
+}
+
+function FloodRiskPageContent() {
   const { t } = useLanguage();
-  const [viewMode, setViewMode] = useState<FloodViewMode>("hazard");
+  const searchParams = useSearchParams();
+  const validViews: FloodViewMode[] = ["hazard", "historical", "drainage", "sewerage"];
+  const viewParam = searchParams.get("view") as FloodViewMode | null;
+  const [viewMode, setViewMode] = useState<FloodViewMode>(
+    viewParam && validViews.includes(viewParam) ? viewParam : "hazard"
+  );
   const [selected, setSelected] = useState<SelectedFloodFeature | null>(null);
   const [historicalEvent, setHistoricalEvent] = useState<"2015" | "2020">("2015");
+  const [focusCenter, setFocusCenter] = useState<[number, number] | undefined>();
+
+  // Deep link: fly to ward centroid from ?ward= param
+  useEffect(() => {
+    const wardParam = searchParams.get("ward");
+    if (!wardParam) return;
+    const wardNum = parseInt(wardParam, 10);
+    fetch("/data/ward-profiles.json")
+      .then((r) => r.json())
+      .then((profiles: WardProfile[]) => {
+        const profile = profiles.find((p) => p.ward_number === wardNum);
+        if (profile) setFocusCenter([profile.centroid[1], profile.centroid[0]]);
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const hasPanel = selected !== null;
 
@@ -145,6 +176,7 @@ export default function FloodRiskPage() {
             viewMode={viewMode}
             historicalEvent={historicalEvent}
             onSelect={setSelected}
+            focusCenter={focusCenter}
           />
           <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000]">
             <FloodLegend viewMode={viewMode} />
