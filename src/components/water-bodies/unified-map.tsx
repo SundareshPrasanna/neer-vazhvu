@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { MapContainer, TileLayer, GeoJSON, LayersControl, Tooltip, LayerGroup, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, LayersControl, Tooltip, LayerGroup, Circle, useMap } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer } from "leaflet";
@@ -26,6 +26,17 @@ interface UnifiedMapProps {
   censusData: CensusWaterBodyProperties[];
   onSelectCurrent: (body: SelectedWaterBody) => void;
   onSelectLost: (body: SelectedWaterBody) => void;
+  focusCenter?: [number, number];
+}
+
+/** Flies the map to a given center when it changes */
+function FlyToCenter({ center }: { center: [number, number] }) {
+  const map = useMap();
+  useEffect(() => {
+    map.flyTo(center, 14, { duration: 1 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [center[0], center[1]]);
+  return null;
 }
 
 function getCensusColor(wb: CensusWaterBodyProperties): string {
@@ -40,7 +51,7 @@ function getCensusColor(wb: CensusWaterBodyProperties): string {
  *  has mixed/unreliable units (see About > Data Quality). */
 const CENSUS_RADIUS_M = 20;
 
-export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, onSelectLost }: UnifiedMapProps) {
+export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, onSelectLost, focusCenter }: UnifiedMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [currentGeoJSON, setCurrentGeoJSON] =
@@ -388,6 +399,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
       scrollWheelZoom={true}
     >
       <MapResizer />
+      {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       <LayersControl position="topright">
         {currentGeoJSON && (

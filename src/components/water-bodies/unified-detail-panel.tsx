@@ -11,7 +11,12 @@ import { STATUS_COLORS } from "@/types/water-bodies";
 import type { ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
-import { RIVER_POLLUTION_COMPONENT_THRESHOLD, RIVER_POLLUTION_COMPONENT_MAX } from "@/lib/insights/constants";
+import {
+  RIVER_POLLUTION_COMPONENT_THRESHOLD,
+  RIVER_POLLUTION_COMPONENT_MAX,
+  LOST_PROXIMITY_COMPONENT_THRESHOLD,
+  INDUSTRIAL_PROXIMITY_COMPONENT_THRESHOLD,
+} from "@/lib/insights/constants";
 
 interface UnifiedDetailPanelProps {
   selected: SelectedWaterBody;
@@ -127,6 +132,28 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
             }}
             linkHref="/rivers"
             linkKey="connected.wb_river_link"
+          />
+        </div>
+      )}
+
+      {/* Connected insight: nearby lost water body */}
+      {wb.components.lost_proximity >= LOST_PROXIMITY_COMPONENT_THRESHOLD && wb.nearest_lost_body && (
+        <div className="px-4">
+          <ConnectedInsight
+            messageKey="connected.wb_lost_proximity"
+            linkHref="/water-bodies?mode=existing"
+            linkKey="connected.wb_lost_link"
+          />
+        </div>
+      )}
+
+      {/* Connected insight: industrial discharge proximity */}
+      {wb.components.industrial_proximity >= INDUSTRIAL_PROXIMITY_COMPONENT_THRESHOLD && wb.nearest_industrial && (
+        <div className="px-4">
+          <ConnectedInsight
+            messageKey="connected.wb_industrial"
+            linkHref="/rivers"
+            linkKey="connected.wb_industrial_link"
           />
         </div>
       )}

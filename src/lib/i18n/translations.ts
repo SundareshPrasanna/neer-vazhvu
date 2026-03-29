@@ -87,6 +87,26 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "connected.flood_stp_river":   { en: "Treated effluent from this plant is discharged into nearby waterways. When plant capacity is exceeded during heavy rain, untreated overflow degrades river quality.", ta: "இந்த நிலையத்திலிருந்து சுத்திகரிக்கப்பட்ட கழிவு நீர் அருகிலுள்ள நீர்வழிகளில் வெளியேற்றப்படுகிறது. கடும் மழையின் போது நிலையத்தின் கொள்ளளவை மீறும்போது, சுத்திகரிக்கப்படாத கழிவு ஆற்றின் தரத்தை சீரழிக்கிறது." },
   "connected.flood_stp_river_link": { en: "See river quality",                                                 ta: "ஆற்றின் தரத்தைக் காண்க" },
 
+  // Ward detail: component-level insights
+  "connected.ward_gw_depth":        { en: "Groundwater depth is the largest contributor to this ward's risk. Deeper water tables mean higher extraction costs and greater vulnerability during dry spells.", ta: "நிலத்தடி நீர் ஆழம் இந்த வார்டின் ஆபத்துக்கு மிகப்பெரிய பங்களிப்பாகும். ஆழமான நீர்மட்டங்கள் அதிக உறிஞ்சும் செலவு மற்றும் வறண்ட காலங்களில் அதிக பாதிப்பை ஏற்படுத்துகின்றன." },
+  "connected.ward_gw_depth_link":   { en: "Compare nearby wards",                                              ta: "அருகிலுள்ள வார்டுகளை ஒப்பிடுக" },
+  "connected.ward_trend":           { en: "Year-over-year groundwater decline is accelerating in this ward. Without intervention, extraction will push deeper into stressed levels.", ta: "இந்த வார்டில் ஆண்டுதோறும் நிலத்தடி நீர் சரிவு வேகமாகிறது. தலையீடு இல்லாமல், எடுப்பு அழுத்த நிலைகளுக்கு ஆழமாகச் செல்லும்." },
+  "connected.ward_trend_link":      { en: "See ward history",                                                   ta: "வார்டு வரலாற்றைக் காண்க" },
+  "connected.ward_seasonal":        { en: "This ward shows high seasonal variation - water table drops sharply in summer. Rainwater harvesting can buffer this swing.", ta: "இந்த வார்டு அதிக பருவகால மாறுபாட்டைக் காட்டுகிறது - கோடையில் நீர்மட்டம் கடுமையாகக் குறைகிறது. மழைநீர் சேகரிப்பு இந்த ஊசலாட்டத்தைத் தடுக்கலாம்." },
+  "connected.ward_seasonal_link":   { en: "See ward history",                                                   ta: "வார்டு வரலாற்றைக் காண்க" },
+
+  // Ward detail: action nudge based on dominant risk factor
+  "action.ward_harvest":            { en: "Rainwater harvesting in this ward would reduce dependence on depleting groundwater.",                                                ta: "இந்த வார்டில் மழைநீர் சேகரிப்பு குறைந்து வரும் நிலத்தடி நீரின் மீதான சார்பைக் குறைக்கும்." },
+  "action.ward_recharge":           { en: "Restoring nearby water bodies could improve natural recharge and stabilize this ward's water table.",                               ta: "அருகிலுள்ள நீர்நிலைகளை மறுசீரமைப்பது இயற்கையான நிரப்புதலை மேம்படுத்தி இந்த வார்டின் நீர்மட்டத்தை நிலைப்படுத்தலாம்." },
+  "action.ward_reservoir":          { en: "This ward's stress is tied to reservoir levels. Diversifying supply through local harvesting would reduce this dependency.",         ta: "இந்த வார்டின் அழுத்தம் நீர்த்தேக்க நிலைகளுடன் பிணைக்கப்பட்டுள்ளது. உள்ளூர் சேகரிப்பு மூலம் விநியோகத்தை பல்வகைப்படுத்துவது இந்த சார்பைக் குறைக்கும்." },
+  "action.heading":                 { en: "What could help",                                                    ta: "என்ன உதவலாம்" },
+
+  // Water body detail: component-level insights
+  "connected.wb_lost_proximity":    { en: "A nearby water body has already been lost to urbanization. Restoring this one is more urgent - it may be the last natural recharge point in this area.", ta: "அருகிலுள்ள ஒரு நீர்நிலை ஏற்கனவே நகரமயமாக்கலால் இழக்கப்பட்டுள்ளது. இதை மறுசீரமைப்பது மிகவும் அவசரம் - இது இந்த பகுதியில் கடைசி இயற்கையான நிரப்புதல் புள்ளியாக இருக்கலாம்." },
+  "connected.wb_lost_link":         { en: "See lost water bodies",                                              ta: "இழக்கப்பட்ட நீர்நிலைகளைக் காண்க" },
+  "connected.wb_industrial":        { en: "Industrial discharge nearby risks contaminating this water body. Restoration should account for pollution mitigation, not just capacity.", ta: "அருகிலுள்ள தொழிற்சாலை வெளியேற்றம் இந்த நீர்நிலையை மாசுபடுத்தும் அபாயம் உள்ளது. மறுசீரமைப்பு கொள்ளளவு மட்டுமின்றி மாசு தணிப்பையும் கணக்கில் எடுக்க வேண்டும்." },
+  "connected.wb_industrial_link":   { en: "See pollution sources",                                              ta: "மாசு ஆதாரங்களைக் காண்க" },
+
   // ── Page Context Lines ──────────────────────────────────────────────────
   "context.gw_stress":            { en: "{stressedCount} wards under stress | City avg: {avg}m below ground",  ta: "{stressedCount} வார்டுகள் அழுத்தத்தில் | நகர சராசரி: {avg}m நிலத்திற்கு கீழ்" },
   "context.gw_risk_explain":      { en: "Risk score combines groundwater depth, trend, reservoir stress, and seasonal factors", ta: "ஆபத்து மதிப்பெண் நிலத்தடி நீர் ஆழம், போக்கு, நீர்த்தேக்க அழுத்தம், பருவகால காரணிகளை இணைக்கிறது" },

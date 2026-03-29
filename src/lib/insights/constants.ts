@@ -20,3 +20,14 @@ export const RESERVOIR_COMPONENT_MAX = 20;
 // at least ~56% of its 18-point max
 export const RIVER_POLLUTION_COMPONENT_THRESHOLD = 10;
 export const RIVER_POLLUTION_COMPONENT_MAX = 18;
+
+// Ward detail panel: show component-specific insight when sub-score is
+// at least 60% of its raw 0-100 range
+export const GW_DEPTH_COMPONENT_THRESHOLD = 60;
+export const TREND_COMPONENT_THRESHOLD = 60;
+export const SEASONAL_COMPONENT_THRESHOLD = 60;
+
+// Water body detail panel: show lost-proximity / industrial insight
+// when sub-score exceeds ~55% of raw 0-100
+export const LOST_PROXIMITY_COMPONENT_THRESHOLD = 55;
+export const INDUSTRIAL_PROXIMITY_COMPONENT_THRESHOLD = 55;

@@ -13,6 +13,7 @@ import type { SelectedWaterBody, LostWaterBodyProperties, CensusWaterBodyPropert
 import type { RestorationPriorityData, ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
+import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -51,6 +52,7 @@ function WaterBodiesPageContent() {
     searchParams.get("mode") === "restoration" ? "restoration" : "water-bodies"
   );
   const [selected, setSelected] = useState<SelectedWaterBody | null>(null);
+  const [focusCenter, setFocusCenter] = useState<[number, number] | undefined>();
   const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
   const [lostStats, setLostStats] = useState<{ lostCount: number; totalHaLost: number } | null>(null);
   const [censusData, setCensusData] = useState<CensusWaterBodyProperties[]>([]);
@@ -77,13 +79,74 @@ function WaterBodiesPageContent() {
     return counts;
   }, [restorationData]);
 
-  // Fetch restoration data
+  // Fetch restoration data + ward-based deep linking
   useEffect(() => {
+    const wardParam = searchParams.get("ward");
+
     fetch("/data/restoration-priority.json")
       .then((r) => r.json())
-      .then((d: RestorationPriorityData) => {
+      .then(async (d: RestorationPriorityData) => {
         setRestorationData(d);
-        // Pre-select Chembarambakkam Lake so users see the panel on load
+
+        // Ward deep link: find the ward's nearest/top water body
+        if (wardParam) {
+          const wardNum = parseInt(wardParam, 10);
+          try {
+            const profiles: WardProfile[] = await fetch("/data/ward-profiles.json").then((r) => r.json());
+            const profile = profiles.find((p) => p.ward_number === wardNum);
+            if (profile?.water_bodies.top_bodies?.length) {
+              const topName = profile.water_bodies.top_bodies[0].name;
+              const match = d.water_bodies.find((w) => w.name === topName);
+              if (match) {
+                setSelected({
+                  kind: "current",
+                  props: {
+                    osm_id: match.osm_id!,
+                    osm_type: "",
+                    name: match.name,
+                    name_ta: match.name_ta,
+                    water_type: match.water_type,
+                    area_ha: match.area_ha,
+                  },
+                  latlng: match.centroid,
+                });
+                setFocusCenter(match.centroid);
+                return;
+              }
+            }
+            // Fallback: find the nearest water body by distance to ward centroid
+            // Ward profiles store centroid as [lng, lat]; water bodies use [lat, lng]
+            if (profile) {
+              const [wLng, wLat] = profile.centroid;
+              let nearest: ScoredWaterBody | null = null;
+              let minDist = Infinity;
+              for (const wb of d.water_bodies) {
+                const dLat = wb.centroid[0] - wLat;
+                const dLng = wb.centroid[1] - wLng;
+                const dist = dLat * dLat + dLng * dLng;
+                if (dist < minDist) { minDist = dist; nearest = wb; }
+              }
+              if (nearest) {
+                setSelected({
+                  kind: "current",
+                  props: {
+                    osm_id: nearest.osm_id!,
+                    osm_type: "",
+                    name: nearest.name,
+                    name_ta: nearest.name_ta,
+                    water_type: nearest.water_type,
+                    area_ha: nearest.area_ha,
+                  },
+                  latlng: nearest.centroid,
+                });
+                setFocusCenter(nearest.centroid);
+                return;
+              }
+            }
+          } catch { /* fall through to default */ }
+        }
+
+        // Default: pre-select Chembarambakkam Lake so users see the panel on load
         const chembarambakkam = d.water_bodies.find((w) => w.osm_id === 25453624);
         if (chembarambakkam) {
           setSelected({
@@ -101,6 +164,7 @@ function WaterBodiesPageContent() {
         }
       })
       .catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch census data
@@ -282,6 +346,7 @@ function WaterBodiesPageContent() {
               censusData={censusData}
               onSelectCurrent={setSelected}
               onSelectLost={setSelected}
+              focusCenter={focusCenter}
             />
             <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000]">
               <UnifiedLegend viewMode={viewMode} />

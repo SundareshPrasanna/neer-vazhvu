@@ -428,6 +428,37 @@ graph TD
     FR --> FR_Children
 ```
 
+### Connected Insights Layer
+
+Detail panels in groundwater and water bodies pages include threshold-gated cross-domain insights. These surface automatically when a risk or restoration score component exceeds its threshold, connecting the user to the underlying cause.
+
+**Groundwater ward panels** show insights for:
+- Reservoir stress contribution (when `reservoirComponent >= 12/20`)
+- Groundwater depth dominance (when `groundwaterComponent >= 60/100`)
+- Declining trend (when `trendComponent >= 60/100`)
+- Seasonal vulnerability (when `seasonalComponent >= 60/100`)
+- Action nudge based on the dominant risk factor (harvest, recharge, or reservoir advocacy)
+
+**Water body detail panels** show insights for:
+- Lost water body proximity (when `lost_proximity >= 55/100`)
+- Industrial pollution proximity (when `industrial_proximity >= 55/100`)
+
+Thresholds are centralized in `src/lib/insights/constants.ts`.
+
+### Deep Linking
+
+Pages support URL query parameters for cross-page navigation from ward context panels:
+
+| Page | Parameters | Behavior |
+|------|-----------|----------|
+| `/groundwater` | `?ward=N` | Pre-selects ward N in the detail panel |
+| `/water-bodies` | `?mode=restoration&ward=N` | Sets restoration view, finds ward's top water body, flies map to it |
+| `/flood-risk` | `?ward=N` | Flies map to ward centroid |
+| `/flood-risk` | `?view=drainage&ward=N` | Initializes drainage view and flies to ward |
+| `/rivers` | `?river=R&station=S` | Pre-selects river and station |
+
+Map pages use a `FlyToCenter` component (via `useMap()` from react-leaflet) to animate the map to the target coordinates.
+
 ### Localization (i18n)
 
 Custom context-based i18n supporting English and Tamil. No external i18n library — lightweight implementation using React Context.
@@ -440,7 +471,7 @@ RootLayout
        └─ setLanguage() → updates state + localStorage + document.lang
 ```
 
-- **Translation file:** `src/lib/i18n/translations.ts` (~500 keys)
+- **Translation file:** `src/lib/i18n/translations.ts` (~665 keys)
 - **Reservoir names:** `src/lib/i18n/reservoir-name.ts`
 - **Validation script:** `npm run i18n:check` (ensures Tamil translation exists for every key)
 - **Hydration safety:** Language loaded in `useEffect` after mount to avoid SSR mismatch
