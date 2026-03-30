@@ -230,7 +230,7 @@ DATA FRESHNESS:
 
   const response = await anthropic.messages.create({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 2048,
+    max_tokens: 4096,
     messages: [
       {
         role: "user",
@@ -244,6 +244,7 @@ RULES:
 - Tamil: Translate your English output naturally. Use standard Tamil vocabulary. Body bullets should also start with "- ".
 - Focus on what matters TODAY. What changed? What should people watch?
 - Do not repeat raw numbers without context. Express large day counts (>365) in years (e.g. "nearly 3 years"), never as raw days like "999 days".
+- Keep Tamil translations concise - do not over-elaborate.
 
 DATA:
 ${context}
