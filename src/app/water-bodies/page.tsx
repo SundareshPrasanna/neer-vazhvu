@@ -429,7 +429,7 @@ function WaterBodiesPageContent() {
 
         {/* Ranking table tab */}
         <TabsContent value="ranking" className="flex-1 m-0 flex flex-col md:flex-row overflow-hidden">
-          <div className={`flex-1 ${selected ? "hidden md:block" : ""}`}>
+          <div className={`flex-1 overflow-hidden ${selected ? "h-[55vh] md:h-full" : "h-full"}`}>
             {restorationData && (
               <RestorationRankingTable
                 data={restorationData.water_bodies}

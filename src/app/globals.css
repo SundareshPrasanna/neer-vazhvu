@@ -125,6 +125,12 @@
   }
 }
 
+/* Dark-mode map: invert OSM tiles + rotate hue to get a natural dark palette
+   with identical label coverage to light mode */
+.dark .leaflet-tile {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+
 /* Remove browser focus rectangle from Leaflet interactive map features */
 .leaflet-interactive:focus {
   outline: none;

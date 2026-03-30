@@ -100,7 +100,8 @@ export function AboutContent() {
 
       <section className="space-y-4">
         <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t("about.assumptions")}</h2>
-        <div className="overflow-x-auto">
+        {/* Desktop table */}
+        <div className="overflow-x-auto hidden sm:block">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
@@ -132,6 +133,21 @@ export function AboutContent() {
               </tr>
             </tbody>
           </table>
+        </div>
+        {/* Mobile cards */}
+        <div className="sm:hidden space-y-3">
+          {[
+            { param: t("about.row_consumption"), value: "830 MLD", source: t("about.src_cmwssb_report") },
+            { param: t("about.row_desalination"), value: "190 MLD", source: t("about.row_desalination_source") },
+            { param: t("about.row_groundwater"), value: t("about.not_modeled"), source: t("about.src_conservative") },
+            { param: t("about.row_evaporation"), value: t("about.not_modeled"), source: t("about.planned_v2") },
+          ].map((row) => (
+            <div key={row.param} className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm">
+              <div className="font-medium text-slate-900 dark:text-slate-100">{row.param}</div>
+              <div className="font-mono text-slate-700 dark:text-slate-300 mt-1">{row.value}</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{row.source}</div>
+            </div>
+          ))}
         </div>
         <p className="text-sm text-slate-500 dark:text-slate-400">
           {t("about.adjust_note")}
@@ -330,7 +346,8 @@ export function AboutContent() {
         </p>
 
         <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">{t("about.wb_lost_heading")}</h3>
-        <div className="overflow-x-auto">
+        {/* Desktop table */}
+        <div className="overflow-x-auto hidden sm:block">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
@@ -363,6 +380,30 @@ export function AboutContent() {
               ))}
             </tbody>
           </table>
+        </div>
+        {/* Mobile cards */}
+        <div className="sm:hidden space-y-3">
+          {LOST_WATER_BODY_SOURCES.map((row) => (
+            <div key={row.name} className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm">
+              <div className="flex items-start justify-between gap-2">
+                <span className="font-medium text-slate-900 dark:text-slate-100">{row.name}</span>
+                <span className={`shrink-0 inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
+                  row.status === "Fully lost"
+                    ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                    : row.status === "Severely reduced"
+                    ? "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300"
+                    : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300"
+                }`}>
+                  {row.status === "Fully lost"
+                    ? t("about.fully_lost")
+                    : row.status === "Severely reduced"
+                    ? t("about.severely_reduced")
+                    : t("about.partially_encroached")}
+                </span>
+              </div>
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{row.source}</div>
+            </div>
+          ))}
         </div>
       </section>
 
