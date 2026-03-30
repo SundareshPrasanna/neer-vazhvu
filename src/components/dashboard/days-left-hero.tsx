@@ -126,10 +126,10 @@ export function DaysLeftHero({
           </Badge>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mt-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mt-4">
           {/* Big number */}
           <div className="text-center sm:text-left">
-            <div className={`text-5xl sm:text-6xl font-bold ${getSeverityColor(days.pessimistic)}`}>
+            <div className={`text-4xl sm:text-5xl md:text-6xl font-bold ${getSeverityColor(days.pessimistic)}`}>
               {days.pessimistic >= MAX_DAYS ? (
                 <>{t("hero.safe")}</>
               ) : days.optimistic >= MAX_DAYS ? (

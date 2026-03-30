@@ -19,12 +19,12 @@ export function FloodViewToggle({ value, onChange }: FloodViewToggleProps) {
   const { t } = useLanguage();
 
   return (
-    <div className="inline-flex rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 max-w-full overflow-x-auto">
+    <div className="inline-flex flex-wrap rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 gap-0.5">
       {MODES.map(({ mode, key }) => (
         <button
           key={mode}
           onClick={() => onChange(mode)}
-          className={`px-2 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+          className={`px-2.5 sm:px-3 py-2 rounded-md text-xs font-medium transition-colors ${
             value === mode
               ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm"
               : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"

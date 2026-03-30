@@ -10,6 +10,9 @@ import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
 import { QUALITY_COLORS } from "@/types/river-quality";
 import type { IndustrialPollutionData, PollutionSource } from "@/types/industrial-pollution";
 import { useLanguage } from "@/lib/i18n/context";
+import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
+import { MapInfoButton } from "@/components/map/map-info-button";
+import { BottomSheet } from "@/components/map/bottom-sheet";
 
 function RiversMapLoading() {
   const { t } = useLanguage();
@@ -41,6 +44,7 @@ export default function RiversPage() {
 }
 
 function RiversPageContent() {
+  useLockBodyScroll();
   const { t } = useLanguage();
   const searchParams = useSearchParams();
   const [qualityData, setQualityData] = useState<RiverQualityData | null>(null);
@@ -145,7 +149,7 @@ function RiversPageContent() {
       {/* Map + panel area */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Map */}
-        <div className={`relative flex-1 ${hasPanel ? "h-[55vh] md:h-full" : "h-full"}`}>
+        <div className="relative flex-1 h-full">
           <CombinedRiversMap
             qualityData={qualityData}
             pollutionData={pollutionData}
@@ -154,13 +158,13 @@ function RiversPageContent() {
             onSelectSource={(source) => { setSelectedSource(source); setSelectedRiver(null); }}
           />
 
-          {/* Legend overlay  -  bottom left */}
-          <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000]">
+          {/* Legend overlay - hidden on mobile when panel is open to free map space */}
+          <div className={`absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000] ${hasPanel ? "hidden md:block" : ""}`}>
             <RiversLegend />
           </div>
 
-          {/* Source note overlay  -  top left */}
-          <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000] bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
+          {/* Source note overlay */}
+          <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {t("rivers_page.quality_label")}{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-300">
@@ -173,12 +177,12 @@ function RiversPageContent() {
                 {t("rivers_page.sources_value")}
               </span>
             </div>
-          </div>
+          </MapInfoButton>
         </div>
 
-        {/* Detail panel  -  bottom sheet on mobile, sidebar on desktop */}
+        {/* Detail panel - bottom sheet on mobile, sidebar on desktop */}
         {hasPanel && (
-          <div className="h-[45vh] md:h-full md:w-80 lg:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+          <BottomSheet onClose={() => { setSelectedRiver(null); setSelectedSource(null); }}>
             {selectedRiver && (
               <RiverPanel
                 key={`${selectedRiver.riverId}-${selectedRiver.stationId ?? ""}`}
@@ -194,7 +198,7 @@ function RiversPageContent() {
                 onClose={() => setSelectedSource(null)}
               />
             )}
-          </div>
+          </BottomSheet>
         )}
       </div>
     </div>

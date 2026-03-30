@@ -14,6 +14,9 @@ import type { RestorationPriorityData, ScoredWaterBody } from "@/types/restorati
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
+import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
+import { MapInfoButton } from "@/components/map/map-info-button";
+import { BottomSheet } from "@/components/map/bottom-sheet";
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -46,6 +49,7 @@ export default function WaterBodiesPage() {
 }
 
 function WaterBodiesPageContent() {
+  useLockBodyScroll();
   const { t } = useLanguage();
   const searchParams = useSearchParams();
   const [viewMode, setViewMode] = useState<ViewMode>(
@@ -57,6 +61,8 @@ function WaterBodiesPageContent() {
   const [lostStats, setLostStats] = useState<{ lostCount: number; totalHaLost: number } | null>(null);
   const [censusData, setCensusData] = useState<CensusWaterBodyProperties[]>([]);
   const [censusSummary, setCensusSummary] = useState<{ total: number; encroached: number; avgStorageLossPct: number | null } | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("map");
+  const [statsOpen, setStatsOpen] = useState(false);
 
   // Build id lookup for restoration data
   const scoreLookup = useMemo(() => {
@@ -236,79 +242,102 @@ function WaterBodiesPageContent() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-64px)]">
-      {/* Stats bar */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2.5 flex flex-wrap items-center gap-x-5 gap-y-1">
-        {viewMode === "water-bodies" ? (
-          <>
-            <div className="flex items-center gap-2 whitespace-nowrap">
-              <span className="w-3 h-3 rounded-sm bg-blue-500 opacity-70 flex-shrink-0" />
-              <span className="text-xs text-slate-600 dark:text-slate-400">
-                <span className="font-semibold text-slate-900 dark:text-slate-100">1,635</span>{" "}
-                {t("wb.existing")}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 whitespace-nowrap">
-              <span className="w-3 h-3 rounded-sm bg-red-500 opacity-70 flex-shrink-0" />
-              <span className="text-xs text-slate-600 dark:text-slate-400">
-                <span className="font-semibold text-slate-900 dark:text-slate-100">
-                  {lostStats?.lostCount ?? "-"}
-                </span>{" "}
-                {t("wb.lost")}
-              </span>
-            </div>
-            {lostStats && (
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <span className="w-3 h-3 rounded-sm bg-orange-500 opacity-70 flex-shrink-0" />
-                <span className="text-xs text-slate-600 dark:text-slate-400">
-                  <span className="font-semibold text-slate-900 dark:text-slate-100">
-                    ~{Math.round(lostStats.totalHaLost / 100) * 100} ha
-                  </span>{" "}
-                  {t("wb.ha_lost")}
-                </span>
-              </div>
-            )}
-            {censusSummary && censusSummary.total > 0 && (
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <span className="w-3 h-3 rounded-sm bg-emerald-500 opacity-70 flex-shrink-0" />
-                <span className="text-xs text-slate-600 dark:text-slate-400">
-                  <span className="font-semibold text-slate-900 dark:text-slate-100">
-                    {censusSummary.total}
-                  </span>{" "}
-                  {t("wb.census_surveyed")}
-                </span>
-              </div>
-            )}
-            <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
-              {t("wb.tagline").replace("{lostCount}", String(lostStats?.lostCount ?? 15))}
-            </p>
-          </>
-        ) : (
-          <>
-            {restorationData && (
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <span className="text-xs text-slate-600 dark:text-slate-400">
-                  <span className="font-semibold text-slate-900 dark:text-slate-100">{restorationData.total_scored.toLocaleString()}</span>{" "}
-                  {t("lr.total_scored")}
-                </span>
-              </div>
-            )}
-            {PRIORITY_LEVELS.map((level) => (
-              <div key={level} className="flex items-center gap-1.5 whitespace-nowrap">
-                <span
-                  className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
-                  style={{ backgroundColor: getPriorityColor(level) }}
-                />
-                <span className="text-xs text-slate-600 dark:text-slate-400">
-                  <span className="font-semibold text-slate-900 dark:text-slate-100">{priorityCounts[level]}</span>{" "}
-                  {t(`lr.${level}`)}
-                </span>
-              </div>
-            ))}
-            <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
-              {t("lr.tagline").replace("{criticalCount}", String(priorityCounts.critical + priorityCounts.high))}
-            </p>
-          </>
+      {/* Stats bar - collapsed on mobile, always visible on desktop */}
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shrink-0">
+        {/* Mobile: collapsed summary - hidden when expanded */}
+        {!statsOpen && (
+          <button
+            onClick={() => setStatsOpen(true)}
+            className="sm:hidden w-full px-4 py-1.5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400"
+          >
+            <span>{viewMode === "water-bodies" ? `1,635 ${t("wb.existing")} · ${lostStats?.lostCount ?? "-"} ${t("wb.lost")}` : `${restorationData?.total_scored.toLocaleString() ?? "-"} ${t("lr.total_scored")}`}</span>
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
         )}
+        {/* Full stats - always on desktop, toggle on mobile */}
+        <div className={`${statsOpen ? "block" : "hidden"} sm:!flex px-4 py-2 sm:py-2.5 sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-1`}>
+          {/* Mobile collapse button */}
+          <div className="sm:hidden flex justify-end mb-1">
+            <button onClick={() => setStatsOpen(false)}>
+              <svg className="w-3.5 h-3.5 text-slate-400 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+          {viewMode === "water-bodies" ? (
+            <>
+              <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+                <span className="w-3 h-3 rounded-sm bg-blue-500 opacity-70 flex-shrink-0" />
+                <span className="text-xs text-slate-600 dark:text-slate-400">
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">1,635</span>{" "}
+                  {t("wb.existing")}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+                <span className="w-3 h-3 rounded-sm bg-red-500 opacity-70 flex-shrink-0" />
+                <span className="text-xs text-slate-600 dark:text-slate-400">
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">
+                    {lostStats?.lostCount ?? "-"}
+                  </span>{" "}
+                  {t("wb.lost")}
+                </span>
+              </div>
+              {lostStats && (
+                <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+                  <span className="w-3 h-3 rounded-sm bg-orange-500 opacity-70 flex-shrink-0" />
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                      ~{Math.round(lostStats.totalHaLost / 100) * 100} ha
+                    </span>{" "}
+                    {t("wb.ha_lost")}
+                  </span>
+                </div>
+              )}
+              {censusSummary && censusSummary.total > 0 && (
+                <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+                  <span className="w-3 h-3 rounded-sm bg-emerald-500 opacity-70 flex-shrink-0" />
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                      {censusSummary.total}
+                    </span>{" "}
+                    {t("wb.census_surveyed")}
+                  </span>
+                </div>
+              )}
+              <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
+                {t("wb.tagline").replace("{lostCount}", String(lostStats?.lostCount ?? 15))}
+              </p>
+            </>
+          ) : (
+            <>
+              {restorationData && (
+                <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{restorationData.total_scored.toLocaleString()}</span>{" "}
+                    {t("lr.total_scored")}
+                  </span>
+                </div>
+              )}
+              {PRIORITY_LEVELS.map((level) => (
+                <div key={level} className="flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                  <span
+                    className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
+                    style={{ backgroundColor: getPriorityColor(level) }}
+                  />
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{priorityCounts[level]}</span>{" "}
+                    {t(`lr.${level}`)}
+                  </span>
+                </div>
+              ))}
+              <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
+                {t("lr.tagline").replace("{criticalCount}", String(priorityCounts.critical + priorityCounts.high))}
+              </p>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Main content with tabs */}
@@ -316,7 +345,11 @@ function WaterBodiesPageContent() {
         defaultValue="map"
         className="flex-1 flex flex-col overflow-hidden"
         onValueChange={(val) => {
-          if (val === "ranking") setViewMode("restoration");
+          setActiveTab(val);
+          if (val === "ranking") {
+            setViewMode("restoration");
+            setSelected(null); // Clear selection so table is visible on mobile
+          }
         }}
       >
         <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 flex items-center justify-between">
@@ -334,12 +367,12 @@ function WaterBodiesPageContent() {
               {t("lr.tab_ranking")}
             </TabsTrigger>
           </TabsList>
-          <ViewModeToggle value={viewMode} onChange={setViewMode} />
+          {activeTab === "map" && <ViewModeToggle value={viewMode} onChange={setViewMode} />}
         </div>
 
         {/* Map tab */}
         <TabsContent value="map" className="flex-1 m-0 flex flex-col md:flex-row overflow-hidden">
-          <div className={`relative flex-1 ${selected ? "h-[55vh] md:h-full" : "h-full"}`}>
+          <div className="relative flex-1 h-full">
             <UnifiedMap
               viewMode={viewMode}
               scoredData={restorationData?.water_bodies ?? []}
@@ -348,10 +381,10 @@ function WaterBodiesPageContent() {
               onSelectLost={setSelected}
               focusCenter={focusCenter}
             />
-            <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000]">
+            <div className={`absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000] ${selected ? "hidden md:block" : ""}`}>
               <UnifiedLegend viewMode={viewMode} />
             </div>
-            <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000] bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
+            <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
               <div className="text-xs text-slate-500 dark:text-slate-400">
                 {t("wb.osm_source")}{" "}
                 <span className="font-semibold text-slate-700 dark:text-slate-300">
@@ -381,16 +414,16 @@ function WaterBodiesPageContent() {
                   {t("lr.source_note")}
                 </div>
               )}
-            </div>
+            </MapInfoButton>
           </div>
           {selected && (
-            <div className="h-[45vh] md:h-full md:w-80 lg:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+            <BottomSheet onClose={() => setSelected(null)}>
               <UnifiedDetailPanel
                 selected={selected}
                 restorationData={selectedRestoration}
                 onClose={() => setSelected(null)}
               />
-            </div>
+            </BottomSheet>
           )}
         </TabsContent>
 
@@ -405,13 +438,13 @@ function WaterBodiesPageContent() {
             )}
           </div>
           {selected && (
-            <div className="h-[45vh] md:h-full md:w-80 lg:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+            <BottomSheet onClose={() => setSelected(null)}>
               <UnifiedDetailPanel
                 selected={selected}
                 restorationData={selectedRestoration}
                 onClose={() => setSelected(null)}
               />
-            </div>
+            </BottomSheet>
           )}
         </TabsContent>
       </Tabs>

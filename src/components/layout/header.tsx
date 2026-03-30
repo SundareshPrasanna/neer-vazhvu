@@ -56,37 +56,53 @@ export function Header() {
   const pathname = usePathname();
   const { t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+
+  // Resolve current page label for mobile indicator (client-only to avoid hydration mismatch)
+  const currentPage = mounted ? NAV_KEYS.find((item) => item.href === pathname && item.href !== "/") : null;
+  const currentPageLabel = currentPage ? t(currentPage.key) : null;
 
   return (
-    <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-50">
+    <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-[10000]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-sm">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-5 h-5 text-white"
-                fill="none"
-              >
-                <path
-                  d="M12 3s-5 6.1-5 9.9A5 5 0 0 0 12 18a5 5 0 0 0 5-5.1C17 9.1 12 3 12 3z"
-                  fill="currentColor"
-                />
-                <path
-                  d="M8.4 12.7c1 .8 2.2 1.2 3.6 1.2s2.6-.4 3.6-1.2"
-                  stroke="#0ea5e9"
-                  strokeWidth={1.8}
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-            <div>
-              <span className="font-bold text-lg text-slate-900 dark:text-slate-100">{t("header.title")}</span>
-              <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 ml-2">
-                {t("header.subtitle")}
+          <div className="flex items-center gap-2 min-w-0">
+            <Link href="/" className="flex items-center gap-2 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-sm">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-5 h-5 text-white"
+                  fill="none"
+                >
+                  <path
+                    d="M12 3s-5 6.1-5 9.9A5 5 0 0 0 12 18a5 5 0 0 0 5-5.1C17 9.1 12 3 12 3z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M8.4 12.7c1 .8 2.2 1.2 3.6 1.2s2.6-.4 3.6-1.2"
+                    stroke="#0ea5e9"
+                    strokeWidth={1.8}
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+              <div>
+                <span className={cn("font-bold text-lg text-slate-900 dark:text-slate-100", currentPageLabel && "hidden sm:inline")}>{t("header.title")}</span>
+                <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 ml-2">
+                  {t("header.subtitle")}
+                </span>
+              </div>
+            </Link>
+            {/* Mobile: show current page name instead of app title */}
+            {currentPageLabel && (
+              <span className="sm:hidden text-sm font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                {currentPageLabel}
               </span>
-            </div>
-          </Link>
+            )}
+          </div>
 
           {/* Desktop nav */}
           <nav className="hidden sm:flex items-center gap-2">
@@ -133,7 +149,7 @@ export function Header() {
 
       {/* Mobile dropdown menu */}
       {menuOpen && (
-        <nav className="sm:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+        <nav className="sm:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[70vh] overflow-y-auto">
           <div className="max-w-7xl mx-auto px-4 py-2 space-y-1">
             {NAV_KEYS.map((item) => (
               <Link

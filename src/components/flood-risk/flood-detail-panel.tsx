@@ -246,7 +246,7 @@ function DrainageContent({ props }: { props: DrainageProperties }) {
           <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.ward} / {props.zone}</div>
         </div>
       )}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {props.drain_len > 0 && (
           <div>
             <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.length")}</div>

@@ -117,7 +117,7 @@ export function RainfallTrends() {
               />
               <YAxis
                 tick={{ fontSize: 10 }}
-                width={45}
+                width={35}
                 tickFormatter={(v: number) => `${v}`}
               />
               <Tooltip
