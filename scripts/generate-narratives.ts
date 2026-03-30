@@ -66,7 +66,10 @@ interface WardProfile {
   };
   flood: {
     dominant_hazard: string | null;
+    hazard_zone_count: number;
+    by_category: Record<string, number>;
     hotspot_2015_count: number;
+    hotspot_2020_count: number;
   };
   drainage: { line_count: number };
   sewerage: {
@@ -287,7 +290,7 @@ WARD ${p.ward_number} (${label}):
 - Groundwater: ${live.depthM != null ? `${live.depthM}m depth, ${live.trend}` : "no data"}
 - Risk: ${live.riskLevel} (score: ${live.riskScore ?? "N/A"})
 - Water bodies: ${p.water_bodies.current_count} (${p.water_bodies.restoration_critical} critical restoration)
-- Flood: dominant hazard ${p.flood.dominant_hazard ?? "none"}, ${p.flood.hotspot_2015_count} 2015 hotspots
+- Flood: ${p.flood.hazard_zone_count} hazard zones [${Object.entries(p.flood.by_category).map(([k, v]) => `${k}: ${v}`).join(", ")}], ${p.flood.hotspot_2015_count} hotspots (2015), ${p.flood.hotspot_2020_count} hotspots (2020)
 - Drainage: ${p.drainage.line_count} lines
 - Sewerage: ${p.sewerage.stp_count} STPs (${p.sewerage.total_stp_capacity_mld} MLD), ${p.sewerage.sps_count} pumping stations
 - Nearest river: ${p.rivers.nearest_river_id ?? "none"} (${p.rivers.nearest_km ?? "N/A"} km)`.trim();
@@ -304,6 +307,7 @@ WARD ${p.ward_number} (${label}):
 RULES:
 - Each ward gets a headline (1 sentence) and body (2-3 sentences).
 - Use hyphens, not em-dashes.
+- For flood risk, report the actual hazard zone distribution - mention the top 2-3 categories that cover the majority. Do NOT just use the dominant category as a blanket statement. For example, if a ward has 16 very_high, 15 high, and 101 very_low zones, say "16 very-high and 15 high-risk zones alongside 101 very-low zones" rather than "very low flood risk".
 - Connect infrastructure to risk: e.g., "Limited drainage in a high-flood-risk zone..."
 - Include 2-3 key facts as a list.
 - Tamil translations should be natural, not literal.

@@ -249,7 +249,7 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
           <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
             {t("rivers.pollution_profile")} ({latestReading.year})
           </h4>
-          <div className="grid grid-cols-2 gap-1.5 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
             {/* COD */}
             {latestReading.cod_mgl != null && (() => {
               const limit = 250;
@@ -425,7 +425,7 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
       )}
 
       {/* Parameter explainers */}
-      <div className="grid grid-cols-2 gap-2 mb-5 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5 text-xs">
         <div className="rounded-lg border border-sky-100 dark:border-sky-900 bg-sky-50 dark:bg-sky-950/30 p-2.5">
           <span className="font-semibold text-sky-700 dark:text-sky-400">{t("rivers.do_title")}</span>
           <p className="text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">

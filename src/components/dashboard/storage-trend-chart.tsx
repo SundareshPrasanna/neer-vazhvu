@@ -399,7 +399,7 @@ export function StorageTrendChart({
               <button
                 key={tab.key}
                 onClick={() => setActiveDays(tab.days)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                className={`px-2.5 sm:px-3 py-2 text-xs font-medium rounded-md transition-colors ${
                   activeDays === tab.days
                     ? "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
                     : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -424,7 +424,7 @@ export function StorageTrendChart({
                 <button
                   key={cy.year}
                   onClick={() => toggleYear(cy.year)}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-full transition-all border ${
+                  className={`px-2.5 py-1.5 text-xs font-medium rounded-full transition-all border ${
                     isSelected
                       ? "text-white shadow-sm"
                       : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500"
@@ -466,7 +466,8 @@ export function StorageTrendChart({
               />
               <YAxis
                 yAxisId="left"
-                tick={{ fontSize: 11, fill: "#94a3b8" }}
+                width={35}
+                tick={{ fontSize: 10, fill: "#94a3b8" }}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
@@ -556,7 +557,8 @@ export function StorageTrendChart({
               />
               <YAxis
                 yAxisId="left"
-                tick={{ fontSize: 11, fill: "#94a3b8" }}
+                width={35}
+                tick={{ fontSize: 10, fill: "#94a3b8" }}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}

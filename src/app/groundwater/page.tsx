@@ -15,6 +15,9 @@ import type {
   GWBlock,
 } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
+import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
+import { MapInfoButton } from "@/components/map/map-info-button";
+import { BottomSheet } from "@/components/map/bottom-sheet";
 
 function GroundwaterMapLoading() {
   const { t } = useLanguage();
@@ -40,6 +43,7 @@ export default function GroundwaterPage() {
 }
 
 function GroundwaterPageContent() {
+  useLockBodyScroll();
   const { t, language } = useLanguage();
   const locale = language === "ta" ? "ta-IN" : "en-IN";
   const searchParams = useSearchParams();
@@ -152,7 +156,7 @@ function GroundwaterPageContent() {
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
       {/* Map area */}
-      <div className={`relative flex-1 ${(selectedWard || selectedBlock) ? "h-[55vh] md:h-full" : "h-full"}`}>
+      <div className="relative flex-1 h-full">
         <WardMap
           groundwaterData={wardMap}
           riskData={riskMap}
@@ -161,13 +165,13 @@ function GroundwaterPageContent() {
           onBlockSelect={(b) => { setSelectedBlock(b); setSelectedWard(null); }}
         />
 
-        {/* Legend overlay */}
-        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000]">
+        {/* Legend overlay - hidden on mobile when panel is open to free map space */}
+        <div className={`absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000] ${(selectedWard || selectedBlock) ? "hidden md:block" : ""}`}>
           <GroundwaterLegend viewMode={viewMode} />
         </div>
 
         {/* Period + source overlay */}
-        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000] bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
+        <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
           {viewMode === "exploitation" ? (
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {t("gw_page.source_cgwb")}
@@ -190,11 +194,11 @@ function GroundwaterPageContent() {
               )}
             </>
           )}
-        </div>
+        </MapInfoButton>
 
         {/* Staleness warning - only for ward views */}
         {isStale && viewMode !== "exploitation" && (
-          <div className="absolute top-16 left-2 sm:top-20 sm:left-4 z-[1000] max-w-sm">
+          <div className="absolute top-14 left-2 sm:top-20 sm:left-4 z-[999] max-w-[calc(100%-1rem)] sm:max-w-sm">
             <div className="px-3 py-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300 shadow-lg">
               <span className="font-semibold">{t("gw_snap.stale_title")}</span>{" "}
               {t("gw_snap.stale_msg")
@@ -269,21 +273,21 @@ function GroundwaterPageContent() {
 
       {/* Detail panel - bottom sheet on mobile, sidebar on desktop */}
       {selectedWard && (
-        <div className="h-[45vh] md:h-full md:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+        <BottomSheet onClose={() => setSelectedWard(null)}>
           <WardDetailPanel
             ward={selectedWard}
             riskData={selectedRisk}
             onClose={() => setSelectedWard(null)}
           />
-        </div>
+        </BottomSheet>
       )}
       {selectedBlock && (
-        <div className="h-[45vh] md:h-full md:w-96 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700">
+        <BottomSheet onClose={() => setSelectedBlock(null)}>
           <BlockDetailPanel
             block={selectedBlock}
             onClose={() => setSelectedBlock(null)}
           />
-        </div>
+        </BottomSheet>
       )}
       </div>
     </div>

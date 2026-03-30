@@ -25,7 +25,7 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
       <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
         {t("dash.reservoir_status")}
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
         {reservoirs.map((r) => (
           <Card
             key={r.name}
@@ -36,27 +36,27 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
             }`}
             onClick={() => onReservoirClick?.(r)}
           >
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm truncate mr-2">
+            <CardContent className="p-2.5 sm:p-4">
+              <div className="flex items-start justify-between mb-1 sm:mb-3">
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate mr-1">
                   {getReservoirDisplayName(r.name, t, r.displayName)}
                 </h3>
-                <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
+                <span className="text-xs font-mono text-slate-500 dark:text-slate-400 shrink-0">
                   {formatPct(r.storagePct)}
                 </span>
               </div>
 
-              <div className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-1">
+              <div className="text-lg sm:text-2xl font-bold text-slate-800 dark:text-slate-200">
                 {formatNumber(r.currentStorage)}
-                <span className="text-sm font-normal text-slate-400 dark:text-slate-500 ml-1">mcft</span>
+                <span className="text-xs sm:text-sm font-normal text-slate-400 dark:text-slate-500 ml-0.5">mcft</span>
               </div>
 
-              <div className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+              <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mb-1.5 sm:mb-3">
                 {t("dash.capacity_of")} {formatNumber(r.capacity)} {t("dash.capacity_unit")}
               </div>
 
               {/* Storage bar */}
-              <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 sm:h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all ${getBarColor(r.storagePct)}`}
                   style={{ width: `${Math.min(r.storagePct, 100)}%` }}
@@ -64,17 +64,17 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
               </div>
 
               {/* Inflow/outflow */}
-              <div className="flex flex-row justify-between mt-3 text-xs text-slate-500 dark:text-slate-400 gap-0.5">
+              <div className="flex flex-row justify-between mt-1.5 sm:mt-3 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">
                 <span>
-                  {t("dash.in_label")} <span className="font-medium text-green-600 dark:text-green-400">{formatNumber(r.inflowCusecs)}</span> {t("dash.cusecs_unit")}
+                  {t("dash.in_label")} <span className="font-medium text-green-600 dark:text-green-400">{formatNumber(r.inflowCusecs)}</span>
                 </span>
                 <span>
-                  {t("dash.out_label")} <span className="font-medium text-red-600 dark:text-red-400">{formatNumber(r.outflowCusecs)}</span> {t("dash.cusecs_unit")}
+                  {t("dash.out_label")} <span className="font-medium text-red-600 dark:text-red-400">{formatNumber(r.outflowCusecs)}</span>
                 </span>
               </div>
 
               {onReservoirClick && (
-                <div className="mt-3 text-xs text-blue-500 font-medium text-center">
+                <div className="mt-1.5 sm:mt-3 text-[10px] sm:text-xs text-blue-500 font-medium text-center">
                   {t("dash.click_details")}
                 </div>
               )}
