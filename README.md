@@ -2,6 +2,8 @@
 
 **Chennai Water Intelligence Dashboard** - An open-source platform that turns public water data into actionable intelligence for Chennai's 11 million residents.
 
+**Live:** [neervazhvu.org](https://neervazhvu.org)
+
 Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, flood risk, sewerage infrastructure, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, an **interactive water bodies and restoration priority map**, and a **flood risk, drainage, and sewerage network map**.
 
 ## Features

@@ -6,9 +6,10 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/lib/i18n/context";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://neervazhvu.org"),
   title: "Neer Vazhvu | Chennai Water Intelligence",
   description:
-    "Real-time dashboard tracking Chennai's water reserves, groundwater health, and days of water remaining. Built with open data from CMWSSB, NASA, and OpenCity.",
+    "Open-source platform tracking Chennai's reservoirs, groundwater, river health, flood risk, drainage, and 1,635 water bodies across 200 wards - with AI-powered summaries in English and Tamil.",
   keywords: [
     "Chennai water",
     "reservoir levels",
@@ -17,18 +18,23 @@ export const metadata: Metadata = {
     "Day Zero",
     "CMWSSB",
     "Tamil Nadu",
+    "flood risk",
+    "river pollution",
+    "water bodies",
+    "civic tech",
   ],
   openGraph: {
     title: "Neer Vazhvu | Chennai Water Intelligence",
-    description: "How many days of water does Chennai have left?",
+    description: "Reservoirs, groundwater, rivers, flood risk, and 1,635 water bodies - all of Chennai's water data in one place.",
     type: "website",
     locale: "en_IN",
     siteName: "Neer Vazhvu",
+    url: "https://neervazhvu.org",
   },
   twitter: {
     card: "summary_large_image",
     title: "Neer Vazhvu | Chennai Water Intelligence",
-    description: "How many days of water does Chennai have left?",
+    description: "Reservoirs, groundwater, rivers, flood risk, and 1,635 water bodies - all of Chennai's water data in one place.",
   },
   icons: {
     icon: [
