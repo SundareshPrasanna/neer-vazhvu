@@ -182,7 +182,7 @@ function FloodRiskPageContent() {
             onSelect={setSelected}
             focusCenter={focusCenter}
           />
-          <div className={`absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000] ${hasPanel ? "hidden md:block" : ""}`}>
+          <div className={`absolute left-2 sm:bottom-4 sm:left-4 z-[1000] transition-[bottom] duration-300 ${hasPanel ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
             <FloodLegend viewMode={viewMode} />
           </div>
           <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">

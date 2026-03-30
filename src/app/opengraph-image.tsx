@@ -116,7 +116,7 @@ export default function OGImage() {
             Chennai Water Intelligence
           </span>
           <span style={{ fontSize: "16px", color: "#475569" }}>
-            neervazhvu.vercel.app
+            neervazhvu.org
           </span>
         </div>
       </div>

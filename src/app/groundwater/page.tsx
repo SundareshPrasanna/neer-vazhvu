@@ -165,8 +165,8 @@ function GroundwaterPageContent() {
           onBlockSelect={(b) => { setSelectedBlock(b); setSelectedWard(null); }}
         />
 
-        {/* Legend overlay - hidden on mobile when panel is open to free map space */}
-        <div className={`absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-[1000] ${(selectedWard || selectedBlock) ? "hidden md:block" : ""}`}>
+        {/* Legend overlay - shifts up on mobile when bottom sheet is open */}
+        <div className={`absolute left-2 sm:bottom-4 sm:left-4 z-[1000] transition-[bottom] duration-300 ${(selectedWard || selectedBlock) ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
           <GroundwaterLegend viewMode={viewMode} />
         </div>
 
