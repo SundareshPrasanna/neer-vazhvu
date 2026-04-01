@@ -1,8 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import { verifyCronAuth } from '@/lib/cron-auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { fetchCKANResource, OPENCITY_RESOURCES } from '@/lib/api-clients/opencity';
 import { todayIST, todayISTParts } from '@/lib/utils/date';
+
+// Canonical ward names - use these instead of raw CKAN values
+const canonicalWardNames = new Map<number, string>(
+  (JSON.parse(readFileSync(resolve(process.cwd(), 'public/data/ward-names.json'), 'utf-8')) as { ward_number: number; ward_name: string }[])
+    .map((w) => [w.ward_number, w.ward_name])
+);
+const canonicalZoneNames = new Map<number, string>(
+  (JSON.parse(readFileSync(resolve(process.cwd(), 'public/data/ward-names.json'), 'utf-8')) as { ward_number: number; zone_name: string }[])
+    .map((w) => [w.ward_number, w.zone_name])
+);
 
 type CKANValue = string | number | null | undefined;
 type CKANRecord = Record<string, CKANValue>;
@@ -122,8 +134,8 @@ export async function POST(request: NextRequest) {
         if (depth == null) continue;
         rows.push({
           ward_number: wardNumber,
-          ward_name: wardName ? String(wardName) : null,
-          zone_name: zoneName ? String(zoneName) : null,
+          ward_name: canonicalWardNames.get(wardNumber) || (wardName ? String(wardName) : null),
+          zone_name: canonicalZoneNames.get(wardNumber) || (zoneName ? String(zoneName) : null),
           year: rowYear,
           month,
           depth_to_water_m: depth,

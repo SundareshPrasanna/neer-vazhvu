@@ -1,3 +1,5 @@
+import { readFileSync } from "fs";
+import { resolve } from "path";
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
 import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
@@ -245,6 +247,13 @@ async function getReservoirData() {
   };
 }
 
+// Load canonical ward names once at module level
+const wardNamesPath = resolve(process.cwd(), "public/data/ward-names.json");
+const canonicalNames = new Map<number, string>(
+  (JSON.parse(readFileSync(wardNamesPath, "utf-8")) as { ward_number: number; ward_name: string }[])
+    .map((w) => [w.ward_number, w.ward_name])
+);
+
 async function getGroundwaterData(): Promise<GroundwaterApiResponse | null> {
   const { createServerClient } = await import("@/lib/supabase/server");
   const supabase = createServerClient();
@@ -286,7 +295,7 @@ async function getGroundwaterData(): Promise<GroundwaterApiResponse | null> {
     }
     return {
       wardNumber: r.ward_number as number,
-      wardName: (r.ward_name as string) || `Ward ${r.ward_number}`,
+      wardName: canonicalNames.get(r.ward_number as number) || (r.ward_name as string) || `Ward ${r.ward_number}`,
       wardNameTa: (r.ward_name_ta as string) || (r.ward_name_tamil as string) || undefined,
       zone: (r.zone_name as string) || "",
       depthM: r.depth_to_water_m as number,

@@ -60,6 +60,7 @@ export function SelectedWardHighlight({ wardNumber, flyTo = false }: SelectedWar
         opacity: 1,
         fillOpacity: 0,
         dashArray: undefined,
+        interactive: false,
       }}
     />
   );

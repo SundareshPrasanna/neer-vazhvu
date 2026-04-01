@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import { internalServerError, logRouteError } from '@/lib/api-error';
 import { getGroundwaterStatus } from '@/types/groundwater';
 import { generateMockGroundwater } from '@/lib/mock-data';
+
+// Load canonical ward names once at module level
+const wardNamesPath = resolve(process.cwd(), 'public/data/ward-names.json');
+const canonicalNames = new Map<number, string>(
+  (JSON.parse(readFileSync(wardNamesPath, 'utf-8')) as { ward_number: number; ward_name: string }[])
+    .map((w) => [w.ward_number, w.ward_name])
+);
 
 function isSupabaseConfigured(): boolean {
   return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -91,7 +100,7 @@ export async function GET(request: NextRequest) {
 
     return {
       wardNumber: r.ward_number,
-      wardName: r.ward_name || `Ward ${r.ward_number}`,
+      wardName: canonicalNames.get(r.ward_number) || r.ward_name || `Ward ${r.ward_number}`,
       wardNameTa: r.ward_name_ta || r.ward_name_tamil || undefined,
       zone: r.zone_name || '',
       depthM: r.depth_to_water_m,
