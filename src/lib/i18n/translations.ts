@@ -773,6 +773,16 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "ward_ctx.dominant_hazard":  { en: "Dominant: {level}",                  ta: "முக்கிய: {level}" },
   "ward_ctx.drain_count":      { en: "{count} drainage lines",             ta: "{count} வடிகால் பாதைகள்" },
 
+  // ── Elected Representatives ─────────────────────────────────────────────────
+  "reps.title":              { en: "Elected representatives",              ta: "தேர்ந்தெடுக்கப்பட்ட பிரதிநிதிகள்" },
+  "reps.councillor":         { en: "Councillor",                           ta: "கவுன்சிலர்" },
+  "reps.mla":                { en: "MLA",                                  ta: "எம்.எல்.ஏ" },
+  "reps.mp":                 { en: "MP",                                   ta: "எம்.பி" },
+  "reps.constituency":       { en: "Constituency: {name}",                 ta: "தொகுதி: {name}" },
+  "reps.source_note":        { en: "Data from {councillor_year} GCC / {mla_year} Assembly / {mp_year} Lok Sabha elections", ta: "{councillor_year} GCC / {mla_year} சட்டமன்றம் / {mp_year} மக்களவை தேர்தல் தரவு" },
+  "reps.report_error":       { en: "Report an error",                      ta: "பிழையை புகாரளிக்க" },
+  "reps.source":             { en: "Source",                               ta: "ஆதாரம்" },
+
   // ── AI Narratives ──────────────────────────────────────────────────────────
   "ai_narrative.ward_heading":  { en: "AI ward analysis",                   ta: "AI வார்டு பகுப்பாய்வு" },
   "ai_narrative.reservoirs":    { en: "Reservoirs",                          ta: "நீர்த்தேக்கங்கள்" },

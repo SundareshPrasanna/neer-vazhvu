@@ -5,6 +5,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { ConnectedInsight } from "@/components/insights/connected-insight";
 import { WardContext } from "@/components/insights/ward-context";
 import { WardNarrative } from "@/components/insights/ward-narrative";
+import { WardRepresentatives } from "@/components/insights/ward-representatives";
 import { useWardLookup } from "@/lib/hooks/use-ward-lookup";
 import { HAZARD_COLORS, VULNERABILITY_COLORS, DRAINAGE_COLORS, SEWERAGE_COLORS } from "@/types/flood-risk";
 import type {
@@ -83,6 +84,7 @@ export function FloodDetailPanel({ selected, onClose }: FloodDetailPanelProps) {
         {selected.kind === "sps" && <SPSContent props={selected.props as SPSProperties} />}
         {selected.kind === "pumping_main" && <PumpingMainContent props={selected.props as PumpingMainProperties} />}
         {resolvedWard && <WardContext wardNumber={resolvedWard} />}
+        {resolvedWard && <WardRepresentatives wardNumber={resolvedWard} />}
         {resolvedWard && <WardNarrative wardNumber={resolvedWard} />}
       </div>
     </div>

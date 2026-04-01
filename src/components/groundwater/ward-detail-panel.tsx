@@ -15,6 +15,7 @@ import {
 } from "@/lib/insights/constants";
 import { WardContext } from "@/components/insights/ward-context";
 import { WardNarrative } from "@/components/insights/ward-narrative";
+import { WardRepresentatives } from "@/components/insights/ward-representatives";
 
 interface WardDetailPanelProps {
   ward: GroundwaterWard;
@@ -228,6 +229,7 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
 
       <div className="px-0">
         <WardContext wardNumber={ward.wardNumber} hideGroundwater />
+        <WardRepresentatives wardNumber={ward.wardNumber} />
         <WardNarrative wardNumber={ward.wardNumber} />
       </div>
 
