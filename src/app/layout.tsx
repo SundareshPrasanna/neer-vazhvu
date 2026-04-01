@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://neervazhvu.org"),
   title: "Neer Vazhvu | Chennai Water Intelligence",
   description:
-    "Open-source platform tracking Chennai's reservoirs, groundwater, river health, flood risk, drainage, and 1,635 water bodies across 200 wards - with AI-powered summaries in English and Tamil.",
+    "Open-source platform tracking Chennai's reservoirs, groundwater, river health, flood risk, drainage, and 1,787 water bodies across 200 wards - with AI-powered summaries in English and Tamil.",
   keywords: [
     "Chennai water",
     "reservoir levels",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Neer Vazhvu | Chennai Water Intelligence",
-    description: "Reservoirs, groundwater, rivers, flood risk, and 1,635 water bodies - all of Chennai's water data in one place.",
+    description: "Reservoirs, groundwater, rivers, flood risk, and 1,787 water bodies - all of Chennai's water data in one place.",
     type: "website",
     locale: "en_IN",
     siteName: "Neer Vazhvu",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Neer Vazhvu | Chennai Water Intelligence",
-    description: "Reservoirs, groundwater, rivers, flood risk, and 1,635 water bodies - all of Chennai's water data in one place.",
+    description: "Reservoirs, groundwater, rivers, flood risk, and 1,787 water bodies - all of Chennai's water data in one place.",
   },
   icons: {
     icon: [

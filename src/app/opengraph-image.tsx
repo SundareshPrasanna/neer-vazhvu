@@ -85,7 +85,7 @@ export default function OGImage() {
         >
           {[
             { label: "Reservoirs", value: "6", color: "#3b82f6" },
-            { label: "Water Bodies", value: "1,635", color: "#06b6d4" },
+            { label: "Water Bodies", value: "1,787", color: "#06b6d4" },
             { label: "Groundwater Wards", value: "200", color: "#22c55e" },
             { label: "Rivers Tracked", value: "4", color: "#f97316" },
           ].map((stat) => (
