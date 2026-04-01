@@ -26,6 +26,7 @@ interface Coord {
 
 interface WardInfo {
   ward_number: number;
+  ward_name: string;
   zone_no: string;
   zone_name: string;
   centroid: [number, number]; // [lng, lat] for GeoJSON consistency
@@ -35,6 +36,7 @@ interface WardInfo {
 
 interface WardProfile {
   ward_number: number;
+  ward_name: string;
   zone_no: string;
   zone_name: string;
   centroid: [number, number];
@@ -185,6 +187,7 @@ function main() {
     const b = bbox(feat);
     return {
       ward_number: wardNum,
+      ward_name: (props.ward_name as string) || `Ward ${wardNum}`,
       zone_no: (props.Zone_No as string) || "",
       zone_name: (props.Zone_Name as string) || "",
       centroid: c.geometry.coordinates as [number, number],
@@ -525,6 +528,7 @@ function main() {
 
     output.push({
       ward_number: w.ward_number,
+      ward_name: w.ward_name,
       zone_no: w.zone_no,
       zone_name: w.zone_name,
       centroid: w.centroid,
