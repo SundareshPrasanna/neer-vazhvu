@@ -13,6 +13,7 @@ import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
+import { WardSearch } from "@/components/map/ward-search";
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -51,15 +52,18 @@ function FloodRiskPageContent() {
   const [selected, setSelected] = useState<SelectedFloodFeature | null>(null);
   const [historicalEvent, setHistoricalEvent] = useState<"2015" | "2020">("2015");
   const [focusCenter, setFocusCenter] = useState<[number, number] | undefined>();
+  const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
 
-  // Deep link: fly to ward centroid from ?ward= param
+  // Load ward profiles for centroid lookups
   useEffect(() => {
-    const wardParam = searchParams.get("ward");
-    if (!wardParam) return;
-    const wardNum = parseInt(wardParam, 10);
     fetch("/data/ward-profiles.json")
       .then((r) => r.json())
       .then((profiles: WardProfile[]) => {
+        setWardProfiles(profiles);
+        // Deep link: fly to ward centroid from ?ward= param
+        const wardParam = searchParams.get("ward");
+        if (!wardParam) return;
+        const wardNum = parseInt(wardParam, 10);
         const profile = profiles.find((p) => p.ward_number === wardNum);
         if (profile) setFocusCenter([profile.centroid[1], profile.centroid[0]]);
       })
@@ -197,6 +201,13 @@ function FloodRiskPageContent() {
               </span>
             </div>
           </MapInfoButton>
+          <WardSearch
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]"
+            onSelect={(wardNum) => {
+              const profile = wardProfiles.find((p) => p.ward_number === wardNum);
+              if (profile) setFocusCenter([profile.centroid[1], profile.centroid[0]]);
+            }}
+          />
         </div>
 
         {hasPanel && (
