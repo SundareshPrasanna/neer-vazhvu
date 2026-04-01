@@ -33,7 +33,7 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 A unified map at `/water-bodies` with a **view-mode toggle** to switch between "Water Bodies" and "Restoration Priority" views. Both views share the same detail panel and data.
 
 **Water Bodies view:**
-- **1,635 Existing Water Bodies** - All current lakes, tanks, ponds, and reservoirs from OpenStreetMap
+- **1,787 Existing Water Bodies** - All current lakes, tanks, ponds, and reservoirs from OpenStreetMap and Census of Water Bodies
 - **15 Documented Lost / Encroached Water Bodies** - Curated from Care Earth Trust, NGT records, and IIT Madras research
 - **Toggle Layers** - Show/hide current and lost water bodies independently
 - **Status-coded Circles** - Fully lost (red), severely reduced (orange), partially encroached (yellow)

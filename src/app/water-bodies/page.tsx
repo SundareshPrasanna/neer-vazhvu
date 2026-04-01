@@ -250,7 +250,7 @@ function WaterBodiesPageContent() {
             onClick={() => setStatsOpen(true)}
             className="sm:hidden w-full px-4 py-1.5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400"
           >
-            <span>{viewMode === "water-bodies" ? `1,635 ${t("wb.existing")} · ${lostStats?.lostCount ?? "-"} ${t("wb.lost")}` : `${restorationData?.total_scored.toLocaleString() ?? "-"} ${t("lr.total_scored")}`}</span>
+            <span>{viewMode === "water-bodies" ? `1,787 ${t("wb.existing")} · ${lostStats?.lostCount ?? "-"} ${t("wb.lost")}` : `${restorationData?.total_scored.toLocaleString() ?? "-"} ${t("lr.total_scored")}`}</span>
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
@@ -271,7 +271,7 @@ function WaterBodiesPageContent() {
               <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
                 <span className="w-3 h-3 rounded-sm bg-blue-500 opacity-70 flex-shrink-0" />
                 <span className="text-xs text-slate-600 dark:text-slate-400">
-                  <span className="font-semibold text-slate-900 dark:text-slate-100">1,635</span>{" "}
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">1,787</span>{" "}
                   {t("wb.existing")}
                 </span>
               </div>
