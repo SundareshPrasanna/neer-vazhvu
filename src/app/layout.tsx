@@ -39,9 +39,12 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.svg?v=3", type: "image/svg+xml" },
-      { url: "/favicon.ico?v=3" },
+      { url: "/favicon.ico?v=3", sizes: "32x32" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     shortcut: [{ url: "/favicon.ico?v=3" }],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
 };
 
@@ -53,6 +56,39 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased" suppressHydrationWarning>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "Neer Vazhvu",
+              url: "https://neervazhvu.org",
+              description:
+                "Open-source platform tracking Chennai's reservoirs, groundwater, river health, flood risk, drainage, and 1,787 water bodies across 200 wards.",
+              applicationCategory: "UtilitiesApplication",
+              operatingSystem: "Any",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "INR",
+              },
+              author: {
+                "@type": "Organization",
+                name: "Neer Vazhvu",
+                url: "https://neervazhvu.org",
+              },
+              areaServed: {
+                "@type": "City",
+                name: "Chennai",
+                containedInPlace: {
+                  "@type": "State",
+                  name: "Tamil Nadu",
+                },
+              },
+            }),
+          }}
+        />
         <LanguageProvider>
           <ThemeProvider>
             <div className="min-h-screen flex flex-col">
