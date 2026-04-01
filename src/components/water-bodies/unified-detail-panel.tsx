@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ConnectedInsight } from "@/components/insights/connected-insight";
 import { WardContext } from "@/components/insights/ward-context";
 import { WardNarrative } from "@/components/insights/ward-narrative";
+import { WardRepresentatives } from "@/components/insights/ward-representatives";
 import { useWardLookup } from "@/lib/hooks/use-ward-lookup";
 import type { SelectedWaterBody, WaterBodyStatus } from "@/types/water-bodies";
 import { STATUS_COLORS } from "@/types/water-bodies";
@@ -368,6 +369,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
         {resolvedWard && (
           <div className="px-4">
             <WardContext wardNumber={resolvedWard} />
+            <WardRepresentatives wardNumber={resolvedWard} />
             <WardNarrative wardNumber={resolvedWard} />
           </div>
         )}
@@ -489,6 +491,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
         {resolvedWard && (
           <div className="px-4">
             <WardContext wardNumber={resolvedWard} />
+            <WardRepresentatives wardNumber={resolvedWard} />
             <WardNarrative wardNumber={resolvedWard} />
           </div>
         )}
@@ -594,6 +597,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
       {resolvedWard && (
         <div className="px-4">
           <WardContext wardNumber={resolvedWard} />
+          <WardRepresentatives wardNumber={resolvedWard} />
           <WardNarrative wardNumber={resolvedWard} />
         </div>
       )}
