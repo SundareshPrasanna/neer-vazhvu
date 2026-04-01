@@ -42,10 +42,8 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
   const status = getGroundwaterStatus(ward.depthM);
   const color = getGroundwaterColor(ward.depthM);
   const trend = TREND_ICONS[ward.trend];
-  const wardPrimaryName = language === "ta"
-    ? (ward.wardNameTa ?? `${t("ward.ward")} ${ward.wardNumber}`)
-    : ward.wardName;
-  const wardSecondaryName = language === "ta" ? ward.wardName : ward.wardNameTa;
+  const wardPrimaryName = `${t("ward.ward")} ${ward.wardNumber}`;
+  const wardZone = ward.zone || "";
   const riskLabels: Record<NonNullable<WardRiskData["riskLevel"]>, string> = {
     low: t("legend.low_risk"),
     moderate: t("legend.moderate_risk"),
@@ -69,14 +67,9 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
     <div className="bg-white dark:bg-slate-900 w-full h-full p-4 sm:p-6 overflow-y-auto">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">{wardPrimaryName}</h3>
-          {wardSecondaryName && (
-            <span className="text-sm text-slate-500 dark:text-slate-400 block">
-              {wardSecondaryName}
-            </span>
-          )}
-          <span className="text-sm text-slate-500 dark:text-slate-400">{t("ward.ward")} {ward.wardNumber}</span>
-          {ward.zone && <span className="text-sm text-slate-400 dark:text-slate-500 ml-2">· {ward.zone}</span>}
+          <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">
+            {wardZone ? `${wardPrimaryName} - ${wardZone}` : wardPrimaryName}
+          </h3>
         </div>
         <button
           onClick={onClose}

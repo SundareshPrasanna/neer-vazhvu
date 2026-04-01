@@ -6,10 +6,10 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { fetchCKANResource, OPENCITY_RESOURCES } from '@/lib/api-clients/opencity';
 import { todayIST, todayISTParts } from '@/lib/utils/date';
 
-// Canonical ward names - use these instead of raw CKAN values
+// Canonical ward names - use ward number as display name
 const canonicalWardNames = new Map<number, string>(
-  (JSON.parse(readFileSync(resolve(process.cwd(), 'public/data/ward-names.json'), 'utf-8')) as { ward_number: number; ward_name: string }[])
-    .map((w) => [w.ward_number, w.ward_name])
+  (JSON.parse(readFileSync(resolve(process.cwd(), 'public/data/ward-names.json'), 'utf-8')) as { ward_number: number; zone_name: string }[])
+    .map((w) => [w.ward_number, `Ward ${w.ward_number}`])
 );
 const canonicalZoneNames = new Map<number, string>(
   (JSON.parse(readFileSync(resolve(process.cwd(), 'public/data/ward-names.json'), 'utf-8')) as { ward_number: number; zone_name: string }[])

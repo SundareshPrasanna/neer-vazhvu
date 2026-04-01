@@ -6,8 +6,8 @@ import { generateMockWardHistory } from "@/lib/mock-data";
 
 const wardNamesPath = resolve(process.cwd(), "public/data/ward-names.json");
 const canonicalNames = new Map<number, string>(
-  (JSON.parse(readFileSync(wardNamesPath, "utf-8")) as { ward_number: number; ward_name: string }[])
-    .map((w) => [w.ward_number, w.ward_name])
+  (JSON.parse(readFileSync(wardNamesPath, "utf-8")) as { ward_number: number; zone_name: string }[])
+    .map((w) => [w.ward_number, `Ward ${w.ward_number}`])
 );
 
 function isSupabaseConfigured(): boolean {

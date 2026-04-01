@@ -75,10 +75,7 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
   };
 
   const displayName = (w: WardEntry) => {
-    if (language === "ta" && w.wardNameTa) {
-      return `${w.wardNameTa} (${w.wardNumber})`;
-    }
-    return `${w.wardName} (Ward ${w.wardNumber})`;
+    return `Ward ${w.wardNumber} - ${w.zone}`;
   };
 
   return (
@@ -143,9 +140,6 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
                 >
                   <div className="font-medium text-slate-900 dark:text-slate-100">
                     {displayName(w)}
-                  </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                    Zone: {w.zone}
                   </div>
                 </button>
               ))}

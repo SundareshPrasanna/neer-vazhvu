@@ -7,7 +7,6 @@ import { useLanguage } from "@/lib/i18n/context";
 
 export interface WardProfile {
   ward_number: number;
-  ward_name: string;
   zone_no: string;
   zone_name: string;
   centroid: [number, number];

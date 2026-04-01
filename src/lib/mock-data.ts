@@ -155,82 +155,92 @@ export function generateMockHistory(
   return history;
 }
 
+// Ward-to-zone mapping (GCC 2022 delimitation, verified against zone boundary polygons)
+function getWardZone(ward: number): string {
+  if (ward <= 14) return "THIRUVOTTIYUR";
+  if (ward <= 21) return "MANALI";
+  if (ward <= 33) return "MADHAVARAM";
+  if (ward <= 48) return "TONDIARPET";
+  if (ward <= 63) return "ROYAPURAM";
+  if (ward <= 78) return "THIRU-VI-KA NAGAR";
+  if (ward <= 93) return "AMBATTUR";
+  if (ward <= 108) return "ANNA NAGAR";
+  if (ward <= 126) return "TEYNAMPET";
+  if (ward <= 142) return "KODAMBAKKAM";
+  if (ward <= 155) return "VALASARAVAKKAM";
+  if (ward <= 167) return "ALANDUR";
+  if (ward <= 169) return "PERUNGUDI";
+  if (ward <= 182) return "ADYAR";
+  if (ward <= 191) return "PERUNGUDI";
+  return "SHOLINGANALLUR";
+}
+
 /** Mock groundwater data  -  adjusts severity based on scenario */
 export function generateMockGroundwater(
   style: "healthy" | "declining" | "crisis" | "recovering"
 ): GroundwaterApiResponse {
   const wards = [];
-  // Canonical GCC 2022 ward locality names (all 200 wards, sourced from chennaicentral.in)
+  // All 200 GCC ward localities across Chennai's 15 zones
   const wardNames = [
-    // Zone I - THIRUVOTTIYUR (1-14)
-    "Kathivakkam", "Ennore", "Ernavoor", "Ajax", "Tiruvottiyur",
-    "Kaladipet", "Rajakadai", "Kodungaiyur (West)", "Kodungaiyur (East)",
-    "Dr. Radhakrishnan Nagar (North)", "Cheriyan Nagar (North)", "Jeeva Nagar (North)",
-    "Cheriyan Nagar (South)", "Jeeva Nagar (South)",
-    // Zone II - MANALI (15-21)
-    "Edyanchavadi", "Kadapakkam", "Theeyambakkam", "Manali", "Mathur",
-    "Sanjeevirayanpet", "Grace Garden",
-    // Zone III - MADHAVARAM (22-33)
-    "Kavankarai", "Puzhal", "Puthagram", "Kathirvedu", "Lakshmipuram",
-    "Assisi Nagar", "Chinnasekkadu", "Madhavaram", "Ma-Po-Si Nagar",
-    "Royapuram", "Singarathottam", "Narayanappa Thottam",
-    // Zone IV - TONDIARPET (34-48)
-    "Korukkupet", "Mottai Thottam", "Kumarasamy Nagar (South)",
-    "Dr. Radhakrishnan Nagar (South)", "Kumarasamy Nagar (North)",
-    "Vijayaragavalu Nagar (West)", "Tondiarpet", "Old Washermenpet",
-    "Meenakshiammanpet", "Kondithope", "Sevenwells (North)", "Amman Koil",
-    "Muthialpet", "Vallalseethakathi Nagar", "Kachaleeswarar Nagar",
-    // Zone V - ROYAPURAM (49-63)
-    "Sevenwells (South)", "Sowcarpet", "Basin Bridge", "Vyasarpet (South)",
-    "Vyasarpet (North)", "Perambur (North)", "Perambur (East)", "Elango Nagar",
-    "Perambur (South)", "Thiru-Vi-Ka Nagar", "Wadia Nagar",
-    "Dr. Sathyavanimuthu Nagar", "Pulianthope", "Dr. Besant Nagar", "Pedhunayakanpet",
-    // Zone VI - THIRU-VI-KA NAGAR (64-78)
-    "Perumal Koil Thottam", "Thattankulam", "Choolai", "Poonga Nagar",
-    "Elephant Gate", "Edapalayam", "Agaram (North)", "Sembiam", "Siruvalloor",
-    "Nagammai Ammaiyar Nagar", "Agaram (South)", "Vidhudalai Gurusami Nagar",
-    "Ayanavaram", "Nagammaiammaiyar Nagar (South)", "Panneer Selvam Nagar",
-    // Zone VII - AMBATTUR (79-93)
-    "Maraimalai Adigal Nagar", "Maraimalai Adigal Nagar (South)", "Purasawalkam",
-    "Kolathur", "Villiwakkam (North)", "Villiwakkam (South)", "Virugambakkam (North)",
-    "Anna Nagar (West)", "Anna Nagar (Central)", "Anna Nagar (East)", "Shenoy Nagar",
-    "Kilpauk (North)", "Gangadeeswarar Koil", "Kilpauk (South)", "Amanjikarai (North)",
-    // Zone VIII - ANNA NAGAR (94-108)
-    "Amanjikarai (Central)", "Amanjikarai (West)", "Periyar Nagar (North)",
-    "Periyar Nagar (West)", "Nungambakkam", "Adikesavapuram", "Nehru Nagar",
-    "Chintadripet", "Komaleeswaranpet", "Balasubramanya Nagar", "Thiruvotteeswaranpet",
-    "Natesan Nagar", "Chepauk", "Zambazaar", "Umaru Pulavar Nagar",
-    // Zone IX - TEYNAMPET (109-126)
-    "Triplicane", "Marina", "Krishnampet", "Bharathi Nagar", "Azad Nagar (North)",
-    "Bharathidasan Nagar", "Azad Nagar (South)", "Vivekananda Puram",
-    "Ajnugam Ammaiyar Nagar", "Kosappet", "Pattalam", "Anbazhagan Nagar",
-    "Perumalpet", "Kannappar Nagar", "Pattalam", "Chetpet", "Egmore", "Pudupet",
-    // Zone X - KODAMBAKKAM (127-142)
-    "Ko-Su-Mani Nagar", "Nakeerar Nagar", "Thousand Lights", "Azhagiri Nagar",
-    "Amir Mahal", "Royapettah", "Teynampet", "Sathyamurthy Nagar",
-    "Alwarpet (North)", "Alwarpet (South)", "Vadapalani (West)", "Vadapalani (East)",
-    "Kalaivanar Nagar", "Navalar Nedunchezian Nagar (West)",
-    "Navalar Nedunchezian Nagar (East)", "Ashok Nagar",
-    // Zone XI - VALASARAVAKKAM (143-155)
-    "M.G.R. Nagar", "Kamaraj Nagar (North)", "Kamaraj Nagar (South)",
-    "Thyagaraya Nagar", "Rajaji Nagar", "Virugambakkam (South)", "Saligramam",
-    "Kodambakkam (North)", "Kodambakkam (South)", "Saidapet",
-    "Kumaran Nagar (North)", "Kumaran Nagar (South)", "Saidapet (West)",
-    // Zone XII - ALANDUR (156-167)
-    "Kalaingar Karunanidhi Nagar", "V.O.C. Nagar", "G.D. Naidu Nagar (East)",
-    "G.D. Naidu Nagar (West)", "Guindy (West)", "Guindy (East)", "Beemannapettai",
-    "Thiruvalluvar Nagar", "Madavaperumal Puram", "Karaneeswarpuram", "Santhome", "Mylapore",
-    // Zone XIII - ADYAR (168-182)
-    "Taramani", "Ullagaram", "Avvai Nagar (South)", "Raja Annamalai Puram",
-    "Avvai Nagar (North)", "Adyar (West)", "Adyar (East)", "Velachery",
-    "Thiruvanmiyur (West)", "Thiruvanmiyur (East)", "Besant Nagar", "Urur",
-    "Adampakkam", "Velachery (West)", "Gandhi Salai",
-    // Zone XIV - PERUNGUDI (183-191)
-    "Puzhuthivakkam", "Kottivakkam", "Pallikaranai", "Palavakkam", "Madipakkam",
-    "Jaladianpet", "Neelangarai", "Thoraipakkam", "Injambakkam",
-    // Zone XV - SHOLINGANALLUR (192-200)
-    "Karapakkam", "Sholinganallur", "Uthandi", "Semmancheri", "Navalur",
-    "Siruseri", "Kelambakkam", "Sithalapakkam", "Medavakkam",
+    // Zone 1  -  Tiruvottiyur (1-13)
+    "Tiruvottiyur", "Kathivakkam", "Tiruvottiyur East", "Ernavoor", "Janakipuram",
+    "Mill Colony", "Kaladipet", "Theradi", "Tiruvottiyur West", "Wimco Nagar",
+    "MH Road", "Tollgate", "Nagammai Nagar",
+    // Zone 2  -  Manali (14-21)
+    "Manali", "Manali New Town", "Mathur MMDA", "Manali West", "Sadayankuppam",
+    "Ennore", "Thirumullaivoyal", "Avadi Gate",
+    // Zone 3  -  Madhavaram (22-32)
+    "Madhavaram", "Madhavaram Milk Colony", "Manjambakkam", "Naravarikuppam",
+    "Moolakadai", "Erukkancheri", "Periyar Nagar", "MKB Nagar", "Mathur",
+    "Kolathur East", "Sembium",
+    // Zone 4  -  Tondiarpet (33-48)
+    "Tondiarpet", "Washermanpet", "Royapuram", "Basin Bridge", "Park Town",
+    "Old Washermanpet", "Kasimedu", "Korukkupet", "Stanley", "Seven Wells",
+    "Mint", "Mannadi", "Sowcarpet", "Kondithope", "George Town", "Broadway",
+    // Zone 5  -  Royapuram (49-63)
+    "Royapuram North", "Thiruvika Nagar", "RK Nagar", "Otteri", "Perambur",
+    "Ayanavaram", "Purasawalkam", "Vepery", "Kellys", "Chetpet",
+    "Kilpauk", "Egmore", "Pudupet", "Choolai", "Puliyanthope",
+    // Zone 6  -  Ambattur (64-82)
+    "Ambattur", "Ambattur OT", "Korattur", "Padi", "Mogappair East",
+    "Mogappair West", "Nolambur", "Maduravoyal", "Thirumangalam", "Anna Nagar West",
+    "Anna Nagar East", "Shenoy Nagar", "Aminjikarai", "Arumbakkam", "Koyambedu",
+    "Virugambakkam", "Alwarthirunagar", "Valasaravakkam", "Porur",
+    // Zone 7  -  Anna Nagar (83-96)
+    "Anna Nagar", "Anna Nagar Western Extension", "Thirumangalam East", "CMDA Colony",
+    "Villivakkam", "Kolathur", "Agaram", "Retteri", "Villivakkam East",
+    "Korattur South", "ICF Colony", "Perambur North", "Jawahar Nagar", "Nammalwarpet",
+    // Zone 8  -  Teynampet (97-119)
+    "Nungambakkam", "T. Nagar", "Kodambakkam", "West Mambalam", "Saidapet",
+    "Ashok Nagar", "Vadapalani", "K.K. Nagar East", "K.K. Nagar West", "Teynampet",
+    "Thousand Lights", "Royapettah", "Lloyds Road", "Alwarpet", "Gopalapuram",
+    "Mylapore", "Mandaveli", "R.A. Puram", "Abhiramapuram", "CIT Colony",
+    "Nandanam", "Santhome", "Foreshore Estate",
+    // Zone 9  -  Kodambakkam (120-134)
+    "Kodambakkam West", "Jafferkhanpet", "Ashok Pillar", "Manapakkam", "Ramapuram",
+    "Mugalivakkam", "Moulivakkam", "Madanandapuram", "Nesapakkam", "KK Nagar South",
+    "Saligramam", "Fairlands", "Choolaimedu", "Nerkundram", "Alapakkam",
+    // Zone 10  -  Valasaravakkam (135-150)
+    "Kumaran Nagar", "Poonamallee", "Kundrathur", "Mangadu", "Kovur",
+    "Alandur", "Nanganallur", "Adambakkam", "Pallavaram", "Chromepet",
+    "Hasthinapuram", "Medavakkam", "Keelkattalai", "Pammal", "Anakaputhur",
+    "Sembakkam",
+    // Zone 11  -  Adyar (151-168)
+    "Adyar", "Thiruvanmiyur", "Besant Nagar", "Indira Nagar", "Kotturpuram",
+    "Gandhi Nagar (Adyar)", "Ekkatuthangal", "Guindy", "Alandur North",
+    "Meenambakkam", "Pallikaranai", "Madipakkam", "Keelkattalai East", "Ullagaram",
+    "Puzhuthivakkam", "Nanmangalam", "Perungalathur", "Tambaram",
+    // Zone 12  -  Perungudi (169-183)
+    "Perungudi", "Taramani", "Velachery", "Vijayanagar", "TNHB Colony",
+    "Kovilambakkam", "Selaiyur", "Rajakilpakkam", "Sithalapakkam", "Vengaivasal",
+    "Narayanapuram", "Jalladianpet", "Madambakkam", "Semmancheri", "Kottivakkam",
+    // Zone 13  -  Sholinganallur (184-193)
+    "Sholinganallur", "Karapakkam", "OMR Thoraipakkam", "Perumbakkam",
+    "Okkiampet", "Egattur", "Navallur", "Siruseri", "Kelambakkam", "Padur",
+    // Zone 14  -  Tondiarpet-Fort (194-197)
+    "Fort St George", "Parrys Corner", "Chennai Central", "Pattalam",
+    // Zone 15  -  Harbour (198-200)
+    "Harbour", "Ennore Port", "Royapuram Harbour",
   ];
 
   // Depth offset based on scenario
@@ -257,7 +267,7 @@ export function generateMockGroundwater(
     wards.push({
       wardNumber: i,
       wardName: wardNames[i - 1] || `Ward ${i}`,
-      zone: `Zone ${Math.ceil(i / 15)}`,
+      zone: getWardZone(i),
       depthM: parseFloat(depth.toFixed(1)),
       trend,
     });
@@ -323,9 +333,8 @@ export function generateMockWardHistory(wardNumber: number): {
   }
 
   const wardNames = [
-    "Kathivakkam", "Ennore", "Ernavoor", "Ajax", "Tiruvottiyur",
-    "Kaladipet", "Rajakadai", "Kodungaiyur (West)", "Kodungaiyur (East)",
-    "Dr. Radhakrishnan Nagar (North)",
+    "Tiruvottiyur", "Kathivakkam", "Tiruvottiyur East", "Ernavoor", "Janakipuram",
+    "Mill Colony", "Kaladipet", "Theradi", "Tiruvottiyur West", "Wimco Nagar",
   ];
 
   return {

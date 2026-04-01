@@ -5,11 +5,14 @@ import { internalServerError, logRouteError } from '@/lib/api-error';
 import { getGroundwaterStatus } from '@/types/groundwater';
 import { generateMockGroundwater } from '@/lib/mock-data';
 
-// Load canonical ward names once at module level
+// Load canonical ward data once at module level
 const wardNamesPath = resolve(process.cwd(), 'public/data/ward-names.json');
+const wardNamesData = JSON.parse(readFileSync(wardNamesPath, 'utf-8')) as { ward_number: number; zone_name: string }[];
 const canonicalNames = new Map<number, string>(
-  (JSON.parse(readFileSync(wardNamesPath, 'utf-8')) as { ward_number: number; ward_name: string }[])
-    .map((w) => [w.ward_number, w.ward_name])
+  wardNamesData.map((w) => [w.ward_number, `Ward ${w.ward_number}`])
+);
+const canonicalZones = new Map<number, string>(
+  wardNamesData.map((w) => [w.ward_number, w.zone_name])
 );
 
 function isSupabaseConfigured(): boolean {
@@ -102,7 +105,7 @@ export async function GET(request: NextRequest) {
       wardNumber: r.ward_number,
       wardName: canonicalNames.get(r.ward_number) || r.ward_name || `Ward ${r.ward_number}`,
       wardNameTa: r.ward_name_ta || r.ward_name_tamil || undefined,
-      zone: r.zone_name || '',
+      zone: canonicalZones.get(r.ward_number) || r.zone_name || '',
       depthM: r.depth_to_water_m,
       trend,
     };

@@ -108,20 +108,19 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
     const ward = groundwaterData.get(wardNum);
     const risk = riskData.get(wardNum);
 
-    const name = language === "ta"
-      ? (ward?.wardNameTa || `${t("ward.ward")} ${wardNum}`)
-      : (ward?.wardName || `${t("ward.ward")} ${wardNum}`);
+    const zoneName = feature.properties?.Zone_Name || ward?.zone || "";
+    const heading = zoneName ? `${t("ward.ward")} ${wardNum} - ${zoneName}` : `${t("ward.ward")} ${wardNum}`;
     let detail: string;
     if (viewMode === "risk") {
       detail = risk
-        ? `<br/><span style="font-size:11px;color:#64748b">${t("ward.ward")} ${wardNum}</span><br/>${t("ward.tooltip_risk")}: ${risk.riskScore.toFixed(0)}/100`
+        ? `<br/>${t("ward.tooltip_risk")}: ${risk.riskScore.toFixed(0)}/100`
         : `<br/>${t("ward.no_risk_data")}`;
     } else {
       detail = ward
-        ? `<br/><span style="font-size:11px;color:#64748b">${t("ward.ward")} ${wardNum}</span><br/>${ward.depthM?.toFixed(1)}m ${t("ward.tooltip_depth")}`
+        ? `<br/>${ward.depthM?.toFixed(1)}m ${t("ward.tooltip_depth")}`
         : `<br/>${t("gw.no_data_lc")}`;
     }
-    layer.bindTooltip(`<strong>${name}</strong>${detail}`, { sticky: true });
+    layer.bindTooltip(`<strong>${heading}</strong>${detail}`, { sticky: true });
 
     layer.on({
       click: () => { onWardSelect(ward || null); },
@@ -181,8 +180,6 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
     >
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
-      {/* Selected ward highlight + fly-to from search */}
-      {viewMode !== "exploitation" && <SelectedWardHighlight wardNumber={selectedWardNumber ?? null} />}
       {flyToWard && <FlyToWard wardNumber={flyToWard} />}
 
       {viewMode === "exploitation" ? (
@@ -212,6 +209,8 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
           {wardGeoJSON && (
             <GeoJSON key={`${viewMode}-${tiles.url}`} data={wardGeoJSON} style={wardStyle} onEachFeature={onEachWard} />
           )}
+          {/* key includes viewMode so highlight remounts on top after choropleth remounts */}
+          <SelectedWardHighlight key={`highlight-${viewMode}`} wardNumber={selectedWardNumber ?? null} />
         </>
       )}
     </MapContainer>

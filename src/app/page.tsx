@@ -247,11 +247,11 @@ async function getReservoirData() {
   };
 }
 
-// Load canonical ward names once at module level
+// Load canonical ward zone names once at module level
 const wardNamesPath = resolve(process.cwd(), "public/data/ward-names.json");
 const canonicalNames = new Map<number, string>(
-  (JSON.parse(readFileSync(wardNamesPath, "utf-8")) as { ward_number: number; ward_name: string }[])
-    .map((w) => [w.ward_number, w.ward_name])
+  (JSON.parse(readFileSync(wardNamesPath, "utf-8")) as { ward_number: number; zone_name: string }[])
+    .map((w) => [w.ward_number, `Ward ${w.ward_number}`])
 );
 
 async function getGroundwaterData(): Promise<GroundwaterApiResponse | null> {

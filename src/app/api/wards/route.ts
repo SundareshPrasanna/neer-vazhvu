@@ -7,11 +7,11 @@ export const revalidate = 86400; // cache for 24 hours
 export async function GET() {
   const profilesPath = path.join(process.cwd(), "public/data/ward-profiles.json");
   const profilesRaw = await readFile(profilesPath, "utf-8");
-  const profiles: { ward_number: number; ward_name: string; zone_name: string }[] = JSON.parse(profilesRaw);
+  const profiles: { ward_number: number; zone_name: string }[] = JSON.parse(profilesRaw);
 
   const wards = profiles.map((p) => ({
     wardNumber: p.ward_number,
-    wardName: p.ward_name,
+    wardName: `Ward ${p.ward_number}`,
     zone: p.zone_name || "",
   }));
 
