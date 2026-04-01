@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Polyline, Tooltip } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Polyline, Tooltip, useMap } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer, PathOptions } from "leaflet";
@@ -14,12 +14,23 @@ import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
 
+/** Flies the map to a given center when it changes */
+function FlyToCenter({ center }: { center: [number, number] }) {
+  const map = useMap();
+  useEffect(() => {
+    map.flyTo(center, 14, { duration: 1 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [center[0], center[1]]);
+  return null;
+}
+
 interface CombinedRiversMapProps {
   qualityData: RiverQualityData;
   pollutionData: IndustrialPollutionData;
   selectedRiver: SelectedRiver | null;
   onSelectRiver: (sel: SelectedRiver | null) => void;
   onSelectSource: (source: PollutionSource | null) => void;
+  focusCenter?: [number, number];
 }
 
 export function CombinedRiversMap({
@@ -28,6 +39,7 @@ export function CombinedRiversMap({
   selectedRiver,
   onSelectRiver,
   onSelectSource,
+  focusCenter,
 }: CombinedRiversMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
@@ -220,6 +232,7 @@ export function CombinedRiversMap({
       scrollWheelZoom={true}
     >
       <MapResizer />
+      {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* Render order: zones (bottom) → rivers → stations → sources → highlight (top) */}
       <GeoJSON key={`zones-${tiles.url}`} data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />

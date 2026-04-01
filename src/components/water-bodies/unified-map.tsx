@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { MapContainer, TileLayer, GeoJSON, LayersControl, Tooltip, LayerGroup, Circle, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, Tooltip, LayerGroup, Circle, useMap } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer } from "leaflet";
@@ -401,31 +401,25 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
       <MapResizer />
       {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
-      <LayersControl position="topright">
-        {currentGeoJSON && (
-          <LayersControl.Overlay name={viewMode === "restoration" ? t("lr.priority_level") : t("wb_map.existing_layer")} checked>
-            <GeoJSON
-              key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}-${tiles.url}`}
-              data={currentGeoJSON}
-              style={currentStyle}
-              onEachFeature={onEachCurrent}
-            />
-          </LayersControl.Overlay>
-        )}
-        {lostGeoJSON && (
-          <LayersControl.Overlay name={t("wb_map.lost_layer")} checked>
-            <GeoJSON
-              key={`lost-${language}-${tiles.url}`}
-              data={lostGeoJSON}
-              pointToLayer={pointToLayer}
-              style={lostStyle}
-              onEachFeature={onEachLost}
-            />
-          </LayersControl.Overlay>
-        )}
-        {unmatchedCensus.length > 0 && viewMode === "water-bodies" && (
-          <LayersControl.Overlay name={t("wb_map.census_layer")} checked>
-            <LayerGroup>
+      {currentGeoJSON && (
+        <GeoJSON
+          key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}-${tiles.url}`}
+          data={currentGeoJSON}
+          style={currentStyle}
+          onEachFeature={onEachCurrent}
+        />
+      )}
+      {lostGeoJSON && (
+        <GeoJSON
+          key={`lost-${language}-${tiles.url}`}
+          data={lostGeoJSON}
+          pointToLayer={pointToLayer}
+          style={lostStyle}
+          onEachFeature={onEachLost}
+        />
+      )}
+      {unmatchedCensus.length > 0 && viewMode === "water-bodies" && (
+        <LayerGroup>
               {unmatchedCensus.map((wb) => {
                 const color = getCensusColor(wb);
                 const name = wb.name || t("wb_panel.unnamed");
@@ -463,12 +457,10 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
                   </Circle>
                 );
               })}
-            </LayerGroup>
-          </LayersControl.Overlay>
-        )}
-        {unmatchedCensus.length > 0 && viewMode === "restoration" && (
-          <LayersControl.Overlay name={t("wb_map.census_layer")} checked>
-            <LayerGroup>
+        </LayerGroup>
+      )}
+      {unmatchedCensus.length > 0 && viewMode === "restoration" && (
+        <LayerGroup>
               {unmatchedCensus.map((wb) => {
                 const scored = scoreLookupById.get(`census:${wb.id}`);
                 const color = scored ? getPriorityColor(scored.priority_level) : "#94a3b8";
@@ -509,10 +501,8 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
                   </Circle>
                 );
               })}
-            </LayerGroup>
-          </LayersControl.Overlay>
-        )}
-      </LayersControl>
+        </LayerGroup>
+      )}
     </MapContainer>
   );
 }

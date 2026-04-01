@@ -18,6 +18,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
+import { WardSearch } from "@/components/map/ward-search";
 
 function GroundwaterMapLoading() {
   const { t } = useLanguage();
@@ -57,6 +58,7 @@ function GroundwaterPageContent() {
     (searchParams.get("view") as ViewMode) || "depth"
   );
   const [loading, setLoading] = useState(true);
+  const [flyToWard, setFlyToWard] = useState<number | null>(null);
 
   useEffect(() => {
     const wardParam = searchParams.get("ward");
@@ -161,8 +163,10 @@ function GroundwaterPageContent() {
           groundwaterData={wardMap}
           riskData={riskMap}
           viewMode={viewMode}
-          onWardSelect={(w) => { setSelectedWard(w); setSelectedBlock(null); }}
-          onBlockSelect={(b) => { setSelectedBlock(b); setSelectedWard(null); }}
+          selectedWardNumber={selectedWard?.wardNumber}
+          flyToWard={flyToWard}
+          onWardSelect={(w) => { setSelectedWard(w); setSelectedBlock(null); setFlyToWard(null); }}
+          onBlockSelect={(b) => { setSelectedBlock(b); setSelectedWard(null); setFlyToWard(null); }}
         />
 
         {/* Legend overlay - shifts up on mobile when bottom sheet is open */}
@@ -196,6 +200,19 @@ function GroundwaterPageContent() {
           )}
         </MapInfoButton>
 
+        {/* Ward search */}
+        <WardSearch
+          className="absolute top-12 right-2 sm:top-16 sm:right-4 z-[1000]"
+          onSelect={(wardNum) => {
+            const ward = wardMap.get(wardNum);
+            if (ward) {
+              setSelectedWard(ward);
+              setSelectedBlock(null);
+              setFlyToWard(wardNum);
+            }
+          }}
+        />
+
         {/* Staleness warning - only for ward views */}
         {isStale && viewMode !== "exploitation" && (
           <div className="absolute top-14 left-2 sm:top-20 sm:left-4 z-[999] max-w-[calc(100%-1rem)] sm:max-w-sm">
@@ -215,8 +232,8 @@ function GroundwaterPageContent() {
               onClick={() => {
                 setViewMode("depth");
                 setSelectedBlock(null);
-                // Re-select deepest ward
-                if (data && data.wards.length > 0) {
+                // Keep current ward selection; only default if none selected
+                if (!selectedWard && data && data.wards.length > 0) {
                   const deepest = [...data.wards].sort((a, b) => (b.depthM ?? 0) - (a.depthM ?? 0))[0];
                   if (deepest) setSelectedWard(deepest);
                 }
@@ -234,8 +251,8 @@ function GroundwaterPageContent() {
                 onClick={() => {
                   setViewMode("risk");
                   setSelectedBlock(null);
-                  // Re-select deepest ward for risk view
-                  if (data && data.wards.length > 0) {
+                  // Keep current ward selection; only default if none selected
+                  if (!selectedWard && data && data.wards.length > 0) {
                     const deepest = [...data.wards].sort((a, b) => (b.depthM ?? 0) - (a.depthM ?? 0))[0];
                     if (deepest) setSelectedWard(deepest);
                   }
@@ -253,8 +270,8 @@ function GroundwaterPageContent() {
               onClick={() => {
                 setViewMode("exploitation");
                 setSelectedWard(null);
-                // Pre-select most over-exploited block
-                if (blocks.length > 0) {
+                // Keep current block selection; only default if none selected
+                if (!selectedBlock && blocks.length > 0) {
                   const mostExploited = [...blocks].sort((a, b) => b.latest.development_pct - a.latest.development_pct)[0];
                   if (mostExploited) setSelectedBlock(mostExploited);
                 }

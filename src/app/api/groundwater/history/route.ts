@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readFileSync } from "fs";
+import { resolve } from "path";
 import { internalServerError, logRouteError } from "@/lib/api-error";
 import { generateMockWardHistory } from "@/lib/mock-data";
+
+const wardNamesPath = resolve(process.cwd(), "public/data/ward-names.json");
+const canonicalNames = new Map<number, string>(
+  (JSON.parse(readFileSync(wardNamesPath, "utf-8")) as { ward_number: number; zone_name: string }[])
+    .map((w) => [w.ward_number, `Ward ${w.ward_number}`])
+);
 
 function isSupabaseConfigured(): boolean {
   return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -48,7 +56,7 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     wardNumber,
-    wardName: (data?.[0]?.ward_name as string) || `Ward ${wardNumber}`,
+    wardName: canonicalNames.get(wardNumber) || (data?.[0]?.ward_name as string) || `Ward ${wardNumber}`,
     history,
   });
 }

@@ -225,12 +225,10 @@ export function FloodRiskMap({
   const onEachWard = useCallback(
     (feature: Feature, layer: Layer) => {
       const props = feature.properties;
-      const wardName = props?.ward_name ?? "";
       const zoneName = props?.Zone_Name ?? "";
       const wardNo = props?.Ward_No ?? "";
       if (zoneName) {
-        const label = wardName ? `<strong>${wardName}</strong><br/><span style="font-size:11px;color:#64748b">Ward ${wardNo} - ${zoneName}</span>` : `${zoneName} - Ward ${wardNo}`;
-        layer.bindTooltip(label, {
+        layer.bindTooltip(`Ward ${wardNo} - ${zoneName}`, {
           sticky: true,
           className: "leaflet-tooltip-custom",
         });

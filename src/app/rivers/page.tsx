@@ -13,6 +13,8 @@ import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
+import { WardSearch } from "@/components/map/ward-search";
+import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 
 function RiversMapLoading() {
   const { t } = useLanguage();
@@ -52,6 +54,8 @@ function RiversPageContent() {
   const [loading, setLoading] = useState(true);
   const [selectedRiver, setSelectedRiver] = useState<SelectedRiver | null>(null);
   const [selectedSource, setSelectedSource] = useState<PollutionSource | null>(null);
+  const [focusCenter, setFocusCenter] = useState<[number, number] | undefined>();
+  const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
 
   useEffect(() => {
     const riverParam = searchParams.get("river");
@@ -87,6 +91,14 @@ function RiversPageContent() {
       })
       .catch(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Fetch ward profiles for search fly-to
+  useEffect(() => {
+    fetch("/data/ward-profiles.json")
+      .then((r) => r.json())
+      .then((profiles: WardProfile[]) => setWardProfiles(profiles))
+      .catch(() => {});
   }, []);
 
   if (loading) {
@@ -156,6 +168,7 @@ function RiversPageContent() {
             selectedRiver={selectedRiver}
             onSelectRiver={(sel) => { setSelectedRiver(sel); setSelectedSource(null); }}
             onSelectSource={(source) => { setSelectedSource(source); setSelectedRiver(null); }}
+            focusCenter={focusCenter}
           />
 
           {/* Legend overlay - shifts up on mobile when bottom sheet is open */}
@@ -178,6 +191,13 @@ function RiversPageContent() {
               </span>
             </div>
           </MapInfoButton>
+          <WardSearch
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]"
+            onSelect={(wardNum) => {
+              const profile = wardProfiles.find((p) => p.ward_number === wardNum);
+              if (profile) setFocusCenter([profile.centroid[1], profile.centroid[0]]);
+            }}
+          />
         </div>
 
         {/* Detail panel - bottom sheet on mobile, sidebar on desktop */}

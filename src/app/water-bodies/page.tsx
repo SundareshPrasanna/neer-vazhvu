@@ -17,6 +17,7 @@ import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
+import { WardSearch } from "@/components/map/ward-search";
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -57,6 +58,7 @@ function WaterBodiesPageContent() {
   );
   const [selected, setSelected] = useState<SelectedWaterBody | null>(null);
   const [focusCenter, setFocusCenter] = useState<[number, number] | undefined>();
+  const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
   const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
   const [lostStats, setLostStats] = useState<{ lostCount: number; totalHaLost: number } | null>(null);
   const [censusData, setCensusData] = useState<CensusWaterBodyProperties[]>([]);
@@ -99,6 +101,7 @@ function WaterBodiesPageContent() {
           const wardNum = parseInt(wardParam, 10);
           try {
             const profiles: WardProfile[] = await fetch("/data/ward-profiles.json").then((r) => r.json());
+            setWardProfiles(profiles);
             const profile = profiles.find((p) => p.ward_number === wardNum);
             if (profile?.water_bodies.top_bodies?.length) {
               const topName = profile.water_bodies.top_bodies[0].name;
@@ -170,6 +173,16 @@ function WaterBodiesPageContent() {
         }
       })
       .catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Fetch ward profiles for search fly-to (if not already loaded by deep link)
+  useEffect(() => {
+    if (wardProfiles.length > 0) return;
+    fetch("/data/ward-profiles.json")
+      .then((r) => r.json())
+      .then((profiles: WardProfile[]) => setWardProfiles(profiles))
+      .catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -415,6 +428,13 @@ function WaterBodiesPageContent() {
                 </div>
               )}
             </MapInfoButton>
+            <WardSearch
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]"
+              onSelect={(wardNum) => {
+                const profile = wardProfiles.find((p) => p.ward_number === wardNum);
+                if (profile) setFocusCenter([profile.centroid[1], profile.centroid[0]]);
+              }}
+            />
           </div>
           {selected && (
             <BottomSheet onClose={() => setSelected(null)}>

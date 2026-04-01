@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, useMap } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import type { Layer, LeafletMouseEvent } from "leaflet";
 import type { Feature } from "geojson";
@@ -10,17 +10,41 @@ import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation } from
 import { useLanguage } from "@/lib/i18n/context";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { SelectedWardHighlight } from "@/components/map/selected-ward-highlight";
 import "leaflet/dist/leaflet.css";
+
+/** Flies the map to a given center when it changes */
+function FlyToWard({ wardNumber }: { wardNumber: number }) {
+  const map = useMap();
+  const [geo, setGeo] = useState<GeoJSON.FeatureCollection | null>(null);
+  useEffect(() => { getWardGeoJSON().then(setGeo); }, []);
+  useEffect(() => {
+    if (!geo) return;
+    const feature = geo.features.find((f) => {
+      const num = Number(f.properties?.ward_number || f.properties?.Ward_No);
+      return num === wardNumber;
+    });
+    if (feature) {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const L = require("leaflet");
+      const bounds = L.geoJSON(feature).getBounds();
+      map.flyToBounds(bounds, { padding: [40, 40], duration: 0.8, maxZoom: 14 });
+    }
+  }, [wardNumber, geo, map]);
+  return null;
+}
 
 interface WardMapProps {
   groundwaterData: Map<number, GroundwaterWard>;
   riskData: Map<number, WardRiskData>;
   viewMode: ViewMode;
+  selectedWardNumber?: number | null;
+  flyToWard?: number | null;
   onWardSelect: (ward: GroundwaterWard | null) => void;
   onBlockSelect?: (block: GWBlock | null) => void;
 }
 
-export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onBlockSelect }: WardMapProps) {
+export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumber, flyToWard, onWardSelect, onBlockSelect }: WardMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [wardGeoJSON, setWardGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
@@ -84,20 +108,19 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
     const ward = groundwaterData.get(wardNum);
     const risk = riskData.get(wardNum);
 
-    const name = language === "ta"
-      ? (ward?.wardNameTa || `${t("ward.ward")} ${wardNum}`)
-      : (ward?.wardName || `${t("ward.ward")} ${wardNum}`);
+    const zoneName = feature.properties?.Zone_Name || ward?.zone || "";
+    const heading = zoneName ? `${t("ward.ward")} ${wardNum} - ${zoneName}` : `${t("ward.ward")} ${wardNum}`;
     let detail: string;
     if (viewMode === "risk") {
       detail = risk
-        ? `<br/><span style="font-size:11px;color:#64748b">${t("ward.ward")} ${wardNum}</span><br/>${t("ward.tooltip_risk")}: ${risk.riskScore.toFixed(0)}/100`
+        ? `<br/>${t("ward.tooltip_risk")}: ${risk.riskScore.toFixed(0)}/100`
         : `<br/>${t("ward.no_risk_data")}`;
     } else {
       detail = ward
-        ? `<br/><span style="font-size:11px;color:#64748b">${t("ward.ward")} ${wardNum}</span><br/>${ward.depthM?.toFixed(1)}m ${t("ward.tooltip_depth")}`
+        ? `<br/>${ward.depthM?.toFixed(1)}m ${t("ward.tooltip_depth")}`
         : `<br/>${t("gw.no_data_lc")}`;
     }
-    layer.bindTooltip(`<strong>${name}</strong>${detail}`, { sticky: true });
+    layer.bindTooltip(`<strong>${heading}</strong>${detail}`, { sticky: true });
 
     layer.on({
       click: () => { onWardSelect(ward || null); },
@@ -105,7 +128,12 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
         e.target.setStyle({ weight: 3, color: tiles.hoverStroke, fillOpacity: 0.9 });
       },
       mouseout: (e: LeafletMouseEvent) => {
-        e.target.setStyle({ weight: 1, color: tiles.stroke, fillOpacity: 0.75 });
+        // Keep slightly bolder style if this is the selected ward
+        if (wardNum === selectedWardNumber) {
+          e.target.setStyle({ weight: 2, color: tiles.stroke, fillOpacity: 0.85 });
+        } else {
+          e.target.setStyle({ weight: 1, color: tiles.stroke, fillOpacity: 0.75 });
+        }
       },
     });
   };
@@ -152,6 +180,8 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
     >
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      {flyToWard && <FlyToWard wardNumber={flyToWard} />}
+
       {viewMode === "exploitation" ? (
         <>
           {blockGeoJSON && (
@@ -179,6 +209,8 @@ export function WardMap({ groundwaterData, riskData, viewMode, onWardSelect, onB
           {wardGeoJSON && (
             <GeoJSON key={`${viewMode}-${tiles.url}`} data={wardGeoJSON} style={wardStyle} onEachFeature={onEachWard} />
           )}
+          {/* key includes viewMode so highlight remounts on top after choropleth remounts */}
+          <SelectedWardHighlight key={`highlight-${viewMode}`} wardNumber={selectedWardNumber ?? null} />
         </>
       )}
     </MapContainer>
