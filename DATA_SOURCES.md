@@ -306,6 +306,39 @@
 - Some STP capacity values are missing in the source data
 - Pipe material and size are stored as codes in the source; decoded using the sewer-codes.txt lookup table
 
+## CRRT Restoration Projects
+
+| | |
+|---|---|
+| **Source** | [Chennai Rivers Restoration Trust (CRRT)](https://www.crrt.tn.gov.in/) |
+| **Method** | Manual curation (CRRT website narrative pages to structured JSON) |
+| **Frequency** | Static dataset (updated when major project milestones are reported) |
+| **Coverage** | 9 restoration projects across 4 rivers: Adyar (5), Cooum (1), Buckingham Canal (1), Kosasthalaiyar (2) |
+| **Fields** | Project name (English + Tamil), river(s), location, status (completed/in_progress/planned), category, budget, area/length, implementing agencies, summary, metrics, source URL |
+| **File** | `public/data/restoration-projects.json` (static, served from Next.js `public/`) |
+| **Validation** | `npm run data:check` (schema check via `scripts/check-restoration-data.ts`) |
+
+**Projects tracked:**
+
+| Project | River(s) | Status |
+|---------|----------|--------|
+| Adyar Eco Park Phase I (Tholkappia Poonga) | Adyar | Completed |
+| Adyar Estuary Phase II | Adyar | Completed |
+| Adyar River Restoration (42 km) | Adyar | In progress |
+| Adyar River PPP Mode | Adyar | In progress |
+| Cooum River Restoration | Cooum | In progress |
+| Buckingham Canal Restoration | Buckingham Canal | Planned |
+| Ennore Creek Eco-Restoration | Kosasthalaiyar | Completed |
+| Kosasthalaiyar River Restoration | Kosasthalaiyar | Planned |
+| Tholkappia Poonga Redevelopment | Adyar | In progress |
+
+**Known limitations:**
+- Data is manually curated from CRRT's public website; no structured API exists
+- Budget figures are as reported by CRRT and may not reflect final expenditure
+- Project timelines and status may lag behind actual progress
+- Tamil translations (`*_ta` fields) are partially populated; English is used as fallback
+- To update: edit `public/data/restoration-projects.json`, run `npm run data:check` to validate
+
 ## Restoration Priority Scores -Computed
 
 | | |

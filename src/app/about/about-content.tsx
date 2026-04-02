@@ -254,6 +254,24 @@ export function AboutContent() {
             frequency={t("about.freq_static")}
           />
           <DataSource
+            name="IMD Gridded Rainfall (via imdlib)"
+            url="https://imdlib.readthedocs.io/"
+            description={t("about.ds_imd_desc")}
+            frequency={t("about.freq_one_time_gen")}
+          />
+          <DataSource
+            name="India WRIS / CGWB"
+            url="https://indiawris.gov.in/"
+            description={t("about.ds_cgwb_desc")}
+            frequency={t("about.freq_static_fetch")}
+          />
+          <DataSource
+            name="Chennai Rivers Restoration Trust (CRRT)"
+            url="https://www.crrt.tn.gov.in/"
+            description={t("about.ds_crrt_desc")}
+            frequency={t("about.freq_manual")}
+          />
+          <DataSource
             name="Anthropic Claude API"
             url="https://docs.anthropic.com/"
             description={t("about.ds_anthropic_desc")}
