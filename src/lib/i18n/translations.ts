@@ -788,4 +788,18 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "ai_narrative.reservoirs":    { en: "Reservoirs",                          ta: "நீர்த்தேக்கங்கள்" },
   "ai_narrative.groundwater":   { en: "Groundwater",                         ta: "நிலத்தடி நீர்" },
   "ai_narrative.risk_scores":   { en: "Risk scores",                         ta: "ஆபத்து மதிப்பெண்கள்" },
+
+  // ── News ────────────────────────────────────────────────────────────────────
+  "news.heading":              { en: "In the news",                         ta: "செய்திகளில்" },
+  "news.related":              { en: "Related news",                        ta: "தொடர்புடைய செய்திகள்" },
+  "news.via":                  { en: "Headlines via Google News",           ta: "Google செய்திகள் வழியாக தலைப்புகள்" },
+  "news.read_more":            { en: "Read full article",                   ta: "முழு கட்டுரையைப் படிக்க" },
+  "news.hours_ago":            { en: "{n}h ago",                            ta: "{n} மணி நேரம் முன்" },
+  "news.days_ago":             { en: "{n}d ago",                            ta: "{n} நாள் முன்" },
+  "news.just_now":             { en: "Just now",                            ta: "இப்போது" },
+  "news.domain_reservoirs":    { en: "Reservoirs",                          ta: "நீர்த்தேக்கங்கள்" },
+  "news.domain_groundwater":   { en: "Groundwater",                         ta: "நிலத்தடி நீர்" },
+  "news.domain_flood":         { en: "Flood",                               ta: "வெள்ளம்" },
+  "news.domain_rivers":        { en: "Rivers",                              ta: "ஆறுகள்" },
+  "news.domain_water_bodies":  { en: "Water bodies",                        ta: "நீர்நிலைகள்" },
 };

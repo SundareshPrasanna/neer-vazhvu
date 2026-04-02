@@ -20,6 +20,8 @@ import { deriveReservoirMetrics, deriveGroundwaterMetrics, deriveRestorationMetr
 import { selectNarrative } from "@/lib/insights/select-narrative";
 import { readFile } from "fs/promises";
 import { join } from "path";
+import { NewsSection } from "@/components/insights/news-section";
+import type { NewsArticle, NewsDomain } from "@/types/news";
 
 export const revalidate = 900; // ISR: revalidate every 15 minutes
 
@@ -367,6 +369,31 @@ export default async function DashboardPage() {
     return <DemoDashboard />;
   }
 
+  // Fetch news separately - failure must not affect dashboard
+  let newsArticles: NewsArticle[] = [];
+  try {
+    const { createServerClient } = await import("@/lib/supabase/server");
+    const supabase = createServerClient();
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { data } = await supabase
+      .from("news_articles")
+      .select("id, title, source_name, url, published_at, snippet, domains")
+      .gt("published_at", sevenDaysAgo)
+      .order("published_at", { ascending: false })
+      .limit(5);
+    newsArticles = (data || []).map((row: Record<string, unknown>) => ({
+      id: row.id as number,
+      title: row.title as string,
+      sourceName: row.source_name as string,
+      url: row.url as string,
+      publishedAt: row.published_at as string,
+      snippet: (row.snippet as string) || null,
+      domains: row.domains as NewsDomain[],
+    }));
+  } catch {
+    // News unavailable - section simply won't render
+  }
+
   // Compute CityStory narrative from available data
   let cityStoryNarrative = null;
   if (groundwaterData) {
@@ -401,6 +428,8 @@ export default async function DashboardPage() {
       />
 
       {cityStoryNarrative && <CityStory narrative={cityStoryNarrative} aiNarrative={aiNarrative} />}
+
+      {newsArticles.length > 0 && <NewsSection articles={newsArticles} />}
 
       <DashboardContent
         reservoirs={reservoirData.reservoirs.filter((r) =>
