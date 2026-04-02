@@ -107,6 +107,8 @@
 - IIT Madras and Anna University peer-reviewed studies on Chennai river water quality
 - NGT Chennai bench orders (which cite measured DO/BOD values)
 - Care Earth Trust / Coastal Management Society published reports
+- Nethaji Mariappan et al. (2017), "Water Quality Studies of Cooum Sub Basin, Chennai", Nature Environment and Pollution Technology, Vol. 16, No. 3. 31 geo-located sewage inlets with PWD discharge data (total 30,708 m3/day). Rendered as a toggleable map layer (`public/data/cooum-sewage-inlets.json`).
+- Sheriff & Hussain (2012), "Monitoring the quality of groundwater on the bank of Cooum River at Chennai City", Advances in Applied Science Research, Vol. 3, No. 6. Groundwater contamination from Cooum pollution at 8 stations.
 
 **CPCB classification scale used:**
 
@@ -121,6 +123,7 @@
 **Known limitations:**
 - CPCB reports are published as PDFs -no programmatic API; data must be extracted manually
 - Monitoring station locations and frequencies can change between annual reports
+- Station coordinates are approximations snapped to the river polyline; exact monitoring station placements are not publicly available from CPCB
 - Pre-2015 data is sparse for smaller rivers (Buckingham Canal, Kosasthalaiyar)
 - The overall `status` field is a judgement call for the river reach, not a single measurement
 - To update: download the latest CPCB report, update `readings` in `river-quality.json`, bump `last_updated` and `data_year_range`, commit `data: update river quality readings to {year}`

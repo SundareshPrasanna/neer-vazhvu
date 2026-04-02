@@ -9,6 +9,7 @@ import { RiversLegend } from "@/components/rivers/rivers-legend";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
 import { QUALITY_COLORS, isRiverId } from "@/types/river-quality";
 import type { IndustrialPollutionData, PollutionSource } from "@/types/industrial-pollution";
+import type { SewageInletData } from "@/components/rivers/combined-rivers-map";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
@@ -51,6 +52,7 @@ function RiversPageContent() {
   const searchParams = useSearchParams();
   const [qualityData, setQualityData] = useState<RiverQualityData | null>(null);
   const [pollutionData, setPollutionData] = useState<IndustrialPollutionData | null>(null);
+  const [sewageInletData, setSewageInletData] = useState<SewageInletData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedRiver, setSelectedRiver] = useState<SelectedRiver | null>(null);
   const [selectedSource, setSelectedSource] = useState<PollutionSource | null>(null);
@@ -65,9 +67,11 @@ function RiversPageContent() {
     Promise.all([
       fetch("/data/river-quality.json").then((r) => r.json()),
       fetch("/data/industrial-sources.json").then((r) => r.json()),
+      fetch("/data/cooum-sewage-inlets.json").then((r) => r.json()).catch(() => null),
     ])
-      .then(([quality, pollution]: [RiverQualityData, IndustrialPollutionData]) => {
+      .then(([quality, pollution, inlets]: [RiverQualityData, IndustrialPollutionData, SewageInletData | null]) => {
         setQualityData(quality);
+        setSewageInletData(inlets);
         setPollutionData(pollution);
         setLoading(false);
 
@@ -166,6 +170,7 @@ function RiversPageContent() {
           <CombinedRiversMap
             qualityData={qualityData}
             pollutionData={pollutionData}
+            sewageInletData={sewageInletData}
             selectedRiver={selectedRiver}
             onSelectRiver={(sel) => { setSelectedRiver(sel); setSelectedSource(null); }}
             onSelectSource={(source) => { setSelectedSource(source); setSelectedRiver(null); }}
@@ -219,10 +224,17 @@ function RiversPageContent() {
           <BottomSheet onClose={() => { setSelectedRiver(null); setSelectedSource(null); }}>
             {selectedRiver && (
               <RiverPanel
-                key={`${selectedRiver.riverId}-${selectedRiver.stationId ?? ""}`}
+                key={selectedRiver.riverId}
                 selected={selectedRiver}
                 qualityData={qualityData}
                 onClose={() => setSelectedRiver(null)}
+                onStationChange={(stationId) => {
+                  const river = qualityData.rivers.find((r) => r.id === selectedRiver.riverId);
+                  const station = river?.stations.find((s) => s.id === stationId);
+                  if (station) {
+                    setSelectedRiver({ ...selectedRiver, stationId, latlng: [station.lat, station.lng] });
+                  }
+                }}
               />
             )}
             {selectedSource && (

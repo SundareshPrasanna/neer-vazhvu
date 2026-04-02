@@ -224,6 +224,12 @@ export function AboutContent() {
             frequency={t("about.freq_annual")}
           />
           <DataSource
+            name="Nethaji Mariappan et al. (2017): Cooum Sewage Inlets"
+            url="https://neptjournal.com/upload-images/NL-61-47-(45)B-3437.pdf"
+            description={t("about.ds_sewage_inlets_desc")}
+            frequency={t("about.freq_one_time")}
+          />
+          <DataSource
             name="NGT Southern Bench / TNPCB / CPCB: Industrial Pollution Sources"
             url="https://www.tnpcb.gov.in/"
             description={t("about.ds_ngt_desc")}
