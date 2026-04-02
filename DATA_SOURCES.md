@@ -95,7 +95,7 @@
 
 | | |
 |---|---|
-| **Source** | [CPCB National Water Monitoring Programme](https://cpcb.nic.in/nwmp-data/) -"Status of Water Quality in India" annual reports |
+| **Source** | [CPCB National Water Monitoring Programme (NWMP)](https://cpcb.nic.in/nwmp-data-2024/) - "Status of Water Quality in India" annual reports |
 | **Method** | Manual curation (PDF/Excel → JSON) |
 | **Frequency** | Annual (refreshed when CPCB publishes the next report, typically Jan–Mar) |
 | **Coverage** | 4 rivers: Cooum, Adyar, Buckingham Canal, Kosasthalaiyar -10 monitoring stations total |
@@ -107,6 +107,8 @@
 - IIT Madras and Anna University peer-reviewed studies on Chennai river water quality
 - NGT Chennai bench orders (which cite measured DO/BOD values)
 - Care Earth Trust / Coastal Management Society published reports
+- Nethaji Mariappan et al. (2017), "Water Quality Studies of Cooum Sub Basin, Chennai", Nature Environment and Pollution Technology, Vol. 16, No. 3. 31 geo-located sewage inlets with PWD discharge data (total 30,708 m3/day). Rendered as a toggleable map layer (`public/data/cooum-sewage-inlets.json`).
+- Sheriff & Hussain (2012), "Monitoring the quality of groundwater on the bank of Cooum River at Chennai City", Advances in Applied Science Research, Vol. 3, No. 6. Groundwater contamination from Cooum pollution at 8 stations.
 
 **CPCB classification scale used:**
 
@@ -121,6 +123,7 @@
 **Known limitations:**
 - CPCB reports are published as PDFs -no programmatic API; data must be extracted manually
 - Monitoring station locations and frequencies can change between annual reports
+- Station coordinates are approximations snapped to the river polyline; exact monitoring station placements are not publicly available from CPCB
 - Pre-2015 data is sparse for smaller rivers (Buckingham Canal, Kosasthalaiyar)
 - The overall `status` field is a judgement call for the river reach, not a single measurement
 - To update: download the latest CPCB report, update `readings` in `river-quality.json`, bump `last_updated` and `data_year_range`, commit `data: update river quality readings to {year}`
@@ -302,6 +305,39 @@
 - Release points (372,223 individual household connections) are excluded for the same reason
 - Some STP capacity values are missing in the source data
 - Pipe material and size are stored as codes in the source; decoded using the sewer-codes.txt lookup table
+
+## CRRT Restoration Projects
+
+| | |
+|---|---|
+| **Source** | [Chennai Rivers Restoration Trust (CRRT)](https://www.crrt.tn.gov.in/) |
+| **Method** | Manual curation (CRRT website narrative pages to structured JSON) |
+| **Frequency** | Static dataset (updated when major project milestones are reported) |
+| **Coverage** | 9 restoration projects across 4 rivers: Adyar (5), Cooum (1), Buckingham Canal (1), Kosasthalaiyar (2) |
+| **Fields** | Project name (English + Tamil), river(s), location, status (completed/in_progress/planned), category, budget, area/length, implementing agencies, summary, metrics, source URL |
+| **File** | `public/data/restoration-projects.json` (static, served from Next.js `public/`) |
+| **Validation** | `npm run data:check` (schema check via `scripts/check-restoration-data.ts`) |
+
+**Projects tracked:**
+
+| Project | River(s) | Status |
+|---------|----------|--------|
+| Adyar Eco Park Phase I (Tholkappia Poonga) | Adyar | Completed |
+| Adyar Estuary Phase II | Adyar | Completed |
+| Adyar River Restoration (42 km) | Adyar | In progress |
+| Adyar River PPP Mode | Adyar | In progress |
+| Cooum River Restoration | Cooum | In progress |
+| Buckingham Canal Restoration | Buckingham Canal | Planned |
+| Ennore Creek Eco-Restoration | Kosasthalaiyar | Completed |
+| Kosasthalaiyar River Restoration | Kosasthalaiyar | Planned |
+| Tholkappia Poonga Redevelopment | Adyar | In progress |
+
+**Known limitations:**
+- Data is manually curated from CRRT's public website; no structured API exists
+- Budget figures are as reported by CRRT and may not reflect final expenditure
+- Project timelines and status may lag behind actual progress
+- Tamil translations (`*_ta` fields) are partially populated; English is used as fallback
+- To update: edit `public/data/restoration-projects.json`, run `npm run data:check` to validate
 
 ## Restoration Priority Scores -Computed
 

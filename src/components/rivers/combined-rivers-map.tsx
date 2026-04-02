@@ -6,8 +6,8 @@ import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer, PathOptions } from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
-import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
-import { QUALITY_COLORS } from "@/types/river-quality";
+import type { RiverId, RiverQualityData, SelectedRiver } from "@/types/river-quality";
+import { QUALITY_COLORS, isRiverId } from "@/types/river-quality";
 import type { IndustrialPollutionData, PollutionSource } from "@/types/industrial-pollution";
 import { SOURCE_TYPE_COLORS } from "@/types/industrial-pollution";
 import { useLanguage } from "@/lib/i18n/context";
@@ -24,9 +24,30 @@ function FlyToCenter({ center }: { center: [number, number] }) {
   return null;
 }
 
+export interface SewageInlet {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  flow_cum_day: number;
+  waterway: string;
+  stretch: string;
+}
+
+export interface SewageInletData {
+  source: string;
+  source_url: string;
+  data_year: number;
+  note: string;
+  total_inlets: number;
+  total_flow_cum_day: number;
+  inlets: SewageInlet[];
+}
+
 interface CombinedRiversMapProps {
   qualityData: RiverQualityData;
   pollutionData: IndustrialPollutionData;
+  sewageInletData: SewageInletData | null;
   selectedRiver: SelectedRiver | null;
   onSelectRiver: (sel: SelectedRiver | null) => void;
   onSelectSource: (source: PollutionSource | null) => void;
@@ -37,6 +58,7 @@ interface CombinedRiversMapProps {
 export function CombinedRiversMap({
   qualityData,
   pollutionData,
+  sewageInletData,
   selectedRiver,
   onSelectRiver,
   onSelectSource,
@@ -47,6 +69,8 @@ export function CombinedRiversMap({
   const tiles = useMapTiles();
   const [riversGeoJSON, setRiversGeoJSON] = useState<FeatureCollection | null>(null);
   const [zonesGeoJSON, setZonesGeoJSON] = useState<FeatureCollection | null>(null);
+  const selectedRiverId = selectedRiver?.riverId;
+  const selectedStationId = selectedRiver?.stationId;
 
   useEffect(() => {
     Promise.all([
@@ -91,6 +115,15 @@ export function CombinedRiversMap({
     })),
   };
 
+  const inletsGeoJSON: FeatureCollection | null = sewageInletData ? {
+    type: "FeatureCollection",
+    features: sewageInletData.inlets.map((inlet) => ({
+      type: "Feature" as const,
+      geometry: { type: "Point" as const, coordinates: [inlet.lng, inlet.lat] },
+      properties: { id: inlet.id, name: inlet.name, flow: inlet.flow_cum_day, waterway: inlet.waterway, stretch: inlet.stretch },
+    })),
+  } : null;
+
   const formatStretch = (stretch: string): string => {
     const normalized = stretch.trim().toLowerCase();
     if (normalized === "upper") return t("rivers.upper");
@@ -122,9 +155,11 @@ export function CombinedRiversMap({
   // (react-leaflet's GeoJSON component has rendering issues with long LineStrings)
   const riverPolylines = useMemo(() => {
     if (!riversGeoJSON) return [];
-    return riversGeoJSON.features.map((feature) => {
+    return riversGeoJSON.features.flatMap((feature) => {
       const props = feature.properties as { river_id: string; name: string; name_ta?: string };
-      const status = riverMetaMap.get(props.river_id)?.overall_status;
+      if (!isRiverId(props.river_id)) return [];
+      const river_id: RiverId = props.river_id;
+      const status = riverMetaMap.get(river_id)?.overall_status;
       const color = QUALITY_COLORS[status ?? "degraded"];
 
       let segments: [number, number][][] = [];
@@ -146,9 +181,87 @@ export function CombinedRiversMap({
         segments = multiCoords.map((seg) => seg.map((c) => [c[1], c[0]] as [number, number]));
       }
 
-      return { ...props, color, segments };
+      return [{ river_id, name: props.name, name_ta: props.name_ta, color, segments }];
     });
   }, [riverMetaMap, riversGeoJSON]);
+
+  // Compute highlighted stretch polyline for the selected station
+  const stretchHighlight = useMemo((): [number, number][] | null => {
+    if (!selectedStationId || !selectedRiverId || !riversGeoJSON) return null;
+
+    const river = riverMetaMap.get(selectedRiverId);
+    if (!river || river.stations.length < 2) return null;
+
+    // Find the river's GeoJSON feature
+    const feature = riversGeoJSON.features.find(
+      (f) => (f.properties as { river_id?: string }).river_id === selectedRiverId
+    );
+    if (!feature) return null;
+
+    // Extract polyline segments (keep MultiLineString segments separate)
+    let segments: [number, number][][] = [];
+    if (feature.geometry.type === "LineString") {
+      segments = [((feature.geometry as { coordinates: number[][] }).coordinates).map(
+        (c) => [c[1], c[0]] as [number, number]
+      )];
+    } else if (feature.geometry.type === "MultiLineString") {
+      segments = ((feature.geometry as { coordinates: number[][][] }).coordinates).map(
+        (seg) => seg.map((c) => [c[1], c[0]] as [number, number])
+      );
+    }
+
+    // Find the selected station
+    const station = river.stations.find((s) => s.id === selectedStationId);
+    if (!station) return null;
+
+    // Find which segment the station is nearest to
+    let bestSeg = 0;
+    let bestDist = Infinity;
+    for (let si = 0; si < segments.length; si++) {
+      for (let i = 0; i < segments[si].length; i++) {
+        const dlat = segments[si][i][0] - station.lat;
+        const dlng = segments[si][i][1] - station.lng;
+        const d = dlat * dlat + dlng * dlng;
+        if (d < bestDist) {
+          bestDist = d;
+          bestSeg = si;
+        }
+      }
+    }
+
+    const coords = segments[bestSeg];
+    if (coords.length < 2) return null;
+
+    // Find nearest vertex index within this segment
+    const findNearest = (lat: number, lng: number): number => {
+      let best = 0;
+      let bd = Infinity;
+      for (let i = 0; i < coords.length; i++) {
+        const dlat = coords[i][0] - lat;
+        const dlng = coords[i][1] - lng;
+        const d = dlat * dlat + dlng * dlng;
+        if (d < bd) { bd = d; best = i; }
+      }
+      return best;
+    };
+
+    // Project stations that fall on this same segment, sort by index
+    const projected = river.stations
+      .map((s) => ({ id: s.id, idx: findNearest(s.lat, s.lng) }))
+      .sort((a, b) => a.idx - b.idx);
+
+    const pos = projected.findIndex((p) => p.id === selectedStationId);
+    if (pos === -1) return null;
+
+    const startIdx = pos === 0 ? 0 : Math.round((projected[pos].idx + projected[pos - 1].idx) / 2);
+    const endIdx =
+      pos === projected.length - 1
+        ? coords.length - 1
+        : Math.round((projected[pos].idx + projected[pos + 1].idx) / 2);
+
+    const [lo, hi] = startIdx <= endIdx ? [startIdx, endIdx] : [endIdx, startIdx];
+    return coords.slice(lo, hi + 1);
+  }, [selectedStationId, selectedRiverId, riversGeoJSON, riverMetaMap]);
 
   // Monitoring station markers
   const stationPointToLayer = (feature: Feature, latlng: L.LatLng) => {
@@ -178,6 +291,7 @@ export function CombinedRiversMap({
     );
     layer.on({
       click: (e) => {
+        if (!isRiverId(props.river_id)) return;
         onSelectRiver({
           riverId: props.river_id,
           stationId: props.station_id,
@@ -215,6 +329,35 @@ export function CombinedRiversMap({
       },
       mouseover: (e) => { (e.target as L.CircleMarker).setStyle({ radius: 13 }); },
       mouseout: (e) => { (e.target as L.CircleMarker).setStyle({ radius: 10 }); },
+    });
+  };
+
+  // Sewage inlet markers - small brown diamonds sized by flow volume
+  const inletPointToLayer = (feature: Feature, latlng: L.LatLng) => {
+    const props = feature.properties as { flow: number };
+    const radius = props.flow >= 2000 ? 6 : props.flow >= 1000 ? 5 : 4;
+    return L.circleMarker(latlng, {
+      radius,
+      fillColor: "#92400e",
+      color: tiles.isDark ? "#1e293b" : "white",
+      weight: 1.5,
+      fillOpacity: 0.85,
+      opacity: 1,
+    });
+  };
+
+  const onEachInlet = (feature: Feature, layer: Layer) => {
+    const props = feature.properties as { name: string; flow: number; waterway: string };
+    layer.bindTooltip(
+      `<strong>${props.name}</strong><br/><span style="font-size:11px;color:#92400e">${props.flow.toLocaleString()} m\u00B3/day</span>`,
+      { sticky: true }
+    );
+    layer.on({
+      mouseover: (e) => { (e.target as L.CircleMarker).setStyle({ radius: 8 }); },
+      mouseout: (e) => {
+        const flow = props.flow;
+        (e.target as L.CircleMarker).setStyle({ radius: flow >= 2000 ? 6 : flow >= 1000 ? 5 : 4 });
+      },
     });
   };
 
@@ -277,6 +420,9 @@ export function CombinedRiversMap({
       {!(hiddenCategories?.has("station")) && (
         <GeoJSON key={`stations-${tiles.url}`} data={stationsGeoJSON} pointToLayer={stationPointToLayer} onEachFeature={onEachStation} />
       )}
+      {inletsGeoJSON && !(hiddenCategories?.has("sewage_inlet")) && (
+        <GeoJSON key={`inlets-${tiles.url}`} data={inletsGeoJSON} pointToLayer={inletPointToLayer} onEachFeature={onEachInlet} />
+      )}
       {(() => {
         const filteredSources = {
           ...sourcesGeoJSON,
@@ -288,6 +434,19 @@ export function CombinedRiversMap({
         return filteredSources.features.length > 0 ? (
           <GeoJSON key={`sources-${tiles.url}-${hiddenCategories ? [...hiddenCategories].sort().join(",") : ""}`} data={filteredSources} pointToLayer={sourcePointToLayer} onEachFeature={onEachSource} />
         ) : null;
+      })()}
+
+      {/* Selected stretch highlight */}
+      {stretchHighlight && selectedRiver && (() => {
+        const river = riverMetaMap.get(selectedRiver.riverId);
+        const color = QUALITY_COLORS[river?.overall_status ?? "degraded"];
+        return (
+          <Polyline
+            positions={stretchHighlight}
+            pathOptions={{ color, weight: 8, opacity: 0.45 }}
+            interactive={false}
+          />
+        );
       })()}
 
       {/* Selected station highlight ring */}

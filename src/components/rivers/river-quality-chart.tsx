@@ -41,7 +41,7 @@ function renderTooltip({
 
   const do_val = payload.find((p) => p.dataKey === "do_mgl");
   const bod_val = payload.find((p) => p.dataKey === "bod_mgl");
-  const cod_val = payload.find((p) => p.dataKey === "cod_mgl");
+  const nitrate_val = payload.find((p) => p.dataKey === "nitrate_mgl");
   const fc_val = payload.find((p) => p.dataKey === "fecal_coliform_mpn");
 
   return (
@@ -71,13 +71,13 @@ function renderTooltip({
           </span>
         </div>
       )}
-      {cod_val?.value != null && (
+      {nitrate_val?.value != null && (
         <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0" />
+          <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
           <span className="text-slate-600 dark:text-slate-400">
-            COD:{" "}
-            <span className="font-medium text-purple-600 dark:text-purple-400">
-              {cod_val.value.toFixed(0)} mg/L
+            NO₃:{" "}
+            <span className="font-medium text-emerald-600 dark:text-emerald-400">
+              {nitrate_val.value.toFixed(1)} mg/L
             </span>
           </span>
         </div>
@@ -164,7 +164,7 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
             formatter={(value: string) => {
               if (value === "do_mgl") return "DO (mg/L)";
               if (value === "bod_mgl") return "BOD (mg/L)";
-              if (value === "cod_mgl") return "COD (mg/L)";
+              if (value === "nitrate_mgl") return "NO₃ (mg/L)";
               return value;
             }}
           />
@@ -209,17 +209,17 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
             name="bod_mgl"
           />
 
-          {/* COD shares the BOD axis (both mg/L, similar scale) */}
+          {/* Nitrate shares the BOD axis (mg/L, 0–45 fits within 0–400 range) */}
           <Line
             yAxisId="bod"
             type="monotone"
-            dataKey="cod_mgl"
-            stroke="#a855f7"
+            dataKey="nitrate_mgl"
+            stroke="#10b981"
             strokeWidth={1.5}
             strokeDasharray="4 2"
-            dot={{ r: 2, fill: "#a855f7" }}
+            dot={{ r: 2, fill: "#10b981" }}
             connectNulls={false}
-            name="cod_mgl"
+            name="nitrate_mgl"
           />
         </LineChart>
       </ResponsiveContainer>

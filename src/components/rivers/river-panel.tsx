@@ -12,36 +12,139 @@ import {
 } from "@/types/river-quality";
 import { useLanguage } from "@/lib/i18n/context";
 import { NewsContext } from "@/components/insights/news-context";
+import { RestorationSection } from "@/components/rivers/restoration-section";
 
 interface RiverPanelProps {
   selected: SelectedRiver;
   qualityData: RiverQualityData;
   onClose: () => void;
+  onStationChange?: (stationId: string) => void;
 }
 
-export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) {
+export function RiverPanel({ selected, qualityData, onClose, onStationChange }: RiverPanelProps) {
   const { t, language } = useLanguage();
   const river = qualityData.rivers.find((r) => r.id === selected.riverId);
-
-  const initialStation =
+  const [fallbackStationId, setFallbackStationId] = useState<string | undefined>(
     selected.stationId
-      ? river?.stations.find((s) => s.id === selected.stationId)
-      : river?.stations[0];
-
-  const [activeStationId, setActiveStationId] = useState(
-    initialStation?.id ?? river?.stations[0]?.id
   );
 
   if (!river) return null;
+  const activeStationId = onStationChange
+    ? (selected.stationId ?? river.stations[0]?.id)
+    : (fallbackStationId ?? river.stations[0]?.id);
 
   const primaryRiverName = language === "ta" ? (river.name_ta ?? river.name) : river.name;
   const secondaryRiverName = language === "ta" ? river.name : river.name_ta;
+  const statusColor = QUALITY_COLORS[river.overall_status];
+  const statusLabel = t(`rivers_legend.${river.overall_status}`);
+
+  // No monitoring stations - show alarm state
+  if (river.stations.length === 0) {
+    return (
+      <div className="bg-white dark:bg-slate-900 w-full h-full p-4 sm:p-6 overflow-y-auto">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">{primaryRiverName}</h3>
+            {secondaryRiverName && (
+              <span className="text-sm text-slate-500 dark:text-slate-400">{secondaryRiverName}</span>
+            )}
+          </div>
+          <button onClick={onClose} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md" aria-label={t("common.close_panel")}>
+            <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="mb-4">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium text-white" style={{ backgroundColor: statusColor }}>
+            {statusLabel}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 mb-3 text-center">
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
+            <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{river.length_km} km</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t("rivers.length")}</div>
+          </div>
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
+            <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{river.cpcb_class}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t("rivers.cpcb_class")}</div>
+          </div>
+        </div>
+
+        {/* No monitoring data alarm */}
+        <div className="bg-red-50 dark:bg-red-950/30 border border-red-300 dark:border-red-800 rounded-lg p-4 mb-5">
+          <div className="flex items-start gap-3">
+            <svg className="w-6 h-6 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div>
+              <h4 className="font-semibold text-red-800 dark:text-red-200 text-sm">{t("rivers.no_monitoring_title")}</h4>
+              <p className="text-sm text-red-700 dark:text-red-300 mt-1">{t("rivers.no_monitoring_desc")}</p>
+              <p className="text-sm text-red-700 dark:text-red-300 mt-2">
+                {t("rivers.no_monitoring_cta_before")}{" "}
+                <a
+                  href={`https://github.com/SundareshPrasanna/neer-vazhvu/issues/new?title=${encodeURIComponent(`[Data] Water quality monitoring source for ${river.name}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold underline hover:text-red-900 dark:hover:text-red-100"
+                >
+                  {t("rivers.no_monitoring_cta_link")}
+                </a>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Connected insight */}
+        {(river.overall_status === "dead" || river.overall_status === "severely_degraded" || river.overall_status === "degraded") && (
+          <div className="mb-4">
+            <ConnectedInsight
+              messageKey="connected.river_recharge"
+              linkHref="/water-bodies"
+              linkKey="connected.river_wb_link"
+            />
+          </div>
+        )}
+
+        {/* Notes */}
+        {river.notes && (
+          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-5">
+            <p className="text-sm text-amber-900 dark:text-amber-200">
+              {language === "ta" ? (river.notes_ta ?? river.notes) : river.notes}
+            </p>
+          </div>
+        )}
+
+        <RestorationSection riverId={river.id} />
+
+        {/* Description */}
+        {river.description && (
+          <div className="mb-5">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              {language === "ta" ? (river.description_ta ?? river.description) : river.description}
+            </p>
+          </div>
+        )}
+
+        <NewsContext domain="rivers" locationName={`${river.name} river`} />
+
+        <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">
+          <p>
+            {t("rivers.source")}{" "}
+            <a href="https://cpcb.nic.in/nwmp-data-2024/" target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-400 hover:underline">
+              NWMP Data by CPCB
+            </a>
+          </p>
+          <p>{t("rivers.last_updated")} {qualityData.last_updated}</p>
+        </div>
+      </div>
+    );
+  }
 
   const activeStation =
     river.stations.find((s) => s.id === activeStationId) ?? river.stations[0];
-
-  const statusColor = QUALITY_COLORS[river.overall_status];
-  const statusLabel = t(`rivers_legend.${river.overall_status}`);
 
   // Latest DO reading from active station
   const latestReading = [...activeStation.readings].sort((a, b) => b.year - a.year)[0];
@@ -157,11 +260,11 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
               </span>
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-x-3 text-xs">
+          <div className="space-y-1.5 text-xs">
             {trend.do_delta !== null && (
-              <div className="flex items-center justify-between gap-1">
-                <span className="text-slate-500 dark:text-slate-400">DO</span>
-                <span className={`font-mono ${
+              <div className="flex items-center justify-between gap-2 bg-slate-50 dark:bg-slate-800/50 rounded px-2 py-1">
+                <span className="text-slate-500 dark:text-slate-400 font-medium">DO <span className="font-normal text-slate-400 dark:text-slate-500">(↑ = better)</span></span>
+                <span className={`font-mono font-semibold ${
                   trend.do_delta >= TREND_DO_THRESHOLD
                     ? "text-green-600 dark:text-green-400"
                     : trend.do_delta <= -TREND_DO_THRESHOLD
@@ -178,9 +281,9 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
               </div>
             )}
             {trend.bod_delta !== null && (
-              <div className="flex items-center justify-between gap-1">
-                <span className="text-slate-500 dark:text-slate-400">BOD</span>
-                <span className={`font-mono ${
+              <div className="flex items-center justify-between gap-2 bg-slate-50 dark:bg-slate-800/50 rounded px-2 py-1">
+                <span className="text-slate-500 dark:text-slate-400 font-medium">BOD <span className="font-normal text-slate-400 dark:text-slate-500">(↓ = better)</span></span>
+                <span className={`font-mono font-semibold ${
                   trend.bod_delta <= -TREND_BOD_THRESHOLD
                     ? "text-green-600 dark:text-green-400"
                     : trend.bod_delta >= TREND_BOD_THRESHOLD
@@ -197,9 +300,6 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
               </div>
             )}
           </div>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 leading-snug">
-            {t("rivers.do_better")}
-          </p>
         </div>
       )}
 
@@ -220,7 +320,13 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
           {river.stations.map((station) => (
             <button
               key={station.id}
-              onClick={() => setActiveStationId(station.id)}
+              onClick={() => {
+                if (onStationChange) {
+                  onStationChange(station.id);
+                  return;
+                }
+                setFallbackStationId(station.id);
+              }}
               className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
                 activeStationId === station.id
                   ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900"
@@ -251,6 +357,52 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
             {t("rivers.pollution_profile")} ({latestReading.year})
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+            {/* DO - Dissolved Oxygen (inverted: higher = better) */}
+            {latestReading.do_mgl != null && (() => {
+              const minHealthy = 4; // mg/L for aquatic life
+              const val = latestReading.do_mgl;
+              const dead = val < 1;
+              const critical = val < 4;
+              return (
+                <div className={`rounded-lg px-2.5 py-1.5 ${dead ? "bg-red-50 dark:bg-red-950/30 ring-1 ring-red-200 dark:ring-red-800" : critical ? "bg-orange-50 dark:bg-orange-950/30 ring-1 ring-orange-200 dark:ring-orange-800" : "bg-slate-50 dark:bg-slate-800"}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500 dark:text-slate-400">DO</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {"\u2265"}{minHealthy} mg/L</span>
+                  </div>
+                  <div className={`font-mono font-bold ${dead ? "text-red-600 dark:text-red-400" : critical ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"}`}>
+                    {val} <span className="font-normal text-slate-400">mg/L</span>
+                    {critical && val > 0 && <span className="ml-1.5 text-[10px] font-semibold text-red-500 dark:text-red-400">{(minHealthy / val).toFixed(0)}x {t("rivers.below_min")}</span>}
+                    {dead && val === 0 && <span className="ml-1.5 text-[10px] font-semibold text-red-500 dark:text-red-400">{t("rivers.dead_zone")}</span>}
+                  </div>
+                  <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div className={`h-full rounded-full ${dead ? "bg-red-500" : critical ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min((val / minHealthy) * 100, 100)}%` }} />
+                  </div>
+                </div>
+              );
+            })()}
+            {/* BOD - Biochemical Oxygen Demand (higher = worse) */}
+            {latestReading.bod_mgl != null && (() => {
+              const limit = 3; // Class C standard
+              const val = latestReading.bod_mgl;
+              const ratio = val / limit;
+              const exceeded = val > limit;
+              const severe = val > 30;
+              return (
+                <div className={`rounded-lg px-2.5 py-1.5 ${severe ? "bg-red-50 dark:bg-red-950/30 ring-1 ring-red-200 dark:ring-red-800" : exceeded ? "bg-orange-50 dark:bg-orange-950/30 ring-1 ring-orange-200 dark:ring-orange-800" : "bg-slate-50 dark:bg-slate-800"}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500 dark:text-slate-400">BOD</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit} mg/L</span>
+                  </div>
+                  <div className={`font-mono font-bold ${severe ? "text-red-600 dark:text-red-400" : exceeded ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"}`}>
+                    {val} <span className="font-normal text-slate-400">mg/L</span>
+                    {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(0)}x</span>}
+                  </div>
+                  <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div className={`h-full rounded-full ${severe ? "bg-red-500" : exceeded ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min(ratio * 100, 100)}%` }} />
+                  </div>
+                </div>
+              );
+            })()}
             {/* COD */}
             {latestReading.cod_mgl != null && (() => {
               const limit = 250;
@@ -293,7 +445,7 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
                     {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(0)}x</span>}
                   </div>
                   <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                    <div className={`h-full rounded-full ${severe ? "bg-red-500" : exceeded ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min((ratio / 20) * 100, 100)}%` }} />
+                    <div className={`h-full rounded-full ${severe ? "bg-red-500" : exceeded ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min(ratio * 100, 100)}%` }} />
                   </div>
                 </div>
               );
@@ -316,7 +468,7 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
                     {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(1)}x</span>}
                   </div>
                   <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                    <div className={`h-full rounded-full ${severe ? "bg-red-500" : exceeded ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min((ratio / 4) * 100, 100)}%` }} />
+                    <div className={`h-full rounded-full ${severe ? "bg-red-500" : exceeded ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min(ratio * 100, 100)}%` }} />
                   </div>
                 </div>
               );
@@ -439,10 +591,10 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
             {t("rivers.bod_desc")}
           </p>
         </div>
-        <div className="rounded-lg border border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950/30 p-2.5">
-          <span className="font-semibold text-purple-700 dark:text-purple-400">{t("rivers.cod_title")}</span>
+        <div className="rounded-lg border border-emerald-100 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 p-2.5">
+          <span className="font-semibold text-emerald-700 dark:text-emerald-400">{t("rivers.nitrate_title")}</span>
           <p className="text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">
-            {t("rivers.cod_desc")}
+            {t("rivers.nitrate_desc")}
           </p>
         </div>
         <div className="rounded-lg border border-rose-100 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/30 p-2.5">
@@ -462,6 +614,8 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
         </div>
       )}
 
+      <RestorationSection riverId={river.id} />
+
       {/* Description */}
       {river.description && (
         <div className="mb-5">
@@ -475,8 +629,29 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
 
       {/* Source */}
       <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">
-        <p>{t("rivers.source")} {qualityData.source}</p>
+        <p>
+          {t("rivers.source")}{" "}
+          <a
+            href="https://cpcb.nic.in/nwmp-data-2024/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 dark:text-blue-400 hover:underline"
+          >
+            NWMP Data by CPCB
+          </a>
+        </p>
         <p>{t("rivers.last_updated")} {qualityData.last_updated}</p>
+        <p>
+          {t("rivers.report_issue_before")}{" "}
+          <a
+            href={`https://github.com/SundareshPrasanna/neer-vazhvu/issues/new?title=${encodeURIComponent(`[Data] ${river.name} - data inconsistency`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 dark:text-blue-400 hover:underline"
+          >
+            {t("rivers.report_issue_link")}
+          </a>
+        </p>
       </div>
     </div>
   );

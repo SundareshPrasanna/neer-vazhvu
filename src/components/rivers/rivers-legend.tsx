@@ -92,6 +92,24 @@ export function RiversLegend({ hiddenCategories, onToggleCategory }: RiversLegen
           );
         })()}
 
+        {(() => {
+          const hidden = hiddenCategories?.has("sewage_inlet") ?? false;
+          return (
+            <button
+              onClick={() => onToggleCategory?.("sewage_inlet")}
+              className={`flex items-center gap-2 w-full text-left transition-opacity ${hidden ? "opacity-30" : ""} ${onToggleCategory ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 -mx-1 px-1 rounded" : ""}`}
+            >
+              <span className="flex items-center gap-0.5 flex-shrink-0 w-6 justify-center">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#92400e" }} />
+                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#92400e" }} />
+              </span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                {t("rivers_legend.sewage_inlet")}
+              </span>
+            </button>
+          );
+        })()}
+
         {/* Divider */}
         <div className="border-t border-slate-100 dark:border-slate-700" />
 

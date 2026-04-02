@@ -218,10 +218,16 @@ export function AboutContent() {
             frequency={t("about.freq_manual")}
           />
           <DataSource
-            name="CPCB: Status of Water Quality in India"
-            url="https://cpcb.nic.in/nwmp-data/"
+            name="CPCB National Water Monitoring Programme (NWMP)"
+            url="https://cpcb.nic.in/nwmp-data-2024/"
             description={t("about.ds_cpcb_desc")}
             frequency={t("about.freq_annual")}
+          />
+          <DataSource
+            name="Nethaji Mariappan et al. (2017): Cooum Sewage Inlets"
+            url="https://neptjournal.com/upload-images/NL-61-47-(45)B-3437.pdf"
+            description={t("about.ds_sewage_inlets_desc")}
+            frequency={t("about.freq_one_time")}
           />
           <DataSource
             name="NGT Southern Bench / TNPCB / CPCB: Industrial Pollution Sources"
@@ -246,6 +252,24 @@ export function AboutContent() {
             url="https://data.opencity.in/dataset/chennai-sewerage-collection-system"
             description={t("about.ds_sewerage_desc")}
             frequency={t("about.freq_static")}
+          />
+          <DataSource
+            name="IMD Gridded Rainfall (via imdlib)"
+            url="https://imdlib.readthedocs.io/"
+            description={t("about.ds_imd_desc")}
+            frequency={t("about.freq_one_time_gen")}
+          />
+          <DataSource
+            name="India WRIS / CGWB"
+            url="https://indiawris.gov.in/"
+            description={t("about.ds_cgwb_desc")}
+            frequency={t("about.freq_static_fetch")}
+          />
+          <DataSource
+            name="Chennai Rivers Restoration Trust (CRRT)"
+            url="https://www.crrt.tn.gov.in/"
+            description={t("about.ds_crrt_desc")}
+            frequency={t("about.freq_manual")}
           />
           <DataSource
             name="Anthropic Claude API"

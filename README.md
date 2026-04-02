@@ -54,10 +54,14 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 ### River Health Map
 - **Interactive Polyline Map** - 4 rivers (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) colour-coded by CPCB water quality status
 - **Monitoring Station Markers** - 10 stations with individual DO/BOD readings
-- **DO/BOD Time-Series Chart** - Dual-axis line chart (2015-2024) per station with reference lines at the aquatic life minimum (DO = 4 mg/L) and clean river standard (BOD = 2 mg/L)
-- **Pollution Profile with BIS Limits** - COD, fecal coliform, TDS, nitrate, and heavy metals (Cr, Pb, Cd) shown as severity cards with BIS drinking water limit baselines, ratio bars, and multiplier labels (e.g., "22x above limit")
-- **River Detail Panel** - Status badge, CPCB class, 3-year trend indicator, station selector, embedded explainer for DO and BOD
+- **DO/BOD/Nitrate Time-Series Chart** - Dual-axis line chart (2015-2024) per station with reference lines at the aquatic life minimum (DO = 4 mg/L) and clean river standard (BOD = 2 mg/L)
+- **Pollution Profile with BIS Limits** - DO, BOD, fecal coliform, TDS, nitrate, and heavy metals (Cr, Pb, Cd) shown as severity cards with BIS drinking water limit baselines, ratio bars, and multiplier labels (e.g., "22x above limit", "13x below min" for critically low DO)
+- **River Detail Panel** - Status badge, CPCB class, 3-year trend indicator (separate DO and BOD rows with direction hints), station selector, embedded explainers for DO, BOD, nitrate, and fecal coliform
 - **3-Year Trend** - Per monitoring station: direction badge (Improving / Worsening / Stable / Mixed) with signed DO and BOD deltas derived from the last 3 annual readings
+- **Stretch Highlighting** - Selecting a station highlights the corresponding river stretch on the map; station clicks on the map sync with the panel
+- **Sewage Inlet Layer** - 31 geo-located sewage inlets along the Cooum river with discharge volumes (size-encoded circles), from Nethaji Mariappan et al. (2017)
+- **CRRT Restoration Tracker** - 9 restoration projects from the Chennai Rivers Restoration Trust shown per river, with status, budget, area, metrics, and source links
+- **No-Monitoring Alarm** - Rivers without CPCB monitoring stations (Kosasthalaiyar) show a prominent alarm with a link to report alternative data sources
 - **Industrial Pollution Sources Overlay** - 7 major facilities (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek) colour-coded by type; click for operator details, pollutant pills, incident timeline, and NGT orders. OSM `landuse=industrial` polygons shown as translucent overlay
 
 ### Flood Risk, Drainage, and Sewerage
@@ -125,7 +129,9 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 | [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
 | [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry + industrial zone polygons | One-time fetch |
 | Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
-| [CPCB NWMP Annual Reports](https://cpcb.nic.in/nwmp-data/) | DO, BOD, pH, conductivity, COD, fecal coliform, TDS, nitrate, heavy metals (Cr, Pb, Cd) at 10 river monitoring stations (2015-2024) | Annual (manual refresh) |
+| [CPCB National Water Monitoring Programme (NWMP)](https://cpcb.nic.in/nwmp-data-2024/) | DO, BOD, pH, conductivity, fecal coliform, nitrate at 13 CPCB monitoring stations (2020-2024) | Annual (manual refresh) |
+| [Nethaji Mariappan et al. (2017)](https://neptjournal.com/upload-images/NL-61-47-(45)B-3437.pdf) | 31 sewage inlets along Cooum river with discharge volumes (30,708 m3/day total) | One-time (2017 data) |
+| [Chennai Rivers Restoration Trust (CRRT)](https://www.crrt.tn.gov.in/) | 9 restoration projects across Adyar, Cooum, Buckingham Canal, Kosasthalaiyar | Manually curated |
 | NGT Southern Bench / TNPCB / CPCB | 7 major industrial pollution sources - facility data, pollutant types, incident records, NGT orders | Manually curated |
 | [IMD Gridded Rainfall (via imdlib)](https://imdlib.readthedocs.io/) | Monthly rainfall at 0.25 deg resolution for Chennai (1970-2025), long-term normals | One-time generation |
 | [India WRIS / CGWB](https://indiawris.gov.in/) | Block-level groundwater exploitation (%), classification (Safe to Over-Exploited), block boundaries (2011-2024) | Static fetch |
@@ -311,6 +317,7 @@ neer-vazhvu/
 │   ├── fetch-wris-groundwater.ts          # Fetch CGWB groundwater exploitation from India WRIS
 │   ├── compute-ward-profiles.ts         # Spatial join: map all data layers to 200 wards
 │   ├── generate-narratives.ts           # AI narrative generation (city + ward, uses Claude API)
+│   ├── check-restoration-data.ts        # Validate restoration-projects.json schema
 │   └── check-i18n.mjs                     # Validate Tamil translation coverage
 ├── src/                          # Next.js frontend
 │   ├── app/                      # App Router pages
@@ -374,12 +381,16 @@ neer-vazhvu/
 │   │   └── chennai-sewerage.geojson             # CMWSSB sewerage network (8 STPs, 348 SPS, 3,834 mains)
 │   └── data/                     # Static JSON datasets
 │       ├── river-quality.json            # CPCB monitoring station readings (2015-2024)
+│       ├── cooum-sewage-inlets.json     # 31 sewage inlets along Cooum (Nethaji Mariappan et al. 2017)
+│       ├── restoration-projects.json    # 9 CRRT restoration projects across 4 rivers
 │       ├── industrial-sources.json       # Industrial pollution sources (NGT/TNPCB/CPCB)
 │       ├── restoration-priority.json     # Pre-computed restoration priority scores (1,787 water bodies)
 │       ├── imd-rainfall-monthly.json     # IMD historical rainfall (1970-2025, monthly + annual)
 │       ├── gwr-blocks.json              # CGWB block-level groundwater exploitation data (2011-2024)
 │       ├── gw-stations.json             # CGWB groundwater monitoring station locations
-│       └── ward-profiles.json             # Build-time ward spatial profiles (200 wards, all layers)
+│       ├── ward-names.json              # GCC ward numbering and zone assignments
+│       ├── ward-profiles.json             # Build-time ward spatial profiles (200 wards, all layers)
+│       └── ward-representatives.json    # GCC ward councilors, MLAs, MPs
 └── .github/
     └── workflows/                # CI + daily data pipeline
 ```
@@ -466,7 +477,9 @@ Please open an issue first to discuss significant changes.
 - **OpenStreetMap contributors** for water body polygon and river geometry data
 - **Care Earth Trust** for comprehensive water body surveys and documentation
 - **IIT Madras** and the **National Green Tribunal** for research and legal records on water body encroachments and industrial pollution
-- **CPCB** for annual river water quality monitoring reports
+- **[CPCB National Water Monitoring Programme (NWMP)](https://cpcb.nic.in/nwmp-data-2024/)** for annual river water quality monitoring data
+- **[Chennai Rivers Restoration Trust (CRRT)](https://www.crrt.tn.gov.in/)** for restoration project data across Chennai's rivers
+- **Nethaji Mariappan et al.** for sewage inlet survey data along the Cooum river (Nature Environment and Pollution Technology, 2017)
 - **IMD (Indian Meteorological Department)** for historical gridded rainfall data (via imdlib)
 - **CGWB / India WRIS** for block-level groundwater exploitation data and monitoring station locations
 - **TNPCB** for enforcement records and industrial consent data used in the pollution sources overlay

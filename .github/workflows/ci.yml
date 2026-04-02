@@ -26,6 +26,7 @@ jobs:
           npx tsx scripts/compute-ward-profiles.ts
           git diff --exit-code public/data/ward-profiles.json
 
+      - run: npm run data:check
       - run: npm run build
       - run: npm run test
 
