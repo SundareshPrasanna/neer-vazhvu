@@ -1,3 +1,14 @@
+// ─── River IDs ──────────────────────────────────────────────────────────────
+
+export const RIVER_IDS = ["cooum", "adyar", "buckingham-canal", "kosasthalaiyar"] as const;
+export type RiverId = (typeof RIVER_IDS)[number];
+
+export function isRiverId(value: string): value is RiverId {
+  return (RIVER_IDS as readonly string[]).includes(value);
+}
+
+// ─── Quality types ──────────────────────────────────────────────────────────
+
 export type RiverQualityStatus =
   | "dead"
   | "severely_degraded"
@@ -30,7 +41,7 @@ export interface RiverStation {
 }
 
 export interface RiverData {
-  id: string;
+  id: RiverId;
   name: string;
   name_ta: string;
   length_km: number;
@@ -51,7 +62,7 @@ export interface RiverQualityData {
 }
 
 export interface SelectedRiver {
-  riverId: string;
+  riverId: RiverId;
   stationId?: string; // undefined = river-level click
   latlng: [number, number];
 }

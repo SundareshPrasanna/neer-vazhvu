@@ -459,7 +459,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "rivers_page.quality_data": { en: "Quality data:",                  ta: "நீர்தரத் தரவு:" },
   "rivers_page.quality_label":{ en: "Quality:",                       ta: "தரம்:" },
   "rivers_page.sources_label":{ en: "Sources:",                       ta: "ஆதாரங்கள்:" },
-  "rivers_page.quality_value":{ en: "CPCB Annual Reports",            ta: "CPCB ஆண்டு அறிக்கைகள்" },
+  "rivers_page.quality_value":{ en: "NWMP Data by CPCB",              ta: "CPCB NWMP தரவு" },
   "rivers_page.sources_value":{ en: "NGT orders · CPCB · Academic studies", ta: "NGT உத்தரவுகள் · CPCB · கல்வியியல் ஆய்வுகள்" },
 
   // ── Rivers legend & status labels ─────────────────────────────────────────
@@ -790,6 +790,20 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "ai_narrative.risk_scores":   { en: "Risk scores",                         ta: "ஆபத்து மதிப்பெண்கள்" },
 
   // ── News ────────────────────────────────────────────────────────────────────
+  // ── Restoration projects ──────────────────────────────────────────────────
+  "restoration.title":         { en: "Restoration Projects",                 ta: "மறுசீரமைப்பு திட்டங்கள்" },
+  "restoration.completed":     { en: "Completed",                            ta: "நிறைவடைந்தது" },
+  "restoration.in_progress":   { en: "In progress",                          ta: "நடப்பில் உள்ளது" },
+  "restoration.planned":       { en: "Planned",                              ta: "திட்டமிடப்பட்டுள்ளது" },
+  "restoration.area":          { en: "Area",                                 ta: "பரப்பளவு" },
+  "restoration.agencies":      { en: "Agencies",                             ta: "நிறுவனங்கள்" },
+  "restoration.source":        { en: "Source: CRRT",                         ta: "ஆதாரம்: CRRT" },
+  "restoration.cat_eco":       { en: "Eco restoration",                      ta: "சுற்றுச்சூழல் மறுசீரமைப்பு" },
+  "restoration.cat_river":     { en: "River restoration",                    ta: "ஆற்று மறுசீரமைப்பு" },
+  "restoration.cat_infra":     { en: "Infrastructure",                       ta: "உள்கட்டமைப்பு" },
+  "restoration.cat_canal":     { en: "Canal restoration",                    ta: "கால்வாய் மறுசீரமைப்பு" },
+  "restoration.unavailable":   { en: "Restoration data unavailable",         ta: "மறுசீரமைப்பு தரவு கிடைக்கவில்லை" },
+
   "news.heading":              { en: "In the news",                         ta: "செய்திகளில்" },
   "news.search_all":           { en: "Search latest Chennai water news",    ta: "சென்னை நீர் செய்திகளைத் தேடுங்கள்" },
   "news.search_related":       { en: "Search related news",                 ta: "தொடர்புடைய செய்திகளைத் தேடுங்கள்" },

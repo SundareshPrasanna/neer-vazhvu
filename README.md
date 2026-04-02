@@ -125,7 +125,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 | [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
 | [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry + industrial zone polygons | One-time fetch |
 | Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
-| [CPCB NWMP Annual Reports](https://cpcb.nic.in/nwmp-data/) | DO, BOD, pH, conductivity, COD, fecal coliform, TDS, nitrate, heavy metals (Cr, Pb, Cd) at 10 river monitoring stations (2015-2024) | Annual (manual refresh) |
+| [CPCB National Water Monitoring Programme (NWMP)](https://cpcb.nic.in/nwmp-data-2024/) | DO, BOD, pH, conductivity, fecal coliform, nitrate at 13 CPCB monitoring stations (2020-2024) | Annual (manual refresh) |
 | NGT Southern Bench / TNPCB / CPCB | 7 major industrial pollution sources - facility data, pollutant types, incident records, NGT orders | Manually curated |
 | [IMD Gridded Rainfall (via imdlib)](https://imdlib.readthedocs.io/) | Monthly rainfall at 0.25 deg resolution for Chennai (1970-2025), long-term normals | One-time generation |
 | [India WRIS / CGWB](https://indiawris.gov.in/) | Block-level groundwater exploitation (%), classification (Safe to Over-Exploited), block boundaries (2011-2024) | Static fetch |
@@ -466,7 +466,7 @@ Please open an issue first to discuss significant changes.
 - **OpenStreetMap contributors** for water body polygon and river geometry data
 - **Care Earth Trust** for comprehensive water body surveys and documentation
 - **IIT Madras** and the **National Green Tribunal** for research and legal records on water body encroachments and industrial pollution
-- **CPCB** for annual river water quality monitoring reports
+- **[CPCB National Water Monitoring Programme (NWMP)](https://cpcb.nic.in/nwmp-data-2024/)** for annual river water quality monitoring data
 - **IMD (Indian Meteorological Department)** for historical gridded rainfall data (via imdlib)
 - **CGWB / India WRIS** for block-level groundwater exploitation data and monitoring station locations
 - **TNPCB** for enforcement records and industrial consent data used in the pollution sources overlay

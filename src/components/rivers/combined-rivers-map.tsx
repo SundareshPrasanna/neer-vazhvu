@@ -6,8 +6,8 @@ import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer, PathOptions } from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
-import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
-import { QUALITY_COLORS } from "@/types/river-quality";
+import type { RiverId, RiverQualityData, SelectedRiver } from "@/types/river-quality";
+import { QUALITY_COLORS, isRiverId } from "@/types/river-quality";
 import type { IndustrialPollutionData, PollutionSource } from "@/types/industrial-pollution";
 import { SOURCE_TYPE_COLORS } from "@/types/industrial-pollution";
 import { useLanguage } from "@/lib/i18n/context";
@@ -122,9 +122,11 @@ export function CombinedRiversMap({
   // (react-leaflet's GeoJSON component has rendering issues with long LineStrings)
   const riverPolylines = useMemo(() => {
     if (!riversGeoJSON) return [];
-    return riversGeoJSON.features.map((feature) => {
+    return riversGeoJSON.features.flatMap((feature) => {
       const props = feature.properties as { river_id: string; name: string; name_ta?: string };
-      const status = riverMetaMap.get(props.river_id)?.overall_status;
+      if (!isRiverId(props.river_id)) return [];
+      const river_id: RiverId = props.river_id;
+      const status = riverMetaMap.get(river_id)?.overall_status;
       const color = QUALITY_COLORS[status ?? "degraded"];
 
       let segments: [number, number][][] = [];
@@ -146,7 +148,7 @@ export function CombinedRiversMap({
         segments = multiCoords.map((seg) => seg.map((c) => [c[1], c[0]] as [number, number]));
       }
 
-      return { ...props, color, segments };
+      return [{ river_id, name: props.name, name_ta: props.name_ta, color, segments }];
     });
   }, [riverMetaMap, riversGeoJSON]);
 
@@ -178,6 +180,7 @@ export function CombinedRiversMap({
     );
     layer.on({
       click: (e) => {
+        if (!isRiverId(props.river_id)) return;
         onSelectRiver({
           riverId: props.river_id,
           stationId: props.station_id,

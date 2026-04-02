@@ -11,7 +11,7 @@ graph TB
         OM["Open-Meteo API<br/>(Weather + ET₀, primary)"]
         NASA["NASA POWER API<br/>(Weather fallback)"]
         OC["OpenCity CKAN<br/>(Groundwater)"]
-        CPCB["CPCB Annual Reports<br/>(River quality, manual)"]
+        CPCB["CPCB NWMP Data<br/>(River quality, manual)"]
         OSM["OpenStreetMap / Overpass<br/>(River geometry, drainage, one-time)"]
         GCC["GCC SWD Survey<br/>(Storm water drains, one-time)"]
         IMD["IMD Gridded Rainfall<br/>(via imdlib, one-time)"]

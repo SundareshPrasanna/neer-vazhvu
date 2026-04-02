@@ -218,8 +218,8 @@ export function AboutContent() {
             frequency={t("about.freq_manual")}
           />
           <DataSource
-            name="CPCB: Status of Water Quality in India"
-            url="https://cpcb.nic.in/nwmp-data/"
+            name="CPCB National Water Monitoring Programme (NWMP)"
+            url="https://cpcb.nic.in/nwmp-data-2024/"
             description={t("about.ds_cpcb_desc")}
             frequency={t("about.freq_annual")}
           />

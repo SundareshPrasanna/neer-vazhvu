@@ -12,6 +12,7 @@ import {
 } from "@/types/river-quality";
 import { useLanguage } from "@/lib/i18n/context";
 import { NewsContext } from "@/components/insights/news-context";
+import { RestorationSection } from "@/components/rivers/restoration-section";
 
 interface RiverPanelProps {
   selected: SelectedRiver;
@@ -462,6 +463,8 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
         </div>
       )}
 
+      <RestorationSection riverId={river.id} />
+
       {/* Description */}
       {river.description && (
         <div className="mb-5">
@@ -475,7 +478,17 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
 
       {/* Source */}
       <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">
-        <p>{t("rivers.source")} {qualityData.source}</p>
+        <p>
+          {t("rivers.source")}{" "}
+          <a
+            href="https://cpcb.nic.in/nwmp-data-2024/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 dark:text-blue-400 hover:underline"
+          >
+            NWMP Data by CPCB
+          </a>
+        </p>
         <p>{t("rivers.last_updated")} {qualityData.last_updated}</p>
       </div>
     </div>

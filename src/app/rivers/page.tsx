@@ -7,7 +7,7 @@ import { RiverPanel } from "@/components/rivers/river-panel";
 import { PollutionPanel } from "@/components/pollution/pollution-panel";
 import { RiversLegend } from "@/components/rivers/rivers-legend";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
-import { QUALITY_COLORS } from "@/types/river-quality";
+import { QUALITY_COLORS, isRiverId } from "@/types/river-quality";
 import type { IndustrialPollutionData, PollutionSource } from "@/types/industrial-pollution";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
@@ -72,8 +72,8 @@ function RiversPageContent() {
         setLoading(false);
 
         // Deep link: pre-select river + station from ?river= and ?station= params
-        if (riverParam) {
-          const river = quality.rivers.find((r: { id: string }) => r.id === riverParam);
+        if (riverParam && isRiverId(riverParam)) {
+          const river = quality.rivers.find((r) => r.id === riverParam);
           if (river && river.stations.length > 0) {
             const station = stationParam
               ? river.stations.find((s: { id: string }) => s.id === stationParam) ?? river.stations[0]
@@ -189,9 +189,14 @@ function RiversPageContent() {
           <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {t("rivers_page.quality_label")}{" "}
-              <span className="font-semibold text-slate-700 dark:text-slate-300">
+              <a
+                href="https://cpcb.nic.in/nwmp-data-2024/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+              >
                 {t("rivers_page.quality_value")}
-              </span>
+              </a>
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {t("rivers_page.sources_label")}{" "}
