@@ -6,6 +6,7 @@ import { ConnectedInsight } from "@/components/insights/connected-insight";
 import { WardContext } from "@/components/insights/ward-context";
 import { WardNarrative } from "@/components/insights/ward-narrative";
 import { WardRepresentatives } from "@/components/insights/ward-representatives";
+import { NewsContext } from "@/components/insights/news-context";
 import { useWardLookup } from "@/lib/hooks/use-ward-lookup";
 import { HAZARD_COLORS, VULNERABILITY_COLORS, DRAINAGE_COLORS, SEWERAGE_COLORS } from "@/types/flood-risk";
 import type {
@@ -86,6 +87,7 @@ export function FloodDetailPanel({ selected, onClose }: FloodDetailPanelProps) {
         {resolvedWard && <WardContext wardNumber={resolvedWard} />}
         {resolvedWard && <WardRepresentatives wardNumber={resolvedWard} />}
         {resolvedWard && <WardNarrative wardNumber={resolvedWard} />}
+        <NewsContext domain="flood" />
       </div>
     </div>
   );

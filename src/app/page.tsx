@@ -20,6 +20,7 @@ import { deriveReservoirMetrics, deriveGroundwaterMetrics, deriveRestorationMetr
 import { selectNarrative } from "@/lib/insights/select-narrative";
 import { readFile } from "fs/promises";
 import { join } from "path";
+import { NewsSection } from "@/components/insights/news-section";
 
 export const revalidate = 900; // ISR: revalidate every 15 minutes
 
@@ -415,6 +416,8 @@ export default async function DashboardPage() {
       {groundwaterData && <GroundwaterSnapshot data={groundwaterData} />}
 
       <RainfallTrends />
+
+      <NewsSection />
     </div>
   );
 }

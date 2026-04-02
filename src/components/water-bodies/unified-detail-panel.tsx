@@ -12,6 +12,7 @@ import { STATUS_COLORS } from "@/types/water-bodies";
 import type { ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
+import { NewsContext } from "@/components/insights/news-context";
 import {
   RIVER_POLLUTION_COMPONENT_THRESHOLD,
   RIVER_POLLUTION_COMPONENT_MAX,
@@ -371,6 +372,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
             <WardContext wardNumber={resolvedWard} />
             <WardRepresentatives wardNumber={resolvedWard} />
             <WardNarrative wardNumber={resolvedWard} />
+            <NewsContext domain="water_bodies" />
           </div>
         )}
       </div>
@@ -493,6 +495,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
             <WardContext wardNumber={resolvedWard} />
             <WardRepresentatives wardNumber={resolvedWard} />
             <WardNarrative wardNumber={resolvedWard} />
+            <NewsContext domain="water_bodies" />
           </div>
         )}
       </div>
@@ -599,6 +602,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
           <WardContext wardNumber={resolvedWard} />
           <WardRepresentatives wardNumber={resolvedWard} />
           <WardNarrative wardNumber={resolvedWard} />
+          <NewsContext domain="water_bodies" />
         </div>
       )}
     </div>

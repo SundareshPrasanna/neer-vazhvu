@@ -27,7 +27,12 @@ const SOURCE_ITEMS: PollutionSourceType[] = [
   "discharge_zone",
 ];
 
-export function RiversLegend() {
+interface RiversLegendProps {
+  hiddenCategories?: Set<string>;
+  onToggleCategory?: (category: string) => void;
+}
+
+export function RiversLegend({ hiddenCategories, onToggleCategory }: RiversLegendProps = {}) {
   const { t } = useLanguage();
   const [expanded, setExpanded] = useState(false);
 
@@ -54,8 +59,13 @@ export function RiversLegend() {
         <div className="flex flex-col gap-1">
           {QUALITY_ITEMS.map((status) => {
             const active = ACTIVE_STATUSES.has(status);
+            const hidden = hiddenCategories?.has(status) ?? false;
             return (
-              <div key={status} className={`flex items-center gap-2 whitespace-nowrap ${active ? "" : "opacity-35"}`}>
+              <button
+                key={status}
+                onClick={() => onToggleCategory?.(status)}
+                className={`flex items-center gap-2 whitespace-nowrap w-full text-left transition-opacity ${hidden ? "opacity-30" : active ? "" : "opacity-35"} ${onToggleCategory ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 -mx-1 px-1 rounded" : ""}`}
+              >
                 <span
                   className="w-6 h-1.5 rounded-full flex-shrink-0"
                   style={{ backgroundColor: QUALITY_COLORS[status] }}
@@ -63,16 +73,24 @@ export function RiversLegend() {
                 <span className="text-xs text-slate-600 dark:text-slate-400">
                   {t(`rivers_legend.${status}`)}
                 </span>
-              </div>
+              </button>
             );
           })}
         </div>
-        <div className="flex items-center gap-2 whitespace-nowrap">
-          <span className="w-3 h-3 rounded-full border-2 border-slate-400 bg-white dark:bg-slate-600 flex-shrink-0" />
-          <span className="text-xs text-slate-500 dark:text-slate-400">
-            {t("rivers_legend.monitoring_station")}
-          </span>
-        </div>
+        {(() => {
+          const hidden = hiddenCategories?.has("station") ?? false;
+          return (
+            <button
+              onClick={() => onToggleCategory?.("station")}
+              className={`flex items-center gap-2 whitespace-nowrap w-full text-left transition-opacity ${hidden ? "opacity-30" : ""} ${onToggleCategory ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 -mx-1 px-1 rounded" : ""}`}
+            >
+              <span className="w-3 h-3 rounded-full border-2 border-slate-400 bg-white dark:bg-slate-600 flex-shrink-0" />
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                {t("rivers_legend.monitoring_station")}
+              </span>
+            </button>
+          );
+        })()}
 
         {/* Divider */}
         <div className="border-t border-slate-100 dark:border-slate-700" />
@@ -83,30 +101,45 @@ export function RiversLegend() {
             {t("rivers_legend.pollution_sources")}
           </p>
           <div className="flex flex-col gap-1">
-            {SOURCE_ITEMS.map((type) => (
-              <div key={type} className="flex items-center gap-2 whitespace-nowrap">
+            {SOURCE_ITEMS.map((type) => {
+              const hidden = hiddenCategories?.has(`source_${type}`) ?? false;
+              return (
+                <button
+                  key={type}
+                  onClick={() => onToggleCategory?.(`source_${type}`)}
+                  className={`flex items-center gap-2 whitespace-nowrap w-full text-left transition-opacity ${hidden ? "opacity-30" : ""} ${onToggleCategory ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 -mx-1 px-1 rounded" : ""}`}
+                >
+                  <span
+                    className="w-3 h-3 rounded-full border-2 border-white dark:border-slate-600 flex-shrink-0 shadow-sm"
+                    style={{ backgroundColor: SOURCE_TYPE_COLORS[type] }}
+                  />
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
+                    {t(`rivers_legend.${type}`)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {(() => {
+            const hidden = hiddenCategories?.has("industrial_zone") ?? false;
+            return (
+              <button
+                onClick={() => onToggleCategory?.("industrial_zone")}
+                className={`mt-1.5 flex items-center gap-2 w-full text-left transition-opacity ${hidden ? "opacity-30" : ""} ${onToggleCategory ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 -mx-1 px-1 rounded" : ""}`}
+              >
                 <span
-                  className="w-3 h-3 rounded-full border-2 border-white dark:border-slate-600 flex-shrink-0 shadow-sm"
-                  style={{ backgroundColor: SOURCE_TYPE_COLORS[type] }}
+                  className="w-6 h-3 rounded flex-shrink-0 border border-dashed"
+                  style={{
+                    backgroundColor: "rgba(249,115,22,0.10)",
+                    borderColor: "#f97316",
+                  }}
                 />
-                <span className="text-xs text-slate-600 dark:text-slate-400">
-                  {t(`rivers_legend.${type}`)}
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  {t("rivers_legend.industrial_zone")}
                 </span>
-              </div>
-            ))}
-          </div>
-          <div className="mt-1.5 flex items-center gap-2">
-            <span
-              className="w-6 h-3 rounded flex-shrink-0 border border-dashed"
-              style={{
-                backgroundColor: "rgba(249,115,22,0.10)",
-                borderColor: "#f97316",
-              }}
-            />
-            <span className="text-xs text-slate-500 dark:text-slate-400">
-              {t("rivers_legend.industrial_zone")}
-            </span>
-          </div>
+              </button>
+            );
+          })()}
         </div>
       </div>
     </div>

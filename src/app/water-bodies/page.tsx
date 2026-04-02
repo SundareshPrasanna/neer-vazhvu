@@ -62,6 +62,7 @@ function WaterBodiesPageContent() {
   const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
   const [lostStats, setLostStats] = useState<{ lostCount: number; totalHaLost: number } | null>(null);
   const [censusData, setCensusData] = useState<CensusWaterBodyProperties[]>([]);
+  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [censusSummary, setCensusSummary] = useState<{ total: number; encroached: number; avgStorageLossPct: number | null } | null>(null);
   const [activeTab, setActiveTab] = useState<string>("map");
   const [statsOpen, setStatsOpen] = useState(false);
@@ -380,7 +381,7 @@ function WaterBodiesPageContent() {
               {t("lr.tab_ranking")}
             </TabsTrigger>
           </TabsList>
-          {activeTab === "map" && <ViewModeToggle value={viewMode} onChange={setViewMode} />}
+          {activeTab === "map" && <ViewModeToggle value={viewMode} onChange={(mode) => { setViewMode(mode); setHiddenCategories(new Set()); }} />}
         </div>
 
         {/* Map tab */}
@@ -393,9 +394,18 @@ function WaterBodiesPageContent() {
               onSelectCurrent={setSelected}
               onSelectLost={setSelected}
               focusCenter={focusCenter}
+              hiddenCategories={hiddenCategories}
             />
             <div className={`absolute left-2 sm:bottom-4 sm:left-4 z-[1000] transition-[bottom] duration-300 ${selected ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
-              <UnifiedLegend viewMode={viewMode} />
+              <UnifiedLegend
+                viewMode={viewMode}
+                hiddenCategories={hiddenCategories}
+                onToggleCategory={(cat) => setHiddenCategories((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(cat)) next.delete(cat); else next.add(cat);
+                  return next;
+                })}
+              />
             </div>
             <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
               <div className="text-xs text-slate-500 dark:text-slate-400">

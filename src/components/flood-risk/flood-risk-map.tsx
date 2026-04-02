@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -41,6 +41,7 @@ interface FloodRiskMapProps {
   historicalEvent: "2015" | "2020";
   onSelect: (feat: SelectedFloodFeature | null) => void;
   focusCenter?: [number, number];
+  hiddenCategories?: Set<string>;
 }
 
 /** Flies the map to a given center when it changes */
@@ -61,12 +62,17 @@ export function FloodRiskMap({
   historicalEvent,
   onSelect,
   focusCenter,
+  hiddenCategories,
 }: FloodRiskMapProps) {
   const { t } = useLanguage();
   const tiles = useMapTiles();
 
   // Canvas renderer with tolerance for easier clicking on thin lines
   const canvasRenderer = useMemo(() => L.canvas({ tolerance: 10 }), []);
+
+  // Refs for imperative style updates (avoids expensive GeoJSON remounts on legend toggle)
+  const hazardLayerRef = useRef<L.GeoJSON | null>(null);
+  const drainageLayerRef = useRef<L.GeoJSON | null>(null);
 
   // GeoJSON data state
   const [hazardGeo, setHazardGeo] = useState<GeoJSON.FeatureCollection | null>(null);
@@ -125,15 +131,16 @@ export function FloodRiskMap({
     (feature: Feature | undefined) => {
       const cat = (feature?.properties?.category ?? "low") as HazardCategory;
       const color = HAZARD_COLORS[cat] ?? "#64748b";
+      const isHidden = hiddenCategories?.has(cat) ?? false;
       return {
         fillColor: color,
-        fillOpacity: 0.45,
+        fillOpacity: isHidden ? 0 : 0.45,
         color,
-        weight: 0.5,
-        opacity: 0.7,
+        weight: isHidden ? 0 : 0.5,
+        opacity: isHidden ? 0 : 0.7,
       };
     },
-    []
+    [hiddenCategories]
   );
 
   // Hazard click + hover handler
@@ -161,13 +168,14 @@ export function FloodRiskMap({
   const drainageStyle = useCallback(
     (feature: Feature | undefined) => {
       const type = feature?.properties?.drain_type ?? "SWD";
+      const isHidden = hiddenCategories?.has(type) ?? false;
       return {
         color: DRAINAGE_COLORS[type] ?? "#3b82f6",
         weight: DRAINAGE_WIDTHS[type] ?? 2,
-        opacity: 0.85,
+        opacity: isHidden ? 0 : 0.85,
       };
     },
-    []
+    [hiddenCategories]
   );
 
   // Drainage click handler
@@ -287,6 +295,15 @@ export function FloodRiskMap({
     [onSelect]
   );
 
+  // Imperatively restyle layers when hiddenCategories changes (avoids full GeoJSON remount)
+  useEffect(() => {
+    hazardLayerRef.current?.setStyle(hazardStyle as L.StyleFunction);
+  }, [hiddenCategories, hazardStyle]);
+
+  useEffect(() => {
+    drainageLayerRef.current?.setStyle(drainageStyle as L.StyleFunction);
+  }, [hiddenCategories, drainageStyle]);
+
   return (
     <MapContainer
       center={CHENNAI_CENTER}
@@ -312,6 +329,7 @@ export function FloodRiskMap({
       {/* ── Hazard mode ─────────────────────────── */}
       {viewMode === "hazard" && hazardGeo && (
         <GeoJSON
+          ref={(layer) => { hazardLayerRef.current = layer; }}
           key={`hazard-zones-${tiles.url}`}
           data={hazardGeo}
           style={hazardStyle}
@@ -322,9 +340,14 @@ export function FloodRiskMap({
       {/* ── Historical mode ─────────────────────── */}
       {viewMode === "historical" && historicalEvent === "2015" && (
         <>
-          {/* 2015 hotspot points */}
+          {/* 2015 hotspot points – filtered by vulnerability level */}
           {hotspot2015Geo?.features.map((f, i) => {
             const p = f.properties as unknown as Hotspot2015Properties;
+            const vulnId = p.vulnerability === "Very High Vulnerability" ? "vuln_very_high"
+              : p.vulnerability === "High Vulnerability" ? "vuln_high"
+              : p.vulnerability === "Low Vulnerability" ? "vuln_low"
+              : undefined;
+            if (vulnId && hiddenCategories?.has(vulnId)) return null;
             const color = VULNERABILITY_COLORS[p.vulnerability] ?? "#f97316";
             return (
               <CircleMarker
@@ -346,7 +369,7 @@ export function FloodRiskMap({
             );
           })}
           {/* 2015 depth points */}
-          {depthGeo?.features.map((f, i) => {
+          {!(hiddenCategories?.has("depth")) && depthGeo?.features.map((f, i) => {
             const p = f.properties as { DEPTH: number; F_REMARKS: string; F_LATITUDE: number; F_LONGITUDE: number };
             const radius = Math.max(3, Math.min(8, p.DEPTH / 6));
             return (
@@ -373,7 +396,7 @@ export function FloodRiskMap({
 
       {viewMode === "historical" && historicalEvent === "2020" && (
         <>
-          {hotspot2020Geo?.features.map((f, i) => {
+          {!(hiddenCategories?.has("hotspot")) && hotspot2020Geo?.features.map((f, i) => {
             const p = f.properties as { name: string; latitude: number; longitude: number };
             return (
               <CircleMarker
@@ -401,7 +424,7 @@ export function FloodRiskMap({
       {viewMode === "drainage" && (
         <>
           {/* Rivers overlay */}
-          {riversGeo && (
+          {!(hiddenCategories?.has("river")) && riversGeo && (
             <GeoJSON
               key={`rivers-overlay-${tiles.url}`}
               data={riversGeo}
@@ -412,6 +435,7 @@ export function FloodRiskMap({
           {/* Drainage network - canvas renderer for 10px click tolerance */}
           {drainageGeo && (
             <GeoJSON
+              ref={(layer) => { drainageLayerRef.current = layer; }}
               key={`drainage-network-${tiles.url}`}
               data={drainageGeo}
               style={drainageStyle}
@@ -435,7 +459,7 @@ export function FloodRiskMap({
             />
           )}
           {/* Pumping mains (lines) - canvas renderer for 10px click tolerance */}
-          {sewerageMains && (
+          {!(hiddenCategories?.has("pumping_main")) && sewerageMains && (
             <GeoJSON
               key={`pumping-mains-${tiles.url}`}
               data={sewerageMains}
@@ -445,7 +469,7 @@ export function FloodRiskMap({
             />
           )}
           {/* Pumping stations (points) */}
-          {sewerageSPS?.features.map((f, i) => {
+          {!(hiddenCategories?.has("sps")) && sewerageSPS?.features.map((f, i) => {
             const p = f.properties as unknown as SPSProperties;
             const coords = (f.geometry as GeoJSON.Point).coordinates;
             return (
@@ -473,7 +497,7 @@ export function FloodRiskMap({
             );
           })}
           {/* Treatment plants (larger markers) */}
-          {sewerageSTP?.features.map((f, i) => {
+          {!(hiddenCategories?.has("stp")) && sewerageSTP?.features.map((f, i) => {
             const p = f.properties as unknown as STPProperties;
             const coords = (f.geometry as GeoJSON.Point).coordinates;
             return (

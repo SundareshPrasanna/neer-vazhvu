@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { MapContainer, TileLayer, GeoJSON, Tooltip, LayerGroup, Circle, useMap } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
@@ -27,6 +27,7 @@ interface UnifiedMapProps {
   onSelectCurrent: (body: SelectedWaterBody) => void;
   onSelectLost: (body: SelectedWaterBody) => void;
   focusCenter?: [number, number];
+  hiddenCategories?: Set<string>;
 }
 
 /** Flies the map to a given center when it changes */
@@ -51,7 +52,7 @@ function getCensusColor(wb: CensusWaterBodyProperties): string {
  *  has mixed/unreliable units (see About > Data Quality). */
 const CENSUS_RADIUS_M = 20;
 
-export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, onSelectLost, focusCenter }: UnifiedMapProps) {
+export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, onSelectLost, focusCenter, hiddenCategories }: UnifiedMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [currentGeoJSON, setCurrentGeoJSON] =
@@ -221,17 +222,23 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
 
   // --- Styles ---
 
-  const currentStyle = (feature: Feature | undefined) => {
+  // Refs for imperative style updates (avoids expensive GeoJSON remounts on legend toggle)
+  const currentLayerRef = useRef<L.GeoJSON | null>(null);
+  const lostLayerRef = useRef<L.GeoJSON | null>(null);
+
+  const currentStyle = useCallback((feature: Feature | undefined) => {
     if (viewMode === "restoration") {
       const osmId = feature?.properties?.osm_id as number | undefined;
       const scored = osmId ? scoreLookupByOsmId.get(osmId) : undefined;
       const color = scored ? getPriorityColor(scored.priority_level) : "#94a3b8";
+      const category = scored?.priority_level;
+      const isHidden = category ? (hiddenCategories?.has(category) ?? false) : false;
       return {
         fillColor: color,
         color,
         weight: 1.5,
-        fillOpacity: 0.55,
-        opacity: 0.8,
+        fillOpacity: isHidden ? 0.05 : 0.55,
+        opacity: isHidden ? 0.1 : 0.8,
       };
     }
     // In water-bodies mode, color matched polygons by census status
@@ -239,31 +246,48 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
     const censusMatch = osmId ? censusMatchByOsmId.get(osmId) : undefined;
     if (censusMatch) {
       const color = getCensusColor(censusMatch);
-      return { fillColor: color, color, weight: 2, fillOpacity: 0.5, opacity: 0.85 };
+      // Determine census category for filtering
+      let category: string;
+      if (censusMatch.encroachment_status === "yes") category = "census_encroached";
+      else if (censusMatch.storage_loss_pct != null && censusMatch.storage_loss_pct > 50) category = "census_degraded";
+      else category = "census_healthy";
+      const isHidden = hiddenCategories?.has(category) ?? false;
+      return { fillColor: color, color, weight: 2, fillOpacity: isHidden ? 0.05 : 0.5, opacity: isHidden ? 0.1 : 0.85 };
     }
+    const isHidden = hiddenCategories?.has("existing") ?? false;
     return {
       fillColor: "#3b82f6",
       color: "#1d4ed8",
       weight: 1.5,
-      fillOpacity: 0.45,
-      opacity: 0.8,
+      fillOpacity: isHidden ? 0.05 : 0.45,
+      opacity: isHidden ? 0.1 : 0.8,
     };
-  };
+  }, [viewMode, scoreLookupByOsmId, censusMatchByOsmId, hiddenCategories]);
 
-  const lostStyle = (feature: Feature | undefined) => {
+  const lostStyle = useCallback((feature: Feature | undefined) => {
     const status = feature?.properties?.status as
       | keyof typeof STATUS_COLORS
       | undefined;
     const color = status ? STATUS_COLORS[status] : "#dc2626";
+    const isHidden = status ? (hiddenCategories?.has(status) ?? false) : false;
     return {
       fillColor: color,
       color,
       weight: 2,
-      fillOpacity: 0.35,
-      opacity: 0.85,
+      fillOpacity: isHidden ? 0.05 : 0.35,
+      opacity: isHidden ? 0.1 : 0.85,
       dashArray: "6, 4",
     };
-  };
+  }, [hiddenCategories]);
+
+  // Imperatively restyle layers when hiddenCategories changes
+  useEffect(() => {
+    currentLayerRef.current?.setStyle(currentStyle as L.StyleFunction);
+  }, [hiddenCategories, currentStyle]);
+
+  useEffect(() => {
+    lostLayerRef.current?.setStyle(lostStyle as L.StyleFunction);
+  }, [hiddenCategories, lostStyle]);
 
   // --- Interaction handlers ---
 
@@ -403,6 +427,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {currentGeoJSON && (
         <GeoJSON
+          ref={(layer) => { currentLayerRef.current = layer; }}
           key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}-${tiles.url}`}
           data={currentGeoJSON}
           style={currentStyle}
@@ -411,6 +436,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
       )}
       {lostGeoJSON && (
         <GeoJSON
+          ref={(layer) => { lostLayerRef.current = layer; }}
           key={`lost-${language}-${tiles.url}`}
           data={lostGeoJSON}
           pointToLayer={pointToLayer}
@@ -420,7 +446,13 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
       )}
       {unmatchedCensus.length > 0 && viewMode === "water-bodies" && (
         <LayerGroup>
-              {unmatchedCensus.map((wb) => {
+              {unmatchedCensus.filter((wb) => {
+                let cat: string;
+                if (wb.encroachment_status === "yes") cat = "census_encroached";
+                else if (wb.storage_loss_pct != null && wb.storage_loss_pct > 50) cat = "census_degraded";
+                else cat = "census_healthy";
+                return !(hiddenCategories?.has(cat));
+              }).map((wb) => {
                 const color = getCensusColor(wb);
                 const name = wb.name || t("wb_panel.unnamed");
                 const type = wb.water_body_type || t("wb_panel.water_body");
@@ -461,7 +493,10 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
       )}
       {unmatchedCensus.length > 0 && viewMode === "restoration" && (
         <LayerGroup>
-              {unmatchedCensus.map((wb) => {
+              {unmatchedCensus.filter((wb) => {
+                const scored = scoreLookupById.get(`census:${wb.id}`);
+                return !(scored && hiddenCategories?.has(scored.priority_level));
+              }).map((wb) => {
                 const scored = scoreLookupById.get(`census:${wb.id}`);
                 const color = scored ? getPriorityColor(scored.priority_level) : "#94a3b8";
                 const name = wb.name || t("wb_panel.unnamed");

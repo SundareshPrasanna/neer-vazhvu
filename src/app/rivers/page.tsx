@@ -55,6 +55,7 @@ function RiversPageContent() {
   const [selectedRiver, setSelectedRiver] = useState<SelectedRiver | null>(null);
   const [selectedSource, setSelectedSource] = useState<PollutionSource | null>(null);
   const [focusCenter, setFocusCenter] = useState<[number, number] | undefined>();
+  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
 
   useEffect(() => {
@@ -169,11 +170,19 @@ function RiversPageContent() {
             onSelectRiver={(sel) => { setSelectedRiver(sel); setSelectedSource(null); }}
             onSelectSource={(source) => { setSelectedSource(source); setSelectedRiver(null); }}
             focusCenter={focusCenter}
+            hiddenCategories={hiddenCategories}
           />
 
           {/* Legend overlay - shifts up on mobile when bottom sheet is open */}
           <div className={`absolute left-2 sm:bottom-4 sm:left-4 z-[1000] transition-[bottom] duration-300 ${hasPanel ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
-            <RiversLegend />
+            <RiversLegend
+              hiddenCategories={hiddenCategories}
+              onToggleCategory={(cat) => setHiddenCategories((prev) => {
+                const next = new Set(prev);
+                if (next.has(cat)) next.delete(cat); else next.add(cat);
+                return next;
+              })}
+            />
           </div>
 
           {/* Source note overlay */}
