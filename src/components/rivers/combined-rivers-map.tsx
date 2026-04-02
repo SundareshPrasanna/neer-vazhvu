@@ -196,36 +196,52 @@ export function CombinedRiversMap({
     );
     if (!feature) return null;
 
-    // Extract full polyline as [lat, lng][]
-    let coords: [number, number][] = [];
+    // Extract polyline segments (keep MultiLineString segments separate)
+    let segments: [number, number][][] = [];
     if (feature.geometry.type === "LineString") {
-      coords = ((feature.geometry as { coordinates: number[][] }).coordinates).map(
+      segments = [((feature.geometry as { coordinates: number[][] }).coordinates).map(
         (c) => [c[1], c[0]] as [number, number]
-      );
+      )];
     } else if (feature.geometry.type === "MultiLineString") {
-      coords = ((feature.geometry as { coordinates: number[][][] }).coordinates)
-        .flat()
-        .map((c) => [c[1], c[0]] as [number, number]);
+      segments = ((feature.geometry as { coordinates: number[][][] }).coordinates).map(
+        (seg) => seg.map((c) => [c[1], c[0]] as [number, number])
+      );
     }
+
+    // Find the selected station
+    const station = river.stations.find((s) => s.id === selectedRiver.stationId);
+    if (!station) return null;
+
+    // Find which segment the station is nearest to
+    let bestSeg = 0;
+    let bestDist = Infinity;
+    let bestIdx = 0;
+    for (let si = 0; si < segments.length; si++) {
+      for (let i = 0; i < segments[si].length; i++) {
+        const dlat = segments[si][i][0] - station.lat;
+        const dlng = segments[si][i][1] - station.lng;
+        const d = dlat * dlat + dlng * dlng;
+        if (d < bestDist) { bestDist = d; bestSeg = si; bestIdx = i; }
+      }
+    }
+
+    const coords = segments[bestSeg];
     if (coords.length < 2) return null;
 
-    // Find nearest polyline vertex index for a lat/lng
+    // Find nearest vertex index within this segment
     const findNearest = (lat: number, lng: number): number => {
       let best = 0;
-      let bestDist = Infinity;
+      let bd = Infinity;
       for (let i = 0; i < coords.length; i++) {
         const dlat = coords[i][0] - lat;
         const dlng = coords[i][1] - lng;
         const d = dlat * dlat + dlng * dlng;
-        if (d < bestDist) {
-          bestDist = d;
-          best = i;
-        }
+        if (d < bd) { bd = d; best = i; }
       }
       return best;
     };
 
-    // Project all stations onto the polyline and sort by index
+    // Project stations that fall on this same segment, sort by index
     const projected = river.stations
       .map((s) => ({ id: s.id, idx: findNearest(s.lat, s.lng) }))
       .sort((a, b) => a.idx - b.idx);

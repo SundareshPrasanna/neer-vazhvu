@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RiverQualityChart } from "@/components/rivers/river-quality-chart";
 import { ConnectedInsight } from "@/components/insights/connected-insight";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
@@ -33,6 +33,11 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
   const [activeStationId, setActiveStationId] = useState(
     initialStation?.id ?? river?.stations[0]?.id
   );
+
+  // Sync when map click changes the selected station
+  useEffect(() => {
+    if (selected.stationId) setActiveStationId(selected.stationId);
+  }, [selected.stationId]);
 
   if (!river) return null;
 
@@ -263,11 +268,11 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
               </span>
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-x-3 text-xs">
+          <div className="space-y-1.5 text-xs">
             {trend.do_delta !== null && (
-              <div className="flex items-center justify-between gap-1">
-                <span className="text-slate-500 dark:text-slate-400">DO</span>
-                <span className={`font-mono ${
+              <div className="flex items-center justify-between gap-2 bg-slate-50 dark:bg-slate-800/50 rounded px-2 py-1">
+                <span className="text-slate-500 dark:text-slate-400 font-medium">DO <span className="font-normal text-slate-400 dark:text-slate-500">(↑ = better)</span></span>
+                <span className={`font-mono font-semibold ${
                   trend.do_delta >= TREND_DO_THRESHOLD
                     ? "text-green-600 dark:text-green-400"
                     : trend.do_delta <= -TREND_DO_THRESHOLD
@@ -284,9 +289,9 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
               </div>
             )}
             {trend.bod_delta !== null && (
-              <div className="flex items-center justify-between gap-1">
-                <span className="text-slate-500 dark:text-slate-400">BOD</span>
-                <span className={`font-mono ${
+              <div className="flex items-center justify-between gap-2 bg-slate-50 dark:bg-slate-800/50 rounded px-2 py-1">
+                <span className="text-slate-500 dark:text-slate-400 font-medium">BOD <span className="font-normal text-slate-400 dark:text-slate-500">(↓ = better)</span></span>
+                <span className={`font-mono font-semibold ${
                   trend.bod_delta <= -TREND_BOD_THRESHOLD
                     ? "text-green-600 dark:text-green-400"
                     : trend.bod_delta >= TREND_BOD_THRESHOLD
@@ -303,9 +308,6 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
               </div>
             )}
           </div>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 leading-snug">
-            {t("rivers.do_better")}
-          </p>
         </div>
       )}
 
@@ -371,7 +373,8 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
                   </div>
                   <div className={`font-mono font-bold ${dead ? "text-red-600 dark:text-red-400" : critical ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"}`}>
                     {val} <span className="font-normal text-slate-400">mg/L</span>
-                    {dead && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{t("rivers.dead_zone")}</span>}
+                    {critical && val > 0 && <span className="ml-1.5 text-[10px] font-semibold text-red-500 dark:text-red-400">{(minHealthy / val).toFixed(0)}x {t("rivers.below_min")}</span>}
+                    {dead && val === 0 && <span className="ml-1.5 text-[10px] font-semibold text-red-500 dark:text-red-400">{t("rivers.dead_zone")}</span>}
                   </div>
                   <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                     <div className={`h-full rounded-full ${dead ? "bg-red-500" : critical ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min((val / minHealthy) * 100, 100)}%` }} />
@@ -590,10 +593,10 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
             {t("rivers.bod_desc")}
           </p>
         </div>
-        <div className="rounded-lg border border-purple-100 dark:border-purple-900 bg-purple-50 dark:bg-purple-950/30 p-2.5">
-          <span className="font-semibold text-purple-700 dark:text-purple-400">{t("rivers.cod_title")}</span>
+        <div className="rounded-lg border border-emerald-100 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 p-2.5">
+          <span className="font-semibold text-emerald-700 dark:text-emerald-400">{t("rivers.nitrate_title")}</span>
           <p className="text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">
-            {t("rivers.cod_desc")}
+            {t("rivers.nitrate_desc")}
           </p>
         </div>
         <div className="rounded-lg border border-rose-100 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/30 p-2.5">

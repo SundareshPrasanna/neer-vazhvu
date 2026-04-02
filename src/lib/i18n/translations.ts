@@ -232,6 +232,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "rivers.metals_desc":    { en: "Chromium, Lead, Cadmium from industrial discharge. Toxic even at trace levels. Accumulates in fish and sediment.", ta: "தொழிற்சாலை வெளியேற்றத்தின் குரோமியம், ஈயம், காட்மியம். சிறிய அளவிலும் நச்சு. மீன் மற்றும் வண்டலில் குவிகிறது." },
   "rivers.pollution_profile": { en: "Pollution Profile", ta: "மாசு விவரக்குறிப்பு" },
   "rivers.dead_zone":      { en: "dead zone", ta: "இறந்த மண்டலம்" },
+  "rivers.below_min":      { en: "below min", ta: "குறைவு" },
   "rivers.no_monitoring_title": { en: "No known monitoring stations", ta: "அறியப்பட்ட கண்காணிப்பு நிலையங்கள் இல்லை" },
   "rivers.no_monitoring_desc": { en: "CPCB has no known NWMP monitoring stations on this river as of 2024. A river flowing through India's most heavily industrialised coastal corridor has zero official water quality data. Without monitoring, pollution goes unmeasured and unaccountable.", ta: "2024 நிலவரப்படி இந்த ஆற்றில் CPCB NWMP கண்காணிப்பு நிலையங்கள் எதுவும் அறியப்படவில்லை. இந்தியாவின் மிகவும் அதிகமாக தொழில்மயமான கடலோர வழித்தடத்தின் வழியாக ஓடும் ஆற்றுக்கு அதிகாரபூர்வ நீர் தர தரவு எதுவும் இல்லை. கண்காணிப்பு இல்லாமல் மாசு அளவிடப்படாமலும் பொறுப்பற்றதாகவும் உள்ளது." },
   "rivers.no_monitoring_cta_before": { en: "If you know of other sources monitoring this river, please raise an issue with the information", ta: "இந்த ஆற்றை கண்காணிக்கும் பிற ஆதாரங்கள் உங்களுக்குத் தெரிந்தால், தகவலுடன் ஒரு சிக்கலை" },
