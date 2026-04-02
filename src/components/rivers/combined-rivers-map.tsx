@@ -69,6 +69,8 @@ export function CombinedRiversMap({
   const tiles = useMapTiles();
   const [riversGeoJSON, setRiversGeoJSON] = useState<FeatureCollection | null>(null);
   const [zonesGeoJSON, setZonesGeoJSON] = useState<FeatureCollection | null>(null);
+  const selectedRiverId = selectedRiver?.riverId;
+  const selectedStationId = selectedRiver?.stationId;
 
   useEffect(() => {
     Promise.all([
@@ -185,14 +187,14 @@ export function CombinedRiversMap({
 
   // Compute highlighted stretch polyline for the selected station
   const stretchHighlight = useMemo((): [number, number][] | null => {
-    if (!selectedRiver?.stationId || !riversGeoJSON) return null;
+    if (!selectedStationId || !selectedRiverId || !riversGeoJSON) return null;
 
-    const river = riverMetaMap.get(selectedRiver.riverId);
+    const river = riverMetaMap.get(selectedRiverId);
     if (!river || river.stations.length < 2) return null;
 
     // Find the river's GeoJSON feature
     const feature = riversGeoJSON.features.find(
-      (f) => (f.properties as { river_id?: string }).river_id === selectedRiver.riverId
+      (f) => (f.properties as { river_id?: string }).river_id === selectedRiverId
     );
     if (!feature) return null;
 
@@ -209,19 +211,21 @@ export function CombinedRiversMap({
     }
 
     // Find the selected station
-    const station = river.stations.find((s) => s.id === selectedRiver.stationId);
+    const station = river.stations.find((s) => s.id === selectedStationId);
     if (!station) return null;
 
     // Find which segment the station is nearest to
     let bestSeg = 0;
     let bestDist = Infinity;
-    let bestIdx = 0;
     for (let si = 0; si < segments.length; si++) {
       for (let i = 0; i < segments[si].length; i++) {
         const dlat = segments[si][i][0] - station.lat;
         const dlng = segments[si][i][1] - station.lng;
         const d = dlat * dlat + dlng * dlng;
-        if (d < bestDist) { bestDist = d; bestSeg = si; bestIdx = i; }
+        if (d < bestDist) {
+          bestDist = d;
+          bestSeg = si;
+        }
       }
     }
 
@@ -246,7 +250,7 @@ export function CombinedRiversMap({
       .map((s) => ({ id: s.id, idx: findNearest(s.lat, s.lng) }))
       .sort((a, b) => a.idx - b.idx);
 
-    const pos = projected.findIndex((p) => p.id === selectedRiver.stationId);
+    const pos = projected.findIndex((p) => p.id === selectedStationId);
     if (pos === -1) return null;
 
     const startIdx = pos === 0 ? 0 : Math.round((projected[pos].idx + projected[pos - 1].idx) / 2);
@@ -257,7 +261,7 @@ export function CombinedRiversMap({
 
     const [lo, hi] = startIdx <= endIdx ? [startIdx, endIdx] : [endIdx, startIdx];
     return coords.slice(lo, hi + 1);
-  }, [selectedRiver?.stationId, selectedRiver?.riverId, riversGeoJSON, riverMetaMap]);
+  }, [selectedStationId, selectedRiverId, riversGeoJSON, riverMetaMap]);
 
   // Monitoring station markers
   const stationPointToLayer = (feature: Feature, latlng: L.LatLng) => {

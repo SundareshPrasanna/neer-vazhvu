@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RiverQualityChart } from "@/components/rivers/river-quality-chart";
 import { ConnectedInsight } from "@/components/insights/connected-insight";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
@@ -24,22 +24,14 @@ interface RiverPanelProps {
 export function RiverPanel({ selected, qualityData, onClose, onStationChange }: RiverPanelProps) {
   const { t, language } = useLanguage();
   const river = qualityData.rivers.find((r) => r.id === selected.riverId);
-
-  const initialStation =
+  const [fallbackStationId, setFallbackStationId] = useState<string | undefined>(
     selected.stationId
-      ? river?.stations.find((s) => s.id === selected.stationId)
-      : river?.stations[0];
-
-  const [activeStationId, setActiveStationId] = useState(
-    initialStation?.id ?? river?.stations[0]?.id
   );
 
-  // Sync when map click changes the selected station
-  useEffect(() => {
-    if (selected.stationId) setActiveStationId(selected.stationId);
-  }, [selected.stationId]);
-
   if (!river) return null;
+  const activeStationId = onStationChange
+    ? (selected.stationId ?? river.stations[0]?.id)
+    : (fallbackStationId ?? river.stations[0]?.id);
 
   const primaryRiverName = language === "ta" ? (river.name_ta ?? river.name) : river.name;
   const secondaryRiverName = language === "ta" ? river.name : river.name_ta;
@@ -328,7 +320,13 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
           {river.stations.map((station) => (
             <button
               key={station.id}
-              onClick={() => { setActiveStationId(station.id); onStationChange?.(station.id); }}
+              onClick={() => {
+                if (onStationChange) {
+                  onStationChange(station.id);
+                  return;
+                }
+                setFallbackStationId(station.id);
+              }}
               className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
                 activeStationId === station.id
                   ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900"
