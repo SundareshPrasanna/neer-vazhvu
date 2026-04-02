@@ -16,6 +16,7 @@ import {
 import { WardContext } from "@/components/insights/ward-context";
 import { WardNarrative } from "@/components/insights/ward-narrative";
 import { WardRepresentatives } from "@/components/insights/ward-representatives";
+import { NewsContext } from "@/components/insights/news-context";
 
 interface WardDetailPanelProps {
   ward: GroundwaterWard;
@@ -103,7 +104,7 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
             </div>
           </div>
 
-          <div className="mb-6">
+          <div id="ward-history" className="mb-6">
             <WardHistoryChart wardNumber={ward.wardNumber} />
           </div>
         </>
@@ -186,8 +187,9 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
           {riskData.trendComponent != null && riskData.trendComponent >= TREND_COMPONENT_THRESHOLD && (
             <ConnectedInsight
               messageKey="connected.ward_trend"
-              linkHref={`/groundwater?ward=${ward.wardNumber}`}
+              linkHref="#ward-history"
               linkKey="connected.ward_trend_link"
+              scrollTarget="ward-history"
             />
           )}
 
@@ -195,8 +197,9 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
           {riskData.seasonalComponent != null && riskData.seasonalComponent >= SEASONAL_COMPONENT_THRESHOLD && (
             <ConnectedInsight
               messageKey="connected.ward_seasonal"
-              linkHref={`/groundwater?ward=${ward.wardNumber}`}
+              linkHref="#ward-history"
               linkKey="connected.ward_seasonal_link"
+              scrollTarget="ward-history"
             />
           )}
 
@@ -231,6 +234,7 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
         <WardContext wardNumber={ward.wardNumber} hideGroundwater />
         <WardRepresentatives wardNumber={ward.wardNumber} />
         <WardNarrative wardNumber={ward.wardNumber} />
+        <NewsContext domain="groundwater" zoneName={ward.zone} />
       </div>
 
       <div className="text-xs text-slate-400 dark:text-slate-500 space-y-1">

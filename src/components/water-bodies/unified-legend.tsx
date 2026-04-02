@@ -25,9 +25,11 @@ const PRIORITY_ITEMS: Array<{ level: PriorityLevel; labelKey: string }> = [
 
 interface UnifiedLegendProps {
   viewMode: ViewMode;
+  hiddenCategories?: Set<string>;
+  onToggleCategory?: (category: string) => void;
 }
 
-export function UnifiedLegend({ viewMode }: UnifiedLegendProps) {
+export function UnifiedLegend({ viewMode, hiddenCategories, onToggleCategory }: UnifiedLegendProps) {
   const { t } = useLanguage();
   const [expanded, setExpanded] = useState(false);
 
@@ -49,33 +51,47 @@ export function UnifiedLegend({ viewMode }: UnifiedLegendProps) {
       </button>
       <div className={`${expanded ? "block" : "hidden"} sm:block mt-2 space-y-1`}>
         {viewMode === "water-bodies"
-          ? WB_LEGEND_DEFS.map((item) => (
-              <div key={item.id} className="flex items-center gap-2 text-xs whitespace-nowrap">
-                <span
-                  className="w-4 h-3 rounded-sm border flex-shrink-0"
-                  style={{
-                    backgroundColor: item.color + "80",
-                    borderColor: item.color,
-                  }}
-                />
-                <span className="font-medium text-slate-700 dark:text-slate-300 shrink-0">{t(item.labelKey)}</span>
-                <span className="text-slate-500 dark:text-slate-400 hidden sm:inline">{t(item.descKey)}</span>
-              </div>
-            ))
-          : PRIORITY_ITEMS.map((item) => (
-              <div key={item.level} className="flex items-center gap-2 text-xs whitespace-nowrap">
-                <span
-                  className="w-4 h-3 rounded-sm border flex-shrink-0"
-                  style={{
-                    backgroundColor: getPriorityColor(item.level) + "80",
-                    borderColor: getPriorityColor(item.level),
-                  }}
-                />
-                <span className="font-medium text-slate-700 dark:text-slate-300">
-                  {t(item.labelKey)}
-                </span>
-              </div>
-            ))}
+          ? WB_LEGEND_DEFS.map((item) => {
+              const hidden = hiddenCategories?.has(item.id) ?? false;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => onToggleCategory?.(item.id)}
+                  className={`flex items-center gap-2 text-xs whitespace-nowrap w-full text-left transition-opacity ${hidden ? "opacity-30" : ""} ${onToggleCategory ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 -mx-1 px-1 rounded" : ""}`}
+                >
+                  <span
+                    className="w-4 h-3 rounded-sm border flex-shrink-0"
+                    style={{
+                      backgroundColor: item.color + "80",
+                      borderColor: item.color,
+                    }}
+                  />
+                  <span className="font-medium text-slate-700 dark:text-slate-300 shrink-0">{t(item.labelKey)}</span>
+                  <span className="text-slate-500 dark:text-slate-400 hidden sm:inline">{t(item.descKey)}</span>
+                </button>
+              );
+            })
+          : PRIORITY_ITEMS.map((item) => {
+              const hidden = hiddenCategories?.has(item.level) ?? false;
+              return (
+                <button
+                  key={item.level}
+                  onClick={() => onToggleCategory?.(item.level)}
+                  className={`flex items-center gap-2 text-xs whitespace-nowrap w-full text-left transition-opacity ${hidden ? "opacity-30" : ""} ${onToggleCategory ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 -mx-1 px-1 rounded" : ""}`}
+                >
+                  <span
+                    className="w-4 h-3 rounded-sm border flex-shrink-0"
+                    style={{
+                      backgroundColor: getPriorityColor(item.level) + "80",
+                      borderColor: getPriorityColor(item.level),
+                    }}
+                  />
+                  <span className="font-medium text-slate-700 dark:text-slate-300">
+                    {t(item.labelKey)}
+                  </span>
+                </button>
+              );
+            })}
       </div>
     </div>
   );

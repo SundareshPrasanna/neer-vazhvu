@@ -12,6 +12,10 @@ interface ConnectedInsightProps {
   linkHref: string;
   /** i18n key for the link text */
   linkKey: string;
+  /** If set, scrolls to this element ID instead of navigating */
+  scrollTarget?: string;
+  /** If set, runs this callback instead of navigating */
+  onAction?: () => void;
 }
 
 /** Interpolate template params into a translated string */
@@ -37,12 +41,26 @@ export function ConnectedInsight({
   params,
   linkHref,
   linkKey,
+  scrollTarget,
+  onAction,
 }: ConnectedInsightProps) {
   const { t } = useLanguage();
 
   const message = params
     ? interpolate(t(messageKey), params)
     : t(messageKey);
+
+  const handleClick = scrollTarget
+    ? (e: React.MouseEvent) => {
+        e.preventDefault();
+        document.getElementById(scrollTarget)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    : onAction
+      ? (e: React.MouseEvent) => {
+          e.preventDefault();
+          onAction();
+        }
+      : undefined;
 
   return (
     <div className="border-t border-slate-100 dark:border-slate-800 pt-3 mt-3">
@@ -66,6 +84,7 @@ export function ConnectedInsight({
           </p>
           <Link
             href={linkHref}
+            onClick={handleClick}
             className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium inline-flex items-center gap-1 mt-1"
           >
             {t(linkKey)}

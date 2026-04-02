@@ -52,6 +52,7 @@ function FloodRiskPageContent() {
   const [selected, setSelected] = useState<SelectedFloodFeature | null>(null);
   const [historicalEvent, setHistoricalEvent] = useState<"2015" | "2020">("2015");
   const [focusCenter, setFocusCenter] = useState<[number, number] | undefined>();
+  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
 
   // Load ward profiles for centroid lookups
@@ -174,7 +175,7 @@ function FloodRiskPageContent() {
 
       {/* View toggle bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex items-center justify-between shrink-0">
-        <FloodViewToggle value={viewMode} onChange={setViewMode} />
+        <FloodViewToggle value={viewMode} onChange={(mode) => { setViewMode(mode); setHiddenCategories(new Set()); }} />
       </div>
 
       {/* Map + panel */}
@@ -185,9 +186,19 @@ function FloodRiskPageContent() {
             historicalEvent={historicalEvent}
             onSelect={setSelected}
             focusCenter={focusCenter}
+            hiddenCategories={hiddenCategories}
           />
           <div className={`absolute left-2 sm:bottom-4 sm:left-4 z-[1000] transition-[bottom] duration-300 ${hasPanel ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
-            <FloodLegend viewMode={viewMode} />
+            <FloodLegend
+              viewMode={viewMode}
+              historicalEvent={historicalEvent}
+              hiddenCategories={hiddenCategories}
+              onToggleCategory={(cat) => setHiddenCategories((prev) => {
+                const next = new Set(prev);
+                if (next.has(cat)) next.delete(cat); else next.add(cat);
+                return next;
+              })}
+            />
           </div>
           <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
             <div className="text-xs text-slate-500 dark:text-slate-400">

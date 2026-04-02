@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, useMap } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
+import L from "leaflet";
 import type { Layer, LeafletMouseEvent } from "leaflet";
 import type { Feature } from "geojson";
-import { getGroundwaterColor, getRiskColor, getBlockClassColor } from "@/types/groundwater";
+import { getGroundwaterColor, getGroundwaterStatus, getRiskColor, getBlockClassColor } from "@/types/groundwater";
 import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
@@ -42,9 +43,10 @@ interface WardMapProps {
   flyToWard?: number | null;
   onWardSelect: (ward: GroundwaterWard | null) => void;
   onBlockSelect?: (block: GWBlock | null) => void;
+  hiddenCategories?: Set<string>;
 }
 
-export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumber, flyToWard, onWardSelect, onBlockSelect }: WardMapProps) {
+export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumber, flyToWard, onWardSelect, onBlockSelect, hiddenCategories }: WardMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [wardGeoJSON, setWardGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
@@ -79,29 +81,48 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
     return map;
   }, [blocks]);
 
+  // Refs for imperative style updates (avoids expensive GeoJSON remounts on legend toggle)
+  const wardLayerRef = useRef<L.GeoJSON | null>(null);
+  const blockLayerRef = useRef<L.GeoJSON | null>(null);
+
   // Ward styles
-  const wardStyle = (feature: Feature | undefined) => {
+  const wardStyle = useCallback((feature: Feature | undefined) => {
     if (!feature) return {};
     const wardNum = Number(feature.properties?.ward_number || feature.properties?.Ward_No);
     let fillColor: string;
+    let category: string;
     if (viewMode === "risk") {
       const risk = riskData.get(wardNum);
-      fillColor = getRiskColor(risk?.riskLevel ?? "noData");
+      const level = risk?.riskLevel ?? "noData";
+      fillColor = getRiskColor(level);
+      category = level;
     } else {
       const ward = groundwaterData.get(wardNum);
       fillColor = getGroundwaterColor(ward?.depthM ?? null);
+      category = getGroundwaterStatus(ward?.depthM ?? null);
     }
-    return { fillColor, weight: 1, opacity: 0.7, color: tiles.stroke, fillOpacity: 0.75 };
+    const isHidden = hiddenCategories?.has(category) ?? false;
+    return { fillColor, weight: 1, opacity: isHidden ? 0.1 : 0.7, color: tiles.stroke, fillOpacity: isHidden ? 0.05 : 0.75 };
+  }, [viewMode, riskData, groundwaterData, hiddenCategories, tiles.stroke]);
+
+  // Map block class names to legend IDs
+  const blockClassToLegendId: Record<string, string> = {
+    "Safe": "safe",
+    "Semi Critical": "semi_critical",
+    "Critical": "critical",
+    "Over Exploited": "over_exploited",
   };
 
   // Block styles
-  const blockStyle = (feature: Feature | undefined) => {
+  const blockStyle = useCallback((feature: Feature | undefined) => {
     if (!feature) return {};
     const blockName = feature.properties?.block as string;
     const block = blockLookup.get(blockName);
     const fillColor = block ? getBlockClassColor(block.latest.class) : "#94a3b8";
-    return { fillColor, weight: 2, opacity: 0.9, color: tiles.strokeLight, fillOpacity: 0.65 };
-  };
+    const legendId = block ? blockClassToLegendId[block.latest.class] : undefined;
+    const isHidden = legendId ? (hiddenCategories?.has(legendId) ?? false) : false;
+    return { fillColor, weight: 2, opacity: isHidden ? 0.1 : 0.9, color: tiles.strokeLight, fillOpacity: isHidden ? 0.05 : 0.65 };
+  }, [blockLookup, hiddenCategories, tiles.strokeLight]);
 
   const onEachWard = (feature: Feature, layer: Layer) => {
     const wardNum = Number(feature.properties?.ward_number || feature.properties?.Ward_No);
@@ -163,6 +184,15 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
     });
   };
 
+  // Imperatively restyle layers when hiddenCategories changes (avoids full GeoJSON remount)
+  useEffect(() => {
+    wardLayerRef.current?.setStyle(wardStyle as L.StyleFunction);
+  }, [hiddenCategories, wardStyle]);
+
+  useEffect(() => {
+    blockLayerRef.current?.setStyle(blockStyle as L.StyleFunction);
+  }, [hiddenCategories, blockStyle]);
+
   if (viewMode === "exploitation" ? !blockGeoJSON : !wardGeoJSON) {
     return (
       <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -185,7 +215,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
       {viewMode === "exploitation" ? (
         <>
           {blockGeoJSON && (
-            <GeoJSON key={`blocks-${tiles.url}`} data={blockGeoJSON} style={blockStyle} onEachFeature={onEachBlock} />
+            <GeoJSON ref={(layer) => { blockLayerRef.current = layer; }} key={`blocks-${tiles.url}`} data={blockGeoJSON} style={blockStyle} onEachFeature={onEachBlock} />
           )}
           {stations.map((s) => (
             <CircleMarker
@@ -207,7 +237,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
       ) : (
         <>
           {wardGeoJSON && (
-            <GeoJSON key={`${viewMode}-${tiles.url}`} data={wardGeoJSON} style={wardStyle} onEachFeature={onEachWard} />
+            <GeoJSON ref={(layer) => { wardLayerRef.current = layer; }} key={`${viewMode}-${tiles.url}`} data={wardGeoJSON} style={wardStyle} onEachFeature={onEachWard} />
           )}
           {/* key includes viewMode so highlight remounts on top after choropleth remounts */}
           <SelectedWardHighlight key={`highlight-${viewMode}`} wardNumber={selectedWardNumber ?? null} />

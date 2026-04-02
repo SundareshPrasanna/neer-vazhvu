@@ -11,6 +11,7 @@ import {
   computeStationTrend,
 } from "@/types/river-quality";
 import { useLanguage } from "@/lib/i18n/context";
+import { NewsContext } from "@/components/insights/news-context";
 
 interface RiverPanelProps {
   selected: SelectedRiver;
@@ -469,6 +470,8 @@ export function RiverPanel({ selected, qualityData, onClose }: RiverPanelProps) 
           </p>
         </div>
       )}
+
+      <NewsContext domain="rivers" locationName={`${river.name} river`} />
 
       {/* Source */}
       <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">

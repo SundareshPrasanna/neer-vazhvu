@@ -31,6 +31,7 @@ interface CombinedRiversMapProps {
   onSelectRiver: (sel: SelectedRiver | null) => void;
   onSelectSource: (source: PollutionSource | null) => void;
   focusCenter?: [number, number];
+  hiddenCategories?: Set<string>;
 }
 
 export function CombinedRiversMap({
@@ -40,6 +41,7 @@ export function CombinedRiversMap({
   onSelectRiver,
   onSelectSource,
   focusCenter,
+  hiddenCategories,
 }: CombinedRiversMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
@@ -235,9 +237,14 @@ export function CombinedRiversMap({
       {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* Render order: zones (bottom) → rivers → stations → sources → highlight (top) */}
-      <GeoJSON key={`zones-${tiles.url}`} data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />
+      {!(hiddenCategories?.has("industrial_zone")) && (
+        <GeoJSON key={`zones-${tiles.url}`} data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />
+      )}
       {/* Rivers as direct Polylines (GeoJSON component has rendering bugs with long paths) */}
-      {riverPolylines.map((river) =>
+      {riverPolylines.filter((river) => {
+        const status = riverMetaMap.get(river.river_id)?.overall_status;
+        return !(hiddenCategories?.has(status ?? ""));
+      }).map((river) =>
         river.segments.map((positions, segIdx) => {
           const riverLabel = language === "ta" ? (river.name_ta ?? river.name) : river.name;
           const cpcbClass = riverMetaMap.get(river.river_id)?.cpcb_class ?? "";
@@ -267,8 +274,21 @@ export function CombinedRiversMap({
           );
         })
       )}
-      <GeoJSON key={`stations-${tiles.url}`} data={stationsGeoJSON} pointToLayer={stationPointToLayer} onEachFeature={onEachStation} />
-      <GeoJSON key={`sources-${tiles.url}`} data={sourcesGeoJSON} pointToLayer={sourcePointToLayer} onEachFeature={onEachSource} />
+      {!(hiddenCategories?.has("station")) && (
+        <GeoJSON key={`stations-${tiles.url}`} data={stationsGeoJSON} pointToLayer={stationPointToLayer} onEachFeature={onEachStation} />
+      )}
+      {(() => {
+        const filteredSources = {
+          ...sourcesGeoJSON,
+          features: sourcesGeoJSON.features.filter((f) => {
+            const type = (f.properties as { type: string }).type;
+            return !(hiddenCategories?.has(`source_${type}`));
+          }),
+        };
+        return filteredSources.features.length > 0 ? (
+          <GeoJSON key={`sources-${tiles.url}-${hiddenCategories ? [...hiddenCategories].sort().join(",") : ""}`} data={filteredSources} pointToLayer={sourcePointToLayer} onEachFeature={onEachSource} />
+        ) : null;
+      })()}
 
       {/* Selected station highlight ring */}
       {(() => {

@@ -788,4 +788,10 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "ai_narrative.reservoirs":    { en: "Reservoirs",                          ta: "நீர்த்தேக்கங்கள்" },
   "ai_narrative.groundwater":   { en: "Groundwater",                         ta: "நிலத்தடி நீர்" },
   "ai_narrative.risk_scores":   { en: "Risk scores",                         ta: "ஆபத்து மதிப்பெண்கள்" },
+
+  // ── News ────────────────────────────────────────────────────────────────────
+  "news.heading":              { en: "In the news",                         ta: "செய்திகளில்" },
+  "news.search_all":           { en: "Search latest Chennai water news",    ta: "சென்னை நீர் செய்திகளைத் தேடுங்கள்" },
+  "news.search_related":       { en: "Search related news",                 ta: "தொடர்புடைய செய்திகளைத் தேடுங்கள்" },
+  "news.via":                  { en: "Via Google News",                     ta: "Google செய்திகள் வழியாக" },
 };

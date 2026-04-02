@@ -59,6 +59,7 @@ function GroundwaterPageContent() {
   );
   const [loading, setLoading] = useState(true);
   const [flyToWard, setFlyToWard] = useState<number | null>(null);
+  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const wardParam = searchParams.get("ward");
@@ -167,11 +168,20 @@ function GroundwaterPageContent() {
           flyToWard={flyToWard}
           onWardSelect={(w) => { setSelectedWard(w); setSelectedBlock(null); setFlyToWard(null); }}
           onBlockSelect={(b) => { setSelectedBlock(b); setSelectedWard(null); setFlyToWard(null); }}
+          hiddenCategories={hiddenCategories}
         />
 
         {/* Legend overlay - shifts up on mobile when bottom sheet is open */}
         <div className={`absolute left-2 sm:bottom-4 sm:left-4 z-[1000] transition-[bottom] duration-300 ${(selectedWard || selectedBlock) ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
-          <GroundwaterLegend viewMode={viewMode} />
+          <GroundwaterLegend
+            viewMode={viewMode}
+            hiddenCategories={hiddenCategories}
+            onToggleCategory={(cat) => setHiddenCategories((prev) => {
+              const next = new Set(prev);
+              if (next.has(cat)) next.delete(cat); else next.add(cat);
+              return next;
+            })}
+          />
         </div>
 
         {/* Period + source overlay */}
@@ -232,6 +242,7 @@ function GroundwaterPageContent() {
               onClick={() => {
                 setViewMode("depth");
                 setSelectedBlock(null);
+                setHiddenCategories(new Set());
                 // Keep current ward selection; only default if none selected
                 if (!selectedWard && data && data.wards.length > 0) {
                   const deepest = [...data.wards].sort((a, b) => (b.depthM ?? 0) - (a.depthM ?? 0))[0];
@@ -251,6 +262,7 @@ function GroundwaterPageContent() {
                 onClick={() => {
                   setViewMode("risk");
                   setSelectedBlock(null);
+                  setHiddenCategories(new Set());
                   // Keep current ward selection; only default if none selected
                   if (!selectedWard && data && data.wards.length > 0) {
                     const deepest = [...data.wards].sort((a, b) => (b.depthM ?? 0) - (a.depthM ?? 0))[0];
@@ -270,6 +282,7 @@ function GroundwaterPageContent() {
               onClick={() => {
                 setViewMode("exploitation");
                 setSelectedWard(null);
+                setHiddenCategories(new Set());
                 // Keep current block selection; only default if none selected
                 if (!selectedBlock && blocks.length > 0) {
                   const mostExploited = [...blocks].sort((a, b) => b.latest.development_pct - a.latest.development_pct)[0];
