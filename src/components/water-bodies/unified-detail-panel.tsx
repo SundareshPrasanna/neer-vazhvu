@@ -13,6 +13,13 @@ import type { ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
 import { NewsContext } from "@/components/insights/news-context";
+import { formatDate } from "@/lib/utils/format";
+import {
+  normalizeWaterBodySatelliteSummary,
+  satelliteAnomalyTone,
+  shouldShowWaterBodySatelliteSummary,
+  type WaterBodySatelliteSummary,
+} from "@/lib/gee/water-body-satellite";
 import {
   RIVER_POLLUTION_COMPONENT_THRESHOLD,
   RIVER_POLLUTION_COMPONENT_MAX,
@@ -65,6 +72,41 @@ function CloseButton({ onClose, ariaLabel }: { onClose: () => void; ariaLabel: s
         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
+  );
+}
+
+function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSummary }) {
+  const { t } = useLanguage();
+  const tone = satelliteAnomalyTone(summary.surfaceWaterAnomalyLevel);
+  const observationDate = summary.observationEnd || summary.summaryDate;
+  const confidenceLabel = t(`wb_panel.satellite_confidence_${summary.confidenceLevel}`);
+
+  return (
+    <div className="border-t border-slate-200 dark:border-slate-700">
+      <div className="px-4 pt-3 pb-1">
+        <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+          {t("wb_panel.satellite_context")}
+        </h3>
+      </div>
+      <div className="px-4 pb-4 space-y-2">
+        {summary.historicalPersistencePct != null ? (
+          <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+            {t("wb_panel.satellite_persistence", {
+              pct: Math.round(summary.historicalPersistencePct),
+            })}
+          </p>
+        ) : null}
+        <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+          {t(`wb_panel.satellite_current_${tone}`)}
+        </p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          {t("wb_panel.satellite_observed", {
+            date: formatDate(observationDate),
+            confidence: confidenceLabel,
+          })}
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -217,6 +259,10 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
   const closeAria = t("common.close_panel");
   const wardLookup = useWardLookup();
   const [resolvedWard, setResolvedWard] = useState<number | null>(null);
+  const [satelliteSummaryState, setSatelliteSummaryState] = useState<{
+    osmId: number;
+    summary: WaterBodySatelliteSummary | null;
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -229,6 +275,48 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
     }
     return () => { cancelled = true; };
   }, [selected, wardLookup]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    if (selected.kind !== "current") {
+      return () => controller.abort();
+    }
+
+    const osmId = selected.props.osm_id;
+    fetch(`/api/water-bodies/gee?osm_id=${selected.props.osm_id}`, {
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (response.status === 404) {
+          return null;
+        }
+        if (!response.ok) {
+          throw new Error(`Failed to fetch water-body satellite context: ${response.status}`);
+        }
+        const payload = await response.json();
+        return payload?.data ? normalizeWaterBodySatelliteSummary(payload.data) : null;
+      })
+      .then((row) => {
+        setSatelliteSummaryState({
+          osmId,
+          summary: shouldShowWaterBodySatelliteSummary(row) ? row : null,
+        });
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+        setSatelliteSummaryState({ osmId, summary: null });
+      });
+
+    return () => controller.abort();
+  }, [selected]);
+
+  const satelliteSummary =
+    selected.kind === "current" && satelliteSummaryState?.osmId === selected.props.osm_id
+      ? satelliteSummaryState.summary
+      : null;
 
   const localizeType = (value: string | undefined): string => {
     if (!value) return t("wb_panel.water_body");
@@ -284,6 +372,8 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
           <Row label={t("wb_panel.area")} value={areaText} />
           <Row label={t("wb_panel.osm_id")} value={`#${props.osm_id}`} />
         </div>
+
+        {satelliteSummary ? <SatelliteContextSection summary={satelliteSummary} /> : null}
 
         {/* Census data (when matched to an OSM polygon) */}
         {selected.censusMatch && (() => {
