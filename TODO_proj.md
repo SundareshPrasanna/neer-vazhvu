@@ -49,6 +49,21 @@
 - [ ] **Water bodies OSM** — Re-run `scripts/fetch-water-bodies-osm.ts` once a year to pull fresh polygon data from OpenStreetMap
 - [ ] **River geometry OSM** — Re-run `scripts/fetch-rivers-osm.ts` if river alignments change significantly in OSM
 
+## IUDX Real-Time Flood Monitoring (P1)
+
+> 241 water level sensors across Chennai (canals, lakes, subways, rivers) via IUDX.
+> Data: water level in cm at 1-minute intervals. Access policy: SECURE (client credentials obtained).
+> Resource group ID: `257aab1b-1258-445a-a37e-058486a2fa13`
+> Catalogue API: `https://api.catalogue.iudx.org.in/iudx/cat/v1/`
+> Resource server: `https://rs.iudx.org.in/ngsi-ld/v1/entities/`
+
+- [ ] **Auth integration** — Token flow using client ID/secret via IUDX auth server. Store credentials in env, implement token refresh in backend.
+- [ ] **Sensor catalogue fetch** — Pull all 241 sensor IDs + names + locations from catalogue API. Map to our ward/river geometry.
+- [ ] **Live water level layer** — Real-time sensor readings on the flood risk map. Color-code by level (normal/warning/danger).
+- [ ] **Subway flooding alerts** — 27 subway/underpass sensors - surface current water levels on flood risk page.
+- [ ] **Canal & river level overlay** — 29 canal + 5 river sensors - show water levels along river/canal polylines.
+- [ ] **Lake level monitoring** — 5 lake sensors (Ambattur, Narayanapuram, Korattur, etc.) - integrate with water bodies page.
+
 ## V2 Features (P2)
 
 - [ ] **Personal water calculator** — "How much water does your household use vs. what's sustainable?"
@@ -81,4 +96,4 @@
 
 ---
 
-*Last updated: 2026-03-22*
+*Last updated: 2026-04-02*
