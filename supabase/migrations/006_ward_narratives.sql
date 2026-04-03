@@ -19,14 +19,11 @@ CREATE TABLE ward_narrative (
     created_at      TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(ward_number, narrative_date)
 );
-
 CREATE INDEX idx_ward_narrative_lookup
     ON ward_narrative(ward_number, narrative_date DESC);
-
 ALTER TABLE ward_narrative ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read ward_narrative"
     ON ward_narrative FOR SELECT USING (true);
-
 -- ----- EXTEND DAILY BRIEFING WITH AI COLUMNS -----
 
 ALTER TABLE daily_briefing

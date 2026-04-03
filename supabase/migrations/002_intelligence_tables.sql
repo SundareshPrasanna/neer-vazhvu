@@ -17,10 +17,8 @@ CREATE TABLE reservoir_forecast (
     created_at             TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(reservoir, forecast_date, target_date)
 );
-
 CREATE INDEX idx_forecast_date ON reservoir_forecast(forecast_date DESC);
 CREATE INDEX idx_forecast_reservoir ON reservoir_forecast(reservoir, target_date);
-
 -- ----- WARD-LEVEL RISK SCORES -----
 
 CREATE TABLE ward_risk_score (
@@ -36,10 +34,8 @@ CREATE TABLE ward_risk_score (
     factors                 JSONB,
     UNIQUE(ward_number, computed_date)
 );
-
 CREATE INDEX idx_risk_ward ON ward_risk_score(ward_number, computed_date DESC);
 CREATE INDEX idx_risk_date ON ward_risk_score(computed_date DESC);
-
 -- ----- DAILY INTELLIGENCE BRIEFINGS -----
 
 CREATE TABLE daily_briefing (
@@ -52,15 +48,12 @@ CREATE TABLE daily_briefing (
     recommendations JSONB,
     created_at      TIMESTAMPTZ DEFAULT NOW()
 );
-
 CREATE INDEX idx_briefing_date ON daily_briefing(briefing_date DESC);
-
 -- ----- ROW LEVEL SECURITY -----
 
 ALTER TABLE reservoir_forecast ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ward_risk_score ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_briefing ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Public read reservoir_forecast"
     ON reservoir_forecast FOR SELECT USING (true);
 CREATE POLICY "Public read ward_risk_score"

@@ -203,7 +203,7 @@ Add one workflow:
 
 Add one migration:
 
-- `supabase/migrations/008_gee_phase1.sql`
+- `supabase/migrations/010_gee_phase1.sql`
 
 Add a frontend API route for water-body detail fetches:
 
