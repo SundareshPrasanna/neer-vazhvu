@@ -75,6 +75,14 @@ function CloseButton({ onClose, ariaLabel }: { onClose: () => void; ariaLabel: s
   );
 }
 
+function interpolate(template: string, params: Record<string, string | number>): string {
+  let result = template;
+  for (const [key, value] of Object.entries(params)) {
+    result = result.replace(`{${key}}`, String(value));
+  }
+  return result;
+}
+
 function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSummary }) {
   const { t } = useLanguage();
   const tone = satelliteAnomalyTone(summary.surfaceWaterAnomalyLevel);
@@ -91,7 +99,7 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
       <div className="px-4 pb-4 space-y-2">
         {summary.historicalPersistencePct != null ? (
           <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-            {t("wb_panel.satellite_persistence", {
+            {interpolate(t("wb_panel.satellite_persistence"), {
               pct: Math.round(summary.historicalPersistencePct),
             })}
           </p>
@@ -100,7 +108,7 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
           {t(`wb_panel.satellite_current_${tone}`)}
         </p>
         <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-          {t("wb_panel.satellite_observed", {
+          {interpolate(t("wb_panel.satellite_observed"), {
             date: formatDate(observationDate),
             confidence: confidenceLabel,
           })}
