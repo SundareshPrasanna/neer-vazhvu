@@ -51,11 +51,37 @@ neer-vazhvu/
 ├── neer-vazhvu-api/      # Python API (FastAPI)
 │   ├── app/scrapers/     # CMWSSB, NASA POWER, OpenCity
 │   ├── app/etl/          # Pipeline orchestrator, constants
+│   ├── app/gee/          # Earth Engine Phase 1 summaries and catchment tooling
 │   ├── app/intelligence/ # ARIMAX forecaster, risk scorer, briefing
 │   └── app/routers/      # API endpoints
 ├── supabase/migrations/  # Database schema
 └── .github/workflows/    # CI (daily pipeline, keepalive)
 ```
+
+## Earth Engine Phase 1
+
+If you are working on the satellite summary layer, also read [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md).
+
+Local prerequisites for GEE work:
+
+- an Earth Engine-enabled Google Cloud project
+- a service account with `Earth Engine Resource Writer` and `Service Usage Consumer`
+- `GEE_CLOUD_PROJECT` plus either `GEE_SERVICE_ACCOUNT_FILE` or `GEE_SERVICE_ACCOUNT_JSON`
+
+Useful commands from `neer-vazhvu-api/`:
+
+```bash
+python scripts/run_gee_phase1.py check-auth
+python scripts/run_gee_phase1.py build-targets --write
+python scripts/run_gee_phase1.py validate-catchments
+python scripts/run_gee_phase1.py run-reservoir-context --write
+python scripts/run_gee_phase1.py run-water-body-summaries --write
+```
+
+Current workflow note:
+
+- `.github/workflows/gee-phase1.yml` is wired for manual dispatch in this branch
+- if you change the GEE data model or methodology, update both [README.md](README.md) and [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md) in the same PR
 
 ## Development Workflow
 

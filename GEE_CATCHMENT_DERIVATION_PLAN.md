@@ -1,5 +1,9 @@
 # GEE Catchment Derivation Plan
 
+Current implementation reference:
+
+- [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md)
+
 This note turns the catchment question into an execution plan for Phase 1.
 
 ## Bottom line

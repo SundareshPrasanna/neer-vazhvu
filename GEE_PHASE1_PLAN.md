@@ -1,5 +1,9 @@
 # GEE Phase 1 Implementation Plan
 
+Current implementation reference:
+
+- [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md)
+
 Companion research note:
 
 - [GEE_RESEARCH.md](/Users/sundaresh/Documents/health_safety/neer-vazhvu/GEE_RESEARCH.md)

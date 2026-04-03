@@ -1,5 +1,11 @@
 # Google Earth Engine Research for Neer Vazhvu
 
+Current implementation reference:
+
+- [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md)
+
+This note captures the broader product research and option space. For the behavior currently implemented in the repo, follow the methods doc above.
+
 ## Why GEE fits this project
 
 Neer Vazhvu already does a good job of turning public water data into readable, low-noise stories. Google Earth Engine (GEE) should extend that pattern, not replace it.
