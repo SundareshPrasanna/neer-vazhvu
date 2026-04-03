@@ -187,7 +187,9 @@ Current behavior and guardrails:
 Current operations:
 
 - local runs happen through `neer-vazhvu-api/scripts/run_gee_phase1.py`
-- GitHub workflow support currently lives in `.github/workflows/gee-phase1.yml`
+- GitHub workflow support lives in `.github/workflows/gee-phase1.yml`
+- reservoir context refreshes daily in GitHub Actions
+- water-body satellite summaries refresh weekly in GitHub Actions
 - the workflow is `workflow_dispatch` only in this branch, so refreshes are currently manual rather than scheduled
 
 Current implementation docs:

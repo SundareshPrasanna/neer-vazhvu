@@ -21,7 +21,13 @@ Phase 1 deliberately does not expose raw rasters, indices, or live Earth Engine 
 - Water-body summaries are stored in `water_body_satellite_summary`
 - Reservoir rainfall summaries are stored in `reservoir_catchment_context`
 
-The current workflow file is `workflow_dispatch` only. In other words, Phase 1 is operational, but it is not yet on an automated schedule in this branch.
+The current workflow file is `.github/workflows/gee-phase1.yml`.
+
+Current cadence:
+
+- reservoir catchment context refreshes daily
+- water-body satellite summaries refresh weekly
+- manual `workflow_dispatch` remains available for auth checks, validation, and ad hoc reruns
 
 ## Datasets In Use
 
@@ -299,7 +305,6 @@ Helpful notes:
 ## Known Gaps And Next Improvements
 
 - add Sentinel-1 fallback for cloudy periods
-- automate the workflow schedule instead of manual dispatch only
 - expand the reviewed target set carefully beyond the current 150 bodies
 - keep refining catchment review, especially where Chennai's managed system can distort a simple rainfall story
 - consider later city-story and ward-story reuse once Phase 1 behavior proves stable
