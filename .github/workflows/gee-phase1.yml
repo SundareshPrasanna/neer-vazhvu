@@ -11,6 +11,7 @@ on:
           - build-targets
           - validate-catchments
           - run-reservoir-context
+          - run-water-body-summaries
         default: check-auth
 
 jobs:
@@ -31,7 +32,7 @@ jobs:
         run: pip install -e .
 
       - name: Materialize GEE service account file
-        if: ${{ (inputs.task == 'check-auth' || inputs.task == 'run-reservoir-context') && secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
+        if: ${{ (inputs.task == 'check-auth' || inputs.task == 'run-reservoir-context' || inputs.task == 'run-water-body-summaries') && secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
         run: |
           mkdir -p /tmp/gee
           printf '%s' '${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}' > /tmp/gee/service-account.json
@@ -55,5 +56,8 @@ jobs:
               ;;
             run-reservoir-context)
               python scripts/run_gee_phase1.py run-reservoir-context --write
+              ;;
+            run-water-body-summaries)
+              python scripts/run_gee_phase1.py run-water-body-summaries --write
               ;;
           esac
