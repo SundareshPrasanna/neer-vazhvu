@@ -179,7 +179,7 @@ function RiversPageContent() {
           />
 
           {/* Legend overlay - bottom-right on desktop (sea side), bottom-left on mobile; shifts up when bottom sheet is open */}
-          <div className={`absolute left-2 md:left-auto md:right-4 sm:bottom-4 z-[1000] transition-[bottom] duration-300 ${hasPanel ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
+          <div className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${hasPanel ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
             <RiversLegend
               hiddenCategories={hiddenCategories}
               onToggleCategory={(cat) => setHiddenCategories((prev) => {

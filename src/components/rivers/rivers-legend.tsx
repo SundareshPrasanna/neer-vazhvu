@@ -34,7 +34,7 @@ interface RiversLegendProps {
 
 export function RiversLegend({ hiddenCategories, onToggleCategory }: RiversLegendProps = {}) {
   const { t } = useLanguage();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
