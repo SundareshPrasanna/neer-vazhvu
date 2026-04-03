@@ -116,6 +116,31 @@ function currentSpreadToneClasses(tone: "lower" | "near_normal" | "higher"): str
   }
 }
 
+function persistenceInsightKey(persistencePct: number | null): string | null {
+  if (persistencePct === null || Number.isNaN(persistencePct)) {
+    return null;
+  }
+  if (persistencePct >= 95) {
+    return "wb_panel.satellite_persistence_year_round";
+  }
+  if (persistencePct >= 75) {
+    return "wb_panel.satellite_persistence_most_year";
+  }
+  if (persistencePct >= 40) {
+    return "wb_panel.satellite_persistence_seasonal";
+  }
+  if (persistencePct >= 15) {
+    return "wb_panel.satellite_persistence_wet_months";
+  }
+  return "wb_panel.satellite_persistence_ephemeral";
+}
+
+const SATELLITE_CARD_CLASS =
+  "rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3";
+const SATELLITE_LABEL_CLASS =
+  "text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400";
+const SATELLITE_VALUE_CLASS = "mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100";
+
 function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSummary }) {
   const { t } = useLanguage();
   const tone = satelliteAnomalyTone(summary.surfaceWaterAnomalyLevel);
@@ -158,65 +183,75 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
       })
     : t(`wb_panel.satellite_current_${tone}`);
   const sensorLabel = sourceLabel(summary.sensorSource, t);
+  const persistenceInsight = persistenceInsightKey(summary.historicalPersistencePct);
 
   return (
     <div className="border-t border-slate-200 dark:border-slate-700">
-      <div className="px-4 pt-3 pb-1">
+      <div className="px-4 pt-3 pb-1.5">
         <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
           {t("wb_panel.satellite_context")}
         </h3>
       </div>
-      <div className="px-4 pb-4 space-y-4">
-        <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+      <div className="px-4 pb-4 space-y-3.5">
+        <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
           {summaryText}
         </p>
 
+        {persistenceInsight ? (
+          <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            <span className="font-semibold text-slate-800 dark:text-slate-200">
+              {t("wb_panel.satellite_metric_persistence")}:
+            </span>{" "}
+            {t(persistenceInsight)}
+          </p>
+        ) : null}
+
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3">
-            <div className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <div className={SATELLITE_CARD_CLASS}>
+            <div className={SATELLITE_LABEL_CLASS}>
               {t("wb_panel.satellite_metric_current")}
             </div>
-            <div className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
+            <div className={SATELLITE_VALUE_CLASS}>
               {observedAreaText}
             </div>
           </div>
-          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3">
-            <div className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <div className={SATELLITE_CARD_CLASS}>
+            <div className={SATELLITE_LABEL_CLASS}>
               {t("wb_panel.satellite_metric_baseline")}
             </div>
-            <div className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
+            <div className={SATELLITE_VALUE_CLASS}>
               {baselineAreaText}
             </div>
           </div>
-          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3">
-            <div className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <div className={SATELLITE_CARD_CLASS}>
+            <div className={SATELLITE_LABEL_CLASS}>
               {t("wb_panel.satellite_metric_persistence")}
             </div>
-            <div className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
+            <div className={SATELLITE_VALUE_CLASS}>
               {persistenceText}
             </div>
           </div>
-          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3">
-            <div className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <div className={SATELLITE_CARD_CLASS}>
+            <div className={SATELLITE_LABEL_CLASS}>
               {t("wb_panel.satellite_metric_coverage")}
             </div>
-            <div className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
+            <div className={SATELLITE_VALUE_CLASS}>
               {coverageText}
             </div>
           </div>
         </div>
 
         {hasAreaComparison ? (
-          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3 space-y-3">
-            <div className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <div className={`${SATELLITE_CARD_CLASS} space-y-3`}>
+            <div className={SATELLITE_LABEL_CLASS}>
               {t("wb_panel.satellite_compare_title")}
             </div>
 
             <div className="space-y-2">
               <div>
                 <div className="mb-1 flex items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-300">
-                  <span>{t("wb_panel.satellite_compare_current")}</span>
-                  <span className="font-medium">{observedAreaText}</span>
+                  <span className="font-semibold">{t("wb_panel.satellite_compare_current")}</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-100">{observedAreaText}</span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
                   <div
@@ -228,8 +263,8 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
 
               <div>
                 <div className="mb-1 flex items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-300">
-                  <span>{t("wb_panel.satellite_compare_baseline")}</span>
-                  <span className="font-medium">{baselineAreaText}</span>
+                  <span className="font-semibold">{t("wb_panel.satellite_compare_baseline")}</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-100">{baselineAreaText}</span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
                   <div
@@ -240,14 +275,6 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
               </div>
             </div>
           </div>
-        ) : null}
-
-        {summary.historicalPersistencePct != null ? (
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            {interpolate(t("wb_panel.satellite_persistence"), {
-              pct: Math.round(summary.historicalPersistencePct),
-            })}
-          </p>
         ) : null}
 
         <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
