@@ -611,6 +611,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "wb_panel.satellite_compare_baseline": { en: "Usual", ta: "வழக்கம்" },
   "wb_panel.satellite_coverage_value": { en: "{pct}% usable pixels", ta: "பயன்படுத்தக்கூடிய பிக்சல்கள் {pct}%" },
   "wb_panel.satellite_source_dynamic_world": { en: "Dynamic World", ta: "டைனமிக் வோர்ல்ட்" },
+  "wb_panel.satellite_source_explainer_dynamic_world": { en: "Dynamic World is a near-real-time 10 m satellite land-cover dataset from Google and WRI, derived from Sentinel-2 imagery. We use its water signal to estimate visible spread.", ta: "Dynamic World என்பது Google மற்றும் WRI உருவாக்கிய, Sentinel-2 படங்களிலிருந்து பெறப்பட்ட, 10 மீ. தீர்மானத்திலான near-real-time செயற்கைக்கோள் நிலமூடல் தரவுத்தொகுப்பு. அதிலுள்ள நீர் சிக்னலை நாம் காணக்கூடிய நீர்ப்பரப்பை கணிக்க பயன்படுத்துகிறோம்." },
+  "wb_panel.satellite_source_link_dynamic_world": { en: "About Dynamic World", ta: "Dynamic World பற்றி" },
   "wb_panel.satellite_current_lower": { en: "Current spread is below usual for this season.", ta: "இந்த பருவத்திற்கு ஒப்பிடும்போது தற்போதைய பரப்பு குறைவாக உள்ளது." },
   "wb_panel.satellite_current_near_normal": { en: "Current spread is close to usual for this season.", ta: "இந்த பருவத்திற்கு ஒப்பிடும்போது தற்போதைய பரப்பு வழக்கமான அளவுக்கு அருகில் உள்ளது." },
   "wb_panel.satellite_current_higher": { en: "Current spread is above usual for this season.", ta: "இந்த பருவத்திற்கு ஒப்பிடும்போது தற்போதைய பரப்பு அதிகமாக உள்ளது." },

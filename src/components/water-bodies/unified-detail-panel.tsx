@@ -140,6 +140,8 @@ const SATELLITE_CARD_CLASS =
 const SATELLITE_LABEL_CLASS =
   "text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400";
 const SATELLITE_VALUE_CLASS = "mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100";
+const DYNAMIC_WORLD_INFO_URL =
+  "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1";
 
 function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSummary }) {
   const { t } = useLanguage();
@@ -284,6 +286,24 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
             confidence: confidenceLabel,
           })}
         </p>
+
+        {summary.sensorSource === "dynamic_world" ? (
+          <div className={`${SATELLITE_CARD_CLASS} space-y-2`}>
+            <div className={SATELLITE_LABEL_CLASS}>{sensorLabel}</div>
+            <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+              {t("wb_panel.satellite_source_explainer_dynamic_world")}
+            </p>
+            <a
+              href={DYNAMIC_WORLD_INFO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              {t("wb_panel.satellite_source_link_dynamic_world")}
+              <span className="ml-1" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        ) : null}
       </div>
     </div>
   );
