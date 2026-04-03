@@ -102,6 +102,19 @@ function formatCapacityM3(value: number | null): string {
   return formatNumber(value, 0);
 }
 
+function coverageLabelKey(validPixelPct: number | null): string | null {
+  if (validPixelPct === null || Number.isNaN(validPixelPct)) {
+    return null;
+  }
+  if (validPixelPct >= 90) {
+    return "wb_panel.satellite_view_clear";
+  }
+  if (validPixelPct >= 70) {
+    return "wb_panel.satellite_view_mostly_clear";
+  }
+  return "wb_panel.satellite_view_partial";
+}
+
 function sourceLabel(source: string, t: (key: string) => string): string {
   if (source === "dynamic_world") {
     return t("wb_panel.satellite_source_dynamic_world");
@@ -159,10 +172,11 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
   const confidenceLabel = t(`wb_panel.satellite_confidence_${summary.confidenceLevel}`);
   const observedAreaText = formatHectares(summary.latestObservedAreaHa);
   const baselineAreaText = formatHectares(summary.seasonalBaselineAreaHa);
-  const coverageText =
+  const coverageLabel = coverageLabelKey(summary.validPixelPct);
+  const coverageDetail =
     summary.validPixelPct == null
-      ? "\u2014"
-      : interpolate(t("wb_panel.satellite_coverage_value"), {
+      ? null
+      : interpolate(t("wb_panel.satellite_coverage_detail"), {
           pct: Math.round(summary.validPixelPct),
         });
   const anomalyPct = satelliteAnomalyPercent(summary.anomalyRatio);
@@ -241,8 +255,13 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
               {t("wb_panel.satellite_metric_coverage")}
             </div>
             <div className={SATELLITE_VALUE_CLASS}>
-              {coverageText}
+              {coverageLabel ? t(coverageLabel) : "\u2014"}
             </div>
+            {coverageDetail ? (
+              <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                {coverageDetail}
+              </div>
+            ) : null}
           </div>
         </div>
 
