@@ -1,0 +1,59 @@
+name: GEE Phase 1 Foundations
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: Foundation task to run
+        type: choice
+        options:
+          - check-auth
+          - build-targets
+          - validate-catchments
+          - run-reservoir-context
+        default: check-auth
+
+jobs:
+  gee-phase1:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: neer-vazhvu-api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install API dependencies
+        run: pip install -e .
+
+      - name: Materialize GEE service account file
+        if: ${{ (inputs.task == 'check-auth' || inputs.task == 'run-reservoir-context') && secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
+        run: |
+          mkdir -p /tmp/gee
+          printf '%s' '${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}' > /tmp/gee/service-account.json
+          echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+
+      - name: Run selected task
+        env:
+          GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          case "${{ inputs.task }}" in
+            check-auth)
+              python scripts/run_gee_phase1.py check-auth
+              ;;
+            build-targets)
+              python scripts/run_gee_phase1.py build-targets --write
+              ;;
+            validate-catchments)
+              python scripts/run_gee_phase1.py validate-catchments
+              ;;
+            run-reservoir-context)
+              python scripts/run_gee_phase1.py run-reservoir-context --write
+              ;;
+          esac

@@ -2,6 +2,7 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
+import { ReservoirCatchmentContext } from "@/components/dashboard/reservoir-catchment-context";
 import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
 import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
 import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
@@ -15,6 +16,7 @@ import {
 import { getGroundwaterStatus } from "@/types/groundwater";
 import type { ReservoirSummary, ReservoirName } from "@/types/reservoir";
 import type { GroundwaterApiResponse } from "@/types/groundwater";
+import type { ReservoirCatchmentContextRow } from "@/lib/gee/reservoir-context";
 import { formatDate } from "@/lib/utils/format";
 import { deriveReservoirMetrics, deriveGroundwaterMetrics, deriveRestorationMetrics } from "@/lib/insights/derive-metrics";
 import { selectNarrative } from "@/lib/insights/select-narrative";
@@ -344,6 +346,45 @@ async function getAiNarrative(): Promise<AiNarrative | null> {
   };
 }
 
+async function getReservoirCatchmentContextRows(): Promise<ReservoirCatchmentContextRow[] | null> {
+  const { createServerClient } = await import("@/lib/supabase/server");
+  const supabase = createServerClient();
+
+  const latestDateResult = await supabase
+    .from("reservoir_catchment_context")
+    .select("context_date")
+    .eq("window_days", 30)
+    .order("context_date", { ascending: false })
+    .limit(1);
+
+  if (latestDateResult.error || !latestDateResult.data?.[0]?.context_date) {
+    return null;
+  }
+
+  const contextDate = latestDateResult.data[0].context_date;
+  const rowsResult = await supabase
+    .from("reservoir_catchment_context")
+    .select(
+      "reservoir, context_date, window_days, rain_total_mm, baseline_mm, anomaly_pct, context_level",
+    )
+    .eq("context_date", contextDate)
+    .eq("window_days", 30);
+
+  if (rowsResult.error || !rowsResult.data?.length) {
+    return null;
+  }
+
+  return rowsResult.data.map((row) => ({
+    reservoir: row.reservoir as ReservoirName,
+    contextDate: row.context_date,
+    windowDays: row.window_days,
+    rainTotalMm: Number(row.rain_total_mm ?? 0),
+    baselineMm: row.baseline_mm == null ? null : Number(row.baseline_mm),
+    anomalyPct: row.anomaly_pct == null ? null : Number(row.anomaly_pct),
+    contextLevel: row.context_level as ReservoirCatchmentContextRow["contextLevel"],
+  }));
+}
+
 export default async function DashboardPage() {
   // If Supabase is not configured, render demo mode with scenario switcher
   if (!isSupabaseConfigured()) {
@@ -354,11 +395,13 @@ export default async function DashboardPage() {
   let reservoirData = null;
   let groundwaterData = null;
   let aiNarrative: AiNarrative | null = null;
+  let reservoirCatchmentContextRows: ReservoirCatchmentContextRow[] | null = null;
   try {
-    [reservoirData, groundwaterData, aiNarrative] = await Promise.all([
+    [reservoirData, groundwaterData, aiNarrative, reservoirCatchmentContextRows] = await Promise.all([
       getReservoirData(),
       getGroundwaterData(),
       getAiNarrative(),
+      getReservoirCatchmentContextRows(),
     ]);
   } catch {
     // Supabase connection failed  -  show demo mode
@@ -402,6 +445,10 @@ export default async function DashboardPage() {
       />
 
       {cityStoryNarrative && <CityStory narrative={cityStoryNarrative} aiNarrative={aiNarrative} />}
+
+      {reservoirCatchmentContextRows && reservoirCatchmentContextRows.length > 0 ? (
+        <ReservoirCatchmentContext rows={reservoirCatchmentContextRows} />
+      ) : null}
 
       <DashboardContent
         reservoirs={reservoirData.reservoirs.filter((r) =>
