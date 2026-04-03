@@ -7,7 +7,7 @@ import { WardContext } from "@/components/insights/ward-context";
 import { WardNarrative } from "@/components/insights/ward-narrative";
 import { WardRepresentatives } from "@/components/insights/ward-representatives";
 import { useWardLookup } from "@/lib/hooks/use-ward-lookup";
-import type { SelectedWaterBody, WaterBodyStatus } from "@/types/water-bodies";
+import type { CensusWaterBodyProperties, SelectedWaterBody, WaterBodyStatus } from "@/types/water-bodies";
 import { STATUS_COLORS } from "@/types/water-bodies";
 import type { ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
@@ -27,6 +27,7 @@ import {
   LOST_PROXIMITY_COMPONENT_THRESHOLD,
   INDUSTRIAL_PROXIMITY_COMPONENT_THRESHOLD,
 } from "@/lib/insights/constants";
+import { assessCensusCapacity } from "@/lib/water-bodies/census-capacity";
 
 interface UnifiedDetailPanelProps {
   selected: SelectedWaterBody;
@@ -91,6 +92,14 @@ function formatHectares(area: number | null): string {
 
   const decimals = area >= 100 ? 0 : 1;
   return `${formatNumber(area, decimals)} ha`;
+}
+
+function formatCapacityM3(value: number | null): string {
+  if (value === null || Number.isNaN(value)) {
+    return "\u2014";
+  }
+
+  return formatNumber(value, 0);
 }
 
 function sourceLabel(source: string, t: (key: string) => string): string {
@@ -305,6 +314,73 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
           </div>
         ) : null}
       </div>
+    </div>
+  );
+}
+
+function CensusCapacitySection({ census }: { census: CensusWaterBodyProperties }) {
+  const { t } = useLanguage();
+  const assessment = assessCensusCapacity(census);
+
+  if (!assessment.hasCapacity) {
+    return null;
+  }
+
+  if (assessment.shouldHideCapacity) {
+    return (
+      <div className="px-4 pb-4">
+        <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
+          {t("wb_panel.storage_capacity")}
+        </h4>
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/20">
+          <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
+            {t("wb_panel.capacity_hidden_suspect")}
+          </p>
+          <p className="mt-2 text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+            {t("wb_panel.capacity_units_note")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const capacityPct = assessment.capacityPct == null
+    ? null
+    : Math.max(0, Math.min(assessment.capacityPct, 100));
+  const capacityEncroachMismatch = assessment.issues.includes("encroachment_mismatch");
+
+  return (
+    <div className="px-4 pb-4">
+      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
+        {t("wb_panel.storage_capacity")}
+      </h4>
+      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+        <span>{t("wb_panel.capacity_remaining")}</span>
+        <span>{capacityPct == null ? "\u2014" : `${capacityPct}%`}</span>
+      </div>
+      <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all"
+          style={{
+            width: `${capacityPct ?? 0}%`,
+            backgroundColor: capacityEncroachMismatch
+              ? "#f59e0b"
+              : (capacityPct ?? 0) > 70 ? "#10b981" : (capacityPct ?? 0) > 40 ? "#f59e0b" : "#ef4444",
+          }}
+        />
+      </div>
+      <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-1 gap-4">
+        <span>{t("wb_panel.original_capacity")}: {formatCapacityM3(census.storage_capacity_original)}</span>
+        <span>{t("wb_panel.present_capacity")}: {formatCapacityM3(census.storage_capacity_present)}</span>
+      </div>
+      {capacityEncroachMismatch ? (
+        <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 leading-snug">
+          {t("wb_panel.capacity_vs_encroach")}
+        </p>
+      ) : null}
+      <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 leading-relaxed">
+        {t("wb_panel.capacity_units_note")}
+      </p>
     </div>
   );
 }
@@ -577,12 +653,6 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
         {/* Census data (when matched to an OSM polygon) */}
         {selected.censusMatch && (() => {
           const cm = selected.censusMatch;
-          const hasCapacity = cm.storage_capacity_original != null && cm.storage_capacity_original > 0;
-          const capacityPct = hasCapacity && cm.storage_capacity_present != null
-            ? Math.round((cm.storage_capacity_present / cm.storage_capacity_original!) * 100)
-            : null;
-          const isEncroached = cm.encroachment_status === "yes" && (cm.encroachment_pct ?? 0) > 0;
-          const capacityEncroachMismatch = isEncroached && capacityPct != null && capacityPct >= 90;
 
           return (
             <div className="border-t border-slate-200 dark:border-slate-700">
@@ -615,34 +685,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
                 )}
               </div>
 
-              {hasCapacity && (
-                <div className="px-4 pb-4">
-                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
-                    <span>{t("wb_panel.capacity_remaining")}</span>
-                    <span>{capacityPct ?? 0}%</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${capacityPct ?? 0}%`,
-                        backgroundColor: capacityEncroachMismatch
-                          ? "#f59e0b"
-                          : (capacityPct ?? 0) > 70 ? "#10b981" : (capacityPct ?? 0) > 40 ? "#f59e0b" : "#ef4444",
-                      }}
-                    />
-                  </div>
-                  <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-1">
-                    <span>{t("wb_panel.original")}: {cm.storage_capacity_original}</span>
-                    <span>{t("wb_panel.present")}: {cm.storage_capacity_present ?? 0}</span>
-                  </div>
-                  {capacityEncroachMismatch && (
-                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 leading-snug">
-                      {t("wb_panel.capacity_vs_encroach")}
-                    </p>
-                  )}
-                </div>
-              )}
+              <CensusCapacitySection census={cm} />
 
               <div className="px-4 pb-3">
                 <p className="text-xs text-slate-400 dark:text-slate-500">
@@ -672,13 +715,6 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
     const { props } = selected;
     const name = props.name || t("wb_panel.unnamed");
     const type = localizeType(props.water_body_type ?? undefined);
-    const hasCapacity = props.storage_capacity_original != null && props.storage_capacity_original > 0;
-    const capacityPct = hasCapacity && props.storage_capacity_present != null
-      ? Math.round((props.storage_capacity_present / props.storage_capacity_original!) * 100)
-      : null;
-    const isEncroached = props.encroachment_status === "yes" && (props.encroachment_pct ?? 0) > 0;
-    // Flag when encroachment is significant but capacity shows no loss
-    const capacityEncroachMismatch = isEncroached && capacityPct != null && capacityPct >= 90;
 
     return (
       <div className="h-full flex flex-col bg-white dark:bg-slate-900 overflow-y-auto">
@@ -729,38 +765,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
           )}
         </div>
 
-        {/* Storage capacity bar */}
-        {hasCapacity && (
-          <div className="px-4 pb-4">
-            <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
-              {t("wb_panel.storage_capacity")}
-            </h4>
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
-              <span>{t("wb_panel.capacity_remaining")}</span>
-              <span>{capacityPct ?? 0}%</span>
-            </div>
-            <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  width: `${capacityPct ?? 0}%`,
-                  backgroundColor: capacityEncroachMismatch
-                    ? "#f59e0b"  // amber — capacity not revised despite encroachment
-                    : (capacityPct ?? 0) > 70 ? "#10b981" : (capacityPct ?? 0) > 40 ? "#f59e0b" : "#ef4444",
-                }}
-              />
-            </div>
-            <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-1">
-              <span>{t("wb_panel.original")}: {props.storage_capacity_original}</span>
-              <span>{t("wb_panel.present")}: {props.storage_capacity_present ?? 0}</span>
-            </div>
-            {capacityEncroachMismatch && (
-              <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 leading-snug">
-                {t("wb_panel.capacity_vs_encroach")}
-              </p>
-            )}
-          </div>
-        )}
+        <CensusCapacitySection census={props} />
 
         {/* Point location note */}
         <div className="px-4 pb-2">
