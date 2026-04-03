@@ -60,6 +60,12 @@ class WaterBodySatelliteSummaryRow:
     valid_pixel_pct: float | None = None
 
 
+@dataclass(slots=True)
+class WaterBodyObservationMetadata:
+    latest_valid_date: str | None = None
+    latest_valid_month: int | None = None
+
+
 def read_phase1_target_payload(path: Path | None = None) -> dict[str, Any]:
     payload_path = (path or PHASE1_TARGETS_PATH).expanduser().resolve()
     if not payload_path.exists():
@@ -184,6 +190,12 @@ def derive_confidence_level(
     return "medium"
 
 
+def calculate_valid_pixel_pct(valid_area_ha: float | None, target_area_ha: float) -> float | None:
+    if valid_area_ha is None or target_area_ha <= 0:
+        return None
+    return round(min((valid_area_ha / target_area_ha) * 100, 100.0), 2)
+
+
 def calculate_historical_persistence_pct(
     monthly_baseline_areas_ha: list[float],
     *,
@@ -245,7 +257,7 @@ def _get_dynamic_world_observation_window(
     region_geometry,
     reference_date: date,
     lookback_days: int,
-) -> tuple[Any, str, str]:
+) -> tuple[Any, str]:
     if lookback_days <= 0:
         raise RuntimeError("lookback_days must be positive")
 
@@ -265,9 +277,57 @@ def _get_dynamic_world_observation_window(
             f"{observation_start.isoformat()} to {reference_date.isoformat()}"
         )
 
-    latest_image = collection.sort("system:time_start", False).first()
-    observation_end = str(ee.Date(latest_image.get("system:time_start")).format("YYYY-MM-dd").getInfo())
-    return collection, observation_start.isoformat(), observation_end
+    return collection, observation_start.isoformat()
+
+
+def _get_latest_valid_observation_metadata_by_target(
+    ee,
+    *,
+    targets: list[Phase1WaterBodyTargetFeature],
+    dw_collection,
+) -> dict[str, WaterBodyObservationMetadata]:
+    metadata_by_target: dict[str, WaterBodyObservationMetadata] = {}
+    for target in targets:
+        target_geometry = ee.Geometry(target.geometry)
+        target_collection = dw_collection.filterBounds(target_geometry).sort("system:time_start", False)
+        image_count = int(target_collection.size().getInfo())
+        if image_count <= 0:
+            metadata_by_target[target.gee_target_id] = WaterBodyObservationMetadata()
+            continue
+
+        image_list = target_collection.toList(image_count)
+        latest_valid_date: str | None = None
+        for index in range(image_count):
+            image = ee.Image(image_list.get(index))
+            valid_area_ha = (
+                image.mask()
+                .multiply(ee.Image.pixelArea())
+                .divide(10000)
+                .rename("valid_area_ha")
+                .reduceRegion(
+                    reducer=ee.Reducer.sum(),
+                    geometry=target_geometry,
+                    scale=DYNAMIC_WORLD_PIXEL_SCALE_METERS,
+                    tileScale=4,
+                    maxPixels=1_000_000_000,
+                )
+                .get("valid_area_ha", 0)
+                .getInfo()
+            )
+            if valid_area_ha and float(valid_area_ha) > 0:
+                latest_valid_date = str(
+                    ee.Date(image.get("system:time_start")).format("YYYY-MM-dd").getInfo()
+                )
+                break
+
+        metadata_by_target[target.gee_target_id] = WaterBodyObservationMetadata(
+            latest_valid_date=latest_valid_date,
+            latest_valid_month=(
+                date.fromisoformat(latest_valid_date).month if latest_valid_date else None
+            ),
+        )
+
+    return metadata_by_target
 
 
 def compute_water_body_summary_rows(
@@ -282,16 +342,13 @@ def compute_water_body_summary_rows(
     targets_fc = _build_target_feature_collection(ee, targets)
     region_geometry = targets_fc.geometry().bounds()
 
-    target_map = {target.gee_target_id: target for target in targets}
     summary_reference_date = reference_date or datetime.now(UTC).date()
-    dw_collection, observation_start, observation_end = _get_dynamic_world_observation_window(
+    dw_collection, observation_start = _get_dynamic_world_observation_window(
         ee,
         region_geometry=region_geometry,
         reference_date=summary_reference_date,
         lookback_days=lookback_days,
     )
-    summary_date = observation_end
-    summary_month = date.fromisoformat(observation_end).month
 
     water_area_image = (
         dw_collection.mean()
@@ -318,12 +375,14 @@ def compute_water_body_summary_rows(
         targets_fc=targets_fc,
         scale_meters=DYNAMIC_WORLD_PIXEL_SCALE_METERS,
     )
+    observation_metadata_by_target = _get_latest_valid_observation_metadata_by_target(
+        ee,
+        targets=targets,
+        dw_collection=dw_collection,
+    )
 
     monthly_baseline_areas_by_target: dict[str, list[float]] = {
         target.gee_target_id: [] for target in targets
-    }
-    seasonal_baseline_by_target: dict[str, float | None] = {
-        target.gee_target_id: None for target in targets
     }
 
     monthly_recurrence_collection = ee.ImageCollection(JRC_MONTHLY_RECURRENCE_DATASET)
@@ -346,13 +405,20 @@ def compute_water_body_summary_rows(
         )
         for target_id, area_ha in baseline_by_target.items():
             monthly_baseline_areas_by_target[target_id].append(area_ha or 0.0)
-            if month == summary_month:
-                seasonal_baseline_by_target[target_id] = area_ha
 
     rows: list[WaterBodySatelliteSummaryRow] = []
     for target in targets:
+        observation_metadata = observation_metadata_by_target.get(target.gee_target_id)
+        observation_end = observation_metadata.latest_valid_date if observation_metadata else None
+        summary_date = summary_reference_date.isoformat()
+        summary_month = (
+            observation_metadata.latest_valid_month
+            if observation_metadata and observation_metadata.latest_valid_month
+            else summary_reference_date.month
+        )
         latest_observed_area_ha = latest_area_by_target.get(target.gee_target_id)
-        seasonal_baseline_area_ha = seasonal_baseline_by_target.get(target.gee_target_id)
+        monthly_baseline_areas_ha = monthly_baseline_areas_by_target[target.gee_target_id]
+        seasonal_baseline_area_ha = monthly_baseline_areas_ha[summary_month - 1]
         valid_area_ha = valid_area_by_target.get(target.gee_target_id)
 
         latest_observed_area_ha = (
@@ -362,12 +428,10 @@ def compute_water_body_summary_rows(
             None if seasonal_baseline_area_ha is None else round(seasonal_baseline_area_ha, 2)
         )
 
-        valid_pixel_pct = None
-        if valid_area_ha is not None and target.area_ha > 0:
-            valid_pixel_pct = round(min((valid_area_ha / target.area_ha) * 100, 100.0), 2)
+        valid_pixel_pct = calculate_valid_pixel_pct(valid_area_ha, target.area_ha)
 
         historical_persistence_pct = calculate_historical_persistence_pct(
-            monthly_baseline_areas_by_target[target.gee_target_id],
+            monthly_baseline_areas_ha,
             target_area_ha=target.area_ha,
         )
 
@@ -402,10 +466,16 @@ def compute_water_body_summary_rows(
             )
         )
 
+    latest_summary_date = max((row.summary_date for row in rows), default=summary_reference_date.isoformat())
+    latest_observation_end = max(
+        (row.observation_end for row in rows if row.observation_end),
+        default=None,
+    )
+
     return {
-        "summary_date": summary_date,
+        "summary_date": latest_summary_date,
         "observation_start": observation_start,
-        "observation_end": observation_end,
+        "observation_end": latest_observation_end,
         "target_count": len(rows),
         "rows": rows,
     }

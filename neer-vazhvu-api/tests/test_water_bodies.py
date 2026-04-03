@@ -1,6 +1,7 @@
 import json
 
 from app.gee.water_bodies import (
+    calculate_valid_pixel_pct,
     calculate_historical_persistence_pct,
     classify_surface_water_anomaly,
     derive_confidence_level,
@@ -33,6 +34,13 @@ def test_calculate_historical_persistence_pct_counts_months_with_meaningful_wate
     )
 
     assert persistence_pct == 50.0
+
+
+def test_calculate_valid_pixel_pct_caps_at_one_hundred_percent():
+    assert calculate_valid_pixel_pct(None, 40) is None
+    assert calculate_valid_pixel_pct(30, 0) is None
+    assert calculate_valid_pixel_pct(20, 40) == 50.0
+    assert calculate_valid_pixel_pct(60, 40) == 100.0
 
 
 def test_load_phase1_target_features_matches_manifest_to_geojson(tmp_path):
