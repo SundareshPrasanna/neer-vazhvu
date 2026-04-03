@@ -125,23 +125,23 @@ function currentSpreadToneClasses(tone: "lower" | "near_normal" | "higher"): str
   }
 }
 
-function persistenceInsightKey(persistencePct: number | null): string | null {
+function persistenceMetricKey(persistencePct: number | null): string | null {
   if (persistencePct === null || Number.isNaN(persistencePct)) {
     return null;
   }
   if (persistencePct >= 95) {
-    return "wb_panel.satellite_persistence_year_round";
+    return "wb_panel.satellite_seasonality_year_round";
   }
   if (persistencePct >= 75) {
-    return "wb_panel.satellite_persistence_most_year";
+    return "wb_panel.satellite_seasonality_most_year";
   }
   if (persistencePct >= 40) {
-    return "wb_panel.satellite_persistence_seasonal";
+    return "wb_panel.satellite_seasonality_seasonal";
   }
   if (persistencePct >= 15) {
-    return "wb_panel.satellite_persistence_wet_months";
+    return "wb_panel.satellite_seasonality_wet_months";
   }
-  return "wb_panel.satellite_persistence_ephemeral";
+  return "wb_panel.satellite_seasonality_ephemeral";
 }
 
 const SATELLITE_CARD_CLASS =
@@ -159,10 +159,6 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
   const confidenceLabel = t(`wb_panel.satellite_confidence_${summary.confidenceLevel}`);
   const observedAreaText = formatHectares(summary.latestObservedAreaHa);
   const baselineAreaText = formatHectares(summary.seasonalBaselineAreaHa);
-  const persistenceText =
-    summary.historicalPersistencePct == null
-      ? "\u2014"
-      : `${Math.round(summary.historicalPersistencePct)}%`;
   const coverageText =
     summary.validPixelPct == null
       ? "\u2014"
@@ -194,7 +190,7 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
       })
     : t(`wb_panel.satellite_current_${tone}`);
   const sensorLabel = sourceLabel(summary.sensorSource, t);
-  const persistenceInsight = persistenceInsightKey(summary.historicalPersistencePct);
+  const persistenceMetric = persistenceMetricKey(summary.historicalPersistencePct);
 
   return (
     <div className="border-t border-slate-200 dark:border-slate-700">
@@ -207,15 +203,6 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
         <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
           {summaryText}
         </p>
-
-        {persistenceInsight ? (
-          <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-            <span className="font-semibold text-slate-800 dark:text-slate-200">
-              {t("wb_panel.satellite_metric_persistence")}:
-            </span>{" "}
-            {t(persistenceInsight)}
-          </p>
-        ) : null}
 
         <div className="grid grid-cols-2 gap-3">
           <div className={SATELLITE_CARD_CLASS}>
@@ -236,11 +223,18 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
           </div>
           <div className={SATELLITE_CARD_CLASS}>
             <div className={SATELLITE_LABEL_CLASS}>
-              {t("wb_panel.satellite_metric_persistence")}
+              {t("wb_panel.satellite_metric_seasonality")}
             </div>
             <div className={SATELLITE_VALUE_CLASS}>
-              {persistenceText}
+              {persistenceMetric ? t(persistenceMetric) : "\u2014"}
             </div>
+            {summary.historicalPersistencePct != null ? (
+              <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                {interpolate(t("wb_panel.satellite_persistence_detail"), {
+                  pct: Math.round(summary.historicalPersistencePct),
+                })}
+              </div>
+            ) : null}
           </div>
           <div className={SATELLITE_CARD_CLASS}>
             <div className={SATELLITE_LABEL_CLASS}>
