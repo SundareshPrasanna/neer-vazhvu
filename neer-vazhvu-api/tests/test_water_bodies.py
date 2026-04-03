@@ -1,11 +1,17 @@
 import json
+from datetime import date
 
 from app.gee.water_bodies import (
+    build_monthly_backfill_reference_dates,
     calculate_valid_pixel_pct,
     calculate_historical_persistence_pct,
     classify_surface_water_anomaly,
     derive_confidence_level,
+    filter_targets_for_cohort,
     load_phase1_target_features,
+    month_end_for_date,
+    previous_month_end,
+    Phase1WaterBodyTargetFeature,
 )
 
 
@@ -41,6 +47,75 @@ def test_calculate_valid_pixel_pct_caps_at_one_hundred_percent():
     assert calculate_valid_pixel_pct(30, 0) is None
     assert calculate_valid_pixel_pct(20, 40) == 50.0
     assert calculate_valid_pixel_pct(60, 40) == 100.0
+
+
+def test_month_end_helpers_cover_regular_and_leap_year_months():
+    assert month_end_for_date(date(2026, 4, 3)) == date(2026, 4, 30)
+    assert month_end_for_date(date(2024, 2, 10)) == date(2024, 2, 29)
+    assert previous_month_end(date(2026, 4, 3)) == date(2026, 3, 31)
+    assert previous_month_end(date(2026, 3, 31)) == date(2026, 2, 28)
+
+
+def test_build_monthly_backfill_reference_dates_includes_reference_then_month_ends():
+    dates = build_monthly_backfill_reference_dates(
+        reference_date=date(2026, 4, 2),
+        months_back=3,
+    )
+
+    assert dates == [
+        date(2026, 4, 2),
+        date(2026, 3, 31),
+        date(2026, 2, 28),
+        date(2026, 1, 31),
+    ]
+
+
+def test_build_monthly_backfill_reference_dates_avoids_duplicate_when_ref_is_month_end():
+    dates = build_monthly_backfill_reference_dates(
+        reference_date=date(2026, 3, 31),
+        months_back=2,
+    )
+
+    assert dates == [
+        date(2026, 3, 31),
+        date(2026, 2, 28),
+        date(2026, 1, 31),
+    ]
+
+
+def test_filter_targets_for_cohort_keeps_only_flagship_history_targets():
+    targets = [
+        Phase1WaterBodyTargetFeature(
+            gee_target_id="osm:25453624",
+            osm_id=25453624,
+            census_id=None,
+            name="Chembarambakkam Lake",
+            water_type="reservoir",
+            area_ha=2000.44,
+            priority_level="moderate",
+            priority_score=44.7,
+            centroid=[],
+            include_reason="named_reservoir",
+            geometry={"type": "Polygon", "coordinates": []},
+        ),
+        Phase1WaterBodyTargetFeature(
+            gee_target_id="osm:999999",
+            osm_id=999999,
+            census_id=None,
+            name="Test Non Cohort Lake",
+            water_type="lake",
+            area_ha=12.5,
+            priority_level="high",
+            priority_score=42.0,
+            centroid=[],
+            include_reason="named_large",
+            geometry={"type": "Polygon", "coordinates": []},
+        ),
+    ]
+
+    filtered = filter_targets_for_cohort(targets, cohort="flagship-history")
+
+    assert [target.gee_target_id for target in filtered] == ["osm:25453624"]
 
 
 def test_load_phase1_target_features_matches_manifest_to_geojson(tmp_path):

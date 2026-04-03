@@ -16,6 +16,7 @@ from app.gee.config import (
     DYNAMIC_WORLD_DATASET,
     DYNAMIC_WORLD_PIXEL_SCALE_METERS,
     DYNAMIC_WORLD_WATER_BAND,
+    FLAGSHIP_HISTORY_COHORT,
     JRC_MONTHLY_RECURRENCE_BAND,
     JRC_MONTHLY_RECURRENCE_DATASET,
     JRC_PIXEL_SCALE_METERS,
@@ -64,6 +65,56 @@ class WaterBodySatelliteSummaryRow:
 class WaterBodyObservationMetadata:
     latest_valid_date: str | None = None
     latest_valid_month: int | None = None
+
+
+def filter_targets_for_cohort(
+    targets: list[Phase1WaterBodyTargetFeature],
+    *,
+    cohort: str | None,
+) -> list[Phase1WaterBodyTargetFeature]:
+    if cohort is None:
+        return targets
+    if cohort != "flagship-history":
+        raise RuntimeError(f"Unsupported target cohort: {cohort}")
+
+    cohort_ids = set(FLAGSHIP_HISTORY_COHORT)
+    filtered_targets = [target for target in targets if target.gee_target_id in cohort_ids]
+    if not filtered_targets:
+        raise RuntimeError(f"No Phase 1 water-body targets found for cohort {cohort}")
+    return filtered_targets
+
+
+def month_end_for_date(value: date) -> date:
+    if value.month == 12:
+        return date(value.year + 1, 1, 1) - timedelta(days=1)
+    return date(value.year, value.month + 1, 1) - timedelta(days=1)
+
+
+def previous_month_end(value: date) -> date:
+    return date(value.year, value.month, 1) - timedelta(days=1)
+
+
+def build_monthly_backfill_reference_dates(
+    *,
+    reference_date: date,
+    months_back: int,
+    include_reference_date: bool = True,
+) -> list[date]:
+    if months_back <= 0:
+        raise RuntimeError("months_back must be positive")
+
+    dates: list[date] = []
+    if include_reference_date:
+        dates.append(reference_date)
+        cursor = previous_month_end(reference_date)
+    else:
+        cursor = month_end_for_date(reference_date)
+
+    for _ in range(months_back):
+        dates.append(cursor)
+        cursor = previous_month_end(cursor)
+
+    return dates
 
 
 def read_phase1_target_payload(path: Path | None = None) -> dict[str, Any]:
@@ -286,46 +337,52 @@ def _get_latest_valid_observation_metadata_by_target(
     targets: list[Phase1WaterBodyTargetFeature],
     dw_collection,
 ) -> dict[str, WaterBodyObservationMetadata]:
-    metadata_by_target: dict[str, WaterBodyObservationMetadata] = {}
-    for target in targets:
-        target_geometry = ee.Geometry(target.geometry)
-        target_collection = dw_collection.filterBounds(target_geometry).sort("system:time_start", False)
-        image_count = int(target_collection.size().getInfo())
-        if image_count <= 0:
-            metadata_by_target[target.gee_target_id] = WaterBodyObservationMetadata()
+    metadata_by_target: dict[str, WaterBodyObservationMetadata] = {
+        target.gee_target_id: WaterBodyObservationMetadata() for target in targets
+    }
+    unresolved_target_ids = {target.gee_target_id for target in targets}
+    if not unresolved_target_ids:
+        return metadata_by_target
+
+    targets_fc = _build_target_feature_collection(ee, targets)
+    ordered_collection = dw_collection.sort("system:time_start", False)
+    image_count = int(ordered_collection.size().getInfo())
+    if image_count <= 0:
+        return metadata_by_target
+
+    image_list = ordered_collection.toList(image_count)
+    for index in range(image_count):
+        if not unresolved_target_ids:
+            break
+
+        image = ee.Image(image_list.get(index))
+        valid_area_by_target = _reduce_sum_by_target(
+            ee,
+            image.mask()
+            .multiply(ee.Image.pixelArea())
+            .divide(10000)
+            .rename("valid_area_ha"),
+            targets_fc=targets_fc,
+            scale_meters=DYNAMIC_WORLD_PIXEL_SCALE_METERS,
+        )
+        resolved_target_ids = [
+            target_id
+            for target_id in unresolved_target_ids
+            if (valid_area_by_target.get(target_id) or 0) > 0
+        ]
+        if not resolved_target_ids:
             continue
 
-        image_list = target_collection.toList(image_count)
-        latest_valid_date: str | None = None
-        for index in range(image_count):
-            image = ee.Image(image_list.get(index))
-            valid_area_ha = (
-                image.mask()
-                .multiply(ee.Image.pixelArea())
-                .divide(10000)
-                .rename("valid_area_ha")
-                .reduceRegion(
-                    reducer=ee.Reducer.sum(),
-                    geometry=target_geometry,
-                    scale=DYNAMIC_WORLD_PIXEL_SCALE_METERS,
-                    tileScale=4,
-                    maxPixels=1_000_000_000,
-                )
-                .get("valid_area_ha", 0)
-                .getInfo()
-            )
-            if valid_area_ha and float(valid_area_ha) > 0:
-                latest_valid_date = str(
-                    ee.Date(image.get("system:time_start")).format("YYYY-MM-dd").getInfo()
-                )
-                break
-
-        metadata_by_target[target.gee_target_id] = WaterBodyObservationMetadata(
-            latest_valid_date=latest_valid_date,
-            latest_valid_month=(
-                date.fromisoformat(latest_valid_date).month if latest_valid_date else None
-            ),
+        latest_valid_date = str(
+            ee.Date(image.get("system:time_start")).format("YYYY-MM-dd").getInfo()
         )
+        latest_valid_month = date.fromisoformat(latest_valid_date).month
+        for target_id in resolved_target_ids:
+            metadata_by_target[target_id] = WaterBodyObservationMetadata(
+                latest_valid_date=latest_valid_date,
+                latest_valid_month=latest_valid_month,
+            )
+            unresolved_target_ids.remove(target_id)
 
     return metadata_by_target
 
@@ -336,8 +393,10 @@ def compute_water_body_summary_rows(
     lookback_days: int = DEFAULT_WATER_BODY_LOOKBACK_DAYS,
     gee_target_id: str | None = None,
     limit: int | None = None,
+    target_cohort: str | None = None,
 ) -> dict[str, Any]:
     targets = load_phase1_target_features(gee_target_id=gee_target_id, limit=limit)
+    targets = filter_targets_for_cohort(targets, cohort=target_cohort)
     ee = initialize_earth_engine()
     targets_fc = _build_target_feature_collection(ee, targets)
     region_geometry = targets_fc.geometry().bounds()
@@ -492,3 +551,62 @@ def upsert_water_body_summaries(rows: list[WaterBodySatelliteSummaryRow]) -> int
         payload, on_conflict="gee_target_id,summary_date"
     ).execute()
     return len(payload)
+
+
+def backfill_water_body_summaries(
+    *,
+    reference_date: date | None = None,
+    months_back: int,
+    lookback_days: int = DEFAULT_WATER_BODY_LOOKBACK_DAYS,
+    gee_target_id: str | None = None,
+    limit: int | None = None,
+    target_cohort: str | None = None,
+    write: bool = False,
+) -> dict[str, Any]:
+    history_reference_date = reference_date or datetime.now(UTC).date()
+    snapshot_dates = build_monthly_backfill_reference_dates(
+        reference_date=history_reference_date,
+        months_back=months_back,
+        include_reference_date=True,
+    )
+
+    snapshots: list[dict[str, Any]] = []
+    total_rows = 0
+    total_written = 0
+
+    for snapshot_date in snapshot_dates:
+        result = compute_water_body_summary_rows(
+            reference_date=snapshot_date,
+            lookback_days=lookback_days,
+            gee_target_id=gee_target_id,
+            limit=limit,
+            target_cohort=target_cohort,
+        )
+        rows = result["rows"]
+        written = upsert_water_body_summaries(rows) if write else 0
+        total_rows += len(rows)
+        total_written += written
+        snapshots.append(
+            {
+                "summary_date": result["summary_date"],
+                "observation_start": result["observation_start"],
+                "observation_end": result["observation_end"],
+                "target_count": result["target_count"],
+                "written": written if write else None,
+            }
+        )
+
+    payload: dict[str, Any] = {
+        "reference_date": history_reference_date.isoformat(),
+        "months_back": months_back,
+        "snapshot_count": len(snapshots),
+        "snapshot_dates": [snapshot.isoformat() for snapshot in snapshot_dates],
+        "target_filter": gee_target_id,
+        "target_cohort": target_cohort,
+        "total_rows": total_rows,
+        "snapshots": snapshots,
+    }
+    if write:
+        payload["written"] = total_written
+
+    return payload

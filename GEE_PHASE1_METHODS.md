@@ -13,6 +13,17 @@ Phase 1 currently powers two user-facing surfaces:
 
 Phase 1 deliberately does not expose raw rasters, indices, or live Earth Engine tiles in the frontend. It writes small summary tables into Supabase and the app reads those summaries like any other product data.
 
+The water-body summary table can also hold historical snapshots. That means the current Phase 1 data model is already capable of supporting:
+
+- recent visible spread over time
+- current spread versus the usual seasonal cycle
+
+Current historical seeding strategy:
+
+- keep the full 150-target set for the latest operational summary
+- use a lighter `flagship-history` cohort for chart-ready history
+- seed monthly history manually rather than on the weekly schedule
+
 ## Architecture
 
 - Earth Engine code lives in `neer-vazhvu-api/app/gee/`
@@ -269,6 +280,12 @@ Important fields:
 - `confidence_level`
 - `valid_pixel_pct`
 
+Historical notes:
+
+- one row represents one snapshot for one water body
+- `summary_date` is the requested snapshot date for that run
+- rerunning the same snapshot date is safe because rows upsert on `gee_target_id + summary_date`
+
 ### `reservoir_catchment_context`
 
 Important fields:
@@ -292,6 +309,7 @@ python scripts/run_gee_phase1.py build-targets --write
 python scripts/run_gee_phase1.py validate-catchments
 python scripts/run_gee_phase1.py run-reservoir-context --write
 python scripts/run_gee_phase1.py run-water-body-summaries --write
+python scripts/run_gee_phase1.py backfill-water-body-summaries --months-back 12 --write
 ```
 
 Helpful notes:
@@ -301,6 +319,22 @@ Helpful notes:
 - `validate-catchments` checks that all four reviewed catchments are present
 - `run-reservoir-context --write` upserts 7, 30, and 90 day reservoir rows
 - `run-water-body-summaries --write` upserts the water-body satellite summaries
+- `backfill-water-body-summaries --months-back 12 --write` seeds one current point plus twelve monthly historical snapshots for chart-ready history
+
+Current `flagship-history` cohort:
+
+- Chembarambakkam Lake
+- Red Hills Reservoir
+- Sholavaram Lake
+- Kolavai Lake
+- Ambattur Lake
+- Korattur Lake
+- Retteri Lake
+- Ayanambakkam Tank
+- Perumbakkam Lake
+- Tiruneermalai Eri
+- Poonamallee Lake
+- Porur Lake
 
 ## Known Gaps And Next Improvements
 

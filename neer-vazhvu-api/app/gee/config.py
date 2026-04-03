@@ -39,3 +39,18 @@ DEFAULT_WATER_BODY_LOOKBACK_DAYS = 45
 DEFAULT_WATER_BODY_MIN_VALID_PCT = 40.0
 DEFAULT_PERSISTENCE_PRESENCE_FRACTION = 0.15
 DEFAULT_PERSISTENCE_MIN_AREA_HA = 1.0
+
+FLAGSHIP_HISTORY_COHORT = (
+    "osm:25453624",   # Chembarambakkam Lake
+    "osm:25394157",   # Red Hills Reservoir
+    "osm:25394523",   # Sholavaram Lake
+    "osm:24161888",   # Kolavai Lake
+    "osm:25391800",   # Ambattur Lake
+    "osm:25474612",   # Korattur Lake
+    "osm:25474749",   # Retteri Lake
+    "osm:1237456198", # Ayanambakkam Tank
+    "osm:30424450",   # Perumbakkam Lake
+    "osm:23648233",   # Tiruneermalai Eri
+    "osm:1236160012", # Poonamallee Lake
+    "osm:23633592",   # Porur Lake
+)

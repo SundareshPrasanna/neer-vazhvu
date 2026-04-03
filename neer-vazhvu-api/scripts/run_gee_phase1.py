@@ -160,6 +160,7 @@ def cmd_run_water_body_summaries(
     lookback_days: int,
     gee_target_id: str | None,
     limit: int | None,
+    target_cohort: str | None,
 ) -> int:
     from app.gee.water_bodies import compute_water_body_summary_rows, upsert_water_body_summaries
 
@@ -176,6 +177,7 @@ def cmd_run_water_body_summaries(
         lookback_days=lookback_days,
         gee_target_id=gee_target_id,
         limit=limit,
+        target_cohort=target_cohort,
     )
     rows = result["rows"]
 
@@ -198,6 +200,39 @@ def cmd_run_water_body_summaries(
         }
 
     print(json.dumps(payload, indent=2))
+    return 0
+
+
+def cmd_backfill_water_body_summaries(
+    *,
+    write: bool,
+    date_arg: str | None,
+    months_back: int,
+    lookback_days: int,
+    gee_target_id: str | None,
+    limit: int | None,
+    target_cohort: str | None,
+) -> int:
+    from app.gee.water_bodies import backfill_water_body_summaries
+
+    if date_arg:
+        try:
+            reference_date = date.fromisoformat(date_arg)
+        except ValueError as exc:
+            raise RuntimeError(f"Invalid --date value: {date_arg}. Use YYYY-MM-DD.") from exc
+    else:
+        reference_date = None
+
+    result = backfill_water_body_summaries(
+        reference_date=reference_date,
+        months_back=months_back,
+        lookback_days=lookback_days,
+        gee_target_id=gee_target_id,
+        limit=limit,
+        target_cohort=target_cohort,
+        write=write,
+    )
+    print(json.dumps(result, indent=2))
     return 0
 
 
@@ -330,6 +365,52 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional target limit for QA dry-runs.",
     )
     run_water_body_summaries.add_argument(
+        "--target-cohort",
+        choices=["flagship-history"],
+        help="Optional named target cohort filter.",
+    )
+    run_water_body_summaries.add_argument(
+        "--write",
+        action="store_true",
+        help="Upsert rows into Supabase instead of printing the dry-run payload.",
+    )
+
+    backfill_water_body_summaries = subparsers.add_parser(
+        "backfill-water-body-summaries",
+        help="Backfill monthly historical Phase 1 water-body satellite summaries",
+    )
+    backfill_water_body_summaries.add_argument(
+        "--date",
+        dest="date_arg",
+        help="Reference date in YYYY-MM-DD format. Defaults to today in UTC.",
+    )
+    backfill_water_body_summaries.add_argument(
+        "--months-back",
+        type=int,
+        default=12,
+        help="Number of prior monthly snapshots to backfill. Default: 12",
+    )
+    backfill_water_body_summaries.add_argument(
+        "--lookback-days",
+        type=int,
+        default=DEFAULT_WATER_BODY_LOOKBACK_DAYS,
+        help=f"Dynamic World lookback window in days. Default: {DEFAULT_WATER_BODY_LOOKBACK_DAYS}",
+    )
+    backfill_water_body_summaries.add_argument(
+        "--gee-target-id",
+        help="Optional single target id filter, for example osm:25394523.",
+    )
+    backfill_water_body_summaries.add_argument(
+        "--limit",
+        type=int,
+        help="Optional target limit for QA dry-runs.",
+    )
+    backfill_water_body_summaries.add_argument(
+        "--target-cohort",
+        choices=["flagship-history"],
+        help="Optional named target cohort filter.",
+    )
+    backfill_water_body_summaries.add_argument(
         "--write",
         action="store_true",
         help="Upsert rows into Supabase instead of printing the dry-run payload.",
@@ -375,6 +456,17 @@ def main() -> int:
                 lookback_days=args.lookback_days,
                 gee_target_id=args.gee_target_id,
                 limit=args.limit,
+                target_cohort=args.target_cohort,
+            )
+        if args.command == "backfill-water-body-summaries":
+            return cmd_backfill_water_body_summaries(
+                write=args.write,
+                date_arg=args.date_arg,
+                months_back=args.months_back,
+                lookback_days=args.lookback_days,
+                gee_target_id=args.gee_target_id,
+                limit=args.limit,
+                target_cohort=args.target_cohort,
             )
     except RuntimeError as exc:
         print(str(exc), file=sys.stderr)

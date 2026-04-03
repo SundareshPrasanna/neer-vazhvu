@@ -15,8 +15,20 @@ on:
           - validate-catchments
           - run-reservoir-context
           - run-water-body-summaries
+          - backfill-water-body-summaries
           - run-all-refresh
         default: run-all-refresh
+      months_back:
+        description: Prior monthly snapshots to backfill when using backfill-water-body-summaries
+        type: number
+        default: 12
+      target_cohort:
+        description: Optional named target cohort for manual water-body runs
+        type: choice
+        options:
+          - all
+          - flagship-history
+        default: all
 
 concurrency:
   group: gee-phase1-${{ github.event_name }}-${{ github.event.schedule || inputs.task || 'default' }}
@@ -118,6 +130,10 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
+          TARGET_COHORT_ARG=""
+          if [ "${{ inputs.target_cohort }}" != "all" ]; then
+            TARGET_COHORT_ARG="--target-cohort ${{ inputs.target_cohort }}"
+          fi
           case "${{ inputs.task }}" in
             check-auth)
               python scripts/run_gee_phase1.py check-auth
@@ -132,7 +148,10 @@ jobs:
               python scripts/run_gee_phase1.py run-reservoir-context --write
               ;;
             run-water-body-summaries)
-              python scripts/run_gee_phase1.py run-water-body-summaries --write
+              python scripts/run_gee_phase1.py run-water-body-summaries $TARGET_COHORT_ARG --write
+              ;;
+            backfill-water-body-summaries)
+              python scripts/run_gee_phase1.py backfill-water-body-summaries --months-back "${{ inputs.months_back }}" $TARGET_COHORT_ARG --write
               ;;
             run-all-refresh)
               python scripts/run_gee_phase1.py run-reservoir-context --write
