@@ -12,7 +12,7 @@ interface GroundwaterLegendProps {
 
 export function GroundwaterLegend({ viewMode, hiddenCategories, onToggleCategory }: GroundwaterLegendProps) {
   const { t } = useLanguage();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   const DEPTH_ITEMS = [
     { id: "healthy",  color: "#22c55e", label: "0-3m",   tKey: "gw.healthy" },
@@ -46,19 +46,19 @@ export function GroundwaterLegend({ viewMode, hiddenCategories, onToggleCategory
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-3">
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="flex items-center justify-between w-full sm:pointer-events-none"
+        className="flex items-center justify-between w-full"
       >
         <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
           {title}
         </h4>
         <svg
-          className={`w-3.5 h-3.5 text-slate-400 sm:hidden transition-transform ${expanded ? "rotate-180" : ""}`}
+          className={`w-3.5 h-3.5 text-slate-400 transition-transform ${expanded ? "rotate-180" : ""}`}
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-      <div className={`${expanded ? "block" : "hidden"} sm:block mt-2 space-y-1`}>
+      <div className={`${expanded ? "block" : "hidden"} mt-2 space-y-1`}>
         {items.map((item) => {
           const hidden = hiddenCategories?.has(item.id) ?? false;
           return (
