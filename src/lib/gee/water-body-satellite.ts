@@ -82,3 +82,11 @@ export function satelliteAnomalyTone(
   }
   return "near_normal";
 }
+
+export function satelliteAnomalyPercent(anomalyRatio: number | null): number | null {
+  if (anomalyRatio === null || Number.isNaN(anomalyRatio)) {
+    return null;
+  }
+
+  return Math.round((anomalyRatio - 1) * 100);
+}

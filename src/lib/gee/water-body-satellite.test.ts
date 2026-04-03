@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  satelliteAnomalyPercent,
   normalizeWaterBodySatelliteSummary,
   satelliteAnomalyTone,
   shouldShowWaterBodySatelliteSummary,
@@ -63,4 +64,10 @@ test("satelliteAnomalyTone collapses detailed anomaly levels into simple copy bu
   assert.equal(satelliteAnomalyTone("near_normal"), "near_normal");
   assert.equal(satelliteAnomalyTone("higher"), "higher");
   assert.equal(satelliteAnomalyTone("much_higher"), "higher");
+});
+
+test("satelliteAnomalyPercent converts ratio into rounded percentage delta", () => {
+  assert.equal(satelliteAnomalyPercent(1.228), 23);
+  assert.equal(satelliteAnomalyPercent(0.8), -20);
+  assert.equal(satelliteAnomalyPercent(null), null);
 });

@@ -13,9 +13,10 @@ import type { ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
 import { NewsContext } from "@/components/insights/news-context";
-import { formatDate } from "@/lib/utils/format";
+import { formatDate, formatNumber } from "@/lib/utils/format";
 import {
   normalizeWaterBodySatelliteSummary,
+  satelliteAnomalyPercent,
   satelliteAnomalyTone,
   shouldShowWaterBodySatelliteSummary,
   type WaterBodySatelliteSummary,
@@ -83,11 +84,80 @@ function interpolate(template: string, params: Record<string, string | number>):
   return result;
 }
 
+function formatHectares(area: number | null): string {
+  if (area === null || Number.isNaN(area)) {
+    return "\u2014";
+  }
+
+  const decimals = area >= 100 ? 0 : 1;
+  return `${formatNumber(area, decimals)} ha`;
+}
+
+function sourceLabel(source: string, t: (key: string) => string): string {
+  if (source === "dynamic_world") {
+    return t("wb_panel.satellite_source_dynamic_world");
+  }
+
+  return source
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function currentSpreadToneClasses(tone: "lower" | "near_normal" | "higher"): string {
+  switch (tone) {
+    case "lower":
+      return "bg-amber-500";
+    case "higher":
+      return "bg-sky-500";
+    case "near_normal":
+    default:
+      return "bg-emerald-500";
+  }
+}
+
 function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSummary }) {
   const { t } = useLanguage();
   const tone = satelliteAnomalyTone(summary.surfaceWaterAnomalyLevel);
   const observationDate = summary.observationEnd || summary.summaryDate;
   const confidenceLabel = t(`wb_panel.satellite_confidence_${summary.confidenceLevel}`);
+  const observedAreaText = formatHectares(summary.latestObservedAreaHa);
+  const baselineAreaText = formatHectares(summary.seasonalBaselineAreaHa);
+  const persistenceText =
+    summary.historicalPersistencePct == null
+      ? "\u2014"
+      : `${Math.round(summary.historicalPersistencePct)}%`;
+  const coverageText =
+    summary.validPixelPct == null
+      ? "\u2014"
+      : interpolate(t("wb_panel.satellite_coverage_value"), {
+          pct: Math.round(summary.validPixelPct),
+        });
+  const anomalyPct = satelliteAnomalyPercent(summary.anomalyRatio);
+  const compareMax = Math.max(
+    summary.latestObservedAreaHa ?? 0,
+    summary.seasonalBaselineAreaHa ?? 0,
+    1,
+  );
+  const currentBarWidth = Math.max(
+    6,
+    Math.round((((summary.latestObservedAreaHa ?? 0) / compareMax) * 100)),
+  );
+  const baselineBarWidth = Math.max(
+    6,
+    Math.round((((summary.seasonalBaselineAreaHa ?? 0) / compareMax) * 100)),
+  );
+  const hasAreaComparison =
+    summary.latestObservedAreaHa != null && summary.seasonalBaselineAreaHa != null;
+  const hasAnomalyEvidence = hasAreaComparison && anomalyPct !== null;
+  const summaryText = hasAnomalyEvidence
+    ? interpolate(t(`wb_panel.satellite_summary_${tone}`), {
+        observed: observedAreaText,
+        baseline: baselineAreaText,
+        delta: `${Math.abs(anomalyPct)}%`,
+      })
+    : t(`wb_panel.satellite_current_${tone}`);
+  const sensorLabel = sourceLabel(summary.sensorSource, t);
 
   return (
     <div className="border-t border-slate-200 dark:border-slate-700">
@@ -96,19 +166,93 @@ function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSumma
           {t("wb_panel.satellite_context")}
         </h3>
       </div>
-      <div className="px-4 pb-4 space-y-2">
+      <div className="px-4 pb-4 space-y-4">
+        <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+          {summaryText}
+        </p>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3">
+            <div className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              {t("wb_panel.satellite_metric_current")}
+            </div>
+            <div className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
+              {observedAreaText}
+            </div>
+          </div>
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3">
+            <div className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              {t("wb_panel.satellite_metric_baseline")}
+            </div>
+            <div className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
+              {baselineAreaText}
+            </div>
+          </div>
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3">
+            <div className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              {t("wb_panel.satellite_metric_persistence")}
+            </div>
+            <div className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
+              {persistenceText}
+            </div>
+          </div>
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3">
+            <div className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              {t("wb_panel.satellite_metric_coverage")}
+            </div>
+            <div className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
+              {coverageText}
+            </div>
+          </div>
+        </div>
+
+        {hasAreaComparison ? (
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3 space-y-3">
+            <div className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              {t("wb_panel.satellite_compare_title")}
+            </div>
+
+            <div className="space-y-2">
+              <div>
+                <div className="mb-1 flex items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-300">
+                  <span>{t("wb_panel.satellite_compare_current")}</span>
+                  <span className="font-medium">{observedAreaText}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                  <div
+                    className={`h-full rounded-full transition-all ${currentSpreadToneClasses(tone)}`}
+                    style={{ width: `${currentBarWidth}%` }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-1 flex items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-300">
+                  <span>{t("wb_panel.satellite_compare_baseline")}</span>
+                  <span className="font-medium">{baselineAreaText}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                  <div
+                    className="h-full rounded-full bg-slate-400 dark:bg-slate-500 transition-all"
+                    style={{ width: `${baselineBarWidth}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         {summary.historicalPersistencePct != null ? (
-          <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
             {interpolate(t("wb_panel.satellite_persistence"), {
               pct: Math.round(summary.historicalPersistencePct),
             })}
           </p>
         ) : null}
-        <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-          {t(`wb_panel.satellite_current_${tone}`)}
-        </p>
+
         <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
           {interpolate(t("wb_panel.satellite_observed"), {
+            source: sensorLabel,
             date: formatDate(observationDate),
             confidence: confidenceLabel,
           })}
