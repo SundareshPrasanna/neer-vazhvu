@@ -120,6 +120,7 @@ export function WardComparisonPage() {
             <ShareMenu
               url={shareUrl}
               title={`Comparing Wards ${validWards.join(", ")} | Neer Vazhvu`}
+              ogImageUrl={`/api/og/compare?wards=${validWards.join(",")}`}
             />
             <button
               onClick={handleExport}

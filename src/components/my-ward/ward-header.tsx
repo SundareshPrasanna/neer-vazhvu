@@ -66,6 +66,7 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
           url={shareUrl}
           title={`Ward ${wardNumber} - ${zoneName} | Neer Vazhvu`}
           description={t("share.ward_report")}
+          ogImageUrl={`/api/og/ward?ward=${wardNumber}`}
         />
 
         {/* Export CSV */}

@@ -239,6 +239,7 @@ export function WardReportCard() {
             url={typeof window !== "undefined" ? `${window.location.origin}/my-ward/report?ward=${wardNumber}` : `/my-ward/report?ward=${wardNumber}`}
             title={`Ward ${wardNumber} Report Card | Neer Vazhvu`}
             description={rankings ? `Grade ${rankings.overallGrade} - Ranked #${rankings.overallRank} of ${rankings.overallTotal}` : undefined}
+            ogImageUrl={`/api/og/ward?ward=${wardNumber}`}
           />
           <button
             onClick={() => window.print()}

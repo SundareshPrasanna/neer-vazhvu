@@ -7,16 +7,58 @@ interface ShareMenuProps {
   url: string;
   title: string;
   description?: string;
+  ogImageUrl?: string;
 }
 
-export function ShareMenu({ url, title, description }: ShareMenuProps) {
+/** Fetch OG image as a File object for native sharing */
+async function fetchOgImage(ogImageUrl: string, title: string): Promise<File | null> {
+  try {
+    const res = await fetch(ogImageUrl, { cache: "no-cache" });
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    const filename = title.replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-").toLowerCase() + ".png";
+    return new File([blob], filename, { type: "image/png" });
+  } catch {
+    return null;
+  }
+}
+
+/** Check if browser supports sharing files */
+function canShareFiles(): boolean {
+  if (typeof navigator === "undefined" || !navigator.canShare) return false;
+  try {
+    const testFile = new File([""], "test.png", { type: "image/png" });
+    return navigator.canShare({ files: [testFile] });
+  } catch {
+    return false;
+  }
+}
+
+/** Download a blob as a file */
+function downloadBlob(blob: Blob, filename: string) {
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = blobUrl;
+  a.download = filename;
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  // Delay cleanup so browser can start the download
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
+  }, 1000);
+}
+
+export function ShareMenu({ url, title, description, ogImageUrl }: ShareMenuProps) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Computed inline - only evaluated inside {open && ...} which never renders during SSR
   const hasNativeShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
+  const hasFileShare = typeof navigator !== "undefined" && canShareFiles();
 
   const close = useCallback(() => setOpen(false), []);
 
@@ -39,36 +81,79 @@ export function ShareMenu({ url, title, description }: ShareMenuProps) {
 
   const shareText = description ? `${title}\n${description}` : title;
 
-  function handleWhatsApp() {
-    window.open(`https://wa.me/?text=${encodeURIComponent(shareText + "\n" + url)}`, "_blank", "noopener");
+  /** Share image via native share, or download image + open platform URL */
+  async function shareWithImage(fallbackUrl?: string) {
+    if (!ogImageUrl) {
+      if (fallbackUrl) window.open(fallbackUrl, "_blank", "noopener");
+      close();
+      return;
+    }
+    setSharing(true);
+    const file = await fetchOgImage(ogImageUrl, title);
+    setSharing(false);
+
+    if (file && hasFileShare) {
+      try {
+        await navigator.share({ files: [file], title, text: shareText + "\n" + url });
+        close();
+        return;
+      } catch {
+        // user cancelled or share failed - fall through to download
+      }
+    }
+
+    // Desktop fallback: download image + open platform URL
+    if (file) downloadBlob(file, file.name);
+    if (fallbackUrl) window.open(fallbackUrl, "_blank", "noopener");
     close();
+  }
+
+  function handleWhatsApp() {
+    const fallback = `https://wa.me/?text=${encodeURIComponent(shareText + "\n" + url)}`;
+    if (ogImageUrl) {
+      shareWithImage(fallback);
+    } else {
+      window.open(fallback, "_blank", "noopener");
+      close();
+    }
   }
 
   function handleTwitter() {
-    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, "_blank", "noopener");
-    close();
+    const fallback = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
+    if (ogImageUrl) {
+      shareWithImage(fallback);
+    } else {
+      window.open(fallback, "_blank", "noopener");
+      close();
+    }
   }
 
   function handleFacebook() {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, "_blank", "noopener");
-    close();
+    const fallback = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    if (ogImageUrl) {
+      shareWithImage(fallback);
+    } else {
+      window.open(fallback, "_blank", "noopener");
+      close();
+    }
   }
 
   function handleLinkedIn() {
-    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, "_blank", "noopener");
-    close();
+    const fallback = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(shareText + "\n" + url)}`;
+    if (ogImageUrl) {
+      shareWithImage(fallback);
+    } else {
+      window.open(fallback, "_blank", "noopener");
+      close();
+    }
   }
 
-  async function handleInstagram() {
-    // Instagram has no web share URL - copy link so user can paste in Stories/DMs
-    try {
-      await navigator.clipboard.writeText(url);
-    } catch {
-      window.prompt("Copy this link:", url);
+  function handleInstagram() {
+    if (ogImageUrl) {
+      shareWithImage();
+    } else {
+      handleCopyLink();
     }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    close();
   }
 
   async function handleCopyLink() {
@@ -82,13 +167,24 @@ export function ShareMenu({ url, title, description }: ShareMenuProps) {
     close();
   }
 
-  async function handleNativeShare() {
-    try {
-      await navigator.share({ url, title, text: description || title });
-    } catch {
-      // user cancelled
-    }
+  async function handleSaveImage() {
+    if (!ogImageUrl) return;
+    setSharing(true);
     close();
+    const file = await fetchOgImage(ogImageUrl, title);
+    setSharing(false);
+    if (file) {
+      downloadBlob(file, file.name);
+    }
+  }
+
+  async function handleNativeShare() {
+    if (!ogImageUrl) {
+      try { await navigator.share({ url, title, text: description || title }); } catch { /* cancelled */ }
+      close();
+      return;
+    }
+    await shareWithImage();
   }
 
   return (
@@ -96,12 +192,13 @@ export function ShareMenu({ url, title, description }: ShareMenuProps) {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+        disabled={sharing}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
       >
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
         </svg>
-        {copied ? t("share.copied") : t("share.share")}
+        {sharing ? t("share.loading") : copied ? t("share.copied") : t("share.share")}
       </button>
 
       {open && (
@@ -163,6 +260,20 @@ export function ShareMenu({ url, title, description }: ShareMenuProps) {
           </button>
 
           <div className="border-t border-slate-100 dark:border-slate-700" />
+
+          {/* Save image for manual sharing */}
+          {ogImageUrl && (
+            <button
+              type="button"
+              onClick={handleSaveImage}
+              className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              {t("share.save_image")}
+            </button>
+          )}
 
           <button
             type="button"

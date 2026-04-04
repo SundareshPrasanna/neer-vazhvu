@@ -969,6 +969,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "share.copy_link":           { en: "Copy link",                          ta: "இணைப்பை நகலெடு" },
   "share.copied":              { en: "Copied!",                            ta: "நகலெடுக்கப்பட்டது!" },
   "share.more":                { en: "More...",                            ta: "மேலும்..." },
+  "share.save_image":          { en: "Save image",                         ta: "படத்தைச் சேமி" },
+  "share.loading":             { en: "Sharing...",                         ta: "பகிர்கிறது..." },
   "share.ward_report":         { en: "Check your ward's water report card", ta: "உங்கள் வார்டின் நீர் அறிக்கை அட்டையைப் பாருங்கள்" },
 
   "news.heading":              { en: "In the news",                         ta: "செய்திகளில்" },
