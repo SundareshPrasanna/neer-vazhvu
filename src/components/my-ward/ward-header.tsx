@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 import type { GroundwaterData } from "@/lib/hooks/use-my-ward-data";
@@ -58,6 +59,17 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
       </div>
 
       <div className="flex items-center gap-2 print:hidden">
+        {/* Report Card */}
+        <Link
+          href={`/my-ward/report?ward=${wardNumber}`}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          {t("report.button")}
+        </Link>
+
         {/* Share */}
         <button
           onClick={handleShare}

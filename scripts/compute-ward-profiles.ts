@@ -14,6 +14,7 @@ import centroid from "@turf/centroid";
 import bbox from "@turf/bbox";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point as turfPoint } from "@turf/helpers";
+import turfArea from "@turf/area";
 import along from "@turf/along";
 import length from "@turf/length";
 
@@ -38,12 +39,14 @@ interface WardProfile {
   zone_no: string;
   zone_name: string;
   centroid: [number, number];
+  area_sq_km: number;
 
   water_bodies: {
     current_count: number;
     census_records: number;
     restoration_critical: number;
     restoration_high: number;
+    avg_restoration_score: number | null;
     top_bodies: { name: string; score: number; level: string }[];
   };
 
@@ -523,16 +526,24 @@ function main() {
       }
     }
 
+    // Ward area in sq km from polygon geometry
+    const areaSqM = turfArea(w.feature);
+    const areaSqKm = Math.round((areaSqM / 1_000_000) * 100) / 100;
+
     output.push({
       ward_number: w.ward_number,
       zone_no: w.zone_no,
       zone_name: w.zone_name,
       centroid: w.centroid,
+      area_sq_km: areaSqKm,
       water_bodies: {
         current_count: p.waterBodyCount,
         census_records: p.censusRecords,
         restoration_critical: p.restorationCritical,
         restoration_high: p.restorationHigh,
+        avg_restoration_score: p.topBodies.length > 0
+          ? Math.round((p.topBodies.reduce((s, b) => s + b.score, 0) / p.topBodies.length) * 10) / 10
+          : null,
         top_bodies: topBodies,
       },
       lost_bodies: {
