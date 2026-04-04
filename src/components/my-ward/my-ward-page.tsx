@@ -95,9 +95,17 @@ export function MyWardPage() {
 
           {/* Industrial zones */}
           {profile.industrial.zone_count > 0 && (
-            <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 rounded-lg px-4 py-2.5">
+            <Link
+              href={
+                profile.rivers.nearest_river_id
+                  ? `/rivers?river=${profile.rivers.nearest_river_id}${profile.rivers.nearest_station_id ? `&station=${profile.rivers.nearest_station_id}` : ""}`
+                  : "/rivers"
+              }
+              className="block text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 rounded-lg px-4 py-2.5 hover:bg-amber-100 dark:hover:bg-amber-950/40 transition-colors"
+            >
               {profile.industrial.zone_count} industrial zone{profile.industrial.zone_count !== 1 ? "s" : ""} in this ward - potential pollution source for water bodies and groundwater.
-            </div>
+              <span className="ml-1 text-amber-500 dark:text-amber-300 print:hidden">&rarr;</span>
+            </Link>
           )}
 
           {/* Actions & Representatives */}
