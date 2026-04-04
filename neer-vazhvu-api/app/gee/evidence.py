@@ -18,9 +18,11 @@ from app.gee.config import (
     DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK,
     DEFAULT_SATELLITE_EVIDENCE_SEARCH_WINDOW_DAYS,
     DYNAMIC_WORLD_DATASET,
+    DYNAMIC_WORLD_WATER_BAND,
     SATELLITE_EVIDENCE_BUCKET,
     SATELLITE_EVIDENCE_COHORT,
     SATELLITE_EVIDENCE_OVERLAY_FORMAT,
+    SATELLITE_EVIDENCE_OVERLAY_OPACITY,
     SATELLITE_EVIDENCE_OVERLAY_PALETTE,
     SATELLITE_EVIDENCE_THUMB_DIMENSIONS,
     SATELLITE_EVIDENCE_TRUE_COLOR_FORMAT,
@@ -230,12 +232,18 @@ def _build_true_color_download_url(ee, *, image, thumb_region: dict[str, Any]) -
     )
 
 
-def _build_overlay_download_url(ee, *, dw_image, thumb_region: dict[str, Any]) -> str:
+def _build_overlay_download_url(ee, *, dw_image, target_geometry, thumb_region: dict[str, Any]) -> str:
     overlay = (
-        dw_image.select("water")
+        dw_image.select(DYNAMIC_WORLD_WATER_BAND)
         .gt(0.5)
         .selfMask()
-        .visualize(min=0, max=1, palette=list(SATELLITE_EVIDENCE_OVERLAY_PALETTE))
+        .clip(target_geometry)
+        .visualize(
+            min=0,
+            max=1,
+            palette=list(SATELLITE_EVIDENCE_OVERLAY_PALETTE),
+            opacity=SATELLITE_EVIDENCE_OVERLAY_OPACITY,
+        )
     )
     return str(
         overlay.getThumbURL(
@@ -383,6 +391,7 @@ def _select_best_scene_for_reference_date(
             overlay_download_url = _build_overlay_download_url(
                 ee,
                 dw_image=dw_image,
+                target_geometry=target_geometry,
                 thumb_region=thumb_region,
             )
 
