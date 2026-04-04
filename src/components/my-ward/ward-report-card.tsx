@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/context";
@@ -22,9 +22,18 @@ const GRADE_STYLES: Record<Grade, { bg: string; text: string; border: string }> 
   F: { bg: "bg-red-50",     text: "text-red-700",     border: "border-red-200" },
 };
 
-const GRADE_PRINT: Record<Grade, string> = {
-  A: "Excellent", B: "Good", C: "Average", D: "Below average", F: "Needs attention",
+const GRADE_PRINT_KEY: Record<Grade, string> = {
+  A: "report.grade_label_a",
+  B: "report.grade_label_b",
+  C: "report.grade_label_c",
+  D: "report.grade_label_d",
+  F: "report.grade_label_f",
 };
+
+const METRIC_NUMBER_FORMAT = new Intl.NumberFormat("en-IN", {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 1,
+});
 
 function GradeBadge({ grade, size = "sm" }: { grade: Grade; size?: "sm" | "lg" }) {
   const s = GRADE_STYLES[grade];
@@ -40,17 +49,27 @@ function GradeBadge({ grade, size = "sm" }: { grade: Grade; size?: "sm" | "lg" }
 
 /* ── Main component ─────────────────────────────────────────────────── */
 
-function InfoTooltip({ text }: { text: string }) {
+function InfoTooltip({ text, label }: { text: string; label: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const tooltipId = useId();
 
   useEffect(() => {
     if (!open) return;
-    function close(e: MouseEvent) {
+    function closeOnOutside(e: PointerEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
+
+    function closeOnEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+
+    document.addEventListener("pointerdown", closeOnOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
   }, [open]);
 
   return (
@@ -59,12 +78,18 @@ function InfoTooltip({ text }: { text: string }) {
         type="button"
         onClick={() => setOpen(!open)}
         className="ml-1 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-600 text-[9px] font-bold leading-none"
-        aria-label="More info"
+        aria-label={label}
+        aria-describedby={open ? tooltipId : undefined}
+        aria-expanded={open}
       >
         i
       </button>
       {open && (
-        <div className="absolute left-0 top-5 z-10 w-64 p-2.5 text-xs text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg leading-relaxed">
+        <div
+          id={tooltipId}
+          role="tooltip"
+          className="absolute left-1/2 top-5 z-10 w-64 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg border border-slate-200 bg-white p-2.5 text-xs leading-relaxed text-slate-600 shadow-lg dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 sm:left-0 sm:translate-x-0"
+        >
           {text}
         </div>
       )}
@@ -74,11 +99,12 @@ function InfoTooltip({ text }: { text: string }) {
 
 export function WardReportCard() {
   const searchParams = useSearchParams();
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [rankings, setRankings] = useState<WardRankings | null>(null);
   const [allProfiles, setAllProfiles] = useState<WardProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   const wardParam = searchParams.get("ward");
   const wardNumber = wardParam ? parseInt(wardParam, 10) || null : null;
@@ -92,23 +118,41 @@ export function WardReportCard() {
     if (wardNumber == null) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setRankings(null);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setAllProfiles([]);
+      setLoadError(false);
       setLoading(false);
       return;
     }
+
+    let cancelled = false;
     setLoading(true);
-    loadProfiles().then((profiles) => {
-      setAllProfiles(profiles);
-      const r = computeWardRankings(wardNumber, profiles);
-      setRankings(r);
-      setLoading(false);
-    });
+    setLoadError(false);
+
+    loadProfiles()
+      .then((profiles) => {
+        if (cancelled) return;
+        setAllProfiles(profiles);
+        const r = computeWardRankings(wardNumber, profiles);
+        setRankings(r);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setAllProfiles([]);
+        setRankings(null);
+        setLoadError(true);
+        setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [wardNumber]);
 
   if (!mounted) {
     return (
       <div className="flex items-center justify-center min-h-[60vh] text-slate-400">
-        Loading...
+        {t("report.loading")}
       </div>
     );
   }
@@ -135,7 +179,15 @@ export function WardReportCard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh] text-slate-400">
-        Loading report...
+        {t("report.loading_report")}
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center text-slate-500">
+        {t("report.load_error")}
       </div>
     );
   }
@@ -143,13 +195,33 @@ export function WardReportCard() {
   if (!rankings) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center text-slate-500">
-        Ward {wardNumber} not found.
+        {t("report.ward_not_found").replace("{ward}", String(wardNumber))}
       </div>
     );
   }
 
   // Get ward profile for additional details
   const ward = allProfiles.find((p) => p.ward_number === wardNumber);
+
+  function formatMetricNumber(value: number): string {
+    return METRIC_NUMBER_FORMAT.format(value);
+  }
+
+  function formatOrdinal(value: number): string {
+    if (language !== "en") return String(value);
+    const mod100 = value % 100;
+    if (mod100 >= 11 && mod100 <= 13) return `${value}th`;
+    switch (value % 10) {
+      case 1:
+        return `${value}st`;
+      case 2:
+        return `${value}nd`;
+      case 3:
+        return `${value}rd`;
+      default:
+        return `${value}th`;
+    }
+  }
 
   return (
     <div className="report-card max-w-3xl mx-auto px-4 sm:px-8 py-6 print:px-0 print:py-0">
@@ -183,7 +255,7 @@ export function WardReportCard() {
                 {t("report.title")}
               </p>
               <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 print:text-black">
-                {t("ward.ward")} {wardNumber} - {rankings.zoneName}
+                {t("ward.ward")} {wardNumber}
               </h1>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                 {t("report.zone")} {rankings.zoneNo} - {rankings.zoneName}
@@ -199,45 +271,58 @@ export function WardReportCard() {
         </div>
 
         {/* ── Overall summary row ─────────────────────────────── */}
-        <div className="px-6 py-3 bg-slate-25 border-b border-slate-100 dark:border-slate-800">
+        <div className="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
           <p className="text-sm text-slate-600 dark:text-slate-400">
-            {t("report.percentile_prefix")} <span className="font-semibold text-slate-900 dark:text-slate-100">{rankings.overallPercentile}th</span> {t("report.percentile_suffix")}
+            {t("report.percentile_prefix")} <span className="font-semibold text-slate-900 dark:text-slate-100">{formatOrdinal(rankings.overallPercentile)}</span> {t("report.percentile_suffix")}
             {" - "}
             <span className={`font-medium ${GRADE_STYLES[rankings.overallGrade].text}`}>
-              {GRADE_PRINT[rankings.overallGrade]}
+              {t(GRADE_PRINT_KEY[rankings.overallGrade])}
             </span>
           </p>
         </div>
 
         {/* ── Metrics table ───────────────────────────────────── */}
         <div className="px-6 py-4">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto print:overflow-visible">
+          <table className="w-full min-w-[42rem] text-sm print:min-w-0 sm:min-w-0">
             <thead>
               <tr className="text-left text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800">
-                <th className="pb-2 pr-2">{t("report.col_metric")}</th>
-                <th className="pb-2 pr-2 text-right">{t("report.col_value")}</th>
-                <th className="pb-2 pr-2 text-right">{t("report.col_zone_avg")}</th>
-                <th className="pb-2 pr-2 text-right">{t("report.col_city_avg")}</th>
-                <th className="pb-2 pr-2 text-center">{t("report.col_rank")}</th>
-                <th className="pb-2 text-center">{t("report.col_grade")}</th>
+                <th scope="col" className="pb-2 pr-2">{t("report.col_metric")}</th>
+                <th scope="col" className="pb-2 pr-2 text-right">{t("report.col_value")}</th>
+                <th scope="col" className="pb-2 pr-2 text-right">{t("report.col_zone_avg")}</th>
+                <th scope="col" className="pb-2 pr-2 text-right">{t("report.col_city_avg")}</th>
+                <th scope="col" className="pb-2 pr-2 text-center">{t("report.col_rank")}</th>
+                <th scope="col" className="pb-2 text-center">{t("report.col_grade")}</th>
               </tr>
             </thead>
             <tbody>
               {rankings.metrics.map((m) => {
                 const graded = m.value != null && !Number.isNaN(m.value) && m.grade != null;
 
-                // Compare ward value to averages, accounting for metric direction
+                // Compare the ward value to the zone/city median.
                 function compArrow(avg: number | null) {
-                  if (!graded || avg == null) return { arrow: "", color: "text-slate-400" };
+                  if (!graded || avg == null) {
+                    return { arrow: "", color: "text-slate-400", srLabel: "" };
+                  }
+
                   const diff = m.value! - avg;
+                  if (Math.abs(diff) < 0.1) {
+                    return {
+                      arrow: "=",
+                      color: "text-slate-400",
+                      srLabel: t("report.arrow_same"),
+                    };
+                  }
+
                   const isBetter = m.higherIsBetter ? diff >= 0 : diff <= 0;
                   return {
-                    arrow: Math.abs(diff) < 0.1 ? "=" : isBetter ? "\u25B2" : "\u25BC",
-                    color: Math.abs(diff) < 0.1 ? "text-slate-400" : isBetter ? "text-emerald-600" : "text-red-500",
+                    arrow: diff > 0 ? "\u25B2" : "\u25BC",
+                    color: isBetter ? "text-emerald-600" : "text-red-500",
+                    srLabel: isBetter ? t("report.arrow_better") : t("report.arrow_worse"),
                   };
                 }
-                const zone = compArrow(m.zoneAvg);
-                const city = compArrow(m.cityAvg);
+                const zone = compArrow(m.zoneMedian);
+                const city = compArrow(m.cityMedian);
 
                 return (
                   <tr
@@ -247,24 +332,34 @@ export function WardReportCard() {
                     <td className="py-2.5 pr-2 text-slate-700 dark:text-slate-300 print:text-black">
                       {t(m.label)}
                       {m.unit && <span className="text-xs text-slate-400 ml-1">{m.unit}</span>}
-                      <InfoTooltip text={t(m.description)} />
+                      <InfoTooltip text={t(m.description)} label={t("report.more_info")} />
                     </td>
                     <td className="py-2.5 pr-2 text-right font-semibold text-slate-900 dark:text-slate-100 tabular-nums print:text-black">
-                      {graded ? m.value : "-"}
+                      {graded ? formatMetricNumber(m.value!) : "-"}
                     </td>
                     <td className="py-2.5 pr-2 text-right text-slate-500 dark:text-slate-400 tabular-nums">
                       {graded ? (
                         <>
-                          {m.zoneAvg}
-                          <span className={`ml-1.5 text-xs ${zone.color}`}>{zone.arrow}</span>
+                          {formatMetricNumber(m.zoneMedian!)}
+                          {zone.arrow && (
+                            <span className={`ml-1.5 text-xs ${zone.color}`}>
+                              <span aria-hidden="true">{zone.arrow}</span>
+                              <span className="sr-only">{zone.srLabel}</span>
+                            </span>
+                          )}
                         </>
                       ) : "-"}
                     </td>
                     <td className="py-2.5 pr-2 text-right text-slate-500 dark:text-slate-400 tabular-nums">
                       {graded ? (
                         <>
-                          {m.cityAvg}
-                          <span className={`ml-1.5 text-xs ${city.color}`}>{city.arrow}</span>
+                          {formatMetricNumber(m.cityMedian!)}
+                          {city.arrow && (
+                            <span className={`ml-1.5 text-xs ${city.color}`}>
+                              <span aria-hidden="true">{city.arrow}</span>
+                              <span className="sr-only">{city.srLabel}</span>
+                            </span>
+                          )}
                         </>
                       ) : "-"}
                     </td>
@@ -281,6 +376,16 @@ export function WardReportCard() {
               })}
             </tbody>
           </table>
+          </div>
+          <p className="mt-3 text-xs text-slate-500 dark:text-slate-400 print:hidden">
+            {t("report.action_cta")}{" "}
+            <Link
+              href={`/my-ward?ward=${wardNumber}`}
+              className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+            >
+              {t("report.action_link")}
+            </Link>
+          </p>
         </div>
 
         {/* ── Quick facts ─────────────────────────────────────── */}
@@ -300,7 +405,7 @@ export function WardReportCard() {
                 <p className="text-slate-400 dark:text-slate-500 text-xs">{t("report.fact_flood_hotspots")}</p>
                 <p className="font-medium text-slate-700 dark:text-slate-300 print:text-black">
                   {ward.flood.hotspot_2015_count + ward.flood.hotspot_2020_count}
-                  <span className="text-xs text-slate-400 ml-1">(2015+2020)</span>
+                  <span className="text-xs text-slate-400 ml-1">{t("report.fact_flood_hotspots_years")}</span>
                 </p>
               </div>
               <div>
@@ -325,7 +430,11 @@ export function WardReportCard() {
                 <p className="font-medium text-slate-700 dark:text-slate-300 print:text-black">
                   {ward.industrial.zone_count === 0
                     ? t("report.none")
-                    : `${ward.industrial.zone_count} zone${ward.industrial.zone_count !== 1 ? "s" : ""}`}
+                    : t(
+                        ward.industrial.zone_count === 1
+                          ? "report.zone_count_one"
+                          : "report.zone_count_other",
+                      ).replace("{count}", String(ward.industrial.zone_count))}
                 </p>
               </div>
               <div>
@@ -380,7 +489,13 @@ export function WardReportCard() {
         <div className="px-6 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 print:bg-white">
           <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
             <span>{t("report.generated_by")}</span>
-            <span>{new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+            <span>
+              {new Date().toLocaleDateString(language === "ta" ? "ta-IN" : "en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
+            </span>
           </div>
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
             {t("report.data_sources")}
@@ -391,15 +506,21 @@ export function WardReportCard() {
       {/* ── Methodology disclosure (below card, shown on print too) */}
       <div className="mt-4 px-2 text-xs text-slate-400 dark:text-slate-500 print:text-slate-600 space-y-2">
         <p className="font-medium">{t("report.grade_legend")}</p>
-        <p>A = Top 20% | B = 21-40% | C = 41-60% | D = 61-80% | F = Bottom 20%</p>
+        <p>{t("report.grade_scale_detail")}</p>
         <p>{t("report.ranking_note")}</p>
-        <details className="mt-2">
+        <div className="hidden print:block space-y-2">
+          <p className="font-medium">{t("report.methodology")}</p>
+          <p className="leading-relaxed">{t("report.methodology_body")}</p>
+          <p className="font-medium">{t("report.limitations")}</p>
+          <p className="leading-relaxed whitespace-pre-line">{t("report.limitations_body")}</p>
+        </div>
+        <details className="mt-2 print:hidden">
           <summary className="font-medium cursor-pointer hover:text-slate-600 dark:hover:text-slate-300">
             {t("report.methodology")}
           </summary>
           <p className="mt-1 leading-relaxed">{t("report.methodology_body")}</p>
         </details>
-        <details>
+        <details className="print:hidden">
           <summary className="font-medium cursor-pointer hover:text-slate-600 dark:hover:text-slate-300">
             {t("report.limitations")}
           </summary>

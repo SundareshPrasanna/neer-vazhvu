@@ -53,6 +53,7 @@
 
 - [x] **My Ward tab** — Unified ward report page at `/my-ward` aggregating groundwater, water bodies, flood risk, infrastructure, rivers, representatives, and AI narrative for any ward. Source attribution and caveats on every card. CSV export, share URL, print layout
 - [x] **Nav consolidation** — 7 tabs compressed to 4: Dashboard, My Ward, Explore (dropdown: Groundwater, Water Bodies, Rivers, Flood Risk), About. Mobile menu has collapsible Explore section
+- [x] **Ward Report Card** — Print-optimized one-pager at `/my-ward/report?ward=N` ranking wards on 5 governance-quality metrics with A-F grades. Length-based infrastructure metrics apportioned across ward boundaries, area-normalized densities, zone/city median comparisons, methodology disclosure
 
 ## V2 Features (P2)
 

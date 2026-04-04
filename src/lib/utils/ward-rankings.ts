@@ -9,12 +9,12 @@ export interface MetricRank {
   label: string;
   description: string;
   unit: string;
-  value: number | null;       // null = not applicable for this ward
-  rank: number | null;         // null = not ranked
+  value: number | null; // null = not applicable for this ward
+  rank: number | null; // null = not ranked
   total: number;
-  zoneAvg: number | null;
-  cityAvg: number | null;
-  grade: Grade | null;         // null = not graded
+  zoneMedian: number | null;
+  cityMedian: number | null;
+  grade: Grade | null; // null = not graded
   higherIsBetter: boolean;
 }
 
@@ -23,6 +23,9 @@ export interface WardRankings {
   zoneName: string;
   zoneNo: string;
   metrics: MetricRank[];
+  overallRank: number;
+  overallTotal: number;
+  overallScore: number;
   overallGrade: Grade;
   overallPercentile: number; // 0-100, higher = better
 }
@@ -43,75 +46,88 @@ interface MetricDef {
   tiebreaker?: (p: WardProfile) => number;
 }
 
+interface RankedEntry {
+  id: number;
+  value: number;
+  tb: number;
+}
+
+interface MetricComputation {
+  def: MetricDef;
+  ranked: Map<number, { value: number; rank: number }>;
+  rankTotal: number;
+  cityMedian: number | null;
+  zoneMedianByZone: Map<string, number>;
+  percentileByWard: Map<number, number>;
+}
+
 const METRICS: MetricDef[] = [
   {
     key: "wb_health",
     label: "report.metric_wb_health",
     description: "report.metric_wb_health_desc",
-    unit: "",
-    // Average restoration priority score (lower = healthier, better managed)
+    unit: "score",
     extract: (p) => p.water_bodies.avg_restoration_score ?? 0,
     higherIsBetter: false,
     weight: 0.15,
     applicable: (p) => p.water_bodies.avg_restoration_score != null,
-    // Tie-break: managing more bodies at same avg score is harder
     tiebreaker: (p) => p.water_bodies.current_count,
   },
   {
     key: "wb_density",
     label: "report.metric_wb_density",
     description: "report.metric_wb_density_desc",
-    unit: "/sq km",
-    // Water bodies per sq km - rewards having and preserving natural water infra
+    unit: "bodies/sq km",
     extract: (p) => {
       if (!p.area_sq_km || p.area_sq_km <= 0) return 0;
-      return Math.round((p.water_bodies.current_count / p.area_sq_km) * 10) / 10;
+      return p.water_bodies.current_count / p.area_sq_km;
     },
     higherIsBetter: true,
     weight: 0.10,
+    applicable: (p) => p.area_sq_km > 0,
   },
   {
     key: "flood_risk",
     label: "report.metric_flood_severe",
     description: "report.metric_flood_severe_desc",
-    unit: "/sq km",
-    // Severe flood hazard zones per sq km - captures actual risk exposure
+    unit: "zones/sq km",
     extract: (p) => {
       if (!p.area_sq_km || p.area_sq_km <= 0) return 0;
       const cat = p.flood.by_category;
       const severe = (cat["very high"] ?? 0) + (cat["high"] ?? 0);
-      return Math.round((severe / p.area_sq_km) * 10) / 10;
+      return severe / p.area_sq_km;
     },
     higherIsBetter: false,
     weight: 0.25,
-    applicable: (p) => p.flood.hazard_zone_count > 0,
+    applicable: (p) => p.area_sq_km > 0,
   },
   {
     key: "drainage",
     label: "report.metric_drainage",
     description: "report.metric_drainage_desc",
-    unit: "/sq km",
-    // Drainage line density - normalized by ward area
+    unit: "km/sq km",
     extract: (p) => {
       if (!p.area_sq_km || p.area_sq_km <= 0) return 0;
-      return Math.round((p.drainage.line_count / p.area_sq_km) * 10) / 10;
+      return p.drainage.total_length_km / p.area_sq_km;
     },
     higherIsBetter: true,
     weight: 0.25,
+    applicable: (p) => p.area_sq_km > 0,
   },
   {
     key: "sewerage_infra",
     label: "report.metric_sewerage",
     description: "report.metric_sewerage_desc",
-    unit: "/sq km",
-    // Ward-level sewerage infrastructure density (pumping stations + mains per sq km)
+    unit: "km/sq km",
     extract: (p) => {
       if (!p.area_sq_km || p.area_sq_km <= 0) return 0;
-      const count = p.sewerage.sps_count + p.sewerage.pumping_main_count;
-      return Math.round((count / p.area_sq_km) * 10) / 10;
+      return p.sewerage.pumping_main_length_km / p.area_sq_km;
     },
     higherIsBetter: true,
     weight: 0.25,
+    applicable: (p) => p.area_sq_km > 0,
+    tiebreaker: (p) =>
+      p.area_sq_km > 0 ? p.sewerage.sps_count / p.area_sq_km : 0,
   },
 ];
 
@@ -134,43 +150,130 @@ function percentileToGrade(pct: number): Grade {
   return "F";
 }
 
-/** Rank values among given profiles. Tied values use optional tiebreaker. */
-function rankValues(
-  profiles: WardProfile[],
-  extract: (p: WardProfile) => number,
-  higherIsBetter: boolean,
-  tiebreaker?: (p: WardProfile) => number,
-): Map<number, { value: number; rank: number }> {
-  const entries = profiles.map((p) => ({
-    ward: p.ward_number,
-    value: extract(p),
-    tb: tiebreaker ? tiebreaker(p) : 0,
-  }));
+function percentileFromRank(rank: number, total: number): number {
+  return total > 1 ? ((total - rank) / (total - 1)) * 100 : 50;
+}
 
-  // Sort: best first. Tiebreaker: higher is always better.
+function buildNullMetricRank(def: MetricDef, total: number): MetricRank {
+  return {
+    key: def.key,
+    label: def.label,
+    description: def.description,
+    unit: def.unit,
+    value: null,
+    rank: null,
+    total,
+    zoneMedian: null,
+    cityMedian: null,
+    grade: null,
+    higherIsBetter: def.higherIsBetter,
+  };
+}
+
+function rankEntries(
+  entries: RankedEntry[],
+  higherIsBetter: boolean,
+  useTiebreaker = true,
+): Map<number, { value: number; rank: number }> {
   entries.sort((a, b) => {
     const cmp = higherIsBetter ? b.value - a.value : a.value - b.value;
     if (cmp !== 0) return cmp;
-    return b.tb - a.tb;
+    return useTiebreaker ? b.tb - a.tb : 0;
   });
 
-  // Assign ranks. With tiebreaker, ties only occur at identical value + tb.
   const result = new Map<number, { value: number; rank: number }>();
   let currentRank = 1;
   for (let i = 0; i < entries.length; i++) {
     if (
       i > 0 &&
       (entries[i].value !== entries[i - 1].value ||
-        entries[i].tb !== entries[i - 1].tb)
+        (useTiebreaker && entries[i].tb !== entries[i - 1].tb))
     ) {
       currentRank = i + 1;
     }
-    result.set(entries[i].ward, {
+    result.set(entries[i].id, {
       value: entries[i].value,
       rank: currentRank,
     });
   }
   return result;
+}
+
+function rankValues(
+  profiles: WardProfile[],
+  extract: (p: WardProfile) => number,
+  higherIsBetter: boolean,
+  tiebreaker?: (p: WardProfile) => number,
+): Map<number, { value: number; rank: number }> {
+  return rankEntries(
+    profiles.map((p) => ({
+      id: p.ward_number,
+      value: extract(p),
+      tb: tiebreaker ? tiebreaker(p) : 0,
+    })),
+    higherIsBetter,
+    Boolean(tiebreaker),
+  );
+}
+
+function computeMetric(def: MetricDef, allProfiles: WardProfile[]): MetricComputation {
+  const applicableProfiles = def.applicable
+    ? allProfiles.filter(def.applicable)
+    : allProfiles;
+  const ranked = rankValues(
+    applicableProfiles,
+    def.extract,
+    def.higherIsBetter,
+    def.tiebreaker,
+  );
+  const rankTotal = applicableProfiles.length;
+  const percentileByWard = new Map<number, number>();
+  const zoneValues = new Map<string, number[]>();
+
+  for (const profile of applicableProfiles) {
+    const row = ranked.get(profile.ward_number);
+    if (row) {
+      percentileByWard.set(
+        profile.ward_number,
+        percentileFromRank(row.rank, rankTotal),
+      );
+    }
+
+    const values = zoneValues.get(profile.zone_no);
+    const value = def.extract(profile);
+    if (values) values.push(value);
+    else zoneValues.set(profile.zone_no, [value]);
+  }
+
+  return {
+    def,
+    ranked,
+    rankTotal,
+    cityMedian: applicableProfiles.length > 0
+      ? median(applicableProfiles.map((p) => def.extract(p)))
+      : null,
+    zoneMedianByZone: new Map(
+      Array.from(zoneValues.entries(), ([zone, values]) => [zone, median(values)]),
+    ),
+    percentileByWard,
+  };
+}
+
+function computeCompositeScore(
+  profile: WardProfile,
+  metricComputations: MetricComputation[],
+): number {
+  let score = 0;
+
+  for (const metric of metricComputations) {
+    const isApplicable = !metric.def.applicable || metric.def.applicable(profile);
+    const percentile = isApplicable
+      ? metric.percentileByWard.get(profile.ward_number) ?? 50
+      : 50;
+    score += percentile * metric.def.weight;
+  }
+
+  return score;
 }
 
 /* ── Main computation ───────────────────────────────────────────────── */
@@ -182,64 +285,25 @@ export function computeWardRankings(
   const ward = allProfiles.find((p) => p.ward_number === wardNumber);
   if (!ward) return null;
 
-  const zoneProfiles = allProfiles.filter((p) => p.zone_no === ward.zone_no);
-
+  const metricComputations = METRICS.map((def) => computeMetric(def, allProfiles));
   const metrics: MetricRank[] = [];
-  let weightedPercentileSum = 0;
-  let totalWeight = 0;
 
-  for (const def of METRICS) {
+  for (const metric of metricComputations) {
+    const { def } = metric;
     const isApplicable = !def.applicable || def.applicable(ward);
 
     if (!isApplicable) {
-      // Show the row but don't grade it
-      metrics.push({
-        key: def.key,
-        label: def.label,
-        description: def.description,
-        unit: def.unit,
-        value: null,
-        rank: null,
-        total: allProfiles.length,
-        zoneAvg: null,
-        cityAvg: null,
-        grade: null,
-        higherIsBetter: def.higherIsBetter,
-      });
+      metrics.push(buildNullMetricRank(def, metric.rankTotal));
       continue;
     }
 
-    // Rank among applicable wards only
-    const applicableProfiles = def.applicable
-      ? allProfiles.filter(def.applicable)
-      : allProfiles;
-    const applicableZone = def.applicable
-      ? zoneProfiles.filter(def.applicable)
-      : zoneProfiles;
+    const wardRank = metric.ranked.get(wardNumber);
+    if (!wardRank) {
+      metrics.push(buildNullMetricRank(def, metric.rankTotal));
+      continue;
+    }
 
-    const ranked = rankValues(
-      applicableProfiles,
-      def.extract,
-      def.higherIsBetter,
-      def.tiebreaker,
-    );
-    const wardRank = ranked.get(wardNumber);
-    if (!wardRank) continue;
-
-    const rankTotal = applicableProfiles.length;
-
-    // Zone median among applicable wards (robust to outliers from tiny wards)
-    const zoneValues = applicableZone.map((p) => def.extract(p));
-    const zoneAvg = median(zoneValues);
-
-    // City median among applicable wards
-    const cityValues = applicableProfiles.map((p) => def.extract(p));
-    const cityAvg = median(cityValues);
-
-    const percentile =
-      rankTotal > 1
-        ? ((rankTotal - wardRank.rank) / (rankTotal - 1)) * 100
-        : 50;
+    const percentile = metric.percentileByWard.get(wardNumber) ?? 50;
 
     metrics.push({
       key: def.key,
@@ -248,26 +312,37 @@ export function computeWardRankings(
       unit: def.unit,
       value: wardRank.value,
       rank: wardRank.rank,
-      total: rankTotal,
-      zoneAvg: Math.round(zoneAvg * 10) / 10,
-      cityAvg: Math.round(cityAvg * 10) / 10,
+      total: metric.rankTotal,
+      zoneMedian: metric.zoneMedianByZone.has(ward.zone_no)
+        ? metric.zoneMedianByZone.get(ward.zone_no)!
+        : null,
+      cityMedian: metric.cityMedian,
       grade: percentileToGrade(percentile),
       higherIsBetter: def.higherIsBetter,
     });
-
-    weightedPercentileSum += percentile * def.weight;
-    totalWeight += def.weight;
   }
 
-  const overallPercentile =
-    totalWeight > 0 ? weightedPercentileSum / totalWeight : 50;
+  const compositeScores = allProfiles.map((profile) => ({
+    id: profile.ward_number,
+    value: computeCompositeScore(profile, metricComputations),
+    tb: 0,
+  }));
+  const overallRanked = rankEntries(compositeScores, true, false);
+  const overall = overallRanked.get(wardNumber);
+  if (!overall) return null;
+
+  const overallPercentile = percentileFromRank(overall.rank, allProfiles.length);
+  const roundedPercentile = Math.round(overallPercentile);
 
   return {
     wardNumber,
     zoneName: ward.zone_name,
     zoneNo: ward.zone_no,
     metrics,
-    overallGrade: percentileToGrade(overallPercentile),
-    overallPercentile: Math.round(overallPercentile),
+    overallRank: overall.rank,
+    overallTotal: allProfiles.length,
+    overallScore: Math.round(overall.value * 10) / 10,
+    overallGrade: percentileToGrade(roundedPercentile),
+    overallPercentile: roundedPercentile,
   };
 }

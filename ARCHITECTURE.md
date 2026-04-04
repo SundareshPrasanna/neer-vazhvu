@@ -402,6 +402,7 @@ graph TD
         MWIF["WardInfrastructureCard<br/>(drainage, STPs, SPS)"]
         MWRV["WardRiverCard<br/>(nearest station)"]
         MWAC["WardActionsCard<br/>(CTAs + representatives)"]
+        MWRC["WardReportCard<br/>(/my-ward/report?ward=N)<br/>Rankings, grades, methodology"]
     end
 
     MW --> MW_Children
@@ -468,6 +469,7 @@ Pages support URL query parameters for cross-page navigation from ward context p
 | Page | Parameters | Behavior |
 |------|-----------|----------|
 | `/my-ward` | `?ward=N` | Loads full ward report for ward N |
+| `/my-ward/report` | `?ward=N` | Print-optimized report card with rankings and grades |
 | `/groundwater` | `?ward=N` | Pre-selects ward N in the detail panel |
 | `/water-bodies` | `?mode=restoration&ward=N` | Sets restoration view, finds ward's top water body, flies map to it |
 | `/flood-risk` | `?ward=N` | Flies map to ward centroid |

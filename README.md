@@ -85,13 +85,14 @@ A unified ward report page at `/my-ward` that aggregates all data layers for any
 - **Groundwater Card** - Depth to water table, year-over-year trend, composite risk score with 4-component breakdown (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%), and historical chart
 - **Water Bodies Card** - Total count, restoration priority breakdown (critical/high/moderate/low), top 3 bodies by score, lost water bodies count with provenance
 - **Flood Risk Card** - Worst-case-first hazard display (very high and high zone counts shown prominently), category breakdown bar, 2015/2020 historical hotspot counts
-- **Infrastructure Card** - Drainage line count, STP count and capacity (MLD), pumping station count
+- **Infrastructure Card** - Drainage network length (km/sq km), STP count and capacity (MLD), pumping main length and station count
 - **River Card** - Nearest river, monitoring station, straight-line distance
 - **Actions Card** - GCC grievance portal link, CMWSSB portal link, ward councillor/MLA/MP with party and contact info
 - **News Context** - Zone-level news articles related to water issues
 - **Cross-page Links** - Each card links to the relevant Explore page with the ward pre-selected
 - **Source Attribution** - Every card shows data source and caveats (data age, model limitations, units explained)
 - **Export** - CSV download of all ward data, share via URL, print-friendly layout
+- **Ward Report Card** - Print-optimized one-pager at `/my-ward/report?ward=N` ranking a ward among all 200 on 5 governance-quality metrics (water body health, water body density, flood risk exposure, drainage coverage, sewage network coverage). Percentile-based A-F grades, zone/city median comparisons, elected representatives, methodology disclosure with known limitations. All density metrics area-normalized; line-based infrastructure apportioned across ward boundaries by sampling
 
 ### Intelligence Layer (Python Service)
 - **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals; uses inflow/outflow, precipitation, and ET₀ (evapotranspiration) as exogenous regressors when data variance is sufficient
@@ -99,8 +100,9 @@ A unified ward report page at `/my-ward` that aggregates all data layers for any
 - **Daily Briefing** - Template-based intelligence summary with headlines, alerts, and recommendations; optionally enhanced with an AI-generated city narrative using Claude (Sonnet for city, Haiku for 200 ward narratives)
 
 ### Ward Profile Index
-- **Build-Time Spatial Join** - Every data layer (water bodies, flood zones, drainage, sewerage, rivers, industrial zones) is mapped to each of Chennai's 200 wards using centroid point-in-polygon attribution
+- **Build-Time Spatial Join** - Every data layer (water bodies, flood zones, drainage, sewerage, rivers, industrial zones) is mapped to each of Chennai's 200 wards using centroid point-in-polygon attribution. Line-based infrastructure (drainage, pumping mains) is apportioned across ward boundaries by sampling at 50m intervals along each line
 - **Deterministic Output** - `scripts/compute-ward-profiles.ts` reads only committed repo files (no Supabase), producing `public/data/ward-profiles.json` with byte-identical output for identical inputs
+- **Ward Area** - Each ward's polygon area (sq km) is computed from GCC 2022 boundaries via `@turf/area`, enabling area-normalized density metrics
 - **CI Freshness Check** - Reruns the script and diffs output; catches stale profiles when source GeoJSON changes
 
 ### Other
@@ -339,7 +341,7 @@ neer-vazhvu/
 ├── src/                          # Next.js frontend
 │   ├── app/                      # App Router pages
 │   │   ├── page.tsx              # Main dashboard
-│   │   ├── my-ward/              # Unified ward report page
+│   │   ├── my-ward/              # Unified ward report page + report card (/report)
 │   │   ├── groundwater/          # Groundwater map page
 │   │   ├── water-bodies/         # Unified water bodies + restoration map
 │   │   ├── rivers/               # River health + industrial pollution map page
@@ -348,7 +350,7 @@ neer-vazhvu/
 │   │   └── about/                # About/methodology page
 │   ├── components/
 │   │   ├── dashboard/            # Dashboard components
-│   │   ├── my-ward/              # Ward report cards (groundwater, water bodies, flood, infra, river, actions)
+│   │   ├── my-ward/              # Ward cards (groundwater, water bodies, flood, infra, river, actions) + report card with rankings
 │   │   ├── groundwater/          # Map, legend, ward panel
 │   │   ├── water-bodies/         # Unified map, legend, detail panel, view-mode toggle
 │   │   ├── rivers/               # River map, panel, chart, legend
@@ -366,7 +368,7 @@ neer-vazhvu/
 │   │   ├── scrapers/             # TypeScript scrapers (legacy, superseded by Python)
 │   │   ├── data/                   # Shared data loaders (ward GeoJSON cache)
 │   │   ├── hooks/                  # Ward lookup (PIP), ward profile loader, my-ward data aggregation
-│   │   ├── utils/                # Formatting, date helpers, constants
+│   │   ├── utils/                # Formatting, date helpers, ward rankings engine, ward export
 │   │   └── mock-data.ts          # Demo mode data
 │   └── types/                    # TypeScript type definitions
 ├── neer-vazhvu-api/              # Python intelligence service

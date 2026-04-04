@@ -34,12 +34,16 @@ export interface WardProfile {
     hotspot_2020_count: number;
   };
 
-  drainage: { line_count: number };
+  drainage: {
+    line_count: number;
+    total_length_km: number;
+  };
 
   sewerage: {
     stp_count: number;
     sps_count: number;
     pumping_main_count: number;
+    pumping_main_length_km: number;
     total_stp_capacity_mld: number;
   };
 
