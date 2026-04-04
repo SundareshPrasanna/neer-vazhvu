@@ -13,12 +13,10 @@ export function ShareMenu({ url, title, description }: ShareMenuProps) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [hasNativeShare, setHasNativeShare] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setHasNativeShare(typeof navigator !== "undefined" && typeof navigator.share === "function");
-  }, []);
+  // Computed inline - only evaluated inside {open && ...} which never renders during SSR
+  const hasNativeShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
 
   const close = useCallback(() => setOpen(false), []);
 

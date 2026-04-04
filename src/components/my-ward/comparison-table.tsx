@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
-import type { WardRankings, MetricRank, Grade } from "@/lib/utils/ward-rankings";
+import type { WardRankings, Grade } from "@/lib/utils/ward-rankings";
 import { GRADE_STYLES, GRADE_PRINT_KEY, GradeBadge } from "@/lib/utils/grade-styles";
 import { InfoTooltip } from "./info-tooltip";
 

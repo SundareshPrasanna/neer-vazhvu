@@ -33,6 +33,7 @@ export function InfoTooltip({ text, label }: { text: string; label: string }) {
 
   useEffect(() => {
     if (!open) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     updatePosition();
 
     function closeOnOutside(e: PointerEvent) {
