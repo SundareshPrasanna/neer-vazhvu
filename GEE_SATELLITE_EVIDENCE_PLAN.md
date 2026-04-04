@@ -7,6 +7,7 @@ Current implementation reference:
 Related research:
 
 - [GEE_RESEARCH.md](GEE_RESEARCH.md)
+- [GEE_SATELLITE_EVIDENCE_CHECKLIST.md](GEE_SATELLITE_EVIDENCE_CHECKLIST.md)
 
 This document covers the planned "satellite evidence" layer for Neer Vazhvu's water-body experience. It is a forward-looking research and implementation note, not a description of behavior already shipped in the app.
 
