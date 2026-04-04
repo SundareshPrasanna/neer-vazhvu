@@ -1,0 +1,544 @@
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass
+from datetime import UTC, date, datetime, timedelta
+from pathlib import Path
+from typing import Any
+
+import httpx
+from shapely.geometry import box, mapping, shape
+
+from app.gee.client import initialize_earth_engine
+from app.gee.config import (
+    CURRENT_WATER_BODIES_PATH,
+    DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT,
+    DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CLOUD_PCT,
+    DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CANDIDATES,
+    DEFAULT_SATELLITE_EVIDENCE_MIN_USABLE_COVERAGE_PCT,
+    DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK,
+    DEFAULT_SATELLITE_EVIDENCE_SEARCH_WINDOW_DAYS,
+    DYNAMIC_WORLD_DATASET,
+    SATELLITE_EVIDENCE_BUCKET,
+    SATELLITE_EVIDENCE_COHORT,
+    SATELLITE_EVIDENCE_OVERLAY_FORMAT,
+    SATELLITE_EVIDENCE_OVERLAY_PALETTE,
+    SATELLITE_EVIDENCE_THUMB_DIMENSIONS,
+    SATELLITE_EVIDENCE_TRUE_COLOR_FORMAT,
+    SATELLITE_EVIDENCE_TRUE_COLOR_GAMMA,
+    SATELLITE_EVIDENCE_TRUE_COLOR_MAX,
+    SATELLITE_EVIDENCE_TRUE_COLOR_MIN,
+    SENTINEL2_HARMONIZED_DATASET,
+    SENTINEL2_PIXEL_SCALE_METERS,
+    SENTINEL2_TRUE_COLOR_BANDS,
+)
+from app.gee.water_bodies import (
+    Phase1WaterBodyTargetFeature,
+    build_monthly_backfill_reference_dates,
+    calculate_valid_pixel_pct,
+    filter_targets_for_cohort,
+    load_phase1_target_features,
+)
+
+
+_CLOUD_BIT = 1 << 10
+_CIRRUS_BIT = 1 << 11
+_MIN_BOUNDS_SPAN_DEGREES = 0.01
+_BOUNDS_PADDING_RATIO = 0.08
+
+
+@dataclass(slots=True)
+class WaterBodySatelliteEvidenceRow:
+    gee_target_id: str
+    reference_date: str
+    frame_date: str
+    frame_rank: int
+    osm_id: int | None = None
+    census_id: int | None = None
+    name: str | None = None
+    target_cohort: str | None = None
+    source_dataset: str = "sentinel2_harmonized"
+    source_asset_id: str | None = None
+    dynamic_world_asset_id: str | None = None
+    image_path: str | None = None
+    overlay_path: str | None = None
+    usable_coverage_pct: float | None = None
+    cloud_note: str | None = None
+    geometry_version: str | None = None
+    is_same_scene_as_overlay: bool = False
+    is_reviewed: bool = False
+    notes: str | None = None
+
+
+@dataclass(slots=True)
+class WaterBodySatelliteEvidenceSelection:
+    row: WaterBodySatelliteEvidenceRow
+    image_download_url: str
+    overlay_download_url: str | None = None
+    image_content_type: str = "image/jpeg"
+    overlay_content_type: str | None = "image/png"
+
+
+def sanitize_gee_target_id_for_path(gee_target_id: str) -> str:
+    safe_chars: list[str] = []
+    for char in gee_target_id.strip().lower():
+        if char.isalnum():
+            safe_chars.append(char)
+        else:
+            safe_chars.append("-")
+
+    sanitized = "".join(safe_chars).strip("-")
+    while "--" in sanitized:
+        sanitized = sanitized.replace("--", "-")
+    return sanitized or "unknown-target"
+
+
+def build_satellite_evidence_reference_dates(
+    *,
+    reference_date: date,
+    months_back: int = DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK,
+    frame_count: int = DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT,
+) -> list[date]:
+    if frame_count <= 0:
+        raise RuntimeError("frame_count must be positive")
+
+    monthly_dates = build_monthly_backfill_reference_dates(
+        reference_date=reference_date,
+        months_back=months_back,
+    )
+    if len(monthly_dates) <= frame_count:
+        return monthly_dates
+
+    stride = max(1, len(monthly_dates) // frame_count)
+    selected = monthly_dates[::stride]
+    if len(selected) < frame_count and monthly_dates[-1] not in selected:
+        selected.append(monthly_dates[-1])
+    selected = selected[:frame_count]
+    if not selected:
+        return monthly_dates[:frame_count]
+    return selected
+
+
+def build_satellite_evidence_storage_path(
+    *,
+    gee_target_id: str,
+    frame_date: date,
+    variant: str,
+    cohort: str = SATELLITE_EVIDENCE_COHORT,
+) -> str:
+    safe_target_id = sanitize_gee_target_id_for_path(gee_target_id)
+    if variant == "true-color":
+        extension = SATELLITE_EVIDENCE_TRUE_COLOR_FORMAT
+    elif variant == "water-overlay":
+        extension = SATELLITE_EVIDENCE_OVERLAY_FORMAT
+    else:
+        raise RuntimeError(f"Unsupported evidence asset variant: {variant}")
+    return f"{cohort}/{safe_target_id}/{frame_date.isoformat()}/{variant}.{extension}"
+
+
+def build_thumb_region_from_geometry(
+    geometry: dict[str, Any],
+    *,
+    padding_ratio: float = _BOUNDS_PADDING_RATIO,
+    min_span_degrees: float = _MIN_BOUNDS_SPAN_DEGREES,
+) -> dict[str, Any]:
+    polygon = shape(geometry)
+    min_x, min_y, max_x, max_y = polygon.bounds
+    span_x = max(max_x - min_x, min_span_degrees)
+    span_y = max(max_y - min_y, min_span_degrees)
+    pad_x = span_x * padding_ratio
+    pad_y = span_y * padding_ratio
+
+    padded_bounds = box(min_x - pad_x, min_y - pad_y, max_x + pad_x, max_y + pad_y)
+    return mapping(padded_bounds)
+
+
+def resolve_satellite_evidence_geometry_version(path: Path | None = None) -> str:
+    return (path or CURRENT_WATER_BODIES_PATH).expanduser().resolve().stem
+
+
+def _mask_sentinel2_clouds(ee, image):
+    qa = image.select("QA60")
+    clear_mask = qa.bitwiseAnd(_CLOUD_BIT).eq(0).And(qa.bitwiseAnd(_CIRRUS_BIT).eq(0))
+    return image.updateMask(clear_mask)
+
+
+def _build_target_geometry(ee, target: Phase1WaterBodyTargetFeature):
+    return ee.Geometry(target.geometry)
+
+
+def _calculate_sentinel_usable_coverage_pct(
+    ee,
+    *,
+    image,
+    target: Phase1WaterBodyTargetFeature,
+) -> float | None:
+    geometry = _build_target_geometry(ee, target)
+    masked_band = image.select([SENTINEL2_TRUE_COLOR_BANDS[0]]).mask()
+    valid_area_result = (
+        masked_band.multiply(ee.Image.pixelArea())
+        .divide(10000)
+        .reduceRegion(
+            reducer=ee.Reducer.sum(),
+            geometry=geometry,
+            scale=SENTINEL2_PIXEL_SCALE_METERS,
+            maxPixels=1_000_000_000,
+            tileScale=4,
+        )
+        .get(SENTINEL2_TRUE_COLOR_BANDS[0])
+    )
+
+    raw_value = valid_area_result.getInfo()
+    valid_area_ha = None if raw_value is None else float(raw_value)
+    return calculate_valid_pixel_pct(valid_area_ha, target.area_ha)
+
+
+def _match_dynamic_world_image(ee, *, sentinel_index: str):
+    collection = ee.ImageCollection(DYNAMIC_WORLD_DATASET).filter(
+        ee.Filter.eq("system:index", sentinel_index)
+    )
+    if int(collection.size().getInfo()) <= 0:
+        return None
+    return collection.first()
+
+
+def _build_true_color_download_url(ee, *, image, thumb_region: dict[str, Any]) -> str:
+    visualized = image.select(list(SENTINEL2_TRUE_COLOR_BANDS)).visualize(
+        min=SATELLITE_EVIDENCE_TRUE_COLOR_MIN,
+        max=SATELLITE_EVIDENCE_TRUE_COLOR_MAX,
+        gamma=SATELLITE_EVIDENCE_TRUE_COLOR_GAMMA,
+    )
+    return str(
+        visualized.getThumbURL(
+            {
+                "region": thumb_region,
+                "dimensions": SATELLITE_EVIDENCE_THUMB_DIMENSIONS,
+                "format": SATELLITE_EVIDENCE_TRUE_COLOR_FORMAT,
+            }
+        )
+    )
+
+
+def _build_overlay_download_url(ee, *, dw_image, thumb_region: dict[str, Any]) -> str:
+    overlay = (
+        dw_image.select("water")
+        .gt(0.5)
+        .selfMask()
+        .visualize(min=0, max=1, palette=list(SATELLITE_EVIDENCE_OVERLAY_PALETTE))
+    )
+    return str(
+        overlay.getThumbURL(
+            {
+                "region": thumb_region,
+                "dimensions": SATELLITE_EVIDENCE_THUMB_DIMENSIONS,
+                "format": SATELLITE_EVIDENCE_OVERLAY_FORMAT,
+            }
+        )
+    )
+
+
+def _get_candidate_sentinel_images(
+    ee,
+    *,
+    target_geometry,
+    reference_date: date,
+    search_window_days: int,
+    max_scene_cloud_pct: float,
+) -> list[Any]:
+    window_start = reference_date - timedelta(days=search_window_days - 1)
+    window_end_exclusive = reference_date + timedelta(days=1)
+    base_collection = (
+        ee.ImageCollection(SENTINEL2_HARMONIZED_DATASET)
+        .filterBounds(target_geometry)
+        .filterDate(window_start.isoformat(), window_end_exclusive.isoformat())
+    )
+
+    filtered_collection = base_collection.filter(
+        ee.Filter.lte("CLOUDY_PIXEL_PERCENTAGE", max_scene_cloud_pct)
+    )
+    collection = filtered_collection
+    if int(filtered_collection.size().getInfo()) <= 0:
+        collection = base_collection
+
+    collection = collection.sort("system:time_start", False)
+    image_count = min(int(collection.size().getInfo()), DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CANDIDATES)
+    if image_count <= 0:
+        return []
+
+    image_list = collection.toList(image_count)
+    return [ee.Image(image_list.get(index)) for index in range(image_count)]
+
+
+def _select_best_scene_for_reference_date(
+    ee,
+    *,
+    target: Phase1WaterBodyTargetFeature,
+    reference_date: date,
+    search_window_days: int,
+    min_usable_coverage_pct: float,
+    max_scene_cloud_pct: float,
+) -> WaterBodySatelliteEvidenceSelection | None:
+    target_geometry = _build_target_geometry(ee, target)
+    candidate_images = _get_candidate_sentinel_images(
+        ee,
+        target_geometry=target_geometry,
+        reference_date=reference_date,
+        search_window_days=search_window_days,
+        max_scene_cloud_pct=max_scene_cloud_pct,
+    )
+    if not candidate_images:
+        return None
+
+    thumb_region = build_thumb_region_from_geometry(target.geometry)
+    candidate_rankings: list[tuple[tuple[float, int, float, int], WaterBodySatelliteEvidenceSelection]] = []
+
+    for image in candidate_images:
+        masked_image = _mask_sentinel2_clouds(ee, image)
+        usable_coverage_pct = _calculate_sentinel_usable_coverage_pct(
+            ee,
+            image=masked_image,
+            target=target,
+        )
+        if usable_coverage_pct is None or usable_coverage_pct < min_usable_coverage_pct:
+            continue
+
+        frame_date = date.fromisoformat(
+            str(ee.Date(image.get("system:time_start")).format("YYYY-MM-dd").getInfo())
+        )
+        scene_cloud_pct = float(image.get("CLOUDY_PIXEL_PERCENTAGE").getInfo() or 0.0)
+        source_asset_id = str(image.id().getInfo())
+        source_asset_index = str(image.get("system:index").getInfo())
+
+        dw_image = _match_dynamic_world_image(ee, sentinel_index=source_asset_index)
+        dynamic_world_asset_id = None
+        overlay_download_url = None
+        if dw_image is not None:
+            dynamic_world_asset_id = str(dw_image.id().getInfo())
+            overlay_download_url = _build_overlay_download_url(
+                ee,
+                dw_image=dw_image,
+                thumb_region=thumb_region,
+            )
+
+        row = WaterBodySatelliteEvidenceRow(
+            gee_target_id=target.gee_target_id,
+            reference_date=reference_date.isoformat(),
+            frame_date=frame_date.isoformat(),
+            frame_rank=0,
+            osm_id=target.osm_id,
+            census_id=target.census_id,
+            name=target.name,
+            target_cohort=SATELLITE_EVIDENCE_COHORT,
+            source_dataset="sentinel2_harmonized",
+            source_asset_id=source_asset_id,
+            dynamic_world_asset_id=dynamic_world_asset_id,
+            image_path=build_satellite_evidence_storage_path(
+                gee_target_id=target.gee_target_id,
+                frame_date=frame_date,
+                variant="true-color",
+            ),
+            overlay_path=(
+                build_satellite_evidence_storage_path(
+                    gee_target_id=target.gee_target_id,
+                    frame_date=frame_date,
+                    variant="water-overlay",
+                )
+                if overlay_download_url
+                else None
+            ),
+            usable_coverage_pct=usable_coverage_pct,
+            cloud_note=f"scene_cloud_pct={scene_cloud_pct:.1f}",
+            geometry_version=resolve_satellite_evidence_geometry_version(),
+            is_same_scene_as_overlay=dynamic_world_asset_id is not None,
+            is_reviewed=False,
+            notes=None,
+        )
+        selection = WaterBodySatelliteEvidenceSelection(
+            row=row,
+            image_download_url=_build_true_color_download_url(
+                ee,
+                image=masked_image,
+                thumb_region=thumb_region,
+            ),
+            overlay_download_url=overlay_download_url,
+        )
+        ranking_key = (
+            -round(usable_coverage_pct, 2),
+            abs((reference_date - frame_date).days),
+            round(scene_cloud_pct, 2),
+            0 if dynamic_world_asset_id else 1,
+        )
+        candidate_rankings.append((ranking_key, selection))
+
+    if not candidate_rankings:
+        return None
+
+    candidate_rankings.sort(key=lambda item: item[0])
+    return candidate_rankings[0][1]
+
+
+def serialize_satellite_evidence_selection(selection: WaterBodySatelliteEvidenceSelection) -> dict[str, Any]:
+    payload = asdict(selection.row)
+    payload.update(
+        {
+            "image_download_url_present": bool(selection.image_download_url),
+            "overlay_download_url_present": bool(selection.overlay_download_url),
+        }
+    )
+    return payload
+
+
+def build_satellite_evidence_selections(
+    *,
+    reference_date: date | None = None,
+    months_back: int = DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK,
+    frame_count: int = DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT,
+    search_window_days: int = DEFAULT_SATELLITE_EVIDENCE_SEARCH_WINDOW_DAYS,
+    min_usable_coverage_pct: float = DEFAULT_SATELLITE_EVIDENCE_MIN_USABLE_COVERAGE_PCT,
+    max_scene_cloud_pct: float = DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CLOUD_PCT,
+    gee_target_id: str | None = None,
+    limit: int | None = None,
+    target_cohort: str | None = SATELLITE_EVIDENCE_COHORT,
+) -> dict[str, Any]:
+    build_reference_date = reference_date or datetime.now(UTC).date()
+    targets = load_phase1_target_features(gee_target_id=gee_target_id, limit=limit)
+    targets = filter_targets_for_cohort(targets, cohort=target_cohort)
+    ee = initialize_earth_engine()
+
+    reference_dates = build_satellite_evidence_reference_dates(
+        reference_date=build_reference_date,
+        months_back=months_back,
+        frame_count=frame_count,
+    )
+
+    selections: list[WaterBodySatelliteEvidenceSelection] = []
+    skipped: list[dict[str, Any]] = []
+    for target in targets:
+        target_selections: list[WaterBodySatelliteEvidenceSelection] = []
+        for ref_date in reference_dates:
+            selection = _select_best_scene_for_reference_date(
+                ee,
+                target=target,
+                reference_date=ref_date,
+                search_window_days=search_window_days,
+                min_usable_coverage_pct=min_usable_coverage_pct,
+                max_scene_cloud_pct=max_scene_cloud_pct,
+            )
+            if selection is None:
+                skipped.append(
+                    {
+                        "gee_target_id": target.gee_target_id,
+                        "name": target.name,
+                        "reference_date": ref_date.isoformat(),
+                        "reason": "no_usable_sentinel_scene",
+                    }
+                )
+                continue
+            target_selections.append(selection)
+
+        target_selections.sort(key=lambda item: item.row.frame_date)
+        for rank, selection in enumerate(target_selections, start=1):
+            selection.row.frame_rank = rank
+        selections.extend(target_selections)
+
+    return {
+        "build_date": build_reference_date.isoformat(),
+        "target_count": len(targets),
+        "reference_dates": [ref_date.isoformat() for ref_date in reference_dates],
+        "selection_count": len(selections),
+        "selected_rows": [serialize_satellite_evidence_selection(selection) for selection in selections],
+        "skipped": skipped,
+        "selections": selections,
+    }
+
+
+def _download_bytes(url: str) -> bytes:
+    response = httpx.get(url, timeout=120.0, follow_redirects=True)
+    response.raise_for_status()
+    return response.content
+
+
+def upload_satellite_evidence_assets(
+    selections: list[WaterBodySatelliteEvidenceSelection],
+    *,
+    bucket_name: str = SATELLITE_EVIDENCE_BUCKET,
+) -> int:
+    if not selections:
+        return 0
+
+    from app.db import get_supabase
+
+    bucket = get_supabase().storage.from_(bucket_name)
+    uploaded_count = 0
+    for selection in selections:
+        row = selection.row
+        if row.image_path and selection.image_download_url:
+            bucket.upload(
+                row.image_path,
+                _download_bytes(selection.image_download_url),
+                {"content-type": selection.image_content_type, "upsert": "true"},
+            )
+            uploaded_count += 1
+        if row.overlay_path and selection.overlay_download_url and selection.overlay_content_type:
+            bucket.upload(
+                row.overlay_path,
+                _download_bytes(selection.overlay_download_url),
+                {"content-type": selection.overlay_content_type, "upsert": "true"},
+            )
+            uploaded_count += 1
+    return uploaded_count
+
+
+def upsert_water_body_satellite_evidence(rows: list[WaterBodySatelliteEvidenceRow]) -> int:
+    if not rows:
+        return 0
+
+    from app.db import get_supabase
+
+    payload = [asdict(row) for row in rows]
+    get_supabase().table("water_body_satellite_evidence").upsert(
+        payload, on_conflict="gee_target_id,reference_date"
+    ).execute()
+    return len(rows)
+
+
+def build_satellite_evidence(
+    *,
+    write: bool,
+    reference_date: date | None = None,
+    months_back: int = DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK,
+    frame_count: int = DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT,
+    search_window_days: int = DEFAULT_SATELLITE_EVIDENCE_SEARCH_WINDOW_DAYS,
+    min_usable_coverage_pct: float = DEFAULT_SATELLITE_EVIDENCE_MIN_USABLE_COVERAGE_PCT,
+    max_scene_cloud_pct: float = DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CLOUD_PCT,
+    gee_target_id: str | None = None,
+    limit: int | None = None,
+    target_cohort: str | None = SATELLITE_EVIDENCE_COHORT,
+) -> dict[str, Any]:
+    result = build_satellite_evidence_selections(
+        reference_date=reference_date,
+        months_back=months_back,
+        frame_count=frame_count,
+        search_window_days=search_window_days,
+        min_usable_coverage_pct=min_usable_coverage_pct,
+        max_scene_cloud_pct=max_scene_cloud_pct,
+        gee_target_id=gee_target_id,
+        limit=limit,
+        target_cohort=target_cohort,
+    )
+    selections = result.pop("selections")
+
+    if not write:
+        return result
+
+    uploaded = upload_satellite_evidence_assets(selections)
+    written = upsert_water_body_satellite_evidence([selection.row for selection in selections])
+
+    return {
+        "build_date": result["build_date"],
+        "target_count": result["target_count"],
+        "reference_dates": result["reference_dates"],
+        "selection_count": result["selection_count"],
+        "uploaded": uploaded,
+        "written": written,
+        "skipped": result["skipped"],
+    }

@@ -16,12 +16,17 @@ on:
           - run-reservoir-context
           - run-water-body-summaries
           - backfill-water-body-summaries
+          - build-satellite-evidence
           - run-all-refresh
         default: run-all-refresh
       months_back:
         description: Prior monthly snapshots to backfill when using backfill-water-body-summaries
         type: number
         default: 12
+      frame_count:
+        description: Evidence frames to build per target when using build-satellite-evidence
+        type: number
+        default: 6
       target_cohort:
         description: Optional named target cohort for manual water-body runs
         type: choice
@@ -152,6 +157,9 @@ jobs:
               ;;
             backfill-water-body-summaries)
               python scripts/run_gee_phase1.py backfill-water-body-summaries --months-back "${{ inputs.months_back }}" $TARGET_COHORT_ARG --write
+              ;;
+            build-satellite-evidence)
+              python scripts/run_gee_phase1.py build-satellite-evidence --months-back "${{ inputs.months_back }}" --frame-count "${{ inputs.frame_count }}" $TARGET_COHORT_ARG --write
               ;;
             run-all-refresh)
               python scripts/run_gee_phase1.py run-reservoir-context --write
