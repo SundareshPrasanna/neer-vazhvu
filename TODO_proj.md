@@ -49,8 +49,14 @@
 - [ ] **Water bodies OSM** — Re-run `scripts/fetch-water-bodies-osm.ts` once a year to pull fresh polygon data from OpenStreetMap
 - [ ] **River geometry OSM** — Re-run `scripts/fetch-rivers-osm.ts` if river alignments change significantly in OSM
 
+## My Ward & Navigation (P1) - Done
+
+- [x] **My Ward tab** — Unified ward report page at `/my-ward` aggregating groundwater, water bodies, flood risk, infrastructure, rivers, representatives, and AI narrative for any ward. Source attribution and caveats on every card. CSV export, share URL, print layout
+- [x] **Nav consolidation** — 7 tabs compressed to 4: Dashboard, My Ward, Explore (dropdown: Groundwater, Water Bodies, Rivers, Flood Risk), About. Mobile menu has collapsible Explore section
+
 ## V2 Features (P2)
 
+- [ ] **Ward comparison tool** — Side-by-side comparison of 2-3 wards (`/compare?wards=42,87,153`)
 - [ ] **Personal water calculator** — "How much water does your household use vs. what's sustainable?"
 - [ ] **Citizen water quality reporting** — Report water issues with photo + geolocation
 - [ ] **Flood risk overlay** — Address-based flood risk using elevation + proximity to water bodies
@@ -81,4 +87,4 @@
 
 ---
 
-*Last updated: 2026-03-22*
+*Last updated: 2026-04-04*

@@ -3,19 +3,28 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/context";
 import { LanguageToggle } from "./language-toggle";
 
-const NAV_KEYS = [
-  { href: "/",            key: "nav.dashboard" },
-  { href: "/groundwater", key: "nav.groundwater" },
-  { href: "/water-bodies",key: "nav.water_bodies" },
-  { href: "/rivers",      key: "nav.rivers" },
-  { href: "/flood-risk",  key: "nav.flood_risk" },
-  { href: "/about",       key: "nav.about" },
-];
+const TOP_NAV = [
+  { href: "/",        key: "nav.dashboard" },
+  { href: "/my-ward", key: "nav.my_ward" },
+] as const;
+
+const EXPLORE_ITEMS = [
+  { href: "/groundwater",  key: "nav.groundwater" },
+  { href: "/water-bodies", key: "nav.water_bodies" },
+  { href: "/rivers",       key: "nav.rivers" },
+  { href: "/flood-risk",   key: "nav.flood_risk" },
+] as const;
+
+const EXPLORE_PATHS: Set<string> = new Set(EXPLORE_ITEMS.map((i) => i.href));
+
+const AFTER_NAV = [
+  { href: "/about", key: "nav.about" },
+] as const;
 
 function ThemeToggle() {
   const { t } = useLanguage();
@@ -52,18 +61,105 @@ function ThemeToggle() {
   );
 }
 
+function NavLink({ href, label, active, onClick }: { href: string; label: string; active: boolean; onClick?: () => void }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={cn(
+        "px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
+        active
+          ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+      )}
+    >
+      {label}
+    </Link>
+  );
+}
+
+function ExploreDropdown({ pathname, t }: { pathname: string; t: (key: string) => string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const isExploreActive = EXPLORE_PATHS.has(pathname);
+
+  // Close on click outside
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const handleMouseEnter = () => {
+    clearTimeout(timeoutRef.current);
+    setOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => setOpen(false), 150);
+  };
+
+  return (
+    <div ref={ref} className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          "px-3 py-2.5 rounded-md text-sm font-medium transition-colors inline-flex items-center gap-1",
+          isExploreActive
+            ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+        )}
+      >
+        {t("nav.explore")}
+        <svg className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-50">
+          {EXPLORE_ITEMS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setOpen(false)}
+              className={cn(
+                "block px-4 py-2.5 text-sm transition-colors",
+                pathname === item.href
+                  ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800"
+              )}
+            >
+              {t(item.key)}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function Header() {
   const pathname = usePathname();
   const { t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileExploreOpen, setMobileExploreOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   // Resolve current page label for mobile indicator (client-only to avoid hydration mismatch)
-  const currentPage = mounted ? NAV_KEYS.find((item) => item.href === pathname && item.href !== "/") : null;
+  const allItems = [...TOP_NAV, ...EXPLORE_ITEMS, ...AFTER_NAV];
+  const currentPage = mounted ? allItems.find((item) => item.href === pathname && item.href !== "/") : null;
   const currentPageLabel = currentPage ? t(currentPage.key) : null;
+
+  const isExploreActive = EXPLORE_PATHS.has(pathname);
 
   return (
     <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-[10000]">
@@ -106,19 +202,12 @@ export function Header() {
 
           {/* Desktop nav */}
           <nav className="hidden sm:flex items-center gap-2">
-            {NAV_KEYS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
-                  pathname === item.href
-                    ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
-                )}
-              >
-                {t(item.key)}
-              </Link>
+            {TOP_NAV.map((item) => (
+              <NavLink key={item.href} href={item.href} label={t(item.key)} active={pathname === item.href} />
+            ))}
+            <ExploreDropdown pathname={pathname} t={t} />
+            {AFTER_NAV.map((item) => (
+              <NavLink key={item.href} href={item.href} label={t(item.key)} active={pathname === item.href} />
             ))}
             <LanguageToggle />
             <ThemeToggle />
@@ -151,7 +240,58 @@ export function Header() {
       {menuOpen && (
         <nav className="sm:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[70vh] overflow-y-auto">
           <div className="max-w-7xl mx-auto px-4 py-2 space-y-1">
-            {NAV_KEYS.map((item) => (
+            {TOP_NAV.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className={cn(
+                  "block px-4 py-3 rounded-md text-sm font-medium transition-colors",
+                  pathname === item.href
+                    ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                )}
+              >
+                {t(item.key)}
+              </Link>
+            ))}
+
+            {/* Explore group */}
+            <button
+              onClick={() => setMobileExploreOpen((v) => !v)}
+              className={cn(
+                "w-full flex items-center justify-between px-4 py-3 rounded-md text-sm font-medium transition-colors",
+                isExploreActive
+                  ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+              )}
+            >
+              {t("nav.explore")}
+              <svg className={cn("w-4 h-4 transition-transform", mobileExploreOpen && "rotate-180")} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {mobileExploreOpen && (
+              <div className="pl-4 space-y-1">
+                {EXPLORE_ITEMS.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className={cn(
+                      "block px-4 py-2.5 rounded-md text-sm transition-colors",
+                      pathname === item.href
+                        ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                        : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    )}
+                  >
+                    {t(item.key)}
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {AFTER_NAV.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

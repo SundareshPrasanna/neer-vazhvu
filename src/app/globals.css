@@ -135,3 +135,28 @@
 .leaflet-interactive:focus {
   outline: none;
 }
+
+/* Print styles for My Ward page */
+@media print {
+  header, footer, .print\:hidden {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .dark {
+    background: white !important;
+    color: black !important;
+  }
+  [class*="shadow"] {
+    box-shadow: none !important;
+  }
+  [class*="border"] {
+    border-color: #e2e8f0 !important;
+  }
+  [class*="Card"], [class*="card"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
