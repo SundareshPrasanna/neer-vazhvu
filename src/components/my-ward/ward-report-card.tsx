@@ -11,6 +11,7 @@ import {
   type WardRankings,
   type Grade,
 } from "@/lib/utils/ward-rankings";
+import { ShareMenu } from "@/components/share-menu";
 
 /* ── Grade colors ───────────────────────────────────────────────────── */
 
@@ -233,15 +234,22 @@ export function WardReportCard() {
         >
           &larr; {t("report.back_to_ward")}
         </Link>
-        <button
-          onClick={() => window.print()}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-          </svg>
-          {t("my_ward.print")}
-        </button>
+        <div className="flex items-center gap-2">
+          <ShareMenu
+            url={typeof window !== "undefined" ? `${window.location.origin}/my-ward/report?ward=${wardNumber}` : `/my-ward/report?ward=${wardNumber}`}
+            title={`Ward ${wardNumber} Report Card | Neer Vazhvu`}
+            description={rankings ? `Grade ${rankings.overallGrade} - Ranked #${rankings.overallRank} of ${rankings.overallTotal}` : undefined}
+          />
+          <button
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            {t("my_ward.print")}
+          </button>
+        </div>
       </div>
 
       {/* ── Report Card Container ─────────────────────────────── */}

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 import type { GroundwaterData } from "@/lib/hooks/use-my-ward-data";
 import type { RepresentativeData } from "@/lib/hooks/use-ward-representatives";
 import { generateWardCSV, downloadCSV } from "@/lib/utils/ward-export";
+import { ShareMenu } from "@/components/share-menu";
 
 interface WardHeaderProps {
   wardNumber: number;
@@ -18,19 +18,10 @@ interface WardHeaderProps {
 
 export function WardHeader({ wardNumber, zoneName, profile, groundwater, representatives }: WardHeaderProps) {
   const { t } = useLanguage();
-  const [copied, setCopied] = useState(false);
 
-  const handleShare = async () => {
-    const url = `${window.location.origin}/my-ward?ward=${wardNumber}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback for mobile
-      window.prompt("Copy this link:", url);
-    }
-  };
+  const shareUrl = typeof window !== "undefined"
+    ? `${window.location.origin}/my-ward?ward=${wardNumber}`
+    : `/my-ward?ward=${wardNumber}`;
 
   const handleExport = () => {
     const csv = generateWardCSV(
@@ -71,15 +62,11 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
         </Link>
 
         {/* Share */}
-        <button
-          onClick={handleShare}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-          </svg>
-          {copied ? t("my_ward.copied") : t("my_ward.share")}
-        </button>
+        <ShareMenu
+          url={shareUrl}
+          title={`Ward ${wardNumber} - ${zoneName} | Neer Vazhvu`}
+          description={t("share.ward_report")}
+        />
 
         {/* Export CSV */}
         <button
