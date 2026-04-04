@@ -43,7 +43,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - run: pip install ruff pytest pytest-asyncio
+      - run: pip install -e ".[dev]"
       - run: ruff check .
       - run: ruff format --check .
       - run: pytest -q
