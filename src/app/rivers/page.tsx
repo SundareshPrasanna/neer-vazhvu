@@ -83,6 +83,7 @@ function RiversPageContent() {
               ? river.stations.find((s: { id: string }) => s.id === stationParam) ?? river.stations[0]
               : river.stations[0];
             setSelectedRiver({ riverId: riverParam, stationId: station.id, latlng: [station.lat, station.lng] });
+            setFocusCenter([station.lat, station.lng]);
             return;
           }
         }

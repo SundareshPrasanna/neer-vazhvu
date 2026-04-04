@@ -13,7 +13,7 @@ interface RepresentativeData {
   mp: { name: string; party: string; constituency: string };
 }
 
-function escapeCSV(value: string | number | null | undefined): string {
+export function escapeCSV(value: string | number | null | undefined): string {
   if (value == null) return "";
   const s = String(value);
   if (s.includes(",") || s.includes('"') || s.includes("\n")) {
@@ -22,7 +22,7 @@ function escapeCSV(value: string | number | null | undefined): string {
   return s;
 }
 
-function row(...cells: (string | number | null | undefined)[]): string {
+export function row(...cells: (string | number | null | undefined)[]): string {
   return cells.map(escapeCSV).join(",");
 }
 
