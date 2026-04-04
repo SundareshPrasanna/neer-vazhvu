@@ -74,6 +74,16 @@ export function normalizeWaterBodySatelliteEvidenceFrame(
   };
 }
 
+export function normalizeWaterBodySatelliteEvidenceFrames(
+  rows: WaterBodySatelliteEvidenceApiRow[] | null | undefined,
+): WaterBodySatelliteEvidenceFrame[] {
+  if (!rows || rows.length === 0) {
+    return [];
+  }
+
+  return rows.map(normalizeWaterBodySatelliteEvidenceFrame);
+}
+
 export function hasWaterBodySatelliteEvidence(
   rows: WaterBodySatelliteEvidenceFrame[] | null | undefined,
 ): rows is WaterBodySatelliteEvidenceFrame[] {

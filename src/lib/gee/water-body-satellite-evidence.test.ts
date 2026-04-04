@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   hasWaterBodySatelliteEvidence,
   normalizeWaterBodySatelliteEvidenceFrame,
+  normalizeWaterBodySatelliteEvidenceFrames,
 } from "./water-body-satellite-evidence";
 
 test("normalizeWaterBodySatelliteEvidenceFrame maps snake_case payload to camelCase", () => {
@@ -70,4 +71,61 @@ test("hasWaterBodySatelliteEvidence requires at least one frame", () => {
     ]),
     true,
   );
+});
+
+test("normalizeWaterBodySatelliteEvidenceFrames handles empty and multi-row payloads", () => {
+  assert.deepEqual(normalizeWaterBodySatelliteEvidenceFrames(null), []);
+
+  const rows = normalizeWaterBodySatelliteEvidenceFrames([
+    {
+      gee_target_id: "osm:25453624",
+      reference_date: "2026-04-04",
+      frame_date: "2025-10-31",
+      frame_rank: 2,
+      osm_id: 25453624,
+      census_id: null,
+      name: "Chembarambakkam Lake",
+      target_cohort: "flagship-history",
+      source_dataset: "sentinel2_harmonized",
+      source_asset_id: null,
+      dynamic_world_asset_id: null,
+      image_path: null,
+      overlay_path: null,
+      image_url: null,
+      overlay_url: null,
+      usable_coverage_pct: 95.1,
+      cloud_note: null,
+      geometry_version: null,
+      is_same_scene_as_overlay: false,
+      is_reviewed: true,
+      notes: null,
+    },
+    {
+      gee_target_id: "osm:25453624",
+      reference_date: "2026-04-04",
+      frame_date: "2026-03-25",
+      frame_rank: 4,
+      osm_id: 25453624,
+      census_id: null,
+      name: "Chembarambakkam Lake",
+      target_cohort: "flagship-history",
+      source_dataset: "sentinel2_harmonized",
+      source_asset_id: null,
+      dynamic_world_asset_id: null,
+      image_path: null,
+      overlay_path: null,
+      image_url: null,
+      overlay_url: null,
+      usable_coverage_pct: 99.3,
+      cloud_note: null,
+      geometry_version: null,
+      is_same_scene_as_overlay: false,
+      is_reviewed: true,
+      notes: null,
+    },
+  ]);
+
+  assert.equal(rows.length, 2);
+  assert.equal(rows[0]?.frameDate, "2025-10-31");
+  assert.equal(rows[1]?.frameRank, 4);
 });
