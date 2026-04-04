@@ -10,12 +10,14 @@ export interface WardProfile {
   zone_no: string;
   zone_name: string;
   centroid: [number, number];
+  area_sq_km: number;
 
   water_bodies: {
     current_count: number;
     census_records: number;
     restoration_critical: number;
     restoration_high: number;
+    avg_restoration_score: number | null;
     top_bodies: { name: string; score: number; level: string }[];
   };
 
@@ -32,12 +34,16 @@ export interface WardProfile {
     hotspot_2020_count: number;
   };
 
-  drainage: { line_count: number };
+  drainage: {
+    line_count: number;
+    total_length_km: number;
+  };
 
   sewerage: {
     stp_count: number;
     sps_count: number;
     pumping_main_count: number;
+    pumping_main_length_km: number;
     total_stp_capacity_mld: number;
   };
 
@@ -68,7 +74,7 @@ interface RiverQuality {
 let profilesPromise: Promise<WardProfile[]> | null = null;
 let riverPromise: Promise<RiverQuality> | null = null;
 
-function loadProfiles(): Promise<WardProfile[]> {
+export function loadProfiles(): Promise<WardProfile[]> {
   if (!profilesPromise) {
     profilesPromise = fetch("/data/ward-profiles.json")
       .then((r) => r.json())

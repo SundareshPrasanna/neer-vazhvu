@@ -14,6 +14,7 @@ import centroid from "@turf/centroid";
 import bbox from "@turf/bbox";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point as turfPoint } from "@turf/helpers";
+import turfArea from "@turf/area";
 import along from "@turf/along";
 import length from "@turf/length";
 
@@ -38,12 +39,14 @@ interface WardProfile {
   zone_no: string;
   zone_name: string;
   centroid: [number, number];
+  area_sq_km: number;
 
   water_bodies: {
     current_count: number;
     census_records: number;
     restoration_critical: number;
     restoration_high: number;
+    avg_restoration_score: number | null;
     top_bodies: { name: string; score: number; level: string }[];
   };
 
@@ -60,12 +63,16 @@ interface WardProfile {
     hotspot_2020_count: number;
   };
 
-  drainage: { line_count: number };
+  drainage: {
+    line_count: number;
+    total_length_km: number;
+  };
 
   sewerage: {
     stp_count: number;
     sps_count: number;
     pumping_main_count: number;
+    pumping_main_length_km: number;
     total_stp_capacity_mld: number;
   };
 
@@ -166,6 +173,38 @@ function findWard(lng: number, lat: number, wards: WardInfo[], grid: GridIndex):
   return null;
 }
 
+function distributeLineLengthByWard(
+  geom: GeoJSON.LineString,
+  wards: WardInfo[],
+  grid: GridIndex,
+  sampleStepKm = 0.05,
+): Map<number, number> {
+  const line = { type: "Feature" as const, properties: {}, geometry: geom };
+  const lenKm = length(line, { units: "kilometers" });
+  if (lenKm <= 0) return new Map();
+
+  const sampleCount = Math.max(1, Math.ceil(lenKm / sampleStepKm));
+  const contributionKm = lenKm / sampleCount;
+  const byWard = new Map<number, number>();
+
+  for (let i = 0; i < sampleCount; i++) {
+    const distanceKm = ((i + 0.5) / sampleCount) * lenKm;
+    const sample = along(line, distanceKm, { units: "kilometers" });
+    const [lng, lat] = sample.geometry.coordinates;
+    const ward = findWard(lng, lat, wards, grid);
+    if (ward != null) {
+      byWard.set(ward, (byWard.get(ward) ?? 0) + contributionKm);
+    }
+  }
+
+  return byWard;
+}
+
+function roundTo(value: number, decimals: number): number {
+  const factor = 10 ** decimals;
+  return Math.round(value * factor) / factor;
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 function main() {
@@ -212,9 +251,11 @@ function main() {
     hotspot2015Count: number;
     hotspot2020Count: number;
     drainageCount: number;
+    drainageLengthKm: number;
     stpCount: number;
     spsCount: number;
     pumpingMainCount: number;
+    pumpingMainLengthKm: number;
     totalStpCapacityMld: number;
     industrialCount: number;
   }>();
@@ -233,9 +274,11 @@ function main() {
       hotspot2015Count: 0,
       hotspot2020Count: 0,
       drainageCount: 0,
+      drainageLengthKm: 0,
       stpCount: 0,
       spsCount: 0,
       pumpingMainCount: 0,
+      pumpingMainLengthKm: 0,
       totalStpCapacityMld: 0,
       industrialCount: 0,
     });
@@ -284,16 +327,17 @@ function main() {
         p.censusRecords++;
       }
 
-      // Critical/high counts
-      if (body.priority_level === "critical") p.restorationCritical++;
-      else if (body.priority_level === "high") p.restorationHigh++;
+      const isCurrentBody = body.source === "osm" || body.source === "matched";
+      if (isCurrentBody) {
+        if (body.priority_level === "critical") p.restorationCritical++;
+        else if (body.priority_level === "high") p.restorationHigh++;
 
-      // Track for top 3
-      p.topBodies.push({
-        name: body.name || "(unnamed)",
-        score: body.priority_score,
-        level: body.priority_level,
-      });
+        p.topBodies.push({
+          name: body.name || "(unnamed)",
+          score: body.priority_score,
+          level: body.priority_level,
+        });
+      }
     }
   }
   console.log(`  ${restorationAssigned}/${restorationBodies.length} restoration records assigned`);
@@ -391,6 +435,11 @@ function main() {
       profiles.get(ward)!.drainageCount++;
       drainageAssigned++;
     }
+
+    const distributed = distributeLineLengthByWard(geom, wards, grid);
+    for (const [distributedWard, lengthKm] of distributed) {
+      profiles.get(distributedWard)!.drainageLengthKm += lengthKm;
+    }
   }
   console.log(`  ${drainageAssigned}/${drainageGeo.features.length} drainage lines assigned`);
 
@@ -433,6 +482,17 @@ function main() {
         p.pumpingMainCount++;
       }
       sewerageAssigned++;
+    }
+
+    if (layer === "pumping_main" && feat.geometry.type === "LineString") {
+      const distributed = distributeLineLengthByWard(
+        feat.geometry as GeoJSON.LineString,
+        wards,
+        grid,
+      );
+      for (const [distributedWard, lengthKm] of distributed) {
+        profiles.get(distributedWard)!.pumpingMainLengthKm += lengthKm;
+      }
     }
   }
   console.log(`  ${sewerageAssigned}/${sewerageGeo.features.length} sewerage features assigned`);
@@ -523,16 +583,24 @@ function main() {
       }
     }
 
+    // Ward area in sq km from polygon geometry
+    const areaSqM = turfArea(w.feature);
+    const areaSqKm = roundTo(areaSqM / 1_000_000, 6);
+
     output.push({
       ward_number: w.ward_number,
       zone_no: w.zone_no,
       zone_name: w.zone_name,
       centroid: w.centroid,
+      area_sq_km: areaSqKm,
       water_bodies: {
         current_count: p.waterBodyCount,
         census_records: p.censusRecords,
         restoration_critical: p.restorationCritical,
         restoration_high: p.restorationHigh,
+        avg_restoration_score: p.topBodies.length > 0
+          ? roundTo(p.topBodies.reduce((s, b) => s + b.score, 0) / p.topBodies.length, 6)
+          : null,
         top_bodies: topBodies,
       },
       lost_bodies: {
@@ -546,11 +614,15 @@ function main() {
         hotspot_2015_count: p.hotspot2015Count,
         hotspot_2020_count: p.hotspot2020Count,
       },
-      drainage: { line_count: p.drainageCount },
+      drainage: {
+        line_count: p.drainageCount,
+        total_length_km: roundTo(p.drainageLengthKm, 6),
+      },
       sewerage: {
         stp_count: p.stpCount,
         sps_count: p.spsCount,
         pumping_main_count: p.pumpingMainCount,
+        pumping_main_length_km: roundTo(p.pumpingMainLengthKm, 6),
         total_stp_capacity_mld: Math.round(p.totalStpCapacityMld * 10) / 10,
       },
       rivers: {
@@ -567,17 +639,22 @@ function main() {
 
   // Summary
   const totalWaterBodies = output.reduce((s, w) => s + w.water_bodies.current_count, 0);
-  const totalDrainage = output.reduce((s, w) => s + w.drainage.line_count, 0);
+  const totalDrainageSegments = output.reduce((s, w) => s + w.drainage.line_count, 0);
+  const totalDrainageLengthKm = output.reduce((s, w) => s + w.drainage.total_length_km, 0);
   const totalSewerage = output.reduce(
     (s, w) => s + w.sewerage.stp_count + w.sewerage.sps_count + w.sewerage.pumping_main_count,
     0
   );
+  const totalPumpingMainLengthKm = output.reduce(
+    (s, w) => s + w.sewerage.pumping_main_length_km,
+    0,
+  );
 
   console.log(`\nWard profiles written to ${outPath}`);
-  console.log(`  200 wards profiled`);
+  console.log(`  ${output.length} wards profiled`);
   console.log(`  Water bodies: ${totalWaterBodies} assigned`);
-  console.log(`  Drainage lines: ${totalDrainage} assigned`);
-  console.log(`  Sewerage features: ${totalSewerage} assigned`);
+  console.log(`  Drainage lines: ${totalDrainageSegments} midpoint assignments, ${Math.round(totalDrainageLengthKm)} km apportioned`);
+  console.log(`  Sewerage features: ${totalSewerage} assigned, ${Math.round(totalPumpingMainLengthKm)} km pumping mains apportioned`);
 }
 
 main();

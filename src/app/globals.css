@@ -136,7 +136,7 @@
   outline: none;
 }
 
-/* Print styles for My Ward page */
+/* Print styles for My Ward and Report Card pages */
 @media print {
   header, footer, .print\:hidden {
     display: none !important;
@@ -144,6 +144,7 @@
   body {
     background: white !important;
     color: black !important;
+    font-size: 11pt !important;
   }
   .dark {
     background: white !important;
@@ -158,5 +159,17 @@
   [class*="Card"], [class*="card"] {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+  /* Report card: fit on one A4 page */
+  .report-card {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+  .report-card table {
+    font-size: 10pt !important;
+  }
+  .report-grade {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 }
