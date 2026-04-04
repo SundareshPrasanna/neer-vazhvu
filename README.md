@@ -192,11 +192,12 @@ Current operations:
 - water-body satellite summaries refresh weekly in GitHub Actions
 - historical water-body snapshots can be backfilled monthly for chart support
 - a lighter `flagship-history` cohort is used for chart-ready history seeding
-- the workflow is `workflow_dispatch` only in this branch, so refreshes are currently manual rather than scheduled
+- the workflow also supports manual `workflow_dispatch` for validation, backfill, and ad hoc reruns
 
 Current implementation docs:
 
 - [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md)
+- [GEE_SATELLITE_EVIDENCE_PLAN.md](GEE_SATELLITE_EVIDENCE_PLAN.md)
 - [GEE_PHASE1_PLAN.md](GEE_PHASE1_PLAN.md)
 - [GEE_CATCHMENT_DERIVATION_PLAN.md](GEE_CATCHMENT_DERIVATION_PLAN.md)
 - [GEE_RESEARCH.md](GEE_RESEARCH.md)

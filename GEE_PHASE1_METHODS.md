@@ -2,7 +2,7 @@
 
 This document is the source of truth for the Earth Engine Phase 1 behavior currently implemented in this repository.
 
-If this file conflicts with the broader idea docs in [GEE_RESEARCH.md](GEE_RESEARCH.md), [GEE_PHASE1_PLAN.md](GEE_PHASE1_PLAN.md), or [GEE_CATCHMENT_DERIVATION_PLAN.md](GEE_CATCHMENT_DERIVATION_PLAN.md), follow this file for what the app actually does today.
+If this file conflicts with the broader idea docs in [GEE_RESEARCH.md](GEE_RESEARCH.md), [GEE_PHASE1_PLAN.md](GEE_PHASE1_PLAN.md), [GEE_CATCHMENT_DERIVATION_PLAN.md](GEE_CATCHMENT_DERIVATION_PLAN.md), or [GEE_SATELLITE_EVIDENCE_PLAN.md](GEE_SATELLITE_EVIDENCE_PLAN.md), follow this file for what the app actually does today.
 
 ## Product Surfaces
 
