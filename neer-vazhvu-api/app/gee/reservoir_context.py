@@ -54,7 +54,9 @@ def canonicalize_reservoir_name(raw_name: Any) -> str | None:
     if not isinstance(raw_name, str):
         return None
 
-    normalized = " ".join(raw_name.strip().lower().replace("_", " ").replace("-", " ").split())
+    normalized = " ".join(
+        raw_name.strip().lower().replace("_", " ").replace("-", " ").split()
+    )
     return _RESERVOIR_NAME_ALIASES.get(normalized)
 
 
@@ -67,7 +69,9 @@ def window_bounds(context_date: date, window_days: int) -> tuple[date, date]:
     return start_date, end_date_exclusive
 
 
-def calculate_anomaly_pct(rain_total_mm: float, baseline_mm: float | None) -> float | None:
+def calculate_anomaly_pct(
+    rain_total_mm: float, baseline_mm: float | None
+) -> float | None:
     if baseline_mm is None or baseline_mm < 1:
         return None
     return round(((rain_total_mm - baseline_mm) / baseline_mm) * 100, 2)
@@ -136,8 +140,13 @@ def load_reservoir_catchments(
             )
             continue
 
-        if not isinstance(geometry, dict) or geometry.get("type") not in _GEOMETRY_TYPES:
-            invalid_features.append(f"feature[{index}] for {reservoir} is missing polygon geometry")
+        if (
+            not isinstance(geometry, dict)
+            or geometry.get("type") not in _GEOMETRY_TYPES
+        ):
+            invalid_features.append(
+                f"feature[{index}] for {reservoir} is missing polygon geometry"
+            )
             continue
 
         if reservoir in catchments:
@@ -158,7 +167,9 @@ def load_reservoir_catchments(
         if missing:
             parts.append(f"Missing verified catchments for: {', '.join(missing)}")
         if duplicates:
-            parts.append(f"Duplicate reservoir features: {', '.join(sorted(set(duplicates)))}")
+            parts.append(
+                f"Duplicate reservoir features: {', '.join(sorted(set(duplicates)))}"
+            )
         if invalid_features:
             parts.append("; ".join(invalid_features))
         raise RuntimeError(". ".join(parts))
@@ -166,7 +177,9 @@ def load_reservoir_catchments(
     return catchments, geometry_version
 
 
-def validate_reservoir_catchments(catchments_path: Path | None = None) -> dict[str, Any]:
+def validate_reservoir_catchments(
+    catchments_path: Path | None = None,
+) -> dict[str, Any]:
     path = catchments_path or RESERVOIR_CATCHMENTS_PATH
 
     try:
@@ -204,8 +217,13 @@ def validate_reservoir_catchments(catchments_path: Path | None = None) -> dict[s
             )
             continue
 
-        if not isinstance(geometry, dict) or geometry.get("type") not in _GEOMETRY_TYPES:
-            invalid_features.append(f"feature[{index}] for {reservoir} is missing polygon geometry")
+        if (
+            not isinstance(geometry, dict)
+            or geometry.get("type") not in _GEOMETRY_TYPES
+        ):
+            invalid_features.append(
+                f"feature[{index}] for {reservoir} is missing polygon geometry"
+            )
             continue
 
         if reservoir in seen:
@@ -222,7 +240,9 @@ def validate_reservoir_catchments(catchments_path: Path | None = None) -> dict[s
     if missing:
         parts.append(f"Missing verified catchments for: {', '.join(missing)}")
     if duplicates:
-        parts.append(f"Duplicate reservoir features: {', '.join(sorted(set(duplicates)))}")
+        parts.append(
+            f"Duplicate reservoir features: {', '.join(sorted(set(duplicates)))}"
+        )
     if invalid_features:
         parts.append("; ".join(invalid_features))
 
@@ -237,7 +257,9 @@ def validate_reservoir_catchments(catchments_path: Path | None = None) -> dict[s
     }
 
 
-def resolve_chirps_context_date(chirps_collection, requested_date: date | None = None) -> date:
+def resolve_chirps_context_date(
+    chirps_collection, requested_date: date | None = None
+) -> date:
     latest_millis = chirps_collection.aggregate_max("system:time_start").getInfo()
     latest_date = datetime.fromtimestamp(latest_millis / 1000, tz=UTC).date()
 
@@ -272,7 +294,9 @@ def baseline_offsets(
     return offsets
 
 
-def _window_mean_precip_mm_ee(ee, chirps_collection, geometry, start_date, end_date_exclusive):
+def _window_mean_precip_mm_ee(
+    ee, chirps_collection, geometry, start_date, end_date_exclusive
+):
     image = chirps_collection.filterDate(start_date, end_date_exclusive).sum()
     stats = image.reduceRegion(
         reducer=ee.Reducer.mean(),
@@ -333,11 +357,17 @@ def compute_reservoir_context_rows(
                     historical_start = start_ee.advance(offset.multiply(-1), "year")
                     historical_end = end_ee.advance(offset.multiply(-1), "year")
                     return _window_mean_precip_mm_ee(
-                        ee, chirps_collection, geometry, historical_start, historical_end
+                        ee,
+                        chirps_collection,
+                        geometry,
+                        historical_start,
+                        historical_end,
                     )
 
                 values = offset_list.map(per_offset).getInfo()
-                baseline_values = [float(value) for value in values if value is not None]
+                baseline_values = [
+                    float(value) for value in values if value is not None
+                ]
 
             baseline_mm = round(mean(baseline_values), 2) if baseline_values else None
             rain_total_mm = round(rain_total_mm, 2)

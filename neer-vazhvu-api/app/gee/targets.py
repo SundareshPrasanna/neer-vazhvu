@@ -96,10 +96,7 @@ def determine_include_reason(row: dict[str, Any]) -> str | None:
     if area_ha >= 10 and bool(name):
         return "named_large"
 
-    if (
-        area_ha >= 50
-        and normalized_water_type in ALLOWED_UNNAMED_WATER_TYPES
-    ):
+    if area_ha >= 50 and normalized_water_type in ALLOWED_UNNAMED_WATER_TYPES:
         return "large_unnamed"
 
     return None

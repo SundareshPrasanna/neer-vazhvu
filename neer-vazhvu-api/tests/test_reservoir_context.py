@@ -43,8 +43,16 @@ def test_load_reservoir_catchments_reads_geometry_version_and_aliases(tmp_path):
     _write_geojson(
         path,
         [
-            {"type": "Feature", "properties": {"reservoir": "Poondi"}, "geometry": _polygon()},
-            {"type": "Feature", "properties": {"reservoir": "Red Hills"}, "geometry": _polygon()},
+            {
+                "type": "Feature",
+                "properties": {"reservoir": "Poondi"},
+                "geometry": _polygon(),
+            },
+            {
+                "type": "Feature",
+                "properties": {"reservoir": "Red Hills"},
+                "geometry": _polygon(),
+            },
             {
                 "type": "Feature",
                 "properties": {"reservoir": "Chembarambakkam"},
@@ -75,8 +83,16 @@ def test_validate_reservoir_catchments_reports_missing_and_invalid_features(tmp_
     _write_geojson(
         path,
         [
-            {"type": "Feature", "properties": {"reservoir": "Poondi"}, "geometry": _polygon()},
-            {"type": "Feature", "properties": {"reservoir": "Unknown"}, "geometry": _polygon()},
+            {
+                "type": "Feature",
+                "properties": {"reservoir": "Poondi"},
+                "geometry": _polygon(),
+            },
+            {
+                "type": "Feature",
+                "properties": {"reservoir": "Unknown"},
+                "geometry": _polygon(),
+            },
             {
                 "type": "Feature",
                 "properties": {"reservoir": "Red Hills"},

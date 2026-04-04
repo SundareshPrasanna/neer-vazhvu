@@ -78,7 +78,9 @@ def filter_targets_for_cohort(
         raise RuntimeError(f"Unsupported target cohort: {cohort}")
 
     cohort_ids = set(FLAGSHIP_HISTORY_COHORT)
-    filtered_targets = [target for target in targets if target.gee_target_id in cohort_ids]
+    filtered_targets = [
+        target for target in targets if target.gee_target_id in cohort_ids
+    ]
     if not filtered_targets:
         raise RuntimeError(f"No Phase 1 water-body targets found for cohort {cohort}")
     return filtered_targets
@@ -135,7 +137,9 @@ def _read_current_water_bodies_payload(path: Path | None = None) -> dict[str, An
 
     payload = json.loads(payload_path.read_text(encoding="utf-8"))
     if payload.get("type") != "FeatureCollection":
-        raise RuntimeError(f"Water-body GeoJSON must be a FeatureCollection: {payload_path}")
+        raise RuntimeError(
+            f"Water-body GeoJSON must be a FeatureCollection: {payload_path}"
+        )
     return payload
 
 
@@ -186,8 +190,12 @@ def load_phase1_target_features(
                 osm_id=int(osm_id),
                 census_id=row.get("census_id"),
                 name=str(row.get("name") or source_properties.get("name") or ""),
-                water_type=str(row.get("water_type") or source_properties.get("water_type") or ""),
-                area_ha=float(row.get("area_ha") or source_properties.get("area_ha") or 0.0),
+                water_type=str(
+                    row.get("water_type") or source_properties.get("water_type") or ""
+                ),
+                area_ha=float(
+                    row.get("area_ha") or source_properties.get("area_ha") or 0.0
+                ),
                 priority_level=str(row.get("priority_level") or ""),
                 priority_score=float(row.get("priority_score") or 0.0),
                 centroid=list(row.get("centroid") or []),
@@ -241,7 +249,9 @@ def derive_confidence_level(
     return "medium"
 
 
-def calculate_valid_pixel_pct(valid_area_ha: float | None, target_area_ha: float) -> float | None:
+def calculate_valid_pixel_pct(
+    valid_area_ha: float | None, target_area_ha: float
+) -> float | None:
     if valid_area_ha is None or target_area_ha <= 0:
         return None
     return round(min((valid_area_ha / target_area_ha) * 100, 100.0), 2)
@@ -258,7 +268,9 @@ def calculate_historical_persistence_pct(
         return None
 
     threshold_area_ha = max(target_area_ha * presence_fraction, min_presence_area_ha)
-    months_present = sum(1 for area_ha in monthly_baseline_areas_ha if area_ha >= threshold_area_ha)
+    months_present = sum(
+        1 for area_ha in monthly_baseline_areas_ha if area_ha >= threshold_area_ha
+    )
     return round((months_present / len(monthly_baseline_areas_ha)) * 100, 2)
 
 
@@ -285,7 +297,9 @@ def _build_target_feature_collection(ee, targets: list[Phase1WaterBodyTargetFeat
     return ee.FeatureCollection(features)
 
 
-def _reduce_sum_by_target(ee, image, *, targets_fc, scale_meters: int) -> dict[str, float | None]:
+def _reduce_sum_by_target(
+    ee, image, *, targets_fc, scale_meters: int
+) -> dict[str, float | None]:
     reduced = image.reduceRegions(
         collection=targets_fc,
         reducer=ee.Reducer.sum(),
@@ -317,7 +331,9 @@ def _get_dynamic_world_observation_window(
     collection = (
         ee.ImageCollection(DYNAMIC_WORLD_DATASET)
         .filterBounds(region_geometry)
-        .filterDate(observation_start.isoformat(), observation_end_exclusive.isoformat())
+        .filterDate(
+            observation_start.isoformat(), observation_end_exclusive.isoformat()
+        )
         .select([DYNAMIC_WORLD_WATER_BAND])
     )
 
@@ -447,8 +463,7 @@ def compute_water_body_summary_rows(
     monthly_recurrence_collection = ee.ImageCollection(JRC_MONTHLY_RECURRENCE_DATASET)
     for month in _MONTHS:
         monthly_image = (
-            monthly_recurrence_collection
-            .filter(ee.Filter.eq("month", month))
+            monthly_recurrence_collection.filter(ee.Filter.eq("month", month))
             .first()
             .select([JRC_MONTHLY_RECURRENCE_BAND])
             .divide(100)
@@ -468,7 +483,9 @@ def compute_water_body_summary_rows(
     rows: list[WaterBodySatelliteSummaryRow] = []
     for target in targets:
         observation_metadata = observation_metadata_by_target.get(target.gee_target_id)
-        observation_end = observation_metadata.latest_valid_date if observation_metadata else None
+        observation_end = (
+            observation_metadata.latest_valid_date if observation_metadata else None
+        )
         summary_date = summary_reference_date.isoformat()
         summary_month = (
             observation_metadata.latest_valid_month
@@ -476,15 +493,21 @@ def compute_water_body_summary_rows(
             else summary_reference_date.month
         )
         latest_observed_area_ha = latest_area_by_target.get(target.gee_target_id)
-        monthly_baseline_areas_ha = monthly_baseline_areas_by_target[target.gee_target_id]
+        monthly_baseline_areas_ha = monthly_baseline_areas_by_target[
+            target.gee_target_id
+        ]
         seasonal_baseline_area_ha = monthly_baseline_areas_ha[summary_month - 1]
         valid_area_ha = valid_area_by_target.get(target.gee_target_id)
 
         latest_observed_area_ha = (
-            None if latest_observed_area_ha is None else round(latest_observed_area_ha, 2)
+            None
+            if latest_observed_area_ha is None
+            else round(latest_observed_area_ha, 2)
         )
         seasonal_baseline_area_ha = (
-            None if seasonal_baseline_area_ha is None else round(seasonal_baseline_area_ha, 2)
+            None
+            if seasonal_baseline_area_ha is None
+            else round(seasonal_baseline_area_ha, 2)
         )
 
         valid_pixel_pct = calculate_valid_pixel_pct(valid_area_ha, target.area_ha)
@@ -500,7 +523,9 @@ def compute_water_body_summary_rows(
             and seasonal_baseline_area_ha is not None
             and seasonal_baseline_area_ha >= 1
         ):
-            anomaly_ratio = round(latest_observed_area_ha / seasonal_baseline_area_ha, 3)
+            anomaly_ratio = round(
+                latest_observed_area_ha / seasonal_baseline_area_ha, 3
+            )
 
         rows.append(
             WaterBodySatelliteSummaryRow(
@@ -513,7 +538,9 @@ def compute_water_body_summary_rows(
                 latest_observed_area_ha=latest_observed_area_ha,
                 seasonal_baseline_area_ha=seasonal_baseline_area_ha,
                 anomaly_ratio=anomaly_ratio,
-                surface_water_anomaly_level=classify_surface_water_anomaly(anomaly_ratio),
+                surface_water_anomaly_level=classify_surface_water_anomaly(
+                    anomaly_ratio
+                ),
                 observation_start=observation_start,
                 observation_end=observation_end,
                 sensor_source="dynamic_world",
@@ -525,7 +552,9 @@ def compute_water_body_summary_rows(
             )
         )
 
-    latest_summary_date = max((row.summary_date for row in rows), default=summary_reference_date.isoformat())
+    latest_summary_date = max(
+        (row.summary_date for row in rows), default=summary_reference_date.isoformat()
+    )
     latest_observation_end = max(
         (row.observation_end for row in rows if row.observation_end),
         default=None,

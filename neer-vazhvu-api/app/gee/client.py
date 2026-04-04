@@ -37,7 +37,11 @@ def initialize_earth_engine(*, force: bool = False):
     if not settings.gee_cloud_project:
         raise RuntimeError("GEE_CLOUD_PROJECT is required for Earth Engine access")
 
-    if _EE_STATE["initialized"] and _EE_STATE["project"] == settings.gee_cloud_project and not force:
+    if (
+        _EE_STATE["initialized"]
+        and _EE_STATE["project"] == settings.gee_cloud_project
+        and not force
+    ):
         import ee
 
         return ee

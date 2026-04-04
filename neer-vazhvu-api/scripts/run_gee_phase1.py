@@ -67,12 +67,20 @@ def cmd_derive_catchment_candidate(
         upsert_catchment_candidate,
     )
 
-    catchments_path = Path(catchments_path_arg).expanduser().resolve() if catchments_path_arg else None
+    catchments_path = (
+        Path(catchments_path_arg).expanduser().resolve()
+        if catchments_path_arg
+        else None
+    )
 
     if method == "hydrobasins":
         if (point_lng is None) != (point_lat is None):
             raise RuntimeError("Provide both --point-lng and --point-lat together.")
-        reference_point = (point_lng, point_lat) if point_lng is not None and point_lat is not None else None
+        reference_point = (
+            (point_lng, point_lat)
+            if point_lng is not None and point_lat is not None
+            else None
+        )
         feature = derive_hydrobasins_catchment_feature(
             reservoir=reservoir,
             hydrobasins_level=hydrobasins_level,
@@ -82,9 +90,13 @@ def cmd_derive_catchment_candidate(
         )
     elif method == "merit-local":
         if point_lng is not None or point_lat is not None:
-            raise RuntimeError("--point-lng/--point-lat are only supported with --method hydrobasins.")
+            raise RuntimeError(
+                "--point-lng/--point-lat are only supported with --method hydrobasins."
+            )
         if include_upstream:
-            raise RuntimeError("--include-upstream is only supported with --method hydrobasins.")
+            raise RuntimeError(
+                "--include-upstream is only supported with --method hydrobasins."
+            )
         feature = derive_merit_local_catchment_feature(reservoir=reservoir)
     else:
         raise RuntimeError(f"Unsupported derivation method: {method}")
@@ -115,16 +127,25 @@ def cmd_run_reservoir_context(
     baseline_years: int,
     catchments_path_arg: str | None,
 ) -> int:
-    from app.gee.reservoir_context import compute_reservoir_context_rows, upsert_reservoir_context
+    from app.gee.reservoir_context import (
+        compute_reservoir_context_rows,
+        upsert_reservoir_context,
+    )
 
     if date_arg:
         try:
             reference_date = date.fromisoformat(date_arg)
         except ValueError as exc:
-            raise RuntimeError(f"Invalid --date value: {date_arg}. Use YYYY-MM-DD.") from exc
+            raise RuntimeError(
+                f"Invalid --date value: {date_arg}. Use YYYY-MM-DD."
+            ) from exc
     else:
         reference_date = None
-    catchments_path = Path(catchments_path_arg).expanduser().resolve() if catchments_path_arg else None
+    catchments_path = (
+        Path(catchments_path_arg).expanduser().resolve()
+        if catchments_path_arg
+        else None
+    )
 
     result = compute_reservoir_context_rows(
         reference_date=reference_date,
@@ -162,13 +183,18 @@ def cmd_run_water_body_summaries(
     limit: int | None,
     target_cohort: str | None,
 ) -> int:
-    from app.gee.water_bodies import compute_water_body_summary_rows, upsert_water_body_summaries
+    from app.gee.water_bodies import (
+        compute_water_body_summary_rows,
+        upsert_water_body_summaries,
+    )
 
     if date_arg:
         try:
             reference_date = date.fromisoformat(date_arg)
         except ValueError as exc:
-            raise RuntimeError(f"Invalid --date value: {date_arg}. Use YYYY-MM-DD.") from exc
+            raise RuntimeError(
+                f"Invalid --date value: {date_arg}. Use YYYY-MM-DD."
+            ) from exc
     else:
         reference_date = None
 
@@ -219,7 +245,9 @@ def cmd_backfill_water_body_summaries(
         try:
             reference_date = date.fromisoformat(date_arg)
         except ValueError as exc:
-            raise RuntimeError(f"Invalid --date value: {date_arg}. Use YYYY-MM-DD.") from exc
+            raise RuntimeError(
+                f"Invalid --date value: {date_arg}. Use YYYY-MM-DD."
+            ) from exc
     else:
         reference_date = None
 
@@ -242,7 +270,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Neer Vazhvu GEE Phase 1 helper")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    subparsers.add_parser("check-auth", help="Verify Earth Engine auth and project setup")
+    subparsers.add_parser(
+        "check-auth", help="Verify Earth Engine auth and project setup"
+    )
 
     build_targets = subparsers.add_parser(
         "build-targets", help="Preview or write the Phase 1 water-body target manifest"

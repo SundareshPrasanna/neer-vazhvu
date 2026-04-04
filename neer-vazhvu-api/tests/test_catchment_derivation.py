@@ -66,7 +66,10 @@ def test_build_hydrobasins_catchment_feature_uses_reservoir_specific_confidence(
 def test_build_merit_local_catchment_feature_adds_local_support_metadata():
     feature = build_merit_local_catchment_feature(
         reservoir="Cholavaram",
-        geometry={**_polygon(), "crs": {"type": "name", "properties": {"name": "EPSG:4326"}}},
+        geometry={
+            **_polygon(),
+            "crs": {"type": "name", "properties": {"name": "EPSG:4326"}},
+        },
         source_dataset="MERIT/Hydro/v1_0_1",
         outlet_hint=(80.169497, 13.222619),
         seed_point=(80.170000, 13.223000),
@@ -132,7 +135,9 @@ def test_upsert_catchment_candidate_updates_metadata_and_replaces_feature(tmp_pa
     assert payload["features"][0]["properties"]["source_hybas_id"] == 4121590240
 
 
-def test_upsert_catchment_candidate_switches_geometry_version_for_local_support(tmp_path):
+def test_upsert_catchment_candidate_switches_geometry_version_for_local_support(
+    tmp_path,
+):
     path = tmp_path / "catchments.geojson"
 
     feature = build_merit_local_catchment_feature(

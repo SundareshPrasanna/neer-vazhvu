@@ -11,14 +11,19 @@ from shapely.ops import unary_union
 
 from app.gee.client import initialize_earth_engine
 from app.gee.config import PHASE1_RESERVOIRS, RESERVOIR_CATCHMENTS_PATH
-from app.gee.reservoir_context import canonicalize_reservoir_name, read_catchment_payload
+from app.gee.reservoir_context import (
+    canonicalize_reservoir_name,
+    read_catchment_payload,
+)
 
 HYDROBASINS_DATASET_TEMPLATE = "WWF/HydroSHEDS/v1/Basins/hybas_{level}"
 DEFAULT_HYDROBASINS_LEVEL = 12
 DEFAULT_SIMPLIFY_METERS = 250
 MERIT_HYDRO_DATASET = "MERIT/Hydro/v1_0_1"
 
-WATER_BODIES_PATH = RESERVOIR_CATCHMENTS_PATH.parent / "chennai-water-bodies-current.geojson"
+WATER_BODIES_PATH = (
+    RESERVOIR_CATCHMENTS_PATH.parent / "chennai-water-bodies-current.geojson"
+)
 
 # These are reservoir reference points used to fetch a first-pass HydroBASINS
 # catchment candidate. They are not treated as formal outlet points.
@@ -201,10 +206,14 @@ def _load_named_waterbody_geometry(*, names: tuple[str, ...]) -> Any:
         if name in names:
             return shape(feature["geometry"])
 
-    raise RuntimeError(f"Could not find waterbody geometry for any of: {', '.join(names)}")
+    raise RuntimeError(
+        f"Could not find waterbody geometry for any of: {', '.join(names)}"
+    )
 
 
-def _expand_bounds(bounds: tuple[float, float, float, float], *, buffer_meters: int) -> tuple[float, float, float, float]:
+def _expand_bounds(
+    bounds: tuple[float, float, float, float], *, buffer_meters: int
+) -> tuple[float, float, float, float]:
     min_lon, min_lat, max_lon, max_lat = bounds
     mean_lat = (min_lat + max_lat) / 2
     lat_buffer = buffer_meters / 111_320
@@ -218,7 +227,9 @@ def _expand_bounds(bounds: tuple[float, float, float, float], *, buffer_meters: 
     )
 
 
-def _sample_merit_window(*, bounds: tuple[float, float, float, float]) -> tuple[np.ndarray, np.ndarray]:
+def _sample_merit_window(
+    *, bounds: tuple[float, float, float, float]
+) -> tuple[np.ndarray, np.ndarray]:
     min_lon, min_lat, max_lon, max_lat = bounds
     ee = initialize_earth_engine()
     region = ee.Geometry.BBox(min_lon, min_lat, max_lon, max_lat)
@@ -254,12 +265,16 @@ def _find_seed_cell(
     col_end = min(ncols, col + search_radius_cells + 1)
     window = upa_array[row_start:row_end, col_start:col_end]
     if not np.isfinite(window).any():
-        raise RuntimeError("Could not identify a finite upstream-area seed cell near the outlet hint.")
+        raise RuntimeError(
+            "Could not identify a finite upstream-area seed cell near the outlet hint."
+        )
     local_idx = np.unravel_index(np.nanargmax(window), window.shape)
     return row_start + int(local_idx[0]), col_start + int(local_idx[1])
 
 
-def _trace_upstream_cells(dir_array: np.ndarray, *, seed_row: int, seed_col: int) -> set[tuple[int, int]]:
+def _trace_upstream_cells(
+    dir_array: np.ndarray, *, seed_row: int, seed_col: int
+) -> set[tuple[int, int]]:
     nrows, ncols = dir_array.shape
     deltas = {
         1: (0, 1),
@@ -330,7 +345,9 @@ def derive_merit_local_catchment_feature(*, reservoir: str) -> dict[str, Any]:
 
     config = _LOCAL_MERIT_CONFIG.get(canonical)
     if not config:
-        raise RuntimeError(f"No MERIT local derivation configuration for reservoir {canonical}")
+        raise RuntimeError(
+            f"No MERIT local derivation configuration for reservoir {canonical}"
+        )
 
     waterbody_geometry = _load_named_waterbody_geometry(names=config["waterbody_names"])
     bounds = _expand_bounds(
@@ -345,7 +362,9 @@ def derive_merit_local_catchment_feature(*, reservoir: str) -> dict[str, Any]:
         search_radius_cells=int(config["seed_search_radius_cells"]),
     )
     cells = _trace_upstream_cells(dir_array, seed_row=seed_row, seed_col=seed_col)
-    geometry = _mask_to_polygon_geometry(cells=cells, bounds=bounds, shape_=dir_array.shape)
+    geometry = _mask_to_polygon_geometry(
+        cells=cells, bounds=bounds, shape_=dir_array.shape
+    )
     derived_shape = shape(geometry)
     if not derived_shape.intersects(waterbody_geometry):
         raise RuntimeError(
@@ -375,8 +394,13 @@ def derive_merit_local_catchment_feature(*, reservoir: str) -> dict[str, Any]:
 
 def _suggest_geometry_version(features: list[dict[str, Any]]) -> str:
     has_local_support = any(
-        ((feature.get("properties") or {}).get("derivation_method") or "").startswith("merit_")
-        or ((feature.get("properties") or {}).get("source_type") == "derived_local_support")
+        ((feature.get("properties") or {}).get("derivation_method") or "").startswith(
+            "merit_"
+        )
+        or (
+            (feature.get("properties") or {}).get("source_type")
+            == "derived_local_support"
+        )
         for feature in features
     )
     if has_local_support:
@@ -457,11 +481,7 @@ def derive_hydrobasins_catchment_feature(
     target_hybas_id = properties.get("HYBAS_ID")
     main_basin_id = properties.get("MAIN_BAS")
 
-    if (
-        include_upstream
-        and target_hybas_id is not None
-        and main_basin_id is not None
-    ):
+    if include_upstream and target_hybas_id is not None and main_basin_id is not None:
         topology_info = (
             collection.filter(ee.Filter.eq("MAIN_BAS", main_basin_id))
             .select(["HYBAS_ID", "NEXT_DOWN"])
@@ -529,9 +549,13 @@ def upsert_catchment_candidate(
     payload = _load_or_create_catchment_payload(output_path)
     features = payload.get("features", [])
 
-    reservoir = canonicalize_reservoir_name((feature.get("properties") or {}).get("reservoir"))
+    reservoir = canonicalize_reservoir_name(
+        (feature.get("properties") or {}).get("reservoir")
+    )
     if reservoir not in PHASE1_RESERVOIRS:
-        raise RuntimeError(f"Candidate feature is missing a valid reservoir name: {reservoir!r}")
+        raise RuntimeError(
+            f"Candidate feature is missing a valid reservoir name: {reservoir!r}"
+        )
 
     next_features: list[dict[str, Any]] = []
     replaced = False
@@ -561,8 +585,14 @@ def upsert_catchment_candidate(
     completed = [name for name in completed if name in PHASE1_RESERVOIRS]
 
     metadata = payload["metadata"]
-    metadata["status"] = "partial_review" if len(completed) < len(PHASE1_RESERVOIRS) else "ready_for_verification"
-    metadata["geometry_version"] = geometry_version or _suggest_geometry_version(next_features)
+    metadata["status"] = (
+        "partial_review"
+        if len(completed) < len(PHASE1_RESERVOIRS)
+        else "ready_for_verification"
+    )
+    metadata["geometry_version"] = geometry_version or _suggest_geometry_version(
+        next_features
+    )
     metadata["completed_reservoirs"] = completed
     metadata["notes"] = (
         "Catchment features in this file are curated candidate polygons. "
