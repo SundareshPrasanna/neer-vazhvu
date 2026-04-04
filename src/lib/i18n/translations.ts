@@ -964,6 +964,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "share.whatsapp":            { en: "WhatsApp",                           ta: "WhatsApp" },
   "share.twitter":             { en: "X (Twitter)",                        ta: "X (Twitter)" },
   "share.facebook":            { en: "Facebook",                           ta: "Facebook" },
+  "share.instagram":           { en: "Instagram",                          ta: "Instagram" },
+  "share.linkedin":            { en: "LinkedIn",                           ta: "LinkedIn" },
   "share.copy_link":           { en: "Copy link",                          ta: "இணைப்பை நகலெடு" },
   "share.copied":              { en: "Copied!",                            ta: "நகலெடுக்கப்பட்டது!" },
   "share.more":                { en: "More...",                            ta: "மேலும்..." },
