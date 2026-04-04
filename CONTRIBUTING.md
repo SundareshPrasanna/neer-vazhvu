@@ -44,7 +44,7 @@ If you need real data flowing through, you'll need a [Supabase](https://supabase
 ```
 neer-vazhvu/
 ├── src/                  # Next.js frontend (App Router)
-│   ├── app/              # Pages (dashboard, groundwater, water-bodies, rivers, about)
+│   ├── app/              # Pages (dashboard, my-ward, groundwater, water-bodies, rivers, flood-risk, about)
 │   ├── components/       # React components
 │   ├── lib/              # Utilities, mock data, Supabase client
 │   └── types/            # TypeScript definitions

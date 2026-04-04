@@ -35,11 +35,12 @@ graph TB
 
     subgraph Frontend ["Next.js (App Router)"]
         Dashboard["Dashboard /"]
+        MW["My Ward /my-ward"]
         GW["Groundwater /groundwater"]
         WB["Water Bodies + Restoration /water-bodies"]
         Rivers["Rivers /rivers"]
-        About["About /about"]
         Flood["Flood Risk /flood-risk"]
+        About["About /about"]
     end
 
     subgraph CI ["GitHub Actions"]
@@ -369,6 +370,7 @@ graph TD
     Layout["RootLayout<br/>(LanguageProvider + ThemeProvider + Header)"]
 
     Layout --> Dashboard
+    Layout --> MW["My Ward Page"]
     Layout --> GW["Groundwater Page"]
     Layout --> WB["Water Bodies + Restoration Page"]
     Layout --> RV["Rivers Page"]
@@ -389,6 +391,20 @@ graph TD
     end
 
     DC --> DC_Children
+
+    subgraph MW_Children["My Ward Page"]
+        MWS["WardSelector<br/>(search + recent wards)"]
+        MWH["WardHeader<br/>(zone, share, export, print)"]
+        MWN["WardNarrative<br/>(AI analysis)"]
+        MWGW["WardGroundwaterCard<br/>(depth, trend, risk score)"]
+        MWWB["WardWaterBodiesCard<br/>(count, priority, lost)"]
+        MWFL["WardFloodRiskCard<br/>(hazard zones, hotspots)"]
+        MWIF["WardInfrastructureCard<br/>(drainage, STPs, SPS)"]
+        MWRV["WardRiverCard<br/>(nearest station)"]
+        MWAC["WardActionsCard<br/>(CTAs + representatives)"]
+    end
+
+    MW --> MW_Children
 
     subgraph GW_Children["Groundwater Page"]
         GM["GroundwaterMap<br/>(Leaflet choropleth)<br/>Depth / Risk / Exploitation views"]
@@ -451,6 +467,7 @@ Pages support URL query parameters for cross-page navigation from ward context p
 
 | Page | Parameters | Behavior |
 |------|-----------|----------|
+| `/my-ward` | `?ward=N` | Loads full ward report for ward N |
 | `/groundwater` | `?ward=N` | Pre-selects ward N in the detail panel |
 | `/water-bodies` | `?mode=restoration&ward=N` | Sets restoration view, finds ward's top water body, flies map to it |
 | `/flood-risk` | `?ward=N` | Flies map to ward centroid |

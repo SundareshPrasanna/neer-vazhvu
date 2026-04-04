@@ -4,7 +4,7 @@
 
 **Live:** [neervazhvu.org](https://neervazhvu.org)
 
-Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, flood risk, sewerage infrastructure, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, an **interactive water bodies and restoration priority map**, and a **flood risk, drainage, and sewerage network map**.
+Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, flood risk, sewerage infrastructure, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, an **interactive water bodies and restoration priority map**, a **flood risk, drainage, and sewerage network map**, and a **unified My Ward report page** that aggregates all data for any of Chennai's 200 wards into a single shareable view.
 
 ## Features
 
@@ -77,6 +77,22 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **Deep Linking** - Ward context links navigate to the flood risk page and fly to the ward centroid (`?ward=N`), with view mode preserved (`?view=drainage`)
 - **Click Tolerance** - Drainage lines and pumping mains use a Canvas renderer with 10px tolerance for easier interaction with thin features
 
+### My Ward
+A unified ward report page at `/my-ward` that aggregates all data layers for any of Chennai's 200 wards into a single scrollable page. Supports deep linking via `?ward=N`.
+
+- **Ward Selector** - Search by ward number, area name, or zone name; recent wards remembered in localStorage
+- **AI Narrative** - AI-generated ward analysis connecting groundwater, infrastructure, and risk data
+- **Groundwater Card** - Depth to water table, year-over-year trend, composite risk score with 4-component breakdown (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%), and historical chart
+- **Water Bodies Card** - Total count, restoration priority breakdown (critical/high/moderate/low), top 3 bodies by score, lost water bodies count with provenance
+- **Flood Risk Card** - Worst-case-first hazard display (very high and high zone counts shown prominently), category breakdown bar, 2015/2020 historical hotspot counts
+- **Infrastructure Card** - Drainage line count, STP count and capacity (MLD), pumping station count
+- **River Card** - Nearest river, monitoring station, straight-line distance
+- **Actions Card** - GCC grievance portal link, CMWSSB portal link, ward councillor/MLA/MP with party and contact info
+- **News Context** - Zone-level news articles related to water issues
+- **Cross-page Links** - Each card links to the relevant Explore page with the ward pre-selected
+- **Source Attribution** - Every card shows data source and caveats (data age, model limitations, units explained)
+- **Export** - CSV download of all ward data, share via URL, print-friendly layout
+
 ### Intelligence Layer (Python Service)
 - **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals; uses inflow/outflow, precipitation, and ET₀ (evapotranspiration) as exogenous regressors when data variance is sufficient
 - **Ward Risk Scoring** - Composite 0-100 risk score per ward (groundwater depth, trend, reservoir stress, seasonal vulnerability)
@@ -88,7 +104,8 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **CI Freshness Check** - Reruns the script and diffs output; catches stale profiles when source GeoJSON changes
 
 ### Other
-- **Tamil Localization** - Full English/Tamil toggle (~665 translation keys) with localStorage persistence; locale-aware date formatting and reservoir name translations
+- **Navigation** - 4 top-level tabs: Dashboard, My Ward, Explore (dropdown grouping Groundwater, Water Bodies, Rivers, Flood Risk), About. Mobile menu has collapsible Explore section
+- **Tamil Localization** - Full English/Tamil toggle (~700 translation keys) with localStorage persistence; locale-aware date formatting and reservoir name translations
 - **Dark Mode** - Full dark mode with system preference detection; maps use OSM tiles with CSS invert filter for consistent label coverage across themes
 - **Responsive** - Works on desktop, tablet, and mobile
 - **Demo Mode** - Runs with realistic mock data when Supabase isn't configured
@@ -322,6 +339,7 @@ neer-vazhvu/
 ├── src/                          # Next.js frontend
 │   ├── app/                      # App Router pages
 │   │   ├── page.tsx              # Main dashboard
+│   │   ├── my-ward/              # Unified ward report page
 │   │   ├── groundwater/          # Groundwater map page
 │   │   ├── water-bodies/         # Unified water bodies + restoration map
 │   │   ├── rivers/               # River health + industrial pollution map page
@@ -330,6 +348,7 @@ neer-vazhvu/
 │   │   └── about/                # About/methodology page
 │   ├── components/
 │   │   ├── dashboard/            # Dashboard components
+│   │   ├── my-ward/              # Ward report cards (groundwater, water bodies, flood, infra, river, actions)
 │   │   ├── groundwater/          # Map, legend, ward panel
 │   │   ├── water-bodies/         # Unified map, legend, detail panel, view-mode toggle
 │   │   ├── rivers/               # River map, panel, chart, legend
@@ -337,7 +356,7 @@ neer-vazhvu/
 │   │   ├── flood-risk/           # Flood risk map, legend, detail panel, view toggle
 │   │   ├── insights/               # Cross-domain ward context, AI narratives, connected insights
 │   │   ├── lake-restoration/     # Restoration ranking table
-│   │   ├── layout/               # Header, footer
+│   │   ├── layout/               # Header (Explore dropdown nav), footer
 │   │   └── ui/                   # shadcn/ui primitives
 │   ├── lib/
 │   │   ├── i18n/                 # English/Tamil translations + LanguageProvider context
@@ -346,7 +365,7 @@ neer-vazhvu/
 │   │   ├── calculator/           # Days-left calculator
 │   │   ├── scrapers/             # TypeScript scrapers (legacy, superseded by Python)
 │   │   ├── data/                   # Shared data loaders (ward GeoJSON cache)
-│   │   ├── hooks/                  # Ward lookup (PIP), ward profile loader
+│   │   ├── hooks/                  # Ward lookup (PIP), ward profile loader, my-ward data aggregation
 │   │   ├── utils/                # Formatting, date helpers, constants
 │   │   └── mock-data.ts          # Demo mode data
 │   └── types/                    # TypeScript type definitions
