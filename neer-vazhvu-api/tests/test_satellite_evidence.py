@@ -75,4 +75,6 @@ def test_build_thumb_region_from_geometry_adds_padding_and_returns_polygon():
 
 
 def test_resolve_satellite_evidence_geometry_version_uses_file_stem():
-    assert resolve_satellite_evidence_geometry_version().endswith("chennai-water-bodies-current")
+    assert resolve_satellite_evidence_geometry_version().endswith(
+        "chennai-water-bodies-current"
+    )

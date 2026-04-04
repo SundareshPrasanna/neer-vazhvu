@@ -283,7 +283,9 @@ def cmd_build_satellite_evidence(
         try:
             reference_date = date.fromisoformat(date_arg)
         except ValueError as exc:
-            raise RuntimeError(f"Invalid --date value: {date_arg}. Use YYYY-MM-DD.") from exc
+            raise RuntimeError(
+                f"Invalid --date value: {date_arg}. Use YYYY-MM-DD."
+            ) from exc
     else:
         reference_date = None
 

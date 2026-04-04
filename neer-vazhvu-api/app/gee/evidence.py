@@ -211,7 +211,9 @@ def _match_dynamic_world_metadata(ee, *, sentinel_index: str) -> dict[str, Any]:
     return {
         "exists": bool(payload.get("exists")),
         "dynamic_world_asset_id": payload.get("dynamic_world_asset_id"),
-        "dynamic_world_image": ee.Image(collection.first()) if payload.get("exists") else None,
+        "dynamic_world_image": ee.Image(collection.first())
+        if payload.get("exists")
+        else None,
     }
 
 
@@ -232,7 +234,9 @@ def _build_true_color_download_url(ee, *, image, thumb_region: dict[str, Any]) -
     )
 
 
-def _build_overlay_download_url(ee, *, dw_image, target_geometry, thumb_region: dict[str, Any]) -> str:
+def _build_overlay_download_url(
+    ee, *, dw_image, target_geometry, thumb_region: dict[str, Any]
+) -> str:
     overlay = (
         dw_image.select(DYNAMIC_WORLD_WATER_BAND)
         .gt(0.5)
@@ -288,7 +292,9 @@ def _build_candidate_sentinel_collection(
         return None
 
     collection = filtered_collection if filtered_count > 0 else base_collection
-    collection = collection.sort("system:time_start", False).limit(DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CANDIDATES)
+    collection = collection.sort("system:time_start", False).limit(
+        DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CANDIDATES
+    )
 
     area_ha = max(target.area_ha, 0.01)
     reference_date_str = reference_date.isoformat()
@@ -312,10 +318,22 @@ def _build_candidate_sentinel_collection(
         valid_area_ha = ee.Number(ee.Algorithms.If(valid_area_raw, valid_area_raw, 0))
         usable_coverage_pct = valid_area_ha.divide(area_ha).multiply(100).min(100)
         date_distance_days = ee.Number(
-            ee.Date(reference_date_str).difference(ee.Date(image.get("system:time_start")), "day")
+            ee.Date(reference_date_str).difference(
+                ee.Date(image.get("system:time_start")), "day"
+            )
         ).abs()
-        cloud_pct = ee.Number(ee.Algorithms.If(image.get("CLOUDY_PIXEL_PERCENTAGE"), image.get("CLOUDY_PIXEL_PERCENTAGE"), 100))
-        ranking_score = usable_coverage_pct.multiply(1000).subtract(date_distance_days.multiply(10)).subtract(cloud_pct)
+        cloud_pct = ee.Number(
+            ee.Algorithms.If(
+                image.get("CLOUDY_PIXEL_PERCENTAGE"),
+                image.get("CLOUDY_PIXEL_PERCENTAGE"),
+                100,
+            )
+        )
+        ranking_score = (
+            usable_coverage_pct.multiply(1000)
+            .subtract(date_distance_days.multiply(10))
+            .subtract(cloud_pct)
+        )
         return image.set(
             {
                 "usable_coverage_pct": usable_coverage_pct,
@@ -359,7 +377,9 @@ def _select_best_scene_for_reference_date(
     best_image = ee.Image(ranked_collection.first())
     best_info = ee.Dictionary(
         {
-            "frame_date": ee.Date(best_image.get("system:time_start")).format("YYYY-MM-dd"),
+            "frame_date": ee.Date(best_image.get("system:time_start")).format(
+                "YYYY-MM-dd"
+            ),
             "scene_cloud_pct": best_image.get("scene_cloud_pct"),
             "usable_coverage_pct": best_image.get("usable_coverage_pct"),
             "source_asset_id": best_image.id(),
@@ -374,7 +394,9 @@ def _select_best_scene_for_reference_date(
     scene_cloud_pct = float(best_info["scene_cloud_pct"])
 
     thumb_region = build_thumb_region_from_geometry(target.geometry)
-    dynamic_world_match = _match_dynamic_world_metadata(ee, sentinel_index=source_asset_index)
+    dynamic_world_match = _match_dynamic_world_metadata(
+        ee, sentinel_index=source_asset_index
+    )
     dynamic_world_asset_id = dynamic_world_match.get("dynamic_world_asset_id")
     dw_image = dynamic_world_match.get("dynamic_world_image")
 
@@ -435,7 +457,9 @@ def _select_best_scene_for_reference_date(
     )
 
 
-def serialize_satellite_evidence_selection(selection: WaterBodySatelliteEvidenceSelection) -> dict[str, Any]:
+def serialize_satellite_evidence_selection(
+    selection: WaterBodySatelliteEvidenceSelection,
+) -> dict[str, Any]:
     payload = asdict(selection.row)
     payload.update(
         {
@@ -506,7 +530,10 @@ def build_satellite_evidence_selections(
         "target_count": len(targets),
         "reference_dates": [ref_date.isoformat() for ref_date in reference_dates],
         "selection_count": len(selections),
-        "selected_rows": [serialize_satellite_evidence_selection(selection) for selection in selections],
+        "selected_rows": [
+            serialize_satellite_evidence_selection(selection)
+            for selection in selections
+        ],
         "skipped": skipped,
         "selections": selections,
     }
@@ -539,7 +566,11 @@ def upload_satellite_evidence_assets(
                 {"content-type": selection.image_content_type, "upsert": "true"},
             )
             uploaded_count += 1
-        if row.overlay_path and selection.overlay_download_url and selection.overlay_content_type:
+        if (
+            row.overlay_path
+            and selection.overlay_download_url
+            and selection.overlay_content_type
+        ):
             bucket.upload(
                 row.overlay_path,
                 _download_bytes(selection.overlay_download_url),
@@ -549,7 +580,9 @@ def upload_satellite_evidence_assets(
     return uploaded_count
 
 
-def upsert_water_body_satellite_evidence(rows: list[WaterBodySatelliteEvidenceRow]) -> int:
+def upsert_water_body_satellite_evidence(
+    rows: list[WaterBodySatelliteEvidenceRow],
+) -> int:
     if not rows:
         return 0
 
@@ -593,7 +626,9 @@ def build_satellite_evidence(
         return result
 
     uploaded = upload_satellite_evidence_assets(selections)
-    written = upsert_water_body_satellite_evidence([selection.row for selection in selections])
+    written = upsert_water_body_satellite_evidence(
+        [selection.row for selection in selections]
+    )
 
     return {
         "build_date": result["build_date"],
