@@ -72,7 +72,7 @@ class WaterBodySatelliteEvidenceRow:
 @dataclass(slots=True)
 class WaterBodySatelliteEvidenceSelection:
     row: WaterBodySatelliteEvidenceRow
-    image_download_url: str
+    image_download_url: str | None = None
     overlay_download_url: str | None = None
     image_content_type: str = "image/jpeg"
     overlay_content_type: str | None = "image/png"
@@ -192,13 +192,25 @@ def _calculate_sentinel_usable_coverage_pct(
     return calculate_valid_pixel_pct(valid_area_ha, target.area_ha)
 
 
-def _match_dynamic_world_image(ee, *, sentinel_index: str):
+def _match_dynamic_world_metadata(ee, *, sentinel_index: str) -> dict[str, Any]:
     collection = ee.ImageCollection(DYNAMIC_WORLD_DATASET).filter(
         ee.Filter.eq("system:index", sentinel_index)
     )
-    if int(collection.size().getInfo()) <= 0:
-        return None
-    return collection.first()
+    payload = ee.Dictionary(
+        {
+            "exists": collection.size().gt(0),
+            "dynamic_world_asset_id": ee.Algorithms.If(
+                collection.size().gt(0),
+                ee.Image(collection.first()).id(),
+                None,
+            ),
+        }
+    ).getInfo()
+    return {
+        "exists": bool(payload.get("exists")),
+        "dynamic_world_asset_id": payload.get("dynamic_world_asset_id"),
+        "dynamic_world_image": ee.Image(collection.first()) if payload.get("exists") else None,
+    }
 
 
 def _build_true_color_download_url(ee, *, image, thumb_region: dict[str, Any]) -> str:
@@ -236,14 +248,15 @@ def _build_overlay_download_url(ee, *, dw_image, thumb_region: dict[str, Any]) -
     )
 
 
-def _get_candidate_sentinel_images(
+def _build_candidate_sentinel_collection(
     ee,
     *,
+    target: Phase1WaterBodyTargetFeature,
     target_geometry,
     reference_date: date,
     search_window_days: int,
     max_scene_cloud_pct: float,
-) -> list[Any]:
+):
     window_start = reference_date - timedelta(days=search_window_days - 1)
     window_end_exclusive = reference_date + timedelta(days=1)
     base_collection = (
@@ -255,17 +268,56 @@ def _get_candidate_sentinel_images(
     filtered_collection = base_collection.filter(
         ee.Filter.lte("CLOUDY_PIXEL_PERCENTAGE", max_scene_cloud_pct)
     )
-    collection = filtered_collection
-    if int(filtered_collection.size().getInfo()) <= 0:
-        collection = base_collection
+    counts = ee.Dictionary(
+        {
+            "base_count": base_collection.size(),
+            "filtered_count": filtered_collection.size(),
+        }
+    ).getInfo()
+    filtered_count = int(counts.get("filtered_count") or 0)
+    base_count = int(counts.get("base_count") or 0)
+    if filtered_count <= 0 and base_count <= 0:
+        return None
 
-    collection = collection.sort("system:time_start", False)
-    image_count = min(int(collection.size().getInfo()), DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CANDIDATES)
-    if image_count <= 0:
-        return []
+    collection = filtered_collection if filtered_count > 0 else base_collection
+    collection = collection.sort("system:time_start", False).limit(DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CANDIDATES)
 
-    image_list = collection.toList(image_count)
-    return [ee.Image(image_list.get(index)) for index in range(image_count)]
+    area_ha = max(target.area_ha, 0.01)
+    reference_date_str = reference_date.isoformat()
+
+    def annotate_candidate(image):
+        masked_image = _mask_sentinel2_clouds(ee, image)
+        valid_area_raw = (
+            masked_image.select([SENTINEL2_TRUE_COLOR_BANDS[0]])
+            .mask()
+            .multiply(ee.Image.pixelArea())
+            .divide(10000)
+            .reduceRegion(
+                reducer=ee.Reducer.sum(),
+                geometry=target_geometry,
+                scale=SENTINEL2_PIXEL_SCALE_METERS,
+                maxPixels=1_000_000_000,
+                tileScale=4,
+            )
+            .get(SENTINEL2_TRUE_COLOR_BANDS[0])
+        )
+        valid_area_ha = ee.Number(ee.Algorithms.If(valid_area_raw, valid_area_raw, 0))
+        usable_coverage_pct = valid_area_ha.divide(area_ha).multiply(100).min(100)
+        date_distance_days = ee.Number(
+            ee.Date(reference_date_str).difference(ee.Date(image.get("system:time_start")), "day")
+        ).abs()
+        cloud_pct = ee.Number(ee.Algorithms.If(image.get("CLOUDY_PIXEL_PERCENTAGE"), image.get("CLOUDY_PIXEL_PERCENTAGE"), 100))
+        ranking_score = usable_coverage_pct.multiply(1000).subtract(date_distance_days.multiply(10)).subtract(cloud_pct)
+        return image.set(
+            {
+                "usable_coverage_pct": usable_coverage_pct,
+                "date_distance_days": date_distance_days,
+                "scene_cloud_pct": cloud_pct,
+                "ranking_score": ranking_score,
+            }
+        )
+
+    return ee.ImageCollection(collection.map(annotate_candidate))
 
 
 def _select_best_scene_for_reference_date(
@@ -276,104 +328,102 @@ def _select_best_scene_for_reference_date(
     search_window_days: int,
     min_usable_coverage_pct: float,
     max_scene_cloud_pct: float,
+    include_download_urls: bool,
 ) -> WaterBodySatelliteEvidenceSelection | None:
     target_geometry = _build_target_geometry(ee, target)
-    candidate_images = _get_candidate_sentinel_images(
+    candidate_collection = _build_candidate_sentinel_collection(
         ee,
+        target=target,
         target_geometry=target_geometry,
         reference_date=reference_date,
         search_window_days=search_window_days,
         max_scene_cloud_pct=max_scene_cloud_pct,
     )
-    if not candidate_images:
+    if candidate_collection is None:
         return None
 
+    ranked_collection = candidate_collection.filter(
+        ee.Filter.gte("usable_coverage_pct", min_usable_coverage_pct)
+    ).sort("ranking_score", False)
+    if int(ranked_collection.size().getInfo()) <= 0:
+        return None
+
+    best_image = ee.Image(ranked_collection.first())
+    best_info = ee.Dictionary(
+        {
+            "frame_date": ee.Date(best_image.get("system:time_start")).format("YYYY-MM-dd"),
+            "scene_cloud_pct": best_image.get("scene_cloud_pct"),
+            "usable_coverage_pct": best_image.get("usable_coverage_pct"),
+            "source_asset_id": best_image.id(),
+            "source_asset_index": best_image.get("system:index"),
+        }
+    ).getInfo()
+
+    frame_date = date.fromisoformat(str(best_info["frame_date"]))
+    usable_coverage_pct = round(float(best_info["usable_coverage_pct"]), 2)
+    source_asset_index = str(best_info["source_asset_index"])
+    source_asset_id = str(best_info["source_asset_id"])
+    scene_cloud_pct = float(best_info["scene_cloud_pct"])
+
     thumb_region = build_thumb_region_from_geometry(target.geometry)
-    candidate_rankings: list[tuple[tuple[float, int, float, int], WaterBodySatelliteEvidenceSelection]] = []
+    dynamic_world_match = _match_dynamic_world_metadata(ee, sentinel_index=source_asset_index)
+    dynamic_world_asset_id = dynamic_world_match.get("dynamic_world_asset_id")
+    dw_image = dynamic_world_match.get("dynamic_world_image")
 
-    for image in candidate_images:
-        masked_image = _mask_sentinel2_clouds(ee, image)
-        usable_coverage_pct = _calculate_sentinel_usable_coverage_pct(
+    image_download_url = None
+    overlay_download_url = None
+    if include_download_urls:
+        masked_best_image = _mask_sentinel2_clouds(ee, best_image)
+        image_download_url = _build_true_color_download_url(
             ee,
-            image=masked_image,
-            target=target,
+            image=masked_best_image,
+            thumb_region=thumb_region,
         )
-        if usable_coverage_pct is None or usable_coverage_pct < min_usable_coverage_pct:
-            continue
-
-        frame_date = date.fromisoformat(
-            str(ee.Date(image.get("system:time_start")).format("YYYY-MM-dd").getInfo())
-        )
-        scene_cloud_pct = float(image.get("CLOUDY_PIXEL_PERCENTAGE").getInfo() or 0.0)
-        source_asset_id = str(image.id().getInfo())
-        source_asset_index = str(image.get("system:index").getInfo())
-
-        dw_image = _match_dynamic_world_image(ee, sentinel_index=source_asset_index)
-        dynamic_world_asset_id = None
-        overlay_download_url = None
         if dw_image is not None:
-            dynamic_world_asset_id = str(dw_image.id().getInfo())
             overlay_download_url = _build_overlay_download_url(
                 ee,
                 dw_image=dw_image,
                 thumb_region=thumb_region,
             )
 
-        row = WaterBodySatelliteEvidenceRow(
+    row = WaterBodySatelliteEvidenceRow(
+        gee_target_id=target.gee_target_id,
+        reference_date=reference_date.isoformat(),
+        frame_date=frame_date.isoformat(),
+        frame_rank=0,
+        osm_id=target.osm_id,
+        census_id=target.census_id,
+        name=target.name,
+        target_cohort=SATELLITE_EVIDENCE_COHORT,
+        source_dataset="sentinel2_harmonized",
+        source_asset_id=source_asset_id,
+        dynamic_world_asset_id=dynamic_world_asset_id,
+        image_path=build_satellite_evidence_storage_path(
             gee_target_id=target.gee_target_id,
-            reference_date=reference_date.isoformat(),
-            frame_date=frame_date.isoformat(),
-            frame_rank=0,
-            osm_id=target.osm_id,
-            census_id=target.census_id,
-            name=target.name,
-            target_cohort=SATELLITE_EVIDENCE_COHORT,
-            source_dataset="sentinel2_harmonized",
-            source_asset_id=source_asset_id,
-            dynamic_world_asset_id=dynamic_world_asset_id,
-            image_path=build_satellite_evidence_storage_path(
+            frame_date=frame_date,
+            variant="true-color",
+        ),
+        overlay_path=(
+            build_satellite_evidence_storage_path(
                 gee_target_id=target.gee_target_id,
                 frame_date=frame_date,
-                variant="true-color",
-            ),
-            overlay_path=(
-                build_satellite_evidence_storage_path(
-                    gee_target_id=target.gee_target_id,
-                    frame_date=frame_date,
-                    variant="water-overlay",
-                )
-                if overlay_download_url
-                else None
-            ),
-            usable_coverage_pct=usable_coverage_pct,
-            cloud_note=f"scene_cloud_pct={scene_cloud_pct:.1f}",
-            geometry_version=resolve_satellite_evidence_geometry_version(),
-            is_same_scene_as_overlay=dynamic_world_asset_id is not None,
-            is_reviewed=False,
-            notes=None,
-        )
-        selection = WaterBodySatelliteEvidenceSelection(
-            row=row,
-            image_download_url=_build_true_color_download_url(
-                ee,
-                image=masked_image,
-                thumb_region=thumb_region,
-            ),
-            overlay_download_url=overlay_download_url,
-        )
-        ranking_key = (
-            -round(usable_coverage_pct, 2),
-            abs((reference_date - frame_date).days),
-            round(scene_cloud_pct, 2),
-            0 if dynamic_world_asset_id else 1,
-        )
-        candidate_rankings.append((ranking_key, selection))
-
-    if not candidate_rankings:
-        return None
-
-    candidate_rankings.sort(key=lambda item: item[0])
-    return candidate_rankings[0][1]
+                variant="water-overlay",
+            )
+            if dynamic_world_asset_id
+            else None
+        ),
+        usable_coverage_pct=usable_coverage_pct,
+        cloud_note=f"tile_cloud_pct={scene_cloud_pct:.1f}",
+        geometry_version=resolve_satellite_evidence_geometry_version(),
+        is_same_scene_as_overlay=bool(dynamic_world_asset_id),
+        is_reviewed=False,
+        notes=None,
+    )
+    return WaterBodySatelliteEvidenceSelection(
+        row=row,
+        image_download_url=image_download_url,
+        overlay_download_url=overlay_download_url,
+    )
 
 
 def serialize_satellite_evidence_selection(selection: WaterBodySatelliteEvidenceSelection) -> dict[str, Any]:
@@ -398,6 +448,7 @@ def build_satellite_evidence_selections(
     gee_target_id: str | None = None,
     limit: int | None = None,
     target_cohort: str | None = SATELLITE_EVIDENCE_COHORT,
+    include_download_urls: bool = False,
 ) -> dict[str, Any]:
     build_reference_date = reference_date or datetime.now(UTC).date()
     targets = load_phase1_target_features(gee_target_id=gee_target_id, limit=limit)
@@ -422,6 +473,7 @@ def build_satellite_evidence_selections(
                 search_window_days=search_window_days,
                 min_usable_coverage_pct=min_usable_coverage_pct,
                 max_scene_cloud_pct=max_scene_cloud_pct,
+                include_download_urls=include_download_urls,
             )
             if selection is None:
                 skipped.append(
@@ -524,6 +576,7 @@ def build_satellite_evidence(
         gee_target_id=gee_target_id,
         limit=limit,
         target_cohort=target_cohort,
+        include_download_urls=write,
     )
     selections = result.pop("selections")
 
