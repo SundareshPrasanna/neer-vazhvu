@@ -33,6 +33,7 @@ export function useMyWardData(wardNumber: number | null): MyWardData {
 
   useEffect(() => {
     if (wardNumber == null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setGroundwater(null);
       return;
     }

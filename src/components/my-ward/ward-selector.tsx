@@ -36,7 +36,13 @@ export function WardSelector({ onSelect, selectedWard }: WardSelectorProps) {
   const [wards, setWards] = useState<WardEntry[]>([]);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
-  const [recentWards, setRecentWards] = useState<number[]>([]);
+  const [recentWards, setRecentWards] = useState<number[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const stored = localStorage.getItem("neer-vazhvu-recent-wards");
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
+  });
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -45,7 +51,6 @@ export function WardSelector({ onSelect, selectedWard }: WardSelectorProps) {
       .then((r) => r.json())
       .then((d) => setWards(d.wards || []))
       .catch(console.error);
-    setRecentWards(getRecentWards());
   }, []);
 
   // Close dropdown on outside click
