@@ -662,17 +662,30 @@ def backfill_water_body_summaries(
     total_rows = 0
     total_written = 0
 
+    skipped = 0
     for idx, snapshot_date in enumerate(snapshot_dates, 1):
         snapshot_start = time.monotonic()
-        result = compute_water_body_summary_rows(
-            reference_date=snapshot_date,
-            lookback_days=lookback_days,
-            precomputed_targets=targets,
-            precomputed_ee=ee,
-            precomputed_targets_fc=targets_fc,
-            precomputed_region_geometry=region_geometry,
-            precomputed_jrc_baselines=jrc_baselines,
-        )
+        try:
+            result = compute_water_body_summary_rows(
+                reference_date=snapshot_date,
+                lookback_days=lookback_days,
+                precomputed_targets=targets,
+                precomputed_ee=ee,
+                precomputed_targets_fc=targets_fc,
+                precomputed_region_geometry=region_geometry,
+                precomputed_jrc_baselines=jrc_baselines,
+            )
+        except RuntimeError as exc:
+            cumulative_elapsed = time.monotonic() - backfill_start
+            print(
+                f"[backfill] {idx}/{len(snapshot_dates)} "
+                f"{snapshot_date.isoformat()} - SKIPPED: {exc} "
+                f"(total {cumulative_elapsed:.1f}s)",
+                file=sys.stderr,
+            )
+            skipped += 1
+            continue
+
         rows = result["rows"]
         written = upsert_water_body_summaries(rows) if write else 0
         total_rows += len(rows)
@@ -699,9 +712,10 @@ def backfill_water_body_summaries(
         )
 
     total_elapsed = time.monotonic() - backfill_start
+    skip_msg = f", {skipped} skipped" if skipped else ""
     print(
         f"[backfill] Done: {total_rows} rows, "
-        f"{len(snapshots)} snapshots in {total_elapsed:.1f}s",
+        f"{len(snapshots)} snapshots{skip_msg} in {total_elapsed:.1f}s",
         file=sys.stderr,
     )
 
