@@ -111,6 +111,9 @@ function coverageLabelKey(validPixelPct: number | null): string | null {
 }
 
 function sourceLabel(source: string, t: (key: string) => string): string {
+  if (source === "sentinel2_ndwi") {
+    return t("wb_panel.satellite_source_sentinel2_ndwi");
+  }
   if (source === "dynamic_world") {
     return t("wb_panel.satellite_source_dynamic_world");
   }
@@ -157,8 +160,7 @@ const SATELLITE_CARD_CLASS =
 const SATELLITE_LABEL_CLASS =
   "text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400";
 const SATELLITE_VALUE_CLASS = "mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100";
-const DYNAMIC_WORLD_INFO_URL =
-  "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1";
+const NDWI_INFO_URL = "https://en.wikipedia.org/wiki/Normalized_difference_water_index";
 
 function SatelliteContextSection({
   summary,
@@ -317,19 +319,19 @@ function SatelliteContextSection({
           })}
         </p>
 
-        {summary.sensorSource === "dynamic_world" ? (
+        {summary.sensorSource === "sentinel2_ndwi" ? (
           <div className={`${SATELLITE_CARD_CLASS} space-y-2`}>
             <div className={SATELLITE_LABEL_CLASS}>{sensorLabel}</div>
             <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-              {t("wb_panel.satellite_source_explainer_dynamic_world")}
+              {t("wb_panel.satellite_source_explainer_sentinel2_ndwi")}
             </p>
             <a
-              href={DYNAMIC_WORLD_INFO_URL}
+              href={NDWI_INFO_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
             >
-              {t("wb_panel.satellite_source_link_dynamic_world")}
+              {t("wb_panel.satellite_source_link_ndwi")}
               <span className="ml-1" aria-hidden="true">↗</span>
             </a>
           </div>

@@ -212,16 +212,10 @@ export function AboutContent() {
             frequency={t("about.freq_static")}
           />
           <DataSource
-            name="Google Earth Engine / Dynamic World"
-            url="https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1"
-            description={t("about.ds_gee_dw_desc")}
-            frequency={t("about.freq_periodic_summary")}
-          />
-          <DataSource
             name="NDWI Water Detection (via Sentinel-2)"
             url="https://en.wikipedia.org/wiki/Normalized_difference_water_index"
             description={t("about.ds_ndwi_desc")}
-            frequency={t("about.freq_evidence_refresh")}
+            frequency={t("about.freq_periodic_summary")}
           />
           <DataSource
             name="JRC Global Surface Water (Monthly Recurrence)"

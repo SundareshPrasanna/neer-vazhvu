@@ -13,15 +13,18 @@ from app.gee.config import (
     DEFAULT_PERSISTENCE_PRESENCE_FRACTION,
     DEFAULT_WATER_BODY_LOOKBACK_DAYS,
     DEFAULT_WATER_BODY_MIN_VALID_PCT,
-    DYNAMIC_WORLD_DATASET,
-    DYNAMIC_WORLD_PIXEL_SCALE_METERS,
-    DYNAMIC_WORLD_WATER_BAND,
     FLAGSHIP_HISTORY_COHORT,
     JRC_MONTHLY_RECURRENCE_BAND,
     JRC_MONTHLY_RECURRENCE_DATASET,
     JRC_PIXEL_SCALE_METERS,
     MAX_OBSERVATION_METADATA_IMAGE_SCANS,
+    NDWI_GREEN_BAND,
+    NDWI_NIR_BAND,
+    NDWI_WATER_THRESHOLD,
     PHASE1_TARGETS_PATH,
+    SENTINEL2_PIXEL_SCALE_METERS,
+    SENTINEL2_SCL_MASK_VALUES,
+    SENTINEL2_SR_HARMONIZED_DATASET,
 )
 
 _GEOMETRY_TYPES = {"Polygon", "MultiPolygon"}
@@ -57,7 +60,7 @@ class WaterBodySatelliteSummaryRow:
     surface_water_anomaly_level: str = "near_normal"
     observation_start: str | None = None
     observation_end: str | None = None
-    sensor_source: str = "dynamic_world"
+    sensor_source: str = "sentinel2_ndwi"
     confidence_level: str = "medium"
     valid_pixel_pct: float | None = None
 
@@ -317,31 +320,56 @@ def _reduce_sum_by_target(
     return values
 
 
-def _get_dynamic_world_observation_window(
+def _mask_sentinel2_clouds(ee, image):
+    """Mask cloud shadows, medium/high cloud probability, thin cirrus, and saturated pixels."""
+    scl = image.select("SCL")
+    clear_mask = ee.Image.constant(1)
+    for scl_value in SENTINEL2_SCL_MASK_VALUES:
+        clear_mask = clear_mask.And(scl.neq(scl_value))
+    return image.updateMask(clear_mask)
+
+
+def _get_sentinel2_ndwi_observation_window(
     ee,
     *,
     region_geometry,
     reference_date: date,
     lookback_days: int,
 ) -> tuple[Any, str]:
+    """Build a collection of binary NDWI water masks from Sentinel-2 SR.
+
+    Each image in the returned collection has a single ``water`` band
+    (1 = water, 0 = not water) with cloudy pixels masked via SCL.
+    """
     if lookback_days <= 0:
         raise RuntimeError("lookback_days must be positive")
 
     observation_end_exclusive = reference_date + timedelta(days=1)
     observation_start = reference_date - timedelta(days=lookback_days - 1)
-    collection = (
-        ee.ImageCollection(DYNAMIC_WORLD_DATASET)
+
+    s2_collection = (
+        ee.ImageCollection(SENTINEL2_SR_HARMONIZED_DATASET)
         .filterBounds(region_geometry)
         .filterDate(
             observation_start.isoformat(), observation_end_exclusive.isoformat()
         )
-        .select([DYNAMIC_WORLD_WATER_BAND])
     )
+
+    def _to_ndwi_water_mask(image):
+        masked = _mask_sentinel2_clouds(ee, image)
+        green = masked.select(NDWI_GREEN_BAND).toFloat()
+        nir = masked.select(NDWI_NIR_BAND).toFloat()
+        ndwi = green.subtract(nir).divide(green.add(nir))
+        return ndwi.gt(NDWI_WATER_THRESHOLD).rename("water").copyProperties(
+            image, ["system:time_start"]
+        )
+
+    collection = s2_collection.map(_to_ndwi_water_mask)
 
     image_count = int(collection.size().getInfo())
     if image_count <= 0:
         raise RuntimeError(
-            "No Dynamic World observations found for the requested window "
+            "No Sentinel-2 observations found for the requested window "
             f"{observation_start.isoformat()} to {reference_date.isoformat()}"
         )
 
@@ -352,7 +380,7 @@ def _get_latest_valid_observation_metadata_by_target(
     ee,
     *,
     targets: list[Phase1WaterBodyTargetFeature],
-    dw_collection,
+    water_collection,
 ) -> dict[str, WaterBodyObservationMetadata]:
     metadata_by_target: dict[str, WaterBodyObservationMetadata] = {
         target.gee_target_id: WaterBodyObservationMetadata() for target in targets
@@ -362,7 +390,7 @@ def _get_latest_valid_observation_metadata_by_target(
         return metadata_by_target
 
     targets_fc = _build_target_feature_collection(ee, targets)
-    ordered_collection = dw_collection.sort("system:time_start", False)
+    ordered_collection = water_collection.sort("system:time_start", False)
     image_count = int(ordered_collection.size().getInfo())
     if image_count <= 0:
         return metadata_by_target
@@ -381,7 +409,7 @@ def _get_latest_valid_observation_metadata_by_target(
             .divide(10000)
             .rename("valid_area_ha"),
             targets_fc=targets_fc,
-            scale_meters=DYNAMIC_WORLD_PIXEL_SCALE_METERS,
+            scale_meters=SENTINEL2_PIXEL_SCALE_METERS,
         )
         resolved_target_ids = [
             target_id
@@ -471,7 +499,7 @@ def compute_water_body_summary_rows(
         region_geometry = targets_fc.geometry().bounds()
 
     summary_reference_date = reference_date or datetime.now(UTC).date()
-    dw_collection, observation_start = _get_dynamic_world_observation_window(
+    water_collection, observation_start = _get_sentinel2_ndwi_observation_window(
         ee,
         region_geometry=region_geometry,
         reference_date=summary_reference_date,
@@ -479,13 +507,13 @@ def compute_water_body_summary_rows(
     )
 
     water_area_image = (
-        dw_collection.mean()
+        water_collection.mean()
         .multiply(ee.Image.pixelArea())
         .divide(10000)
         .rename("latest_observed_area_ha")
     )
     valid_area_image = (
-        dw_collection.mean()
+        water_collection.mean()
         .mask()
         .multiply(ee.Image.pixelArea())
         .divide(10000)
@@ -495,18 +523,18 @@ def compute_water_body_summary_rows(
         ee,
         water_area_image,
         targets_fc=targets_fc,
-        scale_meters=DYNAMIC_WORLD_PIXEL_SCALE_METERS,
+        scale_meters=SENTINEL2_PIXEL_SCALE_METERS,
     )
     valid_area_by_target = _reduce_sum_by_target(
         ee,
         valid_area_image,
         targets_fc=targets_fc,
-        scale_meters=DYNAMIC_WORLD_PIXEL_SCALE_METERS,
+        scale_meters=SENTINEL2_PIXEL_SCALE_METERS,
     )
     observation_metadata_by_target = _get_latest_valid_observation_metadata_by_target(
         ee,
         targets=targets,
-        dw_collection=dw_collection,
+        water_collection=water_collection,
     )
 
     if precomputed_jrc_baselines is not None:
@@ -579,7 +607,7 @@ def compute_water_body_summary_rows(
                 ),
                 observation_start=observation_start,
                 observation_end=observation_end,
-                sensor_source="dynamic_world",
+                sensor_source="sentinel2_ndwi",
                 confidence_level=derive_confidence_level(
                     valid_pixel_pct=valid_pixel_pct,
                     area_ha=target.area_ha,

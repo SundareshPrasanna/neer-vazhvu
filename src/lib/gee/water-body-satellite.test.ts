@@ -22,7 +22,7 @@ test("normalizeWaterBodySatelliteSummary converts snake_case API rows", () => {
     surface_water_anomaly_level: "higher",
     observation_start: "2026-02-18",
     observation_end: "2026-03-30",
-    sensor_source: "dynamic_world",
+    sensor_source: "sentinel2_ndwi",
     confidence_level: "high",
     valid_pixel_pct: 99.31,
   });
@@ -49,7 +49,7 @@ test("shouldShowWaterBodySatelliteSummary hides low-confidence rows", () => {
         surface_water_anomaly_level: "lower",
         observation_start: "2026-02-18",
         observation_end: "2026-03-30",
-        sensor_source: "dynamic_world",
+        sensor_source: "sentinel2_ndwi",
         confidence_level: "low",
         valid_pixel_pct: 25,
       }),
