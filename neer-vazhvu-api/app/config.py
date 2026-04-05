@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     supabase_url: str
     supabase_service_key: str
-    cron_secret: str
+    cron_secret: str | None = None
     environment: str = "development"
     data_gov_in_api_key: str | None = None
     gee_cloud_project: str | None = None
