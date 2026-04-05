@@ -217,7 +217,48 @@ def _match_dynamic_world_metadata(ee, *, sentinel_index: str) -> dict[str, Any]:
     }
 
 
-def _build_true_color_download_url(ee, *, image, thumb_region: dict[str, Any]) -> str:
+def _resolve_thumb_projection(image) -> tuple[str, list[float] | None]:
+    projection_info = (
+        image.select([SENTINEL2_TRUE_COLOR_BANDS[0]]).projection().getInfo()
+    )
+    thumb_crs = str(projection_info.get("crs") or "")
+    if not thumb_crs:
+        raise RuntimeError("Missing Sentinel-2 thumbnail CRS")
+
+    raw_transform = projection_info.get("transform")
+    if not isinstance(raw_transform, list):
+        return thumb_crs, None
+
+    thumb_transform = [float(value) for value in raw_transform]
+    return thumb_crs, thumb_transform
+
+
+def _build_thumb_request(
+    *,
+    thumb_region: dict[str, Any],
+    thumb_crs: str,
+    thumb_transform: list[float] | None,
+    image_format: str,
+) -> dict[str, Any]:
+    request: dict[str, Any] = {
+        "region": thumb_region,
+        "crs": thumb_crs,
+        "dimensions": SATELLITE_EVIDENCE_THUMB_DIMENSIONS,
+        "format": image_format,
+    }
+    if thumb_transform is not None:
+        request["crs_transform"] = thumb_transform
+    return request
+
+
+def _build_true_color_download_url(
+    ee,
+    *,
+    image,
+    thumb_region: dict[str, Any],
+    thumb_crs: str,
+    thumb_transform: list[float] | None,
+) -> str:
     visualized = image.select(list(SENTINEL2_TRUE_COLOR_BANDS)).visualize(
         min=SATELLITE_EVIDENCE_TRUE_COLOR_MIN,
         max=SATELLITE_EVIDENCE_TRUE_COLOR_MAX,
@@ -225,17 +266,24 @@ def _build_true_color_download_url(ee, *, image, thumb_region: dict[str, Any]) -
     )
     return str(
         visualized.getThumbURL(
-            {
-                "region": thumb_region,
-                "dimensions": SATELLITE_EVIDENCE_THUMB_DIMENSIONS,
-                "format": SATELLITE_EVIDENCE_TRUE_COLOR_FORMAT,
-            }
+            _build_thumb_request(
+                thumb_region=thumb_region,
+                thumb_crs=thumb_crs,
+                thumb_transform=thumb_transform,
+                image_format=SATELLITE_EVIDENCE_TRUE_COLOR_FORMAT,
+            )
         )
     )
 
 
 def _build_overlay_download_url(
-    ee, *, dw_image, target_geometry, thumb_region: dict[str, Any]
+    ee,
+    *,
+    dw_image,
+    target_geometry,
+    thumb_region: dict[str, Any],
+    thumb_crs: str,
+    thumb_transform: list[float] | None,
 ) -> str:
     overlay = (
         dw_image.select(DYNAMIC_WORLD_WATER_BAND)
@@ -251,11 +299,12 @@ def _build_overlay_download_url(
     )
     return str(
         overlay.getThumbURL(
-            {
-                "region": thumb_region,
-                "dimensions": SATELLITE_EVIDENCE_THUMB_DIMENSIONS,
-                "format": SATELLITE_EVIDENCE_OVERLAY_FORMAT,
-            }
+            _build_thumb_request(
+                thumb_region=thumb_region,
+                thumb_crs=thumb_crs,
+                thumb_transform=thumb_transform,
+                image_format=SATELLITE_EVIDENCE_OVERLAY_FORMAT,
+            )
         )
     )
 
@@ -404,10 +453,13 @@ def _select_best_scene_for_reference_date(
     overlay_download_url = None
     if include_download_urls:
         masked_best_image = _mask_sentinel2_clouds(ee, best_image)
+        thumb_crs, thumb_transform = _resolve_thumb_projection(masked_best_image)
         image_download_url = _build_true_color_download_url(
             ee,
             image=masked_best_image,
             thumb_region=thumb_region,
+            thumb_crs=thumb_crs,
+            thumb_transform=thumb_transform,
         )
         if dw_image is not None:
             overlay_download_url = _build_overlay_download_url(
@@ -415,6 +467,8 @@ def _select_best_scene_for_reference_date(
                 dw_image=dw_image,
                 target_geometry=target_geometry,
                 thumb_region=thumb_region,
+                thumb_crs=thumb_crs,
+                thumb_transform=thumb_transform,
             )
 
     row = WaterBodySatelliteEvidenceRow(

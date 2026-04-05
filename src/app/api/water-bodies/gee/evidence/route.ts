@@ -8,6 +8,15 @@ function truthyParam(value: string | null): boolean {
   return value === "1" || value === "true";
 }
 
+function withCacheBust(url: string | null, version: string | null): string | null {
+  if (!url || !version) {
+    return url;
+  }
+
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}v=${encodeURIComponent(version)}`;
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const geeTargetId = searchParams.get("gee_target_id");
@@ -63,12 +72,18 @@ export async function GET(request: NextRequest) {
 
   const rows = data.map((row) => ({
     ...row,
-    image_url: row.image_path
-      ? supabase.storage.from(SATELLITE_EVIDENCE_BUCKET).getPublicUrl(row.image_path).data.publicUrl
-      : null,
-    overlay_url: row.overlay_path
-      ? supabase.storage.from(SATELLITE_EVIDENCE_BUCKET).getPublicUrl(row.overlay_path).data.publicUrl
-      : null,
+    image_url: withCacheBust(
+      row.image_path
+        ? supabase.storage.from(SATELLITE_EVIDENCE_BUCKET).getPublicUrl(row.image_path).data.publicUrl
+        : null,
+      row.computed_at,
+    ),
+    overlay_url: withCacheBust(
+      row.overlay_path
+        ? supabase.storage.from(SATELLITE_EVIDENCE_BUCKET).getPublicUrl(row.overlay_path).data.publicUrl
+        : null,
+      row.computed_at,
+    ),
   }));
 
   return NextResponse.json({
