@@ -569,6 +569,14 @@ def _download_bytes(url: str) -> bytes:
     return response.content
 
 
+def _upload_or_update(bucket, path: str, data: bytes, content_type: str) -> None:
+    file_options = {"content-type": content_type, "upsert": "true"}
+    try:
+        bucket.upload(path, data, file_options)
+    except Exception:
+        bucket.update(path, data, file_options)
+
+
 def upload_satellite_evidence_assets(
     selections: list[WaterBodySatelliteEvidenceSelection],
     *,
@@ -584,10 +592,11 @@ def upload_satellite_evidence_assets(
     for selection in selections:
         row = selection.row
         if row.image_path and selection.image_download_url:
-            bucket.upload(
+            _upload_or_update(
+                bucket,
                 row.image_path,
                 _download_bytes(selection.image_download_url),
-                {"content-type": selection.image_content_type, "upsert": "true"},
+                selection.image_content_type,
             )
             uploaded_count += 1
         if (
@@ -595,10 +604,11 @@ def upload_satellite_evidence_assets(
             and selection.overlay_download_url
             and selection.overlay_content_type
         ):
-            bucket.upload(
+            _upload_or_update(
+                bucket,
                 row.overlay_path,
                 _download_bytes(selection.overlay_download_url),
-                {"content-type": selection.overlay_content_type, "upsert": "true"},
+                selection.overlay_content_type,
             )
             uploaded_count += 1
     return uploaded_count
