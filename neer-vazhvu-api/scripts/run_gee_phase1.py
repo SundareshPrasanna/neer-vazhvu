@@ -307,6 +307,7 @@ def cmd_build_satellite_evidence(
 
 def build_parser() -> argparse.ArgumentParser:
     from app.gee.config import (
+        DEFAULT_BACKFILL_MONTHS_BACK,
         DEFAULT_BASELINE_YEARS,
         DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT,
         DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CLOUD_PCT,
@@ -466,8 +467,8 @@ def build_parser() -> argparse.ArgumentParser:
     backfill_water_body_summaries.add_argument(
         "--months-back",
         type=int,
-        default=12,
-        help="Number of prior monthly snapshots to backfill. Default: 12",
+        default=DEFAULT_BACKFILL_MONTHS_BACK,
+        help=f"Number of prior monthly snapshots to backfill. Default: {DEFAULT_BACKFILL_MONTHS_BACK}",
     )
     backfill_water_body_summaries.add_argument(
         "--lookback-days",
