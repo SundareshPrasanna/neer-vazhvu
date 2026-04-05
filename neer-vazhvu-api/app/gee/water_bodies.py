@@ -20,6 +20,7 @@ from app.gee.config import (
     JRC_MONTHLY_RECURRENCE_BAND,
     JRC_MONTHLY_RECURRENCE_DATASET,
     JRC_PIXEL_SCALE_METERS,
+    MAX_OBSERVATION_METADATA_IMAGE_SCANS,
     PHASE1_TARGETS_PATH,
 )
 
@@ -366,8 +367,9 @@ def _get_latest_valid_observation_metadata_by_target(
     if image_count <= 0:
         return metadata_by_target
 
-    image_list = ordered_collection.toList(image_count)
-    for index in range(image_count):
+    scan_limit = min(image_count, MAX_OBSERVATION_METADATA_IMAGE_SCANS)
+    image_list = ordered_collection.toList(scan_limit)
+    for index in range(scan_limit):
         if not unresolved_target_ids:
             break
 
@@ -403,6 +405,43 @@ def _get_latest_valid_observation_metadata_by_target(
     return metadata_by_target
 
 
+def compute_jrc_monthly_baselines(
+    ee,
+    *,
+    targets_fc,
+) -> dict[str, list[float]]:
+    """Compute 12-month JRC recurrence baselines for all targets.
+
+    Returns a dict mapping gee_target_id to a list of 12 floats
+    (one baseline area_ha per calendar month, index 0 = January).
+
+    This result is static and can be reused across snapshot dates.
+    """
+    monthly_baseline_areas_by_target: dict[str, list[float]] = {}
+    monthly_recurrence_collection = ee.ImageCollection(JRC_MONTHLY_RECURRENCE_DATASET)
+    for month in _MONTHS:
+        monthly_image = (
+            monthly_recurrence_collection.filter(ee.Filter.eq("month", month))
+            .first()
+            .select([JRC_MONTHLY_RECURRENCE_BAND])
+            .divide(100)
+            .multiply(ee.Image.pixelArea())
+            .divide(10000)
+            .rename("seasonal_baseline_area_ha")
+        )
+        baseline_by_target = _reduce_sum_by_target(
+            ee,
+            monthly_image,
+            targets_fc=targets_fc,
+            scale_meters=JRC_PIXEL_SCALE_METERS,
+        )
+        for target_id, area_ha in baseline_by_target.items():
+            monthly_baseline_areas_by_target.setdefault(target_id, []).append(
+                area_ha or 0.0
+            )
+    return monthly_baseline_areas_by_target
+
+
 def compute_water_body_summary_rows(
     *,
     reference_date: date | None = None,
@@ -410,12 +449,26 @@ def compute_water_body_summary_rows(
     gee_target_id: str | None = None,
     limit: int | None = None,
     target_cohort: str | None = None,
+    precomputed_targets: list[Phase1WaterBodyTargetFeature] | None = None,
+    precomputed_ee: Any | None = None,
+    precomputed_targets_fc: Any | None = None,
+    precomputed_region_geometry: Any | None = None,
+    precomputed_jrc_baselines: dict[str, list[float]] | None = None,
 ) -> dict[str, Any]:
-    targets = load_phase1_target_features(gee_target_id=gee_target_id, limit=limit)
-    targets = filter_targets_for_cohort(targets, cohort=target_cohort)
-    ee = initialize_earth_engine()
-    targets_fc = _build_target_feature_collection(ee, targets)
-    region_geometry = targets_fc.geometry().bounds()
+    if precomputed_targets is not None:
+        targets = precomputed_targets
+    else:
+        targets = load_phase1_target_features(gee_target_id=gee_target_id, limit=limit)
+        targets = filter_targets_for_cohort(targets, cohort=target_cohort)
+
+    ee = precomputed_ee if precomputed_ee is not None else initialize_earth_engine()
+
+    if precomputed_targets_fc is not None:
+        targets_fc = precomputed_targets_fc
+        region_geometry = precomputed_region_geometry
+    else:
+        targets_fc = _build_target_feature_collection(ee, targets)
+        region_geometry = targets_fc.geometry().bounds()
 
     summary_reference_date = reference_date or datetime.now(UTC).date()
     dw_collection, observation_start = _get_dynamic_world_observation_window(
@@ -456,29 +509,12 @@ def compute_water_body_summary_rows(
         dw_collection=dw_collection,
     )
 
-    monthly_baseline_areas_by_target: dict[str, list[float]] = {
-        target.gee_target_id: [] for target in targets
-    }
-
-    monthly_recurrence_collection = ee.ImageCollection(JRC_MONTHLY_RECURRENCE_DATASET)
-    for month in _MONTHS:
-        monthly_image = (
-            monthly_recurrence_collection.filter(ee.Filter.eq("month", month))
-            .first()
-            .select([JRC_MONTHLY_RECURRENCE_BAND])
-            .divide(100)
-            .multiply(ee.Image.pixelArea())
-            .divide(10000)
-            .rename("seasonal_baseline_area_ha")
+    if precomputed_jrc_baselines is not None:
+        monthly_baseline_areas_by_target = precomputed_jrc_baselines
+    else:
+        monthly_baseline_areas_by_target = compute_jrc_monthly_baselines(
+            ee, targets_fc=targets_fc
         )
-        baseline_by_target = _reduce_sum_by_target(
-            ee,
-            monthly_image,
-            targets_fc=targets_fc,
-            scale_meters=JRC_PIXEL_SCALE_METERS,
-        )
-        for target_id, area_ha in baseline_by_target.items():
-            monthly_baseline_areas_by_target[target_id].append(area_ha or 0.0)
 
     rows: list[WaterBodySatelliteSummaryRow] = []
     for target in targets:
@@ -592,6 +628,9 @@ def backfill_water_body_summaries(
     target_cohort: str | None = None,
     write: bool = False,
 ) -> dict[str, Any]:
+    import sys
+    import time
+
     history_reference_date = reference_date or datetime.now(UTC).date()
     snapshot_dates = build_monthly_backfill_reference_dates(
         reference_date=history_reference_date,
@@ -599,22 +638,56 @@ def backfill_water_body_summaries(
         include_reference_date=True,
     )
 
+    backfill_start = time.monotonic()
+
+    targets = load_phase1_target_features(gee_target_id=gee_target_id, limit=limit)
+    targets = filter_targets_for_cohort(targets, cohort=target_cohort)
+    ee = initialize_earth_engine()
+    targets_fc = _build_target_feature_collection(ee, targets)
+    region_geometry = targets_fc.geometry().bounds()
+
+    print(
+        f"[backfill] {len(targets)} targets, computing JRC baselines...",
+        file=sys.stderr,
+    )
+    jrc_baselines = compute_jrc_monthly_baselines(ee, targets_fc=targets_fc)
+    jrc_elapsed = time.monotonic() - backfill_start
+    print(
+        f"[backfill] JRC baselines ready ({jrc_elapsed:.1f}s), "
+        f"processing {len(snapshot_dates)} snapshots...",
+        file=sys.stderr,
+    )
+
     snapshots: list[dict[str, Any]] = []
     total_rows = 0
     total_written = 0
 
-    for snapshot_date in snapshot_dates:
+    for idx, snapshot_date in enumerate(snapshot_dates, 1):
+        snapshot_start = time.monotonic()
         result = compute_water_body_summary_rows(
             reference_date=snapshot_date,
             lookback_days=lookback_days,
-            gee_target_id=gee_target_id,
-            limit=limit,
-            target_cohort=target_cohort,
+            precomputed_targets=targets,
+            precomputed_ee=ee,
+            precomputed_targets_fc=targets_fc,
+            precomputed_region_geometry=region_geometry,
+            precomputed_jrc_baselines=jrc_baselines,
         )
         rows = result["rows"]
         written = upsert_water_body_summaries(rows) if write else 0
         total_rows += len(rows)
         total_written += written
+
+        snapshot_elapsed = time.monotonic() - snapshot_start
+        cumulative_elapsed = time.monotonic() - backfill_start
+        print(
+            f"[backfill] {idx}/{len(snapshot_dates)} "
+            f"{snapshot_date.isoformat()} - "
+            f"{len(rows)} rows "
+            f"({snapshot_elapsed:.1f}s, total {cumulative_elapsed:.1f}s)",
+            file=sys.stderr,
+        )
+
         snapshots.append(
             {
                 "summary_date": result["summary_date"],
@@ -625,6 +698,13 @@ def backfill_water_body_summaries(
             }
         )
 
+    total_elapsed = time.monotonic() - backfill_start
+    print(
+        f"[backfill] Done: {total_rows} rows, "
+        f"{len(snapshots)} snapshots in {total_elapsed:.1f}s",
+        file=sys.stderr,
+    )
+
     payload: dict[str, Any] = {
         "reference_date": history_reference_date.isoformat(),
         "months_back": months_back,
@@ -633,6 +713,7 @@ def backfill_water_body_summaries(
         "target_filter": gee_target_id,
         "target_cohort": target_cohort,
         "total_rows": total_rows,
+        "elapsed_seconds": round(total_elapsed, 1),
         "snapshots": snapshots,
     }
     if write:

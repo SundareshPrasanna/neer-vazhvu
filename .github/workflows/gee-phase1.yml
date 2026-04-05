@@ -4,6 +4,7 @@ on:
   schedule:
     - cron: '45 0 * * *'   # 00:45 UTC = 06:15 IST, daily reservoir refresh
     - cron: '15 1 * * 1'   # 01:15 UTC = 06:45 IST Monday, weekly water-body refresh
+    - cron: '0 3 1 * *'    # 03:00 UTC = 08:30 IST, 1st of month, monthly history backfill
   workflow_dispatch:
     inputs:
       task:
@@ -22,7 +23,7 @@ on:
       months_back:
         description: Prior monthly snapshots to backfill when using backfill-water-body-summaries
         type: number
-        default: 12
+        default: 24
       frame_count:
         description: Evidence frames to build per target when using build-satellite-evidence
         type: number
@@ -104,10 +105,42 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: python scripts/run_gee_phase1.py run-water-body-summaries --write
 
+  scheduled-monthly-history-backfill:
+    if: github.event_name == 'schedule' && github.event.schedule == '0 3 1 * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: neer-vazhvu-api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install API dependencies
+        run: pip install -e .
+
+      - name: Materialize GEE service account file
+        if: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
+        run: |
+          mkdir -p /tmp/gee
+          printf '%s' '${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}' > /tmp/gee/service-account.json
+          echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+
+      - name: Run monthly 1-month history backfill for all targets
+        env:
+          GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/run_gee_phase1.py backfill-water-body-summaries --months-back 1 --write
+
   manual-phase1:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     defaults:
       run:
         working-directory: neer-vazhvu-api
