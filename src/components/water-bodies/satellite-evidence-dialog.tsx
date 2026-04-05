@@ -46,7 +46,7 @@ function coverageLabelKey(validPixelPct: number | null): string | null {
 }
 
 function sourceLabel(source: string, t: (key: string) => string): string {
-  if (source === "sentinel2_harmonized") {
+  if (source === "sentinel2_harmonized" || source === "sentinel2_sr_harmonized") {
     return t("wb_panel.satellite_source_sentinel2");
   }
   if (source === "dynamic_world") {

@@ -29,8 +29,9 @@ from app.gee.config import (
     SATELLITE_EVIDENCE_TRUE_COLOR_GAMMA,
     SATELLITE_EVIDENCE_TRUE_COLOR_MAX,
     SATELLITE_EVIDENCE_TRUE_COLOR_MIN,
-    SENTINEL2_HARMONIZED_DATASET,
     SENTINEL2_PIXEL_SCALE_METERS,
+    SENTINEL2_SCL_MASK_VALUES,
+    SENTINEL2_SR_HARMONIZED_DATASET,
     SENTINEL2_TRUE_COLOR_BANDS,
 )
 from app.gee.water_bodies import (
@@ -42,8 +43,6 @@ from app.gee.water_bodies import (
 )
 
 
-_CLOUD_BIT = 1 << 10
-_CIRRUS_BIT = 1 << 11
 _MIN_BOUNDS_SPAN_DEGREES = 0.01
 _BOUNDS_PADDING_RATIO = 0.08
 
@@ -58,7 +57,7 @@ class WaterBodySatelliteEvidenceRow:
     census_id: int | None = None
     name: str | None = None
     target_cohort: str | None = None
-    source_dataset: str = "sentinel2_harmonized"
+    source_dataset: str = "sentinel2_sr_harmonized"
     source_asset_id: str | None = None
     dynamic_world_asset_id: str | None = None
     image_path: str | None = None
@@ -159,8 +158,11 @@ def resolve_satellite_evidence_geometry_version(path: Path | None = None) -> str
 
 
 def _mask_sentinel2_clouds(ee, image):
-    qa = image.select("QA60")
-    clear_mask = qa.bitwiseAnd(_CLOUD_BIT).eq(0).And(qa.bitwiseAnd(_CIRRUS_BIT).eq(0))
+    scl = image.select("SCL")
+    # Build mask excluding cloud shadows, medium/high cloud prob, thin cirrus, saturated
+    clear_mask = ee.Image.constant(1)
+    for scl_value in SENTINEL2_SCL_MASK_VALUES:
+        clear_mask = clear_mask.And(scl.neq(scl_value))
     return image.updateMask(clear_mask)
 
 
@@ -287,7 +289,7 @@ def _build_overlay_download_url(
 ) -> str:
     overlay = (
         dw_image.select(DYNAMIC_WORLD_WATER_BAND)
-        .gt(0.5)
+        .gt(0.3)
         .selfMask()
         .clip(target_geometry)
         .visualize(
@@ -321,7 +323,7 @@ def _build_candidate_sentinel_collection(
     window_start = reference_date - timedelta(days=search_window_days - 1)
     window_end_exclusive = reference_date + timedelta(days=1)
     base_collection = (
-        ee.ImageCollection(SENTINEL2_HARMONIZED_DATASET)
+        ee.ImageCollection(SENTINEL2_SR_HARMONIZED_DATASET)
         .filterBounds(target_geometry)
         .filterDate(window_start.isoformat(), window_end_exclusive.isoformat())
     )
