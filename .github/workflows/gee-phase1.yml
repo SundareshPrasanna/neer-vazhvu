@@ -60,11 +60,14 @@ jobs:
         run: pip install -e .
 
       - name: Materialize GEE service account file
-        if: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
+        env:
+          GEE_SA_JSON: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}
         run: |
-          mkdir -p /tmp/gee
-          printf '%s' '${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}' > /tmp/gee/service-account.json
-          echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+          if [ -n "$GEE_SA_JSON" ]; then
+            mkdir -p /tmp/gee
+            printf '%s' "$GEE_SA_JSON" > /tmp/gee/service-account.json
+            echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+          fi
 
       - name: Run daily reservoir context refresh
         env:
@@ -92,11 +95,14 @@ jobs:
         run: pip install -e .
 
       - name: Materialize GEE service account file
-        if: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
+        env:
+          GEE_SA_JSON: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}
         run: |
-          mkdir -p /tmp/gee
-          printf '%s' '${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}' > /tmp/gee/service-account.json
-          echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+          if [ -n "$GEE_SA_JSON" ]; then
+            mkdir -p /tmp/gee
+            printf '%s' "$GEE_SA_JSON" > /tmp/gee/service-account.json
+            echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+          fi
 
       - name: Run weekly water-body summary refresh
         env:
@@ -124,11 +130,14 @@ jobs:
         run: pip install -e .
 
       - name: Materialize GEE service account file
-        if: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
+        env:
+          GEE_SA_JSON: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}
         run: |
-          mkdir -p /tmp/gee
-          printf '%s' '${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}' > /tmp/gee/service-account.json
-          echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+          if [ -n "$GEE_SA_JSON" ]; then
+            mkdir -p /tmp/gee
+            printf '%s' "$GEE_SA_JSON" > /tmp/gee/service-account.json
+            echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+          fi
 
       - name: Run monthly 1-month history backfill for all targets
         env:
@@ -156,11 +165,15 @@ jobs:
         run: pip install -e .
 
       - name: Materialize GEE service account file
-        if: ${{ inputs.task != 'build-targets' && inputs.task != 'validate-catchments' && secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
+        if: ${{ inputs.task != 'build-targets' && inputs.task != 'validate-catchments' }}
+        env:
+          GEE_SA_JSON: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}
         run: |
-          mkdir -p /tmp/gee
-          printf '%s' '${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}' > /tmp/gee/service-account.json
-          echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+          if [ -n "$GEE_SA_JSON" ]; then
+            mkdir -p /tmp/gee
+            printf '%s' "$GEE_SA_JSON" > /tmp/gee/service-account.json
+            echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+          fi
 
       - name: Run selected task
         env:
