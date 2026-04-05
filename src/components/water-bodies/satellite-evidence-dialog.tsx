@@ -159,8 +159,8 @@ export function SatelliteEvidenceDialog({
           }
         }}
       >
-        <DialogContent className="max-w-4xl sm:max-w-4xl max-h-[90vh] overflow-hidden p-0">
-          <div className="flex max-h-[90vh] flex-col bg-white dark:bg-slate-900">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-5xl max-h-[90vh] overflow-hidden p-0">
+          <div className="flex max-h-[90vh] flex-col bg-white dark:bg-slate-900 overflow-hidden">
             <DialogHeader className="border-b border-slate-200 dark:border-slate-700 p-6 pr-12">
               <DialogTitle className="text-xl text-slate-900 dark:text-slate-100">
                 {t("wb_panel.satellite_evidence_title")}
