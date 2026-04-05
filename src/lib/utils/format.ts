@@ -29,6 +29,15 @@ export function formatDate(dateStr: string): string {
   });
 }
 
+/** Interpolate template params into a translated string */
+export function interpolate(template: string, params: Record<string, string | number>): string {
+  let result = template;
+  for (const [key, value] of Object.entries(params)) {
+    result = result.replace(`{${key}}`, String(value));
+  }
+  return result;
+}
+
 /** Format date for "Updated X ago" style display */
 export function formatRelativeDate(dateStr: string): string {
   const date = new Date(dateStr);

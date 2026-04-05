@@ -1,6 +1,10 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings
+
+API_ROOT = Path(__file__).resolve().parents[1]
+ENV_FILE = API_ROOT / ".env"
 
 
 class Settings(BaseSettings):
@@ -11,8 +15,15 @@ class Settings(BaseSettings):
     cron_secret: str
     environment: str = "development"
     data_gov_in_api_key: str | None = None
+    gee_cloud_project: str | None = None
+    gee_service_account_file: str | None = None
+    gee_service_account_json: str | None = None
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    model_config = {
+        "env_file": str(ENV_FILE),
+        "env_file_encoding": "utf-8",
+        "extra": "ignore",
+    }
 
 
 @lru_cache

@@ -7,18 +7,28 @@ import { WardContext } from "@/components/insights/ward-context";
 import { WardNarrative } from "@/components/insights/ward-narrative";
 import { WardRepresentatives } from "@/components/insights/ward-representatives";
 import { useWardLookup } from "@/lib/hooks/use-ward-lookup";
-import type { SelectedWaterBody, WaterBodyStatus } from "@/types/water-bodies";
+import type { CensusWaterBodyProperties, SelectedWaterBody, WaterBodyStatus } from "@/types/water-bodies";
 import { STATUS_COLORS } from "@/types/water-bodies";
 import type { ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
+import { interpolate } from "@/lib/utils/format";
 import { NewsContext } from "@/components/insights/news-context";
+import { formatDate, formatNumber } from "@/lib/utils/format";
+import {
+  normalizeWaterBodySatelliteSummary,
+  satelliteAnomalyPercent,
+  satelliteAnomalyTone,
+  shouldShowWaterBodySatelliteSummary,
+  type WaterBodySatelliteSummary,
+} from "@/lib/gee/water-body-satellite";
 import {
   RIVER_POLLUTION_COMPONENT_THRESHOLD,
   RIVER_POLLUTION_COMPONENT_MAX,
   LOST_PROXIMITY_COMPONENT_THRESHOLD,
   INDUSTRIAL_PROXIMITY_COMPONENT_THRESHOLD,
 } from "@/lib/insights/constants";
+import { assessCensusCapacity } from "@/lib/water-bodies/census-capacity";
 
 interface UnifiedDetailPanelProps {
   selected: SelectedWaterBody;
@@ -65,6 +75,319 @@ function CloseButton({ onClose, ariaLabel }: { onClose: () => void; ariaLabel: s
         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
+  );
+}
+
+function formatHectares(area: number | null): string {
+  if (area === null || Number.isNaN(area)) {
+    return "\u2014";
+  }
+
+  const decimals = area >= 100 ? 0 : 1;
+  return `${formatNumber(area, decimals)} ha`;
+}
+
+function formatCapacityM3(value: number | null): string {
+  if (value === null || Number.isNaN(value)) {
+    return "\u2014";
+  }
+
+  return formatNumber(value, 0);
+}
+
+function coverageLabelKey(validPixelPct: number | null): string | null {
+  if (validPixelPct === null || Number.isNaN(validPixelPct)) {
+    return null;
+  }
+  if (validPixelPct >= 90) {
+    return "wb_panel.satellite_view_clear";
+  }
+  if (validPixelPct >= 70) {
+    return "wb_panel.satellite_view_mostly_clear";
+  }
+  return "wb_panel.satellite_view_partial";
+}
+
+function sourceLabel(source: string, t: (key: string) => string): string {
+  if (source === "dynamic_world") {
+    return t("wb_panel.satellite_source_dynamic_world");
+  }
+
+  return source
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function currentSpreadToneClasses(tone: "lower" | "near_normal" | "higher"): string {
+  switch (tone) {
+    case "lower":
+      return "bg-amber-500";
+    case "higher":
+      return "bg-sky-500";
+    case "near_normal":
+    default:
+      return "bg-emerald-500";
+  }
+}
+
+function persistenceMetricKey(persistencePct: number | null): string | null {
+  if (persistencePct === null || Number.isNaN(persistencePct)) {
+    return null;
+  }
+  if (persistencePct >= 95) {
+    return "wb_panel.satellite_seasonality_year_round";
+  }
+  if (persistencePct >= 75) {
+    return "wb_panel.satellite_seasonality_most_year";
+  }
+  if (persistencePct >= 40) {
+    return "wb_panel.satellite_seasonality_seasonal";
+  }
+  if (persistencePct >= 15) {
+    return "wb_panel.satellite_seasonality_wet_months";
+  }
+  return "wb_panel.satellite_seasonality_ephemeral";
+}
+
+const SATELLITE_CARD_CLASS =
+  "rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-3";
+const SATELLITE_LABEL_CLASS =
+  "text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400";
+const SATELLITE_VALUE_CLASS = "mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100";
+const DYNAMIC_WORLD_INFO_URL =
+  "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1";
+
+function SatelliteContextSection({ summary }: { summary: WaterBodySatelliteSummary }) {
+  const { t } = useLanguage();
+  const tone = satelliteAnomalyTone(summary.surfaceWaterAnomalyLevel);
+  const observationDate = summary.observationEnd || summary.summaryDate;
+  const confidenceLabel = t(`wb_panel.satellite_confidence_${summary.confidenceLevel}`);
+  const observedAreaText = formatHectares(summary.latestObservedAreaHa);
+  const baselineAreaText = formatHectares(summary.seasonalBaselineAreaHa);
+  const coverageLabel = coverageLabelKey(summary.validPixelPct);
+  const coverageDetail =
+    summary.validPixelPct == null
+      ? null
+      : interpolate(t("wb_panel.satellite_coverage_detail"), {
+          pct: Math.round(summary.validPixelPct),
+        });
+  const anomalyPct = satelliteAnomalyPercent(summary.anomalyRatio);
+  const compareMax = Math.max(
+    summary.latestObservedAreaHa ?? 0,
+    summary.seasonalBaselineAreaHa ?? 0,
+    1,
+  );
+  const currentBarWidth = Math.max(
+    6,
+    Math.round((((summary.latestObservedAreaHa ?? 0) / compareMax) * 100)),
+  );
+  const baselineBarWidth = Math.max(
+    6,
+    Math.round((((summary.seasonalBaselineAreaHa ?? 0) / compareMax) * 100)),
+  );
+  const hasAreaComparison =
+    summary.latestObservedAreaHa != null && summary.seasonalBaselineAreaHa != null;
+  const hasAnomalyEvidence = hasAreaComparison && anomalyPct !== null;
+  const summaryText = hasAnomalyEvidence
+    ? interpolate(t(`wb_panel.satellite_summary_${tone}`), {
+        observed: observedAreaText,
+        baseline: baselineAreaText,
+        delta: `${Math.abs(anomalyPct)}%`,
+      })
+    : t(`wb_panel.satellite_current_${tone}`);
+  const sensorLabel = sourceLabel(summary.sensorSource, t);
+  const persistenceMetric = persistenceMetricKey(summary.historicalPersistencePct);
+
+  return (
+    <div className="border-t border-slate-200 dark:border-slate-700">
+      <div className="px-4 pt-3 pb-1.5">
+        <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+          {t("wb_panel.satellite_context")}
+        </h3>
+      </div>
+      <div className="px-4 pb-4 space-y-3.5">
+        <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
+          {summaryText}
+        </p>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className={SATELLITE_CARD_CLASS}>
+            <div className={SATELLITE_LABEL_CLASS}>
+              {t("wb_panel.satellite_metric_current")}
+            </div>
+            <div className={SATELLITE_VALUE_CLASS}>
+              {observedAreaText}
+            </div>
+          </div>
+          <div className={SATELLITE_CARD_CLASS}>
+            <div className={SATELLITE_LABEL_CLASS}>
+              {t("wb_panel.satellite_metric_baseline")}
+            </div>
+            <div className={SATELLITE_VALUE_CLASS}>
+              {baselineAreaText}
+            </div>
+          </div>
+          <div className={SATELLITE_CARD_CLASS}>
+            <div className={SATELLITE_LABEL_CLASS}>
+              {t("wb_panel.satellite_metric_seasonality")}
+            </div>
+            <div className={SATELLITE_VALUE_CLASS}>
+              {persistenceMetric ? t(persistenceMetric) : "\u2014"}
+            </div>
+            {summary.historicalPersistencePct != null ? (
+              <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                {interpolate(t("wb_panel.satellite_persistence_detail"), {
+                  pct: Math.round(summary.historicalPersistencePct),
+                })}
+              </div>
+            ) : null}
+          </div>
+          <div className={SATELLITE_CARD_CLASS}>
+            <div className={SATELLITE_LABEL_CLASS}>
+              {t("wb_panel.satellite_metric_coverage")}
+            </div>
+            <div className={SATELLITE_VALUE_CLASS}>
+              {coverageLabel ? t(coverageLabel) : "\u2014"}
+            </div>
+            {coverageDetail ? (
+              <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                {coverageDetail}
+              </div>
+            ) : null}
+          </div>
+        </div>
+
+        {hasAreaComparison ? (
+          <div className={`${SATELLITE_CARD_CLASS} space-y-3`}>
+            <div className={SATELLITE_LABEL_CLASS}>
+              {t("wb_panel.satellite_compare_title")}
+            </div>
+
+            <div className="space-y-2">
+              <div>
+                <div className="mb-1 flex items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-300">
+                  <span className="font-semibold">{t("wb_panel.satellite_compare_current")}</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-100">{observedAreaText}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                  <div
+                    className={`h-full rounded-full transition-all ${currentSpreadToneClasses(tone)}`}
+                    style={{ width: `${currentBarWidth}%` }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-1 flex items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-300">
+                  <span className="font-semibold">{t("wb_panel.satellite_compare_baseline")}</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-100">{baselineAreaText}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                  <div
+                    className="h-full rounded-full bg-slate-400 dark:bg-slate-500 transition-all"
+                    style={{ width: `${baselineBarWidth}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          {interpolate(t("wb_panel.satellite_observed"), {
+            source: sensorLabel,
+            date: formatDate(observationDate),
+            confidence: confidenceLabel,
+          })}
+        </p>
+
+        {summary.sensorSource === "dynamic_world" ? (
+          <div className={`${SATELLITE_CARD_CLASS} space-y-2`}>
+            <div className={SATELLITE_LABEL_CLASS}>{sensorLabel}</div>
+            <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+              {t("wb_panel.satellite_source_explainer_dynamic_world")}
+            </p>
+            <a
+              href={DYNAMIC_WORLD_INFO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              {t("wb_panel.satellite_source_link_dynamic_world")}
+              <span className="ml-1" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function CensusCapacitySection({ census }: { census: CensusWaterBodyProperties }) {
+  const { t } = useLanguage();
+  const assessment = assessCensusCapacity(census);
+
+  if (!assessment.hasCapacity) {
+    return null;
+  }
+
+  if (assessment.shouldHideCapacity) {
+    return (
+      <div className="px-4 pb-4">
+        <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
+          {t("wb_panel.storage_capacity")}
+        </h4>
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/20">
+          <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
+            {t("wb_panel.capacity_hidden_suspect")}
+          </p>
+          <p className="mt-2 text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+            {t("wb_panel.capacity_units_note")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const capacityPct = assessment.capacityPct == null
+    ? null
+    : Math.max(0, Math.min(assessment.capacityPct, 100));
+  const capacityEncroachMismatch = assessment.issues.includes("encroachment_mismatch");
+
+  return (
+    <div className="px-4 pb-4">
+      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
+        {t("wb_panel.storage_capacity")}
+      </h4>
+      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+        <span>{t("wb_panel.capacity_remaining")}</span>
+        <span>{capacityPct == null ? "\u2014" : `${capacityPct}%`}</span>
+      </div>
+      <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all"
+          style={{
+            width: `${capacityPct ?? 0}%`,
+            backgroundColor: capacityEncroachMismatch
+              ? "#f59e0b"
+              : (capacityPct ?? 0) > 70 ? "#10b981" : (capacityPct ?? 0) > 40 ? "#f59e0b" : "#ef4444",
+          }}
+        />
+      </div>
+      <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-1 gap-4">
+        <span>{t("wb_panel.original_capacity")}: {formatCapacityM3(census.storage_capacity_original)}</span>
+        <span>{t("wb_panel.present_capacity")}: {formatCapacityM3(census.storage_capacity_present)}</span>
+      </div>
+      {capacityEncroachMismatch ? (
+        <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 leading-snug">
+          {t("wb_panel.capacity_vs_encroach")}
+        </p>
+      ) : null}
+      <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 leading-relaxed">
+        {t("wb_panel.capacity_units_note")}
+      </p>
+    </div>
   );
 }
 
@@ -217,6 +540,10 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
   const closeAria = t("common.close_panel");
   const wardLookup = useWardLookup();
   const [resolvedWard, setResolvedWard] = useState<number | null>(null);
+  const [satelliteSummaryState, setSatelliteSummaryState] = useState<{
+    osmId: number;
+    summary: WaterBodySatelliteSummary | null;
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -229,6 +556,48 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
     }
     return () => { cancelled = true; };
   }, [selected, wardLookup]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    if (selected.kind !== "current") {
+      return () => controller.abort();
+    }
+
+    const osmId = selected.props.osm_id;
+    fetch(`/api/water-bodies/gee?osm_id=${selected.props.osm_id}`, {
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (response.status === 404) {
+          return null;
+        }
+        if (!response.ok) {
+          throw new Error(`Failed to fetch water-body satellite context: ${response.status}`);
+        }
+        const payload = await response.json();
+        return payload?.data ? normalizeWaterBodySatelliteSummary(payload.data) : null;
+      })
+      .then((row) => {
+        setSatelliteSummaryState({
+          osmId,
+          summary: shouldShowWaterBodySatelliteSummary(row) ? row : null,
+        });
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+        setSatelliteSummaryState({ osmId, summary: null });
+      });
+
+    return () => controller.abort();
+  }, [selected]);
+
+  const satelliteSummary =
+    selected.kind === "current" && satelliteSummaryState?.osmId === selected.props.osm_id
+      ? satelliteSummaryState.summary
+      : null;
 
   const localizeType = (value: string | undefined): string => {
     if (!value) return t("wb_panel.water_body");
@@ -285,15 +654,11 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
           <Row label={t("wb_panel.osm_id")} value={`#${props.osm_id}`} />
         </div>
 
+        {satelliteSummary ? <SatelliteContextSection summary={satelliteSummary} /> : null}
+
         {/* Census data (when matched to an OSM polygon) */}
         {selected.censusMatch && (() => {
           const cm = selected.censusMatch;
-          const hasCapacity = cm.storage_capacity_original != null && cm.storage_capacity_original > 0;
-          const capacityPct = hasCapacity && cm.storage_capacity_present != null
-            ? Math.round((cm.storage_capacity_present / cm.storage_capacity_original!) * 100)
-            : null;
-          const isEncroached = cm.encroachment_status === "yes" && (cm.encroachment_pct ?? 0) > 0;
-          const capacityEncroachMismatch = isEncroached && capacityPct != null && capacityPct >= 90;
 
           return (
             <div className="border-t border-slate-200 dark:border-slate-700">
@@ -326,34 +691,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
                 )}
               </div>
 
-              {hasCapacity && (
-                <div className="px-4 pb-4">
-                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
-                    <span>{t("wb_panel.capacity_remaining")}</span>
-                    <span>{capacityPct ?? 0}%</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${capacityPct ?? 0}%`,
-                        backgroundColor: capacityEncroachMismatch
-                          ? "#f59e0b"
-                          : (capacityPct ?? 0) > 70 ? "#10b981" : (capacityPct ?? 0) > 40 ? "#f59e0b" : "#ef4444",
-                      }}
-                    />
-                  </div>
-                  <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-1">
-                    <span>{t("wb_panel.original")}: {cm.storage_capacity_original}</span>
-                    <span>{t("wb_panel.present")}: {cm.storage_capacity_present ?? 0}</span>
-                  </div>
-                  {capacityEncroachMismatch && (
-                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 leading-snug">
-                      {t("wb_panel.capacity_vs_encroach")}
-                    </p>
-                  )}
-                </div>
-              )}
+              <CensusCapacitySection census={cm} />
 
               <div className="px-4 pb-3">
                 <p className="text-xs text-slate-400 dark:text-slate-500">
@@ -383,13 +721,6 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
     const { props } = selected;
     const name = props.name || t("wb_panel.unnamed");
     const type = localizeType(props.water_body_type ?? undefined);
-    const hasCapacity = props.storage_capacity_original != null && props.storage_capacity_original > 0;
-    const capacityPct = hasCapacity && props.storage_capacity_present != null
-      ? Math.round((props.storage_capacity_present / props.storage_capacity_original!) * 100)
-      : null;
-    const isEncroached = props.encroachment_status === "yes" && (props.encroachment_pct ?? 0) > 0;
-    // Flag when encroachment is significant but capacity shows no loss
-    const capacityEncroachMismatch = isEncroached && capacityPct != null && capacityPct >= 90;
 
     return (
       <div className="h-full flex flex-col bg-white dark:bg-slate-900 overflow-y-auto">
@@ -440,38 +771,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
           )}
         </div>
 
-        {/* Storage capacity bar */}
-        {hasCapacity && (
-          <div className="px-4 pb-4">
-            <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
-              {t("wb_panel.storage_capacity")}
-            </h4>
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
-              <span>{t("wb_panel.capacity_remaining")}</span>
-              <span>{capacityPct ?? 0}%</span>
-            </div>
-            <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  width: `${capacityPct ?? 0}%`,
-                  backgroundColor: capacityEncroachMismatch
-                    ? "#f59e0b"  // amber — capacity not revised despite encroachment
-                    : (capacityPct ?? 0) > 70 ? "#10b981" : (capacityPct ?? 0) > 40 ? "#f59e0b" : "#ef4444",
-                }}
-              />
-            </div>
-            <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-1">
-              <span>{t("wb_panel.original")}: {props.storage_capacity_original}</span>
-              <span>{t("wb_panel.present")}: {props.storage_capacity_present ?? 0}</span>
-            </div>
-            {capacityEncroachMismatch && (
-              <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 leading-snug">
-                {t("wb_panel.capacity_vs_encroach")}
-              </p>
-            )}
-          </div>
-        )}
+        <CensusCapacitySection census={props} />
 
         {/* Point location note */}
         <div className="px-4 pb-2">

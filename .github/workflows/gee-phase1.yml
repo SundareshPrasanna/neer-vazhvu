@@ -1,0 +1,160 @@
+name: GEE Phase 1
+
+on:
+  schedule:
+    - cron: '45 0 * * *'   # 00:45 UTC = 06:15 IST, daily reservoir refresh
+    - cron: '15 1 * * 1'   # 01:15 UTC = 06:45 IST Monday, weekly water-body refresh
+  workflow_dispatch:
+    inputs:
+      task:
+        description: Phase 1 task to run
+        type: choice
+        options:
+          - check-auth
+          - build-targets
+          - validate-catchments
+          - run-reservoir-context
+          - run-water-body-summaries
+          - backfill-water-body-summaries
+          - run-all-refresh
+        default: run-all-refresh
+      months_back:
+        description: Prior monthly snapshots to backfill when using backfill-water-body-summaries
+        type: number
+        default: 12
+      target_cohort:
+        description: Optional named target cohort for manual water-body runs
+        type: choice
+        options:
+          - all
+          - flagship-history
+        default: all
+
+concurrency:
+  group: gee-phase1-${{ github.event_name }}-${{ github.event.schedule || inputs.task || 'default' }}
+  cancel-in-progress: false
+
+jobs:
+  scheduled-reservoir-context:
+    if: github.event_name == 'schedule' && github.event.schedule == '45 0 * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: neer-vazhvu-api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install API dependencies
+        run: pip install -e .
+
+      - name: Materialize GEE service account file
+        if: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
+        run: |
+          mkdir -p /tmp/gee
+          printf '%s' '${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}' > /tmp/gee/service-account.json
+          echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+
+      - name: Run daily reservoir context refresh
+        env:
+          GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/run_gee_phase1.py run-reservoir-context --write
+
+  scheduled-water-body-summaries:
+    if: github.event_name == 'schedule' && github.event.schedule == '15 1 * * 1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: neer-vazhvu-api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install API dependencies
+        run: pip install -e .
+
+      - name: Materialize GEE service account file
+        if: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
+        run: |
+          mkdir -p /tmp/gee
+          printf '%s' '${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}' > /tmp/gee/service-account.json
+          echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+
+      - name: Run weekly water-body summary refresh
+        env:
+          GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/run_gee_phase1.py run-water-body-summaries --write
+
+  manual-phase1:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: neer-vazhvu-api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install API dependencies
+        run: pip install -e .
+
+      - name: Materialize GEE service account file
+        if: ${{ inputs.task != 'build-targets' && inputs.task != 'validate-catchments' && secrets.GEE_SERVICE_ACCOUNT_JSON != '' }}
+        run: |
+          mkdir -p /tmp/gee
+          printf '%s' '${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}' > /tmp/gee/service-account.json
+          echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+
+      - name: Run selected task
+        env:
+          GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          TARGET_COHORT_ARG=""
+          if [ "${{ inputs.target_cohort }}" != "all" ]; then
+            TARGET_COHORT_ARG="--target-cohort ${{ inputs.target_cohort }}"
+          fi
+          case "${{ inputs.task }}" in
+            check-auth)
+              python scripts/run_gee_phase1.py check-auth
+              ;;
+            build-targets)
+              python scripts/run_gee_phase1.py build-targets --write
+              ;;
+            validate-catchments)
+              python scripts/run_gee_phase1.py validate-catchments
+              ;;
+            run-reservoir-context)
+              python scripts/run_gee_phase1.py run-reservoir-context --write
+              ;;
+            run-water-body-summaries)
+              python scripts/run_gee_phase1.py run-water-body-summaries $TARGET_COHORT_ARG --write
+              ;;
+            backfill-water-body-summaries)
+              python scripts/run_gee_phase1.py backfill-water-body-summaries --months-back "${{ inputs.months_back }}" $TARGET_COHORT_ARG --write
+              ;;
+            run-all-refresh)
+              python scripts/run_gee_phase1.py run-reservoir-context --write
+              python scripts/run_gee_phase1.py run-water-body-summaries --write
+              ;;
+          esac

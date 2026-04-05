@@ -212,6 +212,30 @@ export function AboutContent() {
             frequency={t("about.freq_static")}
           />
           <DataSource
+            name="Google Earth Engine / Dynamic World"
+            url="https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1"
+            description={t("about.ds_gee_dw_desc")}
+            frequency={t("about.freq_periodic_summary")}
+          />
+          <DataSource
+            name="JRC Global Surface Water (Monthly Recurrence)"
+            url="https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_MonthlyRecurrence"
+            description={t("about.ds_gee_jrc_desc")}
+            frequency={t("about.freq_historical_monthly")}
+          />
+          <DataSource
+            name="CHIRPS Daily Rainfall"
+            url="https://developers.google.com/earth-engine/datasets/catalog/UCSB-CHG_CHIRPS_DAILY"
+            description={t("about.ds_gee_chirps_desc")}
+            frequency={t("about.freq_daily")}
+          />
+          <DataSource
+            name="HydroBASINS / MERIT Hydro"
+            url="https://www.hydrosheds.org/products/hydrobasins"
+            description={t("about.ds_gee_catchments_desc")}
+            frequency={t("about.freq_static_fetch")}
+          />
+          <DataSource
             name="Care Earth Trust / NGT / CMDA: Lost Water Bodies"
             url="https://www.careearth.org/"
             description={t("about.ds_careearth_desc")}
@@ -277,6 +301,53 @@ export function AboutContent() {
             description={t("about.ds_anthropic_desc")}
             frequency={t("about.freq_daily_monthly")}
           />
+        </div>
+      </section>
+
+      <Separator className="my-8" />
+
+      <section id="satellite-context" className="space-y-6">
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t("about.gee_heading")}</h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          {t("about.gee_intro")}
+        </p>
+
+        <div className="space-y-4">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40">
+            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">{t("about.gee_surface_title")}</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              {t("about.gee_surface_desc")}
+            </p>
+            <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-2 mt-3">
+              <li>{t("about.gee_surface_step1")}</li>
+              <li>{t("about.gee_surface_step2")}</li>
+              <li>{t("about.gee_surface_step3")}</li>
+              <li>{t("about.gee_surface_step4")}</li>
+            </ul>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40">
+            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">{t("about.gee_catchment_title")}</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              {t("about.gee_catchment_desc")}
+            </p>
+            <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-2 mt-3">
+              <li>{t("about.gee_catchment_step1")}</li>
+              <li>{t("about.gee_catchment_step2")}</li>
+              <li>{t("about.gee_catchment_step3")}</li>
+              <li>{t("about.gee_catchment_step4")}</li>
+            </ul>
+          </div>
+
+          <div className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/20 p-4">
+            <h3 className="text-base font-semibold text-blue-900 dark:text-blue-100">{t("about.gee_thresholds_title")}</h3>
+            <ul className="list-disc list-inside text-sm text-blue-800 dark:text-blue-200 space-y-2 mt-3">
+              <li>{t("about.gee_thresholds_water")}</li>
+              <li>{t("about.gee_thresholds_rain")}</li>
+              <li>{t("about.gee_thresholds_confidence")}</li>
+              <li>{t("about.gee_thresholds_scope")}</li>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -514,6 +585,9 @@ export function AboutContent() {
           <li>{t("about.limit3")}</li>
           <li>{t("about.limit4")}</li>
           <li>{t("about.limit5")}</li>
+          <li>{t("about.limit6")}</li>
+          <li>{t("about.limit7")}</li>
+          <li>{t("about.limit8")}</li>
         </ul>
       </section>
 
@@ -547,6 +621,22 @@ export function AboutContent() {
             </h4>
             <p className="text-sm text-blue-700 dark:text-blue-300">
               {t("about.dq_census_shape_desc")}
+            </p>
+          </div>
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+            <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">
+              {t("about.dq_satellite_baseline_title")}
+            </h4>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              {t("about.dq_satellite_baseline_desc")}
+            </p>
+          </div>
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+            <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">
+              {t("about.dq_catchment_geometry_title")}
+            </h4>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              {t("about.dq_catchment_geometry_desc")}
             </p>
           </div>
         </div>

@@ -11,6 +11,7 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 ### Dashboard
 - **Days of Water Left** - Three-scenario estimate (pessimistic / current trend / seasonal rains)
 - **Reservoir Cards** - Live storage, inflow, outflow, and rainfall for all 6 reservoirs
+- **Catchment Rainfall Context** - CHIRPS-based 30-day and 90-day catchment signals for the 4 core Chennai supply reservoirs, summarized as below / near normal / above normal
 - **Per-Reservoir Drilldown** - Click any reservoir for 365-day charts (storage, inflow vs outflow, rainfall)
 - **Historical Comparison** - Overlay any year from 2019-2025 on the storage trend chart
 - **Storage Trend Chart** - 90-day combined storage with interactive year comparison
@@ -47,6 +48,7 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 **Shared features:**
 - **Ranking Table** - Sortable by score, area, or name; switch via Map/Ranking tabs
 - **Detail Panel** - Click any water body for basic info plus restoration score breakdown, nearest lost water body, nearest river station, nearest industrial source. Connected insights surface when lost-proximity or industrial-proximity scores are dominant
+- **Satellite Context** - For reviewed Phase 1 lakes and reservoirs, the detail panel shows historical persistence, current surface spread versus the usual seasonal baseline, and a freshness/confidence label
 - **Ward Context + AI Analysis** - Each detail panel shows the ward's cross-domain water context and AI-generated narrative
 - **Deep Linking** - Ward context links navigate to the water bodies page and pre-select the ward's top water body (`?mode=restoration&ward=N`)
 - **Stats Bar** - Adapts to show water body counts or priority breakdown based on view mode
@@ -98,6 +100,7 @@ A unified ward report page at `/my-ward` that aggregates all data layers for any
 - **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals; uses inflow/outflow, precipitation, and ET₀ (evapotranspiration) as exogenous regressors when data variance is sufficient
 - **Ward Risk Scoring** - Composite 0-100 risk score per ward (groundwater depth, trend, reservoir stress, seasonal vulnerability)
 - **Daily Briefing** - Template-based intelligence summary with headlines, alerts, and recommendations; optionally enhanced with an AI-generated city narrative using Claude (Sonnet for city, Haiku for 200 ward narratives)
+- **GEE Phase 1 Summaries** - Earth Engine-derived water-body spread seasonality and reservoir catchment rainfall summaries, written into Supabase for dashboard and water-body detail use
 
 ### Ward Profile Index
 - **Build-Time Spatial Join** - Every data layer (water bodies, flood zones, drainage, sewerage, rivers, industrial zones) is mapped to each of Chennai's 200 wards using centroid point-in-polygon attribution. Line-based infrastructure (drainage, pumping mains) is apportioned across ward boundaries by sampling at 50m intervals along each line
@@ -136,6 +139,8 @@ A unified ward report page at `/my-ward` that aggregates all data layers for any
 
 ```
 
+Earth Engine Phase 1 jobs live under `neer-vazhvu-api/app/gee/` and write small summary tables into Supabase instead of serving raster layers directly to the frontend.
+
 ## Data Sources
 
 | Source | Data | Frequency |
@@ -147,6 +152,10 @@ A unified ward report page at `/my-ward` that aggregates all data layers for any
 | [First Census of Water Bodies (data.gov.in)](https://data.gov.in/resource/state-wise-data-first-census-water-bodies-tamil-nadu) | 305 Chennai water bodies — ownership, capacity, encroachment | One-time fetch |
 | [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
 | [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry + industrial zone polygons | One-time fetch |
+| [Google Earth Engine / Dynamic World](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1) | Recent 45-day water observations used to estimate recent visible spread for reviewed Phase 1 lakes and reservoirs | Periodic summary refresh |
+| [JRC Global Surface Water Monthly Recurrence](https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_MonthlyRecurrence) | Historical month-by-month wetness baseline used to judge whether recent spread is lower or higher than usual for the season | Historical monthly baseline |
+| [CHIRPS Daily Rainfall](https://developers.google.com/earth-engine/datasets/catalog/UCSB-CHG_CHIRPS_DAILY) | Catchment rainfall totals and seasonal anomaly baselines for Poondi, Red Hills, Chembarambakkam, and Cholavaram | Daily |
+| [HydroBASINS / MERIT Hydro](https://www.hydrosheds.org/products/hydrobasins) | Reviewed operational catchment geometries used for reservoir rainfall context | Reviewed periodically |
 | Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
 | [CPCB National Water Monitoring Programme (NWMP)](https://cpcb.nic.in/nwmp-data-2024/) | DO, BOD, pH, conductivity, fecal coliform, nitrate at 13 CPCB monitoring stations (2020-2024) | Annual (manual refresh) |
 | [Nethaji Mariappan et al. (2017)](https://neptjournal.com/upload-images/NL-61-47-(45)B-3437.pdf) | 31 sewage inlets along Cooum river with discharge volumes (30,708 m3/day total) | One-time (2017 data) |
@@ -171,6 +180,47 @@ A unified ward report page at `/my-ward` that aggregates all data layers for any
 | Deployment | Vercel (frontend), Railway (Python API) |
 | CI/CD | GitHub Actions (daily data pipeline) |
 | AI Narratives | Anthropic Claude API (Sonnet 4 for city, Haiku 4.5 for ward narratives) |
+
+## Earth Engine Phase 1
+
+Neer Vazhvu uses Google Earth Engine as a summary layer, not a raster explorer.
+
+Phase 1 currently does two things:
+
+- computes catchment rainfall context for Poondi, Red Hills, Chembarambakkam, and Cholavaram
+- computes seasonal surface-spread summaries for a curated 150-water-body target set
+
+Current product surfaces:
+
+- dashboard catchment rainfall card
+- water-body detail panel satellite context block
+
+Current behavior and guardrails:
+
+- water-body summaries are limited to a curated 150-target manifest rather than every mapped polygon
+- low-confidence satellite rows are hidden from the detail panel
+- catchment polygons are reviewed operational geometries, not legal survey boundaries
+- current water-body observation uses Dynamic World only; Sentinel-1 fallback is not implemented yet
+- the frontend reads Supabase summaries; it does not request Earth Engine directly
+
+Current operations:
+
+- local runs happen through `neer-vazhvu-api/scripts/run_gee_phase1.py`
+- GitHub workflow support lives in `.github/workflows/gee-phase1.yml`
+- reservoir context refreshes daily in GitHub Actions
+- water-body satellite summaries refresh weekly in GitHub Actions
+- historical water-body snapshots can be backfilled monthly for chart support
+- a lighter `flagship-history` cohort is used for chart-ready history seeding
+- the workflow also supports manual `workflow_dispatch` for validation, backfill, and ad hoc reruns
+
+Current implementation docs:
+
+- [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md)
+- [GEE_SATELLITE_EVIDENCE_PLAN.md](GEE_SATELLITE_EVIDENCE_PLAN.md)
+- [GEE_SATELLITE_EVIDENCE_CHECKLIST.md](GEE_SATELLITE_EVIDENCE_CHECKLIST.md)
+- [GEE_PHASE1_PLAN.md](GEE_PHASE1_PLAN.md)
+- [GEE_CATCHMENT_DERIVATION_PLAN.md](GEE_CATCHMENT_DERIVATION_PLAN.md)
+- [GEE_RESEARCH.md](GEE_RESEARCH.md)
 
 ## Getting Started
 
@@ -225,6 +275,10 @@ Run all migrations against your Supabase project:
 -- 4. supabase/migrations/004_water_bodies_census.sql
 -- 5. supabase/migrations/005_water_bodies_census_table.sql
 -- 6. supabase/migrations/006_ward_narratives.sql
+-- 7. supabase/migrations/007_security_hardening.sql
+-- 8. supabase/migrations/008_news_articles.sql
+-- 9. supabase/migrations/009_deduplicate_news.sql
+-- 10. supabase/migrations/010_gee_phase1.sql
 ```
 
 Or if using the Supabase CLI:
@@ -252,6 +306,10 @@ Create `.env` in the `neer-vazhvu-api/` directory:
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_KEY=your-service-role-key
 CRON_SECRET=your-secret
+GEE_CLOUD_PROJECT=your-earth-engine-enabled-project-id
+GEE_SERVICE_ACCOUNT_FILE=/absolute/path/to/service-account.json
+# Alternative for CI:
+# GEE_SERVICE_ACCOUNT_JSON={"type":"service_account",...}
 ```
 
 Run the API locally:
@@ -261,7 +319,35 @@ uvicorn app.main:app --reload --port 8000
 # API docs at http://localhost:8000/docs
 ```
 
-### 5. Seed Historical Data
+### 5. Google Earth Engine Setup
+
+Phase 1 GEE commands expect:
+
+- an Earth Engine-enabled Google Cloud project
+- a service account with `Earth Engine Resource Writer` and `Service Usage Consumer`
+- the `GEE_CLOUD_PROJECT` and service-account env vars shown above
+
+Smoke test:
+
+```bash
+python scripts/run_gee_phase1.py check-auth
+```
+
+Useful Phase 1 commands:
+
+```bash
+python scripts/run_gee_phase1.py build-targets --write
+python scripts/run_gee_phase1.py validate-catchments
+python scripts/run_gee_phase1.py run-reservoir-context --write
+python scripts/run_gee_phase1.py run-water-body-summaries --write
+```
+
+Current workflow note:
+
+- `.github/workflows/gee-phase1.yml` supports manual dispatch for `check-auth`, `build-targets`, `validate-catchments`, `run-reservoir-context`, and `run-water-body-summaries`
+- if you need the live app data refreshed today, run the CLI locally or trigger that workflow manually
+
+### 6. Seed Historical Data
 
 ```bash
 # From the repo root
@@ -270,7 +356,7 @@ npx tsx scripts/seed-opencity-groundwater.ts   # Groundwater history
 npx tsx scripts/seed-opencity-lakes.ts         # Optional lake-level history
 ```
 
-### 6. Refresh Static GeoJSON Data (optional)
+### 7. Refresh Static GeoJSON Data (optional)
 
 The water body, river, and industrial zone GeoJSON files are pre-generated and committed. Re-fetch from OpenStreetMap if you want the latest OSM edits:
 
