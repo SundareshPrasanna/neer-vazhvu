@@ -23,6 +23,7 @@ import {
   type WaterBodySatelliteSummary,
 } from "@/lib/gee/water-body-satellite";
 import { SatelliteEvidenceDialog } from "@/components/water-bodies/satellite-evidence-dialog";
+import { WaterBodyHistoryChart } from "@/components/water-bodies/water-body-history-chart";
 import {
   RIVER_POLLUTION_COMPONENT_THRESHOLD,
   RIVER_POLLUTION_COMPONENT_MAX,
@@ -161,9 +162,11 @@ const DYNAMIC_WORLD_INFO_URL =
 
 function SatelliteContextSection({
   summary,
+  osmId,
   evidenceAction,
 }: {
   summary: WaterBodySatelliteSummary;
+  osmId: number;
   evidenceAction?: ReactNode;
 }) {
   const { t } = useLanguage();
@@ -301,6 +304,10 @@ function SatelliteContextSection({
             </div>
           </div>
         ) : null}
+
+        <div className={SATELLITE_CARD_CLASS}>
+          <WaterBodyHistoryChart osmId={osmId} />
+        </div>
 
         <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
           {interpolate(t("wb_panel.satellite_observed"), {
@@ -665,6 +672,7 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
         {satelliteSummary ? (
           <SatelliteContextSection
             summary={satelliteSummary}
+            osmId={props.osm_id}
             evidenceAction={
               <SatelliteEvidenceDialog
                 key={props.osm_id}
@@ -673,7 +681,13 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
               />
             }
           />
-        ) : null}
+        ) : (
+          <div className="border-t border-slate-200 dark:border-slate-700 px-4 py-3">
+            <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+              {t("wb_panel.satellite_limited_note")}
+            </p>
+          </div>
+        )}
 
         {/* Census data (when matched to an OSM polygon) */}
         {selected.censusMatch && (() => {
