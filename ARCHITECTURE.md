@@ -19,6 +19,7 @@ graph TB
         DGI["data.gov.in<br/>(Water Bodies Census)"]
         CMWSSB_SEW["CMWSSB Sewerage<br/>(STPs, SPS, pumping mains, one-time)"]
         ANTHROPIC["Anthropic Claude API<br/>(AI narratives)"]
+        GEE_SRC["Google Earth Engine<br/>(Dynamic World, Sentinel-2, CHIRPS,<br/>JRC, HydroBASINS)"]
     end
 
     subgraph Backend ["Python API (FastAPI)"]
@@ -30,6 +31,8 @@ graph TB
     subgraph Database ["Supabase (PostgreSQL)"]
         Core["Core Tables<br/>reservoir_daily<br/>weather_daily<br/>groundwater_monthly<br/>water_bodies_census"]
         Computed["Computed Tables<br/>water_estimate_daily<br/>reservoir_forecast<br/>ward_risk_score<br/>daily_briefing<br/>ward_narrative"]
+        GEE["GEE Tables<br/>water_body_satellite_summary<br/>reservoir_catchment_context<br/>water_body_satellite_evidence"]
+        Storage["Supabase Storage<br/>satellite-evidence bucket"]
         Log["pipeline_log"]
     end
 
@@ -60,6 +63,8 @@ graph TB
     IMD -->|imdlib script| StaticFiles
     WRIS -->|ArcGIS REST| StaticFiles
     ANTHROPIC -->|Claude API| Computed
+    GEE_SRC -->|Earth Engine API| GEE
+    GEE_SRC -->|Sentinel-2 thumbnails| Storage
 
     Scrapers --> ETL
     ETL -->|upsert| Core
@@ -71,6 +76,8 @@ graph TB
 
     Core -->|read| Frontend
     Computed -->|read| Frontend
+    GEE -->|read| Frontend
+    Storage -->|images| Frontend
     StaticFiles -->|static| Frontend
     StaticFiles2 -->|static| Frontend
 
@@ -119,6 +126,9 @@ flowchart LR
 | Briefing | Template-based rules | `daily_briefing` | Daily |
 | AI City Narrative | Claude Sonnet API | `daily_briefing` (AI columns) | Daily |
 | Fetch Census | data.gov.in (Water Bodies Census) | `water_bodies_census` | One-time / periodic |
+| GEE Reservoir Context | CHIRPS via Earth Engine | `reservoir_catchment_context` | Daily (06:15 IST) |
+| GEE Water-Body Summaries | Dynamic World + JRC via Earth Engine | `water_body_satellite_summary` | Weekly (Monday 06:45 IST) |
+| GEE Satellite Evidence | Sentinel-2 + Dynamic World via Earth Engine | `water_body_satellite_evidence` + Storage | Manual dispatch / run-all-refresh |
 
 ## Monthly Pipeline
 
@@ -513,6 +523,7 @@ When Supabase is not configured (env vars missing), the dashboard falls back to 
 | GET | `/intelligence/forecast` | None | Latest reservoir forecasts |
 | GET | `/intelligence/risk-scores` | None | Ward-level risk scores |
 | GET | `/intelligence/briefing` | None | Daily intelligence briefing |
+| GET | `/api/water-bodies/gee/evidence?gee_target_id=X` | None | Reviewed satellite evidence frames with Storage URLs |
 | GET | `/api/groundwater/ward?ward=N` | None | Single ward groundwater depth + trend + risk |
 | GET | `/api/narratives/city` | None | Latest AI city narrative |
 | GET | `/api/narratives/ward?ward=N` | None | Latest AI ward narrative |

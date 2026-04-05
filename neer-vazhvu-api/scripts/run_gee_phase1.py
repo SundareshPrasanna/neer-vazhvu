@@ -264,8 +264,57 @@ def cmd_backfill_water_body_summaries(
     return 0
 
 
+def cmd_build_satellite_evidence(
+    *,
+    write: bool,
+    date_arg: str | None,
+    months_back: int,
+    frame_count: int,
+    search_window_days: int,
+    min_usable_coverage_pct: float,
+    max_scene_cloud_pct: float,
+    gee_target_id: str | None,
+    limit: int | None,
+    target_cohort: str | None,
+) -> int:
+    from app.gee.evidence import build_satellite_evidence
+
+    if date_arg:
+        try:
+            reference_date = date.fromisoformat(date_arg)
+        except ValueError as exc:
+            raise RuntimeError(
+                f"Invalid --date value: {date_arg}. Use YYYY-MM-DD."
+            ) from exc
+    else:
+        reference_date = None
+
+    result = build_satellite_evidence(
+        write=write,
+        reference_date=reference_date,
+        months_back=months_back,
+        frame_count=frame_count,
+        search_window_days=search_window_days,
+        min_usable_coverage_pct=min_usable_coverage_pct,
+        max_scene_cloud_pct=max_scene_cloud_pct,
+        gee_target_id=gee_target_id,
+        limit=limit,
+        target_cohort=target_cohort,
+    )
+    print(json.dumps(result, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
-    from app.gee.config import DEFAULT_BASELINE_YEARS, DEFAULT_WATER_BODY_LOOKBACK_DAYS
+    from app.gee.config import (
+        DEFAULT_BASELINE_YEARS,
+        DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT,
+        DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CLOUD_PCT,
+        DEFAULT_SATELLITE_EVIDENCE_MIN_USABLE_COVERAGE_PCT,
+        DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK,
+        DEFAULT_SATELLITE_EVIDENCE_SEARCH_WINDOW_DAYS,
+        DEFAULT_WATER_BODY_LOOKBACK_DAYS,
+    )
 
     parser = argparse.ArgumentParser(description="Neer Vazhvu GEE Phase 1 helper")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -446,6 +495,75 @@ def build_parser() -> argparse.ArgumentParser:
         help="Upsert rows into Supabase instead of printing the dry-run payload.",
     )
 
+    build_satellite_evidence = subparsers.add_parser(
+        "build-satellite-evidence",
+        help="Build curated Sentinel-2 evidence frames for flagship water bodies",
+    )
+    build_satellite_evidence.add_argument(
+        "--date",
+        dest="date_arg",
+        help="Reference date in YYYY-MM-DD format. Defaults to today in UTC.",
+    )
+    build_satellite_evidence.add_argument(
+        "--months-back",
+        type=int,
+        default=DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK,
+        help=f"Months of history to sample for evidence selection. Default: {DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK}",
+    )
+    build_satellite_evidence.add_argument(
+        "--frame-count",
+        type=int,
+        default=DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT,
+        help=f"Maximum reviewed frames to select per target. Default: {DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT}",
+    )
+    build_satellite_evidence.add_argument(
+        "--search-window-days",
+        type=int,
+        default=DEFAULT_SATELLITE_EVIDENCE_SEARCH_WINDOW_DAYS,
+        help=(
+            "How far back from each reference month to search for a usable Sentinel-2 scene. "
+            f"Default: {DEFAULT_SATELLITE_EVIDENCE_SEARCH_WINDOW_DAYS}"
+        ),
+    )
+    build_satellite_evidence.add_argument(
+        "--min-usable-coverage-pct",
+        type=float,
+        default=DEFAULT_SATELLITE_EVIDENCE_MIN_USABLE_COVERAGE_PCT,
+        help=(
+            "Minimum cloud-masked usable coverage needed to keep a frame. "
+            f"Default: {DEFAULT_SATELLITE_EVIDENCE_MIN_USABLE_COVERAGE_PCT}"
+        ),
+    )
+    build_satellite_evidence.add_argument(
+        "--max-scene-cloud-pct",
+        type=float,
+        default=DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CLOUD_PCT,
+        help=(
+            "Preferred maximum Sentinel-2 scene cloud percentage before falling back to any scene. "
+            f"Default: {DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CLOUD_PCT}"
+        ),
+    )
+    build_satellite_evidence.add_argument(
+        "--gee-target-id",
+        help="Optional single target id filter, for example osm:25453624.",
+    )
+    build_satellite_evidence.add_argument(
+        "--limit",
+        type=int,
+        help="Optional target limit for QA dry-runs.",
+    )
+    build_satellite_evidence.add_argument(
+        "--target-cohort",
+        choices=["flagship-history"],
+        default="flagship-history",
+        help="Named target cohort to build evidence for. Default: flagship-history",
+    )
+    build_satellite_evidence.add_argument(
+        "--write",
+        action="store_true",
+        help="Upload assets and upsert metadata instead of printing the dry-run payload.",
+    )
+
     return parser
 
 
@@ -494,6 +612,19 @@ def main() -> int:
                 date_arg=args.date_arg,
                 months_back=args.months_back,
                 lookback_days=args.lookback_days,
+                gee_target_id=args.gee_target_id,
+                limit=args.limit,
+                target_cohort=args.target_cohort,
+            )
+        if args.command == "build-satellite-evidence":
+            return cmd_build_satellite_evidence(
+                write=args.write,
+                date_arg=args.date_arg,
+                months_back=args.months_back,
+                frame_count=args.frame_count,
+                search_window_days=args.search_window_days,
+                min_usable_coverage_pct=args.min_usable_coverage_pct,
+                max_scene_cloud_pct=args.max_scene_cloud_pct,
                 gee_target_id=args.gee_target_id,
                 limit=args.limit,
                 target_cohort=args.target_cohort,

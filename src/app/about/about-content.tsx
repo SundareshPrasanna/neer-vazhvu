@@ -230,6 +230,12 @@ export function AboutContent() {
             frequency={t("about.freq_daily")}
           />
           <DataSource
+            name="Copernicus Sentinel-2 (via Earth Engine)"
+            url="https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED"
+            description={t("about.ds_sentinel2_desc")}
+            frequency={t("about.freq_evidence_refresh")}
+          />
+          <DataSource
             name="HydroBASINS / MERIT Hydro"
             url="https://www.hydrosheds.org/products/hydrobasins"
             description={t("about.ds_gee_catchments_desc")}
@@ -336,6 +342,19 @@ export function AboutContent() {
               <li>{t("about.gee_catchment_step2")}</li>
               <li>{t("about.gee_catchment_step3")}</li>
               <li>{t("about.gee_catchment_step4")}</li>
+            </ul>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40">
+            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">{t("about.gee_evidence_title")}</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              {t("about.gee_evidence_desc")}
+            </p>
+            <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-2 mt-3">
+              <li>{t("about.gee_evidence_step1")}</li>
+              <li>{t("about.gee_evidence_step2")}</li>
+              <li>{t("about.gee_evidence_step3")}</li>
+              <li>{t("about.gee_evidence_step4")}</li>
             </ul>
           </div>
 
