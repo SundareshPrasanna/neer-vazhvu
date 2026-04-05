@@ -70,7 +70,7 @@ export function SatelliteEvidenceDialog({
 }: SatelliteEvidenceDialogProps) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
-  const [showOverlay, setShowOverlay] = useState(true);
+  const [showOverlay, setShowOverlay] = useState(false);
   const [selectedFrameDate, setSelectedFrameDate] = useState<string | null>(null);
   const [status, setStatus] = useState<EvidenceStatus>("idle");
   const [frames, setFrames] = useState<WaterBodySatelliteEvidenceFrame[]>([]);
@@ -155,7 +155,7 @@ export function SatelliteEvidenceDialog({
           }
           setOpen(nextOpen);
           if (!nextOpen) {
-            setShowOverlay(true);
+            setShowOverlay(false);
           }
         }}
       >
