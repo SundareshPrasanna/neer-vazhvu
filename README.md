@@ -155,6 +155,7 @@ Earth Engine Phase 1 jobs live under `neer-vazhvu-api/app/gee/` and write small 
 | [Google Earth Engine / Dynamic World](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1) | Recent 45-day water observations used to estimate recent visible spread for reviewed Phase 1 lakes and reservoirs | Periodic summary refresh |
 | [JRC Global Surface Water Monthly Recurrence](https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_MonthlyRecurrence) | Historical month-by-month wetness baseline used to judge whether recent spread is lower or higher than usual for the season | Historical monthly baseline |
 | [CHIRPS Daily Rainfall](https://developers.google.com/earth-engine/datasets/catalog/UCSB-CHG_CHIRPS_DAILY) | Catchment rainfall totals and seasonal anomaly baselines for Poondi, Red Hills, Chembarambakkam, and Cholavaram | Daily |
+| [Copernicus Sentinel-2 (via Earth Engine)](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED) | True-color satellite imagery for reviewed evidence frames at flagship water bodies | Evidence refresh (manual dispatch) |
 | [HydroBASINS / MERIT Hydro](https://www.hydrosheds.org/products/hydrobasins) | Reviewed operational catchment geometries used for reservoir rainfall context | Reviewed periodically |
 | Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
 | [CPCB National Water Monitoring Programme (NWMP)](https://cpcb.nic.in/nwmp-data-2024/) | DO, BOD, pH, conductivity, fecal coliform, nitrate at 13 CPCB monitoring stations (2020-2024) | Annual (manual refresh) |
@@ -185,23 +186,26 @@ Earth Engine Phase 1 jobs live under `neer-vazhvu-api/app/gee/` and write small 
 
 Neer Vazhvu uses Google Earth Engine as a summary layer, not a raster explorer.
 
-Phase 1 currently does two things:
+Phase 1 currently does three things:
 
 - computes catchment rainfall context for Poondi, Red Hills, Chembarambakkam, and Cholavaram
 - computes seasonal surface-spread summaries for a curated 150-water-body target set
+- builds reviewed Sentinel-2 evidence frames with Dynamic World overlays for flagship water bodies
 
 Current product surfaces:
 
 - dashboard catchment rainfall card
 - water-body detail panel satellite context block
+- satellite evidence dialog with true-color imagery and toggleable water-mask overlay
 
 Current behavior and guardrails:
 
 - water-body summaries are limited to a curated 150-target manifest rather than every mapped polygon
+- satellite evidence frames are limited to a 12-body flagship cohort; only reviewed frames are shown by default
 - low-confidence satellite rows are hidden from the detail panel
 - catchment polygons are reviewed operational geometries, not legal survey boundaries
 - current water-body observation uses Dynamic World only; Sentinel-1 fallback is not implemented yet
-- the frontend reads Supabase summaries; it does not request Earth Engine directly
+- the frontend reads Supabase summaries and Storage images; it does not request Earth Engine directly
 
 Current operations:
 
@@ -209,13 +213,16 @@ Current operations:
 - GitHub workflow support lives in `.github/workflows/gee-phase1.yml`
 - reservoir context refreshes daily in GitHub Actions
 - water-body satellite summaries refresh weekly in GitHub Actions
+- satellite evidence is included in `run-all-refresh` and available via manual dispatch
 - historical water-body snapshots can be backfilled monthly for chart support
-- a lighter `flagship-history` cohort is used for chart-ready history seeding
+- a lighter `flagship-history` cohort is used for chart-ready history seeding and evidence frames
 - the workflow also supports manual `workflow_dispatch` for validation, backfill, and ad hoc reruns
 
 Current implementation docs:
 
 - [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md)
+- [GEE_PHASE2_3_PLAN.md](GEE_PHASE2_3_PLAN.md)
+- [GEE_PHASE2_CHECKLIST.md](GEE_PHASE2_CHECKLIST.md)
 - [GEE_SATELLITE_EVIDENCE_PLAN.md](GEE_SATELLITE_EVIDENCE_PLAN.md)
 - [GEE_SATELLITE_EVIDENCE_CHECKLIST.md](GEE_SATELLITE_EVIDENCE_CHECKLIST.md)
 - [GEE_PHASE1_PLAN.md](GEE_PHASE1_PLAN.md)
@@ -279,6 +286,7 @@ Run all migrations against your Supabase project:
 -- 8. supabase/migrations/008_news_articles.sql
 -- 9. supabase/migrations/009_deduplicate_news.sql
 -- 10. supabase/migrations/010_gee_phase1.sql
+-- 11. supabase/migrations/011_gee_satellite_evidence.sql
 ```
 
 Or if using the Supabase CLI:
@@ -340,11 +348,12 @@ python scripts/run_gee_phase1.py build-targets --write
 python scripts/run_gee_phase1.py validate-catchments
 python scripts/run_gee_phase1.py run-reservoir-context --write
 python scripts/run_gee_phase1.py run-water-body-summaries --write
+python scripts/run_gee_phase1.py build-satellite-evidence --write
 ```
 
 Current workflow note:
 
-- `.github/workflows/gee-phase1.yml` supports manual dispatch for `check-auth`, `build-targets`, `validate-catchments`, `run-reservoir-context`, and `run-water-body-summaries`
+- `.github/workflows/gee-phase1.yml` supports manual dispatch for `check-auth`, `build-targets`, `validate-catchments`, `run-reservoir-context`, `run-water-body-summaries`, `build-satellite-evidence`, and `run-all-refresh`
 - if you need the live app data refreshed today, run the CLI locally or trigger that workflow manually
 
 ### 6. Seed Historical Data
@@ -461,16 +470,18 @@ neer-vazhvu/
 │   ├── app/
 │   │   ├── scrapers/             # CMWSSB, Open-Meteo, NASA POWER, OpenCity, data.gov.in
 │   │   ├── etl/                  # Pipeline orchestrator, calculator
+│   │   ├── gee/                  # Earth Engine: summaries, context, evidence
 │   │   ├── intelligence/         # Forecaster, risk scorer, briefing
 │   │   ├── models/               # Pydantic data models
 │   │   └── routers/              # FastAPI route handlers
 │   ├── scripts/
 │   │   ├── scrape_cmwssb.py              # CMWSSB scraper (used by GitHub Actions)
+│   │   ├── run_gee_phase1.py             # GEE Phase 1 CLI (summaries, context, evidence)
 │   │   └── generate_imd_rainfall.py      # Generate IMD rainfall data from imdlib
 │   ├── Dockerfile
 │   └── pyproject.toml
 ├── supabase/
-│   └── migrations/               # SQL migrations (001-006)
+│   └── migrations/               # SQL migrations (001-011)
 ├── public/
 │   ├── geojson/                  # Static GeoJSON data
 │   │   ├── chennai-wards-2022.geojson           # GCC ward boundaries (choropleth)

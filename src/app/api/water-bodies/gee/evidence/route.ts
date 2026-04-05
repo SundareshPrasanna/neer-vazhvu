@@ -108,11 +108,18 @@ export async function GET(request: NextRequest) {
     ),
   }));
 
-  return NextResponse.json({
-    data: rows,
-    meta: {
-      include_unreviewed: includeUnreviewed,
-      bucket: SATELLITE_EVIDENCE_BUCKET,
+  return NextResponse.json(
+    {
+      data: rows,
+      meta: {
+        include_unreviewed: includeUnreviewed,
+        bucket: SATELLITE_EVIDENCE_BUCKET,
+      },
     },
-  });
+    {
+      headers: {
+        "Cache-Control": "public, max-age=300, stale-while-revalidate=60",
+      },
+    },
+  );
 }

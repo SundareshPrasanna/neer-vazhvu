@@ -643,23 +643,32 @@ def _preserve_existing_review_state(
     from app.db import get_supabase
 
     supabase = get_supabase()
-    for row in rows:
-        response = (
-            supabase.table("water_body_satellite_evidence")
-            .select(
-                "frame_date,source_asset_id,dynamic_world_asset_id,is_reviewed,notes"
-            )
-            .eq("gee_target_id", row.gee_target_id)
-            .eq("reference_date", row.reference_date)
-            .limit(1)
-            .execute()
-        )
-        existing_rows = response.data or []
-        if not existing_rows:
-            continue
 
-        existing = existing_rows[0]
-        if not bool(existing.get("is_reviewed")):
+    # Batch-fetch all existing reviewed rows for the target+reference_date pairs
+    target_ids = list({row.gee_target_id for row in rows})
+    ref_dates = list({row.reference_date for row in rows})
+
+    response = (
+        supabase.table("water_body_satellite_evidence")
+        .select(
+            "gee_target_id,reference_date,frame_date,"
+            "source_asset_id,dynamic_world_asset_id,is_reviewed,notes"
+        )
+        .in_("gee_target_id", target_ids)
+        .in_("reference_date", ref_dates)
+        .eq("is_reviewed", True)
+        .execute()
+    )
+
+    # Index by (gee_target_id, reference_date) for O(1) lookup
+    existing_by_key: dict[tuple[str, str], dict] = {}
+    for existing in response.data or []:
+        key = (existing["gee_target_id"], existing["reference_date"])
+        existing_by_key[key] = existing
+
+    for row in rows:
+        existing = existing_by_key.get((row.gee_target_id, row.reference_date))
+        if not existing:
             continue
 
         same_frame_date = str(existing.get("frame_date") or "") == row.frame_date
