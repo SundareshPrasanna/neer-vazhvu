@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
+import { interpolate } from "@/lib/utils/format";
 import type { CityStoryNarrative } from "@/lib/insights/select-narrative";
 
 export interface AiNarrative {
@@ -21,18 +22,6 @@ export interface AiNarrative {
 interface CityStoryProps {
   narrative: CityStoryNarrative;
   aiNarrative?: AiNarrative | null;
-}
-
-/** Interpolate template params into a translated string */
-function interpolate(
-  template: string,
-  params: Record<string, string | number>,
-): string {
-  let result = template;
-  for (const [key, value] of Object.entries(params)) {
-    result = result.replace(`{${key}}`, String(value));
-  }
-  return result;
 }
 
 const VARIANT_BORDER: Record<CityStoryNarrative["variant"], string> = {

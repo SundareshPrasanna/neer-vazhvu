@@ -8,18 +8,10 @@ import {
   type RainfallContextLevel,
   type ReservoirCatchmentContextRow,
 } from "@/lib/gee/reservoir-context";
-import { formatDate } from "@/lib/utils/format";
+import { formatDate, interpolate } from "@/lib/utils/format";
 
 interface ReservoirCatchmentContextProps {
   rows: ReservoirCatchmentContextRow[];
-}
-
-function interpolate(template: string, params: Record<string, string | number>): string {
-  let result = template;
-  for (const [key, value] of Object.entries(params)) {
-    result = result.replace(`{${key}}`, String(value));
-  }
-  return result;
 }
 
 function badgeClasses(level: RainfallContextLevel): string {

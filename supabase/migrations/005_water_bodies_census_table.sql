@@ -32,9 +32,11 @@ CREATE TABLE water_bodies_census (
   fetched_at                      TIMESTAMPTZ DEFAULT NOW(),
   raw_json                        JSONB
 );
+
 CREATE INDEX idx_wbc_lat_lng ON water_bodies_census(latitude, longitude);
 CREATE INDEX idx_wbc_type ON water_bodies_census(water_body_type);
 CREATE INDEX idx_wbc_encroachment ON water_bodies_census(encroachment_status);
+
 -- RLS: public read access
 ALTER TABLE water_bodies_census ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read water_bodies_census"

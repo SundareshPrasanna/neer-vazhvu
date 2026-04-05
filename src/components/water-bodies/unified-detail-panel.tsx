@@ -12,6 +12,7 @@ import { STATUS_COLORS } from "@/types/water-bodies";
 import type { ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
+import { interpolate } from "@/lib/utils/format";
 import { NewsContext } from "@/components/insights/news-context";
 import { formatDate, formatNumber } from "@/lib/utils/format";
 import {
@@ -75,14 +76,6 @@ function CloseButton({ onClose, ariaLabel }: { onClose: () => void; ariaLabel: s
       </svg>
     </button>
   );
-}
-
-function interpolate(template: string, params: Record<string, string | number>): string {
-  let result = template;
-  for (const [key, value] of Object.entries(params)) {
-    result = result.replace(`{${key}}`, String(value));
-  }
-  return result;
 }
 
 function formatHectares(area: number | null): string {

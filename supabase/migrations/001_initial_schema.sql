@@ -13,6 +13,7 @@ CREATE TYPE reservoir_name AS ENUM (
   'veeranam',
   'kannankottai'
 );
+
 CREATE TYPE data_source AS ENUM (
   'kaggle',
   'cmwssb_scrape',
@@ -21,6 +22,7 @@ CREATE TYPE data_source AS ENUM (
   'cgwb',
   'manual'
 );
+
 -- ----- RESERVOIR DAILY STORAGE -----
 
 CREATE TABLE reservoir_daily (
@@ -38,8 +40,10 @@ CREATE TABLE reservoir_daily (
   scraped_at          TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(reservoir, date)
 );
+
 CREATE INDEX idx_reservoir_daily_date ON reservoir_daily(date DESC);
 CREATE INDEX idx_reservoir_daily_reservoir_date ON reservoir_daily(reservoir, date DESC);
+
 -- ----- WARD-LEVEL GROUNDWATER -----
 
 CREATE TABLE groundwater_monthly (
@@ -54,8 +58,10 @@ CREATE TABLE groundwater_monthly (
   ingested_at         TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(ward_number, year, month)
 );
+
 CREATE INDEX idx_gw_ward_date ON groundwater_monthly(ward_number, year DESC, month DESC);
 CREATE INDEX idx_gw_year_month ON groundwater_monthly(year DESC, month DESC);
+
 -- ----- NASA POWER WEATHER DATA -----
 
 CREATE TABLE weather_daily (
@@ -70,7 +76,9 @@ CREATE TABLE weather_daily (
   source              data_source NOT NULL DEFAULT 'nasa_power',
   fetched_at          TIMESTAMPTZ DEFAULT NOW()
 );
+
 CREATE INDEX idx_weather_date ON weather_daily(date DESC);
+
 -- ----- COMPUTED: DAYS OF WATER LEFT -----
 
 CREATE TABLE water_estimate_daily (
@@ -89,7 +97,9 @@ CREATE TABLE water_estimate_daily (
   days_left_optimistic    INTEGER,
   computed_at             TIMESTAMPTZ DEFAULT NOW()
 );
+
 CREATE INDEX idx_estimate_date ON water_estimate_daily(date DESC);
+
 -- ----- DATA PIPELINE LOG -----
 
 CREATE TABLE pipeline_log (
@@ -103,7 +113,9 @@ CREATE TABLE pipeline_log (
   started_at      TIMESTAMPTZ DEFAULT NOW(),
   completed_at    TIMESTAMPTZ
 );
+
 CREATE INDEX idx_pipeline_date ON pipeline_log(run_date DESC);
+
 -- ----- REFERENCE: RESERVOIR METADATA -----
 
 CREATE TABLE reservoir_meta (
@@ -115,6 +127,7 @@ CREATE TABLE reservoir_meta (
   longitude           NUMERIC(8,5),
   catchment_area_sqkm NUMERIC(8,2)
 );
+
 INSERT INTO reservoir_meta VALUES
   ('poondi',          'Poondi',              3231.0, 36.00, 13.3542, 80.0678, 2530.0),
   ('cholavaram',      'Cholavaram',           881.0, 22.00, 13.2184, 80.1499, 77.4),
@@ -122,12 +135,14 @@ INSERT INTO reservoir_meta VALUES
   ('chembarambakkam', 'Chembarambakkam',     3645.0, 24.00, 12.9517, 80.0551, 71.6),
   ('veeranam',        'Veeranam',            1465.0, NULL,  11.3500, 79.5400, NULL),
   ('kannankottai',    'Kannankottai (TK)',    1574.0, NULL,  12.8200, 79.9800, NULL);
+
 -- ----- ROW LEVEL SECURITY -----
 
 ALTER TABLE reservoir_daily ENABLE ROW LEVEL SECURITY;
 ALTER TABLE groundwater_monthly ENABLE ROW LEVEL SECURITY;
 ALTER TABLE weather_daily ENABLE ROW LEVEL SECURITY;
 ALTER TABLE water_estimate_daily ENABLE ROW LEVEL SECURITY;
+
 CREATE POLICY "Public read reservoir_daily"
   ON reservoir_daily FOR SELECT USING (true);
 CREATE POLICY "Public read groundwater_monthly"
@@ -136,6 +151,7 @@ CREATE POLICY "Public read weather_daily"
   ON weather_daily FOR SELECT USING (true);
 CREATE POLICY "Public read water_estimate_daily"
   ON water_estimate_daily FOR SELECT USING (true);
+
 -- ----- SQL FUNCTION: Average monthly inflow -----
 
 CREATE OR REPLACE FUNCTION avg_monthly_inflow(target_month INTEGER)
