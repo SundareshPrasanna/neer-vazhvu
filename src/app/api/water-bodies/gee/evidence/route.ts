@@ -17,6 +17,10 @@ function withCacheBust(url: string | null, version: string | null): string | nul
   return `${url}${separator}v=${encodeURIComponent(version)}`;
 }
 
+function normalizeComputedAt(value: string | null | undefined): string {
+  return value ?? "";
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const geeTargetId = searchParams.get("gee_target_id");
@@ -70,7 +74,25 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "No satellite evidence found" }, { status: 404 });
   }
 
-  const rows = data.map((row) => ({
+  const dedupedData = [...data]
+    .sort((left, right) => {
+      const frameDateComparison = left.frame_date.localeCompare(right.frame_date);
+      if (frameDateComparison !== 0) {
+        return frameDateComparison;
+      }
+
+      return normalizeComputedAt(right.computed_at).localeCompare(
+        normalizeComputedAt(left.computed_at),
+      );
+    })
+    .filter((row, index, rows) => {
+      if (index === 0) {
+        return true;
+      }
+      return rows[index - 1]?.frame_date !== row.frame_date;
+    });
+
+  const rows = dedupedData.map((row) => ({
     ...row,
     image_url: withCacheBust(
       row.image_path

@@ -634,6 +634,52 @@ def upload_satellite_evidence_assets(
     return uploaded_count
 
 
+def _preserve_existing_review_state(
+    rows: list[WaterBodySatelliteEvidenceRow],
+) -> list[WaterBodySatelliteEvidenceRow]:
+    if not rows:
+        return rows
+
+    from app.db import get_supabase
+
+    supabase = get_supabase()
+    for row in rows:
+        response = (
+            supabase.table("water_body_satellite_evidence")
+            .select(
+                "frame_date,source_asset_id,dynamic_world_asset_id,is_reviewed,notes"
+            )
+            .eq("gee_target_id", row.gee_target_id)
+            .eq("reference_date", row.reference_date)
+            .limit(1)
+            .execute()
+        )
+        existing_rows = response.data or []
+        if not existing_rows:
+            continue
+
+        existing = existing_rows[0]
+        if not bool(existing.get("is_reviewed")):
+            continue
+
+        same_frame_date = str(existing.get("frame_date") or "") == row.frame_date
+        same_source_asset = str(existing.get("source_asset_id") or "") == str(
+            row.source_asset_id or ""
+        )
+        same_overlay_asset = str(existing.get("dynamic_world_asset_id") or "") == str(
+            row.dynamic_world_asset_id or ""
+        )
+        same_selection = same_frame_date and same_source_asset and same_overlay_asset
+        if not same_selection:
+            continue
+
+        row.is_reviewed = True
+        if row.notes is None and existing.get("notes") is not None:
+            row.notes = str(existing.get("notes"))
+
+    return rows
+
+
 def upsert_water_body_satellite_evidence(
     rows: list[WaterBodySatelliteEvidenceRow],
 ) -> int:
@@ -642,7 +688,7 @@ def upsert_water_body_satellite_evidence(
 
     from app.db import get_supabase
 
-    payload = [asdict(row) for row in rows]
+    payload = [asdict(row) for row in _preserve_existing_review_state(rows)]
     get_supabase().table("water_body_satellite_evidence").upsert(
         payload, on_conflict="gee_target_id,reference_date"
     ).execute()
