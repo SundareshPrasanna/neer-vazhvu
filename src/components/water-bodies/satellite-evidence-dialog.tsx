@@ -19,8 +19,8 @@ import { formatDate } from "@/lib/utils/format";
 
 const SENTINEL2_INFO_URL =
   "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_HARMONIZED";
-const DYNAMIC_WORLD_INFO_URL =
-  "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1";
+const NDWI_INFO_URL =
+  "https://en.wikipedia.org/wiki/Normalized_difference_water_index";
 
 type EvidenceStatus = "idle" | "loading" | "ready" | "empty" | "error";
 
@@ -316,12 +316,12 @@ export function SatelliteEvidenceDialog({
                         <span className="ml-1" aria-hidden="true">↗</span>
                       </a>
                       <a
-                        href={DYNAMIC_WORLD_INFO_URL}
+                        href={NDWI_INFO_URL}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                       >
-                        {t("wb_panel.satellite_source_link_dynamic_world")}
+                        {t("wb_panel.satellite_source_link_ndwi")}
                         <span className="ml-1" aria-hidden="true">↗</span>
                       </a>
                     </div>

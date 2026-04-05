@@ -68,6 +68,11 @@ SATELLITE_EVIDENCE_TRUE_COLOR_GAMMA = 1.2
 SATELLITE_EVIDENCE_OVERLAY_PALETTE = ("3b82f6",)
 SATELLITE_EVIDENCE_OVERLAY_OPACITY = 0.55
 
+# NDWI water detection (replaces Dynamic World for evidence overlays)
+NDWI_GREEN_BAND = "B3"
+NDWI_NIR_BAND = "B8"
+NDWI_WATER_THRESHOLD = 0.0
+
 FLAGSHIP_HISTORY_COHORT = (
     "osm:25453624",  # Chembarambakkam Lake
     "osm:25394157",  # Red Hills Reservoir
