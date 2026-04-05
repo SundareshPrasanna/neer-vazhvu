@@ -414,7 +414,7 @@
 | **Method** | Earth Engine scene selection + thumbnail download via `neer-vazhvu-api/app/gee/evidence.py` |
 | **Frequency** | Manual dispatch via `build-satellite-evidence` CLI or `run-all-refresh` workflow |
 | **Coverage** | 12 flagship water bodies (flagship-history cohort), up to 6 monthly reference dates per body |
-| **Fields** | Frame date, Sentinel-2 scene ID, Dynamic World asset ID, cloud cover %, usable coverage %, true-color image path, water-overlay image path, review status |
+| **Fields** | Frame date, Sentinel-2 scene ID, cloud cover %, usable coverage %, true-color image path, water-overlay image path, review status |
 | **Table** | `water_body_satellite_evidence` |
 | **Storage** | `satellite-evidence` Supabase Storage bucket (public read) |
 | **API** | `GET /api/water-bodies/gee/evidence?gee_target_id=X` |
@@ -422,7 +422,7 @@
 **How it works:**
 - For each flagship water body and monthly reference date, the pipeline searches Sentinel-2 imagery within a configurable window (default 30 days)
 - Scenes are ranked by usable coverage, proximity to the reference date, and cloud percentage
-- The best scene is downloaded as a true-color thumbnail and a Dynamic World water-mask overlay
+- The best scene is downloaded as a true-color thumbnail and an NDWI water-mask overlay
 - Both images are stored in Supabase Storage; metadata is upserted to the evidence table
 - Only visually reviewed frames (`is_reviewed = true`) are shown in the frontend by default
 
@@ -430,7 +430,7 @@
 - Limited to the 12-body flagship cohort; expanding requires visual review capacity
 - Sentinel-2 is optical-only; persistent cloud cover can prevent usable frames in some months
 - Thumbnails are clipped to a padded bounding box of the water body, not the exact polygon
-- Water-mask overlay uses Dynamic World classification which can misclassify shadows or wet soil
+- Water-mask overlay uses NDWI thresholding which can misclassify shadows or wet soil
 - Re-running the pipeline preserves existing review state but only if the same scene is selected again; a different scene selection resets to unreviewed
 
 ## AI-Generated Narratives - Anthropic Claude API

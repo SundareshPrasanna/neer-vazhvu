@@ -152,7 +152,7 @@ Earth Engine Phase 1 jobs live under `neer-vazhvu-api/app/gee/` and write small 
 | [First Census of Water Bodies (data.gov.in)](https://data.gov.in/resource/state-wise-data-first-census-water-bodies-tamil-nadu) | 305 Chennai water bodies — ownership, capacity, encroachment | One-time fetch |
 | [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
 | [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry + industrial zone polygons | One-time fetch |
-| [Google Earth Engine / Dynamic World](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1) | Recent 45-day water observations used to estimate recent visible spread for reviewed Phase 1 lakes and reservoirs | Periodic summary refresh |
+| [Sentinel-2 NDWI (via Earth Engine)](https://en.wikipedia.org/wiki/Normalized_difference_water_index) | NDWI water detection from Sentinel-2 green/NIR bands used to estimate recent visible spread for reviewed Phase 1 lakes and reservoirs | Periodic summary refresh |
 | [JRC Global Surface Water Monthly Recurrence](https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_MonthlyRecurrence) | Historical month-by-month wetness baseline used to judge whether recent spread is lower or higher than usual for the season | Historical monthly baseline |
 | [CHIRPS Daily Rainfall](https://developers.google.com/earth-engine/datasets/catalog/UCSB-CHG_CHIRPS_DAILY) | Catchment rainfall totals and seasonal anomaly baselines for Poondi, Red Hills, Chembarambakkam, and Cholavaram | Daily |
 | [Copernicus Sentinel-2 (via Earth Engine)](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED) | True-color satellite imagery for reviewed evidence frames at flagship water bodies | Evidence refresh (manual dispatch) |
@@ -190,7 +190,7 @@ Phase 1 currently does three things:
 
 - computes catchment rainfall context for Poondi, Red Hills, Chembarambakkam, and Cholavaram
 - computes seasonal surface-spread summaries for a curated 150-water-body target set
-- builds reviewed Sentinel-2 evidence frames with Dynamic World overlays for flagship water bodies
+- builds reviewed Sentinel-2 evidence frames with NDWI water-mask overlays for flagship water bodies
 
 Current product surfaces:
 
@@ -204,7 +204,7 @@ Current behavior and guardrails:
 - satellite evidence frames are limited to a 12-body flagship cohort; only reviewed frames are shown by default
 - low-confidence satellite rows are hidden from the detail panel
 - catchment polygons are reviewed operational geometries, not legal survey boundaries
-- current water-body observation uses Dynamic World only; Sentinel-1 fallback is not implemented yet
+- current water-body observation uses optical Sentinel-2 NDWI only; Sentinel-1 radar fallback is not implemented yet
 - the frontend reads Supabase summaries and Storage images; it does not request Earth Engine directly
 
 Current operations:

@@ -19,7 +19,7 @@ graph TB
         DGI["data.gov.in<br/>(Water Bodies Census)"]
         CMWSSB_SEW["CMWSSB Sewerage<br/>(STPs, SPS, pumping mains, one-time)"]
         ANTHROPIC["Anthropic Claude API<br/>(AI narratives)"]
-        GEE_SRC["Google Earth Engine<br/>(Dynamic World, Sentinel-2, CHIRPS,<br/>JRC, HydroBASINS)"]
+        GEE_SRC["Google Earth Engine<br/>(Sentinel-2 NDWI, CHIRPS,<br/>JRC, HydroBASINS)"]
     end
 
     subgraph Backend ["Python API (FastAPI)"]
@@ -127,8 +127,8 @@ flowchart LR
 | AI City Narrative | Claude Sonnet API | `daily_briefing` (AI columns) | Daily |
 | Fetch Census | data.gov.in (Water Bodies Census) | `water_bodies_census` | One-time / periodic |
 | GEE Reservoir Context | CHIRPS via Earth Engine | `reservoir_catchment_context` | Daily (06:15 IST) |
-| GEE Water-Body Summaries | Dynamic World + JRC via Earth Engine | `water_body_satellite_summary` | Weekly (Monday 06:45 IST) |
-| GEE Satellite Evidence | Sentinel-2 + Dynamic World via Earth Engine | `water_body_satellite_evidence` + Storage | Manual dispatch / run-all-refresh |
+| GEE Water-Body Summaries | Sentinel-2 NDWI + JRC via Earth Engine | `water_body_satellite_summary` | Weekly (Monday 06:45 IST) |
+| GEE Satellite Evidence | Sentinel-2 NDWI via Earth Engine | `water_body_satellite_evidence` + Storage | Manual dispatch / run-all-refresh |
 
 ## Monthly Pipeline
 

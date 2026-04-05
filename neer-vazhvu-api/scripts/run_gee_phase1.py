@@ -433,7 +433,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--lookback-days",
         type=int,
         default=DEFAULT_WATER_BODY_LOOKBACK_DAYS,
-        help=f"Dynamic World lookback window in days. Default: {DEFAULT_WATER_BODY_LOOKBACK_DAYS}",
+        help=f"Sentinel-2 NDWI lookback window in days. Default: {DEFAULT_WATER_BODY_LOOKBACK_DAYS}",
     )
     run_water_body_summaries.add_argument(
         "--gee-target-id",
@@ -474,7 +474,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--lookback-days",
         type=int,
         default=DEFAULT_WATER_BODY_LOOKBACK_DAYS,
-        help=f"Dynamic World lookback window in days. Default: {DEFAULT_WATER_BODY_LOOKBACK_DAYS}",
+        help=f"Sentinel-2 NDWI lookback window in days. Default: {DEFAULT_WATER_BODY_LOOKBACK_DAYS}",
     )
     backfill_water_body_summaries.add_argument(
         "--gee-target-id",
