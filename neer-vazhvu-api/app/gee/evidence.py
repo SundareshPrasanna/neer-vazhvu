@@ -17,8 +17,9 @@ from app.gee.config import (
     DEFAULT_SATELLITE_EVIDENCE_MIN_USABLE_COVERAGE_PCT,
     DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK,
     DEFAULT_SATELLITE_EVIDENCE_SEARCH_WINDOW_DAYS,
-    DYNAMIC_WORLD_DATASET,
-    DYNAMIC_WORLD_WATER_BAND,
+    NDWI_GREEN_BAND,
+    NDWI_NIR_BAND,
+    NDWI_WATER_THRESHOLD,
     SATELLITE_EVIDENCE_BUCKET,
     SATELLITE_EVIDENCE_COHORT,
     SATELLITE_EVIDENCE_OVERLAY_FORMAT,
@@ -196,29 +197,6 @@ def _calculate_sentinel_usable_coverage_pct(
     return calculate_valid_pixel_pct(valid_area_ha, target.area_ha)
 
 
-def _match_dynamic_world_metadata(ee, *, sentinel_index: str) -> dict[str, Any]:
-    collection = ee.ImageCollection(DYNAMIC_WORLD_DATASET).filter(
-        ee.Filter.eq("system:index", sentinel_index)
-    )
-    payload = ee.Dictionary(
-        {
-            "exists": collection.size().gt(0),
-            "dynamic_world_asset_id": ee.Algorithms.If(
-                collection.size().gt(0),
-                ee.Image(collection.first()).id(),
-                None,
-            ),
-        }
-    ).getInfo()
-    return {
-        "exists": bool(payload.get("exists")),
-        "dynamic_world_asset_id": payload.get("dynamic_world_asset_id"),
-        "dynamic_world_image": ee.Image(collection.first())
-        if payload.get("exists")
-        else None,
-    }
-
-
 def _resolve_thumb_projection(image) -> tuple[str, list[float] | None]:
     projection_info = (
         image.select([SENTINEL2_TRUE_COLOR_BANDS[0]]).projection().getInfo()
@@ -278,18 +256,20 @@ def _build_true_color_download_url(
     )
 
 
-def _build_overlay_download_url(
+def _build_ndwi_overlay_download_url(
     ee,
     *,
-    dw_image,
+    image,
     target_geometry,
     thumb_region: dict[str, Any],
     thumb_crs: str,
     thumb_transform: list[float] | None,
 ) -> str:
+    green = image.select(NDWI_GREEN_BAND).toFloat()
+    nir = image.select(NDWI_NIR_BAND).toFloat()
+    ndwi = green.subtract(nir).divide(green.add(nir)).rename("ndwi")
     overlay = (
-        dw_image.select(DYNAMIC_WORLD_WATER_BAND)
-        .gt(0.3)
+        ndwi.gt(NDWI_WATER_THRESHOLD)
         .selfMask()
         .clip(target_geometry)
         .visualize(
@@ -434,22 +414,15 @@ def _select_best_scene_for_reference_date(
             "scene_cloud_pct": best_image.get("scene_cloud_pct"),
             "usable_coverage_pct": best_image.get("usable_coverage_pct"),
             "source_asset_id": best_image.id(),
-            "source_asset_index": best_image.get("system:index"),
         }
     ).getInfo()
 
     frame_date = date.fromisoformat(str(best_info["frame_date"]))
     usable_coverage_pct = round(float(best_info["usable_coverage_pct"]), 2)
-    source_asset_index = str(best_info["source_asset_index"])
     source_asset_id = str(best_info["source_asset_id"])
     scene_cloud_pct = float(best_info["scene_cloud_pct"])
 
     thumb_region = build_thumb_region_from_geometry(target.geometry)
-    dynamic_world_match = _match_dynamic_world_metadata(
-        ee, sentinel_index=source_asset_index
-    )
-    dynamic_world_asset_id = dynamic_world_match.get("dynamic_world_asset_id")
-    dw_image = dynamic_world_match.get("dynamic_world_image")
 
     image_download_url = None
     overlay_download_url = None
@@ -463,15 +436,14 @@ def _select_best_scene_for_reference_date(
             thumb_crs=thumb_crs,
             thumb_transform=thumb_transform,
         )
-        if dw_image is not None:
-            overlay_download_url = _build_overlay_download_url(
-                ee,
-                dw_image=dw_image,
-                target_geometry=target_geometry,
-                thumb_region=thumb_region,
-                thumb_crs=thumb_crs,
-                thumb_transform=thumb_transform,
-            )
+        overlay_download_url = _build_ndwi_overlay_download_url(
+            ee,
+            image=masked_best_image,
+            target_geometry=target_geometry,
+            thumb_region=thumb_region,
+            thumb_crs=thumb_crs,
+            thumb_transform=thumb_transform,
+        )
 
     row = WaterBodySatelliteEvidenceRow(
         gee_target_id=target.gee_target_id,
@@ -482,27 +454,23 @@ def _select_best_scene_for_reference_date(
         census_id=target.census_id,
         name=target.name,
         target_cohort=SATELLITE_EVIDENCE_COHORT,
-        source_dataset="sentinel2_harmonized",
+        source_dataset="sentinel2_sr_harmonized",
         source_asset_id=source_asset_id,
-        dynamic_world_asset_id=dynamic_world_asset_id,
+        dynamic_world_asset_id=None,
         image_path=build_satellite_evidence_storage_path(
             gee_target_id=target.gee_target_id,
             frame_date=frame_date,
             variant="true-color",
         ),
-        overlay_path=(
-            build_satellite_evidence_storage_path(
-                gee_target_id=target.gee_target_id,
-                frame_date=frame_date,
-                variant="water-overlay",
-            )
-            if dynamic_world_asset_id
-            else None
+        overlay_path=build_satellite_evidence_storage_path(
+            gee_target_id=target.gee_target_id,
+            frame_date=frame_date,
+            variant="water-overlay",
         ),
         usable_coverage_pct=usable_coverage_pct,
         cloud_note=f"tile_cloud_pct={scene_cloud_pct:.1f}",
         geometry_version=resolve_satellite_evidence_geometry_version(),
-        is_same_scene_as_overlay=bool(dynamic_world_asset_id),
+        is_same_scene_as_overlay=True,
         is_reviewed=False,
         notes=None,
     )

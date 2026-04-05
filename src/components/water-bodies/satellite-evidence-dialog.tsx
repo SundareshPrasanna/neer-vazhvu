@@ -19,8 +19,8 @@ import { formatDate } from "@/lib/utils/format";
 
 const SENTINEL2_INFO_URL =
   "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_HARMONIZED";
-const DYNAMIC_WORLD_INFO_URL =
-  "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1";
+const NDWI_INFO_URL =
+  "https://en.wikipedia.org/wiki/Normalized_difference_water_index";
 
 type EvidenceStatus = "idle" | "loading" | "ready" | "empty" | "error";
 
@@ -70,7 +70,7 @@ export function SatelliteEvidenceDialog({
 }: SatelliteEvidenceDialogProps) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
-  const [showOverlay, setShowOverlay] = useState(true);
+  const [showOverlay, setShowOverlay] = useState(false);
   const [selectedFrameDate, setSelectedFrameDate] = useState<string | null>(null);
   const [status, setStatus] = useState<EvidenceStatus>("idle");
   const [frames, setFrames] = useState<WaterBodySatelliteEvidenceFrame[]>([]);
@@ -155,12 +155,12 @@ export function SatelliteEvidenceDialog({
           }
           setOpen(nextOpen);
           if (!nextOpen) {
-            setShowOverlay(true);
+            setShowOverlay(false);
           }
         }}
       >
-        <DialogContent className="max-w-4xl sm:max-w-4xl max-h-[90vh] overflow-hidden p-0">
-          <div className="flex max-h-[90vh] flex-col bg-white dark:bg-slate-900">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-5xl max-h-[90vh] overflow-hidden p-0">
+          <div className="flex max-h-[90vh] flex-col bg-white dark:bg-slate-900 overflow-hidden">
             <DialogHeader className="border-b border-slate-200 dark:border-slate-700 p-6 pr-12">
               <DialogTitle className="text-xl text-slate-900 dark:text-slate-100">
                 {t("wb_panel.satellite_evidence_title")}
@@ -316,12 +316,12 @@ export function SatelliteEvidenceDialog({
                         <span className="ml-1" aria-hidden="true">↗</span>
                       </a>
                       <a
-                        href={DYNAMIC_WORLD_INFO_URL}
+                        href={NDWI_INFO_URL}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                       >
-                        {t("wb_panel.satellite_source_link_dynamic_world")}
+                        {t("wb_panel.satellite_source_link_ndwi")}
                         <span className="ml-1" aria-hidden="true">↗</span>
                       </a>
                     </div>

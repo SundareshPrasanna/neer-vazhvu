@@ -40,5 +40,9 @@ export async function GET(request: NextRequest) {
     return internalServerError();
   }
 
-  return NextResponse.json({ data: data ?? [] });
+  return NextResponse.json({ data: data ?? [] }, {
+    headers: {
+      "Cache-Control": "public, max-age=300, stale-while-revalidate=60",
+    },
+  });
 }

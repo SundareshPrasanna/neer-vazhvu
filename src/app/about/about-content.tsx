@@ -218,6 +218,12 @@ export function AboutContent() {
             frequency={t("about.freq_periodic_summary")}
           />
           <DataSource
+            name="NDWI Water Detection (via Sentinel-2)"
+            url="https://en.wikipedia.org/wiki/Normalized_difference_water_index"
+            description={t("about.ds_ndwi_desc")}
+            frequency={t("about.freq_evidence_refresh")}
+          />
+          <DataSource
             name="JRC Global Surface Water (Monthly Recurrence)"
             url="https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_MonthlyRecurrence"
             description={t("about.ds_gee_jrc_desc")}
