@@ -360,8 +360,10 @@ def _get_sentinel2_ndwi_observation_window(
         green = masked.select(NDWI_GREEN_BAND).toFloat()
         nir = masked.select(NDWI_NIR_BAND).toFloat()
         ndwi = green.subtract(nir).divide(green.add(nir))
-        return ndwi.gt(NDWI_WATER_THRESHOLD).rename("water").copyProperties(
-            image, ["system:time_start"]
+        return (
+            ndwi.gt(NDWI_WATER_THRESHOLD)
+            .rename("water")
+            .copyProperties(image, ["system:time_start"])
         )
 
     collection = s2_collection.map(_to_ndwi_water_mask)
