@@ -1,8 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { WardRepresentatives } from "@/components/insights/ward-representatives";
+
+const HELPLINES = [
+  { labelKey: "my_ward.hl_water_complaint", value: "044-2845 2572", href: "tel:04428452572" },
+  { labelKey: "my_ward.hl_tanker_booking", value: "044-2845 1515", href: "tel:04428451515" },
+  { labelKey: "my_ward.hl_cmwssb_whatsapp", value: "9445147200", href: "https://wa.me/919445147200" },
+  { labelKey: "my_ward.hl_flood_emergency", value: "1913", href: "tel:1913" },
+  { labelKey: "my_ward.hl_rwh_info", value: null, href: "https://www.cmwssb.tn.gov.in/rain-water-harvesting" },
+] as const;
 
 interface Props {
   wardNumber: number;
@@ -10,6 +19,7 @@ interface Props {
 
 export function WardActionsCard({ wardNumber }: Props) {
   const { t } = useLanguage();
+  const [helpOpen, setHelpOpen] = useState(false);
 
   return (
     <Card>
@@ -50,6 +60,38 @@ export function WardActionsCard({ wardNumber }: Props) {
               <p className="text-[10px] text-slate-400">CMWSSB</p>
             </div>
           </a>
+        </div>
+
+        {/* Helplines & Resources - collapsible */}
+        <div className="print:hidden">
+          <button
+            onClick={() => setHelpOpen(!helpOpen)}
+            className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+          >
+            <svg
+              className={`w-3 h-3 transition-transform ${helpOpen ? "rotate-90" : ""}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+            {t("my_ward.hl_title")}
+          </button>
+          {helpOpen && (
+            <div className="mt-2 ml-4.5 space-y-1.5">
+              {HELPLINES.map((h) => (
+                <a
+                  key={h.labelKey}
+                  href={h.href}
+                  target={h.href.startsWith("http") ? "_blank" : undefined}
+                  rel={h.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="flex items-center justify-between text-xs py-0.5 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                  <span>{t(h.labelKey)}</span>
+                  <span className="font-mono text-[11px]">{h.value ?? "→"}</span>
+                </a>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Representatives */}
