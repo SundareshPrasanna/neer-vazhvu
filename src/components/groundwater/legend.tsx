@@ -42,6 +42,33 @@ export function GroundwaterLegend({ viewMode, hiddenCategories, onToggleCategory
   const items = viewMode === "exploitation" ? EXPLOIT_ITEMS : viewMode === "risk" ? RISK_ITEMS : DEPTH_ITEMS;
   const title = viewMode === "exploitation" ? t("legend.exploit_title") : viewMode === "risk" ? t("legend.risk_title") : t("legend.depth_title");
 
+  // "CGWB sensor status" sub-section only applies to the depth view where
+  // WRIS station circle markers are overlaid. These are filterable so users
+  // can hide suspect/old readings from the map.
+  const WRIS_ITEMS = [
+    {
+      id: "wris_stuck",
+      tKey: "legend.wris_stuck",
+      // Amber dashed ring - matches the marker style in ward-map.tsx
+      render: (
+        <span
+          className="w-4 h-4 rounded-full flex-shrink-0 border-2 border-dashed"
+          style={{ borderColor: "#b45309", backgroundColor: "#94a3b8" }}
+        />
+      ),
+    },
+    {
+      id: "wris_stale",
+      tKey: "legend.wris_stale",
+      render: (
+        <span
+          className="w-4 h-4 rounded-full flex-shrink-0 border"
+          style={{ borderColor: "#475569", backgroundColor: "#94a3b8", opacity: 0.6 }}
+        />
+      ),
+    },
+  ];
+
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-3">
       <button
@@ -73,6 +100,32 @@ export function GroundwaterLegend({ viewMode, hiddenCategories, onToggleCategory
             </button>
           );
         })}
+
+        {viewMode === "depth" && (
+          <>
+            <div className="pt-2 mt-1 border-t border-slate-200 dark:border-slate-700">
+              <h5 className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">
+                {t("legend.wris_status_title")}
+              </h5>
+            </div>
+            {WRIS_ITEMS.map((item) => {
+              const hidden = hiddenCategories?.has(item.id) ?? false;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => onToggleCategory?.(item.id)}
+                  className={`flex items-center gap-2 text-xs whitespace-nowrap w-full text-left transition-opacity ${hidden ? "opacity-30" : ""} ${onToggleCategory ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 -mx-1 px-1 rounded" : ""}`}
+                  title={t(`${item.tKey}.tooltip`)}
+                >
+                  {item.render}
+                  <span className="text-slate-500 dark:text-slate-400">
+                    {t(item.tKey)}
+                  </span>
+                </button>
+              );
+            })}
+          </>
+        )}
       </div>
     </div>
   );

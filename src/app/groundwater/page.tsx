@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { WardDetailPanel } from "@/components/groundwater/ward-detail-panel";
 import { BlockDetailPanel } from "@/components/groundwater/block-detail-panel";
+import { WrisStationPanel } from "@/components/groundwater/wris-station-panel";
 import { GroundwaterLegend } from "@/components/groundwater/legend";
 import type {
   GroundwaterWard,
@@ -13,6 +14,8 @@ import type {
   RiskApiResponse,
   ViewMode,
   GWBlock,
+  WrisStation,
+  WrisStationsResponse,
 } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
@@ -52,8 +55,10 @@ function GroundwaterPageContent() {
   const [data, setData] = useState<GroundwaterApiResponse | null>(null);
   const [riskApiData, setRiskApiData] = useState<RiskApiResponse | null>(null);
   const [blocks, setBlocks] = useState<GWBlock[]>([]);
+  const [wrisStations, setWrisStations] = useState<WrisStation[]>([]);
   const [selectedWard, setSelectedWard] = useState<GroundwaterWard | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<GWBlock | null>(null);
+  const [selectedWrisStation, setSelectedWrisStation] = useState<WrisStation | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(
     (searchParams.get("view") as ViewMode) || "depth"
   );
@@ -68,11 +73,15 @@ function GroundwaterPageContent() {
       fetch("/api/groundwater").then((r) => r.json()),
       fetch("/api/groundwater/risk").then((r) => r.json()),
       fetch("/data/gwr-blocks.json").then((r) => r.json()),
+      fetch("/api/groundwater/stations")
+        .then((r) => r.json())
+        .catch(() => ({ stations: [] })),
     ])
-      .then(([gw, risk, gwrBlocks]: [GroundwaterApiResponse, RiskApiResponse, { blocks: GWBlock[] }]) => {
+      .then(([gw, risk, gwrBlocks, wris]: [GroundwaterApiResponse, RiskApiResponse, { blocks: GWBlock[] }, WrisStationsResponse]) => {
         setData(gw);
         setRiskApiData(risk);
         setBlocks(gwrBlocks.blocks ?? []);
+        setWrisStations(wris.stations ?? []);
         setLoading(false);
 
         // Deep link: pre-select ward from ?ward= param
@@ -166,13 +175,16 @@ function GroundwaterPageContent() {
           viewMode={viewMode}
           selectedWardNumber={selectedWard?.wardNumber}
           flyToWard={flyToWard}
-          onWardSelect={(w) => { setSelectedWard(w); setSelectedBlock(null); setFlyToWard(null); }}
-          onBlockSelect={(b) => { setSelectedBlock(b); setSelectedWard(null); setFlyToWard(null); }}
+          onWardSelect={(w) => { setSelectedWard(w); setSelectedBlock(null); setSelectedWrisStation(null); setFlyToWard(null); }}
+          onBlockSelect={(b) => { setSelectedBlock(b); setSelectedWard(null); setSelectedWrisStation(null); setFlyToWard(null); }}
+          onWrisStationSelect={(s) => { setSelectedWrisStation(s); setSelectedWard(null); setSelectedBlock(null); setFlyToWard(null); }}
+          wrisStations={wrisStations}
+          selectedWrisStationCode={selectedWrisStation?.stationCode ?? null}
           hiddenCategories={hiddenCategories}
         />
 
         {/* Legend overlay - shifts up on mobile when bottom sheet is open */}
-        <div className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${(selectedWard || selectedBlock) ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
+        <div className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${(selectedWard || selectedBlock || selectedWrisStation) ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
           <GroundwaterLegend
             viewMode={viewMode}
             hiddenCategories={hiddenCategories}
@@ -262,6 +274,9 @@ function GroundwaterPageContent() {
                 onClick={() => {
                   setViewMode("risk");
                   setSelectedBlock(null);
+                  // CGWB station overlay only renders in depth view, so drop
+                  // any open station panel to avoid a stranded detail pane.
+                  setSelectedWrisStation(null);
                   setHiddenCategories(new Set());
                   // Keep current ward selection; only default if none selected
                   if (!selectedWard && data && data.wards.length > 0) {
@@ -282,6 +297,8 @@ function GroundwaterPageContent() {
               onClick={() => {
                 setViewMode("exploitation");
                 setSelectedWard(null);
+                // CGWB station overlay only renders in depth view.
+                setSelectedWrisStation(null);
                 setHiddenCategories(new Set());
                 // Keep current block selection; only default if none selected
                 if (!selectedBlock && blocks.length > 0) {
@@ -316,6 +333,14 @@ function GroundwaterPageContent() {
           <BlockDetailPanel
             block={selectedBlock}
             onClose={() => setSelectedBlock(null)}
+          />
+        </BottomSheet>
+      )}
+      {selectedWrisStation && (
+        <BottomSheet onClose={() => setSelectedWrisStation(null)}>
+          <WrisStationPanel
+            station={selectedWrisStation}
+            onClose={() => setSelectedWrisStation(null)}
           />
         </BottomSheet>
       )}

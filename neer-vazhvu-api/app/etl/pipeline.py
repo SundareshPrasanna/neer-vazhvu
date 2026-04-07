@@ -23,6 +23,7 @@ from app.scrapers.cmwssb import scrape_cmwssb
 from app.scrapers.nasa_power import fetch_nasa_power
 from app.scrapers.open_meteo import fetch_open_meteo
 from app.scrapers.opencity import fetch_groundwater, GROUNDWATER_RESOURCES
+from app.scrapers.wris import fetch_wris_groundwater
 from app.utils.timezone import ist_today
 
 logger = logging.getLogger(__name__)
@@ -201,6 +202,50 @@ async def _step_fetch_opencity() -> dict:
     return {"rows_affected": len(rows)}
 
 
+async def _step_fetch_wris() -> dict:
+    """Fetch CGWB station-level groundwater from India WRIS API.
+
+    Fetches both manual (seasonal) and telemetric (DWLR) readings.
+    Runs weekly or on-demand. Covers the last 90 days by default to
+    catch any backfilled data.
+    """
+    supabase = get_supabase()
+    today = ist_today()
+    start = today - timedelta(days=90)
+
+    records = await fetch_wris_groundwater(start_date=start, end_date=today)
+
+    rows = [
+        {
+            "station_code": r.station_code,
+            "station_name": r.station_name,
+            "latitude": r.latitude,
+            "longitude": r.longitude,
+            "reading_date": r.reading_date.isoformat(),
+            "depth_to_water_m": r.depth_to_water_m,
+            "acquisition_mode": r.acquisition_mode,
+            "agency": r.agency,
+            "district": r.district,
+            "well_type": r.well_type,
+            "well_depth_m": r.well_depth_m,
+            "well_aquifer_type": r.well_aquifer_type,
+            "source": "cgwb",
+        }
+        for r in records
+    ]
+
+    if rows:
+        # Upsert in batches of 200 to avoid payload limits
+        batch_size = 200
+        for i in range(0, len(rows), batch_size):
+            batch = rows[i : i + batch_size]
+            supabase.table("groundwater_wris").upsert(
+                batch, on_conflict="station_code,reading_date"
+            ).execute()
+
+    return {"rows_affected": len(rows)}
+
+
 async def _step_compute_estimate() -> dict:
     """Step 4: Compute daily days-left estimate."""
     supabase = get_supabase()
@@ -331,6 +376,8 @@ async def run_daily() -> list[dict]:
         await _run_step("fetch_opencity", _step_fetch_opencity, required=False)
     )
 
+    steps.append(await _run_step("fetch_wris", _step_fetch_wris, required=False))
+
     # ETL
     step = await _run_step("compute_estimate", _step_compute_estimate)
     steps.append(step)
@@ -379,6 +426,8 @@ async def run_post_scrape() -> list[dict]:
         await _run_step("fetch_opencity", _step_fetch_opencity, required=False)
     )
 
+    steps.append(await _run_step("fetch_wris", _step_fetch_wris, required=False))
+
     step = await _run_step("compute_estimate", _step_compute_estimate)
     steps.append(step)
     if step["status"] == "error":
@@ -390,6 +439,14 @@ async def run_post_scrape() -> list[dict]:
         return steps
 
     step = await _run_step("briefing", _step_briefing)
+    steps.append(step)
+    return steps
+
+
+async def run_wris_fetch() -> list[dict]:
+    """Fetch WRIS groundwater data (on-demand or weekly)."""
+    steps = []
+    step = await _run_step("fetch_wris", _step_fetch_wris)
     steps.append(step)
     return steps
 

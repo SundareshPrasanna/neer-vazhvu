@@ -21,6 +21,8 @@ Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks res
 - **Choropleth Map** - Depth to water table across all 200 GCC wards, color-coded by CGWB classification (Healthy to Crisis)
 - **Risk Score View** - Toggle between depth choropleth and composite risk score choropleth (Low / Moderate / High / Critical) when pipeline data is available
 - **CGWB Exploitation View** - Block-level groundwater exploitation from India WRIS/CGWB (2011-2024), showing Safe/Semi-Critical/Critical/Over-Exploited classification with development percentage trends
+- **Live CGWB Station Overlay** - ~35 CGWB/India WRIS stations in Chennai district plotted as circle markers over the ward choropleth, mixing Manual (quarterly dug wells) and Telemetric (daily DWLR bore wells) with well type, well depth, and aquifer type in the station panel
+- **Sensor Data Quality Layer** - Each station is scored server-side with a `stuck` / `stale` / `ok` flag (stuck detection uses median daily delta < 1cm over 60 days; stale is mode-aware - 14 days for DWLR, 180 days for manual). Suspect stations render with a dashed amber ring and get an explicit warning banner in the panel, and the legend exposes filters so reviewers can hide them
 - **Ward Detail Panel** - Click any ward for depth, year-over-year trend, historical chart, and composite risk score breakdown
 - **Block Detail Panel** - Click any exploitation block for development %, availability, draft totals, and historical trend bar chart with 100% threshold line
 - **Risk Score Breakdown** - Each of the four components (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%) shown with weighted contribution bars
@@ -164,6 +166,7 @@ Earth Engine Phase 1 jobs live under `neer-vazhvu-api/app/gee/` and write small 
 | NGT Southern Bench / TNPCB / CPCB | 7 major industrial pollution sources - facility data, pollutant types, incident records, NGT orders | Manually curated |
 | [IMD Gridded Rainfall (via imdlib)](https://imdlib.readthedocs.io/) | Monthly rainfall at 0.25 deg resolution for Chennai (1970-2025), long-term normals | One-time generation |
 | [India WRIS / CGWB](https://indiawris.gov.in/) | Block-level groundwater exploitation (%), classification (Safe to Over-Exploited), block boundaries (2011-2024) | Static fetch |
+| [India WRIS Ground Water Level API](https://indiawris.gov.in/Dataset/Ground%20Water%20Level) | CGWB station-level time series (~35 Chennai stations, depth to water, Manual vs Telemetric/DWLR, well type, well depth, aquifer type) with server-side stuck/stale sensor detection | Daily scrape |
 | [OpenCity Chennai (Flood Data)](https://data.opencity.in/) | CFLOWS flood hazard zones, 2015 flood hotspots/depth, 2020 Cyclone Nivar hotspots, return period maps | Static fetch |
 | [GCC Storm Water Drain Survey](https://data.opencity.in/) | 10,308 drain segments with type, depth, width, material, status across 197 wards | Static fetch |
 | [CMWSSB Sewerage Network](https://data.opencity.in/) | 8 STPs, 348 pumping stations, 3,834 pumping mains with pipe material and size | Static fetch |

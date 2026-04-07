@@ -204,11 +204,44 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "gw_block.cgwb_note":      { en: "GW development >100% means extraction exceeds natural recharge - the aquifer is being depleted.", ta: "நிலத்தடி நீர் சுரண்டல் >100% என்றால் எடுப்பு இயற்கை நிரப்பீட்டை மீறுகிறது - நிலத்தடி நீர்வளம் குறைகிறது." },
   "gw_block.boundary_caveat": { en: "CGWB changed assessment block boundaries across years. Some blocks only appear from 2020 or 2023 onward as they were split from older compound blocks.", ta: "CGWB மதிப்பீட்டு தொகுதி எல்லைகள் ஆண்டுகளில் மாற்றப்பட்டன. சில தொகுதிகள் 2020 அல்லது 2023 முதல் மட்டுமே தோன்றும், ஏனெனில் அவை பழைய கூட்டு தொகுதிகளிலிருந்து பிரிக்கப்பட்டன." },
 
+  // ── WRIS / CGWB Live Stations (India WRIS) ─────────────────────────────────
+  "wris.station":            { en: "CGWB Station",                  ta: "CGWB நிலையம்" },
+  "wris.latest_reading":     { en: "Latest reading",                ta: "சமீபத்திய அளவீடு" },
+  "wris.depth_below_ground": { en: "below ground",                  ta: "தரைக்குக் கீழ்" },
+  "wris.acquisition_mode":   { en: "Mode",                          ta: "முறை" },
+  "wris.mode_telemetric":    { en: "Telemetric (DWLR)",             ta: "தானியங்கி (DWLR)" },
+  "wris.mode_manual":        { en: "Manual (seasonal)",             ta: "கையேடு (பருவகால)" },
+  "wris.history_title":      { en: "Recent readings",               ta: "சமீபத்திய அளவீடுகள்" },
+  "wris.history_loading":    { en: "Loading readings...",           ta: "அளவீடுகள் ஏற்றப்படுகின்றன..." },
+  "wris.history_error":      { en: "Could not load readings",       ta: "அளவீடுகளை ஏற்ற முடியவில்லை" },
+  "wris.history_none":       { en: "No readings available",         ta: "அளவீடுகள் இல்லை" },
+  "wris.legend_title":       { en: "Live CGWB stations",            ta: "நேரடி CGWB நிலையங்கள்" },
+  "wris.source_note":        { en: "Source: India WRIS - CGWB monitoring stations.", ta: "ஆதாரம்: இந்தியா WRIS - CGWB கண்காணிப்பு நிலையங்கள்." },
+  "wris.days_ago":           { en: "{n} days ago",                  ta: "{n} நாட்களுக்கு முன்" },
+  "wris.today":              { en: "today",                          ta: "இன்று" },
+  "wris.yesterday":          { en: "yesterday",                      ta: "நேற்று" },
+  "wris.well_info_title":    { en: "Well details",                   ta: "கிணற்று விவரங்கள்" },
+  "wris.well_type":          { en: "Well type",                      ta: "கிணற்று வகை" },
+  "wris.well_depth":         { en: "Well depth",                     ta: "கிணற்று ஆழம்" },
+  "wris.aquifer":            { en: "Aquifer",                        ta: "நீர் படிவு" },
+  "wris.quality_stuck_title": { en: "Possible sensor failure",       ta: "சென்சார் தோல்வியாக இருக்கலாம்" },
+  "wris.quality_stuck_msg":  { en: "This station's reading has barely moved ({range}m over the last {count} days). That's unusual for a live DWLR sensor and most likely means the probe is stuck, recalibrated, or reporting a reference value. Treat the latest depth with caution.", ta: "இந்த நிலையத்தின் அளவீடு கடந்த {count} நாட்களில் {range}மீ மட்டுமே மாறியுள்ளது. நேரடி DWLR சென்சாருக்கு இது அசாதாரணமானது. சென்சார் சிக்கியிருக்கலாம் அல்லது மீள்சீரமைக்கப்பட்டிருக்கலாம். சமீபத்திய அளவீட்டை எச்சரிக்கையுடன் பார்க்கவும்." },
+  "wris.quality_stale_title": { en: "Data is old",                   ta: "தரவு பழையது" },
+  "wris.quality_stale_telem": { en: "This DWLR station has not reported a new reading in over two weeks.", ta: "இந்த DWLR நிலையம் இரண்டு வாரங்களுக்கு மேல் புதிய அளவீட்டை அறிக்கை செய்யவில்லை." },
+  "wris.quality_stale_manual": { en: "This is a seasonal manual station. CGWB only resurveys it every few months, so the reading may be months old.", ta: "இது ஒரு பருவகால கையேடு நிலையம். CGWB சில மாதங்களுக்கு ஒருமுறை மட்டுமே மறு ஆய்வு செய்கிறது." },
+
   "legend.exploit_title":    { en: "GW Exploitation",              ta: "நிலத்தடி நீர் சுரண்டல்" },
   "legend.safe":             { en: "Safe (<70%)",                   ta: "பாதுகாப்பான (<70%)" },
   "legend.semi_critical_lbl": { en: "Semi Critical (70-90%)",      ta: "அரை-தீவிரம் (70-90%)" },
   "legend.critical_lbl":     { en: "Critical (90-100%)",            ta: "தீவிரம் (90-100%)" },
   "legend.over_exploited":   { en: "Over Exploited (>100%)",        ta: "அதிக சுரண்டல் (>100%)" },
+
+  // CGWB/WRIS sensor status sub-legend (depth view only)
+  "legend.wris_status_title": { en: "CGWB Sensor Status",           ta: "CGWB சென்சார் நிலை" },
+  "legend.wris_stuck":       { en: "Suspect sensor",                ta: "செயலிழந்த சென்சார்" },
+  "legend.wris_stuck.tooltip": { en: "Telemetric station whose reading has barely moved in 60 days - likely a stuck sensor.", ta: "60 நாட்களில் அளவீடு அசையாத தொலைமாற்றும் நிலையம் - சென்சார் செயலிழந்திருக்கலாம்." },
+  "legend.wris_stale":       { en: "Old reading",                   ta: "பழைய அளவீடு" },
+  "legend.wris_stale.tooltip": { en: "Station has not reported a fresh reading within its expected cadence (DWLR >14 days, manual >180 days).", ta: "எதிர்பார்த்த இடைவெளிக்குள் (DWLR >14 நாட்கள், கையேடு >180 நாட்கள்) புதிய அளவீடு இல்லை." },
 
   // ── Rivers Panel ──────────────────────────────────────────────────────────
   "rivers.improving":      { en: "↑ Improving", ta: "↑ மேம்படுகிறது" },
@@ -288,6 +321,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   // ── About Page ────────────────────────────────────────────────────────────
   "about.title":           { en: "About Neer Vazhvu",    ta: "நீர் வாழ்வு பற்றி" },
   "about.intro":           { en: "An open-source water intelligence dashboard for Chennai, built to make public data accessible and actionable.", ta: "சென்னைக்கான திறந்த மூல நீர் அறிவு தளம், பொதுத் தரவை அணுகக்கூடியதாகவும் செயல்திறன் மிக்கதாகவும் மாற்றுவதற்காக உருவாக்கப்பட்டது." },
+  "about.collapsed_hint":  { en: "Sections are collapsed by default. Click any heading to expand it.", ta: "பிரிவுகள் இயல்பாக மூடப்பட்டுள்ளன. ஒவ்வொரு தலைப்பையும் கிளிக் செய்து விரிவாக்கலாம்." },
   "about.days_heading":    { en: "How \u201cDays of Water Left\u201d Works", ta: "\u201cமீதமுள்ள நீர் நாட்கள்\u201d எவ்வாறு செயல்படுகிறது" },
   "about.days_intro":      { en: "We compute three scenarios based on current reservoir storage, daily consumption, and inflow patterns:", ta: "தற்போதைய நீர்த்தேக்க இருப்பு, தினசரி நுகர்வு மற்றும் வரத்து முறைகளின் அடிப்படையில் மூன்று சூழ்நிலைகளை கணக்கிடுகிறோம்:" },
   "about.pessimistic":     { en: "Pessimistic (no rain):", ta: "மோசமான (மழையில்லாமல்):" },
@@ -297,8 +331,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.seasonal":        { en: "Seasonal rains:", ta: "பருவமழை:" },
   "about.seasonal_desc":   { en: "Uses the historical average inflow for this calendar month across all available years.", ta: "அனைத்து கிடைக்கும் ஆண்டுகளிலும் இந்த காலண்டர் மாதத்திற்கான வரலாற்று சராசரி வரத்தைப் பயன்படுத்துகிறது." },
   "about.assumptions":     { en: "Default Assumptions",    ta: "இயல்பு அனுமானங்கள்" },
-  "about.data_sources":    { en: "Data Sources & Aggregation", ta: "தரவு ஆதாரங்கள் & திரட்டல்" },
-  "about.intelligence":    { en: "Intelligence Layer",     ta: "நுண்ணறிவு அடுக்கு" },
+  "about.data_sources":    { en: "Data Source Index",      ta: "தரவு ஆதார அட்டவணை" },
+  "about.intelligence":    { en: "Intelligence & AI Narratives", ta: "நுண்ணறிவு & AI கதையாடல்கள்" },
   "about.forecasting":     { en: "Reservoir Forecasting",  ta: "நீர்த்தேக்க முன்கணிப்பு" },
   "about.gw_map":          { en: "Groundwater Map",        ta: "நிலத்தடி நீர் வரைபடம்" },
   "about.wb_map":          { en: "Water Bodies Map",       ta: "நீர்நிலை வரைபடம்" },
@@ -307,6 +341,32 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.limitations":     { en: "Known Limitations",      ta: "அறியப்பட்ட வரம்புகள்" },
   "about.open_source":     { en: "Open Source",            ta: "திறந்த மூலம்" },
   "about.view_github":     { en: "View on GitHub",         ta: "GitHub-ல் காண்க" },
+
+  // Top-level parent groups for the restructured About page
+  "about.group_reading":   { en: "Reading this dashboard",    ta: "இந்த டாஷ்போர்டை படிப்பது எப்படி" },
+  "about.group_pages":     { en: "What each page shows",      ta: "ஒவ்வொரு பக்கமும் காட்டுவது என்ன" },
+  "about.group_quality":   { en: "Data quality & limitations", ta: "தரவு தரம் & வரம்புகள்" },
+  "about.group_project":   { en: "About the project",         ta: "திட்டம் பற்றி" },
+
+  // Page sub-section titles inside "What each page shows"
+  "about.page_dashboard_title": { en: "Dashboard & reservoirs", ta: "டாஷ்போர்டு & நீர்த்தேக்கங்கள்" },
+  "about.page_gw_title":        { en: "Groundwater page",       ta: "நிலத்தடி நீர் பக்கம்" },
+  "about.page_wb_title":        { en: "Water bodies & restoration", ta: "நீர்நிலைகள் & மறுசீரமைப்பு" },
+  "about.page_rivers_title":    { en: "Rivers page",            ta: "ஆறுகள் பக்கம்" },
+  "about.page_flood_title":     { en: "Flood page",             ta: "வெள்ள பக்கம்" },
+  "about.page_my_ward_title":   { en: "My Ward page",           ta: "என் வார்டு பக்கம்" },
+  "about.page_flood_desc":      { en: "Overlays historical flood hazard zones from OpenCity on the ward map together with the Greater Chennai Corporation storm water drain (SWD) network. The goal is to let residents see whether their street sits inside a documented hazard footprint and whether a drain is mapped nearby.", ta: "OpenCity-யின் வரலாற்று வெள்ள ஆபத்து மண்டலங்களையும், GCC மழைநீர் வடிகால் வலையமைப்பையும் வார்டு வரைபடத்தில் காட்டுகிறது. தெரு ஒரு ஆபத்து மண்டலத்தில் இருக்கிறதா, அருகில் வடிகால் உள்ளதா என்பதை குடியிருப்பவர்களுக்கு காட்டுவதே இதன் நோக்கம்." },
+  "about.page_my_ward_desc":    { en: "A single-page rollup of every spatial layer the dashboard knows about - reservoirs, groundwater depth, ward risk score, water bodies, rivers, flood zones, drains, sewerage, CGWB stations - all filtered to one ward. It is the deep-link target when you click a ward anywhere in the app.", ta: "டாஷ்போர்டு அறிந்த ஒவ்வொரு இடஞ்சார்ந்த அடுக்கும் - நீர்த்தேக்கங்கள், நிலத்தடி நீர் ஆழம், வார்டு ஆபத்து மதிப்பெண், நீர்நிலைகள், ஆறுகள், வெள்ள மண்டலங்கள், வடிகால், கழிவுநீர், CGWB நிலையங்கள் - அனைத்தும் ஒரு வார்டுக்கு வடிகட்டப்பட்ட ஒற்றை பக்க சுருக்கம். பயன்பாட்டில் எங்கும் ஒரு வார்டை கிளிக் செய்யும்போது இது ஆழமான-இணைப்பு இலக்காகும்." },
+
+  // Grouping headers inside the flat Data Source Index
+  "about.ds_group_reservoir": { en: "Reservoirs & weather",       ta: "நீர்த்தேக்கங்கள் & வானிலை" },
+  "about.ds_group_gw":        { en: "Groundwater",                ta: "நிலத்தடி நீர்" },
+  "about.ds_group_wb":        { en: "Water bodies & historical",  ta: "நீர்நிலைகள் & வரலாறு" },
+  "about.ds_group_rivers":    { en: "Rivers & pollution",         ta: "ஆறுகள் & மாசு" },
+  "about.ds_group_flood":     { en: "Flood & drainage",           ta: "வெள்ளம் & வடிகால்" },
+  "about.ds_group_satellite": { en: "Satellite & Earth Engine",   ta: "செயற்கைக்கோள் & Earth Engine" },
+  "about.ds_group_base":      { en: "Base geography",             ta: "அடிப்படை புவியியல்" },
+  "about.ds_group_ai":        { en: "AI narratives",              ta: "AI கதையாடல்கள்" },
   "about.param":           { en: "Parameter",  ta: "அளவுரு" },
   "about.default":         { en: "Default",    ta: "இயல்பு" },
   "about.source_col":      { en: "Source",     ta: "ஆதாரம்" },
@@ -359,6 +419,20 @@ export const translations: Record<string, { en: string; ta: string }> = {
   // Groundwater map descriptions
   "about.gw_map_desc1":    { en: "The choropleth map shows depth to water table in metres below ground level (mbgl) for each of Chennai\u2019s 200 GCC wards. Lower values mean the water table is closer to the surface (healthier). Thresholds are based on CGWB classification for South Indian alluvial aquifers.", ta: "நிறப்படக் வரைபடம் சென்னையின் 200 GCC வார்டுகளில் ஒவ்வொன்றிலும் நிலத்தடி நீர்மட்டம் வரையிலான ஆழத்தை மீட்டர்களில் (mbgl) காட்டுகிறது. குறைந்த மதிப்புகள் நீர்மட்டம் மேற்பரப்பிற்கு அருகாமையில் உள்ளது (ஆரோக்கியமானது). வரம்புகள் தென்னிந்திய வண்டல் நீர்வழங்கல் நிலைகளுக்கான CGWB வகைப்பாட்டை அடிப்படையாகக் கொண்டவை." },
   "about.gw_map_desc2":    { en: "Year-over-year trends compare the same month across consecutive years. A change of more than 0.5m is classified as improving or declining.", ta: "ஆண்டுக்கு ஆண்டு போக்குகள் தொடர்ச்சியான ஆண்டுகளில் அதே மாதத்தை ஒப்பிடுகின்றன. 0.5 மீட்டருக்கு மேலான மாற்றம் மேம்படுவதாக அல்லது குறைவதாக வகைப்படுத்தப்படுகிறது." },
+
+  // CGWB station overlay + sensor QA (shown below the ward choropleth description)
+  "about.gw_cgwb_stations_title": { en: "Live CGWB station overlay", ta: "நேரடி CGWB நிலையங்கள் அடுக்கு" },
+  "about.gw_cgwb_stations_intro": { en: "The ward choropleth is sourced from OpenCity's monthly ward-level groundwater dataset, which is authoritative but usually lags by weeks to months. To pair it with ground-truth readings, we also plot ~35 CGWB (Central Ground Water Board) monitoring stations in Chennai district as circle markers, pulled directly from the India WRIS Ground Water Level API.", ta: "வார்டு நிறப்படம் OpenCity-இன் மாதாந்திர வார்டு-மட்ட தரவில் இருந்து வருகிறது, இது அதிகாரப்பூர்வமானது ஆனால் வாரங்கள் அல்லது மாதங்கள் பின்தங்கி வரும். இதனுடன் நேரடி அளவீடுகளை இணைக்க, இந்திய WRIS நிலத்தடி நீர் மட்டம் API-இல் இருந்து நேரடியாக பெறப்படும் ~35 CGWB கண்காணிப்பு நிலையங்களையும் வட்ட குறிகளாக வரைபடத்தில் காட்டுகிறோம்." },
+  "about.gw_cgwb_modes_title": { en: "Manual vs Telemetric stations - why the two can differ sharply", ta: "கையேடு vs தொலை அளவீட்டு நிலையங்கள் - ஏன் இரண்டும் வித்தியாசமாக இருக்கின்றன" },
+  "about.gw_cgwb_modes_manual": { en: "Manual stations are quarterly CGWB field-crew readings, usually from shallow dug wells (~5-11 m deep) sampling the unconfined aquifer. This is the water table residents actually pump from.", ta: "கையேடு நிலையங்கள் மூன்று மாதத்திற்கு ஒருமுறை CGWB கள குழுவால் எடுக்கப்படும் அளவீடுகள், பொதுவாக ஆழமற்ற தோண்டப்பட்ட கிணறுகளில் (~5-11 மீ) இருந்து." },
+  "about.gw_cgwb_modes_telem": { en: "Telemetric stations are DWLR sensors that transmit readings daily. They are usually installed on deeper bore wells or piezometers tapping confined or semi-confined aquifers (often 19-200 m deep), so they answer a different question than the manual dug wells and the two readings should not be conflated.", ta: "தொலை அளவீட்டு நிலையங்கள் நாளொரு முறை அளவீடுகளை அனுப்பும் DWLR சென்சார்கள். இவை பொதுவாக ஆழமான ஆழ்துளை கிணறுகள் அல்லது பைசோமீட்டர்களில் பொருத்தப்படுகின்றன (பெரும்பாலும் 19-200 மீ), எனவே கையேடு கிணறுகளை விட வேறொரு கேள்விக்கு பதில் அளிக்கின்றன." },
+  "about.gw_cgwb_modes_meta": { en: "The station panel surfaces the well type, total well depth, and aquifer type from WRIS metadata so you can tell which well is which before comparing readings.", ta: "WRIS metadata-வில் இருந்து நிலைய பலகம் கிணறு வகை, மொத்த கிணறு ஆழம் மற்றும் நீர்வழங்கல் வகையை காட்டுகிறது." },
+  "about.gw_cgwb_quality_title": { en: "Sensor quality flags", ta: "சென்சார் தரக் குறிப்புகள்" },
+  "about.gw_cgwb_quality_intro": { en: "DWLRs fail silently - a broken sensor keeps reporting the same depth forever, which would poison a naive dashboard. The groundwater_wris_latest database view scores every station with a data_quality_flag so suspect readings are surfaced explicitly rather than averaged into the ward colours:", ta: "DWLR-கள் அமைதியாக செயலிழக்கும் - ஒரு உடைந்த சென்சார் என்றென்றும் அதே ஆழத்தை அறிவிக்கும். groundwater_wris_latest பார்வை ஒவ்வொரு நிலையத்திற்கும் data_quality_flag-ஐ கணக்கிடுகிறது." },
+  "about.gw_cgwb_quality_stuck": { en: "stuck - Telemetric station with >=10 readings in the last 60 days whose median daily delta is under 1cm. This is robust to one-off step changes: a genuinely steady aquifer still passes, but a flat-lined sensor gets caught.", ta: "stuck - கடந்த 60 நாட்களில் >=10 அளவீடுகள் கொண்ட தொலை அளவீட்டு நிலையம், அதன் சராசரி தினசரி மாற்றம் 1 செ.மீ-க்கும் குறைவாக இருந்தால்." },
+  "about.gw_cgwb_quality_stale": { en: "stale - The latest reading is older than the station's expected cadence. Mode-aware: Telemetric becomes stale after 14 days (a DWLR should report daily), manual only after 180 days (CGWB resurveys it seasonally).", ta: "stale - கடைசி அளவீடு எதிர்பார்த்த இடைவெளியை தாண்டியது. தொலை அளவீட்டுக்கு 14 நாட்கள், கையேடு நிலையங்களுக்கு 180 நாட்கள்." },
+  "about.gw_cgwb_quality_ok": { en: "ok - Station has at least one recent reading and is neither stuck nor stale.", ta: "ok - நிலையத்தில் சமீபத்திய அளவீடு உள்ளது மற்றும் stuck அல்லது stale அல்ல." },
+  "about.gw_cgwb_quality_ui": { en: "On the map, suspect stations render with a neutral grey fill and a dashed amber ring so they never get confused with trustworthy readings, and the station panel shows an amber 'Possible sensor failure' banner with the exact 60-day range and reading count. The legend's sensor-status sub-section exposes toggles so reviewers can hide stuck or stale markers entirely.", ta: "வரைபடத்தில், சந்தேகத்திற்குரிய நிலையங்கள் நடுநிலை சாம்பல் நிரப்பு மற்றும் பார்டர் புள்ளிக் கோட்டுடன் காட்டப்படுகின்றன." },
 
   // Water bodies map
   "about.wb_map_desc":         { en: "The Water Bodies page combines current OpenStreetMap polygons, a curated set of 15 historically significant lost or encroached water bodies, and a new satellite context layer for a reviewed Phase 1 target set. For selected lakes and reservoirs, the detail panel now shows historical persistence, current spread versus the usual seasonal baseline, and an observation freshness/confidence label.", ta: "நீர்நிலை பக்கம் தற்போதைய OpenStreetMap பல்கோணங்கள், வரலாற்று முக்கியத்துவம் வாய்ந்த 15 இழந்த அல்லது ஆக்கிரமிக்கப்பட்ட நீர்நிலைகளின் தொகுப்பு, மற்றும் மதிப்பாய்வு செய்யப்பட்ட Phase 1 இலக்கு தொகுப்பிற்கான புதிய செயற்கைக்கோள் சூழல் அடுக்கை இணைக்கிறது. தேர்ந்தெடுக்கப்பட்ட ஏரிகள் மற்றும் நீர்த்தேக்கங்களுக்கு, விவர பலகம் வரலாற்று நிலைத்தன்மை, இந்த பருவத்தின் வழக்கமான அடிப்படையுடன் ஒப்பிடும் தற்போதைய பரப்பு, மற்றும் தரவு புத்தம்புதிய/நம்பிக்கை குறிச்சொல்லைக் காட்டுகிறது." },
@@ -492,6 +566,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.ds_sewerage_desc":   { en: "CMWSSB sewerage infrastructure: 8 sewage treatment plants (STPs) with capacity, 348 pumping stations (SPS) linked to STPs, and 3,834 pumping main segments with pipe material and size.", ta: "CMWSSB கழிவுநீர் உள்கட்டமைப்பு: 8 கழிவுநீர் சுத்திகரிப்பு நிலையங்கள் (STP), 348 பம்பிங் நிலையங்கள் (SPS), மற்றும் 3,834 பம்பிங் முக்கிய குழாய் பகுதிகள்." },
   "about.ds_imd_desc":        { en: "56-year monthly rainfall history (1970-2025) from IMD's 0.25-degree gridded dataset, extracted for the Chennai grid cell. Includes annual totals and long-term monthly normals for drought/flood/Day Zero year identification.", ta: "IMD-யின் 0.25-டிகிரி கிரிட் தரவுத்தொகுப்பிலிருந்து 56 ஆண்டு மாதாந்திர மழை வரலாறு (1970-2025), சென்னை கிரிட் செல்லுக்கு பிரித்தெடுக்கப்பட்டது. வறட்சி/வெள்ளம்/டே ஜீரோ ஆண்டு அடையாளத்திற்கான வருடாந்திர மொத்தங்கள் மற்றும் நீண்டகால மாத சாதாரண மதிப்புகள் அடங்கும்." },
   "about.ds_cgwb_desc":       { en: "Block-level groundwater exploitation data (2011-2024) from CGWB via India WRIS ArcGIS API. Shows classification (Safe to Over-Exploited), development percentage, net availability, and extraction draft for ~15 blocks in and around Chennai.", ta: "இந்தியா WRIS ArcGIS API மூலம் CGWB-யிலிருந்து பிளாக்-நிலை நிலத்தடி நீர் சுரண்டல் தரவு (2011-2024). சென்னை மற்றும் சுற்றியுள்ள ~15 பிளாக்குகளுக்கு வகைப்பாடு (பாதுகாப்பானது முதல் அதிக சுரண்டல் வரை), வளர்ச்சி சதவீதம், நிகர கிடைக்கும் தன்மை மற்றும் எடுப்பு வரைவு." },
+  "about.ds_wris_stations_desc": { en: "Station-level groundwater time series for ~35 CGWB monitoring stations in Chennai district, pulled daily from the India WRIS Ground Water Level API. Mix of Manual (quarterly dug wells, unconfined aquifer) and Telemetric (daily DWLR bore wells, confined aquifer) stations with well type, well depth, and aquifer metadata. Each station is scored server-side with a stuck/stale/ok data quality flag.", ta: "இந்திய WRIS நிலத்தடி நீர் மட்டம் API-இல் இருந்து தினசரி பெறப்படும் சென்னை மாவட்டத்தில் ~35 CGWB கண்காணிப்பு நிலையங்களுக்கான நிலைய-அளவிலான நிலத்தடி நீர் நேரத்தொடர். கையேடு (கிணறு, unconfined) மற்றும் தொலை அளவீட்டு (DWLR, confined) நிலையங்கள் கலந்தவை, கிணறு வகை, ஆழம் மற்றும் நீர்வழங்கல் வகையுடன். ஒவ்வொரு நிலையமும் stuck/stale/ok தரக் குறிப்பிடு கொண்டது." },
   "about.ds_crrt_desc":       { en: "9 restoration projects across Adyar, Cooum, Buckingham Canal, and Kosasthalaiyar rivers from the Chennai Rivers Restoration Trust. Includes project status, budget, area, implementing agencies, and outcome metrics.", ta: "சென்னை ஆறுகள் புனரமைப்பு அறக்கட்டளையிலிருந்து அடையாறு, கூவம், பக்கிங்ஹாம் கால்வாய் மற்றும் கோசஸ்தலையாறு ஆறுகளில் 9 புனரமைப்பு திட்டங்கள். திட்ட நிலை, பட்ஜெட், பரப்பளவு, செயல்படுத்தும் நிறுவனங்கள் மற்றும் விளைவு அளவீடுகள் அடங்கும்." },
   "about.ds_anthropic_desc":  { en: "AI-generated city and ward narratives connecting reservoir, groundwater, and risk data (Claude Sonnet for city, Haiku for wards)", ta: "நீர்த்தேக்கம், நிலத்தடி நீர் மற்றும் ஆபத்து தரவுகளை இணைக்கும் AI-உருவாக்கிய நகர மற்றும் வார்டு கதையாடல்கள்" },
   "about.ds_gee_dw_desc":     { en: "Dynamic World water observations processed through Google Earth Engine. We use a recent 45-day water composite to estimate current visible spread for reviewed Phase 1 lakes and reservoirs.", ta: "Google Earth Engine வழியாக செயலாக்கப்பட்ட Dynamic World நீர் கண்காணிப்புகள். மதிப்பாய்வு செய்யப்பட்ட Phase 1 ஏரிகள் மற்றும் நீர்த்தேக்கங்களுக்கான தற்போதைய காணக்கூடிய பரப்பை கணிக்க, சமீபத்திய 45 நாள் நீர் ஒருங்கிணைப்பை பயன்படுத்துகிறோம்." },

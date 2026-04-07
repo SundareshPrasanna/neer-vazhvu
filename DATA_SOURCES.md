@@ -62,6 +62,7 @@
 - Not all wards report every month -coverage varies
 - Measurement methodology may differ across wards
 - New year datasets require adding the resource ID to the scraper config
+- For fresher station-level readings, see [CGWB Station-Level Groundwater Time Series](#cgwb-station-level-groundwater-time-series---india-wris), which is pulled daily from the India WRIS Ground Water Level API and is plotted as a station overlay on top of the OpenCity ward choropleth.
 
 ## Water Bodies Census — data.gov.in
 
@@ -226,6 +227,47 @@
 - Block boundaries from India WRIS ArcGIS may not align exactly with GCC administrative boundaries
 - Some blocks cover areas beyond Chennai city limits
 - To regenerate: `npx tsx scripts/fetch-wris-groundwater.ts`
+
+## CGWB Station-Level Groundwater Time Series - India WRIS
+
+| | |
+|---|---|
+| **Source** | [India WRIS Ground Water Level API](https://indiawris.gov.in/Dataset/Ground%20Water%20Level) / CGWB |
+| **Method** | Python scraper `neer-vazhvu-api/app/scrapers/wris.py` pulling daily station-level readings for Chennai district; upserted into Supabase via `pipeline.py` |
+| **Frequency** | Daily fetch (as part of the monthly pipeline run); historical backfill via `neer-vazhvu-api/scripts/backfill_wris_metadata.py` |
+| **Coverage** | ~35 CGWB stations in Chennai district (mix of Manual dug wells and Telemetric DWLR bore wells) |
+| **Fields** | `station_code`, `station_name`, `latitude`, `longitude`, `reading_date`, `depth_to_water_m`, `acquisition_mode` (Manual / Telemetric), `agency`, `district`, `well_type` (Dug Well / Bore Well / Piezometer), `well_depth_m`, `well_aquifer_type` (Unconfined / Confined / Semi Confined) |
+| **Storage** | Supabase tables `groundwater_wris` (raw time series) and `groundwater_wris_latest` view (per-station latest reading + quality flag) |
+
+**Why this source?**
+- OpenCity's ward-level dataset is monthly-to-quarterly and often lags by months. CGWB stations give near-daily readings from telemetric DWLRs so the dashboard can surface fresher context next to the ward choropleth.
+- Each reading is tied to a specific well with known depth and aquifer type, which lets users distinguish a 6m dug well sampling the shallow unconfined aquifer from a 200m bore well piezometer tapping a deeper confined aquifer (the two can differ by tens of metres and must not be conflated).
+- Station points complement the ward choropleth with ground-truth measurements.
+
+**Manual vs Telemetric stations:**
+- **Manual (CGWB field crew):** quarterly / seasonal cadence, usually shallow dug wells in the unconfined aquifer. Readings are hand-logged by CGWB ground staff and reflect the shallow water table users actually pump from.
+- **Telemetric (DWLR):** Digital Water Level Recorders that transmit readings daily. Usually installed on deeper bore wells or piezometers tapping confined/semi-confined aquifers. Higher cadence but much more sensitive to sensor failure.
+
+**Data quality pipeline (`groundwater_wris_latest` view):**
+The view enriches each station's latest reading with a `data_quality_flag` so stale or broken sensors don't silently poison the map. Migrations `014_groundwater_wris_metadata_and_quality.sql` → `016_groundwater_wris_stuck_detection_v2.sql` define it:
+- **`stuck`** - Telemetric station with >=10 readings in the last 60 days whose **median daily |delta|** is < 1cm (0.01 m). This is a robust detector: a single one-off step change won't blow it out the way a pure range-based test would, but a sensor that has flat-lined for weeks will be caught. Current catches: ADAYAR_1, Pallavaram_2, Taramani NITTR PZ.
+- **`stale`** - mode-aware freshness threshold. Telemetric stations become stale if the latest reading is older than 14 days (a DWLR should report daily). Manual stations only become stale if the latest reading is older than 180 days (CGWB resurveys them seasonally).
+- **`ok`** - station has at least one recent reading and is neither stuck nor stale.
+- **`unknown`** - no recent data and mode behaviour cannot be judged.
+
+The view also returns `recent_count` and `recent_range_m` so downstream UIs can explain *why* a station was flagged.
+
+**How the frontend uses the flag:**
+- Suspect stations render with a neutral grey fill and a dashed amber border on the groundwater map, so they're visually distinct from trustworthy readings.
+- The WRIS station panel shows a prominent amber "Possible sensor failure" banner on stuck stations and a muted "Data is old" banner on stale stations, with context explaining which kind of station it is.
+- The depth-view legend has a filterable "CGWB sensor status" sub-section so reviewers can hide stuck or stale markers entirely.
+
+**Known limitations:**
+- The WRIS public API is rate-limited and occasionally returns empty responses; the scraper retries on transient failures.
+- A handful of stations have `Not Available` metadata fields - these are normalized to NULL in the stations API route.
+- The stuck-sensor detector currently only flags Telemetric stations. Manual stations with flat readings are assumed to be seasonal and left alone.
+- Well metadata (`well_type`, `well_depth_m`, `well_aquifer_type`) is backfilled from the WRIS metadata endpoint; stations added after the last backfill will have NULLs until the next pipeline run.
+- To backfill metadata on existing rows: `cd neer-vazhvu-api && python scripts/backfill_wris_metadata.py`
 
 ## Flood Risk Data - OpenCity Chennai
 

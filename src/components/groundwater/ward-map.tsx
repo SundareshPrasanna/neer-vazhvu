@@ -7,7 +7,7 @@ import L from "leaflet";
 import type { Layer, LeafletMouseEvent } from "leaflet";
 import type { Feature } from "geojson";
 import { getGroundwaterColor, getGroundwaterStatus, getRiskColor, getBlockClassColor } from "@/types/groundwater";
-import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation } from "@/types/groundwater";
+import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation, WrisStation } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { useMapTiles } from "@/lib/utils/map-tiles";
@@ -43,10 +43,13 @@ interface WardMapProps {
   flyToWard?: number | null;
   onWardSelect: (ward: GroundwaterWard | null) => void;
   onBlockSelect?: (block: GWBlock | null) => void;
+  onWrisStationSelect?: (station: WrisStation | null) => void;
+  wrisStations?: WrisStation[];
+  selectedWrisStationCode?: string | null;
   hiddenCategories?: Set<string>;
 }
 
-export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumber, flyToWard, onWardSelect, onBlockSelect, hiddenCategories }: WardMapProps) {
+export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumber, flyToWard, onWardSelect, onBlockSelect, onWrisStationSelect, wrisStations, selectedWrisStationCode, hiddenCategories }: WardMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [wardGeoJSON, setWardGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
@@ -241,6 +244,74 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
           )}
           {/* key includes viewMode so highlight remounts on top after choropleth remounts */}
           <SelectedWardHighlight key={`highlight-${viewMode}`} wardNumber={selectedWardNumber ?? null} />
+
+          {/* Live CGWB stations overlay (India WRIS) - only on depth view */}
+          {viewMode === "depth" && wrisStations?.map((s) => {
+            if (s.latitude == null || s.longitude == null) return null;
+            // Respect the legend's sensor-status filters so reviewers can hide
+            // suspect/stale stations when evaluating the map.
+            if (s.dataQualityFlag === "stuck" && hiddenCategories?.has("wris_stuck")) return null;
+            if (s.dataQualityFlag === "stale" && hiddenCategories?.has("wris_stale")) return null;
+            const depth = Math.abs(s.latestDepthM);
+            const isSelected = selectedWrisStationCode === s.stationCode;
+            const isSuspect = s.dataQualityFlag === "stuck" || s.dataQualityFlag === "stale";
+            // Stations flagged as stuck/stale get a neutral grey fill and a
+            // dashed border so they don't mislead users into thinking the
+            // depth is a real current reading.
+            const fillColor = isSuspect ? "#94a3b8" : getGroundwaterColor(depth);
+            const borderColor = isSelected
+              ? "#0c4a6e"
+              : s.dataQualityFlag === "stuck"
+                ? "#b45309"
+                : "#1e293b";
+            return (
+              <CircleMarker
+                key={s.stationCode}
+                center={[s.latitude, s.longitude]}
+                radius={isSelected ? 8 : 6}
+                pathOptions={{
+                  fillColor,
+                  color: borderColor,
+                  weight: isSelected ? 2.5 : 1.5,
+                  fillOpacity: isSuspect ? 0.55 : 0.95,
+                  dashArray: s.dataQualityFlag === "stuck" ? "2 3" : undefined,
+                }}
+                eventHandlers={{
+                  click: () => onWrisStationSelect?.(s),
+                }}
+              >
+                <Tooltip>
+                  <strong>{s.stationName}</strong>
+                  <br />
+                  <span style={{ fontSize: "11px" }}>
+                    {depth.toFixed(2)}m {t("wris.depth_below_ground")}
+                  </span>
+                  <br />
+                  <span style={{ fontSize: "10px", color: "#64748b" }}>
+                    {s.acquisitionMode === "Telemetric"
+                      ? t("wris.mode_telemetric")
+                      : t("wris.mode_manual")}
+                  </span>
+                  {s.dataQualityFlag === "stuck" && (
+                    <>
+                      <br />
+                      <span style={{ fontSize: "10px", color: "#b45309", fontWeight: 600 }}>
+                        {t("wris.quality_stuck_title")}
+                      </span>
+                    </>
+                  )}
+                  {s.dataQualityFlag === "stale" && (
+                    <>
+                      <br />
+                      <span style={{ fontSize: "10px", color: "#64748b", fontStyle: "italic" }}>
+                        {t("wris.quality_stale_title")}
+                      </span>
+                    </>
+                  )}
+                </Tooltip>
+              </CircleMarker>
+            );
+          })}
         </>
       )}
     </MapContainer>
