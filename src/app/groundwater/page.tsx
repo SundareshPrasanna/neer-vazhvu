@@ -274,6 +274,9 @@ function GroundwaterPageContent() {
                 onClick={() => {
                   setViewMode("risk");
                   setSelectedBlock(null);
+                  // CGWB station overlay only renders in depth view, so drop
+                  // any open station panel to avoid a stranded detail pane.
+                  setSelectedWrisStation(null);
                   setHiddenCategories(new Set());
                   // Keep current ward selection; only default if none selected
                   if (!selectedWard && data && data.wards.length > 0) {
@@ -294,6 +297,8 @@ function GroundwaterPageContent() {
               onClick={() => {
                 setViewMode("exploitation");
                 setSelectedWard(null);
+                // CGWB station overlay only renders in depth view.
+                setSelectedWrisStation(null);
                 setHiddenCategories(new Set());
                 // Keep current block selection; only default if none selected
                 if (!selectedBlock && blocks.length > 0) {
