@@ -373,9 +373,7 @@ async def run_daily() -> list[dict]:
         await _run_step("fetch_opencity", _step_fetch_opencity, required=False)
     )
 
-    steps.append(
-        await _run_step("fetch_wris", _step_fetch_wris, required=False)
-    )
+    steps.append(await _run_step("fetch_wris", _step_fetch_wris, required=False))
 
     # ETL
     step = await _run_step("compute_estimate", _step_compute_estimate)
@@ -425,9 +423,7 @@ async def run_post_scrape() -> list[dict]:
         await _run_step("fetch_opencity", _step_fetch_opencity, required=False)
     )
 
-    steps.append(
-        await _run_step("fetch_wris", _step_fetch_wris, required=False)
-    )
+    steps.append(await _run_step("fetch_wris", _step_fetch_wris, required=False))
 
     step = await _run_step("compute_estimate", _step_compute_estimate)
     steps.append(step)
