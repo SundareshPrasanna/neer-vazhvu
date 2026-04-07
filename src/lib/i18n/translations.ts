@@ -204,6 +204,23 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "gw_block.cgwb_note":      { en: "GW development >100% means extraction exceeds natural recharge - the aquifer is being depleted.", ta: "நிலத்தடி நீர் சுரண்டல் >100% என்றால் எடுப்பு இயற்கை நிரப்பீட்டை மீறுகிறது - நிலத்தடி நீர்வளம் குறைகிறது." },
   "gw_block.boundary_caveat": { en: "CGWB changed assessment block boundaries across years. Some blocks only appear from 2020 or 2023 onward as they were split from older compound blocks.", ta: "CGWB மதிப்பீட்டு தொகுதி எல்லைகள் ஆண்டுகளில் மாற்றப்பட்டன. சில தொகுதிகள் 2020 அல்லது 2023 முதல் மட்டுமே தோன்றும், ஏனெனில் அவை பழைய கூட்டு தொகுதிகளிலிருந்து பிரிக்கப்பட்டன." },
 
+  // ── WRIS / CGWB Live Stations (India WRIS) ─────────────────────────────────
+  "wris.station":            { en: "CGWB Station",                  ta: "CGWB நிலையம்" },
+  "wris.latest_reading":     { en: "Latest reading",                ta: "சமீபத்திய அளவீடு" },
+  "wris.depth_below_ground": { en: "below ground",                  ta: "தரைக்குக் கீழ்" },
+  "wris.acquisition_mode":   { en: "Mode",                          ta: "முறை" },
+  "wris.mode_telemetric":    { en: "Telemetric (DWLR)",             ta: "தானியங்கி (DWLR)" },
+  "wris.mode_manual":        { en: "Manual (seasonal)",             ta: "கையேடு (பருவகால)" },
+  "wris.history_title":      { en: "Recent readings",               ta: "சமீபத்திய அளவீடுகள்" },
+  "wris.history_loading":    { en: "Loading readings...",           ta: "அளவீடுகள் ஏற்றப்படுகின்றன..." },
+  "wris.history_error":      { en: "Could not load readings",       ta: "அளவீடுகளை ஏற்ற முடியவில்லை" },
+  "wris.history_none":       { en: "No readings available",         ta: "அளவீடுகள் இல்லை" },
+  "wris.legend_title":       { en: "Live CGWB stations",            ta: "நேரடி CGWB நிலையங்கள்" },
+  "wris.source_note":        { en: "Source: India WRIS - CGWB monitoring stations.", ta: "ஆதாரம்: இந்தியா WRIS - CGWB கண்காணிப்பு நிலையங்கள்." },
+  "wris.days_ago":           { en: "{n} days ago",                  ta: "{n} நாட்களுக்கு முன்" },
+  "wris.today":              { en: "today",                          ta: "இன்று" },
+  "wris.yesterday":          { en: "yesterday",                      ta: "நேற்று" },
+
   "legend.exploit_title":    { en: "GW Exploitation",              ta: "நிலத்தடி நீர் சுரண்டல்" },
   "legend.safe":             { en: "Safe (<70%)",                   ta: "பாதுகாப்பான (<70%)" },
   "legend.semi_critical_lbl": { en: "Semi Critical (70-90%)",      ta: "அரை-தீவிரம் (70-90%)" },

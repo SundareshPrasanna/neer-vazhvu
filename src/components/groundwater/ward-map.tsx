@@ -7,7 +7,7 @@ import L from "leaflet";
 import type { Layer, LeafletMouseEvent } from "leaflet";
 import type { Feature } from "geojson";
 import { getGroundwaterColor, getGroundwaterStatus, getRiskColor, getBlockClassColor } from "@/types/groundwater";
-import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation } from "@/types/groundwater";
+import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation, WrisStation } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { useMapTiles } from "@/lib/utils/map-tiles";
@@ -43,10 +43,13 @@ interface WardMapProps {
   flyToWard?: number | null;
   onWardSelect: (ward: GroundwaterWard | null) => void;
   onBlockSelect?: (block: GWBlock | null) => void;
+  onWrisStationSelect?: (station: WrisStation | null) => void;
+  wrisStations?: WrisStation[];
+  selectedWrisStationCode?: string | null;
   hiddenCategories?: Set<string>;
 }
 
-export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumber, flyToWard, onWardSelect, onBlockSelect, hiddenCategories }: WardMapProps) {
+export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumber, flyToWard, onWardSelect, onBlockSelect, onWrisStationSelect, wrisStations, selectedWrisStationCode, hiddenCategories }: WardMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [wardGeoJSON, setWardGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
@@ -241,6 +244,44 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
           )}
           {/* key includes viewMode so highlight remounts on top after choropleth remounts */}
           <SelectedWardHighlight key={`highlight-${viewMode}`} wardNumber={selectedWardNumber ?? null} />
+
+          {/* Live CGWB stations overlay (India WRIS) - only on depth view */}
+          {viewMode === "depth" && wrisStations?.map((s) => {
+            if (s.latitude == null || s.longitude == null) return null;
+            const depth = Math.abs(s.latestDepthM);
+            const fillColor = getGroundwaterColor(depth);
+            const isSelected = selectedWrisStationCode === s.stationCode;
+            return (
+              <CircleMarker
+                key={s.stationCode}
+                center={[s.latitude, s.longitude]}
+                radius={isSelected ? 8 : 6}
+                pathOptions={{
+                  fillColor,
+                  color: isSelected ? "#0c4a6e" : "#1e293b",
+                  weight: isSelected ? 2.5 : 1.5,
+                  fillOpacity: 0.95,
+                }}
+                eventHandlers={{
+                  click: () => onWrisStationSelect?.(s),
+                }}
+              >
+                <Tooltip>
+                  <strong>{s.stationName}</strong>
+                  <br />
+                  <span style={{ fontSize: "11px" }}>
+                    {depth.toFixed(2)}m {t("wris.depth_below_ground")}
+                  </span>
+                  <br />
+                  <span style={{ fontSize: "10px", color: "#64748b" }}>
+                    {s.acquisitionMode === "Telemetric"
+                      ? t("wris.mode_telemetric")
+                      : t("wris.mode_manual")}
+                  </span>
+                </Tooltip>
+              </CircleMarker>
+            );
+          })}
         </>
       )}
     </MapContainer>

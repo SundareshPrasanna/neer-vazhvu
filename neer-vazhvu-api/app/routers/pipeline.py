@@ -66,6 +66,23 @@ async def run_intelligence(authorization: str | None = Header(default=None)):
     return {"success": True, "steps": results}
 
 
+@router.post("/run-wris-fetch")
+async def run_wris_fetch_endpoint(
+    authorization: str | None = Header(default=None),
+):
+    """Fetch CGWB station-level groundwater from India WRIS API.
+
+    Fetches manual (seasonal) + telemetric (DWLR) readings for Chennai.
+    Can be run on-demand or weekly.
+    """
+    verify_cron_auth(authorization)
+
+    from app.etl.pipeline import run_wris_fetch
+
+    results = await run_wris_fetch()
+    return {"success": True, "steps": results}
+
+
 @router.post("/run-census-fetch")
 async def run_census_fetch(authorization: str | None = Header(default=None)):
     """One-time/periodic fetch of water bodies census from data.gov.in.

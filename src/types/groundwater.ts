@@ -152,6 +152,39 @@ export interface GWStationsData {
   stations: GWStation[];
 }
 
+// ── WRIS / CGWB live station readings (India WRIS API) ───────────────────────
+
+export interface WrisStation {
+  stationCode: string;
+  stationName: string;
+  latitude: number | null;
+  longitude: number | null;
+  latestDate: string;     // YYYY-MM-DD
+  latestDepthM: number;   // negative = below ground (depth to water)
+  acquisitionMode: string; // "Manual" | "Telemetric"
+}
+
+export interface WrisStationsResponse {
+  stations: WrisStation[];
+  totalStations: number;
+}
+
+export interface WrisStationReading {
+  date: string;     // YYYY-MM-DD
+  depthM: number;   // negative = below ground
+}
+
+export interface WrisStationHistoryResponse {
+  station: {
+    stationCode: string;
+    stationName: string;
+    latitude: number | null;
+    longitude: number | null;
+    acquisitionMode: string;
+  } | null;
+  readings: WrisStationReading[];
+}
+
 const BLOCK_CLASS_COLORS: Record<GWBlockClass, string> = {
   "Safe": "#22c55e",
   "Semi Critical": "#eab308",
