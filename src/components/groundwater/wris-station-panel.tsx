@@ -18,6 +18,7 @@ import type {
   WrisStation,
   WrisStationHistoryResponse,
   WrisStationReading,
+  WrisDataQualityFlag,
 } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 
@@ -46,6 +47,7 @@ export function WrisStationPanel({ station, onClose }: WrisStationPanelProps) {
   const locale = language === "ta" ? "ta-IN" : "en-IN";
 
   const [readings, setReadings] = useState<WrisStationReading[]>([]);
+  const [serverMeta, setServerMeta] = useState<WrisStationHistoryResponse["station"] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -65,6 +67,7 @@ export function WrisStationPanel({ station, onClose }: WrisStationPanelProps) {
       })
       .then((d: WrisStationHistoryResponse) => {
         setReadings(d.readings || []);
+        setServerMeta(d.station ?? null);
         setLoading(false);
       })
       .catch((e) => {
@@ -76,6 +79,18 @@ export function WrisStationPanel({ station, onClose }: WrisStationPanelProps) {
 
     return () => controller.abort();
   }, [station.stationCode]);
+
+  // The list payload (`station`) and the detail payload (`serverMeta`) share
+  // most fields, but only the detail payload has well metadata + quality flag
+  // in older list responses. Prefer serverMeta when available.
+  const wellType = serverMeta?.wellType ?? station.wellType ?? null;
+  const wellDepthM = serverMeta?.wellDepthM ?? station.wellDepthM ?? null;
+  const wellAquiferType = serverMeta?.wellAquiferType ?? station.wellAquiferType ?? null;
+  const qualityFlag: WrisDataQualityFlag | null =
+    serverMeta?.dataQualityFlag ?? station.dataQualityFlag ?? null;
+  const recentCount = serverMeta?.recentCount ?? station.recentCount ?? null;
+  const recentRangeM = serverMeta?.recentRangeM ?? station.recentRangeM ?? null;
+  const hasWellInfo = !!(wellType || wellDepthM || wellAquiferType);
 
   // Display absolute depth (negative WRIS values mean below ground)
   const depthBelowGround = Math.abs(station.latestDepthM);
@@ -156,6 +171,94 @@ export function WrisStationPanel({ station, onClose }: WrisStationPanelProps) {
           {modeLabel}
         </Badge>
       </div>
+
+      {qualityFlag === "stuck" && (
+        <div className="mb-4 rounded-md border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 p-3">
+          <div className="flex items-start gap-2">
+            <svg
+              className="w-4 h-4 mt-0.5 shrink-0 text-amber-600 dark:text-amber-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <div className="text-xs leading-relaxed text-amber-800 dark:text-amber-200">
+              <div className="font-semibold mb-0.5">
+                {t("wris.quality_stuck_title")}
+              </div>
+              <div>
+                {t("wris.quality_stuck_msg")
+                  .replace(
+                    "{range}",
+                    recentRangeM != null ? recentRangeM.toFixed(2) : "0.00",
+                  )
+                  .replace("{count}", String(recentCount ?? 60))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {qualityFlag === "stale" && (
+        <div className="mb-4 rounded-md border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/60 p-3">
+          <div className="text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+            <div className="font-semibold mb-0.5">
+              {t("wris.quality_stale_title")}
+            </div>
+            <div>
+              {station.acquisitionMode === "Telemetric"
+                ? t("wris.quality_stale_telem")
+                : t("wris.quality_stale_manual")}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {hasWellInfo && (
+        <div className="mb-6 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 p-3">
+          <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
+            {t("wris.well_info_title")}
+          </div>
+          <dl className="grid grid-cols-3 gap-2 text-xs">
+            {wellType && (
+              <>
+                <dt className="col-span-1 text-slate-500 dark:text-slate-400">
+                  {t("wris.well_type")}
+                </dt>
+                <dd className="col-span-2 text-slate-700 dark:text-slate-200 font-medium">
+                  {wellType}
+                </dd>
+              </>
+            )}
+            {wellDepthM != null && (
+              <>
+                <dt className="col-span-1 text-slate-500 dark:text-slate-400">
+                  {t("wris.well_depth")}
+                </dt>
+                <dd className="col-span-2 text-slate-700 dark:text-slate-200 font-medium">
+                  {wellDepthM}m
+                </dd>
+              </>
+            )}
+            {wellAquiferType && (
+              <>
+                <dt className="col-span-1 text-slate-500 dark:text-slate-400">
+                  {t("wris.aquifer")}
+                </dt>
+                <dd className="col-span-2 text-slate-700 dark:text-slate-200 font-medium">
+                  {wellAquiferType}
+                </dd>
+              </>
+            )}
+          </dl>
+        </div>
+      )}
 
       <div className="mb-6">
         <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">

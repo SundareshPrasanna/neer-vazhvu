@@ -27,3 +27,10 @@ class WrisGroundwaterRecord(BaseModel):
     agency: str = "CGWB"
     state: str = "Tamil Nadu"
     district: str = "Chennai"
+    # Well metadata (from WRIS API): helps users distinguish a 6m dug well in
+    # the unconfined aquifer from a 200m bore well in a confined aquifer.
+    well_type: str | None = None  # e.g. "Dug Well", "Bore Well", "Piezometer"
+    well_depth_m: float | None = None  # total well depth in metres
+    well_aquifer_type: str | None = (
+        None  # e.g. "Unconfined", "Confined", "Semi Confined"
+    )

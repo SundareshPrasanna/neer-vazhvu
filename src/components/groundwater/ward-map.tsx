@@ -248,9 +248,22 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
           {/* Live CGWB stations overlay (India WRIS) - only on depth view */}
           {viewMode === "depth" && wrisStations?.map((s) => {
             if (s.latitude == null || s.longitude == null) return null;
+            // Respect the legend's sensor-status filters so reviewers can hide
+            // suspect/stale stations when evaluating the map.
+            if (s.dataQualityFlag === "stuck" && hiddenCategories?.has("wris_stuck")) return null;
+            if (s.dataQualityFlag === "stale" && hiddenCategories?.has("wris_stale")) return null;
             const depth = Math.abs(s.latestDepthM);
-            const fillColor = getGroundwaterColor(depth);
             const isSelected = selectedWrisStationCode === s.stationCode;
+            const isSuspect = s.dataQualityFlag === "stuck" || s.dataQualityFlag === "stale";
+            // Stations flagged as stuck/stale get a neutral grey fill and a
+            // dashed border so they don't mislead users into thinking the
+            // depth is a real current reading.
+            const fillColor = isSuspect ? "#94a3b8" : getGroundwaterColor(depth);
+            const borderColor = isSelected
+              ? "#0c4a6e"
+              : s.dataQualityFlag === "stuck"
+                ? "#b45309"
+                : "#1e293b";
             return (
               <CircleMarker
                 key={s.stationCode}
@@ -258,9 +271,10 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
                 radius={isSelected ? 8 : 6}
                 pathOptions={{
                   fillColor,
-                  color: isSelected ? "#0c4a6e" : "#1e293b",
+                  color: borderColor,
                   weight: isSelected ? 2.5 : 1.5,
-                  fillOpacity: 0.95,
+                  fillOpacity: isSuspect ? 0.55 : 0.95,
+                  dashArray: s.dataQualityFlag === "stuck" ? "2 3" : undefined,
                 }}
                 eventHandlers={{
                   click: () => onWrisStationSelect?.(s),
@@ -278,6 +292,22 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
                       ? t("wris.mode_telemetric")
                       : t("wris.mode_manual")}
                   </span>
+                  {s.dataQualityFlag === "stuck" && (
+                    <>
+                      <br />
+                      <span style={{ fontSize: "10px", color: "#b45309", fontWeight: 600 }}>
+                        {t("wris.quality_stuck_title")}
+                      </span>
+                    </>
+                  )}
+                  {s.dataQualityFlag === "stale" && (
+                    <>
+                      <br />
+                      <span style={{ fontSize: "10px", color: "#64748b", fontStyle: "italic" }}>
+                        {t("wris.quality_stale_title")}
+                      </span>
+                    </>
+                  )}
                 </Tooltip>
               </CircleMarker>
             );

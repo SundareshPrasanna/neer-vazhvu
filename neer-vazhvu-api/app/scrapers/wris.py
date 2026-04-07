@@ -125,6 +125,12 @@ def _deduplicate_daily(raw: list[dict]) -> list[WrisGroundwaterRecord]:
         except ValueError:
             continue
 
+        well_depth_raw = meta.get("wellDepth")
+        try:
+            well_depth_m = float(well_depth_raw) if well_depth_raw is not None else None
+        except (TypeError, ValueError):
+            well_depth_m = None
+
         results.append(
             WrisGroundwaterRecord(
                 station_code=station_code,
@@ -137,6 +143,9 @@ def _deduplicate_daily(raw: list[dict]) -> list[WrisGroundwaterRecord]:
                 agency=meta.get("agencyName", "CGWB"),
                 state=meta.get("state", "Tamil Nadu"),
                 district=meta.get("district", "Chennai"),
+                well_type=meta.get("wellType"),
+                well_depth_m=well_depth_m,
+                well_aquifer_type=meta.get("wellAquiferType"),
             )
         )
 

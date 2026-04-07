@@ -154,6 +154,18 @@ export interface GWStationsData {
 
 // ── WRIS / CGWB live station readings (India WRIS API) ───────────────────────
 
+/**
+ * Data quality flag computed by the `groundwater_wris_latest` view:
+ * - stuck:   Telemetric sensor has effectively stopped moving (range < 10cm
+ *            over last 60 days with at least 5 readings). Treat the latest
+ *            value as suspect, likely hardware failure or recalibration.
+ * - stale:   Telemetric station not reporting for >14d, or Manual station
+ *            not resurveyed for >180d.
+ * - ok:      Station is operating as expected.
+ * - unknown: Not enough data to judge.
+ */
+export type WrisDataQualityFlag = "ok" | "stuck" | "stale" | "unknown";
+
 export interface WrisStation {
   stationCode: string;
   stationName: string;
@@ -162,6 +174,12 @@ export interface WrisStation {
   latestDate: string;     // YYYY-MM-DD
   latestDepthM: number;   // negative = below ground (depth to water)
   acquisitionMode: string; // "Manual" | "Telemetric"
+  wellType: string | null;         // "Dug Well", "Bore Well", "Piezometer", etc.
+  wellDepthM: number | null;       // Total well depth in metres
+  wellAquiferType: string | null;  // "Unconfined", "Confined", "Semi-Confined"
+  recentCount: number | null;      // Number of readings in the last 60 days
+  recentRangeM: number | null;     // Max-min depth over the last 60 days
+  dataQualityFlag: WrisDataQualityFlag | null;
 }
 
 export interface WrisStationsResponse {
@@ -181,6 +199,12 @@ export interface WrisStationHistoryResponse {
     latitude: number | null;
     longitude: number | null;
     acquisitionMode: string;
+    wellType: string | null;
+    wellDepthM: number | null;
+    wellAquiferType: string | null;
+    recentCount: number | null;
+    recentRangeM: number | null;
+    dataQualityFlag: WrisDataQualityFlag | null;
   } | null;
   readings: WrisStationReading[];
 }

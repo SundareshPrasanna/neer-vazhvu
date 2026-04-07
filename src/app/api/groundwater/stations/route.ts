@@ -39,10 +39,13 @@ export async function GET(request: NextRequest) {
   const cutoff = cutoffDate.toISOString().slice(0, 10);
 
   if (stationCode) {
-    // Return time series for a specific station
+    // Return time series for a specific station, along with the latest-view
+    // metadata (well_type, quality flag, etc.) so the panel can display it.
     let query = supabase
       .from("groundwater_wris")
-      .select("station_code, station_name, latitude, longitude, reading_date, depth_to_water_m, acquisition_mode")
+      .select(
+        "station_code, station_name, latitude, longitude, reading_date, depth_to_water_m, acquisition_mode, well_type, well_depth_m, well_aquifer_type",
+      )
       .eq("station_code", stationCode)
       .gte("reading_date", cutoff)
       .order("reading_date", { ascending: true })
@@ -52,27 +55,51 @@ export async function GET(request: NextRequest) {
       query = query.eq("acquisition_mode", modeFilter);
     }
 
-    const { data, error } = await query;
+    const [timeseriesRes, latestRes] = await Promise.all([
+      query,
+      supabase
+        .from("groundwater_wris_latest")
+        .select(
+          "station_code, station_name, latitude, longitude, acquisition_mode, well_type, well_depth_m, well_aquifer_type, recent_count, recent_range_m, data_quality_flag",
+        )
+        .eq("station_code", stationCode)
+        .maybeSingle(),
+    ]);
 
-    if (error) {
-      logRouteError("/api/groundwater/stations", error);
+    if (timeseriesRes.error) {
+      logRouteError("/api/groundwater/stations", timeseriesRes.error);
+      return internalServerError();
+    }
+    if (latestRes.error) {
+      logRouteError("/api/groundwater/stations", latestRes.error);
       return internalServerError();
     }
 
-    if (!data || data.length === 0) {
+    const data = timeseriesRes.data;
+    const latest = latestRes.data;
+
+    if ((!data || data.length === 0) && !latest) {
       return NextResponse.json({ station: null, readings: [] });
     }
 
-    const first = data[0];
+    const meta = latest ?? data?.[0];
     return NextResponse.json({
-      station: {
-        stationCode: first.station_code,
-        stationName: first.station_name,
-        latitude: first.latitude,
-        longitude: first.longitude,
-        acquisitionMode: first.acquisition_mode,
-      },
-      readings: data.map((r) => ({
+      station: meta
+        ? {
+            stationCode: meta.station_code,
+            stationName: meta.station_name,
+            latitude: meta.latitude,
+            longitude: meta.longitude,
+            acquisitionMode: meta.acquisition_mode,
+            wellType: normalizeMetaString(meta.well_type),
+            wellDepthM: meta.well_depth_m as number | null,
+            wellAquiferType: normalizeMetaString(meta.well_aquifer_type),
+            recentCount: latest?.recent_count ?? null,
+            recentRangeM: latest?.recent_range_m ?? null,
+            dataQualityFlag: (latest?.data_quality_flag as string | undefined) ?? null,
+          }
+        : null,
+      readings: (data ?? []).map((r) => ({
         date: r.reading_date,
         depthM: r.depth_to_water_m,
       })),
@@ -82,7 +109,9 @@ export async function GET(request: NextRequest) {
   // No station specified: return latest reading per station from the view
   let listQuery = supabase
     .from("groundwater_wris_latest")
-    .select("station_code, station_name, latitude, longitude, reading_date, depth_to_water_m, acquisition_mode");
+    .select(
+      "station_code, station_name, latitude, longitude, reading_date, depth_to_water_m, acquisition_mode, well_type, well_depth_m, well_aquifer_type, recent_count, recent_range_m, data_quality_flag",
+    );
 
   if (modeFilter) {
     listQuery = listQuery.eq("acquisition_mode", modeFilter);
@@ -104,6 +133,12 @@ export async function GET(request: NextRequest) {
       latestDate: r.reading_date as string,
       latestDepthM: r.depth_to_water_m as number,
       acquisitionMode: r.acquisition_mode as string,
+      wellType: normalizeMetaString(r.well_type),
+      wellDepthM: r.well_depth_m as number | null,
+      wellAquiferType: normalizeMetaString(r.well_aquifer_type),
+      recentCount: r.recent_count as number | null,
+      recentRangeM: r.recent_range_m as number | null,
+      dataQualityFlag: (r.data_quality_flag as string | null) ?? null,
     }))
     .sort((a, b) => a.stationName.localeCompare(b.stationName));
 
@@ -111,4 +146,17 @@ export async function GET(request: NextRequest) {
     stations,
     totalStations: stations.length,
   });
+}
+
+/**
+ * WRIS returns the metadata strings inconsistently: sometimes null, sometimes
+ * an empty string, sometimes the literal "Not Available". Normalize them all
+ * to null so the UI can reliably hide missing fields.
+ */
+function normalizeMetaString(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (trimmed.toLowerCase() === "not available") return null;
+  return trimmed;
 }

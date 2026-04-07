@@ -226,6 +226,9 @@ async def _step_fetch_wris() -> dict:
             "acquisition_mode": r.acquisition_mode,
             "agency": r.agency,
             "district": r.district,
+            "well_type": r.well_type,
+            "well_depth_m": r.well_depth_m,
+            "well_aquifer_type": r.well_aquifer_type,
             "source": "cgwb",
         }
         for r in records

@@ -16,6 +16,7 @@ graph TB
         GCC["GCC SWD Survey<br/>(Storm water drains, one-time)"]
         IMD["IMD Gridded Rainfall<br/>(via imdlib, one-time)"]
         WRIS["India WRIS / CGWB<br/>(GW exploitation, one-time)"]
+        WRIS_ST["India WRIS GWL API<br/>(CGWB station time series, daily)"]
         DGI["data.gov.in<br/>(Water Bodies Census)"]
         CMWSSB_SEW["CMWSSB Sewerage<br/>(STPs, SPS, pumping mains, one-time)"]
         ANTHROPIC["Anthropic Claude API<br/>(AI narratives)"]
@@ -29,7 +30,7 @@ graph TB
     end
 
     subgraph Database ["Supabase (PostgreSQL)"]
-        Core["Core Tables<br/>reservoir_daily<br/>weather_daily<br/>groundwater_monthly<br/>water_bodies_census"]
+        Core["Core Tables<br/>reservoir_daily<br/>weather_daily<br/>groundwater_monthly<br/>groundwater_wris<br/>water_bodies_census"]
         Computed["Computed Tables<br/>water_estimate_daily<br/>reservoir_forecast<br/>ward_risk_score<br/>daily_briefing<br/>ward_narrative"]
         GEE["GEE Tables<br/>water_body_satellite_summary<br/>reservoir_catchment_context<br/>water_body_satellite_evidence"]
         Storage["Supabase Storage<br/>satellite-evidence bucket"]
@@ -62,6 +63,7 @@ graph TB
     CMWSSB_SEW -->|KML/KMZ conversion| StaticFiles2
     IMD -->|imdlib script| StaticFiles
     WRIS -->|ArcGIS REST| StaticFiles
+    WRIS_ST -->|REST API, daily scrape| Scrapers
     ANTHROPIC -->|Claude API| Computed
     GEE_SRC -->|Earth Engine API| GEE
     GEE_SRC -->|Sentinel-2 thumbnails| Storage
@@ -120,6 +122,7 @@ flowchart LR
 | Scrape CMWSSB | cmwssb.tn.gov.in | `reservoir_daily` | Daily |
 | Fetch Weather | open-meteo.com (primary) / power.larc.nasa.gov (fallback) | `weather_daily` | Daily (zero lag) |
 | Fetch OpenCity | data.opencity.in | `groundwater_monthly` | Monthly (days 1-3) |
+| Fetch WRIS Stations | indiawris.gov.in Ground Water Level API | `groundwater_wris` (and `groundwater_wris_latest` view with stuck/stale sensor quality flag) | Daily |
 | Compute Estimate | Aggregated storage + inflow | `water_estimate_daily` | Daily |
 | Forecast | StatsForecast ARIMAX | `reservoir_forecast` | Daily |
 | Risk Scores | Groundwater + reservoir stress | `ward_risk_score` | Monthly |
@@ -174,6 +177,21 @@ erDiagram
         text ward_name
         text zone_name
         float depth_to_water_m
+    }
+
+    groundwater_wris {
+        text station_code PK
+        date reading_date PK
+        text station_name
+        float latitude
+        float longitude
+        float depth_to_water_m
+        text acquisition_mode "Manual or Telemetric"
+        text agency "CGWB"
+        text district
+        text well_type "Dug Well / Bore Well / Piezometer"
+        float well_depth_m
+        text well_aquifer_type "Unconfined / Confined / Semi Confined"
     }
 
     water_estimate_daily {
