@@ -4,7 +4,8 @@ import path from "node:path";
 import { describe, it } from "node:test";
 
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
-import { buildCityDistributions, computeGapAnalysis, computeUpliftPlan } from "./ward-uplift";
+import { buildCityDistributions, buildProjectedProfile, computeGapAnalysis, computeUpliftPlan } from "./ward-uplift";
+import { computeWardRankings, METRICS, percentileFromRank } from "./ward-rankings";
 import { INTERVENTIONS } from "@/lib/data/uplift-benchmarks";
 
 /* ── Load real profiles ────────────────────────────────────────────── */
@@ -188,5 +189,150 @@ describe("computeUpliftPlan - cost ranges reconcile", () => {
       assert.ok(alloc.costCrLow <= alloc.costCrMid, `${alloc.interventionId}: low > mid`);
       assert.ok(alloc.costCrMid <= alloc.costCrHigh, `${alloc.interventionId}: mid > high`);
     }
+  });
+});
+
+describe("ranking parity with report card", () => {
+  it("overallPercentileBefore matches computeWardRankings for all wards", () => {
+    let mismatches = 0;
+    for (const p of allProfiles) {
+      const plan = computeUpliftPlan(p.ward_number, allProfiles, 0, cityDist);
+      const report = computeWardRankings(p.ward_number, allProfiles);
+      assert.ok(plan);
+      assert.ok(report);
+      if (plan.overallPercentileBefore !== report.overallPercentile) {
+        mismatches++;
+      }
+    }
+    assert.equal(mismatches, 0, `${mismatches}/200 wards have mismatched percentiles`);
+  });
+
+  it("overallGradeBefore matches computeWardRankings for all wards", () => {
+    let mismatches = 0;
+    for (const p of allProfiles) {
+      const plan = computeUpliftPlan(p.ward_number, allProfiles, 0, cityDist);
+      const report = computeWardRankings(p.ward_number, allProfiles);
+      assert.ok(plan);
+      assert.ok(report);
+      if (plan.overallGradeBefore !== report.overallGrade) {
+        mismatches++;
+      }
+    }
+    assert.equal(mismatches, 0, `${mismatches}/200 wards have mismatched grades`);
+  });
+});
+
+describe("computeGapAnalysis - zero gap edge cases", () => {
+  it("never shows gapToNextGrade === 0 for non-A metrics", () => {
+    let zeroGaps = 0;
+    for (const p of allProfiles) {
+      const gaps = computeGapAnalysis(p.ward_number, allProfiles, cityDist);
+      for (const g of gaps) {
+        if (g.applicable && g.currentGrade !== "A" && g.gapToNextGrade === 0) {
+          zeroGaps++;
+        }
+      }
+    }
+    assert.equal(zeroGaps, 0, `Found ${zeroGaps} non-A metrics with gapToNextGrade === 0`);
+  });
+});
+
+describe("after-state ranking parity", () => {
+  it("overallPercentileAfter matches independent computeWardRankings recompute for all wards", () => {
+    let mismatches = 0;
+    const examples: string[] = [];
+    for (const p of allProfiles) {
+      const plan = computeUpliftPlan(p.ward_number, allProfiles, 100, cityDist);
+      if (!plan) continue;
+
+      // Independently build projected profile from plan allocations
+      const projectedValues = new Map<string, number>();
+      for (const alloc of plan.allocations) {
+        projectedValues.set(alloc.metricKey, alloc.metricAfter);
+      }
+      // Fill unchanged metrics with original values
+      for (const def of METRICS) {
+        if (!projectedValues.has(def.key)) {
+          const isApplicable = !def.applicable || def.applicable(p);
+          if (isApplicable) projectedValues.set(def.key, def.extract(p));
+        }
+      }
+
+      const projected = buildProjectedProfile(p, projectedValues);
+      const modified = allProfiles.map(w =>
+        w.ward_number === p.ward_number ? projected : w,
+      );
+      const rankings = computeWardRankings(p.ward_number, modified);
+      if (!rankings) continue;
+
+      if (plan.overallPercentileAfter !== rankings.overallPercentile) {
+        mismatches++;
+        if (examples.length < 5) {
+          examples.push(
+            `ward ${p.ward_number}: plan=${plan.overallPercentileAfter} vs recompute=${rankings.overallPercentile}`,
+          );
+        }
+      }
+    }
+    assert.equal(mismatches, 0, `${mismatches}/200 wards mismatch. Examples: ${examples.join("; ")}`);
+  });
+
+  it("per-metric after grades match independent recompute for all allocations", () => {
+    let mismatches = 0;
+    for (const p of allProfiles) {
+      const plan = computeUpliftPlan(p.ward_number, allProfiles, 100, cityDist);
+      if (!plan || plan.allocations.length === 0) continue;
+
+      const projectedValues = new Map<string, number>();
+      for (const alloc of plan.allocations) {
+        projectedValues.set(alloc.metricKey, alloc.metricAfter);
+      }
+      for (const def of METRICS) {
+        if (!projectedValues.has(def.key)) {
+          const isApplicable = !def.applicable || def.applicable(p);
+          if (isApplicable) projectedValues.set(def.key, def.extract(p));
+        }
+      }
+
+      const projected = buildProjectedProfile(p, projectedValues);
+      const modified = allProfiles.map(w =>
+        w.ward_number === p.ward_number ? projected : w,
+      );
+      const rankings = computeWardRankings(p.ward_number, modified);
+      if (!rankings) continue;
+
+      for (const alloc of plan.allocations) {
+        const metric = rankings.metrics.find(m => m.key === alloc.metricKey);
+        if (!metric || metric.grade == null) continue;
+        if (alloc.gradeAfter !== metric.grade) {
+          mismatches++;
+        }
+      }
+    }
+    assert.equal(mismatches, 0, `${mismatches} allocation after-grade mismatches`);
+  });
+
+  it("buildProjectedProfile round-trips: extract(projected) matches projected values", () => {
+    let failures = 0;
+    for (const p of allProfiles.slice(0, 50)) {
+      const plan = computeUpliftPlan(p.ward_number, allProfiles, 100, cityDist);
+      if (!plan || plan.allocations.length === 0) continue;
+
+      const projectedValues = new Map<string, number>();
+      for (const alloc of plan.allocations) {
+        projectedValues.set(alloc.metricKey, alloc.metricAfter);
+      }
+
+      const projected = buildProjectedProfile(p, projectedValues);
+      for (const [key, expected] of projectedValues) {
+        const def = METRICS.find(m => m.key === key);
+        if (!def) continue;
+        const actual = def.extract(projected);
+        if (Math.abs(actual - expected) > 0.01) {
+          failures++;
+        }
+      }
+    }
+    assert.equal(failures, 0, `${failures} round-trip failures`);
   });
 });

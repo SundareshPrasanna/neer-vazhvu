@@ -279,15 +279,34 @@ function GapCell({ gap }: { gap: MetricGap }) {
   if (!gap.applicable) {
     return <span>{t("uplift.not_applicable")}</span>;
   }
-  if (gap.gapToNextGrade == null) {
+  // gapToNextGrade=null, nextGrade=null => already A
+  if (gap.gapToNextGrade == null && gap.nextGrade == null) {
     return (
       <span className="text-emerald-600 dark:text-emerald-400">
         {t("uplift.no_gap")}
       </span>
     );
   }
+  // gapToNextGrade=null, nextGrade set => at grade boundary (ties hold ward back)
+  if (gap.gapToNextGrade == null && gap.nextGrade != null) {
+    return (
+      <span className="text-amber-600 dark:text-amber-400">
+        {t("uplift.at_boundary")}
+      </span>
+    );
+  }
 
-  const formatted = `${NUM.format(gap.gapToNextGrade)} ${gap.unit}`;
+  // Guard against near-zero gaps that round to "0" in display
+  const displayNum = NUM.format(gap.gapToNextGrade!);
+  if (displayNum === "0") {
+    return (
+      <span className="text-amber-600 dark:text-amber-400">
+        {t("uplift.at_boundary")}
+      </span>
+    );
+  }
+
+  const formatted = `${displayNum} ${gap.unit}`;
   if (gap.higherIsBetter) {
     return <span>{t("uplift.gap_needs_more").replace("{amount}", formatted)}</span>;
   }

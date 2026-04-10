@@ -1198,6 +1198,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "uplift.col_grade":                 { en: "Grade", ta: "தரம்" },
   "uplift.not_applicable":            { en: "N/A", ta: "பொ/இ" },
   "uplift.no_gap":                    { en: "Already top grade", ta: "ஏற்கனவே உயர் தரம்" },
+  "uplift.at_boundary":               { en: "At grade boundary", ta: "தர எல்லையில்" },
   "uplift.gap_needs_more":            { en: "Needs +{amount}", ta: "+{amount} தேவை" },
   "uplift.gap_needs_less":            { en: "Needs -{amount}", ta: "-{amount} தேவை" },
   "uplift.budget_spent":              { en: "Budget spent: INR {spent} Cr of {total} Cr", ta: "செலவான பட்ஜெட்: INR {spent} கோடி / {total} கோடி" },

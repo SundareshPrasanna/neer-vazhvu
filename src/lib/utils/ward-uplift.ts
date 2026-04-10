@@ -3,6 +3,7 @@ import type { Grade } from "@/lib/utils/ward-rankings";
 import {
   METRICS,
   computeMetric,
+  computeWardRankings,
   percentileToGrade,
   percentileForValue,
   getSortedValues,
@@ -30,8 +31,13 @@ export interface MetricGap {
   thresholdC: number | null;
   thresholdB: number | null;
   thresholdA: number | null;
-  /** How much the raw value must change to reach the next grade up. null if N/A or already A. */
+  /**
+   * How much the raw value must change to reach the next grade up.
+   * null if N/A, already A, or at grade boundary (value matches threshold
+   * but ties hold the ward in the lower grade).
+   */
   gapToNextGrade: number | null;
+  /** Next grade up. null if already A. Non-null with gapToNextGrade=null means at boundary. */
   nextGrade: Grade | null;
   applicable: boolean;
 }
@@ -69,12 +75,17 @@ export interface UpliftPlan {
 
 /* ── Precomputed city distributions ────────────────────────────────── */
 
-interface CityDistributions {
+export interface CityDistributions {
   metricComps: MetricComputation[];
   /** Sorted ascending arrays of metric values, one per metric key. */
   sortedValues: Map<string, number[]>;
   /** Raw value at each grade boundary, per metric key. */
   thresholds: Map<string, { p20: number; p40: number; p60: number; p80: number }>;
+  /** Real composite score per ward (same formula as report card). */
+  compositeByWard: Map<number, number>;
+  /** Real overall percentile per ward (from report-card ranking). */
+  overallPercentileByWard: Map<number, number>;
+  overallGradeByWard: Map<number, Grade>;
 }
 
 /**
@@ -103,7 +114,35 @@ export function buildCityDistributions(allProfiles: WardProfile[]): CityDistribu
     }
   }
 
-  return { metricComps, sortedValues, thresholds };
+  // Compute real composite scores and overall rankings (exact match with report card)
+  const compositeByWard = new Map<number, number>();
+  for (const p of allProfiles) {
+    compositeByWard.set(p.ward_number, computeCompositeScore(p, metricComps));
+  }
+
+  // Rank composites: higher is better, no tiebreaker (matches computeWardRankings)
+  const compositeEntries = allProfiles.map(p => ({
+    id: p.ward_number,
+    value: compositeByWard.get(p.ward_number)!,
+  }));
+  compositeEntries.sort((a, b) => b.value - a.value);
+
+  const overallPercentileByWard = new Map<number, number>();
+  const overallGradeByWard = new Map<number, Grade>();
+  let currentRank = 1;
+  for (let i = 0; i < compositeEntries.length; i++) {
+    if (i > 0 && compositeEntries[i].value !== compositeEntries[i - 1].value) {
+      currentRank = i + 1;
+    }
+    const pct = Math.round(percentileFromRank(currentRank, compositeEntries.length));
+    overallPercentileByWard.set(compositeEntries[i].id, pct);
+    overallGradeByWard.set(compositeEntries[i].id, percentileToGrade(pct));
+  }
+
+  return {
+    metricComps, sortedValues, thresholds,
+    compositeByWard, overallPercentileByWard, overallGradeByWard,
+  };
 }
 
 /**
@@ -158,8 +197,12 @@ export function computeGapAnalysis(
     if (isApplicable && currentValue != null && th) {
       const thresholdForNext = getNextThreshold(currentGrade, th, def.higherIsBetter);
       if (thresholdForNext != null) {
-        gapToNextGrade = Math.abs(thresholdForNext - currentValue);
         nextGrade = getNextGradeUp(currentGrade);
+        const rawGap = Math.abs(thresholdForNext - currentValue);
+        // If gap is effectively zero the ward sits at the grade boundary
+        // but ties hold it in the lower grade. Leave nextGrade set so the
+        // UI can distinguish "at boundary" from "already A".
+        gapToNextGrade = rawGap < 1e-9 ? null : rawGap;
       }
     }
 
@@ -214,13 +257,6 @@ function getNextThreshold(
 
 /* ── Greedy budget optimizer ───────────────────────────────────────── */
 
-interface ProjectedState {
-  /** Current projected raw metric value per metric key. */
-  values: Map<string, number>;
-  /** Units already allocated per intervention id. */
-  allocated: Map<string, number>;
-}
-
 /**
  * Compute the raw metric value of a ward after applying projected changes.
  * For area-normalized metrics this uses the ward's area.
@@ -256,63 +292,50 @@ function applyIntervention(
 }
 
 /**
- * Compute the composite overall percentile for the ward given projected
- * metric values. Uses the same weighted-sum-of-percentiles formula as
- * the report card, but with projected values ranked against the real
- * city distribution.
+ * Build a modified WardProfile where extract() returns projected metric
+ * values.  Used to rerun computeWardRankings() for exact after-state.
  */
-function projectedOverallPercentile(
+export function buildProjectedProfile(
   ward: WardProfile,
   projectedValues: Map<string, number>,
-  cityDist: CityDistributions,
-  allProfiles: WardProfile[],
-): number {
-  let compositeScore = 0;
+): WardProfile {
+  const p: WardProfile = JSON.parse(JSON.stringify(ward));
+  const area = p.area_sq_km;
 
-  for (const mc of cityDist.metricComps) {
-    const def = mc.def;
-    const isApplicable = !def.applicable || def.applicable(ward);
-    if (!isApplicable) {
-      compositeScore += 50 * def.weight; // neutral
-      continue;
+  for (const [key, value] of projectedValues) {
+    const metricDef = METRICS.find((m) => m.key === key);
+    if (!metricDef) continue;
+    const original = metricDef.extract(ward);
+    if (Math.abs(value - original) < 1e-12) continue;
+
+    switch (key) {
+      case "wb_health":
+        p.water_bodies.avg_restoration_score = value;
+        break;
+      case "wb_density":
+        p.water_bodies.current_count = Math.round(value * area);
+        break;
+      case "flood_risk": {
+        const targetSevere = value * area;
+        const cat = p.flood.by_category;
+        const currentSevere = (cat["very_high"] ?? 0) + (cat["high"] ?? 0);
+        if (currentSevere > 0) {
+          const ratio = targetSevere / currentSevere;
+          cat["very_high"] = (cat["very_high"] ?? 0) * ratio;
+          cat["high"] = (cat["high"] ?? 0) * ratio;
+        }
+        break;
+      }
+      case "drainage":
+        p.drainage.total_length_km = value * area;
+        break;
+      case "sewerage_infra":
+        p.sewerage.pumping_main_length_km = value * area;
+        break;
     }
-
-    const projectedValue = projectedValues.get(def.key);
-    if (projectedValue == null) {
-      compositeScore += 50 * def.weight;
-      continue;
-    }
-
-    const sv = cityDist.sortedValues.get(def.key);
-    if (!sv || sv.length === 0) {
-      compositeScore += 50 * def.weight;
-      continue;
-    }
-
-    const pct = percentileForValue(projectedValue, sv, def.higherIsBetter);
-    compositeScore += pct * def.weight;
   }
 
-  // Now find what percentile this composite score would be among all wards.
-  // Compute composite scores for all other wards.
-  const allComposites: number[] = [];
-  for (const p of allProfiles) {
-    if (p.ward_number === ward.ward_number) continue;
-    allComposites.push(computeCompositeScore(p, cityDist.metricComps));
-  }
-  allComposites.sort((a, b) => a - b);
-
-  // Binary search: how many wards does our composite beat?
-  let lo = 0, hi = allComposites.length;
-  while (lo < hi) {
-    const mid = (lo + hi) >> 1;
-    if (allComposites[mid] < compositeScore) lo = mid + 1;
-    else hi = mid;
-  }
-  const beatCount = lo;
-  const total = allComposites.length + 1;
-  const rank = total - beatCount;
-  return Math.round(percentileFromRank(rank, total));
+  return p;
 }
 
 export function computeUpliftPlan(
@@ -337,10 +360,8 @@ export function computeUpliftPlan(
   }
   const allocated = new Map<string, number>();
 
-  // Compute "before" overall percentile
-  const overallPercentileBefore = projectedOverallPercentile(
-    ward, projectedValues, cityDist, allProfiles,
-  );
+  // Use real report-card percentile for the before state (exact parity)
+  const overallPercentileBefore = cityDist.overallPercentileByWard.get(wardNumber) ?? 50;
 
   let budgetRemaining = totalBudgetCr;
 
@@ -415,6 +436,26 @@ export function computeUpliftPlan(
     );
   }
 
+  // Build projected profile and rerun exact ranking engine
+  const projectedProfile = buildProjectedProfile(ward, projectedValues);
+  const modifiedProfiles = allProfiles.map((p) =>
+    p.ward_number === wardNumber ? projectedProfile : p,
+  );
+  const afterRankings = computeWardRankings(wardNumber, modifiedProfiles);
+
+  // Per-metric exact percentiles and grades from after ranking
+  const afterMetricInfo = new Map<string, { pct: number; grade: Grade }>();
+  if (afterRankings) {
+    for (const m of afterRankings.metrics) {
+      if (m.rank != null && m.grade != null) {
+        afterMetricInfo.set(m.key, {
+          pct: Math.round(percentileFromRank(m.rank, m.total)),
+          grade: m.grade,
+        });
+      }
+    }
+  }
+
   // Build allocation results
   const allocations: InterventionAllocation[] = [];
   for (const intervention of INTERVENTIONS) {
@@ -424,16 +465,13 @@ export function computeUpliftPlan(
     const metricDef = METRICS.find((m) => m.key === intervention.metricKey);
     if (!metricDef) continue;
 
-    const sv = cityDist.sortedValues.get(intervention.metricKey);
+    const mc = cityDist.metricComps.find(m => m.def.key === intervention.metricKey);
     const originalValue = metricDef.extract(ward);
     const projectedValue = projectedValues.get(intervention.metricKey) ?? originalValue;
 
-    const pctBefore = sv
-      ? percentileForValue(originalValue, sv, metricDef.higherIsBetter)
-      : 50;
-    const pctAfter = sv
-      ? percentileForValue(projectedValue, sv, metricDef.higherIsBetter)
-      : 50;
+    // Use real report-card percentile for before; exact recompute for after
+    const pctBefore = mc?.percentileByWard.get(wardNumber) ?? 50;
+    const after = afterMetricInfo.get(intervention.metricKey);
 
     allocations.push({
       interventionId: intervention.id,
@@ -448,18 +486,16 @@ export function computeUpliftPlan(
       metricBefore: originalValue,
       metricAfter: projectedValue,
       percentileBefore: Math.round(pctBefore),
-      percentileAfter: Math.round(pctAfter),
+      percentileAfter: after?.pct ?? Math.round(pctBefore),
       gradeBefore: percentileToGrade(pctBefore),
-      gradeAfter: percentileToGrade(pctAfter),
+      gradeAfter: after?.grade ?? percentileToGrade(pctBefore),
     });
   }
 
   // Sort allocations by cost descending (biggest investment first)
   allocations.sort((a, b) => b.costCrMid - a.costCrMid);
 
-  const overallPercentileAfter = projectedOverallPercentile(
-    ward, projectedValues, cityDist, allProfiles,
-  );
+  const overallPercentileAfter = afterRankings?.overallPercentile ?? overallPercentileBefore;
 
   return {
     wardNumber,
