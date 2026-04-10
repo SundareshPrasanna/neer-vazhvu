@@ -94,7 +94,7 @@ const METRICS: MetricDef[] = [
     extract: (p) => {
       if (!p.area_sq_km || p.area_sq_km <= 0) return 0;
       const cat = p.flood.by_category;
-      const severe = (cat["very high"] ?? 0) + (cat["high"] ?? 0);
+      const severe = (cat["very_high"] ?? 0) + (cat["high"] ?? 0);
       return severe / p.area_sq_km;
     },
     higherIsBetter: false,
