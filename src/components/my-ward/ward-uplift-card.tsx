@@ -194,12 +194,19 @@ export function WardUpliftCard({ wardNumber }: Props) {
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0 mt-1">
-                    <GradeBadge grade={alloc.gradeBefore} />
-                    <svg className="w-3 h-3 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                    <GradeBadge grade={alloc.gradeAfter} />
+                  <div className="flex flex-col items-end shrink-0 mt-1">
+                    <div className="flex items-center gap-1">
+                      <GradeBadge grade={alloc.gradeBefore} />
+                      <svg className="w-3 h-3 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                      <GradeBadge grade={alloc.gradeAfter} />
+                    </div>
+                    {alloc.percentileAfter > alloc.percentileBefore && (
+                      <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 mt-0.5 tabular-nums">
+                        +{alloc.percentileAfter - alloc.percentileBefore} pct
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -241,11 +248,13 @@ export function WardUpliftCard({ wardNumber }: Props) {
                     </td>
                     <td className="py-1.5 pr-2 text-right tabular-nums font-medium text-slate-900 dark:text-slate-100">
                       {gap.applicable && gap.currentValue != null
-                        ? NUM.format(gap.currentValue)
+                        ? <>{NUM.format(gap.currentValue)} <span className="text-[10px] text-slate-400 font-normal">{gap.unit}</span></>
                         : t("uplift.not_applicable")}
                     </td>
                     <td className="py-1.5 pr-2 text-right tabular-nums text-slate-500">
-                      {gap.cityMedian != null ? NUM.format(gap.cityMedian) : "-"}
+                      {gap.cityMedian != null
+                        ? <>{NUM.format(gap.cityMedian)} <span className="text-[10px] text-slate-400">{gap.unit}</span></>
+                        : "-"}
                     </td>
                     <td className="py-1.5 pr-2 text-right tabular-nums text-slate-500">
                       <GapCell gap={gap} />

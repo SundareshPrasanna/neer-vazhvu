@@ -59,8 +59,8 @@ export const INTERVENTIONS: Intervention[] = [
     impactDirection: "add",
     resolution: "continuous",
     stepSize: 0.1,
-    maxUnits: () => 20, // practical cap per ward
-    flatMaxUnits: 20,
+    maxUnits: (p) => Math.ceil(p.area_sq_km * 10), // ~10 km/sq km headroom
+    flatMaxUnits: 100,
     sourceNote: "GCC SWD tender estimates 2022-24",
   },
   {
@@ -76,8 +76,8 @@ export const INTERVENTIONS: Intervention[] = [
     impactDirection: "add",
     resolution: "continuous",
     stepSize: 0.1,
-    maxUnits: () => 15,
-    flatMaxUnits: 15,
+    maxUnits: (p) => Math.ceil(p.area_sq_km * 6), // ~6 km/sq km headroom
+    flatMaxUnits: 60,
     sourceNote: "CMWSSB Phase-2 expansion DPR, Smart Cities Mission benchmarks",
   },
   {

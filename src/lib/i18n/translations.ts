@@ -1236,7 +1236,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "uplift.int_build_pumping_main":    { en: "Extend sewage network", ta: "கழிவுநீர் நெட்வொர்க்கை நீட்டித்தல்" },
   "uplift.int_build_pumping_main_desc": { en: "New pumping mains to expand sewerage coverage.", ta: "கழிவுநீர் கவரேஜை விரிவுபடுத்த புதிய பம்பிங் குழாய்கள்." },
   "uplift.int_flood_mitigation":      { en: "Flood zone mitigation", ta: "வெள்ள மண்டல தணிப்பு" },
-  "uplift.int_flood_mitigation_desc": { en: "Retention ponds, bund upgrades, and pump stations to reduce severe flood zones.", ta: "கடுமையான வெள்ள மண்டலங்களைக் குறைக்க தடுப்பு குளங்கள் மற்றும் பம்ப் நிலையங்கள்." },
+  "uplift.int_flood_mitigation_desc": { en: "Retention ponds, bund upgrades, and stormwater pump stations to reduce severe flood zones.", ta: "கடுமையான வெள்ள மண்டலங்களைக் குறைக்க தடுப்பு குளங்கள், கரை மேம்பாடுகள் மற்றும் மழைநீர் பம்ப் நிலையங்கள்." },
   "uplift.int_restore_wb":            { en: "Restore water bodies", ta: "நீர்நிலைகளை மறுசீரமைத்தல்" },
   "uplift.int_restore_wb_desc":       { en: "Desilting, bund repair, and pollution control for degraded water bodies.", ta: "சீரழிந்த நீர்நிலைகளுக்கு தூர்வாரல் மற்றும் கரையோர பழுதுபார்ப்பு." },
   "uplift.int_revive_wb":             { en: "Revive lost water bodies", ta: "இழக்கப்பட்ட நீர்நிலைகளை புதுப்பித்தல்" },
