@@ -383,10 +383,10 @@ export function computeUpliftPlan(
       const isApplicable = !metricDef.applicable || metricDef.applicable(ward);
       if (!isApplicable) continue;
 
-      // Check unit cap
+      // Check unit cap (tolerance for floating-point accumulation)
       const currentAlloc = allocated.get(intervention.id) ?? 0;
       const maxUnits = Math.min(intervention.maxUnits(ward), intervention.flatMaxUnits);
-      if (currentAlloc >= maxUnits) continue;
+      if (currentAlloc + 1e-9 >= maxUnits) continue;
 
       // Compute step cost
       const stepCost =
@@ -410,7 +410,20 @@ export function computeUpliftPlan(
 
       const currentPct = percentileForValue(currentValue, sv, metricDef.higherIsBetter);
       const newPct = percentileForValue(newValue, sv, metricDef.higherIsBetter);
-      const deltaPct = newPct - currentPct;
+      let deltaPct = newPct - currentPct;
+
+      // In flat distribution regions many wards share the same value, so
+      // a single step may not jump enough wards to register a percentile
+      // change.  When the raw value did improve but deltaPct rounds to 0,
+      // use a tiny positive delta so the optimizer keeps investing.  The
+      // final exact computeWardRankings() recompute determines the true
+      // after-state regardless of this heuristic.
+      const rawImproved = metricDef.higherIsBetter
+        ? newValue > currentValue + 1e-12
+        : newValue < currentValue - 1e-12;
+      if (deltaPct <= 0 && rawImproved) {
+        deltaPct = 0.01; // small nudge to keep allocating
+      }
       if (deltaPct <= 0) continue;
 
       const deltaComposite = deltaPct * metricDef.weight;
