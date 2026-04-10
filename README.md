@@ -97,6 +97,7 @@ A unified ward report page at `/my-ward` that aggregates all data layers for any
 - **Source Attribution** - Every card shows data source and caveats (data age, model limitations, units explained)
 - **Export** - CSV download of all ward data, share via URL, print-friendly layout
 - **Ward Report Card** - Print-optimized one-pager at `/my-ward/report?ward=N` ranking a ward among all 200 on 5 governance-quality metrics (water body health, water body density, flood risk exposure, drainage coverage, sewage network coverage). Percentile-based A-F grades, zone/city median comparisons, elected representatives, methodology disclosure with known limitations. All density metrics area-normalized; line-based infrastructure apportioned across ward boundaries by sampling
+- **Uplift Planner** - Interactive budget optimizer answering "If I had INR X crore for my ward, where should I invest?" A greedy algorithm allocates a hypothetical budget (10-500 Cr slider) across 5 intervention types (storm drains, sewerage, flood mitigation, water body restoration, water body revival), maximizing composite-score improvement per crore spent. Data-backed caps prevent over-allocation (e.g. can't restore more bodies than actually need it). After-state uses exact ranking engine recompute (not approximation) for grade projections. Cost ranges from published GCC/CMWSSB/NDMA project reports
 
 ### Intelligence Layer (Python Service)
 - **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals; uses inflow/outflow, precipitation, and ET₀ (evapotranspiration) as exogenous regressors when data variance is sufficient
@@ -539,6 +540,43 @@ Each ward receives a composite score from 0 (safe) to 100 (critical):
 | Seasonal vulnerability | 10% | Time of year (pre-monsoon = highest risk) |
 
 Risk levels: **Low** (0–25) · **Moderate** (26–50) · **High** (51–75) · **Critical** (76–100)
+
+## Ward Report Card Methodology
+
+Each of Chennai's 200 wards receives a composite score (0-100) based on 5 governance-quality metrics, each ranked independently with percentile-based A-F grades:
+
+| Metric | Weight | Unit | Direction | Tiebreaker |
+|--------|--------|------|-----------|------------|
+| Drainage coverage | 25% | km/sq km | Higher = better | - |
+| Sewerage infrastructure | 25% | km/sq km | Higher = better | SPS density |
+| Flood risk exposure | 25% | zones/sq km | Lower = better | - |
+| Water body health | 15% | restoration score | Lower = better | Body count |
+| Water body density | 10% | bodies/sq km | Higher = better | - |
+
+**Grading:** A (80th+ percentile), B (60-79th), C (40-59th), D (20-39th), F (below 20th). Percentile formula: `(total - rank) / (total - 1) * 100`. The overall grade applies the same thresholds to the composite score's percentile rank.
+
+**Implementation:** `src/lib/utils/ward-rankings.ts` - `computeWardRankings()` computes per-metric ranks with tiebreakers, composite scores via `computeCompositeScore()`, and overall ranking via `rankEntries()`.
+
+## Uplift Planner Methodology
+
+The uplift planner answers: "If I had INR X crore for my ward, where should I invest it to improve its grade the most?"
+
+**Algorithm:** Greedy budget optimizer (`src/lib/utils/ward-uplift.ts`)
+1. **Gap analysis** - Compares the ward's current value on each metric against the city distribution to identify where it lags
+2. **Greedy loop** - At each step, evaluates every feasible intervention and picks the one with the highest weighted-percentile improvement per crore. Repeats until budget is spent or all caps are hit
+3. **Exact projection** - Builds a modified ward profile with projected metric values and reruns `computeWardRankings()` on the full 200-ward dataset to get the exact after-state grade and percentile (not an approximation)
+
+**Interventions & costs** (from published government project reports):
+
+| Intervention | Cost/unit (Cr) | Metric | Cap logic |
+|-------------|---------------|--------|-----------|
+| Build storm drains | 1.5-3.0/km | Drainage coverage | 20 km/ward |
+| Extend sewage network | 3.0-6.0/km | Sewerage infra | 15 km/ward |
+| Flood zone mitigation | 5-15/zone | Flood risk | Actual high+very-high zones |
+| Restore water bodies | 2-8/body | WB health | Bodies rated critical/high |
+| Revive lost water bodies | 10-25/body | WB density | Documented lost bodies |
+
+**Ranking parity:** Both before-state and after-state achieve 0/200 disagreements with the authoritative `computeWardRankings()` engine across all wards. Verified by exhaustive tests in `ward-uplift.test.ts`.
 
 ## Restoration Priority Methodology
 

@@ -522,6 +522,125 @@ export function AboutContent() {
             <p className="text-slate-600 dark:text-slate-400">
               {t("about.page_my_ward_desc")}
             </p>
+
+            {/* Report card methodology */}
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40 space-y-3">
+              <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t("about.report_card_title")}</h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                {t("about.report_card_desc")}
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
+                      <th className="pb-2 font-medium">Metric</th>
+                      <th className="pb-2 font-medium">Weight</th>
+                      <th className="pb-2 font-medium">Direction</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-slate-700 dark:text-slate-300 text-xs">
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5">{t("uplift.factor_drainage")}</td>
+                      <td className="py-1.5 font-mono">25%</td>
+                      <td className="py-1.5">Higher = better</td>
+                    </tr>
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5">{t("uplift.factor_sewerage_infra")}</td>
+                      <td className="py-1.5 font-mono">25%</td>
+                      <td className="py-1.5">Higher = better</td>
+                    </tr>
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5">{t("uplift.factor_flood_risk")}</td>
+                      <td className="py-1.5 font-mono">25%</td>
+                      <td className="py-1.5">Lower = better</td>
+                    </tr>
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5">{t("uplift.factor_wb_health")}</td>
+                      <td className="py-1.5 font-mono">15%</td>
+                      <td className="py-1.5">Lower = better</td>
+                    </tr>
+                    <tr>
+                      <td className="py-1.5">{t("uplift.factor_wb_density")}</td>
+                      <td className="py-1.5 font-mono">10%</td>
+                      <td className="py-1.5">Higher = better</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {t("about.report_card_grading")}
+              </p>
+            </div>
+
+            {/* Uplift planner methodology */}
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40 space-y-3">
+              <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t("about.uplift_title")}</h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                {t("about.uplift_desc")}
+              </p>
+
+              <h5 className="text-xs font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide">
+                {t("about.uplift_how_title")}
+              </h5>
+              <ol className="list-decimal list-inside text-sm text-slate-600 dark:text-slate-400 space-y-2">
+                <li>{t("about.uplift_step1")}</li>
+                <li>{t("about.uplift_step2")}</li>
+                <li>{t("about.uplift_step3")}</li>
+              </ol>
+
+              <h5 className="text-xs font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide pt-1">
+                {t("about.uplift_caps_title")}
+              </h5>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                {t("about.uplift_caps_desc")}
+              </p>
+
+              <h5 className="text-xs font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide pt-1">
+                {t("about.uplift_costs_title")}
+              </h5>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                {t("about.uplift_costs_desc")}
+              </p>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
+                      <th className="pb-2 font-medium">Intervention</th>
+                      <th className="pb-2 font-medium">Cost/unit</th>
+                      <th className="pb-2 font-medium">Metric</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-slate-700 dark:text-slate-300 text-xs">
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5">{t("uplift.int_build_drain")}</td>
+                      <td className="py-1.5 font-mono">1.5-3.0 Cr/km</td>
+                      <td className="py-1.5">{t("uplift.factor_drainage")}</td>
+                    </tr>
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5">{t("uplift.int_build_pumping_main")}</td>
+                      <td className="py-1.5 font-mono">3.0-6.0 Cr/km</td>
+                      <td className="py-1.5">{t("uplift.factor_sewerage_infra")}</td>
+                    </tr>
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5">{t("uplift.int_flood_mitigation")}</td>
+                      <td className="py-1.5 font-mono">5-15 Cr/zone</td>
+                      <td className="py-1.5">{t("uplift.factor_flood_risk")}</td>
+                    </tr>
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-1.5">{t("uplift.int_restore_wb")}</td>
+                      <td className="py-1.5 font-mono">2-8 Cr/body</td>
+                      <td className="py-1.5">{t("uplift.factor_wb_health")}</td>
+                    </tr>
+                    <tr>
+                      <td className="py-1.5">{t("uplift.int_revive_wb")}</td>
+                      <td className="py-1.5 font-mono">10-25 Cr/body</td>
+                      <td className="py-1.5">{t("uplift.factor_wb_density")}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </SubSection>
         </Section>
 
