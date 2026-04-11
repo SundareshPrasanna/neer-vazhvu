@@ -1228,7 +1228,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "uplift.no_improvement":            { en: "No further improvement possible with remaining budget.", ta: "மீதமுள்ள பட்ஜெட்டில் மேலும் மேம்பாடு சாத்தியமில்லை." },
   "uplift.no_allocations":            { en: "No allocations needed - budget is zero or ward is already top-ranked.", ta: "ஒதுக்கீடுகள் தேவையில்லை - பட்ஜெட் பூஜ்ஜியம் அல்லது வார்டு ஏற்கனவே உயர் தரத்தில் உள்ளது." },
   "uplift.cost_range":                { en: "INR {low}-{high} Cr", ta: "INR {low}-{high} கோடி" },
-  "uplift.disclaimer":                { en: "Hypothetical estimates based on published government project costs. Actual costs vary by site conditions, land availability, and procurement method. Not a tender or budget proposal.", ta: "வெளியிடப்பட்ட அரசு திட்ட செலவுகளின் அடிப்படையிலான கற்பனையான மதிப்பீடுகள். உண்மையான செலவுகள் தள நிலைமைகள், நில கிடைக்கும் தன்மை மற்றும் கொள்முதல் முறையால் மாறுபடும்." },
+  "uplift.disclaimer":                { en: "Hypothetical estimates based on published government project costs. Budget allocation uses a greedy heuristic - recommendations are approximate, not globally optimal. Actual costs vary by site conditions, land availability, and procurement method. Not a tender or budget proposal.", ta: "வெளியிடப்பட்ட அரசு திட்ட செலவுகளின் அடிப்படையிலான கற்பனையான மதிப்பீடுகள். பட்ஜெட் ஒதுக்கீடு ஒரு தோராயமான வழிமுறையைப் பயன்படுத்துகிறது - பரிந்துரைகள் தோராயமானவை. உண்மையான செலவுகள் தள நிலைமைகள், நில கிடைக்கும் தன்மை மற்றும் கொள்முதல் முறையால் மாறுபடும்." },
 
   // Intervention names
   "uplift.int_build_drain":           { en: "Build storm drains", ta: "புயல் வடிகால் கட்டுதல்" },
