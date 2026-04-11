@@ -28,6 +28,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "footer.data_sources":  { en: "Core live sources:",        ta: "முக்கிய நேரடி தரவு ஆதாரங்கள்:" },
   "footer.all_sources":   { en: "All sources",               ta: "அனைத்து ஆதாரங்கள்" },
   "footer.open_source":   { en: "Open source · Built for Chennai", ta: "திறந்த மூலம் · சென்னைக்காக" },
+  "footer.support":       { en: "Support on Patreon",            ta: "Patreon-ல் ஆதரவு" },
 
   // ── Days Left Hero ────────────────────────────────────────────────────────
   "hero.title":           { en: "Days of Water Left",        ta: "மீதமுள்ள நீர் நாட்கள்" },
@@ -557,6 +558,11 @@ export const translations: Record<string, { en: string; ta: string }> = {
 
   // Open source
   "about.open_source_desc": { en: "Neer Vazhvu is fully open source. The code, data pipeline, and methodology are transparent and available on GitHub. Contributions, bug reports, and data corrections are welcome.", ta: "நீர் வாழ்வு முழுமையாக திறந்த மூலமாக உள்ளது. குறியீடு, தரவு பைப்லைன் மற்றும் முறைமை வெளிப்படையானவை மற்றும் GitHub-ல் கிடைக்கின்றன. பங்களிப்புகள், பிழை அறிக்கைகள் மற்றும் தரவு திருத்தங்கள் வரவேற்கப்படுகின்றன." },
+
+  // Support
+  "about.support":         { en: "Support this project",  ta: "இந்த திட்டத்தை ஆதரிக்கவும்" },
+  "about.support_desc":    { en: "Neer Vazhvu is free and open source. If you find it useful, consider supporting us on Patreon to help cover satellite data, hosting, and API costs.", ta: "நீர் வாழ்வு இலவசமும் திறந்த மூலமும் ஆகும். இது உங்களுக்கு பயனுள்ளதாக இருந்தால், செயற்கைக்கோள் தரவு, ஹோஸ்டிங் மற்றும் API செலவுகளை ஈடுகட்ட Patreon-ல் எங்களை ஆதரிக்கவும்." },
+  "about.view_patreon":    { en: "Support on Patreon",    ta: "Patreon-ல் ஆதரிக்கவும்" },
 
   // Data source frequencies (shared)
   "about.freq_daily":         { en: "Daily (zero lag)",                         ta: "தினசரி (தாமதம் இல்லை)" },

@@ -958,6 +958,23 @@ export function AboutContent() {
               {t("about.view_github")}
             </a>
           </SubSection>
+
+          <SubSection title={t("about.support")}>
+            <p className="text-slate-600 dark:text-slate-400">
+              {t("about.support_desc")}
+            </p>
+            <a
+              href="https://www.patreon.com/NeerVazhvu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#FF424D] text-white rounded-lg text-sm font-medium hover:bg-[#e03840] transition-colors"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15.386 2c-3.49 0-6.322 2.832-6.322 6.322 0 3.49 2.832 6.322 6.322 6.322 3.49 0 6.322-2.832 6.322-6.322C21.708 4.832 18.876 2 15.386 2M2.292 22h3.449V2H2.292v20z" />
+              </svg>
+              {t("about.view_patreon")}
+            </a>
+          </SubSection>
         </Section>
 
       </div>

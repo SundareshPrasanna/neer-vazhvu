@@ -52,8 +52,17 @@ export function Footer() {
               {t("footer.all_sources")}
             </a>
           </div>
-          <div>
-            {t("footer.open_source")}
+          <div className="flex items-center gap-2">
+            <span>{t("footer.open_source")}</span>
+            <span className="text-slate-300 dark:text-slate-600">·</span>
+            <a
+              href="https://www.patreon.com/NeerVazhvu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {t("footer.support")}
+            </a>
           </div>
         </div>
       </div>
