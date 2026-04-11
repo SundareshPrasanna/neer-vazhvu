@@ -358,6 +358,28 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.page_flood_desc":      { en: "Overlays historical flood hazard zones from OpenCity on the ward map together with the Greater Chennai Corporation storm water drain (SWD) network. The goal is to let residents see whether their street sits inside a documented hazard footprint and whether a drain is mapped nearby.", ta: "OpenCity-யின் வரலாற்று வெள்ள ஆபத்து மண்டலங்களையும், GCC மழைநீர் வடிகால் வலையமைப்பையும் வார்டு வரைபடத்தில் காட்டுகிறது. தெரு ஒரு ஆபத்து மண்டலத்தில் இருக்கிறதா, அருகில் வடிகால் உள்ளதா என்பதை குடியிருப்பவர்களுக்கு காட்டுவதே இதன் நோக்கம்." },
   "about.page_my_ward_desc":    { en: "A single-page rollup of every spatial layer the dashboard knows about - reservoirs, groundwater depth, ward risk score, water bodies, rivers, flood zones, drains, sewerage, CGWB stations - all filtered to one ward. It is the deep-link target when you click a ward anywhere in the app.", ta: "டாஷ்போர்டு அறிந்த ஒவ்வொரு இடஞ்சார்ந்த அடுக்கும் - நீர்த்தேக்கங்கள், நிலத்தடி நீர் ஆழம், வார்டு ஆபத்து மதிப்பெண், நீர்நிலைகள், ஆறுகள், வெள்ள மண்டலங்கள், வடிகால், கழிவுநீர், CGWB நிலையங்கள் - அனைத்தும் ஒரு வார்டுக்கு வடிகட்டப்பட்ட ஒற்றை பக்க சுருக்கம். பயன்பாட்டில் எங்கும் ஒரு வார்டை கிளிக் செய்யும்போது இது ஆழமான-இணைப்பு இலக்காகும்." },
 
+  // Report card methodology (inside My Ward page section)
+  "about.report_card_title":    { en: "Ward Report Card", ta: "வார்டு அறிக்கை அட்டை" },
+  "about.report_card_desc":     { en: "Each of Chennai's 200 wards is ranked on 5 governance-quality metrics. Percentile-based A-F grades compare every ward against the full city. All density metrics are area-normalized (per sq km). The composite score is a weighted sum of per-metric percentiles.", ta: "சென்னையின் 200 வார்டுகளும் 5 ஆளுமை-தர அளவுகளில் தரவரிசைப்படுத்தப்படுகின்றன. சதவீத அடிப்படையிலான A-F தரங்கள் ஒவ்வொரு வார்டையும் முழு நகரத்துடன் ஒப்பிடுகின்றன. அடர்த்தி அளவுகள் பரப்பளவு-இயல்பாக்கப்பட்டவை (சதுர கி.மீ.க்கு). கூட்டு மதிப்பெண் என்பது ஒவ்வொரு அளவுகோலின் சதவீதங்களின் எடையிடப்பட்ட தொகையாகும்." },
+  "about.report_card_metric_drainage":   { en: "Drainage coverage (25%) - Storm water drain length per sq km. Higher = better.", ta: "வடிகால் கவரேஜ் (25%) - சதுர கி.மீ.க்கு புயல்நீர் வடிகால் நீளம். அதிகம் = சிறந்தது." },
+  "about.report_card_metric_sewerage":   { en: "Sewerage infrastructure (25%) - Pumping main length per sq km, with SPS density as tiebreaker. Higher = better.", ta: "கழிவுநீர் உள்கட்டமைப்பு (25%) - சதுர கி.மீ.க்கு பம்பிங் குழாய் நீளம், SPS அடர்த்தி சமநிலை உடைப்பான். அதிகம் = சிறந்தது." },
+  "about.report_card_metric_flood":      { en: "Flood risk exposure (25%) - High + very-high hazard zones per sq km. Lower = better.", ta: "வெள்ள ஆபத்து வெளிப்பாடு (25%) - சதுர கி.மீ.க்கு அதிக + மிக அதிக ஆபத்து மண்டலங்கள். குறைவு = சிறந்தது." },
+  "about.report_card_metric_wb_health":  { en: "Water body health (15%) - Average restoration score across ward's water bodies. Lower = healthier. Only ranked among wards that have water bodies.", ta: "நீர்நிலை ஆரோக்கியம் (15%) - வார்டின் நீர்நிலைகளின் சராசரி மறுசீரமைப்பு மதிப்பெண். குறைவு = ஆரோக்கியமானது. நீர்நிலைகள் உள்ள வார்டுகள் மட்டுமே தரவரிசைப்படுத்தப்படும்." },
+  "about.report_card_metric_wb_density": { en: "Water body density (10%) - Water bodies per sq km. Higher = better.", ta: "நீர்நிலை அடர்த்தி (10%) - சதுர கி.மீ.க்கு நீர்நிலைகள். அதிகம் = சிறந்தது." },
+  "about.report_card_grading":  { en: "Grades: A (80th+ percentile), B (60-79th), C (40-59th), D (20-39th), F (below 20th). The overall grade uses the same thresholds on the composite score's percentile rank.", ta: "தரங்கள்: A (80வது+ சதவீதம்), B (60-79வது), C (40-59வது), D (20-39வது), F (20வதுக்கு கீழ்). ஒட்டுமொத்த தரம் கூட்டு மதிப்பெண்ணின் சதவீத தரவரிசையில் அதே வரம்புகளைப் பயன்படுத்துகிறது." },
+
+  // Uplift planner methodology (inside My Ward page section)
+  "about.uplift_title":         { en: "Uplift Planner", ta: "மேம்பாட்டு திட்டமிடல்" },
+  "about.uplift_desc":          { en: "The uplift planner answers: \"If I had INR X crore for my ward, where should I invest it?\" It uses a greedy budget optimizer to allocate a hypothetical budget across 5 intervention types, maximizing the ward's composite improvement per crore spent.", ta: "மேம்பாட்டு திட்டமிடல் பதிலளிக்கிறது: \"என் வார்டுக்கு INR X கோடி இருந்தால், எங்கு முதலீடு செய்ய வேண்டும்?\" 5 தலையீட்டு வகைகளில் கற்பனையான பட்ஜெட்டை ஒதுக்க, செலவழிக்கப்பட்ட கோடிக்கு வார்டின் கூட்டு மேம்பாட்டை அதிகரிக்க பேராசை பட்ஜெட் உகப்பாக்கியைப் பயன்படுத்துகிறது." },
+  "about.uplift_how_title":     { en: "How it works", ta: "இது எவ்வாறு செயல்படுகிறது" },
+  "about.uplift_step1":         { en: "Gap analysis: compares the ward's current value on each metric against the city distribution to identify where it lags.", ta: "இடைவெளி பகுப்பாய்வு: ஒவ்வொரு அளவுகோலிலும் வார்டின் தற்போதைய மதிப்பை நகர விநியோகத்துடன் ஒப்பிட்டு எங்கே பின்தங்கியுள்ளது என்பதை அடையாளம் காணுகிறது." },
+  "about.uplift_step2":         { en: "Greedy optimizer: at each step, evaluates every feasible intervention and picks the one with the highest composite-score improvement per crore. Repeats until the budget is spent or all caps are hit.", ta: "பேராசை உகப்பாக்கி: ஒவ்வொரு படியிலும், சாத்தியமான ஒவ்வொரு தலையீட்டையும் மதிப்பிட்டு, கோடிக்கு அதிகபட்ச கூட்டு-மதிப்பெண் மேம்பாட்டைக் கொண்டதைத் தேர்ந்தெடுக்கிறது. பட்ஜெட் செலவழிக்கப்படும் வரை அல்லது எல்லா வரம்புகளும் எட்டப்படும் வரை மீண்டும் செய்கிறது." },
+  "about.uplift_step3":         { en: "Exact projection: builds a modified ward profile with the projected metric values and reruns the full ranking engine (computeWardRankings) to determine the exact after-state grade and percentile - not an approximation.", ta: "துல்லியமான கணிப்பு: கணிக்கப்பட்ட அளவுகோல் மதிப்புகளுடன் மாற்றியமைக்கப்பட்ட வார்டு சுயவிவரத்தை உருவாக்கி, துல்லியமான பிந்தைய நிலை தரம் மற்றும் சதவீதத்தை தீர்மானிக்க முழு தரவரிசை இயந்திரத்தை மீண்டும் இயக்குகிறது - தோராயமல்ல." },
+  "about.uplift_caps_title":    { en: "Data-backed caps", ta: "தரவு-ஆதரவு வரம்புகள்" },
+  "about.uplift_caps_desc":     { en: "Each intervention is capped by real ward data: flood mitigation limited to the actual number of high/very-high hazard zones; water body restoration limited to bodies rated critical or high; revival limited to documented lost bodies. Infrastructure interventions (drains, sewerage) have practical per-ward caps.", ta: "ஒவ்வொரு தலையீடும் உண்மையான வார்டு தரவால் வரையறுக்கப்படுகிறது: வெள்ள தணிப்பு உண்மையான அதிக/மிக-அதிக ஆபத்து மண்டலங்களின் எண்ணிக்கையால் வரையறுக்கப்படுகிறது; நீர்நிலை மறுசீரமைப்பு ஆபத்தான அல்லது அதிக தரமதிப்பீடு பெற்ற நிலைகளால் வரையறுக்கப்படுகிறது; புத்துயிர் ஆவணப்படுத்தப்பட்ட இழக்கப்பட்ட நிலைகளால் வரையறுக்கப்படுகிறது." },
+  "about.uplift_costs_title":   { en: "Cost estimates", ta: "செலவு மதிப்பீடுகள்" },
+  "about.uplift_costs_desc":    { en: "All cost ranges come from published GCC, CMWSSB, Smart Cities Mission, NDMA, and NGO project reports. Each allocation shows a low-high range; the optimizer uses the midpoint. These are illustrative - actual costs depend on site conditions, land, and procurement.", ta: "அனைத்து செலவு வரம்புகளும் வெளியிடப்பட்ட GCC, CMWSSB, ஸ்மார்ட் சிட்டிஸ் மிஷன், NDMA மற்றும் NGO திட்ட அறிக்கைகளிலிருந்து வருகின்றன. ஒவ்வொரு ஒதுக்கீடும் குறைந்த-அதிக வரம்பைக் காட்டுகிறது; உகப்பாக்கி நடுப்புள்ளியைப் பயன்படுத்துகிறது. இவை விளக்கமளிக்கக்கூடியவை - உண்மையான செலவுகள் தள நிலைமைகள் மற்றும் கொள்முதலைப் பொறுத்தது." },
+
   // Grouping headers inside the flat Data Source Index
   "about.ds_group_reservoir": { en: "Reservoirs & weather",       ta: "நீர்த்தேக்கங்கள் & வானிலை" },
   "about.ds_group_gw":        { en: "Groundwater",                ta: "நிலத்தடி நீர்" },
@@ -1180,4 +1202,55 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "news.search_all":           { en: "Search latest Chennai water news",    ta: "சென்னை நீர் செய்திகளைத் தேடுங்கள்" },
   "news.search_related":       { en: "Search related news",                 ta: "தொடர்புடைய செய்திகளைத் தேடுங்கள்" },
   "news.via":                  { en: "Via Google News",                     ta: "Google செய்திகள் வழியாக" },
+
+  // ── Uplift Planner ──────────────────────────────────────────────────
+  "uplift.title":                     { en: "Uplift Planner", ta: "மேம்பாட்டு திட்டமிடல்" },
+  "uplift.subtitle":                  { en: "See where your ward lags and how a hypothetical budget could improve its grade.", ta: "உங்கள் வார்டு எங்கே பின்தங்கியுள்ளது, பட்ஜெட் எவ்வாறு தரத்தை மேம்படுத்தும் என்பதைக் காண்க." },
+  "uplift.budget_label":              { en: "Hypothetical budget", ta: "கற்பனையான பட்ஜெட்" },
+  "uplift.budget_cr":                 { en: "INR {amount} Cr", ta: "INR {amount} கோடி" },
+  "uplift.grade_before":              { en: "Current", ta: "தற்போதைய" },
+  "uplift.grade_after":               { en: "Projected", ta: "கணிப்பு" },
+  "uplift.percentile":                { en: "{value}th percentile", ta: "{value}வது சதவீதம்" },
+  "uplift.gap_heading":               { en: "Where your ward lags", ta: "உங்கள் வார்டு எங்கே பின்தங்கியுள்ளது" },
+  "uplift.alloc_heading":             { en: "Recommended investments", ta: "பரிந்துரைக்கப்பட்ட முதலீடுகள்" },
+  "uplift.col_factor":                { en: "Factor", ta: "காரணி" },
+  "uplift.col_current":               { en: "Current", ta: "தற்போதைய" },
+  "uplift.col_city_median":           { en: "City median", ta: "நகர நடுநிலை" },
+  "uplift.col_gap":                   { en: "Gap to next grade", ta: "அடுத்த தரத்திற்கான இடைவெளி" },
+  "uplift.col_grade":                 { en: "Grade", ta: "தரம்" },
+  "uplift.not_applicable":            { en: "N/A", ta: "பொ/இ" },
+  "uplift.no_gap":                    { en: "Already top grade", ta: "ஏற்கனவே உயர் தரம்" },
+  "uplift.at_boundary":               { en: "At grade boundary", ta: "தர எல்லையில்" },
+  "uplift.gap_needs_more":            { en: "Needs +{amount}", ta: "+{amount} தேவை" },
+  "uplift.gap_needs_less":            { en: "Needs -{amount}", ta: "-{amount} தேவை" },
+  "uplift.budget_spent":              { en: "Budget spent: INR {spent} Cr of {total} Cr", ta: "செலவான பட்ஜெட்: INR {spent} கோடி / {total} கோடி" },
+  "uplift.budget_remaining":          { en: "Remaining: INR {amount} Cr", ta: "மீதம்: INR {amount} கோடி" },
+  "uplift.no_improvement":            { en: "No further improvement possible with remaining budget.", ta: "மீதமுள்ள பட்ஜெட்டில் மேலும் மேம்பாடு சாத்தியமில்லை." },
+  "uplift.no_allocations":            { en: "No allocations needed - budget is zero or ward is already top-ranked.", ta: "ஒதுக்கீடுகள் தேவையில்லை - பட்ஜெட் பூஜ்ஜியம் அல்லது வார்டு ஏற்கனவே உயர் தரத்தில் உள்ளது." },
+  "uplift.cost_range":                { en: "INR {low}-{high} Cr", ta: "INR {low}-{high} கோடி" },
+  "uplift.disclaimer":                { en: "Hypothetical estimates based on published government project costs. Budget allocation uses a greedy heuristic - recommendations are approximate, not globally optimal. Actual costs vary by site conditions, land availability, and procurement method. Not a tender or budget proposal.", ta: "வெளியிடப்பட்ட அரசு திட்ட செலவுகளின் அடிப்படையிலான கற்பனையான மதிப்பீடுகள். பட்ஜெட் ஒதுக்கீடு ஒரு தோராயமான வழிமுறையைப் பயன்படுத்துகிறது - பரிந்துரைகள் தோராயமானவை. உண்மையான செலவுகள் தள நிலைமைகள், நில கிடைக்கும் தன்மை மற்றும் கொள்முதல் முறையால் மாறுபடும்." },
+
+  // Intervention names
+  "uplift.int_build_drain":           { en: "Build storm drains", ta: "புயல் வடிகால் கட்டுதல்" },
+  "uplift.int_build_drain_desc":      { en: "New lined stormwater drains to increase drainage coverage.", ta: "வடிகால் கவரேஜை அதிகரிக்க புதிய வரிசைப்படுத்தப்பட்ட புயல்நீர் வடிகால்கள்." },
+  "uplift.int_build_pumping_main":    { en: "Extend sewage network", ta: "கழிவுநீர் நெட்வொர்க்கை நீட்டித்தல்" },
+  "uplift.int_build_pumping_main_desc": { en: "New pumping mains to expand sewerage coverage.", ta: "கழிவுநீர் கவரேஜை விரிவுபடுத்த புதிய பம்பிங் குழாய்கள்." },
+  "uplift.int_flood_mitigation":      { en: "Flood zone mitigation", ta: "வெள்ள மண்டல தணிப்பு" },
+  "uplift.int_flood_mitigation_desc": { en: "Retention ponds, bund upgrades, and stormwater pump stations to reduce severe flood zones.", ta: "கடுமையான வெள்ள மண்டலங்களைக் குறைக்க தடுப்பு குளங்கள், கரை மேம்பாடுகள் மற்றும் மழைநீர் பம்ப் நிலையங்கள்." },
+  "uplift.int_restore_wb":            { en: "Restore water bodies", ta: "நீர்நிலைகளை மறுசீரமைத்தல்" },
+  "uplift.int_restore_wb_desc":       { en: "Desilting, bund repair, and pollution control for degraded water bodies.", ta: "சீரழிந்த நீர்நிலைகளுக்கு தூர்வாரல் மற்றும் கரையோர பழுதுபார்ப்பு." },
+  "uplift.int_revive_wb":             { en: "Revive lost water bodies", ta: "இழக்கப்பட்ட நீர்நிலைகளை புதுப்பித்தல்" },
+  "uplift.int_revive_wb_desc":        { en: "Reclaim and restore water bodies lost to encroachment.", ta: "ஆக்கிரமிப்பால் இழக்கப்பட்ட நீர்நிலைகளை மீட்டெடுத்தல்." },
+
+  // Units
+  "uplift.unit_km":                   { en: "km", ta: "கி.மீ." },
+  "uplift.unit_hazard_zone":          { en: "hazard zones", ta: "ஆபத்து மண்டலங்கள்" },
+  "uplift.unit_water_body":           { en: "water bodies", ta: "நீர்நிலைகள்" },
+
+  // Factor labels (reused in gap table)
+  "uplift.factor_drainage":           { en: "Drainage coverage", ta: "வடிகால் கவரேஜ்" },
+  "uplift.factor_sewerage_infra":     { en: "Sewerage infrastructure", ta: "கழிவுநீர் உள்கட்டமைப்பு" },
+  "uplift.factor_flood_risk":         { en: "Flood exposure", ta: "வெள்ள வெளிப்பாடு" },
+  "uplift.factor_wb_health":          { en: "Water body health", ta: "நீர்நிலை ஆரோக்கியம்" },
+  "uplift.factor_wb_density":         { en: "Water body density", ta: "நீர்நிலை அடர்த்தி" },
 };

@@ -12,6 +12,7 @@ import { WardWaterBodiesCard } from "./ward-water-bodies-card";
 import { WardFloodRiskCard } from "./ward-flood-risk-card";
 import { WardInfrastructureCard } from "./ward-infrastructure-card";
 import { WardRiverCard } from "./ward-river-card";
+import { WardUpliftCard } from "./ward-uplift-card";
 import { WardActionsCard } from "./ward-actions-card";
 import { WardNarrative } from "@/components/insights/ward-narrative";
 import { NewsContext } from "@/components/insights/news-context";
@@ -86,6 +87,8 @@ export function MyWardPage() {
           <WardFloodRiskCard wardNumber={wardNumber} profile={profile} />
 
           <WardInfrastructureCard wardNumber={wardNumber} profile={profile} />
+
+          <WardUpliftCard wardNumber={wardNumber} profile={profile} />
 
           <WardRiverCard
             wardNumber={wardNumber}

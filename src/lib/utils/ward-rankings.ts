@@ -32,7 +32,7 @@ export interface WardRankings {
 
 /* ── Metric definitions ─────────────────────────────────────────────── */
 
-interface MetricDef {
+export interface MetricDef {
   key: string;
   label: string;
   description: string;
@@ -52,7 +52,7 @@ interface RankedEntry {
   tb: number;
 }
 
-interface MetricComputation {
+export interface MetricComputation {
   def: MetricDef;
   ranked: Map<number, { value: number; rank: number }>;
   rankTotal: number;
@@ -61,7 +61,7 @@ interface MetricComputation {
   percentileByWard: Map<number, number>;
 }
 
-const METRICS: MetricDef[] = [
+export const METRICS: MetricDef[] = [
   {
     key: "wb_health",
     label: "report.metric_wb_health",
@@ -94,7 +94,7 @@ const METRICS: MetricDef[] = [
     extract: (p) => {
       if (!p.area_sq_km || p.area_sq_km <= 0) return 0;
       const cat = p.flood.by_category;
-      const severe = (cat["very high"] ?? 0) + (cat["high"] ?? 0);
+      const severe = (cat["very_high"] ?? 0) + (cat["high"] ?? 0);
       return severe / p.area_sq_km;
     },
     higherIsBetter: false,
@@ -131,9 +131,9 @@ const METRICS: MetricDef[] = [
   },
 ];
 
-/* ── Helpers ────────────────────────────────────────────────────────── */
+/* ── Helpers (exported for reuse by uplift planner) ────────────────── */
 
-function median(values: number[]): number {
+export function median(values: number[]): number {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
@@ -142,7 +142,7 @@ function median(values: number[]): number {
     : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
-function percentileToGrade(pct: number): Grade {
+export function percentileToGrade(pct: number): Grade {
   if (pct >= 80) return "A";
   if (pct >= 60) return "B";
   if (pct >= 40) return "C";
@@ -150,7 +150,7 @@ function percentileToGrade(pct: number): Grade {
   return "F";
 }
 
-function percentileFromRank(rank: number, total: number): number {
+export function percentileFromRank(rank: number, total: number): number {
   return total > 1 ? ((total - rank) / (total - 1)) * 100 : 50;
 }
 
@@ -216,7 +216,7 @@ function rankValues(
   );
 }
 
-function computeMetric(def: MetricDef, allProfiles: WardProfile[]): MetricComputation {
+export function computeMetric(def: MetricDef, allProfiles: WardProfile[]): MetricComputation {
   const applicableProfiles = def.applicable
     ? allProfiles.filter(def.applicable)
     : allProfiles;
@@ -259,7 +259,64 @@ function computeMetric(def: MetricDef, allProfiles: WardProfile[]): MetricComput
   };
 }
 
-function computeCompositeScore(
+/**
+ * Return the sorted array of raw metric values from a MetricComputation.
+ * Sorted ascending (regardless of higherIsBetter).  Used by the uplift
+ * planner to binary-search projected values against the city distribution.
+ */
+export function getSortedValues(mc: MetricComputation): number[] {
+  const values: number[] = [];
+  for (const { value } of mc.ranked.values()) values.push(value);
+  return values.sort((a, b) => a - b);
+}
+
+/**
+ * Given a raw metric value and the city-wide sorted distribution,
+ * return the percentile (0-100) that value would occupy.
+ * Uses the same rank-based formula as the report card:
+ *   percentile = (total - rank) / (total - 1) * 100
+ * where rank is the 1-based position after sorting by quality
+ * (best = rank 1).
+ */
+export function percentileForValue(
+  value: number,
+  sortedAsc: number[],
+  higherIsBetter: boolean,
+): number {
+  const n = sortedAsc.length;
+  if (n <= 1) return 50;
+
+  // Count how many existing values this new value would beat.
+  // "beat" means: for higherIsBetter, count entries strictly below value.
+  //               for lowerIsBetter, count entries strictly above value.
+  let beatCount: number;
+  if (higherIsBetter) {
+    // Binary search: find index of first element >= value
+    let lo = 0, hi = n;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (sortedAsc[mid] < value) lo = mid + 1;
+      else hi = mid;
+    }
+    beatCount = lo; // number of elements strictly < value
+  } else {
+    // Lower is better: count entries strictly > value
+    let lo = 0, hi = n;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (sortedAsc[mid] <= value) lo = mid + 1;
+      else hi = mid;
+    }
+    beatCount = n - lo; // number of elements strictly > value
+  }
+
+  // Approximate rank among n+1 entries (the n existing + this hypothetical)
+  const total = n + 1;
+  const rank = total - beatCount;
+  return percentileFromRank(rank, total);
+}
+
+export function computeCompositeScore(
   profile: WardProfile,
   metricComputations: MetricComputation[],
 ): number {
