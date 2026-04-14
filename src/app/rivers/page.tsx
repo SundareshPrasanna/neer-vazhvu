@@ -131,9 +131,12 @@ function RiversPageContent() {
   }
 
   const cooum = qualityData.rivers.find((r) => r.id === "cooum");
-  const cooumLatestDO = cooum?.stations[0]?.readings.sort(
-    (a, b) => b.year - a.year
-  )[0]?.do_mgl;
+  // Use worst (minimum) DO across all Cooum stations for the latest year
+  const cooumLatestDO = cooum?.stations.reduce<number | undefined>((worst, station) => {
+    const latest = [...station.readings].sort((a, b) => b.year - a.year)[0];
+    if (latest?.do_mgl == null) return worst;
+    return worst == null ? latest.do_mgl : Math.min(worst, latest.do_mgl);
+  }, undefined);
 
   const hasPanel = selectedRiver !== null || selectedSource !== null;
 
