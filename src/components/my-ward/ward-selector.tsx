@@ -2,7 +2,15 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useLanguage } from "@/lib/i18n/context";
-import { filterWards, type WardEntry } from "@/lib/utils/ward-filter";
+import {
+  filterWards,
+  type WardEntry,
+  type LocalityEntry,
+  type ZoneEntry,
+  type SearchResult,
+  deriveZones,
+  searchAll,
+} from "@/lib/utils/ward-filter";
 
 const RECENT_WARDS_KEY = "neer-vazhvu-recent-wards";
 const MAX_RECENT = 5;
@@ -26,14 +34,21 @@ function saveRecentWard(wardNumber: number): void {
   }
 }
 
+const SECTION_LABELS: Record<SearchResult["kind"], string> = {
+  locality: "Areas",
+  ward: "Wards",
+  zone: "Zones",
+};
+
 interface WardSelectorProps {
   onSelect: (wardNumber: number) => void;
   selectedWard: number | null;
 }
 
 export function WardSelector({ onSelect, selectedWard }: WardSelectorProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [wards, setWards] = useState<WardEntry[]>([]);
+  const [localities, setLocalities] = useState<LocalityEntry[]>([]);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [recentWards, setRecentWards] = useState<number[]>(() => {
@@ -51,7 +66,13 @@ export function WardSelector({ onSelect, selectedWard }: WardSelectorProps) {
       .then((r) => r.json())
       .then((d) => setWards(d.wards || []))
       .catch(console.error);
+    fetch("/api/localities")
+      .then((r) => r.json())
+      .then((d) => setLocalities(d.localities || []))
+      .catch(console.error);
   }, []);
+
+  const zones = useMemo<ZoneEntry[]>(() => deriveZones(wards), [wards]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -64,7 +85,25 @@ export function WardSelector({ onSelect, selectedWard }: WardSelectorProps) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const filtered = useMemo(() => filterWards(wards, query), [wards, query]);
+  const results = useMemo<SearchResult[]>(
+    () => searchAll(localities, wards, zones, query),
+    [query, localities, wards, zones]
+  );
+
+  // Group results by kind for section headers
+  const grouped = useMemo(() => {
+    const sections: { kind: SearchResult["kind"]; items: SearchResult[] }[] = [];
+    let current: SearchResult["kind"] | null = null;
+    for (const r of results) {
+      if (r.kind !== current) {
+        sections.push({ kind: r.kind, items: [r] });
+        current = r.kind;
+      } else {
+        sections[sections.length - 1].items.push(r);
+      }
+    }
+    return sections;
+  }, [results]);
 
   const handleSelect = useCallback(
     (wardNumber: number) => {
@@ -77,12 +116,57 @@ export function WardSelector({ onSelect, selectedWard }: WardSelectorProps) {
     [onSelect],
   );
 
+  const handleResultSelect = useCallback(
+    (result: SearchResult) => {
+      if (result.kind === "locality") {
+        handleSelect(result.locality.ward_number);
+      } else if (result.kind === "ward") {
+        handleSelect(result.ward.wardNumber);
+      } else {
+        // Zone: navigate to first ward in that zone
+        const firstWard = wards.find((w) => w.zone === result.zone.zoneName);
+        if (firstWard) handleSelect(firstWard.wardNumber);
+      }
+    },
+    [handleSelect, wards]
+  );
+
   const wardLabel = useCallback(
     (wardNumber: number): string => {
       const w = wards.find((w) => w.wardNumber === wardNumber);
-      return w ? `Ward ${w.wardNumber} - ${w.zone}` : `Ward ${wardNumber}`;
+      return w ? `Ward ${w.wardNumber} - ${toTitleCase(w.zone)}` : `Ward ${wardNumber}`;
     },
     [wards],
+  );
+
+  const resultsDropdown = (
+    <>
+      {open && results.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 max-h-72 overflow-y-auto z-10">
+          {grouped.map((section) => (
+            <div key={section.kind}>
+              <div className="px-4 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 select-none">
+                {SECTION_LABELS[section.kind]}
+              </div>
+              {section.items.map((result, i) => (
+                <ResultRow
+                  key={`${result.kind}-${i}`}
+                  result={result}
+                  language={language}
+                  onClick={() => handleResultSelect(result)}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {open && query.trim() && results.length === 0 && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
+          {t("my_ward.no_results")}
+        </div>
+      )}
+    </>
   );
 
   // If no ward is selected, show the full selector as the page hero
@@ -117,29 +201,7 @@ export function WardSelector({ onSelect, selectedWard }: WardSelectorProps) {
             />
           </div>
 
-          {/* Results dropdown */}
-          {open && filtered.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 max-h-64 overflow-y-auto z-10">
-              {filtered.map((w) => (
-                <button
-                  key={w.wardNumber}
-                  onClick={() => handleSelect(w.wardNumber)}
-                  className="w-full text-left px-4 py-3 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-b-0"
-                >
-                  <span className="font-medium text-slate-900 dark:text-slate-100">
-                    Ward {w.wardNumber}
-                  </span>
-                  <span className="text-slate-500 dark:text-slate-400 ml-2">{w.zone}</span>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {open && query.trim() && filtered.length === 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
-              {t("my_ward.no_results")}
-            </div>
-          )}
+          {resultsDropdown}
         </div>
 
         {/* Recent wards */}
@@ -182,20 +244,86 @@ export function WardSelector({ onSelect, selectedWard }: WardSelectorProps) {
         </div>
       </div>
 
-      {open && filtered.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 max-h-64 overflow-y-auto z-10 max-w-xs">
-          {filtered.map((w) => (
-            <button
-              key={w.wardNumber}
-              onClick={() => handleSelect(w.wardNumber)}
-              className="w-full text-left px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-b-0"
-            >
-              <span className="font-medium text-slate-900 dark:text-slate-100">Ward {w.wardNumber}</span>
-              <span className="text-slate-500 dark:text-slate-400 ml-2">{w.zone}</span>
-            </button>
+      {/* Compact dropdown uses same grouped results */}
+      {open && results.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 max-h-72 overflow-y-auto z-10 max-w-xs">
+          {grouped.map((section) => (
+            <div key={section.kind}>
+              <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 select-none">
+                {SECTION_LABELS[section.kind]}
+              </div>
+              {section.items.map((result, i) => (
+                <ResultRow
+                  key={`${result.kind}-${i}`}
+                  result={result}
+                  language={language}
+                  onClick={() => handleResultSelect(result)}
+                  compact
+                />
+              ))}
+            </div>
           ))}
         </div>
       )}
     </div>
   );
+}
+
+function ResultRow({
+  result,
+  language,
+  onClick,
+  compact = false,
+}: {
+  result: SearchResult;
+  language: string;
+  onClick: () => void;
+  compact?: boolean;
+}) {
+  const px = compact ? "px-3 py-2" : "px-4 py-3";
+
+  if (result.kind === "locality") {
+    const l = result.locality;
+    const displayName = language === "ta" && l.name_ta ? l.name_ta : l.name;
+    return (
+      <button
+        onClick={onClick}
+        className={`w-full text-left ${px} text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex flex-col gap-0.5`}
+      >
+        <span className="font-medium text-slate-900 dark:text-slate-100 leading-snug">{displayName}</span>
+        <span className="text-xs text-slate-400 dark:text-slate-500">
+          Ward {l.ward_number} · {toTitleCase(l.zone_name)}
+        </span>
+      </button>
+    );
+  }
+
+  if (result.kind === "ward") {
+    const w = result.ward;
+    return (
+      <button
+        onClick={onClick}
+        className={`w-full text-left ${px} text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-baseline justify-between gap-2`}
+      >
+        <span className="font-medium text-slate-900 dark:text-slate-100">Ward {w.wardNumber}</span>
+        <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">{toTitleCase(w.zone)} zone</span>
+      </button>
+    );
+  }
+
+  // zone
+  const z = result.zone;
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full text-left ${px} text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-baseline justify-between gap-2`}
+    >
+      <span className="font-medium text-slate-900 dark:text-slate-100">{toTitleCase(z.zoneName)}</span>
+      <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">{z.wardCount} wards</span>
+    </button>
+  );
+}
+
+function toTitleCase(s: string): string {
+  return s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 }
