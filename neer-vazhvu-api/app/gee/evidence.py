@@ -67,7 +67,7 @@ class WaterBodySatelliteEvidenceRow:
     cloud_note: str | None = None
     geometry_version: str | None = None
     is_same_scene_as_overlay: bool = False
-    is_reviewed: bool = False
+    is_reviewed: bool = True
     notes: str | None = None
 
 
@@ -636,7 +636,7 @@ def _preserve_existing_review_state(
         )
         .in_("gee_target_id", target_ids)
         .in_("reference_date", ref_dates)
-        .eq("is_reviewed", True)
+        .eq("is_reviewed", False)
         .execute()
     )
 
@@ -662,7 +662,8 @@ def _preserve_existing_review_state(
         if not same_selection:
             continue
 
-        row.is_reviewed = True
+        # Preserve your rejection - if same scene was marked bad, keep it hidden
+        row.is_reviewed = False
         if row.notes is None and existing.get("notes") is not None:
             row.notes = str(existing.get("notes"))
 
