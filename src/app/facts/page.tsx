@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     siteName: "Neer Vazhvu",
-    url: "https://neer-vazhvu.org/facts",
+    url: "https://neervazhvu.org/facts",
   },
   twitter: {
     card: "summary_large_image",
@@ -53,16 +53,16 @@ function buildJsonLd(facts: Fact[]) {
     name: "Chennai Water Facts",
     description:
       "Curated snapshot of Chennai water data across reservoirs, groundwater, rivers, floods, and infrastructure. Each fact has source, date, and methodology attached.",
-    url: "https://neer-vazhvu.org/facts",
+    url: "https://neervazhvu.org/facts",
     creator: {
       "@type": "Organization",
       name: "Neer Vazhvu",
-      url: "https://neer-vazhvu.org",
+      url: "https://neervazhvu.org",
     },
     license: "https://creativecommons.org/licenses/by/4.0/",
     variableMeasured: facts.map((fact) => ({
       "@type": "Observation",
-      "@id": `https://neer-vazhvu.org/facts#${fact.id}`,
+      "@id": `https://neervazhvu.org/facts#${fact.id}`,
       name: fact.title,
       measuredProperty: fact.category,
       value: fact.value,

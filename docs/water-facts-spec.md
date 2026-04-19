@@ -113,14 +113,14 @@ Section banner: *Chennai's water system at a glance. These numbers reflect insta
 ### Copy-quote format
 
 Every card's copy button produces:
-> `{interpretation_sentence} Source: {source_citation}. Data as of {vintage_label}. Reference: neer-vazhvu.org/facts#{card_id}`
+> `{interpretation_sentence} Source: {source_citation}. Data as of {vintage_label}. Reference: neervazhvu.org/facts#{card_id}`
 
 Example for card 11:
-> "At Cooum's Central Jail station, dissolved oxygen dropped to 0.0 mg/L in 2022 - aquatic life cannot survive. CPCB's Class D criterion for Propagation of Wildlife and Fisheries requires DO ≥ 4 mg/L. Source: CPCB NWMP station 10045, annual report 2024. Reference: neer-vazhvu.org/facts#cooum-do-2022"
+> "At Cooum's Central Jail station, dissolved oxygen dropped to 0.0 mg/L in 2022 - aquatic life cannot survive. CPCB's Class D criterion for Propagation of Wildlife and Fisheries requires DO ≥ 4 mg/L. Source: CPCB NWMP station 10045, annual report 2024. Reference: neervazhvu.org/facts#cooum-do-2022"
 
 ### Tweet format
 
-> "{short_interpretation} via @neervazhvu neer-vazhvu.org/facts#{card_id}"
+> "{short_interpretation} via @neervazhvu neervazhvu.org/facts#{card_id}"
 
 ### Vintage badge colours
 

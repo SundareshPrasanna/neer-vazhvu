@@ -30,7 +30,7 @@ export function FactCard({ fact }: FactCardProps) {
   const anchorHref = `#${fact.id}`;
   const canonicalUrl = typeof window !== "undefined"
     ? `${window.location.origin}/facts${anchorHref}`
-    : `https://neer-vazhvu.org/facts${anchorHref}`;
+    : `https://neervazhvu.org/facts${anchorHref}`;
   const fullQuote = `${quote} Reference: ${canonicalUrl}`;
 
   const dateLabel = formatDate(fact.data_date ?? fact.retrieved_at, language);
