@@ -172,20 +172,20 @@ async function buildWaterBodyAreaChange(
     id: "water-body-area-change",
     tier: 1,
     category: "water-bodies",
-    title: "Water body area change (24 months)",
+    title: "Water body area change (year-over-year)",
     value: netFmt,
     unit: "hectares net",
-    interpretation: `Across ${count} tracked water bodies, satellite imagery shows a net ${netFmt} ha change in surface area over the last 24 months.`,
+    interpretation: `Across ${count} tracked water bodies with sufficient data, comparing the most recent 6 months against the same 6 calendar months of the previous year yields a net ${netFmt} ha change in surface area.`,
     data_date: changes[0].endDate,
     published_date: changes[0].endDate,
     retrieved_at: retrievedAt,
     computed_at: retrievedAt,
     source_url: "https://neervazhvu.org/water-bodies",
     source_label: "GEE Sentinel-2 NDWI, Neer Vazhvu pipeline",
-    method_id: "gee-area-24mo",
+    method_id: "gee-yoy-comparison",
     confidence: "medium",
     claim_status: "observed",
-    quote_text: `Across ${count} water bodies tracked by Neer Vazhvu using Sentinel-2 satellite imagery (NDWI), the net surface area change over the last 24 months was ${netFmt} hectares. Source: Neer Vazhvu GEE pipeline.`,
+    quote_text: `Across ${count} water bodies with sufficient seasonal data, Sentinel-2 satellite imagery (NDWI) shows a net ${netFmt} hectare change when comparing the most recent 6 months to the same 6 calendar months of the prior year. Small ponds (<5 ha baseline) and readings with cloud cover are excluded. Source: Neer Vazhvu GEE pipeline.`,
   };
 }
 
@@ -209,12 +209,12 @@ async function buildBiggestWaterBodyChange(
   const id = kind === "loser" ? "water-body-biggest-loser" : "water-body-biggest-gainer";
   const title =
     kind === "loser"
-      ? "Biggest-shrinking water body (24 months)"
-      : "Biggest-growing water body (24 months)";
+      ? "Biggest-shrinking water body (year-over-year)"
+      : "Biggest-growing water body (year-over-year)";
   const interpretation =
     kind === "loser"
-      ? `${top.name} has lost ${Math.abs(top.deltaPct).toFixed(1)}% of its surface area over the last 24 months - the largest relative decline among tracked bodies.`
-      : `${top.name} has grown ${top.deltaPct.toFixed(1)}% in surface area over the last 24 months. Consistent with restoration, rainfall retention, or seasonal hydrology - causal attribution requires field verification.`;
+      ? `${top.name}'s 6-month average surface area is ${Math.abs(top.deltaPct).toFixed(1)}% smaller than the same 6 calendar months a year earlier - the largest relative decline among water bodies with sufficient seasonal data.`
+      : `${top.name}'s 6-month average surface area is ${top.deltaPct.toFixed(1)}% larger than the same 6 calendar months a year earlier. Consistent with restoration, rainfall retention, or seasonal hydrology - causal attribution requires field verification.`;
 
   return {
     id,
@@ -230,13 +230,13 @@ async function buildBiggestWaterBodyChange(
     computed_at: retrievedAt,
     source_url: "https://neervazhvu.org/water-bodies",
     source_label: "GEE Sentinel-2 NDWI, Neer Vazhvu pipeline",
-    method_id: "gee-delta-24mo",
+    method_id: "gee-yoy-comparison",
     confidence: "medium",
     claim_status: "observed",
     quote_text:
       kind === "loser"
-        ? `${top.name} lost ${Math.abs(top.deltaPct).toFixed(1)}% of its surface area between ${top.startDate} and ${top.endDate}, the largest relative decline among water bodies tracked by Neer Vazhvu using Sentinel-2 imagery. Source: Neer Vazhvu GEE pipeline.`
-        : `${top.name} grew ${top.deltaPct.toFixed(1)}% in surface area between ${top.startDate} and ${top.endDate}. Consistent with restoration, rainfall retention, or seasonal hydrology - causal attribution requires field verification. Source: Neer Vazhvu GEE pipeline.`,
+        ? `${top.name} recorded a 6-month average surface area ${Math.abs(top.deltaPct).toFixed(1)}% smaller than the same 6 calendar months a year earlier (comparing up to ${top.endDate}). The largest year-over-year decline among Chennai water bodies with sufficient seasonal satellite data. Source: Neer Vazhvu GEE pipeline using Sentinel-2 NDWI.`
+        : `${top.name} recorded a 6-month average surface area ${top.deltaPct.toFixed(1)}% larger than the same 6 calendar months a year earlier (comparing up to ${top.endDate}). Consistent with restoration, rainfall retention, or seasonal hydrology - causal attribution requires field verification. Source: Neer Vazhvu GEE pipeline using Sentinel-2 NDWI.`,
   };
 }
 
@@ -281,11 +281,33 @@ async function loadTargetNames(): Promise<Map<string, string>> {
   }
 }
 
+/**
+ * Minimum % valid satellite pixels required for a reading to count.
+ * Low values mean the lake was mostly under cloud cover or partial scene.
+ */
+const MIN_VALID_PIXEL_PCT = 80;
+
+/**
+ * Minimum baseline area (hectares) for a water body to be included in
+ * biggest-change rankings. Below this threshold, percentage changes are
+ * dominated by measurement noise.
+ */
+const MIN_BASELINE_AREA_HA = 5;
+
+/**
+ * Number of months on each side of the comparison window.
+ * We compare the most-recent 6 valid months against the same 6 calendar
+ * months in the prior year - so the comparison is season-matched.
+ */
+const COMPARISON_WINDOW_MONTHS = 6;
+
 async function fetchWaterBodyChanges(): Promise<WaterBodyChange[] | null> {
   const supabase = createServerClient();
   const { data } = await supabase
     .from("water_body_satellite_summary")
-    .select("gee_target_id, latest_observed_area_ha, summary_date")
+    .select(
+      "gee_target_id, latest_observed_area_ha, summary_date, valid_pixel_pct",
+    )
     .order("summary_date", { ascending: true });
 
   if (!data || data.length === 0) return null;
@@ -296,11 +318,15 @@ async function fetchWaterBodyChanges(): Promise<WaterBodyChange[] | null> {
     gee_target_id: string;
     latest_observed_area_ha: number | null;
     summary_date: string | null;
+    valid_pixel_pct: number | null;
   }
 
   const grouped = new Map<string, SummaryRow[]>();
   for (const row of data as SummaryRow[]) {
     if (!row.gee_target_id) continue;
+    if (!row.summary_date) continue;
+    // Drop readings where the satellite couldn't see enough of the scene
+    if ((row.valid_pixel_pct ?? 0) < MIN_VALID_PIXEL_PCT) continue;
     const arr = grouped.get(row.gee_target_id) ?? [];
     arr.push(row);
     grouped.set(row.gee_target_id, arr);
@@ -308,30 +334,54 @@ async function fetchWaterBodyChanges(): Promise<WaterBodyChange[] | null> {
 
   const changes: WaterBodyChange[] = [];
   for (const [id, rows] of grouped) {
-    if (rows.length < 2) continue;
-    const first = rows[0];
-    const last = rows[rows.length - 1];
-    if (
-      first.latest_observed_area_ha == null ||
-      last.latest_observed_area_ha == null ||
-      first.latest_observed_area_ha <= 0
-    )
-      continue;
+    // Need at least two years of usable readings so the 12-month comparison
+    // has both a current window and a prior-year window
+    if (rows.length < 18) continue;
+
+    const recent = rows.slice(-COMPARISON_WINDOW_MONTHS);
+    const priorStart = Math.max(
+      0,
+      rows.length - 12 - COMPARISON_WINDOW_MONTHS,
+    );
+    const priorEnd = rows.length - 12;
+    const prior = rows.slice(priorStart, priorEnd);
+    if (recent.length < 3 || prior.length < 3) continue;
+
+    const recentAvg = average(
+      recent.map((r) => r.latest_observed_area_ha ?? 0),
+    );
+    const priorAvg = average(
+      prior.map((r) => r.latest_observed_area_ha ?? 0),
+    );
+
+    // Skip noise: baseline too small to produce meaningful percentages
+    if (priorAvg < MIN_BASELINE_AREA_HA) continue;
+
+    const deltaHa = recentAvg - priorAvg;
+    const deltaPct = (deltaHa / priorAvg) * 100;
+
+    // Hard sanity cap - values outside this range are almost always artifacts
+    // (calibration changes, cloud cover, mask misalignment)
+    if (deltaPct > 300 || deltaPct < -95) continue;
+
     const name = names.get(id);
-    const deltaHa = last.latest_observed_area_ha - first.latest_observed_area_ha;
-    const deltaPct = (deltaHa / first.latest_observed_area_ha) * 100;
     changes.push({
       name: name ?? "",
-      startArea: first.latest_observed_area_ha,
-      endArea: last.latest_observed_area_ha,
+      startArea: priorAvg,
+      endArea: recentAvg,
       deltaHa,
       deltaPct,
-      startDate: first.summary_date ?? "",
-      endDate: last.summary_date ?? "",
+      startDate: prior[0].summary_date ?? "",
+      endDate: recent[recent.length - 1].summary_date ?? "",
     });
   }
 
   return changes;
+}
+
+function average(nums: number[]): number {
+  if (nums.length === 0) return 0;
+  return nums.reduce((a, b) => a + b, 0) / nums.length;
 }
 
 function formatNumber(n: number): string {
