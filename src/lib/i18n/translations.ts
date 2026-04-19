@@ -10,6 +10,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   // ── Navigation ────────────────────────────────────────────────────────────
   "nav.dashboard":      { en: "Dashboard",        ta: "டாஷ்போர்டு" },
   "nav.my_ward":        { en: "My Ward",           ta: "என் வார்டு" },
+  "nav.facts":          { en: "Facts",             ta: "உண்மைகள்" },
   "nav.explore":        { en: "Explore",           ta: "ஆராய்க" },
   "nav.groundwater":    { en: "Groundwater Map",   ta: "நிலத்தடி நீர் வரைபடம்" },
   "nav.water_bodies":   { en: "Water Bodies",      ta: "நீர்நிலைகள்" },
@@ -358,6 +359,8 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "about.page_my_ward_title":   { en: "My Ward page",           ta: "என் வார்டு பக்கம்" },
   "about.page_flood_desc":      { en: "Overlays historical flood hazard zones from OpenCity on the ward map together with the Greater Chennai Corporation storm water drain (SWD) network. The goal is to let residents see whether their street sits inside a documented hazard footprint and whether a drain is mapped nearby.", ta: "OpenCity-யின் வரலாற்று வெள்ள ஆபத்து மண்டலங்களையும், GCC மழைநீர் வடிகால் வலையமைப்பையும் வார்டு வரைபடத்தில் காட்டுகிறது. தெரு ஒரு ஆபத்து மண்டலத்தில் இருக்கிறதா, அருகில் வடிகால் உள்ளதா என்பதை குடியிருப்பவர்களுக்கு காட்டுவதே இதன் நோக்கம்." },
   "about.page_my_ward_desc":    { en: "A single-page rollup of every spatial layer the dashboard knows about - reservoirs, groundwater depth, ward risk score, water bodies, rivers, flood zones, drains, sewerage, CGWB stations - all filtered to one ward. It is the deep-link target when you click a ward anywhere in the app.", ta: "டாஷ்போர்டு அறிந்த ஒவ்வொரு இடஞ்சார்ந்த அடுக்கும் - நீர்த்தேக்கங்கள், நிலத்தடி நீர் ஆழம், வார்டு ஆபத்து மதிப்பெண், நீர்நிலைகள், ஆறுகள், வெள்ள மண்டலங்கள், வடிகால், கழிவுநீர், CGWB நிலையங்கள் - அனைத்தும் ஒரு வார்டுக்கு வடிகட்டப்பட்ட ஒற்றை பக்க சுருக்கம். பயன்பாட்டில் எங்கும் ஒரு வார்டை கிளிக் செய்யும்போது இது ஆழமான-இணைப்பு இலக்காகும்." },
+  "about.page_facts_title":     { en: "Chennai Water Facts page", ta: "சென்னை நீர் உண்மைகள் பக்கம்" },
+  "about.page_facts_desc":      { en: "A journalist-ready snapshot page at /facts that surfaces Chennai's water state as quotable numbers with sources, dates, and methodology attached. Organised into four freshness tiers so staleness is never hidden: Today (live from monitoring feeds), This Year (latest government publications with vintage year), Chennai Water History (milestone events and peak records), and Infrastructure (structural capacity). Every card has copy-quote, tweet, and copy-link buttons. Powered by Schema.org Dataset + Observation structured data for search engines, with a public JSON API at /api/facts.", ta: "/facts-இல் உள்ள பத்திரிக்கையாளர்களுக்கான சென்னை நீர் நிலை பக்கம். மூலங்கள், தேதிகள் மற்றும் முறைமையுடன் மேற்கோள் எண்களாக வழங்கப்படுகிறது. புதுமையின்படி நான்கு அடுக்குகளாக ஒழுங்கமைக்கப்பட்டது: இன்று (நேரடி), இந்த ஆண்டு (சமீபத்திய அரசு வெளியீடுகள்), வரலாறு (மைல்கற்கள்), மற்றும் உள்கட்டமைப்பு. ஒவ்வொரு அட்டையிலும் நகல் மேற்கோள், ட்வீட் மற்றும் இணைப்பு பொத்தான்கள் உள்ளன." },
 
   // Report card methodology (inside My Ward page section)
   "about.report_card_title":    { en: "Ward Report Card", ta: "வார்டு அறிக்கை அட்டை" },
@@ -591,7 +594,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
 
   "about.ds_flood_desc":      { en: "CFLOWS 1.0 flood hazard zones (5 categories, operationalized Nov 2019 by IIT Bombay + IIT Madras + NCCR; not publicly updated since), 2015 Chennai flood hotspots with vulnerability ratings, 2015 inundation depth readings, 2020 Cyclone Nivar hotspots, and return period flood maps (5-200yr). Newer models (JICA Chennai Flood Control Master Plan 2024; TN RTFF & SDSS live Oct 2025 at chennaifloodmonitor.tn.gov.in) are not publicly redistributable as GIS.", ta: "CFLOWS 1.0 வெள்ள ஆபத்து மண்டலங்கள் (5 வகைகள், நவ 2019-இல் IIT பம்பாய் + IIT மெட்ராஸ் + NCCR அமைப்புகளால் செயல்படுத்தப்பட்டது; அதன்பிறகு பொதுவில் புதுப்பிக்கப்படவில்லை), 2015 சென்னை வெள்ள புள்ளிகள், 2015 நீர்மூழ்கு ஆழ அளவீடுகள், 2020 சூறாவளி நிவர் புள்ளிகள், மற்றும் திரும்ப காலம் வெள்ள வரைபடங்கள் (5-200 ஆண்டு). புதிய மாதிரிகள் (JICA சென்னை வெள்ள கட்டுப்பாடு மாஸ்டர் திட்டம் 2024; TN RTFF & SDSS, அக்டோபர் 2025 முதல் chennaifloodmonitor.tn.gov.in-இல்) GIS-ஆக பகிர்வதற்கு கிடைக்கவில்லை." },
   "about.ds_swd_desc":        { en: "10,308 official storm water drain segments from GCC survey (2023) across 197 wards, with street name, drain type, depth, width, length, material, and condition status.", ta: "GCC ஆய்வின் (2023) 197 வார்டுகளில் 10,308 அதிகாரபூர்வ மழைநீர் வடிகால் பகுதிகள், தெரு பெயர், வடிகால் வகை, ஆழம், அகலம், நீளம், பொருள் மற்றும் நிலை." },
-  "about.ds_sewerage_desc":   { en: "CMWSSB sewerage infrastructure: 8 sewage treatment plants (STPs) with capacity, 348 pumping stations (SPS) linked to STPs, and 3,834 pumping main segments with pipe material and size.", ta: "CMWSSB கழிவுநீர் உள்கட்டமைப்பு: 8 கழிவுநீர் சுத்திகரிப்பு நிலையங்கள் (STP), 348 பம்பிங் நிலையங்கள் (SPS), மற்றும் 3,834 பம்பிங் முக்கிய குழாய் பகுதிகள்." },
+  "about.ds_sewerage_desc":   { en: "CMWSSB sewerage infrastructure: 13 operational sewage treatment plants (STPs) with 745 MLD total installed capacity across 6 major campuses (Kodungaiyur, Koyambedu, Nesapakkam, Perungudi, Alandur, Sholinganallur). Map shows 8 treatment-site points; several campuses have multiple plant units commissioned in different years. Also 348 pumping stations (SPS) linked to STPs, and 3,834 pumping main segments with pipe material and size.", ta: "CMWSSB கழிவுநீர் உள்கட்டமைப்பு: 745 MLD மொத்த நிறுவப்பட்ட திறனுடன் 13 செயல்படும் கழிவுநீர் சுத்திகரிப்பு நிலையங்கள் (STP), 6 முக்கிய வளாகங்களில் (கொடுங்கையூர், கோயம்பேடு, நேசப்பாக்கம், பெருங்குடி, ஆலந்தூர், சோலிங்கநல்லூர்). வரைபடம் 8 சுத்திகரிப்பு தளங்களைக் காட்டுகிறது; பல வளாகங்களில் வெவ்வேறு ஆண்டுகளில் செயல்படுத்தப்பட்ட பல ஆலை அலகுகள் உள்ளன. மேலும் 348 பம்பிங் நிலையங்கள் (SPS) STP-களுடன் இணைக்கப்பட்டுள்ளன, மற்றும் 3,834 பம்பிங் முக்கிய குழாய் பகுதிகள்." },
   "about.ds_imd_desc":        { en: "56-year monthly rainfall history (1970-2025) from IMD's 0.25-degree gridded dataset, extracted for the Chennai grid cell. Includes annual totals and long-term monthly normals for drought/flood/Day Zero year identification.", ta: "IMD-யின் 0.25-டிகிரி கிரிட் தரவுத்தொகுப்பிலிருந்து 56 ஆண்டு மாதாந்திர மழை வரலாறு (1970-2025), சென்னை கிரிட் செல்லுக்கு பிரித்தெடுக்கப்பட்டது. வறட்சி/வெள்ளம்/டே ஜீரோ ஆண்டு அடையாளத்திற்கான வருடாந்திர மொத்தங்கள் மற்றும் நீண்டகால மாத சாதாரண மதிப்புகள் அடங்கும்." },
   "about.ds_cgwb_desc":       { en: "Block-level groundwater exploitation data (2011-2024) from CGWB via India WRIS ArcGIS API. Shows classification (Safe to Over-Exploited), development percentage, net availability, and extraction draft for ~15 blocks in and around Chennai.", ta: "இந்தியா WRIS ArcGIS API மூலம் CGWB-யிலிருந்து பிளாக்-நிலை நிலத்தடி நீர் சுரண்டல் தரவு (2011-2024). சென்னை மற்றும் சுற்றியுள்ள ~15 பிளாக்குகளுக்கு வகைப்பாடு (பாதுகாப்பானது முதல் அதிக சுரண்டல் வரை), வளர்ச்சி சதவீதம், நிகர கிடைக்கும் தன்மை மற்றும் எடுப்பு வரைவு." },
   "about.ds_wris_stations_desc": { en: "Station-level groundwater time series for ~35 CGWB monitoring stations in Chennai district, pulled daily from the India WRIS Ground Water Level API. Mix of Manual (quarterly dug wells, unconfined aquifer) and Telemetric (daily DWLR bore wells, confined aquifer) stations with well type, well depth, and aquifer metadata. Each station is scored server-side with a stuck/stale/ok data quality flag.", ta: "இந்திய WRIS நிலத்தடி நீர் மட்டம் API-இல் இருந்து தினசரி பெறப்படும் சென்னை மாவட்டத்தில் ~35 CGWB கண்காணிப்பு நிலையங்களுக்கான நிலைய-அளவிலான நிலத்தடி நீர் நேரத்தொடர். கையேடு (கிணறு, unconfined) மற்றும் தொலை அளவீட்டு (DWLR, confined) நிலையங்கள் கலந்தவை, கிணறு வகை, ஆழம் மற்றும் நீர்வழங்கல் வகையுடன். ஒவ்வொரு நிலையமும் stuck/stale/ok தரக் குறிப்பிடு கொண்டது." },
@@ -989,6 +992,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "flood.legend_sps":       { en: "Pumping Station (SPS)",          ta: "பம்பிங் நிலையம்" },
   "flood.legend_pm":        { en: "Pumping Main",                   ta: "பம்பிங் முக்கிய குழாய்" },
   "flood.stp_count":        { en: "treatment plants",               ta: "சுத்திகரிப்பு நிலையங்கள்" },
+  "flood.stp_capacity":     { en: "installed treatment capacity",   ta: "நிறுவப்பட்ட சுத்திகரிப்பு திறன்" },
   "flood.sps_count":        { en: "pumping stations",               ta: "பம்பிங் நிலையங்கள்" },
   "flood.pm_count":         { en: "pumping mains",                  ta: "பம்பிங் முக்கிய குழாய்கள்" },
   "flood.source_cmwssb":    { en: "CMWSSB",                         ta: "CMWSSB" },
@@ -1261,4 +1265,24 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "uplift.factor_flood_risk":         { en: "Flood exposure", ta: "வெள்ள வெளிப்பாடு" },
   "uplift.factor_wb_health":          { en: "Water body health", ta: "நீர்நிலை ஆரோக்கியம்" },
   "uplift.factor_wb_density":         { en: "Water body density", ta: "நீர்நிலை அடர்த்தி" },
+
+  // ── Chennai Water Facts page ──────────────────────────────────────────────
+  "facts.page_title":       { en: "Chennai Water Facts", ta: "சென்னை நீர் உண்மைகள்" },
+  "facts.page_intro":       {
+    en: "Chennai's water state in quotable numbers. Every fact has a source, a date, and a methodology link. Organised by freshness: today's live data, this year's government releases, historical milestones, and structural infrastructure.",
+    ta: "சென்னையின் நீர் நிலை மேற்கோள் எண்களில். ஒவ்வொரு உண்மைக்கும் ஒரு மூலம், தேதி மற்றும் முறைமை இணைப்பு உள்ளது. புதுமையின் அடிப்படையில் ஒழுங்கமைக்கப்பட்டது: இன்றைய நேரடித் தரவு, இந்த ஆண்டின் அரசாங்க வெளியீடுகள், வரலாற்று மைல்கற்கள், மற்றும் கட்டமைப்பு உள்கட்டமைப்பு.",
+  },
+  "facts.last_updated":     { en: "Last updated", ta: "கடைசியாக புதுப்பிக்கப்பட்டது" },
+  "facts.as_of":            { en: "As of", ta: "அன்று" },
+  "facts.copy_quote":       { en: "Copy quote", ta: "மேற்கோள் நகலெடு" },
+  "facts.copy_link":        { en: "Copy link", ta: "இணைப்பை நகலெடு" },
+  "facts.tweet":            { en: "Tweet", ta: "ட்வீட்" },
+  "facts.copied":           { en: "Copied!", ta: "நகலெடுக்கப்பட்டது!" },
+  "facts.card_anchor":      { en: "Permalink to this fact", ta: "இந்த உண்மைக்கான நிரந்தர இணைப்பு" },
+  "facts.methodology_title":{ en: "Methodology & sources", ta: "முறைமை & மூலங்கள்" },
+  "facts.methodology_intro":{
+    en: "Every number on this page is sourced from a publicly available dataset or official release. Live figures are refreshed daily from government monitoring feeds; annual figures show their vintage year; historical and structural figures are reference data with dated provenance.",
+    ta: "இந்த பக்கத்தில் உள்ள ஒவ்வொரு எண்ணும் பொதுவில் கிடைக்கும் தரவுத்தொகுப்பு அல்லது அதிகாரப்பூர்வ வெளியீட்டிலிருந்து பெறப்பட்டது. நேரடி புள்ளிவிவரங்கள் தினசரி அரசு கண்காணிப்பு ஊட்டங்களிலிருந்து புதுப்பிக்கப்படுகின்றன.",
+  },
+  "facts.methodology_link": { en: "See full data sources →", ta: "முழு தரவு மூலங்களைப் பார்க்கவும் →" },
 };

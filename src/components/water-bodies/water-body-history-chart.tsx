@@ -122,13 +122,30 @@ export function WaterBodyHistoryChart({ osmId }: WaterBodyHistoryChartProps) {
       ? baselineValues.reduce((a, b) => a + b, 0) / baselineValues.length
       : null;
 
-  const formatMonthShort = (date: string) => {
-    const parsed = parseDate(date);
-    if (!parsed) return date;
-    return parsed.toLocaleDateString(locale, {
-      month: "short",
-      year: "2-digit",
-    });
+  const chartData = history.map((p) => ({
+    ...p,
+    ts: parseDate(p.summaryDate)?.getTime() ?? 0,
+  }));
+  const firstTs = chartData[0]?.ts ?? 0;
+  const lastTs = chartData[chartData.length - 1]?.ts ?? 0;
+  const yearTicks: number[] = [];
+  if (firstTs && lastTs) {
+    const firstYear = new Date(firstTs).getFullYear();
+    const lastYear = new Date(lastTs).getFullYear();
+    for (let y = firstYear; y <= lastYear; y++) {
+      const t = new Date(y, 0, 1).getTime();
+      if (t >= firstTs && t <= lastTs) yearTicks.push(t);
+    }
+  }
+  const spanYears =
+    firstTs && lastTs
+      ? (lastTs - firstTs) / (365.25 * 24 * 3600 * 1000)
+      : 0;
+  const yearTickFormatter = (ts: number) => {
+    const d = new Date(ts);
+    return spanYears >= 4
+      ? `'${d.getFullYear().toString().slice(2)}`
+      : d.getFullYear().toString();
   };
 
   const formatMonthLong = (date: string) => {
@@ -184,7 +201,7 @@ export function WaterBodyHistoryChart({ osmId }: WaterBodyHistoryChartProps) {
       <div className="h-40">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
-            data={history}
+            data={chartData}
             margin={{ top: 5, right: 5, left: -10, bottom: 5 }}
           >
             <defs>
@@ -195,12 +212,15 @@ export function WaterBodyHistoryChart({ osmId }: WaterBodyHistoryChartProps) {
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
             <XAxis
-              dataKey="summaryDate"
+              dataKey="ts"
+              type="number"
+              scale="time"
+              domain={["dataMin", "dataMax"]}
+              ticks={yearTicks}
               tick={{ fontSize: 9, fill: tickColor }}
               tickLine={false}
               axisLine={false}
-              interval="preserveStartEnd"
-              tickFormatter={formatMonthShort}
+              tickFormatter={yearTickFormatter}
             />
             <YAxis
               tick={{ fontSize: 9, fill: tickColor }}

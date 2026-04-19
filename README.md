@@ -69,12 +69,12 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **Industrial Pollution Sources Overlay** - 7 major facilities (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek) colour-coded by type; click for operator details, pollutant pills, incident timeline, and NGT orders. OSM `landuse=industrial` polygons shown as translucent overlay
 
 ### Flood Risk, Drainage, and Sewerage
-- **Hazard Zone Map** - CFLOWS model flood hazard zones (Very High to Very Low) from OpenCity Chennai, with ward boundary overlay for area context
+- **Hazard Zone Map** - CFLOWS 1.0 flood hazard zones (Very High to Very Low) from the Nov 2019 model by IIT Bombay + IIT Madras + NCCR, via OpenCity Chennai. Model has not received a public update since; visible caveat on the page explains the vintage. Ward boundary overlay for area context.
 - **Historical Flood Events** - Toggle between 2015 Chennai floods (327 hotspots with vulnerability ratings, 192 inundation depth points) and 2020 Cyclone Nivar (53 hotspots)
 - **GCC Storm Water Drain Network** - 10,308 official drain segments from Greater Chennai Corporation survey (2023), showing street-level detail with drain type, depth, width, material, and condition status
 - **Macro and Micro Drains** - 52 major drainage channels from Chennai Basin Drainage Maps
 - **Drain Detail Panel** - Click any drain for street name, ward/zone, dimensions, open/closed status, condition (Good/Bad), and material type
-- **CMWSSB Sewerage Network** - 8 treatment plants (STPs) with capacity, 348 pumping stations (SPS) with STP linkage, and 3,834 pumping main segments with pipe material and size
+- **CMWSSB Sewerage Network** - 13 operational sewage treatment plants totalling 745 MLD installed capacity (CMWSSB 2026) shown as 8 campus points, 348 pumping stations (SPS) with STP linkage, and 3,834 pumping main segments with pipe material and size
 - **Return Period Maps** - 5/10/25/50/100/200-year flood extent polygons
 - **Ward Boundary Overlay** - 200 GCC wards with zone names on hover across all view modes
 - **Ward Context + AI Analysis** - Detail panels show ward-level cross-domain context and AI narrative for any clicked feature
@@ -98,6 +98,17 @@ A unified ward report page at `/my-ward` that aggregates all data layers for any
 - **Export** - CSV download of all ward data, share via URL, print-friendly layout
 - **Ward Report Card** - Print-optimized one-pager at `/my-ward/report?ward=N` ranking a ward among all 200 on 5 governance-quality metrics (water body health, water body density, flood risk exposure, drainage coverage, sewage network coverage). Percentile-based A-F grades, zone/city median comparisons, elected representatives, methodology disclosure with known limitations. All density metrics area-normalized; line-based infrastructure apportioned across ward boundaries by sampling
 - **Uplift Planner** - Interactive budget optimizer answering "If I had INR X crore for my ward, where should I invest?" A greedy algorithm allocates a hypothetical budget (10-500 Cr slider) across 5 intervention types (storm drains, sewerage, flood mitigation, water body restoration, water body revival), maximizing composite-score improvement per crore spent. Data-backed caps prevent over-allocation (e.g. can't restore more bodies than actually need it). After-state uses exact ranking engine recompute (not approximation) for grade projections. Cost ranges from published GCC/CMWSSB/NDMA project reports
+
+### Chennai Water Facts
+A journalist-ready snapshot page at `/facts` that surfaces Chennai's water state as quotable numbers with sources, dates, and methodology attached. Organised by freshness tier so staleness is never hidden.
+
+- **Live tier** (Tier 1) - Reservoir storage today, Day Zero comparison to 2019, last-30-day rainfall, and year-over-year water body area change for 12+ tracked water bodies. Computed at request time from `reservoir_daily`, `weather_daily`, and `water_body_satellite_summary` tables with hourly ISR.
+- **Annual tier** (Tier 2) - Latest published government data: CGWB over-exploited blocks (13 of 16 in 2024), peak river pollution records (Cooum DO 0.0 mg/L in 2022, Buckingham Canal DO 0.3 mg/L in 2024), ward-level groundwater crisis count, and a Data Transparency Watch meta-card flagging how long it has been since authorities published.
+- **Historical tier** (Tier 3) - Documented events and peak records: 2019 Day Zero (~19 MCFT usable storage), 2015 Chennai floods (77-494 mm station rainfall range per WWA), CFLOWS 1.0 model vintage (Nov 2019), Pallikaranai Marsh decline (~6,000 to ~593 ha per 2016 research).
+- **Infrastructure tier** (Tier 4) - Structural capacity facts: 13 STPs / 745 MLD installed, 200 MLD desalination installed, 13,222 MCFT total reservoir capacity, piped supply vs demand gap.
+- **Copy-quote buttons** produce paste-ready attribution including the canonical fact URL (`neervazhvu.org/facts#id`).
+- **JSON-LD Dataset + Observation** structured data for search engines.
+- **Public JSON API** at `/api/facts` for RSS, embeds, and partner integrations.
 
 ### Intelligence Layer (Python Service)
 - **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals; uses inflow/outflow, precipitation, and ET₀ (evapotranspiration) as exogenous regressors when data variance is sufficient
@@ -168,9 +179,9 @@ Earth Engine Phase 1 jobs live under `neer-vazhvu-api/app/gee/` and write small 
 | [IMD Gridded Rainfall (via imdlib)](https://imdlib.readthedocs.io/) | Monthly rainfall at 0.25 deg resolution for Chennai (1970-2025), long-term normals | One-time generation |
 | [India WRIS / CGWB](https://indiawris.gov.in/) | Block-level groundwater exploitation (%), classification (Safe to Over-Exploited), block boundaries (2011-2024) | Static fetch |
 | [India WRIS Ground Water Level API](https://indiawris.gov.in/Dataset/Ground%20Water%20Level) | CGWB station-level time series (~35 Chennai stations, depth to water, Manual vs Telemetric/DWLR, well type, well depth, aquifer type) with server-side stuck/stale sensor detection | Daily scrape |
-| [OpenCity Chennai (Flood Data)](https://data.opencity.in/) | CFLOWS flood hazard zones, 2015 flood hotspots/depth, 2020 Cyclone Nivar hotspots, return period maps | Static fetch |
+| [OpenCity Chennai (Flood Data)](https://data.opencity.in/) | CFLOWS 1.0 (Nov 2019) flood hazard zones, 2015 flood hotspots/depth, 2020 Cyclone Nivar hotspots, return period maps. Model not publicly updated since 2019. | Static fetch |
 | [GCC Storm Water Drain Survey](https://data.opencity.in/) | 10,308 drain segments with type, depth, width, material, status across 197 wards | Static fetch |
-| [CMWSSB Sewerage Network](https://data.opencity.in/) | 8 STPs, 348 pumping stations, 3,834 pumping mains with pipe material and size | Static fetch |
+| [CMWSSB Sewerage Network](https://cmwssb.tn.gov.in/sewerage-system) | 13 operational STPs (745 MLD installed capacity; 8 campus points in geojson), 348 pumping stations, 3,834 pumping mains with pipe material and size | Static fetch (capacity cross-referenced with CMWSSB page) |
 | [Anthropic Claude API](https://docs.anthropic.com/) | AI-generated city and ward narratives (Sonnet for city, Haiku for wards) | Daily (city) / Monthly (wards) |
 
 ## Tech Stack
@@ -500,7 +511,7 @@ neer-vazhvu/
 │   │   ├── chennai-flood-inundation-depth.geojson # 2015 inundation depth points (192)
 │   │   ├── chennai-flood-return-periods.geojson # Return period flood maps (5-200yr)
 │   │   ├── chennai-drainage.geojson             # GCC storm water drains (10,308 segments)
-│   │   └── chennai-sewerage.geojson             # CMWSSB sewerage network (8 STPs, 348 SPS, 3,834 mains)
+│   │   └── chennai-sewerage.geojson             # CMWSSB sewerage (13 STPs / 745 MLD; 8 campus points, 348 SPS, 3,834 mains)
 │   └── data/                     # Static JSON datasets
 │       ├── river-quality.json            # CPCB monitoring station readings (2015-2024)
 │       ├── cooum-sewage-inlets.json     # 31 sewage inlets along Cooum (Nethaji Mariappan et al. 2017)
