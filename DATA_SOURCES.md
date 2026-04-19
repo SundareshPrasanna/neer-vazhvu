@@ -275,23 +275,40 @@ The view also returns `recent_count` and `recent_range_m` so downstream UIs can 
 |---|---|
 | **Source** | [OpenCity Chennai](https://data.opencity.in/) (multiple flood-related KML datasets) |
 | **Method** | KML download + conversion to simplified GeoJSON via `scripts/simplify-flood-geojson.ts` |
-| **Frequency** | One-time fetch; static datasets |
+| **Frequency** | One-time fetch; static datasets (no public updates to underlying models) |
 | **Coverage** | Chennai metropolitan area |
 | **Datasets** | 6 GeoJSON files derived from OpenCity KML resources |
 | **Files** | `public/geojson/chennai-flood-hazard-zones.geojson`, `chennai-flood-2015-hotspots.geojson`, `chennai-flood-2020-hotspots.geojson`, `chennai-flood-inundation-depth.geojson`, `chennai-flood-return-periods.geojson` |
 
 **Sub-datasets:**
-- **Flood Hazard Zones** (CFLOWS model): 15,524 polygons in 5 categories (very high, high, moderate, low, very low). Simplified from 35MB to 3.6MB.
-- **2015 Flood Hotspots**: 327 GCC-identified flood-affected points with vulnerability ratings (Very High/High/Low), ward and zone numbers
-- **2015 Inundation Depth**: 192 crowd-sourced depth readings (5-60 ft) with location remarks
-- **2020 Cyclone Nivar Hotspots**: 53 named flood-affected neighborhoods
-- **Return Period Maps**: 5/10/25/50/100/200-year flood extents, merged from 6 KMLs into 1.1MB file
+- **Flood Hazard Zones** (CFLOWS 1.0 model, 2019): 15,524 polygons in 5 categories (very high, high, moderate, low, very low). Simplified from 35MB to 3.6MB.
+- **Return Period Maps** (CFLOWS 1.0, 2019): 5/10/25/50/100/200-year flood extents, merged from 6 KMLs into 1.1MB file. 796 pre-computed inundation scenarios across return periods, tidal conditions, and discharge combinations.
+- **2015 Flood Hotspots**: 327 GCC-identified flood-affected points from Dec 2015 event with vulnerability ratings (Very High/High/Low), ward and zone numbers
+- **2015 Inundation Depth**: 192 crowd-sourced depth readings (5-60 ft) from Dec 2015 event with location remarks
+- **2020 Cyclone Nivar Hotspots**: 53 named flood-affected neighborhoods from Nov 2020 event
+
+### CFLOWS model provenance
+
+- **Name**: Chennai Flood Warning System 1.0 (CFLOWS)
+- **Developers**: IIT Bombay (lead), IIT Madras, IISc Bangalore, Anna University IRS, with NCCR, IMD, NCMRWF, NIOT
+- **Publisher**: Ministry of Earth Sciences / Office of the Principal Scientific Adviser
+- **Launched**: November 3, 2019 (by Vice President M. Venkaiah Naidu, alongside the "Red Atlas Action Plan Map")
+- **Current operator**: TN State Disaster Management Authority (TNSDMA) + Greater Chennai Corporation
+- **Public update status**: No public evidence of a "CFLOWS 2.0" or a model re-run since 2019. The underlying hazard zone polygons in this app represent the original 2019 CFLOWS 1.0 output. OpenCity's re-upload dates (e.g., Nov 2025) are redistribution events, not model refreshes.
+- **NCCR reference**: [CFLOWS brochure](https://www.nccr.gov.in/sites/default/files/C-FLOWS%20Brochure.pdf) | [Chennai Flood Warning System 1.0 introduction](https://www.nccr.gov.in/sites/default/files/clChen.pdf)
+
+### Newer flood products (not currently usable)
+
+- **JICA Comprehensive Flood Control Master Plan** (2022-2024): Prepared by JICA + TNDRRA + CMDA + GCC + TN-WRD; final master plan submitted 2024. Will be embedded in CMDA's Third Master Plan 2027-2046 (expected release: early 2026). GIS deliverables not publicly downloadable at time of writing.
+- **RTFF & SDSS** (operationalized October 2025): Tamil Nadu's new real-time flood forecasting + decision support system at [chennaifloodmonitor.tn.gov.in](https://chennaifloodmonitor.tn.gov.in). Covers 4,974 km², 74 watersheds, 185 water level recorders. Supersedes CFLOWS for real-time forecasting. Hazard/return-period outputs not publicly redistributable as shapefiles.
+- **NRSC Bhuvan event-specific extents**: Observed flood inundation maps for specific events (e.g., Dec 2023 Cyclone Michaung via RISAT-1A SAR). Complementary to hazard zones, not a replacement. Available at [bhuvan-app1.nrsc.gov.in/disaster/disaster.php](https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php).
 
 **Known limitations:**
-- CFLOWS hazard zones are model outputs, not observed flood extents
-- 2015 depth points are crowd-sourced and may have accuracy variations
+- **CFLOWS hazard zones are planning-grade model outputs from 2019**, not observed flood extents, and do not reflect drainage infrastructure changes, new construction, or terrain changes since then.
 - Return period maps are planning-grade, not site-specific predictions
+- 2015 depth points are crowd-sourced and may have accuracy variations
 - Hazard zone polygons have no location names; ward boundary overlay provides spatial context
+- Observed extents from post-2019 events (2023 Michaung, 2025 NE monsoon) differ from modeled zones; modeled zones should be read as "baseline hazard likelihood" not current forecast
 
 ## GCC Storm Water Drain Network
 

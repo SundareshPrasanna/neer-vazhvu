@@ -201,7 +201,7 @@ function FloodRiskPageContent() {
             />
           </div>
           <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
-            <div className="text-xs text-slate-500 dark:text-slate-400">
+            <div className="text-xs text-slate-500 dark:text-slate-400 max-w-[260px]">
               {t("flood.source_flood")}{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-300">
                 {viewMode === "drainage"
@@ -210,6 +210,16 @@ function FloodRiskPageContent() {
                     ? t("flood.source_cmwssb")
                     : t("flood.source_opencity")}
               </span>
+              {viewMode === "hazard" && (
+                <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                  <div className="font-semibold text-amber-700 dark:text-amber-400 mb-1">
+                    {t("flood.hazard_caveat_title")}
+                  </div>
+                  <div className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">
+                    {t("flood.hazard_caveat")}
+                  </div>
+                </div>
+              )}
             </div>
           </MapInfoButton>
           <WardSearch
