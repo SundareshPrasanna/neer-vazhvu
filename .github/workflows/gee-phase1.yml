@@ -41,7 +41,7 @@ on:
         default: ''
 
 concurrency:
-  group: gee-phase1-${{ github.event_name }}-${{ github.event.schedule || inputs.task || 'default' }}
+  group: gee-phase1-${{ github.event_name }}-${{ github.event.schedule || inputs.task || 'default' }}-${{ inputs.reference_date || 'default' }}
   cancel-in-progress: false
 
 jobs:
