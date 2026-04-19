@@ -3,9 +3,9 @@
   "entity": {
     "type": "individual",
     "role": "owner",
-    "name": "Sundaresh Prasanna",
+    "name": "Sundaresh Prasanna Chandran",
     "email": "sundareshchandran@gmail.com",
-    "description": "Data Scientist and software engineer based in Chennai, building open-source civic technology for water intelligence and climate resilience.",
+    "description": "Chennai-based software engineer building open-source civic technology. Sole maintainer of Neer Vazhvu, an open-source water intelligence platform cited in Indian media (DT Next, April 2026) for its integrated analysis of Chennai's water crisis.",
     "webpageUrl": {
       "url": "https://neervazhvu.org"
     }
@@ -14,7 +14,7 @@
     {
       "guid": "neer-vazhvu",
       "name": "Neer Vazhvu",
-      "description": "Open-source water intelligence platform for Chennai that connects 6 public datasets - reservoirs, groundwater, river quality, flood risk, drainage, and water bodies - into ward-level summaries with AI narratives in English and Tamil. Covers all 200 wards, runs daily automated pipelines, mobile-first.",
+      "description": "Open-source water intelligence platform for Chennai. Integrates 20+ public data sources (reservoirs, groundwater, river water quality, flood risk, stormwater drains, sewerage, water bodies, satellite imagery) into ward-level decision support for all 200 wards and 11 million residents. Produces four computed intelligence layers unavailable elsewhere in India: daily composite water risk scores for every ward, restoration priority rankings for 1,787 water bodies, ward governance report cards (A-F grades across 5 metrics), and an interactive budget uplift planner that answers 'if I have X crore for my ward, where should I invest?'. Runs an automated daily pipeline on free/open infrastructure (Vercel, Supabase, Railway, Google Earth Engine). Featured in DT Next (April 2026) for platform-sourced findings on untreated sewage discharge and groundwater deficit. Fully documented methodology, MIT-licensed, designed for multi-city replication - a digital commons layer for urban water governance in India.",
       "webpageUrl": {
         "url": "https://neervazhvu.org"
       },
@@ -26,14 +26,16 @@
       ],
       "tags": [
         "civic-tech",
+        "digital-commons",
+        "open-data",
         "water",
         "climate",
-        "open-data",
+        "governance",
         "india",
         "chennai",
+        "satellite",
         "nextjs",
         "python",
-        "ai",
         "tamil"
       ]
     }
@@ -44,39 +46,60 @@
         "guid": "github-sponsors",
         "type": "payment-provider",
         "address": "https://github.com/sponsors/SundareshPrasanna",
-        "description": "GitHub Sponsors"
+        "description": "GitHub Sponsors - individual and organisational sponsorships"
       },
       {
         "guid": "grants",
         "type": "other",
-        "description": "Open to grants and institutional funding for multi-city expansion and community partnerships."
+        "description": "Grants and institutional funding for dedicated development, multi-city expansion, and community engagement"
       }
     ],
     "plans": [
       {
-        "guid": "infrastructure",
+        "guid": "dedicated-development",
         "status": "active",
-        "name": "Infrastructure sustenance",
-        "description": "Cover monthly running costs - AI API, domain, and hosting when traffic exceeds free tier. Currently ~$6/month ($72/year).",
-        "amount": 0,
-        "currency": "USD",
-        "frequency": "monthly",
+        "name": "Dedicated maintainer time (12 months)",
+        "description": "Fund 12 months of dedicated maintainer time to transition from evenings-and-weekends development to substantial part-time commitment. Deliverables in this period: integrate 8 additional high-value government data sources identified but not yet wired in, expand satellite water body monitoring from 150 to 500+ bodies, ship a public API with rate-limited free tier for researchers and journalists, and publish quarterly community updates documenting methodology and findings. This is the primary grant ask and matches FOSS United's stated preference for funding proven maintainers on projects with real users.",
+        "amount": 800000,
+        "currency": "INR",
+        "frequency": "one-time",
         "channels": [
-          "github-sponsors",
           "grants"
         ]
       },
       {
         "guid": "multi-city",
         "status": "active",
-        "name": "Multi-city expansion",
-        "description": "Fund data pipeline development for Bengaluru, Hyderabad, and other water-stressed Indian cities. Includes data source research, scraper development, and localization.",
-        "amount": 0,
+        "name": "Second-city deployment (Bengaluru)",
+        "description": "Fund data source research, scraper development, boundary and water-body localisation, and local validation for a Bengaluru deployment. Bengaluru is selected for its severe ongoing water crisis, active civic-tech community, and recent $426M World Bank water project. Deployment will prove the framework's replicability and produce a template for further Indian cities. Separable from dedicated development above - useful as a co-funded component with other funders.",
+        "amount": 300000,
         "currency": "INR",
         "frequency": "one-time",
         "channels": [
           "grants"
         ]
+      },
+      {
+        "guid": "infrastructure",
+        "status": "active",
+        "name": "Infrastructure sustenance",
+        "description": "Ongoing running costs currently covered out-of-pocket: AI API calls for city and ward narratives, domain renewal, and cloud infrastructure when traffic exceeds free tiers (Vercel, Supabase, Railway, Google Earth Engine compute). Small but continuous need; suitable for GitHub Sponsors.",
+        "amount": 10,
+        "currency": "USD",
+        "frequency": "monthly",
+        "channels": [
+          "github-sponsors"
+        ]
+      }
+    ],
+    "history": [
+      {
+        "year": 2026,
+        "income": 0,
+        "expenses": 100,
+        "taxes": 0,
+        "currency": "USD",
+        "description": "Self-funded to date. All infrastructure costs absorbed by maintainer. No grants or institutional funding received yet."
       }
     ]
   }
