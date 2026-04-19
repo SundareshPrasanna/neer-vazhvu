@@ -35,6 +35,10 @@ on:
           - all
           - flagship-history
         default: all
+      reference_date:
+        description: Anchor date (YYYY-MM-DD) for backfill shards. Leave empty to anchor at today.
+        type: string
+        default: ''
 
 concurrency:
   group: gee-phase1-${{ github.event_name }}-${{ github.event.schedule || inputs.task || 'default' }}
@@ -202,7 +206,11 @@ jobs:
               python scripts/run_gee_phase1.py run-water-body-summaries $TARGET_COHORT_ARG --write
               ;;
             backfill-water-body-summaries)
-              python scripts/run_gee_phase1.py backfill-water-body-summaries --months-back "${{ inputs.months_back }}" $TARGET_COHORT_ARG --write
+              REF_DATE_ARG=""
+              if [ -n "${{ inputs.reference_date }}" ]; then
+                REF_DATE_ARG="--date ${{ inputs.reference_date }}"
+              fi
+              python scripts/run_gee_phase1.py backfill-water-body-summaries --months-back "${{ inputs.months_back }}" $REF_DATE_ARG $TARGET_COHORT_ARG --write
               ;;
             build-satellite-evidence)
               python scripts/run_gee_phase1.py build-satellite-evidence --months-back "${{ inputs.months_back }}" --frame-count "${{ inputs.frame_count }}" $TARGET_COHORT_ARG --write
