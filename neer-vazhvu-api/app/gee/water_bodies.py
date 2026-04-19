@@ -76,7 +76,7 @@ def filter_targets_for_cohort(
     *,
     cohort: str | None,
 ) -> list[Phase1WaterBodyTargetFeature]:
-    if cohort is None:
+    if cohort is None or cohort == "all":
         return targets
     if cohort != "flagship-history":
         raise RuntimeError(f"Unsupported target cohort: {cohort}")

@@ -39,6 +39,10 @@ on:
         description: Anchor date (YYYY-MM-DD) for backfill shards. Leave empty to anchor at today.
         type: string
         default: ''
+      gee_target_id:
+        description: Optional single gee_target_id (e.g. osm:102303002) to scope build-satellite-evidence to one body.
+        type: string
+        default: ''
 
 concurrency:
   group: gee-phase1-${{ github.event_name }}-${{ github.event.schedule || inputs.task || 'default' }}-${{ inputs.reference_date || 'default' }}
@@ -185,9 +189,10 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
-          TARGET_COHORT_ARG=""
-          if [ "${{ inputs.target_cohort }}" != "all" ]; then
-            TARGET_COHORT_ARG="--target-cohort ${{ inputs.target_cohort }}"
+          TARGET_COHORT_ARG="--target-cohort ${{ inputs.target_cohort }}"
+          TARGET_ID_ARG=""
+          if [ -n "${{ inputs.gee_target_id }}" ]; then
+            TARGET_ID_ARG="--gee-target-id ${{ inputs.gee_target_id }}"
           fi
           case "${{ inputs.task }}" in
             check-auth)
@@ -213,7 +218,7 @@ jobs:
               python scripts/run_gee_phase1.py backfill-water-body-summaries --months-back "${{ inputs.months_back }}" $REF_DATE_ARG $TARGET_COHORT_ARG --write
               ;;
             build-satellite-evidence)
-              python scripts/run_gee_phase1.py build-satellite-evidence --months-back "${{ inputs.months_back }}" --frame-count "${{ inputs.frame_count }}" $TARGET_COHORT_ARG --write
+              python scripts/run_gee_phase1.py build-satellite-evidence --months-back "${{ inputs.months_back }}" --frame-count "${{ inputs.frame_count }}" $TARGET_COHORT_ARG $TARGET_ID_ARG --write
               ;;
             run-all-refresh)
               python scripts/run_gee_phase1.py run-reservoir-context --write

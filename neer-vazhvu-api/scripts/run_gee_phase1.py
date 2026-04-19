@@ -555,7 +555,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     build_satellite_evidence.add_argument(
         "--target-cohort",
-        choices=["flagship-history"],
+        choices=["flagship-history", "all"],
         default="flagship-history",
         help="Named target cohort to build evidence for. Default: flagship-history",
     )
