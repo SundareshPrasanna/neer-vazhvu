@@ -24,6 +24,7 @@ export async function buildLiveFacts(): Promise<Fact[]> {
     buildWaterBodyAreaChange(retrievedAt),
     buildBiggestWaterBodyChange(retrievedAt, "loser"),
     buildBiggestWaterBodyChange(retrievedAt, "gainer"),
+    buildWardGwCrisis(retrievedAt),
   ]);
 
   return results
@@ -118,6 +119,61 @@ async function buildDayZeroCompare(retrievedAt: string): Promise<Fact | null> {
     confidence: "high",
     claim_status: "observed",
     quote_text: `Chennai's reservoirs held ${todayFmt} MCFT of water on ${latestDate} - that is ${diffFmt} MCFT ${direction} than the ~${dayZero2019} MCFT of usable storage recorded on 19 June 2019, when the reservoirs were effectively dry at the height of the Day Zero crisis. Source: CMWSSB.`,
+  };
+}
+
+/**
+ * Counts wards at crisis-level groundwater depth (>25m) in the latest
+ * monthly OpenCity / CMWSSB piezometer snapshot present in Supabase.
+ * Goes stale if the OpenCity ingestion pipeline falls behind - see
+ * `data-gap-gw` derived fact for the publication gap signal.
+ */
+async function buildWardGwCrisis(retrievedAt: string): Promise<Fact | null> {
+  const supabase = createServerClient();
+  const { data: latestPeriod } = await supabase
+    .from("groundwater_monthly")
+    .select("year, month")
+    .order("year", { ascending: false })
+    .order("month", { ascending: false })
+    .limit(1);
+
+  if (!latestPeriod || latestPeriod.length === 0) return null;
+  const { year, month } = latestPeriod[0] as { year: number; month: number };
+
+  const { data: wardRows } = await supabase
+    .from("groundwater_monthly")
+    .select("ward_number, depth_to_water_m")
+    .eq("year", year)
+    .eq("month", month);
+
+  if (!wardRows || wardRows.length === 0) return null;
+
+  const crisisCount = wardRows.filter(
+    (r) =>
+      r.depth_to_water_m != null && (r.depth_to_water_m as number) > 25,
+  ).length;
+  const totalWards = wardRows.length;
+  const dataDate = `${year}-${String(month).padStart(2, "0")}-01`;
+
+  return {
+    id: "ward-gw-crisis",
+    tier: 2,
+    category: "groundwater",
+    title: "Wards at crisis groundwater depth",
+    value: String(crisisCount),
+    unit: `of ${totalWards} wards with data (>25m deep)`,
+    interpretation: `${crisisCount} of ${totalWards} Chennai wards with ward-level data are at "crisis" groundwater depth (greater than 25 metres below ground) in the latest ${dataDate} snapshot.`,
+    data_date: dataDate,
+    published_date: dataDate,
+    retrieved_at: retrievedAt,
+    computed_at: retrievedAt,
+    source_url:
+      "https://data.opencity.in/dataset/chennai-ward-wise-groundwater-levels",
+    source_label: `OpenCity / CMWSSB piezometer network, ${year}-${String(month).padStart(2, "0")}`,
+    method_id: "ward-gw-crisis-count",
+    confidence: "medium",
+    claim_status: "observed",
+    quote_text: `${crisisCount} of ${totalWards} Chennai wards with published data sit at "crisis" groundwater depth (over 25 metres below ground) in the latest ${dataDate} CMWSSB piezometer snapshot. Source: OpenCity Chennai ward-wise groundwater dataset.`,
   };
 }
 

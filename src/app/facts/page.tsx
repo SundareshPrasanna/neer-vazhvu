@@ -3,6 +3,7 @@ import Script from "next/script";
 import { FactsPage } from "@/components/facts/facts-page";
 import { STATIC_FACTS } from "@/lib/facts/static-facts";
 import { buildLiveFacts } from "@/lib/facts/live-facts";
+import { buildDerivedFacts } from "@/lib/facts/derived-facts";
 import type { Fact } from "@/types/facts";
 
 export const metadata: Metadata = {
@@ -30,8 +31,11 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function Page() {
-  const liveFacts = await buildLiveFacts();
-  const facts: Fact[] = [...liveFacts, ...STATIC_FACTS];
+  const [liveFacts, derivedFacts] = await Promise.all([
+    buildLiveFacts(),
+    buildDerivedFacts(),
+  ]);
+  const facts: Fact[] = [...liveFacts, ...derivedFacts, ...STATIC_FACTS];
   const generatedAt = new Date().toISOString();
   const jsonLd = buildJsonLd(facts);
 
