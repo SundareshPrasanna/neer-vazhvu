@@ -11,6 +11,7 @@ import { LanguageToggle } from "./language-toggle";
 const TOP_NAV = [
   { href: "/",        key: "nav.dashboard" },
   { href: "/my-ward", key: "nav.my_ward" },
+  { href: "/facts",   key: "nav.facts" },
 ] as const;
 
 const EXPLORE_ITEMS = [

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { FactsPage } from "@/components/facts/facts-page";
 import { STATIC_FACTS } from "@/lib/facts/static-facts";
 import { buildLiveFacts } from "@/lib/facts/live-facts";
@@ -36,8 +37,10 @@ export default async function Page() {
 
   return (
     <>
-      <script
+      <Script
+        id="facts-jsonld"
         type="application/ld+json"
+        strategy="beforeInteractive"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />

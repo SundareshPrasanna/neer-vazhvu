@@ -10,6 +10,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   // ── Navigation ────────────────────────────────────────────────────────────
   "nav.dashboard":      { en: "Dashboard",        ta: "டாஷ்போர்டு" },
   "nav.my_ward":        { en: "My Ward",           ta: "என் வார்டு" },
+  "nav.facts":          { en: "Facts",             ta: "உண்மைகள்" },
   "nav.explore":        { en: "Explore",           ta: "ஆராய்க" },
   "nav.groundwater":    { en: "Groundwater Map",   ta: "நிலத்தடி நீர் வரைபடம்" },
   "nav.water_bodies":   { en: "Water Bodies",      ta: "நீர்நிலைகள்" },
