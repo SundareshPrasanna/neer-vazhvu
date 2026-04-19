@@ -61,7 +61,7 @@ export const RESERVOIR_METADATA: Record<
   },
   cholavaram: {
     displayName: 'Cholavaram',
-    fullCapacityMcft: 881.0,
+    fullCapacityMcft: 1081.0,
     fullTankLevelFt: 22.0,
     latitude: 13.2184,
     longitude: 80.1499,
@@ -93,7 +93,7 @@ export const RESERVOIR_METADATA: Record<
   },
   kannankottai: {
     displayName: 'Kannankottai (TK)',
-    fullCapacityMcft: 1574.0,
+    fullCapacityMcft: 500.0,
     fullTankLevelFt: null,
     latitude: 12.82,
     longitude: 79.98,

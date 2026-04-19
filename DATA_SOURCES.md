@@ -338,20 +338,38 @@ The view also returns `recent_count` and `recent_range_m` so downstream UIs can 
 
 | | |
 |---|---|
-| **Source** | [Chennai Sewerage Collection System](https://data.opencity.in/dataset/chennai-sewerage-collection-system) + [Chennai Sewage Pumping Network](https://data.opencity.in/dataset/chennai-sewage-pumping-network) + [Chennai Sewage Treatment Plants](https://data.opencity.in/dataset/chennai-sewage-treatment-plants) |
+| **Source** | [Chennai Sewerage Collection System](https://data.opencity.in/dataset/chennai-sewerage-collection-system) + [Chennai Sewage Pumping Network](https://data.opencity.in/dataset/chennai-sewage-pumping-network) + [Chennai Sewage Treatment Plants](https://data.opencity.in/dataset/chennai-sewage-treatment-plants); capacity figures cross-referenced with [CMWSSB official sewerage system page](https://cmwssb.tn.gov.in/sewerage-system) |
 | **Method** | KML/KMZ download + Python conversion to GeoJSON (`scripts/convert-sewerage-kml.py`) |
 | **Frequency** | Static (CMWSSB infrastructure data) |
 | **Coverage** | City-wide sewerage infrastructure |
-| **Features** | 4,190 features: 8 STPs + 348 pumping stations + 3,834 pumping main segments |
+| **Features** | 4,190 features: 8 STP campus points + 348 pumping stations + 3,834 pumping main segments |
 | **File** | `public/geojson/chennai-sewerage.geojson` (~1.2 MB) |
 
 **Layers:**
 
 | Layer | Count | Geometry | Key fields |
 |-------|-------|----------|------------|
-| Treatment Plants (STP) | 8 | Point (centroid) | Name, capacity (MLD), effluent quality, disposal point |
+| Treatment Plants (STP) | 8 campus points | Point (centroid) | Name, capacity (MLD), plant_units, effluent quality, disposal point |
 | Pumping Stations (SPS) | 348 | Point (centroid) | Name, linked STP, streets served, ground water level |
 | Pumping Mains | 3,834 | LineString | Origin SPS/STP, destination SPS/STP, pipe material, pipe size (mm) |
+
+**STP capacity and plant-unit reconciliation (updated 2026-04-19):**
+
+CMWSSB officially reports 13 operational sewage treatment plants totalling 745 MLD installed capacity. These are distributed across 6 campus locations, many of which host multiple plant units commissioned in different years. Our geojson stores one point per campus (8 points including 2 auxiliary units not on CMWSSB's current list). Capacity values in the geojson represent the sum of plant units at each campus, per CMWSSB.
+
+| Campus | Plant units | Capacity (MLD) | Source |
+|---|---|---|---|
+| Kodungaiyur | 3 (1991, 1989, 1989) | 270 | CMWSSB |
+| Koyambedu | 3 (1978, 2005, 2015) | 214 | CMWSSB |
+| Nesapakkam | 3 (1974, 2006, 2014) | 117 | CMWSSB |
+| Perungudi | 2 (2006, 2012) | 114 | CMWSSB |
+| Alandur | 1 (2003) | 12 | CMWSSB (not in geojson) |
+| Sholinganallur | 1 | 18 | CMWSSB + geojson |
+| Kotturpuram Modular | 1 | 0.6 | Geojson only (not on CMWSSB page) |
+| Langs Garden | 1 | 10 | Geojson only (not on CMWSSB page) |
+| Thiruvottiyur | 1 | null | Geojson only (capacity unknown) |
+
+Total CMWSSB-listed capacity: 745 MLD across 13 plants. Total geojson capacity (campus sums): 743.6 MLD (Alandur missing; auxiliary units Kotturpuram and Langs Garden included).
 
 **Why this source?**
 - Official CMWSSB infrastructure data - the only source for sewerage network geometry in Chennai
