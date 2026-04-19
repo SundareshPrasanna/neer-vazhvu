@@ -642,6 +642,13 @@ export function AboutContent() {
               </div>
             </div>
           </SubSection>
+
+          {/* 2.7 Chennai Water Facts */}
+          <SubSection id="page-facts" title={t("about.page_facts_title")}>
+            <p className="text-slate-600 dark:text-slate-400">
+              {t("about.page_facts_desc")}
+            </p>
+          </SubSection>
         </Section>
 
         {/* ──────────────────────────────────────────────────────────────

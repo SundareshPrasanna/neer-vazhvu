@@ -560,16 +560,16 @@ Total CMWSSB-listed capacity: 745 MLD across 13 plants. Total geojson capacity (
 | **Table** | `reservoir_meta` |
 | **Fields** | Display name, full capacity (mcft), latitude, longitude |
 
-**Total system capacity:** 14,096 mcft across 6 reservoirs.
+**Total system capacity:** 13,222 mcft across 6 reservoirs per [CMWSSB lake level page](https://cmwssb.tn.gov.in/lake-level) as of April 2026.
 
 | Reservoir | Capacity (mcft) |
 |-----------|----------------|
 | Poondi | 3,231 |
-| Cholavaram | 881 |
+| Cholavaram | 1,081 |
 | Red Hills (Puzhal) | 3,300 |
 | Chembarambakkam | 3,645 |
+| Kannankottai (Thervoikandigai) | 500 |
 | Veeranam | 1,465 |
-| Kannankottai (Thervoikandigai) | 1,574 |
 
 ## Historical Seeding
 

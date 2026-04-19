@@ -399,6 +399,7 @@ graph TD
 
     Layout --> Dashboard
     Layout --> MW["My Ward Page"]
+    Layout --> Facts["Chennai Water Facts Page"]
     Layout --> GW["Groundwater Page"]
     Layout --> WB["Water Bodies + Restoration Page"]
     Layout --> RV["Rivers Page"]
@@ -471,6 +472,16 @@ graph TD
     end
 
     FR --> FR_Children
+
+    subgraph Facts_Children["Chennai Water Facts Page"]
+        FactsLive["buildLiveFacts()<br/>(Tier 1: DB queries at request time)"]
+        FactsStatic["STATIC_FACTS<br/>(Tiers 2-4: hardcoded strings)"]
+        FactsCard["FactCard<br/>(number, interpretation, source,<br/>copy-quote / tweet / link)"]
+        FactsTier["TierSection<br/>(accordion, T1 default open)"]
+        FactsJsonLd["JSON-LD Dataset + Observation<br/>(via next/script)"]
+    end
+
+    Facts --> Facts_Children
 ```
 
 ### Connected Insights Layer

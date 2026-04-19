@@ -18,9 +18,9 @@
 
 ## Water Dashboard Enhancements (P1)
 
-- [ ] **Daily briefing card** — Display `daily_briefing` (headline, alerts, recommendations) on dashboard — API generates it, frontend doesn't surface it yet
-- [ ] **Day Zero comparison** — Prominent "Today vs 2019 Day Zero" widget (data already in `comparison2019Storage`)
-- [ ] **Rainfall visualization** — Dedicated rainfall chart/overlay using NASA POWER precipitation data (already fetched daily)
+- [x] **Daily briefing card** - Rendered via CityStory + NewsSection components with AI-generated narrative
+- [x] **Day Zero comparison** - "Today vs 2019 Day Zero" shown prominently in DaysLeftHero with live diff
+- [x] **Rainfall visualization** - RainfallTrends component on dashboard showing monthly rainfall vs 1970-2020 IMD normal
 
 ## Tamil Localization (P1)
 
@@ -51,18 +51,20 @@
 
 ## My Ward & Navigation (P1) - Done
 
-- [x] **My Ward tab** — Unified ward report page at `/my-ward` aggregating groundwater, water bodies, flood risk, infrastructure, rivers, representatives, and AI narrative for any ward. Source attribution and caveats on every card. CSV export, share URL, print layout
-- [x] **Nav consolidation** — 7 tabs compressed to 4: Dashboard, My Ward, Explore (dropdown: Groundwater, Water Bodies, Rivers, Flood Risk), About. Mobile menu has collapsible Explore section
-- [x] **Ward Report Card** — Print-optimized one-pager at `/my-ward/report?ward=N` ranking wards on 5 governance-quality metrics with A-F grades. Length-based infrastructure metrics apportioned across ward boundaries, area-normalized densities, zone/city median comparisons, methodology disclosure
+- [x] **My Ward tab** - Unified ward report page at `/my-ward` aggregating groundwater, water bodies, flood risk, infrastructure, rivers, representatives, and AI narrative for any ward. Source attribution and caveats on every card. CSV export, share URL, print layout
+- [x] **Nav consolidation** - Dashboard, My Ward, Facts, Explore (dropdown: Groundwater, Water Bodies, Rivers, Flood Risk), About. Mobile menu has collapsible Explore section
+- [x] **Ward Report Card** - Print-optimized one-pager at `/my-ward/report?ward=N` ranking wards on 5 governance-quality metrics with A-F grades. Length-based infrastructure metrics apportioned across ward boundaries, area-normalized densities, zone/city median comparisons, methodology disclosure
+- [x] **Ward comparison tool** - Side-by-side comparison of multiple wards at `/my-ward/compare?wards=N,M,...`
+- [x] **Chennai Water Facts page** - Quotable journalist-ready snapshot at `/facts` with 4 freshness tiers (Today/This Year/History/Infrastructure), Schema.org Observation structured data, public JSON API at `/api/facts`, copy-quote / tweet / link buttons
 
 ## V2 Features (P2)
 
-- [ ] **Ward comparison tool** — Side-by-side comparison of 2-3 wards (`/compare?wards=42,87,153`)
-- [ ] **Personal water calculator** — "How much water does your household use vs. what's sustainable?"
-- [ ] **Citizen water quality reporting** — Report water issues with photo + geolocation
-- [ ] **Flood risk overlay** — Address-based flood risk using elevation + proximity to water bodies
-- [ ] **Seawater intrusion map** — Coastal areas where borewell water is turning saline (CGWB data)
-- [ ] **Open data downloads** — Let researchers download cleaned datasets via API/CSV
+- [ ] **Personal water calculator** - "How much water does your household use vs. what's sustainable?" (current calculator is city-level, not household)
+- [ ] **Citizen water quality reporting** - Report water issues with photo + geolocation
+- [ ] **Address-level flood risk** - Exact geocoded address flood score (currently ward-level resolution only)
+- [ ] **Seawater intrusion / groundwater quality map** - Coastal salinity, fluoride, arsenic (CGWB WDO_GWQ; automated readings not currently accessible as public API)
+- [ ] **Open data downloads** - Bulk dataset download for researchers (currently ward-level CSV export only)
+- [ ] **Tanker dependency map** - Ward-level tanker dependency index (OpenCity CSV data available, not yet integrated)
 
 ## Multi-Environmental Expansion — Suzhal Vision (P3)
 
@@ -88,4 +90,4 @@
 
 ---
 
-*Last updated: 2026-04-04*
+*Last updated: 2026-04-19*
