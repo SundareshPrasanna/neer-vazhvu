@@ -1262,4 +1262,24 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "uplift.factor_flood_risk":         { en: "Flood exposure", ta: "வெள்ள வெளிப்பாடு" },
   "uplift.factor_wb_health":          { en: "Water body health", ta: "நீர்நிலை ஆரோக்கியம்" },
   "uplift.factor_wb_density":         { en: "Water body density", ta: "நீர்நிலை அடர்த்தி" },
+
+  // ── Chennai Water Facts page ──────────────────────────────────────────────
+  "facts.page_title":       { en: "Chennai Water Facts", ta: "சென்னை நீர் உண்மைகள்" },
+  "facts.page_intro":       {
+    en: "Chennai's water state in quotable numbers. Every fact has a source, a date, and a methodology link. Organised by freshness: today's live data, this year's government releases, historical milestones, and structural infrastructure.",
+    ta: "சென்னையின் நீர் நிலை மேற்கோள் எண்களில். ஒவ்வொரு உண்மைக்கும் ஒரு மூலம், தேதி மற்றும் முறைமை இணைப்பு உள்ளது. புதுமையின் அடிப்படையில் ஒழுங்கமைக்கப்பட்டது: இன்றைய நேரடித் தரவு, இந்த ஆண்டின் அரசாங்க வெளியீடுகள், வரலாற்று மைல்கற்கள், மற்றும் கட்டமைப்பு உள்கட்டமைப்பு.",
+  },
+  "facts.last_updated":     { en: "Last updated", ta: "கடைசியாக புதுப்பிக்கப்பட்டது" },
+  "facts.as_of":            { en: "As of", ta: "அன்று" },
+  "facts.copy_quote":       { en: "Copy quote", ta: "மேற்கோள் நகலெடு" },
+  "facts.copy_link":        { en: "Copy link", ta: "இணைப்பை நகலெடு" },
+  "facts.tweet":            { en: "Tweet", ta: "ட்வீட்" },
+  "facts.copied":           { en: "Copied!", ta: "நகலெடுக்கப்பட்டது!" },
+  "facts.card_anchor":      { en: "Permalink to this fact", ta: "இந்த உண்மைக்கான நிரந்தர இணைப்பு" },
+  "facts.methodology_title":{ en: "Methodology & sources", ta: "முறைமை & மூலங்கள்" },
+  "facts.methodology_intro":{
+    en: "Every number on this page is sourced from a publicly available dataset or official release. Live figures are refreshed daily from government monitoring feeds; annual figures show their vintage year; historical and structural figures are reference data with dated provenance.",
+    ta: "இந்த பக்கத்தில் உள்ள ஒவ்வொரு எண்ணும் பொதுவில் கிடைக்கும் தரவுத்தொகுப்பு அல்லது அதிகாரப்பூர்வ வெளியீட்டிலிருந்து பெறப்பட்டது. நேரடி புள்ளிவிவரங்கள் தினசரி அரசு கண்காணிப்பு ஊட்டங்களிலிருந்து புதுப்பிக்கப்படுகின்றன.",
+  },
+  "facts.methodology_link": { en: "See full data sources →", ta: "முழு தரவு மூலங்களைப் பார்க்கவும் →" },
 };

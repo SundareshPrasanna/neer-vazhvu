@@ -24,11 +24,11 @@ export const DAY_ZERO_2019 = {
   totalStorageMcft: 19.0,
 } as const;
 
-/** Total capacity of the 4 major drinking water reservoirs in mcft */
-export const MAJOR_RESERVOIR_CAPACITY_MCFT = 3231.0 + 881.0 + 3300.0 + 3645.0; // 11,057
+/** Total capacity of the 4 major drinking water reservoirs in mcft (Poondi + Cholavaram + Red Hills + Chembarambakkam) */
+export const MAJOR_RESERVOIR_CAPACITY_MCFT = 3231.0 + 1081.0 + 3300.0 + 3645.0; // 11,257
 
-/** Total capacity including all 6 reservoirs */
-export const TOTAL_RESERVOIR_CAPACITY_MCFT = 3231.0 + 881.0 + 3300.0 + 3645.0 + 1465.0 + 1574.0; // 14,096
+/** Total capacity including all 6 reservoirs per CMWSSB lake level page (Apr 2026) */
+export const TOTAL_RESERVOIR_CAPACITY_MCFT = 3231.0 + 1081.0 + 3300.0 + 3645.0 + 500.0 + 1465.0; // 13,222
 
 /** Reservoir display order  -  largest capacity first */
 export const RESERVOIR_DISPLAY_ORDER = [
