@@ -446,7 +446,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     run_water_body_summaries.add_argument(
         "--target-cohort",
-        choices=["flagship-history"],
+        choices=["flagship-history", "all"],
         help="Optional named target cohort filter.",
     )
     run_water_body_summaries.add_argument(
@@ -487,7 +487,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     backfill_water_body_summaries.add_argument(
         "--target-cohort",
-        choices=["flagship-history"],
+        choices=["flagship-history", "all"],
         help="Optional named target cohort filter.",
     )
     backfill_water_body_summaries.add_argument(
