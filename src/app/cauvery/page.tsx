@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { loadKaveriSnapshot, type ReservoirReadingV2 } from "./data";
+import { loadKaveriSnapshot, type ReservoirReadingV2, type BasinRainfallSummary } from "./data";
 
 // Re-fetch Supabase view every 15 minutes (matches /api/reservoir cache TTL).
 export const revalidate = 900;
@@ -80,6 +80,109 @@ function pctBarColor(pct: number | null): string {
   return "bg-red-500";
 }
 
+const SW_LPA_SEASON_END = 568.4; // mm, computed from 1991-2020 OpenMeteo Historical
+const NE_LPA_SEASON_END = 392.8;
+
+function BasinRainfallCard({ basin }: { basin: BasinRainfallSummary }) {
+  const seasonLabel = basin.season === "sw" ? "SW monsoon (Jun-Sep)" : basin.season === "ne" ? "NE monsoon (Oct-Dec)" : null;
+
+  // Off-season or no data: show historical baselines.
+  if (!basin.isLive || basin.cumulativeMm === null) {
+    return (
+      <Card>
+        <CardContent className="space-y-3">
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Cauvery basin rainfall
+            </h2>
+            <span className="text-xs text-slate-400">off-season · showing 1991-2020 climatology</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <div className="text-xs text-slate-500">SW monsoon (Jun-Sep) LPA</div>
+              <div className="text-2xl font-bold mt-1">{SW_LPA_SEASON_END.toFixed(0)} <span className="text-base font-normal text-slate-400">mm</span></div>
+            </div>
+            <div>
+              <div className="text-xs text-slate-500">NE monsoon (Oct-Dec) LPA</div>
+              <div className="text-2xl font-bold mt-1">{NE_LPA_SEASON_END.toFixed(0)} <span className="text-base font-normal text-slate-400">mm</span></div>
+            </div>
+          </div>
+          <div className="text-xs text-slate-500 pt-2 border-t border-slate-200 dark:border-slate-700">
+            Cauvery basin annual normal: ~{(SW_LPA_SEASON_END + NE_LPA_SEASON_END).toFixed(0)} mm (basin-area-averaged across India-WRIS Cauvery polygon, 13 grid points, OpenMeteo ERA5-Land 1991-2020). Live cumulative-vs-LPA tracking activates June 1 when SW season starts.
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const cumulative = basin.cumulativeMm ?? 0;
+  const lpa = basin.lpaMm;
+  const pctOfLpa = lpa && lpa > 0 ? (cumulative / lpa) * 100 : null;
+  const anomaly = lpa !== null ? cumulative - lpa : null;
+  const anomalyColor =
+    anomaly === null
+      ? "text-slate-500"
+      : anomaly > 0
+        ? "text-green-600 dark:text-green-400"
+        : "text-red-600 dark:text-red-400";
+
+  // Bar chart: max 60 days back to keep it readable
+  const recentSeries = basin.series.slice(-60);
+  const maxRain = Math.max(1, ...recentSeries.map((r) => r.rainfall_mm ?? 0));
+  const todayIso = new Date().toISOString().slice(0, 10);
+
+  return (
+    <Card>
+      <CardContent className="space-y-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            Cauvery basin rainfall · {seasonLabel}
+          </h2>
+          <span className="text-xs text-slate-400">as of {basin.asOfDate}</span>
+        </div>
+        <div className="flex flex-wrap items-baseline gap-3">
+          <div className="text-3xl font-bold">
+            {cumulative.toFixed(0)}
+            <span className="text-base font-normal text-slate-400 ml-1">mm</span>
+          </div>
+          {lpa !== null && (
+            <div className="text-sm text-slate-500">
+              vs LPA {lpa.toFixed(0)} mm to date
+              {anomaly !== null && (
+                <> <span className={`font-medium ${anomalyColor}`}>({anomaly > 0 ? "+" : ""}{anomaly.toFixed(0)} mm{pctOfLpa !== null ? `, ${pctOfLpa.toFixed(0)}%` : ""})</span></>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Daily bar mini-chart, last 60 days */}
+        <div className="flex items-end gap-px h-16 mt-2">
+          {recentSeries.map((r) => {
+            const isFuture = r.date > todayIso;
+            const heightPct = ((r.rainfall_mm ?? 0) / maxRain) * 100;
+            return (
+              <div
+                key={r.date}
+                title={`${r.date}: ${r.rainfall_mm ?? 0} mm${isFuture ? " (forecast)" : ""}`}
+                className={`flex-1 rounded-t-sm ${isFuture ? "bg-blue-300/50 dark:bg-blue-700/50" : "bg-blue-500 dark:bg-blue-600"}`}
+                style={{ height: `${heightPct}%` }}
+              />
+            );
+          })}
+        </div>
+        <div className="flex justify-between text-[10px] text-slate-400">
+          <span>{recentSeries[0]?.date}</span>
+          <span>14d forecast (lighter bars) · {recentSeries[recentSeries.length - 1]?.date}</span>
+        </div>
+
+        <div className="text-xs text-slate-500 pt-2 border-t border-slate-200 dark:border-slate-700">
+          Basin-area-averaged across 13 grid points inside the India-WRIS Cauvery polygon. Daily from OpenMeteo (ERA5-Land base + IFS forecast). LPA = 1991-2020 climate normal.
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function fmtNum(n: number | null, digits = 1): string {
   if (n === null || isNaN(n)) return "—";
   return n.toFixed(digits);
@@ -96,8 +199,9 @@ export default async function CauveryPage() {
   const mettur = snapshot.mettur ?? MOCK_METTUR;
   const karnatakaDams =
     snapshot.karnatakaDams.length > 0 ? snapshot.karnatakaDams : MOCK_KARNATAKA_DAMS;
-  const reservoirIsLive = snapshot.isLive;
+  const reservoirIsLive = snapshot.reservoirIsLive;
   const dataDate = snapshot.asOf ?? MOCK_TODAY;
+  const basin = snapshot.basinRainfall;
 
   const today = new Date();
   const daysUntilJune12 = Math.ceil(
@@ -124,7 +228,7 @@ export default async function CauveryPage() {
         )}
         {reservoirIsLive && (
           <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
-            Biligundlu, basin rainfall, and release signal still mock
+            Biligundlu and release signal still mock
           </Badge>
         )}
       </div>
@@ -290,19 +394,8 @@ export default async function CauveryPage() {
       </Card>
 
       {/* Basin rainfall */}
-      <Card>
-        <CardContent className="space-y-3">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Cauvery basin rainfall
-            </h2>
-            <span className="text-xs text-amber-600">mock</span>
-          </div>
-          <div className="text-xs text-slate-400">
-            [SW + NE cumulative vs LPA chart placeholder · M3 will source from IMD daily + CHIRPS GEE backup]
-          </div>
-        </CardContent>
-      </Card>
+      <BasinRainfallCard basin={basin} />
+
 
       {/* Delta timeline (V1 anchor) */}
       <Card>
@@ -353,10 +446,10 @@ export default async function CauveryPage() {
       {/* Footer notes */}
       <div className="text-xs text-slate-500 dark:text-slate-400 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
         <p>
-          <span className="font-semibold">Methodology:</span> Mettur and Karnataka 4-dam from TN PWD daily bulletin via tnagriculture.in; Biligundlu from CWMA monthly schedule + manual entry during distress; basin rainfall from IMD with CHIRPS backup.
+          <span className="font-semibold">Methodology:</span> Mettur and Karnataka 4-dam from TN PWD daily bulletin via tnagriculture.in; basin rainfall from OpenMeteo (ERA5-Land) area-averaged across the India-WRIS Cauvery polygon, with IMD as monthly cross-check; Biligundlu from CWMA monthly schedule + manual entry during distress.
         </p>
         <p>
-          <span className="font-semibold">Status:</span> {reservoirIsLive ? "Live for Mettur and Karnataka. " : ""}M3 wires basin rainfall; M4 wires Biligundlu + release signal model; M5 ships embeds and the timeline visual; M6 launches.
+          <span className="font-semibold">Status:</span> {reservoirIsLive ? "Live for Mettur and Karnataka. " : ""}{basin.isLive ? "Live for basin rainfall. " : ""}M4 wires Biligundlu + release signal model; M5 ships embeds and the timeline visual; M6 launches.
         </p>
         <p className="text-slate-400">
           See <code className="text-[10px] bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">docs/kaveri-water-clock-plan.md</code> for the full plan.
