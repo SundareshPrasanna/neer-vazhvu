@@ -2,7 +2,10 @@ export type WaterSourceType =
   | 'reservoir'
   | 'cauvery_stage'
   | 'borewell_field'
-  | 'river';
+  | 'river'
+  | 'flow_station';
+
+export type PlaceKind = 'city' | 'region';
 
 export interface GeoBounds {
   south: number;
@@ -42,7 +45,7 @@ export interface WaterSourceConfig {
   isPrimaryDrinkingSource: boolean;
 }
 
-export interface CityConfig {
+export interface BasePlaceConfig {
   cityId: string;
   displayName: string;
   stateCode: string;
@@ -50,9 +53,19 @@ export interface CityConfig {
   center: Coordinates;
   bbox: GeoBounds;
   primaryAuthority: Authority;
-  localGovernment: LocalGovernment;
   defaultConsumptionMld: number | null;
   defaultDesalinationMld: number | null;
   waterSources: WaterSourceConfig[];
   sourceNameAliases: Record<string, string>;
 }
+
+export interface CityConfig extends BasePlaceConfig {
+  placeKind: 'city';
+  localGovernment: LocalGovernment;
+}
+
+export interface RegionConfig extends BasePlaceConfig {
+  placeKind: 'region';
+}
+
+export type PlaceConfig = CityConfig | RegionConfig;

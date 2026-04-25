@@ -32,11 +32,11 @@ Direct-to-farmer reach is explicitly NOT the play. Distribution to farmers, when
 
 ### 1.1 Place model: Region, not City
 
-The existing registry is keyed by a single municipal authority and ULB with a wardCount. The Kaveri Delta has none of those - it spans Salem, Erode, Karur, Tiruchi, Thanjavur, Tiruvarur, Nagapattinam, Mayiladuthurai, Cuddalore districts; the actionable jurisdictions are TN PWD (dam ops), CWMA (release schedule), Agriculture Dept (paddy season).
+The existing registry is keyed by a single municipal authority and ULB with a wardCount. The Kaveri Delta has none of those - it spans Salem, Erode, Karur, Tiruchi, Thanjavur, Tiruvarur, Nagapattinam, Mayiladuthurai, Cuddalore districts; the actionable jurisdictions are TN PWD/WRD (dam ops), CWMA (release schedule), Agriculture Dept (paddy season).
 
-Decision: introduce `RegionConfig` as a sibling to `CityConfig` in `src/lib/cities/`. New file `src/lib/cities/kaveri.ts` exporting a `RegionConfig`, register in `src/lib/cities/index.ts`. Mirror in Python at `neer-vazhvu-api/app/cities/kaveri.py`. Shared interface `Place` with a `placeKind` discriminator. Schema-wise, add a `place_kind` column to `cities` (default `'city'`); keep the table named `cities` for V1; rename in a future migration.
+**Resolved 2026-04-25**: TypeScript discriminated union. New shared `BasePlaceConfig` interface holds the common fields. `CityConfig` extends it with `placeKind: 'city'` + required `localGovernment`. New `RegionConfig` extends it with `placeKind: 'region'` (no `localGovernment`). Union type `PlaceConfig = CityConfig | RegionConfig`. Registry functions return `PlaceConfig` and consumers narrow on `placeKind`. Mirror in Python with `Literal["city"|"region"]` discriminator (no inheritance - inline both dataclasses to avoid Python frozen-dataclass field-ordering pitfalls). Schema gains `place_kind` column (default `'city'`); `ward_count` and `local_gov_*` columns become nullable for regions.
 
-Rejected alternative: forcing Kaveri into `CityConfig` with primaryAuthority="PWD" and a fake ward count. Violates existing semantics and would mislead the Bangalore work.
+Verified via grep: zero current consumers of `CityConfig.localGovernment` in the codebase outside `src/lib/cities/` itself, so the type change is safe without further refactoring.
 
 ### 1.2 New source registry entries
 
@@ -47,9 +47,10 @@ These extend the `WaterSourceType` enum at `src/lib/cities/types.ts` (which alre
 | `mettur` | `reservoir` | high - TN PWD bulletin HTML, scrape pattern matches CMWSSB | daily ~07:30 IST |
 | `krs`, `kabini`, `hemavathy`, `harangi` | `reservoir` (new flag `state='KA'`) | high - KSNDMC `Reservoir_Details.aspx` is a clean target | daily |
 | `biligundlu` | new type `flow_station` (add to enum) | mixed - no machine feed; CWC daily station bulletin best-effort | manual override + best-effort daily scrape |
-| `cauvery_basin_imd` | new type `rainfall_basin` (add to enum) | high - `imdlib` already in API stack; CHIRPS via existing GEE pipeline | daily, T-1 lag |
 
-The `flow_station` enum addition needs to relax the SQL CHECK constraint at `supabase/migrations/017_cities_and_water_sources.sql:34`.
+**Note**: basin rainfall is NOT a `water_sources` row. It's a measurement area, conceptually different from a water source. It lives in the `basin_rainfall_daily` table directly with no `water_sources` parent. The `WaterSourceType` enum gets only `flow_station` added.
+
+The `flow_station` enum addition needs `ALTER TABLE water_sources DROP CONSTRAINT water_sources_source_type_check; ADD CONSTRAINT ... CHECK (... 'flow_station')` in migration 018 (Postgres auto-named the inline CHECK following the `<table>_<column>_check` convention).
 
 ### 1.3 Database schema (migration `018_kaveri_water_clock.sql`)
 
@@ -377,26 +378,32 @@ M1 needs the `reservoir_daily_v2` shape locked. If Bangalore is in flight when M
 
 ---
 
-## 7. Open decisions for Sundaresh
+## 7. Decision log
 
-Things genuinely undecided that need user input before code is written.
+Resolved decisions (chronological); deferred items at the bottom.
 
-1. **Place model**: confirm `RegionConfig` as sibling to `CityConfig` (recommended) vs forcing into `CityConfig` with NULL ULB fields.
-2. **Migration coordination with Bangalore**: is `reservoir_daily_v2` already designed in `bangalore_onboarding`? If so, what's its key shape? If not, who owns the design? Don't fork.
-3. **Cauvery basin polygon source**: India-WRIS basin shapefile, GRDC, or our own dissolve of district boundaries? Affects every basin-rainfall number we publish.
-4. **`project_multicity_refactor_decisions.md` location**: planning agent could not find it. Where is the canonical M0/M1/M2 capability-graph spec?
-5. **Manual admin auth**: single ops user model already, or add a simple shared-secret cookie for the Biligundlu/IMD-forecast forms? `src/lib/cron-auth.ts` only covers cron, not interactive admin.
-6. **Release threshold value**: brief says ~50 TMC. From the 2018 SC order, customary practice, or our own heuristic? Number ends up next to a percentage on the page. Same question for "June 12 customary date" (verify primary source).
-7. **Stale-data tolerance per source**: CMWSSB precedent is 4 days. Mettur match? Biligundlu (manual) probably 7-14? KSNDMC?
-8. **Tamil-language UI**: brief says deferred, but `src/lib/i18n/` exists and Chennai pages are bilingual. Ship `/cauvery` English-only and add Tamil in V1.1 (more work later)? Or scaffold the i18n keys with English copy in both `en` and `ta` locales now (less work later)? Recommend the latter.
-9. **Branch base**: cut `kaveri_onboarding` from `bangalore_onboarding` (inherit refactor) or from main (avoid Bangalore drift)? Both have failure modes.
-10. **`flow_station` enum addition timing**: enum lives in TS + Python + SQL CHECK at `017_cities_and_water_sources.sql:34`. Migration 018 needs to relax that CHECK or it'll reject the Biligundlu seed.
-11. **Timeline visual placement**: above release banner (anchor structural story first) or below Mettur card (let live data lead)? Recommend below.
-12. **Capex project list**: confirm the 5-6 post-1947 schemes worth showing. Research dossier has IAMWARM, ADB Vennar, AIIB Grand Anicut ERM, Mukkombu rebuild 2024, Cauvery sub-basin renovation. Anything else?
-13. **Efficiency strip placement**: Mettur card definitely. Karnataka 4-dam (no, upstream of canal). Biligundlu (yes, since loss happens downstream of it)?
-14. **V1.5 branch base**: cut `kaveri_infrastructure` from `kaveri_onboarding` post-V1-merge or from main? Recommend the latter - by V1.5 time, V1 should be in main.
-15. **PSAZ + Madras HC encroachment scraping**: needs a court-compliance scraping pipeline that doesn't exist in the codebase yet. Ship V1.5 indicator 5 as a manual-curation page; automate later.
-16. **Static infrastructure assets - lat/lon**: where do we source the points from? Wikipedia infoboxes are inconsistent; OSM has Kallanai, Mukkombu, Mettur as nodes. Verify before seeding.
+| # | Decision | Resolution | Date |
+|---|---|---|---|
+| 1 | Place model | TS discriminated union: `CityConfig` and `RegionConfig` extend a shared `BasePlaceConfig`; union `PlaceConfig`. Schema adds `place_kind` column; `ward_count`/`local_gov_*` become nullable for regions | 2026-04-25 |
+| 2 | Bangalore migration coordination | No conflict. Migration 017 has only foundational tables. No `reservoir_daily_v2` exists yet. Kaveri leads the design | 2026-04-25 |
+| 3 | Cauvery basin polygon source | India-WRIS shapefile | 2026-04-25 |
+| 4 | `project_multicity_refactor_decisions.md` location | It's an auto-memory note (in `~/.claude/.../memory/`), not a repo doc. Plan agent confused it with a repo file | 2026-04-25 |
+| 5 | Manual admin auth | Shared-secret cookie pattern adapted from `cron-auth.ts:8-32` (Bearer + `timingSafeEqual`); new `ADMIN_SECRET` env, ~30 lines, no new deps | 2026-04-25 |
+| 6 | Release threshold value + June 12 date primary source | Deferred to M4 - run targeted research before locking the threshold and citation. Page can ship without these in M1-M3 | 2026-04-25 |
+| 7 | Stale tolerance per source | Mettur 4 days (mirror CMWSSB precedent at `scrape-cmwssb/route.ts:22`); KSNDMC 4 days; Biligundlu (manual) 14 days; basin rainfall 7 days before swapping IMD->CHIRPS | 2026-04-25 |
+| 8 | Tamil i18n scaffolding | Scaffold all Cauvery keys in both `en` and `ta` locales from V1, matching the existing `Record<string, { en: string; ta: string }>` pattern in `src/lib/i18n/translations.ts` | 2026-04-25 |
+| 9 | Branch base | `kaveri_onboarding` cut from `bangalore_onboarding`, fast-forwarded to current after Phase 0 commits | 2026-04-25 |
+| 10 | `flow_station` enum addition | Migration 018 does `ALTER TABLE water_sources DROP CONSTRAINT water_sources_source_type_check; ADD CONSTRAINT ... CHECK (... 'flow_station')`. `rainfall_basin` is NOT added - basin rainfall lives in its own table, not `water_sources` | 2026-04-25 |
+| 11 | Timeline visual placement | Below Mettur card (live data leads, structural context follows) | 2026-04-25 |
+| 12 | Capex project seed list | TN-IAMWARM, ADB Vennar, Grand Anicut Canal ERM, Cauvery sub-basin renovation, Mukkombu rebuild 2024. Sufficient for V1 | 2026-04-25 |
+| 13 | Efficiency strip placement | Mettur card + Biligundlu card (loss happens downstream of Biligundlu). Karnataka 4-dam: no (upstream of canal) | 2026-04-25 |
+| 14 | V1.5 branch base | Deferred to V1.5 timing. Recommend cut from main once V1 has merged | - |
+| 15 | PSAZ + Madras HC encroachment scraping | V1.5 ships indicator 5 as a manual-curation page; automate later | 2026-04-25 |
+| 16 | Static infrastructure asset lat/lon source | OSM as canonical. Wikipedia fallback if OSM lacks the node | 2026-04-25 |
+
+### CSP / X-Frame-Options for `/cauvery/embed/*`
+
+Not in original decision list, surfaced during code reading. `next.config.ts:7` has CSP `frame-ancestors 'none'` AND `X-Frame-Options: DENY` for all routes. To make embed routes iframable, `next.config.ts.headers()` needs a SECOND source pattern for `/cauvery/embed/:path*` that overrides both headers (not just X-Frame-Options). To be implemented in M5.
 
 ---
 
