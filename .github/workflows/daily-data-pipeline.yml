@@ -41,6 +41,18 @@ jobs:
           CMWSSB_MAX_STALE_DAYS: '4'
         run: python scripts/scrape_cmwssb.py
 
+      # Scrape Kaveri reservoirs (Mettur + Karnataka 4-dam) for the Water Clock.
+      # Tolerates up to 4 days of stale data before failing.
+      - name: Scrape TN PWD reservoirs (Kaveri) -> Supabase
+        id: scrape_kaveri
+        continue-on-error: true
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          TN_PWD_MAX_STALE_DAYS: '4'
+        run: python scripts/scrape_tn_pwd_reservoirs.py
+
       # Always run ETL + intelligence so forecasts and briefings stay fresh,
       # even when the scrape fails and we're using slightly stale reservoir data.
       - name: Run post-scrape pipeline (ETL + intelligence)
