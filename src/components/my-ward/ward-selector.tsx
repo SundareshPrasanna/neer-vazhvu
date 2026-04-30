@@ -46,12 +46,6 @@ function saveRecentWard(wardNumber: number, cityId: string): void {
   }
 }
 
-const SECTION_LABELS: Record<SearchResult["kind"], string> = {
-  locality: "Areas",
-  ward: "Wards",
-  zone: "Zones",
-};
-
 interface WardSelectorProps {
   onSelect: (wardNumber: number) => void;
   selectedWard: number | null;
@@ -76,6 +70,12 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const sectionLabels: Record<SearchResult["kind"], string> = {
+    locality: t("ward_search.section_areas"),
+    ward: t("ward_search.section_wards"),
+    zone: t("ward_search.section_zones"),
+  };
+
   useEffect(() => {
     // For Chennai, hit the legacy unsuffixed API. For other cities, pass
     // the cityId so the API can read the matching <city>-ward-profiles.json
@@ -99,7 +99,10 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
   // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     }
@@ -109,12 +112,13 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
 
   const results = useMemo<SearchResult[]>(
     () => searchAll(localities, wards, zones, query),
-    [query, localities, wards, zones]
+    [query, localities, wards, zones],
   );
 
   // Group results by kind for section headers
   const grouped = useMemo(() => {
-    const sections: { kind: SearchResult["kind"]; items: SearchResult[] }[] = [];
+    const sections: { kind: SearchResult["kind"]; items: SearchResult[] }[] =
+      [];
     let current: SearchResult["kind"] | null = null;
     for (const r of results) {
       if (r.kind !== current) {
@@ -150,15 +154,17 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
         if (firstWard) handleSelect(firstWard.wardNumber);
       }
     },
-    [handleSelect, wards]
+    [handleSelect, wards],
   );
 
   const wardLabel = useCallback(
     (wardNumber: number): string => {
       const w = wards.find((w) => w.wardNumber === wardNumber);
-      return w ? `Ward ${w.wardNumber} - ${toTitleCase(w.zone)}` : `Ward ${wardNumber}`;
+      return w
+        ? `${t("ward.ward")} ${w.wardNumber} - ${getZoneLabel(w.zone, language, t)}`
+        : `${t("ward.ward")} ${wardNumber}`;
     },
-    [wards],
+    [language, t, wards],
   );
 
   const resultsDropdown = (
@@ -168,13 +174,14 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
           {grouped.map((section) => (
             <div key={section.kind}>
               <div className="px-4 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 select-none">
-                {SECTION_LABELS[section.kind]}
+                {sectionLabels[section.kind]}
               </div>
               {section.items.map((result, i) => (
                 <ResultRow
                   key={`${result.kind}-${i}`}
                   result={result}
                   language={language}
+                  t={t}
                   onClick={() => handleResultSelect(result)}
                 />
               ))}
@@ -197,7 +204,10 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
       <div className="flex flex-col items-center justify-center py-16 sm:py-24 px-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg mb-6">
           <svg viewBox="0 0 24 24" className="w-8 h-8 text-white" fill="none">
-            <path d="M12 3s-5 6.1-5 9.9A5 5 0 0 0 12 18a5 5 0 0 0 5-5.1C17 9.1 12 3 12 3z" fill="currentColor" />
+            <path
+              d="M12 3s-5 6.1-5 9.9A5 5 0 0 0 12 18a5 5 0 0 0 5-5.1C17 9.1 12 3 12 3z"
+              fill="currentColor"
+            />
           </svg>
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 text-center mb-2">
@@ -209,14 +219,27 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
 
         <div ref={containerRef} className="w-full max-w-md relative">
           <div className="flex items-center bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <svg className="w-5 h-5 ml-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg
+              className="w-5 h-5 ml-4 text-slate-400 shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
             <input
               ref={inputRef}
               type="text"
               value={query}
-              onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setOpen(true);
+              }}
               onFocus={() => query && setOpen(true)}
               placeholder={t("my_ward.search_placeholder")}
               className="flex-1 px-3 py-4 text-base bg-transparent outline-none text-slate-900 dark:text-slate-100 placeholder-slate-400"
@@ -247,7 +270,9 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
         {/* Recent wards */}
         {recentWards.length > 0 && (
           <div className="mt-6 text-center">
-            <p className="text-xs text-slate-400 dark:text-slate-500 mb-2">{t("my_ward.recent_wards")}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mb-2">
+              {t("my_ward.recent_wards")}
+            </p>
             <div className="flex flex-wrap gap-2 justify-center">
               {recentWards.map((w) => (
                 <button
@@ -270,13 +295,26 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
     <div ref={containerRef} className="relative print:hidden">
       <div className="flex items-center gap-2">
         <div className="flex items-center bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex-1 max-w-xs">
-          <svg className="w-4 h-4 ml-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <svg
+            className="w-4 h-4 ml-3 text-slate-400 shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
           <input
             type="text"
             value={query}
-            onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setOpen(true);
+            }}
             onFocus={() => query && setOpen(true)}
             placeholder={t("my_ward.change_ward")}
             className="flex-1 px-2 py-2 text-sm bg-transparent outline-none text-slate-900 dark:text-slate-100 placeholder-slate-400"
@@ -290,13 +328,14 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
           {grouped.map((section) => (
             <div key={section.kind}>
               <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 select-none">
-                {SECTION_LABELS[section.kind]}
+                {sectionLabels[section.kind]}
               </div>
               {section.items.map((result, i) => (
                 <ResultRow
                   key={`${result.kind}-${i}`}
                   result={result}
                   language={language}
+                  t={t}
                   onClick={() => handleResultSelect(result)}
                   compact
                 />
@@ -312,11 +351,13 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
 function ResultRow({
   result,
   language,
+  t,
   onClick,
   compact = false,
 }: {
   result: SearchResult;
   language: string;
+  t: (key: string) => string;
   onClick: () => void;
   compact?: boolean;
 }) {
@@ -330,9 +371,12 @@ function ResultRow({
         onClick={onClick}
         className={`w-full text-left ${px} text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex flex-col gap-0.5`}
       >
-        <span className="font-medium text-slate-900 dark:text-slate-100 leading-snug">{displayName}</span>
+        <span className="font-medium text-slate-900 dark:text-slate-100 leading-snug">
+          {displayName}
+        </span>
         <span className="text-xs text-slate-400 dark:text-slate-500">
-          Ward {l.ward_number} · {toTitleCase(l.zone_name)}
+          {t("ward.ward")} {l.ward_number} ·{" "}
+          {getZoneLabel(l.zone_name, language, t)}
         </span>
       </button>
     );
@@ -345,25 +389,51 @@ function ResultRow({
         onClick={onClick}
         className={`w-full text-left ${px} text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-baseline justify-between gap-2`}
       >
-        <span className="font-medium text-slate-900 dark:text-slate-100">Ward {w.wardNumber}</span>
-        <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">{toTitleCase(w.zone)} zone</span>
+        <span className="font-medium text-slate-900 dark:text-slate-100">
+          {t("ward.ward")} {w.wardNumber}
+        </span>
+        <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
+          {getZoneLabel(w.zone, language, t)} {t("ward_search.zone_suffix")}
+        </span>
       </button>
     );
   }
 
-  // zone
   const z = result.zone;
   return (
     <button
       onClick={onClick}
       className={`w-full text-left ${px} text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-baseline justify-between gap-2`}
     >
-      <span className="font-medium text-slate-900 dark:text-slate-100">{toTitleCase(z.zoneName)}</span>
-      <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">{z.wardCount} wards</span>
+      <span className="font-medium text-slate-900 dark:text-slate-100">
+        {getZoneLabel(z.zoneName, language, t)}
+      </span>
+      <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
+        {z.wardCount} {t("ward_search.wards")}
+      </span>
     </button>
   );
 }
 
 function toTitleCase(s: string): string {
   return s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function zoneKey(zone: string): string {
+  return zone
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .replace(/_+/g, "_");
+}
+
+function getZoneLabel(
+  zone: string,
+  language: string,
+  t: (key: string) => string,
+): string {
+  if (language !== "ta") return toTitleCase(zone);
+  const key = `zone_name.${zoneKey(zone)}`;
+  const translated = t(key);
+  return translated === key ? toTitleCase(zone) : translated;
 }
