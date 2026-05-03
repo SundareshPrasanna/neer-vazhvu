@@ -1,6 +1,65 @@
+import { promises as fs } from "fs";
+import path from "path";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { loadMaduraiSnapshot, type ReservoirReadingV2 } from "./data";
+
+interface GwrBlockHistoryEntry {
+  year: number;
+  class: string;
+  development_pct: number;
+}
+
+interface GwrBlock {
+  name: string;
+  history: GwrBlockHistoryEntry[];
+  latest: { class: string; development_pct: number };
+}
+
+interface GwrFile {
+  source: string;
+  source_url: string;
+  fetched_at: string;
+  blocks: GwrBlock[];
+}
+
+interface GwStationsFile {
+  source: string;
+  fetched_at: string;
+  stations: { name: string; lat: number; lng: number; agency: string; block: string }[];
+}
+
+async function loadMaduraiGwrBlocks(): Promise<GwrFile | null> {
+  try {
+    const text = await fs.readFile(
+      path.join(process.cwd(), "public", "data", "gwr-blocks-madurai.json"),
+      "utf-8",
+    );
+    return JSON.parse(text) as GwrFile;
+  } catch {
+    return null;
+  }
+}
+
+async function loadMaduraiGwStations(): Promise<GwStationsFile | null> {
+  try {
+    const text = await fs.readFile(
+      path.join(process.cwd(), "public", "data", "gw-stations-madurai.json"),
+      "utf-8",
+    );
+    return JSON.parse(text) as GwStationsFile;
+  } catch {
+    return null;
+  }
+}
+
+const GWR_CLASS_TONE: Record<string, string> = {
+  "Over Exploited": "bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-300 border-red-200 dark:border-red-800",
+  "Critical": "bg-orange-100 text-orange-800 dark:bg-orange-950/40 dark:text-orange-300 border-orange-200 dark:border-orange-800",
+  "Semi Critical": "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200 dark:border-amber-800",
+  "Safe": "bg-green-100 text-green-800 dark:bg-green-950/40 dark:text-green-300 border-green-200 dark:border-green-800",
+};
 
 // Re-fetch every 15 minutes (matches /cauvery and /api/reservoir cache TTL).
 export const revalidate = 900;
@@ -86,7 +145,11 @@ function fmtInt(n: number | null): string {
 }
 
 export default async function MaduraiPage() {
-  const snapshot = await loadMaduraiSnapshot();
+  const [snapshot, gwrFile, gwStationsFile] = await Promise.all([
+    loadMaduraiSnapshot(),
+    loadMaduraiGwrBlocks(),
+    loadMaduraiGwStations(),
+  ]);
 
   const vaigai = snapshot.vaigai ?? MOCK_VAIGAI;
   const mullaperiyar = snapshot.mullaperiyar ?? MOCK_MULLAPERIYAR;
@@ -279,23 +342,79 @@ export default async function MaduraiPage() {
         </CardContent>
       </Card>
 
-      {/* Basin rainfall placeholder (M2) */}
+      {/* Groundwater - CGWB GWR2024 block assessments (live) */}
+      {gwrFile && (
+        <Card>
+          <CardContent className="space-y-3">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                Groundwater stress · CGWB GWR2024
+              </h2>
+              <span className="text-xs text-slate-400">
+                {gwStationsFile && `${gwStationsFile.stations.length} stations · `}
+                {gwrFile.blocks.length} blocks · {new Date(gwrFile.fetched_at).toISOString().slice(0, 10)}
+              </span>
+            </div>
+            <div className="text-sm text-slate-600 dark:text-slate-400">
+              {(() => {
+                const overExploited = gwrFile.blocks.filter((b) => b.latest.class === "Over Exploited");
+                const critical = gwrFile.blocks.filter((b) => b.latest.class === "Critical");
+                const semi = gwrFile.blocks.filter((b) => b.latest.class === "Semi Critical");
+                if (overExploited.length === 0 && critical.length === 0) {
+                  return `${semi.length} of ${gwrFile.blocks.length} blocks are semi-critical; the rest are safe.`;
+                }
+                const phrases: string[] = [];
+                if (overExploited.length) phrases.push(`${overExploited[0].name} is over-exploited at ${overExploited[0].latest.development_pct}% draft-to-availability`);
+                if (critical.length) phrases.push(`${critical[0].name} is critical at ${critical[0].latest.development_pct}%`);
+                if (semi.length) phrases.push(`${semi.length} blocks semi-critical`);
+                return phrases.join("; ") + ".";
+              })()}
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 mt-2">
+              {gwrFile.blocks.map((b) => {
+                const tone = GWR_CLASS_TONE[b.latest.class] ?? GWR_CLASS_TONE.Safe;
+                return (
+                  <div
+                    key={b.name}
+                    className={`text-xs px-2 py-1.5 rounded border ${tone}`}
+                    title={`${b.name}: ${b.latest.class} (${b.latest.development_pct}% development)`}
+                  >
+                    <div className="font-medium truncate">{b.name}</div>
+                    <div className="font-mono text-[10px] opacity-75">
+                      {b.latest.development_pct.toFixed(0)}% · {b.latest.class}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-2 pt-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500">
+              Class is CGWB's annual Dynamic Groundwater Resource Assessment ratio
+              of total annual draft to net annual availability: Safe (≤70%),
+              Semi Critical (70-90%), Critical (90-100%), Over Exploited (&gt;100%).
+              Source: India-WRIS GWR2024_CGWB MapServer, fetched
+              {" "}{new Date(gwrFile.fetched_at).toISOString().slice(0, 10)}.
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Basin rainfall placeholder (M2 follow-up) */}
       <Card>
         <CardContent className="space-y-3">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Vaigai basin rainfall
             </h2>
-            <span className="text-xs text-amber-600">M2</span>
+            <span className="text-xs text-amber-600">M2 follow-up</span>
           </div>
           <div className="text-xs text-slate-500">
             Vaigai basin spans 7,009 sq km across Theni / Dindigul / Madurai /
             Sivagangai / Ramanathapuram. Long-period average for Vaigai-only
-            isn't a clean published number; M2 computes 1991-2020 climatology
-            from imdlib over the India-WRIS basin polygon and pairs it with
-            OpenMeteo daily rainfall area-averaged across the basin. Mullaperiyar
-            catchment (~624 sq km, Kerala side) is tracked separately to capture
-            the trans-basin tunnel contribution.
+            isn't a clean published number; the follow-up ships 1991-2020
+            climatology from imdlib over the India-WRIS basin polygon paired
+            with OpenMeteo daily rainfall area-averaged across the basin.
+            Mullaperiyar catchment (~624 sq km, Kerala side) is tracked
+            separately to capture the trans-basin tunnel contribution.
           </div>
         </CardContent>
       </Card>
