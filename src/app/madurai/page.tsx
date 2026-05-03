@@ -5,10 +5,13 @@ import { loadMaduraiSnapshot, type ReservoirReadingV2 } from "./data";
 // Re-fetch every 15 minutes (matches /cauvery and /api/reservoir cache TTL).
 export const revalidate = 900;
 
-// Mock data is used until live ingestion lands. M1 wires Vaigai + Mullaperiyar
-// from tnagriculture.in (Periyar listing); a separate Kerala SDMA scraper
-// adds Mullaperiyar's Kerala-side reading. Sothuparai is a known data gap
-// (PWD WRD daily memo only, not on TN Agri).
+// Mock data is used only when ingestion has not yet run. M1A wires Vaigai +
+// Mullaperiyar from tnagriculture.in (TN Agri ARS) via the multi-city scraper.
+// Mullaperiyar is published only by TN (TN operates the dam under the 1886
+// lease), so there is no separate Kerala-side reading - the dashboard instead
+// compares the single TN reading against TWO reference levels: TN's historical
+// 152 ft FRL and Kerala's SC-2014-mandated 142 ft cap. Sothuparai is a known
+// data gap (PWD WRD daily memo only, not on TN Agri).
 
 const MOCK_TODAY = "2026-05-03";
 
@@ -24,7 +27,7 @@ const MOCK_VAIGAI: ReservoirReadingV2 = {
   source: "mock",
 };
 
-const MOCK_MULLAPERIYAR_TN: ReservoirReadingV2 = {
+const MOCK_MULLAPERIYAR: ReservoirReadingV2 = {
   city_id: "madurai",
   source_code: "mullaperiyar",
   date: MOCK_TODAY,
@@ -33,16 +36,6 @@ const MOCK_MULLAPERIYAR_TN: ReservoirReadingV2 = {
   level_ft: 134.0,
   inflow_cusecs: 380,
   outflow_cusecs: 410,
-  source: "mock",
-};
-
-// Mock Kerala-SDMA reading for the same dam (for the dual-source story).
-// In Kerala SDMA's data the storage cap is 142 ft (post 2014 SC ruling),
-// so the same physical depth shows a different "% of FRL" than the TN side
-// where 152 ft is used historically. M1 wires this as a real diff.
-const MOCK_MULLAPERIYAR_KE = {
-  level_ft: 134.0,
-  pct_frl_ke_142: Math.round((134.0 / 142.0) * 1000) / 10,
   source: "mock",
 };
 
@@ -58,12 +51,17 @@ const MOCK_SOTHUPARAI: ReservoirReadingV2 = {
   source: "mock",
 };
 
-// Mullaperiyar alert protocol (Kerala SDMA, post-SC 2014 ruling).
+// Mullaperiyar reference levels.
+// Kerala SDMA alert protocol (post-SC 2014 ruling) caps storage at 142 ft;
+// TN-side records preserve 152 ft as historical FRL.
+const MULLAPERIYAR_TN_FRL_FT = 152;
+const MULLAPERIYAR_KE_CAP_FT = 142;
+
 const MULLAPERIYAR_ALERTS = [
   { ft: 136, label: "Warning", tone: "text-yellow-600 dark:text-yellow-400" },
   { ft: 138, label: "Orange", tone: "text-orange-600 dark:text-orange-400" },
   { ft: 140, label: "Red", tone: "text-red-600 dark:text-red-400" },
-  { ft: 142, label: "FRL", tone: "text-red-700 dark:text-red-300 font-semibold" },
+  { ft: MULLAPERIYAR_KE_CAP_FT, label: "Kerala FRL", tone: "text-red-700 dark:text-red-300 font-semibold" },
 ];
 
 const MADURAI_DAILY_DEMAND_MLD = 135;
@@ -91,10 +89,18 @@ export default async function MaduraiPage() {
   const snapshot = await loadMaduraiSnapshot();
 
   const vaigai = snapshot.vaigai ?? MOCK_VAIGAI;
-  const mullaperiyar = snapshot.mullaperiyar ?? MOCK_MULLAPERIYAR_TN;
+  const mullaperiyar = snapshot.mullaperiyar ?? MOCK_MULLAPERIYAR;
   const sothuparai = snapshot.sothuparai ?? MOCK_SOTHUPARAI;
   const reservoirIsLive = snapshot.reservoirIsLive;
   const dataDate = snapshot.asOf ?? MOCK_TODAY;
+
+  // Mullaperiyar dual-reference: one TN-Agri reading, two FRL references.
+  // Kerala SDMA does not publish Mullaperiyar (it is TN-operated under the
+  // 1886 lease), so we don't have a separate Kerala-side reading - what we
+  // expose is the same level_ft compared against both reference caps.
+  const mpLevelFt = mullaperiyar.level_ft;
+  const mpPctTn = mpLevelFt !== null ? Math.round((mpLevelFt / MULLAPERIYAR_TN_FRL_FT) * 1000) / 10 : null;
+  const mpPctKe = mpLevelFt !== null ? Math.round((mpLevelFt / MULLAPERIYAR_KE_CAP_FT) * 1000) / 10 : null;
 
   // Days-of-water-left from Vaigai live storage at the city's share of supply.
   // Vaigai serves Madurai plus a much larger irrigation command. We model only
@@ -189,7 +195,7 @@ export default async function MaduraiPage() {
           </CardContent>
         </Card>
 
-        {/* Mullaperiyar card with TN/Kerala dual reading */}
+        {/* Mullaperiyar card: one reading, two reference levels */}
         <Card className="border-amber-200 dark:border-amber-900">
           <CardContent className="space-y-3">
             <div className="flex items-baseline justify-between">
@@ -202,16 +208,16 @@ export default async function MaduraiPage() {
               </span>
             </div>
             <div className="text-3xl font-bold">
-              {fmtNum(mullaperiyar.level_ft)}
+              {fmtNum(mpLevelFt)}
               <span className="text-base font-normal text-slate-400 ml-1">ft</span>
             </div>
             <div className="text-sm text-slate-500">
-              TN reading: {fmtNum(mullaperiyar.storage_pct_frl)}% of 152 ft
-              {" "}· Kerala reading: {fmtNum(MOCK_MULLAPERIYAR_KE.pct_frl_ke_142)}% of 142 ft
+              {fmtNum(mpPctTn)}% of TN historical FRL ({MULLAPERIYAR_TN_FRL_FT} ft)
+              {" "}· {fmtNum(mpPctKe)}% of Kerala SC-cap ({MULLAPERIYAR_KE_CAP_FT} ft)
             </div>
             <div className="grid grid-cols-4 gap-1 mt-2 text-[10px]">
               {MULLAPERIYAR_ALERTS.map((a) => {
-                const reached = mullaperiyar.level_ft !== null && mullaperiyar.level_ft >= a.ft;
+                const reached = mpLevelFt !== null && mpLevelFt >= a.ft;
                 return (
                   <div
                     key={a.ft}
@@ -231,8 +237,10 @@ export default async function MaduraiPage() {
               <span className="font-semibold">1886 lease deed, 999 years, Rs 5/acre.</span>
               {" "}Periyar Lake Lease Indenture between the Maharaja of Travancore
               and the Secretary of State for India. Kerala caps storage at
-              142 ft per Supreme Court 2014; TN-side records preserve 152 ft FRL.
-              Both readings are tracked here.
+              {" "}{MULLAPERIYAR_KE_CAP_FT} ft per Supreme Court 2014; TN-side
+              records preserve {MULLAPERIYAR_TN_FRL_FT} ft FRL. Reading is
+              published by TN only (the dam is TN-operated); Kerala SDMA does
+              not publish Mullaperiyar in its KSEB or IRR tables.
             </div>
           </CardContent>
         </Card>
@@ -295,19 +303,20 @@ export default async function MaduraiPage() {
       {/* Footer notes */}
       <div className="text-xs text-slate-500 dark:text-slate-400 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
         <p>
-          <span className="font-semibold">Methodology (planned):</span> Vaigai
-          and Mullaperiyar TN-side reading from TN Agri ARS bulletin via
-          tnagriculture.in (same scraper as Mettur for Cauvery); Mullaperiyar
-          Kerala-side reading from Kerala SDMA daily dam-level page; Vaigai
-          basin rainfall from OpenMeteo (ERA5-Land) area-averaged across the
-          India-WRIS Vaigai polygon.
+          <span className="font-semibold">Methodology:</span> Vaigai and
+          Mullaperiyar from TN Agri ARS bulletin via tnagriculture.in (same
+          multi-city scraper as Mettur for Cauvery). Mullaperiyar is published
+          only by Tamil Nadu under the 1886 lease (Kerala SDMA's KSEB and IRR
+          tables do not list it). Vaigai basin rainfall from OpenMeteo
+          (ERA5-Land) area-averaged across the India-WRIS Vaigai polygon
+          comes in M2.
         </p>
         <p>
-          <span className="font-semibold">Status:</span> M0 skeleton only.
-          M1 wires reservoir scrapes (Vaigai + Mullaperiyar); M2 wires basin
-          rainfall + groundwater + IMD; M3 wires Vaigai river quality, water
-          bodies, and the temple-tank satellite series; M4 decouples Chennai
-          hardcoding and ships AI narratives for Madurai.
+          <span className="font-semibold">Status:</span> M1A live - Vaigai and
+          Mullaperiyar daily readings flow into reservoir_daily_v2. M2 wires
+          basin rainfall + groundwater + IMD; M3 wires Vaigai river quality,
+          water bodies, and the temple-tank satellite series; M4 decouples
+          Chennai hardcoding and ships AI narratives for Madurai.
         </p>
         <p className="text-slate-400">
           See <code className="text-[10px] bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">memory/madurai_parity_research.md</code> for the full data inventory.
