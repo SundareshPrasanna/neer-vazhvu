@@ -3,8 +3,8 @@ TN Agriculture / PWD reservoir page scraper.
 
 Scrapes https://tnagriculture.in/ARS/home/reservoir which serves daily storage,
 level, inflow, and outflow for ~20 reservoirs across TN, KA, and KL. We extract
-the 5 Kaveri-relevant rows (Mettur + the four Karnataka basin dams) and map
-them to our source_code keys.
+rows relevant to multiple places we cover (Kaveri Delta + Madurai) and tag each
+reading with its city_id.
 
 Note the URL is the bare hostname (no www) — the www subdomain has a TLS cert
 that does not include tnagriculture.in as an alt name.
@@ -31,18 +31,33 @@ HEADERS = {
     "Accept-Language": "en-US,en;q=0.5",
 }
 
-# Substring -> our canonical source_code. Match is case-insensitive on the
-# first table cell. Order matters: more specific keys first.
-NAME_MAP: list[tuple[str, str]] = [
-    ("krishna raja sagar", "krs"),
-    ("krs", "krs"),
-    ("kabini", "kabini"),
-    ("hemavathy", "hemavathy"),
-    ("hemavathi", "hemavathy"),
-    ("harangi", "harangi"),
-    ("mettur", "mettur"),
-]
+# Per-city: substring -> canonical source_code. Match is case-insensitive on
+# the first table cell. Order matters within a city: more specific keys first.
+# Place-aliasing (e.g. TN Agri's "Periyar" -> our 'mullaperiyar') happens here,
+# not in the DB-side aliases table, because this is the scrape-time mapping.
+NAME_MAPS: dict[str, list[tuple[str, str]]] = {
+    "kaveri": [
+        ("krishna raja sagar", "krs"),
+        ("krs", "krs"),
+        ("kabini", "kabini"),
+        ("hemavathy", "hemavathy"),
+        ("hemavathi", "hemavathy"),
+        ("harangi", "harangi"),
+        ("mettur", "mettur"),
+    ],
+    "madurai": [
+        ("vaigai", "vaigai"),
+        # TN Agri lists Mullaperiyar as "Periyar**" with a footnote. We canonical
+        # to 'mullaperiyar' to disambiguate from the Periyar river.
+        ("periyar", "mullaperiyar"),
+    ],
+}
 
+# Cities expected to receive at least one reading on every successful scrape.
+# Kaveri is the original use case; Madurai is included from M1 onwards.
+EXPECTED_CITY_IDS: tuple[str, ...] = ("kaveri", "madurai")
+
+# Backward-compat: kept so existing imports keep working. Prefer EXPECTED_CITY_IDS.
 KAVERI_CITY_ID = "kaveri"
 
 
@@ -91,11 +106,13 @@ def _parse_date(page_text: str) -> str:
     return f"{year}-{month.zfill(2)}-{day.zfill(2)}"
 
 
-def _match_source_code(name_cell: str) -> str | None:
+def _match_source_code(name_cell: str) -> tuple[str, str] | None:
+    """Return (city_id, source_code) for the first matching needle, or None."""
     name_lower = name_cell.strip().lower()
-    for needle, code in NAME_MAP:
-        if needle in name_lower:
-            return code
+    for city_id, name_map in NAME_MAPS.items():
+        for needle, code in name_map:
+            if needle in name_lower:
+                return city_id, code
     return None
 
 
@@ -105,17 +122,18 @@ def _parse_html(html: str) -> ScrapeResult:
     date_str = _parse_date(page_text)
 
     readings: list[ReservoirReading] = []
-    seen: set[str] = set()
+    seen: set[tuple[str, str]] = set()
 
     for row in soup.find_all("tr"):
         cells = [td.get_text(strip=True) for td in row.find_all("td")]
         if len(cells) < 9:
             continue
 
-        source_code = _match_source_code(cells[0])
-        if source_code is None or source_code in seen:
+        match = _match_source_code(cells[0])
+        if match is None or match in seen:
             continue
-        seen.add(source_code)
+        city_id, source_code = match
+        seen.add(match)
 
         capacity_mcft = _parse_num(cells[2])
         storage_mcft = _parse_num(cells[4])
@@ -133,7 +151,7 @@ def _parse_html(html: str) -> ScrapeResult:
 
         readings.append(
             ReservoirReading(
-                city_id=KAVERI_CITY_ID,
+                city_id=city_id,
                 source_code=source_code,
                 date=date_str,
                 storage_tmc=storage_tmc,
@@ -148,7 +166,7 @@ def _parse_html(html: str) -> ScrapeResult:
 
     if not readings:
         raise ValueError(
-            "No Kaveri-relevant reservoir rows found in tnagriculture.in page; "
+            "No relevant reservoir rows found in tnagriculture.in page; "
             "HTML structure may have changed"
         )
 

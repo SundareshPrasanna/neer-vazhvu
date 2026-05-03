@@ -41,10 +41,11 @@ jobs:
           CMWSSB_MAX_STALE_DAYS: '4'
         run: python scripts/scrape_cmwssb.py
 
-      # Scrape Kaveri reservoirs (Mettur + Karnataka 4-dam) for the Water Clock.
+      # Scrape TN Agri ARS for Kaveri (Mettur + Karnataka 4-dam) and Madurai
+      # (Vaigai + Mullaperiyar/Periyar) reservoirs. Single page fetch, multi-city.
       # Tolerates up to 4 days of stale data before failing.
-      - name: Scrape TN PWD reservoirs (Kaveri) -> Supabase
-        id: scrape_kaveri
+      - name: Scrape TN PWD reservoirs (Kaveri + Madurai) -> Supabase
+        id: scrape_tn_pwd
         continue-on-error: true
         working-directory: neer-vazhvu-api
         env:
