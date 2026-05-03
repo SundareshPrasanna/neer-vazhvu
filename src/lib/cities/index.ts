@@ -1,13 +1,15 @@
 import { CHENNAI } from './chennai';
 import { KAVERI } from './kaveri';
+import { MADURAI } from './madurai';
 import type { PlaceConfig } from './types';
 
 export * from './types';
-export { CHENNAI, KAVERI };
+export { CHENNAI, KAVERI, MADURAI };
 
 const REGISTRY: Record<string, PlaceConfig> = {
   [CHENNAI.cityId]: CHENNAI,
   [KAVERI.cityId]: KAVERI,
+  [MADURAI.cityId]: MADURAI,
 };
 
 export const DEFAULT_CITY_ID = CHENNAI.cityId;
