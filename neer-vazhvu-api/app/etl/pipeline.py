@@ -16,6 +16,7 @@ from app.etl.constants import (
     CUSEC_DAY_TO_MCFT,
     DEFAULT_CONSUMPTION_MLD,
     DEFAULT_DESALINATION_MLD,
+    EXPECTED_RESERVOIR_COUNT,
     MLD_TO_MCFT,
 )
 from app.etl.estimate import compute_days_left
@@ -252,28 +253,56 @@ async def _step_compute_estimate() -> dict:
     today = ist_today().isoformat()
 
     # 1. Get latest reservoir data
+    lookback_days = 10
     res = (
         supabase.table("reservoir_daily")
         .select("reservoir, current_storage_mcft, capacity_mcft, inflow_cusecs, date")
         .order("date", desc=True)
-        .limit(12)
+        .limit(EXPECTED_RESERVOIR_COUNT * lookback_days)
         .execute()
     )
 
     if not res.data:
         raise ValueError("No reservoir data available for estimate computation")
 
-    most_recent_date = res.data[0]["date"]
-    today_reservoirs = [r for r in res.data if r["date"] == most_recent_date]
+    by_date: dict[str, list[dict]] = {}
+    for row in res.data:
+        by_date.setdefault(row["date"], []).append(row)
 
+    # Walk dates newest-first; skip any date missing reservoirs (scrape lag),
+    # since a partial day understates storage and makes days-left misleadingly low.
+    complete_date = None
+    skipped: list[tuple[str, set[str]]] = []
+    for date in sorted(by_date.keys(), reverse=True):
+        reservoirs_seen = {r["reservoir"] for r in by_date[date]}
+        if len(reservoirs_seen) >= EXPECTED_RESERVOIR_COUNT:
+            complete_date = date
+            break
+        skipped.append((date, reservoirs_seen))
+
+    if complete_date is None:
+        details = "; ".join(f"{d} had {sorted(seen)}" for d, seen in skipped[:5])
+        raise ValueError(
+            f"No complete reservoir set in the last {lookback_days} days "
+            f"(expected {EXPECTED_RESERVOIR_COUNT}). {details}"
+        )
+
+    if skipped:
+        logger.warning(
+            "compute_estimate: falling back to %s, skipped incomplete: %s",
+            complete_date,
+            [(d, sorted(seen)) for d, seen in skipped],
+        )
+
+    today_reservoirs = by_date[complete_date]
     total_storage = sum(r["current_storage_mcft"] or 0 for r in today_reservoirs)
     total_capacity = sum(r["capacity_mcft"] or 0 for r in today_reservoirs)
 
-    # 2. Compute 7-day rolling average inflow
+    # 2. Compute 7-day rolling average inflow (complete days only)
     seven_days_ago = (ist_today() - timedelta(days=7)).isoformat()
     recent_res = (
         supabase.table("reservoir_daily")
-        .select("date, inflow_cusecs")
+        .select("date, reservoir, inflow_cusecs")
         .gte("date", seven_days_ago)
         .not_.is_("inflow_cusecs", "null")
         .execute()
@@ -281,13 +310,18 @@ async def _step_compute_estimate() -> dict:
 
     recent_avg_inflow_mcft_per_day = 0.0
     if recent_res.data:
-        by_date: dict[str, float] = {}
+        per_date: dict[str, dict[str, float]] = {}
         for row in recent_res.data:
             d = row["date"]
-            by_date[d] = by_date.get(d, 0) + (row["inflow_cusecs"] or 0)
-        daily_totals = list(by_date.values())
-        avg_cusecs = sum(daily_totals) / len(daily_totals)
-        recent_avg_inflow_mcft_per_day = avg_cusecs * CUSEC_DAY_TO_MCFT
+            per_date.setdefault(d, {})[row["reservoir"]] = row["inflow_cusecs"] or 0
+        complete_days = [
+            sum(rows.values())
+            for rows in per_date.values()
+            if len(rows) >= EXPECTED_RESERVOIR_COUNT
+        ]
+        if complete_days:
+            avg_cusecs = sum(complete_days) / len(complete_days)
+            recent_avg_inflow_mcft_per_day = avg_cusecs * CUSEC_DAY_TO_MCFT
 
     # 3. Get seasonal average inflow
     current_month = ist_today().month
