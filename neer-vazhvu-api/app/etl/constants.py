@@ -43,6 +43,9 @@ RESERVOIR_CAPACITY: dict[str, float] = {
     "kannankottai": 1574.0,
 }
 
+EXPECTED_RESERVOIR_COUNT = len(RESERVOIR_CAPACITY)
+"""All reservoirs must report on a date for it to be usable in days-left math."""
+
 # Maps various CMWSSB page names to canonical reservoir names
 RESERVOIR_NAME_MAP: dict[str, str] = {
     "poondi": "poondi",
