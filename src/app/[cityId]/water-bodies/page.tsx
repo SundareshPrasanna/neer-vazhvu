@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
+import WaterBodiesMapClient from "./water-bodies-map-client";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -175,12 +176,6 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
         <Badge variant="outline" className="text-xs">
           District scope
         </Badge>
-        <Badge variant="outline" className="text-xs">
-          v1 · text catalogue
-        </Badge>
-        <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
-          Map view coming after Chennai-parity refactor
-        </Badge>
       </div>
 
       <header className="space-y-2">
@@ -199,6 +194,14 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
           slum households now living on former tank beds.
         </p>
       </header>
+
+      {/* Interactive Leaflet map - same UX as Chennai's /water-bodies */}
+      <WaterBodiesMapClient
+        cityId={cityId}
+        cityDisplayName={config.displayName}
+        mapCenter={[config.center.lat, config.center.lng]}
+        mapZoom={11}
+      />
 
       {/* Headline stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
