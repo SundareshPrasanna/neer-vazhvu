@@ -13,7 +13,10 @@ import { listEnabledPlaces } from "@/lib/cities";
 // the user keeps the home preview as a useful landing).
 //
 // Keep this in sync with src/app/[cityId]/<feature>/page.tsx as we ship
-// each decoupled feature page.
+// each decoupled feature page. Madurai lake-restoration is a real page
+// (not a redirect like Chennai's) because we have richer narrative
+// content for it than Chennai - 14 documented lost tanks, 19 flagships,
+// 8 restoration programmes, court anchor.
 const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   chennai: new Set([
     "",

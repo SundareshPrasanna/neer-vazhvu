@@ -19,7 +19,7 @@ const FEATURES: FeatureMeta[] = [
   { feature: "flood-risk",       changeFrequency: "monthly", priority: 0.8 },
   { feature: "rivers",           changeFrequency: "monthly", priority: 0.8 },
   { feature: "water-bodies",     changeFrequency: "monthly", priority: 0.8 },
-  { feature: "lake-restoration", changeFrequency: "monthly", priority: 0.6 },
+  { feature: "lake-restoration", changeFrequency: "monthly", priority: 0.7 },
   { feature: "about",            changeFrequency: "monthly", priority: 0.5 },
 ];
 
