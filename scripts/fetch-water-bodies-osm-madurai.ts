@@ -4,22 +4,31 @@
  *
  * Run: npx tsx scripts/fetch-water-bodies-osm-madurai.ts
  *
- * Mirror of fetch-water-bodies-osm.ts; M4 will fold both into a place-aware
- * script. Bbox expanded past MMC to capture peri-urban tanks (Anaikondan,
- * Tirumangalam) and Theni-side dams (Vaigai, Sothuparai, Manjalar).
+ * Uses the osmtogeojson library to assemble OSM ways and multipolygon
+ * relations into proper GeoJSON. Hand-rolled OSM-to-GeoJSON (as the
+ * Chennai script does) gets multipolygon outer-ring chaining wrong and
+ * emits dam walls / disconnected rings as separate "weird shape"
+ * polygons. M4 will eventually fold both fetchers into a single
+ * place-aware script using this same library.
  */
 
-import { writeFileSync } from "fs";
+import { writeFileSync, promises as fsAsync } from "fs";
 import { join } from "path";
+import osmtogeojson from "osmtogeojson";
 
 // Madurai bbox - expanded past MMC. [south, west, north, east]
 const BBOX = "9.5,77.4,10.2,78.4";
 
-// Madurai latitude (~9.93N) for the deg² -> m² conversion in computePolygonAreaHa.
+// Madurai latitude (~9.93N) for the deg² -> m² conversion in
+// computePolygonAreaHa. The original Chennai script uses 13°N.
 const REF_LAT_DEG = 9.93;
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 
+// Note: no `>;` (recurse-down) here. osmtogeojson needs full geometry,
+// which "out body geom;" provides without pulling in unrelated nodes/ways
+// that aren't members. This avoids the dam-wall / TIGER-roads pollution
+// the previous query produced.
 const QUERY = `
 [out:json][timeout:90];
 (
@@ -28,100 +37,78 @@ const QUERY = `
   way["water"~"lake|reservoir|pond|tank"](${BBOX});
   way["landuse"="reservoir"](${BBOX});
 );
-out body;
->;
-out skel qt;
+out body geom;
 `.trim();
 
-interface OsmNode {
-  type: "node";
-  id: number;
-  lat: number;
-  lon: number;
-  tags?: Record<string, string>;
+interface OutputProperties {
+  osm_id: number;
+  osm_type: string;
+  name: string;
+  name_ta: string;
+  water_type: string;
+  area_ha: number;
 }
 
-interface OsmWay {
-  type: "way";
-  id: number;
-  nodes: number[];
-  tags?: Record<string, string>;
-}
-
-interface OsmRelation {
-  type: "relation";
-  id: number;
-  members: Array<{ type: string; ref: number; role: string }>;
-  tags?: Record<string, string>;
-}
-
-type OsmElement = OsmNode | OsmWay | OsmRelation;
-
-interface OsmResponse {
-  elements: OsmElement[];
-}
-
-interface GeoJsonFeature {
+interface OutputFeature {
   type: "Feature";
-  geometry: {
-    type: "Polygon" | "MultiPolygon";
-    coordinates: number[][][] | number[][][][];
-  };
-  properties: {
-    osm_id: number;
-    osm_type: string;
-    name: string;
-    name_ta: string;
-    water_type: string;
-    area_ha: number | null;
-  };
+  geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon;
+  properties: OutputProperties;
 }
 
-interface GeoJsonFeatureCollection {
-  type: "FeatureCollection";
-  features: GeoJsonFeature[];
-}
-
-function computePolygonAreaHa(coords: number[][]): number {
-  // Shoelace formula for approximate area in degrees², then convert to ha
+function ringAreaHa(ring: number[][]): number {
+  // Shoelace area in degrees², converted to ha at the reference latitude.
   let area = 0;
-  for (let i = 0; i < coords.length - 1; i++) {
-    area += coords[i][0] * coords[i + 1][1];
-    area -= coords[i + 1][0] * coords[i][1];
+  for (let i = 0; i < ring.length - 1; i++) {
+    area += ring[i][0] * ring[i + 1][1];
+    area -= ring[i + 1][0] * ring[i][1];
   }
   area = Math.abs(area) / 2;
-  // 1 degree² in m² at the reference latitude.
   const m2 = area * 111320 * 111320 * Math.cos((REF_LAT_DEG * Math.PI) / 180);
-  return Math.round((m2 / 10000) * 100) / 100;
+  return m2 / 10000;
 }
 
-interface RiverFeatureProperties {
-  name?: string;
-  name_ta?: string;
+function polygonAreaHa(geom: GeoJSON.Polygon | GeoJSON.MultiPolygon): number {
+  if (geom.type === "Polygon") {
+    if (geom.coordinates.length === 0) return 0;
+    // Outer ring minus inner rings (holes).
+    let total = ringAreaHa(geom.coordinates[0]);
+    for (let i = 1; i < geom.coordinates.length; i++) total -= ringAreaHa(geom.coordinates[i]);
+    return Math.max(0, total);
+  }
+  let total = 0;
+  for (const poly of geom.coordinates) {
+    if (poly.length === 0) continue;
+    let p = ringAreaHa(poly[0]);
+    for (let i = 1; i < poly.length; i++) p -= ringAreaHa(poly[i]);
+    total += Math.max(0, p);
+  }
+  return total;
 }
 
-interface RiverFeature {
-  geometry: GeoJSON.LineString | GeoJSON.MultiLineString;
-  properties: RiverFeatureProperties;
+function parseOsmFeatureId(rawId: string): { type: string; id: number } | null {
+  // osmtogeojson sets feature.id like "way/12345" or "relation/67890".
+  const m = rawId.match(/^(node|way|relation)\/(\d+)$/);
+  if (!m) return null;
+  return { type: m[1], id: Number(m[2]) };
 }
 
 interface RiverFile {
-  features: RiverFeature[];
+  features: Array<{
+    geometry: GeoJSON.LineString | GeoJSON.MultiLineString;
+    properties: { name?: string; name_ta?: string };
+  }>;
 }
 
-async function labelRiverPolygons(features: GeoJsonFeature[]): Promise<void> {
-  const { promises: fsAsync } = await import("fs");
+async function labelRiverPolygons(features: OutputFeature[]): Promise<void> {
   const riversPath = join(process.cwd(), "public/geojson/madurai-rivers.geojson");
   let riversFile: RiverFile;
   try {
     riversFile = JSON.parse(await fsAsync.readFile(riversPath, "utf-8")) as RiverFile;
-  } catch (e) {
-    console.warn(`  (river-name post-process skipped: ${riversPath} not found - run fetch-rivers-osm-madurai.ts first)`);
+  } catch {
+    console.warn(`  (river-name post-process skipped: ${riversPath} not found)`);
     return;
   }
 
-  // Sample river vertices into a flat array of {lat, lng, name, name_ta}.
-  // No subsampling - we want the densest possible points for the matching.
   interface RiverPoint { lat: number; lng: number; name: string; name_ta: string }
   const riverPoints: RiverPoint[] = [];
   for (const feat of riversFile.features) {
@@ -129,18 +116,15 @@ async function labelRiverPolygons(features: GeoJsonFeature[]): Promise<void> {
     const name_ta = feat.properties.name_ta ?? "";
     if (!name) continue;
     const lines: number[][][] =
-      feat.geometry.type === "LineString"
-        ? [feat.geometry.coordinates]
-        : feat.geometry.coordinates;
+      feat.geometry.type === "LineString" ? [feat.geometry.coordinates] : feat.geometry.coordinates;
     for (const line of lines) {
       for (const [lng, lat] of line) {
         riverPoints.push({ lat, lng, name, name_ta });
       }
     }
   }
-
   if (riverPoints.length === 0) {
-    console.warn("  (river-name post-process: no usable river points found)");
+    console.warn("  (river-name post-process: no usable river points)");
     return;
   }
 
@@ -157,14 +141,12 @@ async function labelRiverPolygons(features: GeoJsonFeature[]): Promise<void> {
   let labeled = 0;
   for (const f of features) {
     const p = f.properties;
-    if (p.name) continue; // already named
-    if (p.water_type !== "river") continue; // only river polygons
-
-    // Compute centroid of outer ring.
+    if (p.name) continue;
+    if (p.water_type !== "river") continue;
     const coords =
       f.geometry.type === "Polygon"
-        ? (f.geometry.coordinates as number[][][])[0]
-        : (f.geometry.coordinates as number[][][][])[0][0];
+        ? f.geometry.coordinates[0]
+        : f.geometry.coordinates[0][0];
     if (!coords || coords.length === 0) continue;
     let latSum = 0;
     let lngSum = 0;
@@ -174,7 +156,6 @@ async function labelRiverPolygons(features: GeoJsonFeature[]): Promise<void> {
     }
     const cLat = latSum / coords.length;
     const cLng = lngSum / coords.length;
-
     let bestDist = Infinity;
     let bestName = "";
     let bestNameTa = "";
@@ -186,9 +167,6 @@ async function labelRiverPolygons(features: GeoJsonFeature[]): Promise<void> {
         bestNameTa = rp.name_ta;
       }
     }
-    // No threshold: water_type=river polygons are river beds by definition,
-    // and we just want to know which river. Centroid-to-nearest-vertex match
-    // is correct unless rivers cross (they don't in our data).
     if (bestName) {
       p.name = bestName;
       p.name_ta = bestNameTa;
@@ -209,192 +187,74 @@ async function main() {
     },
     body: `data=${encodeURIComponent(QUERY)}`,
   });
-
   if (!res.ok) {
     throw new Error(`Overpass returned ${res.status}: ${await res.text()}`);
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const overpassJson = (await res.json()) as any;
+  console.log(`Got ${overpassJson.elements?.length ?? 0} OSM elements`);
 
-  const osm: OsmResponse = await res.json();
-  console.log(`Got ${osm.elements.length} OSM elements`);
+  // osmtogeojson handles all the multipolygon assembly correctly.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const raw = osmtogeojson(overpassJson) as any;
+  const rawFeatures = (raw.features ?? []) as Array<{
+    type: "Feature";
+    id?: string;
+    geometry: GeoJSON.Geometry;
+    properties: Record<string, string> | null;
+  }>;
 
-  // Build node lookup map
-  const nodeMap = new Map<number, OsmNode>();
-  for (const el of osm.elements) {
-    if (el.type === "node") nodeMap.set(el.id, el);
-  }
+  let skippedNonPolygon = 0;
+  let skippedTiny = 0;
 
-  // Track way IDs that are members of a water multipolygon relation. Those
-  // ways are emitted as part of the parent relation, not as standalone
-  // polygons - skipping them avoids double-rendering and the long thin
-  // dam-wall / inner-ring artifacts the original script produced.
-  const memberWayIds = new Set<number>();
-  for (const el of osm.elements) {
-    if (el.type !== "relation") continue;
-    if (el.tags?.["natural"] !== "water") continue;
-    for (const m of el.members ?? []) {
-      if (m.type === "way") memberWayIds.add(m.ref);
+  const features: OutputFeature[] = [];
+  for (const f of rawFeatures) {
+    const geom = f.geometry;
+    if (geom.type !== "Polygon" && geom.type !== "MultiPolygon") {
+      skippedNonPolygon++;
+      continue;
     }
-  }
-
-  function isWaterTaggedWay(tags: Record<string, string>): boolean {
-    if (tags["natural"] === "water") return true;
-    const water = tags["water"];
-    if (water && ["lake", "reservoir", "pond", "tank"].includes(water)) return true;
-    if (tags["landuse"] === "reservoir") return true;
-    return false;
-  }
-
-  const features: GeoJsonFeature[] = [];
-  let skippedNonWater = 0;
-  let skippedRelationMember = 0;
-
-  for (const el of osm.elements) {
-    if (el.type !== "way" && el.type !== "relation") continue;
-
-    const tags = el.tags || {};
-    const name = tags["name"] || tags["name:en"] || "";
-    const name_ta = tags["name:ta"] || "";
-    const water_type =
-      tags["water"] || tags["natural"] || tags["landuse"] || "water";
-
-    if (el.type === "way") {
-      // Skip if this way is a member of a water multipolygon - the relation
-      // emits the geometry. Without this guard we double-render and pick up
-      // dam-wall / inner-ring ways too.
-      if (memberWayIds.has(el.id)) {
-        skippedRelationMember++;
-        continue;
-      }
-      // Skip ways that aren't themselves water-tagged. The Overpass query
-      // also returns the union of relation member nodes/ways so untagged
-      // ways and dam walls (waterway=dam, etc.) sneak in.
-      if (!isWaterTaggedWay(tags)) {
-        skippedNonWater++;
-        continue;
-      }
-
-      const nodeIds = el.nodes;
-      if (nodeIds.length < 4) continue; // Not a closed polygon
-
-      const coords: number[][] = nodeIds
-        .map((id) => {
-          const n = nodeMap.get(id);
-          return n ? [n.lon, n.lat] : null;
-        })
-        .filter((c): c is number[] => c !== null);
-
-      if (coords.length < 4) continue;
-
-      // Ensure closed ring
-      if (
-        coords[0][0] !== coords[coords.length - 1][0] ||
-        coords[0][1] !== coords[coords.length - 1][1]
-      ) {
-        coords.push(coords[0]);
-      }
-
-      const area_ha = computePolygonAreaHa(coords);
-
-      // Skip very tiny features (< 0.1 ha = 1000 m²)
-      if (area_ha < 0.1) continue;
-
-      features.push({
-        type: "Feature",
-        geometry: { type: "Polygon", coordinates: [coords] },
-        properties: { osm_id: el.id, osm_type: "way", name, name_ta, water_type, area_ha },
-      });
+    const tags = f.properties ?? {};
+    const water_type = tags["water"] || tags["natural"] || tags["landuse"] || "water";
+    const area_ha = Math.round(polygonAreaHa(geom) * 100) / 100;
+    if (area_ha < 0.1) {
+      skippedTiny++;
+      continue;
     }
-
-    // Relations (multipolygons) — use outer members
-    if (el.type === "relation") {
-      const outerRings: number[][][] = [];
-
-      for (const member of el.members) {
-        if (member.type !== "way" || member.role !== "outer") continue;
-        // Find way in elements
-        const way = osm.elements.find(
-          (e) => e.type === "way" && e.id === member.ref
-        ) as OsmWay | undefined;
-        if (!way) continue;
-
-        const coords: number[][] = way.nodes
-          .map((id) => {
-            const n = nodeMap.get(id);
-            return n ? [n.lon, n.lat] : null;
-          })
-          .filter((c): c is number[] => c !== null);
-
-        if (coords.length < 4) continue;
-        if (
-          coords[0][0] !== coords[coords.length - 1][0] ||
-          coords[0][1] !== coords[coords.length - 1][1]
-        ) {
-          coords.push(coords[0]);
-        }
-        outerRings.push(coords);
-      }
-
-      if (outerRings.length === 0) continue;
-
-      const area_ha = outerRings.reduce(
-        (sum, ring) => sum + computePolygonAreaHa(ring),
-        0
-      );
-      if (area_ha < 0.1) continue;
-
-      features.push({
-        type: "Feature",
-        geometry: {
-          type: "MultiPolygon",
-          coordinates: outerRings.map((ring) => [ring]) as number[][][][],
-        },
-        properties: {
-          osm_id: el.id,
-          osm_type: "relation",
-          name,
-          name_ta,
-          water_type,
-          area_ha: Math.round(area_ha * 100) / 100,
-        },
-      });
-    }
+    const idInfo = f.id ? parseOsmFeatureId(f.id) : null;
+    features.push({
+      type: "Feature",
+      geometry: geom,
+      properties: {
+        osm_id: idInfo?.id ?? -1,
+        osm_type: idInfo?.type ?? "",
+        name: tags["name"] || tags["name:en"] || "",
+        name_ta: tags["name:ta"] || "",
+        water_type,
+        area_ha,
+      },
+    });
   }
 
   console.log(`Converted ${features.length} polygon features`);
   console.log(
     `  named=${features.filter((f) => f.properties.name).length} ` +
     `unnamed=${features.filter((f) => !f.properties.name).length} ` +
-    `skipped_non_water_ways=${skippedNonWater} ` +
-    `skipped_relation_members=${skippedRelationMember}`,
+    `skipped_non_polygon=${skippedNonPolygon} skipped_tiny=${skippedTiny}`,
   );
 
-  // Post-process: water_type=river polygons (riverbeds) have no `name` tag in
-  // OSM because the name lives on the waterway=river LINESTRING, not the
-  // natural=water POLYGON. The shared UnifiedMap component does a 500m
-  // proximity match, but for wide rivers like Vaigai the linestring follows
-  // the thalweg while the polygon centroid sits in the broad floodplain -
-  // routinely outside 500m. We bake the river name directly into the
-  // polygon property here using a no-threshold "nearest river" match
-  // restricted to water_type=river polygons.
   await labelRiverPolygons(features);
 
-  const geojson: GeoJsonFeatureCollection = {
+  const geojson: GeoJSON.FeatureCollection = {
     type: "FeatureCollection",
-    features,
+    features: features as unknown as GeoJSON.Feature[],
   };
 
-  const outPath = join(
-    process.cwd(),
-    "public/geojson/madurai-water-bodies-current.geojson"
-  );
+  const outPath = join(process.cwd(), "public/geojson/madurai-water-bodies-current.geojson");
   writeFileSync(outPath, JSON.stringify(geojson, null, 2));
   console.log(`\nSaved ${features.length} features to ${outPath}`);
 
-  // Summary stats
-  const totalAreaHa = features.reduce(
-    (sum, f) => sum + (f.properties.area_ha || 0),
-    0
-  );
+  const totalAreaHa = features.reduce((sum, f) => sum + (f.properties.area_ha || 0), 0);
   console.log(`Total water surface area: ~${Math.round(totalAreaHa).toLocaleString()} ha`);
 }
 
