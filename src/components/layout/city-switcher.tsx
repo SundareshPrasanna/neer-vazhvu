@@ -30,6 +30,12 @@ const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "",
     "about",
     "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "my-ward",
+    "facts",
   ]),
 };
 
