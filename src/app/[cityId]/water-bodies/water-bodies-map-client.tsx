@@ -5,14 +5,21 @@ import dynamic from "next/dynamic";
 import { UnifiedDetailPanel } from "@/components/water-bodies/unified-detail-panel";
 import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
 import { BottomSheet } from "@/components/map/bottom-sheet";
+import { MapInfoButton } from "@/components/map/map-info-button";
 import { useLanguage } from "@/lib/i18n/context";
+import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import type { SelectedWaterBody } from "@/types/water-bodies";
 
 interface ClientProps {
   cityId: string;
   cityDisplayName: string;
+  cityState: string;
   mapCenter: [number, number];
   mapZoom?: number;
+  /** Stats bar values from the server; nulls render as dashes. */
+  fullyLostCount: number;
+  reducedCount: number;
+  namedOsmCount: number | null;
 }
 
 function MapLoading() {
@@ -32,64 +39,109 @@ const UnifiedMap = dynamic(
 export default function WaterBodiesMapClient({
   cityId,
   cityDisplayName,
+  cityState,
   mapCenter,
   mapZoom = 11,
+  fullyLostCount,
+  reducedCount,
+  namedOsmCount,
 }: ClientProps) {
+  useLockBodyScroll();
   const [selected, setSelected] = useState<SelectedWaterBody | null>(null);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
 
   return (
-    <div className="relative w-full h-[60vh] sm:h-[65vh] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
-      <UnifiedMap
-        viewMode="water-bodies"
-        scoredData={[]}
-        censusData={[]}
-        onSelectCurrent={setSelected}
-        onSelectLost={setSelected}
-        hiddenCategories={hiddenCategories}
-        currentGeoJsonUrl={`/geojson/${cityId}-water-bodies-current.geojson`}
-        lostGeoJsonUrl={`/geojson/${cityId}-water-bodies-lost.geojson`}
-        riversGeoJsonUrl={`/geojson/${cityId}-rivers.geojson`}
-        mapCenter={mapCenter}
-        mapZoom={mapZoom}
-      />
-
-      {/* Legend overlay - bottom-right on desktop, top-left on mobile */}
-      <div
-        className={`absolute z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${
-          selected ? "bottom-[148px] md:bottom-4" : "bottom-2 md:bottom-4"
-        }`}
-      >
-        <UnifiedLegend
-          viewMode="water-bodies"
-          hiddenCategories={hiddenCategories}
-          onToggleCategory={(cat) =>
-            setHiddenCategories((prev) => {
-              const next = new Set(prev);
-              if (next.has(cat)) next.delete(cat);
-              else next.add(cat);
-              return next;
-            })
-          }
-        />
+    <div className="h-[calc(100vh-64px)] flex flex-col">
+      {/* Stats bar - mirror of Chennai's water-bodies header strip */}
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-5 gap-y-1 items-center text-sm shrink-0">
+        <span className="font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+          {cityDisplayName} · {cityState}
+        </span>
+        {namedOsmCount !== null && (
+          <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+            <span className="w-3 h-3 rounded-sm bg-blue-500 opacity-70" />
+            <span className="text-xs text-slate-600 dark:text-slate-400">
+              <span className="font-semibold text-slate-900 dark:text-slate-100">{namedOsmCount}</span> named bodies on OSM
+            </span>
+          </div>
+        )}
+        <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+          <span className="w-3 h-3 rounded-sm bg-red-500 opacity-70" />
+          <span className="text-xs text-slate-600 dark:text-slate-400">
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{fullyLostCount}</span> fully lost
+          </span>
+        </div>
+        <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+          <span className="w-3 h-3 rounded-sm bg-orange-500 opacity-70" />
+          <span className="text-xs text-slate-600 dark:text-slate-400">
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{reducedCount}</span> at risk
+          </span>
+        </div>
       </div>
 
-      {/* Place pill - top-left */}
-      <div className="absolute top-2 left-2 z-[1000] bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs">
-        <span className="font-semibold text-slate-700 dark:text-slate-300">{cityDisplayName}</span>
-        <span className="text-slate-500 dark:text-slate-400 ml-1">water bodies</span>
-      </div>
-
-      {/* Detail panel via BottomSheet */}
-      {selected && (
-        <BottomSheet onClose={() => setSelected(null)}>
-          <UnifiedDetailPanel
-            selected={selected}
-            restorationData={null}
-            onClose={() => setSelected(null)}
+      {/* Map + sidebar layout - identical to Chennai's water-bodies page */}
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        <div className="relative flex-1 h-full">
+          <UnifiedMap
+            viewMode="water-bodies"
+            scoredData={[]}
+            censusData={[]}
+            onSelectCurrent={setSelected}
+            onSelectLost={setSelected}
+            hiddenCategories={hiddenCategories}
+            currentGeoJsonUrl={`/geojson/${cityId}-water-bodies-current.geojson`}
+            lostGeoJsonUrl={`/geojson/${cityId}-water-bodies-lost.geojson`}
+            riversGeoJsonUrl={`/geojson/${cityId}-rivers.geojson`}
+            mapCenter={mapCenter}
+            mapZoom={mapZoom}
           />
-        </BottomSheet>
-      )}
+
+          {/* Legend overlay */}
+          <div
+            className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${
+              selected ? "bottom-[148px] md:bottom-4" : "bottom-2"
+            }`}
+          >
+            <UnifiedLegend
+              viewMode="water-bodies"
+              hiddenCategories={hiddenCategories}
+              onToggleCategory={(cat) =>
+                setHiddenCategories((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(cat)) next.delete(cat);
+                  else next.add(cat);
+                  return next;
+                })
+              }
+            />
+          </div>
+
+          {/* Map info button - sources */}
+          <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
+            <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
+              <div>
+                Polygons from <span className="font-semibold text-slate-700 dark:text-slate-300">OpenStreetMap</span>
+              </div>
+              <div>
+                Lost-tank narrative from <span className="font-semibold text-slate-700 dark:text-slate-300">Vencatesan academic inventory</span>
+              </div>
+            </div>
+          </MapInfoButton>
+        </div>
+
+        {/* BottomSheet renders as desktop sidebar / mobile fixed-bottom. MUST
+            be a sibling of the map div (not nested inside it) so the desktop
+            sidebar layout works inside the parent flex flex-row container. */}
+        {selected && (
+          <BottomSheet onClose={() => setSelected(null)}>
+            <UnifiedDetailPanel
+              selected={selected}
+              restorationData={null}
+              onClose={() => setSelected(null)}
+            />
+          </BottomSheet>
+        )}
+      </div>
     </div>
   );
 }
