@@ -14,11 +14,18 @@ import { useMapTiles } from "@/lib/utils/map-tiles";
 import { SelectedWardHighlight } from "@/components/map/selected-ward-highlight";
 import "leaflet/dist/leaflet.css";
 
+// Chennai-default URLs and map center. Other cities override via props.
+const DEFAULT_BLOCK_GEOJSON_URL = "/geojson/chennai-gwr-blocks.geojson";
+const DEFAULT_BLOCKS_JSON_URL = "/data/gwr-blocks.json";
+const DEFAULT_STATIONS_JSON_URL = "/data/gw-stations.json";
+const DEFAULT_WARDS_GEOJSON_URL = "/geojson/chennai-wards-2022.geojson";
+const DEFAULT_MAP_CENTER: [number, number] = [13.0827, 80.2707];
+
 /** Flies the map to a given center when it changes */
-function FlyToWard({ wardNumber }: { wardNumber: number }) {
+function FlyToWard({ wardNumber, wardGeoJsonUrl }: { wardNumber: number; wardGeoJsonUrl: string }) {
   const map = useMap();
   const [geo, setGeo] = useState<GeoJSON.FeatureCollection | null>(null);
-  useEffect(() => { getWardGeoJSON().then(setGeo); }, []);
+  useEffect(() => { getWardGeoJSON(wardGeoJsonUrl).then(setGeo); }, [wardGeoJsonUrl]);
   useEffect(() => {
     if (!geo) return;
     const feature = geo.features.find((f) => {
@@ -47,9 +54,34 @@ interface WardMapProps {
   wrisStations?: WrisStation[];
   selectedWrisStationCode?: string | null;
   hiddenCategories?: Set<string>;
+  // City-aware overrides; default to Chennai's paths for backward compat.
+  blockGeoJsonUrl?: string;
+  blocksJsonUrl?: string;
+  stationsJsonUrl?: string;
+  wardGeoJsonUrl?: string;
+  mapCenter?: [number, number];
+  mapZoom?: number;
 }
 
-export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumber, flyToWard, onWardSelect, onBlockSelect, onWrisStationSelect, wrisStations, selectedWrisStationCode, hiddenCategories }: WardMapProps) {
+export function WardMap({
+  groundwaterData,
+  riskData,
+  viewMode,
+  selectedWardNumber,
+  flyToWard,
+  onWardSelect,
+  onBlockSelect,
+  onWrisStationSelect,
+  wrisStations,
+  selectedWrisStationCode,
+  hiddenCategories,
+  blockGeoJsonUrl = DEFAULT_BLOCK_GEOJSON_URL,
+  blocksJsonUrl = DEFAULT_BLOCKS_JSON_URL,
+  stationsJsonUrl = DEFAULT_STATIONS_JSON_URL,
+  wardGeoJsonUrl = DEFAULT_WARDS_GEOJSON_URL,
+  mapCenter = DEFAULT_MAP_CENTER,
+  mapZoom = 11,
+}: WardMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [wardGeoJSON, setWardGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
@@ -58,25 +90,25 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
   const [stations, setStations] = useState<GWStation[]>([]);
 
   useEffect(() => {
-    getWardGeoJSON()
+    getWardGeoJSON(wardGeoJsonUrl)
       .then(setWardGeoJSON)
       .catch(console.error);
 
-    fetch("/geojson/chennai-gwr-blocks.geojson")
+    fetch(blockGeoJsonUrl)
       .then((r) => r.json())
       .then(setBlockGeoJSON)
       .catch(console.error);
 
-    fetch("/data/gwr-blocks.json")
+    fetch(blocksJsonUrl)
       .then((r) => r.json())
       .then((d) => setBlocks(d.blocks))
       .catch(console.error);
 
-    fetch("/data/gw-stations.json")
+    fetch(stationsJsonUrl)
       .then((r) => r.json())
       .then((d) => setStations(d.stations))
       .catch(console.error);
-  }, []);
+  }, [wardGeoJsonUrl, blockGeoJsonUrl, blocksJsonUrl, stationsJsonUrl]);
 
   const blockLookup = useMemo(() => {
     const map = new Map<string, GWBlock>();
@@ -206,14 +238,14 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
 
   return (
     <MapContainer
-      center={[13.0827, 80.2707]}
-      zoom={11}
+      center={mapCenter}
+      zoom={mapZoom}
       className="h-full w-full"
       scrollWheelZoom={true}
     >
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
-      {flyToWard && <FlyToWard wardNumber={flyToWard} />}
+      {flyToWard && <FlyToWard wardNumber={flyToWard} wardGeoJsonUrl={wardGeoJsonUrl} />}
 
       {viewMode === "exploitation" ? (
         <>
