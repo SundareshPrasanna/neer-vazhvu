@@ -95,6 +95,109 @@ function computePolygonAreaHa(coords: number[][]): number {
   return Math.round((m2 / 10000) * 100) / 100;
 }
 
+interface RiverFeatureProperties {
+  name?: string;
+  name_ta?: string;
+}
+
+interface RiverFeature {
+  geometry: GeoJSON.LineString | GeoJSON.MultiLineString;
+  properties: RiverFeatureProperties;
+}
+
+interface RiverFile {
+  features: RiverFeature[];
+}
+
+async function labelRiverPolygons(features: GeoJsonFeature[]): Promise<void> {
+  const { promises: fsAsync } = await import("fs");
+  const riversPath = join(process.cwd(), "public/geojson/madurai-rivers.geojson");
+  let riversFile: RiverFile;
+  try {
+    riversFile = JSON.parse(await fsAsync.readFile(riversPath, "utf-8")) as RiverFile;
+  } catch (e) {
+    console.warn(`  (river-name post-process skipped: ${riversPath} not found - run fetch-rivers-osm-madurai.ts first)`);
+    return;
+  }
+
+  // Sample river vertices into a flat array of {lat, lng, name, name_ta}.
+  // No subsampling - we want the densest possible points for the matching.
+  interface RiverPoint { lat: number; lng: number; name: string; name_ta: string }
+  const riverPoints: RiverPoint[] = [];
+  for (const feat of riversFile.features) {
+    const name = feat.properties.name ?? "";
+    const name_ta = feat.properties.name_ta ?? "";
+    if (!name) continue;
+    const lines: number[][][] =
+      feat.geometry.type === "LineString"
+        ? [feat.geometry.coordinates]
+        : feat.geometry.coordinates;
+    for (const line of lines) {
+      for (const [lng, lat] of line) {
+        riverPoints.push({ lat, lng, name, name_ta });
+      }
+    }
+  }
+
+  if (riverPoints.length === 0) {
+    console.warn("  (river-name post-process: no usable river points found)");
+    return;
+  }
+
+  const haversineM = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+    const toRad = (d: number) => (d * Math.PI) / 180;
+    const dlat = toRad(lat2 - lat1);
+    const dlng = toRad(lng2 - lng1);
+    const a =
+      Math.sin(dlat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dlng / 2) ** 2;
+    return 6371000 * 2 * Math.asin(Math.sqrt(a));
+  };
+
+  let labeled = 0;
+  for (const f of features) {
+    const p = f.properties;
+    if (p.name) continue; // already named
+    if (p.water_type !== "river") continue; // only river polygons
+
+    // Compute centroid of outer ring.
+    const coords =
+      f.geometry.type === "Polygon"
+        ? (f.geometry.coordinates as number[][][])[0]
+        : (f.geometry.coordinates as number[][][][])[0][0];
+    if (!coords || coords.length === 0) continue;
+    let latSum = 0;
+    let lngSum = 0;
+    for (const [lng, lat] of coords) {
+      latSum += lat;
+      lngSum += lng;
+    }
+    const cLat = latSum / coords.length;
+    const cLng = lngSum / coords.length;
+
+    let bestDist = Infinity;
+    let bestName = "";
+    let bestNameTa = "";
+    for (const rp of riverPoints) {
+      const d = haversineM(cLat, cLng, rp.lat, rp.lng);
+      if (d < bestDist) {
+        bestDist = d;
+        bestName = rp.name;
+        bestNameTa = rp.name_ta;
+      }
+    }
+    // No threshold: water_type=river polygons are river beds by definition,
+    // and we just want to know which river. Centroid-to-nearest-vertex match
+    // is correct unless rivers cross (they don't in our data).
+    if (bestName) {
+      p.name = bestName;
+      p.name_ta = bestNameTa;
+      labeled++;
+    }
+  }
+  console.log(`  river-name post-process: labelled ${labeled} unnamed water_type=river polygons`);
+}
+
 async function main() {
   console.log("Querying Overpass API for Madurai water bodies...");
 
@@ -120,7 +223,30 @@ async function main() {
     if (el.type === "node") nodeMap.set(el.id, el);
   }
 
+  // Track way IDs that are members of a water multipolygon relation. Those
+  // ways are emitted as part of the parent relation, not as standalone
+  // polygons - skipping them avoids double-rendering and the long thin
+  // dam-wall / inner-ring artifacts the original script produced.
+  const memberWayIds = new Set<number>();
+  for (const el of osm.elements) {
+    if (el.type !== "relation") continue;
+    if (el.tags?.["natural"] !== "water") continue;
+    for (const m of el.members ?? []) {
+      if (m.type === "way") memberWayIds.add(m.ref);
+    }
+  }
+
+  function isWaterTaggedWay(tags: Record<string, string>): boolean {
+    if (tags["natural"] === "water") return true;
+    const water = tags["water"];
+    if (water && ["lake", "reservoir", "pond", "tank"].includes(water)) return true;
+    if (tags["landuse"] === "reservoir") return true;
+    return false;
+  }
+
   const features: GeoJsonFeature[] = [];
+  let skippedNonWater = 0;
+  let skippedRelationMember = 0;
 
   for (const el of osm.elements) {
     if (el.type !== "way" && el.type !== "relation") continue;
@@ -132,6 +258,21 @@ async function main() {
       tags["water"] || tags["natural"] || tags["landuse"] || "water";
 
     if (el.type === "way") {
+      // Skip if this way is a member of a water multipolygon - the relation
+      // emits the geometry. Without this guard we double-render and pick up
+      // dam-wall / inner-ring ways too.
+      if (memberWayIds.has(el.id)) {
+        skippedRelationMember++;
+        continue;
+      }
+      // Skip ways that aren't themselves water-tagged. The Overpass query
+      // also returns the union of relation member nodes/ways so untagged
+      // ways and dam walls (waterway=dam, etc.) sneak in.
+      if (!isWaterTaggedWay(tags)) {
+        skippedNonWater++;
+        continue;
+      }
+
       const nodeIds = el.nodes;
       if (nodeIds.length < 4) continue; // Not a closed polygon
 
@@ -221,8 +362,21 @@ async function main() {
 
   console.log(`Converted ${features.length} polygon features`);
   console.log(
-    `Named: ${features.filter((f) => f.properties.name).length} / Unnamed: ${features.filter((f) => !f.properties.name).length}`
+    `  named=${features.filter((f) => f.properties.name).length} ` +
+    `unnamed=${features.filter((f) => !f.properties.name).length} ` +
+    `skipped_non_water_ways=${skippedNonWater} ` +
+    `skipped_relation_members=${skippedRelationMember}`,
   );
+
+  // Post-process: water_type=river polygons (riverbeds) have no `name` tag in
+  // OSM because the name lives on the waterway=river LINESTRING, not the
+  // natural=water POLYGON. The shared UnifiedMap component does a 500m
+  // proximity match, but for wide rivers like Vaigai the linestring follows
+  // the thalweg while the polygon centroid sits in the broad floodplain -
+  // routinely outside 500m. We bake the river name directly into the
+  // polygon property here using a no-threshold "nearest river" match
+  // restricted to water_type=river polygons.
+  await labelRiverPolygons(features);
 
   const geojson: GeoJsonFeatureCollection = {
     type: "FeatureCollection",
