@@ -1,12 +1,26 @@
 "use client";
 
 import { useMemo } from "react";
-import { MapContainer, TileLayer, Polyline, Tooltip } from "react-leaflet";
+import { MapContainer, TileLayer, Polyline, Tooltip, CircleMarker } from "react-leaflet";
 import L from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
 import type { RiverInfo } from "./rivers-client";
+
+export interface CpcbStationMarker {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  river_id: string;
+  has_readings: boolean;
+  /** Latest annual midpoint BOD if known. */
+  latest_bod: number | null;
+  /** Latest annual midpoint DO if known. */
+  latest_do: number | null;
+  latest_year: number | null;
+}
 
 interface RiverGeoFeature {
   river_id: string;
@@ -23,6 +37,7 @@ interface MapProps {
   mapCenter: [number, number];
   mapZoom: number;
   riverInfo: Record<string, RiverInfo>;
+  cpcbStations?: CpcbStationMarker[];
 }
 
 // Simple river-color palette. Color comes from riverInfo.color (Tailwind
@@ -52,6 +67,7 @@ export function RiversLeafletMap({
   mapCenter,
   mapZoom,
   riverInfo,
+  cpcbStations = [],
 }: MapProps) {
   const tiles = useMapTiles();
 
@@ -115,6 +131,50 @@ export function RiversLeafletMap({
               )}
             </Tooltip>
           </Polyline>
+        );
+      })}
+
+      {cpcbStations.map((s) => {
+        // Color reflects pollution severity: BOD > 6 = red, > 3 = amber,
+        // otherwise green. Stations without readings render as grey.
+        const fill = !s.has_readings || s.latest_bod === null
+          ? "#94a3b8"
+          : s.latest_bod > 6 ? "#dc2626"
+          : s.latest_bod > 3 ? "#d97706"
+          : "#16a34a";
+        return (
+          <CircleMarker
+            key={`cpcb-${s.id}`}
+            center={[s.lat, s.lng]}
+            radius={6}
+            pathOptions={{
+              color: "#0f172a",
+              weight: 1,
+              fillColor: fill,
+              fillOpacity: 0.85,
+            }}
+            eventHandlers={{ click: () => onSelectRiver(s.river_id) }}
+          >
+            <Tooltip>
+              <strong>{s.name}</strong>
+              {s.has_readings && s.latest_year !== null && (
+                <>
+                  <br />
+                  <span style={{ fontSize: "11px" }}>
+                    {s.latest_year}: BOD {s.latest_bod ?? "-"} mg/L · DO {s.latest_do ?? "-"} mg/L
+                  </span>
+                </>
+              )}
+              {!s.has_readings && (
+                <>
+                  <br />
+                  <span style={{ fontSize: "11px", color: "#64748b" }}>
+                    NWMP station - readings pending parser
+                  </span>
+                </>
+              )}
+            </Tooltip>
+          </CircleMarker>
         );
       })}
     </MapContainer>

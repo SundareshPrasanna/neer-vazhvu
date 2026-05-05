@@ -30,6 +30,34 @@ export interface RiverInfo {
   color: string;
 }
 
+// Slim shape of public/data/river-quality-{cityId}.json - same schema
+// Chennai's RiverQualityData uses but without the strict RiverId enum,
+// so this works for any city's NWMP file.
+interface CpcbReading {
+  year: number;
+  do_mgl: number | null;
+  bod_mgl: number | null;
+  ph: number | null;
+  fecal_coliform_mpn: number | null;
+}
+interface CpcbStation {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  stretch: string;
+  readings: CpcbReading[];
+}
+interface CpcbRiver {
+  id: string;
+  stations: CpcbStation[];
+}
+interface CpcbFile {
+  data_year_range: [number, number];
+  source: string;
+  rivers: CpcbRiver[];
+}
+
 interface RiverGeoFeature {
   river_id: string;
   name: string;
@@ -72,6 +100,7 @@ export default function RiversClient({
   useLockBodyScroll();
   const [rivers, setRivers] = useState<RiverGeoFeature[]>([]);
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(null);
+  const [cpcb, setCpcb] = useState<CpcbFile | null>(null);
 
   useEffect(() => {
     fetch(`/geojson/${cityId}-rivers.geojson`)
@@ -96,11 +125,47 @@ export default function RiversClient({
       .catch(console.error);
   }, [cityId]);
 
+  // Optional CPCB NWMP overlay - 404 (no file) is expected and silent.
+  useEffect(() => {
+    fetch(`/data/river-quality-${cityId}.json`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: CpcbFile | null) => setCpcb(data))
+      .catch(() => setCpcb(null));
+  }, [cityId]);
+
   const selectedInfo = selectedRiverId ? riverInfo[selectedRiverId] : null;
   const selectedRiver = useMemo(
     () => rivers.find((r) => r.river_id === selectedRiverId) ?? null,
     [rivers, selectedRiverId],
   );
+  const selectedCpcbRiver = useMemo(
+    () => cpcb?.rivers.find((r) => r.id === selectedRiverId) ?? null,
+    [cpcb, selectedRiverId],
+  );
+
+  // Flatten CPCB stations across all rivers for the map markers; latest
+  // reading is the row with the highest year, even if some metrics are
+  // null.
+  const cpcbStationMarkers = useMemo(() => {
+    if (!cpcb) return [];
+    return cpcb.rivers.flatMap((r) =>
+      r.stations.map((s) => {
+        const sorted = [...s.readings].sort((a, b) => b.year - a.year);
+        const latest = sorted[0] ?? null;
+        return {
+          id: s.id,
+          name: s.name,
+          lat: s.lat,
+          lng: s.lng,
+          river_id: r.id,
+          has_readings: s.readings.length > 0,
+          latest_bod: latest?.bod_mgl ?? null,
+          latest_do: latest?.do_mgl ?? null,
+          latest_year: latest?.year ?? null,
+        };
+      }),
+    );
+  }, [cpcb]);
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
@@ -110,7 +175,9 @@ export default function RiversClient({
           {cityDisplayName} · {scopeLabel}
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400">
-          {rivers.length} rivers · click a polyline for details
+          {rivers.length} rivers
+          {cpcbStationMarkers.length > 0 && ` · ${cpcbStationMarkers.length} CPCB stations`}
+          {" · click for details"}
         </span>
       </div>
 
@@ -124,6 +191,7 @@ export default function RiversClient({
             mapCenter={mapCenter}
             mapZoom={mapZoom}
             riverInfo={riverInfo}
+            cpcbStations={cpcbStationMarkers}
           />
         </div>
 
@@ -134,6 +202,7 @@ export default function RiversClient({
               info={selectedInfo}
               geomLengthKm={selectedRiver.length_km}
               nameTa={selectedRiver.name_ta}
+              cpcbRiver={selectedCpcbRiver}
             />
           ) : (
             <div className="p-4 text-sm text-slate-500">Click a river to see details.</div>
@@ -148,9 +217,41 @@ export default function RiversClient({
             info={selectedInfo}
             geomLengthKm={selectedRiver.length_km}
             nameTa={selectedRiver.name_ta}
+            cpcbRiver={selectedCpcbRiver}
           />
         </div>
       )}
+    </div>
+  );
+}
+
+function StationReadingsTable({ station }: { station: CpcbStation }) {
+  if (station.readings.length === 0) return null;
+  const sorted = [...station.readings].sort((a, b) => a.year - b.year);
+  return (
+    <div className="text-[11px] mt-1 overflow-x-auto">
+      <table className="w-full">
+        <thead>
+          <tr className="text-slate-500">
+            <th className="text-left font-normal pr-2">Year</th>
+            <th className="text-right font-normal pr-2">DO</th>
+            <th className="text-right font-normal pr-2">BOD</th>
+            <th className="text-right font-normal pr-2">pH</th>
+            <th className="text-right font-normal">FC</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.map((r) => (
+            <tr key={r.year}>
+              <td className="pr-2 text-slate-700 dark:text-slate-300">{r.year}</td>
+              <td className="text-right pr-2 tabular-nums">{r.do_mgl ?? "-"}</td>
+              <td className="text-right pr-2 tabular-nums">{r.bod_mgl ?? "-"}</td>
+              <td className="text-right pr-2 tabular-nums">{r.ph ?? "-"}</td>
+              <td className="text-right tabular-nums">{r.fecal_coliform_mpn ?? "-"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -159,11 +260,14 @@ function RiverDetail({
   info,
   geomLengthKm,
   nameTa,
+  cpcbRiver,
 }: {
   info: RiverInfo;
   geomLengthKm: number;
   nameTa: string;
+  cpcbRiver: CpcbRiver | null;
 }) {
+  const hasReadings = !!cpcbRiver?.stations.some((s) => s.readings.length > 0);
   return (
     <div className="p-4 space-y-3">
       <div>
@@ -203,25 +307,47 @@ function RiverDetail({
         </div>
       </div>
 
-      {info.cpcb_nwmp_stations.length > 0 && (
+      {hasReadings && cpcbRiver ? (
         <div>
           <div className="text-[10px] uppercase text-slate-500 tracking-wider mb-1">
-            CPCB NWMP stations (planned)
+            CPCB NWMP annual readings
           </div>
-          <div className="flex flex-wrap gap-1">
-            {info.cpcb_nwmp_stations.map((s) => (
-              <span
-                key={s}
-                className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
-              >
-                {s}
-              </span>
-            ))}
+          <div className="space-y-3">
+            {cpcbRiver.stations
+              .filter((s) => s.readings.length > 0)
+              .map((s) => (
+                <div key={s.id} className="border border-slate-200 dark:border-slate-700 rounded-md p-2">
+                  <div className="font-medium text-xs text-slate-800 dark:text-slate-200">{s.name}</div>
+                  <div className="text-[10px] text-slate-500">{s.stretch}</div>
+                  <StationReadingsTable station={s} />
+                </div>
+              ))}
           </div>
           <p className="text-[10px] text-slate-400 italic mt-1.5">
-            Annual NWMP samples (BOD, DO, pH, fecal coliform) - data layer pending parser, mirrors Chennai&apos;s Cooum/Adyar pipeline.
+            Values are min-max midpoints from CPCB annual River Water Quality reports. DO mg/L, BOD mg/L, FC = fecal coliform MPN/100ml.
           </p>
         </div>
+      ) : (
+        info.cpcb_nwmp_stations.length > 0 && (
+          <div>
+            <div className="text-[10px] uppercase text-slate-500 tracking-wider mb-1">
+              CPCB NWMP stations (planned)
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {info.cpcb_nwmp_stations.map((s) => (
+                <span
+                  key={s}
+                  className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+            <p className="text-[10px] text-slate-400 italic mt-1.5">
+              Annual NWMP samples (BOD, DO, pH, fecal coliform) - drop CPCB report PDFs in docs/cpcb/ and run scrape_cpcb_nwmp_vaigai.py to populate readings.
+            </p>
+          </div>
+        )
       )}
     </div>
   );
