@@ -20,6 +20,12 @@ import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
 
+// Chennai-default GeoJSON URLs and map center. Other cities override via props.
+const DEFAULT_CURRENT_GEOJSON_URL = "/geojson/chennai-water-bodies-current.geojson";
+const DEFAULT_LOST_GEOJSON_URL = "/geojson/chennai-water-bodies-lost.geojson";
+const DEFAULT_RIVERS_GEOJSON_URL = "/geojson/chennai-rivers.geojson";
+const DEFAULT_MAP_CENTER: [number, number] = [13.0827, 80.2707];
+
 interface UnifiedMapProps {
   viewMode: ViewMode;
   scoredData: ScoredWaterBody[];
@@ -28,6 +34,12 @@ interface UnifiedMapProps {
   onSelectLost: (body: SelectedWaterBody) => void;
   focusCenter?: [number, number];
   hiddenCategories?: Set<string>;
+  // City-aware overrides; default to Chennai paths for backward compat.
+  currentGeoJsonUrl?: string;
+  lostGeoJsonUrl?: string;
+  riversGeoJsonUrl?: string;
+  mapCenter?: [number, number];
+  mapZoom?: number;
 }
 
 /** Flies the map to a given center when it changes */
@@ -52,7 +64,20 @@ function getCensusColor(wb: CensusWaterBodyProperties): string {
  *  has mixed/unreliable units (see About > Data Quality). */
 const CENSUS_RADIUS_M = 20;
 
-export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, onSelectLost, focusCenter, hiddenCategories }: UnifiedMapProps) {
+export function UnifiedMap({
+  viewMode,
+  scoredData,
+  censusData,
+  onSelectCurrent,
+  onSelectLost,
+  focusCenter,
+  hiddenCategories,
+  currentGeoJsonUrl = DEFAULT_CURRENT_GEOJSON_URL,
+  lostGeoJsonUrl = DEFAULT_LOST_GEOJSON_URL,
+  riversGeoJsonUrl = DEFAULT_RIVERS_GEOJSON_URL,
+  mapCenter = DEFAULT_MAP_CENTER,
+  mapZoom = 11,
+}: UnifiedMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [currentGeoJSON, setCurrentGeoJSON] =
@@ -144,21 +169,21 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
   }, [currentGeoJSON, censusData]);
 
   useEffect(() => {
-    fetch("/geojson/chennai-water-bodies-current.geojson")
+    fetch(currentGeoJsonUrl)
       .then((r) => r.json())
       .then(setCurrentGeoJSON)
       .catch(console.error);
 
-    fetch("/geojson/chennai-water-bodies-lost.geojson")
+    fetch(lostGeoJsonUrl)
       .then((r) => r.json())
       .then(setLostGeoJSON)
       .catch(console.error);
-  }, []);
+  }, [currentGeoJsonUrl, lostGeoJsonUrl]);
 
   // Match unnamed water body polygons to rivers by centroid proximity
   useEffect(() => {
     if (!currentGeoJSON) return;
-    fetch("/geojson/chennai-rivers.geojson")
+    fetch(riversGeoJsonUrl)
       .then((r) => r.json())
       .then((riversGeo: GeoJSON.FeatureCollection) => {
         // Extract river line sample points with names
@@ -218,7 +243,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
         setRiverNameByOsmId(lookup);
       })
       .catch(console.error);
-  }, [currentGeoJSON]);
+  }, [currentGeoJSON, riversGeoJsonUrl]);
 
   // --- Styles ---
 
@@ -417,8 +442,8 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
 
   return (
     <MapContainer
-      center={[13.0827, 80.2707]}
-      zoom={11}
+      center={mapCenter}
+      zoom={mapZoom}
       className="h-full w-full"
       scrollWheelZoom={true}
     >
