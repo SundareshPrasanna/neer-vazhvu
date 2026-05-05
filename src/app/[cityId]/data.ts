@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createServerClient } from "@/lib/supabase/server";
+import type { PlaceConfig } from "@/lib/cities";
 
 export interface ReservoirReadingV2 {
   city_id: string;
@@ -14,46 +15,39 @@ export interface ReservoirReadingV2 {
   source: string;
 }
 
-export interface MaduraiSnapshot {
+export interface CitySnapshot {
   asOf: string | null;
-  vaigai: ReservoirReadingV2 | null;
-  mullaperiyar: ReservoirReadingV2 | null;
-  sothuparai: ReservoirReadingV2 | null;
+  readingsBySource: Record<string, ReservoirReadingV2 | null>;
   reservoirIsLive: boolean;
 }
 
-const MADURAI_SOURCE_CODES = ["vaigai", "mullaperiyar", "sothuparai"] as const;
+const EMPTY_SNAPSHOT: CitySnapshot = {
+  asOf: null,
+  readingsBySource: {},
+  reservoirIsLive: false,
+};
 
-export async function loadMaduraiSnapshot(): Promise<MaduraiSnapshot> {
+export async function loadCitySnapshot(config: PlaceConfig): Promise<CitySnapshot> {
+  const sourceCodes = config.waterSources.map((s) => s.sourceCode);
+  if (sourceCodes.length === 0) return EMPTY_SNAPSHOT;
+
   let supabase;
   try {
     supabase = createServerClient();
   } catch {
-    return {
-      asOf: null,
-      vaigai: null,
-      mullaperiyar: null,
-      sothuparai: null,
-      reservoirIsLive: false,
-    };
+    return EMPTY_SNAPSHOT;
   }
 
   const { data: latest, error: latestErr } = await supabase
     .from("reservoir_daily_v2")
     .select("date")
-    .eq("city_id", "madurai")
-    .in("source_code", MADURAI_SOURCE_CODES as unknown as string[])
+    .eq("city_id", config.cityId)
+    .in("source_code", sourceCodes)
     .order("date", { ascending: false })
     .limit(1);
 
   if (latestErr || !latest || latest.length === 0) {
-    return {
-      asOf: null,
-      vaigai: null,
-      mullaperiyar: null,
-      sothuparai: null,
-      reservoirIsLive: false,
-    };
+    return EMPTY_SNAPSHOT;
   }
 
   const asOf = latest[0].date as string;
@@ -63,30 +57,26 @@ export async function loadMaduraiSnapshot(): Promise<MaduraiSnapshot> {
     .select(
       "city_id, source_code, date, storage_tmc, storage_pct_frl, level_ft, inflow_cusecs, outflow_cusecs, source",
     )
-    .eq("city_id", "madurai")
+    .eq("city_id", config.cityId)
     .eq("date", asOf)
-    .in("source_code", MADURAI_SOURCE_CODES as unknown as string[]);
+    .in("source_code", sourceCodes);
 
   if (error || !rows) {
-    return {
-      asOf: null,
-      vaigai: null,
-      mullaperiyar: null,
-      sothuparai: null,
-      reservoirIsLive: false,
-    };
+    return EMPTY_SNAPSHOT;
   }
 
   const typed = rows as ReservoirReadingV2[];
-  const vaigai = typed.find((r) => r.source_code === "vaigai") ?? null;
-  const mullaperiyar = typed.find((r) => r.source_code === "mullaperiyar") ?? null;
-  const sothuparai = typed.find((r) => r.source_code === "sothuparai") ?? null;
+  const readingsBySource: Record<string, ReservoirReadingV2 | null> = {};
+  for (const code of sourceCodes) {
+    readingsBySource[code] = typed.find((r) => r.source_code === code) ?? null;
+  }
 
-  return {
-    asOf,
-    vaigai,
-    mullaperiyar,
-    sothuparai,
-    reservoirIsLive: vaigai !== null && mullaperiyar !== null,
-  };
+  // "Live" means we have at least one primary-drinking-source reading.
+  const primaryCodes = config.waterSources
+    .filter((s) => s.isPrimaryDrinkingSource)
+    .map((s) => s.sourceCode);
+  const liveSources = primaryCodes.filter((c) => readingsBySource[c] !== null);
+  const reservoirIsLive = primaryCodes.length > 0 && liveSources.length === primaryCodes.length;
+
+  return { asOf, readingsBySource, reservoirIsLive };
 }
