@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/context";
 import { LanguageToggle } from "./language-toggle";
+import { CitySwitcher } from "./city-switcher";
 
 const TOP_NAV = [
   { href: "/",        key: "nav.dashboard" },
@@ -210,12 +211,14 @@ export function Header() {
             {AFTER_NAV.map((item) => (
               <NavLink key={item.href} href={item.href} label={t(item.key)} active={pathname === item.href} />
             ))}
+            <CitySwitcher />
             <LanguageToggle />
             <ThemeToggle />
           </nav>
 
           {/* Mobile: toggles + hamburger */}
           <div className="flex sm:hidden items-center gap-1">
+            <CitySwitcher />
             <LanguageToggle />
             <ThemeToggle />
             <button
