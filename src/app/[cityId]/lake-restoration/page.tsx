@@ -95,6 +95,22 @@ interface ProjectsFile {
   court_orders: CourtOrder[];
 }
 
+type PriorityLevel = "critical" | "high" | "moderate" | "low";
+
+interface ScoredBody {
+  name: string;
+  priority_score: number;
+  priority_level: PriorityLevel;
+  rationale: string;
+}
+
+interface RestorationPriorityFile {
+  generated_at: string;
+  algorithm_version: string;
+  total_scored: number;
+  bodies: ScoredBody[];
+}
+
 async function loadJson<T>(filename: string): Promise<T | null> {
   try {
     const text = await fs.readFile(path.join(process.cwd(), "public", "data", filename), "utf-8");
@@ -122,16 +138,30 @@ const CONFIDENCE_LABEL: Record<FlagshipBody["confidence"], string> = {
   C: "claim only",
 };
 
+const PRIORITY_TONE: Record<PriorityLevel, string> = {
+  critical: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200 border-red-300 dark:border-red-700",
+  high:     "bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200 border-orange-300 dark:border-orange-700",
+  moderate: "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700",
+  low:      "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-700",
+};
+
 export default async function CityLakeRestorationPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
 
-  const [lostFile, flagshipFile, projectsFile] = await Promise.all([
+  const [lostFile, flagshipFile, projectsFile, priorityFile] = await Promise.all([
     loadJson<LostFile>(`water-bodies-lost-${cityId}.json`),
     loadJson<FlagshipFile>(`water-bodies-flagship-${cityId}.json`),
     loadJson<ProjectsFile>(`restoration-projects-${cityId}.json`),
+    loadJson<RestorationPriorityFile>(`restoration-priority-${cityId}.json`),
   ]);
+
+  // Index the priority scores by name so we can render badges + sort the
+  // flagship grid by descending priority. Fallback: if the priority file
+  // hasn't been computed yet, the grid renders unordered without badges.
+  const priorityByName = new Map<string, ScoredBody>();
+  for (const b of priorityFile?.bodies ?? []) priorityByName.set(b.name, b);
 
   if (!lostFile || !flagshipFile || !projectsFile) {
     return (
@@ -280,13 +310,36 @@ export default async function CityLakeRestorationPage({ params }: PageProps) {
         <CardContent className="space-y-3">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
             Flagship water bodies · {flagshipFile.bodies.length}
+            {priorityFile && (
+              <span className="text-[10px] font-normal normal-case text-slate-400 ml-2">
+                (sorted by restoration priority - {priorityFile.algorithm_version})
+              </span>
+            )}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {flagshipFile.bodies.map((wb) => (
+            {[...flagshipFile.bodies]
+              .sort((a, b) => {
+                const sa = priorityByName.get(a.name)?.priority_score ?? -1;
+                const sb = priorityByName.get(b.name)?.priority_score ?? -1;
+                return sb - sa;
+              })
+              .map((wb) => {
+                const score = priorityByName.get(wb.name);
+                return (
               <div key={wb.name} className={`border rounded-lg p-3 ${CONFIDENCE_TONE[wb.confidence]}`}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-sm text-slate-900 dark:text-slate-100">{wb.name}</div>
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">{wb.name}</span>
+                      {score && (
+                        <span
+                          className={`shrink-0 text-[10px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded border ${PRIORITY_TONE[score.priority_level]}`}
+                          title={score.rationale}
+                        >
+                          {score.priority_level} · {score.priority_score}
+                        </span>
+                      )}
+                    </div>
                     {wb.alternate_names && wb.alternate_names.length > 0 && (
                       <div className="text-[10px] text-slate-500 italic mt-0.5">also: {wb.alternate_names.join(", ")}</div>
                     )}
@@ -314,8 +367,16 @@ export default async function CityLakeRestorationPage({ params }: PageProps) {
                   </div>
                 )}
               </div>
-            ))}
+                );
+              })}
           </div>
+          {priorityFile && (
+            <p className="text-[11px] text-slate-500 italic pt-2 border-t border-slate-200 dark:border-slate-700">
+              Priority badge: status severity (drying/lost &gt; severely reduced &gt; encroached &gt; restored) +
+              cultural bonus (BHS / Ramsar / HC PIL / heritage) + size bucket, scaled by source confidence.
+              Hover the badge for the per-tank rationale. Algorithm: <code className="font-mono">{priorityFile.algorithm_version}</code>.
+            </p>
+          )}
         </CardContent>
       </Card>
 
