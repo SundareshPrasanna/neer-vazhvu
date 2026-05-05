@@ -57,6 +57,13 @@ export interface BasePlaceConfig {
   defaultDesalinationMld: number | null;
   waterSources: WaterSourceConfig[];
   sourceNameAliases: Record<string, string>;
+  /**
+   * Hide from public-facing discovery surfaces (CitySwitcher dropdown,
+   * sitemap.xml). The route itself stays alive so engineers + direct-
+   * link visitors can still reach the page; users browsing via nav just
+   * don't see it. Default false. Set true for WIP places.
+   */
+  hiddenFromDiscovery?: boolean;
 }
 
 export interface CityConfig extends BasePlaceConfig {

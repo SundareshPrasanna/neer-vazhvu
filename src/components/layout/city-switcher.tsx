@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { listEnabledPlaces } from "@/lib/cities";
+import { listDiscoverablePlaces } from "@/lib/cities";
 import {
   FEATURE_AVAILABILITY,
   buildCityHref,
@@ -17,7 +17,10 @@ export function CitySwitcher() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const places = listEnabledPlaces();
+  // Use discoverable list (excludes WIP places like Kaveri Delta) for the
+  // dropdown options. URL parsing still uses the full known-city list so
+  // existing /cauvery deep links continue to render the city pill correctly.
+  const places = listDiscoverablePlaces();
   const { cityId: currentCityId, feature } = parsePath(pathname, knownCityIds());
   const currentPlace = places.find((p) => p.cityId === currentCityId) ?? places[0];
 

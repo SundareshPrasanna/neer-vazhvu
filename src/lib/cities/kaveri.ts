@@ -6,6 +6,11 @@ export const KAVERI: RegionConfig = {
   displayName: 'Kaveri Delta',
   stateCode: 'TN',
   timezone: 'Asia/Kolkata',
+  // Hidden from CitySwitcher dropdown + sitemap while requirements are
+  // being signed off. /cauvery URL stays alive so anyone with a direct
+  // link can still reach the in-progress page; only nav discovery is
+  // suppressed.
+  hiddenFromDiscovery: true,
   center: { lat: 10.78, lng: 79.13 },
   bbox: { south: 10.0, north: 13.0, west: 77.0, east: 80.0 },
   primaryAuthority: {
