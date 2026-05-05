@@ -43,6 +43,26 @@ export interface CityHistory {
   series: HistorySeries[];
 }
 
+export interface ForecastSeriesPoint {
+  date: string;
+  predicted_tmc: number;
+  lower_tmc: number;
+  upper_tmc: number;
+}
+
+export interface ForecastSeries {
+  source_code: string;
+  forecast_date: string;
+  model_name: string;
+  points: ForecastSeriesPoint[];
+}
+
+export interface CityForecast {
+  /** When the forecast was generated (forecast_date column on the latest row). */
+  forecastDate: string | null;
+  series: ForecastSeries[];
+}
+
 const EMPTY_SNAPSHOT: CitySnapshot = {
   asOf: null,
   readingsBySource: {},
@@ -189,4 +209,76 @@ export async function loadCityHistory(config: PlaceConfig): Promise<CityHistory>
     pointCount: all.length,
     series,
   };
+}
+
+const EMPTY_FORECAST: CityForecast = { forecastDate: null, series: [] };
+
+/**
+ * Load the most-recent forecast for each of this city's water sources from
+ * reservoir_forecast_v2. Returns empty when the forecast table is absent
+ * (mig 020 not yet applied) or no rows exist (run the forecast script).
+ */
+export async function loadCityForecast(config: PlaceConfig): Promise<CityForecast> {
+  const sourceCodes = config.waterSources.map((s) => s.sourceCode);
+  if (sourceCodes.length === 0) return EMPTY_FORECAST;
+
+  let supabase;
+  try {
+    supabase = createServerClient();
+  } catch {
+    return EMPTY_FORECAST;
+  }
+
+  // 1. Find the latest forecast_date per source.
+  const { data: latestRows, error: latestErr } = await supabase
+    .from("reservoir_forecast_v2")
+    .select("source_code, forecast_date")
+    .eq("city_id", config.cityId)
+    .in("source_code", sourceCodes)
+    .order("forecast_date", { ascending: false });
+
+  if (latestErr || !latestRows || latestRows.length === 0) return EMPTY_FORECAST;
+
+  const latestPerSource = new Map<string, string>();
+  for (const r of latestRows) {
+    if (!latestPerSource.has(r.source_code as string)) {
+      latestPerSource.set(r.source_code as string, r.forecast_date as string);
+    }
+  }
+  if (latestPerSource.size === 0) return EMPTY_FORECAST;
+
+  // 2. Fetch all rows for the latest forecast per source.
+  const { data: rows, error } = await supabase
+    .from("reservoir_forecast_v2")
+    .select(
+      "source_code, forecast_date, target_date, predicted_storage_tmc, confidence_lower_tmc, confidence_upper_tmc, model_name",
+    )
+    .eq("city_id", config.cityId)
+    .in("source_code", Array.from(latestPerSource.keys()))
+    .order("target_date", { ascending: true });
+
+  if (error || !rows) return EMPTY_FORECAST;
+
+  const series: ForecastSeries[] = [];
+  let overallForecastDate: string | null = null;
+  for (const [code, latestDate] of latestPerSource) {
+    if (!overallForecastDate || latestDate > overallForecastDate) overallForecastDate = latestDate;
+    const sourceRows = rows.filter(
+      (r) => r.source_code === code && r.forecast_date === latestDate,
+    );
+    if (sourceRows.length === 0) continue;
+    series.push({
+      source_code: code,
+      forecast_date: latestDate,
+      model_name: (sourceRows[0].model_name as string) ?? "auto_arima",
+      points: sourceRows.map((r) => ({
+        date: r.target_date as string,
+        predicted_tmc: Number(r.predicted_storage_tmc),
+        lower_tmc: Number(r.confidence_lower_tmc),
+        upper_tmc: Number(r.confidence_upper_tmc),
+      })),
+    });
+  }
+
+  return { forecastDate: overallForecastDate, series };
 }

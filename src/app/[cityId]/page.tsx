@@ -3,7 +3,12 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getPlaceConfig } from "@/lib/cities";
-import { loadCitySnapshot, loadCityHistory, type ReservoirReadingV2 } from "./data";
+import {
+  loadCitySnapshot,
+  loadCityHistory,
+  loadCityForecast,
+  type ReservoirReadingV2,
+} from "./data";
 import ReservoirHistoryChart from "./reservoir-history-chart";
 
 interface PageProps {
@@ -51,9 +56,10 @@ export default async function CityHomePage({ params }: PageProps) {
   // The layout has already validated cityId and redirected /chennai; we can
   // safely look up the config here.
   const config = getPlaceConfig(cityId);
-  const [snapshot, history] = await Promise.all([
+  const [snapshot, history, forecast] = await Promise.all([
     loadCitySnapshot(config),
     loadCityHistory(config),
+    loadCityForecast(config),
   ]);
   const dataDate = snapshot.asOf;
   const reservoirIsLive = snapshot.reservoirIsLive;
@@ -306,6 +312,8 @@ export default async function CityHomePage({ params }: PageProps) {
           no rows yet. */}
       <ReservoirHistoryChart
         series={history.series}
+        forecast={forecast.series}
+        forecastDate={forecast.forecastDate}
         earliestDate={history.earliestDate}
         latestDate={history.latestDate}
         pointCount={history.pointCount}
