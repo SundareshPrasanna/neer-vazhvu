@@ -34,8 +34,24 @@ const WardMap = dynamic(
   { ssr: false, loading: () => <MapLoading /> },
 );
 
-// Empty maps - non-Chennai cities don't have ward-level risk yet (Tier 1.G).
-const EMPTY_RISK_DATA: Map<number, WardRiskData> = new Map();
+// Shape of public/data/ward-risk-{cityId}.json (output of
+// scripts/compute-madurai-ward-risk.ts).
+interface WardRiskFile {
+  algorithm_version: string;
+  weights: Record<string, number>;
+  notes: string;
+  wards: Array<{
+    ward_number: number;
+    composite_score: number | null;
+    grade: "A" | "B" | "C" | "D" | "F" | "incomplete";
+    pct_gw_depth: number | null;
+    pct_wb_density: number | null;
+    pct_wb_health: number | null;
+    gw_depth_m: number | null;
+    wb_count: number;
+    wb_health_score: number | null;
+  }>;
+}
 
 interface InterpolatedWardsResponse {
   asOf: string | null;
@@ -84,6 +100,7 @@ export default function CityGroundwaterClient() {
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [interpolated, setInterpolated] = useState<InterpolatedWardsResponse | null>(null);
+  const [riskFile, setRiskFile] = useState<WardRiskFile | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("exploitation");
 
   const assets = useMemo(() => (config ? assetsForCity(config) : null), [config]);
@@ -101,11 +118,15 @@ export default function CityGroundwaterClient() {
       fetch(`/api/groundwater/wards-interpolated?city=${encodeURIComponent(cityId)}`)
         .then((r) => (r.ok ? (r.json() as Promise<InterpolatedWardsResponse>) : null))
         .catch(() => null),
+      fetch(`/data/ward-risk-${cityId}.json`)
+        .then((r) => (r.ok ? (r.json() as Promise<WardRiskFile>) : null))
+        .catch(() => null),
     ])
-      .then(([blocksRes, wrisRes, interpolatedRes]: [
+      .then(([blocksRes, wrisRes, interpolatedRes, riskRes]: [
         { blocks?: GWBlock[] },
         WrisStationsResponse,
         InterpolatedWardsResponse | null,
+        WardRiskFile | null,
       ]) => {
         setBlocks(blocksRes.blocks ?? []);
         // Pre-select most-exploited block to anchor the user.
@@ -115,10 +136,36 @@ export default function CityGroundwaterClient() {
         if (sorted.length > 0) setSelectedBlock(sorted[0]);
         setWrisStations(wrisRes.stations ?? []);
         setInterpolated(interpolatedRes);
+        setRiskFile(riskRes);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, [assets, cityId]);
+
+  const riskData = useMemo(() => {
+    const m = new Map<number, WardRiskData>();
+    if (!riskFile) return m;
+    const gradeToLevel: Record<string, WardRiskData["riskLevel"]> = {
+      A: "low",
+      B: "moderate",
+      C: "moderate",
+      D: "high",
+      F: "critical",
+      incomplete: "noData",
+    };
+    for (const w of riskFile.wards) {
+      m.set(w.ward_number, {
+        wardNumber: w.ward_number,
+        riskScore: w.composite_score ?? 0,
+        riskLevel: gradeToLevel[w.grade] ?? "noData",
+        groundwaterComponent: w.pct_gw_depth,
+        trendComponent: null,
+        reservoirComponent: w.pct_wb_density,
+        seasonalComponent: w.pct_wb_health,
+      });
+    }
+    return m;
+  }, [riskFile]);
 
   const groundwaterData = useMemo(() => {
     const m = new Map<number, GroundwaterWard>();
@@ -172,7 +219,11 @@ export default function CityGroundwaterClient() {
       {/* Context bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300">
-          {config.displayName} · {viewMode === "depth" ? "Ward depth (interpolated)" : "CGWB block exploitation (GWR)"}
+          {config.displayName} · {
+            viewMode === "depth" ? "Ward depth (interpolated)" :
+            viewMode === "risk" ? "Ward risk composite (3-factor)" :
+            "CGWB block exploitation (GWR)"
+          }
         </span>
         {viewMode === "exploitation" && headlinePhrases.length > 0 && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
@@ -185,19 +236,41 @@ export default function CityGroundwaterClient() {
             {interpolated.asOf && ` · as of ${interpolated.asOf}`}
           </span>
         )}
-        {/* View-mode toggle - only render when interpolated data is available */}
-        {interpolated && interpolated.wards.some((w) => w.depthM !== null) && (
+        {viewMode === "risk" && riskFile && (
+          <span className="text-slate-500 dark:text-slate-400 text-xs">
+            {riskFile.algorithm_version} · weights:{" "}
+            {Object.entries(riskFile.weights)
+              .map(([k, v]) => `${k} ${(v * 100).toFixed(0)}%`)
+              .join(", ")}
+          </span>
+        )}
+        {/* View-mode toggle - exposes whichever views have data ready. */}
+        {(interpolated?.wards.some((w) => w.depthM !== null) || riskFile) && (
           <div className="ml-auto flex gap-1 text-xs">
-            <button
-              onClick={() => setViewMode("depth")}
-              className={`px-2 py-0.5 rounded border ${
-                viewMode === "depth"
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600"
-              }`}
-            >
-              Depth (ward)
-            </button>
+            {interpolated?.wards.some((w) => w.depthM !== null) && (
+              <button
+                onClick={() => setViewMode("depth")}
+                className={`px-2 py-0.5 rounded border ${
+                  viewMode === "depth"
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600"
+                }`}
+              >
+                Depth (ward)
+              </button>
+            )}
+            {riskFile && (
+              <button
+                onClick={() => setViewMode("risk")}
+                className={`px-2 py-0.5 rounded border ${
+                  viewMode === "risk"
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600"
+                }`}
+              >
+                Risk (composite)
+              </button>
+            )}
             <button
               onClick={() => setViewMode("exploitation")}
               className={`px-2 py-0.5 rounded border ${
@@ -220,7 +293,7 @@ export default function CityGroundwaterClient() {
           ) : (
             <WardMap
               groundwaterData={groundwaterData}
-              riskData={EMPTY_RISK_DATA}
+              riskData={riskData}
               viewMode={viewMode}
               wrisStations={wrisStations}
               selectedWrisStationCode={selectedWrisStation?.stationCode ?? null}
