@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { BlockDetailPanel } from "@/components/groundwater/block-detail-panel";
+import { WrisStationPanel } from "@/components/groundwater/wris-station-panel";
 import { GroundwaterLegend } from "@/components/groundwater/legend";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
@@ -15,6 +16,7 @@ import type {
   WardRiskData,
   GWBlock,
   WrisStation,
+  WrisStationsResponse,
   ViewMode,
 } from "@/types/groundwater";
 
@@ -35,7 +37,6 @@ const WardMap = dynamic(
 // Empty maps - non-Chennai cities don't have ward-level GW or risk yet.
 const EMPTY_WARD_DATA: Map<number, GroundwaterWard> = new Map();
 const EMPTY_RISK_DATA: Map<number, WardRiskData> = new Map();
-const EMPTY_WRIS_STATIONS: WrisStation[] = [];
 
 interface CityGwAssets {
   blocksJsonUrl: string;
@@ -64,6 +65,8 @@ export default function CityGroundwaterClient() {
 
   const [blocks, setBlocks] = useState<GWBlock[]>([]);
   const [selectedBlock, setSelectedBlock] = useState<GWBlock | null>(null);
+  const [wrisStations, setWrisStations] = useState<WrisStation[]>([]);
+  const [selectedWrisStation, setSelectedWrisStation] = useState<WrisStation | null>(null);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
 
@@ -78,19 +81,24 @@ export default function CityGroundwaterClient() {
       setLoading(false);
       return;
     }
-    fetch(assets.blocksJsonUrl)
-      .then((r) => r.json())
-      .then((d) => {
-        setBlocks(d.blocks ?? []);
+    Promise.all([
+      fetch(assets.blocksJsonUrl).then((r) => r.json()),
+      fetch(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
+        .then((r) => r.json() as Promise<WrisStationsResponse>)
+        .catch(() => ({ stations: [], totalStations: 0 } as WrisStationsResponse)),
+    ])
+      .then(([blocksRes, wrisRes]: [{ blocks?: GWBlock[] }, WrisStationsResponse]) => {
+        setBlocks(blocksRes.blocks ?? []);
         // Pre-select most-exploited block to anchor the user.
-        const sorted = [...(d.blocks ?? [])].sort(
+        const sorted = [...(blocksRes.blocks ?? [])].sort(
           (a: GWBlock, b: GWBlock) => b.latest.development_pct - a.latest.development_pct,
         );
         if (sorted.length > 0) setSelectedBlock(sorted[0]);
+        setWrisStations(wrisRes.stations ?? []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [assets]);
+  }, [assets, cityId]);
 
   if (!config) {
     // Layout-level guard already 404s unknown cities; this is just a typesafety
@@ -140,12 +148,20 @@ export default function CityGroundwaterClient() {
               groundwaterData={EMPTY_WARD_DATA}
               riskData={EMPTY_RISK_DATA}
               viewMode={viewMode}
-              wrisStations={EMPTY_WRIS_STATIONS}
+              wrisStations={wrisStations}
+              selectedWrisStationCode={selectedWrisStation?.stationCode ?? null}
               hiddenCategories={hiddenCategories}
               onWardSelect={() => {
                 /* no-op for non-Chennai cities (no ward data) */
               }}
-              onBlockSelect={(b) => setSelectedBlock(b)}
+              onBlockSelect={(b) => {
+                setSelectedBlock(b);
+                setSelectedWrisStation(null);
+              }}
+              onWrisStationSelect={(s) => {
+                setSelectedWrisStation(s);
+                setSelectedBlock(null);
+              }}
               blockGeoJsonUrl={assets!.blockGeoJsonUrl}
               blocksJsonUrl={assets!.blocksJsonUrl}
               stationsJsonUrl={assets!.stationsJsonUrl}
@@ -183,20 +199,34 @@ export default function CityGroundwaterClient() {
                 ({config.stateCode})
               </div>
               <div>{t("gw_page.source_cgwb")}</div>
-              <div className="text-amber-600 dark:text-amber-400">
-                Ward-level groundwater data not yet available for{" "}
-                {config.displayName} - showing block-level CGWB classification only.
-              </div>
+              {wrisStations.length > 0 ? (
+                <div className="text-emerald-600 dark:text-emerald-400">
+                  {wrisStations.length} CGWB stations live · click for depth + quality flag
+                </div>
+              ) : (
+                <div className="text-amber-600 dark:text-amber-400">
+                  Live station readings not yet ingested for {config.displayName} -
+                  showing block-level CGWB classification only.
+                </div>
+              )}
             </div>
           </MapInfoButton>
         </div>
 
-        {/* Block detail panel */}
+        {/* Detail panels - one open at a time */}
         {selectedBlock && (
           <BottomSheet onClose={() => setSelectedBlock(null)}>
             <BlockDetailPanel
               block={selectedBlock}
               onClose={() => setSelectedBlock(null)}
+            />
+          </BottomSheet>
+        )}
+        {selectedWrisStation && (
+          <BottomSheet onClose={() => setSelectedWrisStation(null)}>
+            <WrisStationPanel
+              station={selectedWrisStation}
+              onClose={() => setSelectedWrisStation(null)}
             />
           </BottomSheet>
         )}

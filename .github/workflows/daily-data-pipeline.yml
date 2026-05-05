@@ -65,6 +65,21 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: python scripts/scrape_cauvery_basin_rainfall.py
 
+      # India-WRIS CGWB station readings for Madurai district (last 90 days).
+      # Chennai's WRIS is fetched from the monthly orchestrator's run-monthly
+      # endpoint; Madurai runs daily here so the live-station overlay on
+      # /madurai/groundwater stays fresh. Tolerates failures - upstream
+      # India-WRIS API has periodic outages.
+      - name: Scrape WRIS groundwater (Madurai) -> Supabase
+        id: scrape_wris_madurai
+        continue-on-error: true
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          MADURAI_WRIS_DAYS: '90'
+        run: python scripts/scrape_wris_madurai.py
+
       # Always run ETL + intelligence so forecasts and briefings stay fresh,
       # even when the scrape fails and we're using slightly stale reservoir data.
       - name: Run post-scrape pipeline (ETL + intelligence)

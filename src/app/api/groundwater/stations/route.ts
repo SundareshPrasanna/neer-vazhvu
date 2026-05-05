@@ -11,6 +11,9 @@ function isSupabaseConfigured(): boolean {
  * Returns CGWB monitoring station data from India WRIS.
  *
  * Query params:
+ *   - city: cityId (optional, default "chennai") - filters by district.
+ *           Supported: chennai, madurai. Bangalore and others land here as
+ *           their daily ingestion ships.
  *   - station: station_code (optional, filter to one station)
  *   - mode: "Manual" | "Telemetric" (optional filter)
  *   - days: number of days of history (default 90, max 730) - only used with station param
@@ -20,6 +23,13 @@ function isSupabaseConfigured(): boolean {
  * With station param: returns full time series for that station within the
  *   `days` window.
  */
+
+// Map cityId -> district name in groundwater_wris.district. Keep in sync
+// with the per-city WRIS daily scripts (scrape_wris_madurai.py etc).
+const DISTRICT_BY_CITY: Record<string, string> = {
+  chennai: "Chennai",
+  madurai: "Madurai",
+};
 export async function GET(request: NextRequest) {
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ stations: [], message: "Supabase not configured" });
@@ -33,6 +43,8 @@ export async function GET(request: NextRequest) {
   const modeFilter = searchParams.get("mode");
   const daysParam = searchParams.get("days");
   const days = Math.min(Math.max(parseInt(daysParam || "90", 10) || 90, 1), 730);
+  const cityParam = (searchParams.get("city") || "chennai").toLowerCase();
+  const district = DISTRICT_BY_CITY[cityParam] ?? "Chennai";
 
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - days);
@@ -47,6 +59,7 @@ export async function GET(request: NextRequest) {
         "station_code, station_name, latitude, longitude, reading_date, depth_to_water_m, acquisition_mode, well_type, well_depth_m, well_aquifer_type",
       )
       .eq("station_code", stationCode)
+      .eq("district", district)
       .gte("reading_date", cutoff)
       .order("reading_date", { ascending: true })
       .limit(1000);
@@ -60,9 +73,10 @@ export async function GET(request: NextRequest) {
       supabase
         .from("groundwater_wris_latest")
         .select(
-          "station_code, station_name, latitude, longitude, acquisition_mode, well_type, well_depth_m, well_aquifer_type, recent_count, recent_range_m, data_quality_flag",
+          "station_code, station_name, latitude, longitude, acquisition_mode, well_type, well_depth_m, well_aquifer_type, recent_count, recent_range_m, data_quality_flag, district",
         )
         .eq("station_code", stationCode)
+        .eq("district", district)
         .maybeSingle(),
     ]);
 
@@ -106,12 +120,14 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // No station specified: return latest reading per station from the view
+  // No station specified: return latest reading per station from the view,
+  // filtered to the requested city's district.
   let listQuery = supabase
     .from("groundwater_wris_latest")
     .select(
-      "station_code, station_name, latitude, longitude, reading_date, depth_to_water_m, acquisition_mode, well_type, well_depth_m, well_aquifer_type, recent_count, recent_range_m, data_quality_flag",
-    );
+      "station_code, station_name, latitude, longitude, reading_date, depth_to_water_m, acquisition_mode, well_type, well_depth_m, well_aquifer_type, recent_count, recent_range_m, data_quality_flag, district",
+    )
+    .eq("district", district);
 
   if (modeFilter) {
     listQuery = listQuery.eq("acquisition_mode", modeFilter);

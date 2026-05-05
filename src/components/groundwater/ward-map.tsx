@@ -252,22 +252,73 @@ export function WardMap({
           {blockGeoJSON && (
             <GeoJSON ref={(layer) => { blockLayerRef.current = layer; }} key={`blocks-${tiles.url}`} data={blockGeoJSON} style={blockStyle} onEachFeature={onEachBlock} />
           )}
-          {stations.map((s) => (
-            <CircleMarker
-              key={s.station_code}
-              center={[s.lat, s.lng]}
-              radius={4}
-              pathOptions={{ fillColor: "#3b82f6", color: "#1e3a5f", weight: 1, fillOpacity: 0.8 }}
-            >
-              <Tooltip>
-                <strong>{s.name}</strong>
-                <br />
-                <span style={{ fontSize: "11px", color: "#64748b" }}>
-                  {s.agency} - {t("gw_block.stations")}
-                </span>
-              </Tooltip>
-            </CircleMarker>
-          ))}
+          {/* When the page passes live WRIS readings, render them as rich
+              colored markers (depth + quality flag). Otherwise fall back to
+              the basic static-metadata blue dots. This lights up Madurai's
+              exploitation view with live data while leaving Chennai's
+              behaviour intact when wrisStations is empty. */}
+          {wrisStations && wrisStations.length > 0
+            ? wrisStations.map((s) => {
+                if (s.latitude == null || s.longitude == null) return null;
+                if (s.dataQualityFlag === "stuck" && hiddenCategories?.has("wris_stuck")) return null;
+                if (s.dataQualityFlag === "stale" && hiddenCategories?.has("wris_stale")) return null;
+                const depth = Math.abs(s.latestDepthM);
+                const isSelected = selectedWrisStationCode === s.stationCode;
+                const isSuspect = s.dataQualityFlag === "stuck" || s.dataQualityFlag === "stale";
+                const fillColor = isSuspect ? "#94a3b8" : getGroundwaterColor(depth);
+                const borderColor = isSelected
+                  ? "#0c4a6e"
+                  : s.dataQualityFlag === "stuck"
+                    ? "#b45309"
+                    : "#1e293b";
+                return (
+                  <CircleMarker
+                    key={s.stationCode}
+                    center={[s.latitude, s.longitude]}
+                    radius={isSelected ? 7 : 5}
+                    pathOptions={{
+                      fillColor,
+                      color: borderColor,
+                      weight: isSelected ? 2.5 : 1.5,
+                      fillOpacity: isSuspect ? 0.55 : 0.9,
+                      dashArray: s.dataQualityFlag === "stuck" ? "2 3" : undefined,
+                    }}
+                    eventHandlers={{
+                      click: () => onWrisStationSelect?.(s),
+                    }}
+                  >
+                    <Tooltip>
+                      <strong>{s.stationName}</strong>
+                      <br />
+                      <span style={{ fontSize: "11px" }}>
+                        {depth.toFixed(2)}m {t("wris.depth_below_ground")}
+                      </span>
+                      <br />
+                      <span style={{ fontSize: "10px", color: "#64748b" }}>
+                        {s.acquisitionMode === "Telemetric"
+                          ? t("wris.mode_telemetric")
+                          : t("wris.mode_manual")}
+                      </span>
+                    </Tooltip>
+                  </CircleMarker>
+                );
+              })
+            : stations.map((s) => (
+                <CircleMarker
+                  key={s.station_code}
+                  center={[s.lat, s.lng]}
+                  radius={4}
+                  pathOptions={{ fillColor: "#3b82f6", color: "#1e3a5f", weight: 1, fillOpacity: 0.8 }}
+                >
+                  <Tooltip>
+                    <strong>{s.name}</strong>
+                    <br />
+                    <span style={{ fontSize: "11px", color: "#64748b" }}>
+                      {s.agency} - {t("gw_block.stations")}
+                    </span>
+                  </Tooltip>
+                </CircleMarker>
+              ))}
         </>
       ) : (
         <>
