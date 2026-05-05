@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getPlaceConfig } from "@/lib/cities";
-import { loadCitySnapshot, type ReservoirReadingV2 } from "./data";
+import { loadCitySnapshot, loadCityHistory, type ReservoirReadingV2 } from "./data";
+import ReservoirHistoryChart from "./reservoir-history-chart";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -50,7 +51,10 @@ export default async function CityHomePage({ params }: PageProps) {
   // The layout has already validated cityId and redirected /chennai; we can
   // safely look up the config here.
   const config = getPlaceConfig(cityId);
-  const snapshot = await loadCitySnapshot(config);
+  const [snapshot, history] = await Promise.all([
+    loadCitySnapshot(config),
+    loadCityHistory(config),
+  ]);
   const dataDate = snapshot.asOf;
   const reservoirIsLive = snapshot.reservoirIsLive;
 
@@ -296,6 +300,17 @@ export default async function CityHomePage({ params }: PageProps) {
           </Link>
         </div>
       )}
+
+      {/* Reservoir history trend chart - works for any city, gracefully
+          shows a "backfill pending" callout when reservoir_daily_v2 has
+          no rows yet. */}
+      <ReservoirHistoryChart
+        series={history.series}
+        earliestDate={history.earliestDate}
+        latestDate={history.latestDate}
+        pointCount={history.pointCount}
+        cityDisplayName={config.displayName}
+      />
 
       {/* Generic reservoir grid for cities without a custom narrative yet */}
       {!isMadurai && (
