@@ -14,6 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `About ${config.displayName} | Neer Vazhvu`,
     description: `Methodology, data sources, and assumptions behind the ${config.displayName} Water Intelligence Dashboard.`,
+    alternates: { canonical: `/${cityId}/about` },
   };
 }
 

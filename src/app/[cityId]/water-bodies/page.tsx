@@ -11,7 +11,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) return { title: "Water Bodies | Neer Vazhvu" };
-  return { title: `${config.displayName} Water Bodies | Neer Vazhvu` };
+  return {
+    title: `${config.displayName} Water Bodies | Neer Vazhvu`,
+    alternates: { canonical: `/${cityId}/water-bodies` },
+  };
 }
 
 export default async function CityWaterBodiesPage({ params }: PageProps) {

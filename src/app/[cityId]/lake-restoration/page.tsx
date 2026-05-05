@@ -10,7 +10,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) return { title: "Lake Restoration | Neer Vazhvu" };
-  return { title: `${config.displayName} Lake Restoration | Neer Vazhvu` };
+  return {
+    title: `${config.displayName} Lake Restoration | Neer Vazhvu`,
+    alternates: { canonical: `/${cityId}/water-bodies` },
+  };
 }
 
 // Mirrors Chennai's /lake-restoration -> /water-bodies redirect. The

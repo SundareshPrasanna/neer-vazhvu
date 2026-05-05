@@ -15,9 +15,11 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
   return {
     title: `${config.displayName} Water Clock | Neer Vazhvu`,
     description: `Live tracker for ${config.displayName}'s water year - reservoirs, groundwater, and basin context. Built for journalists, district officials, and planners.`,
+    alternates: { canonical: `/${cityId}` },
     openGraph: {
       title: `${config.displayName} Water Clock | Neer Vazhvu`,
       description: `Where does ${config.displayName} stand right now in the water year?`,
+      url: `/${cityId}`,
     },
   };
 }
