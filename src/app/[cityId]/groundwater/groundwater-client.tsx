@@ -34,9 +34,23 @@ const WardMap = dynamic(
   { ssr: false, loading: () => <MapLoading /> },
 );
 
-// Empty maps - non-Chennai cities don't have ward-level GW or risk yet.
-const EMPTY_WARD_DATA: Map<number, GroundwaterWard> = new Map();
+// Empty maps - non-Chennai cities don't have ward-level risk yet (Tier 1.G).
 const EMPTY_RISK_DATA: Map<number, WardRiskData> = new Map();
+
+interface InterpolatedWardsResponse {
+  asOf: string | null;
+  method: string;
+  cityAverage: number | null;
+  wards: Array<{
+    wardNumber: number;
+    wardName: string;
+    zone: string;
+    depthM: number | null;
+    trend: "improving" | "stable" | "declining" | "unknown";
+    stationCount: number;
+    meanDistanceKm: number | null;
+  }>;
+}
 
 interface CityGwAssets {
   blocksJsonUrl: string;
@@ -69,10 +83,8 @@ export default function CityGroundwaterClient() {
   const [selectedWrisStation, setSelectedWrisStation] = useState<WrisStation | null>(null);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
-
-  // Non-Chennai cities have block + station data only; depth/risk views are
-  // hidden until ward-level GW data is available.
-  const viewMode: ViewMode = "exploitation";
+  const [interpolated, setInterpolated] = useState<InterpolatedWardsResponse | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("exploitation");
 
   const assets = useMemo(() => (config ? assetsForCity(config) : null), [config]);
 
@@ -86,8 +98,15 @@ export default function CityGroundwaterClient() {
       fetch(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
         .then((r) => r.json() as Promise<WrisStationsResponse>)
         .catch(() => ({ stations: [], totalStations: 0 } as WrisStationsResponse)),
+      fetch(`/api/groundwater/wards-interpolated?city=${encodeURIComponent(cityId)}`)
+        .then((r) => (r.ok ? (r.json() as Promise<InterpolatedWardsResponse>) : null))
+        .catch(() => null),
     ])
-      .then(([blocksRes, wrisRes]: [{ blocks?: GWBlock[] }, WrisStationsResponse]) => {
+      .then(([blocksRes, wrisRes, interpolatedRes]: [
+        { blocks?: GWBlock[] },
+        WrisStationsResponse,
+        InterpolatedWardsResponse | null,
+      ]) => {
         setBlocks(blocksRes.blocks ?? []);
         // Pre-select most-exploited block to anchor the user.
         const sorted = [...(blocksRes.blocks ?? [])].sort(
@@ -95,10 +114,34 @@ export default function CityGroundwaterClient() {
         );
         if (sorted.length > 0) setSelectedBlock(sorted[0]);
         setWrisStations(wrisRes.stations ?? []);
+        setInterpolated(interpolatedRes);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, [assets, cityId]);
+
+  const groundwaterData = useMemo(() => {
+    const m = new Map<number, GroundwaterWard>();
+    if (!interpolated) return m;
+    for (const w of interpolated.wards) {
+      m.set(w.wardNumber, {
+        wardNumber: w.wardNumber,
+        wardName: w.wardName,
+        zone: w.zone,
+        depthM: w.depthM,
+        trend: w.trend,
+      });
+    }
+    return m;
+  }, [interpolated]);
+
+  // Auto-promote to "depth" view if interpolated data is available - the
+  // user lands on a richer choropleth instead of just the 4-block GWR map.
+  useEffect(() => {
+    if (interpolated && interpolated.wards.some((w) => w.depthM !== null)) {
+      setViewMode("depth");
+    }
+  }, [interpolated]);
 
   if (!config) {
     // Layout-level guard already 404s unknown cities; this is just a typesafety
@@ -129,12 +172,43 @@ export default function CityGroundwaterClient() {
       {/* Context bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300">
-          {config.displayName} · CGWB block exploitation (GWR)
+          {config.displayName} · {viewMode === "depth" ? "Ward depth (interpolated)" : "CGWB block exploitation (GWR)"}
         </span>
-        {headlinePhrases.length > 0 && (
+        {viewMode === "exploitation" && headlinePhrases.length > 0 && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
             {headlinePhrases.join(" · ")}
           </span>
+        )}
+        {viewMode === "depth" && interpolated && (
+          <span className="text-slate-500 dark:text-slate-400 text-xs">
+            City avg {interpolated.cityAverage?.toFixed(1) ?? "-"} m below ground
+            {interpolated.asOf && ` · as of ${interpolated.asOf}`}
+          </span>
+        )}
+        {/* View-mode toggle - only render when interpolated data is available */}
+        {interpolated && interpolated.wards.some((w) => w.depthM !== null) && (
+          <div className="ml-auto flex gap-1 text-xs">
+            <button
+              onClick={() => setViewMode("depth")}
+              className={`px-2 py-0.5 rounded border ${
+                viewMode === "depth"
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600"
+              }`}
+            >
+              Depth (ward)
+            </button>
+            <button
+              onClick={() => setViewMode("exploitation")}
+              className={`px-2 py-0.5 rounded border ${
+                viewMode === "exploitation"
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600"
+              }`}
+            >
+              Exploitation (block)
+            </button>
+          </div>
         )}
       </div>
 
@@ -145,7 +219,7 @@ export default function CityGroundwaterClient() {
             <MapLoading />
           ) : (
             <WardMap
-              groundwaterData={EMPTY_WARD_DATA}
+              groundwaterData={groundwaterData}
               riskData={EMPTY_RISK_DATA}
               viewMode={viewMode}
               wrisStations={wrisStations}
