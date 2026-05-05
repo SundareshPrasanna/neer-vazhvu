@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/context";
 import { LanguageToggle } from "./language-toggle";
 import { CitySwitcher } from "./city-switcher";
+import { parsePath, rewriteNavHref } from "@/lib/cities/routing";
 
 const TOP_NAV = [
   { href: "/",        key: "nav.dashboard" },
@@ -80,11 +81,21 @@ function NavLink({ href, label, active, onClick }: { href: string; label: string
   );
 }
 
-function ExploreDropdown({ pathname, t }: { pathname: string; t: (key: string) => string }) {
+function ExploreDropdown({
+  pathname,
+  cityId,
+  t,
+}: {
+  pathname: string;
+  cityId: string;
+  t: (key: string) => string;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const isExploreActive = EXPLORE_PATHS.has(pathname);
+  // Active when ANY explore link's city-aware href matches the current path.
+  const exploreCityHrefs = new Set(EXPLORE_ITEMS.map((i) => rewriteNavHref(i.href, cityId)));
+  const isExploreActive = exploreCityHrefs.has(pathname) || EXPLORE_PATHS.has(pathname);
 
   // Close on click outside
   useEffect(() => {
@@ -125,21 +136,24 @@ function ExploreDropdown({ pathname, t }: { pathname: string; t: (key: string) =
 
       {open && (
         <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-50">
-          {EXPLORE_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              className={cn(
-                "block px-4 py-2.5 text-sm transition-colors",
-                pathname === item.href
-                  ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800"
-              )}
-            >
-              {t(item.key)}
-            </Link>
-          ))}
+          {EXPLORE_ITEMS.map((item) => {
+            const cityHref = rewriteNavHref(item.href, cityId);
+            return (
+              <Link
+                key={item.href}
+                href={cityHref}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "block px-4 py-2.5 text-sm transition-colors",
+                  pathname === cityHref
+                    ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800"
+                )}
+              >
+                {t(item.key)}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
@@ -156,19 +170,36 @@ export function Header() {
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
-  // Resolve current page label for mobile indicator (client-only to avoid hydration mismatch)
+  // Detect the current city from the URL so all nav links preserve it.
+  // Without this, clicking "Dashboard" from /madurai/groundwater would
+  // navigate to / and silently reset the user back to Chennai.
+  const { cityId } = parsePath(pathname);
+
+  // Resolve current page label for mobile indicator (client-only to avoid
+  // hydration mismatch). Compare against the city-aware href since that's
+  // what the nav actually links to.
   const allItems = [...TOP_NAV, ...EXPLORE_ITEMS, ...AFTER_NAV];
-  const currentPage = mounted ? allItems.find((item) => item.href === pathname && item.href !== "/") : null;
+  const currentPage = mounted
+    ? allItems.find((item) => {
+        const cityHref = rewriteNavHref(item.href, cityId);
+        return cityHref === pathname && cityHref !== "/" && cityHref !== `/${cityId}`;
+      })
+    : null;
   const currentPageLabel = currentPage ? t(currentPage.key) : null;
 
-  const isExploreActive = EXPLORE_PATHS.has(pathname);
+  // Logo points to the city's home (chennai -> /, madurai -> /madurai).
+  const homeHref = rewriteNavHref("/", cityId);
+
+  const isExploreActive =
+    EXPLORE_PATHS.has(pathname) ||
+    EXPLORE_ITEMS.some((i) => rewriteNavHref(i.href, cityId) === pathname);
 
   return (
     <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-[10000]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2 min-w-0">
-            <Link href="/" className="flex items-center gap-2 shrink-0">
+            <Link href={homeHref} className="flex items-center gap-2 shrink-0">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-sm">
                 <svg
                   viewBox="0 0 24 24"
@@ -204,13 +235,19 @@ export function Header() {
 
           {/* Desktop nav */}
           <nav className="hidden sm:flex items-center gap-2">
-            {TOP_NAV.map((item) => (
-              <NavLink key={item.href} href={item.href} label={t(item.key)} active={pathname === item.href} />
-            ))}
-            <ExploreDropdown pathname={pathname} t={t} />
-            {AFTER_NAV.map((item) => (
-              <NavLink key={item.href} href={item.href} label={t(item.key)} active={pathname === item.href} />
-            ))}
+            {TOP_NAV.map((item) => {
+              const cityHref = rewriteNavHref(item.href, cityId);
+              return (
+                <NavLink key={item.href} href={cityHref} label={t(item.key)} active={pathname === cityHref} />
+              );
+            })}
+            <ExploreDropdown pathname={pathname} cityId={cityId} t={t} />
+            {AFTER_NAV.map((item) => {
+              const cityHref = rewriteNavHref(item.href, cityId);
+              return (
+                <NavLink key={item.href} href={cityHref} label={t(item.key)} active={pathname === cityHref} />
+              );
+            })}
             <CitySwitcher />
             <LanguageToggle />
             <ThemeToggle />
@@ -244,21 +281,24 @@ export function Header() {
       {menuOpen && (
         <nav className="sm:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[70vh] overflow-y-auto">
           <div className="max-w-7xl mx-auto px-4 py-2 space-y-1">
-            {TOP_NAV.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className={cn(
-                  "block px-4 py-3 rounded-md text-sm font-medium transition-colors",
-                  pathname === item.href
-                    ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
-                )}
-              >
-                {t(item.key)}
-              </Link>
-            ))}
+            {TOP_NAV.map((item) => {
+              const cityHref = rewriteNavHref(item.href, cityId);
+              return (
+                <Link
+                  key={item.href}
+                  href={cityHref}
+                  onClick={() => setMenuOpen(false)}
+                  className={cn(
+                    "block px-4 py-3 rounded-md text-sm font-medium transition-colors",
+                    pathname === cityHref
+                      ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  )}
+                >
+                  {t(item.key)}
+                </Link>
+              );
+            })}
 
             {/* Explore group */}
             <button
@@ -277,39 +317,45 @@ export function Header() {
             </button>
             {mobileExploreOpen && (
               <div className="pl-4 space-y-1">
-                {EXPLORE_ITEMS.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMenuOpen(false)}
-                    className={cn(
-                      "block px-4 py-2.5 rounded-md text-sm transition-colors",
-                      pathname === item.href
-                        ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
-                        : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
-                    )}
-                  >
-                    {t(item.key)}
-                  </Link>
-                ))}
+                {EXPLORE_ITEMS.map((item) => {
+                  const cityHref = rewriteNavHref(item.href, cityId);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={cityHref}
+                      onClick={() => setMenuOpen(false)}
+                      className={cn(
+                        "block px-4 py-2.5 rounded-md text-sm transition-colors",
+                        pathname === cityHref
+                          ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                          : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                      )}
+                    >
+                      {t(item.key)}
+                    </Link>
+                  );
+                })}
               </div>
             )}
 
-            {AFTER_NAV.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className={cn(
-                  "block px-4 py-3 rounded-md text-sm font-medium transition-colors",
-                  pathname === item.href
-                    ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
-                )}
-              >
-                {t(item.key)}
-              </Link>
-            ))}
+            {AFTER_NAV.map((item) => {
+              const cityHref = rewriteNavHref(item.href, cityId);
+              return (
+                <Link
+                  key={item.href}
+                  href={cityHref}
+                  onClick={() => setMenuOpen(false)}
+                  className={cn(
+                    "block px-4 py-3 rounded-md text-sm font-medium transition-colors",
+                    pathname === cityHref
+                      ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  )}
+                >
+                  {t(item.key)}
+                </Link>
+              );
+            })}
           </div>
         </nav>
       )}

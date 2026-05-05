@@ -5,74 +5,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { listEnabledPlaces } from "@/lib/cities";
-
-// Per-city feature availability for the switcher's URL rewriting.
-// Chennai has every feature (flat URLs at root). Other cities have only the
-// pages we've shipped under [cityId]. When a user switches from a feature
-// the target city doesn't yet have, we fall back to the city's home (and
-// the user keeps the home preview as a useful landing).
-//
-// Keep this in sync with src/app/[cityId]/<feature>/page.tsx as we ship
-// each decoupled feature page. Madurai lake-restoration is a real page
-// (not a redirect like Chennai's) because we have richer narrative
-// content for it than Chennai - 14 documented lost tanks, 19 flagships,
-// 8 restoration programmes, court anchor.
-const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
-  chennai: new Set([
-    "",
-    "about",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "lake-restoration",
-    "my-ward",
-    "facts",
-  ]),
-  madurai: new Set([
-    "",
-    "about",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "lake-restoration",
-    "my-ward",
-    "facts",
-  ]),
-};
-
-/**
- * Parse a pathname into (cityId, featurePath) using the place registry.
- * /                       -> ("chennai", "")
- * /groundwater            -> ("chennai", "groundwater")
- * /madurai                -> ("madurai", "")
- * /madurai/groundwater    -> ("madurai", "groundwater")
- * /my-ward/compare        -> ("chennai", "my-ward/compare")
- */
-function parsePath(pathname: string, knownCityIds: Set<string>): { cityId: string; feature: string } {
-  const segments = pathname.split("/").filter(Boolean);
-  if (segments.length === 0) return { cityId: "chennai", feature: "" };
-  if (knownCityIds.has(segments[0])) {
-    return { cityId: segments[0], feature: segments.slice(1).join("/") };
-  }
-  return { cityId: "chennai", feature: segments.join("/") };
-}
-
-/**
- * Build the URL for a target city, given the current feature.
- * Chennai uses flat URLs. Other cities use /{cityId}/<feature>.
- * If the target city doesn't support the feature, fall back to its home.
- */
-function buildTargetUrl(targetCityId: string, feature: string): string {
-  const supported = FEATURE_AVAILABILITY[targetCityId];
-  const featureToUse = supported && supported.has(feature) ? feature : "";
-
-  if (targetCityId === "chennai") {
-    return featureToUse === "" ? "/" : `/${featureToUse}`;
-  }
-  return featureToUse === "" ? `/${targetCityId}` : `/${targetCityId}/${featureToUse}`;
-}
+import {
+  FEATURE_AVAILABILITY,
+  buildCityHref,
+  knownCityIds,
+  parsePath,
+} from "@/lib/cities/routing";
 
 export function CitySwitcher() {
   const pathname = usePathname();
@@ -80,8 +18,7 @@ export function CitySwitcher() {
   const ref = useRef<HTMLDivElement>(null);
 
   const places = listEnabledPlaces();
-  const knownCityIds = new Set(places.map((p) => p.cityId));
-  const { cityId: currentCityId, feature } = parsePath(pathname, knownCityIds);
+  const { cityId: currentCityId, feature } = parsePath(pathname, knownCityIds());
   const currentPlace = places.find((p) => p.cityId === currentCityId) ?? places[0];
 
   useEffect(() => {
@@ -121,7 +58,7 @@ export function CitySwitcher() {
           {places.map((p) => {
             const supported = FEATURE_AVAILABILITY[p.cityId];
             const featureSupported = supported ? supported.has(feature) : false;
-            const targetUrl = buildTargetUrl(p.cityId, feature);
+            const targetUrl = buildCityHref(p.cityId, feature);
             const isCurrent = p.cityId === currentCityId;
             return (
               <Link
