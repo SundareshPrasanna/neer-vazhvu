@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { getZoneLabel } from "@/lib/utils/zone-label";
 import { filterWards, type WardEntry } from "@/lib/utils/ward-filter";
 
 const MAX_WARDS = 3;
@@ -106,7 +107,7 @@ export function WardMultiSelector({
     (wardNumber: number): string => {
       const w = wards.find((entry) => entry.wardNumber === wardNumber);
       return w
-        ? `${wardNumber} - ${getZoneLabel(w.zone, language, t)}`
+        ? `${wardNumber} - ${getZoneLabel(w.zone, language)}`
         : String(wardNumber);
     },
     [language, t, wards],
@@ -238,7 +239,7 @@ export function WardMultiSelector({
                           {t("ward.ward")} {w.wardNumber}
                         </span>
                         <span className="text-slate-500 dark:text-slate-400 ml-2">
-                          {getZoneLabel(w.zone, language, t)}
+                          {getZoneLabel(w.zone, language)}
                         </span>
                       </button>
                     ))
@@ -255,27 +256,4 @@ export function WardMultiSelector({
       </div>
     </div>
   );
-}
-
-function toTitleCase(s: string): string {
-  return s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function zoneKey(zone: string): string {
-  return zone
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "")
-    .replace(/_+/g, "_");
-}
-
-function getZoneLabel(
-  zone: string,
-  language: string,
-  t: (key: string) => string,
-): string {
-  if (language !== "ta") return toTitleCase(zone);
-  const key = `zone_name.${zoneKey(zone)}`;
-  const translated = t(key);
-  return translated === key ? toTitleCase(zone) : translated;
 }

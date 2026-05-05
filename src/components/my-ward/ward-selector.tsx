@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
+import { getZoneLabel } from "@/lib/utils/zone-label";
+import { getZoneLabel } from "@/lib/utils/zone-label";
 import {
   filterWards,
   type WardEntry,
@@ -161,7 +163,7 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
     (wardNumber: number): string => {
       const w = wards.find((w) => w.wardNumber === wardNumber);
       return w
-        ? `${t("ward.ward")} ${w.wardNumber} - ${getZoneLabel(w.zone, language, t)}`
+        ? `${t("ward.ward")} ${w.wardNumber} - ${getZoneLabel(w.zone, language)}`
         : `${t("ward.ward")} ${wardNumber}`;
     },
     [language, t, wards],
@@ -376,7 +378,7 @@ function ResultRow({
         </span>
         <span className="text-xs text-slate-400 dark:text-slate-500">
           {t("ward.ward")} {l.ward_number} ·{" "}
-          {getZoneLabel(l.zone_name, language, t)}
+          {getZoneLabel(l.zone_name, language)}
         </span>
       </button>
     );
@@ -393,7 +395,7 @@ function ResultRow({
           {t("ward.ward")} {w.wardNumber}
         </span>
         <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
-          {getZoneLabel(w.zone, language, t)} {t("ward_search.zone_suffix")}
+          {getZoneLabel(w.zone, language)} {t("ward_search.zone_suffix")}
         </span>
       </button>
     );
@@ -406,34 +408,11 @@ function ResultRow({
       className={`w-full text-left ${px} text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-baseline justify-between gap-2`}
     >
       <span className="font-medium text-slate-900 dark:text-slate-100">
-        {getZoneLabel(z.zoneName, language, t)}
+        {getZoneLabel(z.zoneName, language)}
       </span>
       <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
         {z.wardCount} {t("ward_search.wards")}
       </span>
     </button>
   );
-}
-
-function toTitleCase(s: string): string {
-  return s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function zoneKey(zone: string): string {
-  return zone
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "")
-    .replace(/_+/g, "_");
-}
-
-function getZoneLabel(
-  zone: string,
-  language: string,
-  t: (key: string) => string,
-): string {
-  if (language !== "ta") return toTitleCase(zone);
-  const key = `zone_name.${zoneKey(zone)}`;
-  const translated = t(key);
-  return translated === key ? toTitleCase(zone) : translated;
 }

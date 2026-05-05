@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { getZoneLabel } from "@/lib/utils/zone-label";
 import {
   type WardEntry,
   type LocalityEntry,
@@ -32,11 +33,14 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const sectionLabels: Record<SearchResult["kind"], string> = {
-    locality: t("ward_search.section_areas"),
-    ward: t("ward_search.section_wards"),
-    zone: t("ward_search.section_zones"),
-  };
+  const sectionLabels = useMemo<Record<SearchResult["kind"], string>>(
+    () => ({
+      locality: t("ward_search.section_areas"),
+      ward: t("ward_search.section_wards"),
+      zone: t("ward_search.section_zones"),
+    }),
+    [t],
+  );
 
   useEffect(() => {
     fetch("/api/wards")
@@ -211,7 +215,7 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
 
           {open && query.trim() && results.length === 0 && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-3 text-sm text-slate-500 dark:text-slate-400">
-              {t("ward_search.no_results")} &ldquo;{query}&rdquo;
+              {t("ward_search.no_results_query").replace("{query}", query)}
             </div>
           )}
         </div>
@@ -244,7 +248,7 @@ function ResultRow({
         </span>
         <span className="text-xs text-slate-400 dark:text-slate-500">
           {t("ward.ward")} {l.ward_number} ·{" "}
-          {getZoneLabel(l.zone_name, language, t)}
+          {getZoneLabel(l.zone_name, language)}
         </span>
       </button>
     );
@@ -261,7 +265,7 @@ function ResultRow({
           {t("ward.ward")} {w.wardNumber}
         </span>
         <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
-          {getZoneLabel(w.zone, language, t)} {t("ward_search.zone_suffix")}
+          {getZoneLabel(w.zone, language)} {t("ward_search.zone_suffix")}
         </span>
       </button>
     );
@@ -274,34 +278,11 @@ function ResultRow({
       className="w-full text-left px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-baseline justify-between gap-2"
     >
       <span className="font-medium text-slate-900 dark:text-slate-100">
-        {getZoneLabel(z.zoneName, language, t)}
+        {getZoneLabel(z.zoneName, language)}
       </span>
       <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
         {z.wardCount} {t("ward_search.wards")}
       </span>
     </button>
   );
-}
-
-function toTitleCase(s: string): string {
-  return s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function zoneKey(zone: string): string {
-  return zone
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "")
-    .replace(/_+/g, "_");
-}
-
-function getZoneLabel(
-  zone: string,
-  language: string,
-  t: (key: string) => string,
-): string {
-  if (language !== "ta") return toTitleCase(zone);
-  const key = `zone_name.${zoneKey(zone)}`;
-  const translated = t(key);
-  return translated === key ? toTitleCase(zone) : translated;
 }
