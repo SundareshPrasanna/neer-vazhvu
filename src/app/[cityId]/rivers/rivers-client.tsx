@@ -5,6 +5,13 @@ import dynamic from "next/dynamic";
 import type { Feature } from "geojson";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { useLanguage } from "@/lib/i18n/context";
+// Shared types from the Chennai-baseline pollution model. Each city's
+// industrial-sources-{cityId}.json conforms to IndustrialPollutionData;
+// PollutionSource is the per-row shape.
+import type {
+  PollutionSource as IndustrialSource,
+  IndustrialPollutionData as IndustrialSourcesFile,
+} from "@/types/industrial-pollution";
 
 interface ClientProps {
   cityId: string;
@@ -59,23 +66,6 @@ interface RiverEventsFile {
   events: RiverEvent[];
 }
 
-interface IndustrialSource {
-  id: string;
-  name: string;
-  name_ta?: string;
-  type: string;
-  lat: number;
-  lng: number;
-  operator: string;
-  rivers_affected: string[];
-  pollutants: string[];
-  description: string;
-  url?: string;
-}
-
-interface IndustrialSourcesFile {
-  sources: IndustrialSource[];
-}
 interface CpcbStation {
   id: string;
   name: string;
@@ -528,9 +518,9 @@ function RiverDetail({
               <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed mt-1.5">
                 {s.description}
               </p>
-              {s.url && (
+              {s.source && (
                 <a
-                  href={s.url}
+                  href={s.source}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline mt-1.5 inline-block"

@@ -1,10 +1,27 @@
 // ─── River IDs ──────────────────────────────────────────────────────────────
 
-export const RIVER_IDS = ["cooum", "adyar", "buckingham-canal", "kosasthalaiyar"] as const;
-export type RiverId = (typeof RIVER_IDS)[number];
+/**
+ * A river identifier. Historically a Chennai-only union of 4 literals;
+ * widened to plain string so the same RiverData / RiverQualityData
+ * shape can carry Madurai's vaigai / periyar / suruliyaru / ... and
+ * future cities. ChennaiRiverId preserves the narrow union for
+ * Chennai-specific call sites that need exhaustive typing.
+ */
+export type RiverId = string;
 
-export function isRiverId(value: string): value is RiverId {
-  return (RIVER_IDS as readonly string[]).includes(value);
+export const CHENNAI_RIVER_IDS = ["cooum", "adyar", "buckingham-canal", "kosasthalaiyar"] as const;
+export type ChennaiRiverId = (typeof CHENNAI_RIVER_IDS)[number];
+
+/** Backwards-compat alias - some Chennai code paths import RIVER_IDS. */
+export const RIVER_IDS = CHENNAI_RIVER_IDS;
+
+export function isChennaiRiverId(value: string): value is ChennaiRiverId {
+  return (CHENNAI_RIVER_IDS as readonly string[]).includes(value);
+}
+
+/** Backwards-compat alias. */
+export function isRiverId(value: string): boolean {
+  return isChennaiRiverId(value);
 }
 
 // ─── Quality types ──────────────────────────────────────────────────────────

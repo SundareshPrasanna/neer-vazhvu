@@ -53,6 +53,14 @@ interface CombinedRiversMapProps {
   onSelectSource: (source: PollutionSource | null) => void;
   focusCenter?: [number, number];
   hiddenCategories?: Set<string>;
+  /** Path to the city's rivers GeoJSON. Defaults to Chennai's. */
+  riversGeoJsonUrl?: string;
+  /** Path to the city's industrial-zones GeoJSON. Defaults to Chennai's. */
+  industrialZonesGeoJsonUrl?: string;
+  /** Initial map center. Defaults to Chennai's centroid. */
+  mapCenter?: [number, number];
+  /** Initial map zoom. */
+  mapZoom?: number;
 }
 
 export function CombinedRiversMap({
@@ -64,6 +72,10 @@ export function CombinedRiversMap({
   onSelectSource,
   focusCenter,
   hiddenCategories,
+  riversGeoJsonUrl = "/geojson/chennai-rivers.geojson?v=6",
+  industrialZonesGeoJsonUrl = "/geojson/chennai-industrial-zones.geojson",
+  mapCenter,
+  mapZoom = 11,
 }: CombinedRiversMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
@@ -74,15 +86,15 @@ export function CombinedRiversMap({
 
   useEffect(() => {
     Promise.all([
-      fetch("/geojson/chennai-rivers.geojson?v=6").then((r) => r.json()),
-      fetch("/geojson/chennai-industrial-zones.geojson").then((r) => r.json()),
+      fetch(riversGeoJsonUrl).then((r) => r.json()),
+      fetch(industrialZonesGeoJsonUrl).then((r) => (r.ok ? r.json() : null)),
     ])
-      .then(([rivers, zones]: [FeatureCollection, FeatureCollection]) => {
+      .then(([rivers, zones]: [FeatureCollection, FeatureCollection | null]) => {
         setRiversGeoJSON(rivers);
         setZonesGeoJSON(zones);
       })
       .catch(console.error);
-  }, []);
+  }, [riversGeoJsonUrl, industrialZonesGeoJsonUrl]);
 
   const riverMetaMap = useMemo(
     () => new Map(qualityData.rivers.map((river) => [river.id, river])),
@@ -361,7 +373,10 @@ export function CombinedRiversMap({
     });
   };
 
-  if (!riversGeoJSON || !zonesGeoJSON) {
+  // Block render until rivers GeoJSON has loaded; zonesGeoJSON is
+  // optional (some cities don't have an industrial-zones polygon set
+  // - that's fine, the zones layer just doesn't draw).
+  if (!riversGeoJSON) {
     return (
       <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
         <span className="text-slate-500 dark:text-slate-400">{t("common.loading_map")}</span>
@@ -371,8 +386,8 @@ export function CombinedRiversMap({
 
   return (
     <MapContainer
-      center={[13.05, 80.22]}
-      zoom={11}
+      center={mapCenter ?? [13.05, 80.22]}
+      zoom={mapZoom}
       className="h-full w-full"
       scrollWheelZoom={true}
     >
@@ -380,7 +395,7 @@ export function CombinedRiversMap({
       {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* Render order: zones (bottom) → rivers → stations → sources → highlight (top) */}
-      {!(hiddenCategories?.has("industrial_zone")) && (
+      {zonesGeoJSON && !(hiddenCategories?.has("industrial_zone")) && (
         <GeoJSON key={`zones-${tiles.url}`} data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />
       )}
       {/* Rivers as direct Polylines (GeoJSON component has rendering bugs with long paths) */}

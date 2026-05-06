@@ -2,8 +2,8 @@
 
 import type { PollutionSource, IndustrialPollutionData } from "@/types/industrial-pollution";
 import {
-  SOURCE_TYPE_COLORS,
-  POLLUTANT_COLORS,
+  sourceTypeColor,
+  pollutantColor,
   RIVER_DISPLAY_NAMES,
 } from "@/types/industrial-pollution";
 import { useLanguage } from "@/lib/i18n/context";
@@ -16,7 +16,7 @@ interface PollutionPanelProps {
 
 export function PollutionPanel({ source, data, onClose }: PollutionPanelProps) {
   const { t, language } = useLanguage();
-  const typeColor = SOURCE_TYPE_COLORS[source.type];
+  const typeColor = sourceTypeColor(source.type);
   const typeLabel = t(`rivers_legend.${source.type}`);
   const primarySourceName = language === "ta" ? (source.name_ta ?? source.name) : source.name;
   const secondarySourceName = language === "ta" ? source.name : source.name_ta;
@@ -106,7 +106,7 @@ export function PollutionPanel({ source, data, onClose }: PollutionPanelProps) {
             {source.pollutants.map((p) => (
               <span
                 key={p}
-                className={`px-2 py-0.5 rounded text-xs font-medium ${POLLUTANT_COLORS[p]}`}
+                className={`px-2 py-0.5 rounded text-xs font-medium ${pollutantColor(p)}`}
               >
                 {t(`poll.${p}`)}
               </span>
