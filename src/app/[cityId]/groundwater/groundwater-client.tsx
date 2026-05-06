@@ -50,6 +50,7 @@ interface WardRiskFile {
     gw_depth_m: number | null;
     wb_count: number;
     wb_health_score: number | null;
+    centroid_latlng?: [number, number];
   }>;
 }
 
@@ -102,6 +103,7 @@ export default function CityGroundwaterClient() {
   const [interpolated, setInterpolated] = useState<InterpolatedWardsResponse | null>(null);
   const [riskFile, setRiskFile] = useState<WardRiskFile | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("exploitation");
+  const [selectedWard, setSelectedWard] = useState<GroundwaterWard | null>(null);
 
   const assets = useMemo(() => (config ? assetsForCity(config) : null), [config]);
 
@@ -298,8 +300,10 @@ export default function CityGroundwaterClient() {
               wrisStations={wrisStations}
               selectedWrisStationCode={selectedWrisStation?.stationCode ?? null}
               hiddenCategories={hiddenCategories}
-              onWardSelect={() => {
-                /* no-op for non-Chennai cities (no ward data) */
+              onWardSelect={(w) => {
+                setSelectedWard(w);
+                setSelectedBlock(null);
+                setSelectedWrisStation(null);
               }}
               onBlockSelect={(b) => {
                 setSelectedBlock(b);
@@ -377,7 +381,151 @@ export default function CityGroundwaterClient() {
             />
           </BottomSheet>
         )}
+        {selectedWard && (
+          <BottomSheet onClose={() => setSelectedWard(null)}>
+            <WardDepthPanel
+              ward={selectedWard}
+              wrisStations={wrisStations}
+              riskWard={riskFile?.wards.find((w) => w.ward_number === selectedWard.wardNumber) ?? null}
+              onSelectStation={(s) => {
+                setSelectedWrisStation(s);
+                setSelectedWard(null);
+              }}
+              onClose={() => setSelectedWard(null)}
+            />
+          </BottomSheet>
+        )}
       </div>
+    </div>
+  );
+}
+
+/* ── ward depth detail panel ────────────────────────────────────────
+   Surfaces the contributing CGWB stations for the clicked ward, sorted
+   by distance from the ward centroid. Clicking any station opens the
+   existing WrisStationPanel which has the time-series chart. */
+
+function haversineKmLocal(a: [number, number], b: [number, number]): number {
+  const R = 6371;
+  const dLat = ((b[0] - a[0]) * Math.PI) / 180;
+  const dLng = ((b[1] - a[1]) * Math.PI) / 180;
+  const lat1 = (a[0] * Math.PI) / 180;
+  const lat2 = (b[0] * Math.PI) / 180;
+  const h = Math.sin(dLat / 2) ** 2 + Math.sin(dLng / 2) ** 2 * Math.cos(lat1) * Math.cos(lat2);
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+function WardDepthPanel({
+  ward,
+  wrisStations,
+  riskWard,
+  onSelectStation,
+  onClose,
+}: {
+  ward: GroundwaterWard;
+  wrisStations: WrisStation[];
+  riskWard: WardRiskFile["wards"][number] | null;
+  onSelectStation: (s: WrisStation) => void;
+  onClose: () => void;
+}) {
+  // Compute the nearest contributing stations using ward centroid from
+  // the risk file (which carries centroid_latlng). If risk data is absent
+  // we fall back to the city-wide list ranked alphabetically.
+  const centroid: [number, number] | null = riskWard?.centroid_latlng ?? null;
+  const ranked = centroid
+    ? [...wrisStations]
+        .filter((s) => typeof s.latitude === "number" && typeof s.longitude === "number")
+        .map((s) => ({
+          station: s,
+          distKm: haversineKmLocal(centroid, [s.latitude as number, s.longitude as number]),
+        }))
+        .sort((a, b) => a.distKm - b.distKm)
+        .slice(0, 4)
+    : wrisStations.slice(0, 4).map((s) => ({ station: s, distKm: null as number | null }));
+
+  return (
+    <div className="bg-white dark:bg-slate-900 w-full p-4 sm:p-5 overflow-y-auto">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">
+            Ward {ward.wardNumber}
+          </h3>
+          {ward.zone && <div className="text-xs text-slate-500">{ward.zone}</div>}
+        </div>
+        <button
+          onClick={onClose}
+          className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md"
+          aria-label="Close panel"
+        >
+          <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+        <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-2">
+          <div className="text-[10px] uppercase text-slate-500">Interpolated depth</div>
+          <div className="font-semibold mt-0.5 text-base">
+            {ward.depthM !== null ? `${ward.depthM.toFixed(1)} m` : "no data"}
+          </div>
+          <div className="text-[10px] text-slate-500">below ground level</div>
+        </div>
+        {riskWard && (
+          <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-2">
+            <div className="text-[10px] uppercase text-slate-500">Risk grade</div>
+            <div className="font-semibold mt-0.5 text-base">
+              {riskWard.grade === "incomplete" ? "—" : riskWard.grade}
+            </div>
+            <div className="text-[10px] text-slate-500">
+              {riskWard.composite_score !== null ? `${riskWard.composite_score}/100 composite` : "incomplete"}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">
+        Contributing stations · click for time series
+      </div>
+      {ranked.length === 0 && (
+        <p className="text-xs text-slate-500">No CGWB stations within range of this ward.</p>
+      )}
+      <div className="space-y-1.5">
+        {ranked.map(({ station, distKm }) => (
+          <button
+            key={station.stationCode}
+            onClick={() => onSelectStation(station)}
+            className="w-full text-left border border-slate-200 dark:border-slate-700 rounded-md p-2 hover:border-blue-400 transition-colors"
+          >
+            <div className="flex items-baseline justify-between gap-2 flex-wrap">
+              <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                {station.stationName}
+              </span>
+              {distKm !== null && (
+                <span className="text-[10px] font-mono text-slate-500">
+                  {distKm.toFixed(1)} km
+                </span>
+              )}
+            </div>
+            <div className="flex items-baseline justify-between gap-2 text-[11px] mt-0.5">
+              <span className="text-slate-500">
+                {station.acquisitionMode}
+                {station.wellAquiferType && ` · ${station.wellAquiferType}`}
+              </span>
+              <span className="font-mono text-slate-700 dark:text-slate-300">
+                {Math.abs(station.latestDepthM).toFixed(1)} m
+                <span className="text-slate-400 ml-1">({station.latestDate})</span>
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      <p className="text-[10px] text-slate-400 italic mt-3">
+        Ward depth is interpolated from the four nearest CGWB stations
+        within 15 km of the ward centroid. Click a station above to open
+        its full reading history.
+      </p>
     </div>
   );
 }
