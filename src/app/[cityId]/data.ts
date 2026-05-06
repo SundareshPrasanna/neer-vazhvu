@@ -24,7 +24,42 @@ export interface CitySnapshot {
 // HistorySeries / ForecastSeries types live in @/types/reservoir so the
 // chart component can be reused by any city.
 export type { HistorySeries, HistorySeriesPoint, ForecastSeries, ForecastSeriesPoint } from "@/types/reservoir";
-import type { HistorySeries, HistorySeriesPoint, ForecastSeries } from "@/types/reservoir";
+import type { HistorySeries, HistorySeriesPoint, ForecastSeries, ReservoirSummary } from "@/types/reservoir";
+
+const TMC_TO_MCFT = 1000;
+
+/**
+ * Convert a CitySnapshot to the ReservoirSummary[] shape that Chennai's
+ * shared ReservoirCards consumes. Storage_tmc x 1000 = mcft; the capacity
+ * comes from the place config so the percent-of-FRL is consistent across
+ * cities even when the database row's own pct column is missing.
+ */
+export function snapshotToSummaries(
+  config: PlaceConfig,
+  snapshot: CitySnapshot,
+): ReservoirSummary[] {
+  return config.waterSources.map((source) => {
+    const reading = snapshot.readingsBySource[source.sourceCode];
+    const capacityMcft = source.fullCapacityMcft ?? 0;
+    const storageMcft = ((reading?.storage_tmc as number | null | undefined) ?? 0) * TMC_TO_MCFT;
+    const pct =
+      reading?.storage_pct_frl != null
+        ? (reading.storage_pct_frl as number)
+        : capacityMcft > 0
+          ? (storageMcft / capacityMcft) * 100
+          : 0;
+    return {
+      name: source.sourceCode,
+      displayName: source.displayName,
+      currentStorage: storageMcft,
+      capacity: capacityMcft,
+      storagePct: Math.max(0, Math.min(100, pct)),
+      inflowCusecs: (reading?.inflow_cusecs as number | null | undefined) ?? 0,
+      outflowCusecs: (reading?.outflow_cusecs as number | null | undefined) ?? 0,
+      rainfallMm: 0, // not tracked in v2 ingest yet
+    };
+  });
+}
 
 export interface CityHistory {
   earliestDate: string | null;
@@ -57,7 +92,6 @@ const EMPTY_ESTIMATE: CityWaterEstimate = {
   lastUpdated: null,
 };
 
-const TMC_TO_MCFT = 1000;
 const CUSEC_DAY_TO_MCFT = 0.0864;
 
 /**
