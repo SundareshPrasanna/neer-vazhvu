@@ -228,13 +228,13 @@ export function WardMap({
     blockLayerRef.current?.setStyle(blockStyle as L.StyleFunction);
   }, [hiddenCategories, blockStyle]);
 
-  if (viewMode === "exploitation" ? !blockGeoJSON : !wardGeoJSON) {
-    return (
-      <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-slate-500 dark:text-slate-400">{t("common.loading_map")}</span>
-      </div>
-    );
-  }
+  // Show a tiny non-blocking overlay while the relevant layer for the
+  // current viewMode is still loading. Crucially, we DO NOT unmount the
+  // MapContainer here - if the user switches viewMode while one layer
+  // hasn't finished loading, unmounting + remounting the MapContainer
+  // resets Leaflet's internal zoom/center to the initial mapZoom prop,
+  // which is what caused the "zoom jumps when switching tabs" bug.
+  const layerLoading = viewMode === "exploitation" ? !blockGeoJSON : !wardGeoJSON;
 
   return (
     <MapContainer
@@ -243,6 +243,11 @@ export function WardMap({
       className="h-full w-full"
       scrollWheelZoom={true}
     >
+      {layerLoading && (
+        <div className="absolute inset-0 z-[600] bg-slate-100/40 dark:bg-slate-800/40 flex items-center justify-center pointer-events-none">
+          <span className="text-slate-500 dark:text-slate-400 text-sm">{t("common.loading_map")}</span>
+        </div>
+      )}
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {flyToWard && <FlyToWard wardNumber={flyToWard} wardGeoJsonUrl={wardGeoJsonUrl} />}
@@ -326,7 +331,7 @@ export function WardMap({
             <GeoJSON ref={(layer) => { wardLayerRef.current = layer; }} key={`${viewMode}-${tiles.url}`} data={wardGeoJSON} style={wardStyle} onEachFeature={onEachWard} />
           )}
           {/* key includes viewMode so highlight remounts on top after choropleth remounts */}
-          <SelectedWardHighlight key={`highlight-${viewMode}`} wardNumber={selectedWardNumber ?? null} />
+          <SelectedWardHighlight key={`highlight-${viewMode}`} wardNumber={selectedWardNumber ?? null} wardGeoJsonUrl={wardGeoJsonUrl} />
 
           {/* Live CGWB stations overlay (India WRIS) - only on depth view */}
           {viewMode === "depth" && wrisStations?.map((s) => {
