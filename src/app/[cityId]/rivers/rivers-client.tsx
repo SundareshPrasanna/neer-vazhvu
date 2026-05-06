@@ -5,13 +5,17 @@ import dynamic from "next/dynamic";
 import type { Feature } from "geojson";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { useLanguage } from "@/lib/i18n/context";
-// Shared types from the Chennai-baseline pollution model. Each city's
-// industrial-sources-{cityId}.json conforms to IndustrialPollutionData;
-// PollutionSource is the per-row shape.
+// Shared types from the Chennai-baseline pollution + river-quality
+// models. Each city's industrial-sources-{cityId}.json conforms to
+// IndustrialPollutionData; PollutionSource is the per-row shape.
+// RiverQualityData / SelectedRiver are reused from Chennai so the
+// shared RiverPanel can render any city's data.
 import type {
   PollutionSource as IndustrialSource,
   IndustrialPollutionData as IndustrialSourcesFile,
 } from "@/types/industrial-pollution";
+import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
+import { RiverPanel } from "@/components/rivers/river-panel";
 
 interface ClientProps {
   cityId: string;
@@ -37,9 +41,9 @@ export interface RiverInfo {
   color: string;
 }
 
-// Slim shape of public/data/river-quality-{cityId}.json - same schema
-// Chennai's RiverQualityData uses but without the strict RiverId enum,
-// so this works for any city's NWMP file.
+// CPCB reading shape used by the marker tooltip / colour-coding logic.
+// The full reading schema is now imported via RiverQualityData; the
+// type below is the minimum the marker layer needs.
 interface CpcbReading {
   year: number;
   do_mgl: number | null;
@@ -66,23 +70,9 @@ interface RiverEventsFile {
   events: RiverEvent[];
 }
 
-interface CpcbStation {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  stretch: string;
-  readings: CpcbReading[];
-}
-interface CpcbRiver {
-  id: string;
-  stations: CpcbStation[];
-}
-interface CpcbFile {
-  data_year_range: [number, number];
-  source: string;
-  rivers: CpcbRiver[];
-}
+// Use Chennai's RiverQualityData shape directly so the shared
+// RiverPanel can render Madurai's data without a transformer.
+type CpcbFile = RiverQualityData;
 
 interface RiverGeoFeature {
   river_id: string;
@@ -208,11 +198,6 @@ export default function RiversClient({
     () => rivers.find((r) => r.river_id === selectedRiverId) ?? null,
     [rivers, selectedRiverId],
   );
-  const selectedCpcbRiver = useMemo(
-    () => cpcb?.rivers.find((r) => r.id === selectedRiverId) ?? null,
-    [cpcb, selectedRiverId],
-  );
-
   // Flatten CPCB stations across all rivers for the map markers; latest
   // reading is the row with the highest year, even if some metrics are
   // null.
@@ -267,16 +252,20 @@ export default function RiversClient({
           />
         </div>
 
-        {/* Detail sidebar */}
+        {/* Detail sidebar - same RiverPanel Chennai uses, with Madurai's
+            extras (court orders + industrial sources for the selected
+            river) passed through the additionalSections slot. */}
         <div className="hidden md:flex h-full md:w-96 lg:w-[420px] border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto">
-          {selectedInfo && selectedRiver ? (
-            <RiverDetail
-              info={selectedInfo}
-              geomLengthKm={selectedRiver.length_km}
-              nameTa={selectedRiver.name_ta}
-              cpcbRiver={selectedCpcbRiver}
-              events={selectedEvents}
-              industrial={selectedIndustrial}
+          {selectedRiverId && cpcb ? (
+            <RiverPanel
+              selected={{ riverId: selectedRiverId, latlng: mapCenter }}
+              qualityData={cpcb}
+              cityId={cityId}
+              cityDisplayName={cityDisplayName}
+              additionalSections={
+                <RiverExtraSections events={selectedEvents} industrial={selectedIndustrial} />
+              }
+              onClose={() => setSelectedRiverId(null)}
             />
           ) : (
             <div className="p-4 text-sm text-slate-500">Click a river to see details.</div>
@@ -284,16 +273,18 @@ export default function RiversClient({
         </div>
       </div>
 
-      {/* Mobile bottom panel */}
-      {selectedInfo && selectedRiver && (
+      {/* Mobile bottom panel - same component */}
+      {selectedRiverId && cpcb && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[40vh] overflow-y-auto">
-          <RiverDetail
-            info={selectedInfo}
-            geomLengthKm={selectedRiver.length_km}
-            nameTa={selectedRiver.name_ta}
-            cpcbRiver={selectedCpcbRiver}
-            events={selectedEvents}
-            industrial={selectedIndustrial}
+          <RiverPanel
+            selected={{ riverId: selectedRiverId, latlng: mapCenter }}
+            qualityData={cpcb}
+            cityId={cityId}
+            cityDisplayName={cityDisplayName}
+            additionalSections={
+              <RiverExtraSections events={selectedEvents} industrial={selectedIndustrial} />
+            }
+            onClose={() => setSelectedRiverId(null)}
           />
         </div>
       )}
@@ -301,36 +292,11 @@ export default function RiversClient({
   );
 }
 
-function StationReadingsTable({ station }: { station: CpcbStation }) {
-  if (station.readings.length === 0) return null;
-  const sorted = [...station.readings].sort((a, b) => a.year - b.year);
-  return (
-    <div className="text-[11px] mt-1 overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="text-slate-500">
-            <th className="text-left font-normal pr-2">Year</th>
-            <th className="text-right font-normal pr-2">DO</th>
-            <th className="text-right font-normal pr-2">BOD</th>
-            <th className="text-right font-normal pr-2">pH</th>
-            <th className="text-right font-normal">FC</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((r) => (
-            <tr key={r.year}>
-              <td className="pr-2 text-slate-700 dark:text-slate-300">{r.year}</td>
-              <td className="text-right pr-2 tabular-nums">{r.do_mgl ?? "-"}</td>
-              <td className="text-right pr-2 tabular-nums">{r.bod_mgl ?? "-"}</td>
-              <td className="text-right pr-2 tabular-nums">{r.ph ?? "-"}</td>
-              <td className="text-right tabular-nums">{r.fecal_coliform_mpn ?? "-"}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+
+/* ── Extra sections rendered inside the shared RiverPanel ────────────
+   Court-orders / events panel + industrial pollution sources filtered
+   to the selected river. Both are city-extras the Chennai-baseline
+   RiverPanel doesn't ship by default. */
 
 const EVENT_TONE: Record<EventCategory, { bg: string; text: string; label: string }> = {
   court_order: { bg: "bg-red-100 dark:bg-red-900/40 border-red-300 dark:border-red-700",       text: "text-red-800 dark:text-red-200",       label: "Court order" },
@@ -340,111 +306,16 @@ const EVENT_TONE: Record<EventCategory, { bg: string; text: string; label: strin
   restoration: { bg: "bg-emerald-100 dark:bg-emerald-900/40 border-emerald-300 dark:border-emerald-700", text: "text-emerald-800 dark:text-emerald-200", label: "Restoration" },
 };
 
-function RiverDetail({
-  info,
-  geomLengthKm,
-  nameTa,
-  cpcbRiver,
-  events,
-  industrial,
-}: {
-  info: RiverInfo;
-  geomLengthKm: number;
-  nameTa: string;
-  cpcbRiver: CpcbRiver | null;
-  events: RiverEvent[];
-  industrial: IndustrialSource[];
-}) {
-  const hasReadings = !!cpcbRiver?.stations.some((s) => s.readings.length > 0);
+function RiverExtraSections({ events, industrial }: { events: RiverEvent[]; industrial: IndustrialSource[] }) {
+  if (events.length === 0 && industrial.length === 0) return null;
   return (
-    <div className="p-4 space-y-3">
-      <div>
-        <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-          {info.display_name}
-        </h2>
-        {nameTa && <p className="text-xs text-slate-500 italic">{nameTa}</p>}
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-2">
-          <div className="text-[10px] uppercase text-slate-500">OSM length</div>
-          <div className="font-semibold mt-0.5">{geomLengthKm.toFixed(0)} km</div>
-        </div>
-        <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-2">
-          <div className="text-[10px] uppercase text-slate-500">Status</div>
-          <div className="font-semibold mt-0.5 truncate">{info.status}</div>
-        </div>
-      </div>
-
-      <div className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-        {info.description}
-      </div>
-
-      <div className="space-y-2 text-xs">
-        <div>
-          <span className="text-slate-500 uppercase tracking-wider text-[10px] block">Upstream</span>
-          <span className="text-slate-700 dark:text-slate-300">{info.upstream_terminus}</span>
-        </div>
-        <div>
-          <span className="text-slate-500 uppercase tracking-wider text-[10px] block">Downstream</span>
-          <span className="text-slate-700 dark:text-slate-300">{info.downstream_terminus}</span>
-        </div>
-        <div>
-          <span className="text-slate-500 uppercase tracking-wider text-[10px] block">Feeds</span>
-          <span className="text-slate-700 dark:text-slate-300">{info.feeds}</span>
-        </div>
-      </div>
-
-      {hasReadings && cpcbRiver ? (
-        <div>
-          <div className="text-[10px] uppercase text-slate-500 tracking-wider mb-1">
-            CPCB NWMP annual readings
-          </div>
-          <div className="space-y-3">
-            {cpcbRiver.stations
-              .filter((s) => s.readings.length > 0)
-              .map((s) => (
-                <div key={s.id} className="border border-slate-200 dark:border-slate-700 rounded-md p-2">
-                  <div className="font-medium text-xs text-slate-800 dark:text-slate-200">{s.name}</div>
-                  <div className="text-[10px] text-slate-500">{s.stretch}</div>
-                  <StationReadingsTable station={s} />
-                </div>
-              ))}
-          </div>
-          <p className="text-[10px] text-slate-400 italic mt-1.5">
-            Values are min-max midpoints from CPCB annual River Water Quality reports. DO mg/L, BOD mg/L, FC = fecal coliform MPN/100ml.
-          </p>
-        </div>
-      ) : (
-        info.cpcb_nwmp_stations.length > 0 && (
-          <div>
-            <div className="text-[10px] uppercase text-slate-500 tracking-wider mb-1">
-              CPCB NWMP stations (planned)
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {info.cpcb_nwmp_stations.map((s) => (
-                <span
-                  key={s}
-                  className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-            <p className="text-[10px] text-slate-400 italic mt-1.5">
-              Annual NWMP samples (BOD, DO, pH, fecal coliform) - drop CPCB report PDFs in docs/cpcb/ and run scrape_cpcb_nwmp_vaigai.py to populate readings.
-            </p>
-          </div>
-        )
-      )}
-
+    <>
       {events.length > 0 && (
-        <div className="space-y-2">
+        <div className="mb-5 space-y-2">
           <div className="text-[10px] uppercase text-slate-500 tracking-wider">
             Court orders &amp; key events ({events.length})
           </div>
-          {events
-            .slice()
+          {[...events]
             .sort((a, b) => (b.date > a.date ? 1 : -1))
             .map((e) => {
               const tone = EVENT_TONE[e.category];
@@ -486,7 +357,7 @@ function RiverDetail({
       )}
 
       {industrial.length > 0 && (
-        <div className="space-y-2">
+        <div className="mb-5 space-y-2">
           <div className="text-[10px] uppercase text-slate-500 tracking-wider">
             Industrial sources affecting this river ({industrial.length})
           </div>
@@ -532,6 +403,6 @@ function RiverDetail({
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

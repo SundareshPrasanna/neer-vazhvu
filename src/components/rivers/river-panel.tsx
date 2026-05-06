@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { RiverQualityChart } from "@/components/rivers/river-quality-chart";
 import { ConnectedInsight } from "@/components/insights/connected-insight";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
@@ -19,9 +19,26 @@ interface RiverPanelProps {
   qualityData: RiverQualityData;
   onClose: () => void;
   onStationChange?: (stationId: string) => void;
+  /** City id - threads through to RestorationSection so the right city's
+   *  restoration-projects-{cityId}.json gets loaded. Defaults to Chennai. */
+  cityId?: string;
+  /** City display name - seeds NewsContext's Google News query. */
+  cityDisplayName?: string;
+  /** Optional extra sections rendered after the standard panel content
+   *  (e.g. court-orders / events panel for Madurai, industrial sources
+   *  filtered to the selected river). */
+  additionalSections?: ReactNode;
 }
 
-export function RiverPanel({ selected, qualityData, onClose, onStationChange }: RiverPanelProps) {
+export function RiverPanel({
+  selected,
+  qualityData,
+  onClose,
+  onStationChange,
+  cityId,
+  cityDisplayName,
+  additionalSections,
+}: RiverPanelProps) {
   const { t, language } = useLanguage();
   const river = qualityData.rivers.find((r) => r.id === selected.riverId);
   const [fallbackStationId, setFallbackStationId] = useState<string | undefined>(
@@ -117,7 +134,7 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
           </div>
         )}
 
-        <RestorationSection riverId={river.id} />
+        <RestorationSection riverId={river.id} cityId={cityId} />
 
         {/* Description */}
         {river.description && (
@@ -128,7 +145,9 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
           </div>
         )}
 
-        <NewsContext domain="rivers" locationName={`${river.name} river`} />
+        {additionalSections}
+
+        <NewsContext domain="rivers" locationName={`${river.name} river`} cityName={cityDisplayName} />
 
         <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">
           <p>
@@ -614,7 +633,7 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
         </div>
       )}
 
-      <RestorationSection riverId={river.id} />
+      <RestorationSection riverId={river.id} cityId={cityId} />
 
       {/* Description */}
       {river.description && (
@@ -625,7 +644,9 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
         </div>
       )}
 
-      <NewsContext domain="rivers" locationName={`${river.name} river`} />
+      {additionalSections}
+
+      <NewsContext domain="rivers" locationName={`${river.name} river`} cityName={cityDisplayName} />
 
       {/* Source */}
       <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">
