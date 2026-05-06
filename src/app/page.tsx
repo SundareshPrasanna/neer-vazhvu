@@ -14,7 +14,7 @@ import {
   RESERVOIR_METADATA,
 } from "@/lib/utils/constants";
 import { getGroundwaterStatus } from "@/types/groundwater";
-import type { ReservoirSummary, ReservoirName } from "@/types/reservoir";
+import type { ReservoirSummary, ChennaiReservoirName } from "@/types/reservoir";
 import type { GroundwaterApiResponse } from "@/types/groundwater";
 import type { ReservoirCatchmentContextRow } from "@/lib/gee/reservoir-context";
 import { formatDate } from "@/lib/utils/format";
@@ -47,9 +47,9 @@ async function getReservoirData() {
 
   const reservoirs: ReservoirSummary[] = todayReservoirs
     .map((r: Record<string, unknown>) => {
-      const m = RESERVOIR_METADATA[r.reservoir as ReservoirName];
+      const m = RESERVOIR_METADATA[r.reservoir as ChennaiReservoirName];
       return {
-        name: r.reservoir as ReservoirName,
+        name: r.reservoir as ChennaiReservoirName,
         displayName: m?.displayName || (r.reservoir as string),
         currentStorage: (r.current_storage_mcft as number) || 0,
         capacity: (r.capacity_mcft as number) || m?.fullCapacityMcft || 0,
@@ -375,7 +375,7 @@ async function getReservoirCatchmentContextRows(): Promise<ReservoirCatchmentCon
   }
 
   return rowsResult.data.map((row) => ({
-    reservoir: row.reservoir as ReservoirName,
+    reservoir: row.reservoir as ChennaiReservoirName,
     contextDate: row.context_date,
     windowDays: row.window_days,
     rainTotalMm: Number(row.rain_total_mm ?? 0),

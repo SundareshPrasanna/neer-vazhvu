@@ -21,40 +21,16 @@ export interface CitySnapshot {
   reservoirIsLive: boolean;
 }
 
-export interface HistorySeriesPoint {
-  date: string;
-  storage_tmc: number | null;
-  storage_pct_frl: number | null;
-}
-
-export interface HistorySeries {
-  source_code: string;
-  display_name: string;
-  full_capacity_mcft: number | null;
-  full_tank_level_ft: number | null;
-  is_primary: boolean;
-  points: HistorySeriesPoint[];
-}
+// HistorySeries / ForecastSeries types live in @/types/reservoir so the
+// chart component can be reused by any city.
+export type { HistorySeries, HistorySeriesPoint, ForecastSeries, ForecastSeriesPoint } from "@/types/reservoir";
+import type { HistorySeries, HistorySeriesPoint, ForecastSeries } from "@/types/reservoir";
 
 export interface CityHistory {
   earliestDate: string | null;
   latestDate: string | null;
   pointCount: number;
   series: HistorySeries[];
-}
-
-export interface ForecastSeriesPoint {
-  date: string;
-  predicted_tmc: number;
-  lower_tmc: number;
-  upper_tmc: number;
-}
-
-export interface ForecastSeries {
-  source_code: string;
-  forecast_date: string;
-  model_name: string;
-  points: ForecastSeriesPoint[];
 }
 
 export interface CityForecast {

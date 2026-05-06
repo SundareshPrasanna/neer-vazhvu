@@ -1,4 +1,14 @@
-export type ReservoirName =
+/**
+ * A reservoir source code. Historically a Chennai-only enum; widened to
+ * string so the same ReservoirSummary / ReservoirCards components can
+ * carry Madurai's vaigai / mullaperiyar / sothuparai (and future cities)
+ * without a per-city type fork. ChennaiReservoirName preserves the narrow
+ * union for Chennai-specific code paths (CMWSSB scraper, RESERVOIR_METADATA
+ * keyed lookup, i18n display name table).
+ */
+export type ReservoirName = string;
+
+export type ChennaiReservoirName =
   | 'poondi'
   | 'cholavaram'
   | 'redhills'
@@ -55,4 +65,39 @@ export interface ReservoirApiResponse {
     storagePct: number;
   };
   history: HistoryPoint[];
+}
+
+/**
+ * Per-source historical reading (one TMC/percent value per date).
+ */
+export interface HistorySeriesPoint {
+  date: string;
+  storage_tmc: number | null;
+  storage_pct_frl: number | null;
+}
+
+export interface HistorySeries {
+  source_code: string;
+  display_name: string;
+  full_capacity_mcft: number | null;
+  full_tank_level_ft: number | null;
+  is_primary: boolean;
+  points: HistorySeriesPoint[];
+}
+
+/**
+ * Per-source forecast (one prediction with 80% confidence band per target date).
+ */
+export interface ForecastSeriesPoint {
+  date: string;
+  predicted_tmc: number;
+  lower_tmc: number;
+  upper_tmc: number;
+}
+
+export interface ForecastSeries {
+  source_code: string;
+  forecast_date: string;
+  model_name: string;
+  points: ForecastSeriesPoint[];
 }

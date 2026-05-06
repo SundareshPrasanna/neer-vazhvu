@@ -9,7 +9,7 @@ import {
   loadCityForecast,
   loadCityWaterEstimate,
 } from "./data";
-import ReservoirHistoryChart from "./reservoir-history-chart";
+import { MultiSourceHistoryChart } from "@/components/dashboard/multi-source-history-chart";
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
 import { NewsSection } from "@/components/insights/news-section";
@@ -302,7 +302,7 @@ export default async function CityHomePage({ params }: PageProps) {
       {/* Reservoir history trend chart - works for any city, gracefully
           shows a "backfill pending" callout when reservoir_daily_v2 has
           no rows yet. */}
-      <ReservoirHistoryChart
+      <MultiSourceHistoryChart
         series={history.series}
         forecast={forecast.series}
         forecastDate={forecast.forecastDate}
