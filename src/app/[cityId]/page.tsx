@@ -122,7 +122,11 @@ export default async function CityHomePage({ params }: PageProps) {
           lastUpdated={formatDate(waterEstimate.lastUpdated)}
           comparison2019Storage={waterEstimate.comparison2019Storage}
           defaultConsumptionMld={config.defaultConsumptionMld ?? undefined}
-          defaultDesalinationMld={config.defaultDesalinationMld ?? undefined}
+          // null in the city config means "this city has no desalination
+          // contribution" - pass 0 explicitly so DaysLeftHero doesn't fall
+          // back to Chennai's 190 MLD default and end up with negative net
+          // demand (which clamps days to MAX_DAYS = "Safe").
+          defaultDesalinationMld={config.defaultDesalinationMld ?? 0}
         />
       )}
 

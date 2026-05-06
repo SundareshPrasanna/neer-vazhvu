@@ -144,16 +144,14 @@ export function DaysLeftHero({
           {/* Big number */}
           <div className="text-center sm:text-left">
             <div className={`text-4xl sm:text-5xl md:text-6xl font-bold ${getSeverityColor(days.pessimistic)}`}>
-              {days.pessimistic >= MAX_DAYS ? (
-                <>{t("hero.safe")}</>
-              ) : days.optimistic >= MAX_DAYS ? (
+              {days.optimistic >= MAX_DAYS ? (
                 <>{formatDays(days.pessimistic, t)}<span className="text-2xl text-slate-400 dark:text-slate-500">+</span></>
               ) : (
                 <>{formatDays(days.pessimistic, t)}<span className="text-2xl mx-1">-</span>{formatDays(days.optimistic, t)}</>
               )}
             </div>
             <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {days.pessimistic >= MAX_DAYS ? t("hero.inflows_exceed") : t("hero.days_remaining")}
+              {t("hero.days_remaining")}
             </div>
           </div>
 

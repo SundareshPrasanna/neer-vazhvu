@@ -1,7 +1,9 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
-import { DashboardContent } from "@/components/dashboard/dashboard-content";
+import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
+import { MultiSourceHistoryChart } from "@/components/dashboard/multi-source-history-chart";
+import type { HistorySeries, ForecastSeries } from "@/types/reservoir";
 import { ReservoirCatchmentContext } from "@/components/dashboard/reservoir-catchment-context";
 import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
 import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
@@ -250,6 +252,66 @@ async function getReservoirData() {
   };
 }
 
+/**
+ * Convert Chennai's per-reservoir history map (Record<reservoir_name,
+ * HistoryPoint[]>) into the shared HistorySeries[] shape. Storage stays
+ * in Mcft - the shared chart's `unit` prop controls the axis label.
+ */
+function chennaiHistorySeries(
+  perReservoir: Record<string, Array<{ date: string; totalStorage: number }>>,
+): HistorySeries[] {
+  return Object.entries(perReservoir).map(([code, points]) => {
+    const meta = RESERVOIR_METADATA[code as ChennaiReservoirName];
+    return {
+      source_code: code,
+      display_name: meta?.displayName ?? code,
+      full_capacity_mcft: meta?.fullCapacityMcft ?? null,
+      full_tank_level_ft: meta?.fullTankLevelFt ?? null,
+      // All 6 named Chennai reservoirs are primary drinking sources.
+      is_primary: true,
+      points: points.map((p) => ({
+        date: p.date,
+        // Field is named storage_tmc internally; Chennai passes Mcft and
+        // sets unit="Mcft" on the chart. The value is what the axis
+        // reflects - the field name is just an internal label.
+        storage_tmc: p.totalStorage,
+        storage_pct_frl:
+          meta?.fullCapacityMcft && meta.fullCapacityMcft > 0
+            ? (p.totalStorage / meta.fullCapacityMcft) * 100
+            : null,
+      })),
+    };
+  });
+}
+
+function chennaiForecastSeries(
+  perReservoir: Record<string, Array<{ date: string; predicted: number; lower: number; upper: number }>>,
+  forecastDate: string | null,
+): ForecastSeries[] {
+  if (!forecastDate) return [];
+  return Object.entries(perReservoir)
+    .filter(([, pts]) => pts.length > 0)
+    .map(([code, points]) => ({
+      source_code: code,
+      forecast_date: forecastDate,
+      model_name: "auto_arima",
+      points: points.map((p) => ({
+        date: p.date,
+        predicted_tmc: p.predicted,
+        lower_tmc: p.lower,
+        upper_tmc: p.upper,
+      })),
+    }));
+}
+
+function chennaiHistoryPointCount(
+  perReservoir: Record<string, Array<unknown>>,
+): number {
+  let total = 0;
+  for (const arr of Object.values(perReservoir)) total += arr.length;
+  return total;
+}
+
 // Load canonical ward zone names once at module level
 const wardNamesPath = resolve(process.cwd(), "public/data/ward-names.json");
 const canonicalNames = new Map<number, string>(
@@ -411,6 +473,23 @@ export default async function DashboardPage() {
     return <DemoDashboard />;
   }
 
+  // Earliest historical date across all reservoirs (for the shared chart's
+  // metadata strip).
+  const allHistoryDates: string[] = [];
+  for (const points of Object.values(reservoirData.perReservoirHistory)) {
+    for (const p of points) allHistoryDates.push(p.date);
+  }
+  allHistoryDates.sort();
+  const earliestHistoryDate = allHistoryDates[0] ?? null;
+
+  // Forecast date - take any source's first row's effective date if we
+  // have forecasts; otherwise null. Chennai's pipeline aligns all
+  // sources to the same forecast_date so any one is fine.
+  const anyReservoirForecast = Object.values(reservoirData.perReservoirForecast).find((p) => p.length > 0);
+  const latestForecastDate = anyReservoirForecast && anyReservoirForecast.length > 0
+    ? new Date().toISOString().slice(0, 10)
+    : null;
+
   // Compute CityStory narrative from available data
   let cityStoryNarrative = null;
   if (groundwaterData) {
@@ -450,14 +529,27 @@ export default async function DashboardPage() {
         <ReservoirCatchmentContext rows={reservoirCatchmentContextRows} />
       ) : null}
 
-      <DashboardContent
+      {/* Reservoir snapshot grid + shared multi-source chart. The chart
+          accepts data in any storage unit; Chennai passes Mcft, Madurai
+          passes TMC. Both render identical UI (per-source toggles,
+          summed-total mode, drag-to-zoom, pinch-to-zoom, forecast band).
+          Earlier this was a Chennai-specific DashboardContent +
+          StorageTrendChart pair; replaced so both cities share the
+          component. */}
+      <ReservoirCards
         reservoirs={reservoirData.reservoirs.filter((r) =>
           (RESERVOIR_DISPLAY_ORDER as readonly string[]).includes(r.name)
         )}
-        history={reservoirData.history}
-        perReservoirHistory={reservoirData.perReservoirHistory}
-        forecast={reservoirData.forecast}
-        perReservoirForecast={reservoirData.perReservoirForecast}
+      />
+      <MultiSourceHistoryChart
+        cityDisplayName="Chennai"
+        unit="Mcft"
+        series={chennaiHistorySeries(reservoirData.perReservoirHistory)}
+        forecast={chennaiForecastSeries(reservoirData.perReservoirForecast, latestForecastDate)}
+        forecastDate={latestForecastDate}
+        earliestDate={earliestHistoryDate}
+        latestDate={reservoirData.lastUpdated}
+        pointCount={chennaiHistoryPointCount(reservoirData.perReservoirHistory)}
       />
 
       {groundwaterData && <GroundwaterSnapshot data={groundwaterData} />}

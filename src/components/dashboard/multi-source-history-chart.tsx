@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ComposedChart,
   Line,
@@ -14,6 +14,7 @@ import {
   ReferenceLine,
 } from "recharts";
 import type { HistorySeries, ForecastSeries } from "@/types/reservoir";
+import { useChartZoom } from "@/lib/hooks/use-chart-zoom";
 
 interface Props {
   series: HistorySeries[];
@@ -24,6 +25,8 @@ interface Props {
   pointCount: number;
   /** City display name for the chart header. */
   cityDisplayName: string;
+  /** Storage unit used in Y-axis label + tooltip. Default "TMC". */
+  unit?: string;
 }
 
 const TIME_TABS = [
@@ -85,19 +88,11 @@ export function MultiSourceHistoryChart({
   latestDate,
   pointCount,
   cityDisplayName,
+  unit = "TMC",
 }: Props) {
   const [tab, setTab] = useState<TabKey>("1yr");
   const [view, setView] = useState<ViewMode>("by_source");
   const [showForecast, setShowForecast] = useState(true);
-  // Custom x-axis domain for pinch / wheel zoom. null means use the
-  // natural range of the merged data (i.e. follow the time-tab + data).
-  const [zoomDomain, setZoomDomain] = useState<[number, number] | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const pinchStateRef = useRef<{
-    initialDistance: number;
-    initialDomain: [number, number];
-    centerMs: number;
-  } | null>(null);
 
   const forecastBySource = useMemo(() => {
     const m = new Map<string, ForecastSeries>();
@@ -199,123 +194,10 @@ export function MultiSourceHistoryChart({
 
   const visibleSeries = series.filter((s) => !hidden.has(s.source_code));
 
-  // Apply zoom domain to the merged rows. When zoomDomain is null we
-  // render everything inside the time-tab; otherwise we filter to the
-  // pinch-/wheel-selected window.
-  const visibleRows = useMemo(() => {
-    if (!zoomDomain || merged.length === 0) return merged;
-    const [lo, hi] = zoomDomain;
-    return merged.filter((r) => {
-      const t = new Date(r.date as string).getTime();
-      return t >= lo && t <= hi;
-    });
-  }, [merged, zoomDomain]);
-
-  const dataRange = useMemo<[number, number] | null>(() => {
-    if (merged.length === 0) return null;
-    const first = new Date(merged[0].date as string).getTime();
-    const last = new Date(merged[merged.length - 1].date as string).getTime();
-    return [first, last];
-  }, [merged]);
-
-  // Desktop drag-to-zoom: user drags horizontally across the chart, we
-  // overlay a translucent selection rect, and on mouse-up we zoom to
-  // the selected x-range.
-  const [dragRange, setDragRange] = useState<{ startX: number; currentX: number } | null>(null);
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current || !dataRange) return;
-    // Only react to primary button.
-    if (e.button !== 0) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    setDragRange({ startX: x, currentX: x });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!dragRange || !containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-    setDragRange({ ...dragRange, currentX: x });
-  };
-
-  const handleMouseUp = () => {
-    if (!dragRange || !containerRef.current || !dataRange) {
-      setDragRange(null);
-      return;
-    }
-    const rect = containerRef.current.getBoundingClientRect();
-    const x1 = Math.min(dragRange.startX, dragRange.currentX);
-    const x2 = Math.max(dragRange.startX, dragRange.currentX);
-    const dragWidth = x2 - x1;
-    setDragRange(null);
-    // Ignore tiny drags (< 8 px) so a single-click doesn't accidentally
-    // zoom to one pixel.
-    if (dragWidth < 8) return;
-    const current = zoomDomain ?? dataRange;
-    const span = current[1] - current[0];
-    const newLo = current[0] + (x1 / rect.width) * span;
-    const newHi = current[0] + (x2 / rect.width) * span;
-    const minSpan = 86400 * 1000 * 7;
-    if (newHi - newLo < minSpan) return;
-    setZoomDomain([Math.max(dataRange[0], newLo), Math.min(dataRange[1], newHi)]);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (e.touches.length !== 2 || !containerRef.current || !dataRange) return;
-    const t1 = e.touches[0];
-    const t2 = e.touches[1];
-    const dx = t2.clientX - t1.clientX;
-    const dy = t2.clientY - t1.clientY;
-    const distance = Math.hypot(dx, dy);
-    const rect = containerRef.current.getBoundingClientRect();
-    const centerX = (t1.clientX + t2.clientX) / 2 - rect.left;
-    const fraction = Math.max(0, Math.min(1, centerX / rect.width));
-    const current = zoomDomain ?? dataRange;
-    const span = current[1] - current[0];
-    pinchStateRef.current = {
-      initialDistance: distance,
-      initialDomain: current,
-      centerMs: current[0] + span * fraction,
-    };
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (e.touches.length !== 2 || !pinchStateRef.current || !dataRange) return;
-    e.preventDefault();
-    const t1 = e.touches[0];
-    const t2 = e.touches[1];
-    const distance = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
-    const { initialDistance, initialDomain, centerMs } = pinchStateRef.current;
-    if (initialDistance < 4) return;
-    const scale = initialDistance / distance; // pinch out (distance grows) -> scale < 1 -> zoom in
-    const initialSpan = initialDomain[1] - initialDomain[0];
-    const newSpan = Math.max(86400 * 1000 * 7, Math.min(dataRange[1] - dataRange[0], initialSpan * scale));
-    // Keep centerMs at the same fraction of span as before.
-    const fraction = (centerMs - initialDomain[0]) / initialSpan;
-    let newLo = centerMs - newSpan * fraction;
-    let newHi = centerMs + newSpan * (1 - fraction);
-    if (newLo < dataRange[0]) {
-      newHi += dataRange[0] - newLo;
-      newLo = dataRange[0];
-    }
-    if (newHi > dataRange[1]) {
-      newLo -= newHi - dataRange[1];
-      newHi = dataRange[1];
-    }
-    if (newLo <= dataRange[0] && newHi >= dataRange[1]) {
-      setZoomDomain(null);
-    } else {
-      setZoomDomain([Math.max(dataRange[0], newLo), Math.min(dataRange[1], newHi)]);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    pinchStateRef.current = null;
-  };
-
-  const resetZoom = () => setZoomDomain(null);
-  const isZoomed = zoomDomain !== null;
+  const { containerRef, isZoomed, visibleRows, dragRange, resetZoom, handlers } = useChartZoom({
+    rows: merged,
+    toMillis: (r) => new Date(r.date as string).getTime(),
+  });
 
   if (series.length === 0 || pointCount === 0) {
     return (
@@ -431,14 +313,7 @@ export function MultiSourceHistoryChart({
       <div
         ref={containerRef}
         className="relative touch-pan-x select-none"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onDoubleClick={resetZoom}
+        {...handlers}
       >
         {isZoomed && (
           <button
@@ -461,7 +336,7 @@ export function MultiSourceHistoryChart({
         <ComposedChart data={visibleRows} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.5} />
           <XAxis dataKey="date" tickFormatter={fmtTick} tick={{ fontSize: 11 }} minTickGap={50} />
-          <YAxis tick={{ fontSize: 11 }} label={{ value: "TMC", angle: -90, position: "insideLeft", style: { fontSize: 11 } }} />
+          <YAxis tick={{ fontSize: 11 }} label={{ value: unit, angle: -90, position: "insideLeft", style: { fontSize: 11 } }} />
           <Tooltip
             labelFormatter={(label) => fmtDate(label as string)}
             formatter={(value, name) => {
@@ -469,19 +344,19 @@ export function MultiSourceHistoryChart({
               if (Array.isArray(value)) {
                 if (nameStr === "__total_band") {
                   return [
-                    `${(value as number[])[0].toFixed(2)} - ${(value as number[])[1].toFixed(2)} TMC`,
+                    `${(value as number[])[0].toFixed(2)} - ${(value as number[])[1].toFixed(2)} ${unit}`,
                     "Total (80% band)",
                   ] as [string, string];
                 }
                 const code = nameStr.replace("__band", "");
                 const display = series.find((s) => s.source_code === code)?.display_name ?? code;
                 return [
-                  `${(value as number[])[0].toFixed(2)} - ${(value as number[])[1].toFixed(2)} TMC`,
+                  `${(value as number[])[0].toFixed(2)} - ${(value as number[])[1].toFixed(2)} ${unit}`,
                   `${display} (80% band)`,
                 ] as [string, string];
               }
               const num = typeof value === "number" ? value : Number(value);
-              const text = isFinite(num) ? `${num.toFixed(2)} TMC` : "-";
+              const text = isFinite(num) ? `${num.toFixed(2)} ${unit}` : "-";
               if (nameStr === "__total") return [text, "Total (visible sources)"] as [string, string];
               if (nameStr === "__total_forecast") return [text, "Total (forecast)"] as [string, string];
               const isForecast = nameStr.endsWith("__forecast");
