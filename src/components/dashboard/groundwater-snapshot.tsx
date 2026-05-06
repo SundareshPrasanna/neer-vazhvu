@@ -7,6 +7,8 @@ import { useLanguage } from "@/lib/i18n/context";
 
 interface GroundwaterSnapshotProps {
   data: GroundwaterApiResponse;
+  /** Optional href for the "Explore" link. Defaults to Chennai's /groundwater. */
+  exploreHref?: string;
 }
 
 const STATUS_COLORS = {
@@ -18,7 +20,7 @@ const STATUS_COLORS = {
   crisis: "bg-red-900",
 } as const;
 
-export function GroundwaterSnapshot({ data }: GroundwaterSnapshotProps) {
+export function GroundwaterSnapshot({ data, exploreHref = "/groundwater" }: GroundwaterSnapshotProps) {
   const { t, language } = useLanguage();
   const { summary, cityAverage, wards, period } = data;
 
@@ -60,7 +62,7 @@ export function GroundwaterSnapshot({ data }: GroundwaterSnapshotProps) {
             {t("gw_snap.title")}
           </h2>
           <Link
-            href="/groundwater"
+            href={exploreHref}
             className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-1"
           >
             {t("gw_snap.explore")}

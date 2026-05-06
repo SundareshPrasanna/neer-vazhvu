@@ -1,23 +1,31 @@
 """
-Generate IMD historical rainfall JSON for Chennai.
+Generate IMD historical rainfall JSON for any city.
 
-Uses imdlib to download IMD's official gridded rainfall data (0.25° resolution),
-extracts the nearest valid land grid point to Chennai, and writes monthly
-aggregates to a static JSON file for the frontend.
+Uses imdlib to download IMD's official gridded rainfall data
+(0.25 degree resolution), extracts the nearest valid land grid point
+to the supplied lat/lng, and writes monthly aggregates to a static
+JSON the dashboard's RainfallTrends component consumes.
 
-Note: The exact Chennai grid point (13.0, 80.25) is classified as ocean by IMD.
-We use (13.0, 80.0) which is ~30 km inland — still within the Chennai
-metropolitan area (near Sriperumbudur). This is standard practice for
-coastal stations in gridded datasets.
+Default city is Chennai (preserving the original output path
+public/data/imd-rainfall-monthly.json for backward compatibility);
+pass --city <id> to write to imd-rainfall-monthly-{id}.json.
+
+Note: Coastal grid cells are sometimes classified as ocean by IMD.
+For Chennai the exact 13.0/80.25 cell is ocean so we shift to 13.0/80.0
+(~30 km inland near Sriperumbudur). When onboarding a new city, pick
+the nearest inland 0.25-deg grid intersection - the script will warn
+if all values come back NaN for the supplied point.
 
 Usage:
     pip install imdlib xarray
-    python generate_imd_rainfall.py
-
-Output:
-    ../../public/data/imd-rainfall-monthly.json
+    python generate_imd_rainfall.py                   # Chennai (default)
+    python generate_imd_rainfall.py --city madurai \\
+        --lat 9.9 --lng 78.0                          # Madurai
+    python generate_imd_rainfall.py --city kaveri-delta \\
+        --lat 11.0 --lng 79.5
 """
 
+import argparse
 import gc
 import json
 import sys
@@ -28,22 +36,20 @@ from pathlib import Path
 
 import numpy as np
 
-# IMD grid point (13.0, 80.0) — nearest valid land cell to Chennai
-GRID_LAT = 13.0
-GRID_LNG = 80.0
 START_YEAR = 1970
-END_YEAR = date.today().year - 1  # IMD archives lag ~1 year
-OUTPUT_PATH = (
-    Path(__file__).resolve().parent.parent.parent
-    / "public"
-    / "data"
-    / "imd-rainfall-monthly.json"
-)
 NORMAL_END = 2020  # long-term normal computed over START_YEAR-NORMAL_END
 
+# Per-city defaults shipped with the script. New cities can override
+# via --lat / --lng on the CLI without editing the script, but adding
+# a row here keeps invocations one flag.
+CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
+    "chennai": (13.0, 80.0, "Nearest valid land grid point to Chennai (coastal cells classified as ocean by IMD)"),
+    "madurai": (9.9, 78.0, "Madurai-region grid point in upper Vaigai catchment"),
+}
 
-def fetch_year(year: int) -> list[dict]:
-    """Download one year, extract Chennai point, return monthly totals."""
+
+def fetch_year(year: int, lat: float, lng: float) -> list[dict]:
+    """Download one year, extract the supplied grid point, return monthly totals."""
     import imdlib as imd
     import pandas as pd
 
@@ -51,9 +57,9 @@ def fetch_year(year: int) -> list[dict]:
         data = imd.get_data("rain", year, year, fn_format="yearwise", file_dir=tmpdir)
         ds = data.get_xarray()
 
-    chennai = ds.sel(lat=GRID_LAT, lon=GRID_LNG, method="nearest")
-    rain = chennai["rain"].values
-    times = pd.to_datetime(chennai["time"].values)
+    point = ds.sel(lat=lat, lon=lng, method="nearest")
+    rain = point["rain"].values
+    times = pd.to_datetime(point["time"].values)
 
     # Replace -999 fill values with NaN
     rain = np.where(rain <= -999, np.nan, rain)
@@ -67,26 +73,61 @@ def fetch_year(year: int) -> list[dict]:
         months.append({"year": year, "month": month, "rainfall_mm": total})
 
     # Free memory
-    del ds, data, chennai, rain, times
+    del ds, data, point, rain, times
     gc.collect()
 
     return months
 
 
 def main() -> None:
-    print(f"Downloading IMD rainfall data {START_YEAR}-{END_YEAR} (one year at a time)")
-    print(f"Grid point: ({GRID_LAT}, {GRID_LNG})")
+    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0].strip())
+    parser.add_argument("--city", default="chennai", help="City id (chennai / madurai / ...)")
+    parser.add_argument("--lat", type=float, default=None, help="Override grid lat (decimal degrees)")
+    parser.add_argument("--lng", type=float, default=None, help="Override grid lng (decimal degrees)")
+    parser.add_argument("--start-year", type=int, default=START_YEAR)
+    parser.add_argument("--end-year", type=int, default=date.today().year - 1)
+    parser.add_argument("--output", default=None, help="Output path (defaults to public/data/imd-rainfall-monthly[-{city}].json)")
+    args = parser.parse_args()
+
+    city_id = args.city.lower()
+    defaults = CITY_DEFAULTS.get(city_id, (None, None, ""))
+    grid_lat = args.lat if args.lat is not None else defaults[0]
+    grid_lng = args.lng if args.lng is not None else defaults[1]
+    if grid_lat is None or grid_lng is None:
+        print(f"ERROR: no default grid for city '{city_id}'. Pass --lat and --lng.", file=sys.stderr)
+        return
+    note = defaults[2] or f"{city_id} grid point ({grid_lat}, {grid_lng})"
+
+    output_path = (
+        Path(args.output)
+        if args.output
+        else (
+            Path(__file__).resolve().parent.parent.parent
+            / "public"
+            / "data"
+            / (
+                "imd-rainfall-monthly.json"
+                if city_id == "chennai"
+                else f"imd-rainfall-monthly-{city_id}.json"
+            )
+        )
+    )
+
+    start_year = args.start_year
+    end_year = args.end_year
+    print(f"Downloading IMD rainfall data {start_year}-{end_year} for '{city_id}'")
+    print(f"Grid point: ({grid_lat}, {grid_lng})")
 
     monthly_records: list[dict] = []
     annual_records: list[dict] = []
 
-    for year in range(START_YEAR, END_YEAR + 1):
+    for year in range(start_year, end_year + 1):
         sys.stdout.write(f"\r  {year}... ")
         sys.stdout.flush()
 
         for attempt in range(3):
             try:
-                months = fetch_year(year)
+                months = fetch_year(year, grid_lat, grid_lng)
                 break
             except Exception as e:
                 if attempt == 2:
@@ -108,9 +149,9 @@ def main() -> None:
 
     print()
 
-    # Compute long-term normals (START_YEAR to NORMAL_END)
+    # Compute long-term normals (start_year to NORMAL_END)
     normal_years = [r for r in annual_records if r["year"] <= NORMAL_END]
-    annual_mean = round(sum(r["total_mm"] for r in normal_years) / len(normal_years), 1)
+    annual_mean = round(sum(r["total_mm"] for r in normal_years) / max(1, len(normal_years)), 1)
 
     monthly_means = []
     for month in range(1, 13):
@@ -119,16 +160,15 @@ def main() -> None:
             for r in monthly_records
             if r["month"] == month and r["year"] <= NORMAL_END
         ]
-        monthly_means.append(round(sum(month_vals) / len(month_vals), 1))
+        monthly_means.append(round(sum(month_vals) / max(1, len(month_vals)), 1))
 
     result = {
         "source": "IMD Gridded Rainfall (0.25 deg resolution)",
-        "grid_point": {"lat": GRID_LAT, "lon": GRID_LNG},
-        "note": "Nearest valid land grid point to Chennai"
-        " (coastal cells classified as ocean by IMD)",
+        "grid_point": {"lat": grid_lat, "lon": grid_lng},
+        "note": note,
         "generated_at": date.today().isoformat(),
-        "year_range": [START_YEAR, END_YEAR],
-        "normal_period": [START_YEAR, NORMAL_END],
+        "year_range": [start_year, end_year],
+        "normal_period": [start_year, NORMAL_END],
         "monthly": monthly_records,
         "annual_totals": annual_records,
         "normals": {
@@ -137,10 +177,10 @@ def main() -> None:
         },
     }
 
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(json.dumps(result, separators=(",", ":")))
-    size_kb = OUTPUT_PATH.stat().st_size / 1024
-    print(f"\nWritten {OUTPUT_PATH} ({size_kb:.0f} KB)")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(result, separators=(",", ":")))
+    size_kb = output_path.stat().st_size / 1024
+    print(f"\nWritten {output_path} ({size_kb:.0f} KB)")
     print(
         f"  {len(monthly_records)} monthly records, {len(annual_records)} annual totals"
     )

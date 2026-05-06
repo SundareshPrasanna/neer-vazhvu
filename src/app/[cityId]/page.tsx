@@ -7,9 +7,13 @@ import {
   loadCitySnapshot,
   loadCityHistory,
   loadCityForecast,
-  type ReservoirReadingV2,
+  loadCityWaterEstimate,
 } from "./data";
 import ReservoirHistoryChart from "./reservoir-history-chart";
+import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
+import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
+import { NewsSection } from "@/components/insights/news-section";
+import { formatDate } from "@/lib/utils/format";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -29,9 +33,6 @@ const MULLAPERIYAR_ALERTS = [
   { ft: 140, label: "Red", tone: "text-red-600 dark:text-red-400" },
   { ft: MULLAPERIYAR_KE_CAP_FT, label: "Kerala FRL", tone: "text-red-700 dark:text-red-300 font-semibold" },
 ];
-
-const MADURAI_DAILY_DEMAND_MLD = 135;
-const MADURAI_VAIGAI_SHARE_MLD = 80;
 
 function pctBarColor(pct: number | null): string {
   if (pct === null) return "bg-slate-300 dark:bg-slate-600";
@@ -56,10 +57,11 @@ export default async function CityHomePage({ params }: PageProps) {
   // The layout has already validated cityId and redirected /chennai; we can
   // safely look up the config here.
   const config = getPlaceConfig(cityId);
-  const [snapshot, history, forecast] = await Promise.all([
+  const [snapshot, history, forecast, waterEstimate] = await Promise.all([
     loadCitySnapshot(config),
     loadCityHistory(config),
     loadCityForecast(config),
+    loadCityWaterEstimate(config),
   ]);
   const dataDate = snapshot.asOf;
   const reservoirIsLive = snapshot.reservoirIsLive;
@@ -75,13 +77,6 @@ export default async function CityHomePage({ params }: PageProps) {
   const vaigai = snapshot.readingsBySource["vaigai"] ?? null;
   const mullaperiyar = snapshot.readingsBySource["mullaperiyar"] ?? null;
   const sothuparai = snapshot.readingsBySource["sothuparai"] ?? null;
-
-  // Days-of-water-left for Madurai (Vaigai-share only). Other cities reuse
-  // their own homepage logic; this is intentionally Madurai-scoped.
-  const vaigaiMcft = vaigai?.storage_tmc != null ? vaigai.storage_tmc * 1000 : null;
-  const vaigaiMl = vaigaiMcft !== null ? vaigaiMcft * 28.3168 : null;
-  const daysOfCityShare =
-    vaigaiMl !== null ? Math.round(vaigaiMl / MADURAI_VAIGAI_SHARE_MLD) : null;
 
   // Mullaperiyar dual-reference percentages.
   const mpLevelFt = mullaperiyar?.level_ft ?? null;
@@ -114,24 +109,21 @@ export default async function CityHomePage({ params }: PageProps) {
         )}
       </header>
 
-      {/* Madurai: days-of-water-left from Vaigai live storage */}
-      {isMadurai && (
-        <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/40 dark:bg-blue-950/20">
-          <CardContent className="space-y-2">
-            <div className="text-xs uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">
-              Days of city drinking water (Vaigai share only)
-            </div>
-            <div className="text-2xl sm:text-3xl font-bold">
-              {daysOfCityShare !== null ? `~${daysOfCityShare} days` : "-"}
-            </div>
-            <div className="text-sm text-slate-600 dark:text-slate-400">
-              At the Vaigai-supplied share of {MADURAI_VAIGAI_SHARE_MLD} MLD
-              (city total demand ~{MADURAI_DAILY_DEMAND_MLD} MLD per CMA Master
-              Plan, vol II). Excludes evaporation losses, irrigation releases,
-              and groundwater contribution to the remainder.
-            </div>
-          </CardContent>
-        </Card>
+      {/* Place-aware days-of-water-left card with interactive sliders.
+          Pulls defaults from the place config so Chennai's 830 MLD and
+          Madurai's ~135 MLD render the same component with their own
+          baseline and slider ranges. */}
+      {waterEstimate.lastUpdated && (
+        <DaysLeftHero
+          totalStorageMcft={waterEstimate.totalStorageMcft}
+          totalCapacityMcft={waterEstimate.totalCapacityMcft}
+          recentAvgInflowMcftPerDay={waterEstimate.recentAvgInflowMcftPerDay}
+          seasonalAvgInflowMcftPerDay={waterEstimate.seasonalAvgInflowMcftPerDay}
+          lastUpdated={formatDate(waterEstimate.lastUpdated)}
+          comparison2019Storage={waterEstimate.comparison2019Storage}
+          defaultConsumptionMld={config.defaultConsumptionMld ?? undefined}
+          defaultDesalinationMld={config.defaultDesalinationMld ?? undefined}
+        />
       )}
 
       {/* Vaigai + Mullaperiyar grid (Madurai) */}
@@ -319,6 +311,14 @@ export default async function CityHomePage({ params }: PageProps) {
         pointCount={history.pointCount}
         cityDisplayName={config.displayName}
       />
+
+      {/* Long-term IMD rainfall - same component Chennai uses, with the
+          city's own IMD file. Renders an honest empty-state card when
+          the city's rainfall file hasn't been generated yet. */}
+      <RainfallTrends cityId={cityId} />
+
+      {/* Google-News quick-link, seeded with the city name. */}
+      <NewsSection cityDisplayName={config.displayName} />
 
       {/* Generic reservoir grid for cities without a custom narrative yet */}
       {!isMadurai && (

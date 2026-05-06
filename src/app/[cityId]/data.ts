@@ -63,6 +63,149 @@ export interface CityForecast {
   series: ForecastSeries[];
 }
 
+export interface CityWaterEstimate {
+  totalStorageMcft: number;
+  totalCapacityMcft: number;
+  recentAvgInflowMcftPerDay: number;
+  seasonalAvgInflowMcftPerDay: number;
+  comparison2019Storage: number | null;
+  lastUpdated: string | null;
+}
+
+const EMPTY_ESTIMATE: CityWaterEstimate = {
+  totalStorageMcft: 0,
+  totalCapacityMcft: 0,
+  recentAvgInflowMcftPerDay: 0,
+  seasonalAvgInflowMcftPerDay: 0,
+  comparison2019Storage: null,
+  lastUpdated: null,
+};
+
+const TMC_TO_MCFT = 1000;
+const CUSEC_DAY_TO_MCFT = 0.0864;
+
+/**
+ * Roll the city's primary-drinking sources up into a single
+ * water-estimate row, using the same shape Chennai's DaysLeftHero card
+ * consumes. Computed live from reservoir_daily_v2 (snapshot + 7d
+ * inflow window + seasonal-month average + 2019-same-day comparison).
+ */
+export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWaterEstimate> {
+  const primary = config.waterSources.filter((s) => s.isPrimaryDrinkingSource);
+  if (primary.length === 0) return EMPTY_ESTIMATE;
+  const sourceCodes = primary.map((s) => s.sourceCode);
+
+  let supabase;
+  try {
+    supabase = createServerClient();
+  } catch {
+    return EMPTY_ESTIMATE;
+  }
+
+  // Latest available date for any of the primary sources.
+  const { data: latest } = await supabase
+    .from("reservoir_daily_v2")
+    .select("date")
+    .eq("city_id", config.cityId)
+    .in("source_code", sourceCodes)
+    .order("date", { ascending: false })
+    .limit(1);
+
+  if (!latest || latest.length === 0) return EMPTY_ESTIMATE;
+  const asOf = latest[0].date as string;
+
+  // Snapshot: current storage across primary sources for asOf.
+  const { data: rows } = await supabase
+    .from("reservoir_daily_v2")
+    .select("source_code, storage_tmc, inflow_cusecs")
+    .eq("city_id", config.cityId)
+    .in("source_code", sourceCodes)
+    .eq("date", asOf);
+
+  const totalStorageMcft = (rows ?? []).reduce(
+    (s, r) => s + ((r.storage_tmc as number | null) ?? 0) * TMC_TO_MCFT,
+    0,
+  );
+  const totalCapacityMcft = primary.reduce((s, p) => s + (p.fullCapacityMcft ?? 0), 0);
+
+  // 7-day inflow average (Mcft/day): sum across primary sources per day,
+  // then average across the days observed.
+  const sevenDaysAgo = new Date(asOf);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const sevenDaysAgoStr = sevenDaysAgo.toISOString().slice(0, 10);
+  const { data: recentRows } = await supabase
+    .from("reservoir_daily_v2")
+    .select("date, inflow_cusecs")
+    .eq("city_id", config.cityId)
+    .in("source_code", sourceCodes)
+    .gte("date", sevenDaysAgoStr)
+    .lte("date", asOf)
+    .not("inflow_cusecs", "is", null);
+
+  let recentAvgInflowMcftPerDay = 0;
+  if (recentRows && recentRows.length > 0) {
+    const byDate = new Map<string, number>();
+    for (const r of recentRows) {
+      byDate.set(
+        r.date as string,
+        (byDate.get(r.date as string) ?? 0) + ((r.inflow_cusecs as number | null) ?? 0),
+      );
+    }
+    const totals = Array.from(byDate.values());
+    if (totals.length > 0) {
+      const avgCusecs = totals.reduce((s, v) => s + v, 0) / totals.length;
+      recentAvgInflowMcftPerDay = avgCusecs * CUSEC_DAY_TO_MCFT;
+    }
+  }
+
+  // Seasonal (same-month) average inflow over all years of history.
+  const month = Number(asOf.slice(5, 7));
+  const { data: seasonalRows } = await supabase
+    .from("reservoir_daily_v2")
+    .select("date, inflow_cusecs")
+    .eq("city_id", config.cityId)
+    .in("source_code", sourceCodes)
+    .not("inflow_cusecs", "is", null);
+
+  let seasonalAvgInflowMcftPerDay = 0;
+  if (seasonalRows && seasonalRows.length > 0) {
+    const byDate = new Map<string, number>();
+    for (const r of seasonalRows) {
+      const d = r.date as string;
+      if (Number(d.slice(5, 7)) !== month) continue;
+      byDate.set(d, (byDate.get(d) ?? 0) + ((r.inflow_cusecs as number | null) ?? 0));
+    }
+    const totals = Array.from(byDate.values());
+    if (totals.length > 0) {
+      const avgCusecs = totals.reduce((s, v) => s + v, 0) / totals.length;
+      seasonalAvgInflowMcftPerDay = avgCusecs * CUSEC_DAY_TO_MCFT;
+    }
+  }
+
+  // 2019 same-day comparison.
+  const sameDay2019 = `2019-${asOf.slice(5)}`;
+  const { data: data2019 } = await supabase
+    .from("reservoir_daily_v2")
+    .select("storage_tmc")
+    .eq("city_id", config.cityId)
+    .in("source_code", sourceCodes)
+    .eq("date", sameDay2019);
+
+  const comparison2019Storage =
+    data2019 && data2019.length > 0
+      ? data2019.reduce((s, r) => s + ((r.storage_tmc as number | null) ?? 0) * TMC_TO_MCFT, 0)
+      : null;
+
+  return {
+    totalStorageMcft,
+    totalCapacityMcft,
+    recentAvgInflowMcftPerDay,
+    seasonalAvgInflowMcftPerDay,
+    comparison2019Storage,
+    lastUpdated: asOf,
+  };
+}
+
 const EMPTY_SNAPSHOT: CitySnapshot = {
   asOf: null,
   readingsBySource: {},

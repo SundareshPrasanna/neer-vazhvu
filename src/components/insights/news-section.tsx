@@ -2,11 +2,20 @@
 
 import { useLanguage } from "@/lib/i18n/context";
 
-const GOOGLE_NEWS_CHENNAI_WATER_URL =
-  "https://news.google.com/search?q=Chennai%20water%20supply%20OR%20reservoir%20OR%20flood%20OR%20groundwater%20OR%20river%20pollution%20OR%20lake&hl=en-IN&gl=IN&ceid=IN:en";
+interface NewsSectionProps {
+  /** City display name to seed the Google News search. Defaults to Chennai. */
+  cityDisplayName?: string;
+}
 
-export function NewsSection() {
+function newsUrlFor(cityName: string): string {
+  const q = `${cityName} water supply OR reservoir OR flood OR groundwater OR river pollution OR lake`;
+  const params = new URLSearchParams({ q, hl: "en-IN", gl: "IN", ceid: "IN:en" });
+  return `https://news.google.com/search?${params.toString()}`;
+}
+
+export function NewsSection({ cityDisplayName = "Chennai" }: NewsSectionProps = {}) {
   const { t } = useLanguage();
+  const url = newsUrlFor(cityDisplayName);
 
   return (
     <div className="flex items-center justify-center gap-2 text-xs text-slate-400 dark:text-slate-500">
@@ -24,7 +33,7 @@ export function NewsSection() {
         />
       </svg>
       <a
-        href={GOOGLE_NEWS_CHENNAI_WATER_URL}
+        href={url}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline"

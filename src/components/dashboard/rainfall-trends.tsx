@@ -41,7 +41,12 @@ function getBarColor(total: number, mean: number, year: number): string {
   return "#10b981"; // green — normal range
 }
 
-export function RainfallTrends() {
+interface RainfallTrendsProps {
+  /** City id for the data file lookup. Defaults to Chennai for back-compat. */
+  cityId?: string;
+}
+
+export function RainfallTrends({ cityId = "chennai" }: RainfallTrendsProps = {}) {
   const { t, language } = useLanguage();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -49,13 +54,30 @@ export function RainfallTrends() {
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
   const [data, setData] = useState<IMDRainfallData | null>(null);
+  const [missing, setMissing] = useState(false);
 
   useEffect(() => {
-    fetch("/data/imd-rainfall-monthly.json")
-      .then((r) => r.json())
-      .then(setData)
-      .catch(console.error);
-  }, []);
+    setMissing(false);
+    setData(null);
+    // Chennai's file lives at the legacy path; new cities use a
+    // suffixed path so the generator can produce them side by side.
+    const url =
+      cityId === "chennai"
+        ? "/data/imd-rainfall-monthly.json"
+        : `/data/imd-rainfall-monthly-${cityId}.json`;
+    fetch(url)
+      .then((r) => {
+        if (!r.ok) {
+          setMissing(true);
+          return null;
+        }
+        return r.json();
+      })
+      .then((d) => {
+        if (d) setData(d);
+      })
+      .catch(() => setMissing(true));
+  }, [cityId]);
 
   const monthLabels = language === "ta" ? MONTH_LABELS_TA : MONTH_LABELS_EN;
   const currentYear = new Date().getFullYear();
@@ -86,7 +108,29 @@ export function RainfallTrends() {
     return { monthlyComparison: comparison, comparisonYear: yearToUse };
   }, [data, currentYear, currentMonth, monthLabels]);
 
-  if (!data) return null;
+  if (!data) {
+    if (missing) {
+      // Honest empty state when this city's IMD rainfall file hasn't
+      // been generated yet. Shown to readers; suppressed entirely on
+      // Chennai because the legacy path always exists.
+      if (cityId === "chennai") return null;
+      return (
+        <Card className="border-slate-200 dark:border-slate-700">
+          <CardContent className="p-6 space-y-2">
+            <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Long-term rainfall (IMD)
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Long-term IMD rainfall hasn&apos;t been generated for this city
+              yet. The chart lights up automatically once the data file is
+              available.
+            </p>
+          </CardContent>
+        </Card>
+      );
+    }
+    return null;
+  }
 
   const mean = data.normals.annual_mean_mm;
 
