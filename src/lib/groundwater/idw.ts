@@ -31,7 +31,7 @@ export interface IdwResult {
 
 const EARTH_RADIUS_KM = 6371;
 
-function haversineKm(a: [number, number], b: [number, number]): number {
+export function haversineKm(a: [number, number], b: [number, number]): number {
   const [lat1, lng1] = a;
   const [lat2, lng2] = b;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;

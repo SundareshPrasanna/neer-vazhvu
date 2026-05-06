@@ -29,7 +29,7 @@ function FlyToWard({ wardNumber, wardGeoJsonUrl }: { wardNumber: number; wardGeo
   useEffect(() => {
     if (!geo) return;
     const feature = geo.features.find((f) => {
-      const num = Number(f.properties?.ward_number || f.properties?.Ward_No);
+      const num = Number(f.properties?.ward_number ?? f.properties?.Ward_No ?? f.properties?.ward_no);
       return num === wardNumber;
     });
     if (feature) {
@@ -123,7 +123,7 @@ export function WardMap({
   // Ward styles
   const wardStyle = useCallback((feature: Feature | undefined) => {
     if (!feature) return {};
-    const wardNum = Number(feature.properties?.ward_number || feature.properties?.Ward_No);
+    const wardNum = Number(feature.properties?.ward_number ?? feature.properties?.Ward_No ?? feature.properties?.ward_no);
     let fillColor: string;
     let category: string;
     if (viewMode === "risk") {
@@ -160,7 +160,7 @@ export function WardMap({
   }, [blockLookup, hiddenCategories, tiles.strokeLight]);
 
   const onEachWard = (feature: Feature, layer: Layer) => {
-    const wardNum = Number(feature.properties?.ward_number || feature.properties?.Ward_No);
+    const wardNum = Number(feature.properties?.ward_number ?? feature.properties?.Ward_No ?? feature.properties?.ward_no);
     const ward = groundwaterData.get(wardNum);
     const risk = riskData.get(wardNum);
 

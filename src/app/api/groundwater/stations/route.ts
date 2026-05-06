@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { internalServerError, logRouteError } from "@/lib/api-error";
+import { tryGetPlaceConfig } from "@/lib/cities";
+import { haversineKm } from "@/lib/groundwater/idw";
+
+/**
+ * Some India WRIS records carry mislocated lat/lng (e.g. one Madurai-tagged
+ * station that lands near Chennai). Drop stations whose lat/lng is more
+ * than this many kilometres from the requested city's centre.
+ */
+const MAX_STATION_DIST_KM = 80;
 
 function isSupabaseConfigured(): boolean {
   return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -140,7 +149,19 @@ export async function GET(request: NextRequest) {
     return internalServerError();
   }
 
+  // Sanity-filter mislocated rows against the city's centre (some WRIS
+  // records carry coordinates from a different state entirely).
+  const placeConfig = tryGetPlaceConfig(cityParam);
+  const cityCenter: [number, number] | null = placeConfig
+    ? [placeConfig.center.lat, placeConfig.center.lng]
+    : null;
+
   const stations = (latestRows || [])
+    .filter((r) => {
+      if (!cityCenter) return true;
+      if (typeof r.latitude !== "number" || typeof r.longitude !== "number") return true;
+      return haversineKm(cityCenter, [r.latitude as number, r.longitude as number]) <= MAX_STATION_DIST_KM;
+    })
     .map((r) => ({
       stationCode: r.station_code as string,
       stationName: r.station_name as string,

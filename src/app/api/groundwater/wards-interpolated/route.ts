@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { internalServerError, logRouteError } from "@/lib/api-error";
-import { idwInterpolate, polygonCentroid, type IdwStation } from "@/lib/groundwater/idw";
+import { idwInterpolate, polygonCentroid, haversineKm, type IdwStation } from "@/lib/groundwater/idw";
 import { getGroundwaterStatus } from "@/types/groundwater";
 import { tryGetPlaceConfig } from "@/lib/cities";
 
@@ -77,6 +77,13 @@ export async function GET(request: NextRequest) {
     return internalServerError();
   }
 
+  // Drop stations whose lat/lng is wildly off (some WRIS records carry
+  // mislocated coordinates - e.g. one Madurai-tagged station that lands
+  // near Chennai). Sane CGWB stations for a city should sit within
+  // ~80 km of the city center.
+  const MAX_STATION_DIST_KM = 80;
+  const cityCenter: [number, number] = [config.center.lat, config.center.lng];
+
   const stations: IdwStation[] = (rows || [])
     .filter(
       (r) =>
@@ -84,6 +91,7 @@ export async function GET(request: NextRequest) {
         typeof r.longitude === "number" &&
         typeof r.depth_to_water_m === "number",
     )
+    .filter((r) => haversineKm(cityCenter, [r.latitude as number, r.longitude as number]) <= MAX_STATION_DIST_KM)
     .map((r) => ({
       lat: r.latitude as number,
       lng: r.longitude as number,
