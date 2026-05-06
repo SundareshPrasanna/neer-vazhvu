@@ -1,7 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
 import type { Metadata } from "next";
-import Script from "next/script";
 import { notFound } from "next/navigation";
 import { FactsPage } from "@/components/facts/facts-page";
 import { tryGetPlaceConfig } from "@/lib/cities";
@@ -163,10 +162,10 @@ export default async function CityFactsPage({ params }: PageProps) {
 
   return (
     <>
-      <Script
-        id="facts-jsonld"
+      {/* JSON-LD goes in a plain <script> tag (not next/script) so it
+          renders in the SSR HTML and search engines pick it up. */}
+      <script
         type="application/ld+json"
-        strategy="beforeInteractive"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />

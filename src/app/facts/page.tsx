@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { FactsPage } from "@/components/facts/facts-page";
 import { STATIC_FACTS } from "@/lib/facts/static-facts";
 import { buildLiveFacts } from "@/lib/facts/live-facts";
@@ -41,10 +40,10 @@ export default async function Page() {
 
   return (
     <>
-      <Script
-        id="facts-jsonld"
+      {/* JSON-LD goes in a plain <script> tag (not next/script) so it
+          renders in the SSR HTML and search engines pick it up. */}
+      <script
         type="application/ld+json"
-        strategy="beforeInteractive"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
