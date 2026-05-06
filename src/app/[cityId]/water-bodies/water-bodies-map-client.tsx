@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { UnifiedDetailPanel } from "@/components/water-bodies/unified-detail-panel";
 import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
@@ -9,6 +9,7 @@ import { MapInfoButton } from "@/components/map/map-info-button";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import type { SelectedWaterBody } from "@/types/water-bodies";
+import type { RestorationPriorityData } from "@/types/restoration";
 
 interface ClientProps {
   cityId: string;
@@ -49,6 +50,29 @@ export default function WaterBodiesMapClient({
   useLockBodyScroll();
   const [selected, setSelected] = useState<SelectedWaterBody | null>(null);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
+  const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
+
+  // Load this city's restoration-priority JSON. Chennai's /water-bodies
+  // page does the same; the JSON now conforms to the shared
+  // RestorationPriorityData shape across cities.
+  useEffect(() => {
+    fetch(`/data/restoration-priority-${cityId}.json`)
+      .then((r) => (r.ok ? (r.json() as Promise<RestorationPriorityData>) : null))
+      .then((data) => setRestorationData(data))
+      .catch(() => setRestorationData(null));
+  }, [cityId]);
+
+  // Look up the score row for the selected water body so the detail
+  // panel can render the priority badge + component breakdown +
+  // rationale (mirrors Chennai's pattern).
+  const selectedRestoration = useMemo(() => {
+    if (!selected || !restorationData) return null;
+    if (selected.kind === "current") {
+      const osmId = selected.props.osm_id;
+      return restorationData.water_bodies.find((w) => w.osm_id === osmId) ?? null;
+    }
+    return null;
+  }, [selected, restorationData]);
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
@@ -84,7 +108,7 @@ export default function WaterBodiesMapClient({
         <div className="relative flex-1 h-full">
           <UnifiedMap
             viewMode="water-bodies"
-            scoredData={[]}
+            scoredData={restorationData?.water_bodies ?? []}
             censusData={[]}
             onSelectCurrent={setSelected}
             onSelectLost={setSelected}
@@ -136,7 +160,7 @@ export default function WaterBodiesMapClient({
           <BottomSheet onClose={() => setSelected(null)}>
             <UnifiedDetailPanel
               selected={selected}
-              restorationData={null}
+              restorationData={selectedRestoration}
               onClose={() => setSelected(null)}
             />
           </BottomSheet>
