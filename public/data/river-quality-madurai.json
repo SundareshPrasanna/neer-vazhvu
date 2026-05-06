@@ -1,7 +1,10 @@
 {
-  "last_updated": "2026-05",
-  "data_year_range": [2020, 2024],
-  "source": "CPCB NWMP annual River Water Quality reports for Vaigai stations. Readings are populated by neer-vazhvu-api/scripts/scrape_cpcb_nwmp_vaigai.py from CPCB PDF reports placed in docs/cpcb/. Until those PDFs are dropped in, the readings array is empty and the rivers page falls back to the 'planned monitoring' placeholder. Coordinates are approximations along the Vaigai polyline based on village/town names cited in the CPCB station registry; exact coordinates are not publicly published.",
+  "last_updated": "2024",
+  "data_year_range": [
+    2021,
+    2024
+  ],
+  "source": "CPCB NWMP annual River Water Quality reports (cpcb.nic.in/wqm/{YEAR}/WQuality_River-Data-{YEAR}.pdf, 2020-2024 editions). Readings are min-max midpoints parsed by neer-vazhvu-api/scripts/scrape_cpcb_nwmp_vaigai.py. CPCB monitors only 2 of the 6 candidate stations on Vaigai: code 10059 (Madurai U/S, our vaigai-sellur) and 10060 (Madurai D/S, our vaigai-anuppanadi). Vaigai dam, Andipatti, Manamadurai, and Ramanathapuram remain in the seed for future expansion but are NOT on NWMP today, so their readings stay empty. Station coordinates are approximations along the Vaigai polyline; exact CPCB coordinates are not publicly published.",
   "rivers": [
     {
       "id": "vaigai",
@@ -38,18 +41,132 @@
           "name": "Vaigai at Sellur (Madurai upstream)",
           "name_ta": "வைகை - செல்லூர்",
           "lat": 9.9425,
-          "lng": 78.1080,
+          "lng": 78.108,
           "stretch": "Madurai upstream of city",
-          "readings": []
+          "readings": [
+            {
+              "do_mgl": 5.8,
+              "bod_mgl": 2.5,
+              "ph": 7.55,
+              "conductivity_us": 672.0,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 9.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 1.51,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2021
+            },
+            {
+              "do_mgl": 5.9,
+              "bod_mgl": 2.0,
+              "ph": 7.56,
+              "conductivity_us": 492.0,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 20.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.53,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2022
+            },
+            {
+              "do_mgl": 6.05,
+              "bod_mgl": 2.0,
+              "ph": 7.5,
+              "conductivity_us": 480.0,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 9.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.52,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2023
+            },
+            {
+              "do_mgl": 6.15,
+              "bod_mgl": 3.0,
+              "ph": 7.35,
+              "conductivity_us": 616.5,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 16.0,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.68,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2024
+            }
+          ]
         },
         {
           "id": "vaigai-anuppanadi",
           "name": "Vaigai at Anuppanadi (Madurai downstream)",
           "name_ta": "வைகை - அனுப்பானடி",
-          "lat": 9.9000,
-          "lng": 78.1450,
+          "lat": 9.9,
+          "lng": 78.145,
           "stretch": "Madurai downstream of city",
-          "readings": []
+          "readings": [
+            {
+              "do_mgl": 5.6,
+              "bod_mgl": 2.0,
+              "ph": 7.45,
+              "conductivity_us": 955.5,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 2.0,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.57,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2021
+            },
+            {
+              "do_mgl": 6.35,
+              "bod_mgl": 2.0,
+              "ph": 7.29,
+              "conductivity_us": 600.5,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 21.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.86,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2022
+            },
+            {
+              "do_mgl": 6.0,
+              "bod_mgl": 3.5,
+              "ph": 7.5,
+              "conductivity_us": 1079.5,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 20.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.86,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2023
+            },
+            {
+              "do_mgl": 5.1,
+              "bod_mgl": 4.2,
+              "ph": 7.85,
+              "conductivity_us": 916.0,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 21.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.96,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2024
+            }
+          ]
         },
         {
           "id": "vaigai-manamadurai",
@@ -64,8 +181,8 @@
           "id": "vaigai-ramanathapuram",
           "name": "Vaigai at Ramanathapuram (estuarine)",
           "name_ta": "வைகை - ராமநாதபுரம்",
-          "lat": 9.3700,
-          "lng": 78.8300,
+          "lat": 9.37,
+          "lng": 78.83,
           "stretch": "Estuary",
           "readings": []
         }

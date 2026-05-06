@@ -133,7 +133,22 @@ async def main() -> int:
     parser.add_argument(
         "--throttle", type=float, default=1.0, help="Seconds between requests"
     )
+    parser.add_argument(
+        "--cities",
+        default=",".join(EXPECTED_CITY_IDS),
+        help=(
+            "Comma-separated city_ids to backfill. Default: all "
+            f"({','.join(EXPECTED_CITY_IDS)}). Use this to skip cities not "
+            "yet seeded in the cities table (e.g. --cities madurai while "
+            "Kaveri is parked)."
+        ),
+    )
     args = parser.parse_args()
+    only_cities = {c.strip() for c in args.cities.split(",") if c.strip()}
+    unknown = only_cities - set(EXPECTED_CITY_IDS)
+    if unknown:
+        print(f"ERROR: unknown city_ids in --cities: {unknown}", file=sys.stderr)
+        return 1
 
     start = date.fromisoformat(args.start)
     end = date.fromisoformat(args.end) if args.end else (_today_ist() - timedelta(days=1))
@@ -157,11 +172,11 @@ async def main() -> int:
     existing = _existing_dates(supabase, start, end)
     print(f"  {len(existing)} (city,date) pairs already present", flush=True)
 
-    # Date is fully done iff every expected city has a row for it.
+    # Date is fully done iff every requested city has a row for it.
     fully_done: set[str] = set()
     for d in _date_range(start, end):
         ds = d.isoformat()
-        if all(f"{c}|{ds}" in existing for c in EXPECTED_CITY_IDS):
+        if all(f"{c}|{ds}" in existing for c in only_cities):
             fully_done.add(ds)
     todo = [d for d in _date_range(start, end) if d.isoformat() not in fully_done]
     print(
@@ -178,11 +193,15 @@ async def main() -> int:
             if rows is None:
                 failed += 1
             elif rows:
-                supabase.table("reservoir_daily_v2").upsert(
-                    rows, on_conflict="city_id,source_code,date"
-                ).execute()
-                fetched += 1
-                upserted += len(rows)
+                # Filter to requested cities (Kaveri rows skipped while
+                # the kaveri row is absent from the cities table).
+                rows = [r for r in rows if r.get("city_id") in only_cities]
+                if rows:
+                    supabase.table("reservoir_daily_v2").upsert(
+                        rows, on_conflict="city_id,source_code,date"
+                    ).execute()
+                    fetched += 1
+                    upserted += len(rows)
             if i % 25 == 0 or i == len(todo):
                 print(
                     f"  {i}/{len(todo)} processed (fetched={fetched} "
