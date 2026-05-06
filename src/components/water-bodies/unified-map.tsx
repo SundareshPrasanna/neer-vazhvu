@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { MapContainer, TileLayer, GeoJSON, Tooltip, LayerGroup, Circle, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, Tooltip, LayerGroup, Circle, useMap, Pane } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer } from "leaflet";
@@ -459,15 +459,22 @@ export function UnifiedMap({
           onEachFeature={onEachCurrent}
         />
       )}
+      {/* Lost-body markers in their own pane (z-index 450, above
+          overlayPane's 400). Without this, lost markers render below
+          the current water-body polygons because the current layer
+          re-mounts on viewMode/language/census change and gets added
+          last to overlayPane. */}
       {lostGeoJSON && (
-        <GeoJSON
-          ref={(layer) => { lostLayerRef.current = layer; }}
-          key={`lost-${language}-${tiles.url}`}
-          data={lostGeoJSON}
-          pointToLayer={pointToLayer}
-          style={lostStyle}
-          onEachFeature={onEachLost}
-        />
+        <Pane name="lost-bodies-pane" style={{ zIndex: 450 }}>
+          <GeoJSON
+            ref={(layer) => { lostLayerRef.current = layer; }}
+            key={`lost-${language}-${tiles.url}`}
+            data={lostGeoJSON}
+            pointToLayer={pointToLayer}
+            style={lostStyle}
+            onEachFeature={onEachLost}
+          />
+        </Pane>
       )}
       {unmatchedCensus.length > 0 && viewMode === "water-bodies" && (
         <LayerGroup>
