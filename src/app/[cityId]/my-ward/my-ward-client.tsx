@@ -176,21 +176,21 @@ export default function MyWardClient({
 
         {/* Detail sidebar */}
         <div className="hidden md:flex h-full md:w-80 lg:w-96 border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto">
-          {selectedProfile ? <WardDetail profile={selectedProfile} /> : <div className="p-4 text-sm text-slate-500">Click a ward.</div>}
+          {selectedProfile ? <WardDetail profile={selectedProfile} cityId={cityId} /> : <div className="p-4 text-sm text-slate-500">Click a ward.</div>}
         </div>
       </div>
 
       {/* Mobile bottom panel */}
       {selectedProfile && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[40vh] overflow-y-auto">
-          <WardDetail profile={selectedProfile} />
+          <WardDetail profile={selectedProfile} cityId={cityId} />
         </div>
       )}
     </div>
   );
 }
 
-function WardDetail({ profile }: { profile: WardProfile }) {
+function WardDetail({ profile, cityId }: { profile: WardProfile; cityId: string }) {
   const zoneColor = profile.zone_name ? ZONE_COLOR[profile.zone_name] ?? "#94a3b8" : "#94a3b8";
   return (
     <div className="p-4 space-y-3">
@@ -221,31 +221,31 @@ function WardDetail({ profile }: { profile: WardProfile }) {
         </div>
       </div>
 
-      <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-950/20 p-3 space-y-1">
-        <div className="text-[10px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold">
-          Ward profile · in progress
+      <a
+        href={`/${cityId}/my-ward/report?ward=${profile.ward_number}`}
+        className="block rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20 p-3 hover:border-blue-400 transition-colors"
+      >
+        <div className="text-[10px] uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">
+          Ward report card
         </div>
-        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-          The Madurai ward profile fields - water bodies, flood hazard, drainage,
-          sewerage, rivers, industrial, risk score - are not yet populated. The
-          underlying data layers (water-body census subset, river quality,
-          restoration scoring, sewerage GeoJSON) need to land first. Chennai
-          parity for this page comes after M3.
+        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed mt-1">
+          Composite risk grade with factor breakdown (groundwater depth, water-body
+          density, water-body health) for Ward {profile.ward_number}.
         </p>
-      </div>
+      </a>
 
       <div className="text-xs text-slate-500 dark:text-slate-400">
-        For now, the most useful citywide data lives in:
+        Other citywide data:
       </div>
       <div className="space-y-1.5">
         <a href="../groundwater" className="block rounded border border-slate-200 dark:border-slate-700 p-2 text-xs hover:border-blue-400 transition-colors">
-          <span className="font-semibold">Groundwater map</span> · 11 CGWB blocks classified, 194 stations
+          <span className="font-semibold">Groundwater map</span> · CGWB blocks + live WRIS stations
         </a>
         <a href="../water-bodies" className="block rounded border border-slate-200 dark:border-slate-700 p-2 text-xs hover:border-blue-400 transition-colors">
           <span className="font-semibold">Water bodies</span> · OSM polygons of tanks near this ward
         </a>
         <a href="../lake-restoration" className="block rounded border border-slate-200 dark:border-slate-700 p-2 text-xs hover:border-blue-400 transition-colors">
-          <span className="font-semibold">Lake restoration</span> · narrative content + court anchor
+          <span className="font-semibold">Lake restoration</span> · priority-scored flagships + court anchor
         </a>
       </div>
     </div>
