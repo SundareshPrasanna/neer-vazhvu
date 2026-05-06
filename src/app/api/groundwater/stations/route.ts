@@ -62,13 +62,15 @@ export async function GET(request: NextRequest) {
   if (stationCode) {
     // Return time series for a specific station, along with the latest-view
     // metadata (well_type, quality flag, etc.) so the panel can display it.
+    // No district filter - station_code is unique across districts, and
+    // forcing a district match drops Madurai readings when the panel
+    // doesn't pass a city= param (its caller often doesn't know which).
     let query = supabase
       .from("groundwater_wris")
       .select(
         "station_code, station_name, latitude, longitude, reading_date, depth_to_water_m, acquisition_mode, well_type, well_depth_m, well_aquifer_type",
       )
       .eq("station_code", stationCode)
-      .eq("district", district)
       .gte("reading_date", cutoff)
       .order("reading_date", { ascending: true })
       .limit(1000);
@@ -85,7 +87,6 @@ export async function GET(request: NextRequest) {
           "station_code, station_name, latitude, longitude, acquisition_mode, well_type, well_depth_m, well_aquifer_type, recent_count, recent_range_m, data_quality_flag, district",
         )
         .eq("station_code", stationCode)
-        .eq("district", district)
         .maybeSingle(),
     ]);
 
