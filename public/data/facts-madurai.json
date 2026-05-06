@@ -1,6 +1,6 @@
 {
   "place_id": "madurai",
-  "generated_at": "2026-05-04",
+  "generated_at": "2026-05-06",
   "note": "Hand-curated Madurai water facts. v1 - replaces with dynamic fact-builder when M3 data layers (CPCB river quality, ward profiles, satellite GEE) ship.",
   "facts": [
     {
@@ -170,6 +170,114 @@
       "data_date": "2011",
       "source_url": "https://en.wikipedia.org/wiki/Madurai_Municipal_Corporation",
       "source_label": "MMC / Wikipedia"
+    },
+    {
+      "id": "auto-mad-gwr-overexploited-blocks",
+      "tier": 2,
+      "category": "Groundwater",
+      "title": "Over-exploited groundwater blocks (CGWB)",
+      "value": "4",
+      "unit": "of 66 blocks",
+      "interpretation": "4 of Madurai district's 66 CGWB-classified blocks are pumping faster than recharge. Most stressed: Sindhupatti at 120% development. Latest GWR data 2024.",
+      "data_date": "2024",
+      "source_url": "https://indiawris.gov.in/wris/",
+      "source_label": "CGWB GWR via India WRIS"
+    },
+    {
+      "id": "auto-mad-gwr-critical-semi",
+      "tier": 2,
+      "category": "Groundwater",
+      "title": "Critical or semi-critical blocks",
+      "value": "28",
+      "unit": "7 critical · 21 semi-critical",
+      "interpretation": "Beyond the over-exploited tier, 7 blocks are 'Critical' (>90% draft) and 21 are 'Semi Critical' (>70%). These are the watch-list zones where TWAD / Madurai Corporation interventions need to start before they tip over.",
+      "data_date": "2024",
+      "source_url": "https://indiawris.gov.in/wris/",
+      "source_label": "CGWB GWR via India WRIS"
+    },
+    {
+      "id": "auto-mad-restoration-critical",
+      "tier": 2,
+      "category": "Restoration",
+      "title": "Flagship tanks at critical restoration priority",
+      "value": "5",
+      "unit": "of 19 flagships",
+      "interpretation": "5 hand-curated flagship tanks score 'critical' on Madurai's restoration-priority composite (status severity × cultural anchor × size × source confidence). Highest score: Vandiyur tank at 100/100.",
+      "data_date": "2026-05-06",
+      "source_url": "/madurai/lake-restoration",
+      "source_label": "Algorithm: madurai-flagship-v1"
+    },
+    {
+      "id": "auto-mad-restoration-high",
+      "tier": 2,
+      "category": "Restoration",
+      "title": "Flagships at high restoration priority",
+      "value": "2",
+      "unit": "of 19 flagships",
+      "interpretation": "Beyond critical, 2 more flagships rank 'high'. Combined critical + high = 7 of 19 - the short-list for any Kudimaramathu / Smart City / AMRUT cycle.",
+      "data_date": "2026-05-06",
+      "source_url": "/madurai/lake-restoration",
+      "source_label": "Algorithm: madurai-flagship-v1"
+    },
+    {
+      "id": "auto-mad-ward-f-grade",
+      "tier": 2,
+      "category": "Governance",
+      "title": "F-grade wards on the risk composite",
+      "value": "12",
+      "unit": "of 100 wards",
+      "interpretation": "12 of Madurai's 100 wards score F (composite >80) on the 3-factor risk index (groundwater depth 50%, water-body density 20%, water-body health 30%). Highest risk: Ward 88 (SOUTH) at 90.7/100. 34 more wards score D.",
+      "data_date": "2026-05-06",
+      "source_url": "/madurai/my-ward/report",
+      "source_label": "Algorithm: madurai-risk-v1-3factor"
+    },
+    {
+      "id": "auto-mad-ward-gw-depth",
+      "tier": 2,
+      "category": "Groundwater",
+      "title": "Average ward groundwater depth (IDW)",
+      "value": "5.1",
+      "unit": "m below ground",
+      "interpretation": "Inverse-distance interpolation from 35 telemetric CGWB stations gives a citywide average water-table depth of 5.1 m. Deepest: Ward 100 at 11.9 m. Refreshes daily as new WRIS readings land.",
+      "data_date": "2026-05-06",
+      "source_url": "/madurai/groundwater",
+      "source_label": "WRIS telemetric CGWB stations · IDW"
+    },
+    {
+      "id": "auto-mad-vaigai-bod-gradient",
+      "tier": 2,
+      "category": "Restoration",
+      "title": "Vaigai BOD pollution gradient through Madurai",
+      "value": "+1.2",
+      "unit": "mg/L D/S minus U/S",
+      "interpretation": "CPCB 2024 NWMP readings: BOD jumps from 3 mg/L upstream of Madurai (Sellur) to 4.2 mg/L downstream (Anuppanadi). Sewage outfalls and textile dyeing through the city push the river over the 3 mg/L drinkable-after-treatment threshold.",
+      "data_date": "2024",
+      "source_url": "https://cpcb.nic.in/nwmp-data-2/",
+      "source_label": "CPCB NWMP · Vaigai stations 10059 + 10060"
+    },
+    {
+      "id": "auto-mad-vaigai-do-downstream",
+      "tier": 2,
+      "category": "Restoration",
+      "title": "Vaigai dissolved oxygen, downstream of Madurai",
+      "value": "5.1",
+      "unit": "mg/L (CPCB threshold 5.0)",
+      "interpretation": "Latest CPCB NWMP reading at Vaigai D/S Madurai (2024). The 5 mg/L threshold is the cutoff for outdoor bathing and propagation of fish/wildlife under CPCB Class C. Just above threshold.",
+      "data_date": "2024",
+      "source_url": "https://cpcb.nic.in/nwmp-data-2/",
+      "source_label": "CPCB NWMP station 10060"
+    },
+    {
+      "id": "auto-mad-lost-tanks-area",
+      "tier": 2,
+      "category": "Water bodies",
+      "title": "Urban tank area lost to encroachment",
+      "value": "16.5",
+      "unit": "sq km lost",
+      "interpretation": "14 fully lost + 12 severely reduced urban tanks. Combined area swallowed: ~16.5 sq km, roughly 30% of Madurai's old city footprint. ~15k slum households now sit on former tank beds.",
+      "data_date": "2026-05-06",
+      "source_url": "/madurai/lake-restoration",
+      "source_label": "Vencatesan (2014) + DHAN field studies"
     }
   ]
 }
