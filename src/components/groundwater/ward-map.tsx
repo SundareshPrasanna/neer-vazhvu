@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, useMap, Pane } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer, LeafletMouseEvent } from "leaflet";
@@ -261,7 +261,11 @@ export function WardMap({
               colored markers (depth + quality flag). Otherwise fall back to
               the basic static-metadata blue dots. This lights up Madurai's
               exploitation view with live data while leaving Chennai's
-              behaviour intact when wrisStations is empty. */}
+              behaviour intact when wrisStations is empty.
+              Render inside a custom Pane with z-index above the
+              overlayPane (400) so the GeoJSON re-mount on viewMode toggle
+              doesn't push the choropleth fill above the markers. */}
+          <Pane name="wris-stations-pane" style={{ zIndex: 450 }}>
           {wrisStations && wrisStations.length > 0
             ? wrisStations.map((s) => {
                 if (s.latitude == null || s.longitude == null) return null;
@@ -324,6 +328,7 @@ export function WardMap({
                   </Tooltip>
                 </CircleMarker>
               ))}
+          </Pane>
         </>
       ) : (
         <>
@@ -333,7 +338,10 @@ export function WardMap({
           {/* key includes viewMode so highlight remounts on top after choropleth remounts */}
           <SelectedWardHighlight key={`highlight-${viewMode}`} wardNumber={selectedWardNumber ?? null} wardGeoJsonUrl={wardGeoJsonUrl} />
 
-          {/* Live CGWB stations overlay (India WRIS) - only on depth view */}
+          {/* Live CGWB stations overlay (India WRIS) - only on depth view.
+              Wrapped in a custom Pane (z-index above overlayPane) so the
+              ward choropleth fill never hides the markers. */}
+          <Pane name="wris-stations-pane-depth" style={{ zIndex: 450 }}>
           {viewMode === "depth" && wrisStations?.map((s) => {
             if (s.latitude == null || s.longitude == null) return null;
             // Respect the legend's sensor-status filters so reviewers can hide
@@ -400,6 +408,7 @@ export function WardMap({
               </CircleMarker>
             );
           })}
+          </Pane>
         </>
       )}
     </MapContainer>
