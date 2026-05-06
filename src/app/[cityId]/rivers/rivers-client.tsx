@@ -58,6 +58,24 @@ interface RiverEvent {
 interface RiverEventsFile {
   events: RiverEvent[];
 }
+
+interface IndustrialSource {
+  id: string;
+  name: string;
+  name_ta?: string;
+  type: string;
+  lat: number;
+  lng: number;
+  operator: string;
+  rivers_affected: string[];
+  pollutants: string[];
+  description: string;
+  url?: string;
+}
+
+interface IndustrialSourcesFile {
+  sources: IndustrialSource[];
+}
 interface CpcbStation {
   id: string;
   name: string;
@@ -120,6 +138,7 @@ export default function RiversClient({
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(null);
   const [cpcb, setCpcb] = useState<CpcbFile | null>(null);
   const [events, setEvents] = useState<RiverEvent[]>([]);
+  const [industrial, setIndustrial] = useState<IndustrialSource[]>([]);
 
   useEffect(() => {
     fetch(`/geojson/${cityId}-rivers.geojson`)
@@ -160,9 +179,38 @@ export default function RiversClient({
       .catch(() => setEvents([]));
   }, [cityId]);
 
+  // Optional industrial pollution sources overlay.
+  useEffect(() => {
+    fetch(`/data/industrial-sources-${cityId}.json`)
+      .then((r) => (r.ok ? (r.json() as Promise<IndustrialSourcesFile>) : null))
+      .then((data) => setIndustrial(data?.sources ?? []))
+      .catch(() => setIndustrial([]));
+  }, [cityId]);
+
   const selectedEvents = useMemo(
     () => events.filter((e) => e.river_id === selectedRiverId),
     [events, selectedRiverId],
+  );
+
+  const selectedIndustrial = useMemo(
+    () =>
+      selectedRiverId
+        ? industrial.filter((s) => s.rivers_affected.includes(selectedRiverId))
+        : [],
+    [industrial, selectedRiverId],
+  );
+
+  const industrialMarkers = useMemo(
+    () =>
+      industrial.map((s) => ({
+        id: s.id,
+        name: s.name,
+        lat: s.lat,
+        lng: s.lng,
+        type: s.type,
+        rivers_affected: s.rivers_affected,
+      })),
+    [industrial],
   );
 
   const selectedInfo = selectedRiverId ? riverInfo[selectedRiverId] : null;
@@ -209,6 +257,7 @@ export default function RiversClient({
         <span className="text-xs text-slate-500 dark:text-slate-400">
           {rivers.length} rivers
           {cpcbStationMarkers.length > 0 && ` · ${cpcbStationMarkers.length} CPCB stations`}
+          {industrialMarkers.length > 0 && ` · ${industrialMarkers.length} industrial sources`}
           {" · click for details"}
         </span>
       </div>
@@ -224,6 +273,7 @@ export default function RiversClient({
             mapZoom={mapZoom}
             riverInfo={riverInfo}
             cpcbStations={cpcbStationMarkers}
+            industrialSources={industrialMarkers}
           />
         </div>
 
@@ -236,6 +286,7 @@ export default function RiversClient({
               nameTa={selectedRiver.name_ta}
               cpcbRiver={selectedCpcbRiver}
               events={selectedEvents}
+              industrial={selectedIndustrial}
             />
           ) : (
             <div className="p-4 text-sm text-slate-500">Click a river to see details.</div>
@@ -252,6 +303,7 @@ export default function RiversClient({
             nameTa={selectedRiver.name_ta}
             cpcbRiver={selectedCpcbRiver}
             events={selectedEvents}
+            industrial={selectedIndustrial}
           />
         </div>
       )}
@@ -304,12 +356,14 @@ function RiverDetail({
   nameTa,
   cpcbRiver,
   events,
+  industrial,
 }: {
   info: RiverInfo;
   geomLengthKm: number;
   nameTa: string;
   cpcbRiver: CpcbRiver | null;
   events: RiverEvent[];
+  industrial: IndustrialSource[];
 }) {
   const hasReadings = !!cpcbRiver?.stations.some((s) => s.readings.length > 0);
   return (
@@ -438,6 +492,54 @@ function RiverDetail({
                 </div>
               );
             })}
+        </div>
+      )}
+
+      {industrial.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-[10px] uppercase text-slate-500 tracking-wider">
+            Industrial sources affecting this river ({industrial.length})
+          </div>
+          {industrial.map((s) => (
+            <div key={s.id} className="border border-slate-200 dark:border-slate-700 rounded-md p-2 bg-white/50 dark:bg-slate-900/50">
+              <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                <span className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+                  {s.name}
+                </span>
+                <span className="text-[10px] uppercase tracking-wider text-slate-500">
+                  {s.type.replace(/_/g, " ")}
+                </span>
+              </div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                {s.operator}
+              </div>
+              {s.pollutants.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {s.pollutants.map((p) => (
+                    <span
+                      key={p}
+                      className="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800"
+                    >
+                      {p}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed mt-1.5">
+                {s.description}
+              </p>
+              {s.url && (
+                <a
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline mt-1.5 inline-block"
+                >
+                  Source →
+                </a>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

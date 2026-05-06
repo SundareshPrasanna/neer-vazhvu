@@ -22,6 +22,15 @@ export interface CpcbStationMarker {
   latest_year: number | null;
 }
 
+export interface IndustrialSourceMarker {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  type: string;
+  rivers_affected: string[];
+}
+
 interface RiverGeoFeature {
   river_id: string;
   name: string;
@@ -38,7 +47,19 @@ interface MapProps {
   mapZoom: number;
   riverInfo: Record<string, RiverInfo>;
   cpcbStations?: CpcbStationMarker[];
+  industrialSources?: IndustrialSourceMarker[];
 }
+
+const INDUSTRIAL_TYPE_FILL: Record<string, string> = {
+  industrial_estate: "#9333ea",   // purple
+  tannery:           "#7c2d12",   // brown
+  textile_dyeing:    "#be185d",   // pink
+  discharge_zone:    "#0f172a",   // slate-900
+  thermal_power:     "#1f2937",   // grey
+  petrochemical:     "#0891b2",   // cyan
+  chemical:          "#15803d",   // green
+  port:              "#1d4ed8",   // blue
+};
 
 // Simple river-color palette. Color comes from riverInfo.color (Tailwind
 // stroke palette) but Leaflet expects hex; map common Tailwind classes.
@@ -68,6 +89,7 @@ export function RiversLeafletMap({
   mapZoom,
   riverInfo,
   cpcbStations = [],
+  industrialSources = [],
 }: MapProps) {
   const tiles = useMapTiles();
 
@@ -173,6 +195,36 @@ export function RiversLeafletMap({
                   </span>
                 </>
               )}
+            </Tooltip>
+          </CircleMarker>
+        );
+      })}
+
+      {industrialSources.map((s) => {
+        const fill = INDUSTRIAL_TYPE_FILL[s.type] ?? "#475569";
+        return (
+          <CircleMarker
+            key={`ind-${s.id}`}
+            center={[s.lat, s.lng]}
+            radius={5}
+            pathOptions={{
+              color: "#fbbf24",
+              weight: 2,
+              fillColor: fill,
+              fillOpacity: 0.85,
+            }}
+            eventHandlers={{
+              click: () => {
+                if (s.rivers_affected.length > 0) onSelectRiver(s.rivers_affected[0]);
+              },
+            }}
+          >
+            <Tooltip>
+              <strong>{s.name}</strong>
+              <br />
+              <span style={{ fontSize: "11px", color: "#64748b" }}>
+                {s.type.replace(/_/g, " ")} · affects {s.rivers_affected.join(", ")}
+              </span>
             </Tooltip>
           </CircleMarker>
         );
