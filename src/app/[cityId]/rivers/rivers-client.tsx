@@ -40,6 +40,24 @@ interface CpcbReading {
   ph: number | null;
   fecal_coliform_mpn: number | null;
 }
+
+type EventCategory = "court_order" | "dispute" | "threshold" | "news" | "restoration";
+
+interface RiverEvent {
+  id: string;
+  river_id: string;
+  category: EventCategory;
+  date: string;
+  title: string;
+  actors: string[];
+  summary: string;
+  url?: string;
+  url_label?: string;
+}
+
+interface RiverEventsFile {
+  events: RiverEvent[];
+}
 interface CpcbStation {
   id: string;
   name: string;
@@ -101,6 +119,7 @@ export default function RiversClient({
   const [rivers, setRivers] = useState<RiverGeoFeature[]>([]);
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(null);
   const [cpcb, setCpcb] = useState<CpcbFile | null>(null);
+  const [events, setEvents] = useState<RiverEvent[]>([]);
 
   useEffect(() => {
     fetch(`/geojson/${cityId}-rivers.geojson`)
@@ -132,6 +151,19 @@ export default function RiversClient({
       .then((data: CpcbFile | null) => setCpcb(data))
       .catch(() => setCpcb(null));
   }, [cityId]);
+
+  // Optional court orders + news events overlay.
+  useEffect(() => {
+    fetch(`/data/river-events-${cityId}.json`)
+      .then((r) => (r.ok ? (r.json() as Promise<RiverEventsFile>) : null))
+      .then((data) => setEvents(data?.events ?? []))
+      .catch(() => setEvents([]));
+  }, [cityId]);
+
+  const selectedEvents = useMemo(
+    () => events.filter((e) => e.river_id === selectedRiverId),
+    [events, selectedRiverId],
+  );
 
   const selectedInfo = selectedRiverId ? riverInfo[selectedRiverId] : null;
   const selectedRiver = useMemo(
@@ -203,6 +235,7 @@ export default function RiversClient({
               geomLengthKm={selectedRiver.length_km}
               nameTa={selectedRiver.name_ta}
               cpcbRiver={selectedCpcbRiver}
+              events={selectedEvents}
             />
           ) : (
             <div className="p-4 text-sm text-slate-500">Click a river to see details.</div>
@@ -218,6 +251,7 @@ export default function RiversClient({
             geomLengthKm={selectedRiver.length_km}
             nameTa={selectedRiver.name_ta}
             cpcbRiver={selectedCpcbRiver}
+            events={selectedEvents}
           />
         </div>
       )}
@@ -256,16 +290,26 @@ function StationReadingsTable({ station }: { station: CpcbStation }) {
   );
 }
 
+const EVENT_TONE: Record<EventCategory, { bg: string; text: string; label: string }> = {
+  court_order: { bg: "bg-red-100 dark:bg-red-900/40 border-red-300 dark:border-red-700",       text: "text-red-800 dark:text-red-200",       label: "Court order" },
+  dispute:     { bg: "bg-amber-100 dark:bg-amber-900/40 border-amber-300 dark:border-amber-700", text: "text-amber-800 dark:text-amber-200",   label: "Dispute" },
+  threshold:   { bg: "bg-orange-100 dark:bg-orange-900/40 border-orange-300 dark:border-orange-700", text: "text-orange-800 dark:text-orange-200", label: "Threshold" },
+  news:        { bg: "bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600", text: "text-slate-700 dark:text-slate-300",   label: "News" },
+  restoration: { bg: "bg-emerald-100 dark:bg-emerald-900/40 border-emerald-300 dark:border-emerald-700", text: "text-emerald-800 dark:text-emerald-200", label: "Restoration" },
+};
+
 function RiverDetail({
   info,
   geomLengthKm,
   nameTa,
   cpcbRiver,
+  events,
 }: {
   info: RiverInfo;
   geomLengthKm: number;
   nameTa: string;
   cpcbRiver: CpcbRiver | null;
+  events: RiverEvent[];
 }) {
   const hasReadings = !!cpcbRiver?.stations.some((s) => s.readings.length > 0);
   return (
@@ -348,6 +392,53 @@ function RiverDetail({
             </p>
           </div>
         )
+      )}
+
+      {events.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-[10px] uppercase text-slate-500 tracking-wider">
+            Court orders &amp; key events ({events.length})
+          </div>
+          {events
+            .slice()
+            .sort((a, b) => (b.date > a.date ? 1 : -1))
+            .map((e) => {
+              const tone = EVENT_TONE[e.category];
+              return (
+                <div key={e.id} className={`border rounded-md p-2 ${tone.bg}`}>
+                  <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                    <span className={`text-[10px] uppercase font-medium tracking-wider ${tone.text}`}>
+                      {tone.label}
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                      {e.date}
+                    </span>
+                  </div>
+                  <div className="text-xs font-semibold text-slate-900 dark:text-slate-100 mt-1">
+                    {e.title}
+                  </div>
+                  {e.actors.length > 0 && (
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                      {e.actors.join(" · ")}
+                    </div>
+                  )}
+                  <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed mt-1.5">
+                    {e.summary}
+                  </p>
+                  {e.url && (
+                    <a
+                      href={e.url}
+                      target={e.url.startsWith("/") ? undefined : "_blank"}
+                      rel={e.url.startsWith("/") ? undefined : "noopener noreferrer"}
+                      className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline mt-1.5 inline-block"
+                    >
+                      {e.url_label ?? "Source →"}
+                    </a>
+                  )}
+                </div>
+              );
+            })}
+        </div>
       )}
     </div>
   );
