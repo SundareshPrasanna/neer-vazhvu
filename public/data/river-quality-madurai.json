@@ -4,7 +4,7 @@
     2021,
     2024
   ],
-  "source": "CPCB NWMP annual River Water Quality reports (cpcb.nic.in/wqm/{YEAR}/WQuality_River-Data-{YEAR}.pdf, 2020-2024 editions). Readings are min-max midpoints parsed by neer-vazhvu-api/scripts/scrape_cpcb_nwmp_vaigai.py. CPCB monitors only 2 of the 6 candidate stations on Vaigai: code 10059 (Madurai U/S, our vaigai-sellur) and 10060 (Madurai D/S, our vaigai-anuppanadi). Vaigai dam, Andipatti, Manamadurai, and Ramanathapuram remain in the seed for future expansion but are NOT on NWMP today, so their readings stay empty. Station coordinates are approximations along the Vaigai polyline; exact CPCB coordinates are not publicly published.",
+  "source": "CPCB NWMP annual River Water Quality reports (cpcb.nic.in/wqm/{YEAR}/WQuality_River-Data-{YEAR}.pdf, 2021-2024 editions). Readings are min-max midpoints parsed by neer-vazhvu-api/scripts/scrape_cpcb_nwmp_vaigai.py. CPCB monitors Vaigai at 2 stations, both within Madurai city: code 10059 (Madurai U/S, our vaigai-sellur) and 10060 (Madurai D/S, our vaigai-anuppanadi). The headwaters (Vaigai dam, Andipatti) and the lower stretch (Manamadurai, Ramanathapuram) are NOT on the NWMP roster, so they are not represented here. Station coordinates are approximations along the Vaigai polyline; exact CPCB coordinates are not publicly published.",
   "rivers": [
     {
       "id": "vaigai",
@@ -15,27 +15,9 @@
       "cpcb_class": "Below E (Madurai-Manamadurai stretch)",
       "description": "The Vaigai is Madurai's mainstem, draining 7,009 sq km from the Periyar/Vaigai dam in Theni through Madurai city, Sivagangai and Ramanathapuram before reaching the Bay of Bengal. About 80% of its annual flow is the Mullaperiyar tunnel diversion from the Periyar (Kerala) catchment. The Madurai-Manamadurai stretch is on CPCB's Priority III polluted river list (textile dyeing, sewage outfalls, sand mining).",
       "description_ta": "வைகை ஆறு மதுரையின் முதன்மை ஆறாகும். தேனி மாவட்டத்தில் உள்ள பெரியார்/வைகை அணையில் தொடங்கி, 7,009 ச.கி.மீ. பகுதியை வடிகட்டி, மதுரை, சிவகங்கை, ராமநாதபுரம் மாவட்டங்கள் வழியாக வங்காள விரிகுடாவில் கலக்கிறது. ஆண்டுப் பாய்ச்சலில் சுமார் 80% பெரியார்-முல்லைப்பெரியார் சுரங்கப் பாதையின் வழியாக கேரளாவின் பெரியாறு பிடிப்புப் பகுதியிலிருந்து திருப்பப்படுகிறது. மதுரை-மானாமதுரை பகுதி CPCB-வின் முன்னுரிமை III மாசுபட்ட ஆற்றுப் பட்டியலில் உள்ளது (ஜவுளி சாயமிடல், கழிவுநீர் வெளியேற்றம், மணல் சுரண்டல்).",
-      "notes": "6 CPCB NWMP stations along Vaigai per CPCB station registry. Actual annual readings (DO, BOD, pH, conductivity, fecal coliform, nitrate) populate as the parser script processes CPCB annual report PDFs in docs/cpcb/.",
-      "notes_ta": "CPCB நிலையப் பதிவின்படி வைகை ஆற்றில் 6 NWMP கண்காணிப்பு நிலையங்கள் உள்ளன. ஆண்டுத் தரவு (DO, BOD, pH, கடத்துத்திறன், fecal coliform, நைட்ரேட்) docs/cpcb/ கோப்பகத்தில் உள்ள CPCB ஆண்டறிக்கை PDF-களை parser script செயலாக்கும்போது நிரப்பப்படும்.",
+      "notes": "CPCB NWMP monitors Vaigai at 2 stations within Madurai city, both reporting since 2021. Annual readings (DO, BOD, pH, conductivity, fecal coliform, nitrate) come from CPCB annual report PDFs.",
+      "notes_ta": "CPCB-வின் NWMP திட்டத்தின்படி வைகை ஆற்றில் மதுரை நகரப் பகுதியில் 2 கண்காணிப்பு நிலையங்கள் உள்ளன, இரண்டும் 2021 முதல் ஆண்டுத் தரவு வெளியிடுகின்றன. தரவு (DO, BOD, pH, கடத்துத்திறன், fecal coliform, நைட்ரேட்) CPCB ஆண்டறிக்கை PDF-களிலிருந்து வருகிறது.",
       "stations": [
-        {
-          "id": "vaigai-dam",
-          "name": "Vaigai Dam Reservoir (Andipatti, Theni)",
-          "name_ta": "வைகை அணை நீர்த்தேக்கம்",
-          "lat": 9.7167,
-          "lng": 77.5833,
-          "stretch": "Headwaters / dam reservoir",
-          "readings": []
-        },
-        {
-          "id": "vaigai-andipatti",
-          "name": "Vaigai at Andipatti (Theni)",
-          "name_ta": "வைகை - ஆண்டிபட்டி",
-          "lat": 9.9667,
-          "lng": 77.6167,
-          "stretch": "Upper (post-dam release)",
-          "readings": []
-        },
         {
           "id": "vaigai-sellur",
           "name": "Vaigai at Sellur (Madurai upstream)",
@@ -167,24 +149,6 @@
               "year": 2024
             }
           ]
-        },
-        {
-          "id": "vaigai-manamadurai",
-          "name": "Vaigai at Manamadurai (Sivagangai)",
-          "name_ta": "வைகை - மானாமதுரை",
-          "lat": 9.6889,
-          "lng": 78.4667,
-          "stretch": "Lower (Sivagangai)",
-          "readings": []
-        },
-        {
-          "id": "vaigai-ramanathapuram",
-          "name": "Vaigai at Ramanathapuram (estuarine)",
-          "name_ta": "வைகை - ராமநாதபுரம்",
-          "lat": 9.37,
-          "lng": 78.83,
-          "stretch": "Estuary",
-          "readings": []
         }
       ]
     },
