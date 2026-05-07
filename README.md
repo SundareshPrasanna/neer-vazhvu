@@ -1,10 +1,10 @@
 # Neer Vazhvu
 
-**Chennai Water Intelligence Dashboard** - An open-source platform that turns public water data into actionable intelligence for Chennai's 11 million residents.
+**Tamil Nadu Water Intelligence** - An open-source platform that turns public water data into actionable intelligence for Tamil Nadu cities. Live for Chennai and Madurai today, with more cities on the way.
 
 **Live:** [neervazhvu.org](https://neervazhvu.org)
 
-Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, flood risk, sewerage infrastructure, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, an **interactive water bodies and restoration priority map**, a **flood risk, drainage, and sewerage network map**, and a **unified My Ward report page** that aggregates all data for any of Chennai's 200 wards into a single shareable view.
+Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, flood risk, sewerage infrastructure, and water body loss city by city. The Chennai dashboard provides **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, an **interactive water bodies and restoration priority map**, a **flood risk, drainage, and sewerage network map**, and a **unified My Ward report page** across Chennai's 200 wards. The Madurai dashboard mirrors that surface scoped to Madurai's data sources (TN Agriculture daily reservoir levels, India WRIS for Madurai district, Vaigai-basin CPCB stations, DHAN Foundation tank curation, 100 Madurai Corporation wards). City-specific long-form water stories live at [`/origins`](https://neervazhvu.org/origins) (Chennai) and [`/madurai/origins`](https://neervazhvu.org/madurai/origins).
 
 ## Features
 

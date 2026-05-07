@@ -1,6 +1,6 @@
 # Architecture
 
-> Technical overview of Neer Vazhvu - Chennai Water Intelligence Dashboard.
+> Technical overview of Neer Vazhvu - Tamil Nadu Water Intelligence platform (Chennai and Madurai live; multi-city by design).
 
 ## System Overview
 

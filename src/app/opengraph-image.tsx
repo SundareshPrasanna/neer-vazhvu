@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Neer Vazhvu | Chennai Water Intelligence";
+export const alt = "Neer Vazhvu | Tamil Nadu Water Intelligence";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -72,8 +72,8 @@ export default function OGImage() {
             maxWidth: "800px",
           }}
         >
-          Real-time dashboard tracking Chennai&apos;s water reserves,
-          groundwater health, and days of water remaining.
+          Real-time dashboards tracking water reserves, groundwater
+          health, and rivers across Tamil Nadu cities.
         </div>
 
         {/* Stats row */}
@@ -84,10 +84,10 @@ export default function OGImage() {
           }}
         >
           {[
-            { label: "Reservoirs", value: "6", color: "#3b82f6" },
-            { label: "Water Bodies", value: "1,787", color: "#06b6d4" },
-            { label: "Groundwater Wards", value: "200", color: "#22c55e" },
-            { label: "Rivers Tracked", value: "4", color: "#f97316" },
+            { label: "Cities Live", value: "2", color: "#3b82f6" },
+            { label: "Water Bodies", value: "2,300+", color: "#06b6d4" },
+            { label: "Wards Mapped", value: "300+", color: "#22c55e" },
+            { label: "Rivers Tracked", value: "5+", color: "#f97316" },
           ].map((stat) => (
             <div key={stat.label} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
               <span style={{ fontSize: "36px", fontWeight: 700, color: stat.color }}>
@@ -113,7 +113,7 @@ export default function OGImage() {
           }}
         >
           <span style={{ fontSize: "18px", color: "#475569" }}>
-            Chennai Water Intelligence
+            Tamil Nadu Water Intelligence
           </span>
           <span style={{ fontSize: "16px", color: "#475569" }}>
             neervazhvu.org

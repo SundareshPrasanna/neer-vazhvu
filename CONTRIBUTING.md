@@ -1,6 +1,6 @@
 # Contributing to Neer Vazhvu
 
-Thanks for your interest in contributing! This project tracks Chennai's water supply and aims to make civic data accessible to everyone.
+Thanks for your interest in contributing! This project tracks Tamil Nadu cities' water systems (Chennai and Madurai live, more on the way) and aims to make civic data accessible to everyone.
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 

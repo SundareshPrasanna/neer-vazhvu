@@ -11,6 +11,7 @@ import { CitySwitcher } from "./city-switcher";
 import { parsePath, rewriteNavHref } from "@/lib/cities/routing";
 
 const TOP_NAV = [
+  { href: "/origins", key: "nav.story" },
   { href: "/",        key: "nav.dashboard" },
   { href: "/my-ward", key: "nav.my_ward" },
   { href: "/facts",   key: "nav.facts" },
