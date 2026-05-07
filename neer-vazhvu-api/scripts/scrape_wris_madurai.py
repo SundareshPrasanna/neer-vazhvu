@@ -63,7 +63,10 @@ async def main() -> int:
 
     try:
         records = await fetch_wris_groundwater(
-            start_date=start, end_date=end, district="Madurai"
+            start_date=start,
+            end_date=end,
+            district="Madurai",
+            agencies=["CGWB", "Tamil Nadu SW GW"],
         )
     except Exception as exc:
         print(
