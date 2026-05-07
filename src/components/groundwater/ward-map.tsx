@@ -296,7 +296,7 @@ export function WardMap({
                       click: () => onWrisStationSelect?.(s),
                     }}
                   >
-                    <Tooltip>
+                    <Tooltip pane="tooltipPane">
                       <strong>{s.stationName}</strong>
                       <br />
                       <span style={{ fontSize: "11px" }}>
@@ -319,7 +319,7 @@ export function WardMap({
                   radius={4}
                   pathOptions={{ fillColor: "#3b82f6", color: "#1e3a5f", weight: 1, fillOpacity: 0.8 }}
                 >
-                  <Tooltip>
+                  <Tooltip pane="tooltipPane">
                     <strong>{s.name}</strong>
                     <br />
                     <span style={{ fontSize: "11px", color: "#64748b" }}>
@@ -332,6 +332,27 @@ export function WardMap({
         </>
       ) : (
         <>
+          {/* District outline (union of GWR blocks) drawn as a faint
+              stroke-only background. The ward choropleth covers the city
+              core; the district outline shows the full data scope so
+              stations 30-60 km out (in rural blocks like Sedapatti,
+              Tirumangalam, Melur) read as inside the district rather
+              than "off the map". Cities where city == district (Chennai)
+              just see a redundant outline; harmless. */}
+          {blockGeoJSON && (
+            <GeoJSON
+              key={`district-outline-${tiles.url}`}
+              data={blockGeoJSON}
+              style={{
+                fillOpacity: 0,
+                color: tiles.stroke,
+                weight: 1,
+                opacity: 0.45,
+                dashArray: "4 4",
+              }}
+              interactive={false}
+            />
+          )}
           {wardGeoJSON && (
             <GeoJSON ref={(layer) => { wardLayerRef.current = layer; }} key={`${viewMode}-${tiles.url}`} data={wardGeoJSON} style={wardStyle} onEachFeature={onEachWard} />
           )}
@@ -376,7 +397,7 @@ export function WardMap({
                   click: () => onWrisStationSelect?.(s),
                 }}
               >
-                <Tooltip>
+                <Tooltip pane="tooltipPane">
                   <strong>{s.stationName}</strong>
                   <br />
                   <span style={{ fontSize: "11px" }}>

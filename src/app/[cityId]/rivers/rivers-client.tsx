@@ -39,6 +39,17 @@ export interface RiverInfo {
   cpcb_nwmp_stations: string[];
   /** Tailwind color class for the polyline. */
   color: string;
+  // Optional Tamil overrides. When the user has language=ta and the
+  // override is present, the *_ta version replaces its English sibling
+  // at render time. Falls back to English string if the override is
+  // omitted, so single-language cities (Chennai) need no schema change.
+  display_name_ta?: string;
+  description_ta?: string;
+  upstream_terminus_ta?: string;
+  downstream_terminus_ta?: string;
+  feeds_ta?: string;
+  status_ta?: string;
+  cpcb_nwmp_stations_ta?: string[];
 }
 
 // CPCB reading shape used by the marker tooltip / colour-coding logic.
@@ -138,7 +149,14 @@ export default function RiversClient({
         }
         setRivers(out);
         // Pre-select Vaigai for Madurai (or whatever the first listed is).
-        if (out.length > 0) setSelectedRiverId(out[0].river_id);
+        // Prefer the city's mainstem river when present (Vaigai for
+        // Madurai, Cooum for Chennai etc.) instead of an arbitrary
+        // index-0 - feeders and tributaries should not load by default.
+        const mainstem = out.find((r) =>
+          ["vaigai", "cooum", "adyar"].includes(r.river_id)
+        );
+        if (mainstem) setSelectedRiverId(mainstem.river_id);
+        else if (out.length > 0) setSelectedRiverId(out[0].river_id);
       })
       .catch(console.error);
   }, [cityId]);

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
+import {
+  FloodRiskContent,
+  type FloodConfig,
+} from "./flood-risk-content";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -21,54 +22,42 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-interface HistoricalEvent {
-  year: number;
-  trigger: string;
-  impact: string;
-  source_url: string;
-  source_label: string;
-}
-
-interface ExternalSource {
-  name: string;
-  description: string;
-  url: string;
-  cadence: string;
-}
-
-interface FloodConfig {
-  /** Headline narrative for the page hero */
-  headline: string;
-  /** Dam-release threshold story */
-  dam_release_threshold_cusecs: number;
-  dam_release_note: string;
-  historical_events: HistoricalEvent[];
-  external_sources: ExternalSource[];
-  data_gaps: string[];
-}
-
 const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
   madurai: {
-    headline:
-      "Madurai's flood risk is dam-release-driven, not rainfall-driven. The Vaigai's natural catchment is small (2,253 sq km); urban inundation tracks Vaigai-dam outflows on a 12-24 hour lag. There is no public CFM-DSS-equivalent sensor mesh - upstream context comes from CWC and the dam-level scrape.",
+    headline: {
+      en: "Madurai's flood risk is dam-release-driven, not rainfall-driven. The Vaigai's natural catchment is small (2,253 sq km); urban inundation tracks Vaigai-dam outflows on a 12-24 hour lag. There is no public CFM-DSS-equivalent sensor mesh - upstream context comes from CWC and the dam-level scrape.",
+      ta: "மதுரையின் வெள்ள ஆபத்து மழையால் அல்ல, அணை-திறப்பால் ஏற்படுகிறது. வைகையின் இயற்கை நீர்ப்பிடிப்பு பகுதி சிறியது (2,253 சதுர கி.மீ.); நகர மூழ்கல் வைகை அணை வெளியேற்றத்தைத் தொடர்ந்து 12-24 மணி நேரத் தாமதத்தில் நடக்கிறது. பொது CFM-DSS போன்ற சென்சார் வலையமைப்பு இல்லை - மேற்பகுதி சூழல் CWC மற்றும் அணை-மட்ட தரவுச் சேகரிப்பிலிருந்து வருகிறது.",
+    },
     dam_release_threshold_cusecs: 6000,
-    dam_release_note:
-      "~6,000 cusec releases from Vaigai dam saturate the downtown channel between Albert Victor bridge and Anuppanadi. Below this threshold the Vaigai bed absorbs the flow; above it, low-lying wards (Sellur, Avaniyapuram, Anuppanadi) start flooding.",
+    dam_release_note: {
+      en: "~6,000 cusec releases from Vaigai dam saturate the downtown channel between Albert Victor bridge and Anuppanadi. Below this threshold the Vaigai bed absorbs the flow; above it, low-lying wards (Sellur, Avaniyapuram, Anuppanadi) start flooding.",
+      ta: "வைகை அணையிலிருந்து ~6,000 க்யூசெக்ஸ் வெளியேற்றம் ஆல்பர்ட் விக்டர் பாலத்திற்கும் அனுப்பானடிக்கும் இடையே உள்ள நகர மைய ஓடையை நிரப்புகிறது. இந்த வரம்புக்குக் கீழே வைகை படுகை ஓட்டத்தை உறிஞ்சுகிறது; அதற்கு மேலே, தாழ்வான வார்டுகள் (செல்லூர், அவனியாபுரம், அனுப்பானடி) வெள்ளத்தில் மூழ்கத் தொடங்குகின்றன.",
+    },
     historical_events: [
       {
         year: 2023,
-        trigger: "6,000 cusec release from Vaigai dam during NE monsoon",
-        impact:
-          "Downtown Madurai inundated; Avaniyapuram and Sellur worst-hit; release coincided with peak rainfall in the catchment.",
+        trigger: {
+          en: "6,000 cusec release from Vaigai dam during NE monsoon",
+          ta: "வடகிழக்கு பருவமழையில் வைகை அணையிலிருந்து 6,000 க்யூசெக்ஸ் வெளியேற்றம்",
+        },
+        impact: {
+          en: "Downtown Madurai inundated; Avaniyapuram and Sellur worst-hit; release coincided with peak rainfall in the catchment.",
+          ta: "மதுரை நகர மையம் வெள்ளத்தில் மூழ்கியது; அவனியாபுரம் மற்றும் செல்லூர் கடுமையாக பாதிக்கப்பட்டன; நீர்ப்பிடிப்பு பகுதியில் உச்ச மழையுடன் வெளியேற்றம் ஒத்துப்போனது.",
+        },
         source_url:
           "https://www.thehindu.com/news/cities/Madurai/madurai-flooded-after-vaigai-dam-water-release/article67517428.ece",
         source_label: "The Hindu (Nov 2023)",
       },
       {
         year: 2018,
-        trigger: "Sustained NE monsoon + Periyar tunnel diversions",
-        impact:
-          "Significant Vaigai-bed inundation; upstream-tank cascade overflow into peri-urban kanmoi.",
+        trigger: {
+          en: "Sustained NE monsoon + Periyar tunnel diversions",
+          ta: "தொடர்ச்சியான வடகிழக்கு பருவமழை + பெரியார் சுரங்கப் பாதை திருப்பல்",
+        },
+        impact: {
+          en: "Significant Vaigai-bed inundation; upstream-tank cascade overflow into peri-urban kanmoi.",
+          ta: "கணிசமான வைகை-படுகை மூழ்கல்; மேற்பகுதி கண்மாய் அடுக்கு வழிந்தோடி நகர்ப்புற கண்மாய்களில் சேர்ந்தது.",
+        },
         source_url:
           "https://www.sciencedirect.com/science/article/abs/pii/S0045653521020439",
         source_label: "ScienceDirect (Vaigai flood-frequency analysis)",
@@ -78,42 +67,66 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
       {
         name: "CWC Flood Forecast Dashboard",
         url: "https://cwc.gov.in/ffm_dashboard",
-        description:
-          "Central Water Commission dam-gauge readings including Vaigai (Andipatti). Live during NE monsoon; the single best public flood signal.",
+        description: {
+          en: "Central Water Commission dam-gauge readings including Vaigai (Andipatti). Live during NE monsoon; the single best public flood signal.",
+          ta: "வைகை (ஆண்டிபட்டி) உட்பட மத்திய நீர் ஆணையத்தின் அணை-மானி வாசிப்புகள். வடகிழக்கு பருவமழையின் போது நேரடி; சிறந்த ஒரே பொது வெள்ள சமிக்ஞை.",
+        },
         cadence: "live",
       },
       {
         name: "CWC Tamil Nadu basin portal",
         url: "https://ffs.tamcnhp.com/",
-        description: "Vaigai basin gauging stations, river-stage forecasts.",
+        description: {
+          en: "Vaigai basin gauging stations, river-stage forecasts.",
+          ta: "வைகை பேசின் அளவீட்டு நிலையங்கள், ஆற்று-நிலை முன்னறிவிப்புகள்.",
+        },
         cadence: "live",
       },
       {
         name: "TNSDMA hazard map",
         url: "https://tnsdma.tn.gov.in/app/webroot/tnsdma_map/",
-        description: "State-level rainfall + flood-zone overlay (low resolution).",
+        description: {
+          en: "State-level rainfall + flood-zone overlay (low resolution).",
+          ta: "மாநில அளவிலான மழை + வெள்ள-மண்டல அடுக்கு (குறைந்த தெளிவுத்திறன்).",
+        },
         cadence: "live",
       },
       {
         name: "Madurai Master Plan 2024-2044",
         url: "https://www.madurailpa.com/assets/pdf/Final%20Madurai%20-%20Vol%201%20-%20Print.pdf",
-        description:
-          "Land-use plan with flood-prone area mapping. Image-heavy PDF - needs OCR + manual digitisation to extract polygons.",
+        description: {
+          en: "Land-use plan with flood-prone area mapping. Image-heavy PDF - needs OCR + manual digitisation to extract polygons.",
+          ta: "வெள்ளம் ஏற்படக்கூடிய பகுதி வரைபடத்துடன் கூடிய நில-பயன்பாட்டுத் திட்டம். படங்கள் மிகுந்த PDF - பலகோணங்களைப் பெற OCR + கையேடு டிஜிட்டலாக்கம் தேவை.",
+        },
         cadence: "static (2024-2044 horizon)",
       },
       {
         name: "Smart City Madurai ICCC",
         url: "https://iccc.smartcities.gov.in/icc/city-details/c44058eab38fd0805b98b267e8f831a5",
-        description:
-          "Integrated Command Control Centre - city water-supply monitoring. Public flood EWS not exposed.",
+        description: {
+          en: "Integrated Command Control Centre - city water-supply monitoring. Public flood EWS not exposed.",
+          ta: "ஒருங்கிணைந்த கட்டளை மற்றும் கட்டுப்பாட்டு மையம் - நகர நீர் வழங்கல் கண்காணிப்பு. பொது வெள்ள முன்னெச்சரிக்கை அமைப்பு வெளிப்படுத்தப்படவில்லை.",
+        },
         cadence: "internal-only",
       },
     ],
     data_gaps: [
-      "No CFM-DSS-equivalent sensor mesh (Chennai has ARG/AWS/AWLR/gate sensor network; Madurai does not)",
-      "No public flood hazard zone GeoJSON (5/10/25/50/100/200-year return period polygons)",
-      "No public 2018/2023 hotspot inventory (RTI-needed from MMC)",
-      "Flood inundation depth raster - not modeled publicly for Madurai",
+      {
+        en: "No CFM-DSS-equivalent sensor mesh (Chennai has ARG/AWS/AWLR/gate sensor network; Madurai does not)",
+        ta: "CFM-DSS போன்ற சென்சார் வலையமைப்பு இல்லை (சென்னையில் ARG/AWS/AWLR/கதவு சென்சார் வலையமைப்பு உள்ளது; மதுரையில் இல்லை)",
+      },
+      {
+        en: "No public flood hazard zone GeoJSON (5/10/25/50/100/200-year return period polygons)",
+        ta: "பொது வெள்ள ஆபத்து மண்டல GeoJSON இல்லை (5/10/25/50/100/200 ஆண்டு திரும்பும் காலகட்ட பலகோணங்கள்)",
+      },
+      {
+        en: "No public 2018/2023 hotspot inventory (RTI-needed from MMC)",
+        ta: "பொது 2018/2023 அதிக ஆபத்து இடப்பட்டியல் இல்லை (MMC-யிடமிருந்து RTI தேவை)",
+      },
+      {
+        en: "Flood inundation depth raster - not modeled publicly for Madurai",
+        ta: "வெள்ள மூழ்கல் ஆழம் ராஸ்டர் - மதுரைக்கு பொதுவில் மாதிரியாக்கப்படவில்லை",
+      },
     ],
   },
 };
@@ -142,128 +155,10 @@ export default async function CityFloodRiskPage({ params }: PageProps) {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 sm:py-10 space-y-6">
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="outline" className="text-xs">{config.displayName} · Flood risk</Badge>
-        <Badge variant="outline" className="text-xs">Vaigai system scope</Badge>
-        <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
-          No public hazard map - external monitoring only
-        </Badge>
-      </div>
-
-      <header className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          {config.displayName} flood risk
-        </h1>
-        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-3xl">
-          {cfg.headline}
-        </p>
-      </header>
-
-      {/* Dam release threshold - the headline insight */}
-      <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/40 dark:bg-blue-950/20">
-        <CardContent className="space-y-2">
-          <div className="text-xs uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">
-            Dam-release threshold for downtown inundation
-          </div>
-          <div className="text-3xl sm:text-4xl font-bold tracking-tight">
-            ~{cfg.dam_release_threshold_cusecs.toLocaleString()}
-            <span className="text-base font-normal text-slate-400 ml-1">cusecs</span>
-          </div>
-          <p className="text-sm text-slate-700 dark:text-slate-300">
-            {cfg.dam_release_note}
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Historical events */}
-      <Card>
-        <CardContent className="space-y-3">
-          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            Recent flood events · {cfg.historical_events.length}
-          </h2>
-          <div className="space-y-3">
-            {cfg.historical_events.map((e) => (
-              <div key={`${e.year}-${e.trigger.slice(0, 20)}`} className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-                <div className="flex items-baseline gap-3">
-                  <span className="font-mono text-2xl font-bold text-slate-900 dark:text-slate-100">{e.year}</span>
-                  <span className="text-xs text-slate-500">{e.trigger}</span>
-                </div>
-                <p className="text-sm text-slate-700 dark:text-slate-300 mt-2">{e.impact}</p>
-                <a href={e.source_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline inline-block mt-2">
-                  {e.source_label} →
-                </a>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* External monitoring sources */}
-      <Card>
-        <CardContent className="space-y-3">
-          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            External monitoring sources · {cfg.external_sources.length}
-          </h2>
-          <p className="text-xs text-slate-500">
-            We don&apos;t republish these; tracking dam-gauge live state lives elsewhere.
-            These are the operational portals to use during a flood event.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {cfg.external_sources.map((s) => (
-              <a
-                key={s.url}
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block border border-slate-200 dark:border-slate-700 rounded-lg p-3 hover:border-blue-400 dark:hover:border-blue-600 transition-colors"
-              >
-                <div className="flex items-baseline justify-between gap-2">
-                  <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">{s.name}</span>
-                  <span className="text-[10px] font-mono text-slate-500 uppercase">{s.cadence}</span>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{s.description}</p>
-              </a>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Honest data gaps */}
-      <Card>
-        <CardContent className="space-y-2">
-          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            What we don&apos;t have for {config.displayName}
-          </h2>
-          <ul className="list-disc list-inside text-sm text-slate-700 dark:text-slate-300 space-y-1">
-            {cfg.data_gaps.map((gap) => (
-              <li key={gap}>{gap}</li>
-            ))}
-          </ul>
-          <p className="text-xs text-slate-500 italic mt-2">
-            Chennai&apos;s /flood-risk page renders modeled hazard zones, 2015/2020 hotspots,
-            drainage and sewerage overlays - none of which exist publicly for Madurai. This
-            page surfaces what&apos;s actually available rather than papering over the gap
-            with synthetic data.
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Cross-links */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Link href={`/${cityId}`} className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 transition-colors">
-          <div className="text-sm font-semibold">{config.displayName} home</div>
-          <div className="text-xs text-slate-500 mt-1">Vaigai dam current storage + Mullaperiyar tracker</div>
-        </Link>
-        <Link href={`/${cityId}/rivers`} className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 transition-colors">
-          <div className="text-sm font-semibold">Vaigai river system</div>
-          <div className="text-xs text-slate-500 mt-1">5 rivers in scope · click for upstream/downstream context</div>
-        </Link>
-        <Link href={`/${cityId}/water-bodies`} className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 transition-colors">
-          <div className="text-sm font-semibold">Water bodies map</div>
-          <div className="text-xs text-slate-500 mt-1">Tank cascades that buffer (or amplify) inundation</div>
-        </Link>
-      </div>
-    </div>
+    <FloodRiskContent
+      cityId={cityId}
+      cityDisplayName={config.displayName}
+      cfg={cfg}
+    />
   );
 }

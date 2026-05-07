@@ -92,7 +92,7 @@ export function MultiSourceHistoryChart({
 }: Props) {
   const [tab, setTab] = useState<TabKey>("1yr");
   const [view, setView] = useState<ViewMode>("by_source");
-  const [showForecast, setShowForecast] = useState(true);
+  const [showForecast, setShowForecast] = useState(false);
 
   const forecastBySource = useMemo(() => {
     const m = new Map<string, ForecastSeries>();
@@ -135,6 +135,23 @@ export function MultiSourceHistoryChart({
           row[`${f.source_code}__band`] = [p.lower_tmc, p.upper_tmc];
           byDate.set(p.date, row);
         }
+      }
+
+      // Bridge: anchor each source's forecast line to its last
+      // historical point. Recharts treats history and forecast as
+      // separate dataKeys, so without this the dashed forecast line
+      // visually starts one tick after the solid history line ends.
+      for (const s of series) {
+        if (hidden.has(s.source_code)) continue;
+        if (!forecastBySource.has(s.source_code)) continue;
+        if (s.points.length === 0) continue;
+        const lastP = s.points[s.points.length - 1];
+        if (lastP.storage_tmc == null) continue;
+        const row = byDate.get(lastP.date);
+        if (!row) continue;
+        const v = lastP.storage_tmc;
+        row[`${s.source_code}__forecast`] = v;
+        row[`${s.source_code}__band`] = [v, v];
       }
     }
 
@@ -187,10 +204,25 @@ export function MultiSourceHistoryChart({
           }
         }
       }
+
+      // Bridge: anchor the summed forecast line at the last summed
+      // historical row, so the dashed total line continues from where
+      // the solid total line ends.
+      if (showForecast) {
+        let lastTotalRow: Row | null = null;
+        for (const row of rows) {
+          if (typeof row.__total === "number") lastTotalRow = row;
+        }
+        if (lastTotalRow && lastTotalRow.__total_forecast == null) {
+          const t = lastTotalRow.__total as number;
+          lastTotalRow.__total_forecast = t;
+          lastTotalRow.__total_band = [t, t];
+        }
+      }
     }
 
     return rows;
-  }, [series, tab, hidden, showForecast, forecast, view]);
+  }, [series, tab, hidden, showForecast, forecast, forecastBySource, view]);
 
   const visibleSeries = series.filter((s) => !hidden.has(s.source_code));
 
@@ -198,6 +230,23 @@ export function MultiSourceHistoryChart({
     rows: merged,
     toMillis: (r) => new Date(r.date as string).getTime(),
   });
+
+  // Adaptive x-axis tick: when the visible span is short (< ~120 days)
+  // show day-month so zoomed-in users can read individual dates;
+  // otherwise stick with the month-year compact form.
+  const tickFormatter = useMemo(() => {
+    if (visibleRows.length < 2) return fmtTick;
+    const first = new Date(visibleRows[0].date as string).getTime();
+    const last = new Date(visibleRows[visibleRows.length - 1].date as string).getTime();
+    const spanDays = (last - first) / 86_400_000;
+    if (spanDays <= 120) {
+      return (iso: string) => {
+        const d = new Date(iso);
+        return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+      };
+    }
+    return fmtTick;
+  }, [visibleRows]);
 
   if (series.length === 0 || pointCount === 0) {
     return (

@@ -59,7 +59,7 @@ export interface FactsPayload {
 export const TIER_LABELS: Record<FactTier, { en: string; ta: string }> = {
   1: { en: "Today", ta: "இன்று" },
   2: { en: "This year", ta: "இந்த ஆண்டு" },
-  3: { en: "Chennai water history", ta: "சென்னை நீர் வரலாறு" },
+  3: { en: "Water history", ta: "நீர் வரலாறு" },
   4: { en: "Infrastructure", ta: "உள்கட்டமைப்பு" },
 };
 
@@ -77,8 +77,8 @@ export const TIER_DESCRIPTIONS: Record<FactTier, { en: string; ta: string }> = {
     ta: "ஆவணப்படுத்தப்பட்ட நிகழ்வுகள் மற்றும் உச்ச பதிவுகளிலிருந்து குறிப்பு உண்மைகள். இவை வரலாற்று குறிப்புகள்.",
   },
   4: {
-    en: "Chennai's water system at a glance. These numbers reflect installed capacity, inventory, and structural facts that change slowly.",
-    ta: "சென்னையின் நீர் அமைப்பு. நிறுவப்பட்ட திறன், சரக்கு மற்றும் கட்டமைப்பு உண்மைகள்.",
+    en: "The city's water system at a glance. These numbers reflect installed capacity, inventory, and structural facts that change slowly.",
+    ta: "நகரின் நீர் அமைப்பு. நிறுவப்பட்ட திறன், சரக்கு மற்றும் கட்டமைப்பு உண்மைகள்.",
   },
 };
 

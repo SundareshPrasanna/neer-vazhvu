@@ -38,8 +38,10 @@ export const MADURAI: CityConfig = {
       sourceCode: 'mullaperiyar',
       displayName: 'Mullaperiyar (Periyar) Dam',
       type: 'reservoir',
-      fullCapacityMcft: 15660.0,
-      fullTankLevelFt: 152.0,
+      // SC 2014 verdict caps Kerala-side storage at 142 ft; the historical
+      // 152 ft TN FRL (~15,660 mcft) is no longer operationally available.
+      fullCapacityMcft: 10560.0,
+      fullTankLevelFt: 142.0,
       latitude: 9.5394,
       longitude: 77.1422,
       catchmentAreaSqkm: 624.0,

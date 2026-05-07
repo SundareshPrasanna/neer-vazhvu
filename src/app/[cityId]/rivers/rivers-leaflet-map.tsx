@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Polyline, Tooltip, CircleMarker } from "react-
 import L from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { useLanguage } from "@/lib/i18n/context";
 import "leaflet/dist/leaflet.css";
 import type { RiverInfo } from "./rivers-client";
 
@@ -92,6 +93,11 @@ export function RiversLeafletMap({
   industrialSources = [],
 }: MapProps) {
   const tiles = useMapTiles();
+  const { language } = useLanguage();
+  const localizedName = (info: RiverInfo | undefined, fallback: string) =>
+    info ? (language === "ta" ? info.display_name_ta ?? info.display_name : info.display_name) : fallback;
+  const localizedStatus = (info: RiverInfo | undefined) =>
+    info ? (language === "ta" ? info.status_ta ?? info.status : info.status) : undefined;
 
   // Pre-compute polyline coordinate arrays in lat/lng order (Leaflet) per
   // river segment. GeoJSON is [lng, lat]; Leaflet wants [lat, lng].
@@ -144,11 +150,11 @@ export function RiversLeafletMap({
             }}
           >
             <Tooltip sticky>
-              <strong>{info?.display_name ?? riverId}</strong>
+              <strong>{localizedName(info, riverId)}</strong>
               {info?.status && (
                 <>
                   <br />
-                  <span style={{ fontSize: "11px", color: "#64748b" }}>{info.status}</span>
+                  <span style={{ fontSize: "11px", color: "#64748b" }}>{localizedStatus(info)}</span>
                 </>
               )}
             </Tooltip>
@@ -191,7 +197,7 @@ export function RiversLeafletMap({
                 <>
                   <br />
                   <span style={{ fontSize: "11px", color: "#64748b" }}>
-                    NWMP station - readings pending parser
+                    NWMP station - no readings published
                   </span>
                 </>
               )}

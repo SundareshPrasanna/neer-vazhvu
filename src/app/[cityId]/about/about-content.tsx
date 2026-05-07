@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { useLanguage } from "@/lib/i18n/context";
 import type { PlaceConfig } from "@/lib/cities";
+import { MaduraiPageDescriptions } from "./madurai-page-descriptions";
 
 /**
  * City-aware About page. Mirrors the section structure of Chennai's
@@ -126,7 +127,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-        About {cityName} Water Intelligence
+        {t("about.h1_prefix")} {cityName} {t("about.h1_suffix")}
       </h1>
       <p className="text-lg text-slate-600 dark:text-slate-400 mb-6">
         {t("about.intro")}
@@ -140,7 +141,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
         {/* ─────────────────────────────────────────────────────────
             1. What we track for this city + Reading the dashboard
             ───────────────────────────────────────────────────────── */}
-        <Section title={`What we track for ${cityName}`} defaultOpen>
+        <Section title={`${t("about.section_what_we_track")} ${cityName}`} defaultOpen>
           <p className="text-slate-600 dark:text-slate-400">
             {cityName} is governed by{" "}
             <span className="font-semibold">{config.primaryAuthority.name}</span>
@@ -159,7 +160,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
           {config.waterSources.length > 0 && (
             <div className="mt-3">
               <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                Water sources tracked daily
+                {t("about.water_sources_daily")}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {config.waterSources.map((s) => (
@@ -170,7 +171,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
                       {s.fullCapacityMcft !== null && (<> · {s.fullCapacityMcft.toLocaleString()} Mcft full capacity</>)}
                       {s.fullTankLevelFt !== null && (<> · FRL {s.fullTankLevelFt} ft</>)}
                       {s.isPrimaryDrinkingSource && (
-                        <span className="ml-1 inline-block px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">primary drinking</span>
+                        <span className="ml-1 inline-block px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">{t("about.primary_drinking")}</span>
                       )}
                     </div>
                   </div>
@@ -209,46 +210,44 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
           </SubSection>
 
           {isMadurai && (
-            <SubSection title="Default consumption assumptions (Madurai)">
+            <SubSection title={t("about.consumption_madurai_title")}>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Madurai-specific defaults used to compute days-of-water-left.
-                These are conservative starting points; the dashboard exposes
-                sliders so users can substitute their own.
+                {t("about.consumption_intro")}
               </p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
-                      <th className="pb-2 font-medium">Parameter</th>
-                      <th className="pb-2 font-medium">Default</th>
-                      <th className="pb-2 font-medium">Source / note</th>
+                      <th className="pb-2 font-medium">{t("about.col_parameter")}</th>
+                      <th className="pb-2 font-medium">{t("about.col_default")}</th>
+                      <th className="pb-2 font-medium">{t("about.col_source")}</th>
                     </tr>
                   </thead>
                   <tbody className="text-slate-700 dark:text-slate-300">
                     <tr className="border-b border-slate-100 dark:border-slate-800">
-                      <td className="py-2">Daily city demand</td>
+                      <td className="py-2">{t("about.row_demand")}</td>
                       <td className="py-2 font-mono">{config.defaultConsumptionMld ?? "n/a"} MLD</td>
                       <td className="py-2 text-slate-500 dark:text-slate-400">
-                        Madurai Corporation operational estimate; ~85 MLD piped supply across 100 wards.
+                        {t("about.row_demand_note")}
                       </td>
                     </tr>
                     <tr className="border-b border-slate-100 dark:border-slate-800">
-                      <td className="py-2">Desalination contribution</td>
+                      <td className="py-2">{t("about.row_desal")}</td>
                       <td className="py-2 font-mono">0 MLD</td>
-                      <td className="py-2 text-slate-500 dark:text-slate-400">No desal plants commissioned for Madurai.</td>
+                      <td className="py-2 text-slate-500 dark:text-slate-400">{t("about.row_desal_note")}</td>
                     </tr>
                     <tr className="border-b border-slate-100 dark:border-slate-800">
-                      <td className="py-2">Groundwater contribution</td>
-                      <td className="py-2 font-mono">Excluded from days-left</td>
+                      <td className="py-2">{t("about.row_gw")}</td>
+                      <td className="py-2 font-mono">{t("about.row_gw_value")}</td>
                       <td className="py-2 text-slate-500 dark:text-slate-400">
-                        Borewells supplement the piped supply but exact MLD is unmodelled. CGWB block + ward-level depth views show groundwater stress separately.
+                        {t("about.row_gw_note")}
                       </td>
                     </tr>
                     <tr className="border-b border-slate-100 dark:border-slate-800">
-                      <td className="py-2">Reservoir evaporation</td>
-                      <td className="py-2 font-mono">Not modelled</td>
+                      <td className="py-2">{t("about.row_evap")}</td>
+                      <td className="py-2 font-mono">{t("about.row_evap_value")}</td>
                       <td className="py-2 text-slate-500 dark:text-slate-400">
-                        Vaigai / Mullaperiyar evaporation is non-trivial in summer; planned for v2 once a daily ET0 series is wired.
+                        {t("about.row_evap_note")}
                       </td>
                     </tr>
                   </tbody>
@@ -264,170 +263,11 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
         {/* ─────────────────────────────────────────────────────────
             2. What each page shows
             ───────────────────────────────────────────────────────── */}
-        <Section id="pages" title={`What each page shows for ${cityName}`}>
+        <Section id="pages" title={`${t("about.section_what_each_page")} ${cityName}`}>
           {isMadurai && (
-            <>
-              <SubSection id="page-dashboard" title="Home / dashboard">
-                <p className="text-slate-600 dark:text-slate-400">
-                  The home page anchors {cityName}&apos;s reservoir picture. Vaigai dam (the drinking-water source) is the headline; Mullaperiyar (Periyar reservoir in Idukki, Kerala) is the upstream feeder via the 1886 lease tunnel and contributes ~80% of Vaigai&apos;s annual yield.
-                </p>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">9-year history chart</h4>
-                <p className="text-slate-600 dark:text-slate-400">
-                  Daily storage and percent-FRL trends going back to 2018, sourced from TN Agriculture&apos;s public reservoir archive. Toggle between 90 days, 1 year, 3 years, and the full archive; toggle Vaigai vs Mullaperiyar independently.
-                </p>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">14-day forecast</h4>
-                <p className="text-slate-600 dark:text-slate-400">
-                  Each reservoir gets its own AutoARIMA fit. Seasonal differencing kicks in once we have at least two years of history; the forecast is shown as a dashed continuation line plus a shaded 80% confidence band. Refits daily as new readings land.
-                </p>
-                <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-1.5 text-sm">
-                  <li>Each reservoir is forecast independently - no cross-source pooling.</li>
-                  <li>The model retrains on every refresh; we don&apos;t freeze parameters.</li>
-                  <li>14-day horizon is aggressive but useful; the 80% band widens as you go out.</li>
-                  <li>Predictions clamp at 0 and the registered FRL capacity per source.</li>
-                </ul>
-              </SubSection>
-
-              <SubSection id="page-groundwater" title="Groundwater">
-                <p className="text-slate-600 dark:text-slate-400">
-                  {cityName}&apos;s groundwater page combines three views toggled in the headline bar: CGWB block exploitation (the official annual classification), interpolated ward depth, and a 3-factor risk composite.
-                </p>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Block exploitation (GWR)</h4>
-                <p className="text-slate-600 dark:text-slate-400">
-                  All 66 of Madurai district&apos;s CGWB-classified blocks (Safe / Semi Critical / Critical / Over Exploited) coloured by the latest annual draft-percentage. Latest (2017): 4 over-exploited, 7 critical, 21 semi-critical, 34 safe. The most stressed block is <span className="font-semibold">Sindhupatti</span> at ~119% draft.
-                </p>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Ward depth (interpolated)</h4>
-                <p className="text-slate-600 dark:text-slate-400">
-                  No authoritative ward-level groundwater survey exists for Madurai (Chennai uses an OpenCity ward-monthly dataset). Instead, we interpolate per-ward depth from the ~35 telemetric CGWB stations in Madurai district using inverse-distance weighting against each ward centroid - the four nearest stations within 15 km, weighted by 1 / distance². Refreshes daily as new India WRIS readings land.
-                </p>
-                <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40 space-y-3">
-                  <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Live CGWB station overlay</h4>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    On the depth view we also drop markers for each WRIS station in Madurai district. Click a marker for the well&apos;s metadata (acquisition mode, depth, aquifer type) and the recent reading window.
-                  </p>
-                  <h5 className="text-xs font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide">Acquisition modes</h5>
-                  <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-1.5">
-                    <li><span className="font-medium">Manual</span> - field-team measurements, typically 4 readings/year.</li>
-                    <li><span className="font-medium">Telemetric (DWLR)</span> - automated daily readings.</li>
-                  </ul>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Madurai is overwhelmingly telemetric (much denser than Chennai). All 35 stations in the latest scrape are DWLR.
-                  </p>
-                </div>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Ward risk composite</h4>
-                <p className="text-slate-600 dark:text-slate-400">
-                  A 3-factor weighted percentile score per ward, A-F graded. Chennai uses 5 factors (drainage 25%, sewerage 25%, flood 25%, WB-health 15%, WB-density 10%); Madurai&apos;s drainage / sewerage / flood-hazard GeoJSON layers don&apos;t exist publicly yet, so v1 ships a reduced composite with what we have:
-                </p>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
-                        <th className="pb-2 font-medium">Factor</th>
-                        <th className="pb-2 font-medium">Weight</th>
-                        <th className="pb-2 font-medium">Direction</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-slate-700 dark:text-slate-300 text-xs">
-                      <tr className="border-b border-slate-100 dark:border-slate-800">
-                        <td className="py-1.5">Groundwater depth (IDW)</td>
-                        <td className="py-1.5 font-mono">50%</td>
-                        <td className="py-1.5">Deeper = higher risk</td>
-                      </tr>
-                      <tr className="border-b border-slate-100 dark:border-slate-800">
-                        <td className="py-1.5">Water-body density (per sq km)</td>
-                        <td className="py-1.5 font-mono">20%</td>
-                        <td className="py-1.5">Denser = lower risk</td>
-                      </tr>
-                      <tr>
-                        <td className="py-1.5">Water-body health (mean restoration_priority within 3 km)</td>
-                        <td className="py-1.5 font-mono">30%</td>
-                        <td className="py-1.5">Higher score = sicker tank = higher risk</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 italic">
-                  Each factor is converted to a city-wide percentile (0=best, 100=highest risk), weighted, and summed. Composite ≤20 = A, ≤40 = B, ≤60 = C, ≤80 = D, &gt;80 = F.
-                </p>
-              </SubSection>
-
-              <SubSection id="page-water-bodies" title="Water bodies">
-                <p className="text-slate-600 dark:text-slate-400">
-                  715 water-body polygons across Madurai district, sourced from OpenStreetMap. Click any polygon for its tags; the 19 hand-curated flagship tanks carry extra metadata (status, area, builder/era, court-order anchors).
-                </p>
-                <p className="text-slate-600 dark:text-slate-400">
-                  Vaigai mainstem polygons are explicitly labelled - a post-process matches each unnamed river polygon to the nearest section of the Vaigai polyline within 500 m, so long stretches of the river are no longer left blank on the map.
-                </p>
-                <p className="text-slate-600 dark:text-slate-400">
-                  The lake-restoration narrative (lost tanks, flagships, programmes, court orders) lives on its own page rather than the map view; jump in via <a href={`/${config.cityId}/lake-restoration`} className="text-blue-600 dark:text-blue-400 hover:underline">Lake restoration</a>.
-                </p>
-              </SubSection>
-
-              <SubSection id="page-rivers" title="Rivers">
-                <p className="text-slate-600 dark:text-slate-400">
-                  Vaigai-system scope: 304 km Vaigai mainstem, 121 km Periyar (Kerala feeder), 72 km Suruliyaru, 27 km Manjalar, 117 km Varaha tributaries. Per-river sidebar shows length, status, upstream/downstream termini, and feed.
-                </p>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">CPCB monitoring stations</h4>
-                <p className="text-slate-600 dark:text-slate-400">
-                  Vaigai is on CPCB&apos;s Priority III polluted-stretch list. Two stations on the National Water Monitoring Programme cover the Madurai stretch - one upstream of the city, one downstream - with annual readings for dissolved oxygen, BOD, pH, conductivity, fecal coliform, and nitrate. We extract those readings from CPCB&apos;s annual River Water Quality reports (2021-2024 covered today) and show them as a per-station table when you select Vaigai in the sidebar.
-                </p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Markers are colour-coded by the latest BOD reading: red above 6 mg/L, amber above 3, green at or below 3, grey when no readings exist. The four other Vaigai stations a journalist might expect (Vaigai dam, Andipatti, Manamadurai, Ramanathapuram) stay grey because CPCB doesn&apos;t monitor them today.
-                </p>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Court orders &amp; key events</h4>
-                <p className="text-slate-600 dark:text-slate-400">
-                  A hand-curated event log filtered to the selected river. Today it covers the Madras HC&apos;s December 2024 suo motu cognisance of Vaigai pollution (177 sewage / industrial discharge points across 5 districts, 36 samples below CPCB Class D), the Supreme Court&apos;s 2014 Mullaperiyar verdict (142 ft storage cap, still-active Supervisory Committee), and the operational threshold around Vaigai dam release that triggers Madurai-city flood warnings (about 6,000 cusecs).
-                </p>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Industrial pollution sources</h4>
-                <p className="text-slate-600 dark:text-slate-400">
-                  Six hand-curated Vaigai-basin polluters mapped as type-coloured markers: the SIDCO industrial estates at Kappalur and K. Pudur, the Sellur sewage discharge zone, the Dindigul tannery cluster, the Theni textile dyeing units, and the multi-district outfall inventory cited in the December 2024 Madras HC order. Compiled from TNSIDCO records, the DHAN Foundation CURE study, the Columbia GSAPP Madurai studio, NGT orders, and news reporting. The Tamil Nadu Pollution Control Board&apos;s online effluent monitoring portal (OCMMS) is referenced as the live cross-check.
-                </p>
-              </SubSection>
-
-              <SubSection id="page-flood" title="Flood risk">
-                <p className="text-slate-600 dark:text-slate-400">
-                  Narrative-only stub. Hazard-zone polygons (5/10/25/50/100/200-year return periods), historical flood-hotspot layers, drainage GeoJSON, and sewerage overlays don&apos;t exist publicly for Madurai (in contrast with Chennai&apos;s OpenCity-published layers). The page surfaces the Vaigai dam-release threshold (~6,000 cusecs as Madurai-city flood warning; 12,000+ during the 2018 floods) and a documented locality risk note pending RTI to Madurai Corporation.
-                </p>
-              </SubSection>
-
-              <SubSection id="page-lake-restoration" title="Lake restoration">
-                <p className="text-slate-600 dark:text-slate-400">
-                  Madurai-only narrative-rich page (Chennai redirects /lake-restoration to /water-bodies). Sections: 14 lost urban tanks, 12 severely-reduced tanks, 19 hand-curated flagships, restoration programmes (Kudimaramathu / AMRUT / Smart City / IAMWARM), Madras HC court-order anchors, DHAN partnership target.
-                </p>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Restoration priority badge</h4>
-                <p className="text-slate-600 dark:text-slate-400">
-                  Each flagship carries a colour-coded priority badge built from four signals:
-                </p>
-                <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-1.5">
-                  <li><span className="font-semibold">Status severity 0-80</span> - drying / lost &gt; severely reduced &gt; encroached / polluted &gt; restored.</li>
-                  <li><span className="font-semibold">Cultural bonus 0-35</span> - Biodiversity Heritage Site (+25), Ramsar candidate (+20), HC PIL anchor (+15), pre-1700 heritage (+10), dynasty-era (+8).</li>
-                  <li><span className="font-semibold">Size 4-25</span> - acres bucketed (very large / large / medium / small / tiny).</li>
-                  <li><span className="font-semibold">Source confidence ×0.7-1.0</span> - V (verified), N (newsroom), C (claim only) downweights.</li>
-                </ul>
-                <p className="text-xs text-slate-500 dark:text-slate-400 italic">
-                  Sum is bucketed: ≤40 low, ≤60 moderate, ≤80 high, &gt;80 critical. First run produced 5 critical, 2 high, 7 moderate, 5 low. Top 5: Vandiyur 100, Thenkal Kanmoi 100, Madakulam 88, Avaniyapuram 85, Samanatham 80.
-                </p>
-              </SubSection>
-
-              <SubSection id="page-my-ward" title="My Ward / Report Card">
-                <p className="text-slate-600 dark:text-slate-400">
-                  Ward-boundary map for Madurai Corporation&apos;s 100 wards (5 zones, 2022 delimitation). Click a ward to see zone, area, centroid, and a link into the per-ward report card.
-                </p>
-                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Per-ward report card</h4>
-                <p className="text-slate-600 dark:text-slate-400">
-                  Each report card shows a large A-F grade badge, the composite score out of 100, the ward&apos;s rank within the city, and a per-factor breakdown (raw value, percentile, weight). Without a specific ward selected, the page renders an index grouping ward chips by grade so you can jump straight to the worst-graded wards.
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 italic">
-                  Madurai&apos;s report card is intentionally slimmer than Chennai&apos;s. Chennai&apos;s is built on a 5-factor composite plus an uplift-planner cost matrix; that costing layer is out of scope for the Madurai launch because the underlying drainage and sewerage layers aren&apos;t published.
-                </p>
-              </SubSection>
-
-              <SubSection id="page-facts" title="Water facts">
-                <p className="text-slate-600 dark:text-slate-400">
-                  Journalist-ready quotable stats grouped by freshness tier - live (this season), derived (last 12 months), historical (documented), and heritage (pre-modern). Today {cityName} ships 14 hand-curated heritage and governance facts plus 9 auto-derived stats that compute from the data layers we ship: over-exploited blocks, critical and semi-critical blocks, restoration priority counts, F-grade ward count and worst ward, citywide interpolated groundwater depth, Vaigai BOD pollution gradient, Vaigai dissolved oxygen downstream, urban tank area lost.
-                </p>
-              </SubSection>
-            </>
+            <MaduraiPageDescriptions cityId={config.cityId} cityName={cityName} />
           )}
+
 
           {!isMadurai && (
             <p className="text-slate-600 dark:text-slate-400">
@@ -439,7 +279,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
         {/* ─────────────────────────────────────────────────────────
             3. Intelligence & AI narratives
             ───────────────────────────────────────────────────────── */}
-        <Section id="intelligence" title="Intelligence &amp; AI narratives">
+        <Section id="intelligence" title={t("about.section_intelligence")}>
           <p className="text-slate-600 dark:text-slate-400">
             Chennai layers an AI daily briefing, a longer-form weekly narrative, and per-ward AI profiles on top of the raw data. Those layers are pending for {cityName} - the underlying summary stores aren&apos;t yet multi-city.
           </p>
@@ -471,7 +311,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
         {/* ─────────────────────────────────────────────────────────
             4. Data Source Index
             ───────────────────────────────────────────────────────── */}
-        <Section id="data-sources" title={`Data sources for ${cityName}`}>
+        <Section id="data-sources" title={`${t("about.section_data_sources_for")} ${cityName}`}>
           <p className="text-slate-600 dark:text-slate-400">
             {t("about.data_pipeline")} {t("about.data_pipeline2")}
           </p>
@@ -660,7 +500,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
         {/* ─────────────────────────────────────────────────────────
             5. Data quality & limitations
             ───────────────────────────────────────────────────────── */}
-        <Section id="data-quality" title="Data quality &amp; limitations">
+        <Section id="data-quality" title={t("about.section_data_quality")}>
           {isMadurai && (
             <SubSection title="Madurai-specific data gaps">
               <p className="text-sm text-slate-600 dark:text-slate-400">
