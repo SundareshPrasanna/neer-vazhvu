@@ -1337,7 +1337,7 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "share.ward_report":         { en: "Check your ward's water report card", ta: "உங்கள் வார்டின் நீர் அறிக்கை அட்டையைப் பாருங்கள்" },
 
   "news.heading":              { en: "In the news",                         ta: "செய்திகளில்" },
-  "news.search_all":           { en: "Search latest Chennai water news",    ta: "சென்னை நீர் செய்திகளைத் தேடுங்கள்" },
+  "news.search_all":           { en: "Search latest {city} water news",     ta: "{city} நீர் செய்திகளைத் தேடுங்கள்" },
   "news.search_related":       { en: "Search related news",                 ta: "தொடர்புடைய செய்திகளைத் தேடுங்கள்" },
   "news.via":                  { en: "Via Google News",                     ta: "Google செய்திகள் வழியாக" },
 

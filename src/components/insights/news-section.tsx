@@ -38,7 +38,7 @@ export function NewsSection({ cityDisplayName = "Chennai" }: NewsSectionProps = 
         rel="noopener noreferrer"
         className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline"
       >
-        {t("news.search_all")} &rarr;
+        {t("news.search_all").replace("{city}", cityDisplayName)} &rarr;
       </a>
       <span className="text-slate-300 dark:text-slate-600">|</span>
       <span>{t("news.via")}</span>
