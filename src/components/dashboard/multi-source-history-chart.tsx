@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTheme } from "next-themes";
 import {
   ComposedChart,
   Line,
@@ -57,7 +58,13 @@ const SOURCE_COLOR: Record<string, string> = {
   kannankottai:    "#d97706",
 };
 
-const SUMMED_LINE_COLOR = "#0f172a"; // slate-900 for the combined total
+// Summed total line. Dark slate in light mode reads as a strong, near-black
+// line over the colourful per-source bands; in dark mode the same colour
+// disappears against the dark background, so flip to a light slate that
+// still contrasts against per-source line colours without competing with
+// them. Resolved at render time via useTheme below.
+const SUMMED_LINE_LIGHT = "#0f172a"; // slate-900
+const SUMMED_LINE_DARK  = "#e2e8f0"; // slate-200
 
 function fallbackColor(sourceCode: string): string {
   let hash = 0;
@@ -93,6 +100,12 @@ export function MultiSourceHistoryChart({
   const [tab, setTab] = useState<TabKey>("1yr");
   const [view, setView] = useState<ViewMode>("by_source");
   const [showForecast, setShowForecast] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+  const summedLineColor =
+    mounted && resolvedTheme === "dark" ? SUMMED_LINE_DARK : SUMMED_LINE_LIGHT;
 
   const forecastBySource = useMemo(() => {
     const m = new Map<string, ForecastSeries>();
@@ -448,7 +461,7 @@ export function MultiSourceHistoryChart({
           {showForecast && view === "summed" && (
             <Area
               dataKey="__total_band"
-              fill={SUMMED_LINE_COLOR}
+              fill={summedLineColor}
               fillOpacity={0.12}
               stroke="none"
               isAnimationActive={false}
@@ -497,7 +510,7 @@ export function MultiSourceHistoryChart({
                 type="monotone"
                 dataKey="__total"
                 name="__total"
-                stroke={SUMMED_LINE_COLOR}
+                stroke={summedLineColor}
                 strokeWidth={2.5}
                 dot={false}
                 connectNulls={false}
@@ -508,7 +521,7 @@ export function MultiSourceHistoryChart({
                   type="monotone"
                   dataKey="__total_forecast"
                   name="__total_forecast"
-                  stroke={SUMMED_LINE_COLOR}
+                  stroke={summedLineColor}
                   strokeWidth={2.5}
                   strokeDasharray="5 3"
                   dot={false}
