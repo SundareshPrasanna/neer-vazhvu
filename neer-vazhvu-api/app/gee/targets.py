@@ -4,10 +4,8 @@ import json
 from dataclasses import asdict, dataclass
 from typing import Any
 
-from app.gee.config import PHASE1_TARGETS_PATH, REPO_ROOT
+from app.gee.cities import CityGeeConfig, get_city_config
 
-
-RESTORATION_PRIORITY_PATH = REPO_ROOT / "public" / "data" / "restoration-priority.json"
 
 HIGH_PRIORITY_LEVELS = {"critical", "high"}
 EXCLUDED_NAME_PATTERNS = (
@@ -24,17 +22,6 @@ EXCLUDED_NAME_PATTERNS = (
 )
 EXCLUDED_WATER_TYPES = {"wastewater", "ditch", "drain"}
 ALLOWED_UNNAMED_WATER_TYPES = {"reservoir", "lake", "water", "marsh"}
-RESERVOIR_NAME_PATTERNS = (
-    "poondi",
-    "red hills",
-    "puzhal",
-    "chembarambakkam",
-    "cholavaram",
-    "veeranam",
-    "kannankottai",
-    "thervoy",
-)
-WETLAND_NAME_PATTERNS = ("marsh", "wetland", "backwater", "creek")
 
 
 @dataclass(slots=True)
@@ -62,9 +49,14 @@ def _is_excluded(name: str, water_type: str) -> bool:
     return water_type.lower() in EXCLUDED_WATER_TYPES
 
 
-def determine_include_reason(row: dict[str, Any]) -> str | None:
+def determine_include_reason(
+    row: dict[str, Any],
+    city: CityGeeConfig | None = None,
+) -> str | None:
     if row.get("osm_id") is None:
         return None
+
+    city_config = city or get_city_config()
 
     name = _normalized_name(row.get("name"))
     water_type = str(row.get("water_type") or "")
@@ -76,10 +68,14 @@ def determine_include_reason(row: dict[str, Any]) -> str | None:
     if _is_excluded(name, water_type):
         return None
 
-    if name and any(pattern in lowered for pattern in RESERVOIR_NAME_PATTERNS):
+    if name and any(
+        pattern in lowered for pattern in city_config.reservoir_name_patterns
+    ):
         return "named_reservoir"
 
-    if name and any(pattern in lowered for pattern in WETLAND_NAME_PATTERNS):
+    if name and any(
+        pattern in lowered for pattern in city_config.wetland_name_patterns
+    ):
         return "named_wetland"
 
     if priority_level in HIGH_PRIORITY_LEVELS and name and area_ha >= 1:
@@ -110,12 +106,15 @@ def _sort_key(target: Phase1WaterBodyTarget) -> tuple[int, float, str, str]:
     return (priority_rank, -target.area_ha, display_name.lower(), target.gee_target_id)
 
 
-def build_phase1_targets() -> list[Phase1WaterBodyTarget]:
-    data = json.loads(RESTORATION_PRIORITY_PATH.read_text(encoding="utf-8"))
+def build_phase1_targets(
+    city_id: str | None = None,
+) -> list[Phase1WaterBodyTarget]:
+    city = get_city_config(city_id)
+    data = json.loads(city.restoration_priority_path.read_text(encoding="utf-8"))
     targets: list[Phase1WaterBodyTarget] = []
 
     for row in data.get("water_bodies", []):
-        include_reason = determine_include_reason(row)
+        include_reason = determine_include_reason(row, city=city)
         if not include_reason:
             continue
 
@@ -137,10 +136,12 @@ def build_phase1_targets() -> list[Phase1WaterBodyTarget]:
     return targets
 
 
-def write_phase1_target_manifest() -> dict[str, Any]:
-    targets = build_phase1_targets()
+def write_phase1_target_manifest(city_id: str | None = None) -> dict[str, Any]:
+    city = get_city_config(city_id)
+    targets = build_phase1_targets(city.city_id)
     payload = {
         "manifest_version": 1,
+        "city_id": city.city_id,
         "selection_rules": {
             "priority_levels": sorted(HIGH_PRIORITY_LEVELS),
             "min_named_area_ha": 10,
@@ -149,11 +150,13 @@ def write_phase1_target_manifest() -> dict[str, Any]:
             "min_priority_large_unnamed_area_ha": 25,
             "excluded_name_patterns": list(EXCLUDED_NAME_PATTERNS),
             "excluded_water_types": sorted(EXCLUDED_WATER_TYPES),
+            "reservoir_name_patterns": list(city.reservoir_name_patterns),
+            "wetland_name_patterns": list(city.wetland_name_patterns),
         },
         "target_count": len(targets),
         "targets": [asdict(target) for target in targets],
     }
-    PHASE1_TARGETS_PATH.write_text(
+    city.phase1_targets_path.write_text(
         json.dumps(payload, indent=2, ensure_ascii=True) + "\n",
         encoding="utf-8",
     )

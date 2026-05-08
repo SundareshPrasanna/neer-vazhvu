@@ -8,9 +8,9 @@ from typing import Any
 import httpx
 from shapely.geometry import box, mapping, shape
 
+from app.gee.cities import CityGeeConfig, get_city_config
 from app.gee.client import initialize_earth_engine
 from app.gee.config import (
-    CURRENT_WATER_BODIES_PATH,
     DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT,
     DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CLOUD_PCT,
     DEFAULT_SATELLITE_EVIDENCE_MAX_SCENE_CANDIDATES,
@@ -154,8 +154,15 @@ def build_thumb_region_from_geometry(
     return mapping(padded_bounds)
 
 
-def resolve_satellite_evidence_geometry_version(path: Path | None = None) -> str:
-    return (path or CURRENT_WATER_BODIES_PATH).expanduser().resolve().stem
+def resolve_satellite_evidence_geometry_version(
+    path: Path | None = None,
+    *,
+    city: CityGeeConfig | None = None,
+) -> str:
+    if path is None:
+        city_config = city or get_city_config()
+        path = city_config.current_water_bodies_path
+    return path.expanduser().resolve().stem
 
 
 def _mask_sentinel2_clouds(ee, image):
@@ -386,6 +393,7 @@ def _select_best_scene_for_reference_date(
     min_usable_coverage_pct: float,
     max_scene_cloud_pct: float,
     include_download_urls: bool,
+    city: CityGeeConfig,
 ) -> WaterBodySatelliteEvidenceSelection | None:
     target_geometry = _build_target_geometry(ee, target)
     candidate_collection = _build_candidate_sentinel_collection(
@@ -469,7 +477,7 @@ def _select_best_scene_for_reference_date(
         ),
         usable_coverage_pct=usable_coverage_pct,
         cloud_note=f"tile_cloud_pct={scene_cloud_pct:.1f}",
-        geometry_version=resolve_satellite_evidence_geometry_version(),
+        geometry_version=resolve_satellite_evidence_geometry_version(city=city),
         is_same_scene_as_overlay=True,
         is_reviewed=False,
         notes=None,
@@ -496,6 +504,7 @@ def serialize_satellite_evidence_selection(
 
 def build_satellite_evidence_selections(
     *,
+    city_id: str | None = None,
     reference_date: date | None = None,
     months_back: int = DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK,
     frame_count: int = DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT,
@@ -507,9 +516,12 @@ def build_satellite_evidence_selections(
     target_cohort: str | None = SATELLITE_EVIDENCE_COHORT,
     include_download_urls: bool = False,
 ) -> dict[str, Any]:
+    city = get_city_config(city_id)
     build_reference_date = reference_date or datetime.now(UTC).date()
-    targets = load_phase1_target_features(gee_target_id=gee_target_id, limit=limit)
-    targets = filter_targets_for_cohort(targets, cohort=target_cohort)
+    targets = load_phase1_target_features(
+        city_id=city.city_id, gee_target_id=gee_target_id, limit=limit
+    )
+    targets = filter_targets_for_cohort(targets, cohort=target_cohort, city=city)
     ee = initialize_earth_engine()
 
     reference_dates = build_satellite_evidence_reference_dates(
@@ -531,6 +543,7 @@ def build_satellite_evidence_selections(
                 min_usable_coverage_pct=min_usable_coverage_pct,
                 max_scene_cloud_pct=max_scene_cloud_pct,
                 include_download_urls=include_download_urls,
+                city=city,
             )
             if selection is None:
                 skipped.append(
@@ -550,6 +563,7 @@ def build_satellite_evidence_selections(
         selections.extend(target_selections)
 
     return {
+        "city_id": city.city_id,
         "build_date": build_reference_date.isoformat(),
         "target_count": len(targets),
         "reference_dates": [ref_date.isoformat() for ref_date in reference_dates],
@@ -614,38 +628,20 @@ def upload_satellite_evidence_assets(
     return uploaded_count
 
 
-def _preserve_existing_review_state(
+def _apply_existing_review_state(
     rows: list[WaterBodySatelliteEvidenceRow],
+    existing_by_key: dict[tuple[str, str], dict],
 ) -> list[WaterBodySatelliteEvidenceRow]:
-    if not rows:
-        return rows
+    """Carry forward prior review state when the same scene is reselected.
 
-    from app.db import get_supabase
-
-    supabase = get_supabase()
-
-    # Batch-fetch all existing reviewed rows for the target+reference_date pairs
-    target_ids = list({row.gee_target_id for row in rows})
-    ref_dates = list({row.reference_date for row in rows})
-
-    response = (
-        supabase.table("water_body_satellite_evidence")
-        .select(
-            "gee_target_id,reference_date,frame_date,"
-            "source_asset_id,dynamic_world_asset_id,is_reviewed,notes"
-        )
-        .in_("gee_target_id", target_ids)
-        .in_("reference_date", ref_dates)
-        .eq("is_reviewed", False)
-        .execute()
-    )
-
-    # Index by (gee_target_id, reference_date) for O(1) lookup
-    existing_by_key: dict[tuple[str, str], dict] = {}
-    for existing in response.data or []:
-        key = (existing["gee_target_id"], existing["reference_date"])
-        existing_by_key[key] = existing
-
+    For each row, if an existing DB row exists for the same
+    (gee_target_id, reference_date) AND the scene identifiers
+    (frame_date, source_asset_id, dynamic_world_asset_id) match exactly,
+    copy over the prior `is_reviewed` verdict and `notes`. This preserves
+    BOTH approvals and rejections across rebuilds. New rows or rows with
+    a different scene selection keep the default `is_reviewed=False`,
+    which forces a fresh review.
+    """
     for row in rows:
         existing = existing_by_key.get((row.gee_target_id, row.reference_date))
         if not existing:
@@ -662,12 +658,43 @@ def _preserve_existing_review_state(
         if not same_selection:
             continue
 
-        # Preserve your rejection - if same scene was marked bad, keep it hidden
-        row.is_reviewed = False
+        row.is_reviewed = bool(existing.get("is_reviewed"))
         if row.notes is None and existing.get("notes") is not None:
             row.notes = str(existing.get("notes"))
 
     return rows
+
+
+def _preserve_existing_review_state(
+    rows: list[WaterBodySatelliteEvidenceRow],
+) -> list[WaterBodySatelliteEvidenceRow]:
+    if not rows:
+        return rows
+
+    from app.db import get_supabase
+
+    supabase = get_supabase()
+
+    target_ids = list({row.gee_target_id for row in rows})
+    ref_dates = list({row.reference_date for row in rows})
+
+    response = (
+        supabase.table("water_body_satellite_evidence")
+        .select(
+            "gee_target_id,reference_date,frame_date,"
+            "source_asset_id,dynamic_world_asset_id,is_reviewed,notes"
+        )
+        .in_("gee_target_id", target_ids)
+        .in_("reference_date", ref_dates)
+        .execute()
+    )
+
+    existing_by_key: dict[tuple[str, str], dict] = {}
+    for existing in response.data or []:
+        key = (existing["gee_target_id"], existing["reference_date"])
+        existing_by_key[key] = existing
+
+    return _apply_existing_review_state(rows, existing_by_key)
 
 
 def upsert_water_body_satellite_evidence(
@@ -688,6 +715,7 @@ def upsert_water_body_satellite_evidence(
 def build_satellite_evidence(
     *,
     write: bool,
+    city_id: str | None = None,
     reference_date: date | None = None,
     months_back: int = DEFAULT_SATELLITE_EVIDENCE_MONTHS_BACK,
     frame_count: int = DEFAULT_SATELLITE_EVIDENCE_FRAME_COUNT,
@@ -699,6 +727,7 @@ def build_satellite_evidence(
     target_cohort: str | None = SATELLITE_EVIDENCE_COHORT,
 ) -> dict[str, Any]:
     result = build_satellite_evidence_selections(
+        city_id=city_id,
         reference_date=reference_date,
         months_back=months_back,
         frame_count=frame_count,
@@ -721,6 +750,7 @@ def build_satellite_evidence(
     )
 
     return {
+        "city_id": result["city_id"],
         "build_date": result["build_date"],
         "target_count": result["target_count"],
         "reference_dates": result["reference_dates"],

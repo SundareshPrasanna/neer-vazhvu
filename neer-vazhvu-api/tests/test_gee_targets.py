@@ -1,3 +1,4 @@
+from app.gee.cities import get_city_config
 from app.gee.targets import determine_include_reason
 
 
@@ -71,3 +72,34 @@ def test_excludes_census_only_rows_without_polygon():
     }
 
     assert determine_include_reason(row) is None
+
+
+def test_madurai_reservoir_name_pattern_matches_vaigai_only_for_madurai():
+    row = {
+        "osm_id": 13724237,
+        "name": "Vaigai Dam reservoir",
+        "water_type": "reservoir",
+        "area_ha": 1418.08,
+        "priority_level": "moderate",
+    }
+
+    madurai = get_city_config("madurai")
+    chennai = get_city_config("chennai")
+
+    # Vaigai is Madurai's reservoir pattern; Chennai falls through to named_large.
+    assert determine_include_reason(row, city=madurai) == "named_reservoir"
+    assert determine_include_reason(row, city=chennai) == "named_large"
+
+
+def test_chennai_reservoir_name_pattern_does_not_apply_to_madurai():
+    row = {
+        "osm_id": 1,
+        "name": "Poondi Reservoir",
+        "water_type": "reservoir",
+        "area_ha": 1500.0,
+        "priority_level": "moderate",
+    }
+
+    assert determine_include_reason(row, city=get_city_config("chennai")) == "named_reservoir"
+    # Madurai has no "poondi" pattern; falls through to size-based naming rule.
+    assert determine_include_reason(row, city=get_city_config("madurai")) == "named_large"

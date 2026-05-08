@@ -9,17 +9,6 @@ PUBLIC_DIR = REPO_ROOT / "public"
 PUBLIC_DATA_DIR = PUBLIC_DIR / "data"
 PUBLIC_GEOJSON_DIR = PUBLIC_DIR / "geojson"
 
-PHASE1_TARGETS_PATH = PUBLIC_DATA_DIR / "gee-phase1-water-body-targets.json"
-RESERVOIR_CATCHMENTS_PATH = PUBLIC_GEOJSON_DIR / "chennai-reservoir-catchments.geojson"
-CURRENT_WATER_BODIES_PATH = PUBLIC_GEOJSON_DIR / "chennai-water-bodies-current.geojson"
-
-PHASE1_RESERVOIRS = (
-    "poondi",
-    "redhills",
-    "chembarambakkam",
-    "cholavaram",
-)
-
 CHIRPS_DAILY_DATASET = "UCSB-CHG/CHIRPS/DAILY"
 CHIRPS_BAND = "precipitation"
 CHIRPS_PIXEL_SCALE_METERS = 5566
@@ -69,18 +58,3 @@ SATELLITE_EVIDENCE_OVERLAY_OPACITY = 0.55
 NDWI_GREEN_BAND = "B3"
 NDWI_NIR_BAND = "B8"
 NDWI_WATER_THRESHOLD = 0.0
-
-FLAGSHIP_HISTORY_COHORT = (
-    "osm:25453624",  # Chembarambakkam Lake
-    "osm:25394157",  # Red Hills Reservoir
-    "osm:25394523",  # Sholavaram Lake
-    "osm:24161888",  # Kolavai Lake
-    "osm:25391800",  # Ambattur Lake
-    "osm:25474612",  # Korattur Lake
-    "osm:25474749",  # Retteri Lake
-    "osm:1237456198",  # Ayanambakkam Tank
-    "osm:30424450",  # Perumbakkam Lake
-    "osm:23648233",  # Tiruneermalai Eri
-    "osm:1236160012",  # Poonamallee Lake
-    "osm:23633592",  # Porur Lake
-)

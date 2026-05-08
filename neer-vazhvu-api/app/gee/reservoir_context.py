@@ -7,6 +7,7 @@ from pathlib import Path
 from statistics import mean
 from typing import Any
 
+from app.gee.cities import CityGeeConfig, get_city_config
 from app.gee.client import initialize_earth_engine
 from app.gee.config import (
     CHIRPS_BAND,
@@ -15,19 +16,18 @@ from app.gee.config import (
     CHIRPS_START_DATE,
     DEFAULT_BASELINE_YEARS,
     DEFAULT_RAIN_WINDOWS,
-    PHASE1_RESERVOIRS,
-    RESERVOIR_CATCHMENTS_PATH,
 )
 
 _GEOMETRY_TYPES = {"Polygon", "MultiPolygon"}
-_RESERVOIR_NAME_ALIASES = {
-    "poondi": "poondi",
-    "redhills": "redhills",
-    "red hills": "redhills",
-    "puzhal": "redhills",
-    "chembarambakkam": "chembarambakkam",
-    "cholavaram": "cholavaram",
-}
+
+
+def _require_catchments_path(city: CityGeeConfig) -> Path:
+    if city.reservoir_catchments_path is None:
+        raise RuntimeError(
+            f"City {city.city_id!r} has no reservoir catchments configured; "
+            "the reservoir-context pipeline is unavailable for this city."
+        )
+    return city.reservoir_catchments_path
 
 
 @dataclass(slots=True)
@@ -50,14 +50,17 @@ class ReservoirCatchmentContextRow:
     geometry_version: str | None = None
 
 
-def canonicalize_reservoir_name(raw_name: Any) -> str | None:
+def canonicalize_reservoir_name(
+    raw_name: Any, *, city: CityGeeConfig | None = None
+) -> str | None:
     if not isinstance(raw_name, str):
         return None
 
+    city_config = city or get_city_config()
     normalized = " ".join(
         raw_name.strip().lower().replace("_", " ").replace("-", " ").split()
     )
-    return _RESERVOIR_NAME_ALIASES.get(normalized)
+    return city_config.reservoir_name_aliases.get(normalized)
 
 
 def window_bounds(context_date: date, window_days: int) -> tuple[date, date]:
@@ -91,8 +94,15 @@ def classify_rainfall_context(anomaly_pct: float | None) -> str:
     return "well_above"
 
 
-def read_catchment_payload(catchments_path: Path | None = None) -> dict[str, Any]:
-    path = catchments_path or RESERVOIR_CATCHMENTS_PATH
+def read_catchment_payload(
+    catchments_path: Path | None = None,
+    *,
+    city: CityGeeConfig | None = None,
+) -> dict[str, Any]:
+    if catchments_path is None:
+        city_config = city or get_city_config()
+        catchments_path = _require_catchments_path(city_config)
+    path = catchments_path
     if not path.exists():
         raise RuntimeError(f"Missing file: {path}")
 
@@ -116,14 +126,18 @@ def extract_geometry_version(payload: dict[str, Any]) -> str | None:
 
 def load_reservoir_catchments(
     catchments_path: Path | None = None,
+    *,
+    city: CityGeeConfig | None = None,
 ) -> tuple[dict[str, ReservoirCatchmentFeature], str | None]:
-    payload = read_catchment_payload(catchments_path)
+    city_config = city or get_city_config()
+    payload = read_catchment_payload(catchments_path, city=city_config)
     features = payload.get("features", [])
     geometry_version = extract_geometry_version(payload)
 
     catchments: dict[str, ReservoirCatchmentFeature] = {}
     duplicates: list[str] = []
     invalid_features: list[str] = []
+    expected_reservoirs = city_config.phase1_reservoirs
 
     for index, feature in enumerate(features):
         if not isinstance(feature, dict):
@@ -132,9 +146,11 @@ def load_reservoir_catchments(
 
         properties = feature.get("properties")
         geometry = feature.get("geometry")
-        reservoir = canonicalize_reservoir_name((properties or {}).get("reservoir"))
+        reservoir = canonicalize_reservoir_name(
+            (properties or {}).get("reservoir"), city=city_config
+        )
 
-        if reservoir not in PHASE1_RESERVOIRS:
+        if reservoir not in expected_reservoirs:
             invalid_features.append(
                 f"feature[{index}] has unknown reservoir {(properties or {}).get('reservoir')!r}"
             )
@@ -159,7 +175,7 @@ def load_reservoir_catchments(
             properties=properties or {},
         )
 
-    missing = [name for name in PHASE1_RESERVOIRS if name not in catchments]
+    missing = [name for name in expected_reservoirs if name not in catchments]
     if duplicates or invalid_features or missing or not catchments:
         parts: list[str] = []
         if not catchments:
@@ -179,17 +195,33 @@ def load_reservoir_catchments(
 
 def validate_reservoir_catchments(
     catchments_path: Path | None = None,
+    *,
+    city: CityGeeConfig | None = None,
 ) -> dict[str, Any]:
-    path = catchments_path or RESERVOIR_CATCHMENTS_PATH
+    city_config = city or get_city_config()
+    expected_reservoirs = city_config.phase1_reservoirs
+    path = catchments_path or city_config.reservoir_catchments_path
+    if path is None:
+        return {
+            "ok": False,
+            "issue": (
+                f"City {city_config.city_id!r} has no reservoir catchments configured."
+            ),
+            "feature_count": 0,
+            "missing_reservoirs": list(expected_reservoirs),
+            "duplicate_reservoirs": [],
+            "invalid_features": [],
+            "geometry_version": None,
+        }
 
     try:
-        payload = read_catchment_payload(path)
+        payload = read_catchment_payload(path, city=city_config)
     except RuntimeError as exc:
         return {
             "ok": False,
             "issue": str(exc),
             "feature_count": 0,
-            "missing_reservoirs": list(PHASE1_RESERVOIRS),
+            "missing_reservoirs": list(expected_reservoirs),
             "duplicate_reservoirs": [],
             "invalid_features": [],
             "geometry_version": None,
@@ -209,9 +241,11 @@ def validate_reservoir_catchments(
 
         properties = feature.get("properties")
         geometry = feature.get("geometry")
-        reservoir = canonicalize_reservoir_name((properties or {}).get("reservoir"))
+        reservoir = canonicalize_reservoir_name(
+            (properties or {}).get("reservoir"), city=city_config
+        )
 
-        if reservoir not in PHASE1_RESERVOIRS:
+        if reservoir not in expected_reservoirs:
             invalid_features.append(
                 f"feature[{index}] has unknown reservoir {(properties or {}).get('reservoir')!r}"
             )
@@ -232,7 +266,7 @@ def validate_reservoir_catchments(
 
         seen.add(reservoir)
 
-    missing = [name for name in PHASE1_RESERVOIRS if name not in seen]
+    missing = [name for name in expected_reservoirs if name not in seen]
 
     parts: list[str] = []
     if not features:
@@ -310,6 +344,7 @@ def _window_mean_precip_mm_ee(
 
 def compute_reservoir_context_rows(
     *,
+    city_id: str | None = None,
     reference_date: date | None = None,
     baseline_years: int = DEFAULT_BASELINE_YEARS,
     window_days: tuple[int, ...] = DEFAULT_RAIN_WINDOWS,
@@ -318,18 +353,19 @@ def compute_reservoir_context_rows(
     if baseline_years <= 0:
         raise RuntimeError("baseline_years must be positive")
 
-    validation = validate_reservoir_catchments(catchments_path)
+    city = get_city_config(city_id)
+    validation = validate_reservoir_catchments(catchments_path, city=city)
     if not validation["ok"]:
         raise RuntimeError(validation["issue"] or "Catchment validation failed")
 
-    catchments, geometry_version = load_reservoir_catchments(catchments_path)
+    catchments, geometry_version = load_reservoir_catchments(catchments_path, city=city)
     ee = initialize_earth_engine()
     chirps_collection = ee.ImageCollection(CHIRPS_DAILY_DATASET).select(CHIRPS_BAND)
     context_date = resolve_chirps_context_date(chirps_collection, reference_date)
 
     rows: list[ReservoirCatchmentContextRow] = []
 
-    for reservoir in PHASE1_RESERVOIRS:
+    for reservoir in city.phase1_reservoirs:
         feature = catchments[reservoir]
         geometry = ee.Geometry(feature.geometry)
 
@@ -387,6 +423,7 @@ def compute_reservoir_context_rows(
             )
 
     return {
+        "city_id": city.city_id,
         "context_date": context_date.isoformat(),
         "geometry_version": geometry_version,
         "row_count": len(rows),
