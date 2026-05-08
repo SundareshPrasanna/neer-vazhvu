@@ -34,8 +34,8 @@ const MONTH_LABELS_TA = ["ஜன", "பிப்", "மார்", "ஏப்", 
 // DAY_ZERO_YEAR is highlighted red — the crisis was caused by cumulative deficit (2016-2018).
 const DAY_ZERO_YEAR = 2019;
 
-function getBarColor(total: number, mean: number, year: number): string {
-  if (year === DAY_ZERO_YEAR) return "#dc2626"; // red — Day Zero
+function getBarColor(total: number, mean: number, year: number, dayZeroCity: boolean): string {
+  if (dayZeroCity && year === DAY_ZERO_YEAR) return "#dc2626"; // red — Chennai's Day Zero
   if (total < mean * 0.8) return "#f97316"; // orange — below 80% of normal
   if (total > mean * 1.2) return "#3b82f6"; // blue — above 120% of normal
   return "#10b981"; // green — normal range
@@ -44,9 +44,22 @@ function getBarColor(total: number, mean: number, year: number): string {
 interface RainfallTrendsProps {
   /** City id for the data file lookup. Defaults to Chennai for back-compat. */
   cityId?: string;
+  /** City display name shown in the chart title; falls back to a
+   *  capitalised cityId. Pass it explicitly so the title matches the
+   *  rest of the page header. */
+  cityDisplayName?: string;
 }
 
-export function RainfallTrends({ cityId = "chennai" }: RainfallTrendsProps = {}) {
+/** Cities for which we colour the 2019 bar red as "Day Zero". Other
+ *  cities get the same regular below-/above-normal colouring rules
+ *  applied to 2019 like any other year - they didn't have a Chennai-
+ *  style Day Zero event so we don't manufacture one visually. */
+const DAY_ZERO_CITIES = new Set(["chennai"]);
+
+export function RainfallTrends({
+  cityId = "chennai",
+  cityDisplayName,
+}: RainfallTrendsProps = {}) {
   const { t, language } = useLanguage();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -139,7 +152,10 @@ export function RainfallTrends({ cityId = "chennai" }: RainfallTrendsProps = {})
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {t("rain.title")}
+            {t("rain.title").replace(
+              "{city}",
+              cityDisplayName ?? cityId.charAt(0).toUpperCase() + cityId.slice(1),
+            )}
           </h2>
         </div>
 
@@ -170,7 +186,9 @@ export function RainfallTrends({ cityId = "chennai" }: RainfallTrendsProps = {})
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 labelFormatter={(year: any) => {
                   const y = Number(year);
-                  if (y === DAY_ZERO_YEAR) return `${y} (${t("rain.day_zero")})`;
+                  if (DAY_ZERO_CITIES.has(cityId) && y === DAY_ZERO_YEAR) {
+                    return `${y} (${t("rain.day_zero")})`;
+                  }
                   return String(y);
                 }}
                 contentStyle={{
@@ -193,7 +211,7 @@ export function RainfallTrends({ cityId = "chennai" }: RainfallTrendsProps = {})
                 {data.annual_totals.map((entry) => (
                   <Cell
                     key={entry.year}
-                    fill={getBarColor(entry.total_mm, mean, entry.year)}
+                    fill={getBarColor(entry.total_mm, mean, entry.year, DAY_ZERO_CITIES.has(cityId))}
                   />
                 ))}
               </Bar>
@@ -202,15 +220,29 @@ export function RainfallTrends({ cityId = "chennai" }: RainfallTrendsProps = {})
 
           {/* Legend */}
           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-xs text-slate-500 dark:text-slate-400">
-            <span><span className="inline-block w-2 h-2 rounded-sm bg-red-600 mr-1" />{t("rain.day_zero")} (2019)</span>
+            {DAY_ZERO_CITIES.has(cityId) && (
+              <span><span className="inline-block w-2 h-2 rounded-sm bg-red-600 mr-1" />{t("rain.day_zero")} (2019)</span>
+            )}
             <span><span className="inline-block w-2 h-2 rounded-sm bg-orange-500 mr-1" />{"<"} 80%</span>
             <span><span className="inline-block w-2 h-2 rounded-sm bg-emerald-500 mr-1" />{t("rain.normal")}</span>
             <span><span className="inline-block w-2 h-2 rounded-sm bg-blue-500 mr-1" />{">"} 120%</span>
           </div>
 
-          <p className="mt-2 text-xs text-slate-400 dark:text-slate-500 italic">
-            {t("rain.day_zero_note")}
-          </p>
+          {/* City-specific contextual note. Falls back to the Chennai
+              note (`rain.context_note_chennai`) only when no city-specific
+              key has been authored, so a typo'd cityId stays safe and
+              cities without a note render nothing. */}
+          {(() => {
+            const noteKey = `rain.context_note_${cityId}`;
+            const note = t(noteKey);
+            // useLanguage().t returns the key itself when missing; treat
+            // that as "no note for this city".
+            return note && note !== noteKey ? (
+              <p className="mt-2 text-xs text-slate-400 dark:text-slate-500 italic">
+                {note}
+              </p>
+            ) : null;
+          })()}
         </div>
 
         {/* Monthly comparison: current year vs normal */}

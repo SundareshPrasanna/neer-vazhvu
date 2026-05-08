@@ -670,13 +670,17 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "wb_panel.point_location":        { en: "Location marker (census provides coordinates only, not boundary shape)", ta: "இருப்பிடக் குறிப்பான் (கணக்கெடுப்பு ஆயங்களை மட்டுமே வழங்குகிறது, எல்லை வடிவத்தை அல்ல)" },
 
   // ── Rainfall Trends ─────────────────────────────────────────────────────
-  "rain.title":            { en: "Chennai Rainfall History", ta: "சென்னை மழைவீழ்ச்சி வரலாறு" },
+  "rain.title":            { en: "{city} Rainfall History", ta: "{city} மழைவீழ்ச்சி வரலாறு" },
   "rain.annual_title":     { en: "Annual Rainfall", ta: "ஆண்டு மழைவீழ்ச்சி" },
   "rain.monthly_title":    { en: "Monthly Rainfall vs Normal", ta: "மாதாந்திர மழைவீழ்ச்சி vs சாதாரணம்" },
   "rain.normal_line":      { en: "Long-term average", ta: "நீண்டகால சராசரி" },
   "rain.drought_year":     { en: "Drought year", ta: "வறட்சி ஆண்டு" },
   "rain.day_zero":         { en: "Day Zero", ta: "நாள் பூஜ்ஜியம்" },
-  "rain.day_zero_note":    { en: "Day Zero (June 2019): Chennai's four reservoirs ran dry after three consecutive years of below-normal rainfall (2016-2018), leaving 10 million residents without piped water.", ta: "நாள் பூஜ்ஜியம் (ஜூன் 2019): தொடர்ச்சியாக மூன்று ஆண்டுகள் சாதாரணத்திற்கும் குறைவான மழையால் (2016-2018) சென்னையின் நான்கு நீர்த்தேக்கங்களும் வறண்டன, 1 கோடி மக்கள் குழாய் நீரின்றி பாதிக்கப்பட்டனர்." },
+  // Per-city contextual note shown under the annual rainfall bar chart.
+  // The component picks the key matching the current cityId via
+  // `rain.context_note_<cityId>`. Cities without a key get no note.
+  "rain.context_note_chennai":  { en: "Day Zero (June 2019): Chennai's four reservoirs ran dry after three consecutive years of below-normal rainfall (2016-2018), leaving 10 million residents without piped water.", ta: "நாள் பூஜ்ஜியம் (ஜூன் 2019): தொடர்ச்சியாக மூன்று ஆண்டுகள் சாதாரணத்திற்கும் குறைவான மழையால் (2016-2018) சென்னையின் நான்கு நீர்த்தேக்கங்களும் வறண்டன, 1 கோடி மக்கள் குழாய் நீரின்றி பாதிக்கப்பட்டனர்." },
+  "rain.context_note_madurai":  { en: "Madurai's rainfall sits between two failure modes: deficit years (2016, 2018, 2019 each at 60-80% of normal) drain the Vaigai dam and force tanker dependence; surplus years (1995, 2005, 2021, 2024) restore the cascade only briefly. Long-term annual mean: 862 mm at the Vaigai-catchment grid cell.", ta: "மதுரையின் மழை இரண்டு தோல்வி வழிகளுக்கு இடையில் உள்ளது: பற்றாக்குறை ஆண்டுகள் (2016, 2018, 2019 ஒவ்வொன்றும் சாதாரணத்தின் 60-80%) வைகை அணையை வற்றச் செய்து டேங்கர் சார்புத்தன்மையை வலியுறுத்துகின்றன; உபரி ஆண்டுகள் (1995, 2005, 2021, 2024) அடுக்கை சில நேரம் மட்டுமே மீட்டெடுக்கின்றன. நீண்டகால ஆண்டு சராசரி: வைகை-நீர்ப்பிடிப்பு கட்டத்தில் 862 மிமீ." },
   "rain.source_note":      { en: "Source: India Meteorological Department gridded rainfall dataset (0.25° resolution)", ta: "ஆதாரம்: இந்திய வானிலை ஆய்வு மையம் கிரிட் மழைவீழ்ச்சி தரவுத்தொகுப்பு (0.25° தெளிவுத்திறன்)" },
   "rain.total":            { en: "Total", ta: "மொத்தம்" },
   "rain.normal":           { en: "Normal", ta: "சாதாரணம்" },
