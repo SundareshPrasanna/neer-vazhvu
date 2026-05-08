@@ -356,24 +356,19 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
           <DataSource
             name="India WRIS / CGWB - block-level Dynamic GWR"
             url="https://indiawris.gov.in/"
-            description="Annual block-level Dynamic Groundwater Resource Assessment (Safe / Semi Critical / Critical / Over Exploited). 66 blocks classified across Madurai district."
+            description={isMadurai
+              ? "Annual block-level Dynamic Groundwater Resource Assessment (Safe / Semi Critical / Critical / Over Exploited). 11 blocks classified across Madurai district (Madurai East/North/South/West, Melur, Peraiyur, Thirupparankundram, Tirumangalam, Usilampatti, Vadipatti, Kallikudi)."
+              : "Annual block-level Dynamic Groundwater Resource Assessment (Safe / Semi Critical / Critical / Over Exploited)."
+            }
             frequency="annual"
           />
           {isMadurai && (
-            <>
-              <DataSource
-                name="Ward groundwater depth (interpolated)"
-                url={`/${config.cityId}/groundwater`}
-                description="Inverse-distance weighting from the four nearest telemetric CGWB stations within 15 km of each ward centroid. Refreshes daily."
-                frequency="daily refresh"
-              />
-              <DataSource
-                name="Ward risk composite"
-                url={`/${config.cityId}/my-ward/report`}
-                description="3-factor weighted percentile composite per ward: groundwater depth 50%, water-body density 20%, water-body health 30%. Graded A-F."
-                frequency="on data refresh"
-              />
-            </>
+            <DataSource
+              name="CGWB Ground Water Year Book of Tamil Nadu &amp; Puducherry"
+              url="https://cgwb.gov.in/cgwbpnm/search?type=2&cat_id=4&state_id=33"
+              description="Peer-reviewed quarterly depth-to-water-level readings (May / Aug / Nov / Jan) at 21 dug-well stations in Madurai district, sourced from the 2023-24 and 2024-25 Year Books. Replaces an IDW-interpolated ward depth choropleth - Madurai's live WRIS network is too sparse (4 stations) for honest per-ward synthesis. Stitched into a 2-year time series stored in public/data/madurai-cgwb-stations.json."
+              frequency="annual (per Year Book release)"
+            />
           )}
 
           <DataSourceGroupHeader title="Water bodies &amp; restoration" />
@@ -526,9 +521,9 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
                   </p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-                  <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">Ward depth is interpolated, not surveyed</h4>
+                  <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">No per-ward depth choropleth (deliberate)</h4>
                   <p className="text-sm text-blue-700 dark:text-blue-300">
-                    Chennai uses an authoritative OpenCity ward-monthly groundwater dataset. Madurai has no equivalent, so we IDW from the 35 telemetric CGWB stations in the district. IDW uncertainty grows with distance - wards far from any station may be coloured noData.
+                    Chennai uses an authoritative OpenCity ward-monthly groundwater dataset. Madurai has no equivalent, and the four India WRIS live stations in the district are too sparse to manufacture an honest 100-ward choropleth. Instead we surface 21 CGWB Year Book point stations as the depth signal, alongside the 11-block CGWB exploitation classification. The IDW-interpolated ward view used in earlier drafts has been retired for Madurai.
                   </p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">

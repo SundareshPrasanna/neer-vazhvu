@@ -1,0 +1,229 @@
+{
+  "_note": "Madurai-district CGWB ground water monitoring stations, extracted from CGWB's annual Ground Water Year Books for Tamil Nadu & Puducherry. Each well's `readings[]` array is appendable as more years' Year Books are processed - schema accommodates a multi-year time series indexed by lat/lng (well identity is geometric, since Sl No varies year to year and station names sometimes drift). Replaces the IDW-interpolated 100-ward depth view as the authoritative groundwater rendering for Madurai. Each well taps the phreatic (unconfined) aquifer with quarterly readings in metres below ground level (m bgl). Piezometers / tube wells reported in the 2023-24 Year Book annexure tap deeper semi-confined to confined aquifers and are tracked separately when we surface that view; this file is dug-well only.",
+  "district": "Madurai",
+  "well_type": "dug_well",
+  "aquifer": "phreatic_unconfined",
+  "depth_unit": "m_bgl",
+  "year_book_summaries": [
+    {
+      "year_book": "2024-25",
+      "report_id": "SECR/GWYB/TN/2024",
+      "publication_date": "2025-08-01",
+      "principal_author": "Athira R, Scientist-C",
+      "publisher": "Central Ground Water Board, South Eastern Coastal Region, Chennai",
+      "source_index_url": "https://cgwb.gov.in/cgwbpnm/search?type=2&cat_id=4&state_id=33&district_id=&year_of_issue=&name_of_author=&keywords=&search=search",
+      "source_url": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/16881058231005451482file.pdf",
+      "annual_fluctuation_madurai": {
+        "comparison": "Jan 2025 vs Jan 2024",
+        "table_reference": "Year Book Table 25, Madurai row (Sl No 13)",
+        "wells_with_rise": 8,
+        "wells_with_fall": 8,
+        "rise_under_2m": 5,
+        "rise_2_to_4m": 3,
+        "rise_over_4m": 0,
+        "fall_under_2m": 7,
+        "fall_2_to_4m": 1,
+        "fall_over_4m": 0,
+        "interpretation": "Madurai shows balanced rise vs fall - effectively stable annual position, neither significant recovery nor significant decline."
+      },
+      "statewide_context": {
+        "pre_monsoon_may_2024": "87.32% of TN wells <10m bgl; range 0.35-38.75 m bgl statewide.",
+        "post_monsoon_jan_2025": "97% of TN wells <10m bgl; range 0.05-30.35 m bgl statewide.",
+        "decadal_comparison": "74.51% of TN wells showed rise vs Jan 2015-2024 decadal mean as of Jan 2025; 25.49% showed fall. (May 2024 vs May 2014-2023 decadal: 76.95% rise, 23.05% fall.)",
+        "deepest_water_level_districts_pre_monsoon": "Coimbatore, Cuddalore, Dharmapuri, Erode, Kanyakumari, Namakkal, Perambalur, Salem, Theni, Thiruvallur, Thiruchirapalli, Vellore, Villupuram (10-20m bgl). Madurai NOT in this list."
+      }
+    },
+    {
+      "year_book": "2023-24",
+      "report_id": "SECR/GWYB/TN/2023",
+      "publication_date": "2024-07-01",
+      "principal_authors": ["Athira R, Scientist-C", "T. Dinesh Kumar, Scientist-B"],
+      "publisher": "Central Ground Water Board, South Eastern Coastal Region, Chennai",
+      "source_index_url": "https://cgwb.gov.in/cgwbpnm/search?type=2&cat_id=4&state_id=33&district_id=&year_of_issue=&name_of_author=&keywords=&search=search",
+      "source_url_note": "Direct PDF URL not verified; locally archived as docs/research/cgwb/tn-state-yearbook-2023-24.pdf. Find this report under the source_index_url above (filter for year_of_issue 2023-24).",
+      "note": "2023-24 annexure includes both dug wells AND bore wells/piezometers (semi-confined to confined aquifers). This file ingests the dug-well subset only; piezometer readings remain available for a future deeper-aquifer overlay. The 2023-24 PDF also tags each well with its CGWB block (Alanganallur, Chellampatti, Kallikudi, Kottampatti, Madurai East, Madurai West, Melur, Sedapatti, T.Kallupatty, Thirumangalam, Thirupparankundram, Usilampatti, Vadipatti) - block info is preserved on each well below."
+    }
+  ],
+  "wells": [
+    { "name": "Chekkanoorani",       "block": "Chellampatti",        "lat": 9.941035,  "lng": 77.968155, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 7.10, "year_book": "2023-24" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 7.83, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 2.18, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 3.90, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 4.30, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 6.02, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 4.10, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 4.90, "year_book": "2024-25" }
+    ] },
+    { "name": "Eliyarpathi",         "block": "Thirupparankundram",  "lat": 9.796898,  "lng": 78.093460, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 7.65, "year_book": "2023-24" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 7.08, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 4.13, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 4.08, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 6.01, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 6.67, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 8.17, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 6.93, "year_book": "2024-25" }
+    ] },
+    { "name": "Kadavoor",            "block": "Madurai West",        "lat": 10.078610, "lng": 78.174118, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 4.00, "year_book": "2023-24" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 3.88, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 2.06, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 2.50, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 4.24, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 2.17, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 1.48, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 2.25, "year_book": "2024-25" }
+    ] },
+    { "name": "Kappalur",            "block": "Thirumangalam",       "lat": 9.859606,  "lng": 78.021709, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 4.10, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 2.13, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 2.17, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 3.85, "year_book": "2024-25" }
+    ] },
+    { "name": "Kolluveeranpatti",    "block": "T.Kallupatty",        "lat": 9.707103,  "lng": 77.885620, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 5.30, "year_book": "2023-24" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 5.82, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 4.27, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 3.45, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 4.84, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 5.67, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 5.95, "year_book": "2024-25" }
+    ] },
+    { "name": "M.K. University",     "block": "Thirumangalam",       "lat": 9.941090,  "lng": 78.000969, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 5.08, "year_book": "2023-24" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 7.37, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 8.30, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 7.80, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 4.55, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 6.60, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 6.15, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 5.55, "year_book": "2024-25" }
+    ] },
+    { "name": "M. Puliyankulam",     "block": "Thirupparankundram",  "lat": 9.884537,  "lng": 78.182613, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 4.00, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 2.03, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 2.95, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 2.55, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 2.50, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 2.30, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 2.90, "year_book": "2024-25" }
+    ] },
+    { "name": "Madurai Rly Colony",  "block": "Thirupparankundram",  "lat": 9.926863,  "lng": 78.104043, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 8.24, "year_book": "2023-24" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 8.35, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 6.80, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 4.87, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 4.66, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 4.04, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 4.65, "year_book": "2024-25" }
+    ] },
+    { "name": "Melamadai",           "block": "Thirupparankundram",  "lat": 9.934537,  "lng": 78.168777, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 6.07, "year_book": "2023-24" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 4.02, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 3.05, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 4.60, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 5.50, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 8.24, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 4.40, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 4.49, "year_book": "2024-25" }
+    ] },
+    { "name": "Melur",               "block": "Melur",               "lat": 10.030533, "lng": 78.333978, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 5.60, "year_book": "2023-24", "_note": "Listed as Meluru New, ~1.2 km from 2024-25 coords" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 3.85, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 2.59, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 1.50, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 3.57, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 5.15, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 1.50, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 1.45, "year_book": "2024-25" }
+    ] },
+    { "name": "T. Kallupatti",       "block": "T.Kallupatty",        "block_inferred": true, "lat": 9.722498,  "lng": 77.848227, "readings": [
+      { "year": 2024, "month": 5,  "depth_m_bgl": 4.28, "year_book": "2024-25", "_note": "New monitoring station added in 2024-25; not present in 2023-24 annexure. Block 'T.Kallupatty' inferred from geographic proximity to other 2023-24 wells in that block (lat/lng falls within their bounding range); not directly stated in 2024-25 PDF (no block column)." },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 4.24, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 6.95, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 5.88, "year_book": "2024-25" }
+    ] },
+    { "name": "Thirumangalam",       "block": "Thirumangalam",       "lat": 9.823887,  "lng": 77.988312, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 6.40, "year_book": "2023-24", "_note": "Listed as Thirumangalam New, ~1 km from 2024-25 coords" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 5.95, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 4.88, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 4.53, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 5.47, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 5.60, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 1.10, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 5.80, "year_book": "2024-25" }
+    ] },
+    { "name": "Thirumogur",          "block": "Madurai East",        "lat": 9.950642,  "lng": 78.206743, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 2.42, "year_book": "2023-24" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 1.74, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 1.22, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 1.15, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 2.10, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 1.92, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 1.05, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 1.41, "year_book": "2024-25" }
+    ] },
+    { "name": "Thirupallai",         "block": "Madurai West",        "lat": 9.986757,  "lng": 78.139024, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 2.18, "year_book": "2023-24" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 1.85, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 0.11, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 0.90, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 2.58, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 2.15, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 1.00, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 1.10, "year_book": "2024-25" }
+    ] },
+    { "name": "Usilampatti",         "block": "Usilampatti",         "block_inferred": true, "lat": 9.966993,  "lng": 77.785950, "readings": [
+      { "year": 2024, "month": 8,  "depth_m_bgl": 0.48, "year_book": "2024-25", "_note": "New monitoring station in 2024-25; the 2023-24 annexure had a separate 'Usilampatti New' well ~10 km away (recorded as a distinct well in this file). Block 'Usilampatti' inferred from geographic proximity to 2023-24 Usilampatti-block wells; not directly stated in 2024-25 PDF (no block column)." }
+    ] },
+    { "name": "Vadipatti",           "block": "Vadipatti",           "lat": 10.072612, "lng": 77.969553, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 6.90, "year_book": "2023-24", "_note": "Listed as Vadipatti Dw, ~1 km from 2024-25 coords" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 5.62, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 7.75, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 6.30, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 8.85, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 3.59, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 6.30, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 5.23, "year_book": "2024-25" }
+    ] },
+    { "name": "Valayankulam",        "block": "Thirupparankundram",  "lat": 9.826250,  "lng": 78.094218, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 5.10, "year_book": "2023-24", "_note": "2023-24 listed at 9.80417/78.0917 (~2.4 km from 2024-25 coords); treated as same well with coord drift" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 5.16, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 2.26, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 2.00, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 5.80, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 5.95, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 4.80, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 4.65, "year_book": "2024-25" }
+    ] },
+    { "name": "Vilangudi",           "block": "Thirupparankundram",  "lat": 9.960603,  "lng": 78.073134, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 4.19, "year_book": "2023-24" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 4.00, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 3.12, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 2.78, "year_book": "2023-24" },
+      { "year": 2024, "month": 5,  "depth_m_bgl": 7.96, "year_book": "2024-25" },
+      { "year": 2024, "month": 8,  "depth_m_bgl": 3.82, "year_book": "2024-25" },
+      { "year": 2024, "month": 11, "depth_m_bgl": 2.66, "year_book": "2024-25" },
+      { "year": 2025, "month": 1,  "depth_m_bgl": 2.68, "year_book": "2024-25" }
+    ] },
+    { "name": "Kallandri",           "block": "Madurai West",        "lat": 10.0458,   "lng": 78.2,      "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 2.78, "year_book": "2023-24", "_note": "In 2023-24 annexure only; not monitored in 2024-25" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 3.84, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 1.51, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 1.05, "year_book": "2023-24" }
+    ] },
+    { "name": "Madurai New College House", "block": "Thirupparankundram", "lat": 9.91889, "lng": 78.1119, "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 11.72, "year_book": "2023-24", "_note": "In 2023-24 annexure only; not monitored in 2024-25" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 7.77,  "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 26.80, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 9.70,  "year_book": "2023-24" }
+    ] },
+    { "name": "Usilampatti New",     "block": "Usilampatti",         "lat": 9.98611,   "lng": 77.8842,   "readings": [
+      { "year": 2023, "month": 5,  "depth_m_bgl": 3.32, "year_book": "2023-24", "_note": "In 2023-24 annexure only; ~10 km from the separate 'Usilampatti' well listed in 2024-25 - treated as a distinct station" },
+      { "year": 2023, "month": 8,  "depth_m_bgl": 2.95, "year_book": "2023-24" },
+      { "year": 2023, "month": 11, "depth_m_bgl": 1.33, "year_book": "2023-24" },
+      { "year": 2024, "month": 1,  "depth_m_bgl": 0.15, "year_book": "2023-24" }
+    ] }
+  ]
+}

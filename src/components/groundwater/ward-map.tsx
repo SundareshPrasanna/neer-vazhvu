@@ -7,7 +7,7 @@ import L from "leaflet";
 import type { Layer, LeafletMouseEvent } from "leaflet";
 import type { Feature } from "geojson";
 import { getGroundwaterColor, getGroundwaterStatus, getRiskColor, getBlockClassColor } from "@/types/groundwater";
-import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation, WrisStation } from "@/types/groundwater";
+import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation, WrisStation, CgwbStation } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { useMapTiles } from "@/lib/utils/map-tiles";
@@ -53,6 +53,12 @@ interface WardMapProps {
   onWrisStationSelect?: (station: WrisStation | null) => void;
   wrisStations?: WrisStation[];
   selectedWrisStationCode?: string | null;
+  /** CGWB Year Book stations (quarterly, peer-reviewed). Rendered as a
+   *  parallel point overlay alongside (or instead of) the WRIS live
+   *  station network. Used today by Madurai. */
+  cgwbStations?: CgwbStation[];
+  selectedCgwbStationName?: string | null;
+  onCgwbStationSelect?: (station: CgwbStation | null) => void;
   hiddenCategories?: Set<string>;
   // City-aware overrides; default to Chennai's paths for backward compat.
   blockGeoJsonUrl?: string;
@@ -74,6 +80,9 @@ export function WardMap({
   onWrisStationSelect,
   wrisStations,
   selectedWrisStationCode,
+  cgwbStations,
+  selectedCgwbStationName,
+  onCgwbStationSelect,
   hiddenCategories,
   blockGeoJsonUrl = DEFAULT_BLOCK_GEOJSON_URL,
   blocksJsonUrl = DEFAULT_BLOCKS_JSON_URL,
@@ -328,6 +337,50 @@ export function WardMap({
                   </Tooltip>
                 </CircleMarker>
               ))}
+          {/* CGWB Year Book stations - quarterly peer-reviewed point
+              readings, used today by Madurai. Rendered with depth-coloured
+              fill and a dashed stroke so they're visually distinct from
+              the WRIS live network (solid stroke). The latest reading is
+              the marker's depth signal. */}
+          {cgwbStations && cgwbStations.length > 0 && cgwbStations.map((s) => {
+            const sorted = [...s.readings].sort(
+              (a, b) => (a.year * 100 + a.month) - (b.year * 100 + b.month),
+            );
+            const latest = sorted[sorted.length - 1];
+            if (!latest) return null;
+            const depth = latest.depth_m_bgl;
+            const isSelected = selectedCgwbStationName === s.name;
+            const fillColor = getGroundwaterColor(depth);
+            return (
+              <CircleMarker
+                key={`cgwb-${s.name}-${s.lat}-${s.lng}`}
+                center={[s.lat, s.lng]}
+                radius={isSelected ? 7 : 5}
+                pathOptions={{
+                  fillColor,
+                  color: isSelected ? "#0c4a6e" : "#1e293b",
+                  weight: isSelected ? 2.5 : 1.5,
+                  fillOpacity: 0.9,
+                  dashArray: "1 2",
+                }}
+                eventHandlers={{
+                  click: () => onCgwbStationSelect?.(s),
+                }}
+              >
+                <Tooltip pane="tooltipPane">
+                  <strong>{s.name}</strong>
+                  <br />
+                  <span style={{ fontSize: "11px" }}>
+                    {depth.toFixed(2)}m below ground
+                  </span>
+                  <br />
+                  <span style={{ fontSize: "10px", color: "#64748b" }}>
+                    CGWB Year Book · {s.block} block · {sorted.length} quarterly readings
+                  </span>
+                </Tooltip>
+              </CircleMarker>
+            );
+          })}
           </Pane>
         </>
       ) : (

@@ -209,6 +209,50 @@ export interface WrisStationHistoryResponse {
   readings: WrisStationReading[];
 }
 
+/* ── CGWB Year Book stations ───────────────────────────────────────────
+   Quarterly depth-to-water-level readings (May/Aug/Nov/Jan) sourced from
+   CGWB's annual State Ground Water Year Books. Distinct from the WRIS
+   live-station network: these are static, peer-reviewed snapshots that
+   we ingest year-by-year. Used in cities (currently Madurai) where the
+   live WRIS network is too sparse for an honest IDW interpolation, so
+   we surface CGWB stations as the authoritative point overlay instead.
+   Source file shape: public/data/<city>-cgwb-stations.json. */
+
+export interface CgwbStationReading {
+  year: number;
+  month: number;        // 1-12
+  depth_m_bgl: number;  // metres below ground level (positive)
+  year_book: string;    // e.g. "2024-25"
+  _note?: string;
+}
+
+export interface CgwbStation {
+  name: string;
+  lat: number;
+  lng: number;
+  block: string;
+  block_inferred?: boolean;
+  readings: CgwbStationReading[];
+}
+
+export interface CgwbStationsFile {
+  district: string;
+  well_type: string;
+  aquifer: string;
+  depth_unit: string;
+  year_book_summaries: Array<{
+    year_book: string;
+    report_id?: string;
+    publication_date?: string;
+    publisher?: string;
+    source_url?: string;
+    source_index_url?: string;
+    annual_fluctuation_madurai?: Record<string, unknown>;
+    statewide_context?: Record<string, string>;
+  }>;
+  wells: CgwbStation[];
+}
+
 const BLOCK_CLASS_COLORS: Record<GWBlockClass, string> = {
   "Safe": "#22c55e",
   "Semi Critical": "#eab308",

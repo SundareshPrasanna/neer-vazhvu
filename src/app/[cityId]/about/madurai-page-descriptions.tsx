@@ -58,28 +58,26 @@ function English({ cityId, cityName }: Props) {
 
       <SubSection id="page-groundwater" title="Groundwater">
         <p className="text-slate-600 dark:text-slate-400">
-          {cityName}&apos;s groundwater page combines three views toggled in the headline bar: CGWB block exploitation (the official annual classification), interpolated ward depth, and a 3-factor risk composite.
+          {cityName}&apos;s groundwater page combines two authoritative views: CGWB block exploitation (the official annual classification across the district) and a 3-factor ward-level risk composite (composite_score · gw_depth · wb_density · wb_health). The map also shows the CGWB Year Book point network as click-through markers for direct depth readings at known wells.
         </p>
         <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Block exploitation (GWR)</h4>
         <p className="text-slate-600 dark:text-slate-400">
-          All 66 of Madurai district&apos;s CGWB-classified blocks (Safe / Semi Critical / Critical / Over Exploited) coloured by the latest annual draft-percentage. Latest (2017): 4 over-exploited, 7 critical, 21 semi-critical, 34 safe. The most stressed block is <span className="font-semibold">Sindhupatti</span> at ~119% draft.
+          11 CGWB-classified blocks across Madurai district (Madurai East/North/South/West, Melur, Peraiyur, Thirupparankundram, Tirumangalam, Usilampatti, Vadipatti, Kallikudi) coloured by the latest annual draft-percentage from CGWB&apos;s Dynamic Ground Water Resources assessment. Status classes: Safe / Semi Critical / Critical / Over Exploited.
         </p>
-        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Ward depth (interpolated)</h4>
+        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">CGWB Year Book point overlay</h4>
         <p className="text-slate-600 dark:text-slate-400">
-          No authoritative ward-level groundwater survey exists for Madurai (Chennai uses an OpenCity ward-monthly dataset). Instead, we interpolate per-ward depth from the ~35 telemetric CGWB stations in Madurai district using inverse-distance weighting against each ward centroid - the four nearest stations within 15 km, weighted by 1 / distance². Refreshes daily as new India WRIS readings land.
+          21 monitoring stations from CGWB&apos;s Ground Water Year Book of Tamil Nadu &amp; Puducherry (2023-24 and 2024-25 editions) - peer-reviewed, manually-measured dug wells in the phreatic / unconfined aquifer. Each station carries quarterly depth-to-water-level readings (May / Aug / Nov / Jan) spanning May 2023 - January 2025. Click any marker for the well&apos;s hydrograph and full reading history. Stations are tagged with their CGWB block (Alanganallur, Chellampatti, Kallikudi, Kottampatti, Madurai East, Madurai West, Melur, Sedapatti, T.Kallupatty, Thirumangalam, Thirupparankundram, Usilampatti, Vadipatti).
         </p>
-        <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40 space-y-3">
-          <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Live CGWB station overlay</h4>
+        <div className="rounded-lg border border-amber-200 dark:border-amber-900/40 p-4 bg-amber-50/50 dark:bg-amber-950/20 space-y-2">
+          <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-200">Why no per-ward depth choropleth?</h4>
           <p className="text-sm text-slate-600 dark:text-slate-400">
-            On the depth view we also drop markers for each WRIS station in Madurai district. Click a marker for the well&apos;s metadata (acquisition mode, depth, aquifer type) and the recent reading window.
+            We deliberately do NOT publish an IDW-interpolated ward depth choropleth for Madurai (the way Chennai does, via OpenCity&apos;s monthly per-ward survey data). The four India WRIS live stations across the entire district are too sparse to produce an honest 100-ward choropleth; spreading those four points smoothly across the city would manufacture precision we don&apos;t have. The 21 CGWB Year Book stations + the 11-block exploitation classification together give an honest picture without faking ward-level granularity that the underlying data doesn&apos;t support.
           </p>
-          <h5 className="text-xs font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide">Acquisition modes</h5>
-          <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-1.5">
-            <li><span className="font-medium">Manual</span> - field-team measurements, typically 4 readings/year.</li>
-            <li><span className="font-medium">Telemetric (DWLR)</span> - automated daily readings.</li>
-          </ul>
+        </div>
+        <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40 space-y-3">
+          <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Live India WRIS station overlay</h4>
           <p className="text-sm text-slate-600 dark:text-slate-400">
-            Madurai is overwhelmingly telemetric (much denser than Chennai). All 35 stations in the latest scrape are DWLR.
+            We also drop markers for each India WRIS live station in Madurai district. Click a marker for the well&apos;s metadata (acquisition mode, depth, aquifer type) and recent reading window. As of latest scrape, Madurai district has 4 telemetric (DWLR, daily) and minimal manual stations - much sparser than Chennai&apos;s ~35-station network.
           </p>
         </div>
         <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Ward risk composite</h4>
@@ -224,28 +222,26 @@ function Tamil({ cityId, cityName }: Props) {
 
       <SubSection id="page-groundwater" title="நிலத்தடி நீர்">
         <p className="text-slate-600 dark:text-slate-400">
-          {cityName} நிலத்தடி நீர்ப் பக்கம் தலைப்புப் பட்டியில் மாற்றப்படும் மூன்று காட்சிகளை ஒருங்கிணைக்கிறது: CGWB தொகுதி பயன்பாடு (உத்தியோகபூர்வ ஆண்டு வகைப்பாடு), இடைக்கணிக்கப்பட்ட வார்டு ஆழம், மற்றும் 3-காரணி ஆபத்து கூட்டுச் சதவீதம்.
+          {cityName} நிலத்தடி நீர்ப் பக்கம் இரு அதிகாரப்பூர்வ காட்சிகளை ஒருங்கிணைக்கிறது: CGWB தொகுதி பயன்பாடு (மாவட்டம் முழுவதிலும் உத்தியோகபூர்வ ஆண்டு வகைப்பாடு) மற்றும் 3-காரணி வார்டு-நிலை ஆபத்து கூட்டுச் சதவீதம். வரைபடத்தில் CGWB நிலையங்களின் புள்ளி வலையமைப்பும் கிளிக் செய்யக்கூடிய குறிப்பான்களாக காட்டப்படுகின்றன.
         </p>
         <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">தொகுதி பயன்பாடு (GWR)</h4>
         <p className="text-slate-600 dark:text-slate-400">
-          மதுரை மாவட்டத்தின் CGWB-வகைப்பாடு செய்யப்பட்ட 66 தொகுதிகள் (பாதுகாப்பானது / அரை-விமர்சனம் / விமர்சனம் / அதிக-சுரண்டப்பட்டது) சமீபத்திய ஆண்டு பயன்பாட்டு சதவீதத்தால் வண்ணமிடப்பட்டுள்ளன. சமீபத்திய (2017): 4 அதிக-சுரண்டப்பட்டது, 7 விமர்சனம், 21 அரை-விமர்சனம், 34 பாதுகாப்பானது. மிகவும் மன அழுத்தத்திற்கு ஆளாகும் தொகுதி <span className="font-semibold">சிந்துப்பட்டி</span> சுமார் 119% பயன்பாட்டில்.
+          மதுரை மாவட்டம் முழுவதிலும் 11 CGWB-வகைப்பாடு செய்யப்பட்ட தொகுதிகள் (மதுரை கிழக்கு/வடக்கு/தெற்கு/மேற்கு, மேலூர், பெரையூர், திருப்பரங்குன்றம், திருமங்கலம், உசிலம்பட்டி, வாடிபட்டி, கல்லிகுடி). CGWB-யின் டைனமிக் நிலத்தடி நீர் வளங்கள் மதிப்பீட்டிலிருந்து சமீபத்திய ஆண்டு பயன்பாட்டு சதவீதத்தால் வண்ணமிடப்பட்டுள்ளன: பாதுகாப்பானது / அரை-விமர்சனம் / விமர்சனம் / அதிக-சுரண்டப்பட்டது.
         </p>
-        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">வார்டு ஆழம் (இடைக்கணிக்கப்பட்டது)</h4>
+        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">CGWB ஆண்டு புத்தக புள்ளி அடுக்கு</h4>
         <p className="text-slate-600 dark:text-slate-400">
-          மதுரைக்கு அதிகாரப்பூர்வ வார்டு-நிலை நிலத்தடி நீர் ஆய்வு இல்லை (சென்னை OpenCity வார்டு-மாத தரவைப் பயன்படுத்துகிறது). அதற்கு பதிலாக, மதுரை மாவட்டத்தில் உள்ள ~35 தொலைதொடர்பு CGWB நிலையங்களிலிருந்து ஒவ்வொரு வார்டின் மையத்தை நோக்கிய தலைகீழ்-தூர சீரமைப்பால் வார்டு-வாரியான ஆழத்தை நாம் இடைக்கணிக்கிறோம் - 15 கி.மீ.-க்குள் நான்கு அருகிலுள்ள நிலையங்கள், 1/தூரம்² மூலம் சீரமைக்கப்பட்டது. புதிய இந்தியா WRIS வாசிப்புகள் வரும்போது தினசரி புதுப்பிக்கப்படுகிறது.
+          CGWB-யின் தமிழ்நாடு &amp; புதுச்சேரி நிலத்தடி நீர் ஆண்டு புத்தகத்தின் (2023-24 மற்றும் 2024-25 பதிப்புகள்) 21 கண்காணிப்பு நிலையங்கள் - பீர்-ஆய்வு செய்யப்பட்ட, கையேட்டில் அளவிடப்பட்ட பிரியாடிக் / கட்டற்ற நீர்ப்படிவில் உள்ள தோண்டிய கிணறுகள். ஒவ்வொரு நிலையத்திலும் காலாண்டு நீர்மட்ட அளவீடுகள் (மே / ஆகஸ்ட் / நவ / ஜன) - மே 2023 முதல் ஜன 2025 வரை. கிணற்றின் ஹைட்ரோகிராஃப் மற்றும் முழு வாசிப்பு வரலாற்றைப் பார்க்க எந்த குறிப்பானையும் கிளிக் செய்யவும். நிலையங்கள் CGWB தொகுதிகளாக குறியிடப்பட்டுள்ளன (அலகனல்லூர், செல்லம்பட்டி, கல்லிகுடி, கொட்டம்பட்டி, மதுரை கிழக்கு, மதுரை மேற்கு, மேலூர், சேடப்பட்டி, T.கல்லுபட்டி, திருமங்கலம், திருப்பரங்குன்றம், உசிலம்பட்டி, வாடிபட்டி).
         </p>
-        <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40 space-y-3">
-          <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">நேரடி CGWB நிலைய அடுக்கு</h4>
+        <div className="rounded-lg border border-amber-200 dark:border-amber-900/40 p-4 bg-amber-50/50 dark:bg-amber-950/20 space-y-2">
+          <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-200">ஏன் வார்டு-வாரியான ஆழ வரைபடம் இல்லை?</h4>
           <p className="text-sm text-slate-600 dark:text-slate-400">
-            ஆழக் காட்சியில், மதுரை மாவட்டத்தில் உள்ள ஒவ்வொரு WRIS நிலையத்திற்கும் நாம் குறிப்பான்களைப் போடுகிறோம். கிணற்றின் மெட்டாடேட்டா (சேகரிப்பு முறை, ஆழம், நீர்ப்படிவு வகை) மற்றும் சமீபத்திய வாசிப்பு காலத்தைப் பார்க்க ஒரு குறிப்பானைக் கிளிக் செய்யவும்.
+            மதுரைக்கு IDW-இடைக்கணிப்பு செய்யப்பட்ட வார்டு ஆழ வரைபடத்தை வேண்டுமென்றே வெளியிடவில்லை (சென்னை OpenCity-யின் மாதாந்திர வார்டு ஆய்வு தரவு வழியாக செய்வது போல). மாவட்டம் முழுவதும் உள்ள 4 இந்தியா WRIS நேரடி நிலையங்கள் 100 வார்டுகளுக்கான ஒரு நேர்மையான வரைபடத்தை உருவாக்க மிகக் குறைவானவை; அந்த நான்கு புள்ளிகளை நகரத்தின் மீது சீராக பரப்புவது உண்மையில் இல்லாத துல்லியத்தைச் செய்யப்படுவதாகும். 21 CGWB ஆண்டு புத்தக நிலையங்கள் + 11-தொகுதி பயன்பாட்டு வகைப்பாடு ஒன்றாக ஒரு நேர்மையான படத்தைக் கொடுக்கின்றன, தரவு ஆதரிக்காத வார்டு-நிலை விவரத்தைச் செய்யாமல்.
           </p>
-          <h5 className="text-xs font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide">சேகரிப்பு முறைகள்</h5>
-          <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-1.5">
-            <li><span className="font-medium">கையேடு</span> - கள-குழு அளவீடுகள், பொதுவாக 4 வாசிப்புகள்/ஆண்டு.</li>
-            <li><span className="font-medium">தொலைதொடர்பு (DWLR)</span> - தானியங்கி தினசரி வாசிப்புகள்.</li>
-          </ul>
+        </div>
+        <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40 space-y-3">
+          <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">நேரடி இந்தியா WRIS நிலைய அடுக்கு</h4>
           <p className="text-sm text-slate-600 dark:text-slate-400">
-            மதுரை பெரும்பாலும் தொலைதொடர்புடையது (சென்னையை விட மிகவும் அடர்த்தியானது). சமீபத்திய சேகரிப்பில் உள்ள அனைத்து 35 நிலையங்களும் DWLR.
+            மதுரை மாவட்டத்தில் உள்ள ஒவ்வொரு இந்தியா WRIS நேரடி நிலையத்திற்கும் நாம் குறிப்பான்களைப் போடுகிறோம். கிணற்றின் மெட்டாடேட்டா (சேகரிப்பு முறை, ஆழம், நீர்ப்படிவு வகை) மற்றும் சமீபத்திய வாசிப்பு காலத்தைப் பார்க்க ஒரு குறிப்பானைக் கிளிக் செய்யவும். சமீபத்திய சேகரிப்பின்படி, மதுரை மாவட்டத்தில் 4 தொலைதொடர்பு (DWLR, தினசரி) நிலையங்கள் மற்றும் சில கையேடு நிலையங்கள் உள்ளன - சென்னையின் ~35-நிலைய வலையமைப்பை விட மிகவும் குறைவு.
           </p>
         </div>
         <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">வார்டு ஆபத்து கூட்டுச் சதவீதம்</h4>

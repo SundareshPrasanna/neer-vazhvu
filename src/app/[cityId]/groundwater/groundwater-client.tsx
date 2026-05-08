@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { BlockDetailPanel } from "@/components/groundwater/block-detail-panel";
 import { WrisStationPanel } from "@/components/groundwater/wris-station-panel";
+import { CgwbStationPanel } from "@/components/groundwater/cgwb-station-panel";
 import { GroundwaterLegend } from "@/components/groundwater/legend";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
@@ -18,7 +19,24 @@ import type {
   WrisStation,
   WrisStationsResponse,
   ViewMode,
+  CgwbStation,
+  CgwbStationsFile,
 } from "@/types/groundwater";
+
+/** Resolve which GW view layers a city has enabled, falling back to legacy
+ *  "all views" behaviour when groundwaterViews is undefined on the place
+ *  config. Each flag is a feature toggle for the matching view in the
+ *  view-mode bar; cgwbStations gates the CGWB Year Book point overlay
+ *  load and rendering. See PlaceConfig.groundwaterViews docs. */
+function resolveGwViews(config: PlaceConfig | undefined | null) {
+  const v = config?.groundwaterViews;
+  return {
+    exploitation: v?.exploitation ?? true,
+    depth: v?.depth ?? true,
+    risk: v?.risk ?? true,
+    cgwbStations: v?.cgwbStations ?? false,
+  };
+}
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -102,9 +120,13 @@ export default function CityGroundwaterClient() {
   const [loading, setLoading] = useState(true);
   const [interpolated, setInterpolated] = useState<InterpolatedWardsResponse | null>(null);
   const [riskFile, setRiskFile] = useState<WardRiskFile | null>(null);
+  const [cgwbFile, setCgwbFile] = useState<CgwbStationsFile | null>(null);
+  const [selectedCgwbStation, setSelectedCgwbStation] = useState<CgwbStation | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("exploitation");
   const [selectedWard, setSelectedWard] = useState<GroundwaterWard | null>(null);
 
+  const gwViews = useMemo(() => resolveGwViews(config), [config]);
+  const usesCgwbYearbook = gwViews.cgwbStations;
   const assets = useMemo(() => (config ? assetsForCity(config) : null), [config]);
 
   useEffect(() => {
@@ -117,18 +139,32 @@ export default function CityGroundwaterClient() {
       fetch(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
         .then((r) => r.json() as Promise<WrisStationsResponse>)
         .catch(() => ({ stations: [], totalStations: 0 } as WrisStationsResponse)),
-      fetch(`/api/groundwater/wards-interpolated?city=${encodeURIComponent(cityId)}`)
-        .then((r) => (r.ok ? (r.json() as Promise<InterpolatedWardsResponse>) : null))
-        .catch(() => null),
-      fetch(`/data/ward-risk-${cityId}.json`)
-        .then((r) => (r.ok ? (r.json() as Promise<WardRiskFile>) : null))
-        .catch(() => null),
+      // Skip data fetches for views the city has turned off in its
+      // PlaceConfig.groundwaterViews. Saves one network round-trip per
+      // disabled layer and keeps the page from briefly flashing data
+      // we'd then suppress at render time.
+      gwViews.depth
+        ? fetch(`/api/groundwater/wards-interpolated?city=${encodeURIComponent(cityId)}`)
+            .then((r) => (r.ok ? (r.json() as Promise<InterpolatedWardsResponse>) : null))
+            .catch(() => null)
+        : Promise.resolve(null),
+      gwViews.risk
+        ? fetch(`/data/ward-risk-${cityId}.json`)
+            .then((r) => (r.ok ? (r.json() as Promise<WardRiskFile>) : null))
+            .catch(() => null)
+        : Promise.resolve(null),
+      gwViews.cgwbStations
+        ? fetch(`/data/${cityId}-cgwb-stations.json`)
+            .then((r) => (r.ok ? (r.json() as Promise<CgwbStationsFile>) : null))
+            .catch(() => null)
+        : Promise.resolve(null),
     ])
-      .then(([blocksRes, wrisRes, interpolatedRes, riskRes]: [
+      .then(([blocksRes, wrisRes, interpolatedRes, riskRes, cgwbRes]: [
         { blocks?: GWBlock[] },
         WrisStationsResponse,
         InterpolatedWardsResponse | null,
         WardRiskFile | null,
+        CgwbStationsFile | null,
       ]) => {
         setBlocks(blocksRes.blocks ?? []);
         // Pre-select most-exploited block to anchor the user.
@@ -139,10 +175,11 @@ export default function CityGroundwaterClient() {
         setWrisStations(wrisRes.stations ?? []);
         setInterpolated(interpolatedRes);
         setRiskFile(riskRes);
+        setCgwbFile(cgwbRes);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [assets, cityId]);
+  }, [assets, cityId, gwViews.depth, gwViews.risk, gwViews.cgwbStations]);
 
   const riskData = useMemo(() => {
     const m = new Map<number, WardRiskData>();
@@ -184,13 +221,18 @@ export default function CityGroundwaterClient() {
     return m;
   }, [interpolated]);
 
-  // Auto-promote to "depth" view if interpolated data is available - the
-  // user lands on a richer choropleth instead of just the 4-block GWR map.
+  // Auto-promote to "depth" view if interpolated data is available and
+  // the city has the depth view enabled - the user lands on a richer
+  // choropleth instead of just the GWR-block map. Cities that disable
+  // the depth view (e.g. those with sparse stations relying on the
+  // CGWB Year Book point overlay instead) keep the block-exploitation
+  // default.
   useEffect(() => {
+    if (!gwViews.depth) return;
     if (interpolated && interpolated.wards.some((w) => w.depthM !== null)) {
       setViewMode("depth");
     }
-  }, [interpolated]);
+  }, [interpolated, gwViews.depth]);
 
   if (!config) {
     // Layout-level guard already 404s unknown cities; this is just a typesafety
@@ -232,6 +274,11 @@ export default function CityGroundwaterClient() {
             {headlinePhrases.join(" · ")}
           </span>
         )}
+        {usesCgwbYearbook && cgwbFile && (
+          <span className="text-slate-500 dark:text-slate-400 text-xs">
+            {cgwbFile.wells.length} CGWB Year Book stations · quarterly readings May 2023 - Jan 2025
+          </span>
+        )}
         {viewMode === "depth" && interpolated && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
             City avg {interpolated.cityAverage?.toFixed(1) ?? "-"} m below ground
@@ -246,10 +293,16 @@ export default function CityGroundwaterClient() {
               .join(", ")}
           </span>
         )}
-        {/* View-mode toggle - exposes whichever views have data ready. */}
-        {(interpolated?.wards.some((w) => w.depthM !== null) || riskFile) && (
+        {/* View-mode toggle - each button is gated by both (a) the city's
+            groundwaterViews feature flag and (b) the underlying data being
+            available. A view is rendered only when both are true; cities
+            that disable a view in their PlaceConfig don't see the toggle. */}
+        {(
+          (gwViews.depth && interpolated?.wards.some((w) => w.depthM !== null)) ||
+          (gwViews.risk && riskFile)
+        ) && (
           <div className="ml-auto flex gap-1 text-xs">
-            {interpolated?.wards.some((w) => w.depthM !== null) && (
+            {gwViews.depth && interpolated?.wards.some((w) => w.depthM !== null) && (
               <button
                 onClick={() => setViewMode("depth")}
                 className={`px-2 py-0.5 rounded border ${
@@ -261,7 +314,7 @@ export default function CityGroundwaterClient() {
                 Depth (ward)
               </button>
             )}
-            {riskFile && (
+            {gwViews.risk && riskFile && (
               <button
                 onClick={() => setViewMode("risk")}
                 className={`px-2 py-0.5 rounded border ${
@@ -273,16 +326,18 @@ export default function CityGroundwaterClient() {
                 Risk (composite)
               </button>
             )}
-            <button
-              onClick={() => setViewMode("exploitation")}
-              className={`px-2 py-0.5 rounded border ${
-                viewMode === "exploitation"
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600"
-              }`}
-            >
-              Exploitation (block)
-            </button>
+            {gwViews.exploitation && (
+              <button
+                onClick={() => setViewMode("exploitation")}
+                className={`px-2 py-0.5 rounded border ${
+                  viewMode === "exploitation"
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600"
+                }`}
+              >
+                Exploitation (block)
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -298,20 +353,30 @@ export default function CityGroundwaterClient() {
               riskData={riskData}
               viewMode={viewMode}
               wrisStations={wrisStations}
+              cgwbStations={cgwbFile?.wells ?? []}
               selectedWrisStationCode={selectedWrisStation?.stationCode ?? null}
+              selectedCgwbStationName={selectedCgwbStation?.name ?? null}
               hiddenCategories={hiddenCategories}
               onWardSelect={(w) => {
                 setSelectedWard(w);
                 setSelectedBlock(null);
                 setSelectedWrisStation(null);
+                setSelectedCgwbStation(null);
               }}
               onBlockSelect={(b) => {
                 setSelectedBlock(b);
                 setSelectedWrisStation(null);
+                setSelectedCgwbStation(null);
               }}
               onWrisStationSelect={(s) => {
                 setSelectedWrisStation(s);
                 setSelectedBlock(null);
+                setSelectedCgwbStation(null);
+              }}
+              onCgwbStationSelect={(s) => {
+                setSelectedCgwbStation(s);
+                setSelectedBlock(null);
+                setSelectedWrisStation(null);
               }}
               blockGeoJsonUrl={assets!.blockGeoJsonUrl}
               blocksJsonUrl={assets!.blocksJsonUrl}
@@ -350,7 +415,11 @@ export default function CityGroundwaterClient() {
                 ({config.stateCode})
               </div>
               <div>{t("gw_page.source_cgwb")}</div>
-              {wrisStations.length > 0 ? (
+              {usesCgwbYearbook && cgwbFile ? (
+                <div className="text-emerald-600 dark:text-emerald-400">
+                  {cgwbFile.wells.length} CGWB Year Book stations · quarterly readings, click for hydrograph
+                </div>
+              ) : wrisStations.length > 0 ? (
                 <div className="text-emerald-600 dark:text-emerald-400">
                   {wrisStations.length} CGWB stations live · click for depth + quality flag
                 </div>
@@ -378,6 +447,14 @@ export default function CityGroundwaterClient() {
             <WrisStationPanel
               station={selectedWrisStation}
               onClose={() => setSelectedWrisStation(null)}
+            />
+          </BottomSheet>
+        )}
+        {selectedCgwbStation && (
+          <BottomSheet onClose={() => setSelectedCgwbStation(null)}>
+            <CgwbStationPanel
+              station={selectedCgwbStation}
+              onClose={() => setSelectedCgwbStation(null)}
             />
           </BottomSheet>
         )}

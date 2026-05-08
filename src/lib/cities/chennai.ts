@@ -95,6 +95,17 @@ export const CHENNAI: CityConfig = {
       isPrimaryDrinkingSource: true,
     },
   ],
+  // Chennai has dense per-ward groundwater coverage (OpenCity monthly
+  // survey across all 200 GCC wards) plus ~35 live India WRIS stations,
+  // so all four GW views are honestly supported. CGWB Year Book point
+  // overlay is not used here because the OpenCity ward dataset already
+  // provides finer granularity than the Year Book's quarterly snapshot.
+  groundwaterViews: {
+    exploitation: true,
+    depth: true,
+    risk: true,
+    cgwbStations: false,
+  },
   sourceNameAliases: {
     poondi: 'poondi',
     cholavaram: 'cholavaram',

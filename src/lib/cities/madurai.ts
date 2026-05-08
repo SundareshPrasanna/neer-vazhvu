@@ -61,6 +61,19 @@ export const MADURAI: CityConfig = {
       isPrimaryDrinkingSource: false,
     },
   ],
+  // Madurai's groundwater data is sparse at the ward scale (only 4 WRIS
+  // live stations across the entire ~2,700 sq km district), so the IDW-
+  // interpolated ward depth and the ward-level risk composite would
+  // manufacture precision the underlying data does not support.
+  // Instead we surface 21 CGWB Year Book point stations as the
+  // authoritative depth signal, alongside the 11-block CGWB
+  // exploitation classification.
+  groundwaterViews: {
+    exploitation: true,
+    depth: false,
+    risk: false,
+    cgwbStations: true,
+  },
   sourceNameAliases: {
     vaigai: 'vaigai',
     'vaigai dam': 'vaigai',
