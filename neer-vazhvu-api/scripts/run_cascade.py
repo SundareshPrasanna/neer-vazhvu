@@ -27,17 +27,28 @@ if str(API_ROOT) not in sys.path:
 
 
 def cmd_build_topology(district_id: str) -> int:
-    from app.cascade import topology
+    """Build the cascade graph AND publish nodes/edges GeoJSON in one shot.
+
+    The graph is district-scoped state we don't keep in memory across
+    subcommands; persisting to GeoJSON here makes downstream stages
+    (cross-check-channels, detect-encroachment, score, tile) reload
+    from disk. Same pattern as the GEE manifests.
+    """
+    from app.cascade import publish, topology
     from app.cascade.districts import get_district_cascade_config
 
     district = get_district_cascade_config(district_id)
-    result = topology.build_graph(district)
+    graph = topology.build_graph(district)
+    written = publish.write_geojson(
+        district, nodes=graph["nodes"], edges=graph["edges"]
+    )
     print(
         json.dumps(
             {
                 "district_id": district.district_id,
-                "node_count": len(result.get("nodes", [])),
-                "edge_count": len(result.get("edges", [])),
+                "node_count": len(graph["nodes"]),
+                "edge_count": len(graph["edges"]),
+                **written,
             },
             indent=2,
         )
