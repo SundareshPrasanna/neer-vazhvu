@@ -100,6 +100,12 @@ class DistrictCascadeConfig:
     dem_source: str = "merit_hydro"
     max_downstream_distance_km: float = 3.0
     min_tank_area_ha: float = 1.0
+    # Tanks with no tank-to-tank downstream within
+    # max_downstream_distance_km whose flow direction points to a river
+    # within this distance are marked as draining INTO the river. Models
+    # rivers as terminal sinks (water doesn't only stop at rivers, it
+    # falls into them).
+    max_river_outlet_distance_km: float = 2.0
 
     # Optional admin boundary; if absent the topology stage falls back to
     # the bounding box of tank polygons.
@@ -126,11 +132,17 @@ class DistrictCascadeConfig:
     def cascade_systems_json_path(self) -> Path:
         return CASCADE_OUTPUT_DIR / f"{self.district_id}-cascade-systems.json"
 
+    def cascade_river_outlets_geojson_path(self) -> Path:
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-cascade-river-outlets.geojson"
+
     def cascade_nodes_pmtiles_path(self) -> Path:
         return CASCADE_TILE_DIR / f"{self.district_id}-cascade-nodes.pmtiles"
 
     def cascade_edges_pmtiles_path(self) -> Path:
         return CASCADE_TILE_DIR / f"{self.district_id}-cascade-edges.pmtiles"
+
+    def cascade_river_outlets_pmtiles_path(self) -> Path:
+        return CASCADE_TILE_DIR / f"{self.district_id}-cascade-river-outlets.pmtiles"
 
 
 _MADURAI = DistrictCascadeConfig(

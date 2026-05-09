@@ -40,7 +40,10 @@ def cmd_build_topology(district_id: str) -> int:
     district = get_district_cascade_config(district_id)
     graph = topology.build_graph(district)
     written = publish.write_geojson(
-        district, nodes=graph["nodes"], edges=graph["edges"]
+        district,
+        nodes=graph["nodes"],
+        edges=graph["edges"],
+        river_outlets=graph.get("river_outlets", []),
     )
     print(
         json.dumps(
@@ -48,6 +51,7 @@ def cmd_build_topology(district_id: str) -> int:
                 "district_id": district.district_id,
                 "node_count": len(graph["nodes"]),
                 "edge_count": len(graph["edges"]),
+                "river_outlet_count": len(graph.get("river_outlets", [])),
                 **written,
             },
             indent=2,
@@ -100,7 +104,7 @@ def cmd_publish(district_id: str) -> int:
     from app.cascade.districts import get_district_cascade_config
 
     district = get_district_cascade_config(district_id)
-    geo = publish.write_geojson(district, nodes=[], edges=[])
+    geo = publish.write_geojson(district, nodes=[], edges=[], river_outlets=[])
     manifest = publish.write_systems_manifest(district, systems={})
     print(json.dumps({**geo, **manifest}, indent=2))
     return 0

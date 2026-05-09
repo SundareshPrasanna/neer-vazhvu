@@ -35,29 +35,40 @@ def write_geojson(
     district: DistrictCascadeConfig,
     nodes: list[dict[str, Any]],
     edges: list[dict[str, Any]],
+    river_outlets: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Write nodes and edges as GeoJSON FeatureCollections.
+    """Write nodes, edges, and river-outlet arrows as GeoJSON.
 
-    Returns a dict with the output paths and feature counts.
+    river_outlets is a list of LineString features from a tank centroid
+    to its nearest in-flow-direction river point; tanks that drain into
+    a river instead of into another tank.
     """
     _ensure_dirs()
+    river_outlets = river_outlets or []
     nodes_fc = {"type": "FeatureCollection", "features": nodes}
     edges_fc = {"type": "FeatureCollection", "features": edges}
+    outlets_fc = {"type": "FeatureCollection", "features": river_outlets}
 
     nodes_path = district.cascade_nodes_geojson_path()
     edges_path = district.cascade_edges_geojson_path()
+    outlets_path = district.cascade_river_outlets_geojson_path()
     nodes_path.write_text(
         json.dumps(nodes_fc, ensure_ascii=False) + "\n", encoding="utf-8"
     )
     edges_path.write_text(
         json.dumps(edges_fc, ensure_ascii=False) + "\n", encoding="utf-8"
     )
+    outlets_path.write_text(
+        json.dumps(outlets_fc, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
     return {
         "nodes_path": str(nodes_path),
         "edges_path": str(edges_path),
+        "river_outlets_path": str(outlets_path),
         "node_count": len(nodes),
         "edge_count": len(edges),
+        "river_outlet_count": len(river_outlets),
     }
 
 
@@ -107,8 +118,10 @@ def build_pmtiles(district: DistrictCascadeConfig) -> dict[str, Any]:
     _ensure_dirs()
     nodes_geojson = district.cascade_nodes_geojson_path()
     edges_geojson = district.cascade_edges_geojson_path()
+    outlets_geojson = district.cascade_river_outlets_geojson_path()
     nodes_pmtiles = district.cascade_nodes_pmtiles_path()
     edges_pmtiles = district.cascade_edges_pmtiles_path()
+    outlets_pmtiles = district.cascade_river_outlets_pmtiles_path()
 
     if not nodes_geojson.exists() or not edges_geojson.exists():
         raise RuntimeError(
@@ -145,10 +158,22 @@ def build_pmtiles(district: DistrictCascadeConfig) -> dict[str, Any]:
         ],
         check=True,
     )
-
-    return {
+    result: dict[str, Any] = {
         "nodes_pmtiles": str(nodes_pmtiles),
         "edges_pmtiles": str(edges_pmtiles),
         "nodes_size_bytes": nodes_pmtiles.stat().st_size,
         "edges_size_bytes": edges_pmtiles.stat().st_size,
     }
+    if outlets_geojson.exists():
+        subprocess.run(
+            [
+                *common,
+                "--layer=cascade_river_outlets",
+                f"--output={outlets_pmtiles}",
+                str(outlets_geojson),
+            ],
+            check=True,
+        )
+        result["river_outlets_pmtiles"] = str(outlets_pmtiles)
+        result["river_outlets_size_bytes"] = outlets_pmtiles.stat().st_size
+    return result

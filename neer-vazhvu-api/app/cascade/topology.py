@@ -273,6 +273,52 @@ def _sample_flow_directions_via_gee(
     return codes
 
 
+def _find_river_outlet(
+    *,
+    tank_centroid: tuple[float, float],
+    flow_direction_d8: int | None,
+    river_segments: list[Any],
+    max_outlet_distance_km: float,
+) -> tuple[float, float, float, float] | None:
+    """If the tank's flow direction points to a river within range, return
+    the nearest in-cone river-outlet point as
+    (outlet_lat, outlet_lng, distance_km, bearing_deg).
+
+    Otherwise None (tank has no river to drain into in its flow direction,
+    or no flow data, or no rivers configured).
+    """
+    if not river_segments or flow_direction_d8 is None:
+        return None
+    expected_bearing = D8_TO_BEARING_DEG.get(flow_direction_d8)
+    if expected_bearing is None:
+        return None
+
+    from shapely.geometry import Point
+
+    tank_lat, tank_lng = tank_centroid
+    tank_point = Point(tank_lng, tank_lat)  # shapely is (x, y) = (lng, lat)
+
+    best: tuple[float, float, float, float] | None = None
+    for segment in river_segments:
+        # Closest point on the LineString to the tank centroid.
+        proj_dist = segment.project(tank_point)
+        nearest = segment.interpolate(proj_dist)
+        outlet_lat = nearest.y
+        outlet_lng = nearest.x
+        dist_km = _haversine_km(tank_centroid, (outlet_lat, outlet_lng))
+        if dist_km > max_outlet_distance_km or dist_km <= 0:
+            continue
+        bearing_to_outlet = _bearing_deg(tank_centroid, (outlet_lat, outlet_lng))
+        if (
+            _angular_distance_deg(bearing_to_outlet, expected_bearing)
+            > FLOW_DIRECTION_CONE_HALFANGLE_DEG
+        ):
+            continue
+        if best is None or dist_km < best[2]:
+            best = (outlet_lat, outlet_lng, dist_km, bearing_to_outlet)
+    return best
+
+
 def _candidate_passes_flow_direction(
     *,
     upstream_flow_code: int | None,
@@ -403,6 +449,23 @@ def _build_graph_from_polygons_with_elevations(
         if best is not None:
             edges_out[upstream] = best
 
+    # Tanks that didn't get a tank-to-tank outflow but whose flow
+    # direction points to a river within range drain INTO that river.
+    # Stored as (outlet_lat, outlet_lng, distance_km, bearing_deg).
+    river_outlets_by_osm: dict[int, tuple[float, float, float, float]] = {}
+    if river_segments:
+        for tank_osm_id in osm_ids:
+            if tank_osm_id in edges_out:
+                continue  # already drains to a tank
+            outlet = _find_river_outlet(
+                tank_centroid=centroids[tank_osm_id],
+                flow_direction_d8=flow_by_osm[tank_osm_id],
+                river_segments=river_segments,
+                max_outlet_distance_km=district.max_river_outlet_distance_km,
+            )
+            if outlet is not None:
+                river_outlets_by_osm[tank_osm_id] = outlet
+
     degree_in: dict[int, int] = {osm_id: 0 for osm_id in osm_ids}
     for _upstream, (downstream, _score, _dist) in edges_out.items():
         degree_in[downstream] += 1
@@ -429,6 +492,7 @@ def _build_graph_from_polygons_with_elevations(
     node_features: list[dict[str, Any]] = []
     for osm_id, node in nodes_by_osm.items():
         lat, lon = node["centroid"]
+        outlet = river_outlets_by_osm.get(osm_id)
         node_features.append(
             {
                 "type": "Feature",
@@ -444,6 +508,13 @@ def _build_graph_from_polygons_with_elevations(
                     "degree_in": degree_in[osm_id],
                     "degree_out": 1 if osm_id in edges_out else 0,
                     "cascade_position": cascade_position[osm_id],
+                    "drains_to_river": outlet is not None,
+                    "river_outlet_distance_km": (
+                        round(outlet[2], 3) if outlet is not None else None
+                    ),
+                    "river_outlet_bearing_deg": (
+                        round(outlet[3], 1) if outlet is not None else None
+                    ),
                 },
             }
         )
@@ -477,6 +548,31 @@ def _build_graph_from_polygons_with_elevations(
             }
         )
 
+    river_outlet_features: list[dict[str, Any]] = []
+    for tank_osm_id, (out_lat, out_lng, dist_km, bearing) in (
+        river_outlets_by_osm.items()
+    ):
+        cent = centroids[tank_osm_id]
+        river_outlet_features.append(
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                        [cent[1], cent[0]],
+                        [out_lng, out_lat],
+                    ],
+                },
+                "properties": {
+                    "from_osm_id": tank_osm_id,
+                    "from_name": nodes_by_osm[tank_osm_id]["name"],
+                    "distance_km": round(dist_km, 3),
+                    "bearing_deg": round(bearing, 1),
+                    "status": "drains_to_river",
+                },
+            }
+        )
+
     node_features.sort(key=lambda f: f["properties"]["osm_id"])
     edge_features.sort(
         key=lambda f: (
@@ -484,8 +580,13 @@ def _build_graph_from_polygons_with_elevations(
             f["properties"]["to_osm_id"],
         )
     )
+    river_outlet_features.sort(key=lambda f: f["properties"]["from_osm_id"])
 
-    return {"nodes": node_features, "edges": edge_features}
+    return {
+        "nodes": node_features,
+        "edges": edge_features,
+        "river_outlets": river_outlet_features,
+    }
 
 
 def build_graph(district: DistrictCascadeConfig) -> dict[str, Any]:

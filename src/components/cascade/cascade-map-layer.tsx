@@ -15,6 +15,10 @@ interface CascadeMapLayerProps {
 
 const NODE_COLOR_BY_POSITION = ["#0ea5e9", "#06b6d4", "#14b8a6", "#10b981"];
 const EDGE_COLOR = "#0ea5e9";
+// River-outlet arrows use a distinct amber so users can tell at a
+// glance which lines are tank-to-tank cascade edges and which are
+// "this tank drains into the river" terminations.
+const RIVER_OUTLET_COLOR = "#f59e0b";
 
 // Hover hit-test radius in screen pixels. The cascade map already
 // shares hover space with water-body polygon tooltips and lost-tank
@@ -30,6 +34,8 @@ interface NodeIndexEntry {
   degreeIn: number;
   degreeOut: number;
   areaHa: number;
+  drainsToRiver: boolean;
+  riverOutletDistanceKm: number | null;
 }
 
 interface NodesGeoJsonFeature {
@@ -40,6 +46,8 @@ interface NodesGeoJsonFeature {
     degree_in?: number;
     degree_out?: number;
     area_ha?: number;
+    drains_to_river?: boolean;
+    river_outlet_distance_km?: number | null;
   };
 }
 
@@ -127,7 +135,27 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
       ],
     }) as unknown as L.Layer;
 
+    // River-outlet arrows: tanks that drain INTO the river (sink edges).
+    // Distinct amber colour so users can tell these apart from the
+    // sky-blue tank-to-tank edges. Slightly wider so the secondary
+    // semantic ("this is where the cascade actually terminates") reads
+    // at district-overview zooms.
+    const riverOutletsLayer = leafletLayer({
+      url: `/tiles/cascade/${cityId}-cascade-river-outlets.pmtiles`,
+      paintRules: [
+        {
+          dataLayer: "cascade_river_outlets",
+          symbolizer: new LineSymbolizer({
+            color: RIVER_OUTLET_COLOR,
+            width: (z: number) => Math.max(1.2, (z - 9) * 0.8),
+            opacity: 0.85,
+          }),
+        },
+      ],
+    }) as unknown as L.Layer;
+
     edgesLayer.addTo(map);
+    riverOutletsLayer.addTo(map);
     nodesLayer.addTo(map);
 
     // ---- Hover index (lazy GeoJSON fetch) ----
@@ -144,6 +172,8 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
           degreeIn: f.properties.degree_in ?? 0,
           degreeOut: f.properties.degree_out ?? 0,
           areaHa: f.properties.area_ha ?? 0,
+          drainsToRiver: f.properties.drains_to_river ?? false,
+          riverOutletDistanceKm: f.properties.river_outlet_distance_km ?? null,
         }));
       })
       .catch(() => {
@@ -173,12 +203,18 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
 
       const formatNodeTooltip = (entry: NodeIndexEntry): string => {
         const name = entry.name || "(unnamed tank)";
+        const sinkLine =
+          entry.drainsToRiver && entry.riverOutletDistanceKm !== null
+            ? `<br/><span style="font-size:11px;color:#b45309">` +
+              `drains to river (${entry.riverOutletDistanceKm.toFixed(2)} km)</span>`
+            : "";
         return (
           `<strong>${name}</strong>` +
           `<br/><span style="font-size:11px;color:#475569">` +
           `cascade depth ${entry.cascadePosition} · ` +
           `${entry.degreeIn} in · ${entry.degreeOut} out · ` +
-          `${entry.areaHa.toLocaleString()} ha</span>`
+          `${entry.areaHa.toLocaleString()} ha</span>` +
+          sinkLine
         );
       };
 
@@ -254,6 +290,7 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
       cleanupHover?.();
       map.removeLayer(edgesLayer);
       map.removeLayer(nodesLayer);
+      map.removeLayer(riverOutletsLayer);
       nodeIndexRef.current = [];
     };
   }, [map, cityId]);

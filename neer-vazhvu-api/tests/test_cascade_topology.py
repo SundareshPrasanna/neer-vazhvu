@@ -369,3 +369,107 @@ def test_no_river_segments_means_no_barrier(tmp_path):
     )
 
     assert len(graph["edges"]) == 1
+
+
+# -- river-as-sink modeling -----------------------------------------------
+
+
+def test_isolated_tank_with_river_in_flow_direction_drains_to_river(tmp_path):
+    # One tank with no neighbour. Flow direction is South (D8 code 4 ->
+    # bearing 180). A river runs east-west just south of the tank.
+    # Expect the tank to be marked drains_to_river=True with the
+    # outlet point on the river.
+    polygons = [_square_polygon(1, "Lone tank", lat=9.95, lon=78.1, area_ha=20)]
+    elevations = [180.0]
+    flow_directions = [4]  # South
+    district = _district(tmp_path, max_river_outlet_distance_km=5.0)
+    river = LineString([(78.05, 9.94), (78.15, 9.94)])  # east-west, ~1.1 km south
+
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=elevations,
+        district=district,
+        flow_directions=flow_directions,
+        river_segments=[river],
+    )
+
+    [node] = graph["nodes"]
+    assert node["properties"]["drains_to_river"] is True
+    assert node["properties"]["river_outlet_distance_km"] is not None
+    assert len(graph["river_outlets"]) == 1
+    outlet = graph["river_outlets"][0]
+    assert outlet["properties"]["from_osm_id"] == 1
+    assert outlet["properties"]["status"] == "drains_to_river"
+
+
+def test_tank_flowing_away_from_river_does_not_drain_to_river(tmp_path):
+    # Same setup but flow direction is North (away from the river).
+    # Outlet must NOT be created.
+    polygons = [_square_polygon(1, "Lone tank", lat=9.95, lon=78.1, area_ha=20)]
+    elevations = [180.0]
+    flow_directions = [64]  # North - opposite of river to the south
+    district = _district(tmp_path, max_river_outlet_distance_km=5.0)
+    river = LineString([(78.05, 9.94), (78.15, 9.94)])
+
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=elevations,
+        district=district,
+        flow_directions=flow_directions,
+        river_segments=[river],
+    )
+
+    [node] = graph["nodes"]
+    assert node["properties"]["drains_to_river"] is False
+    assert graph["river_outlets"] == []
+
+
+def test_river_outlet_respects_distance_threshold(tmp_path):
+    # River exists in flow direction but beyond the configured outlet
+    # distance threshold; should not create an outlet.
+    polygons = [_square_polygon(1, "Lone tank", lat=9.95, lon=78.1, area_ha=20)]
+    elevations = [180.0]
+    flow_directions = [4]  # South
+    district = _district(tmp_path, max_river_outlet_distance_km=0.5)
+    river = LineString([(78.05, 9.94), (78.15, 9.94)])  # ~1.1 km south, > 0.5
+
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=elevations,
+        district=district,
+        flow_directions=flow_directions,
+        river_segments=[river],
+    )
+
+    assert graph["nodes"][0]["properties"]["drains_to_river"] is False
+    assert graph["river_outlets"] == []
+
+
+def test_tank_with_tank_outflow_does_not_get_river_outlet(tmp_path):
+    # Even when a river is within range, a tank that already drains to
+    # another tank should NOT additionally get a river-outlet entry -
+    # the cascade tank-to-tank outflow takes priority. This keeps the
+    # graph unambiguous (each tank has exactly one downstream).
+    polygons = [
+        _square_polygon(1, "Upstream", lat=9.95, lon=78.1, area_ha=20),
+        _square_polygon(2, "Downstream tank", lat=9.945, lon=78.1, area_ha=10),
+    ]
+    elevations = [180.0, 100.0]
+    flow_directions = [4, None]  # upstream flows S, both tanks south of "river" below
+    district = _district(tmp_path, max_river_outlet_distance_km=5.0)
+    river = LineString([(78.05, 9.92), (78.15, 9.92)])  # well below both
+
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=elevations,
+        district=district,
+        flow_directions=flow_directions,
+        river_segments=[river],
+    )
+
+    upstream = next(
+        n for n in graph["nodes"] if n["properties"]["osm_id"] == 1
+    )
+    assert upstream["properties"]["degree_out"] == 1
+    assert upstream["properties"]["drains_to_river"] is False
+    assert graph["river_outlets"] == []

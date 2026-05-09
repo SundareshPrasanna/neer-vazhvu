@@ -84,6 +84,7 @@ def test_publish_write_geojson_roundtrips_to_disk(tmp_path, monkeypatch):
     # Override the per-config path methods to point inside the tmp dir
     nodes_path = tmp_path / "data" / "testville-cascade-nodes.geojson"
     edges_path = tmp_path / "data" / "testville-cascade-edges.geojson"
+    outlets_path = tmp_path / "data" / "testville-cascade-river-outlets.geojson"
     monkeypatch.setattr(
         DistrictCascadeConfig,
         "cascade_nodes_geojson_path",
@@ -93,6 +94,11 @@ def test_publish_write_geojson_roundtrips_to_disk(tmp_path, monkeypatch):
         DistrictCascadeConfig,
         "cascade_edges_geojson_path",
         lambda self: edges_path,
+    )
+    monkeypatch.setattr(
+        DistrictCascadeConfig,
+        "cascade_river_outlets_geojson_path",
+        lambda self: outlets_path,
     )
 
     sample_node = {
