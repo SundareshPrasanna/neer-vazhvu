@@ -1,3 +1,5 @@
+import type { ScoredWaterBody } from "@/types/restoration";
+
 export type WaterBodyStatus =
   | "fully_lost"
   | "severely_reduced"
@@ -62,7 +64,12 @@ export interface CensusWaterBodyProperties {
 export type SelectedWaterBody =
   | { kind: "current"; props: CurrentWaterBodyProperties; latlng: [number, number]; censusMatch?: CensusWaterBodyProperties }
   | { kind: "lost"; props: LostWaterBodyProperties; latlng: [number, number] }
-  | { kind: "census"; props: CensusWaterBodyProperties; latlng: [number, number] };
+  | { kind: "census"; props: CensusWaterBodyProperties; latlng: [number, number] }
+  // Flagship-curated scored body that has no OSM polygon and no census
+  // match (Madurai's Vandiyur tank etc.). The detail panel reads
+  // restoration metadata from the embedded ScoredWaterBody directly,
+  // bypassing the osm_id-based lookup the other kinds use.
+  | { kind: "scored"; scored: ScoredWaterBody; latlng: [number, number] };
 
 export const STATUS_LABELS: Record<WaterBodyStatus, string> = {
   fully_lost: "Fully Lost",

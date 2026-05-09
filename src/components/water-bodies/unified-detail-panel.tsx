@@ -670,6 +670,57 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
     return localized === key ? value : localized;
   };
 
+  if (selected.kind === "scored") {
+    const wb = selected.scored;
+    const primaryName = language === "ta"
+      ? (wb.name_ta || wb.name || t("wb_panel.unnamed"))
+      : (wb.name || t("wb_panel.unnamed"));
+    const secondaryName = language === "ta" ? wb.name : wb.name_ta;
+    const areaText = wb.area_ha
+      ? `${wb.area_ha.toLocaleString(undefined, { maximumFractionDigits: 1 })} ha`
+      : t("wb_panel.unknown");
+    const type = localizeType(wb.water_type);
+    return (
+      <div className="h-full flex flex-col bg-white dark:bg-slate-900 overflow-y-auto">
+        <div className="flex items-start justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex-1 min-w-0">
+            <h2 className="font-bold text-slate-900 dark:text-slate-100 text-base leading-tight truncate">
+              {primaryName}
+            </h2>
+            {secondaryName && (
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                {secondaryName}
+              </p>
+            )}
+          </div>
+          <CloseButton onClose={onClose} ariaLabel={closeAria} />
+        </div>
+        {/* Status note: this body has no precise OSM polygon, hence
+            the "approximate footprint" caveat surfaced for users. */}
+        <div className="px-4 pt-3">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">
+            {t("wb_panel.flagship_curated")}
+          </span>
+        </div>
+        <div className="p-4 grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-[10px] uppercase text-slate-400 dark:text-slate-500 tracking-wide">
+              {t("wb_panel.area")}
+            </p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mt-0.5">{areaText}</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase text-slate-400 dark:text-slate-500 tracking-wide">
+              {t("wb_panel.type")}
+            </p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mt-0.5">{type}</p>
+          </div>
+        </div>
+        <RestorationSection wb={wb} />
+      </div>
+    );
+  }
+
   if (selected.kind === "current") {
     const { props } = selected;
     const primaryName = language === "ta"
