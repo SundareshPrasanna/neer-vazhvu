@@ -48,6 +48,12 @@ export function snapshotToSummaries(
         : capacityMcft > 0
           ? (storageMcft / capacityMcft) * 100
           : 0;
+    // A registered source with no reading isn't "the dam is empty" - it
+    // means our ingest pipeline doesn't currently publish a level for
+    // it (e.g. Madurai's Sothuparai - TWAD doesn't publish daily
+    // levels). Surface this honestly so the UI renders a "data not
+    // available" card instead of a misleading 0% storage bar.
+    const isLive = reading != null;
     return {
       name: source.sourceCode,
       displayName: source.displayName,
@@ -57,6 +63,10 @@ export function snapshotToSummaries(
       inflowCusecs: (reading?.inflow_cusecs as number | null | undefined) ?? 0,
       outflowCusecs: (reading?.outflow_cusecs as number | null | undefined) ?? 0,
       rainfallMm: 0, // not tracked in v2 ingest yet
+      isLive,
+      noLiveDataReason: isLive
+        ? undefined
+        : `${config.primaryAuthority.acronym} does not publish daily levels for this source.`,
     };
   });
 }

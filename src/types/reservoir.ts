@@ -47,6 +47,17 @@ export interface ReservoirSummary {
   inflowCusecs: number;
   outflowCusecs: number;
   rainfallMm: number;
+  /** False when the city's config registers this reservoir but no live
+   *  measurement is published for it (e.g. Madurai's Sothuparai Dam -
+   *  TWAD doesn't publish daily levels). The card UI treats `false`
+   *  differently from a real-zero reading: it shows a "data not
+   *  available" treatment rather than a misleading 0% storage bar.
+   *  Defaults to true for back-compat - existing callers that build a
+   *  summary from a live reading don't have to set it. */
+  isLive?: boolean;
+  /** Optional human-readable note explaining the data gap when
+   *  `isLive` is false (one short sentence, surfaced in the card). */
+  noLiveDataReason?: string;
 }
 
 export interface HistoryPoint {

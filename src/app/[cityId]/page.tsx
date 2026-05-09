@@ -11,6 +11,9 @@ import {
 } from "./data";
 import { MultiSourceHistoryChart } from "@/components/dashboard/multi-source-history-chart";
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
+import { AllocationHero } from "@/components/dashboard/allocation-hero";
+import { DataGapPanel, URBAN_SUPPLY_DATA_GAPS } from "@/components/dashboard/data-gap-panel";
+import { UrbanSupplyOverview } from "@/components/dashboard/urban-supply-overview";
 import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
 import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
 import { NewsSection } from "@/components/insights/news-section";
@@ -53,9 +56,14 @@ export default async function CityHomePage({ params }: PageProps) {
         )}
       </div>
 
-      {/* Days-of-water-left hero. Shared with Chennai's home; defaults
-          come from the place config (consumption, desalination). */}
-      {waterEstimate.lastUpdated && (
+      {/* Hero swap: cities whose tracked sources ARE the urban supply
+          (Chennai's CMWSSB reservoirs) get the days-left runway; cities
+          where tracked storage is upstream irrigation (Madurai's Vaigai)
+          get the allocation hero, which shows live dam fill + the city's
+          published drinking-water allocation without the misleading
+          days-of-water headline. heroMode defaults to 'days-left' for
+          back-compat. */}
+      {(config.heroMode ?? "days-left") === "days-left" && waterEstimate.lastUpdated && (
         <DaysLeftHero
           totalStorageMcft={waterEstimate.totalStorageMcft}
           totalCapacityMcft={waterEstimate.totalCapacityMcft}
@@ -68,6 +76,38 @@ export default async function CityHomePage({ params }: PageProps) {
           // pass 0 so DaysLeftHero doesn't fall back to Chennai's 190 MLD.
           defaultDesalinationMld={config.defaultDesalinationMld ?? 0}
         />
+      )}
+      {config.heroMode === "allocation" && config.urbanSupply && (
+        <AllocationHero
+          cityDisplayName={config.displayName}
+          supply={config.urbanSupply}
+          sources={config.urbanSupply.allocatedSourceCodes
+            .map((code) => {
+              const r = summaries.find((s) => s.name === code);
+              const source = config.waterSources.find((s) => s.sourceCode === code);
+              if (!r || !source) return null;
+              return {
+                sourceCode: code,
+                displayName: r.displayName,
+                liveStorageMcft: r.isLive === false ? null : r.currentStorage,
+                capacityMcft: source.fullCapacityMcft ?? 0,
+                storagePct: r.isLive === false ? null : r.storagePct,
+                lastUpdated: waterEstimate.lastUpdated
+                  ? formatDate(waterEstimate.lastUpdated)
+                  : null,
+              };
+            })
+            .filter((x): x is NonNullable<typeof x> => x != null)}
+        />
+      )}
+
+      {/* Structural at-a-glance tile - cities with an `allocation`
+          hero typically have a richer story to tell about their
+          supply chain, distribution scale, and 2034-design demand
+          than a single live storage number can convey. The component
+          self-hides if the city has no <cityId>-supply-overview.json. */}
+      {config.heroMode === "allocation" && (
+        <UrbanSupplyOverview cityId={cityId} cityDisplayName={config.displayName} />
       )}
 
       {/* Reservoir snapshot grid + shared multi-source history chart. */}
@@ -83,6 +123,18 @@ export default async function CityHomePage({ params }: PageProps) {
         latestDate={history.latestDate}
         pointCount={history.pointCount}
       />
+
+      {/* Data-gap panel: shown for cities where the utility doesn't
+          publish daily downstream-of-dam data. Reframes the gaps as
+          institutional asks rather than dashboard weaknesses. */}
+      {config.heroMode === "allocation" && (
+        <DataGapPanel
+          titleKey="gap.title_madurai"
+          bodyKey="gap.body_madurai"
+          gaps={URBAN_SUPPLY_DATA_GAPS}
+          cta={{ labelKey: "gap.cta_about", href: `/${cityId}/about` }}
+        />
+      )}
 
       {/* Long-term IMD rainfall - identical component to Chennai's, with
           the city's own IMD file. Falls back to a "data pending" card

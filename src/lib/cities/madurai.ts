@@ -21,6 +21,24 @@ export const MADURAI: CityConfig = {
   },
   defaultConsumptionMld: 135,
   defaultDesalinationMld: null,
+  // Madurai's tracked dams are irrigation-primary (Vaigai is shared
+  // across Madurai/Theni/Sivagangai/Ramanathapuram for fields,
+  // Mullaperiyar is Kerala-side basin storage). Chennai's days-left
+  // headline math (storage / demand) is honest there because CMWSSB
+  // reservoirs ARE the city's tap; here it would overstate runway by
+  // an order of magnitude. Use the allocation hero instead, anchored
+  // on MMC's published Vaigai drinking-water allocation.
+  heroMode: 'allocation',
+  urbanSupply: {
+    allocatedSourceCodes: ['vaigai'],
+    annualAllocationMcft: 1500,
+    recentDrawMcft: 900,
+    wtpCapacityMld: 125,
+    wtpName: 'Pannaipatty WTP',
+    supplyChainDescription:
+      'Mullaperiyar Dam (Kerala) → Vaigai Dam → Pannaipatty WTP → MMC distribution',
+    sourceUrl: 'https://maduraicorporation.co.in/aboutus/water-supply/',
+  },
   waterSources: [
     {
       sourceCode: 'vaigai',

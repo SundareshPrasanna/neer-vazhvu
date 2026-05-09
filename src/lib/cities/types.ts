@@ -84,6 +84,36 @@ export interface GroundwaterViewsConfig {
   cgwbStations?: boolean;
 }
 
+/**
+ * Public urban-supply numbers for the dashboard's allocation hero.
+ * Used when the city's tracked dams are irrigation-primary (so the
+ * Chennai "storage / demand" math is misleading) but a published
+ * drinking-water allocation exists to anchor an honest headline.
+ *
+ * For Madurai today: Vaigai dam is the operational source, MMC's
+ * 1,500 mcft/yr sanctioned allocation is published on
+ * maduraicorporation.co.in/aboutus/water-supply/, and current draw
+ * (~70 MLD ≈ 900 mcft/yr) is from the same page.
+ */
+export interface UrbanSupplyConfig {
+  /** Source code(s) the allocation is drawn from. Must be a subset of
+   *  this city's `waterSources`. */
+  allocatedSourceCodes: string[];
+  /** Sanctioned annual drinking-water allocation, mcft/year. */
+  annualAllocationMcft: number;
+  /** Most recent actual annual draw, mcft/year (publicly stated). */
+  recentDrawMcft: number;
+  /** WTP design capacity in MLD (Pannaipatty for Madurai). */
+  wtpCapacityMld: number;
+  /** Treatment plant name, used in copy. */
+  wtpName: string;
+  /** Optional: sentence describing the supply chain ("Mullaperiyar
+   *  → Vaigai → Pannaipatty WTP → MMC distribution"). */
+  supplyChainDescription?: string;
+  /** Source URL for the allocation + draw numbers. */
+  sourceUrl: string;
+}
+
 export interface BasePlaceConfig {
   cityId: string;
   displayName: string;
@@ -100,6 +130,26 @@ export interface BasePlaceConfig {
    *  Omit to inherit legacy behaviour (all views shown when their
    *  underlying data is present). */
   groundwaterViews?: GroundwaterViewsConfig;
+
+  /** Which dashboard hero to render for this city.
+   *
+   *  - `days-left`: Chennai-style runway = total reservoir storage /
+   *    (urban demand - desalination). Honest only when the tracked
+   *    sources ARE the urban tap supply (CMWSSB reservoirs).
+   *  - `allocation`: Vaigai-style status, used where the tracked
+   *    sources are upstream irrigation dams with a small allocated
+   *    drinking slice (Madurai). Shows live storage + the city's
+   *    annual allocation + current draw, without the misleading
+   *    days-of-water headline.
+   *  - `none`: suppress hero entirely (cities with no useful summary
+   *    yet). Reservoir cards + history chart still render below.
+   *
+   *  Defaults to `days-left` for back-compat with Chennai. */
+  heroMode?: 'days-left' | 'allocation' | 'none';
+
+  /** Public, audited urban supply numbers for the allocation hero.
+   *  Required when heroMode === 'allocation'; ignored otherwise. */
+  urbanSupply?: UrbanSupplyConfig;
   /**
    * Hide from public-facing discovery surfaces (CitySwitcher dropdown,
    * sitemap.xml). The route itself stays alive so engineers + direct-
