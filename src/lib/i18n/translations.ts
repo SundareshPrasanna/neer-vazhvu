@@ -1421,11 +1421,11 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "uplift.factor_wb_health":          { en: "Water body health", ta: "நீர்நிலை ஆரோக்கியம்" },
   "uplift.factor_wb_density":         { en: "Water body density", ta: "நீர்நிலை அடர்த்தி" },
 
-  // ── Chennai Water Facts page ──────────────────────────────────────────────
-  "facts.page_title":       { en: "Chennai Water Facts", ta: "சென்னை நீர் உண்மைகள்" },
+  // ── Water Facts page (city name interpolated via {city}) ─────────────────
+  "facts.page_title":       { en: "{city} Water Facts", ta: "{city} நீர் உண்மைகள்" },
   "facts.page_intro":       {
-    en: "Chennai's water state in quotable numbers. Every fact has a source, a date, and a methodology link. Organised by freshness: today's live data, this year's government releases, historical milestones, and structural infrastructure.",
-    ta: "சென்னையின் நீர் நிலை மேற்கோள் எண்களில். ஒவ்வொரு உண்மைக்கும் ஒரு மூலம், தேதி மற்றும் முறைமை இணைப்பு உள்ளது. புதுமையின் அடிப்படையில் ஒழுங்கமைக்கப்பட்டது: இன்றைய நேரடித் தரவு, இந்த ஆண்டின் அரசாங்க வெளியீடுகள், வரலாற்று மைல்கற்கள், மற்றும் கட்டமைப்பு உள்கட்டமைப்பு.",
+    en: "{city}'s water state in quotable numbers. Every fact has a source, a date, and a methodology link. Organised by freshness: today's live data, this year's government releases, historical milestones, and structural infrastructure.",
+    ta: "{city}யின் நீர் நிலை மேற்கோள் எண்களில். ஒவ்வொரு உண்மைக்கும் ஒரு மூலம், தேதி மற்றும் முறைமை இணைப்பு உள்ளது. புதுமையின் அடிப்படையில் ஒழுங்கமைக்கப்பட்டது: இன்றைய நேரடித் தரவு, இந்த ஆண்டின் அரசாங்க வெளியீடுகள், வரலாற்று மைல்கற்கள், மற்றும் கட்டமைப்பு உள்கட்டமைப்பு.",
   },
   "facts.last_updated":     { en: "Last updated", ta: "கடைசியாக புதுப்பிக்கப்பட்டது" },
   "facts.as_of":            { en: "As of", ta: "அன்று" },

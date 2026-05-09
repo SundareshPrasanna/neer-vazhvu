@@ -8,9 +8,11 @@ import type { Fact, FactTier } from "@/types/facts";
 interface FactsPageProps {
   facts: Fact[];
   generatedAt: string;
+  cityName: string;
+  cityNameTa?: string;
 }
 
-export function FactsPage({ facts, generatedAt }: FactsPageProps) {
+export function FactsPage({ facts, generatedAt, cityName, cityNameTa }: FactsPageProps) {
   const { t, language } = useLanguage();
 
   const byTier: Record<FactTier, Fact[]> = { 1: [], 2: [], 3: [], 4: [] };
@@ -19,15 +21,18 @@ export function FactsPage({ facts, generatedAt }: FactsPageProps) {
   }
 
   const generatedLabel = formatDateTime(generatedAt, language);
+  const localizedCity = language === "ta" ? (cityNameTa ?? cityName) : cityName;
+  const title = t("facts.page_title").replaceAll("{city}", localizedCity);
+  const intro = t("facts.page_intro").replaceAll("{city}", localizedCity);
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
       <header className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-          {t("facts.page_title")}
+          {title}
         </h1>
         <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-          {t("facts.page_intro")}
+          {intro}
         </p>
         <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
           {t("facts.last_updated")}: {generatedLabel}

@@ -117,6 +117,9 @@ export interface UrbanSupplyConfig {
 export interface BasePlaceConfig {
   cityId: string;
   displayName: string;
+  /** Tamil display name, used wherever copy renders the city name in
+   *  Tamil (TN cities). Falls back to `displayName` when omitted. */
+  displayNameTa?: string;
   stateCode: string;
   timezone: string;
   center: Coordinates;

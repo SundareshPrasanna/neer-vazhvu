@@ -4,6 +4,7 @@ export const CHENNAI: CityConfig = {
   placeKind: 'city',
   cityId: 'chennai',
   displayName: 'Chennai',
+  displayNameTa: 'சென்னை',
   stateCode: 'TN',
   timezone: 'Asia/Kolkata',
   center: { lat: 13.0827, lng: 80.2707 },

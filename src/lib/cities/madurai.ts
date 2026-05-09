@@ -4,6 +4,7 @@ export const MADURAI: CityConfig = {
   placeKind: 'city',
   cityId: 'madurai',
   displayName: 'Madurai',
+  displayNameTa: 'மதுரை',
   stateCode: 'TN',
   timezone: 'Asia/Kolkata',
   center: { lat: 9.9252, lng: 78.1198 },
