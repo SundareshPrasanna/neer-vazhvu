@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
+import { UrbanSupplyOverview } from "@/components/dashboard/urban-supply-overview";
 import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
 import { MultiSourceHistoryChart } from "@/components/dashboard/multi-source-history-chart";
 import type { HistorySeries, ForecastSeries } from "@/types/reservoir";
@@ -523,6 +524,13 @@ export default async function DashboardPage() {
         comparison2019Storage={reservoirData.comparison2019Storage}
       />
 
+      {/* Page flow: hero (runway headline) -> CityStory (TL;DR
+          synthesis - the visible anchor most visitors read first) ->
+          live data block (catchment, reservoirs, history) ->
+          UrbanSupplyOverview (structural depth: where the water
+          actually comes from) -> other water sources -> long-term
+          context -> news. */}
+
       {cityStoryNarrative && <CityStory narrative={cityStoryNarrative} aiNarrative={aiNarrative} />}
 
       {reservoirCatchmentContextRows && reservoirCatchmentContextRows.length > 0 ? (
@@ -551,6 +559,15 @@ export default async function DashboardPage() {
         latestDate={reservoirData.lastUpdated}
         pointCount={chennaiHistoryPointCount(reservoirData.perReservoirHistory)}
       />
+
+      {/* Structural at-a-glance tile: source mix across CMWSSB's 5 WTPs +
+          3 DSPs, distribution scale (5,247 km), demand projections to
+          2057, and the proposed Ring Main System. Sits AFTER the live
+          data so it reads as the structural explainer for the numbers
+          above. The component fetches /data/chennai-supply-overview.json
+          client-side and self-hides if missing. Toggle/tab UX between
+          days-left and structural views is a planned follow-up. */}
+      <UrbanSupplyOverview cityId="chennai" cityDisplayName="Chennai" />
 
       {groundwaterData && <GroundwaterSnapshot data={groundwaterData} />}
 

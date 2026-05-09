@@ -14,10 +14,18 @@ import { formatNumber } from "@/lib/utils/format";
  * WTP capacity, distribution scale, demand vs supply gap.
  *
  * The numbers behind this tile come from one-off engineering
- * documents (ADB IEE / DPR / MMC's own water-supply page for Madurai)
- * not live telemetry, so the JSON shape is verbose-but-static. Other
- * cities can ship their own <cityId>-supply-overview.json with the
- * same shape.
+ * documents (ADB IEE / DPR / utility public pages) not live telemetry,
+ * so the JSON shape is verbose-but-static. Other cities can ship their
+ * own <cityId>-supply-overview.json with the same shape.
+ *
+ * Two supported shapes:
+ *  - Single-WTP cities (Madurai): use `primary_wtp` / `pannaipatty_wtp`
+ *    + Madurai-style distribution fields (OHTs, DMAs, mains).
+ *  - Multi-WTP cities (Chennai): use `wtps_summary` + Chennai-style
+ *    distribution fields (admin zones, CWRs, WDSs, network km).
+ *  Madurai-only and Chennai-only fields are optional; the component
+ *  renders the right layout based on which fields are present.
+ *  Per-city narrative strings can be injected via `_view_overrides`.
  */
 
 interface SupplyMixItem {
@@ -36,54 +44,87 @@ interface ReferenceFigure {
   source_label: string;
 }
 
+interface PrimaryWtp {
+  existing_capacity_mld: number;
+  planned_addition_mld: number;
+  planned_total_mld: number;
+  expansion_source: string;
+}
+
+interface WtpsSummary {
+  fresh_water_wtps_count: number;
+  fresh_water_capacity_mld: number;
+  desalination_plants_count?: number;
+  desalination_capacity_mld?: number;
+  total_installed_capacity_mld: number;
+  average_supply_mld?: number;
+  planned_additions_mld?: number;
+  planned_additions_breakdown?: string;
+}
+
 interface SupplyOverviewData {
   _sources: { name: string; url: string; date: string; extracted: string }[];
   supply_chain: string[];
   current_supply_mix_mld: SupplyMixItem[];
   current_supply_total_mld: number;
-  pannaipatty_wtp: {
-    existing_capacity_mld: number;
-    planned_addition_mld: number;
-    planned_total_mld: number;
-    expansion_source: string;
-  };
+
+  /** Madurai-style: single primary WTP. Component renames `pannaipatty_wtp`
+   *  to `primary_wtp` going forward; both names are accepted for
+   *  back-compat with the Madurai JSON. */
+  primary_wtp?: PrimaryWtp;
+  pannaipatty_wtp?: PrimaryWtp;
+
+  /** Chennai-style: aggregated multi-WTP summary. */
+  wtps_summary?: WtpsSummary;
+
   distribution: {
-    /** Per-IEE Part 2 (Dec 2025): 28 existing OHTs (12 N + 16 S),
-     *  410.5 LL aggregate. Tranche 2 adds 37 more OHTs at 589 LL. */
-    ohts_existing: number;
-    ohts_existing_aggregate_capacity_mld: number;
-    ohts_new_under_tranche2: number;
-    ohts_total_post_tranche2: number;
-    /** Operational distribution zones (12 N + 16 S = 28). Distinct from
-     *  DMAs (81 today / 115 post-Tranche-3), which are District
-     *  Metering Areas at finer granularity. */
-    distribution_zones: number;
-    dmas_today: number;
-    dmas_post_tranche3: number;
-    mains_km_existing: number;
-    new_distribution_pipelines_km_tranche3: number;
+    /** Madurai-style fields (all optional). */
+    ohts_existing?: number;
+    ohts_existing_aggregate_capacity_mld?: number;
+    ohts_new_under_tranche2?: number;
+    ohts_total_post_tranche2?: number;
+    distribution_zones?: number;
+    dmas_today?: number;
+    dmas_post_tranche3?: number;
+    mains_km_existing?: number;
+    new_distribution_pipelines_km_tranche3?: number;
+
+    /** Chennai-style fields (all optional). */
+    administrative_zones?: number;
+    ground_level_cwrs?: number;
+    major_wdss?: number;
+    total_wdss?: number;
+    transmission_mains_km?: number;
+    distribution_network_km?: number;
+    population_served?: number;
+
     connections: {
       total: number;
-      domestic: number;
+      domestic?: number;
       non_domestic?: number;
-      commercial: number;
+      commercial?: number;
       industrial?: number;
+      domestic_and_non_domestic_combined?: number;
     };
   };
   demand: {
-    population_2011: number;
-    population_2034_design: number;
+    population_2011?: number;
+    population_2034_design?: number;
+    population_design?: number;
     demand_2034_mld: number;
     demand_gap_2034_mld: number;
     city_area_sqkm: number;
   };
-  allocation_context: {
-    mmc_drinking_mld: number;
-    combined_drinking_mld: number;
-    mullaperiyar_min_monthly_storage_avg_mcft: number;
-    mullaperiyar_storage_period: string;
-  };
   reference_figures?: ReferenceFigure[];
+
+  /** Per-city narrative overrides for strings that are otherwise
+   *  baked into the i18n bundle. Useful when the same component
+   *  serves cities whose supply story differs structurally. */
+  _view_overrides?: {
+    subtitle?: string;
+    wtp_label?: string;
+    demand_caption?: string;
+  };
 }
 
 interface UrbanSupplyOverviewProps {
@@ -102,9 +143,10 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
       .catch(() => setData(null));
   }, [cityId]);
 
-  // Hide entirely when the city hasn't published an overview file -
-  // safer than rendering a thin / placeholder card.
   if (!data) return null;
+
+  const primaryWtp = data.primary_wtp ?? data.pannaipatty_wtp ?? null;
+  const wtpsSummary = data.wtps_summary ?? null;
 
   const supplyGapPct =
     data.demand.demand_2034_mld > 0
@@ -112,8 +154,13 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
       : 0;
   const currentMetPct =
     data.demand.demand_2034_mld > 0
-      ? Math.round((data.current_supply_total_mld / data.demand.demand_2034_mld) * 100)
+      ? Math.min(100, Math.round((data.current_supply_total_mld / data.demand.demand_2034_mld) * 100))
       : 0;
+  const designPopulation = data.demand.population_2034_design ?? data.demand.population_design ?? 0;
+
+  const overrideSubtitle = data._view_overrides?.subtitle;
+  const overrideWtpLabel = data._view_overrides?.wtp_label;
+  const overrideDemandCaption = data._view_overrides?.demand_caption;
 
   return (
     <Card className="border-slate-200 dark:border-slate-700">
@@ -122,7 +169,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
           {t("supply_overview.title").replace("{city}", cityDisplayName)}
         </h2>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          {t("supply_overview.subtitle")}
+          {overrideSubtitle ?? t("supply_overview.subtitle")}
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -131,21 +178,21 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
           <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
             {t("supply_overview.chain_label")}
           </h3>
-          <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+          <div className="flex flex-wrap items-stretch gap-1.5 text-[11px]">
             {data.supply_chain.map((step, i) => (
               <span key={i} className="flex items-center gap-1.5">
-                <span className="px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                <span className="px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 max-w-xs leading-snug">
                   {step}
                 </span>
                 {i < data.supply_chain.length - 1 && (
-                  <span className="text-slate-400 dark:text-slate-500" aria-hidden="true">→</span>
+                  <span className="text-slate-400 dark:text-slate-500 self-center" aria-hidden="true">→</span>
                 )}
               </span>
             ))}
           </div>
         </div>
 
-        {/* Two-column on wide screens: source mix + distribution scale */}
+        {/* Two-column on wide screens: source mix + WTP/distribution scale */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Source mix */}
           <div>
@@ -156,7 +203,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             <div className="flex w-full h-2 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2">
               {data.current_supply_mix_mld.map((item, i) => {
                 const pct = (item.mld / data.current_supply_total_mld) * 100;
-                const colors = ["bg-blue-600", "bg-blue-400", "bg-cyan-500", "bg-teal-500", "bg-emerald-500", "bg-lime-500", "bg-amber-500"];
+                const colors = ["bg-blue-600", "bg-blue-400", "bg-cyan-500", "bg-teal-500", "bg-emerald-500", "bg-lime-500", "bg-amber-500", "bg-orange-500"];
                 return (
                   <div
                     key={item.source}
@@ -170,7 +217,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             <div className="space-y-1">
               {data.current_supply_mix_mld.map((item, i) => {
                 const pct = ((item.mld / data.current_supply_total_mld) * 100).toFixed(0);
-                const colors = ["bg-blue-600", "bg-blue-400", "bg-cyan-500", "bg-teal-500", "bg-emerald-500", "bg-lime-500", "bg-amber-500"];
+                const colors = ["bg-blue-600", "bg-blue-400", "bg-cyan-500", "bg-teal-500", "bg-emerald-500", "bg-lime-500", "bg-amber-500", "bg-orange-500"];
                 return (
                   <div key={item.source} className="flex items-center gap-2 text-xs">
                     <span className={`w-2 h-2 rounded-sm shrink-0 ${colors[i % colors.length]}`} />
@@ -184,52 +231,138 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             </div>
           </div>
 
-          {/* Pannaipatty WTP + distribution scale */}
+          {/* WTP block + distribution scale */}
           <div className="space-y-4">
-            <div>
-              <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">
-                {t("supply_overview.wtp_label")}
-              </h3>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 tabular-nums">
-                  {data.pannaipatty_wtp.existing_capacity_mld}
-                </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">MLD existing</span>
-                {data.pannaipatty_wtp.planned_addition_mld > 0 && (
-                  <span className="text-xs text-emerald-600 dark:text-emerald-400 ml-2">
-                    +{data.pannaipatty_wtp.planned_addition_mld} MLD planned
+            {/* Single-WTP path (Madurai) */}
+            {primaryWtp && (
+              <div>
+                <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">
+                  {overrideWtpLabel ?? t("supply_overview.wtp_label")}
+                </h3>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 tabular-nums">
+                    {primaryWtp.existing_capacity_mld}
                   </span>
-                )}
+                  <span className="text-xs text-slate-500 dark:text-slate-400">MLD existing</span>
+                  {primaryWtp.planned_addition_mld > 0 && (
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400 ml-2">
+                      +{primaryWtp.planned_addition_mld} MLD planned
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                  {primaryWtp.expansion_source}
+                </p>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
-                {data.pannaipatty_wtp.expansion_source}
-              </p>
-            </div>
+            )}
 
-            <div className="grid grid-cols-3 gap-3 text-xs">
-              <Stat
-                label={t("supply_overview.ohts_label")}
-                value={String(data.distribution.ohts_existing)}
-                sub={`${data.distribution.ohts_existing_aggregate_capacity_mld} MLD; +${data.distribution.ohts_new_under_tranche2} planned`}
-              />
-              <Stat
-                label={t("supply_overview.zones_label")}
-                value={`${data.distribution.distribution_zones} / ${data.distribution.dmas_today}`}
-                sub={t("supply_overview.zones_sub")}
-              />
-              <Stat
-                label={t("supply_overview.mains_label")}
-                value={String(data.distribution.mains_km_existing)}
-                sub={`km; +${data.distribution.new_distribution_pipelines_km_tranche3} planned`}
-              />
-            </div>
+            {/* Multi-WTP path (Chennai) */}
+            {!primaryWtp && wtpsSummary && (
+              <div>
+                <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">
+                  {overrideWtpLabel ?? t("supply_overview.wtp_label")}
+                </h3>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 tabular-nums">
+                    {formatNumber(wtpsSummary.total_installed_capacity_mld)}
+                  </span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">MLD installed</span>
+                  {wtpsSummary.planned_additions_mld && wtpsSummary.planned_additions_mld > 0 && (
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400 ml-2">
+                      +{wtpsSummary.planned_additions_mld} MLD planned
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                  {wtpsSummary.fresh_water_wtps_count} fresh-water WTPs
+                  ({formatNumber(wtpsSummary.fresh_water_capacity_mld)} MLD)
+                  {wtpsSummary.desalination_plants_count
+                    ? ` + ${wtpsSummary.desalination_plants_count} desal plants (${formatNumber(wtpsSummary.desalination_capacity_mld ?? 0)} MLD)`
+                    : ""}
+                  {wtpsSummary.average_supply_mld
+                    ? `; avg supply ~${formatNumber(wtpsSummary.average_supply_mld)} MLD`
+                    : ""}
+                  .
+                </p>
+              </div>
+            )}
 
+            {/* Madurai-shape distribution stat row (OHTs / Zones / Mains) */}
+            {data.distribution.ohts_existing != null && (
+              <div className="grid grid-cols-3 gap-3 text-xs">
+                <Stat
+                  label={t("supply_overview.ohts_label")}
+                  value={String(data.distribution.ohts_existing)}
+                  sub={`${data.distribution.ohts_existing_aggregate_capacity_mld ?? "?"} MLD; +${data.distribution.ohts_new_under_tranche2 ?? 0} planned`}
+                />
+                <Stat
+                  label={t("supply_overview.zones_label")}
+                  value={`${data.distribution.distribution_zones ?? "?"} / ${data.distribution.dmas_today ?? "?"}`}
+                  sub={t("supply_overview.zones_sub")}
+                />
+                <Stat
+                  label={t("supply_overview.mains_label")}
+                  value={String(data.distribution.mains_km_existing ?? "?")}
+                  sub={`km; +${data.distribution.new_distribution_pipelines_km_tranche3 ?? 0} planned`}
+                />
+              </div>
+            )}
+
+            {/* Chennai-shape distribution stat row (Zones/WDSs/Network) */}
+            {data.distribution.ohts_existing == null && data.distribution.administrative_zones != null && (
+              <div className="grid grid-cols-3 gap-3 text-xs">
+                <Stat
+                  label="Admin zones"
+                  value={String(data.distribution.administrative_zones)}
+                  sub={
+                    data.distribution.major_wdss != null && data.distribution.total_wdss != null
+                      ? `${data.distribution.major_wdss} major / ${data.distribution.total_wdss} WDSs`
+                      : undefined
+                  }
+                />
+                <Stat
+                  label="Clear-water reservoirs"
+                  value={String(data.distribution.ground_level_cwrs ?? "?")}
+                  sub={
+                    data.distribution.transmission_mains_km != null
+                      ? `${data.distribution.transmission_mains_km} km transmission`
+                      : undefined
+                  }
+                />
+                <Stat
+                  label="Distribution network"
+                  value={
+                    data.distribution.distribution_network_km != null
+                      ? `${formatNumber(data.distribution.distribution_network_km)}`
+                      : "?"
+                  }
+                  sub="km"
+                />
+              </div>
+            )}
+
+            {/* Connections line - the schema is forgiving so cities
+                with only `total` (Chennai) get a one-line summary;
+                cities with the full domestic/commercial breakdown
+                (Madurai) get the rich version. */}
             <div className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              {t("supply_overview.connections_line")
-                .replace("{total}", formatNumber(data.distribution.connections.total))
-                .replace("{domestic}", formatNumber(data.distribution.connections.domestic))
-                .replace("{non_domestic}", formatNumber(data.distribution.connections.non_domestic ?? 0))
-                .replace("{commercial}", formatNumber(data.distribution.connections.commercial))}
+              {data.distribution.connections.domestic != null && data.distribution.connections.commercial != null ? (
+                <>
+                  {t("supply_overview.connections_line")
+                    .replace("{total}", formatNumber(data.distribution.connections.total))
+                    .replace("{domestic}", formatNumber(data.distribution.connections.domestic))
+                    .replace("{non_domestic}", formatNumber(data.distribution.connections.non_domestic ?? 0))
+                    .replace("{commercial}", formatNumber(data.distribution.connections.commercial))}
+                </>
+              ) : (
+                <>
+                  {formatNumber(data.distribution.connections.total)} service connections
+                  {data.distribution.population_served
+                    ? ` serving ~${formatNumber(data.distribution.population_served)} residents`
+                    : ""}
+                  .
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -243,7 +376,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             <span className="text-sm text-slate-600 dark:text-slate-400">
               {t("supply_overview.demand_2034")
                 .replace("{demand}", String(data.demand.demand_2034_mld))
-                .replace("{pop}", formatNumber(data.demand.population_2034_design))}
+                .replace("{pop}", formatNumber(designPopulation))}
             </span>
             <span className="text-sm tabular-nums">
               <span className="text-slate-700 dark:text-slate-300 font-semibold">{data.current_supply_total_mld}</span>
@@ -256,21 +389,23 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
               className="absolute inset-y-0 left-0 bg-blue-500"
               style={{ width: `${currentMetPct}%` }}
             />
-            <div
-              className="absolute inset-y-0 bg-amber-300 dark:bg-amber-600"
-              style={{ left: `${currentMetPct}%`, width: `${100 - currentMetPct}%`, opacity: 0.5 }}
-            />
+            {currentMetPct < 100 && (
+              <div
+                className="absolute inset-y-0 bg-amber-300 dark:bg-amber-600"
+                style={{ left: `${currentMetPct}%`, width: `${100 - currentMetPct}%`, opacity: 0.5 }}
+              />
+            )}
           </div>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 leading-snug">
-            {t("supply_overview.demand_gap_caption")
-              .replace("{gap}", String(data.demand.demand_gap_2034_mld))
-              .replace("{pct}", String(supplyGapPct))}
+            {overrideDemandCaption
+              ? overrideDemandCaption
+              : t("supply_overview.demand_gap_caption")
+                  .replace("{gap}", String(data.demand.demand_gap_2034_mld))
+                  .replace("{pct}", String(supplyGapPct))}
           </p>
         </div>
 
-        {/* Reference figures - the engineering diagrams from the
-            IEE PDFs that document the structural numbers above.
-            Click-to-zoom on each thumbnail. */}
+        {/* Reference figures */}
         {data.reference_figures && data.reference_figures.length > 0 && (
           <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
             <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">

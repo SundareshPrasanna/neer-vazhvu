@@ -101,14 +101,12 @@ export default async function CityHomePage({ params }: PageProps) {
         />
       )}
 
-      {/* Structural at-a-glance tile - cities with an `allocation`
-          hero typically have a richer story to tell about their
-          supply chain, distribution scale, and 2034-design demand
-          than a single live storage number can convey. The component
-          self-hides if the city has no <cityId>-supply-overview.json. */}
-      {config.heroMode === "allocation" && (
-        <UrbanSupplyOverview cityId={cityId} cityDisplayName={config.displayName} />
-      )}
+      {/* Structural at-a-glance tile - sits below whichever hero
+          the city uses (days-left for Chennai, allocation for
+          Madurai). The component self-hides if the city has no
+          <cityId>-supply-overview.json, so cities without a
+          published engineering document don't render an empty card. */}
+      <UrbanSupplyOverview cityId={cityId} cityDisplayName={config.displayName} />
 
       {/* Reservoir snapshot grid + shared multi-source history chart. */}
       <ReservoirCards reservoirs={summaries} />
