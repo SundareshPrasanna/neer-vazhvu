@@ -1472,4 +1472,5 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "supply_overview.demand_2034":        { en: "2034 design demand: {demand} MLD for {pop} residents", ta: "2034 வடிவமைப்பு தேவை: {pop} மக்களுக்கு {demand} MLD" },
   "supply_overview.demand_gap_caption": { en: "{gap} MLD gap ({pct}% of 2034 demand) is driving the under-construction Mullai Periyar dedicated supply scheme, designed to lift Pannaipatty's treated capacity to 250 MLD.", ta: "{gap} MLD இடைவெளி (2034 தேவையில் {pct}%) கட்டுமான நிலையில் உள்ள மூலைப் பெரியார் பிரத்யேக வழங்கல் திட்டத்தை இயக்குகிறது; இந்தத் திட்டம் பன்னைப்பட்டியின் சுத்திகரிக்கப்பட்ட திறனை 250 MLD-க்கு உயர்த்த வடிவமைக்கப்பட்டுள்ளது." },
   "supply_overview.sources_label":      { en: "Sources",                 ta: "ஆதாரங்கள்" },
+  "supply_overview.figures_label":      { en: "Reference figures",       ta: "குறிப்பு படங்கள்" },
 };

@@ -29,6 +29,13 @@ interface SupplyMixItem {
   note?: string | null;
 }
 
+interface ReferenceFigure {
+  id: string;
+  src: string;
+  caption: string;
+  source_label: string;
+}
+
 interface SupplyOverviewData {
   _sources: { name: string; url: string; date: string; extracted: string }[];
   supply_chain: string[];
@@ -76,6 +83,7 @@ interface SupplyOverviewData {
     mullaperiyar_min_monthly_storage_avg_mcft: number;
     mullaperiyar_storage_period: string;
   };
+  reference_figures?: ReferenceFigure[];
 }
 
 interface UrbanSupplyOverviewProps {
@@ -259,6 +267,44 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
               .replace("{pct}", String(supplyGapPct))}
           </p>
         </div>
+
+        {/* Reference figures - the engineering diagrams from the
+            IEE PDFs that document the structural numbers above.
+            Click-to-zoom on each thumbnail. */}
+        {data.reference_figures && data.reference_figures.length > 0 && (
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+            <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
+              {t("supply_overview.figures_label")}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {data.reference_figures.map((fig) => (
+                <a
+                  key={fig.id}
+                  href={fig.src}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block"
+                >
+                  <div className="relative aspect-video bg-slate-50 dark:bg-slate-800/50 rounded-md overflow-hidden border border-slate-200 dark:border-slate-700 group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-colors">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={fig.src}
+                      alt={fig.caption}
+                      loading="lazy"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-1.5 leading-snug">
+                    {fig.caption}
+                  </p>
+                  <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-0.5 italic">
+                    {fig.source_label}
+                  </p>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Source attribution */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-2 leading-relaxed">
