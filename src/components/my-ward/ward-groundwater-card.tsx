@@ -5,7 +5,9 @@ import { useLanguage } from "@/lib/i18n/context";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { WardHistoryChart } from "@/components/groundwater/ward-history-chart";
 import type { GroundwaterData } from "@/lib/hooks/use-my-ward-data";
+import type { WardProfile, WardGroundwaterAssessment } from "@/lib/hooks/use-ward-profile";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMyWardCity } from "./city-context";
 
 const STATUS_COLORS: Record<string, string> = {
   low: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
@@ -21,14 +23,29 @@ const TREND_ICONS: Record<string, { symbol: string; color: string }> = {
   unknown: { symbol: "?", color: "text-slate-400" },
 };
 
+// CGWB extraction-stage classes get a colour treatment matching the
+// /madurai/groundwater map legend so the same vocabulary works across
+// the dashboard. Keys are the verbatim labels from the GWR shapefile
+// (`Safe`, `Semi Critical`, `Critical`, `Over Exploited`).
+const BLOCK_CLASS_COLORS: Record<string, string> = {
+  "Safe": "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  "Semi Critical": "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+  "Critical": "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
+  "Over Exploited": "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+};
+
+const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
 interface Props {
   wardNumber: number;
   groundwater: GroundwaterData | null;
+  profile: WardProfile;
   loading: boolean;
 }
 
-export function WardGroundwaterCard({ wardNumber, groundwater, loading }: Props) {
+export function WardGroundwaterCard({ wardNumber, groundwater, profile, loading }: Props) {
   const { t } = useLanguage();
+  const { cityPrefix } = useMyWardCity();
 
   if (loading) {
     return (
@@ -40,6 +57,20 @@ export function WardGroundwaterCard({ wardNumber, groundwater, loading }: Props)
         </CardHeader>
         <CardContent><Skeleton className="h-48 w-full rounded-lg" /></CardContent>
       </Card>
+    );
+  }
+
+  // Madurai-style: live interpolated depth/risk isn't available, but
+  // we have the CGWB block + nearest Year-Book well from the compute
+  // step. Show that instead of a flat "no data" message.
+  const liveEmpty = !groundwater || (groundwater.depthM == null && groundwater.riskScore == null);
+  if (liveEmpty && profile.groundwater_assessment) {
+    return (
+      <CgwbAssessmentCard
+        wardNumber={wardNumber}
+        assessment={profile.groundwater_assessment}
+        cityPrefix={cityPrefix}
+      />
     );
   }
 
@@ -69,7 +100,7 @@ export function WardGroundwaterCard({ wardNumber, groundwater, loading }: Props)
             {t("my_ward.groundwater")}
           </h2>
           <Link
-            href={`/groundwater?ward=${wardNumber}`}
+            href={`${cityPrefix}/groundwater?ward=${wardNumber}`}
             className="text-xs text-blue-600 dark:text-blue-400 hover:underline print:hidden"
           >
             {t("my_ward.view_on_map")} &rarr;
@@ -158,6 +189,116 @@ export function WardGroundwaterCard({ wardNumber, groundwater, loading }: Props)
 
         {/* History chart */}
         <WardHistoryChart wardNumber={wardNumber} />
+      </CardContent>
+    </Card>
+  );
+}
+
+/* ─ CGWB block + nearest-well card (Madurai today) ─────────────────── */
+
+function CgwbAssessmentCard({
+  wardNumber,
+  assessment,
+  cityPrefix,
+}: {
+  wardNumber: number;
+  assessment: WardGroundwaterAssessment;
+  cityPrefix: string;
+}) {
+  const { t } = useLanguage();
+  const block = assessment.block;
+  const well = assessment.nearest_well;
+  const blockBadgeClass =
+    block && BLOCK_CLASS_COLORS[block.class]
+      ? BLOCK_CLASS_COLORS[block.class]
+      : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300";
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
+            {t("my_ward.groundwater")}
+          </h2>
+          <Link
+            href={`${cityPrefix}/groundwater?ward=${wardNumber}`}
+            className="text-xs text-blue-600 dark:text-blue-400 hover:underline print:hidden"
+          >
+            {t("my_ward.view_on_map")} &rarr;
+          </Link>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Block-level headline - every ward has a block */}
+        {block ? (
+          <div>
+            <div className="flex items-baseline justify-between gap-2 flex-wrap">
+              <div>
+                <p className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                  {t("my_ward.gw_block_label")}
+                </p>
+                <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                  {block.name}
+                </p>
+              </div>
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${blockBadgeClass}`}>
+                {block.class}
+              </span>
+            </div>
+            {block.development_pct != null && (
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                {t("my_ward.gw_block_dev_label").replace(
+                  "{pct}",
+                  block.development_pct.toFixed(1),
+                )}
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-400 dark:text-slate-500">{t("ward.no_data")}</p>
+        )}
+
+        {/* Nearest well - real reading when one is honestly close */}
+        {well && well.latest ? (
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
+            <p className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">
+              {t("my_ward.gw_nearest_well_label")}
+            </p>
+            <div className="flex items-baseline justify-between gap-2 flex-wrap mt-0.5">
+              <div>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  {well.name}
+                </p>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500">
+                  {t("my_ward.gw_nearest_well_meta")
+                    .replace("{block}", well.block)
+                    .replace("{km}", well.distance_km.toFixed(1))}
+                </p>
+              </div>
+              <div className="text-right">
+                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 tabular-nums">
+                  {well.latest.depth_m_bgl.toFixed(1)}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">m bgl</span>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 tabular-nums">
+                  {MONTHS_SHORT[well.latest.month - 1] ?? ""} {well.latest.year}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              {t("my_ward.gw_no_nearest_well")}
+            </p>
+          </div>
+        )}
+
+        {/* Explanatory notes */}
+        <div className="text-[10px] text-slate-400 dark:text-slate-500 space-y-0.5 border-t border-slate-100 dark:border-slate-800 pt-2">
+          <p>{t("my_ward.gw_block_note")}</p>
+          <p>{t("my_ward.gw_source_cgwb_yearbook")}</p>
+        </div>
       </CardContent>
     </Card>
   );

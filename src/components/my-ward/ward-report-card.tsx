@@ -398,7 +398,16 @@ export function WardReportCard() {
         </div>
 
         {/* ── Quick facts ─────────────────────────────────────── */}
-        {ward && (
+        {ward && (() => {
+          // Sections marked _data_status: "not_available" (e.g. Madurai
+          // without public CFLOWS / drainage / sewerage layers) collapse
+          // to a placeholder dash instead of crashing or fabricating zero.
+          // Read each into a narrowed local up-front so TypeScript keeps
+          // the narrow inside the JSX below.
+          const floodSec = "_data_status" in ward.flood ? null : ward.flood;
+          const sewerSec = "_data_status" in ward.sewerage ? null : ward.sewerage;
+          const industrialSec = "_data_status" in ward.industrial ? null : ward.industrial;
+          return (
           <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
               {t("report.quick_facts")}
@@ -407,23 +416,23 @@ export function WardReportCard() {
               <div>
                 <p className="text-slate-400 dark:text-slate-500 text-xs">{t("report.fact_dominant_flood")}</p>
                 <p className="font-medium text-slate-700 dark:text-slate-300 print:text-black capitalize">
-                  {ward.flood.dominant_hazard ?? "-"}
+                  {floodSec ? (floodSec.dominant_hazard ?? "-") : "-"}
                 </p>
               </div>
               <div>
                 <p className="text-slate-400 dark:text-slate-500 text-xs">{t("report.fact_flood_hotspots")}</p>
                 <p className="font-medium text-slate-700 dark:text-slate-300 print:text-black">
-                  {ward.flood.hotspot_2015_count + ward.flood.hotspot_2020_count}
+                  {floodSec ? floodSec.hotspot_2015_count + floodSec.hotspot_2020_count : "-"}
                   <span className="text-xs text-slate-400 ml-1">{t("report.fact_flood_hotspots_years")}</span>
                 </p>
               </div>
               <div>
                 <p className="text-slate-400 dark:text-slate-500 text-xs">{t("report.fact_stps")}</p>
                 <p className="font-medium text-slate-700 dark:text-slate-300 print:text-black">
-                  {ward.sewerage.stp_count}
-                  {ward.sewerage.total_stp_capacity_mld > 0 && (
+                  {sewerSec ? sewerSec.stp_count : "-"}
+                  {sewerSec && sewerSec.total_stp_capacity_mld > 0 && (
                     <span className="text-xs text-slate-400 ml-1">
-                      ({ward.sewerage.total_stp_capacity_mld} MLD)
+                      ({sewerSec.total_stp_capacity_mld} MLD)
                     </span>
                   )}
                 </p>
@@ -431,19 +440,21 @@ export function WardReportCard() {
               <div>
                 <p className="text-slate-400 dark:text-slate-500 text-xs">{t("report.fact_pumping")}</p>
                 <p className="font-medium text-slate-700 dark:text-slate-300 print:text-black">
-                  {ward.sewerage.sps_count} {t("my_ward.pumping_stations")}
+                  {sewerSec ? `${sewerSec.sps_count} ${t("my_ward.pumping_stations")}` : "-"}
                 </p>
               </div>
               <div>
                 <p className="text-slate-400 dark:text-slate-500 text-xs">{t("report.fact_industrial")}</p>
                 <p className="font-medium text-slate-700 dark:text-slate-300 print:text-black">
-                  {ward.industrial.zone_count === 0
-                    ? t("report.none")
-                    : t(
-                        ward.industrial.zone_count === 1
-                          ? "report.zone_count_one"
-                          : "report.zone_count_other",
-                      ).replace("{count}", String(ward.industrial.zone_count))}
+                  {!industrialSec
+                    ? "-"
+                    : industrialSec.zone_count === 0
+                      ? t("report.none")
+                      : t(
+                          industrialSec.zone_count === 1
+                            ? "report.zone_count_one"
+                            : "report.zone_count_other",
+                        ).replace("{count}", String(industrialSec.zone_count))}
                 </p>
               </div>
               <div>
@@ -456,7 +467,8 @@ export function WardReportCard() {
               </div>
             </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* ── Representatives ─────────────────────────────────── */}
         {representatives && (

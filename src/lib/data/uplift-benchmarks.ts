@@ -94,7 +94,10 @@ export const INTERVENTIONS: Intervention[] = [
     resolution: "discrete",
     stepSize: 1,
     maxUnits: (p) => {
-      // Cap at actual number of high + very_high zones
+      // Cap at actual number of high + very_high zones. Cities with no
+      // public flood-hazard layer (Madurai) emit a not_available
+      // marker in p.flood; treat that as zero capped capacity here.
+      if ("_data_status" in p.flood) return 0;
       const cat = p.flood.by_category;
       return (cat["very_high"] ?? 0) + (cat["high"] ?? 0);
     },

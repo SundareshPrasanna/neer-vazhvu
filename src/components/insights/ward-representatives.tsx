@@ -2,6 +2,7 @@
 
 import { useWardRepresentatives } from "@/lib/hooks/use-ward-representatives";
 import { useLanguage } from "@/lib/i18n/context";
+import { useMyWardCity } from "@/components/my-ward/city-context";
 
 interface WardRepresentativesProps {
   wardNumber: number;
@@ -21,7 +22,8 @@ function partyBadgeClass(party: string): string {
 
 export function WardRepresentatives({ wardNumber }: WardRepresentativesProps) {
   const { t, language } = useLanguage();
-  const { representatives: reps, meta } = useWardRepresentatives(wardNumber);
+  const { cityId } = useMyWardCity();
+  const { representatives: reps, meta } = useWardRepresentatives(wardNumber, cityId);
 
   if (!reps) return null;
 

@@ -17,7 +17,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     return { title: "Ward Comparison | Neer Vazhvu" };
   }
 
-  const profiles = loadProfilesServer();
+  const profiles = loadProfilesServer("chennai");
   const rankings = wardNumbers
     .map((w) => computeWardRankings(w, profiles))
     .filter(Boolean);

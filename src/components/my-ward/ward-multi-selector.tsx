@@ -6,11 +6,18 @@ import { filterWards, type WardEntry } from "@/lib/utils/ward-filter";
 
 const MAX_WARDS = 3;
 
-const RECENT_WARDS_KEY = "neer-vazhvu-recent-wards";
+// Per-city localStorage key so a Chennai user's recent wards don't
+// leak into Madurai's selector and vice versa. Chennai keeps the
+// legacy unsuffixed key for back-compat.
+function recentWardsKey(cityId: string): string {
+  return cityId === "chennai"
+    ? "neer-vazhvu-recent-wards"
+    : `neer-vazhvu-recent-wards-${cityId}`;
+}
 
-function getRecentWards(): number[] {
+function getRecentWards(cityId: string): number[] {
   try {
-    const stored = localStorage.getItem(RECENT_WARDS_KEY);
+    const stored = localStorage.getItem(recentWardsKey(cityId));
     return stored ? JSON.parse(stored) : [];
   } catch {
     return [];
@@ -20,9 +27,11 @@ function getRecentWards(): number[] {
 interface WardMultiSelectorProps {
   selectedWards: number[];
   onUpdate: (wards: number[]) => void;
+  /** Defaults to Chennai for the legacy /my-ward/compare route. */
+  cityId?: string;
 }
 
-export function WardMultiSelector({ selectedWards, onUpdate }: WardMultiSelectorProps) {
+export function WardMultiSelector({ selectedWards, onUpdate, cityId = "chennai" }: WardMultiSelectorProps) {
   const { t } = useLanguage();
   const [wards, setWards] = useState<WardEntry[]>([]);
   const [openSlot, setOpenSlot] = useState<number | null>(null);
@@ -31,11 +40,12 @@ export function WardMultiSelector({ selectedWards, onUpdate }: WardMultiSelector
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetch("/api/wards")
+    const url = cityId === "chennai" ? "/api/wards" : `/api/wards?city=${cityId}`;
+    fetch(url)
       .then((r) => r.json())
       .then((d) => setWards(d.wards || []))
       .catch(console.error);
-  }, []);
+  }, [cityId]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -64,8 +74,8 @@ export function WardMultiSelector({ selectedWards, onUpdate }: WardMultiSelector
 
   const recentWards = useMemo(() => {
     if (typeof window === "undefined") return [];
-    return getRecentWards().filter((w) => !selectedWards.includes(w));
-  }, [selectedWards]);
+    return getRecentWards(cityId).filter((w) => !selectedWards.includes(w));
+  }, [selectedWards, cityId]);
 
   const handleSelect = useCallback(
     (wardNumber: number) => {

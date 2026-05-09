@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
+import { useMyWardCity } from "./city-context";
 
 interface Props {
   wardNumber: number;
@@ -13,6 +14,7 @@ interface Props {
 
 export function WardRiverCard({ wardNumber, profile, getRiverLabel }: Props) {
   const { t } = useLanguage();
+  const { cityPrefix } = useMyWardCity();
   const rivers = profile.rivers;
 
   const label = getRiverLabel(rivers.nearest_river_id, rivers.nearest_station_id);
@@ -22,8 +24,8 @@ export function WardRiverCard({ wardNumber, profile, getRiverLabel }: Props) {
   }
 
   const riverLink = rivers.nearest_station_id
-    ? `/rivers?river=${rivers.nearest_river_id}&station=${rivers.nearest_station_id}`
-    : `/rivers?river=${rivers.nearest_river_id}`;
+    ? `${cityPrefix}/rivers?river=${rivers.nearest_river_id}&station=${rivers.nearest_station_id}`
+    : `${cityPrefix}/rivers?river=${rivers.nearest_river_id}`;
 
   return (
     <Card>

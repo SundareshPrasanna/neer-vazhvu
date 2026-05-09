@@ -7,6 +7,7 @@ import type { GroundwaterData } from "@/lib/hooks/use-my-ward-data";
 import type { RepresentativeData } from "@/lib/hooks/use-ward-representatives";
 import { generateWardCSV, downloadCSV } from "@/lib/utils/ward-export";
 import { ShareMenu } from "@/components/share-menu";
+import { useMyWardCity } from "./city-context";
 
 interface WardHeaderProps {
   wardNumber: number;
@@ -18,10 +19,11 @@ interface WardHeaderProps {
 
 export function WardHeader({ wardNumber, zoneName, profile, groundwater, representatives }: WardHeaderProps) {
   const { t } = useLanguage();
+  const { cityPrefix } = useMyWardCity();
 
   const shareUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/my-ward?ward=${wardNumber}`
-    : `/my-ward?ward=${wardNumber}`;
+    ? `${window.location.origin}${cityPrefix}/my-ward?ward=${wardNumber}`
+    : `${cityPrefix}/my-ward?ward=${wardNumber}`;
 
   const handleExport = () => {
     const csv = generateWardCSV(
@@ -52,7 +54,7 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
       <div className="flex items-center gap-2 print:hidden">
         {/* Report Card */}
         <Link
-          href={`/my-ward/report?ward=${wardNumber}`}
+          href={`${cityPrefix}/my-ward/report?ward=${wardNumber}`}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -63,7 +65,7 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
 
         {/* Compare Wards */}
         <Link
-          href={`/my-ward/compare?wards=${wardNumber}`}
+          href={`${cityPrefix}/my-ward/compare?wards=${wardNumber}`}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

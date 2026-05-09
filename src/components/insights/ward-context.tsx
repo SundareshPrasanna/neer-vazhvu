@@ -82,8 +82,8 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
           />
         )}
 
-        {/* Flood */}
-        {profile.flood.dominant_hazard && (
+        {/* Flood - skip when ward profile has no flood data layer for this city */}
+        {!("_data_status" in profile.flood) && profile.flood.dominant_hazard && (
           <ContextRow
             href={`/flood-risk?ward=${wardNumber}`}
             label={t("ward_ctx.flood")}
@@ -104,8 +104,8 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
           />
         )}
 
-        {/* Drainage */}
-        {profile.drainage.line_count > 0 && (
+        {/* Drainage - skip when ward profile has no drainage layer for this city */}
+        {!("_data_status" in profile.drainage) && profile.drainage.line_count > 0 && (
           <ContextRow
             href={`/flood-risk?ward=${wardNumber}&view=drainage`}
             label={t("ward_ctx.drainage")}

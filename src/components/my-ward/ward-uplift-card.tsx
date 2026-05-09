@@ -11,6 +11,7 @@ import {
   computeUpliftPlan,
   type MetricGap,
 } from "@/lib/utils/ward-uplift";
+import { useMyWardCity } from "./city-context";
 
 /* ── Props ─────────────────────────────────────────────────────────── */
 
@@ -38,19 +39,24 @@ const FACTOR_LABEL: Record<string, string> = {
 
 export function WardUpliftCard({ wardNumber }: Props) {
   const { t } = useLanguage();
+  const { cityId } = useMyWardCity();
   const [allProfiles, setAllProfiles] = useState<WardProfile[] | null>(null);
   const [budget, setBudget] = useState(100);
 
-  // Load all profiles (cached in module)
+  // Load profiles for the *current* city. Without the cityId argument
+  // this defaulted to Chennai, so a Madurai ward was being graded
+  // against Chennai medians - "Where your ward lags" would surface
+  // drainage / sewerage gaps even though Madurai has no such data.
   useEffect(() => {
     let cancelled = false;
-    loadProfiles().then((profiles) => {
+    setAllProfiles(null);
+    loadProfiles(cityId).then((profiles) => {
       if (!cancelled) setAllProfiles(profiles);
     });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [cityId]);
 
   // Pre-compute city distributions once
   const cityDist = useMemo(() => {

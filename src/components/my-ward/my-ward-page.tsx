@@ -16,8 +16,16 @@ import { WardUpliftCard } from "./ward-uplift-card";
 import { WardActionsCard } from "./ward-actions-card";
 import { WardNarrative } from "@/components/insights/ward-narrative";
 import { NewsContext } from "@/components/insights/news-context";
+import { MyWardCityProvider } from "./city-context";
 
-export function MyWardPage() {
+interface MyWardPageProps {
+  /** City id for which to render the page. Defaults to Chennai for
+   *  back-compat with the existing flat /my-ward route. Pass an
+   *  explicit cityId on the [cityId]/my-ward route. */
+  cityId?: string;
+}
+
+export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t } = useLanguage();
@@ -28,7 +36,12 @@ export function MyWardPage() {
     initialWard ? parseInt(initialWard, 10) || null : null,
   );
 
-  const { profile, groundwater, representatives, loading, getRiverLabel } = useMyWardData(wardNumber);
+  const { profile, groundwater, representatives, loading, getRiverLabel } =
+    useMyWardData(wardNumber, cityId);
+
+  // Per-city URL prefix. Chennai keeps the flat URLs; other cities are
+  // namespaced under /<cityId>.
+  const cityPrefix = cityId === "chennai" ? "" : `/${cityId}`;
 
   // Avoid hydration mismatch: t() returns raw keys on server since
   // LanguageProvider reads language from localStorage on client only.
@@ -40,9 +53,9 @@ export function MyWardPage() {
     if (wardNumber == null) return;
     const current = searchParams.get("ward");
     if (current !== String(wardNumber)) {
-      router.replace(`/my-ward?ward=${wardNumber}`, { scroll: false });
+      router.replace(`${cityPrefix}/my-ward?ward=${wardNumber}`, { scroll: false });
     }
-  }, [wardNumber, searchParams, router]);
+  }, [wardNumber, searchParams, router, cityPrefix]);
 
   const handleSelectWard = (ward: number) => {
     setWardNumber(ward);
@@ -57,9 +70,10 @@ export function MyWardPage() {
   }
 
   return (
+    <MyWardCityProvider cityId={cityId}>
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Ward selector - shows hero when no ward selected, compact when selected */}
-      <WardSelector onSelect={handleSelectWard} selectedWard={wardNumber} />
+      <WardSelector onSelect={handleSelectWard} selectedWard={wardNumber} cityId={cityId} />
 
       {/* Ward content */}
       {wardNumber != null && profile && (
@@ -72,13 +86,18 @@ export function MyWardPage() {
             representatives={representatives}
           />
 
-          {/* AI Narrative */}
-          <WardNarrative wardNumber={wardNumber} />
+          {/* AI Narrative - Chennai-only today (the /api/narratives/ward
+              endpoint reads a Chennai-specific narrative store).
+              Other cities don't yet have a generation pipeline, so we
+              hide the section rather than render Chennai's narrative
+              under their ward number. */}
+          {cityId === "chennai" && <WardNarrative wardNumber={wardNumber} />}
 
           {/* Section cards */}
           <WardGroundwaterCard
             wardNumber={wardNumber}
             groundwater={groundwater}
+            profile={profile}
             loading={loading}
           />
 
@@ -96,13 +115,13 @@ export function MyWardPage() {
             getRiverLabel={getRiverLabel}
           />
 
-          {/* Industrial zones */}
-          {profile.industrial.zone_count > 0 && (
+          {/* Industrial zones - only when section data exists for this city */}
+          {!("_data_status" in profile.industrial) && profile.industrial.zone_count > 0 && (
             <Link
               href={
                 profile.rivers.nearest_river_id
-                  ? `/rivers?river=${profile.rivers.nearest_river_id}${profile.rivers.nearest_station_id ? `&station=${profile.rivers.nearest_station_id}` : ""}`
-                  : "/rivers"
+                  ? `${cityPrefix}/rivers?river=${profile.rivers.nearest_river_id}${profile.rivers.nearest_station_id ? `&station=${profile.rivers.nearest_station_id}` : ""}`
+                  : `${cityPrefix}/rivers`
               }
               className="block text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 rounded-lg px-4 py-2.5 hover:bg-amber-100 dark:hover:bg-amber-950/40 transition-colors"
             >
@@ -123,7 +142,7 @@ export function MyWardPage() {
           {/* Data disclaimer */}
           <div className="text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/30 rounded-lg px-4 py-3 space-y-1">
             <p>{t("my_ward.data_note")}</p>
-            <Link href="/about" className="text-blue-500 dark:text-blue-400 hover:underline">
+            <Link href={`${cityPrefix}/about`} className="text-blue-500 dark:text-blue-400 hover:underline">
               {t("nav.about")} &rarr;
             </Link>
           </div>
@@ -137,5 +156,6 @@ export function MyWardPage() {
         </div>
       )}
     </div>
+    </MyWardCityProvider>
   );
 }
