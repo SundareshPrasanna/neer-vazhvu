@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { UnifiedDetailPanel } from "@/components/water-bodies/unified-detail-panel";
 import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
@@ -457,6 +458,30 @@ function WaterBodiesPageContent() {
               {viewMode === "restoration" && (
                 <div className="text-xs text-slate-500 dark:text-slate-400">
                   {t("lr.source_note")}
+                </div>
+              )}
+              {hasCascadeOverlay && showCascade && (
+                <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 space-y-1">
+                  <div className="font-semibold text-slate-700 dark:text-slate-300">
+                    Cascade overlay &middot; predicted, not observed
+                  </div>
+                  <div>
+                    <span className="inline-block w-3 h-0.5 bg-sky-500 align-middle mr-1.5" />
+                    Sky-blue lines: predicted tank-to-tank cascade links from HydroSHEDS DEM and flow direction.
+                  </div>
+                  <div>
+                    <span className="inline-block w-3 h-0.5 bg-amber-500 align-middle mr-1.5" />
+                    Amber lines: tanks that drain into a river instead of another tank.
+                  </div>
+                  <div className="pt-1">
+                    Edges respect rivers as both barriers (no crossings) and sinks. Heuristic only - a future pass will label edges as intact / broken / encroached.{" "}
+                    <Link
+                      href="/about#cascade-methodology"
+                      className="text-sky-600 dark:text-sky-400 hover:underline"
+                    >
+                      Full methodology &rarr;
+                    </Link>
+                  </div>
                 </div>
               )}
             </MapInfoButton>
