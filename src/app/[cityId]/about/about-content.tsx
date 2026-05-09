@@ -214,7 +214,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
             <SubSection title="How Madurai's tap is fed today">
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 Madurai&apos;s drinking water travels a long path before it reaches a tap:
-                <span className="font-semibold"> Mullaperiyar Dam (Kerala) → Periyar-Vaigai diversion tunnel → Vaigai Dam → Pannaipatty Water Treatment Plant → Madurai Municipal Corporation distribution mains → 23 overhead reservoirs across 81 zones → ~96,048 connections → tap.</span>
+                <span className="font-semibold"> Mullaperiyar Dam (Kerala) → Periyar-Vaigai diversion tunnel → Vaigai Dam → Pannaipatty Water Treatment Plant (118.6 MLD) → Madurai Municipal Corporation distribution mains (~764 km) → 28 existing overhead reservoirs across 28 distribution zones / 81 District Metering Areas → ~95,487 connections → tap.</span>
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
                 Two things are worth knowing when reading the dashboard&apos;s headline:
@@ -224,7 +224,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
                   <span className="font-semibold">Vaigai is a multi-purpose dam, not a city reservoir.</span> It&apos;s owned by the Tamil Nadu Public Works Department and shared across Madurai, Theni, Sivagangai and Ramanathapuram districts for both irrigation and drinking water. MMC&apos;s sanctioned drinking-water allocation is <span className="font-semibold">1,500 mcft per year</span> - a small slice of Vaigai&apos;s total storage. The most recent reported actual draw is ~900 mcft per year (≈70 MLD continuous).
                 </li>
                 <li>
-                  <span className="font-semibold">We haven&apos;t yet found a public daily feed.</span> Pannaipatty WTP&apos;s daily raw-water intake and treated output, the 23 OHTs&apos; live levels, and zone-by-zone supply are tracked inside MMC&apos;s ICCC and SCADA systems for internal monitoring; we don&apos;t have a route to a daily public surface for them today. So a single &quot;days of water left&quot; number for the city would be guesswork; we don&apos;t generate one.
+                  <span className="font-semibold">We haven&apos;t yet found a public daily feed.</span> Pannaipatty WTP&apos;s daily raw-water intake and treated output, the 28 existing OHTs&apos; live levels (with 37 more being built under Tranche 2), and zone-by-zone supply are tracked inside MMC&apos;s ICCC and SCADA systems for internal monitoring; we don&apos;t have a route to a daily public surface for them today. So a single &quot;days of water left&quot; number for the city would be guesswork; we don&apos;t generate one.
                 </li>
               </ul>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
@@ -249,15 +249,15 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
                   </p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-                  <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Per-zone supply across the 81 distribution zones</h4>
+                  <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Per-DMA supply across the 81 District Metering Areas</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Zone-level supply telemetry isn&apos;t in the public dataset today. ADB Tranche 3 covers 39 of the 81 zones; Smart City ABD covers 8. With zone-level data the dashboard could surface which neighbourhoods are getting served daily and which lean on tankers and borewells.
+                    DMA-level supply telemetry isn&apos;t in the public dataset today. 42 DMAs are covered via earlier 24x7 + Smart City Mission rollouts; ADB Tranche 3 covers the remaining 39, with 115 newly-established DMAs targeted post-build. With this telemetry the dashboard could surface which neighbourhoods are getting served daily and which lean on tankers and borewells.
                   </p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
                   <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">OHT-wise live storage (23 overhead reservoirs)</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Aggregate OHT capacity (34.85 MLD) is documented; per-OHT live levels live in MMC&apos;s SCADA. Per-OHT readings would let zone-level supply gaps surface in near real time.
+                    Aggregate existing-OHT capacity (41.05 MLD across 28 OHTs per IEE Part 2) is documented per-tank in `madurai-supply-overview.json`; per-OHT live levels live in MMC&apos;s SCADA. Per-OHT readings would let zone-level supply gaps surface in near real time.
                   </p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
@@ -401,13 +401,13 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
               <DataSource
                 name="ADB TNUFIP Tranche 2 IEE - Madurai dedicated water supply scheme"
                 url="https://www.adb.org/sites/default/files/project-documents/49107/49107-005-iee-en_10.pdf"
-                description="Engineering-grade structural numbers extracted from the December 2025 ADB Initial Environmental Examination: 192 MLD existing supply mix (Vaigai 115 + Cauvery 30 + Vaigai bed 47), Pannaipatty WTP 125 MLD existing / 250 MLD planned, 23 OHTs / 81 zones / 467 km mains / 96,048 connections, 2034 demand 317 MLD, PWD allocation table (MMC 51.09 cusecs continuous). Powers the dashboard's at-a-glance tile."
+                description="Engineering-grade structural numbers extracted from the December 2025 ADB Initial Environmental Examination Parts 1-3 + Tranche 3 IEE: 192 MLD existing supply mix across 7 schemes (Vaigai surface 115 + Vaigai sub-surface 47 + Cauvery via Melur 30); Pannaipatty WTP 118.6 MLD existing (71.6 Line-I + 47.0 Line-II) / 243.6 MLD planned post-Tranche 2; 28 existing OHTs (12 N + 16 S, 410.5 LL aggregate) plus 37 new under Tranche 2; 28 distribution zones / 81 District Metering Areas (42 today + 39 in Tranche 3 scope; 115 newly-established post-build); 764 km existing mains + 813 km new under Tranche 3; 95,487 connections (94,487 dom + 600 non-dom + 400 com), targeting 163,958 households; 2034 demand 317 MLD; PWD allocation table (MMC 51.09 cusecs continuous). Powers the dashboard's at-a-glance tile."
                 frequency="static (per ADB tranche publication)"
               />
               <DataSource
                 name="MMC water-supply page"
                 url="https://maduraicorporation.co.in/aboutus/water-supply/"
-                description="MMC's published 1,500 mcft/year drinking-water allocation from Vaigai, ~900 mcft recent draw, infrastructure stats (23 OHTs, 96,048 connections, 467 km mains, 12 service zones / 81 distribution zones)."
+                description="MMC's published 1,500 mcft/year drinking-water allocation from Vaigai with ~900 mcft recent draw. Infrastructure stats on the public page differ slightly from the engineering IEE values (page lists 23 OHTs, 96,048 connections, 467 km mains, 81 distribution zones) - we treat the IEE Parts 1-3 as the primary engineering record and document the disagreements in `madurai-supply-overview.json._secondary_local_source`."
                 frequency="static"
               />
               <DataSource

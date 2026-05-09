@@ -124,9 +124,19 @@ export default async function CityHomePage({ params }: PageProps) {
         pointCount={history.pointCount}
       />
 
+      {/* Long-term IMD rainfall - identical component to Chennai's, with
+          the city's own IMD file. Falls back to a "data pending" card
+          when the city's rainfall file hasn't been generated yet. */}
+      <RainfallTrends cityId={cityId} />
+
+      {/* Google-News quick-link, seeded with the city name. */}
+      <NewsSection cityDisplayName={config.displayName} />
+
       {/* Data-gap panel: shown for cities where the utility doesn't
-          publish daily downstream-of-dam data. Reframes the gaps as
-          institutional asks rather than dashboard weaknesses. */}
+          publish daily downstream-of-dam data. Placed near the end of
+          the dashboard so it reads as "we've shown all our cards;
+          here's what's still missing" rather than interrupting the
+          live-data flow mid-page. */}
       {config.heroMode === "allocation" && (
         <DataGapPanel
           titleKey="gap.title_madurai"
@@ -135,14 +145,6 @@ export default async function CityHomePage({ params }: PageProps) {
           cta={{ labelKey: "gap.cta_about", href: `/${cityId}/about` }}
         />
       )}
-
-      {/* Long-term IMD rainfall - identical component to Chennai's, with
-          the city's own IMD file. Falls back to a "data pending" card
-          when the city's rainfall file hasn't been generated yet. */}
-      <RainfallTrends cityId={cityId} />
-
-      {/* Google-News quick-link, seeded with the city name. */}
-      <NewsSection cityDisplayName={config.displayName} />
 
       {/* Per-feature deep-dive nav. Same shape for every city; the routes
           themselves render the city's data. */}

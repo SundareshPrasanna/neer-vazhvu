@@ -39,13 +39,15 @@ Throughout the Madurai sections we hedge gap claims with "no known public X" rat
 | **Output** | `public/data/madurai-supply-overview.json` |
 
 Fields extracted and surfaced via the `UrbanSupplyOverview` tile on `/madurai`:
-- Existing supply mix (192 MLD = Vaigai 115 + Cauvery via Melur 30 + Vaigai riverbed 47)
-- Pannaipatty WTP capacity (125 MLD existing + 125 MLD planned via this tranche)
-- Distribution scale (23 OHTs / 81 zones / 467 km mains / 96,048 connections)
-- 2034 demand (317 MLD with 125 MLD gap driving the Mullai Periyar dedicated supply scheme)
-- Allocation context (PWD letter Dec 2018: MMC drinking 51.09 cusecs continuous; combined drinking demand 209.80 MLD across 59 schemes between Mullaperiyar and Vaigai dams)
+- **Existing supply mix** (192 MLD across 7 schemes): Vaigai WSS Line-I 68 + Line-II 47 (surface, from Vaigai Dam intake well) + Vaigai riverbed 17.54 + Thachampathu Melakkal 14 + Kochadai 8.46 + Manalur/Thiruppuvanam 7 (all sub-surface) + Melur CWSS / Cauvery 30
+- **Pannaipatty WTP capacity** (118.6 MLD existing = 71.6 MLD Line-I + 47.0 MLD Line-II, both built 1995/2009; +125 MLD planned via Tranche 2 = 243.6 MLD post-build)
+- **Distribution scale**: 28 existing OHTs (12 N + 16 S, 410.5 LL aggregate); 37 new OHTs being added under Tranche 2 (589 LL aggregate); 28 distribution zones / 81 DMAs (42 covered today via 24x7 + Smart City; 39 in Tranche 3 scope; 115 newly-established post-Tranche 3); 764 km existing mains; 95,487 connections (94,487 dom + 600 non-dom + 400 com)
+- **Demand**: 2034 design 317 MLD with 125 MLD gap driving the Mullai Periyar dedicated supply scheme; Tranche 3 targets 100% household coverage at 163,958 households
+- **Allocation context** (PWD letter Dec 2018): MMC drinking 51.09 cusecs continuous (= 125 MLD); combined drinking demand 209.80 MLD across 59 schemes between Mullaperiyar and Vaigai dams
 
-Tranche 3 IEE (`49107-010-iee-en_0.pdf`) is committed but not yet parsed; reserved for the deferred zone-reliability heatmap follow-up.
+Tranche 3 IEE (`49107-010-iee-en_0.pdf`) parsed for distribution-network detail. Tranche 2 IEE Parts 2 + 3 (`49107-005-iee-en_11.pdf` and `_12.pdf`) parsed for the existing-system tables, OHT details, and water-quality test reports.
+
+**Cross-reference with MMC's public water-supply page**: a few numbers diverge (MMC's page shows 23 OHTs / 81 distribution zones / 467 km mains / 125 MLD WTP / 96,048 connections). The IEE values supersede because they're the engineering-grade DPR submitted to ADB; the MMC public page uses simpler/rounded figures and conflates DMAs with distribution zones in places. The `madurai-supply-overview.json._secondary_local_source.known_disagreements` array enumerates each disagreement.
 
 ## Groundwater - CGWB Year Book + Block GWR (Madurai)
 
