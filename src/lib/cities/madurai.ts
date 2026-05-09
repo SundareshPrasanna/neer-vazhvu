@@ -4,6 +4,7 @@ export const MADURAI: CityConfig = {
   placeKind: 'city',
   cityId: 'madurai',
   displayName: 'Madurai',
+  displayNameLocalized: { ta: 'மதுரை' },
   stateCode: 'TN',
   timezone: 'Asia/Kolkata',
   center: { lat: 9.9252, lng: 78.1198 },
@@ -21,6 +22,7 @@ export const MADURAI: CityConfig = {
   },
   defaultConsumptionMld: 135,
   defaultDesalinationMld: null,
+  availableLanguages: ['en', 'ta'],
   // Madurai's tracked dams are irrigation-primary (Vaigai is shared
   // across Madurai/Theni/Sivagangai/Ramanathapuram for fields,
   // Mullaperiyar is Kerala-side basin storage). Chennai's days-left

@@ -4,6 +4,7 @@ export const CHENNAI: CityConfig = {
   placeKind: 'city',
   cityId: 'chennai',
   displayName: 'Chennai',
+  displayNameLocalized: { ta: 'சென்னை' },
   stateCode: 'TN',
   timezone: 'Asia/Kolkata',
   center: { lat: 13.0827, lng: 80.2707 },
@@ -21,6 +22,7 @@ export const CHENNAI: CityConfig = {
   },
   defaultConsumptionMld: 830,
   defaultDesalinationMld: 190,
+  availableLanguages: ['en', 'ta'],
   // Cascade reconstruction available (755 nodes / 573 edges across 7
   // cascade depths from the same HydroSHEDS pipeline that built
   // Madurai's). Chennai's max depth is shorter because the delta is

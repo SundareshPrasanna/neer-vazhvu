@@ -1,6 +1,71 @@
-export type Language = "en" | "ta";
+/**
+ * The set of language codes the platform is architected to support
+ * across India. Adding a city in a new state means: extend this union
+ * (if the language is not yet present), add a `LANGUAGE_LABELS` entry,
+ * and set `availableLanguages: ['en', '<code>']` on that city's config.
+ *
+ * Translation entries are partial (see `TranslationEntry`): every
+ * entry MUST have an `en` value (accessibility floor + fallback), but
+ * other-language values are optional. A city can ship before all
+ * strings are translated; missing strings render in English.
+ */
+export type LanguageCode =
+  | "en"
+  | "ta" // Tamil (TN cities)
+  | "kn" // Kannada (Karnataka)
+  | "mr" // Marathi (Maharashtra)
+  | "hi" // Hindi (Delhi, MP, UP, etc.)
+  | "te" // Telugu (Andhra, Telangana)
+  | "ml" // Malayalam (Kerala)
+  | "bn"; // Bengali (West Bengal)
 
-export const translations: Record<string, { en: string; ta: string }> = {
+/** Back-compat alias - many imports still use `Language`. */
+export type Language = LanguageCode;
+
+/** Per-language display metadata: native script name, English name, and a
+ *  one-or-two-character glyph for the toggle button. */
+export const LANGUAGE_LABELS: Record<
+  LanguageCode,
+  { native: string; english: string; toggle: string }
+> = {
+  en: { native: "English", english: "English", toggle: "EN" },
+  ta: { native: "தமிழ்", english: "Tamil", toggle: "த" },
+  kn: { native: "ಕನ್ನಡ", english: "Kannada", toggle: "ಕ" },
+  mr: { native: "मराठी", english: "Marathi", toggle: "म" },
+  hi: { native: "हिन्दी", english: "Hindi", toggle: "हि" },
+  te: { native: "తెలుగు", english: "Telugu", toggle: "తె" },
+  ml: { native: "മലയാളം", english: "Malayalam", toggle: "മ" },
+  bn: { native: "বাংলা", english: "Bengali", toggle: "ব" },
+};
+
+/** All language codes the platform recognises. Useful for runtime
+ *  validation of stored localStorage preferences. */
+export const ALL_LANGUAGES: readonly LanguageCode[] = [
+  "en",
+  "ta",
+  "kn",
+  "mr",
+  "hi",
+  "te",
+  "ml",
+  "bn",
+] as const;
+
+export function isLanguageCode(value: unknown): value is LanguageCode {
+  return typeof value === "string" && (ALL_LANGUAGES as readonly string[]).includes(value);
+}
+
+/**
+ * Shape of a single translation entry. English is required - it is both
+ * the accessibility floor and the fallback whenever a key is missing in
+ * the requested language. Other languages are optional, so e.g. Karnataka
+ * cities can ship before any string is translated to Kannada.
+ */
+export type TranslationEntry = { en: string } & Partial<
+  Record<Exclude<LanguageCode, "en">, string>
+>;
+
+export const translations: Record<string, TranslationEntry> = {
   // ── Common ────────────────────────────────────────────────────────────────
   "common.loading_map":     { en: "Loading map...", ta: "வரைபடம் ஏற்றப்படுகிறது..." },
   "common.close":           { en: "Close", ta: "மூடு" },
@@ -1421,11 +1486,11 @@ export const translations: Record<string, { en: string; ta: string }> = {
   "uplift.factor_wb_health":          { en: "Water body health", ta: "நீர்நிலை ஆரோக்கியம்" },
   "uplift.factor_wb_density":         { en: "Water body density", ta: "நீர்நிலை அடர்த்தி" },
 
-  // ── Chennai Water Facts page ──────────────────────────────────────────────
-  "facts.page_title":       { en: "Chennai Water Facts", ta: "சென்னை நீர் உண்மைகள்" },
+  // ── Water Facts page (city name interpolated via {city}) ─────────────────
+  "facts.page_title":       { en: "{city} Water Facts", ta: "{city} நீர் உண்மைகள்" },
   "facts.page_intro":       {
-    en: "Chennai's water state in quotable numbers. Every fact has a source, a date, and a methodology link. Organised by freshness: today's live data, this year's government releases, historical milestones, and structural infrastructure.",
-    ta: "சென்னையின் நீர் நிலை மேற்கோள் எண்களில். ஒவ்வொரு உண்மைக்கும் ஒரு மூலம், தேதி மற்றும் முறைமை இணைப்பு உள்ளது. புதுமையின் அடிப்படையில் ஒழுங்கமைக்கப்பட்டது: இன்றைய நேரடித் தரவு, இந்த ஆண்டின் அரசாங்க வெளியீடுகள், வரலாற்று மைல்கற்கள், மற்றும் கட்டமைப்பு உள்கட்டமைப்பு.",
+    en: "{city}'s water state in quotable numbers. Every fact has a source, a date, and a methodology link. Organised by freshness: today's live data, this year's government releases, historical milestones, and structural infrastructure.",
+    ta: "{city}யின் நீர் நிலை மேற்கோள் எண்களில். ஒவ்வொரு உண்மைக்கும் ஒரு மூலம், தேதி மற்றும் முறைமை இணைப்பு உள்ளது. புதுமையின் அடிப்படையில் ஒழுங்கமைக்கப்பட்டது: இன்றைய நேரடித் தரவு, இந்த ஆண்டின் அரசாங்க வெளியீடுகள், வரலாற்று மைல்கற்கள், மற்றும் கட்டமைப்பு உள்கட்டமைப்பு.",
   },
   "facts.last_updated":     { en: "Last updated", ta: "கடைசியாக புதுப்பிக்கப்பட்டது" },
   "facts.as_of":            { en: "As of", ta: "அன்று" },
