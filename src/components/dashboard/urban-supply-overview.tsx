@@ -24,7 +24,9 @@ interface SupplyMixItem {
   source: string;
   mld: number;
   annual_mcft: number | null;
-  note?: string;
+  scheme?: string;
+  supplies?: string;
+  note?: string | null;
 }
 
 interface SupplyOverviewData {
@@ -39,17 +41,26 @@ interface SupplyOverviewData {
     expansion_source: string;
   };
   distribution: {
-    ohts: number;
-    oht_aggregate_capacity_mld: number;
-    ground_level_reservoirs: number;
-    glr_capacity_mld: number;
+    /** Per-IEE Part 2 (Dec 2025): 28 existing OHTs (12 N + 16 S),
+     *  410.5 LL aggregate. Tranche 2 adds 37 more OHTs at 589 LL. */
+    ohts_existing: number;
+    ohts_existing_aggregate_capacity_mld: number;
+    ohts_new_under_tranche2: number;
+    ohts_total_post_tranche2: number;
+    /** Operational distribution zones (12 N + 16 S = 28). Distinct from
+     *  DMAs (81 today / 115 post-Tranche-3), which are District
+     *  Metering Areas at finer granularity. */
     distribution_zones: number;
-    mains_km: number;
+    dmas_today: number;
+    dmas_post_tranche3: number;
+    mains_km_existing: number;
+    new_distribution_pipelines_km_tranche3: number;
     connections: {
       total: number;
       domestic: number;
+      non_domestic?: number;
       commercial: number;
-      industrial: number;
+      industrial?: number;
     };
   };
   demand: {
@@ -137,7 +148,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             <div className="flex w-full h-2 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2">
               {data.current_supply_mix_mld.map((item, i) => {
                 const pct = (item.mld / data.current_supply_total_mld) * 100;
-                const colors = ["bg-blue-500", "bg-cyan-500", "bg-teal-500", "bg-emerald-500"];
+                const colors = ["bg-blue-600", "bg-blue-400", "bg-cyan-500", "bg-teal-500", "bg-emerald-500", "bg-lime-500", "bg-amber-500"];
                 return (
                   <div
                     key={item.source}
@@ -151,7 +162,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             <div className="space-y-1">
               {data.current_supply_mix_mld.map((item, i) => {
                 const pct = ((item.mld / data.current_supply_total_mld) * 100).toFixed(0);
-                const colors = ["bg-blue-500", "bg-cyan-500", "bg-teal-500", "bg-emerald-500"];
+                const colors = ["bg-blue-600", "bg-blue-400", "bg-cyan-500", "bg-teal-500", "bg-emerald-500", "bg-lime-500", "bg-amber-500"];
                 return (
                   <div key={item.source} className="flex items-center gap-2 text-xs">
                     <span className={`w-2 h-2 rounded-sm shrink-0 ${colors[i % colors.length]}`} />
@@ -190,18 +201,18 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             <div className="grid grid-cols-3 gap-3 text-xs">
               <Stat
                 label={t("supply_overview.ohts_label")}
-                value={String(data.distribution.ohts)}
-                sub={`${data.distribution.oht_aggregate_capacity_mld} MLD total`}
+                value={String(data.distribution.ohts_existing)}
+                sub={`${data.distribution.ohts_existing_aggregate_capacity_mld} MLD; +${data.distribution.ohts_new_under_tranche2} planned`}
               />
               <Stat
                 label={t("supply_overview.zones_label")}
-                value={String(data.distribution.distribution_zones)}
+                value={`${data.distribution.distribution_zones} / ${data.distribution.dmas_today}`}
                 sub={t("supply_overview.zones_sub")}
               />
               <Stat
                 label={t("supply_overview.mains_label")}
-                value={String(data.distribution.mains_km)}
-                sub="km"
+                value={String(data.distribution.mains_km_existing)}
+                sub={`km; +${data.distribution.new_distribution_pipelines_km_tranche3} planned`}
               />
             </div>
 
@@ -209,8 +220,8 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
               {t("supply_overview.connections_line")
                 .replace("{total}", formatNumber(data.distribution.connections.total))
                 .replace("{domestic}", formatNumber(data.distribution.connections.domestic))
-                .replace("{commercial}", formatNumber(data.distribution.connections.commercial))
-                .replace("{industrial}", formatNumber(data.distribution.connections.industrial))}
+                .replace("{non_domestic}", formatNumber(data.distribution.connections.non_domestic ?? 0))
+                .replace("{commercial}", formatNumber(data.distribution.connections.commercial))}
             </div>
           </div>
         </div>
