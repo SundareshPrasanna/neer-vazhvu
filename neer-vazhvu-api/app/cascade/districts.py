@@ -20,7 +20,7 @@ into `_REGISTRY`. No code changes anywhere else.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 from app.gee.config import PUBLIC_DATA_DIR, PUBLIC_DIR, PUBLIC_GEOJSON_DIR
