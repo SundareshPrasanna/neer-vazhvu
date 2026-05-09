@@ -3,11 +3,10 @@ import { resolve } from "path";
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { UrbanSupplyOverview } from "@/components/dashboard/urban-supply-overview";
 import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
-import { MultiSourceHistoryChart } from "@/components/dashboard/multi-source-history-chart";
-import type { HistorySeries, ForecastSeries } from "@/types/reservoir";
+import { DashboardHistorySection } from "@/components/dashboard/dashboard-history-section";
 import { ReservoirCatchmentContext } from "@/components/dashboard/reservoir-catchment-context";
 import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
-import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
+import { DeferredRainfallTrends } from "@/components/dashboard/deferred-rainfall-trends";
 import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
 import { CityStory } from "@/components/insights/city-story";
 import type { AiNarrative } from "@/components/insights/city-story";
@@ -68,134 +67,6 @@ async function getReservoirData() {
       return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
     });
 
-  // Historical data (all available  -  chart tabs handle filtering client-side)
-  // Supabase/PostgREST caps at 1000 rows per request; paginate to get all
-  const historyRaw: { date: string; reservoir: string; current_storage_mcft: number; inflow_cusecs: number | null; outflow_cusecs: number | null }[] = [];
-  let offset = 0;
-  const PAGE_SIZE = 1000;
-  const MAX_ROWS = 20000; // Safety cap: ~9 years of daily data for 6 reservoirs
-  while (historyRaw.length < MAX_ROWS) {
-    const { data: page } = await supabase
-      .from("reservoir_daily")
-      .select("date, reservoir, current_storage_mcft, inflow_cusecs, outflow_cusecs")
-      .not("current_storage_mcft", "is", null)
-      .order("date", { ascending: true })
-      .range(offset, offset + PAGE_SIZE - 1);
-    if (!page || page.length === 0) break;
-    historyRaw.push(...page);
-    if (page.length < PAGE_SIZE) break;
-    offset += PAGE_SIZE;
-  }
-
-  // Per-reservoir history (used for individual reservoir charts)
-  const perReservoirMap = new Map<string, Map<string, { storage: number; inflow: number; outflow: number }>>();
-  for (const row of historyRaw) {
-    if (row.reservoir) {
-      if (!perReservoirMap.has(row.reservoir)) {
-        perReservoirMap.set(row.reservoir, new Map());
-      }
-      perReservoirMap.get(row.reservoir)!.set(row.date, {
-        storage: row.current_storage_mcft || 0,
-        inflow: row.inflow_cusecs || 0,
-        outflow: row.outflow_cusecs || 0,
-      });
-    }
-  }
-
-  // Combined totals per date  -  forward-fill storage for reservoirs with
-  // sparse (monthly) data so the combined chart doesn't drop to near-zero
-  // on dates where only daily-frequency reservoirs report.
-  const allDates = Array.from(new Set(historyRaw.map((r) => r.date))).sort();
-  const reservoirNames = Array.from(perReservoirMap.keys());
-  const lastKnownStorage = new Map<string, number>();
-  const history: Array<{ date: string; totalStorage: number; totalInflow: number; totalOutflow: number }> = [];
-
-  for (const date of allDates) {
-    let totalStorage = 0;
-    let totalInflow = 0;
-    let totalOutflow = 0;
-
-    for (const res of reservoirNames) {
-      const resMap = perReservoirMap.get(res)!;
-      if (resMap.has(date)) {
-        const val = resMap.get(date)!;
-        lastKnownStorage.set(res, val.storage);
-        totalStorage += val.storage;
-        totalInflow += val.inflow;
-        totalOutflow += val.outflow;
-      } else if (lastKnownStorage.has(res)) {
-        // Forward-fill storage only (inflow/outflow are instantaneous, not carried)
-        totalStorage += lastKnownStorage.get(res)!;
-      }
-    }
-
-    history.push({ date, totalStorage, totalInflow, totalOutflow });
-  }
-  const perReservoirHistory: Record<string, Array<{ date: string; totalStorage: number; totalInflow: number; totalOutflow: number }>> = {};
-  for (const [reservoir, dateMap] of perReservoirMap) {
-    perReservoirHistory[reservoir] = Array.from(dateMap.entries()).map(([date, vals]) => ({
-      date,
-      totalStorage: vals.storage,
-      totalInflow: vals.inflow,
-      totalOutflow: vals.outflow,
-    }));
-  }
-
-  // Forecast data from reservoir_forecast table
-  type ForecastPoint = { date: string; predicted: number; lower: number; upper: number };
-  const forecast: ForecastPoint[] = [];
-  const perReservoirForecast: Record<string, ForecastPoint[]> = {};
-
-  const { data: latestForecastRow } = await supabase
-    .from("reservoir_forecast")
-    .select("forecast_date")
-    .order("forecast_date", { ascending: false })
-    .limit(1);
-
-  if (latestForecastRow && latestForecastRow.length > 0) {
-    const { data: forecastRaw } = await supabase
-      .from("reservoir_forecast")
-      .select("reservoir, target_date, predicted_storage_mcft, confidence_lower_mcft, confidence_upper_mcft")
-      .eq("forecast_date", latestForecastRow[0].forecast_date)
-      .order("target_date", { ascending: true });
-
-    // Build per-reservoir forecast and count contributors per date
-    const combinedMap = new Map<string, { predicted: number; lower: number; upper: number }>();
-    const dateContributors = new Map<string, number>();
-    for (const row of forecastRaw || []) {
-      const point: ForecastPoint = {
-        date: row.target_date,
-        predicted: row.predicted_storage_mcft || 0,
-        lower: row.confidence_lower_mcft || 0,
-        upper: row.confidence_upper_mcft || 0,
-      };
-      if (!perReservoirForecast[row.reservoir]) {
-        perReservoirForecast[row.reservoir] = [];
-      }
-      perReservoirForecast[row.reservoir].push(point);
-
-      // Sum for combined forecast
-      const existing = combinedMap.get(row.target_date);
-      if (existing) {
-        existing.predicted += point.predicted;
-        existing.lower += point.lower;
-        existing.upper += point.upper;
-      } else {
-        combinedMap.set(row.target_date, { ...point });
-      }
-      dateContributors.set(row.target_date, (dateContributors.get(row.target_date) || 0) + 1);
-    }
-    // Only include dates where all forecasting reservoirs contribute.
-    // Partial sums (e.g. only 1 of 6 reservoirs) create misleading jumps.
-    const maxContributors = Math.max(...dateContributors.values(), 0);
-    for (const [date, vals] of combinedMap) {
-      if ((dateContributors.get(date) || 0) >= maxContributors) {
-        forecast.push({ date, ...vals });
-      }
-    }
-    forecast.sort((a, b) => a.date.localeCompare(b.date));
-  }
-
   // 7-day avg inflow
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -242,75 +113,11 @@ async function getReservoirData() {
     reservoirs,
     totalStorage,
     totalCapacity,
-    history,
-    perReservoirHistory,
-    forecast,
-    perReservoirForecast,
     lastUpdated: mostRecentDate,
     recentAvgInflowMcftPerDay,
     seasonalAvgInflowMcftPerDay,
     comparison2019Storage,
   };
-}
-
-/**
- * Convert Chennai's per-reservoir history map (Record<reservoir_name,
- * HistoryPoint[]>) into the shared HistorySeries[] shape. Storage stays
- * in Mcft - the shared chart's `unit` prop controls the axis label.
- */
-function chennaiHistorySeries(
-  perReservoir: Record<string, Array<{ date: string; totalStorage: number }>>,
-): HistorySeries[] {
-  return Object.entries(perReservoir).map(([code, points]) => {
-    const meta = RESERVOIR_METADATA[code as ChennaiReservoirName];
-    return {
-      source_code: code,
-      display_name: meta?.displayName ?? code,
-      full_capacity_mcft: meta?.fullCapacityMcft ?? null,
-      full_tank_level_ft: meta?.fullTankLevelFt ?? null,
-      // All 6 named Chennai reservoirs are primary drinking sources.
-      is_primary: true,
-      points: points.map((p) => ({
-        date: p.date,
-        // Field is named storage_tmc internally; Chennai passes Mcft and
-        // sets unit="Mcft" on the chart. The value is what the axis
-        // reflects - the field name is just an internal label.
-        storage_tmc: p.totalStorage,
-        storage_pct_frl:
-          meta?.fullCapacityMcft && meta.fullCapacityMcft > 0
-            ? (p.totalStorage / meta.fullCapacityMcft) * 100
-            : null,
-      })),
-    };
-  });
-}
-
-function chennaiForecastSeries(
-  perReservoir: Record<string, Array<{ date: string; predicted: number; lower: number; upper: number }>>,
-  forecastDate: string | null,
-): ForecastSeries[] {
-  if (!forecastDate) return [];
-  return Object.entries(perReservoir)
-    .filter(([, pts]) => pts.length > 0)
-    .map(([code, points]) => ({
-      source_code: code,
-      forecast_date: forecastDate,
-      model_name: "auto_arima",
-      points: points.map((p) => ({
-        date: p.date,
-        predicted_tmc: p.predicted,
-        lower_tmc: p.lower,
-        upper_tmc: p.upper,
-      })),
-    }));
-}
-
-function chennaiHistoryPointCount(
-  perReservoir: Record<string, Array<unknown>>,
-): number {
-  let total = 0;
-  for (const arr of Object.values(perReservoir)) total += arr.length;
-  return total;
 }
 
 // Load canonical ward zone names once at module level
@@ -474,23 +281,6 @@ export default async function DashboardPage() {
     return <DemoDashboard />;
   }
 
-  // Earliest historical date across all reservoirs (for the shared chart's
-  // metadata strip).
-  const allHistoryDates: string[] = [];
-  for (const points of Object.values(reservoirData.perReservoirHistory)) {
-    for (const p of points) allHistoryDates.push(p.date);
-  }
-  allHistoryDates.sort();
-  const earliestHistoryDate = allHistoryDates[0] ?? null;
-
-  // Forecast date - take any source's first row's effective date if we
-  // have forecasts; otherwise null. Chennai's pipeline aligns all
-  // sources to the same forecast_date so any one is fine.
-  const anyReservoirForecast = Object.values(reservoirData.perReservoirForecast).find((p) => p.length > 0);
-  const latestForecastDate = anyReservoirForecast && anyReservoirForecast.length > 0
-    ? new Date().toISOString().slice(0, 10)
-    : null;
-
   // Compute CityStory narrative from available data
   let cityStoryNarrative = null;
   if (groundwaterData) {
@@ -549,15 +339,10 @@ export default async function DashboardPage() {
           (RESERVOIR_DISPLAY_ORDER as readonly string[]).includes(r.name)
         )}
       />
-      <MultiSourceHistoryChart
+      <DashboardHistorySection
+        cityId="chennai"
         cityDisplayName="Chennai"
         unit="Mcft"
-        series={chennaiHistorySeries(reservoirData.perReservoirHistory)}
-        forecast={chennaiForecastSeries(reservoirData.perReservoirForecast, latestForecastDate)}
-        forecastDate={latestForecastDate}
-        earliestDate={earliestHistoryDate}
-        latestDate={reservoirData.lastUpdated}
-        pointCount={chennaiHistoryPointCount(reservoirData.perReservoirHistory)}
       />
 
       {/* Structural at-a-glance tile: source mix across CMWSSB's 5 WTPs +
@@ -571,7 +356,7 @@ export default async function DashboardPage() {
 
       {groundwaterData && <GroundwaterSnapshot data={groundwaterData} />}
 
-      <RainfallTrends />
+      <DeferredRainfallTrends />
 
       <NewsSection />
     </div>

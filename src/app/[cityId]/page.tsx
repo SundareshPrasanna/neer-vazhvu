@@ -4,17 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { getPlaceConfig } from "@/lib/cities";
 import {
   loadCitySnapshot,
-  loadCityHistory,
-  loadCityForecast,
   loadCityWaterEstimate,
   snapshotToSummaries,
 } from "./data";
-import { MultiSourceHistoryChart } from "@/components/dashboard/multi-source-history-chart";
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { AllocationHero } from "@/components/dashboard/allocation-hero";
 import { DataGapPanel, URBAN_SUPPLY_DATA_GAPS } from "@/components/dashboard/data-gap-panel";
 import { UrbanSupplyOverview } from "@/components/dashboard/urban-supply-overview";
-import { RainfallTrends } from "@/components/dashboard/rainfall-trends";
+import { DashboardHistorySection } from "@/components/dashboard/dashboard-history-section";
+import { DeferredRainfallTrends } from "@/components/dashboard/deferred-rainfall-trends";
 import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
 import { NewsSection } from "@/components/insights/news-section";
 import { formatDate } from "@/lib/utils/format";
@@ -31,10 +29,8 @@ export default async function CityHomePage({ params }: PageProps) {
   // The layout has already validated cityId and redirected /chennai; we can
   // safely look up the config here.
   const config = getPlaceConfig(cityId);
-  const [snapshot, history, forecast, waterEstimate] = await Promise.all([
+  const [snapshot, waterEstimate] = await Promise.all([
     loadCitySnapshot(config),
-    loadCityHistory(config),
-    loadCityForecast(config),
     loadCityWaterEstimate(config),
   ]);
   const reservoirIsLive = snapshot.reservoirIsLive;
@@ -111,21 +107,16 @@ export default async function CityHomePage({ params }: PageProps) {
       {/* Reservoir snapshot grid + shared multi-source history chart. */}
       <ReservoirCards reservoirs={summaries} />
 
-      <MultiSourceHistoryChart
+      <DashboardHistorySection
+        cityId={cityId}
         cityDisplayName={config.displayName}
         unit="TMC"
-        series={history.series}
-        forecast={forecast.series}
-        forecastDate={forecast.forecastDate}
-        earliestDate={history.earliestDate}
-        latestDate={history.latestDate}
-        pointCount={history.pointCount}
       />
 
       {/* Long-term IMD rainfall - identical component to Chennai's, with
           the city's own IMD file. Falls back to a "data pending" card
           when the city's rainfall file hasn't been generated yet. */}
-      <RainfallTrends cityId={cityId} />
+      <DeferredRainfallTrends cityId={cityId} cityDisplayName={config.displayName} />
 
       {/* Google-News quick-link, seeded with the city name. */}
       <NewsSection cityDisplayName={config.displayName} />

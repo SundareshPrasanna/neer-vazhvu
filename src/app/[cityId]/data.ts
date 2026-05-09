@@ -104,6 +104,48 @@ const EMPTY_ESTIMATE: CityWaterEstimate = {
 
 const CUSEC_DAY_TO_MCFT = 0.0864;
 
+async function loadSeasonalAvgInflowMcftPerDay(
+  supabase: ReturnType<typeof createServerClient>,
+  config: PlaceConfig,
+  sourceCodes: string[],
+  month: number,
+): Promise<number> {
+  const { data, error } = await supabase.rpc("avg_monthly_inflow_v2", {
+    target_city_id: config.cityId,
+    target_source_codes: sourceCodes,
+    target_month: month,
+  });
+
+  if (!error) {
+    return Number(data?.[0]?.avg_inflow_mcft_per_day ?? 0);
+  }
+
+  // Back-compat for databases that have not run migration 022 yet.
+  // This preserves behaviour, but the RPC path above avoids pulling the
+  // full inflow archive into the Server Component render.
+  const { data: seasonalRows } = await supabase
+    .from("reservoir_daily_v2")
+    .select("date, inflow_cusecs")
+    .eq("city_id", config.cityId)
+    .in("source_code", sourceCodes)
+    .not("inflow_cusecs", "is", null);
+
+  if (!seasonalRows || seasonalRows.length === 0) return 0;
+
+  const byDate = new Map<string, number>();
+  for (const r of seasonalRows) {
+    const d = r.date as string;
+    if (Number(d.slice(5, 7)) !== month) continue;
+    byDate.set(d, (byDate.get(d) ?? 0) + ((r.inflow_cusecs as number | null) ?? 0));
+  }
+
+  const totals = Array.from(byDate.values());
+  if (totals.length === 0) return 0;
+
+  const avgCusecs = totals.reduce((s, v) => s + v, 0) / totals.length;
+  return avgCusecs * CUSEC_DAY_TO_MCFT;
+}
+
 /**
  * Roll the city's primary-drinking sources up into a single
  * water-estimate row, using the same shape Chennai's DaysLeftHero card
@@ -179,28 +221,15 @@ export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWa
   }
 
   // Seasonal (same-month) average inflow over all years of history.
+  // Prefer the database aggregate helper so page render time does not
+  // grow with every year of backfilled rows.
   const month = Number(asOf.slice(5, 7));
-  const { data: seasonalRows } = await supabase
-    .from("reservoir_daily_v2")
-    .select("date, inflow_cusecs")
-    .eq("city_id", config.cityId)
-    .in("source_code", sourceCodes)
-    .not("inflow_cusecs", "is", null);
-
-  let seasonalAvgInflowMcftPerDay = 0;
-  if (seasonalRows && seasonalRows.length > 0) {
-    const byDate = new Map<string, number>();
-    for (const r of seasonalRows) {
-      const d = r.date as string;
-      if (Number(d.slice(5, 7)) !== month) continue;
-      byDate.set(d, (byDate.get(d) ?? 0) + ((r.inflow_cusecs as number | null) ?? 0));
-    }
-    const totals = Array.from(byDate.values());
-    if (totals.length > 0) {
-      const avgCusecs = totals.reduce((s, v) => s + v, 0) / totals.length;
-      seasonalAvgInflowMcftPerDay = avgCusecs * CUSEC_DAY_TO_MCFT;
-    }
-  }
+  const seasonalAvgInflowMcftPerDay = await loadSeasonalAvgInflowMcftPerDay(
+    supabase,
+    config,
+    sourceCodes,
+    month,
+  );
 
   // 2019 same-day comparison.
   const sameDay2019 = `2019-${asOf.slice(5)}`;
