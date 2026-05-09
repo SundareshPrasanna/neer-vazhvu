@@ -105,6 +105,11 @@ class DistrictCascadeConfig:
     # the bounding box of tank polygons.
     admin_boundary_path: Path | None = None
 
+    # Optional rivers GeoJSON. If present, the topology stage rejects
+    # candidate cascade edges whose straight-line path crosses a river
+    # LineString - water doesn't flow across rivers, it falls into them.
+    rivers_path: Path | None = None
+
     # Layer B - curation (all optional, additive)
     named_cascades: tuple[NamedCascade, ...] = ()
     court_references: tuple[CourtCase, ...] = ()
@@ -133,6 +138,7 @@ _MADURAI = DistrictCascadeConfig(
     label="Madurai",
     state="tamil_nadu",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "madurai-water-bodies-current.geojson",
+    rivers_path=PUBLIC_GEOJSON_DIR / "madurai-rivers.geojson",
     historical_eras=(
         HistoricalEra(
             era="Pandya",
@@ -162,6 +168,7 @@ _CHENNAI = DistrictCascadeConfig(
     label="Chennai",
     state="tamil_nadu",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "chennai-water-bodies-current.geojson",
+    rivers_path=PUBLIC_GEOJSON_DIR / "chennai-rivers.geojson",
     # Layer B curation deferred until after Madurai validates the pipeline.
 )
 

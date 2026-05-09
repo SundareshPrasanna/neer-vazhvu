@@ -7,13 +7,19 @@ logic in isolation with synthetic polygons + elevations.
 
 from __future__ import annotations
 
+import json
+
 import pytest
+from shapely.geometry import LineString
 
 from app.cascade.districts import DistrictCascadeConfig
 from app.cascade.topology import (
+    _angular_distance_deg,
+    _bearing_deg,
     _build_graph_from_polygons_with_elevations,
     _haversine_km,
     _polygon_centroid,
+    _read_tank_polygons,
 )
 
 
@@ -217,3 +223,149 @@ def test_min_tank_area_filters_out_small_polygons_via_read(tmp_path):
     # Both still appear because the helper trusts its input. The area
     # filter is a responsibility of _read_tank_polygons.
     assert len(graph["nodes"]) == 2
+
+
+# -- water_type filter -----------------------------------------------------
+
+
+def test_read_tank_polygons_excludes_river_water_type(tmp_path):
+    polygons_path = tmp_path / "polygons.geojson"
+    polygons_path.write_text(
+        json.dumps(
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    _square_polygon(1, "Real tank", 9.93, 78.1, 5.0)
+                    | {"properties": {**_square_polygon(1, "Real tank", 9.93, 78.1, 5.0)["properties"], "water_type": "reservoir"}},
+                    _square_polygon(2, "Vaigai segment", 9.92, 78.1, 5.0)
+                    | {"properties": {**_square_polygon(2, "Vaigai segment", 9.92, 78.1, 5.0)["properties"], "water_type": "river"}},
+                    _square_polygon(3, "City drain", 9.91, 78.1, 5.0)
+                    | {"properties": {**_square_polygon(3, "City drain", 9.91, 78.1, 5.0)["properties"], "water_type": "drain"}},
+                    _square_polygon(4, "Channel", 9.90, 78.1, 5.0)
+                    | {"properties": {**_square_polygon(4, "Channel", 9.90, 78.1, 5.0)["properties"], "water_type": "canal"}},
+                ],
+            }
+        )
+    )
+    district = _district(tmp_path, tank_polygons_path=polygons_path)
+
+    eligible = _read_tank_polygons(district)
+    eligible_ids = sorted(int(f["properties"]["osm_id"]) for f in eligible)
+
+    # Only the reservoir survives; river / drain / canal are conduits,
+    # not cascade nodes.
+    assert eligible_ids == [1]
+
+
+# -- flow direction --------------------------------------------------------
+
+
+def test_bearing_deg_north_is_zero():
+    # Walking due north from (0, 0) to (1, 0) is bearing 0 (degrees from N).
+    assert _bearing_deg((0, 0), (1, 0)) == pytest.approx(0, abs=0.5)
+
+
+def test_bearing_deg_east_is_ninety():
+    assert _bearing_deg((9.9, 78.1), (9.9, 78.2)) == pytest.approx(90, abs=0.5)
+
+
+def test_angular_distance_wraps_around_north():
+    # 350 vs 10 degrees should be 20 degrees apart, not 340.
+    assert _angular_distance_deg(350, 10) == pytest.approx(20)
+
+
+def test_flow_direction_rejects_candidate_in_wrong_cone(tmp_path):
+    # Upstream tank's flow direction code 64 means "drains north".
+    # A candidate due SOUTH of upstream (bearing 180) is the OPPOSITE
+    # of the flow direction; it must be rejected even though it's
+    # downhill and within range.
+    polygons = [
+        _square_polygon(1, "Upstream", lat=9.95, lon=78.1, area_ha=20),
+        _square_polygon(2, "South candidate", lat=9.93, lon=78.1, area_ha=10),
+        _square_polygon(3, "North candidate", lat=9.97, lon=78.1, area_ha=10),
+    ]
+    elevations = [180.0, 100.0, 100.0]  # both candidates equally downhill
+    flow_directions = [64, None, None]  # tank 1 drains north
+    district = _district(tmp_path)
+
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=elevations,
+        district=district,
+        flow_directions=flow_directions,
+    )
+
+    edges = [
+        (e["properties"]["from_osm_id"], e["properties"]["to_osm_id"])
+        for e in graph["edges"]
+    ]
+    # Tank 1 should drain north (to tank 3), not south (to tank 2).
+    assert (1, 3) in edges
+    assert (1, 2) not in edges
+
+
+def test_flow_direction_none_falls_back_to_elevation_only(tmp_path):
+    # When flow direction is missing for the upstream tank, the cone
+    # check degrades to "accept everything" so a downhill candidate is
+    # still picked.
+    polygons = [
+        _square_polygon(1, "Upstream", lat=9.95, lon=78.1, area_ha=20),
+        _square_polygon(2, "Downhill candidate", lat=9.94, lon=78.1, area_ha=10),
+    ]
+    elevations = [180.0, 100.0]
+    flow_directions = [None, None]
+    district = _district(tmp_path)
+
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=elevations,
+        district=district,
+        flow_directions=flow_directions,
+    )
+
+    assert len(graph["edges"]) == 1
+    assert graph["edges"][0]["properties"]["from_osm_id"] == 1
+
+
+# -- river-crossing barrier ------------------------------------------------
+
+
+def test_river_crossing_edge_is_rejected(tmp_path):
+    # Two tanks with a river running between them: north tank at 9.95,
+    # south tank at 9.93, river at 9.94 (east-west line). Without the
+    # river, the natural "downhill" edge would be (1 -> 2). With the
+    # river barrier, the edge must be rejected.
+    polygons = [
+        _square_polygon(1, "North tank", lat=9.95, lon=78.1, area_ha=20),
+        _square_polygon(2, "South tank", lat=9.93, lon=78.1, area_ha=10),
+    ]
+    elevations = [180.0, 100.0]
+    district = _district(tmp_path)
+    river = LineString([(78.05, 9.94), (78.15, 9.94)])  # east-west river
+
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=elevations,
+        district=district,
+        river_segments=[river],
+    )
+
+    assert graph["edges"] == []
+
+
+def test_no_river_segments_means_no_barrier(tmp_path):
+    polygons = [
+        _square_polygon(1, "North tank", lat=9.95, lon=78.1, area_ha=20),
+        _square_polygon(2, "South tank", lat=9.93, lon=78.1, area_ha=10),
+    ]
+    elevations = [180.0, 100.0]
+    district = _district(tmp_path)
+
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=elevations,
+        district=district,
+        river_segments=None,
+    )
+
+    assert len(graph["edges"]) == 1
