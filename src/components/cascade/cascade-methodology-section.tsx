@@ -156,19 +156,21 @@ export function CascadeMethodologySection({
             existence does not imply current water flow.
           </li>
           <li>
-            <strong>Not a model of engineered conveyance.</strong> Modern
-            reservoirs receive much of their water through canals,
-            pipelines and trans-basin diversions - Chembarambakkam Lake,
-            for example, is fed by Krishna water from Andhra Pradesh
-            (Kandaleru-Poondi canal system) and Cauvery water from
-            Veeranam, neither of which appears in this graph because
-            neither follows local terrain. A reservoir showing 0
-            terrain-driven inflows is NOT necessarily isolated in
-            real-world supply terms; it may simply rely on
-            human-engineered transfers that this model is silent on.
-            Engineered conveyance is a separate data layer (today: not
-            yet built; eventually: a parallel &quot;canal transfers&quot; layer
-            on the same map).
+            <strong>Not a model of any inflow that isn&apos;t
+            tank-to-tank.</strong> Reservoirs receive water from at least
+            four sources that this graph cannot represent: (a) direct
+            rainfall on the lake surface, (b) catchment runoff via
+            unmapped channels and overland flow, (c) the river the
+            reservoir dams (rivers are deliberately excluded from
+            cascade nodes), and (d) engineered canals, pipelines, and
+            trans-basin diversions. A reservoir showing 0 cascade
+            inflows here is <strong>not</strong> isolated in real life -
+            Chembarambakkam Lake, for example, is fed by all four kinds
+            of inflow (its 71.6 km<sup>2</sup> Adyar catchment, the
+            upper Adyar itself, plus Krishna water via the Kandaleru-Poondi
+            canal and Cauvery water from Veeranam) yet none of those
+            appears in this layer. The cascade graph is solely about
+            tank-to-tank structure derived from terrain.
           </li>
         </ul>
       </div>
