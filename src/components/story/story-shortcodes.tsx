@@ -73,7 +73,7 @@ export function Hero({ src, alt, source, credit }: HeroProps) {
             alt={alt}
             fill
             priority
-            sizes="100vw"
+            sizes="(min-width: 1024px) 896px, 100vw"
             className="object-cover"
           />
         </div>

@@ -11,8 +11,14 @@
  */
 
 import { useLanguage } from "@/lib/i18n/context";
-import { ChennaiStoryEn } from "./story-chennai-en";
-import { ChennaiStoryTa } from "./story-chennai-ta";
+import dynamic from "next/dynamic";
+
+const ChennaiStoryEn = dynamic(() =>
+  import("./story-chennai-en").then((mod) => mod.ChennaiStoryEn),
+);
+const ChennaiStoryTa = dynamic(() =>
+  import("./story-chennai-ta").then((mod) => mod.ChennaiStoryTa),
+);
 
 export function ChennaiStory() {
   const { language } = useLanguage();

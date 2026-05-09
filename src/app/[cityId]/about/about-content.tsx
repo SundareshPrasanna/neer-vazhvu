@@ -2,9 +2,45 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/i18n/context";
 import type { PlaceConfig } from "@/lib/cities";
-import { MaduraiPageDescriptions } from "./madurai-page-descriptions";
+import { CascadeMethodologySection } from "@/components/cascade/cascade-methodology-section";
+
+// Per-city aggregate stats for the cascade overlay's methodology
+// section. Hardcoded today (the publish stage doesn't yet emit a
+// summary manifest); will move to a fetched stats JSON when P3 lands.
+const CASCADE_STATS_BY_CITY: Record<
+  string,
+  {
+    nodeCount: number;
+    edgeCount: number;
+    riverOutletCount: number;
+    maxCascadeDepth: number;
+    topConvergenceExample?: { name: string; degreeIn: number };
+  }
+> = {
+  madurai: {
+    nodeCount: 506,
+    edgeCount: 345,
+    riverOutletCount: 34,
+    maxCascadeDepth: 9,
+    topConvergenceExample: {
+      name: "Vandiyur Lake (HC PIL anchor)",
+      degreeIn: 3,
+    },
+  },
+  chennai: {
+    nodeCount: 720,
+    edgeCount: 430,
+    riverOutletCount: 50,
+    maxCascadeDepth: 6,
+  },
+};
+
+const MaduraiPageDescriptions = dynamic(() =>
+  import("./madurai-page-descriptions").then((mod) => mod.MaduraiPageDescriptions),
+);
 
 /**
  * City-aware About page. Mirrors the section structure of Chennai's
@@ -380,6 +416,23 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
             </div>
           </div>
         </Section>
+
+        {/* ─────────────────────────────────────────────────────────
+            Cascade Reconstruction Methodology - shown only when the
+            city has the overlay enabled. Anchor id is referenced from
+            the on-map "Full methodology -->" link.
+            ───────────────────────────────────────────────────────── */}
+        {config.hasCascadeOverlay && CASCADE_STATS_BY_CITY[config.cityId] && (
+          <Section
+            id="cascade-methodology"
+            title={`Cascade reconstruction methodology - ${cityName}`}
+          >
+            <CascadeMethodologySection
+              cityDisplayName={cityName}
+              {...CASCADE_STATS_BY_CITY[config.cityId]}
+            />
+          </Section>
+        )}
 
         {/* ─────────────────────────────────────────────────────────
             4. Data Source Index

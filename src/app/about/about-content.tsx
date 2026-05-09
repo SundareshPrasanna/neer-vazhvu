@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { CHENNAI } from "@/lib/cities/chennai";
+import { CascadeMethodologySection } from "@/components/cascade/cascade-methodology-section";
 
 const LOST_WATER_BODY_SOURCES: {
   name: string;
@@ -684,6 +686,26 @@ export function AboutContent() {
             </div>
           </div>
         </Section>
+
+        {/* ──────────────────────────────────────────────────────────────
+            Cascade Reconstruction Methodology - shown only when the
+            city has the overlay enabled. Anchor id is referenced from
+            the on-map "Full methodology -->" link.
+            ────────────────────────────────────────────────────────────── */}
+        {CHENNAI.hasCascadeOverlay && (
+          <Section
+            id="cascade-methodology"
+            title="Cascade reconstruction methodology - Chennai"
+          >
+            <CascadeMethodologySection
+              cityDisplayName="Chennai"
+              nodeCount={720}
+              edgeCount={430}
+              riverOutletCount={50}
+              maxCascadeDepth={6}
+            />
+          </Section>
+        )}
 
         {/* ──────────────────────────────────────────────────────────────
             4. Data Source Index - grouped by data domain

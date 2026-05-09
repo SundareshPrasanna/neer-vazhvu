@@ -131,6 +131,7 @@ export function MultiSourceHistoryChart({
     // a render cycle without changing semantics.
     // eslint-disable-next-line react-hooks/purity
     const cutoffMs = cutoffDays > 0 ? Date.now() - cutoffDays * 86400 * 1000 : 0;
+    const cutoffDate = cutoffMs > 0 ? new Date(cutoffMs).toISOString().slice(0, 10) : "";
 
     type Row = { date: string } & Record<string, string | number | null | [number, number]>;
     const byDate = new Map<string, Row>();
@@ -138,7 +139,7 @@ export function MultiSourceHistoryChart({
     for (const s of series) {
       if (hidden.has(s.source_code)) continue;
       for (const p of s.points) {
-        if (cutoffMs > 0 && new Date(p.date).getTime() < cutoffMs) continue;
+        if (cutoffDate && p.date < cutoffDate) continue;
         const row: Row = byDate.get(p.date) ?? { date: p.date };
         row[s.source_code] = p.storage_tmc;
         byDate.set(p.date, row);

@@ -11,8 +11,14 @@
  */
 
 import { useLanguage } from "@/lib/i18n/context";
-import { MaduraiStoryEn } from "./story-madurai-en";
-import { MaduraiStoryTa } from "./story-madurai-ta";
+import dynamic from "next/dynamic";
+
+const MaduraiStoryEn = dynamic(() =>
+  import("./story-madurai-en").then((mod) => mod.MaduraiStoryEn),
+);
+const MaduraiStoryTa = dynamic(() =>
+  import("./story-madurai-ta").then((mod) => mod.MaduraiStoryTa),
+);
 
 export function MaduraiStory() {
   const { language } = useLanguage();
