@@ -150,6 +150,20 @@ export interface BasePlaceConfig {
   /** Public, audited urban supply numbers for the allocation hero.
    *  Required when heroMode === 'allocation'; ignored otherwise. */
   urbanSupply?: UrbanSupplyConfig;
+
+  /** Whether the cascade reconstruction overlay is available for this
+   *  place. When true, /<city>/water-bodies surfaces a "Show cascade
+   *  overlay" toggle that lazy-loads the PMTiles layer from
+   *  /tiles/cascade/<cityId>-cascade-{nodes,edges}.pmtiles.
+   *
+   *  The toggle is opt-in (default off) so initial page weight stays
+   *  unchanged. PMTiles use byte-range fetches; a typical district-zoom
+   *  view transfers tens of KB.
+   *
+   *  Default false. Cities/districts get this enabled once the cascade
+   *  pipeline (`scripts/run_cascade.py --district <id> run-all`) has
+   *  produced the corresponding PMTiles. */
+  hasCascadeOverlay?: boolean;
   /**
    * Hide from public-facing discovery surfaces (CitySwitcher dropdown,
    * sitemap.xml). The route itself stays alive so engineers + direct-

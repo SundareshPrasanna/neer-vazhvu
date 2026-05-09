@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { UnifiedDetailPanel } from "@/components/water-bodies/unified-detail-panel";
 import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
 import { ViewModeToggle, type ViewMode } from "@/components/water-bodies/view-mode-toggle";
+import { CascadeToggle } from "@/components/cascade/cascade-toggle";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { useLanguage } from "@/lib/i18n/context";
@@ -24,6 +25,9 @@ interface ClientProps {
   fullyLostCount: number;
   reducedCount: number;
   namedOsmCount: number | null;
+  /** Whether the cascade reconstruction overlay is available for this
+   *  city (PMTiles produced by `scripts/run_cascade.py` exist). */
+  hasCascadeOverlay?: boolean;
 }
 
 function MapLoading() {
@@ -40,6 +44,14 @@ const UnifiedMap = dynamic(
   { ssr: false, loading: () => <MapLoading /> },
 );
 
+// Cascade overlay is heavier (protomaps-leaflet runtime + PMTiles loader)
+// so it is dynamic-imported only when the user toggles it on. Default
+// page weight on /<city>/water-bodies stays unchanged.
+const CascadeMapLayer = dynamic(
+  () => import("@/components/cascade/cascade-map-layer"),
+  { ssr: false },
+);
+
 export default function WaterBodiesMapClient({
   cityId,
   cityDisplayName,
@@ -49,6 +61,7 @@ export default function WaterBodiesMapClient({
   fullyLostCount,
   reducedCount,
   namedOsmCount,
+  hasCascadeOverlay = false,
 }: ClientProps) {
   useLockBodyScroll();
   const { t } = useLanguage();
@@ -58,6 +71,9 @@ export default function WaterBodiesMapClient({
   const [selected, setSelected] = useState<SelectedWaterBody | null>(null);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
+  // Off by default - the layer + protomaps-leaflet runtime are
+  // dynamic-imported only when the user opts in.
+  const [showCascade, setShowCascade] = useState(false);
 
   // View mode: "water-bodies" (OSM polygons + lost markers) or
   // "restoration" (priority-coloured layer + flagship orphan circles).
@@ -194,7 +210,10 @@ export default function WaterBodiesMapClient({
             ))}
           </>
         )}
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          {hasCascadeOverlay && (
+            <CascadeToggle pressed={showCascade} onPressedChange={setShowCascade} />
+          )}
           <ViewModeToggle value={viewMode} onChange={handleViewModeChange} />
         </div>
       </div>
@@ -214,7 +233,11 @@ export default function WaterBodiesMapClient({
             riversGeoJsonUrl={`/geojson/${cityId}-rivers.geojson`}
             mapCenter={mapCenter}
             mapZoom={mapZoom}
-          />
+          >
+            {hasCascadeOverlay && showCascade && (
+              <CascadeMapLayer cityId={cityId} />
+            )}
+          </UnifiedMap>
 
           {/* Legend overlay */}
           <div

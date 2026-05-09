@@ -39,6 +39,11 @@ export const MADURAI: CityConfig = {
       'Mullaperiyar Dam (Kerala) → Vaigai Dam → Pannaipatty WTP → MMC distribution',
     sourceUrl: 'https://maduraicorporation.co.in/aboutus/water-supply/',
   },
+  // Madurai is the first district with a published cascade reconstruction
+  // (513 nodes / 419 edges across 12 cascade depths from the
+  // HydroSHEDS-derived topology pipeline). Surfaces an opt-in PMTiles
+  // overlay on /madurai/water-bodies.
+  hasCascadeOverlay: true,
   waterSources: [
     {
       sourceCode: 'vaigai',

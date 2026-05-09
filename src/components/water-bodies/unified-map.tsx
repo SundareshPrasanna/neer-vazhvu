@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback, type ReactNode } from "react";
 import { MapContainer, TileLayer, GeoJSON, Tooltip, LayerGroup, Circle, useMap, Pane } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
@@ -40,6 +40,10 @@ interface UnifiedMapProps {
   riversGeoJsonUrl?: string;
   mapCenter?: [number, number];
   mapZoom?: number;
+  /** Optional extra Leaflet layers rendered as children of the
+   *  MapContainer. Used to plug in opt-in overlays (e.g. cascade
+   *  reconstruction) without coupling them into UnifiedMap itself. */
+  children?: ReactNode;
 }
 
 /** Flies the map to a given center when it changes */
@@ -94,6 +98,7 @@ export function UnifiedMap({
   riversGeoJsonUrl = DEFAULT_RIVERS_GEOJSON_URL,
   mapCenter = DEFAULT_MAP_CENTER,
   mapZoom = 11,
+  children,
 }: UnifiedMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
@@ -661,6 +666,7 @@ export function UnifiedMap({
           </LayerGroup>
         </Pane>
       )}
+      {children}
     </MapContainer>
   );
 }
