@@ -399,6 +399,18 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
                 frequency="daily + 2018 archive"
               />
               <DataSource
+                name="ADB TNUFIP Tranche 2 IEE - Madurai dedicated water supply scheme"
+                url="https://www.adb.org/sites/default/files/project-documents/49107/49107-005-iee-en_10.pdf"
+                description="Engineering-grade structural numbers extracted from the December 2025 ADB Initial Environmental Examination: 192 MLD existing supply mix (Vaigai 115 + Cauvery 30 + Vaigai bed 47), Pannaipatty WTP 125 MLD existing / 250 MLD planned, 23 OHTs / 81 zones / 467 km mains / 96,048 connections, 2034 demand 317 MLD, PWD allocation table (MMC 51.09 cusecs continuous). Powers the dashboard's at-a-glance tile."
+                frequency="static (per ADB tranche publication)"
+              />
+              <DataSource
+                name="MMC water-supply page"
+                url="https://maduraicorporation.co.in/aboutus/water-supply/"
+                description="MMC's published 1,500 mcft/year drinking-water allocation from Vaigai, ~900 mcft recent draw, infrastructure stats (23 OHTs, 96,048 connections, 467 km mains, 12 service zones / 81 distribution zones)."
+                frequency="static"
+              />
+              <DataSource
                 name="Reservoir forecast (AutoARIMA)"
                 url={`/${config.cityId}`}
                 description="14-day forecast with 80% confidence band per reservoir, refit daily as new readings land. Seasonal differencing kicks in once we have at least two years of history."
@@ -415,9 +427,19 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
           <DataSource
             name="IMD Gridded Rainfall (via imdlib)"
             url="https://imdlib.readthedocs.io/"
-            description="India Meteorological Department 0.25-degree gridded rainfall, 1970-present. Used for monsoon-context overlays."
+            description={isMadurai
+              ? "India Meteorological Department 0.25-degree gridded rainfall, 1970-2025. Madurai grid cell at 9.9 deg N, 78.0 deg E, 862.6 mm long-term mean. Same imdlib pipeline as Chennai's IMD generator."
+              : "India Meteorological Department 0.25-degree gridded rainfall, 1970-present. Used for monsoon-context overlays."}
             frequency="monthly archive"
           />
+          {isMadurai && (
+            <DataSource
+              name="OSM Nominatim + Overpass - locality search points"
+              url="https://overpass-api.de/"
+              description="51 Madurai neighbourhood points (Anna Nagar, Pasumalai, Mattuthavani, KK Nagar, Sellur, Vandiyur, etc.) extracted via scripts/fetch-localities-osm-madurai.ts for the my-ward search box. 49/51 carry Tamil names. Powers locality-name -> ward resolution."
+              frequency="periodic (one-off refresh today)"
+            />
+          )}
 
           <DataSourceGroupHeader title="Groundwater" />
           <DataSource

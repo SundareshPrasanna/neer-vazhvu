@@ -87,6 +87,38 @@ graph TB
     KA -->|GET /health| Backend
 ```
 
+## Multi-city architecture
+
+Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/lib/cities/{cityId}.ts` and that config drives:
+
+- **`heroMode`** (`days-left` | `allocation` | `none`) — picks the dashboard hero variant. Chennai (`days-left`) divides total CMWSSB-reservoir storage by urban demand; Madurai (`allocation`) anchors on Vaigai live storage + the city's published drinking-water allocation since the dams are irrigation-primary.
+- **`waterSources`** — array of reservoirs/dams the city tracks, with `fullCapacityMcft`, `isPrimaryDrinkingSource`, etc.
+- **`urbanSupply`** (when `heroMode === 'allocation'`) — annual allocation (mcft/yr), recent draw, WTP capacity, supply chain description for the at-a-glance tile.
+- **`groundwaterViews`** — feature flags for the groundwater page (`exploitation` / `depth` / `risk` / `cgwbStations`). Madurai disables `depth` + `risk` because per-ward IDW interpolation would be dishonest with only 4 live stations across the district; instead it surfaces `cgwbStations` (Year Book point overlay) on top of `exploitation` (block-level classification).
+- **`localGovernment`** — ward count + acronym (GCC vs MMC) for help-text and authority labels.
+- **`primaryAuthority`** — utility name (CMWSSB vs MMC vs TWAD) used in MissingDataCard reasons and About-page citations.
+- **`sourceNameAliases`** — case-insensitive maps so the news-search query and reservoir-detail-dialog match a source under any spelling (e.g. "vaigai" / "vaigai dam" / "வைகை" → `vaigai`).
+
+Per-city data files use a `-<cityId>` suffix in `public/data/` and `public/geojson/` (e.g. `madurai-supply-overview.json`, `madurai-gwr-blocks.geojson`). Chennai keeps legacy unsuffixed paths for back-compat.
+
+To add a new city, see the "Adding a new city" walkthrough in [CONTRIBUTING.md](CONTRIBUTING.md). The Madurai onboarding is the worked example.
+
+## Shared utilities
+
+A few classifiers / scorers are city-agnostic and used across both cities:
+
+- **`src/lib/utils/river-classification.ts`** — `computeRiverStatus(river)` returns one of `dead` / `severely_degraded` / `degraded` / `stressed` / `healthy` derived from each station's most recent NWMP reading via CPCB Designated Best-Use class thresholds (DO + BOD). Takes the worst classification across stations as the river-level status. Falls back to the JSON-declared `overall_status` when no station has any classifiable reading. Replaced hardcoded labels in late 2026 — Vaigai dropped from "severely_degraded" to "degraded" once the algorithm read the actual readings instead of inheriting the CPCB Polluted River Stretch (PRS) Priority III designation. Documented for end-users at the "How we classify river health" subsection on each city's About page.
+- **`scripts/compute-ward-profiles.ts`** + **`scripts/compute-madurai-ward-profiles.ts`** — Build-time spatial-join scripts. The Madurai variant emits `_data_status: "not_available"` markers for sections it doesn't have data for (flood, drainage, sewerage, industrial); UI cards branch on this and render honest "not yet sourced" disclaimers rather than fabricated zero counts.
+
+## Madurai-specific dashboard surfaces
+
+The dashboard component tree forks where Madurai's data landscape calls for it. These four components are Madurai-scoped today but generic — any future city with a `heroMode: 'allocation'` config picks them up automatically:
+
+- **`AllocationHero`** (`src/components/dashboard/allocation-hero.tsx`) — replaces `DaysLeftHero`. Shows live dam fill %, four anchored stats (annual allocation, recent draw, allocation utilised, WTP capacity), and a "How to read this" caveat.
+- **`UrbanSupplyOverview`** (`src/components/dashboard/urban-supply-overview.tsx`) — structural at-a-glance tile fed by `<cityId>-supply-overview.json`. Renders supply chain pipeline + source mix stacked bar + WTP capacity + distribution scale + 2034 demand vs supply gap.
+- **`DataGapPanel`** (`src/components/dashboard/data-gap-panel.tsx`) — neutral-tone "What's missing today" inventory of layers the city utility tracks internally but doesn't publish. Generic shape; pass any DataGap[] array.
+- **`MissingDataCard`** + **`MissingReservoirCard`** (`src/components/dashboard/missing-data-card.tsx`) — dashed-border treatment for tracked-but-unmonitored sources (Sothuparai Dam in Madurai's case). Generic; usable for river stations, AQI sensors, etc.
+
 ## Daily Pipeline
 
 Triggered by GitHub Actions at 06:00 IST.
