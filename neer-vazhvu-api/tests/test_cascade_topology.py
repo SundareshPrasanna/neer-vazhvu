@@ -236,13 +236,41 @@ def test_read_tank_polygons_excludes_river_water_type(tmp_path):
                 "type": "FeatureCollection",
                 "features": [
                     _square_polygon(1, "Real tank", 9.93, 78.1, 5.0)
-                    | {"properties": {**_square_polygon(1, "Real tank", 9.93, 78.1, 5.0)["properties"], "water_type": "reservoir"}},
+                    | {
+                        "properties": {
+                            **_square_polygon(1, "Real tank", 9.93, 78.1, 5.0)[
+                                "properties"
+                            ],
+                            "water_type": "reservoir",
+                        }
+                    },
                     _square_polygon(2, "Vaigai segment", 9.92, 78.1, 5.0)
-                    | {"properties": {**_square_polygon(2, "Vaigai segment", 9.92, 78.1, 5.0)["properties"], "water_type": "river"}},
+                    | {
+                        "properties": {
+                            **_square_polygon(2, "Vaigai segment", 9.92, 78.1, 5.0)[
+                                "properties"
+                            ],
+                            "water_type": "river",
+                        }
+                    },
                     _square_polygon(3, "City drain", 9.91, 78.1, 5.0)
-                    | {"properties": {**_square_polygon(3, "City drain", 9.91, 78.1, 5.0)["properties"], "water_type": "drain"}},
+                    | {
+                        "properties": {
+                            **_square_polygon(3, "City drain", 9.91, 78.1, 5.0)[
+                                "properties"
+                            ],
+                            "water_type": "drain",
+                        }
+                    },
                     _square_polygon(4, "Channel", 9.90, 78.1, 5.0)
-                    | {"properties": {**_square_polygon(4, "Channel", 9.90, 78.1, 5.0)["properties"], "water_type": "canal"}},
+                    | {
+                        "properties": {
+                            **_square_polygon(4, "Channel", 9.90, 78.1, 5.0)[
+                                "properties"
+                            ],
+                            "water_type": "canal",
+                        }
+                    },
                 ],
             }
         )
@@ -467,9 +495,7 @@ def test_tank_with_tank_outflow_does_not_get_river_outlet(tmp_path):
         river_segments=[river],
     )
 
-    upstream = next(
-        n for n in graph["nodes"] if n["properties"]["osm_id"] == 1
-    )
+    upstream = next(n for n in graph["nodes"] if n["properties"]["osm_id"] == 1)
     assert upstream["properties"]["degree_out"] == 1
     assert upstream["properties"]["drains_to_river"] is False
     assert graph["river_outlets"] == []

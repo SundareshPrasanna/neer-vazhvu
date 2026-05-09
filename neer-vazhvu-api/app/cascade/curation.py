@@ -28,6 +28,5 @@ def attach_named_cascades(
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     """Return (enriched_nodes, enriched_edges, systems_manifest)."""
     raise NotImplementedError(
-        "curation.attach_named_cascades is implemented in P3 "
-        "(Layer B curation merge)."
+        "curation.attach_named_cascades is implemented in P3 (Layer B curation merge)."
     )

@@ -84,13 +84,13 @@ FLOW_DIRECTION_CONE_HALFANGLE_DEG = 67.5
 
 # ESRI D8 -> compass bearing in degrees from North.
 D8_TO_BEARING_DEG: dict[int, float] = {
-    1: 90.0,    # E
-    2: 135.0,   # SE
-    4: 180.0,   # S
-    8: 225.0,   # SW
+    1: 90.0,  # E
+    2: 135.0,  # SE
+    4: 180.0,  # S
+    8: 225.0,  # SW
     16: 270.0,  # W
     32: 315.0,  # NW
-    64: 0.0,    # N (also 360)
+    64: 0.0,  # N (also 360)
     128: 45.0,  # NE
 }
 
@@ -111,7 +111,9 @@ def _bearing_deg(a: tuple[float, float], b: tuple[float, float]) -> float:
     lat2, lon2 = math.radians(b[0]), math.radians(b[1])
     dlon = lon2 - lon1
     y = math.sin(dlon) * math.cos(lat2)
-    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(dlon)
+    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(
+        dlon
+    )
     return (math.degrees(math.atan2(y, x)) + 360) % 360
 
 
@@ -145,9 +147,7 @@ def _read_tank_polygons(district: DistrictCascadeConfig) -> list[dict[str, Any]]
     district's minimum tank-area threshold, OR whose water_type is a
     conduit (river/canal/etc.) rather than a tank.
     """
-    payload = json.loads(
-        district.tank_polygons_path.read_text(encoding="utf-8")
-    )
+    payload = json.loads(district.tank_polygons_path.read_text(encoding="utf-8"))
     if payload.get("type") != "FeatureCollection":
         raise RuntimeError(
             f"Tank polygons file is not a FeatureCollection: "
@@ -371,9 +371,7 @@ def _build_graph_from_polygons_with_elevations(
     elevations_by_osm: dict[int, float | None] = {}
     flow_by_osm: dict[int, int | None] = {}
 
-    for idx, (feature, elevation) in enumerate(
-        zip(polygons, elevations, strict=True)
-    ):
+    for idx, (feature, elevation) in enumerate(zip(polygons, elevations, strict=True)):
         properties = feature["properties"]
         osm_id = int(properties["osm_id"])
         centroid = _polygon_centroid(feature["geometry"])
@@ -539,9 +537,7 @@ def _build_graph_from_polygons_with_elevations(
                     "from_osm_id": upstream,
                     "to_osm_id": downstream,
                     "distance_km": round(dist_km, 3),
-                    "elevation_drop_m": round(
-                        (elev_up or 0) - (elev_dn or 0), 2
-                    ),
+                    "elevation_drop_m": round((elev_up or 0) - (elev_dn or 0), 2),
                     "score_m_per_km": round(score, 2),
                     "status": "predicted",
                 },
@@ -549,9 +545,12 @@ def _build_graph_from_polygons_with_elevations(
         )
 
     river_outlet_features: list[dict[str, Any]] = []
-    for tank_osm_id, (out_lat, out_lng, dist_km, bearing) in (
-        river_outlets_by_osm.items()
-    ):
+    for tank_osm_id, (
+        out_lat,
+        out_lng,
+        dist_km,
+        bearing,
+    ) in river_outlets_by_osm.items():
         cent = centroids[tank_osm_id]
         river_outlet_features.append(
             {
