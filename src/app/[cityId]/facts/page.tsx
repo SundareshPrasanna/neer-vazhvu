@@ -173,7 +173,7 @@ export default async function CityFactsPage({ params }: PageProps) {
         facts={facts}
         generatedAt={factsFile.generated_at ?? retrievedAt}
         cityName={config.displayName}
-        cityNameTa={config.displayNameTa}
+        cityNameTa={config.displayNameLocalized?.ta}
       />
     </>
   );

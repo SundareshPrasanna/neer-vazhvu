@@ -1,3 +1,5 @@
+import type { LanguageCode } from '@/lib/i18n/translations';
+
 export type WaterSourceType =
   | 'reservoir'
   | 'cauvery_stage'
@@ -117,9 +119,11 @@ export interface UrbanSupplyConfig {
 export interface BasePlaceConfig {
   cityId: string;
   displayName: string;
-  /** Tamil display name, used wherever copy renders the city name in
-   *  Tamil (TN cities). Falls back to `displayName` when omitted. */
-  displayNameTa?: string;
+  /** Localized display names per language. Used wherever copy renders
+   *  the city name in a specific regional script (e.g. `{ ta: 'சென்னை' }`
+   *  for Chennai's Tamil rendering, `{ kn: 'ಬೆಂಗಳೂರು' }` for Bangalore).
+   *  Falls back to `displayName` when the requested language is missing. */
+  displayNameLocalized?: Partial<Record<LanguageCode, string>>;
   stateCode: string;
   timezone: string;
   center: Coordinates;
@@ -153,6 +157,24 @@ export interface BasePlaceConfig {
   /** Public, audited urban supply numbers for the allocation hero.
    *  Required when heroMode === 'allocation'; ignored otherwise. */
   urbanSupply?: UrbanSupplyConfig;
+
+  /**
+   * Languages this city's UI offers, in display order. First entry is
+   * the default. 'en' MUST appear (accessibility floor + translation
+   * fallback).
+   *
+   * For Tamil Nadu cities use ['en', 'ta']; future Karnataka cities
+   * use ['en', 'kn']; Maharashtra ['en', 'mr']; Delhi ['en', 'hi']; etc.
+   *
+   * Cities can ship before any city-language strings are translated -
+   * unmatched keys fall back to English at runtime via `t()` in
+   * `src/lib/i18n/context.tsx`. Translating `src/lib/i18n/translations.ts`
+   * to a new language is independent content work.
+   *
+   * Defaults to ['en', 'ta'] when omitted (preserves current behaviour
+   * for any in-flight city configs that haven't been updated yet).
+   */
+  availableLanguages?: readonly LanguageCode[];
 
   /** Whether the cascade reconstruction overlay is available for this
    *  place. When true, /<city>/water-bodies surfaces a "Show cascade

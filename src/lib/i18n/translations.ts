@@ -1,6 +1,71 @@
-export type Language = "en" | "ta";
+/**
+ * The set of language codes the platform is architected to support
+ * across India. Adding a city in a new state means: extend this union
+ * (if the language is not yet present), add a `LANGUAGE_LABELS` entry,
+ * and set `availableLanguages: ['en', '<code>']` on that city's config.
+ *
+ * Translation entries are partial (see `TranslationEntry`): every
+ * entry MUST have an `en` value (accessibility floor + fallback), but
+ * other-language values are optional. A city can ship before all
+ * strings are translated; missing strings render in English.
+ */
+export type LanguageCode =
+  | "en"
+  | "ta" // Tamil (TN cities)
+  | "kn" // Kannada (Karnataka)
+  | "mr" // Marathi (Maharashtra)
+  | "hi" // Hindi (Delhi, MP, UP, etc.)
+  | "te" // Telugu (Andhra, Telangana)
+  | "ml" // Malayalam (Kerala)
+  | "bn"; // Bengali (West Bengal)
 
-export const translations: Record<string, { en: string; ta: string }> = {
+/** Back-compat alias - many imports still use `Language`. */
+export type Language = LanguageCode;
+
+/** Per-language display metadata: native script name, English name, and a
+ *  one-or-two-character glyph for the toggle button. */
+export const LANGUAGE_LABELS: Record<
+  LanguageCode,
+  { native: string; english: string; toggle: string }
+> = {
+  en: { native: "English", english: "English", toggle: "EN" },
+  ta: { native: "தமிழ்", english: "Tamil", toggle: "த" },
+  kn: { native: "ಕನ್ನಡ", english: "Kannada", toggle: "ಕ" },
+  mr: { native: "मराठी", english: "Marathi", toggle: "म" },
+  hi: { native: "हिन्दी", english: "Hindi", toggle: "हि" },
+  te: { native: "తెలుగు", english: "Telugu", toggle: "తె" },
+  ml: { native: "മലയാളം", english: "Malayalam", toggle: "മ" },
+  bn: { native: "বাংলা", english: "Bengali", toggle: "ব" },
+};
+
+/** All language codes the platform recognises. Useful for runtime
+ *  validation of stored localStorage preferences. */
+export const ALL_LANGUAGES: readonly LanguageCode[] = [
+  "en",
+  "ta",
+  "kn",
+  "mr",
+  "hi",
+  "te",
+  "ml",
+  "bn",
+] as const;
+
+export function isLanguageCode(value: unknown): value is LanguageCode {
+  return typeof value === "string" && (ALL_LANGUAGES as readonly string[]).includes(value);
+}
+
+/**
+ * Shape of a single translation entry. English is required - it is both
+ * the accessibility floor and the fallback whenever a key is missing in
+ * the requested language. Other languages are optional, so e.g. Karnataka
+ * cities can ship before any string is translated to Kannada.
+ */
+export type TranslationEntry = { en: string } & Partial<
+  Record<Exclude<LanguageCode, "en">, string>
+>;
+
+export const translations: Record<string, TranslationEntry> = {
   // ── Common ────────────────────────────────────────────────────────────────
   "common.loading_map":     { en: "Loading map...", ta: "வரைபடம் ஏற்றப்படுகிறது..." },
   "common.close":           { en: "Close", ta: "மூடு" },
