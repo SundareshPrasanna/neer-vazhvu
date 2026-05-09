@@ -68,9 +68,11 @@ function cellBg(role: "best" | "worst" | null): string {
 
 interface ComparisonTableProps {
   rankings: WardRankings[];
+  /** "" for Chennai (legacy flat URLs), "/<cityId>" otherwise. */
+  cityPrefix?: string;
 }
 
-export function ComparisonTable({ rankings }: ComparisonTableProps) {
+export function ComparisonTable({ rankings, cityPrefix = "" }: ComparisonTableProps) {
   const { t } = useLanguage();
 
   if (rankings.length === 0) return null;
@@ -92,7 +94,7 @@ export function ComparisonTable({ rankings }: ComparisonTableProps) {
               </th>
               {rankings.map((r) => (
                 <th key={r.wardNumber} scope="col" className="pb-2 px-2 text-center">
-                  <Link href={`/my-ward/report?ward=${r.wardNumber}`} className="group">
+                  <Link href={`${cityPrefix}/my-ward/report?ward=${r.wardNumber}`} className="group">
                     <p className="font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-sm">
                       {t("ward.ward")} {r.wardNumber}
                     </p>
@@ -110,7 +112,7 @@ export function ComparisonTable({ rankings }: ComparisonTableProps) {
               </td>
               {rankings.map((r, idx) => (
                 <td key={r.wardNumber} className="py-2 px-2">
-                  <Link href={`/my-ward/report?ward=${r.wardNumber}`} className={`flex flex-col items-center gap-0.5 py-1 px-1.5 hover:bg-slate-100/80 dark:hover:bg-slate-700/30 transition-colors rounded-lg ${cellBg(cellRole(idx, overallHL.bestIdx, overallHL.worstIdx, rankings.length))}`}>
+                  <Link href={`${cityPrefix}/my-ward/report?ward=${r.wardNumber}`} className={`flex flex-col items-center gap-0.5 py-1 px-1.5 hover:bg-slate-100/80 dark:hover:bg-slate-700/30 transition-colors rounded-lg ${cellBg(cellRole(idx, overallHL.bestIdx, overallHL.worstIdx, rankings.length))}`}>
                     <GradeBadge grade={r.overallGrade} size="sm" />
                     <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 tabular-nums">
                       #{r.overallRank}<span className="text-slate-400">/{r.overallTotal}</span>
@@ -132,7 +134,7 @@ export function ComparisonTable({ rankings }: ComparisonTableProps) {
                   <td className="py-2 pr-3 text-slate-700 dark:text-slate-300 text-sm">
                     <span className="inline-flex items-center flex-wrap">
                       {METRIC_PAGE[key] ? (
-                        <Link href={METRIC_PAGE[key]} className="group hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                        <Link href={`${cityPrefix}${METRIC_PAGE[key]}`} className="group hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                           <span>{t(metricDef?.label ?? key)}</span>
                           <span className="text-xs text-slate-400 ml-1">
                             {metricDef?.unit}
@@ -160,7 +162,7 @@ export function ComparisonTable({ rankings }: ComparisonTableProps) {
                       );
                     }
                     const base = METRIC_PAGE[key];
-                    const cellLink = base ? `${base}${base.includes("?") ? "&" : "?"}ward=${r.wardNumber}` : null;
+                    const cellLink = base ? `${cityPrefix}${base}${base.includes("?") ? "&" : "?"}ward=${r.wardNumber}` : null;
                     const cellContent = (
                       <>
                         <GradeBadge grade={m.grade} />
@@ -204,7 +206,7 @@ export function ComparisonTable({ rankings }: ComparisonTableProps) {
               className="border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 overflow-hidden"
             >
               {/* Card header */}
-              <Link href={`/my-ward/report?ward=${r.wardNumber}`} className={`flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800 ${overallHighlight}`}>
+              <Link href={`${cityPrefix}/my-ward/report?ward=${r.wardNumber}`} className={`flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800 ${overallHighlight}`}>
                 <div>
                   <p className="font-bold text-slate-900 dark:text-slate-100">{t("ward.ward")} {r.wardNumber}</p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{r.zoneName}</p>
@@ -226,7 +228,7 @@ export function ComparisonTable({ rankings }: ComparisonTableProps) {
                   const hl = bestAndWorst(rankings, m.key);
                   const mobileRole = cellRole(idx, hl.bestIdx, hl.worstIdx, rankings.length);
                   const mBase = METRIC_PAGE[m.key];
-                  const mobileLink = mBase ? `${mBase}${mBase.includes("?") ? "&" : "?"}ward=${r.wardNumber}` : null;
+                  const mobileLink = mBase ? `${cityPrefix}${mBase}${mBase.includes("?") ? "&" : "?"}ward=${r.wardNumber}` : null;
                   const mobileInner = (
                     <>
                       <div className="min-w-0 flex-1">

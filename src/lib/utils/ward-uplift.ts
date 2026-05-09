@@ -316,6 +316,8 @@ export function buildProjectedProfile(
         p.water_bodies.current_count = Math.round(value * area);
         break;
       case "flood_risk": {
+        // Cities without a flood layer can't have an uplift applied to it.
+        if ("_data_status" in p.flood) break;
         const targetSevere = value * area;
         const cat = p.flood.by_category;
         const currentSevere = (cat["very_high"] ?? 0) + (cat["high"] ?? 0);
@@ -327,9 +329,11 @@ export function buildProjectedProfile(
         break;
       }
       case "drainage":
+        if ("_data_status" in p.drainage) break;
         p.drainage.total_length_km = value * area;
         break;
       case "sewerage_infra":
+        if ("_data_status" in p.sewerage) break;
         p.sewerage.pumping_main_length_km = value * area;
         break;
     }

@@ -12,6 +12,7 @@ import type { IndustrialPollutionData, PollutionSource } from "@/types/industria
 import { SOURCE_TYPE_COLORS } from "@/types/industrial-pollution";
 import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { computeRiverStatus } from "@/lib/utils/river-classification";
 import "leaflet/dist/leaflet.css";
 
 /** Flies the map to a given center when it changes */
@@ -53,6 +54,14 @@ interface CombinedRiversMapProps {
   onSelectSource: (source: PollutionSource | null) => void;
   focusCenter?: [number, number];
   hiddenCategories?: Set<string>;
+  /** Path to the city's rivers GeoJSON. Defaults to Chennai's. */
+  riversGeoJsonUrl?: string;
+  /** Path to the city's industrial-zones GeoJSON. Defaults to Chennai's. */
+  industrialZonesGeoJsonUrl?: string;
+  /** Initial map center. Defaults to Chennai's centroid. */
+  mapCenter?: [number, number];
+  /** Initial map zoom. */
+  mapZoom?: number;
 }
 
 export function CombinedRiversMap({
@@ -64,6 +73,10 @@ export function CombinedRiversMap({
   onSelectSource,
   focusCenter,
   hiddenCategories,
+  riversGeoJsonUrl = "/geojson/chennai-rivers.geojson?v=6",
+  industrialZonesGeoJsonUrl = "/geojson/chennai-industrial-zones.geojson",
+  mapCenter,
+  mapZoom = 11,
 }: CombinedRiversMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
@@ -74,18 +87,27 @@ export function CombinedRiversMap({
 
   useEffect(() => {
     Promise.all([
-      fetch("/geojson/chennai-rivers.geojson?v=6").then((r) => r.json()),
-      fetch("/geojson/chennai-industrial-zones.geojson").then((r) => r.json()),
+      fetch(riversGeoJsonUrl).then((r) => r.json()),
+      fetch(industrialZonesGeoJsonUrl).then((r) => (r.ok ? r.json() : null)),
     ])
-      .then(([rivers, zones]: [FeatureCollection, FeatureCollection]) => {
+      .then(([rivers, zones]: [FeatureCollection, FeatureCollection | null]) => {
         setRiversGeoJSON(rivers);
         setZonesGeoJSON(zones);
       })
       .catch(console.error);
-  }, []);
+  }, [riversGeoJsonUrl, industrialZonesGeoJsonUrl]);
 
+  // Each river entry replaces the JSON-declared overall_status with one
+  // computed from current readings (CPCB Designated Best-Use). Every
+  // downstream read of `riverMetaMap.get(...)?.overall_status` then
+  // sees the data-derived status without per-call recomputation.
   const riverMetaMap = useMemo(
-    () => new Map(qualityData.rivers.map((river) => [river.id, river])),
+    () => new Map(
+      qualityData.rivers.map((river) => [
+        river.id,
+        { ...river, overall_status: computeRiverStatus(river) },
+      ]),
+    ),
     [qualityData.rivers]
   );
 
@@ -100,7 +122,7 @@ export function CombinedRiversMap({
           station_id: station.id,
           name: station.name,
           stretch: station.stretch,
-          overall_status: river.overall_status,
+          overall_status: computeRiverStatus(river),
         },
       }))
     ),
@@ -361,7 +383,10 @@ export function CombinedRiversMap({
     });
   };
 
-  if (!riversGeoJSON || !zonesGeoJSON) {
+  // Block render until rivers GeoJSON has loaded; zonesGeoJSON is
+  // optional (some cities don't have an industrial-zones polygon set
+  // - that's fine, the zones layer just doesn't draw).
+  if (!riversGeoJSON) {
     return (
       <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
         <span className="text-slate-500 dark:text-slate-400">{t("common.loading_map")}</span>
@@ -371,8 +396,8 @@ export function CombinedRiversMap({
 
   return (
     <MapContainer
-      center={[13.05, 80.22]}
-      zoom={11}
+      center={mapCenter ?? [13.05, 80.22]}
+      zoom={mapZoom}
       className="h-full w-full"
       scrollWheelZoom={true}
     >
@@ -380,7 +405,7 @@ export function CombinedRiversMap({
       {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* Render order: zones (bottom) → rivers → stations → sources → highlight (top) */}
-      {!(hiddenCategories?.has("industrial_zone")) && (
+      {zonesGeoJSON && !(hiddenCategories?.has("industrial_zone")) && (
         <GeoJSON key={`zones-${tiles.url}`} data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />
       )}
       {/* Rivers as direct Polylines (GeoJSON component has rendering bugs with long paths) */}
@@ -455,7 +480,7 @@ export function CombinedRiversMap({
         const river = riverMetaMap.get(selectedRiver.riverId);
         const station = river?.stations.find((s) => s.id === selectedRiver.stationId);
         if (!station || !river) return null;
-        const color = QUALITY_COLORS[river.overall_status];
+        const color = QUALITY_COLORS[computeRiverStatus(river)];
         return (
           <CircleMarker
             center={[station.lat, station.lng]}

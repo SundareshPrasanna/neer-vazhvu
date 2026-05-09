@@ -116,7 +116,10 @@ describe("computeUpliftPlan - data-backed caps", () => {
   it("caps flood_mitigation at actual severe zone count", () => {
     // Ward 15 has flood zones
     const ward = getProfile(15);
-    const severeZones = (ward.flood.by_category["very_high"] ?? 0) + (ward.flood.by_category["high"] ?? 0);
+    const severeZones =
+      "_data_status" in ward.flood
+        ? 0
+        : (ward.flood.by_category["very_high"] ?? 0) + (ward.flood.by_category["high"] ?? 0);
     const plan = computeUpliftPlan(15, allProfiles, 500, cityDist);
     assert.ok(plan);
     const floodAlloc = plan.allocations.find((a) => a.interventionId === "flood_mitigation");

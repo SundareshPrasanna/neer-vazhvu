@@ -1,188 +1,74 @@
 # Neer Vazhvu
 
-**Chennai Water Intelligence Dashboard** - An open-source platform that turns public water data into actionable intelligence for Chennai's 11 million residents.
+**Tamil Nadu Water Intelligence** - An open-source platform that turns public water data into actionable intelligence for Tamil Nadu cities. Live for Chennai and Madurai today, with more cities on the way.
 
 **Live:** [neervazhvu.org](https://neervazhvu.org)
 
-Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, flood risk, sewerage infrastructure, and water body loss across Chennai. It goes beyond simple dashboards by providing **30-day reservoir forecasts**, **ward-level risk scoring with an interactive risk map**, **river DO/BOD time-series**, **daily intelligence briefings**, an **interactive water bodies and restoration priority map**, a **flood risk, drainage, and sewerage network map**, and a **unified My Ward report page** that aggregates all data for any of Chennai's 200 wards into a single shareable view.
+Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, flood risk, sewerage infrastructure, and water body loss across Tamil Nadu cities. Each city's dashboard reflects what's actually knowable for that city - so Chennai surfaces CMWSSB-fed days-of-water-left + 5-factor ward risk, while Madurai surfaces a Vaigai allocation hero + 3-factor ward risk because its dams are irrigation-primary and several civic-infrastructure layers aren't yet publicly sourced.
 
-## Features
+## What we track (city-agnostic)
 
-### Dashboard
-- **Days of Water Left** - Three-scenario estimate (pessimistic / current trend / seasonal rains)
-- **Reservoir Cards** - Live storage, inflow, outflow, and rainfall for all 6 reservoirs
-- **Catchment Rainfall Context** - CHIRPS-based 30-day and 90-day catchment signals for the 4 core Chennai supply reservoirs, summarized as below / near normal / above normal
-- **Per-Reservoir Drilldown** - Click any reservoir for 365-day charts (storage, inflow vs outflow, rainfall)
-- **Historical Comparison** - Overlay any year from 2019-2025 on the storage trend chart
-- **Storage Trend Chart** - 90-day combined storage with interactive year comparison
-- **Rainfall Trends** - 56-year IMD rainfall history (1970-2025) with annual bar chart color-coded for drought/flood/Day Zero years, plus monthly actual vs long-term normal comparison
+Every city dashboard, where the data exists, surfaces:
 
-### Groundwater Map
-- **Choropleth Map** - Depth to water table across all 200 GCC wards, color-coded by CGWB classification (Healthy to Crisis)
-- **Risk Score View** - Toggle between depth choropleth and composite risk score choropleth (Low / Moderate / High / Critical) when pipeline data is available
-- **CGWB Exploitation View** - Block-level groundwater exploitation from India WRIS/CGWB (2011-2024), showing Safe/Semi-Critical/Critical/Over-Exploited classification with development percentage trends
-- **Live CGWB Station Overlay** - ~35 CGWB/India WRIS stations in Chennai district plotted as circle markers over the ward choropleth, mixing Manual (quarterly dug wells) and Telemetric (daily DWLR bore wells) with well type, well depth, and aquifer type in the station panel
-- **Sensor Data Quality Layer** - Each station is scored server-side with a `stuck` / `stale` / `ok` flag (stuck detection uses median daily delta < 1cm over 60 days; stale is mode-aware - 14 days for DWLR, 180 days for manual). Suspect stations render with a dashed amber ring and get an explicit warning banner in the panel, and the legend exposes filters so reviewers can hide them
-- **Ward Detail Panel** - Click any ward for depth, year-over-year trend, historical chart, and composite risk score breakdown
-- **Block Detail Panel** - Click any exploitation block for development %, availability, draft totals, and historical trend bar chart with 100% threshold line
-- **Risk Score Breakdown** - Each of the four components (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%) shown with weighted contribution bars
-- **Connected Insights** - Threshold-gated cross-domain intelligence blocks that surface when a risk component is dominant (e.g., "Reservoir stress contributes X/20 to this ward's risk score") with deep links to the relevant page
-- **Action Nudges** - Context-aware action recommendations based on the dominant risk factor (rainwater harvesting, recharge wells, or reservoir advocacy)
-- **Panel Pre-selection** - Each view mode auto-selects a notable item on load (deepest ward, highest-risk ward, or most over-exploited block) so users see the detail panel immediately
-- **Ward Context Panel** - Cross-domain intelligence for each ward showing groundwater depth/trend, water body count with restoration needs, dominant flood hazard, nearest river station, and drainage line count - all clickable deep links that navigate to the relevant page and pre-select the ward
-- **AI Ward Analysis** - AI-generated narrative per ward connecting groundwater, infrastructure, and risk data into a contextual story (refreshed monthly)
+- **Reservoirs** - Daily storage / inflow / outflow with multi-source history chart and (Chennai-only today) 30-day AutoARIMA forecasts
+- **Groundwater** - CGWB block exploitation classification, station-level depth time-series, and (where well density supports it) ward-level depth interpolation
+- **Rivers** - CPCB NWMP DO/BOD time-series with status badges derived from current readings via the shared CPCB Designated Best-Use classifier
+- **Water bodies** - OSM polygons, lost-tank inventory, restoration priority scoring (algorithm varies per city)
+- **Flood risk** - Hazard zones / drainage / sewerage where layers are public; narrative-only stub where they're not
+- **My Ward** - Per-ward report aggregating every layer above with comparison + uplift planner
+- **About** - Per-city methodology, data-source index, transparency-gap inventory
 
-### Water Bodies and Restoration Map
-A unified map at `/water-bodies` with a **view-mode toggle** to switch between "Water Bodies" and "Restoration Priority" views. Both views share the same detail panel and data.
+Per-city deep-dives:
 
-**Water Bodies view:**
-- **1,787 Existing Water Bodies** - All current lakes, tanks, ponds, and reservoirs from OpenStreetMap and Census of Water Bodies
-- **15 Documented Lost / Encroached Water Bodies** - Curated from Care Earth Trust, NGT records, and IIT Madras research
-- **Toggle Layers** - Show/hide current and lost water bodies independently
-- **Status-coded Circles** - Fully lost (red), severely reduced (orange), partially encroached (yellow)
-
-**Restoration Priority view:**
-- **1,787 Water Bodies Scored** - OSM and census water bodies ranked on restoration priority using spatial analysis
-- **6-Component Scoring Model** - Water body size (25%), proximity to lost water bodies (18%), proximity to polluted rivers (18%), industrial pollution proximity (14%), water body type (15%), census condition (15%)
-- **Priority Levels** - Critical (75-100), High (50-74), Moderate (25-49), Low (0-24)
-- **Color-coded Polygons** - Red to green showing restoration priority across Chennai
-
-**Shared features:**
-- **Ranking Table** - Sortable by score, area, or name; switch via Map/Ranking tabs
-- **Detail Panel** - Click any water body for basic info plus restoration score breakdown, nearest lost water body, nearest river station, nearest industrial source. Connected insights surface when lost-proximity or industrial-proximity scores are dominant
-- **Satellite Context** - For reviewed Phase 1 lakes and reservoirs, the detail panel shows historical persistence, current surface spread versus the usual seasonal baseline, and a freshness/confidence label
-- **Ward Context + AI Analysis** - Each detail panel shows the ward's cross-domain water context and AI-generated narrative
-- **Deep Linking** - Ward context links navigate to the water bodies page and pre-select the ward's top water body (`?mode=restoration&ward=N`)
-- **Stats Bar** - Adapts to show water body counts or priority breakdown based on view mode
-
-### River Health Map
-- **Interactive Polyline Map** - 4 rivers (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) colour-coded by CPCB water quality status
-- **Monitoring Station Markers** - 10 stations with individual DO/BOD readings
-- **DO/BOD/Nitrate Time-Series Chart** - Dual-axis line chart (2015-2024) per station with reference lines at the aquatic life minimum (DO = 4 mg/L) and clean river standard (BOD = 2 mg/L)
-- **Pollution Profile with BIS Limits** - DO, BOD, fecal coliform, TDS, nitrate, and heavy metals (Cr, Pb, Cd) shown as severity cards with BIS drinking water limit baselines, ratio bars, and multiplier labels (e.g., "22x above limit", "13x below min" for critically low DO)
-- **River Detail Panel** - Status badge, CPCB class, 3-year trend indicator (separate DO and BOD rows with direction hints), station selector, embedded explainers for DO, BOD, nitrate, and fecal coliform
-- **3-Year Trend** - Per monitoring station: direction badge (Improving / Worsening / Stable / Mixed) with signed DO and BOD deltas derived from the last 3 annual readings
-- **Stretch Highlighting** - Selecting a station highlights the corresponding river stretch on the map; station clicks on the map sync with the panel
-- **Sewage Inlet Layer** - 31 geo-located sewage inlets along the Cooum river with discharge volumes (size-encoded circles), from Nethaji Mariappan et al. (2017)
-- **CRRT Restoration Tracker** - 9 restoration projects from the Chennai Rivers Restoration Trust shown per river, with status, budget, area, metrics, and source links
-- **No-Monitoring Alarm** - Rivers without CPCB monitoring stations (Kosasthalaiyar) show a prominent alarm with a link to report alternative data sources
-- **Industrial Pollution Sources Overlay** - 7 major facilities (NCTPS, CPCL, Kamarajar Port, SIPCOT Manali, MFL, TPL, Ennore Creek) colour-coded by type; click for operator details, pollutant pills, incident timeline, and NGT orders. OSM `landuse=industrial` polygons shown as translucent overlay
-
-### Flood Risk, Drainage, and Sewerage
-- **Hazard Zone Map** - CFLOWS 1.0 flood hazard zones (Very High to Very Low) from the Nov 2019 model by IIT Bombay + IIT Madras + NCCR, via OpenCity Chennai. Model has not received a public update since; visible caveat on the page explains the vintage. Ward boundary overlay for area context.
-- **Historical Flood Events** - Toggle between 2015 Chennai floods (327 hotspots with vulnerability ratings, 192 inundation depth points) and 2020 Cyclone Nivar (53 hotspots)
-- **GCC Storm Water Drain Network** - 10,308 official drain segments from Greater Chennai Corporation survey (2023), showing street-level detail with drain type, depth, width, material, and condition status
-- **Macro and Micro Drains** - 52 major drainage channels from Chennai Basin Drainage Maps
-- **Drain Detail Panel** - Click any drain for street name, ward/zone, dimensions, open/closed status, condition (Good/Bad), and material type
-- **CMWSSB Sewerage Network** - 13 operational sewage treatment plants totalling 745 MLD installed capacity (CMWSSB 2026) shown as 8 campus points, 348 pumping stations (SPS) with STP linkage, and 3,834 pumping main segments with pipe material and size
-- **Return Period Maps** - 5/10/25/50/100/200-year flood extent polygons
-- **Ward Boundary Overlay** - 200 GCC wards with zone names on hover across all view modes
-- **Ward Context + AI Analysis** - Detail panels show ward-level cross-domain context and AI narrative for any clicked feature
-- **Deep Linking** - Ward context links navigate to the flood risk page and fly to the ward centroid (`?ward=N`), with view mode preserved (`?view=drainage`)
-- **Click Tolerance** - Drainage lines and pumping mains use a Canvas renderer with 10px tolerance for easier interaction with thin features
-
-### My Ward
-A unified ward report page at `/my-ward` that aggregates all data layers for any of Chennai's 200 wards into a single scrollable page. Supports deep linking via `?ward=N`.
-
-- **Ward Selector** - Search by ward number, area name, or zone name; recent wards remembered in localStorage
-- **AI Narrative** - AI-generated ward analysis connecting groundwater, infrastructure, and risk data
-- **Groundwater Card** - Depth to water table, year-over-year trend, composite risk score with 4-component breakdown (groundwater depth 40%, trend 30%, reservoir stress 20%, seasonal 10%), and historical chart
-- **Water Bodies Card** - Total count, restoration priority breakdown (critical/high/moderate/low), top 3 bodies by score, lost water bodies count with provenance
-- **Flood Risk Card** - Worst-case-first hazard display (very high and high zone counts shown prominently), category breakdown bar, 2015/2020 historical hotspot counts
-- **Infrastructure Card** - Drainage network length (km/sq km), STP count and capacity (MLD), pumping main length and station count
-- **River Card** - Nearest river, monitoring station, straight-line distance
-- **Actions Card** - GCC grievance portal link, CMWSSB portal link, ward councillor/MLA/MP with party and contact info
-- **News Context** - Zone-level news articles related to water issues
-- **Cross-page Links** - Each card links to the relevant Explore page with the ward pre-selected
-- **Source Attribution** - Every card shows data source and caveats (data age, model limitations, units explained)
-- **Export** - CSV download of all ward data, share via URL, print-friendly layout
-- **Ward Report Card** - Print-optimized one-pager at `/my-ward/report?ward=N` ranking a ward among all 200 on 5 governance-quality metrics (water body health, water body density, flood risk exposure, drainage coverage, sewage network coverage). Percentile-based A-F grades, zone/city median comparisons, elected representatives, methodology disclosure with known limitations. All density metrics area-normalized; line-based infrastructure apportioned across ward boundaries by sampling
-- **Uplift Planner** - Interactive budget optimizer answering "If I had INR X crore for my ward, where should I invest?" A greedy algorithm allocates a hypothetical budget (10-500 Cr slider) across 5 intervention types (storm drains, sewerage, flood mitigation, water body restoration, water body revival), maximizing composite-score improvement per crore spent. Data-backed caps prevent over-allocation (e.g. can't restore more bodies than actually need it). After-state uses exact ranking engine recompute (not approximation) for grade projections. Cost ranges from published GCC/CMWSSB/NDMA project reports
-
-### Chennai Water Facts
-A journalist-ready snapshot page at `/facts` that surfaces Chennai's water state as quotable numbers with sources, dates, and methodology attached. Organised by freshness tier so staleness is never hidden.
-
-- **Live tier** (Tier 1) - Reservoir storage today, Day Zero comparison to 2019, last-30-day rainfall, and year-over-year water body area change for 12+ tracked water bodies. Computed at request time from `reservoir_daily`, `weather_daily`, and `water_body_satellite_summary` tables with hourly ISR.
-- **Annual tier** (Tier 2) - Latest published government data: CGWB over-exploited blocks (13 of 16 in 2024), peak river pollution records (Cooum DO 0.0 mg/L in 2022, Buckingham Canal DO 0.3 mg/L in 2024), ward-level groundwater crisis count, and a Data Transparency Watch meta-card flagging how long it has been since authorities published.
-- **Historical tier** (Tier 3) - Documented events and peak records: 2019 Day Zero (~19 MCFT usable storage), 2015 Chennai floods (77-494 mm station rainfall range per WWA), CFLOWS 1.0 model vintage (Nov 2019), Pallikaranai Marsh decline (~6,000 to ~593 ha per 2016 research).
-- **Infrastructure tier** (Tier 4) - Structural capacity facts: 13 STPs / 745 MLD installed, 200 MLD desalination installed, 13,222 MCFT total reservoir capacity, piped supply vs demand gap.
-- **Copy-quote buttons** produce paste-ready attribution including the canonical fact URL (`neervazhvu.org/facts#id`).
-- **JSON-LD Dataset + Observation** structured data for search engines.
-- **Public JSON API** at `/api/facts` for RSS, embeds, and partner integrations.
-
-### Intelligence Layer (Python Service)
-- **Reservoir Forecasting** - 30-day storage predictions using AutoARIMA with confidence intervals; uses inflow/outflow, precipitation, and ET₀ (evapotranspiration) as exogenous regressors when data variance is sufficient
-- **Ward Risk Scoring** - Composite 0-100 risk score per ward (groundwater depth, trend, reservoir stress, seasonal vulnerability)
-- **Daily Briefing** - Template-based intelligence summary with headlines, alerts, and recommendations; optionally enhanced with an AI-generated city narrative using Claude (Sonnet for city, Haiku for 200 ward narratives)
-- **GEE Phase 1 Summaries** - Earth Engine-derived water-body spread seasonality and reservoir catchment rainfall summaries, written into Supabase for dashboard and water-body detail use
-
-### Ward Profile Index
-- **Build-Time Spatial Join** - Every data layer (water bodies, flood zones, drainage, sewerage, rivers, industrial zones) is mapped to each of Chennai's 200 wards using centroid point-in-polygon attribution. Line-based infrastructure (drainage, pumping mains) is apportioned across ward boundaries by sampling at 50m intervals along each line
-- **Deterministic Output** - `scripts/compute-ward-profiles.ts` reads only committed repo files (no Supabase), producing `public/data/ward-profiles.json` with byte-identical output for identical inputs
-- **Ward Area** - Each ward's polygon area (sq km) is computed from GCC 2022 boundaries via `@turf/area`, enabling area-normalized density metrics
-- **CI Freshness Check** - Reruns the script and diffs output; catches stale profiles when source GeoJSON changes
-
-### Other
-- **Navigation** - 4 top-level tabs: Dashboard, My Ward, Explore (dropdown grouping Groundwater, Water Bodies, Rivers, Flood Risk), About. Mobile menu has collapsible Explore section
-- **Tamil Localization** - Full English/Tamil toggle (~700 translation keys) with localStorage persistence; locale-aware date formatting and reservoir name translations
-- **Dark Mode** - Full dark mode with system preference detection; maps use OSM tiles with CSS invert filter for consistent label coverage across themes
-- **Responsive** - Works on desktop, tablet, and mobile
-- **Demo Mode** - Runs with realistic mock data when Supabase isn't configured
-- **OG Image** - Auto-generated Open Graph image for social sharing (LinkedIn, Twitter)
+- [docs/cities/chennai/features.md](docs/cities/chennai/features.md) - Chennai feature inventory + risk-score, ward-report-card, uplift-planner, and restoration-priority methodologies
+- [docs/cities/madurai/features.md](docs/cities/madurai/features.md) - Madurai-specific surfaces (allocation hero, supply-overview tile, transparency-gap panel, missing-data card) and how Madurai differs from Chennai
+- City-specific long-form water stories: [`/origins`](https://neervazhvu.org/origins) (Chennai) and [`/madurai/origins`](https://neervazhvu.org/madurai/origins)
 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────┐
-│        Python FastAPI Service (Railway)           │
-│                                                  │
-│  Scrapers         ETL            Intelligence     │
-│  ├─ cmwssb.py     ├─ pipeline.py ├─ forecaster   │
-│  ├─ open_meteo.py ├─ estimate.py ├─ risk_scorer  │
-│  ├─ nasa_power.py └─ constants   └─ briefing     │
-│  └─ opencity.py                                   │
-│                                                  │
-│  Writes computed results to Supabase ────┐        │
-└──────────────────────────────────────────┘        │
-                                                    │
-┌──────────────────────────────────────────┐        │
-│       Next.js Frontend (Vercel)          │<───────┘
+┌────────────────────────────────────────────────────────────────────┐
+│                  Python FastAPI Service (Railway)                  │
+│                                                                    │
+│  Scrapers (per-city)     ETL              Intelligence             │
+│  ├─ cmwssb.py            ├─ pipeline.py   ├─ forecaster (ARIMAX)   │
+│  ├─ open_meteo.py        ├─ estimate.py   ├─ risk_scorer (200 wd)  │
+│  ├─ nasa_power.py        └─ constants     └─ briefing + AI         │
+│  ├─ opencity.py                                                    │
+│  ├─ wris_telemetry.py    (Madurai: WRIS district scrape)           │
+│  ├─ tn_pwd_reservoirs.py (Madurai: TN Agriculture ARS daily)       │
+│  └─ openmeteo_basin_rainfall.py                                    │
+│                                                                    │
+│  Writes computed results to Supabase ────┐                         │
+└──────────────────────────────────────────┘                         │
+                                                                     │
+┌──────────────────────────────────────────┐                         │
+│       Next.js Frontend (Vercel)          │<────────────────────────┘
 │  Reads from Supabase + renders UI        │
-│  Static GeoJSON + JSON served from /public│
+│                                          │
+│  Multi-city routing:                     │
+│  • / (Chennai legacy flat routes)         │
+│  • /[cityId]/* (Madurai + future cities) │
+│  • src/lib/cities/{chennai,madurai}.ts   │
+│    drives heroMode, water sources,       │
+│    ward count, allocation config         │
+│                                          │
+│  Static GeoJSON + JSON served from       │
+│  /public (per-city -<cityId> suffix)     │
 └──────────────────────────────────────────┘
-
 ```
+
+**Place-config-driven multi-city.** Adding a city = adding a `CityConfig` in `src/lib/cities/`. The routes at `src/app/[cityId]/...` resolve it via `tryGetPlaceConfig(cityId)`. `heroMode` (`days-left` | `allocation` | `none`) picks the dashboard hero variant. Per-city water sources, ward counts, and `urbanSupply` allocation context flow from the same config. See [CONTRIBUTING.md](CONTRIBUTING.md#adding-a-new-city) for the full walkthrough.
 
 Earth Engine Phase 1 jobs live under `neer-vazhvu-api/app/gee/` and write small summary tables into Supabase instead of serving raster layers directly to the frontend.
 
 ## Data Sources
 
-| Source | Data | Frequency |
-|--------|------|-----------|
-| [CMWSSB Lake Level Page](https://cmwssb.tn.gov.in/lake-level) | Reservoir levels, inflow, outflow, rainfall | Daily |
-| [Open-Meteo](https://open-meteo.com/) | Precipitation, temperature, humidity, ET₀, wind speed | Daily (zero lag) |
-| [NASA POWER](https://power.larc.nasa.gov/) | Precipitation, temperature, humidity (fallback) | Daily (2-day lag) |
-| [OpenCity Chennai](https://data.opencity.in/) | Ward-wise groundwater levels (200 wards) | Monthly |
-| [First Census of Water Bodies (data.gov.in)](https://data.gov.in/resource/state-wise-data-first-census-water-bodies-tamil-nadu) | 305 Chennai water bodies — ownership, capacity, encroachment | One-time fetch |
-| [Kaggle Chennai Water Management](https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management) | 15 years of historical reservoir data (2004–2019) | One-time seed |
-| [OpenStreetMap Overpass API](https://overpass-api.de/) | Current water body polygons (lakes, tanks, reservoirs) + river polyline geometry + industrial zone polygons | One-time fetch |
-| [Sentinel-2 NDWI (via Earth Engine)](https://en.wikipedia.org/wiki/Normalized_difference_water_index) | NDWI water detection from Sentinel-2 green/NIR bands used to estimate recent visible spread for reviewed Phase 1 lakes and reservoirs | Periodic summary refresh |
-| [JRC Global Surface Water Monthly Recurrence](https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_MonthlyRecurrence) | Historical month-by-month wetness baseline used to judge whether recent spread is lower or higher than usual for the season | Historical monthly baseline |
-| [CHIRPS Daily Rainfall](https://developers.google.com/earth-engine/datasets/catalog/UCSB-CHG_CHIRPS_DAILY) | Catchment rainfall totals and seasonal anomaly baselines for Poondi, Red Hills, Chembarambakkam, and Cholavaram | Daily |
-| [Copernicus Sentinel-2 (via Earth Engine)](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED) | True-color satellite imagery for reviewed evidence frames at flagship water bodies | Evidence refresh (manual dispatch) |
-| [HydroBASINS / MERIT Hydro](https://www.hydrosheds.org/products/hydrobasins) | Reviewed operational catchment geometries used for reservoir rainfall context | Reviewed periodically |
-| Care Earth Trust / NGT / IIT Madras | Documented lost and encroached water bodies | Curated dataset |
-| [CPCB National Water Monitoring Programme (NWMP)](https://cpcb.nic.in/nwmp-data-2024/) | DO, BOD, pH, conductivity, fecal coliform, nitrate at 13 CPCB monitoring stations (2020-2024) | Annual (manual refresh) |
-| [Nethaji Mariappan et al. (2017)](https://neptjournal.com/upload-images/NL-61-47-(45)B-3437.pdf) | 31 sewage inlets along Cooum river with discharge volumes (30,708 m3/day total) | One-time (2017 data) |
-| [Chennai Rivers Restoration Trust (CRRT)](https://www.crrt.tn.gov.in/) | 9 restoration projects across Adyar, Cooum, Buckingham Canal, Kosasthalaiyar | Manually curated |
-| NGT Southern Bench / TNPCB / CPCB | 7 major industrial pollution sources - facility data, pollutant types, incident records, NGT orders | Manually curated |
-| [IMD Gridded Rainfall (via imdlib)](https://imdlib.readthedocs.io/) | Monthly rainfall at 0.25 deg resolution for Chennai (1970-2025), long-term normals | One-time generation |
-| [India WRIS / CGWB](https://indiawris.gov.in/) | Block-level groundwater exploitation (%), classification (Safe to Over-Exploited), block boundaries (2011-2024) | Static fetch |
-| [India WRIS Ground Water Level API](https://indiawris.gov.in/Dataset/Ground%20Water%20Level) | CGWB station-level time series (~35 Chennai stations, depth to water, Manual vs Telemetric/DWLR, well type, well depth, aquifer type) with server-side stuck/stale sensor detection | Daily scrape |
-| [OpenCity Chennai (Flood Data)](https://data.opencity.in/) | CFLOWS 1.0 (Nov 2019) flood hazard zones, 2015 flood hotspots/depth, 2020 Cyclone Nivar hotspots, return period maps. Model not publicly updated since 2019. | Static fetch |
-| [GCC Storm Water Drain Survey](https://data.opencity.in/) | 10,308 drain segments with type, depth, width, material, status across 197 wards | Static fetch |
-| [CMWSSB Sewerage Network](https://cmwssb.tn.gov.in/sewerage-system) | 13 operational STPs (745 MLD installed capacity; 8 campus points in geojson), 348 pumping stations, 3,834 pumping mains with pipe material and size | Static fetch (capacity cross-referenced with CMWSSB page) |
-| [Anthropic Claude API](https://docs.anthropic.com/) | AI-generated city and ward narratives (Sonnet for city, Haiku for wards) | Daily (city) / Monthly (wards) |
+We integrate roughly 30 distinct sources across the cities we cover - from utility-published reservoir feeds (CMWSSB for Chennai, TN Agriculture ARS for Madurai), to CGWB groundwater telemetry, to CPCB river quality, to OSM/Wikidata for spatial geometry. The full breakdown lives in per-city documents:
+
+- [docs/cities/chennai/data-sources.md](docs/cities/chennai/data-sources.md)
+- [docs/cities/madurai/data-sources.md](docs/cities/madurai/data-sources.md)
+- [DATA_SOURCES.md](DATA_SOURCES.md) - top-level index with a cross-city parity matrix (the contributor cheat-sheet for what each city has covered)
 
 ## Tech Stack
 
@@ -199,49 +85,11 @@ Earth Engine Phase 1 jobs live under `neer-vazhvu-api/app/gee/` and write small 
 
 ## Earth Engine Phase 1
 
-Neer Vazhvu uses Google Earth Engine as a summary layer, not a raster explorer.
+Earth Engine is used as a summary layer (catchment rainfall context, water-body NDWI seasonality, Sentinel-2 evidence frames), not a raster explorer. Methodology, guardrails, and operations live in dedicated docs:
 
-Phase 1 currently does three things:
-
-- computes catchment rainfall context for Poondi, Red Hills, Chembarambakkam, and Cholavaram
-- computes seasonal surface-spread summaries for a curated 150-water-body target set
-- builds reviewed Sentinel-2 evidence frames with NDWI water-mask overlays for flagship water bodies
-
-Current product surfaces:
-
-- dashboard catchment rainfall card
-- water-body detail panel satellite context block
-- satellite evidence dialog with true-color imagery and toggleable water-mask overlay
-
-Current behavior and guardrails:
-
-- water-body summaries are limited to a curated 150-target manifest rather than every mapped polygon
-- satellite evidence frames are limited to a 12-body flagship cohort; only reviewed frames are shown by default
-- low-confidence satellite rows are hidden from the detail panel
-- catchment polygons are reviewed operational geometries, not legal survey boundaries
-- current water-body observation uses optical Sentinel-2 NDWI only; Sentinel-1 radar fallback is not implemented yet
-- the frontend reads Supabase summaries and Storage images; it does not request Earth Engine directly
-
-Current operations:
-
-- local runs happen through `neer-vazhvu-api/scripts/run_gee_phase1.py`
-- GitHub workflow support lives in `.github/workflows/gee-phase1.yml`
-- reservoir context refreshes daily in GitHub Actions
-- water-body satellite summaries refresh weekly in GitHub Actions
-- satellite evidence is included in `run-all-refresh` and available via manual dispatch
-- historical water-body snapshots can be backfilled monthly for chart support
-- a lighter `flagship-history` cohort is used for chart-ready history seeding and evidence frames
-- the workflow also supports manual `workflow_dispatch` for validation, backfill, and ad hoc reruns
-
-Current implementation docs:
-
-- [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md)
-- [GEE_PHASE2_3_PLAN.md](GEE_PHASE2_3_PLAN.md)
-- [GEE_PHASE2_CHECKLIST.md](GEE_PHASE2_CHECKLIST.md)
-- [GEE_SATELLITE_EVIDENCE_PLAN.md](GEE_SATELLITE_EVIDENCE_PLAN.md)
-- [GEE_SATELLITE_EVIDENCE_CHECKLIST.md](GEE_SATELLITE_EVIDENCE_CHECKLIST.md)
-- [GEE_PHASE1_PLAN.md](GEE_PHASE1_PLAN.md)
-- [GEE_CATCHMENT_DERIVATION_PLAN.md](GEE_CATCHMENT_DERIVATION_PLAN.md)
+- [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md), [GEE_PHASE1_PLAN.md](GEE_PHASE1_PLAN.md), [GEE_CATCHMENT_DERIVATION_PLAN.md](GEE_CATCHMENT_DERIVATION_PLAN.md)
+- [GEE_PHASE2_3_PLAN.md](GEE_PHASE2_3_PLAN.md), [GEE_PHASE2_CHECKLIST.md](GEE_PHASE2_CHECKLIST.md)
+- [GEE_SATELLITE_EVIDENCE_PLAN.md](GEE_SATELLITE_EVIDENCE_PLAN.md), [GEE_SATELLITE_EVIDENCE_CHECKLIST.md](GEE_SATELLITE_EVIDENCE_CHECKLIST.md)
 - [GEE_RESEARCH.md](GEE_RESEARCH.md)
 
 ## Getting Started
@@ -435,176 +283,26 @@ Flood hazard zones and GCC storm water drain data are converted from OpenCity KM
 
 ```
 neer-vazhvu/
-├── scripts/                      # One-time data + validation scripts
-│   ├── seed-kaggle.ts                     # Import historical reservoir data (2004–2019)
-│   ├── seed-opencity-groundwater.ts       # Import groundwater history (2021–2024)
-│   ├── seed-opencity-lakes.ts             # Import lake-level history (optional)
-│   ├── fetch-water-bodies-osm.ts          # Fetch current water bodies from Overpass API
-│   ├── fetch-rivers-osm.ts                # Fetch river polylines from Overpass API
-│   ├── fetch-industrial-zones-osm.ts      # Fetch industrial zone polygons from Overpass API
-│   ├── compute-restoration-priority.ts    # Score water bodies for restoration priority
-│   ├── fetch-wris-groundwater.ts          # Fetch CGWB groundwater exploitation from India WRIS
-│   ├── compute-ward-profiles.ts         # Spatial join: map all data layers to 200 wards
-│   ├── generate-narratives.ts           # AI narrative generation (city + ward, uses Claude API)
-│   ├── check-restoration-data.ts        # Validate restoration-projects.json schema
-│   └── check-i18n.mjs                     # Validate Tamil translation coverage
-├── src/                          # Next.js frontend
-│   ├── app/                      # App Router pages
-│   │   ├── page.tsx              # Main dashboard
-│   │   ├── my-ward/              # Unified ward report page + report card (/report)
-│   │   ├── groundwater/          # Groundwater map page
-│   │   ├── water-bodies/         # Unified water bodies + restoration map
-│   │   ├── rivers/               # River health + industrial pollution map page
-│   │   ├── flood-risk/           # Flood risk, historical events, and drainage network
-│   │   ├── lake-restoration/     # Redirects to /water-bodies
-│   │   └── about/                # About/methodology page
-│   ├── components/
-│   │   ├── dashboard/            # Dashboard components
-│   │   ├── my-ward/              # Ward cards (groundwater, water bodies, flood, infra, river, actions) + report card with rankings
-│   │   ├── groundwater/          # Map, legend, ward panel
-│   │   ├── water-bodies/         # Unified map, legend, detail panel, view-mode toggle
-│   │   ├── rivers/               # River map, panel, chart, legend
-│   │   ├── pollution/            # Industrial pollution map overlay, panel, legend
-│   │   ├── flood-risk/           # Flood risk map, legend, detail panel, view toggle
-│   │   ├── insights/               # Cross-domain ward context, AI narratives, connected insights
-│   │   ├── lake-restoration/     # Restoration ranking table
-│   │   ├── layout/               # Header (Explore dropdown nav), footer
-│   │   └── ui/                   # shadcn/ui primitives
-│   ├── lib/
-│   │   ├── i18n/                 # English/Tamil translations + LanguageProvider context
-│   │   ├── supabase/             # Supabase client (admin + server)
-│   │   ├── api-clients/          # NASA POWER, OpenCity API clients
-│   │   ├── calculator/           # Days-left calculator
-│   │   ├── scrapers/             # TypeScript scrapers (legacy, superseded by Python)
-│   │   ├── data/                   # Shared data loaders (ward GeoJSON cache)
-│   │   ├── hooks/                  # Ward lookup (PIP), ward profile loader, my-ward data aggregation
-│   │   ├── utils/                # Formatting, date helpers, ward rankings engine, ward export
-│   │   └── mock-data.ts          # Demo mode data
-│   └── types/                    # TypeScript type definitions
-├── neer-vazhvu-api/              # Python intelligence service
-│   ├── app/
-│   │   ├── scrapers/             # CMWSSB, Open-Meteo, NASA POWER, OpenCity, data.gov.in
-│   │   ├── etl/                  # Pipeline orchestrator, calculator
-│   │   ├── gee/                  # Earth Engine: summaries, context, evidence
-│   │   ├── intelligence/         # Forecaster, risk scorer, briefing
-│   │   ├── models/               # Pydantic data models
-│   │   └── routers/              # FastAPI route handlers
-│   ├── scripts/
-│   │   ├── scrape_cmwssb.py              # CMWSSB scraper (used by GitHub Actions)
-│   │   ├── run_gee_phase1.py             # GEE Phase 1 CLI (summaries, context, evidence)
-│   │   └── generate_imd_rainfall.py      # Generate IMD rainfall data from imdlib
-│   ├── Dockerfile
-│   └── pyproject.toml
-├── supabase/
-│   └── migrations/               # SQL migrations (001-011)
+├── src/                # Next.js frontend (App Router)
+│   ├── app/            # / (Chennai legacy flat routes), /[cityId]/* (Madurai + future cities)
+│   ├── components/     # City-agnostic where possible; per-city forks live in dashboard/, my-ward/, water-bodies/
+│   ├── lib/cities/     # Place-config registry (chennai.ts, madurai.ts, types.ts)
+│   ├── lib/i18n/       # ~700 EN/TA translation keys
+│   └── lib/utils/      # Shared utilities incl. river-classification.ts (CPCB Best-Use)
+├── neer-vazhvu-api/    # Python FastAPI service: scrapers, ETL, intelligence, GEE
 ├── public/
-│   ├── geojson/                  # Static GeoJSON data
-│   │   ├── chennai-wards-2022.geojson           # GCC ward boundaries (choropleth)
-│   │   ├── chennai-water-bodies-current.geojson # OSM water bodies (1,635 features)
-│   │   ├── chennai-water-bodies-lost.geojson    # Curated lost water bodies (15 entries)
-│   │   ├── chennai-rivers.geojson               # River polylines (Cooum, Adyar, etc.)
-│   │   ├── chennai-industrial-zones.geojson     # OSM industrial zone polygons
-│   │   ├── chennai-gwr-blocks.geojson           # CGWB groundwater resource block boundaries
-│   │   ├── chennai-flood-hazard-zones.geojson   # CFLOWS flood hazard zones (5 categories)
-│   │   ├── chennai-flood-2015-hotspots.geojson  # 2015 flood hotspots (327 points)
-│   │   ├── chennai-flood-2020-hotspots.geojson  # 2020 Cyclone Nivar hotspots (53 points)
-│   │   ├── chennai-flood-inundation-depth.geojson # 2015 inundation depth points (192)
-│   │   ├── chennai-flood-return-periods.geojson # Return period flood maps (5-200yr)
-│   │   ├── chennai-drainage.geojson             # GCC storm water drains (10,308 segments)
-│   │   └── chennai-sewerage.geojson             # CMWSSB sewerage (13 STPs / 745 MLD; 8 campus points, 348 SPS, 3,834 mains)
-│   └── data/                     # Static JSON datasets
-│       ├── river-quality.json            # CPCB monitoring station readings (2015-2024)
-│       ├── cooum-sewage-inlets.json     # 31 sewage inlets along Cooum (Nethaji Mariappan et al. 2017)
-│       ├── restoration-projects.json    # 9 CRRT restoration projects across 4 rivers
-│       ├── industrial-sources.json       # Industrial pollution sources (NGT/TNPCB/CPCB)
-│       ├── restoration-priority.json     # Pre-computed restoration priority scores (1,787 water bodies)
-│       ├── imd-rainfall-monthly.json     # IMD historical rainfall (1970-2025, monthly + annual)
-│       ├── gwr-blocks.json              # CGWB block-level groundwater exploitation data (2011-2024)
-│       ├── gw-stations.json             # CGWB groundwater monitoring station locations
-│       ├── ward-names.json              # GCC ward numbering and zone assignments
-│       ├── ward-profiles.json             # Build-time ward spatial profiles (200 wards, all layers)
-│       └── ward-representatives.json    # GCC ward councilors, MLAs, MPs
-└── .github/
-    └── workflows/                # CI + daily data pipeline
+│   ├── data/           # Per-city JSON, -<cityId> suffix (Chennai is unsuffixed for back-compat)
+│   └── geojson/        # Per-city spatial files, same naming convention
+├── scripts/            # Build-time spatial joins, OSM fetchers, validation, narrative generation
+├── docs/
+│   ├── cities/         # Per-city documentation (features, data sources)
+│   │   ├── chennai/
+│   │   └── madurai/
+│   └── research/       # Authoritative source PDFs (CGWB, ADB IEE)
+└── supabase/migrations/ # SQL schema
 ```
 
-## Default Assumptions
-
-| Parameter | Default | Source |
-|-----------|---------|--------|
-| Daily consumption | 830 MLD | CMWSSB annual report |
-| Desalination output | 190 MLD | Model baseline constant (`DEFAULT_DESALINATION_MLD`) |
-| Groundwater supply | Not modeled | Conservative assumption |
-| Evaporation losses | ET₀ from Open-Meteo (FAO Penman-Monteith) | Used as ARIMAX exogenous regressor when variance is sufficient |
-
-Users can adjust consumption and desalination via sliders on the dashboard.
-
-## Risk Score Methodology
-
-Each ward receives a composite score from 0 (safe) to 100 (critical):
-
-| Component | Weight | What it measures |
-|-----------|--------|-----------------|
-| Groundwater depth | 40% | Current depth to water table (mbgl) |
-| Year-over-year trend | 30% | Is the water table rising or falling? |
-| Reservoir stress | 20% | City-wide reservoir storage percentage |
-| Seasonal vulnerability | 10% | Time of year (pre-monsoon = highest risk) |
-
-Risk levels: **Low** (0–25) · **Moderate** (26–50) · **High** (51–75) · **Critical** (76–100)
-
-## Ward Report Card Methodology
-
-Each of Chennai's 200 wards receives a composite score (0-100) based on 5 governance-quality metrics, each ranked independently with percentile-based A-F grades:
-
-| Metric | Weight | Unit | Direction | Tiebreaker |
-|--------|--------|------|-----------|------------|
-| Drainage coverage | 25% | km/sq km | Higher = better | - |
-| Sewerage infrastructure | 25% | km/sq km | Higher = better | SPS density |
-| Flood risk exposure | 25% | zones/sq km | Lower = better | - |
-| Water body health | 15% | restoration score | Lower = better | Body count |
-| Water body density | 10% | bodies/sq km | Higher = better | - |
-
-**Grading:** A (80th+ percentile), B (60-79th), C (40-59th), D (20-39th), F (below 20th). Percentile formula: `(total - rank) / (total - 1) * 100`. The overall grade applies the same thresholds to the composite score's percentile rank.
-
-**Implementation:** `src/lib/utils/ward-rankings.ts` - `computeWardRankings()` computes per-metric ranks with tiebreakers, composite scores via `computeCompositeScore()`, and overall ranking via `rankEntries()`.
-
-## Uplift Planner Methodology
-
-The uplift planner answers: "If I had INR X crore for my ward, where should I invest it to improve its grade the most?"
-
-**Algorithm:** Greedy budget optimizer (`src/lib/utils/ward-uplift.ts`)
-1. **Gap analysis** - Compares the ward's current value on each metric against the city distribution to identify where it lags
-2. **Greedy loop** - At each step, evaluates every feasible intervention and picks the one with the highest weighted-percentile improvement per crore. Repeats until budget is spent or all caps are hit
-3. **Exact projection** - Builds a modified ward profile with projected metric values and reruns `computeWardRankings()` on the full 200-ward dataset to get the exact after-state grade and percentile (not an approximation)
-
-**Interventions & costs** (from published government project reports):
-
-| Intervention | Cost/unit (Cr) | Metric | Cap logic |
-|-------------|---------------|--------|-----------|
-| Build storm drains | 1.5-3.0/km | Drainage coverage | 20 km/ward |
-| Extend sewage network | 3.0-6.0/km | Sewerage infra | 15 km/ward |
-| Flood zone mitigation | 5-15/zone | Flood risk | Actual high+very-high zones |
-| Restore water bodies | 2-8/body | WB health | Bodies rated critical/high |
-| Revive lost water bodies | 10-25/body | WB density | Documented lost bodies |
-
-**Ranking parity:** Both before-state and after-state achieve 0/200 disagreements with the authoritative `computeWardRankings()` engine across all wards. Verified by exhaustive tests in `ward-uplift.test.ts`.
-
-## Restoration Priority Methodology
-
-Each of Chennai's 1,787 water bodies (1,635 OSM + 152 census-only) receives a composite priority score from 0 (low priority) to 100 (critical restoration candidate), computed from 6 weighted spatial components:
-
-| Component | Weight | What it measures |
-|-----------|--------|-----------------|
-| Water body size | 25% | Larger bodies provide greater recharge and flood mitigation impact |
-| Proximity to lost water bodies | 18% | Near historically lost lakes = stressed area needing compensation |
-| Proximity to polluted rivers | 18% | Near dead/degraded river stretches (by DO readings from CPCB stations) |
-| Industrial pollution proximity | 14% | Near industrial discharge zones = higher contamination risk |
-| Water body type | 15% | Reservoirs and lakes prioritised over canals, drains, wastewater ponds |
-| Census condition | 15% | Encroachment status and storage capacity loss from government census data |
-
-Priority levels: **Low** (0–24) · **Moderate** (25–49) · **High** (50–74) · **Critical** (75–100)
-
-Scores are pre-computed by `scripts/compute-restoration-priority.ts` using Haversine distance calculations against all input datasets. Output is saved to `public/data/restoration-priority.json`.
+For the full per-city file inventory, see [docs/cities/chennai/data-sources.md](docs/cities/chennai/data-sources.md) and [docs/cities/madurai/data-sources.md](docs/cities/madurai/data-sources.md).
 
 ## Limitations
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
+import { useMyWardCity } from "./city-context";
 
 const PRIORITY_COLORS: Record<string, string> = {
   critical: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
@@ -19,6 +20,7 @@ interface Props {
 
 export function WardWaterBodiesCard({ wardNumber, profile }: Props) {
   const { t } = useLanguage();
+  const { cityPrefix } = useMyWardCity();
   const wb = profile.water_bodies;
   const lost = profile.lost_bodies;
   const total = wb.current_count;
@@ -46,7 +48,7 @@ export function WardWaterBodiesCard({ wardNumber, profile }: Props) {
             {t("my_ward.water_bodies")}
           </h2>
           <Link
-            href={`/water-bodies?mode=restoration&ward=${wardNumber}`}
+            href={`${cityPrefix}/water-bodies?mode=restoration&ward=${wardNumber}`}
             className="text-xs text-blue-600 dark:text-blue-400 hover:underline print:hidden"
           >
             {t("my_ward.view_on_map")} &rarr;

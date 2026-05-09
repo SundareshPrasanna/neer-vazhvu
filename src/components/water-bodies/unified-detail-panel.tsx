@@ -44,14 +44,45 @@ const STATUS_TKEYS: Record<WaterBodyStatus, string> = {
   partially_encroached: "wb_panel.partially_encroached",
 };
 
-const SCORE_COMPONENTS = [
-  { key: "size"                 as const, tKey: "lr.comp_size",       weight: 0.20, max: 20 },
-  { key: "lost_proximity"      as const, tKey: "lr.comp_lost",       weight: 0.18, max: 18 },
-  { key: "river_pollution"     as const, tKey: "lr.comp_river",      weight: 0.18, max: 18 },
-  { key: "industrial_proximity" as const, tKey: "lr.comp_industrial", weight: 0.14, max: 14 },
-  { key: "type_bonus"          as const, tKey: "lr.comp_type",       weight: 0.15, max: 15 },
-  { key: "census_condition"    as const, tKey: "lr.comp_census",     weight: 0.15, max: 15 },
-];
+/**
+ * Score-breakdown row metadata. Each city's restoration-priority
+ * algorithm carries its own set of component keys in
+ * ScoredWaterBody.components - Chennai's 6-key shape (size,
+ * lost_proximity, river_pollution, industrial_proximity, type_bonus,
+ * census_condition) and Madurai's 4-key shape (status_severity,
+ * cultural_bonus, size, confidence_multiplier) both render here.
+ *
+ * Unknown keys get a friendly fallback label (snake_case -> Title
+ * Case) and the raw component value is shown without a weight x max
+ * multiplication (the algorithm has already done its weighting).
+ */
+const COMPONENT_META: Record<
+  string,
+  { tKey: string; max: number; weight: number }
+> = {
+  // Chennai's keys
+  size:                  { tKey: "lr.comp_size",       max: 20, weight: 0.20 },
+  lost_proximity:        { tKey: "lr.comp_lost",       max: 18, weight: 0.18 },
+  river_pollution:       { tKey: "lr.comp_river",      max: 18, weight: 0.18 },
+  industrial_proximity:  { tKey: "lr.comp_industrial", max: 14, weight: 0.14 },
+  type_bonus:            { tKey: "lr.comp_type",       max: 15, weight: 0.15 },
+  census_condition:      { tKey: "lr.comp_census",     max: 15, weight: 0.15 },
+  // Madurai's keys (madurai-flagship-v1)
+  status_severity:       { tKey: "Status severity",    max: 80, weight: 1   },
+  cultural_bonus:        { tKey: "Cultural anchor",    max: 35, weight: 1   },
+  confidence_multiplier: { tKey: "Source confidence",  max: 1,  weight: 1   },
+};
+
+function componentLabel(key: string, t: (k: string) => string): string {
+  const meta = COMPONENT_META[key];
+  if (!meta) {
+    // Unknown key → friendly fallback
+    return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+  // tKey may be either an i18n key (Chennai) or a literal label (Madurai)
+  if (meta.tKey.startsWith("lr.")) return t(meta.tKey);
+  return meta.tKey;
+}
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -431,22 +462,27 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
         </div>
       </div>
 
-      {/* Score breakdown */}
+      {/* Score breakdown - iterates whatever keys the city's algorithm
+          produced. Chennai ships 6, Madurai ships 4; both render here
+          without a UI fork. */}
       <div className="px-4 py-3">
         <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-3">
           {t("lr.score_breakdown")}
         </h4>
         <div className="space-y-3">
-          {SCORE_COMPONENTS.map(({ key, tKey, weight, max }) => {
-            const subScore = wb.components[key];
-            const contribution = subScore * weight;
-            const pct = (contribution / max) * 100;
+          {Object.entries(wb.components).map(([key, rawValue]) => {
+            const meta = COMPONENT_META[key];
+            const max = meta?.max ?? 100;
+            const weight = meta?.weight ?? 1;
+            const value = Number.isFinite(rawValue) ? rawValue * weight : 0;
+            const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
+            const isMultiplier = key === "confidence_multiplier";
             return (
               <div key={key}>
                 <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
-                  <span>{t(tKey)}</span>
+                  <span>{componentLabel(key, t)}</span>
                   <span className="font-mono tabular-nums">
-                    {contribution.toFixed(0)} / {max}
+                    {isMultiplier ? value.toFixed(2) : value.toFixed(0)} / {isMultiplier ? max.toFixed(1) : max}
                   </span>
                 </div>
                 <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -459,6 +495,11 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
             );
           })}
         </div>
+        {wb.rationale && (
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 italic mt-3">
+            {wb.rationale}
+          </p>
+        )}
       </div>
 
       {/* Connected insight: river pollution proximity */}
@@ -628,6 +669,57 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
     const localized = t(key);
     return localized === key ? value : localized;
   };
+
+  if (selected.kind === "scored") {
+    const wb = selected.scored;
+    const primaryName = language === "ta"
+      ? (wb.name_ta || wb.name || t("wb_panel.unnamed"))
+      : (wb.name || t("wb_panel.unnamed"));
+    const secondaryName = language === "ta" ? wb.name : wb.name_ta;
+    const areaText = wb.area_ha
+      ? `${wb.area_ha.toLocaleString(undefined, { maximumFractionDigits: 1 })} ha`
+      : t("wb_panel.unknown");
+    const type = localizeType(wb.water_type);
+    return (
+      <div className="h-full flex flex-col bg-white dark:bg-slate-900 overflow-y-auto">
+        <div className="flex items-start justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex-1 min-w-0">
+            <h2 className="font-bold text-slate-900 dark:text-slate-100 text-base leading-tight truncate">
+              {primaryName}
+            </h2>
+            {secondaryName && (
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                {secondaryName}
+              </p>
+            )}
+          </div>
+          <CloseButton onClose={onClose} ariaLabel={closeAria} />
+        </div>
+        {/* Status note: this body has no precise OSM polygon, hence
+            the "approximate footprint" caveat surfaced for users. */}
+        <div className="px-4 pt-3">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">
+            {t("wb_panel.flagship_curated")}
+          </span>
+        </div>
+        <div className="p-4 grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-[10px] uppercase text-slate-400 dark:text-slate-500 tracking-wide">
+              {t("wb_panel.area")}
+            </p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mt-0.5">{areaText}</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase text-slate-400 dark:text-slate-500 tracking-wide">
+              {t("wb_panel.type")}
+            </p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mt-0.5">{type}</p>
+          </div>
+        </div>
+        <RestorationSection wb={wb} />
+      </div>
+    );
+  }
 
   if (selected.kind === "current") {
     const { props } = selected;

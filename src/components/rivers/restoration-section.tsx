@@ -33,30 +33,25 @@ const CATEGORY_I18N: Record<RestorationCategory, string> = {
 
 interface RestorationSectionProps {
   riverId: RiverId;
+  /** Which city's restoration projects file to load. Defaults to Chennai. */
+  cityId?: string;
 }
 
-export function RestorationSection({ riverId }: RestorationSectionProps) {
+export function RestorationSection({ riverId, cityId }: RestorationSectionProps) {
   const { t, language } = useLanguage();
   const [projects, setProjects] = useState<RestorationProject[] | null>(null);
-  const [error, setError] = useState(false);
 
   useEffect(() => {
-    getRestorationProjects()
+    getRestorationProjects(cityId)
       .then((all) => {
         const filtered = all.filter((p) => p.display_on_rivers.includes(riverId));
         setProjects(filtered);
       })
-      .catch(() => setError(true));
-  }, [riverId]);
+      .catch(() => setProjects([]));
+  }, [riverId, cityId]);
 
-  if (error) {
-    return (
-      <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">
-        {t("restoration.unavailable")}
-      </p>
-    );
-  }
-
+  // Render nothing when there are no projects for this river - cities
+  // without curated restoration data simply skip the section.
   if (projects === null || projects.length === 0) return null;
 
   return (

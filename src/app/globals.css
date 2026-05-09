@@ -173,3 +173,18 @@
     -webkit-print-color-adjust: exact;
   }
 }
+
+/* Story page: slow Ken Burns drift for hero photographs. The wrapper
+   has a small negative inset so the scale never reveals an edge. */
+@keyframes hero-kenburns {
+  0%   { transform: scale(1.04) translate3d(-1%, -0.5%, 0); }
+  50%  { transform: scale(1.10) translate3d(1%, 0.8%, 0); }
+  100% { transform: scale(1.04) translate3d(-1%, -0.5%, 0); }
+}
+.hero-kenburns {
+  animation: hero-kenburns 32s ease-in-out infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-kenburns { animation: none; }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { RiverQualityChart } from "@/components/rivers/river-quality-chart";
 import { ConnectedInsight } from "@/components/insights/connected-insight";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
@@ -13,15 +13,33 @@ import {
 import { useLanguage } from "@/lib/i18n/context";
 import { NewsContext } from "@/components/insights/news-context";
 import { RestorationSection } from "@/components/rivers/restoration-section";
+import { computeRiverStatus } from "@/lib/utils/river-classification";
 
 interface RiverPanelProps {
   selected: SelectedRiver;
   qualityData: RiverQualityData;
   onClose: () => void;
   onStationChange?: (stationId: string) => void;
+  /** City id - threads through to RestorationSection so the right city's
+   *  restoration-projects-{cityId}.json gets loaded. Defaults to Chennai. */
+  cityId?: string;
+  /** City display name - seeds NewsContext's Google News query. */
+  cityDisplayName?: string;
+  /** Optional extra sections rendered after the standard panel content
+   *  (e.g. court-orders / events panel for Madurai, industrial sources
+   *  filtered to the selected river). */
+  additionalSections?: ReactNode;
 }
 
-export function RiverPanel({ selected, qualityData, onClose, onStationChange }: RiverPanelProps) {
+export function RiverPanel({
+  selected,
+  qualityData,
+  onClose,
+  onStationChange,
+  cityId,
+  cityDisplayName,
+  additionalSections,
+}: RiverPanelProps) {
   const { t, language } = useLanguage();
   const river = qualityData.rivers.find((r) => r.id === selected.riverId);
   const [fallbackStationId, setFallbackStationId] = useState<string | undefined>(
@@ -29,14 +47,26 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
   );
 
   if (!river) return null;
+  // Default to the first station that actually has readings - opening
+  // the panel on an empty station would show a blank chart. Stations
+  // without data still appear in the selector below (greyed out) to
+  // surface the gap.
+  const firstStationWithReadings = river.stations.find((s) => s.readings.length > 0);
+  const defaultStationId = firstStationWithReadings?.id ?? river.stations[0]?.id;
   const activeStationId = onStationChange
-    ? (selected.stationId ?? river.stations[0]?.id)
-    : (fallbackStationId ?? river.stations[0]?.id);
+    ? (selected.stationId ?? defaultStationId)
+    : (fallbackStationId ?? defaultStationId);
 
   const primaryRiverName = language === "ta" ? (river.name_ta ?? river.name) : river.name;
   const secondaryRiverName = language === "ta" ? river.name : river.name_ta;
-  const statusColor = QUALITY_COLORS[river.overall_status];
-  const statusLabel = t(`rivers_legend.${river.overall_status}`);
+  // Status is derived from current readings via CPCB Designated
+  // Best-Use thresholds, not from the JSON's hardcoded label - so a
+  // river's status reflects what the data actually shows today, not
+  // a multi-year stretch-level designation that may have drifted.
+  // The JSON value remains a fallback when no station has readings.
+  const computedStatus = computeRiverStatus(river);
+  const statusColor = QUALITY_COLORS[computedStatus];
+  const statusLabel = t(`rivers_legend.${computedStatus}`);
 
   // No monitoring stations - show alarm state
   if (river.stations.length === 0) {
@@ -98,7 +128,7 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
         </div>
 
         {/* Connected insight */}
-        {(river.overall_status === "dead" || river.overall_status === "severely_degraded" || river.overall_status === "degraded") && (
+        {(computedStatus === "dead" || computedStatus === "severely_degraded" || computedStatus === "degraded") && (
           <div className="mb-4">
             <ConnectedInsight
               messageKey="connected.river_recharge"
@@ -117,7 +147,7 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
           </div>
         )}
 
-        <RestorationSection riverId={river.id} />
+        <RestorationSection riverId={river.id} cityId={cityId} />
 
         {/* Description */}
         {river.description && (
@@ -128,7 +158,9 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
           </div>
         )}
 
-        <NewsContext domain="rivers" locationName={`${river.name} river`} />
+        {additionalSections}
+
+        <NewsContext domain="rivers" locationName={`${river.name} river`} cityName={cityDisplayName} />
 
         <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">
           <p>
@@ -144,7 +176,7 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
   }
 
   const activeStation =
-    river.stations.find((s) => s.id === activeStationId) ?? river.stations[0];
+    river.stations.find((s) => s.id === activeStationId) ?? firstStationWithReadings ?? river.stations[0];
 
   // Latest DO reading from active station
   const latestReading = [...activeStation.readings].sort((a, b) => b.year - a.year)[0];
@@ -304,7 +336,7 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
       )}
 
       {/* Connected insight: degraded river blocks recharge */}
-      {(river.overall_status === "dead" || river.overall_status === "severely_degraded") && (
+      {(computedStatus === "dead" || computedStatus === "severely_degraded") && (
         <div className="mb-4">
           <ConnectedInsight
             messageKey="connected.river_recharge"
@@ -314,40 +346,63 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
         </div>
       )}
 
-      {/* Station selector */}
+      {/* Station selector - stations without readings are kept visible
+          but greyed out, to surface the editorial point that those
+          stations exist on the CPCB roster but publish no data. */}
       {river.stations.length > 1 && (
         <div className="flex flex-wrap gap-1.5 mb-4">
-          {river.stations.map((station) => (
-            <button
-              key={station.id}
-              onClick={() => {
-                if (onStationChange) {
-                  onStationChange(station.id);
-                  return;
-                }
-                setFallbackStationId(station.id);
-              }}
-              className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
-                activeStationId === station.id
-                  ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-              }`}
-            >
-              {formatStretch(station.stretch)}
-            </button>
-          ))}
+          {river.stations.map((station) => {
+            const hasReadings = station.readings.length > 0;
+            return (
+              <button
+                key={station.id}
+                onClick={() => {
+                  if (onStationChange) {
+                    onStationChange(station.id);
+                    return;
+                  }
+                  setFallbackStationId(station.id);
+                }}
+                title={hasReadings ? undefined : t("rivers.station_no_data") || "No CPCB readings published for this station"}
+                className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
+                  activeStationId === station.id
+                    ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900"
+                    : hasReadings
+                      ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                      : "bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-600 line-through hover:bg-slate-100 dark:hover:bg-slate-800"
+                }`}
+              >
+                {formatStretch(station.stretch)}
+                {!hasReadings && (
+                  <span className="ml-1 text-[10px] font-normal opacity-70">no data</span>
+                )}
+              </button>
+            );
+          })}
         </div>
       )}
 
-      {/* Chart */}
+      {/* Chart - falls back to a "no data published" callout when the
+          selected station has no readings (CPCB has it on the roster
+          but doesn't publish results). */}
       <div className="mb-3">
         <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
           {t("rivers.water_quality")}: {activeStation.name}
         </div>
-        <RiverQualityChart
-          readings={activeStation.readings}
-          stationName={activeStation.name}
-        />
+        {activeStation.readings.length === 0 ? (
+          <div className="rounded-md border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20 px-3 py-3 text-xs text-amber-900 dark:text-amber-200">
+            <span className="font-semibold">No CPCB data published.</span>{" "}
+            This station appears on the National Water Monitoring Programme
+            roster, but no annual readings have been released for it. The
+            station&apos;s job is to monitor this stretch - the data gap
+            is itself the story.
+          </div>
+        ) : (
+          <RiverQualityChart
+            readings={activeStation.readings}
+            stationName={activeStation.name}
+          />
+        )}
       </div>
 
       {/* Pollution profile - latest readings */}
@@ -614,7 +669,7 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
         </div>
       )}
 
-      <RestorationSection riverId={river.id} />
+      <RestorationSection riverId={river.id} cityId={cityId} />
 
       {/* Description */}
       {river.description && (
@@ -625,7 +680,9 @@ export function RiverPanel({ selected, qualityData, onClose, onStationChange }: 
         </div>
       )}
 
-      <NewsContext domain="rivers" locationName={`${river.name} river`} />
+      {additionalSections}
+
+      <NewsContext domain="rivers" locationName={`${river.name} river`} cityName={cityDisplayName} />
 
       {/* Source */}
       <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">

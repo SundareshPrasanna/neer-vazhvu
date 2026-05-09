@@ -20,20 +20,22 @@ def cmd_check_auth() -> int:
     return 0
 
 
-def cmd_build_targets(write: bool) -> int:
+def cmd_build_targets(write: bool, city_id: str) -> int:
     from app.gee.targets import build_phase1_targets, write_phase1_target_manifest
 
     if write:
-        payload = write_phase1_target_manifest()
+        payload = write_phase1_target_manifest(city_id=city_id)
         targets = payload["targets"]
         payload = {
+            "city_id": city_id,
             "target_count": payload["target_count"],
             "unnamed_target_count": sum(1 for target in targets if not target["name"]),
             "sample_targets": [target["gee_target_id"] for target in targets[:10]],
         }
     else:
-        targets = build_phase1_targets()
+        targets = build_phase1_targets(city_id=city_id)
         payload = {
+            "city_id": city_id,
             "target_count": len(targets),
             "sample_targets": [target.gee_target_id for target in targets[:10]],
         }
@@ -41,10 +43,11 @@ def cmd_build_targets(write: bool) -> int:
     return 0
 
 
-def cmd_validate_catchments() -> int:
+def cmd_validate_catchments(city_id: str) -> int:
+    from app.gee.cities import get_city_config
     from app.gee.reservoir_context import validate_reservoir_catchments
 
-    result = validate_reservoir_catchments()
+    result = validate_reservoir_catchments(city=get_city_config(city_id))
     print(json.dumps(result, indent=2))
     return 0 if result["ok"] else 1
 
@@ -123,6 +126,7 @@ def cmd_derive_catchment_candidate(
 def cmd_run_reservoir_context(
     *,
     write: bool,
+    city_id: str,
     date_arg: str | None,
     baseline_years: int,
     catchments_path_arg: str | None,
@@ -148,6 +152,7 @@ def cmd_run_reservoir_context(
     )
 
     result = compute_reservoir_context_rows(
+        city_id=city_id,
         reference_date=reference_date,
         baseline_years=baseline_years,
         catchments_path=catchments_path,
@@ -177,6 +182,7 @@ def cmd_run_reservoir_context(
 def cmd_run_water_body_summaries(
     *,
     write: bool,
+    city_id: str,
     date_arg: str | None,
     lookback_days: int,
     gee_target_id: str | None,
@@ -199,6 +205,7 @@ def cmd_run_water_body_summaries(
         reference_date = None
 
     result = compute_water_body_summary_rows(
+        city_id=city_id,
         reference_date=reference_date,
         lookback_days=lookback_days,
         gee_target_id=gee_target_id,
@@ -210,6 +217,7 @@ def cmd_run_water_body_summaries(
     if write:
         written = upsert_water_body_summaries(rows)
         payload = {
+            "city_id": city_id,
             "summary_date": result["summary_date"],
             "observation_start": result["observation_start"],
             "observation_end": result["observation_end"],
@@ -218,6 +226,7 @@ def cmd_run_water_body_summaries(
         }
     else:
         payload = {
+            "city_id": city_id,
             "summary_date": result["summary_date"],
             "observation_start": result["observation_start"],
             "observation_end": result["observation_end"],
@@ -232,6 +241,7 @@ def cmd_run_water_body_summaries(
 def cmd_backfill_water_body_summaries(
     *,
     write: bool,
+    city_id: str,
     date_arg: str | None,
     months_back: int,
     lookback_days: int,
@@ -252,6 +262,7 @@ def cmd_backfill_water_body_summaries(
         reference_date = None
 
     result = backfill_water_body_summaries(
+        city_id=city_id,
         reference_date=reference_date,
         months_back=months_back,
         lookback_days=lookback_days,
@@ -267,6 +278,7 @@ def cmd_backfill_water_body_summaries(
 def cmd_build_satellite_evidence(
     *,
     write: bool,
+    city_id: str,
     date_arg: str | None,
     months_back: int,
     frame_count: int,
@@ -291,6 +303,7 @@ def cmd_build_satellite_evidence(
 
     result = build_satellite_evidence(
         write=write,
+        city_id=city_id,
         reference_date=reference_date,
         months_back=months_back,
         frame_count=frame_count,
@@ -306,6 +319,7 @@ def cmd_build_satellite_evidence(
 
 
 def build_parser() -> argparse.ArgumentParser:
+    from app.gee.cities import DEFAULT_CITY_ID, supported_city_ids
     from app.gee.config import (
         DEFAULT_BACKFILL_MONTHS_BACK,
         DEFAULT_BASELINE_YEARS,
@@ -318,6 +332,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     parser = argparse.ArgumentParser(description="Neer Vazhvu GEE Phase 1 helper")
+    parser.add_argument(
+        "--city",
+        choices=list(supported_city_ids()),
+        default=DEFAULT_CITY_ID,
+        help=f"City scope for the pipeline. Default: {DEFAULT_CITY_ID}",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser(
@@ -576,9 +596,9 @@ def main() -> int:
         if args.command == "check-auth":
             return cmd_check_auth()
         if args.command == "build-targets":
-            return cmd_build_targets(write=args.write)
+            return cmd_build_targets(write=args.write, city_id=args.city)
         if args.command == "validate-catchments":
-            return cmd_validate_catchments()
+            return cmd_validate_catchments(city_id=args.city)
         if args.command == "derive-catchment-candidate":
             return cmd_derive_catchment_candidate(
                 reservoir=args.reservoir,
@@ -594,6 +614,7 @@ def main() -> int:
         if args.command == "run-reservoir-context":
             return cmd_run_reservoir_context(
                 write=args.write,
+                city_id=args.city,
                 date_arg=args.date_arg,
                 baseline_years=args.baseline_years,
                 catchments_path_arg=args.catchments_path_arg,
@@ -601,6 +622,7 @@ def main() -> int:
         if args.command == "run-water-body-summaries":
             return cmd_run_water_body_summaries(
                 write=args.write,
+                city_id=args.city,
                 date_arg=args.date_arg,
                 lookback_days=args.lookback_days,
                 gee_target_id=args.gee_target_id,
@@ -610,6 +632,7 @@ def main() -> int:
         if args.command == "backfill-water-body-summaries":
             return cmd_backfill_water_body_summaries(
                 write=args.write,
+                city_id=args.city,
                 date_arg=args.date_arg,
                 months_back=args.months_back,
                 lookback_days=args.lookback_days,
@@ -620,6 +643,7 @@ def main() -> int:
         if args.command == "build-satellite-evidence":
             return cmd_build_satellite_evidence(
                 write=args.write,
+                city_id=args.city,
                 date_arg=args.date_arg,
                 months_back=args.months_back,
                 frame_count=args.frame_count,

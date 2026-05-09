@@ -28,55 +28,83 @@ async def fetch_wris_groundwater(
     state: str = "Tamil Nadu",
     district: str = "Chennai",
     agency: str = "CGWB",
+    agencies: list[str] | None = None,
 ) -> list[WrisGroundwaterRecord]:
     """
     Fetch groundwater level readings from India WRIS API.
 
-    Returns both manual (seasonal) and telemetric (DWLR) readings.
-    For telemetric stations with multiple readings per day, we keep the
-    daily average to reduce noise and storage.
+    Returns both manual (seasonal) and telemetric (DWLR) readings across
+    one or more agencies (CGWB + state SW GW boards). For telemetric
+    stations with multiple readings per day, the daily average is kept
+    to reduce noise and storage.
+
+    Pass either `agency=` (single) for backward compatibility, or
+    `agencies=` (list) to fan out across multiple data publishers - e.g.
+    `agencies=["CGWB", "Tamil Nadu SW GW"]` doubles Madurai station
+    coverage by adding the 70+ state-board stations the WRIS inventory
+    exposes alongside CGWB's 124.
     """
+    agency_list = agencies if agencies else [agency]
     all_records: list[dict] = []
 
     async with httpx.AsyncClient(timeout=60.0) as client:
-        for page in range(MAX_PAGES):
-            url = (
-                f"{WRIS_API_BASE}"
-                f"?stateName={state}"
-                f"&districtName={district}"
-                f"&agencyName={agency}"
-                f"&startdate={start_date.isoformat()}"
-                f"&enddate={end_date.isoformat()}"
-                f"&download=false"
-                f"&page={page}"
-                f"&size={PAGE_SIZE}"
-            )
-            response = await client.post(url, headers={"Accept": "application/json"})
-            response.raise_for_status()
+        for current_agency in agency_list:
+            agency_count = 0
+            for page in range(MAX_PAGES):
+                url = (
+                    f"{WRIS_API_BASE}"
+                    f"?stateName={state}"
+                    f"&districtName={district}"
+                    f"&agencyName={current_agency}"
+                    f"&startdate={start_date.isoformat()}"
+                    f"&enddate={end_date.isoformat()}"
+                    f"&download=false"
+                    f"&page={page}"
+                    f"&size={PAGE_SIZE}"
+                )
+                response = await client.post(
+                    url, headers={"Accept": "application/json"}
+                )
+                response.raise_for_status()
 
-            data = response.json()
-            if data.get("statusCode") != 200:
-                raise ValueError(f"WRIS API error: {data.get('message')}")
+                data = response.json()
+                if data.get("statusCode") != 200:
+                    raise ValueError(
+                        f"WRIS API error ({current_agency}): {data.get('message')}"
+                    )
 
-            records = data.get("data", [])
-            if not records:
-                break
+                records = data.get("data", [])
+                if not records:
+                    break
 
-            all_records.extend(records)
+                all_records.extend(records)
+                agency_count += len(records)
+                logger.info(
+                    "WRIS %s page %d: %d records (agency cum: %d, total: %d)",
+                    current_agency,
+                    page,
+                    len(records),
+                    agency_count,
+                    len(all_records),
+                )
+
+                if len(records) < PAGE_SIZE:
+                    break
             logger.info(
-                "WRIS page %d: %d records (cumulative: %d)",
-                page,
-                len(records),
-                len(all_records),
+                "WRIS %s done: %d raw records",
+                current_agency,
+                agency_count,
             )
 
-            if len(records) < PAGE_SIZE:
-                break
-
-    logger.info("WRIS total raw records: %d", len(all_records))
+    logger.info(
+        "WRIS total raw records across %d agencies: %d",
+        len(agency_list),
+        len(all_records),
+    )
 
     # Deduplicate: for telemetric stations with multiple readings per day,
-    # keep the daily average
+    # keep the daily average. Station codes are unique across agencies, so
+    # cross-agency records do not collide.
     return _deduplicate_daily(all_records)
 
 

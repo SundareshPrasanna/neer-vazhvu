@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { MapContainer, TileLayer, GeoJSON, Tooltip, LayerGroup, Circle, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, Tooltip, LayerGroup, Circle, useMap, Pane } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer } from "leaflet";
@@ -20,6 +20,12 @@ import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
 
+// Chennai-default GeoJSON URLs and map center. Other cities override via props.
+const DEFAULT_CURRENT_GEOJSON_URL = "/geojson/chennai-water-bodies-current.geojson";
+const DEFAULT_LOST_GEOJSON_URL = "/geojson/chennai-water-bodies-lost.geojson";
+const DEFAULT_RIVERS_GEOJSON_URL = "/geojson/chennai-rivers.geojson";
+const DEFAULT_MAP_CENTER: [number, number] = [13.0827, 80.2707];
+
 interface UnifiedMapProps {
   viewMode: ViewMode;
   scoredData: ScoredWaterBody[];
@@ -28,6 +34,12 @@ interface UnifiedMapProps {
   onSelectLost: (body: SelectedWaterBody) => void;
   focusCenter?: [number, number];
   hiddenCategories?: Set<string>;
+  // City-aware overrides; default to Chennai paths for backward compat.
+  currentGeoJsonUrl?: string;
+  lostGeoJsonUrl?: string;
+  riversGeoJsonUrl?: string;
+  mapCenter?: [number, number];
+  mapZoom?: number;
 }
 
 /** Flies the map to a given center when it changes */
@@ -52,7 +64,37 @@ function getCensusColor(wb: CensusWaterBodyProperties): string {
  *  has mixed/unreliable units (see About > Data Quality). */
 const CENSUS_RADIUS_M = 20;
 
-export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, onSelectLost, focusCenter, hiddenCategories }: UnifiedMapProps) {
+/** For scored water bodies that have neither an OSM polygon nor a
+ *  census record (e.g. Madurai's flagship-curated tanks: Vandiyur,
+ *  Kannanenthal etc.), draw a Circle whose radius approximates the
+ *  body's actual footprint via area-equivalent radius. Clamped so very
+ *  small entries stay clickable and very large ones don't dominate the
+ *  map. Falls back to a 120 m default when area is unknown. */
+const ORPHAN_RADIUS_MIN_M = 80;
+const ORPHAN_RADIUS_MAX_M = 600;
+function orphanRadius(areaHa: number | null | undefined): number {
+  if (!areaHa || areaHa <= 0) return 120;
+  // r = sqrt(area / pi); area_ha * 10000 = sq m
+  const r = Math.sqrt((areaHa * 10000) / Math.PI);
+  if (r < ORPHAN_RADIUS_MIN_M) return ORPHAN_RADIUS_MIN_M;
+  if (r > ORPHAN_RADIUS_MAX_M) return ORPHAN_RADIUS_MAX_M;
+  return r;
+}
+
+export function UnifiedMap({
+  viewMode,
+  scoredData,
+  censusData,
+  onSelectCurrent,
+  onSelectLost,
+  focusCenter,
+  hiddenCategories,
+  currentGeoJsonUrl = DEFAULT_CURRENT_GEOJSON_URL,
+  lostGeoJsonUrl = DEFAULT_LOST_GEOJSON_URL,
+  riversGeoJsonUrl = DEFAULT_RIVERS_GEOJSON_URL,
+  mapCenter = DEFAULT_MAP_CENTER,
+  mapZoom = 11,
+}: UnifiedMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [currentGeoJSON, setCurrentGeoJSON] =
@@ -70,6 +112,17 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
     }
     return { scoreLookupById: byId, scoreLookupByOsmId: byOsm };
   }, [scoredData]);
+
+  // Scored bodies that have neither an OSM polygon nor a census record.
+  // These are city-curated flagship entries (Madurai's Vandiyur tank,
+  // Kannanenthal etc.) - without a polygon to color, they only appear
+  // on the map if we draw an explicit Circle for each. Render in a
+  // dedicated high-z pane so they sit above polygons and stay
+  // clickable.
+  const orphanScored = useMemo(
+    () => scoredData.filter((wb) => wb.osm_id == null && wb.census_id == null),
+    [scoredData],
+  );
 
   // Load rivers GeoJSON and build a name lookup for unnamed water body polygons
   const [riverNameByOsmId, setRiverNameByOsmId] = useState<Map<number, { name: string; name_ta: string }>>(new Map());
@@ -144,21 +197,21 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
   }, [currentGeoJSON, censusData]);
 
   useEffect(() => {
-    fetch("/geojson/chennai-water-bodies-current.geojson")
+    fetch(currentGeoJsonUrl)
       .then((r) => r.json())
       .then(setCurrentGeoJSON)
       .catch(console.error);
 
-    fetch("/geojson/chennai-water-bodies-lost.geojson")
+    fetch(lostGeoJsonUrl)
       .then((r) => r.json())
       .then(setLostGeoJSON)
       .catch(console.error);
-  }, []);
+  }, [currentGeoJsonUrl, lostGeoJsonUrl]);
 
   // Match unnamed water body polygons to rivers by centroid proximity
   useEffect(() => {
     if (!currentGeoJSON) return;
-    fetch("/geojson/chennai-rivers.geojson")
+    fetch(riversGeoJsonUrl)
       .then((r) => r.json())
       .then((riversGeo: GeoJSON.FeatureCollection) => {
         // Extract river line sample points with names
@@ -218,7 +271,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
         setRiverNameByOsmId(lookup);
       })
       .catch(console.error);
-  }, [currentGeoJSON]);
+  }, [currentGeoJSON, riversGeoJsonUrl]);
 
   // --- Styles ---
 
@@ -396,6 +449,13 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
     const props = feature.properties as LostWaterBodyProperties;
     const status = props.status as keyof typeof STATUS_COLORS;
     const color = STATUS_COLORS[status] || "#dc2626";
+    // pointToLayer bypasses react-leaflet's Pane context: the circle
+    // is constructed by Leaflet directly and lands in overlayPane
+    // (z 400) by default, BEHIND the current-water-body polygons
+    // ALSO in overlayPane. That's why a lost-body circle co-located
+    // with a current polygon (e.g. Madurai's Sellur tank) was getting
+    // its clicks intercepted. Setting `pane` here puts the circle in
+    // the same z=540 pane the wrapping <Pane> element established.
     return L.circle(latlng, {
       radius: props.approx_radius_m,
       fillColor: color,
@@ -404,6 +464,7 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
       fillOpacity: 0.35,
       opacity: 0.85,
       dashArray: "6, 4",
+      pane: "lost-bodies-pane",
     });
   };
 
@@ -417,8 +478,8 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
 
   return (
     <MapContainer
-      center={[13.0827, 80.2707]}
-      zoom={11}
+      center={mapCenter}
+      zoom={mapZoom}
       className="h-full w-full"
       scrollWheelZoom={true}
     >
@@ -434,15 +495,23 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
           onEachFeature={onEachCurrent}
         />
       )}
+      {/* Lost-body markers in their own pane, well above overlayPane's
+          400. We explicitly set pointerEvents:auto because some Leaflet
+          builds don't inherit hit-testing into custom panes (a pane at
+          z 450 can render visually on top while the polygon below it
+          continues to win clicks - exactly the "Sellur tank circle is
+          behind the polygon" symptom). */}
       {lostGeoJSON && (
-        <GeoJSON
-          ref={(layer) => { lostLayerRef.current = layer; }}
-          key={`lost-${language}-${tiles.url}`}
-          data={lostGeoJSON}
-          pointToLayer={pointToLayer}
-          style={lostStyle}
-          onEachFeature={onEachLost}
-        />
+        <Pane name="lost-bodies-pane" style={{ zIndex: 540, pointerEvents: "auto" }}>
+          <GeoJSON
+            ref={(layer) => { lostLayerRef.current = layer; }}
+            key={`lost-${language}-${tiles.url}`}
+            data={lostGeoJSON}
+            pointToLayer={pointToLayer}
+            style={lostStyle}
+            onEachFeature={onEachLost}
+          />
+        </Pane>
       )}
       {unmatchedCensus.length > 0 && viewMode === "water-bodies" && (
         <LayerGroup>
@@ -537,6 +606,60 @@ export function UnifiedMap({ viewMode, scoredData, censusData, onSelectCurrent, 
                 );
               })}
         </LayerGroup>
+      )}
+      {/* Orphan scored bodies: flagship-curated entries that have no
+          OSM polygon to color in restoration mode. We render them as
+          Circles in a dedicated pane stacked above the polygon pane
+          and the lost-bodies pane so they stay both visible AND
+          clickable when their footprint overlaps a polygon (Madurai's
+          flagship tanks are 100s of hectares - their circles often
+          overlap smaller OSM polygons of nearby bodies).
+          pointerEvents:auto is required for the same hit-testing
+          reason as the lost-bodies pane comment above. */}
+      {viewMode === "restoration" && orphanScored.length > 0 && (
+        <Pane name="scored-orphans-pane" style={{ zIndex: 560, pointerEvents: "auto" }}>
+          <LayerGroup>
+            {orphanScored.filter((wb) => !hiddenCategories?.has(wb.priority_level)).map((wb) => {
+              const color = getPriorityColor(wb.priority_level);
+              const name = wb.name || t("wb_panel.unnamed");
+              return (
+                <Circle
+                  key={wb.id}
+                  center={wb.centroid}
+                  radius={orphanRadius(wb.area_ha)}
+                  pathOptions={{
+                    fillColor: color,
+                    color,
+                    weight: 2,
+                    fillOpacity: 0.55,
+                    opacity: 0.95,
+                    // Dashed stroke distinguishes "approximate" footprint
+                    // (computed from area, no polygon) from precise OSM
+                    // outlines.
+                    dashArray: "4, 3",
+                  }}
+                  eventHandlers={{
+                    click: () => {
+                      onSelectCurrent({
+                        kind: "scored",
+                        scored: wb,
+                        latlng: wb.centroid,
+                      });
+                    },
+                  }}
+                >
+                  <Tooltip sticky>
+                    <strong>{name}</strong>
+                    <br />
+                    <span style={{ fontSize: "11px", color: "#64748b" }}>
+                      {t("lr.priority_score")}: {wb.priority_score} · {t(`lr.${wb.priority_level}`)}
+                    </span>
+                  </Tooltip>
+                </Circle>
+              );
+            })}
+          </LayerGroup>
+        </Pane>
       )}
     </MapContainer>
   );

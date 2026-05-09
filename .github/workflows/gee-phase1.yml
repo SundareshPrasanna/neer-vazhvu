@@ -20,6 +20,14 @@ on:
           - build-satellite-evidence
           - run-all-refresh
         default: run-all-refresh
+      city:
+        description: City scope for the run (reservoir-context is Chennai-only)
+        type: choice
+        options:
+          - all
+          - chennai
+          - madurai
+        default: all
       months_back:
         description: Prior monthly snapshots to backfill when using backfill-water-body-summaries
         type: number
@@ -45,7 +53,7 @@ on:
         default: ''
 
 concurrency:
-  group: gee-phase1-${{ github.event_name }}-${{ github.event.schedule || inputs.task || 'default' }}-${{ inputs.reference_date || 'default' }}-${{ inputs.gee_target_id || 'default' }}
+  group: gee-phase1-${{ github.event_name }}-${{ github.event.schedule || inputs.task || 'default' }}-${{ inputs.city || 'all' }}-${{ inputs.reference_date || 'default' }}-${{ inputs.gee_target_id || 'default' }}
   cancel-in-progress: false
 
 jobs:
@@ -77,17 +85,17 @@ jobs:
             echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
           fi
 
-      - name: Run daily reservoir context refresh
+      - name: Run daily reservoir context refresh (Chennai only - Madurai has no catchments)
         env:
           GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: python scripts/run_gee_phase1.py run-reservoir-context --write
+        run: python scripts/run_gee_phase1.py --city chennai run-reservoir-context --write
 
   scheduled-water-body-summaries:
     if: github.event_name == 'schedule' && github.event.schedule == '15 1 * * 1'
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 50
     defaults:
       run:
         working-directory: neer-vazhvu-api
@@ -112,17 +120,21 @@ jobs:
             echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
           fi
 
-      - name: Run weekly water-body summary refresh
+      - name: Run weekly water-body summary refresh (all cities)
         env:
           GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: python scripts/run_gee_phase1.py run-water-body-summaries --write
+        run: |
+          for city in chennai madurai; do
+            echo "=== run-water-body-summaries for $city ==="
+            python scripts/run_gee_phase1.py --city "$city" run-water-body-summaries --write
+          done
 
   scheduled-monthly-history-backfill:
     if: github.event_name == 'schedule' && github.event.schedule == '0 3 1 * *'
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 110
     defaults:
       run:
         working-directory: neer-vazhvu-api
@@ -147,17 +159,21 @@ jobs:
             echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
           fi
 
-      - name: Run monthly 1-month history backfill for all targets
+      - name: Run monthly 1-month history backfill for all cities and targets
         env:
           GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: python scripts/run_gee_phase1.py backfill-water-body-summaries --months-back 1 --write
+        run: |
+          for city in chennai madurai; do
+            echo "=== backfill-water-body-summaries for $city ==="
+            python scripts/run_gee_phase1.py --city "$city" backfill-water-body-summaries --months-back 1 --write
+          done
 
   manual-phase1:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 180
     defaults:
       run:
         working-directory: neer-vazhvu-api
@@ -189,40 +205,58 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
+          set -e
           TARGET_COHORT_ARG="--target-cohort ${{ inputs.target_cohort }}"
           TARGET_ID_ARG=""
           if [ -n "${{ inputs.gee_target_id }}" ]; then
             TARGET_ID_ARG="--gee-target-id ${{ inputs.gee_target_id }}"
           fi
-          case "${{ inputs.task }}" in
-            check-auth)
-              python scripts/run_gee_phase1.py check-auth
-              ;;
-            build-targets)
-              python scripts/run_gee_phase1.py build-targets --write
-              ;;
-            validate-catchments)
-              python scripts/run_gee_phase1.py validate-catchments
-              ;;
-            run-reservoir-context)
-              python scripts/run_gee_phase1.py run-reservoir-context --write
-              ;;
-            run-water-body-summaries)
-              python scripts/run_gee_phase1.py run-water-body-summaries $TARGET_COHORT_ARG --write
-              ;;
-            backfill-water-body-summaries)
-              REF_DATE_ARG=""
-              if [ -n "${{ inputs.reference_date }}" ]; then
-                REF_DATE_ARG="--date ${{ inputs.reference_date }}"
-              fi
-              python scripts/run_gee_phase1.py backfill-water-body-summaries --months-back "${{ inputs.months_back }}" $REF_DATE_ARG $TARGET_COHORT_ARG --write
-              ;;
-            build-satellite-evidence)
-              python scripts/run_gee_phase1.py build-satellite-evidence --months-back "${{ inputs.months_back }}" --frame-count "${{ inputs.frame_count }}" $TARGET_COHORT_ARG $TARGET_ID_ARG --write
-              ;;
-            run-all-refresh)
-              python scripts/run_gee_phase1.py run-reservoir-context --write
-              python scripts/run_gee_phase1.py run-water-body-summaries --write
-              python scripts/run_gee_phase1.py build-satellite-evidence $TARGET_COHORT_ARG --write
-              ;;
-          esac
+
+          # Resolve city scope
+          if [ "${{ inputs.city }}" = "all" ]; then
+            CITIES="chennai madurai"
+          else
+            CITIES="${{ inputs.city }}"
+          fi
+
+          for city in $CITIES; do
+            echo "=== city=$city task=${{ inputs.task }} ==="
+            case "${{ inputs.task }}" in
+              check-auth)
+                python scripts/run_gee_phase1.py --city "$city" check-auth
+                ;;
+              build-targets)
+                python scripts/run_gee_phase1.py --city "$city" build-targets --write
+                ;;
+              validate-catchments)
+                python scripts/run_gee_phase1.py --city "$city" validate-catchments
+                ;;
+              run-reservoir-context)
+                if [ "$city" = "madurai" ]; then
+                  echo "(skipping reservoir-context for madurai: no catchments configured)"
+                  continue
+                fi
+                python scripts/run_gee_phase1.py --city "$city" run-reservoir-context --write
+                ;;
+              run-water-body-summaries)
+                python scripts/run_gee_phase1.py --city "$city" run-water-body-summaries $TARGET_COHORT_ARG --write
+                ;;
+              backfill-water-body-summaries)
+                REF_DATE_ARG=""
+                if [ -n "${{ inputs.reference_date }}" ]; then
+                  REF_DATE_ARG="--date ${{ inputs.reference_date }}"
+                fi
+                python scripts/run_gee_phase1.py --city "$city" backfill-water-body-summaries --months-back "${{ inputs.months_back }}" $REF_DATE_ARG $TARGET_COHORT_ARG --write
+                ;;
+              build-satellite-evidence)
+                python scripts/run_gee_phase1.py --city "$city" build-satellite-evidence --months-back "${{ inputs.months_back }}" --frame-count "${{ inputs.frame_count }}" $TARGET_COHORT_ARG $TARGET_ID_ARG --write
+                ;;
+              run-all-refresh)
+                if [ "$city" != "madurai" ]; then
+                  python scripts/run_gee_phase1.py --city "$city" run-reservoir-context --write
+                fi
+                python scripts/run_gee_phase1.py --city "$city" run-water-body-summaries --write
+                python scripts/run_gee_phase1.py --city "$city" build-satellite-evidence $TARGET_COHORT_ARG --write
+                ;;
+            esac
+          done

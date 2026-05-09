@@ -1,4 +1,4 @@
-import type { ReservoirName } from '@/types/reservoir';
+import type { ChennaiReservoirName } from '@/types/reservoir';
 
 /** Conversion factor: 1 MLD (million litres per day) = 0.0353147 mcft (million cubic feet) */
 export const MLD_TO_MCFT = 0.0353147;
@@ -41,7 +41,7 @@ export const RESERVOIR_DISPLAY_ORDER = [
 ] as const;
 
 export const RESERVOIR_METADATA: Record<
-  ReservoirName,
+  ChennaiReservoirName,
   {
     displayName: string;
     fullCapacityMcft: number;

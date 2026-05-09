@@ -1,28 +1,35 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, useMap, Pane } from "react-leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import L from "leaflet";
 import type { Layer, LeafletMouseEvent } from "leaflet";
 import type { Feature } from "geojson";
 import { getGroundwaterColor, getGroundwaterStatus, getRiskColor, getBlockClassColor } from "@/types/groundwater";
-import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation, WrisStation } from "@/types/groundwater";
+import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation, WrisStation, CgwbStation } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { SelectedWardHighlight } from "@/components/map/selected-ward-highlight";
 import "leaflet/dist/leaflet.css";
 
+// Chennai-default URLs and map center. Other cities override via props.
+const DEFAULT_BLOCK_GEOJSON_URL = "/geojson/chennai-gwr-blocks.geojson";
+const DEFAULT_BLOCKS_JSON_URL = "/data/gwr-blocks.json";
+const DEFAULT_STATIONS_JSON_URL = "/data/gw-stations.json";
+const DEFAULT_WARDS_GEOJSON_URL = "/geojson/chennai-wards-2022.geojson";
+const DEFAULT_MAP_CENTER: [number, number] = [13.0827, 80.2707];
+
 /** Flies the map to a given center when it changes */
-function FlyToWard({ wardNumber }: { wardNumber: number }) {
+function FlyToWard({ wardNumber, wardGeoJsonUrl }: { wardNumber: number; wardGeoJsonUrl: string }) {
   const map = useMap();
   const [geo, setGeo] = useState<GeoJSON.FeatureCollection | null>(null);
-  useEffect(() => { getWardGeoJSON().then(setGeo); }, []);
+  useEffect(() => { getWardGeoJSON(wardGeoJsonUrl).then(setGeo); }, [wardGeoJsonUrl]);
   useEffect(() => {
     if (!geo) return;
     const feature = geo.features.find((f) => {
-      const num = Number(f.properties?.ward_number || f.properties?.Ward_No);
+      const num = Number(f.properties?.ward_number ?? f.properties?.Ward_No ?? f.properties?.ward_no);
       return num === wardNumber;
     });
     if (feature) {
@@ -46,10 +53,44 @@ interface WardMapProps {
   onWrisStationSelect?: (station: WrisStation | null) => void;
   wrisStations?: WrisStation[];
   selectedWrisStationCode?: string | null;
+  /** CGWB Year Book stations (quarterly, peer-reviewed). Rendered as a
+   *  parallel point overlay alongside (or instead of) the WRIS live
+   *  station network. Used today by Madurai. */
+  cgwbStations?: CgwbStation[];
+  selectedCgwbStationName?: string | null;
+  onCgwbStationSelect?: (station: CgwbStation | null) => void;
   hiddenCategories?: Set<string>;
+  // City-aware overrides; default to Chennai's paths for backward compat.
+  blockGeoJsonUrl?: string;
+  blocksJsonUrl?: string;
+  stationsJsonUrl?: string;
+  wardGeoJsonUrl?: string;
+  mapCenter?: [number, number];
+  mapZoom?: number;
 }
 
-export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumber, flyToWard, onWardSelect, onBlockSelect, onWrisStationSelect, wrisStations, selectedWrisStationCode, hiddenCategories }: WardMapProps) {
+export function WardMap({
+  groundwaterData,
+  riskData,
+  viewMode,
+  selectedWardNumber,
+  flyToWard,
+  onWardSelect,
+  onBlockSelect,
+  onWrisStationSelect,
+  wrisStations,
+  selectedWrisStationCode,
+  cgwbStations,
+  selectedCgwbStationName,
+  onCgwbStationSelect,
+  hiddenCategories,
+  blockGeoJsonUrl = DEFAULT_BLOCK_GEOJSON_URL,
+  blocksJsonUrl = DEFAULT_BLOCKS_JSON_URL,
+  stationsJsonUrl = DEFAULT_STATIONS_JSON_URL,
+  wardGeoJsonUrl = DEFAULT_WARDS_GEOJSON_URL,
+  mapCenter = DEFAULT_MAP_CENTER,
+  mapZoom = 11,
+}: WardMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [wardGeoJSON, setWardGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
@@ -58,25 +99,25 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
   const [stations, setStations] = useState<GWStation[]>([]);
 
   useEffect(() => {
-    getWardGeoJSON()
+    getWardGeoJSON(wardGeoJsonUrl)
       .then(setWardGeoJSON)
       .catch(console.error);
 
-    fetch("/geojson/chennai-gwr-blocks.geojson")
+    fetch(blockGeoJsonUrl)
       .then((r) => r.json())
       .then(setBlockGeoJSON)
       .catch(console.error);
 
-    fetch("/data/gwr-blocks.json")
+    fetch(blocksJsonUrl)
       .then((r) => r.json())
       .then((d) => setBlocks(d.blocks))
       .catch(console.error);
 
-    fetch("/data/gw-stations.json")
+    fetch(stationsJsonUrl)
       .then((r) => r.json())
       .then((d) => setStations(d.stations))
       .catch(console.error);
-  }, []);
+  }, [wardGeoJsonUrl, blockGeoJsonUrl, blocksJsonUrl, stationsJsonUrl]);
 
   const blockLookup = useMemo(() => {
     const map = new Map<string, GWBlock>();
@@ -91,7 +132,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
   // Ward styles
   const wardStyle = useCallback((feature: Feature | undefined) => {
     if (!feature) return {};
-    const wardNum = Number(feature.properties?.ward_number || feature.properties?.Ward_No);
+    const wardNum = Number(feature.properties?.ward_number ?? feature.properties?.Ward_No ?? feature.properties?.ward_no);
     let fillColor: string;
     let category: string;
     if (viewMode === "risk") {
@@ -128,7 +169,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
   }, [blockLookup, hiddenCategories, tiles.strokeLight]);
 
   const onEachWard = (feature: Feature, layer: Layer) => {
-    const wardNum = Number(feature.properties?.ward_number || feature.properties?.Ward_No);
+    const wardNum = Number(feature.properties?.ward_number ?? feature.properties?.Ward_No ?? feature.properties?.ward_no);
     const ward = groundwaterData.get(wardNum);
     const risk = riskData.get(wardNum);
 
@@ -196,56 +237,185 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
     blockLayerRef.current?.setStyle(blockStyle as L.StyleFunction);
   }, [hiddenCategories, blockStyle]);
 
-  if (viewMode === "exploitation" ? !blockGeoJSON : !wardGeoJSON) {
-    return (
-      <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-slate-500 dark:text-slate-400">{t("common.loading_map")}</span>
-      </div>
-    );
-  }
+  // Show a tiny non-blocking overlay while the relevant layer for the
+  // current viewMode is still loading. Crucially, we DO NOT unmount the
+  // MapContainer here - if the user switches viewMode while one layer
+  // hasn't finished loading, unmounting + remounting the MapContainer
+  // resets Leaflet's internal zoom/center to the initial mapZoom prop,
+  // which is what caused the "zoom jumps when switching tabs" bug.
+  const layerLoading = viewMode === "exploitation" ? !blockGeoJSON : !wardGeoJSON;
 
   return (
     <MapContainer
-      center={[13.0827, 80.2707]}
-      zoom={11}
+      center={mapCenter}
+      zoom={mapZoom}
       className="h-full w-full"
       scrollWheelZoom={true}
     >
+      {layerLoading && (
+        <div className="absolute inset-0 z-[600] bg-slate-100/40 dark:bg-slate-800/40 flex items-center justify-center pointer-events-none">
+          <span className="text-slate-500 dark:text-slate-400 text-sm">{t("common.loading_map")}</span>
+        </div>
+      )}
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
-      {flyToWard && <FlyToWard wardNumber={flyToWard} />}
+      {flyToWard && <FlyToWard wardNumber={flyToWard} wardGeoJsonUrl={wardGeoJsonUrl} />}
 
       {viewMode === "exploitation" ? (
         <>
           {blockGeoJSON && (
             <GeoJSON ref={(layer) => { blockLayerRef.current = layer; }} key={`blocks-${tiles.url}`} data={blockGeoJSON} style={blockStyle} onEachFeature={onEachBlock} />
           )}
-          {stations.map((s) => (
-            <CircleMarker
-              key={s.station_code}
-              center={[s.lat, s.lng]}
-              radius={4}
-              pathOptions={{ fillColor: "#3b82f6", color: "#1e3a5f", weight: 1, fillOpacity: 0.8 }}
-            >
-              <Tooltip>
-                <strong>{s.name}</strong>
-                <br />
-                <span style={{ fontSize: "11px", color: "#64748b" }}>
-                  {s.agency} - {t("gw_block.stations")}
-                </span>
-              </Tooltip>
-            </CircleMarker>
-          ))}
+          {/* When the page passes live WRIS readings, render them as rich
+              colored markers (depth + quality flag). Otherwise fall back to
+              the basic static-metadata blue dots. This lights up Madurai's
+              exploitation view with live data while leaving Chennai's
+              behaviour intact when wrisStations is empty.
+              Render inside a custom Pane with z-index above the
+              overlayPane (400) so the GeoJSON re-mount on viewMode toggle
+              doesn't push the choropleth fill above the markers. */}
+          <Pane name="wris-stations-pane" style={{ zIndex: 450 }}>
+          {wrisStations && wrisStations.length > 0
+            ? wrisStations.map((s) => {
+                if (s.latitude == null || s.longitude == null) return null;
+                if (s.dataQualityFlag === "stuck" && hiddenCategories?.has("wris_stuck")) return null;
+                if (s.dataQualityFlag === "stale" && hiddenCategories?.has("wris_stale")) return null;
+                const depth = Math.abs(s.latestDepthM);
+                const isSelected = selectedWrisStationCode === s.stationCode;
+                const isSuspect = s.dataQualityFlag === "stuck" || s.dataQualityFlag === "stale";
+                const fillColor = isSuspect ? "#94a3b8" : getGroundwaterColor(depth);
+                const borderColor = isSelected
+                  ? "#0c4a6e"
+                  : s.dataQualityFlag === "stuck"
+                    ? "#b45309"
+                    : "#1e293b";
+                return (
+                  <CircleMarker
+                    key={s.stationCode}
+                    center={[s.latitude, s.longitude]}
+                    radius={isSelected ? 7 : 5}
+                    pathOptions={{
+                      fillColor,
+                      color: borderColor,
+                      weight: isSelected ? 2.5 : 1.5,
+                      fillOpacity: isSuspect ? 0.55 : 0.9,
+                      dashArray: s.dataQualityFlag === "stuck" ? "2 3" : undefined,
+                    }}
+                    eventHandlers={{
+                      click: () => onWrisStationSelect?.(s),
+                    }}
+                  >
+                    <Tooltip pane="tooltipPane">
+                      <strong>{s.stationName}</strong>
+                      <br />
+                      <span style={{ fontSize: "11px" }}>
+                        {depth.toFixed(2)}m {t("wris.depth_below_ground")}
+                      </span>
+                      <br />
+                      <span style={{ fontSize: "10px", color: "#64748b" }}>
+                        {s.acquisitionMode === "Telemetric"
+                          ? t("wris.mode_telemetric")
+                          : t("wris.mode_manual")}
+                      </span>
+                    </Tooltip>
+                  </CircleMarker>
+                );
+              })
+            : stations.map((s) => (
+                <CircleMarker
+                  key={s.station_code}
+                  center={[s.lat, s.lng]}
+                  radius={4}
+                  pathOptions={{ fillColor: "#3b82f6", color: "#1e3a5f", weight: 1, fillOpacity: 0.8 }}
+                >
+                  <Tooltip pane="tooltipPane">
+                    <strong>{s.name}</strong>
+                    <br />
+                    <span style={{ fontSize: "11px", color: "#64748b" }}>
+                      {s.agency} - {t("gw_block.stations")}
+                    </span>
+                  </Tooltip>
+                </CircleMarker>
+              ))}
+          {/* CGWB Year Book stations - quarterly peer-reviewed point
+              readings, used today by Madurai. Rendered with depth-coloured
+              fill and a dashed stroke so they're visually distinct from
+              the WRIS live network (solid stroke). The latest reading is
+              the marker's depth signal. */}
+          {cgwbStations && cgwbStations.length > 0 && cgwbStations.map((s) => {
+            const sorted = [...s.readings].sort(
+              (a, b) => (a.year * 100 + a.month) - (b.year * 100 + b.month),
+            );
+            const latest = sorted[sorted.length - 1];
+            if (!latest) return null;
+            const depth = latest.depth_m_bgl;
+            const isSelected = selectedCgwbStationName === s.name;
+            const fillColor = getGroundwaterColor(depth);
+            return (
+              <CircleMarker
+                key={`cgwb-${s.name}-${s.lat}-${s.lng}`}
+                center={[s.lat, s.lng]}
+                radius={isSelected ? 7 : 5}
+                pathOptions={{
+                  fillColor,
+                  color: isSelected ? "#0c4a6e" : "#1e293b",
+                  weight: isSelected ? 2.5 : 1.5,
+                  fillOpacity: 0.9,
+                  dashArray: "1 2",
+                }}
+                eventHandlers={{
+                  click: () => onCgwbStationSelect?.(s),
+                }}
+              >
+                <Tooltip pane="tooltipPane">
+                  <strong>{s.name}</strong>
+                  <br />
+                  <span style={{ fontSize: "11px" }}>
+                    {depth.toFixed(2)}m below ground
+                  </span>
+                  <br />
+                  <span style={{ fontSize: "10px", color: "#64748b" }}>
+                    CGWB Year Book · {s.block} block · {sorted.length} quarterly readings
+                  </span>
+                </Tooltip>
+              </CircleMarker>
+            );
+          })}
+          </Pane>
         </>
       ) : (
         <>
+          {/* District outline (union of GWR blocks) drawn as a faint
+              stroke-only background. The ward choropleth covers the city
+              core; the district outline shows the full data scope so
+              stations 30-60 km out (in rural blocks like Sedapatti,
+              Tirumangalam, Melur) read as inside the district rather
+              than "off the map". Cities where city == district (Chennai)
+              just see a redundant outline; harmless. */}
+          {blockGeoJSON && (
+            <GeoJSON
+              key={`district-outline-${tiles.url}`}
+              data={blockGeoJSON}
+              style={{
+                fillOpacity: 0,
+                color: tiles.stroke,
+                weight: 1,
+                opacity: 0.45,
+                dashArray: "4 4",
+              }}
+              interactive={false}
+            />
+          )}
           {wardGeoJSON && (
             <GeoJSON ref={(layer) => { wardLayerRef.current = layer; }} key={`${viewMode}-${tiles.url}`} data={wardGeoJSON} style={wardStyle} onEachFeature={onEachWard} />
           )}
           {/* key includes viewMode so highlight remounts on top after choropleth remounts */}
-          <SelectedWardHighlight key={`highlight-${viewMode}`} wardNumber={selectedWardNumber ?? null} />
+          <SelectedWardHighlight key={`highlight-${viewMode}`} wardNumber={selectedWardNumber ?? null} wardGeoJsonUrl={wardGeoJsonUrl} />
 
-          {/* Live CGWB stations overlay (India WRIS) - only on depth view */}
+          {/* Live CGWB stations overlay (India WRIS) - only on depth view.
+              Wrapped in a custom Pane (z-index above overlayPane) so the
+              ward choropleth fill never hides the markers. */}
+          <Pane name="wris-stations-pane-depth" style={{ zIndex: 450 }}>
           {viewMode === "depth" && wrisStations?.map((s) => {
             if (s.latitude == null || s.longitude == null) return null;
             // Respect the legend's sensor-status filters so reviewers can hide
@@ -280,7 +450,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
                   click: () => onWrisStationSelect?.(s),
                 }}
               >
-                <Tooltip>
+                <Tooltip pane="tooltipPane">
                   <strong>{s.stationName}</strong>
                   <br />
                   <span style={{ fontSize: "11px" }}>
@@ -312,6 +482,7 @@ export function WardMap({ groundwaterData, riskData, viewMode, selectedWardNumbe
               </CircleMarker>
             );
           })}
+          </Pane>
         </>
       )}
     </MapContainer>

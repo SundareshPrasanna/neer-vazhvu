@@ -33,8 +33,8 @@ export interface ReservoirCatchmentSummary {
 }
 
 function compareReservoirOrder(a: ReservoirName, b: ReservoirName): number {
-  const ai = RESERVOIR_DISPLAY_ORDER.indexOf(a);
-  const bi = RESERVOIR_DISPLAY_ORDER.indexOf(b);
+  const ai = RESERVOIR_DISPLAY_ORDER.indexOf(a as (typeof RESERVOIR_DISPLAY_ORDER)[number]);
+  const bi = RESERVOIR_DISPLAY_ORDER.indexOf(b as (typeof RESERVOIR_DISPLAY_ORDER)[number]);
   return (ai === -1 ? Number.MAX_SAFE_INTEGER : ai) - (bi === -1 ? Number.MAX_SAFE_INTEGER : bi);
 }
 

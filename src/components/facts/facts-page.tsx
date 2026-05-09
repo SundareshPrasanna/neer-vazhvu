@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { TierSection } from "@/components/facts/tier-section";
 import { useLanguage } from "@/lib/i18n/context";
 import type { Fact, FactTier } from "@/types/facts";
@@ -34,28 +35,36 @@ export function FactsPage({ facts, generatedAt }: FactsPageProps) {
       </header>
 
       <nav className="mb-2 flex flex-wrap gap-2">
-        {([1, 2, 3, 4] as FactTier[]).map((tier) => (
-          <a
-            key={tier}
-            href={`#tier-${tier}`}
-            className="text-xs px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-          >
-            {language === "ta" ? tierLabelTa(tier) : tierLabelEn(tier)}
-            <span className="ml-1.5 text-slate-400 dark:text-slate-500 tabular-nums">
-              {byTier[tier].length}
-            </span>
-          </a>
-        ))}
+        {([1, 2, 3, 4] as FactTier[])
+          .filter((tier) => byTier[tier].length > 0)
+          .map((tier) => (
+            <a
+              key={tier}
+              href={`#tier-${tier}`}
+              className="text-xs px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+            >
+              {language === "ta" ? tierLabelTa(tier) : tierLabelEn(tier)}
+              <span className="ml-1.5 text-slate-400 dark:text-slate-500 tabular-nums">
+                {byTier[tier].length}
+              </span>
+            </a>
+          ))}
       </nav>
 
-      {([1, 2, 3, 4] as FactTier[]).map((tier) => (
-        <TierSection
-          key={tier}
-          tier={tier}
-          facts={byTier[tier]}
-          defaultOpen={tier === 1}
-        />
-      ))}
+      {(() => {
+        const presentTiers = ([1, 2, 3, 4] as FactTier[]).filter(
+          (t) => byTier[t].length > 0,
+        );
+        const firstTier = presentTiers[0];
+        return presentTiers.map((tier) => (
+          <TierSection
+            key={tier}
+            tier={tier}
+            facts={byTier[tier]}
+            defaultOpen={tier === firstTier}
+          />
+        ));
+      })()}
 
       <section className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
         <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3">
@@ -64,12 +73,12 @@ export function FactsPage({ facts, generatedAt }: FactsPageProps) {
         <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
           {t("facts.methodology_intro")}
         </p>
-        <a
+        <Link
           href="/about#data-sources"
           className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
         >
           {t("facts.methodology_link")}
-        </a>
+        </Link>
       </section>
     </div>
   );

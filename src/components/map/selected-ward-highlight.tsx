@@ -8,24 +8,26 @@ import { getWardGeoJSON } from "@/lib/data/ward-geo";
 interface SelectedWardHighlightProps {
   wardNumber: number | null;
   flyTo?: boolean;
+  /** Path to the city's ward GeoJSON. Defaults to Chennai's. */
+  wardGeoJsonUrl?: string;
 }
 
 /**
  * Renders a bold outline around the selected ward on the map.
  * Optionally flies the map to center on the ward.
  */
-export function SelectedWardHighlight({ wardNumber, flyTo = false }: SelectedWardHighlightProps) {
+export function SelectedWardHighlight({ wardNumber, flyTo = false, wardGeoJsonUrl }: SelectedWardHighlightProps) {
   const map = useMap();
   const [wardGeoJSON, setWardGeoJSON] = useState<FeatureCollection | null>(null);
 
   useEffect(() => {
-    getWardGeoJSON().then(setWardGeoJSON).catch(console.error);
-  }, []);
+    getWardGeoJSON(wardGeoJsonUrl).then(setWardGeoJSON).catch(console.error);
+  }, [wardGeoJsonUrl]);
 
   useEffect(() => {
     if (!wardNumber || !wardGeoJSON || !flyTo) return;
     const feature = wardGeoJSON.features.find((f) => {
-      const num = Number(f.properties?.ward_number || f.properties?.Ward_No);
+      const num = Number(f.properties?.ward_number ?? f.properties?.Ward_No ?? f.properties?.ward_no);
       return num === wardNumber;
     });
     if (feature) {
@@ -39,7 +41,7 @@ export function SelectedWardHighlight({ wardNumber, flyTo = false }: SelectedWar
   if (!wardNumber || !wardGeoJSON) return null;
 
   const selectedFeature = wardGeoJSON.features.find((f: Feature) => {
-    const num = Number(f.properties?.ward_number || f.properties?.Ward_No);
+    const num = Number(f.properties?.ward_number ?? f.properties?.Ward_No ?? f.properties?.ward_no);
     return num === wardNumber;
   });
 

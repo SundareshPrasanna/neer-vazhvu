@@ -12,7 +12,13 @@ import { WardMultiSelector } from "@/components/my-ward/ward-multi-selector";
 import { ComparisonTable } from "@/components/my-ward/comparison-table";
 import { ShareMenu } from "@/components/share-menu";
 
-export function WardComparisonPage() {
+interface WardComparisonPageProps {
+  /** City id - defaults to Chennai for the legacy /my-ward/compare
+   *  route. Pass an explicit cityId on /[cityId]/my-ward/compare. */
+  cityId?: string;
+}
+
+export function WardComparisonPage({ cityId = "chennai" }: WardComparisonPageProps = {}) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t } = useLanguage();
@@ -24,6 +30,10 @@ export function WardComparisonPage() {
 
   const selectedWards = parseWardsParam(searchParams.get("wards"));
 
+  // Per-city URL prefix. Chennai keeps the flat URLs; other cities are
+  // namespaced under /<cityId>.
+  const cityPrefix = cityId === "chennai" ? "" : `/${cityId}`;
+
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
@@ -33,7 +43,7 @@ export function WardComparisonPage() {
     setLoading(true);
     setLoadError(false);
 
-    loadProfiles()
+    loadProfiles(cityId)
       .then((profiles) => {
         if (cancelled) return;
         setAllProfiles(profiles);
@@ -46,7 +56,7 @@ export function WardComparisonPage() {
       });
 
     return () => { cancelled = true; };
-  }, []);
+  }, [cityId]);
 
   const handleUpdateWards = useCallback(
     (wards: number[]) => {
@@ -56,9 +66,9 @@ export function WardComparisonPage() {
       } else {
         params.delete("wards");
       }
-      router.replace(`/my-ward/compare?${params.toString()}`, { scroll: false });
+      router.replace(`${cityPrefix}/my-ward/compare?${params.toString()}`, { scroll: false });
     },
-    [router, searchParams],
+    [router, searchParams, cityPrefix],
   );
 
   // Filter to valid ward numbers that exist in profiles
@@ -71,12 +81,13 @@ export function WardComparisonPage() {
     .map((w) => computeWardRankings(w, allProfiles))
     .filter((r): r is WardRankings => r != null);
 
+  const compareUrl = `${cityPrefix}/my-ward/compare?wards=${validWards.join(",")}`;
   const shareUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/my-ward/compare?wards=${validWards.join(",")}`
-    : `/my-ward/compare?wards=${validWards.join(",")}`;
+    ? `${window.location.origin}${compareUrl}`
+    : compareUrl;
 
   const handleExport = () => {
-    if (rankings.length >= 1) downloadComparisonCSV(rankings);
+    if (rankings.length >= 1) downloadComparisonCSV(rankings, t);
   };
 
   const handlePrint = () => window.print();
@@ -103,7 +114,7 @@ export function WardComparisonPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <Link
-            href="/my-ward"
+            href={`${cityPrefix}/my-ward`}
             className="text-sm text-blue-600 dark:text-blue-400 hover:underline print:hidden"
           >
             &larr; {t("compare.back")}
@@ -120,7 +131,15 @@ export function WardComparisonPage() {
             <ShareMenu
               url={shareUrl}
               title={`Comparing Wards ${validWards.join(", ")} | Neer Vazhvu`}
-              ogImageUrl={`/api/og/compare?wards=${validWards.join(",")}`}
+              ogImageUrl={
+                // The OG image generator currently reads Chennai's
+                // ward-profiles.json directly. For other cities skip
+                // the image (ShareMenu accepts undefined) until we add
+                // a city-aware generator.
+                cityId === "chennai"
+                  ? `/api/og/compare?wards=${validWards.join(",")}`
+                  : undefined
+              }
             />
             <button
               onClick={handleExport}
@@ -149,6 +168,7 @@ export function WardComparisonPage() {
         <WardMultiSelector
           selectedWards={validWards}
           onUpdate={handleUpdateWards}
+          cityId={cityId}
         />
       )}
 
@@ -168,7 +188,7 @@ export function WardComparisonPage() {
 
       {/* Comparison table */}
       {!loading && rankings.length >= 1 && (
-        <ComparisonTable rankings={rankings} />
+        <ComparisonTable rankings={rankings} cityPrefix={cityPrefix} />
       )}
 
       {/* Footer */}

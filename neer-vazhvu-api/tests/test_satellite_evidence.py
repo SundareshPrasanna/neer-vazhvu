@@ -1,12 +1,94 @@
 from datetime import date
 
 from app.gee.evidence import (
+    WaterBodySatelliteEvidenceRow,
+    _apply_existing_review_state,
     build_satellite_evidence_reference_dates,
     build_satellite_evidence_storage_path,
     build_thumb_region_from_geometry,
     resolve_satellite_evidence_geometry_version,
     sanitize_gee_target_id_for_path,
 )
+
+
+def _row(**overrides):
+    base = dict(
+        gee_target_id="osm:1073092381",
+        reference_date="2026-04-30",
+        frame_date="2026-04-25",
+        frame_rank=1,
+        source_asset_id="S2_TEST_ASSET_A",
+        dynamic_world_asset_id=None,
+        is_reviewed=False,
+        notes=None,
+    )
+    base.update(overrides)
+    return WaterBodySatelliteEvidenceRow(**base)
+
+
+def test_apply_existing_review_state_preserves_prior_approval():
+    rows = [_row(is_reviewed=False)]
+    existing_by_key = {
+        ("osm:1073092381", "2026-04-30"): {
+            "frame_date": "2026-04-25",
+            "source_asset_id": "S2_TEST_ASSET_A",
+            "dynamic_world_asset_id": None,
+            "is_reviewed": True,
+            "notes": None,
+        },
+    }
+
+    [merged] = _apply_existing_review_state(rows, existing_by_key)
+
+    assert merged.is_reviewed is True
+
+
+def test_apply_existing_review_state_preserves_prior_rejection_with_notes():
+    rows = [_row(is_reviewed=False)]
+    existing_by_key = {
+        ("osm:1073092381", "2026-04-30"): {
+            "frame_date": "2026-04-25",
+            "source_asset_id": "S2_TEST_ASSET_A",
+            "dynamic_world_asset_id": None,
+            "is_reviewed": False,
+            "notes": "cloud-edge artefact on dam wall",
+        },
+    }
+
+    [merged] = _apply_existing_review_state(rows, existing_by_key)
+
+    assert merged.is_reviewed is False
+    assert merged.notes == "cloud-edge artefact on dam wall"
+
+
+def test_apply_existing_review_state_resets_when_scene_differs():
+    # Existing row was approved, but the rebuild picked a different scene
+    # (different source_asset_id) — the prior approval no longer applies,
+    # row keeps the default is_reviewed=False so it gets re-reviewed.
+    rows = [_row(is_reviewed=False, source_asset_id="S2_NEW_SCENE_B")]
+    existing_by_key = {
+        ("osm:1073092381", "2026-04-30"): {
+            "frame_date": "2026-04-25",
+            "source_asset_id": "S2_TEST_ASSET_A",
+            "dynamic_world_asset_id": None,
+            "is_reviewed": True,
+            "notes": None,
+        },
+    }
+
+    [merged] = _apply_existing_review_state(rows, existing_by_key)
+
+    assert merged.is_reviewed is False
+
+
+def test_apply_existing_review_state_leaves_new_rows_pending():
+    rows = [_row(is_reviewed=False)]
+    existing_by_key: dict[tuple[str, str], dict] = {}
+
+    [merged] = _apply_existing_review_state(rows, existing_by_key)
+
+    assert merged.is_reviewed is False
+    assert merged.notes is None
 
 
 def test_sanitize_gee_target_id_for_path_normalizes_separators():

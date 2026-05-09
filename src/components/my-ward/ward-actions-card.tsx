@@ -4,14 +4,78 @@ import { useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { WardRepresentatives } from "@/components/insights/ward-representatives";
+import { useMyWardCity } from "./city-context";
 
-const HELPLINES = [
-  { labelKey: "my_ward.hl_water_complaint", value: "044-2845 2572", href: "tel:04428452572" },
-  { labelKey: "my_ward.hl_tanker_booking", value: "044-2845 1515", href: "tel:04428451515" },
-  { labelKey: "my_ward.hl_cmwssb_whatsapp", value: "9445147200", href: "https://wa.me/919445147200" },
-  { labelKey: "my_ward.hl_flood_emergency", value: "1913", href: "tel:1913" },
-  { labelKey: "my_ward.hl_rwh_info", value: null, href: "https://www.cmwssb.tn.gov.in/rain-water-harvesting" },
-] as const;
+interface QuickAction {
+  /** Translation key for the prominent label */
+  labelKey: string;
+  /** Sub-label below the action (operator/agency name, plain text) */
+  subLabel: string;
+  href: string;
+  /** Pick the icon shape: "complaint" (warning) or "portal" (cube) */
+  icon: "complaint" | "portal";
+}
+
+interface Helpline {
+  labelKey: string;
+  value: string | null;
+  href: string;
+}
+
+interface CityActionsConfig {
+  quickActions: QuickAction[];
+  helplines: Helpline[];
+}
+
+/** Per-city action card configuration. Add a new entry when onboarding
+ *  another city - keeps phone numbers, agency names, and portal URLs
+ *  in one place rather than hardcoding Chennai everywhere. */
+const ACTIONS_BY_CITY: Record<string, CityActionsConfig> = {
+  chennai: {
+    quickActions: [
+      {
+        labelKey: "my_ward.report_issue",
+        subLabel: "GCC Online Services",
+        href: "https://gccservices.in/pgr",
+        icon: "complaint",
+      },
+      {
+        labelKey: "my_ward.cmwssb_portal",
+        subLabel: "CMWSSB",
+        href: "https://www.cmwssb.tn.gov.in/",
+        icon: "portal",
+      },
+    ],
+    helplines: [
+      { labelKey: "my_ward.hl_water_complaint", value: "044-2845 2572", href: "tel:04428452572" },
+      { labelKey: "my_ward.hl_tanker_booking", value: "044-2845 1515", href: "tel:04428451515" },
+      { labelKey: "my_ward.hl_cmwssb_whatsapp", value: "9445147200", href: "https://wa.me/919445147200" },
+      { labelKey: "my_ward.hl_flood_emergency", value: "1913", href: "tel:1913" },
+      { labelKey: "my_ward.hl_rwh_info", value: null, href: "https://www.cmwssb.tn.gov.in/rain-water-harvesting" },
+    ],
+  },
+  madurai: {
+    quickActions: [
+      {
+        labelKey: "my_ward.report_issue",
+        subLabel: "Madurai Corporation (MMC)",
+        href: "https://www.maduraicorporation.co.in/",
+        icon: "complaint",
+      },
+      {
+        labelKey: "my_ward.water_supply_portal",
+        subLabel: "TWAD Board (Madurai)",
+        href: "https://www.twadboard.tn.gov.in/content/madurai",
+        icon: "portal",
+      },
+    ],
+    helplines: [
+      { labelKey: "my_ward.hl_mmc_helpline", value: "1913", href: "tel:1913" },
+      { labelKey: "my_ward.hl_mmc_water", value: "0452-253 4222", href: "tel:04522534222" },
+      { labelKey: "my_ward.hl_flood_emergency", value: "1913", href: "tel:1913" },
+    ],
+  },
+};
 
 interface Props {
   wardNumber: number;
@@ -19,7 +83,12 @@ interface Props {
 
 export function WardActionsCard({ wardNumber }: Props) {
   const { t } = useLanguage();
+  const { cityId } = useMyWardCity();
   const [helpOpen, setHelpOpen] = useState(false);
+  // Fall back to Chennai when no per-city config is registered, so a new
+  // city onboarded without an entry here at least renders something
+  // sensible until its config lands.
+  const actionsConfig = ACTIONS_BY_CITY[cityId] ?? ACTIONS_BY_CITY.chennai;
 
   return (
     <Card>
@@ -29,37 +98,31 @@ export function WardActionsCard({ wardNumber }: Props) {
         </h2>
       </CardHeader>
       <CardContent className="space-y-3">
-        {/* Quick actions */}
+        {/* Quick actions - per-city config from ACTIONS_BY_CITY */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 print:hidden">
-          <a
-            href="https://gccservices.in/pgr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-          >
-            <svg className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-            </svg>
-            <div>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("my_ward.report_issue")}</p>
-              <p className="text-[10px] text-slate-400">GCC Online Services</p>
-            </div>
-          </a>
-
-          <a
-            href="https://www.cmwssb.tn.gov.in/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-          >
-            <svg className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
-            <div>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("my_ward.cmwssb_portal")}</p>
-              <p className="text-[10px] text-slate-400">CMWSSB</p>
-            </div>
-          </a>
+          {actionsConfig.quickActions.map((action) => (
+            <a
+              key={action.labelKey}
+              href={action.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+            >
+              {action.icon === "complaint" ? (
+                <svg className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              )}
+              <div>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t(action.labelKey)}</p>
+                <p className="text-[10px] text-slate-400">{action.subLabel}</p>
+              </div>
+            </a>
+          ))}
         </div>
 
         {/* Helplines & Resources - collapsible */}
@@ -78,7 +141,7 @@ export function WardActionsCard({ wardNumber }: Props) {
           </button>
           {helpOpen && (
             <div className="mt-2 ml-4.5 space-y-1.5">
-              {HELPLINES.map((h) => (
+              {actionsConfig.helplines.map((h) => (
                 <a
                   key={h.labelKey}
                   href={h.href}

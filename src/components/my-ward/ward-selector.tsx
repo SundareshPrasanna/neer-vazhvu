@@ -12,23 +12,34 @@ import {
   searchAll,
 } from "@/lib/utils/ward-filter";
 
-const RECENT_WARDS_KEY = "neer-vazhvu-recent-wards";
 const MAX_RECENT = 5;
 
-function getRecentWards(): number[] {
+/** Recently-viewed wards are namespaced per city. Without this, a
+ *  Chennai ward number (e.g. 139 = Valasaravakkam) leaks into the
+ *  Madurai selector as "ward 139" because the underlying numbers
+ *  collide. The legacy unsuffixed `neer-vazhvu-recent-wards` key is
+ *  retained for Chennai for back-compat with returning users; other
+ *  cities namespace explicitly. */
+function recentWardsKey(cityId: string): string {
+  return cityId === "chennai"
+    ? "neer-vazhvu-recent-wards"
+    : `neer-vazhvu-recent-wards-${cityId}`;
+}
+
+function getRecentWards(cityId: string): number[] {
   try {
-    const stored = localStorage.getItem(RECENT_WARDS_KEY);
+    const stored = localStorage.getItem(recentWardsKey(cityId));
     return stored ? JSON.parse(stored) : [];
   } catch {
     return [];
   }
 }
 
-function saveRecentWard(wardNumber: number): void {
+function saveRecentWard(wardNumber: number, cityId: string): void {
   try {
-    const recent = getRecentWards().filter((w) => w !== wardNumber);
+    const recent = getRecentWards(cityId).filter((w) => w !== wardNumber);
     recent.unshift(wardNumber);
-    localStorage.setItem(RECENT_WARDS_KEY, JSON.stringify(recent.slice(0, MAX_RECENT)));
+    localStorage.setItem(recentWardsKey(cityId), JSON.stringify(recent.slice(0, MAX_RECENT)));
   } catch {
     // localStorage unavailable
   }
@@ -43,34 +54,44 @@ const SECTION_LABELS: Record<SearchResult["kind"], string> = {
 interface WardSelectorProps {
   onSelect: (wardNumber: number) => void;
   selectedWard: number | null;
+  /** City id for the ward / locality data lookup. Defaults to Chennai
+   *  for back-compat with the existing flat /my-ward route. */
+  cityId?: string;
 }
 
-export function WardSelector({ onSelect, selectedWard }: WardSelectorProps) {
+export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: WardSelectorProps) {
   const { t, language } = useLanguage();
   const [wards, setWards] = useState<WardEntry[]>([]);
   const [localities, setLocalities] = useState<LocalityEntry[]>([]);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
-  const [recentWards, setRecentWards] = useState<number[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const stored = localStorage.getItem("neer-vazhvu-recent-wards");
-      return stored ? JSON.parse(stored) : [];
-    } catch { return []; }
-  });
+  const [recentWards, setRecentWards] = useState<number[]>([]);
+  // Hydrate recently-viewed from localStorage on mount and when the
+  // city changes. Per-city namespacing prevents Chennai wards leaking
+  // into Madurai's selector (see recentWardsKey).
+  useEffect(() => {
+    setRecentWards(getRecentWards(cityId));
+  }, [cityId]);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/wards")
+    // For Chennai, hit the legacy unsuffixed API. For other cities, pass
+    // the cityId so the API can read the matching <city>-ward-profiles.json
+    // and (optional) <city>-localities.json. Localities is allowed to 404
+    // - some cities don't have a curated locality list yet, and the
+    // selector still works (search by ward # / zone name only).
+    const wardsUrl = cityId === "chennai" ? "/api/wards" : `/api/wards?city=${encodeURIComponent(cityId)}`;
+    const locUrl = cityId === "chennai" ? "/api/localities" : `/api/localities?city=${encodeURIComponent(cityId)}`;
+    fetch(wardsUrl)
       .then((r) => r.json())
       .then((d) => setWards(d.wards || []))
       .catch(console.error);
-    fetch("/api/localities")
-      .then((r) => r.json())
+    fetch(locUrl)
+      .then((r) => (r.ok ? r.json() : { localities: [] }))
       .then((d) => setLocalities(d.localities || []))
-      .catch(console.error);
-  }, []);
+      .catch(() => setLocalities([]));
+  }, [cityId]);
 
   const zones = useMemo<ZoneEntry[]>(() => deriveZones(wards), [wards]);
 
@@ -107,13 +128,13 @@ export function WardSelector({ onSelect, selectedWard }: WardSelectorProps) {
 
   const handleSelect = useCallback(
     (wardNumber: number) => {
-      saveRecentWard(wardNumber);
-      setRecentWards(getRecentWards());
+      saveRecentWard(wardNumber, cityId);
+      setRecentWards(getRecentWards(cityId));
       setQuery("");
       setOpen(false);
       onSelect(wardNumber);
     },
-    [onSelect],
+    [onSelect, cityId],
   );
 
   const handleResultSelect = useCallback(

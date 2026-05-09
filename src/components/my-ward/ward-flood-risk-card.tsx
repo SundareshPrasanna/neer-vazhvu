@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
+import { isSectionUnavailable } from "@/lib/hooks/use-ward-profile";
+import { useMyWardCity } from "./city-context";
 
 const HAZARD_COLORS: Record<string, { bg: string; bar: string }> = {
   very_high: { bg: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400", bar: "bg-red-500" },
@@ -20,7 +22,33 @@ interface Props {
 
 export function WardFloodRiskCard({ wardNumber, profile }: Props) {
   const { t } = useLanguage();
+  const { cityPrefix } = useMyWardCity();
   const flood = profile.flood;
+
+  // Sections marked not_available (e.g. Madurai - no public CFLOWS layer)
+  // render an honest "data not yet sourced" card rather than fabricating
+  // zero counts.
+  if (isSectionUnavailable(flood)) {
+    return (
+      <Card>
+        <CardHeader>
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
+            {t("my_ward.flood_risk")}
+          </h2>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Ward-level flood-hazard data is not yet available for this city.
+          </p>
+          {flood._data_status_note && (
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+              {flood._data_status_note}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (!flood.dominant_hazard && flood.hazard_zone_count === 0 && flood.hotspot_2015_count === 0 && flood.hotspot_2020_count === 0) {
     return (
@@ -55,7 +83,7 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
             {t("my_ward.flood_risk")}
           </h2>
           <Link
-            href={`/flood-risk?ward=${wardNumber}`}
+            href={`${cityPrefix}/flood-risk?ward=${wardNumber}`}
             className="text-xs text-blue-600 dark:text-blue-400 hover:underline print:hidden"
           >
             {t("my_ward.view_on_map")} &rarr;

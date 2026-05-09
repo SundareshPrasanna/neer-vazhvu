@@ -1,0 +1,200 @@
+{
+  "last_updated": "2024",
+  "data_year_range": [
+    2021,
+    2024
+  ],
+  "source": "CPCB NWMP annual River Water Quality reports (cpcb.nic.in/wqm/{YEAR}/WQuality_River-Data-{YEAR}.pdf, 2021-2024 editions). Readings are min-max midpoints parsed by neer-vazhvu-api/scripts/scrape_cpcb_nwmp_vaigai.py. CPCB monitors Vaigai at 2 stations, both within Madurai city: code 10059 (Madurai U/S, our vaigai-sellur) and 10060 (Madurai D/S, our vaigai-anuppanadi). The headwaters (Vaigai dam, Andipatti) and the lower stretch (Manamadurai, Ramanathapuram) are NOT on the NWMP roster, so they are not represented here. Station coordinates are approximations along the Vaigai polyline; exact CPCB coordinates are not publicly published.",
+  "rivers": [
+    {
+      "id": "vaigai",
+      "name": "Vaigai River",
+      "name_ta": "வைகை ஆறு",
+      "length_km": 304,
+      "overall_status": "severely_degraded",
+      "cpcb_class": "Below E (Madurai-Manamadurai stretch)",
+      "description": "The Vaigai is Madurai's mainstem, draining 7,009 sq km from the Periyar/Vaigai dam in Theni through Madurai city, Sivagangai and Ramanathapuram before reaching the Bay of Bengal. About 80% of its annual flow is the Mullaperiyar tunnel diversion from the Periyar (Kerala) catchment. The Madurai-Manamadurai stretch is on CPCB's Priority III polluted river list (textile dyeing, sewage outfalls, sand mining).",
+      "description_ta": "வைகை ஆறு மதுரையின் முதன்மை ஆறாகும். தேனி மாவட்டத்தில் உள்ள பெரியார்/வைகை அணையில் தொடங்கி, 7,009 ச.கி.மீ. பகுதியை வடிகட்டி, மதுரை, சிவகங்கை, ராமநாதபுரம் மாவட்டங்கள் வழியாக வங்காள விரிகுடாவில் கலக்கிறது. ஆண்டுப் பாய்ச்சலில் சுமார் 80% பெரியார்-முல்லைப்பெரியார் சுரங்கப் பாதையின் வழியாக கேரளாவின் பெரியாறு பிடிப்புப் பகுதியிலிருந்து திருப்பப்படுகிறது. மதுரை-மானாமதுரை பகுதி CPCB-வின் முன்னுரிமை III மாசுபட்ட ஆற்றுப் பட்டியலில் உள்ளது (ஜவுளி சாயமிடல், கழிவுநீர் வெளியேற்றம், மணல் சுரண்டல்).",
+      "notes": "CPCB NWMP monitors Vaigai at 2 stations within Madurai city, both reporting since 2021. Annual readings (DO, BOD, pH, conductivity, fecal coliform, nitrate) come from CPCB annual report PDFs.",
+      "notes_ta": "CPCB-வின் NWMP திட்டத்தின்படி வைகை ஆற்றில் மதுரை நகரப் பகுதியில் 2 கண்காணிப்பு நிலையங்கள் உள்ளன, இரண்டும் 2021 முதல் ஆண்டுத் தரவு வெளியிடுகின்றன. தரவு (DO, BOD, pH, கடத்துத்திறன், fecal coliform, நைட்ரேட்) CPCB ஆண்டறிக்கை PDF-களிலிருந்து வருகிறது.",
+      "stations": [
+        {
+          "id": "vaigai-sellur",
+          "name": "Vaigai at Sellur (Madurai upstream)",
+          "name_ta": "வைகை - செல்லூர்",
+          "lat": 9.9425,
+          "lng": 78.108,
+          "stretch": "Madurai upstream of city",
+          "readings": [
+            {
+              "do_mgl": 5.8,
+              "bod_mgl": 2.5,
+              "ph": 7.55,
+              "conductivity_us": 672.0,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 9.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 1.51,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2021
+            },
+            {
+              "do_mgl": 5.9,
+              "bod_mgl": 2.0,
+              "ph": 7.56,
+              "conductivity_us": 492.0,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 20.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.53,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2022
+            },
+            {
+              "do_mgl": 6.05,
+              "bod_mgl": 2.0,
+              "ph": 7.5,
+              "conductivity_us": 480.0,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 9.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.52,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2023
+            },
+            {
+              "do_mgl": 6.15,
+              "bod_mgl": 3.0,
+              "ph": 7.35,
+              "conductivity_us": 616.5,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 16.0,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.68,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2024
+            }
+          ]
+        },
+        {
+          "id": "vaigai-anuppanadi",
+          "name": "Vaigai at Anuppanadi (Madurai downstream)",
+          "name_ta": "வைகை - அனுப்பானடி",
+          "lat": 9.9,
+          "lng": 78.145,
+          "stretch": "Madurai downstream of city",
+          "readings": [
+            {
+              "do_mgl": 5.6,
+              "bod_mgl": 2.0,
+              "ph": 7.45,
+              "conductivity_us": 955.5,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 2.0,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.57,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2021
+            },
+            {
+              "do_mgl": 6.35,
+              "bod_mgl": 2.0,
+              "ph": 7.29,
+              "conductivity_us": 600.5,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 21.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.86,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2022
+            },
+            {
+              "do_mgl": 6.0,
+              "bod_mgl": 3.5,
+              "ph": 7.5,
+              "conductivity_us": 1079.5,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 20.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.86,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2023
+            },
+            {
+              "do_mgl": 5.1,
+              "bod_mgl": 4.2,
+              "ph": 7.85,
+              "conductivity_us": 916.0,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": 21.5,
+              "tds_mgl": null,
+              "nitrate_mgl": 0.96,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "year": 2024
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "periyar",
+      "name": "Periyar (Kerala feeder)",
+      "name_ta": "பெரியாறு",
+      "length_km": 121,
+      "overall_status": "stressed",
+      "cpcb_class": "Not on TN NWMP",
+      "description": "Kerala-side river that feeds Vaigai through the 1886 Mullaperiyar tunnel. The 999-year lease deed makes Periyar a TN-operated source even though the reservoir sits in Kerala's Idukki district. ~80% of Vaigai's annual yield originates here.",
+      "notes": "Periyar is monitored by Kerala State Pollution Control Board, not by CPCB-NWMP under Tamil Nadu. We don't ingest those readings yet.",
+      "stations": []
+    },
+    {
+      "id": "suruliyaru",
+      "name": "Suruliyaru",
+      "name_ta": "சுருளியாறு",
+      "length_km": 72,
+      "overall_status": "stressed",
+      "cpcb_class": "Not on NWMP",
+      "description": "Tributary of Vaigai joining from the south (Theni district hills). Carries Western Ghats runoff during the SW monsoon, contributing to Vaigai dam inflows.",
+      "notes": "No CPCB NWMP station. Quality data not collected.",
+      "stations": []
+    },
+    {
+      "id": "manjalar",
+      "name": "Manjalar",
+      "name_ta": "மஞ்சளாறு",
+      "length_km": 27,
+      "overall_status": "stressed",
+      "cpcb_class": "Not on NWMP",
+      "description": "Short Vaigai-basin tributary with its own dam (Manjalar Dam, Theni district) used for irrigation. Tilapia fishery noted in the reservoir.",
+      "notes": "No CPCB NWMP station. Operational reservoir; minor monitoring.",
+      "stations": []
+    },
+    {
+      "id": "varaha",
+      "name": "Varaha (Varaha Nadhi)",
+      "name_ta": "வராகநதி",
+      "length_km": 117,
+      "overall_status": "stressed",
+      "cpcb_class": "Not on NWMP",
+      "description": "Vaigai-basin tributary; dammed at Sothuparai (Periyakulam taluk, Theni). Sothuparai is NOT on the daily TN Agri ARS portal so live storage data is PWD-memo-only.",
+      "notes": "No CPCB NWMP station. Daily storage data is PWD-memo-only.",
+      "stations": []
+    }
+  ]
+}

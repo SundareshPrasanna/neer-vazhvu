@@ -5,6 +5,7 @@ import { formatNumber, formatPct } from "@/lib/utils/format";
 import type { ReservoirSummary } from "@/types/reservoir";
 import { useLanguage } from "@/lib/i18n/context";
 import { getReservoirDisplayName } from "@/lib/i18n/reservoir-name";
+import { MissingReservoirCard } from "./missing-data-card";
 
 interface ReservoirCardsProps {
   reservoirs: ReservoirSummary[];
@@ -26,7 +27,23 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
         {t("dash.reservoir_status")}
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-        {reservoirs.map((r) => (
+        {reservoirs.map((r) => {
+          // Tracked-but-unmonitored sources (e.g. Madurai's Sothuparai
+          // Dam, where TWAD doesn't publish daily levels) get a
+          // dedicated MissingDataCard rather than the default
+          // zero-storage card. The default card paints 0% red, which
+          // misleadingly reads as "the dam is empty".
+          if (r.isLive === false) {
+            return (
+              <MissingReservoirCard
+                key={r.name}
+                displayName={getReservoirDisplayName(r.name, t, r.displayName)}
+                capacityMcft={r.capacity}
+                reason={r.noLiveDataReason ?? t("dash.no_live_data")}
+              />
+            );
+          }
+          return (
           <Card
             key={r.name}
             className={`border-slate-200 dark:border-slate-700 transition-all ${
@@ -80,7 +97,8 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
               )}
             </CardContent>
           </Card>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

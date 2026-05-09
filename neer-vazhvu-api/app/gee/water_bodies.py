@@ -6,14 +6,13 @@ from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+from app.gee.cities import CityGeeConfig, get_city_config
 from app.gee.client import initialize_earth_engine
 from app.gee.config import (
-    CURRENT_WATER_BODIES_PATH,
     DEFAULT_PERSISTENCE_MIN_AREA_HA,
     DEFAULT_PERSISTENCE_PRESENCE_FRACTION,
     DEFAULT_WATER_BODY_LOOKBACK_DAYS,
     DEFAULT_WATER_BODY_MIN_VALID_PCT,
-    FLAGSHIP_HISTORY_COHORT,
     JRC_MONTHLY_RECURRENCE_BAND,
     JRC_MONTHLY_RECURRENCE_DATASET,
     JRC_PIXEL_SCALE_METERS,
@@ -21,7 +20,6 @@ from app.gee.config import (
     NDWI_GREEN_BAND,
     NDWI_NIR_BAND,
     NDWI_WATER_THRESHOLD,
-    PHASE1_TARGETS_PATH,
     SENTINEL2_PIXEL_SCALE_METERS,
     SENTINEL2_SCL_MASK_VALUES,
     SENTINEL2_SR_HARMONIZED_DATASET,
@@ -75,18 +73,23 @@ def filter_targets_for_cohort(
     targets: list[Phase1WaterBodyTargetFeature],
     *,
     cohort: str | None,
+    city: CityGeeConfig | None = None,
 ) -> list[Phase1WaterBodyTargetFeature]:
     if cohort is None or cohort == "all":
         return targets
     if cohort != "flagship-history":
         raise RuntimeError(f"Unsupported target cohort: {cohort}")
 
-    cohort_ids = set(FLAGSHIP_HISTORY_COHORT)
+    city_config = city or get_city_config()
+    cohort_ids = set(city_config.flagship_history_cohort)
     filtered_targets = [
         target for target in targets if target.gee_target_id in cohort_ids
     ]
     if not filtered_targets:
-        raise RuntimeError(f"No Phase 1 water-body targets found for cohort {cohort}")
+        raise RuntimeError(
+            f"No Phase 1 water-body targets found for cohort {cohort} "
+            f"in city {city_config.city_id}"
+        )
     return filtered_targets
 
 
@@ -123,8 +126,15 @@ def build_monthly_backfill_reference_dates(
     return dates
 
 
-def read_phase1_target_payload(path: Path | None = None) -> dict[str, Any]:
-    payload_path = (path or PHASE1_TARGETS_PATH).expanduser().resolve()
+def read_phase1_target_payload(
+    path: Path | None = None,
+    *,
+    city: CityGeeConfig | None = None,
+) -> dict[str, Any]:
+    if path is None:
+        city_config = city or get_city_config()
+        path = city_config.phase1_targets_path
+    payload_path = path.expanduser().resolve()
     if not payload_path.exists():
         raise RuntimeError(f"Missing file: {payload_path}")
 
@@ -134,8 +144,15 @@ def read_phase1_target_payload(path: Path | None = None) -> dict[str, Any]:
     return payload
 
 
-def _read_current_water_bodies_payload(path: Path | None = None) -> dict[str, Any]:
-    payload_path = (path or CURRENT_WATER_BODIES_PATH).expanduser().resolve()
+def _read_current_water_bodies_payload(
+    path: Path | None = None,
+    *,
+    city: CityGeeConfig | None = None,
+) -> dict[str, Any]:
+    if path is None:
+        city_config = city or get_city_config()
+        path = city_config.current_water_bodies_path
+    payload_path = path.expanduser().resolve()
     if not payload_path.exists():
         raise RuntimeError(f"Missing file: {payload_path}")
 
@@ -149,13 +166,17 @@ def _read_current_water_bodies_payload(path: Path | None = None) -> dict[str, An
 
 def load_phase1_target_features(
     *,
+    city_id: str | None = None,
     manifest_path: Path | None = None,
     water_bodies_path: Path | None = None,
     gee_target_id: str | None = None,
     limit: int | None = None,
 ) -> list[Phase1WaterBodyTargetFeature]:
-    manifest = read_phase1_target_payload(manifest_path)
-    water_bodies_payload = _read_current_water_bodies_payload(water_bodies_path)
+    city = get_city_config(city_id)
+    manifest = read_phase1_target_payload(manifest_path, city=city)
+    water_bodies_payload = _read_current_water_bodies_payload(
+        water_bodies_path, city=city
+    )
 
     geometry_by_osm_id: dict[int, dict[str, Any]] = {}
     properties_by_osm_id: dict[int, dict[str, Any]] = {}
@@ -474,6 +495,7 @@ def compute_jrc_monthly_baselines(
 
 def compute_water_body_summary_rows(
     *,
+    city_id: str | None = None,
     reference_date: date | None = None,
     lookback_days: int = DEFAULT_WATER_BODY_LOOKBACK_DAYS,
     gee_target_id: str | None = None,
@@ -485,11 +507,14 @@ def compute_water_body_summary_rows(
     precomputed_region_geometry: Any | None = None,
     precomputed_jrc_baselines: dict[str, list[float]] | None = None,
 ) -> dict[str, Any]:
+    city = get_city_config(city_id)
     if precomputed_targets is not None:
         targets = precomputed_targets
     else:
-        targets = load_phase1_target_features(gee_target_id=gee_target_id, limit=limit)
-        targets = filter_targets_for_cohort(targets, cohort=target_cohort)
+        targets = load_phase1_target_features(
+            city_id=city.city_id, gee_target_id=gee_target_id, limit=limit
+        )
+        targets = filter_targets_for_cohort(targets, cohort=target_cohort, city=city)
 
     ee = precomputed_ee if precomputed_ee is not None else initialize_earth_engine()
 
@@ -650,6 +675,7 @@ def upsert_water_body_summaries(rows: list[WaterBodySatelliteSummaryRow]) -> int
 
 def backfill_water_body_summaries(
     *,
+    city_id: str | None = None,
     reference_date: date | None = None,
     months_back: int,
     lookback_days: int = DEFAULT_WATER_BODY_LOOKBACK_DAYS,
@@ -661,6 +687,7 @@ def backfill_water_body_summaries(
     import sys
     import time
 
+    city = get_city_config(city_id)
     history_reference_date = reference_date or datetime.now(UTC).date()
     snapshot_dates = build_monthly_backfill_reference_dates(
         reference_date=history_reference_date,
@@ -670,8 +697,10 @@ def backfill_water_body_summaries(
 
     backfill_start = time.monotonic()
 
-    targets = load_phase1_target_features(gee_target_id=gee_target_id, limit=limit)
-    targets = filter_targets_for_cohort(targets, cohort=target_cohort)
+    targets = load_phase1_target_features(
+        city_id=city.city_id, gee_target_id=gee_target_id, limit=limit
+    )
+    targets = filter_targets_for_cohort(targets, cohort=target_cohort, city=city)
     ee = initialize_earth_engine()
     targets_fc = _build_target_feature_collection(ee, targets)
     region_geometry = targets_fc.geometry().bounds()
@@ -750,6 +779,7 @@ def backfill_water_body_summaries(
     )
 
     payload: dict[str, Any] = {
+        "city_id": city.city_id,
         "reference_date": history_reference_date.isoformat(),
         "months_back": months_back,
         "snapshot_count": len(snapshots),

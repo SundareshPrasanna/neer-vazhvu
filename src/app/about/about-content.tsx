@@ -866,6 +866,32 @@ export function AboutContent() {
             5. Data quality & limitations - merged section
             ────────────────────────────────────────────────────────────── */}
         <Section id="data-quality" title={t("about.group_quality")}>
+          <SubSection title="How we classify river health">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              CPCB publishes <span className="font-semibold">two parallel</span> river-water-quality classification systems, and they don&apos;t always agree. Knowing which one drives our river status badges matters for reading the dashboard honestly.
+            </p>
+            <div className="space-y-3 mt-3">
+              <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Designated Best-Use classes (A-E)</h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Computed from <span className="font-semibold">current</span> dissolved-oxygen, BOD and coliform thresholds at each NWMP station. Updates every reading. Class A = drinking with disinfection only; Class B = outdoor bathing; Class C = drinking with conventional treatment; Class D = fisheries/wildlife; Class E = irrigation only. <span className="font-semibold">Below E = practically dead.</span>
+                </p>
+              </div>
+              <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Polluted River Stretch (PRS) Priority I-V</h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  A <span className="font-semibold">historical, multi-year</span> stretch-level designation reflecting cumulative pollution. Slow to update; once a stretch is on the list it tends to stay there even if recent readings improve. Priority I = worst, Priority V = least bad of the polluted stretches.
+                </p>
+              </div>
+            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
+              <span className="font-semibold">Our status badges (&quot;dead&quot;, &quot;severely degraded&quot;, &quot;degraded&quot;, &quot;stressed&quot;, &quot;healthy&quot;) are computed from current readings via the Designated Best-Use thresholds</span> — not from the PRS Priority list. We take the worst classification across a river&apos;s monitored stations and surface that as the river-level status. Cooum, Adyar, and Buckingham Canal hold their labels under both signals (data and PRS Priority I agree); rivers where the two disagree (Vaigai&apos;s PRS Priority III vs Class C/D NWMP readings) reflect what the data shows now.
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
+              Methodology lives in <span className="font-mono">src/lib/utils/river-classification.ts</span>; readings come from CPCB NWMP annual River Water Quality reports.
+            </p>
+          </SubSection>
+
           <SubSection title={t("about.data_quality")}>
             <p className="text-slate-600 dark:text-slate-400">
               {t("about.dq_intro")}

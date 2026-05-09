@@ -93,13 +93,16 @@ export const METRICS: MetricDef[] = [
     unit: "zones/sq km",
     extract: (p) => {
       if (!p.area_sq_km || p.area_sq_km <= 0) return 0;
+      if ("_data_status" in p.flood) return 0;
       const cat = p.flood.by_category;
       const severe = (cat["very_high"] ?? 0) + (cat["high"] ?? 0);
       return severe / p.area_sq_km;
     },
     higherIsBetter: false,
     weight: 0.25,
-    applicable: (p) => p.area_sq_km > 0,
+    // Cities without a public flood-hazard layer (Madurai today) get
+    // this metric skipped from the ranking composite.
+    applicable: (p) => p.area_sq_km > 0 && !("_data_status" in p.flood),
   },
   {
     key: "drainage",
@@ -108,11 +111,12 @@ export const METRICS: MetricDef[] = [
     unit: "km/sq km",
     extract: (p) => {
       if (!p.area_sq_km || p.area_sq_km <= 0) return 0;
+      if ("_data_status" in p.drainage) return 0;
       return p.drainage.total_length_km / p.area_sq_km;
     },
     higherIsBetter: true,
     weight: 0.25,
-    applicable: (p) => p.area_sq_km > 0,
+    applicable: (p) => p.area_sq_km > 0 && !("_data_status" in p.drainage),
   },
   {
     key: "sewerage_infra",
@@ -121,13 +125,16 @@ export const METRICS: MetricDef[] = [
     unit: "km/sq km",
     extract: (p) => {
       if (!p.area_sq_km || p.area_sq_km <= 0) return 0;
+      if ("_data_status" in p.sewerage) return 0;
       return p.sewerage.pumping_main_length_km / p.area_sq_km;
     },
     higherIsBetter: true,
     weight: 0.25,
-    applicable: (p) => p.area_sq_km > 0,
+    applicable: (p) => p.area_sq_km > 0 && !("_data_status" in p.sewerage),
     tiebreaker: (p) =>
-      p.area_sq_km > 0 ? p.sewerage.sps_count / p.area_sq_km : 0,
+      p.area_sq_km > 0 && !("_data_status" in p.sewerage)
+        ? p.sewerage.sps_count / p.area_sq_km
+        : 0,
   },
 ];
 

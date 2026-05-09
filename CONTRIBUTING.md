@@ -1,6 +1,6 @@
 # Contributing to Neer Vazhvu
 
-Thanks for your interest in contributing! This project tracks Chennai's water supply and aims to make civic data accessible to everyone.
+Thanks for your interest in contributing! This project tracks Tamil Nadu cities' water systems (Chennai and Madurai live, more on the way) and aims to make civic data accessible to everyone.
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
@@ -44,19 +44,52 @@ If you need real data flowing through, you'll need a [Supabase](https://supabase
 ```
 neer-vazhvu/
 ├── src/                  # Next.js frontend (App Router)
-│   ├── app/              # Pages (dashboard, my-ward, groundwater, water-bodies, rivers, flood-risk, about)
-│   ├── components/       # React components
-│   ├── lib/              # Utilities, mock data, Supabase client
-│   └── types/            # TypeScript definitions
-├── neer-vazhvu-api/      # Python API (FastAPI)
-│   ├── app/scrapers/     # CMWSSB, NASA POWER, OpenCity
-│   ├── app/etl/          # Pipeline orchestrator, constants
-│   ├── app/gee/          # Earth Engine Phase 1 summaries and catchment tooling
-│   ├── app/intelligence/ # ARIMAX forecaster, risk scorer, briefing
-│   └── app/routers/      # API endpoints
-├── supabase/migrations/  # Database schema
-└── .github/workflows/    # CI (daily pipeline, keepalive)
+│   ├── app/
+│   │   ├── (chennai-flat)/        # Legacy Chennai-only routes (/, /my-ward, /groundwater, /water-bodies, /rivers, /flood-risk, /about, /facts, /origins)
+│   │   └── [cityId]/              # Multi-city parallel routes for Madurai (and future cities)
+│   ├── components/                # React components (most are city-agnostic; Madurai-specific live in dashboard/, my-ward/, water-bodies/)
+│   ├── lib/
+│   │   ├── cities/                # *** Place config registry — add a city by adding a file here ***
+│   │   │   ├── chennai.ts         # CityConfig: GCC wards, CMWSSB reservoirs, days-left hero, etc.
+│   │   │   ├── madurai.ts         # CityConfig: MMC wards, Vaigai/Mullaperiyar/Sothuparai, allocation hero, urbanSupply
+│   │   │   ├── kaveri.ts          # RegionConfig (region, not city) — work-in-progress
+│   │   │   └── types.ts           # PlaceConfig union + GroundwaterViewsConfig + UrbanSupplyConfig + heroMode discriminator
+│   │   ├── hooks/                 # Per-city promise caches: use-ward-profile, use-my-ward-data, use-ward-representatives
+│   │   ├── i18n/                  # ~700 EN/TA translation keys (one file)
+│   │   └── utils/                 # Shared utils incl. river-classification (CPCB Best-Use thresholds, used by both cities)
+│   └── types/                     # TypeScript definitions
+├── neer-vazhvu-api/               # Python API (FastAPI)
+│   ├── app/scrapers/              # CMWSSB, NASA POWER, Open-Meteo, OpenCity, WRIS (Madurai), TN Agriculture ARS (Madurai)
+│   ├── app/etl/                   # Pipeline orchestrator, constants
+│   ├── app/gee/                   # Earth Engine Phase 1 summaries and catchment tooling
+│   ├── app/intelligence/          # ARIMAX forecaster, risk scorer, briefing
+│   └── app/routers/               # API endpoints
+├── public/
+│   ├── data/                      # Static JSON: per-city files use a -<cityId> suffix (e.g. madurai-supply-overview.json) except Chennai which keeps legacy unsuffixed paths for back-compat
+│   └── geojson/                   # Static spatial: same per-city naming convention (madurai-wards-2022.geojson, madurai-gwr-blocks.geojson, etc.)
+├── scripts/                       # One-time + build-time scripts
+│   ├── compute-ward-profiles.ts            # Chennai 200-ward profile compute
+│   ├── compute-madurai-ward-profiles.ts    # Madurai 100-ward profile compute (mirror, emits not_available markers for layers Madurai doesn't have)
+│   ├── fetch-localities-osm.ts             # Chennai OSM neighbourhood points
+│   └── fetch-localities-osm-madurai.ts     # Madurai equivalent (51 OSM points + Wikidata SPARQL fallback)
+├── supabase/migrations/           # Database schema
+└── .github/workflows/             # CI (daily pipeline, keepalive)
 ```
+
+### Adding a new city
+
+The multi-city architecture is config-driven. To add (say) Coimbatore:
+
+1. Create `src/lib/cities/coimbatore.ts` exporting a `CityConfig`. Pick a `heroMode`:
+   - `"days-left"` if the tracked dams ARE the urban supply (Chennai-pattern). Set `defaultConsumptionMld` and `defaultDesalinationMld`.
+   - `"allocation"` if the dams are upstream irrigation reservoirs and the city has a published drinking-water allocation (Madurai-pattern). Provide an `urbanSupply` block with `annualAllocationMcft`, `recentDrawMcft`, `wtpCapacityMld`.
+   - `"none"` to suppress the hero entirely.
+2. Register it in `src/lib/cities/index.ts`.
+3. Drop city-specific files into `public/data/coimbatore-*.json` and `public/geojson/coimbatore-*.geojson` matching the existing naming convention.
+4. Mirror `compute-ward-profiles.ts` for the new city's ward count + data layers. Emit `_data_status: "not_available"` for sections you don't yet have data for — the UI cards branch on this and render honest "data not yet sourced" disclaimers.
+5. The routes at `src/app/[cityId]/...` will pick up the new city automatically once `tryGetPlaceConfig(cityId)` resolves it.
+
+A worked example of all five steps lives in the recent `madurai_onboarding` branch (PR #97).
 
 ## Earth Engine Phase 1
 
@@ -117,11 +150,22 @@ Current workflow note:
 
 ## Areas Where Help Is Needed
 
-- **Data quality** - Improving scraper resilience, handling CMWSSB page format changes
-- **Models** - Better forecasting (Prophet, LSTM), evaporation modeling
+### Chennai
+- **Data quality** - Improving CMWSSB scraper resilience, handling page-format changes
+- **Models** - Better forecasting (Prophet, LSTM), evaporation modelling
 - **Frontend** - Daily briefing card integration, chart clarity, mobile polish
-- **Tamil localization** - Translating the UI for local accessibility
-- **Testing** - Unit tests for scrapers, calculator, and intelligence modules
+
+### Madurai
+- **RTI follow-ups for layers MMC tracks internally but doesn't publish** - daily Pannaipatty WTP raw-water intake + treated output, OHT-wise live storage (23 OHTs), per-zone supply (81 zones), non-revenue water, LPCD actuals. See the "What's missing today" subsection at `/madurai/about` for the institutional landscape.
+- **Parsing the ADB TNUFIP IEEs** (`docs/research/adb-tnufip/49107-005-iee-en_10.pdf` and `49107-010-iee-en_0.pdf`) for zone-level demand projections and OHT capacity tables. Powers the deferred "structural at-a-glance heatmap" tile.
+- **Lost-tank coordinate research** - the 26 Vencatesan/DHAN documented lost tanks have name + status but no lat/lng. Geocoding historical tank names is research-heavy and most have no OSM presence (they're lost).
+- **PWD-WRD Vaigai release log** - currently scraped from episodic news coverage; a structured RTI to PWD-WRD Vaigai Basin Circle would unlock daily releases-by-purpose.
+
+### Cross-city / shared
+- **Tamil prose review** - especially `src/app/[cityId]/about/madurai-page-descriptions.tsx` and the Madurai story pages. Native-speaker review wanted.
+- **Tamil localization (UI)** - ~700 i18n keys; `npm run i18n:check` enforces parity.
+- **Testing** - Unit tests for scrapers, calculator, intelligence modules, and the new `src/lib/utils/river-classification.ts` (CPCB Best-Use classifier shared across all cities).
+- **Adding a third city** - see the "Adding a new city" subsection above.
 
 ## Submitting a Pull Request
 

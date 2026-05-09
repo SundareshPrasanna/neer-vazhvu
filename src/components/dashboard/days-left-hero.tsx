@@ -15,6 +15,14 @@ interface DaysLeftHeroProps {
   seasonalAvgInflowMcftPerDay: number;
   lastUpdated: string;
   comparison2019Storage: number | null;
+  /** Place-specific default consumption (MLD). Defaults to Chennai's. */
+  defaultConsumptionMld?: number;
+  /** Place-specific default desalination (MLD). Defaults to Chennai's. */
+  defaultDesalinationMld?: number;
+  /** Optional max for the consumption slider; sized to the city's demand. */
+  consumptionSliderMax?: number;
+  /** Optional max for the desalination slider; sized to the city's contribution. */
+  desalinationSliderMax?: number;
 }
 
 /** Upper display cap — anything above this is "won't run out" */
@@ -91,10 +99,16 @@ export function DaysLeftHero({
   seasonalAvgInflowMcftPerDay,
   lastUpdated,
   comparison2019Storage,
+  defaultConsumptionMld,
+  defaultDesalinationMld,
+  consumptionSliderMax,
+  desalinationSliderMax,
 }: DaysLeftHeroProps) {
   const { t } = useLanguage();
-  const [consumption, setConsumption] = useState(DEFAULT_CONSUMPTION_MLD);
-  const [desalination, setDesalination] = useState(DEFAULT_DESALINATION_MLD);
+  const baseConsumption = defaultConsumptionMld ?? DEFAULT_CONSUMPTION_MLD;
+  const baseDesalination = defaultDesalinationMld ?? DEFAULT_DESALINATION_MLD;
+  const [consumption, setConsumption] = useState(baseConsumption);
+  const [desalination, setDesalination] = useState(baseDesalination);
   const [inflowPct, setInflowPct] = useState(100);
   const [showAssumptions, setShowAssumptions] = useState(false);
 
@@ -130,16 +144,14 @@ export function DaysLeftHero({
           {/* Big number */}
           <div className="text-center sm:text-left">
             <div className={`text-4xl sm:text-5xl md:text-6xl font-bold ${getSeverityColor(days.pessimistic)}`}>
-              {days.pessimistic >= MAX_DAYS ? (
-                <>{t("hero.safe")}</>
-              ) : days.optimistic >= MAX_DAYS ? (
+              {days.optimistic >= MAX_DAYS ? (
                 <>{formatDays(days.pessimistic, t)}<span className="text-2xl text-slate-400 dark:text-slate-500">+</span></>
               ) : (
                 <>{formatDays(days.pessimistic, t)}<span className="text-2xl mx-1">-</span>{formatDays(days.optimistic, t)}</>
               )}
             </div>
             <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {days.pessimistic >= MAX_DAYS ? t("hero.inflows_exceed") : t("hero.days_remaining")}
+              {t("hero.days_remaining")}
             </div>
           </div>
 
@@ -227,9 +239,9 @@ export function DaysLeftHero({
                 <Slider
                   value={[consumption]}
                   onValueChange={([v]) => setConsumption(v)}
-                  min={500}
-                  max={1200}
-                  step={10}
+                  min={Math.max(0, Math.round(baseConsumption * 0.5))}
+                  max={consumptionSliderMax ?? Math.max(1200, Math.round(baseConsumption * 1.5))}
+                  step={Math.max(1, Math.round(baseConsumption / 100))}
                 />
               </div>
               <div>
@@ -241,8 +253,8 @@ export function DaysLeftHero({
                   value={[desalination]}
                   onValueChange={([v]) => setDesalination(v)}
                   min={0}
-                  max={400}
-                  step={10}
+                  max={desalinationSliderMax ?? Math.max(400, Math.round(baseDesalination * 2))}
+                  step={Math.max(1, Math.round(Math.max(baseDesalination, 50) / 40))}
                 />
               </div>
               <div>

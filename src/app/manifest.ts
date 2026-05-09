@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Neer Vazhvu - Chennai Water Intelligence",
+    name: "Neer Vazhvu - Tamil Nadu Water Intelligence",
     short_name: "Neer Vazhvu",
     description:
-      "Open-source platform tracking Chennai's reservoirs, groundwater, river health, flood risk, drainage, and 1,787 water bodies across 200 wards.",
+      "Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, and water bodies across Tamil Nadu cities - starting with Chennai and Madurai.",
     start_url: "/",
     display: "standalone",
     background_color: "#0f172a",

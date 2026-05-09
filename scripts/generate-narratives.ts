@@ -96,6 +96,33 @@ function stripCodeFences(text: string): string {
   return text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "").trim();
 }
 
+/**
+ * Call an LLM and JSON.parse the result, retrying on parse failure.
+ * Models occasionally return malformed JSON (unescaped newlines, stray text).
+ * A fresh sample usually works.
+ */
+async function parseJsonWithRetry<T>(
+  call: () => Promise<string>,
+  label: string,
+  maxAttempts = 3,
+): Promise<T> {
+  let lastText = "";
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const raw = await call();
+    lastText = stripCodeFences(raw);
+    try {
+      return JSON.parse(lastText) as T;
+    } catch {
+      if (attempt < maxAttempts) {
+        console.warn(`${label}: invalid JSON on attempt ${attempt}/${maxAttempts}, retrying...`);
+        await new Promise((r) => setTimeout(r, 1000 * attempt));
+      }
+    }
+  }
+  console.error(`${label}: failed to parse after ${maxAttempts} attempts:`, lastText.slice(0, 200));
+  throw new Error(`Invalid JSON from Claude API (${label})`);
+}
+
 // ── Data fetching ────────────────────────────────────────────────────────────
 
 async function fetchCityData() {
@@ -228,13 +255,15 @@ DATA FRESHNESS:
 - Risk scores: ${cityData.sourceDates.risk_date ?? "N/A"}
 `.trim();
 
-  const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 4096,
-    messages: [
-      {
-        role: "user",
-        content: `You are an AI analyst for Chennai's water intelligence dashboard (Neer Vazhvu). Write a concise daily narrative that connects the dots across reservoir levels, groundwater stress, and ward-level risks.
+  return parseJsonWithRetry<{ headline_en: string; headline_ta: string; body_en: string; body_ta: string }>(
+    async () => {
+      const response = await anthropic.messages.create({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 4096,
+        messages: [
+          {
+            role: "user",
+            content: `You are an AI analyst for Chennai's water intelligence dashboard (Neer Vazhvu). Write a concise daily narrative that connects the dots across reservoir levels, groundwater stress, and ward-level risks.
 
 RULES:
 - Write in a journalistic, factual tone. No speculation.
@@ -251,18 +280,13 @@ ${context}
 
 Respond in this exact JSON format (no markdown, no code blocks):
 {"headline_en": "...", "headline_ta": "...", "body_en": "- bullet1\n- bullet2\n- bullet3", "body_ta": "- bullet1\n- bullet2\n- bullet3"}`,
-      },
-    ],
-  });
-
-  const raw = response.content[0].type === "text" ? response.content[0].text : "";
-  const text = stripCodeFences(raw);
-  try {
-    return JSON.parse(text);
-  } catch {
-    console.error("Failed to parse city narrative response:", text.slice(0, 200));
-    throw new Error("Invalid JSON from Claude API");
-  }
+          },
+        ],
+      });
+      return response.content[0].type === "text" ? response.content[0].text : "";
+    },
+    "city narrative",
+  );
 }
 
 async function generateWardNarratives(
@@ -297,13 +321,23 @@ WARD ${p.ward_number} (${label}):
 - Nearest river: ${p.rivers.nearest_river_id ?? "none"} (${p.rivers.nearest_km ?? "N/A"} km)`.trim();
     });
 
-    const response = await anthropic.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 8192,
-      messages: [
-        {
-          role: "user",
-          content: `You are an AI analyst for Chennai's water intelligence dashboard. Generate brief ward narratives that highlight the most notable water-related facts for each ward.
+    try {
+      const parsed = await parseJsonWithRetry<Array<{
+        ward: number;
+        headline_en: string;
+        headline_ta: string;
+        body_en: string;
+        body_ta: string;
+        key_facts: string[];
+      }>>(
+        async () => {
+          const response = await anthropic.messages.create({
+            model: "claude-haiku-4-5-20251001",
+            max_tokens: 8192,
+            messages: [
+              {
+                role: "user",
+                content: `You are an AI analyst for Chennai's water intelligence dashboard. Generate brief ward narratives that highlight the most notable water-related facts for each ward.
 
 RULES:
 - Each ward gets a headline (1 sentence) and body (2-3 sentences).
@@ -319,21 +353,13 @@ ${wardContexts.join("\n\n")}
 
 Respond in this exact JSON format (no markdown):
 [{"ward": <number>, "headline_en": "...", "headline_ta": "...", "body_en": "...", "body_ta": "...", "key_facts": ["fact1", "fact2"]}]`,
+              },
+            ],
+          });
+          return response.content[0].type === "text" ? response.content[0].text : "";
         },
-      ],
-    });
-
-    const raw = response.content[0].type === "text" ? response.content[0].text : "";
-    const text = stripCodeFences(raw);
-    try {
-      const parsed = JSON.parse(text) as Array<{
-        ward: number;
-        headline_en: string;
-        headline_ta: string;
-        body_en: string;
-        body_ta: string;
-        key_facts: string[];
-      }>;
+        `ward batch ${batch[0].ward_number}-${batch[batch.length - 1].ward_number}`,
+      );
       for (const item of parsed) {
         results.set(item.ward, {
           headline_en: item.headline_en,
@@ -344,7 +370,7 @@ Respond in this exact JSON format (no markdown):
         });
       }
     } catch {
-      console.error(`Failed to parse ward batch response (wards ${batch[0].ward_number}-${batch[batch.length - 1].ward_number}):`, text.slice(0, 200));
+      // parseJsonWithRetry already logged the failure; skip this batch.
     }
   }
 

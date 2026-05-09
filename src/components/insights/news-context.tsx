@@ -18,10 +18,12 @@ interface NewsContextProps {
   zoneName?: string;
   /** Specific location name (e.g. river name "Adyar", water body name "Pallikaranai"). */
   locationName?: string;
+  /** City name to scope the search. Defaults to Chennai for back-compat. */
+  cityName?: string;
 }
 
-function buildGoogleNewsUrl(domain: NewsDomain, zoneName?: string, locationName?: string): string {
-  // Build a search query scoped to Chennai + domain
+function buildGoogleNewsUrl(domain: NewsDomain, zoneName?: string, locationName?: string, cityName: string = "Chennai"): string {
+  // Build a search query scoped to the city + domain
   const parts: string[] = [];
 
   // Use location name if available (e.g. "Adyar river"), otherwise zone name
@@ -33,17 +35,17 @@ function buildGoogleNewsUrl(domain: NewsDomain, zoneName?: string, locationName?
     parts.push(titleZone);
   }
 
-  parts.push("Chennai");
+  parts.push(cityName);
   parts.push(DOMAIN_SEARCH_TERMS[domain]);
 
   const query = parts.join(" ");
   return `https://news.google.com/search?q=${encodeURIComponent(query)}&hl=en-IN&gl=IN&ceid=IN:en`;
 }
 
-export function NewsContext({ domain, zoneName, locationName }: NewsContextProps) {
+export function NewsContext({ domain, zoneName, locationName, cityName }: NewsContextProps) {
   const { t } = useLanguage();
 
-  const url = buildGoogleNewsUrl(domain, zoneName, locationName);
+  const url = buildGoogleNewsUrl(domain, zoneName, locationName, cityName);
 
   return (
     <div className="border-t border-slate-100 dark:border-slate-800 pt-3 mt-3 pb-4">

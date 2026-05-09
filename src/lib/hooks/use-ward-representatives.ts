@@ -37,25 +37,39 @@ interface RepsFile {
   wards: Record<string, RepresentativeData>;
 }
 
-// ── Module-level cache ───────────────────────────────────────────────────────
+// ── Module-level cache (per-city) ────────────────────────────────────────────
 
-let repsPromise: Promise<RepsFile> | null = null;
+const repsPromiseByCity = new Map<string, Promise<RepsFile | null>>();
 
-function loadReps(): Promise<RepsFile> {
-  if (!repsPromise) {
-    repsPromise = fetch("/data/ward-representatives.json")
-      .then((r) => r.json())
-      .catch((err) => {
-        repsPromise = null;
-        throw err;
-      });
+/** Resolve filename for a city's representative data. Chennai keeps the
+ *  legacy unsuffixed path; other cities use a -<cityId> suffix matching
+ *  the project convention. */
+function repsUrl(cityId: string): string {
+  return cityId === "chennai"
+    ? "/data/ward-representatives.json"
+    : `/data/${cityId}-ward-representatives.json`;
+}
+
+function loadReps(cityId: string = "chennai"): Promise<RepsFile | null> {
+  let p = repsPromiseByCity.get(cityId);
+  if (!p) {
+    // Treat a missing file as a soft "no representatives data yet for
+    // this city" rather than throwing. The card will render an honest
+    // empty state.
+    p = fetch(repsUrl(cityId))
+      .then((r) => (r.ok ? (r.json() as Promise<RepsFile>) : null))
+      .catch(() => null);
+    repsPromiseByCity.set(cityId, p);
   }
-  return repsPromise;
+  return p;
 }
 
 // ── Hook ─────────────────────────────────────────────────────────────────────
 
-export function useWardRepresentatives(wardNumber: number | null) {
+export function useWardRepresentatives(
+  wardNumber: number | null,
+  cityId: string = "chennai",
+) {
   const [data, setData] = useState<RepresentativeData | null>(null);
   const [meta, setMeta] = useState<RepsFile["meta"] | null>(null);
 
@@ -67,11 +81,16 @@ export function useWardRepresentatives(wardNumber: number | null) {
       });
       return;
     }
-    loadReps().then((file) => {
+    loadReps(cityId).then((file) => {
+      if (!file) {
+        setMeta(null);
+        setData(null);
+        return;
+      }
       setMeta(file.meta);
       setData(file.wards[String(wardNumber)] ?? null);
     });
-  }, [wardNumber]);
+  }, [wardNumber, cityId]);
 
   return { representatives: data, meta };
 }

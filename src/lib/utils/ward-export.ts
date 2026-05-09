@@ -63,26 +63,32 @@ export function generateWardCSV(
     }
   }
 
-  // Flood risk
-  if (profile.flood.dominant_hazard) {
-    lines.push(row("Flood Risk", "Dominant hazard", profile.flood.dominant_hazard, "", "CFLOWS / OpenCity"));
-  }
-  lines.push(row("Flood Risk", "Hazard zones", profile.flood.hazard_zone_count, "zones", "CFLOWS / OpenCity"));
-  if (profile.flood.hotspot_2015_count > 0) {
-    lines.push(row("Flood Risk", "2015 flood hotspots", profile.flood.hotspot_2015_count, "hotspots", "OpenCity"));
-  }
-  if (profile.flood.hotspot_2020_count > 0) {
-    lines.push(row("Flood Risk", "2020 Cyclone Nivar hotspots", profile.flood.hotspot_2020_count, "hotspots", "OpenCity"));
+  // Flood risk - skip when ward profile has no flood data layer for this city
+  if (!("_data_status" in profile.flood)) {
+    if (profile.flood.dominant_hazard) {
+      lines.push(row("Flood Risk", "Dominant hazard", profile.flood.dominant_hazard, "", "CFLOWS / OpenCity"));
+    }
+    lines.push(row("Flood Risk", "Hazard zones", profile.flood.hazard_zone_count, "zones", "CFLOWS / OpenCity"));
+    if (profile.flood.hotspot_2015_count > 0) {
+      lines.push(row("Flood Risk", "2015 flood hotspots", profile.flood.hotspot_2015_count, "hotspots", "OpenCity"));
+    }
+    if (profile.flood.hotspot_2020_count > 0) {
+      lines.push(row("Flood Risk", "2020 Cyclone Nivar hotspots", profile.flood.hotspot_2020_count, "hotspots", "OpenCity"));
+    }
   }
 
-  // Infrastructure
-  lines.push(row("Infrastructure", "Drainage lines", profile.drainage.line_count, "segments", "GCC SWD Survey"));
-  lines.push(row("Infrastructure", "Sewage treatment plants", profile.sewerage.stp_count, "STPs", "CMWSSB"));
-  if (profile.sewerage.total_stp_capacity_mld > 0) {
-    lines.push(row("Infrastructure", "STP capacity", profile.sewerage.total_stp_capacity_mld, "MLD", "CMWSSB"));
+  // Infrastructure - skip drainage / sewerage when their layers are not yet sourced
+  if (!("_data_status" in profile.drainage)) {
+    lines.push(row("Infrastructure", "Drainage lines", profile.drainage.line_count, "segments", "GCC SWD Survey"));
   }
-  lines.push(row("Infrastructure", "Sewage pumping stations", profile.sewerage.sps_count, "stations", "CMWSSB"));
-  lines.push(row("Infrastructure", "Pumping mains", profile.sewerage.pumping_main_count, "segments", "CMWSSB"));
+  if (!("_data_status" in profile.sewerage)) {
+    lines.push(row("Infrastructure", "Sewage treatment plants", profile.sewerage.stp_count, "STPs", "CMWSSB"));
+    if (profile.sewerage.total_stp_capacity_mld > 0) {
+      lines.push(row("Infrastructure", "STP capacity", profile.sewerage.total_stp_capacity_mld, "MLD", "CMWSSB"));
+    }
+    lines.push(row("Infrastructure", "Sewage pumping stations", profile.sewerage.sps_count, "stations", "CMWSSB"));
+    lines.push(row("Infrastructure", "Pumping mains", profile.sewerage.pumping_main_count, "segments", "CMWSSB"));
+  }
 
   // River
   if (profile.rivers.nearest_river_id) {
@@ -92,8 +98,8 @@ export function generateWardCSV(
     }
   }
 
-  // Industrial
-  if (profile.industrial.zone_count > 0) {
+  // Industrial - skip when ward profile has no industrial layer for this city
+  if (!("_data_status" in profile.industrial) && profile.industrial.zone_count > 0) {
     lines.push(row("Industrial", "Industrial zones", profile.industrial.zone_count, "zones", "OpenStreetMap"));
   }
 

@@ -9,21 +9,25 @@ import numpy as np
 from shapely.geometry import box, mapping, shape
 from shapely.ops import unary_union
 
+from app.gee.cities import get_city_config
 from app.gee.client import initialize_earth_engine
-from app.gee.config import PHASE1_RESERVOIRS, RESERVOIR_CATCHMENTS_PATH
 from app.gee.reservoir_context import (
     canonicalize_reservoir_name,
     read_catchment_payload,
 )
 
+# Catchment derivation today is Chennai-only (HydroBASINS reference points
+# are hand-picked per reservoir below). When another city onboards
+# reservoir-context, parameterise this on city_id.
+_CHENNAI_CITY = get_city_config("chennai")
+PHASE1_RESERVOIRS = _CHENNAI_CITY.phase1_reservoirs
+RESERVOIR_CATCHMENTS_PATH = _CHENNAI_CITY.reservoir_catchments_path
+WATER_BODIES_PATH = _CHENNAI_CITY.current_water_bodies_path
+
 HYDROBASINS_DATASET_TEMPLATE = "WWF/HydroSHEDS/v1/Basins/hybas_{level}"
 DEFAULT_HYDROBASINS_LEVEL = 12
 DEFAULT_SIMPLIFY_METERS = 250
 MERIT_HYDRO_DATASET = "MERIT/Hydro/v1_0_1"
-
-WATER_BODIES_PATH = (
-    RESERVOIR_CATCHMENTS_PATH.parent / "chennai-water-bodies-current.geojson"
-)
 
 # These are reservoir reference points used to fetch a first-pass HydroBASINS
 # catchment candidate. They are not treated as formal outlet points.

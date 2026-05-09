@@ -1,0 +1,92 @@
+/**
+ * Shared client-side helpers for city-aware URL routing.
+ *
+ * Convention:
+ *   - Chennai uses flat URLs at the root: "/", "/groundwater", "/about"
+ *   - Other cities use a /[cityId] prefix: "/madurai", "/madurai/groundwater"
+ *
+ * The nav header and CitySwitcher both need to parse a pathname into
+ * (cityId, feature) and build city-aware hrefs. Keep this logic in one
+ * place so the two stay in lockstep.
+ */
+
+import { listEnabledPlaces } from "./index";
+
+const CHENNAI_CITY_ID = "chennai";
+
+/** Per-city feature availability. Keep in sync with src/app/[cityId]/<feature>/page.tsx. */
+export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
+  chennai: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "my-ward",
+    "facts",
+    "origins",
+  ]),
+  madurai: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "my-ward",
+    "facts",
+    "origins",
+  ]),
+};
+
+export function knownCityIds(): Set<string> {
+  return new Set(listEnabledPlaces().map((p) => p.cityId));
+}
+
+/**
+ * Parse a pathname into (cityId, featurePath).
+ * /                       -> ("chennai", "")
+ * /groundwater            -> ("chennai", "groundwater")
+ * /madurai                -> ("madurai", "")
+ * /madurai/groundwater    -> ("madurai", "groundwater")
+ * /my-ward/compare        -> ("chennai", "my-ward/compare")
+ */
+export function parsePath(
+  pathname: string,
+  cityIds: Set<string> = knownCityIds(),
+): { cityId: string; feature: string } {
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length === 0) return { cityId: CHENNAI_CITY_ID, feature: "" };
+  if (cityIds.has(segments[0])) {
+    return { cityId: segments[0], feature: segments.slice(1).join("/") };
+  }
+  return { cityId: CHENNAI_CITY_ID, feature: segments.join("/") };
+}
+
+/**
+ * Build the URL for a feature inside a given city. Chennai uses flat URLs;
+ * other cities use /<cityId>/<feature>. Falls back to the city's home if
+ * the city does not yet support the requested feature.
+ */
+export function buildCityHref(targetCityId: string, feature: string): string {
+  const supported = FEATURE_AVAILABILITY[targetCityId];
+  const featureToUse = supported && supported.has(feature) ? feature : "";
+
+  if (targetCityId === CHENNAI_CITY_ID) {
+    return featureToUse === "" ? "/" : `/${featureToUse}`;
+  }
+  return featureToUse === "" ? `/${targetCityId}` : `/${targetCityId}/${featureToUse}`;
+}
+
+/**
+ * Take a Chennai-flat nav href like "/groundwater" or "/" and rewrite it
+ * for the city the user is currently on. Used by the top-nav so that
+ * clicking "Dashboard" while browsing Madurai stays on Madurai.
+ */
+export function rewriteNavHref(navHref: string, currentCityId: string): string {
+  const feature = navHref === "/" ? "" : navHref.replace(/^\//, "");
+  return buildCityHref(currentCityId, feature);
+}

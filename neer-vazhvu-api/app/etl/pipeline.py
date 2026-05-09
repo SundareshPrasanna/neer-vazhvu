@@ -204,17 +204,22 @@ async def _step_fetch_opencity() -> dict:
 
 
 async def _step_fetch_wris() -> dict:
-    """Fetch CGWB station-level groundwater from India WRIS API.
+    """Fetch station-level groundwater from India WRIS API.
 
-    Fetches both manual (seasonal) and telemetric (DWLR) readings.
-    Runs weekly or on-demand. Covers the last 90 days by default to
-    catch any backfilled data.
+    Fetches both manual (seasonal) and telemetric (DWLR) readings from
+    BOTH CGWB and the Tamil Nadu State Ground Water Board. Runs weekly
+    or on-demand. Covers the last 90 days by default to catch any
+    backfilled data.
     """
     supabase = get_supabase()
     today = ist_today()
     start = today - timedelta(days=90)
 
-    records = await fetch_wris_groundwater(start_date=start, end_date=today)
+    records = await fetch_wris_groundwater(
+        start_date=start,
+        end_date=today,
+        agencies=["CGWB", "Tamil Nadu SW GW"],
+    )
 
     rows = [
         {
@@ -244,6 +249,105 @@ async def _step_fetch_wris() -> dict:
                 batch, on_conflict="station_code,reading_date"
             ).execute()
 
+    return {"rows_affected": len(rows)}
+
+
+async def _step_fetch_wris_river_level() -> dict:
+    """Fetch CWC telemetric river-stage readings for Chennai district.
+
+    Same WRIS API base as groundwater, different dataset endpoint.
+    Daily-mean of HHT (INSAT-WL) telemetry, last 90 days. Persists to
+    `wris_river_level`.
+    """
+    from app.scrapers.wris_telemetry import fetch_wris_river_level
+
+    supabase = get_supabase()
+    today = ist_today()
+    start = today - timedelta(days=90)
+
+    records = await fetch_wris_river_level(
+        start_date=start,
+        end_date=today,
+        district="Chennai",
+        agencies=["CWC"],
+    )
+    rows = [
+        {
+            "station_code": r.station_code,
+            "station_name": r.station_name,
+            "latitude": r.latitude,
+            "longitude": r.longitude,
+            "agency": r.agency,
+            "state": r.state,
+            "district": r.district,
+            "tehsil": r.tehsil,
+            "major_basin": r.major_basin,
+            "tributary": r.tributary,
+            "acquisition_mode": r.acquisition_mode,
+            "station_status": r.station_status,
+            "reading_date": r.reading_date.isoformat(),
+            "level_m": r.level_m,
+            "reading_count": r.reading_count,
+            "source": "wris",
+        }
+        for r in records
+    ]
+    if rows:
+        batch_size = 200
+        for i in range(0, len(rows), batch_size):
+            batch = rows[i : i + batch_size]
+            supabase.table("wris_river_level").upsert(
+                batch, on_conflict="station_code,reading_date"
+            ).execute()
+    return {"rows_affected": len(rows)}
+
+
+async def _step_fetch_wris_rainfall() -> dict:
+    """Fetch CWC + IMD telemetric rainfall readings for Chennai district.
+
+    Daily total = MAX of IPC accumulator (midnight-resetting cumulative
+    counter). Last 90 days. Persists to `wris_rainfall`.
+    """
+    from app.scrapers.wris_telemetry import fetch_wris_rainfall
+
+    supabase = get_supabase()
+    today = ist_today()
+    start = today - timedelta(days=90)
+
+    records = await fetch_wris_rainfall(
+        start_date=start,
+        end_date=today,
+        district="Chennai",
+        agencies=["CWC", "IMD"],
+    )
+    rows = [
+        {
+            "station_code": r.station_code,
+            "station_name": r.station_name,
+            "latitude": r.latitude,
+            "longitude": r.longitude,
+            "agency": r.agency,
+            "state": r.state,
+            "district": r.district,
+            "tehsil": r.tehsil,
+            "major_basin": r.major_basin,
+            "tributary": r.tributary,
+            "acquisition_mode": r.acquisition_mode,
+            "station_status": r.station_status,
+            "reading_date": r.reading_date.isoformat(),
+            "rainfall_mm": r.rainfall_mm,
+            "reading_count": r.reading_count,
+            "source": "wris",
+        }
+        for r in records
+    ]
+    if rows:
+        batch_size = 200
+        for i in range(0, len(rows), batch_size):
+            batch = rows[i : i + batch_size]
+            supabase.table("wris_rainfall").upsert(
+                batch, on_conflict="station_code,reading_date"
+            ).execute()
     return {"rows_affected": len(rows)}
 
 
@@ -411,6 +515,16 @@ async def run_daily() -> list[dict]:
     )
 
     steps.append(await _run_step("fetch_wris", _step_fetch_wris, required=False))
+    steps.append(
+        await _run_step(
+            "fetch_wris_river_level", _step_fetch_wris_river_level, required=False
+        )
+    )
+    steps.append(
+        await _run_step(
+            "fetch_wris_rainfall", _step_fetch_wris_rainfall, required=False
+        )
+    )
 
     # ETL
     step = await _run_step("compute_estimate", _step_compute_estimate)
@@ -461,6 +575,16 @@ async def run_post_scrape() -> list[dict]:
     )
 
     steps.append(await _run_step("fetch_wris", _step_fetch_wris, required=False))
+    steps.append(
+        await _run_step(
+            "fetch_wris_river_level", _step_fetch_wris_river_level, required=False
+        )
+    )
+    steps.append(
+        await _run_step(
+            "fetch_wris_rainfall", _step_fetch_wris_rainfall, required=False
+        )
+    )
 
     step = await _run_step("compute_estimate", _step_compute_estimate)
     steps.append(step)
@@ -478,10 +602,21 @@ async def run_post_scrape() -> list[dict]:
 
 
 async def run_wris_fetch() -> list[dict]:
-    """Fetch WRIS groundwater data (on-demand or weekly)."""
+    """Fetch all WRIS datasets (groundwater + river level + rainfall),
+    on-demand or weekly. Independent of the daily pipeline so callers
+    can refresh WRIS without re-running the full ETL chain."""
     steps = []
-    step = await _run_step("fetch_wris", _step_fetch_wris)
-    steps.append(step)
+    steps.append(await _run_step("fetch_wris", _step_fetch_wris))
+    steps.append(
+        await _run_step(
+            "fetch_wris_river_level", _step_fetch_wris_river_level, required=False
+        )
+    )
+    steps.append(
+        await _run_step(
+            "fetch_wris_rainfall", _step_fetch_wris_rainfall, required=False
+        )
+    )
     return steps
 
 
