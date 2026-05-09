@@ -14,8 +14,12 @@ export interface HistoricalEvent {
   year: number;
   trigger: BilingualText;
   impact: BilingualText;
-  source_url: string;
-  source_label: string;
+  /** Optional citation. Some flood events are well-attested but the
+   *  original news article has been removed from the publisher's site
+   *  - we'd rather drop the dead link than fabricate one. When absent,
+   *  the event card hides the citation footer entirely. */
+  source_url?: string;
+  source_label?: string;
 }
 
 export interface ExternalSource {
@@ -60,7 +64,7 @@ export function FloodRiskContent({
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
           {cityDisplayName} {t("flood.heading_suffix")}
         </h1>
-        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-3xl">
+        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
           {pick(cfg.headline)}
         </p>
       </header>
@@ -93,9 +97,11 @@ export function FloodRiskContent({
                   <span className="text-xs text-slate-500">{pick(e.trigger)}</span>
                 </div>
                 <p className="text-sm text-slate-700 dark:text-slate-300 mt-2">{pick(e.impact)}</p>
-                <a href={e.source_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline inline-block mt-2">
-                  {e.source_label} →
-                </a>
+                {e.source_url && e.source_label && (
+                  <a href={e.source_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline inline-block mt-2">
+                    {e.source_label} →
+                  </a>
+                )}
               </div>
             ))}
           </div>

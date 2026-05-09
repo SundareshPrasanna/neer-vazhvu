@@ -44,9 +44,10 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
           en: "Downtown Madurai inundated; Avaniyapuram and Sellur worst-hit; release coincided with peak rainfall in the catchment.",
           ta: "மதுரை நகர மையம் வெள்ளத்தில் மூழ்கியது; அவனியாபுரம் மற்றும் செல்லூர் கடுமையாக பாதிக்கப்பட்டன; நீர்ப்பிடிப்பு பகுதியில் உச்ச மழையுடன் வெளியேற்றம் ஒத்துப்போனது.",
         },
-        source_url:
-          "https://www.thehindu.com/news/cities/Madurai/madurai-flooded-after-vaigai-dam-water-release/article67517428.ece",
-        source_label: "The Hindu (Nov 2023)",
+        // Source omitted: The Hindu article (article67517428.ece) was
+        // removed from thehindu.com after publication. Event itself is
+        // well-attested in contemporary regional press; we'd rather
+        // drop the dead link than substitute one.
       },
       {
         year: 2018,
@@ -73,33 +74,13 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
         },
         cadence: "live",
       },
-      {
-        name: "CWC Tamil Nadu basin portal",
-        url: "https://ffs.tamcnhp.com/",
-        description: {
-          en: "Vaigai basin gauging stations, river-stage forecasts.",
-          ta: "வைகை பேசின் அளவீட்டு நிலையங்கள், ஆற்று-நிலை முன்னறிவிப்புகள்.",
-        },
-        cadence: "live",
-      },
-      {
-        name: "TNSDMA hazard map",
-        url: "https://tnsdma.tn.gov.in/app/webroot/tnsdma_map/",
-        description: {
-          en: "State-level rainfall + flood-zone overlay (low resolution).",
-          ta: "மாநில அளவிலான மழை + வெள்ள-மண்டல அடுக்கு (குறைந்த தெளிவுத்திறன்).",
-        },
-        cadence: "live",
-      },
-      {
-        name: "Madurai Master Plan 2024-2044",
-        url: "https://www.madurailpa.com/assets/pdf/Final%20Madurai%20-%20Vol%201%20-%20Print.pdf",
-        description: {
-          en: "Land-use plan with flood-prone area mapping. Image-heavy PDF - needs OCR + manual digitisation to extract polygons.",
-          ta: "வெள்ளம் ஏற்படக்கூடிய பகுதி வரைபடத்துடன் கூடிய நில-பயன்பாட்டுத் திட்டம். படங்கள் மிகுந்த PDF - பலகோணங்களைப் பெற OCR + கையேடு டிஜிட்டலாக்கம் தேவை.",
-        },
-        cadence: "static (2024-2044 horizon)",
-      },
+      // Removed 2026-05-08: three external sources whose URLs broke
+      // or pointed at the wrong host. We chose to drop rather than
+      // replace because we couldn't verify alternatives at audit time.
+      // Re-add with verified URLs when:
+      //   - TNSDMA hazard map: previously at tnsdma.tn.gov.in/app/webroot/tnsdma_map/
+      //   - Madurai LPA Master Plan 2024-2044: previously a PDF at madurailpa.com
+      //   - Tamil Nadu CWC / WRD basin portal: previously misrouted to ffs.tamcnhp.com
       {
         name: "Smart City Madurai ICCC",
         url: "https://iccc.smartcities.gov.in/icc/city-details/c44058eab38fd0805b98b267e8f831a5",

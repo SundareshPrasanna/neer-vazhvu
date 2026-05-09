@@ -210,6 +210,78 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
           </SubSection>
 
           {isMadurai && (
+            <SubSection title="How Madurai's tap is fed today">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Madurai&apos;s drinking water travels a long path before it reaches a tap:
+                <span className="font-semibold"> Mullaperiyar Dam (Kerala) → Periyar-Vaigai diversion tunnel → Vaigai Dam → Pannaipatty Water Treatment Plant → Madurai Municipal Corporation distribution mains → 23 overhead reservoirs across 81 zones → ~96,048 connections → tap.</span>
+              </p>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
+                Two things are worth knowing when reading the dashboard&apos;s headline:
+              </p>
+              <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-2 mt-2">
+                <li>
+                  <span className="font-semibold">Vaigai is a multi-purpose dam, not a city reservoir.</span> It&apos;s owned by the Tamil Nadu Public Works Department and shared across Madurai, Theni, Sivagangai and Ramanathapuram districts for both irrigation and drinking water. MMC&apos;s sanctioned drinking-water allocation is <span className="font-semibold">1,500 mcft per year</span> - a small slice of Vaigai&apos;s total storage. The most recent reported actual draw is ~900 mcft per year (≈70 MLD continuous).
+                </li>
+                <li>
+                  <span className="font-semibold">We haven&apos;t yet found a public daily feed.</span> Pannaipatty WTP&apos;s daily raw-water intake and treated output, the 23 OHTs&apos; live levels, and zone-by-zone supply are tracked inside MMC&apos;s ICCC and SCADA systems for internal monitoring; we don&apos;t have a route to a daily public surface for them today. So a single &quot;days of water left&quot; number for the city would be guesswork; we don&apos;t generate one.
+                </li>
+              </ul>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
+                What the dashboard <span className="font-semibold">does</span> show: Vaigai&apos;s live dam level (sourced daily from the Tamil Nadu Agriculture Department&apos;s reservoir page), MMC&apos;s public allocation and recent-draw constants, and the structural infrastructure of Pannaipatty WTP and the distribution network. That&apos;s the honest version of what&apos;s currently knowable from outside MMC.
+              </p>
+            </SubSection>
+          )}
+
+          {isMadurai && (
+            <SubSection title="What's missing today">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                A few daily-operations layers aren&apos;t currently part of {cityName}&apos;s public dataset. Most of these data points are tracked inside MMC&apos;s ICCC and SCADA systems for internal monitoring; they just aren&apos;t routed to a public surface yet. Listed here so users know where this dashboard&apos;s daily view ends.
+              </p>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                If any of these become available, the dashboard can move from structural numbers (annual allocation, plant capacity) to a real measured daily runway.
+              </p>
+              <div className="space-y-3 mt-3">
+                <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Daily Pannaipatty WTP raw-water intake + treated output</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Tracked inside MMC&apos;s ICCC SCADA. With a daily series, the dashboard could move from showing the allocation slice to showing actual measured throughput.
+                  </p>
+                </div>
+                <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Per-zone supply across the 81 distribution zones</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Zone-level supply telemetry isn&apos;t in the public dataset today. ADB Tranche 3 covers 39 of the 81 zones; Smart City ABD covers 8. With zone-level data the dashboard could surface which neighbourhoods are getting served daily and which lean on tankers and borewells.
+                  </p>
+                </div>
+                <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">OHT-wise live storage (23 overhead reservoirs)</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Aggregate OHT capacity (34.85 MLD) is documented; per-OHT live levels live in MMC&apos;s SCADA. Per-OHT readings would let zone-level supply gaps surface in near real time.
+                  </p>
+                </div>
+                <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Non-revenue water and per-capita supply (LPCD)</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    MoHUA&apos;s Service Level Benchmarks set targets (135 LPCD, 20% NRW). We haven&apos;t yet found Madurai-specific actuals against these targets in any open dataset. Pey Jal Survekshan (which Madurai is a pilot city for) computes LPCD internally; we haven&apos;t found a public city-level scorecard.
+                  </p>
+                </div>
+                <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">PWD-WRD daily Vaigai drinking-water release log</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Daily drinking-water release volumes from Vaigai are reported episodically through news during release events (Chithirai pulses, summer ~200 cusec drinking baseline) but not as a structured feed. A daily series would let the dashboard&apos;s allocation view reflect real seasonal variation rather than a static constant.
+                  </p>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">In flight: ADB Investment Program IEE / DPR parse</h4>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    The ADB Tamil Nadu Urban Flagship Investment Program Tranches 2 and 3 contain engineering-grade tables for Madurai distribution zones, OHT capacities, and demand projections to 2046. Parsing those PDFs once is the next planned data unlock for the dashboard - converts the allocation hero into a zone-reliability heatmap.
+                  </p>
+                </div>
+              </div>
+            </SubSection>
+          )}
+
+          {isMadurai && (
             <SubSection title={t("about.consumption_madurai_title")}>
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 {t("about.consumption_intro")}
@@ -281,7 +353,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
             ───────────────────────────────────────────────────────── */}
         <Section id="intelligence" title={t("about.section_intelligence")}>
           <p className="text-slate-600 dark:text-slate-400">
-            Chennai layers an AI daily briefing, a longer-form weekly narrative, and per-ward AI profiles on top of the raw data. Those layers are pending for {cityName} - the underlying summary stores aren&apos;t yet multi-city.
+            Daily AI briefings, longer-form weekly narratives, and per-ward AI profiles are pending for {cityName} - the underlying summary stores aren&apos;t yet multi-city. Until those land, the page surfaces raw data without an AI commentary layer.
           </p>
           <div className="space-y-3">
             <div className="flex gap-3">
@@ -467,7 +539,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
           <DataSource
             name="JRC Global Surface Water (Monthly Recurrence)"
             url="https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_MonthlyRecurrence"
-            description="Per-water-body wet/dry history. Algorithm portable from Chennai; data layer pending for Madurai's 19 flagships."
+            description="Per-water-body wet/dry history from satellite. Pipeline ready; data layer pending for Madurai's 19 flagships."
             frequency="historical monthly"
           />
           <DataSource
@@ -496,22 +568,51 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
             5. Data quality & limitations
             ───────────────────────────────────────────────────────── */}
         <Section id="data-quality" title={t("about.section_data_quality")}>
+          <SubSection title="How we classify river health">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              CPCB publishes <span className="font-semibold">two parallel</span> river-water-quality classification systems, and they don&apos;t always agree. Knowing which one we use - and why - matters for reading our river status badges honestly.
+            </p>
+            <div className="space-y-3 mt-3">
+              <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Designated Best-Use classes (A-E)</h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Computed from <span className="font-semibold">current</span> dissolved-oxygen, BOD and coliform thresholds at each NWMP station. Updates every reading. Class A = drinking with disinfection only; Class B = outdoor bathing; Class C = drinking with conventional treatment; Class D = fisheries/wildlife; Class E = irrigation only. <span className="font-semibold">Below E = practically dead.</span>
+                </p>
+              </div>
+              <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Polluted River Stretch (PRS) Priority I-V</h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  A <span className="font-semibold">historical, multi-year</span> stretch-level designation reflecting cumulative pollution. Slow to update; once a river stretch is on the Priority list it tends to stay there even if recent readings improve. Priority I = worst (BOD &gt; 30 mg/L sustained); Priority V = least bad of the polluted stretches.
+                </p>
+              </div>
+            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
+              <span className="font-semibold">Our status badges (&quot;dead&quot;, &quot;severely degraded&quot;, &quot;degraded&quot;, &quot;stressed&quot;, &quot;healthy&quot;) are computed from current readings via the Designated Best-Use thresholds</span> - not from the PRS Priority list. We take the worst classification across a river&apos;s monitored stations and surface that as the river-level status.
+            </p>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+              Practical consequence: a river on CPCB&apos;s PRS Priority list (e.g. the Madurai-Manamadurai stretch of the Vaigai is Priority III) won&apos;t automatically render as &quot;severely degraded&quot; here. If the underlying NWMP readings show only Class C/D conditions, the badge reflects that. The PRS designation belongs in the river description as historical context, not as the live status.
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
+              Methodology lives in <span className="font-mono">src/lib/utils/river-classification.ts</span>; readings are from CPCB NWMP annual River Water Quality reports.
+            </p>
+          </SubSection>
+
           {isMadurai && (
-            <SubSection title="Madurai-specific data gaps">
+            <SubSection title={`Open data gaps in ${cityName}`}>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                {cityName} is materially less instrumented than Chennai. Some honest gaps:
+                Some layers we&apos;d like to surface aren&apos;t publicly released yet for {cityName}. We&apos;ve listed each one with the workaround currently in place; tracked as RTI follow-ups where applicable.
               </p>
               <div className="space-y-3">
                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-                  <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">No public flood-hazard layer</h4>
+                  <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">No public flood-hazard return-period layer</h4>
                   <p className="text-sm text-amber-700 dark:text-amber-300">
-                    Chennai publishes 5/10/25/50/100/200-year flood return-period polygons through OpenCity. Madurai has none. The flood-risk page falls back to a narrative-only stub anchored on the 6,000-cusec dam-release threshold; 2018 floods peaked above 12,000.
+                    Standard 5/10/25/50/100/200-year flood return-period polygons are not currently published for Madurai. The flood-risk page falls back to a narrative-only view anchored on the 6,000-cusec Vaigai dam-release threshold; 2018 floods peaked above 12,000.
                   </p>
                 </div>
                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
                   <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">No public drainage / sewerage GeoJSONs</h4>
                   <p className="text-sm text-amber-700 dark:text-amber-300">
-                    Chennai&apos;s ward-risk composite uses drainage and sewerage GeoJSONs sourced from OpenCity. Madurai equivalents don&apos;t exist publicly - tracked as RTI follow-ups to Madurai Corporation. Until then the ward risk composite ships a 3-factor (vs Chennai&apos;s 5-factor) variant.
+                    Drainage line and sewerage main GeoJSONs aren&apos;t publicly released - tracked as RTI follow-ups to Madurai Municipal Corporation. The ward risk composite ships a 3-factor variant (water bodies, lost bodies, groundwater) until those layers land.
                   </p>
                 </div>
                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
@@ -523,7 +624,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                   <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">No per-ward depth choropleth (deliberate)</h4>
                   <p className="text-sm text-blue-700 dark:text-blue-300">
-                    Chennai uses an authoritative OpenCity ward-monthly groundwater dataset. Madurai has no equivalent, and the four India WRIS live stations in the district are too sparse to manufacture an honest 100-ward choropleth. Instead we surface 21 CGWB Year Book point stations as the depth signal, alongside the 11-block CGWB exploitation classification. The IDW-interpolated ward view used in earlier drafts has been retired for Madurai.
+                    Madurai district has only four India WRIS live groundwater stations - far too sparse to honestly interpolate a 100-ward choropleth. Instead we surface 21 CGWB Year Book point stations as the depth signal, alongside the 11-block CGWB exploitation classification. The IDW-interpolated view used in earlier drafts has been retired.
                   </p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
