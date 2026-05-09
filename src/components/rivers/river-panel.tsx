@@ -13,6 +13,7 @@ import {
 import { useLanguage } from "@/lib/i18n/context";
 import { NewsContext } from "@/components/insights/news-context";
 import { RestorationSection } from "@/components/rivers/restoration-section";
+import { computeRiverStatus } from "@/lib/utils/river-classification";
 
 interface RiverPanelProps {
   selected: SelectedRiver;
@@ -58,8 +59,14 @@ export function RiverPanel({
 
   const primaryRiverName = language === "ta" ? (river.name_ta ?? river.name) : river.name;
   const secondaryRiverName = language === "ta" ? river.name : river.name_ta;
-  const statusColor = QUALITY_COLORS[river.overall_status];
-  const statusLabel = t(`rivers_legend.${river.overall_status}`);
+  // Status is derived from current readings via CPCB Designated
+  // Best-Use thresholds, not from the JSON's hardcoded label - so a
+  // river's status reflects what the data actually shows today, not
+  // a multi-year stretch-level designation that may have drifted.
+  // The JSON value remains a fallback when no station has readings.
+  const computedStatus = computeRiverStatus(river);
+  const statusColor = QUALITY_COLORS[computedStatus];
+  const statusLabel = t(`rivers_legend.${computedStatus}`);
 
   // No monitoring stations - show alarm state
   if (river.stations.length === 0) {
@@ -121,7 +128,7 @@ export function RiverPanel({
         </div>
 
         {/* Connected insight */}
-        {(river.overall_status === "dead" || river.overall_status === "severely_degraded" || river.overall_status === "degraded") && (
+        {(computedStatus === "dead" || computedStatus === "severely_degraded" || computedStatus === "degraded") && (
           <div className="mb-4">
             <ConnectedInsight
               messageKey="connected.river_recharge"
@@ -329,7 +336,7 @@ export function RiverPanel({
       )}
 
       {/* Connected insight: degraded river blocks recharge */}
-      {(river.overall_status === "dead" || river.overall_status === "severely_degraded") && (
+      {(computedStatus === "dead" || computedStatus === "severely_degraded") && (
         <div className="mb-4">
           <ConnectedInsight
             messageKey="connected.river_recharge"

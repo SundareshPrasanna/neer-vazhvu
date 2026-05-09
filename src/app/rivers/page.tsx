@@ -13,6 +13,7 @@ import type { SewageInletData } from "@/components/rivers/combined-rivers-map";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
+import { computeRiverStatus } from "@/lib/utils/river-classification";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
@@ -152,7 +153,7 @@ function RiversPageContent() {
             {t("rivers_page.cooum_do")}{" "}
             <span
               className="font-semibold"
-              style={{ color: QUALITY_COLORS[cooum.overall_status] }}
+              style={{ color: QUALITY_COLORS[computeRiverStatus(cooum)] }}
             >
               ~{cooumLatestDO} mg/L
             </span>{" "}

@@ -12,6 +12,7 @@ import type { IndustrialPollutionData, PollutionSource } from "@/types/industria
 import { SOURCE_TYPE_COLORS } from "@/types/industrial-pollution";
 import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { computeRiverStatus } from "@/lib/utils/river-classification";
 import "leaflet/dist/leaflet.css";
 
 /** Flies the map to a given center when it changes */
@@ -96,8 +97,17 @@ export function CombinedRiversMap({
       .catch(console.error);
   }, [riversGeoJsonUrl, industrialZonesGeoJsonUrl]);
 
+  // Each river entry replaces the JSON-declared overall_status with one
+  // computed from current readings (CPCB Designated Best-Use). Every
+  // downstream read of `riverMetaMap.get(...)?.overall_status` then
+  // sees the data-derived status without per-call recomputation.
   const riverMetaMap = useMemo(
-    () => new Map(qualityData.rivers.map((river) => [river.id, river])),
+    () => new Map(
+      qualityData.rivers.map((river) => [
+        river.id,
+        { ...river, overall_status: computeRiverStatus(river) },
+      ]),
+    ),
     [qualityData.rivers]
   );
 
@@ -112,7 +122,7 @@ export function CombinedRiversMap({
           station_id: station.id,
           name: station.name,
           stretch: station.stretch,
-          overall_status: river.overall_status,
+          overall_status: computeRiverStatus(river),
         },
       }))
     ),
@@ -470,7 +480,7 @@ export function CombinedRiversMap({
         const river = riverMetaMap.get(selectedRiver.riverId);
         const station = river?.stations.find((s) => s.id === selectedRiver.stationId);
         if (!station || !river) return null;
-        const color = QUALITY_COLORS[river.overall_status];
+        const color = QUALITY_COLORS[computeRiverStatus(river)];
         return (
           <CircleMarker
             center={[station.lat, station.lng]}
