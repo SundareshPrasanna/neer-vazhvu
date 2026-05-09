@@ -169,7 +169,12 @@ export default async function CityFactsPage({ params }: PageProps) {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <FactsPage facts={facts} generatedAt={factsFile.generated_at ?? retrievedAt} />
+      <FactsPage
+        facts={facts}
+        generatedAt={factsFile.generated_at ?? retrievedAt}
+        cityName={config.displayName}
+        cityNameTa={config.displayNameLocalized?.ta}
+      />
     </>
   );
 }

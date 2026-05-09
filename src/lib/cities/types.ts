@@ -119,9 +119,10 @@ export interface UrbanSupplyConfig {
 export interface BasePlaceConfig {
   cityId: string;
   displayName: string;
-  /** Localized display name in the city's primary regional language
-   *  (e.g. Tamil for TN cities). Used wherever copy renders the city
-   *  name in that language. Falls back to `displayName` when omitted. */
+  /** Localized display names per language. Used wherever copy renders
+   *  the city name in a specific regional script (e.g. `{ ta: 'சென்னை' }`
+   *  for Chennai's Tamil rendering, `{ kn: 'ಬೆಂಗಳೂರು' }` for Bangalore).
+   *  Falls back to `displayName` when the requested language is missing. */
   displayNameLocalized?: Partial<Record<LanguageCode, string>>;
   stateCode: string;
   timezone: string;
