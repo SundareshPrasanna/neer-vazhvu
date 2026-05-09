@@ -53,10 +53,8 @@ def test_madurai_paths_point_at_madurai_assets():
     madurai = get_city_config("madurai")
     assert madurai.restoration_priority_path.name == "restoration-priority-madurai.json"
     assert (
-        madurai.current_water_bodies_path.name
-        == "madurai-water-bodies-current.geojson"
+        madurai.current_water_bodies_path.name == "madurai-water-bodies-current.geojson"
     )
     assert (
-        madurai.phase1_targets_path.name
-        == "gee-phase1-water-body-targets-madurai.json"
+        madurai.phase1_targets_path.name == "gee-phase1-water-body-targets-madurai.json"
     )

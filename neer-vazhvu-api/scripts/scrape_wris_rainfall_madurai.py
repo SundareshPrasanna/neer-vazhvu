@@ -19,8 +19,6 @@ Usage:
     MADURAI_WRIS_RAIN_DAYS=180 python scripts/scrape_wris_rainfall_madurai.py
 """
 
-VAIGAI_SYSTEM_DISTRICTS = ["Madurai", "Theni", "Dindigul", "Virudhunagar"]
-
 import asyncio
 import os
 import sys
@@ -31,6 +29,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from supabase import create_client  # noqa: E402
+
+VAIGAI_SYSTEM_DISTRICTS = ["Madurai", "Theni", "Dindigul", "Virudhunagar"]
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.scrapers.wris_telemetry import fetch_wris_rainfall  # noqa: E402
@@ -89,7 +89,10 @@ async def main() -> int:
         print(f"  {district}: {len(d_records)} daily records", flush=True)
         records.extend(d_records)
 
-    print(f"  Total: {len(records)} daily records across {len(VAIGAI_SYSTEM_DISTRICTS)} districts", flush=True)
+    print(
+        f"  Total: {len(records)} daily records across {len(VAIGAI_SYSTEM_DISTRICTS)} districts",
+        flush=True,
+    )
 
     if not records:
         print("  No new readings; exiting cleanly.", flush=True)

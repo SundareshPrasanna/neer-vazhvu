@@ -70,7 +70,13 @@ export function RainfallTrends({
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
+    // Reset on cityId change so a stale Chennai dataset doesn't
+    // briefly render under Madurai's chart heading. Intentional;
+    // the lint rule warns against the pattern but the alternatives
+    // (key prop remount, derived state) read worse here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMissing(false);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setData(null);
     // Chennai's file lives at the legacy path; new cities use a
     // suffixed path so the generator can produce them side by side.

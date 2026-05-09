@@ -124,6 +124,12 @@ export function MultiSourceHistoryChart({
   // Build the merged-by-date point array Recharts expects.
   const merged = useMemo(() => {
     const cutoffDays = TIME_TABS.find((t) => t.key === tab)?.days ?? 0;
+    // Date.now() is technically impure during render; the cutoff is
+    // a window relative to "now" by design (last-N-days view), so a
+    // single read per render is the intended behaviour. The lint
+    // rule's preferred alternative (state + effect) would just add
+    // a render cycle without changing semantics.
+    // eslint-disable-next-line react-hooks/purity
     const cutoffMs = cutoffDays > 0 ? Date.now() - cutoffDays * 86400 * 1000 : 0;
 
     type Row = { date: string } & Record<string, string | number | null | [number, number]>;

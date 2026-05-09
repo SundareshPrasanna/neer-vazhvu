@@ -56,6 +56,7 @@ OUTPUT_PATH = REPO_ROOT / "public" / "data" / "river-quality-madurai.json"
 
 # ── row matching ─────────────────────────────────────────────────────
 
+
 # CPCB station name -> our seed station id. CPCB publishes "U/S" + "D/S"
 # only for Madurai (no readings for Vaigai dam, Andipatti, Manamadurai,
 # Ramanathapuram - those aren't on the National Water Monitoring Network
@@ -92,8 +93,12 @@ def parse_float(s: str | None) -> float | None:
 
 
 def midpoint(min_s: Any, max_s: Any) -> float | None:
-    lo = parse_float(min_s if isinstance(min_s, str) else (str(min_s) if min_s is not None else None))
-    hi = parse_float(max_s if isinstance(max_s, str) else (str(max_s) if max_s is not None else None))
+    lo = parse_float(
+        min_s if isinstance(min_s, str) else (str(min_s) if min_s is not None else None)
+    )
+    hi = parse_float(
+        max_s if isinstance(max_s, str) else (str(max_s) if max_s is not None else None)
+    )
     if lo is None and hi is None:
         return None
     if lo is None:
@@ -104,6 +109,7 @@ def midpoint(min_s: Any, max_s: Any) -> float | None:
 
 
 # ── extraction strategies ────────────────────────────────────────────
+
 
 def parse_vaigai_from_line(line: str) -> dict | None:
     """Parse a CPCB row when extract_tables fails / returns garbage.
@@ -183,8 +189,8 @@ def stitch_wrapped_lines(text: str) -> list[str]:
 
 
 CPCB_VAIGAI_CODE_TO_SID = {
-    "10059": "vaigai-sellur",       # Madurai U/S
-    "10060": "vaigai-anuppanadi",   # Madurai D/S
+    "10059": "vaigai-sellur",  # Madurai U/S
+    "10060": "vaigai-anuppanadi",  # Madurai D/S
 }
 
 
@@ -201,7 +207,7 @@ def parse_code_anchored_row(code: str, line: str) -> dict | None:
     rest = line.strip()
     if not rest.startswith(code):
         return None
-    rest = rest[len(code):]
+    rest = rest[len(code) :]
     # Strip any leading state name like "TAMIL NADU".
     rest = re.sub(r"^[A-Z\s]{3,}?(?=\d)", "", rest, count=1).strip()
     nums = NUM_RE.findall(rest)
@@ -279,6 +285,7 @@ def extract_year_readings(pdf_path: Path, year: int) -> dict[str, dict]:
 
 # ── main ─────────────────────────────────────────────────────────────
 
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--years", default="2020,2021,2022,2023,2024")
@@ -290,7 +297,9 @@ def main() -> int:
     years = [int(y) for y in args.years.split(",")]
 
     if not OUTPUT_PATH.exists():
-        print(f"Seed file missing: {OUTPUT_PATH}\nRe-create from the Tier 1.E commit before running.")
+        print(
+            f"Seed file missing: {OUTPUT_PATH}\nRe-create from the Tier 1.E commit before running."
+        )
         return 1
 
     seed = json.loads(OUTPUT_PATH.read_text())
@@ -310,7 +319,9 @@ def main() -> int:
         print(f"  + parsing  {pdf_path.name}")
         records = extract_year_readings(pdf_path, year)
         if not records:
-            print(f"      no Vaigai rows matched - check station-name regex if unexpected")
+            print(
+                "      no Vaigai rows matched - check station-name regex if unexpected"
+            )
             continue
         for sid, rec in records.items():
             if sid not in by_id:

@@ -93,7 +93,9 @@ def _fetch_history(supabase, source_code: str, history_days: int) -> pd.DataFram
     return df[["unique_id", "ds", "y"]].dropna()
 
 
-def _forecast_one_source(source_code: str, df: pd.DataFrame, horizon: int) -> list[dict]:
+def _forecast_one_source(
+    source_code: str, df: pd.DataFrame, horizon: int
+) -> list[dict]:
     """Fit AutoARIMA on the source's history and return forecast rows."""
     if len(df) < MIN_HISTORY_FOR_FIT:
         print(
@@ -115,7 +117,11 @@ def _forecast_one_source(source_code: str, df: pd.DataFrame, horizon: int) -> li
     forecasts = sf.forecast(df=df, h=horizon, level=[CONFIDENCE_LEVEL]).reset_index()
 
     # Find the prediction + interval columns (AutoARIMA names them dynamically).
-    pred_col = next(c for c in forecasts.columns if c not in ("unique_id", "ds", "index") and "-lo-" not in c and "-hi-" not in c)
+    pred_col = next(
+        c
+        for c in forecasts.columns
+        if c not in ("unique_id", "ds", "index") and "-lo-" not in c and "-hi-" not in c
+    )
     lo_col = next(c for c in forecasts.columns if "-lo-" in c)
     hi_col = next(c for c in forecasts.columns if "-hi-" in c)
 
@@ -162,7 +168,10 @@ async def main() -> int:
         print(f"ERROR: no water_sources rows for city_id={CITY_ID}", file=sys.stderr)
         return 1
 
-    print(f"Forecasting {len(sources)} Madurai sources, horizon={args.horizon}d", flush=True)
+    print(
+        f"Forecasting {len(sources)} Madurai sources, horizon={args.horizon}d",
+        flush=True,
+    )
 
     all_rows: list[dict] = []
     for s in sources:
@@ -171,11 +180,17 @@ async def main() -> int:
         df = _fetch_history(supabase, code, args.history_days)
         rows = _forecast_one_source(code, df, args.horizon)
         if rows:
-            print(f"    -> {len(rows)} forecast points (model={rows[0]['model_name']})", flush=True)
+            print(
+                f"    -> {len(rows)} forecast points (model={rows[0]['model_name']})",
+                flush=True,
+            )
             all_rows.extend(rows)
 
     if not all_rows:
-        print("No forecasts produced (insufficient history). Run the backfill first.", flush=True)
+        print(
+            "No forecasts produced (insufficient history). Run the backfill first.",
+            flush=True,
+        )
         return 0
 
     supabase.table("reservoir_forecast_v2").upsert(

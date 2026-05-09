@@ -65,7 +65,9 @@ async def _fetch_pages(
                     f"&page={page}"
                     f"&size={PAGE_SIZE}"
                 )
-                response = await client.post(url, headers={"Accept": "application/json"})
+                response = await client.post(
+                    url, headers={"Accept": "application/json"}
+                )
                 response.raise_for_status()
                 data = response.json()
                 # Treat "no data" responses as empty for this agency rather
@@ -81,8 +83,7 @@ async def _fetch_pages(
                         )
                         break
                     raise ValueError(
-                        f"WRIS API error ({base_url}, {agency}): "
-                        f"{data.get('message')}"
+                        f"WRIS API error ({base_url}, {agency}): {data.get('message')}"
                     )
                 records = data.get("data", [])
                 if not records:
@@ -157,7 +158,11 @@ def _aggregate(
 
     out: list[tuple[str, date, float, int, dict]] = []
     for (station_code, date_str), group in groups.items():
-        values = [g["dataValue"] for g in group if isinstance(g.get("dataValue"), (int, float))]
+        values = [
+            g["dataValue"]
+            for g in group
+            if isinstance(g.get("dataValue"), (int, float))
+        ]
         if not values:
             continue
         try:
@@ -170,7 +175,9 @@ def _aggregate(
             agg = max(values)
         else:
             raise ValueError(f"Unknown aggregator: {aggregator}")
-        out.append((station_code, reading_date, agg, len(values), _meta_from_first(group)))
+        out.append(
+            (station_code, reading_date, agg, len(values), _meta_from_first(group))
+        )
     return out
 
 

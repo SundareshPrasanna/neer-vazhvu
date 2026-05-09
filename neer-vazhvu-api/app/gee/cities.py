@@ -49,9 +49,11 @@ _CHENNAI = CityGeeConfig(
     city_id="chennai",
     label="Chennai",
     restoration_priority_path=PUBLIC_DATA_DIR / "restoration-priority.json",
-    current_water_bodies_path=PUBLIC_GEOJSON_DIR / "chennai-water-bodies-current.geojson",
+    current_water_bodies_path=PUBLIC_GEOJSON_DIR
+    / "chennai-water-bodies-current.geojson",
     phase1_targets_path=PUBLIC_DATA_DIR / "gee-phase1-water-body-targets.json",
-    reservoir_catchments_path=PUBLIC_GEOJSON_DIR / "chennai-reservoir-catchments.geojson",
+    reservoir_catchments_path=PUBLIC_GEOJSON_DIR
+    / "chennai-reservoir-catchments.geojson",
     phase1_reservoirs=("poondi", "redhills", "chembarambakkam", "cholavaram"),
     reservoir_name_aliases=MappingProxyType(
         {
@@ -94,7 +96,8 @@ _MADURAI = CityGeeConfig(
     city_id="madurai",
     label="Madurai",
     restoration_priority_path=PUBLIC_DATA_DIR / "restoration-priority-madurai.json",
-    current_water_bodies_path=PUBLIC_GEOJSON_DIR / "madurai-water-bodies-current.geojson",
+    current_water_bodies_path=PUBLIC_GEOJSON_DIR
+    / "madurai-water-bodies-current.geojson",
     phase1_targets_path=PUBLIC_DATA_DIR / "gee-phase1-water-body-targets-madurai.json",
     reservoir_catchments_path=None,
     phase1_reservoirs=(),
@@ -130,9 +133,7 @@ def get_city_config(city_id: str | None = None) -> CityGeeConfig:
     config = _REGISTRY.get(resolved)
     if config is None:
         supported = ", ".join(sorted(_REGISTRY))
-        raise RuntimeError(
-            f"Unknown city_id {city_id!r}. Supported: {supported}"
-        )
+        raise RuntimeError(f"Unknown city_id {city_id!r}. Supported: {supported}")
     return config
 
 

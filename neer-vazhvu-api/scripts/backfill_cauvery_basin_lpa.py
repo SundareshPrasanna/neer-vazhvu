@@ -69,10 +69,16 @@ async def main() -> int:
 
     if lpa.get("sw"):
         sw_max_doy = max(lpa["sw"].keys())
-        print(f"  SW season-end LPA (day {sw_max_doy}): {lpa['sw'][sw_max_doy]} mm", flush=True)
+        print(
+            f"  SW season-end LPA (day {sw_max_doy}): {lpa['sw'][sw_max_doy]} mm",
+            flush=True,
+        )
     if lpa.get("ne"):
         ne_max_doy = max(lpa["ne"].keys())
-        print(f"  NE season-end LPA (day {ne_max_doy}): {lpa['ne'][ne_max_doy]} mm", flush=True)
+        print(
+            f"  NE season-end LPA (day {ne_max_doy}): {lpa['ne'][ne_max_doy]} mm",
+            flush=True,
+        )
     return 0
 
 

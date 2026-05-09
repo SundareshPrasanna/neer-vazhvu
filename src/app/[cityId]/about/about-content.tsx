@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import type { PlaceConfig } from "@/lib/cities";
 import { MaduraiPageDescriptions } from "./madurai-page-descriptions";
@@ -343,7 +344,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
 
           {!isMadurai && (
             <p className="text-slate-600 dark:text-slate-400">
-              Per-page methodology documentation for {cityName} is pending. See the dedicated Chennai about page (<a href="/about" className="text-blue-600 dark:text-blue-400 hover:underline">/about</a>) for the canonical methodology pattern.
+              Per-page methodology documentation for {cityName} is pending. See the dedicated Chennai about page (<Link href="/about" className="text-blue-600 dark:text-blue-400 hover:underline">/about</Link>) for the canonical methodology pattern.
             </p>
           )}
         </Section>

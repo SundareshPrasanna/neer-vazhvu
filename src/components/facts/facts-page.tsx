@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { TierSection } from "@/components/facts/tier-section";
 import { useLanguage } from "@/lib/i18n/context";
 import type { Fact, FactTier } from "@/types/facts";
@@ -72,12 +73,12 @@ export function FactsPage({ facts, generatedAt }: FactsPageProps) {
         <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
           {t("facts.methodology_intro")}
         </p>
-        <a
+        <Link
           href="/about#data-sources"
           className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
         >
           {t("facts.methodology_link")}
-        </a>
+        </Link>
       </section>
     </div>
   );

@@ -19,8 +19,6 @@ Usage:
     MADURAI_WRIS_RIVER_DAYS=180 python scripts/scrape_wris_river_level_madurai.py
 """
 
-VAIGAI_SYSTEM_DISTRICTS = ["Madurai", "Theni", "Dindigul", "Virudhunagar"]
-
 import asyncio
 import os
 import sys
@@ -29,6 +27,8 @@ from datetime import date, timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
+
+VAIGAI_SYSTEM_DISTRICTS = ["Madurai", "Theni", "Dindigul", "Virudhunagar"]
 
 from supabase import create_client  # noqa: E402
 
@@ -90,7 +90,10 @@ async def main() -> int:
         print(f"  {district}: {len(d_records)} daily records", flush=True)
         records.extend(d_records)
 
-    print(f"  Total: {len(records)} daily records across {len(VAIGAI_SYSTEM_DISTRICTS)} districts", flush=True)
+    print(
+        f"  Total: {len(records)} daily records across {len(VAIGAI_SYSTEM_DISTRICTS)} districts",
+        flush=True,
+    )
 
     if not records:
         print("  No new readings; exiting cleanly.", flush=True)

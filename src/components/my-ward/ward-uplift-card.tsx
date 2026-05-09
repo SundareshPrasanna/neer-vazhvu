@@ -49,6 +49,9 @@ export function WardUpliftCard({ wardNumber }: Props) {
   // drainage / sewerage gaps even though Madurai has no such data.
   useEffect(() => {
     let cancelled = false;
+    // Reset on city change so a stale Chennai profile array doesn't
+    // briefly drive the uplift math while Madurai's profiles fetch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAllProfiles(null);
     loadProfiles(cityId).then((profiles) => {
       if (!cancelled) setAllProfiles(profiles);

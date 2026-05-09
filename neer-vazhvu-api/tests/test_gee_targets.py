@@ -100,6 +100,11 @@ def test_chennai_reservoir_name_pattern_does_not_apply_to_madurai():
         "priority_level": "moderate",
     }
 
-    assert determine_include_reason(row, city=get_city_config("chennai")) == "named_reservoir"
+    assert (
+        determine_include_reason(row, city=get_city_config("chennai"))
+        == "named_reservoir"
+    )
     # Madurai has no "poondi" pattern; falls through to size-based naming rule.
-    assert determine_include_reason(row, city=get_city_config("madurai")) == "named_large"
+    assert (
+        determine_include_reason(row, city=get_city_config("madurai")) == "named_large"
+    )

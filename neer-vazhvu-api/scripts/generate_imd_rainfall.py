@@ -43,7 +43,11 @@ NORMAL_END = 2020  # long-term normal computed over START_YEAR-NORMAL_END
 # via --lat / --lng on the CLI without editing the script, but adding
 # a row here keeps invocations one flag.
 CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
-    "chennai": (13.0, 80.0, "Nearest valid land grid point to Chennai (coastal cells classified as ocean by IMD)"),
+    "chennai": (
+        13.0,
+        80.0,
+        "Nearest valid land grid point to Chennai (coastal cells classified as ocean by IMD)",
+    ),
     "madurai": (9.9, 78.0, "Madurai-region grid point in upper Vaigai catchment"),
 }
 
@@ -81,12 +85,22 @@ def fetch_year(year: int, lat: float, lng: float) -> list[dict]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0].strip())
-    parser.add_argument("--city", default="chennai", help="City id (chennai / madurai / ...)")
-    parser.add_argument("--lat", type=float, default=None, help="Override grid lat (decimal degrees)")
-    parser.add_argument("--lng", type=float, default=None, help="Override grid lng (decimal degrees)")
+    parser.add_argument(
+        "--city", default="chennai", help="City id (chennai / madurai / ...)"
+    )
+    parser.add_argument(
+        "--lat", type=float, default=None, help="Override grid lat (decimal degrees)"
+    )
+    parser.add_argument(
+        "--lng", type=float, default=None, help="Override grid lng (decimal degrees)"
+    )
     parser.add_argument("--start-year", type=int, default=START_YEAR)
     parser.add_argument("--end-year", type=int, default=date.today().year - 1)
-    parser.add_argument("--output", default=None, help="Output path (defaults to public/data/imd-rainfall-monthly[-{city}].json)")
+    parser.add_argument(
+        "--output",
+        default=None,
+        help="Output path (defaults to public/data/imd-rainfall-monthly[-{city}].json)",
+    )
     args = parser.parse_args()
 
     city_id = args.city.lower()
@@ -94,7 +108,10 @@ def main() -> None:
     grid_lat = args.lat if args.lat is not None else defaults[0]
     grid_lng = args.lng if args.lng is not None else defaults[1]
     if grid_lat is None or grid_lng is None:
-        print(f"ERROR: no default grid for city '{city_id}'. Pass --lat and --lng.", file=sys.stderr)
+        print(
+            f"ERROR: no default grid for city '{city_id}'. Pass --lat and --lng.",
+            file=sys.stderr,
+        )
         return
     note = defaults[2] or f"{city_id} grid point ({grid_lat}, {grid_lng})"
 
@@ -151,7 +168,9 @@ def main() -> None:
 
     # Compute long-term normals (start_year to NORMAL_END)
     normal_years = [r for r in annual_records if r["year"] <= NORMAL_END]
-    annual_mean = round(sum(r["total_mm"] for r in normal_years) / max(1, len(normal_years)), 1)
+    annual_mean = round(
+        sum(r["total_mm"] for r in normal_years) / max(1, len(normal_years)), 1
+    )
 
     monthly_means = []
     for month in range(1, 13):

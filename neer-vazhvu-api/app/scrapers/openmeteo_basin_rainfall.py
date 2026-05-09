@@ -17,7 +17,7 @@ IMD remains the monthly authoritative cross-check (separate script, M3.5).
 import asyncio
 import json
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -159,9 +159,7 @@ def _basin_average(per_point_responses: list[dict]) -> dict[str, float]:
                 continue
             by_date.setdefault(t, []).append(float(p))
 
-    return {
-        d: round(sum(vals) / len(vals), 2) for d, vals in by_date.items() if vals
-    }
+    return {d: round(sum(vals) / len(vals), 2) for d, vals in by_date.items() if vals}
 
 
 def _load_lpa_lookup(lpa_path: Path) -> dict[str, dict[str, float]] | None:
@@ -308,9 +306,7 @@ async def fetch_archive_for_lpa(
                 assert start is not None
                 day_idx = (d - start).days
                 cumulative[season] += daily_avg[date_str]
-                by_season_doy[season].setdefault(day_idx, []).append(
-                    cumulative[season]
-                )
+                by_season_doy[season].setdefault(day_idx, []).append(cumulative[season])
             print(f"  [{year}] ok ({len(daily_avg)} days)", flush=True)
             await asyncio.sleep(2.0)  # gentle on the API
 

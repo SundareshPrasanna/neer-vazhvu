@@ -62,7 +62,9 @@ async def fetch_wris_groundwater(
                     f"&page={page}"
                     f"&size={PAGE_SIZE}"
                 )
-                response = await client.post(url, headers={"Accept": "application/json"})
+                response = await client.post(
+                    url, headers={"Accept": "application/json"}
+                )
                 response.raise_for_status()
 
                 data = response.json()

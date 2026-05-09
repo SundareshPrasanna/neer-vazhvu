@@ -131,6 +131,7 @@ export default function CityGroundwaterClient() {
 
   useEffect(() => {
     if (!assets) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
       return;
     }
@@ -256,6 +257,10 @@ export default function CityGroundwaterClient() {
   useEffect(() => {
     if (!gwViews.depth) return;
     if (interpolated && interpolated.wards.some((w) => w.depthM !== null)) {
+      // Auto-promote view-mode after interpolated data lands, so the
+      // initial 'exploitation' default flips to 'depth' for cities
+      // that have ward depth data. Intentional async reaction.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setViewMode("depth");
     }
   }, [interpolated, gwViews.depth]);

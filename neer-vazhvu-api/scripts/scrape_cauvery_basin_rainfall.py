@@ -60,17 +60,24 @@ async def main() -> int:
             lpa_path=LPA_PATH,
         )
     except (httpx.HTTPError, ValueError) as exc:
-        print(f"ERROR: basin rainfall scrape failed — {type(exc).__name__}: {exc}",
-              file=sys.stderr, flush=True)
+        print(
+            f"ERROR: basin rainfall scrape failed — {type(exc).__name__}: {exc}",
+            file=sys.stderr,
+            flush=True,
+        )
         return 1
 
     if not rows:
-        print("No in-season rows produced (off-season or empty response). Exiting clean.",
-              flush=True)
+        print(
+            "No in-season rows produced (off-season or empty response). Exiting clean.",
+            flush=True,
+        )
         return 0
 
-    print(f"  Got {len(rows)} basin rainfall rows ({rows[0].date} … {rows[-1].date})",
-          flush=True)
+    print(
+        f"  Got {len(rows)} basin rainfall rows ({rows[0].date} … {rows[-1].date})",
+        flush=True,
+    )
 
     payload = [asdict(r) for r in rows]
     supabase.table("basin_rainfall_daily").upsert(

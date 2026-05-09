@@ -151,7 +151,9 @@ async def main() -> int:
         return 1
 
     start = date.fromisoformat(args.start)
-    end = date.fromisoformat(args.end) if args.end else (_today_ist() - timedelta(days=1))
+    end = (
+        date.fromisoformat(args.end) if args.end else (_today_ist() - timedelta(days=1))
+    )
     if end < start:
         print(f"ERROR: end ({end}) before start ({start})", file=sys.stderr)
         return 1

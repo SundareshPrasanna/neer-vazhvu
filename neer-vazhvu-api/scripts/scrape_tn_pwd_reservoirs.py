@@ -183,7 +183,9 @@ async def main() -> int:
         print(f"ERROR: Scrape failed — {_fmt_exc(exc)}", file=sys.stderr, flush=True)
         return 1
 
-    print(f"  Got {len(result.readings)} reservoir readings for {result.date}", flush=True)
+    print(
+        f"  Got {len(result.readings)} reservoir readings for {result.date}", flush=True
+    )
     by_city: dict[str, list] = defaultdict(list)
     for r in result.readings:
         by_city[r.city_id].append(r)

@@ -118,8 +118,7 @@ async def main() -> int:
     for r in records:
         modes[r.acquisition_mode] = modes.get(r.acquisition_mode, 0) + 1
     print(
-        f"  unique_stations={len(unique_stations)} "
-        f"modes={dict(sorted(modes.items()))}",
+        f"  unique_stations={len(unique_stations)} modes={dict(sorted(modes.items()))}",
         flush=True,
     )
     print("Done.", flush=True)
