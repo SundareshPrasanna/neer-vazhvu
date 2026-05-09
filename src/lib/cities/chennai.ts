@@ -21,6 +21,12 @@ export const CHENNAI: CityConfig = {
   },
   defaultConsumptionMld: 830,
   defaultDesalinationMld: 190,
+  // Cascade reconstruction available (755 nodes / 573 edges across 7
+  // cascade depths from the same HydroSHEDS pipeline that built
+  // Madurai's). Chennai's max depth is shorter because the delta is
+  // flatter; convergence into Red Hills, Chembarambakkam, Sholavaram,
+  // Cholavaram is correctly identified.
+  hasCascadeOverlay: true,
   waterSources: [
     {
       sourceCode: 'chembarambakkam',

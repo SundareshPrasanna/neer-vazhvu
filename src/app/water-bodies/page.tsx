@@ -8,6 +8,8 @@ import { UnifiedDetailPanel } from "@/components/water-bodies/unified-detail-pan
 import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
 import { ViewModeToggle } from "@/components/water-bodies/view-mode-toggle";
 import type { ViewMode } from "@/components/water-bodies/view-mode-toggle";
+import { CascadeToggle } from "@/components/cascade/cascade-toggle";
+import { CHENNAI } from "@/lib/cities/chennai";
 import { RestorationRankingTable } from "@/components/lake-restoration/restoration-ranking-table";
 import type { SelectedWaterBody, LostWaterBodyProperties, CensusWaterBodyProperties } from "@/types/water-bodies";
 import type { RestorationPriorityData, ScoredWaterBody } from "@/types/restoration";
@@ -32,6 +34,13 @@ const UnifiedMap = dynamic(
   () =>
     import("@/components/water-bodies/unified-map").then((m) => m.UnifiedMap),
   { ssr: false, loading: () => <MapLoading /> }
+);
+
+// Cascade overlay: dynamic-imported only when toggled, so the
+// protomaps-leaflet runtime stays out of the initial bundle.
+const CascadeMapLayer = dynamic(
+  () => import("@/components/cascade/cascade-map-layer"),
+  { ssr: false }
 );
 
 interface LostGeoJSON {
@@ -66,6 +75,10 @@ function WaterBodiesPageContent() {
   const [censusSummary, setCensusSummary] = useState<{ total: number; encroached: number; avgStorageLossPct: number | null } | null>(null);
   const [activeTab, setActiveTab] = useState<string>("map");
   const [statsOpen, setStatsOpen] = useState(false);
+  // Cascade overlay - off by default; layer + protomaps-leaflet runtime
+  // are dynamic-imported only when the user opts in.
+  const [showCascade, setShowCascade] = useState(false);
+  const hasCascadeOverlay = CHENNAI.hasCascadeOverlay ?? false;
 
   // Build id lookup for restoration data
   const scoreLookup = useMemo(() => {
@@ -381,7 +394,14 @@ function WaterBodiesPageContent() {
               {t("lr.tab_ranking")}
             </TabsTrigger>
           </TabsList>
-          {activeTab === "map" && <ViewModeToggle value={viewMode} onChange={(mode) => { setViewMode(mode); setHiddenCategories(new Set()); }} />}
+          {activeTab === "map" && (
+            <div className="flex items-center gap-2">
+              {hasCascadeOverlay && (
+                <CascadeToggle pressed={showCascade} onPressedChange={setShowCascade} />
+              )}
+              <ViewModeToggle value={viewMode} onChange={(mode) => { setViewMode(mode); setHiddenCategories(new Set()); }} />
+            </div>
+          )}
         </div>
 
         {/* Map tab */}
@@ -395,7 +415,9 @@ function WaterBodiesPageContent() {
               onSelectLost={setSelected}
               focusCenter={focusCenter}
               hiddenCategories={hiddenCategories}
-            />
+            >
+              {hasCascadeOverlay && showCascade && <CascadeMapLayer cityId="chennai" />}
+            </UnifiedMap>
             <div className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${selected ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
               <UnifiedLegend
                 viewMode={viewMode}
