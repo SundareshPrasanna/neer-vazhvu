@@ -139,6 +139,14 @@ export default function CityGroundwaterClient() {
       fetch(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
         .then((r) => r.json() as Promise<WrisStationsResponse>)
         .catch(() => ({ stations: [], totalStations: 0 } as WrisStationsResponse)),
+      // Pull the block geojson too so we can scope auto-selection to
+      // blocks that actually have a polygon on the map. Madurai's data
+      // file lists 66 CGWB blocks across the whole district while only
+      // 11 are inside MMC and rendered - without this filter the page
+      // would auto-select an off-map block on first load.
+      fetch(assets.blockGeoJsonUrl)
+        .then((r) => (r.ok ? (r.json() as Promise<GeoJSON.FeatureCollection>) : null))
+        .catch(() => null),
       // Skip data fetches for views the city has turned off in its
       // PlaceConfig.groundwaterViews. Saves one network round-trip per
       // disabled layer and keeps the page from briefly flashing data
@@ -159,16 +167,34 @@ export default function CityGroundwaterClient() {
             .catch(() => null)
         : Promise.resolve(null),
     ])
-      .then(([blocksRes, wrisRes, interpolatedRes, riskRes, cgwbRes]: [
+      .then(([blocksRes, wrisRes, geoRes, interpolatedRes, riskRes, cgwbRes]: [
         { blocks?: GWBlock[] },
         WrisStationsResponse,
+        GeoJSON.FeatureCollection | null,
         InterpolatedWardsResponse | null,
         WardRiskFile | null,
         CgwbStationsFile | null,
       ]) => {
         setBlocks(blocksRes.blocks ?? []);
-        // Pre-select most-exploited block to anchor the user.
-        const sorted = [...(blocksRes.blocks ?? [])].sort(
+        // Pre-select most-exploited block to anchor the user - but only
+        // among blocks whose polygon is on the rendered map. Otherwise
+        // the panel can describe a block the user can't visually find
+        // (e.g. Madurai's "Sindhupatti" block is in the data file but
+        // outside MMC, so it has no polygon).
+        const onMapNames = geoRes
+          ? new Set(
+              geoRes.features
+                .map((f) => {
+                  const p = f.properties as Record<string, unknown> | null;
+                  return String(p?.block ?? p?.name ?? "").trim();
+                })
+                .filter((n) => n.length > 0),
+            )
+          : null;
+        const candidateBlocks = (blocksRes.blocks ?? []).filter((b) =>
+          onMapNames ? onMapNames.has(b.name) : true,
+        );
+        const sorted = [...candidateBlocks].sort(
           (a: GWBlock, b: GWBlock) => b.latest.development_pct - a.latest.development_pct,
         );
         if (sorted.length > 0) setSelectedBlock(sorted[0]);
