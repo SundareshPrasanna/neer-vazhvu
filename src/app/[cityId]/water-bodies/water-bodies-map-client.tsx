@@ -234,6 +234,7 @@ export default function WaterBodiesMapClient({
             riversGeoJsonUrl={`/geojson/${cityId}-rivers.geojson`}
             mapCenter={mapCenter}
             mapZoom={mapZoom}
+            suppressLayerTooltips={hasCascadeOverlay && showCascade}
           >
             {hasCascadeOverlay && showCascade && (
               <CascadeMapLayer cityId={cityId} />
