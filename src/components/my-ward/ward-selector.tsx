@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import {
   filterWards,
@@ -223,6 +224,24 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
           </div>
 
           {resultsDropdown}
+        </div>
+
+        {/* Browse-all entry point. Search is great when the user
+            already knows their ward; the rankings table is the
+            entry point for everyone else (journalists, residents
+            who don't know their ward number, planners) - those
+            users had nothing to click before. */}
+        <div className="mt-5">
+          <Link
+            href={
+              cityId === "chennai"
+                ? "/my-ward/rankings"
+                : `/${cityId}/my-ward/rankings`
+            }
+            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Browse all wards ranked &rarr;
+          </Link>
         </div>
 
         {/* Recent wards */}
