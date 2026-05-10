@@ -44,6 +44,14 @@ interface UnifiedMapProps {
    *  MapContainer. Used to plug in opt-in overlays (e.g. cascade
    *  reconstruction) without coupling them into UnifiedMap itself. */
   children?: ReactNode;
+  /**
+   * When true, suppress hover tooltips on the current/lost/census/
+   * orphan-scored layers. The cascade overlay surfaces its own
+   * hover tooltip; having both fire at once produces a confusing
+   * dual-tooltip stack. Toggling this puts the map into
+   * "cascade mode" cleanly.
+   */
+  suppressLayerTooltips?: boolean;
 }
 
 /** Flies the map to a given center when it changes */
@@ -99,6 +107,7 @@ export function UnifiedMap({
   mapCenter = DEFAULT_MAP_CENTER,
   mapZoom = 11,
   children,
+  suppressLayerTooltips = false,
 }: UnifiedMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
@@ -362,7 +371,11 @@ export function UnifiedMap({
       return props.name || riverInfo?.name || t("wb_panel.unnamed");
     })();
 
-    if (viewMode === "restoration") {
+    if (suppressLayerTooltips) {
+      // Skip tooltip binding entirely; the cascade overlay's hover tooltip
+      // owns the hover surface in this mode. Click-to-select still works
+      // because we still install the click handler below.
+    } else if (viewMode === "restoration") {
       const scored = scoreLookupByOsmId.get(props.osm_id);
       if (scored) {
         const levelLabel = t(`lr.${scored.priority_level}`);
@@ -431,10 +444,12 @@ export function UnifiedMap({
         ? t("wb_panel.severely_reduced")
         : t("wb_panel.partially_encroached");
 
-    layer.bindTooltip(
-      `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${statusLabel} · ${t("wb_map.was_area")} ${props.historical_area_ha} ha</span>`,
-      { sticky: true }
-    );
+    if (!suppressLayerTooltips) {
+      layer.bindTooltip(
+        `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${statusLabel} · ${t("wb_map.was_area")} ${props.historical_area_ha} ha</span>`,
+        { sticky: true }
+      );
+    }
 
     layer.on({
       click: (e) => {
@@ -494,7 +509,7 @@ export function UnifiedMap({
       {currentGeoJSON && (
         <GeoJSON
           ref={(layer) => { currentLayerRef.current = layer; }}
-          key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}-${tiles.url}`}
+          key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}-${tiles.url}-${suppressLayerTooltips}`}
           data={currentGeoJSON}
           style={currentStyle}
           onEachFeature={onEachCurrent}
@@ -510,7 +525,7 @@ export function UnifiedMap({
         <Pane name="lost-bodies-pane" style={{ zIndex: 540, pointerEvents: "auto" }}>
           <GeoJSON
             ref={(layer) => { lostLayerRef.current = layer; }}
-            key={`lost-${language}-${tiles.url}`}
+            key={`lost-${language}-${tiles.url}-${suppressLayerTooltips}`}
             data={lostGeoJSON}
             pointToLayer={pointToLayer}
             style={lostStyle}
@@ -552,14 +567,16 @@ export function UnifiedMap({
                       },
                     }}
                   >
-                    <Tooltip sticky>
-                      <strong>{name}</strong>
-                      <br />
-                      <span style={{ fontSize: "11px", color: "#64748b" }}>
-                        {type}
-                        {wb.ownership ? ` · ${wb.ownership}` : ""}
-                      </span>
-                    </Tooltip>
+                    {!suppressLayerTooltips && (
+                      <Tooltip sticky>
+                        <strong>{name}</strong>
+                        <br />
+                        <span style={{ fontSize: "11px", color: "#64748b" }}>
+                          {type}
+                          {wb.ownership ? ` · ${wb.ownership}` : ""}
+                        </span>
+                      </Tooltip>
+                    )}
                   </Circle>
                 );
               })}
@@ -596,17 +613,19 @@ export function UnifiedMap({
                       },
                     }}
                   >
-                    <Tooltip sticky>
-                      <strong>{name}</strong>
-                      {scored && (
-                        <>
-                          <br />
-                          <span style={{ fontSize: "11px", color: "#64748b" }}>
-                            {t("lr.priority_score")}: {scored.priority_score} · {t(`lr.${scored.priority_level}`)}
-                          </span>
-                        </>
-                      )}
-                    </Tooltip>
+                    {!suppressLayerTooltips && (
+                      <Tooltip sticky>
+                        <strong>{name}</strong>
+                        {scored && (
+                          <>
+                            <br />
+                            <span style={{ fontSize: "11px", color: "#64748b" }}>
+                              {t("lr.priority_score")}: {scored.priority_score} · {t(`lr.${scored.priority_level}`)}
+                            </span>
+                          </>
+                        )}
+                      </Tooltip>
+                    )}
                   </Circle>
                 );
               })}
@@ -653,13 +672,15 @@ export function UnifiedMap({
                     },
                   }}
                 >
-                  <Tooltip sticky>
-                    <strong>{name}</strong>
-                    <br />
-                    <span style={{ fontSize: "11px", color: "#64748b" }}>
-                      {t("lr.priority_score")}: {wb.priority_score} · {t(`lr.${wb.priority_level}`)}
-                    </span>
-                  </Tooltip>
+                  {!suppressLayerTooltips && (
+                    <Tooltip sticky>
+                      <strong>{name}</strong>
+                      <br />
+                      <span style={{ fontSize: "11px", color: "#64748b" }}>
+                        {t("lr.priority_score")}: {wb.priority_score} · {t(`lr.${wb.priority_level}`)}
+                      </span>
+                    </Tooltip>
+                  )}
                 </Circle>
               );
             })}

@@ -416,6 +416,7 @@ function WaterBodiesPageContent() {
               onSelectLost={setSelected}
               focusCenter={focusCenter}
               hiddenCategories={hiddenCategories}
+              suppressLayerTooltips={hasCascadeOverlay && showCascade}
             >
               {hasCascadeOverlay && showCascade && <CascadeMapLayer cityId="chennai" />}
             </UnifiedMap>
