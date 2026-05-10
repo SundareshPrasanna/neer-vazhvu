@@ -38,6 +38,11 @@ export interface WardRankingRow {
   /** Percentile, 0-100; higher = better. */
   percentile: number;
   metricColumns: WardRankingMetricColumn[];
+  /** Up to 3 representative locality names that fall inside this ward,
+   *  used as a human-recognisable label below "Ward N" in the table.
+   *  Empty when no locality data is available for the city or the
+   *  specific ward. */
+  localities: string[];
 }
 
 export interface WardRankingMetricColumn {
@@ -74,10 +79,70 @@ export function loadWardRankings(cityId: string): WardRankingsBundle | null {
   return null;
 }
 
+// ── Locality lookup: ward_number -> representative locality names ─────
+
+interface LocalityEntry {
+  name: string;
+  ward_number?: number;
+}
+
+const localityCacheByCity = new Map<string, Map<number, string[]>>();
+
+/**
+ * Read the per-city localities JSON (chennai-localities.json /
+ * madurai-localities.json) and build a ward-number → top-3 locality
+ * names lookup. Localities are de-duplicated by name and trimmed to
+ * the first three encountered for each ward (no special ranking;
+ * insertion order is "as they appear in the file"). Caches per
+ * city for the lifetime of the Node process.
+ *
+ * Returns an empty Map when the city has no locality file.
+ */
+function loadLocalitiesByWard(cityId: string): Map<number, string[]> {
+  const hit = localityCacheByCity.get(cityId);
+  if (hit) return hit;
+
+  const path = resolve(
+    process.cwd(),
+    "public/data",
+    `${cityId}-localities.json`,
+  );
+  const result = new Map<number, string[]>();
+  try {
+    const entries = JSON.parse(readFileSync(path, "utf-8")) as LocalityEntry[];
+    const seenByWard = new Map<number, Set<string>>();
+    for (const entry of entries) {
+      const w = entry.ward_number;
+      const name = (entry.name ?? "").trim();
+      if (!w || !name) continue;
+      let names = result.get(w);
+      let seen = seenByWard.get(w);
+      if (!names) {
+        names = [];
+        result.set(w, names);
+      }
+      if (!seen) {
+        seen = new Set();
+        seenByWard.set(w, seen);
+      }
+      const key = name.toLowerCase();
+      if (seen.has(key) || names.length >= 3) continue;
+      seen.add(key);
+      names.push(name);
+    }
+  } catch {
+    // No locality file for this city; leave the lookup empty so the
+    // table renders just "Ward N" without a locality preview.
+  }
+  localityCacheByCity.set(cityId, result);
+  return result;
+}
+
 // ── Chennai: compute on the fly from ward-profiles.json ───────────────
 
 function loadChennaiRankings(): WardRankingsBundle {
   const profiles = loadProfilesServer("chennai");
+  const localities = loadLocalitiesByWard("chennai");
 
   // computeWardRankings recomputes every metric across the full city
   // for each call. For 200 wards it's noticeable but acceptable on
@@ -87,7 +152,7 @@ function loadChennaiRankings(): WardRankingsBundle {
   for (const profile of profiles) {
     const ranking = computeWardRankings(profile.ward_number, profiles);
     if (!ranking) continue;
-    rows.push(chennaiRankingToRow(ranking));
+    rows.push(chennaiRankingToRow(ranking, localities));
   }
   rows.sort((a, b) => a.rank - b.rank);
   // computeWardRankings may return null for wards with insufficient
@@ -110,7 +175,10 @@ function loadChennaiRankings(): WardRankingsBundle {
   };
 }
 
-function chennaiRankingToRow(r: WardRankings): WardRankingRow {
+function chennaiRankingToRow(
+  r: WardRankings,
+  localities: Map<number, string[]>,
+): WardRankingRow {
   const metricColumns: WardRankingMetricColumn[] = [];
   for (const m of r.metrics) {
     metricColumns.push({
@@ -122,12 +190,10 @@ function chennaiRankingToRow(r: WardRankings): WardRankingRow {
   }
   return {
     wardNumber: r.wardNumber,
-    // Ward identifier is just "Ward N" - the system today doesn't
-    // carry locality names per ward (zone is the closest grouping
-    // and gets its own column). Don't pretend richer naming exists.
     wardName: `Ward ${r.wardNumber}`,
     zone: r.zoneName,
     grade: r.overallGrade,
+    localities: localities.get(r.wardNumber) ?? [],
     compositeScore: r.overallScore,
     rank: r.overallRank,
     totalWards: r.overallTotal,
@@ -194,6 +260,7 @@ function loadMaduraiRankings(): WardRankingsBundle {
       readFileSync(path, "utf-8"),
     ) as MaduraiWardRiskFile;
   }
+  const localities = loadLocalitiesByWard("madurai");
 
   // Madurai composite_score is risk: higher = worse. Sort ascending so
   // best (lowest-risk) wards land at the top.
@@ -208,6 +275,7 @@ function loadMaduraiRankings(): WardRankingsBundle {
     return {
       wardNumber: w.ward_number,
       wardName: w.ward_name || `Ward ${w.ward_number}`,
+      localities: localities.get(w.ward_number) ?? [],
       zone: w.zone,
       grade: w.grade,
       compositeScore: w.composite_score,

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -59,13 +58,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        {/* JSON-LD via next/script avoids the React 19 "script tag inside
-            React component" warning. strategy="beforeInteractive" injects
-            into <head> before hydration, which is what crawlers want. */}
-        <Script
-          id="json-ld-webapp"
+        {/* JSON-LD for SEO. Plain <script> in a server component
+            ends up in initial HTML for crawlers; React 19 doesn't warn
+            on it the way it does on next/script <Script> with
+            beforeInteractive in App Router (per Next.js JSON-LD docs:
+            https://nextjs.org/docs/app/guides/json-ld). */}
+        <script
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
