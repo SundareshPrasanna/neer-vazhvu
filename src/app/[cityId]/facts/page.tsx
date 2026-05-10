@@ -11,8 +11,10 @@ interface PageProps {
   params: Promise<{ cityId: string }>;
 }
 
-// Refresh hourly so live + derived rebuilds reach the page on the next visit.
-export const revalidate = 3600;
+// Refresh daily. Underlying live-fact sources don't update sub-daily,
+// so re-rendering more often just burns Supabase queries without
+// surfacing newer numbers.
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { cityId } = await params;
