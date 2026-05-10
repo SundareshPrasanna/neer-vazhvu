@@ -20,11 +20,20 @@ const EDGE_COLOR = "#0ea5e9";
 // "this tank drains into the river" terminations.
 const RIVER_OUTLET_COLOR = "#f59e0b";
 
-// Hover hit-test radius in screen pixels. The cascade map already
-// shares hover space with water-body polygon tooltips and lost-tank
-// circle tooltips, so this should be tight enough that a hover OVER a
-// polygon doesn't accidentally surface a faraway cascade node.
-const NODE_HIT_RADIUS_PX = 14;
+// Hover hit-test thresholds, in METRES on the ground (not screen
+// pixels). Each tank's hit area is the larger of:
+//   - MIN_NODE_HIT_RADIUS_M (so small tanks are still grabbable when
+//     the cursor is anywhere near their centroid even when zoomed in)
+//   - the tank's area-equivalent radius (sqrt(area_ha * 10000 / pi))
+//     plus EXTRA_HIT_PADDING_M (so hovering near the visible polygon
+//     edge of a large tank like Vandiyur Lake still triggers the
+//     tooltip - earlier the fixed 14-pixel-around-centroid threshold
+//     missed the edges of any polygon larger than a small pond).
+//
+// Working in metres rather than pixels means hit areas scale naturally
+// with tank size and don't depend on the current zoom level math.
+const MIN_NODE_HIT_RADIUS_M = 60;
+const EXTRA_HIT_PADDING_M = 30;
 
 interface NodeIndexEntry {
   lat: number;
@@ -228,16 +237,29 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
         if (nodes.length === 0) return;
         const rect = container.getBoundingClientRect();
         const cursorPoint = L.point(clientX - rect.left, clientY - rect.top);
+        const cursorLatLng = map.containerPointToLatLng(cursorPoint);
 
+        // Pick the tank whose hit radius the cursor is inside, with the
+        // smallest cursor-to-centroid distance breaking ties (so when
+        // hit areas overlap, the tank you're nearer to wins). Working
+        // in metres lets the hit area scale with the polygon size:
+        // hovering anywhere within Vandiyur Lake's footprint (~850 m
+        // from centroid) triggers it; small tanks still fall back to
+        // the 60 m floor.
         let bestEntry: NodeIndexEntry | null = null;
-        let bestDistSq = NODE_HIT_RADIUS_PX * NODE_HIT_RADIUS_PX;
+        let bestDistM = Number.POSITIVE_INFINITY;
         for (const entry of nodes) {
-          const p = map.latLngToContainerPoint([entry.lat, entry.lng]);
-          const dx = p.x - cursorPoint.x;
-          const dy = p.y - cursorPoint.y;
-          const distSq = dx * dx + dy * dy;
-          if (distSq < bestDistSq) {
-            bestDistSq = distSq;
+          const distM = cursorLatLng.distanceTo([entry.lat, entry.lng]);
+          const tankRadiusM =
+            entry.areaHa > 0
+              ? Math.sqrt((entry.areaHa * 10000) / Math.PI)
+              : 0;
+          const hitRadiusM = Math.max(
+            MIN_NODE_HIT_RADIUS_M,
+            tankRadiusM + EXTRA_HIT_PADDING_M,
+          );
+          if (distM < hitRadiusM && distM < bestDistM) {
+            bestDistM = distM;
             bestEntry = entry;
           }
         }
