@@ -137,8 +137,8 @@ export const STATIC_FACTS: Fact[] = [
     tier: 4,
     category: "sewage",
     title: "Sewage treatment capacity",
-    value: "745 MLD installed",
-    unit: "· ~1,073 MLD generated (estimate)",
+    value: "745",
+    unit: "MLD installed · ~1,073 MLD generated (est)",
     interpretation:
       "Chennai operates 13 sewage treatment plants with 745 MLD installed capacity (CMWSSB, 2026). Independent academic estimates place daily sewage generation at ~1,073 MLD, implying a ~328 MLD gap that flows untreated into rivers, canals, and the sea.",
     data_date: "2026-04-19",

@@ -16,6 +16,17 @@ export function FactCard({ fact }: FactCardProps) {
   const [copied, setCopied] = useState(false);
   const badge = TIER_BADGE_STYLE[fact.tier];
 
+  // Show the data year on the badge for non-live tiers so readers see
+  // freshness at a glance ("Annual · 2024" reads more honestly than a
+  // bare "Annual" badge when the underlying data is two years old).
+  // Live tier keeps a clean badge - the per-card footer already shows
+  // the as-of date for Tier 1 facts which refresh sub-daily.
+  const badgeYearSuffix = (() => {
+    if (fact.tier === 1) return "";
+    const year = (fact.data_date ?? "").slice(0, 4);
+    return /^\d{4}$/.test(year) ? ` · ${year}` : "";
+  })();
+
   const title =
     language === "ta" && fact.title_ta ? fact.title_ta : fact.title;
   const interpretation =
@@ -79,7 +90,7 @@ export function FactCard({ fact }: FactCardProps) {
               badge.text,
             )}
           >
-            {badge.label}
+            {badge.label}{badgeYearSuffix}
           </span>
           <span className="text-[11px] text-slate-500 dark:text-slate-400">
             {fact.category}

@@ -106,8 +106,11 @@ async function buildDayZeroCompare(retrievedAt: string): Promise<Fact | null> {
     tier: 1,
     category: "supply",
     title: "Today vs 2019 Day Zero",
-    value: `${todayFmt}`,
-    unit: `MCFT today · ~${dayZero2019} MCFT in 2019`,
+    // Headline the DIFFERENCE rather than today's absolute storage,
+    // otherwise this card displays the same big number as
+    // "Reservoir storage today" right above it and reads as a duplicate.
+    value: `${diffFmt}`,
+    unit: `MCFT ${direction} than 2019 Day Zero (~${dayZero2019} MCFT)`,
     interpretation: `Chennai's reservoirs today (${todayFmt} MCFT) hold ${diffFmt} MCFT ${direction} than the ~${dayZero2019} MCFT of usable storage when reservoirs were effectively dry on 19 June 2019.`,
     data_date: latestDate,
     published_date: latestDate,
