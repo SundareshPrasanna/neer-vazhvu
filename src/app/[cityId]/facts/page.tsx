@@ -174,6 +174,8 @@ export default async function CityFactsPage({ params }: PageProps) {
         generatedAt={factsFile.generated_at ?? retrievedAt}
         cityName={config.displayName}
         cityNameTa={config.displayNameLocalized?.ta}
+        originsUrl={`/${cityId}/origins`}
+        pagePathPrefix={`/${cityId}`}
       />
     </>
   );

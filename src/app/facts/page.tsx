@@ -47,7 +47,14 @@ export default async function Page() {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <FactsPage facts={facts} generatedAt={generatedAt} cityName="Chennai" cityNameTa="சென்னை" />
+      <FactsPage
+        facts={facts}
+        generatedAt={generatedAt}
+        cityName="Chennai"
+        cityNameTa="சென்னை"
+        originsUrl="/origins"
+        pagePathPrefix=""
+      />
     </>
   );
 }

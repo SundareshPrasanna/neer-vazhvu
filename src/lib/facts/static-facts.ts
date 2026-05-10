@@ -62,8 +62,13 @@ export const STATIC_FACTS: Fact[] = [
       "December 2015 Chennai floods: 24-hour rainfall across monitoring stations ranged from 77 mm to 494 mm, with a regional average of 286 mm. Over 3 million people lost basic services; economic damage estimated at US$3 billion. World Weather Attribution analysis found no detectable climate-change signal in the one-day extreme rainfall. Source: World Weather Attribution.",
   },
   {
+    // CFLOWS 1.0 is the *current* (and only) public flood hazard model
+    // for Chennai - it never received a public update. That makes it
+    // infrastructure-grade methodology context, not "history". Reads
+    // wrong under the History bucket; lives more honestly under
+    // Infrastructure.
     id: "cflows-hazard-zones",
-    tier: 3,
+    tier: 4,
     category: "flood",
     title: "Flood hazard mapping vintage",
     value: "Nov 2019",
