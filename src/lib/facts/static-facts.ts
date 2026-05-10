@@ -62,8 +62,13 @@ export const STATIC_FACTS: Fact[] = [
       "December 2015 Chennai floods: 24-hour rainfall across monitoring stations ranged from 77 mm to 494 mm, with a regional average of 286 mm. Over 3 million people lost basic services; economic damage estimated at US$3 billion. World Weather Attribution analysis found no detectable climate-change signal in the one-day extreme rainfall. Source: World Weather Attribution.",
   },
   {
+    // CFLOWS 1.0 is the *current* (and only) public flood hazard model
+    // for Chennai - it never received a public update. That makes it
+    // infrastructure-grade methodology context, not "history". Reads
+    // wrong under the History bucket; lives more honestly under
+    // Infrastructure.
     id: "cflows-hazard-zones",
-    tier: 3,
+    tier: 4,
     category: "flood",
     title: "Flood hazard mapping vintage",
     value: "Nov 2019",
@@ -132,8 +137,8 @@ export const STATIC_FACTS: Fact[] = [
     tier: 4,
     category: "sewage",
     title: "Sewage treatment capacity",
-    value: "745 MLD installed",
-    unit: "· ~1,073 MLD generated (estimate)",
+    value: "745",
+    unit: "MLD installed · ~1,073 MLD generated (est)",
     interpretation:
       "Chennai operates 13 sewage treatment plants with 745 MLD installed capacity (CMWSSB, 2026). Independent academic estimates place daily sewage generation at ~1,073 MLD, implying a ~328 MLD gap that flows untreated into rivers, canals, and the sea.",
     data_date: "2026-04-19",

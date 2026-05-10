@@ -26,8 +26,11 @@ export const metadata: Metadata = {
   },
 };
 
-// Revalidate daily - live facts query at request time
-export const revalidate = 3600;
+// Revalidate daily. Underlying live-fact sources (CMWSSB lake-level
+// scrape, OpenCity groundwater monthly, etc.) don't refresh faster
+// than once per day, so re-rendering more often just burns Supabase
+// queries without surfacing newer numbers.
+export const revalidate = 86400;
 
 export default async function Page() {
   const [liveFacts, derivedFacts] = await Promise.all([
@@ -47,7 +50,14 @@ export default async function Page() {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <FactsPage facts={facts} generatedAt={generatedAt} cityName="Chennai" cityNameTa="சென்னை" />
+      <FactsPage
+        facts={facts}
+        generatedAt={generatedAt}
+        cityName="Chennai"
+        cityNameTa="சென்னை"
+        originsUrl="/origins"
+        pagePathPrefix=""
+      />
     </>
   );
 }
