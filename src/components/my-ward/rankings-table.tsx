@@ -214,7 +214,7 @@ export function RankingsTable({
                   onClick={onSortClick}
                 />
               ))}
-              <th className="px-3 py-2.5 text-right font-semibold">Open</th>
+              <th className="px-3 py-2.5 text-right font-semibold whitespace-nowrap">Open</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -270,10 +270,10 @@ export function RankingsTable({
                       {m.display}
                     </td>
                   ))}
-                  <td className="px-3 py-2 text-right">
+                  <td className="px-3 py-2 text-right whitespace-nowrap">
                     <Link
                       href={wardHref}
-                      className="text-blue-600 dark:text-blue-400 hover:underline text-xs"
+                      className="text-blue-600 dark:text-blue-400 hover:underline text-xs whitespace-nowrap"
                     >
                       Open &rarr;
                     </Link>

@@ -122,7 +122,10 @@ function chennaiRankingToRow(r: WardRankings): WardRankingRow {
   }
   return {
     wardNumber: r.wardNumber,
-    wardName: `Ward ${r.wardNumber}${r.zoneName ? ` - ${r.zoneName}` : ""}`,
+    // Ward identifier is just "Ward N" - the system today doesn't
+    // carry locality names per ward (zone is the closest grouping
+    // and gets its own column). Don't pretend richer naming exists.
+    wardName: `Ward ${r.wardNumber}`,
     zone: r.zoneName,
     grade: r.overallGrade,
     compositeScore: r.overallScore,
@@ -136,9 +139,9 @@ function chennaiRankingToRow(r: WardRankings): WardRankingRow {
 function shortLabelForMetric(key: string): string {
   switch (key) {
     case "wb_health":
-      return "WB health";
+      return "Water-body health";
     case "wb_density":
-      return "WB density";
+      return "Water-body density";
     case "flood_risk":
       return "Flood risk";
     case "drainage":
@@ -204,7 +207,7 @@ function loadMaduraiRankings(): WardRankingsBundle {
     const percentile = total > 1 ? ((total - rank) / (total - 1)) * 100 : 50;
     return {
       wardNumber: w.ward_number,
-      wardName: w.ward_name,
+      wardName: w.ward_name || `Ward ${w.ward_number}`,
       zone: w.zone,
       grade: w.grade,
       compositeScore: w.composite_score,
@@ -214,14 +217,14 @@ function loadMaduraiRankings(): WardRankingsBundle {
       metricColumns: [
         {
           key: "gw_depth_m",
-          label: "GW depth",
+          label: "Groundwater depth",
           display:
             w.gw_depth_m === null ? "-" : `${w.gw_depth_m.toFixed(1)} m`,
           numeric: w.gw_depth_m,
         },
         {
           key: "wb_density_per_sqkm",
-          label: "WB density",
+          label: "Water-body density",
           display:
             w.wb_density_per_sqkm === null
               ? "-"
@@ -230,7 +233,7 @@ function loadMaduraiRankings(): WardRankingsBundle {
         },
         {
           key: "wb_health_score",
-          label: "WB health",
+          label: "Water-body health",
           display:
             w.wb_health_score === null
               ? "-"
