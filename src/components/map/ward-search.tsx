@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import type { Language } from "@/lib/i18n/translations";
+import { getZoneLabel } from "@/lib/utils/zone-label";
 import {
   type WardEntry,
   type LocalityEntry,
@@ -22,14 +24,8 @@ export interface WardSearchProps {
   className?: string;
 }
 
-const SECTION_LABELS: Record<SearchResult["kind"], string> = {
-  locality: "Areas",
-  ward: "Wards",
-  zone: "Zones",
-};
-
 export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [wards, setWards] = useState<WardEntry[]>([]);
   const [localities, setLocalities] = useState<LocalityEntry[]>([]);
   const [query, setQuery] = useState("");
@@ -37,6 +33,15 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const sectionLabels = useMemo<Record<SearchResult["kind"], string>>(
+    () => ({
+      locality: t("ward_search.section_areas"),
+      ward: t("ward_search.section_wards"),
+      zone: t("ward_search.section_zones"),
+    }),
+    [t],
+  );
 
   useEffect(() => {
     fetch("/api/wards")
@@ -54,7 +59,10 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
   // Close on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
         if (!query) setSearchOpen(false);
       }
@@ -65,12 +73,13 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
 
   const results = useMemo<SearchResult[]>(
     () => searchAll(localities, wards, zones, query),
-    [query, localities, wards, zones]
+    [query, localities, wards, zones],
   );
 
   // Group results by kind for section headers
   const grouped = useMemo(() => {
-    const sections: { kind: SearchResult["kind"]; items: SearchResult[] }[] = [];
+    const sections: { kind: SearchResult["kind"]; items: SearchResult[] }[] =
+      [];
     let current: SearchResult["kind"] | null = null;
     for (const r of results) {
       if (r.kind !== current) {
@@ -85,7 +94,10 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
 
   const handleSelect = (result: SearchResult) => {
     if (result.kind === "locality") {
-      onSelect(result.locality.ward_number, { lat: result.locality.lat, lng: result.locality.lng });
+      onSelect(result.locality.ward_number, {
+        lat: result.locality.lat,
+        lng: result.locality.lng,
+      });
     } else if (result.kind === "ward") {
       onSelect(result.ward.wardNumber);
     } else {
@@ -108,10 +120,20 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
             setTimeout(() => inputRef.current?.focus(), 100);
           }}
           className="w-9 h-9 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-          aria-label="Search areas, wards, or zones"
+          aria-label={t("ward_search.aria_open")}
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
         </button>
       )}
@@ -120,8 +142,18 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
       {searchOpen && (
         <div className="relative">
           <div className="flex items-center bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <svg className="w-4 h-4 ml-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg
+              className="w-4 h-4 ml-3 text-slate-400 shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
             <input
               ref={inputRef}
@@ -132,7 +164,7 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
                 setOpen(true);
               }}
               onFocus={() => query && setOpen(true)}
-              placeholder="Search area, ward, or zone..."
+              placeholder={t("ward_search.placeholder")}
               className="w-52 sm:w-64 px-2 py-2 text-sm bg-transparent outline-none text-slate-900 dark:text-slate-100 placeholder-slate-400"
             />
             <button
@@ -143,8 +175,18 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
               }}
               className="px-2 py-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -156,13 +198,14 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
                 <div key={section.kind}>
                   {/* Section header */}
                   <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 select-none">
-                    {SECTION_LABELS[section.kind]}
+                    {sectionLabels[section.kind]}
                   </div>
                   {section.items.map((result, i) => (
                     <ResultRow
                       key={`${result.kind}-${i}`}
                       result={result}
                       language={language}
+                      t={t}
                       onClick={() => handleSelect(result)}
                     />
                   ))}
@@ -173,7 +216,7 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
 
           {open && query.trim() && results.length === 0 && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 px-3 py-3 text-sm text-slate-500 dark:text-slate-400">
-              No results for &ldquo;{query}&rdquo;
+              {t("ward_search.no_results_query").replace("{query}", query)}
             </div>
           )}
         </div>
@@ -185,10 +228,12 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
 function ResultRow({
   result,
   language,
+  t,
   onClick,
 }: {
   result: SearchResult;
-  language: string;
+  language: Language;
+  t: (key: string) => string;
   onClick: () => void;
 }) {
   if (result.kind === "locality") {
@@ -199,9 +244,12 @@ function ResultRow({
         onClick={onClick}
         className="w-full text-left px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex flex-col gap-0.5"
       >
-        <span className="font-medium text-slate-900 dark:text-slate-100 leading-snug">{displayName}</span>
+        <span className="font-medium text-slate-900 dark:text-slate-100 leading-snug">
+          {displayName}
+        </span>
         <span className="text-xs text-slate-400 dark:text-slate-500">
-          Ward {l.ward_number} · {toTitleCase(l.zone_name)}
+          {t("ward.ward")} {l.ward_number} ·{" "}
+          {getZoneLabel(l.zone_name, language)}
         </span>
       </button>
     );
@@ -214,27 +262,28 @@ function ResultRow({
         onClick={onClick}
         className="w-full text-left px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-baseline justify-between gap-2"
       >
-        <span className="font-medium text-slate-900 dark:text-slate-100">Ward {w.wardNumber}</span>
-        <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">{toTitleCase(w.zone)} zone</span>
+        <span className="font-medium text-slate-900 dark:text-slate-100">
+          {t("ward.ward")} {w.wardNumber}
+        </span>
+        <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
+          {getZoneLabel(w.zone, language)} {t("ward_search.zone_suffix")}
+        </span>
       </button>
     );
   }
 
-  // zone
   const z = result.zone;
   return (
     <button
       onClick={onClick}
       className="w-full text-left px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-baseline justify-between gap-2"
     >
-      <span className="font-medium text-slate-900 dark:text-slate-100">{toTitleCase(z.zoneName)}</span>
-      <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">{z.wardCount} wards</span>
+      <span className="font-medium text-slate-900 dark:text-slate-100">
+        {getZoneLabel(z.zoneName, language)}
+      </span>
+      <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
+        {z.wardCount} {t("ward_search.wards")}
+      </span>
     </button>
   );
-}
-
-function toTitleCase(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase());
 }

@@ -9,7 +9,6 @@ function buildWardProfile(
   overrides: Partial<WardProfile> & Pick<WardProfile, "ward_number">,
 ): WardProfile {
   return {
-    ward_number: overrides.ward_number,
     zone_no: "I",
     zone_name: "Zone I",
     centroid: [80, 13],
@@ -186,7 +185,8 @@ test("zero-area wards treat density metrics as not applicable instead of best-in
   assert.equal(rankings.metrics.length, 5);
 
   for (const key of ["wb_density", "flood_risk", "drainage", "sewerage_infra"]) {
-    const metric = rankings.metrics.find((entry) => entry.key === key);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const metric: any = rankings.metrics.find((entry) => entry.key === key);
     assert.ok(metric);
     assert.equal(metric.value, null);
     assert.equal(metric.rank, null);
