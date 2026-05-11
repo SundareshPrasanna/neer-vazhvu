@@ -123,14 +123,12 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
         {
           dataLayer: "cascade_nodes",
           symbolizer: new CircleSymbolizer({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            radius: (z: number, f: any) => {
+            radius: (z: number, f) => {
               const pos = (f?.props.cascade_position as number) ?? 1;
               const base = Math.max(2, (z - 9) * 1.2);
               return base + Math.min(6, pos * 0.5);
             },
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            fill: (_z: number, f: any) => {
+            fill: (_z: number, f) => {
               const pos = (f?.props.cascade_position as number) ?? 1;
               const idx = Math.min(
                 NODE_COLOR_BY_POSITION.length - 1,
