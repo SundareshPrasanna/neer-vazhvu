@@ -1276,7 +1276,6 @@ export const translations: Record<string, TranslationEntry> = {
   "ward_search.section_areas":  { en: "Areas",                                         ta: "பகுதிகள்" },
   "ward_search.section_wards":  { en: "Wards",                                         ta: "வார்டுகள்" },
   "ward_search.section_zones":  { en: "Zones",                                         ta: "மண்டலங்கள்" },
-  "ward_search.no_results":     { en: "No results for",                                ta: "இதற்கான முடிவுகள் இல்லை" },
   "ward_search.no_results_query": { en: "No results for \"{query}\"",                ta: "\"{query}\"-க்கு முடிவுகள் இல்லை" },
   "ward_search.zone_suffix":    { en: "zone",                                          ta: "மண்டலம்" },
   "ward_search.wards":          { en: "wards",                                         ta: "வார்டுகள்" },

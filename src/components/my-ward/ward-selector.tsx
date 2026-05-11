@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
-import { getZoneLabel } from "@/lib/utils/zone-label";
+import type { Language } from "@/lib/i18n/translations";
 import { getZoneLabel } from "@/lib/utils/zone-label";
 import {
   filterWards,
@@ -72,11 +72,14 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const sectionLabels: Record<SearchResult["kind"], string> = {
-    locality: t("ward_search.section_areas"),
-    ward: t("ward_search.section_wards"),
-    zone: t("ward_search.section_zones"),
-  };
+  const sectionLabels = useMemo<Record<SearchResult["kind"], string>>(
+    () => ({
+      locality: t("ward_search.section_areas"),
+      ward: t("ward_search.section_wards"),
+      zone: t("ward_search.section_zones"),
+    }),
+    [t],
+  );
 
   useEffect(() => {
     // For Chennai, hit the legacy unsuffixed API. For other cities, pass
@@ -358,7 +361,7 @@ function ResultRow({
   compact = false,
 }: {
   result: SearchResult;
-  language: string;
+  language: Language;
   t: (key: string) => string;
   onClick: () => void;
   compact?: boolean;

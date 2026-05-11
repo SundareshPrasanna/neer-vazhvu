@@ -110,7 +110,7 @@ export function WardMultiSelector({
         ? `${wardNumber} - ${getZoneLabel(w.zone, language)}`
         : String(wardNumber);
     },
-    [language, t, wards],
+    [language, wards],
   );
 
   // Build slot array: filled slots + empty slots up to MAX_WARDS

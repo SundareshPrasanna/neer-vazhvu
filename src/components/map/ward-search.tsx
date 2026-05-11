@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import type { Language } from "@/lib/i18n/translations";
 import { getZoneLabel } from "@/lib/utils/zone-label";
 import {
   type WardEntry,
@@ -231,7 +232,7 @@ function ResultRow({
   onClick,
 }: {
   result: SearchResult;
-  language: string;
+  language: Language;
   t: (key: string) => string;
   onClick: () => void;
 }) {
