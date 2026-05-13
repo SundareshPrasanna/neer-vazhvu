@@ -539,8 +539,16 @@ def _build_graph_from_polygons_with_elevations(
     edges_out: dict[int, tuple[int, float, float]] = {}
     osm_ids = list(nodes_by_osm)
     max_dist = district.max_downstream_distance_km
+    terminal_sinks: frozenset[int] = frozenset(district.terminal_sink_osm_ids)
 
     for upstream in osm_ids:
+        if upstream in terminal_sinks:
+            # Curated terminal reservoir: water enters but does not
+            # naturally flow OUT to another tank. Skip candidate
+            # evaluation; the node still accepts inflow and may still
+            # drain to a river via spillway in the river-outlet pass
+            # below.
+            continue
         elev_up = elevations_by_osm[upstream]
         if elev_up is None:
             continue

@@ -125,6 +125,19 @@ class DistrictCascadeConfig:
     # an unnamed reservoir has higher degree_in).
     narrative_anchor_osm_id: int | None = None
 
+    # OSM IDs of nodes that should be treated as terminal sinks - water
+    # comes in but never flows out through the natural-cascade graph.
+    # These are large engineered reservoirs / dams whose outflow is via
+    # spillway or canal to a river, not via gravity to a downstream tank.
+    #
+    # Auto-classification by OSM's water_type=reservoir tag is not safe
+    # in this region: in Madurai ~87% of cascade nodes carry that tag
+    # because OSM contributors apply it to traditional kanmoi tanks as
+    # well as engineered dams. Curated per district as we validate
+    # against TN PWD / CMWSSB / DHAN inventories. Empty by default; the
+    # graph behaves identically to V1 until populated.
+    terminal_sink_osm_ids: tuple[int, ...] = ()
+
     # Layer B - curation (all optional, additive)
     named_cascades: tuple[NamedCascade, ...] = ()
     court_references: tuple[CourtCase, ...] = ()

@@ -696,3 +696,61 @@ def test_builder_assigns_confidence_field_to_every_edge(tmp_path):
         assert confidence == classify_edge_confidence(score)
         # Distance is ~1km between tanks, drop is 30m, so score ~30 -> HIGH.
         assert confidence == EDGE_CONFIDENCE_HIGH
+
+
+def test_terminal_sink_does_not_emit_outgoing_edge(tmp_path):
+    # Three-tank chain. Mark the MIDDLE tank as terminal. Expect the
+    # top tank still flows to it (it accepts inflow), but the middle
+    # tank does NOT flow to the low one (terminal-skip kicks in).
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.1, area_ha=20),
+        _square_polygon(2, "Mid TERMINAL", lat=9.92, lon=78.1, area_ha=200),
+        _square_polygon(3, "Low", lat=9.91, lon=78.1, area_ha=10),
+    ]
+    elevations = [180.0, 150.0, 120.0]
+    district = _district(tmp_path, terminal_sink_osm_ids=(2,))
+
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons, elevations=elevations, district=district
+    )
+    edges = {
+        (e["properties"]["from_osm_id"], e["properties"]["to_osm_id"])
+        for e in graph["edges"]
+    }
+    # Top still flows INTO the terminal reservoir.
+    assert (1, 2) in edges
+    # But the terminal reservoir does NOT flow on to the low tank.
+    assert (2, 3) not in edges
+
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    assert by_id[2]["degree_in"] == 1
+    assert by_id[2]["degree_out"] == 0
+    # Low tank ends up isolated since the terminal reservoir blocks the chain.
+    assert by_id[3]["degree_in"] == 0
+    assert by_id[3]["degree_out"] == 0
+
+
+def test_terminal_sink_can_still_drain_to_river(tmp_path):
+    # A terminal reservoir should still be allowed to register a river
+    # outlet (models spillway-to-river). Set up: single terminal tank,
+    # flow direction points to a river within range.
+    polygons = [
+        _square_polygon(1, "Terminal reservoir", lat=9.93, lon=78.1, area_ha=500),
+    ]
+    river = LineString([(78.05, 9.92), (78.15, 9.92)])  # river just south
+    district = _district(
+        tmp_path,
+        terminal_sink_osm_ids=(1,),
+        max_river_outlet_distance_km=3.0,
+    )
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[150.0],
+        district=district,
+        flow_directions=[4],  # S
+        river_segments=[river],
+    )
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    assert by_id[1]["degree_out"] == 0  # no tank-to-tank outflow
+    assert by_id[1]["drains_to_river"] is True  # spillway path preserved
+    assert len(graph["river_outlets"]) == 1

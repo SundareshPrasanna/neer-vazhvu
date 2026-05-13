@@ -211,6 +211,18 @@ export function CascadeMethodologySection({
             Sentinel-1/2 monsoon imagery, then label each edge as{" "}
             <code className="text-xs">intact / partial / broken / encroached</code>.
           </li>
+          <li>
+            <strong>OSM <code className="text-xs">water_type=reservoir</code> is ambiguous</strong> in this
+            region. In Madurai roughly 87&#37; of cascade nodes carry that
+            tag, including many traditional kanmoi tanks that historically
+            fed downstream cascades. The algorithm therefore does NOT
+            auto-classify reservoirs as terminal sinks. A per-district
+            curation hook (<code className="text-xs">terminal_sink_osm_ids</code>)
+            exists for marking specific known engineered reservoirs (large
+            dams whose outflow is via spillway / canal rather than via
+            gravity to another tank); it is currently empty pending
+            validation against TN PWD / DHAN inventories.
+          </li>
         </ul>
       </div>
 
