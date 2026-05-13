@@ -1,3 +1,4 @@
+import { loadCascadeStats } from "@/lib/cascade-stats";
 import { AboutContent } from "./about-content";
 
 export const metadata = {
@@ -6,5 +7,6 @@ export const metadata = {
 };
 
 export default function AboutPage() {
-  return <AboutContent />;
+  const cascadeStats = loadCascadeStats("chennai");
+  return <AboutContent cascadeStats={cascadeStats} />;
 }

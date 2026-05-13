@@ -7,11 +7,17 @@ Usage:
     python scripts/run_cascade.py --district madurai score
     python scripts/run_cascade.py --district madurai curate
     python scripts/run_cascade.py --district madurai publish
+    python scripts/run_cascade.py --district madurai stats
     python scripts/run_cascade.py --district madurai tile
     python scripts/run_cascade.py --district madurai run-all
 
 Stages dispatch to pure functions in app.cascade.*. Outputs are
 deterministic files in public/data/cascade/ and public/tiles/cascade/.
+
+The `stats` stage is a standalone refresh of {district}-cascade-stats.json
+from the published GeoJSONs - useful when re-running publish without
+re-running build-topology, or when bootstrapping stats files for a
+district that already has GeoJSON outputs from an older pipeline.
 """
 
 from __future__ import annotations
@@ -45,6 +51,7 @@ def cmd_build_topology(district_id: str) -> int:
         edges=graph["edges"],
         river_outlets=graph.get("river_outlets", []),
     )
+    stats = publish.write_stats_manifest(district)
     print(
         json.dumps(
             {
@@ -53,6 +60,7 @@ def cmd_build_topology(district_id: str) -> int:
                 "edge_count": len(graph["edges"]),
                 "river_outlet_count": len(graph.get("river_outlets", [])),
                 **written,
+                **stats,
             },
             indent=2,
         )
@@ -106,7 +114,24 @@ def cmd_publish(district_id: str) -> int:
     district = get_district_cascade_config(district_id)
     geo = publish.write_geojson(district, nodes=[], edges=[], river_outlets=[])
     manifest = publish.write_systems_manifest(district, systems={})
-    print(json.dumps({**geo, **manifest}, indent=2))
+    stats = publish.write_stats_manifest(district)
+    print(json.dumps({**geo, **manifest, **stats}, indent=2))
+    return 0
+
+
+def cmd_stats(district_id: str) -> int:
+    """Compute and write the stats manifest from existing GeoJSONs.
+
+    Standalone path for refreshing stats after the GeoJSONs have been
+    regenerated outside the full pipeline run, or for bootstrapping
+    stats files from an existing publish.
+    """
+    from app.cascade import publish
+    from app.cascade.districts import get_district_cascade_config
+
+    district = get_district_cascade_config(district_id)
+    stats = publish.write_stats_manifest(district)
+    print(json.dumps(stats, indent=2))
     return 0
 
 
@@ -150,6 +175,7 @@ def build_parser() -> argparse.ArgumentParser:
         "score",
         "curate",
         "publish",
+        "stats",
         "tile",
         "run-all",
     ):
@@ -169,6 +195,7 @@ def main() -> int:
         "score": cmd_score,
         "curate": cmd_curate,
         "publish": cmd_publish,
+        "stats": cmd_stats,
         "tile": cmd_tile,
         "run-all": cmd_run_all,
     }

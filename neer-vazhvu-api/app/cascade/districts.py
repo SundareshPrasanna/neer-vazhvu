@@ -116,6 +116,15 @@ class DistrictCascadeConfig:
     # LineString - water doesn't flow across rivers, it falls into them.
     rivers_path: Path | None = None
 
+    # Optional manual override for the methodology section's "spotlight
+    # tank" example. If set, the about-page narrative uses this tank as
+    # the convergence-example anchor instead of the auto-computed top
+    # degree_in. Useful when the topologically highest-convergence node
+    # is unnamed or less narratively meaningful than a known anchor
+    # (e.g. Madurai prefers Vandiyur for the HC PIL story even though
+    # an unnamed reservoir has higher degree_in).
+    narrative_anchor_osm_id: int | None = None
+
     # Layer B - curation (all optional, additive)
     named_cascades: tuple[NamedCascade, ...] = ()
     court_references: tuple[CourtCase, ...] = ()
@@ -135,6 +144,9 @@ class DistrictCascadeConfig:
     def cascade_river_outlets_geojson_path(self) -> Path:
         return CASCADE_OUTPUT_DIR / f"{self.district_id}-cascade-river-outlets.geojson"
 
+    def cascade_stats_json_path(self) -> Path:
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-cascade-stats.json"
+
     def cascade_nodes_pmtiles_path(self) -> Path:
         return CASCADE_TILE_DIR / f"{self.district_id}-cascade-nodes.pmtiles"
 
@@ -151,6 +163,10 @@ _MADURAI = DistrictCascadeConfig(
     state="tamil_nadu",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "madurai-water-bodies-current.geojson",
     rivers_path=PUBLIC_GEOJSON_DIR / "madurai-rivers.geojson",
+    # Vandiyur Lake. Topologically Madurai's highest-convergence node is
+    # an unnamed reservoir near Kadachanenthal (degree_in=10), but the
+    # public narrative anchor is Vandiyur (HC PIL R. Manibharathi v UoI).
+    narrative_anchor_osm_id=1073092381,
     historical_eras=(
         HistoricalEra(
             era="Pandya",

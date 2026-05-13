@@ -173,3 +173,215 @@ def test_build_pmtiles_errors_clearly_when_tippecanoe_missing(monkeypatch):
     madurai = get_district_cascade_config("madurai")
     with pytest.raises(RuntimeError, match="tippecanoe is not installed"):
         publish.build_pmtiles(madurai)
+
+
+def test_cascade_stats_json_path_is_district_scoped():
+    madurai = get_district_cascade_config("madurai")
+    assert madurai.cascade_stats_json_path() == (
+        CASCADE_OUTPUT_DIR / "madurai-cascade-stats.json"
+    )
+
+
+def test_madurai_config_pins_vandiyur_as_narrative_anchor():
+    # Vandiyur is osm_id 1073092381 in the published Madurai nodes.
+    # The narrative-anchor override exists because Madurai's
+    # topologically-highest-convergence node is an unnamed reservoir;
+    # the public PIL story is anchored on Vandiyur.
+    madurai = get_district_cascade_config("madurai")
+    assert madurai.narrative_anchor_osm_id == 1073092381
+
+
+def test_chennai_config_leaves_narrative_anchor_unset():
+    # Chennai uses the auto-computed top_convergence; no manual override.
+    chennai = get_district_cascade_config("chennai")
+    assert chennai.narrative_anchor_osm_id is None
+
+
+def _stub_district_paths(monkeypatch, tmp_path):
+    """Helper: redirect a test district's output paths into tmp_path."""
+    monkeypatch.setattr(publish, "CASCADE_OUTPUT_DIR", tmp_path)
+    monkeypatch.setattr(publish, "CASCADE_TILE_DIR", tmp_path / "tiles")
+    monkeypatch.setattr(
+        DistrictCascadeConfig,
+        "cascade_nodes_geojson_path",
+        lambda self: tmp_path / f"{self.district_id}-cascade-nodes.geojson",
+    )
+    monkeypatch.setattr(
+        DistrictCascadeConfig,
+        "cascade_edges_geojson_path",
+        lambda self: tmp_path / f"{self.district_id}-cascade-edges.geojson",
+    )
+    monkeypatch.setattr(
+        DistrictCascadeConfig,
+        "cascade_river_outlets_geojson_path",
+        lambda self: tmp_path / f"{self.district_id}-cascade-river-outlets.geojson",
+    )
+    monkeypatch.setattr(
+        DistrictCascadeConfig,
+        "cascade_stats_json_path",
+        lambda self: tmp_path / f"{self.district_id}-cascade-stats.json",
+    )
+
+
+def test_write_stats_manifest_computes_counts_and_max_depth(tmp_path, monkeypatch):
+    _stub_district_paths(monkeypatch, tmp_path)
+
+    district = DistrictCascadeConfig(
+        district_id="testville",
+        label="Testville",
+        state="tamil_nadu",
+        tank_polygons_path=tmp_path / "polygons.geojson",
+    )
+
+    # Three nodes: one isolated, one mid-cascade convergence, one terminal.
+    nodes = [
+        {
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [78.0, 9.9]},
+            "properties": {
+                "osm_id": 1,
+                "name": "Source tank",
+                "degree_in": 0,
+                "degree_out": 1,
+                "cascade_position": 1,
+                "drains_to_river": False,
+            },
+        },
+        {
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [78.1, 9.9]},
+            "properties": {
+                "osm_id": 2,
+                "name": "Convergence tank",
+                "degree_in": 3,
+                "degree_out": 1,
+                "cascade_position": 4,
+                "drains_to_river": False,
+                "area_ha": 50.0,
+            },
+        },
+        {
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [78.2, 9.9]},
+            "properties": {
+                "osm_id": 3,
+                "name": "Isolated tank",
+                "degree_in": 0,
+                "degree_out": 0,
+                "cascade_position": 1,
+                "drains_to_river": False,
+            },
+        },
+    ]
+    edges = [{"type": "Feature", "properties": {"from_osm_id": 1, "to_osm_id": 2}}]
+    outlets: list = []
+    publish.write_geojson(district, nodes, edges, outlets)
+
+    result = publish.write_stats_manifest(district)
+    assert result["node_count"] == 3
+    assert result["edge_count"] == 1
+    assert result["river_outlet_count"] == 0
+    assert result["isolated_count"] == 1
+    assert result["max_cascade_depth"] == 4
+
+    payload = json.loads(district.cascade_stats_json_path().read_text())
+    assert payload["_meta"]["pipeline_version"] == publish.PIPELINE_VERSION
+    assert payload["_meta"]["algorithm"] == publish.ALGORITHM_VERSION
+    assert payload["_meta"]["generated_at"].endswith("Z")
+    assert payload["top_convergence"]["osm_id"] == 2
+    assert payload["top_convergence"]["degree_in"] == 3
+
+
+def test_write_stats_manifest_resolves_narrative_anchor_when_set(
+    tmp_path, monkeypatch
+):
+    _stub_district_paths(monkeypatch, tmp_path)
+
+    district = DistrictCascadeConfig(
+        district_id="anchored",
+        label="Anchored",
+        state="tamil_nadu",
+        tank_polygons_path=tmp_path / "polygons.geojson",
+        narrative_anchor_osm_id=99,
+    )
+
+    nodes = [
+        {
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [78.0, 9.9]},
+            "properties": {
+                "osm_id": 1,
+                "name": "Bigger convergence",
+                "degree_in": 5,
+                "degree_out": 1,
+                "cascade_position": 3,
+            },
+        },
+        {
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [78.1, 9.9]},
+            "properties": {
+                "osm_id": 99,
+                "name": "The narrative anchor",
+                "degree_in": 2,
+                "degree_out": 1,
+                "cascade_position": 2,
+                "area_ha": 100.0,
+            },
+        },
+    ]
+    publish.write_geojson(district, nodes, [], [])
+    publish.write_stats_manifest(district)
+
+    payload = json.loads(district.cascade_stats_json_path().read_text())
+    assert payload["narrative_anchor"]["osm_id"] == 99
+    assert payload["narrative_anchor"]["name"] == "The narrative anchor"
+    # Top convergence is still the auto-computed highest degree_in.
+    assert payload["top_convergence"]["osm_id"] == 1
+
+
+def test_write_stats_manifest_narrative_anchor_null_when_unmatched(
+    tmp_path, monkeypatch
+):
+    _stub_district_paths(monkeypatch, tmp_path)
+
+    district = DistrictCascadeConfig(
+        district_id="ghost",
+        label="Ghost",
+        state="tamil_nadu",
+        tank_polygons_path=tmp_path / "polygons.geojson",
+        narrative_anchor_osm_id=99999,  # not in the node set
+    )
+    nodes = [
+        {
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [78.0, 9.9]},
+            "properties": {"osm_id": 1, "name": "Only tank", "degree_in": 0},
+        },
+    ]
+    publish.write_geojson(district, nodes, [], [])
+    publish.write_stats_manifest(district)
+
+    payload = json.loads(district.cascade_stats_json_path().read_text())
+    assert payload["narrative_anchor"] is None
+
+
+def test_write_stats_manifest_handles_empty_input(tmp_path, monkeypatch):
+    _stub_district_paths(monkeypatch, tmp_path)
+
+    district = DistrictCascadeConfig(
+        district_id="empty",
+        label="Empty",
+        state="tamil_nadu",
+        tank_polygons_path=tmp_path / "polygons.geojson",
+    )
+    # No GeoJSONs on disk - the loader returns empty lists; stats should
+    # be zeros without raising.
+    publish.write_stats_manifest(district)
+    payload = json.loads(district.cascade_stats_json_path().read_text())
+    assert payload["node_count"] == 0
+    assert payload["edge_count"] == 0
+    assert payload["max_cascade_depth"] == 0
+    assert payload["isolated_count"] == 0
+    assert payload["top_convergence"] is None
+    assert payload["narrative_anchor"] is None

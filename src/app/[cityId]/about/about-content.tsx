@@ -5,38 +5,9 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/i18n/context";
 import type { PlaceConfig } from "@/lib/cities";
+import type { CascadeStats } from "@/lib/cascade-stats";
+import { resolveConvergenceExample } from "@/lib/cascade-stats";
 import { CascadeMethodologySection } from "@/components/cascade/cascade-methodology-section";
-
-// Per-city aggregate stats for the cascade overlay's methodology
-// section. Hardcoded today (the publish stage doesn't yet emit a
-// summary manifest); will move to a fetched stats JSON when P3 lands.
-const CASCADE_STATS_BY_CITY: Record<
-  string,
-  {
-    nodeCount: number;
-    edgeCount: number;
-    riverOutletCount: number;
-    maxCascadeDepth: number;
-    topConvergenceExample?: { name: string; degreeIn: number };
-  }
-> = {
-  madurai: {
-    nodeCount: 506,
-    edgeCount: 345,
-    riverOutletCount: 34,
-    maxCascadeDepth: 9,
-    topConvergenceExample: {
-      name: "Vandiyur Lake (HC PIL anchor)",
-      degreeIn: 3,
-    },
-  },
-  chennai: {
-    nodeCount: 720,
-    edgeCount: 430,
-    riverOutletCount: 50,
-    maxCascadeDepth: 6,
-  },
-};
 
 const MaduraiPageDescriptions = dynamic(() =>
   import("./madurai-page-descriptions").then((mod) => mod.MaduraiPageDescriptions),
@@ -156,7 +127,13 @@ function DataSource({ name, url, description, frequency }: DataSourceItem) {
 
 /* ── main content ───────────────────────────────────────────────── */
 
-export function CityAboutContent({ config }: { config: PlaceConfig }) {
+export function CityAboutContent({
+  config,
+  cascadeStats,
+}: {
+  config: PlaceConfig;
+  cascadeStats: CascadeStats | null;
+}) {
   const { t } = useLanguage();
   const cityName = config.displayName;
   const isMadurai = config.cityId === "madurai";
@@ -422,14 +399,20 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
             city has the overlay enabled. Anchor id is referenced from
             the on-map "Full methodology -->" link.
             ───────────────────────────────────────────────────────── */}
-        {config.hasCascadeOverlay && CASCADE_STATS_BY_CITY[config.cityId] && (
+        {config.hasCascadeOverlay && cascadeStats && (
           <Section
             id="cascade-methodology"
             title={`Cascade reconstruction methodology - ${cityName}`}
           >
             <CascadeMethodologySection
               cityDisplayName={cityName}
-              {...CASCADE_STATS_BY_CITY[config.cityId]}
+              nodeCount={cascadeStats.node_count}
+              edgeCount={cascadeStats.edge_count}
+              riverOutletCount={cascadeStats.river_outlet_count}
+              maxCascadeDepth={cascadeStats.max_cascade_depth}
+              topConvergenceExample={
+                resolveConvergenceExample(cascadeStats) ?? undefined
+              }
             />
           </Section>
         )}
