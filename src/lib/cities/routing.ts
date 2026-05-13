@@ -27,6 +27,7 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "my-ward",
     "facts",
     "origins",
+    "cascades",
   ]),
   madurai: new Set([
     "",
@@ -39,6 +40,7 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "my-ward",
     "facts",
     "origins",
+    "cascades",
   ]),
 };
 
