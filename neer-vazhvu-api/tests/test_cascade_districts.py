@@ -121,9 +121,7 @@ def test_publish_write_geojson_roundtrips_to_disk(tmp_path, monkeypatch):
     assert payload["features"][0]["properties"]["osm_id"] == 12345
 
 
-def test_publish_write_geojson_embeds_meta_in_each_collection(
-    tmp_path, monkeypatch
-):
+def test_publish_write_geojson_embeds_meta_in_each_collection(tmp_path, monkeypatch):
     # Every published FeatureCollection must carry a top-level _meta
     # block with district_id, generated_at, pipeline_version, algorithm,
     # inputs_hash, and feature_type so a reviewer can trace any single
@@ -355,9 +353,7 @@ def test_write_stats_manifest_computes_counts_and_max_depth(tmp_path, monkeypatc
     assert payload["top_convergence"]["degree_in"] == 3
 
 
-def test_write_stats_manifest_resolves_narrative_anchor_when_set(
-    tmp_path, monkeypatch
-):
+def test_write_stats_manifest_resolves_narrative_anchor_when_set(tmp_path, monkeypatch):
     _stub_district_paths(monkeypatch, tmp_path)
 
     district = DistrictCascadeConfig(

@@ -182,7 +182,10 @@ def _sweep_one_parameter(
         # min_tank_area_ha below the published default cannot be tested
         # because we have no elevation/flow sample for sub-default
         # polygons; skip with a note.
-        if parameter_name == "min_tank_area_ha" and value < base_district.min_tank_area_ha:
+        if (
+            parameter_name == "min_tank_area_ha"
+            and value < base_district.min_tank_area_ha
+        ):
             results.append(
                 {
                     "value": value,
@@ -217,9 +220,7 @@ def _sweep_one_parameter(
             kept_polygons: list[dict[str, Any]] = []
             kept_elevations: list[float | None] = []
             kept_flows: list[int | None] = []
-            for p, e, f in zip(
-                polygons, elevations, flow_directions, strict=True
-            ):
+            for p, e, f in zip(polygons, elevations, flow_directions, strict=True):
                 area = float((p.get("properties") or {}).get("area_ha") or 0.0)
                 if area >= float(value):
                     kept_polygons.append(p)
@@ -258,9 +259,7 @@ def run_sensitivity_analysis(
     Returns the payload that was written.
     """
     publish._ensure_dirs()
-    nodes = publish._load_feature_collection(
-        district.cascade_nodes_geojson_path()
-    )
+    nodes = publish._load_feature_collection(district.cascade_nodes_geojson_path())
     polygons, elevations, flow_directions = _reconstruct_polygons_from_nodes(
         district, nodes
     )
@@ -298,9 +297,7 @@ def run_sensitivity_analysis(
         "sweeps": sweeps,
     }
 
-    out_path = (
-        CASCADE_OUTPUT_DIR / f"{district.district_id}-cascade-sensitivity.json"
-    )
+    out_path = CASCADE_OUTPUT_DIR / f"{district.district_id}-cascade-sensitivity.json"
     out_path.write_text(
         json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",

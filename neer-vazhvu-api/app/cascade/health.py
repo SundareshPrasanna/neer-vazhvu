@@ -248,9 +248,7 @@ def score_documented_cascade(
         if key in edges_by_pair:
             matched_edges.append(edges_by_pair[key])
 
-    edge_reproduction_ratio = (
-        len(matched_edges) / len(edges) if edges else 0.0
-    )
+    edge_reproduction_ratio = len(matched_edges) / len(edges) if edges else 0.0
 
     if matched_edges:
         avg_conf = sum(
@@ -427,15 +425,12 @@ def score_auto_cascade(
         avg_conf = 0.0
 
     isolated_count = sum(
-        1
-        for nid in component
-        if (nodes_by_id.get(nid) or {}).get("isolation_reason")
+        1 for nid in component if (nodes_by_id.get(nid) or {}).get("isolation_reason")
     )
     non_iso_ratio = 1.0 - (isolated_count / size) if size else 0.0
 
     total_area_ha = sum(
-        float((nodes_by_id.get(nid) or {}).get("area_ha") or 0.0)
-        for nid in component
+        float((nodes_by_id.get(nid) or {}).get("area_ha") or 0.0) for nid in component
     )
 
     lost_hits: list[str] = []
@@ -531,12 +526,8 @@ def compute_cascade_health(district: DistrictCascadeConfig) -> dict[str, Any]:
     """
     publish._ensure_dirs()
 
-    nodes = publish._load_feature_collection(
-        district.cascade_nodes_geojson_path()
-    )
-    edges = publish._load_feature_collection(
-        district.cascade_edges_geojson_path()
-    )
+    nodes = publish._load_feature_collection(district.cascade_nodes_geojson_path())
+    edges = publish._load_feature_collection(district.cascade_edges_geojson_path())
     documented = _load_documented_cascades(district.district_id)
     lost_names = _load_lost_tank_names(district.district_id)
 
@@ -591,9 +582,7 @@ def compute_cascade_health(district: DistrictCascadeConfig) -> dict[str, Any]:
             component_edges=component_edges,
             lost_tank_names=lost_names,
         )
-        scored["cascade_id"] = (
-            f"auto-{district.district_id}-{component_idx:03d}"
-        )
+        scored["cascade_id"] = f"auto-{district.district_id}-{component_idx:03d}"
 
         # Join against documented cascades by OSM-ID overlap.
         overlap: dict[str, Any] | None = None
@@ -619,11 +608,12 @@ def compute_cascade_health(district: DistrictCascadeConfig) -> dict[str, Any]:
     # Sort outputs: by priority (CRITICAL first) then by size desc.
     priority_rank = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}
     documented_scored.sort(
-        key=lambda c: (priority_rank.get(c["priority"], 9), -c["components"]["tank_presence"]["total"])
+        key=lambda c: (
+            priority_rank.get(c["priority"], 9),
+            -c["components"]["tank_presence"]["total"],
+        )
     )
-    auto_scored.sort(
-        key=lambda c: (priority_rank.get(c["priority"], 9), -c["size"])
-    )
+    auto_scored.sort(key=lambda c: (priority_rank.get(c["priority"], 9), -c["size"]))
 
     summary = {
         "documented_count": len(documented_scored),

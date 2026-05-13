@@ -650,16 +650,20 @@ def test_annotate_isolation_reasons_in_place_reproduces_main_builder(tmp_path):
         elevations=[180.0, 150.0, 100.0],
         district=district,
     )
-    expected = {n["properties"]["osm_id"]: n["properties"]["isolation_reason"]
-                for n in graph["nodes"]}
+    expected = {
+        n["properties"]["osm_id"]: n["properties"]["isolation_reason"]
+        for n in graph["nodes"]
+    }
 
     # Wipe the field, then re-annotate.
     for node in graph["nodes"]:
         node["properties"]["isolation_reason"] = None
     summary = annotate_isolation_reasons_in_place(graph["nodes"], district)
 
-    actual = {n["properties"]["osm_id"]: n["properties"]["isolation_reason"]
-              for n in graph["nodes"]}
+    actual = {
+        n["properties"]["osm_id"]: n["properties"]["isolation_reason"]
+        for n in graph["nodes"]
+    }
     assert actual == expected
     # Summary counters should match too.
     isolated_total = sum(c for r, c in summary.items() if r != "non_isolated")

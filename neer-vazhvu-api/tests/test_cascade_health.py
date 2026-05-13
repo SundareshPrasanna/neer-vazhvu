@@ -28,8 +28,7 @@ def test_normalise_name_strips_common_suffixes():
     assert health._normalise_name("Vandiyur Lake") == "vandiyur"
     assert health._normalise_name("Madakulam Kanmai") == "madakulam"
     assert (
-        health._normalise_name("Reservoir near Thiruppalai (13.2 ha)")
-        == "thiruppalai"
+        health._normalise_name("Reservoir near Thiruppalai (13.2 ha)") == "thiruppalai"
     )
 
 
@@ -37,7 +36,9 @@ def test_intersects_lost_matches_normalised_name():
     lost = {"Vandiyur tank", "Tallakulam tank", "Sengulam tank"}
     assert health._intersects_lost("Vandiyur Lake", lost) == "Vandiyur tank"
     # Substring match against the lost-tank name (>=4 chars).
-    assert health._intersects_lost("Reservoir near Tallakulam", lost) == "Tallakulam tank"
+    assert (
+        health._intersects_lost("Reservoir near Tallakulam", lost) == "Tallakulam tank"
+    )
     # No match for unrelated names.
     assert health._intersects_lost("Some Other Reservoir", lost) is None
     # Empty lost set returns None.

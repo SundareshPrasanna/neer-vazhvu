@@ -210,11 +210,9 @@ def _compute_stats(
     """
     node_props = [node.get("properties", {}) for node in nodes]
 
-    max_cascade_depth = (
-        max(
-            (_safe_int(props.get("cascade_position")) for props in node_props),
-            default=0,
-        )
+    max_cascade_depth = max(
+        (_safe_int(props.get("cascade_position")) for props in node_props),
+        default=0,
     )
     isolated_count = sum(1 for props in node_props if _is_isolated(props))
 
@@ -305,9 +303,7 @@ def write_stats_manifest(district: DistrictCascadeConfig) -> dict[str, Any]:
     _ensure_dirs()
     nodes = _load_feature_collection(district.cascade_nodes_geojson_path())
     edges = _load_feature_collection(district.cascade_edges_geojson_path())
-    outlets = _load_feature_collection(
-        district.cascade_river_outlets_geojson_path()
-    )
+    outlets = _load_feature_collection(district.cascade_river_outlets_geojson_path())
 
     stats = _compute_stats(district, nodes, edges, outlets)
     payload: dict[str, Any] = {
@@ -324,7 +320,11 @@ def write_stats_manifest(district: DistrictCascadeConfig) -> dict[str, Any]:
     )
     return {
         "stats_path": str(stats_path),
-        **{k: v for k, v in stats.items() if k != "top_convergence" and k != "narrative_anchor"},
+        **{
+            k: v
+            for k, v in stats.items()
+            if k != "top_convergence" and k != "narrative_anchor"
+        },
     }
 
 
