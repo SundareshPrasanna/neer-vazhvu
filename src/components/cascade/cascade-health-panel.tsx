@@ -21,9 +21,17 @@ export function CascadeHealthPanel({
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-        Tank cascades at risk - {cityDisplayName}
-      </h1>
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+          Tank cascades at risk - {cityDisplayName}
+        </h1>
+        <Link
+          href={`/${data.district_id}/water-bodies`}
+          className="shrink-0 inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+        >
+          <span aria-hidden>←</span> View on map
+        </Link>
+      </div>
       <p className="text-base text-slate-600 dark:text-slate-400 mb-2 max-w-3xl">
         Every historic tank in {cityDisplayName} sat on a cascade - water
         from one tank overflowed through a surplus channel to feed the
@@ -35,8 +43,15 @@ export function CascadeHealthPanel({
       </p>
       <p className="text-xs text-slate-500 dark:text-slate-500 mb-8 max-w-3xl italic">
         Health 0-100 (higher = less fragile). Priority: CRITICAL &lt; 25,
-        HIGH &lt; 45, MEDIUM &lt; 70, LOW &ge; 70. Methodology + scoring
-        weights:{" "}
+        HIGH &lt; 45, MEDIUM &lt; 70, LOW &ge; 70. The map view of these
+        cascades lives at{" "}
+        <Link
+          href={`/${data.district_id}/water-bodies`}
+          className="underline hover:text-slate-700 dark:hover:text-slate-300"
+        >
+          /{data.district_id}/water-bodies
+        </Link>
+        {" "}with the Cascade toggle on. Methodology + scoring weights:{" "}
         <Link
           href={`/${data.district_id}/about#cascade-methodology`}
           className="underline hover:text-slate-700 dark:hover:text-slate-300"
