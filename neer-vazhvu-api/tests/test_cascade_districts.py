@@ -121,6 +121,69 @@ def test_publish_write_geojson_roundtrips_to_disk(tmp_path, monkeypatch):
     assert payload["features"][0]["properties"]["osm_id"] == 12345
 
 
+def test_publish_write_geojson_embeds_meta_in_each_collection(
+    tmp_path, monkeypatch
+):
+    # Every published FeatureCollection must carry a top-level _meta
+    # block with district_id, generated_at, pipeline_version, algorithm,
+    # inputs_hash, and feature_type so a reviewer can trace any single
+    # file back to the pipeline run that produced it.
+    monkeypatch.setattr(publish, "CASCADE_OUTPUT_DIR", tmp_path / "data")
+    monkeypatch.setattr(publish, "CASCADE_TILE_DIR", tmp_path / "tiles")
+
+    test_district = DistrictCascadeConfig(
+        district_id="testville",
+        label="Testville",
+        state="tamil_nadu",
+        tank_polygons_path=tmp_path / "polygons.geojson",
+    )
+    nodes_path = tmp_path / "data" / "testville-cascade-nodes.geojson"
+    edges_path = tmp_path / "data" / "testville-cascade-edges.geojson"
+    outlets_path = tmp_path / "data" / "testville-cascade-river-outlets.geojson"
+    monkeypatch.setattr(
+        DistrictCascadeConfig,
+        "cascade_nodes_geojson_path",
+        lambda self: nodes_path,
+    )
+    monkeypatch.setattr(
+        DistrictCascadeConfig,
+        "cascade_edges_geojson_path",
+        lambda self: edges_path,
+    )
+    monkeypatch.setattr(
+        DistrictCascadeConfig,
+        "cascade_river_outlets_geojson_path",
+        lambda self: outlets_path,
+    )
+
+    publish.write_geojson(test_district, [], [], [])
+
+    expected_meta_keys = {
+        "district_id",
+        "generated_at",
+        "pipeline_version",
+        "algorithm",
+        "inputs_hash",
+        "feature_type",
+    }
+    for path, feature_type in (
+        (nodes_path, "nodes"),
+        (edges_path, "edges"),
+        (outlets_path, "river_outlets"),
+    ):
+        payload = json.loads(path.read_text())
+        assert payload["type"] == "FeatureCollection"
+        meta = payload.get("_meta") or {}
+        assert set(meta.keys()) == expected_meta_keys, (
+            f"{path.name} _meta keys mismatch: {set(meta.keys())}"
+        )
+        assert meta["district_id"] == "testville"
+        assert meta["feature_type"] == feature_type
+        assert meta["pipeline_version"] == publish.PIPELINE_VERSION
+        assert meta["algorithm"] == publish.ALGORITHM_VERSION
+        assert meta["generated_at"].endswith("Z")
+
+
 def test_publish_write_systems_manifest_keeps_payload_geometry_free(
     tmp_path, monkeypatch
 ):

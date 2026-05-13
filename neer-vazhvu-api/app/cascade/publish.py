@@ -45,6 +45,63 @@ def _ensure_dirs() -> None:
     CASCADE_TILE_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def _now_iso_utc() -> str:
+    """ISO-8601 UTC timestamp with Z suffix, seconds precision.
+
+    Same format on every output so reviewers can cross-reference the
+    GeoJSON files, the stats manifest, and any future PDF / paper that
+    cites a specific pipeline run.
+    """
+    return (
+        _dt.datetime.now(_dt.timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z")
+    )
+
+
+def _inputs_hash(district: DistrictCascadeConfig) -> str:
+    """SHA256 of the input GeoJSONs (tanks + rivers) for reproducibility.
+
+    Lets a reviewer check whether two outputs were generated from the
+    same source extracts. Empty string if neither input file exists.
+    """
+    hasher = hashlib.sha256()
+    hashed_any = False
+    for path in (district.tank_polygons_path, district.rivers_path):
+        if path is None or not path.exists():
+            continue
+        hasher.update(path.read_bytes())
+        hashed_any = True
+    return hasher.hexdigest() if hashed_any else ""
+
+
+def _build_meta(
+    district: DistrictCascadeConfig,
+    feature_type: str | None = None,
+) -> dict[str, Any]:
+    """Construct the _meta block embedded in every published artefact.
+
+    Same shape across the three GeoJSON FeatureCollections (nodes,
+    edges, river_outlets) and the stats manifest, so downstream
+    consumers (hydrologist reviews, PDF citations, future PySheds
+    comparisons) read one schema.
+
+    feature_type names which kind of features the GeoJSON holds; for
+    the stats manifest it stays None.
+    """
+    meta: dict[str, Any] = {
+        "district_id": district.district_id,
+        "generated_at": _now_iso_utc(),
+        "pipeline_version": PIPELINE_VERSION,
+        "algorithm": ALGORITHM_VERSION,
+        "inputs_hash": _inputs_hash(district),
+    }
+    if feature_type is not None:
+        meta["feature_type"] = feature_type
+    return meta
+
+
 def write_geojson(
     district: DistrictCascadeConfig,
     nodes: list[dict[str, Any]],
@@ -53,15 +110,29 @@ def write_geojson(
 ) -> dict[str, Any]:
     """Write nodes, edges, and river-outlet arrows as GeoJSON.
 
+    Each FeatureCollection carries a top-level _meta block with the
+    district id, generated_at timestamp, pipeline_version, algorithm
+    identifier, and SHA256 hash of the input GeoJSONs. _meta is a
+    non-standard but widely-tolerated extension; Leaflet, Mapbox GL,
+    tippecanoe, and standard JSON consumers all ignore unknown keys.
+
     river_outlets is a list of LineString features from a tank centroid
     to its nearest in-flow-direction river point; tanks that drain into
     a river instead of into another tank.
     """
     _ensure_dirs()
     river_outlets = river_outlets or []
-    nodes_fc = {"type": "FeatureCollection", "features": nodes}
-    edges_fc = {"type": "FeatureCollection", "features": edges}
-    outlets_fc = {"type": "FeatureCollection", "features": river_outlets}
+
+    def _wrap(features: list[dict[str, Any]], feature_type: str) -> dict[str, Any]:
+        return {
+            "type": "FeatureCollection",
+            "_meta": _build_meta(district, feature_type=feature_type),
+            "features": features,
+        }
+
+    nodes_fc = _wrap(nodes, "nodes")
+    edges_fc = _wrap(edges, "edges")
+    outlets_fc = _wrap(river_outlets, "river_outlets")
 
     nodes_path = district.cascade_nodes_geojson_path()
     edges_path = district.cascade_edges_geojson_path()
@@ -209,22 +280,6 @@ def _compute_stats(
     }
 
 
-def _inputs_hash(district: DistrictCascadeConfig) -> str:
-    """SHA256 of the input GeoJSONs (tanks + rivers) for reproducibility.
-
-    Lets a reviewer check whether two stats manifests were generated
-    from the same source extracts. Empty string if inputs are absent.
-    """
-    hasher = hashlib.sha256()
-    hashed_any = False
-    for path in (district.tank_polygons_path, district.rivers_path):
-        if path is None or not path.exists():
-            continue
-        hasher.update(path.read_bytes())
-        hashed_any = True
-    return hasher.hexdigest() if hashed_any else ""
-
-
 def write_stats_manifest(district: DistrictCascadeConfig) -> dict[str, Any]:
     """Compute summary statistics from the published GeoJSONs and write
     {district}-cascade-stats.json.
@@ -248,15 +303,7 @@ def write_stats_manifest(district: DistrictCascadeConfig) -> dict[str, Any]:
     payload: dict[str, Any] = {
         "district_id": district.district_id,
         "label": district.label,
-        "_meta": {
-            "generated_at": _dt.datetime.now(_dt.timezone.utc)
-            .replace(microsecond=0)
-            .isoformat()
-            .replace("+00:00", "Z"),
-            "pipeline_version": PIPELINE_VERSION,
-            "algorithm": ALGORITHM_VERSION,
-            "inputs_hash": _inputs_hash(district),
-        },
+        "_meta": _build_meta(district),
         **stats,
     }
 
@@ -284,6 +331,7 @@ def write_systems_manifest(
     payload = {
         "district_id": district.district_id,
         "label": district.label,
+        "_meta": _build_meta(district),
         "systems": systems.get("systems", []),
         "summary": systems.get("summary", {}),
     }
