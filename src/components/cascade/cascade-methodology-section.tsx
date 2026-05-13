@@ -236,6 +236,31 @@ export function CascadeMethodologySection({
 
       <div>
         <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-1">
+          Reading <code className="text-xs">cascade_position = 1</code>:
+          headwater, not source
+        </h4>
+        <p>
+          Tanks at <code className="text-xs">cascade_position = 1</code>
+          have no tank-to-tank inflow in this graph. They are the
+          shallowest nodes in the network, not the literal source of
+          water in the basin. Real inflow into these tanks comes from
+          rainfall on the lake surface, surface runoff from the
+          surrounding catchment via channels not in OpenStreetMap, and
+          (in dammed basins) the river itself - none of which are
+          modelled here.
+        </p>
+        <p className="mt-2">
+          We call these <em>headwater</em> tanks rather than
+          &quot;sources&quot; to avoid implying the cascade graph
+          accounts for where water actually originates. A reservoir
+          with <code className="text-xs">cascade_position = 1</code> is
+          not isolated from rainfall and runoff; it just sits at the
+          top of whatever tank-to-tank chain the terrain organises.
+        </p>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-1">
           Edge confidence
         </h4>
         <p>

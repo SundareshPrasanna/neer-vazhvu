@@ -227,6 +227,14 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
 
       const formatNodeTooltip = (entry: NodeIndexEntry): string => {
         const name = entry.name || "(unnamed tank)";
+        // cascade_position = 1 means no tank-to-tank inflow in this
+        // graph - not "source of water in the basin". Render it as
+        // "headwater" to keep the meaning honest at a glance; the
+        // methodology section spells out what we do not model.
+        const depthLabel =
+          entry.cascadePosition === 1
+            ? "headwater"
+            : `cascade depth ${entry.cascadePosition}`;
         const sinkLine =
           entry.drainsToRiver && entry.riverOutletDistanceKm !== null
             ? `<br/><span style="font-size:11px;color:#b45309">` +
@@ -241,7 +249,7 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
         return (
           `<strong>${name}</strong>` +
           `<br/><span style="font-size:11px;color:#475569">` +
-          `cascade depth ${entry.cascadePosition} · ` +
+          `${depthLabel} · ` +
           `${entry.degreeIn} in · ${entry.degreeOut} out · ` +
           `${entry.areaHa.toLocaleString()} ha</span>` +
           sinkLine +
