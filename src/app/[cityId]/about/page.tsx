@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { loadCascadeStats } from "@/lib/cascade-stats";
+import { loadCascadeSensitivity } from "@/lib/cascade-sensitivity";
 import { CityAboutContent } from "./about-content";
 
 interface PageProps {
@@ -26,5 +27,14 @@ export default async function CityAboutPage({ params }: PageProps) {
   const cascadeStats = config.hasCascadeOverlay
     ? loadCascadeStats(cityId)
     : null;
-  return <CityAboutContent config={config} cascadeStats={cascadeStats} />;
+  const cascadeSensitivity = config.hasCascadeOverlay
+    ? loadCascadeSensitivity(cityId)
+    : null;
+  return (
+    <CityAboutContent
+      config={config}
+      cascadeStats={cascadeStats}
+      cascadeSensitivity={cascadeSensitivity}
+    />
+  );
 }

@@ -5,6 +5,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { CHENNAI } from "@/lib/cities/chennai";
 import type { CascadeStats } from "@/lib/cascade-stats";
 import { resolveConvergenceExample } from "@/lib/cascade-stats";
+import type { CascadeSensitivity } from "@/lib/cascade-sensitivity";
 import { CascadeMethodologySection } from "@/components/cascade/cascade-methodology-section";
 
 const LOST_WATER_BODY_SOURCES: {
@@ -138,8 +139,10 @@ function DataSource({
 
 export function AboutContent({
   cascadeStats,
+  cascadeSensitivity,
 }: {
   cascadeStats: CascadeStats | null;
+  cascadeSensitivity?: CascadeSensitivity | null;
 }) {
   const { t } = useLanguage();
 
@@ -714,6 +717,7 @@ export function AboutContent({
                 resolveConvergenceExample(cascadeStats) ?? undefined
               }
               edgeConfidenceCounts={cascadeStats.edge_confidence_counts}
+              sensitivity={cascadeSensitivity}
             />
           </Section>
         )}

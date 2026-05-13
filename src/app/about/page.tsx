@@ -1,4 +1,5 @@
 import { loadCascadeStats } from "@/lib/cascade-stats";
+import { loadCascadeSensitivity } from "@/lib/cascade-sensitivity";
 import { AboutContent } from "./about-content";
 
 export const metadata = {
@@ -8,5 +9,11 @@ export const metadata = {
 
 export default function AboutPage() {
   const cascadeStats = loadCascadeStats("chennai");
-  return <AboutContent cascadeStats={cascadeStats} />;
+  const cascadeSensitivity = loadCascadeSensitivity("chennai");
+  return (
+    <AboutContent
+      cascadeStats={cascadeStats}
+      cascadeSensitivity={cascadeSensitivity}
+    />
+  );
 }

@@ -7,6 +7,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import type { PlaceConfig } from "@/lib/cities";
 import type { CascadeStats } from "@/lib/cascade-stats";
 import { resolveConvergenceExample } from "@/lib/cascade-stats";
+import type { CascadeSensitivity } from "@/lib/cascade-sensitivity";
 import { CascadeMethodologySection } from "@/components/cascade/cascade-methodology-section";
 
 const MaduraiPageDescriptions = dynamic(() =>
@@ -130,9 +131,11 @@ function DataSource({ name, url, description, frequency }: DataSourceItem) {
 export function CityAboutContent({
   config,
   cascadeStats,
+  cascadeSensitivity,
 }: {
   config: PlaceConfig;
   cascadeStats: CascadeStats | null;
+  cascadeSensitivity?: CascadeSensitivity | null;
 }) {
   const { t } = useLanguage();
   const cityName = config.displayName;
@@ -415,6 +418,7 @@ export function CityAboutContent({
                 resolveConvergenceExample(cascadeStats) ?? undefined
               }
               edgeConfidenceCounts={cascadeStats.edge_confidence_counts}
+              sensitivity={cascadeSensitivity}
             />
           </Section>
         )}
