@@ -23,6 +23,13 @@ export interface CascadeNodeSummary {
   area_ha: number | null;
 }
 
+export interface EdgeConfidenceCounts {
+  high: number;
+  medium: number;
+  low: number;
+  unspecified: number;
+}
+
 export interface CascadeStats {
   district_id: string;
   label: string;
@@ -39,6 +46,7 @@ export interface CascadeStats {
   max_cascade_depth: number;
   top_convergence: CascadeNodeSummary | null;
   narrative_anchor: CascadeNodeSummary | null;
+  edge_confidence_counts?: EdgeConfidenceCounts;
 }
 
 const STATS_DIR = path.join(process.cwd(), "public", "data", "cascade");

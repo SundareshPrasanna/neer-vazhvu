@@ -115,6 +115,34 @@ ISOLATION_REASONS: frozenset[str] = frozenset(
     }
 )
 
+# Edge confidence buckets, computed from score_m_per_km (elevation drop
+# normalised by distance). Threshold rationale:
+#   - HIGH (>= 5 m/km): a clear downhill gradient. Even with the 90m
+#     DEM's noise floor, a >= 5 m drop over 1 km is unambiguous.
+#   - MEDIUM (1-5 m/km): plausible cascade link with moderate
+#     confidence. Most kanmoi-cascade edges fall here.
+#   - LOW (< 1 m/km): below 0.2 m drop over 200 m. Near the noise
+#     floor of HydroSHEDS-conditioned DEM elevation rounding; the
+#     edge is more likely to be terrain-noise than real flow.
+EDGE_CONFIDENCE_HIGH = "high"
+EDGE_CONFIDENCE_MEDIUM = "medium"
+EDGE_CONFIDENCE_LOW = "low"
+EDGE_CONFIDENCE_HIGH_THRESHOLD_M_PER_KM = 5.0
+EDGE_CONFIDENCE_MEDIUM_THRESHOLD_M_PER_KM = 1.0
+
+
+def classify_edge_confidence(score_m_per_km: float) -> str:
+    """Categorise a predicted edge as high / medium / low confidence.
+
+    Pure function over the existing `score_m_per_km` metric. No new
+    inputs; tunable thresholds documented above.
+    """
+    if score_m_per_km >= EDGE_CONFIDENCE_HIGH_THRESHOLD_M_PER_KM:
+        return EDGE_CONFIDENCE_HIGH
+    if score_m_per_km >= EDGE_CONFIDENCE_MEDIUM_THRESHOLD_M_PER_KM:
+        return EDGE_CONFIDENCE_MEDIUM
+    return EDGE_CONFIDENCE_LOW
+
 
 def _haversine_km(a: tuple[float, float], b: tuple[float, float]) -> float:
     lat1, lon1 = a
@@ -668,6 +696,7 @@ def _build_graph_from_polygons_with_elevations(
                     "distance_km": round(dist_km, 3),
                     "elevation_drop_m": round((elev_up or 0) - (elev_dn or 0), 2),
                     "score_m_per_km": round(score, 2),
+                    "confidence": classify_edge_confidence(score),
                     "status": "predicted",
                 },
             }

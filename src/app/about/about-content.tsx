@@ -712,6 +712,7 @@ export function AboutContent({
               topConvergenceExample={
                 resolveConvergenceExample(cascadeStats) ?? undefined
               }
+              edgeConfidenceCounts={cascadeStats.edge_confidence_counts}
             />
           </Section>
         )}

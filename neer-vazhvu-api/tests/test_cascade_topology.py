@@ -14,6 +14,9 @@ from shapely.geometry import LineString
 
 from app.cascade.districts import DistrictCascadeConfig
 from app.cascade.topology import (
+    EDGE_CONFIDENCE_HIGH,
+    EDGE_CONFIDENCE_LOW,
+    EDGE_CONFIDENCE_MEDIUM,
     ISOLATION_REASON_ALL_UPHILL,
     ISOLATION_REASON_ELEVATION_MISSING,
     ISOLATION_REASON_NO_NEIGHBORS,
@@ -26,6 +29,7 @@ from app.cascade.topology import (
     _polygon_centroid,
     _read_tank_polygons,
     annotate_isolation_reasons_in_place,
+    classify_edge_confidence,
 )
 
 
@@ -660,3 +664,35 @@ def test_annotate_isolation_reasons_in_place_reproduces_main_builder(tmp_path):
     # Summary counters should match too.
     isolated_total = sum(c for r, c in summary.items() if r != "non_isolated")
     assert isolated_total == sum(1 for v in expected.values() if v is not None)
+
+
+def test_classify_edge_confidence_buckets_thresholds():
+    # Boundaries: >=5 = HIGH, >=1 and <5 = MEDIUM, <1 = LOW.
+    assert classify_edge_confidence(0.0) == EDGE_CONFIDENCE_LOW
+    assert classify_edge_confidence(0.5) == EDGE_CONFIDENCE_LOW
+    assert classify_edge_confidence(0.99) == EDGE_CONFIDENCE_LOW
+    assert classify_edge_confidence(1.0) == EDGE_CONFIDENCE_MEDIUM
+    assert classify_edge_confidence(3.0) == EDGE_CONFIDENCE_MEDIUM
+    assert classify_edge_confidence(4.99) == EDGE_CONFIDENCE_MEDIUM
+    assert classify_edge_confidence(5.0) == EDGE_CONFIDENCE_HIGH
+    assert classify_edge_confidence(10.0) == EDGE_CONFIDENCE_HIGH
+    assert classify_edge_confidence(100.0) == EDGE_CONFIDENCE_HIGH
+
+
+def test_builder_assigns_confidence_field_to_every_edge(tmp_path):
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.1, area_ha=20),
+        _square_polygon(2, "Mid", lat=9.92, lon=78.1, area_ha=15),
+        _square_polygon(3, "Low", lat=9.91, lon=78.1, area_ha=10),
+    ]
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[180.0, 150.0, 120.0],
+        district=_district(tmp_path),
+    )
+    for edge in graph["edges"]:
+        score = edge["properties"]["score_m_per_km"]
+        confidence = edge["properties"]["confidence"]
+        assert confidence == classify_edge_confidence(score)
+        # Distance is ~1km between tanks, drop is 30m, so score ~30 -> HIGH.
+        assert confidence == EDGE_CONFIDENCE_HIGH

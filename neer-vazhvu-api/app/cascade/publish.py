@@ -269,6 +269,15 @@ def _compute_stats(
         # narrative_anchor stays None if osm_id wasn't matched in nodes;
         # consumers fall back to top_convergence.
 
+    edge_confidence_counts = {"high": 0, "medium": 0, "low": 0, "unspecified": 0}
+    for edge in edges:
+        props = edge.get("properties") or {}
+        bucket = props.get("confidence")
+        if bucket in edge_confidence_counts:
+            edge_confidence_counts[bucket] += 1
+        else:
+            edge_confidence_counts["unspecified"] += 1
+
     return {
         "node_count": len(nodes),
         "edge_count": len(edges),
@@ -277,6 +286,7 @@ def _compute_stats(
         "max_cascade_depth": max_cascade_depth,
         "top_convergence": top_convergence,
         "narrative_anchor": narrative_anchor,
+        "edge_confidence_counts": edge_confidence_counts,
     }
 
 

@@ -21,6 +21,7 @@ export function CascadeMethodologySection({
   riverOutletCount,
   maxCascadeDepth,
   topConvergenceExample,
+  edgeConfidenceCounts,
 }: {
   cityDisplayName: string;
   nodeCount: number;
@@ -28,6 +29,12 @@ export function CascadeMethodologySection({
   riverOutletCount: number;
   maxCascadeDepth: number;
   topConvergenceExample?: { name: string; degreeIn: number };
+  edgeConfidenceCounts?: {
+    high: number;
+    medium: number;
+    low: number;
+    unspecified: number;
+  };
 }): ReactNode {
   return (
     <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
@@ -205,6 +212,56 @@ export function CascadeMethodologySection({
             <code className="text-xs">intact / partial / broken / encroached</code>.
           </li>
         </ul>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-1">
+          Edge confidence
+        </h4>
+        <p>
+          Each predicted edge carries a{" "}
+          <code className="text-xs">confidence</code> field bucketed by
+          its <code className="text-xs">score_m_per_km</code> (elevation
+          drop normalised by edge length). Thresholds:
+        </p>
+        <ul className="list-disc list-outside pl-5 space-y-1">
+          <li>
+            <strong>HIGH</strong> (&ge;&nbsp;5&nbsp;m/km): a clear
+            downhill gradient unambiguous even given HydroSHEDS
+            90&nbsp;m elevation noise.
+          </li>
+          <li>
+            <strong>MEDIUM</strong> (1-5&nbsp;m/km): plausible cascade
+            link with moderate confidence. Most kanmoi-cascade edges
+            fall here.
+          </li>
+          <li>
+            <strong>LOW</strong> (&lt;&nbsp;1&nbsp;m/km): below
+            0.2&nbsp;m drop per 200&nbsp;m. Near the noise floor of
+            the conditioned DEM; the edge may be terrain noise as much
+            as real flow.
+          </li>
+        </ul>
+        {edgeConfidenceCounts && edgeCount > 0 ? (
+          <p className="mt-2">
+            For {cityDisplayName}:{" "}
+            <strong>
+              {edgeConfidenceCounts.high.toLocaleString()} high
+            </strong>
+            {" "}(
+            {Math.round((edgeConfidenceCounts.high / edgeCount) * 100)}%),{" "}
+            <strong>
+              {edgeConfidenceCounts.medium.toLocaleString()} medium
+            </strong>
+            {" "}(
+            {Math.round((edgeConfidenceCounts.medium / edgeCount) * 100)}%),{" "}
+            <strong>
+              {edgeConfidenceCounts.low.toLocaleString()} low
+            </strong>
+            {" "}(
+            {Math.round((edgeConfidenceCounts.low / edgeCount) * 100)}%).
+          </p>
+        ) : null}
       </div>
 
       <div>

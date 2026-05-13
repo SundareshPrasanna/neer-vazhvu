@@ -413,6 +413,7 @@ export function CityAboutContent({
               topConvergenceExample={
                 resolveConvergenceExample(cascadeStats) ?? undefined
               }
+              edgeConfidenceCounts={cascadeStats.edge_confidence_counts}
             />
           </Section>
         )}
