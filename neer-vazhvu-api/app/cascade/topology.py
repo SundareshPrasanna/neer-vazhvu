@@ -94,6 +94,27 @@ D8_TO_BEARING_DEG: dict[int, float] = {
     128: 45.0,  # NE
 }
 
+# Why a tank ended up isolated (degree_in=0, degree_out=0, drains_to_river=false).
+# Classified by re-walking the candidate-evaluation gates for that tank.
+# A non-isolated tank gets isolation_reason=None.
+ISOLATION_REASON_ELEVATION_MISSING = "elevation_sampling_failed"
+ISOLATION_REASON_NO_NEIGHBORS = "no_neighbors_in_range"
+ISOLATION_REASON_ALL_UPHILL = "all_neighbors_uphill"
+ISOLATION_REASON_OUT_OF_CONE = "all_neighbors_out_of_cone"
+ISOLATION_REASON_RIVER_BLOCKED = "all_neighbors_river_blocked"
+ISOLATION_REASON_UNKNOWN = "unknown_isolation"  # defensive fallback
+
+ISOLATION_REASONS: frozenset[str] = frozenset(
+    {
+        ISOLATION_REASON_ELEVATION_MISSING,
+        ISOLATION_REASON_NO_NEIGHBORS,
+        ISOLATION_REASON_ALL_UPHILL,
+        ISOLATION_REASON_OUT_OF_CONE,
+        ISOLATION_REASON_RIVER_BLOCKED,
+        ISOLATION_REASON_UNKNOWN,
+    }
+)
+
 
 def _haversine_km(a: tuple[float, float], b: tuple[float, float]) -> float:
     lat1, lon1 = a
@@ -319,6 +340,94 @@ def _find_river_outlet(
     return best
 
 
+def _classify_one_isolated_tank(
+    *,
+    upstream_osm_id: int,
+    centroids: dict[int, tuple[float, float]],
+    elevations: dict[int, float | None],
+    flow_codes: dict[int, int | None],
+    osm_ids: list[int],
+    river_index: Any | None,
+    max_distance_km: float,
+) -> str:
+    """Determine WHY a tank ended up with no tank-to-tank outflow.
+
+    Re-walks the candidate-evaluation gates the main edge loop uses, but
+    counts how many candidates survive each gate instead of selecting a
+    winner. The first gate that eliminates every candidate becomes the
+    isolation reason.
+
+    Pure function; identical inputs produce identical output. No GEE,
+    no disk IO. Safe to call from the main builder AND from a bootstrap
+    script reading existing GeoJSONs.
+    """
+    elev_up = elevations.get(upstream_osm_id)
+    if elev_up is None:
+        return ISOLATION_REASON_ELEVATION_MISSING
+
+    cent_up = centroids[upstream_osm_id]
+    flow_up = flow_codes.get(upstream_osm_id)
+
+    in_range_count = 0
+    lower_count = 0
+    in_cone_count = 0
+    river_unblocked_count = 0
+
+    for downstream in osm_ids:
+        if downstream == upstream_osm_id:
+            continue
+        cent_dn = centroids.get(downstream)
+        if cent_dn is None:
+            continue
+        dist = _haversine_km(cent_up, cent_dn)
+        if dist <= 0 or dist > max_distance_km:
+            continue
+        in_range_count += 1
+
+        elev_dn = elevations.get(downstream)
+        if elev_dn is None:
+            continue
+        if elev_up - elev_dn <= 0:
+            continue
+        lower_count += 1
+
+        if not _candidate_passes_flow_direction(
+            upstream_flow_code=flow_up,
+            upstream_centroid=cent_up,
+            downstream_centroid=cent_dn,
+        ):
+            continue
+        in_cone_count += 1
+
+        if river_index is not None:
+            from shapely.geometry import LineString
+
+            edge_line = LineString(
+                [
+                    (cent_up[1], cent_up[0]),
+                    (cent_dn[1], cent_dn[0]),
+                ]
+            )
+            hits = river_index.query(edge_line, predicate="intersects")
+            if len(hits) > 0:
+                continue
+        river_unblocked_count += 1
+
+    if in_range_count == 0:
+        return ISOLATION_REASON_NO_NEIGHBORS
+    if lower_count == 0:
+        return ISOLATION_REASON_ALL_UPHILL
+    if in_cone_count == 0:
+        return ISOLATION_REASON_OUT_OF_CONE
+    if river_unblocked_count == 0:
+        return ISOLATION_REASON_RIVER_BLOCKED
+    # Defensive: if any candidates survived every gate, the main edge
+    # loop would have selected one. Reaching this branch means upstream
+    # state diverged from what the main loop saw; surface it explicitly
+    # rather than silently misclassifying.
+    return ISOLATION_REASON_UNKNOWN
+
+
 def _candidate_passes_flow_direction(
     *,
     upstream_flow_code: int | None,
@@ -468,6 +577,25 @@ def _build_graph_from_polygons_with_elevations(
     for _upstream, (downstream, _score, _dist) in edges_out.items():
         degree_in[downstream] += 1
 
+    isolation_reasons: dict[int, str | None] = {}
+    for osm_id in osm_ids:
+        if osm_id in edges_out or osm_id in river_outlets_by_osm:
+            isolation_reasons[osm_id] = None
+            continue
+        if degree_in[osm_id] > 0:
+            isolation_reasons[osm_id] = None
+            continue
+        # Isolated: no outflow edge, no river sink, and no upstream feeder.
+        isolation_reasons[osm_id] = _classify_one_isolated_tank(
+            upstream_osm_id=osm_id,
+            centroids=centroids,
+            elevations=elevations_by_osm,
+            flow_codes=flow_by_osm,
+            osm_ids=osm_ids,
+            river_index=river_index,
+            max_distance_km=max_dist,
+        )
+
     cascade_position: dict[int, int] = {}
 
     def _resolve_position(osm_id: int, seen: frozenset[int]) -> int:
@@ -513,6 +641,7 @@ def _build_graph_from_polygons_with_elevations(
                     "river_outlet_bearing_deg": (
                         round(outlet[3], 1) if outlet is not None else None
                     ),
+                    "isolation_reason": isolation_reasons[osm_id],
                 },
             }
         )
@@ -611,3 +740,95 @@ def build_graph(district: DistrictCascadeConfig) -> dict[str, Any]:
         flow_directions=flow_directions,
         river_segments=river_segments,
     )
+
+
+def annotate_isolation_reasons_in_place(
+    node_features: list[dict[str, Any]],
+    district: DistrictCascadeConfig,
+) -> dict[str, int]:
+    """Compute and attach `isolation_reason` to each node feature in place.
+
+    Useful for refreshing the annotation on an already-published GeoJSON
+    without re-running the GEE-sampled topology build. Reconstructs the
+    centroid / elevation / flow-direction state from the existing node
+    properties and runs the same classifier the main builder uses.
+
+    Loads river segments from `district.rivers_path` if present so the
+    river-blocked case can be distinguished from out-of-cone. Without
+    rivers, that gate is a no-op (consistent with the main builder).
+
+    Mutates each feature's `properties` dict by setting `isolation_reason`
+    (string for isolated tanks, None otherwise).
+
+    Returns a counter dict {reason: count, ..., 'non_isolated': N}
+    summarising what was assigned.
+    """
+    centroids: dict[int, tuple[float, float]] = {}
+    elevations: dict[int, float | None] = {}
+    flow_codes: dict[int, int | None] = {}
+    isolated_ids: list[int] = []
+    osm_ids: list[int] = []
+
+    for feature in node_features:
+        properties = feature.get("properties") or {}
+        try:
+            osm_id = int(properties.get("osm_id"))
+        except (TypeError, ValueError):
+            continue
+        geometry = feature.get("geometry") or {}
+        if geometry.get("type") != "Point":
+            continue
+        coords = geometry.get("coordinates") or []
+        if len(coords) < 2:
+            continue
+        # GeoJSON convention: coordinates are [lng, lat], centroids are (lat, lng).
+        centroids[osm_id] = (float(coords[1]), float(coords[0]))
+        elev = properties.get("elevation_m")
+        elevations[osm_id] = None if elev is None else float(elev)
+        flow = properties.get("flow_direction_d8")
+        try:
+            flow_codes[osm_id] = None if flow is None else int(flow)
+        except (TypeError, ValueError):
+            flow_codes[osm_id] = None
+        osm_ids.append(osm_id)
+
+        degree_in = int(properties.get("degree_in") or 0)
+        degree_out = int(properties.get("degree_out") or 0)
+        drains_to_river = bool(properties.get("drains_to_river"))
+        if degree_in == 0 and degree_out == 0 and not drains_to_river:
+            isolated_ids.append(osm_id)
+
+    river_segments = _load_river_segments(district)
+    river_index = None
+    if river_segments:
+        from shapely.strtree import STRtree
+
+        river_index = STRtree(river_segments)
+
+    max_dist = district.max_downstream_distance_km
+    summary: dict[str, int] = {reason: 0 for reason in ISOLATION_REASONS}
+    summary["non_isolated"] = 0
+
+    for feature in node_features:
+        properties = feature.get("properties") or {}
+        try:
+            osm_id = int(properties.get("osm_id"))
+        except (TypeError, ValueError):
+            continue
+        if osm_id not in isolated_ids:
+            properties["isolation_reason"] = None
+            summary["non_isolated"] += 1
+            continue
+        reason = _classify_one_isolated_tank(
+            upstream_osm_id=osm_id,
+            centroids=centroids,
+            elevations=elevations,
+            flow_codes=flow_codes,
+            osm_ids=osm_ids,
+            river_index=river_index,
+            max_distance_km=max_dist,
+        )
+        properties["isolation_reason"] = reason
+        summary[reason] = summary.get(reason, 0) + 1
+
+    return summary

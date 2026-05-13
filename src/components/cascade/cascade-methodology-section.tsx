@@ -209,6 +209,59 @@ export function CascadeMethodologySection({
 
       <div>
         <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-1">
+          Isolated tanks: why each one is isolated
+        </h4>
+        <p>
+          A tank is &quot;isolated&quot; in this graph when it has no
+          tank-to-tank inflow, no tank-to-tank outflow, and no river
+          sink. The pipeline re-walks the candidate-evaluation gates for
+          each such tank and stamps it with one of these reasons, surfaced
+          in the on-map hover tooltip:
+        </p>
+        <ul className="list-disc list-outside pl-5 space-y-1">
+          <li>
+            <code className="text-xs">elevation_sampling_failed</code> -
+            the HydroSHEDS DEM returned no value at the tank&apos;s
+            centroid, so the algorithm has nothing to compare against.
+            Usually data-coverage at the DEM&apos;s 90&nbsp;m resolution
+            boundaries.
+          </li>
+          <li>
+            <code className="text-xs">no_neighbors_in_range</code> - no
+            other tanks within the 3&nbsp;km radius the cascade window
+            uses. Real geographic effect, common on the rural fringe of
+            the district.
+          </li>
+          <li>
+            <code className="text-xs">all_neighbors_uphill</code> -
+            in-range tanks exist but every one of them is at a higher
+            elevation. The tank sits at a local basin low; water has
+            nowhere downhill to go through the tank network in this
+            window.
+          </li>
+          <li>
+            <code className="text-xs">all_neighbors_out_of_cone</code> -
+            downhill tanks exist in range, but all sit outside the
+            &plusmn;67.5&deg; cone aligned with the upstream tank&apos;s
+            D8 flow direction. The terrain wants water to go somewhere
+            other than where the nearest downhill tank is.
+          </li>
+          <li>
+            <code className="text-xs">all_neighbors_river_blocked</code> -
+            downhill, in-cone, in-range tanks exist, but every edge to
+            them would cross a mapped river LineString. May indicate
+            either real river-cut isolation or a gap where the OSM river
+            polylines are over-segmented relative to ground truth.
+          </li>
+          <li>
+            <code className="text-xs">unknown_isolation</code> -
+            defensive fallback. Should be empty in practice.
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-1">
           What you can use it for today
         </h4>
         <ul className="list-disc list-outside pl-5 space-y-1">
@@ -228,8 +281,10 @@ export function CascadeMethodologySection({
           </li>
           <li>
             <strong>Identify isolated tanks:</strong> tanks with neither
-            inflow, outflow, nor river sink may be genuinely orphaned in the
-            terrain (rim of a small basin) or signal a data-coverage gap.
+            inflow, outflow, nor river sink carry an{" "}
+            <code className="text-xs">isolation_reason</code> field
+            distinguishing genuine basin orphans from data-coverage gaps.
+            See the bucket-by-bucket breakdown above.
           </li>
         </ul>
       </div>
