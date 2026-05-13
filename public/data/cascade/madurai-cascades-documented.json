@@ -1,0 +1,149 @@
+{
+  "district_id": "madurai",
+  "schema_version": "v1",
+  "note": "Hand-curated, source-cited documented cascade chains for Madurai. Each chain has an ordered tank list (with OSM IDs resolved where the current OpenStreetMap extract carries the name) and a directed edge set drawn from the cited source. Used by the cascade health scorer at neer-vazhvu-api/app/cascade/health.py to enrich auto-derived cascades. Tanks with osm_id=null could not be matched against the OSM extract under any of the searched name variants and are interpreted by the scorer as a 'missing from OSM' signal contributing to the cascade's fragility score.",
+  "_sources_of_truth": [
+    "Vandiyur Tank Cascade System (VTCS) - Chinnasamy & Srivastava 2021 Frontiers in Water",
+    "Kondagai-Piramanur-Palayanur - TN PWD/WRD IAMWARM DPR Girudhumal package",
+    "Madakulam Pandya cascade - JETIR 2019 + Wikipedia + Pandya inscription record",
+    "Mullaperiyar engineered chain - ADB TNUFIP Tranche 2 IEE Dec 2025 + Wikipedia"
+  ],
+  "cascades": [
+    {
+      "cascade_id": "madurai-vandiyur-tank-cascade-system",
+      "name": "Vandiyur Tank Cascade System (VTCS)",
+      "short_name": "VTCS",
+      "narrative": "Eight-tank gravity cascade across six catchments documented in the academic literature as the textbook Madurai cascade. Rural feeder tanks at the head, urban tanks at the foot, terminates in Vandiyur Lake before joining the Vaigai river.",
+      "transfer_type": "natural",
+      "historical_era": "kanmoi-pandya",
+      "confidence": "clearly_documented",
+      "source": {
+        "citation": "Chinnasamy P., Srivastava A. (2021). Revival of Traditional Cascade Tanks for Achieving Climate Resilience in Drylands of South India. Frontiers in Water 3:639637.",
+        "url": "https://www.frontiersin.org/articles/10.3389/frwa.2021.639637/full",
+        "type": "academic_paper"
+      },
+      "court_anchor": {
+        "case": "R. Manibharathi v Union of India, WP(M) 31214/2023",
+        "court": "Madras High Court (Madurai Bench)",
+        "year": 2024,
+        "url": "https://lawbeat.in/news-updates/madras-high-court-orders-dedicated-website-listing-all-water-bodies-tamil-nadu-encroachment",
+        "summary": "March 2024 order on Vandiyur and Thenkal Kanmoi tank bund-road encroachment; directed TN to publish a state water-bodies registry within 6 months."
+      },
+      "restoration_anchor": null,
+      "tanks_in_order": [
+        { "name": "Kulamangalam", "osm_id": null, "area_ha": null, "category": "rural" },
+        { "name": "Veerapandi", "osm_id": null, "area_ha": null, "category": "rural" },
+        { "name": "Thiruppalai", "osm_id": 965972946, "area_ha": 24.76, "category": "peri-urban", "notes": "Multiple Thiruppalai-name reservoirs in OSM; the 24.76 ha polygon is the largest plausible match." },
+        { "name": "Siruvour", "osm_id": null, "area_ha": null, "category": "peri-urban" },
+        { "name": "Kosakulam", "osm_id": null, "area_ha": null, "category": "urban", "supernode_group": "T5-T7" },
+        { "name": "Parsurampatti", "osm_id": null, "area_ha": null, "category": "urban", "supernode_group": "T5-T7" },
+        { "name": "Kodikulam", "osm_id": null, "area_ha": null, "category": "urban", "supernode_group": "T5-T7" },
+        { "name": "Vandiyur", "osm_id": 1073092381, "area_ha": 227.94, "category": "urban", "is_terminal": true, "notes": "HC PIL anchor. Currently neer-vazhvu's narrative_anchor for Madurai." }
+      ],
+      "edges": [
+        { "from_index": 0, "to_index": 1, "link_type": "natural" },
+        { "from_index": 1, "to_index": 2, "link_type": "natural" },
+        { "from_index": 2, "to_index": 3, "link_type": "natural" },
+        { "from_index": 3, "to_index": 4, "link_type": "natural", "notes": "Edge enters the T5-T7 super-node group; internal ordering speculative." },
+        { "from_index": 4, "to_index": 5, "link_type": "natural", "notes": "Within T5-T7 super-node; treat as one logical step." },
+        { "from_index": 5, "to_index": 6, "link_type": "natural", "notes": "Within T5-T7 super-node; treat as one logical step." },
+        { "from_index": 6, "to_index": 7, "link_type": "natural", "notes": "T7 to terminal Vandiyur." }
+      ]
+    },
+    {
+      "cascade_id": "madurai-kondagai-piramanur-palayanur-girudhumal",
+      "name": "Kondagai-Piramanur-Palayanur Vaigai-fed cascade",
+      "short_name": "Girudhumal feeder chain",
+      "narrative": "Vaigai surplus diverted via head-sluice and 9.6 km link canal into a three-tank chain that ultimately drains to the Girudhumal river. Documented in the TN PWD-WRD IAMWARM Detailed Project Report - the gold standard for engineering provenance.",
+      "transfer_type": "mixed",
+      "historical_era": "colonial-pwd",
+      "confidence": "clearly_documented",
+      "source": {
+        "citation": "TN PWD/WRD. Restoration and Regradation of Girudhumal river. IAMWARM Package 01/IAMWARM/WRD/GML-River/Works/V/2012-2013.",
+        "url": "https://iamwarm.gov.in/IAMWARM/OLD/dpr-pdf/Leftout/60Packages/Girudhumal.pdf",
+        "type": "pwd_dpr"
+      },
+      "court_anchor": null,
+      "restoration_anchor": {
+        "program": "TN-IAMWARM (World Bank assisted)",
+        "url": "https://iamwarm.gov.in/"
+      },
+      "tanks_in_order": [
+        { "name": "Vaigai river head-sluice (Virahanur regulator)", "osm_id": null, "category": "reservoir", "is_inflow_origin": true },
+        { "name": "Kondagai (Konthagai) tank", "osm_id": null, "category": "rural" },
+        { "name": "Piramanur tank", "osm_id": null, "category": "rural" },
+        { "name": "Palayanur tank", "osm_id": null, "category": "rural" },
+        { "name": "Girudhumal river (via Melavellore Dividing dam)", "osm_id": null, "category": "river", "is_terminal": true }
+      ],
+      "edges": [
+        { "from_index": 0, "to_index": 1, "link_type": "engineered", "notes": "9.6 km link canal, head sluice." },
+        { "from_index": 1, "to_index": 2, "link_type": "natural" },
+        { "from_index": 2, "to_index": 3, "link_type": "natural" },
+        { "from_index": 3, "to_index": 4, "link_type": "engineered", "notes": "Silaman head sluice + Melavellore Dividing dam." }
+      ]
+    },
+    {
+      "cascade_id": "madurai-madakulam-pandya-12th-c",
+      "name": "Madakulam Pandya cascade (12th century CE)",
+      "short_name": "Madakulam cascade",
+      "narrative": "Five-step cascade documented in a 12th-century Pandya inscription, with channel originally named Nattatrupuram and later renamed Viranarayana kulakeel. Madakulam itself preserves a Pandya-era stone sluice and inscription.",
+      "transfer_type": "mixed",
+      "historical_era": "pandya",
+      "confidence": "clearly_documented",
+      "source": {
+        "citation": "Joshima M., Sundarapandian S. M. (2019). Vaigai River Madurai. JETIR 6(8):JETIR1908A90; Madakulam Wikipedia entry referencing Raja Raja Chola I inscription and Pandya Paranthaka Viranarayanan.",
+        "url": "https://www.jetir.org/papers/JETIR1908A90.pdf",
+        "type": "academic_paper"
+      },
+      "court_anchor": null,
+      "restoration_anchor": null,
+      "tanks_in_order": [
+        { "name": "Urapanur", "osm_id": null, "category": "rural" },
+        { "name": "Sekkanurani", "osm_id": null, "category": "rural" },
+        { "name": "Nagamalai Puthukottai", "osm_id": null, "category": "peri-urban" },
+        { "name": "Kongar Puliankulam", "osm_id": null, "category": "urban" },
+        { "name": "Madakulam Kanmai", "osm_id": 18641173, "area_ha": 123.69, "category": "urban", "is_terminal": true, "notes": "12th-century stone sluice + inscription. Wikipedia: Madakulam." }
+      ],
+      "edges": [
+        { "from_index": 0, "to_index": 1, "link_type": "mixed" },
+        { "from_index": 1, "to_index": 2, "link_type": "mixed" },
+        { "from_index": 2, "to_index": 3, "link_type": "mixed" },
+        { "from_index": 3, "to_index": 4, "link_type": "mixed", "notes": "Pandya-era Nattatrupuram channel renamed Viranarayana kulakeel." }
+      ]
+    },
+    {
+      "cascade_id": "madurai-mullaperiyar-vaigai-engineered-control",
+      "name": "Mullaperiyar to Madurai engineered supply chain",
+      "short_name": "Mullaperiyar-Vaigai control",
+      "narrative": "Inter-state trans-basin transfer: Mullaperiyar reservoir in Kerala feeds the Vaigai catchment in Tamil Nadu via a tunnel through the Western Ghats; Vaigai dam regulates the flow which then reaches Madurai via the Periyar Main Canal, the Thirumangalam Canal, the Vaigai bed, and finally the Pannaipatty WTP. Included here as an engineered NEGATIVE-CONTROL case so the scorer can distinguish documented engineered transfers from algorithmically-predicted natural cascades.",
+      "transfer_type": "engineered",
+      "historical_era": "colonial-pwd",
+      "confidence": "clearly_documented",
+      "is_engineered_control": true,
+      "source": {
+        "citation": "ADB Tamil Nadu Urban Flagship Investment Program (TNUFIP) Tranche 2 Initial Environmental Examination, project 49107-005, December 2025.",
+        "url": "https://www.adb.org/sites/default/files/project-documents/49107/49107-005-iee-en_10.pdf",
+        "type": "adb_iee"
+      },
+      "court_anchor": {
+        "case": "Mullaperiyar Dam Issue (recurring TN-Kerala Supreme Court matter)",
+        "court": "Supreme Court of India",
+        "year": 2014,
+        "url": "https://en.wikipedia.org/wiki/Mullaperiyar_Dam",
+        "summary": "2014 SC verdict permitting 142 ft storage; ongoing supervisory committee."
+      },
+      "restoration_anchor": null,
+      "tanks_in_order": [
+        { "name": "Mullaperiyar Reservoir (Kerala)", "osm_id": null, "category": "dam", "is_inflow_origin": true, "notes": "Outside Madurai-district OSM extract." },
+        { "name": "Periyar-Vaigai diversion tunnel", "osm_id": null, "category": "conduit" },
+        { "name": "Vaigai Dam", "osm_id": 14192817, "area_ha": 2348.06, "category": "dam", "notes": "OSM way 14192817 'Vaigai Reservoir'." },
+        { "name": "Pannaipatty Water Treatment Plant", "osm_id": null, "category": "treatment_plant", "is_terminal": true, "notes": "125 MLD design capacity; serves Madurai Municipal Corporation distribution." }
+      ],
+      "edges": [
+        { "from_index": 0, "to_index": 1, "link_type": "engineered", "notes": "Inter-state tunnel through Western Ghats." },
+        { "from_index": 1, "to_index": 2, "link_type": "engineered" },
+        { "from_index": 2, "to_index": 3, "link_type": "engineered", "notes": "Periyar Main Canal + Thirumangalam Canal + Vaigai bed flow + Pannaipatty intakes." }
+      ]
+    }
+  ]
+}

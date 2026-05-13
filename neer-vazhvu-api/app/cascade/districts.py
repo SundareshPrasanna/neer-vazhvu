@@ -116,6 +116,42 @@ class DistrictCascadeConfig:
     # LineString - water doesn't flow across rivers, it falls into them.
     rivers_path: Path | None = None
 
+    # Optional manual override for the methodology section's "spotlight
+    # tank" example. If set, the about-page narrative uses this tank as
+    # the convergence-example anchor instead of the auto-computed top
+    # degree_in. Useful when the topologically highest-convergence node
+    # is unnamed or less narratively meaningful than a known anchor
+    # (e.g. Madurai prefers Vandiyur for the HC PIL story even though
+    # an unnamed reservoir has higher degree_in).
+    narrative_anchor_osm_id: int | None = None
+
+    # OSM IDs of nodes that should be treated as terminal sinks - water
+    # comes in but never flows out through the natural-cascade graph.
+    # These are large engineered reservoirs / dams whose outflow is via
+    # spillway or canal to a river, not via gravity to a downstream tank.
+    #
+    # Auto-classification by OSM's water_type=reservoir tag is not safe
+    # in this region: in Madurai ~87% of cascade nodes carry that tag
+    # because OSM contributors apply it to traditional kanmoi tanks as
+    # well as engineered dams. Curated per district as we validate
+    # against TN PWD / CMWSSB / DHAN inventories. Empty by default; the
+    # graph behaves identically to V1 until populated.
+    terminal_sink_osm_ids: tuple[int, ...] = ()
+
+    # When True, an upstream tank can emit multiple outflows: the
+    # steepest candidate plus any whose score_m_per_km is within
+    # multi_outflow_score_tolerance of the best. Reflects the
+    # historical reality that many traditional tanks had a feeder
+    # channel AND a separate surplus channel. Default False preserves
+    # the V1 single-outflow rule; turn on per-district once validation
+    # shows the topography benefits from it (Bangalore's plateau
+    # geometry is the expected first beneficiary).
+    allow_multi_outflow: bool = False
+    # When allow_multi_outflow is True, a candidate survives if its
+    # score is at least (1 - tolerance) * best_score. Default 0.30
+    # keeps "near-tied" candidates and rejects clearly inferior ones.
+    multi_outflow_score_tolerance: float = 0.30
+
     # Layer B - curation (all optional, additive)
     named_cascades: tuple[NamedCascade, ...] = ()
     court_references: tuple[CourtCase, ...] = ()
@@ -135,6 +171,9 @@ class DistrictCascadeConfig:
     def cascade_river_outlets_geojson_path(self) -> Path:
         return CASCADE_OUTPUT_DIR / f"{self.district_id}-cascade-river-outlets.geojson"
 
+    def cascade_stats_json_path(self) -> Path:
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-cascade-stats.json"
+
     def cascade_nodes_pmtiles_path(self) -> Path:
         return CASCADE_TILE_DIR / f"{self.district_id}-cascade-nodes.pmtiles"
 
@@ -151,6 +190,10 @@ _MADURAI = DistrictCascadeConfig(
     state="tamil_nadu",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "madurai-water-bodies-current.geojson",
     rivers_path=PUBLIC_GEOJSON_DIR / "madurai-rivers.geojson",
+    # Vandiyur Lake. Topologically Madurai's highest-convergence node is
+    # an unnamed reservoir near Kadachanenthal (degree_in=10), but the
+    # public narrative anchor is Vandiyur (HC PIL R. Manibharathi v UoI).
+    narrative_anchor_osm_id=1073092381,
     historical_eras=(
         HistoricalEra(
             era="Pandya",

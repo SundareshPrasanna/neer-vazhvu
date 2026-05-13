@@ -398,7 +398,19 @@ function WaterBodiesPageContent() {
           {activeTab === "map" && (
             <div className="flex items-center gap-2">
               {hasCascadeOverlay && (
-                <CascadeToggle pressed={showCascade} onPressedChange={setShowCascade} />
+                <>
+                  <CascadeToggle pressed={showCascade} onPressedChange={setShowCascade} />
+                  {showCascade && (
+                    <Link
+                      href="/cascades"
+                      className="hidden sm:inline-flex items-center gap-1 rounded-md border border-sky-300 dark:border-sky-700 bg-sky-50 dark:bg-sky-950 px-2.5 py-1.5 text-xs font-medium text-sky-700 dark:text-sky-200 hover:bg-sky-100 dark:hover:bg-sky-900 transition-colors"
+                      title="See cascade health and priority"
+                    >
+                      Cascade health
+                      <span aria-hidden>→</span>
+                    </Link>
+                  )}
+                </>
               )}
               <ViewModeToggle value={viewMode} onChange={(mode) => { setViewMode(mode); setHiddenCategories(new Set()); }} />
             </div>

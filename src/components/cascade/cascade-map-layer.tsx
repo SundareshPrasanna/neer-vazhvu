@@ -45,6 +45,7 @@ interface NodeIndexEntry {
   areaHa: number;
   drainsToRiver: boolean;
   riverOutletDistanceKm: number | null;
+  isolationReason: string | null;
 }
 
 interface NodesGeoJsonFeature {
@@ -57,8 +58,21 @@ interface NodesGeoJsonFeature {
     area_ha?: number;
     drains_to_river?: boolean;
     river_outlet_distance_km?: number | null;
+    isolation_reason?: string | null;
   };
 }
+
+// Plain-English rendering of the algorithmic isolation-reason enum.
+// Stays terse for the tooltip; the about-page methodology section has
+// the full explanation of what each one means.
+const ISOLATION_REASON_LABEL: Record<string, string> = {
+  elevation_sampling_failed: "elevation unknown",
+  no_neighbors_in_range: "no tanks within range",
+  all_neighbors_uphill: "no downhill neighbours",
+  all_neighbors_out_of_cone: "downhill neighbours out of flow cone",
+  all_neighbors_river_blocked: "downhill neighbours blocked by river",
+  unknown_isolation: "isolated (unclassified)",
+};
 
 interface NodesGeoJson {
   type: "FeatureCollection";
@@ -183,6 +197,7 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
           areaHa: f.properties.area_ha ?? 0,
           drainsToRiver: f.properties.drains_to_river ?? false,
           riverOutletDistanceKm: f.properties.river_outlet_distance_km ?? null,
+          isolationReason: f.properties.isolation_reason ?? null,
         }));
       })
       .catch(() => {
@@ -212,18 +227,33 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
 
       const formatNodeTooltip = (entry: NodeIndexEntry): string => {
         const name = entry.name || "(unnamed tank)";
+        // cascade_position = 1 means no tank-to-tank inflow in this
+        // graph - not "source of water in the basin". Render it as
+        // "headwater" to keep the meaning honest at a glance; the
+        // methodology section spells out what we do not model.
+        const depthLabel =
+          entry.cascadePosition === 1
+            ? "headwater"
+            : `cascade depth ${entry.cascadePosition}`;
         const sinkLine =
           entry.drainsToRiver && entry.riverOutletDistanceKm !== null
             ? `<br/><span style="font-size:11px;color:#b45309">` +
               `drains to river (${entry.riverOutletDistanceKm.toFixed(2)} km)</span>`
             : "";
+        const isolationLine = entry.isolationReason
+          ? `<br/><span style="font-size:11px;color:#9333ea">` +
+            `isolated: ${
+              ISOLATION_REASON_LABEL[entry.isolationReason] ?? entry.isolationReason
+            }</span>`
+          : "";
         return (
           `<strong>${name}</strong>` +
           `<br/><span style="font-size:11px;color:#475569">` +
-          `cascade depth ${entry.cascadePosition} · ` +
+          `${depthLabel} · ` +
           `${entry.degreeIn} in · ${entry.degreeOut} out · ` +
           `${entry.areaHa.toLocaleString()} ha</span>` +
-          sinkLine
+          sinkLine +
+          isolationLine
         );
       };
 

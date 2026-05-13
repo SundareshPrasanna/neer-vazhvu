@@ -3,6 +3,9 @@
 import type { ReactNode } from "react";
 import { useLanguage } from "@/lib/i18n/context";
 import { CHENNAI } from "@/lib/cities/chennai";
+import type { CascadeStats } from "@/lib/cascade-stats";
+import { resolveConvergenceExample } from "@/lib/cascade-stats";
+import type { CascadeSensitivity } from "@/lib/cascade-sensitivity";
 import { CascadeMethodologySection } from "@/components/cascade/cascade-methodology-section";
 
 const LOST_WATER_BODY_SOURCES: {
@@ -134,7 +137,13 @@ function DataSource({
   );
 }
 
-export function AboutContent() {
+export function AboutContent({
+  cascadeStats,
+  cascadeSensitivity,
+}: {
+  cascadeStats: CascadeStats | null;
+  cascadeSensitivity?: CascadeSensitivity | null;
+}) {
   const { t } = useLanguage();
 
   return (
@@ -692,17 +701,23 @@ export function AboutContent() {
             city has the overlay enabled. Anchor id is referenced from
             the on-map "Full methodology -->" link.
             ────────────────────────────────────────────────────────────── */}
-        {CHENNAI.hasCascadeOverlay && (
+        {CHENNAI.hasCascadeOverlay && cascadeStats && (
           <Section
             id="cascade-methodology"
             title="Cascade reconstruction methodology - Chennai"
           >
             <CascadeMethodologySection
               cityDisplayName="Chennai"
-              nodeCount={720}
-              edgeCount={430}
-              riverOutletCount={50}
-              maxCascadeDepth={6}
+              cityId="chennai"
+              nodeCount={cascadeStats.node_count}
+              edgeCount={cascadeStats.edge_count}
+              riverOutletCount={cascadeStats.river_outlet_count}
+              maxCascadeDepth={cascadeStats.max_cascade_depth}
+              topConvergenceExample={
+                resolveConvergenceExample(cascadeStats) ?? undefined
+              }
+              edgeConfidenceCounts={cascadeStats.edge_confidence_counts}
+              sensitivity={cascadeSensitivity}
             />
           </Section>
         )}

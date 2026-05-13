@@ -14,12 +14,22 @@ from shapely.geometry import LineString
 
 from app.cascade.districts import DistrictCascadeConfig
 from app.cascade.topology import (
+    EDGE_CONFIDENCE_HIGH,
+    EDGE_CONFIDENCE_LOW,
+    EDGE_CONFIDENCE_MEDIUM,
+    ISOLATION_REASON_ALL_UPHILL,
+    ISOLATION_REASON_ELEVATION_MISSING,
+    ISOLATION_REASON_NO_NEIGHBORS,
+    ISOLATION_REASON_OUT_OF_CONE,
+    ISOLATION_REASON_RIVER_BLOCKED,
     _angular_distance_deg,
     _bearing_deg,
     _build_graph_from_polygons_with_elevations,
     _haversine_km,
     _polygon_centroid,
     _read_tank_polygons,
+    annotate_isolation_reasons_in_place,
+    classify_edge_confidence,
 )
 
 
@@ -499,3 +509,323 @@ def test_tank_with_tank_outflow_does_not_get_river_outlet(tmp_path):
     assert upstream["properties"]["degree_out"] == 1
     assert upstream["properties"]["drains_to_river"] is False
     assert graph["river_outlets"] == []
+
+
+def _isolation_reason(graph, osm_id):
+    return next(
+        n["properties"]["isolation_reason"]
+        for n in graph["nodes"]
+        if n["properties"]["osm_id"] == osm_id
+    )
+
+
+def test_isolation_reason_is_none_for_a_tank_in_a_cascade(tmp_path):
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.1, area_ha=20),
+        _square_polygon(2, "Mid", lat=9.92, lon=78.1, area_ha=15),
+        _square_polygon(3, "Low", lat=9.91, lon=78.1, area_ha=10),
+    ]
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[180.0, 150.0, 120.0],
+        district=_district(tmp_path),
+    )
+    for osm_id in (1, 2, 3):
+        assert _isolation_reason(graph, osm_id) is None
+
+
+def test_isolation_reason_elevation_missing(tmp_path):
+    # Single tank with no elevation sample. It is trivially isolated
+    # because the main loop never enters the candidate evaluation for it.
+    polygons = [
+        _square_polygon(1, "Only tank", lat=9.93, lon=78.1, area_ha=20),
+    ]
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[None],
+        district=_district(tmp_path),
+    )
+    assert _isolation_reason(graph, 1) == ISOLATION_REASON_ELEVATION_MISSING
+
+
+def test_isolation_reason_no_neighbors_in_range(tmp_path):
+    # Two tanks ~5 km apart with a 3 km distance cap. Both fall out of
+    # range of each other; both are isolated for the same reason.
+    polygons = [
+        _square_polygon(1, "Top", lat=9.95, lon=78.1, area_ha=20),
+        _square_polygon(2, "Far", lat=9.90, lon=78.1, area_ha=15),
+    ]
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[180.0, 120.0],
+        district=_district(tmp_path, max_downstream_distance_km=3.0),
+    )
+    assert _isolation_reason(graph, 1) == ISOLATION_REASON_NO_NEIGHBORS
+    assert _isolation_reason(graph, 2) == ISOLATION_REASON_NO_NEIGHBORS
+
+
+def test_isolation_reason_all_neighbors_uphill(tmp_path):
+    # Construct a tank that ends up isolated with reason all_uphill:
+    # - Tank 1 (elev 100): the target. Only in-range neighbour is tank 2
+    #   (uphill). No downstream candidate, hence degree_out=0.
+    # - Tank 2 (elev 150): in-range of both 1 (downhill, small drop) and
+    #   3 (downhill, much steeper drop). Picks 3 because of the steeper
+    #   score. So degree_in for tank 1 stays 0.
+    # - Tank 3 (elev 0): the much lower tank that pulls tank 2 away.
+    # Tank 1 is isolated because every in-range neighbour (just tank 2)
+    # is uphill of it.
+    # Geometry: tank 3 must be out of range of tank 1 (so tank 1 has
+    # only the uphill tank 2 in range), but in range of tank 2 (so
+    # tank 2 prefers tank 3 over tank 1 and leaves tank 1 with
+    # degree_in=0).
+    polygons = [
+        _square_polygon(1, "Target", lat=9.93, lon=78.100, area_ha=20),
+        _square_polygon(2, "Uphill neighbour", lat=9.93, lon=78.115, area_ha=15),
+        _square_polygon(3, "Steeper sink", lat=9.93, lon=78.140, area_ha=10),
+    ]
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[100.0, 150.0, 0.0],
+        district=_district(tmp_path, max_downstream_distance_km=3.0),
+    )
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    # Sanity-check the construction: tank 1 must end up genuinely
+    # isolated (no in, no out, no river outlet) before the reason can
+    # mean what we want.
+    assert by_id[1]["degree_in"] == 0
+    assert by_id[1]["degree_out"] == 0
+    assert by_id[1]["drains_to_river"] is False
+    assert _isolation_reason(graph, 1) == ISOLATION_REASON_ALL_UPHILL
+
+
+def test_isolation_reason_all_neighbors_out_of_cone(tmp_path):
+    # Two tanks: upstream flows SOUTH (D8 code 4) but the only lower
+    # tank in range is to the EAST. Lower tank is out of cone.
+    polygons = [
+        _square_polygon(1, "Upstream flowing south", lat=9.93, lon=78.10, area_ha=20),
+        _square_polygon(2, "Eastern low", lat=9.93, lon=78.12, area_ha=15),
+    ]
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[180.0, 100.0],
+        district=_district(tmp_path),
+        flow_directions=[4, None],  # tank 1 flows S, tank 2 missing
+    )
+    # Tank 1 has a lower neighbour but it's E, outside the S cone.
+    assert _isolation_reason(graph, 1) == ISOLATION_REASON_OUT_OF_CONE
+
+
+def test_isolation_reason_river_blocks_otherwise_valid_neighbor(tmp_path):
+    # Two tanks lined up with the lower one south; D8 says SOUTH; but a
+    # river cuts horizontally between them. All-else valid candidate is
+    # rejected by the river barrier; tank 1 ends up isolated.
+    polygons = [
+        _square_polygon(1, "North", lat=9.93, lon=78.1, area_ha=20),
+        _square_polygon(2, "South", lat=9.925, lon=78.1, area_ha=15),
+    ]
+    river = LineString([(78.05, 9.928), (78.15, 9.928)])  # cuts between them
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[180.0, 100.0],
+        district=_district(tmp_path, max_river_outlet_distance_km=0.001),
+        flow_directions=[4, None],
+        river_segments=[river],
+    )
+    # No tank-to-tank edge (river-blocked); river outlet distance is
+    # tiny so no drains_to_river. Tank 1 isolated, reason river-blocked.
+    assert _isolation_reason(graph, 1) == ISOLATION_REASON_RIVER_BLOCKED
+
+
+def test_annotate_isolation_reasons_in_place_reproduces_main_builder(tmp_path):
+    # Build a graph normally; clear the isolation_reason fields; run the
+    # standalone annotator; result must equal the main builder's output.
+    polygons = [
+        _square_polygon(1, "Top", lat=9.95, lon=78.1, area_ha=20),
+        _square_polygon(2, "Mid", lat=9.94, lon=78.1, area_ha=15),
+        _square_polygon(3, "Far", lat=9.90, lon=78.1, area_ha=10),  # out of range
+    ]
+    district = _district(tmp_path, max_downstream_distance_km=3.0)
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[180.0, 150.0, 100.0],
+        district=district,
+    )
+    expected = {
+        n["properties"]["osm_id"]: n["properties"]["isolation_reason"]
+        for n in graph["nodes"]
+    }
+
+    # Wipe the field, then re-annotate.
+    for node in graph["nodes"]:
+        node["properties"]["isolation_reason"] = None
+    summary = annotate_isolation_reasons_in_place(graph["nodes"], district)
+
+    actual = {
+        n["properties"]["osm_id"]: n["properties"]["isolation_reason"]
+        for n in graph["nodes"]
+    }
+    assert actual == expected
+    # Summary counters should match too.
+    isolated_total = sum(c for r, c in summary.items() if r != "non_isolated")
+    assert isolated_total == sum(1 for v in expected.values() if v is not None)
+
+
+def test_classify_edge_confidence_buckets_thresholds():
+    # Boundaries: >=5 = HIGH, >=1 and <5 = MEDIUM, <1 = LOW.
+    assert classify_edge_confidence(0.0) == EDGE_CONFIDENCE_LOW
+    assert classify_edge_confidence(0.5) == EDGE_CONFIDENCE_LOW
+    assert classify_edge_confidence(0.99) == EDGE_CONFIDENCE_LOW
+    assert classify_edge_confidence(1.0) == EDGE_CONFIDENCE_MEDIUM
+    assert classify_edge_confidence(3.0) == EDGE_CONFIDENCE_MEDIUM
+    assert classify_edge_confidence(4.99) == EDGE_CONFIDENCE_MEDIUM
+    assert classify_edge_confidence(5.0) == EDGE_CONFIDENCE_HIGH
+    assert classify_edge_confidence(10.0) == EDGE_CONFIDENCE_HIGH
+    assert classify_edge_confidence(100.0) == EDGE_CONFIDENCE_HIGH
+
+
+def test_builder_assigns_confidence_field_to_every_edge(tmp_path):
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.1, area_ha=20),
+        _square_polygon(2, "Mid", lat=9.92, lon=78.1, area_ha=15),
+        _square_polygon(3, "Low", lat=9.91, lon=78.1, area_ha=10),
+    ]
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[180.0, 150.0, 120.0],
+        district=_district(tmp_path),
+    )
+    for edge in graph["edges"]:
+        score = edge["properties"]["score_m_per_km"]
+        confidence = edge["properties"]["confidence"]
+        assert confidence == classify_edge_confidence(score)
+        # Distance is ~1km between tanks, drop is 30m, so score ~30 -> HIGH.
+        assert confidence == EDGE_CONFIDENCE_HIGH
+
+
+def test_terminal_sink_does_not_emit_outgoing_edge(tmp_path):
+    # Three-tank chain. Mark the MIDDLE tank as terminal. Expect the
+    # top tank still flows to it (it accepts inflow), but the middle
+    # tank does NOT flow to the low one (terminal-skip kicks in).
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.1, area_ha=20),
+        _square_polygon(2, "Mid TERMINAL", lat=9.92, lon=78.1, area_ha=200),
+        _square_polygon(3, "Low", lat=9.91, lon=78.1, area_ha=10),
+    ]
+    elevations = [180.0, 150.0, 120.0]
+    district = _district(tmp_path, terminal_sink_osm_ids=(2,))
+
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons, elevations=elevations, district=district
+    )
+    edges = {
+        (e["properties"]["from_osm_id"], e["properties"]["to_osm_id"])
+        for e in graph["edges"]
+    }
+    # Top still flows INTO the terminal reservoir.
+    assert (1, 2) in edges
+    # But the terminal reservoir does NOT flow on to the low tank.
+    assert (2, 3) not in edges
+
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    assert by_id[2]["degree_in"] == 1
+    assert by_id[2]["degree_out"] == 0
+    # Low tank ends up isolated since the terminal reservoir blocks the chain.
+    assert by_id[3]["degree_in"] == 0
+    assert by_id[3]["degree_out"] == 0
+
+
+def test_terminal_sink_can_still_drain_to_river(tmp_path):
+    # A terminal reservoir should still be allowed to register a river
+    # outlet (models spillway-to-river). Set up: single terminal tank,
+    # flow direction points to a river within range.
+    polygons = [
+        _square_polygon(1, "Terminal reservoir", lat=9.93, lon=78.1, area_ha=500),
+    ]
+    river = LineString([(78.05, 9.92), (78.15, 9.92)])  # river just south
+    district = _district(
+        tmp_path,
+        terminal_sink_osm_ids=(1,),
+        max_river_outlet_distance_km=3.0,
+    )
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons,
+        elevations=[150.0],
+        district=district,
+        flow_directions=[4],  # S
+        river_segments=[river],
+    )
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    assert by_id[1]["degree_out"] == 0  # no tank-to-tank outflow
+    assert by_id[1]["drains_to_river"] is True  # spillway path preserved
+    assert len(graph["river_outlets"]) == 1
+
+
+def test_multi_outflow_default_off_preserves_single_outflow(tmp_path):
+    # Top tank has two near-equal downhill candidates. Default behaviour
+    # (allow_multi_outflow=False) must still pick exactly one.
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.100, area_ha=20),
+        _square_polygon(2, "Near-equal A", lat=9.92, lon=78.100, area_ha=10),
+        _square_polygon(3, "Near-equal B", lat=9.92, lon=78.110, area_ha=10),
+    ]
+    # Both candidates ~1.1 km away from top; both drop 50m.
+    elevations = [200.0, 150.0, 150.0]
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons, elevations=elevations, district=_district(tmp_path)
+    )
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    assert by_id[1]["degree_out"] == 1
+
+
+def test_multi_outflow_keeps_near_tied_candidates(tmp_path):
+    # Same geometry, but allow_multi_outflow=True with 30% tolerance.
+    # Both candidates have identical scores (tied at 100% of best), so
+    # both must survive.
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.100, area_ha=20),
+        _square_polygon(2, "Near-equal A", lat=9.92, lon=78.100, area_ha=10),
+        _square_polygon(3, "Near-equal B", lat=9.92, lon=78.110, area_ha=10),
+    ]
+    elevations = [200.0, 150.0, 150.0]
+    district = _district(
+        tmp_path, allow_multi_outflow=True, multi_outflow_score_tolerance=0.30
+    )
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons, elevations=elevations, district=district
+    )
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    edges = {
+        (e["properties"]["from_osm_id"], e["properties"]["to_osm_id"])
+        for e in graph["edges"]
+    }
+    assert by_id[1]["degree_out"] == 2
+    assert (1, 2) in edges
+    assert (1, 3) in edges
+
+
+def test_multi_outflow_drops_candidates_below_tolerance(tmp_path):
+    # One clearly steeper candidate, one much shallower. With 30%
+    # tolerance the shallow one must NOT survive even with multi-outflow on.
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.100, area_ha=20),
+        _square_polygon(2, "Steep", lat=9.92, lon=78.100, area_ha=10),
+        _square_polygon(3, "Shallow", lat=9.92, lon=78.110, area_ha=10),
+    ]
+    # Tank 2: drop 150, dist ~1.1km, score ~136
+    # Tank 3: drop 10,  dist ~1.6km, score ~6
+    # 6 / 136 = 4% of best - far below 70% survival threshold.
+    elevations = [200.0, 50.0, 190.0]
+    district = _district(
+        tmp_path, allow_multi_outflow=True, multi_outflow_score_tolerance=0.30
+    )
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons, elevations=elevations, district=district
+    )
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    edges = {
+        (e["properties"]["from_osm_id"], e["properties"]["to_osm_id"])
+        for e in graph["edges"]
+    }
+    assert by_id[1]["degree_out"] == 1
+    assert (1, 2) in edges
+    assert (1, 3) not in edges
