@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CHENNAI } from "@/lib/cities/chennai";
-import { loadCascadeHealth } from "@/lib/cascade-health";
+import { loadCascadeHealth } from "@/lib/cascade-health-loader";
 import { CascadeHealthPanel } from "@/components/cascade/cascade-health-panel";
 
 export const metadata: Metadata = {

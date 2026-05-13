@@ -1,5 +1,5 @@
-import { loadCascadeStats } from "@/lib/cascade-stats";
-import { loadCascadeSensitivity } from "@/lib/cascade-sensitivity";
+import { loadCascadeStats } from "@/lib/cascade-stats-loader";
+import { loadCascadeSensitivity } from "@/lib/cascade-sensitivity-loader";
 import { AboutContent } from "./about-content";
 
 export const metadata = {

@@ -1,15 +1,10 @@
 /**
- * Server-side loader for cascade-health JSON outputs.
- *
- * The pipeline at neer-vazhvu-api/app/cascade/health.py writes
- * public/data/cascade/{cityId}-cascades-health.json with documented +
- * auto-derived cascades, each scored and priority-classed. This
- * module reads those files at server-render time so the frontend
- * never has to parse them on the client.
+ * Cascade health: types + pure utility constants. Safe to import from
+ * client components (no fs / no node-only modules). The server-side
+ * loader that reads the JSON from disk lives in
+ * `cascade-health-loader.ts` and must only be imported from server
+ * components (page.tsx files), never from "use client" components.
  */
-
-import fs from "node:fs";
-import path from "node:path";
 
 export type CascadePriority = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
 
@@ -132,21 +127,6 @@ export interface CascadeHealth {
   };
   documented_cascades: DocumentedCascadeScored[];
   auto_cascades: AutoCascadeScored[];
-}
-
-const HEALTH_DIR = path.join(process.cwd(), "public", "data", "cascade");
-
-export function loadCascadeHealth(cityId: string): CascadeHealth | null {
-  const filePath = path.join(HEALTH_DIR, `${cityId}-cascades-health.json`);
-  if (!fs.existsSync(filePath)) {
-    return null;
-  }
-  try {
-    const raw = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(raw) as CascadeHealth;
-  } catch {
-    return null;
-  }
 }
 
 /**

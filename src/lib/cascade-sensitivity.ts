@@ -1,14 +1,9 @@
 /**
- * Server-side loader for cascade sensitivity sweep outputs.
- *
- * The pipeline at neer-vazhvu-api/app/cascade/sensitivity.py writes
- * public/data/cascade/{cityId}-cascade-sensitivity.json with per-
- * parameter sweep results. This module reads those files at server-
- * render time for the about-page methodology section.
+ * Cascade sensitivity: types only. Safe to import from client
+ * components. The server-side loader lives in
+ * `cascade-sensitivity-loader.ts` and must only be imported from
+ * server components.
  */
-
-import fs from "node:fs";
-import path from "node:path";
 
 export interface SensitivityResult {
   value: number;
@@ -43,24 +38,4 @@ export interface CascadeSensitivity {
     inputs_hash: string;
   };
   sweeps: SensitivitySweep[];
-}
-
-const SENSITIVITY_DIR = path.join(process.cwd(), "public", "data", "cascade");
-
-export function loadCascadeSensitivity(
-  cityId: string,
-): CascadeSensitivity | null {
-  const filePath = path.join(
-    SENSITIVITY_DIR,
-    `${cityId}-cascade-sensitivity.json`,
-  );
-  if (!fs.existsSync(filePath)) {
-    return null;
-  }
-  try {
-    const raw = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(raw) as CascadeSensitivity;
-  } catch {
-    return null;
-  }
 }

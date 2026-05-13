@@ -1,19 +1,10 @@
 /**
- * Server-side loader for cascade reconstruction stats manifests.
- *
- * The pipeline at neer-vazhvu-api/app/cascade/publish.py writes one
- * stats JSON per district at public/data/cascade/{cityId}-cascade-stats.json.
- * This module reads those files at build time / server-render time so
- * the frontend never hardcodes the counts.
- *
- * Returns null if the stats file is absent (e.g. a city without
- * cascade overlay, or one whose pipeline has not yet run). Callers
- * should treat null as "do not render the cascade methodology
- * section".
+ * Cascade stats: types + pure utility functions. Safe to import from
+ * client components (no fs / no node-only modules). The server-side
+ * loader that reads the JSON from disk lives in
+ * `cascade-stats-loader.ts` and must only be imported from server
+ * components (page.tsx files), never from "use client" components.
  */
-
-import fs from "node:fs";
-import path from "node:path";
 
 export interface CascadeNodeSummary {
   osm_id: number;
@@ -47,21 +38,6 @@ export interface CascadeStats {
   top_convergence: CascadeNodeSummary | null;
   narrative_anchor: CascadeNodeSummary | null;
   edge_confidence_counts?: EdgeConfidenceCounts;
-}
-
-const STATS_DIR = path.join(process.cwd(), "public", "data", "cascade");
-
-export function loadCascadeStats(cityId: string): CascadeStats | null {
-  const filePath = path.join(STATS_DIR, `${cityId}-cascade-stats.json`);
-  if (!fs.existsSync(filePath)) {
-    return null;
-  }
-  try {
-    const raw = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(raw) as CascadeStats;
-  } catch {
-    return null;
-  }
 }
 
 /**

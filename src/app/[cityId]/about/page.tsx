@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
-import { loadCascadeStats } from "@/lib/cascade-stats";
-import { loadCascadeSensitivity } from "@/lib/cascade-sensitivity";
+import { loadCascadeStats } from "@/lib/cascade-stats-loader";
+import { loadCascadeSensitivity } from "@/lib/cascade-sensitivity-loader";
 import { CityAboutContent } from "./about-content";
 
 interface PageProps {
