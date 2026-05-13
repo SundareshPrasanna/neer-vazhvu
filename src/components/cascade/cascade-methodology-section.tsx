@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 /**
@@ -16,6 +17,7 @@ import type { ReactNode } from "react";
  */
 export function CascadeMethodologySection({
   cityDisplayName,
+  cityId,
   nodeCount,
   edgeCount,
   riverOutletCount,
@@ -24,6 +26,7 @@ export function CascadeMethodologySection({
   edgeConfidenceCounts,
 }: {
   cityDisplayName: string;
+  cityId?: string;
   nodeCount: number;
   edgeCount: number;
   riverOutletCount: number;
@@ -48,6 +51,24 @@ export function CascadeMethodologySection({
         structure should have been organised, given the actual elevation
         and flow direction of the land.
       </p>
+
+      {cityId ? (
+        <p className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-3 text-sm">
+          <strong className="text-slate-800 dark:text-slate-200">
+            See cascade health scores:
+          </strong>{" "}
+          <Link
+            href={`/${cityId}/cascades`}
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Tank cascades at risk - {cityDisplayName} &rarr;
+          </Link>
+          {" "}
+          ranks every documented and auto-derived cascade by fragility +
+          priority, with citations and court / restoration anchors where
+          known.
+        </p>
+      ) : null}
 
       <div>
         <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-1">

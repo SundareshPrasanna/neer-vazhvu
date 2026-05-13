@@ -406,6 +406,7 @@ export function CityAboutContent({
           >
             <CascadeMethodologySection
               cityDisplayName={cityName}
+              cityId={config.cityId}
               nodeCount={cascadeStats.node_count}
               edgeCount={cascadeStats.edge_count}
               riverOutletCount={cascadeStats.river_outlet_count}
