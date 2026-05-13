@@ -195,6 +195,56 @@ def test_score_auto_cascade_full_chain():
     assert result["total_area_ha"] == 23.0
 
 
+def test_score_auto_cascade_returns_tanks_in_topological_order():
+    # Chain: 1 -> 2 -> 3 -> 4. Topological sort should produce that order.
+    nodes_by_id = {
+        1: {"name": "Head", "area_ha": 5.0, "isolation_reason": None},
+        2: {"name": "Mid", "area_ha": 4.0, "isolation_reason": None},
+        3: {"name": "Lower", "area_ha": 3.0, "isolation_reason": None},
+        4: {"name": "Terminal", "area_ha": 2.0, "isolation_reason": None},
+    }
+    edges = [
+        {"from_osm_id": 1, "to_osm_id": 2, "confidence": "high"},
+        {"from_osm_id": 2, "to_osm_id": 3, "confidence": "high"},
+        {"from_osm_id": 3, "to_osm_id": 4, "confidence": "high"},
+    ]
+    result = health.score_auto_cascade(
+        component={1, 2, 3, 4},
+        nodes_by_id=nodes_by_id,
+        component_edges=edges,
+        lost_tank_names=set(),
+    )
+    order = [t["osm_id"] for t in result["tanks_in_order"]]
+    assert order == [1, 2, 3, 4]
+    # Headwater + terminal flags
+    assert result["tanks_in_order"][0]["is_headwater_in_component"] is True
+    assert result["tanks_in_order"][0]["is_terminal_in_component"] is False
+    assert result["tanks_in_order"][-1]["is_headwater_in_component"] is False
+    assert result["tanks_in_order"][-1]["is_terminal_in_component"] is True
+
+
+def test_score_auto_cascade_tanks_in_order_handles_diamond():
+    # 1 -> 2 and 1 -> 3; 2 -> 4 and 3 -> 4. Tank 1 first, tank 4 last.
+    nodes_by_id = {nid: {"name": f"T{nid}", "area_ha": 1.0} for nid in [1, 2, 3, 4]}
+    edges = [
+        {"from_osm_id": 1, "to_osm_id": 2},
+        {"from_osm_id": 1, "to_osm_id": 3},
+        {"from_osm_id": 2, "to_osm_id": 4},
+        {"from_osm_id": 3, "to_osm_id": 4},
+    ]
+    result = health.score_auto_cascade(
+        component={1, 2, 3, 4},
+        nodes_by_id=nodes_by_id,
+        component_edges=edges,
+        lost_tank_names=set(),
+    )
+    order = [t["osm_id"] for t in result["tanks_in_order"]]
+    assert order[0] == 1  # headwater first
+    assert order[-1] == 4  # terminal last
+    # 2 and 3 in between, in either order (osm_id-tiebroken to 2 then 3)
+    assert order[1:3] == [2, 3]
+
+
 def test_score_auto_cascade_isolated_nodes_reduce_score():
     # Two of three nodes isolated, low-confidence edges.
     nodes_by_id = {

@@ -369,16 +369,29 @@ function AutoCascadeCard({ cascade }: { cascade: AutoCascadeScored }) {
     cascade.representative_tank_name ?? `Cascade of ${cascade.size} tanks`;
   return (
     <article
-      className={`rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/30 p-4 ring-1 ${style.ring}`}
+      className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/30 p-5 ring-1 ${style.ring}`}
     >
-      <header className="flex items-start justify-between gap-3 mb-2">
+      <header className="flex items-start justify-between gap-3 mb-3">
         <div className="min-w-0">
-          <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 truncate">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 truncate">
             {name}
           </h3>
-          <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            {cascade.size} tanks · {cascade.edge_count} edges ·{" "}
-            {cascade.total_area_ha.toLocaleString()} ha
+          <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-500 dark:text-slate-400">
+            <span>Auto-derived</span>
+            <span aria-hidden>·</span>
+            <span>{cascade.size} tanks</span>
+            <span aria-hidden>·</span>
+            <span>{cascade.edge_count} edges</span>
+            <span aria-hidden>·</span>
+            <span>{cascade.total_area_ha.toLocaleString()} ha</span>
+            {cascade.documented_overlap ? (
+              <>
+                <span aria-hidden>·</span>
+                <span className="text-blue-600 dark:text-blue-400 font-medium">
+                  ↔ {cascade.documented_overlap.documented_name}
+                </span>
+              </>
+            ) : null}
           </div>
         </div>
         <PriorityBadge priority={cascade.priority} />
@@ -386,24 +399,75 @@ function AutoCascadeCard({ cascade }: { cascade: AutoCascadeScored }) {
 
       <HealthBar health={cascade.health_score} priority={cascade.priority} />
 
-      <div className="mt-3 text-xs grid grid-cols-2 md:grid-cols-4 gap-2 text-slate-600 dark:text-slate-400">
-        <span>
-          Avg confidence: {cascade.avg_edge_confidence.toFixed(2)}
-        </span>
-        <span>Isolated: {cascade.isolated_count}</span>
-        <span>
-          Lost-tank hits: {cascade.lost_tank_intersections.length}
-        </span>
-        {cascade.documented_overlap ? (
-          <span className="text-blue-600 dark:text-blue-400 font-medium md:text-right truncate">
-            ↔ {cascade.documented_overlap.documented_name}
-          </span>
-        ) : (
-          <span className="text-slate-400 dark:text-slate-500">
-            no documented overlap
-          </span>
-        )}
+      <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+        <Component
+          label="Tanks in component"
+          value={cascade.size.toString()}
+          sub={`${cascade.total_area_ha.toLocaleString()} ha total`}
+        />
+        <Component
+          label="Edges in component"
+          value={cascade.edge_count.toString()}
+          sub={`${cascade.isolated_count} isolated tanks`}
+        />
+        <Component
+          label="Avg edge confidence"
+          value={cascade.avg_edge_confidence.toFixed(2)}
+          sub="0=low, 1=high"
+        />
+        <Component
+          label="Lost-tank hits"
+          value={cascade.lost_tank_intersections.length.toString()}
+          sub={
+            cascade.lost_tank_intersections.length > 0
+              ? cascade.lost_tank_intersections.join(", ")
+              : "none in known list"
+          }
+        />
       </div>
+
+      {cascade.tanks_in_order.length > 0 ? (
+        <div className="mt-4 text-xs">
+          <details className="group">
+            <summary className="cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 select-none">
+              Tanks in order ({cascade.tanks_in_order.length})
+            </summary>
+            <ol className="mt-2 space-y-1 list-decimal list-inside text-slate-700 dark:text-slate-300">
+              {cascade.tanks_in_order.map((tank, i) => (
+                <li key={`${cascade.cascade_id}-${i}`}>
+                  <span className="font-medium">
+                    {tank.name || `(unnamed OSM ${tank.osm_id})`}
+                  </span>
+                  {tank.area_ha != null ? (
+                    <span className="text-slate-500 dark:text-slate-400 ml-1">
+                      ({tank.area_ha.toLocaleString()} ha)
+                    </span>
+                  ) : null}
+                  {tank.is_headwater_in_component ? (
+                    <span className="ml-2 text-sky-600 dark:text-sky-400">
+                      headwater
+                    </span>
+                  ) : null}
+                  {tank.is_terminal_in_component &&
+                  !tank.is_headwater_in_component ? (
+                    <span className="ml-2 text-amber-600 dark:text-amber-400">
+                      terminal
+                    </span>
+                  ) : null}
+                  {tank.isolation_reason ? (
+                    <span className="ml-2 text-purple-600 dark:text-purple-400">
+                      isolated · {tank.isolation_reason.replace(/_/g, " ")}
+                    </span>
+                  ) : null}
+                  <span className="ml-2 text-slate-400 dark:text-slate-500">
+                    OSM {tank.osm_id}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </details>
+        </div>
+      ) : null}
     </article>
   );
 }

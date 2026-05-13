@@ -82,6 +82,17 @@ export interface DocumentedCascadeScored {
   };
 }
 
+export interface AutoCascadeTank {
+  osm_id: number;
+  name: string | null;
+  area_ha: number | null;
+  isolation_reason: string | null;
+  in_within_component: number;
+  out_within_component: number;
+  is_headwater_in_component: boolean;
+  is_terminal_in_component: boolean;
+}
+
 export interface AutoCascadeScored {
   cascade_id: string;
   size: number;
@@ -95,6 +106,7 @@ export interface AutoCascadeScored {
   lost_tank_intersections: string[];
   health_score: number;
   priority: CascadePriority;
+  tanks_in_order: AutoCascadeTank[];
   documented_overlap: {
     documented_cascade_id: string;
     documented_name: string;

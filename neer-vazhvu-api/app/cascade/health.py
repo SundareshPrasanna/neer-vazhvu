@@ -353,6 +353,55 @@ def find_connected_components(
     return list(components.values())
 
 
+def _topological_sort_within_component(
+    component: set[int],
+    component_edges: list[dict[str, Any]],
+) -> list[int]:
+    """Kahn's algorithm topological sort over the directed subgraph
+    induced by `component`. Returns OSM IDs roughly in upstream-to-
+    downstream order.
+
+    Tanks with no in-edges within the component (the component's
+    headwaters) come first, then their downstream targets, and so on.
+    Ties are broken by osm_id for determinism. If the component
+    contains cycles (extremely unlikely given the single-outflow
+    topology, but possible under multi-outflow with weird terrain),
+    any remaining nodes are appended at the end.
+    """
+    indeg: dict[int, int] = {nid: 0 for nid in component}
+    out_adj: dict[int, list[int]] = {nid: [] for nid in component}
+    for e in component_edges:
+        try:
+            f = int(e.get("from_osm_id"))
+            t = int(e.get("to_osm_id"))
+        except (TypeError, ValueError):
+            continue
+        if f in component and t in component:
+            out_adj[f].append(t)
+            indeg[t] += 1
+
+    # Sort the seed list (no in-edges) by osm_id for deterministic output.
+    queue: list[int] = sorted([nid for nid, d in indeg.items() if d == 0])
+    ordered: list[int] = []
+    queue_idx = 0
+    while queue_idx < len(queue):
+        nid = queue[queue_idx]
+        queue_idx += 1
+        ordered.append(nid)
+        # Sort downstream targets for determinism.
+        for next_nid in sorted(out_adj.get(nid, [])):
+            indeg[next_nid] -= 1
+            if indeg[next_nid] == 0:
+                queue.append(next_nid)
+
+    # Append any remaining nodes (in case of cycles) for completeness.
+    if len(ordered) < len(component):
+        remaining = sorted(component - set(ordered))
+        ordered.extend(remaining)
+
+    return ordered
+
+
 def score_auto_cascade(
     component: set[int],
     *,
@@ -406,6 +455,45 @@ def score_auto_cascade(
     )
     health = max(0.0, round(raw_health - penalty, 1))
 
+    # Per-component in/out degree counts. Used by the UI to mark
+    # headwaters (in_within=0) and terminals (out_within=0) when
+    # rendering the ordered tank list.
+    in_within: dict[int, int] = {nid: 0 for nid in component}
+    out_within: dict[int, int] = {nid: 0 for nid in component}
+    for e in component_edges:
+        try:
+            f = int(e.get("from_osm_id"))
+            t = int(e.get("to_osm_id"))
+        except (TypeError, ValueError):
+            continue
+        if f in component and t in component:
+            out_within[f] += 1
+            in_within[t] += 1
+
+    ordered_ids = _topological_sort_within_component(component, component_edges)
+    tanks_in_order: list[dict[str, Any]] = []
+    for nid in ordered_ids:
+        props = nodes_by_id.get(nid) or {}
+        name = (props.get("name") or "").strip() or None
+        in_count = in_within.get(nid, 0)
+        out_count = out_within.get(nid, 0)
+        tanks_in_order.append(
+            {
+                "osm_id": nid,
+                "name": name,
+                "area_ha": (
+                    round(float(props.get("area_ha")), 2)
+                    if props.get("area_ha") is not None
+                    else None
+                ),
+                "isolation_reason": props.get("isolation_reason"),
+                "in_within_component": in_count,
+                "out_within_component": out_count,
+                "is_headwater_in_component": in_count == 0,
+                "is_terminal_in_component": out_count == 0,
+            }
+        )
+
     representative_name = None
     largest_area = 0.0
     for nid in component:
@@ -428,6 +516,7 @@ def score_auto_cascade(
         "lost_tank_intersections": lost_hits,
         "health_score": health,
         "priority": _classify_priority(health),
+        "tanks_in_order": tanks_in_order,
     }
 
 
