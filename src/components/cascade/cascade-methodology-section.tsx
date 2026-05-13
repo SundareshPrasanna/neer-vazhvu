@@ -195,9 +195,17 @@ export function CascadeMethodologySection({
             cone does most of the work.
           </li>
           <li>
-            <strong>Single outflow per tank.</strong> Real tanks often have
-            one feeder channel and one separate surplus channel; we model
-            only the most likely single outflow.
+            <strong>Single outflow per tank (default).</strong> Real
+            tanks often have one feeder channel and one separate surplus
+            channel; the V1 algorithm models only the steepest candidate
+            edge per upstream. A per-district{" "}
+            <code className="text-xs">allow_multi_outflow</code> opt-in
+            relaxes this and keeps near-tied candidates (within 30&#37;
+            of the best score by default), modelling tanks with both
+            feeder and surplus. Off by default for {cityDisplayName};
+            we plan to enable it for plateau-geography districts where
+            terrain gradients are weaker and multi-branch cascades are
+            documented in the historical record.
           </li>
           <li>
             <strong>River-coverage gaps.</strong> The river-crossing barrier

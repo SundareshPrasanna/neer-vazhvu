@@ -138,6 +138,20 @@ class DistrictCascadeConfig:
     # graph behaves identically to V1 until populated.
     terminal_sink_osm_ids: tuple[int, ...] = ()
 
+    # When True, an upstream tank can emit multiple outflows: the
+    # steepest candidate plus any whose score_m_per_km is within
+    # multi_outflow_score_tolerance of the best. Reflects the
+    # historical reality that many traditional tanks had a feeder
+    # channel AND a separate surplus channel. Default False preserves
+    # the V1 single-outflow rule; turn on per-district once validation
+    # shows the topography benefits from it (Bangalore's plateau
+    # geometry is the expected first beneficiary).
+    allow_multi_outflow: bool = False
+    # When allow_multi_outflow is True, a candidate survives if its
+    # score is at least (1 - tolerance) * best_score. Default 0.30
+    # keeps "near-tied" candidates and rejects clearly inferior ones.
+    multi_outflow_score_tolerance: float = 0.30
+
     # Layer B - curation (all optional, additive)
     named_cascades: tuple[NamedCascade, ...] = ()
     court_references: tuple[CourtCase, ...] = ()

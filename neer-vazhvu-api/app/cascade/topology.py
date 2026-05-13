@@ -536,10 +536,19 @@ def _build_graph_from_polygons_with_elevations(
 
         river_index = STRtree(river_segments)
 
-    edges_out: dict[int, tuple[int, float, float]] = {}
+    # edges_out maps upstream osm_id -> list of (downstream, score, dist_km).
+    # When district.allow_multi_outflow is False (V1 default), the list
+    # has length 1 (the steepest candidate). When True, candidates
+    # within district.multi_outflow_score_tolerance of the best score
+    # also survive, modelling tanks with both a feeder channel and a
+    # separate surplus channel.
+    edges_out: dict[int, list[tuple[int, float, float]]] = {}
     osm_ids = list(nodes_by_osm)
     max_dist = district.max_downstream_distance_km
     terminal_sinks: frozenset[int] = frozenset(district.terminal_sink_osm_ids)
+    multi_outflow = bool(district.allow_multi_outflow)
+    score_tolerance = float(district.multi_outflow_score_tolerance)
+    surviving_threshold_ratio = max(0.0, 1.0 - score_tolerance)
 
     for upstream in osm_ids:
         if upstream in terminal_sinks:
@@ -554,7 +563,7 @@ def _build_graph_from_polygons_with_elevations(
             continue
         cent_up = centroids[upstream]
         flow_code_up = flow_by_osm[upstream]
-        best: tuple[int, float, float] | None = None  # (downstream, score, dist_km)
+        candidates: list[tuple[int, float, float]] = []
         for downstream in osm_ids:
             if downstream == upstream:
                 continue
@@ -587,10 +596,19 @@ def _build_graph_from_polygons_with_elevations(
                 if len(hits) > 0:
                     continue
             score = drop / dist
-            if best is None or score > best[1]:
-                best = (downstream, score, dist)
-        if best is not None:
-            edges_out[upstream] = best
+            candidates.append((downstream, score, dist))
+
+        if not candidates:
+            continue
+        # Sort by score descending so the steepest is always first.
+        candidates.sort(key=lambda c: -c[1])
+        if not multi_outflow:
+            edges_out[upstream] = [candidates[0]]
+            continue
+        best_score = candidates[0][1]
+        cutoff = best_score * surviving_threshold_ratio
+        surviving = [c for c in candidates if c[1] >= cutoff]
+        edges_out[upstream] = surviving
 
     # Tanks that didn't get a tank-to-tank outflow but whose flow
     # direction points to a river within range drain INTO that river.
@@ -610,8 +628,9 @@ def _build_graph_from_polygons_with_elevations(
                 river_outlets_by_osm[tank_osm_id] = outlet
 
     degree_in: dict[int, int] = {osm_id: 0 for osm_id in osm_ids}
-    for _upstream, (downstream, _score, _dist) in edges_out.items():
-        degree_in[downstream] += 1
+    for _upstream, downstreams in edges_out.items():
+        for downstream, _score, _dist in downstreams:
+            degree_in[downstream] += 1
 
     isolation_reasons: dict[int, str | None] = {}
     for osm_id in osm_ids:
@@ -639,7 +658,11 @@ def _build_graph_from_polygons_with_elevations(
             return cascade_position[osm_id]
         if osm_id in seen:
             return 1
-        uppers = [up for up, (dn, _s, _d) in edges_out.items() if dn == osm_id]
+        uppers = [
+            up
+            for up, downstreams in edges_out.items()
+            if any(dn == osm_id for dn, _s, _d in downstreams)
+        ]
         depth = (
             1 + max(_resolve_position(up, seen | {osm_id}) for up in uppers)
             if uppers
@@ -668,7 +691,7 @@ def _build_graph_from_polygons_with_elevations(
                     "elevation_m": node["elevation_m"],
                     "flow_direction_d8": flow_by_osm[osm_id],
                     "degree_in": degree_in[osm_id],
-                    "degree_out": 1 if osm_id in edges_out else 0,
+                    "degree_out": len(edges_out.get(osm_id, [])),
                     "cascade_position": cascade_position[osm_id],
                     "drains_to_river": outlet is not None,
                     "river_outlet_distance_km": (
@@ -683,32 +706,33 @@ def _build_graph_from_polygons_with_elevations(
         )
 
     edge_features: list[dict[str, Any]] = []
-    for upstream, (downstream, score, dist_km) in edges_out.items():
-        cent_up = centroids[upstream]
-        cent_dn = centroids[downstream]
-        elev_up = elevations_by_osm[upstream]
-        elev_dn = elevations_by_osm[downstream]
-        edge_features.append(
-            {
-                "type": "Feature",
-                "geometry": {
-                    "type": "LineString",
-                    "coordinates": [
-                        [cent_up[1], cent_up[0]],
-                        [cent_dn[1], cent_dn[0]],
-                    ],
-                },
-                "properties": {
-                    "from_osm_id": upstream,
-                    "to_osm_id": downstream,
-                    "distance_km": round(dist_km, 3),
-                    "elevation_drop_m": round((elev_up or 0) - (elev_dn or 0), 2),
-                    "score_m_per_km": round(score, 2),
-                    "confidence": classify_edge_confidence(score),
-                    "status": "predicted",
-                },
-            }
-        )
+    for upstream, downstreams in edges_out.items():
+        for downstream, score, dist_km in downstreams:
+            cent_up = centroids[upstream]
+            cent_dn = centroids[downstream]
+            elev_up = elevations_by_osm[upstream]
+            elev_dn = elevations_by_osm[downstream]
+            edge_features.append(
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
+                            [cent_up[1], cent_up[0]],
+                            [cent_dn[1], cent_dn[0]],
+                        ],
+                    },
+                    "properties": {
+                        "from_osm_id": upstream,
+                        "to_osm_id": downstream,
+                        "distance_km": round(dist_km, 3),
+                        "elevation_drop_m": round((elev_up or 0) - (elev_dn or 0), 2),
+                        "score_m_per_km": round(score, 2),
+                        "confidence": classify_edge_confidence(score),
+                        "status": "predicted",
+                    },
+                }
+            )
 
     river_outlet_features: list[dict[str, Any]] = []
     for tank_osm_id, (

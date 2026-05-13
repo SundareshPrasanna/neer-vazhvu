@@ -754,3 +754,74 @@ def test_terminal_sink_can_still_drain_to_river(tmp_path):
     assert by_id[1]["degree_out"] == 0  # no tank-to-tank outflow
     assert by_id[1]["drains_to_river"] is True  # spillway path preserved
     assert len(graph["river_outlets"]) == 1
+
+
+def test_multi_outflow_default_off_preserves_single_outflow(tmp_path):
+    # Top tank has two near-equal downhill candidates. Default behaviour
+    # (allow_multi_outflow=False) must still pick exactly one.
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.100, area_ha=20),
+        _square_polygon(2, "Near-equal A", lat=9.92, lon=78.100, area_ha=10),
+        _square_polygon(3, "Near-equal B", lat=9.92, lon=78.110, area_ha=10),
+    ]
+    # Both candidates ~1.1 km away from top; both drop 50m.
+    elevations = [200.0, 150.0, 150.0]
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons, elevations=elevations, district=_district(tmp_path)
+    )
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    assert by_id[1]["degree_out"] == 1
+
+
+def test_multi_outflow_keeps_near_tied_candidates(tmp_path):
+    # Same geometry, but allow_multi_outflow=True with 30% tolerance.
+    # Both candidates have identical scores (tied at 100% of best), so
+    # both must survive.
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.100, area_ha=20),
+        _square_polygon(2, "Near-equal A", lat=9.92, lon=78.100, area_ha=10),
+        _square_polygon(3, "Near-equal B", lat=9.92, lon=78.110, area_ha=10),
+    ]
+    elevations = [200.0, 150.0, 150.0]
+    district = _district(
+        tmp_path, allow_multi_outflow=True, multi_outflow_score_tolerance=0.30
+    )
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons, elevations=elevations, district=district
+    )
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    edges = {
+        (e["properties"]["from_osm_id"], e["properties"]["to_osm_id"])
+        for e in graph["edges"]
+    }
+    assert by_id[1]["degree_out"] == 2
+    assert (1, 2) in edges
+    assert (1, 3) in edges
+
+
+def test_multi_outflow_drops_candidates_below_tolerance(tmp_path):
+    # One clearly steeper candidate, one much shallower. With 30%
+    # tolerance the shallow one must NOT survive even with multi-outflow on.
+    polygons = [
+        _square_polygon(1, "Top", lat=9.93, lon=78.100, area_ha=20),
+        _square_polygon(2, "Steep", lat=9.92, lon=78.100, area_ha=10),
+        _square_polygon(3, "Shallow", lat=9.92, lon=78.110, area_ha=10),
+    ]
+    # Tank 2: drop 150, dist ~1.1km, score ~136
+    # Tank 3: drop 10,  dist ~1.6km, score ~6
+    # 6 / 136 = 4% of best - far below 70% survival threshold.
+    elevations = [200.0, 50.0, 190.0]
+    district = _district(
+        tmp_path, allow_multi_outflow=True, multi_outflow_score_tolerance=0.30
+    )
+    graph = _build_graph_from_polygons_with_elevations(
+        polygons=polygons, elevations=elevations, district=district
+    )
+    by_id = {n["properties"]["osm_id"]: n["properties"] for n in graph["nodes"]}
+    edges = {
+        (e["properties"]["from_osm_id"], e["properties"]["to_osm_id"])
+        for e in graph["edges"]
+    }
+    assert by_id[1]["degree_out"] == 1
+    assert (1, 2) in edges
+    assert (1, 3) not in edges
