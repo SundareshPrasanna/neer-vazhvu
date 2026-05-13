@@ -135,6 +135,35 @@ def cmd_stats(district_id: str) -> int:
     return 0
 
 
+def cmd_sensitivity(district_id: str) -> int:
+    """Sweep each topology parameter and write a per-city sensitivity
+    table to {district}-cascade-sensitivity.json. Read by the
+    methodology section and the hydrologist-facing PDF.
+    """
+    from app.cascade import sensitivity
+    from app.cascade.districts import get_district_cascade_config
+
+    district = get_district_cascade_config(district_id)
+    payload = sensitivity.run_sensitivity_analysis(district)
+    print(
+        json.dumps(
+            {
+                "district_id": payload["district_id"],
+                "sweeps": [
+                    {
+                        "parameter": s["parameter"],
+                        "default": s["default"],
+                        "result_count": len(s["results"]),
+                    }
+                    for s in payload["sweeps"]
+                ],
+            },
+            indent=2,
+        )
+    )
+    return 0
+
+
 def cmd_health(district_id: str) -> int:
     """Score documented + auto-derived cascades for health and priority.
 
@@ -202,6 +231,7 @@ def build_parser() -> argparse.ArgumentParser:
         "publish",
         "stats",
         "health",
+        "sensitivity",
         "tile",
         "run-all",
     ):
@@ -223,6 +253,7 @@ def main() -> int:
         "publish": cmd_publish,
         "stats": cmd_stats,
         "health": cmd_health,
+        "sensitivity": cmd_sensitivity,
         "tile": cmd_tile,
         "run-all": cmd_run_all,
     }
