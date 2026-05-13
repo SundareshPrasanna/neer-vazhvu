@@ -1,0 +1,2104 @@
+{
+  "district_id": "chennai",
+  "label": "Chennai",
+  "_meta": {
+    "district_id": "chennai",
+    "generated_at": "2026-05-13T06:45:27Z",
+    "pipeline_version": "v1.1.0",
+    "algorithm": "d8_steepest_descent_v1",
+    "inputs_hash": "134b2176f9fe1a3fdfd7acf552c74604b77bac04d44eb5d3bcdb55e975bf86d6"
+  },
+  "summary": {
+    "documented_count": 4,
+    "auto_count": 78,
+    "documented_by_priority": {
+      "CRITICAL": 2,
+      "HIGH": 1,
+      "MEDIUM": 1,
+      "LOW": 0
+    },
+    "auto_by_priority": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 19,
+      "LOW": 59
+    },
+    "min_component_size": 3
+  },
+  "documented_cascades": [
+    {
+      "cascade_id": "chennai-poondi-cholavaram-redhills-chembarambakkam",
+      "name": "Korttalaiyar four-reservoir diversion chain",
+      "short_name": "4-reservoir CMWSSB chain",
+      "narrative": "Chennai's canonical engineered supply chain: Korttalaiyar river surplus diverted via the 1870 Tamaraipakkam Anicut into Cholavaram, then Red Hills, with Poondi reservoir (1944) added as upstream storage feeding Cholavaram via the 1972 Poondi Canal. The chain has been the city's drinking-water spine for 150+ years.",
+      "transfer_type": "engineered",
+      "historical_era": "colonial-pwd",
+      "confidence": "clearly_documented",
+      "is_engineered_control": false,
+      "source": {
+        "citation": "Chennai Metropolitan Water Supply and Sewerage Board, Historical Background; CMDA Second Master Plan Vol III Chapter 7 (Water Supply Infrastructure).",
+        "url": "https://cmwssb.tn.gov.in/historical-background",
+        "type": "cmwssb"
+      },
+      "court_anchor": null,
+      "restoration_anchor": {
+        "program": "CMWSSB operations + ongoing CMDA infrastructure",
+        "url": "https://cmwssb.tn.gov.in/"
+      },
+      "tanks_in_order": [
+        {
+          "name": "Poondi Reservoir (Sathyamoorty Sagar)",
+          "osm_id": null,
+          "category": "reservoir",
+          "notes": "1944; OSM may carry under alias Sathyamoorty Sagar. Not resolved in current extract."
+        },
+        {
+          "name": "Cholavaram Lake",
+          "osm_id": null,
+          "category": "reservoir",
+          "notes": "Lake polygon not surfaced in current extract; Cholavaram airstrip dominates the name match."
+        },
+        {
+          "name": "Red Hills Reservoir (Puzhal)",
+          "osm_id": 25394157,
+          "area_ha": 1945.47,
+          "category": "reservoir"
+        },
+        {
+          "name": "Chembarambakkam Lake",
+          "osm_id": 25453624,
+          "area_ha": 2000.44,
+          "category": "reservoir",
+          "is_terminal": true,
+          "notes": "Treated water leaves via Kilpauk distribution shaft, not the polygon itself."
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "engineered",
+          "notes": "Poondi Canal (1972), replaced by closed pipeline c. 2008-09."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "engineered",
+          "notes": "4 km lower gravity supply channel (1870)."
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "engineered",
+          "notes": "Connecting infrastructure; partially routed through Kilpauk shafts."
+        }
+      ],
+      "health_score": 20.0,
+      "priority": "CRITICAL",
+      "components": {
+        "tank_presence": {
+          "resolved_in_osm": 2,
+          "total": 4,
+          "ratio": 0.5
+        },
+        "edge_reproduction": {
+          "reproduced": 0,
+          "total_documented": 3,
+          "ratio": 0.0
+        },
+        "avg_edge_confidence": 0.0,
+        "lost_tank_intersections": [],
+        "court_anchor_present": false,
+        "restoration_anchor_present": true,
+        "engineered_control": false
+      }
+    },
+    {
+      "cascade_id": "chennai-veeranam-engineered-control",
+      "name": "Veeranam long-distance supply scheme",
+      "short_name": "Veeranam engineered control",
+      "narrative": "Inter-basin transfer from the Cauvery system: Stanley Reservoir at Mettur via Lower Anicut + Vadavar Canal to Veeranam Lake in Cuddalore district, then via 230 km of MS pipeline to Chennai's Porur distribution station. Commissioned 2004; conceived 1967. Included here as an engineered NEGATIVE-CONTROL case to distinguish documented engineered transfers from algorithm-predicted natural cascades.",
+      "transfer_type": "engineered",
+      "historical_era": "post_independence",
+      "confidence": "clearly_documented",
+      "is_engineered_control": true,
+      "source": {
+        "citation": "Veeranam Lake Wikipedia entry; CMDA Second Master Plan Vol III Chapter 7; DT Next 2018 retrospective on Veeranam scheme.",
+        "url": "https://en.wikipedia.org/wiki/Veeranam_Lake",
+        "type": "wikipedia_cmda"
+      },
+      "court_anchor": null,
+      "restoration_anchor": null,
+      "tanks_in_order": [
+        {
+          "name": "Stanley Reservoir (Mettur)",
+          "osm_id": null,
+          "category": "dam",
+          "is_inflow_origin": true,
+          "notes": "Outside Chennai-district OSM extract; on Cauvery."
+        },
+        {
+          "name": "Veeranam Lake (Cuddalore district)",
+          "osm_id": null,
+          "category": "reservoir",
+          "notes": "Outside Chennai-district OSM extract; OSM way 82611270 per external lookup."
+        },
+        {
+          "name": "Porur distribution station",
+          "osm_id": null,
+          "category": "treatment_plant",
+          "is_terminal": true,
+          "notes": "Chennai-end break-pressure + distribution; not a tank."
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "engineered",
+          "notes": "Cauvery river + Kollidam + Lower Anicut + Vadavar Canal."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "engineered",
+          "notes": "230 km MS pipeline (1500-1875 mm diameter); commissioned 2004."
+        }
+      ],
+      "health_score": 0.0,
+      "priority": "CRITICAL",
+      "components": {
+        "tank_presence": {
+          "resolved_in_osm": 0,
+          "total": 3,
+          "ratio": 0.0
+        },
+        "edge_reproduction": {
+          "reproduced": 0,
+          "total_documented": 2,
+          "ratio": 0.0
+        },
+        "avg_edge_confidence": 0.0,
+        "lost_tank_intersections": [],
+        "court_anchor_present": false,
+        "restoration_anchor_present": false,
+        "engineered_control": true
+      }
+    },
+    {
+      "cascade_id": "chennai-ambattur-korattur-retteri",
+      "name": "Ambattur-Korattur-Retteri industrial-zone cascade",
+      "short_name": "Ambattur-Korattur-Retteri chain",
+      "narrative": "Three large lakes in north Chennai with surplus flowing east-southeast through what was historically a kanmoi network and is now a hybrid of natural surplus channels and engineered drains (notably the Lucas TVS canal). All three appear in OSM as ~100-200 ha polygons. Drains ultimately into the Otteri Nullah and the Buckingham Canal.",
+      "transfer_type": "mixed",
+      "historical_era": "kanmoi-pandya",
+      "confidence": "clearly_documented",
+      "is_engineered_control": false,
+      "source": {
+        "citation": "Wikipedia: Ambattur Lake, Korattur Lake, Retteri, Otteri Nullah; DT Next 2023 surplus-diversion coverage; Urban Acres Chennai water diversion article.",
+        "url": "https://en.wikipedia.org/wiki/Otteri_Nullah",
+        "type": "wikipedia_news"
+      },
+      "court_anchor": null,
+      "restoration_anchor": {
+        "program": "GCC + WRD lake restoration (ongoing)",
+        "url": "https://urbanacres.in/chennai-water-diversion-project-from-ambattur-lake-advances/"
+      },
+      "tanks_in_order": [
+        {
+          "name": "Ambattur Lake",
+          "osm_id": 25391800,
+          "area_ha": 161.78,
+          "category": "urban"
+        },
+        {
+          "name": "Korattur Lake",
+          "osm_id": 25474612,
+          "area_ha": 197.03,
+          "category": "urban"
+        },
+        {
+          "name": "Retteri Lake (Madhavaram)",
+          "osm_id": 25474749,
+          "area_ha": 94.98,
+          "category": "urban",
+          "is_terminal": true,
+          "notes": "Drains onward via Otteri Nullah + Lucas TVS canal."
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "mixed",
+          "notes": "Original surplus channel; now hybrid with engineered drain components."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "mixed"
+        }
+      ],
+      "health_score": 40.0,
+      "priority": "HIGH",
+      "components": {
+        "tank_presence": {
+          "resolved_in_osm": 3,
+          "total": 3,
+          "ratio": 1.0
+        },
+        "edge_reproduction": {
+          "reproduced": 0,
+          "total_documented": 2,
+          "ratio": 0.0
+        },
+        "avg_edge_confidence": 0.0,
+        "lost_tank_intersections": [],
+        "court_anchor_present": false,
+        "restoration_anchor_present": true,
+        "engineered_control": false
+      }
+    },
+    {
+      "cascade_id": "chennai-sembakkam-cluster-pallikaranai",
+      "name": "Sembakkam-Pallikaranai south-Chennai cluster",
+      "short_name": "Pallikaranai feeder cluster",
+      "narrative": "Surface runoff from the Pachamalai hills cascades through Chitlapakkam, Sembakkam, Nanmangalam, and Keelkattalai before discharging into the Pallikaranai marsh - the Ramsar Site #2481 (designated 2022). One of the most-documented Chennai cascade narratives because of the marshland advocacy literature.",
+      "transfer_type": "natural",
+      "historical_era": "kanmoi-pandya",
+      "confidence": "clearly_documented",
+      "is_engineered_control": false,
+      "source": {
+        "citation": "Care Earth Trust et al. Comprehensive Management Plan for Pallikaranai Marsh 2014-2019; Citizen Matters 'Reviving Sembakkam Lake'; The Nature Conservancy Sembakkam programme.",
+        "url": "https://rsis.ramsar.org/RISapp/files/42511262/documents/IN2481_mgt220526_RIS_Compressed_Final-compressed.pdf",
+        "type": "ngo_management_plan"
+      },
+      "court_anchor": null,
+      "restoration_anchor": {
+        "program": "The Nature Conservancy + Care Earth Trust Lake Sembakkam programme",
+        "url": "https://www.nature.org/en-us/about-us/where-we-work/india/our-priorities/lake-sembakkam/"
+      },
+      "tanks_in_order": [
+        {
+          "name": "Pachamalai Hills (runoff source)",
+          "osm_id": null,
+          "category": "watershed_origin",
+          "is_inflow_origin": true
+        },
+        {
+          "name": "Chitlapakkam Lake",
+          "osm_id": 23648229,
+          "area_ha": 21.46,
+          "category": "peri-urban"
+        },
+        {
+          "name": "Sembakkam Lake",
+          "osm_id": 26433707,
+          "area_ha": 35.07,
+          "category": "peri-urban",
+          "notes": "Receives Selaiyur tributary; WRD cut-and-cover drain currently replaces a lost natural channel."
+        },
+        {
+          "name": "Selaiyur Lake (tributary)",
+          "osm_id": 28260577,
+          "area_ha": 32.28,
+          "category": "peri-urban",
+          "is_tributary": true
+        },
+        {
+          "name": "Nanmangalam Lake",
+          "osm_id": 28260431,
+          "area_ha": 39.58,
+          "category": "peri-urban"
+        },
+        {
+          "name": "Keelkattalai Lake",
+          "osm_id": 13671410,
+          "area_ha": 24.52,
+          "category": "peri-urban"
+        },
+        {
+          "name": "Pallikaranai Marsh",
+          "osm_id": 154089347,
+          "area_ha": 0.79,
+          "category": "marsh",
+          "is_terminal": true,
+          "notes": "OSM polygon 154089347 is only one fragment ('Thamarai Kulam'); the full Ramsar relation is OSM relation 15046539 and totals ~700 ha residual from ~2650 ha historical."
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "natural",
+          "notes": "Surface runoff from Pachamalai hills."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "mixed",
+          "notes": "Now via cut-and-cover drain; original natural channel encroached."
+        },
+        {
+          "from_index": 3,
+          "to_index": 2,
+          "link_type": "natural",
+          "notes": "Selaiyur surplus into Sembakkam."
+        },
+        {
+          "from_index": 2,
+          "to_index": 4,
+          "link_type": "engineered",
+          "notes": "Recent WRD restoration; ~90% complete 2024."
+        },
+        {
+          "from_index": 4,
+          "to_index": 5,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 5,
+          "to_index": 6,
+          "link_type": "natural",
+          "notes": "Discharges into Pallikaranai marsh complex."
+        }
+      ],
+      "health_score": 61.9,
+      "priority": "MEDIUM",
+      "components": {
+        "tank_presence": {
+          "resolved_in_osm": 5,
+          "total": 7,
+          "ratio": 0.714
+        },
+        "edge_reproduction": {
+          "reproduced": 3,
+          "total_documented": 6,
+          "ratio": 0.5
+        },
+        "avg_edge_confidence": 0.667,
+        "lost_tank_intersections": [],
+        "court_anchor_present": false,
+        "restoration_anchor_present": true,
+        "engineered_control": false
+      }
+    }
+  ],
+  "auto_cascades": [
+    {
+      "size": 14,
+      "tank_osm_ids": [
+        117609817,
+        655564285,
+        655564287,
+        655564288,
+        655564291,
+        655564292,
+        655564293,
+        655564298,
+        655564300,
+        655564301,
+        655784724,
+        655822838,
+        655879388,
+        655879391
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 2352.02,
+      "edge_count": 13,
+      "avg_edge_confidence": 0.385,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 63.1,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-055",
+      "documented_overlap": null
+    },
+    {
+      "size": 11,
+      "tank_osm_ids": [
+        34108761,
+        34108764,
+        34108765,
+        84087726,
+        84087737,
+        383851518,
+        384142386,
+        384470982,
+        385630668,
+        704209771,
+        1426021596
+      ],
+      "representative_tank_name": "SriPerumpudur lake",
+      "total_area_ha": 335.65,
+      "edge_count": 10,
+      "avg_edge_confidence": 0.47,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 68.2,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-049",
+      "documented_overlap": null
+    },
+    {
+      "size": 8,
+      "tank_osm_ids": [
+        25504265,
+        25724261,
+        30606822,
+        30609167,
+        98639499,
+        131425321,
+        558926042,
+        620724466
+      ],
+      "representative_tank_name": "Velachery Lake",
+      "total_area_ha": 98.4,
+      "edge_count": 7,
+      "avg_edge_confidence": 0.486,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 69.1,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-031",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        117609765,
+        117609772,
+        117609784,
+        117609849,
+        655834419,
+        655834421,
+        655840709
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 84.92,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.4,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 64.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-065",
+      "documented_overlap": null
+    },
+    {
+      "size": 6,
+      "tank_osm_ids": [
+        98357263,
+        98357562,
+        98357568,
+        98357632,
+        384427752,
+        1198008409
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 101.43,
+      "edge_count": 5,
+      "avg_edge_confidence": 0.44,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 66.4,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-003",
+      "documented_overlap": null
+    },
+    {
+      "size": 6,
+      "tank_osm_ids": [
+        98357289,
+        98357340,
+        98357618,
+        98358044,
+        384380356,
+        1233330604
+      ],
+      "representative_tank_name": "Classic Farms Lake 2",
+      "total_area_ha": 87.26,
+      "edge_count": 5,
+      "avg_edge_confidence": 0.44,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 66.4,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-007",
+      "documented_overlap": null
+    },
+    {
+      "size": 6,
+      "tank_osm_ids": [
+        11180365,
+        34618168,
+        102459218,
+        459061876,
+        813634949,
+        1237456198
+      ],
+      "representative_tank_name": "Ayanambakkam Tank",
+      "total_area_ha": 197.27,
+      "edge_count": 5,
+      "avg_edge_confidence": 0.44,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 66.4,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-042",
+      "documented_overlap": null
+    },
+    {
+      "size": 5,
+      "tank_osm_ids": [
+        102655672,
+        384437273,
+        384467381,
+        595611907,
+        597421167
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 57.02,
+      "edge_count": 4,
+      "avg_edge_confidence": 0.425,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 65.5,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-037",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        23804000,
+        25474749,
+        95668360,
+        1318241202
+      ],
+      "representative_tank_name": "Retteri Lake",
+      "total_area_ha": 113.11,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.4,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 64.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-018",
+      "documented_overlap": {
+        "documented_cascade_id": "chennai-ambattur-korattur-retteri",
+        "documented_name": "Ambattur-Korattur-Retteri industrial-zone cascade",
+        "shared_tank_count": 1
+      }
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        98357502,
+        384869422,
+        390483604,
+        556042015
+      ],
+      "representative_tank_name": "Arachi Lake",
+      "total_area_ha": 272.41,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.4,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 64.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-035",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        133599506,
+        462909812,
+        1395181386,
+        1395181387
+      ],
+      "representative_tank_name": "NALLUR ERIKARAII",
+      "total_area_ha": 49.67,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.2,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 52.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-039",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        117609848,
+        117609850,
+        655564290,
+        655799463
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 330.3,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.3,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 58.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-069",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        655564294,
+        655564299,
+        655879380,
+        655879382
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 964.08,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.3,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 58.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-071",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        117609821,
+        651837042,
+        651845533,
+        655531857
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 18.69,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.4,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 64.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-075",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        98357294,
+        595619341,
+        642850681
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 13.69,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.2,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 52.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-010",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        138307645,
+        661094629,
+        661178358
+      ],
+      "representative_tank_name": "Vettamani Lake",
+      "total_area_ha": 6.14,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.2,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 52.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-013",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        34483989,
+        385422795,
+        1159363407
+      ],
+      "representative_tank_name": "Vellachheri aeri",
+      "total_area_ha": 64.12,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.35,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 61.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-060",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        117609789,
+        655840702,
+        655865365
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 5784.04,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.35,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 61.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-073",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        25921389,
+        30799532,
+        30799589
+      ],
+      "representative_tank_name": "Somangalam Lake",
+      "total_area_ha": 149.09,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.35,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 61.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-chennai-076",
+      "documented_overlap": null
+    },
+    {
+      "size": 28,
+      "tank_osm_ids": [
+        12863758,
+        30209756,
+        82883544,
+        82883553,
+        82883586,
+        96963152,
+        98357315,
+        98357621,
+        98358098,
+        384388258,
+        384388262,
+        384388269,
+        384388272,
+        384388285,
+        384622633,
+        384622645,
+        384791809,
+        384799422,
+        384801134,
+        384807082,
+        384829634,
+        650596146,
+        685182151,
+        856053254,
+        856053744,
+        955974829,
+        955974835,
+        1390444621
+      ],
+      "representative_tank_name": "Mambakkam Lake",
+      "total_area_ha": 314.96,
+      "edge_count": 27,
+      "avg_edge_confidence": 0.73,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 83.8,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-008",
+      "documented_overlap": null
+    },
+    {
+      "size": 25,
+      "tank_osm_ids": [
+        13671410,
+        16916505,
+        23648227,
+        23648229,
+        25725027,
+        26433707,
+        28260431,
+        28260577,
+        28309481,
+        28309498,
+        28309593,
+        28309687,
+        30746879,
+        47572261,
+        84099124,
+        177370838,
+        369099870,
+        369099873,
+        661117610,
+        864059073,
+        864059074,
+        875106647,
+        1021009994,
+        1021009995,
+        1236161501
+      ],
+      "representative_tank_name": "Nanmangalam Lake",
+      "total_area_ha": 279.71,
+      "edge_count": 24,
+      "avg_edge_confidence": 0.737,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 84.2,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-004",
+      "documented_overlap": {
+        "documented_cascade_id": "chennai-sembakkam-cluster-pallikaranai",
+        "documented_name": "Sembakkam-Pallikaranai south-Chennai cluster",
+        "shared_tank_count": 5
+      }
+    },
+    {
+      "size": 22,
+      "tank_osm_ids": [
+        34108762,
+        38424012,
+        383851516,
+        384785114,
+        384786188,
+        384787655,
+        384822678,
+        384824294,
+        384824295,
+        384824296,
+        384824881,
+        384824882,
+        385104900,
+        385114343,
+        385114344,
+        620333900,
+        1188058841,
+        1188058842,
+        1188085232,
+        1188085233,
+        1188085234,
+        1200049520
+      ],
+      "representative_tank_name": "Irungattukottai lake",
+      "total_area_ha": 229.79,
+      "edge_count": 21,
+      "avg_edge_confidence": 0.71,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 82.6,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-032",
+      "documented_overlap": null
+    },
+    {
+      "size": 11,
+      "tank_osm_ids": [
+        30778453,
+        34108774,
+        34108779,
+        102302989,
+        102302994,
+        625552785,
+        642874822,
+        642877313,
+        642877315,
+        642877316,
+        642880084
+      ],
+      "representative_tank_name": "Padappai Lake",
+      "total_area_ha": 300.88,
+      "edge_count": 10,
+      "avg_edge_confidence": 0.67,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 80.2,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-054",
+      "documented_overlap": null
+    },
+    {
+      "size": 10,
+      "tank_osm_ids": [
+        14312113,
+        32253842,
+        87098619,
+        132192377,
+        132192387,
+        132192388,
+        383857980,
+        383857983,
+        383861893,
+        1075043308
+      ],
+      "representative_tank_name": "Vandalur Lake",
+      "total_area_ha": 129.21,
+      "edge_count": 9,
+      "avg_edge_confidence": 0.667,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 80.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-021",
+      "documented_overlap": null
+    },
+    {
+      "size": 8,
+      "tank_osm_ids": [
+        6201190,
+        11915438,
+        28260199,
+        203215028,
+        203215030,
+        203215355,
+        203215356,
+        416884994
+      ],
+      "representative_tank_name": "Pallikkaranai Anai Tank",
+      "total_area_ha": 72.31,
+      "edge_count": 7,
+      "avg_edge_confidence": 0.571,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 74.3,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-027",
+      "documented_overlap": null
+    },
+    {
+      "size": 8,
+      "tank_osm_ids": [
+        23648233,
+        30118530,
+        95772858,
+        175799902,
+        384530140,
+        384530144,
+        384530145,
+        643533398
+      ],
+      "representative_tank_name": "Tiruneermalai Eri",
+      "total_area_ha": 83.7,
+      "edge_count": 7,
+      "avg_edge_confidence": 0.586,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 75.1,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-029",
+      "documented_overlap": null
+    },
+    {
+      "size": 8,
+      "tank_osm_ids": [
+        117609794,
+        117609835,
+        117609846,
+        655564297,
+        655822836,
+        655879371,
+        655879373,
+        655879375
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 2789.65,
+      "edge_count": 7,
+      "avg_edge_confidence": 0.529,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 71.7,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-070",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        23648228,
+        383857981,
+        383857982,
+        383947586,
+        384622623,
+        1123068816,
+        1123068819
+      ],
+      "representative_tank_name": "Irumbuliyur Lake",
+      "total_area_ha": 80.59,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.667,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 80.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-005",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        30799618,
+        30799655,
+        34108780,
+        84086853,
+        84086856,
+        84086883,
+        383842297
+      ],
+      "representative_tank_name": "Navalur Eri",
+      "total_area_ha": 211.13,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-014",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        655800534,
+        655800536,
+        655822830,
+        655822832,
+        655822834,
+        655822835,
+        655822839
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 186.64,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-016",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        67551369,
+        99029636,
+        99047710,
+        99047729,
+        102309331,
+        641905999,
+        642880740
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 212.64,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.583,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 75.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-022",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        30425246,
+        30425253,
+        177370837,
+        177370839,
+        177370842,
+        177370847,
+        642018697
+      ],
+      "representative_tank_name": "Agaram Lake",
+      "total_area_ha": 438.42,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-024",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        95639925,
+        102577046,
+        384472437,
+        384790335,
+        1236160012,
+        1236160013,
+        1344560973
+      ],
+      "representative_tank_name": "Poonamallee Lake",
+      "total_area_ha": 61.64,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.583,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 75.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-026",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        34108771,
+        34108772,
+        370161230,
+        642877317,
+        731054318,
+        1053244065,
+        1053244066
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 306.44,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.667,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 80.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-033",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        384853644,
+        384853661,
+        384853662,
+        384854734,
+        856053259,
+        856053260,
+        856053261
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 143.76,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.917,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 95.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-034",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        35460561,
+        99047702,
+        102303002,
+        123059891,
+        123059897,
+        251883786,
+        641918370
+      ],
+      "representative_tank_name": "ADHANOOR LAKE",
+      "total_area_ha": 201.89,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-038",
+      "documented_overlap": null
+    },
+    {
+      "size": 6,
+      "tank_osm_ids": [
+        17473164,
+        34483997,
+        95639912,
+        138307636,
+        138307638,
+        1272721014
+      ],
+      "representative_tank_name": "Nagaraja aeri",
+      "total_area_ha": 99.9,
+      "edge_count": 5,
+      "avg_edge_confidence": 0.8,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 88.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-012",
+      "documented_overlap": null
+    },
+    {
+      "size": 6,
+      "tank_osm_ids": [
+        383833224,
+        1236160014,
+        1236160015,
+        1236160017,
+        1236160018,
+        1344560972
+      ],
+      "representative_tank_name": "Lake Kollappancheri",
+      "total_area_ha": 31.34,
+      "edge_count": 5,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-028",
+      "documented_overlap": null
+    },
+    {
+      "size": 6,
+      "tank_osm_ids": [
+        47572610,
+        82883558,
+        82883604,
+        98357524,
+        385786366,
+        620731613
+      ],
+      "representative_tank_name": "Chitrerari Lake",
+      "total_area_ha": 132.58,
+      "edge_count": 5,
+      "avg_edge_confidence": 0.54,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 72.4,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-040",
+      "documented_overlap": null
+    },
+    {
+      "size": 6,
+      "tank_osm_ids": [
+        24161888,
+        177370846,
+        177370858,
+        177370864,
+        247043032,
+        1163543652
+      ],
+      "representative_tank_name": "Kolavai Lake",
+      "total_area_ha": 649.66,
+      "edge_count": 5,
+      "avg_edge_confidence": 0.7,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 82.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-062",
+      "documented_overlap": null
+    },
+    {
+      "size": 6,
+      "tank_osm_ids": [
+        177370836,
+        177370840,
+        177370848,
+        177370861,
+        177370862,
+        177370863
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 100.92,
+      "edge_count": 5,
+      "avg_edge_confidence": 0.8,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 88.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-077",
+      "documented_overlap": null
+    },
+    {
+      "size": 5,
+      "tank_osm_ids": [
+        117609775,
+        117609836,
+        117609840,
+        654878766,
+        654878777
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 1495.25,
+      "edge_count": 4,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-011",
+      "documented_overlap": null
+    },
+    {
+      "size": 5,
+      "tank_osm_ids": [
+        117609822,
+        555507810,
+        654920019,
+        654920022,
+        654920028
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 284.04,
+      "edge_count": 4,
+      "avg_edge_confidence": 1.0,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 100.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-019",
+      "documented_overlap": null
+    },
+    {
+      "size": 5,
+      "tank_osm_ids": [
+        34108767,
+        34108768,
+        34108777,
+        34108778,
+        642884433
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 167.05,
+      "edge_count": 4,
+      "avg_edge_confidence": 0.875,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 92.5,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-059",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        1253861295,
+        1253861296,
+        1253863422,
+        1253863425
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 21.41,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.833,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 90.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-001",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        384784387,
+        384784388,
+        384941948,
+        384941949
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 6.53,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.667,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 80.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-002",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        95639899,
+        95639903,
+        138307635,
+        385065005
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 135.05,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-009",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        34108763,
+        384163920,
+        384163921,
+        384187884
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 32.84,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.733,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 84.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-015",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        84086873,
+        84087728,
+        384956629,
+        385401881
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 87.76,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.833,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 90.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-017",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        102655659,
+        385417118,
+        595609706,
+        1344561377
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 37.18,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-020",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        47572658,
+        82883601,
+        98357449,
+        384807083
+      ],
+      "representative_tank_name": "Vengadamangalam, IRPC Lake",
+      "total_area_ha": 162.88,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-025",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        17972561,
+        30424450,
+        82883565,
+        1131919660
+      ],
+      "representative_tank_name": "Perumbakkam Lake",
+      "total_area_ha": 143.31,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-041",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        14321157,
+        95639902,
+        95639930,
+        553897152
+      ],
+      "representative_tank_name": "Thandurai aeri",
+      "total_area_ha": 49.41,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-044",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        25474612,
+        102574448,
+        834888383,
+        1318749868
+      ],
+      "representative_tank_name": "Korattur Lake",
+      "total_area_ha": 206.09,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-047",
+      "documented_overlap": {
+        "documented_cascade_id": "chennai-ambattur-korattur-retteri",
+        "documented_name": "Ambattur-Korattur-Retteri industrial-zone cascade",
+        "shared_tank_count": 1
+      }
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        34483999,
+        385497552,
+        385546795,
+        1235139446
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 48.4,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.733,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 84.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-050",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        111749083,
+        111749099,
+        211638794,
+        1076229591
+      ],
+      "representative_tank_name": "Adyar Creek",
+      "total_area_ha": 42.0,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-051",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        117609783,
+        650855819,
+        650881572,
+        651834331
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 25.4,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.833,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 90.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-052",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        32066592,
+        98358078,
+        384284409,
+        384855646
+      ],
+      "representative_tank_name": "Manivakkam Lake",
+      "total_area_ha": 53.53,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.833,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 90.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-057",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        34108775,
+        34108776,
+        642884428,
+        642884430
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 68.46,
+      "edge_count": 3,
+      "avg_edge_confidence": 1.0,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 100.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-058",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        98315669,
+        98315691,
+        385000408,
+        1344685069
+      ],
+      "representative_tank_name": "Kadapakkam Tank",
+      "total_area_ha": 71.62,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.567,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 74.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-063",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        24161889,
+        99052514,
+        177370844,
+        177370849
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 126.57,
+      "edge_count": 3,
+      "avg_edge_confidence": 1.0,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 100.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-064",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        19969911,
+        30025552,
+        30037018,
+        30037019
+      ],
+      "representative_tank_name": "IIT Lake",
+      "total_area_ha": 15.79,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.833,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 90.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-068",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        23047573,
+        111749058,
+        111749064,
+        211900070
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 10.01,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.667,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 80.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-074",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        124983296,
+        655564289,
+        655800535
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 31.5,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-000",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        384279908,
+        595611908,
+        620333897
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 6.89,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-006",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        28260258,
+        82874933,
+        661100692
+      ],
+      "representative_tank_name": "Vadakkapattu Lake",
+      "total_area_ha": 35.97,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-023",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        30425323,
+        384707596,
+        856053255
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 54.88,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-030",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        86251016,
+        384476259,
+        1237405953
+      ],
+      "representative_tank_name": "Thirupunanthal Lake",
+      "total_area_ha": 5.83,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-036",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        98357640,
+        369500929,
+        385151310
+      ],
+      "representative_tank_name": "Padur Lake",
+      "total_area_ha": 61.4,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-043",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        133591397,
+        1408255862,
+        1408255877
+      ],
+      "representative_tank_name": "Kortallaiyar River",
+      "total_area_ha": 21.83,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-045",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        133591400,
+        1017189242,
+        1408255876
+      ],
+      "representative_tank_name": "Kosasthalaiyar River",
+      "total_area_ha": 1454.67,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-046",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        34108718,
+        34108719,
+        1152278957
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 61.0,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-048",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        384656746,
+        384656747,
+        625556028
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 8.61,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-053",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        98358058,
+        384811808,
+        384811817
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 20.78,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-056",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        31253726,
+        31255512,
+        830928058
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 171.59,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-061",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        25394157,
+        34483988,
+        34484000
+      ],
+      "representative_tank_name": "Red Hills Reservoir",
+      "total_area_ha": 1986.08,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-066",
+      "documented_overlap": {
+        "documented_cascade_id": "chennai-poondi-cholavaram-redhills-chembarambakkam",
+        "documented_name": "Korttalaiyar four-reservoir diversion chain",
+        "shared_tank_count": 1
+      }
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        383851515,
+        383851519,
+        385119995
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 138.25,
+      "edge_count": 2,
+      "avg_edge_confidence": 1.0,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 100.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-067",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        117609785,
+        117609832,
+        117609841
+      ],
+      "representative_tank_name": null,
+      "total_area_ha": 1682.63,
+      "edge_count": 2,
+      "avg_edge_confidence": 1.0,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 100.0,
+      "priority": "LOW",
+      "cascade_id": "auto-chennai-072",
+      "documented_overlap": null
+    }
+  ]
+}

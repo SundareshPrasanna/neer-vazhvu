@@ -135,6 +135,31 @@ def cmd_stats(district_id: str) -> int:
     return 0
 
 
+def cmd_health(district_id: str) -> int:
+    """Score documented + auto-derived cascades for health and priority.
+
+    Reads documented chains from
+    public/data/cascade/{district}-cascades-documented.json, joins
+    them with the cascade GeoJSONs and (where present) the
+    lost-tanks JSON, writes {district}-cascades-health.json.
+    """
+    from app.cascade import health
+    from app.cascade.districts import get_district_cascade_config
+
+    district = get_district_cascade_config(district_id)
+    payload = health.compute_cascade_health(district)
+    print(
+        json.dumps(
+            {
+                "district_id": payload["district_id"],
+                "summary": payload["summary"],
+            },
+            indent=2,
+        )
+    )
+    return 0
+
+
 def cmd_tile(district_id: str) -> int:
     from app.cascade import publish
     from app.cascade.districts import get_district_cascade_config
@@ -176,6 +201,7 @@ def build_parser() -> argparse.ArgumentParser:
         "curate",
         "publish",
         "stats",
+        "health",
         "tile",
         "run-all",
     ):
@@ -196,6 +222,7 @@ def main() -> int:
         "curate": cmd_curate,
         "publish": cmd_publish,
         "stats": cmd_stats,
+        "health": cmd_health,
         "tile": cmd_tile,
         "run-all": cmd_run_all,
     }

@@ -1,0 +1,1386 @@
+{
+  "district_id": "madurai",
+  "label": "Madurai",
+  "_meta": {
+    "district_id": "madurai",
+    "generated_at": "2026-05-13T06:45:26Z",
+    "pipeline_version": "v1.1.0",
+    "algorithm": "d8_steepest_descent_v1",
+    "inputs_hash": "3799d71c8ef98b78b109d975c9c1dcc2fafdb2e1b28338fbc4439cc528add89e"
+  },
+  "summary": {
+    "documented_count": 4,
+    "auto_count": 35,
+    "documented_by_priority": {
+      "CRITICAL": 4,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0
+    },
+    "auto_by_priority": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 4,
+      "LOW": 31
+    },
+    "min_component_size": 3
+  },
+  "documented_cascades": [
+    {
+      "cascade_id": "madurai-vandiyur-tank-cascade-system",
+      "name": "Vandiyur Tank Cascade System (VTCS)",
+      "short_name": "VTCS",
+      "narrative": "Eight-tank gravity cascade across six catchments documented in the academic literature as the textbook Madurai cascade. Rural feeder tanks at the head, urban tanks at the foot, terminates in Vandiyur Lake before joining the Vaigai river.",
+      "transfer_type": "natural",
+      "historical_era": "kanmoi-pandya",
+      "confidence": "clearly_documented",
+      "is_engineered_control": false,
+      "source": {
+        "citation": "Chinnasamy P., Srivastava A. (2021). Revival of Traditional Cascade Tanks for Achieving Climate Resilience in Drylands of South India. Frontiers in Water 3:639637.",
+        "url": "https://www.frontiersin.org/articles/10.3389/frwa.2021.639637/full",
+        "type": "academic_paper"
+      },
+      "court_anchor": {
+        "case": "R. Manibharathi v Union of India, WP(M) 31214/2023",
+        "court": "Madras High Court (Madurai Bench)",
+        "year": 2024,
+        "url": "https://lawbeat.in/news-updates/madras-high-court-orders-dedicated-website-listing-all-water-bodies-tamil-nadu-encroachment",
+        "summary": "March 2024 order on Vandiyur and Thenkal Kanmoi tank bund-road encroachment; directed TN to publish a state water-bodies registry within 6 months."
+      },
+      "restoration_anchor": null,
+      "tanks_in_order": [
+        {
+          "name": "Kulamangalam",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "rural"
+        },
+        {
+          "name": "Veerapandi",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "rural"
+        },
+        {
+          "name": "Thiruppalai",
+          "osm_id": 965972946,
+          "area_ha": 24.76,
+          "category": "peri-urban",
+          "notes": "Multiple Thiruppalai-name reservoirs in OSM; the 24.76 ha polygon is the largest plausible match."
+        },
+        {
+          "name": "Siruvour",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "peri-urban"
+        },
+        {
+          "name": "Kosakulam",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "urban",
+          "supernode_group": "T5-T7"
+        },
+        {
+          "name": "Parsurampatti",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "urban",
+          "supernode_group": "T5-T7"
+        },
+        {
+          "name": "Kodikulam",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "urban",
+          "supernode_group": "T5-T7"
+        },
+        {
+          "name": "Vandiyur",
+          "osm_id": 1073092381,
+          "area_ha": 227.94,
+          "category": "urban",
+          "is_terminal": true,
+          "notes": "HC PIL anchor. Currently neer-vazhvu's narrative_anchor for Madurai."
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 3,
+          "to_index": 4,
+          "link_type": "natural",
+          "notes": "Edge enters the T5-T7 super-node group; internal ordering speculative."
+        },
+        {
+          "from_index": 4,
+          "to_index": 5,
+          "link_type": "natural",
+          "notes": "Within T5-T7 super-node; treat as one logical step."
+        },
+        {
+          "from_index": 5,
+          "to_index": 6,
+          "link_type": "natural",
+          "notes": "Within T5-T7 super-node; treat as one logical step."
+        },
+        {
+          "from_index": 6,
+          "to_index": 7,
+          "link_type": "natural",
+          "notes": "T7 to terminal Vandiyur."
+        }
+      ],
+      "health_score": 0.0,
+      "priority": "CRITICAL",
+      "components": {
+        "tank_presence": {
+          "resolved_in_osm": 2,
+          "total": 8,
+          "ratio": 0.25
+        },
+        "edge_reproduction": {
+          "reproduced": 0,
+          "total_documented": 7,
+          "ratio": 0.0
+        },
+        "avg_edge_confidence": 0.0,
+        "lost_tank_intersections": [
+          "Kosakulam tank",
+          "S. Kodikulam tank",
+          "Vandiyur tank"
+        ],
+        "court_anchor_present": true,
+        "restoration_anchor_present": false,
+        "engineered_control": false
+      }
+    },
+    {
+      "cascade_id": "madurai-kondagai-piramanur-palayanur-girudhumal",
+      "name": "Kondagai-Piramanur-Palayanur Vaigai-fed cascade",
+      "short_name": "Girudhumal feeder chain",
+      "narrative": "Vaigai surplus diverted via head-sluice and 9.6 km link canal into a three-tank chain that ultimately drains to the Girudhumal river. Documented in the TN PWD-WRD IAMWARM Detailed Project Report - the gold standard for engineering provenance.",
+      "transfer_type": "mixed",
+      "historical_era": "colonial-pwd",
+      "confidence": "clearly_documented",
+      "is_engineered_control": false,
+      "source": {
+        "citation": "TN PWD/WRD. Restoration and Regradation of Girudhumal river. IAMWARM Package 01/IAMWARM/WRD/GML-River/Works/V/2012-2013.",
+        "url": "https://iamwarm.gov.in/IAMWARM/OLD/dpr-pdf/Leftout/60Packages/Girudhumal.pdf",
+        "type": "pwd_dpr"
+      },
+      "court_anchor": null,
+      "restoration_anchor": {
+        "program": "TN-IAMWARM (World Bank assisted)",
+        "url": "https://iamwarm.gov.in/"
+      },
+      "tanks_in_order": [
+        {
+          "name": "Vaigai river head-sluice (Virahanur regulator)",
+          "osm_id": null,
+          "category": "reservoir",
+          "is_inflow_origin": true
+        },
+        {
+          "name": "Kondagai (Konthagai) tank",
+          "osm_id": null,
+          "category": "rural"
+        },
+        {
+          "name": "Piramanur tank",
+          "osm_id": null,
+          "category": "rural"
+        },
+        {
+          "name": "Palayanur tank",
+          "osm_id": null,
+          "category": "rural"
+        },
+        {
+          "name": "Girudhumal river (via Melavellore Dividing dam)",
+          "osm_id": null,
+          "category": "river",
+          "is_terminal": true
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "engineered",
+          "notes": "9.6 km link canal, head sluice."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 3,
+          "to_index": 4,
+          "link_type": "engineered",
+          "notes": "Silaman head sluice + Melavellore Dividing dam."
+        }
+      ],
+      "health_score": 0.0,
+      "priority": "CRITICAL",
+      "components": {
+        "tank_presence": {
+          "resolved_in_osm": 0,
+          "total": 5,
+          "ratio": 0.0
+        },
+        "edge_reproduction": {
+          "reproduced": 0,
+          "total_documented": 4,
+          "ratio": 0.0
+        },
+        "avg_edge_confidence": 0.0,
+        "lost_tank_intersections": [],
+        "court_anchor_present": false,
+        "restoration_anchor_present": true,
+        "engineered_control": false
+      }
+    },
+    {
+      "cascade_id": "madurai-madakulam-pandya-12th-c",
+      "name": "Madakulam Pandya cascade (12th century CE)",
+      "short_name": "Madakulam cascade",
+      "narrative": "Five-step cascade documented in a 12th-century Pandya inscription, with channel originally named Nattatrupuram and later renamed Viranarayana kulakeel. Madakulam itself preserves a Pandya-era stone sluice and inscription.",
+      "transfer_type": "mixed",
+      "historical_era": "pandya",
+      "confidence": "clearly_documented",
+      "is_engineered_control": false,
+      "source": {
+        "citation": "Joshima M., Sundarapandian S. M. (2019). Vaigai River Madurai. JETIR 6(8):JETIR1908A90; Madakulam Wikipedia entry referencing Raja Raja Chola I inscription and Pandya Paranthaka Viranarayanan.",
+        "url": "https://www.jetir.org/papers/JETIR1908A90.pdf",
+        "type": "academic_paper"
+      },
+      "court_anchor": null,
+      "restoration_anchor": null,
+      "tanks_in_order": [
+        {
+          "name": "Urapanur",
+          "osm_id": null,
+          "category": "rural"
+        },
+        {
+          "name": "Sekkanurani",
+          "osm_id": null,
+          "category": "rural"
+        },
+        {
+          "name": "Nagamalai Puthukottai",
+          "osm_id": null,
+          "category": "peri-urban"
+        },
+        {
+          "name": "Kongar Puliankulam",
+          "osm_id": null,
+          "category": "urban"
+        },
+        {
+          "name": "Madakulam Kanmai",
+          "osm_id": 18641173,
+          "area_ha": 123.69,
+          "category": "urban",
+          "is_terminal": true,
+          "notes": "12th-century stone sluice + inscription. Wikipedia: Madakulam."
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "mixed"
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "mixed"
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "mixed"
+        },
+        {
+          "from_index": 3,
+          "to_index": 4,
+          "link_type": "mixed",
+          "notes": "Pandya-era Nattatrupuram channel renamed Viranarayana kulakeel."
+        }
+      ],
+      "health_score": 0.0,
+      "priority": "CRITICAL",
+      "components": {
+        "tank_presence": {
+          "resolved_in_osm": 1,
+          "total": 5,
+          "ratio": 0.2
+        },
+        "edge_reproduction": {
+          "reproduced": 0,
+          "total_documented": 4,
+          "ratio": 0.0
+        },
+        "avg_edge_confidence": 0.0,
+        "lost_tank_intersections": [
+          "Madakulam tank"
+        ],
+        "court_anchor_present": false,
+        "restoration_anchor_present": false,
+        "engineered_control": false
+      }
+    },
+    {
+      "cascade_id": "madurai-mullaperiyar-vaigai-engineered-control",
+      "name": "Mullaperiyar to Madurai engineered supply chain",
+      "short_name": "Mullaperiyar-Vaigai control",
+      "narrative": "Inter-state trans-basin transfer: Mullaperiyar reservoir in Kerala feeds the Vaigai catchment in Tamil Nadu via a tunnel through the Western Ghats; Vaigai dam regulates the flow which then reaches Madurai via the Periyar Main Canal, the Thirumangalam Canal, the Vaigai bed, and finally the Pannaipatty WTP. Included here as an engineered NEGATIVE-CONTROL case so the scorer can distinguish documented engineered transfers from algorithmically-predicted natural cascades.",
+      "transfer_type": "engineered",
+      "historical_era": "colonial-pwd",
+      "confidence": "clearly_documented",
+      "is_engineered_control": true,
+      "source": {
+        "citation": "ADB Tamil Nadu Urban Flagship Investment Program (TNUFIP) Tranche 2 Initial Environmental Examination, project 49107-005, December 2025.",
+        "url": "https://www.adb.org/sites/default/files/project-documents/49107/49107-005-iee-en_10.pdf",
+        "type": "adb_iee"
+      },
+      "court_anchor": {
+        "case": "Mullaperiyar Dam Issue (recurring TN-Kerala Supreme Court matter)",
+        "court": "Supreme Court of India",
+        "year": 2014,
+        "url": "https://en.wikipedia.org/wiki/Mullaperiyar_Dam",
+        "summary": "2014 SC verdict permitting 142 ft storage; ongoing supervisory committee."
+      },
+      "restoration_anchor": null,
+      "tanks_in_order": [
+        {
+          "name": "Mullaperiyar Reservoir (Kerala)",
+          "osm_id": null,
+          "category": "dam",
+          "is_inflow_origin": true,
+          "notes": "Outside Madurai-district OSM extract."
+        },
+        {
+          "name": "Periyar-Vaigai diversion tunnel",
+          "osm_id": null,
+          "category": "conduit"
+        },
+        {
+          "name": "Vaigai Dam",
+          "osm_id": 14192817,
+          "area_ha": 2348.06,
+          "category": "dam",
+          "notes": "OSM way 14192817 'Vaigai Reservoir'."
+        },
+        {
+          "name": "Pannaipatty Water Treatment Plant",
+          "osm_id": null,
+          "category": "treatment_plant",
+          "is_terminal": true,
+          "notes": "125 MLD design capacity; serves Madurai Municipal Corporation distribution."
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "engineered",
+          "notes": "Inter-state tunnel through Western Ghats."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "engineered"
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "engineered",
+          "notes": "Periyar Main Canal + Thirumangalam Canal + Vaigai bed flow + Pannaipatty intakes."
+        }
+      ],
+      "health_score": 10.0,
+      "priority": "CRITICAL",
+      "components": {
+        "tank_presence": {
+          "resolved_in_osm": 1,
+          "total": 4,
+          "ratio": 0.25
+        },
+        "edge_reproduction": {
+          "reproduced": 0,
+          "total_documented": 3,
+          "ratio": 0.0
+        },
+        "avg_edge_confidence": 0.0,
+        "lost_tank_intersections": [],
+        "court_anchor_present": true,
+        "restoration_anchor_present": false,
+        "engineered_control": true
+      }
+    }
+  ],
+  "auto_cascades": [
+    {
+      "size": 24,
+      "tank_osm_ids": [
+        28699171,
+        97246707,
+        136448484,
+        136448520,
+        589776811,
+        755424587,
+        758133411,
+        758133412,
+        758133413,
+        758417490,
+        758417491,
+        758417495,
+        758444871,
+        778055578,
+        870776561,
+        870776564,
+        870776566,
+        870776568,
+        870776569,
+        870776570,
+        870776573,
+        870776575,
+        921413062,
+        1168594837
+      ],
+      "representative_tank_name": "Thenkal Kanmai",
+      "total_area_ha": 838.57,
+      "edge_count": 23,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [
+        "Villapuram tank",
+        "Thenkal Kanmoi",
+        "Chinthamani tank"
+      ],
+      "health_score": 55.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-madurai-010",
+      "documented_overlap": null
+    },
+    {
+      "size": 21,
+      "tank_osm_ids": [
+        1837919,
+        28679448,
+        136448547,
+        824461899,
+        867022071,
+        867022081,
+        867022084,
+        867022085,
+        867022089,
+        867022094,
+        962330789,
+        962330790,
+        963748126,
+        963748138,
+        965318009,
+        965652653,
+        965652657,
+        965652659,
+        965972946,
+        1055265385,
+        1055265396
+      ],
+      "representative_tank_name": "Reservoir near Koodal Nagar (61.9 ha)",
+      "total_area_ha": 596.38,
+      "edge_count": 20,
+      "avg_edge_confidence": 0.52,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [
+        "Sellur tank",
+        "Athikulam tank"
+      ],
+      "health_score": 61.2,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-madurai-018",
+      "documented_overlap": {
+        "documented_cascade_id": "madurai-vandiyur-tank-cascade-system",
+        "documented_name": "Vandiyur Tank Cascade System (VTCS)",
+        "shared_tank_count": 1
+      }
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        807794474,
+        1071956890,
+        1071995800,
+        1071995801,
+        1072661613,
+        1072661614,
+        1073092381
+      ],
+      "representative_tank_name": "Vandiyur Lake",
+      "total_area_ha": 248.26,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [
+        "Tallakulam tank",
+        "Vandiyur tank"
+      ],
+      "health_score": 60.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-madurai-014",
+      "documented_overlap": {
+        "documented_cascade_id": "madurai-vandiyur-tank-cascade-system",
+        "documented_name": "Vandiyur Tank Cascade System (VTCS)",
+        "shared_tank_count": 1
+      }
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        18351398,
+        18351411,
+        1336244248
+      ],
+      "representative_tank_name": "Reservoir near Checkanurani (52.9 ha)",
+      "total_area_ha": 66.26,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.35,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 61.0,
+      "priority": "MEDIUM",
+      "cascade_id": "auto-madurai-002",
+      "documented_overlap": null
+    },
+    {
+      "size": 83,
+      "tank_osm_ids": [
+        14278817,
+        136448549,
+        336290000,
+        867021942,
+        965652652,
+        965652654,
+        965652658,
+        965652667,
+        965652680,
+        965652691,
+        965652693,
+        965652695,
+        965652708,
+        965652709,
+        965963119,
+        965963120,
+        965963121,
+        965963122,
+        965963123,
+        965963125,
+        965963126,
+        965963127,
+        965963128,
+        965963129,
+        965963130,
+        965963131,
+        965963132,
+        965969452,
+        965969453,
+        965969454,
+        965969455,
+        965969456,
+        965969457,
+        965969458,
+        965969459,
+        965969460,
+        965969461,
+        965972945,
+        965972947,
+        973195516,
+        1013551310,
+        1055297702,
+        1060043266,
+        1060043268,
+        1060105298,
+        1060105301,
+        1060111380,
+        1060111381,
+        1060111382,
+        1060111388,
+        1060111390,
+        1068762655,
+        1069024505,
+        1069024507,
+        1069050556,
+        1069050558,
+        1069050559,
+        1069050561,
+        1069050564,
+        1069050565,
+        1069050566,
+        1069332796,
+        1069332801,
+        1069711754,
+        1069711759,
+        1071956869,
+        1071956870,
+        1071956873,
+        1071956874,
+        1071956875,
+        1071956876,
+        1071956878,
+        1071956879,
+        1071956880,
+        1071956883,
+        1071956884,
+        1071956889,
+        1071956913,
+        1071995799,
+        1071995805,
+        1071995806,
+        1334915454,
+        1426175370
+      ],
+      "representative_tank_name": "Reservoir near Oomachikulam (46.7 ha)",
+      "total_area_ha": 755.83,
+      "edge_count": 82,
+      "avg_edge_confidence": 0.657,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [
+        "Athikulam tank"
+      ],
+      "health_score": 74.4,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-001",
+      "documented_overlap": null
+    },
+    {
+      "size": 25,
+      "tank_osm_ids": [
+        870776562,
+        870776578,
+        870776579,
+        870776582,
+        870776584,
+        921413054,
+        921413067,
+        921413079,
+        921413083,
+        921413084,
+        921413085,
+        921413088,
+        921413090,
+        922241996,
+        922241999,
+        922242001,
+        993454837,
+        993454838,
+        993454839,
+        993454841,
+        993454842,
+        993454844,
+        993454845,
+        993454850,
+        993454854
+      ],
+      "representative_tank_name": "Reservoir near Tirumangalam (118.9 ha)",
+      "total_area_ha": 722.24,
+      "edge_count": 24,
+      "avg_edge_confidence": 0.517,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 71.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-028",
+      "documented_overlap": null
+    },
+    {
+      "size": 21,
+      "tank_osm_ids": [
+        1050201022,
+        1050201023,
+        1050201024,
+        1050201051,
+        1050227343,
+        1050227348,
+        1050227353,
+        1050227355,
+        1069711761,
+        1069711766,
+        1069711767,
+        1069711770,
+        1069711775,
+        1069711776,
+        1069711779,
+        1069711780,
+        1071956882,
+        1072661621,
+        1072661622,
+        1072664490,
+        1072664491
+      ],
+      "representative_tank_name": "Reservoir near Othakadai (16.6 ha)",
+      "total_area_ha": 147.46,
+      "edge_count": 20,
+      "avg_edge_confidence": 0.66,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 79.6,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-016",
+      "documented_overlap": null
+    },
+    {
+      "size": 18,
+      "tank_osm_ids": [
+        819087579,
+        819087588,
+        819087592,
+        819087600,
+        819172077,
+        819172078,
+        819172107,
+        963748086,
+        963748094,
+        963748120,
+        963748121,
+        963748135,
+        963748136,
+        965008187,
+        965008191,
+        965008192,
+        996118882,
+        996118889
+      ],
+      "representative_tank_name": "Reservoir near Vayalur (156.1 ha)",
+      "total_area_ha": 584.95,
+      "edge_count": 17,
+      "avg_edge_confidence": 0.571,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 74.2,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-020",
+      "documented_overlap": null
+    },
+    {
+      "size": 14,
+      "tank_osm_ids": [
+        758433031,
+        758433057,
+        1007690938,
+        1007690957,
+        1024896788,
+        1024896789,
+        1024896791,
+        1024896794,
+        1024896795,
+        1024896796,
+        1024896797,
+        1034787745,
+        1034807902,
+        1034807904
+      ],
+      "representative_tank_name": "Reservoir near Vilachery (74.1 ha)",
+      "total_area_ha": 211.84,
+      "edge_count": 13,
+      "avg_edge_confidence": 0.731,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 83.8,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-019",
+      "documented_overlap": null
+    },
+    {
+      "size": 13,
+      "tank_osm_ids": [
+        965963124,
+        1069711752,
+        1069711753,
+        1069711756,
+        1069711757,
+        1069711760,
+        1069711763,
+        1069711764,
+        1069711765,
+        1069711771,
+        1069711772,
+        1069711773,
+        1069711774
+      ],
+      "representative_tank_name": "Reservoir near Kadachanenthal (25.1 ha)",
+      "total_area_ha": 107.39,
+      "edge_count": 12,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-027",
+      "documented_overlap": null
+    },
+    {
+      "size": 12,
+      "tank_osm_ids": [
+        18310093,
+        18310094,
+        18310095,
+        18310101,
+        965981459,
+        965981460,
+        965981461,
+        965981462,
+        965981463,
+        969600086,
+        969600097,
+        969600098
+      ],
+      "representative_tank_name": "Reservoir near Karumathur (103.9 ha)",
+      "total_area_ha": 522.47,
+      "edge_count": 11,
+      "avg_edge_confidence": 0.555,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 73.3,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-012",
+      "documented_overlap": null
+    },
+    {
+      "size": 11,
+      "tank_osm_ids": [
+        18351408,
+        967060141,
+        967060151,
+        967060152,
+        967060153,
+        967060154,
+        969600077,
+        969600080,
+        969600083,
+        969600084,
+        969600085
+      ],
+      "representative_tank_name": "Reservoir near Valandur (97.5 ha)",
+      "total_area_ha": 279.57,
+      "edge_count": 10,
+      "avg_edge_confidence": 0.55,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 73.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-009",
+      "documented_overlap": null
+    },
+    {
+      "size": 8,
+      "tank_osm_ids": [
+        136448517,
+        1050201013,
+        1050201015,
+        1050201020,
+        1071995808,
+        1072661615,
+        1072661616,
+        1072661617
+      ],
+      "representative_tank_name": "Reservoir near Karuppayurani (31.6 ha)",
+      "total_area_ha": 71.45,
+      "edge_count": 7,
+      "avg_edge_confidence": 0.714,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 82.9,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-015",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        18310097,
+        18310099,
+        18310100,
+        18351397,
+        18351409,
+        1074604589,
+        1336244258
+      ],
+      "representative_tank_name": "Reservoir near Karumathur (50.6 ha)",
+      "total_area_ha": 168.9,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.617,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 77.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-004",
+      "documented_overlap": null
+    },
+    {
+      "size": 7,
+      "tank_osm_ids": [
+        963748117,
+        963748132,
+        965210829,
+        965210830,
+        996118900,
+        996118906,
+        996118909
+      ],
+      "representative_tank_name": "Reservoir near Vayalur (54.1 ha)",
+      "total_area_ha": 130.71,
+      "edge_count": 6,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-023",
+      "documented_overlap": null
+    },
+    {
+      "size": 6,
+      "tank_osm_ids": [
+        14405966,
+        786176286,
+        921313202,
+        921413077,
+        993454834,
+        1036266079
+      ],
+      "representative_tank_name": "Koothiyarkundu Kanmai",
+      "total_area_ha": 325.98,
+      "edge_count": 5,
+      "avg_edge_confidence": 0.9,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 94.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-024",
+      "documented_overlap": null
+    },
+    {
+      "size": 5,
+      "tank_osm_ids": [
+        965981457,
+        966251550,
+        1074590321,
+        1074590322,
+        1074604559
+      ],
+      "representative_tank_name": "முதலைக்குளம் பெரிய கண்மாய்",
+      "total_area_ha": 161.72,
+      "edge_count": 4,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-003",
+      "documented_overlap": null
+    },
+    {
+      "size": 5,
+      "tank_osm_ids": [
+        16771494,
+        16771495,
+        1338424148,
+        1338424149,
+        1338443825
+      ],
+      "representative_tank_name": "Tank near Krishnankoil",
+      "total_area_ha": 210.99,
+      "edge_count": 4,
+      "avg_edge_confidence": 0.55,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 73.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-007",
+      "documented_overlap": null
+    },
+    {
+      "size": 5,
+      "tank_osm_ids": [
+        18641173,
+        758444920,
+        807758936,
+        1007690937,
+        1024896805
+      ],
+      "representative_tank_name": "Madakulam Kanmai",
+      "total_area_ha": 141.94,
+      "edge_count": 4,
+      "avg_edge_confidence": 0.625,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [
+        "Madakulam tank"
+      ],
+      "health_score": 72.5,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-011",
+      "documented_overlap": {
+        "documented_cascade_id": "madurai-madakulam-pandya-12th-c",
+        "documented_name": "Madakulam Pandya cascade (12th century CE)",
+        "shared_tank_count": 1
+      }
+    },
+    {
+      "size": 5,
+      "tank_osm_ids": [
+        902626798,
+        913522355,
+        913522356,
+        1073231829,
+        1077902841
+      ],
+      "representative_tank_name": "Thattankulam Kanmai",
+      "total_area_ha": 70.95,
+      "edge_count": 4,
+      "avg_edge_confidence": 0.875,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 92.5,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-022",
+      "documented_overlap": null
+    },
+    {
+      "size": 5,
+      "tank_osm_ids": [
+        758177068,
+        990626336,
+        1024904820,
+        1024904821,
+        1024904822
+      ],
+      "representative_tank_name": "Reservoir near Thirumalnattam (44.8 ha)",
+      "total_area_ha": 66.46,
+      "edge_count": 4,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-025",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        886895656,
+        886895657,
+        886895664,
+        886895666
+      ],
+      "representative_tank_name": "Reservoir near Devadānappatti (64.1 ha)",
+      "total_area_ha": 101.23,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.667,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 80.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-005",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        974414887,
+        974414895,
+        974414896,
+        974414904
+      ],
+      "representative_tank_name": "Reservoir near Saruthupatti (68.3 ha)",
+      "total_area_ha": 149.51,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-006",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        758343292,
+        758343298,
+        1024896798,
+        1024896804
+      ],
+      "representative_tank_name": "Thuvarimaan Kanmaai",
+      "total_area_ha": 107.69,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.667,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 80.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-030",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        1066155669,
+        1066155670,
+        1066155675,
+        1066155679
+      ],
+      "representative_tank_name": "Reservoir near Andipatti Jakkampatty (29.2 ha)",
+      "total_area_ha": 45.13,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.833,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 90.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-031",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        1066155684,
+        1066155690,
+        1066155692,
+        1066167051
+      ],
+      "representative_tank_name": "Reservoir near Kanavilakku (51.1 ha)",
+      "total_area_ha": 70.49,
+      "edge_count": 3,
+      "avg_edge_confidence": 1.0,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 100.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-032",
+      "documented_overlap": null
+    },
+    {
+      "size": 4,
+      "tank_osm_ids": [
+        14406371,
+        14406373,
+        14406376,
+        14406377
+      ],
+      "representative_tank_name": "Reservoir near Kappalur (58.1 ha)",
+      "total_area_ha": 91.15,
+      "edge_count": 3,
+      "avg_edge_confidence": 0.667,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 80.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-034",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        1034787770,
+        1034787777,
+        1336244233
+      ],
+      "representative_tank_name": "Reservoir near Checkanurani (7.2 ha)",
+      "total_area_ha": 13.68,
+      "edge_count": 2,
+      "avg_edge_confidence": 1.0,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 100.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-000",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        361696320,
+        980669896,
+        980669899
+      ],
+      "representative_tank_name": "Tank near Allinagaram",
+      "total_area_ha": 72.77,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-008",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        15430905,
+        15520015,
+        1148482656
+      ],
+      "representative_tank_name": "Reservoir near Attipatti",
+      "total_area_ha": 88.61,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-013",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        962330780,
+        962330785,
+        963748133
+      ],
+      "representative_tank_name": "Reservoir near Pudupatti (21.6 ha)",
+      "total_area_ha": 50.64,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-017",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        819087580,
+        819172110,
+        819172120
+      ],
+      "representative_tank_name": "Reservoir near Pallpatti (254.4 ha)",
+      "total_area_ha": 264.46,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-021",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        905165522,
+        1076631917,
+        1086119819
+      ],
+      "representative_tank_name": "Pond near Thiruvannamalai (58.3 ha)",
+      "total_area_ha": 74.83,
+      "edge_count": 2,
+      "avg_edge_confidence": 1.0,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 100.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-026",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        18310098,
+        18310102,
+        1074604565
+      ],
+      "representative_tank_name": "Reservoir near Karumathur (30.3 ha)",
+      "total_area_ha": 54.89,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.75,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 85.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-029",
+      "documented_overlap": null
+    },
+    {
+      "size": 3,
+      "tank_osm_ids": [
+        14406364,
+        14406366,
+        14406368
+      ],
+      "representative_tank_name": "Reservoir near Kappalur (17.5 ha)",
+      "total_area_ha": 32.95,
+      "edge_count": 2,
+      "avg_edge_confidence": 0.5,
+      "isolated_count": 0,
+      "non_isolated_ratio": 1.0,
+      "lost_tank_intersections": [],
+      "health_score": 70.0,
+      "priority": "LOW",
+      "cascade_id": "auto-madurai-033",
+      "documented_overlap": null
+    }
+  ]
+}
