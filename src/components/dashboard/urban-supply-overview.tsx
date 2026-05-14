@@ -152,10 +152,11 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
     data.demand.demand_2034_mld > 0
       ? Math.round((data.demand.demand_gap_2034_mld / data.demand.demand_2034_mld) * 100)
       : 0;
-  const currentMetPct =
+  const currentMetPctRaw =
     data.demand.demand_2034_mld > 0
-      ? Math.min(100, Math.round((data.current_supply_total_mld / data.demand.demand_2034_mld) * 100))
+      ? Math.round((data.current_supply_total_mld / data.demand.demand_2034_mld) * 100)
       : 0;
+  const currentMetPct = Math.min(100, currentMetPctRaw);
   const designPopulation = data.demand.population_2034_design ?? data.demand.population_design ?? 0;
 
   const overrideSubtitle = data._view_overrides?.subtitle;
@@ -381,7 +382,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             <span className="text-sm tabular-nums">
               <span className="text-slate-700 dark:text-slate-300 font-semibold">{data.current_supply_total_mld}</span>
               <span className="text-slate-400 dark:text-slate-500"> / {data.demand.demand_2034_mld} MLD</span>
-              <span className="text-slate-400 dark:text-slate-500"> ({currentMetPct}%)</span>
+              <span className="text-slate-400 dark:text-slate-500"> ({currentMetPctRaw}%)</span>
             </span>
           </div>
           <div className="relative w-full h-2 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800">
