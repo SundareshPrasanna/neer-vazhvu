@@ -248,8 +248,8 @@ export function ChennaiStoryEn() {
           land waiting for an excuse.
         </p>
         <PullQuote>
-          The District Court complex stands on Sengulam tank&apos;s
-          bed in Madurai. T. Nagar stands on the Long Tank&apos;s.
+          Valluvar Kottam stands on the Nungambakkam Tank&apos;s
+          bed. T. Nagar stands on the Long Tank&apos;s.
         </PullQuote>
         <p>
           <strong>1923.</strong> The Madras Presidency, under the
@@ -323,9 +323,8 @@ export function ChennaiStoryEn() {
           channels that used to feed the upstream tanks. The
           Chembarambakkam reservoir filled. The eris that should
           have pre-loaded its catchment did not. The cascade was
-          no longer just blocked. Like in Madurai, it was
-          physically decoupled from the river it used to draw
-          from.
+          no longer just blocked. It was physically decoupled
+          from the river it used to draw from.
         </p>
         <PullQuote>
           The cascade is not gone. It is just disconnected.
@@ -591,10 +590,10 @@ export function ChennaiStoryEn() {
           </li>
           <li>
             <strong>The 2024 Madras High Court water-body registry order.</strong>{" "}
-            The same statewide directive
-            that pushes Madurai to publish a public register of
-            every water body, with survey number and original and
-            present extent, applies to Chennai. Status: pending
+            A statewide directive requiring every Tamil Nadu
+            municipality to publish a public register of every
+            water body, with survey number and original and
+            present extent. Chennai is bound by it. Status: pending
             compliance. Until compliance happens, every encroached
             tank is plausibly deniable.
           </li>
