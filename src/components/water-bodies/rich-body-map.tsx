@@ -200,9 +200,18 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
           </LayersControl.Overlay>
         )}
 
-        {/* Legal buffer (1 km NGT) - rendered below the gazette outline */}
+        {/* Buffer (legal NGT for Pallikaranai, indicative context for others).
+            Label is "NGT X km buffer" only when buffer_legal_basis starts
+            with "NGT"; otherwise generic "X km context buffer". */}
         {buffer && (
-          <LayersControl.Overlay name="NGT 1 km buffer" checked>
+          <LayersControl.Overlay
+            name={
+              body.buffer_legal_basis?.startsWith("NGT")
+                ? `NGT ${(body.buffer_metres ?? 1000) / 1000} km buffer`
+                : `${(body.buffer_metres ?? 1000) / 1000} km context buffer`
+            }
+            checked
+          >
             <GeoJSON
               data={buffer as FeatureCollection}
               style={{
@@ -216,8 +225,16 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
           </LayersControl.Overlay>
         )}
 
-        {/* Gazetted Ramsar - always the anchor; rendered last so it is on top */}
-        <LayersControl.Overlay name="Ramsar boundary (gazetted)" checked>
+        {/* Primary boundary - rendered last so it is on top. Label adapts
+            to the body's actual provenance. */}
+        <LayersControl.Overlay
+          name={
+            body.boundary_source.includes("Ramsar")
+              ? "Ramsar boundary (gazetted)"
+              : `Boundary (${body.boundary_source.split(" ")[0]})`
+          }
+          checked
+        >
           <GeoJSON
             data={polygon as FeatureCollection}
             style={{
