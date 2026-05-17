@@ -83,21 +83,21 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[10001] bg-black/70 flex items-stretch overflow-y-auto"
+      className="fixed inset-0 z-[10001] bg-black/70 flex items-stretch"
       onClick={(e) => {
         // Clicking the dark backdrop (but not the content container) closes
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative flex flex-col w-full md:max-w-[1100px] md:mx-auto md:my-4 md:rounded-xl bg-white dark:bg-slate-900 shadow-2xl min-h-[calc(100vh-2rem)]">
-        {/* Persistent close button - positioned absolute so it survives any
-            layout breakage in the header. Visible bg + border so it can't
-            be missed. */}
+      <div className="relative flex flex-col w-full md:max-w-[1100px] md:mx-auto md:my-4 md:rounded-xl bg-white dark:bg-slate-900 shadow-2xl overflow-hidden h-full md:h-[calc(100vh-2rem)]">
+        {/* Close button - absolute-positioned at top-right of the panel.
+            The panel is exact viewport height so nothing scrolls and the
+            button never moves out of reach. */}
         <button
           onClick={onClose}
           aria-label="Close"
           title="Close (Esc)"
-          className="sticky top-3 z-20 self-end mr-3 md:mr-4 mt-3 md:mt-4 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 shadow-md hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-medium"
+          className="absolute top-3 right-3 md:top-4 md:right-4 z-20 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 shadow-md hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-medium"
         >
           <X className="w-4 h-4" />
           <span className="hidden sm:inline">Close</span>
@@ -125,10 +125,11 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
           </div>
         </div>
 
-        {/* Map area - guaranteed min-height so it never collapses below
-            usable size, especially when the user zooms the browser in
-            and the header/slider/footer get taller. */}
-        <div className="flex-1 min-h-[55vh] md:min-h-[60vh]">
+        {/* Map area - flex-1 so it absorbs whatever space the fixed-height
+            sections (header, stats, slider, footer) leave. User pans and
+            zooms inside this Leaflet map freely; a Reset button restores
+            the default fit-bounds view. */}
+        <div className="flex-1 min-h-0 relative">
           <RichBodyMap
             body={body}
             year={selectedYear}
