@@ -62,7 +62,7 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
 
   if (!body) {
     return (
-      <div className="fixed inset-0 z-[2000] bg-black/60 flex items-center justify-center">
+      <div className="fixed inset-0 z-[10001] bg-black/60 flex items-center justify-center">
         <div className="bg-white dark:bg-slate-900 rounded-lg p-6 max-w-md">
           <p className="text-sm">
             Rich-data body <code>{bodyId}</code> is not in the registry.
@@ -79,41 +79,53 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-[2000] bg-black/70 flex items-stretch">
-      <div className="flex flex-col w-full md:max-w-[1100px] md:mx-auto md:my-4 md:rounded-xl bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
+    <div
+      className="fixed inset-0 z-[10001] bg-black/70 flex items-stretch overflow-y-auto"
+      onClick={(e) => {
+        // Clicking the dark backdrop (but not the content container) closes
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="relative flex flex-col w-full md:max-w-[1100px] md:mx-auto md:my-4 md:rounded-xl bg-white dark:bg-slate-900 shadow-2xl min-h-[calc(100vh-2rem)]">
+        {/* Persistent close button - positioned absolute so it survives any
+            layout breakage in the header. Visible bg + border so it can't
+            be missed. */}
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          title="Close (Esc)"
+          className="sticky top-3 z-20 self-end mr-3 md:mr-4 mt-3 md:mt-4 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 shadow-md hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-medium"
+        >
+          <X className="w-4 h-4" />
+          <span className="hidden sm:inline">Close</span>
+        </button>
+
         {/* Header */}
-        <div className="flex items-start justify-between px-4 md:px-6 py-3 md:py-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
-          <div className="min-w-0 flex-1">
-            <h2 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100 truncate">
-              {body.name}
-            </h2>
-            {body.name_ta && (
-              <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
-                {body.name_ta}
-              </p>
-            )}
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300">
-                Ramsar Site
+        <div className="px-4 md:px-6 py-3 md:py-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
+          <h2 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100 truncate">
+            {body.name}
+          </h2>
+          {body.name_ta && (
+            <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
+              {body.name_ta}
+            </p>
+          )}
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300">
+              Ramsar Site
+            </span>
+            {body.buffer_legal_basis && (
+              <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300">
+                NGT {body.buffer_metres! / 1000} km buffer
               </span>
-              {body.buffer_legal_basis && (
-                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300">
-                  NGT {body.buffer_metres! / 1000} km buffer
-                </span>
-              )}
-            </div>
+            )}
           </div>
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="ml-3 p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
-        {/* Map area - takes the bulk of the viewport */}
-        <div className="flex-1 min-h-0">
+        {/* Map area - guaranteed min-height so it never collapses below
+            usable size, especially when the user zooms the browser in
+            and the header/slider/footer get taller. */}
+        <div className="flex-1 min-h-[55vh] md:min-h-[60vh]">
           <RichBodyMap
             body={body}
             year={selectedYear}
