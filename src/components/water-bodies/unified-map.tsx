@@ -18,6 +18,7 @@ import { getPriorityColor } from "@/types/restoration";
 import type { ViewMode } from "./view-mode-toggle";
 import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { getRichBodyIdByOsmId } from "@/lib/water-bodies/rich-body-registry";
 import "leaflet/dist/leaflet.css";
 
 // Chennai-default GeoJSON URLs and map center. Other cities override via props.
@@ -417,10 +418,11 @@ export function UnifiedMap({
     }
 
     const censusMatch = censusMatchByOsmId.get(props.osm_id);
+    const richBodyId = getRichBodyIdByOsmId(props.osm_id) ?? undefined;
     layer.on({
       click: (e) => {
         const latlng: [number, number] = [e.latlng.lat, e.latlng.lng];
-        onSelectCurrent({ kind: "current", props, latlng, censusMatch });
+        onSelectCurrent({ kind: "current", props, latlng, censusMatch, richBodyId });
       },
       mouseover: (e) => {
         (e.target as L.Path).setStyle({ fillOpacity: viewMode === "restoration" ? 0.8 : 0.7, weight: 2.5 });

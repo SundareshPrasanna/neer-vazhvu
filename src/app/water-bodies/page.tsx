@@ -21,6 +21,7 @@ import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
+import { RichBodyOverlay } from "@/components/water-bodies/rich-body-overlay";
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -506,7 +507,12 @@ function WaterBodiesPageContent() {
               }}
             />
           </div>
-          {selected && (
+          {selected && selected.kind === "current" && selected.richBodyId ? (
+            <RichBodyOverlay
+              bodyId={selected.richBodyId}
+              onClose={() => setSelected(null)}
+            />
+          ) : selected ? (
             <BottomSheet onClose={() => setSelected(null)}>
               <UnifiedDetailPanel
                 selected={selected}
@@ -514,7 +520,7 @@ function WaterBodiesPageContent() {
                 onClose={() => setSelected(null)}
               />
             </BottomSheet>
-          )}
+          ) : null}
         </TabsContent>
 
         {/* Ranking table tab */}
@@ -527,7 +533,12 @@ function WaterBodiesPageContent() {
               />
             )}
           </div>
-          {selected && (
+          {selected && selected.kind === "current" && selected.richBodyId ? (
+            <RichBodyOverlay
+              bodyId={selected.richBodyId}
+              onClose={() => setSelected(null)}
+            />
+          ) : selected ? (
             <BottomSheet onClose={() => setSelected(null)}>
               <UnifiedDetailPanel
                 selected={selected}
@@ -535,7 +546,7 @@ function WaterBodiesPageContent() {
                 onClose={() => setSelected(null)}
               />
             </BottomSheet>
-          )}
+          ) : null}
         </TabsContent>
       </Tabs>
     </div>

@@ -10,6 +10,7 @@ import { ViewModeToggle, type ViewMode } from "@/components/water-bodies/view-mo
 import { CascadeToggle } from "@/components/cascade/cascade-toggle";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { MapInfoButton } from "@/components/map/map-info-button";
+import { RichBodyOverlay } from "@/components/water-bodies/rich-body-overlay";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import type { SelectedWaterBody } from "@/types/water-bodies";
@@ -312,8 +313,15 @@ export default function WaterBodiesMapClient({
 
         {/* BottomSheet renders as desktop sidebar / mobile fixed-bottom. MUST
             be a sibling of the map div (not nested inside it) so the desktop
-            sidebar layout works inside the parent flex flex-row container. */}
-        {selected && (
+            sidebar layout works inside the parent flex flex-row container.
+            Rich-data bodies (Pallikaranai etc.) take over with their own
+            full-screen overlay instead of the BottomSheet. */}
+        {selected && selected.kind === "current" && selected.richBodyId ? (
+          <RichBodyOverlay
+            bodyId={selected.richBodyId}
+            onClose={() => setSelected(null)}
+          />
+        ) : selected ? (
           <BottomSheet onClose={() => setSelected(null)}>
             <UnifiedDetailPanel
               selected={selected}
@@ -321,7 +329,7 @@ export default function WaterBodiesMapClient({
               onClose={() => setSelected(null)}
             />
           </BottomSheet>
-        )}
+        ) : null}
       </div>
     </div>
   );
