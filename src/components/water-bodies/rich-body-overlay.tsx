@@ -4,6 +4,18 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import dynamic from "next/dynamic";
 import { getRichBody } from "@/lib/water-bodies/rich-body-registry";
+import { RichBodyTimelineSlider } from "./rich-body-timeline-slider";
+
+interface ChipManifestShape {
+  chip_bbox_wsen: [number, number, number, number];
+  chips: Array<{
+    year: number;
+    available: boolean;
+    sensor?: string;
+    scene_count?: number;
+    url?: string;
+  }>;
+}
 
 const RichBodyMap = dynamic(
   () => import("./rich-body-map").then((m) => m.RichBodyMap),
@@ -30,6 +42,7 @@ interface RichBodyOverlayProps {
  */
 export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
   const body = getRichBody(bodyId);
+  const [manifest, setManifest] = useState<ChipManifestShape | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | undefined>(undefined);
 
   useEffect(() => {
@@ -39,6 +52,13 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  // When the manifest arrives, default the slider to the latest available year
+  useEffect(() => {
+    if (!manifest || selectedYear != null) return;
+    const avail = manifest.chips.filter((c) => c.available).map((c) => c.year);
+    if (avail.length) setSelectedYear(Math.max(...avail));
+  }, [manifest, selectedYear]);
 
   if (!body) {
     return (
@@ -94,11 +114,23 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
 
         {/* Map area - takes the bulk of the viewport */}
         <div className="flex-1 min-h-0">
-          <RichBodyMap body={body} year={selectedYear} />
+          <RichBodyMap
+            body={body}
+            year={selectedYear}
+            onManifestLoaded={(m) => setManifest(m)}
+          />
         </div>
 
-        {/* Footer placeholder: slider + stats land in T13/T15. For V0
-            scaffold, just show the data-source footnote. */}
+        {/* Timeline slider - controls the year prop passed down to the map */}
+        {manifest && selectedYear != null && (
+          <RichBodyTimelineSlider
+            chips={manifest.chips}
+            year={selectedYear}
+            onYearChange={setSelectedYear}
+          />
+        )}
+
+        {/* Sources footnote */}
         <div className="px-4 md:px-6 py-2 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 shrink-0">
           <span>
             Gazette: Tamil Nadu State Wetland Authority &middot;{" "}
