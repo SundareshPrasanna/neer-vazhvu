@@ -36,6 +36,13 @@ interface RichBodyOverlayProps {
   onClose: () => void;
 }
 
+const TONE_CLASSES: Record<string, string> = {
+  emerald: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300",
+  amber: "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300",
+  sky: "bg-sky-100 dark:bg-sky-900/30 text-sky-800 dark:text-sky-300",
+  slate: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
+};
+
 /**
  * Full-screen takeover for rich-data water bodies (Pallikaranai etc.).
  * Hosts an embedded map with TNSWA gazetted boundary + 1km NGT buffer +
@@ -113,16 +120,18 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
               {body.name_ta}
             </p>
           )}
-          <div className="mt-1.5 flex flex-wrap gap-1.5">
-            <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300">
-              Ramsar Site
-            </span>
-            {body.buffer_legal_basis && (
-              <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300">
-                NGT {body.buffer_metres! / 1000} km buffer
-              </span>
-            )}
-          </div>
+          {body.status_badges && body.status_badges.length > 0 && (
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              {body.status_badges.map((b) => (
+                <span
+                  key={b.label}
+                  className={`text-[11px] font-medium px-1.5 py-0.5 rounded ${TONE_CLASSES[b.tone]}`}
+                >
+                  {b.label}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Map area - flex-1 so it absorbs whatever space the fixed-height

@@ -49,6 +49,13 @@ export interface RichBodyEntry {
   };
   /** Hand-curated event stamps for the timeline */
   timeline_events: TimelineEvent[];
+  /** Status badges shown in the overlay header. Each body declares its
+   *  own truth - we no longer assume "rich body == Ramsar". */
+  status_badges?: Array<{
+    label: string;
+    /** Tailwind-tinted background colour */
+    tone: "emerald" | "amber" | "sky" | "slate";
+  }>;
 }
 
 export interface TimelineEvent {
@@ -104,6 +111,11 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
         source_url: "https://www.dtnext.in/news/tamilnadu/ngt-suspends-all-construction-around-pallikaranai-marsh-as-part-of-urban-conservation-848168",
       },
     ],
+    status_badges: [
+      { label: "Ramsar Site #2481", tone: "emerald" },
+      { label: "Reserve Forest", tone: "emerald" },
+      { label: "NGT 1 km buffer", tone: "amber" },
+    ],
   },
   sholavaram: {
     id: "sholavaram",
@@ -155,6 +167,9 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
         label: "Cyclone Michaung floods - reservoir reached full pool",
         label_short: "Cyclone Michaung",
       },
+    ],
+    status_badges: [
+      { label: "CMWSSB drinking water reservoir", tone: "sky" },
     ],
   },
 };
