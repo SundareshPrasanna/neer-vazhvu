@@ -1,6 +1,6 @@
 {
   "body_id": "pallikaranai",
-  "computed_at": "2026-05-17T07:50:43.361022+00:00",
+  "computed_at": "2026-05-17T18:04:59.189863+00:00",
   "data_source": {
     "dataset": "GOOGLE/DYNAMICWORLD/V1",
     "license": "CC-BY-4.0",
@@ -10,7 +10,7 @@
     "method": "Per-pixel annual MODE label across all DW scenes intersecting the zone; built = class 6",
     "known_limitations": [
       "Dynamic World started June 2015; pre-2016 not included",
-      "2026 partial-year (through script run date)",
+      "Current-year is partial (through script run date)",
       "Mode aggregation can be noisy in low-scene-count regions; check scene_count column",
       "Built class includes any built-up surface (roofs, roads, paved): not building-count-equivalent"
     ]
@@ -29,7 +29,7 @@
     2026
   ],
   "by_zone": {
-    "TNSWA gazetted (full)": {
+    "Body (primary)": {
       "2016": {
         "year": 2016,
         "scene_count": 13,
@@ -119,7 +119,7 @@
         "built_area_ha": 175.66
       }
     },
-    "OSM ecological (full)": {
+    "OSM ecological": {
       "2016": {
         "year": 2016,
         "scene_count": 13,
@@ -209,7 +209,7 @@
         "built_area_ha": 116.82
       }
     },
-    "Gap: TNSWA - OSM": {
+    "Gap: body - OSM ecological": {
       "2016": {
         "year": 2016,
         "scene_count": 13,
@@ -299,7 +299,7 @@
         "built_area_ha": 80.76
       }
     },
-    "Halo: 1km buffer - TNSWA (NGT no-build zone)": {
+    "Halo: 1km buffer - body": {
       "2016": {
         "year": 2016,
         "scene_count": 13,
@@ -391,9 +391,9 @@
     }
   },
   "headline_for_v0": [
-    "TNSWA gazetted (full): built fraction 5.94% (2016) -> 13.64% (2026), delta +7.7 pp",
-    "OSM ecological (full): built fraction 5.17% (2016) -> 10.54% (2026), delta +5.37 pp",
-    "Gap: TNSWA - OSM: built fraction 17.02% (2016) -> 33.56% (2026), delta +16.54 pp",
-    "Halo: 1km buffer - TNSWA (NGT no-build zone): built fraction 82.72% (2016) -> 87.12% (2026), delta +4.4 pp"
+    "Body (primary): built fraction 5.94% (2016) -> 13.64% (2026), delta +7.7 pp",
+    "OSM ecological: built fraction 5.17% (2016) -> 10.54% (2026), delta +5.37 pp",
+    "Gap: body - OSM ecological: built fraction 17.02% (2016) -> 33.56% (2026), delta +16.54 pp",
+    "Halo: 1km buffer - body: built fraction 82.72% (2016) -> 87.12% (2026), delta +4.4 pp"
   ]
 }

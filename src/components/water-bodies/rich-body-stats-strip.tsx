@@ -33,8 +33,10 @@ interface OvertureBuildings {
   }>;
 }
 
-const GAZETTE_ZONE = "TNSWA gazetted (full)";
-const HALO_ZONE = "Halo: 1km buffer - TNSWA (NGT no-build zone)";
+// Generic zone names emitted by all verify_rich_body_*.py scripts via
+// scripts/_rich_body_zones.py. Same names regardless of body source.
+const BODY_ZONE = "Body (primary)";
+const HALO_ZONE = "Halo: 1km buffer - body";
 
 interface RichBodyStatsStripProps {
   body: RichBodyEntry;
@@ -63,17 +65,17 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
     });
   }, [body.id, body.analysis_paths.overture_buildings]);
 
-  const waterPct = jrc?.by_zone[GAZETTE_ZONE]?.[String(year)]?.any_water_pct ?? null;
+  const waterPct = jrc?.by_zone[BODY_ZONE]?.[String(year)]?.any_water_pct ?? null;
   const builtPct = dw?.by_zone[HALO_ZONE]?.[String(year)]?.built_fraction_pct ?? null;
   const haloBuildingsOb = ob?.regions.find((r) => r.region === HALO_ZONE);
-  const gazetteBuildingsOb = ob?.regions.find((r) => r.region === GAZETTE_ZONE);
+  const bodyBuildingsOb = ob?.regions.find((r) => r.region === BODY_ZONE);
   const haloBuildingsOv = ov?.regions.find((r) => r.region === HALO_ZONE);
-  const gazetteBuildingsOv = ov?.regions.find((r) => r.region === GAZETTE_ZONE);
+  const bodyBuildingsOv = ov?.regions.find((r) => r.region === BODY_ZONE);
   const overtureRelease = ov?.data_source?.release_date ?? "Q1 2026";
 
   // Baseline reference values for delta indicators
-  const waterBaseline = jrc?.by_zone[GAZETTE_ZONE]
-    ? avgPct(jrc.by_zone[GAZETTE_ZONE], [1988, 1989, 1990, 1991, 1992])
+  const waterBaseline = jrc?.by_zone[BODY_ZONE]
+    ? avgPct(jrc.by_zone[BODY_ZONE], [1988, 1989, 1990, 1991, 1992])
     : null;
   const builtBaseline = dw?.by_zone[HALO_ZONE]?.["2016"]?.built_fraction_pct ?? null;
 
@@ -81,7 +83,7 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
     <div className="px-4 md:px-6 py-2.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/30 shrink-0">
       <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
         <Stat
-          label="Water in gazette"
+          label="Water in body"
           value={waterPct != null ? `${waterPct.toFixed(1)}%` : "n/a"}
           delta={waterPct != null && waterBaseline != null ? waterPct - waterBaseline : null}
           deltaUnit="pp"
@@ -110,15 +112,15 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
           caveat={haloBuildingsOv ? `Overture ${overtureRelease}` : "Open Buildings 2023"}
         />
         <Stat
-          label="Buildings in gazette"
+          label="Buildings in body"
           value={
-            gazetteBuildingsOv
-              ? gazetteBuildingsOv.building_count.toLocaleString()
-              : gazetteBuildingsOb
-                ? gazetteBuildingsOb.building_count.toLocaleString()
+            bodyBuildingsOv
+              ? bodyBuildingsOv.building_count.toLocaleString()
+              : bodyBuildingsOb
+                ? bodyBuildingsOb.building_count.toLocaleString()
                 : "n/a"
           }
-          caveat={gazetteBuildingsOv ? `Overture ${overtureRelease}` : "Open Buildings 2023"}
+          caveat={bodyBuildingsOv ? `Overture ${overtureRelease}` : "Open Buildings 2023"}
         />
       </div>
     </div>

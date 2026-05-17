@@ -56,7 +56,7 @@ jobs:
         run: |
           set +e
           ANOMALY_FOUND=0
-          BODY_IDS="pallikaranai"  # add new rich-body ids here as they onboard
+          BODY_IDS="pallikaranai sholavaram"  # add new rich-body ids here as they onboard
 
           ARGS=""
           if [ -n "${{ inputs.release }}" ]; then
@@ -68,7 +68,7 @@ jobs:
 
           for body in $BODY_IDS; do
             echo "=== refreshing $body ==="
-            python scripts/verify_pallikaranai_overture_buildings.py --body-id "$body" $ARGS
+            python scripts/verify_rich_body_overture_buildings.py --body-id "$body" $ARGS
             EXIT=$?
             if [ "$EXIT" = "2" ]; then
               echo "$body: anomaly detected, candidate file written"

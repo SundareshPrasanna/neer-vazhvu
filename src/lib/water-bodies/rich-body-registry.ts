@@ -22,6 +22,10 @@ export interface RichBodyEntry {
   name_ta?: string;
   /** City this body belongs to */
   city_id: string;
+  /** Provenance of the primary polygon - shown in the sources modal so
+   *  users see whether the boundary is gazetted legal vs OSM mapper
+   *  interpretation vs satellite-derived. */
+  boundary_source: string;
   /** Gazetted Ramsar (or equivalent legal) boundary - the legal anchor */
   polygon_path: string;
   /** OSM-mapped ecological boundary (smaller than gazette for marshes with cutouts) */
@@ -61,6 +65,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
     name: "Pallikaranai Marsh",
     name_ta: "பள்ளிக்கரணை சதுப்புநிலப்பகுதி",
     city_id: "chennai",
+    boundary_source: "Tamil Nadu State Wetland Authority (TNSWA) - gazetted Ramsar Site #2481 boundary",
     polygon_path: "/geojson/rich-bodies/pallikaranai.geojson",
     osm_ecological_path: "/geojson/rich-bodies/pallikaranai-osm-ecological.geojson",
     buffer_path: "/geojson/rich-bodies/pallikaranai-buffer-1000m.geojson",
@@ -97,6 +102,58 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
         label: "NGT orders 1 km construction freeze around the marsh",
         label_short: "NGT 1km buffer order",
         source_url: "https://www.dtnext.in/news/tamilnadu/ngt-suspends-all-construction-around-pallikaranai-marsh-as-part-of-urban-conservation-848168",
+      },
+    ],
+  },
+  sholavaram: {
+    id: "sholavaram",
+    osm_id: 25394523,
+    name: "Sholavaram Lake",
+    name_ta: "சோளவரம் ஏரி",
+    city_id: "chennai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 25394523). " +
+      "Note: no public gazetted boundary - CMWSSB manages this reservoir as " +
+      "drinking-water infrastructure but does not publish a GIS layer. India-WRIS " +
+      "and Bhuvan WBIS host satellite-derived alternatives; integration is a " +
+      "V0.1 follow-up. OSM polygon represents the visible water surface at the " +
+      "time mappers drew it (mostly 2018-2022 edits).",
+    polygon_path: "/geojson/rich-bodies/sholavaram.geojson",
+    buffer_path: "/geojson/rich-bodies/sholavaram-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, no specific legal NGT order for Sholavaram). " +
+      "Shown to visualise the urbanisation pressure on the reservoir's surroundings.",
+    imagery_manifest_path: "/data/rich-bodies/sholavaram-imagery-manifest.json",
+    analysis_paths: {
+      boundary: "/data/rich-bodies/sholavaram-boundary-analysis.json",
+      open_buildings:
+        "/data/rich-bodies/sholavaram-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/sholavaram-overture-buildings.json",
+      water_trend: "/data/rich-bodies/sholavaram-jrc-water-trend.json",
+      built_trend:
+        "/data/rich-bodies/sholavaram-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1944,
+        label: "Sholavaram reservoir constructed as part of Chennai's water supply system",
+        label_short: "Constructed",
+      },
+      {
+        year: 2003,
+        label: "Reservoir went dry during the historic Chennai drought; symbolic of city's water crisis",
+        label_short: "2003 drought - dried up",
+      },
+      {
+        year: 2019,
+        label: "Chennai 'Day Zero' water crisis - all four city reservoirs (Sholavaram included) went near-empty",
+        label_short: "2019 'Day Zero' crisis",
+      },
+      {
+        year: 2023,
+        label: "Cyclone Michaung floods - reservoir reached full pool",
+        label_short: "Cyclone Michaung",
       },
     ],
   },

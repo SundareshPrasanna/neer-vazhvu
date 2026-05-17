@@ -1,20 +1,28 @@
 """
-Quick verification: count Google Open Buildings v3 footprints inside
-Pallikaranai's TNSWA gazetted boundary, OSM ecological boundary, the
-TNSWA-OSM "lost marsh character" gap, and the 1 km NGT buffer.
+Count Google Open Buildings v3 footprints inside the zones of a
+rich-data water body.
 
-Output: public/data/rich-bodies/pallikaranai-open-buildings-verification.json
+Generic across rich bodies via --body-id. Zones come from
+_rich_body_zones.load_body_zones (Pallikaranai-style 4-zone or
+Sholavaram-style 2-zone depending on whether the body has a
+separate OSM ecological boundary).
 
-Why: turns the polygon-math comparison into a concrete encroachment number.
-Polygon math says "233 ha gap inside gazette where OSM no longer maps
-marsh." This script answers: of that 233 ha, how much is actually built?
+Output: public/data/rich-bodies/<body_id>-open-buildings-verification.json
 
 Usage:
-    cd neer-vazhvu-api
-    python ../scripts/verify_pallikaranai_encroachment.py
+    python scripts/verify_rich_body_open_buildings.py --body-id pallikaranai
+    python scripts/verify_rich_body_open_buildings.py --body-id sholavaram
+
+Originally focused on Pallikaranai (the analysis that turned the
+233 ha TNSWA-OSM gap into a quotable encroachment number). Now used
+for every rich body. Open Buildings v3 is a 2023 snapshot - we keep
+this as a baseline cross-check; Overture (run by
+verify_rich_body_overture_buildings.py) is the current-primary
+source for the UI.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
@@ -22,18 +30,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
-from shapely.geometry import shape
-from shapely.ops import unary_union
 
-# Load env (GEE creds)
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / "neer-vazhvu-api" / ".env")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import ee  # noqa: E402
+from _rich_body_zones import load_body_zones, ZONE_BODY, ZONE_HALO  # noqa: E402
 
 OPEN_BUILDINGS_COLLECTION = "GOOGLE/Research/open-buildings/v3/polygons"
 
-# Open Buildings v3 confidence bands (per published methodology)
 CONFIDENCE_BANDS = [
     ("high", 0.75, 1.0),
     ("medium", 0.65, 0.75),
@@ -51,28 +57,13 @@ def init_ee() -> None:
     print(f"GEE initialised: project={project}")
 
 
-def load_geom(path: Path):
-    with open(path) as f:
-        gj = json.load(f)
-    return unary_union([shape(f["geometry"]) for f in gj["features"]])
-
-
 def shapely_to_ee(geom) -> ee.Geometry:
     return ee.Geometry(json.loads(json.dumps(geom.__geo_interface__)))
 
 
 def summarise_buildings(name: str, ee_geom: ee.Geometry) -> dict:
-    """Filter Open Buildings v3 to a polygon and return count + area + confidence breakdown."""
     print(f"\n[{name}]")
     buildings = ee.FeatureCollection(OPEN_BUILDINGS_COLLECTION).filterBounds(ee_geom)
-
-    # Tight intersection so partial-overlap buildings aren't double-counted into wrong zones
-    contained = buildings.filter(ee.Filter.contains(".geo", ee_geom).Not()).filter(
-        ee.Filter.intersects(".geo", ee_geom)
-    )
-
-    # We actually want: buildings whose centroid is inside the region
-    # (simpler + cheaper than the contains/intersects dance above)
     centroid_inside = buildings.map(
         lambda f: f.set("centroid_in", ee_geom.contains(f.geometry().centroid(1), 1))
     ).filter(ee.Filter.eq("centroid_in", True))
@@ -111,30 +102,19 @@ def summarise_buildings(name: str, ee_geom: ee.Geometry) -> dict:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--body-id", required=True)
+    ap.add_argument("--buffer-m", type=int, default=1000)
+    args = ap.parse_args()
+
     init_ee()
 
-    base = ROOT / "public/geojson/rich-bodies"
-    tnswa = load_geom(base / "pallikaranai.geojson")
-    osm = load_geom(base / "pallikaranai-osm-ecological.geojson")
-    buffer = load_geom(base / "pallikaranai-buffer-1000m.geojson")
-
-    # Derive the comparison polygons
-    gap_tnswa_minus_osm = tnswa.difference(osm)
-    intersection = tnswa.intersection(osm)
-    halo_buffer_minus_tnswa = buffer.difference(tnswa)
-
-    regions = [
-        ("TNSWA gazetted (full)", shapely_to_ee(tnswa), tnswa.area),
-        ("OSM ecological (full)", shapely_to_ee(osm), osm.area),
-        ("Intersection (both agree)", shapely_to_ee(intersection), intersection.area),
-        ("Gap: TNSWA - OSM (legally protected, no longer marsh)", shapely_to_ee(gap_tnswa_minus_osm), gap_tnswa_minus_osm.area),
-        ("Halo: 1km buffer - TNSWA (NGT no-build zone)", shapely_to_ee(halo_buffer_minus_tnswa), halo_buffer_minus_tnswa.area),
-    ]
+    zones = load_body_zones(ROOT, args.body_id, buffer_metres=args.buffer_m)
 
     results = []
-    for label, ee_geom, raw_area in regions:
-        summary = summarise_buildings(label, ee_geom)
-        # raw_area is degrees² from shapely; not useful here. Compute proper area:
+    for name, geom in zones.items():
+        ee_geom = shapely_to_ee(geom)
+        summary = summarise_buildings(name, ee_geom)
         utm_area_ha = ee_geom.area(1).getInfo() / 10000
         summary["region_area_ha"] = round(utm_area_ha, 2)
         summary["built_up_fraction_pct"] = (
@@ -145,7 +125,7 @@ def main() -> None:
         results.append(summary)
 
     payload = {
-        "body_id": "pallikaranai",
+        "body_id": args.body_id,
         "computed_at": datetime.now(timezone.utc).isoformat(),
         "data_source": {
             "dataset": OPEN_BUILDINGS_COLLECTION,
@@ -162,7 +142,11 @@ def main() -> None:
         "headline_for_v0": _build_headline(results),
     }
 
-    out_path = ROOT / "public/data/rich-bodies/pallikaranai-open-buildings-verification.json"
+    out_path = (
+        ROOT
+        / "public/data/rich-bodies"
+        / f"{args.body_id}-open-buildings-verification.json"
+    )
     out_path.write_text(json.dumps(payload, indent=2))
     print(f"\nWrote {out_path}")
     print("\n=== Headline ===")
@@ -171,21 +155,23 @@ def main() -> None:
 
 
 def _build_headline(results: list[dict]) -> list[str]:
-    by_region = {r["region"]: r for r in results}
-    gap = by_region["Gap: TNSWA - OSM (legally protected, no longer marsh)"]
-    gazette = by_region["TNSWA gazetted (full)"]
-    halo = by_region["Halo: 1km buffer - TNSWA (NGT no-build zone)"]
-    return [
-        f"Inside the gazetted Ramsar boundary: {gazette['building_count']:,} buildings "
-        f"covering {gazette['building_area_ha']:.0f} ha "
-        f"({gazette['built_up_fraction_pct']:.1f}% of the {gazette['region_area_ha']:.0f} ha gazette).",
-        f"Inside the 233 ha 'lost marsh character' gap: {gap['building_count']:,} buildings "
-        f"covering {gap['building_area_ha']:.0f} ha "
-        f"({gap['built_up_fraction_pct']:.1f}% of the gap).",
-        f"Inside the NGT 1 km no-build halo: {halo['building_count']:,} buildings "
-        f"covering {halo['building_area_ha']:.0f} ha "
-        f"({halo['built_up_fraction_pct']:.1f}% of the {halo['region_area_ha']:.0f} ha halo).",
-    ]
+    by = {r["region"]: r for r in results}
+    body = by.get(ZONE_BODY)
+    halo = by.get(ZONE_HALO)
+    lines: list[str] = []
+    if body:
+        lines.append(
+            f"Inside primary boundary: {body['building_count']:,} buildings "
+            f"covering {body['building_area_ha']:.0f} ha "
+            f"({body['built_up_fraction_pct']:.1f}% of {body['region_area_ha']:.0f} ha)."
+        )
+    if halo:
+        lines.append(
+            f"Inside 1 km halo: {halo['building_count']:,} buildings "
+            f"covering {halo['building_area_ha']:.0f} ha "
+            f"({halo['built_up_fraction_pct']:.1f}% of {halo['region_area_ha']:.0f} ha)."
+        )
+    return lines
 
 
 if __name__ == "__main__":

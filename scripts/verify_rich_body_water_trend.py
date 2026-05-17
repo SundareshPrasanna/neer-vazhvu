@@ -1,24 +1,12 @@
 """
-JRC Global Surface Water v1.4 yearly classification trend for Pallikaranai.
+JRC Global Surface Water v1.4 yearly water classification per zone of a
+rich-data body. Generic across rich bodies via --body-id.
 
-Companion to verify_pallikaranai_built_trend.py: where Dynamic World gives
-the GROWING built-fraction story 2016-2026, JRC gives the LOSING water-
-fraction story 1984-2021 (the v1.4 cutoff).
-
-Per year, per zone, classify each 30 m pixel as:
-  0 = no data / no observation
-  1 = not water (dry)
-  2 = seasonal water (wet some months)
-  3 = permanent water (wet most months)
-
-Output: public/data/rich-bodies/pallikaranai-jrc-water-trend.json
-
-Years: 1984-2021 (v1.4 cutoff). 2022-present is a known gap - JRC has
-not released a newer version. Extending to 2022+ requires computing our
-own Landsat/S2 water mask matching JRC's methodology (deferred).
+Output: public/data/rich-bodies/<body_id>-jrc-water-trend.json
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
@@ -26,16 +14,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
-from shapely.geometry import shape
-from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / "neer-vazhvu-api" / ".env")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import ee  # noqa: E402
+from _rich_body_zones import load_body_zones  # noqa: E402
 
 JRC_YEARLY = "JRC/GSW1_4/YearlyHistory"
-YEARS = list(range(1984, 2022))  # JRC v1.4 covers 1984-2021 inclusive
+YEARS = list(range(1984, 2022))
 
 CLASS_LABELS = {0: "no_data", 1: "not_water", 2: "seasonal", 3: "permanent"}
 
@@ -50,18 +38,11 @@ def init_ee() -> None:
     print(f"GEE initialised: project={project}")
 
 
-def load_geom(path: Path):
-    with open(path) as f:
-        gj = json.load(f)
-    return unary_union([shape(f["geometry"]) for f in gj["features"]])
-
-
 def shapely_to_ee(geom) -> ee.Geometry:
     return ee.Geometry(json.loads(json.dumps(geom.__geo_interface__)))
 
 
 def water_class_series(ee_geom: ee.Geometry, label: str) -> dict:
-    """Per year, count pixels in each water class within the zone."""
     def year_to_counts(y):
         y = ee.Number(y).toInt()
         img = ee.Image(f"{JRC_YEARLY}/{y.format('%d').getInfo()}").select("waterClass")
@@ -94,12 +75,10 @@ def water_class_series(ee_geom: ee.Geometry, label: str) -> dict:
         any_water_pct = round(100 * any_water / valid, 2) if valid else None
         permanent_pct = round(100 * c3 / valid, 2) if valid else None
         seasonal_pct = round(100 * c2 / valid, 2) if valid else None
-
         print(
             f"  {year:<6}{c0:>10,}{c1:>10,}{c2:>11,}{c3:>12,}"
             f"{any_water_pct if any_water_pct is not None else 'n/a':>11}%"
         )
-
         series[str(year)] = {
             "year": year,
             "pixels_no_data": c0,
@@ -111,38 +90,29 @@ def water_class_series(ee_geom: ee.Geometry, label: str) -> dict:
             "any_water_pct": any_water_pct,
             "permanent_pct": permanent_pct,
             "seasonal_pct": seasonal_pct,
-            "any_water_area_ha": round(any_water * 900 / 10000, 2),  # 30m pixel = 900 m²
+            "any_water_area_ha": round(any_water * 900 / 10000, 2),
             "permanent_area_ha": round(c3 * 900 / 10000, 2),
         }
-
     return series
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--body-id", required=True)
+    ap.add_argument("--buffer-m", type=int, default=1000)
+    args = ap.parse_args()
+
     init_ee()
 
-    base = ROOT / "public/geojson/rich-bodies"
-    tnswa = load_geom(base / "pallikaranai.geojson")
-    osm = load_geom(base / "pallikaranai-osm-ecological.geojson")
-    buffer = load_geom(base / "pallikaranai-buffer-1000m.geojson")
+    zones = load_body_zones(ROOT, args.body_id, buffer_metres=args.buffer_m)
 
-    gap = tnswa.difference(osm)
-    halo = buffer.difference(tnswa)
-
-    zones = [
-        ("TNSWA gazetted (full)", tnswa),
-        ("OSM ecological (full)", osm),
-        ("Gap: TNSWA - OSM", gap),
-        ("Halo: 1km buffer - TNSWA (NGT no-build zone)", halo),
-    ]
-
-    by_zone = {}
-    for label, geom in zones:
+    by_zone: dict[str, dict] = {}
+    for label, geom in zones.items():
         ee_geom = shapely_to_ee(geom)
         by_zone[label] = water_class_series(ee_geom, label)
 
     payload = {
-        "body_id": "pallikaranai",
+        "body_id": args.body_id,
         "computed_at": datetime.now(timezone.utc).isoformat(),
         "data_source": {
             "dataset": JRC_YEARLY,
@@ -155,7 +125,7 @@ def main() -> None:
                 "v1.4 cutoff is 2021. No 2022-present data; extending requires custom pipeline.",
                 "Landsat 5 over India was sparse in 1984-1995; expect high no_data fractions in early years.",
                 "30m resolution: bodies under ~2 ha have unreliable signal.",
-                "JRC may misclassify marsh bed (damp but not wet) as 'not water' during dry season.",
+                "JRC may misclassify damp-but-not-flooded marsh bed as 'not water' during dry season.",
             ],
         },
         "years": YEARS,
@@ -163,7 +133,9 @@ def main() -> None:
         "headline_for_v0": _build_headline(by_zone),
     }
 
-    out_path = ROOT / "public/data/rich-bodies/pallikaranai-jrc-water-trend.json"
+    out_path = (
+        ROOT / "public/data/rich-bodies" / f"{args.body_id}-jrc-water-trend.json"
+    )
     out_path.write_text(json.dumps(payload, indent=2))
     print(f"\nWrote {out_path}")
     print("\n=== Headline ===")
@@ -174,7 +146,6 @@ def main() -> None:
 def _build_headline(by_zone: dict) -> list[str]:
     lines = []
     for zone_label, series in by_zone.items():
-        # Compare a reference baseline (avg of first 5 valid years) to the end
         years_sorted = sorted(int(y) for y in series.keys())
         baseline_years = []
         baseline_vals = []

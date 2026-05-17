@@ -13,7 +13,7 @@
  */
 
 import { writeFileSync, mkdirSync } from "fs";
-import { join, dirname } from "path";
+import { join } from "path";
 import buffer from "@turf/buffer";
 import area from "@turf/area";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
@@ -39,8 +39,15 @@ interface OsmRelation {
   members: OsmMember[];
   tags?: Record<string, string>;
 }
+interface OsmWay {
+  type: "way";
+  id: number;
+  geometry?: OsmGeomNode[];
+  nodes?: number[];
+  tags?: Record<string, string>;
+}
 interface OsmResponse {
-  elements: OsmRelation[];
+  elements: Array<OsmRelation | OsmWay>;
 }
 
 function parseArgs(argv: string[]): Record<string, string> {
@@ -181,20 +188,25 @@ function assignInnersToOuters(
 async function main() {
   const args = parseArgs(process.argv);
   const osmRel = args["osm-rel"];
+  const osmWay = args["osm-way"];
   const bodyId = args["body-id"];
   const displayName = args["name"] || "";
   const bufferM = parseInt(args["buffer-m"] || "0", 10);
 
-  if (!osmRel || !bodyId) {
+  if ((!osmRel && !osmWay) || !bodyId) {
     console.error(
-      "Usage: --osm-rel <relationId> --body-id <slug> [--name <name>] [--buffer-m <metres>]"
+      "Usage: --body-id <slug> --osm-rel <relationId> | --osm-way <wayId> [--name <name>] [--buffer-m <metres>]"
     );
     process.exit(1);
   }
 
-  console.log(`Fetching OSM relation ${osmRel} (${displayName || bodyId})…`);
+  const osmType = osmRel ? "relation" : "way";
+  const osmId = (osmRel ?? osmWay) as string;
+  console.log(`Fetching OSM ${osmType} ${osmId} (${displayName || bodyId})…`);
 
-  const query = `[out:json][timeout:60];rel(${osmRel});out geom;`;
+  const query = osmRel
+    ? `[out:json][timeout:60];rel(${osmRel});out geom;`
+    : `[out:json][timeout:60];way(${osmWay});out geom;`;
   const res = await fetch(OVERPASS_URL, {
     method: "POST",
     headers: {
@@ -209,25 +221,31 @@ async function main() {
   }
 
   const osm: OsmResponse = await res.json();
-  const rel = osm.elements.find((e) => e.type === "relation");
-  if (!rel) {
-    throw new Error(`Relation ${osmRel} not found in Overpass response`);
+  const element = osm.elements.find((e) => e.type === osmType);
+  if (!element) {
+    throw new Error(`OSM ${osmType} ${osmId} not found in Overpass response`);
   }
 
-  const tags = rel.tags || {};
+  const tags = element.tags || {};
   console.log(`  name: ${tags["name"] || "(unnamed)"}`);
   console.log(`  ramsar: ${tags["ramsar"] || "no"}`);
-  console.log(`  members: ${rel.members.length}`);
 
-  const outerWays: Position[][] = [];
-  const innerWays: Position[][] = [];
+  let outerWays: Position[][] = [];
+  let innerWays: Position[][] = [];
 
-  for (const m of rel.members) {
-    if (m.type !== "way" || !m.geometry) continue;
-    const ring: Position[] = m.geometry.map((g) => [g.lon, g.lat]);
-    if (ring.length < 2) continue;
-    if (m.role === "outer") outerWays.push(ring);
-    else if (m.role === "inner") innerWays.push(ring);
+  if (element.type === "relation") {
+    console.log(`  members: ${element.members.length}`);
+    for (const m of element.members) {
+      if (m.type !== "way" || !m.geometry) continue;
+      const ring: Position[] = m.geometry.map((g) => [g.lon, g.lat]);
+      if (ring.length < 2) continue;
+      if (m.role === "outer") outerWays.push(ring);
+      else if (m.role === "inner") innerWays.push(ring);
+    }
+  } else if (element.type === "way" && element.geometry) {
+    // Simple way: one ring, no holes
+    const ring: Position[] = element.geometry.map((g) => [g.lon, g.lat]);
+    if (ring.length >= 2) outerWays.push(ring);
   }
 
   console.log(`  outer ways: ${outerWays.length}, inner ways: ${innerWays.length}`);
@@ -250,8 +268,8 @@ async function main() {
     geometry,
     properties: {
       body_id: bodyId,
-      osm_type: "relation",
-      osm_id: parseInt(osmRel, 10),
+      osm_type: osmType,
+      osm_id: parseInt(osmId, 10),
       name: tags["name"] || displayName,
       name_en: tags["name:en"] || tags["name"] || displayName,
       name_ta: tags["name:ta"] || "",
@@ -262,7 +280,7 @@ async function main() {
       wikidata: tags["wikidata"] || null,
       wikipedia: tags["wikipedia"] || null,
       area_ha: Math.round((area(geometry) / 10000) * 100) / 100,
-      source: `OSM relation ${osmRel}`,
+      source: `OSM ${osmType} ${osmId}`,
       license: "ODbL",
       fetched_at: new Date().toISOString(),
     },

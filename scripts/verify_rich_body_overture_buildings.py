@@ -31,18 +31,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import duckdb
-from shapely.geometry import shape
 from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _rich_body_zones import load_body_zones, ZONE_BODY, ZONE_HALO  # noqa: E402
+
 DEFAULT_OVERTURE_RELEASE = "2026-04-15.0"
 DEFAULT_ANOMALY_PCT = 20.0  # any zone changing > this triggers review
-
-
-def load_geom(path: Path):
-    with open(path) as f:
-        gj = json.load(f)
-    return unary_union([shape(f["geometry"]) for f in gj["features"]])
 
 
 def main():
@@ -59,18 +55,12 @@ def main():
         f"theme=buildings/type=building/*"
     )
 
-    base = ROOT / "public/geojson/rich-bodies"
-    tnswa = load_geom(base / f"{body_id}.geojson")
-    osm_path = base / f"{body_id}-osm-ecological.geojson"
-    osm = load_geom(osm_path) if osm_path.exists() else tnswa
-    buffer_path = base / f"{body_id}-buffer-1000m.geojson"
-    buffer = load_geom(buffer_path) if buffer_path.exists() else tnswa
+    zones = load_body_zones(ROOT, body_id, buffer_metres=1000)
+    primary = zones[ZONE_BODY]
+    halo = zones[ZONE_HALO]
 
-    gap = tnswa.difference(osm)
-    halo = buffer.difference(tnswa)
-
-    # Query bbox = TNSWA + buffer union with small margin
-    union = unary_union([tnswa, buffer])
+    # Query bbox = primary + halo union with small margin
+    union = unary_union([primary, halo])
     minx, miny, maxx, maxy = union.bounds
     # Add small margin in degrees (~200m at 13N)
     pad = 0.002
@@ -148,12 +138,9 @@ def main():
             "with_height_metadata": with_height,
         }
 
-    regions = [
-        ("TNSWA gazetted (full)", tnswa),
-        ("OSM ecological (full)", osm),
-        ("Gap: TNSWA - OSM", gap),
-        ("Halo: 1km buffer - TNSWA (NGT no-build zone)", halo),
-    ]
+    # Use the same zone set the other verify scripts emit so the UI has
+    # consistent names across data sources.
+    regions = list(zones.items())
 
     summaries = []
     print(f"{'region':<55} {'count':>8} {'area_ha':>10} {'w/height':>10}")
@@ -258,14 +245,20 @@ def _detect_anomalies(out_path: Path, new_payload: dict, threshold_pct: float) -
 
 def _build_headline(summaries: list[dict]) -> list[str]:
     by = {r["region"]: r for r in summaries}
-    gazette = by["TNSWA gazetted (full)"]
-    halo = by["Halo: 1km buffer - TNSWA (NGT no-build zone)"]
-    return [
-        f"Inside the 1,247 ha gazetted Ramsar boundary: {gazette['building_count']:,} buildings "
-        f"covering {gazette['building_area_ha']:.0f} ha ({gazette['built_up_fraction_pct']:.1f}%).",
-        f"Inside the 1 km NGT no-build halo: {halo['building_count']:,} buildings "
-        f"covering {halo['building_area_ha']:.0f} ha ({halo['built_up_fraction_pct']:.1f}%).",
-    ]
+    body = by.get(ZONE_BODY)
+    halo = by.get(ZONE_HALO)
+    out: list[str] = []
+    if body:
+        out.append(
+            f"Inside primary boundary: {body['building_count']:,} buildings "
+            f"covering {body['building_area_ha']:.0f} ha ({body['built_up_fraction_pct']:.1f}%)."
+        )
+    if halo:
+        out.append(
+            f"Inside 1 km halo: {halo['building_count']:,} buildings "
+            f"covering {halo['building_area_ha']:.0f} ha ({halo['built_up_fraction_pct']:.1f}%)."
+        )
+    return out
 
 
 if __name__ == "__main__":

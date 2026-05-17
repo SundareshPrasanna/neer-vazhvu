@@ -1,20 +1,15 @@
 """
-Complement to verify_pallikaranai_encroachment.py.
+Dynamic World V1 built-fraction trend (annual) per zone of a rich-data body.
 
-Where Open Buildings v3 gives a static 2023 building-count snapshot,
-Dynamic World gives a per-year "fraction of pixels classified as built"
-trend from 2016 to today. Together they answer:
-  - snapshot: how many buildings exist now? (Open Buildings v3, June 2023)
-  - trend:    is the built fraction still rising? (Dynamic World, 2016->2026)
+Per zone, per year (2016 - present), reports the fraction of pixels
+whose annual MODE Dynamic World label is "built" (class 6). Used by the
+UI stats strip and the sources modal.
 
-Output: public/data/rich-bodies/pallikaranai-dynamic-world-built-trend.json
-
-Methodology: for each calendar year, take the per-pixel MODE label across
-all Dynamic World scenes intersecting each zone, then compute the fraction
-of pixels whose dominant annual classification is "built" (class index 6).
+Output: public/data/rich-bodies/<body_id>-dynamic-world-built-trend.json
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
@@ -22,19 +17,18 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
-from shapely.geometry import shape
-from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / "neer-vazhvu-api" / ".env")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import ee  # noqa: E402
+from _rich_body_zones import load_body_zones  # noqa: E402
 
 DW = "GOOGLE/DYNAMICWORLD/V1"
 BUILT_CLASS_INDEX = 6
-YEARS = list(range(2016, 2027))  # 2016 to 2026 inclusive
+YEARS = list(range(2016, 2027))
 
-# Dynamic World's 9 classes (for documentation):
 DW_CLASSES = [
     "water", "trees", "grass", "flooded_vegetation", "crops",
     "shrub_and_scrub", "built", "bare", "snow_and_ice",
@@ -51,26 +45,21 @@ def init_ee() -> None:
     print(f"GEE initialised: project={project}")
 
 
-def load_geom(path: Path):
-    with open(path) as f:
-        gj = json.load(f)
-    return unary_union([shape(f["geometry"]) for f in gj["features"]])
-
-
 def shapely_to_ee(geom) -> ee.Geometry:
     return ee.Geometry(json.loads(json.dumps(geom.__geo_interface__)))
 
 
 def built_fraction_series(ee_geom: ee.Geometry, label: str) -> dict:
-    """For each year in YEARS, compute fraction of pixels with annual mode label = built."""
     today = datetime.now(timezone.utc).date().isoformat()
-    series = {}
+    series: dict[str, dict] = {}
 
     def year_to_built_fraction(y):
         y = ee.Number(y).toInt()
         start = ee.Date.fromYMD(y, 1, 1)
         end_full = ee.Date.fromYMD(y.add(1), 1, 1)
-        end = ee.Date(ee.Algorithms.If(end_full.millis().gt(ee.Date(today).millis()), ee.Date(today), end_full))
+        end = ee.Date(
+            ee.Algorithms.If(end_full.millis().gt(ee.Date(today).millis()), ee.Date(today), end_full)
+        )
 
         coll = (
             ee.ImageCollection(DW)
@@ -80,7 +69,6 @@ def built_fraction_series(ee_geom: ee.Geometry, label: str) -> dict:
         )
 
         scene_count = coll.size()
-
         mode = coll.mode()
         built = mode.eq(BUILT_CLASS_INDEX).rename("built")
         valid = mode.gte(0).rename("valid")
@@ -92,15 +80,12 @@ def built_fraction_series(ee_geom: ee.Geometry, label: str) -> dict:
             maxPixels=int(1e9),
         )
 
-        return ee.Feature(
-            None,
-            {
-                "year": y,
-                "scene_count": scene_count,
-                "built_pixels": result.get("built"),
-                "valid_pixels": result.get("valid"),
-            },
-        )
+        return ee.Feature(None, {
+            "year": y,
+            "scene_count": scene_count,
+            "built_pixels": result.get("built"),
+            "valid_pixels": result.get("valid"),
+        })
 
     fc = ee.FeatureCollection([year_to_built_fraction(y) for y in YEARS])
     info = fc.getInfo()
@@ -127,35 +112,26 @@ def built_fraction_series(ee_geom: ee.Geometry, label: str) -> dict:
             "built_fraction_pct": pct,
             "built_area_ha": round(built_px / 100, 2) if built_px else 0.0,
         }
-
     return series
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--body-id", required=True)
+    ap.add_argument("--buffer-m", type=int, default=1000)
+    args = ap.parse_args()
+
     init_ee()
 
-    base = ROOT / "public/geojson/rich-bodies"
-    tnswa = load_geom(base / "pallikaranai.geojson")
-    osm = load_geom(base / "pallikaranai-osm-ecological.geojson")
-    buffer = load_geom(base / "pallikaranai-buffer-1000m.geojson")
+    zones = load_body_zones(ROOT, args.body_id, buffer_metres=args.buffer_m)
 
-    gap_tnswa_minus_osm = tnswa.difference(osm)
-    halo_buffer_minus_tnswa = buffer.difference(tnswa)
-
-    zones = [
-        ("TNSWA gazetted (full)", tnswa),
-        ("OSM ecological (full)", osm),
-        ("Gap: TNSWA - OSM", gap_tnswa_minus_osm),
-        ("Halo: 1km buffer - TNSWA (NGT no-build zone)", halo_buffer_minus_tnswa),
-    ]
-
-    by_zone = {}
-    for label, geom in zones:
+    by_zone: dict[str, dict] = {}
+    for label, geom in zones.items():
         ee_geom = shapely_to_ee(geom)
         by_zone[label] = built_fraction_series(ee_geom, label)
 
     payload = {
-        "body_id": "pallikaranai",
+        "body_id": args.body_id,
         "computed_at": datetime.now(timezone.utc).isoformat(),
         "data_source": {
             "dataset": DW,
@@ -166,7 +142,7 @@ def main() -> None:
             "method": "Per-pixel annual MODE label across all DW scenes intersecting the zone; built = class 6",
             "known_limitations": [
                 "Dynamic World started June 2015; pre-2016 not included",
-                "2026 partial-year (through script run date)",
+                "Current-year is partial (through script run date)",
                 "Mode aggregation can be noisy in low-scene-count regions; check scene_count column",
                 "Built class includes any built-up surface (roofs, roads, paved): not building-count-equivalent",
             ],
@@ -176,7 +152,11 @@ def main() -> None:
         "headline_for_v0": _build_headline(by_zone),
     }
 
-    out_path = ROOT / "public/data/rich-bodies/pallikaranai-dynamic-world-built-trend.json"
+    out_path = (
+        ROOT
+        / "public/data/rich-bodies"
+        / f"{args.body_id}-dynamic-world-built-trend.json"
+    )
     out_path.write_text(json.dumps(payload, indent=2))
     print(f"\nWrote {out_path}")
     print("\n=== Headline ===")
@@ -188,6 +168,8 @@ def _build_headline(by_zone: dict) -> list[str]:
     lines = []
     for zone_label, series in by_zone.items():
         years_sorted = sorted(int(y) for y in series.keys())
+        if not years_sorted:
+            continue
         first_year = years_sorted[0]
         last_year = years_sorted[-1]
         first = series[str(first_year)]["built_fraction_pct"]
