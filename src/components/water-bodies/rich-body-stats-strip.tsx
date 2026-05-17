@@ -95,6 +95,9 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
           deltaUnit="pp"
           caveat={year < 2016 ? "DW starts 2016" : null}
         />
+        {/* Single source for building counts: Overture Maps quarterly.
+            If Overture is missing for some reason (older onboarded body),
+            fall back to Open Buildings v3 with the older date noted. */}
         <Stat
           label="Buildings in halo"
           value={
@@ -105,11 +108,6 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
                 : "n/a"
           }
           caveat={haloBuildingsOv ? `Overture ${overtureRelease}` : "Open Buildings 2023"}
-          secondary={
-            haloBuildingsOv && haloBuildingsOb
-              ? `${haloBuildingsOb.building_count.toLocaleString()} via Open Buildings 2023`
-              : undefined
-          }
         />
         <Stat
           label="Buildings in gazette"
@@ -121,11 +119,6 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
                 : "n/a"
           }
           caveat={gazetteBuildingsOv ? `Overture ${overtureRelease}` : "Open Buildings 2023"}
-          secondary={
-            gazetteBuildingsOv && gazetteBuildingsOb
-              ? `${gazetteBuildingsOb.building_count.toLocaleString()} via Open Buildings 2023`
-              : undefined
-          }
         />
       </div>
     </div>
