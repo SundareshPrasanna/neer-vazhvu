@@ -23,6 +23,15 @@ interface OpenBuildings {
     region_area_ha: number;
   }>;
 }
+interface OvertureBuildings {
+  data_source?: { release_date?: string };
+  regions: Array<{
+    region: string;
+    building_count: number;
+    building_area_ha: number;
+    region_area_ha: number;
+  }>;
+}
 
 const GAZETTE_ZONE = "TNSWA gazetted (full)";
 const HALO_ZONE = "Halo: 1km buffer - TNSWA (NGT no-build zone)";
@@ -36,23 +45,31 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
   const [jrc, setJrc] = useState<JrcTrend | null>(null);
   const [dw, setDw] = useState<DwTrend | null>(null);
   const [ob, setOb] = useState<OpenBuildings | null>(null);
+  const [ov, setOv] = useState<OvertureBuildings | null>(null);
 
   useEffect(() => {
     Promise.all([
       fetch(body.analysis_paths.water_trend).then((r) => r.json()).catch(() => null),
       fetch(body.analysis_paths.built_trend).then((r) => r.json()).catch(() => null),
       fetch(body.analysis_paths.open_buildings).then((r) => r.json()).catch(() => null),
-    ]).then(([j, d, o]) => {
+      body.analysis_paths.overture_buildings
+        ? fetch(body.analysis_paths.overture_buildings).then((r) => r.json()).catch(() => null)
+        : Promise.resolve(null),
+    ]).then(([j, d, o, ovr]) => {
       setJrc(j);
       setDw(d);
       setOb(o);
+      setOv(ovr);
     });
-  }, [body.id]);
+  }, [body.id, body.analysis_paths.overture_buildings]);
 
   const waterPct = jrc?.by_zone[GAZETTE_ZONE]?.[String(year)]?.any_water_pct ?? null;
   const builtPct = dw?.by_zone[HALO_ZONE]?.[String(year)]?.built_fraction_pct ?? null;
-  const haloBuildings = ob?.regions.find((r) => r.region === HALO_ZONE);
-  const gazetteBuildings = ob?.regions.find((r) => r.region === GAZETTE_ZONE);
+  const haloBuildingsOb = ob?.regions.find((r) => r.region === HALO_ZONE);
+  const gazetteBuildingsOb = ob?.regions.find((r) => r.region === GAZETTE_ZONE);
+  const haloBuildingsOv = ov?.regions.find((r) => r.region === HALO_ZONE);
+  const gazetteBuildingsOv = ov?.regions.find((r) => r.region === GAZETTE_ZONE);
+  const overtureRelease = ov?.data_source?.release_date ?? "Q1 2026";
 
   // Baseline reference values for delta indicators
   const waterBaseline = jrc?.by_zone[GAZETTE_ZONE]
@@ -80,13 +97,35 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
         />
         <Stat
           label="Buildings in halo"
-          value={haloBuildings ? haloBuildings.building_count.toLocaleString() : "n/a"}
-          caveat="2023 snapshot"
+          value={
+            haloBuildingsOv
+              ? haloBuildingsOv.building_count.toLocaleString()
+              : haloBuildingsOb
+                ? haloBuildingsOb.building_count.toLocaleString()
+                : "n/a"
+          }
+          caveat={haloBuildingsOv ? `Overture ${overtureRelease}` : "Open Buildings 2023"}
+          secondary={
+            haloBuildingsOv && haloBuildingsOb
+              ? `${haloBuildingsOb.building_count.toLocaleString()} via Open Buildings 2023`
+              : undefined
+          }
         />
         <Stat
           label="Buildings in gazette"
-          value={gazetteBuildings ? gazetteBuildings.building_count.toLocaleString() : "n/a"}
-          caveat="2023 snapshot"
+          value={
+            gazetteBuildingsOv
+              ? gazetteBuildingsOv.building_count.toLocaleString()
+              : gazetteBuildingsOb
+                ? gazetteBuildingsOb.building_count.toLocaleString()
+                : "n/a"
+          }
+          caveat={gazetteBuildingsOv ? `Overture ${overtureRelease}` : "Open Buildings 2023"}
+          secondary={
+            gazetteBuildingsOv && gazetteBuildingsOb
+              ? `${gazetteBuildingsOb.building_count.toLocaleString()} via Open Buildings 2023`
+              : undefined
+          }
         />
       </div>
     </div>
@@ -111,9 +150,11 @@ interface StatProps {
   /** When true, a positive delta is BAD (e.g. water loss) - colour inverts */
   deltaInvert?: boolean;
   caveat?: string | null;
+  /** Optional second value (e.g. "X via Open Buildings 2023" alongside Overture) */
+  secondary?: string;
 }
 
-function Stat({ label, value, delta, deltaUnit = "", deltaInvert = false, caveat }: StatProps) {
+function Stat({ label, value, delta, deltaUnit = "", deltaInvert = false, caveat, secondary }: StatProps) {
   const sign = delta == null ? null : delta > 0.05 ? "+" : delta < -0.05 ? "-" : "";
   const isBad = delta != null && (deltaInvert ? delta < 0 : delta > 0);
   const deltaColor = sign
@@ -144,6 +185,11 @@ function Stat({ label, value, delta, deltaUnit = "", deltaInvert = false, caveat
           </span>
         )}
       </span>
+      {secondary && (
+        <span className="text-[10px] text-slate-400 dark:text-slate-500 italic">
+          cf. {secondary}
+        </span>
+      )}
     </div>
   );
 }

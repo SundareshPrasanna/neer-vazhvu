@@ -72,16 +72,23 @@ export function RichBodySourcesModal({ body, onClose }: RichBodySourcesModalProp
 
           <Section title="Encroachment &amp; built-up surface">
             <SourceRow
-              label="Building footprints (snapshot)"
+              label="Building footprints (current, primary)"
+              source="Overture Maps Foundation - buildings 2026-04-15.0 release"
+              note="Quarterly-refreshed building polygons combined from Microsoft, OpenStreetMap, Google, and other partners. Conservative deduplication: each detected structure counted once. We display Overture's count as the primary headline number."
+              link="https://docs.overturemaps.org/"
+              licence="CDLA-Permissive 2.0"
+            />
+            <SourceRow
+              label="Building footprints (2023 baseline)"
               source="Google Open Buildings v3"
-              note="Static one-time research release, imagery from approximately 2022-2023. Conservative on rooftops only; may under-detect informal low-rise structures in dense slum geometry."
+              note="Static one-time research release, imagery from approximately 2022-2023. More aggressive detection - includes each small rooftop as a separate structure, so counts run higher than Overture especially in informal-settlement areas. We show the 2023 count as cf. comparison for the encroachment-since-2023 angle."
               link="https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons"
               licence="CC-BY-4.0"
             />
             <SourceRow
               label="Built-up surface trend (2016-2026)"
               source="Dynamic World V1"
-              note="Per-pixel land-cover labels at 10 m, refreshed every 2-5 days from Sentinel-2. We compute the per-year annual MODE label and report the fraction with built = class 6. DW's built class is broader than Open Buildings: roads, paved surfaces, and sometimes bare ground all read as built."
+              note="Per-pixel land-cover labels at 10 m, refreshed every 2-5 days from Sentinel-2. We compute the per-year annual MODE label and report the fraction with built = class 6. DW's built class is broader than the building polygons: roads, paved surfaces, and sometimes bare ground all read as built."
               link="https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1"
               licence="CC-BY-4.0"
             />
@@ -169,9 +176,11 @@ export function RichBodySourcesModal({ body, onClose }: RichBodySourcesModalProp
           <Section title="Caveats to keep in mind">
             <ul className="list-disc pl-5 space-y-2 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
               <li>
-                <strong className="text-slate-900 dark:text-slate-100">Buildings inside the gazette
-                are floor estimates.</strong> Open Buildings v3 reflects ~2023; construction after that
-                date is not yet in the dataset.
+                <strong className="text-slate-900 dark:text-slate-100">The two building counts
+                diverge by methodology, not just by date.</strong> Overture (2026) is the more recent
+                snapshot but uses conservative deduplication; Google Open Buildings v3 (2023) detects
+                each rooftop individually and often counts more structures in dense informal
+                settlements. Treat the pair as a range, not a point estimate.
               </li>
               <li>
                 <strong className="text-slate-900 dark:text-slate-100">Dynamic World &quot;built&quot;

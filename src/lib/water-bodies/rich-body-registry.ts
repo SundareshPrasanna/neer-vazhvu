@@ -37,6 +37,9 @@ export interface RichBodyEntry {
   analysis_paths: {
     boundary: string;
     open_buildings: string;
+    /** Newer building source (Overture Maps quarterly release).
+     *  Optional - bodies onboarded before T19a may not have this yet. */
+    overture_buildings?: string;
     water_trend: string;
     built_trend: string;
   };
@@ -68,6 +71,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
     analysis_paths: {
       boundary: "/data/rich-bodies/pallikaranai-boundary-analysis.json",
       open_buildings: "/data/rich-bodies/pallikaranai-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/pallikaranai-overture-buildings.json",
       water_trend: "/data/rich-bodies/pallikaranai-jrc-water-trend.json",
       built_trend: "/data/rich-bodies/pallikaranai-dynamic-world-built-trend.json",
     },
