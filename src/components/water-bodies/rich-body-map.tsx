@@ -200,15 +200,16 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
           </LayersControl.Overlay>
         )}
 
-        {/* Buffer (legal NGT for Pallikaranai, indicative context for others).
-            Label is "NGT X km buffer" only when buffer_legal_basis starts
-            with "NGT"; otherwise generic "X km context buffer". */}
+        {/* Buffer - label adapts to whether the buffer is legally mandated
+            (e.g. NGT order on Pallikaranai) or an editorial choice for
+            cross-body visual consistency. Style stays the same; only the
+            label and the sources-modal entry change. */}
         {buffer && (
           <LayersControl.Overlay
             name={
-              body.buffer_legal_basis?.startsWith("NGT")
-                ? `NGT ${(body.buffer_metres ?? 1000) / 1000} km buffer`
-                : `${(body.buffer_metres ?? 1000) / 1000} km context buffer`
+              body.buffer_legally_mandated
+                ? `${(body.buffer_metres ?? 1000) / 1000} km legal buffer`
+                : `${(body.buffer_metres ?? 1000) / 1000} km surroundings (editorial)`
             }
             checked
           >

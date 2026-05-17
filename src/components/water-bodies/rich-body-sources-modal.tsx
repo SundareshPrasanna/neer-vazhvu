@@ -47,27 +47,15 @@ export function RichBodySourcesModal({ body, onClose }: RichBodySourcesModalProp
           </p>
 
           <Section title="Boundary &amp; legal status">
-            <SourceRow
-              label="Gazetted Ramsar boundary"
-              source="Tamil Nadu State Wetland Authority (TNSWA) QGIS web map"
-              note="Authoritative legal boundary. Matches the official Ramsar Site 2481 area (1,247.54 ha) within 0.4%."
-              link="https://tnswa.tn.gov.in/qgis_web/index.html"
-              licence="Public data from a Tamil Nadu government portal"
-            />
-            <SourceRow
-              label="Ecological boundary (secondary)"
-              source="OpenStreetMap relation 15046539"
-              note="OSM mapper's interpretation of current marsh extent. Smaller than the gazette (~1,073 ha) because OSM mappers excluded built-up enclaves inside the legal Ramsar perimeter."
-              link="https://www.openstreetmap.org/relation/15046539"
-              licence="ODbL"
-            />
-            <SourceRow
-              label="1 km no-build buffer"
-              source="Computed via @turf/buffer as a Minkowski offset from the gazetted polygon"
-              note={`Anchored to NGT order, Sept 2025 - construction freeze within 1 km pending scientific zone-of-influence mapping. Buffer follows the polygon edge (not a circle from a centroid).`}
-              link={body.buffer_source_url}
-              licence="Derived"
-            />
+            {body.data_sources?.boundary?.length ? (
+              body.data_sources.boundary.map((row) => (
+                <SourceRow key={row.label} {...row} />
+              ))
+            ) : (
+              <p className="text-[12px] text-slate-500 dark:text-slate-400 italic">
+                No body-specific boundary sources declared in the registry.
+              </p>
+            )}
           </Section>
 
           <Section title="Encroachment &amp; built-up surface">
@@ -200,11 +188,9 @@ export function RichBodySourcesModal({ body, onClose }: RichBodySourcesModalProp
                 <strong className="text-slate-900 dark:text-slate-100">JRC pre-2000 over India is
                 sparse</strong> (Landsat 5 sparse coverage). Use 5-year averages, not single-year values.
               </li>
-              <li>
-                <strong className="text-slate-900 dark:text-slate-100">The OSM ecological polygon is
-                one observer&apos;s interpretation</strong> - the &quot;gap&quot; between gazette and OSM is
-                indicative of conversion-already-happened, not definitive proof.
-              </li>
+              {body.data_sources?.caveats?.map((c, i) => (
+                <li key={i}>{c}</li>
+              ))}
             </ul>
           </Section>
 

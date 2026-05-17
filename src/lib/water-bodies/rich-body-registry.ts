@@ -56,6 +56,28 @@ export interface RichBodyEntry {
     /** Tailwind-tinted background colour */
     tone: "emerald" | "amber" | "sky" | "slate";
   }>;
+  /** Whether the buffer has a legal basis (NGT order, gazetted protection).
+   *  When false, the buffer is an editorial choice for cross-body visual
+   *  consistency and the UI labels it as such. */
+  buffer_legally_mandated?: boolean;
+  /** Body-specific copy for the Sources & methodology modal. Sections not
+   *  populated here render from generic defaults; body-agnostic sections
+   *  (Satellite imagery era table, NICFI compliance, encroachment data
+   *  sources) live in the modal component itself. */
+  data_sources?: {
+    /** Sources for the Boundary & legal status section of the modal */
+    boundary?: ModalSourceRow[];
+    /** Body-specific caveat bullets appended to the generic caveats */
+    caveats?: string[];
+  };
+}
+
+export interface ModalSourceRow {
+  label: string;
+  source: string;
+  note: string;
+  link?: string;
+  licence?: string;
 }
 
 export interface TimelineEvent {
@@ -116,6 +138,35 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       { label: "Reserve Forest", tone: "emerald" },
       { label: "NGT 1 km buffer", tone: "amber" },
     ],
+    buffer_legally_mandated: true,
+    data_sources: {
+      boundary: [
+        {
+          label: "Gazetted Ramsar boundary",
+          source: "Tamil Nadu State Wetland Authority (TNSWA) QGIS web map",
+          note: "Authoritative legal boundary. Matches the official Ramsar Site 2481 area (1,247.54 ha) within 0.4%.",
+          link: "https://tnswa.tn.gov.in/qgis_web/index.html",
+          licence: "Public data from a Tamil Nadu government portal",
+        },
+        {
+          label: "Ecological boundary (secondary)",
+          source: "OpenStreetMap relation 15046539",
+          note: "OSM mapper's interpretation of current marsh extent. Smaller than the gazette (~1,073 ha) because OSM mappers excluded built-up enclaves inside the legal Ramsar perimeter.",
+          link: "https://www.openstreetmap.org/relation/15046539",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km no-build buffer",
+          source: "Computed via @turf/buffer as a Minkowski offset from the gazetted polygon",
+          note: "Anchored to NGT order, Sept 2025 - construction freeze within 1 km pending scientific zone-of-influence mapping. Buffer follows the polygon edge (not a circle from a centroid).",
+          link: "https://www.dtnext.in/news/tamilnadu/ngt-suspends-all-construction-around-pallikaranai-marsh-as-part-of-urban-conservation-848168",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "The OSM ecological polygon is one observer's interpretation - the 'gap' between gazette and OSM is indicative of conversion-already-happened, not definitive proof.",
+      ],
+    },
   },
   sholavaram: {
     id: "sholavaram",
@@ -171,6 +222,27 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
     status_badges: [
       { label: "CMWSSB drinking water reservoir", tone: "sky" },
     ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap way 25394523",
+          note: "OSM mappers traced the reservoir's visible water surface from satellite imagery, mostly in 2018-2022. CMWSSB manages Sholavaram as core drinking water infrastructure but does not publish a GIS layer. Bhuvan WBIS (satellite-derived) and India-WRIS (ArcGIS REST) host alternatives we plan to integrate in V0.1.",
+          link: "https://www.openstreetmap.org/way/25394523",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated for Sholavaram. We use the same 1 km radius across all rich-data bodies for cross-body visual consistency. Only Pallikaranai's 1 km buffer has a legal anchor (NGT Sept 2025 order). For other bodies (including Sholavaram), the buffer is an editorial choice to visualise urbanisation pressure on the surroundings.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Reservoir water trend reading: any-water fraction rose from 51.7% (1988-92 avg) to 94.6% (2017-21 avg). The honest read is 'the reservoir is more reliably full in the modern era' (better water management + OSM polygon at full-pool extent + sparse 1980s-90s Landsat coverage over Chennai), not 'the reservoir grew 43 percentage points.'",
+      ],
+    },
   },
 };
 
