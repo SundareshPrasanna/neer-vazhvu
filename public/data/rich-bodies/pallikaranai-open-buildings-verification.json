@@ -1,0 +1,87 @@
+{
+  "body_id": "pallikaranai",
+  "computed_at": "2026-05-17T07:43:27.585076+00:00",
+  "data_source": {
+    "dataset": "GOOGLE/Research/open-buildings/v3/polygons",
+    "license": "CC-BY-4.0",
+    "version": "v3 (released June 2023)",
+    "method": "Google's tree-based segmentation of high-res satellite imagery",
+    "known_limitations": [
+      "May under-detect low-rise informal structures in dense slum geometry",
+      "Confidence < 0.5 buildings excluded by default",
+      "Footprint dates are approximate; v3 reflects state around 2023"
+    ]
+  },
+  "regions": [
+    {
+      "region": "TNSWA gazetted (full)",
+      "building_count": 543,
+      "building_area_m2_sum": 42311.92147411117,
+      "building_area_ha": 4.23,
+      "by_confidence": {
+        "high": 287,
+        "medium": 256,
+        "low": 0
+      },
+      "region_area_ha": 1252.3,
+      "built_up_fraction_pct": 0.34
+    },
+    {
+      "region": "OSM ecological (full)",
+      "building_count": 147,
+      "building_area_m2_sum": 7031.72682762146,
+      "building_area_ha": 0.7,
+      "by_confidence": {
+        "high": 72,
+        "medium": 75,
+        "low": 0
+      },
+      "region_area_ha": 1077.82,
+      "built_up_fraction_pct": 0.06
+    },
+    {
+      "region": "Intersection (both agree)",
+      "building_count": 100,
+      "building_area_m2_sum": 5215.6698360443115,
+      "building_area_ha": 0.52,
+      "by_confidence": {
+        "high": 54,
+        "medium": 46,
+        "low": 0
+      },
+      "region_area_ha": 1018.2,
+      "built_up_fraction_pct": 0.05
+    },
+    {
+      "region": "Gap: TNSWA - OSM (legally protected, no longer marsh)",
+      "building_count": 443,
+      "building_area_m2_sum": 37096.25163806687,
+      "building_area_ha": 3.71,
+      "by_confidence": {
+        "high": 233,
+        "medium": 210,
+        "low": 0
+      },
+      "region_area_ha": 234.1,
+      "built_up_fraction_pct": 1.58
+    },
+    {
+      "region": "Halo: 1km buffer - TNSWA (NGT no-build zone)",
+      "building_count": 70602,
+      "building_area_m2_sum": 8169141.721669358,
+      "building_area_ha": 816.91,
+      "by_confidence": {
+        "high": 49277,
+        "medium": 21320,
+        "low": 0
+      },
+      "region_area_ha": 3495.47,
+      "built_up_fraction_pct": 23.37
+    }
+  ],
+  "headline_for_v0": [
+    "Inside the gazetted Ramsar boundary: 543 buildings covering 4 ha (0.3% of the 1252 ha gazette).",
+    "Inside the 233 ha 'lost marsh character' gap: 443 buildings covering 4 ha (1.6% of the gap).",
+    "Inside the NGT 1 km no-build halo: 70,602 buildings covering 817 ha (23.4% of the 3495 ha halo)."
+  ]
+}
