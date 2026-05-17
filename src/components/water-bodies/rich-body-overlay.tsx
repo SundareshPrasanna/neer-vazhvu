@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import dynamic from "next/dynamic";
 import { getRichBody } from "@/lib/water-bodies/rich-body-registry";
 import { RichBodyTimelineSlider } from "./rich-body-timeline-slider";
+import { RichBodyStatsStrip } from "./rich-body-stats-strip";
 
 interface ChipManifestShape {
   chip_bbox_wsen: [number, number, number, number];
@@ -133,12 +134,18 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
           />
         </div>
 
+        {/* Per-year stats driven by the slider */}
+        {manifest && selectedYear != null && (
+          <RichBodyStatsStrip body={body} year={selectedYear} />
+        )}
+
         {/* Timeline slider - controls the year prop passed down to the map */}
         {manifest && selectedYear != null && (
           <RichBodyTimelineSlider
             chips={manifest.chips}
             year={selectedYear}
             onYearChange={setSelectedYear}
+            events={body.timeline_events}
           />
         )}
 
