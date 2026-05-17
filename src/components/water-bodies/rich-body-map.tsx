@@ -7,6 +7,7 @@ import {
   ImageOverlay,
   GeoJSON,
   LayersControl,
+  Pane,
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
@@ -164,6 +165,18 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
         attribution='&copy; OpenStreetMap'
       />
 
+      {/* Explicit panes for each layer with hardcoded z-index. Leaflet's
+          per-overlay zIndex prop is unreliable when LayersControl toggles
+          or when ImageOverlay re-mounts (year change) - the layer often
+          ends up at the bottom of the pane stack. Panes are real DOM
+          elements with CSS z-index, so the order is rock-solid regardless
+          of toggle state or re-mount timing. */}
+      <Pane name="rb-chip-pane" style={{ zIndex: 410 }} />
+      <Pane name="rb-water-loss-pane" style={{ zIndex: 460 }} />
+      <Pane name="rb-built-gain-pane" style={{ zIndex: 470 }} />
+      <Pane name="rb-buffer-pane" style={{ zIndex: 480 }} />
+      <Pane name="rb-boundary-pane" style={{ zIndex: 490 }} />
+
       <LayersControl position="topright" collapsed={false}>
         {/* Backdrop satellite chip for the selected year */}
         {renderChip?.url && (
@@ -173,19 +186,19 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
               url={renderChip.url}
               bounds={bounds}
               opacity={1.0}
-              zIndex={400}
+              pane="rb-chip-pane"
             />
           </LayersControl.Overlay>
         )}
 
-        {/* Cumulative tints */}
+        {/* Cumulative tints - in panes guaranteed to render above the chip */}
         {manifest.tints?.water_loss?.url && (
           <LayersControl.Overlay name="Water lost (1990-2021)" checked>
             <ImageOverlay
               url={manifest.tints.water_loss.url}
               bounds={bounds}
               opacity={0.85}
-              zIndex={410}
+              pane="rb-water-loss-pane"
             />
           </LayersControl.Overlay>
         )}
@@ -195,15 +208,14 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
               url={manifest.tints.built_gain.url}
               bounds={bounds}
               opacity={0.7}
-              zIndex={420}
+              pane="rb-built-gain-pane"
             />
           </LayersControl.Overlay>
         )}
 
         {/* Buffer - label adapts to whether the buffer is legally mandated
             (e.g. NGT order on Pallikaranai) or an editorial choice for
-            cross-body visual consistency. Style stays the same; only the
-            label and the sources-modal entry change. */}
+            cross-body visual consistency. */}
         {buffer && (
           <LayersControl.Overlay
             name={
@@ -215,6 +227,7 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
           >
             <GeoJSON
               data={buffer as FeatureCollection}
+              pane="rb-buffer-pane"
               style={{
                 color: "#f59e0b",
                 weight: 2,
@@ -226,8 +239,7 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
           </LayersControl.Overlay>
         )}
 
-        {/* Primary boundary - rendered last so it is on top. Label adapts
-            to the body's actual provenance. */}
+        {/* Primary boundary - always topmost via its dedicated pane */}
         <LayersControl.Overlay
           name={
             body.boundary_source.includes("Ramsar")
@@ -238,6 +250,7 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
         >
           <GeoJSON
             data={polygon as FeatureCollection}
+            pane="rb-boundary-pane"
             style={{
               color: "#10b981",
               weight: 3,
