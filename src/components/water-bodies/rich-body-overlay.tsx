@@ -1,8 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import dynamic from "next/dynamic";
 import { getRichBody } from "@/lib/water-bodies/rich-body-registry";
+
+const RichBodyMap = dynamic(
+  () => import("./rich-body-map").then((m) => m.RichBodyMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+        <span className="text-sm text-slate-500 dark:text-slate-400">Loading map…</span>
+      </div>
+    ),
+  }
+);
 
 interface RichBodyOverlayProps {
   bodyId: string;
@@ -11,18 +24,14 @@ interface RichBodyOverlayProps {
 
 /**
  * Full-screen takeover for rich-data water bodies (Pallikaranai etc.).
- * Replaces the standard BottomSheet detail panel when a rich body is
- * clicked. Hosts an embedded map, timeline slider, change-tints, and
- * stats - all driven from the body's registry entry + pre-computed
- * analysis JSONs.
- *
- * V0: scaffold with title + close. Map + slider + tints + stats wired in
- * subsequent tickets.
+ * Hosts an embedded map with TNSWA gazetted boundary + 1km NGT buffer +
+ * cumulative water-loss / built-gain tints + year-selectable satellite
+ * chip. Replaces the standard BottomSheet detail panel.
  */
 export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
   const body = getRichBody(bodyId);
+  const [selectedYear, setSelectedYear] = useState<number | undefined>(undefined);
 
-  // Esc to close (parity with the standard panel behaviour)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -53,7 +62,7 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
     <div className="fixed inset-0 z-[2000] bg-black/70 flex items-stretch">
       <div className="flex flex-col w-full md:max-w-[1100px] md:mx-auto md:my-4 md:rounded-xl bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-start justify-between px-4 md:px-6 py-3 md:py-4 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex items-start justify-between px-4 md:px-6 py-3 md:py-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
           <div className="min-w-0 flex-1">
             <h2 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100 truncate">
               {body.name}
@@ -83,14 +92,20 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
           </button>
         </div>
 
-        {/* Body - scaffold placeholder; map + slider + tints + stats land in T12-T15 */}
-        <div className="flex-1 overflow-auto p-4 md:p-6">
-          <div className="rounded-lg border border-dashed border-slate-300 dark:border-slate-700 p-6 text-sm text-slate-500 dark:text-slate-400">
-            Deep-zoom panel scaffold. The interactive map + timeline +
-            change-tints + stats wire in over the next tickets. Data assets
-            already shipped in <code className="text-xs">/data/rich-bodies/</code>
-            and <code className="text-xs">/geojson/rich-bodies/</code>.
-          </div>
+        {/* Map area - takes the bulk of the viewport */}
+        <div className="flex-1 min-h-0">
+          <RichBodyMap body={body} year={selectedYear} />
+        </div>
+
+        {/* Footer placeholder: slider + stats land in T13/T15. For V0
+            scaffold, just show the data-source footnote. */}
+        <div className="px-4 md:px-6 py-2 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 shrink-0">
+          <span>
+            Gazette: Tamil Nadu State Wetland Authority &middot;{" "}
+            Encroachment indicator: Google Open Buildings v3 (2023) &middot;{" "}
+            Water trend: JRC GSW v1.4 (1984-2021) &middot;{" "}
+            Built trend: Dynamic World V1 (2016-2026)
+          </span>
         </div>
       </div>
     </div>
