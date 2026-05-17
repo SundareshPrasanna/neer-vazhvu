@@ -71,6 +71,15 @@ export function RichBodySourcesModal({ body, onClose }: RichBodySourcesModalProp
           </Section>
 
           <Section title="Encroachment &amp; built-up surface">
+            <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed pb-2">
+              <em>Trust basis:</em> we trust Overture&apos;s methodology on its
+              consortium backing and public QC process. We have not independently
+              ground-truthed the count against high-resolution satellite imagery
+              for this body - the conservative-floor framing in the caveats below
+              accounts for this uncertainty. Each quarterly refresh is delta-checked
+              against the previous release; any change above 20&percnt; in any zone
+              triggers manual review before publication.
+            </p>
             <SourceRow
               label="Building counts"
               source="Overture Maps Foundation - buildings 2026-04-15.0 release"

@@ -8,11 +8,23 @@ others - typically much fresher than the 2023 Google snapshot.
 
 Output: public/data/rich-bodies/pallikaranai-overture-buildings.json
 
-Latest release as of writing: 2026-04-15.0 - 2-month-old data instead
-of 3-year-old.
+Anomaly detection: when re-running this script (e.g. on a quarterly
+cron after a new Overture release), the new count is delta-checked
+against the previous JSON. If any zone's building count changes by
+more than ANOMALY_DELTA_PCT, the script exits non-zero AND writes
+the new JSON to a *.candidate.json file instead of overwriting the
+canonical path - so a CI workflow can fail loudly and require human
+review before publication.
+
+Usage:
+  python scripts/verify_pallikaranai_overture_buildings.py
+    --body-id pallikaranai
+    [--release 2026-04-15.0]
+    [--anomaly-pct 20]
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from datetime import datetime, timezone
@@ -23,11 +35,8 @@ from shapely.geometry import shape
 from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parent.parent
-OVERTURE_RELEASE = "2026-04-15.0"
-OVERTURE_BUILDINGS_URL = (
-    f"s3://overturemaps-us-west-2/release/{OVERTURE_RELEASE}/"
-    f"theme=buildings/type=building/*"
-)
+DEFAULT_OVERTURE_RELEASE = "2026-04-15.0"
+DEFAULT_ANOMALY_PCT = 20.0  # any zone changing > this triggers review
 
 
 def load_geom(path: Path):
@@ -37,10 +46,25 @@ def load_geom(path: Path):
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--body-id", default="pallikaranai")
+    ap.add_argument("--release", default=DEFAULT_OVERTURE_RELEASE)
+    ap.add_argument("--anomaly-pct", type=float, default=DEFAULT_ANOMALY_PCT,
+                    help="Flag any zone whose count changes by more than this percent vs the previous JSON.")
+    args = ap.parse_args()
+    body_id = args.body_id
+    release = args.release
+    overture_url = (
+        f"s3://overturemaps-us-west-2/release/{release}/"
+        f"theme=buildings/type=building/*"
+    )
+
     base = ROOT / "public/geojson/rich-bodies"
-    tnswa = load_geom(base / "pallikaranai.geojson")
-    osm = load_geom(base / "pallikaranai-osm-ecological.geojson")
-    buffer = load_geom(base / "pallikaranai-buffer-1000m.geojson")
+    tnswa = load_geom(base / f"{body_id}.geojson")
+    osm_path = base / f"{body_id}-osm-ecological.geojson"
+    osm = load_geom(osm_path) if osm_path.exists() else tnswa
+    buffer_path = base / f"{body_id}-buffer-1000m.geojson"
+    buffer = load_geom(buffer_path) if buffer_path.exists() else tnswa
 
     gap = tnswa.difference(osm)
     halo = buffer.difference(tnswa)
@@ -51,8 +75,10 @@ def main():
     # Add small margin in degrees (~200m at 13N)
     pad = 0.002
     qminx, qminy, qmaxx, qmaxy = minx - pad, miny - pad, maxx + pad, maxy + pad
+    print(f"Body: {body_id}")
     print(f"Query bbox: lon {qminx:.4f}..{qmaxx:.4f}, lat {qminy:.4f}..{qmaxy:.4f}")
-    print(f"Overture release: {OVERTURE_RELEASE}")
+    print(f"Overture release: {release}")
+    print(f"Anomaly threshold: ±{args.anomaly_pct}%")
     print(f"This will fetch ~tens of MB of parquet over the network; please wait.\n")
 
     con = duckdb.connect(":memory:")
@@ -74,7 +100,7 @@ def main():
       ST_AsWKB(geometry) AS geom_wkb,
       height,
       sources
-    FROM read_parquet('{OVERTURE_BUILDINGS_URL}',
+    FROM read_parquet('{overture_url}',
                       filename=true, hive_partitioning=1)
     WHERE bbox.xmin BETWEEN {qminx} AND {qmaxx}
       AND bbox.ymin BETWEEN {qminy} AND {qmaxy}
@@ -143,12 +169,12 @@ def main():
         print(f"{name:<55} {s['building_count']:>8,} {s['building_area_ha']:>10.2f} {s['with_height_metadata']:>10,}")
 
     payload = {
-        "body_id": "pallikaranai",
+        "body_id": body_id,
         "computed_at": datetime.now(timezone.utc).isoformat(),
         "data_source": {
-            "dataset": f"Overture Maps Foundation - buildings ({OVERTURE_RELEASE})",
-            "release_date": "2026-04-15",
-            "url_root": OVERTURE_BUILDINGS_URL,
+            "dataset": f"Overture Maps Foundation - buildings ({release})",
+            "release_date": release.split(".")[0],
+            "url_root": overture_url,
             "license": "CDLA-Permissive 2.0",
             "method": (
                 "Per-building polygon download via DuckDB+spatial+httpfs query on the "
@@ -173,12 +199,61 @@ def main():
         ),
     }
 
-    out_path = ROOT / "public/data/rich-bodies/pallikaranai-overture-buildings.json"
+    out_path = ROOT / "public/data/rich-bodies" / f"{body_id}-overture-buildings.json"
+    candidate_path = out_path.with_suffix(".candidate.json")
+
+    # Anomaly detection: compare against the previously published JSON
+    anomalies = _detect_anomalies(out_path, payload, args.anomaly_pct)
+    if anomalies:
+        candidate_path.write_text(json.dumps(payload, indent=2))
+        print(f"\n!! ANOMALY DETECTED in {len(anomalies)} zone(s):")
+        for a in anomalies:
+            print(
+                f"   {a['region']}: {a['old']} → {a['new']}  "
+                f"({a['delta_pct']:+.1f}% vs threshold ±{args.anomaly_pct}%)"
+            )
+        print(f"\nWrote candidate to {candidate_path}")
+        print(f"Canonical {out_path.name} NOT overwritten - human review required.")
+        print(f"To accept: mv {candidate_path.name} {out_path.name}")
+        sys.exit(2)
+
     out_path.write_text(json.dumps(payload, indent=2))
+    # Clean up any stale candidate file from a previous failed run
+    if candidate_path.exists():
+        candidate_path.unlink()
     print(f"\nWrote {out_path}")
     print("\n=== Headline ===")
     for line in payload["headline_for_v0"]:
         print(f"  {line}")
+
+
+def _detect_anomalies(out_path: Path, new_payload: dict, threshold_pct: float) -> list[dict]:
+    """Compare new count vs previous JSON on disk. Return list of zones that exceed threshold."""
+    if not out_path.exists():
+        return []  # first run, nothing to compare against
+    try:
+        old = json.loads(out_path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return []
+    old_by_region = {r["region"]: r for r in old.get("regions", [])}
+    flagged: list[dict] = []
+    for r_new in new_payload["regions"]:
+        r_old = old_by_region.get(r_new["region"])
+        if not r_old:
+            continue
+        old_count = int(r_old.get("building_count", 0))
+        new_count = int(r_new.get("building_count", 0))
+        if old_count == 0:
+            continue
+        delta_pct = ((new_count - old_count) / old_count) * 100
+        if abs(delta_pct) > threshold_pct:
+            flagged.append({
+                "region": r_new["region"],
+                "old": old_count,
+                "new": new_count,
+                "delta_pct": delta_pct,
+            })
+    return flagged
 
 
 def _build_headline(summaries: list[dict]) -> list[str]:
