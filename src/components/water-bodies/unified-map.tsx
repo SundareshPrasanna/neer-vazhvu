@@ -357,6 +357,34 @@ export function UnifiedMap({
     lostLayerRef.current?.setStyle(lostStyle as L.StyleFunction);
   }, [hiddenCategories, lostStyle]);
 
+  // When a category is toggled off in the legend the layer was still
+  // intercepting clicks + hover events (visibly dimmed but pointer-
+  // capturing), which blocked clicks on bodies underneath. Toggle the
+  // SVG element's pointer-events so hidden features stop swallowing
+  // mouse interactions and let clicks pass through to whatever sits
+  // below in z-order.
+  const togglePointerEventsByStatus = useCallback(
+    (layerRef: L.GeoJSON | null, getCategory: (props: Record<string, unknown>) => string | null) => {
+      if (!layerRef) return;
+      layerRef.eachLayer((sub) => {
+        const feat = (sub as L.GeoJSON & { feature?: Feature }).feature;
+        const props = (feat?.properties ?? {}) as Record<string, unknown>;
+        const cat = getCategory(props);
+        const isHidden = cat ? (hiddenCategories?.has(cat) ?? false) : false;
+        const el = (sub as L.Path).getElement?.();
+        if (el) (el as HTMLElement).style.pointerEvents = isHidden ? "none" : "";
+      });
+    },
+    [hiddenCategories],
+  );
+
+  useEffect(() => {
+    togglePointerEventsByStatus(lostLayerRef.current, (props) => {
+      const s = props.status;
+      return typeof s === "string" ? s : null;
+    });
+  }, [hiddenCategories, togglePointerEventsByStatus]);
+
   // --- Interaction handlers ---
 
   const defaultFillOpacity = viewMode === "restoration" ? 0.55 : 0.45;
@@ -455,13 +483,20 @@ export function UnifiedMap({
 
     layer.on({
       click: (e) => {
+        // Guard: a stale handler can fire from a "hidden" feature
+        // because the .on() closure was attached before the hide was
+        // toggled. Disabling pointer-events on the element (above) is
+        // the primary defence; this is a belt-and-braces fallback.
+        if (hiddenCategories?.has(props.status)) return;
         const latlng: [number, number] = [e.latlng.lat, e.latlng.lng];
         onSelectLost({ kind: "lost", props, latlng });
       },
       mouseover: (e) => {
+        if (hiddenCategories?.has(props.status)) return;
         (e.target as L.Path).setStyle({ fillOpacity: 0.6, weight: 3 });
       },
       mouseout: (e) => {
+        if (hiddenCategories?.has(props.status)) return;
         (e.target as L.Path).setStyle({ fillOpacity: 0.35, weight: 2 });
       },
     });
