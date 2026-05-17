@@ -39,33 +39,24 @@ interface RichBodyMapProps {
 }
 
 /**
- * Reset-view button - bottom-left of the map (Leaflet attribution sits
- * bottom-right, layers control top-right, zoom controls top-left, so
- * bottom-left is the only corner not already claimed).
+ * Reset-view button - captures the Leaflet map instance via ref pattern
+ * and renders as a sibling of MapContainer, absolutely positioned. This
+ * avoids Leaflet's leaflet-control quirks (which were overlapping the
+ * LayersControl panel) and lets us place the button anywhere on the map.
  */
-function ResetViewButton({ bounds }: { bounds: L.LatLngBoundsExpression }) {
+function MapInstanceCapture({ onReady }: { onReady: (m: L.Map) => void }) {
   const map = useMap();
-  return (
-    <div className="leaflet-bottom leaflet-left" style={{ marginBottom: 10, marginLeft: 10, pointerEvents: "auto" }}>
-      <div className="leaflet-control">
-        <button
-          onClick={() => map.fitBounds(bounds)}
-          title="Reset view to default zoom and centre"
-          aria-label="Reset view"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-md shadow-md hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-medium"
-        >
-          <Maximize2 className="w-3.5 h-3.5" />
-          <span>Reset view</span>
-        </button>
-      </div>
-    </div>
-  );
+  useEffect(() => {
+    onReady(map);
+  }, [map, onReady]);
+  return null;
 }
 
 export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) {
   const [manifest, setManifest] = useState<ChipManifest | null>(null);
   const [polygon, setPolygon] = useState<FeatureCollection | null>(null);
   const [buffer, setBuffer] = useState<FeatureCollection | null>(null);
+  const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
 
   // Fetch manifest + polygons in parallel
   useEffect(() => {
@@ -142,16 +133,32 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
   }
 
   return (
-    <MapContainer
-      bounds={initialBounds}
-      minZoom={9}
-      maxZoom={18}
-      scrollWheelZoom
-      zoomControl
-      className="w-full h-full"
-      attributionControl
-    >
-      <ResetViewButton bounds={initialBounds} />
+    <div className="relative w-full h-full">
+      {/* Reset-view button: plain absolute in the map div, NOT a Leaflet
+          control (those collided with the LayersControl). Top-center of
+          the map so it never overlaps the zoom (top-left), layers control
+          (top-right), or attribution (bottom-right). */}
+      {mapInstance && (
+        <button
+          onClick={() => mapInstance.fitBounds(initialBounds)}
+          title="Reset view to default zoom and centre"
+          aria-label="Reset view"
+          className="absolute top-3 left-1/2 -translate-x-1/2 z-[500] flex items-center gap-1.5 px-2.5 py-1.5 bg-white/95 dark:bg-slate-800/95 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-md shadow-md hover:bg-white dark:hover:bg-slate-700 text-xs font-medium backdrop-blur-sm"
+        >
+          <Maximize2 className="w-3.5 h-3.5" />
+          <span>Reset view</span>
+        </button>
+      )}
+      <MapContainer
+        bounds={initialBounds}
+        minZoom={9}
+        maxZoom={18}
+        scrollWheelZoom
+        zoomControl
+        className="w-full h-full"
+        attributionControl
+      >
+        <MapInstanceCapture onReady={setMapInstance} />
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; OpenStreetMap'
@@ -222,6 +229,7 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
           />
         </LayersControl.Overlay>
       </LayersControl>
-    </MapContainer>
+      </MapContainer>
+    </div>
   );
 }
