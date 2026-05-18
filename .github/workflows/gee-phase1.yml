@@ -17,7 +17,6 @@ on:
           - run-reservoir-context
           - run-water-body-summaries
           - backfill-water-body-summaries
-          - build-satellite-evidence
           - run-all-refresh
         default: run-all-refresh
       city:
@@ -32,10 +31,6 @@ on:
         description: Prior monthly snapshots to backfill when using backfill-water-body-summaries
         type: number
         default: 24
-      frame_count:
-        description: Evidence frames to build per target when using build-satellite-evidence
-        type: number
-        default: 6
       target_cohort:
         description: Optional named target cohort for manual water-body runs
         type: choice
@@ -48,7 +43,7 @@ on:
         type: string
         default: ''
       gee_target_id:
-        description: Optional single gee_target_id (e.g. osm:102303002) to scope build-satellite-evidence to one body.
+        description: Optional single gee_target_id (e.g. osm:102303002) to scope a manual water-body summary run.
         type: string
         default: ''
 
@@ -248,15 +243,11 @@ jobs:
                 fi
                 python scripts/run_gee_phase1.py --city "$city" backfill-water-body-summaries --months-back "${{ inputs.months_back }}" $REF_DATE_ARG $TARGET_COHORT_ARG --write
                 ;;
-              build-satellite-evidence)
-                python scripts/run_gee_phase1.py --city "$city" build-satellite-evidence --months-back "${{ inputs.months_back }}" --frame-count "${{ inputs.frame_count }}" $TARGET_COHORT_ARG $TARGET_ID_ARG --write
-                ;;
               run-all-refresh)
                 if [ "$city" != "madurai" ]; then
                   python scripts/run_gee_phase1.py --city "$city" run-reservoir-context --write
                 fi
                 python scripts/run_gee_phase1.py --city "$city" run-water-body-summaries --write
-                python scripts/run_gee_phase1.py --city "$city" build-satellite-evidence $TARGET_COHORT_ARG --write
                 ;;
             esac
           done

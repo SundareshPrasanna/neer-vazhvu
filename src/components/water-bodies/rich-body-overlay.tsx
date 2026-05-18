@@ -7,6 +7,7 @@ import { getRichBody } from "@/lib/water-bodies/rich-body-registry";
 import { RichBodyTimelineSlider } from "./rich-body-timeline-slider";
 import { RichBodyStatsStrip } from "./rich-body-stats-strip";
 import { RichBodySourcesModal } from "./rich-body-sources-modal";
+import { WaterBodyHistoryChart } from "./water-body-history-chart";
 
 interface ChipManifestShape {
   chip_bbox_wsen: [number, number, number, number];
@@ -160,6 +161,19 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
             events={body.timeline_events}
           />
         )}
+
+        {/* Recent water-area trend (GEE Phase 1 24-month series). Collapsed by
+            default so it doesn't compete with the map for space. The chart
+            self-handles "no data" for bodies not in the flagship GEE cohort. */}
+        <details className="border-t border-slate-200 dark:border-slate-800 shrink-0 group">
+          <summary className="px-4 md:px-6 py-2 text-[12px] cursor-pointer text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-950/40 select-none flex items-center justify-between">
+            <span>Recent water-area trend (Sentinel-2, 24 months)</span>
+            <span className="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+          </summary>
+          <div className="px-4 md:px-6 pb-3 max-h-[40vh] overflow-y-auto">
+            <WaterBodyHistoryChart osmId={body.osm_id} />
+          </div>
+        </details>
 
         {/* Sources footnote with clickable link to full methodology modal */}
         <div className="px-4 md:px-6 py-2 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 shrink-0 flex items-center justify-between gap-3">
