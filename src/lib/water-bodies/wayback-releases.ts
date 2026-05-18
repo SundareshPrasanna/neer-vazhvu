@@ -28,20 +28,24 @@
 
 export const WAYBACK_FIRST_YEAR = 2014;
 
+// Mid-year-closest release per calendar year, verified against the live
+// waybackconfig.json on 2026-05-18. Each entry's source-date is the
+// actual Wayback snapshot date the release ID maps to. Refresh by re-
+// running scripts/fetch-wayback-releases.ts (TODO).
 export const WAYBACK_RELEASE_BY_YEAR: Record<number, number> = {
-  2014: 3026,
-  2015: 1431,
-  2016: 5097,
-  2017: 4073,
-  2018: 8249,
-  2019: 16681,
-  2020: 9549,
-  2021: 8432,
-  2022: 13851,
-  2023: 25982,
-  2024: 39767,
-  2025: 49999,
-  2026: 49059,
+  2014: 3026,   // 2014-07-02
+  2015: 11952,  // 2015-06-24
+  2016: 13240,  // 2016-07-06
+  2017: 4073,   // 2017-06-27
+  2018: 11334,  // 2018-06-27
+  2019: 645,    // 2019-06-26
+  2020: 18289,  // 2020-07-01 (exact)
+  2021: 13534,  // 2021-06-30
+  2022: 4905,   // 2022-06-29
+  2023: 47963,  // 2023-06-29
+  2024: 39767,  // 2024-06-27
+  2025: 48925,  // 2025-06-26
+  2026: 49059,  // 2026-04-30 (latest available; 62d off mid-year)
 };
 
 export const WAYBACK_TILE_URL_TEMPLATE =
