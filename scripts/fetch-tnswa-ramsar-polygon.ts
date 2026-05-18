@@ -92,11 +92,11 @@ async function main() {
   }
 
   const match = boundary.features.find(
-    (f) => (f.properties as any)?.Wetland === wetlandName
+    (f) => (f.properties as Record<string, unknown>)?.Wetland === wetlandName
   );
   if (!match) {
     const names = boundary.features
-      .map((f) => (f.properties as any)?.Wetland)
+      .map((f) => (f.properties as Record<string, unknown>)?.Wetland)
       .filter(Boolean);
     console.error(`Wetland "${wetlandName}" not found in TNSWA boundary file.`);
     console.error(`Available names:\n  - ${names.join("\n  - ")}`);
@@ -104,9 +104,9 @@ async function main() {
   }
 
   const infoMatch = info?.features.find(
-    (f) => (f.properties as any)?.Name === wetlandName
+    (f) => (f.properties as Record<string, unknown>)?.Name === wetlandName
   );
-  const infoProps = (infoMatch?.properties as any) || {};
+  const infoProps = (infoMatch?.properties as Record<string, unknown>) || {};
 
   const geom = match.geometry as MultiPolygon | Polygon;
   const totalAreaHa = Math.round((area(geom) / 10000) * 100) / 100;

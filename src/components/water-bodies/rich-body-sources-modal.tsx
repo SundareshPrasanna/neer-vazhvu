@@ -174,7 +174,7 @@ export function RichBodySourcesModal({ body, onClose }: RichBodySourcesModalProp
             <ul className="list-disc pl-5 space-y-2 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
               <li>
                 <strong className="text-slate-900 dark:text-slate-100">Building counts are a
-                conservative floor.</strong> Overture's deduplication may count clusters of small
+                conservative floor.</strong> Overture&apos;s deduplication may count clusters of small
                 structures in dense informal settlements as fewer distinct buildings. Real informal
                 construction density inside the gazette is likely higher than the headline number.
                 We are exploring a fresher per-rooftop count to publish alongside this floor.

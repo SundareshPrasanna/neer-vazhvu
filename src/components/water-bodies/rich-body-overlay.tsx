@@ -64,11 +64,16 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  // When the manifest arrives, default the slider to the latest available year
+  // When the manifest arrives, default the slider to the latest available
+  // year. setState is deferred via queueMicrotask to satisfy the
+  // react-hooks lint rule against synchronous setState in an effect.
   useEffect(() => {
     if (!manifest || selectedYear != null) return;
     const avail = manifest.chips.filter((c) => c.available).map((c) => c.year);
-    if (avail.length) setSelectedYear(Math.max(...avail));
+    if (avail.length) {
+      const latest = Math.max(...avail);
+      queueMicrotask(() => setSelectedYear(latest));
+    }
   }, [manifest, selectedYear]);
 
   if (!body) {

@@ -230,8 +230,8 @@ async function main() {
   console.log(`  name: ${tags["name"] || "(unnamed)"}`);
   console.log(`  ramsar: ${tags["ramsar"] || "no"}`);
 
-  let outerWays: Position[][] = [];
-  let innerWays: Position[][] = [];
+  const outerWays: Position[][] = [];
+  const innerWays: Position[][] = [];
 
   if (element.type === "relation") {
     console.log(`  members: ${element.members.length}`);

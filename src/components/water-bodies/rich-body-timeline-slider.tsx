@@ -56,9 +56,13 @@ export function RichBodyTimelineSlider({
 
   // Auto-advance the year when playing. Loops back to the earliest year
   // when it reaches the end - the "time machine" feels more delightful
-  // when it cycles rather than stops dead.
+  // when it cycles rather than stops dead. yearRef is kept in sync via
+  // useEffect (NOT mutated during render) so the interval callback always
+  // reads the latest year without forcing a re-subscribe each tick.
   const yearRef = useRef(year);
-  yearRef.current = year;
+  useEffect(() => {
+    yearRef.current = year;
+  }, [year]);
   useEffect(() => {
     if (!isPlaying || availableChips.length === 0) return;
     const id = setInterval(() => {
