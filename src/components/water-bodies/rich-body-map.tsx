@@ -15,11 +15,6 @@ import type { Feature, FeatureCollection } from "geojson";
 import { Maximize2 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import type { RichBodyEntry } from "@/lib/water-bodies/rich-body-registry";
-import {
-  WAYBACK_FIRST_YEAR,
-  WAYBACK_ATTRIBUTION,
-  getWaybackTileUrl,
-} from "@/lib/water-bodies/wayback-releases";
 
 interface ChipManifest {
   chip_bbox_wsen: [number, number, number, number];
@@ -206,26 +201,9 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
       <Pane name="rb-boundary-pane" style={{ zIndex: 490 }} />
 
       <LayersControl position="topright" collapsed={false}>
-        {/* Backdrop satellite for the selected year. For 2014+ we use
-            Esri Wayback Imagery (0.3-1m commercial, ~Google Maps Satellite
-            quality) sourced from Esri's historical tile archive - one
-            release per year. For pre-2014 we fall back to our static
-            Landsat-era chip ImageOverlay since Wayback doesn't cover
-            that era. The slider transitions naturally; the era band
-            below tells the user about the resolution shift. */}
-        {renderYear != null && renderYear >= WAYBACK_FIRST_YEAR ? (
-          <LayersControl.Overlay name={`Satellite ${renderYear} (Esri Wayback)`} checked>
-            <TileLayer
-              key={`wayback-${renderYear}`}
-              url={getWaybackTileUrl(renderYear) ?? ""}
-              attribution={WAYBACK_ATTRIBUTION}
-              pane="rb-chip-pane"
-              maxNativeZoom={19}
-              maxZoom={20}
-            />
-          </LayersControl.Overlay>
-        ) : renderChip?.url ? (
-          <LayersControl.Overlay name={`Satellite ${renderYear} (Landsat)`} checked>
+        {/* Backdrop satellite chip for the selected year */}
+        {renderChip?.url && (
+          <LayersControl.Overlay name={`Satellite ${renderYear}`} checked>
             <ImageOverlay
               key={renderChip.url}
               url={renderChip.url}
@@ -234,7 +212,7 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
               pane="rb-chip-pane"
             />
           </LayersControl.Overlay>
-        ) : null}
+        )}
 
         {/* Cumulative tints - in panes guaranteed to render above the chip */}
         {manifest.tints?.water_loss?.url && (
