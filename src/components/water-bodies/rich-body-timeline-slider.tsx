@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ExternalLink, Pause, Play } from "lucide-react";
 import type { TimelineEvent } from "@/lib/water-bodies/rich-body-registry";
+
+const PLAY_STEP_MS = 800; // ~1.3 years per second; full 38-year loop in ~30s
 
 interface Chip {
   year: number;
@@ -46,10 +48,26 @@ export function RichBodyTimelineSlider({
   );
 
   const [openEventYear, setOpenEventYear] = useState<number | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const minYear = availableChips[0]?.year ?? 1988;
   const maxYear = availableChips[availableChips.length - 1]?.year ?? 2026;
   const total = maxYear - minYear;
+
+  // Auto-advance the year when playing. Loops back to the earliest year
+  // when it reaches the end - the "time machine" feels more delightful
+  // when it cycles rather than stops dead.
+  const yearRef = useRef(year);
+  yearRef.current = year;
+  useEffect(() => {
+    if (!isPlaying || availableChips.length === 0) return;
+    const id = setInterval(() => {
+      const idx = availableChips.findIndex((c) => c.year === yearRef.current);
+      const nextIdx = (idx + 1) % availableChips.length;
+      onYearChange(availableChips[nextIdx].year);
+    }, PLAY_STEP_MS);
+    return () => clearInterval(id);
+  }, [isPlaying, availableChips, onYearChange]);
 
   // Only show events that fall within the slider range
   const visibleEvents = useMemo(
@@ -99,6 +117,14 @@ export function RichBodyTimelineSlider({
       {/* Year + sensor readout */}
       <div className="flex items-baseline justify-between mb-2">
         <div className="flex items-baseline gap-3">
+          <button
+            onClick={() => setIsPlaying((p) => !p)}
+            aria-label={isPlaying ? "Pause time-lapse" : "Play time-lapse"}
+            title={isPlaying ? "Pause" : "Play through the years"}
+            className="self-center flex items-center justify-center w-7 h-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors"
+          >
+            {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 translate-x-[1px]" />}
+          </button>
           <span className="text-2xl font-semibold tabular-nums text-slate-900 dark:text-slate-100">
             {year}
           </span>
@@ -140,14 +166,18 @@ export function RichBodyTimelineSlider({
         </div>
       )}
 
-      {/* Native range slider */}
+      {/* Native range slider. Dragging it pauses any in-flight time-lapse
+          so the user's chosen year doesn't get overwritten by auto-advance. */}
       <input
         type="range"
         min={minYear}
         max={maxYear}
         step={1}
         value={year}
-        onChange={(e) => onYearChange(snapToAvailable(parseInt(e.target.value, 10)))}
+        onChange={(e) => {
+          if (isPlaying) setIsPlaying(false);
+          onYearChange(snapToAvailable(parseInt(e.target.value, 10)));
+        }}
         className="w-full h-2 cursor-pointer accent-emerald-600"
         aria-label="Year"
       />
