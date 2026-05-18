@@ -584,15 +584,19 @@ export function UnifiedMap({
   };
 
   // ─── Rich-body layer (Pallikaranai etc.) ─────────────────────────
-  // Distinctive style: emerald outline + subtle pulse via CSS class.
-  // The fill is transparent so the body's underlying imagery (or basemap)
-  // shows through and the polygon reads as "frame" not "fill".
+  // Subtle indicator at default city zoom - dashed thin lighter emerald
+  // so the rich-body bodies read as "interactive zones you can explore"
+  // without competing visually with the regular OSM water polygons. The
+  // line brightens + thickens on hover so the affordance is obvious when
+  // the user moves over it. Fill stays transparent so OSM imagery shows
+  // through and the polygon reads as a "frame" not a colored shape.
   const richBodyStyle = useCallback(() => ({
-    color: "#10b981",     // emerald-500
-    weight: 3,
-    opacity: 1,
-    fillColor: "#10b981",
-    fillOpacity: 0.05,
+    color: "#34d399",       // emerald-400 (lighter than emerald-500)
+    weight: 1.5,
+    opacity: 0.7,
+    fillColor: "#34d399",
+    fillOpacity: 0,
+    dashArray: "6 5",
     className: "rich-body-polygon",
   }), []);
 
@@ -630,10 +634,22 @@ export function UnifiedMap({
         });
       },
       mouseover: (e) => {
-        (e.target as L.Path).setStyle({ weight: 4, fillOpacity: 0.15 });
+        (e.target as L.Path).setStyle({
+          color: "#10b981",     // emerald-500, brighter on hover
+          weight: 3,
+          opacity: 1,
+          fillOpacity: 0.08,
+          dashArray: "",        // solid on hover so it pops
+        });
       },
       mouseout: (e) => {
-        (e.target as L.Path).setStyle({ weight: 3, fillOpacity: 0.05 });
+        (e.target as L.Path).setStyle({
+          color: "#34d399",
+          weight: 1.5,
+          opacity: 0.7,
+          fillOpacity: 0,
+          dashArray: "6 5",
+        });
       },
     });
   };
