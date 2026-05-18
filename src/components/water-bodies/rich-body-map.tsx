@@ -82,6 +82,21 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [body.id]);
 
+  // Pre-cache every chip image into the browser cache as soon as the
+  // manifest lands. Without this, advancing the year slider (especially
+  // via the play button) briefly exposes the OSM basemap during each
+  // chip's network/disk load - a visible flash that hurts the time-lapse
+  // experience. With this, every chip swap is served from cache and is
+  // effectively instantaneous.
+  useEffect(() => {
+    if (!manifest) return;
+    for (const chip of manifest.chips) {
+      if (!chip.available || !chip.url) continue;
+      const img = new Image();
+      img.src = chip.url;
+    }
+  }, [manifest]);
+
   // Available years (chips that succeeded)
   const availableYears = useMemo(
     () => (manifest?.chips ?? []).filter((c) => c.available).map((c) => c.year),
