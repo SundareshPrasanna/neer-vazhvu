@@ -125,6 +125,29 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
     ];
   }, [bounds]);
 
+  // After the map is ready AND we have the body's bounds, force a size
+  // recalc then fit-to-the-actual-rendered-container. MapContainer's
+  // bounds prop alone is unreliable because the panel's flex layout
+  // means the map div hasn't finished sizing when the map first mounts -
+  // the initial fit ends up zoomed to some default Chennai view instead
+  // of the body. Two RAFs let the browser commit layout before we
+  // measure; invalidateSize tells Leaflet its container is now
+  // correctly-sized; fitBounds re-centres on the body within that size.
+  useEffect(() => {
+    if (!mapInstance || !initialBounds) return;
+    let cancelled = false;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (cancelled) return;
+        mapInstance.invalidateSize();
+        mapInstance.fitBounds(initialBounds, { padding: [10, 10] });
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [mapInstance, initialBounds]);
+
   if (!manifest || !bounds || !initialBounds || !polygon) {
     return (
       <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
