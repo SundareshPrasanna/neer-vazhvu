@@ -1,6 +1,6 @@
 {
   "body_id": "pallikaranai",
-  "computed_at": "2026-05-17T07:58:33.906702+00:00",
+  "computed_at": "2026-05-18T15:31:34.490079+00:00",
   "data_source": {
     "dataset": "JRC/GSW1_4/YearlyHistory",
     "version": "JRC Global Surface Water v1.4 (Pekel et al., Nature 2016, updated)",
@@ -17,7 +17,7 @@
       "v1.4 cutoff is 2021. No 2022-present data; extending requires custom pipeline.",
       "Landsat 5 over India was sparse in 1984-1995; expect high no_data fractions in early years.",
       "30m resolution: bodies under ~2 ha have unreliable signal.",
-      "JRC may misclassify marsh bed (damp but not wet) as 'not water' during dry season."
+      "JRC may misclassify damp-but-not-flooded marsh bed as 'not water' during dry season."
     ]
   },
   "years": [
@@ -61,7 +61,7 @@
     2021
   ],
   "by_zone": {
-    "TNSWA gazetted (full)": {
+    "Body (primary)": {
       "1984": {
         "year": 1984,
         "pixels_no_data": 7727,
@@ -595,7 +595,7 @@
         "permanent_area_ha": 7.38
       }
     },
-    "OSM ecological (full)": {
+    "OSM ecological": {
       "1984": {
         "year": 1984,
         "pixels_no_data": 7186,
@@ -1129,7 +1129,7 @@
         "permanent_area_ha": 1.89
       }
     },
-    "Gap: TNSWA - OSM": {
+    "Gap: body - OSM ecological": {
       "1984": {
         "year": 1984,
         "pixels_no_data": 1017,
@@ -1663,7 +1663,7 @@
         "permanent_area_ha": 5.49
       }
     },
-    "Halo: 1km buffer - TNSWA (NGT no-build zone)": {
+    "Halo: 1km buffer - body": {
       "1984": {
         "year": 1984,
         "pixels_no_data": 7029,
@@ -2199,9 +2199,9 @@
     }
   },
   "headline_for_v0": [
-    "TNSWA gazetted (full): any-water fraction 37.4% (1988-1992 avg) -> 29.2% (2017-2021 avg), delta -8.2 pp",
-    "OSM ecological (full): any-water fraction 38.2% (1988-1992 avg) -> 26.9% (2017-2021 avg), delta -11.3 pp",
-    "Gap: TNSWA - OSM: any-water fraction 38.9% (1988-1992 avg) -> 39.8% (2017-2021 avg), delta +0.9 pp",
-    "Halo: 1km buffer - TNSWA (NGT no-build zone): any-water fraction 42.0% (1988-1992 avg) -> 24.3% (2017-2021 avg), delta -17.7 pp"
+    "Body (primary): any-water fraction 37.4% (1988-1992 avg) -> 29.2% (2017-2021 avg), delta -8.2 pp",
+    "OSM ecological: any-water fraction 38.2% (1988-1992 avg) -> 26.9% (2017-2021 avg), delta -11.3 pp",
+    "Gap: body - OSM ecological: any-water fraction 38.9% (1988-1992 avg) -> 39.8% (2017-2021 avg), delta +0.9 pp",
+    "Halo: 1km buffer - body: any-water fraction 42.0% (1988-1992 avg) -> 24.3% (2017-2021 avg), delta -17.7 pp"
   ]
 }
