@@ -54,17 +54,6 @@ jobs:
           TN_PWD_MAX_STALE_DAYS: '4'
         run: python scripts/scrape_tn_pwd_reservoirs.py
 
-      # Cauvery basin rainfall via OpenMeteo (basin-area-averaged across the
-      # India-WRIS polygon). Off-season (Jan-May) produces zero rows by design.
-      - name: Compute Cauvery basin rainfall -> Supabase
-        id: basin_rainfall
-        continue-on-error: true
-        working-directory: neer-vazhvu-api
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: python scripts/scrape_cauvery_basin_rainfall.py
-
       # India-WRIS CGWB station readings for Madurai district (last 90 days).
       # Chennai's WRIS is fetched from the monthly orchestrator's run-monthly
       # endpoint; Madurai runs daily here so the live-station overlay on

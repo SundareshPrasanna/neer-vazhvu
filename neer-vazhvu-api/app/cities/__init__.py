@@ -1,5 +1,4 @@
 from .chennai import CHENNAI
-from .kaveri import KAVERI
 from .madurai import MADURAI
 from .registry import (
     DEFAULT_CITY_ID,
@@ -14,15 +13,12 @@ from .types import (
     GeoBounds,
     LocalGovernment,
     PlaceConfig,
-    PlaceKind,
-    RegionConfig,
     WaterSourceConfig,
     WaterSourceType,
 )
 
 __all__ = [
     "CHENNAI",
-    "KAVERI",
     "MADURAI",
     "DEFAULT_CITY_ID",
     "get_place_config",
@@ -34,8 +30,6 @@ __all__ = [
     "GeoBounds",
     "LocalGovernment",
     "PlaceConfig",
-    "PlaceKind",
-    "RegionConfig",
     "WaterSourceConfig",
     "WaterSourceType",
 ]

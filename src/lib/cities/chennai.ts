@@ -1,7 +1,6 @@
 import type { CityConfig } from './types';
 
 export const CHENNAI: CityConfig = {
-  placeKind: 'city',
   cityId: 'chennai',
   displayName: 'Chennai',
   displayNameLocalized: { ta: 'சென்னை' },

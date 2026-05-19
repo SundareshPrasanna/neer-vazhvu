@@ -1,15 +1,12 @@
 from dataclasses import dataclass
-from typing import Literal, Union
+from typing import Literal
 
 WaterSourceType = Literal[
     "reservoir",
-    "cauvery_stage",
     "borewell_field",
     "river",
     "flow_station",
 ]
-
-PlaceKind = Literal["city", "region"]
 
 
 @dataclass(frozen=True)
@@ -57,7 +54,6 @@ class WaterSourceConfig:
 
 @dataclass(frozen=True)
 class CityConfig:
-    place_kind: Literal["city"]
     city_id: str
     display_name: str
     state_code: str
@@ -72,20 +68,4 @@ class CityConfig:
     source_name_aliases: dict[str, str]
 
 
-@dataclass(frozen=True)
-class RegionConfig:
-    place_kind: Literal["region"]
-    city_id: str
-    display_name: str
-    state_code: str
-    timezone: str
-    center: Coordinates
-    bbox: GeoBounds
-    primary_authority: Authority
-    default_consumption_mld: float | None
-    default_desalination_mld: float | None
-    water_sources: tuple[WaterSourceConfig, ...]
-    source_name_aliases: dict[str, str]
-
-
-PlaceConfig = Union[CityConfig, RegionConfig]
+PlaceConfig = CityConfig
