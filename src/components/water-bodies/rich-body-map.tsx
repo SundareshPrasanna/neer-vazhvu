@@ -11,7 +11,7 @@ import {
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
-import type { Feature, FeatureCollection } from "geojson";
+import type { FeatureCollection } from "geojson";
 import { Maximize2 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import type { RichBodyEntry } from "@/lib/water-bodies/rich-body-registry";

@@ -483,32 +483,52 @@ Total CMWSSB-listed capacity: 745 MLD across 13 plants. Total geojson capacity (
 - Counts only, no derived areas or lengths (centroid attribution makes area/length calculations misleading)
 - To regenerate: `npx tsx scripts/compute-ward-profiles.ts`
 
-## Satellite Evidence - Copernicus Sentinel-2
+## Rich-Data Deep-Zoom Panel - flagship water bodies
 
-| | |
-|---|---|
-| **Source** | [Copernicus Sentinel-2 (via Earth Engine)](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED) |
-| **Method** | Earth Engine scene selection + thumbnail download via `neer-vazhvu-api/app/gee/evidence.py` |
-| **Frequency** | Manual dispatch via `build-satellite-evidence` CLI or `run-all-refresh` workflow |
-| **Coverage** | 12 flagship water bodies (flagship-history cohort), up to 6 monthly reference dates per body |
-| **Fields** | Frame date, Sentinel-2 scene ID, cloud cover %, usable coverage %, true-color image path, water-overlay image path, review status |
-| **Table** | `water_body_satellite_evidence` |
-| **Storage** | `satellite-evidence` Supabase Storage bucket (public read) |
-| **API** | `GET /api/water-bodies/gee/evidence?gee_target_id=X` |
+A subset of Chennai water bodies have a dedicated full-screen panel offering yearly satellite imagery 1984-present, cumulative water-loss and built-gain tints, per-year zonal stats, a play/pause timeline with event stamps, and a sources & methodology modal. The pattern is registry-driven so a new body needs no UI code; the registry lives at [src/lib/water-bodies/rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts).
 
-**How it works:**
-- For each flagship water body and monthly reference date, the pipeline searches Sentinel-2 imagery within a configurable window (default 30 days)
-- Scenes are ranked by usable coverage, proximity to the reference date, and cloud percentage
-- The best scene is downloaded as a true-color thumbnail and an NDWI water-mask overlay
-- Both images are stored in Supabase Storage; metadata is upserted to the evidence table
-- Only visually reviewed frames (`is_reviewed = true`) are shown in the frontend by default
+**Onboarded today (7):**
 
-**Known limitations:**
-- Limited to the 12-body flagship cohort; expanding requires visual review capacity
-- Sentinel-2 is optical-only; persistent cloud cover can prevent usable frames in some months
-- Thumbnails are clipped to a padded bounding box of the water body, not the exact polygon
-- Water-mask overlay uses NDWI thresholding which can misclassify shadows or wet soil
-- Re-running the pipeline preserves existing review state but only if the same scene is selected again; a different scene selection resets to unreviewed
+| Body | Boundary source | OSM ID | Buffer | Notes |
+|------|-----------------|--------|--------|-------|
+| Pallikaranai Marsh (பள்ளிக்கரணை சதுப்புநிலப்பகுதி) | TNSWA gazetted Ramsar Site #2481 boundary (Tamil Nadu State Wetland Authority QGIS web map) | OSM relation 15046539 (cross-check only) | 1 km halo (NGT-aligned reference, not legally codified) | Set-difference analysis vs OSM `natural=wetland` shows a 233.06 ha gap between gazette (1246.76 ha) and OSM (1073.06 ha); both layers shown in panel |
+| Sholavaram Lake (சோளவரம் ஏரி) | OpenStreetMap relation | OSM relation 25394523 | 1 km halo (editorial) | One of Chennai's 3 northern CMWSSB reservoirs; declared safe-yield drinking source |
+| Red Hills Reservoir / Puzhal (புழல் ஏரி) | OpenStreetMap relation | OSM relation 25394157 | 1 km halo (editorial) | Largest of Chennai's CMWSSB drinking-water reservoirs |
+| Chembarambakkam Lake (செம்பரம்பாக்கம் ஏரி) | OpenStreetMap relation | OSM relation 25453624 | 1 km halo (editorial) | CMWSSB drinking source; central in the 2015 Chennai flood narrative |
+| Porur Lake (போரூர் ஏரி) | OpenStreetMap relation | OSM relation 23633592 | 1 km halo (editorial) | Eri tank type; recreation + groundwater recharge |
+| Velachery Lake (வேளச்சேரி ஏரி) | OpenStreetMap relation | OSM relation 25504265 | 1 km halo (editorial) | Heavily encroached on south + east; Madras HC orders on encroachment |
+| Perumbakkam Lake (பெரும்பாக்கம் ஏரி) | OpenStreetMap relation | OSM relation 30424450 | 1 km halo (editorial) | Adjacent to large IT corridor + resettlement housing |
+
+**Build-time pipeline (per body):**
+
+| Step | Source | Output |
+|------|--------|--------|
+| Fetch polygon | OSM Overpass (relation / way) or TNSWA QGIS web map | `public/geojson/rich-bodies/{body}.geojson` + `{body}-buffer-1000m.geojson` |
+| Yearly chips 1984-2026 | Landsat 5 TM (1984-1998), Landsat 5+7 (1999-2012), Landsat 7+8 (2013-2018), Sentinel-2 SR Harmonized (2019-present) via GEE | `public/data/rich-bodies/imagery/{body}/*.jpg` + `{body}-imagery-manifest.json` |
+| Water-loss tint | JRC Global Surface Water v1.4 cumulative loss (1984 vs latest) | `public/data/rich-bodies/tints/{body}/water-loss.png` |
+| Built-gain tint | Dynamic World V1 cumulative gain (2016 vs latest) | `public/data/rich-bodies/tints/{body}/built-gain.png` |
+| JRC water trend (per year, per zone) | JRC GSW v1.4 via GEE | `public/data/rich-bodies/{body}-jrc-water-trend.json` |
+| Dynamic World built trend (per year, per zone) | Dynamic World V1 via GEE | `public/data/rich-bodies/{body}-dynamic-world-built-trend.json` |
+| Open Buildings verification | Open Buildings v3 (2023) via GEE | `public/data/rich-bodies/{body}-open-buildings-verification.json` |
+| Overture buildings (refreshed monthly) | Overture Maps Foundation buildings (quarterly parquet, queried via DuckDB) | `public/data/rich-bodies/{body}-overture-buildings.json` |
+
+**Pipeline scripts:**
+- `scripts/fetch-rich-body-polygon.ts` (`--osm-rel` or `--osm-way` mode) and `scripts/fetch-tnswa-ramsar-polygon.ts`
+- `scripts/_rich_body_zones.py` - body-agnostic zone helper; emits `Body (primary)`, `OSM ecological` (where both layers exist), `Gap: body - OSM ecological`, `Halo: 1km buffer - body`
+- `scripts/verify_rich_body_{water_trend,built_trend,open_buildings,overture_buildings}.py` - all take `--body-id`
+- `scripts/ingest_rich_body_imagery.py` - yearly chip ingest
+- `scripts/ingest_rich_body_{water_loss,built_gain}_tint.py` - cumulative tint PNGs
+
+**Refresh cron:** `.github/workflows/overture-buildings-refresh.yml` runs monthly across all 7 onboarded bodies; it queries the latest Overture quarterly release and opens a candidate-data PR if month-over-month building count moves more than the anomaly threshold (default 25 pct). The other inputs (JRC, Dynamic World, Open Buildings, yearly chips, tints) update infrequently enough that they are run on-demand rather than on a cron.
+
+**Known limitations / caveats:**
+- JRC GSW v1.4 ends in 2021; per-year stats for 2022-onwards show a "JRC data ends 2021" caveat
+- Dynamic World starts in 2016; per-year stats before 2016 show a "DW starts 2016" caveat
+- The 1 km halo is editorial reference (not a legally codified buffer) for all bodies except Pallikaranai, where it aligns with the NGT 1 km eco-sensitive zone reference; this is labelled explicitly in the panel
+- Building counts use the building centroid for zone attribution, so a building straddling the boundary is counted by where its centroid lands
+- Overture is more rigorous about de-duplication than Open Buildings, so Overture counts are floor estimates - actual density (especially in informal settlements) is likely higher
+- Sentinel-2 is optical-only; cloud cover can prevent a usable annual composite in some years
+- Pallikaranai is the only body where both a gazetted (TNSWA) and an OSM-ecological polygon exist; for it, set-algebra outputs (`-tnswa-vs-osm-ecological.json`) accompany the standard analysis JSONs
 
 ## AI-Generated Narratives - Anthropic Claude API
 

@@ -385,16 +385,23 @@ export function AboutContent({
               </ul>
             </div>
 
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40">
-              <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t("about.gee_evidence_title")}</h4>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                {t("about.gee_evidence_desc")}
+            <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/20 p-4 space-y-3">
+              <div>
+                <h4 className="text-sm font-semibold text-emerald-900 dark:text-emerald-100">Rich-Data Deep-Zoom Panel (flagship bodies)</h4>
+                <p className="text-sm text-emerald-800/80 dark:text-emerald-200/80 mt-1">
+                  Seven Chennai water bodies have a dedicated full-screen panel layered on top of the standard <span className="font-mono text-xs">/water-bodies</span> map. Clicking a flagship body opens yearly satellite imagery 1984-present, cumulative water-loss and built-gain tints, per-year zonal stats, and a sources & methodology modal.
+                </p>
+              </div>
+              <p className="text-sm text-emerald-800/80 dark:text-emerald-200/80">
+                <span className="font-semibold text-emerald-900 dark:text-emerald-100">Onboarded today (7):</span> Pallikaranai Marsh (TNSWA gazetted Ramsar Site #2481 boundary), Sholavaram Lake, Red Hills Reservoir (Puzhal), Chembarambakkam Lake, Porur Lake, Velachery Lake, Perumbakkam Lake. The last six use the OpenStreetMap relation as the primary boundary.
               </p>
-              <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-2 mt-3">
-                <li>{t("about.gee_evidence_step1")}</li>
-                <li>{t("about.gee_evidence_step2")}</li>
-                <li>{t("about.gee_evidence_step3")}</li>
-                <li>{t("about.gee_evidence_step4")}</li>
+              <ul className="list-disc list-inside text-sm text-emerald-800/80 dark:text-emerald-200/80 space-y-2">
+                <li><span className="font-semibold text-emerald-900 dark:text-emerald-100">Yearly chips 1984-present</span> - Landsat 5 TM (1984-1998), Landsat 5+7 (1999-2012), Landsat 7+8 (2013-2018), Sentinel-2 SR Harmonized (2019-present). All chips are pre-loaded on panel open so the time-lapse plays without flicker.</li>
+                <li><span className="font-semibold text-emerald-900 dark:text-emerald-100">Cumulative water-loss tint</span> over the body polygon, computed from JRC Global Surface Water v1.4 (1984 vs latest year).</li>
+                <li><span className="font-semibold text-emerald-900 dark:text-emerald-100">Cumulative built-gain tint</span> over the 1 km halo, computed from Google Dynamic World V1 (2016 vs latest year).</li>
+                <li><span className="font-semibold text-emerald-900 dark:text-emerald-100">Per-year stats</span> - water surface % in body (JRC), built fraction % in halo (Dynamic World), buildings in halo, buildings in body. Building counts use Overture Maps Foundation (refreshed monthly via a GitHub Actions cron) with Open Buildings v3 as fallback.</li>
+                <li><span className="font-semibold text-emerald-900 dark:text-emerald-100">Caveats stated in-panel</span> - JRC data ends 2021; Dynamic World starts 2016; the 1 km halo is editorial reference (not a legally codified buffer) for every body except Pallikaranai, where it aligns with the NGT 1 km eco-sensitive zone reference.</li>
+                <li><span className="font-semibold text-emerald-900 dark:text-emerald-100">Pallikaranai-only set-algebra</span> - For Pallikaranai both a gazetted TNSWA boundary (1246.76 ha) and an OSM <span className="font-mono text-xs">natural=wetland</span> polygon (1073.06 ha) exist; the panel surfaces the 233.06 ha gap between the two.</li>
               </ul>
             </div>
 

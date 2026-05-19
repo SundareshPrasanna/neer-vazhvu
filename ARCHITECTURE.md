@@ -20,7 +20,9 @@ graph TB
         DGI["data.gov.in<br/>(Water Bodies Census)"]
         CMWSSB_SEW["CMWSSB Sewerage<br/>(STPs, SPS, pumping mains, one-time)"]
         ANTHROPIC["Anthropic Claude API<br/>(AI narratives)"]
-        GEE_SRC["Google Earth Engine<br/>(Sentinel-2 NDWI, CHIRPS,<br/>JRC, HydroBASINS)"]
+        GEE_SRC["Google Earth Engine<br/>(Sentinel-2, Landsat 5/7/8,<br/>Dynamic World V1, JRC GSW v1.4,<br/>Open Buildings v3, CHIRPS, HydroBASINS)"]
+        TNSWA["Tamil Nadu State Wetland<br/>Authority QGIS Web Map<br/>(Pallikaranai Ramsar boundary)"]
+        OVERTURE["Overture Maps Foundation<br/>(buildings, quarterly parquet)"]
     end
 
     subgraph Backend ["Python API (FastAPI)"]
@@ -32,8 +34,8 @@ graph TB
     subgraph Database ["Supabase (PostgreSQL)"]
         Core["Core Tables<br/>reservoir_daily<br/>weather_daily<br/>groundwater_monthly<br/>groundwater_wris<br/>water_bodies_census"]
         Computed["Computed Tables<br/>water_estimate_daily<br/>reservoir_forecast<br/>ward_risk_score<br/>daily_briefing<br/>ward_narrative"]
-        GEE["GEE Tables<br/>water_body_satellite_summary<br/>reservoir_catchment_context<br/>water_body_satellite_evidence"]
-        Storage["Supabase Storage<br/>satellite-evidence bucket"]
+        GEE["GEE Tables<br/>water_body_satellite_summary<br/>reservoir_catchment_context"]
+        RichStatic["Rich-Body Static Files<br/>(public/data/rich-bodies/...)<br/>per-body manifests, JRC + DW trends,<br/>Open Buildings + Overture counts,<br/>yearly chips, cumulative tints"]
         Log["pipeline_log"]
     end
 
@@ -66,7 +68,9 @@ graph TB
     WRIS_ST -->|REST API, daily scrape| Scrapers
     ANTHROPIC -->|Claude API| Computed
     GEE_SRC -->|Earth Engine API| GEE
-    GEE_SRC -->|Sentinel-2 thumbnails| Storage
+    GEE_SRC -->|build-time chips + tints + zonal stats| RichStatic
+    TNSWA -->|fetch-tnswa-ramsar-polygon.ts| StaticFiles2
+    OVERTURE -->|monthly DuckDB cron| RichStatic
 
     Scrapers --> ETL
     ETL -->|upsert| Core
@@ -79,7 +83,7 @@ graph TB
     Core -->|read| Frontend
     Computed -->|read| Frontend
     GEE -->|read| Frontend
-    Storage -->|images| Frontend
+    RichStatic -->|static| Frontend
     StaticFiles -->|static| Frontend
     StaticFiles2 -->|static| Frontend
 
@@ -163,7 +167,7 @@ flowchart LR
 | Fetch Census | data.gov.in (Water Bodies Census) | `water_bodies_census` | One-time / periodic |
 | GEE Reservoir Context | CHIRPS via Earth Engine | `reservoir_catchment_context` | Daily (06:15 IST) |
 | GEE Water-Body Summaries | Sentinel-2 NDWI + JRC via Earth Engine | `water_body_satellite_summary` | Weekly (Monday 06:45 IST) |
-| GEE Satellite Evidence | Sentinel-2 NDWI via Earth Engine | `water_body_satellite_evidence` + Storage | Manual dispatch / run-all-refresh |
+| Overture Buildings Refresh | Overture Maps quarterly parquet (DuckDB) | `public/data/rich-bodies/{body}-overture-buildings.json` (PR-gated when anomaly) | Monthly (1st of month) |
 
 ## Monthly Pipeline
 
@@ -423,6 +427,38 @@ Pre-computed (build-time) scoring of all 1,787 water bodies for restoration prio
 
 **Output:** Ranked list with composite score (0–100), component breakdown, and nearest feature references per water body.
 
+### Rich-Data Deep-Zoom Panel (flagship water bodies)
+
+A subset of Chennai water bodies have a dedicated full-screen panel layered on top of the standard `/water-bodies` map. Onboarded today (7): Pallikaranai Marsh, Sholavaram Lake, Red Hills Reservoir (Puzhal), Chembarambakkam Lake, Porur Lake, Velachery Lake, Perumbakkam Lake. The pattern is registry-driven so a new body needs no UI code, just a registry entry plus pipeline outputs.
+
+**Registry:** [src/lib/water-bodies/rich-body-registry.ts](src/lib/water-bodies/rich-body-registry.ts) maps a `richBodyId` to the polygon path, buffer path, imagery manifest, analysis-JSON paths, timeline events, status badges, boundary source, and a `data_sources` block driving the in-panel sources & methodology modal.
+
+**Build-time pipeline (all output to `public/`, no Supabase tables):**
+
+| Step | Source | Output | Frequency |
+|------|--------|--------|-----------|
+| Fetch polygon | OSM Overpass relation/way; TNSWA QGIS web map for Pallikaranai | `public/geojson/rich-bodies/{body}.geojson` + `{body}-buffer-1000m.geojson` | One-time / on-demand |
+| Verify zonal water trend | JRC Global Surface Water v1.4 via GEE | `public/data/rich-bodies/{body}-jrc-water-trend.json` | One-time / on-demand |
+| Verify zonal built trend | Dynamic World V1 via GEE | `public/data/rich-bodies/{body}-dynamic-world-built-trend.json` | One-time / on-demand |
+| Verify Open Buildings | Open Buildings v3 via GEE | `public/data/rich-bodies/{body}-open-buildings-verification.json` | One-time / on-demand |
+| Refresh Overture buildings | Overture Maps parquet (DuckDB) | `public/data/rich-bodies/{body}-overture-buildings.json` | Monthly via `.github/workflows/overture-buildings-refresh.yml` (PR-gated when anomaly) |
+| Ingest yearly chips | Landsat 5/7/8 (1984-2018) + Sentinel-2 SR Harmonized (2019-present) via GEE | `public/data/rich-bodies/imagery/{body}/*.jpg` + `{body}-imagery-manifest.json` | One-time per onboarding; re-run when newer imagery is desired |
+| Ingest water-loss tint | JRC GSW v1.4 cumulative loss (1984 vs latest year) | `public/data/rich-bodies/tints/{body}/water-loss.png` | One-time / on-demand |
+| Ingest built-gain tint | Dynamic World V1 cumulative gain (2016 vs latest year) | `public/data/rich-bodies/tints/{body}/built-gain.png` | One-time / on-demand |
+
+**Zones (body-agnostic, defined in [scripts/_rich_body_zones.py](scripts/_rich_body_zones.py)):**
+
+- `Body (primary)` - the body's main boundary (TNSWA gazette for Pallikaranai, OSM for the rest)
+- `OSM ecological` (Pallikaranai only) - the OSM `natural=wetland` polygon for the marsh
+- `Gap: body - OSM ecological` (Pallikaranai only) - the set-difference, currently 233.06 ha (gazette - OSM)
+- `Halo: 1km buffer - body` - the donut ring outside the body's edge
+
+The four `scripts/verify_rich_body_*.py` scripts take `--body-id` and emit the same zone names regardless of source, so the frontend stats strip is body-agnostic.
+
+**Frontend:** A click on a flagship body opens a full-screen overlay ([src/components/water-bodies/rich-body-overlay.tsx](src/components/water-bodies/rich-body-overlay.tsx)). The map ([rich-body-map.tsx](src/components/water-bodies/rich-body-map.tsx)) renders 5 explicit Leaflet panes (z-index 410-490) to stack chips, tints, polygon, halo, and labels deterministically. The slider ([rich-body-timeline-slider.tsx](src/components/water-bodies/rich-body-timeline-slider.tsx)) supports play/pause time-lapse with era bands (Landsat 5 / 5+7 / 7+8 / Sentinel-2) and event stamps. The stats strip ([rich-body-stats-strip.tsx](src/components/water-bodies/rich-body-stats-strip.tsx)) shows 4 stats per year (body water %, halo built %, halo buildings, body buildings) with delta-vs-baseline indicators. The sources modal ([rich-body-sources-modal.tsx](src/components/water-bodies/rich-body-sources-modal.tsx)) reads `data_sources` from the registry.
+
+All chips are pre-loaded into the browser cache via `new Image().src = url` on manifest load to eliminate flicker during play/drag. There is no GEE round-trip at view time.
+
 ## Frontend
 
 ```mermaid
@@ -584,7 +620,6 @@ When Supabase is not configured (env vars missing), the dashboard falls back to 
 | GET | `/intelligence/forecast` | None | Latest reservoir forecasts |
 | GET | `/intelligence/risk-scores` | None | Ward-level risk scores |
 | GET | `/intelligence/briefing` | None | Daily intelligence briefing |
-| GET | `/api/water-bodies/gee/evidence?gee_target_id=X` | None | Reviewed satellite evidence frames with Storage URLs |
 | GET | `/api/groundwater/ward?ward=N` | None | Single ward groundwater depth + trend + risk |
 | GET | `/api/narratives/city` | None | Latest AI city narrative |
 | GET | `/api/narratives/ward?ward=N` | None | Latest AI ward narrative |
