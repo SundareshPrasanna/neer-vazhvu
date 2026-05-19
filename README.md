@@ -14,6 +14,7 @@ Every city dashboard, where the data exists, surfaces:
 - **Groundwater** - CGWB block exploitation classification, station-level depth time-series, and (where well density supports it) ward-level depth interpolation
 - **Rivers** - CPCB NWMP DO/BOD time-series with status badges derived from current readings via the shared CPCB Designated Best-Use classifier
 - **Water bodies** - OSM polygons, lost-tank inventory, restoration priority scoring (algorithm varies per city)
+- **Rich-data deep-zoom panel** - For 7 flagship Chennai bodies (Pallikaranai, Sholavaram, Red Hills, Chembarambakkam, Porur, Velachery, Perumbakkam) a click opens a full-screen panel with yearly satellite imagery 1984-present, cumulative water-loss and built-gain tints over the polygon and 1 km halo, per-year stats (water surface, built share, building counts in body vs halo), a play/pause timeline with event stamps, and a sources & methodology modal
 - **Flood risk** - Hazard zones / drainage / sewerage where layers are public; narrative-only stub where they're not
 - **My Ward** - Per-ward report aggregating every layer above with comparison + uplift planner
 - **About** - Per-city methodology, data-source index, transparency-gap inventory
@@ -85,12 +86,27 @@ We integrate roughly 30 distinct sources across the cities we cover - from utili
 
 ## Earth Engine Phase 1
 
-Earth Engine is used as a summary layer (catchment rainfall context, water-body NDWI seasonality, Sentinel-2 evidence frames), not a raster explorer. Methodology, guardrails, and operations live in dedicated docs:
+Earth Engine is used as a summary layer (catchment rainfall context, water-body NDWI seasonality) and as the build-time source for the rich-data deep-zoom panel's yearly chips and zonal stats — not a raster explorer. Methodology, guardrails, and operations live in dedicated docs:
 
 - [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md), [GEE_PHASE1_PLAN.md](GEE_PHASE1_PLAN.md), [GEE_CATCHMENT_DERIVATION_PLAN.md](GEE_CATCHMENT_DERIVATION_PLAN.md)
 - [GEE_PHASE2_3_PLAN.md](GEE_PHASE2_3_PLAN.md), [GEE_PHASE2_CHECKLIST.md](GEE_PHASE2_CHECKLIST.md)
-- [GEE_SATELLITE_EVIDENCE_PLAN.md](GEE_SATELLITE_EVIDENCE_PLAN.md), [GEE_SATELLITE_EVIDENCE_CHECKLIST.md](GEE_SATELLITE_EVIDENCE_CHECKLIST.md)
 - [GEE_RESEARCH.md](GEE_RESEARCH.md)
+
+## Rich-Data Deep-Zoom Panel
+
+A few flagship Chennai bodies have a dedicated deep-zoom experience layered on top of the standard `/water-bodies` map. Onboarded bodies today (7): Pallikaranai Marsh, Sholavaram Lake, Red Hills Reservoir (Puzhal), Chembarambakkam Lake, Porur Lake, Velachery Lake, Perumbakkam Lake.
+
+For each body the build-time pipeline produces:
+
+- A primary polygon (Tamil Nadu State Wetland Authority gazetted boundary for Pallikaranai; OpenStreetMap relation/way for the others) and a 1 km buffer halo
+- ~39 yearly satellite chips (Landsat 5/7/8 1984-2018, Sentinel-2 SR Harmonized 2019-present) via Google Earth Engine
+- Cumulative water-loss and built-gain tint PNGs derived from JRC Global Surface Water v1.4 and Dynamic World V1
+- Zonal stats per year for the body and 1 km halo: water surface % (JRC), built fraction % (Dynamic World), building counts (Overture Maps; falls back to Open Buildings v3 if Overture is missing)
+- Per-body timeline events and status badges driven from the registry at [src/lib/water-bodies/rich-body-registry.ts](src/lib/water-bodies/rich-body-registry.ts)
+
+Overture building counts refresh monthly via [.github/workflows/overture-buildings-refresh.yml](.github/workflows/overture-buildings-refresh.yml), which queries Overture's quarterly parquet release through DuckDB and opens a candidate-data PR when month-over-month change exceeds a tunable threshold.
+
+To onboard a new body, see [docs/cities/chennai/features.md](docs/cities/chennai/features.md#rich-data-deep-zoom-panel) for the registry pattern and `scripts/fetch-rich-body-polygon.ts`, `scripts/_rich_body_zones.py`, `scripts/verify_rich_body_*.py`, `scripts/ingest_rich_body_imagery.py`, and `scripts/ingest_rich_body_{water_loss,built_gain}_tint.py` for the pipeline scripts.
 
 ## Getting Started
 
@@ -149,7 +165,9 @@ Run all migrations against your Supabase project:
 -- 8. supabase/migrations/008_news_articles.sql
 -- 9. supabase/migrations/009_deduplicate_news.sql
 -- 10. supabase/migrations/010_gee_phase1.sql
--- 11. supabase/migrations/011_gee_satellite_evidence.sql
+-- 11. supabase/migrations/011_gee_satellite_evidence.sql (legacy; superseded by 023)
+-- ... (later migrations live in supabase/migrations/)
+-- N. supabase/migrations/023_drop_satellite_evidence.sql (drops the table + Storage bucket from #011)
 ```
 
 Or if using the Supabase CLI:
@@ -211,12 +229,11 @@ python scripts/run_gee_phase1.py build-targets --write
 python scripts/run_gee_phase1.py validate-catchments
 python scripts/run_gee_phase1.py run-reservoir-context --write
 python scripts/run_gee_phase1.py run-water-body-summaries --write
-python scripts/run_gee_phase1.py build-satellite-evidence --write
 ```
 
 Current workflow note:
 
-- `.github/workflows/gee-phase1.yml` supports manual dispatch for `check-auth`, `build-targets`, `validate-catchments`, `run-reservoir-context`, `run-water-body-summaries`, `build-satellite-evidence`, and `run-all-refresh`
+- `.github/workflows/gee-phase1.yml` supports manual dispatch for `check-auth`, `build-targets`, `validate-catchments`, `run-reservoir-context`, `run-water-body-summaries`, and `run-all-refresh`
 - if you need the live app data refreshed today, run the CLI locally or trigger that workflow manually
 
 ### 6. Seed Historical Data
@@ -344,6 +361,11 @@ Please open an issue first to discuss significant changes.
 - **GCC** for ward boundary delimitation data and storm water drain survey data (10,308 drain segments)
 - **OpenStreetMap contributors** for water body polygon and river geometry data
 - **Care Earth Trust** for comprehensive water body surveys and documentation
+- **Tamil Nadu State Wetland Authority (TNSWA)** for the gazetted Pallikaranai Ramsar Site #2481 boundary used in the rich-data deep-zoom panel
+- **European Commission Joint Research Centre (JRC)** for the Global Surface Water v1.4 dataset (1984-2021 annual water occurrence)
+- **Google Dynamic World V1** for near-real-time land-cover classification (2016-present)
+- **Google Open Buildings v3** and **Overture Maps Foundation** for building footprints used in halo/body building counts
+- **NASA / USGS Landsat 5/7/8** and **ESA / Copernicus Sentinel-2** for the multi-decadal yearly imagery in the deep-zoom panel
 - **IIT Madras** and the **National Green Tribunal** for research and legal records on water body encroachments and industrial pollution
 - **[CPCB National Water Monitoring Programme (NWMP)](https://cpcb.nic.in/nwmp-data-2024/)** for annual river water quality monitoring data
 - **[Chennai Rivers Restoration Trust (CRRT)](https://www.crrt.tn.gov.in/)** for restoration project data across Chennai's rivers

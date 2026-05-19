@@ -47,9 +47,24 @@ A unified map at `/water-bodies` with a **view-mode toggle** to switch between "
 - **Ranking Table** - Sortable by score, area, or name; switch via Map/Ranking tabs
 - **Detail Panel** - Click any water body for basic info plus restoration score breakdown, nearest lost water body, nearest river station, nearest industrial source. Connected insights surface when lost-proximity or industrial-proximity scores are dominant
 - **Satellite Context** - For reviewed Phase 1 lakes and reservoirs, the detail panel shows historical persistence, current surface spread versus the usual seasonal baseline, and a freshness/confidence label
+- **Rich-Data Deep-Zoom Panel** - 7 flagship bodies open a dedicated full-screen panel (see below) instead of the standard detail panel
 - **Ward Context + AI Analysis** - Each detail panel shows the ward's cross-domain water context and AI-generated narrative
 - **Deep Linking** - Ward context links navigate to the water bodies page and pre-select the ward's top water body (`?mode=restoration&ward=N`)
 - **Stats Bar** - Adapts to show water body counts or priority breakdown based on view mode
+
+### Rich-Data Deep-Zoom Panel
+A full-screen overlay layered on top of `/water-bodies` for flagship Chennai bodies. Onboarded today (7): Pallikaranai Marsh, Sholavaram Lake, Red Hills Reservoir (Puzhal), Chembarambakkam Lake, Porur Lake, Velachery Lake, Perumbakkam Lake. Bodies in the rich-data set are picked out on the standard map with a subtle dashed emerald outline (brightens on hover); clicking opens the panel.
+
+- **Subtle emerald dashed outline** on the standard `/water-bodies` map identifies which bodies have the deep-zoom experience
+- **Yearly satellite imagery 1984-2026** - Landsat 5 TM (1984-1998), Landsat 5+7 (1999-2012), Landsat 7+8 (2013-2018), Sentinel-2 SR Harmonized (2019-present). All chips pre-loaded on panel open to eliminate flicker during scrubbing or time-lapse playback
+- **Play / pause time-lapse** at 800 ms per year, with an era band labelling which satellite generation produced each frame, plus per-body event stamps from the registry (e.g. NGT order dates, encroachment events, restoration milestones)
+- **Cumulative water-loss tint (red)** over the body polygon - JRC Global Surface Water v1.4 cumulative loss (1984 vs latest year)
+- **Cumulative built-gain tint (rose)** over the 1 km halo - Dynamic World V1 cumulative gain (2016 vs latest year)
+- **Per-year stats strip** with 4 metrics: water surface % in body (JRC), built fraction % in halo (Dynamic World), building count in halo, building count in body. Each metric shows a delta vs a baseline (1988-92 avg for water; 2016 for built), with caveats where the source dataset doesn't cover the current year. Inline click-toggle help popovers explain each metric in plain language (works on touch + desktop)
+- **Status badges** - Per-body emerald / amber / sky / slate tone badges from the registry, e.g. "Ramsar Site #2481" for Pallikaranai, "CMWSSB drinking source" for Sholavaram / Red Hills / Chembarambakkam
+- **Sources & methodology modal** - Driven from the registry's `data_sources` block; lists boundary source, imagery sources, analysis sources, and caveats for that specific body
+- **5 Leaflet panes** - Chips (z 410), water-loss tint (z 460), built-gain tint (z 470), polygon outline (z 480), labels (z 490) - so stacking is deterministic regardless of which layer loads first
+- **Registry-driven** - New body = registry entry plus pipeline outputs; no UI code change. See [src/lib/water-bodies/rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) for the schema and [docs/cities/chennai/data-sources.md](data-sources.md#rich-data-deep-zoom-panel---flagship-water-bodies) for the per-body source matrix
 
 ### River Health Map
 - **Interactive Polyline Map** - 4 rivers (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar) colour-coded by CPCB water quality status

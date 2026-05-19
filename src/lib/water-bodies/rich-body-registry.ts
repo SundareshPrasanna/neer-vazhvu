@@ -39,7 +39,10 @@ export interface RichBodyEntry {
   imagery_manifest_path: string;
   /** Pre-computed analysis JSONs */
   analysis_paths: {
-    boundary: string;
+    /** TNSWA-vs-OSM set-algebra analysis. Only emitted for bodies that have
+     *  BOTH a gazetted (TNSWA) and an OSM-ecological polygon, i.e. only
+     *  Pallikaranai today. Optional. */
+    boundary?: string;
     open_buildings: string;
     /** Newer building source (Overture Maps quarterly release).
      *  Optional - bodies onboarded before T19a may not have this yet. */
@@ -241,6 +244,334 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       ],
       caveats: [
         "Reservoir water trend reading: any-water fraction rose from 51.7% (1988-92 avg) to 94.6% (2017-21 avg). The honest read is 'the reservoir is more reliably full in the modern era' (better water management + OSM polygon at full-pool extent + sparse 1980s-90s Landsat coverage over Chennai), not 'the reservoir grew 43 percentage points.'",
+      ],
+    },
+  },
+  "red-hills": {
+    id: "red-hills",
+    osm_id: 25394157,
+    name: "Red Hills Reservoir (Puzhal)",
+    name_ta: "புழல் ஏரி",
+    city_id: "chennai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 25394157). " +
+      "Red Hills / Puzhal is the largest of Chennai's four drinking-water " +
+      "reservoirs and is managed by CMWSSB, which does not publish a GIS " +
+      "layer. OSM polygon represents the visible water surface at the time " +
+      "mappers drew it. India-WRIS / Bhuvan WBIS satellite-derived " +
+      "alternatives are a V0.1 follow-up.",
+    polygon_path: "/geojson/rich-bodies/red-hills.geojson",
+    buffer_path: "/geojson/rich-bodies/red-hills-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). " +
+      "No specific NGT order for Red Hills. Shown to visualise the urban " +
+      "pressure of north Chennai's IT corridor + Outer Ring Road on the reservoir's surroundings.",
+    imagery_manifest_path: "/data/rich-bodies/red-hills-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/red-hills-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/red-hills-overture-buildings.json",
+      water_trend: "/data/rich-bodies/red-hills-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/red-hills-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1876,
+        label: "Red Hills (Puzhal) lake formalised as a drinking-water reservoir under the Madras Presidency",
+        label_short: "Constructed as reservoir",
+      },
+      {
+        year: 2015,
+        label: "December 2015 Chennai floods - reservoir overflowed contributing to downstream inundation",
+        label_short: "2015 Chennai floods",
+      },
+      {
+        year: 2019,
+        label: "Chennai 'Day Zero' water crisis - all four city reservoirs (Red Hills included) went near-empty",
+        label_short: "2019 'Day Zero' crisis",
+      },
+      {
+        year: 2023,
+        label: "Cyclone Michaung floods - reservoir reached full pool",
+        label_short: "Cyclone Michaung",
+      },
+    ],
+    status_badges: [
+      { label: "CMWSSB drinking water reservoir", tone: "sky" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap way 25394157",
+          note: "OSM mappers traced the reservoir's visible water surface from satellite imagery. CMWSSB does not publish a GIS layer; Bhuvan WBIS / India-WRIS alternatives planned for V0.1.",
+          link: "https://www.openstreetmap.org/way/25394157",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated. Same 1 km radius used across all rich-data bodies for cross-body visual consistency.",
+          licence: "Derived",
+        },
+      ],
+    },
+  },
+  chembarambakkam: {
+    id: "chembarambakkam",
+    osm_id: 25453624,
+    name: "Chembarambakkam Lake",
+    name_ta: "செம்பரம்பாக்கம் ஏரி",
+    city_id: "chennai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 25453624). " +
+      "Chembarambakkam is one of Chennai's four CMWSSB drinking-water " +
+      "reservoirs (with Poondi, Red Hills, Cholavaram). OSM polygon " +
+      "represents the visible water surface.",
+    polygon_path: "/geojson/rich-bodies/chembarambakkam.geojson",
+    buffer_path: "/geojson/rich-bodies/chembarambakkam-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). " +
+      "No specific NGT order for Chembarambakkam. Shown to visualise the " +
+      "western Chennai urban-edge pressure on the reservoir.",
+    imagery_manifest_path: "/data/rich-bodies/chembarambakkam-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/chembarambakkam-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/chembarambakkam-overture-buildings.json",
+      water_trend: "/data/rich-bodies/chembarambakkam-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/chembarambakkam-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1944,
+        label: "Chembarambakkam dam modernised; reservoir formalised as part of Chennai's water supply system",
+        label_short: "Modern dam built",
+      },
+      {
+        year: 2015,
+        label: "Chembarambakkam gate-release decision on December 1-3 2015 widely cited as a contributing factor to the catastrophic Chennai floods downstream along the Adyar river",
+        label_short: "2015 floods (gate release)",
+        source_url: "https://www.thehindu.com/news/cities/chennai/chembarambakkam-the-villain-of-2015-floods/article33288316.ece",
+      },
+      {
+        year: 2019,
+        label: "Chennai 'Day Zero' water crisis - all four city reservoirs (Chembarambakkam included) went near-empty",
+        label_short: "2019 'Day Zero' crisis",
+      },
+      {
+        year: 2023,
+        label: "Cyclone Michaung floods - reservoir reached full pool",
+        label_short: "Cyclone Michaung",
+      },
+    ],
+    status_badges: [
+      { label: "CMWSSB drinking water reservoir", tone: "sky" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap way 25453624",
+          note: "OSM mappers traced the reservoir's visible water surface. CMWSSB does not publish a GIS layer.",
+          link: "https://www.openstreetmap.org/way/25453624",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated. Same 1 km radius used across all rich-data bodies for cross-body visual consistency.",
+          licence: "Derived",
+        },
+      ],
+    },
+  },
+  porur: {
+    id: "porur",
+    osm_id: 23633592,
+    name: "Porur Lake",
+    name_ta: "போரூர் ஏரி",
+    city_id: "chennai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 23633592). " +
+      "Small urban lake in western Chennai, originally a temple-tank " +
+      "system attributed to 18th-century Tirumalanaicker. Heavily " +
+      "encroached, with periodic restoration drives.",
+    polygon_path: "/geojson/rich-bodies/porur.geojson",
+    buffer_path: "/geojson/rich-bodies/porur-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). " +
+      "No specific NGT order for Porur. Shown to visualise the dense urban " +
+      "context that has encroached on this small (~29 ha) urban lake.",
+    imagery_manifest_path: "/data/rich-bodies/porur-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/porur-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/porur-overture-buildings.json",
+      water_trend: "/data/rich-bodies/porur-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/porur-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2018,
+        label: "Madras High Court / NGT order restoration of Porur Lake amid encroachment concerns; multiple eviction drives followed",
+        label_short: "Restoration order",
+      },
+      {
+        year: 2023,
+        label: "Cyclone Michaung floods - lake reached full pool, drainage strain in surrounding neighbourhoods",
+        label_short: "Cyclone Michaung",
+      },
+    ],
+    status_badges: [
+      { label: "Urban lake", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap way 23633592",
+          note: "OSM mappers traced the visible water surface. No public gazetted boundary published by GCC / TN PWD; the 2024 Madras HC-ordered TN-wide water-body website did not surface a polygon for Porur as of this writing.",
+          link: "https://www.openstreetmap.org/way/23633592",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Porur is small (~29 ha). JRC water classification at 30 m has only ~320 pixels of body - per-year area readings will be noisier than for the large CMWSSB reservoirs.",
+      ],
+    },
+  },
+  velachery: {
+    id: "velachery",
+    osm_id: 25504265,
+    name: "Velachery Lake",
+    name_ta: "வேளச்சேரி ஏரி",
+    city_id: "chennai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 25504265). " +
+      "Small urban lake in south Chennai, severely encroached by " +
+      "Velachery's dense urbanisation and the IT corridor build-out.",
+    polygon_path: "/geojson/rich-bodies/velachery.geojson",
+    buffer_path: "/geojson/rich-bodies/velachery-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). " +
+      "No specific NGT order for Velachery Lake. Buffer chosen for cross-body " +
+      "visual consistency; the surroundings are among the most-built halos " +
+      "we measure across the rich-data cohort.",
+    imagery_manifest_path: "/data/rich-bodies/velachery-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/velachery-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/velachery-overture-buildings.json",
+      water_trend: "/data/rich-bodies/velachery-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/velachery-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2015,
+        label: "Velachery was among the worst-affected areas in the December 2015 Chennai floods - the lake's reduced extent (encroachment-driven) is widely cited as a contributing factor",
+        label_short: "2015 Chennai floods",
+      },
+      {
+        year: 2017,
+        label: "Smart Cities Mission / GCC announce restoration plan for Velachery Lake",
+        label_short: "Smart City restoration plan",
+      },
+      {
+        year: 2023,
+        label: "Cyclone Michaung - flood pressure on the urban lake's reduced footprint",
+        label_short: "Cyclone Michaung",
+      },
+    ],
+    status_badges: [
+      { label: "Urban lake", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap way 25504265",
+          note: "OSM mappers traced the visible water surface. The historical lake extent was significantly larger - large portions are now built over (residential + the Velachery MRTS station + Phoenix MarketCity vicinity). No public gazetted boundary.",
+          link: "https://www.openstreetmap.org/way/25504265",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Velachery Lake at ~20 ha (current OSM extent) is much smaller than its historical extent. The 'built-up surface in halo' reading is among the highest in our cohort (~45%) which is consistent with the surrounding Velachery / Tambaram dense urbanisation; the body itself shows encroachment pressure on the small remaining footprint.",
+        "JRC 30 m water classification on a 20 ha body has only ~220 pixels - per-year readings are very noisy. Treat the trend as directional only.",
+      ],
+    },
+  },
+  perumbakkam: {
+    id: "perumbakkam",
+    osm_id: 30424450,
+    name: "Perumbakkam Lake",
+    name_ta: "பெரும்பாக்கம் ஏரி",
+    city_id: "chennai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 30424450). " +
+      "Peri-urban lake in south Chennai near the OMR / IT corridor.",
+    polygon_path: "/geojson/rich-bodies/perumbakkam.geojson",
+    buffer_path: "/geojson/rich-bodies/perumbakkam-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). " +
+      "No specific NGT order for Perumbakkam. Shown to visualise the OMR / " +
+      "IT-corridor build-out pressure on the lake's surroundings.",
+    imagery_manifest_path: "/data/rich-bodies/perumbakkam-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/perumbakkam-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/perumbakkam-overture-buildings.json",
+      water_trend: "/data/rich-bodies/perumbakkam-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/perumbakkam-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2015,
+        label: "December 2015 Chennai floods - peri-urban lakes including Perumbakkam overflowed contributing to downstream flooding",
+        label_short: "2015 Chennai floods",
+      },
+      {
+        year: 2023,
+        label: "Cyclone Michaung floods - lake reached full pool",
+        label_short: "Cyclone Michaung",
+      },
+    ],
+    status_badges: [
+      { label: "Peri-urban lake", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap way 30424450",
+          note: "OSM mappers traced the visible water surface. No public gazetted boundary.",
+          link: "https://www.openstreetmap.org/way/30424450",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated.",
+          licence: "Derived",
+        },
       ],
     },
   },

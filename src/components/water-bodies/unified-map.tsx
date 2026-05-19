@@ -21,7 +21,6 @@ import { useMapTiles } from "@/lib/utils/map-tiles";
 import {
   getRichBodyIdByOsmId,
   RICH_BODIES,
-  type RichBodyEntry,
 } from "@/lib/water-bodies/rich-body-registry";
 import "leaflet/dist/leaflet.css";
 
