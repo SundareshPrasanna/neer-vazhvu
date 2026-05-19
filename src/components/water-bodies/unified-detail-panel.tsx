@@ -22,7 +22,6 @@ import {
   shouldShowWaterBodySatelliteSummary,
   type WaterBodySatelliteSummary,
 } from "@/lib/gee/water-body-satellite";
-import { SatelliteEvidenceDialog } from "@/components/water-bodies/satellite-evidence-dialog";
 import { WaterBodyHistoryChart } from "@/components/water-bodies/water-body-history-chart";
 import {
   RIVER_POLLUTION_COMPONENT_THRESHOLD,
@@ -196,11 +195,9 @@ const NDWI_INFO_URL = "https://en.wikipedia.org/wiki/Normalized_difference_water
 function SatelliteContextSection({
   summary,
   osmId,
-  evidenceAction,
 }: {
   summary: WaterBodySatelliteSummary;
   osmId: number;
-  evidenceAction?: ReactNode;
 }) {
   const { t } = useLanguage();
   const tone = satelliteAnomalyTone(summary.surfaceWaterAnomalyLevel);
@@ -244,11 +241,10 @@ function SatelliteContextSection({
 
   return (
     <div className="border-t border-slate-200 dark:border-slate-700">
-      <div className="px-4 pt-3 pb-1.5 flex items-center justify-between gap-3">
+      <div className="px-4 pt-3 pb-1.5">
         <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
           {t("wb_panel.satellite_context")}
         </h3>
-        {evidenceAction}
       </div>
       <div className="px-4 pb-4 space-y-3.5">
         <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
@@ -767,13 +763,6 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
           <SatelliteContextSection
             summary={satelliteSummary}
             osmId={props.osm_id}
-            evidenceAction={
-              <SatelliteEvidenceDialog
-                key={props.osm_id}
-                osmId={props.osm_id}
-                waterBodyName={primaryName}
-              />
-            }
           />
         ) : (
           <div className="border-t border-slate-200 dark:border-slate-700 px-4 py-3">

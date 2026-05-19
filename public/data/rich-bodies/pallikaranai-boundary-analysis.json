@@ -1,0 +1,54 @@
+{
+  "body_id": "pallikaranai",
+  "computed_at": "2026-05-17T07:26:10.856737+00:00",
+  "methodology": {
+    "projection": "EPSG:32644 (UTM zone 44N) for accurate area computation in metres",
+    "tools": "shapely 2.x + pyproj 3.x",
+    "operations": "unary_union per source -> reproject -> set algebra"
+  },
+  "polygons": {
+    "tnswa_gazetted": {
+      "area_ha": 1246.76,
+      "source": "Tamil Nadu State Wetland Authority QGIS web map (tnswa.tn.gov.in/qgis_web/index.html), feature 'Pallikaranai Marsh Reserve Forest'",
+      "represents": "Gazetted Ramsar / Reserve Forest legal boundary",
+      "ramsar_official_ha": 1247.54,
+      "match_to_official_pct": 99.94
+    },
+    "osm_ecological": {
+      "area_ha": 1073.06,
+      "source": "OpenStreetMap relation 15046539",
+      "represents": "Current ecologically-mapped marsh (OSM mapper interpretation)",
+      "inner_holes_count": 14,
+      "inner_holes_area_ha": 5.29,
+      "license": "ODbL"
+    }
+  },
+  "set_algebra": {
+    "intersection_ha": 1013.7,
+    "intersection_meaning": "Land that is both gazetted Ramsar AND OSM-mapped marsh - the unambiguous core",
+    "tnswa_minus_osm_ha": 233.06,
+    "tnswa_minus_osm_meaning": "Land inside the legal Ramsar boundary that OSM does NOT classify as marsh - implies converted/encroached/disturbed land inside the gazette",
+    "osm_minus_tnswa_ha": 59.36,
+    "osm_minus_tnswa_meaning": "Marsh visible in OSM outside the gazetted boundary - either ungazetted ecological extent or OSM boundary overshoot"
+  },
+  "buffer": {
+    "buffer_metres": 1000,
+    "computed_from": "TNSWA gazetted polygon (the legal basis for the NGT 1km no-build rule)",
+    "legal_anchor": "NGT order Sept 2025 establishing 1 km construction freeze pending scientific zone-of-influence mapping",
+    "buffer_total_ha": 4726.76,
+    "buffer_halo_only_ha": 3480.0
+  },
+  "headline_stats_for_v0_page": {
+    "gazetted_area_ha": 1246.76,
+    "actually_marsh_area_ha": 1073.06,
+    "converted_inside_gazette_ha": 233.06,
+    "converted_inside_gazette_pct": 18.7,
+    "no_build_zone_total_ha": 4726.76
+  },
+  "caveats": [
+    "TNSWA polygon is the gazetted legal boundary; it does NOT reflect current ecological state.",
+    "OSM polygon is an OSM mapper's interpretation of current marsh extent; precision varies and last-edit dates vary.",
+    "The '233 ha converted inside gazette' figure should be visually corroborated before use in press copy. Some of that may be OSM under-mapping rather than physical conversion.",
+    "Buffer is Minkowski-offset from polygon edge (not circular from centroid). Follows jagged boundary; ~1 km on every side."
+  ]
+}

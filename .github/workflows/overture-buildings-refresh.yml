@@ -1,0 +1,123 @@
+name: Overture buildings refresh
+
+# Refreshes rich-body building counts from the Overture Maps Foundation
+# quarterly release. Runs monthly so we catch new Overture releases
+# within ~30 days of publication (Overture releases ~every 3 months).
+#
+# Anomaly detection in the script: if any zone's count changes by >20%
+# from the previous JSON, the script writes a *.candidate.json instead
+# of overwriting the canonical file and exits non-zero. The workflow
+# then opens a PR with the candidate for human review. Within-threshold
+# changes are committed directly to the working branch.
+#
+# Manual runs (workflow_dispatch) accept an optional explicit release
+# date if Overture publishes faster than our cron catches.
+
+on:
+  schedule:
+    - cron: '0 4 8 * *'   # 04:00 UTC = 09:30 IST, 8th of each month
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Overture release id (e.g. 2026-04-15.0). Leave empty to use script default.'
+        type: string
+        default: ''
+      anomaly_pct:
+        description: 'Anomaly threshold percentage (default 20)'
+        type: string
+        default: '20'
+
+concurrency:
+  group: overture-buildings-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install minimal dependencies
+        # Script only needs duckdb + shapely + python-dotenv. Avoid pulling
+        # the whole neer-vazhvu-api dependency tree for a small refresh job.
+        run: pip install duckdb shapely python-dotenv
+
+      - name: Refresh Overture buildings for all rich bodies
+        id: refresh
+        run: |
+          set +e
+          ANOMALY_FOUND=0
+          BODY_IDS="pallikaranai sholavaram"  # add new rich-body ids here as they onboard
+
+          ARGS=""
+          if [ -n "${{ inputs.release }}" ]; then
+            ARGS="$ARGS --release ${{ inputs.release }}"
+          fi
+          if [ -n "${{ inputs.anomaly_pct }}" ]; then
+            ARGS="$ARGS --anomaly-pct ${{ inputs.anomaly_pct }}"
+          fi
+
+          for body in $BODY_IDS; do
+            echo "=== refreshing $body ==="
+            python scripts/verify_rich_body_overture_buildings.py --body-id "$body" $ARGS
+            EXIT=$?
+            if [ "$EXIT" = "2" ]; then
+              echo "$body: anomaly detected, candidate file written"
+              ANOMALY_FOUND=1
+            elif [ "$EXIT" != "0" ]; then
+              echo "$body: script failed with exit code $EXIT"
+              exit "$EXIT"
+            fi
+          done
+
+          echo "anomaly_found=$ANOMALY_FOUND" >> "$GITHUB_OUTPUT"
+
+      - name: Commit direct refresh (no anomaly)
+        if: steps.refresh.outputs.anomaly_found == '0'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/rich-bodies/*-overture-buildings.json
+          if git diff --staged --quiet; then
+            echo "No JSON changes - Overture release matched previous; nothing to commit."
+            exit 0
+          fi
+          git commit -m "Overture buildings refresh ($(date -u +%Y-%m-%d))"
+          git push
+
+      - name: Open PR with candidate (anomaly detected)
+        if: steps.refresh.outputs.anomaly_found == '1'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "Overture buildings refresh - ANOMALY needs review"
+          body: |
+            One or more rich-body building counts changed by more than the
+            anomaly threshold vs the previous Overture release. The job has
+            written `*-overture-buildings.candidate.json` files alongside the
+            existing canonical JSONs - the canonicals were not overwritten.
+
+            Please review the deltas (compare canonical vs candidate JSON)
+            and decide:
+              - Accept the new counts: rename candidate to canonical, drop
+                the candidate, merge this PR.
+              - Reject: close this PR; the candidate will be cleaned up on
+                the next run that does not anomaly.
+              - Investigate: dig into whether Overture changed methodology
+                or whether real construction/demolition happened.
+
+            See `scripts/verify_pallikaranai_overture_buildings.py` and the
+            workflow run for raw deltas.
+          branch: overture-buildings-anomaly-${{ github.run_id }}
+          add-paths: |
+            public/data/rich-bodies/*-overture-buildings.candidate.json
+          commit-message: "Overture refresh candidate ($(date -u +%Y-%m-%d)) - needs review"
+          delete-branch: true

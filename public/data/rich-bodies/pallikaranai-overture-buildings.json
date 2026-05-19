@@ -1,0 +1,57 @@
+{
+  "body_id": "pallikaranai",
+  "computed_at": "2026-05-17T17:31:19.945375+00:00",
+  "data_source": {
+    "dataset": "Overture Maps Foundation - buildings (2026-04-15.0)",
+    "release_date": "2026-04-15",
+    "url_root": "s3://overturemaps-us-west-2/release/2026-04-15.0/theme=buildings/type=building/*",
+    "license": "CDLA-Permissive 2.0",
+    "method": "Per-building polygon download via DuckDB+spatial+httpfs query on the Overture parquet release filtered by chip bbox. Buildings counted as inside a region when their centroid is within the region polygon. Area summed from each footprint's planar area at 13N.",
+    "providers": "Microsoft + OpenStreetMap + Google + other partners (combined and deduplicated by Overture)",
+    "known_limitations": [
+      "Updates quarterly; this release reflects data through approximately Q1 2026.",
+      "May still under-detect very recent informal construction.",
+      "Centroid-in-polygon test slightly miscounts buildings straddling a polygon edge.",
+      "Height metadata is sparse (mostly null) outside known dense urban cores."
+    ]
+  },
+  "regions": [
+    {
+      "region": "Body (primary)",
+      "building_count": 422,
+      "building_area_ha": 4.07,
+      "with_height_metadata": 0,
+      "region_area_ha": 1221.66,
+      "built_up_fraction_pct": 0.33
+    },
+    {
+      "region": "OSM ecological",
+      "building_count": 125,
+      "building_area_ha": 0.68,
+      "with_height_metadata": 0,
+      "region_area_ha": 1051.45,
+      "built_up_fraction_pct": 0.06
+    },
+    {
+      "region": "Gap: body - OSM ecological",
+      "building_count": 338,
+      "building_area_ha": 3.55,
+      "with_height_metadata": 0,
+      "region_area_ha": 228.37,
+      "built_up_fraction_pct": 1.55
+    },
+    {
+      "region": "Halo: 1km buffer - body",
+      "building_count": 48257,
+      "building_area_ha": 639.67,
+      "with_height_metadata": 4,
+      "region_area_ha": 3409.87,
+      "built_up_fraction_pct": 18.76
+    }
+  ],
+  "headline_for_v0": [
+    "Inside primary boundary: 422 buildings covering 4 ha (0.3%).",
+    "Inside 1 km halo: 48,257 buildings covering 640 ha (18.8%)."
+  ],
+  "comparison_note": "Compare side-by-side with the Google Open Buildings v3 numbers in pallikaranai-open-buildings-verification.json (2023 release). Delta indicates construction since 2023."
+}

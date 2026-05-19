@@ -62,7 +62,15 @@ export interface CensusWaterBodyProperties {
 }
 
 export type SelectedWaterBody =
-  | { kind: "current"; props: CurrentWaterBodyProperties; latlng: [number, number]; censusMatch?: CensusWaterBodyProperties }
+  | {
+      kind: "current";
+      props: CurrentWaterBodyProperties;
+      latlng: [number, number];
+      censusMatch?: CensusWaterBodyProperties;
+      /** If set, this body has the deep-zoom rich-data panel experience.
+       *  See src/lib/water-bodies/rich-body-registry.ts */
+      richBodyId?: string;
+    }
   | { kind: "lost"; props: LostWaterBodyProperties; latlng: [number, number] }
   | { kind: "census"; props: CensusWaterBodyProperties; latlng: [number, number] }
   // Flagship-curated scored body that has no OSM polygon and no census

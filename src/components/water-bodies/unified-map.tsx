@@ -18,6 +18,11 @@ import { getPriorityColor } from "@/types/restoration";
 import type { ViewMode } from "./view-mode-toggle";
 import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import {
+  getRichBodyIdByOsmId,
+  RICH_BODIES,
+  type RichBodyEntry,
+} from "@/lib/water-bodies/rich-body-registry";
 import "leaflet/dist/leaflet.css";
 
 // Chennai-default GeoJSON URLs and map center. Other cities override via props.
@@ -114,6 +119,12 @@ export function UnifiedMap({
   const [currentGeoJSON, setCurrentGeoJSON] =
     useState<GeoJSON.FeatureCollection | null>(null);
   const [lostGeoJSON, setLostGeoJSON] =
+    useState<GeoJSON.FeatureCollection | null>(null);
+  // Rich-data bodies (Pallikaranai etc.) have their own canonical
+  // polygons from the registry. Render as a top-of-stack overlay so
+  // clicks open the deep-zoom RichBodyOverlay regardless of whether
+  // the body is also in the OSM extract.
+  const [richBodiesGeoJSON, setRichBodiesGeoJSON] =
     useState<GeoJSON.FeatureCollection | null>(null);
 
   // Build lookup from id to scored data, plus osm_id shortcut
@@ -221,6 +232,40 @@ export function UnifiedMap({
       .then(setLostGeoJSON)
       .catch(console.error);
   }, [currentGeoJsonUrl, lostGeoJsonUrl]);
+
+  // Fetch all rich-body polygons from the registry, merge into one
+  // FeatureCollection. Each feature stamps body_id so the click handler
+  // can route to the right rich-body overlay.
+  useEffect(() => {
+    const entries = Object.values(RICH_BODIES);
+    if (entries.length === 0) return;
+    Promise.all(
+      entries.map((b) =>
+        fetch(b.polygon_path)
+          .then((r) => r.json())
+          .then((gj: GeoJSON.FeatureCollection) => ({ body: b, gj }))
+          .catch(() => null),
+      ),
+    ).then((results) => {
+      const features: GeoJSON.Feature[] = [];
+      for (const r of results) {
+        if (!r) continue;
+        for (const f of r.gj.features) {
+          features.push({
+            ...f,
+            properties: {
+              ...(f.properties ?? {}),
+              body_id: r.body.id,
+              name: r.body.name,
+              name_ta: r.body.name_ta ?? "",
+              osm_id: r.body.osm_id,
+            },
+          });
+        }
+      }
+      setRichBodiesGeoJSON({ type: "FeatureCollection", features });
+    });
+  }, []);
 
   // Match unnamed water body polygons to rivers by centroid proximity
   useEffect(() => {
@@ -356,6 +401,56 @@ export function UnifiedMap({
     lostLayerRef.current?.setStyle(lostStyle as L.StyleFunction);
   }, [hiddenCategories, lostStyle]);
 
+  // When a category is toggled off in the legend the layer was still
+  // intercepting clicks + hover events (visibly dimmed but pointer-
+  // capturing), which blocked clicks on bodies underneath. Toggle the
+  // SVG element's pointer-events so hidden features stop swallowing
+  // mouse interactions and let clicks pass through to whatever sits
+  // below in z-order.
+  const togglePointerEventsByStatus = useCallback(
+    (layerRef: L.GeoJSON | null, getCategory: (props: Record<string, unknown>) => string | null) => {
+      if (!layerRef) return;
+      layerRef.eachLayer((sub) => {
+        const feat = (sub as L.GeoJSON & { feature?: Feature }).feature;
+        const props = (feat?.properties ?? {}) as Record<string, unknown>;
+        const cat = getCategory(props);
+        const isHidden = cat ? (hiddenCategories?.has(cat) ?? false) : false;
+        const el = (sub as L.Path).getElement?.();
+        if (el) (el as HTMLElement).style.pointerEvents = isHidden ? "none" : "";
+      });
+    },
+    [hiddenCategories],
+  );
+
+  useEffect(() => {
+    togglePointerEventsByStatus(lostLayerRef.current, (props) => {
+      const s = props.status;
+      return typeof s === "string" ? s : null;
+    });
+  }, [hiddenCategories, togglePointerEventsByStatus]);
+
+  // Same pointer-events guard for current-water-body polygons. Category
+  // depends on view mode: restoration -> priority_level, water-bodies ->
+  // encroached/existing (per census match).
+  useEffect(() => {
+    togglePointerEventsByStatus(currentLayerRef.current, (props) => {
+      const osmId = typeof props.osm_id === "number" ? props.osm_id : null;
+      if (osmId == null) return null;
+      if (viewMode === "restoration") {
+        const scored = scoreLookupByOsmId.get(osmId);
+        return scored?.priority_level ?? null;
+      }
+      const census = censusMatchByOsmId.get(osmId);
+      return census?.encroachment_status === "yes" ? "encroached" : "existing";
+    });
+  }, [
+    hiddenCategories,
+    togglePointerEventsByStatus,
+    viewMode,
+    scoreLookupByOsmId,
+    censusMatchByOsmId,
+  ]);
+
   // --- Interaction handlers ---
 
   const defaultFillOpacity = viewMode === "restoration" ? 0.55 : 0.45;
@@ -417,15 +512,31 @@ export function UnifiedMap({
     }
 
     const censusMatch = censusMatchByOsmId.get(props.osm_id);
+    const richBodyId = getRichBodyIdByOsmId(props.osm_id) ?? undefined;
+    // Resolve which legend category this body belongs to so we can guard
+    // hover/click handlers against firing for hidden categories. Mirror
+    // currentStyle's category mapping.
+    const resolveCategory = () => {
+      if (viewMode === "restoration") {
+        return scoreLookupByOsmId.get(props.osm_id)?.priority_level ?? null;
+      }
+      return censusMatch?.encroachment_status === "yes" ? "encroached" : "existing";
+    };
     layer.on({
       click: (e) => {
+        const cat = resolveCategory();
+        if (cat && hiddenCategories?.has(cat)) return;
         const latlng: [number, number] = [e.latlng.lat, e.latlng.lng];
-        onSelectCurrent({ kind: "current", props, latlng, censusMatch });
+        onSelectCurrent({ kind: "current", props, latlng, censusMatch, richBodyId });
       },
       mouseover: (e) => {
+        const cat = resolveCategory();
+        if (cat && hiddenCategories?.has(cat)) return;
         (e.target as L.Path).setStyle({ fillOpacity: viewMode === "restoration" ? 0.8 : 0.7, weight: 2.5 });
       },
       mouseout: (e) => {
+        const cat = resolveCategory();
+        if (cat && hiddenCategories?.has(cat)) return;
         (e.target as L.Path).setStyle({ fillOpacity: defaultFillOpacity, weight: 1.5 });
       },
     });
@@ -453,14 +564,92 @@ export function UnifiedMap({
 
     layer.on({
       click: (e) => {
+        // Guard: a stale handler can fire from a "hidden" feature
+        // because the .on() closure was attached before the hide was
+        // toggled. Disabling pointer-events on the element (above) is
+        // the primary defence; this is a belt-and-braces fallback.
+        if (hiddenCategories?.has(props.status)) return;
         const latlng: [number, number] = [e.latlng.lat, e.latlng.lng];
         onSelectLost({ kind: "lost", props, latlng });
       },
       mouseover: (e) => {
+        if (hiddenCategories?.has(props.status)) return;
         (e.target as L.Path).setStyle({ fillOpacity: 0.6, weight: 3 });
       },
       mouseout: (e) => {
+        if (hiddenCategories?.has(props.status)) return;
         (e.target as L.Path).setStyle({ fillOpacity: 0.35, weight: 2 });
+      },
+    });
+  };
+
+  // ─── Rich-body layer (Pallikaranai etc.) ─────────────────────────
+  // Subtle indicator at default city zoom - dashed thin lighter emerald
+  // so the rich-body bodies read as "interactive zones you can explore"
+  // without competing visually with the regular OSM water polygons. The
+  // line brightens + thickens on hover so the affordance is obvious when
+  // the user moves over it. Fill stays transparent so OSM imagery shows
+  // through and the polygon reads as a "frame" not a colored shape.
+  const richBodyStyle = useCallback(() => ({
+    color: "#34d399",       // emerald-400 (lighter than emerald-500)
+    weight: 1.5,
+    opacity: 0.7,
+    fillColor: "#34d399",
+    fillOpacity: 0,
+    dashArray: "6 5",
+    className: "rich-body-polygon",
+  }), []);
+
+  const onEachRichBody = (feature: Feature, layer: Layer) => {
+    const props = (feature.properties ?? {}) as Record<string, unknown>;
+    const body_id = typeof props.body_id === "string" ? props.body_id : null;
+    const name = typeof props.name === "string" ? props.name : "";
+    const osm_id = typeof props.osm_id === "number" ? props.osm_id : 0;
+    const name_ta = typeof props.name_ta === "string" ? props.name_ta : "";
+
+    if (!suppressLayerTooltips && body_id) {
+      const labelName = language === "ta" && name_ta ? name_ta : name;
+      layer.bindTooltip(
+        `<strong>${labelName}</strong><br/><span style="font-size:11px;color:#10b981">Click to explore boundary, encroachment, timeline →</span>`,
+        { sticky: true }
+      );
+    }
+
+    layer.on({
+      click: (e) => {
+        if (!body_id) return;
+        const latlng: [number, number] = [e.latlng.lat, e.latlng.lng];
+        onSelectCurrent({
+          kind: "current",
+          props: {
+            osm_id,
+            osm_type: "relation",
+            name,
+            name_ta,
+            water_type: "wetland",
+            area_ha: null,
+          },
+          latlng,
+          richBodyId: body_id,
+        });
+      },
+      mouseover: (e) => {
+        (e.target as L.Path).setStyle({
+          color: "#10b981",     // emerald-500, brighter on hover
+          weight: 3,
+          opacity: 1,
+          fillOpacity: 0.08,
+          dashArray: "",        // solid on hover so it pops
+        });
+      },
+      mouseout: (e) => {
+        (e.target as L.Path).setStyle({
+          color: "#34d399",
+          weight: 1.5,
+          opacity: 0.7,
+          fillOpacity: 0,
+          dashArray: "6 5",
+        });
       },
     });
   };
@@ -530,6 +719,19 @@ export function UnifiedMap({
             pointToLayer={pointToLayer}
             style={lostStyle}
             onEachFeature={onEachLost}
+          />
+        </Pane>
+      )}
+      {/* Rich-data bodies on the top pane so their clicks always win
+          over lost-body circles / current-water-body polygons that may
+          sit at the same lat/lon. */}
+      {richBodiesGeoJSON && richBodiesGeoJSON.features.length > 0 && (
+        <Pane name="rich-bodies-pane" style={{ zIndex: 560, pointerEvents: "auto" }}>
+          <GeoJSON
+            key={`rich-${language}-${tiles.url}`}
+            data={richBodiesGeoJSON}
+            style={richBodyStyle as L.StyleFunction}
+            onEachFeature={onEachRichBody}
           />
         </Pane>
       )}
