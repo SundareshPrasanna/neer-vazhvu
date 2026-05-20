@@ -2,12 +2,9 @@ import type { LanguageCode } from '@/lib/i18n/translations';
 
 export type WaterSourceType =
   | 'reservoir'
-  | 'cauvery_stage'
   | 'borewell_field'
   | 'river'
   | 'flow_station';
-
-export type PlaceKind = 'city' | 'region';
 
 export interface GeoBounds {
   south: number;
@@ -189,22 +186,10 @@ export interface BasePlaceConfig {
    *  pipeline (`scripts/run_cascade.py --district <id> run-all`) has
    *  produced the corresponding PMTiles. */
   hasCascadeOverlay?: boolean;
-  /**
-   * Hide from public-facing discovery surfaces (CitySwitcher dropdown,
-   * sitemap.xml). The route itself stays alive so engineers + direct-
-   * link visitors can still reach the page; users browsing via nav just
-   * don't see it. Default false. Set true for WIP places.
-   */
-  hiddenFromDiscovery?: boolean;
 }
 
 export interface CityConfig extends BasePlaceConfig {
-  placeKind: 'city';
   localGovernment: LocalGovernment;
 }
 
-export interface RegionConfig extends BasePlaceConfig {
-  placeKind: 'region';
-}
-
-export type PlaceConfig = CityConfig | RegionConfig;
+export type PlaceConfig = CityConfig;

@@ -162,7 +162,7 @@ export function CityAboutContent({
           <p className="text-slate-600 dark:text-slate-400">
             {cityName} is governed by{" "}
             <span className="font-semibold">{config.primaryAuthority.name}</span>
-            {config.placeKind === "city" && config.localGovernment && (
+            {config.localGovernment && (
               <> with civic services under {config.localGovernment.name}{" "}
                 ({config.localGovernment.wardCount} wards)</>
             )}.

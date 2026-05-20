@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { listDiscoverablePlaces } from "@/lib/cities";
+import { listEnabledPlaces } from "@/lib/cities";
 
 const BASE = "https://neervazhvu.org";
 
@@ -40,9 +40,7 @@ function urlForCityFeature(cityId: string, feature: string): string {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  // Skip WIP places (e.g. Kaveri Delta while requirements are being signed
-  // off) so search engines don't surface in-progress URLs.
-  const places = listDiscoverablePlaces();
+  const places = listEnabledPlaces();
   const entries: MetadataRoute.Sitemap = [];
 
   for (const place of places) {

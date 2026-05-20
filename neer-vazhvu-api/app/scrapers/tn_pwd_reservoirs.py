@@ -3,10 +3,9 @@ TN Agriculture / PWD reservoir page scraper.
 
 Scrapes https://tnagriculture.in/ARS/home/reservoir which serves daily storage,
 level, inflow, and outflow for ~20 reservoirs across TN, KA, and KL. We extract
-rows relevant to multiple places we cover (Kaveri Delta + Madurai) and tag each
-reading with its city_id.
+the Madurai (Vaigai + Mullaperiyar) rows and tag each reading with its city_id.
 
-Note the URL is the bare hostname (no www) — the www subdomain has a TLS cert
+Note the URL is the bare hostname (no www) - the www subdomain has a TLS cert
 that does not include tnagriculture.in as an alt name.
 """
 
@@ -36,15 +35,6 @@ HEADERS = {
 # Place-aliasing (e.g. TN Agri's "Periyar" -> our 'mullaperiyar') happens here,
 # not in the DB-side aliases table, because this is the scrape-time mapping.
 NAME_MAPS: dict[str, list[tuple[str, str]]] = {
-    "kaveri": [
-        ("krishna raja sagar", "krs"),
-        ("krs", "krs"),
-        ("kabini", "kabini"),
-        ("hemavathy", "hemavathy"),
-        ("hemavathi", "hemavathy"),
-        ("harangi", "harangi"),
-        ("mettur", "mettur"),
-    ],
     "madurai": [
         ("vaigai", "vaigai"),
         # TN Agri lists Mullaperiyar as "Periyar**" with a footnote. We canonical
@@ -54,11 +44,7 @@ NAME_MAPS: dict[str, list[tuple[str, str]]] = {
 }
 
 # Cities expected to receive at least one reading on every successful scrape.
-# Kaveri is the original use case; Madurai is included from M1 onwards.
-EXPECTED_CITY_IDS: tuple[str, ...] = ("kaveri", "madurai")
-
-# Backward-compat: kept so existing imports keep working. Prefer EXPECTED_CITY_IDS.
-KAVERI_CITY_ID = "kaveri"
+EXPECTED_CITY_IDS: tuple[str, ...] = ("madurai",)
 
 
 @dataclass(frozen=True)

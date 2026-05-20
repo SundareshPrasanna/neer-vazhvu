@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-TN Agriculture / PWD reservoir scrape — multi-city daily ingestion.
+TN Agriculture / PWD reservoir scrape - Madurai daily ingestion.
 
-Scrapes tnagriculture.in for Kaveri (Mettur + Karnataka 4-dam) and Madurai
-(Vaigai + Mullaperiyar/Periyar) reservoirs in a single page fetch, upserting
-to reservoir_daily_v2 keyed by (city_id, source_code, date).
+Scrapes tnagriculture.in for Madurai's Vaigai + Mullaperiyar/Periyar reservoirs
+and upserts to reservoir_daily_v2 keyed by (city_id, source_code, date).
 
 Designed to be called from GitHub Actions, mirroring scrape_cmwssb.py. Reads
 SUPABASE_URL and SUPABASE_SERVICE_KEY from the environment.

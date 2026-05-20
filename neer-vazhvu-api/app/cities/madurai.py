@@ -8,7 +8,6 @@ from .types import (
 )
 
 MADURAI = CityConfig(
-    place_kind="city",
     city_id="madurai",
     display_name="Madurai",
     state_code="TN",

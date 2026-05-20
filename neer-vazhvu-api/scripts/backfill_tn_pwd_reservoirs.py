@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-TN Agri ARS reservoir history backfill - covers Kaveri (Mettur + Karnataka
-4-dam) and Madurai (Vaigai + Mullaperiyar) in a single pass.
+TN Agri ARS reservoir history backfill - Madurai (Vaigai + Mullaperiyar).
 
 The TN Agri archive serves dated pages at /ARS/home/reservoir/YYYY-MM-DD
 back to ~2018. Each date returns a single HTML table identical in shape
@@ -138,9 +137,7 @@ async def main() -> int:
         default=",".join(EXPECTED_CITY_IDS),
         help=(
             "Comma-separated city_ids to backfill. Default: all "
-            f"({','.join(EXPECTED_CITY_IDS)}). Use this to skip cities not "
-            "yet seeded in the cities table (e.g. --cities madurai while "
-            "Kaveri is parked)."
+            f"({','.join(EXPECTED_CITY_IDS)})."
         ),
     )
     args = parser.parse_args()
@@ -195,8 +192,6 @@ async def main() -> int:
             if rows is None:
                 failed += 1
             elif rows:
-                # Filter to requested cities (Kaveri rows skipped while
-                # the kaveri row is absent from the cities table).
                 rows = [r for r in rows if r.get("city_id") in only_cities]
                 if rows:
                     supabase.table("reservoir_daily_v2").upsert(

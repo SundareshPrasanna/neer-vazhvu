@@ -1,11 +1,9 @@
 from .chennai import CHENNAI
-from .kaveri import KAVERI
 from .madurai import MADURAI
 from .types import PlaceConfig
 
 _REGISTRY: dict[str, PlaceConfig] = {
     CHENNAI.city_id: CHENNAI,
-    KAVERI.city_id: KAVERI,
     MADURAI.city_id: MADURAI,
 }
 

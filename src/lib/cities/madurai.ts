@@ -1,7 +1,6 @@
 import type { CityConfig } from './types';
 
 export const MADURAI: CityConfig = {
-  placeKind: 'city',
   cityId: 'madurai',
   displayName: 'Madurai',
   displayNameLocalized: { ta: 'மதுரை' },

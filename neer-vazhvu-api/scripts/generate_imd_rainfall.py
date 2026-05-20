@@ -21,8 +21,6 @@ Usage:
     python generate_imd_rainfall.py                   # Chennai (default)
     python generate_imd_rainfall.py --city madurai \\
         --lat 9.9 --lng 78.0                          # Madurai
-    python generate_imd_rainfall.py --city kaveri-delta \\
-        --lat 11.0 --lng 79.5
 """
 
 import argparse

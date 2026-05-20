@@ -1,14 +1,12 @@
 import { CHENNAI } from './chennai';
-import { KAVERI } from './kaveri';
 import { MADURAI } from './madurai';
 import type { PlaceConfig } from './types';
 
 export * from './types';
-export { CHENNAI, KAVERI, MADURAI };
+export { CHENNAI, MADURAI };
 
 const REGISTRY: Record<string, PlaceConfig> = {
   [CHENNAI.cityId]: CHENNAI,
-  [KAVERI.cityId]: KAVERI,
   [MADURAI.cityId]: MADURAI,
 };
 
@@ -28,14 +26,4 @@ export function tryGetPlaceConfig(placeId: string): PlaceConfig | null {
 
 export function listEnabledPlaces(): PlaceConfig[] {
   return Object.values(REGISTRY);
-}
-
-/**
- * Public-facing places to surface in user-discoverable navigation
- * (CitySwitcher dropdown, sitemap.xml). Excludes places marked
- * hiddenFromDiscovery (typically WIP places whose routes work but
- * aren't ready for public traffic).
- */
-export function listDiscoverablePlaces(): PlaceConfig[] {
-  return Object.values(REGISTRY).filter((p) => !p.hiddenFromDiscovery);
 }
