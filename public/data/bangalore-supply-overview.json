@@ -1,0 +1,266 @@
+{
+  "_note": "Structural at-a-glance facts for Bangalore's urban water supply. UNLIKE Chennai's supply-overview (anchored on the ADB CCRWSSP IEE March 2026) and Madurai's (anchored on the ADB TNUFIP Tranche 2 IEEs), Bangalore does NOT have a publicly available ADB IEE we can extract engineering numbers from. The single highest-leverage primary document is the WELL Labs Bengaluru Urban Water Balance report (Jan 2024), which is behind a registration gate. Numbers below are compiled from BWSSB Wikipedia, public BWSSB statements quoted in The Ken (May 2026), IISc Groundwater Outlook of Bengaluru City (April 2025), and the bangalore_data_sources_research audit memo. Fields tagged with _provenance='estimate' or 'reported_no_primary' need verification against the WELL Labs PDF + an ADB Karnataka IEE before being quoted to journalists.",
+  "_view_overrides": {
+    "subtitle": "Compiled from BWSSB public statements, IISc Groundwater Outlook (April 2025) and the WELL Labs Bengaluru Urban Water Balance. Engineering numbers from a primary ADB/JICA IEE document remain a follow-up data acquisition - several fields below are best public estimates pending that source.",
+    "wtp_label": "Cauvery treatment capacity",
+    "demand_caption": "Unlike Chennai (impounded reservoirs) and Madurai (gravity feed from Mullaperiyar), Bangalore is fundamentally a pumped city. ~1,450 MLD is lifted ~95 km uphill from the Cauvery against a city demand of ~2,100 MLD - the remaining ~650+ MLD comes from groundwater, illegal extraction, and a tanker market BWSSB itself only partly serves."
+  },
+  "_data_provenance_caveats": [
+    "BWSSB official supply numbers and the WELL Labs bottom-up estimate diverge sharply (e.g. BWSSB cites 800 MLD groundwater extraction; WELL Labs estimates 1,392 MLD). Both are documented below.",
+    "Stage V (T.K. Halli, commissioned 16 October 2024) design is 775 MLD but actual delivery is reported at ~400 MLD as of Feb 2026 - the 'expansion only half-delivering' story.",
+    "Transmission distance from Cauvery (T.K. Halli intake) to Bangalore is variously cited as 95 km, 98 km, and 100 km depending on the source. We use ~95-100 km as a range.",
+    "Population served varies by boundary: BBMP ~10M, GBA 369 wards ~13.5M (post-Nov 2025 delimitation), Bengaluru Urban district ~12.5M.",
+    "Wikipedia's 900 MLD supply number is pre-Stage V (Stage IV completion era) - superseded by the post-Stage V ~1,300-1,450 MLD range."
+  ],
+  "_sources": [
+    {
+      "name": "IISc Groundwater Outlook of Bengaluru City",
+      "url": "https://data.opencity.in/dataset/groundwater-outlook-of-bengaluru-city-april-2025",
+      "date": "2025-04",
+      "extracted": "2026-05",
+      "note": "BWSSB-commissioned, ward-mapped, names 65 specific stress wards. Authoritative on the groundwater side."
+    },
+    {
+      "name": "WELL Labs Bengaluru Urban Water Balance Report",
+      "url": "https://welllabs.org/bengaluru-urban-water-balance-report-well-labs/",
+      "date": "2024-01",
+      "extracted": "registration_required",
+      "note": "GOLD STANDARD bottom-up urban water balance for Bangalore. Behind a registration gate; we cite public references to the 1,392 MLD groundwater number until we have the full PDF in hand."
+    },
+    {
+      "name": "BWSSB - Bangalore Water Supply and Sewerage Board",
+      "url": "https://bwssb.karnataka.gov.in/",
+      "date": "2026-05",
+      "extracted": "2026-05",
+      "note": "Canonical 2026 site is .karnataka.gov.in; .gov.in is legacy. English info pages return 403 to scrapers."
+    },
+    {
+      "name": "BWSSB (Wikipedia)",
+      "url": "https://en.wikipedia.org/wiki/Bangalore_Water_Supply_and_Sewerage_Board",
+      "date": "current",
+      "extracted": "2026-05",
+      "note": "Pre-Stage V baseline: 900 MLD supply, 1,300 MLD demand, ~100 km Cauvery transmission, 75% of revenue spent on pumping power."
+    },
+    {
+      "name": "The Ken - 'Bengaluru doesn't have a water problem' series",
+      "url": "https://the-ken.com/",
+      "date": "2026-05",
+      "extracted": "2026-05",
+      "note": "Source for the BWSSB-vs-WELL-Labs divergence narrative and Stage V under-delivery (775 design / ~400 actual)."
+    }
+  ],
+
+  "supply_chain": [
+    "Cauvery River (Krishnaraja Sagar / KRS reservoir + Hemavathi + Harangi + Kabini upstream storage)",
+    "T.K. Halli intake on the Cauvery (~95-100 km south of Bangalore)",
+    "5-stage Cauvery Water Supply Scheme (Stages I-V, 1974-2024) - pumping water uphill against ~500 m elevation",
+    "Cauvery WTPs at T.K. Halli + Tataguni + intermediate stations",
+    "Transmission mains delivering up to ~1,450 MLD design (~1,300 MLD actual)",
+    "Local resources (largely defunct for potable): TG Halli/Chamaraja Sagar 1933, Hesaraghatta 1894, Arkavathi",
+    "Groundwater: BWSSB-managed wells + ~400,000+ private borewells across BBMP/GBA",
+    "Tanker market (informal): Kaveriwheels app official tankers + a large private tanker mafia",
+    "Distribution: BWSSB ~10.5 lakh service connections (BBMP area), GBA-wide coverage incomplete"
+  ],
+
+  "current_supply_mix_mld": [
+    {
+      "source": "Cauvery Stage I (commissioned 1974)",
+      "scheme": "T.K. Halli intake -> early-stage Cauvery WTP -> Bangalore (pumped)",
+      "mld": 135,
+      "annual_mcft": null,
+      "supplies": "Initial Cauvery scheme footprint",
+      "note": "First Cauvery scheme. MLD figure is a public estimate; needs verification.",
+      "_provenance": "estimate"
+    },
+    {
+      "source": "Cauvery Stage II (commissioned 1983-84)",
+      "scheme": "T.K. Halli -> WTP -> Bangalore (additional pumping main)",
+      "mld": 135,
+      "annual_mcft": null,
+      "supplies": "Expansion of Stage I service area",
+      "note": "Often grouped with Stage I as 'Stage I/II' delivering ~270 MLD combined.",
+      "_provenance": "estimate"
+    },
+    {
+      "source": "Cauvery Stage III (commissioned 1993)",
+      "scheme": "T.K. Halli -> WTP -> Bangalore (additional pumping main)",
+      "mld": 270,
+      "annual_mcft": null,
+      "supplies": "Mid-1990s city expansion (Indiranagar, BTM Layout, JP Nagar)",
+      "note": "ADB-funded per public references. MLD figure needs verification.",
+      "_provenance": "estimate"
+    },
+    {
+      "source": "Cauvery Stage IV Phase I (commissioned 2002)",
+      "scheme": "T.K. Halli -> WTP -> Bangalore",
+      "mld": 270,
+      "annual_mcft": null,
+      "supplies": "BBMP expansion era (Bangalore South + East)",
+      "note": "Wikipedia cites Phase I as +270 MLD.",
+      "_provenance": "reported_no_primary"
+    },
+    {
+      "source": "Cauvery Stage IV Phase II (commissioned 2012)",
+      "scheme": "T.K. Halli -> WTP -> Bangalore",
+      "mld": 500,
+      "annual_mcft": null,
+      "supplies": "BBMP integration (110 villages absorbed in 2007 city expansion)",
+      "note": "Wikipedia cites Phase II as +510 MLD with target completion 2010 (delivered ~2012).",
+      "_provenance": "reported_no_primary"
+    },
+    {
+      "source": "Cauvery Stage V (commissioned 16 October 2024)",
+      "scheme": "T.K. Halli -> new Stage V WTP -> Bangalore via dedicated main",
+      "mld": 400,
+      "annual_mcft": null,
+      "supplies": "110 newly-added villages (post-2007 BBMP integration) - 50% coverage as of Feb 2026",
+      "note": "Design capacity 775 MLD; actual delivery reported at ~400 MLD as of Feb 2026. The 'expansion that only half-delivers' is a key Bangalore narrative.",
+      "_provenance": "reported_no_primary"
+    },
+    {
+      "source": "Groundwater - BWSSB managed + private (official BWSSB position)",
+      "scheme": "BWSSB borewells + ~400K private borewells",
+      "mld": 800,
+      "annual_mcft": null,
+      "supplies": "Gap-fill across BBMP/GBA, especially in stress wards",
+      "note": "BWSSB's official cited extraction figure. The IISc Groundwater Outlook (April 2025) names 65 specific stress wards as critically over-extracted.",
+      "_provenance": "official_BWSSB"
+    },
+    {
+      "source": "Groundwater - bottom-up estimate (WELL Labs)",
+      "scheme": "Same source, different accounting",
+      "mld": 1392,
+      "annual_mcft": null,
+      "supplies": "Same",
+      "note": "WELL Labs Jan 2024 bottom-up urban water balance. 592 MLD HIGHER than BWSSB's official number. The divergence IS the story - presented alongside BWSSB's 800 MLD, not instead of it.",
+      "_provenance": "WELL_Labs_estimate"
+    },
+    {
+      "source": "Tanker water market (informal)",
+      "scheme": "Private + Kaveriwheels app tankers",
+      "mld": null,
+      "annual_mcft": null,
+      "supplies": "All Bengaluru, peaks in summer crisis",
+      "note": "OpenCity Bengaluru Tanker Water Survey 2024+2025 quantifies tanker dependence but no consolidated MLD published. The Ken (May 2026): Kaveriwheels official tankers ~19K downloads in 14M city; rates Rs 700/5kL official vs Rs 2,850/12kL informal at crisis peak.",
+      "_provenance": "estimate"
+    }
+  ],
+  "current_supply_total_mld": 1710,
+  "_supply_total_note": "1,710 MLD = Cauvery Stages I-V active delivery (~1,310 MLD, taking Stage V at actual ~400 not design ~775) + BWSSB official groundwater (800 MLD). NOT the same as the city's drinking-water-equivalent consumption. Excludes private borewell extraction beyond BWSSB's accounting (WELL Labs would put total resource utilisation at ~2,300+ MLD against this 1,710 MLD).",
+
+  "wtps_summary": {
+    "_note": "BWSSB does NOT publish a clean WTP-by-WTP capacity table on its English info pages. Numbers below are compiled from public references and need verification against the WELL Labs report or an ADB Karnataka IEE.",
+    "cauvery_total_design_capacity_mld": 1450,
+    "cauvery_total_actual_supply_mld": 1310,
+    "stage_v_design_mld": 775,
+    "stage_v_actual_mld": 400,
+    "_stage_v_caveat": "Stage V actual delivery is ~50% of design as of Feb 2026 due to distribution main + last-mile connection delays in the 110 newly-added villages.",
+    "tk_halli_treatment_complex": "Multi-stage WTP complex at T.K. Halli (~95-100 km south of Bangalore), serves as the headworks for all 5 Cauvery stages.",
+    "tg_halli_reuse_project": {
+      "design_mld": 110,
+      "scheme": "STP-treated wastewater + Indirect Potable Reuse (IPR), blended in TG Halli reservoir",
+      "partner": "BWSSB + SUEZ",
+      "status": "Pilot phase as of 2026",
+      "note": "Country's largest indirect-potable-reuse experiment. Repurposes TG Halli/Chamaraja Sagar (1933) which has been defunct for potable supply since the 1990s due to upstream sewage contamination."
+    }
+  },
+
+  "distribution": {
+    "_note": "Distribution figures here are best public estimates. BWSSB does not publish a consolidated network statistics page. The 11 lakh connections figure is widely cited but the date varies. Per-capita LPCD official vs actual is sharply contested.",
+    "service_area_description": "BBMP 198-ward area historically; expanding to GBA 369-ward area post-Nov 2025 delimitation. Many newly-added wards still have partial or zero piped coverage.",
+    "service_connections_total": 1100000,
+    "_service_connections_note": "Widely cited as '~11 lakh connections'. Roughly 70% domestic, 30% non-domestic / commercial. Coverage by ward in the newly-merged 110 villages and GBA peripheral wards is incomplete.",
+    "service_connections_as_of": "2024 (approximate)",
+    "_lpcd_official_supplied": 150,
+    "_lpcd_actual_received_estimate": 100,
+    "_lpcd_note": "BWSSB design standard 150 LPCD for the served population. Many wards receive less than 100 LPCD in practice due to NRW (~40% non-revenue water cited in industry literature) + intermittent supply. Stress wards skew sharply lower; tanker-dependent areas pay multiples for less."
+  },
+
+  "demand": {
+    "_note": "Demand figures here are public estimates pending verification against an ADB Karnataka water IEE or WELL Labs published demand projections. Population numbers depend on which boundary is used.",
+    "population_bbmp_198_wards": 10000000,
+    "population_gba_369_wards": 13500000,
+    "population_bengaluru_urban_district": 12500000,
+    "_population_2011_census": 8425970,
+    "_population_2024_estimate": 13500000,
+    "current_demand_mld": 2100,
+    "_current_demand_caveat": "Often cited as 2,000-2,200 MLD across BBMP+GBA. Bangalore lives with a roughly 600-800 MLD shortfall against current demand, plugged by groundwater + tanker market + intermittent rationing.",
+    "demand_2030_mld_estimate": 2400,
+    "demand_2035_mld_estimate": 2700,
+    "city_area_bbmp_sqkm": 741,
+    "city_area_gba_sqkm": null,
+    "_city_area_gba_note": "GBA area encompasses BBMP's 741 sqkm + the newly-added city corporation areas. Total post-Nov 2025 delimitation TBD; we estimate ~1,300+ sqkm pending an authoritative GBA area declaration."
+  },
+
+  "allocation_context": {
+    "_note": "Bangalore's water comes from the Cauvery basin, governed by the Cauvery Water Disputes Tribunal (CWDT) 2007 award + Supreme Court 2018 modification. Karnataka's allocation is shared between irrigation (largest), Bangalore drinking, other urban centres, and rural drinking.",
+    "cwdt_karnataka_total_tmc": 284.75,
+    "cwdt_karnataka_drinking_tmc": 14.75,
+    "_drinking_tmc_note": "Karnataka's 14.75 TMC drinking-water share covers Bangalore + Mysuru + other Cauvery-basin urban centres. Bangalore alone is widely cited as needing ~19-24 TMC at current demand.",
+    "bangalore_required_tmc_estimate": 24,
+    "krs_reservoir_full_capacity_tmc": 49.45,
+    "krs_reservoir_role": "Headworks for the Cauvery delivery to Bangalore via T.K. Halli intake. KRS storage + Hemavathi + Harangi + Kabini upstream combined determine Bangalore's annual supply security.",
+    "groundwater_dependency_ratio_pct_official": 35,
+    "groundwater_dependency_ratio_pct_well_labs": 50,
+    "_groundwater_dependency_note": "BWSSB official: ~800 MLD GW / ~2,300 MLD total = ~35%. WELL Labs bottom-up: ~1,392 MLD GW / ~2,800 MLD total = ~50%. Either way Bangalore is structurally more groundwater-dependent than Chennai (which is reservoir-impounded) or Madurai (which is Mullaperiyar-fed).",
+    "energy_cost_of_pumping_pct_of_revenue": 75,
+    "_energy_cost_note": "Per BWSSB (Wikipedia citation): 75% of agency revenues are consumed by the electricity bill for pumping Cauvery water ~95-100 km uphill against ~500 m elevation gain. This is the single largest factor in Bangalore's water tariff structure and is why every additional MLD via Cauvery is significantly more expensive than equivalent MLD from local sources."
+  },
+
+  "stress_wards_iisc": {
+    "_note": "From IISc Groundwater Outlook of Bengaluru City (April 2025), BWSSB-commissioned, names 65 specific wards as 'over-exploited' on the CGWB framework. These 65 are mapped to the pre-Nov 2025 BBMP 198-ward configuration; mapping to GBA 369 wards is a follow-up.",
+    "stress_ward_count": 65,
+    "stress_ward_examples": [
+      "Hebbal",
+      "Jakkur",
+      "Yelahanka",
+      "KR Puram",
+      "Koramangala",
+      "Vijayanagar",
+      "Kengeri",
+      "Nagarbhavi",
+      "Chamarajpet"
+    ],
+    "stress_ward_implication": "Per BWSSB's own commissioned study, ~33% of BBMP wards are operating beyond CGWB's 'safe' groundwater extraction limit. Cauvery Stage V was meant to relieve these wards via piped supply; under-delivery means many remain on groundwater + tankers."
+  },
+
+  "tanker_market": {
+    "_note": "Bangalore's informal water market is uniquely large among Indian metros. The Ken (May 2026): even at non-crisis times, hundreds of thousands of households substitute tanker water for piped supply.",
+    "official_app": "Kaveriwheels (BWSSB-operated, ~19K downloads in a 14M city as of 2026, 2.8/5 rating)",
+    "official_rate_per_5kl_inr": 700,
+    "informal_rate_per_12kl_inr_crisis": 2850,
+    "informal_rate_note": "Crisis-peak summer 2024 rates. Off-season tankers are ~Rs 800-1,200 per 6-12kL but rates surge 2-4x when piped supply fails.",
+    "primary_data_source": "OpenCity Bengaluru Tanker Water Survey 2024 + 2025 (https://opencity.in/bengaluru-water-tankers-survey-2025-situation-better-than-2024/)"
+  },
+
+  "reference_figures": [
+    {
+      "id": "groundwater-outlook-65-wards",
+      "src_external": "https://data.opencity.in/dataset/groundwater-outlook-of-bengaluru-city-april-2025",
+      "caption": "IISc Groundwater Outlook (April 2025): 65 BBMP wards mapped as critically over-extracted. To embed locally we need to download the report and extract the figure under license.",
+      "source_label": "IISc / BWSSB Groundwater Outlook (April 2025)"
+    },
+    {
+      "id": "cauvery-stages-map",
+      "src_external": null,
+      "caption": "Cauvery Water Supply Stages I-V map showing T.K. Halli intake -> ~95 km pumped transmission -> Bangalore. We need to source or commission this; BWSSB English info pages return 403 to scrapers.",
+      "source_label": "BWSSB (to be sourced)"
+    }
+  ],
+
+  "open_data_gaps": [
+    "WELL Labs Bengaluru Urban Water Balance Report (Jan 2024) PDF download - behind registration gate, gold-standard primary source.",
+    "An ADB Karnataka urban water IEE document analogous to Chennai's CCRWSSP IEE / Madurai's TNUFIP Tranche 2 IEE. Tradition has it that ADB Karnataka projects exist but the public IEE links are not surfacing in this research session.",
+    "JICA Stage V project documents (Stage V was JICA-funded). JICA's Open JICA Report portal hosts these but the exact title/PDF is not yet pinned.",
+    "BWSSB Annual Report / Tariff Order with WTP-by-WTP capacity table. Either via RTI or via the BWSSB English info pages once we figure out a non-403 fetch path.",
+    "WTP-level treated water output by plant - Bangalore has multiple Cauvery WTPs but the per-WTP capacity split is not publicly tabulated."
+  ],
+
+  "followup_actions": [
+    "Acquire WELL Labs PDF (registration required) - this single document supersedes most of the 'estimate' tags above.",
+    "RTI BWSSB for: WTP-by-WTP design vs actual capacity, current LPCD by ward, current NRW estimate.",
+    "Search JICA Open Report portal for the Cauvery Stage V preparatory survey + appraisal report.",
+    "Search ADB project documents for any Karnataka Urban Water Sector Investment Program tranches.",
+    "Reconcile BBMP 198-ward IISc stress-ward map to GBA 369-ward configuration (areal weighting on new boundaries)."
+  ]
+}
