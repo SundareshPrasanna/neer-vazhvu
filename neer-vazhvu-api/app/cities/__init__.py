@@ -1,3 +1,4 @@
+from .bangalore import BANGALORE
 from .chennai import CHENNAI
 from .madurai import MADURAI
 from .registry import (
@@ -18,6 +19,7 @@ from .types import (
 )
 
 __all__ = [
+    "BANGALORE",
     "CHENNAI",
     "MADURAI",
     "DEFAULT_CITY_ID",

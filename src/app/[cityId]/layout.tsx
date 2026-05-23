@@ -10,7 +10,7 @@ interface LayoutProps {
 export async function generateMetadata({ params }: LayoutProps): Promise<Metadata> {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
-  if (!config) return { title: "Neer Vazhvu" };
+  if (!config || config.enabled === false) return { title: "Neer Vazhvu" };
 
   return {
     title: `${config.displayName} Water Clock | Neer Vazhvu`,
@@ -33,8 +33,11 @@ export default async function CityLayout({ children, params }: LayoutProps) {
     redirect("/");
   }
 
+  // Registered-but-disabled cities (config.enabled === false) are scaffolded
+  // in code for data ingestion + scraper work but not yet exposed publicly.
+  // 404 them at the route boundary so no user-facing surface leaks.
   const config = tryGetPlaceConfig(cityId);
-  if (!config) {
+  if (!config || config.enabled === false) {
     notFound();
   }
 

@@ -186,6 +186,15 @@ export interface BasePlaceConfig {
    *  pipeline (`scripts/run_cascade.py --district <id> run-all`) has
    *  produced the corresponding PMTiles. */
   hasCascadeOverlay?: boolean;
+
+  /** When false, the city is registered (data + scrapers can be wired
+   *  up) but excluded from user-facing surfaces: listEnabledPlaces(),
+   *  the [cityId] route guard, the city switcher, the nav. Mirrors the
+   *  `enabled` column on the `cities` table.
+   *
+   *  Treated as enabled when omitted, so existing Chennai/Madurai
+   *  configs stay exposed without modification. */
+  enabled?: boolean;
 }
 
 export interface CityConfig extends BasePlaceConfig {

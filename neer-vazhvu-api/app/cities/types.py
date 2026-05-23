@@ -66,6 +66,12 @@ class CityConfig:
     default_desalination_mld: float | None
     water_sources: tuple[WaterSourceConfig, ...]
     source_name_aliases: dict[str, str]
+    # When False, the city is registered (data + scrapers can be wired up)
+    # but excluded from user-facing surfaces: list_enabled_places(),
+    # frontend route guards, switcher UI. Mirrors the `enabled` column on
+    # the `cities` table. Defaults to True so existing city configs stay
+    # exposed without modification.
+    enabled: bool = True
 
 
 PlaceConfig = CityConfig
