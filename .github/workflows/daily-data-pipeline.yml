@@ -29,9 +29,11 @@ jobs:
         working-directory: neer-vazhvu-api
         run: pip install -e .
 
-      # Scrape CMWSSB reservoir data. CMWSSB may block some datacenter IPs,
-      # so this step tolerates up to 4 days of stale data before failing.
-      - name: Scrape CMWSSB -> Supabase
+      # Scrape Chennai's CMWSSB lake-level page. CMWSSB may block some
+      # datacenter IPs, so this step tolerates up to 4 days of stale data
+      # before failing. Each city has its own primary-supply scraper step;
+      # they run independently so one city failing doesn't block the others.
+      - name: Scrape Chennai (CMWSSB) -> Supabase
         id: scrape
         continue-on-error: true
         working-directory: neer-vazhvu-api
@@ -41,10 +43,10 @@ jobs:
           CMWSSB_MAX_STALE_DAYS: '4'
         run: python scripts/scrape_cmwssb.py
 
-      # Scrape TN Agri ARS for Kaveri (Mettur + Karnataka 4-dam) and Madurai
-      # (Vaigai + Mullaperiyar/Periyar) reservoirs. Single page fetch, multi-city.
-      # Tolerates up to 4 days of stale data before failing.
-      - name: Scrape TN PWD reservoirs (Kaveri + Madurai) -> Supabase
+      # Scrape TN Agri ARS for Madurai (Vaigai + Mullaperiyar/Periyar)
+      # reservoirs. Single page fetch. Tolerates up to 4 days of stale data
+      # before failing.
+      - name: Scrape Madurai (TN PWD) -> Supabase
         id: scrape_tn_pwd
         continue-on-error: true
         working-directory: neer-vazhvu-api
