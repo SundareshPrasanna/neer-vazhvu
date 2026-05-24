@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { MaduraiStory } from "@/content/story-madurai";
 import { ChennaiStory } from "@/content/story-chennai";
+import { BangaloreStory } from "@/content/story-bangalore";
 import { ComingSoonStory } from "@/components/story/coming-soon";
 
 interface PageProps {
@@ -19,7 +20,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ? "City of Tanks - what is left of the cascade"
       : cityId === "chennai"
         ? "City of estuaries - what is left of the sponge"
-        : `${config.displayName} water story`;
+        : cityId === "bangalore"
+          ? "City of stolen kere - what Kempegowda built and what Bengaluru built over it"
+          : `${config.displayName} water story`;
 
   return {
     title: `${tagline} | Neer Vazhvu`,
@@ -45,6 +48,10 @@ export default async function CityStoryPage({ params }: PageProps) {
 
   if (cityId === "chennai") {
     return <ChennaiStory />;
+  }
+
+  if (cityId === "bangalore") {
+    return <BangaloreStory />;
   }
 
   return <ComingSoonStory cityDisplayName={config.displayName} />;
