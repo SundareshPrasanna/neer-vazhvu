@@ -42,6 +42,16 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "origins",
     "cascades",
   ]),
+  bangalore: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "my-ward",
+    "origins",
+    "tanker",
+  ]),
 };
 
 export function knownCityIds(): Set<string> {

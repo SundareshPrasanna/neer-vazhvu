@@ -108,6 +108,7 @@ export default async function CityHomePage({ params }: PageProps) {
           published engineering document don't render an empty card. */}
       <UrbanSupplyOverview cityId={cityId} cityDisplayName={config.displayName} />
 
+
       {/* Reservoir snapshot grid + shared multi-source history chart. */}
       <ReservoirCards reservoirs={summaries} />
 
@@ -139,9 +140,9 @@ export default async function CityHomePage({ params }: PageProps) {
         />
       )}
 
-      {/* Per-feature deep-dive nav. Same shape for every city; the routes
-          themselves render the city's data. */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* Per-feature deep-dive nav. Tanker-market card only appears for
+          cities that have a tanker-survey JSON (Bangalore today). */}
+      <div className={`grid grid-cols-1 ${config.heroMode === "cauvery-pumping" ? "sm:grid-cols-4" : "sm:grid-cols-3"} gap-3`}>
         <Link
           href={`/${cityId}/groundwater`}
           className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors"
@@ -174,6 +175,24 @@ export default async function CityHomePage({ params }: PageProps) {
             OSM polygons, flagship tanks, restoration priority badges, lost-tank inventory.
           </p>
         </Link>
+        {config.heroMode === "cauvery-pumping" && (
+          <Link
+            href={`/${cityId}/tanker`}
+            className="block rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50/40 dark:bg-amber-950/20 p-4 hover:border-amber-400 dark:hover:border-amber-600 transition-colors"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                Tanker market
+              </h3>
+              <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+              What households actually pay - longitudinal OpenCity surveys (2015 / 2019 / 2024).
+            </p>
+          </Link>
+        )}
         <Link
           href={`/${cityId}/about`}
           className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors"
