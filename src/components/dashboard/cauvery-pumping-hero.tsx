@@ -152,7 +152,7 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
           )}
           {populationServed && (
             <Stat
-              value={formatNumber(Math.round(populationServed / 1_000_000))}
+              value={(populationServed / 1_000_000).toFixed(1)}
               unit="M people"
               label="Population served"
               sub="BWSSB salient features, JICA 2017 snapshot"
