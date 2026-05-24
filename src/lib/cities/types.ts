@@ -145,11 +145,17 @@ export interface BasePlaceConfig {
    *    drinking slice (Madurai). Shows live storage + the city's
    *    annual allocation + current draw, without the misleading
    *    days-of-water headline.
+   *  - `cauvery-pumping`: Bangalore-style supply-chain story for cities
+   *    where the headline is "we pump it from a long way away + local
+   *    groundwater + tankers". Renders engineering-document numbers
+   *    (Cauvery stages, transmission distance, NRW, IISc stress wards,
+   *    Stage V under-delivery) from `<cityId>-supply-overview.json`.
+   *    Honest for any pumped-from-far city (Delhi/Mumbai future fits).
    *  - `none`: suppress hero entirely (cities with no useful summary
    *    yet). Reservoir cards + history chart still render below.
    *
    *  Defaults to `days-left` for back-compat with Chennai. */
-  heroMode?: 'days-left' | 'allocation' | 'none';
+  heroMode?: 'days-left' | 'allocation' | 'cauvery-pumping' | 'none';
 
   /** Public, audited urban supply numbers for the allocation hero.
    *  Required when heroMode === 'allocation'; ignored otherwise. */

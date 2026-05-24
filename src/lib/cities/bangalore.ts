@@ -40,7 +40,7 @@ export const BANGALORE: CityConfig = {
   defaultConsumptionMld: 1450,
   defaultDesalinationMld: null,
   availableLanguages: ['en', 'kn'],
-  heroMode: 'none',
+  heroMode: 'cauvery-pumping',
   waterSources: [
     {
       sourceCode: 'krs',

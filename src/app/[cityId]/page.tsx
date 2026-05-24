@@ -9,6 +9,7 @@ import {
 } from "./data";
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { AllocationHero } from "@/components/dashboard/allocation-hero";
+import { CauveryPumpingHero } from "@/components/dashboard/cauvery-pumping-hero";
 import { DataGapPanel, URBAN_SUPPLY_DATA_GAPS } from "@/components/dashboard/data-gap-panel";
 import { UrbanSupplyOverview } from "@/components/dashboard/urban-supply-overview";
 import { DashboardHistorySection } from "@/components/dashboard/dashboard-history-section";
@@ -72,6 +73,9 @@ export default async function CityHomePage({ params }: PageProps) {
           // pass 0 so DaysLeftHero doesn't fall back to Chennai's 190 MLD.
           defaultDesalinationMld={config.defaultDesalinationMld ?? 0}
         />
+      )}
+      {config.heroMode === "cauvery-pumping" && (
+        <CauveryPumpingHero cityId={cityId} cityDisplayName={config.displayName} />
       )}
       {config.heroMode === "allocation" && config.urbanSupply && (
         <AllocationHero
