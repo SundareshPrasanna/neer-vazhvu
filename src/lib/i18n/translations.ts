@@ -209,7 +209,7 @@ export const translations: Record<string, TranslationEntry> = {
   "nav.lake_restoration": { en: "Restoration",     ta: "மறுசீரமைப்பு" },
   "nav.about":          { en: "About",             ta: "எங்களைப் பற்றி" },
   "header.title":       { en: "Neer Vazhvu",                ta: "நீர் வாழ்வு" },
-  "header.subtitle":    { en: "Tamil Nadu Water Intelligence", ta: "தமிழ்நாடு நீர் அறிவுத்தளம்" },
+  "header.subtitle":    { en: "Urban Water Intelligence", ta: "நகர்ப்புற நீர் அறிவுத்தளம்" },
   "theme.switch_to_light": { en: "Switch to light mode", ta: "ஒளிர் நிலையில் மாற்று" },
   "theme.switch_to_dark":  { en: "Switch to dark mode", ta: "இருண்ட நிலையில் மாற்று" },
   "lang.switch_to_english": { en: "Switch to English", ta: "ஆங்கிலத்திற்கு மாற்று" },
@@ -219,7 +219,7 @@ export const translations: Record<string, TranslationEntry> = {
   // ── Footer ────────────────────────────────────────────────────────────────
   "footer.data_sources":  { en: "Core live sources:",        ta: "முக்கிய நேரடி தரவு ஆதாரங்கள்:" },
   "footer.all_sources":   { en: "All sources",               ta: "அனைத்து ஆதாரங்கள்" },
-  "footer.open_source":   { en: "Open source · Built for Tamil Nadu", ta: "திறந்த மூலம் · தமிழ்நாட்டிற்காக" },
+  "footer.open_source":   { en: "Open source · Built for Indian cities", ta: "திறந்த மூலம் · இந்திய நகரங்களுக்காக" },
   "footer.support":       { en: "Support on Patreon",            ta: "Patreon-ல் ஆதரவு" },
 
   // ── Days Left Hero ────────────────────────────────────────────────────────

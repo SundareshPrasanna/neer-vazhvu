@@ -8,18 +8,20 @@ import { LanguageProvider } from "@/lib/i18n/context";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://neervazhvu.org"),
-  title: "Neer Vazhvu | Tamil Nadu Water Intelligence",
+  title: "Neer Vazhvu | Urban Water Intelligence",
   description:
-    "Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, and water bodies across Tamil Nadu cities - starting with Chennai and Madurai - with AI-powered summaries in English and Tamil.",
+    "Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, and water bodies across Indian cities - Chennai, Madurai, and onboarding Bengaluru - with AI-powered summaries in English and regional languages.",
   keywords: [
-    "Tamil Nadu water",
+    "urban water",
     "Chennai water",
     "Madurai water",
+    "Bengaluru water",
     "reservoir levels",
     "groundwater",
     "water crisis",
     "Day Zero",
     "CMWSSB",
+    "BWSSB",
     "TWAD",
     "flood risk",
     "river pollution",
@@ -27,8 +29,8 @@ export const metadata: Metadata = {
     "civic tech",
   ],
   openGraph: {
-    title: "Neer Vazhvu | Tamil Nadu Water Intelligence",
-    description: "Reservoirs, groundwater, rivers, flood risk, and water bodies across Tamil Nadu cities - Chennai and Madurai live, more on the way.",
+    title: "Neer Vazhvu | Urban Water Intelligence",
+    description: "Reservoirs, groundwater, rivers, flood risk, and water bodies across Indian cities - Chennai and Madurai live, Bengaluru onboarding.",
     type: "website",
     locale: "en_IN",
     siteName: "Neer Vazhvu",
@@ -36,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Neer Vazhvu | Tamil Nadu Water Intelligence",
-    description: "Reservoirs, groundwater, rivers, flood risk, and water bodies across Tamil Nadu cities - Chennai and Madurai live, more on the way.",
+    title: "Neer Vazhvu | Urban Water Intelligence",
+    description: "Reservoirs, groundwater, rivers, flood risk, and water bodies across Indian cities - Chennai and Madurai live, Bengaluru onboarding.",
   },
   icons: {
     icon: [
@@ -73,7 +75,7 @@ export default function RootLayout({
               name: "Neer Vazhvu",
               url: "https://neervazhvu.org",
               description:
-                "Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, and water bodies across Tamil Nadu cities - starting with Chennai and Madurai.",
+                "Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, and water bodies across Indian cities - Chennai, Madurai, and onboarding Bengaluru.",
               applicationCategory: "UtilitiesApplication",
               operatingSystem: "Any",
               offers: {
@@ -87,12 +89,8 @@ export default function RootLayout({
                 url: "https://neervazhvu.org",
               },
               areaServed: {
-                "@type": "State",
-                name: "Tamil Nadu",
-                containedInPlace: {
-                  "@type": "Country",
-                  name: "India",
-                },
+                "@type": "Country",
+                name: "India",
               },
             }),
           }}
