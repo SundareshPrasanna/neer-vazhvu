@@ -136,7 +136,13 @@ export default function CityGroundwaterClient() {
       return;
     }
     Promise.all([
-      fetch(assets.blocksJsonUrl).then((r) => r.json()),
+      // Cities without a curated gwr-blocks JSON (Bangalore today) get
+      // an empty-blocks fallback instead of letting the .json() parse on
+      // the 404 HTML body reject the whole Promise.all and leave the map
+      // stuck in a loading state.
+      fetch(assets.blocksJsonUrl)
+        .then((r) => (r.ok ? (r.json() as Promise<{ blocks?: GWBlock[] }>) : { blocks: [] }))
+        .catch(() => ({ blocks: [] })),
       fetch(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
         .then((r) => r.json() as Promise<WrisStationsResponse>)
         .catch(() => ({ stations: [], totalStations: 0 } as WrisStationsResponse)),

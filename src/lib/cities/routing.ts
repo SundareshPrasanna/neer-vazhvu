@@ -10,7 +10,7 @@
  * place so the two stay in lockstep.
  */
 
-import { listEnabledPlaces } from "./index";
+import { listAllPlaces } from "./index";
 
 const CHENNAI_CITY_ID = "chennai";
 
@@ -54,8 +54,19 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   ]),
 };
 
+/**
+ * City IDs the URL parser should recognise. Uses listAllPlaces() (NOT
+ * listEnabledPlaces) so that disabled cities under PREVIEW_CITIES still
+ * get correctly identified by parsePath - otherwise /bangalore/origins
+ * would parse as ("chennai", "bangalore/origins") and the nav-rewriter
+ * would route Origins clicks to /origins (Chennai's flat URL).
+ *
+ * Production exposure of disabled cities is gated by the [cityId]/layout
+ * route guard (404 when enabled=false and not in PREVIEW_CITIES) - not
+ * by this URL-parsing set.
+ */
 export function knownCityIds(): Set<string> {
-  return new Set(listEnabledPlaces().map((p) => p.cityId));
+  return new Set(listAllPlaces().map((p) => p.cityId));
 }
 
 /**

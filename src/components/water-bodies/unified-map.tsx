@@ -221,13 +221,20 @@ export function UnifiedMap({
   }, [currentGeoJSON, censusData]);
 
   useEffect(() => {
+    // Current OSM water-bodies geojson. Cities without one (no Bangalore
+    // for now) get a graceful null instead of letting the 404 HTML body
+    // explode JSON.parse.
     fetch(currentGeoJsonUrl)
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : null))
       .then(setCurrentGeoJSON)
       .catch(console.error);
 
+    // Lost-bodies geojson is OPTIONAL. Chennai/Madurai ship a polygon
+    // version (water-bodies-lost-{city}.geojson) with historical tank
+    // shapes; Bangalore's lost-kere data is tabular only (no polygons),
+    // so this fetch will 404 there and that's fine.
     fetch(lostGeoJsonUrl)
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : null))
       .then(setLostGeoJSON)
       .catch(console.error);
   }, [currentGeoJsonUrl, lostGeoJsonUrl]);
@@ -270,8 +277,9 @@ export function UnifiedMap({
   useEffect(() => {
     if (!currentGeoJSON) return;
     fetch(riversGeoJsonUrl)
-      .then((r) => r.json())
-      .then((riversGeo: GeoJSON.FeatureCollection) => {
+      .then((r) => (r.ok ? r.json() : null))
+      .then((riversGeo: GeoJSON.FeatureCollection | null) => {
+        if (!riversGeo) return;
         // Extract river line sample points with names
         const riverPoints: { lat: number; lng: number; name: string; name_ta: string }[] = [];
         for (const feat of riversGeo.features) {

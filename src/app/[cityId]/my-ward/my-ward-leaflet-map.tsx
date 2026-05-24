@@ -45,8 +45,20 @@ export function MyWardLeafletMap({
   const [wards, setWards] = useState<FeatureCollection | null>(null);
 
   useEffect(() => {
-    fetch(`/geojson/${cityId}-wards-2022.geojson`)
-      .then((r) => r.json())
+    // Ward delimitation vintage differs by city:
+    //   Chennai/Madurai use the 2022 GCC/MMC delimitation
+    //   Bangalore uses GBA 2025 (Karnataka Act 36 of 2025, notified Nov 2025)
+    const WARDS_VINTAGE: Record<string, string> = {
+      chennai: "2022",
+      madurai: "2022",
+      bangalore: "2025",
+    };
+    const vintage = WARDS_VINTAGE[cityId] ?? "2022";
+    fetch(`/geojson/${cityId}-wards-${vintage}.geojson`)
+      .then((r) => {
+        if (!r.ok) throw new Error(`Wards geojson HTTP ${r.status}`);
+        return r.json();
+      })
       .then(setWards)
       .catch(console.error);
   }, [cityId]);

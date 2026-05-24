@@ -40,3 +40,13 @@ export function tryGetPlaceConfig(placeId: string): PlaceConfig | null {
 export function listEnabledPlaces(): PlaceConfig[] {
   return Object.values(REGISTRY).filter((p) => p.enabled !== false);
 }
+
+/** ALL registered cities, including disabled ones. Used for URL parsing
+ *  (parsePath / rewriteNavHref) so that navigation to /<disabled-city>/*
+ *  still resolves to the correct city instead of falling back to Chennai.
+ *  User-facing surfaces (city switcher, sitemap, nav-rewrite targets)
+ *  should keep using listEnabledPlaces(); only the URL parser needs to
+ *  recognise disabled cities. */
+export function listAllPlaces(): PlaceConfig[] {
+  return Object.values(REGISTRY);
+}
