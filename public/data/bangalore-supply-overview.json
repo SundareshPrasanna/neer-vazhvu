@@ -208,15 +208,20 @@
   },
 
   "allocation_context": {
-    "_note": "JICA Phase 3 Table 6.1: Cauvery Water Disputes Tribunal allocation by state. 1 TMC = 77.5 MLD per JICA's working conversion.",
+    "_note": "JICA Phase 3 Table 6.1: Cauvery Water Disputes Tribunal allocation by state, per Gazette No. 373 of 19 Feb 2013. 1 TMC = 77.5 MLD per JICA's working conversion.",
     "cwdt_total_tmc": 726,
     "cwdt_karnataka_tmc": 270,
     "cwdt_tamil_nadu_tmc": 419,
     "cwdt_kerala_tmc": 30,
     "cwdt_pondicherry_tmc": 7,
     "_state_share_note": "JICA Table 6.1 cites the original Gazette notification. The Cauvery Water Disputes Tribunal final award (2007) + Supreme Court 2018 modification adjusts Karnataka's share within these totals.",
+    "cauvery_basin_total_sqkm": 85626,
+    "cauvery_basin_karnataka_pct": 42,
+    "cauvery_basin_tamil_nadu_pondy_pct": 54,
+    "cauvery_basin_kerala_pct": 4,
+    "_basin_note": "JICA 6.2.1 + India-WRIS Database. Karnataka holds 42% of the 85,626 km^2 basin (~36,000 km^2), the largest share.",
     "bangalore_cwss_allocation_mld": 2235,
-    "_cwss_allocation_breakdown": "JICA Table 6.2: Stage I+II+III = 730 MLD; Stage IV Ph1+Ph2 = 730 MLD; Stage V = 775 MLD. Total 2,235 MLD of Karnataka's 270 TMC (~21,000 MLD) allocation is dedicated to BWSSB.",
+    "_cwss_allocation_breakdown": "JICA Table 6.2: Stage I+II+III = 730 MLD (GO PWD/41MMM/04/Bengaluru, 10 Dec 1984); Stage IV Ph1+Ph2 = 730 MLD (GO HUD/MNI/90/Bengaluru, 27 July 1994); Stage V = 775 MLD (GO of Karnataka 10 TMC additional). Total 2,235 MLD = ~21% of Karnataka's 270 TMC drinking allocation.",
     "transmission_distance_km": 95,
     "transmission_elevation_lift_m": 500,
     "energy_cost_of_pumping_pct_of_revenue": 75,
@@ -226,7 +231,84 @@
     "present_per_capita_consumption_lpcd": 76,
     "_lpcd_note": "JICA Salient Features (2015-16): 146 LPCD supplied; only 76 LPCD reaching consumers. 48% NRW gap.",
     "nrw_pct": 48,
-    "_nrw_note": "JICA Phase 3 Salient Features Table 3.1.2. The UFW reduction project (Stage IV Phase 2 era) targeted DMA-by-DMA improvement but completion was delayed at JICA's 2017 publication. Current NRW not officially re-published."
+    "_nrw_note": "JICA Phase 3 Salient Features Table 3.1.2. UFW targets (Table 6.3.5): Core+ULB to drop from 23% (2017) to 16% (2049); 110 Villages steady at 16%. Current actual NRW not officially re-published since 2017.",
+    "cauvery_drought_avg_flow_mld": 2539,
+    "_cauvery_flow_note": "JICA Table 6.2.5: 1972-2016 Cauvery flow at Kollegal Point. Drought-year average is 2,539 MLD vs the post-Stage V intake requirement of 2,235 MLD - a 304 MLD margin against a high baseline year. Stage VI would erode this further."
+  },
+
+  "upstream_dams": {
+    "_note": "JICA Phase 3 Table 6.2.6: the 4 Cauvery basin reservoirs whose combined live storage gates BWSSB's annual supply security. These are tracked in neer-vazhvu's water_sources table for Bangalore.",
+    "dam_count": 4,
+    "names": ["Krishnaraja Sagar (KRS)", "Hemavathi", "Kabini", "Harangi"],
+    "total_live_capacity_mcm": 2583,
+    "total_live_capacity_mcm_unit": "Million cubic metres",
+    "equivalent_daily_yield_mld": 7000,
+    "_equivalent_note": "2,583 Mm^3 / 365 days = ~7,000 MLD/day if drawn evenly across a year. BWSSB's 2,235 MLD intake requirement post-Stage V is ~32% of this. But the dams also serve irrigation (Mandya, Mysore) and downstream Tamil Nadu obligations under CWDT - drinking water gets a slice, not the whole envelope."
+  },
+
+  "tertiary_treatment": {
+    "_note": "JICA Phase 3 Tables 6.3.3 + 6.3.4: tertiary treatment plants beyond secondary STPs. Bangalore already produces ~161 MLD of tertiary-treated reuse water - more than commonly cited.",
+    "total_tertiary_capacity_mld": 161,
+    "plants": [
+      {"name": "BWSSB 40 MLD TTP", "mld": 40, "use": "Industrial / commercial reuse"},
+      {"name": "KPTCL power-plant supply", "mld": 60, "use": "Karnataka Power Transmission Corp - power plant cooling"},
+      {"name": "Hebbal 60 MLD TTP", "mld": 60, "use": "DBOT-basis supply to neighbouring industries"},
+      {"name": "RO bottled water plant", "mld": 1.5, "use": "Reverse-osmosis from tertiary treated sewage"}
+    ],
+    "_implication": "JICA notes treated sewage cannot be mixed with domestic supply under current policy, but is increasingly displacing industrial freshwater demand. TG Halli IPR pilot (with SUEZ, 110 MLD design) would be a major expansion of this layer if it succeeds.",
+    "water_charge_inr_per_kl_plant": 15,
+    "water_charge_inr_per_kl_piped": 25
+  },
+
+  "groundwater_expert_committee_2017": {
+    "_note": "JICA Phase 3 Section 6.3: Bengaluru Groundwater Expert Committee's findings on aquifer extraction. A third data point between BWSSB's official 800 MLD framing and WELL Labs' 2024 bottom-up 1,392 MLD estimate.",
+    "core_ulb_current_extraction_mld": 570,
+    "core_ulb_projected_future_mld": 400,
+    "villages_110_current_mld": 100,
+    "committee_total_mld": 500,
+    "_committee_findings": "At present approximately 570 MLD is being extracted from the deep aquifer in Core+ULB (Water Source Expert Report). For future planning the committee recommended assuming 400 MLD continued from this source plus 100 MLD for 110 villages. The committee's 500 MLD total (used in JICA Table 6.3 water balance) sits below BWSSB's 800 MLD official and well below WELL Labs' 1,392 MLD. All three numbers should be cited together; the divergence reflects what is officially planned-for vs what is actually extracted vs what is sustainably available."
+  },
+
+  "rainfall_harvesting_potential": {
+    "_note": "JICA Phase 3 Section 6.3 + rainwater study: theoretical maximum of urban rainwater harvesting across the 800 sq km BBMP catchment.",
+    "annual_rainfall_total_mld_low": 1750,
+    "annual_rainfall_total_mld_high": 1970,
+    "harvestable_at_35pct_capture_mld_low": 613,
+    "harvestable_at_35pct_capture_mld_high": 690,
+    "_implication": "JICA notes rainwater can't be mixed with domestic supply under current policy, but Karnataka mandates rainwater-harvesting installation in new buildings (>40x60 ft sites). The 613-690 MLD harvestable potential is ~3-4x the current tertiary treatment capacity - a structurally large under-utilised supply source."
+  },
+
+  "project_cost": {
+    "_note": "JICA Phase 3 Table 16.2.1 + 16.2.2: project cost estimate for the JICA Survey scope (the Stage V WTP + 110 villages sewerage). At 2017 prices.",
+    "total_inr_million": 56899,
+    "total_inr_crore": 5690,
+    "components": [
+      {"name": "CWSS Stage V", "inr_million": 44350, "inr_crore": 4435},
+      {"name": "Major Sewerage Facilities for 110 Villages", "inr_million": 12549, "inr_crore": 1255}
+    ],
+    "funding_pattern": {
+      "jica_loan_pct": 85,
+      "jica_loan_inr_million": 48364,
+      "gok_pct": 7.5,
+      "gok_inr_million": 4267,
+      "bwssb_pct": 7.5,
+      "bwssb_inr_million": 4267
+    },
+    "_funding_note": "85% JICA loan / 7.5% Government of Karnataka / 7.5% BWSSB. Stage V was commissioned 16 Oct 2024 at TK Halli (~7 years from JICA Phase 3 Final Report). Per The Ken May 2026, actual delivery is ~400 MLD against 775 MLD design - a Rs 4,435 crore investment running at ~52% of installed capacity."
+  },
+
+  "household_economics": {
+    "_note": "JICA Phase 3 Chapter 14 social survey: household-level economics across BBMP. Anchors the affordability + willingness-to-pay question.",
+    "avg_monthly_household_income_inr": 20800,
+    "core_area_avg_monthly_income_inr": 25000,
+    "ulb_area_avg_monthly_income_inr": 16489,
+    "villages_110_avg_monthly_income_inr": 13182,
+    "avg_monthly_household_expenditure_inr": 10300,
+    "_water_connection_willingness": "77.5% of respondents ready to pay below INR 500 for water connection fee; 21.6% ready for INR 500-1,000; remainder above INR 1,000.",
+    "_sewerage_connection_willingness": "85.7% of respondents ready to pay below INR 300 for sewerage connection.",
+    "_willingness_to_pay_monthly_inr_500_pct": 24,
+    "_willingness_to_pay_monthly_inr_500_3000_pct": 54,
+    "_implication": "JICA found that ~78% of BBMP households tolerated connection costs below INR 500 - meaning major upfront cost recovery is not viable. BWSSB's revenue model is therefore monthly tariff + bulk-supply pricing, not connection charges. The 24%/54% willingness-to-pay split for monthly tariff suggests an INR 500 ceiling per household for piped + sewerage service is the political affordability floor."
   },
 
   "stress_wards_iisc": {

@@ -54,6 +54,11 @@ interface SupplyOverviewMin {
   stress_wards_iisc?: {
     stress_ward_count?: number;
   };
+  project_cost?: {
+    total_inr_crore?: number;
+    components?: { name: string; inr_crore: number }[];
+    funding_pattern?: { jica_loan_pct?: number };
+  };
 }
 
 interface Props {
@@ -97,6 +102,8 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
   const populationServed = data.distribution?.population_served;
   const demand2049 = data.demand?.demand_2049_mld;
   const deficit2049 = data.demand?.demand_gap_2049_mld;
+  const projectCostCrore = data.project_cost?.total_inr_crore;
+  const jicaLoanPct = data.project_cost?.funding_pattern?.jica_loan_pct;
 
   return (
     <Card className="border-blue-200 dark:border-blue-900 bg-gradient-to-br from-blue-50/50 to-cyan-50/50 dark:from-blue-950/30 dark:to-cyan-950/30">
@@ -195,6 +202,14 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
               icon="2049"
               title={`2049 demand ${formatNumber(demand2049)} MLD vs supply ${formatNumber(demand2049 - deficit2049)} MLD = ${formatNumber(deficit2049)} MLD deficit`}
               body="JICA Phase 3 Table 6.3 high-growth scenario: even with Stage V fully delivered + 500 MLD groundwater, post-2049 demand outstrips supply by 721 MLD. Closing this needs Stage VI / inter-basin transfer / large-scale reuse / 10x UFW reduction."
+              wide
+            />
+          )}
+          {projectCostCrore && (
+            <Callout
+              icon="₹"
+              title={`${formatNumber(projectCostCrore)} crore Stage V + 110-villages sewerage investment`}
+              body={`JICA Phase 3 Table 16.2.1 (2017 prices). Funding pattern: ${jicaLoanPct ?? 85}% JICA sovereign loan, 7.5% Government of Karnataka, 7.5% BWSSB. Stage V alone is ₹4,435 crore. Running at ~52% of design capacity as of Feb 2026 (The Ken) means roughly half that investment is unrealised yield.`}
               wide
             />
           )}
