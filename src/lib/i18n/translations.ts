@@ -526,7 +526,7 @@ export const translations: Record<string, TranslationEntry> = {
 
   // ── About Page ────────────────────────────────────────────────────────────
   "about.title":           { en: "About Neer Vazhvu",    ta: "நீர் வாழ்வு பற்றி" },
-  "about.intro":           { en: "An open-source water intelligence platform for Tamil Nadu cities - starting with Chennai and Madurai - built to make public data accessible and actionable.", ta: "தமிழ்நாட்டின் நகரங்களுக்கான திறந்த மூல நீர் அறிவுத் தளம் - சென்னை மற்றும் மதுரையில் தொடங்கி - பொதுத் தரவை அணுகக்கூடியதாகவும் செயல்திறன் மிக்கதாகவும் மாற்றுவதற்காக உருவாக்கப்பட்டது." },
+  "about.intro":           { en: "An open-source water intelligence platform for Indian cities - Chennai and Madurai live, Bengaluru onboarding - built to make public data accessible and actionable.", ta: "இந்திய நகரங்களுக்கான திறந்த மூல நீர் அறிவுத் தளம் - சென்னை மற்றும் மதுரை செயல்பாட்டில், பெங்களூரு சேர்க்கப்படுகிறது - பொதுத் தரவை அணுகக்கூடியதாகவும் செயல்திறன் மிக்கதாகவும் மாற்றுவதற்காக உருவாக்கப்பட்டது." },
   "about.collapsed_hint":  { en: "Sections are collapsed by default. Click any heading to expand it.", ta: "பிரிவுகள் இயல்பாக மூடப்பட்டுள்ளன. ஒவ்வொரு தலைப்பையும் கிளிக் செய்து விரிவாக்கலாம்." },
   "about.days_heading":    { en: "How \u201cDays of Water Left\u201d Works", ta: "\u201cமீதமுள்ள நீர் நாட்கள்\u201d எவ்வாறு செயல்படுகிறது" },
   "about.days_intro":      { en: "We compute three scenarios based on current reservoir storage, daily consumption, and inflow patterns:", ta: "தற்போதைய நீர்த்தேக்க இருப்பு, தினசரி நுகர்வு மற்றும் வரத்து முறைகளின் அடிப்படையில் மூன்று சூழ்நிலைகளை கணக்கிடுகிறோம்:" },

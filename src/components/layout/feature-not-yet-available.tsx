@@ -10,12 +10,18 @@ export type FeatureScope =
   | "basin-system"
   | "cross-state";
 
+/**
+ * Generic, city-agnostic scope labels. Previously these were
+ * hardcoded to Madurai/Vaigai/MMC, which leaked Tamil Nadu-coded
+ * strings onto every non-Madurai city's "not yet available" page.
+ * Now they describe the geographic frame, not the example city.
+ */
 const SCOPE_LABEL: Record<FeatureScope, string> = {
   "city-admin": "City scope",
-  "district-admin": "Madurai district",
-  "ward-admin": "Ward scope (MMC)",
-  "basin-system": "Vaigai system",
-  "cross-state": "TN + Kerala (cross-state)",
+  "district-admin": "District scope",
+  "ward-admin": "Ward scope",
+  "basin-system": "Basin scope",
+  "cross-state": "Cross-state",
 };
 
 interface FeatureNotYetAvailableProps {
@@ -65,9 +71,9 @@ export function FeatureNotYetAvailable({
       </h1>
       <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-6">
         Chennai&apos;s version of this page shows {whatItShowsForChennai}. The
-        equivalent for {config.displayName} hasn&apos;t shipped yet - the rest
-        of the dashboard is being decoupled to be place-aware before this page
-        gets its data layer.
+        equivalent for {config.displayName}{" "}hasn&apos;t shipped yet - the
+        rest of the dashboard is being decoupled to be place-aware before this
+        page gets its data layer.
       </p>
 
       {dataGapNote && (
