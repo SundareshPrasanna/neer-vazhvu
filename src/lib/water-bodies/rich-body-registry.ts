@@ -1043,6 +1043,384 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       ],
     },
   },
+  sankey: {
+    id: "sankey",
+    osm_id: 6030715,
+    name: "Sankey Tank",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 6030715). " +
+      "Sankey is a colonial-era drinking-water tank in west Bengaluru " +
+      "at ~12.5 ha (OSM extent), constructed in 1882 by Colonel " +
+      "Richard Hieram Sankey of the Madras Sappers & Miners (after " +
+      "whom it is named) to serve the British Cantonment + residents " +
+      "of Malleswaram. Today an amenity / heritage water body managed " +
+      "by BBMP.",
+    polygon_path: "/geojson/rich-bodies/sankey.geojson",
+    buffer_path: "/geojson/rich-bodies/sankey-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). NGT Forward " +
+      "Foundation regime (OA 222/2014) applies (75 m / 50 m / 30 m " +
+      "buffers); 1 km halo is the cohort-standard editorial radius.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/sankey-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/sankey-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/sankey-overture-buildings.json",
+      water_trend: "/data/rich-bodies/sankey-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/sankey-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1882,
+        label:
+          "Constructed by Col. Richard Hieram Sankey, Madras Sappers " +
+          "& Miners, as a drinking-water tank for the British " +
+          "Cantonment and Malleswaram residents.",
+        label_short: "Constructed (Col. Sankey)",
+      },
+      {
+        year: 2014,
+        label:
+          "Friends of Lakes Karnataka HC PIL against BBMP plans to " +
+          "route a sewage trunk through Sankey's bund; court stays " +
+          "the routing, BBMP reroutes around the body.",
+        label_short: "Sewage-trunk PIL win",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) extends the " +
+          "75 m buffer regime to all BBMP lakes including Sankey.",
+        label_short: "NGT 75 m buffer order",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2019,
+        label:
+          "BBMP walking-track and amenity refresh; bird census " +
+          "documents pelicans, herons and migratory ducks despite " +
+          "the small surface area.",
+        label_short: "Amenity refresh + bird census",
+      },
+    ],
+    status_badges: [
+      { label: "Colonial-era heritage (1882)", tone: "emerald" },
+      { label: "BBMP managed", tone: "sky" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 6030715",
+          note: "OSM mappers traced the visible water surface; ~12.5 ha. No BBMP gazetted GIS layer.",
+          link: "https://www.openstreetmap.org/relation/6030715",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers Vyalikaval, Sadashivnagar, Malleswaram, Palace Grounds.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Sankey is small (~12.5 ha). JRC 30 m water classification has only ~140 pixels of body - per-year area readings are noisier than for the larger lakes in this cohort.",
+      ],
+    },
+  },
+  yelahanka: {
+    id: "yelahanka",
+    osm_id: 10179602,
+    name: "Yelahanka Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 10179602; " +
+      "1 outer ring + 3 inner-ring islands). Yelahanka is the " +
+      "largest surviving north-Bengaluru kere at ~96 ha (OSM " +
+      "extent). Yelahanka itself is Kempegowda's ancestral home - " +
+      "Kempegowda I and his lineage (Yelahanka Nadaprabhus) " +
+      "originated here. BBMP + Karnataka Forest Department " +
+      "co-manage; bird-sanctuary attention.",
+    polygon_path: "/geojson/rich-bodies/yelahanka.geojson",
+    buffer_path: "/geojson/rich-bodies/yelahanka-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). General NGT " +
+      "Forward Foundation regime applies (75 m / 50 m / 30 m); the " +
+      "1 km halo is the cohort-standard editorial radius.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/yelahanka-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/yelahanka-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/yelahanka-overture-buildings.json",
+      water_trend: "/data/rich-bodies/yelahanka-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/yelahanka-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) extends the " +
+          "75 m / 50 m / 30 m buffer regime to all BBMP lakes " +
+          "including Yelahanka.",
+        label_short: "NGT 75 m buffer order",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2020,
+        label:
+          "Yelahanka block's CGWB GEC stage-of-development crosses " +
+          "into Over-Exploited territory at 140% draft-vs-recharge; " +
+          "Yelahanka named as its own assessment unit (carved out " +
+          "from Bangalore (North)).",
+        label_short: "Yelahanka block GEC 140%",
+      },
+      {
+        year: 2022,
+        label:
+          "Bird sanctuary documentation: Sarus Crane, Greater " +
+          "Flamingo, Painted Stork sightings; Forest Department " +
+          "and citizen groups petition for stronger protection.",
+        label_short: "Bird sanctuary docs",
+      },
+      {
+        year: 2024,
+        label:
+          "CGWB GEC 2024 records Yelahanka block at 260% (draft / " +
+          "recharge) - the most over-extracted unit in the Bangalore " +
+          "Urban district. The lake itself is a critical recharge " +
+          "asset for the surrounding aquifer.",
+        label_short: "260% over-extracted block headliner",
+      },
+    ],
+    status_badges: [
+      { label: "Largest north-Bengaluru kere", tone: "sky" },
+      { label: "Bird sanctuary attention", tone: "emerald" },
+      { label: "Over-exploited block (260% in 2024)", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 10179602",
+          note: "OSM mappers traced the visible water surface; ~96 ha across 1 outer ring + 3 inner-ring islands. No BBMP gazetted GIS layer; Karnataka Forest Department has internal mapping but does not publish it.",
+          link: "https://www.openstreetmap.org/relation/10179602",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers Yelahanka New Town, Jakkur, the air-force station perimeter, and the Yelahanka Satellite Town development pressure.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Yelahanka the lake is hydrologically a recharge asset for the over-exploited Yelahanka aquifer block (CGWB GEC 260% in 2024 per the round-11 extract). The lake's surface health is therefore inseparable from the block's groundwater story; the panel surfaces the block context explicitly.",
+      ],
+    },
+  },
+  kempambudhi: {
+    id: "kempambudhi",
+    osm_id: 38047206,
+    name: "Kempambudhi Kere",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 38047206). " +
+      "Kempambudhi is the family-deity tank of Kempegowda I, " +
+      "founder of Bengaluru (~1550s). At ~7 ha (OSM extent) it is " +
+      "a small fraction of its historical footprint; 19th-century " +
+      "surveys and Harini Nagendra's Nature in the City (OUP 2016) " +
+      "place its original extent at several multiples of the " +
+      "present surface. Operationally a sewage-receiving body " +
+      "today; heritage value remains.",
+    polygon_path: "/geojson/rich-bodies/kempambudhi.geojson",
+    buffer_path: "/geojson/rich-bodies/kempambudhi-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). General NGT " +
+      "Forward Foundation regime applies (75 m / 50 m / 30 m); " +
+      "1 km halo is the cohort-standard editorial radius.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/kempambudhi-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/kempambudhi-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/kempambudhi-overture-buildings.json",
+      water_trend: "/data/rich-bodies/kempambudhi-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/kempambudhi-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1550,
+        label:
+          "Kempambudhi excavated by Kempegowda I as his family-deity " +
+          "tank, as Bengaluru is being founded. Among the earliest " +
+          "Kempegowda-era kere along with Dharmambudhi.",
+        label_short: "Excavated by Kempegowda I",
+      },
+      {
+        year: 2010,
+        label:
+          "INTACH Bengaluru documents Kempambudhi's degradation: " +
+          "sewage inflow from the surrounding old-Bengaluru lanes, " +
+          "shrinking footprint, lost storm-drain connections.",
+        label_short: "INTACH degradation report",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) extends the " +
+          "75 m buffer regime to all BBMP lakes including " +
+          "Kempambudhi.",
+        label_short: "NGT 75 m buffer order",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2019,
+        label:
+          "BBMP heritage-restoration round; bund stones reset, " +
+          "INTACH guides interpretive signage explaining " +
+          "Kempegowda lineage.",
+        label_short: "Heritage restoration round",
+      },
+    ],
+    status_badges: [
+      { label: "Kempegowda family tank (~1550)", tone: "emerald" },
+      { label: "BBMP managed", tone: "sky" },
+      { label: "Severely reduced (Nagendra OUP 2016)", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap way 38047206",
+          note: "OSM mappers traced the present visible water surface; ~7 ha. The historical extent (per 19th-century survey records and Nagendra 2016) was several multiples of this; the gap is conversion-already-happened over four centuries, not a measurement artefact.",
+          link: "https://www.openstreetmap.org/way/38047206",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers Chamarajpet, Gavipuram, Basavanagudi, Kempegowda's pete (old city core).",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Kempambudhi at ~7 ha is the smallest body in the Bangalore rich-data cohort. JRC 30 m water pixels number ~80; per-year area readings are very noisy, treat as directional only.",
+        "Modern Kempambudhi is operationally a sewage-receiving body; JRC 'water' classification captures that inflow, not lake-health.",
+      ],
+    },
+  },
+  hesaraghatta: {
+    id: "hesaraghatta",
+    osm_id: 41662659,
+    name: "Hesaraghatta Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 41662659). " +
+      "Hesaraghatta is the historical BWSSB drinking-water " +
+      "reservoir built in 1894 by the Madras Engineering Group on " +
+      "the Arkavathy river; supplied Bengaluru's first piped water " +
+      "and predates Tippegondanahalli (1932) and the Cauvery " +
+      "stages (1974 onwards). At ~600 ha (OSM extent at full pool) " +
+      "it is the largest body in this cohort. Today operationally " +
+      "near-dry: upstream urbanisation and a collapsing Arkavathy " +
+      "catchment have ended its role as a drinking source.",
+    polygon_path: "/geojson/rich-bodies/hesaraghatta.geojson",
+    buffer_path: "/geojson/rich-bodies/hesaraghatta-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). General NGT " +
+      "Forward Foundation regime applies; 1 km halo is the " +
+      "cohort-standard editorial radius.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/hesaraghatta-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/hesaraghatta-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/hesaraghatta-overture-buildings.json",
+      water_trend: "/data/rich-bodies/hesaraghatta-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/hesaraghatta-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1894,
+        label:
+          "Constructed by the Madras Engineering Group on the " +
+          "Arkavathy river to supply Bengaluru's first piped water " +
+          "system; remains the city's sole drinking source until " +
+          "Tippegondanahalli (1932) and the Cauvery stages " +
+          "(1974+).",
+        label_short: "Constructed (Bengaluru's first piped water)",
+      },
+      {
+        year: 1932,
+        label:
+          "Tippegondanahalli reservoir downstream commissioned; " +
+          "Hesaraghatta's share of city supply begins to fall as " +
+          "the Cauvery push begins.",
+        label_short: "TG Halli commissioning shifts supply",
+      },
+      {
+        year: 2010,
+        label:
+          "Hesaraghatta documented as near-dry for the first time " +
+          "after a sequence of weak monsoons and collapsed " +
+          "Arkavathy catchment recharge. BWSSB formally relegates " +
+          "it to a back-up source.",
+        label_short: "Near-dry; back-up status",
+      },
+      {
+        year: 2021,
+        label:
+          "Karnataka government proposal to develop a tourism / " +
+          "film-city zone on the Hesaraghatta grasslands; civil " +
+          "society and conservationists push back citing the " +
+          "lesser-florican grassland habitat and the Arkavathy " +
+          "recharge function.",
+        label_short: "Tourism / film-city pushback",
+      },
+      {
+        year: 2024,
+        label:
+          "Karnataka HC and citizen petitions on grassland " +
+          "conservation continue; CGWB Hesaraghatta Piezometer " +
+          "monitors the surrounding aquifer.",
+        label_short: "HC conservation hearings ongoing",
+      },
+    ],
+    status_badges: [
+      { label: "BWSSB historical reservoir (1894)", tone: "emerald" },
+      { label: "Near-dry / back-up status", tone: "amber" },
+      { label: "Hesaraghatta grassland conservation", tone: "emerald" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary (full-pool extent)",
+          source: "OpenStreetMap way 41662659",
+          note: "OSM mappers traced the historical full-pool extent (~600 ha). The lake has been near-dry for most of the past 15 years; satellite imagery for any modern year will show a much smaller wet surface inside this polygon.",
+          link: "https://www.openstreetmap.org/way/41662659",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers Hesaraghatta grasslands, the CGWB Piezometer station, the Doddabettahalli village belt.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "The OSM polygon is full-pool extent. The 'water surface in body' reading will look very low for any modern year - this is the lake's actual operational state (near-dry), not an encroachment or measurement artefact.",
+        "The Hesaraghatta CGWB Piezometer is logged in the round-7 CGWB station file (`bangalore-cgwb-stations.json`). Click-through cross-reference would be a nice follow-up wiring task.",
+      ],
+    },
+  },
   perumbakkam: {
     id: "perumbakkam",
     osm_id: 30424450,
