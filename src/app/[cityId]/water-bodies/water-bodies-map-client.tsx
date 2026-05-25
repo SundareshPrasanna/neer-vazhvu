@@ -316,6 +316,16 @@ export default function WaterBodiesMapClient({
                   return next;
                 })
               }
+              // Bengaluru's V0 data layer is OSM polygons + tabular
+              // lost-kere only - no census-to-OSM polygon spatial join
+              // yet, so the three census_* legend entries would mislead
+              // (no feature on the map is coloured by them). Filter
+              // them out. Chennai/Madurai default to the full legend.
+              visibleCategoryIds={
+                cityId === "bangalore"
+                  ? ["existing", "fully_lost", "severely_reduced", "encroached"]
+                  : undefined
+              }
             />
           </div>
 

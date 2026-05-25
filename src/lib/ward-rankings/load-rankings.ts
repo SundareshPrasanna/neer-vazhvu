@@ -76,6 +76,7 @@ export interface WardRankingsBundle {
 export function loadWardRankings(cityId: string): WardRankingsBundle | null {
   if (cityId === "madurai") return loadMaduraiRankings();
   if (cityId === "chennai") return loadChennaiRankings();
+  if (cityId === "bangalore") return loadBangaloreRankings();
   return null;
 }
 
@@ -320,6 +321,112 @@ function loadMaduraiRankings(): WardRankingsBundle {
     sourceLabel: `Pre-baked ${maduraiCache.algorithm_version} composite from public/data/ward-risk-madurai.json (groundwater depth, water-body density, water-body health)`,
     // Madurai stores risk where lower = better; the table sorts the
     // composite column ascending by default which matches "best first".
+    compositeScoreLowerIsBetter: true,
+  };
+}
+
+// ── Bangalore: read pre-baked ward-risk-bangalore.json ────────────────
+//
+// V0 methodology (will refine as IISc 65 stress wards + per-ward
+// groundwater interpolation land):
+//   - wb_density_per_sqkm: count of OSM water-body centroids inside
+//     each ward polygon / ward area (computed offline by
+//     scripts/compute-bangalore-ward-risk.py)
+//   - wb_health_score: 100 if ward contains a named flagship kere
+//     (Bellandur, Halsoor, Hesaraghatta, Sankey, etc.); else 50
+//   - gw_depth_m: NULL (no per-ward groundwater yet for Bengaluru)
+//   - composite_score weighted: pop_density (+0.5) - wb_density (-0.3)
+//     - wb_health (-0.2); higher composite = worse stress
+//   - grade by quintile of composite_score
+
+interface BangaloreWardRisk {
+  ward_number: number;
+  ward_name: string;
+  zone: string;
+  composite_score: number;
+  grade: Grade;
+  gw_depth_m: number | null;
+  wb_density_per_sqkm: number | null;
+  wb_health_score: number | null;
+}
+
+interface BangaloreWardRiskFile {
+  algorithm_version: string;
+  weights: Record<string, number>;
+  wards: BangaloreWardRisk[];
+}
+
+let bangaloreCache: BangaloreWardRiskFile | null = null;
+
+function loadBangaloreRankings(): WardRankingsBundle {
+  if (!bangaloreCache) {
+    const path = resolve(
+      process.cwd(),
+      "public/data/ward-risk-bangalore.json",
+    );
+    bangaloreCache = JSON.parse(
+      readFileSync(path, "utf-8"),
+    ) as BangaloreWardRiskFile;
+  }
+  const localities = loadLocalitiesByWard("bangalore");
+
+  // composite_score: higher = worse stress (same convention as Madurai)
+  // Sort ascending so best-ranked wards land at the top of the table.
+  const sorted = [...bangaloreCache.wards].sort(
+    (a, b) => a.composite_score - b.composite_score,
+  );
+  const total = sorted.length;
+
+  const rows: WardRankingRow[] = sorted.map((w, idx) => {
+    const rank = idx + 1;
+    const percentile = total > 1 ? ((total - rank) / (total - 1)) * 100 : 50;
+    return {
+      wardNumber: w.ward_number,
+      wardName: w.ward_name || `Ward ${w.ward_number}`,
+      localities: localities.get(w.ward_number) ?? [],
+      zone: w.zone,
+      grade: w.grade,
+      compositeScore: w.composite_score,
+      rank,
+      totalWards: total,
+      percentile,
+      metricColumns: [
+        {
+          key: "wb_density_per_sqkm",
+          label: "Water-body density",
+          display:
+            w.wb_density_per_sqkm === null
+              ? "-"
+              : `${w.wb_density_per_sqkm.toFixed(2)} /km²`,
+          numeric: w.wb_density_per_sqkm,
+        },
+        {
+          key: "wb_health_score",
+          label: "Flagship-kere flag",
+          display:
+            w.wb_health_score === null
+              ? "-"
+              : w.wb_health_score >= 100
+                ? "Flagship"
+                : "—",
+          numeric: w.wb_health_score,
+        },
+        {
+          key: "gw_depth_m",
+          label: "Groundwater depth",
+          display: w.gw_depth_m === null ? "-" : `${w.gw_depth_m.toFixed(1)} m`,
+          numeric: w.gw_depth_m,
+        },
+      ],
+    };
+  });
+
+  return {
+    cityId: "bangalore",
+    rows,
+    gradeCounts: countsByGrade(rows),
+    zones: distinctZones(rows),
+    sourceLabel: `Pre-baked ${bangaloreCache.algorithm_version} composite from public/data/ward-risk-bangalore.json (population density, OSM water-body density per ward, flagship-kere flag). Per-ward groundwater depth + IISc 65 stress-ward overlay are roadmap follow-ups.`,
     compositeScoreLowerIsBetter: true,
   };
 }
