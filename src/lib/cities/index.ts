@@ -45,8 +45,36 @@ export function listEnabledPlaces(): PlaceConfig[] {
  *  (parsePath / rewriteNavHref) so that navigation to /<disabled-city>/*
  *  still resolves to the correct city instead of falling back to Chennai.
  *  User-facing surfaces (city switcher, sitemap, nav-rewrite targets)
- *  should keep using listEnabledPlaces(); only the URL parser needs to
- *  recognise disabled cities. */
+ *  should keep using listVisiblePlaces() or listEnabledPlaces(); only
+ *  the URL parser needs to recognise disabled cities. */
 export function listAllPlaces(): PlaceConfig[] {
   return Object.values(REGISTRY);
+}
+
+/** Enabled cities + any cities listed in NEXT_PUBLIC_PREVIEW_CITIES.
+ *  Use this for surfaces that should expose preview cities during
+ *  local/branch-deploy development (city switcher, sitemap if you want
+ *  preview URLs indexed by Vercel's bot, etc.) but stay hidden in
+ *  production unless NEXT_PUBLIC_PREVIEW_CITIES is set on that
+ *  deployment.
+ *
+ *  Production behaviour: NEXT_PUBLIC_PREVIEW_CITIES is unset, so this
+ *  returns the same set as listEnabledPlaces().
+ *
+ *  Branch deploy / local: set NEXT_PUBLIC_PREVIEW_CITIES=bangalore in
+ *  .env.local or the Vercel branch-env, and Bangalore (still
+ *  enabled=false) becomes visible in switchers/nav. The layout guard
+ *  in [cityId]/layout.tsx ALSO checks this env var, so the route
+ *  resolves end-to-end. */
+export function listVisiblePlaces(): PlaceConfig[] {
+  const enabled = Object.values(REGISTRY).filter((p) => p.enabled !== false);
+  const previewRaw = process.env.NEXT_PUBLIC_PREVIEW_CITIES;
+  if (!previewRaw) return enabled;
+  const previewIds = new Set(
+    previewRaw.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean),
+  );
+  const previewExtras = Object.values(REGISTRY).filter(
+    (p) => previewIds.has(p.cityId) && p.enabled === false,
+  );
+  return [...enabled, ...previewExtras];
 }

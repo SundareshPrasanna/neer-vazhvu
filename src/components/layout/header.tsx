@@ -8,13 +8,14 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/context";
 import { LanguageToggle } from "./language-toggle";
 import { CitySwitcher } from "./city-switcher";
-import { parsePath, rewriteNavHref } from "@/lib/cities/routing";
+import { parsePath, rewriteNavHref, isFeatureSupportedForCity } from "@/lib/cities/routing";
 
 const TOP_NAV = [
   { href: "/origins", key: "nav.story" },
   { href: "/",        key: "nav.dashboard" },
   { href: "/my-ward", key: "nav.my_ward" },
   { href: "/facts",   key: "nav.facts" },
+  { href: "/tanker",  key: "nav.tanker" },
 ] as const;
 
 const EXPLORE_ITEMS = [
@@ -137,7 +138,7 @@ function ExploreDropdown({
 
       {open && (
         <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-50">
-          {EXPLORE_ITEMS.map((item) => {
+          {EXPLORE_ITEMS.filter((item) => isFeatureSupportedForCity(item.href, cityId)).map((item) => {
             const cityHref = rewriteNavHref(item.href, cityId);
             return (
               <Link
@@ -236,14 +237,14 @@ export function Header() {
 
           {/* Desktop nav */}
           <nav className="hidden sm:flex items-center gap-2">
-            {TOP_NAV.map((item) => {
+            {TOP_NAV.filter((item) => isFeatureSupportedForCity(item.href, cityId)).map((item) => {
               const cityHref = rewriteNavHref(item.href, cityId);
               return (
                 <NavLink key={item.href} href={cityHref} label={t(item.key)} active={pathname === cityHref} />
               );
             })}
             <ExploreDropdown pathname={pathname} cityId={cityId} t={t} />
-            {AFTER_NAV.map((item) => {
+            {AFTER_NAV.filter((item) => isFeatureSupportedForCity(item.href, cityId)).map((item) => {
               const cityHref = rewriteNavHref(item.href, cityId);
               return (
                 <NavLink key={item.href} href={cityHref} label={t(item.key)} active={pathname === cityHref} />
@@ -282,7 +283,7 @@ export function Header() {
       {menuOpen && (
         <nav className="sm:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[70vh] overflow-y-auto">
           <div className="max-w-7xl mx-auto px-4 py-2 space-y-1">
-            {TOP_NAV.map((item) => {
+            {TOP_NAV.filter((item) => isFeatureSupportedForCity(item.href, cityId)).map((item) => {
               const cityHref = rewriteNavHref(item.href, cityId);
               return (
                 <Link
@@ -318,7 +319,7 @@ export function Header() {
             </button>
             {mobileExploreOpen && (
               <div className="pl-4 space-y-1">
-                {EXPLORE_ITEMS.map((item) => {
+                {EXPLORE_ITEMS.filter((item) => isFeatureSupportedForCity(item.href, cityId)).map((item) => {
                   const cityHref = rewriteNavHref(item.href, cityId);
                   return (
                     <Link
@@ -339,7 +340,7 @@ export function Header() {
               </div>
             )}
 
-            {AFTER_NAV.map((item) => {
+            {AFTER_NAV.filter((item) => isFeatureSupportedForCity(item.href, cityId)).map((item) => {
               const cityHref = rewriteNavHref(item.href, cityId);
               return (
                 <Link

@@ -118,13 +118,17 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
             groundwater shadow market
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-            Unlike Chennai (impounded reservoirs) or Madurai (gravity-fed
-            from Mullaperiyar), {cityDisplayName} is a fundamentally{" "}
-            <span className="font-semibold">pumped</span> city. Its water
-            chain starts at the Cauvery River and climbs ~
-            {transmissionLiftM ?? 500} m through three pump stations to
-            reach BBMP - which is why the next four numbers are so
-            consequential.
+            {cityDisplayName} is a fundamentally{" "}
+            <span className="font-semibold">pumped</span> city. There is no
+            river running through it - the city sits across the watershed
+            divide of three small valleys (Vrishabhavathi, Koramangala-
+            Challaghatta, Hebbal). Its water chain starts ~
+            {transmissionKm ?? 95} km away at the Cauvery and climbs ~
+            {transmissionLiftM ?? 500} m through three pump stations
+            (TK Halli {String.fromCharCode(0x2192)} Harohalli {String.fromCharCode(0x2192)} Tataguni) to reach the
+            BBMP service area. That structural choice - made because Kempe
+            Gowda&apos;s 1537 kere network could not scale to a 14M-person
+            city - is what makes the next four numbers consequential.
           </p>
         </div>
 
@@ -173,7 +177,7 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
             <Callout
               icon="V"
               title={`Stage V: ${stageVDesign} MLD design, ${stageVActual} MLD delivered`}
-              body="Commissioned 16 Oct 2024 at TK Halli to cover the 110 newly-added villages. As of Feb 2026 it's running at roughly half-capacity - the 'expansion that only half-delivers' is the live Bangalore narrative."
+              body="Commissioned 16 Oct 2024 at TK Halli to cover the 110 newly-added villages. As of Feb 2026 it's running at roughly half-capacity - the 'expansion that only half-delivers' is the live Bengaluru narrative."
             />
           )}
           {energyPct && (

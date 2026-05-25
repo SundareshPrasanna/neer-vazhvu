@@ -8,20 +8,25 @@ interface LayoutProps {
 }
 
 /**
- * Server-side bypass for the `enabled` route guard. When the PREVIEW_CITIES
- * env var contains the cityId (comma-separated), the layout renders even
- * though config.enabled === false. Lets us develop a not-yet-launched city's
- * pages on preview/branch deploys without flipping the canonical enabled flag.
+ * Server-side bypass for the `enabled` route guard. Reads either env var
+ * (NEXT_PUBLIC_PREVIEW_CITIES preferred; legacy PREVIEW_CITIES still
+ * honoured). The NEXT_PUBLIC_ one is required for the client-side city
+ * switcher + nav to also surface the preview city - so use that on
+ * branch deploys.
  *
- * - Local dev:        PREVIEW_CITIES=bangalore npm run dev
- * - Vercel preview:   set PREVIEW_CITIES=bangalore on the branch deploy env
- * - Production:       leave the var unset (default behaviour - 404 disabled cities)
+ *   Local dev:       NEXT_PUBLIC_PREVIEW_CITIES=bangalore npm run dev
+ *   Vercel branch:   set NEXT_PUBLIC_PREVIEW_CITIES=bangalore env
+ *   Production:      leave the vars unset (404 disabled cities)
  *
- * Not NEXT_PUBLIC_ on purpose: keep this server-side so a malicious client
- * can't force-render a disabled city by tampering with bundled values.
+ * Using NEXT_PUBLIC_ does leak the city-id list into the bundle - that's
+ * fine because the layout guard is the actual gate; this var just tells
+ * the UI to surface the link.
  */
 function isPreviewCity(cityId: string): boolean {
-  const raw = process.env.PREVIEW_CITIES;
+  const raw =
+    process.env.NEXT_PUBLIC_PREVIEW_CITIES ??
+    process.env.PREVIEW_CITIES ??
+    "";
   if (!raw) return false;
   return raw
     .split(",")

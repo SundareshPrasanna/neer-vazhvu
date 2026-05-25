@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { listEnabledPlaces } from "@/lib/cities";
+import { listVisiblePlaces } from "@/lib/cities";
 import {
   FEATURE_AVAILABILITY,
   buildCityHref,
@@ -17,7 +17,7 @@ export function CitySwitcher() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const places = listEnabledPlaces();
+  const places = listVisiblePlaces();
   const { cityId: currentCityId, feature } = parsePath(pathname, knownCityIds());
   const currentPlace = places.find((p) => p.cityId === currentCityId) ?? places[0];
 

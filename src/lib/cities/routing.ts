@@ -105,6 +105,19 @@ export function buildCityHref(targetCityId: string, feature: string): string {
 }
 
 /**
+ * Returns true iff the given Chennai-flat nav href ("/facts", "/flood-risk"
+ * etc.) is a feature this city has built. Used by the top-nav to hide nav
+ * items that would otherwise silently redirect to city home and show as
+ * "active" simultaneously with Dashboard (the multi-highlight bug).
+ */
+export function isFeatureSupportedForCity(navHref: string, cityId: string): boolean {
+  const feature = navHref === "/" ? "" : navHref.replace(/^\//, "");
+  const supported = FEATURE_AVAILABILITY[cityId];
+  if (!supported) return true; // unknown city, fall back to permissive
+  return supported.has(feature);
+}
+
+/**
  * Take a Chennai-flat nav href like "/groundwater" or "/" and rewrite it
  * for the city the user is currently on. Used by the top-nav so that
  * clicking "Dashboard" while browsing Madurai stays on Madurai.
