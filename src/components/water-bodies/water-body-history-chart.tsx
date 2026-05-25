@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -25,6 +25,12 @@ interface HistoryPoint {
 
 interface WaterBodyHistoryChartProps {
   osmId: number;
+  /** Notifies the parent whether this body has enough satellite-history
+   *  data to render a meaningful chart. Lets the parent hide the surrounding
+   *  disclosure for bodies (e.g. marsh wetlands, freshly onboarded bodies)
+   *  that aren't in the GEE Phase-1 cohort so users don't see a control
+   *  that yields nothing when clicked. */
+  onAvailabilityChange?: (available: boolean) => void;
 }
 
 function parseDate(value: string): Date | null {
@@ -35,7 +41,10 @@ function parseDate(value: string): Date | null {
   return new Date(parts[0], parts[1] - 1, parts[2] ?? 1);
 }
 
-export function WaterBodyHistoryChart({ osmId }: WaterBodyHistoryChartProps) {
+export function WaterBodyHistoryChart({
+  osmId,
+  onAvailabilityChange,
+}: WaterBodyHistoryChartProps) {
   const { t, language } = useLanguage();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -47,6 +56,16 @@ export function WaterBodyHistoryChart({ osmId }: WaterBodyHistoryChartProps) {
   const [history, setHistory] = useState<HistoryPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const onAvailabilityChangeRef = useRef(onAvailabilityChange);
+  useEffect(() => {
+    onAvailabilityChangeRef.current = onAvailabilityChange;
+  });
+  useEffect(() => {
+    if (loading || error) return;
+    const has = history.filter((p) => p.observedAreaHa !== null).length >= 2;
+    onAvailabilityChangeRef.current?.(has);
+  }, [loading, error, history]);
 
   useEffect(() => {
     const controller = new AbortController();
