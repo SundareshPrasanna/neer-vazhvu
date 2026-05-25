@@ -753,6 +753,296 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       ],
     },
   },
+  madivala: {
+    id: "madivala",
+    osm_id: 2310417,
+    name: "Madivala Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 2310417). " +
+      "Madivala is south Bengaluru's largest surviving kere at ~83 ha " +
+      "(OSM extent) and the second-largest BBMP lake after Bellandur. " +
+      "Owned and maintained jointly by BBMP and the Karnataka Forest " +
+      "Department (the Madivala Tank Bed is a notified protected area " +
+      "with bird sanctuary status). Neither agency publishes a gazetted " +
+      "GIS layer; the OSM polygon traces the visible water surface.",
+    polygon_path: "/geojson/rich-bodies/madivala.geojson",
+    buffer_path: "/geojson/rich-bodies/madivala-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). The general NGT " +
+      "Forward Foundation regime (OA 222/2014) covers all Bengaluru " +
+      "kere with a 75 m no-construction zone around the lake plus 50 m " +
+      "around rajakaluves and 30 m around secondary drains; the 1 km " +
+      "halo is the cohort-standard editorial radius, not the legal " +
+      "buffer.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/madivala-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/madivala-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/madivala-overture-buildings.json",
+      water_trend: "/data/rich-bodies/madivala-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/madivala-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2010,
+        label:
+          "Karnataka Forest Department designates the Madivala Tank Bed " +
+          "as a protected zone with bird-sanctuary status; pelicans, " +
+          "spot-billed ducks, and migratory waterfowl recorded.",
+        label_short: "Bird sanctuary status",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) extends the " +
+          "75 m / 50 m / 30 m buffer regime to all BBMP lakes including " +
+          "Madivala; Hosur Road widening flagged for buffer compliance.",
+        label_short: "NGT 75 m buffer extends to Madivala",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2018,
+        label:
+          "BBMP-led desilting and bund-restoration round; boating " +
+          "facility reopened under Karnataka Tourism after a period " +
+          "of closure.",
+        label_short: "Desilting + boating reopens",
+      },
+      {
+        year: 2023,
+        label:
+          "Citizen group MapleSeed and Forest Department report renewed " +
+          "sewage inflow from the Bommanahalli storm-drain network; " +
+          "BBMP commits to interception works.",
+        label_short: "Sewage inflow flagged",
+      },
+    ],
+    status_badges: [
+      { label: "Madivala Tank Bed bird sanctuary", tone: "emerald" },
+      { label: "BBMP + Karnataka Forest Dept", tone: "sky" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 2310417",
+          note: "OSM mappers traced the visible water surface; ~83 ha. The Karnataka Forest Department gazettes the Tank Bed area but does not publish a GIS layer; BBMP holds operational data but not a public polygon.",
+          link: "https://www.openstreetmap.org/relation/2310417",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard 1 km radius. Chosen to expose BTM Layout, HSR Layout, Bommanahalli, Silk Board and the Hosur Road / NICE Ring Road infrastructure that crowd Madivala from three sides.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Madivala is less polluted than Bellandur or Varthur but is on a downstream branch of the same K&C valley sewer-shed; biennial KSPCB grab samples have flagged fecal coliform exceedances.",
+      ],
+    },
+  },
+  ulsoor: {
+    id: "ulsoor",
+    osm_id: 1857615,
+    name: "Ulsoor Lake (Halasuru)",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 1857615). " +
+      "Ulsoor (Halasuru in Kannada) is the heritage Cantonment-era " +
+      "lake of east Bengaluru at ~38 ha (OSM extent). Attributed in " +
+      "local history to Kempegowda II (~1550s), formalised under the " +
+      "1809-1811 British Cantonment when the garrison was laid out " +
+      "around it. Owned by BBMP today; the Indian Army's Madras " +
+      "Engineer Group bounds its eastern edge.",
+    polygon_path: "/geojson/rich-bodies/ulsoor.geojson",
+    buffer_path: "/geojson/rich-bodies/ulsoor-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). General NGT " +
+      "Forward Foundation regime (OA 222/2014) applies (75 m / 50 m " +
+      "/ 30 m buffers); 1 km halo is the cohort-standard editorial " +
+      "radius for visualising the dense Cantonment-and-MG-Road urban " +
+      "context.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/ulsoor-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/ulsoor-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/ulsoor-overture-buildings.json",
+      water_trend: "/data/rich-bodies/ulsoor-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/ulsoor-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1811,
+        label:
+          "British Cantonment laid out around the existing Kempegowda-era " +
+          "Halasuru tank; the lake becomes the visual anchor for the " +
+          "garrison's parade and residential layout.",
+        label_short: "Cantonment laid out around lake",
+      },
+      {
+        year: 2008,
+        label:
+          "Algal bloom and mass fish-kill events highlight the impact of " +
+          "Cantonment Drain sewage inflow; BBMP commits to interception.",
+        label_short: "Algal bloom + fish kill",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) applies the " +
+          "75 m / 50 m / 30 m buffer regime to all BBMP lakes " +
+          "including Ulsoor.",
+        label_short: "NGT 75 m buffer order",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2019,
+        label:
+          "Desilting and aerator installation round under BBMP and " +
+          "Karnataka Tourism; surface algae visibly reduced for the " +
+          "following 18 months.",
+        label_short: "Desilting + aerators installed",
+      },
+      {
+        year: 2023,
+        label:
+          "Algal recurrence flagged by citizen groups; BBMP " +
+          "commissions a fresh water-quality audit and reaffirms " +
+          "interception commitments.",
+        label_short: "Algal recurrence; quality audit",
+      },
+    ],
+    status_badges: [
+      { label: "Cantonment-era heritage lake", tone: "emerald" },
+      { label: "BBMP managed", tone: "sky" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 1857615",
+          note: "OSM mappers traced the visible water surface; ~38 ha. The lake's pre-Cantonment 19th-century extent was larger; subsequent road, rail and Army-cantonment encroachments cut into the original perimeter and storm drains. No gazetted GIS layer is published by BBMP.",
+          link: "https://www.openstreetmap.org/relation/1857615",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. The 1 km ring covers the Cantonment grid, MG Road, Indiranagar's western edge, and the Madras Engineer Group cantonment to the east.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "The Indian Army cantonment occupies a large share of the 1 km halo to the east; built-fraction readings in the halo therefore mix dense military layout with civilian urban density.",
+      ],
+    },
+  },
+  hebbal: {
+    id: "hebbal",
+    osm_id: 8754543,
+    name: "Hebbal Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 8754543). " +
+      "Hebbal is the terminal lake of the Hebbal-Nagavara cascade in " +
+      "north Bengaluru at ~46 ha (OSM extent). Local history " +
+      "attributes the tank to a Kempegowda-era expansion; the " +
+      "post-JNNURM (2007 onwards) restoration is the better-documented " +
+      "modern chapter. BBMP-managed; carries Karnataka Forest " +
+      "Department bird-sanctuary designation.",
+    polygon_path: "/geojson/rich-bodies/hebbal.geojson",
+    buffer_path: "/geojson/rich-bodies/hebbal-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). General NGT " +
+      "Forward Foundation regime (OA 222/2014) applies (75 m / 50 m " +
+      "/ 30 m buffers); 1 km halo is the cohort-standard editorial " +
+      "radius.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/hebbal-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/hebbal-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/hebbal-overture-buildings.json",
+      water_trend: "/data/rich-bodies/hebbal-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/hebbal-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2007,
+        label:
+          "JNNURM-funded Hebbal restoration begins; weed clearing, bund " +
+          "reconstruction and a constructed wetland for inflow treatment.",
+        label_short: "JNNURM restoration",
+      },
+      {
+        year: 2010,
+        label:
+          "Karnataka Forest Department bird-sanctuary designation; " +
+          "Painted Stork, Greater Spotted Eagle and several waterfowl " +
+          "recorded as regular visitors.",
+        label_short: "Bird sanctuary designation",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) buffer regime " +
+          "extends to Hebbal; Manyata Tech Park and Bellary Road " +
+          "widening flagged for buffer compliance.",
+        label_short: "NGT 75 m buffer order",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2020,
+        label:
+          "BWSSB sewerage interception works upstream of Hebbal Valley " +
+          "advance under the JICA Phase-3 programme; treated effluent " +
+          "discharge to the cascade tightens.",
+        label_short: "JICA Phase-3 interception upstream",
+      },
+      {
+        year: 2024,
+        label:
+          "Post-monsoon water-quality dip flagged by citizen and " +
+          "Forest Department monitoring; aerator and floating-wetland " +
+          "additions planned.",
+        label_short: "Post-monsoon quality dip",
+      },
+    ],
+    status_badges: [
+      { label: "Hebbal-Nagavara cascade terminus", tone: "sky" },
+      { label: "Bird sanctuary status", tone: "emerald" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 8754543",
+          note: "OSM mappers traced the visible water surface; ~46 ha. BBMP and Karnataka Forest Department co-manage; neither publishes a gazetted GIS layer.",
+          link: "https://www.openstreetmap.org/relation/8754543",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers Manyata Tech Park, the Hebbal flyover triangle, Bellary Road's airport corridor and the surrounding Kempapura / Nagavara urban edge.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Hebbal's bund and weirs were reshaped under the 2007 JNNURM restoration; the OSM polygon reflects the post-restoration extent. Pre-restoration footprint comparisons (e.g. 1990 satellite imagery) should be read with that bund-engineering context in mind.",
+      ],
+    },
+  },
   perumbakkam: {
     id: "perumbakkam",
     osm_id: 30424450,
