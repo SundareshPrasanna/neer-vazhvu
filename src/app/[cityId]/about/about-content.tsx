@@ -14,6 +14,10 @@ const MaduraiPageDescriptions = dynamic(() =>
   import("./madurai-page-descriptions").then((mod) => mod.MaduraiPageDescriptions),
 );
 
+const BangalorePageDescriptions = dynamic(() =>
+  import("./bangalore-page-descriptions").then((mod) => mod.BangalorePageDescriptions),
+);
+
 /**
  * City-aware About page. Mirrors the section structure of Chennai's
  * src/app/about/about-content.tsx but with per-place content where the
@@ -140,6 +144,7 @@ export function CityAboutContent({
   const { t } = useLanguage();
   const cityName = config.displayName;
   const isMadurai = config.cityId === "madurai";
+  const isBangalore = config.cityId === "bangalore";
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -357,8 +362,11 @@ export function CityAboutContent({
             <MaduraiPageDescriptions cityId={config.cityId} cityName={cityName} />
           )}
 
+          {isBangalore && (
+            <BangalorePageDescriptions cityId={config.cityId} cityName={cityName} />
+          )}
 
-          {!isMadurai && (
+          {!isMadurai && !isBangalore && (
             <p className="text-slate-600 dark:text-slate-400">
               Per-page methodology documentation for {cityName} is pending. See the dedicated Chennai about page (<Link href="/about" className="text-blue-600 dark:text-blue-400 hover:underline">/about</Link>) for the canonical methodology pattern.
             </p>
