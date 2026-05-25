@@ -105,6 +105,15 @@ export const BANGALORE: CityConfig = {
       isPrimaryDrinkingSource: false,
     },
   ],
+  // Cascade reconstruction overlay (V1): 1,033 nodes / 1,053 edges /
+  // 43 river outlets, max depth 11, 79% high-confidence edges. Built
+  // via scripts/run_cascade.py with allow_multi_outflow=True to honour
+  // the historical feeder+surplus channel pattern on Bengaluru's ridge
+  // geometry. Top convergence is Doddajala Kere (degree_in=8) on the
+  // Hebbal cascade. Layer B curation (named cascades, NGO partners,
+  // atlas refs) queued for follow-up once WELL Labs Urban Water Balance
+  // and IISc kere chain inventories are joined.
+  hasCascadeOverlay: true,
   sourceNameAliases: {
     krs: 'krs',
     'krishna raja sagar': 'krs',
