@@ -638,6 +638,121 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       ],
     },
   },
+  varthur: {
+    id: "varthur",
+    osm_id: 19306126,
+    name: "Varthur Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 19306126). " +
+      "Varthur is the next lake downstream from Bellandur on the " +
+      "Koramangala-Challaghatta (K&C) valley cascade and receives " +
+      "Bellandur's outflow plus direct inflows from the Whitefield / " +
+      "Marathahalli catchment. ~155 ha (OSM extent). Owned by the " +
+      "Bangalore Development Authority; no gazetted GIS layer is " +
+      "published. From Varthur the cascade discharges east towards the " +
+      "Dakshina Pinakini basin.",
+    polygon_path: "/geojson/rich-bodies/varthur.geojson",
+    buffer_path: "/geojson/rich-bodies/varthur-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Same NGT Forward " +
+      "Foundation legal regime as Bellandur (OA 222/2014 et al.): " +
+      "75 m no-construction zone around the lake, 50 m around " +
+      "rajakaluves, 30 m around secondary drains. The 1 km halo is the " +
+      "cohort-standard editorial radius, not the legal buffer.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/varthur-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/varthur-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/varthur-overture-buildings.json",
+      water_trend: "/data/rich-bodies/varthur-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/varthur-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2015,
+        label:
+          "Bellandur foam crisis spills downstream into Varthur; " +
+          "Whitefield residents flag froth coming over the Sarjapur-" +
+          "Whitefield weir as a recurring annual event.",
+        label_short: "Foam crisis arrives from Bellandur",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) covers Varthur " +
+          "jointly with Bellandur: 75 m buffer around the lake, 50 m " +
+          "around rajakaluves, 30 m around secondary drains.",
+        label_short: "NGT 75 m buffer order",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2017,
+        label:
+          "Varthur Lake catches fire; surfactant foam ignites at the " +
+          "downstream weir. NGT Bellandur-Varthur monitoring committee " +
+          "(under retired Justice Santosh Hegde) is constituted.",
+        label_short: "Varthur fire; NGT committee",
+      },
+      {
+        year: 2018,
+        label:
+          "Continued foam and froth events through the year; KSPCB " +
+          "and BWSSB face NGT compliance pressure on sewage interception " +
+          "upstream of Varthur.",
+        label_short: "Foam events recur",
+      },
+      {
+        year: 2020,
+        label:
+          "BDA's Varthur restoration tender invites bids for desilting " +
+          "and weir reconstruction alongside the Bellandur work.",
+        label_short: "BDA restoration tender",
+      },
+      {
+        year: 2024,
+        label:
+          "Foam events recur post-monsoon; Whitefield Rising and " +
+          "citizen groups continue compliance monitoring with NGT.",
+        label_short: "Foam recurs; citizen monitoring",
+      },
+    ],
+    status_badges: [
+      { label: "K&C valley downstream of Bellandur", tone: "sky" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+      { label: "Foam + fire events recurring", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 19306126",
+          note: "OSM mappers traced the visible water surface; ~155 ha. The Bangalore Development Authority owns the lake but does not publish a gazetted GIS layer; KSPCB and BWSSB hold operational data but do not publish a boundary. IISc Centre for Sustainable Technologies (T.V. Ramachandra) has academic boundaries that we plan to integrate as a secondary source.",
+          link: "https://www.openstreetmap.org/relation/19306126",
+          licence: "ODbL",
+        },
+        {
+          label: "NGT 75 m legal buffer (not rendered)",
+          source: "NGT Forward Foundation v State of Karnataka (OA 222/2014)",
+          note: "Same legal regime as Bellandur. 75 m construction-free zone around the lake plus 50 m around rajakaluves and 30 m around secondary drains. Not rendered as a separate layer because the scale is illegible at the zoom needed to read the 1 km halo.",
+          link: "https://greentribunal.gov.in/",
+          licence: "Public order",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated. Same 1 km radius as the rest of the rich-data cohort. Chosen to expose Whitefield, Brookefield, Marathahalli, and the Prestige / Brigade / Embassy tech-park density that crowds Varthur from the west.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Varthur is a sewage-receiving body downstream of Bellandur. JRC 'any water' classification therefore captures sewage inflow as well as standing water; the 'water surface' percentage is not a health metric.",
+        "Because Varthur sits immediately downstream of Bellandur on the same cascade, foam and fire events at the two lakes are often described interchangeably in press coverage. They are distinct events at distinct weirs.",
+      ],
+    },
+  },
   perumbakkam: {
     id: "perumbakkam",
     osm_id: 30424450,
