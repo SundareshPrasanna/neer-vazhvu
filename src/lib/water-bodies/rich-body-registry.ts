@@ -1421,6 +1421,441 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       ],
     },
   },
+  agara: {
+    id: "agara",
+    osm_id: 8469370,
+    name: "Agara Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 8469370). " +
+      "Agara is an upstream node on the Koramangala-Challaghatta " +
+      "(K&C) valley cascade in south-east Bengaluru at ~27 ha (OSM " +
+      "extent). The lake sits on the HSR Layout / Bellandur edge and " +
+      "ultimately drains, via short surplus channels, toward Bellandur " +
+      "downstream. BBMP-managed; Friends of Agara Lake (FOAL) is the " +
+      "anchor citizen group.",
+    polygon_path: "/geojson/rich-bodies/agara.geojson",
+    buffer_path: "/geojson/rich-bodies/agara-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). NGT Forward " +
+      "Foundation regime (OA 222/2014) applies (75 m / 50 m / 30 m); " +
+      "1 km halo is the cohort-standard editorial radius.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/agara-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/agara-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/agara-overture-buildings.json",
+      water_trend: "/data/rich-bodies/agara-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/agara-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2010,
+        label:
+          "BDA-led survey documents severe encroachment + sewage " +
+          "inflow; Friends of Agara Lake (FOAL) constitutes itself " +
+          "to push restoration.",
+        label_short: "Encroachment documented; FOAL forms",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) extends the " +
+          "75 m buffer regime to all BBMP lakes including Agara.",
+        label_short: "NGT 75 m buffer order",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2018,
+        label:
+          "BDA + FOAL restoration round: desilting, bund repair, " +
+          "fencing of perimeter. Bird sightings (cormorants, " +
+          "spot-billed pelicans, painted storks) begin recovering.",
+        label_short: "BDA + FOAL restoration",
+      },
+      {
+        year: 2023,
+        label:
+          "Sewage inflow from HSR Layout drains continues to test " +
+          "Agara's water quality; BBMP commits to upstream " +
+          "interception.",
+        label_short: "Sewage pressure continues",
+      },
+    ],
+    status_badges: [
+      { label: "K&C cascade upstream of Bellandur", tone: "sky" },
+      { label: "FOAL citizen restoration", tone: "emerald" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 8469370",
+          note: "OSM mappers traced the visible water surface; ~27 ha. There is a second OSM polygon (way 124797587, ~20 ha) tagged 'Agara Lake' that maps a partial / older footprint - we use the larger relation as the canonical extent.",
+          link: "https://www.openstreetmap.org/relation/8469370",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers HSR Layout, Agara village, the Bellandur-feeding storm-drain corridor.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Agara is on the K&C cascade upstream of Bellandur; its surface 'water' classification includes urban runoff and partially-treated sewage that funnels through HSR's drains toward Bellandur. Not a health metric.",
+      ],
+    },
+  },
+  puttenahalli: {
+    id: "puttenahalli",
+    osm_id: 15989750,
+    name: "Puttenahalli Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 15989750). " +
+      "Puttenahalli is a small JP Nagar lake at ~8.5 ha (OSM extent) " +
+      "whose restoration is widely cited as the model for citizen-led " +
+      "lake rejuvenation in Bengaluru. The Puttenahalli Neighbourhood " +
+      "Lake Improvement Trust (PNLIT) signed one of Karnataka's first " +
+      "citizen-BBMP lake-maintenance MoUs in 2010.",
+    polygon_path: "/geojson/rich-bodies/puttenahalli.geojson",
+    buffer_path: "/geojson/rich-bodies/puttenahalli-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). NGT Forward " +
+      "Foundation regime applies; 1 km halo is cohort-standard.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/puttenahalli-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/puttenahalli-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/puttenahalli-overture-buildings.json",
+      water_trend: "/data/rich-bodies/puttenahalli-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/puttenahalli-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2010,
+        label:
+          "PNLIT signs an MoU with BBMP for lake maintenance and " +
+          "restoration - one of the earliest citizen-government " +
+          "lake partnerships in Karnataka.",
+        label_short: "PNLIT-BBMP MoU (model citizen restoration)",
+      },
+      {
+        year: 2012,
+        label:
+          "Constructed wetland inlet treatment and silt traps " +
+          "installed; sewage inflow from JP Nagar drains intercepted " +
+          "and partially treated before entering the lake.",
+        label_short: "Inlet wetland + silt traps",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order applies; PNLIT's existing " +
+          "maintenance regime already covers most compliance " +
+          "obligations.",
+        label_short: "NGT 75 m buffer order",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2020,
+        label:
+          "Bird census records >100 species over the rolling decade; " +
+          "Puttenahalli cited in academic literature on participatory " +
+          "urban-lake governance.",
+        label_short: "100+ bird species milestone",
+      },
+    ],
+    status_badges: [
+      { label: "PNLIT model restoration", tone: "emerald" },
+      { label: "BBMP-citizen MoU (2010)", tone: "emerald" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 15989750",
+          note: "OSM mappers traced the visible water surface; ~8.5 ha.",
+          link: "https://www.openstreetmap.org/relation/15989750",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers JP Nagar 7th Phase, Brigade Millennium, Banashankari edges.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Puttenahalli is small (~8.5 ha = ~95 JRC pixels). Per-year area readings carry meaningful pixel-noise; treat trends as directional rather than precise.",
+      ],
+    },
+  },
+  jakkur: {
+    id: "jakkur",
+    osm_id: 9321012,
+    name: "Jakkur Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 9321012). " +
+      "Jakkur is a ~50 ha (OSM extent) lake in north Bengaluru " +
+      "(Yelahanka-adjacent) restored under JNNURM with a 50 MLD " +
+      "polishing wetland that treats BWSSB STP discharge before it " +
+      "enters the lake. Widely cited as Bengaluru's model of an " +
+      "engineered-wetland urban lake.",
+    polygon_path: "/geojson/rich-bodies/jakkur.geojson",
+    buffer_path: "/geojson/rich-bodies/jakkur-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). NGT Forward " +
+      "Foundation regime applies; 1 km halo is cohort-standard.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/jakkur-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/jakkur-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/jakkur-overture-buildings.json",
+      water_trend: "/data/rich-bodies/jakkur-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/jakkur-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2008,
+        label:
+          "JNNURM-funded Jakkur restoration begins; BWSSB " +
+          "constructs a 10-MLD STP upstream + a polishing-wetland " +
+          "treatment train designed by ATREE / IISc CES " +
+          "(T.V. Ramachandra).",
+        label_short: "JNNURM restoration + STP + wetland",
+      },
+      {
+        year: 2011,
+        label:
+          "Polishing-wetland commissioned; treated effluent enters " +
+          "the lake; aquifer recharge measurably improves in the " +
+          "surrounding Jakkur-Yelahanka borewell network.",
+        label_short: "Polishing wetland online",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) applies. " +
+          "Jakkur becomes a reference example in NGT proceedings for " +
+          "how a constructed-wetland approach can comply.",
+        label_short: "NGT cites Jakkur as a model",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2020,
+        label:
+          "BWSSB JICA Phase-3 upstream sewerage strengthening " +
+          "improves STP feedstock quality; lake water clarity " +
+          "improves further.",
+        label_short: "JICA Phase-3 upstream STP gains",
+      },
+      {
+        year: 2024,
+        label:
+          "Adani Realty / Embassy / Prestige tower-block expansion " +
+          "in Jakkur's 1 km halo tests the STP-then-polish capacity; " +
+          "BWSSB studies expansion options.",
+        label_short: "Halo growth tests STP capacity",
+      },
+    ],
+    status_badges: [
+      { label: "Model engineered-wetland lake", tone: "emerald" },
+      { label: "ATREE/IISc CES design (2011)", tone: "sky" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 9321012",
+          note: "OSM mappers traced the visible water surface; ~50 ha. BWSSB and BBMP co-manage with ATREE/IISc CES providing the wetland-design IP; no gazetted GIS layer is published.",
+          link: "https://www.openstreetmap.org/relation/9321012",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers Jakkur village, the Yelahanka air-force-station perimeter, and the surrounding north-Bengaluru tech park belt.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Jakkur's 'water surface' reading reflects deliberately-managed inflow (treated effluent + storm flow) - the lake is operationally a polishing pond plus amenity body, not a passively-recharged kere. Read trends in that engineered-system context.",
+      ],
+    },
+  },
+  rachenahalli: {
+    id: "rachenahalli",
+    osm_id: 6041559,
+    name: "Rachenahalli Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 6041559). " +
+      "Rachenahalli is a ~36 ha (OSM extent) lake in north Bengaluru " +
+      "(Thanisandra, immediately adjacent to Manyata Tech Park) on " +
+      "the Hebbal-Nagavara cascade. BBMP-managed; the Manyata side " +
+      "of the halo is among the densest IT-corridor build-outs in " +
+      "the cohort.",
+    polygon_path: "/geojson/rich-bodies/rachenahalli.geojson",
+    buffer_path: "/geojson/rich-bodies/rachenahalli-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). NGT Forward " +
+      "Foundation regime applies; 1 km halo is cohort-standard.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/rachenahalli-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/rachenahalli-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/rachenahalli-overture-buildings.json",
+      water_trend: "/data/rich-bodies/rachenahalli-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/rachenahalli-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2012,
+        label:
+          "BDA-led desilting + bund-reconstruction round; Manyata " +
+          "Tech Park's adjacency raises Rachenahalli's profile in " +
+          "BBMP planning.",
+        label_short: "BDA desilting + bund repair",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) applies; " +
+          "Manyata-adjacent buffer compliance flagged as a watch item.",
+        label_short: "NGT 75 m buffer order",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2019,
+        label:
+          "Citizen group Save Rachenahalli Lake documents sewage " +
+          "inflow from Thanisandra drains; BBMP commits to upstream " +
+          "interception.",
+        label_short: "Sewage inflow flagged",
+      },
+      {
+        year: 2024,
+        label:
+          "Manyata's continued expansion and the Outer Ring Road " +
+          "traffic pressure keep the lake under monitoring; BWSSB " +
+          "JICA Phase-3 interception works progress upstream.",
+        label_short: "Monitoring + JICA upstream gains",
+      },
+    ],
+    status_badges: [
+      { label: "Hebbal-Nagavara cascade", tone: "sky" },
+      { label: "Manyata Tech Park adjacency", tone: "amber" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 6041559",
+          note: "OSM mappers traced the visible water surface; ~36 ha.",
+          link: "https://www.openstreetmap.org/relation/6041559",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers Thanisandra, Manyata Tech Park, ORR-East frontage, Hebbal-edge.",
+          licence: "Derived",
+        },
+      ],
+    },
+  },
+  iblur: {
+    id: "iblur",
+    osm_id: 3120373,
+    name: "Iblur Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 3120373). " +
+      "Iblur is a small ~2.4 ha (OSM extent) HSR Layout / Sarjapur " +
+      "Road citizen-restoration story. Friends of Iblur Lake + BBMP " +
+      "co-maintain under MoU; the body is too small to be " +
+      "operationally significant for hydrology but is widely cited as " +
+      "a 'win' exemplar in Bengaluru's citizen-lake landscape.",
+    polygon_path: "/geojson/rich-bodies/iblur.geojson",
+    buffer_path: "/geojson/rich-bodies/iblur-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). NGT Forward " +
+      "Foundation regime applies.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/iblur-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/iblur-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/iblur-overture-buildings.json",
+      water_trend: "/data/rich-bodies/iblur-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/iblur-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2014,
+        label:
+          "Friends of Iblur Lake forms in response to encroachment " +
+          "and dumping; BBMP MoU follows shortly after.",
+        label_short: "Friends of Iblur + BBMP MoU",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014) applies to " +
+          "all BBMP lakes including Iblur.",
+        label_short: "NGT 75 m buffer order",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2019,
+        label:
+          "BBMP + citizen-group desilting + perimeter walking-track " +
+          "addition; bird sightings (egrets, herons) recorded.",
+        label_short: "Desilting + walking-track",
+      },
+    ],
+    status_badges: [
+      { label: "Friends of Iblur citizen MoU", tone: "emerald" },
+      { label: "BBMP managed", tone: "sky" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 3120373",
+          note: "OSM mappers traced the visible water surface; ~2.4 ha. Iblur is the smallest body in the Bangalore rich-data cohort.",
+          link: "https://www.openstreetmap.org/relation/3120373",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers HSR Layout 1st-3rd sectors, Iblur Junction, the Sarjapur Road frontage that connects toward Bellandur.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Iblur at ~2.4 ha is the smallest body in this cohort - only ~27 JRC water-classification pixels. Per-year area readings are very noisy and should be treated as directional only. The narrative value is the citizen-restoration story, not the satellite quantification.",
+      ],
+    },
+  },
   perumbakkam: {
     id: "perumbakkam",
     osm_id: 30424450,
