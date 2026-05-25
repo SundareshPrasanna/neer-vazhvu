@@ -518,6 +518,126 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       ],
     },
   },
+  bellandur: {
+    id: "bellandur",
+    osm_id: 19751547,
+    name: "Bellandur Lake",
+    city_id: "bangalore",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 19751547). " +
+      "Bellandur is the terminal lake of the Koramangala-Challaghatta " +
+      "(K&C) valley cascade and the largest lake under BBMP at ~317 ha " +
+      "(OSM extent). The Bangalore Development Authority and Karnataka " +
+      "State Pollution Control Board are the relevant agencies but " +
+      "neither publishes a gazetted GIS boundary; the OSM polygon traces " +
+      "the visible water surface from satellite imagery.",
+    polygon_path: "/geojson/rich-bodies/bellandur.geojson",
+    buffer_path: "/geojson/rich-bodies/bellandur-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). The legal anchor " +
+      "for Bellandur is the NGT's 75 m no-construction zone around the " +
+      "lake edge plus 50 m around rajakaluves (storm-water drains) and " +
+      "30 m around secondary drains, ordered in Forward Foundation v " +
+      "State of Karnataka (NGT OA 222/2014). The 1 km halo here is the " +
+      "same editorial radius used across the rich-data cohort to make " +
+      "build-up density visible at a glance.",
+    buffer_source_url: "https://greentribunal.gov.in/",
+    imagery_manifest_path: "/data/rich-bodies/bellandur-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/bellandur-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/bellandur-overture-buildings.json",
+      water_trend: "/data/rich-bodies/bellandur-jrc-water-trend.json",
+      built_trend: "/data/rich-bodies/bellandur-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2015,
+        label:
+          "Bellandur foam crisis breaks into national coverage; toxic " +
+          "surfactant foam spills onto Sarjapur Road from the lake's " +
+          "downstream weir.",
+        label_short: "Foam crisis enters public view",
+      },
+      {
+        year: 2016,
+        label:
+          "NGT Forward Foundation order (OA 222/2014): 75 m buffer " +
+          "around the lake, 50 m around rajakaluves, 30 m around " +
+          "secondary drains; Mantri Tech Park (Espana) and Coremind " +
+          "constructions halted as encroaching the buffer.",
+        label_short: "NGT 75 m buffer + construction halt",
+        source_url: "https://greentribunal.gov.in/",
+      },
+      {
+        year: 2017,
+        label:
+          "16 February 2017: Bellandur foam catches fire on Sarjapur " +
+          "Road; international news. NGT constitutes a Bellandur-Varthur " +
+          "monitoring committee chaired by retired Justice Santosh Hegde.",
+        label_short: "Bellandur burns; NGT committee formed",
+        source_url: "https://www.thehindu.com/news/national/karnataka/foam-from-bellandur-lake-catches-fire/article17319080.ece",
+      },
+      {
+        year: 2018,
+        label:
+          "January 2018: second major foam fire on Bellandur draws PMO " +
+          "attention; KSPCB issues notices to BWSSB and BDA over " +
+          "untreated sewage inflow.",
+        label_short: "Second foam fire",
+      },
+      {
+        year: 2020,
+        label:
+          "BDA's Bellandur restoration tender invites bids for desilting, " +
+          "weir reconstruction, and sewage interception; rolling work " +
+          "begins through the early 2020s.",
+        label_short: "BDA restoration tender",
+      },
+      {
+        year: 2024,
+        label:
+          "Post-monsoon foam recurs at the downstream weir; NGT and " +
+          "Karnataka HC continue to monitor compliance with the 2016 " +
+          "Forward Foundation order.",
+        label_short: "Foam recurs; NGT compliance hearings",
+      },
+    ],
+    status_badges: [
+      { label: "K&C valley terminal lake", tone: "sky" },
+      { label: "NGT 75 m buffer order", tone: "amber" },
+      { label: "Foam + fire events recurring", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 19751547",
+          note: "OSM mappers traced the visible water surface from satellite imagery; ~317 ha. The Bangalore Development Authority owns the lake but does not publish a gazetted GIS layer. KSPCB and BWSSB hold operational data (sewage inflow, treatment) but do not publish a boundary either. The IISc Centre for Sustainable Technologies (T.V. Ramachandra) maintains independently-mapped extents used in academic work; integration is a follow-up.",
+          link: "https://www.openstreetmap.org/relation/19751547",
+          licence: "ODbL",
+        },
+        {
+          label: "NGT 75 m legal buffer (not rendered)",
+          source: "NGT Forward Foundation v State of Karnataka (OA 222/2014)",
+          note: "The 75 m construction-free zone around the lake (plus 50 m around rajakaluves, 30 m around secondary drains) is the legal anchor; it is not rendered as a separate layer on this map because its scale is illegible at the zoom needed to read the 1 km halo's urban context.",
+          link: "https://greentribunal.gov.in/",
+          licence: "Public order",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated. Same 1 km radius used across all rich-data bodies for cross-body visual consistency; chosen to expose Wipro Sarjapur, Embassy Tech Village, Bellandur SEZ, RGA Tech Park, and the IT-corridor density that ring the lake.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Bellandur's surface water is largely industrial-organic effluent and untreated municipal sewage from the K&C valley; the JRC 'water' classification therefore captures inflow as well as standing water, and the 'water surface' percentage should not be read as a health metric.",
+        "The OSM polygon is the lake bed extent. The 'water surface in body' reading can drop below the polygon area when the lake is at low level or post-desilting; this is a measurement artefact, not encroachment.",
+      ],
+    },
+  },
   perumbakkam: {
     id: "perumbakkam",
     osm_id: 30424450,
