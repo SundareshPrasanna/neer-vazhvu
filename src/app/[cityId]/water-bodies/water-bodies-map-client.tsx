@@ -17,6 +17,20 @@ import type { SelectedWaterBody } from "@/types/water-bodies";
 import type { RestorationPriorityData } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 
+/** Shape of the entries inside water-bodies-lost-{cityId}.json that the
+ *  detail panel uses to enrich a clicked OSM body with historical
+ *  narrative ("foam-and-fire" for Bellandur etc.). */
+interface LostBodyEntry {
+  name: string;
+  status: string;
+  side?: string;
+  note?: string;
+}
+
+interface LostBodiesFile {
+  lost_bodies: LostBodyEntry[];
+}
+
 interface ClientProps {
   cityId: string;
   cityDisplayName: string;
@@ -73,6 +87,14 @@ export default function WaterBodiesMapClient({
   const [selected, setSelected] = useState<SelectedWaterBody | null>(null);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
+  // Lost-bodies tabular data (Bengaluru today: narrative notes for
+  // Bellandur, Halsoor, Dharmambudhi etc.). Used to surface the rich
+  // historical "what happened to this kere" text in UnifiedDetailPanel
+  // when the clicked OSM polygon's name matches an entry here. Cities
+  // that ship a *-water-bodies-lost.geojson layer (Chennai/Madurai) get
+  // this via the dedicated "lost" click path; this is the augment for
+  // cities with tabular-only lost data.
+  const [lostBodies, setLostBodies] = useState<LostBodyEntry[] | null>(null);
   // Off by default - the layer + protomaps-leaflet runtime are
   // dynamic-imported only when the user opts in.
   const [showCascade, setShowCascade] = useState(false);
@@ -139,6 +161,29 @@ export default function WaterBodiesMapClient({
   // first-load anchor and shouldn't re-fire as the user toggles modes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cityId]);
+
+  // Fetch lost-bodies tabular file for narrative augmentation. Optional;
+  // 404 is fine (Chennai/Madurai use the geojson layer for this).
+  useEffect(() => {
+    fetch(`/data/water-bodies-lost-${cityId}.json`)
+      .then((r) => (r.ok ? (r.json() as Promise<LostBodiesFile>) : null))
+      .then((data) => setLostBodies(data?.lost_bodies ?? null))
+      .catch(() => setLostBodies(null));
+  }, [cityId]);
+
+  // For a "current" click, look up the body by name (case + whitespace
+  // normalised) in the lost-bodies tabular file. Matches Bellandur /
+  // Halsoor / Sankey / Hesaraghatta etc. on /bangalore/water-bodies.
+  const selectedLostNarrative = useMemo(() => {
+    if (!lostBodies || !selected || selected.kind !== "current") return null;
+    const clickedName = (selected.props.name ?? "").trim().toLowerCase();
+    if (!clickedName) return null;
+    return (
+      lostBodies.find(
+        (b) => b.name.trim().toLowerCase() === clickedName,
+      ) ?? null
+    );
+  }, [lostBodies, selected]);
 
   // Resolve the score row for the selected body. For "current" we
   // match by osm_id; for "scored" the scored row is already in hand.
@@ -326,6 +371,7 @@ export default function WaterBodiesMapClient({
             <UnifiedDetailPanel
               selected={selected}
               restorationData={selectedRestoration}
+              lostNarrative={selectedLostNarrative}
               onClose={() => setSelected(null)}
             />
           </BottomSheet>

@@ -31,9 +31,22 @@ import {
 } from "@/lib/insights/constants";
 import { assessCensusCapacity } from "@/lib/water-bodies/census-capacity";
 
+interface LostNarrativeEntry {
+  name: string;
+  status: string;
+  side?: string;
+  note?: string;
+}
+
 interface UnifiedDetailPanelProps {
   selected: SelectedWaterBody;
   restorationData: ScoredWaterBody | null;
+  /** Optional historical narrative from water-bodies-lost-{cityId}.json
+   *  matched by name. Currently Bengaluru-only: renders the rich
+   *  "what happened to this kere" note (Bellandur foam-and-fire,
+   *  Halsoor Cantonment context, Sankey-Col-Sankey-1882 etc.) inline
+   *  when the clicked OSM body's name matches a lost-bodies entry. */
+  lostNarrative?: LostNarrativeEntry | null;
   onClose: () => void;
 }
 
@@ -589,7 +602,7 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
   );
 }
 
-export function UnifiedDetailPanel({ selected, restorationData, onClose }: UnifiedDetailPanelProps) {
+export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, onClose }: UnifiedDetailPanelProps) {
   const { t, language } = useLanguage();
   const closeAria = t("common.close_panel");
   const wardLookup = useWardLookup();
@@ -758,6 +771,30 @@ export function UnifiedDetailPanel({ selected, restorationData, onClose }: Unifi
           <Row label={t("wb_panel.area")} value={areaText} />
           <Row label={t("wb_panel.osm_id")} value={`#${props.osm_id}`} />
         </div>
+
+        {/* Historical narrative from the city's water-bodies-lost JSON,
+            matched on name. Surfaces the "what happened to this kere"
+            note for cities (Bengaluru today) where named bodies like
+            Bellandur / Halsoor / Sankey are documented in the tabular
+            lost-bodies file but render in the OSM-current layer because
+            they still hold water. */}
+        {lostNarrative && (
+          <div className="border-t border-slate-200 dark:border-slate-700 px-4 py-3 bg-amber-50/40 dark:bg-amber-950/20">
+            <div className="flex items-center gap-2 mb-1.5">
+              <h3 className="text-xs font-semibold text-amber-800 dark:text-amber-300 uppercase tracking-wide">
+                Documented status
+              </h3>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-100">
+                {lostNarrative.status}
+              </span>
+            </div>
+            {lostNarrative.note && (
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                {lostNarrative.note}
+              </p>
+            )}
+          </div>
+        )}
 
         {satelliteSummary ? (
           <SatelliteContextSection
