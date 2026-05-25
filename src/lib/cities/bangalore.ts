@@ -41,6 +41,20 @@ export const BANGALORE: CityConfig = {
   defaultDesalinationMld: null,
   availableLanguages: ['en', 'kn'],
   heroMode: 'cauvery-pumping',
+  // Per-ward GW depth interpolation (`depth`) is off because Bengaluru
+  // has only 13 CGWB telemetric stations across 369 wards - density too
+  // low to honestly IDW. Block-level `exploitation` is off until the
+  // bangalore-gwr-blocks.geojson + json sources are wired (Karnataka
+  // CGWB has them, just not extracted yet). What IS shippable today:
+  // the `risk` composite from ward-risk-bangalore.json (round 5) +
+  // `cgwbStations` point overlay from bangalore-cgwb-stations.json
+  // (round 7, this commit). Mirrors Madurai's depth=false strategy.
+  groundwaterViews: {
+    exploitation: false,
+    depth: false,
+    risk: true,
+    cgwbStations: true,
+  },
   waterSources: [
     {
       sourceCode: 'krs',
