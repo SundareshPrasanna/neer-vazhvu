@@ -235,6 +235,7 @@ export default function RiversClient({
           latest_bod: latest?.bod_mgl ?? null,
           latest_do: latest?.do_mgl ?? null,
           latest_year: latest?.year ?? null,
+          off_osm_river_polyline: s.off_osm_river_polyline,
         };
       }),
     );

@@ -48,9 +48,13 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "groundwater",
     "water-bodies",
     "rivers",
+    "flood-risk",
+    "lake-restoration",
     "my-ward",
+    "facts",
     "origins",
     "tanker",
+    "cascades",
   ]),
 };
 

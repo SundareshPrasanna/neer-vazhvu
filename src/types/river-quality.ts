@@ -55,6 +55,25 @@ export interface RiverStation {
   lng: number;
   stretch: string; // "Upper" | "Middle" | "Lower" | "Estuary" | etc.
   readings: RiverQualityReading[];
+  /** True when the station coord sits more than ~2 km from the
+   *  OSM-traced river LineString. Set by the snap step when
+   *  re-curating Bangalore river stations: OSM does not trace
+   *  Bangalore's rivers through built-up BBMP (they flow as storm
+   *  drains), so KSPCB sampling stations at named city places end
+   *  up far from any river polyline point. The map marker renders
+   *  with a dashed border and the tooltip surfaces an off-polyline
+   *  note when this flag is set. */
+  off_osm_river_polyline?: boolean;
+  /** Set when the station coord was moved by the snap step.
+   *  Preserves the original named-place coordinate for audit. */
+  lat_original?: number;
+  lng_original?: number;
+  snapped_to_river_polyline?: boolean;
+  /** Distance in metres from the curated coord to the nearest OSM
+   *  river polyline point, before any snap. Always reported for
+   *  transparency. */
+  osm_river_offset_m_before?: number;
+  osm_river_offset_m_after?: number;
 }
 
 export interface RiverData {
