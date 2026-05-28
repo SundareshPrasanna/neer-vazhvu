@@ -6,6 +6,7 @@ import {
   FloodRiskContent,
   type FloodConfig,
 } from "./flood-risk-content";
+import { FloodRiskBangaloreContent } from "./flood-risk-bangalore-content";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -116,6 +117,16 @@ export default async function CityFloodRiskPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
+
+  // Bengaluru has a distinct map-based flood page (KSRSAC hotspots +
+  // BBMP rajakaluve network from OpenCity, Nov 2025) rather than the
+  // narrative-only Madurai pattern. Branch here rather than shoehorn
+  // the two shapes into one config object - the data shapes are
+  // genuinely different (no single "dam release threshold" for
+  // Bengaluru; rainfall + drainage capacity is the driver).
+  if (cityId === "bangalore") {
+    return <FloodRiskBangaloreContent cityDisplayName={config.displayName} />;
+  }
 
   const cfg = FLOOD_CONFIG_BY_CITY[cityId];
   if (!cfg) {
