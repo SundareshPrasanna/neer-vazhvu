@@ -10,6 +10,8 @@ import {
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { AllocationHero } from "@/components/dashboard/allocation-hero";
 import { CauveryPumpingHero } from "@/components/dashboard/cauvery-pumping-hero";
+import { BangaloreDailyBriefing } from "@/components/dashboard/bangalore-daily-briefing";
+import { buildBangaloreBriefing } from "@/lib/insights/bangalore-briefing";
 import { DataGapPanel, URBAN_SUPPLY_DATA_GAPS } from "@/components/dashboard/data-gap-panel";
 import { UrbanSupplyOverview } from "@/components/dashboard/urban-supply-overview";
 import { DashboardHistorySection } from "@/components/dashboard/dashboard-history-section";
@@ -39,6 +41,19 @@ export default async function CityHomePage({ params }: PageProps) {
   // Convert the per-city snapshot into the shared ReservoirSummary[]
   // shape Chennai's ReservoirCards consumes.
   const summaries = snapshotToSummaries(config, snapshot);
+
+  // Bengaluru-specific daily briefing - template-based for V1, with an
+  // open slot for a later Claude-pipeline AI uplift. Renders just below
+  // the city badge row, above the Cauvery Pumping hero.
+  const bangaloreBriefing =
+    cityId === "bangalore"
+      ? buildBangaloreBriefing(
+          summaries,
+          waterEstimate.lastUpdated
+            ? formatDate(waterEstimate.lastUpdated)
+            : null,
+        )
+      : null;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -73,6 +88,9 @@ export default async function CityHomePage({ params }: PageProps) {
           // pass 0 so DaysLeftHero doesn't fall back to Chennai's 190 MLD.
           defaultDesalinationMld={config.defaultDesalinationMld ?? 0}
         />
+      )}
+      {bangaloreBriefing && (
+        <BangaloreDailyBriefing briefing={bangaloreBriefing} />
       )}
       {config.heroMode === "cauvery-pumping" && (
         <CauveryPumpingHero cityId={cityId} cityDisplayName={config.displayName} />
