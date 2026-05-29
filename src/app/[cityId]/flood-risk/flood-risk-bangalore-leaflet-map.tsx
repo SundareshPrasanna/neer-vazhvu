@@ -141,13 +141,17 @@ export function FloodLeafletMap({ center, zoom, layerState }: MapProps) {
       )}
 
       {visibleHotspots.map((f, i) => {
+        // Hotspot features in this GeoJSON are always Point geometries
+        // (the source KSRSAC KMLs only contain Point placemarks for the
+        // hotspot layer). Narrow defensively so a future ingest of
+        // MultiPoint / Polygon doesn't crash; skip non-Point features.
+        if (f.geometry.type !== "Point") return null;
         const props = f.properties as HotspotProps;
-        const coords = (f.geometry as { coordinates: [number, number] })
-          .coordinates;
+        const [lng, lat] = f.geometry.coordinates as [number, number];
         return (
           <CircleMarker
             key={`${props.category}-${i}`}
-            center={[coords[1], coords[0]]}
+            center={[lat, lng]}
             radius={CATEGORY_RADIUS[props.category]}
             pathOptions={{
               color: "#0f172a",
