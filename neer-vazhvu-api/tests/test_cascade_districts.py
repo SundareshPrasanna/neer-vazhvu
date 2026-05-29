@@ -14,8 +14,10 @@ from app.cascade.districts import (
 from app.cascade import publish
 
 
-def test_supported_district_ids_includes_madurai_and_chennai():
-    assert set(supported_district_ids()) == {"chennai", "madurai"}
+def test_supported_district_ids_includes_seeded_cities():
+    # Subset check (not equality) so adding a new district (Delhi /
+    # Mumbai / etc.) doesn't break the test without an explicit update.
+    assert {"chennai", "madurai", "bangalore"}.issubset(supported_district_ids())
 
 
 def test_get_district_cascade_config_normalises_case():
@@ -43,6 +45,28 @@ def test_chennai_config_starts_with_no_curation():
     chennai = get_district_cascade_config("chennai")
     assert chennai.named_cascades == ()
     assert chennai.court_references == ()
+
+
+def test_bangalore_config_points_at_bangalore_assets():
+    bangalore = get_district_cascade_config("bangalore")
+    assert bangalore.tank_polygons_path.name == "bangalore-water-bodies-current.geojson"
+    assert bangalore.state == "karnataka"
+    # Multi-outflow scoring is the Bangalore-specific topology override -
+    # the ridge city's traditional kere chains had feeder + surplus
+    # channels that single-outflow scoring would lose.
+    assert bangalore.allow_multi_outflow is True
+
+
+def test_bangalore_config_includes_kempegowda_era():
+    bangalore = get_district_cascade_config("bangalore")
+    eras = {era.era for era in bangalore.historical_eras}
+    assert "Kempegowda" in eras
+
+
+def test_bangalore_config_includes_forward_foundation_court_anchor():
+    bangalore = get_district_cascade_config("bangalore")
+    case_ids = {case.case_id for case in bangalore.court_references}
+    assert "forward-foundation-ngt-2012" in case_ids
 
 
 def test_output_paths_are_district_scoped():

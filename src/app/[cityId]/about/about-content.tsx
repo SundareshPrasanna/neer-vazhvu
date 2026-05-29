@@ -979,7 +979,7 @@ export function CityAboutContent({
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                   <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">No per-ward depth choropleth (deliberate)</h4>
                   <p className="text-sm text-blue-700 dark:text-blue-300">
-                    Bengaluru has 13 CGWB telemetric DWLR stations across 369 GBA wards - density ~1 station per 21 sq km, far too sparse to honestly interpolate a per-ward choropleth. Instead the groundwater page surfaces the 13-station point overlay alongside the 6-block GEC exploitation classification + 3-factor ward risk composite. The IDW-interpolated view that Chennai uses is deliberately disabled because Bengaluru lacks Chennai's equivalent of the OpenCity monthly per-ward survey.
+                    Bengaluru has 13 CGWB telemetric DWLR stations across 369 GBA wards - density ~1 station per 21 sq km, far too sparse to honestly interpolate a per-ward choropleth. Instead the groundwater page surfaces the 13-station point overlay alongside the 6-block GEC exploitation classification + 3-factor ward risk composite. The IDW-interpolated view that Chennai uses is deliberately disabled because Bengaluru lacks Chennai&apos;s equivalent of the OpenCity monthly per-ward survey.
                   </p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
@@ -991,7 +991,7 @@ export function CityAboutContent({
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                   <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">Lost-kere coordinates not populated</h4>
                   <p className="text-sm text-blue-700 dark:text-blue-300">
-                    The 9 Nagendra-anchored lost / severely-reduced kere have name + status + conversion note but no lat/lng - the fully-lost ones (Dharmambudhi, Sampangi, Karanji Anjaneya, Akkithimmanahalli, Domlur) have no OSM presence (they're under bus stations, stadiums, schools and BDA layouts). The 4 severely-reduced bodies are mappable via their OSM osm_ids (Kempambudhi, Ulsoor, Sankey, Bellandur) and already surface in the rich-body cohort. Listed as a Tier 3 follow-up.
+                    The 9 Nagendra-anchored lost / severely-reduced kere have name + status + conversion note but no lat/lng - the fully-lost ones (Dharmambudhi, Sampangi, Karanji Anjaneya, Akkithimmanahalli, Domlur) have no OSM presence (they&apos;re under bus stations, stadiums, schools and BDA layouts). The 4 severely-reduced bodies are mappable via their OSM osm_ids (Kempambudhi, Ulsoor, Sankey, Bellandur) and already surface in the rich-body cohort. Listed as a Tier 3 follow-up.
                   </p>
                 </div>
               </div>
