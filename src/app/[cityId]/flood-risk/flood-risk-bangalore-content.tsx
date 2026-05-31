@@ -105,7 +105,7 @@ export function FloodRiskBangaloreContent({ cityDisplayName }: Props) {
                 Secondary drains (870)
               </span>
             </label>
-            <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
+            <div className="pt-2 mt-1 border-t border-slate-100 dark:border-slate-800 space-y-2">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"

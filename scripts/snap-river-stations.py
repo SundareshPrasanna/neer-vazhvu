@@ -85,6 +85,16 @@ def snap(city: str, threshold_m: float) -> None:
     river_pts = collect_river_points(json.loads(geo_path.read_text()))
     rq = json.loads(rq_path.read_text())
 
+    # Older runs of this script appended an OSM-coverage caveat directly
+    # into the `stretch` field. Strip those legacy concatenations so the
+    # next pass can store the caveat in a dedicated field instead, and
+    # leave `stretch` as the editorial physical-stretch description that
+    # the UI renders as the station's primary label.
+    LEGACY_CAVEAT_MARKERS = (
+        "Marker is off the OSM-traced river LineString",
+        "Marker sits on the urban storm-drain network",
+    )
+
     audit = []
     for r in rq.get("rivers", []):
         name = r.get("name")
@@ -98,6 +108,19 @@ def snap(city: str, threshold_m: float) -> None:
             lng = s.get("lng_original", s["lng"])
             pt, d = closest_point(lat, lng, pts)
             s["osm_river_offset_m_before"] = round(d)
+
+            # Clean any legacy caveat text out of `stretch`.
+            stretch = s.get("stretch", "") or ""
+            for marker in LEGACY_CAVEAT_MARKERS:
+                idx = stretch.find(marker)
+                if idx >= 0:
+                    stretch = stretch[:idx].rstrip(" \t-.:;,")
+                    break
+            if stretch:
+                s["stretch"] = stretch
+            elif "stretch" in s and not stretch:
+                s["stretch"] = ""
+
             if d <= threshold_m:
                 s["lat_original"] = lat
                 s["lng_original"] = lng
@@ -105,8 +128,9 @@ def snap(city: str, threshold_m: float) -> None:
                 s["lng"] = round(pt[0], 6)
                 s["snapped_to_river_polyline"] = True
                 s["osm_river_offset_m_after"] = 0
-                # Clear the off-polyline flag if it was previously set.
+                # Clear off-polyline state from any previous run.
                 s.pop("off_osm_river_polyline", None)
+                s.pop("osm_coverage_caveat", None)
                 audit.append(f"  SNAP  {s['name']:55s} {d:>6.0f}m -> 0m")
             else:
                 s["off_osm_river_polyline"] = True
@@ -115,18 +139,27 @@ def snap(city: str, threshold_m: float) -> None:
                 s["lat"] = lat
                 s["lng"] = lng
                 s.pop("snapped_to_river_polyline", None)
+                s["osm_coverage_caveat"] = (
+                    "Coordinate is at the named place cited in the KSPCB / "
+                    "CPCB monitoring report. OpenStreetMap does not trace the "
+                    "river segment through this point - in Bengaluru the river "
+                    "frequently flows as a storm-drain (rajakaluve) channel "
+                    "through built-up BBMP, and OSM doesn't tag those as "
+                    "waterway=river. Rendered with a dashed-border marker so "
+                    "the visual disconnect from the polyline reads as "
+                    "intentional."
+                )
                 audit.append(f"  KEEP  {s['name']:55s} {d:>6.0f}m  (off-polyline)")
 
     rq["_osm_coverage_note"] = (
         f"River-quality stations cross-referenced against the OSM river "
-        f"LineStrings. Stations within {int(threshold_m)} m of the polyline have "
-        "been snapped to the nearest line point (lat_original / lng_original "
-        "preserved for audit). Stations farther off carry "
-        "`off_osm_river_polyline: true` because OpenStreetMap does not trace "
-        "the river segment that passes through this named place (typically "
-        "because the river flows as a storm-drain / rajakaluve channel through "
-        "built-up Bengaluru, or the named place is a reservoir not tagged as "
-        "a river segment)."
+        f"LineStrings. Stations within {int(threshold_m)} m of the polyline "
+        "have been snapped to the nearest line point (lat_original / "
+        "lng_original preserved for audit). Stations farther off carry "
+        "`off_osm_river_polyline: true` plus an `osm_coverage_caveat` field "
+        "explaining the disconnect; the `stretch` field stays the editorial "
+        "physical-stretch description so the UI's primary station label is "
+        "stable."
     )
 
     rq_path.write_text(json.dumps(rq, indent=2))
@@ -137,7 +170,13 @@ def snap(city: str, threshold_m: float) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--city", required=True, help="e.g. bangalore")
-    ap.add_argument("--threshold-m", type=float, default=2000.0)
+    # Bumped from 2 km to 5 km after testing on Bengaluru: more KSPCB
+    # named-place stations sit on the riverbank within 3-4 km of where
+    # OSM picks up the polyline. 5 km keeps the snap honest (we're
+    # moving the marker visibly toward the river, not faking precision)
+    # while catching stations that the 2 km threshold was leaving
+    # visually orphaned.
+    ap.add_argument("--threshold-m", type=float, default=5000.0)
     args = ap.parse_args()
     snap(args.city, args.threshold_m)
 

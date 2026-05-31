@@ -74,6 +74,11 @@ export interface RiverStation {
    *  transparency. */
   osm_river_offset_m_before?: number;
   osm_river_offset_m_after?: number;
+  /** Long-form explanation of why the marker sits off the OSM
+   *  polyline. Set by snap-river-stations.py when
+   *  off_osm_river_polyline is true. Kept out of `stretch` so the
+   *  primary station label stays short. */
+  osm_coverage_caveat?: string;
 }
 
 export interface RiverData {

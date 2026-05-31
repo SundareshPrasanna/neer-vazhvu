@@ -12,6 +12,7 @@ import { BottomSheet } from "@/components/map/bottom-sheet";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { getPlaceConfig, tryGetPlaceConfig, type PlaceConfig } from "@/lib/cities";
+import { wardsGeoJsonPathFor } from "@/lib/cities/wards-vintage";
 import type {
   GroundwaterWard,
   WardRiskData,
@@ -100,7 +101,7 @@ function assetsForCity(config: PlaceConfig): CityGwAssets {
     blocksJsonUrl: `/data/gwr-blocks-${config.cityId}.json`,
     blockGeoJsonUrl: `/geojson/${config.cityId}-gwr-blocks.geojson`,
     stationsJsonUrl: `/data/gw-stations-${config.cityId}.json`,
-    wardGeoJsonUrl: `/geojson/${config.cityId}-wards-2022.geojson`,
+    wardGeoJsonUrl: wardsGeoJsonPathFor(config.cityId),
     mapCenter: [config.center.lat, config.center.lng],
   };
 }
