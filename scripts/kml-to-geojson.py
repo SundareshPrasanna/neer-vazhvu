@@ -38,7 +38,16 @@ NS = {"k": "http://www.opengis.net/kml/2.2"}
 
 
 def parse_coords(coord_text: str):
-    """Parse KML coordinates "lng,lat[,alt] lng,lat[,alt] ..." -> list of [lng, lat]."""
+    """Parse KML coordinates "lng,lat[,alt] lng,lat[,alt] ..." -> list of [lng, lat].
+
+    Drops tokens whose lng/lat parse to NaN or +/-inf. JSON cannot serialise
+    NaN, so emitting one bad coordinate would corrupt the whole output file
+    for JSON.parse consumers (Next.js fetch, browser GeoJSON readers, etc.).
+    The KSRSAC Bengaluru flood-vulnerable KML in particular had one
+    placemark with malformed coords that earlier passed through silently
+    and produced `[NaN, NaN]` in the GeoJSON.
+    """
+    import math
     if not coord_text:
         return []
     tokens = coord_text.strip().split()
@@ -47,9 +56,13 @@ def parse_coords(coord_text: str):
         parts = t.split(",")
         if len(parts) >= 2:
             try:
-                out.append([float(parts[0]), float(parts[1])])
+                lng = float(parts[0])
+                lat = float(parts[1])
             except ValueError:
                 continue
+            if not (math.isfinite(lng) and math.isfinite(lat)):
+                continue
+            out.append([lng, lat])
     return out
 
 

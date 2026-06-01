@@ -44,9 +44,24 @@ interface MapProps {
   layerState: LayerToggleState;
 }
 
+interface HotspotMarker {
+  id: string;
+  lat: number;
+  lng: number;
+  name: string | null;
+  category: HotspotProps["category"];
+  category_label: string;
+}
+
 export function FloodLeafletMap({ center, zoom, layerState }: MapProps) {
   const tiles = useMapTiles();
-  const [hotspots, setHotspots] = useState<FeatureCollection | null>(null);
+  // Pre-flatten hotspot features into a plain marker array on fetch.
+  // Earlier attempt rendered <CircleMarker> directly from a typed
+  // FeatureCollection but the markers never showed up on screen even
+  // though the SSR HTML + fetched data were both correct. The
+  // /bangalore/rivers page renders CircleMarkers off a plain typed
+  // array without issue, so we mirror that shape here.
+  const [hotspots, setHotspots] = useState<HotspotMarker[] | null>(null);
   const [swdPrimary, setSwdPrimary] = useState<FeatureCollection | null>(null);
   const [swdSecondary, setSwdSecondary] = useState<FeatureCollection | null>(null);
 
@@ -61,9 +76,37 @@ export function FloodLeafletMap({ center, zoom, layerState }: MapProps) {
       return;
     }
     fetch("/data/bangalore-flood-hotspots.geojson")
-      .then((r) => r.json())
-      .then(setHotspots)
-      .catch(() => setHotspots({ type: "FeatureCollection", features: [] }));
+      .then((r) => r.json() as Promise<FeatureCollection>)
+      .then((fc) => {
+        const out: HotspotMarker[] = [];
+        for (let i = 0; i < (fc.features ?? []).length; i++) {
+          const f = fc.features[i];
+          if (!f?.geometry || f.geometry.type !== "Point") continue;
+          const coords = f.geometry.coordinates;
+          if (!Array.isArray(coords) || coords.length < 2) continue;
+          const lng = Number(coords[0]);
+          const lat = Number(coords[1]);
+          if (!Number.isFinite(lng) || !Number.isFinite(lat)) continue;
+          const props = (f.properties ?? {}) as Partial<HotspotProps>;
+          if (
+            props.category !== "named_flood_prone" &&
+            props.category !== "named_low_lying" &&
+            props.category !== "vulnerable_unnamed"
+          ) {
+            continue;
+          }
+          out.push({
+            id: `${props.category}-${i}`,
+            lat,
+            lng,
+            name: props.name ?? null,
+            category: props.category,
+            category_label: props.category_label ?? "",
+          });
+        }
+        setHotspots(out);
+      })
+      .catch(() => setHotspots([]));
   }, [
     hotspots,
     layerState.showHotspotsNamedProne,
@@ -89,12 +132,11 @@ export function FloodLeafletMap({ center, zoom, layerState }: MapProps) {
       .catch(() => setSwdSecondary({ type: "FeatureCollection", features: [] }));
   }, [swdSecondary, layerState.showSecondary]);
 
-  // Filter hotspots client-side per category toggle.
-  const visibleHotspots = (hotspots?.features ?? []).filter((f) => {
-    const cat = (f.properties as HotspotProps | null)?.category;
-    if (cat === "named_flood_prone") return layerState.showHotspotsNamedProne;
-    if (cat === "named_low_lying") return layerState.showHotspotsLowLying;
-    if (cat === "vulnerable_unnamed") return layerState.showHotspotsVulnerable;
+  // Filter pre-flattened hotspots per category toggle.
+  const visibleHotspots = (hotspots ?? []).filter((m) => {
+    if (m.category === "named_flood_prone") return layerState.showHotspotsNamedProne;
+    if (m.category === "named_low_lying") return layerState.showHotspotsLowLying;
+    if (m.category === "vulnerable_unnamed") return layerState.showHotspotsVulnerable;
     return false;
   });
 
@@ -140,36 +182,27 @@ export function FloodLeafletMap({ center, zoom, layerState }: MapProps) {
         />
       )}
 
-      {visibleHotspots.map((f, i) => {
-        // Hotspot features in this GeoJSON are always Point geometries
-        // (the source KSRSAC KMLs only contain Point placemarks for the
-        // hotspot layer). Narrow defensively so a future ingest of
-        // MultiPoint / Polygon doesn't crash; skip non-Point features.
-        if (f.geometry.type !== "Point") return null;
-        const props = f.properties as HotspotProps;
-        const [lng, lat] = f.geometry.coordinates as [number, number];
-        return (
-          <CircleMarker
-            key={`${props.category}-${i}`}
-            center={[lat, lng]}
-            radius={CATEGORY_RADIUS[props.category]}
-            pathOptions={{
-              color: "#0f172a",
-              weight: 1,
-              fillColor: CATEGORY_FILL[props.category],
-              fillOpacity: 0.85,
-            }}
-          >
-            <Tooltip>
-              <strong>{props.name || "(unnamed point)"}</strong>
-              <br />
-              <span style={{ fontSize: "11px", color: "#64748b" }}>
-                {props.category_label}
-              </span>
-            </Tooltip>
-          </CircleMarker>
-        );
-      })}
+      {visibleHotspots.map((m) => (
+        <CircleMarker
+          key={m.id}
+          center={[m.lat, m.lng]}
+          radius={CATEGORY_RADIUS[m.category]}
+          pathOptions={{
+            color: "#0f172a",
+            weight: 1,
+            fillColor: CATEGORY_FILL[m.category],
+            fillOpacity: 0.85,
+          }}
+        >
+          <Tooltip>
+            <strong>{m.name || "(unnamed point)"}</strong>
+            <br />
+            <span style={{ fontSize: "11px", color: "#64748b" }}>
+              {m.category_label}
+            </span>
+          </Tooltip>
+        </CircleMarker>
+      ))}
     </MapContainer>
   );
 }
