@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { TankerMarketPanel } from "@/components/dashboard/tanker-market-panel";
+import { TankerExpandedContext } from "@/components/dashboard/tanker-expanded-context";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -68,6 +69,8 @@ export default async function CityTankerPage({ params }: PageProps) {
       </header>
 
       <TankerMarketPanel cityId={cityId} cityDisplayName={config.displayName} />
+
+      {cityId === "bangalore" && <TankerExpandedContext />}
 
       <section className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-900/40 p-4 space-y-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
         <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">

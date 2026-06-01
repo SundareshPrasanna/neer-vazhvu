@@ -1,0 +1,251 @@
+{
+  "_note": "Curated supplementary context for /bangalore/tanker - layers the page builds on TOP of the longitudinal OpenCity survey (bangalore-tanker-survey.json). Compiled 2026-06-01 from primary press + academic + portal sources cross-referenced in research memo. Every claim has at least one citation in the `sources` map at the bottom of this file.",
+  "compiled_at": "2026-06-01",
+  "structural_anchor": {
+    "headline": "Bengaluru's 14M residents consume ~2,830 MLD - the gap between BWSSB's piped supply and household demand is what the tanker market fills.",
+    "breakdown": [
+      { "label": "Groundwater extraction (private borewells + tankers)", "mld": 1372, "share_pct": 49 },
+      { "label": "BWSSB Cauvery piped supply",                           "mld": 1460, "share_pct": 51 },
+      { "label": "Natural groundwater recharge (annual)",                "mld": 148,  "share_pct": null, "note": "recharge only ~10% of extraction - the rest is fossil-aquifer drawdown" }
+    ],
+    "source_key": "well_labs_uwb_2024"
+  },
+  "crisis_timeline_2024": {
+    "headline": "How the March 2024 crisis unfolded",
+    "subtitle": "A Cauvery-deficit summer + collapsed monsoon recharge took private tanker rates from ~Rs 800 to ~Rs 2,850 in 6 weeks. Government scrambled to register the informal fleet and impose price ceilings.",
+    "events": [
+      {
+        "date": "2024-02-28",
+        "headline": "BWSSB announces 20% bulk-water cut",
+        "detail": "Tech parks, apartment associations, gated communities take the first cuts. Stage I-IV stretched thin against a depleted Cauvery; Stage V not yet commissioned.",
+        "source_key": "down_to_earth_bulk_cut"
+      },
+      {
+        "date": "2024-03-04",
+        "headline": "DK Shivakumar: tanker operators must register by March 7",
+        "detail": "Karnataka Deputy CM gives all private tanker operators a 72-hour deadline to register with BBMP. Penalty: seizure of unregistered tankers. Status snapshot: 219 of estimated ~3,500 tankers registered as of this date.",
+        "source_key": "the_week_mar_4"
+      },
+      {
+        "date": "2024-03-07",
+        "headline": "Registration deadline lapses; rate ceiling imposed",
+        "detail": "BBMP sets official tanker rate ceiling: Rs 600 for 6kL (within 5 km), Rs 750 for 8kL (within 5 km), Rs 1,000 for 12kL (within 5 km). Operators ignoring the cap face seizure.",
+        "source_key": "the_week_mar_4"
+      },
+      {
+        "date": "2024-03-12",
+        "headline": "Karnataka government sets up tanker war room + per-ward allocation",
+        "detail": "Govt assigns tankers to every BBMP ward via central control room. Helpline numbers published per zone. Section 144 imposed at known crisis hotspots.",
+        "source_key": "the_week_mar_12"
+      },
+      {
+        "date": "2024-03-14",
+        "headline": "Registration count reaches 1,700",
+        "detail": "BBMP / RTO mismatch noted in press: 1,700 BBMP-registered tankers vs. estimated 3,500 in operation. The gap is the informal/illegal fleet drawing primarily from over-extracted private borewells.",
+        "source_key": "down_to_earth_tanker_economy"
+      },
+      {
+        "date": "2024-03-15",
+        "headline": "Cauvery supply cut by an additional 1-20%; non-potable use banned",
+        "detail": "Washing vehicles, gardening, swimming pools, fountains, road construction all banned within BBMP limits. Crisis-peak informal tanker rate documented at ~Rs 2,850 per 12kL (vs official ceiling Rs 1,000).",
+        "source_key": "newslaundry_overexploitation"
+      },
+      {
+        "date": "2024-10-16",
+        "headline": "Cauvery Stage V commissioned at T.K. Halli",
+        "detail": "775 MLD design capacity; actual delivery reported at ~400 MLD per The Ken Feb 2026. ~1.75 lakh new BWSSB connections target; ~110 surrounding villages migrate from tanker / borewell to piped supply.",
+        "source_key": "citizen_matters_stage_v"
+      }
+    ]
+  },
+  "rate_gap": {
+    "headline": "Official vs informal pricing",
+    "subtitle": "BWSSB's official Kaveri-on-Wheels rate ceiling sits ~3-4x below the crisis-peak informal market. The gap is the cost of the tanker mafia's monopoly on the over-extracted private borewell pool that the official 200-tanker fleet doesn't reach.",
+    "tiers": [
+      {
+        "channel": "BWSSB Kaveri-on-Wheels (official, GPS-tracked)",
+        "rate_5kl_inr": 700,
+        "rate_12kl_inr": null,
+        "fleet_size": 200,
+        "coverage": "On-demand booking via Android app + portal; service area limited to BWSSB piped-supply zones",
+        "note": "App has ~19K downloads in a 14M city, 2.8/5 rating as of Feb 2026. Driver-assignment failure common."
+      },
+      {
+        "channel": "BBMP-mandated ceiling for private tankers (Mar 2024)",
+        "rate_5kl_inr": null,
+        "rate_6kl_inr": 600,
+        "rate_8kl_inr": 750,
+        "rate_12kl_inr": 1000,
+        "fleet_size": 1700,
+        "coverage": "Within 5 km of fill point; applies only to registered private operators",
+        "note": "Enforced via seizure threat; in practice most apartment associations report paying above ceiling during peak crisis."
+      },
+      {
+        "channel": "Informal market (off-season, 2025 OpenCity survey)",
+        "rate_6kl_inr_low": 800,
+        "rate_12kl_inr_high": 1200,
+        "fleet_size": null,
+        "coverage": "Most of BBMP; relies on private borewells (over-extracted) + occasional illegal lake / drain abstraction",
+        "note": "Includes BBMP-registered tankers operating above the ceiling outside enforcement windows."
+      },
+      {
+        "channel": "Informal market (March 2024 crisis peak)",
+        "rate_6kl_inr_low": 1500,
+        "rate_12kl_inr_high": 2850,
+        "fleet_size": null,
+        "coverage": "All of BBMP",
+        "note": "WELL Labs UWB documents Rs 200/kL crisis-peak (vs Rs 60-90/kL pre-crisis). The Rs 2,850/12kL ceiling-bust was widely cited in press."
+      }
+    ]
+  },
+  "extraction_sites": {
+    "headline": "Where the tanker water comes from",
+    "subtitle": "BBMP / KSPCB tanker-source-borewell consent applications are 'essentially nonexistent' per Down To Earth's Apr 2024 investigation. Named sources surfaced in press fall into three buckets:",
+    "sites": [
+      {
+        "name": "Yele Mallapa Shetty Lake (Medahalli, east Bengaluru)",
+        "type": "illegal_lake_abstraction",
+        "lat": 12.985,
+        "lng": 77.717,
+        "narrative": "Documented illegal tanker fill point during the March 2024 crisis. The lake is a notified water body; tanker abstraction from it is technically prohibited under NGT Forward Foundation order. Operator names cited in Down To Earth.",
+        "source_key": "down_to_earth_tanker_economy"
+      },
+      {
+        "name": "Vibhutipura Lake buffer (east Bengaluru)",
+        "type": "illegal_lake_buffer_borewell",
+        "lat": 12.961,
+        "lng": 77.683,
+        "narrative": "Borewells inside the NGT-mandated 75m lake buffer feeding tanker trucks. Operator 'Srinivas' named in press. Buffer-zone extraction is illegal per the 2016 NGT Forward Foundation order.",
+        "source_key": "down_to_earth_tanker_economy"
+      },
+      {
+        "name": "Jigani industrial belt borewell cluster (south)",
+        "type": "industrial_borewell",
+        "lat": 12.781,
+        "lng": 77.654,
+        "narrative": "Industrial-zone borewells (KIADB Jigani area) feeding the informal tanker market. Operator 'Lokesh' named in press. Industrial borewells nominally for factory use are diverted to tanker fill.",
+        "source_key": "down_to_earth_tanker_economy"
+      },
+      {
+        "name": "Whitefield / Sarjapur peri-urban borewell belt",
+        "type": "over_extracted_private_borewell",
+        "lat": 12.969,
+        "lng": 77.749,
+        "narrative": "Peri-urban borewells beyond BBMP limits where extraction has been minimally regulated. Tanker trucks drive ~40 km (per WELL Labs UWB) from city stress wards to fill points here.",
+        "source_key": "well_labs_uwb_2024"
+      },
+      {
+        "name": "Treated wastewater STP outlets (legitimate alternative)",
+        "type": "treated_wastewater",
+        "lat": null,
+        "lng": null,
+        "narrative": "39 BWSSB STPs (1500+ MLD installed treatment) produce treated effluent priced at Rs 10-80/kL - far below private tanker rates. Tankers DO buy STP effluent for construction / horticulture use but the supply isn't widely advertised to apartment associations for non-potable household use.",
+        "source_key": "well_labs_uwb_2024"
+      }
+    ],
+    "regulatory_gap": "KSPCB consent-management portal (kspcb.karnataka.gov.in/consent-management) lists CFE/CFO holders by sector. Tanker-source borewells almost universally absent from the registry - 108 BBMP borewells officially registered with the Karnataka Ground Water Authority pre-March 2024. The de-facto unregulated extraction is the regulatory paper-trail's main story."
+  },
+  "dependency_corridors": {
+    "headline": "Most-dependent areas",
+    "subtitle": "IISc Groundwater Outlook (April 2025) flagged 65 BBMP wards as critically over-extracted. The OpenCity 2025 survey and Citizen Matters' Cauvery LPCD index converge on the same corridors as worst-served by piped supply.",
+    "stress_ward_count": 65,
+    "iisc_source_key": "iisc_outlook_2025",
+    "highest_rate_corridors_2025": [
+      { "corridor": "Whitefield / Sarjapur",        "rate_band_inr_kL": "120-200", "note": "Tech-corridor apartment density + slow Cauvery Stage V rollout into eastern wards" },
+      { "corridor": "Horamavu / Hennur",            "rate_band_inr_kL": "100-160", "note": "Ward 87 Horamavu reports 0 LPCD piped supply per Citizen Matters Cauvery index (Jun 2024)" },
+      { "corridor": "Yelahanka / Jakkur",           "rate_band_inr_kL":  "90-140", "note": "GBA-north corridor; CGWB Yelahanka block stage-of-development crossed 260% in GEC 2024" },
+      { "corridor": "Bommanahalli / HSR fringe",    "rate_band_inr_kL":  "90-140", "note": "South-east transition wards; K&C valley discharge nuisance complicates groundwater quality" },
+      { "corridor": "Kanakapura Road / JP Nagar",   "rate_band_inr_kL":  "80-120", "note": "Better BWSSB Stage V coverage; tanker rates among the lowest in the city" }
+    ],
+    "worst_served_named_wards": [
+      { "ward_no": 87, "name": "Horamavu",            "cauvery_lpcd": 0,   "source_key": "citizen_matters_cauvery_index" },
+      { "ward_no": 26, "name": "Dodda Bidarakallu",   "cauvery_lpcd": 2,   "source_key": "citizen_matters_cauvery_index" },
+      { "ward_no":  7, "name": "Thanisandra",         "cauvery_lpcd": 2,   "source_key": "citizen_matters_cauvery_index" },
+      { "ward_no": null, "name": "Shivaji Nagar (best-served reference)", "cauvery_lpcd": 191, "source_key": "citizen_matters_cauvery_index" }
+    ]
+  },
+  "data_gaps": [
+    {
+      "label": "Per-ward Kaveri-on-Wheels booking volume",
+      "detail": "BWSSB's GPS-tracked official tanker booking volume + response time by BBMP ward is not published. RTI to BWSSB IT cell would yield it.",
+      "rti_target": "BWSSB IT cell / CPIO"
+    },
+    {
+      "label": "65-ward IISc stress list (structured)",
+      "detail": "IISc Interim Report II (Jan 2025) PDF contains the full 65 stress wards in tables. Not yet structured by any news outlet. Parsing the PDF would surface a ward-overlay layer the platform doesn't have today.",
+      "rti_target": "Tabula / pdfplumber parse of opencity.in mirror"
+    },
+    {
+      "label": "KSPCB tanker-source borewell consents",
+      "detail": "The regulatory roster of tanker-source borewells. Down To Earth confirms it's near-empty by design; RTI / scrape would verify the empty-set as a fact (honest gap framing per platform principle).",
+      "rti_target": "KSPCB CFE/CFO portal scrape"
+    },
+    {
+      "label": "Karnataka Ground Water Authority registered borewells",
+      "detail": "108 BBMP borewells were officially registered pre-March 2024 per Newslaundry. A scrape of kgwa.in/Public/ would yield the current count and let us layer it against the IISc 65-ward stress list.",
+      "rti_target": "kgwa.in Public portal"
+    },
+    {
+      "label": "BBMP / RTO registered tanker roster (deferred)",
+      "detail": "RTI for the 1,700 registered tankers with operator names, fill-point declarations, fleet capacities. Would let us map fleet density per ward.",
+      "rti_target": "BBMP Health Cell / RTO Bangalore"
+    }
+  ],
+  "sources": {
+    "opencity_tanker_2025": {
+      "label": "OpenCity Bengaluru Tanker Survey 2025",
+      "url": "https://opencity.in/bengaluru-water-tankers-survey-2025-situation-better-than-2024/",
+      "extracted": "2026-06-01"
+    },
+    "iisc_outlook_2025": {
+      "label": "IISc Groundwater Outlook for Bengaluru - Interim Report II (Jan 2025)",
+      "url": "https://data.opencity.in/dataset/32551941-ee4d-4bcb-8413-86a5a5936c16/resource/cd20c936-aef5-422b-9117-aaba6f92a99c/download/013503fa-f786-47f7-ad03-fa083cda11ec.pdf",
+      "extracted": "2026-06-01"
+    },
+    "citizen_matters_cauvery_index": {
+      "label": "Citizen Matters - Bengaluru Cauvery Supply Water Security Index (Jun 2024)",
+      "url": "https://citizenmatters.in/bengaluru-cauvery-supply-water-security/",
+      "extracted": "2026-06-01"
+    },
+    "well_labs_uwb_2024": {
+      "label": "WELL Labs - Bengaluru Urban Water Balance Report (Oct 2023, Jan 2024 update)",
+      "url": "https://welllabs.org/bengaluru-urban-water-balance-report-well-labs/",
+      "extracted": "2026-06-01"
+    },
+    "down_to_earth_bulk_cut": {
+      "label": "Down To Earth - BWSSB Announces 20% Water Cut to Bulk Consumers",
+      "url": "https://www.downtoearth.org.in/water/bengaluru-water-crisis-bwssb-announces-20-water-cut-to-bulk-consumers-identifies-areas-bearing-the-brunt-94973",
+      "extracted": "2026-06-01"
+    },
+    "down_to_earth_tanker_economy": {
+      "label": "Down To Earth - Tanker Economy Revealed: Nexus Between Water Mafia and Politicians",
+      "url": "https://www.downtoearth.org.in/water/tanker-economy-revealed-nexus-between-water-mafia-and-politicians-controls-supply-in-bengaluru",
+      "extracted": "2026-06-01"
+    },
+    "the_week_mar_4": {
+      "label": "The Week - Bengaluru Private Tankers Must Register by March 7 (4 Mar 2024)",
+      "url": "https://www.theweek.in/news/india/2024/03/04/karnataka-dk-shivakumar-wants-bengaluru-private-tankers-to-finish-registration-before-march-7.html",
+      "extracted": "2026-06-01"
+    },
+    "the_week_mar_12": {
+      "label": "The Week - Govt to Set Up Water War-Room, Assign Tankers Per Ward (12 Mar 2024)",
+      "url": "https://www.theweek.in/news/india/2024/03/12/bengaluru-water-woes-govt-to-set-up-war-room-assign-water-tankers-for-every-ward.html",
+      "extracted": "2026-06-01"
+    },
+    "newslaundry_overexploitation": {
+      "label": "Newslaundry - Over-Exploited Groundwater + Crisis-Peak Tanker Rates (Mar 2024)",
+      "url": "https://www.newslaundry.com/2024/03/20/over-exploited-groundwater-neglected-lakes-heres-why-bengalurus-water-crisis",
+      "extracted": "2026-06-01"
+    },
+    "citizen_matters_stage_v": {
+      "label": "Citizen Matters - Promise of Cauvery Stage V (BWSSB 2024)",
+      "url": "https://citizenmatters.in/promise-of-cauvery-stage-v-bengalureans-to-be-worry-free/",
+      "extracted": "2026-06-01"
+    },
+    "kaveri_on_wheels": {
+      "label": "BWSSB Kaveri-on-Wheels portal",
+      "url": "https://kaverionwheels.bwssb.gov.in/",
+      "extracted": "2026-06-01"
+    }
+  }
+}
