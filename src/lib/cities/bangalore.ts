@@ -1,9 +1,10 @@
 import type { CityConfig } from './types';
 
-// Bangalore is registered but DISABLED until M1 data ingestion + M2 UI land.
-// `enabled: false` keeps the city out of listEnabledPlaces(), the URL
-// parser's knownCityIds set, the city switcher, and the [cityId] route
-// guard (which 404s any non-enabled city in src/app/[cityId]/layout.tsx).
+// Bangalore was registered DISABLED through the onboarding window and
+// flipped to enabled: true on the cutover commit that merged PR #117 to
+// main (June 2026). For the equivalent flip on the Supabase `cities`
+// table see the M1 migration notes; both must agree for /bangalore to
+// be reachable in production.
 //
 // Ward count is the post-15-May-2025 GBA delimitation (369 wards across
 // 5 City Corporations, notified 19 Nov 2025).
@@ -129,5 +130,5 @@ export const BANGALORE: CityConfig = {
     bichanahalli: 'kabini',
     harangi: 'harangi',
   },
-  enabled: false,
+  enabled: true,
 };
