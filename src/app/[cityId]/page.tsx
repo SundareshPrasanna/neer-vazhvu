@@ -36,7 +36,18 @@ export default async function CityHomePage({ params }: PageProps) {
     loadCitySnapshot(config),
     loadCityWaterEstimate(config),
   ]);
-  const reservoirIsLive = snapshot.reservoirIsLive;
+  // Compute the preview pill semantically (see below).
+  // The "PREVIEW · waiting for first daily ingestion" pill is meaningful only
+  // for cities that drink directly from a tracked reservoir. Bangalore tracks
+  // 4 upstream Cauvery reservoirs as basin context but none are primary
+  // drinking sources (BWSSB lifts treated water 100 km from T.K. Halli), so
+  // "waiting for ingestion" would misrepresent the data model. Only consider
+  // a city "in preview" if it has a primary source configured AND that
+  // source's reading is missing.
+  const hasPrimaryDrinkingSource = config.waterSources.some(
+    (s) => s.isPrimaryDrinkingSource,
+  );
+  const reservoirIsLive = !hasPrimaryDrinkingSource || snapshot.reservoirIsLive;
 
   // Convert the per-city snapshot into the shared ReservoirSummary[]
   // shape Chennai's ReservoirCards consumes.

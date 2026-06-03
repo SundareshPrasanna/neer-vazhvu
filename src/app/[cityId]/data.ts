@@ -305,12 +305,18 @@ export async function loadCitySnapshot(config: PlaceConfig): Promise<CitySnapsho
     readingsBySource[code] = typed.find((r) => r.source_code === code) ?? null;
   }
 
-  // "Live" means we have at least one primary-drinking-source reading.
+  // "Live" means either (a) the city has no primary-drinking-source defined
+  // because its data model doesn't include a city-owned reservoir (Bangalore -
+  // BWSSB drinks Cauvery via T.K. Halli, not from any single reservoir), or
+  // (b) the city has primaries defined AND every one has a current reading.
+  // The previous form (`primaryCodes.length > 0 && ...`) flipped to false
+  // for cities like Bangalore that legitimately have zero primaries, which
+  // surfaced a misleading "waiting for first daily ingestion" pill.
   const primaryCodes = config.waterSources
     .filter((s) => s.isPrimaryDrinkingSource)
     .map((s) => s.sourceCode);
   const liveSources = primaryCodes.filter((c) => readingsBySource[c] !== null);
-  const reservoirIsLive = primaryCodes.length > 0 && liveSources.length === primaryCodes.length;
+  const reservoirIsLive = primaryCodes.length === 0 || liveSources.length === primaryCodes.length;
 
   return { asOf, readingsBySource, reservoirIsLive };
 }
