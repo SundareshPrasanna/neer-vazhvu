@@ -1,6 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/lib/i18n/context";
+
+function tFmt(template: string, params: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
+}
 
 /**
  * Expanded /bangalore/tanker context layers. Sits beneath the
@@ -131,32 +136,31 @@ function SourceLink({
   );
 }
 
-const SITE_TYPE_LABEL: Record<string, { label: string; tone: string }> = {
-  illegal_lake_abstraction: {
-    label: "Illegal lake abstraction",
-    tone: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200",
-  },
-  illegal_lake_buffer_borewell: {
-    label: "Illegal lake-buffer borewell",
-    tone: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200",
-  },
-  industrial_borewell: {
-    label: "Industrial borewell (diverted)",
-    tone: "bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200",
-  },
-  over_extracted_private_borewell: {
-    label: "Over-extracted private borewell",
-    tone: "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200",
-  },
-  treated_wastewater: {
-    label: "Treated wastewater (legitimate)",
-    tone: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200",
-  },
+const SITE_TYPE_TONE: Record<string, string> = {
+  illegal_lake_abstraction: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200",
+  illegal_lake_buffer_borewell: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200",
+  industrial_borewell: "bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200",
+  over_extracted_private_borewell: "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200",
+  treated_wastewater: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200",
 };
 
 export function TankerExpandedContext() {
+  const { t, language } = useLanguage();
   const [ctx, setCtx] = useState<TankerContext | null>(null);
   const [error, setError] = useState(false);
+  // Generic per-language picker for JSON data fields. Each user-facing
+  // text field in bangalore-tanker-context.json now ships parallel
+  // `_kn` / `_ta` variants (see /tmp/patch_tanker_context.py); this
+  // helper reads the right one or falls back to English.
+  const pick = (
+    obj: Record<string, unknown>,
+    key: string,
+  ): string => {
+    const localized = obj[`${key}_${language}`];
+    if (typeof localized === "string" && localized) return localized;
+    const en = obj[key];
+    return typeof en === "string" ? en : "";
+  };
 
   useEffect(() => {
     fetch("/data/bangalore-tanker-context.json")
@@ -168,8 +172,7 @@ export function TankerExpandedContext() {
   if (error) {
     return (
       <div className="rounded-md border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20 p-3 text-xs text-amber-700 dark:text-amber-200">
-        Could not load tanker context. The page falls back to the
-        OpenCity longitudinal survey above.
+        {t("tanker_ctx.error")}
       </div>
     );
   }
@@ -182,10 +185,10 @@ export function TankerExpandedContext() {
       {/* 1. Structural anchor */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900">
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-2">
-          The structural picture
+          {t("tanker_ctx.section.structural_anchor")}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
-          {ctx.structural_anchor.headline}
+          {t("tanker_ctx.section.structural_body")}
         </p>
         <div className="space-y-2">
           {ctx.structural_anchor.breakdown.map((row, i) => (
@@ -205,10 +208,10 @@ export function TankerExpandedContext() {
                 {row.mld.toLocaleString()} MLD
               </div>
               <div className="text-slate-600 dark:text-slate-400 flex-[2] text-xs">
-                {row.label}
+                {pick(row as unknown as Record<string, unknown>, "label")}
                 {row.note && (
                   <span className="text-amber-700 dark:text-amber-400 ml-1">
-                    · {row.note}
+                    · {pick(row as unknown as Record<string, unknown>, "note")}
                   </span>
                 )}
               </div>
@@ -216,19 +219,19 @@ export function TankerExpandedContext() {
           ))}
         </div>
         <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-3">
-          Numbers from <SourceLink sourceKey={ctx.structural_anchor.source_key} sources={sources} />
-          . Sums larger than 2,830 MLD because BWSSB also serves bulk
-          industrial / institutional users outside the household total.
+          {t("tanker_ctx.structural_footer").split("{source}")[0]}
+          <SourceLink sourceKey={ctx.structural_anchor.source_key} sources={sources} />
+          {t("tanker_ctx.structural_footer").split("{source}")[1] ?? ""}
         </p>
       </section>
 
       {/* 2. Crisis timeline */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900">
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">
-          {ctx.crisis_timeline_2024.headline}
+          {t("tanker_ctx.section.crisis_headline")}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-          {ctx.crisis_timeline_2024.subtitle}
+          {t("tanker_ctx.section.crisis_subtitle")}
         </p>
         <ol className="border-l-2 border-slate-200 dark:border-slate-700 pl-4 space-y-3">
           {ctx.crisis_timeline_2024.events.map((e) => (
@@ -239,11 +242,11 @@ export function TankerExpandedContext() {
                   {e.date}
                 </time>
                 <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-                  {e.headline}
+                  {pick(e as unknown as Record<string, unknown>, "headline")}
                 </span>
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-                {e.detail}{" "}
+                {pick(e as unknown as Record<string, unknown>, "detail")}{" "}
                 <SourceLink sourceKey={e.source_key} sources={sources} />
               </p>
             </li>
@@ -254,21 +257,21 @@ export function TankerExpandedContext() {
       {/* 3. Rate gap */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900">
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">
-          {ctx.rate_gap.headline}
+          {t("tanker_ctx.section.rate_gap_headline")}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-          {ctx.rate_gap.subtitle}
+          {t("tanker_ctx.section.rate_gap_subtitle")}
         </p>
         <div className="space-y-3">
-          {ctx.rate_gap.tiers.map((t, i) => {
+          {ctx.rate_gap.tiers.map((tier, i) => {
             const rateBits: string[] = [];
-            if (t.rate_5kl_inr) rateBits.push(`Rs ${t.rate_5kl_inr} / 5kL`);
-            if (t.rate_6kl_inr) rateBits.push(`Rs ${t.rate_6kl_inr} / 6kL`);
-            if (t.rate_6kl_inr_low && t.rate_12kl_inr_high)
-              rateBits.push(`Rs ${t.rate_6kl_inr_low.toLocaleString()}-${t.rate_12kl_inr_high.toLocaleString()}`);
-            if (t.rate_8kl_inr) rateBits.push(`Rs ${t.rate_8kl_inr} / 8kL`);
-            if (t.rate_12kl_inr && !t.rate_12kl_inr_high)
-              rateBits.push(`Rs ${t.rate_12kl_inr.toLocaleString()} / 12kL`);
+            if (tier.rate_5kl_inr) rateBits.push(`Rs ${tier.rate_5kl_inr} / 5kL`);
+            if (tier.rate_6kl_inr) rateBits.push(`Rs ${tier.rate_6kl_inr} / 6kL`);
+            if (tier.rate_6kl_inr_low && tier.rate_12kl_inr_high)
+              rateBits.push(`Rs ${tier.rate_6kl_inr_low.toLocaleString()}-${tier.rate_12kl_inr_high.toLocaleString()}`);
+            if (tier.rate_8kl_inr) rateBits.push(`Rs ${tier.rate_8kl_inr} / 8kL`);
+            if (tier.rate_12kl_inr && !tier.rate_12kl_inr_high)
+              rateBits.push(`Rs ${tier.rate_12kl_inr.toLocaleString()} / 12kL`);
             return (
               <div
                 key={i}
@@ -276,22 +279,22 @@ export function TankerExpandedContext() {
               >
                 <div className="flex items-baseline justify-between gap-3 flex-wrap mb-1">
                   <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-                    {t.channel}
+                    {pick(tier as unknown as Record<string, unknown>, "channel")}
                   </span>
                   <span className="text-sm font-mono text-blue-700 dark:text-blue-400 tabular-nums">
                     {rateBits.join(" · ")}
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
-                  {t.coverage}
-                  {t.fleet_size != null && (
+                  {pick(tier as unknown as Record<string, unknown>, "coverage")}
+                  {tier.fleet_size != null && (
                     <span className="ml-2 text-slate-500 dark:text-slate-500">
-                      · fleet ~{t.fleet_size.toLocaleString()}
+                      · {tFmt(t("tanker_ctx.fleet"), { n: tier.fleet_size.toLocaleString() })}
                     </span>
                   )}
                 </p>
                 <p className="text-[11px] text-slate-500 dark:text-slate-500 mt-1 italic">
-                  {t.note}
+                  {pick(tier as unknown as Record<string, unknown>, "note")}
                 </p>
               </div>
             );
@@ -302,14 +305,16 @@ export function TankerExpandedContext() {
       {/* 4. Extraction sites */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900">
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">
-          {ctx.extraction_sites.headline}
+          {t("tanker_ctx.section.extraction_headline")}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-          {ctx.extraction_sites.subtitle}
+          {t("tanker_ctx.section.extraction_subtitle")}
         </p>
         <div className="space-y-3">
           {ctx.extraction_sites.sites.map((s, i) => {
-            const typeMeta = SITE_TYPE_LABEL[s.type] ?? { label: s.type, tone: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" };
+            const tone = SITE_TYPE_TONE[s.type] ?? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300";
+            const typeKey = `tanker_ctx.site_type.${s.type}`;
+            const typeLabel = t(typeKey);
             return (
               <div
                 key={i}
@@ -320,13 +325,13 @@ export function TankerExpandedContext() {
                     {s.name}
                   </span>
                   <span
-                    className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${typeMeta.tone}`}
+                    className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${tone}`}
                   >
-                    {typeMeta.label}
+                    {typeLabel === typeKey ? s.type : typeLabel}
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                  {s.narrative}{" "}
+                  {pick(s as unknown as Record<string, unknown>, "narrative")}{" "}
                   <SourceLink sourceKey={s.source_key} sources={sources} />
                 </p>
               </div>
@@ -334,23 +339,23 @@ export function TankerExpandedContext() {
           })}
         </div>
         <p className="text-[11px] text-amber-700 dark:text-amber-300 mt-3 leading-relaxed">
-          {ctx.extraction_sites.regulatory_gap}
+          {t("tanker_ctx.section.extraction_gap")}
         </p>
       </section>
 
       {/* 5. Dependency corridors */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900">
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">
-          {ctx.dependency_corridors.headline}
+          {t("tanker_ctx.section.corridors_headline")}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-          {ctx.dependency_corridors.subtitle}{" "}
+          {t("tanker_ctx.section.corridors_subtitle")}{" "}
           <SourceLink sourceKey={ctx.dependency_corridors.iisc_source_key} sources={sources} />
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
-              Highest informal tanker rates (Rs / kL, 2025)
+              {t("tanker_ctx.rates_heading")}
             </h3>
             <div className="space-y-1.5">
               {ctx.dependency_corridors.highest_rate_corridors_2025.map((c, i) => (
@@ -365,7 +370,7 @@ export function TankerExpandedContext() {
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 dark:text-slate-500 italic">
-                    {c.note}
+                    {pick(c as unknown as Record<string, unknown>, "note")}
                   </p>
                 </div>
               ))}
@@ -373,7 +378,7 @@ export function TankerExpandedContext() {
           </div>
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
-              Worst-served by piped supply (Cauvery LPCD)
+              {t("tanker_ctx.worst_served")}
             </h3>
             <div className="space-y-1.5">
               {ctx.dependency_corridors.worst_served_named_wards.map((w, i) => (
@@ -394,50 +399,69 @@ export function TankerExpandedContext() {
               ))}
             </div>
             <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-2 italic">
-              MoHUA Service Level Benchmark target: 135 LPCD. <SourceLink sourceKey="citizen_matters_cauvery_index" sources={sources} />
+              {t("tanker_ctx.mohua_note")} <SourceLink sourceKey="citizen_matters_cauvery_index" sources={sources} />
             </p>
           </div>
         </div>
         <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-4">
-          IISc Groundwater Outlook flags{" "}
-          <span className="font-semibold text-slate-700 dark:text-slate-200">
-            {ctx.dependency_corridors.stress_ward_count} BBMP wards
-          </span>{" "}
-          as critically over-extracted. Mapping that 65-ward list onto
-          a choropleth on this page is a Tier-1 follow-up (IISc PDF
-          parse required - see data gaps below).
+          {tFmt(t("tanker_ctx.stress_footer"), { count: ctx.dependency_corridors.stress_ward_count })}
         </p>
       </section>
 
-      {/* 6. Data gaps */}
-      <section className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-950/20 p-5">
-        <h2 className="text-base font-semibold text-amber-900 dark:text-amber-200 mb-1">
-          Data we don&apos;t have (RTI / partnership unlocks)
-        </h2>
-        <p className="text-sm text-amber-800 dark:text-amber-300 mb-3 leading-relaxed">
-          The tanker market&apos;s remaining opacity isn&apos;t a
-          mystery - it&apos;s a regulatory paper-trail that BBMP /
-          BWSSB / KSPCB hold internally. Listed here so users can see
-          the boundary of public knowledge and so the platform&apos;s
-          honest-gaps principle stays visible.
-        </p>
-        <ul className="space-y-2">
-          {ctx.data_gaps.map((g, i) => (
-            <li
-              key={i}
-              className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed"
-            >
-              <span className="font-semibold">{g.label}.</span>{" "}
-              <span className="text-amber-800 dark:text-amber-300">
-                {g.detail}
-              </span>{" "}
-              <span className="text-[11px] text-amber-700 dark:text-amber-400 italic">
-                Target: {g.rti_target}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
     </div>
+  );
+}
+
+/**
+ * Standalone "Data we don't have" panel, split out from
+ * TankerExpandedContext so the page can interleave it after the IISc
+ * stress-ward map (which is rendered between the two). Same data
+ * source; renders independently of the rest of the expanded context.
+ */
+export function TankerDataGaps() {
+  const { t, language } = useLanguage();
+  const [ctx, setCtx] = useState<TankerContext | null>(null);
+  const pick = (
+    obj: Record<string, unknown>,
+    key: string,
+  ): string => {
+    const localized = obj[`${key}_${language}`];
+    if (typeof localized === "string" && localized) return localized;
+    const en = obj[key];
+    return typeof en === "string" ? en : "";
+  };
+  useEffect(() => {
+    fetch("/data/bangalore-tanker-context.json")
+      .then((r) => (r.ok ? (r.json() as Promise<TankerContext>) : Promise.reject()))
+      .then(setCtx)
+      .catch(() => setCtx(null));
+  }, []);
+  if (!ctx) return null;
+
+  return (
+    <section className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-950/20 p-5">
+      <h2 className="text-base font-semibold text-amber-900 dark:text-amber-200 mb-1">
+        {t("tanker_gaps.heading")}
+      </h2>
+      <p className="text-sm text-amber-800 dark:text-amber-300 mb-3 leading-relaxed">
+        {t("tanker_gaps.body")}
+      </p>
+      <ul className="space-y-2">
+        {ctx.data_gaps.map((g, i) => (
+          <li
+            key={i}
+            className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed"
+          >
+            <span className="font-semibold">{pick(g as unknown as Record<string, unknown>, "label")}.</span>{" "}
+            <span className="text-amber-800 dark:text-amber-300">
+              {pick(g as unknown as Record<string, unknown>, "detail")}
+            </span>{" "}
+            <span className="text-[11px] text-amber-700 dark:text-amber-400 italic">
+              {t("tanker_gaps.target")}: {pick(g as unknown as Record<string, unknown>, "rti_target")}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

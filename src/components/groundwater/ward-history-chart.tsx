@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/theme-provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { WardHistoryPoint, WardHistoryResponse } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
@@ -26,7 +26,7 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
-  const locale = language === "ta" ? "ta-IN" : "en-IN";
+  const locale = language === "ta" ? "ta-IN" : language === "kn" ? "kn-IN" : "en-IN";
   const [history, setHistory] = useState<WardHistoryPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);

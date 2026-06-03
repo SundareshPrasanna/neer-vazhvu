@@ -6,6 +6,7 @@ import L from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { useLanguage } from "@/lib/i18n/context";
+import { FitToBounds, pointsBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 import type { RiverInfo } from "./rivers-client";
 
@@ -129,6 +130,11 @@ export function RiversLeafletMap({
     >
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      <FitToBounds
+        bounds={pointsBounds(segments.flatMap((s) => s.coords))}
+        resetKey={`rivers:${segments.length}`}
+        maxZoom={12}
+      />
 
       {segments.map(({ riverId, coords, key }) => {
         const info = riverInfo[riverId];

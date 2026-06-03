@@ -511,7 +511,7 @@ export function WardReportCard() {
           <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
             <span>{t("report.generated_by")}</span>
             <span>
-              {new Date().toLocaleDateString(language === "ta" ? "ta-IN" : "en-IN", {
+              {new Date().toLocaleDateString(language === "ta" ? "ta-IN" : language === "kn" ? "kn-IN" : "en-IN", {
                 day: "numeric",
                 month: "short",
                 year: "numeric",

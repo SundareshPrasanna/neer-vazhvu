@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip } from "react-l
 import "leaflet/dist/leaflet.css";
 import type { Feature, FeatureCollection } from "geojson";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { FitToBounds, pointsBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 
 interface HotspotProps {
   name?: string;
@@ -151,6 +152,22 @@ export function FloodLeafletMap({ center, zoom, layerState }: MapProps) {
         key={tiles.url}
         url={tiles.url}
         attribution={tiles.attribution}
+      />
+      {/* Fit to whichever layer is visible. Hotspot markers are the
+          tighter envelope; fall back to the SWD network when only the
+          drain layers are on. */}
+      <FitToBounds
+        bounds={
+          visibleHotspots.length > 0
+            ? pointsBounds(visibleHotspots.map((m) => [m.lat, m.lng] as [number, number]))
+            : layerState.showPrimary
+              ? geoJsonBounds(swdPrimary)
+              : layerState.showSecondary
+                ? geoJsonBounds(swdSecondary)
+                : null
+        }
+        resetKey={`hot:${visibleHotspots.length}|p:${swdPrimary ? 1 : 0}|s:${swdSecondary ? 1 : 0}`}
+        maxZoom={12}
       />
 
       {layerState.showSecondary && swdSecondary && (

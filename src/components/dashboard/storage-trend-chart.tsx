@@ -14,7 +14,7 @@ import {
   Legend,
   ReferenceLine,
 } from "recharts";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/theme-provider";
 import { formatNumber } from "@/lib/utils/format";
 import type { HistoricalYearData } from "@/lib/mock-data";
 import { useLanguage } from "@/lib/i18n/context";
@@ -68,7 +68,7 @@ export function StorageTrendChart({
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
-  const locale = language === "ta" ? "ta-IN" : "en-IN";
+  const locale = language === "ta" ? "ta-IN" : language === "kn" ? "kn-IN" : "en-IN";
   const resolvedTitle = title ?? t("dash.combined_trend");
   const [activeDays, setActiveDays] = useState(0);
   const [selectedYears, setSelectedYears] = useState<number[]>([]);

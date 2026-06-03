@@ -37,13 +37,29 @@ export type BangaloreBriefingVariant =
 
 export interface BangaloreBriefing {
   variant: BangaloreBriefingVariant;
-  /** Single-line headline (English). Kannada/Tamil prose deferred until
-   *  city-language i18n keys land for Bengaluru. */
-  headline: string;
-  /** 3-4 supporting bullet sentences. Each is a short factual line. */
-  sentences: string[];
-  /** Freshness footer ("Cauvery storage: 2026-05-26 · refreshed daily"). */
-  freshness: string;
+  /** Structured fields the client component substitutes into i18n
+   *  templates. The English prose is no longer carried on this struct -
+   *  it is composed at render time so the briefing localises per the
+   *  user's chosen language. */
+  fields: {
+    pct: number;          // total FRL %
+    lowName: string;      // dam with lowest % (most-drawn)
+    lowPct: number;
+    highName: string;     // dam with highest % (most buffer)
+    highPct: number;
+    stageVDesign: number;
+    stageVActual: number;
+    served: number;       // population on BWSSB piped (millions)
+    gba: number;          // total GBA population (millions)
+    tankers: string;      // formatted "5,000"
+    wards: number;        // IISc stress wards
+    nrwPct: number;
+    tmcPerPct: string;    // pretty-printed TMC per 1% FRL
+  };
+  /** Date string from the upstream daily ingest, or null if no live
+   *  reading is available yet. The freshness label is built at render
+   *  time using t("briefing.freshness.*"). */
+  freshnessDate: string | null;
   /** Total live storage across the 4 upstream Cauvery dams, in TMC. */
   totalStorageTmc: number;
   /** Total full-pool capacity across the 4 dams, in TMC. */
@@ -79,84 +95,11 @@ function pickVariant(totalPctFrl: number, monthIST: number): BangaloreBriefingVa
 }
 
 
-function variantHeadline(variant: BangaloreBriefingVariant, pct: number): string {
-  const p = pct.toFixed(0);
-  switch (variant) {
-    case "drought_drawdown":
-      return `Cauvery basin in drought drawdown: 4 upstream dams at just ${p}% of FRL combined.`;
-    case "pre_monsoon":
-      return `Pre-monsoon drawdown: Cauvery upstream at ${p}% of FRL, awaiting south-west monsoon onset.`;
-    case "monsoon_recharge":
-      return `Cauvery basin in monsoon recharge: 4 upstream dams at ${p}% of FRL combined.`;
-    case "post_monsoon":
-      return `Cauvery basin near full storage: 4 upstream dams at ${p}% of FRL combined.`;
-    case "steady_drawdown":
-      return `Cauvery upstream storage at ${p}% of FRL - mid-cycle draw against next monsoon.`;
-  }
-}
-
-
-function buildSentences(
-  variant: BangaloreBriefingVariant,
-  summaries: ReservoirSummary[],
-): string[] {
-  const out: string[] = [];
-
-  // Per-dam status sentence - lead with the lowest pct (most stress
-  // signal) and the highest (most buffer).
-  const sorted = summaries
-    .filter((s) => s.storagePct != null)
-    .sort((a, b) => (a.storagePct ?? 0) - (b.storagePct ?? 0));
-  if (sorted.length >= 2) {
-    const low = sorted[0];
-    const high = sorted[sorted.length - 1];
-    out.push(
-      `${low.displayName} is the most-drawn at ${Math.round(low.storagePct ?? 0)}% FRL; ${high.displayName} carries the most buffer at ${Math.round(high.storagePct ?? 0)}% FRL.`,
-    );
-  }
-
-  // Stage V structural under-delivery is constant in the briefing because
-  // it's the dominant structural fact regardless of upstream storage.
-  out.push(
-    `BWSSB's Cauvery Stage V (commissioned Oct 2024) is delivering ~${STAGE_V_ACTUAL_MLD_APPROX} MLD against ${STAGE_V_DESIGN_MLD} MLD design per The Ken (Feb 2026), keeping the city's piped capacity below 2034 demand even at full upstream storage.`,
-  );
-
-  // Demand-side constants (IISc + tanker).
-  out.push(
-    `~${POPULATION_SERVED_M}M of ${POPULATION_GBA_M}M GBA residents are on BWSSB piped supply; the rest depend on over-extracted borewells and the ~${TANKER_FLEET_APPROX.toLocaleString()}-tanker informal market. IISc Groundwater Outlook (Apr 2025) flags ${IISC_STRESS_WARDS} BBMP wards as critically over-extracted.`,
-  );
-
-  // Variant-specific closing sentence.
-  switch (variant) {
-    case "drought_drawdown":
-      out.push(
-        `At this drawdown level, Karnataka's drinking-water carve-out at T.K. Halli is the first item under pressure - irrigation releases get curtailed before urban supply, but pumping itself becomes more contested. Watch the Cauvery Water Management Authority release schedules.`,
-      );
-      break;
-    case "pre_monsoon":
-      out.push(
-        `Monsoon onset for the Cauvery catchment is typically the first week of June (south-west monsoon). KRS + Hemavathi typically refill 60-80% by end-July in a normal year; weak monsoons (2017, 2023) push that into August.`,
-      );
-      break;
-    case "monsoon_recharge":
-      out.push(
-        `Recharge season also coincides with the BBMP foam-fire window - Bellandur's downstream weir typically produces surfactant foam events in the first heavy rains after a dry stretch (Feb 2017 fire was the canonical event).`,
-      );
-      break;
-    case "post_monsoon":
-      out.push(
-        `Even at full upstream storage, BWSSB's ~${NRW_PCT_APPROX}% non-revenue water (JICA Phase 3) means roughly half of what's pumped 95 km from T.K. Halli is lost between WTP and household meter. That structural loss is the next data unlock when BWSSB publishes NRW telemetry.`,
-      );
-      break;
-    case "steady_drawdown":
-      out.push(
-        `Mid-cycle drawdown phase. Each percentage point of FRL on these four dams represents roughly ${(((48400 + 35700 + 19520 + 8500) / 1000) * 0.01).toFixed(2)} TMC of basin storage - the same volume Bengaluru's piped network distributes in about 25 days at current pumping rates.`,
-      );
-      break;
-  }
-
-  return out;
-}
+/**
+ * The prose has been moved out into i18n keys (briefing.headline.*,
+ * briefing.sentence.*). The builder now returns only the structured
+ * fields the client component plugs into those templates.
+ */
 
 
 export function buildBangaloreBriefing(
@@ -195,13 +138,36 @@ export function buildBangaloreBriefing(
   const monthIST = nowIST.getMonth() + 1; // 1-12
   const variant = pickVariant(totalPctFrl, monthIST);
 
+  // Pick lowest- and highest-FRL dams so the client component can drop
+  // their names + percentages into the localised dam_range sentence.
+  const sorted = liveReadings
+    .filter((s) => s.storagePct != null)
+    .sort((a, b) => (a.storagePct ?? 0) - (b.storagePct ?? 0));
+  const low = sorted[0];
+  const high = sorted[sorted.length - 1];
+
+  // TMC of basin storage represented by 1% FRL on the 4 main dams
+  // (KRS 48.4 + Hemavathi 35.7 + Harangi 8.5 + Kabini 19.52 TMC ~= 112.12).
+  const tmcPerPct = (((48400 + 35700 + 19520 + 8500) / 1000) * 0.01).toFixed(2);
+
   return {
     variant,
-    headline: variantHeadline(variant, totalPctFrl),
-    sentences: buildSentences(variant, liveReadings),
-    freshness: lastUpdated
-      ? `Cauvery upstream storage: ${lastUpdated} · refreshed daily via TN Agri archive`
-      : "Cauvery upstream storage: live ingest pending",
+    fields: {
+      pct: Math.round(totalPctFrl),
+      lowName: low?.displayName ?? "",
+      lowPct: Math.round(low?.storagePct ?? 0),
+      highName: high?.displayName ?? "",
+      highPct: Math.round(high?.storagePct ?? 0),
+      stageVDesign: STAGE_V_DESIGN_MLD,
+      stageVActual: STAGE_V_ACTUAL_MLD_APPROX,
+      served: POPULATION_SERVED_M,
+      gba: POPULATION_GBA_M,
+      tankers: TANKER_FLEET_APPROX.toLocaleString(),
+      wards: IISC_STRESS_WARDS,
+      nrwPct: NRW_PCT_APPROX,
+      tmcPerPct,
+    },
+    freshnessDate: lastUpdated,
     totalStorageTmc: Math.round(totalStorageTmc * 100) / 100,
     totalCapacityTmc: Math.round(totalCapacityTmc * 100) / 100,
     totalPctFrl: Math.round(totalPctFrl * 10) / 10,

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
+import { CityHeaderBadges } from "@/components/dashboard/city-header-badges";
 import { getPlaceConfig } from "@/lib/cities";
 import {
   loadCitySnapshot,
@@ -57,16 +57,11 @@ export default async function CityHomePage({ params }: PageProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="outline" className="text-xs">
-          {config.displayName} · {config.stateCode}
-        </Badge>
-        {!reservoirIsLive && (
-          <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
-            PREVIEW · waiting for first daily ingestion
-          </Badge>
-        )}
-      </div>
+      <CityHeaderBadges
+        displayName={config.displayName}
+        stateCode={config.stateCode}
+        preview={!reservoirIsLive}
+      />
 
       {/* Hero swap: cities whose tracked sources ARE the urban supply
           (Chennai's CMWSSB reservoirs) get the days-left runway; cities
@@ -196,17 +191,17 @@ export default async function CityHomePage({ params }: PageProps) {
         {config.heroMode === "cauvery-pumping" && (
           <Link
             href={`/${cityId}/tanker`}
-            className="block rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50/40 dark:bg-amber-950/20 p-4 hover:border-amber-400 dark:hover:border-amber-600 transition-colors"
+            className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors"
           >
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+              <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                 Tanker market
               </h3>
-              <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               What households actually pay - longitudinal OpenCity surveys (2015 / 2019 / 2024).
             </p>
           </Link>

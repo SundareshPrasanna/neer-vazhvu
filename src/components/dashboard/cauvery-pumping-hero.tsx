@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatNumber } from "@/lib/utils/format";
+import { useLanguage } from "@/lib/i18n/context";
+
+function format(template: string, params: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
+}
 
 /**
  * "Pumped-city" hero for the city dashboard. Built for Bangalore but
@@ -67,6 +72,7 @@ interface Props {
 }
 
 export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
+  const { t } = useLanguage();
   const [data, setData] = useState<SupplyOverviewMin | null>(null);
 
   useEffect(() => {
@@ -110,25 +116,13 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
       <CardContent className="p-6 space-y-6">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400">
-            How {cityDisplayName} gets its water
+            {format(t("pump.eyebrow"), { city: cityDisplayName })}
           </p>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
-            Pumped {transmissionKm ? `${transmissionKm} km` : "far"}, lifted{" "}
-            {transmissionLiftM ? `${transmissionLiftM} m` : ""}, then a long
-            groundwater shadow market
+            {format(t("pump.headline"), { km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-            {cityDisplayName} is a fundamentally{" "}
-            <span className="font-semibold">pumped</span> city. There is no
-            river running through it - the city sits across the watershed
-            divide of three small valleys (Vrishabhavathi, Koramangala-
-            Challaghatta, Hebbal). Its water chain starts ~
-            {transmissionKm ?? 95} km away at the Cauvery and climbs ~
-            {transmissionLiftM ?? 500} m through three pump stations
-            (TK Halli {String.fromCharCode(0x2192)} Harohalli {String.fromCharCode(0x2192)} Tataguni) to reach the
-            BBMP service area. That structural choice - made because Kempe
-            Gowda&apos;s 1537 kere network could not scale to a 14M-person
-            city - is what makes the next four numbers consequential.
+            {format(t("pump.body"), { city: cityDisplayName, km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
           </p>
         </div>
 
@@ -137,26 +131,26 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
           <Stat
             value={formatNumber(cauveryMld)}
             unit="MLD"
-            label="Cauvery WTP capacity"
-            sub="Stages I-IV at TK Halli (JICA)"
+            label={t("pump.stat.wtp_label")}
+            sub={t("pump.stat.wtp_sub")}
           />
           {transmissionKm && (
             <Stat
               value={String(transmissionKm)}
               unit="km"
-              label="Uphill from Cauvery"
-              sub={`${transmissionLiftM ?? "~500"} m total lift, 3 pump stations`}
+              label={t("pump.stat.uphill_label")}
+              sub={format(t("pump.stat.uphill_sub"), { m: transmissionLiftM ?? "~500" })}
             />
           )}
           {nrwPct != null && (
             <Stat
               value={String(nrwPct)}
               unit="%"
-              label="NRW (non-revenue water)"
+              label={t("pump.stat.nrw_label")}
               sub={
                 lpcdSupply && lpcdConsumption
-                  ? `${lpcdSupply} LPCD supplied -> ${lpcdConsumption} LPCD reaches consumers`
-                  : "Roughly half of supply lost"
+                  ? format(t("pump.stat.nrw_sub"), { supply: lpcdSupply, consumer: lpcdConsumption })
+                  : t("pump.stat.nrw_sub_fallback")
               }
               warn
             />
@@ -164,69 +158,67 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
           {populationServed && (
             <Stat
               value={(populationServed / 1_000_000).toFixed(1)}
-              unit="M people"
-              label="Population served"
-              sub="BWSSB salient features, JICA 2017 snapshot"
+              unit={t("pump.stat.unit_m_people")}
+              label={t("pump.stat.pop_label")}
+              sub={t("pump.stat.pop_sub")}
             />
           )}
         </div>
 
-        {/* Story-callouts: why isn't 1,310 MLD enough? */}
+        {/* Story-callouts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
           {stageVDesign && stageVActual != null && (
             <Callout
               icon="V"
-              title={`Stage V: ${stageVDesign} MLD design, ${stageVActual} MLD delivered`}
-              body="Commissioned 16 Oct 2024 at TK Halli to cover the 110 newly-added villages. As of Feb 2026 it's running at roughly half-capacity - the 'expansion that only half-delivers' is the live Bengaluru narrative."
+              title={format(t("pump.callout.stage_v_title"), { design: stageVDesign, actual: stageVActual })}
+              body={t("pump.callout.stage_v_body")}
             />
           )}
           {energyPct && (
             <Callout
               icon="$"
-              title={`${energyPct}% of BWSSB revenue burned on pumping`}
-              body={`Lifting Cauvery water ~${transmissionKm ?? 95} km uphill against ~${transmissionLiftM ?? 500} m elevation is the single largest operating cost - which is why every additional MLD via Cauvery is structurally more expensive than equivalent MLD from local sources.`}
+              title={format(t("pump.callout.energy_title"), { pct: energyPct })}
+              body={format(t("pump.callout.energy_body"), { km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
             />
           )}
           {groundwaterOfficial != null && groundwaterEstimate != null && (
             <Callout
               icon="G"
-              title={`Groundwater: ${groundwaterOfficial} MLD (BWSSB) vs ${formatNumber(groundwaterEstimate)} MLD (WELL Labs)`}
-              body="BWSSB's official extraction figure and WELL Labs' bottom-up urban water balance disagree by 592 MLD. The divergence IS the story - either the city's groundwater use is sustainably 800 MLD or unsustainably 1,392 MLD."
+              title={format(t("pump.callout.gw_title"), { official: groundwaterOfficial, estimate: formatNumber(groundwaterEstimate) })}
+              body={t("pump.callout.gw_body")}
             />
           )}
           {stressWards && (
             <Callout
               icon="!"
-              title={`${stressWards} wards critically over-extracted`}
-              body="The BWSSB-commissioned IISc Groundwater Outlook of Bengaluru City (April 2025) maps 65 BBMP wards as 'over-exploited' - including Hebbal, Yelahanka, Koramangala, KR Puram, Jakkur. Stage V was meant to relieve these wards via piped supply."
+              title={format(t("pump.callout.stress_title"), { count: stressWards })}
+              body={t("pump.callout.stress_body")}
             />
           )}
           {demand2049 && deficit2049 && (
             <Callout
               icon="2049"
-              title={`2049 demand ${formatNumber(demand2049)} MLD vs supply ${formatNumber(demand2049 - deficit2049)} MLD = ${formatNumber(deficit2049)} MLD deficit`}
-              body="JICA Phase 3 Table 6.3 high-growth scenario: even with Stage V fully delivered + 500 MLD groundwater, post-2049 demand outstrips supply by 721 MLD. Closing this needs Stage VI / inter-basin transfer / large-scale reuse / 10x UFW reduction."
+              title={format(t("pump.callout.demand_title"), {
+                demand: formatNumber(demand2049),
+                supply: formatNumber(demand2049 - deficit2049),
+                gap: formatNumber(deficit2049),
+              })}
+              body={t("pump.callout.demand_body")}
               wide
             />
           )}
           {projectCostCrore && (
             <Callout
               icon="₹"
-              title={`${formatNumber(projectCostCrore)} crore Stage V + 110-villages sewerage investment`}
-              body={`JICA Phase 3 Table 16.2.1 (2017 prices). Funding pattern: ${jicaLoanPct ?? 85}% JICA sovereign loan, 7.5% Government of Karnataka, 7.5% BWSSB. Stage V alone is ₹4,435 crore. Running at ~52% of design capacity as of Feb 2026 (The Ken) means roughly half that investment is unrealised yield.`}
+              title={format(t("pump.callout.project_title"), { cost: formatNumber(projectCostCrore) })}
+              body={format(t("pump.callout.project_body"), { jica: jicaLoanPct ?? 85 })}
               wide
             />
           )}
         </div>
 
         <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
-          Engineering numbers from the JICA Bengaluru Water Supply and
-          Sewerage Project (Phase 3) Final Report, November 2017 (NJS
-          Consultants). Supplemented with WELL Labs Urban Water Balance
-          (2024), IISc Groundwater Outlook (April 2025), and The Ken May
-          2026 reporting. See the supply-overview tile below for the full
-          source mix, WTP commissioning history, distribution chain, and
-          tanker market data.
+          {t("pump.footer")}
         </p>
       </CardContent>
     </Card>

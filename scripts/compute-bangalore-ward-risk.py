@@ -230,12 +230,17 @@ def main() -> None:
     for s in ward_stats.values():
         # Inverted wb_density (lower density -> worse), positive pop_density (higher -> worse),
         # inverted wb_health (lower health -> worse).
-        composite = (
+        composite_z = (
             -zscore(s["wb_density_per_sqkm"], densities) * 0.3
             + zscore(s["_pop_density"], pop_dens) * 0.5
             - zscore(s["wb_health_score"], health) * 0.2
         )
-        s["composite_score"] = round(composite, 4)
+        # Keep the z-score under composite_zscore for transparency; the
+        # exposed `composite_score` is converted to a 0-100 city-wide
+        # percentile rank below (matching Chennai / Madurai conventions
+        # where 0 = best, 100 = worst). The raw z-score-driven sort
+        # below preserves the ordering used for grade assignment.
+        s["composite_zscore"] = round(composite_z, 4)
         s["pct_wb_density"] = percentile_of(
             s["wb_density_per_sqkm"], densities, higher_is_better=True
         )
@@ -246,10 +251,18 @@ def main() -> None:
         # interpolation yet); the percentile reflects that.
         s["pct_gw_depth"] = None
 
-    sorted_wards = sorted(ward_stats.values(), key=lambda s: s["composite_score"])
+    # Sort ascending by z-score so rank 1 = best (lowest stress) and
+    # rank N = worst. composite_score then = (rank - 1) / (N - 1) * 100,
+    # so a ward at the best end reads 0/100 and the worst reads 100/100
+    # in the renderer (matches the Chennai / Madurai ward-risk tooltip
+    # convention).
+    sorted_wards = sorted(ward_stats.values(), key=lambda s: s["composite_zscore"])
     total = len(sorted_wards)
     for idx, s in enumerate(sorted_wards):
         s["grade"] = grade_from_quintile(idx + 1, total)
+        s["composite_score"] = (
+            round((idx) / max(1, total - 1) * 100, 1) if total > 1 else 0.0
+        )
 
     output = {
         "algorithm_version": "bangalore-v0-pop-wb-density",
@@ -275,6 +288,7 @@ def main() -> None:
                 "pct_wb_density": s["pct_wb_density"],
                 "pct_wb_health": s["pct_wb_health"],
                 "composite_score": s["composite_score"],
+                "composite_zscore": s["composite_zscore"],
                 "grade": s["grade"],
             }
             for s in sorted(ward_stats.values(), key=lambda s: s["ward_number"])

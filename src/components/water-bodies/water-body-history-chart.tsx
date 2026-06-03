@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/theme-provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/utils/format";
@@ -51,7 +51,7 @@ export function WaterBodyHistoryChart({
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
-  const locale = language === "ta" ? "ta-IN" : "en-IN";
+  const locale = language === "ta" ? "ta-IN" : language === "kn" ? "kn-IN" : "en-IN";
 
   const [history, setHistory] = useState<HistoryPoint[]>([]);
   const [loading, setLoading] = useState(true);

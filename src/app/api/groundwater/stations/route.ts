@@ -38,6 +38,7 @@ function isSupabaseConfigured(): boolean {
 const DISTRICT_BY_CITY: Record<string, string> = {
   chennai: "Chennai",
   madurai: "Madurai",
+  bangalore: "Bangalore Urban",
 };
 export async function GET(request: NextRequest) {
   if (!isSupabaseConfigured()) {

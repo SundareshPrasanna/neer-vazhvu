@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getGroundwaterColor } from "@/types/groundwater";
@@ -44,7 +44,7 @@ export function WrisStationPanel({ station, onClose }: WrisStationPanelProps) {
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
-  const locale = language === "ta" ? "ta-IN" : "en-IN";
+  const locale = language === "ta" ? "ta-IN" : language === "kn" ? "kn-IN" : "en-IN";
 
   const [readings, setReadings] = useState<WrisStationReading[]>([]);
   const [serverMeta, setServerMeta] = useState<WrisStationHistoryResponse["station"] | null>(null);

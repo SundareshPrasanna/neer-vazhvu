@@ -27,16 +27,23 @@ export function FactCard({ fact }: FactCardProps) {
     return /^\d{4}$/.test(year) ? ` · ${year}` : "";
   })();
 
-  const title =
-    language === "ta" && fact.title_ta ? fact.title_ta : fact.title;
-  const interpretation =
-    language === "ta" && fact.interpretation_ta
-      ? fact.interpretation_ta
-      : fact.interpretation;
-  const quote =
-    language === "ta" && fact.quote_text_ta
-      ? fact.quote_text_ta
-      : fact.quote_text;
+  // Pick the per-language field if present; fall back to English. The
+  // Fact schema carries optional `title_<lang>` / `interpretation_<lang>`
+  // / `quote_text_<lang>` slots that the city facts JSON can populate.
+  const pickLang = <T,>(map: Partial<Record<string, T>>, fallback: T): T =>
+    map[language] ?? fallback;
+  const title = pickLang(
+    { ta: fact.title_ta, kn: fact.title_kn },
+    fact.title,
+  );
+  const interpretation = pickLang(
+    { ta: fact.interpretation_ta, kn: fact.interpretation_kn },
+    fact.interpretation,
+  );
+  const quote = pickLang(
+    { ta: fact.quote_text_ta, kn: fact.quote_text_kn },
+    fact.quote_text,
+  );
 
   const anchorHref = `#${fact.id}`;
   const canonicalUrl = typeof window !== "undefined"
@@ -180,7 +187,7 @@ function formatDate(iso: string, language: string): string {
   try {
     const d = new Date(iso);
     if (isNaN(d.getTime())) return iso;
-    return d.toLocaleDateString(language === "ta" ? "ta-IN" : "en-IN", {
+    return d.toLocaleDateString(language === "ta" ? "ta-IN" : language === "kn" ? "kn-IN" : "en-IN", {
       year: "numeric",
       month: "short",
       day: "numeric",

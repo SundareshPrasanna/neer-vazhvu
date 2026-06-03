@@ -53,6 +53,8 @@ interface RawFact {
   source_label: string;
   title_ta?: string;
   interpretation_ta?: string;
+  title_kn?: string;
+  interpretation_kn?: string;
 }
 
 interface FactsFile {
@@ -88,6 +90,8 @@ function hydrate(raw: RawFact, retrievedAt: string): Fact {
     quote_text: raw.interpretation,
     title_ta: raw.title_ta,
     interpretation_ta: raw.interpretation_ta,
+    title_kn: raw.title_kn,
+    interpretation_kn: raw.interpretation_kn,
   };
 }
 

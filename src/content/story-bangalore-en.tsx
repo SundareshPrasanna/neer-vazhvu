@@ -25,6 +25,8 @@ import { StoryPage } from "@/components/story/story-page";
 import {
   Chapter,
   CTA,
+  Figure,
+  Hero,
   Lede,
   PullQuote,
   ThenNow,
@@ -38,27 +40,27 @@ export function BangaloreStoryEn() {
       tagline="City of stolen kere: what Kempegowda built and what Bengaluru built over it"
       lastRevised="May 2026"
     >
+      <Hero
+        src="/images/story/bangalore/bangalore-1854-map.jpg"
+        alt="Surveyed map of Bangalore in 1854, published by Pharaoh and Co., Madras. The old walled Pete sits to the left and the British Cantonment to the right, with the daisy-chained kere - Dharmambudhi, Sampangi, Halsoor, Sankey, Kempambudhi and dozens of smaller tanks - shown in their period-correct positions across both halves of the city."
+        source="Wikimedia Commons / Pharaoh and Co. atlas"
+        credit="Surveyed for Pharaoh and Co. Madras, 1854 (public domain)"
+      />
       <Lede>
-        Bengaluru is not on a river. There is no Vaigai here, no Cooum,
-        no Ganga. The city sits across a ridge - the watershed divide of
-        three small valleys, Koramangala-Challaghatta to the south-east,
-        Hebbal to the north-east, Vrishabhavathi to the west - that the
-        rain runs off of, never into. The chieftain who founded
-        Bengaluru in 1537, Kempe Gowda I, had no river to dam, so he
-        built lakes instead. <em>Kere</em> (ಕೆರೆ), in Kannada. Earthen
-        bunds across the gentlest slope of each valley, daisy-chained so
-        the overflow from the upper kere filled the next one down,
-        watering crops and topping up wells the whole way along. The
-        nineteenth-century gazetteers counted close to three hundred
-        kere in the area that is now BBMP. Today, by the most generous
-        count, about a third of them still hold water; by a stricter
-        count, fewer than twenty are in something the Indian Institute
-        of Science is willing to call <em>good condition</em>. The
-        oldest kere this city had - Dharmambudhi - is a bus stand. The
-        founder&apos;s own family-deity kere, Kempambudhi, is sewage. The
-        first thing every visitor to Bengaluru ever did - look at a
-        kere - is now harder to do here than in most villages in
-        Karnataka.
+        Bengaluru sits on a ridge, not a river. Its founder in 1537,
+        Kempe Gowda I, had no Vaigai or Cooum to dam, so he built lakes
+        instead - <em>kere</em> (ಕೆರೆ) in Kannada, earthen bunds across
+        the gentlest slope of each valley, daisy-chained so the overflow
+        from the upper kere filled the next one down. Nineteenth-century
+        gazetteers counted close to three hundred kere in what is now
+        BBMP. Today, by the most generous count, about a third still
+        hold water; by a stricter count, fewer than twenty are in
+        something the Indian Institute of Science is willing to call{" "}
+        <em>good condition</em>. The oldest kere this city had -
+        Dharmambudhi - is a bus stand. The kere the founder himself
+        built - Kempambudhi - is now a sewage drain. The first thing every
+        visitor to Bengaluru ever did - look at a kere - is now harder
+        to do here than in most villages in Karnataka.
       </Lede>
 
       <Chapter
@@ -115,6 +117,15 @@ export function BangaloreStoryEn() {
           made by damming the flow of water, fed by the rain, designed
           to feed each other.
         </PullQuote>
+        <Figure
+          src="/images/story/bangalore/ulsoor-1834.jpg"
+          alt="Steel engraving of Ulsoor (Halsoor) Lake in Bangalore, 1834, by William Miller after Humphrey Jervis. The kere is full; the bund is visible at right; a temple complex stands on the shore. Cattle graze at the water's edge in the foreground."
+          caption="Ulsoor (Halsoor) Lake, 1834. A working Bengaluru kere a generation before the Cantonment Water Works at Hesaraghatta (1894) demoted the kere system from primary water supply to overflow buffer. Steel engraving by William Miller after Humphrey Jervis."
+          source="Wikimedia Commons"
+          credit="William Miller (1796-1882) after Humphrey Jervis, 1834 (public domain)"
+          aspect="7/5"
+          fit="contain"
+        />
         <p>
           Two more political eras built on what Kempe Gowda started. The
           Maratha governor Shahaji Bhonsle ruled Bengaluru from 1638;

@@ -49,7 +49,7 @@ export default function GroundwaterPage() {
 function GroundwaterPageContent() {
   useLockBodyScroll();
   const { t, language } = useLanguage();
-  const locale = language === "ta" ? "ta-IN" : "en-IN";
+  const locale = language === "ta" ? "ta-IN" : language === "kn" ? "kn-IN" : "en-IN";
   const searchParams = useSearchParams();
 
   const [data, setData] = useState<GroundwaterApiResponse | null>(null);

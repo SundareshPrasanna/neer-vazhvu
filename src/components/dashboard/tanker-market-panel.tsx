@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatNumber } from "@/lib/utils/format";
+import { useLanguage } from "@/lib/i18n/context";
+
+function tFmt(template: string, params: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
+}
 
 /**
  * Tanker-market longitudinal panel for the city dashboard.
@@ -49,6 +54,7 @@ interface Props {
 }
 
 export function TankerMarketPanel({ cityId, cityDisplayName }: Props) {
+  const { t } = useLanguage();
   const [data, setData] = useState<SurveyData | null>(null);
 
   useEffect(() => {
@@ -82,20 +88,17 @@ export function TankerMarketPanel({ cityId, cityDisplayName }: Props) {
     <Card className="border-amber-200 dark:border-amber-900 bg-gradient-to-br from-amber-50/40 to-orange-50/40 dark:from-amber-950/20 dark:to-orange-950/20">
       <CardHeader>
         <h2 className="text-sm font-semibold uppercase tracking-wider text-amber-800 dark:text-amber-400">
-          {cityDisplayName}&apos;s tanker market - what households actually pay
+          {tFmt(t("tanker_panel.heading"), { city: cityDisplayName })}
         </h2>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">
-          Longitudinal apartment-level surveys (2015, 2019, 2024) from
-          OpenCity. The informal tanker market is uniquely large among
-          Indian metros - what households substitute when BWSSB&apos;s 48%
-          NRW gap meets their tap.
+          {t("tanker_panel.subtitle")}
         </p>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Price evolution row */}
         <div>
           <h3 className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
-            Median tanker price (per load)
+            {t("tanker_panel.median_price")}
           </h3>
           <div className="grid grid-cols-3 gap-3">
             {[y2015, y2019, y2024].map((y) =>
@@ -112,12 +115,12 @@ export function TankerMarketPanel({ cityId, cityDisplayName }: Props) {
                       ₹{formatNumber(y.tanker_price_inr_per_load_median)}
                     </span>
                     <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                      / load
+                      {t("tanker_panel.per_load")}
                     </span>
                   </div>
                   <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
                     {y.tanker_capacity_litres_median
-                      ? `~${formatNumber(y.tanker_capacity_litres_median)} L tanker; `
+                      ? `${tFmt(t("tanker_panel.litre_capacity"), { L: formatNumber(y.tanker_capacity_litres_median) })}; `
                       : ""}
                     n={y.respondents_n}
                   </p>
@@ -127,7 +130,7 @@ export function TankerMarketPanel({ cityId, cityDisplayName }: Props) {
           </div>
           {priceGrowthSince2015 != null && (
             <p className="text-xs text-amber-700 dark:text-amber-400 mt-2">
-              +{priceGrowthSince2015}% nominal price growth from 2015 to 2024.
+              {tFmt(t("tanker_panel.growth"), { pct: priceGrowthSince2015 })}
             </p>
           )}
         </div>
@@ -135,41 +138,38 @@ export function TankerMarketPanel({ cityId, cityDisplayName }: Props) {
         {/* 2024 crisis-era stats */}
         <div>
           <h3 className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
-            2024 snapshot - the pre-Stage-V crisis year
+            {t("tanker_panel.snap_heading")}
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
             {y2024.private_tanker_source_pct != null && (
               <BigStat
                 value={`${y2024.private_tanker_source_pct}%`}
-                label="of apartments rely on private tankers"
+                label={t("tanker_panel.stat.relies")}
               />
             )}
             {y2024.more_often_pct != null && (
               <BigStat
                 value={`${y2024.more_often_pct}%`}
-                label="were ordering tankers more often than the previous quarter"
+                label={t("tanker_panel.stat.more_often")}
               />
             )}
             {bwssbWorsenedPct != null && (
               <BigStat
                 value={`${bwssbWorsenedPct.toFixed(0)}%`}
-                label="reported BWSSB supply got WORSE year-on-year"
+                label={t("tanker_panel.stat.bwssb_worse")}
                 warn
               />
             )}
             {y2024.dry_days_median != null && (
               <BigStat
                 value={`${y2024.dry_days_median}`}
-                label="median dry days in the year (when tap simply didn't run)"
+                label={t("tanker_panel.stat.dry_days")}
               />
             )}
           </div>
           {y2024.tanker_price_yoy_delta_inr_median != null && (
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-3 leading-relaxed">
-              Same households paid <span className="font-semibold tabular-nums">₹{formatNumber(y2024.tanker_price_yoy_delta_inr_median)}</span> more per tanker
-              load in early 2024 than they did in Feb 2023 - a real-time
-              private market price-jump captured the upstream Cauvery stress
-              before piped-supply data could.
+              {tFmt(t("tanker_panel.yoy_delta"), { amount: formatNumber(y2024.tanker_price_yoy_delta_inr_median) })}
             </p>
           )}
         </div>
@@ -177,7 +177,7 @@ export function TankerMarketPanel({ cityId, cityDisplayName }: Props) {
         {/* 2025 context narrative */}
         <div className="rounded-md border border-emerald-200 dark:border-emerald-900 bg-emerald-50/30 dark:bg-emerald-950/20 p-3">
           <p className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 mb-1">
-            2025 follow-up: situation improved
+            {t("tanker_panel.followup_heading")}
           </p>
           <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-snug">
             {data._2025_context.summary}
@@ -185,7 +185,7 @@ export function TankerMarketPanel({ cityId, cityDisplayName }: Props) {
         </div>
 
         <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
-          Source:{" "}
+          {t("rivers.source")}{" "}
           <a
             href={data._source.url}
             target="_blank"
@@ -194,9 +194,7 @@ export function TankerMarketPanel({ cityId, cityDisplayName }: Props) {
           >
             {data._source.name}
           </a>
-          {" "}(CC BY-NC 2.0). Apartment-level survey of self-selected
-          respondents; rates reflect the informal market, not the official
-          BWSSB Kaveriwheels app rates.
+          {" "}{t("tanker_panel.source_note")}
         </p>
       </CardContent>
     </Card>

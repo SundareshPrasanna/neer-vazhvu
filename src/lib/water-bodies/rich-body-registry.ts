@@ -47,7 +47,14 @@ export interface RichBodyEntry {
     /** Newer building source (Overture Maps quarterly release).
      *  Optional - bodies onboarded before T19a may not have this yet. */
     overture_buildings?: string;
+    /** JRC Global Surface Water v1.4 yearly classification (1984-2021).
+     *  Series stops at JRC's upstream cutoff. */
     water_trend: string;
+    /** Dynamic World water-class extension that bridges JRC's gap
+     *  (2022-present). Renderer splices the two into one continuous
+     *  chart. Optional - bodies onboarded before this extension may
+     *  not have it yet; when absent the chart just shows JRC alone. */
+    dw_water_trend?: string;
     built_trend: string;
   };
   /** Hand-curated event stamps for the timeline */
@@ -110,6 +117,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/pallikaranai-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/pallikaranai-overture-buildings.json",
       water_trend: "/data/rich-bodies/pallikaranai-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/pallikaranai-dw-water-trend.json",
       built_trend: "/data/rich-bodies/pallikaranai-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -197,6 +205,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
         "/data/rich-bodies/sholavaram-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/sholavaram-overture-buildings.json",
       water_trend: "/data/rich-bodies/sholavaram-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/sholavaram-dw-water-trend.json",
       built_trend:
         "/data/rich-bodies/sholavaram-dynamic-world-built-trend.json",
     },
@@ -272,6 +281,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/red-hills-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/red-hills-overture-buildings.json",
       water_trend: "/data/rich-bodies/red-hills-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/red-hills-dw-water-trend.json",
       built_trend: "/data/rich-bodies/red-hills-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -341,6 +351,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/chembarambakkam-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/chembarambakkam-overture-buildings.json",
       water_trend: "/data/rich-bodies/chembarambakkam-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/chembarambakkam-dw-water-trend.json",
       built_trend: "/data/rich-bodies/chembarambakkam-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -411,6 +422,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/porur-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/porur-overture-buildings.json",
       water_trend: "/data/rich-bodies/porur-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/porur-dw-water-trend.json",
       built_trend: "/data/rich-bodies/porur-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -473,6 +485,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/velachery-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/velachery-overture-buildings.json",
       water_trend: "/data/rich-bodies/velachery-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/velachery-dw-water-trend.json",
       built_trend: "/data/rich-bodies/velachery-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -548,6 +561,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/bellandur-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/bellandur-overture-buildings.json",
       water_trend: "/data/rich-bodies/bellandur-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/bellandur-dw-water-trend.json",
       built_trend: "/data/rich-bodies/bellandur-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -667,6 +681,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/varthur-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/varthur-overture-buildings.json",
       water_trend: "/data/rich-bodies/varthur-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/varthur-dw-water-trend.json",
       built_trend: "/data/rich-bodies/varthur-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -782,6 +797,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/madivala-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/madivala-overture-buildings.json",
       water_trend: "/data/rich-bodies/madivala-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/madivala-dw-water-trend.json",
       built_trend: "/data/rich-bodies/madivala-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -874,6 +890,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/ulsoor-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/ulsoor-overture-buildings.json",
       water_trend: "/data/rich-bodies/ulsoor-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/ulsoor-dw-water-trend.json",
       built_trend: "/data/rich-bodies/ulsoor-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -972,6 +989,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/hebbal-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/hebbal-overture-buildings.json",
       water_trend: "/data/rich-bodies/hebbal-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/hebbal-dw-water-trend.json",
       built_trend: "/data/rich-bodies/hebbal-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -1069,6 +1087,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/sankey-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/sankey-overture-buildings.json",
       water_trend: "/data/rich-bodies/sankey-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/sankey-dw-water-trend.json",
       built_trend: "/data/rich-bodies/sankey-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -1158,6 +1177,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/yelahanka-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/yelahanka-overture-buildings.json",
       water_trend: "/data/rich-bodies/yelahanka-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/yelahanka-dw-water-trend.json",
       built_trend: "/data/rich-bodies/yelahanka-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -1251,6 +1271,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/kempambudhi-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/kempambudhi-overture-buildings.json",
       water_trend: "/data/rich-bodies/kempambudhi-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/kempambudhi-dw-water-trend.json",
       built_trend: "/data/rich-bodies/kempambudhi-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -1344,6 +1365,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/hesaraghatta-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/hesaraghatta-overture-buildings.json",
       water_trend: "/data/rich-bodies/hesaraghatta-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/hesaraghatta-dw-water-trend.json",
       built_trend: "/data/rich-bodies/hesaraghatta-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -1447,6 +1469,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/agara-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/agara-overture-buildings.json",
       water_trend: "/data/rich-bodies/agara-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/agara-dw-water-trend.json",
       built_trend: "/data/rich-bodies/agara-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -1534,6 +1557,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/puttenahalli-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/puttenahalli-overture-buildings.json",
       water_trend: "/data/rich-bodies/puttenahalli-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/puttenahalli-dw-water-trend.json",
       built_trend: "/data/rich-bodies/puttenahalli-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -1622,6 +1646,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/jakkur-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/jakkur-overture-buildings.json",
       water_trend: "/data/rich-bodies/jakkur-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/jakkur-dw-water-trend.json",
       built_trend: "/data/rich-bodies/jakkur-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -1719,6 +1744,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/rachenahalli-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/rachenahalli-overture-buildings.json",
       water_trend: "/data/rich-bodies/rachenahalli-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/rachenahalli-dw-water-trend.json",
       built_trend: "/data/rich-bodies/rachenahalli-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -1803,6 +1829,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/iblur-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/iblur-overture-buildings.json",
       water_trend: "/data/rich-bodies/iblur-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/iblur-dw-water-trend.json",
       built_trend: "/data/rich-bodies/iblur-dynamic-world-built-trend.json",
     },
     timeline_events: [
@@ -1877,6 +1904,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       open_buildings: "/data/rich-bodies/perumbakkam-open-buildings-verification.json",
       overture_buildings: "/data/rich-bodies/perumbakkam-overture-buildings.json",
       water_trend: "/data/rich-bodies/perumbakkam-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/perumbakkam-dw-water-trend.json",
       built_trend: "/data/rich-bodies/perumbakkam-dynamic-world-built-trend.json",
     },
     timeline_events: [

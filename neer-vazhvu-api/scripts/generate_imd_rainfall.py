@@ -47,6 +47,11 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         "Nearest valid land grid point to Chennai (coastal cells classified as ocean by IMD)",
     ),
     "madurai": (9.9, 78.0, "Madurai-region grid point in upper Vaigai catchment"),
+    "bangalore": (
+        13.0,
+        77.5,
+        "Bangalore-region grid point on the Deccan plateau (city centre 12.97 N, 77.59 E)",
+    ),
 }
 
 

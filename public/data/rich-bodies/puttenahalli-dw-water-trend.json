@@ -1,0 +1,117 @@
+{
+  "body_id": "puttenahalli",
+  "computed_at": "2026-06-02T15:16:00.342738+00:00",
+  "data_source": {
+    "dataset": "GOOGLE/DYNAMICWORLD/V1",
+    "license": "CC-BY-4.0",
+    "version": "Dynamic World V1",
+    "resolution_m": 10,
+    "revisit_days": "2-5 (Sentinel-2)",
+    "method": "Per-pixel annual MODE label across all DW scenes intersecting the zone; water = class 0",
+    "purpose": "Extends the JRC v1.4 water-trend series past its 2021 cutoff. Spliced with JRC at year 2021/2022 in the rich-body panel chart.",
+    "known_limitations": [
+      "Dynamic World started June 2015; this script covers 2022-present (the JRC gap)",
+      "Current-year is partial (through script run date) - see scene_count + check headline",
+      "Mode aggregation can be noisy in low-scene-count regions; check scene_count column",
+      "Water class includes seasonal flooding + permanent open water + flooded vegetation",
+      "DW is per-image per-pixel; methodology differs from JRC YearlyHistory (annual classifier). Expect small step at the splice year."
+    ]
+  },
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "by_zone": {
+    "Body (primary)": {
+      "2022": {
+        "year": 2022,
+        "scene_count": 43,
+        "water_pixels": 559,
+        "valid_pixels": 872,
+        "any_water_pct": 64.17,
+        "any_water_area_ha": 5.6
+      },
+      "2023": {
+        "year": 2023,
+        "scene_count": 30,
+        "water_pixels": 663,
+        "valid_pixels": 872,
+        "any_water_pct": 76.03,
+        "any_water_area_ha": 6.63
+      },
+      "2024": {
+        "year": 2024,
+        "scene_count": 27,
+        "water_pixels": 455,
+        "valid_pixels": 872,
+        "any_water_pct": 52.23,
+        "any_water_area_ha": 4.55
+      },
+      "2025": {
+        "year": 2025,
+        "scene_count": 31,
+        "water_pixels": 217,
+        "valid_pixels": 872,
+        "any_water_pct": 24.99,
+        "any_water_area_ha": 2.18
+      },
+      "2026": {
+        "year": 2026,
+        "scene_count": 21,
+        "water_pixels": 46,
+        "valid_pixels": 872,
+        "any_water_pct": 5.27,
+        "any_water_area_ha": 0.46
+      }
+    },
+    "Halo: 1km buffer - body": {
+      "2022": {
+        "year": 2022,
+        "scene_count": 43,
+        "water_pixels": 1663,
+        "valid_pixels": 50889,
+        "any_water_pct": 3.27,
+        "any_water_area_ha": 16.64
+      },
+      "2023": {
+        "year": 2023,
+        "scene_count": 30,
+        "water_pixels": 1812,
+        "valid_pixels": 50889,
+        "any_water_pct": 3.56,
+        "any_water_area_ha": 18.13
+      },
+      "2024": {
+        "year": 2024,
+        "scene_count": 27,
+        "water_pixels": 1303,
+        "valid_pixels": 50889,
+        "any_water_pct": 2.56,
+        "any_water_area_ha": 13.04
+      },
+      "2025": {
+        "year": 2025,
+        "scene_count": 31,
+        "water_pixels": 1381,
+        "valid_pixels": 50889,
+        "any_water_pct": 2.72,
+        "any_water_area_ha": 13.82
+      },
+      "2026": {
+        "year": 2026,
+        "scene_count": 21,
+        "water_pixels": 1496,
+        "valid_pixels": 50889,
+        "any_water_pct": 2.94,
+        "any_water_area_ha": 14.97
+      }
+    }
+  },
+  "headline_for_v0": [
+    "Body (primary): any-water fraction 64.17% (2022) -> 5.27% (2026), delta -58.9 pp",
+    "Halo: 1km buffer - body: any-water fraction 3.27% (2022) -> 2.94% (2026), delta -0.33 pp"
+  ]
+}

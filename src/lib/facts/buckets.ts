@@ -52,63 +52,69 @@ export interface FactBucketDef {
 export const BUCKETS: readonly FactBucketDef[] = [
   {
     id: "reservoirs",
-    label: { en: "Reservoirs & supply", ta: "நீர்த்தேக்கங்கள் & வழங்கல்" },
+    label: { en: "Reservoirs & supply", ta: "நீர்த்தேக்கங்கள் & வழங்கல்", kn: "ಜಲಾಶಯಗಳು ಮತ್ತು ಪೂರೈಕೆ" },
     description: {
       en: "Live reservoir storage, refill rates, monsoon catchment context, and the urban supply chain that draws from them.",
       ta: "நேரடி நீர்த்தேக்க சேமிப்பு, நிரப்பு விகிதங்கள், பருவமழை நீர்வழிப் பின்னணி, மற்றும் இவற்றிலிருந்து எடுக்கப்படும் நகர வழங்கல் சங்கிலி.",
+      kn: "ನೇರ ಜಲಾಶಯ ಸಂಗ್ರಹ, ಮರುಪೂರಣ ದರಗಳು, ಮುಂಗಾರು ಜಲಾನಯನ ಸಂದರ್ಭ, ಮತ್ತು ಅವುಗಳಿಂದ ಸೆಳೆಯುವ ನಗರ ಪೂರೈಕೆ ಸರಪಳಿ.",
     },
     pagePathSuffix: "",
-    pageLabel: { en: "dashboard", ta: "டாஷ்போர்டு" },
+    pageLabel: { en: "dashboard", ta: "டாஷ்போர்டு", kn: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್" },
   },
   {
     id: "groundwater",
-    label: { en: "Groundwater", ta: "நிலத்தடி நீர்" },
+    label: { en: "Groundwater", ta: "நிலத்தடி நீர்", kn: "ಅಂತರ್ಜಲ" },
     description: {
       en: "Block-level CGWB exploitation, station depths, and the structural pressure on aquifers.",
       ta: "வட்ட அளவில் CGWB சுரண்டல், நிலையங்களின் ஆழம், மற்றும் நிலத்தடி நீர்த் தொட்டிகளில் கட்டமைப்பு அழுத்தம்.",
+      kn: "ಬ್ಲಾಕ್-ಮಟ್ಟದ CGWB ಶೋಷಣೆ, ನಿಲ್ದಾಣ ಆಳಗಳು, ಮತ್ತು ಜಲಸ್ತರಗಳ ಮೇಲಿನ ಕಟ್ಟಡ ಒತ್ತಡ.",
     },
     pagePathSuffix: "/groundwater",
-    pageLabel: { en: "groundwater map", ta: "நிலத்தடி நீர் வரைபடம்" },
+    pageLabel: { en: "groundwater map", ta: "நிலத்தடி நீர் வரைபடம்", kn: "ಅಂತರ್ಜಲ ನಕ್ಷೆ" },
   },
   {
     id: "rivers",
-    label: { en: "Rivers", ta: "ஆறுகள்" },
+    label: { en: "Rivers", ta: "ஆறுகள்", kn: "ನದಿಗಳು" },
     description: {
       en: "River basin context, water-quality stations, and the operational state of the rivers that feed (or used to feed) the city.",
       ta: "ஆற்றுப் படுகை பின்னணி, நீர் தர நிலையங்கள், மற்றும் நகரத்திற்கு நீர் வழங்கும் (அல்லது வழங்கிய) ஆறுகளின் நிலை.",
+      kn: "ನದಿ ಜಲಾನಯನ ಸಂದರ್ಭ, ನೀರಿನ-ಗುಣಮಟ್ಟ ನಿಲ್ದಾಣಗಳು, ಮತ್ತು ನಗರಕ್ಕೆ ಪೋಷಿಸುವ (ಅಥವಾ ಪೋಷಿಸುತ್ತಿದ್ದ) ನದಿಗಳ ಕಾರ್ಯಾಚರಣಾ ಸ್ಥಿತಿ.",
     },
     pagePathSuffix: "/rivers",
-    pageLabel: { en: "rivers", ta: "ஆறுகள்" },
+    pageLabel: { en: "rivers", ta: "ஆறுகள்", kn: "ನದಿಗಳು" },
   },
   {
     id: "water-bodies",
-    label: { en: "Water bodies & restoration", ta: "நீர்நிலைகள் & மறுசீரமைப்பு" },
+    label: { en: "Water bodies & restoration", ta: "நீர்நிலைகள் & மறுசீரமைப்பு", kn: "ಜಲಮೂಲಗಳು ಮತ್ತು ಪುನರ್ನಿರ್ಮಾಣ" },
     description: {
       en: "Surviving and lost tanks, restoration programmes, and the flagship water-body inventory.",
       ta: "உள்ள மற்றும் இழந்த ஏரிகள், மறுசீரமைப்புத் திட்டங்கள், மற்றும் முக்கிய நீர்நிலை பட்டியல்.",
+      kn: "ಉಳಿದಿರುವ ಮತ್ತು ಕಳೆದ ಕೆರೆಗಳು, ಪುನರ್ನಿರ್ಮಾಣ ಕಾರ್ಯಕ್ರಮಗಳು, ಮತ್ತು ಪ್ರಮುಖ ಜಲಮೂಲ ದಾಸ್ತಾನು.",
     },
     pagePathSuffix: "/water-bodies",
-    pageLabel: { en: "water bodies map", ta: "நீர்நிலை வரைபடம்" },
+    pageLabel: { en: "water bodies map", ta: "நீர்நிலை வரைபடம்", kn: "ಜಲಮೂಲಗಳ ನಕ್ಷೆ" },
   },
   {
     id: "floods",
-    label: { en: "Floods & monsoon", ta: "வெள்ளம் & பருவமழை" },
+    label: { en: "Floods & monsoon", ta: "வெள்ளம் & பருவமழை", kn: "ಪ್ರವಾಹಗಳು ಮತ್ತು ಮುಂಗಾರು" },
     description: {
       en: "Flood-risk infrastructure, hazard mapping vintage, and rainfall-driven flooding context.",
       ta: "வெள்ள ஆபத்து உள்கட்டமைப்பு, ஆபத்து வரைபடத்தின் காலப்பகுதி, மற்றும் மழை தூண்டிய வெள்ளப் பின்னணி.",
+      kn: "ಪ್ರವಾಹ-ಅಪಾಯ ಮೂಲಸೌಕರ್ಯ, ಅಪಾಯ ನಕ್ಷೆ ಆವೃತ್ತಿ, ಮತ್ತು ಮಳೆ-ಪ್ರೇರಿತ ಪ್ರವಾಹ ಸಂದರ್ಭ.",
     },
     pagePathSuffix: "/flood-risk",
-    pageLabel: { en: "flood risk", ta: "வெள்ள ஆபத்து" },
+    pageLabel: { en: "flood risk", ta: "வெள்ள ஆபத்து", kn: "ಪ್ರವಾಹ ಅಪಾಯ" },
   },
   {
     id: "infrastructure",
-    label: { en: "Infrastructure & governance", ta: "உள்கட்டமைப்பு & நிர்வாகம்" },
+    label: { en: "Infrastructure & governance", ta: "உள்கட்டமைப்பு & நிர்வாகம்", kn: "ಮೂಲಸೌಕರ್ಯ ಮತ್ತು ಆಡಳಿತ" },
     description: {
       en: "Sewage treatment capacity, governance authorities, transparency notes, and other supply-chain infrastructure.",
       ta: "கழிவுநீர் சுத்திகரிப்புத் திறன், நிர்வாக அதிகாரிகள், வெளிப்படைத்தன்மை குறிப்புகள், மற்றும் பிற வழங்கல்-சங்கிலி உள்கட்டமைப்பு.",
+      kn: "ಚರಂಡಿ ಸಂಸ್ಕರಣಾ ಸಾಮರ್ಥ್ಯ, ಆಡಳಿತ ಪ್ರಾಧಿಕಾರಗಳು, ಪಾರದರ್ಶಕತೆ ಟಿಪ್ಪಣಿಗಳು, ಮತ್ತು ಇತರ ಪೂರೈಕೆ-ಸರಪಳಿ ಮೂಲಸೌಕರ್ಯ.",
     },
     pagePathSuffix: null,
-    pageLabel: { en: "", ta: "" },
+    pageLabel: { en: "", ta: "", kn: "" },
   },
 ] as const;
 

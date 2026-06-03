@@ -13,6 +13,7 @@ import { SOURCE_TYPE_COLORS } from "@/types/industrial-pollution";
 import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { computeRiverStatus } from "@/lib/utils/river-classification";
+import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 
 /** Flies the map to a given center when it changes */
@@ -404,6 +405,11 @@ export function CombinedRiversMap({
       <MapResizer />
       {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      <FitToBounds
+        bounds={geoJsonBounds(riversGeoJSON)}
+        resetKey={`rivers:${riversGeoJSON?.features?.length ?? 0}`}
+        maxZoom={12}
+      />
       {/* Render order: zones (bottom) → rivers → stations → sources → highlight (top) */}
       {zonesGeoJSON && !(hiddenCategories?.has("industrial_zone")) && (
         <GeoJSON key={`zones-${tiles.url}`} data={zonesGeoJSON} style={zoneStyle} onEachFeature={onEachZone} />

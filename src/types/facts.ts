@@ -49,6 +49,9 @@ export interface Fact {
   title_ta?: string;
   interpretation_ta?: string;
   quote_text_ta?: string;
+  title_kn?: string;
+  interpretation_kn?: string;
+  quote_text_kn?: string;
 }
 
 export interface FactsPayload {

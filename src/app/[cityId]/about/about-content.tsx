@@ -733,7 +733,7 @@ export function CityAboutContent({
               <DataSource
                 name="Bengaluru rich-data lake cohort (14 bodies)"
                 url={`/${config.cityId}/water-bodies`}
-                description="14 flagship lakes with the full deep-zoom panel: Bellandur, Varthur, Madivala, Ulsoor, Hebbal, Sankey, Yelahanka, Kempambudhi, Hesaraghatta, Agara, Puttenahalli, Jakkur, Rachenahalli, Iblur. Each ships polygon + 1 km halo + 35-year imagery slider (1990-2024 yearly) + JRC water-loss tint + Dynamic World built-gain tint + Open Buildings v3 + Overture Q1 2026 stats + curated timeline + sources modal."
+                description="14 flagship lakes with the full deep-zoom panel: Bellandur, Varthur, Madivala, Ulsoor, Hebbal, Sankey, Yelahanka, Kempambudhi, Hesaraghatta, Agara, Puttenahalli, Jakkur, Rachenahalli, Iblur. Each ships polygon + 1 km halo + 37-year imagery slider (1990-2026 yearly) + JRC water-loss tint (1988-92 vs 2017-21) + Dynamic World water-class extension (2022-now) + Dynamic World built-gain tint (2016-18 vs 2023-25) + Open Buildings v3 + Overture Q1 2026 stats + curated timeline + sources modal."
                 frequency="periodic (cohort additions in rich-body rounds)"
               />
               <DataSource

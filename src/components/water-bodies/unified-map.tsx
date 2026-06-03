@@ -702,6 +702,14 @@ export function UnifiedMap({
       <MapResizer />
       {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      {/* No FitToBounds here: the OSM water-body collection's extent
+          includes far-flung outliers (Pulicat in the north for Chennai,
+          Hesaraghatta in the west for Bengaluru) which pull the auto-fit
+          well past the urban core and leave the city body unreadable.
+          The city's pre-tuned center+zoom (mapCenter / mapZoom passed by
+          the parent page) is the right frame for this map. The Reset
+          button on the rich-body deep-zoom panel handles per-body
+          fit-to-bounds where that *is* the right frame. */}
       {currentGeoJSON && (
         <GeoJSON
           ref={(layer) => { currentLayerRef.current = layer; }}
