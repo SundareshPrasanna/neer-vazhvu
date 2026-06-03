@@ -1,6 +1,6 @@
 # Architecture
 
-> Technical overview of Neer Vazhvu - Tamil Nadu Water Intelligence platform (Chennai and Madurai live; multi-city by design).
+> Technical overview of Neer Vazhvu - Urban Water Intelligence platform (Chennai, Madurai, and Bengaluru live; multi-city by design).
 
 ## System Overview
 
@@ -93,19 +93,23 @@ graph TB
 
 ## Multi-city architecture
 
-Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/lib/cities/{cityId}.ts` and that config drives:
+Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai, Bengaluru, and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/lib/cities/{cityId}.ts` and that config drives:
 
-- **`heroMode`** (`days-left` | `allocation` | `none`) — picks the dashboard hero variant. Chennai (`days-left`) divides total CMWSSB-reservoir storage by urban demand; Madurai (`allocation`) anchors on Vaigai live storage + the city's published drinking-water allocation since the dams are irrigation-primary.
-- **`waterSources`** — array of reservoirs/dams the city tracks, with `fullCapacityMcft`, `isPrimaryDrinkingSource`, etc.
+- **`heroMode`** (`days-left` | `allocation` | `cauvery-pumping` | `none`) — picks the dashboard hero variant.
+    - Chennai (`days-left`): divides total CMWSSB-reservoir storage by urban demand. Works because Chennai's reservoirs ARE the urban supply.
+    - Madurai (`allocation`): anchors on Vaigai live storage + the city's published drinking-water allocation since the dams are irrigation-primary and shared across multiple districts.
+    - Bengaluru (`cauvery-pumping`): tracks BWSSB's lift volume from T.K. Halli (~1,400-1,450 MLD) against Stage I-V design capacity (~2,225 MLD post-Stage V). Bangalore drinks 100 km away from the Cauvery so reservoir storage is not the right runway metric; pumping volume vs design is. Pairs with the IISc 80-ward stress overlay (April 2025 Outlook) since all 6 Bangalore Urban CGWB blocks are over-exploited and tap deficits show up as tanker dependency, not as reservoir percent.
+- **`waterSources`** — array of reservoirs/dams the city tracks, with `fullCapacityMcft`, `isPrimaryDrinkingSource`, etc. `isPrimaryDrinkingSource` is true only when the reservoir's storage IS the city's runway. Bangalore tracks 4 upstream Cauvery basin reservoirs (KRS, Hemavathi, Kabini, Harangi) but flags them all false because they're shared with irrigation + Mysuru + Mandya + the inter-state release to TN.
 - **`urbanSupply`** (when `heroMode === 'allocation'`) — annual allocation (mcft/yr), recent draw, WTP capacity, supply chain description for the at-a-glance tile.
-- **`groundwaterViews`** — feature flags for the groundwater page (`exploitation` / `depth` / `risk` / `cgwbStations`). Madurai disables `depth` + `risk` because per-ward IDW interpolation would be dishonest with only 4 live stations across the district; instead it surfaces `cgwbStations` (Year Book point overlay) on top of `exploitation` (block-level classification).
-- **`localGovernment`** — ward count + acronym (GCC vs MMC) for help-text and authority labels.
-- **`primaryAuthority`** — utility name (CMWSSB vs MMC vs TWAD) used in MissingDataCard reasons and About-page citations.
+- **`groundwaterViews`** — feature flags for the groundwater page (`exploitation` / `depth` / `risk` / `cgwbStations`). Madurai disables `depth` + `risk` because per-ward IDW interpolation would be dishonest with only 4 live stations across the district; instead it surfaces `cgwbStations` (Year Book point overlay) on top of `exploitation` (block-level classification). Bengaluru disables `depth` for the same reason (13 CGWB telemetric stations across 369 GBA wards is too sparse to honestly IDW); it surfaces `exploitation` (6 blocks all Over-Exploited every year on record), `risk` (ward-risk composite), and `cgwbStations`.
+- **`localGovernment`** — ward count + acronym (GCC 200 / MMC 100 / GBA 369) for help-text and authority labels.
+- **`primaryAuthority`** — utility name (CMWSSB / MMC / TWAD / BWSSB) used in MissingDataCard reasons and About-page citations.
+- **`availableLanguages`** — which UI languages render the language toggle for this city. Chennai: `['en', 'ta']`. Madurai: `['en', 'ta']`. Bengaluru: `['en', 'kn']`.
 - **`sourceNameAliases`** — case-insensitive maps so the news-search query and reservoir-detail-dialog match a source under any spelling (e.g. "vaigai" / "vaigai dam" / "வைகை" → `vaigai`).
 
-Per-city data files use a `-<cityId>` suffix in `public/data/` and `public/geojson/` (e.g. `madurai-supply-overview.json`, `madurai-gwr-blocks.geojson`). Chennai keeps legacy unsuffixed paths for back-compat.
+Per-city data files use a `-<cityId>` suffix in `public/data/` and `public/geojson/` (e.g. `madurai-supply-overview.json`, `bangalore-iisc-stress-wards-2025.json`, `imd-rainfall-monthly-bangalore.json`). Chennai keeps legacy unsuffixed paths for back-compat.
 
-To add a new city, see the "Adding a new city" walkthrough in [CONTRIBUTING.md](CONTRIBUTING.md). The Madurai onboarding is the worked example.
+To add a new city, see the "Adding a new city" walkthrough in [CONTRIBUTING.md](CONTRIBUTING.md). The Bangalore onboarding (PRs through `bangalore_onboarding` branch) is the most recent worked example; the Madurai onboarding (PR #97) is the canonical reference.
 
 ## Shared utilities
 
@@ -114,14 +118,23 @@ A few classifiers / scorers are city-agnostic and used across both cities:
 - **`src/lib/utils/river-classification.ts`** — `computeRiverStatus(river)` returns one of `dead` / `severely_degraded` / `degraded` / `stressed` / `healthy` derived from each station's most recent NWMP reading via CPCB Designated Best-Use class thresholds (DO + BOD). Takes the worst classification across stations as the river-level status. Falls back to the JSON-declared `overall_status` when no station has any classifiable reading. Replaced hardcoded labels in late 2026 — Vaigai dropped from "severely_degraded" to "degraded" once the algorithm read the actual readings instead of inheriting the CPCB Polluted River Stretch (PRS) Priority III designation. Documented for end-users at the "How we classify river health" subsection on each city's About page.
 - **`scripts/compute-ward-profiles.ts`** + **`scripts/compute-madurai-ward-profiles.ts`** — Build-time spatial-join scripts. The Madurai variant emits `_data_status: "not_available"` markers for sections it doesn't have data for (flood, drainage, sewerage, industrial); UI cards branch on this and render honest "not yet sourced" disclaimers rather than fabricated zero counts.
 
-## Madurai-specific dashboard surfaces
+## City-specific dashboard surfaces
 
-The dashboard component tree forks where Madurai's data landscape calls for it. These four components are Madurai-scoped today but generic — any future city with a `heroMode: 'allocation'` config picks them up automatically:
+The dashboard component tree forks where each city's data landscape calls for it. Components are city-scoped today but generic — any future city with the matching `heroMode` config picks them up automatically.
+
+### Madurai (`heroMode: 'allocation'`)
 
 - **`AllocationHero`** (`src/components/dashboard/allocation-hero.tsx`) — replaces `DaysLeftHero`. Shows live dam fill %, four anchored stats (annual allocation, recent draw, allocation utilised, WTP capacity), and a "How to read this" caveat.
 - **`UrbanSupplyOverview`** (`src/components/dashboard/urban-supply-overview.tsx`) — structural at-a-glance tile fed by `<cityId>-supply-overview.json`. Renders supply chain pipeline + source mix stacked bar + WTP capacity + distribution scale + 2034 demand vs supply gap.
 - **`DataGapPanel`** (`src/components/dashboard/data-gap-panel.tsx`) — neutral-tone "What's missing today" inventory of layers the city utility tracks internally but doesn't publish. Generic shape; pass any DataGap[] array.
 - **`MissingDataCard`** + **`MissingReservoirCard`** (`src/components/dashboard/missing-data-card.tsx`) — dashed-border treatment for tracked-but-unmonitored sources (Sothuparai Dam in Madurai's case). Generic; usable for river stations, AQI sensors, etc.
+
+### Bengaluru (`heroMode: 'cauvery-pumping'`)
+
+- **`CauveryPumpingHero`** (`src/components/dashboard/cauvery-pumping-hero.tsx`) — replaces `DaysLeftHero` + `AllocationHero`. Headline shows current Cauvery lift volume vs Stage I-V design capacity (e.g. "BWSSB lifts ~1,450 MLD against Stage V's 2,225 MLD design"), with 4 stat tiles (current lift, Stage V design, Stage V actual ≈ 400 MLD per The Ken Feb 2026, deficit). 6 callouts cover the 100 km / 600 m elevation pump chain, 33% wards on tankers, all 6 GW blocks Over-Exploited, etc.
+- **`BangaloreDailyBriefing`** (`src/components/dashboard/bangalore-daily-briefing.tsx`) — template-based daily briefing card. Composes prose from `t()` keys against structured `fields` (returned by `buildBangaloreBriefing()` in `src/lib/insights/bangalore-briefing.ts`) so the briefing is fully localised. Five briefing variants pick by reservoir storage + tanker dependency. Open slot for a Claude-pipeline AI uplift via `aiOverride`.
+- **`IIScStressWardsMap`** (`src/components/dashboard/iisc-stress-wards-{leaflet-,}map.tsx`) — the headline groundwater layer on `/bangalore`. Renders 80 critically-over-extracted BBMP wards (April 2025 IISc Outlook) as a percentile-coloured choropleth (0-100 composite score) over the 198 BBMP polygon set. Click any ward for its severity tier + composite score breakdown.
+- **`TankerExpandedContext`** + **`TankerMarketPanel`** + **`TankerPageChrome`** — the `/bangalore/tanker` page composes longitudinal OpenCity survey data (2015 / 2019 / 2024) on what households actually pay vs BWSSB's official tariff, with tier-by-tier breakdowns and corridor-specific sites. All section headings + body fields read from per-language JSON variants (`_kn`, `_ta`) so the page is fully localised.
 
 ## Daily Pipeline
 
@@ -429,7 +442,7 @@ Pre-computed (build-time) scoring of all 1,787 water bodies for restoration prio
 
 ### Rich-Data Deep-Zoom Panel (flagship water bodies)
 
-A subset of Chennai water bodies have a dedicated full-screen panel layered on top of the standard `/water-bodies` map. Onboarded today (7): Pallikaranai Marsh, Sholavaram Lake, Red Hills Reservoir (Puzhal), Chembarambakkam Lake, Porur Lake, Velachery Lake, Perumbakkam Lake. The pattern is registry-driven so a new body needs no UI code, just a registry entry plus pipeline outputs.
+21 flagship bodies have a dedicated full-screen panel layered on top of the standard `/water-bodies` map. Onboarded today: **8 in Chennai** (Pallikaranai Marsh, Sholavaram Lake, Red Hills/Puzhal, Chembarambakkam, Porur, Velachery, Perumbakkam, Chitlapakkam) + **13 in Bengaluru** (Bellandur, Varthur, Hesaraghatta, Hebbal, Ulsoor, Sankey, Madivala, Agara, Jakkur, Rachenahalli, Iblur, Kempambudhi, Puttenahalli, Yelahanka). The pattern is registry-driven so a new body needs no UI code, just a registry entry plus pipeline outputs.
 
 **Registry:** [src/lib/water-bodies/rich-body-registry.ts](src/lib/water-bodies/rich-body-registry.ts) maps a `richBodyId` to the polygon path, buffer path, imagery manifest, analysis-JSON paths, timeline events, status badges, boundary source, and a `data_sources` block driving the in-panel sources & methodology modal.
 
@@ -438,13 +451,16 @@ A subset of Chennai water bodies have a dedicated full-screen panel layered on t
 | Step | Source | Output | Frequency |
 |------|--------|--------|-----------|
 | Fetch polygon | OSM Overpass relation/way; TNSWA QGIS web map for Pallikaranai | `public/geojson/rich-bodies/{body}.geojson` + `{body}-buffer-1000m.geojson` | One-time / on-demand |
-| Verify zonal water trend | JRC Global Surface Water v1.4 via GEE | `public/data/rich-bodies/{body}-jrc-water-trend.json` | One-time / on-demand |
-| Verify zonal built trend | Dynamic World V1 via GEE | `public/data/rich-bodies/{body}-dynamic-world-built-trend.json` | One-time / on-demand |
+| Verify zonal water trend (JRC) | JRC Global Surface Water v1.4 via GEE (annual 1984-2021) | `public/data/rich-bodies/{body}-jrc-water-trend.json` | One-time / on-demand |
+| Verify zonal water trend (DW) | Dynamic World V1 water class via GEE (annual 2022-present, bridges JRC's 2021 cutoff) | `public/data/rich-bodies/{body}-dw-water-trend.json` | Yearly refresh |
+| Verify zonal built trend | Dynamic World V1 built class via GEE (annual 2016-present) | `public/data/rich-bodies/{body}-dynamic-world-built-trend.json` | One-time / on-demand |
 | Verify Open Buildings | Open Buildings v3 via GEE | `public/data/rich-bodies/{body}-open-buildings-verification.json` | One-time / on-demand |
 | Refresh Overture buildings | Overture Maps parquet (DuckDB) | `public/data/rich-bodies/{body}-overture-buildings.json` | Monthly via `.github/workflows/overture-buildings-refresh.yml` (PR-gated when anomaly) |
-| Ingest yearly chips | Landsat 5/7/8 (1984-2018) + Sentinel-2 SR Harmonized (2019-present) via GEE | `public/data/rich-bodies/imagery/{body}/*.jpg` + `{body}-imagery-manifest.json` | One-time per onboarding; re-run when newer imagery is desired |
-| Ingest water-loss tint | JRC GSW v1.4 cumulative loss (1984 vs latest year) | `public/data/rich-bodies/tints/{body}/water-loss.png` | One-time / on-demand |
-| Ingest built-gain tint | Dynamic World V1 cumulative gain (2016 vs latest year) | `public/data/rich-bodies/tints/{body}/built-gain.png` | One-time / on-demand |
+| Ingest yearly chips | Landsat 5/7/8 (1984-2018) + Sentinel-2 SR Harmonized (2019-present) via GEE | `public/data/rich-bodies/imagery/{body}/*.jpg` + `{body}-imagery-manifest.json` (merges with existing chips so partial-year re-runs don't wipe history) | One-time per onboarding; re-run when newer imagery is desired |
+| Ingest water-loss tint | JRC GSW v1.4 two-window comparison: water in ≥3 of [1988-92] AND not water in ≥3 of [2017-21] | `public/data/rich-bodies/tints/{body}/water-loss.png` | One-time / on-demand |
+| Ingest built-gain tint | Dynamic World V1 two-window comparison: built in ≥2 of [2023-25] but not in ≥2 of [2016-18] | `public/data/rich-bodies/tints/{body}/built-gain.png` | One-time / on-demand |
+
+**JRC → DW water-trend splice.** JRC GSW v1.4 ships annual classification through 2021. Without a bridge, the per-body water-fraction chart truncates at 2021 - misleading for bodies whose recent dynamics matter (e.g. Bellandur, Varthur). The DW water-class extension (class 0) provides 2022-present in the same shape (`any_water_pct` key), spliced in `rich-body-stats-strip.tsx`: years ≤2021 read from JRC, years ≥2022 read from DW. Methodology disclosed in the in-panel sources modal.
 
 **Zones (body-agnostic, defined in [scripts/_rich_body_zones.py](scripts/_rich_body_zones.py)):**
 
@@ -587,7 +603,7 @@ Map pages use a `FlyToCenter` component (via `useMap()` from react-leaflet) to a
 
 ### Localization (i18n)
 
-Custom context-based i18n supporting English and Tamil. No external i18n library — lightweight implementation using React Context.
+Custom context-based i18n supporting English, Tamil, and Kannada. No external i18n library — lightweight implementation using React Context. Per-city `availableLanguages` in `CityConfig` controls which languages the toggle exposes for that city.
 
 ```
 RootLayout
@@ -597,9 +613,12 @@ RootLayout
        └─ setLanguage() → updates state + localStorage + document.lang
 ```
 
-- **Translation file:** `src/lib/i18n/translations.ts` (~665 keys)
+- **Translation file:** `src/lib/i18n/translations.ts` (~1,500 keys, 100% EN/TA/KN coverage)
 - **Reservoir names:** `src/lib/i18n/reservoir-name.ts`
-- **Validation script:** `npm run i18n:check` (ensures Tamil translation exists for every key)
+- **Per-city availableLanguages:** Chennai/Madurai expose EN + TA; Bengaluru exposes EN + KN. The language toggle in the header filters its options against the active city's `availableLanguages`.
+- **Per-language JSON field picking:** For city data files where prose differs per-language (tanker-context, facts), entries carry parallel `_ta` and `_kn` suffixes (e.g. `headline`, `headline_ta`, `headline_kn`) and a `pickLang()` helper resolves them.
+- **Long-form stories:** Chennai (`src/content/story-chennai.tsx`) and Madurai (`src/content/story-madurai.tsx`) ship EN + TA via inline mixing. Bangalore (`src/content/story-bangalore.tsx`) dispatches to per-language modules (`story-bangalore-en.tsx`, `story-bangalore-kn.tsx`) for the 4-chapter long-form because the prose volume justified the split.
+- **Validation script:** `npm run i18n:check` (ensures every translation key has TA + KN values)
 - **Hydration safety:** Language loaded in `useEffect` after mount to avoid SSR mismatch
 
 ### Demo Mode

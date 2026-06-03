@@ -34,6 +34,7 @@ import type {
 import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
+import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 
 interface FloodRiskMapProps {
@@ -315,6 +316,11 @@ export function FloodRiskMap({
       <MapResizer />
       {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      <FitToBounds
+        bounds={geoJsonBounds(wardsGeo) ?? geoJsonBounds(hazardGeo)}
+        resetKey={`flood:${wardsGeo?.features?.length ?? 0}`}
+        maxZoom={12}
+      />
 
       {/* ── Ward boundaries (all modes) ───────── */}
       {wardsGeo && (

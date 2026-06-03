@@ -5,6 +5,7 @@ import { internalServerError, logRouteError } from "@/lib/api-error";
 import { idwInterpolate, polygonCentroid, haversineKm, type IdwStation } from "@/lib/groundwater/idw";
 import { getGroundwaterStatus } from "@/types/groundwater";
 import { tryGetPlaceConfig } from "@/lib/cities";
+import { wardsVintageFor } from "@/lib/cities/wards-vintage";
 
 /**
  * Ward groundwater depth via IDW from CGWB / WRIS stations.
@@ -42,8 +43,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "City has no WRIS district mapping" }, { status: 404 });
   }
 
-  // 1. Load ward polygons.
-  const geojsonPath = resolve(process.cwd(), `public/geojson/${cityId}-wards-2022.geojson`);
+  // 1. Load ward polygons (vintage per city - Bangalore uses GBA 2025
+  //    not GCC/MMC 2022).
+  const geojsonPath = resolve(
+    process.cwd(),
+    `public/geojson/${cityId}-wards-${wardsVintageFor(cityId)}.geojson`,
+  );
   let geojson: {
     features: Array<{
       properties: Record<string, unknown>;

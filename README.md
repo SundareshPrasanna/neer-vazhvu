@@ -1,10 +1,10 @@
 # Neer Vazhvu
 
-**Tamil Nadu Water Intelligence** - An open-source platform that turns public water data into actionable intelligence for Tamil Nadu cities. Live for Chennai and Madurai today, with more cities on the way.
+**Urban Water Intelligence** - An open-source platform that turns public water data into actionable intelligence for Indian cities. Live for Chennai, Madurai, and Bengaluru today, with more cities on the way.
 
 **Live:** [neervazhvu.org](https://neervazhvu.org)
 
-Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, flood risk, sewerage infrastructure, and water body loss across Tamil Nadu cities. Each city's dashboard reflects what's actually knowable for that city - so Chennai surfaces CMWSSB-fed days-of-water-left + 5-factor ward risk, while Madurai surfaces a Vaigai allocation hero + 3-factor ward risk because its dams are irrigation-primary and several civic-infrastructure layers aren't yet publicly sourced.
+Neer Vazhvu (நீர் வாழ்வு, Tamil for "Water Life") tracks reservoir levels, groundwater health, river water quality, flood risk, sewerage infrastructure, and water body loss across Indian cities. Each city's dashboard reflects what's actually knowable for that city - so Chennai surfaces CMWSSB-fed days-of-water-left + 5-factor ward risk, Madurai surfaces a Vaigai allocation hero + 3-factor ward risk because its dams are irrigation-primary, and Bengaluru surfaces a Cauvery-pumping hero (BWSSB lifts treated water 100 km from T.K. Halli, so reservoir storage is not the right runway metric) layered on the IISc 80-ward stress overlay since all 6 Bangalore Urban CGWB blocks are over-exploited.
 
 ## What we track (city-agnostic)
 
@@ -14,16 +14,19 @@ Every city dashboard, where the data exists, surfaces:
 - **Groundwater** - CGWB block exploitation classification, station-level depth time-series, and (where well density supports it) ward-level depth interpolation
 - **Rivers** - CPCB NWMP DO/BOD time-series with status badges derived from current readings via the shared CPCB Designated Best-Use classifier
 - **Water bodies** - OSM polygons, lost-tank inventory, restoration priority scoring (algorithm varies per city)
-- **Rich-data deep-zoom panel** - For 7 flagship Chennai bodies (Pallikaranai, Sholavaram, Red Hills, Chembarambakkam, Porur, Velachery, Perumbakkam) a click opens a full-screen panel with yearly satellite imagery 1984-present, cumulative water-loss and built-gain tints over the polygon and 1 km halo, per-year stats (water surface, built share, building counts in body vs halo), a play/pause timeline with event stamps, and a sources & methodology modal
+- **Rich-data deep-zoom panel** - 21 flagship bodies onboarded (8 in Chennai + 13 in Bangalore). A click opens a full-screen panel with yearly satellite imagery 1984-present, cumulative water-loss and built-gain tints over the polygon and 1 km halo, per-year stats (water surface, built share, building counts in body vs halo), a play/pause timeline with event stamps, and a sources & methodology modal. Water-fraction series splices JRC GSW v1.4 (1984-2021) with Dynamic World V1 (2022-present) so the chart doesn't truncate at JRC's cutoff
 - **Flood risk** - Hazard zones / drainage / sewerage where layers are public; narrative-only stub where they're not
 - **My Ward** - Per-ward report aggregating every layer above with comparison + uplift planner
 - **About** - Per-city methodology, data-source index, transparency-gap inventory
+- **Tanker market** (Bengaluru only today) - Longitudinal OpenCity household-survey data (2015 / 2019 / 2024) on what households actually pay vs BWSSB's official tariff
+- **IISc 80-ward stress overlay** (Bengaluru only today) - 80 critically-over-extracted BBMP wards from the April 2025 IISc Groundwater Outlook layered as a choropleth on /bangalore
 
 Per-city deep-dives:
 
 - [docs/cities/chennai/features.md](docs/cities/chennai/features.md) - Chennai feature inventory + risk-score, ward-report-card, uplift-planner, and restoration-priority methodologies
 - [docs/cities/madurai/features.md](docs/cities/madurai/features.md) - Madurai-specific surfaces (allocation hero, supply-overview tile, transparency-gap panel, missing-data card) and how Madurai differs from Chennai
-- City-specific long-form water stories: [`/origins`](https://neervazhvu.org/origins) (Chennai) and [`/madurai/origins`](https://neervazhvu.org/madurai/origins)
+- [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md) - Bengaluru-specific surfaces (cauvery-pumping hero, daily briefing, IISc stress overlay, tanker market, 13 rich-body lakes) and Kannada localization
+- City-specific long-form water stories: [`/origins`](https://neervazhvu.org/origins) (Chennai), [`/madurai/origins`](https://neervazhvu.org/madurai/origins), [`/bangalore/origins`](https://neervazhvu.org/bangalore/origins) (EN + KN)
 
 ## Architecture
 
@@ -49,26 +52,29 @@ Per-city deep-dives:
 │                                          │
 │  Multi-city routing:                     │
 │  • / (Chennai legacy flat routes)         │
-│  • /[cityId]/* (Madurai + future cities) │
-│  • src/lib/cities/{chennai,madurai}.ts   │
-│    drives heroMode, water sources,       │
-│    ward count, allocation config         │
+│  • /[cityId]/* (Madurai, Bangalore,      │
+│    future cities)                         │
+│  • src/lib/cities/{chennai,madurai,      │
+│    bangalore}.ts drives heroMode,        │
+│    water sources, ward count,            │
+│    allocation config                     │
 │                                          │
 │  Static GeoJSON + JSON served from       │
 │  /public (per-city -<cityId> suffix)     │
 └──────────────────────────────────────────┘
 ```
 
-**Place-config-driven multi-city.** Adding a city = adding a `CityConfig` in `src/lib/cities/`. The routes at `src/app/[cityId]/...` resolve it via `tryGetPlaceConfig(cityId)`. `heroMode` (`days-left` | `allocation` | `none`) picks the dashboard hero variant. Per-city water sources, ward counts, and `urbanSupply` allocation context flow from the same config. See [CONTRIBUTING.md](CONTRIBUTING.md#adding-a-new-city) for the full walkthrough.
+**Place-config-driven multi-city.** Adding a city = adding a `CityConfig` in `src/lib/cities/`. The routes at `src/app/[cityId]/...` resolve it via `tryGetPlaceConfig(cityId)`. `heroMode` (`days-left` | `allocation` | `cauvery-pumping` | `none`) picks the dashboard hero variant. Per-city water sources, ward counts, and `urbanSupply` allocation context flow from the same config. See [CONTRIBUTING.md](CONTRIBUTING.md#adding-a-new-city) for the full walkthrough.
 
 Earth Engine Phase 1 jobs live under `neer-vazhvu-api/app/gee/` and write small summary tables into Supabase instead of serving raster layers directly to the frontend.
 
 ## Data Sources
 
-We integrate roughly 30 distinct sources across the cities we cover - from utility-published reservoir feeds (CMWSSB for Chennai, TN Agriculture ARS for Madurai), to CGWB groundwater telemetry, to CPCB river quality, to OSM/Wikidata for spatial geometry. The full breakdown lives in per-city documents:
+We integrate roughly 40 distinct sources across the cities we cover - from utility-published reservoir feeds (CMWSSB for Chennai, TN Agriculture ARS for Madurai, KSNDMC + Karnataka WRD for Bengaluru), to CGWB groundwater telemetry, to CPCB river quality, to IISc research outputs (Bengaluru stress wards), to OpenCity household-survey panels (Bengaluru tanker market), to OSM/Wikidata for spatial geometry. The full breakdown lives in per-city documents:
 
 - [docs/cities/chennai/data-sources.md](docs/cities/chennai/data-sources.md)
 - [docs/cities/madurai/data-sources.md](docs/cities/madurai/data-sources.md)
+- [docs/cities/bangalore/data-sources.md](docs/cities/bangalore/data-sources.md)
 - [DATA_SOURCES.md](DATA_SOURCES.md) - top-level index with a cross-city parity matrix (the contributor cheat-sheet for what each city has covered)
 
 ## Tech Stack
@@ -94,14 +100,14 @@ Earth Engine is used as a summary layer (catchment rainfall context, water-body 
 
 ## Rich-Data Deep-Zoom Panel
 
-A few flagship Chennai bodies have a dedicated deep-zoom experience layered on top of the standard `/water-bodies` map. Onboarded bodies today (7): Pallikaranai Marsh, Sholavaram Lake, Red Hills Reservoir (Puzhal), Chembarambakkam Lake, Porur Lake, Velachery Lake, Perumbakkam Lake.
+21 flagship bodies have a dedicated deep-zoom experience layered on top of the standard `/water-bodies` map. Onboarded bodies today: 8 in Chennai (Pallikaranai Marsh, Sholavaram, Red Hills/Puzhal, Chembarambakkam, Porur, Velachery, Perumbakkam, Chitlapakkam) + 13 in Bengaluru (Bellandur, Varthur, Hesaraghatta, Hebbal, Ulsoor, Sankey, Madivala, Agara, Jakkur, Rachenahalli, Iblur, Kempambudhi, Puttenahalli, Yelahanka).
 
 For each body the build-time pipeline produces:
 
 - A primary polygon (Tamil Nadu State Wetland Authority gazetted boundary for Pallikaranai; OpenStreetMap relation/way for the others) and a 1 km buffer halo
-- ~39 yearly satellite chips (Landsat 5/7/8 1984-2018, Sentinel-2 SR Harmonized 2019-present) via Google Earth Engine
-- Cumulative water-loss and built-gain tint PNGs derived from JRC Global Surface Water v1.4 and Dynamic World V1
-- Zonal stats per year for the body and 1 km halo: water surface % (JRC), built fraction % (Dynamic World), building counts (Overture Maps; falls back to Open Buildings v3 if Overture is missing)
+- ~37 yearly satellite chips (Landsat 5/7/8 1984-2018, Sentinel-2 SR Harmonized 2019-present) via Google Earth Engine
+- Cumulative water-loss and built-gain tint PNGs reflecting two-window methodology: water lost = pixels that were water in ≥3 of [1988-92] AND not water in ≥3 of [2017-21]; built gain = pixels built in ≥2 of [2023-25] but not in ≥2 of [2016-18]
+- Zonal water trend per year spliced from JRC GSW v1.4 (1984-2021) + Dynamic World V1 (2022-present) so the chart doesn't truncate at JRC's cutoff; built fraction % (Dynamic World); building counts (Overture Maps; falls back to Open Buildings v3 if Overture is missing)
 - Per-body timeline events and status badges driven from the registry at [src/lib/water-bodies/rich-body-registry.ts](src/lib/water-bodies/rich-body-registry.ts)
 
 Overture building counts refresh monthly via [.github/workflows/overture-buildings-refresh.yml](.github/workflows/overture-buildings-refresh.yml), which queries Overture's quarterly parquet release through DuckDB and opens a candidate-data PR when month-over-month change exceeds a tunable threshold.
@@ -301,10 +307,10 @@ Flood hazard zones and GCC storm water drain data are converted from OpenCity KM
 ```
 neer-vazhvu/
 ├── src/                # Next.js frontend (App Router)
-│   ├── app/            # / (Chennai legacy flat routes), /[cityId]/* (Madurai + future cities)
+│   ├── app/            # / (Chennai legacy flat routes), /[cityId]/* (Madurai, Bangalore, future cities)
 │   ├── components/     # City-agnostic where possible; per-city forks live in dashboard/, my-ward/, water-bodies/
-│   ├── lib/cities/     # Place-config registry (chennai.ts, madurai.ts, types.ts)
-│   ├── lib/i18n/       # ~700 EN/TA translation keys
+│   ├── lib/cities/     # Place-config registry (chennai.ts, madurai.ts, bangalore.ts, types.ts)
+│   ├── lib/i18n/       # ~1,500 EN/TA/KN translation keys
 │   └── lib/utils/      # Shared utilities incl. river-classification.ts (CPCB Best-Use)
 ├── neer-vazhvu-api/    # Python FastAPI service: scrapers, ETL, intelligence, GEE
 ├── public/
@@ -314,12 +320,13 @@ neer-vazhvu/
 ├── docs/
 │   ├── cities/         # Per-city documentation (features, data sources)
 │   │   ├── chennai/
-│   │   └── madurai/
-│   └── research/       # Authoritative source PDFs (CGWB, ADB IEE)
+│   │   ├── madurai/
+│   │   └── bangalore/
+│   └── research/       # Authoritative source PDFs (CGWB, ADB IEE, IISc Outlook)
 └── supabase/migrations/ # SQL schema
 ```
 
-For the full per-city file inventory, see [docs/cities/chennai/data-sources.md](docs/cities/chennai/data-sources.md) and [docs/cities/madurai/data-sources.md](docs/cities/madurai/data-sources.md).
+For the full per-city file inventory, see [docs/cities/chennai/data-sources.md](docs/cities/chennai/data-sources.md), [docs/cities/madurai/data-sources.md](docs/cities/madurai/data-sources.md), and [docs/cities/bangalore/data-sources.md](docs/cities/bangalore/data-sources.md).
 
 ## Limitations
 
@@ -339,10 +346,10 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 
 Areas where help is needed:
 
-- **Data quality** -Improving scraper resilience, handling CMWSSB page format changes
+- **Data quality** -Improving scraper resilience, handling CMWSSB / BWSSB / TN Agriculture page format changes
 - **Models** -Better forecasting (Prophet, LSTM), improved evaporation integration
 - **Water bodies data** -Adding more documented lost water bodies with verified coordinates and sources
-- **Tamil localization** -Translating the UI for local accessibility
+- **Localization** -Translating the UI for local accessibility. Today: ~1,500 keys covering EN + TA (Chennai/Madurai) + KN (Bangalore). Native-speaker review wanted for TA prose review and KN long-form story (`src/content/story-bangalore-kn.tsx`)
 - **Testing** -Unit tests for scrapers, calculator, and intelligence modules
 
 Please open an issue first to discuss significant changes.
@@ -372,7 +379,10 @@ Please open an issue first to discuss significant changes.
 - **Nethaji Mariappan et al.** for sewage inlet survey data along the Cooum river (Nature Environment and Pollution Technology, 2017)
 - **IMD (Indian Meteorological Department)** for historical gridded rainfall data (via imdlib)
 - **CGWB / India WRIS** for block-level groundwater exploitation data and monitoring station locations
-- **TNPCB** for enforcement records and industrial consent data used in the pollution sources overlay
+- **TNPCB** and **KSPCB** for enforcement records and industrial consent data used in the pollution sources overlays
 - **Carbon Copy** and **The Wire** for investigative reporting on the Ennore-Manali industrial corridor
+- **Indian Institute of Science (IISc)** for the Groundwater Outlook for Bengaluru (April 2025) - 80 critically-over-extracted BBMP wards used as the headline stress layer on `/bangalore`
+- **OpenCity Bengaluru** for longitudinal household water-tariff surveys (2015 / 2019 / 2024) powering the `/bangalore/tanker` market view
+- **BWSSB** for Cauvery pumping disclosures used in the cauvery-pumping hero
 - **[Anthropic](https://www.anthropic.com/)** for Claude API powering city and ward AI narratives
-- Chennai's civic data community for making public data accessible
+- Chennai's, Madurai's, and Bengaluru's civic data communities for making public data accessible

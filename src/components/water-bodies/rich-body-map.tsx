@@ -231,7 +231,11 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
 
         {/* Cumulative tints - in panes guaranteed to render above the chip */}
         {manifest.tints?.water_loss?.url && (
-          <LayersControl.Overlay name="Water lost (1990-2021)" checked>
+          // Tint methodology: pixels that were water in >=3 of the 5
+          // baseline years (1988-1992) AND not water in >=3 of the 5
+          // end years (2017-2021). The label reflects that two-window
+          // comparison, not a continuum.
+          <LayersControl.Overlay name="Water lost (1988-92 → 2017-21)" checked>
             <ImageOverlay
               url={manifest.tints.water_loss.url}
               bounds={bounds}
@@ -241,7 +245,10 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
           </LayersControl.Overlay>
         )}
         {manifest.tints?.built_gain?.url && (
-          <LayersControl.Overlay name="New built (2016-2025)" checked>
+          // Tint methodology: pixels that became built in >=2 of the 3
+          // end years (2023-2025) but were not built in >=2 of the 3
+          // baseline years (2016-2018).
+          <LayersControl.Overlay name="New built (2016-18 → 2023-25)" checked>
             <ImageOverlay
               url={manifest.tints.built_gain.url}
               bounds={bounds}

@@ -153,7 +153,7 @@ export default function RiversClient({
         // Madurai, Cooum for Chennai etc.) instead of an arbitrary
         // index-0 - feeders and tributaries should not load by default.
         const mainstem = out.find((r) =>
-          ["vaigai", "cooum", "adyar"].includes(r.river_id)
+          ["vaigai", "cooum", "adyar", "vrishabhavathi"].includes(r.river_id)
         );
         if (mainstem) setSelectedRiverId(mainstem.river_id);
         else if (out.length > 0) setSelectedRiverId(out[0].river_id);
@@ -235,6 +235,7 @@ export default function RiversClient({
           latest_bod: latest?.bod_mgl ?? null,
           latest_do: latest?.do_mgl ?? null,
           latest_year: latest?.year ?? null,
+          off_osm_river_polyline: s.off_osm_river_polyline,
         };
       }),
     );
@@ -270,9 +271,13 @@ export default function RiversClient({
           />
         </div>
 
-        {/* Detail sidebar - same RiverPanel Chennai uses, with Madurai's
-            extras (court orders + industrial sources for the selected
-            river) passed through the additionalSections slot. */}
+        {/* Detail sidebar. Three modes:
+              1. selectedRiver + cpcb data -> full RiverPanel (Chennai/Madurai)
+              2. selectedRiver, no cpcb    -> minimal info panel from
+                 riverInfo (Bengaluru today, until CPCB monitoring is
+                 wired up). Shows description / upstream / downstream /
+                 feeds / status from the per-city config.
+              3. nothing selected          -> placeholder hint. */}
         <div className="hidden md:flex h-full md:w-96 lg:w-[420px] border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto">
           {selectedRiverId && cpcb ? (
             <RiverPanel
@@ -285,13 +290,15 @@ export default function RiversClient({
               }
               onClose={() => setSelectedRiverId(null)}
             />
+          ) : selectedRiverId && selectedInfo ? (
+            <RiverInfoOnlyPanel info={selectedInfo} cityDisplayName={cityDisplayName} onClose={() => setSelectedRiverId(null)} />
           ) : (
             <div className="p-4 text-sm text-slate-500">Click a river to see details.</div>
           )}
         </div>
       </div>
 
-      {/* Mobile bottom panel - same component */}
+      {/* Mobile bottom panel - same modes as desktop sidebar */}
       {selectedRiverId && cpcb && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[40vh] overflow-y-auto">
           <RiverPanel
@@ -304,6 +311,11 @@ export default function RiversClient({
             }
             onClose={() => setSelectedRiverId(null)}
           />
+        </div>
+      )}
+      {selectedRiverId && !cpcb && selectedInfo && (
+        <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[40vh] overflow-y-auto">
+          <RiverInfoOnlyPanel info={selectedInfo} cityDisplayName={cityDisplayName} onClose={() => setSelectedRiverId(null)} />
         </div>
       )}
     </div>
@@ -422,5 +434,96 @@ function RiverExtraSections({ events, industrial }: { events: RiverEvent[]; indu
         </div>
       )}
     </>
+  );
+}
+
+
+/* ── River info-only panel ────────────────────────────────────────────
+   Renders the per-city RIVER_INFO description for cities that do not
+   yet have a CPCB NWMP quality file. Bengaluru today: KSPCB monthly
+   lake WQ is on roadmap, river WQ is patchier; until those land we
+   surface the engineering-doc river description as the click target. */
+
+function RiverInfoOnlyPanel({
+  info,
+  cityDisplayName,
+  onClose,
+}: {
+  info: RiverInfo;
+  cityDisplayName: string;
+  onClose: () => void;
+}) {
+  return (
+    <div className="bg-white dark:bg-slate-900 w-full h-full p-4 sm:p-6 overflow-y-auto">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">
+            {info.display_name}
+          </h3>
+          {info.display_name_ta && (
+            <span className="text-sm text-slate-500 dark:text-slate-400">
+              {info.display_name_ta}
+            </span>
+          )}
+        </div>
+        <button
+          onClick={onClose}
+          className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md"
+          aria-label="Close panel"
+        >
+          <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="space-y-3 text-sm">
+        {info.status && (
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">
+              Status
+            </div>
+            <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{info.status}</p>
+          </div>
+        )}
+        <div>
+          <div className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">
+            About this river
+          </div>
+          <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{info.description}</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 text-xs">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">
+              Length (geom)
+            </div>
+            <div className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
+              {info.length_km_geom} km
+            </div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">
+              Source
+            </div>
+            <div className="text-slate-700 dark:text-slate-300">{info.upstream_terminus}</div>
+          </div>
+          <div className="col-span-2">
+            <div className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">
+              Mouth
+            </div>
+            <div className="text-slate-700 dark:text-slate-300">{info.downstream_terminus}</div>
+          </div>
+          <div className="col-span-2">
+            <div className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">
+              Feeds
+            </div>
+            <div className="text-slate-700 dark:text-slate-300">{info.feeds}</div>
+          </div>
+        </div>
+        <p className="text-[11px] text-slate-500 dark:text-slate-400 italic pt-2 border-t border-slate-200 dark:border-slate-700">
+          CPCB NWMP water-quality monitoring for {cityDisplayName} rivers is not yet wired into this dashboard. When it is, this panel will switch to the full Chennai-style quality + station view.
+        </p>
+      </div>
+    </div>
   );
 }

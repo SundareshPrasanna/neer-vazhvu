@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/theme-provider";
 import {
   ComposedChart,
   Line,
@@ -113,9 +113,17 @@ export function MultiSourceHistoryChart({
     return m;
   }, [forecast]);
 
-  // Default-hidden non-primary sources to keep the chart readable on first load.
+  // Default-hidden non-primary sources to keep the chart readable on
+  // first load. Edge case: a city like Bengaluru tracks 4 upstream
+  // basin reservoirs that are all is_primary=false (the basin is
+  // irrigation-primary; BWSSB's drinking-water carve-out is downstream
+  // at T.K. Halli). In that case the chart would render empty by
+  // default. Fall back to showing ALL sources when none are flagged
+  // primary - the cohort itself is the story.
   const defaultHidden = useMemo(() => {
     const hidden = new Set<string>();
+    const hasAnyPrimary = series.some((s) => s.is_primary);
+    if (!hasAnyPrimary) return hidden;
     for (const s of series) if (!s.is_primary) hidden.add(s.source_code);
     return hidden;
   }, [series]);

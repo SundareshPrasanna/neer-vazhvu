@@ -41,10 +41,11 @@ async def run_monthly_pipeline(authorization: str | None = Header(default=None))
 
 @router.post("/run-post-scrape")
 async def run_post_scrape_pipeline(authorization: str | None = Header(default=None)):
-    """Run all pipeline steps except scrape_cmwssb.
+    """Run all pipeline steps except the per-city primary-supply scrape.
 
-    Call this after pushing reservoir data to the DB externally (e.g. from a
-    GitHub Actions job that scrapes CMWSSB from a non-blocked IP).
+    Call this after pushing reservoir data to the DB externally (e.g. from
+    GitHub Actions jobs that scrape each city's primary authority directly:
+    Chennai's CMWSSB lake-level page, Madurai's TN PWD reservoir page, etc.).
     Steps: fetch_nasa → fetch_opencity → compute_estimate → forecast → briefing.
     """
     verify_cron_auth(authorization)

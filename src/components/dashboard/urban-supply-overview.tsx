@@ -39,7 +39,14 @@ interface SupplyMixItem {
 
 interface ReferenceFigure {
   id: string;
-  src: string;
+  /** Local thumbnail path under /public (preferred). When absent, we
+   *  render a text-only "external reference" card instead of a broken
+   *  image. */
+  src?: string;
+  /** External URL the card links out to. Used when we cite a figure
+   *  from a primary source (ADB IEE, JICA report) but haven't extracted
+   *  + licensed the image into /public/images/ yet. */
+  src_external?: string;
   caption: string;
   source_label: string;
 }
@@ -406,38 +413,72 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
           </p>
         </div>
 
-        {/* Reference figures */}
+        {/* Reference figures. Two render modes:
+            - src present: link out + render a thumbnail (Chennai/Madurai)
+            - only src_external: render a clean text-card linking to the
+              external source (Bangalore until JICA figures are extracted) */}
         {data.reference_figures && data.reference_figures.length > 0 && (
           <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
             <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
               {t("supply_overview.figures_label")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {data.reference_figures.map((fig) => (
-                <a
-                  key={fig.id}
-                  href={fig.src}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block"
-                >
-                  <div className="relative aspect-video bg-slate-50 dark:bg-slate-800/50 rounded-md overflow-hidden border border-slate-200 dark:border-slate-700 group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-colors">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={fig.src}
-                      alt={fig.caption}
-                      loading="lazy"
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-1.5 leading-snug">
-                    {fig.caption}
-                  </p>
-                  <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-0.5 italic">
-                    {fig.source_label}
-                  </p>
-                </a>
-              ))}
+              {data.reference_figures.map((fig) => {
+                const href = fig.src ?? fig.src_external;
+                if (!href) return null;
+                return (
+                  <a
+                    key={fig.id}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block"
+                  >
+                    {fig.src ? (
+                      <div className="relative aspect-video bg-slate-50 dark:bg-slate-800/50 rounded-md overflow-hidden border border-slate-200 dark:border-slate-700 group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-colors">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={fig.src}
+                          alt={fig.caption}
+                          loading="lazy"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    ) : (
+                      <div className="aspect-video bg-slate-50 dark:bg-slate-800/50 rounded-md border border-slate-200 dark:border-slate-700 group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-colors p-3 flex flex-col justify-between">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                          External reference
+                        </span>
+                        <span className="text-[11px] text-slate-700 dark:text-slate-300 leading-snug line-clamp-4">
+                          {fig.caption}
+                        </span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                          View at source →
+                        </span>
+                      </div>
+                    )}
+                    {/* The caption + source label render below the card only
+                        for thumbnail mode; text-card mode shows caption inside
+                        the card itself, so we skip the caption block here to
+                        avoid duplication. */}
+                    {fig.src && (
+                      <>
+                        <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-1.5 leading-snug">
+                          {fig.caption}
+                        </p>
+                        <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-0.5 italic">
+                          {fig.source_label}
+                        </p>
+                      </>
+                    )}
+                    {!fig.src && (
+                      <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-1 italic">
+                        {fig.source_label}
+                      </p>
+                    )}
+                  </a>
+                );
+              })}
             </div>
           </div>
         )}

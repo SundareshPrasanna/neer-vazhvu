@@ -1,0 +1,1603 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2">
+ <Document>
+  <name>
+   bwssb_stp_locations.kml
+  </name>
+  <Schema id="S_stp_locations_ISDDSIS" name="stp_locations">
+   <SimpleField name="STPId" type="int">
+    <displayName>
+     &lt;b&gt;STPId&lt;/b&gt;
+    </displayName>
+   </SimpleField>
+   <SimpleField name="STPName" type="string">
+    <displayName>
+     &lt;b&gt;STPName&lt;/b&gt;
+    </displayName>
+   </SimpleField>
+   <SimpleField name="Latitude" type="double">
+    <displayName>
+     &lt;b&gt;Latitude&lt;/b&gt;
+    </displayName>
+   </SimpleField>
+   <SimpleField name="Longitude" type="double">
+    <displayName>
+     &lt;b&gt;Longitude&lt;/b&gt;
+    </displayName>
+   </SimpleField>
+   <SimpleField name="PlantType" type="string">
+    <displayName>
+     &lt;b&gt;PlantType&lt;/b&gt;
+    </displayName>
+   </SimpleField>
+   <SimpleField name="TreatmentCapacity (KLD)" type="int">
+    <displayName>
+     &lt;b&gt;TreatmentCapacity (KLD)&lt;/b&gt;
+    </displayName>
+   </SimpleField>
+   <SimpleField name="Status" type="string">
+    <displayName>
+     &lt;b&gt;Status&lt;/b&gt;
+    </displayName>
+   </SimpleField>
+  </Schema>
+  <Style id="hlightPointStyle">
+   <IconStyle>
+    <color>
+     ffff5500
+    </color>
+    <Icon>
+     <href>
+      http://maps.google.com/mapfiles/kml/shapes/placemark_circle_highlight.png
+     </href>
+    </Icon>
+   </IconStyle>
+   <BalloonStyle>
+    <text>
+     &lt;table border="0"&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;STPId&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/STPId]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;STPName&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/STPName]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Latitude&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/Latitude]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Longitude&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/Longitude]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;PlantType&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/PlantType]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;TreatmentCapacity (KLD)&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/TreatmentCapacity (KLD)]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Status&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/Status]&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+    </text>
+   </BalloonStyle>
+  </Style>
+  <Style id="normPointStyle">
+   <IconStyle>
+    <color>
+     ffff5500
+    </color>
+    <Icon>
+     <href>
+      http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png
+     </href>
+    </Icon>
+   </IconStyle>
+   <BalloonStyle>
+    <text>
+     &lt;table border="0"&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;STPId&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/STPId]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;STPName&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/STPName]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Latitude&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/Latitude]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Longitude&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/Longitude]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;PlantType&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/PlantType]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;TreatmentCapacity (KLD)&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/TreatmentCapacity (KLD)]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Status&lt;/b&gt;&lt;/td&gt;&lt;td&gt;$[stp_locations/Status]&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+    </text>
+   </BalloonStyle>
+  </Style>
+  <StyleMap id="pointStyleMap">
+   <Pair>
+    <key>
+     normal
+    </key>
+    <styleUrl>
+     #normPointStyle
+    </styleUrl>
+   </Pair>
+   <Pair>
+    <key>
+     highlight
+    </key>
+    <styleUrl>
+     #hlightPointStyle
+    </styleUrl>
+   </Pair>
+  </StyleMap>
+  <Folder id="layer 0">
+   <name>
+    stp_locations
+   </name>
+   <open>
+    1
+   </open>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Hebbal 60MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       9
+      </SimpleData>
+      <SimpleData name="STPName">
+       Hebbal 60MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9405
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6548
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       60000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.65482199999997,12.94054499999997,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Horamavu Agara 20 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       10
+      </SimpleData>
+      <SimpleData name="STPName">
+       Horamavu Agara 20 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.0471
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6622
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       20000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.66215599999998,13.04709999999998,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Jakkur 15 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       12
+      </SimpleData>
+      <SimpleData name="STPName">
+       Jakkur 15 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.0939
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6057
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Tertiary Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       15000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.60573099999999,13.09394700000002,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Rajacanal (new) 40 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       26
+      </SimpleData>
+      <SimpleData name="STPName">
+       Rajacanal (new) 40 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.0455
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6467
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       40000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.64674000000004,13.04551200000001,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Rajacanal (old) 40 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       27
+      </SimpleData>
+      <SimpleData name="STPName">
+       Rajacanal (old) 40 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.0458
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6462
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       40000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.64617599999997,13.04582800000001,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Yelahanka TTP 10 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       32
+      </SimpleData>
+      <SimpleData name="STPName">
+       Yelahanka TTP 10 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.1011
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.5862
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       10000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.58616599999999,13.10111100000001,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Agaram 35.0 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       1
+      </SimpleData>
+      <SimpleData name="STPName">
+       Agaram 35.0 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9163
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6405
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       35000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.64047000000001,12.91630999999999,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Bellandur Amani kere 90.MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       2
+      </SimpleData>
+      <SimpleData name="STPName">
+       Bellandur Amani kere 90.MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.94
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.7166
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       90000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.71662600000002,12.94000399999997,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Chickbegur 5 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       3
+      </SimpleData>
+      <SimpleData name="STPName">
+       Chickbegur 5 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.8854
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6359
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       5000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.63589000000003,12.88539699999999,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Cubbon Park 4.0 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       5
+      </SimpleData>
+      <SimpleData name="STPName">
+       Cubbon Park 4.0 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9792
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.5936
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Tertiary Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       4000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.59360300000003,12.97918600000002,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Halasuru 2.0 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       8
+      </SimpleData>
+      <SimpleData name="STPName">
+       Halasuru 2.0 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9757
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.64
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       2000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.64001100000003,12.97565199999998,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Hulimavu 10 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       11
+      </SimpleData>
+      <SimpleData name="STPName">
+       Hulimavu 10 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.8719
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6042
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       10000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.604156,12.87193,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     K&amp;C Valley 218 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       13
+      </SimpleData>
+      <SimpleData name="STPName">
+       K&amp;C Valley 218 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9424
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6543
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       218000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.65427599999998,12.942407,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     K&amp;C Valley 30MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       14
+      </SimpleData>
+      <SimpleData name="STPName">
+       K&amp;C Valley 30MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9424
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6543
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       30000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.65427599999998,12.942407,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     K&amp;C Valley 60 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       15
+      </SimpleData>
+      <SimpleData name="STPName">
+       K&amp;C Valley 60 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9406
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6548
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       60000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.65475700000002,12.940599,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     K.R.Puram 20 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       16
+      </SimpleData>
+      <SimpleData name="STPName">
+       K.R.Puram 20 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.0171
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6933
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       20000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.693303,13.01707099999998,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Kadabeesanahalli 50 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       17
+      </SimpleData>
+      <SimpleData name="STPName">
+       Kadabeesanahalli 50 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9466
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6981
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       50000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.69811600000003,12.9466,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Kadugodi 6 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       18
+      </SimpleData>
+      <SimpleData name="STPName">
+       Kadugodi 6 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9966
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.777
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       5000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.77700500000003,12.99659199999999,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Lalbagh 1.5 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       21
+      </SimpleData>
+      <SimpleData name="STPName">
+       Lalbagh 1.5 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9452
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.5838
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Tertiary Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       1500
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.5838,12.94516999999999,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Sarakki 5 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       28
+      </SimpleData>
+      <SimpleData name="STPName">
+       Sarakki 5 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.8994
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.5799
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       5000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.57986699999999,12.89941400000001,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Yelemallappa Chetti 15 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       33
+      </SimpleData>
+      <SimpleData name="STPName">
+       Yelemallappa Chetti 15 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.0233
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.7294
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       15000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.72941400000003,13.02334399999999,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Chikkabanavara 5 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       4
+      </SimpleData>
+      <SimpleData name="STPName">
+       Chikkabanavara 5 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.0831
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.5123
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       5000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.51225899999997,13.08305899999998,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Doddabele 20 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       6
+      </SimpleData>
+      <SimpleData name="STPName">
+       Doddabele 20 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.8983
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.4775
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       20000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.47753000000002,12.89830899999999,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Doddabele 40 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       7
+      </SimpleData>
+      <SimpleData name="STPName">
+       Doddabele 40 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.8981
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.4776
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       40000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.47756600000004,12.89813100000001,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Kempambudhi 1.0 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       19
+      </SimpleData>
+      <SimpleData name="STPName">
+       Kempambudhi 1.0 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9525
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.5577
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       1000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.55765899999999,12.95254400000001,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Kengeri 60 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       20
+      </SimpleData>
+      <SimpleData name="STPName">
+       Kengeri 60 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.916
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.4899
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       60000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.48987999999996,12.91602199999998,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Mailasandra Ph-I 75 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       22
+      </SimpleData>
+      <SimpleData name="STPName">
+       Mailasandra Ph-I 75 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9213
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.5026
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       75000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.50261999999999,12.92126500000002,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Mallathahalli 5.0 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       23
+      </SimpleData>
+      <SimpleData name="STPName">
+       Mallathahalli 5.0 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9678
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.495
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       5000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.49500200000001,12.96784599999999,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Nagasandra ( new) 20 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       24
+      </SimpleData>
+      <SimpleData name="STPName">
+       Nagasandra ( new) 20 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.043
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.4929
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       20000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.49287099999999,13.043003,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Nagasandra(old) 20MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       25
+      </SimpleData>
+      <SimpleData name="STPName">
+       Nagasandra(old) 20MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.0428
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.4926
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       20000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.49261299999999,13.04275300000002,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     V.Valley 150 MLD
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       29
+      </SimpleData>
+      <SimpleData name="STPName">
+       V.Valley 150 MLD
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9409
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6548
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       60000
+      </SimpleData>
+      <SimpleData name="Status">
+       FALSE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.65478500000002,12.940942,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     V.Valley 180 MLD Secondary
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       30
+      </SimpleData>
+      <SimpleData name="STPName">
+       V.Valley 180 MLD Secondary
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9348
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.5197
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       150000
+      </SimpleData>
+      <SimpleData name="Status">
+       FALSE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.51965899999998,12.93480399999998,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     V.Valley 60 MLD Tertiary
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       31
+      </SimpleData>
+      <SimpleData name="STPName">
+       V.Valley 60 MLD Tertiary
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9348
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.5197
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Sewage Treatment Plant
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       180000
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.51965899999998,12.93480399999998,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     5th Phase Yelahanka 1 MLD ISPS
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       39
+      </SimpleData>
+      <SimpleData name="STPName">
+       5th Phase Yelahanka 1 MLD ISPS
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.1011
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.5862
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Intermediate Sewage Pumping Station
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       0
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.58616599999999,13.10111100000001,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Agaram 65 MLD ISPS
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       34
+      </SimpleData>
+      <SimpleData name="STPName">
+       Agaram 65 MLD ISPS
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9256
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.64
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Intermediate Sewage Pumping Station
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       0
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.63995999999997,12.92562,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Karibhavanahalli 5 MLD ISPS
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       35
+      </SimpleData>
+      <SimpleData name="STPName">
+       Karibhavanahalli 5 MLD ISPS
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.0449
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6464
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Intermediate Sewage Pumping Station
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       0
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.64637600000002,13.04494700000002,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Koramangala 210 MLD ISPS
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       38
+      </SimpleData>
+      <SimpleData name="STPName">
+       Koramangala 210 MLD ISPS
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.947
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6237
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Intermediate Sewage Pumping Station
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       0
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.623667,12.94697200000001,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Rajacanal 20 MLD ISPS
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       36
+      </SimpleData>
+      <SimpleData name="STPName">
+       Rajacanal 20 MLD ISPS
+      </SimpleData>
+      <SimpleData name="Latitude">
+       13.0449
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.6464
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Intermediate Sewage Pumping Station
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       0
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.64637600000002,13.04494700000002,0
+     </coordinates>
+    </Point>
+   </Placemark>
+   <Placemark>
+    <styleUrl>
+     #pointStyleMap
+    </styleUrl>
+    <name>
+     Sadaramangala 5 MLD ISPS
+    </name>
+    <ExtendedData>
+     <SchemaData schemaUrl="#S_stp_locations_ISDDSIS">
+      <SimpleData name="STPId">
+       37
+      </SimpleData>
+      <SimpleData name="STPName">
+       Sadaramangala 5 MLD ISPS
+      </SimpleData>
+      <SimpleData name="Latitude">
+       12.9982
+      </SimpleData>
+      <SimpleData name="Longitude">
+       77.7253
+      </SimpleData>
+      <SimpleData name="PlantType">
+       Intermediate Sewage Pumping Station
+      </SimpleData>
+      <SimpleData name="TreatmentCapacity (KLD)">
+       0
+      </SimpleData>
+      <SimpleData name="Status">
+       TRUE
+      </SimpleData>
+     </SchemaData>
+    </ExtendedData>
+    <Point>
+     <coordinates>
+      77.725326,12.998234,0
+     </coordinates>
+    </Point>
+   </Placemark>
+  </Folder>
+ </Document>
+</kml>

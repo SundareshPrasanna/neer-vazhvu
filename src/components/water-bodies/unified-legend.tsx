@@ -27,9 +27,17 @@ interface UnifiedLegendProps {
   viewMode: ViewMode;
   hiddenCategories?: Set<string>;
   onToggleCategory?: (category: string) => void;
+  /** Optional whitelist of category ids to render. When provided, the
+   *  legend only shows these entries (in the canonical order).
+   *  Use for cities whose data layer doesn't include certain categories
+   *  (Bengaluru today: no census-to-OSM polygon join, so the three
+   *  census_* categories are misleading - pass
+   *  ["existing","fully_lost","severely_reduced","encroached"] to hide
+   *  them). When omitted, the full Chennai-shape legend renders. */
+  visibleCategoryIds?: ReadonlySet<string> | readonly string[];
 }
 
-export function UnifiedLegend({ viewMode, hiddenCategories, onToggleCategory }: UnifiedLegendProps) {
+export function UnifiedLegend({ viewMode, hiddenCategories, onToggleCategory, visibleCategoryIds }: UnifiedLegendProps) {
   const { t } = useLanguage();
   const [expanded, setExpanded] = useState(true);
 
@@ -51,7 +59,13 @@ export function UnifiedLegend({ viewMode, hiddenCategories, onToggleCategory }: 
       </button>
       <div className={`${expanded ? "block" : "hidden"} mt-2 space-y-1`}>
         {viewMode === "water-bodies"
-          ? WB_LEGEND_DEFS.map((item) => {
+          ? WB_LEGEND_DEFS.filter((item) => {
+              if (!visibleCategoryIds) return true;
+              const allowed = visibleCategoryIds instanceof Set
+                ? visibleCategoryIds
+                : new Set(visibleCategoryIds);
+              return allowed.has(item.id);
+            }).map((item) => {
               const hidden = hiddenCategories?.has(item.id) ?? false;
               return (
                 <button

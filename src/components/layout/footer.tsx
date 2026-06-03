@@ -17,12 +17,17 @@ const CITY_FOOTER_SOURCES: Record<
   chennai: [
     { label: "CMWSSB", href: "https://cmwssb.tn.gov.in/lake-level" },
     { label: "NASA POWER", href: "https://power.larc.nasa.gov/" },
-    { label: "OpenCity Chennai", href: "https://data.opencity.in/" },
+    { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
   madurai: [
     { label: "TN Agriculture", href: "https://www.tnagrisnet.tn.gov.in/" },
     { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
     { label: "CPCB NWMP", href: "https://cpcb.nic.in/water-quality-data/" },
+  ],
+  bangalore: [
+    { label: "BWSSB", href: "https://bwssb.karnataka.gov.in/" },
+    { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
+    { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
 };
 

@@ -70,6 +70,9 @@ export function FactsPage({
   }
 
   const generatedLabel = formatDateTime(generatedAt, language);
+  // Keep `cityName` as the brand-form (Bengaluru, Chennai, Madurai) for
+  // non-Tamil languages - we don't have Kannada-script transliterations
+  // of every city name yet. Tamil keeps its special-case for back-compat.
   const localizedCity =
     language === "ta" ? (cityNameTa ?? cityName) : cityName;
   const title = t("facts.page_title").replaceAll("{city}", localizedCity);
@@ -98,13 +101,12 @@ export function FactsPage({
           they don't think those numbers are missing. */}
       {excludedFacts.length > 0 && (
         <div className="mb-4 rounded-lg border border-amber-200 dark:border-amber-900/40 bg-amber-50/60 dark:bg-amber-950/20 px-4 py-3 text-sm text-slate-700 dark:text-slate-300">
-          Historical milestones (Day Zero, the 2015 floods, and similar
-          narrative anchors) are covered as story prose in {localizedCity}&apos;s{" "}
+          {t("facts.origins_banner_before").replaceAll("{city}", localizedCity)}
           <Link
             href={originsUrl}
             className="font-medium text-amber-700 dark:text-amber-300 hover:underline"
           >
-            Origins long-read &rarr;
+            {t("facts.origins_banner_link")}
           </Link>
         </div>
       )}
@@ -157,7 +159,9 @@ function formatDateTime(iso: string, language: string): string {
   try {
     const d = new Date(iso);
     if (isNaN(d.getTime())) return iso;
-    return d.toLocaleString(language === "ta" ? "ta-IN" : "en-IN", {
+    const locale =
+      language === "ta" ? "ta-IN" : language === "kn" ? "kn-IN" : "en-IN";
+    return d.toLocaleString(locale, {
       year: "numeric",
       month: "short",
       day: "numeric",

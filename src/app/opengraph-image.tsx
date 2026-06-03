@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Neer Vazhvu | Tamil Nadu Water Intelligence";
+export const alt = "Neer Vazhvu | Urban Water Intelligence";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -73,7 +73,7 @@ export default function OGImage() {
           }}
         >
           Real-time dashboards tracking water reserves, groundwater
-          health, and rivers across Tamil Nadu cities.
+          health, and rivers across Indian cities.
         </div>
 
         {/* Stats row */}
@@ -113,7 +113,7 @@ export default function OGImage() {
           }}
         >
           <span style={{ fontSize: "18px", color: "#475569" }}>
-            Tamil Nadu Water Intelligence
+            Urban Water Intelligence
           </span>
           <span style={{ fontSize: "16px", color: "#475569" }}>
             neervazhvu.org

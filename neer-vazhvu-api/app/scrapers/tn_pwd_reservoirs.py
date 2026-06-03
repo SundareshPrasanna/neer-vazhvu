@@ -34,6 +34,11 @@ HEADERS = {
 # the first table cell. Order matters within a city: more specific keys first.
 # Place-aliasing (e.g. TN Agri's "Periyar" -> our 'mullaperiyar') happens here,
 # not in the DB-side aliases table, because this is the scrape-time mapping.
+#
+# TN Agri's reservoir page also lists the 4 upstream Cauvery dams in
+# Karnataka (Krishna Raja Sagar / Kabini / Harangi / Hemavathy) because
+# Cauvery is shared with Tamil Nadu, so the same scrape feeds Bengaluru
+# alongside Madurai.
 NAME_MAPS: dict[str, list[tuple[str, str]]] = {
     "madurai": [
         ("vaigai", "vaigai"),
@@ -41,10 +46,22 @@ NAME_MAPS: dict[str, list[tuple[str, str]]] = {
         # to 'mullaperiyar' to disambiguate from the Periyar river.
         ("periyar", "mullaperiyar"),
     ],
+    "bangalore": [
+        # TN Agri spelling -> our source_code. Substring match catches case +
+        # whitespace variants. "krs" is unambiguous; "krishna raja sagar" is
+        # the official name. "hemavathy" (TN Agri spelling) vs "hemavathi"
+        # (our source_code); the "hemava" prefix matches both. Kabini and
+        # Harangi are spelled the same way in both systems.
+        ("krishna raja sagar", "krs"),
+        ("krs", "krs"),
+        ("hemava", "hemavathi"),
+        ("kabini", "kabini"),
+        ("harangi", "harangi"),
+    ],
 }
 
 # Cities expected to receive at least one reading on every successful scrape.
-EXPECTED_CITY_IDS: tuple[str, ...] = ("madurai",)
+EXPECTED_CITY_IDS: tuple[str, ...] = ("madurai", "bangalore")
 
 
 @dataclass(frozen=True)

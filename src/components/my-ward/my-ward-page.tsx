@@ -115,8 +115,12 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
             getRiverLabel={getRiverLabel}
           />
 
-          {/* Industrial zones - only when section data exists for this city */}
-          {!("_data_status" in profile.industrial) && profile.industrial.zone_count > 0 && (
+          {/* Industrial zones - only when section data exists for this city.
+              Guard `profile.industrial` itself: the type declares it required
+              but ward profiles built for cities without an industrial layer
+              (e.g. a Bangalore ward whose profile JSON omits the section)
+              come through as undefined at runtime, and `in` throws on undef. */}
+          {profile.industrial && !("_data_status" in profile.industrial) && profile.industrial.zone_count > 0 && (
             <Link
               href={
                 profile.rivers.nearest_river_id

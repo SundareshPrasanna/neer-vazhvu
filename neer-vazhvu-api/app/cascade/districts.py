@@ -228,9 +228,87 @@ _CHENNAI = DistrictCascadeConfig(
 )
 
 
+_BANGALORE = DistrictCascadeConfig(
+    district_id="bangalore",
+    label="Bengaluru",
+    state="karnataka",
+    tank_polygons_path=PUBLIC_GEOJSON_DIR / "bangalore-water-bodies-current.geojson",
+    rivers_path=PUBLIC_GEOJSON_DIR / "bangalore-rivers.geojson",
+    # Bengaluru sits on a ridge that splits into three valleys
+    # (Vrishabhavathi west, Koramangala-Challaghatta south, Hebbal
+    # north). Traditional kere chains historically branched into a
+    # feeder + a surplus channel - single-outflow scoring loses that.
+    allow_multi_outflow=True,
+    historical_eras=(
+        HistoricalEra(
+            era="Kempegowda",
+            period_start=1537,
+            period_end=1638,
+            notes=(
+                "Kempegowda I founded Bengaluru in 1537 and laid down the "
+                "interconnected kere system on the ridge city, with each "
+                "tank's surplus feeding the next. Dharmambudhi (now Majestic "
+                "bus stand) and Sampangi (now Kanteerava stadium) are the "
+                "canonical Kempegowda-era kere."
+            ),
+        ),
+        HistoricalEra(
+            era="Wodeyar / Hyder-Tipu",
+            period_start=1638,
+            period_end=1799,
+            notes=(
+                "Tank-building continued under the Mysore Wodeyars, Hyder "
+                "Ali, and Tipu Sultan. Lalbagh tank and Ulsoor's expansion "
+                "trace to this era."
+            ),
+        ),
+        HistoricalEra(
+            era="British Cantonment",
+            period_start=1809,
+            period_end=1947,
+            notes=(
+                "The Cantonment era added Sankey Tank (1882, M.C. Sankey) "
+                "and Hebbal-Nagavara chain works; many older tanks were "
+                "drained for parade grounds and civil station expansion."
+            ),
+        ),
+    ),
+    court_references=(
+        CourtCase(
+            case_id="forward-foundation-ngt-2012",
+            court="National Green Tribunal (Principal Bench)",
+            year=2012,
+            citation_url="https://greentribunal.gov.in/",
+            narrative=(
+                "Forward Foundation & Praja v State of Karnataka & Ors "
+                "(NGT OA 222/2014 et al.). Landmark order requiring 75 m "
+                "buffer around lakes, 50 m around rajakaluves (storm "
+                "drains), 30 m around secondary drains; halted Mantri "
+                "and Coremind constructions on Bellandur catchment."
+            ),
+        ),
+        CourtCase(
+            case_id="karnataka-lokayukta-patil-2011",
+            court="Karnataka Lokayukta (Justice N. Padmaraj Patil report)",
+            year=2011,
+            citation_url="https://www.lokayukta.kar.nic.in/",
+            narrative=(
+                "Lokayukta report on Bengaluru lake encroachments "
+                "documented systemic loss of kere to civic and private "
+                "construction; cited in subsequent HC and NGT proceedings."
+            ),
+        ),
+    ),
+    # Layer B expansion (named cascades + atlas refs + NGO partners) is
+    # queued for a follow-up PR once the WELL Labs Bengaluru Urban Water
+    # Balance dataset and the IISc kere chain inventories are joined.
+)
+
+
 _REGISTRY: dict[str, DistrictCascadeConfig] = {
     _MADURAI.district_id: _MADURAI,
     _CHENNAI.district_id: _CHENNAI,
+    _BANGALORE.district_id: _BANGALORE,
 }
 
 

@@ -15,6 +15,12 @@ interface JrcTrend {
 interface DwTrend {
   by_zone: Record<string, Record<string, ZoneYear>>;
 }
+/** Dynamic World water-class extension that bridges JRC's 2021 cutoff
+ *  (so the chart can plot a continuous line through 2026). Same shape
+ *  as JrcTrend; lives in <body>-dw-water-trend.json. Optional. */
+interface DwWaterTrend {
+  by_zone: Record<string, Record<string, ZoneYear>>;
+}
 interface OpenBuildings {
   regions: Array<{
     region: string;
@@ -46,6 +52,7 @@ interface RichBodyStatsStripProps {
 export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
   const [jrc, setJrc] = useState<JrcTrend | null>(null);
   const [dw, setDw] = useState<DwTrend | null>(null);
+  const [dwWater, setDwWater] = useState<DwWaterTrend | null>(null);
   const [ob, setOb] = useState<OpenBuildings | null>(null);
   const [ov, setOv] = useState<OvertureBuildings | null>(null);
 
@@ -57,15 +64,28 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
       body.analysis_paths.overture_buildings
         ? fetch(body.analysis_paths.overture_buildings).then((r) => r.json()).catch(() => null)
         : Promise.resolve(null),
-    ]).then(([j, d, o, ovr]) => {
+      body.analysis_paths.dw_water_trend
+        ? fetch(body.analysis_paths.dw_water_trend).then((r) => r.json()).catch(() => null)
+        : Promise.resolve(null),
+    ]).then(([j, d, o, ovr, dww]) => {
       setJrc(j);
       setDw(d);
       setOb(o);
       setOv(ovr);
+      setDwWater(dww);
     });
-  }, [body.id, body.analysis_paths.overture_buildings]);
+  }, [body.id, body.analysis_paths.overture_buildings, body.analysis_paths.dw_water_trend]);
 
-  const waterPct = jrc?.by_zone[BODY_ZONE]?.[String(year)]?.any_water_pct ?? null;
+  // Splice: JRC owns 1984-2021 (its upstream cutoff); Dynamic World
+  // water-class bridges 2022-present. Returns null if neither source
+  // has the year (e.g. <1984, or a year that pre-dates the requested body).
+  const waterPctForYear = (yr: number): number | null => {
+    if (yr <= 2021) {
+      return jrc?.by_zone[BODY_ZONE]?.[String(yr)]?.any_water_pct ?? null;
+    }
+    return dwWater?.by_zone[BODY_ZONE]?.[String(yr)]?.any_water_pct ?? null;
+  };
+  const waterPct = waterPctForYear(year);
   const builtPct = dw?.by_zone[HALO_ZONE]?.[String(year)]?.built_fraction_pct ?? null;
   const haloBuildingsOb = ob?.regions.find((r) => r.region === HALO_ZONE);
   const bodyBuildingsOb = ob?.regions.find((r) => r.region === BODY_ZONE);
@@ -84,13 +104,19 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
       <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
         <Stat
           label="Water surface in body"
-          help="The body is its primary boundary (Ramsar for Pallikaranai, OpenStreetMap-mapped for reservoirs). This shows the share of land inside that boundary classified as water (seasonal or permanent) by the European JRC team using Landsat satellite data. It's averaged across the whole year, so it doesn't reflect today's water level."
+          help="The body is its primary boundary (Ramsar for Pallikaranai, OpenStreetMap-mapped for reservoirs). This shows the share of land inside that boundary classified as water (seasonal or permanent), averaged across the year. Sources splice at year 2021/2022: JRC Global Surface Water v1.4 (Landsat, 1984-2021) and Google's Dynamic World water class (Sentinel-2, 2022-present). A small step at the splice is methodology-driven (per-pixel annual classifier vs MODE-aggregated per-image), not a real water-level jump."
           value={waterPct != null ? `${waterPct.toFixed(1)}%` : "n/a"}
           delta={waterPct != null && waterBaseline != null ? waterPct - waterBaseline : null}
           deltaUnit=" pts"
           deltaContext="1988-92 avg"
           deltaInvert
-          caveat={year > 2021 ? "JRC data ends 2021" : null}
+          caveat={
+            year > 2021 && dwWater?.by_zone[BODY_ZONE]?.[String(year)]
+              ? "Dynamic World"
+              : year <= 2021
+                ? null
+                : "JRC ends 2021"
+          }
         />
         <Stat
           label="Built-up surface in 1 km halo"

@@ -12,6 +12,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { SelectedWardHighlight } from "@/components/map/selected-ward-highlight";
+import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 
 // Chennai-default URLs and map center. Other cities override via props.
@@ -113,10 +114,14 @@ export function WardMap({
       .then((d) => setBlocks(d.blocks))
       .catch(console.error);
 
+    // Static gw-stations.json is Chennai's fallback metadata bundle;
+    // Bangalore has no equivalent file (live WRIS readings come through
+    // the wrisStations prop instead). Guard r.ok so a 404 doesn't try to
+    // parse the Next.js HTML error page as JSON.
     fetch(stationsJsonUrl)
-      .then((r) => r.json())
-      .then((d) => setStations(d.stations))
-      .catch(console.error);
+      .then((r) => (r.ok ? r.json() : { stations: [] }))
+      .then((d) => setStations(d.stations ?? []))
+      .catch(() => setStations([]));
   }, [wardGeoJsonUrl, blockGeoJsonUrl, blocksJsonUrl, stationsJsonUrl]);
 
   const blockLookup = useMemo(() => {
@@ -173,7 +178,10 @@ export function WardMap({
     const ward = groundwaterData.get(wardNum);
     const risk = riskData.get(wardNum);
 
-    const zoneName = feature.properties?.Zone_Name || ward?.zone || "";
+    const zoneName = feature.properties?.Zone_Name || feature.properties?.zone_name || feature.properties?.corporation || ward?.zone || "";
+    const wardName = String(
+      feature.properties?.ward_name ?? feature.properties?.Ward_Name ?? ward?.wardName ?? `Ward ${wardNum}`,
+    );
     const heading = zoneName ? `${t("ward.ward")} ${wardNum} - ${zoneName}` : `${t("ward.ward")} ${wardNum}`;
     let detail: string;
     if (viewMode === "risk") {
@@ -187,8 +195,24 @@ export function WardMap({
     }
     layer.bindTooltip(`<strong>${heading}</strong>${detail}`, { sticky: true });
 
+    // Build a synthetic ward when we don't have depth data (Bangalore
+    // groundwaterViews.depth=false, so groundwaterData is empty) but
+    // we still want clicks on the risk choropleth to surface the
+    // ward detail panel. The panel handles depthM=null cleanly.
+    const wardForPanel: GroundwaterWard | null =
+      ward ??
+      (risk
+        ? {
+            wardNumber: wardNum,
+            wardName,
+            zone: zoneName || "",
+            depthM: null,
+            trend: "unknown",
+          }
+        : null);
+
     layer.on({
-      click: () => { onWardSelect(ward || null); },
+      click: () => { onWardSelect(wardForPanel); },
       mouseover: (e: LeafletMouseEvent) => {
         e.target.setStyle({ weight: 3, color: tiles.hoverStroke, fillOpacity: 0.9 });
       },
@@ -259,6 +283,19 @@ export function WardMap({
       )}
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      {/* Fit the map to the active layer's extent. Refires when viewMode
+          flips (block extent vs full ward extent can be very different,
+          especially in Bangalore where 369 GBA wards span ~800 km² but
+          GWR blocks are a compact subset). */}
+      <FitToBounds
+        bounds={
+          viewMode === "exploitation"
+            ? geoJsonBounds(blockGeoJSON)
+            : geoJsonBounds(wardGeoJSON)
+        }
+        resetKey={viewMode}
+        maxZoom={12}
+      />
       {flyToWard && <FlyToWard wardNumber={flyToWard} wardGeoJsonUrl={wardGeoJsonUrl} />}
 
       {viewMode === "exploitation" ? (

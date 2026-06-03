@@ -56,3 +56,19 @@ docs/cpcb/*.pdf
 
 # Local caches written by data-acquisition scripts
 scripts/_cache-*.json
+
+# Rich-body satellite imagery + tints - served from Supabase Storage
+# in production via the `satellite-evidence` bucket. Local files are
+# kept by the ingest pipeline (scripts/ingest_rich_body_imagery.py
+# and the tint scripts) for dev convenience but are excluded from git
+# because the bundle exceeds Vercel's practical static-deploy size
+# (~150 MB across 14 Bangalore bodies + 7 Chennai bodies). The chip
+# url in each <body>-imagery-manifest.json points to the Supabase
+# public URL; the local files are a developer-only artifact.
+public/data/rich-bodies/imagery/
+public/data/rich-bodies/tints/
+
+# Local-only workspace + working-doc directories. Not part of the
+# shipped codebase.
+.vscode/
+docs/deliverables/

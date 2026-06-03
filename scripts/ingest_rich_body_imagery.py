@@ -243,7 +243,24 @@ def main():
     local_dir = Path("/tmp/rich-bodies") / body_id / "imagery"
     local_dir.mkdir(parents=True, exist_ok=True)
 
-    chips = []
+    # Merge new chips into any existing manifest so a partial re-run
+    # (e.g. `--years 2025,2026`) extends the historical chip list rather
+    # than replacing it. Years requested again will be re-fetched and
+    # overwrite their old entry (intentional - lets us refresh stale
+    # composites).
+    manifest_path = (
+        ROOT / "public/data/rich-bodies" / f"{body_id}-imagery-manifest.json"
+    )
+    chips: list[dict] = []
+    existing_chips_by_year: dict[int, dict] = {}
+    if manifest_path.exists():
+        try:
+            existing = json.loads(manifest_path.read_text())
+            for c in existing.get("chips", []):
+                existing_chips_by_year[int(c["year"])] = c
+        except Exception as e:
+            print(f"  warning: could not read existing manifest: {e}")
+
     for year in years:
         t0 = time.time()
         try:
@@ -308,8 +325,17 @@ def main():
             }
         )
 
+    # Merge: years we just processed (in `chips`) override any same-year
+    # entries from a previous run; everything else (e.g. 1990-2024 from
+    # an earlier full run) carries over.
+    just_processed = {int(c["year"]) for c in chips}
+    for old_year, old_chip in existing_chips_by_year.items():
+        if old_year not in just_processed:
+            chips.append(old_chip)
+    chips.sort(key=lambda c: c["year"])
+
     available_count = sum(1 for c in chips if c.get("available"))
-    print(f"\nDone: {available_count}/{len(years)} chips available")
+    print(f"\nDone: {available_count}/{len(chips)} chips available (incl. {len(existing_chips_by_year) - sum(1 for y in existing_chips_by_year if y in just_processed)} carried over from prior runs)")
 
     manifest = {
         "body_id": body_id,
@@ -330,9 +356,8 @@ def main():
         ),
         "chips": chips,
     }
-    manifest_path = (
-        ROOT / "public/data/rich-bodies" / f"{body_id}-imagery-manifest.json"
-    )
+    # `manifest_path` was already defined earlier (top of main) for the
+    # existing-manifest read; reuse it for the write.
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(json.dumps(manifest, indent=2))
     print(f"Wrote manifest: {manifest_path}")

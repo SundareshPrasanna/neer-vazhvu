@@ -1,0 +1,230 @@
+{
+  "district_id": "bangalore",
+  "schema_version": "v1",
+  "note": "Hand-curated, source-cited documented cascade chains for Bengaluru. Four chains are surfaced today: the Koramangala-Challaghatta (K&C) foam cascade, the Yelahanka-Hebbal north cascade, the Vrishabhavathi west headwaters, and the Old-City Kempegowda heritage fragment. Each chain has an ordered tank list with OSM IDs (where the polygon is in our extract); the cascade health stage joins these against the terrain-derived graph and rich-body cohort to produce per-chain health scores in bangalore-cascades-health.json.",
+  "_sources_of_truth": [
+    "Harini Nagendra, Nature in the City: Bengaluru in the Past, Present and Future (Oxford University Press 2016)",
+    "T.V. Ramachandra et al. (IISc CES) - Wetlands of Bengaluru 105-lake survey",
+    "NGT Forward Foundation v State of Karnataka, OA 222/2014 (75 m / 50 m / 30 m buffer order)",
+    "JICA Bengaluru Water Supply and Sewerage Project Phase 3 Final Report (Nov 2017)",
+    "BWSSB historical records (1894 Hesaraghatta, 1932 TG Halli, 1974 Stage I)"
+  ],
+  "cascades": [
+    {
+      "cascade_id": "bangalore-kc-foam-cascade",
+      "name": "Koramangala-Challaghatta (K&C) valley foam cascade",
+      "short_name": "K&C foam cascade",
+      "narrative": "South-east Bengaluru's terminal kere chain: HSR Layout's Agara feeds storm drains toward Bellandur (317 ha, terminal lake of the K&C valley receiving sewage from ~40% of Bangalore), which discharges through a downstream weir into Varthur (155 ha), which in turn drains east toward the Dakshina Pinakini basin. The chain became national news on 16 Feb 2017 when surfactant foam ignited at the Bellandur weir on Sarjapur Road. The NGT subsequently constituted a Bellandur-Varthur monitoring committee under retired Justice Santosh Hegde and ordered a 75 m no-construction buffer around the lakes plus 50 m around rajakaluves.",
+      "transfer_type": "natural",
+      "historical_era": "kempegowda-pre",
+      "confidence": "clearly_documented",
+      "source": {
+        "citation": "NGT Forward Foundation v State of Karnataka, OA 222/2014; Bellandur-Varthur Monitoring Committee under retired Justice Santosh Hegde (constituted Feb 2017).",
+        "url": "https://greentribunal.gov.in/",
+        "type": "court_order"
+      },
+      "court_anchor": {
+        "case": "Forward Foundation v State of Karnataka",
+        "citation": "NGT OA 222/2014 and consolidated proceedings; PMO statement on Bellandur fire (Feb 2017).",
+        "url": "https://greentribunal.gov.in/",
+        "year": 2016
+      },
+      "restoration_anchor": {
+        "program": "BDA Bellandur-Varthur restoration tender (2020); BWSSB JICA Phase-3 upstream sewerage interception (rolling 2020-2025).",
+        "url": "https://www.bwssb.karnataka.gov.in/"
+      },
+      "tanks_in_order": [
+        {
+          "name": "Agara Lake",
+          "osm_id": 8469370,
+          "area_ha": 26.9,
+          "category": "lake",
+          "notes": "Upstream HSR Layout kere; degraded by storm-drain inflow but partially restored by Friends of Agara Lake (FOAL) since 2010."
+        },
+        {
+          "name": "Bellandur Lake",
+          "osm_id": 19751547,
+          "area_ha": 317.3,
+          "category": "lake",
+          "notes": "K&C valley terminal lake; ~40% of Bengaluru's sewage funnels through here. The 16 Feb 2017 foam fire and the NGT Forward Foundation order anchor the city's lake-pollution discourse."
+        },
+        {
+          "name": "Varthur Lake",
+          "osm_id": 19306126,
+          "area_ha": 155.0,
+          "category": "lake",
+          "is_terminal": true,
+          "notes": "Downstream of Bellandur via the Sarjapur-Whitefield weir; foam events recur post-monsoon. Discharges east toward the Dakshina Pinakini basin."
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "natural",
+          "notes": "Agara surplus historically fed Bellandur via the Iblur drain; sewerage growth has converted this into an effective storm-and-sewage corridor."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "natural",
+          "notes": "Bellandur to Varthur via the downstream weir; the foam events occur at this weir's plunge zone."
+        }
+      ]
+    },
+    {
+      "cascade_id": "bangalore-yelahanka-hebbal-north-cascade",
+      "name": "Yelahanka-Hebbal north cascade",
+      "short_name": "Yelahanka-Hebbal cascade",
+      "narrative": "North Bengaluru's surviving cascade chain. Yelahanka Lake (96 ha, in Kempegowda's ancestral home of the same name) feeds south through Jakkur (50 ha, the JNNURM-funded engineered-wetland model lake commissioned 2011) into Rachenahalli (36 ha, immediately adjacent to Manyata Tech Park) and ultimately into Hebbal Lake (46 ha, Karnataka Forest Department bird sanctuary). The chain is the platform's clearest contemporary example of cascade-restoration done well: BWSSB's 10 MLD STP discharge is polished through Jakkur's ATREE/IISc-CES-designed constructed wetland before entering the lake, and aquifer-recharge benefits are measurable in the surrounding borewells.",
+      "transfer_type": "natural",
+      "historical_era": "wodeyar",
+      "confidence": "clearly_documented",
+      "source": {
+        "citation": "Harini Nagendra, Nature in the City (OUP 2016); T.V. Ramachandra (IISc CES) - Wetlands of Bengaluru.",
+        "url": "https://wgbis.ces.iisc.ac.in/energy/water/paper/ETR101/bangalore.html",
+        "type": "academic"
+      },
+      "court_anchor": {
+        "case": "Forward Foundation v State of Karnataka",
+        "citation": "NGT OA 222/2014 buffer regime extends to all BBMP lakes including Yelahanka, Jakkur, Rachenahalli and Hebbal.",
+        "url": "https://greentribunal.gov.in/",
+        "year": 2016
+      },
+      "restoration_anchor": {
+        "program": "JNNURM Jakkur restoration (2008 begin, 2011 wetland online); JICA Phase-3 upstream sewerage strengthening (rolling 2020s).",
+        "url": "https://www.bwssb.karnataka.gov.in/"
+      },
+      "tanks_in_order": [
+        {
+          "name": "Yelahanka Lake",
+          "osm_id": 10179602,
+          "area_ha": 96.7,
+          "category": "lake",
+          "notes": "Kempegowda's ancestral village; the surrounding CGWB block stands at 260% draft-vs-recharge in GEC 2024 - the lake is a critical recharge asset."
+        },
+        {
+          "name": "Jakkur Lake",
+          "osm_id": 9321012,
+          "area_ha": 50.0,
+          "category": "lake",
+          "notes": "JNNURM-funded engineered-wetland model lake; ATREE/IISc CES polishing-wetland design treats BWSSB STP discharge before it enters the lake."
+        },
+        {
+          "name": "Rachenahalli Lake",
+          "osm_id": 6041559,
+          "area_ha": 36.0,
+          "category": "lake",
+          "notes": "Manyata Tech Park adjacency; halo built fraction rose +23 pp 2016-2026."
+        },
+        {
+          "name": "Hebbal Lake",
+          "osm_id": 8754543,
+          "area_ha": 45.6,
+          "category": "lake",
+          "is_terminal": true,
+          "notes": "Karnataka Forest Department bird-sanctuary status; the 2007 JNNURM bund reshaping produced a more consistent water surface (+28 pp body water 1988-92 vs 2017-21)."
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "natural",
+          "notes": "Yelahanka surplus historically flowed south through Jakkur village via storm channels."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "engineered",
+          "notes": "Jakkur to Rachenahalli via the modern BWSSB-routed surplus channel; the cascade health relies on Jakkur's wetland polishing the inflow."
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "natural",
+          "notes": "Rachenahalli to Hebbal via the Hebbal-Nagavara channel."
+        }
+      ]
+    },
+    {
+      "cascade_id": "bangalore-vrishabhavathi-headwaters",
+      "name": "Vrishabhavathi west headwaters",
+      "short_name": "Vrishabhavathi headwaters",
+      "narrative": "The colonial-era BWSSB drinking-water spine. Hesaraghatta Lake (600 ha full pool, on the Arkavathy river) was constructed in 1894 by the Madras Engineering Group to supply Bengaluru's first piped water - and remained the city's sole drinking source until Tippegondanahalli reservoir (TG Halli, 1932) and the Cauvery stages (1974 onwards). Today Hesaraghatta is operationally near-dry: upstream urbanisation and a collapsed Arkavathy catchment have ended its role as a drinking source. The Vrishabhavathi river it drains into now carries primarily sewage and industrial effluent through west Bengaluru. The 2021 Karnataka tourism / film-city proposal on the Hesaraghatta grasslands was paused after civil-society pushback citing lesser-florican habitat and Arkavathy recharge functions.",
+      "transfer_type": "engineered",
+      "historical_era": "colonial-pwd",
+      "confidence": "clearly_documented",
+      "source": {
+        "citation": "BWSSB historical records (1894 Hesaraghatta, 1932 TG Halli); Harini Nagendra, Nature in the City (OUP 2016).",
+        "url": "https://www.bwssb.karnataka.gov.in/",
+        "type": "operator"
+      },
+      "court_anchor": {
+        "case": "Karnataka High Court - Hesaraghatta grassland conservation petitions",
+        "citation": "Ongoing public-interest petitions on the Hesaraghatta grassland conservation zone (2024); lesser-florican habitat and Arkavathy recharge function cited.",
+        "url": "https://karnatakajudiciary.kar.nic.in/",
+        "year": 2024
+      },
+      "restoration_anchor": {
+        "program": "Hesaraghatta Conservation Reserve proposal (Karnataka Forest Department, pending); BWSSB Arkavathy catchment restoration is institutionally orphaned today.",
+        "url": "https://aranya.gov.in/"
+      },
+      "tanks_in_order": [
+        {
+          "name": "Hesaraghatta Lake",
+          "osm_id": 41662659,
+          "area_ha": 599.7,
+          "category": "reservoir",
+          "is_terminal": true,
+          "notes": "1894 BWSSB historical reservoir on Arkavathy; near-dry since the mid-2000s. Polygon is full-pool extent; modern satellite shows a much smaller wet surface inside."
+        }
+      ],
+      "edges": []
+    },
+    {
+      "cascade_id": "bangalore-kempegowda-old-city-fragments",
+      "name": "Old-city Kempegowda heritage fragments",
+      "short_name": "Kempegowda heritage fragments",
+      "narrative": "The surviving fragments of Kempegowda I's mid-16th-century interconnected kere system in old Bengaluru. Kempegowda laid down the city's original ridge cascade in 1537, with each tank's surplus feeding the next downstream. Most of the chain is gone: Dharmambudhi tank (drained 1950s for Majestic bus stand), Sampangi tank (Sri Kanteerava stadium), Karanji Anjaneya (Bishop Cotton playing fields), Akkithimmanahalli (hockey stadium), Domlur (BDA layout). Today only Kempambudhi (Kempegowda's family-deity tank, ~7 ha, severely reduced, operationally a sewage-receiving body) and Ulsoor / Halasuru (38 ha, expanded under Kempegowda II in the 1550s and formalised in the 1809-1811 British Cantonment) remain identifiable as lakes. Together they bookend the heritage chain - upstream-most and downstream-most surviving Kempegowda-era kere in the old city core.",
+      "transfer_type": "natural",
+      "historical_era": "kempegowda",
+      "confidence": "partially_documented",
+      "source": {
+        "citation": "Harini Nagendra, Nature in the City (OUP 2016); Fathima Samana - Historical Evolution of Tank System in Bangalore (2008); INTACH Bengaluru documentation.",
+        "url": "https://global.oup.com/academic/product/nature-in-the-city-9780199465927",
+        "type": "academic"
+      },
+      "court_anchor": null,
+      "restoration_anchor": {
+        "program": "BBMP heritage restoration rounds (Kempambudhi 2019); INTACH interpretive signage; Ulsoor periodic desilting + aerator installation (2019).",
+        "url": "https://www.bbmp.gov.in/"
+      },
+      "tanks_in_order": [
+        {
+          "name": "Kempambudhi Kere",
+          "osm_id": 38047206,
+          "area_ha": 7.1,
+          "category": "lake",
+          "notes": "Kempegowda's family-deity tank (~1550). Survives at ~7 ha, a fraction of its historical footprint; operationally a sewage-receiving body today."
+        },
+        {
+          "name": "Ulsoor Lake (Halasuru)",
+          "osm_id": 1857615,
+          "area_ha": 38.1,
+          "category": "lake",
+          "is_terminal": true,
+          "notes": "Kempegowda II expansion (~1550s); 1809-1811 Cantonment laid out around it. Algal recurrence flagged 2023; Madras Engineer Group cantonment bounds the eastern halo."
+        }
+      ],
+      "edges": [
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "natural",
+          "notes": "Historical Kempegowda-era surplus chain ran south-west to north-east through Chamarajpet / Cubbon area; intermediate tanks (Dharmambudhi, Sampangi, etc.) are fully lost so the surviving chain is reduced to these two endpoints."
+        }
+      ]
+    }
+  ]
+}

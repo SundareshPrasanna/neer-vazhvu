@@ -99,7 +99,13 @@ async def _run_step(
 
 
 async def _step_scrape_cmwssb() -> dict:
-    """Step 1: Scrape CMWSSB for daily reservoir levels."""
+    """Scrape Chennai's CMWSSB lake-level page for daily reservoir
+    readings. Chennai-specific step: other cities have their own
+    primary-supply scrapers (e.g. Madurai uses TN PWD; Bangalore will
+    use BWSSB once onboarded). Production daily ingestion does NOT call
+    this - the GitHub Action runs scripts/scrape_cmwssb.py directly and
+    then POSTs to /pipeline/run-post-scrape. This step is exercised
+    only by /pipeline/run-daily (manual/local dev)."""
     supabase = get_supabase()
     result = await scrape_cmwssb()
 
@@ -558,11 +564,13 @@ async def run_monthly() -> list[dict]:
 
 
 async def run_post_scrape() -> list[dict]:
-    """Run the pipeline after scraping is done externally (e.g. from GitHub Actions).
+    """Run the pipeline after per-city primary-supply scraping is done
+    externally (e.g. from GitHub Actions running scripts/scrape_cmwssb.py
+    for Chennai and scripts/scrape_tn_pwd_reservoirs.py for Madurai).
 
     Runs: fetch_weather → fetch_opencity → compute_estimate → forecast → briefing.
-    Skips scrape_cmwssb so callers that already pushed reservoir data to the DB
-    don't redundantly hit the CMWSSB website.
+    Skips the in-process CMWSSB scrape step so callers that already pushed
+    reservoir data to the DB don't redundantly hit upstream sites.
     """
     steps = []
     step = await _run_step("fetch_weather", _step_fetch_weather)

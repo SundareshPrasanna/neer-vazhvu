@@ -6,6 +6,7 @@ import L from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { useLanguage } from "@/lib/i18n/context";
+import { FitToBounds, pointsBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 import type { RiverInfo } from "./rivers-client";
 
@@ -21,6 +22,13 @@ export interface CpcbStationMarker {
   /** Latest annual midpoint DO if known. */
   latest_do: number | null;
   latest_year: number | null;
+  /** True when the station sits more than ~2 km from the OSM-traced
+   *  river LineString (typically because OSM doesn't trace the segment
+   *  through built-up Bengaluru or the named place is a reservoir not
+   *  tagged as a river segment). When true, the marker uses a dashed
+   *  border so the visual disconnect from the river polyline reads as
+   *  intentional, and the tooltip surfaces an off-polyline note. */
+  off_osm_river_polyline?: boolean;
 }
 
 export interface IndustrialSourceMarker {
@@ -122,6 +130,11 @@ export function RiversLeafletMap({
     >
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      <FitToBounds
+        bounds={pointsBounds(segments.flatMap((s) => s.coords))}
+        resetKey={`rivers:${segments.length}`}
+        maxZoom={12}
+      />
 
       {segments.map(({ riverId, coords, key }) => {
         const info = riverInfo[riverId];
@@ -177,7 +190,8 @@ export function RiversLeafletMap({
             radius={6}
             pathOptions={{
               color: "#0f172a",
-              weight: 1,
+              weight: s.off_osm_river_polyline ? 1.5 : 1,
+              dashArray: s.off_osm_river_polyline ? "3 3" : undefined,
               fillColor: fill,
               fillOpacity: 0.85,
             }}
@@ -198,6 +212,14 @@ export function RiversLeafletMap({
                   <br />
                   <span style={{ fontSize: "11px", color: "#64748b" }}>
                     NWMP station - no readings published
+                  </span>
+                </>
+              )}
+              {s.off_osm_river_polyline && (
+                <>
+                  <br />
+                  <span style={{ fontSize: "10px", color: "#b45309" }}>
+                    Off OSM river polyline - named-place coord; see river panel for context
                   </span>
                 </>
               )}

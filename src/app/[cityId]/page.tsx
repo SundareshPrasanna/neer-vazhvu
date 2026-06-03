@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
+import { CityHeaderBadges } from "@/components/dashboard/city-header-badges";
 import { getPlaceConfig } from "@/lib/cities";
 import {
   loadCitySnapshot,
@@ -9,6 +9,9 @@ import {
 } from "./data";
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { AllocationHero } from "@/components/dashboard/allocation-hero";
+import { CauveryPumpingHero } from "@/components/dashboard/cauvery-pumping-hero";
+import { BangaloreDailyBriefing } from "@/components/dashboard/bangalore-daily-briefing";
+import { buildBangaloreBriefing } from "@/lib/insights/bangalore-briefing";
 import { DataGapPanel, URBAN_SUPPLY_DATA_GAPS } from "@/components/dashboard/data-gap-panel";
 import { UrbanSupplyOverview } from "@/components/dashboard/urban-supply-overview";
 import { DashboardHistorySection } from "@/components/dashboard/dashboard-history-section";
@@ -33,24 +36,43 @@ export default async function CityHomePage({ params }: PageProps) {
     loadCitySnapshot(config),
     loadCityWaterEstimate(config),
   ]);
-  const reservoirIsLive = snapshot.reservoirIsLive;
+  // Compute the preview pill semantically (see below).
+  // The "PREVIEW · waiting for first daily ingestion" pill is meaningful only
+  // for cities that drink directly from a tracked reservoir. Bangalore tracks
+  // 4 upstream Cauvery reservoirs as basin context but none are primary
+  // drinking sources (BWSSB lifts treated water 100 km from T.K. Halli), so
+  // "waiting for ingestion" would misrepresent the data model. Only consider
+  // a city "in preview" if it has a primary source configured AND that
+  // source's reading is missing.
+  const hasPrimaryDrinkingSource = config.waterSources.some(
+    (s) => s.isPrimaryDrinkingSource,
+  );
+  const reservoirIsLive = !hasPrimaryDrinkingSource || snapshot.reservoirIsLive;
 
   // Convert the per-city snapshot into the shared ReservoirSummary[]
   // shape Chennai's ReservoirCards consumes.
   const summaries = snapshotToSummaries(config, snapshot);
 
+  // Bengaluru-specific daily briefing - template-based for V1, with an
+  // open slot for a later Claude-pipeline AI uplift. Renders just below
+  // the city badge row, above the Cauvery Pumping hero.
+  const bangaloreBriefing =
+    cityId === "bangalore"
+      ? buildBangaloreBriefing(
+          summaries,
+          waterEstimate.lastUpdated
+            ? formatDate(waterEstimate.lastUpdated)
+            : null,
+        )
+      : null;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="outline" className="text-xs">
-          {config.displayName} · {config.stateCode}
-        </Badge>
-        {!reservoirIsLive && (
-          <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
-            PREVIEW · waiting for first daily ingestion
-          </Badge>
-        )}
-      </div>
+      <CityHeaderBadges
+        displayName={config.displayName}
+        stateCode={config.stateCode}
+        preview={!reservoirIsLive}
+      />
 
       {/* Hero swap: cities whose tracked sources ARE the urban supply
           (Chennai's CMWSSB reservoirs) get the days-left runway; cities
@@ -72,6 +94,12 @@ export default async function CityHomePage({ params }: PageProps) {
           // pass 0 so DaysLeftHero doesn't fall back to Chennai's 190 MLD.
           defaultDesalinationMld={config.defaultDesalinationMld ?? 0}
         />
+      )}
+      {bangaloreBriefing && (
+        <BangaloreDailyBriefing briefing={bangaloreBriefing} />
+      )}
+      {config.heroMode === "cauvery-pumping" && (
+        <CauveryPumpingHero cityId={cityId} cityDisplayName={config.displayName} />
       )}
       {config.heroMode === "allocation" && config.urbanSupply && (
         <AllocationHero
@@ -104,6 +132,7 @@ export default async function CityHomePage({ params }: PageProps) {
           published engineering document don't render an empty card. */}
       <UrbanSupplyOverview cityId={cityId} cityDisplayName={config.displayName} />
 
+
       {/* Reservoir snapshot grid + shared multi-source history chart. */}
       <ReservoirCards reservoirs={summaries} />
 
@@ -135,9 +164,9 @@ export default async function CityHomePage({ params }: PageProps) {
         />
       )}
 
-      {/* Per-feature deep-dive nav. Same shape for every city; the routes
-          themselves render the city's data. */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* Per-feature deep-dive nav. Tanker-market card only appears for
+          cities that have a tanker-survey JSON (Bangalore today). */}
+      <div className={`grid grid-cols-1 ${config.heroMode === "cauvery-pumping" ? "sm:grid-cols-4" : "sm:grid-cols-3"} gap-3`}>
         <Link
           href={`/${cityId}/groundwater`}
           className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors"
@@ -170,6 +199,24 @@ export default async function CityHomePage({ params }: PageProps) {
             OSM polygons, flagship tanks, restoration priority badges, lost-tank inventory.
           </p>
         </Link>
+        {config.heroMode === "cauvery-pumping" && (
+          <Link
+            href={`/${cityId}/tanker`}
+            className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                Tanker market
+              </h3>
+              <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+            <p className="text-xs text-slate-500 mt-1">
+              What households actually pay - longitudinal OpenCity surveys (2015 / 2019 / 2024).
+            </p>
+          </Link>
+        )}
         <Link
           href={`/${cityId}/about`}
           className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors"

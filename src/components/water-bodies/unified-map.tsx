@@ -221,13 +221,20 @@ export function UnifiedMap({
   }, [currentGeoJSON, censusData]);
 
   useEffect(() => {
+    // Current OSM water-bodies geojson. Cities without one (no Bangalore
+    // for now) get a graceful null instead of letting the 404 HTML body
+    // explode JSON.parse.
     fetch(currentGeoJsonUrl)
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : null))
       .then(setCurrentGeoJSON)
       .catch(console.error);
 
+    // Lost-bodies geojson is OPTIONAL. Chennai/Madurai ship a polygon
+    // version (water-bodies-lost-{city}.geojson) with historical tank
+    // shapes; Bangalore's lost-kere data is tabular only (no polygons),
+    // so this fetch will 404 there and that's fine.
     fetch(lostGeoJsonUrl)
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : null))
       .then(setLostGeoJSON)
       .catch(console.error);
   }, [currentGeoJsonUrl, lostGeoJsonUrl]);
@@ -270,8 +277,9 @@ export function UnifiedMap({
   useEffect(() => {
     if (!currentGeoJSON) return;
     fetch(riversGeoJsonUrl)
-      .then((r) => r.json())
-      .then((riversGeo: GeoJSON.FeatureCollection) => {
+      .then((r) => (r.ok ? r.json() : null))
+      .then((riversGeo: GeoJSON.FeatureCollection | null) => {
+        if (!riversGeo) return;
         // Extract river line sample points with names
         const riverPoints: { lat: number; lng: number; name: string; name_ta: string }[] = [];
         for (const feat of riversGeo.features) {
@@ -694,6 +702,14 @@ export function UnifiedMap({
       <MapResizer />
       {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      {/* No FitToBounds here: the OSM water-body collection's extent
+          includes far-flung outliers (Pulicat in the north for Chennai,
+          Hesaraghatta in the west for Bengaluru) which pull the auto-fit
+          well past the urban core and leave the city body unreadable.
+          The city's pre-tuned center+zoom (mapCenter / mapZoom passed by
+          the parent page) is the right frame for this map. The Reset
+          button on the rich-body deep-zoom panel handles per-body
+          fit-to-bounds where that *is* the right frame. */}
       {currentGeoJSON && (
         <GeoJSON
           ref={(layer) => { currentLayerRef.current = layer; }}

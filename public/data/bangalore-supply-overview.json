@@ -1,0 +1,409 @@
+{
+  "_note": "Structural at-a-glance facts for Bangalore's urban water supply, anchored on the JICA Bengaluru Water Supply and Sewerage Project (Phase 3) Final Report (November 2017, NJS Consultants Co., Ltd, JR(SAEI) 17-063). JICA Phase 3 IS the engineering preparatory survey equivalent to Chennai's ADB CCRWSSP IEE and Madurai's ADB TNUFIP Tranche 2 IEE - same level of engineering depth, same purpose (feasibility evaluation for a sovereign loan), same status as primary citable engineering document. Numbers below are extracted from JICA Phase 3 Final Report (Main Report Part 1, Executive Summary + Chapter 3) unless otherwise noted. Engineering snapshot is 2015-2017; current state notes flagged where the picture has changed since (Stage V commissioned 16 Oct 2024, GBA replaced BBMP 15 May 2025, 369-ward delimitation notified 19 Nov 2025).",
+  "_view_overrides": {
+    "subtitle": "Engineering numbers from the JICA Bengaluru Water Supply and Sewerage Project (Phase 3) Final Report, Nov 2017. Refreshed when new ADB/JICA/BWSSB documents are published; supplemented with WELL Labs + IISc Groundwater Outlook + Karnataka WRD where the picture has shifted since 2017.",
+    "wtp_label": "Cauvery WTP capacity",
+    "demand_caption": "Bengaluru is fundamentally a pumped city - the only major Indian metro that sits on a watershed divide rather than on a river. Up to 1,460 MLD is lifted ~95 km uphill from the Cauvery River via 3-stage pumping (TK Halli -> Harohalli -> Tataguni) against ~500 m elevation. JICA's 2049 demand projection of 3,456 MLD against post-Stage-V supply of 2,735 MLD opens a structural 721 MLD deficit. Bengaluru's groundwater and tanker market exist because BWSSB cannot deliver enough Cauvery to meet demand. (For contrast: Chennai impounds local reservoirs; Madurai is gravity-fed from Mullaperiyar.)"
+  },
+  "_data_provenance_caveats": [
+    "JICA Phase 3 was published November 2017 - numbers reflect 2015-2017 system state. Stage V (775 MLD design) was 'planned' in JICA and commissioned 16 October 2024 at TK Halli. Per The Ken (May 2026), Stage V actual delivery as of Feb 2026 is ~400 MLD, well below the 775 MLD design.",
+    "STP count and capacity have ~doubled since JICA's 14 plants / 721 MLD (2017) to ~39 plants / 1,371 MLD (2024-25, BWSSB on OpenCity).",
+    "GBA replaced BBMP on 15 May 2025 (Karnataka Act 36 of 2025). Final 369-ward delimitation notified 19 Nov 2025. JICA used BBMP's 198-ward Core area + 8 ULBs + 110 villages structure - geometry has shifted; functional supply chain is unchanged.",
+    "Groundwater extraction: BWSSB official 800 MLD in JICA-era assumptions; WELL Labs Bengaluru Urban Water Balance (Jan 2024) bottom-up estimate is 1,392 MLD. Both documented in current_supply_mix_mld and groundwater section.",
+    "JICA flagged NRW at 48% in 2017. BWSSB UFW reduction projects have run since; current NRW is not officially published.",
+    "Cauvery release variability: JICA Figure 6.1 shows daily flow at Kollegal Point 1972-2016. Even drought year 2012 met Stage I-IV requirements. Stage V demand pushes total close to the safe-yield envelope."
+  ],
+  "_sources": [
+    {
+      "name": "JICA Bengaluru Water Supply and Sewerage Project (Phase 3) - Final Report, Main Report Part 1",
+      "url": "https://data.opencity.in/dataset/jica-report-for-bwssb-project-phase-3-2017",
+      "date": "2017-11",
+      "extracted": "2026-05-24",
+      "note": "Executive Summary + Chapters 1-5. Primary engineering document anchoring this overview. Tables 3.1 (Existing TK Halli WTPs), 3.1.2 (Salient Features of BWSSB), 4.1 (Existing STPs), 5.3 (Water Demand by Study Area), 6.1 (Cauvery State Allocation), 6.2 (CWSS Stage Allocation), 6.3 (Water Balance JICA vs BWSSB)."
+    },
+    {
+      "name": "JICA Phase 3 Supporting Report",
+      "url": "https://data.opencity.in/dataset/jica-report-for-bwssb-project-phase-3-2017",
+      "date": "2017-11",
+      "extracted": "2026-05-24",
+      "note": "Population projection background + facility schedule details."
+    },
+    {
+      "name": "IISc Groundwater Outlook of Bengaluru City",
+      "url": "https://data.opencity.in/dataset/groundwater-outlook-of-bengaluru-city-april-2025",
+      "date": "2025-04",
+      "extracted": "2026-05",
+      "note": "BWSSB-commissioned, ward-mapped, names 65 specific stress wards. Authoritative groundwater complement to JICA's 2017 surface-water focus."
+    },
+    {
+      "name": "WELL Labs Bengaluru Urban Water Balance Report",
+      "url": "https://welllabs.org/bengaluru-urban-water-balance-report-well-labs/",
+      "date": "2024-01",
+      "extracted": "registration_required",
+      "note": "Gold-standard bottom-up balance. Cites groundwater extraction at 1,392 MLD vs BWSSB's official 800 MLD. Used here for the divergence narrative; full PDF behind a registration gate."
+    },
+    {
+      "name": "BWSSB - Bangalore Water Supply and Sewerage Board",
+      "url": "https://bwssb.karnataka.gov.in/",
+      "date": "2026-05",
+      "extracted": "2026-05",
+      "note": "Canonical 2026 site (.karnataka.gov.in). English info pages return 403 to scrapers; live operational MLD figures need RTI."
+    },
+    {
+      "name": "The Ken - 'Bengaluru doesn't have a water problem' series",
+      "url": "https://the-ken.com/",
+      "date": "2026-05",
+      "extracted": "2026-05",
+      "note": "Source for Stage V under-delivery (775 design / ~400 actual as of Feb 2026) and tanker-market quantification."
+    },
+    {
+      "name": "OpenCity Bengaluru Tanker Water Survey 2024 + 2025",
+      "url": "https://opencity.in/bengaluru-water-tankers-survey-2025-situation-better-than-2024/",
+      "date": "2025",
+      "extracted": "2026-05",
+      "note": "Quantified tanker dependence baseline."
+    }
+  ],
+
+  "supply_chain": [
+    "Cauvery River (KRS + Hemavathi + Kabini + Harangi reservoirs upstream)",
+    "Shiva Balancing Reservoir (SBR) -> Netkal Balancing Reservoir (NBR)",
+    "MS pipelines, gravity flow to TK Halli WTP",
+    "TK Halli WTP complex (1,310 MLD installed across Stages I-IV, +775 MLD Stage V)",
+    "3-stage pumping: TK Halli -> Harohalli -> Tataguni (~500 m total lift over ~95 km)",
+    "84 Ground Level Reservoirs (GLRs) at 51 sites, 1,064 ML aggregate storage",
+    "52 Over Head Tanks (OHTs), 45.9 ML aggregate storage",
+    "8,746 km distribution pipelines (diameter range 100-3000 mm)",
+    "9 BWSSB divisions / 31 sub-divisions, ~865,000 service connections (2017 JICA snapshot)"
+  ],
+
+  "current_supply_mix_mld": [
+    {
+      "source": "Cauvery Stage I (1974)",
+      "scheme": "TK Halli WTP Stage I, Clariflocculator process",
+      "mld": 135,
+      "annual_mcft": null,
+      "supplies": "Original 1974 service area, central BBMP core",
+      "note": "Allocation 155 MLD; WTP capacity 135 MLD. JICA Table 3.1.",
+      "_provenance": "JICA_2017"
+    },
+    {
+      "source": "Cauvery Stage II (1982)",
+      "scheme": "TK Halli WTP Stage II, Clariflocculator",
+      "mld": 135,
+      "annual_mcft": null,
+      "supplies": "1980s BBMP expansion",
+      "note": "Allocation 155 MLD; WTP capacity 135 MLD. JICA Table 3.1.",
+      "_provenance": "JICA_2017"
+    },
+    {
+      "source": "Cauvery Stage III (1992)",
+      "scheme": "TK Halli WTP Stage III, Clariflocculator",
+      "mld": 270,
+      "annual_mcft": null,
+      "supplies": "Indiranagar / BTM Layout / JP Nagar era",
+      "note": "Allocation 315 MLD; WTP capacity 270 MLD. JICA Table 3.1.",
+      "_provenance": "JICA_2017"
+    },
+    {
+      "source": "Cauvery Stage IV Phase 1 (2002)",
+      "scheme": "TK Halli WTP Stage IV Phase 1, Pulsator process",
+      "mld": 270,
+      "annual_mcft": null,
+      "supplies": "2000s expansion incl. parts of BBMP-merged areas",
+      "note": "Allocation 315 MLD; WTP capacity 270 MLD. JICA Table 3.1.",
+      "_provenance": "JICA_2017"
+    },
+    {
+      "source": "Cauvery Stage IV Phase 2 (2012)",
+      "scheme": "TK Halli WTP Stage IV Phase 2, Dissolved Air Flotation (DAF)",
+      "mld": 500,
+      "annual_mcft": null,
+      "supplies": "BBMP-integration era (110 villages absorbed in 2007)",
+      "note": "Allocation 520 MLD; WTP capacity 500 MLD. Largest single-stage capacity. JICA Table 3.1.",
+      "_provenance": "JICA_2017"
+    },
+    {
+      "source": "Cauvery Stage V (commissioned 16 October 2024)",
+      "scheme": "New TK Halli Stage V WTP, dedicated transmission to 110-villages + ULB expansion",
+      "mld": 400,
+      "annual_mcft": null,
+      "supplies": "110 newly-added villages (post-2007 BBMP integration) - ~50% coverage as of Feb 2026",
+      "note": "Design capacity 775 MLD (JICA Table 6.2). Actual delivery reported at ~400 MLD as of Feb 2026 (The Ken May 2026). The 'expansion that only half-delivers' is a key Bengaluru narrative.",
+      "_provenance": "JICA_2017_design_plus_The_Ken_2026_actual"
+    },
+    {
+      "source": "Groundwater - BWSSB managed (official position)",
+      "scheme": "BWSSB borewells + private wells across BBMP/ULB",
+      "mld": 800,
+      "annual_mcft": null,
+      "supplies": "Gap-fill across BBMP/GBA, peaks in stress wards",
+      "note": "BWSSB's official cited extraction figure. JICA Survey assumed 500 MLD groundwater abstraction in 2017 (Table 6.3) - the 800 MLD figure is more recent BWSSB framing.",
+      "_provenance": "BWSSB_official"
+    },
+    {
+      "source": "Groundwater - bottom-up estimate (WELL Labs)",
+      "scheme": "Same source pool as above, different accounting",
+      "mld": 1392,
+      "annual_mcft": null,
+      "supplies": "Same",
+      "note": "WELL Labs Jan 2024 bottom-up urban water balance. 592 MLD HIGHER than BWSSB's official number. The divergence IS the story.",
+      "_provenance": "WELL_Labs_2024"
+    }
+  ],
+  "current_supply_total_mld": 1310,
+  "_supply_total_note": "1,310 MLD is the operational Cauvery WTP capacity across Stages I-IV (JICA Phase 3 Table 3.1 + Salient Features Table 3.1.2). NOT including Stage V's reported ~400 MLD actual delivery, NOT including the contested ~800-1,392 MLD groundwater layer. JICA-era monthly maximum supply was 1,450 MLD (which used some allocation buffer); monthly average was 1,390 MLD. Pre-Stage-V baseline.",
+
+  "wtps_summary": {
+    "_note": "Multi-WTP shape (same shape Chennai uses). The 5 Cauvery 'stages' are physically co-located at TK Halli WTP complex but commissioned across different years with different treatment processes. Total installed = 1,310 MLD (Stages I-IV) + 775 MLD (Stage V design) = 2,085 MLD design capacity; actual Stage V delivery is ~400 MLD per The Ken May 2026 so real total is ~1,710 MLD.",
+    "fresh_water_wtps_count": 5,
+    "fresh_water_capacity_mld": 1310,
+    "desalination_plants_count": 0,
+    "desalination_capacity_mld": 0,
+    "total_installed_capacity_mld": 1310,
+    "average_supply_mld": 1390,
+    "planned_additions_mld": 775,
+    "planned_additions_breakdown": "Stage V Project (commissioned 16 Oct 2024 at TK Halli, 775 MLD design; ~400 MLD actually delivered as of Feb 2026 per The Ken). Stage V was the primary subject of the JICA Phase 3 preparatory survey.",
+    "post_addition_capacity_mld": 2085
+  },
+
+  "distribution": {
+    "_note": "Distribution figures from JICA Phase 3 Salient Features (Table 3.1.2) - 2015-2017 BWSSB snapshot. Numbers will have grown since with GBA's expansion to 369 wards across 5 corporations. GLRs map to Chennai's 'ground-level Clear Water Reservoirs' (CWRs) for the shared dashboard component.",
+    "administrative_zones": 9,
+    "_admin_zones_note": "BWSSB has 9 divisions, further split into 31 sub-divisions for O&M, billing, and collection. Each sub-division runs a service station that owns inflow metering for its area.",
+    "ground_level_cwrs": 84,
+    "_ground_level_cwrs_note": "84 GLRs at 51 sites totalling 1,064 ML storage. Plus 52 OHTs (45.9 ML). Pumped water from Tataguni feeds GLRs first, then gravity/pump to OHTs and direct service areas.",
+    "major_wdss": 51,
+    "total_wdss": 84,
+    "_wdss_note": "Bengaluru doesn't use Chennai's WDS terminology; 51 GLR sites approximately correspond to Chennai's WDS hubs. 62 booster pumping stations + 7,477 public faucets + 371 public taps complete the last-mile network.",
+    "transmission_mains_km": 95,
+    "_transmission_mains_note": "Cauvery transmission spans ~95 km from TK Halli intake (12.45 N, 76.86 E) uphill to BBMP via 3-stage pumping (TK Halli -> Harohalli -> Tataguni). Total elevation gain ~500 m.",
+    "transmission_max_diameter_mm": 3000,
+    "distribution_network_km": 8746,
+    "connections": {
+      "total": 865000,
+      "_total_note": "Per JICA Phase 3 Salient Features (2015-2017 snapshot): 865,000 house service connections. Often cited as '~11 lakh' in 2024-era BWSSB framing - includes growth + commercial.",
+      "as_of": "2017"
+    },
+    "population_served": 5800000,
+    "_population_note": "Per JICA Phase 3 Salient Features (2015-16 snapshot): 5.8M people served. Now ~8M+ within BBMP and ~13.5M across GBA's 369 wards (Nov 2025 delimitation). Coverage of newly-added wards is incomplete pending Stage V full delivery."
+  },
+
+  "demand": {
+    "_note": "Demand projections from JICA Phase 3 Tables 5.3 + 6.3 (high-growth population scenario; matches BBMP M/P assumption of ~20M by 2051). JICA uses CPHEEO's 150 LPCD design standard for metropolitan cities with sewerage.",
+    "population_2011": 8425970,
+    "population_design": 14111000,
+    "population_2034_design": 14111000,
+    "_population_2034_note": "JICA Table 5.1: Core 6.5M + ULB 4.8M + 110V 2.8M = 14.1M (2034). Includes high-growth assumption (medium scenario projects ~12M).",
+    "population_2049_design": 19358000,
+    "demand_2034_mld": 2608,
+    "demand_2049_mld": 3456,
+    "_demand_breakdown_note": "JICA Table 6.3 (high pop): 2034 total water demand 2,608 MLD = 2,108 MLD piped supply + 500 MLD groundwater abstraction. 2049 demand 3,456 MLD = 2,956 + 500.",
+    "demand_gap_2034_mld": 0,
+    "_demand_gap_2034_note": "Post-Stage-V supply of 2,735 MLD (1,460 Cauvery + 775 Stage V + 500 GW) covers 2034 demand of 2,608 MLD with 127 MLD surplus. Headline gap is 2049, not 2034.",
+    "demand_gap_2049_mld": 721,
+    "_demand_gap_2049_note": "JICA Table 6.3: by 2049, post-Stage-V supply still 2,735 MLD against demand 3,456 MLD = 721 MLD structural deficit. Closing this needs either Stage VI/inter-basin transfer, an order-of-magnitude UFW reduction, or large-scale wastewater reuse + recycling. No Stage VI is currently planned.",
+    "city_area_sqkm": 800,
+    "_city_area_note": "JICA Phase 3 BBMP composition (2017): Core 245 + 8 ULBs 330 + 110 villages 225 = 800 sq km. Post-Nov 2025 GBA delimitation reorganises into 5 City Corporations across 369 wards; total area expanded but not yet officially published."
+  },
+
+  "allocation_context": {
+    "_note": "JICA Phase 3 Table 6.1: Cauvery Water Disputes Tribunal allocation by state, per Gazette No. 373 of 19 Feb 2013. 1 TMC = 77.5 MLD per JICA's working conversion.",
+    "cwdt_total_tmc": 726,
+    "cwdt_karnataka_tmc": 270,
+    "cwdt_tamil_nadu_tmc": 419,
+    "cwdt_kerala_tmc": 30,
+    "cwdt_pondicherry_tmc": 7,
+    "_state_share_note": "JICA Table 6.1 cites the original Gazette notification. The Cauvery Water Disputes Tribunal final award (2007) + Supreme Court 2018 modification adjusts Karnataka's share within these totals.",
+    "cauvery_basin_total_sqkm": 85626,
+    "cauvery_basin_karnataka_pct": 42,
+    "cauvery_basin_tamil_nadu_pondy_pct": 54,
+    "cauvery_basin_kerala_pct": 4,
+    "_basin_note": "JICA 6.2.1 + India-WRIS Database. Karnataka holds 42% of the 85,626 km^2 basin (~36,000 km^2), the largest share.",
+    "bangalore_cwss_allocation_mld": 2235,
+    "_cwss_allocation_breakdown": "JICA Table 6.2: Stage I+II+III = 730 MLD (GO PWD/41MMM/04/Bengaluru, 10 Dec 1984); Stage IV Ph1+Ph2 = 730 MLD (GO HUD/MNI/90/Bengaluru, 27 July 1994); Stage V = 775 MLD (GO of Karnataka 10 TMC additional). Total 2,235 MLD = ~21% of Karnataka's 270 TMC drinking allocation.",
+    "transmission_distance_km": 95,
+    "transmission_elevation_lift_m": 500,
+    "energy_cost_of_pumping_pct_of_revenue": 75,
+    "_energy_cost_note": "Widely cited BWSSB figure (Wikipedia citation): pumping ~95 km uphill against ~500 m elevation consumes 75% of agency revenues. Single largest factor in Bangalore's water tariff structure.",
+    "design_per_capita_lpcd": 150,
+    "present_per_capita_supply_lpcd": 146,
+    "present_per_capita_consumption_lpcd": 76,
+    "_lpcd_note": "JICA Salient Features (2015-16): 146 LPCD supplied; only 76 LPCD reaching consumers. 48% NRW gap.",
+    "nrw_pct": 48,
+    "_nrw_note": "JICA Phase 3 Salient Features Table 3.1.2. UFW targets (Table 6.3.5): Core+ULB to drop from 23% (2017) to 16% (2049); 110 Villages steady at 16%. Current actual NRW not officially re-published since 2017.",
+    "cauvery_drought_avg_flow_mld": 2539,
+    "_cauvery_flow_note": "JICA Table 6.2.5: 1972-2016 Cauvery flow at Kollegal Point. Drought-year average is 2,539 MLD vs the post-Stage V intake requirement of 2,235 MLD - a 304 MLD margin against a high baseline year. Stage VI would erode this further."
+  },
+
+  "upstream_dams": {
+    "_note": "JICA Phase 3 Table 6.2.6: the 4 Cauvery basin reservoirs whose combined live storage gates BWSSB's annual supply security. These are tracked in neer-vazhvu's water_sources table for Bangalore.",
+    "dam_count": 4,
+    "names": ["Krishnaraja Sagar (KRS)", "Hemavathi", "Kabini", "Harangi"],
+    "total_live_capacity_mcm": 2583,
+    "total_live_capacity_mcm_unit": "Million cubic metres",
+    "equivalent_daily_yield_mld": 7000,
+    "_equivalent_note": "2,583 Mm^3 / 365 days = ~7,000 MLD/day if drawn evenly across a year. BWSSB's 2,235 MLD intake requirement post-Stage V is ~32% of this. But the dams also serve irrigation (Mandya, Mysore) and downstream Tamil Nadu obligations under CWDT - drinking water gets a slice, not the whole envelope."
+  },
+
+  "tertiary_treatment": {
+    "_note": "JICA Phase 3 Tables 6.3.3 + 6.3.4: tertiary treatment plants beyond secondary STPs. Bengaluru already produces ~161 MLD of tertiary-treated reuse water - more than commonly cited.",
+    "total_tertiary_capacity_mld": 161,
+    "plants": [
+      {"name": "BWSSB 40 MLD TTP", "mld": 40, "use": "Industrial / commercial reuse"},
+      {"name": "KPTCL power-plant supply", "mld": 60, "use": "Karnataka Power Transmission Corp - power plant cooling"},
+      {"name": "Hebbal 60 MLD TTP", "mld": 60, "use": "DBOT-basis supply to neighbouring industries"},
+      {"name": "RO bottled water plant", "mld": 1.5, "use": "Reverse-osmosis from tertiary treated sewage"}
+    ],
+    "_implication": "JICA notes treated sewage cannot be mixed with domestic supply under current policy, but is increasingly displacing industrial freshwater demand. TG Halli IPR pilot (with SUEZ, 110 MLD design) would be a major expansion of this layer if it succeeds.",
+    "water_charge_inr_per_kl_plant": 15,
+    "water_charge_inr_per_kl_piped": 25
+  },
+
+  "groundwater_expert_committee_2017": {
+    "_note": "JICA Phase 3 Section 6.3: Bengaluru Groundwater Expert Committee's findings on aquifer extraction. A third data point between BWSSB's official 800 MLD framing and WELL Labs' 2024 bottom-up 1,392 MLD estimate.",
+    "core_ulb_current_extraction_mld": 570,
+    "core_ulb_projected_future_mld": 400,
+    "villages_110_current_mld": 100,
+    "committee_total_mld": 500,
+    "_committee_findings": "At present approximately 570 MLD is being extracted from the deep aquifer in Core+ULB (Water Source Expert Report). For future planning the committee recommended assuming 400 MLD continued from this source plus 100 MLD for 110 villages. The committee's 500 MLD total (used in JICA Table 6.3 water balance) sits below BWSSB's 800 MLD official and well below WELL Labs' 1,392 MLD. All three numbers should be cited together; the divergence reflects what is officially planned-for vs what is actually extracted vs what is sustainably available."
+  },
+
+  "rainfall_harvesting_potential": {
+    "_note": "JICA Phase 3 Section 6.3 + rainwater study: theoretical maximum of urban rainwater harvesting across the 800 sq km BBMP catchment.",
+    "annual_rainfall_total_mld_low": 1750,
+    "annual_rainfall_total_mld_high": 1970,
+    "harvestable_at_35pct_capture_mld_low": 613,
+    "harvestable_at_35pct_capture_mld_high": 690,
+    "_implication": "JICA notes rainwater can't be mixed with domestic supply under current policy, but Karnataka mandates rainwater-harvesting installation in new buildings (>40x60 ft sites). The 613-690 MLD harvestable potential is ~3-4x the current tertiary treatment capacity - a structurally large under-utilised supply source."
+  },
+
+  "project_cost": {
+    "_note": "JICA Phase 3 Table 16.2.1 + 16.2.2: project cost estimate for the JICA Survey scope (the Stage V WTP + 110 villages sewerage). At 2017 prices.",
+    "total_inr_million": 56899,
+    "total_inr_crore": 5690,
+    "components": [
+      {"name": "CWSS Stage V", "inr_million": 44350, "inr_crore": 4435},
+      {"name": "Major Sewerage Facilities for 110 Villages", "inr_million": 12549, "inr_crore": 1255}
+    ],
+    "funding_pattern": {
+      "jica_loan_pct": 85,
+      "jica_loan_inr_million": 48364,
+      "gok_pct": 7.5,
+      "gok_inr_million": 4267,
+      "bwssb_pct": 7.5,
+      "bwssb_inr_million": 4267
+    },
+    "_funding_note": "85% JICA loan / 7.5% Government of Karnataka / 7.5% BWSSB. Stage V was commissioned 16 Oct 2024 at TK Halli (~7 years from JICA Phase 3 Final Report). Per The Ken May 2026, actual delivery is ~400 MLD against 775 MLD design - a Rs 4,435 crore investment running at ~52% of installed capacity."
+  },
+
+  "household_economics": {
+    "_note": "JICA Phase 3 Chapter 14 social survey: household-level economics across BBMP. Anchors the affordability + willingness-to-pay question.",
+    "avg_monthly_household_income_inr": 20800,
+    "core_area_avg_monthly_income_inr": 25000,
+    "ulb_area_avg_monthly_income_inr": 16489,
+    "villages_110_avg_monthly_income_inr": 13182,
+    "avg_monthly_household_expenditure_inr": 10300,
+    "_water_connection_willingness": "77.5% of respondents ready to pay below INR 500 for water connection fee; 21.6% ready for INR 500-1,000; remainder above INR 1,000.",
+    "_sewerage_connection_willingness": "85.7% of respondents ready to pay below INR 300 for sewerage connection.",
+    "_willingness_to_pay_monthly_inr_500_pct": 24,
+    "_willingness_to_pay_monthly_inr_500_3000_pct": 54,
+    "_implication": "JICA found that ~78% of BBMP households tolerated connection costs below INR 500 - meaning major upfront cost recovery is not viable. BWSSB's revenue model is therefore monthly tariff + bulk-supply pricing, not connection charges. The 24%/54% willingness-to-pay split for monthly tariff suggests an INR 500 ceiling per household for piped + sewerage service is the political affordability floor."
+  },
+
+  "stress_wards_iisc": {
+    "_note": "From IISc Groundwater Outlook of Bengaluru City (April 2025), BWSSB-commissioned, names 65 specific wards as 'over-exploited' on the CGWB framework. Mapped to the pre-Nov 2025 BBMP 198-ward configuration; mapping to GBA 369 wards is a follow-up.",
+    "stress_ward_count": 65,
+    "stress_ward_examples": [
+      "Hebbal",
+      "Jakkur",
+      "Yelahanka",
+      "KR Puram",
+      "Koramangala",
+      "Vijayanagar",
+      "Kengeri",
+      "Nagarbhavi",
+      "Chamarajpet"
+    ],
+    "stress_ward_implication": "Per BWSSB's own commissioned study, ~33% of BBMP wards operate beyond CGWB's 'safe' groundwater extraction limit. Cauvery Stage V was meant to relieve these wards via piped supply; under-delivery means many remain on groundwater + tankers."
+  },
+
+  "tanker_market": {
+    "_note": "Bangalore's informal water market is uniquely large among Indian metros. JICA Phase 3 noted 62 BWSSB tanker lorries in 2017; the private tanker fleet is multiples of that.",
+    "official_app": "Kaveriwheels (BWSSB-operated, ~19K downloads in a 14M city as of 2026, 2.8/5 rating)",
+    "official_rate_per_5kl_inr": 700,
+    "informal_rate_per_12kl_inr_crisis": 2850,
+    "informal_rate_note": "Crisis-peak summer 2024 rates. Off-season tankers are ~Rs 800-1,200 per 6-12kL but rates surge 2-4x when piped supply fails.",
+    "primary_data_source": "OpenCity Bengaluru Tanker Water Survey 2024 + 2025"
+  },
+
+  "stps": {
+    "_note": "JICA Phase 3 Table 4.1 documented 14 STPs / 721 MLD in 2017. Current state (per OpenCity BWSSB STP dataset 2024-25) is ~39 STPs / 1,371 MLD - capacity roughly DOUBLED post-JICA. Headline STPs from the 2017 inventory below; the 2024-25 inventory lives in public/geojson/bangalore-stps.geojson.",
+    "stps_2017_count": 14,
+    "stps_2017_total_mld": 721,
+    "stps_2024_count": 39,
+    "stps_2024_total_mld": 1371,
+    "core_stp_facilities_2017": [
+      {"name": "K&C Valley (Before Stage IV)", "mld": 218, "process": "Activated Sludge Process"},
+      {"name": "K&C Valley (Stage IV Phase 1)", "mld": 30, "process": "Extended Aeration"},
+      {"name": "V (Vrishabhavathi) Valley", "mld": 180, "process": "Trickling Filter + partial Tertiary"},
+      {"name": "Mailasandra (R.R. Nagar)", "mld": 75, "process": "Extended Aeration"},
+      {"name": "Hebbal", "mld": 60, "process": "Activated Sludge Process"},
+      {"name": "Kadabesanahalli (Mahadevpura)", "mld": 50, "process": "Extended Aeration"},
+      {"name": "Raja Canal", "mld": 40, "process": "Extended Aeration"},
+      {"name": "Nagasandra (Dasarahalli)", "mld": 20, "process": "Extended Aeration"},
+      {"name": "K.R. Purum", "mld": 20, "process": "UASB"},
+      {"name": "Yelahanka (Allasandara)", "mld": 10, "process": "ASP + Sand Filter + Tertiary"},
+      {"name": "Jakkur", "mld": 10, "process": "UASB + Extended Aeration"},
+      {"name": "Madivara", "mld": 4, "process": "UASB + Oxidation Pond + Constructed Wetlands"},
+      {"name": "Cubbon Park", "mld": 1.5, "process": "Membrane Bio-Reactor + Tertiary"},
+      {"name": "Labaugh", "mld": 1.5, "process": "Extended Aeration"},
+      {"name": "Kempbudhi (Iti Colony)", "mld": 1, "process": "Extended Aeration"}
+    ]
+  },
+
+  "tg_halli_reuse_project": {
+    "_note": "TG Halli reservoir is BWSSB's defunct 1933 surface impoundment on the Arkavathi river (Chamarajasagara). Since the 1990s the upstream sewage burden killed it as a drinking source. The BWSSB-SUEZ Indirect Potable Reuse (IPR) project repurposes it as a 110 MLD STP-blended reuse reservoir - the country's largest IPR pilot.",
+    "design_mld": 110,
+    "scheme": "STP-treated wastewater blended in TG Halli reservoir for indirect potable reuse",
+    "partner": "BWSSB + SUEZ",
+    "status": "Pilot phase as of 2026"
+  },
+
+  "reference_figures": [
+    {
+      "id": "jica-supply-chain",
+      "src_external": "https://data.opencity.in/dataset/jica-report-for-bwssb-project-phase-3-2017",
+      "caption": "JICA Phase 3 supply chain: Cauvery River -> SBR -> NBR -> MS pipelines -> TK Halli WTP (Stages I-V) -> 3-stage pumping (TK Halli -> Harohalli -> Tataguni) -> 84 GLRs -> 52 OHTs -> distribution. JICA Phase 3 Figure 3.x.",
+      "source_label": "JICA Phase 3 Final Report (Nov 2017)"
+    },
+    {
+      "id": "jica-cauvery-flow",
+      "src_external": "https://data.opencity.in/dataset/jica-report-for-bwssb-project-phase-3-2017",
+      "caption": "Cauvery 355-day flow at Kollegal Point 1972-2016 plotted against Stage I-IV + Stage V intake requirements. Even drought-year 2012 maintained sufficient flow for Stages I-IV; Stage V demand pushes against safe-yield envelope.",
+      "source_label": "JICA Phase 3 Final Report Figure 6.1"
+    },
+    {
+      "id": "jica-water-balance",
+      "src_external": "https://data.opencity.in/dataset/jica-report-for-bwssb-project-phase-3-2017",
+      "caption": "Water balance 2024 / 2034 / 2049: supply (Cauvery + Stage V + groundwater + UFW savings + tertiary treated + rainwater) vs demand by area (Core + ULB + 110 villages). 2049 shows a structural 721 MLD deficit.",
+      "source_label": "JICA Phase 3 Final Report Table 6.3"
+    }
+  ],
+
+  "open_data_gaps": [
+    "WELL Labs Bengaluru Urban Water Balance Report (Jan 2024) full PDF - behind registration gate. Would replace the 'estimate' tags for groundwater + tanker market figures with cited bottom-up numbers.",
+    "BWSSB Annual Report / Tariff Order with WTP-by-WTP design vs actual current capacity table. Would update JICA's 2017 1,310 MLD figure to a 2026 actual.",
+    "Stage V actual MLD delivered, by month, since 16 Oct 2024 commissioning. The Ken's ~400 MLD figure is one data point.",
+    "Current NRW figure (JICA 2017: 48%). UFW reduction project results need to be published or RTI'd.",
+    "GBA 369-ward boundary -> existing IISc 65 stress wards mapping (areal weighting from the BBMP 198-ward base).",
+    "JICA Phase 3 Supporting Report + Social Survey extraction - documents downloaded to scripts/data-raw/bangalore/ but not yet mined for additional numbers (slum population, household income, NRW by sub-division)."
+  ],
+
+  "followup_actions": [
+    "Acquire WELL Labs PDF (registration required) and re-tag groundwater + tanker numbers.",
+    "Extract Chapters 6-17 of JICA Phase 3 (Main Report Parts 2-4) for the proposed Stage V design + sewerage + financial details.",
+    "RTI BWSSB for: WTP-by-WTP current capacity, current NRW estimate, Stage V monthly delivery since Oct 2024.",
+    "Reconcile BBMP 198-ward IISc stress-ward map to GBA 369-ward configuration."
+  ]
+}

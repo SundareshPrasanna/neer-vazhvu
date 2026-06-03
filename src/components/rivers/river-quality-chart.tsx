@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/theme-provider";
 import type { RiverQualityReading } from "@/types/river-quality";
 import { useLanguage } from "@/lib/i18n/context";
 

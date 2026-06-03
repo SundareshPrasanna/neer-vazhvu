@@ -29,9 +29,11 @@ jobs:
         working-directory: neer-vazhvu-api
         run: pip install -e .
 
-      # Scrape CMWSSB reservoir data. CMWSSB may block some datacenter IPs,
-      # so this step tolerates up to 4 days of stale data before failing.
-      - name: Scrape CMWSSB -> Supabase
+      # Scrape Chennai's CMWSSB lake-level page. CMWSSB may block some
+      # datacenter IPs, so this step tolerates up to 4 days of stale data
+      # before failing. Each city has its own primary-supply scraper step;
+      # they run independently so one city failing doesn't block the others.
+      - name: Scrape Chennai (CMWSSB) -> Supabase
         id: scrape
         continue-on-error: true
         working-directory: neer-vazhvu-api
@@ -41,10 +43,10 @@ jobs:
           CMWSSB_MAX_STALE_DAYS: '4'
         run: python scripts/scrape_cmwssb.py
 
-      # Scrape TN Agri ARS for Kaveri (Mettur + Karnataka 4-dam) and Madurai
-      # (Vaigai + Mullaperiyar/Periyar) reservoirs. Single page fetch, multi-city.
-      # Tolerates up to 4 days of stale data before failing.
-      - name: Scrape TN PWD reservoirs (Kaveri + Madurai) -> Supabase
+      # Scrape TN Agri ARS for Madurai (Vaigai + Mullaperiyar/Periyar)
+      # reservoirs. Single page fetch. Tolerates up to 4 days of stale data
+      # before failing.
+      - name: Scrape Madurai (TN PWD) -> Supabase
         id: scrape_tn_pwd
         continue-on-error: true
         working-directory: neer-vazhvu-api
@@ -69,15 +71,70 @@ jobs:
           MADURAI_WRIS_DAYS: '90'
         run: python scripts/scrape_wris_madurai.py
 
-      # Always run ETL + intelligence so forecasts and briefings stay fresh,
-      # even when the scrape fails and we're using slightly stale reservoir data.
+      # India-WRIS CGWB station readings for Bangalore Urban district
+      # (last 90 days). 13-14 active telemetric stations (Cubbon Park,
+      # Lalbagh, NIMHANS, IISc, Hebbal, Jayanagar, Yelahanka, Anekal, etc.).
+      # No Karnataka State GW board records in WRIS - CGWB only.
+      # Bangalore is disabled in the city registry as of this commit, so
+      # nothing on the frontend reads these rows yet; we accumulate
+      # history here so the IISc Outlook stress-ward map has live
+      # verification data on day-one when /bangalore launches.
+      # Tolerates failures - upstream India-WRIS API has periodic outages.
+      - name: Scrape WRIS groundwater (Bangalore) -> Supabase
+        id: scrape_wris_bangalore
+        continue-on-error: true
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          BANGALORE_WRIS_DAYS: '90'
+        run: python scripts/scrape_wris_bangalore.py
+
+      # Best-effort call into the FastAPI orchestrator (Chennai-side ETL +
+      # briefing + legacy v1 forecasts). Marked continue-on-error so a down
+      # PYTHON_API_URL endpoint doesn't block the rest of the daily run -
+      # past runs were timing out at the 15-min job limit when the
+      # orchestrator was unreachable.
+      #
+      # Madurai + Bangalore forecasts are NOT dependent on this; their
+      # standalone forecasters run as separate steps below. Chennai's
+      # legacy v1 forecaster + briefing live behind this endpoint today;
+      # when this fails Chennai's daily briefing surfaces yesterday's row
+      # via the table's date-scoped query (page.tsx falls back to template).
       - name: Run post-scrape pipeline (ETL + intelligence)
+        id: post_scrape
+        continue-on-error: true
         run: |
           curl -X POST "${{ secrets.PYTHON_API_URL }}/pipeline/run-post-scrape" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
-            --fail --max-time 300 \
-            --retry 2 --retry-delay 120
+            --fail --max-time 90 \
+            --retry 1 --retry-delay 30
+
+      # Standalone AutoARIMA forecasters for the v2 multi-city schema.
+      # These don't need the FastAPI orchestrator - they fit AutoARIMA on
+      # reservoir_daily_v2 and upsert into reservoir_forecast_v2 directly.
+      # Run with a 2-year history window for tractable wall clock (~10s
+      # per city) and so seasonal AutoARIMA can pick up at least 2 yearly
+      # cycles. Each marked continue-on-error so one city's failure
+      # doesn't cascade.
+      - name: Forecast Madurai reservoirs (AutoARIMA v2)
+        id: forecast_madurai
+        continue-on-error: true
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/compute_reservoir_forecast_madurai.py --history-days 730
+
+      - name: Forecast Bangalore reservoirs (AutoARIMA v2)
+        id: forecast_bangalore
+        continue-on-error: true
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/compute_reservoir_forecast_bangalore.py --history-days 730
 
       # Generate AI city narrative (skips IST days 1-3; monthly job owns those)
       # Also skips when force_monthly is true to avoid race with monthly job
@@ -158,6 +215,10 @@ jobs:
             fi
           fi
 
+      # Best-effort call into the FastAPI orchestrator. continue-on-error
+      # already set; tightened max-time + dropped retries so the step
+      # fails fast (~30s) instead of blocking the job up to the timeout
+      # when PYTHON_API_URL is unreachable.
       - name: Run Monthly Pipeline (groundwater + risk scoring)
         if: steps.check-day.outputs.run == 'true'
         continue-on-error: true
@@ -165,8 +226,8 @@ jobs:
           curl -X POST "${{ secrets.PYTHON_API_URL }}/pipeline/run-monthly" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
-            --fail --max-time 120 \
-            --retry 2 --retry-delay 60
+            --fail --max-time 30 \
+            --retry 0
 
       # Generate AI ward + city narratives (monthly)
       - name: Set up Node.js

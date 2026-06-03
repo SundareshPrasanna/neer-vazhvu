@@ -136,6 +136,79 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       color: "stroke-amber-600",
     },
   },
+  // Bengaluru is a ridge city across three drainage divides; its
+  // "river system" is really three small rivers (Vrishabhavathi west,
+  // Arkavati north-west, Dakshina Pinakini east) that the city's
+  // sewerage discharges into rather than being fed by.
+  bangalore: {
+    vrishabhavathi: {
+      display_name: "Vrishabhavathi",
+      display_name_ta: "ವೃಷಭಾವತಿ ನದಿ",
+      length_km_geom: 68,
+      description:
+        "The famous foam-and-fire river. Flows south-west out of central BBMP through the Vrishabhavathi Valley, picking up the untreated overflow from the V Valley STPs (180 + 150 MLD design) plus the Mailasandra catchment. Discharges into Byramangala reservoir (348 ha) before joining the Arkavati, then the Cauvery. The 2015 May Bellandur foam-fire event was downstream of the same sewerage system.",
+      description_ta: "",
+      upstream_terminus: "Central BBMP (Vrishabhavathi Valley)",
+      upstream_terminus_ta: "",
+      downstream_terminus: "Byramangala reservoir, then Arkavati / Cauvery",
+      downstream_terminus_ta: "",
+      feeds: "Byramangala reservoir; downstream Cauvery via Arkavati",
+      feeds_ta: "",
+      status: "KSPCB priority polluted stretch; V Valley STPs over capacity",
+      status_ta: "",
+      cpcb_nwmp_stations: [
+        "Vrishabhavathi at Kengeri (upstream)",
+        "Vrishabhavathi downstream of K&C Valley STP discharge",
+      ],
+      cpcb_nwmp_stations_ta: [],
+      color: "stroke-amber-600",
+    },
+    arkavati: {
+      display_name: "Arkavati",
+      display_name_ta: "ಅರ್ಕಾವತಿ ನದಿ",
+      length_km_geom: 102,
+      description:
+        "Cauvery tributary that gave Bengaluru its first piped water supplies - Hesaraghatta lake (1894, Chamarajendra Water Works) and Tippagondanahalli reservoir (1933, Chamaraja Sagara). Both impoundments are now defunct as freshwater sources due to upstream urbanisation. TG Halli is being repurposed as a 110 MLD indirect-potable-reuse pilot with SUEZ.",
+      description_ta: "",
+      upstream_terminus: "Nandi Hills / Doddaballapur (Chikballapur)",
+      upstream_terminus_ta: "",
+      downstream_terminus: "Joins Cauvery downstream of Kanakapura",
+      downstream_terminus_ta: "",
+      feeds: "Hesaraghatta + TG Halli reservoirs; downstream irrigation",
+      feeds_ta: "",
+      status: "Catchment built over; reservoirs effectively dead; TG Halli IPR pilot under SUEZ",
+      status_ta: "",
+      cpcb_nwmp_stations: [],
+      cpcb_nwmp_stations_ta: [],
+      color: "stroke-blue-600",
+    },
+    "dakshina-pinakini": {
+      display_name: "Dakshina Pinakini",
+      display_name_ta: "ದಕ್ಷಿಣ ಪಿನಾಕಿನಿ",
+      length_km_geom: 99,
+      description:
+        "East-flowing river that originates in BBMP south and exits into Tamil Nadu, where it is called Ponnaiyar. Drains the Koramangala-Challaghatta valley downstream of Bellandur Lake. Carries the cumulative discharge of K&C Valley sewerage to the state border.",
+      description_ta: "",
+      upstream_terminus: "Chennasandra / Begur area, BBMP south",
+      upstream_terminus_ta: "",
+      downstream_terminus: "Tamil Nadu border (becomes Ponnaiyar)",
+      downstream_terminus_ta: "",
+      feeds: "Downstream irrigation in TN's Krishnagiri / Tiruvannamalai",
+      feeds_ta: "",
+      status: "Sewage-dominated downstream of Bellandur",
+      status_ta: "",
+      cpcb_nwmp_stations: [],
+      cpcb_nwmp_stations_ta: [],
+      color: "stroke-violet-600",
+    },
+  },
+};
+
+// Per-city map framing for the rivers page. Madurai needs the Vaigai
+// system view; Bangalore needs the city-centred ridge view.
+const RIVERS_SCOPE_LABEL: Record<string, string> = {
+  madurai: "Vaigai system",
+  bangalore: "Bengaluru ridge (3 drainage valleys)",
 };
 
 export default async function CityRiversPage({ params }: PageProps) {
@@ -161,17 +234,24 @@ export default async function CityRiversPage({ params }: PageProps) {
     );
   }
 
-  // Center map slightly south-west of the city so the Vaigai mainstem from
-  // Theni dam through Madurai to Manamadurai/Ramanathapuram fits in view.
-  const mapCenter: [number, number] = [config.center.lat - 0.1, config.center.lng - 0.2];
+  // Madurai: nudge south-west to fit Vaigai mainstem from Theni dam through
+  // Madurai to Manamadurai/Ramanathapuram. Bangalore: city centre is fine -
+  // all three rivers (Vrishabhavathi west, Arkavati north-west, Dakshina
+  // Pinakini east) fit at the same zoom.
+  const mapCenter: [number, number] =
+    cityId === "bangalore"
+      ? [config.center.lat, config.center.lng]
+      : [config.center.lat - 0.1, config.center.lng - 0.2];
+  const mapZoom = cityId === "bangalore" ? 10 : 9;
+  const scopeLabel = RIVERS_SCOPE_LABEL[cityId] ?? "Basin system";
 
   return (
     <RiversClient
       cityId={cityId}
       cityDisplayName={config.displayName}
       mapCenter={mapCenter}
-      mapZoom={9}
-      scopeLabel="Vaigai system"
+      mapZoom={mapZoom}
+      scopeLabel={scopeLabel}
       riverInfo={riverInfo}
     />
   );

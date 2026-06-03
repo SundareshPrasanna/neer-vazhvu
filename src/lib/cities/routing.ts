@@ -10,7 +10,7 @@
  * place so the two stay in lockstep.
  */
 
-import { listEnabledPlaces } from "./index";
+import { listAllPlaces } from "./index";
 
 const CHENNAI_CITY_ID = "chennai";
 
@@ -42,10 +42,35 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "origins",
     "cascades",
   ]),
+  bangalore: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "my-ward",
+    "facts",
+    "origins",
+    "tanker",
+    "cascades",
+  ]),
 };
 
+/**
+ * City IDs the URL parser should recognise. Uses listAllPlaces() (NOT
+ * listEnabledPlaces) so that disabled cities under PREVIEW_CITIES still
+ * get correctly identified by parsePath - otherwise /bangalore/origins
+ * would parse as ("chennai", "bangalore/origins") and the nav-rewriter
+ * would route Origins clicks to /origins (Chennai's flat URL).
+ *
+ * Production exposure of disabled cities is gated by the [cityId]/layout
+ * route guard (404 when enabled=false and not in PREVIEW_CITIES) - not
+ * by this URL-parsing set.
+ */
 export function knownCityIds(): Set<string> {
-  return new Set(listEnabledPlaces().map((p) => p.cityId));
+  return new Set(listAllPlaces().map((p) => p.cityId));
 }
 
 /**
@@ -81,6 +106,19 @@ export function buildCityHref(targetCityId: string, feature: string): string {
     return featureToUse === "" ? "/" : `/${featureToUse}`;
   }
   return featureToUse === "" ? `/${targetCityId}` : `/${targetCityId}/${featureToUse}`;
+}
+
+/**
+ * Returns true iff the given Chennai-flat nav href ("/facts", "/flood-risk"
+ * etc.) is a feature this city has built. Used by the top-nav to hide nav
+ * items that would otherwise silently redirect to city home and show as
+ * "active" simultaneously with Dashboard (the multi-highlight bug).
+ */
+export function isFeatureSupportedForCity(navHref: string, cityId: string): boolean {
+  const feature = navHref === "/" ? "" : navHref.replace(/^\//, "");
+  const supported = FEATURE_AVAILABILITY[cityId];
+  if (!supported) return true; // unknown city, fall back to permissive
+  return supported.has(feature);
 }
 
 /**

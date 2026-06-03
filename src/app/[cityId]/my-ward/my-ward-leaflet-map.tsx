@@ -6,6 +6,7 @@ import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 
 interface WardProfile {
@@ -45,8 +46,20 @@ export function MyWardLeafletMap({
   const [wards, setWards] = useState<FeatureCollection | null>(null);
 
   useEffect(() => {
-    fetch(`/geojson/${cityId}-wards-2022.geojson`)
-      .then((r) => r.json())
+    // Ward delimitation vintage differs by city:
+    //   Chennai/Madurai use the 2022 GCC/MMC delimitation
+    //   Bangalore uses GBA 2025 (Karnataka Act 36 of 2025, notified Nov 2025)
+    const WARDS_VINTAGE: Record<string, string> = {
+      chennai: "2022",
+      madurai: "2022",
+      bangalore: "2025",
+    };
+    const vintage = WARDS_VINTAGE[cityId] ?? "2022";
+    fetch(`/geojson/${cityId}-wards-${vintage}.geojson`)
+      .then((r) => {
+        if (!r.ok) throw new Error(`Wards geojson HTTP ${r.status}`);
+        return r.json();
+      })
       .then(setWards)
       .catch(console.error);
   }, [cityId]);
@@ -97,6 +110,7 @@ export function MyWardLeafletMap({
     <MapContainer center={mapCenter} zoom={mapZoom} className="h-full w-full" scrollWheelZoom={true}>
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      <FitToBounds bounds={geoJsonBounds(wards)} resetKey={`my-ward:${cityId}`} maxZoom={12} />
       {wards && (
         <GeoJSON
           key={`wards-${selectedWard ?? "none"}`}
