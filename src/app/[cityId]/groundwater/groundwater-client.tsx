@@ -36,6 +36,7 @@ function resolveGwViews(config: PlaceConfig | undefined | null) {
     depth: v?.depth ?? true,
     risk: v?.risk ?? true,
     cgwbStations: v?.cgwbStations ?? false,
+    iisc: v?.iisc ?? false,
   };
 }
 
@@ -50,6 +51,14 @@ function MapLoading() {
 
 const WardMap = dynamic(
   () => import("@/components/groundwater/ward-map").then((m) => m.WardMap),
+  { ssr: false, loading: () => <MapLoading /> },
+);
+
+const IIScStressWardsMap = dynamic(
+  () =>
+    import("@/components/dashboard/iisc-stress-wards-map").then(
+      (m) => m.IIScStressWardsMap,
+    ),
   { ssr: false, loading: () => <MapLoading /> },
 );
 
@@ -106,7 +115,15 @@ function assetsForCity(config: PlaceConfig): CityGwAssets {
   };
 }
 
-export default function CityGroundwaterClient() {
+interface CityGroundwaterClientProps {
+  /** Server-resolved default tab. Bangalore gets "iisc"; other cities
+   *  get "exploitation". See page.tsx for the resolution. */
+  initialViewMode: ViewMode;
+}
+
+export default function CityGroundwaterClient({
+  initialViewMode,
+}: CityGroundwaterClientProps) {
   useLockBodyScroll();
   const { t } = useLanguage();
   const params = useParams<{ cityId: string }>();
@@ -123,12 +140,20 @@ export default function CityGroundwaterClient() {
   const [riskFile, setRiskFile] = useState<WardRiskFile | null>(null);
   const [cgwbFile, setCgwbFile] = useState<CgwbStationsFile | null>(null);
   const [selectedCgwbStation, setSelectedCgwbStation] = useState<CgwbStation | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("exploitation");
+  // Default tab is resolved server-side and passed in via `initialViewMode`.
+  // `explicitViewMode` tracks any subsequent user click; until then the
+  // effective viewMode is the server-supplied default. The derived-state
+  // pattern (rather than a useEffect that calls setState) keeps the
+  // project's react-hooks/set-state-in-effect rule happy.
+  const [explicitViewMode, setExplicitViewMode] = useState<ViewMode | null>(null);
+  const viewMode: ViewMode = explicitViewMode ?? initialViewMode;
+  const setViewMode = setExplicitViewMode;
   const [selectedWard, setSelectedWard] = useState<GroundwaterWard | null>(null);
 
   const gwViews = useMemo(() => resolveGwViews(config), [config]);
   const usesCgwbYearbook = gwViews.cgwbStations;
   const assets = useMemo(() => (config ? assetsForCity(config) : null), [config]);
+
 
   useEffect(() => {
     if (!assets) {
@@ -205,7 +230,13 @@ export default function CityGroundwaterClient() {
         const sorted = [...candidateBlocks].sort(
           (a: GWBlock, b: GWBlock) => b.latest.development_pct - a.latest.development_pct,
         );
-        if (sorted.length > 0) setSelectedBlock(sorted[0]);
+        // Auto-open the highest-stress block in the BlockDetailPanel so the
+        // page has visible content on first load. Skip when the default tab
+        // is the IISc Outlook view (Bangalore today) - the block panel
+        // would render on the right and contradict the active tab.
+        if (sorted.length > 0 && initialViewMode !== "iisc") {
+          setSelectedBlock(sorted[0]);
+        }
         setWrisStations(wrisRes.stations ?? []);
         setInterpolated(interpolatedRes);
         setRiskFile(riskRes);
@@ -213,7 +244,7 @@ export default function CityGroundwaterClient() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [assets, cityId, gwViews.depth, gwViews.risk, gwViews.cgwbStations]);
+  }, [assets, cityId, gwViews.depth, gwViews.risk, gwViews.cgwbStations, initialViewMode]);
 
   const riskData = useMemo(() => {
     const m = new Map<number, WardRiskData>();
@@ -270,7 +301,7 @@ export default function CityGroundwaterClient() {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setViewMode("depth");
     }
-  }, [interpolated, gwViews.depth]);
+  }, [interpolated, gwViews.depth, setViewMode]);
 
   if (!config) {
     // Layout-level guard already 404s unknown cities; this is just a typesafety
@@ -337,7 +368,8 @@ export default function CityGroundwaterClient() {
             that disable a view in their PlaceConfig don't see the toggle. */}
         {(
           (gwViews.depth && interpolated?.wards.some((w) => w.depthM !== null)) ||
-          (gwViews.risk && riskFile)
+          (gwViews.risk && riskFile) ||
+          gwViews.iisc
         ) && (
           <div className="ml-auto flex gap-1 text-xs">
             {gwViews.depth && interpolated?.wards.some((w) => w.depthM !== null) && (
@@ -376,6 +408,18 @@ export default function CityGroundwaterClient() {
                 Exploitation (block)
               </button>
             )}
+            {gwViews.iisc && (
+              <button
+                onClick={() => setViewMode("iisc")}
+                className={`px-2 py-0.5 rounded border ${
+                  viewMode === "iisc"
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600"
+                }`}
+              >
+                IISc Outlook (ward)
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -385,6 +429,16 @@ export default function CityGroundwaterClient() {
         <div className="relative flex-1 h-full">
           {loading ? (
             <MapLoading />
+          ) : viewMode === "iisc" ? (
+            // IIScStressWardsMap is a vertical layout (header + map +
+            // grouped-by-corporation ward list). The /groundwater wrapper
+            // is overflow-hidden for the panel-style WardMap layout, so we
+            // give the IISc branch its own scrolling container.
+            <div className="h-full overflow-y-auto bg-white dark:bg-slate-950">
+              <div className="p-4">
+                <IIScStressWardsMap />
+              </div>
+            </div>
           ) : (
             <WardMap
               groundwaterData={groundwaterData}
@@ -425,25 +479,29 @@ export default function CityGroundwaterClient() {
             />
           )}
 
-          {/* Legend overlay */}
-          <div
-            className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${
-              selectedBlock ? "bottom-[148px] md:bottom-4" : "bottom-2"
-            }`}
-          >
-            <GroundwaterLegend
-              viewMode={viewMode}
-              hiddenCategories={hiddenCategories}
-              onToggleCategory={(cat) =>
-                setHiddenCategories((prev) => {
-                  const next = new Set(prev);
-                  if (next.has(cat)) next.delete(cat);
-                  else next.add(cat);
-                  return next;
-                })
-              }
-            />
-          </div>
+          {/* Legend overlay - IISc view has its own legend baked into
+              IIScStressWardsMap, so the GroundwaterLegend (which only
+              models depth / risk / exploitation) is hidden for that mode. */}
+          {viewMode !== "iisc" && (
+            <div
+              className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${
+                selectedBlock ? "bottom-[148px] md:bottom-4" : "bottom-2"
+              }`}
+            >
+              <GroundwaterLegend
+                viewMode={viewMode}
+                hiddenCategories={hiddenCategories}
+                onToggleCategory={(cat) =>
+                  setHiddenCategories((prev) => {
+                    const next = new Set(prev);
+                    if (next.has(cat)) next.delete(cat);
+                    else next.add(cat);
+                    return next;
+                  })
+                }
+              />
+            </div>
+          )}
 
           {/* Info pill - source + ward-level gap call-out */}
           <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
@@ -471,8 +529,11 @@ export default function CityGroundwaterClient() {
           </MapInfoButton>
         </div>
 
-        {/* Detail panels - one open at a time */}
-        {selectedBlock && (
+        {/* Detail panels - one open at a time. None of these are meaningful
+            on the IISc Outlook tab (which has its own click interactions
+            baked into IIScStressWardsMap), so we suppress them while that
+            view is active. */}
+        {viewMode !== "iisc" && selectedBlock && (
           <BottomSheet onClose={() => setSelectedBlock(null)}>
             <BlockDetailPanel
               block={selectedBlock}
@@ -480,7 +541,7 @@ export default function CityGroundwaterClient() {
             />
           </BottomSheet>
         )}
-        {selectedWrisStation && (
+        {viewMode !== "iisc" && selectedWrisStation && (
           <BottomSheet onClose={() => setSelectedWrisStation(null)}>
             <WrisStationPanel
               station={selectedWrisStation}
@@ -488,7 +549,7 @@ export default function CityGroundwaterClient() {
             />
           </BottomSheet>
         )}
-        {selectedCgwbStation && (
+        {viewMode !== "iisc" && selectedCgwbStation && (
           <BottomSheet onClose={() => setSelectedCgwbStation(null)}>
             <CgwbStationPanel
               station={selectedCgwbStation}
@@ -496,7 +557,7 @@ export default function CityGroundwaterClient() {
             />
           </BottomSheet>
         )}
-        {selectedWard && (
+        {viewMode !== "iisc" && selectedWard && (
           <BottomSheet onClose={() => setSelectedWard(null)}>
             <WardDepthPanel
               ward={selectedWard}

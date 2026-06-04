@@ -68,7 +68,7 @@ export function getGroundwaterColor(depthM: number | null): string {
 
 export type RiskLevel = 'low' | 'moderate' | 'high' | 'critical' | 'noData';
 
-export type ViewMode = 'depth' | 'risk' | 'exploitation';
+export type ViewMode = 'depth' | 'risk' | 'exploitation' | 'iisc';
 
 export interface WardRiskData {
   wardNumber: number;
