@@ -230,7 +230,13 @@ export default function CityGroundwaterClient({
         const sorted = [...candidateBlocks].sort(
           (a: GWBlock, b: GWBlock) => b.latest.development_pct - a.latest.development_pct,
         );
-        if (sorted.length > 0) setSelectedBlock(sorted[0]);
+        // Auto-open the highest-stress block in the BlockDetailPanel so the
+        // page has visible content on first load. Skip when the default tab
+        // is the IISc Outlook view (Bangalore today) - the block panel
+        // would render on the right and contradict the active tab.
+        if (sorted.length > 0 && initialViewMode !== "iisc") {
+          setSelectedBlock(sorted[0]);
+        }
         setWrisStations(wrisRes.stations ?? []);
         setInterpolated(interpolatedRes);
         setRiskFile(riskRes);
@@ -238,7 +244,7 @@ export default function CityGroundwaterClient({
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [assets, cityId, gwViews.depth, gwViews.risk, gwViews.cgwbStations]);
+  }, [assets, cityId, gwViews.depth, gwViews.risk, gwViews.cgwbStations, initialViewMode]);
 
   const riskData = useMemo(() => {
     const m = new Map<number, WardRiskData>();
@@ -523,8 +529,11 @@ export default function CityGroundwaterClient({
           </MapInfoButton>
         </div>
 
-        {/* Detail panels - one open at a time */}
-        {selectedBlock && (
+        {/* Detail panels - one open at a time. None of these are meaningful
+            on the IISc Outlook tab (which has its own click interactions
+            baked into IIScStressWardsMap), so we suppress them while that
+            view is active. */}
+        {viewMode !== "iisc" && selectedBlock && (
           <BottomSheet onClose={() => setSelectedBlock(null)}>
             <BlockDetailPanel
               block={selectedBlock}
@@ -532,7 +541,7 @@ export default function CityGroundwaterClient({
             />
           </BottomSheet>
         )}
-        {selectedWrisStation && (
+        {viewMode !== "iisc" && selectedWrisStation && (
           <BottomSheet onClose={() => setSelectedWrisStation(null)}>
             <WrisStationPanel
               station={selectedWrisStation}
@@ -540,7 +549,7 @@ export default function CityGroundwaterClient({
             />
           </BottomSheet>
         )}
-        {selectedCgwbStation && (
+        {viewMode !== "iisc" && selectedCgwbStation && (
           <BottomSheet onClose={() => setSelectedCgwbStation(null)}>
             <CgwbStationPanel
               station={selectedCgwbStation}
@@ -548,7 +557,7 @@ export default function CityGroundwaterClient({
             />
           </BottomSheet>
         )}
-        {selectedWard && (
+        {viewMode !== "iisc" && selectedWard && (
           <BottomSheet onClose={() => setSelectedWard(null)}>
             <WardDepthPanel
               ward={selectedWard}
