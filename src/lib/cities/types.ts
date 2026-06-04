@@ -81,6 +81,13 @@ export interface GroundwaterViewsConfig {
    *  available. Loads public/data/<city>-cgwb-stations.json.
    *  Default false. */
   cgwbStations?: boolean;
+  /** IISc Groundwater Outlook ward-level stress choropleth. Currently
+   *  available only for Bangalore (April 2025 Outlook by Prof. T.V.
+   *  Ramachandra's group flags 80 of 198 BBMP wards as critically
+   *  over-extracted). Loads public/data/<city>-iisc-stress-wards-*.json
+   *  and renders the IIScStressWardsMap component instead of the
+   *  block/ward WardMap when active. Default false. */
+  iisc?: boolean;
 }
 
 /**

@@ -36,6 +36,7 @@ function resolveGwViews(config: PlaceConfig | undefined | null) {
     depth: v?.depth ?? true,
     risk: v?.risk ?? true,
     cgwbStations: v?.cgwbStations ?? false,
+    iisc: v?.iisc ?? false,
   };
 }
 
@@ -50,6 +51,14 @@ function MapLoading() {
 
 const WardMap = dynamic(
   () => import("@/components/groundwater/ward-map").then((m) => m.WardMap),
+  { ssr: false, loading: () => <MapLoading /> },
+);
+
+const IIScStressWardsMap = dynamic(
+  () =>
+    import("@/components/dashboard/iisc-stress-wards-map").then(
+      (m) => m.IIScStressWardsMap,
+    ),
   { ssr: false, loading: () => <MapLoading /> },
 );
 
@@ -337,7 +346,8 @@ export default function CityGroundwaterClient() {
             that disable a view in their PlaceConfig don't see the toggle. */}
         {(
           (gwViews.depth && interpolated?.wards.some((w) => w.depthM !== null)) ||
-          (gwViews.risk && riskFile)
+          (gwViews.risk && riskFile) ||
+          gwViews.iisc
         ) && (
           <div className="ml-auto flex gap-1 text-xs">
             {gwViews.depth && interpolated?.wards.some((w) => w.depthM !== null) && (
@@ -376,6 +386,18 @@ export default function CityGroundwaterClient() {
                 Exploitation (block)
               </button>
             )}
+            {gwViews.iisc && (
+              <button
+                onClick={() => setViewMode("iisc")}
+                className={`px-2 py-0.5 rounded border ${
+                  viewMode === "iisc"
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600"
+                }`}
+              >
+                IISc Outlook (ward)
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -385,6 +407,8 @@ export default function CityGroundwaterClient() {
         <div className="relative flex-1 h-full">
           {loading ? (
             <MapLoading />
+          ) : viewMode === "iisc" ? (
+            <IIScStressWardsMap />
           ) : (
             <WardMap
               groundwaterData={groundwaterData}
@@ -425,25 +449,29 @@ export default function CityGroundwaterClient() {
             />
           )}
 
-          {/* Legend overlay */}
-          <div
-            className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${
-              selectedBlock ? "bottom-[148px] md:bottom-4" : "bottom-2"
-            }`}
-          >
-            <GroundwaterLegend
-              viewMode={viewMode}
-              hiddenCategories={hiddenCategories}
-              onToggleCategory={(cat) =>
-                setHiddenCategories((prev) => {
-                  const next = new Set(prev);
-                  if (next.has(cat)) next.delete(cat);
-                  else next.add(cat);
-                  return next;
-                })
-              }
-            />
-          </div>
+          {/* Legend overlay - IISc view has its own legend baked into
+              IIScStressWardsMap, so the GroundwaterLegend (which only
+              models depth / risk / exploitation) is hidden for that mode. */}
+          {viewMode !== "iisc" && (
+            <div
+              className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${
+                selectedBlock ? "bottom-[148px] md:bottom-4" : "bottom-2"
+              }`}
+            >
+              <GroundwaterLegend
+                viewMode={viewMode}
+                hiddenCategories={hiddenCategories}
+                onToggleCategory={(cat) =>
+                  setHiddenCategories((prev) => {
+                    const next = new Set(prev);
+                    if (next.has(cat)) next.delete(cat);
+                    else next.add(cat);
+                    return next;
+                  })
+                }
+              />
+            </div>
+          )}
 
           {/* Info pill - source + ward-level gap call-out */}
           <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">

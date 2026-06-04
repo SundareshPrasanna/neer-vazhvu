@@ -55,6 +55,7 @@ export const BANGALORE: CityConfig = {
     depth: false,
     risk: true,
     cgwbStations: true,
+    iisc: true,
   },
   waterSources: [
     {
