@@ -115,7 +115,15 @@ function assetsForCity(config: PlaceConfig): CityGwAssets {
   };
 }
 
-export default function CityGroundwaterClient() {
+interface CityGroundwaterClientProps {
+  /** Server-resolved default tab. Bangalore gets "iisc"; other cities
+   *  get "exploitation". See page.tsx for the resolution. */
+  initialViewMode: ViewMode;
+}
+
+export default function CityGroundwaterClient({
+  initialViewMode,
+}: CityGroundwaterClientProps) {
   useLockBodyScroll();
   const { t } = useLanguage();
   const params = useParams<{ cityId: string }>();
@@ -132,12 +140,20 @@ export default function CityGroundwaterClient() {
   const [riskFile, setRiskFile] = useState<WardRiskFile | null>(null);
   const [cgwbFile, setCgwbFile] = useState<CgwbStationsFile | null>(null);
   const [selectedCgwbStation, setSelectedCgwbStation] = useState<CgwbStation | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("exploitation");
+  // Default tab is resolved server-side and passed in via `initialViewMode`.
+  // `explicitViewMode` tracks any subsequent user click; until then the
+  // effective viewMode is the server-supplied default. The derived-state
+  // pattern (rather than a useEffect that calls setState) keeps the
+  // project's react-hooks/set-state-in-effect rule happy.
+  const [explicitViewMode, setExplicitViewMode] = useState<ViewMode | null>(null);
+  const viewMode: ViewMode = explicitViewMode ?? initialViewMode;
+  const setViewMode = setExplicitViewMode;
   const [selectedWard, setSelectedWard] = useState<GroundwaterWard | null>(null);
 
   const gwViews = useMemo(() => resolveGwViews(config), [config]);
   const usesCgwbYearbook = gwViews.cgwbStations;
   const assets = useMemo(() => (config ? assetsForCity(config) : null), [config]);
+
 
   useEffect(() => {
     if (!assets) {
@@ -279,7 +295,7 @@ export default function CityGroundwaterClient() {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setViewMode("depth");
     }
-  }, [interpolated, gwViews.depth]);
+  }, [interpolated, gwViews.depth, setViewMode]);
 
   if (!config) {
     // Layout-level guard already 404s unknown cities; this is just a typesafety
@@ -408,7 +424,15 @@ export default function CityGroundwaterClient() {
           {loading ? (
             <MapLoading />
           ) : viewMode === "iisc" ? (
-            <IIScStressWardsMap />
+            // IIScStressWardsMap is a vertical layout (header + map +
+            // grouped-by-corporation ward list). The /groundwater wrapper
+            // is overflow-hidden for the panel-style WardMap layout, so we
+            // give the IISc branch its own scrolling container.
+            <div className="h-full overflow-y-auto bg-white dark:bg-slate-950">
+              <div className="p-4">
+                <IIScStressWardsMap />
+              </div>
+            </div>
           ) : (
             <WardMap
               groundwaterData={groundwaterData}

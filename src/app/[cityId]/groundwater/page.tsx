@@ -22,5 +22,11 @@ export default async function CityGroundwaterPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
-  return <CityGroundwaterClient />;
+  // Pre-resolve the default tab server-side so SSR renders with the correct
+  // active button styling. Without this, useParams() returns empty on SSR
+  // and the client falls back to "exploitation" before snapping to "iisc"
+  // after hydration, producing a visible flicker for Bangalore visitors.
+  const initialViewMode = config.groundwaterViews?.iisc ? "iisc" : "exploitation";
+  return <CityGroundwaterClient initialViewMode={initialViewMode} />;
 }
+
