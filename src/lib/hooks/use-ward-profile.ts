@@ -187,16 +187,33 @@ export function useWardProfile(
   const { language } = useLanguage();
   const [profile, setProfile] = useState<WardProfile | null>(null);
   const [riverData, setRiverData] = useState<RiverQuality | null>(null);
+  // `loaded` flips to true once the profiles fetch has resolved for this
+  // wardNumber/cityId pair, regardless of whether a matching ward was
+  // found. Distinguishes "still loading" from "loaded but not in dataset"
+  // so callers can render an honest "ward N is not in our 198-ward
+  // Bangalore dataset" state instead of stalling on a loading spinner
+  // forever (which is what the previous code did for out-of-range wards
+  // like GBA-era ward 302).
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (wardNumber == null) {
       // Use microtask to avoid synchronous setState in effect body
-      Promise.resolve().then(() => setProfile(null));
+      Promise.resolve().then(() => {
+        setProfile(null);
+        setLoaded(true);
+      });
       return;
     }
+    // Reset loaded to false at the start of a new wardNumber/cityId
+    // request so callers can distinguish "still loading the new ward"
+    // from "loaded but no match." Intentional sync setState here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoaded(false);
     loadProfiles(cityId).then((profiles) => {
       const p = profiles.find((w) => w.ward_number === wardNumber) ?? null;
       setProfile(p);
+      setLoaded(true);
     });
     loadRiverQuality(cityId).then(setRiverData);
   }, [wardNumber, cityId]);
@@ -225,5 +242,5 @@ export function useWardProfile(
     [riverData, language]
   );
 
-  return { profile, getRiverLabel };
+  return { profile, getRiverLabel, loaded };
 }

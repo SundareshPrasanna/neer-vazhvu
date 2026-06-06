@@ -36,7 +36,7 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
     initialWard ? parseInt(initialWard, 10) || null : null,
   );
 
-  const { profile, groundwater, representatives, loading, getRiverLabel } =
+  const { profile, groundwater, representatives, loading, notFound, getRiverLabel } =
     useMyWardData(wardNumber, cityId);
 
   // Per-city URL prefix. Chennai keeps the flat URLs; other cities are
@@ -93,7 +93,70 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
               under their ward number. */}
           {cityId === "chennai" && <WardNarrative wardNumber={wardNumber} />}
 
-          {/* Section cards */}
+          {/* Bangalore ward profiles currently carry only administrative
+              data (ward name, corporation, zone, population, centroid,
+              area) - the analytical compute that joins water bodies,
+              flood, drainage, sewerage, rivers, etc. per ward hasn't
+              been run on the GBA 369-ward boundaries yet. Render an
+              honest "analytical layers pending" message that links to
+              the city-level views where that content does live. */}
+          {profile.water_bodies == null && (
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/30 p-5 space-y-3">
+              <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                Ward-level analytical layers are not yet compiled for this city
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                The profile above is administrative only (corporation,
+                zone, population, voter range, centroid, area).
+                Per-ward water-bodies, flood, drainage, sewerage,
+                groundwater-depth, and river-quality joins are produced
+                by a build-time spatial-join pipeline that runs on the
+                stable BBMP 198-ward boundary today. We carry the GBA
+                369-ward boundaries (post 15 May 2025 delimitation) for
+                administrative lookup, but the analytical compute on
+                top hasn&apos;t been re-run on them. Tracked as an open
+                gap at{" "}
+                <Link
+                  href={`${cityPrefix}/about`}
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  /bangalore/about
+                </Link>
+                .
+              </p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                In the meantime, the city-level surfaces carry the
+                analytical content with sharper data:{" "}
+                <Link href={`${cityPrefix}/groundwater`} className="text-blue-600 dark:text-blue-400 hover:underline">
+                  /bangalore/groundwater
+                </Link>{" "}
+                (IISc 80-ward stress overlay, CGWB GEC 2024 blocks),{" "}
+                <Link href={`${cityPrefix}/water-bodies`} className="text-blue-600 dark:text-blue-400 hover:underline">
+                  /bangalore/water-bodies
+                </Link>{" "}
+                (13 flagship deep-zoom lakes),{" "}
+                <Link href={`${cityPrefix}/tanker`} className="text-blue-600 dark:text-blue-400 hover:underline">
+                  /bangalore/tanker
+                </Link>{" "}
+                (OpenCity longitudinal survey), and{" "}
+                <Link href={`${cityPrefix}/flood-risk`} className="text-blue-600 dark:text-blue-400 hover:underline">
+                  /bangalore/flood-risk
+                </Link>{" "}
+                (KSNDMC + BBMP Sep 2022 hotspots).
+              </p>
+            </div>
+          )}
+
+          {/* Analytical section cards. Gated on `profile.water_bodies` as
+              the sentinel: cities whose profile compute has joined the
+              water-bodies layer to wards have all the other analytical
+              fields too (Chennai 200 GCC wards, Madurai 100 MMC wards).
+              Cities that don't (Bangalore GBA 369 wards today) get the
+              admin-only fallback above instead, avoiding the runtime
+              TypeError that the cards would otherwise raise on undef
+              fields. */}
+          {profile.water_bodies != null && (
+            <>
           <WardGroundwaterCard
             wardNumber={wardNumber}
             groundwater={groundwater}
@@ -114,6 +177,8 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
             profile={profile}
             getRiverLabel={getRiverLabel}
           />
+            </>
+          )}
 
           {/* Industrial zones - only when section data exists for this city.
               Guard `profile.industrial` itself: the type declares it required
@@ -157,6 +222,50 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
       {wardNumber != null && !profile && loading && (
         <div className="flex items-center justify-center py-16">
           <div className="text-slate-400 dark:text-slate-500 text-sm">Loading ward data...</div>
+        </div>
+      )}
+
+      {/* Out-of-range ward: the profile fetch is complete but no ward
+          matched the entered number. Most common for Bangalore visitors
+          who enter a GBA-era ward number (199-369) against our pre-GBA
+          BBMP 198-ward dataset. Render an honest "not in our dataset"
+          message instead of stalling. */}
+      {notFound && (
+        <div className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50/40 dark:bg-amber-950/20 p-5">
+          <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-300 mb-2">
+            Ward {wardNumber} is not in our dataset
+          </h3>
+          <div className="text-xs text-slate-700 dark:text-slate-300 space-y-2">
+            {cityId === "bangalore" ? (
+              <>
+                <p>
+                  The dashboard currently uses BBMP&apos;s pre-reorganization{" "}
+                  <span className="font-semibold">198 wards</span>. The Greater
+                  Bengaluru Authority (GBA) 369-ward boundary file (notified
+                  19 November 2025) isn&apos;t yet available in any ingestable
+                  public format. We&apos;re tracking it as an open data gap at{" "}
+                  <Link
+                    href={`${cityPrefix}/about`}
+                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    /bangalore/about
+                  </Link>
+                  .
+                </p>
+                <p>
+                  Try a ward number between 1 and 198 (BBMP) for now. We&apos;ll
+                  migrate to GBA 369 wards when the boundary file becomes
+                  publicly available.
+                </p>
+              </>
+            ) : (
+              <p>
+                The dashboard doesn&apos;t carry a profile for ward{" "}
+                {wardNumber} in this city. Use the search above to find a
+                covered ward.
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>

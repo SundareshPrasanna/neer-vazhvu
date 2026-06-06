@@ -22,6 +22,11 @@ export interface MyWardData {
   groundwater: GroundwaterData | null;
   representatives: RepresentativeData | null;
   loading: boolean;
+  /** True once the profiles fetch has resolved AND a matching ward was not
+   *  found. Distinguishes "still loading" from "ward isn't in this city's
+   *  dataset". Surfaces the friendly out-of-range message in the UI
+   *  instead of stalling on a loading spinner. */
+  notFound: boolean;
   getRiverLabel: (riverId: string | null, stationId: string | null) => { river: string; station: string } | null;
 }
 
@@ -29,7 +34,7 @@ export function useMyWardData(
   wardNumber: number | null,
   cityId: string = "chennai",
 ): MyWardData {
-  const { profile, getRiverLabel } = useWardProfile(wardNumber, cityId);
+  const { profile, getRiverLabel, loaded: profileLoaded } = useWardProfile(wardNumber, cityId);
   const { representatives } = useWardRepresentatives(wardNumber, cityId);
   const [groundwater, setGroundwater] = useState<GroundwaterData | null>(null);
   const [gwLoading, setGwLoading] = useState(false);
@@ -84,7 +89,13 @@ export function useMyWardData(
     return () => { cancelled = true; };
   }, [wardNumber, cityId]);
 
-  const loading = wardNumber != null && (profile == null || gwLoading);
+  // Stop reporting "loading" once the profile fetch has resolved. If a
+  // ward number was given but no matching profile was found (e.g. a GBA
+  // ward number 199-369 entered against our BBMP 198-ward dataset), flip
+  // to notFound: true so the UI can render a friendly out-of-range
+  // message instead of a perpetual loading spinner.
+  const notFound = wardNumber != null && profileLoaded && profile == null;
+  const loading = wardNumber != null && !notFound && (profile == null || gwLoading);
 
-  return { profile, groundwater, representatives, loading, getRiverLabel };
+  return { profile, groundwater, representatives, loading, notFound, getRiverLabel };
 }
