@@ -107,14 +107,16 @@ def lst_collection(start, end, aoi):
     return l8.merge(l9).map(prep)
 
 
-def lst_series(coll, zones: dict) -> list[dict]:
+def zone_mean_series(coll, zones: dict, band: str, scale: int) -> list[dict]:
+    """Per-scene mean of `band` over each zone. Generic across Landsat LST
+    and Sentinel-1 VV."""
     items = list(zones.items())
 
     def per_img(img):
         img = ee.Image(img)
         feat = ee.Feature(None, {"t": img.get("system:time_start")})
         for name, geom in items:
-            v = img.reduceRegion(ee.Reducer.mean(), geom, 30, maxPixels=MAXPIX).get("lst")
+            v = img.reduceRegion(ee.Reducer.mean(), geom, scale, maxPixels=MAXPIX).get(band)
             feat = feat.set(name, v)
         return feat
 
@@ -132,6 +134,54 @@ def lst_series(coll, zones: dict) -> list[dict]:
     return sorted(rows, key=lambda r: r["date"])
 
 
+def s1_collection(start, end, aoi):
+    """Sentinel-1 GRD VV (dB). Surfactant / foam films damp capillary waves
+    => LOWER VV than surrounding water (and far below the rough algae mat),
+    so a persistently darker weir is a froth/slick signature."""
+    return (ee.ImageCollection("COPERNICUS/S1_GRD")
+            .filterBounds(aoi).filterDate(start, end)
+            .filter(ee.Filter.eq("instrumentMode", "IW"))
+            .filter(ee.Filter.listContains("transmitterReceiverPolarisation", "VV"))
+            .select("VV"))
+
+
+def make_rings(center: ee.Geometry, radii: list[int]) -> dict:
+    """Concentric annuli around a point, for an inflow plume distance profile."""
+    rings, prev = {}, None
+    for r in radii:
+        disk = center.buffer(r)
+        rings[f"ring_{r}"] = disk if prev is None else disk.difference(prev)
+        prev = disk
+    return rings
+
+
+def plume_profile(rows: list[dict], ring_keys: list[str]) -> dict:
+    """Mean (ring LST - lakebed LST) per ring => warm-inflow decay with
+    distance. Plume extent ~ the farthest ring still clearly above baseline."""
+    out = {}
+    for rk in ring_keys:
+        diffs = [r[rk] - r[LAKEBED] for r in rows if rk in r and LAKEBED in r]
+        if diffs:
+            out[rk] = {"mean_anomaly_c": round(sum(diffs) / len(diffs), 2), "n": len(diffs)}
+    return out
+
+
+def plume_summary(label: str, prof: dict) -> str | None:
+    """Honest plume read: only call it a plume if the warm anomaly actually
+    DECAYS with distance from the inlet. If it is flat/rising, the thermal
+    structure is interior heating, not a discharge plume."""
+    if not prof:
+        return None
+    items = sorted(prof.items(), key=lambda kv: int(kv[0].split("_")[1]))
+    steps = ", ".join(f"{rk.split('_')[1]}m {v['mean_anomaly_c']:+.1f}C" for rk, v in items)
+    near, far = items[0][1]["mean_anomaly_c"], items[-1][1]["mean_anomaly_c"]
+    if near - far >= 0.5:
+        return f"{label}: warm-inflow plume decays with distance ({steps}) [coarse]."
+    return (f"{label}: NO inflow-plume signal - thermal anomaly does not decay with "
+            f"distance ({steps}); reflects algae-mat interior heating, not a discharge "
+            f"plume [coarse].")
+
+
 def thermal_anomalies(rows: list[dict], subzones: list[str]) -> dict:
     out = {}
     for z in subzones:
@@ -146,7 +196,23 @@ def thermal_anomalies(rows: list[dict], subzones: list[str]) -> dict:
     return out
 
 
-def characterise(z: str, kind: str, s2: dict, th: dict) -> str:
+def sar_anomalies(rows: list[dict], subzones: list[str]) -> dict:
+    """Mean (sub-zone VV - lakebed VV) in dB. Negative => smoother/darker =>
+    froth/surfactant slick (or calm water) vs the rough algae-mat interior."""
+    out = {}
+    for z in subzones:
+        diffs = [r[z] - r[LAKEBED] for r in rows if z in r and LAKEBED in r]
+        if diffs:
+            darker = sum(1 for x in diffs if x < 0)
+            out[z] = {
+                "mean_anomaly_db": round(sum(diffs) / len(diffs), 2),
+                "n": len(diffs),
+                "darker_pct": round(100 * darker / len(diffs), 1),
+            }
+    return out
+
+
+def characterise(z: str, kind: str, s2: dict, th: dict, sar: dict) -> str:
     bits = []
     a = s2.get("frac_algae", {})
     fr = s2.get("frac_froth", {})
@@ -160,8 +226,12 @@ def characterise(z: str, kind: str, s2: dict, th: dict) -> str:
     if t and abs(t["mean_anomaly_c"]) >= 0.5:
         bits.append(f"{'warmer' if t['mean_anomaly_c'] > 0 else 'cooler'} "
                     f"{t['mean_anomaly_c']:+.1f}C [coarse]")
+    s = sar.get(z)
+    if s and s["mean_anomaly_db"] <= -1.0 and s["darker_pct"] >= 60:
+        bits.append(f"radar-dark {s['mean_anomaly_db']:+.1f}dB in {s['darker_pct']:.0f}% "
+                    f"of scenes (SAR smooth-surface/froth signature)")
     if not bits:
-        return f"{kind}: no strong anomaly vs lake interior in free optical/thermal."
+        return f"{kind}: no strong anomaly vs lake interior in free optical/thermal/SAR."
     return f"{kind}: " + "; ".join(bits) + " - candidate for field verification."
 
 
@@ -195,9 +265,27 @@ def main() -> None:
 
     s2 = s2_anomalies(state, subzones)
     aoi = zones[LAKEBED].bounds()
-    rows = lst_series(lst_collection(args.start, args.end, aoi), zones)
-    th = thermal_anomalies(rows, subzones)
-    print(f"Landsat thermal scenes: {len(rows)}")
+
+    # Plume rings around inflow (inlet) sub-zones, for the thermal-decay profile.
+    PLUME_RADII = [150, 350, 600, 1000]
+    ring_zones, plume_ring_keys = {}, {}
+    for k in subzones:
+        if kinds[k] == "inlet":
+            rz = make_rings(zones[k].centroid(1), PLUME_RADII)
+            ring_zones.update(rz)
+            plume_ring_keys[k] = list(rz.keys())
+
+    # Landsat thermal: sub-zones + plume rings in one pull.
+    lst_rows = zone_mean_series(
+        lst_collection(args.start, args.end, aoi), {**zones, **ring_zones}, "lst", 30)
+    th = thermal_anomalies(lst_rows, subzones)
+    plume = {k: plume_profile(lst_rows, keys) for k, keys in plume_ring_keys.items()}
+    print(f"Landsat thermal scenes: {len(lst_rows)}")
+
+    # Sentinel-1 SAR (VV, dB): sub-zones vs lakebed - independent froth/slick signal.
+    s1_rows = zone_mean_series(s1_collection(args.start, args.end, aoi), zones, "VV", 10)
+    sar = sar_anomalies(s1_rows, subzones)
+    print(f"Sentinel-1 scenes: {len(s1_rows)}")
 
     sources = {}
     for z in subzones:
@@ -206,8 +294,16 @@ def main() -> None:
             "label": named[z]["label"],
             "s2_anomaly": s2.get(z, {}),
             "thermal_anomaly": th.get(z, {}),
-            "characterisation": characterise(z, kinds[z], s2.get(z, {}), th),
+            "sar_anomaly": sar.get(z, {}),
+            "thermal_plume": plume.get(z, {}),
+            "characterisation": characterise(z, kinds[z], s2.get(z, {}), th, sar),
         }
+
+    plume_lines = []
+    for k, prof in plume.items():
+        line = plume_summary(named[k]["label"], prof)
+        if line:
+            plume_lines.append(line)
 
     payload = {
         "body_id": args.body_id,
@@ -215,24 +311,33 @@ def main() -> None:
         "tier": "relative",
         "capability_status": {
             "s2_source_anomaly": "ok (10m, well-resolved)",
+            "sar_slick": "no clean signal on this body: VV at edge sub-zones is "
+                         "dominated by shoreline/structure roughness (weir/inlet read "
+                         "BRIGHTER, not darker); froth-slick detection needs open-water-"
+                         "only per-pixel analysis - deferred",
             "thermal_anomaly": "indicative only - Landsat thermal native 100m, "
                                "a 120m sub-zone is ~1 thermal pixel",
-            "outfall_pinpoint": "gap: exact discharge mouth needs high-res / SAR slick / field",
+            "thermal_plume": "indicative only - same 100m thermal coarseness",
+            "outfall_pinpoint": "gap: exact discharge mouth needs high-res / field",
         },
         "data_source": {
             "s2_state": str(state_path.name),
             "thermal": "LANDSAT/LC08+LC09 C02 L2 ST_B10 (QA_PIXEL cloud-masked)",
+            "sar": "COPERNICUS/S1_GRD IW VV (dB); lower = smoother surface (froth/slick)",
             "method": "Per-sub-zone anomaly vs lake interior (sub-zone minus lakebed), "
-                      "date-matched, with persistence. Candidate source signals, not verdicts.",
+                      "date-matched, with persistence; thermal plume = LST decay over "
+                      "concentric rings around the inlet. Candidate source signals, not verdicts.",
             "known_limitations": [
                 "Sub-zone locations are derived candidates (inlet/weir) - see zone geojson provenance.",
-                "Thermal anomaly is coarse at sub-zone scale (100m native).",
+                "Thermal anomaly + plume are coarse at sub-zone scale (100m native).",
+                "SAR low backscatter can also be calm water, not only froth - corroborative, not proof.",
                 "Does not distinguish sewage vs stormwater vs industrial - field verification required.",
             ],
         },
-        "thermal_series": rows,
+        "thermal_series": lst_rows,
+        "sar_series": s1_rows,
         "sources": sources,
-        "headline_for_v0": [sources[z]["characterisation"] for z in subzones],
+        "headline_for_v0": [sources[z]["characterisation"] for z in subzones] + plume_lines,
     }
     out = ROOT / "public/data/rich-bodies" / f"{args.body_id}-pollution-sources.json"
     out.write_text(json.dumps(payload, indent=2))
