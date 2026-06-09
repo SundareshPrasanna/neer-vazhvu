@@ -8,6 +8,7 @@ import { RichBodyTimelineSlider } from "./rich-body-timeline-slider";
 import { RichBodyStatsStrip } from "./rich-body-stats-strip";
 import { RichBodySourcesModal } from "./rich-body-sources-modal";
 import { WaterBodyHistoryChart } from "./water-body-history-chart";
+import { RichBodyPollutionPanel } from "./rich-body-pollution-panel";
 
 interface ChipManifestShape {
   chip_bbox_wsen: [number, number, number, number];
@@ -198,6 +199,11 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
             </div>
           </details>
         )}
+
+        {/* Pollution profile (Sentinel-2 STATE: composition + turbidity/chl +
+            froth + animation). Only for bodies onboarded to the pollution
+            layer (pollution config present). */}
+        {body.pollution && <RichBodyPollutionPanel body={body} />}
 
         {/* Sources footnote with clickable link to full methodology modal */}
         <div className="px-4 md:px-6 py-2 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 shrink-0 flex items-center justify-between gap-3">

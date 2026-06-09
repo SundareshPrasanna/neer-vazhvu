@@ -449,6 +449,21 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
         },
       ],
     },
+    pollution: {
+      // Open-water drinking reservoir - the contrast case to Bellandur. Same
+      // capability, but open water dominant so turbidity/chl are
+      // lake-representative (not gated).
+      size_class: "large",
+      open_water_inset_m: 10,
+      insitu_source: {
+        agency: "Tamil Nadu Pollution Control Board (TNPCB) / CMWSSB",
+        status: "none",
+        note: "Relative Tier-1 only for now.",
+      },
+      signal_paths: {
+        state: "/data/rich-bodies/chembarambakkam-pollution-state.json",
+      },
+    },
   },
   porur: {
     id: "porur",
@@ -738,6 +753,8 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       ],
       signal_paths: {
         state: "/data/rich-bodies/bellandur-pollution-state.json",
+        sources: "/data/rich-bodies/bellandur-pollution-sources.json",
+        events: "/data/rich-bodies/bellandur-pollution-froth.json",
       },
     },
   },
