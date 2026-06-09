@@ -252,15 +252,30 @@ def _status_and_headline(by_zone: dict) -> "tuple[dict, list[str]]":
     def pct(x):
         return f"{100 * x:.0f}%" if x is not None else "n/a"
 
-    idx_status = (
-        f"computed where >={MIN_OPEN_WATER_PX}px open water ({n_idx}/{n} "
-        f"scenes), but open water averages only {pct(ow)} of the surface and "
-        f"shifts location scene-to-scene - low spatial consistency, not a "
-        f"lake-wide reading"
-    )
+    ow_dom = (ow or 0) >= 0.50      # open-water dominated (clean reservoir-like)
+    alg_dom = (alg or 0) >= 0.50    # algae/macrophyte dominated (choked lake)
+
+    if ow_dom:
+        idx_status = (f"ok (relative); open water dominant ({pct(ow)}) - "
+                      f"turbidity/chl are lake-representative ({n_idx}/{n} scenes)")
+        character = (f"Reads as predominantly open water ({pct(ow)}); turbidity "
+                     f"and chl-a (NDCI) are lake-representative relative signals.")
+    elif alg_dom:
+        idx_status = (f"low spatial consistency: open water averages only "
+                      f"{pct(ow)} and shifts location ({n_idx}/{n} scenes) - "
+                      f"not a lake-wide reading")
+        character = (f"Reads as a vegetation-choked surface, not open water: "
+                     f"open water averages only {pct(ow)} and varies scene-to-"
+                     f"scene, so turbidity/chl are low-consistency proxies.")
+    else:
+        idx_status = (f"partially representative: mixed surface, open water "
+                      f"{pct(ow)} ({n_idx}/{n} scenes)")
+        character = (f"Mixed surface (open water {pct(ow)}, algae {pct(alg)}); "
+                     f"turbidity/chl are partially representative.")
+
     cap = {
         "classification": "ok",
-        "surface_composition": "ok (primary signal for this lake)",
+        "surface_composition": "ok (primary signal)",
         "algae_vigor": "ok (relative NDVI over algae class)",
         "turbidity_rel": idx_status,
         "chl_ndci_rel": idx_status,
@@ -274,10 +289,7 @@ def _status_and_headline(by_zone: dict) -> "tuple[dict, list[str]]":
     ]
     if vigor is not None:
         headline.append(f"Algae-mat vigour (mean NDVI over algae class): {vigor:.2f}.")
-    headline.append(
-        f"Reads as a vegetation-choked surface, not open water: open water "
-        f"averages only {pct(ow)} and varies scene-to-scene, so turbidity/chl "
-        f"are low-consistency proxies, not lake-wide metrics.")
+    headline.append(character)
     headline.append(
         "Froth is rare and localized (median 0% of surface), concentrating in "
         "dry pre-monsoon months; reliable quantification needs high-res (deferred).")
