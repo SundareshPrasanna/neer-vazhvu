@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CHENNAI } from "@/lib/cities/chennai";
-import { loadCascadeHealth } from "@/lib/cascade-health-loader";
-import { CascadeHealthPanel } from "@/components/cascade/cascade-health-panel";
+import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
 
 export const metadata: Metadata = {
-  title: "Tank cascades at risk - Chennai | Neer Vazhvu",
+  title: "Lake catchments - Chennai | Neer Vazhvu",
   description:
-    "Health and priority of historic tank cascades in Chennai, scored against current OpenStreetMap and the terrain-derived cascade graph.",
+    "Click any lake in Chennai to see its catchment - the area of influence it collects rain from, the lakes that feed it, and where it drains. Terrain-derived from FABDEM 30 m elevation.",
   alternates: { canonical: "/cascades" },
 };
 
@@ -15,9 +14,11 @@ export default function ChennaiCascadesPage() {
   if (!CHENNAI.hasCascadeOverlay) {
     notFound();
   }
-  const data = loadCascadeHealth("chennai");
-  if (!data) {
-    notFound();
-  }
-  return <CascadeHealthPanel data={data} cityDisplayName={CHENNAI.displayName} />;
+  return (
+    <CatchmentAtlasClient
+      cityId="chennai"
+      cityDisplayName={CHENNAI.displayName}
+      center={[CHENNAI.center.lat, CHENNAI.center.lng]}
+    />
+  );
 }

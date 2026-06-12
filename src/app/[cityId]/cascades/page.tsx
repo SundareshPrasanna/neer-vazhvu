@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
-import { loadCascadeHealth } from "@/lib/cascade-health-loader";
-import { CascadeHealthPanel } from "@/components/cascade/cascade-health-panel";
+import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -13,10 +12,10 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
-  if (!config) return { title: "Cascades | Neer Vazhvu" };
+  if (!config) return { title: "Catchments | Neer Vazhvu" };
   return {
-    title: `Tank cascades at risk - ${config.displayName} | Neer Vazhvu`,
-    description: `Health and priority of historic tank cascades in ${config.displayName}, scored against current OpenStreetMap and the terrain-derived cascade graph.`,
+    title: `Lake catchments — ${config.displayName} | Neer Vazhvu`,
+    description: `Click any lake in ${config.displayName} to see its catchment — the area of influence it collects rain from, the lakes that feed it, and where it drains. Terrain-derived from FABDEM 30 m elevation.`,
     alternates: { canonical: `/${cityId}/cascades` },
   };
 }
@@ -25,17 +24,13 @@ export default async function CityCascadesPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
-
-  if (!config.hasCascadeOverlay) {
-    notFound();
-  }
-
-  const data = loadCascadeHealth(cityId);
-  if (!data) {
-    notFound();
-  }
+  if (!config.hasCascadeOverlay) notFound();
 
   return (
-    <CascadeHealthPanel data={data} cityDisplayName={config.displayName} />
+    <CatchmentAtlasClient
+      cityId={cityId}
+      cityDisplayName={config.displayName}
+      center={[config.center.lat, config.center.lng]}
+    />
   );
 }
