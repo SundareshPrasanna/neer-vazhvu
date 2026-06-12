@@ -247,14 +247,16 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
     to_utm = pyproj.Transformer.from_crs("EPSG:4326", f"EPSG:{district.utm_epsg}", always_xy=True).transform
     to_wgs = pyproj.Transformer.from_crs(f"EPSG:{district.utm_epsg}", "EPSG:4326", always_xy=True).transform
 
-    # Canonical node set (osm_ids in the cascade graph) + their polygons.
+    # Canonical node set (osm_ids in the cascade graph) + per-node graph props.
     nodes_fc = json.loads(district.cascade_nodes_geojson_path().read_text(encoding="utf-8"))
-    node_ids = {f["properties"]["osm_id"] for f in nodes_fc["features"]}
+    node_props = {f["properties"]["osm_id"]: f["properties"] for f in nodes_fc["features"]}
+    node_ids = set(node_props)
     bodies_fc = json.loads(district.tank_polygons_path.read_text(encoding="utf-8"))
     polys: dict[int, dict[str, Any]] = {
         f["properties"]["osm_id"]: {
             "geom": shape(f["geometry"]),
-            "name": (f["properties"].get("name") or "") + " " + (f["properties"].get("name_ta") or ""),
+            "name": f["properties"].get("name") or "",
+            "name_ta": f["properties"].get("name_ta") or "",
         }
         for f in bodies_fc["features"]
         if f["properties"].get("osm_id") in node_ids
@@ -262,12 +264,14 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
     _log(f"delineating {len(polys)} of {len(node_ids)} nodes (rest have no polygon)")
 
     catch_features: list[dict[str, Any]] = []
+    lake_features: list[dict[str, Any]] = []
     area_by_id: dict[int, float] = {}
     flagged: list[dict[str, Any]] = []
     done = 0
     for osm_id, meta in polys.items():
         poly = meta["geom"]
-        name = meta["name"].strip()
+        name_full = f"{meta['name']} {meta['name_ta']}".strip()
+        name = name_full
         # Named conduits: skip before the BFS (rivers are not impoundments).
         if name and _CONDUIT_NAME_RE.search(name):
             flagged.append({"osm_id": osm_id, "quality": "conduit_excluded", "name": name})
@@ -306,6 +310,27 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
             },
             "geometry": mapping(shp_transform(to_wgs, catch_utm)),
         })
+
+        # Clickable lake layer: the real water-body polygon (not a centroid
+        # circle), delineated lakes only (conduits already filtered out),
+        # with all the panel stats embedded so the frontend needs one file.
+        np_ = node_props.get(osm_id, {})
+        lake_features.append({
+            "type": "Feature",
+            "properties": {
+                "osm_id": osm_id,
+                "name": meta["name"],
+                "name_ta": meta["name_ta"],
+                "catchment_area_sqkm": area_km2,
+                "lake_area_sqkm": lake_km2,
+                "degree_in": np_.get("degree_in"),
+                "degree_out": np_.get("degree_out"),
+                "cascade_position": np_.get("cascade_position"),
+                "drains_to_river": np_.get("drains_to_river"),
+                "river_outlet_distance_km": np_.get("river_outlet_distance_km"),
+            },
+            "geometry": mapping(poly.simplify(0.0001, preserve_topology=True)),
+        })
         done += 1
         if done % 200 == 0:
             _log(f"  delineated {done}/{len(polys)}")
@@ -314,6 +339,12 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
     out = district.cascade_catchments_geojson_path()
     out.write_text(
         json.dumps({"type": "FeatureCollection", "features": catch_features}, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+
+    # Write the clickable lakes GeoJSON (real polygons, delineated lakes only).
+    district.cascade_lakes_geojson_path().write_text(
+        json.dumps({"type": "FeatureCollection", "features": lake_features}, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
 

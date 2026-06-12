@@ -200,6 +200,9 @@ class DistrictCascadeConfig:
     def cascade_catchment_quality_json_path(self) -> Path:
         return CASCADE_OUTPUT_DIR / f"{self.district_id}-catchment-quality.json"
 
+    def cascade_lakes_geojson_path(self) -> Path:
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-cascade-lakes.geojson"
+
 
 _MADURAI = DistrictCascadeConfig(
     district_id="madurai",

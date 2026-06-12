@@ -1,22 +1,23 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, Circle, Tooltip, Pane } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, Pane } from "react-leaflet";
 import type { Feature, FeatureCollection } from "geojson";
+import type { Layer, PathOptions } from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
 
-interface NodeProps {
+interface LakeProps {
   osm_id: number;
   name: string;
   name_ta: string;
-  area_ha: number;
   catchment_area_sqkm: number | null;
-  degree_in: number;
-  degree_out: number;
-  cascade_position: number;
-  drains_to_river: boolean;
+  lake_area_sqkm: number | null;
+  degree_in: number | null;
+  degree_out: number | null;
+  cascade_position: number | null;
+  drains_to_river: boolean | null;
   river_outlet_distance_km: number | null;
 }
 
@@ -32,38 +33,27 @@ const C_SELECTED = "#dc2626"; // red-600  — the lake you clicked
 const C_UPSTREAM = "#2563eb"; // blue-600 — feeds into it
 const C_DOWNSTREAM = "#f59e0b"; // amber-500 — it drains toward
 
-function areaEquivRadiusM(areaHa: number): number {
-  const r = Math.sqrt(((areaHa || 0.5) * 10000) / Math.PI);
-  return Math.min(Math.max(r, 70), 700);
-}
-
-function nodeLatLng(f: Feature): [number, number] {
-  // Cascade nodes are Point centroids: [lng, lat].
-  const [lng, lat] = (f.geometry as GeoJSON.Point).coordinates;
-  return [lat, lng];
-}
-
 export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: Props) {
   const tiles = useMapTiles();
-  const [nodes, setNodes] = useState<FeatureCollection | null>(null);
+  const [lakes, setLakes] = useState<FeatureCollection | null>(null);
   const [edges, setEdges] = useState<FeatureCollection | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [catchment, setCatchment] = useState<Feature | null>(null);
   const [loadingCatch, setLoadingCatch] = useState(false);
 
   useEffect(() => {
-    fetch(`/data/cascade/${cityId}-cascade-nodes.geojson`)
+    fetch(`/data/cascade/${cityId}-cascade-lakes.geojson`)
       .then((r) => r.json())
-      .then(setNodes)
-      .catch(() => setNodes(null));
+      .then(setLakes)
+      .catch(() => setLakes(null));
     fetch(`/data/cascade/${cityId}-cascade-edges.geojson`)
       .then((r) => r.json())
       .then(setEdges)
       .catch(() => setEdges(null));
   }, [cityId]);
 
-  // Directed adjacency over the cascade edge graph.
-  const { adjUp, adjDown, nodeById, latLngById } = useMemo(() => {
+  // Directed adjacency over the cascade edge graph + lake prop lookup.
+  const { adjUp, adjDown, lakeById } = useMemo(() => {
     const adjUp = new Map<number, number[]>();
     const adjDown = new Map<number, number[]>();
     edges?.features.forEach((e) => {
@@ -72,15 +62,13 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
       adjDown.set(f, [...(adjDown.get(f) ?? []), t]);
       adjUp.set(t, [...(adjUp.get(t) ?? []), f]);
     });
-    const nodeById = new Map<number, NodeProps>();
-    const latLngById = new Map<number, [number, number]>();
-    nodes?.features.forEach((f) => {
-      const p = f.properties as unknown as NodeProps;
-      nodeById.set(p.osm_id, p);
-      latLngById.set(p.osm_id, nodeLatLng(f));
+    const lakeById = new Map<number, LakeProps>();
+    lakes?.features.forEach((f) => {
+      const p = f.properties as unknown as LakeProps;
+      lakeById.set(p.osm_id, p);
     });
-    return { adjUp, adjDown, nodeById, latLngById };
-  }, [edges, nodes]);
+    return { adjUp, adjDown, lakeById };
+  }, [edges, lakes]);
 
   // Walk the full upstream / downstream chains from the selected lake.
   const { upstream, downstream } = useMemo(() => {
@@ -102,7 +90,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
     return { upstream: walk(selected, adjUp), downstream: walk(selected, adjDown) };
   }, [selected, adjUp, adjDown]);
 
-  // Edge sub-collections for highlighting the chain.
+  // Edges that lie on the selected lake's chain, for highlighting.
   const chainEdges = useMemo(() => {
     if (selected == null || !edges) return null;
     const up = new Set([selected, ...upstream]);
@@ -125,7 +113,25 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
       .finally(() => setLoadingCatch(false));
   }
 
-  const sel = selected != null ? nodeById.get(selected) ?? null : null;
+  function lakeStyle(osmId: number): PathOptions {
+    const color =
+      osmId === selected
+        ? C_SELECTED
+        : upstream.has(osmId)
+          ? C_UPSTREAM
+          : downstream.has(osmId)
+            ? C_DOWNSTREAM
+            : C_DEFAULT;
+    const hi = osmId === selected || upstream.has(osmId) || downstream.has(osmId);
+    return {
+      color,
+      weight: osmId === selected ? 2 : 1,
+      fillColor: color,
+      fillOpacity: hi ? 0.6 : 0.35,
+    };
+  }
+
+  const sel = selected != null ? lakeById.get(selected) ?? null : null;
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col md:flex-row">
@@ -134,7 +140,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
           <MapResizer />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
-          {/* Selected catchment polygon — the area of influence, under the markers. */}
+          {/* Selected catchment polygon — the area of influence, beneath the lakes. */}
           <Pane name="catchment" style={{ zIndex: 410 }}>
             {catchment && (
               <GeoJSON
@@ -151,48 +157,32 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               <GeoJSON
                 key={`chain-${selected}`}
                 data={chainEdges}
-                style={{ color: "#64748b", weight: 1.5, opacity: 0.7 }}
+                style={{ color: "#475569", weight: 1.5, opacity: 0.7 }}
               />
             )}
           </Pane>
 
-          {/* Lake markers. */}
+          {/* Clickable lake polygons (real water-body boundaries). */}
           <Pane name="lakes" style={{ zIndex: 430 }}>
-            {nodes?.features.map((f) => {
-              const p = f.properties as unknown as NodeProps;
-              const id = p.osm_id;
-              const ll = latLngById.get(id)!;
-              const color =
-                id === selected
-                  ? C_SELECTED
-                  : upstream.has(id)
-                    ? C_UPSTREAM
-                    : downstream.has(id)
-                      ? C_DOWNSTREAM
-                      : C_DEFAULT;
-              const isHi = id === selected || upstream.has(id) || downstream.has(id);
-              return (
-                <Circle
-                  key={id}
-                  center={ll}
-                  radius={areaEquivRadiusM(p.area_ha)}
-                  pathOptions={{
-                    color,
-                    weight: id === selected ? 2 : 1,
-                    fillColor: color,
-                    fillOpacity: isHi ? 0.55 : 0.25,
-                  }}
-                  eventHandlers={{ click: () => selectLake(id) }}
-                >
-                  <Tooltip>
-                    <span className="font-medium">{p.name || "(unnamed tank)"}</span>
-                    {p.catchment_area_sqkm != null && (
-                      <> · catchment {p.catchment_area_sqkm.toFixed(1)} km²</>
-                    )}
-                  </Tooltip>
-                </Circle>
-              );
-            })}
+            {lakes && (
+              <GeoJSON
+                key={`lakes-${selected}-${upstream.size}-${downstream.size}`}
+                data={lakes}
+                style={(feat?: Feature) =>
+                  lakeStyle((feat?.properties as { osm_id: number }).osm_id)
+                }
+                onEachFeature={(feat: Feature, layer: Layer) => {
+                  const p = feat.properties as unknown as LakeProps;
+                  layer.on("click", () => selectLake(p.osm_id));
+                  const label =
+                    (p.name || "(unnamed tank)") +
+                    (p.catchment_area_sqkm != null
+                      ? ` · catchment ${p.catchment_area_sqkm.toFixed(1)} km²`
+                      : "");
+                  layer.bindTooltip(label, { sticky: true });
+                }}
+              />
+            )}
           </Pane>
         </MapContainer>
 
@@ -240,15 +230,18 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               <Stat
                 label="Catchment (area of influence)"
                 value={
-                  loadingCatch && sel.catchment_area_sqkm == null
-                    ? "…"
-                    : sel.catchment_area_sqkm != null
-                      ? `${sel.catchment_area_sqkm.toFixed(1)} km²`
+                  sel.catchment_area_sqkm != null
+                    ? `${sel.catchment_area_sqkm.toFixed(1)} km²`
+                    : loadingCatch
+                      ? "…"
                       : "n/a"
                 }
                 emphasis
               />
-              <Stat label="Lake surface" value={`${(sel.area_ha / 100).toFixed(2)} km²`} />
+              <Stat
+                label="Lake surface"
+                value={sel.lake_area_sqkm != null ? `${sel.lake_area_sqkm.toFixed(2)} km²` : "—"}
+              />
             </div>
 
             <section>
@@ -258,10 +251,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               <div className="grid grid-cols-2 gap-3">
                 <Stat label="Upstream lakes" value={String(upstream.size)} />
                 <Stat label="Downstream lakes" value={String(downstream.size)} />
-                <Stat
-                  label="Drains to river"
-                  value={sel.drains_to_river ? "Yes" : "No"}
-                />
+                <Stat label="Drains to river" value={sel.drains_to_river ? "Yes" : "No"} />
                 <Stat
                   label="Distance to river"
                   value={
