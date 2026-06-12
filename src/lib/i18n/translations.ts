@@ -759,6 +759,7 @@ export const translations: Record<string, TranslationEntry> = {
   "wb.lost_source_value": { en: "Care Earth Trust & NGT records",         ta: "Care Earth Trust & NGT பதிவுகள்", kn: "Care Earth Trust ಮತ್ತು NGT ದಾಖಲೆಗಳು" },
   "wb.view_bodies": { en: "Water Bodies",                          ta: "நீர்நிலைகள்", kn: "ಜಲಮೂಲಗಳು" },
   "wb.view_restoration": { en: "Restoration Priority",                  ta: "மறுசீரமைப்பு முன்னுரிமை", kn: "ಪುನರುಜ್ಜೀವನ ಆದ್ಯತೆ" },
+  "wb.view_catchments": { en: "Catchments",                          ta: "நீர்ப்பிடிப்பு", kn: "ಜಲಾನಯನ" },
   "wb.census_surveyed": { en: "govt. surveyed (2018-19)",               ta: "அரசு ஆய்வு (2018-19)", kn: "ಸರ್ಕಾರಿ ಸಮೀಕ್ಷೆ (2018-19)" },
   "wb.census_source": { en: "Census data from",                      ta: "கணக்கெடுப்பு தரவு:", kn: "ಜನಗಣತಿ ದತ್ತಾಂಶ:" },
   "wb.census_source_value": { en: "First Census of Water Bodies, Govt. of India", ta: "நீர்நிலைகளின் முதல் கணக்கெடுப்பு, இந்திய அரசு", kn: "ಜಲಮೂಲಗಳ ಮೊದಲ ಜನಗಣತಿ, ಭಾರತ ಸರ್ಕಾರ" },

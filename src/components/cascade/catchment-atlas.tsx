@@ -157,7 +157,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
   const sel = selected != null ? lakeById.get(selected) ?? null : null;
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col md:flex-row">
+    <div className="h-full flex flex-col md:flex-row">
       <div className="relative flex-1 h-full">
         <MapContainer center={center} zoom={zoom} className="h-full w-full" preferCanvas>
           <MapResizer />
