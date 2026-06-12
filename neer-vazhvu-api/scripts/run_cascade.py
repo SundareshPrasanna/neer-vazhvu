@@ -68,6 +68,23 @@ def cmd_build_topology(district_id: str) -> int:
     return 0
 
 
+def cmd_delineate_catchments(district_id: str) -> int:
+    """Terrain-derive a catchment polygon for every cascade node.
+
+    One FABDEM mosaic + one WhiteboxTools conditioning pass per district,
+    then a bounded upstream BFS per lake. Writes
+    {district}-cascade-catchments.geojson, extends the nodes file with
+    catchment_area_sqkm, and writes {district}-catchment-quality.json.
+    """
+    from app.cascade import catchments
+    from app.cascade.districts import get_district_cascade_config
+
+    district = get_district_cascade_config(district_id)
+    summary = catchments.build_catchments(district)
+    print(json.dumps(summary, indent=2))
+    return 0
+
+
 def cmd_cross_check_channels(district_id: str) -> int:
     from app.cascade import channels
     from app.cascade.districts import get_district_cascade_config
@@ -224,6 +241,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     for command in (
         "build-topology",
+        "delineate-catchments",
         "cross-check-channels",
         "detect-encroachment",
         "score",
@@ -246,6 +264,7 @@ def main() -> int:
 
     dispatch = {
         "build-topology": cmd_build_topology,
+        "delineate-catchments": cmd_delineate_catchments,
         "cross-check-channels": cmd_cross_check_channels,
         "detect-encroachment": cmd_detect_encroachment,
         "score": cmd_score,

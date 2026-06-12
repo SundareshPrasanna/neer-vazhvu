@@ -100,6 +100,17 @@ class DistrictCascadeConfig:
     dem_source: str = "merit_hydro"
     max_downstream_distance_km: float = 3.0
     min_tank_area_ha: float = 1.0
+
+    # --- Catchment delineation (Layer A2: `delineate-catchments` stage) ---
+    # Projected CRS (metric) for hydrology: cells become ~30x30 m so areas,
+    # slope and flow routing are correct. UTM 44N covers Tamil Nadu (78-84E);
+    # 43N covers Karnataka (72-78E).
+    utm_epsg: int = 32644
+    # Degrees of padding around the water-body bounding box when fetching the
+    # district DEM. Must be wide enough to contain the largest catchment;
+    # catchments that still touch the DEM edge are flagged, not silently
+    # clipped. ~0.35 deg ~= 39 km at this latitude.
+    catchment_dem_buffer_deg: float = 0.35
     # Tanks with no tank-to-tank downstream within
     # max_downstream_distance_km whose flow direction points to a river
     # within this distance are marked as draining INTO the river. Models
@@ -183,6 +194,12 @@ class DistrictCascadeConfig:
     def cascade_river_outlets_pmtiles_path(self) -> Path:
         return CASCADE_TILE_DIR / f"{self.district_id}-cascade-river-outlets.pmtiles"
 
+    def cascade_catchments_geojson_path(self) -> Path:
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-cascade-catchments.geojson"
+
+    def cascade_catchment_quality_json_path(self) -> Path:
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-catchment-quality.json"
+
 
 _MADURAI = DistrictCascadeConfig(
     district_id="madurai",
@@ -234,6 +251,8 @@ _BANGALORE = DistrictCascadeConfig(
     state="karnataka",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "bangalore-water-bodies-current.geojson",
     rivers_path=PUBLIC_GEOJSON_DIR / "bangalore-rivers.geojson",
+    # Bengaluru sits in UTM zone 43N (72-78E), not 44N like Tamil Nadu.
+    utm_epsg=32643,
     # Bengaluru sits on a ridge that splits into three valleys
     # (Vrishabhavathi west, Koramangala-Challaghatta south, Hebbal
     # north). Traditional kere chains historically branched into a
