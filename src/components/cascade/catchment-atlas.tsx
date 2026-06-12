@@ -26,9 +26,9 @@ interface Props {
   zoom?: number;
 }
 
-const C_DEFAULT = "#0ea5e9"; // sky-500  — other lakes
-const C_SELECTED = "#dc2626"; // red-600 — the lake you clicked
-const C_INSIDE = "#2563eb"; // blue-600 — tank within the catchment (feeds it)
+const C_DEFAULT = "#0ea5e9"; // sky-500   — other lakes
+const C_SELECTED = "#e11d48"; // rose-600 — the lake you clicked (crimson, off the amber)
+const C_INSIDE = "#2563eb"; // blue-600  — tank within the catchment (feeds it)
 
 // --- client-side point-in-polygon (even-odd over all rings, handles holes
 //     and MultiPolygon), so we can tell which tanks sit inside a catchment. ---
@@ -160,13 +160,20 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
           <MapController fitGeom={catchment} resetKey={resetKey} center={center} zoom={zoom} />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
-          {/* Catchment — neutral dashed outline (the area of influence). */}
+          {/* Catchment — warm amber, complementary to the blue water/streams.
+              Deep amber boundary on the light map; bright gold on the dark map. */}
           <Pane name="catchment" style={{ zIndex: 410 }}>
             {catchment && (
               <GeoJSON
-                key={`catch-${selected}`}
+                key={`catch-${selected}-${tiles.isDark ? "d" : "l"}`}
                 data={catchment}
-                style={{ color: "#334155", weight: 1.5, dashArray: "5 4", fillColor: "#94a3b8", fillOpacity: 0.1 }}
+                style={{
+                  color: tiles.isDark ? "#fbbf24" : "#b45309",
+                  weight: tiles.isDark ? 2 : 2.5,
+                  dashArray: "6 4",
+                  fillColor: tiles.isDark ? "#f59e0b" : "#d97706",
+                  fillOpacity: tiles.isDark ? 0.14 : 0.28,
+                }}
               />
             )}
           </Pane>
@@ -221,6 +228,12 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
           <div className="flex items-center gap-2 pt-0.5">
             <span className="inline-block w-4 h-0.5 bg-blue-700" />
             <span className="text-slate-600 dark:text-slate-300">Feeder streams</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-block w-4 h-0 border-t-2 border-dashed border-amber-500"
+            />
+            <span className="text-slate-600 dark:text-slate-300">Catchment</span>
           </div>
         </div>
       </div>
