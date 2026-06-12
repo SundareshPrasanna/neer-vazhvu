@@ -17,6 +17,10 @@ interface LakeProps {
   lake_area_sqkm: number | null;
   drains_to_river: boolean | null;
   river_outlet_distance_km: number | null;
+  buildings_in_catchment?: number | null;
+  rooftop_area_sqkm?: number | null;
+  annual_rainfall_mm?: number | null;
+  rooftop_harvest_ml?: number | null;
 }
 
 interface Props {
@@ -296,11 +300,40 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               </div>
             </section>
 
-            <section className="rounded-lg border border-dashed border-slate-300 dark:border-slate-700 p-3 text-xs text-slate-500 dark:text-slate-400">
-              <div className="font-semibold text-slate-600 dark:text-slate-300 mb-1">Coming next</div>
-              Rainfall over this catchment, estimated rooftop-harvest potential,
-              and buildings in the catchment.
-            </section>
+            {sel.rooftop_harvest_ml != null ? (
+              <section>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
+                  Rooftop rainwater harvest
+                </h3>
+                <Stat
+                  label="Annual harvest potential"
+                  value={`${sel.rooftop_harvest_ml.toLocaleString(undefined, { maximumFractionDigits: 0 })} ML`}
+                  emphasis
+                />
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <Stat
+                    label="Buildings in catchment"
+                    value={(sel.buildings_in_catchment ?? 0).toLocaleString()}
+                  />
+                  <Stat
+                    label="Rooftop area"
+                    value={sel.rooftop_area_sqkm != null ? `${sel.rooftop_area_sqkm.toFixed(2)} km²` : "—"}
+                  />
+                  <Stat
+                    label="Annual rainfall"
+                    value={sel.annual_rainfall_mm != null ? `${sel.annual_rainfall_mm.toFixed(0)} mm` : "—"}
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-2">
+                  Rooftop area × annual rainfall × 0.8 runoff. Buildings from
+                  Overture; rainfall from IMD normals.
+                </p>
+              </section>
+            ) : (
+              <section className="rounded-lg border border-dashed border-slate-300 dark:border-slate-700 p-3 text-xs text-slate-500 dark:text-slate-400">
+                Rooftop-harvest potential not yet computed for this city.
+              </section>
+            )}
 
             <button onClick={reset} className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
               ← Reset view

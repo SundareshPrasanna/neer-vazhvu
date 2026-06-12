@@ -122,6 +122,10 @@ class DistrictCascadeConfig:
     # the bounding box of tank polygons.
     admin_boundary_path: Path | None = None
 
+    # IMD monthly-rainfall normals JSON for this district, used to turn
+    # rooftop area in a catchment into annual rainwater-harvest potential.
+    imd_rainfall_path: Path | None = None
+
     # Optional rivers GeoJSON. If present, the topology stage rejects
     # candidate cascade edges whose straight-line path crosses a river
     # LineString - water doesn't flow across rivers, it falls into them.
@@ -213,6 +217,7 @@ _MADURAI = DistrictCascadeConfig(
     state="tamil_nadu",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "madurai-water-bodies-current.geojson",
     rivers_path=PUBLIC_GEOJSON_DIR / "madurai-rivers.geojson",
+    imd_rainfall_path=PUBLIC_DATA_DIR / "imd-rainfall-monthly-madurai.json",
     # Vandiyur Lake. Topologically Madurai's highest-convergence node is
     # an unnamed reservoir near Kadachanenthal (degree_in=10), but the
     # public narrative anchor is Vandiyur (HC PIL R. Manibharathi v UoI).
@@ -247,6 +252,7 @@ _CHENNAI = DistrictCascadeConfig(
     state="tamil_nadu",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "chennai-water-bodies-current.geojson",
     rivers_path=PUBLIC_GEOJSON_DIR / "chennai-rivers.geojson",
+    imd_rainfall_path=PUBLIC_DATA_DIR / "imd-rainfall-monthly.json",
     # Layer B curation deferred until after Madurai validates the pipeline.
 )
 
@@ -257,6 +263,7 @@ _BANGALORE = DistrictCascadeConfig(
     state="karnataka",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "bangalore-water-bodies-current.geojson",
     rivers_path=PUBLIC_GEOJSON_DIR / "bangalore-rivers.geojson",
+    imd_rainfall_path=PUBLIC_DATA_DIR / "imd-rainfall-monthly-bangalore.json",
     # Bengaluru sits in UTM zone 43N (72-78E), not 44N like Tamil Nadu.
     utm_epsg=32643,
     # Bengaluru sits on a ridge that splits into three valleys
