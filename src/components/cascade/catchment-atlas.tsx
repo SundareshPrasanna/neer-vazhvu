@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON, Pane, useMap } from "react-leaflet";
 import L from "leaflet";
-import type { Feature, FeatureCollection } from "geojson";
+import type { Feature, FeatureCollection, Geometry, Position } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
@@ -15,9 +15,6 @@ interface LakeProps {
   name_ta: string;
   catchment_area_sqkm: number | null;
   lake_area_sqkm: number | null;
-  degree_in: number | null;
-  degree_out: number | null;
-  cascade_position: number | null;
   drains_to_river: boolean | null;
   river_outlet_distance_km: number | null;
 }
@@ -29,13 +26,42 @@ interface Props {
   zoom?: number;
 }
 
-const C_DEFAULT = "#0ea5e9"; // sky-500   — unselected lake
-const C_SELECTED = "#dc2626"; // red-600  — the lake you clicked
-const C_UPSTREAM = "#2563eb"; // blue-600 — feeds into it
-const C_DOWNSTREAM = "#f59e0b"; // amber-500 — it drains toward
+const C_DEFAULT = "#0ea5e9"; // sky-500  — other lakes
+const C_SELECTED = "#dc2626"; // red-600 — the lake you clicked
+const C_INSIDE = "#2563eb"; // blue-600 — tank within the catchment (feeds it)
 
-/** Fits to the selected catchment when it loads; flies back to the city
- *  view when Reset is pressed (resetKey changes). */
+// --- client-side point-in-polygon (even-odd over all rings, handles holes
+//     and MultiPolygon), so we can tell which tanks sit inside a catchment. ---
+function pointInRing(x: number, y: number, ring: Position[]): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const xi = ring[i][0], yi = ring[i][1];
+    const xj = ring[j][0], yj = ring[j][1];
+    if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+function pointInPolygon(x: number, y: number, rings: Position[][]): boolean {
+  let inside = false;
+  for (const ring of rings) if (pointInRing(x, y, ring)) inside = !inside;
+  return inside;
+}
+function pointInGeom(x: number, y: number, geom: Geometry): boolean {
+  if (geom.type === "Polygon") return pointInPolygon(x, y, geom.coordinates);
+  if (geom.type === "MultiPolygon") return geom.coordinates.some((p) => pointInPolygon(x, y, p));
+  return false;
+}
+function centroidOf(geom: Geometry): [number, number] | null {
+  let ring: Position[] | null = null;
+  if (geom.type === "Polygon") ring = geom.coordinates[0];
+  else if (geom.type === "MultiPolygon") ring = geom.coordinates[0]?.[0] ?? null;
+  if (!ring || !ring.length) return null;
+  let sx = 0, sy = 0;
+  for (const [x, y] of ring) { sx += x; sy += y; }
+  return [sx / ring.length, sy / ring.length];
+}
+
+/** Fit to the selected catchment when it loads; fly back to the city view on Reset. */
 function MapController({
   fitGeom,
   resetKey,
@@ -63,7 +89,6 @@ function MapController({
 export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: Props) {
   const tiles = useMapTiles();
   const [lakes, setLakes] = useState<FeatureCollection | null>(null);
-  const [edges, setEdges] = useState<FeatureCollection | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [catchment, setCatchment] = useState<Feature | null>(null);
   const [streams, setStreams] = useState<FeatureCollection | null>(null);
@@ -75,47 +100,28 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
       .then((r) => r.json())
       .then(setLakes)
       .catch(() => setLakes(null));
-    fetch(`/data/cascade/${cityId}-cascade-edges.geojson`)
-      .then((r) => r.json())
-      .then(setEdges)
-      .catch(() => setEdges(null));
   }, [cityId]);
 
-  const { adjUp, adjDown, lakeById } = useMemo(() => {
-    const adjUp = new Map<number, number[]>();
-    const adjDown = new Map<number, number[]>();
-    edges?.features.forEach((e) => {
-      const f = e.properties?.from_osm_id as number;
-      const t = e.properties?.to_osm_id as number;
-      adjDown.set(f, [...(adjDown.get(f) ?? []), t]);
-      adjUp.set(t, [...(adjUp.get(t) ?? []), f]);
-    });
-    const lakeById = new Map<number, LakeProps>();
-    lakes?.features.forEach((f) => {
-      const p = f.properties as unknown as LakeProps;
-      lakeById.set(p.osm_id, p);
-    });
-    return { adjUp, adjDown, lakeById };
-  }, [edges, lakes]);
+  const lakeById = useMemo(() => {
+    const m = new Map<number, LakeProps>();
+    lakes?.features.forEach((f) => m.set((f.properties as { osm_id: number }).osm_id, f.properties as unknown as LakeProps));
+    return m;
+  }, [lakes]);
 
-  const { upstream, downstream } = useMemo(() => {
-    const walk = (start: number, adj: Map<number, number[]>) => {
-      const seen = new Set<number>();
-      const stack = [start];
-      while (stack.length) {
-        const n = stack.pop()!;
-        for (const m of adj.get(n) ?? []) {
-          if (!seen.has(m)) {
-            seen.add(m);
-            stack.push(m);
-          }
-        }
-      }
-      return seen;
-    };
-    if (selected == null) return { upstream: new Set<number>(), downstream: new Set<number>() };
-    return { upstream: walk(selected, adjUp), downstream: walk(selected, adjDown) };
-  }, [selected, adjUp, adjDown]);
+  // Tanks whose centroid falls inside the selected catchment = the lakes that
+  // drain into it. Computed from the fetched catchment polygon, client-side.
+  const inside = useMemo(() => {
+    const s = new Set<number>();
+    if (!catchment || !lakes) return s;
+    const geom = catchment.geometry;
+    for (const f of lakes.features) {
+      const id = (f.properties as { osm_id: number }).osm_id;
+      if (id === selected) continue;
+      const c = centroidOf(f.geometry);
+      if (c && pointInGeom(c[0], c[1], geom)) s.add(id);
+    }
+    return s;
+  }, [catchment, lakes, selected]);
 
   function selectLake(osmId: number) {
     setSelected(osmId);
@@ -139,16 +145,9 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
   }
 
   function lakeStyle(osmId: number): PathOptions {
-    const color =
-      osmId === selected
-        ? C_SELECTED
-        : upstream.has(osmId)
-          ? C_UPSTREAM
-          : downstream.has(osmId)
-            ? C_DOWNSTREAM
-            : C_DEFAULT;
-    const hi = osmId === selected || upstream.has(osmId) || downstream.has(osmId);
-    return { color, weight: osmId === selected ? 2 : 1, fillColor: color, fillOpacity: hi ? 0.65 : 0.35 };
+    const color = osmId === selected ? C_SELECTED : inside.has(osmId) ? C_INSIDE : C_DEFAULT;
+    const hi = osmId === selected || inside.has(osmId);
+    return { color, weight: osmId === selected ? 2 : 1, fillColor: color, fillOpacity: hi ? 0.65 : 0.3 };
   }
 
   const sel = selected != null ? lakeById.get(selected) ?? null : null;
@@ -161,36 +160,36 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
           <MapController fitGeom={catchment} resetKey={resetKey} center={center} zoom={zoom} />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
-          {/* Catchment — the area of influence, beneath everything. */}
+          {/* Catchment — neutral dashed outline (the area of influence). */}
           <Pane name="catchment" style={{ zIndex: 410 }}>
             {catchment && (
               <GeoJSON
                 key={`catch-${selected}`}
                 data={catchment}
-                style={{ color: "#1d4ed8", weight: 2, fillColor: "#3b82f6", fillOpacity: 0.15 }}
+                style={{ color: "#334155", weight: 1.5, dashArray: "5 4", fillColor: "#94a3b8", fillOpacity: 0.1 }}
               />
             )}
           </Pane>
 
-          {/* Feeder streams within the selected catchment, width by Strahler order. */}
+          {/* Feeder streams within the catchment, width by Strahler order. */}
           <Pane name="streams" style={{ zIndex: 418 }}>
             {streams && (
               <GeoJSON
                 key={`streams-${selected}`}
                 data={streams}
                 style={(feat?: Feature) => {
-                  const o = ((feat?.properties as { order?: number })?.order ?? 1);
+                  const o = (feat?.properties as { order?: number })?.order ?? 1;
                   return { color: "#1d4ed8", weight: Math.min(0.5 + o * 0.55, 4), opacity: 0.85 };
                 }}
               />
             )}
           </Pane>
 
-          {/* Clickable lake polygons (real water-body boundaries). */}
+          {/* Clickable lake polygons. */}
           <Pane name="lakes" style={{ zIndex: 430 }}>
             {lakes && (
               <GeoJSON
-                key={`lakes-${selected}-${upstream.size}-${downstream.size}`}
+                key={`lakes-${selected}-${inside.size}`}
                 data={lakes}
                 style={(feat?: Feature) => lakeStyle((feat?.properties as { osm_id: number }).osm_id)}
                 onEachFeature={(feat: Feature, layer: Layer) => {
@@ -198,9 +197,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
                   layer.on("click", () => selectLake(p.osm_id));
                   const label =
                     (p.name || "(unnamed tank)") +
-                    (p.catchment_area_sqkm != null
-                      ? ` · catchment ${p.catchment_area_sqkm.toFixed(1)} km²`
-                      : "");
+                    (p.catchment_area_sqkm != null ? ` · catchment ${p.catchment_area_sqkm.toFixed(1)} km²` : "");
                   layer.bindTooltip(label, { sticky: true });
                 }}
               />
@@ -208,7 +205,6 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
           </Pane>
         </MapContainer>
 
-        {/* Reset view */}
         {selected != null && (
           <button
             onClick={reset}
@@ -218,12 +214,14 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
           </button>
         )}
 
-        {/* Legend */}
         <div className="absolute bottom-4 left-4 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow px-3 py-2 text-xs space-y-1">
           <LegendDot color={C_SELECTED} label="Selected lake" />
-          <LegendDot color={C_UPSTREAM} label="Upstream (feeds it)" />
-          <LegendDot color={C_DOWNSTREAM} label="Downstream (drains toward)" />
+          <LegendDot color={C_INSIDE} label="Tank in catchment (feeds it)" />
           <LegendDot color={C_DEFAULT} label="Other lakes" />
+          <div className="flex items-center gap-2 pt-0.5">
+            <span className="inline-block w-4 h-0.5 bg-blue-700" />
+            <span className="text-slate-600 dark:text-slate-300">Feeder streams</span>
+          </div>
         </div>
       </div>
 
@@ -239,7 +237,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               drains into it. Click any lake to see its{" "}
               <strong className="text-slate-800 dark:text-slate-200">area of influence</strong>
               {" "}— the catchment it collects from, the feeder streams that carry
-              water in, the lakes upstream, and where its overflow drains.
+              water in, and the tanks within it that drain toward it.
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-500">
               Catchments and streams are terrain-derived from FABDEM 30 m
@@ -253,9 +251,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
                 {sel.name || "(unnamed tank)"}
               </h2>
-              {sel.name_ta && (
-                <div className="text-sm text-slate-500 dark:text-slate-400">{sel.name_ta}</div>
-              )}
+              {sel.name_ta && <div className="text-sm text-slate-500 dark:text-slate-400">{sel.name_ta}</div>}
             </header>
 
             <div className="grid grid-cols-2 gap-3">
@@ -270,10 +266,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
                 }
                 emphasis
               />
-              <Stat
-                label="Lake surface"
-                value={sel.lake_area_sqkm != null ? `${sel.lake_area_sqkm.toFixed(2)} km²` : "—"}
-              />
+              <Stat label="Lake surface" value={sel.lake_area_sqkm != null ? `${sel.lake_area_sqkm.toFixed(2)} km²` : "—"} />
             </div>
 
             <section>
@@ -281,24 +274,17 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
                 Drainage network
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                <Stat label="Upstream lakes" value={String(upstream.size)} />
-                <Stat label="Downstream lakes" value={String(downstream.size)} />
+                <Stat label="Tanks in catchment" value={loading ? "…" : String(inside.size)} />
                 <Stat label="Drains to river" value={sel.drains_to_river ? "Yes" : "No"} />
                 <Stat
                   label="Distance to river"
-                  value={
-                    sel.river_outlet_distance_km != null
-                      ? `${sel.river_outlet_distance_km.toFixed(1)} km`
-                      : "—"
-                  }
+                  value={sel.river_outlet_distance_km != null ? `${sel.river_outlet_distance_km.toFixed(1)} km` : "—"}
                 />
               </div>
             </section>
 
             <section className="rounded-lg border border-dashed border-slate-300 dark:border-slate-700 p-3 text-xs text-slate-500 dark:text-slate-400">
-              <div className="font-semibold text-slate-600 dark:text-slate-300 mb-1">
-                Coming next
-              </div>
+              <div className="font-semibold text-slate-600 dark:text-slate-300 mb-1">Coming next</div>
               Rainfall over this catchment, estimated rooftop-harvest potential,
               and buildings in the catchment.
             </section>
