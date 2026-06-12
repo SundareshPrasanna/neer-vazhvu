@@ -50,7 +50,7 @@ import rasterio
 from rasterio.features import rasterize, shapes
 from rasterio.merge import merge as rio_merge
 from rasterio.warp import Resampling, calculate_default_transform, reproject
-from shapely.geometry import mapping, shape
+from shapely.geometry import LineString, MultiLineString, mapping, shape
 from shapely.ops import transform as shp_transform, unary_union
 
 from app.cascade.districts import DistrictCascadeConfig
@@ -68,8 +68,10 @@ _NEIGHBORS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 
 # GEE getDownloadURL has a per-request pixel/byte ceiling; tile the fetch.
 _FETCH_TILE_DEG = 0.20
 # Flow-accumulation threshold (cells) above which a cell is treated as a
-# stream channel for the streams layer. ~1500 cells * 900 m2 ~= 1.35 km2.
-_STREAM_THRESHOLD_CELLS = 1500
+# stream channel for the feeder-stream layer. ~800 cells * 900 m2 ~= 0.72 km2,
+# which gives a dense dendritic network without overwhelming the catchment.
+_STREAM_THRESHOLD_CELLS = 800
+_STREAM_NEIGHBORS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
 
 # Conduits (rivers/canals/creeks) are not impoundments: their "catchment" is a
@@ -191,6 +193,9 @@ def _condition_and_route(dem_utm: Path, workdir: Path) -> tuple[Path, Path]:
     wbt.d8_pointer("breach.tif", "d8.tif")
     _log("WBT d8_flow_accumulation ...")
     wbt.d8_flow_accumulation("breach.tif", "acc.tif", out_type="cells")
+    _log("WBT extract_streams + strahler_stream_order ...")
+    wbt.extract_streams("acc.tif", "streams.tif", threshold=_STREAM_THRESHOLD_CELLS)
+    wbt.strahler_stream_order("d8.tif", "streams.tif", "strahler.tif")
     return workdir / "d8.tif", workdir / "acc.tif"
 
 
@@ -246,6 +251,71 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
     cell_area_m2 = abs(T.a * T.e)
     to_utm = pyproj.Transformer.from_crs("EPSG:4326", f"EPSG:{district.utm_epsg}", always_xy=True).transform
     to_wgs = pyproj.Transformer.from_crs(f"EPSG:{district.utm_epsg}", "EPSG:4326", always_xy=True).transform
+
+    # --- Feeder-stream network (for the per-lake "streams in this catchment"
+    # overlay). Chain each stream cell to its highest-accumulation neighbour:
+    # that is the true downstream cell regardless of the D8 pointer encoding,
+    # so the segments trace the natural curved channels. Precomputed once;
+    # clipped to each lake's watershed in the loop. ---
+    strahler_path = workdir / "strahler.tif"
+    if not strahler_path.exists():
+        from whitebox import WhiteboxTools
+
+        wbt = WhiteboxTools()
+        wbt.set_working_dir(str(workdir))
+        wbt.verbose = False
+        wbt.extract_streams("acc.tif", "streams.tif", threshold=_STREAM_THRESHOLD_CELLS)
+        wbt.strahler_stream_order("d8.tif", "streams.tif", "strahler.tif")
+    sa = rasterio.open(strahler_path).read(1)
+    sy, sx = np.where(sa > 0)
+    s_order = sa[sy, sx]
+    _tr = pyproj.Transformer.from_crs(f"EPSG:{district.utm_epsg}", "EPSG:4326", always_xy=True)
+
+    def _cells_to_wgs(rows: np.ndarray, cols: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        lo, la = _tr.transform(T.c + (cols + 0.5) * T.a, T.f + (rows + 0.5) * T.e)
+        return np.round(lo, 5), np.round(la, 5)
+
+    slon, slat = _cells_to_wgs(sy, sx)
+    # Downstream endpoint of each stream cell = its highest-accumulation
+    # neighbour. Vectorised over the 8 directions across all stream cells.
+    own = acc[sy, sx]
+    best = own.copy()
+    bnr, bnc = sy.copy(), sx.copy()
+    for dr, dc in _STREAM_NEIGHBORS:
+        nr, nc = sy + dr, sx + dc
+        inb = (nr >= 0) & (nr < H) & (nc >= 0) & (nc < W)
+        nv = np.where(inb, acc[np.clip(nr, 0, H - 1), np.clip(nc, 0, W - 1)], -1)
+        take = nv > best
+        best = np.where(take, nv, best)
+        bnr = np.where(take, nr, bnr)
+        bnc = np.where(take, nc, bnc)
+    s_valid = best > own
+    dlon, dlat = _cells_to_wgs(bnr, bnc)
+
+    def _streams_in(mask: np.ndarray) -> dict[str, Any]:
+        """Stream features (grouped by Strahler order) where `mask` (over the
+        stream-cell arrays) is true. One scan to the catchment's stream cells,
+        then group + build coordinates with numpy (no per-segment Python loop)."""
+        idx = np.where(mask & s_valid)[0]
+        if not len(idx):
+            return {"type": "FeatureCollection", "features": []}
+        orders = s_order[idx]
+        feats: list[dict[str, Any]] = []
+        for order in np.unique(orders):
+            ii = idx[orders == order]
+            coords = np.stack(
+                [np.column_stack([slon[ii], slat[ii]]),
+                 np.column_stack([dlon[ii], dlat[ii]])],
+                axis=1,
+            ).tolist()
+            feats.append({
+                "type": "Feature",
+                "properties": {"order": int(order)},
+                "geometry": {"type": "MultiLineString", "coordinates": coords},
+            })
+        return {"type": "FeatureCollection", "features": feats}
+
+    streams_by_lake: dict[str, Any] = {}
 
     # Canonical node set (osm_ids in the cascade graph) + per-node graph props.
     nodes_fc = json.loads(district.cascade_nodes_geojson_path().read_text(encoding="utf-8"))
@@ -331,6 +401,9 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
             },
             "geometry": mapping(poly.simplify(0.0001, preserve_topology=True)),
         })
+
+        # Feeder streams clipped to this lake's catchment.
+        streams_by_lake[str(osm_id)] = _streams_in(ws[sy, sx])
         done += 1
         if done % 200 == 0:
             _log(f"  delineated {done}/{len(polys)}")
@@ -346,6 +419,11 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
     district.cascade_lakes_geojson_path().write_text(
         json.dumps({"type": "FeatureCollection", "features": lake_features}, ensure_ascii=False) + "\n",
         encoding="utf-8",
+    )
+
+    # Write per-lake feeder streams, keyed by osm_id (served on click).
+    district.cascade_catchment_streams_json_path().write_text(
+        json.dumps(streams_by_lake, separators=(",", ":")) + "\n", encoding="utf-8"
     )
 
     # Extend the nodes file in place with catchment_area_sqkm.

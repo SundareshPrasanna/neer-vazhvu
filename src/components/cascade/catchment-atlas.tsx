@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, Pane } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, Pane, useMap } from "react-leaflet";
+import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
@@ -33,13 +34,41 @@ const C_SELECTED = "#dc2626"; // red-600  — the lake you clicked
 const C_UPSTREAM = "#2563eb"; // blue-600 — feeds into it
 const C_DOWNSTREAM = "#f59e0b"; // amber-500 — it drains toward
 
+/** Fits to the selected catchment when it loads; flies back to the city
+ *  view when Reset is pressed (resetKey changes). */
+function MapController({
+  fitGeom,
+  resetKey,
+  center,
+  zoom,
+}: {
+  fitGeom: Feature | null;
+  resetKey: number;
+  center: [number, number];
+  zoom: number;
+}) {
+  const map = useMap();
+  useEffect(() => {
+    if (!fitGeom) return;
+    const b = L.geoJSON(fitGeom).getBounds();
+    if (b.isValid()) map.fitBounds(b, { padding: [50, 50], maxZoom: 14 });
+  }, [fitGeom, map]);
+  useEffect(() => {
+    if (resetKey > 0) map.flyTo(center, zoom, { duration: 0.8 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetKey]);
+  return null;
+}
+
 export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: Props) {
   const tiles = useMapTiles();
   const [lakes, setLakes] = useState<FeatureCollection | null>(null);
   const [edges, setEdges] = useState<FeatureCollection | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [catchment, setCatchment] = useState<Feature | null>(null);
-  const [loadingCatch, setLoadingCatch] = useState(false);
+  const [streams, setStreams] = useState<FeatureCollection | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     fetch(`/data/cascade/${cityId}-cascade-lakes.geojson`)
@@ -52,7 +81,6 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
       .catch(() => setEdges(null));
   }, [cityId]);
 
-  // Directed adjacency over the cascade edge graph + lake prop lookup.
   const { adjUp, adjDown, lakeById } = useMemo(() => {
     const adjUp = new Map<number, number[]>();
     const adjDown = new Map<number, number[]>();
@@ -70,7 +98,6 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
     return { adjUp, adjDown, lakeById };
   }, [edges, lakes]);
 
-  // Walk the full upstream / downstream chains from the selected lake.
   const { upstream, downstream } = useMemo(() => {
     const walk = (start: number, adj: Map<number, number[]>) => {
       const seen = new Set<number>();
@@ -90,27 +117,25 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
     return { upstream: walk(selected, adjUp), downstream: walk(selected, adjDown) };
   }, [selected, adjUp, adjDown]);
 
-  // Edges that lie on the selected lake's chain, for highlighting.
-  const chainEdges = useMemo(() => {
-    if (selected == null || !edges) return null;
-    const up = new Set([selected, ...upstream]);
-    const down = new Set([selected, ...downstream]);
-    const feats = edges.features.filter((e) => {
-      const f = e.properties?.from_osm_id as number;
-      const t = e.properties?.to_osm_id as number;
-      return (up.has(f) && up.has(t)) || (down.has(f) && down.has(t));
-    });
-    return { type: "FeatureCollection", features: feats } as FeatureCollection;
-  }, [selected, edges, upstream, downstream]);
-
   function selectLake(osmId: number) {
     setSelected(osmId);
     setCatchment(null);
-    setLoadingCatch(true);
+    setStreams(null);
+    setLoading(true);
     fetch(`/api/cascade/${cityId}/catchment?osm_id=${osmId}`)
       .then((r) => (r.ok ? r.json() : null))
-      .then((f) => setCatchment(f))
-      .finally(() => setLoadingCatch(false));
+      .then((d) => {
+        setCatchment(d?.catchment ?? null);
+        setStreams(d?.streams ?? null);
+      })
+      .finally(() => setLoading(false));
+  }
+
+  function reset() {
+    setSelected(null);
+    setCatchment(null);
+    setStreams(null);
+    setResetKey((k) => k + 1);
   }
 
   function lakeStyle(osmId: number): PathOptions {
@@ -123,12 +148,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
             ? C_DOWNSTREAM
             : C_DEFAULT;
     const hi = osmId === selected || upstream.has(osmId) || downstream.has(osmId);
-    return {
-      color,
-      weight: osmId === selected ? 2 : 1,
-      fillColor: color,
-      fillOpacity: hi ? 0.6 : 0.35,
-    };
+    return { color, weight: osmId === selected ? 2 : 1, fillColor: color, fillOpacity: hi ? 0.65 : 0.35 };
   }
 
   const sel = selected != null ? lakeById.get(selected) ?? null : null;
@@ -138,26 +158,30 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
       <div className="relative flex-1 h-full">
         <MapContainer center={center} zoom={zoom} className="h-full w-full" preferCanvas>
           <MapResizer />
+          <MapController fitGeom={catchment} resetKey={resetKey} center={center} zoom={zoom} />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
-          {/* Selected catchment polygon — the area of influence, beneath the lakes. */}
+          {/* Catchment — the area of influence, beneath everything. */}
           <Pane name="catchment" style={{ zIndex: 410 }}>
             {catchment && (
               <GeoJSON
                 key={`catch-${selected}`}
                 data={catchment}
-                style={{ color: "#1d4ed8", weight: 2, fillColor: "#3b82f6", fillOpacity: 0.18 }}
+                style={{ color: "#1d4ed8", weight: 2, fillColor: "#3b82f6", fillOpacity: 0.15 }}
               />
             )}
           </Pane>
 
-          {/* Highlighted cascade chain. */}
-          <Pane name="chain" style={{ zIndex: 420 }}>
-            {chainEdges && (
+          {/* Feeder streams within the selected catchment, width by Strahler order. */}
+          <Pane name="streams" style={{ zIndex: 418 }}>
+            {streams && (
               <GeoJSON
-                key={`chain-${selected}`}
-                data={chainEdges}
-                style={{ color: "#475569", weight: 1.5, opacity: 0.7 }}
+                key={`streams-${selected}`}
+                data={streams}
+                style={(feat?: Feature) => {
+                  const o = ((feat?.properties as { order?: number })?.order ?? 1);
+                  return { color: "#1d4ed8", weight: Math.min(0.5 + o * 0.55, 4), opacity: 0.85 };
+                }}
               />
             )}
           </Pane>
@@ -168,9 +192,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               <GeoJSON
                 key={`lakes-${selected}-${upstream.size}-${downstream.size}`}
                 data={lakes}
-                style={(feat?: Feature) =>
-                  lakeStyle((feat?.properties as { osm_id: number }).osm_id)
-                }
+                style={(feat?: Feature) => lakeStyle((feat?.properties as { osm_id: number }).osm_id)}
                 onEachFeature={(feat: Feature, layer: Layer) => {
                   const p = feat.properties as unknown as LakeProps;
                   layer.on("click", () => selectLake(p.osm_id));
@@ -185,6 +207,16 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
             )}
           </Pane>
         </MapContainer>
+
+        {/* Reset view */}
+        {selected != null && (
+          <button
+            onClick={reset}
+            className="absolute top-3 right-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-md shadow px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+          >
+            Reset view
+          </button>
+        )}
 
         {/* Legend */}
         <div className="absolute bottom-4 left-4 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow px-3 py-2 text-xs space-y-1">
@@ -206,13 +238,13 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               Every lake sits at the bottom of a catchment: the land whose rain
               drains into it. Click any lake to see its{" "}
               <strong className="text-slate-800 dark:text-slate-200">area of influence</strong>
-              {" "}— the catchment it collects from, the lakes upstream that feed
-              it, and where its overflow drains downstream.
+              {" "}— the catchment it collects from, the feeder streams that carry
+              water in, the lakes upstream, and where its overflow drains.
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-500">
-              Catchments are terrain-derived from FABDEM 30 m elevation
-              (WhiteboxTools D8 flow routing). Rivers and canals are excluded —
-              they are conduits, not catchments.
+              Catchments and streams are terrain-derived from FABDEM 30 m
+              elevation (WhiteboxTools flow routing). Rivers and canals are
+              excluded — they are conduits, not catchments.
             </p>
           </div>
         ) : (
@@ -232,7 +264,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
                 value={
                   sel.catchment_area_sqkm != null
                     ? `${sel.catchment_area_sqkm.toFixed(1)} km²`
-                    : loadingCatch
+                    : loading
                       ? "…"
                       : "n/a"
                 }
@@ -271,14 +303,8 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               and buildings in the catchment.
             </section>
 
-            <button
-              onClick={() => {
-                setSelected(null);
-                setCatchment(null);
-              }}
-              className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              ← Clear selection
+            <button onClick={reset} className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+              ← Reset view
             </button>
           </div>
         )}
@@ -293,9 +319,7 @@ function Stat({ label, value, emphasis }: { label: string; value: string; emphas
       <div className="text-xs text-slate-500 dark:text-slate-400">{label}</div>
       <div
         className={`mt-0.5 font-semibold tabular-nums ${
-          emphasis
-            ? "text-xl text-blue-700 dark:text-blue-300"
-            : "text-base text-slate-900 dark:text-slate-100"
+          emphasis ? "text-xl text-blue-700 dark:text-blue-300" : "text-base text-slate-900 dark:text-slate-100"
         }`}
       >
         {value}

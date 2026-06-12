@@ -2,25 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
 
-// Serve a single catchment polygon by osm_id. The full
-// {city}-cascade-catchments.geojson is several MB (707 polygons for
-// Chennai); shipping it whole to the client would be wasteful, so the
-// atlas fetches just the selected lake's catchment on click. The parsed
-// file is cached in module scope (the server process stays warm) keyed
-// by city, as an osm_id -> Feature map.
-type FeatureMap = Map<number, unknown> | null;
-const CACHE = new Map<string, FeatureMap>();
+// On click, the atlas fetches one lake's catchment polygon AND the feeder
+// streams within that catchment. Both are read from precomputed files (the
+// full catchments geojson is several MB; the streams file is keyed by
+// osm_id), parsed once and cached in module scope.
+const DIR = path.join(process.cwd(), "public", "data", "cascade");
 
-function loadCity(cityId: string): FeatureMap {
-  if (CACHE.has(cityId)) return CACHE.get(cityId)!;
-  const fp = path.join(
-    process.cwd(),
-    "public",
-    "data",
-    "cascade",
-    `${cityId}-cascade-catchments.geojson`,
-  );
-  let result: FeatureMap = null;
+type CatchMap = Map<number, unknown> | null;
+const CATCH_CACHE = new Map<string, CatchMap>();
+const STREAM_CACHE = new Map<string, Record<string, unknown> | null>();
+
+function loadCatchments(cityId: string): CatchMap {
+  if (CATCH_CACHE.has(cityId)) return CATCH_CACHE.get(cityId)!;
+  const fp = path.join(DIR, `${cityId}-cascade-catchments.geojson`);
+  let result: CatchMap = null;
   if (fs.existsSync(fp)) {
     try {
       const fc = JSON.parse(fs.readFileSync(fp, "utf-8")) as {
@@ -33,7 +28,22 @@ function loadCity(cityId: string): FeatureMap {
       result = null;
     }
   }
-  CACHE.set(cityId, result);
+  CATCH_CACHE.set(cityId, result);
+  return result;
+}
+
+function loadStreams(cityId: string): Record<string, unknown> | null {
+  if (STREAM_CACHE.has(cityId)) return STREAM_CACHE.get(cityId)!;
+  const fp = path.join(DIR, `${cityId}-catchment-streams.json`);
+  let result: Record<string, unknown> | null = null;
+  if (fs.existsSync(fp)) {
+    try {
+      result = JSON.parse(fs.readFileSync(fp, "utf-8")) as Record<string, unknown>;
+    } catch {
+      result = null;
+    }
+  }
+  STREAM_CACHE.set(cityId, result);
   return result;
 }
 
@@ -46,13 +56,11 @@ export async function GET(
   if (!Number.isFinite(osmId)) {
     return NextResponse.json({ error: "osm_id required" }, { status: 400 });
   }
-  const byId = loadCity(cityId);
-  if (!byId) {
-    return NextResponse.json({ error: "no catchment data" }, { status: 404 });
-  }
-  const feat = byId.get(osmId);
-  if (!feat) {
+  const catchments = loadCatchments(cityId);
+  const catchment = catchments?.get(osmId) ?? null;
+  if (!catchment) {
     return NextResponse.json({ error: "not found" }, { status: 404 });
   }
-  return NextResponse.json(feat);
+  const streams = loadStreams(cityId)?.[String(osmId)] ?? null;
+  return NextResponse.json({ catchment, streams });
 }
