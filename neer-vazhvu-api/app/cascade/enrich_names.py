@@ -67,8 +67,10 @@ def _sync_names_from_source(district: DistrictCascadeConfig, lakes: dict) -> int
                 p["name_ta"] = alt_by_id[oid]
             updated += 1
 
-    patched = {f["properties"]["osm_id"]: (f["properties"].get("name") or "").strip()
-               for f in lakes["features"]}
+    patched = {
+        f["properties"]["osm_id"]: (f["properties"].get("name") or "").strip()
+        for f in lakes["features"]
+    }
     for f in lakes["features"]:
         p = f["properties"]
         dst = p.get("drains_to_osm_id")
@@ -90,7 +92,10 @@ def _assign_river_names(district: DistrictCascadeConfig, lakes: dict) -> int:
     ).transform
     rivers_fc = json.loads(rivers_path.read_text(encoding="utf-8"))
     rivers = [
-        ((f["properties"].get("name") or "").strip(), shp_transform(to_utm, shape(f["geometry"])))
+        (
+            (f["properties"].get("name") or "").strip(),
+            shp_transform(to_utm, shape(f["geometry"])),
+        )
         for f in rivers_fc["features"]
         if (f["properties"].get("name") or "").strip()
     ]
@@ -134,19 +139,29 @@ def enrich_cascade_lakes(district: DistrictCascadeConfig) -> dict[str, int]:
     lakes = json.loads(lakes_path.read_text(encoding="utf-8"))
     names_synced = _sync_names_from_source(district, lakes)
     rivers_named = _assign_river_names(district, lakes)
-    lakes_path.write_text(json.dumps(lakes, ensure_ascii=False) + "\n", encoding="utf-8")
-    total_named = sum(1 for f in lakes["features"] if (f["properties"].get("name") or "").strip())
+    lakes_path.write_text(
+        json.dumps(lakes, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    total_named = sum(
+        1 for f in lakes["features"] if (f["properties"].get("name") or "").strip()
+    )
     n = len(lakes["features"])
-    print(f"[enrich-names] {district.district_id}: synced {names_synced} names, "
-          f"named river for {rivers_named} terminals; {total_named}/{n} lakes named "
-          f"({100 * total_named // n if n else 0}%)")
+    print(
+        f"[enrich-names] {district.district_id}: synced {names_synced} names, "
+        f"named river for {rivers_named} terminals; {total_named}/{n} lakes named "
+        f"({100 * total_named // n if n else 0}%)"
+    )
     return {"names_synced": names_synced, "rivers_named": rivers_named}
 
 
 def main(argv: list[str] | None = None) -> None:
     import sys
 
-    cities = (argv if argv is not None else sys.argv[1:]) or ["chennai", "madurai", "bangalore"]
+    cities = (argv if argv is not None else sys.argv[1:]) or [
+        "chennai",
+        "madurai",
+        "bangalore",
+    ]
     for city in cities:
         enrich_cascade_lakes(get_district_cascade_config(city))
 

@@ -57,7 +57,9 @@ def enrich_catchments(district: DistrictCascadeConfig) -> dict[str, Any]:
     rain_mm = _annual_rainfall_mm(district)
     _log(f"annual rainfall normal: {rain_mm:.0f} mm")
 
-    catch = json.loads(district.cascade_catchments_geojson_path().read_text(encoding="utf-8"))
+    catch = json.loads(
+        district.cascade_catchments_geojson_path().read_text(encoding="utf-8")
+    )
     polys = [shape(f["geometry"]) for f in catch["features"]]
     osm_ids = [f["properties"]["osm_id"] for f in catch["features"]]
     tree = STRtree(polys)
@@ -78,7 +80,9 @@ def enrich_catchments(district: DistrictCascadeConfig) -> dict[str, Any]:
         "INSTALL spatial; LOAD spatial; INSTALL httpfs; LOAD httpfs; SET s3_region='us-west-2';"
     )
     if not os.path.exists(cache_path):
-        _log(f"querying Overture buildings in bbox [{minx:.3f},{miny:.3f},{maxx:.3f},{maxy:.3f}] (one-time S3 pull) ...")
+        _log(
+            f"querying Overture buildings in bbox [{minx:.3f},{miny:.3f},{maxx:.3f},{maxy:.3f}] (one-time S3 pull) ..."
+        )
         con.execute(
             f"""
             COPY (
@@ -119,7 +123,9 @@ def enrich_catchments(district: DistrictCascadeConfig) -> dict[str, Any]:
         }
 
     # Write the stats back into the lakes GeoJSON properties.
-    lakes = json.loads(district.cascade_lakes_geojson_path().read_text(encoding="utf-8"))
+    lakes = json.loads(
+        district.cascade_lakes_geojson_path().read_text(encoding="utf-8")
+    )
     for f in lakes["features"]:
         s = stats_by_id.get(f["properties"]["osm_id"])
         if s:
