@@ -191,7 +191,11 @@ Contract rules:
 
 ## 6. Ingestion pipeline (one script, manifest-driven)
 
-`scripts/ingest-basin.ts <basinId>` reads `docs/<source-dir>/ingest-manifest.json`:
+Implemented as `scripts/ingest_basin.py <manifest.json>` (Python, not the
+originally-sketched TS - matches the repo's existing GIS converters and shells
+to GDAL's `ogr2ogr`/`ogrinfo`; CSVs are parsed directly in Python so partner
+header quirks like trailing spaces are handled). It reads
+`docs/<source-dir>/ingest-manifest.json`:
 
 ```jsonc
 {
@@ -217,7 +221,7 @@ simplify above per-family size budgets (boundary/sheds 0.0005 tolerance; drainag
 emit minified files + per-shed slices + a generated `inventory.json` (counts, sizes,
 provenance) consumed by the legend and "Data on this map".
 
-**Validator** (`scripts/validate-basin.ts`, also run by the ingest script): checks contract
+**Validator** (`scripts/validate_basin.py`): checks contract
 conformance - required families present, required properties non-empty, CRS, geometry types,
 `shedId` referential integrity, size budgets - and prints a partner-readable report. This is
 the bottleneck-removal tool: a partner can run it (or we run it on their drop and send the
