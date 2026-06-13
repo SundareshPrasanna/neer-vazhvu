@@ -50,7 +50,7 @@ import rasterio
 from rasterio.features import rasterize, shapes
 from rasterio.merge import merge as rio_merge
 from rasterio.warp import Resampling, calculate_default_transform, reproject
-from shapely.geometry import LineString, MultiLineString, mapping, shape
+from shapely.geometry import LineString, mapping, shape
 from shapely.ops import transform as shp_transform, unary_union
 
 from app.cascade.districts import DistrictCascadeConfig
@@ -256,7 +256,7 @@ def build_vector_streams(district: DistrictCascadeConfig, *, dem_cache: Path) ->
     import shapefile  # pyshp
     import pyproj
     from shapely.strtree import STRtree
-    from shapely.geometry import LineString, MultiLineString, mapping, shape as _shape
+    from shapely.geometry import LineString, mapping, shape as _shape
     from shapely.ops import transform as _tf, unary_union as _union
     from whitebox import WhiteboxTools
 
