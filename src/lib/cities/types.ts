@@ -200,6 +200,13 @@ export interface BasePlaceConfig {
    *  produced the corresponding PMTiles. */
   hasCascadeOverlay?: boolean;
 
+  /** Basin Atlas surfaces hosted by this city. Each id must have a manifest
+   *  in src/lib/basins/ and ingested data under public/data/basins/<id>/.
+   *  Drives the /<city>/basins/<id> route guard and any basin nav entry.
+   *  Basins legitimately exceed city limits; the page states its true extent.
+   *  Omit/empty -> the city offers no basin atlas. */
+  basinIds?: string[];
+
   /** When false, the city is registered (data + scrapers can be wired
    *  up) but excluded from user-facing surfaces: listEnabledPlaces(),
    *  the [cityId] route guard, the city switcher, the nav. Mirrors the

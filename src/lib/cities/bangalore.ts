@@ -116,6 +116,9 @@ export const BANGALORE: CityConfig = {
   // atlas refs) queued for follow-up once WELL Labs Urban Water Balance
   // and IISc kere chain inventories are joined.
   hasCascadeOverlay: true,
+  // Basin Atlas: Arkavathi basin (Vrishabhavathi / Kumudavathi / Suvarnamukhi),
+  // co-built with Paani Earth. Data under public/data/basins/arkavathi/.
+  basinIds: ['arkavathi'],
   sourceNameAliases: {
     krs: 'krs',
     'krishna raja sagar': 'krs',
