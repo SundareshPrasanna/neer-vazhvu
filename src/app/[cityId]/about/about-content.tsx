@@ -9,6 +9,7 @@ import type { CascadeStats } from "@/lib/cascade-stats";
 import { resolveConvergenceExample } from "@/lib/cascade-stats";
 import type { CascadeSensitivity } from "@/lib/cascade-sensitivity";
 import { CascadeMethodologySection } from "@/components/cascade/cascade-methodology-section";
+import { CatchmentMethodologySection } from "@/components/cascade/catchment-methodology-section";
 
 const MaduraiPageDescriptions = dynamic(() =>
   import("./madurai-page-descriptions").then((mod) => mod.MaduraiPageDescriptions),
@@ -519,6 +520,20 @@ export function CityAboutContent({
               edgeConfidenceCounts={cascadeStats.edge_confidence_counts}
               sensitivity={cascadeSensitivity}
             />
+          </Section>
+        )}
+
+        {/* ─────────────────────────────────────────────────────────
+            Lake Catchment Atlas methodology - the "Catchments" view on
+            /water-bodies. Anchor id is referenced from the atlas side
+            panel's "How this is built -->" link.
+            ───────────────────────────────────────────────────────── */}
+        {config.hasCascadeOverlay && (
+          <Section
+            id="catchment-methodology"
+            title={`Lake catchment atlas methodology - ${cityName}`}
+          >
+            <CatchmentMethodologySection cityDisplayName={cityName} />
           </Section>
         )}
 

@@ -1,8 +1,26 @@
 # Lake Catchment Atlas - catchment delineation + clickable area-of-influence
 
-Status: DRAFT spec, 2026-06-12
+Status: SHIPPED (Chennai, Madurai, Bengaluru). This file is the original planning spec, kept for context.
 Owner: Sundaresh
 Reference benchmark: [Hyderabad Lake Atlas](https://lakeatlas.hyderabad.urbanobservatory.in/) (Hyderabad Urban Lab)
+
+> **As-built note.** The authoritative description of what shipped is
+> [docs/methodology/catchment-atlas-v1.md](../methodology/catchment-atlas-v1.md).
+> Several decisions below changed during the build:
+> - **Tooling:** WhiteboxTools (not pysheds) for breach/flow/streams.
+> - **Catchment definition:** a threshold-free **incremental own / received / total**
+>   model (upstream BFS barriered by other water bodies), not pour-point snapping +
+>   a single watershed. own + received = total; no impound-vs-transit heuristics.
+> - **Downstream:** each lake's overflow is traced as a **flow path to the river**
+>   (the "click-anywhere downhill trace" of section 5.3 Phase 2, delivered per-lake).
+> - **Home:** it lives as the **"Catchments" view mode on `/[city]/water-bodies`**
+>   (section 5.1), not a separate `/water-map` route.
+> - **Added after this spec:** the false-river ribbon filter, authoritative
+>   lake-name backfill (ATREE/CSEI for Bengaluru) + downstream-river naming, both
+>   reconciled by `app/cascade/enrich_names.py`.
+> - **Deferred / not built:** client-side rainfall window toggles (5.4) and PMTiles
+>   for catchments (the lake layer ships as static GeoJSON; per-lake catchment /
+>   basin / streams / downstream are fetched on click).
 
 ## 1. Goal
 

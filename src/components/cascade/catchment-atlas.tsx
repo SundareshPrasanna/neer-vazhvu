@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { MapContainer, TileLayer, GeoJSON, Pane, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
@@ -190,6 +191,11 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
     setResetKey((k) => k + 1);
   }
 
+  // Deep link to the catchment methodology on the city's about page (Chennai
+  // uses flat routing). The about page renders it under id="catchment-methodology".
+  const methodologyHref =
+    (cityId === "chennai" ? "/about" : `/${cityId}/about`) + "#catchment-methodology";
+
   function lakeStyle(osmId: number): PathOptions {
     const color =
       osmId === selected
@@ -358,6 +364,12 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               elevation (WhiteboxTools flow routing). Rivers and canals are
               excluded - they are conduits, not catchments.
             </p>
+            <Link
+              href={methodologyHref}
+              className="inline-block text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              How this is built: full methodology &rarr;
+            </Link>
           </div>
         ) : (
           <div className="space-y-4">
@@ -506,9 +518,17 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               </section>
             )}
 
-            <button onClick={reset} className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
-              ← Reset view
-            </button>
+            <div className="flex items-center justify-between gap-3 border-t border-slate-200 dark:border-slate-700 pt-3">
+              <button onClick={reset} className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+                ← Reset view
+              </button>
+              <Link
+                href={methodologyHref}
+                className="text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline"
+              >
+                How this is built &rarr;
+              </Link>
+            </div>
           </div>
         )}
       </aside>

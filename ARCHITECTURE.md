@@ -475,6 +475,26 @@ The four `scripts/verify_rich_body_*.py` scripts take `--body-id` and emit the s
 
 All chips are pre-loaded into the browser cache via `new Image().src = url` on manifest load to eliminate flicker during play/drag. There is no GEE round-trip at view time.
 
+### Lake Catchment Atlas (`/[city]/water-bodies` → "Catchments" view)
+
+A terrain-derived, clickable area-of-influence layer for every lake/tank, live for Chennai, Madurai, and Bengaluru. Where the cascade reconstruction (90 m HydroSHEDS, tank-to-tank edges) is the district-scale skeleton, the atlas delineates the **contributing area** per lake from a 30 m bare-earth DEM. Full methodology: [docs/methodology/catchment-atlas-v1.md](docs/methodology/catchment-atlas-v1.md); original spec: [docs/specs/lake-catchment-atlas.md](docs/specs/lake-catchment-atlas.md).
+
+**Build-time pipeline** ([neer-vazhvu-api/app/cascade/catchments.py](neer-vazhvu-api/app/cascade/catchments.py), algorithm `catchments_fabdem_wbt_v1`):
+
+| Step | Source / tool | Output |
+|------|---------------|--------|
+| DEM mosaic + condition | FABDEM 30 m (GEE `projects/sat-io/open-datasets/FABDEM`) + WhiteboxTools `breach_depressions_least_cost` | cached UTM rasters |
+| Flow routing + streams | WBT D8 pointer / accumulation / `extract_streams` / Strahler / vectorize + Chaikin smooth | `{city}-catchment-streams.json` |
+| Own / received / total catchment | upstream BFS over D8, barriered by other water bodies (threshold-free; own + received = total) | `{city}-cascade-catchments.geojson` (own), `{city}-catchment-basin.json` (total) |
+| Downstream flow path + `drains_to` | max-accumulation neighbour trace, chained along the cascade to the river | `{city}-catchment-downstream.json` |
+| False-river filter | name regex OR thin-ribbon (Polsby-Popper < 0.05 AND catchment/area ratio > 100) | excluded conduits |
+| Rooftop harvest | Overture footprints (DuckDB) clipped to own catchment × IMD rainfall normal × 0.8 | embedded in lakes layer |
+| Names + downstream river | `app/cascade/enrich_names.py` (auto at build end; also a CLI) - syncs names from source, snaps each terminal lake's path to the nearest named river | `drains_to_river_name`, `name` / `name_source` |
+
+**Naming backfill:** OSM under-names water bodies (Chennai ~78%, Bengaluru ~67% unnamed at ingest). [scripts/name-bangalore-water-bodies.py](scripts/name-bangalore-water-bodies.py) polygon-overlap-joins the ATREE/CSEI named-lake census (OpenCity) into the Bengaluru source geojson (446 toponyms, with `name_source`/`name_match_iou` provenance; OSM names never overwritten). `enrich_names.py` re-applies names + river labels onto the published lake layer keyed by `osm_id`, so a name refresh never needs a full re-delineation.
+
+**Serving:** the clickable lake layer is one static GeoJSON (`{city}-cascade-lakes.geojson`, all panel stats embedded). On click, [src/app/api/cascade/[cityId]/catchment/route.ts](src/app/api/cascade/[cityId]/catchment/route.ts) returns `{ catchment, basin, streams, downstream }` for that `osm_id` (module-scope cached). **Frontend** [src/components/cascade/catchment-atlas.tsx](src/components/cascade/catchment-atlas.tsx) is a `/water-bodies` view mode (persisted via `?mode=catchments`, carried across city switches): one map, click-to-emphasise (own catchment solid orange, inherited basin dashed amber, streams Strahler-graded blue, downstream flow dotted violet), with a side panel showing the own/received/total hierarchy, named clickable upstream/downstream lists, the named downstream river, and rooftop-harvest potential. The panel deep-links to the about-page methodology (`#catchment-methodology`).
+
 ## Frontend
 
 ```mermaid

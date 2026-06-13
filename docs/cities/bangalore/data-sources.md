@@ -110,6 +110,17 @@ Notable entries:
 
 13 of these are onboarded as **rich-data deep-zoom bodies** (see below).
 
+### Lake names - ATREE/CSEI named-lake census (catchment atlas)
+
+| | |
+|---|---|
+| **Source** | ATREE / Centre for Social and Environmental Innovation, "Map of Lakes in Bengaluru Urban and Rural Districts" via [OpenCity](https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area) (1,349 named lake polygons, open license) |
+| **Why** | ~67% of OSM Bengaluru water polygons are unnamed; the Jal Dharohar census carries no name field (only village/ward); Nominatim only yields locality guesses. ATREE/CSEI is the canonical named Bengaluru lake census. |
+| **Method** | `scripts/name-bangalore-water-bodies.py` - polygon-overlap join onto OSM polygons (accept IoU >= 0.2, or OSM-mostly-inside-ref with a reverse-overlap guard). 446 real toponyms backfilled with `name_source = "ATREE-CSEI"` + `name_match_iou`; OSM-native names never overwritten. Bengaluru source 19% -> 43% named. |
+| **Output** | names written into `bangalore-water-bodies-current.geojson`; re-synced onto the cascade lake layer by `app/cascade/enrich_names.py` (no re-delineation needed). Raw KMZ/KML under `scripts/data-raw/bangalore/`. |
+
+Powers the **Lake Catchment Atlas** ("Catchments" view on `/bangalore/water-bodies`): per-lake own/received/total catchment, feeder streams, downstream flow path, and rooftop-harvest potential, delineated from FABDEM 30 m + WhiteboxTools. Downstream rivers (Arkavati / Vrishabhavathi / Dakshina Pinakini) named by snapping each terminal lake's flow path to `bangalore-rivers.geojson`. Full methodology: [docs/methodology/catchment-atlas-v1.md](../../methodology/catchment-atlas-v1.md).
+
 ## Rich-Data Deep-Zoom Panel (13 Bengaluru flagship bodies)
 
 | | |

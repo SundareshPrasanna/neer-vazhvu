@@ -7,6 +7,7 @@ import type { CascadeStats } from "@/lib/cascade-stats";
 import { resolveConvergenceExample } from "@/lib/cascade-stats";
 import type { CascadeSensitivity } from "@/lib/cascade-sensitivity";
 import { CascadeMethodologySection } from "@/components/cascade/cascade-methodology-section";
+import { CatchmentMethodologySection } from "@/components/cascade/catchment-methodology-section";
 
 const LOST_WATER_BODY_SOURCES: {
   name: string;
@@ -726,6 +727,15 @@ export function AboutContent({
               edgeConfidenceCounts={cascadeStats.edge_confidence_counts}
               sensitivity={cascadeSensitivity}
             />
+          </Section>
+        )}
+
+        {CHENNAI.hasCascadeOverlay && (
+          <Section
+            id="catchment-methodology"
+            title="Lake catchment atlas methodology - Chennai"
+          >
+            <CatchmentMethodologySection cityDisplayName="Chennai" />
           </Section>
         )}
 
