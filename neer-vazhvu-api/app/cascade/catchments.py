@@ -202,8 +202,17 @@ def _condition_and_route(dem_utm: Path, workdir: Path) -> tuple[Path, Path]:
 # --------------------------------------------------------------------------
 # Per-lake delineation
 # --------------------------------------------------------------------------
-def _bfs_upstream(ptr: np.ndarray, seed_mask: np.ndarray) -> np.ndarray:
-    """Catchment = seed cells + every cell whose D8 path drains into the seed."""
+def _bfs_upstream(
+    ptr: np.ndarray, seed_mask: np.ndarray, barrier: np.ndarray | None = None
+) -> np.ndarray:
+    """Catchment = seed cells + every cell whose D8 path drains into the seed.
+
+    If `barrier` is given (a mask of OTHER water bodies), the trace stops when
+    it reaches a barrier cell - it does not climb past another lake. That
+    yields the lake's OWN (incremental) catchment: the land that drains to it
+    before reaching any other water body. Without a barrier it yields the TOTAL
+    upstream basin (everything that ultimately drains to it).
+    """
     H, W = ptr.shape
     ws = seed_mask.copy()
     q: deque[tuple[int, int]] = deque(map(tuple, np.argwhere(seed_mask)))
@@ -212,11 +221,124 @@ def _bfs_upstream(ptr: np.ndarray, seed_mask: np.ndarray) -> np.ndarray:
         for dr, dc in _NEIGHBORS:
             nr, nc = r + dr, c + dc
             if 0 <= nr < H and 0 <= nc < W and not ws[nr, nc]:
+                if barrier is not None and barrier[nr, nc]:
+                    continue  # another water body upstream -> its land is its own
                 t = D8_DELTAS.get(int(ptr[nr, nc]))
                 if t is not None and nr + t[0] == r and nc + t[1] == c:
                     ws[nr, nc] = True
                     q.append((nr, nc))
     return ws
+
+
+def _chaikin(coords: list[tuple[float, float]], iters: int = 2) -> list[tuple[float, float]]:
+    """Corner-cutting smoothing: turns the D8 staircase into natural curves."""
+    for _ in range(iters):
+        if len(coords) < 3:
+            break
+        out = [coords[0]]
+        for p, q in zip(coords[:-1], coords[1:]):
+            out.append((0.75 * p[0] + 0.25 * q[0], 0.75 * p[1] + 0.25 * q[1]))
+            out.append((0.25 * p[0] + 0.75 * q[0], 0.25 * p[1] + 0.75 * q[1]))
+        out.append(coords[-1])
+        coords = out
+    return coords
+
+
+def build_vector_streams(district: DistrictCascadeConfig, *, dem_cache: Path) -> dict[str, Any]:
+    """Sharper feeder streams: vectorise the stream raster into continuous
+    channel reaches (WhiteboxTools), smooth them (Chaikin), then clip each to a
+    lake's basin. Replaces the blocky per-cell segments. Uses cached rasters +
+    the basin polygons; no catchment re-delineation."""
+    import shapefile  # pyshp
+    import pyproj
+    from shapely.strtree import STRtree
+    from shapely.geometry import LineString, MultiLineString, mapping, shape as _shape
+    from shapely.ops import transform as _tf, unary_union as _union
+    from whitebox import WhiteboxTools
+
+    W = Path(dem_cache)
+    wbt = WhiteboxTools()
+    wbt.set_working_dir(str(W))
+    wbt.verbose = False
+    if not (W / "streams_vec.shp").exists():
+        _log("WBT raster_streams_to_vector ...")
+        wbt.raster_streams_to_vector("streams.tif", "d8.tif", "streams_vec.shp")
+
+    sr = rasterio.open(W / "strahler.tif")
+    sa = sr.read(1)
+    inv = ~sr.transform
+    Hs, Ws = sa.shape
+    to_wgs = pyproj.Transformer.from_crs(
+        f"EPSG:{district.utm_epsg}", "EPSG:4326", always_xy=True
+    ).transform
+
+    reaches: list[Any] = []
+    orders: list[int] = []
+    for sh in shapefile.Reader(str(W / "streams_vec.shp")).shapes():
+        pts = sh.points
+        if len(pts) < 2:
+            continue
+        mx, my = pts[len(pts) // 2]
+        fcol, frow = inv * (mx, my)
+        row, col = int(frow), int(fcol)
+        order = int(sa[row, col]) if 0 <= row < Hs and 0 <= col < Ws else 1
+        g = _tf(to_wgs, LineString(_chaikin(list(pts)))).simplify(0.00004, preserve_topology=True)
+        if not g.is_empty:
+            reaches.append(g)
+            orders.append(max(order, 1))
+    _log(f"{len(reaches)} vectorised stream reaches; clipping to basins")
+
+    tree = STRtree(reaches)
+    basins = json.loads(district.cascade_catchment_basin_json_path().read_text(encoding="utf-8"))
+    out: dict[str, Any] = {}
+    for oid, geom in basins.items():
+        basin = _shape(geom)
+        byo: dict[int, list[Any]] = {}
+        for i in tree.query(basin):
+            clipped = reaches[int(i)].intersection(basin)
+            if clipped.is_empty:
+                continue
+            byo.setdefault(orders[int(i)], []).append(clipped)
+        feats = [
+            {"type": "Feature", "properties": {"order": o},
+             "geometry": mapping(_union(geoms))}
+            for o, geoms in sorted(byo.items())
+        ]
+        out[oid] = {"type": "FeatureCollection", "features": feats}
+
+    district.cascade_catchment_streams_json_path().write_text(
+        json.dumps(out, separators=(",", ":")) + "\n", encoding="utf-8"
+    )
+    return {"district_id": district.district_id, "reaches": len(reaches), "lakes": len(out)}
+
+
+def _trace_downstream(
+    acc: np.ndarray, lake_label: np.ndarray, start: tuple[int, int], self_idx: int,
+    max_steps: int = 6000,
+) -> int:
+    """From a lake's outlet, follow the channel downstream (steepest-accumulation
+    neighbour) until it enters another water body. Returns that lake's label
+    index, or 0 if it reaches a sink / the river / the grid edge first. Pointer-
+    free (max-accumulation = true downstream regardless of D8 encoding)."""
+    H, W = acc.shape
+    r, c = start
+    visited: set[tuple[int, int]] = set()
+    for _ in range(max_steps):
+        best = acc[r, c]
+        nr = nc = -1
+        for dr, dc in _NEIGHBORS:
+            rr, cc = r + dr, c + dc
+            if 0 <= rr < H and 0 <= cc < W and (rr, cc) not in visited and acc[rr, cc] > best:
+                best = acc[rr, cc]
+                nr, nc = rr, cc
+        if nr < 0:
+            return 0
+        lbl = int(lake_label[nr, nc])
+        if lbl and lbl != self_idx:
+            return lbl
+        visited.add((r, c))
+        r, c = nr, nc
+    return 0
 
 
 def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None = None) -> dict[str, Any]:
@@ -333,6 +455,36 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
     }
     _log(f"delineating {len(polys)} of {len(node_ids)} nodes (rest have no polygon)")
 
+    # Pre-project every polygon, and rasterise all (non-named-conduit) water
+    # bodies into one barrier mask. Each lake's OWN (incremental) catchment is
+    # then the upstream trace that STOPS at this barrier - the land draining to
+    # it before reaching any other tank. Named rivers/canals are left out of the
+    # barrier so they act as conveyance, not walls.
+    poly_utm_by_id: dict[int, Any] = {}
+    barrier_shapes: list[tuple[dict[str, Any], int]] = []
+    for oid, m in polys.items():
+        pu = shp_transform(to_utm, m["geom"])
+        poly_utm_by_id[oid] = pu
+        nm = f"{m['name']} {m['name_ta']}".strip()
+        if not (nm and _CONDUIT_NAME_RE.search(nm)):
+            barrier_shapes.append((mapping(pu), 1))
+    all_tanks_mask = (
+        rasterize(barrier_shapes, out_shape=(H, W), transform=T, fill=0, dtype="uint8").astype(bool)
+        if barrier_shapes else np.zeros((H, W), bool)
+    )
+    _log(f"barrier mask: {int(all_tanks_mask.sum())} water-body cells")
+
+    # Lake-label raster (compact index per water body) for downstream tracing.
+    idx_by_id = {oid: i + 1 for i, oid in enumerate(polys)}
+    id_by_idx = {i: oid for oid, i in idx_by_id.items()}
+    lake_label = (
+        rasterize(
+            [(mapping(poly_utm_by_id[oid]), idx_by_id[oid]) for oid in polys],
+            out_shape=(H, W), transform=T, fill=0, dtype="int32",
+        )
+        if polys else np.zeros((H, W), "int32")
+    )
+
     catch_features: list[dict[str, Any]] = []
     lake_features: list[dict[str, Any]] = []
     area_by_id: dict[int, float] = {}
@@ -346,40 +498,56 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
         if name and _CONDUIT_NAME_RE.search(name):
             flagged.append({"osm_id": osm_id, "quality": "conduit_excluded", "name": name})
             continue
-        poly_utm = shp_transform(to_utm, poly)
+        poly_utm = poly_utm_by_id[osm_id]
         seed = rasterize([(mapping(poly_utm), 1)], out_shape=(H, W), transform=T,
                          fill=0, dtype="uint8").astype(bool)
         if not seed.any():
             flagged.append({"osm_id": osm_id, "quality": "no_seed_subpixel"})
             continue
-        ws = _bfs_upstream(ptr, seed)
-        area_km2 = round(ws.sum() * cell_area_m2 / 1e6, 3)
+        # TOTAL = whole upstream basin; OWN = stops at the next water body.
+        total_ws = _bfs_upstream(ptr, seed)
+        own_ws = _bfs_upstream(ptr, seed, barrier=all_tanks_mask)
+        total_km2 = round(total_ws.sum() * cell_area_m2 / 1e6, 3)
+        own_km2 = round(own_ws.sum() * cell_area_m2 / 1e6, 3)
+        received_km2 = round(max(total_km2 - own_km2, 0.0), 3)
         lake_km2 = round(seed.sum() * cell_area_m2 / 1e6, 3)
         # Unnamed thin ribbon draining a whole basin = a river segment, not a tank.
         if (not name and _polsby_popper(poly) < _RIBBON_COMPACTNESS_MAX
-                and lake_km2 > 0 and area_km2 / lake_km2 > _RIBBON_CATCHMENT_RATIO_MIN):
+                and lake_km2 > 0 and total_km2 / lake_km2 > _RIBBON_CATCHMENT_RATIO_MIN):
             flagged.append({"osm_id": osm_id, "quality": "conduit_excluded",
-                            "catchment_area_sqkm": area_km2, "note": "unnamed_ribbon"})
+                            "catchment_area_sqkm": total_km2, "note": "unnamed_ribbon"})
             continue
-        touches_edge = bool(ws[0, :].any() or ws[-1, :].any() or ws[:, 0].any() or ws[:, -1].any())
+        touches_edge = bool(total_ws[0, :].any() or total_ws[-1, :].any()
+                            or total_ws[:, 0].any() or total_ws[:, -1].any())
         quality = "edge_touch_maybe_clipped" if touches_edge else "ok"
-        area_by_id[osm_id] = area_km2
+        area_by_id[osm_id] = own_km2  # headline = the lake's OWN catchment
         if touches_edge:
-            flagged.append({"osm_id": osm_id, "quality": quality, "catchment_area_sqkm": area_km2})
+            flagged.append({"osm_id": osm_id, "quality": quality, "total_upstream_sqkm": total_km2})
 
-        geoms = [shape(g) for g, v in shapes(ws.astype("uint8"), mask=ws, transform=T) if v == 1]
+        # The drawn tile is the OWN (incremental) catchment - non-overlapping,
+        # so the district reads as a clean mosaic rather than nested basins.
+        geoms = [shape(g) for g, v in shapes(own_ws.astype("uint8"), mask=own_ws, transform=T) if v == 1]
         catch_utm = unary_union(geoms).simplify(15.0, preserve_topology=True)
         catch_features.append({
             "type": "Feature",
             "properties": {
                 "osm_id": osm_id,
-                "catchment_area_sqkm": area_km2,
+                "catchment_area_sqkm": own_km2,        # OWN (headline)
+                "total_upstream_sqkm": total_km2,      # full basin (roll-up)
+                "received_sqkm": received_km2,          # inherited from upstream
                 "lake_area_sqkm": lake_km2,
                 "touches_edge": touches_edge,
                 "quality": quality,
             },
             "geometry": mapping(shp_transform(to_wgs, catch_utm)),
         })
+
+        # Downstream cascade neighbour: trace this lake's outlet to the first
+        # lake it reaches. Embeds the cascade graph in the lakes file.
+        outlet_flat = int(np.argmax(np.where(seed, acc, -1)))
+        dlbl = _trace_downstream(acc, lake_label, divmod(outlet_flat, W), idx_by_id[osm_id])
+        drains_to = id_by_idx.get(dlbl)
+        drains_to_name = polys[drains_to]["name"] if drains_to in polys else ""
 
         # Clickable lake layer: the real water-body polygon (not a centroid
         # circle), delineated lakes only (conduits already filtered out),
@@ -391,7 +559,11 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
                 "osm_id": osm_id,
                 "name": meta["name"],
                 "name_ta": meta["name_ta"],
-                "catchment_area_sqkm": area_km2,
+                "catchment_area_sqkm": own_km2,         # OWN (headline area of influence)
+                "total_upstream_sqkm": total_km2,       # full basin draining through it
+                "received_sqkm": received_km2,           # inherited from upstream tanks
+                "drains_to_osm_id": drains_to,           # cascade: where its overflow goes next
+                "drains_to_name": drains_to_name,
                 "lake_area_sqkm": lake_km2,
                 "degree_in": np_.get("degree_in"),
                 "degree_out": np_.get("degree_out"),
@@ -402,8 +574,9 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
             "geometry": mapping(poly.simplify(0.0001, preserve_topology=True)),
         })
 
-        # Feeder streams clipped to this lake's catchment.
-        streams_by_lake[str(osm_id)] = _streams_in(ws[sy, sx])
+        # Feeder streams across the whole basin (own + inherited), so the
+        # upstream feeders flowing in are visible, not just the local ones.
+        streams_by_lake[str(osm_id)] = _streams_in(total_ws[sy, sx])
         done += 1
         if done % 200 == 0:
             _log(f"  delineated {done}/{len(polys)}")
@@ -425,6 +598,10 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
     district.cascade_catchment_streams_json_path().write_text(
         json.dumps(streams_by_lake, separators=(",", ":")) + "\n", encoding="utf-8"
     )
+
+    # NOTE: per-lake TOTAL basin polygons ({district}-catchment-basin.json) are
+    # generated separately (extracted from the full-BFS catchments), not in this
+    # hot loop - vectorising every basin here was the run-time bottleneck.
 
     # Extend the nodes file in place with catchment_area_sqkm.
     for f in nodes_fc["features"]:

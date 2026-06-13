@@ -210,6 +210,11 @@ class DistrictCascadeConfig:
     def cascade_catchment_streams_json_path(self) -> Path:
         return CASCADE_OUTPUT_DIR / f"{self.district_id}-catchment-streams.json"
 
+    def cascade_catchment_basin_json_path(self) -> Path:
+        # Per-lake TOTAL upstream basin polygon (own + inherited), keyed by
+        # osm_id, served on click so the map can shade inherited under own.
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-catchment-basin.json"
+
 
 _MADURAI = DistrictCascadeConfig(
     district_id="madurai",

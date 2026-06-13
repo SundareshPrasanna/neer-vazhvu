@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON, Pane, useMap } from "react-leaflet";
 import L from "leaflet";
-import type { Feature, FeatureCollection, Geometry, Position } from "geojson";
+import type { Feature, FeatureCollection, Geometry } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
@@ -13,7 +13,11 @@ interface LakeProps {
   osm_id: number;
   name: string;
   name_ta: string;
-  catchment_area_sqkm: number | null;
+  catchment_area_sqkm: number | null;   // OWN / direct catchment (headline)
+  total_upstream_sqkm?: number | null;   // full basin draining through it
+  received_sqkm?: number | null;          // inherited from upstream tanks
+  drains_to_osm_id?: number | null;        // cascade: where its overflow goes next
+  drains_to_name?: string | null;
   lake_area_sqkm: number | null;
   drains_to_river: boolean | null;
   river_outlet_distance_km: number | null;
@@ -30,40 +34,10 @@ interface Props {
   zoom?: number;
 }
 
-const C_DEFAULT = "#0ea5e9"; // sky-500   — other lakes
-const C_SELECTED = "#e11d48"; // rose-600 — the lake you clicked (crimson, off the amber)
-const C_INSIDE = "#2563eb"; // blue-600  — tank within the catchment (feeds it)
-
-// --- client-side point-in-polygon (even-odd over all rings, handles holes
-//     and MultiPolygon), so we can tell which tanks sit inside a catchment. ---
-function pointInRing(x: number, y: number, ring: Position[]): boolean {
-  let inside = false;
-  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-    const xi = ring[i][0], yi = ring[i][1];
-    const xj = ring[j][0], yj = ring[j][1];
-    if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
-  }
-  return inside;
-}
-function pointInPolygon(x: number, y: number, rings: Position[][]): boolean {
-  let inside = false;
-  for (const ring of rings) if (pointInRing(x, y, ring)) inside = !inside;
-  return inside;
-}
-function pointInGeom(x: number, y: number, geom: Geometry): boolean {
-  if (geom.type === "Polygon") return pointInPolygon(x, y, geom.coordinates);
-  if (geom.type === "MultiPolygon") return geom.coordinates.some((p) => pointInPolygon(x, y, p));
-  return false;
-}
-function centroidOf(geom: Geometry): [number, number] | null {
-  let ring: Position[] | null = null;
-  if (geom.type === "Polygon") ring = geom.coordinates[0];
-  else if (geom.type === "MultiPolygon") ring = geom.coordinates[0]?.[0] ?? null;
-  if (!ring || !ring.length) return null;
-  let sx = 0, sy = 0;
-  for (const [x, y] of ring) { sx += x; sy += y; }
-  return [sx / ring.length, sy / ring.length];
-}
+const C_DEFAULT = "#0ea5e9"; // sky-500    - other lakes
+const C_SELECTED = "#e11d48"; // rose-600  - the lake you clicked
+const C_UPSTREAM = "#2563eb"; // blue-600  - feeds it (upstream cascade)
+const C_DOWNSTREAM = "#7c3aed"; // violet-600 - its overflow drains here (downstream cascade)
 
 /** Fit to the selected catchment when it loads; fly back to the city view on Reset. */
 function MapController({
@@ -95,6 +69,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
   const [lakes, setLakes] = useState<FeatureCollection | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [catchment, setCatchment] = useState<Feature | null>(null);
+  const [basin, setBasin] = useState<Geometry | null>(null);
   const [streams, setStreams] = useState<FeatureCollection | null>(null);
   const [loading, setLoading] = useState(false);
   const [resetKey, setResetKey] = useState(0);
@@ -106,36 +81,53 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
       .catch(() => setLakes(null));
   }, [cityId]);
 
-  const lakeById = useMemo(() => {
-    const m = new Map<number, LakeProps>();
-    lakes?.features.forEach((f) => m.set((f.properties as { osm_id: number }).osm_id, f.properties as unknown as LakeProps));
-    return m;
+  // Lake lookup + the cascade graph (each lake -> the lake its overflow
+  // drains into next), built from the embedded drains_to_osm_id.
+  const { lakeById, adjUp, adjDown } = useMemo(() => {
+    const lakeById = new Map<number, LakeProps>();
+    const adjUp = new Map<number, number[]>();
+    const adjDown = new Map<number, number[]>();
+    lakes?.features.forEach((f) => {
+      const p = f.properties as unknown as LakeProps;
+      lakeById.set(p.osm_id, p);
+      const to = p.drains_to_osm_id;
+      if (to != null) {
+        adjDown.set(p.osm_id, [...(adjDown.get(p.osm_id) ?? []), to]);
+        adjUp.set(to, [...(adjUp.get(to) ?? []), p.osm_id]);
+      }
+    });
+    return { lakeById, adjUp, adjDown };
   }, [lakes]);
 
-  // Tanks whose centroid falls inside the selected catchment = the lakes that
-  // drain into it. Computed from the fetched catchment polygon, client-side.
-  const inside = useMemo(() => {
-    const s = new Set<number>();
-    if (!catchment || !lakes) return s;
-    const geom = catchment.geometry;
-    for (const f of lakes.features) {
-      const id = (f.properties as { osm_id: number }).osm_id;
-      if (id === selected) continue;
-      const c = centroidOf(f.geometry);
-      if (c && pointInGeom(c[0], c[1], geom)) s.add(id);
-    }
-    return s;
-  }, [catchment, lakes, selected]);
+  // Walk the cascade: upstream = everything that feeds the selected lake;
+  // downstream = the chain its overflow flows down.
+  const { upstream, downstream } = useMemo(() => {
+    const walk = (start: number, adj: Map<number, number[]>) => {
+      const seen = new Set<number>();
+      const stack = [start];
+      while (stack.length) {
+        const n = stack.pop()!;
+        for (const m of adj.get(n) ?? []) {
+          if (!seen.has(m)) { seen.add(m); stack.push(m); }
+        }
+      }
+      return seen;
+    };
+    if (selected == null) return { upstream: new Set<number>(), downstream: new Set<number>() };
+    return { upstream: walk(selected, adjUp), downstream: walk(selected, adjDown) };
+  }, [selected, adjUp, adjDown]);
 
   function selectLake(osmId: number) {
     setSelected(osmId);
     setCatchment(null);
+    setBasin(null);
     setStreams(null);
     setLoading(true);
     fetch(`/api/cascade/${cityId}/catchment?osm_id=${osmId}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         setCatchment(d?.catchment ?? null);
+        setBasin(d?.basin ?? null);
         setStreams(d?.streams ?? null);
       })
       .finally(() => setLoading(false));
@@ -144,14 +136,22 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
   function reset() {
     setSelected(null);
     setCatchment(null);
+    setBasin(null);
     setStreams(null);
     setResetKey((k) => k + 1);
   }
 
   function lakeStyle(osmId: number): PathOptions {
-    const color = osmId === selected ? C_SELECTED : inside.has(osmId) ? C_INSIDE : C_DEFAULT;
-    const hi = osmId === selected || inside.has(osmId);
-    return { color, weight: osmId === selected ? 2 : 1, fillColor: color, fillOpacity: hi ? 0.65 : 0.3 };
+    const color =
+      osmId === selected
+        ? C_SELECTED
+        : upstream.has(osmId)
+          ? C_UPSTREAM
+          : downstream.has(osmId)
+            ? C_DOWNSTREAM
+            : C_DEFAULT;
+    const hi = osmId === selected || upstream.has(osmId) || downstream.has(osmId);
+    return { color, weight: osmId === selected ? 2 : 1, fillColor: color, fillOpacity: hi ? 0.7 : 0.3 };
   }
 
   const sel = selected != null ? lakeById.get(selected) ?? null : null;
@@ -161,22 +161,44 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
       <div className="relative flex-1 h-full">
         <MapContainer center={center} zoom={zoom} className="h-full w-full" preferCanvas>
           <MapResizer />
-          <MapController fitGeom={catchment} resetKey={resetKey} center={center} zoom={zoom} />
+          <MapController
+            fitGeom={basin ? ({ type: "Feature", properties: {}, geometry: basin } as Feature) : catchment}
+            resetKey={resetKey}
+            center={center}
+            zoom={zoom}
+          />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
-          {/* Catchment — warm amber, complementary to the blue water/streams.
-              Deep amber boundary on the light map; bright gold on the dark map. */}
+          {/* Inherited area - the total basin (own + received) in a faint amber
+              underneath; the part not covered by the bright own catchment above
+              reads as "inherited from upstream." */}
+          <Pane name="basin" style={{ zIndex: 405 }}>
+            {basin && (
+              <GeoJSON
+                key={`basin-${selected}-${tiles.isDark ? "d" : "l"}`}
+                data={{ type: "Feature", properties: {}, geometry: basin } as Feature}
+                style={{
+                  color: tiles.isDark ? "#fcd34d" : "#b45309", // boundary of the inherited basin
+                  weight: 1.5,
+                  dashArray: "5 5",
+                  fillColor: "#fcd34d", // amber-300, a pale wash = inherited
+                  fillOpacity: tiles.isDark ? 0.12 : 0.2,
+                }}
+              />
+            )}
+          </Pane>
+
+          {/* Own catchment - bright amber. Deep boundary on light, gold on dark. */}
           <Pane name="catchment" style={{ zIndex: 410 }}>
             {catchment && (
               <GeoJSON
                 key={`catch-${selected}-${tiles.isDark ? "d" : "l"}`}
                 data={catchment}
                 style={{
-                  color: tiles.isDark ? "#fbbf24" : "#b45309",
-                  weight: tiles.isDark ? 2 : 2.5,
-                  dashArray: "6 4",
-                  fillColor: tiles.isDark ? "#f59e0b" : "#d97706",
-                  fillOpacity: tiles.isDark ? 0.14 : 0.28,
+                  color: tiles.isDark ? "#fb923c" : "#9a3412", // solid orange boundary = direct catchment
+                  weight: 2.5,
+                  fillColor: tiles.isDark ? "#ea580c" : "#ea580c", // orange-600, strong = own/direct
+                  fillOpacity: tiles.isDark ? 0.4 : 0.45,
                 }}
               />
             )}
@@ -190,7 +212,8 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
                 data={streams}
                 style={(feat?: Feature) => {
                   const o = (feat?.properties as { order?: number })?.order ?? 1;
-                  return { color: "#1d4ed8", weight: Math.min(0.5 + o * 0.55, 4), opacity: 0.85 };
+                  // order-1 dendrites stay visible (~1.2px); trunks scale up.
+                  return { color: "#1d4ed8", weight: Math.min(0.9 + o * 0.6, 4.5), opacity: 0.9 };
                 }}
               />
             )}
@@ -200,7 +223,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
           <Pane name="lakes" style={{ zIndex: 430 }}>
             {lakes && (
               <GeoJSON
-                key={`lakes-${selected}-${inside.size}`}
+                key={`lakes-${selected}-${upstream.size}-${downstream.size}`}
                 data={lakes}
                 style={(feat?: Feature) => lakeStyle((feat?.properties as { osm_id: number }).osm_id)}
                 onEachFeature={(feat: Feature, layer: Layer) => {
@@ -227,11 +250,20 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
 
         <div className="absolute bottom-4 left-4 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow px-3 py-2 text-xs space-y-1">
           <LegendDot color={C_SELECTED} label="Selected lake" />
-          <LegendDot color={C_INSIDE} label="Tank in catchment (feeds it)" />
+          <LegendDot color={C_UPSTREAM} label="Upstream - feeds it" />
+          <LegendDot color={C_DOWNSTREAM} label="Downstream - drains to" />
           <LegendDot color={C_DEFAULT} label="Other lakes" />
           <div className="flex items-center gap-2 pt-0.5">
             <span className="inline-block w-4 h-0.5 bg-blue-700" />
             <span className="text-slate-600 dark:text-slate-300">Feeder streams</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: "#ea580c", opacity: 0.85 }} />
+            <span className="text-slate-600 dark:text-slate-300">Direct catchment (drains straight in)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: "#fcd34d", opacity: 0.7 }} />
+            <span className="text-slate-600 dark:text-slate-300">Inherited basin (from upstream)</span>
           </div>
           <div className="flex items-center gap-2">
             <span
@@ -247,19 +279,19 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
         {!sel ? (
           <div className="text-slate-600 dark:text-slate-400 space-y-3">
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-              {cityDisplayName} — lake catchments
+              {cityDisplayName} - lake catchments
             </h1>
             <p>
               Every lake sits at the bottom of a catchment: the land whose rain
               drains into it. Click any lake to see its{" "}
               <strong className="text-slate-800 dark:text-slate-200">area of influence</strong>
-              {" "}— the catchment it collects from, the feeder streams that carry
+              {" "}- the catchment it collects from, the feeder streams that carry
               water in, and the tanks within it that drain toward it.
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-500">
               Catchments and streams are terrain-derived from FABDEM 30 m
               elevation (WhiteboxTools flow routing). Rivers and canals are
-              excluded — they are conduits, not catchments.
+              excluded - they are conduits, not catchments.
             </p>
           </div>
         ) : (
@@ -271,31 +303,53 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               {sel.name_ta && <div className="text-sm text-slate-500 dark:text-slate-400">{sel.name_ta}</div>}
             </header>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Stat
-                label="Catchment (area of influence)"
-                value={
-                  sel.catchment_area_sqkm != null
-                    ? `${sel.catchment_area_sqkm.toFixed(1)} km²`
-                    : loading
-                      ? "…"
-                      : "n/a"
-                }
-                emphasis
-              />
-              <Stat label="Lake surface" value={sel.lake_area_sqkm != null ? `${sel.lake_area_sqkm.toFixed(2)} km²` : "—"} />
-            </div>
+            <Stat
+              label="Direct catchment (area of influence)"
+              value={
+                sel.catchment_area_sqkm != null
+                  ? `${sel.catchment_area_sqkm.toFixed(1)} km²`
+                  : loading
+                    ? "…"
+                    : "n/a"
+              }
+              emphasis
+            />
+            {/* Cascade hierarchy: own + received = total upstream basin. */}
+            {sel.total_upstream_sqkm != null &&
+              sel.received_sqkm != null &&
+              sel.received_sqkm > 0.05 && (
+                <div className="rounded-lg bg-slate-50 dark:bg-slate-800/50 p-3 text-xs space-y-1">
+                  <Row label="Drains directly into it" value={`${(sel.catchment_area_sqkm ?? 0).toFixed(1)} km²`} />
+                  <Row
+                    label="Inherited from upstream tanks"
+                    value={`+ ${sel.received_sqkm.toFixed(1)} km²`}
+                  />
+                  <div className="border-t border-slate-200 dark:border-slate-700 pt-1">
+                    <Row
+                      label="Total upstream basin"
+                      value={`${sel.total_upstream_sqkm.toFixed(1)} km²`}
+                      bold
+                    />
+                  </div>
+                </div>
+              )}
+            <Stat label="Lake surface" value={sel.lake_area_sqkm != null ? `${sel.lake_area_sqkm.toFixed(2)} km²` : "-"} />
 
             <section>
               <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
-                Drainage network
+                Cascade
               </h3>
-              <div className="grid grid-cols-2 gap-3">
-                <Stat label="Tanks in catchment" value={loading ? "…" : String(inside.size)} />
+              <Stat
+                label="Overflow drains to"
+                value={sel.drains_to_name ? sel.drains_to_name : sel.drains_to_river ? "the river →" : "-"}
+              />
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <Stat label="Upstream tanks (feed it)" value={String(upstream.size)} />
+                <Stat label="Downstream tanks" value={String(downstream.size)} />
                 <Stat label="Drains to river" value={sel.drains_to_river ? "Yes" : "No"} />
                 <Stat
                   label="Distance to river"
-                  value={sel.river_outlet_distance_km != null ? `${sel.river_outlet_distance_km.toFixed(1)} km` : "—"}
+                  value={sel.river_outlet_distance_km != null ? `${sel.river_outlet_distance_km.toFixed(1)} km` : "-"}
                 />
               </div>
             </section>
@@ -317,11 +371,11 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
                   />
                   <Stat
                     label="Rooftop area"
-                    value={sel.rooftop_area_sqkm != null ? `${sel.rooftop_area_sqkm.toFixed(2)} km²` : "—"}
+                    value={sel.rooftop_area_sqkm != null ? `${sel.rooftop_area_sqkm.toFixed(2)} km²` : "-"}
                   />
                   <Stat
                     label="Annual rainfall"
-                    value={sel.annual_rainfall_mm != null ? `${sel.annual_rainfall_mm.toFixed(0)} mm` : "—"}
+                    value={sel.annual_rainfall_mm != null ? `${sel.annual_rainfall_mm.toFixed(0)} mm` : "-"}
                   />
                 </div>
                 <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-2">
@@ -356,6 +410,19 @@ function Stat({ label, value, emphasis }: { label: string; value: string; emphas
       >
         {value}
       </div>
+    </div>
+  );
+}
+
+function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3">
+      <span className={bold ? "text-slate-700 dark:text-slate-200 font-medium" : "text-slate-500 dark:text-slate-400"}>
+        {label}
+      </span>
+      <span className={`tabular-nums ${bold ? "font-bold text-slate-900 dark:text-slate-100" : "text-slate-600 dark:text-slate-300"}`}>
+        {value}
+      </span>
     </div>
   );
 }

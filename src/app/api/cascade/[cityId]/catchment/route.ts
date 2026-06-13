@@ -11,6 +11,7 @@ const DIR = path.join(process.cwd(), "public", "data", "cascade");
 type CatchMap = Map<number, unknown> | null;
 const CATCH_CACHE = new Map<string, CatchMap>();
 const STREAM_CACHE = new Map<string, Record<string, unknown> | null>();
+const BASIN_CACHE = new Map<string, Record<string, unknown> | null>();
 
 function loadCatchments(cityId: string): CatchMap {
   if (CATCH_CACHE.has(cityId)) return CATCH_CACHE.get(cityId)!;
@@ -32,9 +33,13 @@ function loadCatchments(cityId: string): CatchMap {
   return result;
 }
 
-function loadStreams(cityId: string): Record<string, unknown> | null {
-  if (STREAM_CACHE.has(cityId)) return STREAM_CACHE.get(cityId)!;
-  const fp = path.join(DIR, `${cityId}-catchment-streams.json`);
+function loadKeyed(
+  cityId: string,
+  suffix: string,
+  cache: Map<string, Record<string, unknown> | null>,
+): Record<string, unknown> | null {
+  if (cache.has(cityId)) return cache.get(cityId)!;
+  const fp = path.join(DIR, `${cityId}-${suffix}`);
   let result: Record<string, unknown> | null = null;
   if (fs.existsSync(fp)) {
     try {
@@ -43,7 +48,7 @@ function loadStreams(cityId: string): Record<string, unknown> | null {
       result = null;
     }
   }
-  STREAM_CACHE.set(cityId, result);
+  cache.set(cityId, result);
   return result;
 }
 
@@ -61,6 +66,7 @@ export async function GET(
   if (!catchment) {
     return NextResponse.json({ error: "not found" }, { status: 404 });
   }
-  const streams = loadStreams(cityId)?.[String(osmId)] ?? null;
-  return NextResponse.json({ catchment, streams });
+  const streams = loadKeyed(cityId, "catchment-streams.json", STREAM_CACHE)?.[String(osmId)] ?? null;
+  const basin = loadKeyed(cityId, "catchment-basin.json", BASIN_CACHE)?.[String(osmId)] ?? null;
+  return NextResponse.json({ catchment, basin, streams });
 }
