@@ -1,8 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import fs from "node:fs";
+import path from "node:path";
 import { tryGetPlaceConfig } from "@/lib/cities";
+import { basinsForCity, type BasinInventory } from "@/lib/basins";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import RiversClient, { type RiverInfo } from "./rivers-client";
+
+function loadBasinInventory(basinId: string): BasinInventory | null {
+  const fp = path.join(process.cwd(), "public", "data", "basins", basinId, "inventory.json");
+  try {
+    return JSON.parse(fs.readFileSync(fp, "utf-8")) as BasinInventory;
+  } catch {
+    return null;
+  }
+}
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -245,6 +257,14 @@ export default async function CityRiversPage({ params }: PageProps) {
   const mapZoom = cityId === "bangalore" ? 10 : 9;
   const scopeLabel = RIVERS_SCOPE_LABEL[cityId] ?? "Basin system";
 
+  // Additive: if a river on this page has a deep basin atlas, hand it down so
+  // clicking that river can open the layered basin view. The standard rivers
+  // map is unchanged for everyone else.
+  const basin = basinsForCity(cityId)[0] ?? null;
+  const basinProp = basin
+    ? { manifest: basin, inventory: loadBasinInventory(basin.basinId) }
+    : null;
+
   return (
     <RiversClient
       cityId={cityId}
@@ -253,6 +273,7 @@ export default async function CityRiversPage({ params }: PageProps) {
       mapZoom={mapZoom}
       scopeLabel={scopeLabel}
       riverInfo={riverInfo}
+      basin={basinProp}
     />
   );
 }

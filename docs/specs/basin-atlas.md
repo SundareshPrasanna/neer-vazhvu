@@ -112,9 +112,18 @@ One additive field on `BasePlaceConfig` (mirrors `hasCascadeOverlay`):
 basinIds?: string[];
 ```
 
-Bangalore first: `basinIds: ['arkavathi']`. Route: `/[cityId]/basins/[basinId]`
-(decision: basin pages are city-scoped for nav/i18n consistency, even though basins exceed
-city limits; the page states its true extent, per the Madurai scope-label precedent).
+Bangalore first: `basinIds: ['arkavathi']`.
+
+**Route (revised 2026-06-13): the atlas is a drill-down FROM the standard rivers page, not a
+separate endpoint and not a replacement.** `/[cityId]/rivers` is unchanged - it shows all the
+city's rivers as before. When a river that belongs to a basin is clicked (Arkavathi or
+Vrishabhavathi on the Bangalore map; mapped via a small id alias since the rivers page predates
+the manifest), the layered basin atlas opens as a full overlay over the map, pre-scoped to that
+river, with a "Back to rivers" affordance. Rivers without basin data (Dakshina Pinakini) keep
+their standard info panel. There is no `/basins` URL; the atlas is reached only by clicking a
+river, so the depth is discovered on the map people already use (this is why the click +
+coach-mark framing matters). The atlas component takes `embedded`/`onClose`/`initialRiverId`
+props for this overlay mode (skips URL syncing when embedded).
 
 ## 4. Basin manifest (one file per basin, the only per-basin "code")
 

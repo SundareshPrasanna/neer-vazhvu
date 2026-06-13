@@ -20,6 +20,13 @@ interface Props {
   cityDisplayName: string;
   manifest: BasinManifest;
   inventory: BasinInventory | null;
+  /** Pre-select a river (e.g. when opened by clicking it on the rivers map). */
+  initialRiverId?: string | null;
+  /** Embedded as an overlay (over the rivers page): skip URL syncing and show
+   *  a back button instead of relying on the address bar. */
+  embedded?: boolean;
+  /** Back affordance when embedded. */
+  onClose?: () => void;
 }
 
 // The elevator floors, top (surface) to bottom (causes + accountability).
@@ -76,14 +83,14 @@ function MapController({
   return null;
 }
 
-export function BasinAtlas({ cityDisplayName, manifest, inventory }: Props) {
+export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, embedded = false, onClose }: Props) {
   const tiles = useMapTiles();
 
   const [focusedFloor, setFocusedFloor] = useState<BasinFloor>("hydrology");
   const [enabled, setEnabled] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(manifest.layers.map((l) => [l.family, l.defaultOn])),
   );
-  const [selectedRiverId, setSelectedRiverId] = useState<string | null>(null);
+  const [selectedRiverId, setSelectedRiverId] = useState<string | null>(initialRiverId);
   const [selectedFeature, setSelectedFeature] = useState<{ family: string; props: Record<string, unknown> } | null>(null);
   const [data, setData] = useState<Record<string, FC | null>>({});
   const [zoom, setZoom] = useState(manifest.mapZoom);
@@ -110,23 +117,26 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory }: Props) {
   );
 
   // URL <-> state (?river= & ?level=), via replaceState (no full navigation).
+  // Skipped when embedded as an overlay so we don't clobber the rivers-page URL.
   useEffect(() => {
+    setCoachDismissed(localStorage.getItem(COACH_KEY) === "1");
+    if (embedded) return;
     const p = new URLSearchParams(window.location.search);
     const r = p.get("river");
     const lvl = p.get("level") as BasinFloor | null;
     if (r && manifest.rivers.some((x) => x.riverId === r)) setSelectedRiverId(r);
     if (lvl && FLOORS.some((f) => f.id === lvl)) setFocusedFloor(lvl);
-    setCoachDismissed(localStorage.getItem(COACH_KEY) === "1");
-  }, [manifest.rivers]);
+  }, [manifest.rivers, embedded]);
 
   useEffect(() => {
+    if (embedded) return;
     const p = new URLSearchParams(window.location.search);
     if (selectedRiverId) p.set("river", selectedRiverId);
     else p.delete("river");
     p.set("level", focusedFloor);
     const qs = p.toString();
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
-  }, [selectedRiverId, focusedFloor]);
+  }, [selectedRiverId, focusedFloor, embedded]);
 
   // Should a layer render right now? (gates fetching too.)
   function shouldRender(l: BasinLayer): boolean {
@@ -209,7 +219,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory }: Props) {
   const floorLayers = (floor: BasinFloor) => manifest.layers.filter((l) => l.floor === floor);
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col md:flex-row">
+    <div className="h-full w-full flex flex-col md:flex-row">
       {/* ── Elevator rail ── */}
       <div className="shrink-0 md:w-60 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto">
         <div className="p-3 border-b border-slate-200 dark:border-slate-700">
@@ -295,8 +305,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory }: Props) {
           <MapController fitBounds={fitBounds} resetKey={resetKey} center={manifest.mapCenter} zoom={manifest.mapZoom} onZoom={setZoom} />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
-          <Pane name="b-fill" style={{ zIndex: 400 }} />
-          <Pane name="b-shed" style={{ zIndex: 405 }} />
+          {/* z-order, bottom to top: non-interactive base outlines, then the
+              clickable sheds, then thematic fills/lines/points on top so they
+              win hit-testing (canvas hit-test ignores fill:false). */}
+          <Pane name="b-base" style={{ zIndex: 390 }} />
+          <Pane name="b-shed" style={{ zIndex: 400 }} />
+          <Pane name="b-fill" style={{ zIndex: 410 }} />
           <Pane name="b-line" style={{ zIndex: 420 }} />
           <Pane name="b-point" style={{ zIndex: 440 }} />
 
@@ -311,21 +325,20 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory }: Props) {
 
             if (l.family === "sub-hydrosheds") {
               return (
-                <Pane key={l.family} name="b-shed-wrap" style={{ zIndex: 405 }}>
-                  <GeoJSON
-                    key={`shed-${selectedRiverId}-${tiles.isDark}`}
-                    data={fcScoped}
-                    pane="b-shed"
-                    style={(feat?: Feature) => shedStyle(feat, selectedSheds, faded)}
-                    onEachFeature={(feat: Feature, layer: Layer) => {
-                      const sid = String((feat.properties as Record<string, unknown>)?.shedId ?? "");
-                      const name = String((feat.properties as Record<string, unknown>)?.name ?? "sub-catchment");
-                      const river = shedToRiver.get(sid);
-                      layer.bindTooltip(river ? `${name} (click: ${manifest.rivers.find((r) => r.riverId === river)?.displayName})` : name, { sticky: true });
-                      if (river) layer.on("click", () => selectRiver(river));
-                    }}
-                  />
-                </Pane>
+                <GeoJSON
+                  key={`shed-${selectedRiverId}-${tiles.isDark}`}
+                  data={fcScoped}
+                  pane="b-shed"
+                  style={(feat?: Feature) => shedStyle(feat, selectedSheds, faded)}
+                  onEachFeature={(feat: Feature, layer: Layer) => {
+                    const sid = String((feat.properties as Record<string, unknown>)?.shedId ?? "");
+                    const name = String((feat.properties as Record<string, unknown>)?.name ?? "sub-catchment");
+                    const river = shedToRiver.get(sid);
+                    const rName = manifest.rivers.find((r) => r.riverId === river)?.displayName;
+                    layer.bindTooltip(river ? `${name} - click for ${rName}` : name, { sticky: true });
+                    if (river) layer.on("click", () => selectRiver(river));
+                  }}
+                />
               );
             }
 
@@ -336,6 +349,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory }: Props) {
                   data={fcScoped}
                   pane="b-line"
                   style={(feat?: Feature) => lineStyle(l, feat, manifest, selectedRiverId, faded)}
+                  interactive={l.family === "rivers"}
                   onEachFeature={(feat: Feature, layer: Layer) => {
                     if (l.family === "rivers") {
                       const rid = String((feat.properties as Record<string, unknown>)?.riverId ?? "");
@@ -361,35 +375,50 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory }: Props) {
                   }
                   onEachFeature={(feat: Feature, layer: Layer) => {
                     const p = (feat.properties ?? {}) as Record<string, unknown>;
-                    layer.bindTooltip(String(p.name ?? p.contributor ?? l.label), { sticky: true });
+                    layer.bindTooltip(tipLabel(p, l), { sticky: true });
                     layer.on("click", () => setSelectedFeature({ family: l.family, props: p }));
                   }}
                 />
               );
             }
 
-            // fill (boundary, waterbodies, pressures, admin, command-areas)
+            // fill: boundary + admin are non-interactive base outlines (so they
+            // never steal hover from the layers above); waterbodies / pressures
+            // / command-areas are interactive thematic fills. pointToLayer keeps
+            // any point geometry (e.g. waste-facility) a circle, not a default
+            // marker (which would 404 its icon and render broken).
+            const isBase = l.family === "boundary" || l.family.startsWith("admin");
             return (
               <GeoJSON
                 key={`${l.family}-${selectedRiverId}-${tiles.isDark}`}
                 data={fcScoped}
-                pane={l.family === "boundary" ? "b-line" : "b-fill"}
+                pane={isBase ? "b-base" : "b-fill"}
+                interactive={!isBase}
                 style={(feat?: Feature) => fillStyle(l, feat, faded)}
+                pointToLayer={(feat, latlng) => L.circleMarker(latlng, pressurePointStyle(feat, faded))}
                 onEachFeature={(feat: Feature, layer: Layer) => {
+                  if (isBase) return;
                   const p = (feat.properties ?? {}) as Record<string, unknown>;
-                  const label = String(p.name ?? p.kind ?? l.label);
-                  layer.bindTooltip(label, { sticky: true });
-                  if (l.family !== "boundary" && l.family !== "admin-district") {
-                    layer.on("click", () => setSelectedFeature({ family: l.family, props: p }));
-                  }
+                  layer.bindTooltip(tipLabel(p, l), { sticky: true });
+                  layer.on("click", () => setSelectedFeature({ family: l.family, props: p }));
                 }}
               />
             );
           })}
         </MapContainer>
 
+        {/* Back to the rivers map (only when opened as an overlay). */}
+        {embedded && onClose && (
+          <button
+            onClick={onClose}
+            className="absolute top-3 left-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-md shadow px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+          >
+            ← Back to rivers
+          </button>
+        )}
+
         {/* Coach mark */}
-        {!coachDismissed && !selectedRiverId && (
+        {!embedded && !coachDismissed && !selectedRiverId && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[500] bg-slate-900/95 text-white text-xs rounded-full px-4 py-2 shadow-lg flex items-center gap-3">
             <span>Click a river to explore its pollution story</span>
             <button
@@ -430,6 +459,19 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory }: Props) {
 }
 
 // ── styling ──────────────────────────────────────────────────────────────
+
+/** Short, single-line hover label; full detail lives in the click panel. */
+function tipLabel(p: Record<string, unknown>, l: BasinLayer): string {
+  const kind = p.kind ? String(p.kind).replace(/-/g, " ") : "";
+  const raw = String(p.name ?? p.contributor ?? kind ?? l.label).trim() || l.label;
+  return raw.length > 46 ? `${raw.slice(0, 46)}…` : raw;
+}
+
+function pressurePointStyle(feat: Feature | undefined, faded: boolean): L.CircleMarkerOptions {
+  const kind = String((feat?.properties as Record<string, unknown>)?.kind ?? "");
+  const c = PRESSURE_KIND_COLOR[kind] ?? "#b91c1c";
+  return { radius: 5, color: c, weight: 1.5, fillColor: c, fillOpacity: faded ? 0.3 : 0.85, opacity: faded ? 0.5 : 1 };
+}
 
 function shedStyle(feat: Feature | undefined, selectedSheds: Set<string>, faded: boolean): PathOptions {
   const sid = String((feat?.properties as Record<string, unknown>)?.shedId ?? "");

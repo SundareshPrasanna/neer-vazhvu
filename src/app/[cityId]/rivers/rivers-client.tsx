@@ -16,6 +16,8 @@ import type {
 } from "@/types/industrial-pollution";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
 import { RiverPanel } from "@/components/rivers/river-panel";
+import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
+import type { BasinInventory, BasinManifest } from "@/lib/basins";
 
 interface ClientProps {
   cityId: string;
@@ -26,7 +28,14 @@ interface ClientProps {
   scopeLabel: string;
   /** Per-river narrative metadata, keyed by river_id from the geojson. */
   riverInfo: Record<string, RiverInfo>;
+  /** Optional deep basin atlas: when a river on this map belongs to a basin,
+   *  clicking it opens the layered basin view as an overlay. */
+  basin?: { manifest: BasinManifest; inventory: BasinInventory | null } | null;
 }
+
+// Rivers-page river_id -> basin riverId, where the two registries spell the
+// same river differently (the rivers page predates the basin manifest).
+const BASIN_RIVER_ALIAS: Record<string, string> = { arkavati: "arkavathi" };
 
 export interface RiverInfo {
   display_name: string;
@@ -123,10 +132,30 @@ export default function RiversClient({
   mapZoom = 9,
   scopeLabel,
   riverInfo,
+  basin = null,
 }: ClientProps) {
   useLockBodyScroll();
   const [rivers, setRivers] = useState<RiverGeoFeature[]>([]);
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(null);
+  // When set, the layered basin atlas is open (over the rivers map), scoped
+  // to this basin river. Clicking a basin river opens it; everything else on
+  // the standard rivers page is unchanged.
+  const [openBasinRiverId, setOpenBasinRiverId] = useState<string | null>(null);
+
+  // The basin riverId a rivers-page river maps to, or null if it has no basin.
+  function basinRiverIdFor(riverId: string): string | null {
+    if (!basin) return null;
+    const target = BASIN_RIVER_ALIAS[riverId] ?? riverId;
+    return basin.manifest.rivers.find((r) => r.riverId === target)?.riverId ?? null;
+  }
+
+  // Clicking a river that has a basin opens the deep atlas; otherwise the
+  // standard select-and-show-panel behaviour.
+  function handleSelectRiver(riverId: string | null) {
+    const bid = riverId ? basinRiverIdFor(riverId) : null;
+    if (bid) setOpenBasinRiverId(bid);
+    else setSelectedRiverId(riverId);
+  }
   const [cpcb, setCpcb] = useState<CpcbFile | null>(null);
   const [events, setEvents] = useState<RiverEvent[]>([]);
   const [industrial, setIndustrial] = useState<IndustrialSource[]>([]);
@@ -242,7 +271,7 @@ export default function RiversClient({
   }, [cpcb]);
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col">
+    <div className="relative h-[calc(100vh-64px)] flex flex-col">
       {/* Stats bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-5 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
@@ -262,7 +291,7 @@ export default function RiversClient({
           <RiversLeafletMap
             rivers={rivers}
             selectedRiverId={selectedRiverId}
-            onSelectRiver={setSelectedRiverId}
+            onSelectRiver={handleSelectRiver}
             mapCenter={mapCenter}
             mapZoom={mapZoom}
             riverInfo={riverInfo}
@@ -316,6 +345,22 @@ export default function RiversClient({
       {selectedRiverId && !cpcb && selectedInfo && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[40vh] overflow-y-auto">
           <RiverInfoOnlyPanel info={selectedInfo} cityDisplayName={cityDisplayName} onClose={() => setSelectedRiverId(null)} />
+        </div>
+      )}
+
+      {/* Layered basin atlas, opened by clicking a river that has basin data.
+          Overlays the rivers map; "Back to rivers" returns to the standard view. */}
+      {basin && openBasinRiverId && (
+        <div className="absolute inset-0 z-[1000] bg-white dark:bg-slate-950">
+          <BasinAtlasClient
+            cityId={cityId}
+            cityDisplayName={cityDisplayName}
+            manifest={basin.manifest}
+            inventory={basin.inventory}
+            initialRiverId={openBasinRiverId}
+            embedded
+            onClose={() => setOpenBasinRiverId(null)}
+          />
         </div>
       )}
     </div>

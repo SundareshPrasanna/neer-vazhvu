@@ -21,6 +21,9 @@ export function BasinAtlasClient(props: {
   cityDisplayName: string;
   manifest: BasinManifest;
   inventory: BasinInventory | null;
+  initialRiverId?: string | null;
+  embedded?: boolean;
+  onClose?: () => void;
 }) {
   return <BasinAtlas {...props} />;
 }
