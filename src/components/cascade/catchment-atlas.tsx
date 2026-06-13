@@ -18,6 +18,7 @@ interface LakeProps {
   received_sqkm?: number | null;          // inherited from upstream tanks
   drains_to_osm_id?: number | null;        // cascade: where its overflow goes next
   drains_to_name?: string | null;
+  drains_to_river_name?: string | null;    // the named river this lake's overflow reaches
   lake_area_sqkm: number | null;
   drains_to_river: boolean | null;
   river_outlet_distance_km: number | null;
@@ -71,6 +72,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
   const [catchment, setCatchment] = useState<Feature | null>(null);
   const [basin, setBasin] = useState<Geometry | null>(null);
   const [streams, setStreams] = useState<FeatureCollection | null>(null);
+  const [downflow, setDownflow] = useState<FeatureCollection | null>(null);
   const [loading, setLoading] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
@@ -117,11 +119,56 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
     return { upstream: walk(selected, adjUp), downstream: walk(selected, adjDown) };
   }, [selected, adjUp, adjDown]);
 
+  // Named lists for the panel: the ordered downstream chain (where the water
+  // goes, lake by lake, ending at a river) and the immediate upstream feeders.
+  const { downstreamChain, namedUpstream, unnamedUpstreamCount } = useMemo(() => {
+    if (selected == null) return { downstreamChain: [], namedUpstream: [], unnamedUpstreamCount: 0 };
+    // Downstream chain, with runs of unnamed tanks collapsed into one count.
+    type Step = { osm_id: number | null; name: string; isRiver: boolean; unnamedRun?: number };
+    const chain: Step[] = [];
+    const seen = new Set<number>([selected]);
+    let cur: number | null = selected;
+    while (cur != null) {
+      const p = lakeById.get(cur);
+      const next = p?.drains_to_osm_id ?? null;
+      const riverName = (p?.drains_to_river_name || "").trim();
+      if (next == null) {
+        if (riverName || p?.drains_to_river) {
+          chain.push({ osm_id: null, name: riverName || "the river", isRiver: true });
+        }
+        break;
+      }
+      const nextLake = lakeById.get(next);
+      const nm = (nextLake?.name || "").trim();
+      if (nextLake && !nm) {
+        const last = chain[chain.length - 1];
+        if (last && last.unnamedRun) last.unnamedRun += 1;
+        else chain.push({ osm_id: null, name: "", isRiver: false, unnamedRun: 1 });
+      } else if (!nextLake) {
+        // drains_to points at a body that was filtered out: treat as a river sink.
+        chain.push({ osm_id: null, name: riverName || "an unnamed watercourse", isRiver: true });
+      } else {
+        chain.push({ osm_id: next, name: nm, isRiver: false });
+      }
+      if (!nextLake || seen.has(next)) break;
+      seen.add(next);
+      cur = next;
+    }
+    // Immediate feeders: named ones listed, unnamed collapsed to a count.
+    const ids = adjUp.get(selected) ?? [];
+    const named = ids
+      .map((id) => ({ osm_id: id, name: (lakeById.get(id)?.name || "").trim() }))
+      .filter((u) => u.name)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    return { downstreamChain: chain, namedUpstream: named, unnamedUpstreamCount: ids.length - named.length };
+  }, [selected, lakeById, adjUp]);
+
   function selectLake(osmId: number) {
     setSelected(osmId);
     setCatchment(null);
     setBasin(null);
     setStreams(null);
+    setDownflow(null);
     setLoading(true);
     fetch(`/api/cascade/${cityId}/catchment?osm_id=${osmId}`)
       .then((r) => (r.ok ? r.json() : null))
@@ -129,6 +176,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
         setCatchment(d?.catchment ?? null);
         setBasin(d?.basin ?? null);
         setStreams(d?.streams ?? null);
+        setDownflow(d?.downstream ?? null);
       })
       .finally(() => setLoading(false));
   }
@@ -138,6 +186,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
     setCatchment(null);
     setBasin(null);
     setStreams(null);
+    setDownflow(null);
     setResetKey((k) => k + 1);
   }
 
@@ -219,6 +268,18 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
             )}
           </Pane>
 
+          {/* Downstream flow path: how this lake's overflow runs down the
+              channel network through the cascade to the river. */}
+          <Pane name="downflow" style={{ zIndex: 424 }}>
+            {downflow && (
+              <GeoJSON
+                key={`downflow-${selected}`}
+                data={downflow}
+                style={() => ({ color: C_DOWNSTREAM, weight: 3, opacity: 0.95, dashArray: "1 6", lineCap: "round" })}
+              />
+            )}
+          </Pane>
+
           {/* Clickable lake polygons. */}
           <Pane name="lakes" style={{ zIndex: 430 }}>
             {lakes && (
@@ -256,6 +317,10 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
           <div className="flex items-center gap-2 pt-0.5">
             <span className="inline-block w-4 h-0.5 bg-blue-700" />
             <span className="text-slate-600 dark:text-slate-300">Feeder streams</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-4 h-0 border-t-2 border-dotted" style={{ borderColor: C_DOWNSTREAM }} />
+            <span className="text-slate-600 dark:text-slate-300">Downstream flow</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: "#ea580c", opacity: 0.85 }} />
@@ -339,19 +404,71 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
                 Cascade
               </h3>
-              <Stat
-                label="Overflow drains to"
-                value={sel.drains_to_name ? sel.drains_to_name : sel.drains_to_river ? "the river →" : "-"}
-              />
-              <div className="grid grid-cols-2 gap-3 mt-3">
-                <Stat label="Upstream tanks (feed it)" value={String(upstream.size)} />
-                <Stat label="Downstream tanks" value={String(downstream.size)} />
-                <Stat label="Drains to river" value={sel.drains_to_river ? "Yes" : "No"} />
-                <Stat
-                  label="Distance to river"
-                  value={sel.river_outlet_distance_km != null ? `${sel.river_outlet_distance_km.toFixed(1)} km` : "-"}
-                />
+              <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1.5">
+                Overflow flows down to{downstreamChain.length > 0 ? ` (${downstream.size} tank${downstream.size === 1 ? "" : "s"} downstream)` : ""}
               </div>
+              {downstreamChain.length === 0 ? (
+                <p className="text-xs text-slate-400 dark:text-slate-500 mb-3">Drains locally; no mapped downstream tank.</p>
+              ) : (
+                <ol className="space-y-1 mb-3">
+                  {downstreamChain.map((d, i) => (
+                    <li key={`${d.osm_id ?? "x"}-${i}`} style={{ paddingLeft: `${Math.min(i, 6) * 12}px` }}>
+                      {d.unnamedRun ? (
+                        <span className="text-sm text-slate-500 dark:text-slate-400 italic">
+                          <span aria-hidden className="text-violet-500">↳</span> {d.unnamedRun} unnamed tank{d.unnamedRun === 1 ? "" : "s"}
+                        </span>
+                      ) : d.osm_id != null ? (
+                        <button
+                          onClick={() => selectLake(d.osm_id!)}
+                          className="text-left text-sm text-violet-700 dark:text-violet-300 hover:underline"
+                        >
+                          <span aria-hidden className="text-violet-500">↳</span> {d.name}
+                        </button>
+                      ) : (
+                        <span className="text-sm text-sky-700 dark:text-sky-300">
+                          <span aria-hidden className="text-sky-500">↳</span> {d.name}
+                          {/river|canal|nadi|watercourse/i.test(d.name) ? null : <span className="text-slate-400"> (river)</span>}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              )}
+
+              <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1.5">
+                Fed by {upstream.size} upstream tank{upstream.size === 1 ? "" : "s"}
+              </div>
+              {namedUpstream.length === 0 && unnamedUpstreamCount === 0 ? (
+                <p className="text-xs text-slate-400 dark:text-slate-500 mb-3">Headwater; no mapped tank feeds it.</p>
+              ) : (
+                <ul className="space-y-1 mb-3">
+                  {namedUpstream.slice(0, 8).map((u) => (
+                    <li key={u.osm_id}>
+                      <button
+                        onClick={() => selectLake(u.osm_id)}
+                        className="text-left text-sm text-blue-700 dark:text-blue-300 hover:underline"
+                      >
+                        <span aria-hidden className="text-blue-500">↑</span> {u.name}
+                      </button>
+                    </li>
+                  ))}
+                  {namedUpstream.length > 8 ? (
+                    <li className="text-xs text-slate-400 dark:text-slate-500">
+                      + {namedUpstream.length - 8} more named feeder{namedUpstream.length - 8 === 1 ? "" : "s"}
+                    </li>
+                  ) : null}
+                  {unnamedUpstreamCount > 0 ? (
+                    <li className="text-xs text-slate-400 dark:text-slate-500 italic">
+                      <span aria-hidden className="text-blue-500/60">↑</span> + {unnamedUpstreamCount} unnamed feeder tank{unnamedUpstreamCount === 1 ? "" : "s"}
+                    </li>
+                  ) : null}
+                </ul>
+              )}
+
+              <Stat
+                label="Distance to river"
+                value={sel.river_outlet_distance_km != null ? `${sel.river_outlet_distance_km.toFixed(1)} km` : "-"}
+              />
             </section>
 
             {sel.rooftop_harvest_ml != null ? (
@@ -361,7 +478,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
                 </h3>
                 <Stat
                   label="Annual harvest potential"
-                  value={`${sel.rooftop_harvest_ml.toLocaleString(undefined, { maximumFractionDigits: 0 })} ML`}
+                  value={`${sel.rooftop_harvest_ml.toLocaleString(undefined, { maximumFractionDigits: 0 })} million litres`}
                   emphasis
                 />
                 <div className="grid grid-cols-2 gap-3 mt-3">

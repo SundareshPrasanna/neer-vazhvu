@@ -12,6 +12,7 @@ type CatchMap = Map<number, unknown> | null;
 const CATCH_CACHE = new Map<string, CatchMap>();
 const STREAM_CACHE = new Map<string, Record<string, unknown> | null>();
 const BASIN_CACHE = new Map<string, Record<string, unknown> | null>();
+const DOWNSTREAM_CACHE = new Map<string, Record<string, unknown> | null>();
 
 function loadCatchments(cityId: string): CatchMap {
   if (CATCH_CACHE.has(cityId)) return CATCH_CACHE.get(cityId)!;
@@ -68,5 +69,6 @@ export async function GET(
   }
   const streams = loadKeyed(cityId, "catchment-streams.json", STREAM_CACHE)?.[String(osmId)] ?? null;
   const basin = loadKeyed(cityId, "catchment-basin.json", BASIN_CACHE)?.[String(osmId)] ?? null;
-  return NextResponse.json({ catchment, basin, streams });
+  const downstream = loadKeyed(cityId, "catchment-downstream.json", DOWNSTREAM_CACHE)?.[String(osmId)] ?? null;
+  return NextResponse.json({ catchment, basin, streams, downstream });
 }

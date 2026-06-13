@@ -81,9 +81,13 @@ _STREAM_NEIGHBORS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0
 _CONDUIT_NAME_RE = re.compile(
     r"river|canal|creek|stream|rivulet|drain|kaalvai|ஆறு|கால்வாய்|ஓடை|நதி", re.IGNORECASE
 )
-# Unnamed thin-ribbon test: Polsby-Popper compactness (4*pi*A/P^2) below this,
-# with catchment far larger than the polygon, is a river segment not a tank.
-_RIBBON_COMPACTNESS_MAX = 0.03
+# Thin-ribbon test: Polsby-Popper compactness (4*pi*A/P^2) below this, with a
+# catchment far larger than the polygon, is a river segment, not a tank. The
+# catchment-to-area ratio is the real discriminator: a genuine elongated water
+# body (e.g. Pulicat lagoon, pp 0.019) has a low ratio (~3), whereas a river
+# masquerading as a lake (Vrishabhavati, "Nagarbhavi Thorai") has a ratio in
+# the hundreds. So this also catches NAMED rivers the conduit regex misses.
+_RIBBON_COMPACTNESS_MAX = 0.05
 _RIBBON_CATCHMENT_RATIO_MIN = 100.0
 
 
@@ -315,13 +319,15 @@ def build_vector_streams(district: DistrictCascadeConfig, *, dem_cache: Path) ->
 def _trace_downstream(
     acc: np.ndarray, lake_label: np.ndarray, start: tuple[int, int], self_idx: int,
     max_steps: int = 6000,
-) -> int:
+) -> tuple[int, list[tuple[int, int]]]:
     """From a lake's outlet, follow the channel downstream (steepest-accumulation
-    neighbour) until it enters another water body. Returns that lake's label
-    index, or 0 if it reaches a sink / the river / the grid edge first. Pointer-
-    free (max-accumulation = true downstream regardless of D8 encoding)."""
+    neighbour) until it enters another water body. Returns (label index of that
+    lake, path cells walked from the outlet to that lake's edge). The label is 0
+    if it reaches a sink / the river / the grid edge first. Pointer-free
+    (max-accumulation = true downstream regardless of D8 encoding)."""
     H, W = acc.shape
     r, c = start
+    path: list[tuple[int, int]] = [(r, c)]
     visited: set[tuple[int, int]] = set()
     for _ in range(max_steps):
         best = acc[r, c]
@@ -332,13 +338,15 @@ def _trace_downstream(
                 best = acc[rr, cc]
                 nr, nc = rr, cc
         if nr < 0:
-            return 0
+            return 0, path
         lbl = int(lake_label[nr, nc])
         if lbl and lbl != self_idx:
-            return lbl
+            path.append((nr, nc))
+            return lbl, path
         visited.add((r, c))
         r, c = nr, nc
-    return 0
+        path.append((r, c))
+    return 0, path
 
 
 def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None = None) -> dict[str, Any]:
@@ -438,6 +446,8 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
         return {"type": "FeatureCollection", "features": feats}
 
     streams_by_lake: dict[str, Any] = {}
+    seg_by_id: dict[int, list[tuple[int, int]]] = {}   # osm_id -> one-hop downstream channel cells
+    drains_map: dict[int, int | None] = {}             # osm_id -> next lake osm_id (cascade graph)
 
     # Canonical node set (osm_ids in the cascade graph) + per-node graph props.
     nodes_fc = json.loads(district.cascade_nodes_geojson_path().read_text(encoding="utf-8"))
@@ -511,11 +521,15 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
         own_km2 = round(own_ws.sum() * cell_area_m2 / 1e6, 3)
         received_km2 = round(max(total_km2 - own_km2, 0.0), 3)
         lake_km2 = round(seed.sum() * cell_area_m2 / 1e6, 3)
-        # Unnamed thin ribbon draining a whole basin = a river segment, not a tank.
-        if (not name and _polsby_popper(poly) < _RIBBON_COMPACTNESS_MAX
+        # Thin ribbon draining a whole basin = a river segment, not a tank.
+        # Applies to named bodies too (catches rivers like "Vrishabhavati" that
+        # the conduit name-regex misses); the catchment ratio keeps genuine
+        # elongated water bodies (Pulicat: low ratio) from being dropped.
+        if (_polsby_popper(poly) < _RIBBON_COMPACTNESS_MAX
                 and lake_km2 > 0 and total_km2 / lake_km2 > _RIBBON_CATCHMENT_RATIO_MIN):
             flagged.append({"osm_id": osm_id, "quality": "conduit_excluded",
-                            "catchment_area_sqkm": total_km2, "note": "unnamed_ribbon"})
+                            "catchment_area_sqkm": total_km2,
+                            "note": "ribbon", "name": name})
             continue
         touches_edge = bool(total_ws[0, :].any() or total_ws[-1, :].any()
                             or total_ws[:, 0].any() or total_ws[:, -1].any())
@@ -545,9 +559,13 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
         # Downstream cascade neighbour: trace this lake's outlet to the first
         # lake it reaches. Embeds the cascade graph in the lakes file.
         outlet_flat = int(np.argmax(np.where(seed, acc, -1)))
-        dlbl = _trace_downstream(acc, lake_label, divmod(outlet_flat, W), idx_by_id[osm_id])
+        dlbl, dseg = _trace_downstream(acc, lake_label, divmod(outlet_flat, W), idx_by_id[osm_id])
         drains_to = id_by_idx.get(dlbl)
         drains_to_name = polys[drains_to]["name"] if drains_to in polys else ""
+        # One-hop channel cells (this lake's outlet -> the next lake's edge);
+        # chained along drains_to after the loop into a full downstream path.
+        seg_by_id[osm_id] = dseg
+        drains_map[osm_id] = drains_to
 
         # Clickable lake layer: the real water-body polygon (not a centroid
         # circle), delineated lakes only (conduits already filtered out),
@@ -599,6 +617,43 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
         json.dumps(streams_by_lake, separators=(",", ":")) + "\n", encoding="utf-8"
     )
 
+    # Per-lake DOWNSTREAM flow path: chain the one-hop channel segments along
+    # drains_to (single out-edge per lake => O(chain) per lake) into the full
+    # route from this lake's outlet down through the cascade to the river, then
+    # smooth + simplify so the map can draw how the overflow actually flows.
+    def _path_feature(cells: list[tuple[int, int]]) -> dict[str, Any] | None:
+        if len(cells) < 2:
+            return None
+        step = max(1, len(cells) // 400)  # cap detail for very long routes
+        rows = np.array([rc[0] for rc in cells[::step]])
+        cols = np.array([rc[1] for rc in cells[::step]])
+        lo, la = _cells_to_wgs(rows, cols)
+        coords = list(zip(lo.tolist(), la.tolist()))
+        if len(coords) < 2:
+            return None
+        g = LineString(_chaikin(coords)).simplify(0.00004, preserve_topology=True)
+        if g.is_empty:
+            return None
+        return {"type": "Feature", "properties": {}, "geometry": mapping(g)}
+
+    downstream_by_lake: dict[str, Any] = {}
+    for osm_id in seg_by_id:
+        cells: list[tuple[int, int]] = []
+        seen: set[int] = set()
+        cur: int | None = osm_id
+        while cur is not None and cur not in seen and len(cells) < 6000:
+            seen.add(cur)
+            cells.extend(seg_by_id.get(cur, []))
+            cur = drains_map.get(cur)
+        feat = _path_feature(cells)
+        downstream_by_lake[str(osm_id)] = {
+            "type": "FeatureCollection",
+            "features": [feat] if feat else [],
+        }
+    district.cascade_catchment_downstream_json_path().write_text(
+        json.dumps(downstream_by_lake, separators=(",", ":")) + "\n", encoding="utf-8"
+    )
+
     # NOTE: per-lake TOTAL basin polygons ({district}-catchment-basin.json) are
     # generated separately (extracted from the full-BFS catchments), not in this
     # hot loop - vectorising every basin here was the run-time bottleneck.
@@ -637,4 +692,11 @@ def build_catchments(district: DistrictCascadeConfig, *, dem_cache: Path | None 
     district.cascade_catchment_quality_json_path().write_text(
         json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
+
+    # Sync names from the (possibly name-backfilled) source and name the river
+    # each terminal lake drains into. Folded in here so a regen is self-
+    # contained; also runnable standalone via `python -m app.cascade.enrich_names`.
+    from app.cascade.enrich_names import enrich_cascade_lakes
+
+    enrich_cascade_lakes(district)
     return summary

@@ -215,6 +215,12 @@ class DistrictCascadeConfig:
         # osm_id, served on click so the map can shade inherited under own.
         return CASCADE_OUTPUT_DIR / f"{self.district_id}-catchment-basin.json"
 
+    def cascade_catchment_downstream_json_path(self) -> Path:
+        # Per-lake downstream flow path (outlet traced through the cascade to
+        # the river), keyed by osm_id, served on click so the map can show how
+        # the lake's overflow actually flows down the channel network.
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-catchment-downstream.json"
+
 
 _MADURAI = DistrictCascadeConfig(
     district_id="madurai",
