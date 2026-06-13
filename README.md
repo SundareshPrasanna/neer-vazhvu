@@ -114,6 +114,12 @@ Overture building counts refresh monthly via [.github/workflows/overture-buildin
 
 To onboard a new body, see [docs/cities/chennai/features.md](docs/cities/chennai/features.md#rich-data-deep-zoom-panel) for the registry pattern and `scripts/fetch-rich-body-polygon.ts`, `scripts/_rich_body_zones.py`, `scripts/verify_rich_body_*.py`, `scripts/ingest_rich_body_imagery.py`, and `scripts/ingest_rich_body_{water_loss,built_gain}_tint.py` for the pipeline scripts.
 
+## Lake Catchment Atlas
+
+The "Catchments" view mode on `/[city]/water-bodies` makes every lake clickable to show its **area of influence**: the catchment that drains into it, the feeder streams, the upstream/downstream tanks, the downstream flow path to the river, and a rooftop rainwater-harvest estimate. Live for Chennai, Madurai, and Bengaluru; quality bar is the Hyderabad Lake Atlas.
+
+Catchments are delineated from a 30 m bare-earth DEM (FABDEM) with WhiteboxTools hydrology - a threshold-free own / received / total contributing-area model, plus a per-lake downstream flow path traced through the cascade to the river. Lake names are backfilled from authoritative open sources where OSM is sparse (Bengaluru: the ATREE/CSEI named-lake census on OpenCity), and the downstream river is named by snapping the flow path to the mapped river network. Full methodology: [docs/methodology/catchment-atlas-v1.md](docs/methodology/catchment-atlas-v1.md).
+
 ## Getting Started
 
 ### Prerequisites

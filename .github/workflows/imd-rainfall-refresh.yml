@@ -1,0 +1,68 @@
+name: IMD rainfall refresh
+
+# Regenerates the IMD gridded-rainfall JSON (monthly history + the long-term
+# normal) for each city from IMD's official 0.25-degree data via imdlib.
+#
+# Cadence: quarterly. IMD publishes gridded rainfall with a lag of weeks to a
+# few months, so a full prior calendar year is reliably available by early in
+# the next year; quarterly runs pick that up within ~3 months. The catchment
+# rooftop-harvest figure uses the 1970-2020 NORMAL (which barely moves), so
+# this refresh mainly keeps the dashboard's RainfallTrends history current.
+#
+# Manual runs (workflow_dispatch) can target a single city.
+
+on:
+  schedule:
+    - cron: '0 3 5 1,4,7,10 *'   # 03:00 UTC on the 5th of Jan/Apr/Jul/Oct
+  workflow_dispatch:
+    inputs:
+      city:
+        description: 'City id to refresh (chennai / madurai / bangalore). Leave empty for all.'
+        type: string
+        default: ''
+
+concurrency:
+  group: imd-rainfall-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install IMD dependencies
+        # Script needs imdlib (downloads IMD gridded NetCDF) + xarray + numpy.
+        run: pip install imdlib xarray numpy
+
+      - name: Generate IMD rainfall JSON
+        run: |
+          set -e
+          CITIES="${{ inputs.city }}"
+          if [ -z "$CITIES" ]; then
+            CITIES="chennai madurai bangalore"
+          fi
+          for city in $CITIES; do
+            echo "=== IMD refresh: $city ==="
+            python neer-vazhvu-api/scripts/generate_imd_rainfall.py --city "$city"
+          done
+
+      - name: Commit refreshed rainfall JSON
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/imd-rainfall-monthly*.json
+          if git diff --staged --quiet; then
+            echo "No rainfall changes - IMD data unchanged since last run."
+            exit 0
+          fi
+          git commit -m "IMD rainfall refresh ($(date -u +%Y-%m-%d))"
+          git push

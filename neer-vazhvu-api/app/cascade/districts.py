@@ -100,6 +100,17 @@ class DistrictCascadeConfig:
     dem_source: str = "merit_hydro"
     max_downstream_distance_km: float = 3.0
     min_tank_area_ha: float = 1.0
+
+    # --- Catchment delineation (Layer A2: `delineate-catchments` stage) ---
+    # Projected CRS (metric) for hydrology: cells become ~30x30 m so areas,
+    # slope and flow routing are correct. UTM 44N covers Tamil Nadu (78-84E);
+    # 43N covers Karnataka (72-78E).
+    utm_epsg: int = 32644
+    # Degrees of padding around the water-body bounding box when fetching the
+    # district DEM. Must be wide enough to contain the largest catchment;
+    # catchments that still touch the DEM edge are flagged, not silently
+    # clipped. ~0.35 deg ~= 39 km at this latitude.
+    catchment_dem_buffer_deg: float = 0.35
     # Tanks with no tank-to-tank downstream within
     # max_downstream_distance_km whose flow direction points to a river
     # within this distance are marked as draining INTO the river. Models
@@ -110,6 +121,10 @@ class DistrictCascadeConfig:
     # Optional admin boundary; if absent the topology stage falls back to
     # the bounding box of tank polygons.
     admin_boundary_path: Path | None = None
+
+    # IMD monthly-rainfall normals JSON for this district, used to turn
+    # rooftop area in a catchment into annual rainwater-harvest potential.
+    imd_rainfall_path: Path | None = None
 
     # Optional rivers GeoJSON. If present, the topology stage rejects
     # candidate cascade edges whose straight-line path crosses a river
@@ -183,6 +198,29 @@ class DistrictCascadeConfig:
     def cascade_river_outlets_pmtiles_path(self) -> Path:
         return CASCADE_TILE_DIR / f"{self.district_id}-cascade-river-outlets.pmtiles"
 
+    def cascade_catchments_geojson_path(self) -> Path:
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-cascade-catchments.geojson"
+
+    def cascade_catchment_quality_json_path(self) -> Path:
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-catchment-quality.json"
+
+    def cascade_lakes_geojson_path(self) -> Path:
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-cascade-lakes.geojson"
+
+    def cascade_catchment_streams_json_path(self) -> Path:
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-catchment-streams.json"
+
+    def cascade_catchment_basin_json_path(self) -> Path:
+        # Per-lake TOTAL upstream basin polygon (own + inherited), keyed by
+        # osm_id, served on click so the map can shade inherited under own.
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-catchment-basin.json"
+
+    def cascade_catchment_downstream_json_path(self) -> Path:
+        # Per-lake downstream flow path (outlet traced through the cascade to
+        # the river), keyed by osm_id, served on click so the map can show how
+        # the lake's overflow actually flows down the channel network.
+        return CASCADE_OUTPUT_DIR / f"{self.district_id}-catchment-downstream.json"
+
 
 _MADURAI = DistrictCascadeConfig(
     district_id="madurai",
@@ -190,6 +228,7 @@ _MADURAI = DistrictCascadeConfig(
     state="tamil_nadu",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "madurai-water-bodies-current.geojson",
     rivers_path=PUBLIC_GEOJSON_DIR / "madurai-rivers.geojson",
+    imd_rainfall_path=PUBLIC_DATA_DIR / "imd-rainfall-monthly-madurai.json",
     # Vandiyur Lake. Topologically Madurai's highest-convergence node is
     # an unnamed reservoir near Kadachanenthal (degree_in=10), but the
     # public narrative anchor is Vandiyur (HC PIL R. Manibharathi v UoI).
@@ -224,6 +263,7 @@ _CHENNAI = DistrictCascadeConfig(
     state="tamil_nadu",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "chennai-water-bodies-current.geojson",
     rivers_path=PUBLIC_GEOJSON_DIR / "chennai-rivers.geojson",
+    imd_rainfall_path=PUBLIC_DATA_DIR / "imd-rainfall-monthly.json",
     # Layer B curation deferred until after Madurai validates the pipeline.
 )
 
@@ -234,6 +274,9 @@ _BANGALORE = DistrictCascadeConfig(
     state="karnataka",
     tank_polygons_path=PUBLIC_GEOJSON_DIR / "bangalore-water-bodies-current.geojson",
     rivers_path=PUBLIC_GEOJSON_DIR / "bangalore-rivers.geojson",
+    imd_rainfall_path=PUBLIC_DATA_DIR / "imd-rainfall-monthly-bangalore.json",
+    # Bengaluru sits in UTM zone 43N (72-78E), not 44N like Tamil Nadu.
+    utm_epsg=32643,
     # Bengaluru sits on a ridge that splits into three valleys
     # (Vrishabhavathi west, Koramangala-Challaghatta south, Hebbal
     # north). Traditional kere chains historically branched into a

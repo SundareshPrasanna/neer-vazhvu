@@ -3,13 +3,12 @@
 import { Suspense, useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { UnifiedDetailPanel } from "@/components/water-bodies/unified-detail-panel";
 import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
 import { ViewModeToggle } from "@/components/water-bodies/view-mode-toggle";
 import type { ViewMode } from "@/components/water-bodies/view-mode-toggle";
-import { CascadeToggle } from "@/components/cascade/cascade-toggle";
+import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
 import { CHENNAI } from "@/lib/cities/chennai";
 import { RestorationRankingTable } from "@/components/lake-restoration/restoration-ranking-table";
 import type { SelectedWaterBody, LostWaterBodyProperties, CensusWaterBodyProperties } from "@/types/water-bodies";
@@ -38,13 +37,6 @@ const UnifiedMap = dynamic(
   { ssr: false, loading: () => <MapLoading /> }
 );
 
-// Cascade overlay: dynamic-imported only when toggled, so the
-// protomaps-leaflet runtime stays out of the initial bundle.
-const CascadeMapLayer = dynamic(
-  () => import("@/components/cascade/cascade-map-layer"),
-  { ssr: false }
-);
-
 interface LostGeoJSON {
   type: string;
   features: Array<{ properties: LostWaterBodyProperties }>;
@@ -64,9 +56,13 @@ function WaterBodiesPageContent() {
   useLockBodyScroll();
   const { t } = useLanguage();
   const searchParams = useSearchParams();
-  const [viewMode, setViewMode] = useState<ViewMode>(
-    searchParams.get("mode") === "restoration" ? "restoration" : "water-bodies"
-  );
+  const hasCascadeOverlay = CHENNAI.hasCascadeOverlay ?? false;
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    const m = searchParams.get("mode");
+    if (m === "restoration") return "restoration";
+    if (m === "catchments" && hasCascadeOverlay) return "catchments";
+    return "water-bodies";
+  });
   const [selected, setSelected] = useState<SelectedWaterBody | null>(null);
   const [focusCenter, setFocusCenter] = useState<[number, number] | undefined>();
   const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
@@ -77,10 +73,6 @@ function WaterBodiesPageContent() {
   const [censusSummary, setCensusSummary] = useState<{ total: number; encroached: number; avgStorageLossPct: number | null } | null>(null);
   const [activeTab, setActiveTab] = useState<string>("map");
   const [statsOpen, setStatsOpen] = useState(false);
-  // Cascade overlay - off by default; layer + protomaps-leaflet runtime
-  // are dynamic-imported only when the user opts in.
-  const [showCascade, setShowCascade] = useState(false);
-  const hasCascadeOverlay = CHENNAI.hasCascadeOverlay ?? false;
 
   // Build id lookup for restoration data
   const scoreLookup = useMemo(() => {
@@ -398,28 +390,27 @@ function WaterBodiesPageContent() {
           </TabsList>
           {activeTab === "map" && (
             <div className="flex items-center gap-2">
-              {hasCascadeOverlay && (
-                <>
-                  <CascadeToggle pressed={showCascade} onPressedChange={setShowCascade} />
-                  {showCascade && (
-                    <Link
-                      href="/cascades"
-                      className="hidden sm:inline-flex items-center gap-1 rounded-md border border-sky-300 dark:border-sky-700 bg-sky-50 dark:bg-sky-950 px-2.5 py-1.5 text-xs font-medium text-sky-700 dark:text-sky-200 hover:bg-sky-100 dark:hover:bg-sky-900 transition-colors"
-                      title="See cascade health and priority"
-                    >
-                      Cascade health
-                      <span aria-hidden>→</span>
-                    </Link>
-                  )}
-                </>
-              )}
-              <ViewModeToggle value={viewMode} onChange={(mode) => { setViewMode(mode); setHiddenCategories(new Set()); }} />
+              <ViewModeToggle
+                value={viewMode}
+                onChange={(mode) => { setViewMode(mode); setHiddenCategories(new Set()); setSelected(null); }}
+                catchmentsAvailable={hasCascadeOverlay}
+              />
             </div>
           )}
         </div>
 
         {/* Map tab */}
         <TabsContent value="map" className="flex-1 m-0 flex flex-col md:flex-row overflow-hidden">
+          {viewMode === "catchments" ? (
+            <div className="flex-1 min-h-0">
+              <CatchmentAtlasClient
+                cityId="chennai"
+                cityDisplayName="Chennai"
+                center={[CHENNAI.center.lat, CHENNAI.center.lng]}
+              />
+            </div>
+          ) : (
+          <>
           <div className="relative flex-1 h-full">
             <UnifiedMap
               viewMode={viewMode}
@@ -429,10 +420,7 @@ function WaterBodiesPageContent() {
               onSelectLost={setSelected}
               focusCenter={focusCenter}
               hiddenCategories={hiddenCategories}
-              suppressLayerTooltips={hasCascadeOverlay && showCascade}
-            >
-              {hasCascadeOverlay && showCascade && <CascadeMapLayer cityId="chennai" />}
-            </UnifiedMap>
+            />
             <div className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${selected ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
               <UnifiedLegend
                 viewMode={viewMode}
@@ -474,30 +462,6 @@ function WaterBodiesPageContent() {
                   {t("lr.source_note")}
                 </div>
               )}
-              {hasCascadeOverlay && showCascade && (
-                <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 space-y-1">
-                  <div className="font-semibold text-slate-700 dark:text-slate-300">
-                    Cascade overlay &middot; predicted, not observed
-                  </div>
-                  <div>
-                    <span className="inline-block w-3 h-0.5 bg-sky-500 align-middle mr-1.5" />
-                    Sky-blue lines: predicted tank-to-tank cascade links from HydroSHEDS DEM and flow direction.
-                  </div>
-                  <div>
-                    <span className="inline-block w-3 h-0.5 bg-amber-500 align-middle mr-1.5" />
-                    Amber lines: tanks that drain into a river instead of another tank.
-                  </div>
-                  <div className="pt-1">
-                    Edges respect rivers as both barriers (no crossings) and sinks. Heuristic only - a future pass will label edges as intact / broken / encroached.{" "}
-                    <Link
-                      href="/about#cascade-methodology"
-                      className="text-sky-600 dark:text-sky-400 hover:underline"
-                    >
-                      Full methodology &rarr;
-                    </Link>
-                  </div>
-                </div>
-              )}
             </MapInfoButton>
             <WardSearch
               className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]"
@@ -521,6 +485,8 @@ function WaterBodiesPageContent() {
               />
             </BottomSheet>
           ) : null}
+          </>
+          )}
         </TabsContent>
 
         {/* Ranking table tab */}

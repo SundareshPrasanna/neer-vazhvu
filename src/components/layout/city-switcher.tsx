@@ -21,6 +21,15 @@ export function CitySwitcher() {
   const { cityId: currentCityId, feature } = parsePath(pathname, knownCityIds());
   const currentPlace = places.find((p) => p.cityId === currentCityId) ?? places[0];
 
+  // Water-bodies view mode (?mode=catchments) to carry across a city switch.
+  // Read lazily on the client only when the menu is open (avoids pulling
+  // useSearchParams into this layout-level component, which would force a
+  // Suspense bailout at build time). The dropdown renders only after a click.
+  const carriedMode =
+    open && typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("mode")
+      : null;
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -58,7 +67,15 @@ export function CitySwitcher() {
           {places.map((p) => {
             const supported = FEATURE_AVAILABILITY[p.cityId];
             const featureSupported = supported ? supported.has(feature) : false;
-            const targetUrl = buildCityHref(p.cityId, feature);
+            let targetUrl = buildCityHref(p.cityId, feature);
+            // Carry the water-bodies view mode (e.g. ?mode=catchments) across a
+            // city switch so the catchments/restoration view doesn't silently
+            // drop back to the default tab. Only when the target city actually
+            // has the water-bodies page; the page falls back gracefully if it
+            // lacks the catchments overlay.
+            if (carriedMode && feature === "water-bodies" && featureSupported) {
+              targetUrl += `?mode=${carriedMode}`;
+            }
             const isCurrent = p.cityId === currentCityId;
             return (
               <Link

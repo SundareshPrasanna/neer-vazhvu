@@ -3,11 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { UnifiedDetailPanel } from "@/components/water-bodies/unified-detail-panel";
 import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
 import { ViewModeToggle, type ViewMode } from "@/components/water-bodies/view-mode-toggle";
-import { CascadeToggle } from "@/components/cascade/cascade-toggle";
+import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { RichBodyOverlay } from "@/components/water-bodies/rich-body-overlay";
@@ -60,14 +59,6 @@ const UnifiedMap = dynamic(
   { ssr: false, loading: () => <MapLoading /> },
 );
 
-// Cascade overlay is heavier (protomaps-leaflet runtime + PMTiles loader)
-// so it is dynamic-imported only when the user toggles it on. Default
-// page weight on /<city>/water-bodies stays unchanged.
-const CascadeMapLayer = dynamic(
-  () => import("@/components/cascade/cascade-map-layer"),
-  { ssr: false },
-);
-
 export default function WaterBodiesMapClient({
   cityId,
   cityDisplayName,
@@ -97,23 +88,26 @@ export default function WaterBodiesMapClient({
   const [lostBodies, setLostBodies] = useState<LostBodyEntry[] | null>(null);
   // Off by default - the layer + protomaps-leaflet runtime are
   // dynamic-imported only when the user opts in.
-  const [showCascade, setShowCascade] = useState(false);
-
-  // View mode: "water-bodies" (OSM polygons + lost markers) or
-  // "restoration" (priority-coloured layer + flagship orphan circles).
-  // Sourced from the URL so deep links share state.
-  const [viewMode, setViewMode] = useState<ViewMode>(
-    searchParams.get("mode") === "restoration" ? "restoration" : "water-bodies",
-  );
+  // View mode: "water-bodies" (OSM polygons + lost markers),
+  // "restoration" (priority-coloured layer + flagship orphan circles), or
+  // "catchments" (terrain-derived area-of-influence atlas). Sourced from
+  // the URL so deep links share state.
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    const m = searchParams.get("mode");
+    if (m === "restoration") return "restoration";
+    if (m === "catchments" && hasCascadeOverlay) return "catchments";
+    return "water-bodies";
+  });
 
   // Persist toggle to the URL so the chosen view survives refresh and
   // shareable links open in the right mode.
   const handleViewModeChange = (mode: ViewMode) => {
     setViewMode(mode);
     setHiddenCategories(new Set());
+    setSelected(null);
     const params = new URLSearchParams(searchParams.toString());
-    if (mode === "restoration") params.set("mode", "restoration");
-    else params.delete("mode");
+    if (mode === "water-bodies") params.delete("mode");
+    else params.set("mode", mode);
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
@@ -238,7 +232,7 @@ export default function WaterBodiesMapClient({
               </span>
             </div>
           </>
-        ) : (
+        ) : viewMode === "restoration" ? (
           <>
             {restorationData && (
               <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
@@ -256,28 +250,31 @@ export default function WaterBodiesMapClient({
               </div>
             ))}
           </>
+        ) : (
+          <span className="text-xs text-slate-600 dark:text-slate-400">
+            Click a lake to see its catchment, feeder streams, and rooftop-harvest potential.
+          </span>
         )}
         <div className="ml-auto flex items-center gap-2">
-          {hasCascadeOverlay && (
-            <>
-              <CascadeToggle pressed={showCascade} onPressedChange={setShowCascade} />
-              {showCascade && (
-                <Link
-                  href={`/${cityId}/cascades`}
-                  className="hidden sm:inline-flex items-center gap-1 rounded-md border border-sky-300 dark:border-sky-700 bg-sky-50 dark:bg-sky-950 px-2.5 py-1.5 text-xs font-medium text-sky-700 dark:text-sky-200 hover:bg-sky-100 dark:hover:bg-sky-900 transition-colors"
-                  title="See cascade health and priority"
-                >
-                  Cascade health
-                  <span aria-hidden>→</span>
-                </Link>
-              )}
-            </>
-          )}
-          <ViewModeToggle value={viewMode} onChange={handleViewModeChange} />
+          <ViewModeToggle
+            value={viewMode}
+            onChange={handleViewModeChange}
+            catchmentsAvailable={hasCascadeOverlay}
+          />
         </div>
       </div>
 
-      {/* Map + sidebar layout - identical to Chennai's water-bodies page */}
+      {viewMode === "catchments" ? (
+        <div className="flex-1 min-h-0">
+          <CatchmentAtlasClient
+            cityId={cityId}
+            cityDisplayName={cityDisplayName}
+            center={mapCenter}
+            zoom={mapZoom}
+          />
+        </div>
+      ) : (
+      /* Map + sidebar layout - identical to Chennai's water-bodies page */
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         <div className="relative flex-1 h-full">
           <UnifiedMap
@@ -292,12 +289,7 @@ export default function WaterBodiesMapClient({
             riversGeoJsonUrl={`/geojson/${cityId}-rivers.geojson`}
             mapCenter={mapCenter}
             mapZoom={mapZoom}
-            suppressLayerTooltips={hasCascadeOverlay && showCascade}
-          >
-            {hasCascadeOverlay && showCascade && (
-              <CascadeMapLayer cityId={cityId} />
-            )}
-          </UnifiedMap>
+          />
 
           {/* Legend overlay */}
           <div
@@ -339,30 +331,6 @@ export default function WaterBodiesMapClient({
                 Lost-tank narrative from <span className="font-semibold text-slate-700 dark:text-slate-300">Vencatesan academic inventory</span>
               </div>
             </div>
-            {hasCascadeOverlay && showCascade && (
-              <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 space-y-1">
-                <div className="font-semibold text-slate-700 dark:text-slate-300">
-                  Cascade overlay · predicted, not observed
-                </div>
-                <div>
-                  <span className="inline-block w-3 h-0.5 bg-sky-500 align-middle mr-1.5" />
-                  Sky-blue lines: predicted tank-to-tank cascade links from HydroSHEDS DEM and flow direction.
-                </div>
-                <div>
-                  <span className="inline-block w-3 h-0.5 bg-amber-500 align-middle mr-1.5" />
-                  Amber lines: tanks that drain into a river instead of another tank.
-                </div>
-                <div className="pt-1">
-                  Edges respect rivers as both barriers (no crossings) and sinks. Heuristic only - a future pass will label edges as intact / broken / encroached.{" "}
-                  <Link
-                    href={`/${cityId}/about#cascade-methodology`}
-                    className="text-sky-600 dark:text-sky-400 hover:underline"
-                  >
-                    Full methodology &rarr;
-                  </Link>
-                </div>
-              </div>
-            )}
           </MapInfoButton>
         </div>
 
@@ -387,6 +355,7 @@ export default function WaterBodiesMapClient({
           </BottomSheet>
         ) : null}
       </div>
+      )}
     </div>
   );
 }
