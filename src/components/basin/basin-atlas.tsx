@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, Pane, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
@@ -41,6 +41,17 @@ const COACH_KEY = "basin-atlas-coach-dismissed";
 
 type FC = FeatureCollection;
 
+/** Draw order on the shared canvas (lower = drawn first = underneath). Base
+ *  outlines and sub-catchments sit below thematic fills, lines, and points so
+ *  the layers on top receive hover/click, not the catchment beneath them. */
+function drawRank(l: BasinLayer): number {
+  if (l.family === "boundary" || l.family.startsWith("admin")) return 0;
+  if (l.family === "sub-hydrosheds") return 1;
+  if (l.geom === "fill") return 2;
+  if (l.geom === "line") return 3;
+  return 4; // point
+}
+
 async function fetchJson(url: string): Promise<FC | null> {
   try {
     const r = await fetch(url);
@@ -50,36 +61,15 @@ async function fetchJson(url: string): Promise<FC | null> {
   }
 }
 
-/** Fly to the selected river's sub-hydrosheds; fly back to basin view on clear. */
-function MapController({
-  fitBounds,
-  resetKey,
-  center,
-  zoom,
-  onZoom,
-}: {
-  fitBounds: L.LatLngBounds | null;
-  resetKey: number;
-  center: [number, number];
-  zoom: number;
-  onZoom: (z: number) => void;
-}) {
+/** Keep the map framed: the whole basin by default, the selected river's
+ *  sub-catchments when one is chosen. */
+function MapController({ fitBounds }: { fitBounds: L.LatLngBounds | null }) {
   const map = useMap();
   useEffect(() => {
-    onZoom(map.getZoom());
-    const h = () => onZoom(map.getZoom());
-    map.on("zoomend", h);
-    return () => void map.off("zoomend", h);
-  }, [map, onZoom]);
-  useEffect(() => {
     if (fitBounds && fitBounds.isValid()) {
-      map.fitBounds(fitBounds, { padding: [40, 40], maxZoom: 13 });
+      map.fitBounds(fitBounds, { padding: [8, 8], maxZoom: 14 });
     }
   }, [fitBounds, map]);
-  useEffect(() => {
-    if (resetKey > 0) map.flyTo(center, zoom, { duration: 0.7 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resetKey]);
   return null;
 }
 
@@ -93,9 +83,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(initialRiverId);
   const [selectedFeature, setSelectedFeature] = useState<{ family: string; props: Record<string, unknown> } | null>(null);
   const [data, setData] = useState<Record<string, FC | null>>({});
-  const [zoom, setZoom] = useState(manifest.mapZoom);
-  const [resetKey, setResetKey] = useState(0);
   const [coachDismissed, setCoachDismissed] = useState(true);
+  // Either panel can be collapsed to see the map alone.
+  const [railOpen, setRailOpen] = useState(true);
+  const [panelOpen, setPanelOpen] = useState(true);
   const fetchedRef = useRef<Set<string>>(new Set());
 
   const layerByFamily = useMemo(
@@ -138,11 +129,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
   }, [selectedRiverId, focusedFloor, embedded]);
 
-  // Should a layer render right now? (gates fetching too.)
+  // A layer is visible iff its checkbox is on (and, for non-context layers,
+  // its floor is focused). The checkbox is the single source of truth - zoom
+  // never hides a checked layer. This also gates fetching.
   function shouldRender(l: BasinLayer): boolean {
     if (!enabled[l.family]) return false;
     if (!l.context && l.floor !== focusedFloor) return false;
-    if (l.minZoom && zoom < l.minZoom && !selectedRiverId) return false;
     return true;
   }
 
@@ -175,23 +167,27 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, focusedFloor, zoom, selectedRiverId]);
+  }, [enabled, focusedFloor, selectedRiverId]);
 
-  // Bounds to fly to when a river is selected (its sheds in the loaded sheds file).
+  // What the map frames: the selected river's sub-catchments, or the whole
+  // basin boundary when nothing is selected (the default). Depends only on the
+  // boundary/shed data (stable references once loaded) and the selection - NOT
+  // the whole `data` object - so changing floors never refits/resets the zoom.
+  const shedData = data["sub-hydrosheds"];
+  const boundaryData = data["boundary"];
   const fitBounds = useMemo(() => {
-    if (!selectedRiverId) return null;
-    const sheds = data["sub-hydrosheds"];
-    if (!sheds) return null;
-    const sel = sheds.features.filter((f) => selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)));
-    if (!sel.length) return null;
-    const b = L.geoJSON({ type: "FeatureCollection", features: sel } as FC).getBounds();
+    const feats =
+      selectedRiverId && shedData
+        ? shedData.features.filter((f) => selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)))
+        : boundaryData?.features ?? [];
+    if (!feats.length) return null;
+    const b = L.geoJSON({ type: "FeatureCollection", features: feats } as FC).getBounds();
     return b.isValid() ? b : null;
-  }, [selectedRiverId, data, selectedSheds]);
+  }, [selectedRiverId, shedData, boundaryData, selectedSheds]);
 
   function selectRiver(riverId: string | null) {
     setSelectedRiverId(riverId);
     setSelectedFeature(null);
-    if (!riverId) setResetKey((k) => k + 1);
   }
 
   // Restrict a feature collection to the selected river's sheds (non-context).
@@ -218,12 +214,32 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
   const floorLayers = (floor: BasinFloor) => manifest.layers.filter((l) => l.floor === floor);
 
+  // Draw order (single shared canvas): base outlines + sub-catchments at the
+  // bottom, then fills, lines, points on top. Stable-sorted so manifest order
+  // is preserved within a rank.
+  const orderedLayers = useMemo(
+    () => [...manifest.layers].sort((a, b) => drawRank(a) - drawRank(b)),
+    [manifest.layers],
+  );
+
+  const visibleLayers = orderedLayers.filter(shouldRender);
+
   return (
     <div className="h-full w-full flex flex-col md:flex-row">
       {/* ── Elevator rail ── */}
+      {railOpen && (
       <div className="shrink-0 md:w-60 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto">
         <div className="p-3 border-b border-slate-200 dark:border-slate-700">
-          <h1 className="font-bold text-slate-900 dark:text-slate-100 leading-tight">{manifest.displayName}</h1>
+          <div className="flex items-start justify-between gap-2">
+            <h1 className="font-bold text-slate-900 dark:text-slate-100 leading-tight">{manifest.displayName}</h1>
+            <button
+              onClick={() => setRailOpen(false)}
+              title="Hide layers panel"
+              className="hidden md:block shrink-0 -mt-0.5 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+            >
+              «
+            </button>
+          </div>
           {manifest.displayNameLocal && (
             <div className="text-xs text-slate-500 dark:text-slate-400">{manifest.displayNameLocal}</div>
           )}
@@ -266,7 +282,6 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 {active && (
                   <div className="px-3 pb-2 pt-1 space-y-1 hidden md:block">
                     {floorLayers(f.id).map((l) => {
-                      const gated = l.minZoom && zoom < l.minZoom && !selectedRiverId;
                       const inv = inventory?.families[l.family];
                       return (
                         <label key={l.family} className="flex items-start gap-2 text-xs cursor-pointer group">
@@ -281,7 +296,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                             <span className="text-slate-600 dark:text-slate-300">
                               {l.label}
                               {inv && <span className="text-slate-400"> ({inv.featureCount})</span>}
-                              {gated && <span className="block text-[10px] text-amber-600 dark:text-amber-400">zoom in to load</span>}
+                              {l.heavy && <span className="block text-[10px] text-slate-400">large layer</span>}
                             </span>
                           </span>
                         </label>
@@ -297,24 +312,23 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         {/* Data on this map */}
         <DataOnThisMap manifest={manifest} inventory={inventory} />
       </div>
+      )}
 
       {/* ── Map ── */}
       <div className="relative flex-1 h-full min-h-[320px]">
-        <MapContainer center={manifest.mapCenter} zoom={manifest.mapZoom} className="h-full w-full" preferCanvas>
+        <MapContainer center={manifest.mapCenter} zoom={manifest.mapZoom} className="h-full w-full" preferCanvas zoomControl={false}>
+          <ZoomControl position="bottomright" />
           <MapResizer />
-          <MapController fitBounds={fitBounds} resetKey={resetKey} center={manifest.mapCenter} zoom={manifest.mapZoom} onZoom={setZoom} />
+          <MapController fitBounds={fitBounds} />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
-          {/* z-order, bottom to top: non-interactive base outlines, then the
-              clickable sheds, then thematic fills/lines/points on top so they
-              win hit-testing (canvas hit-test ignores fill:false). */}
-          <Pane name="b-base" style={{ zIndex: 390 }} />
-          <Pane name="b-shed" style={{ zIndex: 400 }} />
-          <Pane name="b-fill" style={{ zIndex: 410 }} />
-          <Pane name="b-line" style={{ zIndex: 420 }} />
-          <Pane name="b-point" style={{ zIndex: 440 }} />
-
-          {manifest.layers.map((l) => {
+          {/* One shared canvas, stacked by DRAW ORDER (not panes): base outlines
+              and sub-catchments first (bottom), then thematic fills, lines, and
+              points on top. Single canvas means hit-testing follows the same
+              order, so a tank/point on top receives the hover, not the
+              catchment beneath it. (Separate pane-canvases would each eat events
+              across the whole map, blocking layers below.) */}
+          {orderedLayers.map((l) => {
             if (!shouldRender(l)) return null;
             const fc = data[dataKey(l)];
             if (!fc) return null;
@@ -328,15 +342,22 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 <GeoJSON
                   key={`shed-${selectedRiverId}-${tiles.isDark}`}
                   data={fcScoped}
-                  pane="b-shed"
-                  style={(feat?: Feature) => shedStyle(feat, selectedSheds, faded)}
+                  style={(feat?: Feature) => shedStyle(feat, selectedSheds, faded, l.color)}
                   onEachFeature={(feat: Feature, layer: Layer) => {
                     const sid = String((feat.properties as Record<string, unknown>)?.shedId ?? "");
                     const name = String((feat.properties as Record<string, unknown>)?.name ?? "sub-catchment");
                     const river = shedToRiver.get(sid);
                     const rName = manifest.rivers.find((r) => r.riverId === river)?.displayName;
-                    layer.bindTooltip(river ? `${name} - click for ${rName}` : name, { sticky: true });
-                    if (river) layer.on("click", () => selectRiver(river));
+                    const isSelected = !!river && river === selectedRiverId;
+                    // "click for X" only invites a selection that would change the
+                    // view - never on the catchment whose river is already selected.
+                    const label = !river
+                      ? `${name} catchment`
+                      : isSelected
+                        ? `${name} catchment · ${rName}`
+                        : `${name} catchment - click for ${rName}`;
+                    layer.bindTooltip(label, { sticky: true });
+                    if (river && !isSelected) layer.on("click", () => selectRiver(river));
                   }}
                 />
               );
@@ -347,7 +368,6 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 <GeoJSON
                   key={`${l.family}-${selectedRiverId}-${tiles.isDark}`}
                   data={fcScoped}
-                  pane="b-line"
                   style={(feat?: Feature) => lineStyle(l, feat, manifest, selectedRiverId, faded)}
                   interactive={l.family === "rivers"}
                   onEachFeature={(feat: Feature, layer: Layer) => {
@@ -369,7 +389,6 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 <GeoJSON
                   key={`${l.family}-${selectedRiverId}`}
                   data={fcScoped}
-                  pane="b-point"
                   pointToLayer={(feat, latlng) =>
                     L.circleMarker(latlng, pointStyle(l, feat, faded))
                   }
@@ -392,7 +411,6 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
               <GeoJSON
                 key={`${l.family}-${selectedRiverId}-${tiles.isDark}`}
                 data={fcScoped}
-                pane={isBase ? "b-base" : "b-fill"}
                 interactive={!isBase}
                 style={(feat?: Feature) => fillStyle(l, feat, faded)}
                 pointToLayer={(feat, latlng) => L.circleMarker(latlng, pressurePointStyle(feat, faded))}
@@ -417,6 +435,17 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           </button>
         )}
 
+        {/* Whole-basin reset: clears the river scope so every layer shows
+            basin-wide (e.g. all waterbodies), and flies back to the overview. */}
+        {selectedRiverId && (
+          <button
+            onClick={() => selectRiver(null)}
+            className="absolute top-3 right-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-md shadow px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+          >
+            ↺ Whole basin
+          </button>
+        )}
+
         {/* Coach mark */}
         {!embedded && !coachDismissed && !selectedRiverId && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[500] bg-slate-900/95 text-white text-xs rounded-full px-4 py-2 shadow-lg flex items-center gap-3">
@@ -429,10 +458,37 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             </button>
           </div>
         )}
+
+        {/* Reopen tabs when a panel is collapsed (md+). */}
+        {!railOpen && (
+          <button
+            onClick={() => setRailOpen(true)}
+            title="Show layers panel"
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-[500] items-center bg-white/95 dark:bg-slate-900/95 border border-l-0 border-slate-200 dark:border-slate-700 rounded-r-md shadow px-1.5 py-3 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+          >
+            » Layers
+          </button>
+        )}
+        {!panelOpen && (
+          <button
+            onClick={() => setPanelOpen(true)}
+            title="Show details panel"
+            className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-[500] items-center bg-white/95 dark:bg-slate-900/95 border border-r-0 border-slate-200 dark:border-slate-700 rounded-l-md shadow px-1.5 py-3 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+          >
+            Details «
+          </button>
+        )}
+
+        {/* Legend - reflects what's currently visible. */}
+        <MapLegend layers={visibleLayers} />
       </div>
 
       {/* ── Detail panel ── */}
+      {panelOpen && (
       <aside className="hidden lg:flex h-full w-[360px] shrink-0 border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto bg-white dark:bg-slate-900 p-5 text-sm">
+        <div className="flex justify-end -mt-2 -mr-2 mb-1">
+          <button onClick={() => setPanelOpen(false)} title="Hide details panel" className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">»</button>
+        </div>
         {selectedFeature ? (
           <FeaturePanel
             props={selectedFeature.props}
@@ -454,8 +510,70 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           </div>
         )}
       </aside>
+      )}
     </div>
   );
+}
+
+// ── legend ───────────────────────────────────────────────────────────────
+
+type LegendSym = "box" | "dot" | "ring" | "line" | "dash" | "outline";
+
+/** Dynamic legend: one entry per symbol actually on the map right now,
+ *  expanding pressures into its kinds and showing the monitoring public-domain
+ *  cue (filled vs hollow). */
+function MapLegend({ layers }: { layers: BasinLayer[] }) {
+  const [open, setOpen] = useState(true);
+  // Every entry's color comes from the layer's manifest `color` or the shared
+  // PRESSURE_KIND_COLOR map - the same sources the map styles read - so the
+  // legend can never disagree with what's drawn.
+  const items: { sym: LegendSym; color: string; label: string }[] = [];
+  for (const l of layers) {
+    if (l.family === "boundary") items.push({ sym: "line", color: l.color, label: l.label });
+    else if (l.family === "sub-hydrosheds") items.push({ sym: "dash", color: l.color, label: "Sub-catchment" });
+    else if (l.family === "rivers") items.push({ sym: "line", color: l.color, label: "River" });
+    else if (l.family === "drainage") items.push({ sym: "line", color: l.color, label: l.label });
+    else if (l.family === "monitoring-points") {
+      items.push({ sym: "dot", color: l.color, label: "Monitoring (public data)" });
+      items.push({ sym: "ring", color: l.color, label: "Monitoring (not in public domain)" });
+    } else if (l.family === "pressures") {
+      for (const kind of Object.keys(PRESSURE_KIND_COLOR)) {
+        items.push({ sym: "box", color: PRESSURE_KIND_COLOR[kind], label: PRESSURE_KIND_LABEL[kind] });
+      }
+    } else if (l.family.startsWith("admin")) items.push({ sym: "outline", color: l.color, label: l.label });
+    else if (l.geom === "point") items.push({ sym: "dot", color: l.color, label: l.label });
+    else items.push({ sym: "box", color: l.color, label: l.label });
+  }
+  if (!items.length) return null;
+  return (
+    <div className="absolute bottom-3 left-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow text-[11px] max-w-[230px]">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between px-2.5 py-1.5 font-semibold text-slate-600 dark:text-slate-300"
+      >
+        Legend <span className="text-slate-400">{open ? "−" : "+"}</span>
+      </button>
+      {open && (
+        <div className="px-2.5 pb-2 space-y-1 max-h-[42vh] overflow-y-auto">
+          {items.map((it, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <LegendSymbol sym={it.sym} color={it.color} />
+              <span className="text-slate-600 dark:text-slate-300 leading-tight">{it.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LegendSymbol({ sym, color }: { sym: LegendSym; color: string }) {
+  if (sym === "dot") return <span className="inline-block w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: color }} />;
+  if (sym === "ring") return <span className="inline-block w-3 h-3 rounded-full shrink-0 border-2 bg-transparent" style={{ borderColor: color }} />;
+  if (sym === "line") return <span className="inline-block w-4 h-[2px] shrink-0" style={{ backgroundColor: color }} />;
+  if (sym === "dash") return <span className="inline-block w-4 border-t-2 border-dashed shrink-0" style={{ borderColor: color }} />;
+  if (sym === "outline") return <span className="inline-block w-3 h-3 rounded-sm shrink-0 border" style={{ borderColor: color }} />;
+  return <span className="inline-block w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: color }} />;
 }
 
 // ── styling ──────────────────────────────────────────────────────────────
@@ -473,14 +591,22 @@ function pressurePointStyle(feat: Feature | undefined, faded: boolean): L.Circle
   return { radius: 5, color: c, weight: 1.5, fillColor: c, fillOpacity: faded ? 0.3 : 0.85, opacity: faded ? 0.5 : 1 };
 }
 
-function shedStyle(feat: Feature | undefined, selectedSheds: Set<string>, faded: boolean): PathOptions {
+// Sub-catchments are dashed INDIGO outlines - a hue absent from the OSM
+// basemap (which draws its own admin boundaries in grey/white), so they read
+// as ours, not the basemap's. Outline-only (no fill) avoids the darkening
+// where catchments meet; the interior stays clickable under canvas. The
+// selected catchment pops in amber with a faint highlight fill.
+function shedStyle(feat: Feature | undefined, selectedSheds: Set<string>, faded: boolean, color: string): PathOptions {
   const sid = String((feat?.properties as Record<string, unknown>)?.shedId ?? "");
   const sel = selectedSheds.has(sid);
   return {
-    color: "#0ea5e9",
-    weight: sel ? 2 : 1,
-    fillColor: "#0ea5e9",
-    fillOpacity: sel ? 0.18 : faded ? 0.04 : 0.08,
+    color: sel ? SELECTED_SHED_COLOR : color,
+    weight: sel ? 2.5 : 1.4,
+    dashArray: sel ? undefined : "5 4",
+    opacity: sel ? 0.95 : faded ? 0.45 : 0.8,
+    fill: sel,
+    fillColor: SELECTED_SHED_COLOR,
+    fillOpacity: sel ? 0.08 : 0,
   };
 }
 
@@ -489,7 +615,7 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
     const rid = String((feat?.properties as Record<string, unknown>)?.riverId ?? "");
     const r = manifest.rivers.find((x) => x.riverId === rid);
     const sel = rid === selectedRiverId;
-    return { color: r?.color ?? l.color, weight: sel ? 4 : 2.5, opacity: sel || !selectedRiverId ? 0.95 : 0.5 };
+    return { color: r?.color ?? l.color, weight: sel ? 5 : 3, opacity: sel || !selectedRiverId ? 1 : 0.75 };
   }
   return { color: l.color, weight: 1, opacity: faded ? 0.4 : 0.85 };
 }
@@ -508,26 +634,55 @@ function pointStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): L
   };
 }
 
+// ── shared color sources (the map, legend, and rail all read from these +
+//    each layer's manifest `color`, so they can never drift out of sync) ──
+
+// Warm red->orange->amber ramp: reads as "pressure", three steps distinct and
+// each mid-toned so it holds on both the light and dark basemaps.
 const PRESSURE_KIND_COLOR: Record<string, string> = {
-  "industrial-area": "#b91c1c",
-  quarry: "#92400e",
-  "waste-facility": "#7c2d12",
+  "industrial-area": "#dc2626",
+  quarry: "#ea580c",
+  "waste-facility": "#ca8a04",
+};
+const PRESSURE_KIND_LABEL: Record<string, string> = {
+  "industrial-area": "Industrial area",
+  quarry: "Quarry",
+  "waste-facility": "Waste facility",
+};
+// The selected sub-catchment highlight (warm amber - the only warm structural
+// cue, so "you are scoped here" stands out from the cool context).
+const SELECTED_SHED_COLOR = "#f59e0b";
+
+// Admin levels are all neutral; tell them apart by dash pattern + weight.
+const ADMIN_DASH: Record<string, string | undefined> = {
+  "admin-district": undefined,
+  "admin-taluk": "6 4",
+  "admin-town": "2 3",
+  "admin-gp": "1 4",
 };
 
 function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): PathOptions {
   if (l.family === "boundary") {
-    return { color: l.color, weight: 2.5, fill: false, dashArray: "6 4" };
+    // Bold SOLID line in the manifest color (fuchsia) - a hue the OSM basemap
+    // never uses, so the basin edge can't be mistaken for a basemap boundary.
+    return { color: l.color, weight: 3, fill: false, opacity: 0.95 };
   }
   if (l.family.startsWith("admin")) {
-    return { color: l.color, weight: 1, fill: false, opacity: faded ? 0.4 : 0.8, dashArray: l.family === "admin-district" ? undefined : "3 3" };
+    return {
+      color: l.color,
+      weight: l.family === "admin-district" ? 1.4 : 1.2,
+      fill: false,
+      opacity: faded ? 0.4 : 0.85,
+      dashArray: ADMIN_DASH[l.family],
+    };
   }
   if (l.family === "pressures") {
     const kind = String((feat?.properties as Record<string, unknown>)?.kind ?? "");
     const c = PRESSURE_KIND_COLOR[kind] ?? l.color;
-    return { color: c, weight: 1, fillColor: c, fillOpacity: faded ? 0.2 : 0.45 };
+    return { color: c, weight: 1, fillColor: c, fillOpacity: faded ? 0.2 : 0.5 };
   }
   // waterbodies, command-areas
-  return { color: l.color, weight: 0.8, fillColor: l.color, fillOpacity: faded ? 0.25 : 0.55 };
+  return { color: l.color, weight: 0.8, fillColor: l.color, fillOpacity: faded ? 0.3 : 0.6 };
 }
 
 // ── panels ───────────────────────────────────────────────────────────────
@@ -564,13 +719,23 @@ const PROP_LABELS: Record<string, string> = {
   status: "Status",
   process: "Process",
   kind: "Type",
+  type: "Type",
   custodian: "Custodian",
   district: "District",
   tankId: "Tank ID",
   details: "Details",
   areaHa: "Area (ha)",
+  govCode: "Government code",
+  townType: "Town type",
 };
 const LINK_FIELDS = new Set(["dataUrl", "evidenceUrl"]);
+
+/** Fallback label for any property key not in PROP_LABELS: split camelCase and
+ *  capitalise, so "evidenceType" -> "Evidence Type", "govCode" -> "Gov Code". */
+function humanizeKey(k: string): string {
+  const s = k.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/[_-]+/g, " ");
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown>; label: string; onClose: () => void }) {
   const title = String(props.name ?? props.contributor ?? props.kind ?? label);
@@ -591,7 +756,7 @@ function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown
       <dl className="space-y-2">
         {entries.map(([k, v]) => (
           <div key={k}>
-            <dt className="text-[10px] uppercase tracking-wider text-slate-400">{PROP_LABELS[k] ?? k}</dt>
+            <dt className="text-[10px] uppercase tracking-wider text-slate-400">{PROP_LABELS[k] ?? humanizeKey(k)}</dt>
             <dd className="text-slate-700 dark:text-slate-300 leading-relaxed">{String(v)}</dd>
           </div>
         ))}
@@ -610,6 +775,7 @@ function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown
 function DataOnThisMap({ manifest, inventory }: { manifest: BasinManifest; inventory: BasinInventory | null }) {
   const [open, setOpen] = useState(false);
   if (!inventory) return null;
+  const layersWithData = manifest.layers.filter((l) => inventory.families[l.family]);
   return (
     <div className="border-t border-slate-200 dark:border-slate-700 mt-1">
       <button
@@ -620,28 +786,38 @@ function DataOnThisMap({ manifest, inventory }: { manifest: BasinManifest; inven
         <span className="text-slate-400">{open ? "−" : "+"}</span>
       </button>
       {open && (
-        <div className="px-3 pb-3 space-y-2 text-[11px] text-slate-500 dark:text-slate-400">
-          {manifest.layers.map((l) => {
-            const inv = inventory.families[l.family];
-            if (!inv) return null;
-            const prov = inv.sources.map((s) => s.provenance).filter(Boolean)[0];
-            return (
-              <div key={l.family}>
-                <span className="text-slate-700 dark:text-slate-300">{l.label}</span>{" "}
-                <span className="tabular-nums">({inv.featureCount})</span>
-                {prov && <div className="text-slate-400 leading-snug">{prov}</div>}
-              </div>
-            );
-          })}
-          {inventory.skipped.length > 0 && (
-            <div className="pt-1 border-t border-slate-200 dark:border-slate-700">
-              <div className="text-slate-600 dark:text-slate-300 font-medium">Data we don&apos;t have yet</div>
-              {inventory.skipped.map((s) => (
-                <div key={s.file} className="leading-snug">{s.file}: {s.reason}</div>
+        <div className="px-3 pb-3 space-y-3 text-[11px] text-slate-500 dark:text-slate-400">
+          {/* Data partner credit - most of this basin's data is Paani Earth's. */}
+          <a
+            href="https://paani.earth"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2.5 group rounded-md border border-slate-200 dark:border-slate-700 p-2 hover:bg-slate-50 dark:hover:bg-slate-800/60"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/partners/paani-earth-logo.png" alt="Paani Earth Foundation" width={36} height={36} className="rounded shrink-0" />
+            <span className="leading-tight">
+              <span className="block text-[10px] uppercase tracking-wider text-slate-400">Data partner</span>
+              <span className="block text-slate-700 dark:text-slate-200 font-semibold group-hover:underline">Paani Earth Foundation</span>
+              <span className="block text-slate-400">Basin spatial data &amp; field evidence · paani.earth ↗</span>
+            </span>
+          </a>
+
+          {/* Consolidated layer inventory (counts only - provenance is in Sources). */}
+          <div>
+            <div className="text-slate-600 dark:text-slate-300 font-medium mb-1">Layers ({layersWithData.length})</div>
+            <div className="space-y-0.5">
+              {layersWithData.map((l) => (
+                <div key={l.family} className="flex justify-between gap-2">
+                  <span className="text-slate-600 dark:text-slate-300">{l.label}</span>
+                  <span className="tabular-nums text-slate-400">{inventory.families[l.family].featureCount}</span>
+                </div>
               ))}
             </div>
-          )}
-          <div className="pt-1 border-t border-slate-200 dark:border-slate-700 space-y-1">
+          </div>
+
+          <div className="pt-1 border-t border-slate-200 dark:border-slate-700">
+            <div className="text-slate-600 dark:text-slate-300 font-medium mb-1">Sources</div>
             {manifest.credits.map((c, i) => <div key={i} className="leading-snug">{c}</div>)}
           </div>
         </div>

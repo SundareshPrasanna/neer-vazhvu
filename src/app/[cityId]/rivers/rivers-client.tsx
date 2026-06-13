@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import type { Feature } from "geojson";
+import type { Feature, Geometry, LineString, MultiLineString } from "geojson";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { useLanguage } from "@/lib/i18n/context";
 // Shared types from the Chennai-baseline pollution + river-quality
@@ -36,6 +36,20 @@ interface ClientProps {
 // Rivers-page river_id -> basin riverId, where the two registries spell the
 // same river differently (the rivers page predates the basin manifest).
 const BASIN_RIVER_ALIAS: Record<string, string> = { arkavati: "arkavathi" };
+const RIVERS_COACH_KEY = "rivers-drilldown-coach-dismissed";
+
+/** Combine one or more line geometries into a single (Multi)LineString. */
+function mergeLineGeoms(geoms: Geometry[]): LineString | MultiLineString | null {
+  const lines: number[][][] = [];
+  for (const g of geoms) {
+    if (g.type === "LineString") lines.push(g.coordinates as number[][]);
+    else if (g.type === "MultiLineString") lines.push(...(g.coordinates as number[][][]));
+  }
+  if (lines.length === 0) return null;
+  return lines.length === 1
+    ? { type: "LineString", coordinates: lines[0] }
+    : { type: "MultiLineString", coordinates: lines };
+}
 
 export interface RiverInfo {
   display_name: string;
@@ -141,6 +155,15 @@ export default function RiversClient({
   // to this basin river. Clicking a basin river opens it; everything else on
   // the standard rivers page is unchanged.
   const [openBasinRiverId, setOpenBasinRiverId] = useState<string | null>(null);
+  // More accurate basin river geometry (Paani), keyed by rivers-page river_id.
+  const [basinRiverGeom, setBasinRiverGeom] = useState<Record<string, LineString | MultiLineString>>({});
+  const [coachDismissed, setCoachDismissed] = useState(true);
+
+  // basin riverId -> rivers-page river_id (reverse of the spelling alias).
+  const reverseAlias = useMemo(
+    () => Object.fromEntries(Object.entries(BASIN_RIVER_ALIAS).map(([k, v]) => [v, k])),
+    [],
+  );
 
   // The basin riverId a rivers-page river maps to, or null if it has no basin.
   function basinRiverIdFor(riverId: string): string | null {
@@ -214,6 +237,54 @@ export default function RiversClient({
       .catch(() => setIndustrial([]));
   }, [cityId]);
 
+  // The basin carries a more accurate river line (Paani) than the OSM rivers
+  // file; use it to draw the basin's rivers on this page too.
+  useEffect(() => {
+    if (!basin) return;
+    fetch(`/data/basins/${basin.manifest.basinId}/rivers.geojson`)
+      .then((r) => (r.ok ? (r.json() as Promise<{ features: Feature[] }>) : null))
+      .then((fc) => {
+        if (!fc) return;
+        const byPageId: Record<string, Geometry[]> = {};
+        for (const f of fc.features) {
+          const bid = (f.properties as { riverId?: string } | null)?.riverId;
+          if (!bid || !f.geometry) continue;
+          const pageId = reverseAlias[bid] ?? bid;
+          (byPageId[pageId] ??= []).push(f.geometry);
+        }
+        const out: Record<string, LineString | MultiLineString> = {};
+        for (const [pageId, geoms] of Object.entries(byPageId)) {
+          const merged = mergeLineGeoms(geoms);
+          if (merged) out[pageId] = merged;
+        }
+        setBasinRiverGeom(out);
+      })
+      .catch(() => {});
+  }, [basin, reverseAlias]);
+
+  useEffect(() => {
+    setCoachDismissed(localStorage.getItem(RIVERS_COACH_KEY) === "1");
+  }, []);
+
+  // Rivers drawn on the map: basin rivers use the more accurate basin geometry.
+  const displayRivers = useMemo(
+    () =>
+      rivers.map((r) =>
+        basinRiverGeom[r.river_id] ? { ...r, geometry: basinRiverGeom[r.river_id] } : r,
+      ),
+    [rivers, basinRiverGeom],
+  );
+
+  // Names of the rivers on this page that drill into the basin (for the hint).
+  const drillableNames = useMemo(() => {
+    if (!basin) return [];
+    const pageIds = new Set(rivers.map((r) => r.river_id));
+    return basin.manifest.rivers
+      .map((r) => ({ name: r.displayName, pageId: reverseAlias[r.riverId] ?? r.riverId }))
+      .filter((x) => pageIds.has(x.pageId))
+      .map((x) => x.name);
+  }, [basin, rivers, reverseAlias]);
+
   const selectedEvents = useMemo(
     () => events.filter((e) => e.river_id === selectedRiverId),
     [events, selectedRiverId],
@@ -242,9 +313,18 @@ export default function RiversClient({
 
   const selectedInfo = selectedRiverId ? riverInfo[selectedRiverId] : null;
   const selectedRiver = useMemo(
-    () => rivers.find((r) => r.river_id === selectedRiverId) ?? null,
-    [rivers, selectedRiverId],
+    () => displayRivers.find((r) => r.river_id === selectedRiverId) ?? null,
+    [displayRivers, selectedRiverId],
   );
+
+  // A river on a basin-city that doesn't (yet) drill into the basin: tell the
+  // user the layered view is in progress rather than implying it exists.
+  const basinComingSoon = !!basin && !!selectedRiverId && !basinRiverIdFor(selectedRiverId);
+  const comingSoonNote = basinComingSoon ? (
+    <div className="m-3 rounded-md border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 p-2.5 text-xs text-amber-800 dark:text-amber-200">
+      Layered basin data (pollution, monitoring &amp; infrastructure) for this river is being worked on - coming soon.
+    </div>
+  ) : null;
   // Flatten CPCB stations across all rivers for the map markers; latest
   // reading is the row with the highest year, even if some metrics are
   // null.
@@ -289,7 +369,7 @@ export default function RiversClient({
         {/* Map */}
         <div className="relative flex-1 h-full">
           <RiversLeafletMap
-            rivers={rivers}
+            rivers={displayRivers}
             selectedRiverId={selectedRiverId}
             onSelectRiver={handleSelectRiver}
             mapCenter={mapCenter}
@@ -298,6 +378,21 @@ export default function RiversClient({
             cpcbStations={cpcbStationMarkers}
             industrialSources={industrialMarkers}
           />
+
+          {/* Drill-down hint: shown where at least one river opens a basin atlas. */}
+          {drillableNames.length > 0 && !coachDismissed && !openBasinRiverId && (
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[600] max-w-[92%] bg-slate-900/95 text-white text-xs rounded-full px-4 py-2 shadow-lg flex items-center gap-3">
+              <span>
+                Click on the rivers to drill into the basin - pollution, monitoring &amp; infrastructure
+              </span>
+              <button
+                onClick={() => { localStorage.setItem(RIVERS_COACH_KEY, "1"); setCoachDismissed(true); }}
+                className="shrink-0 text-slate-300 hover:text-white underline"
+              >
+                don&apos;t show again
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Detail sidebar. Three modes:
@@ -308,6 +403,7 @@ export default function RiversClient({
                  feeds / status from the per-city config.
               3. nothing selected          -> placeholder hint. */}
         <div className="hidden md:flex h-full md:w-96 lg:w-[420px] border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto">
+          {comingSoonNote}
           {selectedRiverId && cpcb ? (
             <RiverPanel
               selected={{ riverId: selectedRiverId, latlng: mapCenter }}
@@ -330,6 +426,7 @@ export default function RiversClient({
       {/* Mobile bottom panel - same modes as desktop sidebar */}
       {selectedRiverId && cpcb && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[40vh] overflow-y-auto">
+          {comingSoonNote}
           <RiverPanel
             selected={{ riverId: selectedRiverId, latlng: mapCenter }}
             qualityData={cpcb}
@@ -344,12 +441,15 @@ export default function RiversClient({
       )}
       {selectedRiverId && !cpcb && selectedInfo && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[40vh] overflow-y-auto">
+          {comingSoonNote}
           <RiverInfoOnlyPanel info={selectedInfo} cityDisplayName={cityDisplayName} onClose={() => setSelectedRiverId(null)} />
         </div>
       )}
 
       {/* Layered basin atlas, opened by clicking a river that has basin data.
-          Overlays the rivers map; "Back to rivers" returns to the standard view. */}
+          Opens at the WHOLE-BASIN view (not scoped to the clicked river) so the
+          full picture shows first; the user drills into a sub-catchment from
+          there. Overlays the rivers map; "Back to rivers" returns. */}
       {basin && openBasinRiverId && (
         <div className="absolute inset-0 z-[1000] bg-white dark:bg-slate-950">
           <BasinAtlasClient
@@ -357,7 +457,7 @@ export default function RiversClient({
             cityDisplayName={cityDisplayName}
             manifest={basin.manifest}
             inventory={basin.inventory}
-            initialRiverId={openBasinRiverId}
+            initialRiverId={null}
             embedded
             onClose={() => setOpenBasinRiverId(null)}
           />

@@ -34,11 +34,12 @@ export interface BasinLayer {
   geom: BasinGeomRole;
   /** Hex color for the layer (rivers override per-river). */
   color: string;
-  /** On by default within its floor. */
+  /** On by default within its floor. The checkbox is the single source of
+   *  truth for visibility - nothing else (zoom, etc.) hides a checked layer. */
   defaultOn: boolean;
-  /** Map zoom at/above which the layer may render+fetch (gates fetching). */
-  minZoom?: number;
-  /** Sliced per sub-hydroshed; loaded on river-select or past minZoom. */
+  /** Large layer: sliced per sub-hydroshed and loaded on demand (per shed when
+   *  a river is selected, else the full file). Default off so it only loads
+   *  when explicitly checked. */
   heavy?: boolean;
   /** Part of the persistent base skeleton - rendered (dimmed) even when its
    *  floor isn't focused, so the map keeps its bearings. */
