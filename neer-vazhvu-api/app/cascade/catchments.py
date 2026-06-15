@@ -102,12 +102,35 @@ _CONDUIT_NAME_RE = re.compile(
 # body (e.g. Pulicat lagoon, pp 0.019) has a low ratio (~3), whereas a river
 # masquerading as a lake (Vrishabhavati, "Nagarbhavi Thorai") has a ratio in
 # the hundreds. So this also catches NAMED rivers the conduit regex misses.
+#
+# Exception: an on-river RESERVOIR (e.g. Manchanabele, impounded behind a dam on
+# the Arkavati trunk) is both elongated AND drains a whole basin, so it trips the
+# ratio test exactly like a river - the ratio cannot tell them apart. A surface-
+# area floor can: a contiguous water polygon this large is an impoundment, never
+# a drain/canal ribbon. Bodies at or above the floor are exempt from the test.
 _RIBBON_COMPACTNESS_MAX = 0.05
 _RIBBON_CATCHMENT_RATIO_MIN = 100.0
+_RIBBON_LAKE_AREA_FLOOR_KM2 = 0.5  # ~50 ha; above this, keep even if ribbon-like
 
 
 def _polsby_popper(poly: Any) -> float:
     return 4 * math.pi * poly.area / (poly.length**2) if poly.length else 0.0
+
+
+def _is_river_ribbon(poly: Any, lake_km2: float, total_km2: float) -> bool:
+    """True if a water polygon is a river/canal segment masquerading as a tank.
+
+    Thin (low compactness) AND draining a catchment far larger than itself.
+    Large impoundments are exempt via the area floor: an on-river reservoir
+    (Manchanabele) is thin and drains a whole basin, so it trips compactness
+    and ratio exactly like a river - only its surface area sets it apart.
+    """
+    return (
+        lake_km2 < _RIBBON_LAKE_AREA_FLOOR_KM2
+        and lake_km2 > 0
+        and _polsby_popper(poly) < _RIBBON_COMPACTNESS_MAX
+        and total_km2 / lake_km2 > _RIBBON_CATCHMENT_RATIO_MIN
+    )
 
 
 def _log(msg: str) -> None:
@@ -618,12 +641,10 @@ def build_catchments(
         # Thin ribbon draining a whole basin = a river segment, not a tank.
         # Applies to named bodies too (catches rivers like "Vrishabhavati" that
         # the conduit name-regex misses); the catchment ratio keeps genuine
-        # elongated water bodies (Pulicat: low ratio) from being dropped.
-        if (
-            _polsby_popper(poly) < _RIBBON_COMPACTNESS_MAX
-            and lake_km2 > 0
-            and total_km2 / lake_km2 > _RIBBON_CATCHMENT_RATIO_MIN
-        ):
+        # elongated water bodies (Pulicat: low ratio) from being dropped, and the
+        # area floor keeps large impoundments (Manchanabele) that otherwise look
+        # like ribbons by both compactness and ratio.
+        if _is_river_ribbon(poly, lake_km2, total_km2):
             flagged.append(
                 {
                     "osm_id": osm_id,

@@ -21,6 +21,8 @@ from __future__ import annotations
 import json
 import math
 import os
+import urllib.request
+import xml.etree.ElementTree as ET
 from typing import Any
 
 import numpy as np
@@ -30,14 +32,42 @@ from shapely.strtree import STRtree
 
 from app.cascade.districts import DistrictCascadeConfig
 
-OVERTURE_BUILDINGS = (
-    "s3://overturemaps-us-west-2/release/2026-04-15.0/theme=buildings/type=building/*"
-)
+OVERTURE_BUCKET = "overturemaps-us-west-2"
+OVERTURE_REGION = "us-west-2"
+# Overture publishes a fresh release roughly monthly and prunes old ones, so a
+# hardcoded release silently 404s after a few weeks (this is why harvest stalled
+# - the pipeline was pinned to a release that no longer existed). Resolve the
+# latest live release at run time; this constant is only the offline fallback.
+DEFAULT_OVERTURE_RELEASE = "2026-05-20.0"
 RUNOFF_COEFFICIENT = 0.8
 
 
 def _log(msg: str) -> None:
     print(f"[buildings] {msg}", flush=True)
+
+
+def _latest_overture_release() -> str:
+    """Newest live Overture release id, via anonymous S3 REST listing.
+
+    Falls back to DEFAULT_OVERTURE_RELEASE if the listing is unreachable.
+    """
+    url = (
+        f"https://{OVERTURE_BUCKET}.s3.{OVERTURE_REGION}.amazonaws.com/"
+        "?list-type=2&prefix=release/&delimiter=/"
+    )
+    try:
+        with urllib.request.urlopen(url, timeout=30) as resp:
+            root = ET.fromstring(resp.read())
+        ns = {"s3": "http://s3.amazonaws.com/doc/2006-03-01/"}
+        rels = [
+            p.text.split("/")[-2]
+            for p in root.findall(".//s3:CommonPrefixes/s3:Prefix", ns)
+            if p.text
+        ]
+        return max(rels) if rels else DEFAULT_OVERTURE_RELEASE
+    except Exception as exc:  # network/parse failure -> offline fallback
+        _log(f"release listing failed ({exc}); using {DEFAULT_OVERTURE_RELEASE}")
+        return DEFAULT_OVERTURE_RELEASE
 
 
 def _annual_rainfall_mm(district: DistrictCascadeConfig) -> float:
@@ -73,15 +103,25 @@ def enrich_catchments(district: DistrictCascadeConfig) -> dict[str, Any]:
     # the geodesic ST_Area_Spheroid over millions of buildings.
     lat0 = (miny + maxy) / 2.0
     deg2_to_m2 = 110574.0 * (111320.0 * math.cos(math.radians(lat0)))
-    cache_path = f"/tmp/overture_{district.district_id}_buildings.parquet"
+    release = _latest_overture_release()
+    overture_glob = (
+        f"s3://{OVERTURE_BUCKET}/release/{release}/theme=buildings/type=building/*"
+    )
+    # Release in the cache key so a release roll invalidates the stale extract.
+    cache_path = f"/tmp/overture_{district.district_id}_{release}_buildings.parquet"
 
     con = duckdb.connect()
+    con.execute("INSTALL spatial; LOAD spatial; INSTALL httpfs; LOAD httpfs;")
+    # Overture's bucket is public; an anonymous secret forces unsigned requests
+    # so the pull works without AWS credentials in the environment.
     con.execute(
-        "INSTALL spatial; LOAD spatial; INSTALL httpfs; LOAD httpfs; SET s3_region='us-west-2';"
+        f"CREATE SECRET overture_anon (TYPE s3, PROVIDER config, "
+        f"REGION '{OVERTURE_REGION}', ENDPOINT 's3.{OVERTURE_REGION}.amazonaws.com');"
     )
     if not os.path.exists(cache_path):
         _log(
-            f"querying Overture buildings in bbox [{minx:.3f},{miny:.3f},{maxx:.3f},{maxy:.3f}] (one-time S3 pull) ..."
+            f"querying Overture buildings (release {release}) in bbox "
+            f"[{minx:.3f},{miny:.3f},{maxx:.3f},{maxy:.3f}] (one-time S3 pull) ..."
         )
         con.execute(
             f"""
@@ -89,7 +129,7 @@ def enrich_catchments(district: DistrictCascadeConfig) -> dict[str, Any]:
               SELECT ST_X(ST_Centroid(geometry)) AS lon,
                      ST_Y(ST_Centroid(geometry)) AS lat,
                      ST_Area(geometry) * {deg2_to_m2} AS area_m2
-              FROM read_parquet('{OVERTURE_BUILDINGS}')
+              FROM read_parquet('{overture_glob}')
               WHERE bbox.xmin BETWEEN {minx} AND {maxx}
                 AND bbox.ymin BETWEEN {miny} AND {maxy}
             ) TO '{cache_path}' (FORMAT parquet)
@@ -140,5 +180,5 @@ def enrich_catchments(district: DistrictCascadeConfig) -> dict[str, Any]:
         "annual_rainfall_mm": round(rain_mm, 1),
         "total_buildings": int(count.sum()),
         "catchments_with_buildings": nonzero,
-        "overture_release": "2026-04-15.0",
+        "overture_release": release,
     }

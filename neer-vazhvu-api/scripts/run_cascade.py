@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 API_ROOT = Path(__file__).resolve().parents[1]
@@ -80,7 +81,11 @@ def cmd_delineate_catchments(district_id: str) -> int:
     from app.cascade.districts import get_district_cascade_config
 
     district = get_district_cascade_config(district_id)
-    summary = catchments.build_catchments(district)
+    # Persist the conditioned DEM (FABDEM mosaic + WhiteboxTools rasters) per
+    # district so re-delineation (e.g. after a filter change) skips the slow
+    # GEE pull and reuses the cached terrain.
+    dem_cache = Path(tempfile.gettempdir()) / "cascade_dem_cache" / district_id
+    summary = catchments.build_catchments(district, dem_cache=dem_cache)
     print(json.dumps(summary, indent=2))
     return 0
 
