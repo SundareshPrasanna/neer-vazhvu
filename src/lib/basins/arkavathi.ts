@@ -84,7 +84,10 @@ export const ARKAVATHI: BasinManifest = {
     // ── Floor 3: Pressures (warm ramp) ──
     { family: "pressures", label: "Industry, quarries & waste", floor: "pressures", geom: "fill", color: "#dc2626", defaultOn: true, hasKinds: true },
 
-    // ── Floor 4: Governance & response ──
+    // ── Floor 4: Gaps & response ──
+    // Treatment-gap intelligence (cross-source; panel content in gaps.json).
+    // Demo: Ramanagara. More units are a data-only addition.
+    { family: "gaps", label: "Treatment gaps", floor: "governance", geom: "fill", color: "#dc2626", defaultOn: true, gap: true },
     { family: "infrastructure", label: "Treatment plants (STPs)", floor: "governance", geom: "point", color: "#a855f7", defaultOn: true },
     { family: "command-areas", label: "Irrigation command areas", floor: "governance", geom: "fill", color: "#65a30d", defaultOn: false },
     // District stays neutral (always-on context); the opt-in finer levels get

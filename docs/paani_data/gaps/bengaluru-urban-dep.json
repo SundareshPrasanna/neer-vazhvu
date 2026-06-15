@@ -1,0 +1,105 @@
+{
+  "_meta": {
+    "source_document": "District Environmental Plan for Bengaluru Urban District, Karnataka State",
+    "source_page": "https://bengaluruurban.nic.in/en/environmental-plan/",
+    "document_url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf",
+    "published": "May 2022 (s3waas upload path 2022/05)",
+    "data_as_on": "Base data from 'Bengaluru Urban District at a Glance 2019-2020' (Govt. of Karnataka); KSPCB F-Register / industry status current to ~2021-22; action-plan timelines run 31.12.2021 to 31.03.2023. Cited throughout as 'DEP 2022' with the 2019-20 base year noted.",
+    "extraction_method": "pdftotext -layout on machine-readable (text-based) PDF; cover page rendered empty, all data pages selectable text.",
+    "structure_note": "This DEP is organised PER ULB (BBMP, TMC-Anekal, TMC-Attibele, TMC-Bommasandra, TMC-Chandapura, CMC-Hebbagodi, TMC-Jigani), NOT per valley. There is no per-valley (V-Valley / K&C-Valley) data table in the document. The only Arkavathi-basin urban unit is BBMP (city corporation), whose west and south drain via the Vrishabhavathi (V-Valley), a tributary of the Arkavathi. The six small TMCs/CMC of Anekal taluk lie in the K&C Valley / Dakshina Pinakini (Pennar) catchment, not the Arkavathi.",
+    "v_valley_row_caveat": "The exact '144 industries (Red-29, Orange-43, Green-72) ... 3515 KLD sewage and 4715 KLD trade effluent ... 19 STPs and 31 ETPs ... 250 KLD CETP proposed in Peenya' row cited in the task does NOT appear verbatim in this Bengaluru Urban DEP. That valley-resolution row is from a different source (NMCG MPR / V-Valley NGT documentation), not this district DEP. This DEP instead carries DISTRICT-WIDE KSPCB industry counts (Red 1025 / Orange 2268 / Green 5441 / White 981) and 4 Common Effluent Treatment Facilities, plus per-ULB sewage/STP tables. The Peenya 250 KLD CETP is NOT mentioned here as a proposal; Peenya appears only as a 'Critically Polluted Area' (CEPI 78.12) with NGT OA 1038/2018 groundwater-remediation directions. All figures below are verbatim from this DEP only.",
+    "internal_inconsistency_caveat": "The DEP's own tables disagree on BBMP sewage generation: the at-a-glance Water Quality table prints 1440 MLD, the STP-adequacy gap table prints 1440 MLD generated, but the section header 'Total sewage' line and the per-ULB total print 1458.6 MLD (district) and 1457.6 MLD (gap-table district total). Both are reproduced verbatim in sources."
+  },
+  "units": {
+    "bbmp": {
+      "name": "BBMP (Bengaluru city corporation; west/south = V-Valley / Vrishabhavathi)",
+      "level": "City",
+      "coverage": "Bengaluru Urban DEP 2022 (base data 'District at a Glance 2019-20')",
+      "headline": "City sewage runs close to installed STP capacity on paper, but ~20% has no sewer network and the V-Valley's Peenya cluster is a CPCB Critically Polluted Area with chromium-contaminated groundwater",
+      "streams": [
+        {
+          "stream": "Sewage",
+          "summary": "BBMP shows ~1440 MLD generated vs 1522.5 MLD installed STP capacity and only ~1050 MLD actual flow treated; the DEP records a 0 MLD capacity 'gap' but a 20% sewer-network gap (8-10% of sewage untreated)",
+          "metrics": [
+            { "label": "Sewage generated (BBMP)", "value": "1440 MLD (DEP 2022); district total 1458.6 MLD (DEP 2022)" },
+            { "label": "STP installed capacity (BBMP)", "value": "1522.5 MLD across 3 STP towns (DEP 2022)" },
+            { "label": "Present sewage flow treated", "value": "1050 MLD (DEP 2022)", "emphasis": true },
+            { "label": "Capacity-vs-generation gap (BBMP)", "value": "0 MLD on paper; district gap 15.35 MLD (DEP 2022)" },
+            { "label": "Sewer-network gap (BBMP)", "value": "20% of UGD area uncovered; 8-10% of sewage untreated (DEP 2022)", "emphasis": true },
+            { "label": "Untreated-sewage fix plan", "value": "124 MLD via 14 WWTPs + UGD to 110 villages, by 2024 (DEP 2022)" },
+            { "label": "STP compliance", "value": "Not tabulated per-STP in this DEP; KSPCB monitors WQ of 165 lakes (DEP 2022)" }
+          ],
+          "sources": [
+            { "source": "Bengaluru Urban DEP 2022 - At-a-glance Water Quality table (p.78)", "says": "Total Quantity of Sewage generated in MLD: BBMP 1440; TMC-Anekal 3.0; TMC-Attibele 2.0; TMC-Bommasandra 1.6; TMC-Chandapura 2.5; CMC-Hebbagodi 8; TMC-Jigani 1.5; Total 1458.6.", "citation": "District Environmental Plan for Bengaluru Urban District, p.78", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - STP adequacy gap table (p.90)", "says": "BBMP area: Quantity of wastewater generated 1440 MLD; Existing STP Capacity 1522.5 MLD; Present Sewage Flow rate 1050 MLD; Gap Analysis 0. (District total: generated 1457.6, capacity 1529.45, flow 1054.25, gap 15.35.)", "citation": "District Environmental Plan for Bengaluru Urban District, Domestic Sewage gap analysis, p.90", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - At-a-glance (p.79)", "says": "There are 07 Local bodies in the District. BBMP, TMC-Anekal have provided STPs... there is a gap in sewer network in BBMP area, which results in 8 to 10% of sewage is untreated. This gap shall be fulfilled by 2024 after completion of providing UGD facilities to 110 villages of BBMP and construction of 14 Nos. of Waste Water Treatment Plants of total 124 MLD capacity.", "citation": "District Environmental Plan for Bengaluru Urban District, p.79", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - Underground sewerage network (p.87, p.91)", "says": "BBMP: Existing STP Capacity 1522.5 MLD; % Existing UGD area covered 80%; Gap Analysis 20%. Sewerage network: 800 Sq.Km area, 640 Sq.km provided (80%), 10% gap.", "citation": "District Environmental Plan for Bengaluru Urban District, p.87 and p.91", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" }
+          ]
+        },
+        {
+          "stream": "Industrial effluent (CETP)",
+          "summary": "District-wide 25.34 MLD trade effluent from 2018 discharging industries, all reported treated in-premises with 4 Common Effluent Treatment Facilities; Peenya cluster (V-Valley) is a CPCB Critically Polluted Area with chromium-contaminated groundwater under NGT OA 1038/2018",
+          "metrics": [
+            { "label": "Industries (district, KSPCB)", "value": "Red 1025 / Orange 2268 / Green 5441 / White 981 (DEP 2022)" },
+            { "label": "Industries discharging wastewater", "value": "2018 (DEP 2022)" },
+            { "label": "Trade effluent generated (district)", "value": "25.34 MLD (DEP 2022)", "emphasis": true },
+            { "label": "Treated effluent to nalas/rivers", "value": "NIL - reported recycled/on-land within premises (DEP 2022)" },
+            { "label": "Common Effluent Treatment Facilities", "value": "4 (district) (DEP 2022)", "emphasis": true },
+            { "label": "Industries meeting / not meeting standards", "value": "1178 meeting / 27 not meeting (DEP 2022)" },
+            { "label": "Peenya cluster (V-Valley) status", "value": "CPCB Critically Polluted Area, CEPI 78.12; groundwater Cr/nitrate/hardness contaminated; NGT Suo Moto OA 1038/2018 (DEP 2022)", "emphasis": true }
+          ],
+          "sources": [
+            { "source": "Bengaluru Urban DEP 2022 - Industrial Wastewater Management current status (p.93)", "says": "Nos. of Red industries: 1025; Orange: 2268; Green: 5441; White: 981. No of Industries discharging wastewater: 2018. Total Quantity of industrial waste water generated: 25.34 MLD. Quantity of treated industrial waste water discharged in to Nalas/Rivers: NIL. Common Effluent Treatment Facilities: 4. No of Industries meeting Standards: 1178. No of Industries not meeting discharge Standards: 27.", "citation": "District Environmental Plan for Bengaluru Urban District, Industrial Wastewater Management, p.93", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - At-a-glance (p.78)", "says": "About 25.31 MLD of wastewater is being generated from the industries, which is being treated in the treatment plants provided by the industries to the standards prescribed by the KSPCB and treated water is used for washing, recycling and on land for gardening within their premises.", "citation": "District Environmental Plan for Bengaluru Urban District, p.78", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - Water Quality / groundwater section (p.79, p.~84)", "says": "Peenya Industrial Cluster is notified as 'Critically Polluted Area' with CEPI score of 78.12 as per CPCB. The underground water of Peenya Industrial Cluster is contaminated with Chromium, Nitrates and Hardness. Hon'ble NGT registered the Suo Moto in OA No.1038/2018. Short and Long term action plan w.r.t. remediation of ground water pollution at Peenya cluster is submitted to NGT through CPCB.", "citation": "District Environmental Plan for Bengaluru Urban District, Water Quality Management, p.79 and p.~84", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" }
+          ]
+        },
+        {
+          "stream": "Solid waste",
+          "summary": "BBMP generates ~5500 TPD; the district carries ~5,000,000 tonnes of legacy waste at 4 BBMP dumpsites, with only 1 of 8 required sanitary landfills available and 70 of 72 bulk-generator onsite composters missing",
+          "metrics": [
+            { "label": "Solid waste generated (BBMP)", "value": "5500 TPD (DEP 2022, base 2019-20)", "emphasis": true },
+            { "label": "Legacy waste (BBMP, 4 dumpsites)", "value": "5,000,000 tonnes; district total 5,002,000 t (DEP 2022)", "emphasis": true },
+            { "label": "Sanitary landfill (BBMP)", "value": "4 existing dumpsites; 8 SLF required, 1 available, gap 7 (DEP 2022)", "emphasis": true },
+            { "label": "Source segregation (BBMP)", "value": "198 of 198 wards at 100% (district gap 20 of 348 GP/wards) (DEP 2022)" },
+            { "label": "Onsite composting (BBMP bulk generators)", "value": "72 identified, 2 done, gap 70 (DEP 2022)" },
+            { "label": "Central biomethanation (BBMP)", "value": "13 plants, 5 functional, 8 need upgradation; 8 compost facilities, 4 functional (DEP 2022)" },
+            { "label": "C&D recycling (BBMP)", "value": "M/s Rock Crystal 1000 MTPD facility; 750 TPD plant at Kannur being set up (DEP 2022)" }
+          ],
+          "sources": [
+            { "source": "Bengaluru Urban DEP 2022 - SWM current status (p.7-8)", "says": "Municipal corporations: BBMP-198 wards, 3183000 households, 84,00,000 population (2011), Solid Waste Generated per day 5500 TPD. (CMC-Hebbagodi 35; TMC-Anekal 20; TMC-Attibele 11; TMC-Bommasandra 12; TMC-Chandapura 8.5; TMC-Jigani 12. Block/Taluk rural: 86/05 blocks, 296 TPD.)", "citation": "District Environmental Plan for Bengaluru Urban District, Solid Waste Management current status, p.7-8", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - Legacy dumpsite remediation table (p.27)", "says": "Remediation of historic/legacy dumpsite: BBMP 4 existing old dumpsites, Total Quantity of legacy waste 5000000 Tonnes, Gap Analysis 5000000. TMC-Anekal 1 dumpsite, 2000 tonnes. Total 5 dumpsites, 5002000 tonnes.", "citation": "District Environmental Plan for Bengaluru Urban District, SWM gap analysis (v), p.27", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - Sanitary Landfill table (p.26)", "says": "Sanitary Landfill: BBMP 4 existing Dumpsites; Required Nos of SLF 8; Available 1; Gap 7. (Each of the 6 TMC/CMC: 0 existing, 1 required, 0 available, gap 1.) Total: 4 / 14 / 1 / 13.", "citation": "District Environmental Plan for Bengaluru Urban District, SWM gap analysis (iv), p.26", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - Onsite composting & biomethanation tables (p.21-22)", "says": "BBMP bulk-waste-generator onsite composting: 72 generators, status done 2, gap 70. Central Biomethanation/Composting: BBMP Compost facility 8 existence / 4 functional; Bio methanation 13 existence / 5 functional / 8 need upgradation.", "citation": "District Environmental Plan for Bengaluru Urban District, SWM Waste Treatment & Disposal, p.21-22", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" }
+          ]
+        }
+      ]
+    },
+    "anekal-cluster": {
+      "name": "Anekal taluk ULBs (Anekal / Attibele / Bommasandra / Chandapura / Hebbagodi / Jigani) - K&C Valley / Dakshina Pinakini side",
+      "level": "Taluk",
+      "coverage": "Bengaluru Urban DEP 2022 (base data 'District at a Glance 2019-20')",
+      "headline": "Small Anekal-taluk towns generate ~17.6 MLD of sewage with only 6.65 MLD STP capacity; most have no STP and large UGD gaps; these drain to the K&C Valley, not the Arkavathi",
+      "streams": [
+        {
+          "stream": "Sewage",
+          "summary": "Class-II-and-above towns generate 17.6 MLD vs 6.65 MLD installed STP capacity; Attibele, Chandapura, Hebbagodi and Jigani have zero STP and 65-70% UGD gaps",
+          "metrics": [
+            { "label": "Sewage generated (Anekal-taluk towns)", "value": "17.6 MLD from Class-II+ towns (DEP 2022)", "emphasis": true },
+            { "label": "STP capacity (these towns)", "value": "6.65 MLD: Anekal 6.4 (incl. Doddakere 1.3 + Aldenhalli 3.1), Bommasandra 0.25, others NIL (DEP 2022)" },
+            { "label": "Towns with zero STP", "value": "Attibele, Chandapura, Hebbagodi, Jigani (DEP 2022)", "emphasis": true },
+            { "label": "UGD coverage gap", "value": "Chandapura 70%, Hebbagodi 70%, Bommasandra 40%, Attibele 25% (DEP 2022)" },
+            { "label": "Proposed/sanctioned STPs", "value": "Hebbagodi 24 MLD (DPR prepared), Jigani 7 MLD (DPR prepared), Bommasandra +10 MLD (DPR submitted to GoK) (DEP 2022)" },
+            { "label": "K&C Valley reuse note", "value": "301 MLD treated K&C Valley sewage pumped to Kolar (126 lakes); 67 Anekal-taluk lakes planned to fill with K&C-Valley treated sewage (DEP 2022)" }
+          ],
+          "sources": [
+            { "source": "Bengaluru Urban DEP 2022 - Domestic Sewage generation table (p.88)", "says": "Total Quantity of Sewage generated in District From Class II cities and above: 17.6 MLD. TMC-Anekal STP 6.4 / generated 2; TMC-Attibele 0 / 2; TMC-Bommasandra 0.250 / 1.6; TMC-Chandapura 0 / 2.5; CMC-Hebbagodi 0 / 8; TMC-Jigani 0 / 1.5; Total 6.65 / 17.6.", "citation": "District Environmental Plan for Bengaluru Urban District, Domestic Sewage, p.88", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - STPs installed / towns needing STPs (p.87)", "says": "Existing STP Capacity: BBMP 1522.5 MLD; TMC-Anekal 1.3 MLD @ Doddakere + 3.1 MLD @ Aldenhalli Kare; TMC-Bommasandra 0.25 MLD; Attibele/Chandapura/Hebbagodi/Jigani NIL. Towns needing STPs: Bommasandra 250 KLD existing and 10 MLD (DPR prepared, submitted to GoK); Hebbagodi 24 MLD (DPR prepared); Jigani 7 MLD (DPR prepared); Attibele Yes (DPR to be prepared); Chandapura Yes (request not raised).", "citation": "District Environmental Plan for Bengaluru Urban District, Domestic Sewage, p.87", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - UGD coverage gap (p.87)", "says": "% Existing UGD area covered / Gap: BBMP 80%/20%; TMC-Anekal 90%/10%; TMC-Attibele 75%/25%; TMC-Bommasandra 60%/40%; TMC-Chandapura 30%/70%; CMC-Hebbagodi 30%/70%; TMC-Jigani 80%/20%.", "citation": "District Environmental Plan for Bengaluru Urban District, Domestic Sewage, p.87", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" },
+            { "source": "Bengaluru Urban DEP 2022 - Water harvesting / reuse note (p.85)", "says": "The treated sewage from K&C Valley of Bengaluru District of 301 MLD is being pumped to Kolar District for rejuvenation of underground water of 126 Lakes. 67 Lakes of Anekal Taluk are planned to fill by treated sewage of K&C Valley.", "citation": "District Environmental Plan for Bengaluru Urban District, p.85", "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf" }
+          ]
+        }
+      ]
+    }
+  }
+}

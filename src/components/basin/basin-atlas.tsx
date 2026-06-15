@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, ZoomControl, useMap } from "react-leaflet";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
@@ -34,8 +34,19 @@ const FLOORS: { id: BasinFloor; label: string; sub: string }[] = [
   { id: "hydrology", label: "River system", sub: "Rivers, catchments, tanks" },
   { id: "monitoring", label: "State & evidence", sub: "Readings, lab evidence" },
   { id: "pressures", label: "Pressures", sub: "Industry, quarries, waste" },
-  { id: "governance", label: "Response", sub: "Treatment, governance" },
+  { id: "governance", label: "Governance & response", sub: "Treatment, boundaries, gaps" },
 ];
+
+// gaps.json shape (cross-source treatment-gap intelligence per admin unit).
+interface GapSource { source: string; says: string; citation: string; url?: string }
+interface GapStream {
+  stream: string;
+  summary: string;
+  metrics: { label: string; value: string; emphasis?: boolean }[];
+  trend?: { label: string; unit?: string; points: { year: number; value: number | null; url?: string; note?: string }[] };
+  sources: GapSource[];
+}
+interface GapUnit { name: string; level?: string; coverage?: string; headline: string; streams: GapStream[] }
 
 const COACH_KEY = "basin-atlas-coach-dismissed";
 
@@ -82,6 +93,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   );
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(initialRiverId);
   const [selectedFeature, setSelectedFeature] = useState<{ family: string; props: Record<string, unknown> } | null>(null);
+  const [selectedGapUnit, setSelectedGapUnit] = useState<string | null>(null);
+  const [gapData, setGapData] = useState<Record<string, GapUnit>>({});
   const [data, setData] = useState<Record<string, FC | null>>({});
   const [coachDismissed, setCoachDismissed] = useState(true);
   // Either panel can be collapsed to see the map alone.
@@ -109,6 +122,13 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
   // URL <-> state (?river= & ?level=), via replaceState (no full navigation).
   // Skipped when embedded as an overlay so we don't clobber the rivers-page URL.
+  // Cross-source gap intelligence for the gap layer's click panel (optional).
+  useEffect(() => {
+    fetchJson(`/data/basins/${manifest.basinId}/gaps.json`)
+      .then((d) => setGapData(((d as unknown as { units?: Record<string, GapUnit> })?.units) ?? {}))
+      .catch(() => setGapData({}));
+  }, [manifest.basinId]);
+
   useEffect(() => {
     setCoachDismissed(localStorage.getItem(COACH_KEY) === "1");
     if (embedded) return;
@@ -188,12 +208,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   function selectRiver(riverId: string | null) {
     setSelectedRiverId(riverId);
     setSelectedFeature(null);
+    setSelectedGapUnit(null);
   }
 
-  // Restrict a feature collection to the selected river's sheds (non-context).
+  // Restrict a feature collection to the selected river's sheds. Context layers
+  // and gap layers are exempt - gaps sit at admin level (no shed id), so a river
+  // selection must not filter them out.
   function scoped(fc: FC | null, layer: BasinLayer): Feature[] {
     if (!fc) return [];
-    if (!selectedRiverId || layer.context) return fc.features;
+    if (!selectedRiverId || layer.context || layer.gap) return fc.features;
     return fc.features.filter((f) =>
       selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)),
     );
@@ -337,13 +360,51 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             const fcScoped: FC = { type: "FeatureCollection", features: feats };
             const faded = dim(l);
 
+            // Gap layer: the choropleth fill is NON-interactive (click-through)
+            // so it never blocks the STPs/features beneath it; a clickable badge
+            // at each unit's centroid opens the gap panel.
+            if (l.gap) {
+              return (
+                <Fragment key={`gap-${l.family}-${selectedRiverId}`}>
+                  <GeoJSON
+                    key={`gapfill-${selectedRiverId}-${tiles.isDark}`}
+                    data={fcScoped}
+                    interactive={false}
+                    style={(feat?: Feature) => fillStyle(l, feat, faded)}
+                  />
+                  {feats.map((f, idx) => {
+                    const unit = String((f.properties as Record<string, unknown>)?.gapUnit ?? "");
+                    const name = String((f.properties as Record<string, unknown>)?.name ?? "Treatment gaps");
+                    const center = L.geoJSON(f).getBounds().getCenter();
+                    return (
+                      <CircleMarker
+                        key={`gapbadge-${unit}-${idx}`}
+                        center={center}
+                        radius={6}
+                        pathOptions={{ color: "#fecaca", weight: 1, fillColor: "#dc2626", fillOpacity: 0.7 }}
+                        eventHandlers={{ click: () => { setSelectedGapUnit(unit); setSelectedFeature(null); } }}
+                      >
+                        <Tooltip sticky>{name} - click for treatment gaps</Tooltip>
+                      </CircleMarker>
+                    );
+                  })}
+                </Fragment>
+              );
+            }
+
             if (l.family === "sub-hydrosheds") {
+              // Catchments select a river only on the hydrology floor (where
+              // picking a river makes sense). On other floors they are passive
+              // context outlines, so they don't grab clicks from those floors.
+              const shedInteractive = focusedFloor === "hydrology";
               return (
                 <GeoJSON
-                  key={`shed-${selectedRiverId}-${tiles.isDark}`}
+                  key={`shed-${selectedRiverId}-${focusedFloor}-${tiles.isDark}`}
                   data={fcScoped}
+                  interactive={shedInteractive}
                   style={(feat?: Feature) => shedStyle(feat, selectedSheds, faded, l.color)}
                   onEachFeature={(feat: Feature, layer: Layer) => {
+                    if (!shedInteractive) return;
                     const sid = String((feat.properties as Record<string, unknown>)?.shedId ?? "");
                     const name = String((feat.properties as Record<string, unknown>)?.name ?? "sub-catchment");
                     const river = shedToRiver.get(sid);
@@ -418,7 +479,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   if (isBase) return;
                   const p = (feat.properties ?? {}) as Record<string, unknown>;
                   layer.bindTooltip(tipLabel(p, l), { sticky: true });
-                  layer.on("click", () => setSelectedFeature({ family: l.family, props: p }));
+                  layer.on("click", () => { setSelectedFeature({ family: l.family, props: p }); setSelectedGapUnit(null); });
                 }}
               />
             );
@@ -485,11 +546,13 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
       {/* ── Detail panel ── */}
       {panelOpen && (
-      <aside className="hidden lg:flex h-full w-[360px] shrink-0 border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto bg-white dark:bg-slate-900 p-5 text-sm">
+      <aside className="hidden lg:flex h-full w-[400px] xl:w-[460px] shrink-0 border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto bg-white dark:bg-slate-900 p-5 text-sm">
         <div className="flex justify-end -mt-2 -mr-2 mb-1">
           <button onClick={() => setPanelOpen(false)} title="Hide details panel" className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">»</button>
         </div>
-        {selectedFeature ? (
+        {selectedGapUnit && gapData[selectedGapUnit] ? (
+          <GapPanel unit={gapData[selectedGapUnit]} onClose={() => setSelectedGapUnit(null)} />
+        ) : selectedFeature ? (
           <FeaturePanel
             props={selectedFeature.props}
             label={layerByFamily[selectedFeature.family]?.label ?? selectedFeature.family}
@@ -529,7 +592,8 @@ function MapLegend({ layers }: { layers: BasinLayer[] }) {
   // legend can never disagree with what's drawn.
   const items: { sym: LegendSym; color: string; label: string }[] = [];
   for (const l of layers) {
-    if (l.family === "boundary") items.push({ sym: "line", color: l.color, label: l.label });
+    if (l.gap) items.push({ sym: "box", color: "#dc2626", label: "Treatment gap" });
+    else if (l.family === "boundary") items.push({ sym: "line", color: l.color, label: l.label });
     else if (l.family === "sub-hydrosheds") items.push({ sym: "dash", color: l.color, label: "Sub-catchment" });
     else if (l.family === "rivers") items.push({ sym: "line", color: l.color, label: "River" });
     else if (l.family === "drainage") items.push({ sym: "line", color: l.color, label: l.label });
@@ -676,6 +740,11 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): Pa
       dashArray: ADMIN_DASH[l.family],
     };
   }
+  if (l.gap) {
+    const sev = String((feat?.properties as Record<string, unknown>)?.severity ?? "high");
+    const c = sev === "high" ? "#dc2626" : sev === "medium" ? "#ea580c" : "#f59e0b";
+    return { color: c, weight: 2, fillColor: c, fillOpacity: faded ? 0.2 : 0.4 };
+  }
   if (l.family === "pressures") {
     const kind = String((feat?.properties as Record<string, unknown>)?.kind ?? "");
     const c = PRESSURE_KIND_COLOR[kind] ?? l.color;
@@ -768,6 +837,101 @@ function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown
           </a>
         ) : null,
       )}
+    </div>
+  );
+}
+
+/** Cross-source treatment-gap panel: the "why does it persist" view - metrics,
+ *  the gap over time, and what each document says, with citations. */
+function GapPanel({ unit, onClose }: { unit: GapUnit; onClose: () => void }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <div className="text-[11px] uppercase tracking-wider text-rose-500">Treatment gaps{unit.level ? ` · ${unit.level}` : ""}</div>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 leading-snug">{unit.name}</h2>
+        </div>
+        <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+          <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      {unit.headline && (
+        <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed border-l-2 border-rose-400 pl-2.5">{unit.headline}</p>
+      )}
+      {unit.coverage && (
+        <p className="text-[11px] text-slate-400">Data coverage: {unit.coverage}</p>
+      )}
+
+      {unit.streams.map((s, i) => (
+        <section key={i} className="border-t border-slate-200 dark:border-slate-700 pt-3">
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{s.stream}</h3>
+          <p className="text-[13px] text-slate-500 dark:text-slate-400 mb-2.5 leading-relaxed">{s.summary}</p>
+
+          <dl className="space-y-1.5 mb-3">
+            {s.metrics.map((m, j) => (
+              <div key={j} className="flex items-baseline justify-between gap-3">
+                <dt className="text-[13px] text-slate-500 dark:text-slate-400">{m.label}</dt>
+                <dd className={`text-[13px] tabular-nums text-right ${m.emphasis ? "font-bold text-rose-600 dark:text-rose-400" : "text-slate-700 dark:text-slate-300"}`}>{m.value}</dd>
+              </div>
+            ))}
+          </dl>
+
+          {s.trend && s.trend.points.length > 0 && <GapTrend trend={s.trend} />}
+
+          <div className="mt-3 space-y-2">
+            <div className="text-[11px] uppercase tracking-wider text-slate-400">What the documents say</div>
+            {s.sources.map((src, k) => (
+              <div key={k} className="text-[13px] leading-relaxed">
+                <span className="font-semibold text-slate-700 dark:text-slate-300">{src.source}:</span>{" "}
+                <span className="text-slate-600 dark:text-slate-400">{src.says}</span>
+                {src.url ? (
+                  <a href={src.url} target="_blank" rel="noopener noreferrer" className="block text-[11px] text-blue-600 dark:text-blue-400 hover:underline mt-0.5">
+                    {src.citation} ↗
+                  </a>
+                ) : (
+                  <span className="block text-[11px] text-slate-400 italic mt-0.5">{src.citation}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+      <p className="text-[11px] text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-700 leading-relaxed">
+        Figures extracted from public documents; each line links to its source. First cut - to be expanded across the basin.
+      </p>
+    </div>
+  );
+}
+
+/** Tiny inline bar chart - equal bars across years make "frozen, nothing
+ *  changed" read at a glance. */
+function GapTrend({ trend }: { trend: NonNullable<GapStream["trend"]> }) {
+  const max = Math.max(...trend.points.map((p) => p.value ?? 0), 1);
+  return (
+    <div className="mb-2">
+      <div className="text-[11px] text-slate-400 mb-1">{trend.label}</div>
+      <div className="flex items-end gap-1 h-14">
+        {trend.points.map((p, i) => {
+          const hasVal = p.value != null;
+          const bar = hasVal ? (
+            <div className="w-full bg-rose-400/80 dark:bg-rose-500/70 rounded-sm group-hover:bg-rose-500" style={{ height: `${Math.max(((p.value as number) / max) * 100, 6)}%` }} />
+          ) : (
+            <div className="w-full border border-dashed border-slate-400/60 rounded-sm" style={{ height: "30%" }} />
+          );
+          const yr = <span className={`text-[9px] tabular-nums ${p.url ? "text-blue-600 dark:text-blue-400 group-hover:underline" : "text-slate-400"}`}>{String(p.year).slice(2)}</span>;
+          const title = hasVal
+            ? `${p.year}: ${p.value}${trend.unit ? " " + trend.unit : ""}${p.url ? " - open report" : ""}`
+            : `${p.year}: ${p.note ?? "not reported"}${p.url ? " - open report" : ""}`;
+          const inner = (<>{bar}{!hasVal && <span className="text-[8px] text-slate-400 leading-none">n/r</span>}{yr}</>);
+          return p.url ? (
+            <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" title={title} className="group flex-1 flex flex-col items-center justify-end gap-0.5">
+              {inner}
+            </a>
+          ) : (
+            <div key={i} title={title} className="flex-1 flex flex-col items-center justify-end gap-0.5">{inner}</div>
+          );
+        })}
+      </div>
     </div>
   );
 }

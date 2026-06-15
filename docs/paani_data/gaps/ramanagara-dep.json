@@ -1,0 +1,183 @@
+{
+  "source_url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/",
+  "document_url": "https://cdn.s3waas.gov.in/s35f0f5e5f33945135b874349cfbed4fb9/uploads/2022/06/2022060195.pdf",
+  "document_title": "DISTRICT ENVIRONMENTAL PLAN FOR RAMANAGARA DISTRICT",
+  "district": "Ramanagara (now Bengaluru South)",
+  "base_year": "Data as on 31-03-2021 (F-Reg / KSPCB Regional Office Ramanagara); population from 2011 Census",
+  "extraction_method": "pdftotext -layout on text-based PDF (machine-readable, not scanned). Cover/first page rendered empty; all data pages are selectable text.",
+  "extraction_caveats": [
+    "PDF is text-based and extracted cleanly except the cover page which is image/empty.",
+    "This is the RAMANAGARA district DEP. It does NOT contain the V-Valley / Peenya / 144-industries / 250 KLD CETP example row cited in the task; that row belongs to the Bengaluru URBAN district DEP, not this document. Ramanagara DEP explicitly states 'There are no CETP's in the Ramanagara District.'",
+    "Sewage figures are internally inconsistent across the DEP's own tables: the at-a-glance summary lists 18.87 MLD then a sub-table totaling 27.4 MLD; the Domestic Sewage section gives 23.32 MLD for Class-II-and-above towns. All three are reproduced verbatim below.",
+    "STP installed-capacity figures also vary by table: TMC Magadi appears as 3.2 MLD in one place and 3.71 MLD in others; CMC Ramanagara as 7.5 / 7.56 MLD.",
+    "Industrial-wastewater 'number of industries' varies: 562 Nos (at-a-glance), 581 Nos (industrial section), generated quantity consistently 5.652 MLD.",
+    "No single district-wide URBAN solid-waste total is printed; urban total below is summed from the per-ULB table (40.16+36+24+14.5+15 = 129.66 TPD, Harohalli not yet quantified). Rural/GP total is stated as 162.9754 MT/day (theoretical at 200 g/head/day).",
+    "Treated/untreated sewage volumes are explicitly 'Not Estimated' in the DEP; untreated percentage 'not quantified'."
+  ],
+  "sewage": {
+    "total_generated_mld_at_a_glance": 18.87,
+    "total_generated_mld_at_a_glance_subtable_total": 27.4,
+    "total_generated_mld_domestic_section_classII_and_above": 23.32,
+    "per_ulb_generated_mld": {
+      "CMC-Ramanagara": 10.12,
+      "CMC-Channapatna": 8.8,
+      "CMC-Kanakapura": 4.4,
+      "TMC-Magadi": 2.29,
+      "TMC-Bidadi": 3.7
+    },
+    "stp_count": 3,
+    "stp_total_capacity_mld": 17.5,
+    "per_ulb_stp_capacity_mld": {
+      "CMC-Ramanagara": 7.5,
+      "CMC-Kanakapura": 6.29,
+      "TMC-Magadi": 3.71,
+      "CMC-Channapatna": 0,
+      "TMC-Bidadi": 0,
+      "TP-Harohalli": 0
+    },
+    "towns_needing_stp": 3,
+    "towns_without_stp": ["CMC-Channapatna", "TMC-Bidadi", "TP-Harohalli"],
+    "treated_sewage_to_rivers_mld": "Not Estimated",
+    "untreated_or_partially_treated_mld": "Not Estimated",
+    "untreated_percentage": "not quantified",
+    "treatment_gap_notes": "CMC-Ramanagara existing STP (7.5 MLD) NOT adequate for 10.12 MLD generated, plus missing UGD links bypass STP (40% gap in UGD coverage). CMC-Kanakapura STP adequate but missing links. TMC-Magadi STP adequate but missing links. CMC-Channapatna has 0 STP (UGD under construction, septic tanks/soak pits). Bidadi 0 STP. Harohalli 0 STP."
+  },
+  "effluent": {
+    "industries_red": 94,
+    "industries_orange": 163,
+    "industries_green": 333,
+    "industries_white": 8,
+    "industries_discharging_wastewater": 581,
+    "industries_count_at_a_glance": 562,
+    "trade_effluent_generated_mld": 5.652,
+    "trade_effluent_treatment": "Treated in existing in-premises ETPs; treated effluent fully recycled or used on-land for irrigation within premises per Consent conditions.",
+    "treated_effluent_discharged_to_nalas_rivers_mld": 0,
+    "cetp_count": 0,
+    "cetp_status": "There are no CETPs in the Ramanagara District. No CETP proposed or sanctioned in this DEP.",
+    "industries_meeting_standards": 581,
+    "industries_not_meeting_standards": 0,
+    "hazardous_waste_total_mt_per_annum": 6827.95,
+    "hazardous_waste_incinerable_mt_per_annum": 2021.73,
+    "hazardous_waste_landfillable_mt_per_annum": 1377.847,
+    "biomedical_waste_kg_per_day": 1290
+  },
+  "solid_waste": {
+    "urban_per_ulb_tpd": {
+      "CMC-Ramanagara": 40.16,
+      "CMC-Channapatna": 36,
+      "CMC-Kanakapura": 24,
+      "TMC-Magadi": 14.5,
+      "TMC-Bidadi": 15,
+      "TP-Harohalli": "DPR yet to be prepared"
+    },
+    "urban_total_tpd_summed": 129.66,
+    "rural_gram_panchayat_total_mt_per_day": 162.9754,
+    "rural_count_gram_panchayats": 127,
+    "rural_note": "Actual GP quantity not available; theoretical at 200 g/head/day over population 814877.",
+    "processing": {
+      "central_biomethanation_composting_facilities_existing": 9,
+      "central_biomethanation_composting_facilities_functional": 9,
+      "central_biomethanation_composting_facilities_need_upgradation": 2,
+      "dry_waste_collection_centres_total": 9,
+      "bulk_waste_generators_identified": 335,
+      "bulk_waste_generators_with_onsite_composting": 0,
+      "dry_waste_status": "Materials segregated partially; remaining dumped in landfill site (per-ULB notes for Ramanagara, Channapatna, Kanakapura, Magadi; Bidadi to private land)."
+    },
+    "sanitary_landfill": {
+      "existing_dumpsites": 4,
+      "slf_required": 5,
+      "slf_available": 2,
+      "slf_gap": 3,
+      "note": "CMC-Ramanagara & CMC-Channapatna dumpsites under litigation; Kanakapura & Magadi have functional SLF; Bidadi none."
+    },
+    "legacy_dumpsite_waste_tonnes": {
+      "CMC-Ramanagara": 2500,
+      "CMC-Channapatna": 2200,
+      "CMC-Kanakapura": 4200,
+      "TMC-Magadi": 46000,
+      "TMC-Bidadi": 3700,
+      "total": 58600,
+      "note": "DEP prints total as 5860 0 (layout split) = 58600 tonnes; sum of rows = 58600."
+    },
+    "cnd_waste_total_tpd": 4.9,
+    "cnd_recycling_facility": "No",
+    "gap_notes": "Source segregation: 115 of 139 urban wards at 100% segregation (gap 24 wards). 0 of 335 bulk waste generators have onsite composting. No district C&D recycling facility. Legacy dumpsite remediation DPRs mostly not started."
+  },
+  "citations": [
+    {
+      "field": "sewage.total_generated_mld_at_a_glance",
+      "verbatim_text": "Total Quantity of sewage [MLD]:18.87 MLD from towns and cities in District ... Total 27.4 (sub-table: CMC-Ramanagara 10.0, CMC Channapatna 6.4, CMC-Kanakapura 4.4, TMC-Magadi 2.9, TMC-Bidadi 3.7)",
+      "section_or_page": "At-a-glance / Water Quality status table, p.60"
+    },
+    {
+      "field": "effluent.trade_effluent_generated_mld",
+      "verbatim_text": "Quantity of industrial waste water [MLD]: 5.652 MLD as per the F-Reg as on 31-3-2021 is generated from the operation of 562 Nos. of industries and the same is treated in the existing ETP's operated within the premises of the unit and the treated effluent is disposal as per the terms and conditions of the Consent order either completely recycled or utilized for on land for irrigation within the premises.",
+      "section_or_page": "At-a-glance table, p.60; restated in Industrial Waste Water Management section, p.74"
+    },
+    {
+      "field": "sewage.untreated_percentage",
+      "verbatim_text": "Percentage of untreated sewage [%]:not quantified ... There are 06 Local bodies in the District. Out off which CMC Ramanagara as provide STP of 7.56MLD Capacity, CMC Kanakapura as provide STP of 6.29 MLD and TMC Magadi as provide STP of capacity 3.2 MLD ... Hence untreated sewage is not quantified.",
+      "section_or_page": "At-a-glance table, p.60"
+    },
+    {
+      "field": "sewage.stp_total_capacity_mld",
+      "verbatim_text": "Total available Treatment Capacity [MLD]: 17.5 MLD. CMC-Ramanagara 7.5 MLD; CMC-Kanakapura 6.29MLD; TMC-Magadi 3.71 MLD; CMC-Channapatna Nil (No STP only Septic tank and Soak Pit); TMC-Bidadi Nil; TP-Harohalli Nil; Total 17.5 MLD",
+      "section_or_page": "Domestic Sewage section, p.69"
+    },
+    {
+      "field": "sewage.total_generated_mld_domestic_section_classII_and_above",
+      "verbatim_text": "Total Quantity of Sewage generated in District [MLD]: 23.32 MLD From Class II cities and above. CMC Ramanagar 7.5MLD STP / 10.12 generated; CMC-Channapatna 0 STP / 8.8 generated; CMC-kanakapura 6.29MLD / 4.4 generated.",
+      "section_or_page": "Domestic Sewage section, p.69"
+    },
+    {
+      "field": "sewage.treated_and_untreated_not_estimated",
+      "verbatim_text": "Quantity of treated sewage flowing into Rivers(directly or indirectly) [MLD]: Not Estimated. Quantity of untreated or partially treated sewage(directly or indirectly) [MLD]: Not Estimated. The untreated sewage effluent through missing links from CMC Ramanagara and CMC-kanakapura limit, is indirectly discharged to river.",
+      "section_or_page": "Domestic Sewage section, p.69"
+    },
+    {
+      "field": "effluent.cetp_count",
+      "verbatim_text": "Common Effluent Treatment Facilities [Nos]: Nil. There are no CETP's in the Ramanagara District.",
+      "section_or_page": "Industrial Waste Water Management section, p.74-75"
+    },
+    {
+      "field": "effluent.industries_color_categories",
+      "verbatim_text": "[Nos. of Red industries]: 94 ( out off 94 Nos. of red industry , No of 17 category industries is 2No.) [Nos. of Orange industries]: 163 [Nos. of Green industries]:333 [Nos. of White industries]:8 ... No of Industries discharging waste water [Nos]: 581 Nos ... Quantity of treated industrial waste water discharged in to Nalas/ Rivers [MLD]: Nil. None of the industries are permitted to discharge ...",
+      "section_or_page": "Industrial Waste Water Management section, p.74-75"
+    },
+    {
+      "field": "solid_waste.urban_per_ulb_tpd",
+      "verbatim_text": "City Municipal Council Ramanagara-31 wards, 20195 households (2011 Census), 95167 population, 40.16 [SW generated per day]; CMC Channapatna-31, 36; CMC Kanakapura-27, 24; TMC Magadi-23, 14.5; TMC Bidadi-23, 15; TP-Harohalli Newly declared TP and DPR is yet to be prepared.",
+      "section_or_page": "Solid Waste Management current status, p.11"
+    },
+    {
+      "field": "solid_waste.rural_gram_panchayat_total_mt_per_day",
+      "verbatim_text": "Village/Gram Panchayats 127 [blocks], 814877 population, 162.9754MT [SW generated per day]. Note: The actual quantity of Solid waste generated in Village/ Grama Panchayats is not available, as such theoretical calculation assuming 200 gms/ head/day.",
+      "section_or_page": "Solid Waste Management current status, p.11"
+    },
+    {
+      "field": "solid_waste.legacy_dumpsite_waste_tonnes",
+      "verbatim_text": "Remediation of historic/legacy dumpsite (Total Quantity of legacy waste dumped at dump site in Tonnes): CMC-Ramanagara 2500 (1 dumpsite under litigation, DPR prepared but not started); CMC-Channapatna 2200; CMC-kanakapura 4200; TMC Magadi 46000; Bidadi TMC 3700; Total 58600.",
+      "section_or_page": "Solid Waste Management gap analysis (v), p.29"
+    },
+    {
+      "field": "solid_waste.sanitary_landfill_gap",
+      "verbatim_text": "Sanitary Landfill (No. of existing Dumpsite / Required Nos of SLF / Available No. of SLF / Gap): CMC-Ramanagara 01 (Under Litigation)/01/0/1; CMC-Channapatna 1(Under Litigation)/1/0/1; CMC-kanakapura 01/01/01/Nil; TMC Magadi 01/01/01/Nil; Bidadi TMC 0/1/0/1; Total 4/5/2/3.",
+      "section_or_page": "Solid Waste Management gap analysis (iv), p.28"
+    },
+    {
+      "field": "solid_waste.cnd_waste_total_tpd",
+      "verbatim_text": "Total C&D waste generation in MT per day: CMC-Ramanagara 1.0; CMC-Channapatna 1.0; CMC-Kanakapura 2.0; TMC-Magadi 0.5; TMC-Bidadi 0.4; TP-Harohalli -; Total 4.9. Does the District has access to C&D waste recycling facility? No.",
+      "section_or_page": "C&D Waste section, p.39"
+    },
+    {
+      "field": "effluent.hazardous_waste",
+      "verbatim_text": "Quantity of HW in the District [MT/Annum]: 6827.95 MT/Annum; (i) Quantity of Incinerable HW [MT/Annum]: 2021.73 MT/Annum; (ii) Quantity of land-fillable HW [MT/Annum]: 1377.847 MT/Annum; ... 3323.6 MT/Annum.",
+      "section_or_page": "Hazardous Waste section, p.~46"
+    },
+    {
+      "field": "effluent.biomedical_waste_kg_per_day",
+      "verbatim_text": "Quantity of biomedical waste generated per day [in Kg/day]: 1290",
+      "section_or_page": "Biomedical Waste section, p.~41"
+    }
+  ]
+}

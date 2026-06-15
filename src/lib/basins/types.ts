@@ -46,6 +46,10 @@ export interface BasinLayer {
   context?: boolean;
   /** Features carry a `kind` with sub-types worth toggling (pressures). */
   hasKinds?: boolean;
+  /** Gap layer: a choropleth of treatment-gap severity per admin unit, whose
+   *  click opens the cross-source gap panel (see gaps.json) instead of the
+   *  generic feature panel. Features carry `gapUnit` + `severity`. */
+  gap?: boolean;
 }
 
 export interface BasinManifest {
