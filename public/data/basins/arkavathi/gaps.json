@@ -546,12 +546,12 @@
     "doddaballapura": {
       "name": "Doddaballapura (City Municipal Council / taluk)",
       "level": "Taluk",
-      "coverage": "Bengaluru Rural DEP 2021 (scanned PDF; sewage figures image-verified, p.55/57)",
+      "coverage": "Bengaluru Rural DEP 2021 + NMCG Feb 2026 (STP list & CETP register)",
       "headline": "Doddaballapura CMC generates ~5.0 MLD of sewage against a 12 MLD STP, but an incomplete UGD network (20% still uncovered) means sewage bypasses the plant; it is the district's largest solid-waste generator at 35 TPD",
       "streams": [
         {
           "stream": "Sewage",
-          "summary": "5.0 MLD wastewater vs a 12 MLD existing STP; present sewage flow ~5 MLD. On paper capacity is adequate, but the DEP's gap analysis says the UGD network is incomplete so missing links bypass the STP and must be intercepted and diverted. 80% of the UGD network is provided; 20% still to be completed.",
+          "summary": "STP works at 7 of 12 MLD but is directed to upgrade to meet PCB standards; 20% of the sewer network is still incomplete",
           "metrics": [
             {
               "label": "Wastewater generated",
@@ -579,6 +579,15 @@
               "label": "Compliance / treatment gap",
               "value": "Incomplete UGD -> sewage bypasses STP via missing links (DEP 2021)",
               "emphasis": true
+            },
+            {
+              "label": "Treated (utilisation), 2026",
+              "value": "7 MLD (NMCG 2026)"
+            },
+            {
+              "label": "STP compliance, 2026",
+              "value": "Directed to upgrade STP to meet PCB standards (NMCG 2026)",
+              "emphasis": true
             }
           ],
           "sources": [
@@ -593,41 +602,48 @@
               "says": "City Municipal Council, Doddaballapura: Status of Sewerage Network 'Provided with UGD System'; % Sewerage network provided 80%; % yet to be completed 20%. Gap Analysis: '20% of the UGD work needs to be completed.'",
               "citation": "District Environmental Plan for Bengaluru Rural District, Underground sewerage network table, p.57",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            },
+            {
+              "source": "NMCG MPR (Feb 2026)",
+              "says": "Doddaballapur STP (Majarahosahalli) 12 MLD installed, 7 MLD utilised (WSP); status: upgrade the STP to meet PCB standards.",
+              "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
+              "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
             }
           ]
         },
         {
           "stream": "Industrial effluent (CETP)",
-          "summary": "The DEP reports industrial effluent ONLY at the district level (all of Bengaluru Rural), not per taluk. District-wide: 151 industries discharge wastewater generating 14.354 MLD; NIL treated industrial wastewater is discharged to nalas/rivers; 2 Common Effluent Treatment Facilities exist; 134 industries meet discharge standards and 26 do not.",
+          "summary": "The KIADB Apparel Park CETP, built in 2021 for dyeing-unit effluent, is non-operational",
           "metrics": [
             {
-              "label": "Industries discharging wastewater (district-wide, not taluk-level)",
-              "value": "151 Nos. (DEP 2021)"
+              "label": "CETP (KIADB Apparel Park, Doddaballapura)",
+              "value": "5,000 KLD + 500 KLD CSTP; established 30.06.2021 (NMCG 2026)"
             },
             {
-              "label": "Industrial wastewater generated (district-wide, not taluk-level)",
-              "value": "14.354 MLD (DEP 2021)",
+              "label": "CETP status, 2026",
+              "value": "NOT operating - defunct machinery; dyeing-unit trade effluent presently untreated (NMCG 2026)",
               "emphasis": true
             },
             {
-              "label": "Common Effluent Treatment Facilities (district-wide)",
-              "value": "2 Nos. (DEP 2021)"
+              "label": "District industries discharging",
+              "value": "151 (DEP 2021)"
             },
             {
-              "label": "Industries NOT meeting discharge standards (district-wide)",
-              "value": "26 Nos. of 160 monitored (134 compliant) (DEP 2021)",
-              "emphasis": true
-            },
-            {
-              "label": "Operating industries by KSPCB category (district-wide)",
-              "value": "Red 174 / Orange 275 / Green 681 / White 97 (DEP 2021)"
+              "label": "District trade effluent",
+              "value": "14.354 MLD; 2 common facilities; 26 of 160 non-compliant (DEP 2021)"
             }
           ],
           "sources": [
             {
-              "source": "Bengaluru Rural DEP 2021 - Industrial waste water management (p.58)",
-              "says": "As per the F-Reg maintained in the Regional office Hoskote, Regional office Nelamangala, KSPCB as on 31-03-2021 the list of number of operating industries is as below: Nos. of Red industries 174; Nos. of Orange industries 275; Nos. of Green industries 681; Nos. of White industries 97. No of Industries discharging waste water: 151 Nos. Total Quantity of industrial waste water generated: 14.354 MLD. Quantity of treated industrial waste water discharged into Nalas/Rivers: NIL. Common Effluent Treatment Facilities: 2 Nos. No of Industries meeting discharge Standards: 134 Nos. No of Industries not meeting discharge Standards: 26 Nos.",
-              "citation": "District Environmental Plan for Bengaluru Rural District, Industrial Wastewater Management section, p.58 (KSPCB F-Register as on 31-03-2021)",
+              "source": "NMCG MPR (Feb 2026) - CETP register",
+              "says": "M/s. CETP, KIADB, Apparel Park, Doddaballapura (5000 + CSTP 500), established 30.06.2021 for treatment of trade effluent from dyeing units - 'Not Operating' due to defunct machineries.",
+              "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
+              "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
+            },
+            {
+              "source": "Bengaluru Rural DEP 2021",
+              "says": "District-wide: 151 industries discharge wastewater, 14.354 MLD, 2 common effluent treatment facilities, 26 of 160 monitored non-compliant.",
+              "citation": "Bengaluru Rural DEP 2021, p.58",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
             }
           ]
@@ -671,7 +687,7 @@
     "nelamangala": {
       "name": "Nelamangala (City Municipal Council / taluk)",
       "level": "Taluk",
-      "coverage": "Bengaluru Rural DEP 2021 (scanned PDF; sewage + UGD figures image-verified, p.55/57)",
+      "coverage": "Bengaluru Rural DEP 2021 + NMCG Feb 2026 (image-verified)",
       "headline": "Nelamangala CMC has no operating STP (capacity and flow both 0 MLD) against 2.9 MLD of wastewater; the DEP says an STP is 'to be established' though it reports the UGD network as 100% provided; 30 TPD solid waste",
       "streams": [
         {
@@ -694,6 +710,11 @@
             {
               "label": "Action plan",
               "value": "'STP to be established' (DEP 2021)"
+            },
+            {
+              "label": "STP status, 2026",
+              "value": "Still no STP - not in the NMCG Feb 2026 STP list (NMCG 2026)",
+              "emphasis": true
             }
           ],
           "sources": [
@@ -702,6 +723,12 @@
               "says": "Nelamangala CMC: 2.9 MLD generated, 0 MLD STP, 0 MLD treated; sewerage network 0% provided / 100% of UGD work yet to be completed; action plan 'STP to be established'.",
               "citation": "Bengaluru Rural DEP 2021, p.55, 57",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            },
+            {
+              "source": "NMCG MPR (Feb 2026)",
+              "says": "Nelamangala does not appear in the Karnataka existing-STP list - no STP as of Feb 2026.",
+              "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
+              "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
             }
           ]
         },
@@ -780,7 +807,7 @@
     "devanahalli": {
       "name": "Devanahalli (Town Municipal Council / taluk)",
       "level": "Taluk",
-      "coverage": "Bengaluru Rural DEP 2021 (scanned PDF; sewage + UGD figures image-verified, p.55-57)",
+      "coverage": "Bengaluru Rural DEP 2021 + NMCG Feb 2026 (image-verified)",
       "headline": "Devanahalli Town MC has no UGD sewer system at all (0% implemented) and 0 MLD STP against 2.9 MLD wastewater; the DEP records a sanctioned Sludge Treatment Plant in lieu of UGD; 17 TPD solid waste",
       "streams": [
         {
@@ -807,6 +834,10 @@
             {
               "label": "Plan inconsistency",
               "value": "p.55-56 says 'provide UGD+STP'; p.57 says 'FSTP provided, no UGD needed' (DEP 2021)"
+            },
+            {
+              "label": "STP status, 2026",
+              "value": "No conventional STP in the NMCG Feb 2026 STP list (FSTP only) (NMCG 2026)"
             }
           ],
           "sources": [
@@ -815,6 +846,12 @@
               "says": "Devanahalli TMC: 1.0 MLD generated, 0 MLD STP, houses on septic tanks/soak pits. p.57 sewerage table: 'There is no UGD System implemented'; gap analysis 'Provided faecal Sludge Treatment Plant and Using. No Need to provide UGD system' - while p.55-56 lists 'Need to provide UGD system connected to STP'.",
               "citation": "Bengaluru Rural DEP 2021, p.55-57",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            },
+            {
+              "source": "NMCG MPR (Feb 2026)",
+              "says": "Devanahalli does not appear in the Karnataka existing-STP list - no conventional STP as of Feb 2026.",
+              "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
+              "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
             }
           ]
         },
@@ -893,7 +930,7 @@
     "chikkaballapura": {
       "name": "Chikkaballapura (CMC / taluk)",
       "level": "Taluk",
-      "coverage": "Chikkaballapura DEP 2021 (scanned PDF; STP capacity & UGD gap image-verified, p.99)",
+      "coverage": "Chikkaballapura DEP 2021 + NMCG Feb 2026 (STP list; STP figures image-verified DEP p.99)",
       "headline": "Chikkaballapura town (Arkavathi headwaters near Nandi Hills) has a 10 MLD STP against ~3.5 MLD generated, but its underground sewerage network is only ~91% complete (9% gap) and ~40,000 tonnes of legacy waste sit at its dumpsite; the district has no CETP and most industrial effluent is handled by in-premises ETPs.",
       "_provenance": {
         "document_title": "DISTRICT ENVIRONMENT PLAN FOR CHIKKABALLAPURA DISTRICT, KARNATAKA STATE",
@@ -943,6 +980,14 @@
               "label": "Treated/untreated sewage flowing to rivers or lakes (district)",
               "value": "Nil reported (DEP 2021)",
               "emphasis": false
+            },
+            {
+              "label": "Treated (utilisation), 2026",
+              "value": "7 MLD (NMCG 2026)"
+            },
+            {
+              "label": "STP compliance, 2026",
+              "value": "Complying (NMCG 2026)"
             }
           ],
           "sources": [
@@ -969,6 +1014,12 @@
               "says": "Existing STP (oxidation pond) is inadequate to treat the sewage generated from the town. Due to incomplete UGD connection missing link exists, the completion of UGD work and connection shall be made. Note: The existing oxidation pond to be upgraded to STP of new technology in case of CMC - Chikkaballapura, Chinthamani & Shidlaghatta.",
               "citation": "DEP 2021, Domestic Sewage action plan, p.103 and p.97 (PDF labels)",
               "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            },
+            {
+              "source": "NMCG MPR (Feb 2026)",
+              "says": "Chikkaballapur STP 10 MLD installed, 7 MLD utilised (WSP), status Complying.",
+              "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
+              "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
             }
           ]
         },
