@@ -159,6 +159,10 @@
             }
           ]
         }
+      ],
+      "conflicts": [
+        "DEP says there are no CETPs needed and all 581 industries meet standards with effluent 'fully recycled, zero discharge' - while the CAG audit found 38 of 66 sampled KIADB areas had no CETP and ~2,571 ML/yr of untreated discharge.",
+        "The DEP's own district sewage-generation total is inconsistent (~18.9 MLD in one table vs ~23.3 MLD in another)."
       ]
     },
     "kanakapura": {
@@ -447,6 +451,10 @@
             }
           ]
         }
+      ],
+      "conflicts": [
+        "The DEP records a '0 MLD' treatment-capacity gap on paper, yet states ~20% of the area has no sewer network and 8-10% of sewage is untreated.",
+        "The DEP's own BBMP sewage-generation figure differs between tables (1,440 vs 1,458.6 MLD)."
       ]
     },
     "harohalli": {
@@ -655,58 +663,44 @@
             }
           ]
         }
+      ],
+      "conflicts": [
+        "STP capacity (12 MLD) is called 'adequate' for ~5 MLD of sewage, but 20% of the UGD network is incomplete, so part of the sewage bypasses the STP untreated."
       ]
     },
     "nelamangala": {
       "name": "Nelamangala (City Municipal Council / taluk)",
       "level": "Taluk",
-      "coverage": "Bengaluru Rural DEP 2021 (scanned PDF; sewage figures image-verified, p.55/57)",
+      "coverage": "Bengaluru Rural DEP 2021 (scanned PDF; sewage + UGD figures image-verified, p.55/57)",
       "headline": "Nelamangala CMC has no operating STP (capacity and flow both 0 MLD) against 2.9 MLD of wastewater; the DEP says an STP is 'to be established' though it reports the UGD network as 100% provided; 30 TPD solid waste",
       "streams": [
         {
           "stream": "Sewage",
-          "summary": "2.9 MLD wastewater present, with 0 MLD existing STP capacity and 0 MLD present flow; the gap action says 'STP to be established'. The DEP's sewerage-network table separately marks Nelamangala's UGD network as 100% provided (a notable internal tension: network provided but no STP and zero flow).",
+          "summary": "No STP and effectively no sewer network laid - the full 2.9 MLD is untreated",
           "metrics": [
             {
-              "label": "Wastewater generated",
-              "value": "2.9 MLD (DEP 2021)",
-              "emphasis": true
+              "label": "Sewage generated",
+              "value": "2.9 MLD (DEP 2021)"
             },
             {
-              "label": "Existing STP capacity",
+              "label": "STP capacity",
               "value": "0 MLD - no STP (DEP 2021)",
               "emphasis": true
             },
             {
-              "label": "Present sewage flow rate",
-              "value": "0 MLD (DEP 2021)"
+              "label": "UGD network",
+              "value": "Nominally 'provided' but 0% laid; 100% of UGD work yet to be completed (DEP 2021, p.57)"
             },
             {
-              "label": "STP capacity vs generation",
-              "value": "Action plan: 'STP to be established' (DEP 2021)",
-              "emphasis": true
-            },
-            {
-              "label": "UGD (sewer) network coverage",
-              "value": "Recorded 100% provided, 0% pending (DEP 2021)"
-            },
-            {
-              "label": "Compliance / treatment gap",
-              "value": "Full generation untreated; no STP exists (DEP 2021)",
-              "emphasis": true
+              "label": "Action plan",
+              "value": "'STP to be established' (DEP 2021)"
             }
           ],
           "sources": [
             {
-              "source": "Bengaluru Rural DEP 2021 - Domestic sewage gap & action plan table (p.55)",
-              "says": "City Municipal Council, [Devanahalli/Nelamangala row set]: for Nelamangala the Quantity of waste water present is 2.9 MLD; Existing STP Capacity 0; Present Sewage Flow rate 0; Gap Analysis: 'STP to be established.' (Hoskote CMC: 3.4 MLD waste water, 0 STP, 0 flow, 'STP to be established'.)",
-              "citation": "District Environmental Plan for Bengaluru Rural District, Domestic Sewage gap analysis table, p.55",
-              "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
-            },
-            {
-              "source": "Bengaluru Rural DEP 2021 - Underground sewerage network table (p.57)",
-              "says": "City Municipal Council, Nelamangala: Status of Sewerage Network 'Provided with UGD System'; % Sewerage network provided 100%; % yet to be completed 0% (Not Applicable). Gap Analysis text on this row references a Sludge Treatment Plant established and 'No Need to provide UGD system'.",
-              "citation": "District Environmental Plan for Bengaluru Rural District, Underground sewerage network table, p.57",
+              "source": "Bengaluru Rural DEP 2021 (p.55,57, image-verified)",
+              "says": "Nelamangala CMC: 2.9 MLD generated, 0 MLD STP, 0 MLD treated; sewerage network 0% provided / 100% of UGD work yet to be completed; action plan 'STP to be established'.",
+              "citation": "Bengaluru Rural DEP 2021, p.55, 57",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
             }
           ]
@@ -778,37 +772,48 @@
             }
           ]
         }
+      ],
+      "conflicts": [
+        "The DEP labels the sewerage status 'Provided with UGD System', yet the same table records 0% of the network actually laid (100% still to be completed) and there is no STP."
       ]
     },
     "devanahalli": {
       "name": "Devanahalli (Town Municipal Council / taluk)",
       "level": "Taluk",
-      "coverage": "Bengaluru Rural DEP 2021 (scanned PDF; sewage figures image-verified, p.55-56)",
+      "coverage": "Bengaluru Rural DEP 2021 (scanned PDF; sewage + UGD figures image-verified, p.55-57)",
       "headline": "Devanahalli Town MC has no UGD sewer system at all (0% implemented) and 0 MLD STP against 2.9 MLD wastewater; the DEP records a sanctioned Sludge Treatment Plant in lieu of UGD; 17 TPD solid waste",
       "streams": [
         {
           "stream": "Sewage",
-          "summary": "No STP; on septic tanks - UGD and STP yet to be provided",
+          "summary": "No UGD network and no conventional STP; relies on a faecal sludge treatment plant - the DEP's own tables disagree on what's needed",
           "metrics": [
             {
               "label": "Sewage generated",
               "value": "1.0 MLD (DEP 2021)"
             },
             {
-              "label": "STP capacity",
+              "label": "Conventional STP",
               "value": "0 MLD - no STP (DEP 2021)",
               "emphasis": true
             },
             {
-              "label": "Status",
-              "value": "Houses on septic tanks / soak pits; UGD + STP to be provided (DEP 2021)"
+              "label": "UGD network",
+              "value": "None implemented (DEP 2021, p.57)"
+            },
+            {
+              "label": "Faecal sludge",
+              "value": "Faecal Sludge Treatment Plant recorded in use (DEP 2021, p.57)"
+            },
+            {
+              "label": "Plan inconsistency",
+              "value": "p.55-56 says 'provide UGD+STP'; p.57 says 'FSTP provided, no UGD needed' (DEP 2021)"
             }
           ],
           "sources": [
             {
-              "source": "Bengaluru Rural DEP 2021 (p.55-56, image-verified)",
-              "says": "Town Municipal Council Devanahalli: 1.0 MLD wastewater generated, 0 MLD existing STP, houses provided with individual septic tank and soak pit; 'Need to provide UGD system connected to STP'.",
-              "citation": "Bengaluru Rural District Environmental Plan, 2021, p.55-56",
+              "source": "Bengaluru Rural DEP 2021 (p.55-57, image-verified)",
+              "says": "Devanahalli TMC: 1.0 MLD generated, 0 MLD STP, houses on septic tanks/soak pits. p.57 sewerage table: 'There is no UGD System implemented'; gap analysis 'Provided faecal Sludge Treatment Plant and Using. No Need to provide UGD system' - while p.55-56 lists 'Need to provide UGD system connected to STP'.",
+              "citation": "Bengaluru Rural DEP 2021, p.55-57",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
             }
           ]
@@ -880,6 +885,9 @@
             }
           ]
         }
+      ],
+      "conflicts": [
+        "The DEP contradicts itself: the sewerage table (p.55-56) says 'provide UGD system connected to STP', while the gap-analysis table (p.57) says a faecal sludge treatment plant is already provided and 'no need to provide UGD system'."
       ]
     },
     "chikkaballapura": {
@@ -1076,6 +1084,9 @@
             }
           ]
         }
+      ],
+      "conflicts": [
+        "The DEP's sewage-generation figure for Chikkaballapura is inconsistent - one table gives 3.5 MLD while another replaces the number with 'work taken up by KMRP'."
       ]
     }
   }

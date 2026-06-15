@@ -46,7 +46,7 @@ interface GapStream {
   trend?: { label: string; unit?: string; points: { year: number; value: number | null; url?: string; note?: string }[] };
   sources: GapSource[];
 }
-interface GapUnit { name: string; level?: string; coverage?: string; headline: string; streams: GapStream[] }
+interface GapUnit { name: string; level?: string; coverage?: string; conflicts?: string[]; headline: string; streams: GapStream[] }
 
 const COACH_KEY = "basin-atlas-coach-dismissed";
 
@@ -860,6 +860,16 @@ function GapPanel({ unit, onClose }: { unit: GapUnit; onClose: () => void }) {
       )}
       {unit.coverage && (
         <p className="text-[11px] text-slate-400">Data coverage: {unit.coverage}</p>
+      )}
+      {unit.conflicts && unit.conflicts.length > 0 && (
+        <div className="rounded-md border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 p-2.5">
+          <div className="text-[11px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold mb-1">⚠ Source conflicts</div>
+          <ul className="space-y-1 list-disc pl-4">
+            {unit.conflicts.map((c, i) => (
+              <li key={i} className="text-[12px] text-amber-800 dark:text-amber-200 leading-snug">{c}</li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {unit.streams.map((s, i) => (
