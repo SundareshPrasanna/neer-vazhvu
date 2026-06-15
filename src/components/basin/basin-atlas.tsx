@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
@@ -56,6 +56,7 @@ type FC = FeatureCollection;
  *  outlines and sub-catchments sit below thematic fills, lines, and points so
  *  the layers on top receive hover/click, not the catchment beneath them. */
 function drawRank(l: BasinLayer): number {
+  if (l.gap) return -1; // gap choropleth at the very bottom - all data (incl. STPs) sits above it
   if (l.family === "boundary" || l.family.startsWith("admin")) return 0;
   if (l.family === "sub-hydrosheds") return 1;
   if (l.geom === "fill") return 2;
@@ -360,35 +361,18 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             const fcScoped: FC = { type: "FeatureCollection", features: feats };
             const faded = dim(l);
 
-            // Gap layer: the choropleth fill is NON-interactive (click-through)
-            // so it never blocks the STPs/features beneath it; a clickable badge
-            // at each unit's centroid opens the gap panel.
+            // Gap layer: only the choropleth FILL is drawn here (at the very
+            // bottom, drawRank -1, non-interactive) so it never sits over or
+            // blocks the STPs/features above it. The clickable badge is rendered
+            // separately, last, so it stays on top and openable.
             if (l.gap) {
               return (
-                <Fragment key={`gap-${l.family}-${selectedRiverId}`}>
-                  <GeoJSON
-                    key={`gapfill-${selectedRiverId}-${tiles.isDark}`}
-                    data={fcScoped}
-                    interactive={false}
-                    style={(feat?: Feature) => fillStyle(l, feat, faded)}
-                  />
-                  {feats.map((f, idx) => {
-                    const unit = String((f.properties as Record<string, unknown>)?.gapUnit ?? "");
-                    const name = String((f.properties as Record<string, unknown>)?.name ?? "Treatment gaps");
-                    const center = L.geoJSON(f).getBounds().getCenter();
-                    return (
-                      <CircleMarker
-                        key={`gapbadge-${unit}-${idx}`}
-                        center={center}
-                        radius={6}
-                        pathOptions={{ color: "#fecaca", weight: 1, fillColor: "#dc2626", fillOpacity: 0.7 }}
-                        eventHandlers={{ click: () => { setSelectedGapUnit(unit); setSelectedFeature(null); } }}
-                      >
-                        <Tooltip sticky>{name} - click for treatment gaps</Tooltip>
-                      </CircleMarker>
-                    );
-                  })}
-                </Fragment>
+                <GeoJSON
+                  key={`gapfill-${selectedRiverId}-${tiles.isDark}`}
+                  data={fcScoped}
+                  interactive={false}
+                  style={(feat?: Feature) => fillStyle(l, feat, faded)}
+                />
               );
             }
 
@@ -483,6 +467,29 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 }}
               />
             );
+          })}
+
+          {/* Gap badges, rendered LAST so they sit on top (clickable) while the
+              gap choropleth fill stays at the bottom of the stack. */}
+          {orderedLayers.filter((l) => l.gap && shouldRender(l)).map((l) => {
+            const fc = data[dataKey(l)];
+            if (!fc) return null;
+            return scoped(fc, l).map((f, idx) => {
+              const unit = String((f.properties as Record<string, unknown>)?.gapUnit ?? "");
+              const name = String((f.properties as Record<string, unknown>)?.name ?? "Treatment & waste gaps");
+              const center = L.geoJSON(f).getBounds().getCenter();
+              return (
+                <CircleMarker
+                  key={`gapbadge-${unit}-${idx}`}
+                  center={center}
+                  radius={6}
+                  pathOptions={{ color: "#fecaca", weight: 1, fillColor: "#dc2626", fillOpacity: 0.7 }}
+                  eventHandlers={{ click: () => { setSelectedGapUnit(unit); setSelectedFeature(null); } }}
+                >
+                  <Tooltip sticky>{name} - click for treatment &amp; waste gaps</Tooltip>
+                </CircleMarker>
+              );
+            });
           })}
         </MapContainer>
 
@@ -592,7 +599,7 @@ function MapLegend({ layers }: { layers: BasinLayer[] }) {
   // legend can never disagree with what's drawn.
   const items: { sym: LegendSym; color: string; label: string }[] = [];
   for (const l of layers) {
-    if (l.gap) items.push({ sym: "box", color: "#dc2626", label: "Treatment gap" });
+    if (l.gap) items.push({ sym: "box", color: "#dc2626", label: "Treatment & waste gap" });
     else if (l.family === "boundary") items.push({ sym: "line", color: l.color, label: l.label });
     else if (l.family === "sub-hydrosheds") items.push({ sym: "dash", color: l.color, label: "Sub-catchment" });
     else if (l.family === "rivers") items.push({ sym: "line", color: l.color, label: "River" });
@@ -848,7 +855,7 @@ function GapPanel({ unit, onClose }: { unit: GapUnit; onClose: () => void }) {
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <div className="text-[11px] uppercase tracking-wider text-rose-500">Treatment gaps{unit.level ? ` · ${unit.level}` : ""}</div>
+          <div className="text-[11px] uppercase tracking-wider text-rose-500">Treatment &amp; waste gaps{unit.level ? ` · ${unit.level}` : ""}</div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 leading-snug">{unit.name}</h2>
         </div>
         <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
