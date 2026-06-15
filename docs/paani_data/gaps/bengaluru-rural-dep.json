@@ -1,0 +1,167 @@
+{
+  "_meta": {
+    "source_document": "District Environmental Plan for Bengaluru Rural District, Karnataka State (titled 'cpcpDISTRICT ENVIRONMENTAL PLAN FOR BENGALURRURAL DISTRICT')",
+    "source_page": "https://kspcb.karnataka.gov.in/node/748 (KSPCB District Environmental Plan index) -> https://bangalorerural.nic.in/en/notice/cpcpdistrict-environmental-plan-for-bengalururural-district-karnataka-state/",
+    "document_url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf",
+    "published": "April 2022 (s3waas upload path 2022/04); office of the Deputy Commissioner, Bengaluru Rural District.",
+    "data_as_on": "Industrial / KSPCB F-Register data explicitly 'as on 31-03-2021' (p.58). District profile uses 2011 Census base population. Action-plan completion timelines run 31-03-2022 to 31-03-2023. Cited throughout below as 'DEP 2021' (the 31-03-2021 F-Register cut-off year), consistent with the 2022 publication.",
+    "extraction_method": "PDF is a CamScanner/iLovePDF SCANNED IMAGE (no text layer; pdftotext returned empty). Rendered to PNG at 200-350 dpi with pdftoppm and OCR'd with tesseract; the three load-bearing pages (solid-waste p.7, domestic-sewage/STP p.55, underground-sewerage p.57, industrial p.58) were ALSO read visually from the rendered page images to confirm every numeric cell, because tesseract garbled the rotated/boxed tables. Figures below are taken from the visual reads, not the raw OCR.",
+    "structure_note": "This DEP is organised PER ULB (Urban Local Body), not per valley/basin. The five ULBs are Hoskote CMC, Doddaballapura CMC, Nelamangala CMC, Devanahalli Town MC and Vijayapura Town MC. Of the three Arkavathi/Kumudavathi-headwater taluks requested, Doddaballapura (Arkavathi headwaters near Nandi/Doddaballapur hills), Nelamangala (Kumudavathi headwaters) and Devanahalli are extracted below. Hoskote and Vijayapura are in the Dakshina Pinakini (Pennar) / north catchment respectively and are not part of the Arkavathi-basin scope, so they are recorded only as supporting context inside source 'says' strings.",
+    "industrial_caveat": "Industrial effluent, ETP/CETP and industry-count figures in this DEP are reported DISTRICT-WIDE ONLY (all of Bengaluru Rural), not split per taluk/ULB. The same district-wide industrial block is therefore attached to each Arkavathi taluk with an explicit 'district-wide, not taluk-level' label on each metric. Do not present these as per-taluk values.",
+    "solid_waste_caveat": "The DEP's solid-waste section gives per-ULB GENERATION (tons/day) cleanly (p.7) but does NOT publish a per-ULB 'quantity processed' or 'legacy/dumpsite tonnage' figure. The downstream tables are gap-analysis percentages (door-to-door collection %, segregation, composting, bulk-waste). 'Processed' and 'legacy waste' are therefore flagged as not-tabulated rather than invented."
+  },
+  "units": {
+    "doddaballapura": {
+      "name": "Doddaballapura (City Municipal Council / taluk)",
+      "level": "Taluk",
+      "coverage": "Bengaluru Rural DEP 2021 (data as on 31-03-2021; pub. 2022)",
+      "headline": "Doddaballapura CMC generates ~5.0 MLD of sewage against a 12 MLD STP, but an incomplete UGD network (20% still uncovered) means sewage bypasses the plant; it is the district's largest solid-waste generator at 35 TPD",
+      "streams": [
+        {
+          "stream": "Sewage",
+          "summary": "5.0 MLD wastewater vs a 12 MLD existing STP; present sewage flow ~5 MLD. On paper capacity is adequate, but the DEP's gap analysis says the UGD network is incomplete so missing links bypass the STP and must be intercepted and diverted. 80% of the UGD network is provided; 20% still to be completed.",
+          "metrics": [
+            { "label": "Wastewater generated", "value": "5.0 MLD (DEP 2021)", "emphasis": true },
+            { "label": "Existing STP capacity", "value": "12 MLD (DEP 2021)" },
+            { "label": "Present sewage flow rate", "value": "5 MLD (DEP 2021)" },
+            { "label": "STP capacity vs generation", "value": "Adequate on paper; no MLD shortfall stated (DEP 2021)" },
+            { "label": "UGD (sewer) network coverage", "value": "80% provided, 20% yet to be completed (DEP 2021)", "emphasis": true },
+            { "label": "Compliance / treatment gap", "value": "Incomplete UGD -> sewage bypasses STP via missing links (DEP 2021)", "emphasis": true }
+          ],
+          "sources": [
+            { "source": "Bengaluru Rural DEP 2021 - Domestic sewage gap & action plan table (p.55)", "says": "City Municipal Council, Doddaballapura: Quantity of waste water present 5.0 MLD; Existing STP Capacity 12 MLD; Present Sewage Flow rate 5 MLD. Gap Analysis: 'Due to incomplete UGD network connected to STP there is a missing links bypassing the STP. Thus, these missing links must be intercepted and diverted to existing STP for treatment and Disposal. The existing STP is adequate.'", "citation": "District Environmental Plan for Bengaluru Rural District, Domestic Sewage gap analysis table, p.55", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" },
+            { "source": "Bengaluru Rural DEP 2021 - Underground sewerage network table (p.57)", "says": "City Municipal Council, Doddaballapura: Status of Sewerage Network 'Provided with UGD System'; % Sewerage network provided 80%; % yet to be completed 20%. Gap Analysis: '20% of the UGD work needs to be completed.'", "citation": "District Environmental Plan for Bengaluru Rural District, Underground sewerage network table, p.57", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" }
+          ]
+        },
+        {
+          "stream": "Industrial effluent (CETP)",
+          "summary": "The DEP reports industrial effluent ONLY at the district level (all of Bengaluru Rural), not per taluk. District-wide: 151 industries discharge wastewater generating 14.354 MLD; NIL treated industrial wastewater is discharged to nalas/rivers; 2 Common Effluent Treatment Facilities exist; 134 industries meet discharge standards and 26 do not.",
+          "metrics": [
+            { "label": "Industries discharging wastewater (district-wide, not taluk-level)", "value": "151 Nos. (DEP 2021)" },
+            { "label": "Industrial wastewater generated (district-wide, not taluk-level)", "value": "14.354 MLD (DEP 2021)", "emphasis": true },
+            { "label": "Common Effluent Treatment Facilities (district-wide)", "value": "2 Nos. (DEP 2021)" },
+            { "label": "Industries NOT meeting discharge standards (district-wide)", "value": "26 Nos. of 160 monitored (134 compliant) (DEP 2021)", "emphasis": true },
+            { "label": "Operating industries by KSPCB category (district-wide)", "value": "Red 174 / Orange 275 / Green 681 / White 97 (DEP 2021)" }
+          ],
+          "sources": [
+            { "source": "Bengaluru Rural DEP 2021 - Industrial waste water management (p.58)", "says": "As per the F-Reg maintained in the Regional office Hoskote, Regional office Nelamangala, KSPCB as on 31-03-2021 the list of number of operating industries is as below: Nos. of Red industries 174; Nos. of Orange industries 275; Nos. of Green industries 681; Nos. of White industries 97. No of Industries discharging waste water: 151 Nos. Total Quantity of industrial waste water generated: 14.354 MLD. Quantity of treated industrial waste water discharged into Nalas/Rivers: NIL. Common Effluent Treatment Facilities: 2 Nos. No of Industries meeting discharge Standards: 134 Nos. No of Industries not meeting discharge Standards: 26 Nos.", "citation": "District Environmental Plan for Bengaluru Rural District, Industrial Wastewater Management section, p.58 (KSPCB F-Register as on 31-03-2021)", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" }
+          ]
+        },
+        {
+          "stream": "Solid waste",
+          "summary": "Doddaballapura CMC is the district's largest urban solid-waste generator at 35 tons/day (31 wards, ~93,105 population). The DEP does not publish a per-ULB processed-quantity or legacy-waste tonnage; its downstream tables are collection/segregation gap percentages only.",
+          "metrics": [
+            { "label": "Solid waste generated", "value": "35 tons/day (DEP 2021)", "emphasis": true },
+            { "label": "Wards / population (Doddaballapura CMC)", "value": "31 wards; ~93,105 population (DEP 2021)" },
+            { "label": "Solid waste processed", "value": "Not tabulated per ULB in this DEP (DEP 2021)" },
+            { "label": "Legacy / dumpsite waste", "value": "Not tabulated per ULB in this DEP (DEP 2021)" }
+          ],
+          "sources": [
+            { "source": "Bengaluru Rural DEP 2021 - Solid Waste Management current-status table (p.7)", "says": "City Municipal Council Doddaballapura: No. of House holds 26059; Population 93105; Solid Waste Generated 35 Tons per day. (Other ULBs: Hoskote CMC 25 TPD; Nelamangala CMC 30 TPD; Devanahalli Town MC 17 TPD; Vijayapura Town MC 18 TPD. Village/Gram Panchayats 198.184 MT/day theoretical at 200 gm/head/day; actual not available.)", "citation": "District Environmental Plan for Bengaluru Rural District, Solid Waste Management current status, p.7", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" }
+          ]
+        }
+      ]
+    },
+    "nelamangala": {
+      "name": "Nelamangala (City Municipal Council / taluk)",
+      "level": "Taluk",
+      "coverage": "Bengaluru Rural DEP 2021 (data as on 31-03-2021; pub. 2022)",
+      "headline": "Nelamangala CMC has no operating STP (capacity and flow both 0 MLD) against 2.9 MLD of wastewater; the DEP says an STP is 'to be established' though it reports the UGD network as 100% provided; 30 TPD solid waste",
+      "streams": [
+        {
+          "stream": "Sewage",
+          "summary": "2.9 MLD wastewater present, with 0 MLD existing STP capacity and 0 MLD present flow; the gap action says 'STP to be established'. The DEP's sewerage-network table separately marks Nelamangala's UGD network as 100% provided (a notable internal tension: network provided but no STP and zero flow).",
+          "metrics": [
+            { "label": "Wastewater generated", "value": "2.9 MLD (DEP 2021)", "emphasis": true },
+            { "label": "Existing STP capacity", "value": "0 MLD - no STP (DEP 2021)", "emphasis": true },
+            { "label": "Present sewage flow rate", "value": "0 MLD (DEP 2021)" },
+            { "label": "STP capacity vs generation", "value": "Action plan: 'STP to be established' (DEP 2021)", "emphasis": true },
+            { "label": "UGD (sewer) network coverage", "value": "Recorded 100% provided, 0% pending (DEP 2021)" },
+            { "label": "Compliance / treatment gap", "value": "Full generation untreated; no STP exists (DEP 2021)", "emphasis": true }
+          ],
+          "sources": [
+            { "source": "Bengaluru Rural DEP 2021 - Domestic sewage gap & action plan table (p.55)", "says": "City Municipal Council, [Devanahalli/Nelamangala row set]: for Nelamangala the Quantity of waste water present is 2.9 MLD; Existing STP Capacity 0; Present Sewage Flow rate 0; Gap Analysis: 'STP to be established.' (Hoskote CMC: 3.4 MLD waste water, 0 STP, 0 flow, 'STP to be established'.)", "citation": "District Environmental Plan for Bengaluru Rural District, Domestic Sewage gap analysis table, p.55", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" },
+            { "source": "Bengaluru Rural DEP 2021 - Underground sewerage network table (p.57)", "says": "City Municipal Council, Nelamangala: Status of Sewerage Network 'Provided with UGD System'; % Sewerage network provided 100%; % yet to be completed 0% (Not Applicable). Gap Analysis text on this row references a Sludge Treatment Plant established and 'No Need to provide UGD system'.", "citation": "District Environmental Plan for Bengaluru Rural District, Underground sewerage network table, p.57", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" }
+          ]
+        },
+        {
+          "stream": "Industrial effluent (CETP)",
+          "summary": "Reported district-wide only (all of Bengaluru Rural), not per taluk. District-wide: 151 industries discharge wastewater generating 14.354 MLD; NIL treated industrial wastewater discharged to nalas/rivers; 2 Common Effluent Treatment Facilities; 134 industries compliant, 26 non-compliant. Note Nelamangala hosts one of KSPCB's two regional F-Register offices for the district.",
+          "metrics": [
+            { "label": "Industries discharging wastewater (district-wide, not taluk-level)", "value": "151 Nos. (DEP 2021)" },
+            { "label": "Industrial wastewater generated (district-wide, not taluk-level)", "value": "14.354 MLD (DEP 2021)", "emphasis": true },
+            { "label": "Common Effluent Treatment Facilities (district-wide)", "value": "2 Nos. (DEP 2021)" },
+            { "label": "Industries NOT meeting discharge standards (district-wide)", "value": "26 Nos. of 160 monitored (134 compliant) (DEP 2021)", "emphasis": true },
+            { "label": "Operating industries by KSPCB category (district-wide)", "value": "Red 174 / Orange 275 / Green 681 / White 97 (DEP 2021)" }
+          ],
+          "sources": [
+            { "source": "Bengaluru Rural DEP 2021 - Industrial waste water management (p.58)", "says": "As per the F-Reg maintained in the Regional office Hoskote, Regional office Nelamangala, KSPCB as on 31-03-2021: Red 174; Orange 275; Green 681; White 97. No of Industries discharging waste water 151 Nos.; Total Quantity of industrial waste water generated 14.354 MLD; Quantity of treated industrial waste water discharged into Nalas/Rivers NIL; Common Effluent Treatment Facilities 2 Nos.; Industries meeting discharge Standards 134 Nos.; Industries not meeting discharge Standards 26 Nos.", "citation": "District Environmental Plan for Bengaluru Rural District, Industrial Wastewater Management section, p.58 (KSPCB F-Register as on 31-03-2021)", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" }
+          ]
+        },
+        {
+          "stream": "Solid waste",
+          "summary": "Nelamangala CMC generates 30 tons/day (31 wards, ~70,393 population). The DEP does not publish a per-ULB processed-quantity or legacy-waste tonnage.",
+          "metrics": [
+            { "label": "Solid waste generated", "value": "30 tons/day (DEP 2021)", "emphasis": true },
+            { "label": "Wards / population (Nelamangala CMC)", "value": "31 wards; ~70,393 population (DEP 2021)" },
+            { "label": "Solid waste processed", "value": "Not tabulated per ULB in this DEP (DEP 2021)" },
+            { "label": "Legacy / dumpsite waste", "value": "Not tabulated per ULB in this DEP (DEP 2021)" }
+          ],
+          "sources": [
+            { "source": "Bengaluru Rural DEP 2021 - Solid Waste Management current-status table (p.7)", "says": "City Municipal Council Nelamanagala: No. of House holds 17604; Population 70393; Solid Waste Generated 30 Tons per day.", "citation": "District Environmental Plan for Bengaluru Rural District, Solid Waste Management current status, p.7", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" }
+          ]
+        }
+      ]
+    },
+    "devanahalli": {
+      "name": "Devanahalli (Town Municipal Council / taluk)",
+      "level": "Taluk",
+      "coverage": "Bengaluru Rural DEP 2021 (data as on 31-03-2021; pub. 2022)",
+      "headline": "Devanahalli Town MC has no UGD sewer system at all (0% implemented) and 0 MLD STP against 2.9 MLD wastewater; the DEP records a sanctioned Sludge Treatment Plant in lieu of UGD; 17 TPD solid waste",
+      "streams": [
+        {
+          "stream": "Sewage",
+          "summary": "2.9 MLD wastewater present, with 0 MLD existing STP capacity and 0 MLD present flow. The sewerage-network table records 'There is no UGD System implemented' (0% provided), with a sanctioned/established Sludge Treatment Plant offered as the alternative ('No Need to provide UGD system'). Effectively all generated sewage is untreated through a conventional STP.",
+          "metrics": [
+            { "label": "Wastewater generated", "value": "2.9 MLD (DEP 2021)", "emphasis": true },
+            { "label": "Existing STP capacity", "value": "0 MLD - no STP (DEP 2021)", "emphasis": true },
+            { "label": "Present sewage flow rate", "value": "0 MLD (DEP 2021)" },
+            { "label": "UGD (sewer) network coverage", "value": "0% - no UGD system implemented (DEP 2021)", "emphasis": true },
+            { "label": "Compliance / treatment gap", "value": "No UGD, no STP; sanctioned Sludge Treatment Plant cited as substitute (DEP 2021)", "emphasis": true }
+          ],
+          "sources": [
+            { "source": "Bengaluru Rural DEP 2021 - Domestic sewage gap & action plan table (p.55)", "says": "City Municipal Council, [Devanahalli row]: Quantity of waste water present 2.9 MLD; Existing STP Capacity 0; Present Sewage Flow rate 0. Gap Analysis describes incomplete/missing UGD network with sewage needing interception and diversion to an existing STP for treatment and disposal.", "citation": "District Environmental Plan for Bengaluru Rural District, Domestic Sewage gap analysis table, p.55", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" },
+            { "source": "Bengaluru Rural DEP 2021 - Underground sewerage network table (p.57)", "says": "Town Municipal Council, Devanahalli: Status of Sewerage Network 'There is no UGD System implemented'; % Sewerage network provided 0%; % yet to be completed 'Not Applicable'. Gap Analysis: 'Provided / Sanctioned Sludge Treatment Plant Established and Using. No Need to provide UGD system.'", "citation": "District Environmental Plan for Bengaluru Rural District, Underground sewerage network table, p.57", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" }
+          ]
+        },
+        {
+          "stream": "Industrial effluent (CETP)",
+          "summary": "Reported district-wide only (all of Bengaluru Rural), not per taluk. District-wide: 151 industries discharge wastewater generating 14.354 MLD; NIL treated industrial wastewater discharged to nalas/rivers; 2 Common Effluent Treatment Facilities; 134 industries compliant, 26 non-compliant. (Devanahalli taluk also hosts the BIAL airport/KIADB industrial cluster, but the DEP does not give a taluk-level effluent split.)",
+          "metrics": [
+            { "label": "Industries discharging wastewater (district-wide, not taluk-level)", "value": "151 Nos. (DEP 2021)" },
+            { "label": "Industrial wastewater generated (district-wide, not taluk-level)", "value": "14.354 MLD (DEP 2021)", "emphasis": true },
+            { "label": "Common Effluent Treatment Facilities (district-wide)", "value": "2 Nos. (DEP 2021)" },
+            { "label": "Industries NOT meeting discharge standards (district-wide)", "value": "26 Nos. of 160 monitored (134 compliant) (DEP 2021)", "emphasis": true },
+            { "label": "Operating industries by KSPCB category (district-wide)", "value": "Red 174 / Orange 275 / Green 681 / White 97 (DEP 2021)" }
+          ],
+          "sources": [
+            { "source": "Bengaluru Rural DEP 2021 - Industrial waste water management (p.58)", "says": "As per the F-Reg maintained in the Regional office Hoskote, Regional office Nelamangala, KSPCB as on 31-03-2021: Red 174; Orange 275; Green 681; White 97. No of Industries discharging waste water 151 Nos.; Total Quantity of industrial waste water generated 14.354 MLD; Quantity of treated industrial waste water discharged into Nalas/Rivers NIL; Common Effluent Treatment Facilities 2 Nos.; Industries meeting discharge Standards 134 Nos.; Industries not meeting discharge Standards 26 Nos.", "citation": "District Environmental Plan for Bengaluru Rural District, Industrial Wastewater Management section, p.58 (KSPCB F-Register as on 31-03-2021)", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" }
+          ]
+        },
+        {
+          "stream": "Solid waste",
+          "summary": "Devanahalli Town MC generates 17 tons/day (the smallest of the five district ULBs; ~28,051 population). The DEP does not publish a per-ULB processed-quantity or legacy-waste tonnage.",
+          "metrics": [
+            { "label": "Solid waste generated", "value": "17 tons/day (DEP 2021)", "emphasis": true },
+            { "label": "Wards / population (Devanahalli Town MC)", "value": "~6,397 households; ~28,051 population (DEP 2021)" },
+            { "label": "Solid waste processed", "value": "Not tabulated per ULB in this DEP (DEP 2021)" },
+            { "label": "Legacy / dumpsite waste", "value": "Not tabulated per ULB in this DEP (DEP 2021)" }
+          ],
+          "sources": [
+            { "source": "Bengaluru Rural DEP 2021 - Solid Waste Management current-status table (p.7)", "says": "Town Municipal Council Devanahalli: No. of House holds 6397; Population 28051; Solid Waste Generated 17 Tons per day.", "citation": "District Environmental Plan for Bengaluru Rural District, Solid Waste Management current status, p.7", "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf" }
+          ]
+        }
+      ]
+    }
+  }
+}
