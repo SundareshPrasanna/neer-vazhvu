@@ -46,7 +46,7 @@ interface GapStream {
   trend?: { label: string; unit?: string; points: { year: number; value: number | null; url?: string; note?: string }[] };
   sources: GapSource[];
 }
-interface GapUnit { name: string; level?: string; coverage?: string; conflicts?: string[]; headline: string; streams: GapStream[] }
+interface GapUnit { name: string; level?: string; coverage?: string; conflicts?: string[]; caveats?: string[]; headline: string; streams: GapStream[] }
 
 const COACH_KEY = "basin-atlas-coach-dismissed";
 
@@ -248,6 +248,20 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
   const visibleLayers = orderedLayers.filter(shouldRender);
 
+  // Derived insight (Madhuri's CAG ask): when the pressures layer is shown,
+  // how many industrial areas have no CETP nearby - computed live from the data.
+  const legendNotes = useMemo(() => {
+    const out: string[] = [];
+    if (visibleLayers.some((l) => l.family === "pressures")) {
+      const ind = (data["pressures"]?.features ?? []).filter(
+        (f) => (f.properties as Record<string, unknown>)?.kind === "industrial-area",
+      );
+      const none = ind.filter((f) => (f.properties as Record<string, unknown>)?.cetp === "none").length;
+      if (ind.length) out.push(`≈${none} of ${ind.length} industrial areas have no CETP within ~5 km - CAG-flagged gap, spatial estimate (8 of 18 KIADB areas)`);
+    }
+    return out;
+  }, [visibleLayers, data]);
+
   return (
     <div className="h-full w-full flex flex-col md:flex-row">
       {/* ── Elevator rail ── */}
@@ -440,7 +454,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   onEachFeature={(feat: Feature, layer: Layer) => {
                     const p = (feat.properties ?? {}) as Record<string, unknown>;
                     layer.bindTooltip(tipLabel(p, l), { sticky: true });
-                    layer.on("click", () => setSelectedFeature({ family: l.family, props: p }));
+                    layer.on("click", () => { setSelectedFeature({ family: l.family, props: p }); setSelectedGapUnit(null); });
                   }}
                 />
               );
@@ -548,7 +562,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         )}
 
         {/* Legend - reflects what's currently visible. */}
-        <MapLegend layers={visibleLayers} />
+        <MapLegend layers={visibleLayers} notes={legendNotes} />
       </div>
 
       {/* ── Detail panel ── */}
@@ -592,7 +606,7 @@ type LegendSym = "box" | "dot" | "ring" | "line" | "dash" | "outline";
 /** Dynamic legend: one entry per symbol actually on the map right now,
  *  expanding pressures into its kinds and showing the monitoring public-domain
  *  cue (filled vs hollow). */
-function MapLegend({ layers }: { layers: BasinLayer[] }) {
+function MapLegend({ layers, notes }: { layers: BasinLayer[]; notes?: string[] }) {
   const [open, setOpen] = useState(true);
   // Every entry's color comes from the layer's manifest `color` or the shared
   // PRESSURE_KIND_COLOR map - the same sources the map styles read - so the
@@ -608,9 +622,10 @@ function MapLegend({ layers }: { layers: BasinLayer[] }) {
       items.push({ sym: "dot", color: l.color, label: "Monitoring (public data)" });
       items.push({ sym: "ring", color: l.color, label: "Monitoring (not in public domain)" });
     } else if (l.family === "pressures") {
-      for (const kind of Object.keys(PRESSURE_KIND_COLOR)) {
-        items.push({ sym: "box", color: PRESSURE_KIND_COLOR[kind], label: PRESSURE_KIND_LABEL[kind] });
-      }
+      items.push({ sym: "box", color: "#dc2626", label: "Industrial area - no CETP (est.)" });
+      items.push({ sym: "box", color: "#64748b", label: "Industrial area - CETP nearby" });
+      items.push({ sym: "box", color: PRESSURE_KIND_COLOR["quarry"], label: "Quarry" });
+      items.push({ sym: "box", color: PRESSURE_KIND_COLOR["waste-facility"], label: "Waste facility" });
     } else if (l.family.startsWith("admin")) items.push({ sym: "outline", color: l.color, label: l.label });
     else if (l.geom === "point") items.push({ sym: "dot", color: l.color, label: l.label });
     else items.push({ sym: "box", color: l.color, label: l.label });
@@ -631,6 +646,9 @@ function MapLegend({ layers }: { layers: BasinLayer[] }) {
               <LegendSymbol sym={it.sym} color={it.color} />
               <span className="text-slate-600 dark:text-slate-300 leading-tight">{it.label}</span>
             </div>
+          ))}
+          {notes && notes.map((n, i) => (
+            <div key={`note-${i}`} className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug pt-1 mt-1 border-t border-slate-200 dark:border-slate-700">{n}</div>
           ))}
         </div>
       )}
@@ -715,11 +733,6 @@ const PRESSURE_KIND_COLOR: Record<string, string> = {
   quarry: "#ea580c",
   "waste-facility": "#ca8a04",
 };
-const PRESSURE_KIND_LABEL: Record<string, string> = {
-  "industrial-area": "Industrial area",
-  quarry: "Quarry",
-  "waste-facility": "Waste facility",
-};
 // The selected sub-catchment highlight (warm amber - the only warm structural
 // cue, so "you are scoped here" stands out from the cool context).
 const SELECTED_SHED_COLOR = "#f59e0b";
@@ -753,7 +766,15 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): Pa
     return { color: c, weight: 2, fillColor: c, fillOpacity: faded ? 0.2 : 0.4 };
   }
   if (l.family === "pressures") {
-    const kind = String((feat?.properties as Record<string, unknown>)?.kind ?? "");
+    const p = (feat?.properties as Record<string, unknown>) ?? {};
+    const kind = String(p.kind ?? "");
+    // Industrial areas are sub-coloured by CETP coverage (Madhuri's ask): no
+    // CETP nearby = strong red (the gap), CETP nearby = muted, unlocated = grey.
+    if (kind === "industrial-area") {
+      const cetp = String(p.cetp ?? "unknown");
+      const c = cetp === "none" ? "#dc2626" : cetp === "served" ? "#64748b" : "#cbd5e1";
+      return { color: c, weight: 1, fillColor: c, fillOpacity: faded ? 0.2 : cetp === "none" ? 0.6 : 0.3, dashArray: cetp === "unknown" ? "3 3" : undefined };
+    }
     const c = PRESSURE_KIND_COLOR[kind] ?? l.color;
     return { color: c, weight: 1, fillColor: c, fillOpacity: faded ? 0.2 : 0.5 };
   }
@@ -803,6 +824,7 @@ const PROP_LABELS: Record<string, string> = {
   areaHa: "Area (ha)",
   govCode: "Government code",
   townType: "Town type",
+  cetpNote: "CETP coverage",
 };
 const LINK_FIELDS = new Set(["dataUrl", "evidenceUrl"]);
 
@@ -816,7 +838,7 @@ function humanizeKey(k: string): string {
 function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown>; label: string; onClose: () => void }) {
   const title = String(props.name ?? props.contributor ?? props.kind ?? label);
   const entries = Object.entries(props).filter(
-    ([k, v]) => k !== "name" && k !== "shedId" && !LINK_FIELDS.has(k) && v != null && String(v).trim() !== "",
+    ([k, v]) => k !== "name" && k !== "shedId" && k !== "cetp" && !LINK_FIELDS.has(k) && v != null && String(v).trim() !== "",
   );
   return (
     <div className="space-y-3">
@@ -874,6 +896,16 @@ function GapPanel({ unit, onClose }: { unit: GapUnit; onClose: () => void }) {
           <ul className="space-y-1 list-disc pl-4">
             {unit.conflicts.map((c, i) => (
               <li key={i} className="text-[12px] text-amber-800 dark:text-amber-200 leading-snug">{c}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {unit.caveats && unit.caveats.length > 0 && (
+        <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 p-2.5">
+          <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1">Notes &amp; caveats</div>
+          <ul className="space-y-1 list-disc pl-4">
+            {unit.caveats.map((c, i) => (
+              <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{c}</li>
             ))}
           </ul>
         </div>

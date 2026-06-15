@@ -97,6 +97,10 @@
               "emphasis": true
             },
             {
+              "label": "Industrial areas mapped (basin)",
+              "value": "4, all >5 km from a CETP (Neer Vazhvu estimate, 2026)"
+            },
+            {
               "label": "DEP position",
               "value": "Effluent \"fully recycled, zero discharge\"; 581 industries \"meeting standards\" (DEP 2021)"
             },
@@ -169,7 +173,7 @@
       "name": "Kanakapura (CMC / taluk)",
       "level": "Taluk",
       "coverage": "NMCG Monthly Progress Reports, yearly 2020-2026 (on the monitored Arkavathi stretch) + District Environmental Plan 2021",
-      "headline": "Sewage roughly within STP capacity; the gaps here are no CETP and unprocessed solid waste",
+      "headline": "Sewage roughly within STP capacity; the gaps here are no CETP for its industrial areas and unprocessed solid waste",
       "streams": [
         {
           "stream": "Sewage",
@@ -205,6 +209,43 @@
               "says": "Kanakapura sewage generation ~4.4 MLD; STP capacity 6.29 MLD.",
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ]
+        },
+        {
+          "stream": "Industrial effluent (CETP)",
+          "summary": "Two mapped industrial areas, neither with a CETP nearby",
+          "metrics": [
+            {
+              "label": "Industrial areas mapped",
+              "value": "2, incl. 1 KIADB (Paani layer, 2026)"
+            },
+            {
+              "label": "With a CETP nearby",
+              "value": "0 - both >5 km from the nearest CETP (Neer Vazhvu estimate, 2026)",
+              "emphasis": true
+            },
+            {
+              "label": "District CETPs",
+              "value": "0 - \"no CETPs in the Ramanagara district\" (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Neer Vazhvu spatial estimate",
+              "says": "Both mapped Kanakapura industrial areas sit >5 km from the nearest common effluent facility - a proximity estimate from the industrial-areas and common-facilities layers, not confirmed service connectivity."
+            },
+            {
+              "source": "Ramanagara DEP (31-03-2021)",
+              "says": "\"There are no CETPs in the Ramanagara District.\"",
+              "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            },
+            {
+              "source": "CAG Report No. 8 of 2017 (p.18)",
+              "says": "38 of 66 sampled KIADB industrial areas had no CETP/CSTP.",
+              "citation": "CAG Report No. 8 of 2017, Economic Sector, Govt. of Karnataka, p.18",
+              "url": "https://cag.gov.in/uploads/download_audit_report/2017/Report_No_8_of_2017_-_Economic_Sector_Government_of_Karnataka.pdf"
             }
           ]
         },
@@ -285,6 +326,9 @@
             }
           ]
         }
+      ],
+      "caveats": [
+        "No industrial estate is mapped in this taluk, so there's no CETP analysis here. Channapatna's toy/lacquerware and silk industry isn't captured in this layer - a known coverage gap. The district reports no CETPs (DEP 2021)."
       ]
     },
     "magadi": {
@@ -353,6 +397,9 @@
             }
           ]
         }
+      ],
+      "caveats": [
+        "No industrial estate is mapped in this taluk in the current layer, so there's no CETP analysis here. The district reports no CETPs (DEP 2021)."
       ]
     },
     "bbmp": {
@@ -710,8 +757,8 @@
           ]
         }
       ],
-      "conflicts": [
-        "STP capacity (12 MLD) is called 'adequate' for ~5 MLD of sewage, but 20% of the UGD network is incomplete, so part of the sewage bypasses the STP untreated."
+      "caveats": [
+        "The STP has spare capacity (12 MLD vs ~5 MLD generated), but 20% of the area has no sewer line - so that share of sewage isn't collected or treated. Adequate capacity doesn't mean full treatment."
       ]
     },
     "nelamangala": {
