@@ -85,7 +85,14 @@
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 10.0,
+            "unit": "MLD"
+          }
         },
         {
           "stream": "Industrial effluent (CETP)",
@@ -128,10 +135,13 @@
               "citation": "Karnataka Monthly Progress Reports (NMCG)",
               "url": "https://nmcg.nic.in/ngtprogressreport.aspx"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "industry",
+          "granularity": "taluk"
         },
         {
-          "stream": "Solid waste",
+          "stream": "Municipal solid waste",
           "summary": "20 of 35 TPD processed (2025); the rest unprocessed, plus a district sanitary-landfill shortfall",
           "metrics": [
             {
@@ -159,6 +169,105 @@
               "source": "Ramanagara DEP (31-03-2021)",
               "says": "~129.66 TPD urban generated district-wide; legacy waste 58,600 t (Magadi alone 46,000 t); sanitary-landfill sites under litigation.",
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ],
+          "medium": "solid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 35.0,
+            "unit": "TPD"
+          }
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 18.7,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, reported district-wide (covers all taluks in the district); generation is recorded but no taluk-level treatment is.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "6,827.95 MT/yr ≈ 18.7 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "2,021.73 / 1,377.847 / 3,323.60 MT/yr (DEP 2021)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "Disposal-facility status not separately recorded in this DEP. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "Quantity of HW in the District: 6827.95 MT/Annum; Incinerable 2021.73; land-fillable 1377.847; recyclable/utilizable 3323.6 MT/Annum.",
+              "citation": "Hazardous Waste section, p.46",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 1.29,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "1.3 t/day ≈ 1.29 t/day (DEP 2021)",
+              "emphasis": true
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "Quantity of biomedical waste generated per day: 1290 kg/day.",
+              "citation": "Biomedical Waste section, p.41",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ]
+        },
+        {
+          "stream": "C&D waste",
+          "medium": "solid",
+          "sector": "construction",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 1.0,
+            "unit": "TPD"
+          },
+          "summary": "Construction & demolition waste.",
+          "metrics": [
+            {
+              "label": "C&D waste generated",
+              "value": "1.0 TPD (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Recycling facility",
+              "value": "None in the district (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "C&D waste generation (per ULB), Ramanagara: 1.0 MT/day. No C&D recycling facility in the district.",
+              "citation": "C&D Waste section, p.39",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
             }
           ]
@@ -210,7 +319,14 @@
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 4.4,
+            "unit": "MLD"
+          }
         },
         {
           "stream": "Industrial effluent (CETP)",
@@ -247,10 +363,13 @@
               "citation": "CAG Report No. 8 of 2017, Economic Sector, Govt. of Karnataka, p.18",
               "url": "https://cag.gov.in/uploads/download_audit_report/2017/Report_No_8_of_2017_-_Economic_Sector_Government_of_Karnataka.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "industry",
+          "granularity": "taluk"
         },
         {
-          "stream": "Solid waste",
+          "stream": "Municipal solid waste",
           "summary": "~24 TPD generated; district-wide processing and landfill gaps apply",
           "metrics": [
             {
@@ -263,6 +382,105 @@
               "source": "Ramanagara DEP (31-03-2021)",
               "says": "Kanakapura urban solid waste ~24 TPD; district has 0 of 335 bulk generators composting onsite and a 3-site sanitary-landfill shortfall.",
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ],
+          "medium": "solid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 24.0,
+            "unit": "TPD"
+          }
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 18.7,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, reported district-wide (covers all taluks in the district); generation is recorded but no taluk-level treatment is.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "6,827.95 MT/yr ≈ 18.7 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "2,021.73 / 1,377.847 / 3,323.60 MT/yr (DEP 2021)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "Disposal-facility status not separately recorded in this DEP. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "Quantity of HW in the District: 6827.95 MT/Annum; Incinerable 2021.73; land-fillable 1377.847; recyclable/utilizable 3323.6 MT/Annum.",
+              "citation": "Hazardous Waste section, p.46",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 1.29,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "1.3 t/day ≈ 1.29 t/day (DEP 2021)",
+              "emphasis": true
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "Quantity of biomedical waste generated per day: 1290 kg/day.",
+              "citation": "Biomedical Waste section, p.41",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ]
+        },
+        {
+          "stream": "C&D waste",
+          "medium": "solid",
+          "sector": "construction",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 2.0,
+            "unit": "TPD"
+          },
+          "summary": "Construction & demolition waste.",
+          "metrics": [
+            {
+              "label": "C&D waste generated",
+              "value": "2.0 TPD (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Recycling facility",
+              "value": "None in the district (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "C&D waste generation (per ULB), Kanakapura: 2.0 MT/day. No C&D recycling facility in the district.",
+              "citation": "C&D Waste section, p.39",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
             }
           ]
@@ -306,10 +524,17 @@
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 8.8,
+            "unit": "MLD"
+          }
         },
         {
-          "stream": "Solid waste",
+          "stream": "Municipal solid waste",
           "summary": "~36 TPD generated - the highest urban load in the district after Ramanagara",
           "metrics": [
             {
@@ -322,6 +547,105 @@
               "source": "Ramanagara DEP (31-03-2021)",
               "says": "Channapatna urban solid waste ~36 TPD.",
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ],
+          "medium": "solid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 36.0,
+            "unit": "TPD"
+          }
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 18.7,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, reported district-wide (covers all taluks in the district); generation is recorded but no taluk-level treatment is.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "6,827.95 MT/yr ≈ 18.7 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "2,021.73 / 1,377.847 / 3,323.60 MT/yr (DEP 2021)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "Disposal-facility status not separately recorded in this DEP. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "Quantity of HW in the District: 6827.95 MT/Annum; Incinerable 2021.73; land-fillable 1377.847; recyclable/utilizable 3323.6 MT/Annum.",
+              "citation": "Hazardous Waste section, p.46",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 1.29,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "1.3 t/day ≈ 1.29 t/day (DEP 2021)",
+              "emphasis": true
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "Quantity of biomedical waste generated per day: 1290 kg/day.",
+              "citation": "Biomedical Waste section, p.41",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ]
+        },
+        {
+          "stream": "C&D waste",
+          "medium": "solid",
+          "sector": "construction",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 1.0,
+            "unit": "TPD"
+          },
+          "summary": "Construction & demolition waste.",
+          "metrics": [
+            {
+              "label": "C&D waste generated",
+              "value": "1.0 TPD (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Recycling facility",
+              "value": "None in the district (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "C&D waste generation (per ULB), Channapatna: 1.0 MT/day. No C&D recycling facility in the district.",
+              "citation": "C&D Waste section, p.39",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
             }
           ]
@@ -372,10 +696,17 @@
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 2.29,
+            "unit": "MLD"
+          }
         },
         {
-          "stream": "Solid waste",
+          "stream": "Municipal solid waste",
           "summary": "~14.5 TPD generated, but a very large legacy dump",
           "metrics": [
             {
@@ -393,6 +724,105 @@
               "source": "Ramanagara DEP (31-03-2021)",
               "says": "Magadi urban solid waste ~14.5 TPD; legacy waste at Magadi ~46,000 tonnes (the bulk of the district's 58,600 t legacy backlog).",
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ],
+          "medium": "solid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 14.5,
+            "unit": "TPD"
+          }
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 18.7,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, reported district-wide (covers all taluks in the district); generation is recorded but no taluk-level treatment is.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "6,827.95 MT/yr ≈ 18.7 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "2,021.73 / 1,377.847 / 3,323.60 MT/yr (DEP 2021)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "Disposal-facility status not separately recorded in this DEP. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "Quantity of HW in the District: 6827.95 MT/Annum; Incinerable 2021.73; land-fillable 1377.847; recyclable/utilizable 3323.6 MT/Annum.",
+              "citation": "Hazardous Waste section, p.46",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 1.29,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "1.3 t/day ≈ 1.29 t/day (DEP 2021)",
+              "emphasis": true
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "Quantity of biomedical waste generated per day: 1290 kg/day.",
+              "citation": "Biomedical Waste section, p.41",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ]
+        },
+        {
+          "stream": "C&D waste",
+          "medium": "solid",
+          "sector": "construction",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 0.5,
+            "unit": "TPD"
+          },
+          "summary": "Construction & demolition waste.",
+          "metrics": [
+            {
+              "label": "C&D waste generated",
+              "value": "0.5 TPD (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Recycling facility",
+              "value": "None in the district (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "C&D waste generation (per ULB), Magadi: 0.5 MT/day. No C&D recycling facility in the district.",
+              "citation": "C&D Waste section, p.39",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
             }
           ]
@@ -457,7 +887,14 @@
               "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
               "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 1440.0,
+            "unit": "MLD"
+          }
         },
         {
           "stream": "Industrial effluent (CETP)",
@@ -484,10 +921,17 @@
               "citation": "Bengaluru Urban District Environmental Plan, 2022 (p.79, 93)",
               "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 25.34,
+            "unit": "MLD"
+          }
         },
         {
-          "stream": "Solid waste",
+          "stream": "Municipal solid waste",
           "summary": "5,500 TPD generated; ~5 million tonnes of legacy waste and no functional sanitary landfill",
           "metrics": [
             {
@@ -509,6 +953,117 @@
               "source": "Bengaluru Urban DEP 2022",
               "says": "BBMP ~5500 TPD solid waste; ~5,000,000 tonnes legacy waste at 4 dumpsites (district total 5,002,000 t); Nos. of Sanitary Landfill Facility (SLF): Nil.",
               "citation": "Bengaluru Urban District Environmental Plan, 2022 (p.7-8, 26-27)",
+              "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf"
+            }
+          ],
+          "medium": "solid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 5500.0,
+            "unit": "TPD"
+          }
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 203.9,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, reported district-wide (covers all taluks in the district); generation is recorded but no taluk-level treatment is.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "74,416.29 MT/yr ≈ 203.9 t/day (DEP 2022)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "12,963.63 / 16,429.380 / 45,023.44 MT/yr (DEP 2022)"
+            },
+            {
+              "label": "HW-generating industries (district)",
+              "value": "1718 (DEP 2022)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "No integrated TSDF and no SLF in the district; 02 standalone incinerators; HW sent to authorised facilities outside the district under MoU. 1 contaminated site: Mavallipura dumpsite, Yelahanka (manganese exceeding standard, 15.02.2022). (DEP 2022)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Urban DEP 2022",
+              "says": "KSPCB identified 1718 HW-generating industries (all authorised). Quantity of HW: 74416.29 MT/annum; Incinerable 12963.63; land-fillable 16429.38; recyclable/utilizable 45023.44. Integrated TSDF Nil; SLF Nil; standalone incinerators 02. Contaminated site: Mavallipura dumpsite, Yelahanka (Manganese exceeding standard).",
+              "citation": "V. Hazardous Waste Management, p.45",
+              "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 37.32,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "37.3 t/day ≈ 37.32 t/day (DEP 2022)",
+              "emphasis": true
+            },
+            {
+              "label": "Treatment facilities (CBMWTF)",
+              "value": "5 (DEP 2022)"
+            },
+            {
+              "label": "Notes",
+              "value": "5 CBMWTF (all outside the district) serve it; 1,559 bedded + 8,877 non-bedded HCFs; 538.733 MT Covid-19 waste (2020-21). Generated = treated. (DEP 2022)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Urban DEP 2022",
+              "says": "Inventory of BMW: 1559 bedded + 8877 non-bedded HCF; 37.321 Tons/day generated and treated; 538.733 MT Covid-19 waste (2020-21); disposed through 5 CBMWTF (all outside the district).",
+              "citation": "(iv) Bio-Medical Waste Management, p.40",
+              "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "C&D waste",
+          "medium": "solid",
+          "sector": "construction",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 2500.0,
+            "unit": "TPD"
+          },
+          "summary": "Construction & demolition waste.",
+          "metrics": [
+            {
+              "label": "C&D waste generated (BBMP)",
+              "value": "2,500 TPD (DEP 2022)",
+              "emphasis": true
+            },
+            {
+              "label": "Recycling capacity",
+              "value": "Rock Crystal 1,000 MTPD operational + Kannur 750 TPD under construction (DEP 2022)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Urban DEP 2022",
+              "says": "Total C&D waste generation: BBMP 2500 TPD (district total 2507). Recycling: M/s Rock Crystal 1000 MTPD (Chikkajala, existing) + 750 TPD plant at Kannur (under construction). User fee Rs.134/ton.",
+              "citation": "(iii) C&D Waste Management, p.36",
               "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf"
             }
           ]
@@ -560,7 +1115,10 @@
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "industry",
+          "granularity": "taluk"
         },
         {
           "stream": "Sewage",
@@ -598,10 +1156,13 @@
               "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
               "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk"
         },
         {
-          "stream": "Solid waste",
+          "stream": "Municipal solid waste",
           "summary": "Processing facility still at DPR stage",
           "metrics": [
             {
@@ -614,6 +1175,71 @@
               "source": "Ramanagara DEP (31-03-2021)",
               "says": "Harohalli solid-waste processing DPR yet to be prepared (newly declared town).",
               "citation": "District Environmental Plan, Ramanagara / Bengaluru South",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ],
+          "medium": "solid",
+          "sector": "public",
+          "granularity": "taluk"
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 18.7,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, reported district-wide (covers all taluks in the district); generation is recorded but no taluk-level treatment is.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "6,827.95 MT/yr ≈ 18.7 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "2,021.73 / 1,377.847 / 3,323.60 MT/yr (DEP 2021)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "Disposal-facility status not separately recorded in this DEP. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "Quantity of HW in the District: 6827.95 MT/Annum; Incinerable 2021.73; land-fillable 1377.847; recyclable/utilizable 3323.6 MT/Annum.",
+              "citation": "Hazardous Waste section, p.46",
+              "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 1.29,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "1.3 t/day ≈ 1.29 t/day (DEP 2021)",
+              "emphasis": true
+            }
+          ],
+          "sources": [
+            {
+              "source": "Ramanagara DEP 2021",
+              "says": "Quantity of biomedical waste generated per day: 1290 kg/day.",
+              "citation": "Biomedical Waste section, p.41",
               "url": "https://bengalurusouth.nic.in/en/district-environmental-plan-ramanagara/"
             }
           ]
@@ -686,7 +1312,14 @@
               "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
               "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 5.0,
+            "unit": "MLD"
+          }
         },
         {
           "stream": "Industrial effluent (CETP)",
@@ -723,10 +1356,17 @@
               "citation": "Bengaluru Rural DEP 2021, p.58",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 14.354,
+            "unit": "MLD"
+          }
         },
         {
-          "stream": "Solid waste",
+          "stream": "Municipal solid waste",
           "summary": "Doddaballapura CMC is the district's largest urban solid-waste generator at 35 tons/day (31 wards, ~93,105 population). The DEP does not publish a per-ULB processed-quantity or legacy-waste tonnage; its downstream tables are collection/segregation gap percentages only.",
           "metrics": [
             {
@@ -752,6 +1392,113 @@
               "source": "Bengaluru Rural DEP 2021 - Solid Waste Management current-status table (p.7)",
               "says": "City Municipal Council Doddaballapura: No. of House holds 26059; Population 93105; Solid Waste Generated 35 Tons per day. (Other ULBs: Hoskote CMC 25 TPD; Nelamangala CMC 30 TPD; Devanahalli Town MC 17 TPD; Vijayapura Town MC 18 TPD. Village/Gram Panchayats 198.184 MT/day theoretical at 200 gm/head/day; actual not available.)",
               "citation": "District Environmental Plan for Bengaluru Rural District, Solid Waste Management current status, p.7",
+              "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            }
+          ],
+          "medium": "solid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 35.0,
+            "unit": "TPD"
+          }
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 23.2,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, reported district-wide (covers all taluks in the district); generation is recorded but no taluk-level treatment is.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "8,453.57 MT/yr ≈ 23.2 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "4,070.89 / 2,190.730 / 2,187.84 MT/yr (DEP 2021)"
+            },
+            {
+              "label": "HW-generating industries (district)",
+              "value": "286 (DEP 2021)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "01 integrated TSDF in the district, at Dabaspet (Nelamangala taluk); no SLF, no standalone incinerators, no contaminated sites. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Rural DEP 2021",
+              "says": "No of Industries generating HW: 286. Quantity of HW in the District: 8453.57 MT/Annum; Incinerable 4070.89; land-fillable 2190.73; recyclable/utilizable 2187.84. Integrated TSDF 01 (Dabaspet, Nelamangala Taluk); SLF Nil; standalone incinerators NIL; contaminated sites NIL.",
+              "citation": "V. Hazardous Waste Management, p.38",
+              "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 2.29,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "2.3 t/day ≈ 2.29 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Treatment facilities (CBMWTF)",
+              "value": "3 (DEP 2021)"
+            },
+            {
+              "label": "Notes",
+              "value": "03 CBMWTF serve the district (within 75 km); generated = disposed. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Rural DEP 2021",
+              "says": "Total BMW generated in the District (Annual report 2019): 2292.96 kg/day; disposed 2292.96 kg/day; 03 Nos. CBMWTF within 75 km.",
+              "citation": "(iv) Bio-Medical Waste Management, p.35",
+              "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "C&D waste",
+          "medium": "solid",
+          "sector": "construction",
+          "granularity": "district",
+          "summary": "Construction & demolition waste - the DEP's table is left blank, so no quantity is on record.",
+          "metrics": [
+            {
+              "label": "C&D waste generated",
+              "value": "Not furnished - the per-ULB quantity column is blank in the DEP table (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Recycling facility",
+              "value": "None in the district; no C&D reuse policy (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Rural DEP 2021",
+              "says": "The C&D current-status table lists the 5 ULBs and a Total row but every quantity cell is blank ('As per the information furnished by the ULB's' - none furnished). 'There is no C & D Recycling facility in the District.'",
+              "citation": "(iii) C&D Waste Management, p.30-32",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
             }
           ]
@@ -807,7 +1554,14 @@
               "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
               "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 2.9,
+            "unit": "MLD"
+          }
         },
         {
           "stream": "Industrial effluent (CETP)",
@@ -843,10 +1597,17 @@
               "citation": "District Environmental Plan for Bengaluru Rural District, Industrial Wastewater Management section, p.58 (KSPCB F-Register as on 31-03-2021)",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 14.354,
+            "unit": "MLD"
+          }
         },
         {
-          "stream": "Solid waste",
+          "stream": "Municipal solid waste",
           "summary": "Nelamangala CMC generates 30 tons/day (31 wards, ~70,393 population). The DEP does not publish a per-ULB processed-quantity or legacy-waste tonnage.",
           "metrics": [
             {
@@ -872,6 +1633,113 @@
               "source": "Bengaluru Rural DEP 2021 - Solid Waste Management current-status table (p.7)",
               "says": "City Municipal Council Nelamanagala: No. of House holds 17604; Population 70393; Solid Waste Generated 30 Tons per day.",
               "citation": "District Environmental Plan for Bengaluru Rural District, Solid Waste Management current status, p.7",
+              "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            }
+          ],
+          "medium": "solid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 30.0,
+            "unit": "TPD"
+          }
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 23.2,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, district-wide. The district's only integrated TSDF (treatment-storage-disposal) is sited in Nelamangala taluk, at Dabaspet.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "8,453.57 MT/yr ≈ 23.2 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "4,070.89 / 2,190.730 / 2,187.84 MT/yr (DEP 2021)"
+            },
+            {
+              "label": "HW-generating industries (district)",
+              "value": "286 (DEP 2021)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "01 integrated TSDF in the district, at Dabaspet (Nelamangala taluk); no SLF, no standalone incinerators, no contaminated sites. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Rural DEP 2021",
+              "says": "No of Industries generating HW: 286. Quantity of HW in the District: 8453.57 MT/Annum; Incinerable 4070.89; land-fillable 2190.73; recyclable/utilizable 2187.84. Integrated TSDF 01 (Dabaspet, Nelamangala Taluk); SLF Nil; standalone incinerators NIL; contaminated sites NIL.",
+              "citation": "V. Hazardous Waste Management, p.38",
+              "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 2.29,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "2.3 t/day ≈ 2.29 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Treatment facilities (CBMWTF)",
+              "value": "3 (DEP 2021)"
+            },
+            {
+              "label": "Notes",
+              "value": "03 CBMWTF serve the district (within 75 km); generated = disposed. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Rural DEP 2021",
+              "says": "Total BMW generated in the District (Annual report 2019): 2292.96 kg/day; disposed 2292.96 kg/day; 03 Nos. CBMWTF within 75 km.",
+              "citation": "(iv) Bio-Medical Waste Management, p.35",
+              "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "C&D waste",
+          "medium": "solid",
+          "sector": "construction",
+          "granularity": "district",
+          "summary": "Construction & demolition waste - the DEP's table is left blank, so no quantity is on record.",
+          "metrics": [
+            {
+              "label": "C&D waste generated",
+              "value": "Not furnished - the per-ULB quantity column is blank in the DEP table (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Recycling facility",
+              "value": "None in the district; no C&D reuse policy (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Rural DEP 2021",
+              "says": "The C&D current-status table lists the 5 ULBs and a Total row but every quantity cell is blank ('As per the information furnished by the ULB's' - none furnished). 'There is no C & D Recycling facility in the District.'",
+              "citation": "(iii) C&D Waste Management, p.30-32",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
             }
           ]
@@ -930,7 +1798,14 @@
               "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
               "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 1.0,
+            "unit": "MLD"
+          }
         },
         {
           "stream": "Industrial effluent (CETP)",
@@ -966,10 +1841,17 @@
               "citation": "District Environmental Plan for Bengaluru Rural District, Industrial Wastewater Management section, p.58 (KSPCB F-Register as on 31-03-2021)",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 14.354,
+            "unit": "MLD"
+          }
         },
         {
-          "stream": "Solid waste",
+          "stream": "Municipal solid waste",
           "summary": "Devanahalli Town MC generates 17 tons/day (the smallest of the five district ULBs; ~28,051 population). The DEP does not publish a per-ULB processed-quantity or legacy-waste tonnage.",
           "metrics": [
             {
@@ -995,6 +1877,113 @@
               "source": "Bengaluru Rural DEP 2021 - Solid Waste Management current-status table (p.7)",
               "says": "Town Municipal Council Devanahalli: No. of House holds 6397; Population 28051; Solid Waste Generated 17 Tons per day.",
               "citation": "District Environmental Plan for Bengaluru Rural District, Solid Waste Management current status, p.7",
+              "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            }
+          ],
+          "medium": "solid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 17.0,
+            "unit": "TPD"
+          }
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 23.2,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, reported district-wide (covers all taluks in the district); generation is recorded but no taluk-level treatment is.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "8,453.57 MT/yr ≈ 23.2 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "4,070.89 / 2,190.730 / 2,187.84 MT/yr (DEP 2021)"
+            },
+            {
+              "label": "HW-generating industries (district)",
+              "value": "286 (DEP 2021)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "01 integrated TSDF in the district, at Dabaspet (Nelamangala taluk); no SLF, no standalone incinerators, no contaminated sites. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Rural DEP 2021",
+              "says": "No of Industries generating HW: 286. Quantity of HW in the District: 8453.57 MT/Annum; Incinerable 4070.89; land-fillable 2190.73; recyclable/utilizable 2187.84. Integrated TSDF 01 (Dabaspet, Nelamangala Taluk); SLF Nil; standalone incinerators NIL; contaminated sites NIL.",
+              "citation": "V. Hazardous Waste Management, p.38",
+              "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 2.29,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "2.3 t/day ≈ 2.29 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Treatment facilities (CBMWTF)",
+              "value": "3 (DEP 2021)"
+            },
+            {
+              "label": "Notes",
+              "value": "03 CBMWTF serve the district (within 75 km); generated = disposed. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Rural DEP 2021",
+              "says": "Total BMW generated in the District (Annual report 2019): 2292.96 kg/day; disposed 2292.96 kg/day; 03 Nos. CBMWTF within 75 km.",
+              "citation": "(iv) Bio-Medical Waste Management, p.35",
+              "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "C&D waste",
+          "medium": "solid",
+          "sector": "construction",
+          "granularity": "district",
+          "summary": "Construction & demolition waste - the DEP's table is left blank, so no quantity is on record.",
+          "metrics": [
+            {
+              "label": "C&D waste generated",
+              "value": "Not furnished - the per-ULB quantity column is blank in the DEP table (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Recycling facility",
+              "value": "None in the district; no C&D reuse policy (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Rural DEP 2021",
+              "says": "The C&D current-status table lists the 5 ULBs and a Total row but every quantity cell is blank ('As per the information furnished by the ULB's' - none furnished). 'There is no C & D Recycling facility in the District.'",
+              "citation": "(iii) C&D Waste Management, p.30-32",
               "url": "https://cdn.s3waas.gov.in/s3aba3b6fd5d186d28e06ff97135cade7f/uploads/2022/04/2022040179.pdf"
             }
           ]
@@ -1098,7 +2087,14 @@
               "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
               "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 3.5,
+            "unit": "MLD"
+          }
         },
         {
           "stream": "Industrial effluent (CETP)",
@@ -1148,10 +2144,17 @@
               "citation": "DEP 2021, Industrial Waste Water Management, p.107 (PDF label)",
               "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
             }
-          ]
+          ],
+          "medium": "liquid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 2.15,
+            "unit": "MLD"
+          }
         },
         {
-          "stream": "Solid waste",
+          "stream": "Municipal solid waste",
           "summary": "Chikkaballapura CMC (31 wards, ~63,652 population) generates 26 TPD of municipal solid waste with 100% door-to-door collection reported; composting is practised in all ULBs. The DEP prints no separate 'quantity processed' tonnage but records ~40,000 tonnes of legacy waste at the Chikkaballapura CMC dumpsite (district legacy total 1,46,250 tonnes), with remediation via screening machines targeted by 31/12/2025. There is no C&D recycling facility in the district.",
           "metrics": [
             {
@@ -1210,6 +2213,117 @@
               "citation": "DEP 2021, C&D Waste section, p.62 (PDF label)",
               "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
             }
+          ],
+          "medium": "solid",
+          "sector": "public",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 26.0,
+            "unit": "TPD"
+          }
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 1.1,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, reported district-wide (covers all taluks in the district); generation is recorded but no taluk-level treatment is.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "398.82 MT/yr ≈ 1.1 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "143.90 / 194.290 / 60.63 MT/yr (DEP 2021)"
+            },
+            {
+              "label": "HW-generating industries (district)",
+              "value": "38 (DEP 2021)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "No TSDF, no SLF, no standalone incinerator in the district; HW sent off-district under MoU. One in-district used-oil recycler (Gowribidanur). (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Chikkaballapura DEP 2021",
+              "says": "No of Industries generating HW: 38. Quantity of HW: 398.82 MT/Annum; Incinerable 143.90; land-fillable 194.29; recyclable/utilizable 60.63 (sub-totals sum exactly). TSDF/SLF/standalone incinerator: Nil.",
+              "citation": "V. Hazardous Waste Management, p.72 (printed)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 0.38,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "378.221 kg/day ≈ 0.38 t/day (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Treatment facilities (CBMWTF)",
+              "value": "2 (DEP 2021)"
+            },
+            {
+              "label": "Notes",
+              "value": "2 CBWTFs (one in-district at Gowribidanur, one at Kolar within 75 km); 100% treated. The DEP's own gaps table elsewhere prints 378.58 kg/day. (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Chikkaballapura DEP 2021",
+              "says": "Inventory of BMW: 225 bedded + 353 non-bedded HCF; 378.221 kg/day generated and treated; 2 CBWTFs (Prajwal, Gowribidanur in-district; Meera Envirotech, Kolar). Gaps table (p.68) prints 378.58 kg/day.",
+              "citation": "(iv) Bio-Medical Waste Management, p.66 (printed)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "C&D waste",
+          "medium": "solid",
+          "sector": "construction",
+          "granularity": "taluk",
+          "magnitude": {
+            "perDay": 3.0,
+            "unit": "TPD"
+          },
+          "summary": "Construction & demolition waste.",
+          "metrics": [
+            {
+              "label": "C&D waste generated",
+              "value": "3.0 TPD (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Recycling facility",
+              "value": "None in the district (DEP 2021)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Chikkaballapura DEP 2021",
+              "says": "C&D waste generation (per ULB), Chikkaballapura: 3.0 MT/day. No C&D recycling facility in the district.",
+              "citation": "(iii) C&D Waste, p.62 (printed)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            }
           ]
         }
       ],
@@ -1246,6 +2360,83 @@
               "says": "Yelahanka STP (BWSSB), Bengaluru Urban: 10 MLD, Operational and Complying, treating 5.83 MLD; a new 6 MLD SBR STP is under construction (~86%, target May 2026).",
               "citation": "Karnataka Monthly Progress Report, February 2026 (NMCG)",
               "url": "https://nmcg.nic.in/writereaddata/fileupload/ngtmpr/7_Karnataka%20-%20February%202026.pdf"
+            }
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk"
+        },
+        {
+          "stream": "Hazardous waste",
+          "medium": "solid",
+          "sector": "industry",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 203.9,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Industrial hazardous waste, district-wide. Bengaluru Urban's one recorded contaminated site - the Mavallipura dumpsite (manganese in groundwater) - is in Yelahanka.",
+          "metrics": [
+            {
+              "label": "Hazardous waste generated (district)",
+              "value": "74,416.29 MT/yr ≈ 203.9 t/day (DEP 2022)",
+              "emphasis": true
+            },
+            {
+              "label": "Incinerable / land-fillable / recyclable",
+              "value": "12,963.63 / 16,429.380 / 45,023.44 MT/yr (DEP 2022)"
+            },
+            {
+              "label": "HW-generating industries (district)",
+              "value": "1718 (DEP 2022)"
+            },
+            {
+              "label": "Disposal facilities",
+              "value": "No integrated TSDF and no SLF in the district; 02 standalone incinerators; HW sent to authorised facilities outside the district under MoU. 1 contaminated site: Mavallipura dumpsite, Yelahanka (manganese exceeding standard, 15.02.2022). (DEP 2022)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Urban DEP 2022",
+              "says": "KSPCB identified 1718 HW-generating industries (all authorised). Quantity of HW: 74416.29 MT/annum; Incinerable 12963.63; land-fillable 16429.38; recyclable/utilizable 45023.44. Integrated TSDF Nil; SLF Nil; standalone incinerators 02. Contaminated site: Mavallipura dumpsite, Yelahanka (Manganese exceeding standard).",
+              "citation": "V. Hazardous Waste Management, p.45",
+              "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "Biomedical waste",
+          "medium": "solid",
+          "sector": "institutional",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 37.32,
+            "unit": "TPD",
+            "estimated": true
+          },
+          "summary": "Institutional (healthcare) biomedical waste, reported district-wide; the DEP records it as fully treated via common facilities.",
+          "metrics": [
+            {
+              "label": "Biomedical waste generated (district)",
+              "value": "37.3 t/day ≈ 37.32 t/day (DEP 2022)",
+              "emphasis": true
+            },
+            {
+              "label": "Treatment facilities (CBMWTF)",
+              "value": "5 (DEP 2022)"
+            },
+            {
+              "label": "Notes",
+              "value": "5 CBMWTF (all outside the district) serve it; 1,559 bedded + 8,877 non-bedded HCFs; 538.733 MT Covid-19 waste (2020-21). Generated = treated. (DEP 2022)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Bengaluru Urban DEP 2022",
+              "says": "Inventory of BMW: 1559 bedded + 8877 non-bedded HCF; 37.321 Tons/day generated and treated; 538.733 MT Covid-19 waste (2020-21); disposed through 5 CBMWTF (all outside the district).",
+              "citation": "(iv) Bio-Medical Waste Management, p.40",
+              "url": "https://cdn.s3waas.gov.in/s33621f1454cacf995530ea53652ddf8fb/uploads/2022/05/2022050419.pdf"
             }
           ]
         }
