@@ -1,0 +1,200 @@
+{
+  "units": {
+    "chikkaballapura": {
+      "name": "Chikkaballapura (CMC / taluk)",
+      "level": "Taluk",
+      "coverage": "Chikkaballapura DEP 2021",
+      "headline": "Chikkaballapura town (Arkavathi headwaters near Nandi Hills) has a 10 MLD STP against ~3.5 MLD generated, but its underground sewerage network is only ~91% complete (9% gap) and ~40,000 tonnes of legacy waste sit at its dumpsite; the district has no CETP and most industrial effluent is handled by in-premises ETPs.",
+      "_provenance": {
+        "document_title": "DISTRICT ENVIRONMENT PLAN FOR CHIKKABALLAPURA DISTRICT, KARNATAKA STATE",
+        "source_page": "https://chikkaballapur.nic.in/en/about-district/district-environmental-plan/",
+        "document_url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf",
+        "data_as_on": "No explicit 'data as on' date is printed in the DEP. Dating evidence: PDF uploaded Nov 2021 (s3waas path /uploads/2021/11/); action-plan timelines are dated 30/11/2021, 31/12/2021 with completion targets to 2025; population is 2011 Census; HN Valley treated-water reuse cited 'from the year 2019-20'. Referenced throughout as 'DEP 2021'.",
+        "extraction_method": "PDF is image-only / scanned (116 pages; pdftotext -layout and pypdf both returned zero text on all pages). Extracted via pdftoppm at 200 dpi + tesseract 5.5.2 OCR. Figures below transcribed from OCR; minor OCR artefacts corrected against context but all numeric values reproduced verbatim from the OCR'd tables.",
+        "extraction_caveats": [
+          "The DEP reports almost everything at district level across its 6 ULBs (CMC Chikkaballapura, CMC Chinthamani, CMC Sidlaghatta, CMC Gowribidanur, TMC Bagepalli, TP Gudibande) and 157 gram panchayats. Town/taluk-specific rows for Chikkaballapura CMC are extracted where the DEP breaks them out; sewage-per-ULB and solid-waste-per-ULB tables do break out Chikkaballapura, but industrial effluent and CETP status are reported district-wide only (no taluk split).",
+          "The Domestic Sewage section is internally inconsistent on Chikkaballapura's generated volume: the per-ULB sewage-generated table lists 3.5 MLD, while the later waste-water/gap-analysis table lists 'The work has been taken up by KMRP and maintained by ULB' instead of a number for Chikkaballapura. The 3.5 MLD figure is the only printed numeric value and is used here.",
+          "Total district urban sewage generated is stated as 13.01 MLD; total available STP treatment capacity 15.10 MLD (CMC Chikkaballapura 10 + CMC Chinthamani 2 + CMC Sidlaghatta 3.1). 3 of 6 towns have STPs.",
+          "No explicit 'quantity processed' figure is printed for municipal solid waste; the DEP records 100% collection and that composting is practised in all ULBs, with legacy-waste tonnages given per ULB. Chikkaballapura CMC legacy waste = 40,000 tonnes; district total = 1,46,250 tonnes.",
+          "OCR rendered the C&D-waste district total as '72' which is inconsistent with the row sum (3+2+0.5+1+0.5+0.2 = 7.2 TPD); the intended total is 7.2 TPD. Not central to the three requested streams."
+        ]
+      },
+      "streams": [
+        {
+          "stream": "Sewage",
+          "summary": "Chikkaballapura CMC (31 wards) generates ~3.5 MLD of sewage and has a 10 MLD STP, so installed treatment capacity exceeds current generation. The binding gap is collection, not capacity: the underground sewerage network is ~91% complete with a 9% gap, and the DEP's own action plan notes the existing oxidation pond is inadequate and an upgraded STP plus completion of UGD missing links is required. The town sits in the Arkavathi headwaters zone near Nandi Hills.",
+          "metrics": [
+            {
+              "label": "Sewage generated, CMC Chikkaballapura",
+              "value": "3.5 MLD (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Existing STP capacity, CMC Chikkaballapura",
+              "value": "10 MLD (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Underground sewerage network coverage / gap, CMC Chikkaballapura",
+              "value": "91% covered, 9% gap (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "District urban sewage generated (6 ULBs, Class-II towns and above)",
+              "value": "13.01 MLD (DEP 2021)",
+              "emphasis": false
+            },
+            {
+              "label": "District total available STP treatment capacity (3 of 6 towns have STPs)",
+              "value": "15.10 MLD (DEP 2021)",
+              "emphasis": false
+            },
+            {
+              "label": "Treated/untreated sewage flowing to rivers or lakes (district)",
+              "value": "Nil reported (DEP 2021)",
+              "emphasis": false
+            }
+          ],
+          "sources": [
+            {
+              "source": "Chikkaballapura DEP 2021, Domestic Sewage section",
+              "says": "ULB's Existing STP Capacity (MLD) / Total Quantity of sewage generated in MLD: CMC. Chikkaballapura 10 / 3.5; CMC Chinthamani 2 / 3.4; CMC - Sidlaghatta 3.1 / 2.1; CMC - Gowribidanur Not existing / 2.2; TMC- Bagepalli 0 / 1; TP Gudibande 0 / 0.8. Total Quantity of Sewage generated in District From Class II cities and above [MLD]: 13.01 MLD.",
+              "citation": "DEP 2021, Domestic Sewage, p.99 (PDF label)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            },
+            {
+              "source": "Chikkaballapura DEP 2021, Domestic Sewage section (UGD coverage table)",
+              "says": "No of ULBs having partial underground Sewerage network [Nos]: 3 Nos. ULB's Existing STP Capacity / % area covered / Existing UGD Gap Analysis: CMC. Chikkaballapura 10 / 91% / 9%; CMC Chinthamani 2 / 98% / 2%; CMC - Sidlaghatta 3.1 / 70% / 30%.",
+              "citation": "DEP 2021, Domestic Sewage, p.98 (PDF label)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            },
+            {
+              "source": "Chikkaballapura DEP 2021, Domestic Sewage treatment-capacity table",
+              "says": "Total available Treatment Capacity [MLD]: 15.10 MLD. CMC. Chikkaballapura 10; CMC Chinthamani 2; CMC - Sidlaghatta 3.1; CMC - Gowribidanur No STP, discharged to ST & SP; TMC- Bagepalli No STP, discharged to ST & SP; TP - Gudibande No STP, discharged to ST & SP; Total 15.1.",
+              "citation": "DEP 2021, Domestic Sewage, p.100 (PDF label)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            },
+            {
+              "source": "Chikkaballapura DEP 2021, Domestic Sewage action plan",
+              "says": "Existing STP (oxidation pond) is inadequate to treat the sewage generated from the town. Due to incomplete UGD connection missing link exists, the completion of UGD work and connection shall be made. Note: The existing oxidation pond to be upgraded to STP of new technology in case of CMC - Chikkaballapura, Chinthamani & Shidlaghatta.",
+              "citation": "DEP 2021, Domestic Sewage action plan, p.103 and p.97 (PDF labels)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "Industrial effluent (CETP)",
+          "summary": "The DEP reports industrial effluent at district scale only (no separate Chikkaballapura-taluk figure). The district has 196 operating industries (16 Red, 59 Orange, 113 Green, 8 White); 39 discharge waste water, generating 2.15 MLD of which 1.61 MLD is treated. There is no CETP anywhere in Chikkaballapura district - effluent is handled by in-premises ETPs and no industry is permitted to discharge to nalas/rivers.",
+          "metrics": [
+            {
+              "label": "Operating industries in district (Red/Orange/Green/White)",
+              "value": "196 total - 16 Red, 59 Orange, 113 Green, 8 White (DEP 2021)",
+              "emphasis": false
+            },
+            {
+              "label": "Industries discharging waste water (district)",
+              "value": "39 (DEP 2021)",
+              "emphasis": false
+            },
+            {
+              "label": "Industrial trade effluent generated (district)",
+              "value": "2.15 MLD (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Industrial waste water treated (district)",
+              "value": "1.61 MLD (DEP 2021)",
+              "emphasis": false
+            },
+            {
+              "label": "CETP status (district)",
+              "value": "No CETP established in Chikkaballapura district (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "ETP status (district)",
+              "value": "Effluent treated in in-premises ETPs; 39 of 39 discharging industries meeting standards, 0 not meeting (DEP 2021)",
+              "emphasis": false
+            }
+          ],
+          "sources": [
+            {
+              "source": "Chikkaballapura DEP 2021, Industrial Waste Water Management section",
+              "says": "Total number of operating industries in the district is 196 ... [Nos. of Red industries]: 16; [Nos. of Orange industries]: 59; [Nos. of Green industries]: 113; [Nos. of White industries]: 8. No of Industries discharging waste water 39 Nos. Total Quantity of industrial waste water generated [MLD]: 2.15. Quantity of treated industrial waste water discharged in to Nalas/ Rivers [MLD]: 1.61. None of the industries are permitted to discharge either treated industrial wastewater into water bodies like Nalas /Rivers by KSPCB.",
+              "citation": "DEP 2021, Industrial Waste Water Management, p.107 (PDF label)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            },
+            {
+              "source": "Chikkaballapura DEP 2021, Industrial Waste Water Management - CETP / standards",
+              "says": "Common Effluent Treatment Facilities: There is no CETP's established in Chikkaballapura district. No of Industries meeting Standards Nos - 39. No of Industries not meeting discharge Standards Nil. As per the CPCB inspection policy the industries were inspected and sampling is carried out. If the samples are not confirming, the Show cause notice is served.",
+              "citation": "DEP 2021, Industrial Waste Water Management, p.107 (PDF label)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            }
+          ]
+        },
+        {
+          "stream": "Solid waste",
+          "summary": "Chikkaballapura CMC (31 wards, ~63,652 population) generates 26 TPD of municipal solid waste with 100% door-to-door collection reported; composting is practised in all ULBs. The DEP prints no separate 'quantity processed' tonnage but records ~40,000 tonnes of legacy waste at the Chikkaballapura CMC dumpsite (district legacy total 1,46,250 tonnes), with remediation via screening machines targeted by 31/12/2025. There is no C&D recycling facility in the district.",
+          "metrics": [
+            {
+              "label": "MSW generated, CMC Chikkaballapura",
+              "value": "26 TPD (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "Door-to-door collection, CMC Chikkaballapura",
+              "value": "100% of 31 wards (DEP 2021)",
+              "emphasis": false
+            },
+            {
+              "label": "Legacy / historic dumpsite waste, CMC Chikkaballapura",
+              "value": "40,000 tonnes (DEP 2021)",
+              "emphasis": true
+            },
+            {
+              "label": "District legacy waste total (6 ULBs)",
+              "value": "1,46,250 tonnes (DEP 2021)",
+              "emphasis": false
+            },
+            {
+              "label": "District urban MSW generated (6 ULBs)",
+              "value": "112.5 TPD (DEP 2021)",
+              "emphasis": false
+            },
+            {
+              "label": "Processing / disposal status (district)",
+              "value": "100% collection; composting in all ULBs; no separate processed-tonnage printed; legacy remediation by screening machine targeted 31/12/2025 (DEP 2021)",
+              "emphasis": false
+            }
+          ],
+          "sources": [
+            {
+              "source": "Chikkaballapura DEP 2021, Solid Waste Management current status",
+              "says": "Urban Local bodies / No. of Wards / No. of House holds / Population / Solid Waste Generated per day (TPD): CMC. Chikkaballapura 31 / 14806 / 63652 / 26; CMC Chinthamani 31 / 17841 / 76068 / 28; CMC - Sidlaghatta 31 / 10169 / 51159 / 23; CMC - Gowribidanur 31 / 10256 / 53290 / 23; TMC- Bagepalli 23 / 4263 / 27011 / 10; TP Gudibande 11 / 2250 / 9441 / 2.5. Total 280621 population / 112.5 TPD.",
+              "citation": "DEP 2021, Solid Waste Management current status, p.9 (PDF label)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            },
+            {
+              "source": "Chikkaballapura DEP 2021, Solid Waste Management - 100% collection table",
+              "says": "Whether 100% collection achieved? CMC. Chikkaballapura 31 wards / 100% collection of solid waste; ... Total 158 wards / 100%. Door to door collection: CMC. Chikkaballapura 31 wards / 31 having arrangement / 100% achieved / Nil gap.",
+              "citation": "DEP 2021, Solid Waste Management, p.24-25 (PDF labels)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            },
+            {
+              "source": "Chikkaballapura DEP 2021, Remediation of historic/legacy dumpsite",
+              "says": "Whether existing old dumpsite if any required remediation as per rules? No. of existing old dump site / Total Quantity of legacy waste dumped at dump site in Tonnes: CMC. Chikkaballapura 1 / 40000; CMC Chinthamani 1 / 43000; CMC - Sidlaghatta 1 / 31000; CMC - Gowribidanur 20500; TMC- Bagepalli 10200; TP Gudibande 1550; Total 146250. Screening machines have been purchased and installed in 5 ULB's and tendered in CMC-Gowribidanur. Legacy waste will be disposed using screening machine. Timeline 31/12/2025.",
+              "citation": "DEP 2021, Solid Waste Management gap analysis (v), p.37-38 (PDF labels)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            },
+            {
+              "source": "Chikkaballapura DEP 2021, C&D Waste section",
+              "says": "Quantity of C&D waste generated in TPD: CMC. Chikkaballapura 3; CMC Chinthamani 2; CMC - Sidlaghatta 0.5; CMC - Gowribidanur 1; TMC- Bagepalli 0.5; TP Gudibande 0.2. Does the District has access to C&D waste recycling facility? No facility exist to process C & D waste in the district.",
+              "citation": "DEP 2021, C&D Waste section, p.62 (PDF label)",
+              "url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2021/11/2021112595.pdf"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

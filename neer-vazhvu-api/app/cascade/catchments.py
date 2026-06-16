@@ -46,12 +46,23 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-import rasterio
-from rasterio.features import rasterize, shapes
-from rasterio.merge import merge as rio_merge
-from rasterio.warp import Resampling, calculate_default_transform, reproject
 from shapely.geometry import LineString, mapping, shape
 from shapely.ops import transform as shp_transform, unary_union
+
+# rasterio (+ GDAL) ships only in the optional `hydro` extra and is used solely
+# by the DEM acquisition / flow-routing functions below. Import it tolerantly so
+# the module - and its shapely-only helpers like _is_river_ribbon / _polsby_popper
+# - load without the extra (e.g. CI, which installs only `.[dev]`). The DEM
+# functions are reached only by the cascade pipeline, which runs with `.[hydro]`.
+try:
+    import rasterio
+    from rasterio.features import rasterize, shapes
+    from rasterio.merge import merge as rio_merge
+    from rasterio.warp import Resampling, calculate_default_transform, reproject
+except ModuleNotFoundError:  # pragma: no cover - only hit without the hydro extra
+    rasterio = None  # type: ignore[assignment]
+    rasterize = shapes = rio_merge = None  # type: ignore[assignment]
+    Resampling = calculate_default_transform = reproject = None  # type: ignore[assignment]
 
 from app.cascade.districts import DistrictCascadeConfig
 

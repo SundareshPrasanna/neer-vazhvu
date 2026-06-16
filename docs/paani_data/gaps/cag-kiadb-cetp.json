@@ -1,0 +1,121 @@
+{
+  "source": {
+    "title": "Report No. 8 of 2017 - Economic Sector, Government of Karnataka (Performance Audit of Karnataka Industrial Areas Development Board)",
+    "auditor": "Comptroller and Auditor General of India (CAG)",
+    "url": "https://cag.gov.in/uploads/download_audit_report/2017/Report_No_8_of_2017_-_Economic_Sector_Government_of_Karnataka.pdf",
+    "pdf_pages": 106,
+    "note": "Printed page numbers cited below; the relevant section sits at printed pages 16-19, which fall on PDF pages ~26-29."
+  },
+  "cag_findings": [
+    {
+      "finding": "Of 66 KIADB Industrial Areas in the sampled Development Offices, 38 lacked completed basic infrastructure, and CETP/CSTP was not established in all 38.",
+      "verbatim_text": "A typical IA formed by KIADB should have roads, electricity and water supply, storm water drains and Common Effluent Treatment Plant (CETP)/ Common Sewage Treatment Plant (CSTP). In the sampled DOs, in respect of 38 IAs out of 66 IAs, the basic facilities were not provided/completed in all respects as shown in Table 2.4 below:",
+      "page": "Printed p.18 (section 2.1.8.4 'Industrial Areas without basic infrastructure facilities'); PDF p.28",
+      "figures": {
+        "IAs_sampled": 66,
+        "IAs_without_completed_basic_facilities": 38,
+        "IAs_without_CETP_or_CSTP_established": 38,
+        "IAs_without_power_substation": 21,
+        "IAs_without_bulk_water_supply": 28,
+        "IAs_without_street_lights": 14,
+        "table_breakdown_CETP_CSTP_not_established": {
+          "DO-2_Bengaluru": 5,
+          "DO_Ballari": 13,
+          "DO_Dharwad": 8,
+          "DO_Mysuru": 12,
+          "total": 38
+        }
+      }
+    },
+    {
+      "finding": "4,077 industrial units had commenced operation in these IAs without requisite infrastructure including CETP/CSTP.",
+      "verbatim_text": "However, allotment assumed precedence over completion of basic facilities and a total of 4,077 units, which had commenced operation in these IAs functioned without requisite infrastructure like power sub-station, bulk water supply and CETP/CSTP. This defeated the objective of providing world class facilities/quality infrastructure as stated in the IPs.",
+      "page": "Printed p.18 (section 2.1.8.4); PDF p.28",
+      "figures": { "operating_units_without_requisite_infrastructure": 4077 }
+    },
+    {
+      "finding": "An estimated 2,571 million litres per annum of untreated industrial and domestic waste was let off as surface discharge from sampled IAs (consequence of absent CETP/CSTP).",
+      "verbatim_text": "At current occupancy rate, an estimated 2,571 million litres (2,040 plus 531) of untreated industrial and domestic waste per annum was apparently let-off as surface discharge, which invariably flows along the contour to the nearest [water body].",
+      "page": "Printed p.19 (section 2.1.8.5 'Discharge of untreated water in IAs'); PDF p.29",
+      "figures": {
+        "estimated_untreated_surface_discharge_MLpa": 2571,
+        "industrial_component_MLpa": 2040,
+        "domestic_component_MLpa": 531,
+        "sampled_IAs_for_estimate": 6
+      }
+    },
+    {
+      "finding": "Context: total KIADB Industrial Areas and EIA/Environmental Clearance gaps.",
+      "verbatim_text": "Out of 162 Industrial Areas, KIADB had developed 62 IAs subsequent to EIA Notification, 2006. Audit observed that out of these 62 IAs, KIADB did not apply for EC in respect of 31 IAs and obtained EC for 20 IAs as of 31 March 2017; for 11 IAs, EC was yet to be obtained, though allotment was made in respect of all the 62 IAs as detailed in Appendix 2.2.",
+      "page": "Printed p.17 (section 2.1.8.1 'Environmental Clearance'); PDF p.27",
+      "figures": {
+        "total_KIADB_industrial_areas_statewide": 162,
+        "developed_after_EIA_2006": 62,
+        "no_EC_application": 31,
+        "EC_obtained": 20,
+        "EC_pending": 11
+      }
+    }
+  ],
+  "our_data": {
+    "industrial_areas_layer": "docs/paani_data/Arkavathi_Industrial_Areas_Ground_Truthed.gpkg",
+    "industrial_areas_total": 56,
+    "industrial_areas_kiadb": 18,
+    "industrial_areas_kssidc_or_marked_kssidc": 35,
+    "industrial_areas_bbmp": 1,
+    "industrial_areas_unattributed": 2,
+    "industrial_areas_with_usable_centroid": 45,
+    "common_facilities_layer": "docs/paani_data/Common Facilities for Industrial and Hazardous Waste.csv",
+    "common_facilities_count": 13,
+    "common_facilities_cetp_cstp_effluent_type": 6,
+    "common_facilities_other_type": "7 (hazardous-waste secured landfill, incinerator, common biomedical waste treatment) - not effluent treatment"
+  },
+  "areas_without_cetp_estimate": {
+    "headline": "Of the 45 industrial areas in our Arkavathi layer that have usable centroids, an estimated 26-36 have NO common effluent-treatment plant in their vicinity; among the 18 KIADB areas specifically, an estimated 8-11 have no CETP nearby.",
+    "by_threshold": {
+      "within_2km": {
+        "all_geocoded_IAs_without_CETP": 36,
+        "of_geocoded_total": 45,
+        "kiadb_IAs_without_CETP": 11,
+        "of_kiadb_total": 18
+      },
+      "within_5km": {
+        "all_geocoded_IAs_without_CETP": 26,
+        "of_geocoded_total": 45,
+        "kiadb_IAs_without_CETP": 8,
+        "of_kiadb_total": 18
+      }
+    },
+    "kiadb_clearly_unserved_examples_km_to_nearest_cetp": {
+      "Harohalli 4th Phase": 27.6,
+      "Harohalli 3rd Phase": 24.4,
+      "Harohalli 1st and 2nd Phase": 21.1,
+      "Peenya Industrial Area": 20.7,
+      "Bidadi 1st Phase": 10.4,
+      "Bidadi 2nd Phase Sector II": 8.7,
+      "Bidadi 2nd Phase Sector I": 7.1,
+      "Dabaspete 5th Phase": 5.3
+    },
+    "kiadb_served_examples_km_to_nearest_cetp": {
+      "Apparel Park 2nd Phase": 0.37,
+      "Kumbalagodu 1st Phase": 0.37,
+      "Sompura 1st and 2nd Phase": 0.58,
+      "Doddaballapura General": 0.61
+    }
+  },
+  "method": "Proximity / nearest-neighbour join. (1) Extracted polygon centroids for all 56 industrial areas in Arkavathi_Industrial_Areas_Ground_Truthed.gpkg via QGIS ogr2ogr ST_Centroid; 45 returned usable coordinates (11 polygons returned null centroids and were excluded). (2) Parsed the 13 records in 'Common Facilities for Industrial and Hazardous Waste.csv'; classified 6 as CETP/CSTP/effluent-treatment by the 'Facility Details' field (keywords effluent/CETP/CSTP), the remaining 7 being hazardous-waste landfill, incinerator, or common biomedical-waste facilities (not effluent treatment). (3) For each industrial-area centroid computed the haversine distance to the nearest CETP-type facility. An area is counted as 'without CETP' if its nearest CETP-type facility exceeds the distance threshold (reported at both 2 km and 5 km).",
+  "assumptions": [
+    "Centroid-to-point distance is a proxy for service relationship. A true answer needs an authoritative IA-to-CETP service mapping (which CETP each IA is connected to); we do not have that, so this is a spatial-proximity estimate, not a confirmed connectivity count.",
+    "11 of 56 polygons returned null centroids from the geometry and are excluded from the distance calculation; the true number of unserved areas is therefore likely understated.",
+    "Our 6 CETP-type facilities are only the common/standalone CETP/CSTP points we have geocoded; some industrial areas may have in-house or unit-level ETPs not captured in this CSV, which would reduce the count. Conversely the CAG found CETP/CSTP not established in 38 of 66 sampled KIADB IAs statewide, consistent with widespread absence.",
+    "Agency labels are as-supplied: 18 areas are tagged KIADB, ~33 are tagged 'KSSIDC?' (a question mark indicating unverified attribution), 1 KSSIDC, 1 BBMP (Peenya), 2 blank. KIADB counts above use the explicit KIADB tag only.",
+    "The CAG figures (66 sampled, 38 without CETP, 4,077 units, 2,571 ML/yr) are statewide-sample numbers from 2017 across four Development Offices, NOT specific to the Arkavathi basin; they are cited as the authoritative finding, while our 18 KIADB / 8-11-without-CETP numbers are the Arkavathi-basin subset we can independently map."
+  ],
+  "what_would_sharpen_it": [
+    "An authoritative KIADB/KSPCB list mapping each Arkavathi industrial area to its sanctioned CETP/CSTP (service connectivity), which would replace the distance proxy with a confirmed yes/no.",
+    "Fixing the 11 null-centroid polygons (repair geometry) so all 56 areas enter the distance calc.",
+    "Verifying the ~33 'KSSIDC?' agency tags so the KIADB-specific subset is exact.",
+    "Capturing unit-level / in-house ETPs (not just common CETPs) to avoid counting an area as unserved when it self-treats.",
+    "Cross-walking our mapped KIADB areas to the CAG Appendix 2.2 IA list to label each Arkavathi area with its EC status and CAG infrastructure finding."
+  ]
+}
