@@ -675,8 +675,11 @@ function MapLegend({ layers, notes }: { layers: BasinLayer[]; notes?: string[] }
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["waste-facility"], label: "Waste facility" });
       items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "Major industry (17-category)" });
     } else if (l.family === "infrastructure") {
-      items.push({ sym: "dot", color: l.color, label: "STP" });
-      items.push({ sym: "ring", color: l.color, label: "FSTP (planned, not yet functional)" });
+      items.push({ sym: "dot", color: l.color, label: "STP (operational)" });
+      items.push({ sym: "ring", color: l.color, label: "STP (not yet functional)" });
+    } else if (l.family === "fstp") {
+      items.push({ sym: "dot", color: l.color, label: "FSTP (operational)" });
+      items.push({ sym: "ring", color: l.color, label: "FSTP (not yet functional)" });
     } else if (l.family.startsWith("admin")) items.push({ sym: "outline", color: l.color, label: l.label });
     else if (l.geom === "point") items.push({ sym: "dot", color: l.color, label: l.label });
     else items.push({ sym: "box", color: l.color, label: l.label });
@@ -762,11 +765,13 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
 
 function pointStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): L.CircleMarkerOptions {
   const p = (feat?.properties ?? {}) as Record<string, unknown>;
-  // Monitoring: hollow if not in public domain (honest-gap cue). Incomplete
-  // FSTPs are also drawn hollow, so an unbuilt plant reads as not-yet-solid.
+  // Monitoring: hollow if not in public domain (honest-gap cue). Treatment
+  // plants (STP + FSTP): hollow if not yet functional (status doesn't say
+  // "operational"), so an unbuilt/under-construction plant reads as not-solid.
+  const treatment = l.family === "infrastructure" || l.family === "fstp";
   const hollow =
     (l.family === "monitoring-points" && String(p.publicDomain ?? "").toUpperCase() !== "YES") ||
-    (l.family === "infrastructure" && String(p.kind ?? "") === "fstp");
+    (treatment && !/operational/i.test(String(p.status ?? "")));
   return {
     radius: 5,
     color: l.color,
