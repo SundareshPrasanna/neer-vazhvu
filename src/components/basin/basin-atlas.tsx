@@ -190,7 +190,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // its floor is focused). The checkbox is the single source of truth - zoom
   // never hides a checked layer. This also gates fetching.
   function shouldRender(l: BasinLayer): boolean {
-    if (!enabled[l.family]) return false;
+    // Fall back to the layer's defaultOn if its toggle key is missing (e.g. a
+    // layer added to the manifest after this state was initialised), so a
+    // default-on layer is never silently hidden.
+    if (!(enabled[l.family] ?? l.defaultOn)) return false;
     if (!l.context && l.floor !== focusedFloor) return false;
     return true;
   }
@@ -361,7 +364,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                         <label key={l.family} className="flex items-start gap-2 text-xs cursor-pointer group">
                           <input
                             type="checkbox"
-                            checked={!!enabled[l.family]}
+                            checked={enabled[l.family] ?? l.defaultOn}
                             onChange={(e) => setEnabled((s) => ({ ...s, [l.family]: e.target.checked }))}
                             className="mt-0.5 accent-blue-600"
                           />
