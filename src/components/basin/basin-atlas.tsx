@@ -673,6 +673,10 @@ function MapLegend({ layers, notes }: { layers: BasinLayer[]; notes?: string[] }
       items.push({ sym: "box", color: "#64748b", label: "Industrial area - CETP nearby" });
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["quarry"], label: "Quarry" });
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["waste-facility"], label: "Waste facility" });
+      items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "Major industry (17-category)" });
+    } else if (l.family === "infrastructure") {
+      items.push({ sym: "dot", color: l.color, label: "STP" });
+      items.push({ sym: "ring", color: l.color, label: "FSTP (planned, not yet functional)" });
     } else if (l.family.startsWith("admin")) items.push({ sym: "outline", color: l.color, label: l.label });
     else if (l.geom === "point") items.push({ sym: "dot", color: l.color, label: l.label });
     else items.push({ sym: "box", color: l.color, label: l.label });
@@ -758,8 +762,11 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
 
 function pointStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): L.CircleMarkerOptions {
   const p = (feat?.properties ?? {}) as Record<string, unknown>;
-  // Monitoring: hollow if not in public domain (honest-gap cue).
-  const hollow = l.family === "monitoring-points" && String(p.publicDomain ?? "").toUpperCase() !== "YES";
+  // Monitoring: hollow if not in public domain (honest-gap cue). Incomplete
+  // FSTPs are also drawn hollow, so an unbuilt plant reads as not-yet-solid.
+  const hollow =
+    (l.family === "monitoring-points" && String(p.publicDomain ?? "").toUpperCase() !== "YES") ||
+    (l.family === "infrastructure" && String(p.kind ?? "") === "fstp");
   return {
     radius: 5,
     color: l.color,
@@ -779,6 +786,9 @@ const PRESSURE_KIND_COLOR: Record<string, string> = {
   "industrial-area": "#dc2626",
   quarry: "#ea580c",
   "waste-facility": "#ca8a04",
+  // Named 17-category major polluters (KSPCB) - a deep rose, distinct from the
+  // red/orange/amber area kinds and rendered as a point, not a fill.
+  "major-industry": "#9d174d",
 };
 // The selected sub-catchment highlight (warm amber - the only warm structural
 // cue, so "you are scoped here" stands out from the cool context).
@@ -860,6 +870,9 @@ const PROP_LABELS: Record<string, string> = {
   period: "Study period",
   locationName: "Location",
   capacityMld: "Operating capacity (MLD)",
+  capacityKld: "Capacity (KLD)",
+  classification: "Classification",
+  locationNote: "Location note",
   status: "Status",
   process: "Process",
   kind: "Type",

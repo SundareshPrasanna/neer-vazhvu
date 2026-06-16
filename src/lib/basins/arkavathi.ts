@@ -88,7 +88,7 @@ export const ARKAVATHI: BasinManifest = {
     // Treatment-gap intelligence (cross-source; panel content in gaps.json).
     // Demo: Ramanagara. More units are a data-only addition.
     { family: "gaps", label: "Treatment & waste gaps", floor: "governance", geom: "fill", color: "#dc2626", defaultOn: true, gap: true },
-    { family: "infrastructure", label: "Treatment plants (STPs)", floor: "governance", geom: "point", color: "#a855f7", defaultOn: true },
+    { family: "infrastructure", label: "Treatment plants (STP / FSTP)", floor: "governance", geom: "point", color: "#a855f7", defaultOn: true },
     { family: "command-areas", label: "Irrigation command areas", floor: "governance", geom: "fill", color: "#65a30d", defaultOn: false },
     // District stays neutral (always-on context); the opt-in finer levels get
     // distinct colors + dash patterns so several can be told apart at once.
@@ -101,6 +101,8 @@ export const ARKAVATHI: BasinManifest = {
     "Spatial data: Paani Earth Foundation - Arkavathi River Basin GIS package (Feb 2026).",
     "Monitoring points: KSPCB, CPCB, CWC, Dept. of Mines & Geology, ATREE and others, compiled by Paani Earth.",
     "Pollution evidence: Arkavathi Horata Samithi and RTI filings (lab analyses hosted on paani.earth).",
+    "Treatment plants (STP/FSTP): BWSSB, KUWS&DB, BDA and KUIDFC, compiled by Paani Earth; locations confirmed against satellite imagery.",
+    "Major industries: KSPCB 17-category polluting-industry list (geocoded).",
     "Boundaries: Karnataka GIS (KGIS); sub-watersheds & command areas: India-WRIS.",
   ],
 };
