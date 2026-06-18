@@ -47,6 +47,7 @@ export function FactsPage({
   const byBucket: Record<FactBucketId, Fact[]> = {
     reservoirs: [],
     groundwater: [],
+    coastal: [],
     rivers: [],
     "water-bodies": [],
     floods: [],
