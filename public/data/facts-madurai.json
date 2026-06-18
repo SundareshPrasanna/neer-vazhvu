@@ -106,7 +106,7 @@
       "title": "CGWB monitoring stations",
       "value": "194",
       "unit": "stations",
-      "interpretation": "CGWB / TN-NHP / TN State GW network across Madurai district. Mix of seasonal manual wells and telemetric DWLR piezometers. Madurai has no MMC ward-level piezometer mesh comparable to Chennai's CMWSSB 200-station network.",
+      "interpretation": "CGWB / TN-NHP / TN State GW network across Madurai district. Of these, 21 are CGWB Year Book observation wells with published quarterly hydrographs and 4 are India-WRIS live telemetric stations; the remainder are seasonal manual points. Madurai has no MMC ward-level piezometer mesh comparable to Chennai's CMWSSB 200-station network.",
       "data_date": "2026-05",
       "source_url": "https://indiawris.gov.in/wris/#/timeseriesdata",
       "source_label": "India-WRIS / CGWB / TN-NHP"
@@ -178,7 +178,7 @@
       "title": "City STP capacity",
       "value": "~170",
       "unit": "MLD",
-      "interpretation": "Three Madurai STPs - Avaniyapuram (54-125 MLD), Sakkimangalam (45.7 MLD), Vandiyur. Against estimated city demand of ~270 MLD (CMA Master Plan vol II), this leaves ~100 MLD untreated discharge into the Vaigai-Kruthumal system.",
+      "interpretation": "Three reported Madurai STPs - Avaniyapuram (~54-125 MLD), Sakkimangalam (45.7 MLD), and Vandiyur. MMC's sewerage pages do not publish plant-level capacities, so these figures come from news and CPCB references and are not yet officially confirmed. Set against an estimated city demand of ~270 MLD, they point to on the order of ~100 MLD of untreated discharge into the Vaigai-Kruthumal system.",
       "data_date": "2024",
       "source_url": "https://maduraicorporation.co.in/underground-sewerage-system/",
       "source_label": "MMC UGSS / CPCB"
@@ -214,7 +214,7 @@
       "title": "Madurai daily water supply",
       "value": "147.7",
       "unit": "MLD",
-      "interpretation": "Total piped supply across MMC schemes (23 + 2 + 68 + 54.7 MLD): Vaigai direct draw, Mullaperiyar augmentation, AMRUT scheme, and city distribution. Treated at the Pannaipatty water treatment plant before entering the network.",
+      "interpretation": "MMC's reported daily supply across its schemes (23 + 2 + 68 + 54.7 MLD): Vaigai direct draw, Mullaperiyar augmentation, AMRUT scheme, and city distribution, treated at the Pannaipatty plant. This is the utility's stated daily delivery; the ADB TNUFIP IEE accounts total installed scheme capacity at 192 MLD, the gap reflecting derated/non-functional sources and distribution losses.",
       "data_date": "2026",
       "source_url": "https://maduraicorporation.co.in/aboutus/water-supply/",
       "source_label": "Madurai Municipal Corporation"
@@ -343,13 +343,13 @@
       "id": "auto-mad-ward-gw-depth",
       "tier": 2,
       "category": "Groundwater",
-      "title": "Average ward groundwater depth (IDW)",
+      "title": "Shallow groundwater depth (CGWB Year Book wells)",
       "value": "5.1",
       "unit": "m below ground",
-      "interpretation": "Inverse-distance interpolation from 35 telemetric CGWB stations gives a citywide average water-table depth of 5.1 m. Deepest: Ward 100 at 11.9 m. Refreshes daily as new WRIS readings land.",
-      "data_date": "2026-06-18",
+      "interpretation": "Across Madurai's 21 CGWB Year Book observation wells (manually-measured dug wells in the shallow/phreatic aquifer), depth-to-water averages 5.1 m, reaching about 11.9 m at the deepest well. Each ward is matched to its nearest well for the risk composite; the network is too sparse for a true per-ward survey, so this is a coarse nearest-well estimate, not interpolated precision.",
+      "data_date": "2025-01",
       "source_url": "/madurai/groundwater",
-      "source_label": "WRIS telemetric CGWB stations · IDW"
+      "source_label": "CGWB Ground Water Year Book (TN & Puducherry), 2023-25 · nearest-well"
     },
     {
       "id": "auto-mad-vaigai-bod-gradient",

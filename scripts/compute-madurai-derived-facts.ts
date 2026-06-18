@@ -202,13 +202,13 @@ function buildFacts(): Fact[] {
         id: `${AUTO_PREFIX}ward-gw-depth`,
         tier: 2,
         category: "Groundwater",
-        title: "Average ward groundwater depth (IDW)",
+        title: "Shallow groundwater depth (CGWB Year Book wells)",
         value: avgDepth.toFixed(1),
         unit: "m below ground",
-        interpretation: `Inverse-distance interpolation from 35 telemetric CGWB stations gives a citywide average water-table depth of ${avgDepth.toFixed(1)} m. Deepest: Ward ${deepest.ward_number} at ${(deepest.gw_depth_m as number).toFixed(1)} m. Refreshes daily as new WRIS readings land.`,
-        data_date: today,
+        interpretation: `Across Madurai's 21 CGWB Year Book observation wells (manually-measured dug wells in the shallow/phreatic aquifer), depth-to-water averages ${avgDepth.toFixed(1)} m, reaching about ${(deepest.gw_depth_m as number).toFixed(1)} m at the deepest well. Each ward is matched to its nearest well for the risk composite; the network is too sparse for a true per-ward survey, so this is a coarse nearest-well estimate, not interpolated precision.`,
+        data_date: "2025-01",
         source_url: "/madurai/groundwater",
-        source_label: "WRIS telemetric CGWB stations · IDW",
+        source_label: "CGWB Ground Water Year Book (TN & Puducherry), 2023-25 · nearest-well",
       });
     }
   }
