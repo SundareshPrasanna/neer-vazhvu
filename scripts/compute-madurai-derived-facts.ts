@@ -64,13 +64,31 @@ function buildFacts(): Fact[] {
     }>;
   }>("public/data/gwr-blocks-madurai.json");
   if (gwr?.blocks?.length) {
-    const latestPerBlock = gwr.blocks
-      .map((b) => ({ name: b.name, last: b.history[b.history.length - 1] }))
-      .filter((b) => b.last);
-    const oe = latestPerBlock.filter((b) => b.last.class === "Over Exploited");
-    const cr = latestPerBlock.filter((b) => b.last.class === "Critical");
-    const sc = latestPerBlock.filter((b) => b.last.class === "Semi Critical");
-    const latestYear = Math.max(...latestPerBlock.map((b) => b.last.year));
+    // CGWB changed assessment granularity over time: pre-2023 rounds covered
+    // ~66 firka-level units, while the 2023-24 rounds report the 11 revenue
+    // blocks. Classify each block AT the latest common year so we never mix a
+    // 2024 class with a stale 2020/2022 one. (The previous last-entry-per-block
+    // approach did exactly that and inflated the over-exploited count to 4.)
+    const latestYear = Math.max(
+      ...gwr.blocks.flatMap((b) => b.history.map((h) => h.year)),
+    );
+    type BlockAtYear = {
+      name: string;
+      last: { year: number; class: string; development_pct: number };
+    };
+    const assessed = gwr.blocks
+      .map((b) => ({
+        name: b.name,
+        last: b.history.find((h) => h.year === latestYear),
+      }))
+      .filter((b): b is BlockAtYear => b.last !== undefined);
+    const oe = assessed.filter((b) => b.last.class === "Over Exploited");
+    const cr = assessed.filter((b) => b.last.class === "Critical");
+    const sc = assessed.filter((b) => b.last.class === "Semi Critical");
+    const granularityNote =
+      gwr.blocks.length > assessed.length
+        ? ` CGWB's pre-2023 rounds assessed ${gwr.blocks.length} finer firka-level units, so earlier over-exploited counts are not directly comparable.`
+        : "";
 
     if (oe.length > 0) {
       const top = oe.sort((a, b) => b.last.development_pct - a.last.development_pct)[0];
@@ -80,8 +98,8 @@ function buildFacts(): Fact[] {
         category: "Groundwater",
         title: "Over-exploited groundwater blocks (CGWB)",
         value: String(oe.length),
-        unit: `of ${latestPerBlock.length} blocks`,
-        interpretation: `${oe.length} of Madurai district's ${latestPerBlock.length} CGWB-classified blocks are pumping faster than recharge. Most stressed: ${top.name} at ${top.last.development_pct.toFixed(0)}% development. Latest GWR data ${latestYear}.`,
+        unit: `of ${assessed.length} blocks`,
+        interpretation: `${oe.length} of Madurai district's ${assessed.length} CGWB-assessed blocks (${latestYear}) ${oe.length === 1 ? "is" : "are"} pumping faster than recharge; most stressed is ${top.name} at ${top.last.development_pct.toFixed(0)}% development.${granularityNote}`,
         data_date: String(latestYear),
         source_url: gwr.source_url ?? "https://indiawris.gov.in/wris/",
         source_label: "CGWB GWR via India WRIS",
@@ -95,7 +113,7 @@ function buildFacts(): Fact[] {
         title: "Critical or semi-critical blocks",
         value: String(cr.length + sc.length),
         unit: `${cr.length} critical · ${sc.length} semi-critical`,
-        interpretation: `Beyond the over-exploited tier, ${cr.length} blocks are 'Critical' (>90% draft) and ${sc.length} are 'Semi Critical' (>70%). These are the watch-list zones where TWAD / Madurai Corporation interventions need to start before they tip over.`,
+        interpretation: `Beyond the over-exploited tier, ${cr.length} ${cr.length === 1 ? "block is" : "blocks are"} 'Critical' (>90% draft) and ${sc.length} ${sc.length === 1 ? "is" : "are"} 'Semi Critical' (>70%). These are the watch-list zones where TWAD / Madurai Corporation interventions need to start before they tip over.`,
         data_date: String(latestYear),
         source_url: gwr.source_url ?? "https://indiawris.gov.in/wris/",
         source_label: "CGWB GWR via India WRIS",
