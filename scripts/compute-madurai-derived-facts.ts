@@ -238,7 +238,7 @@ function buildFacts(): Fact[] {
         out.push({
           id: `${AUTO_PREFIX}vaigai-bod-gradient`,
           tier: 2,
-          category: "Restoration",
+          category: "Rivers",
           title: "Vaigai BOD pollution gradient through Madurai",
           value: `+${(dsLatest.bod_mgl - usLatest.bod_mgl).toFixed(1)}`,
           unit: "mg/L D/S minus U/S",
@@ -252,7 +252,7 @@ function buildFacts(): Fact[] {
         out.push({
           id: `${AUTO_PREFIX}vaigai-do-downstream`,
           tier: 2,
-          category: "Restoration",
+          category: "Rivers",
           title: "Vaigai dissolved oxygen, downstream of Madurai",
           value: dsLatest.do_mgl.toFixed(1),
           unit: "mg/L (CPCB threshold 5.0)",
