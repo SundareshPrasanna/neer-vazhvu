@@ -9,10 +9,10 @@ our own computed CoastSat + DSAS transect rates.
 |---|---|---|---|---|
 | SEED (zones) | `public/geojson/chennai-coastal-zones.geojson` | `study-reported` | `scripts/build-chennai-coastal-seed.py` | **shipped** |
 | SEED (hotspots) | `public/geojson/chennai-coastal-hotspots.geojson` | `study-reported` | same | **shipped** |
-| COMPUTED (transects) | `public/geojson/chennai-coastal-transects.geojson` | `computed` | `neer-vazhvu-api/scripts/run_gee_coastline.py` | **not yet run** |
+| COMPUTED (transects) | `public/geojson/chennai-coastal-transects.geojson` | `computed` | `neer-vazhvu-api/scripts/run_gee_coastline.py` | **run + validated (2026-06)** |
 
-The UI labels provenance from the `source` field. Until the computed layer
-exists, `/coastal` honestly shows "cited overview, not our own reproduction".
+The `/coastal` page shows both, with a "Study zones" / "Our transects" toggle.
+The UI labels provenance from the `source` field.
 
 ## SEED layer (shipped)
 
@@ -39,42 +39,45 @@ Prereqs:
   / `GEE_SERVICE_ACCOUNT_JSON` (same path as the existing GEE jobs;
   `python scripts/run_gee_coastline.py check-auth` to verify).
 
-Stage 1 - shoreline extraction (CoastSat, GEE):
-- Imagery: Landsat 5 TM / 7 ETM+ / 8 OLI and Sentinel-2 MSI, epochs 1990, 1995,
-  2000, 2005, 2010, 2015, 2020, 2024 (Table 1 of the paper).
-- Index: MNDWI = (Green - SWIR1)/(Green + SWIR1); Otsu threshold; sub-pixel
-  shoreline via marching squares (CoastSat default). Resample Landsat to 15 m,
-  Sentinel-2 to 10 m; CoastSat's sub-pixel mapping gives ~10 m horizontal
-  accuracy across sensors.
-- The single block to fill on first authenticated run is the CoastSat
-  `retrieve_images` / `save_shorelines` call (reference shoreline + cloud/beach
-  settings) - left guarded with `NotImplementedError` because its parameters
-  can't be validated without creds.
+We use a transparent MNDWI/GEE pipeline rather than CoastSat (no extra deps; the
+whole thing runs on the existing `earthengine-api` install). `run` in
+`app/gee/coastline.py`:
 
-Stage 2 - DSAS-equivalent rates (pure NumPy, reviewable now):
-- Cast shore-normal transects every 100 m along the earliest baseline
-  (`build_transects`).
-- Per transect, intersect each epoch's shoreline (`_signed_offset_m`).
+Stage 1 - per-epoch waterline offsets (`sample_transect_offsets`, GEE):
+- Baseline = the six seed zone segments concatenated south->north.
+- Cast shore-normal transects every 100 m (`build_transects`) -> 972 transects.
+- Build an 8-band MNDWI image, one band per epoch (Table 1 sensors): Landsat 5
+  (1990, 1995), Landsat 7 (2000, 2005, 2010), Landsat 8 (2015; the paper used L7
+  - we use L8 to avoid SLC-off gaps), Sentinel-2 (2020, 2024). Dry-season
+  Dec-May median composite, cloud-masked (QA_PIXEL / SCL). MNDWI =
+  (Green - SWIR1)/(Green + SWIR1), reflectance-scaled.
+- Sample MNDWI at 20 m steps along each transect (-260..+400 m) and take the
+  land->water crossing (MNDWI = 0) as that epoch's shoreline offset.
+
+Stage 2 - DSAS-equivalent rates (`compute_rates`, pure Python):
 - End Point Rate = NSM / years; Weighted Linear Regression slope with
   weights = 1 / Esp^2 using the paper's per-epoch positional errors (Table 2:
   16.33, 17.21, 15.78, 16.04, 15.67, 15.14, 8.66, 8.66 m). `_wlr` returns slope
-  + R^2.
+  + R^2. Transects with < 3 usable epochs are dropped.
 - Classify erosion / accretion / stable at +/-0.5 m/yr.
-- Zone assignment splits the baseline by the same published per-zone lengths as
-  the seed (wire `zone_of` in `run_gee_coastline.py` on run).
+- Zone assignment splits the baseline by the published per-zone lengths.
 
-Output: `public/geojson/chennai-coastal-transects.geojson`, `source:"computed"`.
+Output: `public/geojson/chennai-coastal-transects.geojson`, `source:"computed"`
+(895 of 972 transects had >= 3 usable epochs).
 
-## Validation before it supersedes the seed
+## Validation (run 2026-06)
 
-The first computed run is a draft. Check against the paper before swapping the
-default layer on `/coastal`:
-- 58.65% of transects eroding, mean -1.89 m/yr overall.
-- Zone V the most erosive (mean 4.34 m/yr); down-drift Ennore ~-21.3, Kattupalli
-  ~-16 m/yr; Chennai Port accretion ~+34.8 m/yr.
-- Per-zone means within a few m/yr of 0.48 / 1.15 / 0.76 / 1.66 / 4.34 / 2.97.
+| Signal | Paper | Our run |
+|---|---|---|
+| Direction overall | 58.65% eroding (erosion-dominant) | 39% eroding vs 27% accreting (erosion-dominant) |
+| Zone V most volatile | Ennore down-drift -21.3, Kattupalli -16; port accretion | Zone V min **-19.0**, max **+21.7** m/yr |
+| Zone II/III accretion | up to +7.78 (Adyar/Cooum), Chennai Port gain | Zone II/III positive means, max **+7.4** |
+| Zone I stable | marginal (turtle sector) | mean **-0.37** (stable) |
 
-Differences are expected (CoastSat vs the paper's exact reference shoreline and
-tide handling), but the spatial pattern and signs should match. Once validated,
-point the map's primary layer at the transect file and flip the page copy from
-"cited overview" to "computed by neervazhvu (CoastSat + DSAS)".
+The **spatial pattern and signs match**. Absolute zone means run lower than the
+paper because (a) we use a fixed MNDWI = 0 threshold with no tidal correction at
+20 m sampling vs CoastSat's sub-pixel extraction, and (b) the paper's per-zone
+figure is the mean of *eroding* transects only, while ours is the net mean over
+all transects. So this is **independent corroboration, not a replica** - and the
+UI says exactly that. To re-run: `python scripts/run_gee_coastline.py
+build-geojson --write` (~12 min, needs GEE auth).

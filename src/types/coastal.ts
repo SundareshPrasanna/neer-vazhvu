@@ -44,9 +44,24 @@ export interface CoastalHotspotProperties {
   period: string;
 }
 
+/** One computed DSAS transect (our own MNDWI/GEE measurement). */
+export interface CoastalTransectProperties {
+  transect_id: number;
+  zone_id: string;
+  /** WLR rate, m/yr. Negative = erosion, positive = accretion. */
+  rate_m_yr: number;
+  epr_m_yr: number | null;
+  r_squared: number | null;
+  n_epochs: number;
+  trend: Extract<CoastalTrend, "erosion" | "accretion" | "stable">;
+  source: "computed";
+  period: string;
+}
+
 export type SelectedCoastal =
   | { kind: "zone"; props: CoastalZoneProperties }
-  | { kind: "hotspot"; props: CoastalHotspotProperties };
+  | { kind: "hotspot"; props: CoastalHotspotProperties }
+  | { kind: "transect"; props: CoastalTransectProperties };
 
 /** Trend -> colour for zone lines and legend swatches. */
 export const TREND_COLORS: Record<CoastalTrend, string> = {
@@ -67,3 +82,19 @@ export const TREND_LABELS: Record<CoastalTrend, string> = {
 export function hotspotColor(rate: number): string {
   return rate < 0 ? TREND_COLORS.erosion : TREND_COLORS.accretion;
 }
+
+/**
+ * Diverging colour for a computed transect rate (m/yr): red erosion ->
+ * slate stable -> blue accretion, saturating around +/-6 m/yr.
+ */
+export function rateColor(rate: number): string {
+  if (rate <= -6) return "#991b1b"; // red-800
+  if (rate <= -2) return "#dc2626"; // red-600
+  if (rate <= -0.5) return "#f87171"; // red-400
+  if (rate < 0.5) return "#94a3b8"; // slate-400 (stable)
+  if (rate < 2) return "#60a5fa"; // blue-400
+  if (rate < 6) return "#2563eb"; // blue-600
+  return "#1e3a8a"; // blue-900
+}
+
+export type CoastalViewMode = "zones" | "transects";

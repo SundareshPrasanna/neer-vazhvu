@@ -1,20 +1,19 @@
 """
 Orchestrator for the Chennai coastal shoreline-change reproduction.
 
-Stages mirror app/gee/coastline.py. The end-to-end run needs GEE credentials
-(see app/gee/client.py) and the coastal extra (pip install -e .[coastal]); it
-has not been run/validated locally yet. See
-docs/research/chennai-coast-paper/METHODS.md.
+Computes our own transect erosion/accretion rates (MNDWI on Landsat/Sentinel-2
+via GEE + DSAS-equivalent WLR) and writes
+public/geojson/chennai-coastal-transects.geojson (source="computed"). Needs
+Earth Engine auth (see app/gee/client.py); no extra pip deps beyond the core
+install. See docs/research/chennai-coast-paper/METHODS.md.
 
 Commands:
-  check-auth          Verify Earth Engine credentials are usable.
-  extract-shorelines  Stage 1: CoastSat shoreline extraction via GEE.
-  build-geojson       Stage 2 + emit public/geojson/chennai-coastal-transects.geojson.
-  all                 extract-shorelines -> build-geojson.
+  check-auth     Verify Earth Engine credentials are usable.
+  build-geojson  Run the pipeline; --write to persist the GeoJSON.
 
 Example:
   python scripts/run_gee_coastline.py check-auth
-  python scripts/run_gee_coastline.py all
+  python scripts/run_gee_coastline.py build-geojson --write
 """
 
 from __future__ import annotations
@@ -28,9 +27,6 @@ API_ROOT = Path(__file__).resolve().parents[1]
 if str(API_ROOT) not in sys.path:
     sys.path.insert(0, str(API_ROOT))
 
-REPO_ROOT = API_ROOT.parent
-OUT_PATH = REPO_ROOT / "public" / "geojson" / "chennai-coastal-transects.geojson"
-
 
 def cmd_check_auth() -> int:
     from app.gee.client import check_auth
@@ -39,38 +35,11 @@ def cmd_check_auth() -> int:
     return 0
 
 
-def cmd_extract_shorelines() -> int:
-    from app.gee.coastline import extract_shorelines
-
-    shorelines = extract_shorelines()
-    print(json.dumps({"epochs": sorted(shorelines.shorelines)}, indent=2))
-    return 0
-
-
 def cmd_build_geojson(write: bool) -> int:
-    from app.gee.coastline import (
-        build_transects,
-        compute_transect_rates,
-        extract_shorelines,
-        transects_to_geojson,
-    )
+    from app.gee.coastline import run
 
-    shorelines = extract_shorelines()
-    # The baseline is the earliest reliable shoreline; zone assignment splits
-    # the baseline by the study's published per-zone lengths (see METHODS.md).
-    baseline = shorelines.shorelines[min(shorelines.shorelines)]
-    transects = build_transects(baseline)
-
-    def zone_of(_tid: int) -> str:  # placeholder: wire arc-length split on run
-        return "?"
-
-    rates = compute_transect_rates(transects, shorelines, zone_of)
-    fc = transects_to_geojson(rates)
-    if write:
-        OUT_PATH.write_text(json.dumps(fc, separators=(",", ":")), encoding="utf-8")
-        print(f"wrote {OUT_PATH} ({len(fc['features'])} transects)")
-    else:
-        print(json.dumps({"transect_count": len(fc["features"])}, indent=2))
+    fc = run(write=write, log=lambda m: print(m, flush=True))
+    print(json.dumps({"transect_count": len(fc["features"]), "written": write}, indent=2))
     return 0
 
 
@@ -78,19 +47,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Chennai coastal shoreline-change pipeline")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("check-auth")
-    sub.add_parser("extract-shorelines")
     bg = sub.add_parser("build-geojson")
     bg.add_argument("--write", action="store_true")
-    al = sub.add_parser("all")
-    al.add_argument("--write", action="store_true", default=True)
 
     args = parser.parse_args()
     if args.command == "check-auth":
         return cmd_check_auth()
-    if args.command == "extract-shorelines":
-        return cmd_extract_shorelines()
-    if args.command in ("build-geojson", "all"):
-        return cmd_build_geojson(write=getattr(args, "write", False))
+    if args.command == "build-geojson":
+        return cmd_build_geojson(write=args.write)
     return 1
 
 

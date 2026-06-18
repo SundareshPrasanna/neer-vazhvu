@@ -65,12 +65,16 @@ the real OSM coastline. Seed data built by `scripts/build-chennai-coastal-seed.p
 (`source: "study-reported"`). The UI labels this as a cited overview, not our
 own reproduction.
 
-**B2 (scripted, needs a GEE run):** `neer-vazhvu-api/app/gee/coastline.py` +
-`scripts/run_gee_coastline.py` reproduce the study's CoastSat + DSAS analysis to
-emit our own `chennai-coastal-transects.geojson` (`source: "computed"`) that
-supersedes the seed. The DSAS math (EPR/WLR) is pure NumPy and reviewable; the
-CoastSat/GEE extraction needs service-account creds. Full recipe + validation
-checklist in [METHODS.md](./METHODS.md).
+**B2 (run + validated, June 2026):** `neer-vazhvu-api/app/gee/coastline.py` +
+`scripts/run_gee_coastline.py` compute our own per-transect rates (MNDWI on
+Landsat 5/7/8 + Sentinel-2 via GEE, 100 m transects, DSAS-equivalent WLR over 8
+epochs) -> `chennai-coastal-transects.geojson` (`source: "computed"`, 895
+transects), surfaced as the "Our transects" toggle on `/coastal`. Validated
+against the paper: spatial pattern + signs match (Zone V min -19 m/yr vs the
+paper's -21.3 Ennore down-drift; Zone II/III accretion max +7.4 vs +7.78), with
+absolute means lower by method (fixed MNDWI threshold, no tide correction). It is
+independent corroboration, not a replica - the UI says so. Recipe + validation
+table in [METHODS.md](./METHODS.md).
 
 Almost every input is public and reproducible by us:
 

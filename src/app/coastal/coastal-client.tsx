@@ -8,7 +8,7 @@ import { MapInfoButton } from "@/components/map/map-info-button";
 import { CoastalLegend } from "@/components/coastal/coastal-legend";
 import { CoastalDetailPanel } from "@/components/coastal/coastal-detail-panel";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
-import type { SelectedCoastal } from "@/types/coastal";
+import type { SelectedCoastal, CoastalViewMode } from "@/types/coastal";
 
 function MapLoading() {
   return (
@@ -23,9 +23,40 @@ const CoastalMap = dynamic(
   { ssr: false, loading: () => <MapLoading /> },
 );
 
+function ModeToggle({
+  mode,
+  onChange,
+}: {
+  mode: CoastalViewMode;
+  onChange: (m: CoastalViewMode) => void;
+}) {
+  const opts: { id: CoastalViewMode; label: string }[] = [
+    { id: "zones", label: "Study zones" },
+    { id: "transects", label: "Our transects" },
+  ];
+  return (
+    <div className="inline-flex rounded-md border border-slate-300 dark:border-slate-600 overflow-hidden text-xs">
+      {opts.map((o) => (
+        <button
+          key={o.id}
+          onClick={() => onChange(o.id)}
+          className={`px-2.5 py-1 ${
+            mode === o.id
+              ? "bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900"
+              : "bg-white text-slate-600 dark:bg-slate-900 dark:text-slate-300"
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function CoastalClient() {
   useLockBodyScroll();
   const [selected, setSelected] = useState<SelectedCoastal | null>(null);
+  const [mode, setMode] = useState<CoastalViewMode>("zones");
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
@@ -34,29 +65,41 @@ export default function CoastalClient() {
         <span className="font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
           Chennai coast · 1990-2024
         </span>
-        <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
-          <span className="w-3 h-3 rounded-sm bg-red-600 opacity-80" />
+        {mode === "zones" ? (
+          <>
+            <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+              <span className="w-3 h-3 rounded-sm bg-red-600 opacity-80" />
+              <span className="text-xs text-slate-600 dark:text-slate-400">
+                <span className="font-semibold text-slate-900 dark:text-slate-100">58.65%</span> of 86 km eroding
+              </span>
+            </div>
+            <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+              <span className="text-xs text-slate-600 dark:text-slate-400">
+                Ennore <span className="font-semibold text-slate-900 dark:text-slate-100">-21.3</span> · Kattupalli{" "}
+                <span className="font-semibold text-slate-900 dark:text-slate-100">-16</span> m/yr down-drift
+              </span>
+            </div>
+          </>
+        ) : (
           <span className="text-xs text-slate-600 dark:text-slate-400">
-            <span className="font-semibold text-slate-900 dark:text-slate-100">58.65%</span> of 86 km eroding
+            <span className="font-semibold text-slate-900 dark:text-slate-100">895</span> transects we computed
+            from satellite imagery · click any point for its rate
           </span>
+        )}
+        <div className="ml-auto flex items-center gap-3">
+          <ModeToggle mode={mode} onChange={(m) => { setMode(m); setSelected(null); }} />
+          <Link
+            href="/facts#bucket-coastal"
+            className="text-xs text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap"
+          >
+            Coastal facts →
+          </Link>
         </div>
-        <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
-          <span className="text-xs text-slate-600 dark:text-slate-400">
-            Ennore <span className="font-semibold text-slate-900 dark:text-slate-100">-21.3</span> · Kattupalli{" "}
-            <span className="font-semibold text-slate-900 dark:text-slate-100">-16</span> m/yr down-drift
-          </span>
-        </div>
-        <Link
-          href="/facts#bucket-coastal"
-          className="ml-auto text-xs text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap"
-        >
-          Coastal facts →
-        </Link>
       </div>
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         <div className="relative flex-1 h-full">
-          <CoastalMap selected={selected} onSelect={setSelected} />
+          <CoastalMap mode={mode} selected={selected} onSelect={setSelected} />
 
           {/* Legend overlay */}
           <div
@@ -64,14 +107,14 @@ export default function CoastalClient() {
               selected ? "bottom-[148px] md:bottom-4" : "bottom-2 md:bottom-4"
             }`}
           >
-            <CoastalLegend />
+            <CoastalLegend mode={mode} />
           </div>
 
           {/* Sources / honesty note */}
           <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
             <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1.5 max-w-xs">
               <div>
-                Shoreline-change rates from{" "}
+                Shoreline-change study:{" "}
                 <a
                   href="https://www.sciencedirect.com/science/article/pii/S2667010026001083"
                   target="_blank"
@@ -83,10 +126,12 @@ export default function CoastalClient() {
                 .
               </div>
               <div>
-                Zone geometry is the <span className="font-semibold text-slate-700 dark:text-slate-300">OpenStreetMap</span> coastline
-                split into the study&apos;s six zones. Numbers are the study&apos;s published per-zone rates - this is a
-                cited overview, not our own transect reproduction. The CoastSat + DSAS pipeline that computes our own
-                861-transect rates is the planned next step.
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Study zones</span> show the
+                paper&apos;s published per-zone rates over the OSM coastline.{" "}
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Our transects</span> are
+                neervazhvu&apos;s own measurement (MNDWI on Landsat + Sentinel-2 via Google Earth Engine, 8
+                epochs) - independent of the paper&apos;s CoastSat + DSAS. The spatial pattern matches; absolute
+                rates differ by method.
               </div>
             </div>
           </MapInfoButton>

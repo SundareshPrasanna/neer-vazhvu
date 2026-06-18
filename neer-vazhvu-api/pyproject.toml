@@ -26,10 +26,6 @@ cpcb = ["pdfplumber>=0.11"]
 # Catchment delineation (delineate-catchments stage): FABDEM via GEE +
 # WhiteboxTools hydrology. whitebox auto-downloads its engine binary on first use.
 hydro = ["rasterio>=1.3", "whitebox>=2.3", "pyproj>=3.6", "duckdb>=1.0"]
-# Coastal shoreline-change reproduction (app/gee/coastline.py): CoastSat drives
-# GEE Landsat/Sentinel-2 sub-pixel shoreline extraction; scikit-image for the
-# marching-squares / Otsu steps. The DSAS stage is pure NumPy (no extra deps).
-coastal = ["coastsat>=2.4", "scikit-image>=0.22", "geopandas>=1.0"]
 
 [build-system]
 requires = ["setuptools>=75"]
