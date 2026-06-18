@@ -16,6 +16,7 @@ Every city dashboard, where the data exists, surfaces:
 - **Water bodies** - OSM polygons, lost-tank inventory, restoration priority scoring (algorithm varies per city)
 - **Rich-data deep-zoom panel** - 21 flagship bodies onboarded (8 in Chennai + 13 in Bangalore). A click opens a full-screen panel with yearly satellite imagery 1984-present, cumulative water-loss and built-gain tints over the polygon and 1 km halo, per-year stats (water surface, built share, building counts in body vs halo), a play/pause timeline with event stamps, and a sources & methodology modal. Water-fraction series splices JRC GSW v1.4 (1984-2021) with Dynamic World V1 (2022-present) so the chart doesn't truncate at JRC's cutoff
 - **Flood risk** - Hazard zones / drainage / sewerage where layers are public; narrative-only stub where they're not
+- **Coast & shoreline change** (Chennai only today) - Erosion/accretion along the 86 km Chennai-Ennore-Pulicat coast (1990-2024). A "Study zones" layer surfaces the published per-zone rates + port hotspots from Anagha, Singh & Frappart (2026, *Environmental Challenges*) over the OSM coastline; an "Our transects" layer is our own MNDWI/DSAS reproduction (Landsat 5/7/8 + Sentinel-2 via Earth Engine, 972 transects) that independently corroborates the study's pattern
 - **My Ward** - Per-ward report aggregating every layer above with comparison + uplift planner
 - **About** - Per-city methodology, data-source index, transparency-gap inventory
 - **Tanker market** (Bengaluru only today) - Longitudinal OpenCity household-survey data (2015 / 2019 / 2024) on what households actually pay vs BWSSB's official tariff
@@ -276,9 +277,12 @@ npx tsx scripts/fetch-drainage-osm.ts
 
 # CMWSSB sewerage network (STPs, pumping stations, pumping mains)
 python3 scripts/convert-sewerage-kml.py
+
+# Coastal zones + port hotspots seed (OSM coastline + published study rates)
+python3 scripts/build-chennai-coastal-seed.py
 ```
 
-Flood hazard zones and GCC storm water drain data are converted from OpenCity KML files via `scripts/simplify-flood-geojson.ts`. CMWSSB sewerage data is converted via `python3 scripts/convert-sewerage-kml.py`.
+Flood hazard zones and GCC storm water drain data are converted from OpenCity KML files via `scripts/simplify-flood-geojson.ts`. CMWSSB sewerage data is converted via `python3 scripts/convert-sewerage-kml.py`. The `/coastal` "Our transects" layer (our own MNDWI/DSAS shoreline-change reproduction) is regenerated with `python neer-vazhvu-api/scripts/run_gee_coastline.py build-geojson --write` (needs Earth Engine auth; ~12 min); method + validation in [docs/research/chennai-coast-paper/METHODS.md](docs/research/chennai-coast-paper/METHODS.md).
 
 ### 7. Refresh River Quality Data (optional, annual)
 
