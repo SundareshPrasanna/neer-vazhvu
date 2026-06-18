@@ -442,6 +442,7 @@ export const translations: Record<string, TranslationEntry> = {
   "nav.groundwater":    { en: "Groundwater Map",   ta: "நிலத்தடி நீர் வரைபடம்",     kn: "ಅಂತರ್ಜಲ ನಕ್ಷೆ" },
   "nav.water_bodies":   { en: "Water Bodies",      ta: "நீர்நிலைகள்",              kn: "ಜಲಮೂಲಗಳು" },
   "nav.rivers":         { en: "Rivers",            ta: "ஆறுகள்",                  kn: "ನದಿಗಳು" },
+  "nav.coastal":        { en: "Coast",             ta: "கடற்கரை",                 kn: "ಕರಾವಳಿ" },
   "nav.lake_restoration": { en: "Restoration",     ta: "மறுசீரமைப்பு",            kn: "ಪುನರುಜ್ಜೀವನ" },
   "nav.about":          { en: "About",             ta: "எங்களைப் பற்றி",           kn: "ನಮ್ಮ ಬಗ್ಗೆ" },
   "header.title":       { en: "Neer Vazhvu",                ta: "நீர் வாழ்வு",      kn: "ನೀರ್ ವಾೞ್ವು" },

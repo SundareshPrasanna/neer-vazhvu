@@ -23,6 +23,7 @@ const EXPLORE_ITEMS = [
   { href: "/water-bodies", key: "nav.water_bodies" },
   { href: "/rivers",       key: "nav.rivers" },
   { href: "/flood-risk",   key: "nav.flood_risk" },
+  { href: "/coastal",      key: "nav.coastal" },
 ] as const;
 
 const EXPLORE_PATHS: Set<string> = new Set(EXPLORE_ITEMS.map((i) => i.href));

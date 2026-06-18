@@ -57,7 +57,20 @@ Ennore work (fly-ash atlas, coastal-erosion / salt-intrusion / Pulicat angles):
 ports erase the sediment buffer (same mechanism that exposes fly-ash), and the
 coastal aquifer is under chronic saline + over-abstraction stress.
 
-## Option B: reproducible shoreline-change layer (next)
+## Option B: shoreline-change map (shipped seed + scripted reproduction)
+
+**B1 (shipped):** `/coastal` page (`src/app/coastal/`) - a Leaflet map of the
+six study zones (coloured by dominant trend) plus the named port hotspots, over
+the real OSM coastline. Seed data built by `scripts/build-chennai-coastal-seed.py`
+(`source: "study-reported"`). The UI labels this as a cited overview, not our
+own reproduction.
+
+**B2 (scripted, needs a GEE run):** `neer-vazhvu-api/app/gee/coastline.py` +
+`scripts/run_gee_coastline.py` reproduce the study's CoastSat + DSAS analysis to
+emit our own `chennai-coastal-transects.geojson` (`source: "computed"`) that
+supersedes the seed. The DSAS math (EPR/WLR) is pure NumPy and reviewable; the
+CoastSat/GEE extraction needs service-account creds. Full recipe + validation
+checklist in [METHODS.md](./METHODS.md).
 
 Almost every input is public and reproducible by us:
 
