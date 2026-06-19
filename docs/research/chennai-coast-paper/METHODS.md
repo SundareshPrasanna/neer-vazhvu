@@ -21,8 +21,9 @@ our own computed transect rates.
 | SEED (hotspots) | `public/geojson/chennai-coastal-hotspots.geojson` | `study-reported` | same | **shipped** |
 | COMPUTED (transects) | `public/geojson/chennai-coastal-transects.geojson` | `computed` | `neer-vazhvu-api/scripts/run_gee_coastline.py` | **run + validated (2026-06)** |
 
-The `/coastal` page shows both, with a "Study zones" / "Our transects" toggle.
-The UI labels provenance from the `source` field.
+The `/shoreline` page shows one map: our rate-coloured transects as the primary
+layer, the study's zones as faint context bands, and its named hotspots as quiet
+validating annotations. The UI labels provenance from the `source` field.
 
 ## SEED layer (shipped)
 
@@ -54,8 +55,9 @@ whole thing runs on the existing `earthengine-api` install). `run` in
 `app/gee/coastline.py`:
 
 Stage 1 - per-epoch waterline offsets (`sample_transect_offsets`, GEE):
-- Baseline = the six seed zone segments concatenated south->north.
-- Cast shore-normal transects every 100 m (`build_transects`) -> 972 transects.
+- Baseline = the seed zone segments concatenated south->north (the study's six
+  zones plus our southern "S" extension to Mahabalipuram).
+- Cast shore-normal transects every 100 m (`build_transects`) -> ~1,200 transects.
 - Build a 10-band MNDWI image, one band per epoch (Table 1 sensors): Landsat 5
   (1990, 1995), Landsat 7 (2000, 2005, 2010), Landsat 8 (2015; the paper used L7
   - we use L8 to avoid SLC-off gaps), Sentinel-2 (2020, 2024, **2025, 2026**).
@@ -80,23 +82,28 @@ Stage 2 - DSAS-equivalent rates (`compute_rates`, pure Python):
 - Zone assignment splits the baseline by the published per-zone lengths.
 
 Output: `public/geojson/chennai-coastal-transects.geojson`, `source:"computed"`
-(905 of 972 transects had >= 3 usable epochs over 1990-2026). Headline temporal
-finding: of 374 eroding transects with both split rates, **247 (~66%) are
-eroding faster in 2015-2026 than in 1990-2010** - the erosion is accelerating.
+(1,137 transects had >= 3 usable epochs over 1990-2026). Each carries a
+`confidence` flag (judged on the recent Sentinel-2-era trajectory; ~8% "low") and
+one `showcase` flag for the UI's pre-selected example. Headline temporal finding
+(high-confidence only): of ~420 eroding transects with both split rates, **~72%
+are eroding faster in 2015-2026 than in 1990-2010** - the erosion is accelerating.
 
 ## Validation (run 2026-06)
 
+Computed over high-confidence transects:
+
 | Signal | Paper | Our run |
 |---|---|---|
-| Direction overall | 58.65% eroding (erosion-dominant) | 39% eroding vs 27% accreting (erosion-dominant) |
-| Zone V most volatile | Ennore down-drift -21.3, Kattupalli -16; port accretion | Zone V min **-19.0**, max **+21.7** m/yr |
-| Zone II/III accretion | up to +7.78 (Adyar/Cooum), Chennai Port gain | Zone II/III positive means, max **+7.4** |
-| Zone I stable | marginal (turtle sector) | mean **-0.37** (stable) |
+| Direction overall | 58.65% eroding (erosion-dominant) | 41% eroding vs 24% accreting (erosion-dominant) |
+| Ennore/Kattupalli (Zone V) erode | down-drift -21.3 / -16; port accretion | Zone V eroding (worst clean transect ~-13 m/yr; the most extreme port-adjacent spots are flagged low-confidence) |
+| Zone II/III accretion | up to +7.78 (Adyar/Cooum), Chennai Port gain | Chennai Port mean +1.4, Adyar/Cooum positive |
+| Zone I stable | marginal (turtle sector) | near-stable |
 
-The **spatial pattern and signs match**. Absolute zone means run lower than the
-paper because (a) we use a fixed MNDWI = 0 threshold with no tidal correction at
-20 m sampling vs CoastSat's sub-pixel extraction, and (b) the paper's per-zone
-figure is the mean of *eroding* transects only, while ours is the net mean over
-all transects. So this is **independent corroboration, not a replica** - and the
-UI says exactly that. To re-run: `python scripts/run_gee_coastline.py
-build-geojson --write` (~12 min, needs GEE auth).
+The **spatial pattern and signs match**. Absolute magnitudes run lower than the
+paper because (a) fixed MNDWI = 0, no tidal correction, 20 m sampling vs CoastSat's
+sub-pixel extraction, and (b) the paper's per-zone figure is the mean of *eroding*
+transects only, while ours is the net mean. The paper's most extreme Ennore/
+Kattupalli figures sit exactly where our method is least reliable (port + creek
+ambiguity), so those transects are flagged low-confidence rather than trusted. So
+this is **independent corroboration of the pattern, not a replica**. To re-run:
+`python scripts/run_gee_coastline.py build-geojson --write` (~15 min, needs GEE auth).

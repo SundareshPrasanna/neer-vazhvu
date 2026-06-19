@@ -23,7 +23,7 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "water-bodies",
     "rivers",
     "flood-risk",
-    "coastal",
+    "shoreline",
     "lake-restoration",
     "my-ward",
     "facts",

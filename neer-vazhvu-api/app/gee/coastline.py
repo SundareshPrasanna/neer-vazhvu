@@ -223,11 +223,26 @@ TRANSECT_SPACING_M = 100.0
 SAMPLE_S_VALUES: tuple[int, ...] = tuple(range(-260, 401, 20))
 WATER_THRESHOLD = 0.0  # MNDWI > 0 => water
 EARTH_RADIUS_M = 6_371_000.0
-ZONE_IDS = ("I", "II", "III", "IV", "V", "VI")
-ZONE_LENGTHS_KM = (14.0, 10.3, 9.4, 12.2, 24.6, 15.6)  # study along-shore lengths
+# "S" is our southern extension (Mahabalipuram -> Uthandi, East Coast Road),
+# beyond the study's Uthandi -> Pulicat area; I-VI are the study's six zones.
+ZONE_IDS = ("S", "I", "II", "III", "IV", "V", "VI")
+ZONE_LENGTHS_KM = (22.0, 14.0, 10.3, 9.4, 12.2, 24.6, 15.6)  # along-shore lengths
 # Split the record into "early" (<=) and "recent" (>) halves to detect whether
 # erosion/accretion is accelerating. 1990-2010 vs 2015-2026.
 EARLY_SPLIT_YEAR = 2012
+
+# Per-transect confidence. We judge reliability from the RECENT (Sentinel-2-era,
+# >= 2015) trajectory, not the whole series: the early Landsat-5 years are noisy
+# even on perfectly real shorelines, so scoring the full series wrongly flags
+# genuine fast erosion. A transect is "low" only when its recent positions
+# scatter a lot or take an isolated implausible jump (a feature-snap, e.g. the
+# water-edge catching an inner creek/lagoon bank). Low-confidence transects are
+# dimmed and never lead.
+CONF_RECENT_FROM_YEAR = 2015
+CONF_MAX_RECENT_RMS_M = 30.0  # scatter of recent positions about their trend
+CONF_MAX_RECENT_STEP_M_YR = 70.0  # isolated implausible recent jump
+CONF_MIN_EPOCHS = 5
+CONF_MIN_RECENT_POINTS = 3
 
 
 @dataclass
@@ -246,6 +261,8 @@ class TransectRate:
     series: list[tuple[int, float]] | None = None
     early_rate_m_yr: float | None = None  # WLR over epochs <= EARLY_SPLIT_YEAR
     recent_rate_m_yr: float | None = None  # WLR over epochs >= EARLY_SPLIT_YEAR
+    confidence: str = "high"  # "high" | "low" (low = ambiguous waterline)
+    showcase: bool = False  # one clean strong eroder pre-selected by the UI
 
 
 # --------------------------------------------------------------------------
@@ -357,15 +374,16 @@ def sample_transect_offsets(
     configs = configs or active_epoch_config()
     years = [c["year"] for c in configs]
 
-    features = []
+    # Build plain point tuples (not ee.Features) so we never serialise one giant
+    # inline FeatureCollection - that blows the 10 MB request-payload limit at
+    # ~40k points. Each batch sends only its own points; filtering uses a bbox.
+    pts: list[tuple[float, float, int, int]] = []
     for tid, origin, normal in transects:
         for s in SAMPLE_S_VALUES:
-            pt = ee.Geometry.Point(
-                [origin[0] + normal[0] * s, origin[1] + normal[1] * s]
-            )
-            features.append(ee.Feature(pt, {"tid": tid, "s": s}))
-    fc = ee.FeatureCollection(features)
-    geom = fc.geometry()
+            pts.append((origin[0] + normal[0] * s, origin[1] + normal[1] * s, tid, s))
+    lons = [p[0] for p in pts]
+    lats = [p[1] for p in pts]
+    geom = ee.Geometry.Rectangle([min(lons), min(lats), max(lons), max(lats)])
 
     def ls_mask(img):
         qa = img.select("QA_PIXEL")
@@ -405,10 +423,15 @@ def sample_transect_offsets(
     multi = ee.Image.cat(bands)
 
     raw: dict[tuple[int, int], dict[int, float]] = {}
-    n = len(features)
-    plist = fc.toList(n)
+    n = len(pts)
     for i in range(0, n, batch_size):
-        sub = ee.FeatureCollection(plist.slice(i, min(i + batch_size, n)))
+        chunk = pts[i : min(i + batch_size, n)]
+        sub = ee.FeatureCollection(
+            [
+                ee.Feature(ee.Geometry.Point([lon, lat]), {"tid": tid, "s": s})
+                for lon, lat, tid, s in chunk
+            ]
+        )
         sampled = multi.sampleRegions(
             collection=sub, scale=20, geometries=False
         ).getInfo()
@@ -470,6 +493,79 @@ def _classify(rate: float | None) -> str:
     if rate >= 0.5:
         return "accretion"
     return "stable"
+
+
+def _residual_rms(series: list[tuple[int, float]]) -> float:
+    """RMS scatter of the per-epoch shoreline positions about their OLS trend."""
+    n = len(series)
+    if n < 2:
+        return 0.0
+    xs = [p[0] for p in series]
+    ys = [p[1] for p in series]
+    mx = sum(xs) / n
+    my = sum(ys) / n
+    sxx = sum((x - mx) ** 2 for x in xs)
+    if sxx == 0:
+        return 0.0
+    slope = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sxx
+    inter = my - slope * mx
+    return math.sqrt(sum((y - (slope * x + inter)) ** 2 for x, y in zip(xs, ys)) / n)
+
+
+def _max_step_rate(series: list[tuple[int, float]]) -> float:
+    """Largest single-epoch movement rate (m/yr) - a proxy for a feature-snap."""
+    return max(
+        (
+            abs(series[i][1] - series[i - 1][1]) / (series[i][0] - series[i - 1][0])
+            for i in range(1, len(series))
+        ),
+        default=0.0,
+    )
+
+
+def transect_confidence(series: list[tuple[int, float]] | None, n_epochs: int) -> str:
+    """ "high" unless the recent (Sentinel-2-era, >= 2015) trajectory is too
+    sparse, scattered, or spiky to trust. Judged on the recent half so noisy
+    early-Landsat years on a genuinely eroding transect aren't wrongly flagged."""
+    if not series or n_epochs < CONF_MIN_EPOCHS:
+        return "low"
+    recent = [p for p in series if p[0] >= CONF_RECENT_FROM_YEAR]
+    if len(recent) < CONF_MIN_RECENT_POINTS:
+        return "low"
+    if _residual_rms(recent) > CONF_MAX_RECENT_RMS_M:
+        return "low"
+    if _max_step_rate(recent) > CONF_MAX_RECENT_STEP_M_YR:
+        return "low"
+    return "high"
+
+
+def mark_showcase(rates: list[TransectRate]) -> None:
+    """Flag one clean, strongly + credibly eroding transect for the UI to
+    pre-select, so the opening panel never lands on a noisy artifact."""
+
+    def clean(r: TransectRate) -> bool:
+        if r.confidence != "high" or r.series is None or r.n_epochs < 8:
+            return False
+        recent = [p for p in r.series if p[0] >= CONF_RECENT_FROM_YEAR]
+        return (
+            len(recent) >= 3
+            and _residual_rms(recent) < 12.0  # clean recent trajectory
+            and r.recent_rate_m_yr is not None
+            and r.recent_rate_m_yr < -3.0  # clearly + currently eroding
+        )
+
+    pool = [r for r in rates if clean(r)]
+    if not pool:
+        pool = [r for r in rates if r.confidence == "high" and r.wlr_m_yr is not None]
+    if not pool:
+        return
+    best = min(
+        pool,
+        key=lambda r: (
+            r.recent_rate_m_yr if r.recent_rate_m_yr is not None else (r.wlr_m_yr or 0)
+        ),
+    )
+    best.showcase = True
 
 
 def compute_rates(
@@ -546,6 +642,7 @@ def compute_rates(
                 series=series,
                 early_rate_m_yr=early_rate,
                 recent_rate_m_yr=recent_rate,
+                confidence=transect_confidence(series, len(years)),
             )
         )
     return results
@@ -580,6 +677,8 @@ def transects_to_geojson(
                     if r.recent_rate_m_yr is not None
                     else None,
                     "series": [[y, o] for y, o in r.series] if r.series else None,
+                    "confidence": r.confidence,
+                    "showcase": r.showcase,
                     "source": "computed",
                     "period": period,
                 },
@@ -616,6 +715,7 @@ def run(*, write: bool = True, log=print) -> dict:
     log(f"transects: {len(transects)} | epochs: {years}")
     offsets = sample_transect_offsets(transects, configs=configs, log=log)
     rates = compute_rates(transects, offsets, zones)
+    mark_showcase(rates)
     fc = transects_to_geojson(rates, period=period, n_epochs=len(years))
     if write:
         TRANSECTS_GEOJSON.write_text(

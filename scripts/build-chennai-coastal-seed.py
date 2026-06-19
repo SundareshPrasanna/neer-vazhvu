@@ -38,7 +38,7 @@ import math
 import os
 import urllib.request
 
-BBOX = (12.7, 80.15, 13.6, 80.45)  # south, west, north, east
+BBOX = (12.55, 80.1, 13.6, 80.45)  # south, west, north, east (south to Mahabalipuram)
 OVERPASS_MIRRORS = [
     "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
     "https://overpass-api.de/api/interpreter",
@@ -53,14 +53,25 @@ STUDY_CITE = "Anagha, Singh & Frappart 2026 (Environmental Challenges)"
 # dominant_trend reflects which signal dominates the zone over 1990-2024.
 ZONES = [
     {
+        "zone_id": "S",
+        "zone_name": "ECR: Mahabalipuram - Uthandi",
+        "length_km": 22.0,
+        "mean_erosion_m_yr": None,  # beyond the study area; no published rate
+        "dominant_trend": "mixed",
+        "summary": "Our southern extension along the East Coast Road, from "
+        "Mahabalipuram up to Uthandi. This stretch sits south of the "
+        "published study, so only our own transect measurement covers "
+        "it - there is no study rate to validate against here.",
+    },
+    {
         "zone_id": "I",
         "zone_name": "Uthandi - Thiruvanmiyur",
         "length_km": 14.0,
         "mean_erosion_m_yr": 0.48,
         "dominant_trend": "stable",
         "summary": "Conservation sector and Olive Ridley turtle nesting ground. "
-                   "The most geomorphologically stable stretch: only ~16 m of "
-                   "retreat over 34 years.",
+        "The most geomorphologically stable stretch: only ~16 m of "
+        "retreat over 34 years.",
     },
     {
         "zone_id": "II",
@@ -69,8 +80,8 @@ ZONES = [
         "mean_erosion_m_yr": 1.15,
         "dominant_trend": "accretion",
         "summary": "Accretion dominates 80.5% of transects (up to ~7.8 m/yr) as "
-                   "littoral drift traps urban silt at the Adyar and Cooum river "
-                   "mouths. Includes Besant Nagar and Marina beaches.",
+        "littoral drift traps urban silt at the Adyar and Cooum river "
+        "mouths. Includes Besant Nagar and Marina beaches.",
     },
     {
         "zone_id": "III",
@@ -79,8 +90,8 @@ ZONES = [
         "mean_erosion_m_yr": 0.76,
         "dominant_trend": "accretion",
         "summary": "Chennai Port breakwaters intercept northward drift, gaining "
-                   "~1.1 km of land to the south. Extensive seawalls suppressed "
-                   "the down-drift erosion seen at the newer northern ports.",
+        "~1.1 km of land to the south. Extensive seawalls suppressed "
+        "the down-drift erosion seen at the newer northern ports.",
     },
     {
         "zone_id": "IV",
@@ -89,8 +100,8 @@ ZONES = [
         "mean_erosion_m_yr": 1.66,
         "dominant_trend": "mixed",
         "summary": "Post-2004 seawalls and a ~5 km groyne field trap sediment "
-                   "locally (~0.96 m/yr accretion) but starve down-drift segments, "
-                   "with erosion intensifying after 2015.",
+        "locally (~0.96 m/yr accretion) but starve down-drift segments, "
+        "with erosion intensifying after 2015.",
     },
     {
         "zone_id": "V",
@@ -99,9 +110,9 @@ ZONES = [
         "mean_erosion_m_yr": 4.34,
         "dominant_trend": "erosion",
         "summary": "The most volatile zone. Ennore and Kattupalli port breakwaters "
-                   "interrupt sand bypass, driving severe down-drift erosion on "
-                   "their northern flanks (21.3 and 16 m/yr); the north-Kattupalli "
-                   "sector retreated nearly 1 km.",
+        "interrupt sand bypass, driving severe down-drift erosion on "
+        "their northern flanks (21.3 and 16 m/yr); the north-Kattupalli "
+        "sector retreated nearly 1 km.",
     },
     {
         "zone_id": "VI",
@@ -110,9 +121,9 @@ ZONES = [
         "mean_erosion_m_yr": 2.97,
         "dominant_trend": "mixed",
         "summary": "Ecologically sensitive lagoon and bird sanctuary. Highly "
-                   "variable: the south advanced over 2 km while the north eroded "
-                   "up to 5.7 m/yr, a net lagoon loss of ~0.92 km, with mangrove "
-                   "decline. A proposed Kattupalli expansion is a further risk.",
+        "variable: the south advanced over 2 km while the north eroded "
+        "up to 5.7 m/yr, a net lagoon loss of ~0.92 km, with mangrove "
+        "decline. A proposed Kattupalli expansion is a further risk.",
     },
 ]
 
@@ -121,38 +132,53 @@ ZONES = [
 HOTSPOTS = [
     {
         "name": "Chennai Port",
-        "lat": 13.10, "lon": 80.30, "zone_id": "III",
-        "rate_m_yr": 34.8, "trend": "accretion",
+        "lat": 13.10,
+        "lon": 80.30,
+        "zone_id": "III",
+        "rate_m_yr": 34.8,
+        "trend": "accretion",
         "note": "Port expansion (1995-2010) accreted up to 34.8 m/yr, gaining "
-                "~1.1 km of land behind seawalls.",
+        "~1.1 km of land behind seawalls.",
     },
     {
         "name": "Adyar / Cooum mouths",
-        "lat": 13.02, "lon": 80.28, "zone_id": "II",
-        "rate_m_yr": 7.78, "trend": "accretion",
+        "lat": 13.02,
+        "lon": 80.28,
+        "zone_id": "II",
+        "rate_m_yr": 7.78,
+        "trend": "accretion",
         "note": "River-mouth accretion up to 7.78 m/yr from trapped urban silt.",
     },
     {
         "name": "North of Ennore Port",
-        "lat": 13.26, "lon": 80.345, "zone_id": "V",
-        "rate_m_yr": -21.3, "trend": "erosion",
+        "lat": 13.26,
+        "lon": 80.345,
+        "zone_id": "V",
+        "rate_m_yr": -21.3,
+        "trend": "erosion",
         "note": "Down-drift erosion of 21.3 m/yr immediately north of Ennore "
-                "Port, where the breakwater starves the sand supply.",
+        "Port, where the breakwater starves the sand supply.",
     },
     {
         "name": "North of Kattupalli Port",
-        "lat": 13.31, "lon": 80.34, "zone_id": "V",
-        "rate_m_yr": -16.0, "trend": "erosion",
+        "lat": 13.31,
+        "lon": 80.34,
+        "zone_id": "V",
+        "rate_m_yr": -16.0,
+        "trend": "erosion",
         "note": "Down-drift erosion of 16 m/yr; the north-Kattupalli sector "
-                "retreated nearly 1 km (peak -71 m/yr, 2010-2024) as a second "
-                "port compounded the sediment deficit.",
+        "retreated nearly 1 km (peak -71 m/yr, 2010-2024) as a second "
+        "port compounded the sediment deficit.",
     },
     {
         "name": "North Pulicat",
-        "lat": 13.50, "lon": 80.32, "zone_id": "VI",
-        "rate_m_yr": -5.7, "trend": "erosion",
+        "lat": 13.50,
+        "lon": 80.32,
+        "zone_id": "VI",
+        "rate_m_yr": -5.7,
+        "trend": "erosion",
         "note": "Chronic erosion up to 5.7 m/yr on the northern lagoon shore; "
-                "net lagoon loss of ~0.92 km with mangrove decline.",
+        "net lagoon loss of ~0.92 km with mangrove decline.",
     },
 ]
 
@@ -179,7 +205,8 @@ def fetch_coastline():
     for mirror in OVERPASS_MIRRORS:
         try:
             req = urllib.request.Request(
-                mirror, data=query.encode(),
+                mirror,
+                data=query.encode(),
                 headers={"User-Agent": "neervazhvu-coastal/1.0"},
             )
             raw = urllib.request.urlopen(req, timeout=150).read()
@@ -234,7 +261,7 @@ def stitch(ways):
     return chains[0]
 
 
-def seaward_shore(chain, lat_min=12.795, lat_max=13.566, step=0.004):
+def seaward_shore(chain, lat_min=12.60, lat_max=13.566, step=0.004):
     bins = collections.defaultdict(list)
     for lon, lat in chain:
         if lat_min <= lat <= lat_max:
@@ -281,43 +308,53 @@ def main():
     for zmeta, seg in zip(ZONES, segments):
         if len(seg) < 2:
             continue
-        zone_features.append({
-            "type": "Feature",
-            "properties": {
-                **zmeta,
-                "source": "study-reported",
-                "source_label": STUDY_CITE,
-                "source_url": STUDY_URL,
-                "period": "1990-2024",
-            },
-            "geometry": {"type": "LineString", "coordinates": round_coords(seg)},
-        })
+        is_study = zmeta.get("mean_erosion_m_yr") is not None
+        zone_features.append(
+            {
+                "type": "Feature",
+                "properties": {
+                    **zmeta,
+                    "source": "study-reported" if is_study else "extension",
+                    "source_label": STUDY_CITE
+                    if is_study
+                    else "Neer Vazhvu (beyond study)",
+                    "source_url": STUDY_URL,
+                    "period": "1990-2024" if is_study else "1990-2026",
+                },
+                "geometry": {"type": "LineString", "coordinates": round_coords(seg)},
+            }
+        )
 
     hotspot_features = []
     for h in HOTSPOTS:
         lon, lat = nearest_on_shore(shore, h["lat"], h["lon"])
-        hotspot_features.append({
-            "type": "Feature",
-            "properties": {
-                "name": h["name"],
-                "zone_id": h["zone_id"],
-                "rate_m_yr": h["rate_m_yr"],
-                "trend": h["trend"],
-                "note": h["note"],
-                "source": "study-reported",
-                "source_label": STUDY_CITE,
-                "source_url": STUDY_URL,
-                "period": "1990-2024",
-            },
-            "geometry": {"type": "Point", "coordinates": [round(lon, 5), round(lat, 5)]},
-        })
+        hotspot_features.append(
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": h["name"],
+                    "zone_id": h["zone_id"],
+                    "rate_m_yr": h["rate_m_yr"],
+                    "trend": h["trend"],
+                    "note": h["note"],
+                    "source": "study-reported",
+                    "source_label": STUDY_CITE,
+                    "source_url": STUDY_URL,
+                    "period": "1990-2024",
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [round(lon, 5), round(lat, 5)],
+                },
+            }
+        )
 
     os.makedirs(OUT_DIR, exist_ok=True)
     zones_fc = {
         "type": "FeatureCollection",
         "_note": "SEED layer: OSM coastline geometry + study-reported per-zone "
-                 "rates. Replaced by computed CoastSat+DSAS transects when the "
-                 "GEE pipeline is run. See docs/research/chennai-coast-paper/.",
+        "rates. Replaced by computed CoastSat+DSAS transects when the "
+        "GEE pipeline is run. See docs/research/chennai-coast-paper/.",
         "_source": STUDY_CITE,
         "features": zone_features,
     }
@@ -327,8 +364,10 @@ def main():
         "_source": STUDY_CITE,
         "features": hotspot_features,
     }
-    for name, fc in [("chennai-coastal-zones", zones_fc),
-                     ("chennai-coastal-hotspots", hotspots_fc)]:
+    for name, fc in [
+        ("chennai-coastal-zones", zones_fc),
+        ("chennai-coastal-hotspots", hotspots_fc),
+    ]:
         path = os.path.join(OUT_DIR, f"{name}.geojson")
         with open(path, "w") as fh:
             json.dump(fc, fh, separators=(",", ":"))

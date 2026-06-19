@@ -2,7 +2,7 @@
 
 **An independent, transparent reproduction and 2026 extension of a published shoreline-change study**
 
-Version 1 · neervazhvu · June 2026
+Version 1 - Neer Vazhvu - June 2026
 
 ---
 
@@ -16,12 +16,14 @@ and ArcGIS DSAS, we use a Modified Normalised Difference Water Index (MNDWI)
 sampled along shore-normal transects in Google Earth Engine, followed by a
 weighted-linear-regression rate per transect. The two independent methods agree
 on the spatial pattern and the sign of change at every zone: the Ennore-Kattupalli
-port sector (Zone V) is by far the most erosive (our transect minimum -23.6 m/yr
-vs the study's -21.3 m/yr down-drift of Ennore), the Adyar/Cooum and Chennai Port
-stretches accrete, and the southern turtle-nesting sector is stable. Adding 2025
-and 2026 lets us ask a question the original window could not: **of 374 eroding
-transects, 247 (about 66%) are eroding faster in 2015-2026 than they were in
-1990-2010 - the erosion is accelerating.** All code and outputs are open; the
+port sector (Zone V) erodes on its down-drift flanks (a clean run of -10 to -18
+m/yr accelerating recently, consistent with the study's -21.3 m/yr at Ennore; the
+most extreme port-adjacent spots are flagged low-confidence rather than trusted),
+the Adyar/Cooum and Chennai Port stretches accrete, and the southern
+turtle-nesting sector is stable. Adding 2025 and 2026 lets us ask a question the
+original window could not: **of the eroding high-confidence transects, about 72%
+are eroding faster in 2015-2026 than they were in 1990-2010 - the erosion is
+accelerating.** All code and outputs are open; the
 method is offered as independent corroboration and a live monitoring layer, not
 as a replacement for the peer-reviewed study.
 
@@ -59,6 +61,11 @@ north, divided into the study's six along-shore zones:
 | IV | Kasimedu groyne field | 12.2 | Engineered; local accretion, down-drift starvation |
 | V | Ennore - Kattupalli ports | 24.6 | Most volatile; severe down-drift erosion |
 | VI | Pulicat lagoon | 15.6 | Sensitive lagoon/sanctuary; highly variable |
+
+We also extend our own measurement ~22 km **south of the study**, along the East
+Coast Road from Uthandi down to **Mahabalipuram** (zone "S", greater-Chennai
+coast). That stretch has no published study rate, so it carries our transect
+measurement only and is labelled as beyond the study.
 
 ## 3. Data
 
@@ -161,35 +168,40 @@ reader never mistakes a cited figure for an independent one.
 
 ## 5. Validation against the published study
 
+Computed over high-confidence transects:
+
 | Signal | Study (1990-2024) | Our run (1990-2026) |
 |--------|-------------------|---------------------|
-| Overall direction | erosion-dominant, 58.65% eroding, mean -1.89 m/yr | erosion-dominant, 42.8% eroding vs 26.4% accreting, net mean -0.37 m/yr |
-| Zone V (Ennore/Kattupalli) | most erosive; Ennore down-drift -21.3, Kattupalli -16 m/yr | most erosive; zone min **-23.6**, max +16.3, mean -1.33 m/yr |
-| Zone II/III accretion | Adyar/Cooum +7.78 m/yr; Chennai Port land gain | Zone II mean +0.10 (max +6.8), Zone III mean +1.60 (max +6.6) |
-| Zone I | marginal / stable | mean -0.64 (stable) |
+| Overall direction | erosion-dominant, 58.65% eroding, mean -1.89 m/yr | erosion-dominant, 41% eroding vs 24% accreting |
+| Zone V (Ennore/Kattupalli) | most erosive; Ennore down-drift -21.3, Kattupalli -16 m/yr | down-drift erosion; cleanest run -10 to -18 m/yr (the most extreme port-adjacent spots flagged low-confidence) |
+| Zone II/III accretion | Adyar/Cooum +7.78 m/yr; Chennai Port land gain | Chennai Port mean +1.6 (max +6.6), Adyar/Cooum positive |
+| Zone I | marginal / stable | near-stable |
 
 The spatial pattern and signs match. Our absolute magnitudes are smaller for two
 understood reasons: (1) we use a fixed MNDWI = 0 threshold with no tidal
 correction at 20 m sampling, where CoastSat extracts a sub-pixel waterline and
 corrects for tide - this damps and adds noise to individual rates; and (2) the
 study's per-zone figure is the mean over *eroding* transects, while our net mean
-mixes erosion and accretion. The agreement on pattern, sign, and the location and
-magnitude of the extremes is the substantive result.
+mixes erosion and accretion. Notably, the study's most extreme Ennore/Kattupalli
+figures fall exactly where our method is least reliable (port + creek ambiguity),
+so those transects are flagged low-confidence rather than trusted. The agreement
+on pattern, sign, and the *clean* down-drift erosion run is the substantive result.
 
 ## 6. Results
 
-905 of 972 transects had at least three usable epochs (790 had all ten). Headline
-findings:
+1,137 transects (of ~1,200, Mahabalipuram to Pulicat) had at least three usable
+epochs. Headline findings:
 
-- **Where:** erosion concentrates in the port-dominated north (Zone V) and on the
-  northern Pulicat shore; accretion concentrates at the Adyar/Cooum mouths and
-  behind the Chennai Port breakwaters - the classic engineered-coast signature.
-- **Acceleration:** of 374 eroding transects with both split-period rates,
-  **247 (~66%) are eroding faster in 2015-2026 than in 1990-2010.** The erosion is
+- **Where:** erosion concentrates on the down-drift (north) flanks of the Ennore
+  and Kattupalli ports and along the northern Pulicat shore; accretion concentrates
+  at the Adyar/Cooum mouths and behind the Chennai Port breakwaters - the classic
+  engineered-coast signature.
+- **Acceleration:** of the eroding high-confidence transects with both split-period
+  rates, **~72% are eroding faster in 2015-2026 than in 1990-2010.** The erosion is
   not merely persistent; it is intensifying.
-- **Currency:** extending to 2026 sharpened Zone V's worst transect to -23.6 m/yr,
-  consistent with the study's -21.3 m/yr and with continued down-drift starvation
-  north of the ports.
+- **Currency:** extending to 2026 keeps the clean Ennore/Kattupalli down-drift
+  erosion in the -10 to -18 m/yr range, consistent with the study's -21.3 m/yr and
+  with continued down-drift sediment starvation north of the ports.
 
 ## 7. Limitations
 
@@ -197,6 +209,18 @@ findings:
   the bias small but not zero; individual transect rates are noisier than
   sub-pixel CoastSat. We report pattern and extremes, not precise per-transect
   magnitudes. *Planned v2: per-composite Otsu threshold and a tidal-stage filter.*
+- **Unreliable transects flagged, not trusted.** A transect carries a
+  `confidence` flag judged on its **recent (Sentinel-2-era, >= 2015) trajectory**
+  - "low" when the recent positions scatter > 30 m RMS about their trend, take an
+  isolated > 70 m/yr jump (a feature-snap, e.g. the water-edge catching an inner
+  creek/lagoon bank), or it has too few epochs (about 8% of transects). We score
+  the *recent* half deliberately: the early Landsat-5 years are noisy even on
+  genuinely eroding shorelines, so scoring the full series wrongly flagged real
+  fast-erosion stretches (the open coast north of Ennore) as unreliable.
+  Low-confidence transects are dimmed, excluded from the headline statistics, and
+  never pre-selected; a `showcase` flag marks one clean, strongly + currently
+  eroding transect for that. *Planned v2: a robust (Theil-Sen) per-transect slope
+  so a single bad epoch can't drag the rate.*
 - **Annual dry-season snapshot.** One composite per year smooths seasonal
   beach cycling but cannot resolve sub-annual change.
 - **Sensor heterogeneity.** Landsat (30 m) and Sentinel-2 (10 m) differ in

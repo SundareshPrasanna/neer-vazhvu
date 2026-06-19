@@ -18,11 +18,12 @@ export type CoastalTrend = "erosion" | "accretion" | "mixed" | "stable";
 export type CoastalSource = "study-reported" | "computed";
 
 export interface CoastalZoneProperties {
-  zone_id: string; // "I" .. "VI"
+  zone_id: string; // "S" (extension) or "I" .. "VI" (study)
   zone_name: string;
   length_km: number;
-  /** Study per-zone mean erosion rate (m/yr, positive magnitude). */
-  mean_erosion_m_yr: number;
+  /** Study per-zone mean erosion rate (m/yr). null for the "S" extension,
+   *  which is beyond the study and has no published rate. */
+  mean_erosion_m_yr: number | null;
   dominant_trend: CoastalTrend;
   summary: string;
   source: CoastalSource;
@@ -59,6 +60,11 @@ export interface CoastalTransectProperties {
   /** WLR over the early half (1990-2010) and recent half (2015-2026), m/yr. */
   early_rate_m_yr: number | null;
   recent_rate_m_yr: number | null;
+  /** "low" where the shoreline is ambiguous (river/creek mouth, lagoon) and the
+   *  per-epoch waterline can snap to a different feature - dimmed, never led with. */
+  confidence: "high" | "low";
+  /** true on the one clean, strong eroder the UI pre-selects on load. */
+  showcase?: boolean;
   source: "computed";
   period: string;
 }
@@ -142,8 +148,6 @@ export function rateColor(rate: number): string {
   return "#1e3a8a"; // blue-900
 }
 
-export type CoastalViewMode = "zones" | "transects";
-
 /** Aggregate the map computes from the computed-transect layer for the header. */
 export interface CoastalSummary {
   total: number;
@@ -151,4 +155,7 @@ export interface CoastalSummary {
   erodingWithSplit: number;
   acceleratingErosion: number;
   period: string;
+  /** Clean, strongly-eroding transect pre-selected on load (the pipeline's
+   *  showcase pick, or the worst high-confidence as fallback). */
+  featured: CoastalTransectProperties | null;
 }

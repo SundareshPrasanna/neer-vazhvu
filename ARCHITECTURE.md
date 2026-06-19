@@ -46,7 +46,7 @@ graph TB
         WB["Water Bodies + Restoration /water-bodies"]
         Rivers["Rivers /rivers"]
         Flood["Flood Risk /flood-risk"]
-        Coast["Coast / shoreline change /coastal (Chennai)"]
+        Coast["Coast / shoreline change /shoreline (Chennai)"]
         About["About /about"]
     end
 
@@ -497,7 +497,7 @@ A terrain-derived, clickable area-of-influence layer for every lake/tank, live f
 
 **Serving:** the clickable lake layer is one static GeoJSON (`{city}-cascade-lakes.geojson`, all panel stats embedded). On click, [src/app/api/cascade/[cityId]/catchment/route.ts](src/app/api/cascade/[cityId]/catchment/route.ts) returns `{ catchment, basin, streams, downstream }` for that `osm_id` (module-scope cached). **Frontend** [src/components/cascade/catchment-atlas.tsx](src/components/cascade/catchment-atlas.tsx) is a `/water-bodies` view mode (persisted via `?mode=catchments`, carried across city switches): one map, click-to-emphasise (own catchment solid orange, inherited basin dashed amber, streams Strahler-graded blue, downstream flow dotted violet), with a side panel showing the own/received/total hierarchy, named clickable upstream/downstream lists, the named downstream river, and rooftop-harvest potential. The panel deep-links to the about-page methodology (`#catchment-methodology`).
 
-### Coastal Shoreline-Change (`/coastal`, Chennai)
+### Coastal Shoreline-Change (`/shoreline`, Chennai)
 
 A two-layer map of erosion/accretion along the 86 km Chennai-Ennore-Pulicat coast (1990-2024), keyed to Anagha, Singh & Frappart (2026, *Environmental Challenges*). Unlike the daily/weekly pipelines this is an **on-demand build**, not a cron job. Every feature carries a `source` field (`study-reported` vs `computed`) so the UI labels provenance honestly.
 
@@ -521,7 +521,7 @@ graph TD
     Layout --> WB["Water Bodies + Restoration Page"]
     Layout --> RV["Rivers Page"]
     Layout --> FR["Flood Risk Page"]
-    Layout --> CO["Coast / Shoreline Page /coastal"]
+    Layout --> CO["Coast / Shoreline Page /shoreline"]
     Layout --> About["About Page"]
 
     subgraph Dashboard["Dashboard Page /"]

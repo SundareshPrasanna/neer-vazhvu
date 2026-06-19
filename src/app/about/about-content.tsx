@@ -536,26 +536,24 @@ export function AboutContent({
             </p>
           </SubSection>
 
-          {/* 2.5b Coast & shoreline change */}
-          <SubSection id="page-coastal" title="Coast & shoreline change">
+          {/* 2.5b Shoreline change */}
+          <SubSection id="page-coastal" title="Shoreline change">
             <p className="text-slate-600 dark:text-slate-400">
-              The <span className="font-mono text-xs">/coastal</span> page maps shoreline erosion and
-              accretion along the 86 km Chennai-Ennore-Pulicat coast (1990-2024). It has two layers. The{" "}
-              <span className="font-semibold">Study zones</span> view shows the six zones and named port
-              hotspots with the published per-zone rates from Anagha, Singh &amp; Frappart (2026,{" "}
-              <span className="italic">Environmental Challenges</span>) drawn over the OpenStreetMap
-              coastline - a cited overview, not our own measurement. The{" "}
-              <span className="font-semibold">Our transects</span> view is neervazhvu&apos;s own
-              reproduction: an MNDWI water index computed from dry-season Landsat 5/7/8 and Sentinel-2
-              composites (ten epochs, 1990-2026 - extending the study&apos;s 2024 window with current
-              Sentinel-2) in Google Earth Engine, sampled along 972 shore-normal 100 m transects, with a
-              DSAS-equivalent weighted linear regression per transect plus a per-transect movement-over-time
-              chart and an early-vs-recent acceleration check. The two methods
-              agree on pattern and direction (Zone V around the Ennore and Kattupalli ports is the most
-              eroded, the Adyar/Cooum and Chennai Port stretches accrete); our absolute rates run lower
+              The <span className="font-mono text-xs">/shoreline</span> page maps shoreline erosion and
+              accretion along the 86 km Chennai-Ennore-Pulicat coast. Its primary layer is{" "}
+              <span className="font-semibold">Neer Vazhvu&apos;s own measurement</span>: an MNDWI water index
+              computed from dry-season Landsat 5/7/8 and Sentinel-2 composites (ten epochs, 1990-2026 -
+              extending the study&apos;s 2024 window with current Sentinel-2) in Google Earth Engine, sampled
+              along 972 shore-normal 100 m transects, with a DSAS-equivalent weighted linear regression per
+              transect plus a per-transect movement-over-time chart and an early-vs-recent acceleration check.
+              The six study zones and named port hotspots from Anagha, Singh &amp; Frappart (2026,{" "}
+              <span className="italic">Environmental Challenges</span>) are drawn as faint context over the
+              same map - the study validates our measurement rather than sitting in a separate view. The two
+              methods agree on pattern and direction (Zone V around the Ennore and Kattupalli ports is the
+              most eroded, the Adyar/Cooum and Chennai Port stretches accrete); our absolute rates run lower
               than the paper&apos;s because we use a fixed MNDWI threshold without tidal correction, so we
-              present it as independent corroboration rather than a replica. Each layer is tagged with its
-              provenance in the data itself.
+              present it as independent corroboration rather than a replica. Every feature is tagged with its
+              provenance (our measurement vs study-reported) in the data itself.
             </p>
           </SubSection>
 
@@ -893,13 +891,13 @@ export function AboutContent({
             <DataSource
               name="Anagha, Singh & Frappart (2026), Environmental Challenges"
               url="https://www.sciencedirect.com/science/article/pii/S2667010026001083"
-              description="Peer-reviewed shoreline-change + seawater-intrusion study of the Chennai coast (1990-2024). Source of the per-zone rates and named port hotspots on the /coastal Study-zones view and the coastal facts."
+              description="Peer-reviewed shoreline-change + seawater-intrusion study of the Chennai coast (1990-2024). Source of the per-zone rates and named port hotspots that validate the /shoreline map, and of the coastal facts."
               frequency={t("about.freq_static")}
             />
             <DataSource
               name="Landsat 5/7/8 (via Earth Engine)"
               url="https://developers.google.com/earth-engine/datasets/catalog/landsat"
-              description="USGS Landsat surface reflectance, with Sentinel-2, drives our own MNDWI shoreline transects on the /coastal Our-transects view (ten epochs, 1990-2026)."
+              description="USGS Landsat surface reflectance, with Sentinel-2, drives our own MNDWI shoreline transects on the /shoreline map (ten epochs, 1990-2026)."
               frequency={t("about.freq_static")}
             />
 

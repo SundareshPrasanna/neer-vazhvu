@@ -41,7 +41,8 @@ function SourceFooter({ label, url }: { label: string; url: string }) {
       </p>
       <p>
         Geometry: OpenStreetMap coastline; rates are the study&apos;s published figures (1990-2024).
-        For our own per-transect measurement, switch to the &ldquo;Our transects&rdquo; view.
+        The coloured dots on the map are our own per-transect measurement - click one for its rate
+        and shoreline movement over time.
       </p>
     </div>
   );
@@ -64,21 +65,29 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
         </div>
 
         <div className="flex items-center gap-2 mb-5">
-          <span
-            className="text-xs font-semibold px-2 py-0.5 rounded-full text-white"
-            style={{ backgroundColor: color }}
-          >
-            {TREND_LABELS[z.dominant_trend]}
-          </span>
+          {z.mean_erosion_m_yr != null && (
+            <span
+              className="text-xs font-semibold px-2 py-0.5 rounded-full text-white"
+              style={{ backgroundColor: color }}
+            >
+              {TREND_LABELS[z.dominant_trend]}
+            </span>
+          )}
           <span className="text-xs text-slate-500">{z.length_km} km of coast</span>
         </div>
 
-        <div className="mb-5">
-          <div className="text-4xl font-bold" style={{ color }}>
-            {z.mean_erosion_m_yr} <span className="text-lg font-medium text-slate-400">m/yr</span>
+        {z.mean_erosion_m_yr != null ? (
+          <div className="mb-5">
+            <div className="text-4xl font-bold" style={{ color }}>
+              {z.mean_erosion_m_yr} <span className="text-lg font-medium text-slate-400">m/yr</span>
+            </div>
+            <div className="text-sm text-slate-500">Study mean erosion rate (1990-2024)</div>
           </div>
-          <div className="text-sm text-slate-500">Mean erosion rate (1990-2024)</div>
-        </div>
+        ) : (
+          <div className="mb-5 text-sm font-medium text-slate-500">
+            Beyond the study area - see our transect measurements along this stretch.
+          </div>
+        )}
 
         <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{z.summary}</p>
 
@@ -95,7 +104,7 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
         <div className="flex items-start justify-between mb-4">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Transect {t.transect_id} · Zone {t.zone_id}
+              Transect {t.transect_id} - Zone {t.zone_id}
             </div>
             <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">
               {t.trend === "erosion" ? "Erosion" : t.trend === "accretion" ? "Accretion" : "Stable"}
@@ -103,6 +112,15 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
           </div>
           <CloseButton onClose={onClose} />
         </div>
+
+        {t.confidence === "low" && (
+          <div className="mb-4 rounded-lg border border-amber-300 dark:border-amber-700/60 bg-amber-50 dark:bg-amber-900/20 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+            <span className="font-semibold">Low confidence.</span> This transect&apos;s recent year-to-year
+            positions scatter or jump more than our reliability threshold, so the magnitude may be unstable.
+            That can happen where the shoreline is genuinely ambiguous (near a river/creek mouth or the
+            lagoon) or where cloud/imagery noise affected the readings. Treat the magnitude with caution.
+          </div>
+        )}
 
         {(() => {
           const accel = accelStatus(t.early_rate_m_yr, t.recent_rate_m_yr);
@@ -122,17 +140,42 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
                   {t.rate_m_yr} <span className="text-lg font-medium text-slate-400">m/yr</span>
                 </div>
                 <div className="text-sm text-slate-500">
-                  Weighted linear regression of shoreline position ({t.period ?? "1990-2026"})
+                  Long-term rate ({t.period ?? "1990-2026"}, weighted linear regression)
                 </div>
               </div>
 
-              {accel !== "unknown" && (
-                <span
-                  className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full text-white mb-4"
-                  style={{ backgroundColor: accelColor }}
-                >
-                  {ACCEL_LABELS[accel]}
-                </span>
+              {/* Recent pace, surfaced prominently: a full-period average can
+                  badly understate an accelerating shore (e.g. -23 long-term
+                  while -47 recently). */}
+              {t.recent_rate_m_yr != null ? (
+                <div className="mb-4 flex flex-wrap items-center gap-2">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5">
+                    <div className="text-[10px] uppercase tracking-wide text-slate-400">
+                      Recent pace (2015-2026)
+                    </div>
+                    <div className="text-2xl font-bold" style={{ color: rateColor(t.recent_rate_m_yr) }}>
+                      {t.recent_rate_m_yr > 0 ? "+" : ""}
+                      {t.recent_rate_m_yr} <span className="text-sm font-medium text-slate-400">m/yr</span>
+                    </div>
+                  </div>
+                  {accel !== "unknown" && (
+                    <span
+                      className="text-xs font-semibold px-2 py-0.5 rounded-full text-white"
+                      style={{ backgroundColor: accelColor }}
+                    >
+                      {ACCEL_LABELS[accel]}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                accel !== "unknown" && (
+                  <span
+                    className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full text-white mb-4"
+                    style={{ backgroundColor: accelColor }}
+                  >
+                    {ACCEL_LABELS[accel]}
+                  </span>
+                )
               )}
 
               {t.series && t.series.length >= 2 && (
@@ -154,15 +197,6 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
                     <dd className="font-semibold text-slate-700 dark:text-slate-200">
                       {t.early_rate_m_yr > 0 ? "+" : ""}
                       {t.early_rate_m_yr} m/yr
-                    </dd>
-                  </div>
-                )}
-                {t.recent_rate_m_yr != null && (
-                  <div>
-                    <dt className="text-xs text-slate-400">Recent rate (2015-2026)</dt>
-                    <dd className="font-semibold text-slate-700 dark:text-slate-200">
-                      {t.recent_rate_m_yr > 0 ? "+" : ""}
-                      {t.recent_rate_m_yr} m/yr
                     </dd>
                   </div>
                 )}
@@ -189,7 +223,7 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
 
         <div className="border-t border-slate-100 dark:border-slate-800 pt-3 mt-5 text-xs text-slate-400 space-y-1">
           <p>
-            Computed by neervazhvu: MNDWI water index on Landsat 5/7/8 + Sentinel-2 via Google Earth
+            Computed by Neer Vazhvu: MNDWI water index on Landsat 5/7/8 + Sentinel-2 via Google Earth
             Engine, sampled along this 100 m transect.
           </p>
           <p>
@@ -208,7 +242,7 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
       <div className="flex items-start justify-between mb-4">
         <div>
           <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-            Hotspot · Zone {h.zone_id}
+            Hotspot - Zone {h.zone_id}
           </div>
           <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">{h.name}</h3>
         </div>

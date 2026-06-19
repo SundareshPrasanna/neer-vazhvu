@@ -67,7 +67,7 @@ export type TranslationEntry = { en: string } & Partial<
 
 export const translations: Record<string, TranslationEntry> = {
   // ── City header badges (state pill + preview pill) ───────────────────────
-  "city.preview_badge":     { en: "PREVIEW · waiting for first daily ingestion", ta: "முன்னோட்டம் · முதல் தினசரி ஏற்றத்திற்காக காத்திருக்கிறது", kn: "ಮುನ್ನೋಟ · ಮೊದಲ ದೈನಂದಿನ ದತ್ತಾಂಶ ಪ್ರವೇಶಕ್ಕಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ" },
+  "city.preview_badge":     { en: "PREVIEW - waiting for first daily ingestion", ta: "முன்னோட்டம் - முதல் தினசரி ஏற்றத்திற்காக காத்திருக்கிறது", kn: "ಮುನ್ನೋಟ - ಮೊದಲ ದೈನಂದಿನ ದತ್ತಾಂಶ ಪ್ರವೇಶಕ್ಕಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ" },
 
   // ── Facts page (banner + locale) ─────────────────────────────────────────
   "facts.origins_banner_before":  { en: "Historical milestones (Day Zero, the 2015 floods, and similar narrative anchors) are covered as story prose in {city}'s ", ta: "வரலாற்று மைல்கற்கள் (Day Zero, 2015 வெள்ளம், மற்றும் ஒத்த கதைச் சேரிகள்) {city}-வின் கதை உரையில் உள்ளடக்கப்பட்டுள்ளன ", kn: "ಐತಿಹಾಸಿಕ ಮೈಲಿಗಲ್ಲುಗಳು (Day Zero, 2015 ಪ್ರವಾಹಗಳು, ಮತ್ತು ಸಮಾನ ಕಥನ ಆಧಾರಗಳು) {city} ನ ಕಥನ ಗದ್ಯದಲ್ಲಿ ಆವರಿಸಲಾಗಿದೆ " },
@@ -155,8 +155,8 @@ export const translations: Record<string, TranslationEntry> = {
   "bpd.origins.p1":         { en: "A 4-chapter long-read covers the Kempegowda founding (1537) → Cantonment + Hesaraghatta (1882 / 1894) → Cauvery stages (1974 → 2024) → today's parallel water economy (tankers + over-extracted borewells + IISc-flagged stress wards). 11 named sources anchor the narrative including Nagendra's Nature in the City, the JICA Phase 3 Final Report, IISc Groundwater Outlook, NGT Forward Foundation v Karnataka, and Forward Foundation / Friends of Lakes citizen-group accounts. Replaces a Chennai-style runtime LLM CityStory with a hand-edited historical narrative.", ta: "4-அத்தியாய நீளக் கட்டுரை கெம்பேகௌடா நிறுவல் (1537) → Cantonment + ஹேசராகட்டா (1882 / 1894) → காவிரி நிலைகள் (1974 → 2024) → இன்றைய இணை நீர் பொருளாதாரம் (டேங்கர்கள் + அதிக-எடுக்கப்பட்ட ஆழ்துளைக் கிணறுகள் + IISc-அடையாளம் காட்டப்பட்ட அழுத்த வார்டுகள்) ஆகியவற்றை உள்ளடக்குகிறது.", kn: "4-ಅಧ್ಯಾಯ ದೀರ್ಘ-ಓದು ಕೆಂಪೇಗೌಡ ಸ್ಥಾಪನೆ (1537) → ಕ್ಯಾಂಟೋನ್‌ಮೆಂಟ್ + ಹೆಸರಘಟ್ಟ (1882 / 1894) → ಕಾವೇರಿ ಹಂತಗಳು (1974 → 2024) → ಇಂದಿನ ಸಮಾನಾಂತರ ಜಲ ಆರ್ಥಿಕತೆ (ಟ್ಯಾಂಕರ್‌ಗಳು + ಅತಿ-ಎತ್ತಲ್ಪಟ್ಟ ಬೋರ್‌ವೆಲ್‌ಗಳು + IISc-ಗುರುತಿಸಿದ ಒತ್ತಡ ವಾರ್ಡ್‌ಗಳು) ಅನ್ನು ಒಳಗೊಂಡಿದೆ. ಕಥನವನ್ನು ನಾಗೇಂದ್ರ ಅವರ Nature in the City, JICA Phase 3 ಅಂತಿಮ ವರದಿ, IISc ಅಂತರ್ಜಲ ಔಟ್‌ಲುಕ್, NGT Forward Foundation v ಕರ್ನಾಟಕ, ಮತ್ತು Forward Foundation / Friends of Lakes ನಾಗರಿಕ-ಗುಂಪು ಖಾತೆಗಳು ಸೇರಿದಂತೆ 11 ಹೆಸರಿಸಲಾದ ಮೂಲಗಳು ಆಧರಿಸಿವೆ." },
 
   // ── Flood-risk Bangalore page ────────────────────────────────────────────
-  "frb.scope_label":          { en: "{city} · Flood risk", ta: "{city} · வெள்ள ஆபத்து", kn: "{city} · ಪ್ರವಾಹ ಅಪಾಯ" },
-  "frb.summary_counts":       { en: "399 hotspots · 163 primary drains · 870 secondary drains · KSRSAC via OpenCity (Nov 2025)", ta: "399 ஹாட்ஸ்பாட்கள் · 163 முதன்மை சாலைகள் · 870 இரண்டாம்நிலை சாலைகள் · OpenCity வழியாக KSRSAC (நவ 2025)", kn: "399 ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳು · 163 ಪ್ರಾಥಮಿಕ ಚರಂಡಿಗಳು · 870 ದ್ವಿತೀಯ ಚರಂಡಿಗಳು · OpenCity ಮೂಲಕ KSRSAC (ನವ 2025)" },
+  "frb.scope_label":          { en: "{city} - Flood risk", ta: "{city} - வெள்ள ஆபத்து", kn: "{city} - ಪ್ರವಾಹ ಅಪಾಯ" },
+  "frb.summary_counts":       { en: "399 hotspots - 163 primary drains - 870 secondary drains - KSRSAC via OpenCity (Nov 2025)", ta: "399 ஹாட்ஸ்பாட்கள் - 163 முதன்மை சாலைகள் - 870 இரண்டாம்நிலை சாலைகள் - OpenCity வழியாக KSRSAC (நவ 2025)", kn: "399 ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳು - 163 ಪ್ರಾಥಮಿಕ ಚರಂಡಿಗಳು - 870 ದ್ವಿತೀಯ ಚರಂಡಿಗಳು - OpenCity ಮೂಲಕ KSRSAC (ನವ 2025)" },
   "frb.loading_map":          { en: "Loading map…", ta: "வரைபடம் ஏற்றப்படுகிறது…", kn: "ನಕ್ಷೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ…" },
   "frb.layers":               { en: "Layers", ta: "அடுக்குகள்", kn: "ಲೇಯರ್‌ಗಳು" },
   "frb.primary_drains":       { en: "Primary drains (163)", ta: "முதன்மை சாலைகள் (163)", kn: "ಪ್ರಾಥಮಿಕ ಚರಂಡಿಗಳು (163)" },
@@ -233,7 +233,7 @@ export const translations: Record<string, TranslationEntry> = {
   "iisc_map.error":                 { en: "Could not load IISc stress-ward dataset.", ta: "IISc அழுத்த-வார்டு தரவை ஏற்ற முடியவில்லை.", kn: "IISc ಒತ್ತಡ-ವಾರ್ಡ್ ದತ್ತಾಂಶವನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ." },
   "iisc_map.heading":               { en: "IISc's 80 critically-stressed BBMP wards", ta: "IISc-ன் 80 மிக-அழுத்தமான BBMP வார்டுகள்", kn: "IISc ಯ 80 ಗಂಭೀರವಾಗಿ-ಒತ್ತಡದ BBMP ವಾರ್ಡ್‌ಗಳು" },
   "iisc_map.intro":                 { en: "From IISc's Groundwater Outlook of Bengaluru City - Interim Report II (submitted {date}, projecting {target}). Table 1 of the report lists 80 critical BBMP wards (legacy 198-ward grid) plus 110 peripheral villages. The April-2025 IISc summary that media coverage cites (\"65 wards\") is a later narrower revision; the structural 80-ward list below is the spatial baseline.", ta: "IISc-ன் பெங்களூரு நகரின் நிலத்தடி நீர் கண்காணிப்பு - இடைக்கால அறிக்கை II ({date} சமர்ப்பிக்கப்பட்டது, {target} திட்டமிடுகிறது).", kn: "IISc ಯ ಬೆಂಗಳೂರು ನಗರ ಅಂತರ್ಜಲ ಔಟ್‌ಲುಕ್ - ಮಧ್ಯಂತರ ವರದಿ II ({date} ಸಲ್ಲಿಸಲಾಗಿದೆ, {target} ಪ್ರಕ್ಷೇಪಿಸುತ್ತಿದೆ). ವರದಿಯ ಟೇಬಲ್ 1 80 ನಿರ್ಣಾಯಕ BBMP ವಾರ್ಡ್‌ಗಳನ್ನು ಮತ್ತು 110 ಬಾಹ್ಯ ಗ್ರಾಮಗಳನ್ನು ಪಟ್ಟಿ ಮಾಡುತ್ತದೆ." },
-  "iisc_map.predicted":             { en: "Predicted April-2025 water-level drops from December 2024 baseline: Core Area 5 m · CMC Area 10-15 m · 110 surrounding villages 20-25 m.", ta: "டிசம்பர் 2024 அடிப்படையில் இருந்து ஏப்ரல்-2025 கணிக்கப்பட்ட நீர்-நிலை வீழ்ச்சிகள்: முக்கிய பகுதி 5 மீ · CMC பகுதி 10-15 மீ · 110 சுற்றியுள்ள கிராமங்கள் 20-25 மீ.", kn: "ಡಿಸೆಂಬರ್ 2024 ಆಧಾರದಿಂದ ಏಪ್ರಿಲ್-2025 ಪ್ರಕ್ಷೇಪಿತ ನೀರಿನ-ಮಟ್ಟ ಇಳಿತಗಳು: ಕೋರ್ ಪ್ರದೇಶ 5 ಮೀ · CMC ಪ್ರದೇಶ 10-15 ಮೀ · 110 ಸುತ್ತಲಿನ ಗ್ರಾಮಗಳು 20-25 ಮೀ." },
+  "iisc_map.predicted":             { en: "Predicted April-2025 water-level drops from December 2024 baseline: Core Area 5 m - CMC Area 10-15 m - 110 surrounding villages 20-25 m.", ta: "டிசம்பர் 2024 அடிப்படையில் இருந்து ஏப்ரல்-2025 கணிக்கப்பட்ட நீர்-நிலை வீழ்ச்சிகள்: முக்கிய பகுதி 5 மீ - CMC பகுதி 10-15 மீ - 110 சுற்றியுள்ள கிராமங்கள் 20-25 மீ.", kn: "ಡಿಸೆಂಬರ್ 2024 ಆಧಾರದಿಂದ ಏಪ್ರಿಲ್-2025 ಪ್ರಕ್ಷೇಪಿತ ನೀರಿನ-ಮಟ್ಟ ಇಳಿತಗಳು: ಕೋರ್ ಪ್ರದೇಶ 5 ಮೀ - CMC ಪ್ರದೇಶ 10-15 ಮೀ - 110 ಸುತ್ತಲಿನ ಗ್ರಾಮಗಳು 20-25 ಮೀ." },
   "iisc_map.legend_title":          { en: "Legend", ta: "வரைபட விளக்கம்", kn: "ದಂತಕಥೆ" },
   "iisc_map.legend.two_plus":       { en: "GBA ward with 2+ stress centroids", ta: "2+ அழுத்த மையங்கள் கொண்ட GBA வார்டு", kn: "2+ ಒತ್ತಡ ಕೇಂದ್ರಗಳಿರುವ GBA ವಾರ್ಡ್" },
   "iisc_map.legend.one":            { en: "GBA ward with 1 stress centroid", ta: "1 அழுத்த மையம் கொண்ட GBA வார்டு", kn: "1 ಒತ್ತಡ ಕೇಂದ್ರವಿರುವ GBA ವಾರ್ಡ್" },
@@ -255,7 +255,7 @@ export const translations: Record<string, TranslationEntry> = {
   "briefing.sentence.tail.monsoon_recharge": { en: "Recharge season also coincides with the BBMP foam-fire window - Bellandur's downstream weir typically produces surfactant foam events in the first heavy rains after a dry stretch (Feb 2017 fire was the canonical event).", ta: "நிரப்புதல் காலம் BBMP நுரை-தீ சாளரத்துடன் ஒத்துவருகிறது - பெல்லந்தூரின் கீழ்நிலை வீர் பொதுவாக ஒரு வறட்சி நீட்டிப்புக்குப் பிறகான முதல் கனமழைகளில் சர்பேக்டெண்ட் நுரை நிகழ்வுகளை உருவாக்கும் (பிப் 2017 தீ சாதாரண நிகழ்வாக இருந்தது).", kn: "ಮರುಪೂರಣ ಋತು BBMP ಫೋಮ್-ಬೆಂಕಿ ಅವಧಿಯೊಂದಿಗೆ ಸಹ ಹೊಂದಾಣಿಕೆಯಾಗುತ್ತದೆ - ಬೆಲ್ಲಂದೂರ್‌ನ ಕೆಳಭಾಗದ ಒಡ್ಡು ಸಾಮಾನ್ಯವಾಗಿ ಒಂದು ಒಣ ವಿಸ್ತಾರದ ನಂತರ ಮೊದಲ ಭಾರೀ ಮಳೆಯಲ್ಲಿ ಸರ್ಫ್ಯಾಕ್ಟಂಟ್ ಫೋಮ್ ಘಟನೆಗಳನ್ನು ಉಂಟುಮಾಡುತ್ತದೆ (ಫೆಬ್ 2017 ಬೆಂಕಿ ಪ್ರಾಮಾಣಿಕ ಘಟನೆಯಾಗಿತ್ತು)." },
   "briefing.sentence.tail.post_monsoon":     { en: "Even at full upstream storage, BWSSB's ~{nrw}% non-revenue water (JICA Phase 3) means roughly half of what's pumped 95 km from T.K. Halli is lost between WTP and household meter. That structural loss is the next data unlock when BWSSB publishes NRW telemetry.", ta: "முழு மேற்பகுதி சேமிப்பிலும், BWSSB-ன் ~{nrw}% வருவாய் இல்லாத நீர் (JICA கட்டம் 3) என்பது டி.கே. ஹல்லியில் இருந்து 95 கி.மீ பம்ப் செய்யப்படுவதில் கிட்டத்தட்ட பாதி WTP மற்றும் வீட்டு மீட்டருக்கு இடையில் இழக்கப்படுகிறது என்பதாகும்.", kn: "ಪೂರ್ಣ ಮೇಲ್ಭಾಗ ಸಂಗ್ರಹದಲ್ಲೂ, BWSSB ಯ ~{nrw}% ಆದಾಯವಲ್ಲದ ನೀರು (JICA Phase 3) ಎಂದರೆ T.K. ಹಳ್ಳಿಯಿಂದ 95 ಕಿಮೀ ಪಂಪ್ ಮಾಡಿದ್ದರಲ್ಲಿ ಸುಮಾರು ಅರ್ಧ WTP ಮತ್ತು ಮನೆಯ ಮೀಟರ್ ನಡುವೆ ಕಳೆದುಹೋಗುತ್ತದೆ. BWSSB NRW ಟೆಲಿಮೆಟ್ರಿ ಪ್ರಕಟಿಸಿದಾಗ ಆ ಕಟ್ಟಡ ನಷ್ಟ ಮುಂದಿನ ದತ್ತಾಂಶ ಅನ್‌ಲಾಕ್." },
   "briefing.sentence.tail.steady_drawdown":  { en: "Mid-cycle drawdown phase. Each percentage point of FRL on these four dams represents roughly {tmcPerPct} TMC of basin storage - the same volume Bengaluru's piped network distributes in about 25 days at current pumping rates.", ta: "நடுவில் இறக்க கட்டம். இந்த நான்கு அணைகளில் FRL-ன் ஒவ்வொரு சதவீத புள்ளியும் சுமார் {tmcPerPct} TMC தடாக சேமிப்பைக் குறிக்கிறது - இது தற்போதைய பம்பிங் விகிதங்களில் பெங்களூரின் குழாய் வலையமைப்பு சுமார் 25 நாட்களில் விநியோகிக்கும் அதே அளவாகும்.", kn: "ಮಧ್ಯ-ಚಕ್ರ ಇಳಿತ ಹಂತ. ಈ ನಾಲ್ಕು ಅಣೆಕಟ್ಟುಗಳಲ್ಲಿ FRL ನ ಪ್ರತಿ ಶೇಕಡಾ ಬಿಂದು ಸುಮಾರು {tmcPerPct} TMC ಜಲಾನಯನ ಸಂಗ್ರಹವನ್ನು ಪ್ರತಿನಿಧಿಸುತ್ತದೆ - ಪ್ರಸ್ತುತ ಪಂಪಿಂಗ್ ದರಗಳಲ್ಲಿ ಬೆಂಗಳೂರಿನ ಪೈಪ್ ಜಾಲ ಸುಮಾರು 25 ದಿನಗಳಲ್ಲಿ ವಿತರಿಸುವ ಅದೇ ಪರಿಮಾಣ." },
-  "briefing.freshness.with_date":       { en: "Cauvery upstream storage: {date} · refreshed daily via TN Agri archive", ta: "காவிரி மேற்பகுதி சேமிப்பு: {date} · TN வேளாண் ஆவணகத்தின் வழியாக தினசரி புதுப்பிக்கப்பட்டது", kn: "ಕಾವೇರಿ ಮೇಲ್ಭಾಗ ಸಂಗ್ರಹ: {date} · TN ಕೃಷಿ ಆರ್ಕೈವ್ ಮೂಲಕ ದಿನಂಪ್ರತಿ ರಿಫ್ರೆಶ್" },
+  "briefing.freshness.with_date":       { en: "Cauvery upstream storage: {date} - refreshed daily via TN Agri archive", ta: "காவிரி மேற்பகுதி சேமிப்பு: {date} - TN வேளாண் ஆவணகத்தின் வழியாக தினசரி புதுப்பிக்கப்பட்டது", kn: "ಕಾವೇರಿ ಮೇಲ್ಭಾಗ ಸಂಗ್ರಹ: {date} - TN ಕೃಷಿ ಆರ್ಕೈವ್ ಮೂಲಕ ದಿನಂಪ್ರತಿ ರಿಫ್ರೆಶ್" },
   "briefing.freshness.pending":         { en: "Cauvery upstream storage: live ingest pending", ta: "காவிரி மேற்பகுதி சேமிப்பு: நேரடி உள்ளீடு நிலுவையில்", kn: "ಕಾವೇರಿ ಮೇಲ್ಭಾಗ ಸಂಗ್ರಹ: ನೇರ ಪ್ರವೇಶ ಬಾಕಿ" },
 
   // ── Cauvery Pumping Hero (Bangalore-specific dashboard panel) ────────────
@@ -333,7 +333,7 @@ export const translations: Record<string, TranslationEntry> = {
   "flood.cross_link_home": { en: "home", ta: "முகப்பு", kn: "ಮುಖಪುಟ" },
   "flood.cross_link_home_desc": { en: "Vaigai dam current storage + Mullaperiyar tracker", ta: "வைகை அணை தற்போதைய சேமிப்பு + முல்லைப் பெரியார் கண்காணிப்பு", kn: "ವೈಗೈ ಅಣೆಕಟ್ಟು ಪ್ರಸ್ತುತ ಸಂಗ್ರಹ + ಮುಲ್ಲೈಪೆರಿಯಾರ್ ಟ್ರ್ಯಾಕರ್" },
   "flood.cross_link_rivers": { en: "Vaigai river system", ta: "வைகை ஆற்று அமைப்பு", kn: "ವೈಗೈ ನದಿ ವ್ಯವಸ್ಥೆ" },
-  "flood.cross_link_rivers_desc": { en: "5 rivers in scope · click for upstream/downstream context", ta: "5 ஆறுகள் · மேற்பகுதி/கீழ்பகுதி பின்னணிக்கு கிளிக் செய்யவும்", kn: "5 ನದಿಗಳು ವ್ಯಾಪ್ತಿಯಲ್ಲಿ · ಮೇಲ್ಭಾಗ/ಕೆಳಭಾಗ ಸಂದರ್ಭಕ್ಕೆ ಕ್ಲಿಕ್ ಮಾಡಿ" },
+  "flood.cross_link_rivers_desc": { en: "5 rivers in scope - click for upstream/downstream context", ta: "5 ஆறுகள் - மேற்பகுதி/கீழ்பகுதி பின்னணிக்கு கிளிக் செய்யவும்", kn: "5 ನದಿಗಳು ವ್ಯಾಪ್ತಿಯಲ್ಲಿ - ಮೇಲ್ಭಾಗ/ಕೆಳಭಾಗ ಸಂದರ್ಭಕ್ಕೆ ಕ್ಲಿಕ್ ಮಾಡಿ" },
   "flood.cross_link_water_bodies": { en: "Water bodies map", ta: "நீர்நிலைகள் வரைபடம்", kn: "ಜಲಮೂಲಗಳ ನಕ್ಷೆ" },
   "flood.cross_link_water_bodies_desc": { en: "Tank cascades that buffer (or amplify) inundation", ta: "வெள்ளத்தைத் தணிக்கும் (அல்லது பெருக்கும்) கண்மாய் அடுக்குகள்", kn: "ಪ್ರವಾಹವನ್ನು ತಡೆಯುವ (ಅಥವಾ ಹೆಚ್ಚಿಸುವ) ಕೆರೆ ಸರಪಳಿಗಳು" },
 
@@ -442,7 +442,7 @@ export const translations: Record<string, TranslationEntry> = {
   "nav.groundwater":    { en: "Groundwater Map",   ta: "நிலத்தடி நீர் வரைபடம்",     kn: "ಅಂತರ್ಜಲ ನಕ್ಷೆ" },
   "nav.water_bodies":   { en: "Water Bodies",      ta: "நீர்நிலைகள்",              kn: "ಜಲಮೂಲಗಳು" },
   "nav.rivers":         { en: "Rivers",            ta: "ஆறுகள்",                  kn: "ನದಿಗಳು" },
-  "nav.coastal":        { en: "Coast",             ta: "கடற்கரை",                 kn: "ಕರಾವಳಿ" },
+  "nav.coastal":        { en: "Shoreline",         ta: "கடற்கரை",                 kn: "ಕರಾವಳಿ" },
   "nav.lake_restoration": { en: "Restoration",     ta: "மறுசீரமைப்பு",            kn: "ಪುನರುಜ್ಜೀವನ" },
   "nav.about":          { en: "About",             ta: "எங்களைப் பற்றி",           kn: "ನಮ್ಮ ಬಗ್ಗೆ" },
   "header.title":       { en: "Neer Vazhvu",                ta: "நீர் வாழ்வு",      kn: "ನೀರ್ ವಾೞ್ವು" },
@@ -459,7 +459,7 @@ export const translations: Record<string, TranslationEntry> = {
   // ── Footer ────────────────────────────────────────────────────────────────
   "footer.data_sources":  { en: "Core live sources:",        ta: "முக்கிய நேரடி தரவு ஆதாரங்கள்:", kn: "ಮುಖ್ಯ ನೇರ ದತ್ತಾಂಶ ಮೂಲಗಳು:" },
   "footer.all_sources":   { en: "All sources",               ta: "அனைத்து ஆதாரங்கள்",         kn: "ಎಲ್ಲಾ ಮೂಲಗಳು" },
-  "footer.open_source":   { en: "Open source · Built for Indian cities", ta: "திறந்த மூலம் · இந்திய நகரங்களுக்காக", kn: "ಮುಕ್ತ ಮೂಲ · ಭಾರತೀಯ ನಗರಗಳಿಗಾಗಿ ನಿರ್ಮಿಸಲಾಗಿದೆ" },
+  "footer.open_source":   { en: "Open source - Built for Indian cities", ta: "திறந்த மூலம் - இந்திய நகரங்களுக்காக", kn: "ಮುಕ್ತ ಮೂಲ - ಭಾರತೀಯ ನಗರಗಳಿಗಾಗಿ ನಿರ್ಮಿಸಲಾಗಿದೆ" },
   "footer.support":       { en: "Support on Patreon",            ta: "Patreon-ல் ஆதரவு",     kn: "Patreon ನಲ್ಲಿ ಬೆಂಬಲಿಸಿ" },
 
   // ── Days Left Hero ────────────────────────────────────────────────────────
@@ -603,7 +603,7 @@ export const translations: Record<string, TranslationEntry> = {
   "ward.trend_comp": { en: "Year-on-year trend",     ta: "ஆண்டுவாரி போக்கு", kn: "ವರ್ಷ-ವರ್ಷದ ಪ್ರವೃತ್ತಿ" },
   "ward.reservoir_comp": { en: "Reservoir stress",       ta: "நீர்த்தேக்க அழுத்தம்", kn: "ಜಲಾಶಯ ಒತ್ತಡ" },
   "ward.seasonal_comp": { en: "Seasonal factor",        ta: "பருவகால காரணி", kn: "ಋತುಮಾನದ ಅಂಶ" },
-  "ward.weights_note": { en: "Weights: groundwater 40% · trend 30% · reservoir 20% · seasonal 10%", ta: "எடைகள்: நிலத்தடி நீர் 40% · போக்கு 30% · நீர்த்தேக்கம் 20% · பருவகாலம் 10%", kn: "ತೂಕಗಳು: ಅಂತರ್ಜಲ 40% · ಪ್ರವೃತ್ತಿ 30% · ಜಲಾಶಯ 20% · ಋತುಮಾನ 10%" },
+  "ward.weights_note": { en: "Weights: groundwater 40% - trend 30% - reservoir 20% - seasonal 10%", ta: "எடைகள்: நிலத்தடி நீர் 40% - போக்கு 30% - நீர்த்தேக்கம் 20% - பருவகாலம் 10%", kn: "ತೂಕಗಳು: ಅಂತರ್ಜಲ 40% - ಪ್ರವೃತ್ತಿ 30% - ಜಲಾಶಯ 20% - ಋತುಮಾನ 10%" },
   "ward.depth_note1": { en: "Depth measured in metres below ground level (mbgl).", ta: "ஆழம் நில மட்டத்திற்கு கீழே மீட்டரில் அளவிடப்படுகிறது (mbgl).", kn: "ಆಳವನ್ನು ನೆಲಮಟ್ಟದ ಕೆಳಗೆ ಮೀಟರ್‌ಗಳಲ್ಲಿ ಅಳೆಯಲಾಗುತ್ತದೆ (mbgl)." },
   "ward.depth_note2": { en: "Lower values = water table closer to surface = healthier.", ta: "குறைந்த மதிப்புகள் = நீர்மட்டம் மேற்பரப்பிற்கு நெருக்கமாக = ஆரோக்கியமான.", kn: "ಕಡಿಮೆ ಮೌಲ್ಯಗಳು = ಜಲಮಟ್ಟ ಮೇಲ್ಮೈಗೆ ಹತ್ತಿರ = ಹೆಚ್ಚು ಆರೋಗ್ಯಕರ." },
   "ward.depth_note3": { en: "Trend compares same month, previous year.", ta: "போக்கு முந்தைய ஆண்டின் அதே மாதத்துடன் ஒப்பிடுகிறது.", kn: "ಪ್ರವೃತ್ತಿ ಹಿಂದಿನ ವರ್ಷದ ಅದೇ ತಿಂಗಳಿಗೆ ಹೋಲಿಸುತ್ತದೆ." },
@@ -697,7 +697,7 @@ export const translations: Record<string, TranslationEntry> = {
   "rivers.length": { en: "Length",        ta: "நீளம்", kn: "ಉದ್ದ" },
   "rivers.cpcb_class": { en: "CPCB Class",    ta: "CPCB வகுப்பு", kn: "CPCB ವರ್ಗ" },
   "rivers.trend_label": { en: "3-year trend",  ta: "3-ஆண்டு போக்கு", kn: "3-ವರ್ಷದ ಪ್ರವೃತ್ತಿ" },
-  "rivers.do_better": { en: "DO \u2191 = better \u00a0\u00b7\u00a0 BOD \u2193 = better", ta: "DO \u2191 = சிறப்பு \u00a0\u00b7\u00a0 BOD \u2193 = சிறப்பு", kn: "DO ↑ = ಉತ್ತಮ  ·  BOD ↓ = ಉತ್ತಮ" },
+  "rivers.do_better": { en: "DO \u2191 = better \u00a0\u00b7\u00a0 BOD \u2193 = better", ta: "DO \u2191 = சிறப்பு \u00a0\u00b7\u00a0 BOD \u2193 = சிறப்பு", kn: "DO ↑ = ಉತ್ತಮ  -  BOD ↓ = ಉತ್ತಮ" },
   "rivers.do_title": { en: "DO  - Dissolved Oxygen",           ta: "DO  - கரைந்த ஆக்சிஜன்", kn: "DO  - ಕರಗಿದ ಆಮ್ಲಜನಕ" },
   "rivers.do_desc": { en: "Oxygen dissolved in water. Fish and aquatic life need \u2265 4 mg/L to survive. Near zero means the river is biologically dead.", ta: "நீரில் கரைந்த ஆக்சிஜன். மீன்களுக்கு ≥ 4 mg/L தேவை. பூஜ்யத்திற்கு அருகில் என்றால் ஆறு உயிரியலாக இறந்துவிட்டது.", kn: "ನೀರಿನಲ್ಲಿ ಕರಗಿದ ಆಮ್ಲಜನಕ. ಮೀನು ಮತ್ತು ಜಲಜೀವಿಗಳಿಗೆ ಬದುಕಲು ≥ 4 mg/L ಬೇಕು. ಶೂನ್ಯಕ್ಕೆ ಸಮೀಪವಿರುವುದು ಎಂದರೆ ನದಿ ಜೈವಿಕವಾಗಿ ಮೃತ." },
   "rivers.bod_title": { en: "BOD  - Biochemical Oxygen Demand", ta: "BOD  - உயிர்வேதியியல் ஆக்சிஜன் தேவை", kn: "BOD  - ಜೈವಿಕ ಆಮ್ಲಜನಕ ಬೇಡಿಕೆ" },
@@ -1075,7 +1075,7 @@ export const translations: Record<string, TranslationEntry> = {
   "rivers_page.quality_label": { en: "Quality:",                       ta: "தரம்:", kn: "ಗುಣಮಟ್ಟ:" },
   "rivers_page.sources_label": { en: "Sources:",                       ta: "ஆதாரங்கள்:", kn: "ಮೂಲಗಳು:" },
   "rivers_page.quality_value": { en: "NWMP Data by CPCB",              ta: "CPCB NWMP தரவு", kn: "CPCB ಯ NWMP ದತ್ತಾಂಶ" },
-  "rivers_page.sources_value": { en: "NGT orders · CPCB · Academic studies", ta: "NGT உத்தரவுகள் · CPCB · கல்வியியல் ஆய்வுகள்", kn: "NGT ಆದೇಶಗಳು · CPCB · ಶೈಕ್ಷಣಿಕ ಅಧ್ಯಯನಗಳು" },
+  "rivers_page.sources_value": { en: "NGT orders - CPCB - Academic studies", ta: "NGT உத்தரவுகள் - CPCB - கல்வியியல் ஆய்வுகள்", kn: "NGT ಆದೇಶಗಳು - CPCB - ಶೈಕ್ಷಣಿಕ ಅಧ್ಯಯನಗಳು" },
 
   // ── Rivers legend & status labels ─────────────────────────────────────────
   "rivers_legend.water_quality": { en: "Water Quality",     ta: "நீர்த்தரம்", kn: "ನೀರಿನ ಗುಣಮಟ್ಟ" },
@@ -1132,7 +1132,7 @@ export const translations: Record<string, TranslationEntry> = {
   // ── Water Body Panel ──────────────────────────────────────────────────────
   "wb_panel.existing": { en: "Existing",          ta: "தற்போதுள்ளது", kn: "ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ" },
   "wb_panel.unnamed": { en: "Unnamed water body", ta: "பெயரிடப்படாத நீர்நிலை", kn: "ಹೆಸರಿಲ್ಲದ ಜಲಮೂಲ" },
-  "wb_panel.flagship_curated": { en: "Flagship-curated · approximate footprint", ta: "முக்கிய நீர்நிலை · தோராயமான இடம்", kn: "ಪ್ರಮುಖ-ಸಂಗ್ರಹಿಸಲಾದ · ಸ್ಥೂಲ ಗಡಿ" },
+  "wb_panel.flagship_curated": { en: "Flagship-curated - approximate footprint", ta: "முக்கிய நீர்நிலை - தோராயமான இடம்", kn: "ಪ್ರಮುಖ-ಸಂಗ್ರಹಿಸಲಾದ - ಸ್ಥೂಲ ಗಡಿ" },
   "wb_panel.water_body": { en: "Water body",         ta: "நீர்நிலை", kn: "ಜಲಮೂಲ" },
   "wb_panel.unknown": { en: "Unknown",            ta: "தெரியவில்லை", kn: "ಅಜ್ಞಾತ" },
   "wb_panel.type": { en: "Type",               ta: "வகை", kn: "ಪ್ರಕಾರ" },
@@ -1781,13 +1781,13 @@ export const translations: Record<string, TranslationEntry> = {
   "supply_overview.title": { en: "{city} water supply at a glance", ta: "{city} நீர்வழங்கல் ஒரே பார்வையில்", kn: "{city} ನೀರು ಪೂರೈಕೆ ಒಂದು ನೋಟದಲ್ಲಿ" },
   "supply_overview.subtitle": { en: "Structural numbers from MMC and the ADB Tamil Nadu Urban Flagship Investment Program. Refreshed when new engineering documents are published.", ta: "MMC மற்றும் ADB தமிழ்நாடு நகர்ப்புற முதலீட்டுத் திட்டத்திலிருந்து கட்டமைப்பு எண்கள். புதிய பொறியியல் ஆவணங்கள் வெளியாகும்போது புதுப்பிக்கப்படும்.", kn: "MMC ಮತ್ತು ADB ತಮಿಳುನಾಡು ನಗರ ಫ್ಲಾಗ್‌ಶಿಪ್ ಹೂಡಿಕೆ ಕಾರ್ಯಕ್ರಮದ ಕಟ್ಟಡ ಸಂಖ್ಯೆಗಳು. ಹೊಸ ಎಂಜಿನಿಯರಿಂಗ್ ದಾಖಲೆಗಳು ಪ್ರಕಟವಾದಾಗ ರಿಫ್ರೆಶ್ ಆಗುತ್ತದೆ." },
   "supply_overview.chain_label": { en: "Supply chain",            ta: "வழங்கல் சங்கிலி", kn: "ಪೂರೈಕೆ ಸರಪಳಿ" },
-  "supply_overview.source_mix_label": { en: "Existing supply mix · {total} MLD total", ta: "தற்போதைய வழங்கல் கலவை · மொத்தம் {total} MLD", kn: "ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಪೂರೈಕೆ ಮಿಶ್ರಣ · ಒಟ್ಟು {total} MLD" },
+  "supply_overview.source_mix_label": { en: "Existing supply mix - {total} MLD total", ta: "தற்போதைய வழங்கல் கலவை - மொத்தம் {total} MLD", kn: "ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಪೂರೈಕೆ ಮಿಶ್ರಣ - ಒಟ್ಟು {total} MLD" },
   "supply_overview.wtp_label": { en: "Pannaipatty WTP capacity", ta: "பன்னைப்பட்டி WTP திறன்", kn: "ಪನ್ನೈಪಟ್ಟಿ WTP ಸಾಮರ್ಥ್ಯ" },
   "supply_overview.ohts_label": { en: "OHTs",                    ta: "OHTகள்", kn: "OHT ಗಳು" },
   "supply_overview.zones_label": { en: "Zones / DMAs",            ta: "மண்டலங்கள் / DMA-கள்", kn: "ವಲಯಗಳು / DMA ಗಳು" },
   "supply_overview.zones_sub": { en: "distribution / district-metering",  ta: "விநியோகம் / DMA", kn: "ವಿತರಣೆ / ಜಿಲ್ಲಾ-ಮಾಪನ" },
   "supply_overview.mains_label": { en: "Mains",                   ta: "முக்கிய குழாய்கள்", kn: "ಮುಖ್ಯಗಳು" },
-  "supply_overview.connections_line": { en: "{total} connections: {domestic} domestic · {non_domestic} non-domestic · {commercial} commercial", ta: "{total} இணைப்புகள்: {domestic} வீட்டுவசதி · {non_domestic} வீட்டு-அல்லாத · {commercial} வணிக", kn: "{total} ಸಂಪರ್ಕಗಳು: {domestic} ಮನೆಯ · {non_domestic} ಮನೆಯಲ್ಲದ · {commercial} ವಾಣಿಜ್ಯ" },
+  "supply_overview.connections_line": { en: "{total} connections: {domestic} domestic - {non_domestic} non-domestic - {commercial} commercial", ta: "{total} இணைப்புகள்: {domestic} வீட்டுவசதி - {non_domestic} வீட்டு-அல்லாத - {commercial} வணிக", kn: "{total} ಸಂಪರ್ಕಗಳು: {domestic} ಮನೆಯ - {non_domestic} ಮನೆಯಲ್ಲದ - {commercial} ವಾಣಿಜ್ಯ" },
   "supply_overview.demand_label": { en: "Demand vs supply",        ta: "தேவை vs வழங்கல்", kn: "ಬೇಡಿಕೆ vs ಪೂರೈಕೆ" },
   "supply_overview.demand_2034": { en: "2034 design demand: {demand} MLD for {pop} residents", ta: "2034 வடிவமைப்பு தேவை: {pop} மக்களுக்கு {demand} MLD", kn: "2034 ವಿನ್ಯಾಸ ಬೇಡಿಕೆ: {pop} ನಿವಾಸಿಗಳಿಗೆ {demand} MLD" },
   "supply_overview.demand_gap_caption": { en: "{gap} MLD gap ({pct}% of 2034 demand) is driving the under-construction Mullai Periyar dedicated supply scheme, designed to lift Pannaipatty's treated capacity to 250 MLD.", ta: "{gap} MLD இடைவெளி (2034 தேவையில் {pct}%) கட்டுமான நிலையில் உள்ள மூலைப் பெரியார் பிரத்யேக வழங்கல் திட்டத்தை இயக்குகிறது; இந்தத் திட்டம் பன்னைப்பட்டியின் சுத்திகரிக்கப்பட்ட திறனை 250 MLD-க்கு உயர்த்த வடிவமைக்கப்பட்டுள்ளது.", kn: "{gap} MLD ಅಂತರ (2034 ಬೇಡಿಕೆಯ {pct}%) ನಿರ್ಮಾಣ ಹಂತದಲ್ಲಿರುವ ಮುಲ್ಲೈಪೆರಿಯಾರ್ ಮೀಸಲಾದ ಪೂರೈಕೆ ಯೋಜನೆಯನ್ನು ಚಾಲನೆ ಮಾಡುತ್ತಿದೆ, ಪನ್ನೈಪಟ್ಟಿಯ ಸಂಸ್ಕರಿಸಿದ ಸಾಮರ್ಥ್ಯವನ್ನು 250 MLD ಗೆ ಎತ್ತಲು ವಿನ್ಯಾಸಗೊಳಿಸಲಾಗಿದೆ." },
