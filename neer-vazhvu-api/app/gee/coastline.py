@@ -37,7 +37,9 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 ZONES_GEOJSON = REPO_ROOT / "public" / "geojson" / "chennai-coastal-zones.geojson"
-TRANSECTS_GEOJSON = REPO_ROOT / "public" / "geojson" / "chennai-coastal-transects.geojson"
+TRANSECTS_GEOJSON = (
+    REPO_ROOT / "public" / "geojson" / "chennai-coastal-transects.geojson"
+)
 
 # Study epochs (Table 1 of the paper). Landsat for 1990-2015, Sentinel-2 for
 # 2020 & 2024.
@@ -46,23 +48,109 @@ EPOCHS: tuple[int, ...] = (1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024)
 # Per-epoch total shoreline-position error Esp (m), Table 2 of the paper, used
 # as the WLR weights (weight = 1 / Esp**2).
 EPOCH_UNCERTAINTY_M: dict[int, float] = {
-    1990: 16.33, 1995: 17.21, 2000: 15.78, 2005: 16.04,
-    2010: 15.67, 2015: 15.14, 2020: 8.66, 2024: 8.66,
+    1990: 16.33,
+    1995: 17.21,
+    2000: 15.78,
+    2005: 16.04,
+    2010: 15.67,
+    2015: 15.14,
+    2020: 8.66,
+    2024: 8.66,
 }
 
 # Sensor / band / window per epoch. Reflectance = DN * scale + offset; MNDWI is
 # scale-sensitive (the +offset doesn't cancel in the ratio), so it is applied.
 # A dry-season Dec-May window + median composite suppresses cloud and tide noise.
 EPOCH_CONFIG: tuple[dict, ...] = (
-    {"year": 1990, "coll": "LANDSAT/LT05/C02/T1_L2", "d0": "1989-12-01", "d1": "1990-05-31", "green": "SR_B2", "swir1": "SR_B5", "scale": 2.75e-5, "offset": -0.2, "kind": "ls"},
-    {"year": 1995, "coll": "LANDSAT/LT05/C02/T1_L2", "d0": "1994-12-01", "d1": "1995-05-31", "green": "SR_B2", "swir1": "SR_B5", "scale": 2.75e-5, "offset": -0.2, "kind": "ls"},
-    {"year": 2000, "coll": "LANDSAT/LE07/C02/T1_L2", "d0": "1999-12-01", "d1": "2000-05-31", "green": "SR_B2", "swir1": "SR_B5", "scale": 2.75e-5, "offset": -0.2, "kind": "ls"},
-    {"year": 2005, "coll": "LANDSAT/LE07/C02/T1_L2", "d0": "2004-12-01", "d1": "2005-05-31", "green": "SR_B2", "swir1": "SR_B5", "scale": 2.75e-5, "offset": -0.2, "kind": "ls"},
-    {"year": 2010, "coll": "LANDSAT/LE07/C02/T1_L2", "d0": "2009-12-01", "d1": "2010-05-31", "green": "SR_B2", "swir1": "SR_B5", "scale": 2.75e-5, "offset": -0.2, "kind": "ls"},
+    {
+        "year": 1990,
+        "coll": "LANDSAT/LT05/C02/T1_L2",
+        "d0": "1989-12-01",
+        "d1": "1990-05-31",
+        "green": "SR_B2",
+        "swir1": "SR_B5",
+        "scale": 2.75e-5,
+        "offset": -0.2,
+        "kind": "ls",
+    },
+    {
+        "year": 1995,
+        "coll": "LANDSAT/LT05/C02/T1_L2",
+        "d0": "1994-12-01",
+        "d1": "1995-05-31",
+        "green": "SR_B2",
+        "swir1": "SR_B5",
+        "scale": 2.75e-5,
+        "offset": -0.2,
+        "kind": "ls",
+    },
+    {
+        "year": 2000,
+        "coll": "LANDSAT/LE07/C02/T1_L2",
+        "d0": "1999-12-01",
+        "d1": "2000-05-31",
+        "green": "SR_B2",
+        "swir1": "SR_B5",
+        "scale": 2.75e-5,
+        "offset": -0.2,
+        "kind": "ls",
+    },
+    {
+        "year": 2005,
+        "coll": "LANDSAT/LE07/C02/T1_L2",
+        "d0": "2004-12-01",
+        "d1": "2005-05-31",
+        "green": "SR_B2",
+        "swir1": "SR_B5",
+        "scale": 2.75e-5,
+        "offset": -0.2,
+        "kind": "ls",
+    },
+    {
+        "year": 2010,
+        "coll": "LANDSAT/LE07/C02/T1_L2",
+        "d0": "2009-12-01",
+        "d1": "2010-05-31",
+        "green": "SR_B2",
+        "swir1": "SR_B5",
+        "scale": 2.75e-5,
+        "offset": -0.2,
+        "kind": "ls",
+    },
     # Landsat 8 for 2015 (no SLC-off gaps); the paper used Landsat 7.
-    {"year": 2015, "coll": "LANDSAT/LC08/C02/T1_L2", "d0": "2014-12-01", "d1": "2015-05-31", "green": "SR_B3", "swir1": "SR_B6", "scale": 2.75e-5, "offset": -0.2, "kind": "ls"},
-    {"year": 2020, "coll": "COPERNICUS/S2_SR_HARMONIZED", "d0": "2019-12-01", "d1": "2020-05-31", "green": "B3", "swir1": "B11", "scale": 1e-4, "offset": 0.0, "kind": "s2"},
-    {"year": 2024, "coll": "COPERNICUS/S2_SR_HARMONIZED", "d0": "2023-12-01", "d1": "2024-05-31", "green": "B3", "swir1": "B11", "scale": 1e-4, "offset": 0.0, "kind": "s2"},
+    {
+        "year": 2015,
+        "coll": "LANDSAT/LC08/C02/T1_L2",
+        "d0": "2014-12-01",
+        "d1": "2015-05-31",
+        "green": "SR_B3",
+        "swir1": "SR_B6",
+        "scale": 2.75e-5,
+        "offset": -0.2,
+        "kind": "ls",
+    },
+    {
+        "year": 2020,
+        "coll": "COPERNICUS/S2_SR_HARMONIZED",
+        "d0": "2019-12-01",
+        "d1": "2020-05-31",
+        "green": "B3",
+        "swir1": "B11",
+        "scale": 1e-4,
+        "offset": 0.0,
+        "kind": "s2",
+    },
+    {
+        "year": 2024,
+        "coll": "COPERNICUS/S2_SR_HARMONIZED",
+        "d0": "2023-12-01",
+        "d1": "2024-05-31",
+        "green": "B3",
+        "swir1": "B11",
+        "scale": 1e-4,
+        "offset": 0.0,
+        "kind": "s2",
+    },
 )
 
 TRANSECT_SPACING_M = 100.0
@@ -91,10 +179,14 @@ class TransectRate:
 # Geometry helpers (pure)
 # --------------------------------------------------------------------------
 
+
 def _haversine_m(a: tuple[float, float], b: tuple[float, float]) -> float:
     lon1, lat1, lon2, lat2 = map(math.radians, [a[0], a[1], b[0], b[1]])
     dlat, dlon = lat2 - lat1, lon2 - lon1
-    h = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+    h = (
+        math.sin(dlat / 2) ** 2
+        + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+    )
     return 2 * EARTH_RADIUS_M * math.asin(math.sqrt(h))
 
 
@@ -136,7 +228,7 @@ def build_transects(
             origin = (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]))
             mlat = math.cos(math.radians(origin[1])) or 1.0
             tx = (b[0] - a[0]) * mlat
-            ty = (b[1] - a[1])
+            ty = b[1] - a[1]
             norm = math.hypot(tx, ty) or 1.0
             deg_per_m_lat = 1.0 / 111_320.0
             deg_per_m_lon = deg_per_m_lat / mlat
@@ -169,6 +261,7 @@ def zones_by_position(n: int) -> list[str]:
 # Stage 1: per-epoch MNDWI waterline offsets (GEE-dependent)
 # --------------------------------------------------------------------------
 
+
 def sample_transect_offsets(
     transects: list[tuple[int, tuple[float, float], tuple[float, float]]],
     *,
@@ -190,7 +283,9 @@ def sample_transect_offsets(
     features = []
     for tid, origin, normal in transects:
         for s in SAMPLE_S_VALUES:
-            pt = ee.Geometry.Point([origin[0] + normal[0] * s, origin[1] + normal[1] * s])
+            pt = ee.Geometry.Point(
+                [origin[0] + normal[0] * s, origin[1] + normal[1] * s]
+            )
             features.append(ee.Feature(pt, {"tid": tid, "s": s}))
     fc = ee.FeatureCollection(features)
     geom = fc.geometry()
@@ -198,7 +293,8 @@ def sample_transect_offsets(
     def ls_mask(img):
         qa = img.select("QA_PIXEL")
         keep = (
-            qa.bitwiseAnd(1 << 1).eq(0)
+            qa.bitwiseAnd(1 << 1)
+            .eq(0)
             .And(qa.bitwiseAnd(1 << 2).eq(0))
             .And(qa.bitwiseAnd(1 << 3).eq(0))
             .And(qa.bitwiseAnd(1 << 4).eq(0))
@@ -219,7 +315,11 @@ def sample_transect_offsets(
 
     bands = []
     for cfg in EPOCH_CONFIG:
-        col = ee.ImageCollection(cfg["coll"]).filterBounds(geom).filterDate(cfg["d0"], cfg["d1"])
+        col = (
+            ee.ImageCollection(cfg["coll"])
+            .filterBounds(geom)
+            .filterDate(cfg["d0"], cfg["d1"])
+        )
         if cfg["kind"] == "ls":
             col = col.map(ls_mask)
         else:
@@ -232,10 +332,14 @@ def sample_transect_offsets(
     plist = fc.toList(n)
     for i in range(0, n, batch_size):
         sub = ee.FeatureCollection(plist.slice(i, min(i + batch_size, n)))
-        sampled = multi.sampleRegions(collection=sub, scale=20, geometries=False).getInfo()
+        sampled = multi.sampleRegions(
+            collection=sub, scale=20, geometries=False
+        ).getInfo()
         for f in sampled["features"]:
             p = f["properties"]
-            raw[(p["tid"], p["s"])] = {cfg["year"]: p.get(f"m{cfg['year']}") for cfg in EPOCH_CONFIG}
+            raw[(p["tid"], p["s"])] = {
+                cfg["year"]: p.get(f"m{cfg['year']}") for cfg in EPOCH_CONFIG
+            }
         log(f"  sampled {min(i + batch_size, n)}/{n}")
 
     offsets: dict[int, dict[int, float]] = {}
@@ -264,7 +368,10 @@ def _land_to_water_crossing(seq: list[tuple[int, float | None]]) -> float | None
 # Stage 2: DSAS-equivalent rates (pure)
 # --------------------------------------------------------------------------
 
-def _wlr(years: list[int], offsets: list[float], weights: list[float]) -> tuple[float, float]:
+
+def _wlr(
+    years: list[int], offsets: list[float], weights: list[float]
+) -> tuple[float, float]:
     sw = sum(weights)
     mx = sum(w * x for w, x in zip(weights, years)) / sw
     my = sum(w * y for w, y in zip(weights, offsets)) / sw
@@ -274,7 +381,7 @@ def _wlr(years: list[int], offsets: list[float], weights: list[float]) -> tuple[
         return 0.0, 0.0
     slope = sxy / sxx
     syy = sum(w * (y - my) ** 2 for w, y in zip(weights, offsets))
-    r2 = (sxy ** 2 / (sxx * syy)) if syy > 0 else 0.0
+    r2 = (sxy**2 / (sxx * syy)) if syy > 0 else 0.0
     return slope, r2
 
 
@@ -301,8 +408,19 @@ def compute_rates(
         per = offsets.get(tid, {})
         years = sorted(per)
         if len(years) < min_epochs:
-            results.append(TransectRate(tid, zones[idx], origin[0], origin[1],
-                                        None, None, None, len(years), "stable"))
+            results.append(
+                TransectRate(
+                    tid,
+                    zones[idx],
+                    origin[0],
+                    origin[1],
+                    None,
+                    None,
+                    None,
+                    len(years),
+                    "stable",
+                )
+            )
             continue
         offs = [per[y] for y in years]
         weights = [1.0 / (EPOCH_UNCERTAINTY_M.get(y, 15.0) ** 2) for y in years]
@@ -310,11 +428,19 @@ def compute_rates(
         span = years[-1] - years[0]
         epr = nsm / span if span else None
         wlr, r2 = _wlr(years, offs, weights)
-        results.append(TransectRate(
-            transect_id=tid, zone_id=zones[idx], lon=origin[0], lat=origin[1],
-            epr_m_yr=epr, wlr_m_yr=wlr, r_squared=r2, n_epochs=len(years),
-            trend=_classify(wlr),
-        ))
+        results.append(
+            TransectRate(
+                transect_id=tid,
+                zone_id=zones[idx],
+                lon=origin[0],
+                lat=origin[1],
+                epr_m_yr=epr,
+                wlr_m_yr=wlr,
+                r_squared=r2,
+                n_epochs=len(years),
+                trend=_classify(wlr),
+            )
+        )
     return results
 
 
@@ -323,26 +449,35 @@ def transects_to_geojson(rates: list[TransectRate]) -> dict:
     for r in rates:
         if r.wlr_m_yr is None:
             continue
-        features.append({
-            "type": "Feature",
-            "properties": {
-                "transect_id": r.transect_id,
-                "zone_id": r.zone_id,
-                "rate_m_yr": round(r.wlr_m_yr, 2),
-                "epr_m_yr": round(r.epr_m_yr, 2) if r.epr_m_yr is not None else None,
-                "r_squared": round(r.r_squared, 3) if r.r_squared is not None else None,
-                "n_epochs": r.n_epochs,
-                "trend": r.trend,
-                "source": "computed",
-                "period": "1990-2024",
-            },
-            "geometry": {"type": "Point", "coordinates": [round(r.lon, 6), round(r.lat, 6)]},
-        })
+        features.append(
+            {
+                "type": "Feature",
+                "properties": {
+                    "transect_id": r.transect_id,
+                    "zone_id": r.zone_id,
+                    "rate_m_yr": round(r.wlr_m_yr, 2),
+                    "epr_m_yr": round(r.epr_m_yr, 2)
+                    if r.epr_m_yr is not None
+                    else None,
+                    "r_squared": round(r.r_squared, 3)
+                    if r.r_squared is not None
+                    else None,
+                    "n_epochs": r.n_epochs,
+                    "trend": r.trend,
+                    "source": "computed",
+                    "period": "1990-2024",
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [round(r.lon, 6), round(r.lat, 6)],
+                },
+            }
+        )
     return {
         "type": "FeatureCollection",
         "_note": "COMPUTED transect shoreline-change rates (neervazhvu): MNDWI on "
-                 "Landsat 5/7/8 + Sentinel-2 via GEE, 100 m transects, WLR over 8 "
-                 "epochs (1990-2024). Independent of the study's CoastSat+DSAS.",
+        "Landsat 5/7/8 + Sentinel-2 via GEE, 100 m transects, WLR over 8 "
+        "epochs (1990-2024). Independent of the study's CoastSat+DSAS.",
         "_source": "neervazhvu (MNDWI/GEE) corroborating Anagha, Singh & Frappart 2026",
         "features": features,
     }
@@ -358,6 +493,8 @@ def run(*, write: bool = True, log=print) -> dict:
     rates = compute_rates(transects, offsets, zones)
     fc = transects_to_geojson(rates)
     if write:
-        TRANSECTS_GEOJSON.write_text(json.dumps(fc, separators=(",", ":")), encoding="utf-8")
+        TRANSECTS_GEOJSON.write_text(
+            json.dumps(fc, separators=(",", ":")), encoding="utf-8"
+        )
         log(f"wrote {TRANSECTS_GEOJSON} ({len(fc['features'])} transects)")
     return fc

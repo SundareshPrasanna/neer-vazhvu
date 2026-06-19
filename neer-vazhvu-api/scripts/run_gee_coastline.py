@@ -39,12 +39,16 @@ def cmd_build_geojson(write: bool) -> int:
     from app.gee.coastline import run
 
     fc = run(write=write, log=lambda m: print(m, flush=True))
-    print(json.dumps({"transect_count": len(fc["features"]), "written": write}, indent=2))
+    print(
+        json.dumps({"transect_count": len(fc["features"]), "written": write}, indent=2)
+    )
     return 0
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Chennai coastal shoreline-change pipeline")
+    parser = argparse.ArgumentParser(
+        description="Chennai coastal shoreline-change pipeline"
+    )
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("check-auth")
     bg = sub.add_parser("build-geojson")
