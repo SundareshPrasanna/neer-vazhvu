@@ -282,7 +282,7 @@ python3 scripts/convert-sewerage-kml.py
 python3 scripts/build-chennai-coastal-seed.py
 ```
 
-Flood hazard zones and GCC storm water drain data are converted from OpenCity KML files via `scripts/simplify-flood-geojson.ts`. CMWSSB sewerage data is converted via `python3 scripts/convert-sewerage-kml.py`. The `/coastal` "Our transects" layer (our own MNDWI/DSAS shoreline-change reproduction) is regenerated with `python neer-vazhvu-api/scripts/run_gee_coastline.py build-geojson --write` (needs Earth Engine auth; ~12 min); method + validation in [docs/research/chennai-coast-paper/METHODS.md](docs/research/chennai-coast-paper/METHODS.md).
+Flood hazard zones and GCC storm water drain data are converted from OpenCity KML files via `scripts/simplify-flood-geojson.ts`. CMWSSB sewerage data is converted via `python3 scripts/convert-sewerage-kml.py`. The `/coastal` "Our transects" layer (our own MNDWI/DSAS shoreline-change reproduction) is regenerated with `python neer-vazhvu-api/scripts/run_gee_coastline.py build-geojson --write` (needs Earth Engine auth; ~12-15 min). It also refreshes **automatically once a year** (mid-June, after the dry season closes) via `.github/workflows/coastal-shoreline-refresh.yml`, which opens a PR with the new epoch for review - the pipeline auto-appends the latest year, so no code edit is needed. Full method, validation, and operational cadence: [docs/methodology/coastal-shoreline-change-v1.md](docs/methodology/coastal-shoreline-change-v1.md) (publication-style write-up); internal notes in [docs/research/chennai-coast-paper/METHODS.md](docs/research/chennai-coast-paper/METHODS.md).
 
 ### 7. Refresh River Quality Data (optional, annual)
 

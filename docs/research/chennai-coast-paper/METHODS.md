@@ -1,7 +1,17 @@
 # Chennai coastal shoreline-change: reproduction method (Option B)
 
 How the `/coastal` page is built, and the recipe to replace its SEED layer with
-our own computed CoastSat + DSAS transect rates.
+our own computed transect rates.
+
+> For the publication-style write-up (abstract, study area, validation table,
+> limitations, references), see
+> [docs/methodology/coastal-shoreline-change-v1.md](../../methodology/coastal-shoreline-change-v1.md).
+> This file is the terse internal build note.
+>
+> **Cadence:** yearly. The epochs are annual dry-season composites, so re-running
+> more often recomputes identical data. `active_epoch_config()` auto-appends the
+> latest complete dry-season year, and `.github/workflows/coastal-shoreline-refresh.yml`
+> opens a refresh PR each 15 June.
 
 ## Two layers, two provenance states
 
