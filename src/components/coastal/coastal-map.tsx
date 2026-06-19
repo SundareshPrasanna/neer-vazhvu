@@ -22,6 +22,8 @@ interface CoastalMapProps {
   selected: SelectedCoastal | null;
   onSelect: (sel: SelectedCoastal | null) => void;
   onSummary?: (s: CoastalSummary) => void;
+  /** Increment to zoom the map to the showcase ("Highest erosion") transect. */
+  flyToFeaturedSignal?: number;
   mapCenter?: [number, number];
   mapZoom?: number;
 }
@@ -47,6 +49,18 @@ function FlyTo({ target }: { target: [number, number] | null }) {
   return null;
 }
 
+/** Zooms to `target` whenever `signal` increments - lets a parent (e.g. the
+ *  summary's "zoom to worst spot" button) trigger a fly without a map click. */
+function FlyOnSignal({ signal, target }: { signal: number; target: [number, number] | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (signal > 0 && target) map.setView(target, Math.max(map.getZoom(), 13), { animate: true });
+    // Fire only when the signal changes, not on target/map identity changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signal]);
+  return null;
+}
+
 /**
  * Single shoreline-change view. The rate-coloured transects (our own
  * measurement) are the primary layer; the study's six zones are drawn as faint
@@ -60,6 +74,7 @@ export function CoastalMap({
   onSummary,
   mapCenter = [13.15, 80.32],
   mapZoom = 11,
+  flyToFeaturedSignal = 0,
 }: CoastalMapProps) {
   const tiles = useMapTiles();
   const [zones, setZones] = useState<FeatureCollection | null>(null);
@@ -87,6 +102,8 @@ export function CoastalMap({
           const all = t.features.map((f) => f.properties as unknown as CoastalTransectProperties);
           const hi = all.filter((p) => p.confidence === "high");
           const eroding = hi.filter((p) => p.trend === "erosion");
+          const accreting = hi.filter((p) => p.trend === "accretion");
+          const stable = hi.filter((p) => p.trend === "stable");
           const withSplit = eroding.filter((p) => p.early_rate_m_yr != null && p.recent_rate_m_yr != null);
           const accel = withSplit.filter((p) => (p.recent_rate_m_yr as number) - (p.early_rate_m_yr as number) < -1);
           const featured =
@@ -104,7 +121,10 @@ export function CoastalMap({
           }
           onSummary?.({
             total: all.length,
+            highConf: hi.length,
             eroding: eroding.length,
+            accreting: accreting.length,
+            stable: stable.length,
             erodingWithSplit: withSplit.length,
             acceleratingErosion: accel.length,
             period: all[0]?.period ?? "1990-2026",
@@ -142,6 +162,7 @@ export function CoastalMap({
       {/* Default load frames the entire coastline; clicks zoom in via FlyTo. */}
       <FitToBounds bounds={geoJsonBounds(zones)} resetKey="coastal-full" maxZoom={12} />
       <FlyTo target={flyTarget} />
+      <FlyOnSignal signal={flyToFeaturedSignal} target={featuredLatLng} />
 
       {/* Study zones: faint neutral context bands, clickable for the study's
           per-zone figures. Highlighted when selected. */}

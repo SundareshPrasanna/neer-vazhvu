@@ -7,6 +7,7 @@ import { BottomSheet } from "@/components/map/bottom-sheet";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { CoastalLegend } from "@/components/coastal/coastal-legend";
 import { CoastalDetailPanel } from "@/components/coastal/coastal-detail-panel";
+import { ShorelineSummary } from "@/components/coastal/shoreline-summary";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import type { SelectedCoastal, CoastalSummary } from "@/types/coastal";
 
@@ -29,6 +30,8 @@ export default function CoastalClient() {
   useLockBodyScroll();
   const [selected, setSelected] = useState<SelectedCoastal | null>(null);
   const [summary, setSummary] = useState<CoastalSummary | null>(null);
+  // Bumped by the summary's "zoom to worst spot" button to fly the map there.
+  const [flySignal, setFlySignal] = useState(0);
   // Pre-select the worst-eroding transect once the data loads, so the panel
   // opens with a clear, self-explanatory example. Runs in the map's data-load
   // callback (not an effect), and only the first time; the user is in control
@@ -41,11 +44,6 @@ export default function CoastalClient() {
       setSelected({ kind: "transect", props: s.featured });
     }
   };
-
-  const accelPct =
-    summary && summary.erodingWithSplit > 0
-      ? Math.round((100 * summary.acceleratingErosion) / summary.erodingWithSplit)
-      : null;
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
@@ -62,15 +60,6 @@ export default function CoastalClient() {
             <span className="font-semibold text-slate-900 dark:text-slate-100">{summary?.total ?? 905}</span> transects
           </span>
         </div>
-        {accelPct != null && (
-          <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
-            <span className="w-3 h-3 rounded-sm bg-red-700 opacity-80" />
-            <span className="text-xs text-slate-600 dark:text-slate-400">
-              <span className="font-semibold text-slate-900 dark:text-slate-100">{accelPct}%</span> eroding{" "}
-              <span className="font-semibold">faster</span> than before
-            </span>
-          </div>
-        )}
         <div className="ml-auto flex items-center gap-3">
           <span className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap hidden sm:inline">
             Corroborated by{" "}
@@ -89,7 +78,23 @@ export default function CoastalClient() {
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         <div className="relative flex-1 h-full">
-          <CoastalMap selected={selected} onSelect={setSelected} onSummary={handleSummary} />
+          <CoastalMap
+            selected={selected}
+            onSelect={setSelected}
+            onSummary={handleSummary}
+            flyToFeaturedSignal={flySignal}
+          />
+
+          {/* "At a glance" summary - semi-transparent overlay, top-right. */}
+          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]">
+            <ShorelineSummary
+              summary={summary}
+              onShowWorst={() => {
+                if (summary?.featured) setSelected({ kind: "transect", props: summary.featured });
+                setFlySignal((s) => s + 1);
+              }}
+            />
+          </div>
 
           {/* Legend overlay */}
           <div
