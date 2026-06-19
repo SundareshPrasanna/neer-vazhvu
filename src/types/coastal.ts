@@ -151,7 +151,11 @@ export function rateColor(rate: number): string {
 /** Aggregate the map computes from the computed-transect layer for the header. */
 export interface CoastalSummary {
   total: number;
+  /** Counts below are over HIGH-confidence transects only. */
+  highConf: number;
   eroding: number;
+  accreting: number;
+  stable: number;
   erodingWithSplit: number;
   acceleratingErosion: number;
   period: string;
