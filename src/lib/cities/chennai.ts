@@ -113,6 +113,33 @@ export const CHENNAI: CityConfig = {
     risk: true,
     cgwbStations: false,
   },
+  // Chennai is the first city with the full home-dashboard pipeline: the
+  // synthesized AI briefing (daily_briefing), the reservoir rainfall-anomaly
+  // context strip, and a dense per-ward groundwater snapshot.
+  dashboard: {
+    aiBriefing: true,
+    reservoirCatchmentContext: true,
+    groundwaterSnapshot: true,
+  },
+  // Chennai's facts run the live + derived builders at request time
+  // (reservoir storage, Day Zero compare, CGWB blocks, river quality)
+  // merged with the static layer, rather than a static JSON snapshot.
+  facts: { dynamicPipeline: true },
+  // Full interactive hazard / historical / drainage / sewerage flood map.
+  flood: { variant: 'interactive' },
+  // Encroachment census + restoration ranking + ward search + lost bodies.
+  waterBodies: {
+    censusSource: true,
+    rankingTab: true,
+    wardSearch: true,
+    lostBodies: true,
+  },
+  // Chennai's reservoir history lives in the original v1 tables
+  // (reservoir_daily / reservoir_forecast), stored in Mcft, not the
+  // multi-city reservoir_daily_v2 schema. The shared loaders select the
+  // source from this flag.
+  reservoirDataSource: 'legacy-v1',
+  historyUnit: 'Mcft',
   sourceNameAliases: {
     poondi: 'poondi',
     cholavaram: 'cholavaram',

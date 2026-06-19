@@ -91,6 +91,73 @@ export interface GroundwaterViewsConfig {
 }
 
 /**
+ * Per-city capability flags for the home dashboard's optional sections.
+ * Each section renders only where the city has the backing data; the
+ * components are shared, so any city opts in by setting the flag once it
+ * has the pipeline. Undefined -> section omitted (additive default).
+ *
+ * See docs/specs/multi-city-component-discipline.md.
+ */
+export interface DashboardSectionsConfig {
+  /** AI daily briefing (the synthesized TL;DR from the `daily_briefing`
+   *  pipeline). Chennai is the first city with this pipeline. */
+  aiBriefing?: boolean;
+  /** Rainfall-anomaly context strip for the tracked reservoirs
+   *  (`reservoir_catchment_context`). */
+  reservoirCatchmentContext?: boolean;
+  /** Groundwater status snapshot card (needs dense per-ward GW data). */
+  groundwaterSnapshot?: boolean;
+}
+
+/**
+ * Per-city facts-page sourcing.
+ *
+ * - dynamicPipeline true: the page runs the live + derived fact builders
+ *   at request time and merges them with the static layer (Chennai today;
+ *   reservoir storage, Day Zero compare, CGWB blocks, river quality).
+ * - dynamicPipeline false/omitted: the page loads the static
+ *   `facts-<cityId>.json` snapshot (Madurai, Bangalore).
+ */
+export interface FactsConfig {
+  dynamicPipeline?: boolean;
+}
+
+/**
+ * Per-city flood-risk renderer selection. A named variant (like
+ * `heroMode`) so any city can adopt any renderer:
+ *
+ * - `interactive`: the full hazard / historical / drainage / sewerage map
+ *   (city-agnostic; reads `<cityId>-flood-*`, `<cityId>-drainage`,
+ *   `<cityId>-sewerage`, `<cityId>-rivers` GeoJSON). Chennai today.
+ * - `bangalore`: Bangalore's bespoke hotspot + drain-toggle map.
+ * - `narrative` (default when a narrative config exists): dam-threshold +
+ *   historical-events card stack (Madurai).
+ */
+export interface FloodViewConfig {
+  variant?: 'interactive' | 'bangalore' | 'narrative';
+}
+
+/**
+ * Per-city water-bodies capability flags. The shared water-bodies surface
+ * reads these to decide which richer affordances to mount; defaults off so
+ * a new city degrades to the basic map until its data lands.
+ */
+export interface WaterBodiesConfig {
+  /** Pull the encroachment census from /api/water-bodies-census and join it
+   *  to the OSM polygons. Chennai today. */
+  censusSource?: boolean;
+  /** Show the Map / Ranking tabbed layout with the restoration ranking
+   *  table. */
+  rankingTab?: boolean;
+  /** Mount the ward-search box + ward deep-linking (needs
+   *  `<cityId>-ward-profiles.json`). */
+  wardSearch?: boolean;
+  /** Overlay the lost / vanished water bodies layer
+   *  (`<cityId>-water-bodies-lost.geojson`). */
+  lostBodies?: boolean;
+}
+
+/**
  * Public urban-supply numbers for the dashboard's allocation hero.
  * Used when the city's tracked dams are irrigation-primary (so the
  * Chennai "storage / demand" math is misleading) but a published
@@ -141,6 +208,39 @@ export interface BasePlaceConfig {
    *  Omit to inherit legacy behaviour (all views shown when their
    *  underlying data is present). */
   groundwaterViews?: GroundwaterViewsConfig;
+
+  /** Per-city home-dashboard optional sections (AI briefing, catchment
+   *  context, groundwater snapshot). Omit -> none of the optional
+   *  sections render. See docs/specs/multi-city-component-discipline.md. */
+  dashboard?: DashboardSectionsConfig;
+
+  /** Facts-page sourcing: dynamic live+derived pipeline vs static JSON
+   *  snapshot. Omit -> static `facts-<cityId>.json`. */
+  facts?: FactsConfig;
+
+  /** Flood-risk renderer variant. Omit -> narrative card stack when a
+   *  narrative config exists for the city, else "not yet available". */
+  flood?: FloodViewConfig;
+
+  /** Water-bodies capability flags (census, ranking tab, ward search,
+   *  lost bodies). Omit -> the basic map only. */
+  waterBodies?: WaterBodiesConfig;
+
+  /** Which reservoir tables this city's data lives in.
+   *  - `v2` (default): the multi-city `reservoir_daily_v2` schema
+   *    (city_id + source_code), used by every city onboarded after the
+   *    multi-city refactor (Madurai, Bangalore, ...).
+   *  - `legacy-v1`: Chennai's original `reservoir_daily` /
+   *    `reservoir_forecast` tables (no city column). The shared loaders
+   *    and the history API select the source from this flag so Chennai
+   *    flows through the same dashboard as every other city.
+   *  Tracked for migration to v2 in
+   *  docs/specs/multi-city-component-discipline.md. */
+  reservoirDataSource?: 'v2' | 'legacy-v1';
+
+  /** Storage unit the history chart + reservoir cards render in. Chennai's
+   *  legacy data is stored in Mcft; v2 cities use TMC. Default 'TMC'. */
+  historyUnit?: 'TMC' | 'Mcft';
 
   /** Which dashboard hero to render for this city.
    *

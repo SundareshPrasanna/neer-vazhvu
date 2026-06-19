@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import WaterBodiesMapClient from "./water-bodies-map-client";
+import { RichWaterBodiesContent } from "./rich-water-bodies-content";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -51,6 +52,13 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
+
+  // Cities whose data supports the rich surface (tabs, ranking, census, ward
+  // deep-linking, lost-bodies overlay, cascade/catchment atlas) get the
+  // parametrized rich renderer. Selected by capability flag, not city id.
+  if (config.waterBodies?.rankingTab) {
+    return <RichWaterBodiesContent cityId={cityId} />;
+  }
 
   const [lostFile, currentGeoJson] = await Promise.all([
     loadJson<LostFile>(`water-bodies-lost-${cityId}.json`, "data"),

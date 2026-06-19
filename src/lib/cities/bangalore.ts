@@ -116,6 +116,10 @@ export const BANGALORE: CityConfig = {
   // atlas refs) queued for follow-up once WELL Labs Urban Water Balance
   // and IISc kere chain inventories are joined.
   hasCascadeOverlay: true,
+  // Flood-risk renderer: the KSRSAC-hotspot + BBMP-rajakaluve map
+  // (FloodRiskBangaloreContent), selected by named variant rather than a
+  // city-id branch. Distinct data shape from the interactive Chennai map.
+  flood: { variant: 'bangalore' },
   // Basin Atlas: Arkavathi basin (Vrishabhavathi / Kumudavathi / Suvarnamukhi),
   // co-built with Paani Earth. Data under public/data/basins/arkavathi/.
   basinIds: ['arkavathi'],

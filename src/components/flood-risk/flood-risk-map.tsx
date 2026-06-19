@@ -38,6 +38,9 @@ import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 
 interface FloodRiskMapProps {
+  cityId: string;
+  /** Initial map center [lat, lng]; falls back to DEFAULT_CENTER. */
+  center?: [number, number];
   viewMode: FloodViewMode;
   historicalEvent: "2015" | "2020";
   onSelect: (feat: SelectedFloodFeature | null) => void;
@@ -55,10 +58,12 @@ function FlyToCenter({ center }: { center: [number, number] }) {
   return null;
 }
 
-const CHENNAI_CENTER: [number, number] = [13.06, 80.24];
-const CHENNAI_ZOOM = 11;
+const DEFAULT_CENTER: [number, number] = [13.06, 80.24];
+const DEFAULT_ZOOM = 11;
 
 export function FloodRiskMap({
+  cityId,
+  center,
   viewMode,
   historicalEvent,
   onSelect,
@@ -87,32 +92,32 @@ export function FloodRiskMap({
 
   // Fetch data on mount
   useEffect(() => {
-    fetch("/geojson/chennai-flood-hazard-zones.geojson")
+    fetch(`/geojson/${cityId}-flood-hazard-zones.geojson`)
       .then((r) => r.json())
       .then(setHazardGeo)
       .catch(console.error);
 
-    fetch("/geojson/chennai-flood-inundation-depth.geojson")
+    fetch(`/geojson/${cityId}-flood-inundation-depth.geojson`)
       .then((r) => r.json())
       .then(setDepthGeo)
       .catch(console.error);
 
-    fetch("/geojson/chennai-flood-2015-hotspots.geojson")
+    fetch(`/geojson/${cityId}-flood-2015-hotspots.geojson`)
       .then((r) => r.json())
       .then(setHotspot2015Geo)
       .catch(console.error);
 
-    fetch("/geojson/chennai-flood-2020-hotspots.geojson")
+    fetch(`/geojson/${cityId}-flood-2020-hotspots.geojson`)
       .then((r) => r.json())
       .then(setHotspot2020Geo)
       .catch(console.error);
 
-    fetch("/geojson/chennai-drainage.geojson")
+    fetch(`/geojson/${cityId}-drainage.geojson`)
       .then((r) => r.json())
       .then(setDrainageGeo)
       .catch(console.error);
 
-    fetch("/geojson/chennai-rivers.geojson")
+    fetch(`/geojson/${cityId}-rivers.geojson`)
       .then((r) => r.json())
       .then(setRiversGeo)
       .catch(console.error);
@@ -121,11 +126,11 @@ export function FloodRiskMap({
       .then(setWardsGeo)
       .catch(console.error);
 
-    fetch("/geojson/chennai-sewerage.geojson")
+    fetch(`/geojson/${cityId}-sewerage.geojson`)
       .then((r) => r.json())
       .then(setSewerageGeo)
       .catch(console.error);
-  }, []);
+  }, [cityId]);
 
   // Hazard zone style
   const hazardStyle = useCallback(
@@ -307,8 +312,8 @@ export function FloodRiskMap({
 
   return (
     <MapContainer
-      center={CHENNAI_CENTER}
-      zoom={CHENNAI_ZOOM}
+      center={center ?? DEFAULT_CENTER}
+      zoom={DEFAULT_ZOOM}
       className="h-full w-full z-0"
       zoomControl={true}
       scrollWheelZoom={true}

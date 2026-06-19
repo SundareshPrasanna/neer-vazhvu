@@ -7,6 +7,7 @@ import {
   type FloodConfig,
 } from "./flood-risk-content";
 import { FloodRiskBangaloreContent } from "./flood-risk-bangalore-content";
+import { InteractiveFloodContent } from "./interactive-flood-content";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -118,13 +119,27 @@ export default async function CityFloodRiskPage({ params }: PageProps) {
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
 
-  // Bengaluru has a distinct map-based flood page (KSRSAC hotspots +
-  // BBMP rajakaluve network from OpenCity, Nov 2025) rather than the
-  // narrative-only Madurai pattern. Branch here rather than shoehorn
-  // the two shapes into one config object - the data shapes are
-  // genuinely different (no single "dam release threshold" for
-  // Bengaluru; rainfall + drainage capacity is the driver).
-  if (cityId === "bangalore") {
+  // Renderer is selected by declared variant, not city id (see
+  // docs/specs/multi-city-component-discipline.md rule 3). Any city can
+  // adopt any variant by setting `flood.variant` in its config.
+  //
+  //  - 'interactive': full interactive flood map (4 view modes -
+  //    hazard/historical/drainage/sewerage, legend, detail panel, ward
+  //    search, stats bar). City-agnostic; reads `<cityId>-flood-*`.
+  //    The same content component also backs the flat /flood-risk route.
+  //  - 'bangalore': distinct map-based page (KSRSAC hotspots + BBMP
+  //    rajakaluve network) whose data shape differs from the interactive
+  //    map (no single dam-release threshold; rainfall + drainage capacity
+  //    is the driver).
+  //  - 'narrative' / undefined: the Madurai-style narrative card stack
+  //    (FLOOD_CONFIG_BY_CITY) or the not-yet-available placeholder.
+  const variant = config.flood?.variant;
+
+  if (variant === "interactive") {
+    return <InteractiveFloodContent cityId={cityId} />;
+  }
+
+  if (variant === "bangalore") {
     return <FloodRiskBangaloreContent cityDisplayName={config.displayName} />;
   }
 

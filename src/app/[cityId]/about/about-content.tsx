@@ -19,6 +19,10 @@ const BangalorePageDescriptions = dynamic(() =>
   import("./bangalore-page-descriptions").then((mod) => mod.BangalorePageDescriptions),
 );
 
+const ChennaiPageDescriptions = dynamic(() =>
+  import("./chennai-page-descriptions").then((mod) => mod.ChennaiPageDescriptions),
+);
+
 /**
  * City-aware About page. Mirrors the section structure of Chennai's
  * src/app/about/about-content.tsx but with per-place content where the
@@ -165,6 +169,7 @@ export function CityAboutContent({
   const cityName = config.displayName;
   const isMadurai = config.cityId === "madurai";
   const isBangalore = config.cityId === "bangalore";
+  const isChennai = config.cityId === "chennai";
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -444,6 +449,63 @@ export function CityAboutContent({
               </p>
             </SubSection>
           )}
+
+          {isChennai && (
+            <SubSection title={t("about.assumptions")}>
+              {/* Desktop table */}
+              <div className="overflow-x-auto hidden sm:block">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
+                      <th className="pb-2 font-medium">{t("about.param")}</th>
+                      <th className="pb-2 font-medium">{t("about.default")}</th>
+                      <th className="pb-2 font-medium">{t("about.source_col")}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-slate-700 dark:text-slate-300">
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-2">{t("about.row_consumption")}</td>
+                      <td className="py-2 font-mono">830 MLD</td>
+                      <td className="py-2 text-slate-500 dark:text-slate-400">{t("about.src_cmwssb_report")}</td>
+                    </tr>
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-2">{t("about.row_desalination")}</td>
+                      <td className="py-2 font-mono">190 MLD</td>
+                      <td className="py-2 text-slate-500 dark:text-slate-400">{t("about.row_desalination_source")}</td>
+                    </tr>
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-2">{t("about.row_groundwater")}</td>
+                      <td className="py-2 font-mono">{t("about.not_modeled")}</td>
+                      <td className="py-2 text-slate-500 dark:text-slate-400">{t("about.src_conservative")}</td>
+                    </tr>
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-2">{t("about.row_evaporation")}</td>
+                      <td className="py-2 font-mono">{t("about.not_modeled")}</td>
+                      <td className="py-2 text-slate-500 dark:text-slate-400">{t("about.planned_v2")}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              {/* Mobile cards */}
+              <div className="sm:hidden space-y-3">
+                {[
+                  { param: t("about.row_consumption"), value: "830 MLD", source: t("about.src_cmwssb_report") },
+                  { param: t("about.row_desalination"), value: "190 MLD", source: t("about.row_desalination_source") },
+                  { param: t("about.row_groundwater"), value: t("about.not_modeled"), source: t("about.src_conservative") },
+                  { param: t("about.row_evaporation"), value: t("about.not_modeled"), source: t("about.planned_v2") },
+                ].map((row) => (
+                  <div key={row.param} className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm">
+                    <div className="font-medium text-slate-900 dark:text-slate-100">{row.param}</div>
+                    <div className="font-mono text-slate-700 dark:text-slate-300 mt-1">{row.value}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{row.source}</div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {t("about.adjust_note")}
+              </p>
+            </SubSection>
+          )}
         </Section>
 
         {/* ─────────────────────────────────────────────────────────
@@ -458,9 +520,13 @@ export function CityAboutContent({
             <BangalorePageDescriptions cityId={config.cityId} cityName={cityName} />
           )}
 
-          {!isMadurai && !isBangalore && (
+          {isChennai && (
+            <ChennaiPageDescriptions cityId={config.cityId} cityName={cityName} />
+          )}
+
+          {!isMadurai && !isBangalore && !isChennai && (
             <p className="text-slate-600 dark:text-slate-400">
-              Per-page methodology documentation for {cityName} is pending. See the dedicated Chennai about page (<Link href="/about" className="text-blue-600 dark:text-blue-400 hover:underline">/about</Link>) for the canonical methodology pattern.
+              Per-page methodology documentation for {cityName} is pending. See the dedicated Chennai about page (<Link href="/chennai/about" className="text-blue-600 dark:text-blue-400 hover:underline">/chennai/about</Link>) for the canonical methodology pattern.
             </p>
           )}
         </Section>
@@ -469,32 +535,65 @@ export function CityAboutContent({
             3. Intelligence & AI narratives
             ───────────────────────────────────────────────────────── */}
         <Section id="intelligence" title={t("about.section_intelligence")}>
-          <p className="text-slate-600 dark:text-slate-400">
-            Daily AI briefings, longer-form weekly narratives, and per-ward AI profiles are pending for {cityName} - the underlying summary stores aren&apos;t yet multi-city. Until those land, the page surfaces raw data without an AI commentary layer.
-          </p>
-          <div className="space-y-3">
-            <div className="flex gap-3">
-              <span className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0" />
-              <div>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">Daily briefing</span>
-                <span className="text-slate-600 dark:text-slate-400"> Template-based briefing (no LLM) summarising current storage, 7-day delta, days-of-water-left, and high-risk ward count. Pending for {cityName}.</span>
+          {isChennai ? (
+            <>
+              <p className="text-slate-600 dark:text-slate-400">
+                {t("about.intelligence_intro")}
+              </p>
+              <div className="space-y-3">
+                <div className="flex gap-3">
+                  <span className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.daily_briefing_title")}</span>
+                    <span className="text-slate-600 dark:text-slate-400"> {t("about.daily_briefing_desc")}</span>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.ai_narrative_title")}</span>
+                    <span className="text-slate-600 dark:text-slate-400"> {t("about.ai_narrative_desc")}</span>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-2 h-2 rounded-full bg-indigo-500 mt-2 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.ward_profile_title")}</span>
+                    <span className="text-slate-600 dark:text-slate-400"> {t("about.ward_profile_desc")}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex gap-3">
-              <span className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-              <div>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">CityStory narrative</span>
-                <span className="text-slate-600 dark:text-slate-400"> Anthropic Claude API generates a longer-form weekly narrative grounded in the latest data. Pending for {cityName}.</span>
+            </>
+          ) : (
+            <>
+              <p className="text-slate-600 dark:text-slate-400">
+                Daily AI briefings, longer-form weekly narratives, and per-ward AI profiles are pending for {cityName} - the underlying summary stores aren&apos;t yet multi-city. Until those land, the page surfaces raw data without an AI commentary layer.
+              </p>
+              <div className="space-y-3">
+                <div className="flex gap-3">
+                  <span className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">Daily briefing</span>
+                    <span className="text-slate-600 dark:text-slate-400"> Template-based briefing (no LLM) summarising current storage, 7-day delta, days-of-water-left, and high-risk ward count. Pending for {cityName}.</span>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">CityStory narrative</span>
+                    <span className="text-slate-600 dark:text-slate-400"> Anthropic Claude API generates a longer-form weekly narrative grounded in the latest data. Pending for {cityName}.</span>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-2 h-2 rounded-full bg-indigo-500 mt-2 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">Per-ward AI profile</span>
+                    <span className="text-slate-600 dark:text-slate-400"> Monthly Claude-generated micro-narrative per ward. Pending for {cityName}.</span>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex gap-3">
-              <span className="w-2 h-2 rounded-full bg-indigo-500 mt-2 flex-shrink-0" />
-              <div>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">Per-ward AI profile</span>
-                <span className="text-slate-600 dark:text-slate-400"> Monthly Claude-generated micro-narrative per ward. Pending for {cityName}.</span>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
         </Section>
 
         {/* ─────────────────────────────────────────────────────────
@@ -545,6 +644,192 @@ export function CityAboutContent({
             {t("about.data_pipeline")} {t("about.data_pipeline2")}
           </p>
 
+          {isChennai && (
+            <div className="space-y-3">
+              <DataSourceGroupHeader title={t("about.ds_group_reservoir")} />
+              <DataSource
+                name="CMWSSB Lake Level Page"
+                url="https://cmwssb.tn.gov.in/lake-level"
+                description={t("about.ds_cmwssb_desc")}
+                frequency={t("about.freq_daily_scraped")}
+              />
+              <DataSource
+                name="Open-Meteo"
+                url="https://open-meteo.com/"
+                description={t("about.ds_open_meteo_desc")}
+                frequency={t("about.freq_daily")}
+              />
+              <DataSource
+                name="NASA POWER (fallback)"
+                url="https://power.larc.nasa.gov/"
+                description={t("about.ds_nasa_desc")}
+                frequency={t("about.freq_daily_lag")}
+              />
+              <DataSource
+                name="OpenCity Chennai (Lake Storage)"
+                url="https://data.opencity.in/"
+                description={t("about.ds_opencity_lake_desc")}
+                frequency={t("about.freq_historical")}
+              />
+              <DataSource
+                name="IMD Gridded Rainfall (via imdlib)"
+                url="https://imdlib.readthedocs.io/"
+                description={t("about.ds_imd_desc")}
+                frequency={t("about.freq_one_time_gen")}
+              />
+
+              <DataSourceGroupHeader title={t("about.ds_group_gw")} />
+              <DataSource
+                name="India WRIS Ground Water Level API (CGWB Stations)"
+                url="https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
+                description={t("about.ds_wris_stations_desc")}
+                frequency={t("about.freq_daily")}
+              />
+              <DataSource
+                name="India WRIS / CGWB (Block Exploitation)"
+                url="https://indiawris.gov.in/"
+                description={t("about.ds_cgwb_desc")}
+                frequency={t("about.freq_static_fetch")}
+              />
+              <DataSource
+                name="OpenCity Chennai (Groundwater)"
+                url="https://data.opencity.in/"
+                description={t("about.ds_opencity_gw_desc")}
+                frequency={t("about.freq_monthly")}
+              />
+
+              <DataSourceGroupHeader title={t("about.ds_group_wb")} />
+              <DataSource
+                name="First Census of Water Bodies (data.gov.in)"
+                url="https://data.gov.in/resource/state-wise-data-first-census-water-bodies-tamil-nadu"
+                description={t("about.ds_census_wb_desc")}
+                frequency={t("about.freq_one_time")}
+              />
+              <DataSource
+                name="Kaggle Chennai Water Management"
+                url="https://www.kaggle.com/datasets/sudalairajkumar/chennai-water-management"
+                description={t("about.ds_kaggle_desc")}
+                frequency={t("about.freq_one_time")}
+              />
+              <DataSource
+                name="Care Earth Trust / NGT / CMDA: Lost Water Bodies"
+                url="https://www.careearth.org/"
+                description={t("about.ds_careearth_desc")}
+                frequency={t("about.freq_manual")}
+              />
+
+              <DataSourceGroupHeader title={t("about.ds_group_rivers")} />
+              <DataSource
+                name="Chennai Rivers Restoration Trust (CRRT)"
+                url="https://www.crrt.tn.gov.in/"
+                description={t("about.ds_crrt_desc")}
+                frequency={t("about.freq_manual")}
+              />
+              <DataSource
+                name="CPCB National Water Monitoring Programme (NWMP)"
+                url="https://cpcb.nic.in/nwmp-data-2024/"
+                description={t("about.ds_cpcb_desc")}
+                frequency={t("about.freq_annual")}
+              />
+              <DataSource
+                name="Nethaji Mariappan et al. (2017): Cooum Sewage Inlets"
+                url="https://neptjournal.com/upload-images/NL-61-47-(45)B-3437.pdf"
+                description={t("about.ds_sewage_inlets_desc")}
+                frequency={t("about.freq_one_time")}
+              />
+              <DataSource
+                name="NGT Southern Bench / TNPCB / CPCB: Industrial Pollution Sources"
+                url="https://www.tnpcb.gov.in/"
+                description={t("about.ds_ngt_desc")}
+                frequency={t("about.freq_manual")}
+              />
+
+              <DataSourceGroupHeader title={t("about.ds_group_flood")} />
+              <DataSource
+                name="OpenCity Chennai (Flood Hazard Data)"
+                url="https://data.opencity.in/"
+                description={t("about.ds_flood_desc")}
+                frequency={t("about.freq_static")}
+              />
+              <DataSource
+                name="GCC Storm Water Drain Survey"
+                url="https://data.opencity.in/dataset/chennai-stormwater-drain-swd-maps"
+                description={t("about.ds_swd_desc")}
+                frequency={t("about.freq_static")}
+              />
+              <DataSource
+                name="CMWSSB Sewerage Network"
+                url="https://data.opencity.in/dataset/chennai-sewerage-collection-system"
+                description={t("about.ds_sewerage_desc")}
+                frequency={t("about.freq_static")}
+              />
+
+              <DataSourceGroupHeader title="Coast &amp; shoreline" />
+              <DataSource
+                name="Anagha, Singh & Frappart (2026), Environmental Challenges"
+                url="https://www.sciencedirect.com/science/article/pii/S2667010026001083"
+                description="Peer-reviewed shoreline-change + seawater-intrusion study of the Chennai coast (1990-2024). Source of the per-zone rates and named port hotspots that validate the /shoreline map, and of the coastal facts."
+                frequency={t("about.freq_static")}
+              />
+              <DataSource
+                name="Landsat 5/7/8 (via Earth Engine)"
+                url="https://developers.google.com/earth-engine/datasets/catalog/landsat"
+                description="USGS Landsat surface reflectance, with Sentinel-2, drives our own MNDWI shoreline transects on the /shoreline map (ten epochs, 1990-2026)."
+                frequency={t("about.freq_static")}
+              />
+
+              <DataSourceGroupHeader title={t("about.ds_group_satellite")} />
+              <DataSource
+                name="NDWI Water Detection (via Sentinel-2)"
+                url="https://en.wikipedia.org/wiki/Normalized_difference_water_index"
+                description={t("about.ds_ndwi_desc")}
+                frequency={t("about.freq_periodic_summary")}
+              />
+              <DataSource
+                name="JRC Global Surface Water (Monthly Recurrence)"
+                url="https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_MonthlyRecurrence"
+                description={t("about.ds_gee_jrc_desc")}
+                frequency={t("about.freq_historical_monthly")}
+              />
+              <DataSource
+                name="CHIRPS Daily Rainfall"
+                url="https://developers.google.com/earth-engine/datasets/catalog/UCSB-CHG_CHIRPS_DAILY"
+                description={t("about.ds_gee_chirps_desc")}
+                frequency={t("about.freq_daily")}
+              />
+              <DataSource
+                name="Copernicus Sentinel-2 (via Earth Engine)"
+                url="https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED"
+                description={t("about.ds_sentinel2_desc")}
+                frequency={t("about.freq_evidence_refresh")}
+              />
+              <DataSource
+                name="HydroBASINS / MERIT Hydro"
+                url="https://www.hydrosheds.org/products/hydrobasins"
+                description={t("about.ds_gee_catchments_desc")}
+                frequency={t("about.freq_static_fetch")}
+              />
+
+              <DataSourceGroupHeader title={t("about.ds_group_base")} />
+              <DataSource
+                name="OpenStreetMap (Overpass API)"
+                url="https://overpass-api.de/"
+                description={t("about.ds_osm_desc")}
+                frequency={t("about.freq_static")}
+              />
+
+              <DataSourceGroupHeader title={t("about.ds_group_ai")} />
+              <DataSource
+                name="Anthropic Claude API"
+                url="https://docs.anthropic.com/"
+                description={t("about.ds_anthropic_desc")}
+                frequency={t("about.freq_daily_monthly")}
+              />
+            </div>
+          )}
+
+          {!isChennai && (
+          <>
           <DataSourceGroupHeader title="Reservoir &amp; weather" />
           {isMadurai && (
             <>
@@ -892,6 +1177,8 @@ export function CityAboutContent({
             description="AI city narratives and per-ward profiles. Pending for Madurai."
             frequency="daily / monthly"
           />
+          </>
+          )}
         </Section>
 
         {/* ─────────────────────────────────────────────────────────
@@ -918,10 +1205,15 @@ export function CityAboutContent({
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
               <span className="font-semibold">Our status badges (&quot;dead&quot;, &quot;severely degraded&quot;, &quot;degraded&quot;, &quot;stressed&quot;, &quot;healthy&quot;) are computed from current readings via the Designated Best-Use thresholds</span> - not from the PRS Priority list. We take the worst classification across a river&apos;s monitored stations and surface that as the river-level status.
+              {isChennai && (
+                <> Cooum, Adyar, and Buckingham Canal hold their labels under both signals (data and PRS Priority I agree); rivers where the two disagree (Vaigai&apos;s PRS Priority III vs Class C/D NWMP readings) reflect what the data shows now.</>
+              )}
             </p>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
-              Practical consequence: a river on CPCB&apos;s PRS Priority list (e.g. the Madurai-Manamadurai stretch of the Vaigai is Priority III) won&apos;t automatically render as &quot;severely degraded&quot; here. If the underlying NWMP readings show only Class C/D conditions, the badge reflects that. The PRS designation belongs in the river description as historical context, not as the live status.
-            </p>
+            {!isChennai && (
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                Practical consequence: a river on CPCB&apos;s PRS Priority list (e.g. the Madurai-Manamadurai stretch of the Vaigai is Priority III) won&apos;t automatically render as &quot;severely degraded&quot; here. If the underlying NWMP readings show only Class C/D conditions, the badge reflects that. The PRS designation belongs in the river description as historical context, not as the live status.
+              </p>
+            )}
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
               Methodology lives in <span className="font-mono">src/lib/utils/river-classification.ts</span>; readings are from CPCB NWMP annual River Water Quality reports.
             </p>
@@ -1007,6 +1299,56 @@ export function CityAboutContent({
                   <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">Lost-kere coordinates not populated</h4>
                   <p className="text-sm text-blue-700 dark:text-blue-300">
                     The 9 Nagendra-anchored lost / severely-reduced kere have name + status + conversion note but no lat/lng - the fully-lost ones (Dharmambudhi, Sampangi, Karanji Anjaneya, Akkithimmanahalli, Domlur) have no OSM presence (they&apos;re under bus stations, stadiums, schools and BDA layouts). The 4 severely-reduced bodies are mappable via their OSM osm_ids (Kempambudhi, Ulsoor, Sankey, Bellandur) and already surface in the rich-body cohort. Listed as a Tier 3 follow-up.
+                  </p>
+                </div>
+              </div>
+            </SubSection>
+          )}
+
+          {isChennai && (
+            <SubSection title={t("about.data_quality")}>
+              <p className="text-slate-600 dark:text-slate-400">
+                {t("about.dq_intro")}
+              </p>
+              <div className="space-y-3">
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">
+                    {t("about.dq_census_units_title")}
+                  </h4>
+                  <p className="text-sm text-amber-700 dark:text-amber-300">
+                    {t("about.dq_census_units_desc")}
+                  </p>
+                </div>
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">
+                    {t("about.dq_census_capacity_title")}
+                  </h4>
+                  <p className="text-sm text-amber-700 dark:text-amber-300">
+                    {t("about.dq_census_capacity_desc")}
+                  </p>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">
+                    {t("about.dq_census_shape_title")}
+                  </h4>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    {t("about.dq_census_shape_desc")}
+                  </p>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">
+                    {t("about.dq_satellite_baseline_title")}
+                  </h4>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    {t("about.dq_satellite_baseline_desc")}
+                  </p>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                  <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">
+                    {t("about.dq_catchment_geometry_title")}
+                  </h4>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    {t("about.dq_catchment_geometry_desc")}
                   </p>
                 </div>
               </div>
