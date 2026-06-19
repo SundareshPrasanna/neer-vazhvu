@@ -179,7 +179,7 @@ export function CityWardReportCard({
             return (
               <div key={g}>
                 <div className="text-xs uppercase tracking-wider text-slate-500 mb-1.5">
-                  Grade {g === "incomplete" ? "—" : g} · {GRADE_STYLES[g].label} · {list.length}
+                  Grade {g === "incomplete" ? "—" : g} - {GRADE_STYLES[g].label} - {list.length}
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {list
@@ -229,18 +229,18 @@ export function CityWardReportCard({
               Ward {ward.ward_number}
             </h1>
             <div className="text-sm text-slate-600 dark:text-slate-400">
-              Zone {ward.zone} · {ward.area_sq_km.toFixed(2)} sq km
+              Zone {ward.zone} - {ward.area_sq_km.toFixed(2)} sq km
             </div>
             <div className={`text-sm font-medium mt-1 ${s.text}`}>
               {s.label}
               {ward.composite_score !== null && (
                 <span className="text-slate-600 dark:text-slate-400 ml-2 font-normal">
-                  · Composite {ward.composite_score.toFixed(0)}/100
+                  - Composite {ward.composite_score.toFixed(0)}/100
                 </span>
               )}
               {cityRank && (
                 <span className="text-slate-600 dark:text-slate-400 ml-2 font-normal">
-                  · Ranked #{cityRank.rank} of {cityRank.total}
+                  - Ranked #{cityRank.rank} of {cityRank.total}
                 </span>
               )}
             </div>
@@ -263,7 +263,7 @@ export function CityWardReportCard({
           unit={ward.gw_depth_m !== null ? "m" : undefined}
           percentile={ward.pct_gw_depth}
           weight={0.5}
-          description={`IDW from ${ward.gw_station_count} CGWB station${ward.gw_station_count === 1 ? "" : "s"} within 15 km · deeper = more stress`}
+          description={`IDW from ${ward.gw_station_count} CGWB station${ward.gw_station_count === 1 ? "" : "s"} within 15 km - deeper = more stress`}
         />
         <MetricRow
           label="Water-body density"
@@ -271,14 +271,14 @@ export function CityWardReportCard({
           unit="/sq km"
           percentile={ward.pct_wb_density}
           weight={0.2}
-          description={`${ward.wb_count} OSM water bodies in ward · higher density = lower risk`}
+          description={`${ward.wb_count} OSM water bodies in ward - higher density = lower risk`}
         />
         <MetricRow
           label="Water-body health"
           rawValue={ward.wb_health_score !== null ? ward.wb_health_score.toFixed(0) : "no flagship"}
           percentile={ward.pct_wb_health}
           weight={0.3}
-          description={`Mean restoration_priority_score across ${ward.wb_health_sample_count} flagship${ward.wb_health_sample_count === 1 ? "" : "s"} within 3 km · higher score = sicker tank`}
+          description={`Mean restoration_priority_score across ${ward.wb_health_sample_count} flagship${ward.wb_health_sample_count === 1 ? "" : "s"} within 3 km - higher score = sicker tank`}
         />
       </div>
 

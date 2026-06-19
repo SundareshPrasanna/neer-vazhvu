@@ -298,7 +298,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
                   layer.on("click", () => selectLake(p.osm_id));
                   const label =
                     (p.name || "(unnamed tank)") +
-                    (p.catchment_area_sqkm != null ? ` · catchment ${p.catchment_area_sqkm.toFixed(1)} km²` : "");
+                    (p.catchment_area_sqkm != null ? ` - catchment ${p.catchment_area_sqkm.toFixed(1)} km²` : "");
                   layer.bindTooltip(label, { sticky: true });
                 }}
               />

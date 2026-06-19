@@ -46,7 +46,7 @@ export function StoryPage({
           <Link href={dashboardHref} className="underline">
             {t("nav.dashboard")}
           </Link>
-          {" · "}
+          {" - "}
           <Link href={factsHref} className="underline">
             {t("nav.facts")}
           </Link>

@@ -109,7 +109,7 @@ export function IIScStressWardsLeafletMap({ wards }: Props) {
                     : `Contains ${stressCount} IISc-stressed BBMP wards`;
               layer.bindTooltip(
                 `<strong>${p.ward_name ?? "Unnamed ward"}</strong>` +
-                  `<br/><span style="font-size:11px;color:#64748b">GBA ward ${p.ward_no ?? "?"} · ${p.corporation ?? "?"}</span>` +
+                  `<br/><span style="font-size:11px;color:#64748b">GBA ward ${p.ward_no ?? "?"} - ${p.corporation ?? "?"}</span>` +
                   `<br/><span style="font-size:11px;color:${stressCount > 0 ? "#b91c1c" : "#64748b"}">${stressLabel}</span>`,
                 { sticky: true },
               );
@@ -136,8 +136,8 @@ export function IIScStressWardsLeafletMap({ wards }: Props) {
                 <br />
                 <span style={{ fontSize: "11px", color: "#64748b" }}>
                   BBMP ward {w.bbmp_ward_no}
-                  {w.gba_ward_no != null && ` · GBA ward ${w.gba_ward_no}`}
-                  {w.gba_corporation && ` · ${w.gba_corporation}`}
+                  {w.gba_ward_no != null && ` - GBA ward ${w.gba_ward_no}`}
+                  {w.gba_corporation && ` - ${w.gba_corporation}`}
                 </span>
               </Tooltip>
             </CircleMarker>

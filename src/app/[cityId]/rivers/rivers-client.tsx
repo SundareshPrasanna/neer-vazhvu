@@ -355,13 +355,13 @@ export default function RiversClient({
       {/* Stats bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-5 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
-          {cityDisplayName} · {scopeLabel}
+          {cityDisplayName} - {scopeLabel}
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400">
           {rivers.length} rivers
-          {cpcbStationMarkers.length > 0 && ` · ${cpcbStationMarkers.length} CPCB stations`}
-          {industrialMarkers.length > 0 && ` · ${industrialMarkers.length} industrial sources`}
-          {" · click for details"}
+          {cpcbStationMarkers.length > 0 && ` - ${cpcbStationMarkers.length} CPCB stations`}
+          {industrialMarkers.length > 0 && ` - ${industrialMarkers.length} industrial sources`}
+          {" - click for details"}
         </span>
       </div>
 
@@ -509,7 +509,7 @@ function RiverExtraSections({ events, industrial }: { events: RiverEvent[]; indu
                   </div>
                   {e.actors.length > 0 && (
                     <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
-                      {e.actors.join(" · ")}
+                      {e.actors.join(" - ")}
                     </div>
                   )}
                   <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed mt-1.5">

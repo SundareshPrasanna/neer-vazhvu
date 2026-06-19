@@ -240,7 +240,7 @@ function SourceRow({ label, source, note, link, licence }: SourceRowProps) {
         {source}
         {licence && (
           <span className="ml-2 text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-500">
-            · {licence}
+            - {licence}
           </span>
         )}
       </div>

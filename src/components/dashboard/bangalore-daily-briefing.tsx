@@ -136,7 +136,7 @@ export function BangaloreDailyBriefing({ briefing, aiOverride }: Props) {
 
       <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-3">
         {useAi && aiOverride?.sourceDates?.reservoir_date
-          ? `${t("briefing.cauvery_storage_label")}: ${aiOverride.sourceDates.reservoir_date}${aiOverride.model ? ` · ${aiOverride.model}` : ""}`
+          ? `${t("briefing.cauvery_storage_label")}: ${aiOverride.sourceDates.reservoir_date}${aiOverride.model ? ` - ${aiOverride.model}` : ""}`
           : briefing.freshnessDate
             ? format(t("briefing.freshness.with_date"), { date: briefing.freshnessDate })
             : t("briefing.freshness.pending")}

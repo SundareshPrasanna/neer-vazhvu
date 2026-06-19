@@ -46,6 +46,7 @@ graph TB
         WB["Water Bodies + Restoration /water-bodies"]
         Rivers["Rivers /rivers"]
         Flood["Flood Risk /flood-risk"]
+        Coast["Coast / shoreline change /shoreline (Chennai)"]
         About["About /about"]
     end
 
@@ -60,7 +61,7 @@ graph TB
     OC -->|CKAN API| Scrapers
     DGI -->|REST API| Scrapers
     CPCB -->|manual JSON| StaticFiles["public/data/<br/>river-quality.json<br/>industrial-sources.json<br/>restoration-priority.json<br/>imd-rainfall-monthly.json<br/>gwr-blocks.json<br/>gw-stations.json"]
-    OSM -->|fetch scripts| StaticFiles2["public/geojson/<br/>chennai-rivers.geojson<br/>chennai-water-bodies-current.geojson<br/>chennai-water-bodies-lost.geojson<br/>chennai-industrial-zones.geojson<br/>chennai-wards-2022.geojson<br/>chennai-gwr-blocks.geojson<br/>chennai-flood-*.geojson<br/>chennai-drainage.geojson<br/>chennai-sewerage.geojson"]
+    OSM -->|fetch scripts| StaticFiles2["public/geojson/<br/>chennai-rivers.geojson<br/>chennai-water-bodies-current.geojson<br/>chennai-water-bodies-lost.geojson<br/>chennai-industrial-zones.geojson<br/>chennai-wards-2022.geojson<br/>chennai-gwr-blocks.geojson<br/>chennai-flood-*.geojson<br/>chennai-drainage.geojson<br/>chennai-sewerage.geojson<br/>chennai-coastal-zones.geojson<br/>chennai-coastal-hotspots.geojson<br/>chennai-coastal-transects.geojson"]
     GCC -->|KML conversion| StaticFiles2
     CMWSSB_SEW -->|KML/KMZ conversion| StaticFiles2
     IMD -->|imdlib script| StaticFiles
@@ -69,6 +70,7 @@ graph TB
     ANTHROPIC -->|Claude API| Computed
     GEE_SRC -->|Earth Engine API| GEE
     GEE_SRC -->|build-time chips + tints + zonal stats| RichStatic
+    GEE_SRC -->|run_gee_coastline.py MNDWI+DSAS shoreline change| StaticFiles2
     TNSWA -->|fetch-tnswa-ramsar-polygon.ts| StaticFiles2
     OVERTURE -->|monthly DuckDB cron| RichStatic
 
@@ -495,6 +497,17 @@ A terrain-derived, clickable area-of-influence layer for every lake/tank, live f
 
 **Serving:** the clickable lake layer is one static GeoJSON (`{city}-cascade-lakes.geojson`, all panel stats embedded). On click, [src/app/api/cascade/[cityId]/catchment/route.ts](src/app/api/cascade/[cityId]/catchment/route.ts) returns `{ catchment, basin, streams, downstream }` for that `osm_id` (module-scope cached). **Frontend** [src/components/cascade/catchment-atlas.tsx](src/components/cascade/catchment-atlas.tsx) is a `/water-bodies` view mode (persisted via `?mode=catchments`, carried across city switches): one map, click-to-emphasise (own catchment solid orange, inherited basin dashed amber, streams Strahler-graded blue, downstream flow dotted violet), with a side panel showing the own/received/total hierarchy, named clickable upstream/downstream lists, the named downstream river, and rooftop-harvest potential. The panel deep-links to the about-page methodology (`#catchment-methodology`).
 
+### Coastal Shoreline-Change (`/shoreline`, Chennai)
+
+A two-layer map of erosion/accretion along the 86 km Chennai-Ennore-Pulicat coast (1990-2024), keyed to Anagha, Singh & Frappart (2026, *Environmental Challenges*). Unlike the daily/weekly pipelines this is an **on-demand build**, not a cron job. Every feature carries a `source` field (`study-reported` vs `computed`) so the UI labels provenance honestly.
+
+| Layer | Built by | Source tag | Method |
+|-------|----------|------------|--------|
+| Zones + hotspots (seed) | [scripts/build-chennai-coastal-seed.py](scripts/build-chennai-coastal-seed.py) | `study-reported` | OSM coastline (Overpass) stitched → seaward shore → split into the study's 6 zones by published along-shore lengths; per-zone rates + 5 port hotspots attached |
+| Transects (our own) | [neer-vazhvu-api/app/gee/coastline.py](neer-vazhvu-api/app/gee/coastline.py) via [run_gee_coastline.py](neer-vazhvu-api/scripts/run_gee_coastline.py) | `computed` | 8-band MNDWI (Landsat 5/7/8 + Sentinel-2, dry-season composites) sampled along 972 shore-normal 100 m transects in GEE; land→water crossing per epoch; DSAS-equivalent EPR + weighted linear regression (weights = 1/Esp²) → 895 transects |
+
+The two methods are independent: stage 2 (transect geometry + DSAS regression) is pure NumPy and unit-testable; only stage 1 (MNDWI sampling) touches GEE. They agree on pattern and sign (Zone V around Ennore/Kattupalli most eroded; Adyar/Cooum + Chennai Port accrete), with our absolute rates lower (fixed MNDWI threshold, no tidal correction) - presented as independent corroboration. Each computed transect also carries a per-year movement `series` + early/recent split rates, so the panel shows a shoreline-movement-over-time chart and an acceleration flag (~66% of eroding transects are eroding faster post-2015). **Frontend** [src/components/coastal/coastal-map.tsx](src/components/coastal/coastal-map.tsx) is a Leaflet map with a "Study zones" / "Our transects" toggle; types in [src/types/coastal.ts](src/types/coastal.ts), gated by `coastal` in `FEATURE_AVAILABILITY` ([src/lib/cities/routing.ts](src/lib/cities/routing.ts)). **Cadence:** yearly (annual dry-season epochs) - `active_epoch_config()` auto-appends the latest complete year and `.github/workflows/coastal-shoreline-refresh.yml` opens a refresh PR each 15 June. Publication-style write-up: [docs/methodology/coastal-shoreline-change-v1.md](docs/methodology/coastal-shoreline-change-v1.md); internal notes: [docs/research/chennai-coast-paper/METHODS.md](docs/research/chennai-coast-paper/METHODS.md).
+
 ## Frontend
 
 ```mermaid
@@ -508,6 +521,7 @@ graph TD
     Layout --> WB["Water Bodies + Restoration Page"]
     Layout --> RV["Rivers Page"]
     Layout --> FR["Flood Risk Page"]
+    Layout --> CO["Coast / Shoreline Page /shoreline"]
     Layout --> About["About Page"]
 
     subgraph Dashboard["Dashboard Page /"]

@@ -27,6 +27,7 @@ import type { LanguageCode } from "@/lib/i18n/translations";
 export type FactBucketId =
   | "reservoirs"
   | "groundwater"
+  | "coastal"
   | "rivers"
   | "water-bodies"
   | "floods"
@@ -71,6 +72,17 @@ export const BUCKETS: readonly FactBucketDef[] = [
     },
     pagePathSuffix: "/groundwater",
     pageLabel: { en: "groundwater map", ta: "நிலத்தடி நீர் வரைபடம்", kn: "ಅಂತರ್ಜಲ ನಕ್ಷೆ" },
+  },
+  {
+    id: "coastal",
+    label: { en: "Coast & seawater intrusion", ta: "கடற்கரை & கடல்நீர் ஊடுருவல்", kn: "ಕರಾವಳಿ ಮತ್ತು ಸಮುದ್ರ ನೀರಿನ ಒಳನುಗ್ಗುವಿಕೆ" },
+    description: {
+      en: "Shoreline erosion, sea-level rise, and seawater intrusion into the coastal aquifer along the Chennai-Ennore-Pulicat coast.",
+      ta: "சென்னை-எண்ணூர்-புலிக்காட் கடற்கரையில் கடற்கரை அரிப்பு, கடல்மட்ட உயர்வு, மற்றும் கடலோர நிலத்தடி நீரில் கடல்நீர் ஊடுருவல்.",
+      kn: "ಚೆನ್ನೈ-ಎನ್ನೋರ್-ಪುಲಿಕ್ಯಾಟ್ ಕರಾವಳಿಯ ಉದ್ದಕ್ಕೂ ತೀರ ಸವೆತ, ಸಮುದ್ರ ಮಟ್ಟ ಏರಿಕೆ, ಮತ್ತು ಕರಾವಳಿ ಜಲಸ್ತರಕ್ಕೆ ಸಮುದ್ರ ನೀರಿನ ಒಳನುಗ್ಗುವಿಕೆ.",
+    },
+    pagePathSuffix: null,
+    pageLabel: { en: "", ta: "", kn: "" },
   },
   {
     id: "rivers",
@@ -129,6 +141,12 @@ const CATEGORY_TO_BUCKET: Record<string, FactBucketId> = {
 
   // Groundwater
   groundwater: "groundwater",
+
+  // Coast & seawater intrusion
+  coastal: "coastal",
+  coast: "coastal",
+  "seawater-intrusion": "coastal",
+  shoreline: "coastal",
 
   // Rivers
   rivers: "rivers",

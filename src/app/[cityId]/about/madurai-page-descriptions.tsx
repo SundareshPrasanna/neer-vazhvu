@@ -58,7 +58,7 @@ function English({ cityId, cityName }: Props) {
 
       <SubSection id="page-groundwater" title="Groundwater">
         <p className="text-slate-600 dark:text-slate-400">
-          {cityName}&apos;s groundwater page combines two authoritative views: CGWB block exploitation (the official annual classification across the district) and a 3-factor ward-level risk composite (composite_score · gw_depth · wb_density · wb_health). The map also shows the CGWB Year Book point network as click-through markers for direct depth readings at known wells.
+          {cityName}&apos;s groundwater page combines two authoritative views: CGWB block exploitation (the official annual classification across the district) and a 3-factor ward-level risk composite (composite_score - gw_depth - wb_density - wb_health). The map also shows the CGWB Year Book point network as click-through markers for direct depth readings at known wells.
         </p>
         <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Block exploitation (GWR)</h4>
         <p className="text-slate-600 dark:text-slate-400">

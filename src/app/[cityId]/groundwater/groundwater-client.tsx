@@ -332,7 +332,7 @@ export default function CityGroundwaterClient({
       {/* Context bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300">
-          {config.displayName} · {
+          {config.displayName} - {
             viewMode === "depth" ? "Ward depth (interpolated)" :
             viewMode === "risk" ? "Ward risk composite (3-factor)" :
             "CGWB block exploitation (GWR)"
@@ -340,23 +340,23 @@ export default function CityGroundwaterClient({
         </span>
         {viewMode === "exploitation" && headlinePhrases.length > 0 && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
-            {headlinePhrases.join(" · ")}
+            {headlinePhrases.join(" - ")}
           </span>
         )}
         {usesCgwbYearbook && cgwbFile && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
-            {cgwbFile.wells.length} CGWB Year Book stations · quarterly readings May 2023 - Jan 2025
+            {cgwbFile.wells.length} CGWB Year Book stations - quarterly readings May 2023 - Jan 2025
           </span>
         )}
         {viewMode === "depth" && interpolated && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
             City avg {interpolated.cityAverage?.toFixed(1) ?? "-"} m below ground
-            {interpolated.asOf && ` · as of ${interpolated.asOf}`}
+            {interpolated.asOf && ` - as of ${interpolated.asOf}`}
           </span>
         )}
         {viewMode === "risk" && riskFile && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
-            {riskFile.algorithm_version} · weights:{" "}
+            {riskFile.algorithm_version} - weights:{" "}
             {Object.entries(riskFile.weights)
               .map(([k, v]) => `${k} ${(v * 100).toFixed(0)}%`)
               .join(", ")}
@@ -513,11 +513,11 @@ export default function CityGroundwaterClient({
               <div>{t("gw_page.source_cgwb")}</div>
               {usesCgwbYearbook && cgwbFile ? (
                 <div className="text-emerald-600 dark:text-emerald-400">
-                  {cgwbFile.wells.length} CGWB Year Book stations · quarterly readings, click for hydrograph
+                  {cgwbFile.wells.length} CGWB Year Book stations - quarterly readings, click for hydrograph
                 </div>
               ) : wrisStations.length > 0 ? (
                 <div className="text-emerald-600 dark:text-emerald-400">
-                  {wrisStations.length} CGWB stations live · click for depth + quality flag
+                  {wrisStations.length} CGWB stations live - click for depth + quality flag
                 </div>
               ) : (
                 <div className="text-amber-600 dark:text-amber-400">
@@ -661,7 +661,7 @@ function WardDepthPanel({
       </div>
 
       <div className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">
-        Contributing stations · click for time series
+        Contributing stations - click for time series
       </div>
       {ranked.length === 0 && (
         <p className="text-xs text-slate-500">No CGWB stations within range of this ward.</p>
@@ -686,7 +686,7 @@ function WardDepthPanel({
             <div className="flex items-baseline justify-between gap-2 text-[11px] mt-0.5">
               <span className="text-slate-500">
                 {station.acquisitionMode}
-                {station.wellAquiferType && ` · ${station.wellAquiferType}`}
+                {station.wellAquiferType && ` - ${station.wellAquiferType}`}
               </span>
               <span className="font-mono text-slate-700 dark:text-slate-300">
                 {Math.abs(station.latestDepthM).toFixed(1)} m

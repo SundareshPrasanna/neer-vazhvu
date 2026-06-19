@@ -51,7 +51,7 @@ export function Footer() {
             {t("footer.data_sources")}{" "}
             {sources.map((s, i) => (
               <span key={s.label}>
-                {i > 0 && " · "}
+                {i > 0 && " - "}
                 <a
                   href={s.href}
                   target="_blank"
@@ -62,7 +62,7 @@ export function Footer() {
                 </a>
               </span>
             ))}
-            {" · "}
+            {" - "}
             <a
               href={aboutHref}
               className="text-blue-600 dark:text-blue-400 hover:underline"
@@ -72,7 +72,7 @@ export function Footer() {
           </div>
           <div className="flex items-center gap-2">
             <span>{t("footer.open_source")}</span>
-            <span className="text-slate-300 dark:text-slate-600">·</span>
+            <span className="text-slate-300 dark:text-slate-600">-</span>
             <a
               href="https://www.patreon.com/NeerVazhvu"
               target="_blank"

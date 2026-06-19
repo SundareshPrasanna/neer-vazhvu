@@ -203,7 +203,7 @@ export function RiversLeafletMap({
                 <>
                   <br />
                   <span style={{ fontSize: "11px" }}>
-                    {s.latest_year}: BOD {s.latest_bod ?? "-"} mg/L · DO {s.latest_do ?? "-"} mg/L
+                    {s.latest_year}: BOD {s.latest_bod ?? "-"} mg/L - DO {s.latest_do ?? "-"} mg/L
                   </span>
                 </>
               )}
@@ -251,7 +251,7 @@ export function RiversLeafletMap({
               <strong>{s.name}</strong>
               <br />
               <span style={{ fontSize: "11px", color: "#64748b" }}>
-                {s.type.replace(/_/g, " ")} · affects {s.rivers_affected.join(", ")}
+                {s.type.replace(/_/g, " ")} - affects {s.rivers_affected.join(", ")}
               </span>
             </Tooltip>
           </CircleMarker>

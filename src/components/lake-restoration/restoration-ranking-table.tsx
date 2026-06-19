@@ -159,7 +159,7 @@ export function RestorationRankingTable({ data, onSelect }: RestorationRankingTa
                       </span>
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      {wb.water_type} · {wb.area_ha.toLocaleString()} ha
+                      {wb.water_type} - {wb.area_ha.toLocaleString()} ha
                     </div>
                   </div>
                   <div className="flex items-center gap-2">

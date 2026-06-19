@@ -51,7 +51,7 @@ export function FeatureNotYetAvailable({
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <Badge variant="outline" className="text-xs">
-          {config.displayName} · {feature}
+          {config.displayName} - {feature}
         </Badge>
         <Badge variant="outline" className="text-xs">
           {SCOPE_LABEL[scope]}

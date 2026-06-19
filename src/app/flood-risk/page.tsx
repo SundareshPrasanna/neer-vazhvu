@@ -130,7 +130,7 @@ function FloodRiskPageContent() {
             </div>
             <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
               {historicalEvent === "2015" ? "327 " : "53 "}{t("flood.hotspots")}
-              {historicalEvent === "2015" && <> · 192 {t("flood.depth_readings")}</>}
+              {historicalEvent === "2015" && <> - 192 {t("flood.depth_readings")}</>}
             </span>
             <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
               {t("flood.tagline_historical")}

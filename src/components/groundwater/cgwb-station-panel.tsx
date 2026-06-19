@@ -67,13 +67,13 @@ export function CgwbStationPanel({
             {station.name}
           </h3>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            CGWB Year Book · {station.block} block
+            CGWB Year Book - {station.block} block
             {station.block_inferred && (
               <span className="ml-1 text-amber-600 dark:text-amber-400" title="Block assignment inferred from geographic proximity to other CGWB wells in this block; not directly stated in the source PDF.">
                 (inferred)
               </span>
             )}
-            {" · "}phreatic / unconfined
+            {" - "}phreatic / unconfined
           </div>
           <div className="text-[11px] font-mono text-slate-400 mt-0.5">
             {station.lat.toFixed(4)}°N, {station.lng.toFixed(4)}°E
@@ -98,7 +98,7 @@ export function CgwbStationPanel({
             {latest ? `${latest.depth_m_bgl.toFixed(2)} m` : "no data"}
           </div>
           <div className="text-[10px] text-slate-500">
-            {latest ? `${MONTH_LABELS[latest.month]} ${latest.year}` : ""} · below ground level
+            {latest ? `${MONTH_LABELS[latest.month]} ${latest.year}` : ""} - below ground level
           </div>
         </div>
         <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-2">
@@ -144,7 +144,7 @@ export function CgwbStationPanel({
 
       {/* Tabular readings */}
       <div className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">
-        All readings · m below ground level
+        All readings - m below ground level
       </div>
       <div className="border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden">
         <table className="w-full text-xs">

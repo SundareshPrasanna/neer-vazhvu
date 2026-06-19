@@ -249,8 +249,8 @@ export default function CascadeMapLayer({ cityId }: CascadeMapLayerProps) {
         return (
           `<strong>${name}</strong>` +
           `<br/><span style="font-size:11px;color:#475569">` +
-          `${depthLabel} · ` +
-          `${entry.degreeIn} in · ${entry.degreeOut} out · ` +
+          `${depthLabel} - ` +
+          `${entry.degreeIn} in - ${entry.degreeOut} out - ` +
           `${entry.areaHa.toLocaleString()} ha</span>` +
           sinkLine +
           isolationLine

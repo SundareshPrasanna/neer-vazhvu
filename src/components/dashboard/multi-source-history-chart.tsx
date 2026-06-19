@@ -298,7 +298,7 @@ export function MultiSourceHistoryChart({
           {cityDisplayName} reservoir storage history
         </h2>
         <div className="text-xs text-slate-500">
-          {pointCount.toLocaleString()} readings ·{" "}
+          {pointCount.toLocaleString()} readings -{" "}
           {earliestDate ? fmtDate(earliestDate) : "?"} - {latestDate ? fmtDate(latestDate) : "?"}
         </div>
       </div>

@@ -380,7 +380,7 @@ function ResultRow({
           {displayName}
         </span>
         <span className="text-xs text-slate-400 dark:text-slate-500">
-          {t("ward.ward")} {l.ward_number} ·{" "}
+          {t("ward.ward")} {l.ward_number} -{" "}
           {getZoneLabel(l.zone_name, language)}
         </span>
       </button>

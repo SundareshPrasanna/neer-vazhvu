@@ -111,7 +111,7 @@ function ProjectCard({ project }: { project: RestorationProject }) {
       {/* Key facts */}
       {facts.length > 0 && (
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          {facts.join(" · ")}
+          {facts.join(" - ")}
         </p>
       )}
 

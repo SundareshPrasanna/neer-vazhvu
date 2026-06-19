@@ -80,7 +80,7 @@ export function Hero({ src, alt, source, credit }: HeroProps) {
       </div>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
       <figcaption className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded">
-        {credit ? `${credit} · ` : ""}
+        {credit ? `${credit} - ` : ""}
         {t("story.source")} {source}
       </figcaption>
     </figure>
@@ -188,7 +188,7 @@ export function Figure({
         <span className="text-slate-700 dark:text-slate-300">{caption}</span>
         {" "}
         <span className="text-slate-400 dark:text-slate-500">
-          {credit ? `· ${credit} ` : ""}· {t("story.source")} {source}
+          {credit ? `- ${credit} ` : ""}- {t("story.source")} {source}
         </span>
       </figcaption>
     </figure>
@@ -215,7 +215,7 @@ export function TimeLapse({ src, alt, caption, source }: TimeLapseProps) {
       </div>
       <figcaption className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
         <span className="text-slate-700 dark:text-slate-300">{caption}</span>{" "}
-        <span className="text-slate-400 dark:text-slate-500">· {t("story.source")} {source}</span>
+        <span className="text-slate-400 dark:text-slate-500">- {t("story.source")} {source}</span>
       </figcaption>
     </figure>
   );
@@ -354,7 +354,7 @@ export function BeforeAfter({
       <figcaption className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
         <span className="text-slate-700 dark:text-slate-300">{caption}</span>{" "}
         <span className="text-slate-400 dark:text-slate-500">
-          {credit ? `· ${credit} ` : ""}· {t("story.source")} {source}
+          {credit ? `- ${credit} ` : ""}- {t("story.source")} {source}
         </span>
       </figcaption>
     </figure>
