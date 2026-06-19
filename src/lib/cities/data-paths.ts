@@ -50,3 +50,41 @@ export function waterBodiesLostUrl(cityId: string): string {
 export function riversUrl(cityId: string): string {
   return `/geojson/${cityId}-rivers.geojson`;
 }
+
+/**
+ * Rivers-page renderer selection, derived from the city's data layout (not a
+ * city-id check in render code - see multi-city-component-discipline.md rule 3
+ * and rule 4: legacy-data exceptions live in this single module).
+ *
+ * - `"chennai-combined"`: the richer combined-rivers map (CPCB stations +
+ *   industrial pollution sources + Cooum sewage inlets overlay, legend
+ *   toggles, ward search, pollution detail panel). Backed by Chennai's legacy
+ *   unprefixed `river-quality.json` / `industrial-sources.json` /
+ *   `cooum-sewage-inlets.json`. Any city that lands that data layout can adopt
+ *   this variant by extending the map below.
+ * - `null`: the shared RiversClient (Madurai, Bangalore, and every new city).
+ */
+export type RiversVariant = "chennai-combined";
+export function riversVariant(cityId: string): RiversVariant | null {
+  return cityId === CHENNAI ? "chennai-combined" : null;
+}
+
+/** public/data/river-quality[-<cityId>].json (Chennai: river-quality.json) */
+export function riverQualityUrl(cityId: string): string {
+  return cityId === CHENNAI
+    ? "/data/river-quality.json"
+    : `/data/river-quality-${cityId}.json`;
+}
+
+/** public/data/industrial-sources[-<cityId>].json (Chennai: industrial-sources.json) */
+export function industrialSourcesUrl(cityId: string): string {
+  return cityId === CHENNAI
+    ? "/data/industrial-sources.json"
+    : `/data/industrial-sources-${cityId}.json`;
+}
+
+/** public/data/<cityId>-sewage-inlets.json (Chennai: cooum-sewage-inlets.json).
+ *  Only Chennai ships this overlay today; returns null where absent. */
+export function sewageInletsUrl(cityId: string): string | null {
+  return cityId === CHENNAI ? "/data/cooum-sewage-inlets.json" : null;
+}

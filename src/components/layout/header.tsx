@@ -190,8 +190,9 @@ export function Header() {
     : null;
   const currentPageLabel = currentPage ? t(currentPage.key) : null;
 
-  // Logo points to the city's home (chennai -> /, madurai -> /madurai).
-  const homeHref = rewriteNavHref("/", cityId);
+  // Logo returns to the project landing page ("/") from any city. The
+  // per-city home is still reachable via the "Dashboard" nav item.
+  const homeHref = "/";
 
   const isExploreActive =
     EXPLORE_PATHS.has(pathname) ||
