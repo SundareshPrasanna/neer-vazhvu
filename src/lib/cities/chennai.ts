@@ -140,6 +140,8 @@ export const CHENNAI: CityConfig = {
   // source from this flag.
   reservoirDataSource: 'legacy-v1',
   historyUnit: 'Mcft',
+  // Coastal shoreline-change surface (Mahabalipuram to Pulicat), 1990-2026.
+  hasShoreline: true,
   sourceNameAliases: {
     poondi: 'poondi',
     cholavaram: 'cholavaram',

@@ -242,6 +242,12 @@ export interface BasePlaceConfig {
    *  legacy data is stored in Mcft; v2 cities use TMC. Default 'TMC'. */
   historyUnit?: 'TMC' | 'Mcft';
 
+  /** Whether this city has the coastal shoreline-change surface
+   *  (/<city>/shoreline). Coastal cities only (Chennai today). The
+   *  shoreline map currently reads Chennai coastal data; a second coastal
+   *  city would parametrize it. Default false. */
+  hasShoreline?: boolean;
+
   /** Which dashboard hero to render for this city.
    *
    *  - `days-left`: Chennai-style runway = total reservoir storage /

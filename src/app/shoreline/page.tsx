@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import CoastalClient from "./coastal-client";
+import CoastalClient from "@/app/[cityId]/shoreline/coastal-client";
 
 export const metadata: Metadata = {
   title: "Chennai Shoreline Change | Neer Vazhvu",
