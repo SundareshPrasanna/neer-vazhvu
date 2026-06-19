@@ -1,58 +1,54 @@
 import type { MetadataRoute } from "next";
 import { listEnabledPlaces } from "@/lib/cities";
+import { FEATURE_AVAILABILITY } from "@/lib/cities/routing";
 
 const BASE = "https://neervazhvu.org";
 
-// Per-feature default sitemap metadata. Keep in sync with the routes that
-// exist under both / (Chennai) and /[cityId]/ (other cities).
-interface FeatureMeta {
-  feature: string; // empty string = home/index
-  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
-  priority: number;
-}
-
-const FEATURES: FeatureMeta[] = [
-  { feature: "",                 changeFrequency: "daily",   priority: 1.0 },
-  { feature: "facts",            changeFrequency: "daily",   priority: 0.95 },
-  { feature: "groundwater",      changeFrequency: "monthly", priority: 0.9 },
-  { feature: "my-ward",          changeFrequency: "monthly", priority: 0.9 },
-  { feature: "flood-risk",       changeFrequency: "monthly", priority: 0.8 },
-  { feature: "rivers",           changeFrequency: "monthly", priority: 0.8 },
-  { feature: "water-bodies",     changeFrequency: "monthly", priority: 0.8 },
-  { feature: "lake-restoration", changeFrequency: "monthly", priority: 0.7 },
-  { feature: "about",            changeFrequency: "monthly", priority: 0.5 },
-];
-
-// Per-city feature support: which features have been built for each city.
-// Keep in sync with FEATURE_AVAILABILITY in components/layout/city-switcher.tsx.
-const CITY_FEATURE_SUPPORT: Record<string, Set<string>> = {
-  chennai: new Set(FEATURES.map((f) => f.feature)),
-  madurai: new Set(FEATURES.map((f) => f.feature)),
+// Per-feature sitemap hints. The set of features a city actually has is the
+// single source of truth in FEATURE_AVAILABILITY (src/lib/cities/routing.ts);
+// this map only supplies changeFrequency + priority. Unlisted features fall
+// back to the default below.
+const FEATURE_HINTS: Record<
+  string,
+  { changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number }
+> = {
+  "": { changeFrequency: "daily", priority: 0.95 }, // city home
+  facts: { changeFrequency: "daily", priority: 0.9 },
+  groundwater: { changeFrequency: "monthly", priority: 0.85 },
+  "my-ward": { changeFrequency: "monthly", priority: 0.85 },
+  "flood-risk": { changeFrequency: "monthly", priority: 0.8 },
+  rivers: { changeFrequency: "monthly", priority: 0.8 },
+  "water-bodies": { changeFrequency: "monthly", priority: 0.8 },
+  shoreline: { changeFrequency: "monthly", priority: 0.75 },
+  tanker: { changeFrequency: "monthly", priority: 0.75 },
+  cascades: { changeFrequency: "yearly", priority: 0.6 },
+  origins: { changeFrequency: "yearly", priority: 0.6 },
+  about: { changeFrequency: "monthly", priority: 0.5 },
 };
 
-function urlForCityFeature(cityId: string, feature: string): string {
-  // Chennai uses flat URLs at the root; other cities use /[cityId]/<feature>.
-  if (cityId === "chennai") {
-    return feature === "" ? BASE : `${BASE}/${feature}`;
-  }
-  return feature === "" ? `${BASE}/${cityId}` : `${BASE}/${cityId}/${feature}`;
-}
+const DEFAULT_HINT = { changeFrequency: "monthly" as const, priority: 0.6 };
+
+// lake-restoration is a legacy redirect alias (-> water-bodies); never list it.
+const EXCLUDED_FEATURES = new Set(["lake-restoration"]);
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const places = listEnabledPlaces();
   const entries: MetadataRoute.Sitemap = [];
 
-  for (const place of places) {
-    const supported = CITY_FEATURE_SUPPORT[place.cityId];
-    if (!supported) continue;
-    for (const feat of FEATURES) {
-      if (!supported.has(feat.feature)) continue;
+  // The project landing page.
+  entries.push({ url: BASE, lastModified: now, changeFrequency: "weekly", priority: 1.0 });
+
+  for (const place of listEnabledPlaces()) {
+    const features = FEATURE_AVAILABILITY[place.cityId];
+    if (!features) continue;
+    for (const feature of features) {
+      if (EXCLUDED_FEATURES.has(feature)) continue;
+      const hint = FEATURE_HINTS[feature] ?? DEFAULT_HINT;
       entries.push({
-        url: urlForCityFeature(place.cityId, feat.feature),
+        url: feature === "" ? `${BASE}/${place.cityId}` : `${BASE}/${place.cityId}/${feature}`,
         lastModified: now,
-        changeFrequency: feat.changeFrequency,
-        priority: feat.priority,
+        changeFrequency: hint.changeFrequency,
+        priority: hint.priority,
       });
     }
   }

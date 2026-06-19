@@ -396,7 +396,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           anchor most visitors read first) -> live data block (catchment,
           reservoirs, history). */}
       {config.dashboard?.aiBriefing && cityStoryNarrative && (
-        <CityStory narrative={cityStoryNarrative} aiNarrative={aiNarrative} />
+        <CityStory narrative={cityStoryNarrative} aiNarrative={aiNarrative} hrefPrefix={`/${cityId}`} />
       )}
 
       {config.dashboard?.reservoirCatchmentContext &&

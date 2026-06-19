@@ -618,10 +618,10 @@ export function ChennaiStoryEn() {
           will only be drought-proof and flood-proof when it
           starts behaving like one again.
         </p>
-        <CTA href="/water-bodies">
+        <CTA href="/chennai/water-bodies">
           See the cascade today on the map
         </CTA>
-        <CTA href="/facts">Quotable facts and citations</CTA>
+        <CTA href="/chennai/facts">Quotable facts and citations</CTA>
       </Chapter>
     </StoryPage>
   );
