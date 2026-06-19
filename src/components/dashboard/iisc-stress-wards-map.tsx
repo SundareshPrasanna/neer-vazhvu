@@ -151,7 +151,7 @@ export function IIScStressWardsMap() {
                   <span
                     key={`${w.bbmp_ward_no}-${w.bbmp_ward_name}`}
                     className={`text-[11px] px-1.5 py-0.5 rounded border ${CORP_TONE[corp] ?? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700"}`}
-                    title={`BBMP ${w.bbmp_ward_no} · GBA ${w.gba_ward_no ?? "?"} (${w.gba_corporation ?? "—"})`}
+                    title={`BBMP ${w.bbmp_ward_no} - GBA ${w.gba_ward_no ?? "?"} (${w.gba_corporation ?? "—"})`}
                   >
                     {w.bbmp_ward_name}
                   </span>

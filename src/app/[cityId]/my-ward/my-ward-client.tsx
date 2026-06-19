@@ -103,7 +103,7 @@ export default function MyWardClient({
       {/* Stats bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-5 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
-          {cityDisplayName} · My Ward
+          {cityDisplayName} - My Ward
         </span>
         <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
           <span className="font-semibold text-slate-900 dark:text-slate-100">{profiles.length}</span> wards
@@ -147,7 +147,7 @@ export default function MyWardClient({
                     }}
                     className="block w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 dark:hover:bg-slate-800"
                   >
-                    Ward {p.ward_number} · {p.zone_name}
+                    Ward {p.ward_number} - {p.zone_name}
                   </button>
                 ))}
                 {filtered.length > 12 && (
@@ -239,13 +239,13 @@ function WardDetail({ profile, cityId }: { profile: WardProfile; cityId: string 
       </div>
       <div className="space-y-1.5">
         <a href="../groundwater" className="block rounded border border-slate-200 dark:border-slate-700 p-2 text-xs hover:border-blue-400 transition-colors">
-          <span className="font-semibold">Groundwater map</span> · CGWB blocks + live WRIS stations
+          <span className="font-semibold">Groundwater map</span> - CGWB blocks + live WRIS stations
         </a>
         <a href="../water-bodies" className="block rounded border border-slate-200 dark:border-slate-700 p-2 text-xs hover:border-blue-400 transition-colors">
-          <span className="font-semibold">Water bodies</span> · OSM polygons of tanks near this ward
+          <span className="font-semibold">Water bodies</span> - OSM polygons of tanks near this ward
         </a>
         <a href="../lake-restoration" className="block rounded border border-slate-200 dark:border-slate-700 p-2 text-xs hover:border-blue-400 transition-colors">
-          <span className="font-semibold">Lake restoration</span> · priority-scored flagships + court anchor
+          <span className="font-semibold">Lake restoration</span> - priority-scored flagships + court anchor
         </a>
       </div>
     </div>

@@ -483,7 +483,7 @@ export function UnifiedMap({
         const levelLabel = t(`lr.${scored.priority_level}`);
         layer.bindTooltip(
           `<strong>${name}</strong><br/>` +
-          `<span style="font-size:11px;color:#64748b">${t("lr.priority_score")}: ${scored.priority_score} · ${levelLabel}</span>`,
+          `<span style="font-size:11px;color:#64748b">${t("lr.priority_score")}: ${scored.priority_score} - ${levelLabel}</span>`,
           { sticky: true }
         );
       } else {
@@ -508,12 +508,12 @@ export function UnifiedMap({
         ? `<br/><span style="font-size:11px;color:#64748b">${
             censusMatch.ownership || ""
           }${censusMatch.encroachment_status === "yes"
-            ? ` · ${t("wb_panel.encroached")}${censusMatch.encroachment_pct != null ? ` (${censusMatch.encroachment_pct}%)` : ""}`
+            ? ` - ${t("wb_panel.encroached")}${censusMatch.encroachment_pct != null ? ` (${censusMatch.encroachment_pct}%)` : ""}`
             : ""
           }</span>`
         : "";
       layer.bindTooltip(
-        `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${type} · ${areaText}</span>${censusInfo}`,
+        `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${type} - ${areaText}</span>${censusInfo}`,
         { sticky: true }
       );
     }
@@ -564,7 +564,7 @@ export function UnifiedMap({
 
     if (!suppressLayerTooltips) {
       layer.bindTooltip(
-        `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${statusLabel} · ${t("wb_map.was_area")} ${props.historical_area_ha} ha</span>`,
+        `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${statusLabel} - ${t("wb_map.was_area")} ${props.historical_area_ha} ha</span>`,
         { sticky: true }
       );
     }
@@ -790,7 +790,7 @@ export function UnifiedMap({
                         <br />
                         <span style={{ fontSize: "11px", color: "#64748b" }}>
                           {type}
-                          {wb.ownership ? ` · ${wb.ownership}` : ""}
+                          {wb.ownership ? ` - ${wb.ownership}` : ""}
                         </span>
                       </Tooltip>
                     )}
@@ -837,7 +837,7 @@ export function UnifiedMap({
                           <>
                             <br />
                             <span style={{ fontSize: "11px", color: "#64748b" }}>
-                              {t("lr.priority_score")}: {scored.priority_score} · {t(`lr.${scored.priority_level}`)}
+                              {t("lr.priority_score")}: {scored.priority_score} - {t(`lr.${scored.priority_level}`)}
                             </span>
                           </>
                         )}
@@ -894,7 +894,7 @@ export function UnifiedMap({
                       <strong>{name}</strong>
                       <br />
                       <span style={{ fontSize: "11px", color: "#64748b" }}>
-                        {t("lr.priority_score")}: {wb.priority_score} · {t(`lr.${wb.priority_level}`)}
+                        {t("lr.priority_score")}: {wb.priority_score} - {t(`lr.${wb.priority_level}`)}
                       </span>
                     </Tooltip>
                   )}

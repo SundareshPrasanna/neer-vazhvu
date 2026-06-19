@@ -22,7 +22,7 @@ export function CityHeaderBadges({ displayName, stateCode, preview }: Props) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Badge variant="outline" className="text-xs">
-        {displayName} · {stateCode}
+        {displayName} - {stateCode}
       </Badge>
       {preview && (
         <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">

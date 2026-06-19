@@ -138,7 +138,7 @@ export const STATIC_FACTS: Fact[] = [
     category: "sewage",
     title: "Sewage treatment capacity",
     value: "745",
-    unit: "MLD installed · ~1,073 MLD generated (est)",
+    unit: "MLD installed - ~1,073 MLD generated (est)",
     interpretation:
       "Chennai operates 13 sewage treatment plants with 745 MLD installed capacity (CMWSSB, 2026). Independent academic estimates place daily sewage generation at ~1,073 MLD, implying a ~328 MLD gap that flows untreated into rivers, canals, and the sea.",
     data_date: "2026-04-19",
@@ -159,7 +159,7 @@ export const STATIC_FACTS: Fact[] = [
     category: "supply",
     title: "Desalination capacity and status",
     value: "200 MLD installed",
-    unit: "· operating output varies",
+    unit: "- operating output varies",
     interpretation:
       "Minjur (100 MLD, since 2010) and Nemmeli (100 MLD) represent 200 MLD of installed desalination capacity - roughly 20% of Chennai's piped supply when both plants run at full capacity. Operating output varies: CMWSSB has cut Nemmeli production during periods of high reservoir storage (TNIE, Feb 2026).",
     data_date: "2026-02-09",
@@ -231,7 +231,7 @@ export const STATIC_FACTS: Fact[] = [
     category: "coastal",
     title: "Port-driven down-drift erosion",
     value: "21.3 & 16",
-    unit: "m/yr (Ennore · Kattupalli, north flank)",
+    unit: "m/yr (Ennore - Kattupalli, north flank)",
     interpretation:
       "Ennore and Kattupalli ports interrupt the natural south-to-north sand drift, starving the coast immediately north of each. A 1990-2024 satellite shoreline analysis measures down-drift erosion of 21.3 m/yr north of Ennore and 16 m/yr north of Kattupalli, with the north-Kattupalli sector retreating nearly 1 km. Chennai Port, by contrast, gained land (~34.8 m/yr accretion) behind extensive seawalls.",
     data_date: "2024-01-01",
@@ -252,7 +252,7 @@ export const STATIC_FACTS: Fact[] = [
     category: "coastal",
     title: "Share of Chennai coast eroding",
     value: "58.65%",
-    unit: "of 86 km · mean -1.89 m/yr (1990-2024)",
+    unit: "of 86 km - mean -1.89 m/yr (1990-2024)",
     interpretation:
       "Across the 86 km from Uthandi (south) to Pulicat (north), 58.65% of the monitored coastline eroded and ~40.5% accreted over 1990-2024, measured with the Digital Shoreline Analysis System on Landsat and Sentinel-2 imagery. Erosion concentrates on the port-dominated northern zones (Ennore-Kattupalli-Pulicat), where mean rates reach 4.34 m/yr.",
     data_date: "2024-01-01",
@@ -294,7 +294,7 @@ export const STATIC_FACTS: Fact[] = [
     category: "coastal",
     title: "Coastal groundwater level decline",
     value: "-18 & -17",
-    unit: "cm/yr (Vepery · Tondiarpet, 2002-2021)",
+    unit: "cm/yr (Vepery - Tondiarpet, 2002-2021)",
     interpretation:
       "Of 14 CGWB monitoring wells inside the 7 km coastal buffer, levels fell significantly at Vepery (-18 cm/yr) and Tondiarpet (-17 cm/yr) over 2002-2021 (both p<0.05), and sit persistently below mean sea level at Vepery and Pallikaranai. The authors argue chronic urban over-abstraction is a co-equal driver of salinisation alongside the sea - so stabilising the shoreline alone cannot reverse the intrusion.",
     data_date: "2021-01-01",

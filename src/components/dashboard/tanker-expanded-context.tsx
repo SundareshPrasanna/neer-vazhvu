@@ -211,7 +211,7 @@ export function TankerExpandedContext() {
                 {pick(row as unknown as Record<string, unknown>, "label")}
                 {row.note && (
                   <span className="text-amber-700 dark:text-amber-400 ml-1">
-                    · {pick(row as unknown as Record<string, unknown>, "note")}
+                    - {pick(row as unknown as Record<string, unknown>, "note")}
                   </span>
                 )}
               </div>
@@ -282,14 +282,14 @@ export function TankerExpandedContext() {
                     {pick(tier as unknown as Record<string, unknown>, "channel")}
                   </span>
                   <span className="text-sm font-mono text-blue-700 dark:text-blue-400 tabular-nums">
-                    {rateBits.join(" · ")}
+                    {rateBits.join(" - ")}
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
                   {pick(tier as unknown as Record<string, unknown>, "coverage")}
                   {tier.fleet_size != null && (
                     <span className="ml-2 text-slate-500 dark:text-slate-500">
-                      · {tFmt(t("tanker_ctx.fleet"), { n: tier.fleet_size.toLocaleString() })}
+                      - {tFmt(t("tanker_ctx.fleet"), { n: tier.fleet_size.toLocaleString() })}
                     </span>
                   )}
                 </p>

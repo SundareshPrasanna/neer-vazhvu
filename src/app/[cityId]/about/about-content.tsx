@@ -210,8 +210,8 @@ export function CityAboutContent({
                     <div className="font-medium text-slate-900 dark:text-slate-100">{s.displayName}</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       {s.type}
-                      {s.fullCapacityMcft !== null && (<> · {s.fullCapacityMcft.toLocaleString()} Mcft full capacity</>)}
-                      {s.fullTankLevelFt !== null && (<> · FRL {s.fullTankLevelFt} ft</>)}
+                      {s.fullCapacityMcft !== null && (<> - {s.fullCapacityMcft.toLocaleString()} Mcft full capacity</>)}
+                      {s.fullTankLevelFt !== null && (<> - FRL {s.fullTankLevelFt} ft</>)}
                       {s.isPrimaryDrinkingSource && (
                         <span className="ml-1 inline-block px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">{t("about.primary_drinking")}</span>
                       )}

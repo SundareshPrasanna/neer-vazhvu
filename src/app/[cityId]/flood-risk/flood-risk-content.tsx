@@ -53,7 +53,7 @@ export function FloodRiskContent({
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:py-10 space-y-6">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="outline" className="text-xs">{cityDisplayName} · {t("flood.badge_scope")}</Badge>
+        <Badge variant="outline" className="text-xs">{cityDisplayName} - {t("flood.badge_scope")}</Badge>
         <Badge variant="outline" className="text-xs">Vaigai system scope</Badge>
         <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
           {t("flood.badge_no_hazard_map")}
@@ -87,7 +87,7 @@ export function FloodRiskContent({
       <Card>
         <CardContent className="space-y-3">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {t("flood.recent_events")} · {cfg.historical_events.length}
+            {t("flood.recent_events")} - {cfg.historical_events.length}
           </h2>
           <div className="space-y-3">
             {cfg.historical_events.map((e) => (
@@ -111,7 +111,7 @@ export function FloodRiskContent({
       <Card>
         <CardContent className="space-y-3">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {t("flood.external_sources")} · {cfg.external_sources.length}
+            {t("flood.external_sources")} - {cfg.external_sources.length}
           </h2>
           <p className="text-xs text-slate-500">
             {t("flood.external_intro")}

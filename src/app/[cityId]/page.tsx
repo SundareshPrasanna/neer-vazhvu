@@ -37,7 +37,7 @@ export default async function CityHomePage({ params }: PageProps) {
     loadCityWaterEstimate(config),
   ]);
   // Compute the preview pill semantically (see below).
-  // The "PREVIEW · waiting for first daily ingestion" pill is meaningful only
+  // The "PREVIEW - waiting for first daily ingestion" pill is meaningful only
   // for cities that drink directly from a tracked reservoir. Bangalore tracks
   // 4 upstream Cauvery reservoirs as basin context but none are primary
   // drinking sources (BWSSB lifts treated water 100 km from T.K. Halli), so

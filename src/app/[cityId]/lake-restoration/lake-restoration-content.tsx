@@ -159,7 +159,7 @@ export function LakeRestorationContent({
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:py-10 space-y-6">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="outline" className="text-xs">{cityDisplayName} · {t("lake.badge_scope")}</Badge>
+        <Badge variant="outline" className="text-xs">{cityDisplayName} - {t("lake.badge_scope")}</Badge>
         <Badge variant="outline" className="text-xs">{t("lake.badge_district")}</Badge>
       </div>
 
@@ -220,7 +220,7 @@ export function LakeRestorationContent({
       <Card>
         <CardContent className="space-y-3">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {t("lake.programmes_heading")} {cityDisplayName} · {projectsFile.projects.length}
+            {t("lake.programmes_heading")} {cityDisplayName} - {projectsFile.projects.length}
           </h2>
           <div className="space-y-3">
             {projectsFile.projects.map((p) => (
@@ -246,9 +246,9 @@ export function LakeRestorationContent({
                 </div>
                 <div className="text-xs text-slate-500 mt-0.5">
                   {p.operator}
-                  {p.financier && p.financier !== p.operator && ` · ${t("lake.financier")}: ${p.financier}`}
-                  {p.sanctioned_year && ` · ${t("lake.sanctioned")} ${p.sanctioned_year}`}
-                  {p.completed_year && ` · ${t("lake.completed")} ${p.completed_year}`}
+                  {p.financier && p.financier !== p.operator && ` - ${t("lake.financier")}: ${p.financier}`}
+                  {p.sanctioned_year && ` - ${t("lake.sanctioned")} ${p.sanctioned_year}`}
+                  {p.completed_year && ` - ${t("lake.completed")} ${p.completed_year}`}
                 </div>
                 <p className="text-xs text-slate-700 dark:text-slate-300 mt-1.5">{p.scope}</p>
                 {p.funding_summary && (
@@ -272,7 +272,7 @@ export function LakeRestorationContent({
       <Card>
         <CardContent className="space-y-3">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {t("lake.flagship_heading")} · {flagshipFile.bodies.length}
+            {t("lake.flagship_heading")} - {flagshipFile.bodies.length}
             {priorityFile && (
               <span className="text-[10px] font-normal normal-case text-slate-400 ml-2">
                 ({t("lake.flagship_sort_note")} - {priorityFile.algorithm_version})
@@ -299,7 +299,7 @@ export function LakeRestorationContent({
                           className={`shrink-0 text-[10px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded border ${PRIORITY_TONE[score.priority_level]}`}
                           title={score.rationale}
                         >
-                          {priorityLabel(score.priority_level)} · {score.priority_score}
+                          {priorityLabel(score.priority_level)} - {score.priority_score}
                         </span>
                       )}
                     </div>
@@ -320,7 +320,7 @@ export function LakeRestorationContent({
                   {wb.ramsar_proposed_date && <span className="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">{t("lake.ramsar_proposed")} {wb.ramsar_proposed_date}</span>}
                 </div>
                 <p className="text-xs text-slate-700 dark:text-slate-300 mt-2">{wb.status}</p>
-                {wb.builder && <p className="text-[11px] text-slate-500 mt-1">{t("lake.builder_label")} {wb.builder}{wb.feed && ` · ${t("lake.fed_by")} ${wb.feed}`}</p>}
+                {wb.builder && <p className="text-[11px] text-slate-500 mt-1">{t("lake.builder_label")} {wb.builder}{wb.feed && ` - ${t("lake.fed_by")} ${wb.feed}`}</p>}
                 {wb.cultural_note && <p className="text-[11px] text-slate-500 italic mt-1">{wb.cultural_note}</p>}
                 {wb.sources.length > 0 && (
                   <div className="flex gap-2 mt-2 flex-wrap">
@@ -345,7 +345,7 @@ export function LakeRestorationContent({
         <CardContent className="space-y-3">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              {t("lake.fully_lost_heading")} · {fullyLost.length}
+              {t("lake.fully_lost_heading")} - {fullyLost.length}
             </h2>
             <span className="text-xs text-slate-400">source: {lostFile.primary_source.citation}</span>
           </div>
@@ -367,7 +367,7 @@ export function LakeRestorationContent({
       <Card>
         <CardContent className="space-y-3">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {t("lake.surviving_heading")} · {reduced.length}
+            {t("lake.surviving_heading")} - {reduced.length}
           </h2>
           <div className="space-y-2">
             {reduced.map((b) => (

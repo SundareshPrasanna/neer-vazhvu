@@ -17,14 +17,14 @@ export function FactCard({ fact }: FactCardProps) {
   const badge = TIER_BADGE_STYLE[fact.tier];
 
   // Show the data year on the badge for non-live tiers so readers see
-  // freshness at a glance ("Annual · 2024" reads more honestly than a
+  // freshness at a glance ("Annual - 2024" reads more honestly than a
   // bare "Annual" badge when the underlying data is two years old).
   // Live tier keeps a clean badge - the per-card footer already shows
   // the as-of date for Tier 1 facts which refresh sub-daily.
   const badgeYearSuffix = (() => {
     if (fact.tier === 1) return "";
     const year = (fact.data_date ?? "").slice(0, 4);
-    return /^\d{4}$/.test(year) ? ` · ${year}` : "";
+    return /^\d{4}$/.test(year) ? ` - ${year}` : "";
   })();
 
   // Pick the per-language field if present; fall back to English. The
@@ -150,7 +150,7 @@ export function FactCard({ fact }: FactCardProps) {
           >
             {fact.source_label}
           </a>
-          <span className="mx-1.5">·</span>
+          <span className="mx-1.5">-</span>
           <span>
             {t("facts.as_of")} {dateLabel}
           </span>

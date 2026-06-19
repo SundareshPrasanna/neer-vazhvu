@@ -412,7 +412,7 @@ export function WardMap({
                   </span>
                   <br />
                   <span style={{ fontSize: "10px", color: "#64748b" }}>
-                    CGWB Year Book · {s.block} block · {sorted.length} quarterly readings
+                    CGWB Year Book - {s.block} block - {sorted.length} quarterly readings
                   </span>
                 </Tooltip>
               </CircleMarker>

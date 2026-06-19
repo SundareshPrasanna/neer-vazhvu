@@ -201,7 +201,7 @@ export function FloodRiskBangaloreContent({ cityDisplayName }: Props) {
                 >
                   KSNDMC - Karnataka SDMA
                 </a>{" "}
-                · {t("frb.ksndmc_note")}
+                - {t("frb.ksndmc_note")}
               </li>
               <li>
                 <a
@@ -212,7 +212,7 @@ export function FloodRiskBangaloreContent({ cityDisplayName }: Props) {
                 >
                   ISRO Bhuvan
                 </a>{" "}
-                · {t("frb.bhuvan_note")}
+                - {t("frb.bhuvan_note")}
               </li>
               <li>
                 <a
@@ -223,7 +223,7 @@ export function FloodRiskBangaloreContent({ cityDisplayName }: Props) {
                 >
                   World Bank P506272
                 </a>{" "}
-                · {t("frb.wb_note")}
+                - {t("frb.wb_note")}
               </li>
               <li>
                 <a
@@ -234,7 +234,7 @@ export function FloodRiskBangaloreContent({ cityDisplayName }: Props) {
                 >
                   IISc CES - T.V. Ramachandra urban-flood papers
                 </a>{" "}
-                · {t("frb.iisc_note")}
+                - {t("frb.iisc_note")}
               </li>
               <li>
                 <a
@@ -245,7 +245,7 @@ export function FloodRiskBangaloreContent({ cityDisplayName }: Props) {
                 >
                   BMTPC Vulnerability Atlas
                 </a>{" "}
-                · {t("frb.bmtpc_note")}
+                - {t("frb.bmtpc_note")}
               </li>
             </ul>
           </section>

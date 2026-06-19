@@ -208,13 +208,13 @@ function DocumentedCascadeCard({
             <span className="capitalize">{cascade.transfer_type}</span>
             {cascade.historical_era ? (
               <>
-                <span aria-hidden>·</span>
+                <span aria-hidden>-</span>
                 <span>{cascade.historical_era}</span>
               </>
             ) : null}
             {cascade.is_engineered_control ? (
               <>
-                <span aria-hidden>·</span>
+                <span aria-hidden>-</span>
                 <span className="text-amber-700 dark:text-amber-400 font-medium">
                   engineered control
                 </span>
@@ -378,15 +378,15 @@ function AutoCascadeCard({ cascade }: { cascade: AutoCascadeScored }) {
           </h3>
           <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-500 dark:text-slate-400">
             <span>Auto-derived</span>
-            <span aria-hidden>·</span>
+            <span aria-hidden>-</span>
             <span>{cascade.size} tanks</span>
-            <span aria-hidden>·</span>
+            <span aria-hidden>-</span>
             <span>{cascade.edge_count} edges</span>
-            <span aria-hidden>·</span>
+            <span aria-hidden>-</span>
             <span>{cascade.total_area_ha.toLocaleString()} ha</span>
             {cascade.documented_overlap ? (
               <>
-                <span aria-hidden>·</span>
+                <span aria-hidden>-</span>
                 <span className="text-blue-600 dark:text-blue-400 font-medium">
                   ↔ {cascade.documented_overlap.documented_name}
                 </span>
@@ -456,7 +456,7 @@ function AutoCascadeCard({ cascade }: { cascade: AutoCascadeScored }) {
                   ) : null}
                   {tank.isolation_reason ? (
                     <span className="ml-2 text-purple-600 dark:text-purple-400">
-                      isolated · {tank.isolation_reason.replace(/_/g, " ")}
+                      isolated - {tank.isolation_reason.replace(/_/g, " ")}
                     </span>
                   ) : null}
                   <span className="ml-2 text-slate-400 dark:text-slate-500">

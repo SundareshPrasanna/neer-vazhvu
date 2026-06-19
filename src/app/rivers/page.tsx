@@ -146,7 +146,7 @@ function RiversPageContent() {
       {/* Stats bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300">
-          {qualityData.rivers.length} {t("rivers_page.rivers")} · {pollutionData.sources.length} {t("rivers_page.poll_sources")}
+          {qualityData.rivers.length} {t("rivers_page.rivers")} - {pollutionData.sources.length} {t("rivers_page.poll_sources")}
         </span>
         {cooum && cooumLatestDO !== undefined && cooumLatestDO !== null && (
           <span className="text-slate-500 dark:text-slate-400">
