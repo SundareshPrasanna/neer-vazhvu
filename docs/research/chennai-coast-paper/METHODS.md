@@ -46,24 +46,33 @@ whole thing runs on the existing `earthengine-api` install). `run` in
 Stage 1 - per-epoch waterline offsets (`sample_transect_offsets`, GEE):
 - Baseline = the six seed zone segments concatenated south->north.
 - Cast shore-normal transects every 100 m (`build_transects`) -> 972 transects.
-- Build an 8-band MNDWI image, one band per epoch (Table 1 sensors): Landsat 5
+- Build a 10-band MNDWI image, one band per epoch (Table 1 sensors): Landsat 5
   (1990, 1995), Landsat 7 (2000, 2005, 2010), Landsat 8 (2015; the paper used L7
-  - we use L8 to avoid SLC-off gaps), Sentinel-2 (2020, 2024). Dry-season
-  Dec-May median composite, cloud-masked (QA_PIXEL / SCL). MNDWI =
+  - we use L8 to avoid SLC-off gaps), Sentinel-2 (2020, 2024, **2025, 2026**).
+  2025-2026 extend our measurement past the study's 2024 cutoff with current
+  Sentinel-2 (the 2026 dry-season window Dec 2025-May 2026 is complete).
+  Dry-season Dec-May median composite, cloud-masked (QA_PIXEL / SCL). MNDWI =
   (Green - SWIR1)/(Green + SWIR1), reflectance-scaled.
 - Sample MNDWI at 20 m steps along each transect (-260..+400 m) and take the
   land->water crossing (MNDWI = 0) as that epoch's shoreline offset.
 
 Stage 2 - DSAS-equivalent rates (`compute_rates`, pure Python):
 - End Point Rate = NSM / years; Weighted Linear Regression slope with
-  weights = 1 / Esp^2 using the paper's per-epoch positional errors (Table 2:
-  16.33, 17.21, 15.78, 16.04, 15.67, 15.14, 8.66, 8.66 m). `_wlr` returns slope
-  + R^2. Transects with < 3 usable epochs are dropped.
+  weights = 1 / Esp^2 using the paper's per-epoch positional errors (Table 2;
+  2025/2026 reuse the Sentinel-2 value 8.66 m). `_wlr` returns slope + R^2.
+  Transects with < 3 usable epochs are dropped.
 - Classify erosion / accretion / stable at +/-0.5 m/yr.
+- **Temporal axis:** each transect also carries `series` (net shoreline
+  movement vs the earliest epoch, per year) and split-period WLR rates -
+  `early_rate_m_yr` (<= 2012) and `recent_rate_m_yr` (> 2012) - so the UI can
+  draw a movement-over-time chart and flag acceleration (recent steeper than
+  early by > 1 m/yr).
 - Zone assignment splits the baseline by the published per-zone lengths.
 
 Output: `public/geojson/chennai-coastal-transects.geojson`, `source:"computed"`
-(895 of 972 transects had >= 3 usable epochs).
+(905 of 972 transects had >= 3 usable epochs over 1990-2026). Headline temporal
+finding: of 374 eroding transects with both split rates, **247 (~66%) are
+eroding faster in 2015-2026 than in 1990-2010** - the erosion is accelerating.
 
 ## Validation (run 2026-06)
 

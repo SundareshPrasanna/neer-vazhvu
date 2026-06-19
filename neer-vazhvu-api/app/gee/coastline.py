@@ -41,12 +41,13 @@ TRANSECTS_GEOJSON = (
     REPO_ROOT / "public" / "geojson" / "chennai-coastal-transects.geojson"
 )
 
-# Study epochs (Table 1 of the paper). Landsat for 1990-2015, Sentinel-2 for
-# 2020 & 2024.
-EPOCHS: tuple[int, ...] = (1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024)
+# Study epochs (Table 1 of the paper) extended past 2024 with current
+# Sentinel-2: 2025 and 2026 carry our own measurement beyond the paper's window.
+EPOCHS: tuple[int, ...] = (1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024, 2025, 2026)
 
 # Per-epoch total shoreline-position error Esp (m), Table 2 of the paper, used
-# as the WLR weights (weight = 1 / Esp**2).
+# as the WLR weights (weight = 1 / Esp**2). 2025/2026 are Sentinel-2, same Esp
+# as the paper's other Sentinel-2 epochs (8.66 m).
 EPOCH_UNCERTAINTY_M: dict[int, float] = {
     1990: 16.33,
     1995: 17.21,
@@ -56,6 +57,8 @@ EPOCH_UNCERTAINTY_M: dict[int, float] = {
     2015: 15.14,
     2020: 8.66,
     2024: 8.66,
+    2025: 8.66,
+    2026: 8.66,
 }
 
 # Sensor / band / window per epoch. Reflectance = DN * scale + offset; MNDWI is
@@ -151,6 +154,28 @@ EPOCH_CONFIG: tuple[dict, ...] = (
         "offset": 0.0,
         "kind": "s2",
     },
+    {
+        "year": 2025,
+        "coll": "COPERNICUS/S2_SR_HARMONIZED",
+        "d0": "2024-12-01",
+        "d1": "2025-05-31",
+        "green": "B3",
+        "swir1": "B11",
+        "scale": 1e-4,
+        "offset": 0.0,
+        "kind": "s2",
+    },
+    {
+        "year": 2026,
+        "coll": "COPERNICUS/S2_SR_HARMONIZED",
+        "d0": "2025-12-01",
+        "d1": "2026-05-31",
+        "green": "B3",
+        "swir1": "B11",
+        "scale": 1e-4,
+        "offset": 0.0,
+        "kind": "s2",
+    },
 )
 
 TRANSECT_SPACING_M = 100.0
@@ -160,6 +185,9 @@ WATER_THRESHOLD = 0.0  # MNDWI > 0 => water
 EARTH_RADIUS_M = 6_371_000.0
 ZONE_IDS = ("I", "II", "III", "IV", "V", "VI")
 ZONE_LENGTHS_KM = (14.0, 10.3, 9.4, 12.2, 24.6, 15.6)  # study along-shore lengths
+# Split the record into "early" (<=) and "recent" (>) halves to detect whether
+# erosion/accretion is accelerating. 1990-2010 vs 2015-2026.
+EARLY_SPLIT_YEAR = 2012
 
 
 @dataclass
@@ -173,6 +201,11 @@ class TransectRate:
     r_squared: float | None
     n_epochs: int
     trend: str
+    # Temporal axis: net shoreline movement (m, relative to the earliest epoch)
+    # at each measured year, plus split-period rates to show acceleration.
+    series: list[tuple[int, float]] | None = None
+    early_rate_m_yr: float | None = None  # WLR over epochs <= EARLY_SPLIT_YEAR
+    recent_rate_m_yr: float | None = None  # WLR over epochs >= EARLY_SPLIT_YEAR
 
 
 # --------------------------------------------------------------------------
@@ -428,6 +461,32 @@ def compute_rates(
         span = years[-1] - years[0]
         epr = nsm / span if span else None
         wlr, r2 = _wlr(years, offs, weights)
+
+        # Net shoreline movement relative to the earliest measured epoch, for
+        # the per-transect temporal chart.
+        base = offs[0]
+        series = [(y, round(o - base, 1)) for y, o in zip(years, offs)]
+
+        # Split-period rates to expose acceleration. Each half needs >= 2 points.
+        early = [
+            (y, o, w) for y, o, w in zip(years, offs, weights) if y <= EARLY_SPLIT_YEAR
+        ]
+        recent = [
+            (y, o, w) for y, o, w in zip(years, offs, weights) if y > EARLY_SPLIT_YEAR
+        ]
+        early_rate = (
+            _wlr([e[0] for e in early], [e[1] for e in early], [e[2] for e in early])[0]
+            if len(early) >= 2
+            else None
+        )
+        recent_rate = (
+            _wlr(
+                [r[0] for r in recent], [r[1] for r in recent], [r[2] for r in recent]
+            )[0]
+            if len(recent) >= 2
+            else None
+        )
+
         results.append(
             TransectRate(
                 transect_id=tid,
@@ -439,12 +498,16 @@ def compute_rates(
                 r_squared=r2,
                 n_epochs=len(years),
                 trend=_classify(wlr),
+                series=series,
+                early_rate_m_yr=early_rate,
+                recent_rate_m_yr=recent_rate,
             )
         )
     return results
 
 
 def transects_to_geojson(rates: list[TransectRate]) -> dict:
+    period = f"{EPOCHS[0]}-{EPOCHS[-1]}"
     features = []
     for r in rates:
         if r.wlr_m_yr is None:
@@ -464,8 +527,15 @@ def transects_to_geojson(rates: list[TransectRate]) -> dict:
                     else None,
                     "n_epochs": r.n_epochs,
                     "trend": r.trend,
+                    "early_rate_m_yr": round(r.early_rate_m_yr, 2)
+                    if r.early_rate_m_yr is not None
+                    else None,
+                    "recent_rate_m_yr": round(r.recent_rate_m_yr, 2)
+                    if r.recent_rate_m_yr is not None
+                    else None,
+                    "series": [[y, o] for y, o in r.series] if r.series else None,
                     "source": "computed",
-                    "period": "1990-2024",
+                    "period": period,
                 },
                 "geometry": {
                     "type": "Point",
@@ -476,8 +546,9 @@ def transects_to_geojson(rates: list[TransectRate]) -> dict:
     return {
         "type": "FeatureCollection",
         "_note": "COMPUTED transect shoreline-change rates (neervazhvu): MNDWI on "
-        "Landsat 5/7/8 + Sentinel-2 via GEE, 100 m transects, WLR over 8 "
-        "epochs (1990-2024). Independent of the study's CoastSat+DSAS.",
+        f"Landsat 5/7/8 + Sentinel-2 via GEE, 100 m transects, WLR over {len(EPOCHS)} "
+        f"epochs ({period}); 2025-2026 extend past the study's 2024 cutoff. "
+        "Independent of the study's CoastSat+DSAS.",
         "_source": "neervazhvu (MNDWI/GEE) corroborating Anagha, Singh & Frappart 2026",
         "features": features,
     }

@@ -54,9 +54,54 @@ export interface CoastalTransectProperties {
   r_squared: number | null;
   n_epochs: number;
   trend: Extract<CoastalTrend, "erosion" | "accretion" | "stable">;
+  /** Net shoreline movement (m) vs the earliest epoch, per measured year. */
+  series: [number, number][] | null;
+  /** WLR over the early half (1990-2010) and recent half (2015-2026), m/yr. */
+  early_rate_m_yr: number | null;
+  recent_rate_m_yr: number | null;
   source: "computed";
   period: string;
 }
+
+export type AccelStatus =
+  | "erosion-accelerating"
+  | "erosion-slowing"
+  | "accretion-accelerating"
+  | "accretion-slowing"
+  | "reversed"
+  | "steady"
+  | "unknown";
+
+/**
+ * Compare the recent-half rate to the early-half rate to say whether the
+ * shoreline trend is accelerating. Threshold of 1 m/yr avoids over-reading
+ * noise from the coarse fixed-threshold method.
+ */
+export function accelStatus(
+  early: number | null,
+  recent: number | null,
+): AccelStatus {
+  if (early == null || recent == null) return "unknown";
+  const delta = recent - early; // more negative = eroding faster
+  const T = 1.0;
+  const eroding = recent < -0.5;
+  const accreting = recent > 0.5;
+  if (eroding && early >= 0 && Math.abs(delta) > T) return "reversed";
+  if (accreting && early <= 0 && Math.abs(delta) > T) return "reversed";
+  if (eroding) return delta < -T ? "erosion-accelerating" : delta > T ? "erosion-slowing" : "steady";
+  if (accreting) return delta > T ? "accretion-accelerating" : delta < -T ? "accretion-slowing" : "steady";
+  return "steady";
+}
+
+export const ACCEL_LABELS: Record<AccelStatus, string> = {
+  "erosion-accelerating": "Erosion accelerating",
+  "erosion-slowing": "Erosion slowing",
+  "accretion-accelerating": "Accretion accelerating",
+  "accretion-slowing": "Accretion slowing",
+  reversed: "Trend reversed",
+  steady: "Steady rate",
+  unknown: "Not enough data",
+};
 
 export type SelectedCoastal =
   | { kind: "zone"; props: CoastalZoneProperties }
@@ -98,3 +143,12 @@ export function rateColor(rate: number): string {
 }
 
 export type CoastalViewMode = "zones" | "transects";
+
+/** Aggregate the map computes from the computed-transect layer for the header. */
+export interface CoastalSummary {
+  total: number;
+  eroding: number;
+  erodingWithSplit: number;
+  acceleratingErosion: number;
+  period: string;
+}

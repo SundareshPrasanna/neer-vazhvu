@@ -15,6 +15,7 @@ import {
   type CoastalHotspotProperties,
   type CoastalTransectProperties,
   type CoastalViewMode,
+  type CoastalSummary,
   type SelectedCoastal,
 } from "@/types/coastal";
 import "leaflet/dist/leaflet.css";
@@ -23,6 +24,7 @@ interface CoastalMapProps {
   mode: CoastalViewMode;
   selected: SelectedCoastal | null;
   onSelect: (sel: SelectedCoastal | null) => void;
+  onSummary?: (s: CoastalSummary) => void;
   mapCenter?: [number, number];
   mapZoom?: number;
 }
@@ -39,6 +41,7 @@ export function CoastalMap({
   mode,
   selected,
   onSelect,
+  onSummary,
   mapCenter = [13.18, 80.32],
   mapZoom = 10,
 }: CoastalMapProps) {
@@ -57,8 +60,23 @@ export function CoastalMap({
         setZones(z);
         setHotspots(h);
         setTransects(t);
+        if (t && onSummary) {
+          const props = t.features.map((f) => f.properties as unknown as CoastalTransectProperties);
+          const eroding = props.filter((p) => p.trend === "erosion");
+          const withSplit = eroding.filter((p) => p.early_rate_m_yr != null && p.recent_rate_m_yr != null);
+          const accel = withSplit.filter((p) => (p.recent_rate_m_yr as number) - (p.early_rate_m_yr as number) < -1);
+          onSummary({
+            total: props.length,
+            eroding: eroding.length,
+            erodingWithSplit: withSplit.length,
+            acceleratingErosion: accel.length,
+            period: props[0]?.period ?? "1990-2026",
+          });
+        }
       })
       .catch(console.error);
+  // onSummary is a stable setter from the parent; exclude to fetch once.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!zones) {

@@ -8,7 +8,7 @@ import { MapInfoButton } from "@/components/map/map-info-button";
 import { CoastalLegend } from "@/components/coastal/coastal-legend";
 import { CoastalDetailPanel } from "@/components/coastal/coastal-detail-panel";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
-import type { SelectedCoastal, CoastalViewMode } from "@/types/coastal";
+import type { SelectedCoastal, CoastalViewMode, CoastalSummary } from "@/types/coastal";
 
 function MapLoading() {
   return (
@@ -57,13 +57,14 @@ export default function CoastalClient() {
   useLockBodyScroll();
   const [selected, setSelected] = useState<SelectedCoastal | null>(null);
   const [mode, setMode] = useState<CoastalViewMode>("zones");
+  const [summary, setSummary] = useState<CoastalSummary | null>(null);
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
       {/* Stats / context bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-5 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
-          Chennai coast · 1990-2024
+          Chennai coast · {mode === "zones" ? "1990-2024" : (summary?.period ?? "1990-2026")}
         </span>
         {mode === "zones" ? (
           <>
@@ -81,10 +82,23 @@ export default function CoastalClient() {
             </div>
           </>
         ) : (
-          <span className="text-xs text-slate-600 dark:text-slate-400">
-            <span className="font-semibold text-slate-900 dark:text-slate-100">895</span> transects we computed
-            from satellite imagery · click any point for its rate
-          </span>
+          <>
+            <span className="text-xs text-slate-600 dark:text-slate-400">
+              <span className="font-semibold text-slate-900 dark:text-slate-100">{summary?.total ?? 905}</span>{" "}
+              transects we computed from satellite imagery ({summary?.period ?? "1990-2026"}) · click any point
+            </span>
+            {summary && summary.erodingWithSplit > 0 && (
+              <span className="flex items-center gap-2 whitespace-nowrap shrink-0">
+                <span className="w-3 h-3 rounded-sm bg-red-700 opacity-80" />
+                <span className="text-xs text-slate-600 dark:text-slate-400">
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">
+                    {Math.round((100 * summary.acceleratingErosion) / summary.erodingWithSplit)}%
+                  </span>{" "}
+                  of eroding coast is eroding <span className="font-semibold">faster</span> than before
+                </span>
+              </span>
+            )}
+          </>
         )}
         <div className="ml-auto flex items-center gap-3">
           <ModeToggle mode={mode} onChange={(m) => { setMode(m); setSelected(null); }} />
@@ -99,7 +113,7 @@ export default function CoastalClient() {
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         <div className="relative flex-1 h-full">
-          <CoastalMap mode={mode} selected={selected} onSelect={setSelected} />
+          <CoastalMap mode={mode} selected={selected} onSelect={setSelected} onSummary={setSummary} />
 
           {/* Legend overlay */}
           <div
@@ -129,9 +143,9 @@ export default function CoastalClient() {
                 <span className="font-semibold text-slate-700 dark:text-slate-300">Study zones</span> show the
                 paper&apos;s published per-zone rates over the OSM coastline.{" "}
                 <span className="font-semibold text-slate-700 dark:text-slate-300">Our transects</span> are
-                neervazhvu&apos;s own measurement (MNDWI on Landsat + Sentinel-2 via Google Earth Engine, 8
-                epochs) - independent of the paper&apos;s CoastSat + DSAS. The spatial pattern matches; absolute
-                rates differ by method.
+                neervazhvu&apos;s own measurement (MNDWI on Landsat + Sentinel-2 via Google Earth Engine, 10
+                epochs 1990-2026) - independent of the paper&apos;s CoastSat + DSAS, and extended past its 2024
+                window. The spatial pattern matches; absolute rates differ by method.
               </div>
             </div>
           </MapInfoButton>

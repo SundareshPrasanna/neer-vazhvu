@@ -5,8 +5,11 @@ import {
   TREND_LABELS,
   hotspotColor,
   rateColor,
+  accelStatus,
+  ACCEL_LABELS,
   type SelectedCoastal,
 } from "@/types/coastal";
+import { ShorelineSparkline } from "./shoreline-sparkline";
 
 interface CoastalDetailPanelProps {
   selected: SelectedCoastal;
@@ -101,34 +104,88 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
           <CloseButton onClose={onClose} />
         </div>
 
-        <div className="mb-5">
-          <div className="text-4xl font-bold" style={{ color }}>
-            {t.rate_m_yr > 0 ? "+" : ""}
-            {t.rate_m_yr} <span className="text-lg font-medium text-slate-400">m/yr</span>
-          </div>
-          <div className="text-sm text-slate-500">
-            Weighted linear regression of shoreline position (1990-2024)
-          </div>
-        </div>
+        {(() => {
+          const accel = accelStatus(t.early_rate_m_yr, t.recent_rate_m_yr);
+          const accelColor =
+            accel === "erosion-accelerating"
+              ? "#dc2626"
+              : accel === "accretion-accelerating"
+                ? "#2563eb"
+                : accel === "reversed"
+                  ? "#7c3aed"
+                  : "#64748b";
+          return (
+            <>
+              <div className="mb-3">
+                <div className="text-4xl font-bold" style={{ color }}>
+                  {t.rate_m_yr > 0 ? "+" : ""}
+                  {t.rate_m_yr} <span className="text-lg font-medium text-slate-400">m/yr</span>
+                </div>
+                <div className="text-sm text-slate-500">
+                  Weighted linear regression of shoreline position ({t.period ?? "1990-2026"})
+                </div>
+              </div>
 
-        <dl className="grid grid-cols-2 gap-3 text-sm">
-          {t.epr_m_yr != null && (
-            <div>
-              <dt className="text-xs text-slate-400">End-point rate</dt>
-              <dd className="font-semibold text-slate-700 dark:text-slate-200">{t.epr_m_yr} m/yr</dd>
-            </div>
-          )}
-          {t.r_squared != null && (
-            <div>
-              <dt className="text-xs text-slate-400">R²</dt>
-              <dd className="font-semibold text-slate-700 dark:text-slate-200">{t.r_squared}</dd>
-            </div>
-          )}
-          <div>
-            <dt className="text-xs text-slate-400">Epochs used</dt>
-            <dd className="font-semibold text-slate-700 dark:text-slate-200">{t.n_epochs} of 8</dd>
-          </div>
-        </dl>
+              {accel !== "unknown" && (
+                <span
+                  className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full text-white mb-4"
+                  style={{ backgroundColor: accelColor }}
+                >
+                  {ACCEL_LABELS[accel]}
+                </span>
+              )}
+
+              {t.series && t.series.length >= 2 && (
+                <div className="mb-4 rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 bg-white dark:bg-slate-900/40">
+                  <div className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
+                    Net shoreline movement over time
+                  </div>
+                  <ShorelineSparkline series={t.series} />
+                  <div className="text-[10px] text-slate-400 mt-1">
+                    metres seaward (up) / landward (down) vs the {t.series[0][0]} shoreline
+                  </div>
+                </div>
+              )}
+
+              <dl className="grid grid-cols-2 gap-3 text-sm">
+                {t.early_rate_m_yr != null && (
+                  <div>
+                    <dt className="text-xs text-slate-400">Early rate (1990-2010)</dt>
+                    <dd className="font-semibold text-slate-700 dark:text-slate-200">
+                      {t.early_rate_m_yr > 0 ? "+" : ""}
+                      {t.early_rate_m_yr} m/yr
+                    </dd>
+                  </div>
+                )}
+                {t.recent_rate_m_yr != null && (
+                  <div>
+                    <dt className="text-xs text-slate-400">Recent rate (2015-2026)</dt>
+                    <dd className="font-semibold text-slate-700 dark:text-slate-200">
+                      {t.recent_rate_m_yr > 0 ? "+" : ""}
+                      {t.recent_rate_m_yr} m/yr
+                    </dd>
+                  </div>
+                )}
+                {t.epr_m_yr != null && (
+                  <div>
+                    <dt className="text-xs text-slate-400">End-point rate</dt>
+                    <dd className="font-semibold text-slate-700 dark:text-slate-200">{t.epr_m_yr} m/yr</dd>
+                  </div>
+                )}
+                {t.r_squared != null && (
+                  <div>
+                    <dt className="text-xs text-slate-400">R²</dt>
+                    <dd className="font-semibold text-slate-700 dark:text-slate-200">{t.r_squared}</dd>
+                  </div>
+                )}
+                <div>
+                  <dt className="text-xs text-slate-400">Epochs used</dt>
+                  <dd className="font-semibold text-slate-700 dark:text-slate-200">{t.n_epochs} of 10</dd>
+                </div>
+              </dl>
+            </>
+          );
+        })()}
 
         <div className="border-t border-slate-100 dark:border-slate-800 pt-3 mt-5 text-xs text-slate-400 space-y-1">
           <p>

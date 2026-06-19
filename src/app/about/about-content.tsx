@@ -547,8 +547,10 @@ export function AboutContent({
               coastline - a cited overview, not our own measurement. The{" "}
               <span className="font-semibold">Our transects</span> view is neervazhvu&apos;s own
               reproduction: an MNDWI water index computed from dry-season Landsat 5/7/8 and Sentinel-2
-              composites (eight epochs) in Google Earth Engine, sampled along 972 shore-normal 100 m
-              transects, with a DSAS-equivalent weighted linear regression per transect. The two methods
+              composites (ten epochs, 1990-2026 - extending the study&apos;s 2024 window with current
+              Sentinel-2) in Google Earth Engine, sampled along 972 shore-normal 100 m transects, with a
+              DSAS-equivalent weighted linear regression per transect plus a per-transect movement-over-time
+              chart and an early-vs-recent acceleration check. The two methods
               agree on pattern and direction (Zone V around the Ennore and Kattupalli ports is the most
               eroded, the Adyar/Cooum and Chennai Port stretches accrete); our absolute rates run lower
               than the paper&apos;s because we use a fixed MNDWI threshold without tidal correction, so we
@@ -897,7 +899,7 @@ export function AboutContent({
             <DataSource
               name="Landsat 5/7/8 (via Earth Engine)"
               url="https://developers.google.com/earth-engine/datasets/catalog/landsat"
-              description="USGS Landsat surface reflectance, with Sentinel-2, drives our own MNDWI shoreline transects on the /coastal Our-transects view (eight epochs, 1990-2024)."
+              description="USGS Landsat surface reflectance, with Sentinel-2, drives our own MNDWI shoreline transects on the /coastal Our-transects view (ten epochs, 1990-2026)."
               frequency={t("about.freq_static")}
             />
 
