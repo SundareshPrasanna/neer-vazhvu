@@ -50,7 +50,10 @@ export const MADURAI: CityConfig = {
       sourceCode: 'vaigai',
       displayName: 'Vaigai Dam',
       type: 'reservoir',
-      fullCapacityMcft: 6837.0,
+      // 6,143 mcft at 71 ft FRL (TN-Agri ARS / Wikipedia). Earlier 6,837
+      // figure was unsourced and overstated the reservoir against the daily
+      // ARS feed we ingest.
+      fullCapacityMcft: 6143.0,
       fullTankLevelFt: 71.0,
       latitude: 10.0533,
       longitude: 77.5897,
@@ -76,7 +79,9 @@ export const MADURAI: CityConfig = {
       sourceCode: 'sothuparai',
       displayName: 'Sothuparai Dam',
       type: 'reservoir',
-      fullCapacityMcft: 1272.0,
+      // 2.831 MCM (~100 mcft) per Wikipedia; small Varaha-river dam near
+      // Periyakulam. Earlier 1,272 figure was ~13x too high. No daily ARS feed.
+      fullCapacityMcft: 100.0,
       fullTankLevelFt: null,
       latitude: 10.07,
       longitude: 77.45,
