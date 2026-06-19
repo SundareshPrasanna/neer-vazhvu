@@ -1,0 +1,86 @@
+name: Coastal shoreline refresh
+
+# Recomputes the Chennai coastal shoreline-change transects
+# (public/geojson/chennai-coastal-transects.geojson) once a year, after the
+# Dec-May dry season is complete. The pipeline (app/gee/coastline.py) auto-
+# appends the new year's Sentinel-2 epoch via active_epoch_config(), so no code
+# edit is needed - the cron just picks up the latest complete dry season.
+#
+# Cadence is YEARLY by design: the epochs are annual dry-season composites, so
+# re-running quarterly/half-yearly would recompute identical data. Mid-June is
+# the earliest the current year's window (through 31 May) is reliably available.
+#
+# Output goes through a PR (not a direct push) so each new annual epoch gets a
+# human eyeball before it lands - shoreline rates are sensitive and a bad cloud
+# year could skew a transect.
+
+on:
+  schedule:
+    - cron: '0 4 15 6 *'   # 04:00 UTC = 09:30 IST, 15 June every year
+  workflow_dispatch: {}
+
+concurrency:
+  group: coastal-shoreline-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+      pull-requests: write
+    defaults:
+      run:
+        working-directory: neer-vazhvu-api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Materialize GEE service account file
+        env:
+          GEE_SA_JSON: ${{ secrets.GEE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -n "$GEE_SA_JSON" ]; then
+            mkdir -p /tmp/gee
+            printf '%s' "$GEE_SA_JSON" > /tmp/gee/service-account.json
+            echo "GEE_SERVICE_ACCOUNT_FILE=/tmp/gee/service-account.json" >> $GITHUB_ENV
+          else
+            echo "GEE_SERVICE_ACCOUNT_JSON secret is empty - cannot run." >&2
+            exit 1
+          fi
+
+      - name: Recompute shoreline transects
+        env:
+          GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
+        run: python scripts/run_gee_coastline.py build-geojson --write
+
+      - name: Open PR with the refreshed transects
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "Coastal shoreline refresh (${{ github.run_id }})"
+          body: |
+            Annual recomputation of the Chennai coastal shoreline-change
+            transects (`public/geojson/chennai-coastal-transects.geojson`) from
+            the latest complete dry season.
+
+            Please review before merging:
+              - Sanity-check the new year's transects against the prior run
+                (overall erosion/accretion split, Zone V extremes, the
+                accelerating-erosion share). A bad cloud year can skew rates.
+              - Bump the `?v=` query on the GeoJSON fetch in
+                `src/components/coastal/coastal-map.tsx` so browsers/CDN don't
+                serve the stale copy.
+
+            Method + validation: `docs/methodology/coastal-shoreline-change-v1.md`.
+          branch: coastal-shoreline-refresh-${{ github.run_id }}
+          add-paths: public/geojson/chennai-coastal-transects.geojson
+          commit-message: "Coastal shoreline refresh (annual dry-season epoch)"
+          delete-branch: true

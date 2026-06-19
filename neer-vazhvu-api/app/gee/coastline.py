@@ -178,6 +178,46 @@ EPOCH_CONFIG: tuple[dict, ...] = (
     },
 )
 
+
+def _annual_s2_config(year: int) -> dict:
+    """Sentinel-2 dry-season (Dec[y-1]-May[y]) MNDWI epoch config for `year`."""
+    return {
+        "year": year,
+        "coll": "COPERNICUS/S2_SR_HARMONIZED",
+        "d0": f"{year - 1}-12-01",
+        "d1": f"{year}-05-31",
+        "green": "B3",
+        "swir1": "B11",
+        "scale": 1e-4,
+        "offset": 0.0,
+        "kind": "s2",
+    }
+
+
+def latest_dryseason_year(today=None) -> int:
+    """Most recent year whose Dec-May dry-season composite is complete.
+
+    Year Y's composite needs imagery through 31 May Y, so Y only becomes
+    available from June onward; before June the latest complete year is Y-1.
+    """
+    from datetime import date
+
+    today = today or date.today()
+    return today.year if today.month >= 6 else today.year - 1
+
+
+def active_epoch_config(today=None) -> list[dict]:
+    """EPOCH_CONFIG extended with annual Sentinel-2 epochs through the latest
+    complete dry season, so the yearly refresh picks up new years with no code
+    change. The hardcoded historical epochs are never dropped.
+    """
+    cfg = list(EPOCH_CONFIG)
+    max_base = max(c["year"] for c in cfg)
+    for year in range(max_base + 1, latest_dryseason_year(today) + 1):
+        cfg.append(_annual_s2_config(year))
+    return cfg
+
+
 TRANSECT_SPACING_M = 100.0
 # Sample the water index along each transect normal, landward to seaward (m).
 SAMPLE_S_VALUES: tuple[int, ...] = tuple(range(-260, 401, 20))
@@ -298,13 +338,15 @@ def zones_by_position(n: int) -> list[str]:
 def sample_transect_offsets(
     transects: list[tuple[int, tuple[float, float], tuple[float, float]]],
     *,
+    configs: list[dict] | None = None,
     batch_size: int = 4000,
     log=print,
 ) -> dict[int, dict[int, float]]:
     """For each transect, the seaward waterline offset (m) per epoch.
 
-    Builds an 8-band MNDWI image (one band per epoch) and samples it along the
-    transect normals via GEE, then finds the land->water crossing per transect.
+    Builds one MNDWI band per epoch and samples it along the transect normals
+    via GEE, then finds the land->water crossing per transect. `configs`
+    defaults to `active_epoch_config()` (history + new years auto-appended).
     Requires Earth Engine auth (no extra pip deps).
     """
     import ee
@@ -312,6 +354,8 @@ def sample_transect_offsets(
     from app.gee.client import initialize_earth_engine
 
     initialize_earth_engine()
+    configs = configs or active_epoch_config()
+    years = [c["year"] for c in configs]
 
     features = []
     for tid, origin, normal in transects:
@@ -347,7 +391,7 @@ def sample_transect_offsets(
         return g.subtract(s).divide(g.add(s))
 
     bands = []
-    for cfg in EPOCH_CONFIG:
+    for cfg in configs:
         col = (
             ee.ImageCollection(cfg["coll"])
             .filterBounds(geom)
@@ -371,14 +415,14 @@ def sample_transect_offsets(
         for f in sampled["features"]:
             p = f["properties"]
             raw[(p["tid"], p["s"])] = {
-                cfg["year"]: p.get(f"m{cfg['year']}") for cfg in EPOCH_CONFIG
+                cfg["year"]: p.get(f"m{cfg['year']}") for cfg in configs
             }
         log(f"  sampled {min(i + batch_size, n)}/{n}")
 
     offsets: dict[int, dict[int, float]] = {}
     for tid, _origin, _normal in transects:
         per_year: dict[int, float] = {}
-        for year in EPOCHS:
+        for year in years:
             seq = [(s, raw.get((tid, s), {}).get(year)) for s in SAMPLE_S_VALUES]
             crossing = _land_to_water_crossing(seq)
             if crossing is not None:
@@ -456,7 +500,8 @@ def compute_rates(
             )
             continue
         offs = [per[y] for y in years]
-        weights = [1.0 / (EPOCH_UNCERTAINTY_M.get(y, 15.0) ** 2) for y in years]
+        # New auto-appended years are Sentinel-2; default to its Esp (8.66 m).
+        weights = [1.0 / (EPOCH_UNCERTAINTY_M.get(y, 8.66) ** 2) for y in years]
         nsm = offs[-1] - offs[0]
         span = years[-1] - years[0]
         epr = nsm / span if span else None
@@ -506,8 +551,9 @@ def compute_rates(
     return results
 
 
-def transects_to_geojson(rates: list[TransectRate]) -> dict:
-    period = f"{EPOCHS[0]}-{EPOCHS[-1]}"
+def transects_to_geojson(
+    rates: list[TransectRate], *, period: str, n_epochs: int
+) -> dict:
     features = []
     for r in rates:
         if r.wlr_m_yr is None:
@@ -546,8 +592,8 @@ def transects_to_geojson(rates: list[TransectRate]) -> dict:
     return {
         "type": "FeatureCollection",
         "_note": "COMPUTED transect shoreline-change rates (neervazhvu): MNDWI on "
-        f"Landsat 5/7/8 + Sentinel-2 via GEE, 100 m transects, WLR over {len(EPOCHS)} "
-        f"epochs ({period}); 2025-2026 extend past the study's 2024 cutoff. "
+        f"Landsat 5/7/8 + Sentinel-2 via GEE, 100 m transects, WLR over {n_epochs} "
+        f"epochs ({period}); post-2024 epochs extend past the study's cutoff. "
         "Independent of the study's CoastSat+DSAS.",
         "_source": "neervazhvu (MNDWI/GEE) corroborating Anagha, Singh & Frappart 2026",
         "features": features,
@@ -555,14 +601,22 @@ def transects_to_geojson(rates: list[TransectRate]) -> dict:
 
 
 def run(*, write: bool = True, log=print) -> dict:
-    """End-to-end: baseline -> transects -> GEE offsets -> rates -> GeoJSON."""
+    """End-to-end: baseline -> transects -> GEE offsets -> rates -> GeoJSON.
+
+    Epochs come from `active_epoch_config()`, which auto-appends annual
+    Sentinel-2 years through the latest complete dry season - so a yearly cron
+    re-run picks up the new year with no code change.
+    """
+    configs = active_epoch_config()
+    years = [c["year"] for c in configs]
+    period = f"{years[0]}-{years[-1]}"
     baseline = baseline_from_zones()
     transects = build_transects(baseline)
     zones = zones_by_position(len(transects))
-    log(f"transects: {len(transects)}")
-    offsets = sample_transect_offsets(transects, log=log)
+    log(f"transects: {len(transects)} | epochs: {years}")
+    offsets = sample_transect_offsets(transects, configs=configs, log=log)
     rates = compute_rates(transects, offsets, zones)
-    fc = transects_to_geojson(rates)
+    fc = transects_to_geojson(rates, period=period, n_epochs=len(years))
     if write:
         TRANSECTS_GEOJSON.write_text(
             json.dumps(fc, separators=(",", ":")), encoding="utf-8"

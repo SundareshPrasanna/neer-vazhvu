@@ -29,9 +29,11 @@ interface CoastalMapProps {
   mapZoom?: number;
 }
 
-const ZONES_URL = "/geojson/chennai-coastal-zones.geojson";
-const HOTSPOTS_URL = "/geojson/chennai-coastal-hotspots.geojson";
-const TRANSECTS_URL = "/geojson/chennai-coastal-transects.geojson";
+// Bump ?v when a file is regenerated so browsers don't serve a stale copy
+// (the transects layer gained per-year series + 2025/2026 epochs).
+const ZONES_URL = "/geojson/chennai-coastal-zones.geojson?v=1";
+const HOTSPOTS_URL = "/geojson/chennai-coastal-hotspots.geojson?v=1";
+const TRANSECTS_URL = "/geojson/chennai-coastal-transects.geojson?v=2";
 
 function toLatLng(coords: number[][]): [number, number][] {
   return coords.map((c) => [c[1], c[0]]);
