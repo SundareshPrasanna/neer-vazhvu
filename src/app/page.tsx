@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listAllPlaces } from "@/lib/cities";
+import { CityLandmark, CITY_ACCENT, DEFAULT_ACCENT } from "@/components/landing/city-landmark";
 
 export const metadata: Metadata = {
   title: "Neer Vazhvu | Urban Water Intelligence",
@@ -159,23 +160,32 @@ function CityBadge({ status }: { status: CityStatus }) {
 }
 
 function CityCard({ city }: { city: BoardCity }) {
-  const meta = (
-    <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
-      {city.authorityAcronym} . {city.stateCode}
-    </p>
-  );
+  const accent = CITY_ACCENT[city.cityId] ?? DEFAULT_ACCENT;
 
-  const inner = (
-    <>
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-            {city.displayName}
-          </h3>
-          {meta}
-        </div>
+  // Landmark banner. A licensed photograph can later replace the gradient +
+  // CityLandmark here without touching the rest of the card.
+  const banner = (
+    <div className={`relative h-24 overflow-hidden bg-gradient-to-br ${accent}`}>
+      <CityLandmark
+        cityId={city.cityId}
+        className="absolute inset-0 h-full w-full text-white/85"
+      />
+      {/* gentle dark gradient at the base for separation from the body */}
+      <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/15 to-transparent" />
+      <div className="absolute top-3 right-3">
         <CityBadge status={city.status} />
       </div>
+    </div>
+  );
+
+  const body = (
+    <div className="p-5 sm:p-6">
+      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+        {city.displayName}
+      </h3>
+      <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        {city.authorityAcronym} . {city.stateCode}
+      </p>
       {city.hook && (
         <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
           {city.hook}
@@ -184,18 +194,8 @@ function CityCard({ city }: { city: BoardCity }) {
       {city.status === "live" ? (
         <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-cyan-700 dark:text-cyan-400">
           Open dashboard
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9 5l7 7-7 7"
-            />
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </span>
       ) : (
@@ -203,11 +203,11 @@ function CityCard({ city }: { city: BoardCity }) {
           {city.status === "onboarding" ? "Onboarding" : "Up next"}
         </span>
       )}
-    </>
+    </div>
   );
 
   const baseClass =
-    "block rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 sm:p-6";
+    "block overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900";
 
   if (city.status === "live") {
     return (
@@ -215,12 +215,18 @@ function CityCard({ city }: { city: BoardCity }) {
         href={`/${city.cityId}`}
         className={`${baseClass} transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500`}
       >
-        {inner}
+        {banner}
+        {body}
       </Link>
     );
   }
 
-  return <div className={`${baseClass} opacity-90`}>{inner}</div>;
+  return (
+    <div className={baseClass}>
+      {banner}
+      {body}
+    </div>
+  );
 }
 
 export default function Page() {
