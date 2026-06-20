@@ -17,7 +17,7 @@ import type {
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
 import { RiverPanel } from "@/components/rivers/river-panel";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
-import type { BasinInventory, BasinManifest } from "@/lib/basins";
+import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
 
 interface ClientProps {
   cityId: string;
@@ -155,6 +155,8 @@ export default function RiversClient({
   // to this basin river. Clicking a basin river opens it; everything else on
   // the standard rivers page is unchanged.
   const [openBasinRiverId, setOpenBasinRiverId] = useState<string | null>(null);
+  // Which floor the atlas opens on (e.g. straight to gaps via the button).
+  const [atlasFloor, setAtlasFloor] = useState<BasinFloor | undefined>(undefined);
   // More accurate basin river geometry (Paani), keyed by rivers-page river_id.
   const [basinRiverGeom, setBasinRiverGeom] = useState<Record<string, LineString | MultiLineString>>({});
   const [coachDismissed, setCoachDismissed] = useState(true);
@@ -176,7 +178,7 @@ export default function RiversClient({
   // standard select-and-show-panel behaviour.
   function handleSelectRiver(riverId: string | null) {
     const bid = riverId ? basinRiverIdFor(riverId) : null;
-    if (bid) setOpenBasinRiverId(bid);
+    if (bid) { setAtlasFloor(undefined); setOpenBasinRiverId(bid); }
     else setSelectedRiverId(riverId);
   }
   const [cpcb, setCpcb] = useState<CpcbFile | null>(null);
@@ -200,18 +202,21 @@ export default function RiversClient({
           });
         }
         setRivers(out);
-        // Pre-select Vaigai for Madurai (or whatever the first listed is).
-        // Prefer the city's mainstem river when present (Vaigai for
-        // Madurai, Cooum for Chennai etc.) instead of an arbitrary
-        // index-0 - feeders and tributaries should not load by default.
-        const mainstem = out.find((r) =>
-          ["vaigai", "cooum", "adyar", "vrishabhavathi"].includes(r.river_id)
-        );
-        if (mainstem) setSelectedRiverId(mainstem.river_id);
-        else if (out.length > 0) setSelectedRiverId(out[0].river_id);
+        // Pre-select the mainstem river ONLY for cities WITHOUT a basin atlas
+        // (e.g. Madurai), where the quality panel is the primary surface. For
+        // cities WITH a basin (e.g. Bengaluru), don't auto-open a panel: the
+        // "click to drill into the basin" coach mark guides the user into the
+        // atlas, and an auto-opened panel would compete with it.
+        if (!basin) {
+          const mainstem = out.find((r) =>
+            ["vaigai", "cooum", "adyar", "vrishabhavathi"].includes(r.river_id)
+          );
+          if (mainstem) setSelectedRiverId(mainstem.river_id);
+          else if (out.length > 0) setSelectedRiverId(out[0].river_id);
+        }
       })
       .catch(console.error);
-  }, [cityId]);
+  }, [cityId, basin]);
 
   // Optional CPCB NWMP overlay - 404 (no file) is expected and silent.
   useEffect(() => {
@@ -363,6 +368,15 @@ export default function RiversClient({
           {industrialMarkers.length > 0 && ` - ${industrialMarkers.length} industrial sources`}
           {" - click for details"}
         </span>
+        {basin && drillableNames.length > 0 && (
+          <button
+            onClick={() => { setAtlasFloor("governance"); setOpenBasinRiverId("__gaps__"); }}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1 shadow-sm"
+          >
+            Treatment &amp; waste gaps
+            <span aria-hidden>&rarr;</span>
+          </button>
+        )}
       </div>
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
@@ -402,9 +416,13 @@ export default function RiversClient({
                  wired up). Shows description / upstream / downstream /
                  feeds / status from the per-city config.
               3. nothing selected          -> placeholder hint. */}
+        {/* Detail sidebar appears only when a river WITHOUT a basin drill-down
+            is selected (basin rivers open the atlas instead). No empty
+            placeholder - the sidebar shows up once such a river is clicked. */}
+        {selectedRiverId && (
         <div className="hidden md:flex h-full md:w-96 lg:w-[420px] border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto">
           {comingSoonNote}
-          {selectedRiverId && cpcb ? (
+          {cpcb ? (
             <RiverPanel
               selected={{ riverId: selectedRiverId, latlng: mapCenter }}
               qualityData={cpcb}
@@ -415,12 +433,13 @@ export default function RiversClient({
               }
               onClose={() => setSelectedRiverId(null)}
             />
-          ) : selectedRiverId && selectedInfo ? (
+          ) : selectedInfo ? (
             <RiverInfoOnlyPanel info={selectedInfo} cityDisplayName={cityDisplayName} onClose={() => setSelectedRiverId(null)} />
           ) : (
-            <div className="p-4 text-sm text-slate-500">Click a river to see details.</div>
+            <div className="p-4 text-sm text-slate-500">No detailed data for this river yet.</div>
           )}
         </div>
+        )}
       </div>
 
       {/* Mobile bottom panel - same modes as desktop sidebar */}
@@ -458,8 +477,9 @@ export default function RiversClient({
             manifest={basin.manifest}
             inventory={basin.inventory}
             initialRiverId={null}
+            initialFloor={atlasFloor}
             embedded
-            onClose={() => setOpenBasinRiverId(null)}
+            onClose={() => { setOpenBasinRiverId(null); setAtlasFloor(undefined); }}
           />
         </div>
       )}

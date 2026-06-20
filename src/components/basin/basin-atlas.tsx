@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
@@ -22,11 +22,22 @@ interface Props {
   inventory: BasinInventory | null;
   /** Pre-select a river (e.g. when opened by clicking it on the rivers map). */
   initialRiverId?: string | null;
+  /** Pre-focus a floor (e.g. open straight onto the gaps / governance view). */
+  initialFloor?: BasinFloor;
   /** Embedded as an overlay (over the rivers page): skip URL syncing and show
    *  a back button instead of relying on the address bar. */
   embedded?: boolean;
   /** Back affordance when embedded. */
   onClose?: () => void;
+  /** Optional: render a custom detail panel for a clicked feature (e.g. a
+   *  city's rich CPCB quality panel for a monitoring station). Return null to
+   *  fall back to the generic key/value FeaturePanel. Keeps the atlas decoupled
+   *  from any city-specific panel component. */
+  renderFeatureDetail?: (args: {
+    family: string;
+    props: Record<string, unknown>;
+    onClose: () => void;
+  }) => ReactNode | null;
 }
 
 // The elevator floors, top (surface) to bottom (causes + accountability).
@@ -121,10 +132,10 @@ function MapController({ fitBounds }: { fitBounds: L.LatLngBounds | null }) {
   return null;
 }
 
-export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, embedded = false, onClose }: Props) {
+export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, initialFloor, embedded = false, onClose, renderFeatureDetail }: Props) {
   const tiles = useMapTiles();
 
-  const [focusedFloor, setFocusedFloor] = useState<BasinFloor>("hydrology");
+  const [focusedFloor, setFocusedFloor] = useState<BasinFloor>(initialFloor ?? "hydrology");
   const [enabled, setEnabled] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(manifest.layers.map((l) => [l.family, l.defaultOn])),
   );
@@ -629,11 +640,17 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         {selectedGapUnit && gapData[selectedGapUnit] ? (
           <GapPanel unit={gapData[selectedGapUnit]} onClose={() => setSelectedGapUnit(null)} />
         ) : selectedFeature ? (
-          <FeaturePanel
-            props={selectedFeature.props}
-            label={layerByFamily[selectedFeature.family]?.label ?? selectedFeature.family}
-            onClose={() => setSelectedFeature(null)}
-          />
+          renderFeatureDetail?.({
+            family: selectedFeature.family,
+            props: selectedFeature.props,
+            onClose: () => setSelectedFeature(null),
+          }) ?? (
+            <FeaturePanel
+              props={selectedFeature.props}
+              label={layerByFamily[selectedFeature.family]?.label ?? selectedFeature.family}
+              onClose={() => setSelectedFeature(null)}
+            />
+          )
         ) : selectedRiver ? (
           <RiverPanel river={selectedRiver} onClear={() => selectRiver(null)} />
         ) : (

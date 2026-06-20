@@ -36,7 +36,7 @@ import {
   wardProfilesUrl,
 } from "@/lib/cities/data-paths";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
-import type { BasinInventory, BasinManifest } from "@/lib/basins";
+import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
 
 interface ChennaiRiversClientProps {
   cityId: string;
@@ -58,6 +58,10 @@ function RiversMapLoading() {
 }
 
 // Leaflet must be loaded client-side only (no SSR)
+// Shared with the standard rivers client so dismissing the drill-in hint in
+// one place dismisses it everywhere.
+const RIVERS_COACH_KEY = "rivers-drilldown-coach-dismissed";
+
 const CombinedRiversMap = dynamic(
   () =>
     import("@/components/rivers/combined-rivers-map").then(
@@ -83,6 +87,9 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
   const searchParams = useSearchParams();
   const [openBasin, setOpenBasin] = useState(false);
   const [atlasRiver, setAtlasRiver] = useState<string | null>(null);
+  const [atlasFloor, setAtlasFloor] = useState<BasinFloor | undefined>(undefined);
+  const [coachDismissed, setCoachDismissed] = useState(true);
+  useEffect(() => { setCoachDismissed(localStorage.getItem(RIVERS_COACH_KEY) === "1"); }, []);
   const [qualityData, setQualityData] = useState<RiverQualityData | null>(null);
   const [pollutionData, setPollutionData] = useState<IndustrialPollutionData | null>(null);
   const [sewageInletData, setSewageInletData] = useState<SewageInletData | null>(null);
@@ -180,15 +187,6 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
         <span className="font-semibold text-slate-700 dark:text-slate-300">
           {qualityData.rivers.length} {t("rivers_page.rivers")} - {pollutionData.sources.length} {t("rivers_page.poll_sources")}
         </span>
-        {basin && (
-          <button
-            onClick={() => { setAtlasRiver(null); setOpenBasin(true); }}
-            className="inline-flex items-center gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1 shadow-sm"
-          >
-            Treatment &amp; waste gaps
-            <span aria-hidden>&rarr;</span>
-          </button>
-        )}
         {cooum && cooumLatestDO !== undefined && cooumLatestDO !== null && (
           <span className="text-slate-500 dark:text-slate-400">
             {t("rivers_page.cooum_do")}{" "}
@@ -204,9 +202,18 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
         <span className="text-slate-400 dark:text-slate-500 text-xs hidden sm:inline">
           {t("context.rivers_recharge")}
         </span>
-        <span className="text-slate-400 dark:text-slate-500 text-xs ml-auto whitespace-nowrap">
+        <span className="text-slate-400 dark:text-slate-500 text-xs whitespace-nowrap">
           {t("rivers_page.quality_data")} {qualityData.data_year_range[0]}-{qualityData.data_year_range[1]}
         </span>
+        {basin && (
+          <button
+            onClick={() => { setAtlasRiver(null); setAtlasFloor("governance"); setOpenBasin(true); }}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1 shadow-sm"
+          >
+            Treatment &amp; waste gaps
+            <span aria-hidden>&rarr;</span>
+          </button>
+        )}
       </div>
 
       {/* Map + panel area */}
@@ -222,7 +229,7 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
               // Match the Arkavathi flow: clicking a river opens the basin
               // atlas at that river (CPCB quality is folded in as monitoring
               // points). Fall back to the quality panel only if no basin.
-              if (basin && sel) { setAtlasRiver(sel.riverId); setOpenBasin(true); }
+              if (basin && sel) { setAtlasRiver(sel.riverId); setAtlasFloor(undefined); setOpenBasin(true); }
               else { setSelectedRiver(sel); setSelectedSource(null); }
             }}
             onSelectSource={(source) => { setSelectedSource(source); setSelectedRiver(null); }}
@@ -231,6 +238,19 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
             mapCenter={mapCenter}
             mapZoom={mapZoom}
           />
+
+          {/* Drill-in hint: same affordance as the shared rivers client. */}
+          {basin && !coachDismissed && !openBasin && (
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[600] max-w-[92%] bg-slate-900/95 text-white text-xs rounded-full px-4 py-2 shadow-lg flex items-center gap-3">
+              <span>Click on a river to drill into the basin - pollution, monitoring &amp; infrastructure</span>
+              <button
+                onClick={() => { localStorage.setItem(RIVERS_COACH_KEY, "1"); setCoachDismissed(true); }}
+                className="shrink-0 text-slate-300 hover:text-white underline"
+              >
+                don&apos;t show again
+              </button>
+            </div>
+          )}
 
           {/* Legend overlay - bottom-right on desktop (sea side), bottom-left on mobile; shifts up when bottom sheet is open */}
           <div className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${hasPanel ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
@@ -314,8 +334,23 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
             manifest={basin.manifest}
             inventory={basin.inventory}
             initialRiverId={atlasRiver}
+            initialFloor={atlasFloor}
             embedded
             onClose={() => { setOpenBasin(false); setAtlasRiver(null); }}
+            renderFeatureDetail={({ family, props, onClose }) =>
+              family === "monitoring-points" && qualityData && props.stationId ? (
+                <RiverPanel
+                  selected={{
+                    riverId: String(props.river_id),
+                    stationId: String(props.stationId),
+                    latlng: [Number(props.lat), Number(props.lng)],
+                  }}
+                  qualityData={qualityData}
+                  cityId={cityId}
+                  onClose={onClose}
+                />
+              ) : null
+            }
           />
         </div>
       )}
