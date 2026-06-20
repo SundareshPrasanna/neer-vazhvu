@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 const GITHUB_URL = "https://github.com/SundareshPrasanna/neer-vazhvu";
-const CONTACT_EMAIL = "sundareshchandran@gmail.com";
+const CONTACT_EMAIL = "contact@neervazhvu.org";
 const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Neer Vazhvu")}`;
 
 // One-line hook per city. Keyed by cityId. Cities without a hook still
@@ -335,12 +335,12 @@ export default function Page() {
               ))}
           </div>
           <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">
-            Want your city, or a dataset, on this map sooner?{" "}
+            Want your city, or a dataset, on this map sooner? Email{" "}
             <a
               href={CONTACT_MAILTO}
               className="font-medium text-cyan-700 dark:text-cyan-400 underline-offset-2 hover:underline"
             >
-              Get in touch
+              {CONTACT_EMAIL}
             </a>
             .
           </p>
@@ -458,12 +458,12 @@ export default function Page() {
             </a>
             , and the data is curated city by city. Partners, journalists, and
             officials who want to extend a city or contribute data are welcome
-            to{" "}
+            to reach out at{" "}
             <a
               href={CONTACT_MAILTO}
               className="font-semibold text-cyan-700 dark:text-cyan-400 underline-offset-2 hover:underline"
             >
-              reach out
+              {CONTACT_EMAIL}
             </a>
             . For a sense of the methodology depth, read the{" "}
             <Link
