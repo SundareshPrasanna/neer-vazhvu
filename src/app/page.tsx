@@ -160,7 +160,12 @@ function CityBadge({ status }: { status: CityStatus }) {
 }
 
 function CityCard({ city }: { city: BoardCity }) {
-  const accent = CITY_ACCENT[city.cityId] ?? DEFAULT_ACCENT;
+  const isLive = city.status === "live";
+  // Live cities get their vibrant accent; cities that are not yet open get a
+  // muted slate banner so colour alone signals live-vs-coming at a glance.
+  const accent = isLive
+    ? CITY_ACCENT[city.cityId] ?? DEFAULT_ACCENT
+    : "from-slate-400 to-slate-500 dark:from-slate-700 dark:to-slate-800";
 
   // Landmark banner. A licensed photograph can later replace the gradient +
   // CityLandmark here without touching the rest of the card.
@@ -168,13 +173,18 @@ function CityCard({ city }: { city: BoardCity }) {
     <div className={`relative h-24 overflow-hidden bg-gradient-to-br ${accent}`}>
       <CityLandmark
         cityId={city.cityId}
-        className="absolute inset-0 h-full w-full text-white/85"
+        className={`absolute inset-0 h-full w-full ${isLive ? "text-white/85" : "text-white/60"}`}
       />
       {/* gentle dark gradient at the base for separation from the body */}
       <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/15 to-transparent" />
       <div className="absolute top-3 right-3">
         <CityBadge status={city.status} />
       </div>
+      {!isLive && (
+        <span className="absolute bottom-2 left-3 text-xs font-semibold uppercase tracking-wide text-white/90">
+          {city.status === "onboarding" ? "Onboarding" : "Up next"}
+        </span>
+      )}
     </div>
   );
 
@@ -291,14 +301,32 @@ export default function Page() {
             </h2>
             <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
               Each city is its own dashboard, built on whatever public data can
-              carry an honest picture. Live cities are open now; onboarding
-              cities are being wired up; up-next cities are next in line.
+              carry an honest picture.
             </p>
           </div>
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {cities.map((city) => (
-              <CityCard key={city.cityId} city={city} />
-            ))}
+
+          <h3 className="mt-10 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            Live now
+          </h3>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {cities
+              .filter((c) => c.status === "live")
+              .map((city) => (
+                <CityCard key={city.cityId} city={city} />
+              ))}
+          </div>
+
+          <h3 className="mt-12 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <span className="h-2 w-2 rounded-full bg-slate-400" />
+            Coming soon
+          </h3>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {cities
+              .filter((c) => c.status !== "live")
+              .map((city) => (
+                <CityCard key={city.cityId} city={city} />
+              ))}
           </div>
           <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">
             Want your city, or a dataset, on this map sooner? Get in touch.
