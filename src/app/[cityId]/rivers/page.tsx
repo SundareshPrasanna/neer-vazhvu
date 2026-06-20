@@ -5,7 +5,9 @@ import path from "node:path";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { basinsForCity, type BasinInventory } from "@/lib/basins";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
+import { riversVariant } from "@/lib/cities/data-paths";
 import RiversClient, { type RiverInfo } from "./rivers-client";
+import ChennaiRiversClient from "./chennai-rivers-client";
 
 function loadBasinInventory(basinId: string): BasinInventory | null {
   const fp = path.join(process.cwd(), "public", "data", "basins", basinId, "inventory.json");
@@ -227,6 +229,23 @@ export default async function CityRiversPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
+
+  // Renderer is selected by declared data-layout variant, not a city-id
+  // branch in render code (see multi-city-component-discipline.md rule 3).
+  // Chennai's legacy combined-rivers data layout (CPCB stations + industrial
+  // pollution + Cooum sewage inlets + ward search) maps to the richer
+  // ChennaiRiversClient; every other city uses the shared RiversClient.
+  if (riversVariant(cityId) === "chennai-combined") {
+    // Chennai's combined map self-fits to its rivers; centre on the city.
+    return (
+      <ChennaiRiversClient
+        cityId={cityId}
+        cityDisplayName={config.displayName}
+        mapCenter={[config.center.lat, config.center.lng]}
+        mapZoom={11}
+      />
+    );
+  }
 
   const riverInfo = RIVER_INFO_BY_CITY[cityId];
   if (!riverInfo) {

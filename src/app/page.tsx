@@ -1,364 +1,495 @@
-import { readFileSync } from "fs";
-import { resolve } from "path";
-import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
-import { UrbanSupplyOverview } from "@/components/dashboard/urban-supply-overview";
-import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
-import { DashboardHistorySection } from "@/components/dashboard/dashboard-history-section";
-import { ReservoirCatchmentContext } from "@/components/dashboard/reservoir-catchment-context";
-import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
-import { DeferredRainfallTrends } from "@/components/dashboard/deferred-rainfall-trends";
-import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
-import { CityStory } from "@/components/insights/city-story";
-import type { AiNarrative } from "@/components/insights/city-story";
-import {
-  CUSEC_DAY_TO_MCFT,
-  RESERVOIR_DISPLAY_ORDER,
-  RESERVOIR_METADATA,
-} from "@/lib/utils/constants";
-import { getGroundwaterStatus } from "@/types/groundwater";
-import type { ReservoirSummary, ChennaiReservoirName } from "@/types/reservoir";
-import type { GroundwaterApiResponse } from "@/types/groundwater";
-import type { ReservoirCatchmentContextRow } from "@/lib/gee/reservoir-context";
-import { formatDate } from "@/lib/utils/format";
-import { deriveReservoirMetrics, deriveGroundwaterMetrics, deriveRestorationMetrics } from "@/lib/insights/derive-metrics";
-import { selectNarrative } from "@/lib/insights/select-narrative";
-import { readFile } from "fs/promises";
-import { join } from "path";
-import { NewsSection } from "@/components/insights/news-section";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { listAllPlaces } from "@/lib/cities";
+import { CityLandmark, CITY_ACCENT, DEFAULT_ACCENT } from "@/components/landing/city-landmark";
 
-export const revalidate = 900; // ISR: revalidate every 15 minutes
+export const metadata: Metadata = {
+  title: "Neer Vazhvu | Urban Water Intelligence",
+  description:
+    "Open-source urban water intelligence across Indian cities. Reservoirs, groundwater, rivers, floods, and water bodies made legible city by city - Chennai, Madurai, and Bengaluru live, more onboarding.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Neer Vazhvu | Urban Water Intelligence",
+    description:
+      "Open-source urban water intelligence across Indian cities - Chennai, Madurai, and Bengaluru live, more onboarding.",
+    type: "website",
+    locale: "en_IN",
+    siteName: "Neer Vazhvu",
+    url: "https://neervazhvu.org",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Neer Vazhvu | Urban Water Intelligence",
+    description:
+      "Open-source urban water intelligence across Indian cities - Chennai, Madurai, and Bengaluru live, more onboarding.",
+  },
+};
 
-function isSupabaseConfigured(): boolean {
-  return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-}
+const GITHUB_URL = "https://github.com/SundareshPrasanna/neer-vazhvu";
+const CONTACT_EMAIL = "contact@neervazhvu.org";
+const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Neer Vazhvu")}`;
 
-async function getReservoirData() {
-  const { createServerClient } = await import("@/lib/supabase/server");
-  const supabase = createServerClient();
+// One-line hook per city. Keyed by cityId. Cities without a hook still
+// render from the registry with their authority + state, just no tagline.
+const CITY_HOOKS: Record<string, string> = {
+  chennai:
+    "Reservoir days-left, groundwater by ward, river health, flood risk, lost water bodies, and a satellite shoreline-change map. The origin city.",
+  madurai:
+    "Vaigai-basin reservoir runway, groundwater, water bodies, and flood context for the temple city.",
+  bangalore:
+    "Cauvery pumped 100 km uphill, ward groundwater stress, the tanker market, and lake restoration.",
+  mumbai:
+    "Seven BMC lakes, the Mithi river, and the parallel water systems behind the city's taps. Onboarding.",
+  delhi:
+    "The Yamuna, the Delhi Jal Board supply network, and one of India's sharpest water-access gaps.",
+  kolkata:
+    "The Hooghly, groundwater arsenic, and a delta city's drainage and flooding.",
+};
 
-  const { data: latest } = await supabase
-    .from("reservoir_daily")
-    .select("*")
-    .order("date", { ascending: false })
-    .limit(12);
+type CityStatus = "live" | "onboarding" | "upnext";
 
-  if (!latest || latest.length === 0) return null;
+type BoardCity = {
+  cityId: string;
+  displayName: string;
+  authorityAcronym: string;
+  stateCode: string;
+  hook: string;
+  status: CityStatus;
+};
 
-  const mostRecentDate = latest[0].date;
-  const todayReservoirs = latest.filter((r: { date: string }) => r.date === mostRecentDate);
+const STATUS_ORDER: Record<CityStatus, number> = { live: 0, onboarding: 1, upnext: 2 };
 
-  const reservoirs: ReservoirSummary[] = todayReservoirs
-    .map((r: Record<string, unknown>) => {
-      const m = RESERVOIR_METADATA[r.reservoir as ChennaiReservoirName];
-      return {
-        name: r.reservoir as ChennaiReservoirName,
-        displayName: m?.displayName || (r.reservoir as string),
-        currentStorage: (r.current_storage_mcft as number) || 0,
-        capacity: (r.capacity_mcft as number) || m?.fullCapacityMcft || 0,
-        storagePct: (r.storage_pct as number) || 0,
-        inflowCusecs: (r.inflow_cusecs as number) || 0,
-        outflowCusecs: (r.outflow_cusecs as number) || 0,
-        rainfallMm: (r.rainfall_mm as number) || 0,
-      };
-    })
-    .sort((a: ReservoirSummary, b: ReservoirSummary) => {
-      const ai = RESERVOIR_DISPLAY_ORDER.indexOf(a.name as (typeof RESERVOIR_DISPLAY_ORDER)[number]);
-      const bi = RESERVOIR_DISPLAY_ORDER.indexOf(b.name as (typeof RESERVOIR_DISPLAY_ORDER)[number]);
-      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-    });
-
-  // 7-day avg inflow
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  const { data: recentInflow } = await supabase
-    .from("reservoir_daily")
-    .select("date, inflow_cusecs")
-    .gte("date", sevenDaysAgo.toISOString().split("T")[0])
-    .not("inflow_cusecs", "is", null);
-
-  let recentAvgInflowMcftPerDay = 0;
-  if (recentInflow && recentInflow.length > 0) {
-    const byDate = new Map<string, number>();
-    for (const row of recentInflow) {
-      byDate.set(row.date, (byDate.get(row.date) || 0) + (row.inflow_cusecs || 0));
-    }
-    const dailyTotals = Array.from(byDate.values());
-    const avgCusecs = dailyTotals.reduce((s, v) => s + v, 0) / dailyTotals.length;
-    recentAvgInflowMcftPerDay = avgCusecs * CUSEC_DAY_TO_MCFT;
-  }
-
-  // Seasonal avg
-  const currentMonth = new Date().getMonth() + 1;
-  const { data: seasonalData } = await supabase.rpc("avg_monthly_inflow", {
-    target_month: currentMonth,
-  });
-  const seasonalAvgInflowMcftPerDay = seasonalData?.[0]?.avg_inflow_mcft_per_day || 0;
-
-  // 2019 comparison
-  const today = new Date();
-  const sameDay2019 = `2019-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-  const { data: data2019 } = await supabase
-    .from("reservoir_daily")
-    .select("current_storage_mcft")
-    .eq("date", sameDay2019);
-
-  const comparison2019Storage = data2019
-    ? data2019.reduce((sum: number, r: { current_storage_mcft: number }) => sum + (r.current_storage_mcft || 0), 0) || null
-    : null;
-
-  const totalStorage = reservoirs.reduce((sum, r) => sum + r.currentStorage, 0);
-  const totalCapacity = reservoirs.reduce((sum, r) => sum + r.capacity, 0);
-
-  return {
-    reservoirs,
-    totalStorage,
-    totalCapacity,
-    lastUpdated: mostRecentDate,
-    recentAvgInflowMcftPerDay,
-    seasonalAvgInflowMcftPerDay,
-    comparison2019Storage,
-  };
-}
-
-// Load canonical ward zone names once at module level
-const wardNamesPath = resolve(process.cwd(), "public/data/ward-names.json");
-const canonicalNames = new Map<number, string>(
-  (JSON.parse(readFileSync(wardNamesPath, "utf-8")) as { ward_number: number; zone_name: string }[])
-    .map((w) => [w.ward_number, `Ward ${w.ward_number}`])
-);
-
-async function getGroundwaterData(): Promise<GroundwaterApiResponse | null> {
-  const { createServerClient } = await import("@/lib/supabase/server");
-  const supabase = createServerClient();
-
-  const { data: latest } = await supabase
-    .from("groundwater_monthly")
-    .select("year, month")
-    .order("year", { ascending: false })
-    .order("month", { ascending: false })
-    .limit(1);
-
-  if (!latest || latest.length === 0) return null;
-
-  const { year, month } = latest[0];
-
-  const { data: currentData } = await supabase
-    .from("groundwater_monthly")
-    .select("*")
-    .eq("year", year)
-    .eq("month", month)
-    .order("ward_number", { ascending: true });
-
-  const { data: prevYearData } = await supabase
-    .from("groundwater_monthly")
-    .select("ward_number, depth_to_water_m")
-    .eq("year", year - 1)
-    .eq("month", month);
-
-  const prevYearMap = new Map(prevYearData?.map((r: { ward_number: number; depth_to_water_m: number }) => [r.ward_number, r.depth_to_water_m]) || []);
-
-  const wards = (currentData || []).map((r: Record<string, unknown>) => {
-    const prevDepth = prevYearMap.get(r.ward_number as number);
-    let trend: "improving" | "stable" | "declining" | "unknown" = "unknown";
-    if (prevDepth != null && r.depth_to_water_m != null) {
-      const diff = (r.depth_to_water_m as number) - prevDepth;
-      if (diff < -0.5) trend = "improving";
-      else if (diff > 0.5) trend = "declining";
-      else trend = "stable";
-    }
-    return {
-      wardNumber: r.ward_number as number,
-      wardName: canonicalNames.get(r.ward_number as number) || (r.ward_name as string) || `Ward ${r.ward_number}`,
-      wardNameTa: (r.ward_name_ta as string) || (r.ward_name_tamil as string) || undefined,
-      zone: (r.zone_name as string) || "",
-      depthM: r.depth_to_water_m as number,
-      trend,
-    };
-  });
-
-  const summary = { healthy: 0, moderate: 0, declining: 0, stressed: 0, critical: 0, crisis: 0, noData: 0 };
-  for (const w of wards) {
-    summary[getGroundwaterStatus(w.depthM)]++;
-  }
-
-  const withData = wards.filter((w: { depthM: number | null }) => w.depthM !== null);
-  const cityAverage = withData.length > 0
-    ? parseFloat((withData.reduce((sum: number, w: { depthM: number }) => sum + w.depthM, 0) / withData.length).toFixed(1))
-    : null;
-
-  return { period: { year, month }, cityAverage, wards, summary };
-}
-
-async function getAiNarrative(): Promise<AiNarrative | null> {
-  const { createServerClient } = await import("@/lib/supabase/server");
-  const supabase = createServerClient();
-
-  // Scope to today's briefing (IST) so stale AI narratives trigger template fallback
-  const todayIST = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date());
-  const { data } = await supabase
-    .from("daily_briefing")
-    .select("briefing_date, ai_headline_en, ai_headline_ta, ai_body_en, ai_body_ta, ai_source_dates, ai_model")
-    .eq("briefing_date", todayIST)
-    .not("ai_headline_en", "is", null)
-    .limit(1);
-
-  if (!data?.[0]) return null;
-
-  const row = data[0];
-  return {
-    date: row.briefing_date,
-    headline_en: row.ai_headline_en,
-    headline_ta: row.ai_headline_ta,
-    body_en: row.ai_body_en,
-    body_ta: row.ai_body_ta,
-    source_dates: row.ai_source_dates,
-    model: row.ai_model,
-  };
-}
-
-async function getReservoirCatchmentContextRows(): Promise<ReservoirCatchmentContextRow[] | null> {
-  const { createServerClient } = await import("@/lib/supabase/server");
-  const supabase = createServerClient();
-
-  const latestDateResult = await supabase
-    .from("reservoir_catchment_context")
-    .select("context_date")
-    .eq("window_days", 30)
-    .order("context_date", { ascending: false })
-    .limit(1);
-
-  if (latestDateResult.error || !latestDateResult.data?.[0]?.context_date) {
-    return null;
-  }
-
-  const contextDate = latestDateResult.data[0].context_date;
-  const rowsResult = await supabase
-    .from("reservoir_catchment_context")
-    .select(
-      "reservoir, context_date, window_days, rain_total_mm, baseline_mm, anomaly_pct, context_level",
-    )
-    .eq("context_date", contextDate)
-    .eq("window_days", 30);
-
-  if (rowsResult.error || !rowsResult.data?.length) {
-    return null;
-  }
-
-  return rowsResult.data.map((row) => ({
-    reservoir: row.reservoir as ChennaiReservoirName,
-    contextDate: row.context_date,
-    windowDays: row.window_days,
-    rainTotalMm: Number(row.rain_total_mm ?? 0),
-    baselineMm: row.baseline_mm == null ? null : Number(row.baseline_mm),
-    anomalyPct: row.anomaly_pct == null ? null : Number(row.anomaly_pct),
-    contextLevel: row.context_level as ReservoirCatchmentContextRow["contextLevel"],
+/**
+ * Build the city status board from the registry. A registered place with
+ * `enabled !== false` is LIVE (its /<cityId> route resolves in prod); a
+ * registered place with `enabled === false` is ONBOARDING (route 404s, so
+ * its card is not a link).
+ *
+ * Mumbai is publicly known to be onboarding but is not yet in the registry,
+ * so it is appended as a static onboarding entry. Once it lands in the
+ * registry (enabled: false), the dedupe below drops the static fallback and
+ * the registry becomes the single source of truth.
+ */
+function buildCityBoard(): BoardCity[] {
+  const fromRegistry: BoardCity[] = listAllPlaces().map((config): BoardCity => ({
+    cityId: config.cityId,
+    displayName: config.displayName,
+    authorityAcronym: config.primaryAuthority.acronym,
+    stateCode: config.stateCode,
+    hook: CITY_HOOKS[config.cityId] ?? "",
+    status: config.enabled !== false ? "live" : "onboarding",
   }));
+
+  const registeredIds = new Set(fromRegistry.map((c) => c.cityId));
+
+  // Cities not yet in the registry. Kept minimal and honest: shown with
+  // their published authority + state and no link (their routes 404 in
+  // prod). "onboarding" = actively being wired up; "upnext" = next in line.
+  const staticCities: BoardCity[] = [
+    { cityId: "mumbai", displayName: "Mumbai", authorityAcronym: "BMC", stateCode: "MH", hook: CITY_HOOKS.mumbai, status: "onboarding" },
+    { cityId: "delhi", displayName: "Delhi", authorityAcronym: "DJB", stateCode: "DL", hook: CITY_HOOKS.delhi, status: "upnext" },
+    { cityId: "kolkata", displayName: "Kolkata", authorityAcronym: "KMC", stateCode: "WB", hook: CITY_HOOKS.kolkata, status: "upnext" },
+  ];
+  const STATIC = staticCities.filter((c) => !registeredIds.has(c.cityId));
+
+  const all = [...fromRegistry, ...STATIC];
+  // Live first, then onboarding, then up next; stable within each group.
+  return all.sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
 }
 
-export default async function DashboardPage() {
-  // If Supabase is not configured, render demo mode with scenario switcher
-  if (!isSupabaseConfigured()) {
-    return <DemoDashboard />;
-  }
+const CAPABILITIES: { label: string; detail: string }[] = [
+  {
+    label: "Reservoir levels & days-left",
+    detail: "Live storage against demand, and how much runway is left.",
+  },
+  {
+    label: "Groundwater by ward",
+    detail: "Depth, stress, and extraction stitched to local geography.",
+  },
+  {
+    label: "River & canal water quality",
+    detail: "Pollution loads and health along the streams that drain the city.",
+  },
+  {
+    label: "Flood risk & drainage",
+    detail: "Hazard zones, historical events, and where the water goes.",
+  },
+  {
+    label: "Water bodies & restoration",
+    detail: "Lakes and tanks, what was lost, and what is being revived.",
+  },
+  {
+    label: "Coastal shoreline change",
+    detail: "Satellite-derived erosion and accretion along the coast.",
+  },
+  {
+    label: "AI daily briefings",
+    detail: "Plain-language summaries in English and regional languages.",
+  },
+];
 
-  // Try to fetch real data; fall back to demo on any error
-  let reservoirData = null;
-  let groundwaterData = null;
-  let aiNarrative: AiNarrative | null = null;
-  let reservoirCatchmentContextRows: ReservoirCatchmentContextRow[] | null = null;
-  try {
-    [reservoirData, groundwaterData, aiNarrative, reservoirCatchmentContextRows] = await Promise.all([
-      getReservoirData(),
-      getGroundwaterData(),
-      getAiNarrative(),
-      getReservoirCatchmentContextRows(),
-    ]);
-  } catch {
-    // Supabase connection failed  -  show demo mode
-  }
+const STATUS_BADGE: Record<CityStatus, { label: string; classes: string; dot: string }> = {
+  live: {
+    label: "Live",
+    classes:
+      "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 ring-emerald-600/20 dark:ring-emerald-500/30",
+    dot: "bg-emerald-500",
+  },
+  onboarding: {
+    label: "Onboarding",
+    classes:
+      "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 ring-amber-600/20 dark:ring-amber-500/30",
+    dot: "bg-amber-500",
+  },
+  upnext: {
+    label: "Up next",
+    classes:
+      "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 ring-slate-500/20 dark:ring-slate-400/30",
+    dot: "bg-slate-400",
+  },
+};
 
-  if (!reservoirData) {
-    return <DemoDashboard />;
-  }
+function CityBadge({ status }: { status: CityStatus }) {
+  const b = STATUS_BADGE[status];
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${b.classes}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${b.dot}`} />
+      {b.label}
+    </span>
+  );
+}
 
-  // Compute CityStory narrative from available data
-  let cityStoryNarrative = null;
-  if (groundwaterData) {
-    try {
-      const restorationPath = join(process.cwd(), "public", "data", "restoration-priority.json");
-      const restorationRaw = JSON.parse(await readFile(restorationPath, "utf-8"));
+function CityCard({ city }: { city: BoardCity }) {
+  const isLive = city.status === "live";
+  // Live cities get their vibrant accent; cities that are not yet open get a
+  // muted slate banner so colour alone signals live-vs-coming at a glance.
+  const accent = isLive
+    ? CITY_ACCENT[city.cityId] ?? DEFAULT_ACCENT
+    : "from-slate-400 to-slate-500 dark:from-slate-700 dark:to-slate-800";
 
-      const metrics = {
-        reservoir: deriveReservoirMetrics(
-          reservoirData.totalStorage,
-          reservoirData.totalCapacity,
-          reservoirData.lastUpdated,
-        ),
-        groundwater: deriveGroundwaterMetrics(groundwaterData),
-        restoration: deriveRestorationMetrics(restorationRaw),
-      };
-      cityStoryNarrative = selectNarrative(metrics);
-    } catch {
-      // Restoration data unavailable - skip CityStory
-    }
+  // Landmark banner. A licensed photograph can later replace the gradient +
+  // CityLandmark here without touching the rest of the card.
+  const banner = (
+    <div className={`relative h-24 overflow-hidden bg-gradient-to-br ${accent}`}>
+      <CityLandmark
+        cityId={city.cityId}
+        className={`absolute inset-0 h-full w-full ${isLive ? "text-white/85" : "text-white/60"}`}
+      />
+      {/* gentle dark gradient at the base for separation from the body */}
+      <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/15 to-transparent" />
+      <div className="absolute top-3 right-3">
+        <CityBadge status={city.status} />
+      </div>
+      {!isLive && (
+        <span className="absolute bottom-2 left-3 text-xs font-semibold uppercase tracking-wide text-white/90">
+          {city.status === "onboarding" ? "Onboarding" : "Up next"}
+        </span>
+      )}
+    </div>
+  );
+
+  const body = (
+    <div className="p-5 sm:p-6">
+      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+        {city.displayName}
+      </h3>
+      <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        {city.authorityAcronym}
+        <span className="mx-1 text-slate-300 dark:text-slate-600">|</span>
+        {city.stateCode}
+      </p>
+      {city.hook && (
+        <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          {city.hook}
+        </p>
+      )}
+      {city.status === "live" ? (
+        <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-cyan-700 dark:text-cyan-400">
+          Open dashboard
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </span>
+      ) : (
+        <span className="mt-4 inline-flex items-center text-sm font-medium text-slate-400 dark:text-slate-500">
+          {city.status === "onboarding" ? "Onboarding" : "Up next"}
+        </span>
+      )}
+    </div>
+  );
+
+  const baseClass =
+    "block overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900";
+
+  if (city.status === "live") {
+    return (
+      <Link
+        href={`/${city.cityId}`}
+        className={`${baseClass} transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500`}
+      >
+        {banner}
+        {body}
+      </Link>
+    );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      <DaysLeftHero
-        totalStorageMcft={reservoirData.totalStorage}
-        totalCapacityMcft={reservoirData.totalCapacity}
-        recentAvgInflowMcftPerDay={reservoirData.recentAvgInflowMcftPerDay}
-        seasonalAvgInflowMcftPerDay={reservoirData.seasonalAvgInflowMcftPerDay}
-        lastUpdated={formatDate(reservoirData.lastUpdated)}
-        comparison2019Storage={reservoirData.comparison2019Storage}
-      />
+    <div className={baseClass}>
+      {banner}
+      {body}
+    </div>
+  );
+}
 
-      {/* Page flow: hero (runway headline) -> CityStory (TL;DR
-          synthesis - the visible anchor most visitors read first) ->
-          live data block (catchment, reservoirs, history) ->
-          UrbanSupplyOverview (structural depth: where the water
-          actually comes from) -> other water sources -> long-term
-          context -> news. */}
+export default function Page() {
+  const cities = buildCityBoard();
 
-      {cityStoryNarrative && <CityStory narrative={cityStoryNarrative} aiNarrative={aiNarrative} />}
+  return (
+    <div className="bg-slate-50 dark:bg-slate-950">
+      {/* HERO */}
+      <section className="relative overflow-hidden border-b border-slate-200 dark:border-slate-800">
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900" />
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/80 dark:bg-slate-800/80 px-3 py-1 text-xs font-semibold text-cyan-700 dark:text-cyan-300 ring-1 ring-inset ring-cyan-600/20">
+            Open source
+            <span className="mx-1.5 font-normal text-cyan-600/40 dark:text-cyan-400/40">|</span>
+            Built in the open
+          </span>
+          <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
+            Neer Vazhvu
+          </h1>
+          <p className="mt-3 bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-lg sm:text-xl font-semibold text-transparent">
+            Urban Water Intelligence
+          </p>
+          <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+            An open-source platform that makes India&apos;s urban water systems
+            legible - reservoirs, groundwater, rivers, floods, and water bodies
+            - city by city.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="#cities"
+              className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+            >
+              Explore the cities
+            </a>
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+            >
+              <svg
+                className="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.04-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.39 1.24-3.23-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016.01 0c2.29-1.55 3.3-1.23 3.3-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.92 1.23 3.23 0 4.62-2.81 5.64-5.49 5.94.43.37.81 1.1.81 2.22 0 1.6-.01 2.9-.01 3.29 0 .32.21.7.82.58A12.01 12.01 0 0024 12.5C24 5.87 18.63.5 12 .5z" />
+              </svg>
+              View source on GitHub
+            </a>
+          </div>
+        </div>
+      </section>
 
-      {reservoirCatchmentContextRows && reservoirCatchmentContextRows.length > 0 ? (
-        <ReservoirCatchmentContext rows={reservoirCatchmentContextRows} />
-      ) : null}
+      {/* CITY STATUS BOARD */}
+      <section
+        id="cities"
+        className="scroll-mt-20 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+      >
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <div className="max-w-2xl">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+              Cities
+            </h2>
+            <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
+              Each city is its own dashboard, built on whatever public data can
+              carry an honest picture.
+            </p>
+          </div>
 
-      {/* Reservoir snapshot grid + shared multi-source chart. The chart
-          accepts data in any storage unit; Chennai passes Mcft, Madurai
-          passes TMC. Both render identical UI (per-source toggles,
-          summed-total mode, drag-to-zoom, pinch-to-zoom, forecast band).
-          Earlier this was a Chennai-specific DashboardContent +
-          StorageTrendChart pair; replaced so both cities share the
-          component. */}
-      <ReservoirCards
-        reservoirs={reservoirData.reservoirs.filter((r) =>
-          (RESERVOIR_DISPLAY_ORDER as readonly string[]).includes(r.name)
-        )}
-      />
-      <DashboardHistorySection
-        cityId="chennai"
-        cityDisplayName="Chennai"
-        unit="Mcft"
-      />
+          <h3 className="mt-10 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            Live now
+          </h3>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {cities
+              .filter((c) => c.status === "live")
+              .map((city) => (
+                <CityCard key={city.cityId} city={city} />
+              ))}
+          </div>
 
-      {/* Structural at-a-glance tile: source mix across CMWSSB's 5 WTPs +
-          3 DSPs, distribution scale (5,247 km), demand projections to
-          2057, and the proposed Ring Main System. Sits AFTER the live
-          data so it reads as the structural explainer for the numbers
-          above. The component fetches /data/chennai-supply-overview.json
-          client-side and self-hides if missing. Toggle/tab UX between
-          days-left and structural views is a planned follow-up. */}
-      <UrbanSupplyOverview cityId="chennai" cityDisplayName="Chennai" />
+          <h3 className="mt-12 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <span className="h-2 w-2 rounded-full bg-slate-400" />
+            Coming soon
+          </h3>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {cities
+              .filter((c) => c.status !== "live")
+              .map((city) => (
+                <CityCard key={city.cityId} city={city} />
+              ))}
+          </div>
+          <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">
+            Want your city, or a dataset, on this map sooner? Email{" "}
+            <a
+              href={CONTACT_MAILTO}
+              className="font-medium text-cyan-700 dark:text-cyan-400 underline-offset-2 hover:underline"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            .
+          </p>
+        </div>
+      </section>
 
-      {groundwaterData && <GroundwaterSnapshot data={groundwaterData} />}
+      {/* ORIGIN STORY */}
+      <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">
+          Why it exists
+        </h2>
+        <div className="mt-4 space-y-4 text-base leading-relaxed text-slate-700 dark:text-slate-300">
+          <p>
+            Neer Vazhvu was born from Chennai&apos;s water crisis. In 2019, the
+            city reached &quot;Day Zero&quot; - its major reservoirs ran dry and
+            taps across the metro fell silent. The question that followed was
+            simple: why did almost no one see it coming, and where was the data
+            that could have?
+          </p>
+          <p>
+            The data existed. It was just scattered - across research papers,
+            government portals, citizen surveys, and satellite archives - with no
+            one holding a single, joined-up view. India does not lack water data.
+            It lacks an eagle-eye view of it, and the ability to drill from a
+            whole city down to one neighbourhood, road, or locality.
+          </p>
+          <p>
+            That is the idea behind Neer Vazhvu: use AI to bring those scattered
+            sources together into one coherent picture, then use that picture to
+            surface what matters - the gaps, the contradictions, and the changes
+            worth acting on. Collating the data is only the start; the goal is the
+            gap analysis that turns it into something genuinely useful.
+          </p>
+          <p>
+            The stance is deliberate. Neer Vazhvu is infrastructure that enables
+            accountability, not a publisher of verdicts. It surfaces public data
+            honestly, dates every number, names the gaps it cannot fill, and keeps
+            its code open. No scorecards, no grades, no hype - just the water
+            systems made legible so anyone can ask better questions.
+          </p>
+        </div>
+      </section>
 
-      <DeferredRainfallTrends />
+      {/* WHAT WE TRACK */}
+      <section className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <div className="max-w-2xl">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+              What we track
+            </h2>
+            <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
+              The capabilities below are the building blocks. Which ones a city
+              has depends on its data - we turn a layer on only when the public
+              record can support it.
+            </p>
+          </div>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            {CAPABILITIES.map((cap) => (
+              <div
+                key={cap.label}
+                className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5"
+              >
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  {cap.label}
+                </h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                  {cap.detail}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      <NewsSection />
+      {/* DATA STEWARDSHIP */}
+      <section className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+            A home for peer-reviewed data
+          </h2>
+          <div className="mt-4 space-y-4 text-base leading-relaxed text-slate-700 dark:text-slate-300">
+            <p>
+              Neer Vazhvu is built alongside the people who produce the data -
+              researchers, surveyors, civic groups, and institutions. Much of
+              what you see here exists because data collaborators chose to share
+              peer-reviewed work that would otherwise sit in a PDF or a one-off
+              report.
+            </p>
+            <p>
+              The aim is a safe space for water data: shared carefully,
+              attributed clearly, dated, and stewarded for the long term. Sharing
+              a dataset here adds to a public commons without losing the credit
+              or the context, so the next person can build on it instead of
+              starting over.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* CLOSING */}
+      <section className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+            Open source, open to collaboration
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
+            The code is open on{" "}
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-cyan-700 dark:text-cyan-400 underline-offset-2 hover:underline"
+            >
+              GitHub
+            </a>
+            , and the data is curated city by city. Partners, journalists, and
+            officials who want to extend a city or contribute data are welcome
+            to reach out at{" "}
+            <a
+              href={CONTACT_MAILTO}
+              className="font-semibold text-cyan-700 dark:text-cyan-400 underline-offset-2 hover:underline"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            . For a sense of the methodology depth, read the{" "}
+            <Link
+              href="/chennai/about"
+              className="font-semibold text-cyan-700 dark:text-cyan-400 underline-offset-2 hover:underline"
+            >
+              Chennai methodology
+            </Link>
+            .
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/chennai"
+              className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+            >
+              Open the Chennai dashboard
+            </Link>
+            <Link
+              href="/chennai/about"
+              className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+            >
+              Read the methodology
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

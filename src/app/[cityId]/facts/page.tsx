@@ -3,6 +3,7 @@ import path from "path";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FactsPage } from "@/components/facts/facts-page";
+import { DynamicFactsContent } from "./dynamic-facts-content";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import type { Fact, FactTier } from "@/types/facts";
@@ -143,6 +144,20 @@ export default async function CityFactsPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
+
+  // Cities with a live/derived facts pipeline assemble facts at request
+  // time (merged with the static layer) instead of loading the static
+  // per-city JSON snapshot below. Selected by capability flag, not city id.
+  if (config.facts?.dynamicPipeline) {
+    return (
+      <DynamicFactsContent
+        cityId={cityId}
+        cityName={config.displayName}
+        cityNameTa={config.displayNameLocalized?.ta}
+        pagePathPrefix={`/${cityId}`}
+      />
+    );
+  }
 
   const factsFile = await loadFacts(cityId);
   if (!factsFile) {

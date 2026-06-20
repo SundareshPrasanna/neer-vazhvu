@@ -1,5 +1,17 @@
 "use client";
 
+// Chennai's richer rivers renderer, recovered from the pre-namespace flat
+// `/rivers` route (commit 84eb20b). It is a genuinely different surface from
+// the shared RiversClient: it overlays Cooum sewage inlets, industrial
+// pollution sources with a category-toggle legend, a pollution detail panel,
+// and ward search on top of the CPCB NWMP river-quality map. The shared
+// RiversClient (Madurai / Bangalore) does NOT carry these layers, so this is
+// recovered as a config-selected variant (see data-paths.ts `riversVariant`),
+// not folded into the shared client.
+//
+// Data paths come from the data-paths helpers (no hardcoded chennai-* literals
+// here); the map center/zoom and cityId are passed down from the shared page.
+
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -17,6 +29,19 @@ import { computeRiverStatus } from "@/lib/utils/river-classification";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
+import {
+  riverQualityUrl,
+  industrialSourcesUrl,
+  sewageInletsUrl,
+  wardProfilesUrl,
+} from "@/lib/cities/data-paths";
+
+interface ChennaiRiversClientProps {
+  cityId: string;
+  cityDisplayName: string;
+  mapCenter: [number, number];
+  mapZoom?: number;
+}
 
 function RiversMapLoading() {
   const { t } = useLanguage();
@@ -39,15 +64,15 @@ const CombinedRiversMap = dynamic(
   }
 );
 
-export default function RiversPage() {
+export default function ChennaiRiversClient(props: ChennaiRiversClientProps) {
   return (
     <Suspense>
-      <RiversPageContent />
+      <RiversPageContent {...props} />
     </Suspense>
   );
 }
 
-function RiversPageContent() {
+function RiversPageContent({ cityId, mapCenter, mapZoom }: ChennaiRiversClientProps) {
   useLockBodyScroll();
   const { t } = useLanguage();
   const searchParams = useSearchParams();
@@ -64,11 +89,14 @@ function RiversPageContent() {
   useEffect(() => {
     const riverParam = searchParams.get("river");
     const stationParam = searchParams.get("station");
+    const inletsUrl = sewageInletsUrl(cityId);
 
     Promise.all([
-      fetch("/data/river-quality.json").then((r) => r.json()),
-      fetch("/data/industrial-sources.json").then((r) => r.json()),
-      fetch("/data/cooum-sewage-inlets.json").then((r) => r.json()).catch(() => null),
+      fetch(riverQualityUrl(cityId)).then((r) => r.json()),
+      fetch(industrialSourcesUrl(cityId)).then((r) => r.json()),
+      inletsUrl
+        ? fetch(inletsUrl).then((r) => r.json()).catch(() => null)
+        : Promise.resolve(null),
     ])
       .then(([quality, pollution, inlets]: [RiverQualityData, IndustrialPollutionData, SewageInletData | null]) => {
         setQualityData(quality);
@@ -98,15 +126,15 @@ function RiversPageContent() {
       })
       .catch(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cityId]);
 
   // Fetch ward profiles for search fly-to
   useEffect(() => {
-    fetch("/data/ward-profiles.json")
+    fetch(wardProfilesUrl(cityId))
       .then((r) => r.json())
       .then((profiles: WardProfile[]) => setWardProfiles(profiles))
       .catch(() => {});
-  }, []);
+  }, [cityId]);
 
   if (loading) {
     return (
@@ -181,6 +209,8 @@ function RiversPageContent() {
             onSelectSource={(source) => { setSelectedSource(source); setSelectedRiver(null); }}
             focusCenter={focusCenter}
             hiddenCategories={hiddenCategories}
+            mapCenter={mapCenter}
+            mapZoom={mapZoom}
           />
 
           {/* Legend overlay - bottom-right on desktop (sea side), bottom-left on mobile; shifts up when bottom sheet is open */}
@@ -232,6 +262,7 @@ function RiversPageContent() {
                 key={selectedRiver.riverId}
                 selected={selectedRiver}
                 qualityData={qualityData}
+                cityId={cityId}
                 onClose={() => setSelectedRiver(null)}
                 onStationChange={(stationId) => {
                   const river = qualityData.rivers.find((r) => r.id === selectedRiver.riverId);

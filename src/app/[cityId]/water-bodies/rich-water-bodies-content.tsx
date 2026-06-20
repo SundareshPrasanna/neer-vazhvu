@@ -9,7 +9,12 @@ import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
 import { ViewModeToggle } from "@/components/water-bodies/view-mode-toggle";
 import type { ViewMode } from "@/components/water-bodies/view-mode-toggle";
 import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
-import { CHENNAI } from "@/lib/cities/chennai";
+import { getPlaceConfig } from "@/lib/cities";
+import {
+  restorationPriorityUrl,
+  wardProfilesUrl,
+  waterBodiesLostUrl,
+} from "@/lib/cities/data-paths";
 import { RestorationRankingTable } from "@/components/lake-restoration/restoration-ranking-table";
 import type { SelectedWaterBody, LostWaterBodyProperties, CensusWaterBodyProperties } from "@/types/water-bodies";
 import type { RestorationPriorityData, ScoredWaterBody } from "@/types/restoration";
@@ -44,19 +49,25 @@ interface LostGeoJSON {
 
 const PRIORITY_LEVELS = ["critical", "high", "moderate", "low"] as const;
 
-export default function WaterBodiesPage() {
+export function RichWaterBodiesContent({ cityId }: { cityId: string }) {
   return (
     <Suspense>
-      <WaterBodiesPageContent />
+      <WaterBodiesPageContent cityId={cityId} />
     </Suspense>
   );
 }
 
-function WaterBodiesPageContent() {
+function WaterBodiesPageContent({ cityId }: { cityId: string }) {
   useLockBodyScroll();
   const { t } = useLanguage();
   const searchParams = useSearchParams();
-  const hasCascadeOverlay = CHENNAI.hasCascadeOverlay ?? false;
+  const config = getPlaceConfig(cityId);
+  const hasCascadeOverlay = config.hasCascadeOverlay ?? false;
+  const wb = config.waterBodies;
+  const hasCensus = wb?.censusSource ?? false;
+  const hasWardSearch = wb?.wardSearch ?? false;
+  const hasLostBodies = wb?.lostBodies ?? false;
+  const hasRankingTab = wb?.rankingTab ?? false;
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     const m = searchParams.get("mode");
     if (m === "restoration") return "restoration";
@@ -99,16 +110,16 @@ function WaterBodiesPageContent() {
   useEffect(() => {
     const wardParam = searchParams.get("ward");
 
-    fetch("/data/restoration-priority.json")
+    fetch(restorationPriorityUrl(cityId))
       .then((r) => r.json())
       .then(async (d: RestorationPriorityData) => {
         setRestorationData(d);
 
         // Ward deep link: find the ward's nearest/top water body
-        if (wardParam) {
+        if (hasWardSearch && wardParam) {
           const wardNum = parseInt(wardParam, 10);
           try {
-            const profiles: WardProfile[] = await fetch("/data/ward-profiles.json").then((r) => r.json());
+            const profiles: WardProfile[] = await fetch(wardProfilesUrl(cityId)).then((r) => r.json());
             setWardProfiles(profiles);
             const profile = profiles.find((p) => p.ward_number === wardNum);
             if (profile?.water_bodies.top_bodies?.length) {
@@ -186,8 +197,9 @@ function WaterBodiesPageContent() {
 
   // Fetch ward profiles for search fly-to (if not already loaded by deep link)
   useEffect(() => {
+    if (!hasWardSearch) return;
     if (wardProfiles.length > 0) return;
-    fetch("/data/ward-profiles.json")
+    fetch(wardProfilesUrl(cityId))
       .then((r) => r.json())
       .then((profiles: WardProfile[]) => setWardProfiles(profiles))
       .catch(() => {});
@@ -196,6 +208,7 @@ function WaterBodiesPageContent() {
 
   // Fetch census data
   useEffect(() => {
+    if (!hasCensus) return;
     fetch("/api/water-bodies-census")
       .then((r) => r.json())
       .then((d: { data: CensusWaterBodyProperties[]; summary: { total: number; encroached: number; avgStorageLossPct: number | null } }) => {
@@ -203,11 +216,13 @@ function WaterBodiesPageContent() {
         setCensusSummary(d.summary ?? null);
       })
       .catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch lost stats
   useEffect(() => {
-    fetch("/geojson/chennai-water-bodies-lost.geojson")
+    if (!hasLostBodies) return;
+    fetch(waterBodiesLostUrl(cityId))
       .then((r) => r.json())
       .then((data: LostGeoJSON) => {
         const lostCount = data.features.length;
@@ -218,6 +233,7 @@ function WaterBodiesPageContent() {
         setLostStats({ lostCount, totalHaLost });
       })
       .catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Find restoration data for the selected water body
@@ -381,12 +397,14 @@ function WaterBodiesPageContent() {
             >
               {t("lr.tab_map")}
             </TabsTrigger>
-            <TabsTrigger
-              value="ranking"
-              className="px-1 py-2.5 text-sm font-medium border-none rounded-none data-[state=active]:border-none after:!bg-blue-600 after:!h-[2.5px] after:!rounded-full"
-            >
-              {t("lr.tab_ranking")}
-            </TabsTrigger>
+            {hasRankingTab && (
+              <TabsTrigger
+                value="ranking"
+                className="px-1 py-2.5 text-sm font-medium border-none rounded-none data-[state=active]:border-none after:!bg-blue-600 after:!h-[2.5px] after:!rounded-full"
+              >
+                {t("lr.tab_ranking")}
+              </TabsTrigger>
+            )}
           </TabsList>
           {activeTab === "map" && (
             <div className="flex items-center gap-2">
@@ -404,9 +422,9 @@ function WaterBodiesPageContent() {
           {viewMode === "catchments" ? (
             <div className="flex-1 min-h-0">
               <CatchmentAtlasClient
-                cityId="chennai"
-                cityDisplayName="Chennai"
-                center={[CHENNAI.center.lat, CHENNAI.center.lng]}
+                cityId={cityId}
+                cityDisplayName={config.displayName}
+                center={[config.center.lat, config.center.lng]}
               />
             </div>
           ) : (
@@ -463,13 +481,15 @@ function WaterBodiesPageContent() {
                 </div>
               )}
             </MapInfoButton>
-            <WardSearch
-              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]"
-              onSelect={(wardNum) => {
-                const profile = wardProfiles.find((p) => p.ward_number === wardNum);
-                if (profile) setFocusCenter([profile.centroid[1], profile.centroid[0]]);
-              }}
-            />
+            {hasWardSearch && (
+              <WardSearch
+                className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]"
+                onSelect={(wardNum) => {
+                  const profile = wardProfiles.find((p) => p.ward_number === wardNum);
+                  if (profile) setFocusCenter([profile.centroid[1], profile.centroid[0]]);
+                }}
+              />
+            )}
           </div>
           {selected && selected.kind === "current" && selected.richBodyId ? (
             <RichBodyOverlay

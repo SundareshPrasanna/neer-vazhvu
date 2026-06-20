@@ -57,10 +57,15 @@ function MapController({
   useEffect(() => {
     if (!fitGeom) return;
     const b = L.geoJSON(fitGeom).getBounds();
-    if (b.isValid()) map.fitBounds(b, { padding: [50, 50], maxZoom: 14 });
+    if (!b.isValid()) return;
+    // Snap to an integer zoom and jump without animation. Animating
+    // through fractional zoom levels makes the raster tile layer redraw
+    // mid-transition, which reads as flickering rectangles.
+    const targetZoom = Math.min(14, Math.floor(map.getBoundsZoom(b, false, L.point(50, 50))));
+    map.setView(b.getCenter(), targetZoom, { animate: false });
   }, [fitGeom, map]);
   useEffect(() => {
-    if (resetKey > 0) map.flyTo(center, zoom, { duration: 0.8 });
+    if (resetKey > 0) map.setView(center, zoom, { animate: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
   return null;
@@ -214,7 +219,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
   return (
     <div className="h-full flex flex-col md:flex-row">
       <div className="relative flex-1 h-full">
-        <MapContainer center={center} zoom={zoom} className="h-full w-full" preferCanvas>
+        <MapContainer center={center} zoom={zoom} className="h-full w-full" preferCanvas zoomSnap={1}>
           <MapResizer />
           <MapController
             fitGeom={basin ? ({ type: "Feature", properties: {}, geometry: basin } as Feature) : catchment}

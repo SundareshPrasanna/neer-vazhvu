@@ -22,6 +22,9 @@ export interface AiNarrative {
 interface CityStoryProps {
   narrative: CityStoryNarrative;
   aiNarrative?: AiNarrative | null;
+  /** City route prefix for cross-links, e.g. "/chennai". Default "" keeps
+   *  the links root-relative. */
+  hrefPrefix?: string;
 }
 
 const VARIANT_BORDER: Record<CityStoryNarrative["variant"], string> = {
@@ -51,7 +54,7 @@ function AiFreshness({ sourceDates, t }: { sourceDates: AiNarrative["source_date
   );
 }
 
-export function CityStory({ narrative, aiNarrative }: CityStoryProps) {
+export function CityStory({ narrative, aiNarrative, hrefPrefix = "" }: CityStoryProps) {
   const { t, language } = useLanguage();
 
   const useAi = !!aiNarrative;
@@ -106,7 +109,7 @@ export function CityStory({ narrative, aiNarrative }: CityStoryProps) {
       {/* Cross-links */}
       <div className="flex flex-wrap gap-4 mt-3">
         <Link
-          href="/groundwater"
+          href={`${hrefPrefix}/groundwater`}
           className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-1"
         >
           {t("city_story.explore_gw")}
@@ -115,7 +118,7 @@ export function CityStory({ narrative, aiNarrative }: CityStoryProps) {
           </svg>
         </Link>
         <Link
-          href="/water-bodies?mode=restoration"
+          href={`${hrefPrefix}/water-bodies?mode=restoration`}
           className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-1"
         >
           {t("city_story.see_restoration")}
@@ -124,7 +127,7 @@ export function CityStory({ narrative, aiNarrative }: CityStoryProps) {
           </svg>
         </Link>
         <Link
-          href="/flood-risk"
+          href={`${hrefPrefix}/flood-risk`}
           className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-1"
         >
           {t("city_story.see_flood_risk")}

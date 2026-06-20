@@ -14,6 +14,8 @@ import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
+import { tryGetPlaceConfig } from "@/lib/cities";
+import { wardProfilesUrl } from "@/lib/cities/data-paths";
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -32,15 +34,15 @@ const FloodRiskMap = dynamic(
 
 const HAZARD_CATS: HazardCategory[] = ["very_high", "high", "moderate", "low", "very_low"];
 
-export default function FloodRiskPage() {
+export function InteractiveFloodContent({ cityId }: { cityId: string }) {
   return (
     <Suspense>
-      <FloodRiskPageContent />
+      <InteractiveFloodContentInner cityId={cityId} />
     </Suspense>
   );
 }
 
-function FloodRiskPageContent() {
+function InteractiveFloodContentInner({ cityId }: { cityId: string }) {
   useLockBodyScroll();
   const { t } = useLanguage();
   const searchParams = useSearchParams();
@@ -55,9 +57,14 @@ function FloodRiskPageContent() {
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
 
+  const config = tryGetPlaceConfig(cityId);
+  const center: [number, number] | undefined = config
+    ? [config.center.lat, config.center.lng]
+    : undefined;
+
   // Load ward profiles for centroid lookups
   useEffect(() => {
-    fetch("/data/ward-profiles.json")
+    fetch(wardProfilesUrl(cityId))
       .then((r) => r.json())
       .then((profiles: WardProfile[]) => {
         setWardProfiles(profiles);
@@ -185,6 +192,8 @@ function FloodRiskPageContent() {
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         <div className="relative flex-1 h-full">
           <FloodRiskMap
+            cityId={cityId}
+            center={center}
             viewMode={viewMode}
             historicalEvent={historicalEvent}
             onSelect={setSelected}

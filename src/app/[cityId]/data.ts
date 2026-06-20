@@ -2,6 +2,8 @@ import "server-only";
 
 import { createServerClient } from "@/lib/supabase/server";
 import type { PlaceConfig } from "@/lib/cities";
+import { RESERVOIR_DISPLAY_ORDER, RESERVOIR_METADATA } from "@/lib/utils/constants";
+import type { ChennaiReservoirName } from "@/types/reservoir";
 
 export interface ReservoirReadingV2 {
   city_id: string;
@@ -153,6 +155,9 @@ async function loadSeasonalAvgInflowMcftPerDay(
  * inflow window + seasonal-month average + 2019-same-day comparison).
  */
 export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWaterEstimate> {
+  if (config.reservoirDataSource === "legacy-v1") {
+    return loadLegacyChennaiWaterEstimate();
+  }
   const primary = config.waterSources.filter((s) => s.isPrimaryDrinkingSource);
   if (primary.length === 0) return EMPTY_ESTIMATE;
   const sourceCodes = primary.map((s) => s.sourceCode);
@@ -261,7 +266,185 @@ const EMPTY_SNAPSHOT: CitySnapshot = {
   reservoirIsLive: false,
 };
 
+// ---------------------------------------------------------------------------
+// Legacy v1 (Chennai) reservoir loaders.
+//
+// Chennai's reservoir history lives in the original single-tenant `reservoir_daily`
+// table, storing storage in Mcft (column current_storage_mcft) rather than the
+// multi-city `reservoir_daily_v2` schema (storage_tmc). The seasonal-average RPC
+// is the v1 `avg_monthly_inflow` (no city/source args), not `avg_monthly_inflow_v2`.
+// These helpers reproduce the exact query logic that previously lived in
+// chennai-home.tsx getReservoirData(), so the shared dashboard renders Chennai's
+// numbers identically. loadCitySnapshot / loadCityWaterEstimate delegate here
+// when config.reservoirDataSource === 'legacy-v1'.
+// ---------------------------------------------------------------------------
+
+async function loadLegacyChennaiSnapshot(config: PlaceConfig): Promise<CitySnapshot> {
+  let supabase;
+  try {
+    supabase = createServerClient();
+  } catch {
+    return EMPTY_SNAPSHOT;
+  }
+
+  const { data: latest } = await supabase
+    .from("reservoir_daily")
+    .select("*")
+    .order("date", { ascending: false })
+    .limit(12);
+
+  if (!latest || latest.length === 0) return EMPTY_SNAPSHOT;
+
+  const asOf = latest[0].date as string;
+  const todayRows = latest.filter((r: { date: string }) => r.date === asOf);
+
+  const sourceCodes = config.waterSources.map((s) => s.sourceCode);
+  const readingsBySource: Record<string, ReservoirReadingV2 | null> = {};
+  for (const code of sourceCodes) readingsBySource[code] = null;
+
+  for (const r of todayRows as Record<string, unknown>[]) {
+    const code = r.reservoir as string;
+    if (!(code in readingsBySource)) continue;
+    // Express legacy Mcft storage in the v2 reading shape (storage_tmc) so
+    // snapshotToSummaries renders identical cards. storage_pct_frl carries the
+    // DB's own storage_pct so the percentage bar matches chennai-home exactly.
+    readingsBySource[code] = {
+      city_id: config.cityId,
+      source_code: code,
+      date: asOf,
+      storage_tmc: ((r.current_storage_mcft as number) || 0) / TMC_TO_MCFT,
+      storage_pct_frl: (r.storage_pct as number) ?? null,
+      level_ft: null,
+      inflow_cusecs: (r.inflow_cusecs as number) ?? null,
+      outflow_cusecs: (r.outflow_cusecs as number) ?? null,
+      source: "reservoir_daily",
+    };
+  }
+
+  const primaryCodes = config.waterSources
+    .filter((s) => s.isPrimaryDrinkingSource)
+    .map((s) => s.sourceCode);
+  const liveSources = primaryCodes.filter((c) => readingsBySource[c] !== null);
+  const reservoirIsLive =
+    primaryCodes.length === 0 || liveSources.length === primaryCodes.length;
+
+  return { asOf, readingsBySource, reservoirIsLive };
+}
+
+/**
+ * Roll Chennai's legacy `reservoir_daily` rows into the shared
+ * CityWaterEstimate shape DaysLeftHero consumes. Mirrors the prior
+ * chennai-home.tsx getReservoirData() math exactly: storage already in Mcft,
+ * 7-day inflow window, seasonal average via the v1 `avg_monthly_inflow` RPC,
+ * and a 2019 same-day storage comparison.
+ */
+async function loadLegacyChennaiWaterEstimate(): Promise<CityWaterEstimate> {
+  let supabase;
+  try {
+    supabase = createServerClient();
+  } catch {
+    return EMPTY_ESTIMATE;
+  }
+
+  const { data: latest } = await supabase
+    .from("reservoir_daily")
+    .select("*")
+    .order("date", { ascending: false })
+    .limit(12);
+
+  if (!latest || latest.length === 0) return EMPTY_ESTIMATE;
+
+  const mostRecentDate = latest[0].date as string;
+  const todayReservoirs = latest.filter(
+    (r: { date: string }) => r.date === mostRecentDate,
+  );
+
+  // Cards/summary use the same display-ordered set chennai-home rendered.
+  const reservoirs = (todayReservoirs as Record<string, unknown>[])
+    .map((r) => {
+      const m = RESERVOIR_METADATA[r.reservoir as ChennaiReservoirName];
+      return {
+        name: r.reservoir as ChennaiReservoirName,
+        currentStorage: (r.current_storage_mcft as number) || 0,
+        capacity: (r.capacity_mcft as number) || m?.fullCapacityMcft || 0,
+      };
+    })
+    .sort((a, b) => {
+      const ai = RESERVOIR_DISPLAY_ORDER.indexOf(
+        a.name as (typeof RESERVOIR_DISPLAY_ORDER)[number],
+      );
+      const bi = RESERVOIR_DISPLAY_ORDER.indexOf(
+        b.name as (typeof RESERVOIR_DISPLAY_ORDER)[number],
+      );
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+
+  // 7-day avg inflow (Mcft/day).
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const { data: recentInflow } = await supabase
+    .from("reservoir_daily")
+    .select("date, inflow_cusecs")
+    .gte("date", sevenDaysAgo.toISOString().split("T")[0])
+    .not("inflow_cusecs", "is", null);
+
+  let recentAvgInflowMcftPerDay = 0;
+  if (recentInflow && recentInflow.length > 0) {
+    const byDate = new Map<string, number>();
+    for (const row of recentInflow) {
+      byDate.set(
+        row.date as string,
+        (byDate.get(row.date as string) || 0) + ((row.inflow_cusecs as number) || 0),
+      );
+    }
+    const dailyTotals = Array.from(byDate.values());
+    const avgCusecs = dailyTotals.reduce((s, v) => s + v, 0) / dailyTotals.length;
+    recentAvgInflowMcftPerDay = avgCusecs * CUSEC_DAY_TO_MCFT;
+  }
+
+  // Seasonal avg via the v1 RPC (current month).
+  const currentMonth = new Date().getMonth() + 1;
+  const { data: seasonalData } = await supabase.rpc("avg_monthly_inflow", {
+    target_month: currentMonth,
+  });
+  const seasonalAvgInflowMcftPerDay =
+    seasonalData?.[0]?.avg_inflow_mcft_per_day || 0;
+
+  // 2019 same-day comparison.
+  const today = new Date();
+  const sameDay2019 = `2019-${String(today.getMonth() + 1).padStart(2, "0")}-${String(
+    today.getDate(),
+  ).padStart(2, "0")}`;
+  const { data: data2019 } = await supabase
+    .from("reservoir_daily")
+    .select("current_storage_mcft")
+    .eq("date", sameDay2019);
+
+  const comparison2019Storage = data2019
+    ? data2019.reduce(
+        (sum: number, r: { current_storage_mcft: number }) =>
+          sum + (r.current_storage_mcft || 0),
+        0,
+      ) || null
+    : null;
+
+  const totalStorageMcft = reservoirs.reduce((sum, r) => sum + r.currentStorage, 0);
+  const totalCapacityMcft = reservoirs.reduce((sum, r) => sum + r.capacity, 0);
+
+  return {
+    totalStorageMcft,
+    totalCapacityMcft,
+    recentAvgInflowMcftPerDay,
+    seasonalAvgInflowMcftPerDay,
+    comparison2019Storage,
+    lastUpdated: mostRecentDate,
+  };
+}
+
 export async function loadCitySnapshot(config: PlaceConfig): Promise<CitySnapshot> {
+  if (config.reservoirDataSource === "legacy-v1") {
+    return loadLegacyChennaiSnapshot(config);
+  }
   const sourceCodes = config.waterSources.map((s) => s.sourceCode);
   if (sourceCodes.length === 0) return EMPTY_SNAPSHOT;
 

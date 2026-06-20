@@ -617,10 +617,10 @@ export function ChennaiStoryTa() {
           ஆரம்பித்தால் மட்டுமே வறட்சி-தடுப்பாகவும் வெள்ள-தடுப்பாகவும்
           இருக்க முடியும்.
         </p>
-        <CTA href="/water-bodies">
+        <CTA href="/chennai/water-bodies">
           இன்று வரைபடத்தில் அடுக்கைக் காண்க
         </CTA>
-        <CTA href="/facts">மேற்கோளிடத்தக்க உண்மைகள் மற்றும் சான்றுகள்</CTA>
+        <CTA href="/chennai/facts">மேற்கோளிடத்தக்க உண்மைகள் மற்றும் சான்றுகள்</CTA>
       </Chapter>
     </StoryPage>
   );

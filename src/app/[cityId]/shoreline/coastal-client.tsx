@@ -68,7 +68,7 @@ export default function CoastalClient() {
             </a>
           </span>
           <Link
-            href="/facts#bucket-coastal"
+            href="/chennai/facts#bucket-coastal"
             className="text-xs text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap"
           >
             Coastal facts →

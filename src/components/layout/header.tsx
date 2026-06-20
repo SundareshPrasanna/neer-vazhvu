@@ -190,12 +190,58 @@ export function Header() {
     : null;
   const currentPageLabel = currentPage ? t(currentPage.key) : null;
 
-  // Logo points to the city's home (chennai -> /, madurai -> /madurai).
-  const homeHref = rewriteNavHref("/", cityId);
+  // Logo returns to the project landing page ("/") from any city. The
+  // per-city home is still reachable via the "Dashboard" nav item.
+  const homeHref = "/";
 
   const isExploreActive =
     EXPLORE_PATHS.has(pathname) ||
     EXPLORE_ITEMS.some((i) => rewriteNavHref(i.href, cityId) === pathname);
+
+  // The root path "/" is the project landing page, not a city. Render a
+  // minimal header there: brand + city switcher + toggles, with no
+  // per-city feature nav (Dashboard/Groundwater/... only make sense inside
+  // a city).
+  if (pathname === "/") {
+    return (
+      <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-[10000]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="flex items-center gap-2 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-sm">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="none">
+                  <path
+                    d="M12 3s-5 6.1-5 9.9A5 5 0 0 0 12 18a5 5 0 0 0 5-5.1C17 9.1 12 3 12 3z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M8.4 12.7c1 .8 2.2 1.2 3.6 1.2s2.6-.4 3.6-1.2"
+                    stroke="#0ea5e9"
+                    strokeWidth={1.8}
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+              <div>
+                <span className="font-bold text-lg text-slate-900 dark:text-slate-100">
+                  {t("header.title")}
+                </span>
+                <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 ml-2">
+                  {t("header.subtitle")}
+                </span>
+              </div>
+            </Link>
+            {/* No CitySwitcher or LanguageToggle here: the landing page is not
+                a city (a switcher defaulting to Chennai would mislead), and the
+                regional-language toggle is a per-city UI concern. */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              <ThemeToggle />
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-[10000]">

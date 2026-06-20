@@ -1,5 +1,32 @@
 "use client";
 
+/**
+ * Chennai groundwater variant.
+ *
+ * Chennai's groundwater is fed by a fundamentally different data pipeline
+ * than Madurai / Bangalore, so it gets a distinct renderer selected by a
+ * declared capability (see page.tsx and
+ * docs/specs/multi-city-component-discipline.md rule 3 - variant by named
+ * key, never a bare cityId check):
+ *
+ *   - depth: authoritative OpenCity per-ward monthly survey via
+ *     /api/groundwater (real per-ward depthM + YoY trend + period), NOT
+ *     the sparse-station IDW that backs the shared CityGroundwaterClient.
+ *   - risk: /api/groundwater/risk (Supabase ward_risk_score, full
+ *     multi-factor composite), NOT a static ward-risk-<city>.json.
+ *   - exploitation: legacy unprefixed /data/gwr-blocks.json (Chennai
+ *     predates the <cityId>-prefixed convention).
+ *   - WRIS station overlay via /api/groundwater/stations.
+ *
+ * It also carries Chennai-only UX the shared client never had: ?ward=
+ * and ?view= deep-linking, WardSearch, deepest-ward auto-select, and the
+ * staleness banner.
+ *
+ * This is the original flat /groundwater client (deleted in the /chennai
+ * namespace migration) restored as a variant. Madurai / Bangalore stay on
+ * CityGroundwaterClient.
+ */
+
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -38,7 +65,7 @@ const WardMap = dynamic(() => import("@/components/groundwater/ward-map").then((
   loading: () => <GroundwaterMapLoading />,
 });
 
-export default function GroundwaterPage() {
+export default function ChennaiGroundwaterClient() {
   return (
     <Suspense>
       <GroundwaterPageContent />

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
 
 interface LayoutProps {
@@ -56,12 +56,6 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
 
 export default async function CityLayout({ children, params }: LayoutProps) {
   const { cityId } = await params;
-
-  // Chennai's home lives at / for legacy/SEO reasons (the historical entry point
-  // for media coverage). /chennai 301-redirects to / to keep one canonical URL.
-  if (cityId === "chennai") {
-    redirect("/");
-  }
 
   // Registered-but-disabled cities (config.enabled === false) are scaffolded
   // in code for data ingestion + scraper work but not yet exposed publicly.

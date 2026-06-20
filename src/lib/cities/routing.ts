@@ -95,17 +95,16 @@ export function parsePath(
 }
 
 /**
- * Build the URL for a feature inside a given city. Chennai uses flat URLs;
- * other cities use /<cityId>/<feature>. Falls back to the city's home if
- * the city does not yet support the requested feature.
+ * Build the URL for a feature inside a given city. Every city (Chennai
+ * included, since the namespace migration) uses /<cityId>/<feature>; the
+ * city home is /<cityId>. Falls back to the city's home if the city does
+ * not yet support the requested feature. The root path "/" is the project
+ * landing page, not a city.
  */
 export function buildCityHref(targetCityId: string, feature: string): string {
   const supported = FEATURE_AVAILABILITY[targetCityId];
   const featureToUse = supported && supported.has(feature) ? feature : "";
 
-  if (targetCityId === CHENNAI_CITY_ID) {
-    return featureToUse === "" ? "/" : `/${featureToUse}`;
-  }
   return featureToUse === "" ? `/${targetCityId}` : `/${targetCityId}/${featureToUse}`;
 }
 
