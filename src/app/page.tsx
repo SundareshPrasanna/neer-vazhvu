@@ -28,6 +28,8 @@ export const metadata: Metadata = {
 };
 
 const GITHUB_URL = "https://github.com/SundareshPrasanna/neer-vazhvu";
+const CONTACT_EMAIL = "sundareshchandran@gmail.com";
+const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Neer Vazhvu")}`;
 
 // One-line hook per city. Keyed by cityId. Cities without a hook still
 // render from the registry with their authority + state, just no tagline.
@@ -194,7 +196,9 @@ function CityCard({ city }: { city: BoardCity }) {
         {city.displayName}
       </h3>
       <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
-        {city.authorityAcronym} . {city.stateCode}
+        {city.authorityAcronym}
+        <span className="mx-1 text-slate-300 dark:text-slate-600">|</span>
+        {city.stateCode}
       </p>
       {city.hook && (
         <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
@@ -249,7 +253,9 @@ export default function Page() {
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900" />
         <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-white/80 dark:bg-slate-800/80 px-3 py-1 text-xs font-semibold text-cyan-700 dark:text-cyan-300 ring-1 ring-inset ring-cyan-600/20">
-            Open source . Built in the open
+            Open source
+            <span className="mx-1.5 font-normal text-cyan-600/40 dark:text-cyan-400/40">|</span>
+            Built in the open
           </span>
           <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
             Neer Vazhvu
@@ -329,7 +335,14 @@ export default function Page() {
               ))}
           </div>
           <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">
-            Want your city, or a dataset, on this map sooner? Get in touch.
+            Want your city, or a dataset, on this map sooner?{" "}
+            <a
+              href={CONTACT_MAILTO}
+              className="font-medium text-cyan-700 dark:text-cyan-400 underline-offset-2 hover:underline"
+            >
+              Get in touch
+            </a>
+            .
           </p>
         </div>
       </section>
@@ -445,7 +458,14 @@ export default function Page() {
             </a>
             , and the data is curated city by city. Partners, journalists, and
             officials who want to extend a city or contribute data are welcome
-            to reach out. For a sense of the methodology depth, read the{" "}
+            to{" "}
+            <a
+              href={CONTACT_MAILTO}
+              className="font-semibold text-cyan-700 dark:text-cyan-400 underline-offset-2 hover:underline"
+            >
+              reach out
+            </a>
+            . For a sense of the methodology depth, read the{" "}
             <Link
               href="/chennai/about"
               className="font-semibold text-cyan-700 dark:text-cyan-400 underline-offset-2 hover:underline"
