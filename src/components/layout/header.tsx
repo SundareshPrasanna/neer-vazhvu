@@ -231,8 +231,9 @@ export function Header() {
                 </span>
               </div>
             </Link>
+            {/* No CitySwitcher here: the landing page is not a city, and a
+                switcher defaulting to Chennai would be misleading. */}
             <div className="flex items-center gap-1 sm:gap-2">
-              <CitySwitcher />
               <LanguageToggle />
               <ThemeToggle />
             </div>

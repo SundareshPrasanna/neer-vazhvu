@@ -39,7 +39,13 @@ const CITY_HOOKS: Record<string, string> = {
     "Cauvery pumped 100 km uphill, ward groundwater stress, the tanker market, and lake restoration.",
   mumbai:
     "Seven BMC lakes, the Mithi river, and the parallel water systems behind the city's taps. Onboarding.",
+  delhi:
+    "The Yamuna, the Delhi Jal Board supply network, and one of India's sharpest water-access gaps.",
+  kolkata:
+    "The Hooghly, groundwater arsenic, and a delta city's drainage and flooding.",
 };
+
+type CityStatus = "live" | "onboarding" | "upnext";
 
 type BoardCity = {
   cityId: string;
@@ -47,8 +53,10 @@ type BoardCity = {
   authorityAcronym: string;
   stateCode: string;
   hook: string;
-  live: boolean;
+  status: CityStatus;
 };
+
+const STATUS_ORDER: Record<CityStatus, number> = { live: 0, onboarding: 1, upnext: 2 };
 
 /**
  * Build the city status board from the registry. A registered place with
@@ -62,33 +70,30 @@ type BoardCity = {
  * the registry becomes the single source of truth.
  */
 function buildCityBoard(): BoardCity[] {
-  const fromRegistry: BoardCity[] = listAllPlaces().map((config) => ({
+  const fromRegistry: BoardCity[] = listAllPlaces().map((config): BoardCity => ({
     cityId: config.cityId,
     displayName: config.displayName,
     authorityAcronym: config.primaryAuthority.acronym,
     stateCode: config.stateCode,
     hook: CITY_HOOKS[config.cityId] ?? "",
-    live: config.enabled !== false,
+    status: config.enabled !== false ? "live" : "onboarding",
   }));
 
   const registeredIds = new Set(fromRegistry.map((c) => c.cityId));
 
-  // Onboarding cities not yet in the registry. Kept minimal and honest:
-  // shown as onboarding (no link) with their published authority + state.
-  const STATIC_ONBOARDING: BoardCity[] = [
-    {
-      cityId: "mumbai",
-      displayName: "Mumbai",
-      authorityAcronym: "BMC",
-      stateCode: "MH",
-      hook: CITY_HOOKS.mumbai,
-      live: false,
-    },
-  ].filter((c) => !registeredIds.has(c.cityId));
+  // Cities not yet in the registry. Kept minimal and honest: shown with
+  // their published authority + state and no link (their routes 404 in
+  // prod). "onboarding" = actively being wired up; "upnext" = next in line.
+  const staticCities: BoardCity[] = [
+    { cityId: "mumbai", displayName: "Mumbai", authorityAcronym: "BMC", stateCode: "MH", hook: CITY_HOOKS.mumbai, status: "onboarding" },
+    { cityId: "delhi", displayName: "Delhi", authorityAcronym: "DJB", stateCode: "DL", hook: CITY_HOOKS.delhi, status: "upnext" },
+    { cityId: "kolkata", displayName: "Kolkata", authorityAcronym: "KMC", stateCode: "WB", hook: CITY_HOOKS.kolkata, status: "upnext" },
+  ];
+  const STATIC = staticCities.filter((c) => !registeredIds.has(c.cityId));
 
-  const all = [...fromRegistry, ...STATIC_ONBOARDING];
-  // Live cities first, then onboarding; stable within each group.
-  return all.sort((a, b) => Number(b.live) - Number(a.live));
+  const all = [...fromRegistry, ...STATIC];
+  // Live first, then onboarding, then up next; stable within each group.
+  return all.sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
 }
 
 const CAPABILITIES: { label: string; detail: string }[] = [
@@ -122,19 +127,33 @@ const CAPABILITIES: { label: string; detail: string }[] = [
   },
 ];
 
-function CityBadge({ live }: { live: boolean }) {
-  if (live) {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-600/20 dark:ring-emerald-500/30">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        Live
-      </span>
-    );
-  }
+const STATUS_BADGE: Record<CityStatus, { label: string; classes: string; dot: string }> = {
+  live: {
+    label: "Live",
+    classes:
+      "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 ring-emerald-600/20 dark:ring-emerald-500/30",
+    dot: "bg-emerald-500",
+  },
+  onboarding: {
+    label: "Onboarding",
+    classes:
+      "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 ring-amber-600/20 dark:ring-amber-500/30",
+    dot: "bg-amber-500",
+  },
+  upnext: {
+    label: "Up next",
+    classes:
+      "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 ring-slate-500/20 dark:ring-slate-400/30",
+    dot: "bg-slate-400",
+  },
+};
+
+function CityBadge({ status }: { status: CityStatus }) {
+  const b = STATUS_BADGE[status];
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-400 ring-1 ring-inset ring-amber-600/20 dark:ring-amber-500/30">
-      <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-      Onboarding
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${b.classes}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${b.dot}`} />
+      {b.label}
     </span>
   );
 }
@@ -155,14 +174,14 @@ function CityCard({ city }: { city: BoardCity }) {
           </h3>
           {meta}
         </div>
-        <CityBadge live={city.live} />
+        <CityBadge status={city.status} />
       </div>
       {city.hook && (
         <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
           {city.hook}
         </p>
       )}
-      {city.live ? (
+      {city.status === "live" ? (
         <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-cyan-700 dark:text-cyan-400">
           Open dashboard
           <svg
@@ -181,7 +200,7 @@ function CityCard({ city }: { city: BoardCity }) {
         </span>
       ) : (
         <span className="mt-4 inline-flex items-center text-sm font-medium text-slate-400 dark:text-slate-500">
-          Onboarding
+          {city.status === "onboarding" ? "Onboarding" : "Up next"}
         </span>
       )}
     </>
@@ -190,7 +209,7 @@ function CityCard({ city }: { city: BoardCity }) {
   const baseClass =
     "block rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 sm:p-6";
 
-  if (city.live) {
+  if (city.status === "live") {
     return (
       <Link
         href={`/${city.cityId}`}
@@ -254,6 +273,33 @@ export default function Page() {
         </div>
       </section>
 
+      {/* CITY STATUS BOARD */}
+      <section
+        id="cities"
+        className="scroll-mt-20 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+      >
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <div className="max-w-2xl">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+              Cities
+            </h2>
+            <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
+              Each city is its own dashboard, built on whatever public data can
+              carry an honest picture. Live cities are open now; onboarding
+              cities are being wired up; up-next cities are next in line.
+            </p>
+          </div>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {cities.map((city) => (
+              <CityCard key={city.cityId} city={city} />
+            ))}
+          </div>
+          <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">
+            Want your city, or a dataset, on this map sooner? Get in touch.
+          </p>
+        </div>
+      </section>
+
       {/* ORIGIN STORY */}
       <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">
@@ -268,44 +314,25 @@ export default function Page() {
             that could have?
           </p>
           <p>
-            It started as a Chennai water clock - one number for how much water
-            was left. It grew to cover Tamil Nadu with Madurai, and it is now
-            expanding pan-India, one city at a time, wherever the public data
-            can carry an honest picture.
+            The data existed. It was just scattered - across research papers,
+            government portals, citizen surveys, and satellite archives - with no
+            one holding a single, joined-up view. India does not lack water data.
+            It lacks an eagle-eye view of it, and the ability to drill from a
+            whole city down to one neighbourhood, road, or locality.
+          </p>
+          <p>
+            That is the idea behind Neer Vazhvu: use AI to bring those scattered
+            sources together into one coherent picture, then use that picture to
+            surface what matters - the gaps, the contradictions, and the changes
+            worth acting on. Collating the data is only the start; the goal is the
+            gap analysis that turns it into something genuinely useful.
           </p>
           <p>
             The stance is deliberate. Neer Vazhvu is infrastructure that enables
             accountability, not a publisher of verdicts. It surfaces public data
-            honestly, names the gaps it cannot fill, and keeps its code open. No
-            scorecards, no grades, no hype - just the water systems made legible
-            so anyone can ask better questions.
-          </p>
-        </div>
-      </section>
-
-      {/* CITY STATUS BOARD */}
-      <section
-        id="cities"
-        className="scroll-mt-20 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
-      >
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
-          <div className="max-w-2xl">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
-              Cities
-            </h2>
-            <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
-              Each city is its own dashboard, built on whatever public data can
-              carry an honest picture. Live cities are open now; onboarding
-              cities are still being wired up.
-            </p>
-          </div>
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {cities.map((city) => (
-              <CityCard key={city.cityId} city={city} />
-            ))}
-          </div>
-          <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">
-            More cities are in research.
+            honestly, dates every number, names the gaps it cannot fill, and keeps
+            its code open. No scorecards, no grades, no hype - just the water
+            systems made legible so anyone can ask better questions.
           </p>
         </div>
       </section>
@@ -341,8 +368,33 @@ export default function Page() {
         </div>
       </section>
 
-      {/* CLOSING */}
+      {/* DATA STEWARDSHIP */}
       <section className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+            A home for peer-reviewed data
+          </h2>
+          <div className="mt-4 space-y-4 text-base leading-relaxed text-slate-700 dark:text-slate-300">
+            <p>
+              Neer Vazhvu is built alongside the people who produce the data -
+              researchers, surveyors, civic groups, and institutions. Much of
+              what you see here exists because data collaborators chose to share
+              peer-reviewed work that would otherwise sit in a PDF or a one-off
+              report.
+            </p>
+            <p>
+              The aim is a safe space for water data: shared carefully,
+              attributed clearly, dated, and stewarded for the long term. Sharing
+              a dataset here adds to a public commons without losing the credit
+              or the context, so the next person can build on it instead of
+              starting over.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* CLOSING */}
+      <section className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
             Open source, open to collaboration
