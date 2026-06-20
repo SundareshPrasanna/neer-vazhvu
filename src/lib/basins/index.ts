@@ -1,5 +1,6 @@
 import type { BasinManifest } from "./types";
 import { ARKAVATHI } from "./arkavathi";
+import { CHENNAI_RIVERS } from "./chennai-rivers";
 
 export * from "./types";
 
@@ -7,6 +8,7 @@ export * from "./types";
 // data has been ingested under public/data/basins/<id>/.
 const BASINS: Record<string, BasinManifest> = {
   arkavathi: ARKAVATHI,
+  "chennai-rivers": CHENNAI_RIVERS,
 };
 
 export function tryGetBasinManifest(basinId: string): BasinManifest | null {

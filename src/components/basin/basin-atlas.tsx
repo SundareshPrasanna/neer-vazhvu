@@ -256,7 +256,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // selection must not filter them out.
   function scoped(fc: FC | null, layer: BasinLayer): Feature[] {
     if (!fc) return [];
-    if (!selectedRiverId || layer.context || layer.gap) return fc.features;
+    // No scoping when: nothing selected, context/gap layers, or the selected
+    // river has no sub-shed of its own (e.g. an artificial canal that cuts
+    // across catchments) - in that case show the full layer rather than hiding
+    // everything.
+    if (!selectedRiverId || layer.context || layer.gap || selectedSheds.size === 0)
+      return fc.features;
     return fc.features.filter((f) =>
       selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)),
     );

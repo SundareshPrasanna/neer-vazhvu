@@ -35,12 +35,17 @@ import {
   sewageInletsUrl,
   wardProfilesUrl,
 } from "@/lib/cities/data-paths";
+import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
+import type { BasinInventory, BasinManifest } from "@/lib/basins";
 
 interface ChennaiRiversClientProps {
   cityId: string;
   cityDisplayName: string;
   mapCenter: [number, number];
   mapZoom?: number;
+  /** Optional treatment-&-waste gaps atlas, opened from a button (not on
+   *  river click, which keeps showing the CPCB quality panel). */
+  basin?: { manifest: BasinManifest; inventory: BasinInventory | null } | null;
 }
 
 function RiversMapLoading() {
@@ -72,10 +77,12 @@ export default function ChennaiRiversClient(props: ChennaiRiversClientProps) {
   );
 }
 
-function RiversPageContent({ cityId, mapCenter, mapZoom }: ChennaiRiversClientProps) {
+function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin }: ChennaiRiversClientProps) {
   useLockBodyScroll();
   const { t } = useLanguage();
   const searchParams = useSearchParams();
+  const [openBasin, setOpenBasin] = useState(false);
+  const [atlasRiver, setAtlasRiver] = useState<string | null>(null);
   const [qualityData, setQualityData] = useState<RiverQualityData | null>(null);
   const [pollutionData, setPollutionData] = useState<IndustrialPollutionData | null>(null);
   const [sewageInletData, setSewageInletData] = useState<SewageInletData | null>(null);
@@ -117,12 +124,9 @@ function RiversPageContent({ cityId, mapCenter, mapZoom }: ChennaiRiversClientPr
           }
         }
 
-        // Default: pre-select Cooum (most polluted)
-        const cooum = quality.rivers.find((r: { id: string }) => r.id === "cooum");
-        if (cooum && cooum.stations.length > 0) {
-          const s = cooum.stations[0];
-          setSelectedRiver({ riverId: "cooum", stationId: s.id, latlng: [s.lat, s.lng] });
-        }
+        // No auto-selection: clicking a river opens the basin atlas (which
+        // folds in the CPCB quality as monitoring points). The standalone
+        // quality panel remains only as a deep-link fallback.
       })
       .catch(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -170,12 +174,21 @@ function RiversPageContent({ cityId, mapCenter, mapZoom }: ChennaiRiversClientPr
   const hasPanel = selectedRiver !== null || selectedSource !== null;
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
+    <div className="relative h-[calc(100vh-64px)] flex flex-col overflow-hidden">
       {/* Stats bar */}
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300">
           {qualityData.rivers.length} {t("rivers_page.rivers")} - {pollutionData.sources.length} {t("rivers_page.poll_sources")}
         </span>
+        {basin && (
+          <button
+            onClick={() => { setAtlasRiver(null); setOpenBasin(true); }}
+            className="inline-flex items-center gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1 shadow-sm"
+          >
+            Treatment &amp; waste gaps
+            <span aria-hidden>&rarr;</span>
+          </button>
+        )}
         {cooum && cooumLatestDO !== undefined && cooumLatestDO !== null && (
           <span className="text-slate-500 dark:text-slate-400">
             {t("rivers_page.cooum_do")}{" "}
@@ -205,7 +218,13 @@ function RiversPageContent({ cityId, mapCenter, mapZoom }: ChennaiRiversClientPr
             pollutionData={pollutionData}
             sewageInletData={sewageInletData}
             selectedRiver={selectedRiver}
-            onSelectRiver={(sel) => { setSelectedRiver(sel); setSelectedSource(null); }}
+            onSelectRiver={(sel) => {
+              // Match the Arkavathi flow: clicking a river opens the basin
+              // atlas at that river (CPCB quality is folded in as monitoring
+              // points). Fall back to the quality panel only if no basin.
+              if (basin && sel) { setAtlasRiver(sel.riverId); setOpenBasin(true); }
+              else { setSelectedRiver(sel); setSelectedSource(null); }
+            }}
             onSelectSource={(source) => { setSelectedSource(source); setSelectedRiver(null); }}
             focusCenter={focusCenter}
             hiddenCategories={hiddenCategories}
@@ -283,6 +302,23 @@ function RiversPageContent({ cityId, mapCenter, mapZoom }: ChennaiRiversClientPr
           </BottomSheet>
         )}
       </div>
+
+      {/* Treatment & waste gaps atlas - opened from the stats-bar button, not
+          on river click (river click keeps the CPCB quality panel, so the two
+          no longer compete). */}
+      {basin && openBasin && (
+        <div className="absolute inset-0 z-[1000] bg-white dark:bg-slate-950">
+          <BasinAtlasClient
+            cityId={cityId}
+            cityDisplayName={cityDisplayName}
+            manifest={basin.manifest}
+            inventory={basin.inventory}
+            initialRiverId={atlasRiver}
+            embedded
+            onClose={() => { setOpenBasin(false); setAtlasRiver(null); }}
+          />
+        </div>
+      )}
     </div>
   );
 }

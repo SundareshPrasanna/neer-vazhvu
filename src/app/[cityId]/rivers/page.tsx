@@ -237,12 +237,21 @@ export default async function CityRiversPage({ params }: PageProps) {
   // ChennaiRiversClient; every other city uses the shared RiversClient.
   if (riversVariant(cityId) === "chennai-combined") {
     // Chennai's combined map self-fits to its rivers; centre on the city.
+    // Hand down the basin (if any) so the treatment-&-waste gaps atlas can be
+    // opened from this richer surface too - same additive wiring as the shared
+    // client below, threaded into the Chennai-specific variant.
+    const chennaiBasin = basinsForCity(cityId)[0] ?? null;
     return (
       <ChennaiRiversClient
         cityId={cityId}
         cityDisplayName={config.displayName}
         mapCenter={[config.center.lat, config.center.lng]}
         mapZoom={11}
+        basin={
+          chennaiBasin
+            ? { manifest: chennaiBasin, inventory: loadBasinInventory(chennaiBasin.basinId) }
+            : null
+        }
       />
     );
   }

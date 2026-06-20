@@ -1,0 +1,261 @@
+{
+  "units": {
+    "cooum": {
+      "name": "Cooum catchment",
+      "level": "River sub-catchment (HydroBASINS L12)",
+      "coverage": "CAG performance audit 2018-19 (gap figures) + CMWSSB Sewerage System 2024 (capacity) + Cooum sewage-inlet survey",
+      "headline": "The Cooum receives ~30 MLD of sewage through 31 surveyed inlets and reads among India's most polluted stretches. City-wide, 243 MLD of raw sewage reaches the rivers - but only the Cooum's inlets are actually located.",
+      "caveats": [
+        "Gap figures (242.73 bypass, the per-area numbers) are CAG 2018-19 - the latest comprehensive audit; STP capacity is 2024. No newer audit publishes these.",
+        "The 242.73 MLD bypass is a CMA-wide aggregate, not split by river. 'Uncollected by sewer' is a separate measure - it goes to on-site septic tanks, not necessarily this river."
+      ],
+      "streams": [
+        {
+          "stream": "Sewage reaching the river",
+          "summary": "~30 MLD enters the Cooum via 31 located inlets; the city-wide bypass is far larger but unlocated.",
+          "metrics": [
+            {
+              "label": "Located discharge into the Cooum",
+              "value": "~30.5 MLD via 31 surveyed inlets (survey)",
+              "emphasis": true
+            },
+            {
+              "label": "Worst CPCB station",
+              "value": "BOD 16 mg/L, DO 1.4 (Cooum at Poonamalle, 2024) - below Class E"
+            },
+            {
+              "label": "STPs in this catchment",
+              "value": "Koyambedu 214 + Langs Garden 10 MLD capacity (2024)"
+            },
+            {
+              "label": "City-wide raw bypass into rivers",
+              "value": "242.73 MLD into Cooum + Adyar + Buckingham (CAG, Apr 2019); not split by river"
+            },
+            {
+              "label": "Contested estimate (citizens' audit)",
+              "value": "Arappor's 2018 RTI social audit puts city generation at 1,500-2,000 MLD and ~1,073 MLD into waterbodies - 2-4x the official figures; 10 of 27 audited pumping stations discharge untreated sewage directly into water bodies",
+              "emphasis": true
+            }
+          ],
+          "sources": [
+            {
+              "source": "Cooum inlet survey",
+              "says": "31 sewage inlets discharge into the Cooum, ~30.5 MLD combined.",
+              "citation": "CMWSSB / Chennai River Restoration Trust"
+            },
+            {
+              "source": "CAG (2018-19)",
+              "says": "An estimated 242.73 MLD of raw sewage entered storm-water drains and drained into the Adyar, Buckingham Canal and Cooum (CMA-wide).",
+              "citation": "CAG Report on General & Social Sector, Tamil Nadu, year ended March 2019",
+              "url": "https://cag.gov.in/webroot/uploads/download_audit_report/2019/AR-GSSA-2018-19%20English-FULL-060d9b8b037c776.24588949.pdf"
+            },
+            {
+              "source": "Arappor Iyakkam (2018, citizens' audit)",
+              "says": "Social audit of 27 pumping stations + 5 STPs (RTI + field visits): estimates Chennai generates 1,500-2,000 MLD (vs CMWSSB's 550 MLD, 2017), treats only 427 MLD, and ~1,073 MLD flows into waterbodies untreated; 10/27 pumping stations discharge untreated directly into water bodies. Alleges gross official underestimation of sewage generated.",
+              "citation": "Why Chennai Stinks? Citizens' report on the sewage problem, Arappor Iyakkam (civil-society / advocacy source, ~2018)",
+              "url": "https://www.cag.org.in/sites/default/files/database/arappor_citizensreport_sewage.pdf"
+            }
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "district"
+        },
+        {
+          "stream": "Collection gap (unsewered -> septic tanks)",
+          "summary": "Two suburbs in this catchment have no completed sewer network; their sewage relies on on-site septic tanks.",
+          "metrics": [
+            {
+              "label": "Ambattur (unsewered)",
+              "value": "23.79 MLD generated, uncollected by sewer -> on-site septic tanks (CAG App. 2.6, 2019)"
+            },
+            {
+              "label": "Avadi (unsewered)",
+              "value": "4.66 MLD generated, uncollected by sewer -> on-site septic tanks (CAG App. 2.6, 2019)"
+            },
+            {
+              "label": "Fate",
+              "value": "On-site septic tanks: a septage-management + groundwater risk, not direct river discharge"
+            }
+          ],
+          "sources": [
+            {
+              "source": "CAG (2018-19), Appendix 2.6",
+              "says": "Estimated sewage generated in delayed-UGSS (unsewered) areas, 90 LPCD: Ambattur 23.79, Avadi 4.66 MLD; city-wide total across 9 such areas = 74.69 MLD.",
+              "citation": "CAG Report, year ended March 2019",
+              "url": "https://cag.gov.in/webroot/uploads/download_audit_report/2019/AR-GSSA-2018-19%20English-FULL-060d9b8b037c776.24588949.pdf"
+            }
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "district"
+        }
+      ]
+    },
+    "adyar": {
+      "name": "Adyar catchment",
+      "level": "River sub-catchment (HydroBASINS L12)",
+      "coverage": "CAG performance audit 2018-19 (gap figures) + CMWSSB Sewerage System 2024 (capacity)",
+      "headline": "What actually reaches the Adyar is not separately surveyed - only the city-wide 243 MLD bypass and the six unsewered suburbs in its catchment (~30 MLD to septic tanks) are documented.",
+      "caveats": [
+        "No sewage-inlet survey is published for the Adyar (only the Cooum is surveyed) - the located river-discharge here is a genuine data gap.",
+        "Gap figures are CAG 2018-19; capacity 2024."
+      ],
+      "streams": [
+        {
+          "stream": "Sewage reaching the river",
+          "summary": "Not separately surveyed; folded into the CMA-wide bypass.",
+          "metrics": [
+            {
+              "label": "Located discharge into the Adyar",
+              "value": "Not surveyed - no published inlet/outfall flow for the Adyar (RTI gap)",
+              "emphasis": true
+            },
+            {
+              "label": "Worst CPCB station",
+              "value": "see CPCB stations layer (Adyar stretch)"
+            },
+            {
+              "label": "STPs in this catchment",
+              "value": "Nesapakkam 117 + Perungudi 114 + Sholinganallur 18 MLD capacity (2024)"
+            },
+            {
+              "label": "City-wide raw bypass into rivers",
+              "value": "242.73 MLD into Cooum + Adyar + Buckingham (CAG, Apr 2019); not split by river"
+            },
+            {
+              "label": "Contested estimate (citizens' audit)",
+              "value": "Arappor's 2018 RTI social audit puts city generation at 1,500-2,000 MLD and ~1,073 MLD into waterbodies - 2-4x the official figures; 10 of 27 audited pumping stations discharge untreated sewage directly into water bodies",
+              "emphasis": true
+            }
+          ],
+          "sources": [
+            {
+              "source": "CAG (2018-19)",
+              "says": "242.73 MLD of raw sewage drained into the Adyar, Buckingham Canal and Cooum (CMA-wide aggregate).",
+              "citation": "CAG Report, year ended March 2019",
+              "url": "https://cag.gov.in/webroot/uploads/download_audit_report/2019/AR-GSSA-2018-19%20English-FULL-060d9b8b037c776.24588949.pdf"
+            },
+            {
+              "source": "Arappor Iyakkam (2018, citizens' audit)",
+              "says": "Social audit of 27 pumping stations + 5 STPs (RTI + field visits): estimates Chennai generates 1,500-2,000 MLD (vs CMWSSB's 550 MLD, 2017), treats only 427 MLD, and ~1,073 MLD flows into waterbodies untreated; 10/27 pumping stations discharge untreated directly into water bodies. Alleges gross official underestimation of sewage generated.",
+              "citation": "Why Chennai Stinks? Citizens' report on the sewage problem, Arappor Iyakkam (civil-society / advocacy source, ~2018)",
+              "url": "https://www.cag.org.in/sites/default/files/database/arappor_citizensreport_sewage.pdf"
+            }
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "district"
+        },
+        {
+          "stream": "Collection gap (unsewered -> septic tanks)",
+          "summary": "Six delayed-sewer suburbs in this catchment, ~30 MLD on on-site sanitation.",
+          "metrics": [
+            {
+              "label": "Unsewered suburbs (-> septic tanks)",
+              "value": "Tambaram 13.18, Porur 5.04, Ramapuram 4.18, Perungudi 3.30, Sholinganallur-Karapakkam 3.05, Pallikaranai 1.32 MLD (CAG App. 2.6, 2019)",
+              "emphasis": true
+            },
+            {
+              "label": "Fate",
+              "value": "On-site septic tanks: septage-management + groundwater risk, not direct river discharge"
+            }
+          ],
+          "sources": [
+            {
+              "source": "CAG (2018-19), Appendix 2.6",
+              "says": "Estimated sewage generated, uncollected by sewer, in delayed-UGSS areas of the Adyar catchment (90 LPCD).",
+              "citation": "CAG Report, year ended March 2019",
+              "url": "https://cag.gov.in/webroot/uploads/download_audit_report/2019/AR-GSSA-2018-19%20English-FULL-060d9b8b037c776.24588949.pdf"
+            }
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "district"
+        }
+      ]
+    },
+    "kosasthalaiyar": {
+      "name": "Kosasthalaiyar catchment",
+      "level": "River sub-catchment (HydroBASINS L12)",
+      "coverage": "CAG performance audit 2018-19 (gap figures) + CMWSSB Sewerage System 2024 (capacity)",
+      "headline": "No located river-discharge survey; one unsewered suburb (Thiruvottiyur, ~16 MLD to septic tanks) and the north-Chennai industrial belt define what's documented here.",
+      "caveats": [
+        "No inlet/outfall survey is published for the Kosasthalaiyar; located river-discharge is a data gap.",
+        "Industrial effluent from the Manali/Ennore belt is not quantified here (separate industrial-water surface). Gap figures CAG 2018-19; capacity 2024."
+      ],
+      "streams": [
+        {
+          "stream": "Sewage reaching the river",
+          "summary": "Not surveyed; large north-Chennai catchment carrying sewage + industrial load.",
+          "metrics": [
+            {
+              "label": "Located discharge into the Kosasthalaiyar",
+              "value": "Not surveyed - no published inlet/outfall flow (RTI gap)",
+              "emphasis": true
+            },
+            {
+              "label": "STP in this catchment",
+              "value": "Kodungaiyur 270 MLD capacity, Zones I + II (2024)"
+            },
+            {
+              "label": "Industrial load",
+              "value": "Manali / Ennore petrochemical-thermal belt drains to this system (not quantified here)"
+            },
+            {
+              "label": "City-wide raw bypass into rivers",
+              "value": "242.73 MLD into Cooum + Adyar + Buckingham (CAG, Apr 2019); not split by river"
+            },
+            {
+              "label": "Contested estimate (citizens' audit)",
+              "value": "Arappor's 2018 RTI social audit puts city generation at 1,500-2,000 MLD and ~1,073 MLD into waterbodies - 2-4x the official figures; 10 of 27 audited pumping stations discharge untreated sewage directly into water bodies",
+              "emphasis": true
+            }
+          ],
+          "sources": [
+            {
+              "source": "CAG (2018-19)",
+              "says": "CMA-wide raw-sewage bypass of 242.73 MLD into the city's water bodies.",
+              "citation": "CAG Report, year ended March 2019",
+              "url": "https://cag.gov.in/webroot/uploads/download_audit_report/2019/AR-GSSA-2018-19%20English-FULL-060d9b8b037c776.24588949.pdf"
+            },
+            {
+              "source": "Arappor Iyakkam (2018, citizens' audit)",
+              "says": "Social audit of 27 pumping stations + 5 STPs (RTI + field visits): estimates Chennai generates 1,500-2,000 MLD (vs CMWSSB's 550 MLD, 2017), treats only 427 MLD, and ~1,073 MLD flows into waterbodies untreated; 10/27 pumping stations discharge untreated directly into water bodies. Alleges gross official underestimation of sewage generated.",
+              "citation": "Why Chennai Stinks? Citizens' report on the sewage problem, Arappor Iyakkam (civil-society / advocacy source, ~2018)",
+              "url": "https://www.cag.org.in/sites/default/files/database/arappor_citizensreport_sewage.pdf"
+            }
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "district"
+        },
+        {
+          "stream": "Collection gap (unsewered -> septic tanks)",
+          "summary": "Thiruvottiyur, ~16 MLD on on-site sanitation.",
+          "metrics": [
+            {
+              "label": "Thiruvottiyur (unsewered)",
+              "value": "16.17 MLD generated, uncollected by sewer -> on-site septic tanks (CAG App. 2.6, 2019)",
+              "emphasis": true
+            },
+            {
+              "label": "Fate",
+              "value": "On-site septic tanks: septage-management + groundwater risk, not direct river discharge"
+            }
+          ],
+          "sources": [
+            {
+              "source": "CAG (2018-19), Appendix 2.6",
+              "says": "Thiruvottiyur (delayed UGSS): 16.17 MLD generated, uncollected by sewer.",
+              "citation": "CAG Report, year ended March 2019",
+              "url": "https://cag.gov.in/webroot/uploads/download_audit_report/2019/AR-GSSA-2018-19%20English-FULL-060d9b8b037c776.24588949.pdf"
+            }
+          ],
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "district"
+        }
+      ]
+    }
+  }
+}
