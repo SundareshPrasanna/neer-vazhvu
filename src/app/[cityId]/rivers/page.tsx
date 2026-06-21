@@ -237,12 +237,21 @@ export default async function CityRiversPage({ params }: PageProps) {
   // ChennaiRiversClient; every other city uses the shared RiversClient.
   if (riversVariant(cityId) === "chennai-combined") {
     // Chennai's combined map self-fits to its rivers; centre on the city.
+    // Hand down the basin (if any) so the treatment-&-waste gaps atlas can be
+    // opened from this richer surface too - same additive wiring as the shared
+    // client below, threaded into the Chennai-specific variant.
+    const chennaiBasin = basinsForCity(cityId)[0] ?? null;
     return (
       <ChennaiRiversClient
         cityId={cityId}
         cityDisplayName={config.displayName}
         mapCenter={[config.center.lat, config.center.lng]}
         mapZoom={11}
+        basin={
+          chennaiBasin
+            ? { manifest: chennaiBasin, inventory: loadBasinInventory(chennaiBasin.basinId) }
+            : null
+        }
       />
     );
   }
@@ -273,7 +282,9 @@ export default async function CityRiversPage({ params }: PageProps) {
     cityId === "bangalore"
       ? [config.center.lat, config.center.lng]
       : [config.center.lat - 0.1, config.center.lng - 0.2];
-  const mapZoom = cityId === "bangalore" ? 10 : 9;
+  // Bangalore: zoom 11 frames the GBA bbox (~38x41 km) tightly; zoom 10 read as
+  // too wide. Others keep 9 (Vaigai/Pinakini mainstems need the wider frame).
+  const mapZoom = cityId === "bangalore" ? 11 : 9;
   const scopeLabel = RIVERS_SCOPE_LABEL[cityId] ?? "Basin system";
 
   // Additive: if a river on this page has a deep basin atlas, hand it down so

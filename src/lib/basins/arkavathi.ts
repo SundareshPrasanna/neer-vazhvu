@@ -16,11 +16,16 @@ export const ARKAVATHI: BasinManifest = {
   blurb:
     "The Arkavathi and its tributaries - Vrishabhavathi, Kumudavathi and Suvarnamukhi - drain Bengaluru's west and north into the Cauvery. Once the city's first piped-water source (Hesaraghatta 1894, TG Halli 1933), the basin now carries the wastewater, solid waste and industrial effluent of a metropolis. Click a river to follow its story through the basin.",
   // Basin spans roughly Chikkaballapura (north) to the Cauvery confluence
-  // (south); centre near Bengaluru's western edge at a basin-wide zoom.
+  // (south); a basin-wide initial view. The atlas then frames to content - the
+  // whole basin (all rivers) by default, or the clicked river. No fixed focus:
+  // the basin is ~120 km tall, so pinning a tight Bengaluru view would hide the
+  // Arkavathi when you select it.
   mapCenter: [12.9, 77.45],
   mapZoom: 10,
   areaKm2: 4161,
   areaNote: "Basin boundary area as supplied by Paani Earth (India-WRIS derived).",
+  // Open the gap view on Ramanagara by default so the detail panel is populated.
+  defaultGapUnit: "ramanagara",
   rivers: [
     {
       riverId: "arkavathi",

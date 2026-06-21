@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { BasinInventory, BasinManifest } from "@/lib/basins";
+import type { ReactNode } from "react";
+import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
 
 // Leaflet needs the DOM; load the atlas client-side only.
 const BasinAtlas = dynamic(
@@ -22,8 +23,14 @@ export function BasinAtlasClient(props: {
   manifest: BasinManifest;
   inventory: BasinInventory | null;
   initialRiverId?: string | null;
+  initialFloor?: BasinFloor;
   embedded?: boolean;
   onClose?: () => void;
+  renderFeatureDetail?: (args: {
+    family: string;
+    props: Record<string, unknown>;
+    onClose: () => void;
+  }) => ReactNode | null;
 }) {
   return <BasinAtlas {...props} />;
 }

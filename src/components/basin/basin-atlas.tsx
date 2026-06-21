@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
@@ -22,11 +22,22 @@ interface Props {
   inventory: BasinInventory | null;
   /** Pre-select a river (e.g. when opened by clicking it on the rivers map). */
   initialRiverId?: string | null;
+  /** Pre-focus a floor (e.g. open straight onto the gaps / governance view). */
+  initialFloor?: BasinFloor;
   /** Embedded as an overlay (over the rivers page): skip URL syncing and show
    *  a back button instead of relying on the address bar. */
   embedded?: boolean;
   /** Back affordance when embedded. */
   onClose?: () => void;
+  /** Optional: render a custom detail panel for a clicked feature (e.g. a
+   *  city's rich CPCB quality panel for a monitoring station). Return null to
+   *  fall back to the generic key/value FeaturePanel. Keeps the atlas decoupled
+   *  from any city-specific panel component. */
+  renderFeatureDetail?: (args: {
+    family: string;
+    props: Record<string, unknown>;
+    onClose: () => void;
+  }) => ReactNode | null;
 }
 
 // The elevator floors, top (surface) to bottom (causes + accountability).
@@ -111,20 +122,36 @@ async function fetchJson(url: string): Promise<FC | null> {
 
 /** Keep the map framed: the whole basin by default, the selected river's
  *  sub-catchments when one is chosen. */
-function MapController({ fitBounds }: { fitBounds: L.LatLngBounds | null }) {
+function MapController({
+  fitBounds,
+  defaultFocus,
+  hasSelection,
+}: {
+  fitBounds: L.LatLngBounds | null;
+  defaultFocus?: { center: [number, number]; zoom: number };
+  hasSelection: boolean;
+}) {
   const map = useMap();
   useEffect(() => {
     if (fitBounds && fitBounds.isValid()) {
+      // A river is selected: fit its full extent (zooming out if the river spans
+      // more than the default view, e.g. the basin-long Arkavathi).
       map.fitBounds(fitBounds, { padding: [8, 8], maxZoom: 14 });
+    } else if (defaultFocus && !hasSelection) {
+      // Nothing selected and the manifest pins a focus view - honour it instead
+      // of the (too-wide) whole-basin boundary fit. Suppressed while a river is
+      // selected so the focus view never pre-empts that river's fit (e.g. before
+      // its sub-catchments finish loading).
+      map.setView(defaultFocus.center, defaultFocus.zoom);
     }
-  }, [fitBounds, map]);
+  }, [fitBounds, defaultFocus, hasSelection, map]);
   return null;
 }
 
-export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, embedded = false, onClose }: Props) {
+export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, initialFloor, embedded = false, onClose, renderFeatureDetail }: Props) {
   const tiles = useMapTiles();
 
-  const [focusedFloor, setFocusedFloor] = useState<BasinFloor>("hydrology");
+  const [focusedFloor, setFocusedFloor] = useState<BasinFloor>(initialFloor ?? "hydrology");
   const [enabled, setEnabled] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(manifest.layers.map((l) => [l.family, l.defaultOn])),
   );
@@ -138,6 +165,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const [railOpen, setRailOpen] = useState(true);
   const [panelOpen, setPanelOpen] = useState(true);
   const fetchedRef = useRef<Set<string>>(new Set());
+  const didDefaultGapRef = useRef(false);
 
   const layerByFamily = useMemo(
     () => Object.fromEntries(manifest.layers.map((l) => [l.family, l])),
@@ -165,6 +193,21 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       .then((d) => setGapData(((d as unknown as { units?: Record<string, GapUnit> })?.units) ?? {}))
       .catch(() => setGapData({}));
   }, [manifest.basinId]);
+
+  // When opened straight to the governance floor (the "Treatment & waste gaps"
+  // button), auto-select the manifest's default gap unit once the data loads,
+  // so the right-hand detail panel is populated and discoverable rather than
+  // blank. Fires once per mount; the user can close/switch freely afterwards.
+  useEffect(() => {
+    if (didDefaultGapRef.current) return;
+    if (initialFloor !== "governance") return;
+    const unit = manifest.defaultGapUnit;
+    if (unit && gapData[unit]) {
+      setSelectedGapUnit(unit);
+      setSelectedFeature(null);
+      didDefaultGapRef.current = true;
+    }
+  }, [gapData, initialFloor, manifest.defaultGapUnit]);
 
   useEffect(() => {
     setCoachDismissed(localStorage.getItem(COACH_KEY) === "1");
@@ -236,14 +279,21 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const shedData = data["sub-hydrosheds"];
   const boundaryData = data["boundary"];
   const fitBounds = useMemo(() => {
-    const feats =
-      selectedRiverId && shedData
-        ? shedData.features.filter((f) => selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)))
-        : boundaryData?.features ?? [];
+    let feats: Feature[];
+    if (selectedRiverId && shedData) {
+      // A river is selected: frame its sub-catchments.
+      feats = shedData.features.filter((f) => selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)));
+    } else if (manifest.defaultFocus) {
+      // Nothing selected and a focus view is configured: defer to it (the
+      // MapController applies center/zoom) instead of the wide boundary fit.
+      return null;
+    } else {
+      feats = boundaryData?.features ?? [];
+    }
     if (!feats.length) return null;
     const b = L.geoJSON({ type: "FeatureCollection", features: feats } as FC).getBounds();
     return b.isValid() ? b : null;
-  }, [selectedRiverId, shedData, boundaryData, selectedSheds]);
+  }, [selectedRiverId, shedData, boundaryData, selectedSheds, manifest.defaultFocus]);
 
   function selectRiver(riverId: string | null) {
     setSelectedRiverId(riverId);
@@ -256,7 +306,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // selection must not filter them out.
   function scoped(fc: FC | null, layer: BasinLayer): Feature[] {
     if (!fc) return [];
-    if (!selectedRiverId || layer.context || layer.gap) return fc.features;
+    // No scoping when: nothing selected, context/gap layers, or the selected
+    // river has no sub-shed of its own (e.g. an artificial canal that cuts
+    // across catchments) - in that case show the full layer rather than hiding
+    // everything.
+    if (!selectedRiverId || layer.context || layer.gap || selectedSheds.size === 0)
+      return fc.features;
     return fc.features.filter((f) =>
       selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)),
     );
@@ -396,7 +451,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         <MapContainer center={manifest.mapCenter} zoom={manifest.mapZoom} className="h-full w-full" preferCanvas zoomControl={false}>
           <ZoomControl position="bottomright" />
           <MapResizer />
-          <MapController fitBounds={fitBounds} />
+          <MapController fitBounds={fitBounds} defaultFocus={manifest.defaultFocus} hasSelection={selectedRiverId != null} />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
           {/* One shared canvas, stacked by DRAW ORDER (not panes): base outlines
@@ -624,11 +679,17 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         {selectedGapUnit && gapData[selectedGapUnit] ? (
           <GapPanel unit={gapData[selectedGapUnit]} onClose={() => setSelectedGapUnit(null)} />
         ) : selectedFeature ? (
-          <FeaturePanel
-            props={selectedFeature.props}
-            label={layerByFamily[selectedFeature.family]?.label ?? selectedFeature.family}
-            onClose={() => setSelectedFeature(null)}
-          />
+          renderFeatureDetail?.({
+            family: selectedFeature.family,
+            props: selectedFeature.props,
+            onClose: () => setSelectedFeature(null),
+          }) ?? (
+            <FeaturePanel
+              props={selectedFeature.props}
+              label={layerByFamily[selectedFeature.family]?.label ?? selectedFeature.family}
+              onClose={() => setSelectedFeature(null)}
+            />
+          )
         ) : selectedRiver ? (
           <RiverPanel river={selectedRiver} onClear={() => selectRiver(null)} />
         ) : (
