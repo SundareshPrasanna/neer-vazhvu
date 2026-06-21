@@ -308,15 +308,19 @@ export default function WaterBodiesMapClient({
                   return next;
                 })
               }
-              // Bengaluru's V0 data layer is OSM polygons + tabular
-              // lost-kere only - no census-to-OSM polygon spatial join
-              // yet, so the three census_* legend entries would mislead
-              // (no feature on the map is coloured by them). Filter
-              // them out. Chennai/Madurai default to the full legend.
+              // Bengaluru's water-bodies map only renders OSM "current"
+              // polygons, which all read as "existing" (blue). There is no
+              // lost-lakes inventory for the city (so fully_lost /
+              // severely_reduced / encroached have zero features on the
+              // map), and the only survey we hold - the MoWR 6th Minor
+              // Irrigation Census (718 points) - records encroached=No and
+              // in-use=No for every body, so it cannot back a condition
+              // classification either. Show only the one category that
+              // actually appears. Chennai/Madurai default to the full
+              // legend. Revisit if a real lake-condition survey (e.g. a
+              // digitised KTCDA / IISc encroachment inventory) is wired in.
               visibleCategoryIds={
-                cityId === "bangalore"
-                  ? ["existing", "fully_lost", "severely_reduced", "encroached"]
-                  : undefined
+                cityId === "bangalore" ? ["existing"] : undefined
               }
             />
           </div>
