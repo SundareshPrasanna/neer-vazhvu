@@ -99,11 +99,13 @@ export const ARKAVATHI: BasinManifest = {
     { family: "fstp", label: "Faecal sludge plants (FSTP)", floor: "governance", geom: "point", color: "#0891b2", defaultOn: true },
     { family: "command-areas", label: "Irrigation command areas", floor: "governance", geom: "fill", color: "#65a30d", defaultOn: false },
     // District stays neutral (always-on context); the opt-in finer levels get
-    // distinct colors + dash patterns so several can be told apart at once.
+    // distinct COOL hues (ColorBrewer Dark2: purple/magenta/teal) + dash
+    // patterns so several can be told apart at once AND don't collide with the
+    // warm red/orange/amber treatment-gap colours.
     { family: "admin-district", label: "Districts", floor: "governance", geom: "fill", color: "#94a3b8", defaultOn: true, context: true },
-    { family: "admin-taluk", label: "Taluks", floor: "governance", geom: "fill", color: "#2dd4bf", defaultOn: false },
-    { family: "admin-town", label: "Towns", floor: "governance", geom: "fill", color: "#f472b6", defaultOn: false },
-    { family: "admin-gp", label: "Gram panchayats", floor: "governance", geom: "fill", color: "#fb923c", defaultOn: false, heavy: true },
+    { family: "admin-taluk", label: "Taluks", floor: "governance", geom: "fill", color: "#7570b3", defaultOn: false },
+    { family: "admin-town", label: "Towns", floor: "governance", geom: "fill", color: "#e7298a", defaultOn: false },
+    { family: "admin-gp", label: "Gram panchayats", floor: "governance", geom: "fill", color: "#1b9e77", defaultOn: false, heavy: true },
   ],
   credits: [
     "Spatial data: Paani Earth Foundation - Arkavathi River Basin GIS package (Feb 2026).",
