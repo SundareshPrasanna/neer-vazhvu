@@ -66,7 +66,9 @@ interface GapStream {
    *  liquid, TPD for solid), for the composition bar. Absent = no defensible
    *  generation figure (stream still shows as a card). */
   magnitude?: { perDay: number; unit: string; estimated?: boolean };
-  metrics: { label: string; value: string; emphasis?: boolean }[];
+  // emphasis tone: "bad" (red - a gap/deficit/non-compliance) or "good" (green
+  // - a positive outcome). Legacy `true` is treated as "bad". Absent = neutral.
+  metrics: { label: string; value: string; emphasis?: boolean | "good" | "bad" }[];
   trend?: { label: string; unit?: string; points: { year: number; value: number | null; url?: string; note?: string }[] };
   sources: GapSource[];
 }
@@ -1246,7 +1248,7 @@ function StreamCard({ s }: { s: GapStream }) {
         {s.metrics.map((m, j) => (
           <div key={j} className="flex items-baseline justify-between gap-3">
             <dt className="text-[13px] text-slate-500 dark:text-slate-400">{m.label}</dt>
-            <dd className={`text-[13px] tabular-nums text-right ${m.emphasis ? "font-bold text-rose-600 dark:text-rose-400" : "text-slate-700 dark:text-slate-300"}`}>{m.value}</dd>
+            <dd className={`text-[13px] tabular-nums text-right ${m.emphasis === "good" ? "font-bold text-emerald-600 dark:text-emerald-400" : m.emphasis ? "font-bold text-rose-600 dark:text-rose-400" : "text-slate-700 dark:text-slate-300"}`}>{m.value}</dd>
           </div>
         ))}
       </dl>
