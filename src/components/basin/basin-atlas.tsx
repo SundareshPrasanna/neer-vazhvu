@@ -589,7 +589,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             // / command-areas are interactive thematic fills. pointToLayer keeps
             // any point geometry (e.g. waste-facility) a circle, not a default
             // marker (which would 404 its icon and render broken).
-            const isBase = l.family === "boundary" || l.family.startsWith("admin");
+            // boundary + always-on district are non-interactive context; the
+            // opt-in admin levels (taluk/town/GP) are tappable to reveal their
+            // place in the hierarchy.
+            const isBase = l.family === "boundary" || l.family === "admin-district";
+            const isAdmin = l.family.startsWith("admin");
             return (
               <GeoJSON
                 key={`${l.family}-${selectedRiverId}-${tiles.isDark}`}
@@ -600,7 +604,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 onEachFeature={(feat: Feature, layer: Layer) => {
                   if (isBase) return;
                   const p = (feat.properties ?? {}) as Record<string, unknown>;
-                  layer.bindTooltip(tipLabel(p, l), { sticky: true });
+                  layer.bindTooltip(isAdmin ? adminTip(p) : tipLabel(p, l), { sticky: true });
                   layer.on("click", () => { setSelectedFeature({ family: l.family, props: p }); setSelectedGapUnit(null); });
                 }}
               />
@@ -819,6 +823,17 @@ function tipLabel(p: Record<string, unknown>, l: BasinLayer): string {
   return raw.length > 46 ? `${raw.slice(0, 46)}…` : raw;
 }
 
+/** Admin tooltip: the unit and its place in the hierarchy, e.g.
+ *  "Haragadde (gp) · Kanakapura taluk · Ramanagara". */
+function adminTip(p: Record<string, unknown>): string {
+  const name = String(p.name ?? "").trim();
+  const level = String(p.level ?? "").trim();
+  const parts = [level ? `${name} (${level})` : name];
+  if (p.parentTaluk) parts.push(`${String(p.parentTaluk)} taluk`);
+  if (p.parentDistrict) parts.push(String(p.parentDistrict));
+  return parts.join(" · ");
+}
+
 function pressurePointStyle(feat: Feature | undefined, faded: boolean): L.CircleMarkerOptions {
   const kind = String((feat?.properties as Record<string, unknown>)?.kind ?? "");
   const c = PRESSURE_KIND_COLOR[kind] ?? "#b91c1c";
@@ -906,10 +921,15 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, sel
     return { color: l.color, weight: 3, fill: false, opacity: 0.95 };
   }
   if (l.family.startsWith("admin")) {
+    // District is always-on context (outline only). The opt-in finer levels get
+    // a faint fill so the whole unit is tappable (hierarchy on tap/hover).
+    const detail = l.family !== "admin-district";
     return {
       color: l.color,
       weight: l.family === "admin-district" ? 1.4 : 1.2,
-      fill: false,
+      fill: detail,
+      fillColor: l.color,
+      fillOpacity: detail ? (faded ? 0.03 : 0.07) : 0,
       opacity: faded ? 0.4 : 0.85,
       dashArray: ADMIN_DASH[l.family],
     };
