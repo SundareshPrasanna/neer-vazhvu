@@ -268,7 +268,7 @@ export function Header() {
                 </svg>
               </div>
               <div>
-                <span className={cn("font-bold text-lg text-slate-900 dark:text-slate-100", currentPageLabel && "hidden sm:inline")}>{t("header.title")}</span>
+                <span className="font-bold text-lg text-slate-900 dark:text-slate-100 hidden sm:inline">{t("header.title")}</span>
                 <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 ml-2">
                   {t("header.subtitle")}
                 </span>
