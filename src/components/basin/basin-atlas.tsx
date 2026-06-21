@@ -505,10 +505,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (l.gap) {
               return (
                 <GeoJSON
-                  key={`gapfill-${selectedRiverId}-${tiles.isDark}`}
+                  key={`gapfill-${selectedRiverId}-${tiles.isDark}-${selectedGapUnit ?? ""}`}
                   data={fcScoped}
                   interactive={false}
-                  style={(feat?: Feature) => fillStyle(l, feat, faded)}
+                  style={(feat?: Feature) => fillStyle(l, feat, faded, selectedGapUnit)}
                 />
               );
             }
@@ -615,6 +615,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             return scoped(fc, l).flatMap((f, idx) => {
               const unit = String((f.properties as Record<string, unknown>)?.gapUnit ?? "");
               const name = String((f.properties as Record<string, unknown>)?.name ?? "Treatment & waste gaps");
+              const sev = String((f.properties as Record<string, unknown>)?.severity ?? "high");
+              const sevColor = sev === "high" ? "#dc2626" : sev === "medium" ? "#ea580c" : "#f59e0b";
+              // When a unit is selected, dim the others so the choice reads.
+              const dimmed = selectedGapUnit != null && selectedGapUnit !== unit;
+              const isSel = selectedGapUnit === unit;
               // Badge each polygon PART, not just the feature as a whole, so a
               // detached fragment (e.g. Harohalli's Kaggalahalli exclave near
               // Hosuru) gets its own labelled, clickable dot instead of an
@@ -629,10 +634,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 .filter((p, i) => i === 0 || p.area >= GAP_BADGE_MIN_AREA)
                 .map((p, pi) => (
                   <CircleMarker
-                    key={`gapbadge-${unit}-${idx}-${pi}`}
+                    key={`gapbadge-${unit}-${idx}-${pi}-${selectedGapUnit ?? ""}`}
                     center={p.b.getCenter()}
-                    radius={coarsePointer ? 12 : 6}
-                    pathOptions={{ color: "#fecaca", weight: coarsePointer ? 2 : 1, fillColor: "#dc2626", fillOpacity: 0.7 }}
+                    radius={(coarsePointer ? 12 : 6) + (isSel ? 3 : 0)}
+                    pathOptions={{
+                      color: dimmed ? "#cbd5e1" : isSel ? "#7f1d1d" : "#fecaca",
+                      weight: isSel ? 3 : coarsePointer ? 2 : 1,
+                      fillColor: dimmed ? "#94a3b8" : sevColor,
+                      fillOpacity: dimmed ? 0.35 : 0.85,
+                    }}
                     eventHandlers={{ click: () => { setSelectedGapUnit(unit); setSelectedFeature(null); } }}
                   >
                     <Tooltip sticky>{name}{pi > 0 ? " (detached part)" : ""} - click for treatment &amp; waste gaps</Tooltip>
@@ -735,7 +745,13 @@ function MapLegend({ layers, notes, raised }: { layers: BasinLayer[]; notes?: st
   // legend can never disagree with what's drawn.
   const items: { sym: LegendSym; color: string; label: string }[] = [];
   for (const l of layers) {
-    if (l.gap) items.push({ sym: "box", color: "#dc2626", label: "Treatment & waste gap" });
+    if (l.gap) {
+      // Severity scale (matches the fill/badge colours) so red vs amber reads
+      // as "how bad is the gap", not just decoration.
+      items.push({ sym: "box", color: "#dc2626", label: "Waste gap - severe" });
+      items.push({ sym: "box", color: "#ea580c", label: "Waste gap - moderate" });
+      items.push({ sym: "box", color: "#f59e0b", label: "Waste gap - minor" });
+    }
     else if (l.family === "boundary") items.push({ sym: "line", color: l.color, label: l.label });
     else if (l.family === "sub-hydrosheds") items.push({ sym: "dash", color: l.color, label: "Sub-catchment" });
     else if (l.family === "rivers") items.push({ sym: "line", color: l.color, label: "River" });
@@ -883,7 +899,7 @@ const ADMIN_DASH: Record<string, string | undefined> = {
   "admin-gp": "1 4",
 };
 
-function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): PathOptions {
+function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, selectedGapUnit?: string | null): PathOptions {
   if (l.family === "boundary") {
     // Bold SOLID line in the manifest color (fuchsia) - a hue the OSM basemap
     // never uses, so the basin edge can't be mistaken for a basemap boundary.
@@ -899,9 +915,15 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): Pa
     };
   }
   if (l.gap) {
+    const unit = String((feat?.properties as Record<string, unknown>)?.gapUnit ?? "");
     const sev = String((feat?.properties as Record<string, unknown>)?.severity ?? "high");
     const c = sev === "high" ? "#dc2626" : sev === "medium" ? "#ea580c" : "#f59e0b";
-    return { color: c, weight: 2, fillColor: c, fillOpacity: faded ? 0.2 : 0.4 };
+    // When a unit is selected, grey out the others so the selection stands out.
+    if (selectedGapUnit != null && selectedGapUnit !== unit) {
+      return { color: "#cbd5e1", weight: 1, fillColor: "#94a3b8", fillOpacity: 0.12 };
+    }
+    const isSel = selectedGapUnit === unit;
+    return { color: c, weight: isSel ? 3 : 2, fillColor: c, fillOpacity: faded ? 0.2 : isSel ? 0.55 : 0.4 };
   }
   if (l.family === "pressures") {
     const p = (feat?.properties as Record<string, unknown>) ?? {};
@@ -1026,7 +1048,12 @@ function GapPanel({ unit, onClose }: { unit: GapUnit; onClose: () => void }) {
         </button>
       </div>
       {unit.headline && (
-        <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed border-l-2 border-rose-400 pl-2.5">{unit.headline}</p>
+        <div className="rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-3">
+          <div className="flex items-start gap-2">
+            <span aria-hidden className="mt-0.5 text-rose-500 shrink-0">▶</span>
+            <p className="text-[13px] font-semibold text-rose-900 dark:text-rose-100 leading-relaxed">{unit.headline}</p>
+          </div>
+        </div>
       )}
       {unit.coverage && (
         <p className="text-[11px] text-slate-400">Data coverage: {unit.coverage}</p>
