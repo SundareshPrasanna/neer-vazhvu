@@ -666,14 +666,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           </button>
         )}
 
-        {/* Whole-basin reset: clears the river scope so every layer shows
-            basin-wide (e.g. all waterbodies), and flies back to the overview. */}
-        {selectedRiverId && (
+        {/* Reset: clears ANY active selection (river scope, gap unit, or clicked
+            feature) so every layer shows basin-wide and nothing is greyed out,
+            and flies back to the overview. */}
+        {(selectedRiverId || selectedGapUnit || selectedFeature) && (
           <button
-            onClick={() => selectRiver(null)}
+            onClick={() => { setSelectedGapUnit(null); setSelectedFeature(null); selectRiver(null); }}
             className="absolute top-3 right-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-md shadow px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
-            ↺ Whole basin
+            ↺ Reset{selectedRiver ? " to whole basin" : ""}
           </button>
         )}
 
