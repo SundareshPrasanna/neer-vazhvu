@@ -122,13 +122,23 @@ async function fetchJson(url: string): Promise<FC | null> {
 
 /** Keep the map framed: the whole basin by default, the selected river's
  *  sub-catchments when one is chosen. */
-function MapController({ fitBounds }: { fitBounds: L.LatLngBounds | null }) {
+function MapController({
+  fitBounds,
+  defaultFocus,
+}: {
+  fitBounds: L.LatLngBounds | null;
+  defaultFocus?: { center: [number, number]; zoom: number };
+}) {
   const map = useMap();
   useEffect(() => {
     if (fitBounds && fitBounds.isValid()) {
       map.fitBounds(fitBounds, { padding: [8, 8], maxZoom: 14 });
+    } else if (defaultFocus) {
+      // Nothing selected and the manifest pins a focus view - honour it instead
+      // of the (too-wide) whole-basin boundary fit.
+      map.setView(defaultFocus.center, defaultFocus.zoom);
     }
-  }, [fitBounds, map]);
+  }, [fitBounds, defaultFocus, map]);
   return null;
 }
 
@@ -263,14 +273,21 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const shedData = data["sub-hydrosheds"];
   const boundaryData = data["boundary"];
   const fitBounds = useMemo(() => {
-    const feats =
-      selectedRiverId && shedData
-        ? shedData.features.filter((f) => selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)))
-        : boundaryData?.features ?? [];
+    let feats: Feature[];
+    if (selectedRiverId && shedData) {
+      // A river is selected: frame its sub-catchments.
+      feats = shedData.features.filter((f) => selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)));
+    } else if (manifest.defaultFocus) {
+      // Nothing selected and a focus view is configured: defer to it (the
+      // MapController applies center/zoom) instead of the wide boundary fit.
+      return null;
+    } else {
+      feats = boundaryData?.features ?? [];
+    }
     if (!feats.length) return null;
     const b = L.geoJSON({ type: "FeatureCollection", features: feats } as FC).getBounds();
     return b.isValid() ? b : null;
-  }, [selectedRiverId, shedData, boundaryData, selectedSheds]);
+  }, [selectedRiverId, shedData, boundaryData, selectedSheds, manifest.defaultFocus]);
 
   function selectRiver(riverId: string | null) {
     setSelectedRiverId(riverId);
@@ -428,7 +445,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         <MapContainer center={manifest.mapCenter} zoom={manifest.mapZoom} className="h-full w-full" preferCanvas zoomControl={false}>
           <ZoomControl position="bottomright" />
           <MapResizer />
-          <MapController fitBounds={fitBounds} />
+          <MapController fitBounds={fitBounds} defaultFocus={manifest.defaultFocus} />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
           {/* One shared canvas, stacked by DRAW ORDER (not panes): base outlines

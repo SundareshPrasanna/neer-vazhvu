@@ -74,6 +74,15 @@ export interface BasinManifest {
    * gapUnit key in gaps.json (e.g. "cooum", "ramanagara").
    */
   defaultGapUnit?: string;
+  /**
+   * Default map view when nothing is selected. By default the atlas frames the
+   * whole basin boundary, which is right for compact basins (Chennai) but too
+   * zoomed-out for large ones whose rivers span the full extent (the Arkavathi
+   * runs ~120 km from Nandi Hills to Kanakapura). Set this to pin the opening
+   * view on the part that matters (e.g. the Bengaluru / Vrishabhavathi cluster)
+   * while the rest stays a pan away. Selecting a river still fits to it.
+   */
+  defaultFocus?: { center: [number, number]; zoom: number };
   /** Attribution lines rendered verbatim in "Data on this map". */
   credits: string[];
 }

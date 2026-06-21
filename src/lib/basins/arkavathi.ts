@@ -23,6 +23,9 @@ export const ARKAVATHI: BasinManifest = {
   areaNote: "Basin boundary area as supplied by Paani Earth (India-WRIS derived).",
   // Open the gap view on Ramanagara by default so the detail panel is populated.
   defaultGapUnit: "ramanagara",
+  // The basin is ~120 km tall; frame the Bengaluru / Vrishabhavathi cluster by
+  // default rather than the whole rural extent (the south is a pan away).
+  defaultFocus: { center: [13.0, 77.52], zoom: 11 },
   rivers: [
     {
       riverId: "arkavathi",
