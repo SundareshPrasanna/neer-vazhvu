@@ -824,14 +824,14 @@ function tipLabel(p: Record<string, unknown>, l: BasinLayer): string {
 }
 
 /** Admin tooltip: the unit and its place in the hierarchy, e.g.
- *  "Haragadde (gp) · Kanakapura taluk · Ramanagara". */
+ *  "Haragadde (gp) - Kanakapura taluk - Ramanagara". */
 function adminTip(p: Record<string, unknown>): string {
   const name = String(p.name ?? "").trim();
   const level = String(p.level ?? "").trim();
   const parts = [level ? `${name} (${level})` : name];
   if (p.parentTaluk) parts.push(`${String(p.parentTaluk)} taluk`);
   if (p.parentDistrict) parts.push(String(p.parentDistrict));
-  return parts.join(" · ");
+  return parts.join(" - ");
 }
 
 function pressurePointStyle(feat: Feature | undefined, faded: boolean): L.CircleMarkerOptions {
