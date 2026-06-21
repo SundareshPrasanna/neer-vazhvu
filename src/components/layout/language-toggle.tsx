@@ -59,7 +59,7 @@ export function LanguageToggle() {
     return (
       <button
         onClick={() => setLanguage(other)}
-        className="px-2.5 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 transition-colors leading-none"
+        className="px-2.5 h-9 inline-flex items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 transition-colors leading-none"
         aria-label={`Switch to ${otherLabel.english}`}
         title={`Switch to ${otherLabel.native}`}
       >
@@ -76,12 +76,12 @@ export function LanguageToggle() {
         onClick={() => setOpen((v) => !v)}
         aria-label={t("lang.choose_language") || `Choose language - currently ${currentLabel.english}`}
         aria-expanded={open}
-        className="px-2.5 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 transition-colors leading-none"
+        className="px-2.5 h-9 inline-flex items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 transition-colors leading-none"
       >
         {currentLabel.toggle}
       </button>
       {open && (
-        <div className="absolute right-0 top-10 z-50 min-w-[160px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg py-1">
+        <div className="absolute right-0 top-full mt-1 z-50 min-w-[160px] max-w-[calc(100vw-1rem)] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg py-1">
           {availableLanguages.map((code: LanguageCode) => {
             const label = LANGUAGE_LABELS[code];
             const isActive = code === language;
@@ -92,7 +92,7 @@ export function LanguageToggle() {
                   setLanguage(code);
                   setOpen(false);
                 }}
-                className={`w-full text-left px-3 py-1.5 text-sm flex items-center justify-between gap-3 ${
+                className={`w-full text-left px-3 py-2.5 text-sm flex items-center justify-between gap-3 ${
                   isActive
                     ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                     : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"

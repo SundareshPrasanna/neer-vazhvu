@@ -63,7 +63,7 @@ export function CitySwitcher() {
       </button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-1 min-w-[180px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-50">
+        <div className="absolute top-full right-0 mt-1 min-w-[180px] max-w-[calc(100vw-1rem)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-50">
           {places.map((p) => {
             const supported = FEATURE_AVAILABILITY[p.cityId];
             const featureSupported = supported ? supported.has(feature) : false;
