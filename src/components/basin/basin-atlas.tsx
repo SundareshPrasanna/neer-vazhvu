@@ -6,6 +6,7 @@ import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
+import { BottomSheet } from "@/components/map/bottom-sheet";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import type {
   BasinFloor,
@@ -163,7 +164,6 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const [coachDismissed, setCoachDismissed] = useState(true);
   // Either panel can be collapsed to see the map alone.
   const [railOpen, setRailOpen] = useState(true);
-  const [panelOpen, setPanelOpen] = useState(true);
   const fetchedRef = useRef<Set<string>>(new Set());
   const didDefaultGapRef = useRef(false);
 
@@ -360,8 +360,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     <div className="h-full w-full flex flex-col md:flex-row">
       {/* ── Elevator rail ── */}
       {railOpen && (
-      <div className="shrink-0 md:w-60 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto">
+      <div className="shrink-0 md:w-60 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto max-h-[46vh] md:max-h-none">
         <div className="p-3 border-b border-slate-200 dark:border-slate-700">
+          <div className="text-[10px] uppercase tracking-wide text-slate-400">{cityDisplayName}</div>
           <div className="flex items-start justify-between gap-2">
             <h1 className="font-bold text-slate-900 dark:text-slate-100 leading-tight">{manifest.displayName}</h1>
             <button
@@ -374,6 +375,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           </div>
           {manifest.displayNameLocal && (
             <div className="text-xs text-slate-500 dark:text-slate-400">{manifest.displayNameLocal}</div>
+          )}
+          {/* Basin intro - desktop rail only (mobile rail stays compact). */}
+          <p className="hidden md:block mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">{manifest.blurb}</p>
+          {manifest.areaKm2 && (
+            <p className="hidden md:block mt-1 text-[11px] text-slate-400">Basin area ~{manifest.areaKm2.toLocaleString()} km².</p>
           )}
           {selectedRiver && (
             <button
@@ -437,6 +443,33 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   </div>
                 )}
               </div>
+            );
+          })}
+        </div>
+
+        {/* Mobile: layer toggles for the focused floor, full-width below the
+            tabs (on desktop the toggles live under each floor above). */}
+        <div className="md:hidden px-3 pb-2 pt-2 space-y-1 border-t border-slate-100 dark:border-slate-800">
+          <div className="text-[10px] uppercase tracking-wide text-slate-400 mb-1">Layers</div>
+          {floorLayers(focusedFloor).map((l) => {
+            const inv = inventory?.families[l.family];
+            return (
+              <label key={l.family} className="flex items-start gap-2 text-xs cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={enabled[l.family] ?? l.defaultOn}
+                  onChange={(e) => setEnabled((s) => ({ ...s, [l.family]: e.target.checked }))}
+                  className="mt-0.5 accent-blue-600"
+                />
+                <span className="flex items-center gap-1.5 leading-tight">
+                  <span className="inline-block w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: l.color }} />
+                  <span className="text-slate-600 dark:text-slate-300">
+                    {l.label}
+                    {inv && <span className="text-slate-400"> ({inv.featureCount})</span>}
+                    {l.heavy && <span className="block text-[10px] text-slate-400">large layer</span>}
+                  </span>
+                </span>
+              </label>
             );
           })}
         </div>
@@ -635,7 +668,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
         {/* Coach mark */}
         {!embedded && !coachDismissed && !selectedRiverId && (
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[500] bg-slate-900/95 text-white text-xs rounded-full px-4 py-2 shadow-lg flex items-center gap-3">
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[500] max-w-[88%] sm:max-w-md bg-slate-900/95 text-white text-xs rounded-xl px-3.5 py-2 shadow-lg flex items-center gap-3">
             <span>Click a river to explore its pollution story</span>
             <button
               onClick={() => { localStorage.setItem(COACH_KEY, "1"); setCoachDismissed(true); }}
@@ -656,55 +689,35 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             » Layers
           </button>
         )}
-        {!panelOpen && (
-          <button
-            onClick={() => setPanelOpen(true)}
-            title="Show details panel"
-            className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-[500] items-center bg-white/95 dark:bg-slate-900/95 border border-r-0 border-slate-200 dark:border-slate-700 rounded-l-md shadow px-1.5 py-3 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
-          >
-            Details «
-          </button>
-        )}
-
         {/* Legend - reflects what's currently visible. */}
         <MapLegend layers={visibleLayers} notes={legendNotes} />
       </div>
 
-      {/* ── Detail panel ── */}
-      {panelOpen && (
-      <aside className="hidden lg:flex h-full w-[400px] xl:w-[460px] shrink-0 border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto bg-white dark:bg-slate-900 p-5 text-sm">
-        <div className="flex justify-end -mt-2 -mr-2 mb-1">
-          <button onClick={() => setPanelOpen(false)} title="Hide details panel" className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">»</button>
-        </div>
-        {selectedGapUnit && gapData[selectedGapUnit] ? (
-          <GapPanel unit={gapData[selectedGapUnit]} onClose={() => setSelectedGapUnit(null)} />
-        ) : selectedFeature ? (
-          renderFeatureDetail?.({
-            family: selectedFeature.family,
-            props: selectedFeature.props,
-            onClose: () => setSelectedFeature(null),
-          }) ?? (
-            <FeaturePanel
-              props={selectedFeature.props}
-              label={layerByFamily[selectedFeature.family]?.label ?? selectedFeature.family}
-              onClose={() => setSelectedFeature(null)}
-            />
-          )
-        ) : selectedRiver ? (
-          <RiverPanel river={selectedRiver} onClear={() => selectRiver(null)} />
-        ) : (
-          <div className="space-y-3 text-slate-600 dark:text-slate-400">
-            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">{cityDisplayName} - {manifest.displayName}</h2>
-            <p className="leading-relaxed">{manifest.blurb}</p>
-            {manifest.areaKm2 && (
-              <p className="text-xs text-slate-500">Basin area ~{manifest.areaKm2.toLocaleString()} km². {manifest.areaNote}</p>
-            )}
-            <p className="text-xs text-slate-500 dark:text-slate-500">
-              Use the floors on the left to move between the river system, its monitoring evidence, the pressures on it, and the response. Click a river to scope everything to its sub-basin.
-            </p>
+      {/* ── Detail panel: draggable bottom sheet on mobile, sidebar on desktop
+           (shared BottomSheet, matching the rivers map). Shown when a river,
+           feature or gap is selected; closing clears the selection. ── */}
+      {(selectedGapUnit || selectedFeature || selectedRiver) && (
+        <BottomSheet onClose={() => { setSelectedGapUnit(null); setSelectedFeature(null); selectRiver(null); }}>
+          <div className="p-5 text-sm">
+            {selectedGapUnit && gapData[selectedGapUnit] ? (
+              <GapPanel unit={gapData[selectedGapUnit]} onClose={() => setSelectedGapUnit(null)} />
+            ) : selectedFeature ? (
+              renderFeatureDetail?.({
+                family: selectedFeature.family,
+                props: selectedFeature.props,
+                onClose: () => setSelectedFeature(null),
+              }) ?? (
+                <FeaturePanel
+                  props={selectedFeature.props}
+                  label={layerByFamily[selectedFeature.family]?.label ?? selectedFeature.family}
+                  onClose={() => setSelectedFeature(null)}
+                />
+              )
+            ) : selectedRiver ? (
+              <RiverPanel river={selectedRiver} onClear={() => selectRiver(null)} />
+            ) : null}
           </div>
-        )}
-      </aside>
+        </BottomSheet>
       )}
     </div>
   );
