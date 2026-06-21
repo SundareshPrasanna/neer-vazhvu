@@ -282,7 +282,9 @@ export default async function CityRiversPage({ params }: PageProps) {
     cityId === "bangalore"
       ? [config.center.lat, config.center.lng]
       : [config.center.lat - 0.1, config.center.lng - 0.2];
-  const mapZoom = cityId === "bangalore" ? 10 : 9;
+  // Bangalore: zoom 11 frames the GBA bbox (~38x41 km) tightly; zoom 10 read as
+  // too wide. Others keep 9 (Vaigai/Pinakini mainstems need the wider frame).
+  const mapZoom = cityId === "bangalore" ? 11 : 9;
   const scopeLabel = RIVERS_SCOPE_LABEL[cityId] ?? "Basin system";
 
   // Additive: if a river on this page has a deep basin atlas, hand it down so
