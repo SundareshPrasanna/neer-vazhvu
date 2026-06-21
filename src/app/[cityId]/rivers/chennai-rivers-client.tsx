@@ -241,7 +241,7 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
 
           {/* Drill-in hint: same affordance as the shared rivers client. */}
           {basin && !coachDismissed && !openBasin && (
-            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[600] max-w-[92%] bg-slate-900/95 text-white text-xs rounded-full px-4 py-2 shadow-lg flex items-center gap-3">
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[600] max-w-[88%] sm:max-w-md bg-slate-900/95 text-white text-xs rounded-xl px-3.5 py-2 shadow-lg flex items-center gap-3">
               <span>Click on a river to drill into the basin - pollution, monitoring &amp; infrastructure</span>
               <button
                 onClick={() => { localStorage.setItem(RIVERS_COACH_KEY, "1"); setCoachDismissed(true); }}

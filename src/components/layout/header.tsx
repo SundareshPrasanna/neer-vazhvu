@@ -268,15 +268,16 @@ export function Header() {
                 </svg>
               </div>
               <div>
-                <span className={cn("font-bold text-lg text-slate-900 dark:text-slate-100", currentPageLabel && "hidden sm:inline")}>{t("header.title")}</span>
+                <span className="font-bold text-lg text-slate-900 dark:text-slate-100 hidden sm:inline">{t("header.title")}</span>
                 <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 ml-2">
                   {t("header.subtitle")}
                 </span>
               </div>
             </Link>
-            {/* Mobile: show current page name instead of app title */}
+            {/* Mobile: show current page name instead of app title. Truncates
+                so a long label can never push into the city switcher. */}
             {currentPageLabel && (
-              <span className="sm:hidden text-sm font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+              <span className="sm:hidden text-sm font-semibold text-slate-700 dark:text-slate-300 truncate min-w-0">
                 {currentPageLabel}
               </span>
             )}
@@ -303,7 +304,7 @@ export function Header() {
           </nav>
 
           {/* Mobile: toggles + hamburger */}
-          <div className="flex sm:hidden items-center gap-1">
+          <div className="flex sm:hidden items-center gap-1 shrink-0 pl-2">
             <CitySwitcher />
             <LanguageToggle />
             <ThemeToggle />

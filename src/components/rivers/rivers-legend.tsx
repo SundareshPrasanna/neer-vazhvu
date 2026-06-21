@@ -54,7 +54,7 @@ export function RiversLegend({ hiddenCategories, onToggleCategory }: RiversLegen
         </svg>
       </button>
 
-      <div className={`${expanded ? "block" : "hidden"} mt-1.5 space-y-2`}>
+      <div className={`${expanded ? "block" : "hidden"} mt-1.5 space-y-2 max-h-[52vh] overflow-y-auto pr-1`}>
         {/* Water quality section */}
         <div className="flex flex-col gap-1">
           {QUALITY_ITEMS.map((status) => {

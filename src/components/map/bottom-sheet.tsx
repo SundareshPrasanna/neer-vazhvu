@@ -159,7 +159,7 @@ export function BottomSheet({ children, onClose }: BottomSheetProps) {
       </div>
 
       {/* Desktop: normal sidebar panel */}
-      <div className="hidden md:flex h-full md:w-80 lg:w-96 border-l border-slate-200 dark:border-slate-700 flex-col">
+      <div className="hidden md:flex h-full md:w-80 lg:w-96 border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto">
         {children}
       </div>
     </>
