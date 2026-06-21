@@ -149,6 +149,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const [railOpen, setRailOpen] = useState(true);
   const [panelOpen, setPanelOpen] = useState(true);
   const fetchedRef = useRef<Set<string>>(new Set());
+  const didDefaultGapRef = useRef(false);
 
   const layerByFamily = useMemo(
     () => Object.fromEntries(manifest.layers.map((l) => [l.family, l])),
@@ -176,6 +177,21 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       .then((d) => setGapData(((d as unknown as { units?: Record<string, GapUnit> })?.units) ?? {}))
       .catch(() => setGapData({}));
   }, [manifest.basinId]);
+
+  // When opened straight to the governance floor (the "Treatment & waste gaps"
+  // button), auto-select the manifest's default gap unit once the data loads,
+  // so the right-hand detail panel is populated and discoverable rather than
+  // blank. Fires once per mount; the user can close/switch freely afterwards.
+  useEffect(() => {
+    if (didDefaultGapRef.current) return;
+    if (initialFloor !== "governance") return;
+    const unit = manifest.defaultGapUnit;
+    if (unit && gapData[unit]) {
+      setSelectedGapUnit(unit);
+      setSelectedFeature(null);
+      didDefaultGapRef.current = true;
+    }
+  }, [gapData, initialFloor, manifest.defaultGapUnit]);
 
   useEffect(() => {
     setCoachDismissed(localStorage.getItem(COACH_KEY) === "1");

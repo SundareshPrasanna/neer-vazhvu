@@ -67,6 +67,13 @@ export interface BasinManifest {
   areaNote?: string;
   rivers: BasinRiver[];
   layers: BasinLayer[];
+  /**
+   * Gap unit to auto-select when the atlas is opened straight to the
+   * governance floor (the "Treatment & waste gaps" button), so the right-hand
+   * detail panel is populated and discoverable rather than blank. Must match a
+   * gapUnit key in gaps.json (e.g. "cooum", "ramanagara").
+   */
+  defaultGapUnit?: string;
   /** Attribution lines rendered verbatim in "Data on this map". */
   credits: string[];
 }

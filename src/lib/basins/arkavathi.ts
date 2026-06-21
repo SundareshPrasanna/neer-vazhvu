@@ -21,6 +21,8 @@ export const ARKAVATHI: BasinManifest = {
   mapZoom: 10,
   areaKm2: 4161,
   areaNote: "Basin boundary area as supplied by Paani Earth (India-WRIS derived).",
+  // Open the gap view on Ramanagara by default so the detail panel is populated.
+  defaultGapUnit: "ramanagara",
   rivers: [
     {
       riverId: "arkavathi",
