@@ -505,10 +505,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (l.gap) {
               return (
                 <GeoJSON
-                  key={`gapfill-${selectedRiverId}-${tiles.isDark}`}
+                  key={`gapfill-${selectedRiverId}-${tiles.isDark}-${selectedGapUnit ?? ""}`}
                   data={fcScoped}
                   interactive={false}
-                  style={(feat?: Feature) => fillStyle(l, feat, faded)}
+                  style={(feat?: Feature) => fillStyle(l, feat, faded, selectedGapUnit)}
                 />
               );
             }
@@ -589,7 +589,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             // / command-areas are interactive thematic fills. pointToLayer keeps
             // any point geometry (e.g. waste-facility) a circle, not a default
             // marker (which would 404 its icon and render broken).
-            const isBase = l.family === "boundary" || l.family.startsWith("admin");
+            // boundary + always-on district are non-interactive context; the
+            // opt-in admin levels (taluk/town/GP) are tappable to reveal their
+            // place in the hierarchy.
+            const isBase = l.family === "boundary" || l.family === "admin-district";
+            const isAdmin = l.family.startsWith("admin");
             return (
               <GeoJSON
                 key={`${l.family}-${selectedRiverId}-${tiles.isDark}`}
@@ -600,7 +604,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 onEachFeature={(feat: Feature, layer: Layer) => {
                   if (isBase) return;
                   const p = (feat.properties ?? {}) as Record<string, unknown>;
-                  layer.bindTooltip(tipLabel(p, l), { sticky: true });
+                  layer.bindTooltip(isAdmin ? adminTip(p) : tipLabel(p, l), { sticky: true });
                   layer.on("click", () => { setSelectedFeature({ family: l.family, props: p }); setSelectedGapUnit(null); });
                 }}
               />
@@ -615,6 +619,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             return scoped(fc, l).flatMap((f, idx) => {
               const unit = String((f.properties as Record<string, unknown>)?.gapUnit ?? "");
               const name = String((f.properties as Record<string, unknown>)?.name ?? "Treatment & waste gaps");
+              const sev = String((f.properties as Record<string, unknown>)?.severity ?? "high");
+              const sevColor = sev === "high" ? "#dc2626" : sev === "medium" ? "#ea580c" : "#f59e0b";
+              // When a unit is selected, dim the others so the choice reads.
+              const dimmed = selectedGapUnit != null && selectedGapUnit !== unit;
+              const isSel = selectedGapUnit === unit;
               // Badge each polygon PART, not just the feature as a whole, so a
               // detached fragment (e.g. Harohalli's Kaggalahalli exclave near
               // Hosuru) gets its own labelled, clickable dot instead of an
@@ -629,10 +638,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 .filter((p, i) => i === 0 || p.area >= GAP_BADGE_MIN_AREA)
                 .map((p, pi) => (
                   <CircleMarker
-                    key={`gapbadge-${unit}-${idx}-${pi}`}
+                    key={`gapbadge-${unit}-${idx}-${pi}-${selectedGapUnit ?? ""}`}
                     center={p.b.getCenter()}
-                    radius={coarsePointer ? 12 : 6}
-                    pathOptions={{ color: "#fecaca", weight: coarsePointer ? 2 : 1, fillColor: "#dc2626", fillOpacity: 0.7 }}
+                    radius={(coarsePointer ? 12 : 6) + (isSel ? 3 : 0)}
+                    pathOptions={{
+                      color: dimmed ? "#cbd5e1" : isSel ? "#7f1d1d" : "#fecaca",
+                      weight: isSel ? 3 : coarsePointer ? 2 : 1,
+                      fillColor: dimmed ? "#94a3b8" : sevColor,
+                      fillOpacity: dimmed ? 0.35 : 0.85,
+                    }}
                     eventHandlers={{ click: () => { setSelectedGapUnit(unit); setSelectedFeature(null); } }}
                   >
                     <Tooltip sticky>{name}{pi > 0 ? " (detached part)" : ""} - click for treatment &amp; waste gaps</Tooltip>
@@ -652,14 +666,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           </button>
         )}
 
-        {/* Whole-basin reset: clears the river scope so every layer shows
-            basin-wide (e.g. all waterbodies), and flies back to the overview. */}
-        {selectedRiverId && (
+        {/* Reset: clears ANY active selection (river scope, gap unit, or clicked
+            feature) so every layer shows basin-wide and nothing is greyed out,
+            and flies back to the overview. */}
+        {(selectedRiverId || selectedGapUnit || selectedFeature) && (
           <button
-            onClick={() => selectRiver(null)}
+            onClick={() => { setSelectedGapUnit(null); setSelectedFeature(null); selectRiver(null); }}
             className="absolute top-3 right-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-md shadow px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
-            ↺ Whole basin
+            ↺ Reset{selectedRiver ? " to whole basin" : ""}
           </button>
         )}
 
@@ -735,7 +750,13 @@ function MapLegend({ layers, notes, raised }: { layers: BasinLayer[]; notes?: st
   // legend can never disagree with what's drawn.
   const items: { sym: LegendSym; color: string; label: string }[] = [];
   for (const l of layers) {
-    if (l.gap) items.push({ sym: "box", color: "#dc2626", label: "Treatment & waste gap" });
+    if (l.gap) {
+      // Severity scale (matches the fill/badge colours) so red vs amber reads
+      // as "how bad is the gap", not just decoration.
+      items.push({ sym: "box", color: "#dc2626", label: "Waste gap - severe" });
+      items.push({ sym: "box", color: "#ea580c", label: "Waste gap - moderate" });
+      items.push({ sym: "box", color: "#f59e0b", label: "Waste gap - minor" });
+    }
     else if (l.family === "boundary") items.push({ sym: "line", color: l.color, label: l.label });
     else if (l.family === "sub-hydrosheds") items.push({ sym: "dash", color: l.color, label: "Sub-catchment" });
     else if (l.family === "rivers") items.push({ sym: "line", color: l.color, label: "River" });
@@ -801,6 +822,17 @@ function tipLabel(p: Record<string, unknown>, l: BasinLayer): string {
   const kind = p.kind ? String(p.kind).replace(/-/g, " ") : "";
   const raw = String(p.name ?? p.contributor ?? kind ?? l.label).trim() || l.label;
   return raw.length > 46 ? `${raw.slice(0, 46)}…` : raw;
+}
+
+/** Admin tooltip: the unit and its place in the hierarchy, e.g.
+ *  "Haragadde (gp) - Kanakapura taluk - Ramanagara". */
+function adminTip(p: Record<string, unknown>): string {
+  const name = String(p.name ?? "").trim();
+  const level = String(p.level ?? "").trim();
+  const parts = [level ? `${name} (${level})` : name];
+  if (p.parentTaluk) parts.push(`${String(p.parentTaluk)} taluk`);
+  if (p.parentDistrict) parts.push(String(p.parentDistrict));
+  return parts.join(" - ");
 }
 
 function pressurePointStyle(feat: Feature | undefined, faded: boolean): L.CircleMarkerOptions {
@@ -883,25 +915,36 @@ const ADMIN_DASH: Record<string, string | undefined> = {
   "admin-gp": "1 4",
 };
 
-function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): PathOptions {
+function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, selectedGapUnit?: string | null): PathOptions {
   if (l.family === "boundary") {
     // Bold SOLID line in the manifest color (fuchsia) - a hue the OSM basemap
     // never uses, so the basin edge can't be mistaken for a basemap boundary.
     return { color: l.color, weight: 3, fill: false, opacity: 0.95 };
   }
   if (l.family.startsWith("admin")) {
+    // District is always-on context (outline only). The opt-in finer levels get
+    // a faint fill so the whole unit is tappable (hierarchy on tap/hover).
+    const detail = l.family !== "admin-district";
     return {
       color: l.color,
       weight: l.family === "admin-district" ? 1.4 : 1.2,
-      fill: false,
+      fill: detail,
+      fillColor: l.color,
+      fillOpacity: detail ? (faded ? 0.03 : 0.07) : 0,
       opacity: faded ? 0.4 : 0.85,
       dashArray: ADMIN_DASH[l.family],
     };
   }
   if (l.gap) {
+    const unit = String((feat?.properties as Record<string, unknown>)?.gapUnit ?? "");
     const sev = String((feat?.properties as Record<string, unknown>)?.severity ?? "high");
     const c = sev === "high" ? "#dc2626" : sev === "medium" ? "#ea580c" : "#f59e0b";
-    return { color: c, weight: 2, fillColor: c, fillOpacity: faded ? 0.2 : 0.4 };
+    // When a unit is selected, grey out the others so the selection stands out.
+    if (selectedGapUnit != null && selectedGapUnit !== unit) {
+      return { color: "#cbd5e1", weight: 1, fillColor: "#94a3b8", fillOpacity: 0.12 };
+    }
+    const isSel = selectedGapUnit === unit;
+    return { color: c, weight: isSel ? 3 : 2, fillColor: c, fillOpacity: faded ? 0.2 : isSel ? 0.55 : 0.4 };
   }
   if (l.family === "pressures") {
     const p = (feat?.properties as Record<string, unknown>) ?? {};
@@ -1026,7 +1069,12 @@ function GapPanel({ unit, onClose }: { unit: GapUnit; onClose: () => void }) {
         </button>
       </div>
       {unit.headline && (
-        <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed border-l-2 border-rose-400 pl-2.5">{unit.headline}</p>
+        <div className="rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-3">
+          <div className="flex items-start gap-2">
+            <span aria-hidden className="mt-0.5 text-rose-500 shrink-0">▶</span>
+            <p className="text-[13px] font-semibold text-rose-900 dark:text-rose-100 leading-relaxed">{unit.headline}</p>
+          </div>
+        </div>
       )}
       {unit.coverage && (
         <p className="text-[11px] text-slate-400">Data coverage: {unit.coverage}</p>
