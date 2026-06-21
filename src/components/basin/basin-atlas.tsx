@@ -194,6 +194,13 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       .catch(() => setGapData({}));
   }, [manifest.basinId]);
 
+  // On phones the layers panel is an off-canvas drawer; start it closed so the
+  // map is full-screen, with the "Layers" tab to open it. Desktop keeps the
+  // in-flow sidebar open.
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) setRailOpen(false);
+  }, []);
+
   // When opened straight to the governance floor (the "Treatment & waste gaps"
   // button), auto-select the manifest's default gap unit once the data loads,
   // so the right-hand detail panel is populated and discoverable rather than
@@ -358,9 +365,17 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
   return (
     <div className="h-full w-full flex flex-col md:flex-row">
-      {/* ── Elevator rail ── */}
+      {/* ── Elevator rail: off-canvas left drawer on mobile, in-flow sidebar on
+           desktop. ── */}
       {railOpen && (
-      <div className="shrink-0 md:w-60 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto max-h-[46vh] md:max-h-none">
+        <button
+          aria-label="Close layers"
+          onClick={() => setRailOpen(false)}
+          className="md:hidden fixed inset-0 z-[1190] bg-black/40"
+        />
+      )}
+      {railOpen && (
+      <div className="bg-white dark:bg-slate-900 overflow-y-auto fixed inset-y-0 left-0 z-[1200] w-[84%] max-w-xs shadow-2xl md:static md:z-auto md:w-60 md:max-w-none md:shadow-none md:shrink-0 md:border-r border-slate-200 dark:border-slate-700">
         <div className="p-3 border-b border-slate-200 dark:border-slate-700">
           <div className="text-[10px] uppercase tracking-wide text-slate-400">{cityDisplayName}</div>
           <div className="flex items-start justify-between gap-2">
@@ -368,9 +383,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             <button
               onClick={() => setRailOpen(false)}
               title="Hide layers panel"
-              className="hidden md:block shrink-0 -mt-0.5 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              className="block shrink-0 -mt-0.5 p-1 text-lg leading-none text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             >
-              «
+              <span className="md:hidden">✕</span>
+              <span className="hidden md:inline">«</span>
             </button>
           </div>
           {manifest.displayNameLocal && (
@@ -391,11 +407,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           )}
         </div>
 
-        <div className="flex md:block">
+        <div className="block">
           {FLOORS.map((f, i) => {
             const active = f.id === focusedFloor;
             return (
-              <div key={f.id} className="flex-1 md:flex-none">
+              <div key={f.id}>
                 <button
                   onClick={() => setFocusedFloor(f.id)}
                   className={`w-full text-left px-3 py-2.5 border-l-4 transition-colors ${
@@ -413,12 +429,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                       <span className="text-[10px] tabular-nums text-slate-400">{floorCounts[f.id]}</span>
                     )}
                   </div>
-                  <div className="text-[10px] text-slate-400 dark:text-slate-500 hidden md:block">{f.sub}</div>
+                  <div className="text-[10px] text-slate-400 dark:text-slate-500">{f.sub}</div>
                 </button>
 
                 {/* Per-floor layer toggles, only under the focused floor. */}
                 {active && (
-                  <div className="px-3 pb-2 pt-1 space-y-1 hidden md:block">
+                  <div className="px-3 pb-2 pt-1 space-y-1">
                     {floorLayers(f.id).map((l) => {
                       const inv = inventory?.families[l.family];
                       return (
@@ -443,33 +459,6 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   </div>
                 )}
               </div>
-            );
-          })}
-        </div>
-
-        {/* Mobile: layer toggles for the focused floor, full-width below the
-            tabs (on desktop the toggles live under each floor above). */}
-        <div className="md:hidden px-3 pb-2 pt-2 space-y-1 border-t border-slate-100 dark:border-slate-800">
-          <div className="text-[10px] uppercase tracking-wide text-slate-400 mb-1">Layers</div>
-          {floorLayers(focusedFloor).map((l) => {
-            const inv = inventory?.families[l.family];
-            return (
-              <label key={l.family} className="flex items-start gap-2 text-xs cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={enabled[l.family] ?? l.defaultOn}
-                  onChange={(e) => setEnabled((s) => ({ ...s, [l.family]: e.target.checked }))}
-                  className="mt-0.5 accent-blue-600"
-                />
-                <span className="flex items-center gap-1.5 leading-tight">
-                  <span className="inline-block w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: l.color }} />
-                  <span className="text-slate-600 dark:text-slate-300">
-                    {l.label}
-                    {inv && <span className="text-slate-400"> ({inv.featureCount})</span>}
-                    {l.heavy && <span className="block text-[10px] text-slate-400">large layer</span>}
-                  </span>
-                </span>
-              </label>
             );
           })}
         </div>
@@ -679,12 +668,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           </div>
         )}
 
-        {/* Reopen tabs when a panel is collapsed (md+). */}
+        {/* Reopen the layers drawer/sidebar when collapsed (left-edge tab). */}
         {!railOpen && (
           <button
             onClick={() => setRailOpen(true)}
             title="Show layers panel"
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-[500] items-center bg-white/95 dark:bg-slate-900/95 border border-l-0 border-slate-200 dark:border-slate-700 rounded-r-md shadow px-1.5 py-3 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+            className="flex absolute left-0 top-1/2 -translate-y-1/2 z-[500] items-center bg-white/95 dark:bg-slate-900/95 border border-l-0 border-slate-200 dark:border-slate-700 rounded-r-md shadow px-1.5 py-3 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             » Layers
           </button>
@@ -763,7 +752,7 @@ function MapLegend({ layers, notes }: { layers: BasinLayer[]; notes?: string[] }
   }
   if (!items.length) return null;
   return (
-    <div className="absolute bottom-3 left-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow text-[11px] max-w-[230px]">
+    <div className="absolute bottom-3 left-3 z-[800] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow text-[11px] max-w-[230px]">
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between px-2.5 py-1.5 font-semibold text-slate-600 dark:text-slate-300"
