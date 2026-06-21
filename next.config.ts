@@ -25,6 +25,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Dev-only: let phones/other devices on the LAN load /_next/* dev resources
+  // (Next 16 blocks cross-origin dev requests by default, which leaves the page
+  // server-rendered but non-interactive when opened via a LAN IP). No effect in
+  // production. Add your machine's LAN IP here when testing on a real device.
+  allowedDevOrigins: ["192.168.0.186"],
   async headers() {
     return [
       {

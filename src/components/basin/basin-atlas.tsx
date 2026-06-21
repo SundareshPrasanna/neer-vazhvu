@@ -185,6 +185,13 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     [selectedRiver],
   );
 
+  // Touch devices need bigger hit targets. The atlas renders client-only
+  // (ssr:false), so window is always available here.
+  const coarsePointer =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(pointer: coarse)").matches;
+
   // URL <-> state (?river= & ?level=), via replaceState (no full navigation).
   // Skipped when embedded as an overlay so we don't clobber the rivers-page URL.
   // Cross-source gap intelligence for the gap layer's click panel (optional).
@@ -547,7 +554,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   interactive={l.family === "rivers"}
                   onEachFeature={(feat: Feature, layer: Layer) => {
                     if (l.family === "rivers") {
-                      const rid = String((feat.properties as Record<string, unknown>)?.riverId ?? "");
+                      const rprops = feat.properties as Record<string, unknown>;
+                      const rid = String(rprops?.riverId ?? rprops?.river_id ?? "");
                       const r = manifest.rivers.find((x) => x.riverId === rid);
                       if (r) {
                         layer.bindTooltip(r.displayName, { sticky: true });
@@ -623,8 +631,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   <CircleMarker
                     key={`gapbadge-${unit}-${idx}-${pi}`}
                     center={p.b.getCenter()}
-                    radius={6}
-                    pathOptions={{ color: "#fecaca", weight: 1, fillColor: "#dc2626", fillOpacity: 0.7 }}
+                    radius={coarsePointer ? 12 : 6}
+                    pathOptions={{ color: "#fecaca", weight: coarsePointer ? 2 : 1, fillColor: "#dc2626", fillOpacity: 0.7 }}
                     eventHandlers={{ click: () => { setSelectedGapUnit(unit); setSelectedFeature(null); } }}
                   >
                     <Tooltip sticky>{name}{pi > 0 ? " (detached part)" : ""} - click for treatment &amp; waste gaps</Tooltip>
@@ -678,8 +686,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             » Layers
           </button>
         )}
-        {/* Legend - reflects what's currently visible. */}
-        <MapLegend layers={visibleLayers} notes={legendNotes} />
+        {/* Legend - reflects what's currently visible. Raised above the mobile
+            bottom sheet when a detail panel is open so it isn't covered. */}
+        <MapLegend layers={visibleLayers} notes={legendNotes} raised={!!(selectedGapUnit || selectedFeature || selectedRiver)} />
       </div>
 
       {/* ── Detail panel: draggable bottom sheet on mobile, sidebar on desktop
@@ -719,7 +728,7 @@ type LegendSym = "box" | "dot" | "ring" | "line" | "dash" | "outline";
 /** Dynamic legend: one entry per symbol actually on the map right now,
  *  expanding pressures into its kinds and showing the monitoring public-domain
  *  cue (filled vs hollow). */
-function MapLegend({ layers, notes }: { layers: BasinLayer[]; notes?: string[] }) {
+function MapLegend({ layers, notes, raised }: { layers: BasinLayer[]; notes?: string[]; raised?: boolean }) {
   const [open, setOpen] = useState(true);
   // Every entry's color comes from the layer's manifest `color` or the shared
   // PRESSURE_KIND_COLOR map - the same sources the map styles read - so the
@@ -752,7 +761,7 @@ function MapLegend({ layers, notes }: { layers: BasinLayer[]; notes?: string[] }
   }
   if (!items.length) return null;
   return (
-    <div className="absolute bottom-3 left-3 z-[800] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow text-[11px] max-w-[230px]">
+    <div className={`absolute ${raised ? "bottom-[156px] md:bottom-3" : "bottom-3"} left-3 z-[800] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow text-[11px] max-w-[230px] transition-[bottom] duration-200`}>
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between px-2.5 py-1.5 font-semibold text-slate-600 dark:text-slate-300"
@@ -821,7 +830,8 @@ function shedStyle(feat: Feature | undefined, selectedSheds: Set<string>, faded:
 
 function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinManifest, selectedRiverId: string | null, faded: boolean): PathOptions {
   if (l.family === "rivers") {
-    const rid = String((feat?.properties as Record<string, unknown>)?.riverId ?? "");
+    const rprops = feat?.properties as Record<string, unknown>;
+    const rid = String(rprops?.riverId ?? rprops?.river_id ?? "");
     const r = manifest.rivers.find((x) => x.riverId === rid);
     const sel = rid === selectedRiverId;
     return { color: r?.color ?? l.color, weight: sel ? 5 : 3, opacity: sel || !selectedRiverId ? 1 : 0.75 };
