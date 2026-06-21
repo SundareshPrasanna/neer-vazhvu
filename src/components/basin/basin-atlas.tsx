@@ -125,20 +125,26 @@ async function fetchJson(url: string): Promise<FC | null> {
 function MapController({
   fitBounds,
   defaultFocus,
+  hasSelection,
 }: {
   fitBounds: L.LatLngBounds | null;
   defaultFocus?: { center: [number, number]; zoom: number };
+  hasSelection: boolean;
 }) {
   const map = useMap();
   useEffect(() => {
     if (fitBounds && fitBounds.isValid()) {
+      // A river is selected: fit its full extent (zooming out if the river spans
+      // more than the default view, e.g. the basin-long Arkavathi).
       map.fitBounds(fitBounds, { padding: [8, 8], maxZoom: 14 });
-    } else if (defaultFocus) {
+    } else if (defaultFocus && !hasSelection) {
       // Nothing selected and the manifest pins a focus view - honour it instead
-      // of the (too-wide) whole-basin boundary fit.
+      // of the (too-wide) whole-basin boundary fit. Suppressed while a river is
+      // selected so the focus view never pre-empts that river's fit (e.g. before
+      // its sub-catchments finish loading).
       map.setView(defaultFocus.center, defaultFocus.zoom);
     }
-  }, [fitBounds, defaultFocus, map]);
+  }, [fitBounds, defaultFocus, hasSelection, map]);
   return null;
 }
 
@@ -445,7 +451,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         <MapContainer center={manifest.mapCenter} zoom={manifest.mapZoom} className="h-full w-full" preferCanvas zoomControl={false}>
           <ZoomControl position="bottomright" />
           <MapResizer />
-          <MapController fitBounds={fitBounds} defaultFocus={manifest.defaultFocus} />
+          <MapController fitBounds={fitBounds} defaultFocus={manifest.defaultFocus} hasSelection={selectedRiverId != null} />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
           {/* One shared canvas, stacked by DRAW ORDER (not panes): base outlines
