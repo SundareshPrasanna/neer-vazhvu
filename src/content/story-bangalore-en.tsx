@@ -418,9 +418,10 @@ export function BangaloreStoryEn() {
           newly-merged villages, opened a structural ~1,000 MLD gap that
           could not be closed without the as-yet-uncommissioned Cauvery
           Stage V. Households filled the gap with private borewells -
-          the WELL Labs Bengaluru Urban Water Balance Report (January
-          2024) puts the city&apos;s total groundwater extraction at
-          1,392 MLD, against BWSSB&apos;s official 800 MLD estimate -
+          the WELL Labs Bengaluru Urban Water Balance Report (2021
+          data) estimates the city&apos;s groundwater dependence at
+          1,392 MLD, above the ~800 MLD the BWSSB-commissioned IISc
+          Groundwater Outlook (2024-25) reads as actual extraction -
           and with private tanker water. The OpenCity Bengaluru Tanker
           Water Surveys captured what households actually paid: the
           median price per tanker load rose from Rs 510 in 2015 to Rs
@@ -514,19 +515,19 @@ export function BangaloreStoryEn() {
             {
               metric: "BWSSB Cauvery WTP capacity",
               then: "0 MLD in 1974; 135 MLD with Stage I",
-              now: "1,310 MLD Stages I-IV + 775 MLD Stage V design (~400 MLD actual)",
+              now: "2,293 MLD installed across 6 WTPs (Stages I-IV + Stage V 775 design); ~1,500 MLD delivered (Stage V ~400 of 775)",
               verdict: "better",
             },
             {
               metric: "Non-revenue water (NRW)",
               then: "~40% in 1980s (BWSSB internal)",
-              now: "48% as of JICA Phase 3 (2017); no public update since",
-              verdict: "worse",
+              now: "36% audited 2017-18 (ISEC WP-505); down from ~48% (2017), BWSSB claims ~30% (unaudited)",
+              verdict: "better",
             },
             {
               metric: "Per-capita water reaching consumer tap",
               then: "Design standard 150 LPCD (CPHEEO)",
-              now: "76 LPCD actual, per JICA salient features",
+              now: "108 LPCD average consumption (BWSSB, 2026); ISEC 106 LPCD (2017-18)",
               verdict: "worse",
             },
             {
@@ -542,9 +543,9 @@ export function BangaloreStoryEn() {
               verdict: "worse",
             },
             {
-              metric: "Groundwater extraction (city-wide)",
+              metric: "Groundwater use (city-wide)",
               then: "~500 MLD per JICA Phase 3 Expert Committee (2017)",
-              now: "800 MLD BWSSB official; 1,392 MLD WELL Labs bottom-up (2024)",
+              now: "~800 MLD extraction (IISc Outlook, 2024-25) to 1,392 MLD dependence (WELL Labs, 2021 balance) - method/year range, not a contradiction",
               verdict: "worse",
             },
             {

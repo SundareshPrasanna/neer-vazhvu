@@ -37,8 +37,15 @@ interface SupplyMixItem {
 interface SupplyOverviewMin {
   current_supply_total_mld: number;
   current_supply_mix_mld: SupplyMixItem[];
+  groundwater?: {
+    official_mld?: number;
+    estimate_mld?: number;
+  };
   wtps_summary?: {
     planned_additions_mld?: number;
+    total_installed_capacity_mld?: number;
+    stage_v_design_mld?: number;
+    stage_v_actual_mld?: number;
   };
   distribution?: {
     population_served?: number;
@@ -84,19 +91,29 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
 
   if (!data) return null;
 
-  const cauveryMld = data.current_supply_total_mld;
-  const stageVDesign = data.wtps_summary?.planned_additions_mld ?? null;
+  // Headline "Cauvery WTP capacity" = installed capacity (post-Stage-V), not the
+  // per-stage design sum; falls back to the supply-mix total for cities without
+  // a wtps_summary block.
+  const cauveryMld =
+    data.wtps_summary?.total_installed_capacity_mld ?? data.current_supply_total_mld;
+  // Stage V design/actual are explicit fields so the "+planned" addition figure
+  // (Stage VI) is no longer overloaded onto Stage V's design capacity.
+  const stageVDesign = data.wtps_summary?.stage_v_design_mld ?? null;
   const stageVActual =
+    data.wtps_summary?.stage_v_actual_mld ??
     data.current_supply_mix_mld.find((s) =>
       s.source.toLowerCase().includes("stage v"),
-    )?.mld ?? null;
+    )?.mld ??
+    null;
 
-  const groundwaterOfficial = data.current_supply_mix_mld.find(
-    (s) => s._provenance === "BWSSB_official",
-  )?.mld;
-  const groundwaterEstimate = data.current_supply_mix_mld.find(
-    (s) => s._provenance === "WELL_Labs_2024",
-  )?.mld;
+  // Groundwater is a separate layer (the 'groundwater' object), not a slice of
+  // the treated-supply mix. Fall back to the legacy mix lookup for safety.
+  const groundwaterOfficial =
+    data.groundwater?.official_mld ??
+    data.current_supply_mix_mld.find((s) => s._provenance === "BWSSB_official")?.mld;
+  const groundwaterEstimate =
+    data.groundwater?.estimate_mld ??
+    data.current_supply_mix_mld.find((s) => s._provenance === "WELL_Labs_2024")?.mld;
 
   const transmissionKm = data.allocation_context?.transmission_distance_km;
   const transmissionLiftM = data.allocation_context?.transmission_elevation_lift_m;

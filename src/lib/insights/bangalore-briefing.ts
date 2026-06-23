@@ -23,7 +23,7 @@
  * Sentence templates surface live numbers (today's storage TMC,
  * percent FRL across the 4 upstream Cauvery dams) PLUS constants
  * pulled from `bangalore-supply-overview.json` (Stage V design vs
- * actual, NRW, 5.8M served, 65 IISc stress wards, ~5000 tankers).
+ * actual, NRW, ~14M served, 65 IISc stress wards, ~5000 tankers).
  */
 
 import type { ReservoirSummary } from "@/types/reservoir";
@@ -72,10 +72,13 @@ export interface BangaloreBriefing {
 // Constants pulled from bangalore-supply-overview.json + IISc Outlook
 // (April 2025) + OpenCity Tanker Survey 2024-25. Hand-mirrored here so
 // the briefing builder doesn't need a separate I/O pass.
+// Supply/NRW/population refreshed June 2026 to BWSSB-official 2026 figures
+// (BWSSB 'About' page + Apr 2026 Chairman interview, Elets eGov) and ISEC
+// Working Paper 505 (audited NRW), replacing the stale JICA-2017 values.
 const STAGE_V_DESIGN_MLD = 775;
 const STAGE_V_ACTUAL_MLD_APPROX = 400;
-const NRW_PCT_APPROX = 48;
-const POPULATION_SERVED_M = 5.8;
+const NRW_PCT_APPROX = 36; // audited 2017-18 (ISEC WP-505); BWSSB claims ~30% (unaudited)
+const POPULATION_SERVED_M = 14; // BWSSB-stated served (~14M); piped coverage ~71% (ISEC)
 const POPULATION_GBA_M = 14;
 const IISC_STRESS_WARDS = 65;
 const TANKER_FLEET_APPROX = 5000;

@@ -283,7 +283,7 @@ export function CityAboutContent({
             <SubSection title="How Bengaluru's tap is fed today">
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 Bengaluru&apos;s drinking water travels a much longer path than Chennai&apos;s or Madurai&apos;s:
-                <span className="font-semibold"> Cauvery river (Karnataka allocation 270 TMC of the CWDT 726-TMC pool) → 4 upstream Karnataka reservoirs (KRS 48.4 TMC + Hemavathi 35.7 + Kabini 19.5 + Harangi 8.5) → BWSSB pumps from T.K. Halli 95 km north + 500 m elevation lift → 5 WTPs at the headworks (Cauvery Stages I-V) → 8,746 km BWSSB distribution mains → 84 ground-level reservoirs / 84 distribution stations across 9 administrative zones → ~865,000 piped connections → tap.</span>
+                <span className="font-semibold"> Cauvery river (Karnataka allocation 270 TMC of the CWDT 726-TMC pool) → 4 upstream Karnataka reservoirs (KRS 48.4 TMC + Hemavathi 35.7 + Kabini 19.5 + Harangi 8.5) → BWSSB pumps from T.K. Halli 95 km north + 500 m elevation lift → 6 WTPs at the headworks (Cauvery Stages I-V, 2,293 MLD installed) → ~14,384 km BWSSB distribution mains → 84 ground-level reservoirs / 84 distribution stations across 9 administrative zones → ~11.46 lakh piped connections → tap.</span>
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
                 Three structural facts worth knowing when reading the dashboard&apos;s headline:
@@ -293,14 +293,14 @@ export function CityAboutContent({
                   <span className="font-semibold">The 4 upstream dams aren&apos;t Bengaluru&apos;s tap supply.</span> They are irrigation-primary reservoirs owned by the Karnataka Water Resources Department; the city&apos;s drinking-water carve-out is the slice released into BWSSB&apos;s pumping line at T.K. Halli. We track them because they set the seasonal ceiling on what BWSSB can pump - similar to how Madurai tracks Mullaperiyar even though it&apos;s in Kerala.
                 </li>
                 <li>
-                  <span className="font-semibold">~48% non-revenue water.</span> Per the JICA Phase 3 Final Report (Nov 2017), nearly half of what BWSSB pumps 95 km is lost between WTP and household meter (physical leakage + commercial losses + unmetered uses). Bringing NRW under 20% would free more water than the entire Stage V augmentation.
+                  <span className="font-semibold">~36% non-revenue water.</span> Audited at 36% for 2017-18 (ISEC Working Paper 505, computed from BWSSB data), down from ~48% in 2007/2017; BWSSB reports a further reduction toward ~30%, not yet independently audited. Even at 36%, more than a third of what BWSSB pumps 95 km is lost between WTP and household meter (physical leakage + commercial losses + unmetered uses). Bringing NRW under 20% would free more water than the entire Stage V augmentation.
                 </li>
                 <li>
-                  <span className="font-semibold">BWSSB serves ~5.8M of ~14M GBA residents.</span> The rest depend on private borewells (over-extracted - all 6 CGWB blocks Over-Exploited since 2011) and the ~5,000-tanker informal economy. The piped/non-piped split is the single biggest equity gap in Bengaluru&apos;s water story.
+                  <span className="font-semibold">BWSSB&apos;s ~14M jurisdiction overstates piped reach.</span> BWSSB now reports serving ~14M residents, but &quot;served&quot; is a within-jurisdiction figure, not piped coverage: independent benchmarking (ISEC) put actual coverage at ~71% (2017-18), and ~11.46 lakh metered connections in a 14M-person city leave large gaps filled by private borewells (over-extracted - all 6 CGWB blocks Over-Exploited since 2011) and the ~5,000-tanker informal economy. The piped/non-piped split is the single biggest equity gap in Bengaluru&apos;s water story.
                 </li>
               </ul>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
-                What the dashboard <span className="font-semibold">does</span> show: the Cauvery Pumping hero (1,310 MLD installed across Stages I-V, 95 km / 500 m lift, 48% NRW, ~5.8M served), live daily storage at the 4 upstream Karnataka dams (TN Agri / TNAU reservoir page, which lists them alongside the TN reservoirs because Cauvery is shared), 8 years of daily history per dam (2018-today), 14-day AutoARIMA forecasts per dam, and the Stage V under-delivery flag from The Ken (Feb 2026: ~400 MLD actual vs 775 MLD design).
+                What the dashboard <span className="font-semibold">does</span> show: the Cauvery Pumping hero (2,293 MLD installed across Stages I-V / 6 WTPs, ~1,500 MLD delivered, 95 km / 500 m lift, 36% NRW, ~14M served), live daily storage at the 4 upstream Karnataka dams (TN Agri / TNAU reservoir page, which lists them alongside the TN reservoirs because Cauvery is shared), 8 years of daily history per dam (2018-today), 14-day AutoARIMA forecasts per dam, and the Stage V under-delivery flag from The Ken (Feb 2026: ~400 MLD actual vs 775 MLD design).
               </p>
             </SubSection>
           )}
@@ -870,7 +870,7 @@ export function CityAboutContent({
               <DataSource
                 name="JICA Phase 3 Final Report (Bengaluru Water Supply and Sewerage Project)"
                 url="https://www.jica.go.jp/"
-                description="Engineering-grade structural numbers extracted from the JICA Phase 3 Preparatory Survey Final Report (November 2017): 1,310 MLD installed treatment across Stages I-V at T.K. Halli; 95 km transmission distance + 500 m elevation lift; 48% NRW; ~5.8M population served vs ~14M GBA; ~865,000 piped connections (2017); 8,746 km distribution mains; 84 ground-level CWRs + 84 WDSS across 9 zones; 2,235 MLD CWSS allocation; 2034 demand projection 2,608 MLD; project cost Rs 5,690 crore (85% JICA loan). Powers the Cauvery Pumping hero + bangalore-supply-overview.json."
+                description="Historical stage build-out, allocation and demand projections from the JICA Phase 3 Preparatory Survey Final Report (November 2017): 95 km transmission distance + 500 m elevation lift; 84 ground-level CWRs + 84 WDSS across 9 zones; 2,235 MLD CWSS allocation; 2034 demand projection 2,608 MLD; project cost Rs 5,690 crore (85% JICA loan). Supply capacity, connections, population, network and NRW/per-capita figures refreshed June 2026 to BWSSB-official sources (BWSSB 'About' page + April 2026 Chairman interview, Elets eGov; ISEC Working Paper 505 for audited NRW): 2,293 MLD installed across 6 WTPs (Stage V commissioned 16 Oct 2024) / ~1,500 MLD delivered; 36% NRW (audited 2017-18); ~14M served; ~11.46 lakh connections; ~14,384 km mains; 108 LPCD consumption. Powers the Cauvery Pumping hero + bangalore-supply-overview.json."
                 frequency="static (Nov 2017 baseline; periodic refresh on subsequent JICA reports)"
               />
               <DataSource
