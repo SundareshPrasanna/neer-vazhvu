@@ -120,6 +120,7 @@ export const CHENNAI: CityConfig = {
     aiBriefing: true,
     reservoirCatchmentContext: true,
     groundwaterSnapshot: true,
+    weapBalance: true,
   },
   // Chennai's facts run the live + derived builders at request time
   // (reservoir storage, Day Zero compare, CGWB blocks, river quality)
@@ -127,6 +128,14 @@ export const CHENNAI: CityConfig = {
   facts: { dynamicPipeline: true },
   // Full interactive hazard / historical / drainage / sewerage flood map.
   flood: { variant: 'interactive' },
+  // Sub-basin climate-risk choropleth (6 sub-basins x 4 subthemes) from the
+  // TNGCC + CEEW Feb 2026 risk index. All four subthemes are supported.
+  climateRisk: {
+    risk: true,
+    hazard: true,
+    exposure: true,
+    vulnerability: true,
+  },
   // Encroachment census + restoration ranking + ward search + lost bodies.
   waterBodies: {
     censusSource: true,

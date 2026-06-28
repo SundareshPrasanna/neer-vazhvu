@@ -107,6 +107,27 @@ export interface DashboardSectionsConfig {
   reservoirCatchmentContext?: boolean;
   /** Groundwater status snapshot card (needs dense per-ward GW data). */
   groundwaterSnapshot?: boolean;
+  /** WEAP water-balance tile (basin demand vs unmet-demand projection +
+   *  the reuse/micro-irrigation levers). Needs a published basin water
+   *  balance; Chennai today (TNGCC+CEEW 2026). Links to the climate-risk
+   *  surface. */
+  weapBalance?: boolean;
+}
+
+/**
+ * Per-city climate-risk theme flags. The shared `/<city>/climate-risk`
+ * surface decomposes the basin into sub-basins and recolors the same
+ * polygons by each risk component (the four subthemes). Each flag gates
+ * one subtheme in the toggle; the data lives in
+ * `<cityId>-sub-basins-risk.geojson`. Chennai today (TNGCC+CEEW 2026).
+ * Omit -> the theme is hidden for the city.
+ */
+export interface ClimateRiskConfig {
+  /** Composite Risk = Hazard x Exposure x Vulnerability (default subtheme). */
+  risk?: boolean;
+  hazard?: boolean;
+  exposure?: boolean;
+  vulnerability?: boolean;
 }
 
 /**
@@ -221,6 +242,10 @@ export interface BasePlaceConfig {
   /** Flood-risk renderer variant. Omit -> narrative card stack when a
    *  narrative config exists for the city, else "not yet available". */
   flood?: FloodViewConfig;
+
+  /** Climate-risk theme subtheme flags (sub-basin risk choropleth).
+   *  Omit -> the /<city>/climate-risk theme is hidden. */
+  climateRisk?: ClimateRiskConfig;
 
   /** Water-bodies capability flags (census, ranking tab, ward search,
    *  lost bodies). Omit -> the basic map only. */

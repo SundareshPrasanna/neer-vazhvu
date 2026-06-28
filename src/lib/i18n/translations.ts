@@ -443,6 +443,7 @@ export const translations: Record<string, TranslationEntry> = {
   "nav.water_bodies":   { en: "Water Bodies",      ta: "நீர்நிலைகள்",              kn: "ಜಲಮೂಲಗಳು" },
   "nav.rivers":         { en: "Rivers",            ta: "ஆறுகள்",                  kn: "ನದಿಗಳು" },
   "nav.coastal":        { en: "Shoreline",         ta: "கடற்கரை",                 kn: "ಕರಾವಳಿ" },
+  "nav.climate_risk":   { en: "Climate Risk",      ta: "காலநிலை ஆபத்து" },
   "nav.lake_restoration": { en: "Restoration",     ta: "மறுசீரமைப்பு",            kn: "ಪುನರುಜ್ಜೀವನ" },
   "nav.about":          { en: "About",             ta: "எங்களைப் பற்றி",           kn: "ನಮ್ಮ ಬಗ್ಗೆ" },
   "header.title":       { en: "Neer Vazhvu",                ta: "நீர் வாழ்வு",      kn: "ನೀರ್ ವಾೞ್ವು" },
@@ -1332,6 +1333,42 @@ export const translations: Record<string, TranslationEntry> = {
   "lr.show_top": { en: "Show top priorities only",      ta: "முக்கிய முன்னுரிமைகளை மட்டும் காட்டு", kn: "ಮುಖ್ಯ ಆದ್ಯತೆಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸಿ" },
   "lr.methodology": { en: "Scores computed from water body size, proximity to lost water bodies, river pollution levels, industrial source proximity, and water body type.", ta: "நீர்நிலை அளவு, இழந்த நீர்நிலைகளுக்கு அருகாமை, ஆற்று மாசு நிலைகள், தொழிற்சாலை ஆதாரங்கள் அருகாமை, மற்றும் நீர்நிலை வகை ஆகியவற்றின் அடிப்படையில் மதிப்பெண்கள் கணக்கிடப்படுகின்றன.", kn: "ಸ್ಕೋರ್‌ಗಳು ಜಲಮೂಲ ಗಾತ್ರ, ಕಳೆದ ಜಲಮೂಲಗಳ ಬಳಿ, ನದಿ ಮಾಲಿನ್ಯ ಮಟ್ಟಗಳು, ಕೈಗಾರಿಕಾ ಮೂಲ ಸಾಮೀಪ್ಯ ಮತ್ತು ಜಲಮೂಲ ಪ್ರಕಾರದಿಂದ ಲೆಕ್ಕಹಾಕಲಾಗಿದೆ." },
   "lr.source_note": { en: "Data: OpenStreetMap, CPCB, Care Earth Trust", ta: "தரவு: OpenStreetMap, CPCB, Care Earth Trust", kn: "ದತ್ತಾಂಶ: OpenStreetMap, CPCB, Care Earth Trust" },
+
+  // ── Climate Risk page (sub-basin risk index) ────────────
+  "climate.loading_map": { en: "Loading climate risk map...", ta: "காலநிலை ஆபத்து வரைபடம் ஏற்றப்படுகிறது..." },
+  "climate.context": { en: "Climate-induced risk to water systems, scored at the sub-basin level: Risk = Hazard x Exposure x Vulnerability.", ta: "நீர் அமைப்புகளுக்கான காலநிலை ஆபத்து, துணை-நீர்ப்பிடிப்பு மட்டத்தில் மதிப்பிடப்பட்டது: ஆபத்து = அபாயம் x வெளிப்பாடு x பாதிப்படையும் தன்மை." },
+  "climate.headline": { en: "The Cooum and Kosasthalaiyar sub-basins carry the highest climate risk to Chennai's water.", ta: "சென்னையின் நீருக்கு கூவம் மற்றும் கொசஸ்தலையாறு துணை-நீர்ப்பிடிப்புகள் அதிக காலநிலை ஆபத்தைக் கொண்டுள்ளன." },
+  // Subtheme toggle
+  "climate.sub.risk": { en: "Overall risk", ta: "மொத்த ஆபத்து" },
+  "climate.sub.hazard": { en: "Hazard", ta: "அபாயம்" },
+  "climate.sub.exposure": { en: "Exposure", ta: "வெளிப்பாடு" },
+  "climate.sub.vulnerability": { en: "Vulnerability", ta: "பாதிப்படையும் தன்மை" },
+  // 5-class scale
+  "climate.class.very_high": { en: "Very high", ta: "மிக அதிகம்" },
+  "climate.class.high": { en: "High", ta: "அதிகம்" },
+  "climate.class.moderate": { en: "Moderate", ta: "மிதமான" },
+  "climate.class.low": { en: "Low", ta: "குறைவு" },
+  "climate.class.very_low": { en: "Very low", ta: "மிகக் குறைவு" },
+  // Legend + detail panel
+  "climate.legend_title": { en: "Climate risk level", ta: "காலநிலை ஆபத்து நிலை" },
+  "climate.sub_basin": { en: "Sub-basin", ta: "துணை-நீர்ப்பிடிப்பு" },
+  "climate.top_drivers": { en: "Top contributing indicators", ta: "முக்கிய பங்களிப்பு குறிகாட்டிகள்" },
+  "climate.driver.hazard": { en: "Hazard", ta: "அபாயம்" },
+  "climate.driver.exposure": { en: "Exposure", ta: "வெளிப்பாடு" },
+  "climate.driver.adaptive_capacity": { en: "Adaptive capacity", ta: "தகவமைப்புத் திறன்" },
+  "climate.driver.sensitivity": { en: "Sensitivity", ta: "உணர்திறன்" },
+  "climate.unmet_demand": { en: "Unmet water demand", ta: "பூர்த்தியாகாத நீர் தேவை" },
+  "climate.unmet_demand_note": { en: "Business-as-usual, 2020 -> 2050 (MCM)", ta: "வழக்கம் போல், 2020 -> 2050 (MCM)" },
+  "climate.boundary_approximate": { en: "Boundary approximate", ta: "எல்லை தோராயமானது" },
+  "climate.source": { en: "Risk index: TNGCC and CEEW 2026 (CC BY-NC 4.0).", ta: "ஆபத்து குறியீடு: TNGCC மற்றும் CEEW 2026 (CC BY-NC 4.0)." },
+  "climate.boundary_caveat": { en: "Cooum, Adyar and Kosasthalaiyar boundaries are HydroSHEDS-derived catchments; Araniyar, Gummidipoondi and Kovalam are approximate, pending official boundaries.", ta: "கூவம், அடையாறு மற்றும் கொசஸ்தலையாறு எல்லைகள் HydroSHEDS-இலிருந்து பெறப்பட்டவை; ஆரணியாறு, கும்மிடிப்பூண்டி மற்றும் கோவளம் தோராயமானவை, அதிகாரப்பூர்வ எல்லைகள் வரும்வரை." },
+  // WEAP balance dashboard tile
+  "climate.weap.title": { en: "Chennai basin water balance", ta: "சென்னை படுகை நீர் சமநிலை" },
+  "climate.weap.demand": { en: "Total water demand", ta: "மொத்த நீர் தேவை" },
+  "climate.weap.unmet": { en: "Unmet demand (business-as-usual)", ta: "பூர்த்தியாகாத தேவை (வழக்கம் போல்)" },
+  "climate.weap.lever": { en: "Treated-water reuse + micro-irrigation can cut unmet demand 52-93% by 2050.", ta: "சுத்திகரிக்கப்பட்ட நீர் மறுபயன்பாடு + நுண்-பாசனம் 2050க்குள் பூர்த்தியாகாத தேவையை 52-93% குறைக்கலாம்." },
+  "climate.weap.by_2050": { en: "by 2050", ta: "2050க்குள்" },
+  "climate.weap.explore": { en: "Explore sub-basin risk", ta: "துணை-நீர்ப்பிடிப்பு ஆபத்தை ஆராயுங்கள்" },
 
   // ── Flood Risk page ──────────────────────────────────────
   "nav.flood_risk": { en: "Flood Risk",                     ta: "வெள்ள அபாயம்", kn: "ಪ್ರವಾಹ ಅಪಾಯ" },

@@ -22,6 +22,7 @@ import { DeferredRainfallTrends } from "@/components/dashboard/deferred-rainfall
 import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
 import { ReservoirCatchmentContext } from "@/components/dashboard/reservoir-catchment-context";
 import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
+import { WeapBalanceTile } from "@/components/dashboard/weap-balance-tile";
 import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
 import { CityStory } from "@/components/insights/city-story";
 import type { AiNarrative } from "@/components/insights/city-story";
@@ -424,6 +425,10 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
       {config.dashboard?.groundwaterSnapshot && groundwaterData && (
         <GroundwaterSnapshot data={groundwaterData} />
       )}
+
+      {/* Basin water-balance tile (WEAP). Static figures; deep-links to the
+          sub-basin climate-risk surface. */}
+      {config.dashboard?.weapBalance && <WeapBalanceTile cityId={cityId} />}
 
       {/* Long-term IMD rainfall - identical component to Chennai's, with
           the city's own IMD file. Falls back to a "data pending" card
