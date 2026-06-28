@@ -92,6 +92,16 @@ A full-screen overlay layered on top of `/water-bodies` for flagship Chennai bod
 - **Deep Linking** - Ward context links navigate to the flood risk page and fly to the ward centroid (`?ward=N`), with view mode preserved (`?view=drainage`)
 - **Click Tolerance** - Drainage lines and pumping mains use a Canvas renderer with 10px tolerance for easier interaction with thin features
 
+### Climate Risk (sub-basin)
+A theme map at `/climate-risk` showing climate-induced risk to water systems across the six sub-basins of the Chennai basin (Adyar, Araniyar, Cooum, Gummidipoondi, Kosasthalaiyar, Kovalam), from the TNGCC + CEEW 2026 study *Towards Climate-resilient River Systems in Chennai* (CC BY-NC 4.0).
+
+- **Risk choropleth** - Risk = hazard x exposure x vulnerability (IPCC AR5, 33 indicators, 5-class Jenks). Cooum and Kosasthalaiyar carry the highest risk; Araniyar and Gummidipoondi the lowest.
+- **Four-way component toggle** - Overall risk / Hazard / Exposure / Vulnerability re-colour the same six sub-basins (side-panel sub-sections, not tabs). A fixed-order driver breakdown shows the top-five contributing indicators per component.
+- **Ranked sub-basin list + detail** - The side panel lists the six sub-basins highest-first for the active component; clicking one (or a polygon) opens a detail panel with its class, ordered drivers, and projected unmet water demand. Consistent driver order across all sub-basins.
+- **At-a-glance summary overlay** - A collapsible card (top-right) leading with the conclusion, the risk-class split of the six sub-basins, the basin water-balance line, a "why", and a "show highest-risk sub-basins" CTA.
+- **Water-balance dashboard tile** - The home dashboard carries a WEAP tile: basin demand 2,479 -> 2,728 MCM by 2050; unmet demand 546 -> 654 MCM, which treated-water reuse + micro-irrigation can cut 52-93%.
+- **Honest boundaries** - The CEEW study publishes no sub-basin boundaries; we derive them as hydrological catchments from WWF/HydroSHEDS hybas_12 (drainage-grouped per the TN-WRD / IAMWARM scheme), clipped to the Tamil Nadu state boundary. The small Kovalam and Gummidipoondi sub-basins are approximate over the flat Pulicat coast and tagged as such. See `docs/methodology/climate-risk-subbasins-v1.md`.
+
 ### My Ward
 A unified ward report page at `/my-ward` that aggregates all data layers for any of Chennai's 200 wards into a single scrollable page. Supports deep linking via `?ward=N`.
 
