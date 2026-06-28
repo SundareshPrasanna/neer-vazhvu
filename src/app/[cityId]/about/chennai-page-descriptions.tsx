@@ -370,6 +370,28 @@ export function ChennaiPageDescriptions({ cityId: _cityId, cityName: _cityName }
         </p>
       </SubSection>
 
+      {/* Climate risk */}
+      <SubSection id="page-climate-risk" title="Climate risk">
+        <p className="text-slate-600 dark:text-slate-400">
+          The <span className="font-mono text-xs">/climate-risk</span> page maps climate-induced risk to
+          water systems across the six sub-basins of the Chennai basin - Adyar, Araniyar, Cooum,
+          Gummidipoondi, Kosasthalaiyar and Kovalam. Risk is the product of{" "}
+          <span className="font-semibold">hazard x exposure x vulnerability</span> (IPCC AR5 framing, 33
+          indicators, Jenks classes), taken from the TNGCC + CEEW 2026 study{" "}
+          <span className="italic">Towards Climate-resilient River Systems in Chennai</span> (CC BY-NC 4.0).
+          A four-way toggle (overall risk / hazard / exposure / vulnerability) recolours the same six
+          sub-basins; clicking one opens its risk classes, the top-five contributing indicators per
+          component, and its projected unmet water demand. The home dashboard carries a companion
+          water-balance tile (basin demand 2,479 to 2,728 MCM by 2050; unmet demand 546 to 654 MCM, which
+          treated-water reuse and micro-irrigation can cut 52-93%).{" "}
+          <span className="font-semibold">Cooum and Kosasthalaiyar carry the highest risk.</span> The CEEW
+          study does not publish sub-basin boundaries, so we derive them as hydrological catchments from
+          WWF/HydroSHEDS hybas_12 (grouped by drainage outlet following the TN-WRD / IAMWARM sub-basin
+          scheme), clipped to the Tamil Nadu state boundary. Over the flat Pulicat coast the small Kovalam
+          and Gummidipoondi sub-basins are approximate - the boundaries are tagged as such on the map.
+        </p>
+      </SubSection>
+
       {/* My Ward */}
       <SubSection id="page-my-ward" title={t("about.page_my_ward_title")}>
         <p className="text-slate-600 dark:text-slate-400">

@@ -591,6 +591,20 @@ A subset of Chennai water bodies have a dedicated full-screen panel offering yea
 | Kannankottai (Thervoikandigai) | 500 |
 | Veeranam | 1,465 |
 
+## Sub-basin Climate Risk - TNGCC + CEEW 2026
+
+| | |
+|---|---|
+| **Risk index & scores** | [TNGCC & CEEW (2026), *Towards Climate-resilient River Systems in Chennai*](https://www.ceew.in/) (CC BY-NC 4.0). Risk = hazard x exposure x vulnerability (IPCC AR5; 33 indicators; 5-class Jenks). Per-sub-basin risk/hazard/exposure/vulnerability classes, top-5 driver indicators, and unmet-demand figures are transcribed from the report's figures and tables. |
+| **WEAP water balance** | Same report: basin demand 2,479 -> 2,728 MCM (2025->2050); unmet demand 546 -> 654 MCM; reuse + micro-irrigation cut 52-93%. Drives the dashboard water-balance tile. |
+| **Sub-basin geometry** | Derived (the report publishes no boundaries). Catchments from [WWF/HydroSHEDS HydroBASINS level 12](https://www.hydrosheds.org/products/hydrobasins) via Earth Engine: every unit grouped by the coastal outlet it drains to (`NEXT_DOWN` topology), assigned to the nearest river mouth following the TN-WRD / IAMWARM sub-basin scheme. |
+| **State clip** | [geoBoundaries](https://www.geoboundaries.org/) ADM1 Tamil Nadu boundary - catchments clipped to TN so they don't spill into Andhra Pradesh across the shared Pulicat catchment. |
+| **Validation** | [IAMWARM sub-basin DPRs](https://iamwarm.gov.in/) (TN WRD) - official sub-basin areas + taluk lists. Araniyar DPR = 763 km2 in TN (Ponneri / Gummidipoondi / Uthukottai taluks); confirms Gummidipoondi taluk belongs to the Araniyar sub-basin. Derived total ~6,190 km2 vs CEEW's 6,123 km2. |
+| **Method** | `scripts/derive_chennai_subbasins_hydrobasins.py` (GEE; needs the pyenv `neer-vazhvu-api` env + service-account key) -> `chennai-sub-basins-risk-geom.json`; `scripts/build_chennai_subbasin_risk.py` joins CEEW attributes -> `public/geojson/chennai-sub-basins-risk.geojson`. Full method: `docs/methodology/climate-risk-subbasins-v1.md`. |
+| **Files** | `public/geojson/chennai-sub-basins-risk.geojson` (6 sub-basins), `public/geojson/tamil-nadu-boundary.geojson` |
+
+**Caveats:** Boundaries are hydrological catchments, not the (unpublished) official CEEW boundaries. Over the flat, canal-cross-linked Pulicat coast HydroBASINS mis-routes, so the small Kovalam and Gummidipoondi sub-basins are approximate; the TN/AP edge is the real state border. Component (hazard/exposure/vulnerability) classes are read from the report's ranking figures; overall risk classes are verbatim. Areas run larger than CEEW's clipped study-area figures because these are full catchments.
+
 ## Historical Seeding
 
 For initial database population, seed scripts in `scripts/` import from:

@@ -778,6 +778,32 @@ export function CityAboutContent({
                 frequency={t("about.freq_static")}
               />
 
+              <DataSourceGroupHeader title="Climate risk" />
+              <DataSource
+                name="TNGCC &amp; CEEW (2026), Towards Climate-resilient River Systems in Chennai"
+                url="https://www.ceew.in/"
+                description="The sub-basin climate-risk index (hazard x exposure x vulnerability, 33 indicators) and the WEAP water-balance projections behind the /climate-risk map and the dashboard water-balance tile. CC BY-NC 4.0."
+                frequency={t("about.freq_static")}
+              />
+              <DataSource
+                name="WWF/HydroSHEDS HydroBASINS (level 12, via Earth Engine)"
+                url="https://www.hydrosheds.org/products/hydrobasins"
+                description="Drainage units grouped by coastal outlet (following the TN-WRD / IAMWARM sub-basin scheme) to derive the six sub-basin catchment boundaries, since the CEEW study publishes none."
+                frequency={t("about.freq_static")}
+              />
+              <DataSource
+                name="IAMWARM Sub-Basin DPRs (TN Water Resources Dept)"
+                url="https://iamwarm.gov.in/"
+                description="The official Tamil Nadu sub-basin scheme (by taluk + area) used to name and validate the catchments - e.g. the Araniyar DPR (763 km2 in TN; Ponneri/Gummidipoondi/Uthukottai taluks)."
+                frequency={t("about.freq_static")}
+              />
+              <DataSource
+                name="geoBoundaries (Tamil Nadu state boundary)"
+                url="https://www.geoboundaries.org/"
+                description="Open ADM1 boundary used to clip the derived catchments to Tamil Nadu so they don't spill into Andhra Pradesh across the shared Pulicat catchment."
+                frequency={t("about.freq_static")}
+              />
+
               <DataSourceGroupHeader title={t("about.ds_group_satellite")} />
               <DataSource
                 name="NDWI Water Detection (via Sentinel-2)"
