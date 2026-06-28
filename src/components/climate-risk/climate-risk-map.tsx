@@ -22,6 +22,9 @@ interface ClimateRiskMapProps {
   subtheme: ClimateSubtheme;
   onSelect: (props: SubBasinProperties | null) => void;
   hiddenClasses?: Set<string>;
+  /** Sub-basin FeatureCollection. When provided, the map skips its own fetch
+   *  (the content component owns the data so the side panel can share it). */
+  data?: GeoJSON.FeatureCollection | null;
 }
 
 const DEFAULT_CENTER: [number, number] = [13.15, 80.05];
@@ -33,17 +36,20 @@ export function ClimateRiskMap({
   subtheme,
   onSelect,
   hiddenClasses,
+  data,
 }: ClimateRiskMapProps) {
   const tiles = useMapTiles();
   const layerRef = useRef<L.GeoJSON | null>(null);
-  const [geo, setGeo] = useState<GeoJSON.FeatureCollection | null>(null);
+  const [fetched, setFetched] = useState<GeoJSON.FeatureCollection | null>(null);
+  const geo = data ?? fetched;
 
   useEffect(() => {
+    if (data) return; // content owns the data
     fetch(`/geojson/${cityId}-sub-basins-risk.geojson`)
       .then((r) => r.json())
-      .then(setGeo)
+      .then(setFetched)
       .catch(console.error);
-  }, [cityId]);
+  }, [cityId, data]);
 
   const style = useCallback(
     (feature: Feature | undefined) => {

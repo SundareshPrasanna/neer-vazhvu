@@ -6,14 +6,11 @@ import {
   DRIVER_GROUPS,
   type ClimateClass,
   type ClimateSubtheme,
-  type DriverGroup,
   type SubBasinProperties,
 } from "@/types/climate-risk";
 
 interface ClimateRiskDetailPanelProps {
   selected: SubBasinProperties;
-  /** The active subtheme, so the matching component is highlighted first. */
-  subtheme: ClimateSubtheme;
   onClose: () => void;
 }
 
@@ -35,25 +32,26 @@ function ClassChip({ cls, label }: { cls: ClimateClass; label: string }) {
   );
 }
 
-export function ClimateRiskDetailPanel({ selected, subtheme, onClose }: ClimateRiskDetailPanelProps) {
+export function ClimateRiskDetailPanel({ selected, onClose }: ClimateRiskDetailPanelProps) {
   const { t } = useLanguage();
   const p = selected;
 
   return (
     <div className="h-full flex flex-col bg-white dark:bg-slate-900 overflow-y-auto">
-      {/* Header */}
-      <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-        <div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">{t("climate.sub_basin")}</div>
-          <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">{p.sub_basin}</h3>
-        </div>
+      {/* Back button */}
+      <div className="px-3 pt-3">
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 text-xl leading-none"
-          aria-label="Close"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-600 dark:text-sky-400 hover:underline"
         >
-          &times;
+          <span aria-hidden>&larr;</span> {t("climate.back")}
         </button>
+      </div>
+
+      {/* Header */}
+      <div className="px-4 pt-2 pb-3 border-b border-slate-200 dark:border-slate-700">
+        <div className="text-xs text-slate-500 dark:text-slate-400">{t("climate.sub_basin")}</div>
+        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">{p.sub_basin}</h3>
       </div>
 
       <div className="px-4 py-3 space-y-4 flex-1">
@@ -79,6 +77,11 @@ export function ClimateRiskDetailPanel({ selected, subtheme, onClose }: ClimateR
           </div>
         </div>
 
+        {/* Plain-language explainer of what the scores mean */}
+        <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+          {t("climate.detail.intro")}
+        </p>
+
         {/* Unmet demand (where the report gives it) */}
         {p.unmet_mcm_2050 != null && (
           <div>
@@ -91,16 +94,19 @@ export function ClimateRiskDetailPanel({ selected, subtheme, onClose }: ClimateR
           </div>
         )}
 
-        {/* Top contributing indicators per group; active subtheme's group first */}
+        {/* Drivers per component; active subtheme's group first, each with a gloss */}
         <div>
-          <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
+          <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
             {t("climate.top_drivers")}
           </div>
           <div className="space-y-3">
-            {orderedGroups(subtheme).map((group) => (
+            {DRIVER_GROUPS.map((group) => (
               <div key={group}>
-                <div className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">
+                <div className="text-sm font-medium text-slate-700 dark:text-slate-200">
                   {t(`climate.driver.${group}`)}
+                </div>
+                <div className="text-[11px] text-slate-400 dark:text-slate-500 mb-1">
+                  {t(`climate.driver.${group}.gloss`)}
                 </div>
                 <ol className="list-decimal list-inside text-xs text-slate-600 dark:text-slate-400 space-y-0.5">
                   {p.drivers[group].map((d, i) => (
@@ -128,11 +134,3 @@ export function ClimateRiskDetailPanel({ selected, subtheme, onClose }: ClimateR
   );
 }
 
-/** Put the active subtheme's matching driver group first (vulnerability maps
- *  to adaptive_capacity + sensitivity; risk shows all in default order). */
-function orderedGroups(subtheme: ClimateSubtheme): DriverGroup[] {
-  if (subtheme === "hazard") return ["hazard", "exposure", "adaptive_capacity", "sensitivity"];
-  if (subtheme === "exposure") return ["exposure", "hazard", "adaptive_capacity", "sensitivity"];
-  if (subtheme === "vulnerability") return ["adaptive_capacity", "sensitivity", "hazard", "exposure"];
-  return DRIVER_GROUPS;
-}

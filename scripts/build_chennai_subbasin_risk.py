@@ -1,38 +1,37 @@
 #!/usr/bin/env python3
 """Build public/geojson/chennai-sub-basins-risk.geojson.
 
+Joins the CEEW risk attributes (classes, drivers, unmet demand) onto the
+HydroBASINS-derived catchment geometry produced by
+derive_chennai_subbasins_hydrobasins.py (-> chennai-sub-basins-risk-geom.json).
+
 Data source: TNGCC and CEEW. 2026. "Towards Climate-resilient River Systems in
-Chennai: Assessing Risks at the Sub-basin Level and Advancing a Circular Economy
-Approach." (CC BY-NC 4.0). Risk index = Hazard x Exposure x Vulnerability
+Chennai" (CC BY-NC 4.0). Risk index = Hazard x Exposure x Vulnerability
 (IPCC AR5), 33 indicators, Jenks classification.
 
-Geometry provenance (two tiers, tagged per feature via `boundary_quality`):
-  - "derived"      : Cooum / Adyar / Kosasthalaiyar reuse the existing
-                     GEE/HydroSHEDS hybas_12 channel-upstream-union catchments
-                     already in public/data/basins/chennai-rivers/sub-hydrosheds.geojson.
-  - "approximate"  : Araniyar / Gummidipoondi / Kovalam are coarse polygons
-                     anchored to their real geographic extent (the report does
-                     not publish a shapefile; these are placeholders pending the
-                     official TNGCC/CEEW boundaries). Fine for a city-zoom
-                     choropleth; not authoritative boundaries.
+Geometry: all six sub-basins are hydrological catchments derived from
+WWF/HydroSHEDS hybas_12 by grouping units by the coastal outlet they drain to
+(NEXT_DOWN topology) and clipping to the Tamil Nadu basin window. This is a
+genuine drainage delineation (so e.g. Pulicat/Ponneri fall in Araniyar, the
+Arani catchment - not Gummidipoondi). Over flat coastal terrain HydroBASINS is
+imperfect, so the small coastal sub-basins (Kovalam, Gummidipoondi) and the
+TN/AP northern edge are approximate; the official TNGCC/CEEW boundaries would
+supersede these.
 
-Risk CLASS per sub-basin (overall) is taken verbatim from report Figures
-ES6-ES11 (each sub-basin's single risk label). Component classes
-(hazard/exposure/vulnerability) are assigned from the report's ranking text
-(Figs 3/4/5: "highest in X, followed by Y, Z ...") onto the 5-class Jenks scale.
-Top-5 drivers per component are transcribed from Figures ES6-ES11.
-Per-sub-basin unmet demand (MCM) is given by the report only for Adyar,
-Araniyar, Kosasthalaiyar (Table 4); others are null.
+Run derive_chennai_subbasins_hydrobasins.py first (needs GEE), then this.
+
+Overall risk CLASS per sub-basin is verbatim from report Figures ES6-ES11.
+Component classes (hazard/exposure/vulnerability) are assigned from the report's
+ranking text (Figs 3/4/5). Top-5 drivers per component are transcribed from
+Figures ES6-ES11. Per-sub-basin unmet demand (MCM) is given by the report only
+for Adyar, Araniyar, Kosasthalaiyar (Table 4); others are null.
 """
 import json
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC_SHEDS = os.path.join(ROOT, "public/data/basins/chennai-rivers/sub-hydrosheds.geojson")
+SRC_GEOM = os.path.join(ROOT, "public/geojson/chennai-sub-basins-risk-geom.json")
 OUT = os.path.join(ROOT, "public/geojson/chennai-sub-basins-risk.geojson")
-
-# shedId in sub-hydrosheds.geojson -> our sub_basin name
-DERIVED = {"COOUM": "Cooum", "ADYAR": "Adyar", "KOSAS": "Kosasthalaiyar"}
 
 # Per-sub-basin attributes from the CEEW report.
 # classes: very_low | low | moderate | high | very_high
@@ -105,23 +104,17 @@ META = {
     },
 }
 
-# Approximate polygons (lon,lat) for the 3 sub-basins not in sub-hydrosheds.geojson.
-# Anchored to real geography: Gummidipoondi (far-north coast), Araniyar (north/
-# inland, drains to Pulicat), Kovalam (south coast). Coarse placeholders.
-APPROX_GEOM = {
-    "Gummidipoondi": [[[80.00, 13.40], [80.08, 13.62], [80.28, 13.59], [80.31, 13.45], [80.22, 13.36], [80.04, 13.36], [80.00, 13.40]]],
-    "Araniyar": [[[79.55, 13.46], [79.72, 13.63], [80.02, 13.60], [80.02, 13.39], [79.76, 13.35], [79.55, 13.46]]],
-    "Kovalam": [[[80.00, 12.78], [80.06, 12.87], [80.27, 12.85], [80.31, 12.62], [80.16, 12.55], [80.02, 12.62], [80.00, 12.78]]],
-}
+CREDIT = "Risk index & scores: TNGCC and CEEW 2026 (CC BY-NC 4.0). Boundaries: hydrological catchments derived from WWF/HydroSHEDS hybas_12 (drainage-grouped, clipped to the TN basin); small coastal sub-basins are approximate over flat terrain."
 
-CREDIT = "Risk index & scores: TNGCC and CEEW 2026 (CC BY-NC 4.0). Boundaries: Cooum/Adyar/Kosasthalaiyar from HydroSHEDS-derived catchments; Araniyar/Gummidipoondi/Kovalam approximate."
+# Risk order for stable legend/reading.
+ORDER = ["very_high", "high", "moderate", "low", "very_low"]
 
 
-def feature(name, geometry, boundary_quality):
+def feature(name, geometry):
     m = META[name]
     props = {
         "sub_basin": name,
-        "boundary_quality": boundary_quality,
+        "boundary_quality": "derived",
         "credit": CREDIT,
         **{k: m[k] for k in ("risk_class", "hazard_class", "exposure_class", "vulnerability_class", "risk_score", "unmet_mcm_2020", "unmet_mcm_2050")},
         "drivers": m["drivers"],
@@ -130,18 +123,15 @@ def feature(name, geometry, boundary_quality):
 
 
 def main():
-    sheds = json.load(open(SRC_SHEDS))
-    feats = []
-    for f in sheds["features"]:
-        shed = f["properties"]["shedId"]
-        if shed in DERIVED:
-            feats.append(feature(DERIVED[shed], f["geometry"], "derived"))
-    for name, coords in APPROX_GEOM.items():
-        feats.append(feature(name, {"type": "Polygon", "coordinates": coords}, "approximate"))
+    geom_fc = json.load(open(SRC_GEOM))
+    geoms = {f["properties"]["sub_basin"]: f["geometry"] for f in geom_fc["features"]}
 
-    # order by descending risk for stable legend/reading
-    order = ["very_high", "high", "moderate", "low", "very_low"]
-    feats.sort(key=lambda f: order.index(f["properties"]["risk_class"]))
+    missing = set(META) - set(geoms)
+    if missing:
+        raise SystemExit(f"geometry missing for {missing}; run derive_chennai_subbasins_hydrobasins.py")
+
+    feats = [feature(name, geoms[name]) for name in META]
+    feats.sort(key=lambda f: ORDER.index(f["properties"]["risk_class"]))
 
     fc = {"type": "FeatureCollection", "name": "chennai-sub-basins-risk", "features": feats}
     with open(OUT, "w") as fh:
@@ -149,7 +139,7 @@ def main():
     print(f"wrote {len(feats)} features -> {OUT}")
     for f in feats:
         p = f["properties"]
-        print(f"  {p['sub_basin']:15} risk={p['risk_class']:10} ({p['boundary_quality']})")
+        print(f"  {p['sub_basin']:15} risk={p['risk_class']}")
 
 
 if __name__ == "__main__":

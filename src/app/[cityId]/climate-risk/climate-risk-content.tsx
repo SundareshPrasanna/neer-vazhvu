@@ -1,16 +1,15 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { ClimateRiskToggle } from "@/components/climate-risk/climate-risk-toggle";
+import { ClimateRiskPanel } from "@/components/climate-risk/climate-risk-panel";
 import { ClimateRiskLegend } from "@/components/climate-risk/climate-risk-legend";
 import { ClimateRiskDetailPanel } from "@/components/climate-risk/climate-risk-detail-panel";
 import { CLIMATE_SUBTHEMES, type ClimateSubtheme, type SubBasinProperties } from "@/types/climate-risk";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
-import { BottomSheet } from "@/components/map/bottom-sheet";
 import { tryGetPlaceConfig } from "@/lib/cities";
 
 function MapLoading() {
@@ -51,11 +50,24 @@ function ClimateRiskContentInner({ cityId }: { cityId: string }) {
   );
   const [selected, setSelected] = useState<SubBasinProperties | null>(null);
   const [hiddenClasses, setHiddenClasses] = useState<Set<string>>(new Set());
+  const [data, setData] = useState<GeoJSON.FeatureCollection | null>(null);
+
+  // Content owns the fetch so the side-panel list and the map share one dataset.
+  useEffect(() => {
+    fetch(`/geojson/${cityId}-sub-basins-risk.geojson`)
+      .then((r) => r.json())
+      .then(setData)
+      .catch(() => {});
+  }, [cityId]);
+
+  const subBasins = useMemo(
+    () => (data?.features ?? []).map((f) => f.properties as SubBasinProperties),
+    [data]
+  );
 
   const center: [number, number] | undefined = config
     ? [config.center.lat, config.center.lng]
     : undefined;
-  const hasPanel = selected !== null;
 
   const handleSubtheme = (s: ClimateSubtheme) => {
     setSubtheme(s);
@@ -70,31 +82,24 @@ function ClimateRiskContentInner({ cityId }: { cityId: string }) {
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
       {/* Context bar - the conclusion leads */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 items-center text-sm shrink-0">
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300">
           {t("climate.headline")}
         </span>
       </div>
 
-      {/* Subtheme toggle */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex items-center justify-between shrink-0">
-        <ClimateRiskToggle value={subtheme} onChange={handleSubtheme} available={available} />
-        <span className="text-xs text-slate-400 dark:text-slate-500 hidden sm:block">
-          {t("climate.context")}
-        </span>
-      </div>
-
-      {/* Map + panel */}
+      {/* Map (left) + control/detail panel (right) */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        <div className="relative flex-1 h-full">
+        <div className="relative flex-1 min-h-[50vh] md:min-h-0 h-full">
           <ClimateRiskMap
             cityId={cityId}
             center={center}
             subtheme={subtheme}
             onSelect={setSelected}
             hiddenClasses={hiddenClasses}
+            data={data}
           />
-          <div className={`absolute z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${hasPanel ? "bottom-[148px] md:bottom-4" : "bottom-2 sm:bottom-4"}`}>
+          <div className="absolute z-[1000] left-2 bottom-2 sm:left-4 sm:bottom-4">
             <ClimateRiskLegend
               hiddenClasses={hiddenClasses}
               onToggleClass={(cls) => setHiddenClasses((prev) => {
@@ -105,24 +110,40 @@ function ClimateRiskContentInner({ cityId }: { cityId: string }) {
             />
           </div>
           <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
-            <div className="text-xs text-slate-500 dark:text-slate-400 max-w-[280px] space-y-2">
-              <div>{t("climate.source")}</div>
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px] leading-relaxed">
+            <div className="max-w-[300px] space-y-2.5">
+              <div className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                {t("climate.info_title")}
+              </div>
+              <div className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                {t("climate.source")}
+              </div>
+              <div className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                {t("climate.source_boundaries")}
+              </div>
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px] leading-relaxed text-amber-700 dark:text-amber-400">
                 {t("climate.boundary_caveat")}
               </div>
             </div>
           </MapInfoButton>
         </div>
 
-        {hasPanel && (
-          <BottomSheet onClose={() => setSelected(null)}>
+        {/* Right panel: subtheme sub-sections by default; sub-basin detail on select */}
+        <aside className="w-full md:w-[330px] md:h-full overflow-y-auto bg-white dark:bg-slate-900 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700 shrink-0">
+          {selected ? (
             <ClimateRiskDetailPanel
               selected={selected}
-              subtheme={subtheme}
               onClose={() => setSelected(null)}
             />
-          </BottomSheet>
-        )}
+          ) : (
+            <ClimateRiskPanel
+              value={subtheme}
+              onChange={handleSubtheme}
+              available={available}
+              subBasins={subBasins}
+              onSelect={setSelected}
+            />
+          )}
+        </aside>
       </div>
     </div>
   );
