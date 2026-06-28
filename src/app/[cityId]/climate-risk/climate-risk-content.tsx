@@ -6,7 +6,8 @@ import dynamic from "next/dynamic";
 import { ClimateRiskPanel } from "@/components/climate-risk/climate-risk-panel";
 import { ClimateRiskLegend } from "@/components/climate-risk/climate-risk-legend";
 import { ClimateRiskDetailPanel } from "@/components/climate-risk/climate-risk-detail-panel";
-import { CLIMATE_SUBTHEMES, type ClimateSubtheme, type SubBasinProperties } from "@/types/climate-risk";
+import { ClimateRiskSummary } from "@/components/climate-risk/climate-risk-summary";
+import { CLIMATE_CLASSES, CLIMATE_SUBTHEMES, type ClimateSubtheme, type SubBasinProperties } from "@/types/climate-risk";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
@@ -79,14 +80,18 @@ function ClimateRiskContentInner({ cityId }: { cityId: string }) {
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
   };
 
+  // "Show the highest-risk sub-basins" CTA: switch to overall-risk + open the
+  // top-ranked sub-basin's detail.
+  const showHighest = () => {
+    handleSubtheme("risk");
+    const top = [...subBasins].sort(
+      (a, b) => CLIMATE_CLASSES.indexOf(a.risk_class) - CLIMATE_CLASSES.indexOf(b.risk_class)
+    )[0];
+    if (top) setSelected(top);
+  };
+
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
-      {/* Context bar - the conclusion leads */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 text-sm shrink-0">
-        <span className="font-semibold text-slate-700 dark:text-slate-300">
-          {t("climate.headline")}
-        </span>
-      </div>
 
       {/* Map (left) + control/detail panel (right) */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
@@ -125,6 +130,11 @@ function ClimateRiskContentInner({ cityId }: { cityId: string }) {
               </div>
             </div>
           </MapInfoButton>
+          {subBasins.length > 0 && (
+            <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-[1000]">
+              <ClimateRiskSummary subBasins={subBasins} onShowHighest={showHighest} />
+            </div>
+          )}
         </div>
 
         {/* Right panel: subtheme sub-sections by default; sub-basin detail on select */}

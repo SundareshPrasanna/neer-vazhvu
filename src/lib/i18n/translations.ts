@@ -1349,6 +1349,15 @@ export const translations: Record<string, TranslationEntry> = {
   "climate.sub.vulnerability.desc": { en: "Sensitivity vs adaptive capacity (drainage, storage, reuse).", ta: "உணர்திறன் vs தகவமைப்புத் திறன் (வடிகால், சேமிப்பு, மறுபயன்பாடு)." },
   "climate.panel_title": { en: "Risk component", ta: "ஆபத்து கூறு" },
   "climate.ranked_title": { en: "Sub-basins (highest first)", ta: "துணை-படுகைகள் (அதிகம் முதலில்)" },
+  // At-a-glance summary overlay
+  "climate.summary.title": { en: "Chennai climate risk", ta: "சென்னை காலநிலை ஆபத்து" },
+  "climate.summary.subtitle": { en: "at a glance · 6 sub-basins", ta: "ஒரே பார்வையில் · 6 துணை-படுகைகள்" },
+  "climate.summary.collapsed": { en: "Climate risk summary", ta: "காலநிலை ஆபத்து சுருக்கம்" },
+  "climate.summary.balance": { en: "Basin-wide unmet water demand rises 546 → 654 MCM by 2050 — but treated-water reuse + micro-irrigation can cut it 52–93%.", ta: "படுகை முழுவதும் பூர்த்தியாகாத நீர் தேவை 2050க்குள் 546 → 654 MCM ஆக உயரும் — ஆனால் சுத்திகரிக்கப்பட்ட நீர் மறுபயன்பாடு + நுண்-பாசனம் அதை 52–93% குறைக்கலாம்." },
+  "climate.summary.why_label": { en: "Why", ta: "ஏன்" },
+  "climate.summary.why": { en: "Risk = hazard × exposure × vulnerability. The two worst sub-basins rank high on all three; the coast adds flood and cyclone load.", ta: "ஆபத்து = அபாயம் × வெளிப்பாடு × பாதிப்படையும் தன்மை. மோசமான இரண்டு துணை-படுகைகளும் மூன்றிலும் அதிகம்; கடற்கரை வெள்ளம் மற்றும் புயல் சுமையைச் சேர்க்கிறது." },
+  "climate.summary.cta": { en: "Show the highest-risk sub-basins", ta: "அதிக ஆபத்துள்ள துணை-படுகைகளைக் காட்டு" },
+  "climate.summary.source": { en: "Source: TNGCC & CEEW 2026 (CC BY-NC 4.0).", ta: "ஆதாரம்: TNGCC & CEEW 2026 (CC BY-NC 4.0)." },
   "climate.tap_hint": { en: "Tap a sub-basin for drivers & detail.", ta: "காரணிகள் & விவரங்களுக்கு ஒரு துணை-படுகையைத் தட்டவும்." },
   // 5-class scale
   "climate.class.very_high": { en: "Very high", ta: "மிக அதிகம்" },

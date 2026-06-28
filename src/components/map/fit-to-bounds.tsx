@@ -19,8 +19,13 @@ interface FitToBoundsProps {
    * preserve user pan/zoom.
    */
   resetKey?: string | number;
-  /** Padding in pixels added around the fitted bounds. */
+  /** Padding in pixels added around the fitted bounds (symmetric). */
   padding?: [number, number];
+  /** Asymmetric padding (top-left / bottom-right corners). When either is set
+   *  it overrides `padding` - use to reserve space for an overlaid panel so the
+   *  fitted content shifts away from it. */
+  paddingTopLeft?: [number, number];
+  paddingBottomRight?: [number, number];
   /** Cap the zoom-in level so dense compact data doesn't over-zoom. */
   maxZoom?: number;
 }
@@ -36,6 +41,8 @@ export function FitToBounds({
   bounds,
   resetKey,
   padding = [20, 20],
+  paddingTopLeft,
+  paddingBottomRight,
   maxZoom = 13,
 }: FitToBoundsProps) {
   const map = useMap();
@@ -45,13 +52,21 @@ export function FitToBounds({
     if (!bounds) return;
     if (lastFitKey.current === (resetKey ?? "__init__")) return;
     lastFitKey.current = resetKey ?? "__init__";
+    const opts =
+      paddingTopLeft || paddingBottomRight
+        ? {
+            paddingTopLeft: paddingTopLeft ?? padding,
+            paddingBottomRight: paddingBottomRight ?? padding,
+            maxZoom,
+          }
+        : { padding, maxZoom };
     try {
-      map.fitBounds(bounds, { padding, maxZoom });
+      map.fitBounds(bounds, opts);
     } catch {
       // L.fitBounds can throw if the bounds collapsed to a single point
       // with NaN values; swallow to keep the rest of the map alive.
     }
-  }, [bounds, resetKey, padding, maxZoom, map]);
+  }, [bounds, resetKey, padding, paddingTopLeft, paddingBottomRight, maxZoom, map]);
 
   return null;
 }

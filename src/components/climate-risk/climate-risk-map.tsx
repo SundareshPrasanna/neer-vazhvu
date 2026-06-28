@@ -39,6 +39,9 @@ export function ClimateRiskMap({
   data,
 }: ClimateRiskMapProps) {
   const tiles = useMapTiles();
+  // md breakpoint: only reserve the summary-card strip on desktop (the map is
+  // client-only, so window is available at render).
+  const wideViewport = typeof window !== "undefined" && window.innerWidth >= 768;
   const layerRef = useRef<L.GeoJSON | null>(null);
   const [fetched, setFetched] = useState<GeoJSON.FeatureCollection | null>(null);
   const geo = data ?? fetched;
@@ -85,6 +88,12 @@ export function ClimateRiskMap({
     layerRef.current?.setStyle(style as L.StyleFunction);
   }, [style]);
 
+  // Inset the fit bounds on desktop so the basin fills the screen (its full
+  // N-S extent otherwise caps the zoom ~10.7; the low-risk far-north/south tips
+  // crop a little). Mobile fits the full extent.
+  const rawBounds = geoJsonBounds(geo);
+  const fitBounds = rawBounds ? rawBounds.pad(wideViewport ? -0.12 : 0) : null;
+
   return (
     <MapContainer
       center={center ?? DEFAULT_CENTER}
@@ -95,7 +104,16 @@ export function ClimateRiskMap({
     >
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
-      <FitToBounds bounds={geoJsonBounds(geo)} resetKey={`climate:${geo?.features?.length ?? 0}`} maxZoom={11} />
+      <FitToBounds
+        bounds={fitBounds}
+        resetKey={`climate:${geo?.features?.length ?? 0}`}
+        maxZoom={12}
+        // On desktop reserve the top-right strip where the "at a glance" card
+        // sits, so the sub-basins fit into the left of the map and don't hide
+        // behind it. Mobile keeps symmetric padding.
+        paddingTopLeft={wideViewport ? [12, 16] : undefined}
+        paddingBottomRight={wideViewport ? [320, 12] : undefined}
+      />
       {geo && (
         <GeoJSON
           ref={(layer) => { layerRef.current = layer; }}
