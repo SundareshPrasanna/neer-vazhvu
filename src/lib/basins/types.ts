@@ -50,6 +50,10 @@ export interface BasinLayer {
    *  click opens the cross-source gap panel (see gaps.json) instead of the
    *  generic feature panel. Features carry `gapUnit` + `severity`. */
   gap?: boolean;
+  /** PRS layer: the CPCB/NGT polluted-river-stretch lines (one per survey year),
+   *  whose click opens the PRS entry-point panel (see prs.json) instead of the
+   *  generic feature panel. Features carry `year` + `priority` + `length_km`. */
+  prs?: boolean;
 }
 
 export interface BasinManifest {
