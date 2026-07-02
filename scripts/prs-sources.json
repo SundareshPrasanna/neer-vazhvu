@@ -1,0 +1,14 @@
+{
+  "_doc": "Per-basin Polluted River Stretch (PRS) sources. To onboard a new river's PRS, add a basin entry here and run `python scripts/build_prs.py <basinId>` - no code change. Each year entry: the source line geometry (any OGR-readable format), its survey year, and the CPCB/NGT priority band (I = worst). Output goes to public/data/basins/<basinId>/prs.geojson and is consumed by the generic `prs` layer + PRSPanel.",
+  "basins": {
+    "arkavathi": {
+      "river": "Arkavathi",
+      "srcDir": "docs/partnerships/paani_partnership",
+      "credit": "Paani Earth (digitised from CPCB/NGT polluted-river-stretch classification)",
+      "years": [
+        { "year": 2020, "file": "Arkavathi_PRS_Stretch_2020.gpkg", "priority": "III" },
+        { "year": 2025, "file": "Arkavathi_PRS_Stretch_2025.gpkg", "priority": "I" }
+      ]
+    }
+  }
+}

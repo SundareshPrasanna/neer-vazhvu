@@ -131,6 +131,19 @@
   filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
 }
 
+/* Tile-seam fix. Leaflet raster tiles leave a 1px sub-pixel gap between
+   adjacent tiles on HiDPI / fractional-zoom screens (phones especially), and
+   zoom animations widen it briefly - so you see a faint grid. The gap shows
+   the map container's background; Leaflet's default is light grey, which
+   flashes as a BRIGHT grid over the inverted dark basemap. Match the container
+   background to the basemap so any seam blends in instead of showing through. */
+.leaflet-container {
+  background: #e7e4dd; /* ~ OSM land tone (light mode) */
+}
+.dark .leaflet-container {
+  background: #10151b; /* ~ inverted OSM land tone (dark mode) */
+}
+
 /* Remove browser focus rectangle from Leaflet interactive map features */
 .leaflet-interactive:focus {
   outline: none;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, ZoomControl, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Circle, Tooltip, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
@@ -98,6 +98,94 @@ function polygonOuterRings(geom: Feature["geometry"] | null | undefined): [numbe
 const GAP_BADGE_MIN_AREA = 1.2e-5;
 interface GapUnit { name: string; level?: string; coverage?: string; conflicts?: string[]; caveats?: string[]; headline: string; streams: GapStream[] }
 
+// ── PRS (Polluted River Stretch) entry-point panel (prs.json) ────────────────
+// Tabbed surface: each tab is a stressor theme; the subtab axis differs per
+// theme (Sewage = admin units along the stretch; Industrial/Solid/PRS = named
+// sub-categories). The selected tab+subtab shows two parallel 2021-2025 tracks:
+// generation and the infrastructure built (per the partner's PDF, page 3).
+interface PrsYearPoint { year: number; value: number }
+interface PrsInfraItem { label: string; status: string; tone?: "good" | "bad" | "neutral" }
+interface PrsUnit {
+  key: string;
+  name: string;
+  /** Admin level this unit's figures are reported at (ULB / taluk / district /
+   *  catchment), shown as a chip so each number's granularity is explicit. */
+  level?: string;
+  /** Links to this unit's full cross-source GapPanel. */
+  gapUnit?: string;
+  caveat?: string;
+  /** Generated quantity per year (MLD for liquid, TPD for solid). */
+  generation: PrsYearPoint[];
+  generationNote?: string;
+  /** Treated/processed quantity per year, same unit as generation. */
+  treated: PrsYearPoint[];
+  capacity?: string;
+  gapValue?: number;
+  gapNote?: string;
+  infrastructure?: PrsInfraItem[];
+  dashboard?: string;
+  /** Other waste streams reported for this unit (plastic, biomedical, hazardous)
+   *  - a label + value line, shown beneath the generated-vs-processed timeline. */
+  otherStreams?: { label: string; value: string }[];
+}
+/** A narrative sub-theme (Industrial: Discharges/Areas/Clusters; PRS:
+ *  PRS/E-flow/Flood/Evidence) - text + key points, not a per-year timeline. */
+interface PrsCategory {
+  key: string;
+  label: string;
+  /** Admin level this category's figures are reported at (shown as a chip). */
+  level?: string;
+  body?: string;
+  points?: string[];
+  /** A map layer this category maps to (e.g. "pressures", "evidence-points"). */
+  layerRef?: string;
+  /** No known public data yet - shown as an explicit honest gap. */
+  noData?: boolean;
+}
+interface PrsTab {
+  key: string;
+  label: string;
+  status: "built" | "soon";
+  subtabKind?: "units" | "categories";
+  source?: string;
+  intro?: string;
+  /** Status-list row (summary view): a short badge + one-liner + tone colour. */
+  summaryBadge?: string;
+  summaryLine?: string;
+  summaryTone?: "bad" | "warn" | "neutral" | "good";
+  /** "units" tabs: the dual-timeline. unitLabel = MLD|TPD; treatedVerb =
+   *  treated|processed (drives the bar value + legend wording). */
+  unitLabel?: string;
+  treatedVerb?: string;
+  units?: PrsUnit[];
+  /** "categories" tabs: narrative sub-themes. */
+  categories?: PrsCategory[];
+}
+interface PrsData {
+  river: string;
+  stretchName: string;
+  comparison: { y2020: { length_km: number; priority: string }; y2025: { length_km: number; priority: string } };
+  conclusion: string;
+  growthNote?: string;
+  priorityNote?: string;
+  /** One-line "what this is" - the MPR-overview context line. */
+  mprOverview?: string;
+  /** Which admin levels (district / taluk / ULB / GP) the data covers and which
+   *  it does not - shown as an explicit reporting-level note. */
+  levelCoverage?: string;
+  /** How to read the figures - that "nil/not reported" means absent from the
+   *  documents, not necessarily absent on the ground. */
+  reportingCaveat?: string;
+  bodCaveat: string;
+  /** Promoted "extent of pollution" section, shown above the per-area tabs:
+   *  the evidence that pollution is documented over time and beyond BOD. */
+  evidence?: { headline: string; points: string[]; layerRef?: string };
+  tabs: PrsTab[];
+  grievance?: { label: string; sub?: string; url: string; urlNote?: string };
+  knownGaps?: string[];
+  sources?: string[];
+}
+
 const COACH_KEY = "basin-atlas-coach-dismissed";
 
 type FC = FeatureCollection;
@@ -107,6 +195,7 @@ type FC = FeatureCollection;
  *  the layers on top receive hover/click, not the catchment beneath them. */
 function drawRank(l: BasinLayer): number {
   if (l.gap) return -1; // gap choropleth at the very bottom - all data (incl. STPs) sits above it
+  if (l.prs) return 5; // polluted stretch always on top so the thin line stays clickable
   if (l.family === "boundary" || l.family.startsWith("admin")) return 0;
   if (l.family === "sub-hydrosheds") return 1;
   if (l.geom === "fill") return 2;
@@ -151,21 +240,92 @@ function MapController({
   return null;
 }
 
+/** Fly to the visitor's location when it is (re)acquired. If they're inside the
+ *  mapped basin we zoom in close so nearby stretches / industrial areas read;
+ *  if they're outside it we frame both their pin and the basin so the distance
+ *  is honest rather than dropping them into empty tiles. */
+function LocateFlyer({
+  location,
+  basinBounds,
+}: {
+  location: { lat: number; lng: number } | null;
+  basinBounds: L.LatLngBounds | null;
+}) {
+  const map = useMap();
+  const lastRef = useRef<string>("");
+  useEffect(() => {
+    if (!location) return;
+    const key = `${location.lat.toFixed(5)},${location.lng.toFixed(5)}`;
+    if (key === lastRef.current) return;
+    lastRef.current = key;
+    const here = L.latLng(location.lat, location.lng);
+    const inside = basinBounds?.contains(here) ?? true;
+    if (inside) {
+      map.flyTo(here, Math.max(map.getZoom(), 14), { duration: 0.8 });
+    } else if (basinBounds) {
+      map.flyToBounds(L.latLngBounds([here]).extend(basinBounds), {
+        padding: [40, 40],
+        duration: 0.8,
+      });
+    } else {
+      map.flyTo(here, 13, { duration: 0.8 });
+    }
+  }, [location, basinBounds, map]);
+  return null;
+}
+
 export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, initialFloor, embedded = false, onClose, renderFeatureDetail }: Props) {
   const tiles = useMapTiles();
 
   const [focusedFloor, setFocusedFloor] = useState<BasinFloor>(initialFloor ?? "hydrology");
-  const [enabled, setEnabled] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(manifest.layers.map((l) => [l.family, l.defaultOn])),
+  // Initial toggle state: a calm landing, not everything at once. Start with
+  // only the entry floor's default-on layers + always-on context + the PRS
+  // spine on. Rendering is then checkbox-only, so the user can freely combine
+  // layers from other floors (e.g. PRS + treatment gaps) by toggling them on.
+  const [enabled, setEnabled] = useState<Record<string, boolean>>(() => {
+    const startFloor = initialFloor ?? "hydrology";
+    return Object.fromEntries(
+      manifest.layers.map((l) => [
+        l.family,
+        l.defaultOn && (l.context || l.prs || l.floor === startFloor),
+      ]),
+    );
+  });
+  // Which floors' toggle lists are expanded in the rail. Only the entry floor
+  // opens by default (a calm landing); others collapse with a chevron so it's
+  // clear they open. Collapsing only hides the list - layers stay rendered.
+  const [expandedFloors, setExpandedFloors] = useState<Set<BasinFloor>>(
+    () => new Set<BasinFloor>([initialFloor ?? "hydrology"]),
   );
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(initialRiverId);
   const [selectedFeature, setSelectedFeature] = useState<{ family: string; props: Record<string, unknown> } | null>(null);
   const [selectedGapUnit, setSelectedGapUnit] = useState<string | null>(null);
   const [gapData, setGapData] = useState<Record<string, GapUnit>>({});
+  // PRS entry-point panel: open when the polluted-stretch line is clicked.
+  const [selectedPrs, setSelectedPrs] = useState(false);
+  const [prsData, setPrsData] = useState<PrsData | null>(null);
+  // True when a gap unit was opened FROM the PRS panel, so the gap panel can
+  // offer a "back to PRS" affordance.
+  const [gapFromPrs, setGapFromPrs] = useState(false);
+  // Reveal the 2020 stretch alongside 2025 to show how the polluted reach grew.
+  const [showGrowth, setShowGrowth] = useState(false);
   const [data, setData] = useState<Record<string, FC | null>>({});
   const [coachDismissed, setCoachDismissed] = useState(true);
-  // Either panel can be collapsed to see the map alone.
-  const [railOpen, setRailOpen] = useState(true);
+  // Either panel can be collapsed to see the map alone. On phones the map is
+  // the calm resting state, so the layers panel starts closed (tap "Layers" to
+  // open it as a bottom sheet); on desktop the sidebar starts open. The atlas
+  // is client-only (ssr:false) so `window` is available here.
+  const [railOpen, setRailOpen] = useState(() =>
+    typeof window === "undefined" ? true : window.innerWidth >= 768,
+  );
+  // On phones the layers panel and a detail panel are both bottom sheets, so
+  // opening a detail selection closes the layers sheet - they never stack.
+  const hasSelection = selectedRiverId != null || selectedFeature != null || selectedGapUnit != null || selectedPrs;
+  useEffect(() => {
+    if (hasSelection && typeof window !== "undefined" && window.innerWidth < 768) {
+      setRailOpen(false);
+    }
+  }, [hasSelection]);
   const fetchedRef = useRef<Set<string>>(new Set());
   const didDefaultGapRef = useRef(false);
 
@@ -194,6 +354,57 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     typeof window.matchMedia === "function" &&
     window.matchMedia("(pointer: coarse)").matches;
 
+  // "Where am I?" - drop a pin at the visitor's own location so they can read
+  // the polluted stretches / industrial areas nearest them. Generic to any
+  // basin (uses the loaded footprint to tell inside-basin from outside).
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [locateMsg, setLocateMsg] = useState<{ tone: "info" | "warn" | "error"; text: string } | null>(null);
+
+  // Extent of everything currently drawn = a good-enough footprint of the basin
+  // for an inside/outside check (recomputed as layers stream in).
+  const basinBounds = useMemo(() => {
+    const feats = Object.values(data).flatMap((fc) => fc?.features ?? []);
+    if (!feats.length) return null;
+    const b = L.geoJSON({ type: "FeatureCollection", features: feats } as FC).getBounds();
+    return b.isValid() ? b : null;
+  }, [data]);
+
+  function locateMe() {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setLocateMsg({ tone: "error", text: "Location isn't available in this browser." });
+      return;
+    }
+    setLocating(true);
+    setLocateMsg(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        setUserLocation({ lat: latitude, lng: longitude, accuracy });
+        setLocating(false);
+        const here = L.latLng(latitude, longitude);
+        if (basinBounds && !basinBounds.contains(here)) {
+          setLocateMsg({ tone: "warn", text: `You're outside the mapped basin. Showing your location and the basin together.` });
+        } else {
+          setLocateMsg({ tone: "info", text: "You are here. Zoom in to see the stretches and areas nearest you." });
+        }
+      },
+      (err) => {
+        setLocating(false);
+        setLocateMsg({
+          tone: "error",
+          text:
+            err.code === err.PERMISSION_DENIED
+              ? "Location is blocked. Click the lock / location icon in your browser's address bar, set Location to Allow, then try again."
+              : err.code === err.POSITION_UNAVAILABLE
+                ? "Your location is unavailable. Check that location services are on for your browser (macOS: System Settings > Privacy & Security > Location Services)."
+                : "Couldn't get your location in time. Please try again.",
+        });
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+    );
+  }
+
   // URL <-> state (?river= & ?level=), via replaceState (no full navigation).
   // Skipped when embedded as an overlay so we don't clobber the rivers-page URL.
   // Cross-source gap intelligence for the gap layer's click panel (optional).
@@ -202,6 +413,14 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       .then((d) => setGapData(((d as unknown as { units?: Record<string, GapUnit> })?.units) ?? {}))
       .catch(() => setGapData({}));
   }, [manifest.basinId]);
+
+  // PRS panel content (optional; only basins with a prs layer ship prs.json).
+  useEffect(() => {
+    if (!manifest.layers.some((l) => l.prs)) return;
+    fetchJson(`/data/basins/${manifest.basinId}/prs.json`)
+      .then((d) => setPrsData((d as unknown as PrsData) ?? null))
+      .catch(() => setPrsData(null));
+  }, [manifest.basinId, manifest.layers]);
 
   // On phones the layers panel is an off-canvas drawer; start it closed so the
   // map is full-screen, with the "Layers" tab to open it. Desktop keeps the
@@ -249,12 +468,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // its floor is focused). The checkbox is the single source of truth - zoom
   // never hides a checked layer. This also gates fetching.
   function shouldRender(l: BasinLayer): boolean {
-    // Fall back to the layer's defaultOn if its toggle key is missing (e.g. a
-    // layer added to the manifest after this state was initialised), so a
-    // default-on layer is never silently hidden.
-    if (!(enabled[l.family] ?? l.defaultOn)) return false;
-    if (!l.context && l.floor !== focusedFloor) return false;
-    return true;
+    // The checkbox is the single source of truth: a layer renders iff its
+    // toggle is on, regardless of which floor is focused. This lets layers from
+    // different floors be combined (e.g. the polluted stretch + treatment gaps).
+    // Fall back to defaultOn if the toggle key is missing (a layer added after
+    // this state was initialised), so a default-on layer is never silently hidden.
+    return enabled[l.family] ?? l.defaultOn;
   }
 
   // The data key a layer reads from: heavy + river selected -> per-shed merge.
@@ -315,6 +534,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     setSelectedRiverId(riverId);
     setSelectedFeature(null);
     setSelectedGapUnit(null);
+    setSelectedPrs(false);
   }
 
   // Restrict a feature collection to the selected river's sheds. Context layers
@@ -326,14 +546,18 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     // river has no sub-shed of its own (e.g. an artificial canal that cuts
     // across catchments) - in that case show the full layer rather than hiding
     // everything.
-    if (!selectedRiverId || layer.context || layer.gap || selectedSheds.size === 0)
+    // PRS is exempt too: the polluted stretch spans the whole river (no shedId),
+    // so a river selection must not filter it out.
+    if (!selectedRiverId || layer.context || layer.gap || layer.prs || selectedSheds.size === 0)
       return fc.features;
     return fc.features.filter((f) =>
       selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)),
     );
   }
 
-  const dim = (l: BasinLayer) => l.floor !== focusedFloor;
+  // No floor-based dimming: every enabled layer draws at full strength so
+  // cross-floor combinations read equally (the rail still groups by floor).
+  const dim = () => false;
 
   // Per-floor feature counts for the rail (from inventory).
   const floorCounts = useMemo(() => {
@@ -357,6 +581,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   );
 
   const visibleLayers = orderedLayers.filter(shouldRender);
+  // The growth toggle is only meaningful when the PRS layer is on the map AND
+  // there is more than one survey year to compare.
+  const prsVisible =
+    manifest.layers.some((l) => l.prs && shouldRender(l)) &&
+    (data["prs"]?.features?.length ?? 0) > 1;
 
   // Derived insight (Madhuri's CAG ask): when the pressures layer is shown,
   // how many industrial areas have no CETP nearby - computed live from the data.
@@ -384,7 +613,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         />
       )}
       {railOpen && (
-      <div className="bg-white dark:bg-slate-900 overflow-y-auto fixed inset-y-0 left-0 z-[1200] w-[84%] max-w-xs shadow-2xl md:static md:z-auto md:w-60 md:max-w-none md:shadow-none md:shrink-0 md:border-r border-slate-200 dark:border-slate-700">
+      <div className="bg-white dark:bg-slate-900 overflow-y-auto overscroll-contain fixed inset-x-0 bottom-0 z-[1200] max-h-[72vh] rounded-t-2xl shadow-2xl md:static md:inset-auto md:max-h-none md:rounded-none md:z-auto md:w-60 md:shadow-none md:shrink-0 md:border-r border-slate-200 dark:border-slate-700">
+        {/* Grab handle - mobile bottom-sheet affordance; tap to close. */}
+        <button
+          aria-label="Close layers panel"
+          onClick={() => setRailOpen(false)}
+          className="md:hidden sticky top-0 z-10 w-full flex items-center justify-center py-2.5 bg-white/95 dark:bg-slate-900/95"
+        >
+          <span className="w-10 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600" />
+        </button>
         <div className="p-3 border-b border-slate-200 dark:border-slate-700">
           <div className="text-[10px] uppercase tracking-wide text-slate-400">{cityDisplayName}</div>
           <div className="flex items-start justify-between gap-2">
@@ -401,11 +638,17 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           {manifest.displayNameLocal && (
             <div className="text-xs text-slate-500 dark:text-slate-400">{manifest.displayNameLocal}</div>
           )}
-          {/* Basin intro - desktop rail only (mobile rail stays compact). */}
-          <p className="hidden md:block mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">{manifest.blurb}</p>
-          {manifest.areaKm2 && (
-            <p className="hidden md:block mt-1 text-[11px] text-slate-400">Basin area ~{manifest.areaKm2.toLocaleString()} km².</p>
-          )}
+          {/* Basin intro - desktop rail only, collapsed by default to save space. */}
+          <details className="hidden md:block group mt-2">
+            <summary className="cursor-pointer list-none flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+              <span aria-hidden className="text-slate-400 group-open:rotate-90 transition-transform">▸</span>
+              About this basin
+            </summary>
+            <p className="mt-1.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">{manifest.blurb}</p>
+            {manifest.areaKm2 && (
+              <p className="mt-1 text-[11px] text-slate-400">Basin area ~{manifest.areaKm2.toLocaleString()} km².</p>
+            )}
+          </details>
           {selectedRiver && (
             <button
               onClick={() => selectRiver(null)}
@@ -418,32 +661,50 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
         <div className="block">
           {FLOORS.map((f, i) => {
-            const active = f.id === focusedFloor;
+            const open = expandedFloors.has(f.id);
+            const onCount = floorLayers(f.id).filter((l) => enabled[l.family] ?? l.defaultOn).length;
             return (
               <div key={f.id}>
                 <button
-                  onClick={() => setFocusedFloor(f.id)}
+                  onClick={() => {
+                    setFocusedFloor(f.id);
+                    setExpandedFloors((s) => {
+                      const next = new Set(s);
+                      if (next.has(f.id)) next.delete(f.id);
+                      else next.add(f.id);
+                      return next;
+                    });
+                  }}
+                  aria-expanded={open}
                   className={`w-full text-left px-3 py-2.5 border-l-4 transition-colors ${
-                    active
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950/40"
+                    open
+                      ? "border-blue-500 bg-blue-50/60 dark:bg-blue-950/30"
                       : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/60"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className={`text-sm font-semibold ${active ? "text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-300"}`}>
+                    <span className={`flex items-center text-sm font-semibold ${open ? "text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-300"}`}>
+                      <span aria-hidden className={`mr-1 text-slate-400 transition-transform ${open ? "rotate-90" : ""}`}>▸</span>
                       <span className="text-[10px] font-mono text-slate-400 mr-1">{i + 1}</span>
                       {f.label}
                     </span>
-                    {floorCounts[f.id] > 0 && (
-                      <span className="text-[10px] tabular-nums text-slate-400">{floorCounts[f.id]}</span>
-                    )}
+                    <span className="flex items-center gap-1.5 shrink-0">
+                      {onCount > 0 && (
+                        <span className="text-[9px] font-medium text-blue-600 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/50 rounded px-1 py-0.5 tabular-nums">{onCount} on</span>
+                      )}
+                      {floorCounts[f.id] > 0 && (
+                        <span className="text-[10px] tabular-nums text-slate-400">{floorCounts[f.id]}</span>
+                      )}
+                    </span>
                   </div>
-                  <div className="text-[10px] text-slate-400 dark:text-slate-500">{f.sub}</div>
+                  <div className="text-[10px] text-slate-400 dark:text-slate-500 pl-4">{f.sub}{!open && onCount === 0 ? " · open to explore" : ""}</div>
                 </button>
 
-                {/* Per-floor layer toggles, only under the focused floor. */}
-                {active && (
-                  <div className="px-3 pb-2 pt-1 space-y-1">
+                {/* Per-floor layer toggles, shown when the floor is expanded.
+                    Collapsing only hides the list - enabled layers stay on the
+                    map, so cross-floor combinations persist (checkbox-only). */}
+                {open && (
+                <div className="px-3 pb-2 pt-1 space-y-1">
                     {floorLayers(f.id).map((l) => {
                       const inv = inventory?.families[l.family];
                       return (
@@ -495,10 +756,22 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (!shouldRender(l)) return null;
             const fc = data[dataKey(l)];
             if (!fc) return null;
-            const feats = scoped(fc, l);
+            let feats = scoped(fc, l);
+            // PRS: by default only the latest year's stretch is shown; the
+            // growth toggle reveals the earlier year too. Sort so the EARLIER
+            // (2020) line draws on top of the later (2025) one, so the segments
+            // left red are exactly the 2020->2025 growth.
+            if (l.prs) {
+              const years = feats.map((f) => Number((f.properties as Record<string, unknown>)?.year));
+              const maxYear = years.length ? Math.max(...years) : 0;
+              feats = feats
+                .filter((f) => showGrowth || Number((f.properties as Record<string, unknown>)?.year) === maxYear)
+                .slice()
+                .sort((a, b) => Number((b.properties as Record<string, unknown>)?.year) - Number((a.properties as Record<string, unknown>)?.year));
+            }
             if (!feats.length) return null;
             const fcScoped: FC = { type: "FeatureCollection", features: feats };
-            const faded = dim(l);
+            const faded = dim();
 
             // Gap layer: only the choropleth FILL is drawn here (at the very
             // bottom, drawRank -1, non-interactive) so it never sits over or
@@ -550,12 +823,16 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (l.geom === "line") {
               return (
                 <GeoJSON
-                  key={`${l.family}-${selectedRiverId}-${tiles.isDark}`}
+                  key={`${l.family}-${selectedRiverId}-${tiles.isDark}${l.prs ? `-${showGrowth}` : ""}`}
                   data={fcScoped}
-                  style={(feat?: Feature) => lineStyle(l, feat, manifest, selectedRiverId, faded)}
-                  interactive={l.family === "rivers"}
+                  style={(feat?: Feature) => lineStyle(l, feat, manifest, selectedRiverId, faded, l.prs && showGrowth)}
+                  interactive={l.family === "rivers" || !!l.prs}
                   onEachFeature={(feat: Feature, layer: Layer) => {
-                    if (l.family === "rivers") {
+                    if (l.prs) {
+                      const pp = (feat.properties ?? {}) as Record<string, unknown>;
+                      layer.bindTooltip(String(pp?.label ?? "Polluted river stretch") + " - click to see how & why", { sticky: true });
+                      layer.on("click", () => { setSelectedPrs(true); setSelectedFeature(null); setSelectedGapUnit(null); });
+                    } else if (l.family === "rivers") {
                       const rprops = feat.properties as Record<string, unknown>;
                       const rid = String(rprops?.riverId ?? rprops?.river_id ?? "");
                       const r = manifest.rivers.find((x) => x.riverId === rid);
@@ -580,7 +857,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   onEachFeature={(feat: Feature, layer: Layer) => {
                     const p = (feat.properties ?? {}) as Record<string, unknown>;
                     layer.bindTooltip(tipLabel(p, l), { sticky: true });
-                    layer.on("click", () => { setSelectedFeature({ family: l.family, props: p }); setSelectedGapUnit(null); });
+                    layer.on("click", () => { setSelectedFeature({ family: l.family, props: p }); setSelectedGapUnit(null); setSelectedPrs(false); });
                   }}
                 />
               );
@@ -607,7 +884,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   if (isBase) return;
                   const p = (feat.properties ?? {}) as Record<string, unknown>;
                   layer.bindTooltip(isAdmin ? adminTip(p) : tipLabel(p, l), { sticky: true });
-                  layer.on("click", () => { setSelectedFeature({ family: l.family, props: p }); setSelectedGapUnit(null); });
+                  layer.on("click", () => { setSelectedFeature({ family: l.family, props: p }); setSelectedGapUnit(null); setSelectedPrs(false); });
                 }}
               />
             );
@@ -649,14 +926,71 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                       fillColor: dimmed ? "#94a3b8" : sevColor,
                       fillOpacity: dimmed ? 0.35 : 0.85,
                     }}
-                    eventHandlers={{ click: () => { setSelectedGapUnit(unit); setSelectedFeature(null); } }}
+                    eventHandlers={{ click: () => { setSelectedGapUnit(unit); setSelectedFeature(null); setSelectedPrs(false); setGapFromPrs(false); } }}
                   >
                     <Tooltip sticky>{name}{pi > 0 ? " (detached part)" : ""} - click for treatment &amp; waste gaps</Tooltip>
                   </CircleMarker>
                 ));
             });
           })}
+
+          {/* Visitor's own location: an accuracy ring + a solid blue dot, drawn
+              last so it sits on top of every layer. */}
+          <LocateFlyer location={userLocation} basinBounds={basinBounds} />
+          {userLocation && (
+            <>
+              {userLocation.accuracy > 0 && userLocation.accuracy < 5000 && (
+                <Circle
+                  center={[userLocation.lat, userLocation.lng]}
+                  radius={userLocation.accuracy}
+                  interactive={false}
+                  pathOptions={{ color: "#2563eb", weight: 1, fillColor: "#3b82f6", fillOpacity: 0.12 }}
+                />
+              )}
+              <CircleMarker
+                center={[userLocation.lat, userLocation.lng]}
+                radius={coarsePointer ? 9 : 7}
+                pathOptions={{ color: "#ffffff", weight: 2.5, fillColor: "#2563eb", fillOpacity: 1 }}
+              >
+                <Tooltip direction="top">You are here</Tooltip>
+              </CircleMarker>
+            </>
+          )}
         </MapContainer>
+
+        {/* "Where am I?" control + status. Bottom-right, lifted above the zoom
+            control; the bottom-left corner is taken by the MapLegend. */}
+        <div className="absolute bottom-24 right-3 z-[500] flex flex-col items-end gap-1.5 max-w-[70%]">
+          {locateMsg && (
+            <div
+              className={`rounded-md shadow px-3 py-1.5 text-[11px] leading-snug flex items-start gap-2 border ${
+                locateMsg.tone === "error"
+                  ? "bg-rose-50 dark:bg-rose-950/70 text-rose-800 dark:text-rose-200 border-rose-200 dark:border-rose-800"
+                  : locateMsg.tone === "warn"
+                    ? "bg-amber-50 dark:bg-amber-950/70 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800"
+                    : "bg-white/95 dark:bg-slate-900/95 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700"
+              }`}
+            >
+              <span>{locateMsg.text}</span>
+              <button
+                onClick={() => { setLocateMsg(null); setUserLocation(null); }}
+                aria-label="Dismiss"
+                className="shrink-0 opacity-60 hover:opacity-100 font-semibold"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+          <button
+            onClick={locateMe}
+            disabled={locating}
+            aria-label="Show my location on the map"
+            className="rounded-md shadow px-3 py-1.5 text-xs font-medium border bg-white/95 dark:bg-slate-900/95 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-60 flex items-center gap-1.5"
+          >
+            <span aria-hidden>◎</span>
+            {locating ? "Locating…" : userLocation ? "Recenter on me" : "Where am I?"}
+          </button>
+        </div>
 
         {/* Back to the rivers map (only when opened as an overlay). */}
         {embedded && onClose && (
@@ -671,9 +1005,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         {/* Reset: clears ANY active selection (river scope, gap unit, or clicked
             feature) so every layer shows basin-wide and nothing is greyed out,
             and flies back to the overview. */}
-        {(selectedRiverId || selectedGapUnit || selectedFeature) && (
+        {(selectedRiverId || selectedGapUnit || selectedFeature || selectedPrs) && (
           <button
-            onClick={() => { setSelectedGapUnit(null); setSelectedFeature(null); selectRiver(null); }}
+            onClick={() => { setSelectedGapUnit(null); setSelectedFeature(null); setSelectedPrs(false); setGapFromPrs(false); selectRiver(null); }}
             className="absolute top-3 right-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-md shadow px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             ↺ Reset{selectedRiver ? " to whole basin" : ""}
@@ -693,6 +1027,44 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           </div>
         )}
 
+        {/* Growth toggle: reveal the 2020 stretch under the 2025 one so the
+            orange->red growth of the polluted reach reads on the map. Top-right,
+            below the Reset button (which only shows when something is selected). */}
+        {prsVisible && (
+          <div className={`absolute ${(selectedRiverId || selectedGapUnit || selectedFeature || selectedPrs) ? "top-14" : "top-3"} right-3 z-[500] flex flex-col items-end gap-1`}>
+            {!selectedPrs && (
+              <button
+                onClick={() => { setSelectedPrs(true); setSelectedFeature(null); setSelectedGapUnit(null); setGapFromPrs(false); }}
+                className="rounded-md shadow px-3 py-1.5 text-xs font-semibold border bg-rose-600 hover:bg-rose-700 text-white border-rose-700 flex items-center gap-1.5"
+              >
+                <span aria-hidden className="inline-block w-3 h-[3px] rounded bg-white/90" />
+                Explore the polluted stretch →
+              </button>
+            )}
+            <button
+              onClick={() => setShowGrowth((v) => !v)}
+              aria-pressed={showGrowth}
+              className={`rounded-md shadow px-3 py-1.5 text-xs font-medium border ${
+                showGrowth
+                  ? "bg-slate-900 text-white border-slate-900"
+                  : "bg-white/95 dark:bg-slate-900/95 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800"
+              }`}
+            >
+              {showGrowth ? "Hide growth" : "Show how the stretch grew"}
+            </button>
+            <div className="flex flex-col items-end gap-1 bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-[10px] text-slate-600 dark:text-slate-300 shadow">
+              {showGrowth ? (
+                <>
+                  <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-[3px] rounded" style={{ backgroundColor: "#f97316" }} />polluted by 2020 (Priority III)</span>
+                  <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-[2px] rounded" style={{ backgroundColor: "#dc2626" }} />added by 2025 → now Priority I</span>
+                </>
+              ) : (
+                <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-[2px] rounded" style={{ backgroundColor: "#dc2626" }} />polluted stretch, 2025 (Priority I)</span>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Reopen the layers drawer/sidebar when collapsed (left-edge tab). */}
         {!railOpen && (
           <button
@@ -705,17 +1077,36 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         )}
         {/* Legend - reflects what's currently visible. Raised above the mobile
             bottom sheet when a detail panel is open so it isn't covered. */}
-        <MapLegend layers={visibleLayers} notes={legendNotes} raised={!!(selectedGapUnit || selectedFeature || selectedRiver)} />
+        <MapLegend layers={visibleLayers} notes={legendNotes} raised={!!(selectedGapUnit || selectedFeature || selectedRiver || selectedPrs)} />
       </div>
 
       {/* ── Detail panel: draggable bottom sheet on mobile, sidebar on desktop
            (shared BottomSheet, matching the rivers map). Shown when a river,
            feature or gap is selected; closing clears the selection. ── */}
-      {(selectedGapUnit || selectedFeature || selectedRiver) && (
-        <BottomSheet onClose={() => { setSelectedGapUnit(null); setSelectedFeature(null); selectRiver(null); }}>
+      {(selectedGapUnit || selectedFeature || selectedRiver || selectedPrs) && (
+        <BottomSheet onClose={() => { setSelectedGapUnit(null); setSelectedFeature(null); setSelectedPrs(false); setGapFromPrs(false); selectRiver(null); }}>
           <div className="p-5 text-sm">
-            {selectedGapUnit && gapData[selectedGapUnit] ? (
-              <GapPanel unit={gapData[selectedGapUnit]} onClose={() => setSelectedGapUnit(null)} />
+            {selectedPrs && prsData ? (
+              <PRSPanel
+                prs={prsData}
+                layerByFamily={layerByFamily}
+                onOpenUnit={(u) => { setSelectedPrs(false); setSelectedFeature(null); setSelectedGapUnit(u); setGapFromPrs(true); }}
+                onShowLayer={(family) => {
+                  const lyr = layerByFamily[family];
+                  setEnabled((s) => ({ ...s, [family]: true }));
+                  if (lyr) {
+                    setFocusedFloor(lyr.floor);
+                    setExpandedFloors((s) => { const n = new Set(s); n.add(lyr.floor); return n; });
+                  }
+                }}
+                onClose={() => setSelectedPrs(false)}
+              />
+            ) : selectedGapUnit && gapData[selectedGapUnit] ? (
+              <GapPanel
+                unit={gapData[selectedGapUnit]}
+                onClose={() => { setSelectedGapUnit(null); setGapFromPrs(false); }}
+                onBack={gapFromPrs ? () => { setSelectedGapUnit(null); setGapFromPrs(false); setSelectedPrs(true); } : undefined}
+              />
             ) : selectedFeature ? (
               renderFeatureDetail?.({
                 family: selectedFeature.family,
@@ -862,7 +1253,21 @@ function shedStyle(feat: Feature | undefined, selectedSheds: Set<string>, faded:
   };
 }
 
-function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinManifest, selectedRiverId: string | null, faded: boolean): PathOptions {
+function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinManifest, selectedRiverId: string | null, faded: boolean, showGrowth = false): PathOptions {
+  if (l.prs) {
+    const yr = Number((feat?.properties as Record<string, unknown>)?.year);
+    const isLatest = yr >= 2025;
+    if (showGrowth) {
+      // Growth view: the 2020 reach is drawn LAST (on top) as a thick orange
+      // line that fully covers the red beneath it on the shared length; the
+      // 2025 red therefore only shows where the stretch EXTENDED - the growth.
+      return isLatest
+        ? { color: "#dc2626", weight: 4, opacity: 0.95 }
+        : { color: "#f97316", weight: 8, opacity: 1 };
+    }
+    // Default: just the current (latest) stretch, red.
+    return { color: "#dc2626", weight: 5, opacity: faded ? 0.5 : 0.95 };
+  }
   if (l.family === "rivers") {
     const rprops = feat?.properties as Record<string, unknown>;
     const rid = String(rprops?.riverId ?? rprops?.river_id ?? "");
@@ -1056,11 +1461,410 @@ function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown
   );
 }
 
+/** Priority chip colour: CPCB band I/II = worst (red), III-V progressively less. */
+function priorityClass(p: string): string {
+  const worst = p === "I" || p === "II";
+  return worst
+    ? "bg-rose-600 text-white"
+    : "bg-amber-500 text-white";
+}
+
+/** PRS (Polluted River Stretch) entry-point panel: lead with the conclusion
+ *  (the stretch grew + worsened), the constructive BOD caveat, then the
+ *  stressor themes as collapsible sub-sections that reuse the gaps data already
+ *  loaded, each linking into that unit's full cross-source GapPanel. */
+function PRSPanel({
+  prs,
+  layerByFamily,
+  onOpenUnit,
+  onShowLayer,
+  onClose,
+}: {
+  prs: PrsData;
+  layerByFamily: Record<string, BasinLayer>;
+  onOpenUnit: (unit: string) => void;
+  onShowLayer: (family: string) => void;
+  onClose: () => void;
+}) {
+  const firstSubKey = (t?: PrsTab) => t?.units?.[0]?.key ?? t?.categories?.[0]?.key ?? "";
+  const [openArea, setOpenArea] = useState<string | null>(null);
+  const [subKey, setSubKey] = useState<string>("");
+  const openTab = openArea ? prs.tabs.find((t) => t.key === openArea) ?? null : null;
+  const subs = openTab ? openTab.units ?? openTab.categories ?? [] : [];
+  const unit = openTab?.units?.find((u) => u.key === subKey) ?? openTab?.units?.[0];
+  const cat = openTab?.categories?.find((c) => c.key === subKey) ?? openTab?.categories?.[0];
+  const openAreaFn = (t: PrsTab) => { setOpenArea(t.key); setSubKey(firstSubKey(t)); };
+  const maxKm = Math.max(prs.comparison.y2020.length_km, prs.comparison.y2025.length_km) || 1;
+  const rows = [
+    { year: "2020", ...prs.comparison.y2020, accent: "#fb7185" },
+    { year: "2025", ...prs.comparison.y2025, accent: "#b91c1c" },
+  ];
+  const badgeTone: Record<string, string> = {
+    bad: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
+    warn: "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
+    neutral: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+    good: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
+  };
+
+  // ── Level 2: one area's detail ──
+  if (openTab) {
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <button onClick={() => setOpenArea(null)} className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+            ← All stressors
+          </button>
+          <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+            <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">{openTab.label}</h2>
+        {openTab.intro && <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed">{openTab.intro}</p>}
+        {subs.length > 1 && (
+          <div className="flex flex-wrap gap-1">
+            {subs.map((s) => {
+              const name = "name" in s ? s.name : s.label;
+              const on = s.key === (unit?.key ?? cat?.key);
+              return (
+                <button
+                  key={s.key}
+                  onClick={() => setSubKey(s.key)}
+                  className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
+                    on
+                      ? "bg-rose-600 text-white border-rose-600"
+                      : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+                  }`}
+                >
+                  {name}
+                </button>
+              );
+            })}
+          </div>
+        )}
+        {openTab.units && unit && (
+          <UnitTimeline unit={unit} unitLabel={openTab.unitLabel ?? "MLD"} treatedVerb={openTab.treatedVerb ?? "treated"} onOpenUnit={onOpenUnit} />
+        )}
+        {openTab.categories && cat && (
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-3">
+            {cat.level && (
+              <span className="inline-block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">Reported at: {cat.level}</span>
+            )}
+            {cat.noData ? (
+              <p className="text-[13px] text-slate-500 dark:text-slate-400">No known public data yet for {cat.label} along this stretch.</p>
+            ) : (
+              <>
+                {cat.body && <p className="text-[13px] font-medium text-slate-700 dark:text-slate-200 leading-relaxed">{cat.body}</p>}
+                {cat.points && cat.points.length > 0 && (
+                  <ul className="space-y-2.5">
+                    {cat.points.map((p, i) => {
+                      const ci = p.indexOf(": ");
+                      const hasLabel = ci > 0 && ci <= 42;
+                      const label = hasLabel ? p.slice(0, ci) : null;
+                      const rest = hasLabel ? p.slice(ci + 2) : p;
+                      return (
+                        <li key={i} className="flex gap-2 text-[13px] text-slate-700 dark:text-slate-200 leading-relaxed">
+                          <span aria-hidden className="mt-[7px] w-1.5 h-1.5 rounded-full bg-rose-400 dark:bg-rose-500 shrink-0" />
+                          <span>
+                            {label && <span className="font-semibold text-slate-900 dark:text-slate-100">{label}. </span>}
+                            {rest}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+                {cat.layerRef && layerByFamily[cat.layerRef] && (
+                  <button onClick={() => onShowLayer(cat.layerRef!)} className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                    Show {layerByFamily[cat.layerRef].label} on the map →
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        )}
+        {openTab.source && <p className="text-[10px] text-slate-400">Source: {openTab.source}</p>}
+      </div>
+    );
+  }
+
+  // ── Level 1: summary ──
+  return (
+    <div className="space-y-3.5">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <div className="text-[11px] uppercase tracking-wider text-rose-500">Polluted river stretch (PRS)</div>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 leading-snug">{prs.river}</h2>
+          <p className="text-[11px] text-slate-400">{prs.stretchName}</p>
+        </div>
+        <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+          <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+
+      {/* Conclusion */}
+      <div className="rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-3">
+        <div className="flex items-start gap-2">
+          <span aria-hidden className="mt-0.5 text-rose-500 shrink-0">▶</span>
+          <p className="text-[13px] font-semibold text-rose-900 dark:text-rose-100 leading-relaxed">{prs.conclusion}</p>
+        </div>
+      </div>
+
+      {/* 2020 vs 2025 bars */}
+      <div className="space-y-2">
+        {rows.map((r) => (
+          <div key={r.year} className="flex items-center gap-2">
+            <span className="text-[11px] font-mono text-slate-500 w-9 shrink-0">{r.year}</span>
+            <div className="flex-1 h-4 rounded-sm bg-slate-100 dark:bg-slate-800 overflow-hidden">
+              <div className="h-full rounded-sm" style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
+            </div>
+            <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 w-14 text-right shrink-0">{r.length_km} km</span>
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>Pri {r.priority}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Status list - the per-area summary; tap a row for detail + trend */}
+      <section>
+        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Stressors <span className="normal-case font-normal text-slate-400">(tap for detail &amp; trend)</span></div>
+        <div className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-200 dark:divide-slate-700">
+          {prs.tabs.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => openAreaFn(t)}
+              className="w-full text-left flex items-center gap-2 px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/60"
+            >
+              {t.summaryBadge && (
+                <span className={`text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 w-[88px] text-center ${badgeTone[t.summaryTone ?? "neutral"]}`}>{t.summaryBadge}</span>
+              )}
+              <span className="flex-1 min-w-0">
+                <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-100">{t.label}</span>
+                {t.summaryLine && <span className="block text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{t.summaryLine}</span>}
+              </span>
+              <span aria-hidden className="text-slate-400 shrink-0">›</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Evidence (collapsed; the "beyond BOD" beat) */}
+      {prs.evidence && (
+        <details className="group rounded-md border border-slate-200 dark:border-slate-700">
+          <summary className="cursor-pointer list-none p-2.5 flex items-start gap-1.5">
+            <span aria-hidden className="text-slate-400 group-open:rotate-90 transition-transform mt-0.5">▸</span>
+            <span className="flex-1">
+              <span className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">Evidence of pollution</span>
+              <span className="block text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{prs.evidence.headline}</span>
+            </span>
+          </summary>
+          <div className="px-2.5 pb-2.5 pt-0.5">
+            <ul className="space-y-1 list-disc pl-4">
+              {prs.evidence.points.map((p, i) => (
+                <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{p}</li>
+              ))}
+            </ul>
+            {prs.evidence.layerRef && layerByFamily[prs.evidence.layerRef] && (
+              <button onClick={() => onShowLayer(prs.evidence!.layerRef!)} className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                Show {layerByFamily[prs.evidence.layerRef].label} on the map →
+              </button>
+            )}
+          </div>
+        </details>
+      )}
+
+      {/* Report a problem (action) */}
+      {prs.grievance && (
+        <a
+          href={prs.grievance.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-semibold px-3 py-2"
+        >
+          {prs.grievance.label} →
+        </a>
+      )}
+
+      {/* Footer disclosures - everything else, one tap deep */}
+      <PrsDisclosure label="Priority, methodology & data coverage">
+        {prs.reportingCaveat && <p className="text-[12px] text-slate-700 dark:text-slate-200 font-medium leading-relaxed">{prs.reportingCaveat}</p>}
+        {prs.growthNote && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed">{prs.growthNote}</p>}
+        {prs.priorityNote && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed">{prs.priorityNote}</p>}
+        {prs.bodCaveat && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed">{prs.bodCaveat}</p>}
+        {prs.mprOverview && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed">{prs.mprOverview}</p>}
+        {prs.levelCoverage && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed"><span className="font-semibold">Reporting level: </span>{prs.levelCoverage}</p>}
+      </PrsDisclosure>
+
+      {prs.knownGaps && prs.knownGaps.length > 0 && (
+        <PrsDisclosure label="Data we don't have yet">
+          <ul className="space-y-1 list-disc pl-4">
+            {prs.knownGaps.map((g, i) => (
+              <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{g}</li>
+            ))}
+          </ul>
+        </PrsDisclosure>
+      )}
+
+      {prs.sources && prs.sources.length > 0 && (
+        <PrsDisclosure label="Sources">
+          <ul className="space-y-0.5">
+            {prs.sources.map((s, i) => (
+              <li key={i} className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{s}</li>
+            ))}
+          </ul>
+        </PrsDisclosure>
+      )}
+      {prs.grievance?.urlNote && <p className="text-[10px] text-slate-400 italic">{prs.grievance.urlNote}</p>}
+    </div>
+  );
+}
+
+/** Small collapsible used for the PRS summary's footer meta sections. */
+function PrsDisclosure({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <details className="group border-t border-slate-200 dark:border-slate-700 pt-2">
+      <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+        <span aria-hidden className="text-slate-400 group-open:rotate-90 transition-transform">▸</span>
+        {label}
+      </summary>
+      <div className="mt-1.5 space-y-1.5">{children}</div>
+    </details>
+  );
+}
+
+/** One year's generated-vs-treated bar: a single bar scaled to GENERATED,
+ *  split into a treated/processed segment (blue) + an untreated-gap segment
+ *  (red). When only one side is reported for a year, the bar is shown honestly
+ *  (neutral / treated-only) rather than inventing a gap. `unit` = MLD | TPD. */
+function GenTreatedBar({ year, gen, treated, max, unit }: { year: number; gen?: number; treated?: number; max: number; unit: string }) {
+  const w = (v: number) => `${Math.max(0, (v / max) * 100)}%`;
+  let segments: ReactNode;
+  let value: string;
+  if (gen != null && treated != null) {
+    const tr = Math.min(treated, gen);
+    segments = (
+      <>
+        <div style={{ width: w(tr), backgroundColor: "#3b82f6" }} title="treated/processed" />
+        <div style={{ width: w(gen - tr), backgroundColor: "#b91c1c" }} title="gap" />
+      </>
+    );
+    value = `${treated} / ${gen} ${unit}`;
+  } else if (gen != null) {
+    segments = <div style={{ width: w(gen), backgroundColor: "#94a3b8" }} title="generated (treatment not reported)" />;
+    value = `${gen} ${unit} gen`;
+  } else if (treated != null) {
+    segments = <div style={{ width: w(treated), backgroundColor: "#3b82f6" }} title="treated/processed" />;
+    value = `${treated} ${unit}`;
+  } else {
+    segments = null;
+    value = "n/r";
+  }
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[10px] font-mono text-slate-400 w-8 shrink-0">{year}</span>
+      <div className="flex-1 h-4 rounded-sm bg-slate-100 dark:bg-slate-800 overflow-hidden flex">{segments}</div>
+      <span className="text-[10px] font-mono text-slate-500 dark:text-slate-300 w-24 text-right shrink-0">{value}</span>
+    </div>
+  );
+}
+
+/** A unit's dual-timeline: one generated-vs-treated bar per year, then the
+ *  infrastructure built + status. Generic over the quantity unit (MLD/TPD) and
+ *  the treatment verb (treated/processed), so Sewage and Solid waste reuse it. */
+function UnitTimeline({ unit, unitLabel, treatedVerb, onOpenUnit }: { unit: PrsUnit; unitLabel: string; treatedVerb: string; onOpenUnit: (u: string) => void }) {
+  const genBy = new Map(unit.generation.map((p) => [p.year, p.value]));
+  const trBy = new Map(unit.treated.map((p) => [p.year, p.value]));
+  const years = Array.from(new Set([...genBy.keys(), ...trBy.keys()])).sort((a, b) => a - b);
+  const maxV = Math.max(1, ...unit.generation.map((p) => p.value), ...unit.treated.map((p) => p.value));
+  const gapWord = treatedVerb === "processed" ? "unprocessed" : "untreated";
+  const toneColor: Record<string, string> = { good: "text-emerald-600", bad: "text-rose-600", neutral: "text-slate-400" };
+  return (
+    <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-3">
+      {unit.level && (
+        <div className="flex items-center gap-1.5">
+          <span className="text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">Reported at: {unit.level}</span>
+        </div>
+      )}
+      {unit.caveat && (
+        <p className="text-[11px] text-amber-700 dark:text-amber-300 leading-snug">⚠ {unit.caveat}</p>
+      )}
+
+      {/* Track 1: generated vs treated/processed, one bar per year */}
+      <div>
+        <div className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Generated vs {treatedVerb} ({unitLabel}/year)</div>
+        {years.length > 0 ? (
+          <>
+            <div className="space-y-1">
+              {years.map((y) => (
+                <GenTreatedBar key={y} year={y} gen={genBy.get(y)} treated={trBy.get(y)} max={maxV} unit={unitLabel} />
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1.5 text-[9px] text-slate-500 dark:text-slate-400">
+              <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2 rounded-sm" style={{ backgroundColor: "#3b82f6" }} />{treatedVerb}</span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2 rounded-sm" style={{ backgroundColor: "#b91c1c" }} />{gapWord} gap</span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2 rounded-sm" style={{ backgroundColor: "#94a3b8" }} />not reported</span>
+            </div>
+          </>
+        ) : (
+          <p className="text-[11px] text-slate-400">{unit.generationNote ?? "Generation not separately reported."}</p>
+        )}
+        {years.length > 0 && unit.generationNote && (
+          <p className="text-[10px] text-slate-400 mt-1 leading-snug">{unit.generationNote}</p>
+        )}
+        {typeof unit.gapValue === "number" && (
+          <div className="mt-2 rounded bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 p-1.5 text-[12px] text-rose-800 dark:text-rose-200 leading-snug">
+            ⚠ {gapWord.charAt(0).toUpperCase() + gapWord.slice(1)} gap {unit.gapValue} {unitLabel}{unit.gapNote ? ` - ${unit.gapNote}` : ""}
+          </div>
+        )}
+      </div>
+
+      {/* Track 2: infrastructure built + status */}
+      <div className="border-t border-slate-200 dark:border-slate-700 pt-2">
+        <div className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Infrastructure &amp; status</div>
+        {unit.capacity && <p className="text-[12px] text-slate-600 dark:text-slate-300">Capacity: {unit.capacity}</p>}
+        {unit.infrastructure && unit.infrastructure.length > 0 && (
+          <ul className="space-y-1 mt-1">
+            {unit.infrastructure.map((it, i) => (
+              <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 flex gap-1.5 leading-snug">
+                <span aria-hidden className={`${toneColor[it.tone ?? "neutral"]} shrink-0`}>●</span>
+                <span><span className="font-semibold">{it.label}:</span> {it.status}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {unit.dashboard && <p className="text-[11px] text-slate-400 mt-1">Public dashboard: {unit.dashboard}</p>}
+      </div>
+
+      {unit.otherStreams && unit.otherStreams.length > 0 && (
+        <div className="border-t border-slate-200 dark:border-slate-700 pt-2">
+          <div className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Other waste streams</div>
+          <ul className="space-y-0.5">
+            {unit.otherStreams.map((s, i) => (
+              <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">
+                <span className="font-semibold">{s.label}:</span> {s.value}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {unit.gapUnit && (
+        <button onClick={() => onOpenUnit(unit.gapUnit!)} className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+          View full cross-source detail →
+        </button>
+      )}
+    </div>
+  );
+}
+
 /** Cross-source treatment-gap panel: the "why does it persist" view - metrics,
  *  the gap over time, and what each document says, with citations. */
-function GapPanel({ unit, onClose }: { unit: GapUnit; onClose: () => void }) {
+function GapPanel({ unit, onClose, onBack }: { unit: GapUnit; onClose: () => void; onBack?: () => void }) {
   return (
     <div className="space-y-4">
+      {onBack && (
+        <button onClick={onBack} className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+          ← Back to polluted stretch
+        </button>
+      )}
       <div className="flex items-start justify-between gap-2">
         <div>
           <div className="text-[11px] uppercase tracking-wider text-rose-500">Treatment &amp; waste gaps{unit.level ? ` - ${unit.level}` : ""}</div>
@@ -1083,7 +1887,7 @@ function GapPanel({ unit, onClose }: { unit: GapUnit; onClose: () => void }) {
       )}
       {unit.conflicts && unit.conflicts.length > 0 && (
         <div className="rounded-md border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 p-2.5">
-          <div className="text-[11px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold mb-1">⚠ Source conflicts</div>
+          <div className="text-[11px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold mb-1">Points to reconcile across sources</div>
           <ul className="space-y-1 list-disc pl-4">
             {unit.conflicts.map((c, i) => (
               <li key={i} className="text-[12px] text-amber-800 dark:text-amber-200 leading-snug">{c}</li>
@@ -1330,8 +2134,6 @@ function DataOnThisMap({ manifest, inventory }: { manifest: BasinManifest; inven
             rel="noopener noreferrer"
             className="flex items-center gap-2.5 group rounded-md border border-slate-200 dark:border-slate-700 p-2 hover:bg-slate-50 dark:hover:bg-slate-800/60"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/partners/paani-earth-logo.png" alt="Paani Earth Foundation" width={36} height={36} className="rounded shrink-0" />
             <span className="leading-tight">
               <span className="block text-[10px] uppercase tracking-wider text-slate-400">Data partner</span>
               <span className="block text-slate-700 dark:text-slate-200 font-semibold group-hover:underline">Paani Earth Foundation</span>
