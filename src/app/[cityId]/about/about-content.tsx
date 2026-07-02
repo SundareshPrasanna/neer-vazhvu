@@ -1138,6 +1138,12 @@ export function CityAboutContent({
                 description="Karnataka State Pollution Control Board's online continuous effluent monitoring system for red-category industries. Public-facing dashboard is intermittent and partial; cross-check reference for the curated industrial sources list."
                 frequency="real-time (when feed is up)"
               />
+              <DataSource
+                name="Arkavathi Polluted River Stretch (PRS) surface"
+                url={`/${config.cityId}/rivers`}
+                description="The polluted-stretch entry point on the basin atlas: the CPCB/NGT stretch 2020 vs 2025, its priority, and per-area gaps (sewage, industrial, solid, hazardous, FSTP, e-flow, treated-water reuse, flood plain). Built from 7 NMCG Monthly Progress Reports (Karnataka, 2020-2026), the CPCB &lsquo;Polluted River Stretches for Restoration of Water Quality - 2025&rsquo; report (Oct 2025; Arkavathi Priority I, BOD 72 mg/L, Hesaraghatta to d/s Kanakapura), District Environment Plans (Ramanagara 2021, Bengaluru Urban 2022), and Paani Earth&apos;s digitised stretch geometry. KSPCB&apos;s own 2022-23 lab reads Priority IV - shown as a central-vs-state divergence. Every figure carries its admin level; &lsquo;nil / not reported&rsquo; means absent from the documents, not necessarily absent on the ground. Co-built with Paani Earth."
+                frequency="NMCG monthly; CPCB + DEP periodic"
+              />
             </>
           )}
 

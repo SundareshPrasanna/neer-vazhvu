@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, ZoomControl, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Circle, Tooltip, ZoomControl, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
@@ -133,6 +133,8 @@ interface PrsUnit {
 interface PrsCategory {
   key: string;
   label: string;
+  /** Admin level this category's figures are reported at (shown as a chip). */
+  level?: string;
   body?: string;
   points?: string[];
   /** A map layer this category maps to (e.g. "pressures", "evidence-points"). */
@@ -179,7 +181,6 @@ interface PrsData {
    *  the evidence that pollution is documented over time and beyond BOD. */
   evidence?: { headline: string; points: string[]; layerRef?: string };
   tabs: PrsTab[];
-  industries?: { layerRef?: string; note: string };
   grievance?: { label: string; sub?: string; url: string; urlNote?: string };
   knownGaps?: string[];
   sources?: string[];
@@ -239,6 +240,40 @@ function MapController({
   return null;
 }
 
+/** Fly to the visitor's location when it is (re)acquired. If they're inside the
+ *  mapped basin we zoom in close so nearby stretches / industrial areas read;
+ *  if they're outside it we frame both their pin and the basin so the distance
+ *  is honest rather than dropping them into empty tiles. */
+function LocateFlyer({
+  location,
+  basinBounds,
+}: {
+  location: { lat: number; lng: number } | null;
+  basinBounds: L.LatLngBounds | null;
+}) {
+  const map = useMap();
+  const lastRef = useRef<string>("");
+  useEffect(() => {
+    if (!location) return;
+    const key = `${location.lat.toFixed(5)},${location.lng.toFixed(5)}`;
+    if (key === lastRef.current) return;
+    lastRef.current = key;
+    const here = L.latLng(location.lat, location.lng);
+    const inside = basinBounds?.contains(here) ?? true;
+    if (inside) {
+      map.flyTo(here, Math.max(map.getZoom(), 14), { duration: 0.8 });
+    } else if (basinBounds) {
+      map.flyToBounds(L.latLngBounds([here]).extend(basinBounds), {
+        padding: [40, 40],
+        duration: 0.8,
+      });
+    } else {
+      map.flyTo(here, 13, { duration: 0.8 });
+    }
+  }, [location, basinBounds, map]);
+  return null;
+}
+
 export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, initialFloor, embedded = false, onClose, renderFeatureDetail }: Props) {
   const tiles = useMapTiles();
 
@@ -276,8 +311,21 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const [showGrowth, setShowGrowth] = useState(false);
   const [data, setData] = useState<Record<string, FC | null>>({});
   const [coachDismissed, setCoachDismissed] = useState(true);
-  // Either panel can be collapsed to see the map alone.
-  const [railOpen, setRailOpen] = useState(true);
+  // Either panel can be collapsed to see the map alone. On phones the map is
+  // the calm resting state, so the layers panel starts closed (tap "Layers" to
+  // open it as a bottom sheet); on desktop the sidebar starts open. The atlas
+  // is client-only (ssr:false) so `window` is available here.
+  const [railOpen, setRailOpen] = useState(() =>
+    typeof window === "undefined" ? true : window.innerWidth >= 768,
+  );
+  // On phones the layers panel and a detail panel are both bottom sheets, so
+  // opening a detail selection closes the layers sheet - they never stack.
+  const hasSelection = selectedRiverId != null || selectedFeature != null || selectedGapUnit != null || selectedPrs;
+  useEffect(() => {
+    if (hasSelection && typeof window !== "undefined" && window.innerWidth < 768) {
+      setRailOpen(false);
+    }
+  }, [hasSelection]);
   const fetchedRef = useRef<Set<string>>(new Set());
   const didDefaultGapRef = useRef(false);
 
@@ -305,6 +353,57 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     typeof window !== "undefined" &&
     typeof window.matchMedia === "function" &&
     window.matchMedia("(pointer: coarse)").matches;
+
+  // "Where am I?" - drop a pin at the visitor's own location so they can read
+  // the polluted stretches / industrial areas nearest them. Generic to any
+  // basin (uses the loaded footprint to tell inside-basin from outside).
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [locateMsg, setLocateMsg] = useState<{ tone: "info" | "warn" | "error"; text: string } | null>(null);
+
+  // Extent of everything currently drawn = a good-enough footprint of the basin
+  // for an inside/outside check (recomputed as layers stream in).
+  const basinBounds = useMemo(() => {
+    const feats = Object.values(data).flatMap((fc) => fc?.features ?? []);
+    if (!feats.length) return null;
+    const b = L.geoJSON({ type: "FeatureCollection", features: feats } as FC).getBounds();
+    return b.isValid() ? b : null;
+  }, [data]);
+
+  function locateMe() {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setLocateMsg({ tone: "error", text: "Location isn't available in this browser." });
+      return;
+    }
+    setLocating(true);
+    setLocateMsg(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        setUserLocation({ lat: latitude, lng: longitude, accuracy });
+        setLocating(false);
+        const here = L.latLng(latitude, longitude);
+        if (basinBounds && !basinBounds.contains(here)) {
+          setLocateMsg({ tone: "warn", text: `You're outside the mapped basin. Showing your location and the basin together.` });
+        } else {
+          setLocateMsg({ tone: "info", text: "You are here. Zoom in to see the stretches and areas nearest you." });
+        }
+      },
+      (err) => {
+        setLocating(false);
+        setLocateMsg({
+          tone: "error",
+          text:
+            err.code === err.PERMISSION_DENIED
+              ? "Location is blocked. Click the lock / location icon in your browser's address bar, set Location to Allow, then try again."
+              : err.code === err.POSITION_UNAVAILABLE
+                ? "Your location is unavailable. Check that location services are on for your browser (macOS: System Settings > Privacy & Security > Location Services)."
+                : "Couldn't get your location in time. Please try again.",
+        });
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+    );
+  }
 
   // URL <-> state (?river= & ?level=), via replaceState (no full navigation).
   // Skipped when embedded as an overlay so we don't clobber the rivers-page URL.
@@ -514,7 +613,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         />
       )}
       {railOpen && (
-      <div className="bg-white dark:bg-slate-900 overflow-y-auto fixed inset-y-0 left-0 z-[1200] w-[84%] max-w-xs shadow-2xl md:static md:z-auto md:w-60 md:max-w-none md:shadow-none md:shrink-0 md:border-r border-slate-200 dark:border-slate-700">
+      <div className="bg-white dark:bg-slate-900 overflow-y-auto overscroll-contain fixed inset-x-0 bottom-0 z-[1200] max-h-[72vh] rounded-t-2xl shadow-2xl md:static md:inset-auto md:max-h-none md:rounded-none md:z-auto md:w-60 md:shadow-none md:shrink-0 md:border-r border-slate-200 dark:border-slate-700">
+        {/* Grab handle - mobile bottom-sheet affordance; tap to close. */}
+        <button
+          aria-label="Close layers panel"
+          onClick={() => setRailOpen(false)}
+          className="md:hidden sticky top-0 z-10 w-full flex items-center justify-center py-2.5 bg-white/95 dark:bg-slate-900/95"
+        >
+          <span className="w-10 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600" />
+        </button>
         <div className="p-3 border-b border-slate-200 dark:border-slate-700">
           <div className="text-[10px] uppercase tracking-wide text-slate-400">{cityDisplayName}</div>
           <div className="flex items-start justify-between gap-2">
@@ -826,7 +933,64 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 ));
             });
           })}
+
+          {/* Visitor's own location: an accuracy ring + a solid blue dot, drawn
+              last so it sits on top of every layer. */}
+          <LocateFlyer location={userLocation} basinBounds={basinBounds} />
+          {userLocation && (
+            <>
+              {userLocation.accuracy > 0 && userLocation.accuracy < 5000 && (
+                <Circle
+                  center={[userLocation.lat, userLocation.lng]}
+                  radius={userLocation.accuracy}
+                  interactive={false}
+                  pathOptions={{ color: "#2563eb", weight: 1, fillColor: "#3b82f6", fillOpacity: 0.12 }}
+                />
+              )}
+              <CircleMarker
+                center={[userLocation.lat, userLocation.lng]}
+                radius={coarsePointer ? 9 : 7}
+                pathOptions={{ color: "#ffffff", weight: 2.5, fillColor: "#2563eb", fillOpacity: 1 }}
+              >
+                <Tooltip direction="top">You are here</Tooltip>
+              </CircleMarker>
+            </>
+          )}
         </MapContainer>
+
+        {/* "Where am I?" control + status. Bottom-right, lifted above the zoom
+            control; the bottom-left corner is taken by the MapLegend. */}
+        <div className="absolute bottom-24 right-3 z-[500] flex flex-col items-end gap-1.5 max-w-[70%]">
+          {locateMsg && (
+            <div
+              className={`rounded-md shadow px-3 py-1.5 text-[11px] leading-snug flex items-start gap-2 border ${
+                locateMsg.tone === "error"
+                  ? "bg-rose-50 dark:bg-rose-950/70 text-rose-800 dark:text-rose-200 border-rose-200 dark:border-rose-800"
+                  : locateMsg.tone === "warn"
+                    ? "bg-amber-50 dark:bg-amber-950/70 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800"
+                    : "bg-white/95 dark:bg-slate-900/95 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700"
+              }`}
+            >
+              <span>{locateMsg.text}</span>
+              <button
+                onClick={() => { setLocateMsg(null); setUserLocation(null); }}
+                aria-label="Dismiss"
+                className="shrink-0 opacity-60 hover:opacity-100 font-semibold"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+          <button
+            onClick={locateMe}
+            disabled={locating}
+            aria-label="Show my location on the map"
+            className="rounded-md shadow px-3 py-1.5 text-xs font-medium border bg-white/95 dark:bg-slate-900/95 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-60 flex items-center gap-1.5"
+          >
+            <span aria-hidden>◎</span>
+            {locating ? "Locating…" : userLocation ? "Recenter on me" : "Where am I?"}
+          </button>
+        </div>
 
         {/* Back to the rivers map (only when opened as an overlay). */}
         {embedded && onClose && (
@@ -868,6 +1032,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             below the Reset button (which only shows when something is selected). */}
         {prsVisible && (
           <div className={`absolute ${(selectedRiverId || selectedGapUnit || selectedFeature || selectedPrs) ? "top-14" : "top-3"} right-3 z-[500] flex flex-col items-end gap-1`}>
+            {!selectedPrs && (
+              <button
+                onClick={() => { setSelectedPrs(true); setSelectedFeature(null); setSelectedGapUnit(null); setGapFromPrs(false); }}
+                className="rounded-md shadow px-3 py-1.5 text-xs font-semibold border bg-rose-600 hover:bg-rose-700 text-white border-rose-700 flex items-center gap-1.5"
+              >
+                <span aria-hidden className="inline-block w-3 h-[3px] rounded bg-white/90" />
+                Explore the polluted stretch →
+              </button>
+            )}
             <button
               onClick={() => setShowGrowth((v) => !v)}
               aria-pressed={showGrowth}
@@ -1373,6 +1546,9 @@ function PRSPanel({
         )}
         {openTab.categories && cat && (
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-3">
+            {cat.level && (
+              <span className="inline-block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">Reported at: {cat.level}</span>
+            )}
             {cat.noData ? (
               <p className="text-[13px] text-slate-500 dark:text-slate-400">No known public data yet for {cat.label} along this stretch.</p>
             ) : (
@@ -1517,16 +1693,13 @@ function PRSPanel({
         {prs.levelCoverage && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed"><span className="font-semibold">Reporting level: </span>{prs.levelCoverage}</p>}
       </PrsDisclosure>
 
-      {((prs.knownGaps && prs.knownGaps.length > 0) || prs.industries) && (
+      {prs.knownGaps && prs.knownGaps.length > 0 && (
         <PrsDisclosure label="Data we don't have yet">
-          {prs.industries && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed">{prs.industries.note}</p>}
-          {prs.knownGaps && (
-            <ul className="space-y-1 list-disc pl-4">
-              {prs.knownGaps.map((g, i) => (
-                <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{g}</li>
-              ))}
-            </ul>
-          )}
+          <ul className="space-y-1 list-disc pl-4">
+            {prs.knownGaps.map((g, i) => (
+              <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{g}</li>
+            ))}
+          </ul>
         </PrsDisclosure>
       )}
 
@@ -1714,7 +1887,7 @@ function GapPanel({ unit, onClose, onBack }: { unit: GapUnit; onClose: () => voi
       )}
       {unit.conflicts && unit.conflicts.length > 0 && (
         <div className="rounded-md border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 p-2.5">
-          <div className="text-[11px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold mb-1">⚠ Source conflicts</div>
+          <div className="text-[11px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold mb-1">Points to reconcile across sources</div>
           <ul className="space-y-1 list-disc pl-4">
             {unit.conflicts.map((c, i) => (
               <li key={i} className="text-[12px] text-amber-800 dark:text-amber-200 leading-snug">{c}</li>
@@ -1961,8 +2134,6 @@ function DataOnThisMap({ manifest, inventory }: { manifest: BasinManifest; inven
             rel="noopener noreferrer"
             className="flex items-center gap-2.5 group rounded-md border border-slate-200 dark:border-slate-700 p-2 hover:bg-slate-50 dark:hover:bg-slate-800/60"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/partners/paani-earth-logo.png" alt="Paani Earth Foundation" width={36} height={36} className="rounded shrink-0" />
             <span className="leading-tight">
               <span className="block text-[10px] uppercase tracking-wider text-slate-400">Data partner</span>
               <span className="block text-slate-700 dark:text-slate-200 font-semibold group-hover:underline">Paani Earth Foundation</span>

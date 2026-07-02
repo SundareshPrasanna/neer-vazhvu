@@ -8,7 +8,9 @@ const securityHeaders = [
   },
   {
     key: "Permissions-Policy",
-    value: "camera=(), geolocation=(), microphone=()",
+    // geolocation=(self): the basin atlas "Where am I?" control needs it for
+    // our own origin. Camera/mic stay fully disabled (unused).
+    value: "camera=(), geolocation=(self), microphone=()",
   },
   {
     key: "Referrer-Policy",
