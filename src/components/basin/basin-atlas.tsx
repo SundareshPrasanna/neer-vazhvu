@@ -139,6 +139,9 @@ interface PrsCategory {
   points?: string[];
   /** A map layer this category maps to (e.g. "pressures", "evidence-points"). */
   layerRef?: string;
+  /** An external source to open in a new tab (e.g. a live CPCB dashboard the
+   *  reader can inspect for themselves). */
+  link?: { url: string; label: string };
   /** No known public data yet - shown as an explicit honest gap. */
   noData?: boolean;
 }
@@ -1577,6 +1580,16 @@ function PRSPanel({
                   <button onClick={() => onShowLayer(cat.layerRef!)} className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
                     Show {layerByFamily[cat.layerRef].label} on the map →
                   </button>
+                )}
+                {cat.link && (
+                  <a
+                    href={cat.link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1.5 text-[12px] font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                  >
+                    {cat.link.label} ↗
+                  </a>
                 )}
               </>
             )}

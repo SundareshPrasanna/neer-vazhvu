@@ -1207,6 +1207,12 @@ export function CityAboutContent({
                 description="The polluted-stretch entry point on the basin atlas: the CPCB/NGT stretch 2020 vs 2025, its priority, and per-area gaps (sewage, industrial, solid, hazardous, FSTP, e-flow, treated-water reuse, flood plain). Built from 7 NMCG Monthly Progress Reports (Karnataka, 2020-2026), the CPCB &lsquo;Polluted River Stretches for Restoration of Water Quality - 2025&rsquo; report (Oct 2025; Arkavathi Priority I, BOD 72 mg/L, Hesaraghatta to d/s Kanakapura), District Environment Plans (Ramanagara 2021, Bengaluru Urban 2022), and Paani Earth&apos;s digitised stretch geometry. KSPCB&apos;s own 2022-23 lab reads Priority IV - shown as a central-vs-state divergence. Every figure carries its admin level; &lsquo;nil / not reported&rsquo; means absent from the documents, not necessarily absent on the ground. Co-built with Paani Earth."
                 frequency="NMCG monthly; CPCB + DEP periodic"
               />
+              <DataSource
+                name="KSPCB F-register - consented-industry register (2019)"
+                url="https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Ramanagara.pdf"
+                description="The KSPCB Regional-Office registers of consented industries (Water/Air Act), as on 31-03-2019, published as scanned PDFs. Extracted per taluk and by pollution category (Red/Orange/Green/White) for the basin&apos;s ROs - Ramanagara (Ramanagara/Kanakapura/Magadi/Channapatna), Peenya + Dasarahalli (Vrishabhavathi valley), Nelamangala and Doddaballapura (headwaters). ~11,800 consented industries basin-wide, at least ~37% Red/Orange - the industrial denominator against which only ~12 appear on CPCB continuous monitoring. Per-taluk counts on the Gaps layer; basin summary in the PRS Industrial tab. Counts are OCR-extracted and approximate; SE/N Bengaluru ROs (Bommanahalli/Yelahanka) excluded as they drain to other basins. See scripts/build_fregister.py."
+                frequency="periodic (KSPCB republishes registers)"
+              />
             </>
           )}
 
