@@ -7,6 +7,7 @@ import {
   type FloodConfig,
 } from "./flood-risk-content";
 import { FloodRiskBangaloreContent } from "./flood-risk-bangalore-content";
+import { FloodRiskMumbaiContent } from "./flood-risk-mumbai-content";
 import { InteractiveFloodContent } from "./interactive-flood-content";
 
 interface PageProps {
@@ -141,6 +142,13 @@ export default async function CityFloodRiskPage({ params }: PageProps) {
 
   if (variant === "bangalore") {
     return <FloodRiskBangaloreContent cityDisplayName={config.displayName} />;
+  }
+
+  // Mumbai's flooding is rainfall + high-tide + drainage driven (not a
+  // dam-release threshold), with a distinct chronic-spot map - its own
+  // component rather than the Madurai dam-release config shape.
+  if (cityId === "mumbai") {
+    return <FloodRiskMumbaiContent cityDisplayName={config.displayName} />;
   }
 
   const cfg = FLOOD_CONFIG_BY_CITY[cityId];
