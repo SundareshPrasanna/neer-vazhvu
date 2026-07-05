@@ -41,6 +41,27 @@ TRANSECTS_GEOJSON = (
     REPO_ROOT / "public" / "geojson" / "chennai-coastal-transects.geojson"
 )
 
+# Per-city coast registry. seaward_sign: +1 = the sea lies to the RIGHT of the
+# south->north baseline (east coast - Chennai); -1 = to the LEFT (west coast -
+# Mumbai). Zone ids + along-shore lengths are read from each city's zones
+# geojson (file order = south->north), so adding a coastal city = a seed
+# geojson + one entry here.
+COASTS: dict[str, dict] = {
+    "chennai": {
+        "zones": ZONES_GEOJSON,
+        "transects": TRANSECTS_GEOJSON,
+        "seaward_sign": 1,
+    },
+    "mumbai": {
+        "zones": REPO_ROOT / "public" / "geojson" / "mumbai-coastal-zones.geojson",
+        "transects": REPO_ROOT
+        / "public"
+        / "geojson"
+        / "mumbai-coastal-transects.geojson",
+        "seaward_sign": -1,
+    },
+}
+
 # Study epochs (Table 1 of the paper) extended past 2024 with current
 # Sentinel-2: 2025 and 2026 carry our own measurement beyond the paper's window.
 EPOCHS: tuple[int, ...] = (1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024, 2025, 2026)
@@ -280,24 +301,35 @@ def _haversine_m(a: tuple[float, float], b: tuple[float, float]) -> float:
     return 2 * EARTH_RADIUS_M * math.asin(math.sqrt(h))
 
 
-def baseline_from_zones(path: Path = ZONES_GEOJSON) -> list[tuple[float, float]]:
-    """Concatenate the six seed zone segments (south->north) into one baseline."""
+def load_zones(
+    path: Path = ZONES_GEOJSON,
+) -> tuple[list[tuple[float, float]], tuple[str, ...], tuple[float, ...]]:
+    """Concatenate the seed zone segments (file order = south->north) into one
+    baseline, and return the zone ids + along-shore lengths alongside - so the
+    same function serves any coastal city's seed file."""
     fc = json.loads(path.read_text(encoding="utf-8"))
-    order = {z: i for i, z in enumerate(ZONE_IDS)}
-    feats = sorted(fc["features"], key=lambda f: order[f["properties"]["zone_id"]])
+    feats = fc["features"]
     baseline: list[tuple[float, float]] = []
     for f in feats:
         for lon, lat in f["geometry"]["coordinates"]:
             pt = (lon, lat)
             if not baseline or baseline[-1] != pt:
                 baseline.append(pt)
-    return baseline
+    ids = tuple(f["properties"]["zone_id"] for f in feats)
+    lengths = tuple(float(f["properties"]["length_km"]) for f in feats)
+    return baseline, ids, lengths
+
+
+def baseline_from_zones(path: Path = ZONES_GEOJSON) -> list[tuple[float, float]]:
+    """Back-compat wrapper: baseline only."""
+    return load_zones(path)[0]
 
 
 def build_transects(
     baseline: list[tuple[float, float]],
     *,
     spacing_m: float = TRANSECT_SPACING_M,
+    seaward_sign: int = 1,
 ) -> list[tuple[int, tuple[float, float], tuple[float, float]]]:
     """Cast shore-normal transects every `spacing_m` along the baseline.
 
@@ -322,8 +354,13 @@ def build_transects(
             norm = math.hypot(tx, ty) or 1.0
             deg_per_m_lat = 1.0 / 111_320.0
             deg_per_m_lon = deg_per_m_lat / mlat
-            # seaward normal = tangent rotated -90deg -> (ty, -tx)
-            normal = (ty / norm * deg_per_m_lon, -tx / norm * deg_per_m_lat)
+            # seaward normal = tangent rotated -90deg -> (ty, -tx) when the
+            # sea is right of the S->N baseline (east coast); flipped by
+            # seaward_sign=-1 for a west coast (Mumbai).
+            normal = (
+                seaward_sign * ty / norm * deg_per_m_lon,
+                seaward_sign * -tx / norm * deg_per_m_lat,
+            )
             transects.append((tid, origin, normal))
             tid += 1
             next_at += spacing_m
@@ -331,19 +368,23 @@ def build_transects(
     return transects
 
 
-def zones_by_position(n: int) -> list[str]:
-    """Assign each transect a zone by along-shore position, using the study's
-    published per-zone lengths (the same split the seed uses)."""
-    total = sum(ZONE_LENGTHS_KM)
+def zones_by_position(
+    n: int,
+    zone_ids: tuple[str, ...] = ZONE_IDS,
+    zone_lengths_km: tuple[float, ...] = ZONE_LENGTHS_KM,
+) -> list[str]:
+    """Assign each transect a zone by along-shore position, using the seed
+    file's per-zone lengths (the same split the seed uses)."""
+    total = sum(zone_lengths_km)
     bounds, acc = [], 0.0
-    for length in ZONE_LENGTHS_KM:
+    for length in zone_lengths_km:
         acc += length / total * n
         bounds.append(acc)
     out, zi = [], 0
     for k in range(n):
-        while zi < len(ZONE_IDS) - 1 and k > bounds[zi]:
+        while zi < len(zone_ids) - 1 and k > bounds[zi]:
             zi += 1
-        out.append(ZONE_IDS[zi])
+        out.append(zone_ids[zi])
     return out
 
 
@@ -699,27 +740,28 @@ def transects_to_geojson(
     }
 
 
-def run(*, write: bool = True, log=print) -> dict:
+def run(*, city: str = "chennai", write: bool = True, log=print) -> dict:
     """End-to-end: baseline -> transects -> GEE offsets -> rates -> GeoJSON.
 
     Epochs come from `active_epoch_config()`, which auto-appends annual
     Sentinel-2 years through the latest complete dry season - so a yearly cron
-    re-run picks up the new year with no code change.
+    re-run picks up the new year with no code change. `city` selects the coast
+    from COASTS (zones seed in, transects out, seaward orientation).
     """
+    coast = COASTS[city]
     configs = active_epoch_config()
     years = [c["year"] for c in configs]
     period = f"{years[0]}-{years[-1]}"
-    baseline = baseline_from_zones()
-    transects = build_transects(baseline)
-    zones = zones_by_position(len(transects))
-    log(f"transects: {len(transects)} | epochs: {years}")
+    baseline, zone_ids, zone_lengths = load_zones(coast["zones"])
+    transects = build_transects(baseline, seaward_sign=coast["seaward_sign"])
+    zones = zones_by_position(len(transects), zone_ids, zone_lengths)
+    log(f"{city}: transects: {len(transects)} | epochs: {years}")
     offsets = sample_transect_offsets(transects, configs=configs, log=log)
     rates = compute_rates(transects, offsets, zones)
     mark_showcase(rates)
     fc = transects_to_geojson(rates, period=period, n_epochs=len(years))
     if write:
-        TRANSECTS_GEOJSON.write_text(
-            json.dumps(fc, separators=(",", ":")), encoding="utf-8"
-        )
-        log(f"wrote {TRANSECTS_GEOJSON} ({len(fc['features'])} transects)")
+        out_path = coast["transects"]
+        out_path.write_text(json.dumps(fc, separators=(",", ":")), encoding="utf-8")
+        log(f"wrote {out_path} ({len(fc['features'])} transects)")
     return fc

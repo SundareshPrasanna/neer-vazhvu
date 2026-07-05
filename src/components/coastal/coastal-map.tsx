@@ -26,12 +26,16 @@ interface CoastalMapProps {
   flyToFeaturedSignal?: number;
   mapCenter?: [number, number];
   mapZoom?: number;
+  /** City whose {cityId}-coastal-* geojsons to load. Defaults to Chennai
+   *  (the first coastal city) for back-compat. */
+  cityId?: string;
 }
 
-// Bump ?v when a file is regenerated so browsers don't serve a stale copy.
-const ZONES_URL = "/geojson/chennai-coastal-zones.geojson?v=2";
-const HOTSPOTS_URL = "/geojson/chennai-coastal-hotspots.geojson?v=1";
-const TRANSECTS_URL = "/geojson/chennai-coastal-transects.geojson?v=4";
+// Bump the per-city ?v when a file is regenerated so browsers don't serve a
+// stale copy. Cities without an entry start at v=1.
+const GEO_VERSIONS: Record<string, { zones: number; hotspots: number; transects: number }> = {
+  chennai: { zones: 2, hotspots: 1, transects: 4 },
+};
 
 function toLatLng(coords: number[][]): [number, number][] {
   return coords.map((c) => [c[1], c[0]]);
@@ -75,7 +79,12 @@ export function CoastalMap({
   mapCenter = [13.15, 80.32],
   mapZoom = 11,
   flyToFeaturedSignal = 0,
+  cityId = "chennai",
 }: CoastalMapProps) {
+  const v = GEO_VERSIONS[cityId] ?? { zones: 1, hotspots: 1, transects: 1 };
+  const zonesUrl = `/geojson/${cityId}-coastal-zones.geojson?v=${v.zones}`;
+  const hotspotsUrl = `/geojson/${cityId}-coastal-hotspots.geojson?v=${v.hotspots}`;
+  const transectsUrl = `/geojson/${cityId}-coastal-transects.geojson?v=${v.transects}`;
   const tiles = useMapTiles();
   const [zones, setZones] = useState<FeatureCollection | null>(null);
   const [hotspots, setHotspots] = useState<FeatureCollection | null>(null);
@@ -88,9 +97,9 @@ export function CoastalMap({
 
   useEffect(() => {
     Promise.all([
-      fetch(ZONES_URL).then((r) => (r.ok ? r.json() : null)),
-      fetch(HOTSPOTS_URL).then((r) => (r.ok ? r.json() : null)),
-      fetch(TRANSECTS_URL).then((r) => (r.ok ? r.json() : null)),
+      fetch(zonesUrl).then((r) => (r.ok ? r.json() : null)),
+      fetch(hotspotsUrl).then((r) => (r.ok ? r.json() : null)),
+      fetch(transectsUrl).then((r) => (r.ok ? r.json() : null)),
     ])
       .then(([z, h, t]: [FeatureCollection | null, FeatureCollection | null, FeatureCollection | null]) => {
         setZones(z);
@@ -192,7 +201,7 @@ export function CoastalMap({
               <span style={{ fontSize: "11px", color: "#64748b" }}>
                 {props.mean_erosion_m_yr != null
                   ? `study: ${props.dominant_trend} - mean erosion ${props.mean_erosion_m_yr} m/yr`
-                  : "beyond the study - our measurement only"}
+                  : `${props.dominant_trend} (published classification) - no published rate; our measurement only`}
               </span>
             </Tooltip>
           </Polyline>

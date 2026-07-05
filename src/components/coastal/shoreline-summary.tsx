@@ -3,17 +3,30 @@
 import { useState } from "react";
 import type { CoastalSummary } from "@/types/coastal";
 
+/** Per-city strings for the at-a-glance card (title, extent, the one-line
+ *  conclusion, the "why" mechanism, and the attribution footer). Supplied by
+ *  the shoreline client's CITY_COPY registry - config, not fork. */
+export interface ShorelineSummaryCopy {
+  title: string;
+  extent: string;
+  headline: string;
+  why: React.ReactNode;
+  attribution: (totalTransects: number) => string;
+}
+
 /**
  * "At a glance" overview for the shoreline page - a semi-transparent card
  * overlaid top-right of the map, open by default and collapsible to a pill.
- * Gives the Chennai-wide conclusion on arrival without changing the map.
+ * Gives the city-wide conclusion on arrival without changing the map.
  */
 export function ShorelineSummary({
   summary,
   onShowWorst,
+  copy,
 }: {
   summary: CoastalSummary | null;
   onShowWorst: () => void;
+  copy: ShorelineSummaryCopy;
 }) {
   const [open, setOpen] = useState(true);
 
@@ -47,9 +60,9 @@ export function ShorelineSummary({
     <div className="w-[260px] sm:w-[288px] bg-white/85 dark:bg-slate-900/85 backdrop-blur-sm rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-3.5 text-sm">
       <div className="flex items-start justify-between mb-2">
         <h2 className="font-bold text-slate-900 dark:text-slate-100 leading-tight">
-          Chennai coastline
+          {copy.title}
           <span className="block text-[11px] font-normal text-slate-500">
-            at a glance - {period}, Mahabalipuram to Pulicat
+            at a glance - {period}, {copy.extent}
           </span>
         </h2>
         <button
@@ -64,7 +77,7 @@ export function ShorelineSummary({
       </div>
 
       <p className="text-slate-700 dark:text-slate-200 font-medium leading-snug mb-3">
-        Most of the coast is eroding - and the erosion is speeding up.
+        {copy.headline}
       </p>
 
       {!summary ? (
@@ -93,10 +106,7 @@ export function ShorelineSummary({
       )}
 
       <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-snug">
-        <span className="font-semibold">Why:</span> the <span className="font-semibold">Ennore &amp; Kattupalli</span>{" "}
-        ports interrupt the coast&apos;s natural south-to-north sand drift - trapping sand at the breakwaters,
-        but starving and eroding the beaches further north (down-drift). The coast gains land where the{" "}
-        <span className="font-semibold">Adyar &amp; Cooum</span> rivers drop silt at their mouths.
+        <span className="font-semibold">Why:</span> {copy.why}
       </p>
 
       <button
@@ -107,8 +117,7 @@ export function ShorelineSummary({
       </button>
 
       <p className="text-[10px] text-slate-400 mt-2.5 leading-snug">
-        Our satellite measurement ({summary.total.toLocaleString()}{" "}transects), corroborated by
-        Anagha, Singh &amp; Frappart (2026).
+        {copy.attribution(summary.total)}
       </p>
         </>
       )}

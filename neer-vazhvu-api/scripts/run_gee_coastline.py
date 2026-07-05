@@ -35,10 +35,10 @@ def cmd_check_auth() -> int:
     return 0
 
 
-def cmd_build_geojson(write: bool) -> int:
+def cmd_build_geojson(write: bool, city: str) -> int:
     from app.gee.coastline import run
 
-    fc = run(write=write, log=lambda m: print(m, flush=True))
+    fc = run(city=city, write=write, log=lambda m: print(m, flush=True))
     print(
         json.dumps({"transect_count": len(fc["features"]), "written": write}, indent=2)
     )
@@ -47,18 +47,19 @@ def cmd_build_geojson(write: bool) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Chennai coastal shoreline-change pipeline"
+        description="Coastal shoreline-change pipeline (per-city, see COASTS)"
     )
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("check-auth")
     bg = sub.add_parser("build-geojson")
     bg.add_argument("--write", action="store_true")
+    bg.add_argument("--city", default="chennai")
 
     args = parser.parse_args()
     if args.command == "check-auth":
         return cmd_check_auth()
     if args.command == "build-geojson":
-        return cmd_build_geojson(write=args.write)
+        return cmd_build_geojson(write=args.write, city=args.city)
     return 1
 
 
