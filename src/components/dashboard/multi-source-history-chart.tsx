@@ -28,6 +28,13 @@ interface Props {
   cityDisplayName: string;
   /** Storage unit used in Y-axis label + tooltip. Default "TMC". */
   unit?: string;
+  /** Per-city data-coverage note (from config) - names which sources have
+   *  archives and since when, so sparse windows read as known gaps. */
+  coverageNote?: string;
+  /** Geographic scope badge (region places only). */
+  scopeLabel?: string;
+  /** Initial time-range tab (default '1yr'); config-driven per city. */
+  defaultTab?: TabKey;
 }
 
 const TIME_TABS = [
@@ -56,6 +63,16 @@ const SOURCE_COLOR: Record<string, string> = {
   chembarambakkam: "#7c3aed",
   veeranam:        "#059669",
   kannankottai:    "#d97706",
+  hemavathi:       "#10b981",
+  // Mumbai's 7 BMC lakes - explicit, pairwise-distinct colours; the hash
+  // fallback collides (bhatsa/tansa/tulsi all landed on the same slot).
+  bhatsa:          "#2563eb",
+  upper_vaitarna:  "#7c3aed",
+  middle_vaitarna: "#ec4899",
+  modak_sagar:     "#059669",
+  tansa:           "#d97706",
+  vihar:           "#0891b2",
+  tulsi:           "#dc2626",
 };
 
 // Summed total line. Dark slate in light mode reads as a strong, near-black
@@ -96,16 +113,19 @@ export function MultiSourceHistoryChart({
   pointCount,
   cityDisplayName,
   unit = "TMC",
+  coverageNote,
+  scopeLabel,
+  defaultTab = "1yr",
 }: Props) {
-  const [tab, setTab] = useState<TabKey>("1yr");
+  const [tab, setTab] = useState<TabKey>(defaultTab);
   const [view, setView] = useState<ViewMode>("by_source");
   const [showForecast, setShowForecast] = useState(false);
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
-  const summedLineColor =
-    mounted && resolvedTheme === "dark" ? SUMMED_LINE_DARK : SUMMED_LINE_LIGHT;
+  const isDark = mounted && resolvedTheme === "dark";
+  const summedLineColor = isDark ? SUMMED_LINE_DARK : SUMMED_LINE_LIGHT;
 
   const forecastBySource = useMemo(() => {
     const m = new Map<string, ForecastSeries>();
@@ -294,9 +314,16 @@ export function MultiSourceHistoryChart({
   return (
     <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 space-y-3 bg-white dark:bg-slate-900/30">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-          {cityDisplayName} reservoir storage history
-        </h2>
+        <div className="flex flex-wrap items-baseline gap-2">
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            {cityDisplayName} reservoir storage history
+          </h2>
+          {scopeLabel && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 whitespace-nowrap">
+              {scopeLabel}
+            </span>
+          )}
+        </div>
         <div className="text-xs text-slate-500">
           {pointCount.toLocaleString()} readings -{" "}
           {earliestDate ? fmtDate(earliestDate) : "?"} - {latestDate ? fmtDate(latestDate) : "?"}
@@ -441,7 +468,17 @@ export function MultiSourceHistoryChart({
               const display = series.find((s) => s.source_code === code)?.display_name ?? code;
               return [text, isForecast ? `${display} (forecast)` : display] as [string, string];
             }}
-            contentStyle={{ fontSize: 12, borderRadius: 6 }}
+            contentStyle={{
+              fontSize: 12,
+              borderRadius: 6,
+              backgroundColor: isDark ? "#0f172a" : "#ffffff",
+              border: `1px solid ${isDark ? "#334155" : "#e2e8f0"}`,
+            }}
+            labelStyle={{
+              color: isDark ? "#f1f5f9" : "#0f172a",
+              fontWeight: 600,
+              marginBottom: 4,
+            }}
           />
           <Legend
             wrapperStyle={{ fontSize: 11 }}
@@ -552,6 +589,11 @@ export function MultiSourceHistoryChart({
       </ResponsiveContainer>
       </div>
 
+      {coverageNote && (
+        <div className="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded px-2.5 py-1.5">
+          {coverageNote}
+        </div>
+      )}
       <div className="text-[11px] text-slate-500 dark:text-slate-400 pt-1">
         Click a source pill to toggle it; primary drinking sources are on by
         default. Drag horizontally on the chart to zoom into a time window
