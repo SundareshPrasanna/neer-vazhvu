@@ -1,6 +1,7 @@
 from .bangalore import BANGALORE
 from .chennai import CHENNAI
 from .madurai import MADURAI
+from .mumbai import MUMBAI
 from .types import PlaceConfig
 
 # Registry contains every known city, enabled or not. Disabled cities are
@@ -12,6 +13,7 @@ _REGISTRY: dict[str, PlaceConfig] = {
     CHENNAI.city_id: CHENNAI,
     MADURAI.city_id: MADURAI,
     BANGALORE.city_id: BANGALORE,
+    MUMBAI.city_id: MUMBAI,
 }
 
 DEFAULT_CITY_ID = CHENNAI.city_id

@@ -1,0 +1,72 @@
+# Daily refresh of MMR regional dam storage from the Maharashtra WRD
+# "Pravah" dam-safety feed (a single all-Maharashtra PDF, updated each
+# morning IST). Feeds public/data/mmr-dam-storage.json, which the
+# Regional Water System card on /mumbai reads for the per-corporation
+# live-storage bars (Barvi for the eastern corridor, Dhamni/Kawdas for
+# the Surya scheme, plus the BMC Vaitarna-system dams as a cross-check).
+#
+# Artifact-commit pattern (like imd-rainfall-refresh.yml): the daily
+# Supabase pipeline stays DB-only; workflows that regenerate static
+# files commit them back to the branch, and the Vercel deploy picks
+# them up. The gov server is flaky (timeouts/504s, incomplete TLS
+# chain), so the scrape retries 3x and a missed day is tolerated - the
+# card shows its "as of" date either way.
+name: Pravah Dam Storage Refresh
+
+on:
+  schedule:
+    - cron: '0 4 * * *'   # 04:00 UTC = 09:30 IST, after Pravah's ~6 am report lands
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # pdftotext for the PDF parse; supabase client for the reservoir upsert.
+      - name: Install poppler (pdftotext) + supabase client
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
+          pip install -q supabase
+
+      # --supabase upserts the 5 WRD-registered BMC lakes (~97% of system
+      # capacity) into reservoir_daily_v2 - Pravah is the OFFICIAL daily
+      # source; BMC itself publishes no public bulletin (its HE portal is a
+      # closed SAP iView) and no reliable machine-readable mirror exists.
+      - name: Scrape Pravah dam storage
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          for attempt in 1 2 3; do
+            if python scripts/scrape_pravah_dams.py --out ../public/data/mmr-dam-storage.json --supabase; then
+              exit 0
+            fi
+            echo "attempt $attempt failed; retrying in 60s"
+            sleep 60
+          done
+          echo "Pravah unreachable after 3 attempts; keeping yesterday's snapshot"
+          exit 0
+
+      - name: Commit refreshed snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/mmr-dam-storage.json
+          if git diff --staged --quiet; then
+            echo "No storage change to commit"
+            exit 0
+          fi
+          git commit -m "Pravah dam storage refresh ($(date -u +%Y-%m-%d))"
+          git push

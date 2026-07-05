@@ -348,10 +348,33 @@ _BANGALORE = DistrictCascadeConfig(
 )
 
 
+# Mumbai is reservoir-impounded, NOT a tank-cascade geography - its lakes are
+# engineered terminal sinks far outside the city, so cascade EDGES are expected
+# to be sparse/meaningless. We register it for the LAKE CATCHMENT ATLAS only
+# (per-water-body area-of-influence over Mumbai's ~600 OSM bodies incl. Powai/
+# Vihar/Tulsi); the cascade overlay is suppressed downstream when edge_count is
+# negligible. UTM 43N (32643) covers Mumbai (72-78E).
+_MUMBAI = DistrictCascadeConfig(
+    district_id="mumbai",
+    label="Mumbai",
+    state="maharashtra",
+    tank_polygons_path=PUBLIC_GEOJSON_DIR / "mumbai-water-bodies-current.geojson",
+    rivers_path=PUBLIC_GEOJSON_DIR / "mumbai-rivers.geojson",
+    imd_rainfall_path=PUBLIC_DATA_DIR / "imd-rainfall-monthly-mumbai.json",
+    utm_epsg=32643,
+    # Mumbai's tank set includes the 4 supply reservoirs (Bhatsa, Tansa, Modak
+    # Sagar, Upper Vaitarna) 70-110 km NE in the Western Ghats. Their catchments
+    # are large upland basins extending further east, so widen the DEM padding
+    # beyond the 0.35 deg default to capture them without clipping at the edge.
+    catchment_dem_buffer_deg=0.5,
+)
+
+
 _REGISTRY: dict[str, DistrictCascadeConfig] = {
     _MADURAI.district_id: _MADURAI,
     _CHENNAI.district_id: _CHENNAI,
     _BANGALORE.district_id: _BANGALORE,
+    _MUMBAI.district_id: _MUMBAI,
 }
 
 
