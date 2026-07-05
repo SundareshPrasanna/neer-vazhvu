@@ -208,6 +208,60 @@ export interface UrbanSupplyConfig {
   sourceUrl: string;
 }
 
+/**
+ * A place is either a single municipal `city` (the original and default model)
+ * or a `region` made of several municipal corporations (the MMR model). This is
+ * additive: omit `placeKind` and a place behaves exactly as before. Mirrors the
+ * `cities.place_kind` column.
+ */
+export type PlaceKind = 'city' | 'region';
+
+/**
+ * Per-corporation data-availability flags. A region's corporations have wildly
+ * uneven data (BMC is rich; smaller corporations are thin). Rather than block a
+ * corporation on missing data, we render its boundary + identity always and
+ * flag what deeper data exists, surfacing the rest as named gaps. See
+ * docs/specs/mumbai-mmr.md (the "corporation = always-present unit, ward =
+ * enrichment" contract).
+ */
+export interface AdminUnitDataFlags {
+  /** A `{corporationId}-wards-{vintage}.geojson` exists for ward drill-down. */
+  hasWardGeometry?: boolean;
+  /** Per-corporation supply (draw, sources, hours) data exists. */
+  hasSupplyData?: boolean;
+  /** Per-corporation equity data (LPCD / supply-hours / coverage) exists. */
+  hasEquityData?: boolean;
+  /** This corporation participates in the region-level risk ranking. */
+  hasRiskComposite?: boolean;
+}
+
+/**
+ * One municipal corporation within a `region` place. The corporation is the
+ * region's always-present comparable sub-unit (every one has a boundary +
+ * identity + the sources that feed it); wards are an optional enrichment per
+ * corporation. Only present on region configs; a `city` config never carries
+ * these (its single ULB lives in `localGovernment`).
+ */
+export interface CorporationConfig {
+  corporationId: string;
+  displayName: string;
+  displayNameLocalized?: Partial<Record<LanguageCode, string>>;
+  acronym: string;
+  unitType: 'municipal_corporation' | 'municipal_council';
+  /** Primary administrative district (Thane / Palghar / Raigad / ...). */
+  district: string;
+  center: Coordinates;
+  bbox: GeoBounds;
+  /** Published ward count, or null where wards aren't available. */
+  wardCount: number | null;
+  /** Vintage tag for `{corporationId}-wards-{vintage}.geojson`, if any. */
+  wardsVintage?: string;
+  /** Source codes (subset of the region's `waterSources`) feeding this
+   *  corporation - the edges of the source -> corporation supply graph. */
+  servedBySourceCodes: string[];
+  data: AdminUnitDataFlags;
+}
+
 export interface BasePlaceConfig {
   cityId: string;
   displayName: string;
@@ -273,6 +327,43 @@ export interface BasePlaceConfig {
    *  city would parametrize it. Default false. */
   hasShoreline?: boolean;
 
+  /** Ships /:cityId/allocations - the Allocation Ledger (entitled vs received
+   *  per supply arrangement, with instruments + confidence grades). Requires a
+   *  compiled public/data/allocations-{cityId}.json. See
+   *  docs/specs/allocation-ledger.md. */
+  hasAllocationLedger?: boolean;
+
+  /** Optional honesty caveat rendered under the days-left hero's number -
+   *  e.g. Mumbai's, naming the figure an upper bound because storage counts
+   *  whole-dam water while capacity is the city's share. */
+  heroNote?: string;
+
+  /** Optional source link rendered after heroNote. */
+  heroNoteSource?: { label: string; url: string };
+
+  /** For region places whose dashboard mixes two geographies (the MMR):
+   *  short scope labels rendered as badges on each dashboard card, so a
+   *  reader always knows whether a card covers the core city or the whole
+   *  region. Absent for single-city places - no badges render. */
+  dashboardScopes?: { city: string; region: string };
+
+  /** Default time-range tab for the reservoir history chart. Cities whose
+   *  recent windows are still sparse (e.g. Mumbai: daily feed just started,
+   *  weekly history is 2015-2025) should open on 'all' so the chart doesn't
+   *  greet readers with a single dot. Defaults to '1yr'. */
+  reservoirHistoryDefaultRange?: '90d' | '1yr' | '3yr' | 'all';
+
+  /** Optional data-coverage note rendered under the dashboard reservoir
+   *  history chart - names which sources have archives and since when, so a
+   *  sparse window (e.g. a feed that just started) reads as a known gap,
+   *  not a bug. */
+  reservoirHistoryNote?: string;
+
+  /** Ships /:cityId/commitments - the Commitments Register (dated commitments
+   *  by named institutions with a cited status lifecycle; history kept, never
+   *  overwritten). Requires public/data/commitments-{cityId}.json. */
+  hasCommitments?: boolean;
+
   /** Which dashboard hero to render for this city.
    *
    *  - `days-left`: Chennai-style runway = total reservoir storage /
@@ -295,6 +386,14 @@ export interface BasePlaceConfig {
    *  Defaults to `days-left` for back-compat with Chennai. */
   heroMode?: 'days-left' | 'allocation' | 'cauvery-pumping' | 'none';
 
+  /** When the days-left runway is ALREADY published by the source (e.g. BMC's
+   *  Mumbai-lakes feed states "days of supply left"), set this so the shared
+   *  days-left hero surfaces + attributes + deep-links to it instead of posing
+   *  as the calculator: the what-if sliders are hidden and an attribution line
+   *  + outbound link replace them. Omit it (Chennai, Madurai) and the hero keeps
+   *  its full interactive behaviour - we compute the runway no one else does. */
+  runwaySource?: { publisher: string; url: string };
+
   /** Public, audited urban supply numbers for the allocation hero.
    *  Required when heroMode === 'allocation'; ignored otherwise. */
   urbanSupply?: UrbanSupplyConfig;
@@ -316,6 +415,11 @@ export interface BasePlaceConfig {
    * for any in-flight city configs that haven't been updated yet).
    */
   availableLanguages?: readonly LanguageCode[];
+
+  /** Languages advertised as coming soon: the switcher renders them
+   *  greyed-out/disabled. Move a code to availableLanguages once its
+   *  translation pass lands. */
+  upcomingLanguages?: readonly LanguageCode[];
 
   /** Whether the cascade reconstruction overlay is available for this
    *  place. When true, /<city>/water-bodies surfaces a "Show cascade
@@ -346,6 +450,20 @@ export interface BasePlaceConfig {
    *  Treated as enabled when omitted, so existing Chennai/Madurai
    *  configs stay exposed without modification. */
   enabled?: boolean;
+
+  /** Whether this place is a single municipal `city` (default) or a
+   *  multi-corporation `region` (the MMR). Omit -> 'city'; existing
+   *  configs are unaffected. Corporation-aware code paths are entered
+   *  only when this is 'region' and `corporations` is present, so flat
+   *  city -> ward behaviour is the untouched default. */
+  placeKind?: PlaceKind;
+
+  /** The municipal corporations of a `region` place, in display order.
+   *  Present iff placeKind === 'region'. Absent for every `city` (whose
+   *  single ULB lives in `localGovernment`). Each corporation is a
+   *  first-class comparable sub-unit with a boundary; ward + deep data
+   *  are optional per-corporation enrichments. See docs/specs/mumbai-mmr.md. */
+  corporations?: CorporationConfig[];
 }
 
 export interface CityConfig extends BasePlaceConfig {

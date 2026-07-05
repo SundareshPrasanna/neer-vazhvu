@@ -17,6 +17,9 @@ const WARDS_VINTAGE: Record<string, string> = {
   chennai: "2022",
   madurai: "2022",
   bangalore: "2025",
+  // Mumbai uses the 24 BMC administrative wards (A..T), not the 227
+  // electoral wards; "2023" tags the DataMeet source vintage.
+  mumbai: "2023",
 };
 
 const DEFAULT_VINTAGE = "2022";
@@ -27,4 +30,23 @@ export function wardsVintageFor(cityId: string): string {
 
 export function wardsGeoJsonPathFor(cityId: string): string {
   return `/geojson/${cityId}-wards-${wardsVintageFor(cityId)}.geojson`;
+}
+
+/**
+ * Per-region municipal-corporation boundary vintage (region places only, e.g.
+ * the MMR). Mirrors the wards pattern: the `<cityId>-corporations-<vintage>`
+ * GeoJSON is the admin layer of the 9 corporations. Only defined for region
+ * places; city places have no entry and no corporations file.
+ */
+const CORPORATIONS_VINTAGE: Record<string, string> = {
+  mumbai: "2024",
+};
+
+export function corporationsVintageFor(cityId: string): string | null {
+  return CORPORATIONS_VINTAGE[cityId] ?? null;
+}
+
+export function corporationsGeoJsonPathFor(cityId: string): string | null {
+  const v = corporationsVintageFor(cityId);
+  return v ? `/geojson/${cityId}-corporations-${v}.geojson` : null;
 }

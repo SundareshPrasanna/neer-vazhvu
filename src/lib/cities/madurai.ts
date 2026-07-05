@@ -30,6 +30,13 @@ export const MADURAI: CityConfig = {
   // an order of magnitude. Use the allocation hero instead, anchored
   // on MMC's published Vaigai drinking-water allocation.
   heroMode: 'allocation',
+  // The Allocation Ledger page: Madurai's 1,500 mcft/yr PWD-letter entitlement
+  // (the allocation hero's underlying instrument) + the 1886 Periyar lease
+  // ancestry, compiled in allocations-madurai.json.
+  hasAllocationLedger: true,
+  // Commitments register: HC water-bodies order, Mullaiperiyar 125 MLD, 24x7
+  // conversion, UGSS, Vaigai riverfront/cleanup - commitments-madurai.json.
+  hasCommitments: true,
   urbanSupply: {
     allocatedSourceCodes: ['vaigai'],
     annualAllocationMcft: 1500,

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/context";
+import { resolveUpcomingLanguagesForPath } from "@/lib/i18n/available-languages";
 import { LANGUAGE_LABELS, type LanguageCode } from "@/lib/i18n/translations";
 
 /**
@@ -18,8 +20,24 @@ import { LANGUAGE_LABELS, type LanguageCode } from "@/lib/i18n/translations";
  * popover - so the popover is "what am I in" + "what could I switch
  * to").
  */
+/** Greyed, non-interactive chip for a language that is coming soon. */
+function UpcomingChip({ code }: { code: LanguageCode }) {
+  const label = LANGUAGE_LABELS[code];
+  return (
+    <span
+      aria-disabled="true"
+      title={`${label.native} (${label.english}) - coming soon`}
+      className="px-2.5 h-9 inline-flex items-center justify-center rounded-md border border-dashed border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-300 dark:text-slate-600 bg-white dark:bg-slate-900 cursor-not-allowed select-none leading-none"
+    >
+      {label.toggle}
+    </span>
+  );
+}
+
 export function LanguageToggle() {
   const { language, availableLanguages, setLanguage, t } = useLanguage();
+  const pathname = usePathname();
+  const upcoming = resolveUpcomingLanguagesForPath(pathname ?? "");
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -50,13 +68,22 @@ export function LanguageToggle() {
   }
 
   if (availableLanguages.length <= 1) {
-    return null;
+    // Nothing to switch to - but advertise languages on the way (Mumbai:
+    // a greyed Marathi chip) so readers know the gap is temporary.
+    if (upcoming.length === 0) return null;
+    return (
+      <span className="inline-flex items-center gap-1.5">
+        {upcoming.map((code) => (
+          <UpcomingChip key={code} code={code} />
+        ))}
+      </span>
+    );
   }
 
   if (availableLanguages.length === 2) {
     const other = availableLanguages.find((l) => l !== language) ?? "en";
     const otherLabel = LANGUAGE_LABELS[other];
-    return (
+    const cycle = (
       <button
         onClick={() => setLanguage(other)}
         className="px-2.5 h-9 inline-flex items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 transition-colors leading-none"
@@ -65,6 +92,16 @@ export function LanguageToggle() {
       >
         {otherLabel.toggle}
       </button>
+    );
+    return upcoming.length === 0 ? (
+      cycle
+    ) : (
+      <span className="inline-flex items-center gap-1.5">
+        {cycle}
+        {upcoming.map((code) => (
+          <UpcomingChip key={code} code={code} />
+        ))}
+      </span>
     );
   }
 
@@ -101,6 +138,20 @@ export function LanguageToggle() {
                 <span>{label.native}</span>
                 <span className="text-xs text-slate-400">{label.english}</span>
               </button>
+            );
+          })}
+          {upcoming.map((code) => {
+            const label = LANGUAGE_LABELS[code];
+            return (
+              <div
+                key={code}
+                aria-disabled="true"
+                title={`${label.native} (${label.english}) - coming soon`}
+                className="w-full text-left px-3 py-2.5 text-sm flex items-center justify-between gap-3 text-slate-300 dark:text-slate-600 cursor-not-allowed select-none"
+              >
+                <span>{label.native}</span>
+                <span className="text-xs">coming soon</span>
+              </div>
             );
           })}
         </div>

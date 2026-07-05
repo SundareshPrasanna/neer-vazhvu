@@ -1,10 +1,11 @@
 import { BANGALORE } from './bangalore';
 import { CHENNAI } from './chennai';
 import { MADURAI } from './madurai';
+import { MUMBAI } from './mumbai';
 import type { PlaceConfig } from './types';
 
 export * from './types';
-export { BANGALORE, CHENNAI, MADURAI };
+export { BANGALORE, CHENNAI, MADURAI, MUMBAI };
 
 // Registry contains every known city, enabled or not. Disabled cities
 // (config.enabled === false) are usable internally for scaffolding but
@@ -15,6 +16,7 @@ const REGISTRY: Record<string, PlaceConfig> = {
   [CHENNAI.cityId]: CHENNAI,
   [MADURAI.cityId]: MADURAI,
   [BANGALORE.cityId]: BANGALORE,
+  [MUMBAI.cityId]: MUMBAI,
 };
 
 export const DEFAULT_CITY_ID = CHENNAI.cityId;

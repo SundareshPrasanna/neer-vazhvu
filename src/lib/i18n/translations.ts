@@ -346,6 +346,11 @@ export const translations: Record<string, TranslationEntry> = {
     ta: "{fully_lost} வரலாற்று நகர்ப்புற கண்மாய்கள் முற்றிலுமாக கட்டப்பட்டுள்ளன - மாவட்ட நீதிமன்ற வளாகம் (செங்குளம் கண்மாயின் மீது) மற்றும் மதுரை மாநகராட்சி அலுவலகங்கள் (தல்லாகுளம் கண்மாயின் மீது) உட்பட. மற்றொரு {reduced} எஞ்சிய கண்மாய்கள் கடுமையாகச் சுருங்கிய அல்லது ஆக்கிரமிக்கப்பட்ட நிலையில் உள்ளன. மொத்தம் இழந்த பகுதி: ~{area} சதுர கி.மீ. (நகரின் {pct}%). {households}+ குடிசை வீடுகள் இப்போது முன்னாள் கண்மாய் படுகைகளில் வாழ்கின்றன.",
     kn: "{fully_lost} ಐತಿಹಾಸಿಕ ನಗರ ಕೆರೆಗಳು ಸಂಪೂರ್ಣವಾಗಿ ಕಟ್ಟಲ್ಪಟ್ಟಿವೆ - ಜಿಲ್ಲಾ ನ್ಯಾಯಾಲಯ ಸಂಕೀರ್ಣ (ಸೆಂಗುಲಂ ಕೆರೆ) ಮತ್ತು ಮಧುರೈ ಮಹಾನಗರಪಾಲಿಕೆ ಕಚೇರಿಗಳು (ತಲ್ಲಾಕುಳಂ ಕೆರೆ) ಸೇರಿದಂತೆ. ಇನ್ನೊಂದು {reduced} ಉಳಿದಿರುವ ಕೆರೆಗಳು ತೀವ್ರವಾಗಿ ಕುಗ್ಗಿವೆ. ಒಟ್ಟು ಕಳೆದ ಪ್ರದೇಶ: ~{area} ಚ.ಕಿ.ಮೀ. (ನಗರದ {pct}%). {households}+ ಕೊಳೆಗೇರಿ ಕುಟುಂಬಗಳು ಮಾಜಿ ಕೆರೆ ಮೈದಾನಗಳಲ್ಲಿ ವಾಸಿಸುತ್ತಿವೆ.",
   },
+  "lake.intro_generic": {
+    en: "Flagship water bodies across the region - scored by status severity, cultural prominence and restoration pressure - together with the documented lost and shrunken tanks, the active restoration programmes, and the court orders shaping them.",
+    ta: "பகுதி முழுவதிலுமுள்ள முதன்மை நீர்நிலைகள் - அவற்றின் நிலை, பண்பாட்டு முக்கியத்துவம் மற்றும் மீட்பு அழுத்தம் ஆகியவற்றின் அடிப்படையில் மதிப்பிடப்பட்டவை - ஆவணப்படுத்தப்பட்ட இழந்த மற்றும் சுருங்கிய கண்மாய்கள், செயலிலுள்ள மீட்புத் திட்டங்கள் மற்றும் அவற்றை வடிவமைக்கும் நீதிமன்ற உத்தரவுகளுடன்.",
+    kn: "ಪ್ರದೇಶದಾದ್ಯಂತ ಪ್ರಮುಖ ಜಲಮೂಲಗಳು - ಸ್ಥಿತಿ ತೀವ್ರತೆ, ಸಾಂಸ್ಕೃತಿಕ ಪ್ರಾಮುಖ್ಯ ಮತ್ತು ಪುನರುಜ್ಜೀವನ ಒತ್ತಡದ ಆಧಾರದ ಮೇಲೆ ಅಂಕಗಳಿಸಲಾಗಿದೆ - ದಾಖಲಾದ ಕಳೆದು/ಕುಗ್ಗಿದ ಕೆರೆಗಳು, ಸಕ್ರಿಯ ಪುನರುಜ್ಜೀವನ ಕಾರ್ಯಕ್ರಮಗಳು ಮತ್ತು ಅವುಗಳನ್ನು ರೂಪಿಸುವ ನ್ಯಾಯಾಲಯ ಆದೇಶಗಳ ಜೊತೆಗೆ.",
+  },
   "lake.card_fully_lost": { en: "Fully lost", ta: "முற்றிலும் இழந்தவை", kn: "ಸಂಪೂರ್ಣ ನಷ್ಟ" },
   "lake.card_fully_lost_sub": { en: "historic urban tanks", ta: "வரலாற்று நகர்ப்புற கண்மாய்கள்", kn: "ಐತಿಹಾಸಿಕ ನಗರ ಕೆರೆಗಳು" },
   "lake.card_at_risk": { en: "At risk", ta: "ஆபத்தில்", kn: "ಅಪಾಯದಲ್ಲಿ" },
@@ -483,6 +488,9 @@ export const translations: Record<string, TranslationEntry> = {
   "hero.inflows_exceed": { en: "inflows exceed demand",     ta: "வரத்து தேவையை மீறுகிறது", kn: "ಒಳಹರಿವು ಬೇಡಿಕೆಯನ್ನು ಮೀರಿದೆ" },
   "hero.days_remaining": { en: "days remaining",            ta: "நாட்கள் மீதம்", kn: "ದಿನಗಳು ಬಾಕಿ" },
   "hero.worst_case": { en: "Worst case (no rain):",     ta: "மோசமான நிலை (மழையில்லாமல்):", kn: "ಕೆಟ್ಟ ಸ್ಥಿತಿ (ಮಳೆ ಇಲ್ಲದೆ):" },
+  "hero.desalination_word": { en: "desalination", ta: "கடல்நீர் சுத்திகரிப்பு", kn: "ಉಪ್ಪುನೀರು ಸಂಸ್ಕರಣೆ" },
+  "hero.at_current_draw": { en: "At a draw of {mld} MLD:", ta: "நாளொன்றுக்கு {mld} MLD எடுப்பில்:", kn: "ದಿನಕ್ಕೆ {mld} MLD ಬಳಕೆಯಲ್ಲಿ:" },
+  "hero.no_inflow_note": { en: "Storage divided by the current net draw. These lakes publish no inflow data, so rain scenarios can't be computed - the figure assumes no new inflows.", ta: "தேக்கத்தை தற்போதைய நிகர எடுப்பால் வகுத்தது. இந்த ஏரிகளுக்கு உள்வரவு தரவு வெளியிடப்படுவதில்லை, எனவே மழை காட்சிகள் கணக்கிட முடியாது - புதிய உள்வரவு இல்லை என்ற அனுமானத்தில் இந்த எண்.", kn: "ಸಂಗ್ರಹವನ್ನು ಪ್ರಸ್ತುತ ನಿವ್ವಳ ಬಳಕೆಯಿಂದ ಭಾಗಿಸಲಾಗಿದೆ. ಈ ಕೆರೆಗಳಿಗೆ ಒಳಹರಿವಿನ ದತ್ತಾಂಶ ಪ್ರಕಟವಾಗುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಮಳೆ ಸನ್ನಿವೇಶಗಳನ್ನು ಲೆಕ್ಕಹಾಕಲಾಗುವುದಿಲ್ಲ - ಹೊಸ ಒಳಹರಿವು ಇಲ್ಲ ಎಂಬ ಊಹೆಯ ಮೇಲೆ ಈ ಸಂಖ್ಯೆ." },
   "hero.current_trend": { en: "Current trend:",            ta: "தற்போதைய போக்கு:", kn: "ಪ್ರಸ್ತುತ ಪ್ರವೃತ್ತಿ:" },
   "hero.seasonal_rains": { en: "If seasonal rains:",        ta: "பருவமழை இருந்தால்:", kn: "ಋತುಮಾನದ ಮಳೆ ಬಂದರೆ:" },
   "hero.wont_run_out": { en: "Won\u2019t run out",        ta: "தீர்ந்துவிடாது", kn: "ಮುಗಿಯುವುದಿಲ್ಲ" },
@@ -499,11 +507,13 @@ export const translations: Record<string, TranslationEntry> = {
   "hero.better_today": { en: "(better today)",            ta: "(இன்று சிறப்பாக)", kn: "(ಇಂದು ಉತ್ತಮ)" },
   "hero.worse_today": { en: "(worse today)",             ta: "(இன்று மோசமாக)", kn: "(ಇಂದು ಕೆಟ್ಟದು)" },
   "hero.adjust": { en: "Adjust assumptions",        ta: "அனுமானங்களை மாற்றவும்", kn: "ಊಹೆಗಳನ್ನು ಸರಿಹೊಂದಿಸಿ" },
+  "hero.view_live": { en: "View the live figure at the source", ta: "மூலத்தில் நேரடி எண்ணிக்கையைக் காண்க", kn: "ಮೂಲದಲ್ಲಿ ನೇರ ಅಂಕಿಯನ್ನು ನೋಡಿ" },
+  "hero.source_published": { en: "This runway is published by {publisher}; we surface it rather than recompute it.", ta: "இந்த எண்ணிக்கையை {publisher} வெளியிடுகிறது; நாங்கள் அதை மீண்டும் கணக்கிடாமல் முன்வைக்கிறோம்.", kn: "ಈ ಅಂಕಿಯನ್ನು {publisher} ಪ್ರಕಟಿಸುತ್ತದೆ; ನಾವು ಅದನ್ನು ಮರು-ಲೆಕ್ಕ ಹಾಕದೆ ಮುಂದಿಡುತ್ತೇವೆ." },
   "hero.consumption": { en: "Daily consumption",         ta: "தினசரி நுகர்வு", kn: "ದೈನಂದಿನ ಬಳಕೆ" },
   "hero.desalination": { en: "Desalination output",       ta: "கடல்நீர் குடிநீராக்க உற்பத்தி", kn: "ಸಮುದ್ರಜಲ ಶುದ್ಧೀಕರಣ ಉತ್ಪಾದನೆ" },
   "hero.inflow_pct": { en: "Inflow scenario",           ta: "நீர்வரத்து சூழல்", kn: "ಒಳಹರಿವು ಸನ್ನಿವೇಶ" },
   "hero.inflow_hint": { en: "Simulate drought (↓) or heavy rains (↑). 0% = no inflow, 100% = current actual.",  ta: "வறட்சி (↓) அல்லது கனமழை (↑) உருவகப்படுத்தவும். 0% = வரத்து இல்லை, 100% = தற்போதைய நிலை.", kn: "ಬರಗಾಲ (↓) ಅಥವಾ ಭಾರೀ ಮಳೆ (↑) ಅನುಕರಿಸಿ. 0% = ಒಳಹರಿವು ಇಲ್ಲ, 100% = ಪ್ರಸ್ತುತ ವಾಸ್ತವ." },
-  "hero.slider_note": { en: "Days left updates in real time as you adjust. Default: 830 MLD consumption, 190 MLD desalination.", ta: "சரிசெய்யும்போது மீதமுள்ள நாட்கள் நேரடியாக புதுப்பிக்கப்படும். இயல்பு: 830 MLD நுகர்வு, 190 MLD கடல்நீர் நீக்கம்.", kn: "ನೀವು ಸರಿಹೊಂದಿಸಿದಂತೆ ಉಳಿದ ದಿನಗಳು ನೈಜ-ಸಮಯದಲ್ಲಿ ನವೀಕರಿಸುತ್ತವೆ. ಪೂರ್ವನಿಯೋಜಿತ: 830 MLD ಬಳಕೆ, 190 MLD ಸಮುದ್ರಜಲ ಶುದ್ಧೀಕರಣ." },
+  "hero.slider_note": { en: "Days left updates in real time as you adjust. Default: {consumption} MLD consumption{desal}.", ta: "சரிசெய்யும்போது மீதமுள்ள நாட்கள் நேரடியாக புதுப்பிக்கப்படும். இயல்புநிலை: {consumption} MLD நுகர்வு{desal}.", kn: "ಹೊಂದಿಸಿದಂತೆ ಉಳಿದ ದಿನಗಳು ತಕ್ಷಣ ನವೀಕರಿಸಲ್ಪಡುತ್ತವೆ. ಡೀಫಾಲ್ಟ್: {consumption} MLD ಬಳಕೆ{desal}." },
 
   // ── City Story (dashboard narrative) ──────────────────────────────────────
   "city_story.heading": { en: "Chennai's water at a glance",                                      ta: "சென்னையின் நீர் நிலை ஒரு பார்வை", kn: "ಚೆನ್ನೈನ ನೀರು ಒಂದು ನೋಟದಲ್ಲಿ" },
@@ -1396,6 +1406,8 @@ export const translations: Record<string, TranslationEntry> = {
 
   // ── Flood Risk page ──────────────────────────────────────
   "nav.flood_risk": { en: "Flood Risk",                     ta: "வெள்ள அபாயம்", kn: "ಪ್ರವಾಹ ಅಪಾಯ" },
+  "nav.allocations": { en: "Allocations", ta: "\u0b92\u0ba4\u0bc1\u0b95\u0bcd\u0b95\u0bc0\u0b9f\u0bc1\u0b95\u0bb3\u0bcd", kn: "\u0cb9\u0c82\u0c9a\u0cbf\u0c95\u0cc6\u0c97\u0cb3\u0cc1" },
+  "nav.commitments": { en: "Commitments", ta: "உறுதிமொழிகள்", kn: "ಬದ್ಧತೆಗಳು" },
   "flood.loading": { en: "Loading flood data...",           ta: "வெள்ள தரவு ஏற்றப்படுகிறது...", kn: "ಪ್ರವಾಹ ದತ್ತಾಂಶ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." },
   "flood.loading_map": { en: "Loading flood risk map...",       ta: "வெள்ள அபாய வரைபடம் ஏற்றப்படுகிறது...", kn: "ಪ್ರವಾಹ ಅಪಾಯ ನಕ್ಷೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." },
 
