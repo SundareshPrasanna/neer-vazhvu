@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { isFeatureSupportedForCity } from "@/lib/cities/routing";
 import { Suspense } from "react";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { MyWardPage } from "@/components/my-ward/my-ward-page";
@@ -23,6 +24,10 @@ export default async function CityMyWardPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
+  // WIP gate: cities whose FEATURE_AVAILABILITY set omits "my-ward"
+  // (Mumbai at launch - the ward panels are still being built) 404 here
+  // and show no nav entry.
+  if (!isFeatureSupportedForCity("/my-ward", cityId)) notFound();
 
   return (
     <Suspense

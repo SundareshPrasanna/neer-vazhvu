@@ -19,6 +19,10 @@ const BangalorePageDescriptions = dynamic(() =>
   import("./bangalore-page-descriptions").then((mod) => mod.BangalorePageDescriptions),
 );
 
+const MumbaiPageDescriptions = dynamic(() =>
+  import("./mumbai-page-descriptions").then((mod) => mod.MumbaiPageDescriptions),
+);
+
 const ChennaiPageDescriptions = dynamic(() =>
   import("./chennai-page-descriptions").then((mod) => mod.ChennaiPageDescriptions),
 );
@@ -169,6 +173,7 @@ export function CityAboutContent({
   const cityName = config.displayName;
   const isMadurai = config.cityId === "madurai";
   const isBangalore = config.cityId === "bangalore";
+  const isMumbai = config.cityId === "mumbai";
   const isChennai = config.cityId === "chennai";
 
   return (
@@ -520,11 +525,15 @@ export function CityAboutContent({
             <BangalorePageDescriptions cityId={config.cityId} cityName={cityName} />
           )}
 
+          {isMumbai && (
+            <MumbaiPageDescriptions cityId={config.cityId} cityName={cityName} />
+          )}
+
           {isChennai && (
             <ChennaiPageDescriptions cityId={config.cityId} cityName={cityName} />
           )}
 
-          {!isMadurai && !isBangalore && !isChennai && (
+          {!isMadurai && !isBangalore && !isMumbai && !isChennai && (
             <p className="text-slate-600 dark:text-slate-400">
               Per-page methodology documentation for {cityName} is pending. See the dedicated Chennai about page (<Link href="/chennai/about" className="text-blue-600 dark:text-blue-400 hover:underline">/chennai/about</Link>) for the canonical methodology pattern.
             </p>

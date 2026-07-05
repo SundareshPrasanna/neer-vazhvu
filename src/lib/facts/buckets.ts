@@ -138,6 +138,9 @@ const CATEGORY_TO_BUCKET: Record<string, FactBucketId> = {
   supply: "reservoirs",
   rainfall: "reservoirs",
   reservoirs: "reservoirs",
+  // Water equity (who gets how much) is a supply-distribution story; it sits
+  // with the supply bucket, whose dashboard page carries the equity surface.
+  "water equity": "reservoirs",
 
   // Groundwater
   groundwater: "groundwater",
@@ -160,6 +163,9 @@ const CATEGORY_TO_BUCKET: Record<string, FactBucketId> = {
   // Floods
   flood: "floods",
   floods: "floods",
+  // Coast & wetlands: mangroves and salt pans are the city's flood buffers, so
+  // their erasure is a flood-resilience story.
+  "coast & wetlands": "floods",
 
   // Infrastructure & governance (catch-all bucket)
   sewage: "infrastructure",
