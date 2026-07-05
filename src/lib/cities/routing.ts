@@ -78,6 +78,7 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "lake-restoration",
     "facts",
     "origins",
+    "my-ward",
     "shoreline",
     "allocations",
     "commitments",

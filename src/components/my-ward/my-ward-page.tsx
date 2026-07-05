@@ -17,6 +17,7 @@ import { WardActionsCard } from "./ward-actions-card";
 import { WardNarrative } from "@/components/insights/ward-narrative";
 import { NewsContext } from "@/components/insights/news-context";
 import { MyWardCityProvider } from "./city-context";
+import { WardEquityPanel } from "./ward-equity-panel";
 
 interface MyWardPageProps {
   /** City id for which to render the page. Defaults to Chennai for
@@ -75,6 +76,13 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
       {/* Ward selector - shows hero when no ward selected, compact when selected */}
       <WardSelector onSelect={handleSelectWard} selectedWard={wardNumber} cityId={cityId} />
 
+      {/* Ward equity panel - the per-ward service-equity view (supply hours,
+          %-unfit samples, unmetered share) from the utility's own numbers.
+          Data-file driven (ward-equity-{cityId}.json); self-hides for cities
+          without one. Shown above the fold when no ward is selected - it IS
+          the city-level answer to "which ward, and how unequal". */}
+      {wardNumber == null && <WardEquityPanel cityId={cityId} />}
+
       {/* Ward content */}
       {wardNumber != null && profile && (
         <>
@@ -107,20 +115,26 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 The profile above is administrative only (corporation,
-                zone, population, voter range, centroid, area).
-                Per-ward water-bodies, flood, drainage, sewerage,
-                groundwater-depth, and river-quality joins are produced
-                by a build-time spatial-join pipeline that runs on the
-                stable BBMP 198-ward boundary today. We carry the GBA
-                369-ward boundaries (post 15 May 2025 delimitation) for
-                administrative lookup, but the analytical compute on
-                top hasn&apos;t been re-run on them. Tracked as an open
-                gap at{" "}
+                zone, centroid, area). Per-ward water-bodies, flood,
+                drainage, sewerage, groundwater-depth, and river-quality
+                joins are produced by a build-time spatial-join pipeline
+                that hasn&apos;t yet been run for this city&apos;s
+                wards.
+                {cityId === "bangalore" && (
+                  <>
+                    {" "}The pipeline runs on the stable BBMP 198-ward
+                    boundary today; we carry the GBA 369-ward boundaries
+                    (post 15 May 2025 delimitation) for administrative
+                    lookup, but the analytical compute hasn&apos;t been
+                    re-run on them.
+                  </>
+                )}{" "}
+                Tracked as an open gap at{" "}
                 <Link
                   href={`${cityPrefix}/about`}
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
-                  /bangalore/about
+                  {`${cityPrefix}/about`}
                 </Link>
                 .
               </p>
@@ -128,21 +142,17 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
                 In the meantime, the city-level surfaces carry the
                 analytical content with sharper data:{" "}
                 <Link href={`${cityPrefix}/groundwater`} className="text-blue-600 dark:text-blue-400 hover:underline">
-                  /bangalore/groundwater
-                </Link>{" "}
-                (IISc 80-ward stress overlay, CGWB GEC 2024 blocks),{" "}
+                  {`${cityPrefix}/groundwater`}
+                </Link>
+                ,{" "}
                 <Link href={`${cityPrefix}/water-bodies`} className="text-blue-600 dark:text-blue-400 hover:underline">
-                  /bangalore/water-bodies
+                  {`${cityPrefix}/water-bodies`}
                 </Link>{" "}
-                (13 flagship deep-zoom lakes),{" "}
-                <Link href={`${cityPrefix}/tanker`} className="text-blue-600 dark:text-blue-400 hover:underline">
-                  /bangalore/tanker
-                </Link>{" "}
-                (OpenCity longitudinal survey), and{" "}
+                and{" "}
                 <Link href={`${cityPrefix}/flood-risk`} className="text-blue-600 dark:text-blue-400 hover:underline">
-                  /bangalore/flood-risk
-                </Link>{" "}
-                (KSNDMC + BBMP Sep 2022 hotspots).
+                  {`${cityPrefix}/flood-risk`}
+                </Link>
+                .
               </p>
             </div>
           )}

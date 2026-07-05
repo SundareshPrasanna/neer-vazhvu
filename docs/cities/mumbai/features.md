@@ -38,7 +38,7 @@ The supply model is Chennai-like, not Bengaluru-like: BMC's seven impounded lake
 
 ### Deliberately absent at launch
 
-- **My Ward** - the ward panels are still in build (non-BMC corporation ward geometry has no public source). Removed from `FEATURE_AVAILABILITY`, so nav, sitemap and direct URLs all 404 for Mumbai. Returns with the ward-equity build (the per-ward Praja feedstock - supply hours, unfit samples, metering - is already in `public/data/mumbai-ward-water-praja.json`).
+- **My Ward beyond BMC** - the page shipped shortly after launch with the **ward water equity panel** (ranked per-ward supply hours / unfit samples / unmetered share from Praja's RTI tables, via `ward-equity-mumbai.json` + the shared `WardEquityPanel`), covering the 24 BMC wards. The other eight corporations' wards remain absent - their boundaries have no known public geometry (SEC delimitation PDFs only).
 - **Marathi** - declared as upcoming (`upcomingLanguages: ['mr']`): the language switcher shows a greyed "coming soon" chip. The translation pass is a dedicated follow-up PR; ~1,509 keys.
 - **Forecasts** - shipped without AutoARIMA forecasts (Chennai-only today); the Pravah history is too young.
 - **Cascades / tanker** - not applicable (reservoir-pumped geography; tanker data is RTI-gated).

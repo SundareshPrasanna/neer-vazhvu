@@ -163,11 +163,20 @@ export function MumbaiPageDescriptions({ cityId, cityName }: Props) {
         </div>
       </SubSection>
 
-      <SubSection id="page-my-ward" title="My Ward / Report Card (in build - not yet live)">
+      <SubSection id="page-my-ward" title="My Ward / Report Card">
         <p className="text-slate-600 dark:text-slate-400">
           Ward-boundary map for the 24 BMC administrative wards (A..T), not the 227 electoral wards -
           those exist only as SEC PDFs with no open geometry. Click a ward for its code, locality,
-          area and a link into the rankings.
+          area and a link into the rankings. The other eight corporations&apos; wards are not shown:
+          their boundaries have no known public geometry (SEC delimitation PDFs only).
+        </p>
+        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Ward water equity panel</h4>
+        <p className="text-slate-600 dark:text-slate-400">
+          The page opens with a ranked equity view built from Praja Foundation&apos;s RTI ward
+          tables (data year 2024): average supply hours per ward (C / Marine Lines at 1.53 h/day to
+          T / Mulund at 24 h - a 16x gap inside one corporation), the share of samples unfit for
+          drinking (2020-24), and the unmetered share of each ward&apos;s connections. Worst wards
+          rank first; the toggle switches metrics.
         </p>
         <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Ward risk composite (risk_v2_mum)</h4>
         <p className="text-slate-600 dark:text-slate-400">
@@ -279,8 +288,7 @@ export function MumbaiPageDescriptions({ cityId, cityName }: Props) {
           <Link href="/about" className="text-blue-600 dark:text-blue-400 hover:underline">
             /about
           </Link>
-          ) for the canonical methodology pattern this follows. My Ward is the one page still in
-          build for {cityName}; it will be documented here when it ships. Linked
+          ) for the canonical methodology pattern this follows. Linked
           from <Link href={`/${cityId}/facts`} className="text-blue-600 dark:text-blue-400 hover:underline">{`/${cityId}/facts`}</Link>.
         </p>
       </SubSection>
