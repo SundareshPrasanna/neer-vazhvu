@@ -9,6 +9,7 @@ import { ViewModeToggle, type ViewMode } from "@/components/water-bodies/view-mo
 import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { MapInfoButton } from "@/components/map/map-info-button";
+import { tryGetPlaceConfig } from "@/lib/cities";
 import { RichBodyOverlay } from "@/components/water-bodies/rich-body-overlay";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
@@ -57,6 +58,13 @@ function MapLoading() {
 const UnifiedMap = dynamic(
   () => import("@/components/water-bodies/unified-map").then((m) => m.UnifiedMap),
   { ssr: false, loading: () => <MapLoading /> },
+);
+
+// react-leaflet is browser-only; load the corporation-boundary overlay
+// client-side (it renders inside the ssr:false UnifiedMap).
+const CorporationBoundaries = dynamic(
+  () => import("@/components/map/corporation-boundaries").then((m) => m.CorporationBoundaries),
+  { ssr: false },
 );
 
 export default function WaterBodiesMapClient({
@@ -289,7 +297,13 @@ export default function WaterBodiesMapClient({
             riversGeoJsonUrl={`/geojson/${cityId}-rivers.geojson`}
             mapCenter={mapCenter}
             mapZoom={mapZoom}
-          />
+          >
+            {/* Region places (the MMR) overlay their municipal-corporation
+                boundaries as context. No-op for single-city places. */}
+            {tryGetPlaceConfig(cityId)?.placeKind === "region" && (
+              <CorporationBoundaries cityId={cityId} />
+            )}
+          </UnifiedMap>
 
           {/* Legend overlay */}
           <div

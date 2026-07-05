@@ -146,15 +146,23 @@ export function LakeRestorationContent({
     : p === "moderate" ? t("lake.priority_moderate")
     : t("lake.priority_low");
 
-  // Render the Madurai-specific intro paragraph by interpolating numbers
-  // into the bilingual template.
-  const introTpl = t("lake.intro_template_madurai");
-  const introText = introTpl
-    .replace("{fully_lost}", String(lostFile.summary.fully_lost_count))
-    .replace("{reduced}", String(lostFile.summary.severely_reduced_count))
-    .replace("{area}", String(lostFile.summary.combined_area_lost_sqkm_estimate))
-    .replace("{pct}", String(lostFile.summary.share_of_city_estimate_pct))
-    .replace("{households}", lostFile.summary.slum_households_on_former_tank_beds_estimate.toLocaleString());
+  // The detailed intro interpolates Madurai-specific aggregate stats (lost area,
+  // % of city, households on tank beds). Only cities whose lost-summary carries
+  // those aggregates (Madurai today) get it; others (e.g. the MMR, which still
+  // lists its lost tanks but has no aggregate stats) get a generic intro. This
+  // also avoids reading summary fields those cities don't carry.
+  const s = lostFile.summary;
+  const hasAggregateLostStats =
+    s.slum_households_on_former_tank_beds_estimate != null &&
+    s.combined_area_lost_sqkm_estimate != null;
+  const introText = hasAggregateLostStats
+    ? t("lake.intro_template_madurai")
+        .replace("{fully_lost}", String(s.fully_lost_count))
+        .replace("{reduced}", String(s.severely_reduced_count))
+        .replace("{area}", String(s.combined_area_lost_sqkm_estimate))
+        .replace("{pct}", String(s.share_of_city_estimate_pct))
+        .replace("{households}", s.slum_households_on_former_tank_beds_estimate.toLocaleString())
+    : t("lake.intro_generic");
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:py-10 space-y-6">

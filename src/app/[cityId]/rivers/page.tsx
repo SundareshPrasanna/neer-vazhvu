@@ -216,6 +216,60 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       color: "stroke-violet-600",
     },
   },
+  mumbai: {
+    mithi: {
+      display_name: "Mithi River",
+      length_km_geom: 18,
+      description:
+        "Mumbai's principal river - rises from the Vihar and Powai lake overflows in the Sanjay Gandhi National Park and runs ~18 km south-west through Saki Naka, Kurla, Dharavi and Mahim to the Arabian Sea at Mahim Creek. Walled and channelised, it carries largely untreated sewage and industrial effluent, and it was the river that overflowed in the 26 July 2005 deluge.",
+      upstream_terminus: "Vihar / Powai lake overflows (Sanjay Gandhi NP)",
+      downstream_terminus: "Mahim Creek / Arabian Sea",
+      feeds: "Mahim Creek estuary",
+      status: "CPCB Priority-I polluted stretch; MRDPA jurisdiction; 2025 ED desilting probe",
+      cpcb_nwmp_stations: [
+        "Mithi at Powai (origin)",
+        "Mithi at Kurla (CST Road bridge)",
+        "Mithi at Mahim Creek (mouth)",
+      ],
+      color: "stroke-red-600",
+    },
+    dahisar: {
+      display_name: "Dahisar River",
+      length_km_geom: 12,
+      description:
+        "Rises from Tulsi Lake in the Sanjay Gandhi National Park and flows ~12 km west through Dahisar to the Gorai/Manori Creek and the Arabian Sea; reduced to a sewage-fed channel through built-up Dahisar.",
+      upstream_terminus: "Tulsi Lake (Sanjay Gandhi NP)",
+      downstream_terminus: "Gorai / Manori Creek",
+      feeds: "Manori Creek",
+      status: "CPCB Priority-I polluted stretch; BMC rejuvenation STPs under trial (2025)",
+      cpcb_nwmp_stations: [],
+      color: "stroke-amber-600",
+    },
+    poisar: {
+      display_name: "Poisar River",
+      length_km_geom: 7,
+      description:
+        "Originates in the Sanjay Gandhi National Park and runs ~7 km through Kandivali to the Marve Creek; largely a storm-water and sewage channel through built-up Kandivali.",
+      upstream_terminus: "Sanjay Gandhi National Park",
+      downstream_terminus: "Marve Creek",
+      feeds: "Marve Creek",
+      status: "CPCB Priority-I polluted stretch; BMC rejuvenation programme",
+      cpcb_nwmp_stations: [],
+      color: "stroke-violet-600",
+    },
+    oshiwara: {
+      display_name: "Oshiwara River",
+      length_km_geom: 7,
+      description:
+        "Rises near the Aarey Milk Colony and the Sanjay Gandhi National Park and flows ~7 km through Goregaon and Jogeshwari to the Malad Creek; heavily encroached and sewage-fed through its urban course.",
+      upstream_terminus: "Aarey / Sanjay Gandhi National Park",
+      downstream_terminus: "Malad Creek",
+      feeds: "Malad Creek",
+      status: "CPCB Priority-I polluted stretch; BMC rejuvenation programme",
+      cpcb_nwmp_stations: [],
+      color: "stroke-blue-600",
+    },
+  },
 };
 
 // Per-city map framing for the rivers page. Madurai needs the Vaigai
@@ -223,6 +277,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
 const RIVERS_SCOPE_LABEL: Record<string, string> = {
   madurai: "Vaigai system",
   bangalore: "Bengaluru ridge (3 drainage valleys)",
+  mumbai: "MMR rivers (urban + eastern Ulhas corridor + source rivers)",
 };
 
 export default async function CityRiversPage({ params }: PageProps) {
@@ -281,9 +336,14 @@ export default async function CityRiversPage({ params }: PageProps) {
   const mapCenter: [number, number] =
     cityId === "bangalore"
       ? [config.center.lat, config.center.lng]
-      : [config.center.lat - 0.1, config.center.lng - 0.2];
+      : cityId === "mumbai"
+        ? // MMR spread: BMC rivers in the SW, the Ulhas corridor in the east,
+          // and the source rivers (Vaitarna/Bhatsa/Tansa) in the NE.
+          [19.35, 73.15]
+        : [config.center.lat - 0.1, config.center.lng - 0.2];
   // Bangalore: zoom 11 frames the GBA bbox (~38x41 km) tightly; zoom 10 read as
-  // too wide. Others keep 9 (Vaigai/Pinakini mainstems need the wider frame).
+  // too wide. Others keep 9 (Vaigai/Pinakini mainstems + the MMR spread need
+  // the wider frame).
   const mapZoom = cityId === "bangalore" ? 11 : 9;
   const scopeLabel = RIVERS_SCOPE_LABEL[cityId] ?? "Basin system";
 

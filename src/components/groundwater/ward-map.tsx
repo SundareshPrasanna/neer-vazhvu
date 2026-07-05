@@ -10,6 +10,8 @@ import { getGroundwaterColor, getGroundwaterStatus, getRiskColor, getBlockClassC
 import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation, WrisStation, CgwbStation } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
+import { CorporationBoundaries } from "@/components/map/corporation-boundaries";
+import { tryGetPlaceConfig } from "@/lib/cities";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { SelectedWardHighlight } from "@/components/map/selected-ward-highlight";
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
@@ -68,6 +70,8 @@ interface WardMapProps {
   wardGeoJsonUrl?: string;
   mapCenter?: [number, number];
   mapZoom?: number;
+  /** Place id, used to overlay corporation boundaries for region places. */
+  cityId?: string;
 }
 
 export function WardMap({
@@ -91,11 +95,17 @@ export function WardMap({
   wardGeoJsonUrl = DEFAULT_WARDS_GEOJSON_URL,
   mapCenter = DEFAULT_MAP_CENTER,
   mapZoom = 11,
+  cityId,
 }: WardMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
   const [wardGeoJSON, setWardGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
   const [blockGeoJSON, setBlockGeoJSON] = useState<GeoJSON.FeatureCollection | null>(null);
+  // Whether the block-geojson fetch has settled (resolved OR 404'd). Cities
+  // excluded from the CGWB block assessment (Mumbai) legitimately have no
+  // block layer, so the loading overlay must key off "fetch done", not
+  // "blockGeoJSON is non-null" - otherwise it hangs forever on a null layer.
+  const [blockGeoResolved, setBlockGeoResolved] = useState(false);
   const [blocks, setBlocks] = useState<GWBlock[]>([]);
   const [stations, setStations] = useState<GWStation[]>([]);
 
@@ -104,14 +114,19 @@ export function WardMap({
       .then(setWardGeoJSON)
       .catch(console.error);
 
+    // Guard r.ok on the block layers too: cities excluded from the CGWB
+    // block assessment (Mumbai) or without a curated blocks file ship no
+    // gwr-blocks geojson/json, and parsing the 404 HTML error page as JSON
+    // throws a SyntaxError that leaves the map stuck loading.
     fetch(blockGeoJsonUrl)
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : null))
       .then(setBlockGeoJSON)
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setBlockGeoResolved(true));
 
     fetch(blocksJsonUrl)
-      .then((r) => r.json())
-      .then((d) => setBlocks(d.blocks))
+      .then((r) => (r.ok ? r.json() : { blocks: [] }))
+      .then((d) => setBlocks(d.blocks ?? []))
       .catch(console.error);
 
     // Static gw-stations.json is Chennai's fallback metadata bundle;
@@ -151,7 +166,13 @@ export function WardMap({
       category = getGroundwaterStatus(ward?.depthM ?? null);
     }
     const isHidden = hiddenCategories?.has(category) ?? false;
-    return { fillColor, weight: 1, opacity: isHidden ? 0.1 : 0.7, color: tiles.stroke, fillOpacity: isHidden ? 0.05 : 0.75 };
+    // A ward with no data shouldn't paint a solid grey block - that reads as
+    // "measured", not "absent". Render it as a faint outline instead. This is
+    // the normal state for a CGWB-stations-only city (Mumbai), where the wells
+    // carry the data and the ward layer is just spatial context.
+    const noData = category === "noData";
+    const fillOpacity = isHidden ? 0.05 : noData ? 0.06 : 0.75;
+    return { fillColor, weight: 1, opacity: isHidden ? 0.1 : 0.7, color: tiles.stroke, fillOpacity };
   }, [viewMode, riskData, groundwaterData, hiddenCategories, tiles.stroke]);
 
   // Map block class names to legend IDs
@@ -267,7 +288,24 @@ export function WardMap({
   // hasn't finished loading, unmounting + remounting the MapContainer
   // resets Leaflet's internal zoom/center to the initial mapZoom prop,
   // which is what caused the "zoom jumps when switching tabs" bug.
-  const layerLoading = viewMode === "exploitation" ? !blockGeoJSON : !wardGeoJSON;
+  const layerLoading =
+    viewMode === "exploitation"
+      ? !blockGeoJSON && !blockGeoResolved
+      : !wardGeoJSON;
+
+  // Fit to the ward layer extended to include the CGWB station points, so a
+  // region's wells (e.g. the MMR's Thane/Palghar/Raigad stations beyond the BMC
+  // wards) are in frame. No-op where the stations sit within the wards.
+  const stationFitBounds = useMemo(() => {
+    const wb = geoJsonBounds(wardGeoJSON);
+    if (!cgwbStations || cgwbStations.length === 0) return wb;
+    const b = L.latLngBounds([]);
+    if (wb) b.extend(wb as L.LatLngBoundsExpression);
+    for (const s of cgwbStations) {
+      if (s.lat != null && s.lng != null) b.extend([s.lat, s.lng]);
+    }
+    return b.isValid() ? b : wb;
+  }, [wardGeoJSON, cgwbStations]);
 
   return (
     <MapContainer
@@ -283,6 +321,11 @@ export function WardMap({
       )}
       <MapResizer />
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      {/* Region places (the MMR) overlay their corporation boundaries as
+          context. No-op for single-city places / when cityId is absent. */}
+      {cityId && tryGetPlaceConfig(cityId)?.placeKind === "region" && (
+        <CorporationBoundaries cityId={cityId} />
+      )}
       {/* Fit the map to the active layer's extent. Refires when viewMode
           flips (block extent vs full ward extent can be very different,
           especially in Bangalore where 369 GBA wards span ~800 km² but
@@ -291,7 +334,7 @@ export function WardMap({
         bounds={
           viewMode === "exploitation"
             ? geoJsonBounds(blockGeoJSON)
-            : geoJsonBounds(wardGeoJSON)
+            : stationFitBounds
         }
         resetKey={viewMode}
         maxZoom={12}
