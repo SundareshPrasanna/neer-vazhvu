@@ -90,6 +90,10 @@ jobs:
           BANGALORE_WRIS_DAYS: '90'
         run: python scripts/scrape_wris_bangalore.py
 
+      # Mumbai 7-lake daily storage comes from the Pravah workflow
+      # (pravah-dam-refresh.yml) - the earlier third-party mirror feed died
+      # (500s) and its scraper was retired in July 2026.
+
       # Best-effort call into the FastAPI orchestrator (Chennai-side ETL +
       # briefing + legacy v1 forecasts). Marked continue-on-error so a down
       # PYTHON_API_URL endpoint doesn't block the rest of the daily run -

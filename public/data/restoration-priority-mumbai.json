@@ -1,0 +1,377 @@
+{
+  "place_id": "mumbai",
+  "computed_at": "2026-06-24",
+  "algorithm_version": "mumbai-flagship-v0",
+  "total_scored": 15,
+  "weights": {
+    "status_severity": 0.4,
+    "cultural_bonus": 0.3,
+    "size": 0.2,
+    "narrative_bonus": 0.1,
+    "_note": "Mirrors the Bangalore flagship-v0 model: a curated set of named MMR water bodies scored by status severity + cultural prominence + size + narrative weight, normalised to 0-100 (critical>=84, high 60-83, moderate 42-59, low<42). No census-condition or automated WQ join yet; status_severity is hand-set from sourced reporting. Will refine when MPCB lake WQ + the restoration-projects pipeline land."
+  },
+  "notes": "Curated flagship set across the 9 MMR corporations (BMC Powai/Vihar/Tulsi/Bandra/Banganga; Thane Siddheshwar/Upvan/Kacharali/Masunda/Kavesar/Makhmali; Kalyan Kala Talao; Panvel Ballaleshwar; Navi Mumbai DPS/NRI wetlands). Bodies that are not distinct OSM water polygons (Masunda, Kavesar, the Navi Mumbai tidal wetlands, Makhmali) carry osm_id=null and render as orphan priority circles at an approximate centroid. The recurring theme is cosmetic beautification substituting for water-quality restoration; Powai and the CIDCO-contested flamingo wetlands carry the highest narrative weight.",
+  "water_bodies": [
+    {
+      "id": "osm:8546709",
+      "source": "osm",
+      "osm_id": 8546709,
+      "census_id": null,
+      "name": "Powai Lake",
+      "name_mr": "पवई तलाव",
+      "water_type": "lake",
+      "area_ha": 178.2,
+      "centroid": [
+        19.1282,
+        72.9059
+      ],
+      "priority_score": 96,
+      "priority_level": "critical",
+      "components": {
+        "status_severity": 60,
+        "cultural_bonus": 25,
+        "size": 18,
+        "narrative_bonus": 30,
+        "confidence_multiplier": 1.0
+      },
+      "rationale": "Drinking source lost to sewage: ~18 MLD inflow (BMC affidavit ~10.9), eutrophic, hyacinth (23-25% per BMC Apr-2024 ops vs 80% in the Jul-2025 NGT framing); NGT OA 150/2025, ~Rs 66 cr STP not live until Dec 2027; still hosts wild mugger crocodiles beside IIT Bombay."
+    },
+    {
+      "id": "osm:227785907",
+      "source": "osm",
+      "osm_id": 227785907,
+      "census_id": null,
+      "name": "Siddheshwar Talao",
+      "name_mr": "सिद्धेश्वर तलाव",
+      "water_type": "talao",
+      "area_ha": 1.97,
+      "centroid": [
+        19.2014,
+        72.9683
+      ],
+      "priority_score": 85,
+      "priority_level": "critical",
+      "components": {
+        "status_severity": 62,
+        "cultural_bonus": 28,
+        "size": 2,
+        "narrative_bonus": 18,
+        "confidence_multiplier": 0.95
+      },
+      "rationale": "A priceless Thane temple tank (a 9th-c Brahma idol was found during cleaning) left to rot - slum sewage on three sides, hyacinth, fish kills, shrinking to encroachment - and pointedly EXCLUDED from the City-of-Lakes conservation list. The counter-narrative to the beautified showcase lakes."
+    },
+    {
+      "id": "osm:31508318",
+      "source": "osm",
+      "osm_id": 31508318,
+      "census_id": null,
+      "name": "Kala Talao",
+      "name_mr": "कला तलाव",
+      "water_type": "talao",
+      "area_ha": 7.55,
+      "centroid": [
+        19.2459,
+        73.1313
+      ],
+      "priority_score": 69,
+      "priority_level": "high",
+      "components": {
+        "status_severity": 52,
+        "cultural_bonus": 22,
+        "size": 5,
+        "narrative_bonus": 18,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "Kalyan's Adil Shah-era tank, 'beautified' with a track, boating and fountain yet still acidic (pH 3.9-4.25), sewage-fed and eutrophic - the clearest beautified-but-not-restored paradox in the outer MMR."
+    },
+    {
+      "id": "mmr:dps-flamingo-lake",
+      "source": "curated",
+      "osm_id": null,
+      "census_id": null,
+      "name": "DPS Flamingo Lake",
+      "name_mr": "",
+      "water_type": "wetland",
+      "area_ha": 12.0,
+      "centroid": [
+        19.0235,
+        73.0185
+      ],
+      "priority_score": 60,
+      "priority_level": "high",
+      "components": {
+        "status_severity": 42,
+        "cultural_bonus": 22,
+        "size": 8,
+        "narrative_bonus": 30,
+        "confidence_multiplier": 0.85
+      },
+      "rationale": "Seawoods tidal wetland declared a Conservation Reserve (Apr 2025) - then targeted by a CIDCO de-reservation resolution days later; flamingo deaths in 2024 after a water-flow disruption, return in 2025 after partial tidal restoration. The flagship citizen-vs-CIDCO wetland fight."
+    },
+    {
+      "id": "osm:54228760",
+      "source": "osm",
+      "osm_id": 54228760,
+      "census_id": null,
+      "name": "Vadale Lake",
+      "name_mr": "वडाळे तलाव",
+      "water_type": "lake",
+      "area_ha": 9.44,
+      "centroid": [
+        18.9934,
+        73.1112
+      ],
+      "priority_score": 57,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 38,
+        "cultural_bonus": 22,
+        "size": 6,
+        "narrative_bonus": 22,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "Old Panvel's temple lake by the Ballaleshwar shrine: a Rs 13 cr beautification (2021), Phase-2 boating cancelled on ecological grounds (2024), now nature-based weed control (>1 lakh Salvinia weevils with ICAR-DWR, 2026-27). The outer MMR's cleanest restoration arc."
+    },
+    {
+      "id": "osm:38718204",
+      "source": "osm",
+      "osm_id": 38718204,
+      "census_id": null,
+      "name": "Banganga Talao",
+      "name_mr": "बाणगंगा तलाव",
+      "water_type": "temple_tank",
+      "area_ha": 0.44,
+      "centroid": [
+        18.9455,
+        72.7936
+      ],
+      "priority_score": 56,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 30,
+        "cultural_bonus": 35,
+        "size": 1,
+        "narrative_bonus": 20,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "Ancient sacred tank at Malabar Hill; a Sept-2025 Bombay HC order refused idol immersion here ('right to clean water prevails'), an immersion-pollution precedent for heritage tanks across the state."
+    },
+    {
+      "id": "mmr:makhmali-talao",
+      "source": "curated",
+      "osm_id": null,
+      "census_id": null,
+      "name": "Makhmali Talao",
+      "name_mr": "मखमली तलाव",
+      "water_type": "talao",
+      "area_ha": 1.0,
+      "centroid": [
+        19.205,
+        72.972
+      ],
+      "priority_score": 56,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 50,
+        "cultural_bonus": 15,
+        "size": 1,
+        "narrative_bonus": 12,
+        "confidence_multiplier": 0.85
+      },
+      "rationale": "Thane's 'velvet lake' - poor water quality, a non-functional aerator and food-dumping, left out of the AMRUT-2 funding list; subject of the citizen 'Majha Talao' awareness campaign. The neighbourhood-tank gap behind the flagship lakes."
+    },
+    {
+      "id": "mmr:masunda-lake",
+      "source": "curated",
+      "osm_id": null,
+      "census_id": null,
+      "name": "Masunda Lake",
+      "name_mr": "मासुंदा तलाव",
+      "water_type": "lake",
+      "area_ha": 6.0,
+      "centroid": [
+        19.1935,
+        72.9725
+      ],
+      "priority_score": 53,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 35,
+        "cultural_bonus": 32,
+        "size": 5,
+        "narrative_bonus": 16,
+        "confidence_multiplier": 0.8
+      },
+      "rationale": "The emotional and civic centre of 'City of Lakes' Thane (glass pathway, island Shiva temple), but with greenish water, foul odour and blocked inlets reported; area est. (reduced ~1/3 by 1950s station road). Not a distinct OSM water polygon."
+    },
+    {
+      "id": "osm:311633",
+      "source": "osm",
+      "osm_id": 311633,
+      "census_id": null,
+      "name": "Vihar Lake",
+      "name_mr": "विहार तलाव",
+      "water_type": "lake",
+      "area_ha": 485.96,
+      "centroid": [
+        19.1539,
+        72.913
+      ],
+      "priority_score": 52,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 18,
+        "cultural_bonus": 22,
+        "size": 25,
+        "narrative_bonus": 18,
+        "confidence_multiplier": 1.0
+      },
+      "rationale": "Mumbai's largest in-city lake and the headwater impoundment of the Mithi - the river behind the 2005 flood. SGNP-protected, supplies ~3% of the city; restoration leverage is catchment + Mithi-source protection, not the lake body itself."
+    },
+    {
+      "id": "osm:37813439",
+      "source": "osm",
+      "osm_id": 37813439,
+      "census_id": null,
+      "name": "Upvan Lake",
+      "name_mr": "उपवन तलाव",
+      "water_type": "lake",
+      "area_ha": 5.58,
+      "centroid": [
+        19.2217,
+        72.956
+      ],
+      "priority_score": 52,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 28,
+        "cultural_bonus": 25,
+        "size": 4,
+        "narrative_bonus": 12,
+        "confidence_multiplier": 1.0
+      },
+      "rationale": "Thane's flagship public-realm lake and festival venue (Sanskruti arts fest); a frequently-cited example of hardscape 'beautification' applied to a living water body."
+    },
+    {
+      "id": "osm:107295488",
+      "source": "osm",
+      "osm_id": 107295488,
+      "census_id": null,
+      "name": "Bandra Talao",
+      "name_mr": "वांद्रे तलाव",
+      "water_type": "talao",
+      "area_ha": 2.49,
+      "centroid": [
+        19.057,
+        72.8375
+      ],
+      "priority_score": 52,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 25,
+        "cultural_bonus": 28,
+        "size": 2,
+        "narrative_bonus": 16,
+        "confidence_multiplier": 1.0
+      },
+      "rationale": "Grade-II heritage tank, ~200 years old, dewatered May 2026 for a ~Rs 20 cr BMC restoration (15th Finance Commission) - the test case for reviving Mumbai's small heritage talaos as blue-green assets."
+    },
+    {
+      "id": "mmr:nri-wetland",
+      "source": "curated",
+      "osm_id": null,
+      "census_id": null,
+      "name": "NRI Wetland",
+      "name_mr": "",
+      "water_type": "wetland",
+      "area_ha": 20.0,
+      "centroid": [
+        19.015,
+        73.018
+      ],
+      "priority_score": 51,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 40,
+        "cultural_bonus": 16,
+        "size": 10,
+        "narrative_bonus": 26,
+        "confidence_multiplier": 0.8
+      },
+      "rationale": "The original Navi Mumbai 'golf course vs flamingos' battle: Bombay HC struck down the golf course (2018, total ban on NWIA-wetland reclamation), the developer's SLP is still pending in the Supreme Court, and a recommended Conservation Reserve status is undeclared."
+    },
+    {
+      "id": "mmr:kavesar-lake",
+      "source": "curated",
+      "osm_id": null,
+      "census_id": null,
+      "name": "Kavesar Lake",
+      "name_mr": "कावेसर तलाव",
+      "water_type": "wetland",
+      "area_ha": 2.46,
+      "centroid": [
+        19.2555,
+        72.9925
+      ],
+      "priority_score": 48,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 32,
+        "cultural_bonus": 22,
+        "size": 2,
+        "narrative_bonus": 26,
+        "confidence_multiplier": 0.85
+      },
+      "rationale": "Thane's last natural wetland (200+ species, the district's only naturally-growing white lotus) inside Hiranandani Estate; a ~Rs 6-7 cr TMC 'beautification' is opposed by the Save Kavesar Lake movement (8,000+ signatures) who argue it would destroy the ecology. Governance-not-water in one lake."
+    },
+    {
+      "id": "osm:35357668",
+      "source": "osm",
+      "osm_id": 35357668,
+      "census_id": null,
+      "name": "Kacharali Lake",
+      "name_mr": "कचराळी तलाव",
+      "water_type": "lake",
+      "area_ha": 2.05,
+      "centroid": [
+        19.1962,
+        72.968
+      ],
+      "priority_score": 31,
+      "priority_level": "low",
+      "components": {
+        "status_severity": 20,
+        "cultural_bonus": 15,
+        "size": 2,
+        "narrative_bonus": 5,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "Showcase lake beside Thane's municipal HQ; beautified/well-maintained and on the AMRUT-2 list - included as the maintained-flagship reference within the City of Lakes."
+    },
+    {
+      "id": "osm:6244817",
+      "source": "osm",
+      "osm_id": 6244817,
+      "census_id": null,
+      "name": "Tulsi Lake",
+      "name_mr": "तुळशी तलाव",
+      "water_type": "lake",
+      "area_ha": 114.61,
+      "centroid": [
+        19.1917,
+        72.9177
+      ],
+      "priority_score": 27,
+      "priority_level": "low",
+      "components": {
+        "status_severity": 10,
+        "cultural_bonus": 15,
+        "size": 14,
+        "narrative_bonus": 5,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "The forest-buffered, encroachment-free counterpoint to Powai inside SGNP; commonly cited as the cleanest of Mumbai's reservoirs (qualitative). Low restoration pressure - included as the healthy reference."
+    }
+  ],
+  "river_sections": []
+}

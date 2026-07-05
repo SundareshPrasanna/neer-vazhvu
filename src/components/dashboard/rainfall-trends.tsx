@@ -41,6 +41,15 @@ function getBarColor(total: number, mean: number, year: number, dayZeroCity: boo
   return "#10b981"; // green — normal range
 }
 
+interface RecentRainfall {
+  attribution: string;
+  url: string;
+  provisional_note: string;
+  imd_covers_through: string;
+  through: string;
+  monthly: { year: number; month: number; rainfall_mm: number; complete: boolean }[];
+}
+
 interface RainfallTrendsProps {
   /** City id for the data file lookup. Defaults to Chennai for back-compat. */
   cityId?: string;
@@ -67,6 +76,7 @@ export function RainfallTrends({
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
   const [data, setData] = useState<IMDRainfallData | null>(null);
+  const [recent, setRecent] = useState<RecentRainfall | null>(null);
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
@@ -96,6 +106,16 @@ export function RainfallTrends({
         if (d) setData(d);
       })
       .catch(() => setMissing(true));
+    // Provisional recent months (daily-updated Open-Meteo fill for the gap
+    // after IMD's last published month) - optional file, absent = no-op.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setRecent(null);
+    fetch(`/data/rainfall-recent-${cityId}.json`)
+      .then((r) => (r.ok ? (r.json() as Promise<RecentRainfall>) : null))
+      .then((d) => {
+        if (d) setRecent(d);
+      })
+      .catch(() => {});
   }, [cityId]);
 
   const monthLabels = language === "ta" ? MONTH_LABELS_TA : MONTH_LABELS_EN;
@@ -103,29 +123,45 @@ export function RainfallTrends({
 
   const currentMonth = new Date().getMonth() + 1; // 1-indexed
 
-  // Current year monthly vs normal (only show months up to current month)
-  const { monthlyComparison, comparisonYear } = useMemo(() => {
-    if (!data) return { monthlyComparison: [], comparisonYear: currentYear };
-    const currentYearData = data.monthly.filter((m) => m.year === currentYear);
+  // Current year monthly vs normal (only show months up to current month).
+  // Provisional Open-Meteo months extend the IMD series so the chart shows
+  // THIS year's monsoon while IMD's gridded product is still catching up;
+  // wherever both have a month, IMD wins.
+  const { monthlyComparison, comparisonYear, provisionalMonths } = useMemo(() => {
+    if (!data)
+      return { monthlyComparison: [], comparisonYear: currentYear, provisionalMonths: new Set<number>() };
+    const imdKeys = new Set(data.monthly.map((m) => `${m.year}-${m.month}`));
+    const merged = [
+      ...data.monthly.map((m) => ({ ...m, provisional: false })),
+      ...(recent?.monthly ?? [])
+        .filter((m) => !imdKeys.has(`${m.year}-${m.month}`))
+        .map((m) => ({ year: m.year, month: m.month, rainfall_mm: m.rainfall_mm, provisional: true })),
+    ];
+    const currentYearData = merged.filter((m) => m.year === currentYear);
     const hasCurrentYear = currentYearData.length > 0;
     const yearToUse = hasCurrentYear ? currentYear : data.year_range[1];
     const yearData = hasCurrentYear
       ? currentYearData
-      : data.monthly.filter((m) => m.year === yearToUse);
+      : merged.filter((m) => m.year === yearToUse);
 
     // Only show months up to the current month for the display year
     const maxMonth = yearToUse === currentYear ? currentMonth : 12;
 
+    const provisional = new Set<number>();
     const comparison = data.normals.monthly_mean_mm
       .slice(0, maxMonth)
-      .map((normal, i) => ({
-        month: monthLabels[i],
-        normal: Math.round(normal),
-        actual: yearData.find((m) => m.month === i + 1)?.rainfall_mm ?? 0,
-      }));
+      .map((normal, i) => {
+        const row = yearData.find((m) => m.month === i + 1);
+        if (row?.provisional) provisional.add(i + 1);
+        return {
+          month: monthLabels[i] + (row?.provisional ? "*" : ""),
+          normal: Math.round(normal),
+          actual: row?.rainfall_mm ?? 0,
+        };
+      });
 
-    return { monthlyComparison: comparison, comparisonYear: yearToUse };
-  }, [data, currentYear, currentMonth, monthLabels]);
+    return { monthlyComparison: comparison, comparisonYear: yearToUse, provisionalMonths: provisional };
+  }, [data, recent, currentYear, currentMonth, monthLabels]);
 
   if (!data) {
     if (missing) {
@@ -285,6 +321,23 @@ export function RainfallTrends({
             <span><span className="inline-block w-2 h-2 rounded-sm bg-slate-400 mr-1" />{t("rain.normal")}</span>
             <span><span className="inline-block w-2 h-2 rounded-sm bg-blue-500 mr-1" />{comparisonYear}</span>
           </div>
+          {provisionalMonths.size > 0 && recent && (
+            <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500 leading-snug">
+              * Provisional: months after IMD&apos;s last published gridded month
+              ({recent.imd_covers_through}) use daily reanalysis rainfall through {recent.through},
+              updated daily and replaced by IMD&apos;s values as its quarterly series catches up.
+              The current month is month-to-date.{" "}
+              <a
+                href={recent.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {recent.attribution}
+              </a>
+              .
+            </p>
+          )}
         </div>
 
         {/* Source */}

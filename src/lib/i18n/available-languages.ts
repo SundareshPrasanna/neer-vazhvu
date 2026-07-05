@@ -35,3 +35,14 @@ export function resolveAvailableLanguagesForPath(
 
   return ["en"];
 }
+
+/**
+ * Languages a city advertises as coming soon (greyed in the switcher).
+ * No Chennai fallback: legacy routes have no upcoming set.
+ */
+export function resolveUpcomingLanguagesForPath(
+  pathname: string,
+): readonly LanguageCode[] {
+  const firstSegment = pathname.split("/").filter(Boolean)[0] ?? "";
+  return tryGetPlaceConfig(firstSegment)?.upcomingLanguages ?? [];
+}

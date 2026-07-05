@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ForecastSeries, HistorySeries } from "@/types/reservoir";
+import { tryGetPlaceConfig } from "@/lib/cities";
 
 interface DashboardHistoryPayload {
   earliestDate: string | null;
@@ -121,6 +122,9 @@ export function DashboardHistorySection({
   return (
     <MultiSourceHistoryChart
       cityDisplayName={cityDisplayName}
+      coverageNote={tryGetPlaceConfig(cityId)?.reservoirHistoryNote}
+      scopeLabel={tryGetPlaceConfig(cityId)?.dashboardScopes?.city}
+      defaultTab={tryGetPlaceConfig(cityId)?.reservoirHistoryDefaultRange}
       unit={unit}
       series={state.payload.series}
       forecast={state.payload.forecast}

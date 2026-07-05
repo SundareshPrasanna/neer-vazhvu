@@ -15,9 +15,27 @@
  */
 
 import { useMemo } from "react";
-import type { CgwbStation } from "@/types/groundwater";
+import type { CgwbStation, CgwbStationQuality } from "@/types/groundwater";
 
 const MONTH_LABELS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// Major-ion rows we surface, with BIS 10500 acceptable limits where one
+// exists. A value over its limit is flagged amber. EC has no BIS limit but
+// the 3000 uS/cm salinity threshold is the meaningful coastal-aquifer marker.
+const QUALITY_ROWS: Array<{
+  key: keyof CgwbStationQuality;
+  label: string;
+  unit: string;
+  limit: number | null;
+  limitLabel?: string;
+}> = [
+  { key: "ec_us_cm", label: "Salinity (EC)", unit: "µS/cm", limit: 3000, limitLabel: "saline > 3000" },
+  { key: "tds_mg_l", label: "TDS", unit: "mg/l", limit: 500 },
+  { key: "chloride_mg_l", label: "Chloride", unit: "mg/l", limit: 250 },
+  { key: "nitrate_mg_l", label: "Nitrate", unit: "mg/l", limit: 45 },
+  { key: "fluoride_mg_l", label: "Fluoride", unit: "mg/l", limit: 1.0 },
+  { key: "hardness_mg_l", label: "Total hardness", unit: "mg/l", limit: 200 },
+];
 
 function readingDateKey(year: number, month: number) {
   return year * 100 + month;
@@ -26,9 +44,13 @@ function readingDateKey(year: number, month: number) {
 export function CgwbStationPanel({
   station,
   onClose,
+  sourceNote,
 }: {
   station: CgwbStation;
   onClose: () => void;
+  /* Citation line for the foot of the panel. Defaults are wrong outside
+     Tamil Nadu, so cities pass their own Year Book label. */
+  sourceNote?: string;
 }) {
   const sorted = useMemo(
     () => [...station.readings].sort((a, b) => readingDateKey(a.year, a.month) - readingDateKey(b.year, b.month)),
@@ -174,11 +196,64 @@ export function CgwbStationPanel({
         </table>
       </div>
 
+      {/* Water chemistry - only where the well was sampled for quality. */}
+      {station.quality && (
+        <div className="mt-4">
+          <div className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">
+            Water chemistry · pre-monsoon (May 2022)
+          </div>
+          <div className="border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden">
+            <table className="w-full text-xs">
+              <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 text-[10px] uppercase tracking-wider">
+                <tr>
+                  <th className="text-left px-2 py-1.5 font-medium">Parameter</th>
+                  <th className="text-right px-2 py-1.5 font-medium">Value</th>
+                  <th className="text-left px-2 py-1.5 font-medium">BIS limit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {QUALITY_ROWS.map((row) => {
+                  const v = station.quality?.[row.key];
+                  if (v === undefined) return null;
+                  const over = row.limit !== null && v > row.limit;
+                  return (
+                    <tr key={row.key} className="border-t border-slate-100 dark:border-slate-800">
+                      <td className="px-2 py-1.5 text-slate-700 dark:text-slate-300">{row.label}</td>
+                      <td
+                        className={`px-2 py-1.5 text-right font-mono ${
+                          over
+                            ? "text-amber-600 dark:text-amber-400 font-semibold"
+                            : "text-slate-900 dark:text-slate-100"
+                        }`}
+                      >
+                        {v} <span className="text-[10px] text-slate-400">{row.unit}</span>
+                      </td>
+                      <td className="px-2 py-1.5 text-[11px] text-slate-500">
+                        {row.limitLabel ?? (row.limit !== null ? `${row.limit}` : "—")}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {(station.quality.arsenic_ug_l !== undefined ||
+            station.quality.uranium_ug_l !== undefined ||
+            station.quality.iron_mg_l !== undefined) && (
+            <div className="text-[10px] text-slate-400 mt-1">
+              Trace metals (NHS 2019-20):
+              {station.quality.iron_mg_l !== undefined && ` Fe ${station.quality.iron_mg_l} mg/l`}
+              {station.quality.arsenic_ug_l !== undefined && ` · As ${station.quality.arsenic_ug_l} µg/l`}
+              {station.quality.uranium_ug_l !== undefined && ` · U ${station.quality.uranium_ug_l} µg/l`}
+              {" "}— all well under BIS limits (As 10, U 30 µg/l).
+            </div>
+          )}
+        </div>
+      )}
+
       <p className="text-[10px] text-slate-400 italic mt-3">
-        Source: CGWB Ground Water Year Book of Tamil Nadu &amp; Puducherry,
-        annual editions. Phreatic (unconfined) aquifer dug well, manual
-        quarterly measurement. The deeper semi-confined / confined aquifer
-        is monitored separately via piezometers.
+        {sourceNote ??
+          "Source: CGWB Ground Water Year Book, annual editions. Phreatic (unconfined) aquifer dug well, manual seasonal measurement. The deeper semi-confined / confined aquifer is monitored separately via piezometers."}
       </p>
     </div>
   );

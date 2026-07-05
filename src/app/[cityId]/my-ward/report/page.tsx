@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { isFeatureSupportedForCity } from "@/lib/cities/routing";
 import { Suspense } from "react";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { CityWardReportCard } from "./city-ward-report-card";
@@ -28,6 +29,7 @@ export default async function CityWardReportPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
+  if (!isFeatureSupportedForCity("/my-ward", cityId)) notFound();
 
   return (
     <Suspense

@@ -27,6 +27,40 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Several server routes fs.readFile from public/ with DYNAMIC paths
+  // (e.g. `public/${dir}/${filename}`), which Next's file tracer can't
+  // narrow - so it traces ALL of public/ (~213 MB tracked) into every such
+  // serverless function, blowing Vercel's 250 MB uncompressed limit.
+  // Exclude the heavyweight client-fetched-only payloads globally, then
+  // re-include the specific families each route genuinely reads.
+  outputFileTracingExcludes: {
+    "*": [
+      "./public/data/cascade/**",
+      "./public/data/basins/**",
+      "./public/geojson/**",
+      "./public/tiles/**",
+      "./public/images/**",
+      "./public/data/rich-bodies/**",
+    ],
+  },
+  outputFileTracingIncludes: {
+    // Catchment API reads the per-city cascade files (streams/basin/downstream
+    // + catchments geojson) - the single legitimately heavy route.
+    // NOTE: keys are globs - [cityId] would parse as a character class and
+    // never match, so single-segment wildcards stand in for dynamic params.
+    "/api/cascade/**": ["./public/data/cascade/**"],
+    // About + dashboard read the small cascade stats/health summaries.
+    "*": [
+      "./public/data/cascade/*-cascade-stats.json",
+      "./public/data/cascade/*-cascades-health.json",
+    ],
+    // Water-bodies page reads the current-bodies geojson for census matching.
+    "/*/water-bodies": ["./public/geojson/*-water-bodies-current.geojson"],
+    // Ward-depth interpolation reads the ward polygons.
+    "/api/groundwater/wards-interpolated": ["./public/geojson/*-wards-*.geojson"],
+    // Rivers page reads the basin inventory (arkavathi PRS surface).
+    "/*/rivers": ["./public/data/basins/*/inventory.json"],
+  },
   async headers() {
     return [
       {

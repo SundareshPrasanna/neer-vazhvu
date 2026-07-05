@@ -226,6 +226,29 @@ export interface CgwbStationReading {
   _note?: string;
 }
 
+/* Major-ion chemistry for a CGWB well, from the state groundwater-quality
+   report (Annexure IX, pre-monsoon sampling). EC in uS/cm; ions in mg/l;
+   arsenic and uranium in ug/l. All fields optional - only a subset of wells
+   are sampled for quality, and trace metals (Fe/As/U) are reported per well
+   only where above detection. */
+export interface CgwbStationQuality {
+  ph?: number;
+  ec_us_cm?: number;
+  tds_mg_l?: number;
+  hardness_mg_l?: number;
+  calcium_mg_l?: number;
+  magnesium_mg_l?: number;
+  sodium_mg_l?: number;
+  bicarbonate_mg_l?: number;
+  chloride_mg_l?: number;
+  sulphate_mg_l?: number;
+  nitrate_mg_l?: number;
+  fluoride_mg_l?: number;
+  iron_mg_l?: number;
+  arsenic_ug_l?: number;
+  uranium_ug_l?: number;
+}
+
 export interface CgwbStation {
   name: string;
   lat: number;
@@ -233,6 +256,7 @@ export interface CgwbStation {
   block: string;
   block_inferred?: boolean;
   readings: CgwbStationReading[];
+  quality?: CgwbStationQuality;
 }
 
 export interface CgwbStationsFile {
@@ -240,6 +264,9 @@ export interface CgwbStationsFile {
   well_type: string;
   aquifer: string;
   depth_unit: string;
+  source_label?: string;
+  source_url?: string;
+  quality_note?: string;
   year_book_summaries: Array<{
     year_book: string;
     report_id?: string;

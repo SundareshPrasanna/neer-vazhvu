@@ -53,7 +53,22 @@ export default async function CityGroundwaterPage({ params }: PageProps) {
   // active button styling. Without this, useParams() returns empty on SSR
   // and the client falls back to "exploitation" before snapping to "iisc"
   // after hydration, producing a visible flicker for Bangalore visitors.
-  const initialViewMode = config.groundwaterViews?.iisc ? "iisc" : "exploitation";
+  //
+  // Pick the first enabled view, never a disabled one: a city excluded from
+  // the CGWB block assessment (Mumbai: exploitation=false, only cgwbStations)
+  // must NOT default to "exploitation", or the block base layer never loads
+  // and the map hangs on "Loading map...". Such cities fall back to the
+  // ward-based "depth" base, over which the CGWB station points render.
+  const gv = config.groundwaterViews;
+  const initialViewMode = gv?.iisc
+    ? "iisc"
+    : gv?.exploitation
+      ? "exploitation"
+      : gv?.depth
+        ? "depth"
+        : gv?.risk
+          ? "risk"
+          : "depth";
   return <CityGroundwaterClient initialViewMode={initialViewMode} />;
 }
 

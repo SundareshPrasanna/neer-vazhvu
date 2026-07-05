@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { MapContainer, TileLayer, GeoJSON, Pane, useMap } from "react-leaflet";
+import { CorporationBoundaries } from "@/components/map/corporation-boundaries";
+import { tryGetPlaceConfig } from "@/lib/cities";
 import L from "leaflet";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
@@ -228,6 +230,12 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
             zoom={zoom}
           />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+
+          {/* Region places (the MMR) overlay their corporation boundaries as
+              context. No-op for single-city places. */}
+          {tryGetPlaceConfig(cityId)?.placeKind === "region" && (
+            <CorporationBoundaries cityId={cityId} />
+          )}
 
           {/* Inherited area - the total basin (own + received) in a faint amber
               underneath; the part not covered by the bright own catchment above

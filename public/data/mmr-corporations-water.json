@@ -1,0 +1,576 @@
+{
+ "_note": "MMR per-corporation water data inventory. Every figure carries source_refs pointing into the `sources` registry below (document title, publisher, year, page/table, URL). Synthesised 2026-06-22 from 3 adversarially-verified deep-research passes + MMRDA WSRMC operator data. Coverage is deliberately uneven; nulls are genuine gaps, not zeros; vintages differ (see `year`). Built for docs/specs/mumbai-mmr.md P2.",
+ "as_of": "2026-07-04",
+ "sources": {
+  "praja-2021": {
+   "title": "Report on the Status of Civic Issues in Mumbai 2021",
+   "publisher": "Praja Foundation",
+   "year": 2021,
+   "ref": "Water chapter - slum 45 vs non-slum 150 LPCD + tariffs, citing MCGM 'Towards Equitable & 24x7 Water Supply'",
+   "url": "https://www.praja.org/praja_docs/praja_downloads/Report%20on%20Status%20of%20Civic%20Issues%20in%20Mumbai%202021.pdf"
+  },
+  "praja-2024": {
+   "title": "Status of Civic Issues in Mumbai 2024 (water supply: 15% shortfall, 1 ward 24x7)",
+   "publisher": "Praja Foundation (reported via Free Press Journal)",
+   "year": 2024,
+   "ref": "supply 3,975 vs demand 4,664 MLD = 689 (14.8%)",
+   "url": "https://www.freepressjournal.in/mumbai/mumbai-news-only-1-ward-received-24-hour-water-supply-amid-15-shortfall-in-2024-reveals-praja-foundation-report"
+  },
+  "nmmc-esr-2014": {
+   "title": "Navi Mumbai Environment Status Report 2014-15",
+   "publisher": "NMMC (authored by TERI)",
+   "year": 2015,
+   "ref": "water supply chapter - 421 MLD supplied / 325 billed, 240 LPCD, 1,22,143 connections, 972 km, 100% coverage",
+   "url": "https://www.nmmc.gov.in/environment-status-report"
+  },
+  "mmrda-wsrmc": {
+   "title": "Water Supply Resource Management Cell - Surya scheme Project Beneficiaries table + present status",
+   "publisher": "MMRDA",
+   "year": 2025,
+   "ref": "Project Beneficiaries: VVCMC 422 demand / 400 supply / 22 deficit; MBMC 240 / 195 / 55; operator-provided (page is JS-rendered)",
+   "url": "https://mmrda.maharashtra.gov.in/en/division/engineering/wsrmc/details-project"
+  },
+  "mmrda-wsrmc-status": {
+   "title": "WSRMC present status - augmentation pipeline (Surya/Kalu/Deharji)",
+   "publisher": "MMRDA",
+   "year": 2025,
+   "ref": "Surya 403 MLD Phase-1 live to VVCMC since 15.11.2023; Kalu + Deharji via KIDC",
+   "url": "https://www.mmrda.maharashtra.gov.in/division/engineering/wsrmc/present-status"
+  },
+  "mmrda-kalu": {
+   "title": "Kalu Dam Project and Regional Water Supply Scheme - overview",
+   "publisher": "MMRDA",
+   "year": 2025,
+   "ref": "1,140 MLD for Thane/Bhiwandi/Kalyan-Dombivli/Ulhasnagar/Ambernath",
+   "url": "https://mmrda.maharashtra.gov.in/en/projects/environment/kalu-dam-project-and-regional-water-supply-scheme/overview"
+  },
+  "mpcb-stp-2025": {
+   "title": "Status of Sewage Generation and Treatment Capacity in the State",
+   "publisher": "Maharashtra Pollution Control Board (MPCB)",
+   "year": 2025,
+   "ref": "per-STP table (installed vs operational MLD), data as on ~31.08.2025",
+   "url": "https://www.mpcb.gov.in/sites/default/files/inline-files/STP_information_on_website_publication_1_0_jul.pdf"
+  },
+  "mpcb-kalyan-esr-2005": {
+   "title": "Kalyan Region Environmental Status Report",
+   "publisher": "MPCB",
+   "year": 2005,
+   "ref": "Annexure-IV 'Domestic Water Pollution by Local Bodies, as on 31.3.2005' + Ulhas BOD/DO (HISTORIC baseline)",
+   "url": "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/envstatuskalayan.pdf"
+  },
+  "thane-creek-2025": {
+   "title": "Thane Creek water-quality review (sewage load, anoxic zones)",
+   "publisher": "Environmental Earth Sciences (Springer), peer-reviewed",
+   "year": 2025,
+   "ref": "~1,260 MLD domestic sewage; BOD > CPCB 3 mg/l in all samples; 0 mg/l DO upper creek",
+   "url": "https://link.springer.com/article/10.1007/s12665-025-12108-4"
+  },
+  "mwrra-tariff-2022": {
+   "title": "Bulk Water Tariff Order 2022 (Third)",
+   "publisher": "Maharashtra Water Resources Regulatory Authority (MWRRA)",
+   "year": 2022,
+   "ref": "Annexure 2 - Municipal Corporation domestic Rs 0.55/m3; eff 29.03.2022, extended to 30.06.2026 (2026-29 order published)",
+   "url": "https://mwrra.maharashtra.gov.in/en/tariff/"
+  },
+  "pravah": {
+   "title": "Pravah dam-safety daily live-storage feed (Konkan region: Barvi, Bhatsa, Dhamni/Surya, Kawdas)",
+   "publisher": "Maharashtra Water Resources Department",
+   "year": 2026,
+   "ref": "daily timestamped PDF; live vs gross storage per dam",
+   "url": "https://mwrdpravah.in/damsafety/control/pdfLatestReportEng"
+  },
+  "iwp-tiwale": {
+   "title": "Water at metropolitan scale: how Mumbai came to dominate regional water resources",
+   "publisher": "India Water Portal (Sachin Tiwale, ATREE; Political Geography 126:103473)",
+   "year": 2026,
+   "ref": "Mumbai = 67% of regional water; LPCD inequality Mumbai 252 / MBMC 105 / Bhiwandi 100 / VVCMC 70; Pinjal reallocated VVCMC->BMC 1999",
+   "url": "https://www.indiawaterportal.org/drinking-water/water-at-metropolitan-scale-how-mumbai-came-to-dominate-regional-water-resources"
+  },
+  "qoc-thirst": {
+   "title": "Mumbai's unquenchable thirst: overestimating water demand to justify dams",
+   "publisher": "Question of Cities",
+   "year": 2024,
+   "ref": "Greater Mumbai 2041 demand 5,940 MLD; Gargai/Pinjal/Damanganga 2,052 + desal 200 MLD; 240 LPCD standard critique",
+   "url": "https://questionofcities.org/mumbais-unquenchable-thirst-overestimating-water-demand-to-justify-dams/"
+  },
+  "fpj-thane-deficit-2026": {
+   "title": "Thane's 40 MLD Water Deficit Highlights Distribution Divide",
+   "publisher": "Free Press Journal (corroborated by Lokmat Times, same week)",
+   "year": 2026,
+   "ref": "supply 590 MLD vs demand 630; per-source quota TMC-own 250 + STEM 150 + MIDC 135 + BMC 90 (sums 625 - quota vs receipt)",
+   "url": "https://www.freepressjournal.in/mumbai/thanes-40-mld-water-deficit-highlights-distribution-divide-as-residents-rely-on-tanker-supply"
+  },
+  "fpj-kdmc-2023": {
+   "title": "Maharashtra Jeevan Pradhikaran approves Rs 303 crore for KDMC water project",
+   "publisher": "Free Press Journal",
+   "year": 2023,
+   "ref": "KDMC current supply 370 MLD; no current official demand published (2011 academic figure 238 MLD is stale)",
+   "url": "https://www.freepressjournal.in/mumbai/thane-maharashtra-jeevan-pradhikaran-approves-303-crore-for-kdmc-water-project"
+  },
+  "newsband-umc-audit": {
+   "title": "Ulhasnagar water supply to undergo full audit",
+   "publisher": "Newsband (press-reported; site blocks direct fetch)",
+   "year": 2026,
+   "ref": "receives ~140 MLD from MIDC (Shahad + Jambhul WTPs) vs 112 MLD sanctioned quota vs a stated need of ~100 MLD - shortage attributed to theft/illegal connections, not bulk scarcity",
+   "url": "https://www.newsband.in/article_detail/ulhasnagar-water-supply-to-undergo-full-audit-vows-commissioner"
+  },
+  "tiwale-2011": {
+   "title": "Equitable Distribution of Drinking Water Supply in Municipal Corporations in Thane District",
+   "publisher": "Management Research & Practice (Tiwale, 2011)",
+   "year": 2011,
+   "ref": "UMC sanctioned quota 112 MLD; Bhiwandi demand 117.69 MLD (vintage ~2010, stale)",
+   "url": "https://mrp.ase.ro/no11/f2.pdf"
+  },
+  "fpj-bhiwandi-2026": {
+   "title": "Bhiwandi boils over water scarcity; mayor issues 24-hour ultimatum",
+   "publisher": "Free Press Journal",
+   "year": 2026,
+   "ref": "normal STEM quota ~94 MLD; receiving 88-89 MLD during the Feb 2026 shortfall; 100 MLD AMRUT 2.0 augmentation tendered",
+   "url": "https://www.freepressjournal.in/mumbai/bhiwandi-boils-over-water-scarcity-mayor-issues-24-hour-ultimatum-amidst-ramzan-hardships"
+  },
+  "pmc-esr-2024": {
+   "title": "Panvel Municipal Corporation Environmental Status Report 2024-25",
+   "publisher": "Panvel Municipal Corporation (Water Supply Dept, Tables 6-1/6-6/6-7)",
+   "year": 2025,
+   "ref": "availability 220 MLD vs requirement 250; 120 LPCD; 98% coverage; 9.52% losses; CIDCO nodes ~179 MLD (Hetawane; Morbe for Kamothe), old council area ~32 MLD (Dehrang + MIDC + MJP)",
+   "url": "https://panvelcorporation.maharashtra.gov.in/myfinalimg/1753942164.pdf"
+  },
+  "stem-dra": {
+   "title": "STEM (Shahad-Temghar) water works - 285 MLD water/energy audit brief",
+   "publisher": "DRA Consultants / STEM Water Distribution & Infra Co",
+   "year": 2024,
+   "ref": "STEM capacity 285-300 MLD serving TMC/BNCMC/MBMC + ZP villages; reconstructed allocations (Thane 150 + MBMC 86 + Bhiwandi ~94) oversubscribe it - the perennial quota fights",
+   "url": "https://www.dra.net.in/project/water-audit-leak-detection-leak-reduction-energy-audit-of-285-mld-water-supply-scheme-shahad-temghar-water-works/"
+  },
+  "bmc-esr-2425": {
+   "title": "BMC Environmental Status Report 2024-25",
+   "publisher": "Brihanmumbai Municipal Corporation",
+   "year": 2025,
+   "ref": "water ch.9 (supply 4,000/demand 4,505, per-source yields); sewage ch.11 (Table 11.5)",
+   "url": "https://www.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Environment/Docs/Environment%20Status%20Report%20%202024-25%20(English).pdf"
+  },
+  "praja-may-2025": {
+   "title": "Report on the Status of Civic Issues in Mumbai (May 2025)",
+   "publisher": "Praja Foundation",
+   "year": 2025,
+   "ref": "RTI tables: connections (551,459, Mar 2025), ward supply hours, yield/losses series",
+   "url": "https://data.opencity.in/dataset/report-on-the-status-of-civic-issues-in-mumbai-may-2025/resource/eae0e205-c8d3-4827-b8c4-87fb4dcd122e"
+  }
+ },
+ "region": {
+  "name": "Mumbai Metropolitan Region",
+  "corporations": 9,
+  "lpcd_norm_cpheeo": "135-150",
+  "greater_mumbai_2041_demand_mld": 5940,
+  "lpcd_inequality_source_refs": [
+   "iwp-tiwale",
+   "qoc-thirst"
+  ],
+  "augmentation_pipeline": [
+   {
+    "project": "Surya Regional WSS",
+    "mld": 403,
+    "status": "phase1_live",
+    "implementer": "MMRDA",
+    "serves": [
+     "vvcmc",
+     "mbmc"
+    ],
+    "note": "Phase-1 ~160-170 MLD to VVCMC live since 2023-11-15; Phase-2 218 MLD to MBMC in progress",
+    "source_refs": [
+     "mmrda-wsrmc-status",
+     "mmrda-wsrmc"
+    ]
+   },
+   {
+    "project": "Kalu Dam RWSS",
+    "mld": 1140,
+    "status": "planned",
+    "implementer": "KIDC (MMRDA-funded)",
+    "serves": [
+     "tmc",
+     "bncmc",
+     "kdmc",
+     "umc"
+    ],
+    "source_refs": [
+     "mmrda-kalu"
+    ]
+   },
+   {
+    "project": "Deharji Dam",
+    "mld": null,
+    "status": "planned",
+    "implementer": "KIDC (MMRDA-funded)",
+    "serves": [
+     "tmc",
+     "kdmc"
+    ],
+    "source_refs": [
+     "mmrda-wsrmc-status"
+    ]
+   },
+   {
+    "project": "Gargai + Pinjal + Damanganga-Pinjal link",
+    "mld": 2052,
+    "status": "planned/stalled",
+    "implementer": "BMC",
+    "serves": [
+     "bmc"
+    ],
+    "note": "Damanganga-Pinjal is inter-state (MH-GJ)",
+    "source_refs": [
+     "qoc-thirst"
+    ]
+   },
+   {
+    "project": "Desalination",
+    "mld": 200,
+    "status": "planned",
+    "implementer": "BMC",
+    "serves": [
+     "bmc"
+    ],
+    "source_refs": [
+     "qoc-thirst"
+    ]
+   }
+  ],
+  "bulk_tariff": {
+   "municipal_corp_domestic_rs_per_kl": 0.55,
+   "source_refs": [
+    "mwrra-tariff-2022"
+   ]
+  },
+  "live_storage_trackable": {
+   "yes_via_bmc_feed": [
+    "upper_vaitarna",
+    "middle_vaitarna",
+    "modak_sagar",
+    "tansa",
+    "bhatsa",
+    "vihar",
+    "tulsi"
+   ],
+   "yes_via_pravah": [
+    "barvi",
+    "surya",
+    "kawdas"
+   ],
+   "no": [
+    "morbe",
+    "hetawane",
+    "pelhar",
+    "usgaon"
+   ],
+   "source_refs": [
+    "pravah"
+   ]
+  }
+ },
+ "corporations": {
+  "bmc": {
+   "supply_mld": 3975,
+   "demand_mld": 4664,
+   "deficit_mld": 689,
+   "deficit_pct": 15,
+   "year": "2024",
+   "lpcd": 188,
+   "lpcd_year": "2019-20",
+   "lpcd_bulk_cited": 252,
+   "supply_hours": "1 of 24 wards 24x7; rest intermittent",
+   "sources": [
+    "upper_vaitarna",
+    "middle_vaitarna",
+    "modak_sagar",
+    "tansa",
+    "bhatsa",
+    "vihar",
+    "tulsi"
+   ],
+   "equity": {
+    "slum_lpcd": 45,
+    "nonslum_lpcd": "135-150",
+    "slum_tanker_cost_rs_month": "500-567",
+    "intra_slum_notified_vs_nonnotified_lpcd": "31.4 vs 17.7"
+   },
+   "sewage": {
+    "stp_count": 8,
+    "installed_mld": 2723,
+    "reaching_plants_mld": 1312.9,
+    "note": "ESR 2024-25 Table 11.5: 2,723 MLD installed vs 1,312.9 MLD of sewage actually reaching plants; 7 WwTF upgrades (2,464 MLD programme) under way, Worli + Bandra offline for reconstruction in 2024"
+   },
+   "wards": {
+    "count": 24,
+    "geometry": true,
+    "vintage": "2023"
+   },
+   "confidence": "high",
+   "source_refs": [
+    "bmc-esr-2425",
+    "iwp-tiwale",
+    "mpcb-stp-2025",
+    "praja-2021",
+    "praja-2024",
+    "praja-may-2025"
+   ],
+   "connections": 551459,
+   "connections_note": "as on March 2025 (Praja RTI)"
+  },
+  "nmmc": {
+   "supply_mld": 421,
+   "demand_mld": null,
+   "billed_mld": 325,
+   "nrw_pct": 19,
+   "year": "2014-15",
+   "lpcd": 240,
+   "lpcd_year": "2014-15",
+   "lpcd_note": "highest in MMR",
+   "supply_hours": "24x7 to ~75% of area; 4-8 h/day to the rest",
+   "connections": 122143,
+   "sources": [
+    "morbe",
+    "barvi"
+   ],
+   "sewage": {
+    "stp_count": 7,
+    "installed_mld": 454,
+    "note": "treating far below capacity (Nerul 100/32.9, Vashi 100/21.6, Koparkhairane 87.5/30.8)"
+   },
+   "wards": {
+    "count": null,
+    "geometry": false
+   },
+   "confidence": "medium (dated ~11 yrs)",
+   "source_refs": [
+    "nmmc-esr-2014",
+    "mpcb-stp-2025"
+   ]
+  },
+  "vvcmc": {
+   "supply_mld": 400,
+   "demand_mld": 422,
+   "deficit_mld": 22,
+   "deficit_pct": 5.2,
+   "year": "2024",
+   "population_lakh": 25,
+   "lpcd": 70,
+   "lpcd_confidence": "soft/single-source",
+   "sources": [
+    "surya",
+    "pelhar",
+    "usgaon",
+    "papdy"
+   ],
+   "surya_allocation_mld": 180,
+   "sewage": {
+    "stp_count": 1,
+    "installed_mld": 30,
+    "note": "Bolinge Village - severely under-treated"
+   },
+   "wards": {
+    "count": null,
+    "geometry": false
+   },
+   "confidence": "high (supply/demand)",
+   "source_refs": [
+    "mmrda-wsrmc",
+    "iwp-tiwale",
+    "mpcb-stp-2025"
+   ]
+  },
+  "mbmc": {
+   "supply_mld": 195,
+   "demand_mld": 240,
+   "deficit_mld": 55,
+   "deficit_pct": 22.9,
+   "year": "2024",
+   "population_lakh": 15,
+   "lpcd": 105,
+   "lpcd_confidence": "soft/single-source",
+   "sources": [
+    "surya",
+    "stem"
+   ],
+   "surya_allocation_mld": 218,
+   "sewage": {
+    "stp_count": null,
+    "note": "gap"
+   },
+   "wards": {
+    "count": null,
+    "geometry": false
+   },
+   "confidence": "high (supply/demand)",
+   "source_refs": [
+    "mmrda-wsrmc",
+    "iwp-tiwale"
+   ]
+  },
+  "tmc": {
+   "supply_mld": 590,
+   "demand_mld": 630,
+   "deficit_mld": 40,
+   "lpcd": null,
+   "supply_hours": "5.6 h/day (2010-11, dated)",
+   "sources": [
+    "bhatsa",
+    "stem",
+    "barvi"
+   ],
+   "sewage": {
+    "stp_count": 9,
+    "examples_installed_treated_mld": {
+     "kopri": "120/60",
+     "mumbra": "32/13",
+     "hiranandani": "59/50",
+     "kharegaon": "46.76/40"
+    }
+   },
+   "wards": {
+    "count": null,
+    "geometry": false
+   },
+   "confidence": "medium-high (press-reported June 2026; TMC ESR original behind an expired-cert portal)",
+   "source_refs": [
+    "fpj-thane-deficit-2026",
+    "stem-dra"
+   ],
+   "year": "2026-06",
+   "supply_note": "Per-source quota: TMC own (Bhatsa) 250 + STEM 150 + MIDC (Barvi) 135 + BMC 90 - the split sums to 625 vs 590 received (quota vs actual receipt)"
+  },
+  "kdmc": {
+   "supply_mld": 370,
+   "demand_mld": null,
+   "lpcd": null,
+   "supply_hours": "~4 h/day (2010-11, dated)",
+   "sources": [
+    "barvi",
+    "ulhas",
+    "stem"
+   ],
+   "sewage": {
+    "stp_count": 9,
+    "note": "Motagaon-1 (40 MLD) NON-OPERATIONAL; 2005 baseline: 184 MLD generated vs 30 MLD STP (gap 154), to Kalyan Creek",
+    "sink": "Kalyan Creek"
+   },
+   "wards": {
+    "count": null,
+    "geometry": false
+   },
+   "confidence": "medium (2023 press citing MJP approval)",
+   "source_refs": [
+    "fpj-kdmc-2023"
+   ],
+   "year": "2023",
+   "supply_note": "Own Ulhas-river schemes ~310 + MIDC ~50; no current official demand published (2011 academic 238 MLD is stale - kept as a named gap)"
+  },
+  "umc": {
+   "supply_mld": 140,
+   "demand_mld": null,
+   "lpcd": null,
+   "sources": [
+    "barvi",
+    "ulhas"
+   ],
+   "sewage": {
+    "stp_count": 4,
+    "installed_mld": 75,
+    "note": "2005 baseline: 86 MLD generated vs 28 MLD STP, to Ulhas creek via Waldhuni nalla",
+    "sink": "Ulhas/Waldhuni"
+   },
+   "wards": {
+    "count": null,
+    "geometry": false
+   },
+   "confidence": "low-medium (press-reported; audit under way)",
+   "source_refs": [
+    "newsband-umc-audit",
+    "tiwale-2011"
+   ],
+   "year": "2025-26",
+   "supply_note": "~140 MLD received from MIDC (Shahad + Jambhul) vs 112 MLD sanctioned quota; stated need ~100 MLD - receives more than both, yet chronic shortage attributed to theft/illegal connections"
+  },
+  "bncmc": {
+   "supply_mld": 94,
+   "demand_mld": null,
+   "lpcd": 100,
+   "lpcd_confidence": "soft/single-source",
+   "sources": [
+    "stem",
+    "ulhas"
+   ],
+   "sewage": {
+    "stp_count": 1,
+    "installed_mld": 13,
+    "note": "Katai-1 operational, Katai-2 (17 MLD) non-operational; 2005 baseline: 64 MLD generated vs 17 MLD STP, to Kamavari creek",
+    "sink": "Kamavari creek"
+   },
+   "wards": {
+    "count": null,
+    "geometry": false
+   },
+   "confidence": "medium (FPJ Feb 2026 + STEM records)",
+   "source_refs": [
+    "fpj-bhiwandi-2026",
+    "tiwale-2011",
+    "iwp-tiwale"
+   ],
+   "year": "2026-02",
+   "supply_note": "STEM quota ~94 MLD (received 88-89 during the Feb 2026 shortfall); official current demand unpublished - the 2010-vintage 117.69 MLD estimate and the tendered 100 MLD AMRUT augmentation both say demand exceeds supply"
+  },
+  "pmc": {
+   "supply_mld": 220,
+   "demand_mld": 250,
+   "lpcd": 120,
+   "sources": [
+    "hetawane",
+    "barvi"
+   ],
+   "supplier": "CIDCO",
+   "sewage": {
+    "stp_count": null,
+    "note": "gap"
+   },
+   "wards": {
+    "count": null,
+    "geometry": false
+   },
+   "confidence": "high (corporation's own ESR)",
+   "source_refs": [
+    "pmc-esr-2024"
+   ],
+   "deficit_mld": 30,
+   "year": "2024-25",
+   "supply_note": "PMC's own ESR 2024-25: CIDCO nodes ~179 MLD (Hetawane; Morbe for Kamothe) + old council area ~32 (Dehrang/MIDC/MJP) + villages ~12; 98% coverage, 9.52% losses; master-plan (2021) demand ~317 MLD"
+  }
+ },
+ "rivers_creeks": {
+  "thane_creek": {
+   "sewage_load_mld": 1260,
+   "bod": "exceeds CPCB max (3 mg/l) in all samples; anoxic (0 DO) upper-creek zones",
+   "year": "2025 review (2007-18 data)",
+   "source_refs": [
+    "thane-creek-2025"
+   ]
+  },
+  "ulhas_river": {
+   "role": "eastern corridor source AND sink",
+   "bod": "3.0-8.0 mg/l at Badlapur (2004-05, historic)",
+   "do": "5.7-7.9",
+   "source_refs": [
+    "mpcb-kalyan-esr-2005"
+   ]
+  },
+  "mithi_river": {
+   "note": "BMC; see river-quality-mumbai.json (MPCB/CPCB NWMP, BOD up to 210, FC up to 540000)"
+  }
+ },
+ "open_gaps": [
+  "Current supply/demand/LPCD for TMC, KDMC, BNCMC, UMC, PMC (only dated 2008-11 benchmarks + supply-hours exist).",
+  "Ward/prabhag boundary GEOMETRY for ALL non-BMC corporations (research surfaced none; biggest blocker for corporation->ward drill-down).",
+  "Live storage for Morbe (NMMC) and Hetawane (Panvel/CIDCO) - not in Pravah; need NMMC/CIDCO portals or RTI.",
+  "NMMC figures are 2014-15 (~11 years dated) - need a refresh.",
+  "Per-corporation current sewage GENERATION (not just STP capacity) beyond the 2005 Kalyan-region baseline."
+ ]
+}

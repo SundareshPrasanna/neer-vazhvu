@@ -201,3 +201,22 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-kenburns { animation: none; }
 }
+/* Municipal-corporation boundary labels (CorporationBoundaries layer): clean
+   map labels, not the default Leaflet white chip. */
+.leaflet-tooltip.corp-boundary-label {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #334155;            /* slate-700 */
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+}
+.leaflet-tooltip.corp-boundary-label::before { display: none; }  /* drop the tip arrow */
+.dark .leaflet-tooltip.corp-boundary-label {
+  color: #e2e8f0;            /* slate-200 */
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.85);
+}

@@ -31,6 +31,39 @@ const DISTRICT_BY_CITY: Record<string, string> = {
   madurai: "Madurai",
 };
 
+/** Load stations from the curated static Year Book file
+ *  (public/data/{cityId}-cgwb-stations.json). Each well's LATEST seasonal
+ *  reading becomes its depth. Returns null when the city has no such file. */
+function loadStaticWells(
+  cityId: string,
+): { stations: IdwStation[]; latestDate: string | null } | null {
+  interface StaticWell {
+    lat?: number;
+    lng?: number;
+    readings?: Array<{ year: number; month: number; depth_m_bgl: number }>;
+  }
+  let wells: StaticWell[];
+  try {
+    const raw = readFileSync(
+      resolve(process.cwd(), `public/data/${cityId}-cgwb-stations.json`),
+      "utf-8",
+    );
+    wells = (JSON.parse(raw) as { wells: StaticWell[] }).wells;
+  } catch {
+    return null;
+  }
+  const stations: IdwStation[] = [];
+  let latestDate: string | null = null;
+  for (const w of wells) {
+    const last = w.readings?.[w.readings.length - 1];
+    if (typeof w.lat !== "number" || typeof w.lng !== "number" || !last) continue;
+    stations.push({ lat: w.lat, lng: w.lng, depthM: Math.abs(last.depth_m_bgl) });
+    const d = `${last.year}-${String(last.month).padStart(2, "0")}-01`;
+    if (!latestDate || d > latestDate) latestDate = d;
+  }
+  return { stations, latestDate };
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const cityId = (searchParams.get("city") || "madurai").toLowerCase();
@@ -38,9 +71,16 @@ export async function GET(request: NextRequest) {
   if (!config) {
     return NextResponse.json({ error: "Unknown city" }, { status: 404 });
   }
+  // Cities with a live WRIS district read Supabase; cities without one
+  // (e.g. Mumbai, whose WRIS feed went stale in 2023) fall back to the
+  // curated static Year Book file public/data/{cityId}-cgwb-stations.json.
   const district = DISTRICT_BY_CITY[cityId];
-  if (!district) {
-    return NextResponse.json({ error: "City has no WRIS district mapping" }, { status: 404 });
+  const staticWells = district ? null : loadStaticWells(cityId);
+  if (!district && !staticWells) {
+    return NextResponse.json(
+      { error: "City has no WRIS district mapping or static station file" },
+      { status: 404 },
+    );
   }
 
   // 1. Load ward polygons (vintage per city - Bangalore uses GBA 2025
@@ -62,26 +102,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Ward GeoJSON missing" }, { status: 500 });
   }
 
-  // 2. Pull latest CGWB station readings filtered by district.
-  const { createServerClient } = await import("@/lib/supabase/server");
-  let supabase;
-  try {
-    supabase = createServerClient();
-  } catch (e) {
-    logRouteError("/api/groundwater/wards-interpolated supabase", e);
-    return internalServerError();
-  }
-
-  const { data: rows, error } = await supabase
-    .from("groundwater_wris_latest")
-    .select("station_code, latitude, longitude, depth_to_water_m, reading_date")
-    .eq("district", district);
-
-  if (error) {
-    logRouteError("/api/groundwater/wards-interpolated query", error);
-    return internalServerError();
-  }
-
+  // 2. Pull latest CGWB station readings - from Supabase (WRIS district
+  //    cities) or the curated static file (Year Book cities).
   // Drop stations whose lat/lng is wildly off (some WRIS records carry
   // mislocated coordinates - e.g. one Madurai-tagged station that lands
   // near Chennai). Sane CGWB stations for a city should sit within
@@ -89,27 +111,60 @@ export async function GET(request: NextRequest) {
   const MAX_STATION_DIST_KM = 80;
   const cityCenter: [number, number] = [config.center.lat, config.center.lng];
 
-  const stations: IdwStation[] = (rows || [])
-    .filter(
-      (r) =>
-        typeof r.latitude === "number" &&
-        typeof r.longitude === "number" &&
-        typeof r.depth_to_water_m === "number",
-    )
-    .filter((r) => haversineKm(cityCenter, [r.latitude as number, r.longitude as number]) <= MAX_STATION_DIST_KM)
-    .map((r) => ({
-      lat: r.latitude as number,
-      lng: r.longitude as number,
-      depthM: Math.abs(r.depth_to_water_m as number), // CGWB sometimes stores negative
-    }));
+  let stations: IdwStation[];
+  let latestDate: string | null;
+  let sourceLabel: string;
 
-  // Latest reading_date across all stations - shown as the "as of" anchor.
-  const latestDate =
-    (rows || [])
-      .map((r) => r.reading_date as string | null)
-      .filter((d): d is string => !!d)
-      .sort()
-      .pop() ?? null;
+  if (district) {
+    const { createServerClient } = await import("@/lib/supabase/server");
+    let supabase;
+    try {
+      supabase = createServerClient();
+    } catch (e) {
+      logRouteError("/api/groundwater/wards-interpolated supabase", e);
+      return internalServerError();
+    }
+
+    const { data: rows, error } = await supabase
+      .from("groundwater_wris_latest")
+      .select("station_code, latitude, longitude, depth_to_water_m, reading_date")
+      .eq("district", district);
+
+    if (error) {
+      logRouteError("/api/groundwater/wards-interpolated query", error);
+      return internalServerError();
+    }
+
+    stations = (rows || [])
+      .filter(
+        (r) =>
+          typeof r.latitude === "number" &&
+          typeof r.longitude === "number" &&
+          typeof r.depth_to_water_m === "number",
+      )
+      .filter((r) => haversineKm(cityCenter, [r.latitude as number, r.longitude as number]) <= MAX_STATION_DIST_KM)
+      .map((r) => ({
+        lat: r.latitude as number,
+        lng: r.longitude as number,
+        depthM: Math.abs(r.depth_to_water_m as number), // CGWB sometimes stores negative
+      }));
+
+    // Latest reading_date across all stations - shown as the "as of" anchor.
+    latestDate =
+      (rows || [])
+        .map((r) => r.reading_date as string | null)
+        .filter((d): d is string => !!d)
+        .sort()
+        .pop() ?? null;
+    sourceLabel = "CGWB stations";
+  } else {
+    const s = staticWells!;
+    stations = s.stations.filter(
+      (st) => haversineKm(cityCenter, [st.lat, st.lng]) <= MAX_STATION_DIST_KM,
+    );
+    latestDate = s.latestDate;
+    sourceLabel = "CGWB Year Book wells (curated)";
+  }
 
   // 3. Interpolate per ward.
   const wards = geojson.features.map((feat) => {
@@ -166,7 +221,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     cityId,
     asOf: latestDate,
-    method: `IDW (k=4, max 15 km, power=2) over ${stations.length} CGWB stations`,
+    method: `IDW (k=4, max 15 km, power=2) over ${stations.length} ${sourceLabel}`,
     cityAverage,
     wards,
     summary,

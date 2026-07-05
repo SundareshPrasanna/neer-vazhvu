@@ -23,6 +23,16 @@ interface DaysLeftHeroProps {
   consumptionSliderMax?: number;
   /** Optional max for the desalination slider; sized to the city's contribution. */
   desalinationSliderMax?: number;
+  /** When the source already publishes the runway, surface + attribute + link
+   *  to it instead of offering the what-if calculator (sliders are hidden). */
+  runwaySource?: { publisher: string; url: string };
+  /** Geographic scope badge (region places only) - names which slice of the
+   *  region this card covers, e.g. "Greater Mumbai · BMC's 7 lakes". */
+  scopeLabel?: string;
+  /** Optional honesty caveat rendered under the number (from city config). */
+  heroNote?: string;
+  /** Optional source link rendered after heroNote. */
+  heroNoteSource?: { label: string; url: string };
 }
 
 /** Upper display cap — anything above this is "won't run out" */
@@ -103,6 +113,10 @@ export function DaysLeftHero({
   defaultDesalinationMld,
   consumptionSliderMax,
   desalinationSliderMax,
+  runwaySource,
+  scopeLabel,
+  heroNote,
+  heroNoteSource,
 }: DaysLeftHeroProps) {
   const { t } = useLanguage();
   const baseConsumption = defaultConsumptionMld ?? DEFAULT_CONSUMPTION_MLD;
@@ -124,6 +138,13 @@ export function DaysLeftHero({
   const days = { pessimistic: result.pessimistic, moderate: result.moderate, optimistic: result.optimistic };
   const storagePct = totalCapacityMcft > 0 ? (totalStorageMcft / totalCapacityMcft) * 100 : 0;
 
+  // When the city's feed publishes no inflow data (e.g. Mumbai's Pravah
+  // bulletin carries storage only), the rain scenarios have nothing to vary
+  // on and all three collapse to storage / draw. Three identical rows and a
+  // "131-131" range read as a bug - render ONE figure and say why.
+  const scenariosCollapse =
+    days.pessimistic === days.moderate && days.moderate === days.optimistic;
+
   // Whether each inflow scenario exceeds demand
   const moderateSurplus = result.recentInflowScaled > result.netDemandMcft;
   const optimisticSurplus = result.seasonalInflowScaled > result.netDemandMcft;
@@ -132,9 +153,16 @@ export function DaysLeftHero({
     <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-blue-50 dark:from-slate-900 dark:to-slate-800">
       <CardContent className="p-6 sm:p-8">
         <div className="flex items-start justify-between mb-2">
-          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {t("hero.title")}
-          </h2>
+          <div className="flex flex-wrap items-baseline gap-2">
+            <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              {t("hero.title")}
+            </h2>
+            {scopeLabel && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 whitespace-nowrap">
+                {scopeLabel}
+              </span>
+            )}
+          </div>
           <Badge variant="outline" className="text-xs">
             {t("hero.updated")} {lastUpdated}
           </Badge>
@@ -144,7 +172,9 @@ export function DaysLeftHero({
           {/* Big number */}
           <div className="text-center sm:text-left">
             <div className={`text-4xl sm:text-5xl md:text-6xl font-bold ${getSeverityColor(days.pessimistic)}`}>
-              {days.optimistic >= MAX_DAYS ? (
+              {scenariosCollapse ? (
+                <>{formatDays(days.pessimistic, t)}</>
+              ) : days.optimistic >= MAX_DAYS ? (
                 <>{formatDays(days.pessimistic, t)}<span className="text-2xl text-slate-400 dark:text-slate-500">+</span></>
               ) : (
                 <>{formatDays(days.pessimistic, t)}<span className="text-2xl mx-1">-</span>{formatDays(days.optimistic, t)}</>
@@ -155,7 +185,22 @@ export function DaysLeftHero({
             </div>
           </div>
 
-          {/* Scenario breakdown */}
+          {/* Scenario breakdown - or, when inflow data doesn't exist, one
+              honest line instead of three identical ones. */}
+          {scenariosCollapse ? (
+            <div className="flex-1 space-y-1.5 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-slate-400" />
+                <span className="text-slate-600 dark:text-slate-400">
+                  {t("hero.at_current_draw").replace("{mld}", consumption.toLocaleString("en-IN"))}
+                </span>
+                <span className="font-semibold">{formatDays(days.pessimistic, t)}</span>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
+                {t("hero.no_inflow_note")}
+              </p>
+            </div>
+          ) : (
           <div className="flex-1 space-y-1.5 text-sm">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-red-500" />
@@ -183,7 +228,27 @@ export function DaysLeftHero({
               )}
             </div>
           </div>
+          )}
         </div>
+
+        {heroNote && (
+          <p className="mt-3 text-xs text-slate-500 dark:text-slate-400 leading-snug border-l-2 border-amber-400 dark:border-amber-600 pl-2">
+            {heroNote}
+            {heroNoteSource && (
+              <>
+                {" "}
+                <a
+                  href={heroNoteSource.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {heroNoteSource.label} &rarr;
+                </a>
+              </>
+            )}
+          </p>
+        )}
 
         {/* Storage bar */}
         <div className="mt-6">
@@ -212,7 +277,24 @@ export function DaysLeftHero({
           )}
         </div>
 
-        {/* Collapsible assumptions panel */}
+        {/* When the source already publishes the runway, link out + attribute
+            instead of offering the what-if calculator; otherwise show the
+            interactive assumptions panel. */}
+        {runwaySource ? (
+          <div className="mt-4 text-sm">
+            <a
+              href={runwaySource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+            >
+              {t("hero.view_live")} &rarr;
+            </a>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+              {t("hero.source_published").replace("{publisher}", runwaySource.publisher)}
+            </p>
+          </div>
+        ) : (
         <div className="mt-4">
           <button
             onClick={() => setShowAssumptions(!showAssumptions)}
@@ -277,11 +359,19 @@ export function DaysLeftHero({
                 </p>
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500">
-                {t("hero.slider_note")}
+                {t("hero.slider_note")
+                  .replace("{consumption}", baseConsumption.toLocaleString("en-IN"))
+                  .replace(
+                    "{desal}",
+                    baseDesalination > 0
+                      ? `, ${baseDesalination.toLocaleString("en-IN")} MLD ${t("hero.desalination_word")}`
+                      : "",
+                  )}
               </p>
             </div>
           )}
         </div>
+        )}
       </CardContent>
     </Card>
   );

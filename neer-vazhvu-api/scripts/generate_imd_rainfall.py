@@ -52,6 +52,12 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         77.5,
         "Bangalore-region grid point on the Deccan plateau (city centre 12.97 N, 77.59 E)",
     ),
+    "mumbai": (
+        19.0,
+        73.0,
+        "Nearest valid land grid point to Mumbai (coastal/island cells "
+        "classified as ocean by IMD; city centre 19.08 N, 72.88 E)",
+    ),
 }
 
 

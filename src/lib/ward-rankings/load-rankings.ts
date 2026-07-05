@@ -77,6 +77,7 @@ export function loadWardRankings(cityId: string): WardRankingsBundle | null {
   if (cityId === "madurai") return loadMaduraiRankings();
   if (cityId === "chennai") return loadChennaiRankings();
   if (cityId === "bangalore") return loadBangaloreRankings();
+  if (cityId === "mumbai") return loadMumbaiRankings();
   return null;
 }
 
@@ -321,6 +322,99 @@ function loadMaduraiRankings(): WardRankingsBundle {
     sourceLabel: `Pre-baked ${maduraiCache.algorithm_version} composite from public/data/ward-risk-madurai.json (groundwater depth, water-body density, water-body health)`,
     // Madurai stores risk where lower = better; the table sorts the
     // composite column ascending by default which matches "best first".
+    compositeScoreLowerIsBetter: true,
+  };
+}
+
+// ── Mumbai: read pre-baked ward-risk-mumbai.json (risk_v2_mum) ────────
+//
+// Equity-first model (scripts/compute-mumbai-ward-risk.py). Mumbai is
+// excluded from the CGWB groundwater assessment, so the groundwater-led
+// composite is replaced by:
+//   - supply_deficit (0.50): real per-ward average daily water-supply
+//     HOURS (Praja 2024 Table 4; fewer hours = worse). Replaces the
+//     earlier slum-area-share proxy.
+//   - flood_hotspot_count (0.30): chronic monsoon flooding spots in ward
+//   - river_vertex_count (0.20): Priority-I river polyline length in ward
+//   - slum_area_share: retained as context (unweighted)
+//   - composite_score: 0-100 city percentile (higher = worse), grade by quintile
+
+interface MumbaiWardRisk {
+  ward_number: number;
+  ward_name: string;
+  zone: string;
+  composite_score: number; // higher = worse risk
+  grade: Grade;
+  supply_hours: number;
+  slum_area_share: number;
+  flood_hotspot_count: number;
+  river_vertex_count: number;
+}
+
+interface MumbaiWardRiskFile {
+  algorithm_version: string;
+  weights: Record<string, number>;
+  wards: MumbaiWardRisk[];
+}
+
+let mumbaiCache: MumbaiWardRiskFile | null = null;
+
+function loadMumbaiRankings(): WardRankingsBundle {
+  if (!mumbaiCache) {
+    const path = resolve(process.cwd(), "public/data/ward-risk-mumbai.json");
+    mumbaiCache = JSON.parse(readFileSync(path, "utf-8")) as MumbaiWardRiskFile;
+  }
+  const localities = loadLocalitiesByWard("mumbai");
+
+  // composite_score is risk (higher = worse); sort ascending so the
+  // lowest-risk wards land at the top.
+  const sorted = [...mumbaiCache.wards].sort(
+    (a, b) => a.composite_score - b.composite_score,
+  );
+  const total = sorted.length;
+
+  const rows: WardRankingRow[] = sorted.map((w, idx) => {
+    const rank = idx + 1;
+    const percentile = total > 1 ? ((total - rank) / (total - 1)) * 100 : 50;
+    return {
+      wardNumber: w.ward_number,
+      wardName: w.ward_name || `Ward ${w.ward_number}`,
+      localities: localities.get(w.ward_number) ?? [],
+      zone: w.zone,
+      grade: w.grade,
+      compositeScore: w.composite_score,
+      rank,
+      totalWards: total,
+      percentile,
+      metricColumns: [
+        {
+          key: "supply_hours",
+          label: "Water supply (hrs/day)",
+          display: `${w.supply_hours.toFixed(1)} h`,
+          numeric: w.supply_hours,
+        },
+        {
+          key: "flood_hotspot_count",
+          label: "Chronic flood spots",
+          display: String(w.flood_hotspot_count),
+          numeric: w.flood_hotspot_count,
+        },
+        {
+          key: "slum_area_share",
+          label: "Slum-area share",
+          display: `${Math.round(w.slum_area_share * 100)}%`,
+          numeric: w.slum_area_share,
+        },
+      ],
+    };
+  });
+
+  return {
+    cityId: "mumbai",
+    rows,
+    gradeCounts: countsByGrade(rows),
+    zones: distinctZones(rows),
+    sourceLabel: `Pre-baked ${mumbaiCache.algorithm_version} equity composite from public/data/ward-risk-mumbai.json (per-ward water-supply hours from Praja 2024, chronic flood spots, Priority-I river burden)`,
     compositeScoreLowerIsBetter: true,
   };
 }

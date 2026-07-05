@@ -30,6 +30,8 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "facts",
     "origins",
     "cascades",
+    "allocations",
+    "commitments",
   ]),
   madurai: new Set([
     "",
@@ -43,6 +45,8 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "facts",
     "origins",
     "cascades",
+    "allocations",
+    "commitments",
   ]),
   bangalore: new Set([
     "",
@@ -57,6 +61,26 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "origins",
     "tanker",
     "cascades",
+    "allocations",
+    "commitments",
+  ]),
+  // Mumbai V1 target set. No `cascades` (Mumbai is reservoir-pumped, not a
+  // tank-cascade geography) and no `tanker` (deferred, RTI-gated). Features
+  // fill in across M1-M3; this set drives nav rendering while the city is
+  // preview-gated (NEXT_PUBLIC_PREVIEW_CITIES=mumbai).
+  mumbai: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "facts",
+    "origins",
+    "shoreline",
+    "allocations",
+    "commitments",
   ]),
 };
 

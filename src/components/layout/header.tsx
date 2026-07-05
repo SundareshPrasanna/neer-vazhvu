@@ -23,6 +23,8 @@ const EXPLORE_ITEMS = [
   { href: "/water-bodies", key: "nav.water_bodies" },
   { href: "/rivers",       key: "nav.rivers" },
   { href: "/flood-risk",   key: "nav.flood_risk" },
+  { href: "/allocations",  key: "nav.allocations" },
+  { href: "/commitments",  key: "nav.commitments" },
   { href: "/climate-risk", key: "nav.climate_risk" },
   { href: "/shoreline",    key: "nav.coastal" },
 ] as const;

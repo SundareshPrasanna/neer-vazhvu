@@ -42,6 +42,12 @@ export const BANGALORE: CityConfig = {
   defaultDesalinationMld: null,
   availableLanguages: ['en', 'kn'],
   heroMode: 'cauvery-pumping',
+  // Allocation Ledger: the Cauvery award chain (CWDT 1.75 TMC -> SC 2018 +4.75
+  // -> Karnataka's 19+10 TMC to BWSSB), compiled in allocations-bangalore.json.
+  hasAllocationLedger: true,
+  // Commitments register: NGT lake deadlines (Bellandur/Varthur), Cauvery Stage
+  // V/VI, K-100, treated-water reuse, Mekedatu - commitments-bangalore.json.
+  hasCommitments: true,
   // Per-ward GW depth interpolation (`depth`) is off because Bengaluru
   // has only 13 CGWB telemetric stations across 369 wards - density too
   // low to honestly IDW. `exploitation` is ON since round 11 (WRIS

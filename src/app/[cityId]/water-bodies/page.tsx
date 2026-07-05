@@ -87,13 +87,23 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
     ? currentGeoJson.features.filter((f) => f.properties?.name).length
     : null;
 
+  // Mumbai's drinking-water reservoirs sit 70-110 km NE of the city (Thane/
+  // Palghar). A city-tight zoom hides them entirely, so the water-bodies +
+  // catchment maps open on a wider regional frame that includes both the city
+  // and its distant supply lakes ("expand the zone"). Users zoom in for the
+  // in-city lakes. Other cities keep the city-tight default.
+  const supplyShedView: Record<string, { center: [number, number]; zoom: number }> = {
+    mumbai: { center: [19.3, 73.05], zoom: 10 },
+  };
+  const view = supplyShedView[cityId];
+
   return (
     <WaterBodiesMapClient
       cityId={cityId}
       cityDisplayName={config.displayName}
       cityState={config.stateCode}
-      mapCenter={[config.center.lat, config.center.lng]}
-      mapZoom={11}
+      mapCenter={view ? view.center : [config.center.lat, config.center.lng]}
+      mapZoom={view ? view.zoom : 11}
       fullyLostCount={lostFile.summary.fully_lost_count}
       reducedCount={lostFile.summary.severely_reduced_count}
       namedOsmCount={namedOsmCount}

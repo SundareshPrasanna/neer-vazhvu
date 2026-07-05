@@ -13,9 +13,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!config || !config.hasShoreline) return { title: "Shoreline Change | Neer Vazhvu" };
 
   const title = `${config.displayName} Shoreline Change | Neer Vazhvu`;
+  // The corroborating-study sentence + acceleration stat are Chennai findings;
+  // other coasts get the generic measurement description.
+  const chennaiTail =
+    cityId === "chennai"
+      ? " Corroborated by Anagha, Singh & Frappart (2026). About 72% of the eroding coast is eroding faster than before."
+      : "";
   return {
     title,
-    description: `Shoreline erosion and accretion along the ${config.displayName} coast (1990-2026): our own satellite measurement (MNDWI on Landsat + Sentinel-2), corroborated by Anagha, Singh & Frappart (2026). About 72% of the eroding coast is eroding faster than before.`,
+    description: `Shoreline erosion and accretion along the ${config.displayName} coast (1990-2026): our own satellite measurement (MNDWI on Landsat + Sentinel-2).${chennaiTail}`,
     alternates: { canonical: `/${cityId}/shoreline` },
     openGraph: {
       title,
@@ -28,7 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     twitter: {
       card: "summary_large_image",
       title,
-      description: `${config.displayName} coastal erosion/accretion 1990-2026; ~72% of the eroding coast is eroding faster than before.`,
+      description: `${config.displayName} coastal erosion/accretion 1990-2026, measured from open satellite data.`,
     },
   };
 }
@@ -39,5 +45,5 @@ export default async function CoastalPage({ params }: PageProps) {
   // Coastal feature is gated by capability flag: inland cities have no
   // shoreline surface.
   if (!config || !config.hasShoreline) notFound();
-  return <CoastalClient />;
+  return <CoastalClient cityId={cityId} />;
 }

@@ -316,6 +316,19 @@ export default function CityGroundwaterClient({
   const critical = sortedBlocks.find((b) => b.latest.class === "Critical");
   const semiCount = sortedBlocks.filter((b) => b.latest.class === "Semi Critical").length;
 
+  // Actual reading span across the CGWB wells, so the banner label is honest
+  // per city (Mumbai runs May 2022 -> Jan 2025; Madurai differs).
+  const MONTH_ABBR = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const cgwbReadings = (cgwbFile?.wells ?? []).flatMap((w) => w.readings);
+  const cgwbSpan = cgwbReadings.length
+    ? (() => {
+        const keyed = cgwbReadings.map((r) => ({ k: r.year * 100 + r.month, r }));
+        const lo = keyed.reduce((a, b) => (b.k < a.k ? b : a)).r;
+        const hi = keyed.reduce((a, b) => (b.k > a.k ? b : a)).r;
+        return `${MONTH_ABBR[lo.month]} ${lo.year} - ${MONTH_ABBR[hi.month]} ${hi.year}`;
+      })()
+    : "";
+
   const headlinePhrases: string[] = [];
   if (overExploited) {
     headlinePhrases.push(
@@ -345,7 +358,7 @@ export default function CityGroundwaterClient({
         )}
         {usesCgwbYearbook && cgwbFile && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
-            {cgwbFile.wells.length} CGWB Year Book stations - quarterly readings May 2023 - Jan 2025
+            {cgwbFile.wells.length} CGWB Year Book stations · seasonal readings{cgwbSpan ? ` ${cgwbSpan}` : ""}
           </span>
         )}
         {viewMode === "depth" && interpolated && (
@@ -476,6 +489,7 @@ export default function CityGroundwaterClient({
               wardGeoJsonUrl={assets!.wardGeoJsonUrl}
               mapCenter={assets!.mapCenter}
               mapZoom={10}
+              cityId={cityId}
             />
           )}
 
@@ -554,6 +568,11 @@ export default function CityGroundwaterClient({
             <CgwbStationPanel
               station={selectedCgwbStation}
               onClose={() => setSelectedCgwbStation(null)}
+              sourceNote={
+                cgwbFile?.source_label
+                  ? `Source: ${cgwbFile.source_label}. Phreatic (unconfined) aquifer dug well, manual seasonal measurement (May / Aug / Nov / Jan). ${cgwbFile.quality_note ?? ""}`
+                  : undefined
+              }
             />
           </BottomSheet>
         )}
@@ -562,9 +581,14 @@ export default function CityGroundwaterClient({
             <WardDepthPanel
               ward={selectedWard}
               wrisStations={wrisStations}
+              cgwbWells={cgwbFile?.wells ?? []}
               riskWard={riskFile?.wards.find((w) => w.ward_number === selectedWard.wardNumber) ?? null}
               onSelectStation={(s) => {
                 setSelectedWrisStation(s);
+                setSelectedWard(null);
+              }}
+              onSelectCgwbWell={(w) => {
+                setSelectedCgwbStation(w);
                 setSelectedWard(null);
               }}
               onClose={() => setSelectedWard(null)}
@@ -594,14 +618,21 @@ function haversineKmLocal(a: [number, number], b: [number, number]): number {
 function WardDepthPanel({
   ward,
   wrisStations,
+  cgwbWells,
   riskWard,
   onSelectStation,
+  onSelectCgwbWell,
   onClose,
 }: {
   ward: GroundwaterWard;
   wrisStations: WrisStation[];
+  /** Static Year Book wells - the contributing stations for cities whose
+   *  depth surface interpolates from the curated CGWB file (Mumbai) rather
+   *  than live WRIS stations (Chennai/Madurai). */
+  cgwbWells: CgwbStation[];
   riskWard: WardRiskFile["wards"][number] | null;
   onSelectStation: (s: WrisStation) => void;
+  onSelectCgwbWell: (w: CgwbStation) => void;
   onClose: () => void;
 }) {
   // Compute the nearest contributing stations using ward centroid from
@@ -618,6 +649,18 @@ function WardDepthPanel({
         .sort((a, b) => a.distKm - b.distKm)
         .slice(0, 4)
     : wrisStations.slice(0, 4).map((s) => ({ station: s, distKm: null as number | null }));
+  // Cities without live WRIS stations (Mumbai) interpolate from the curated
+  // Year Book wells instead - list those as the contributing stations, and
+  // clicking opens the well's seasonal-history panel.
+  const usesCgwbFallback = wrisStations.length === 0 && cgwbWells.length > 0;
+  const rankedCgwb = usesCgwbFallback
+    ? (centroid
+        ? [...cgwbWells]
+            .map((w) => ({ well: w, distKm: haversineKmLocal(centroid, [w.lat, w.lng]) }))
+            .sort((a, b) => a.distKm - b.distKm)
+            .slice(0, 4)
+        : cgwbWells.slice(0, 4).map((w) => ({ well: w, distKm: null as number | null })))
+    : [];
 
   return (
     <div className="bg-white dark:bg-slate-900 w-full p-4 sm:p-5 overflow-y-auto">
@@ -661,10 +704,37 @@ function WardDepthPanel({
       </div>
 
       <div className="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">
-        Contributing stations - click for time series
+        {usesCgwbFallback
+          ? "Contributing Year Book wells - click for seasonal history"
+          : "Contributing stations - click for time series"}
       </div>
-      {ranked.length === 0 && (
+      {ranked.length === 0 && !usesCgwbFallback && (
         <p className="text-xs text-slate-500">No CGWB stations within range of this ward.</p>
+      )}
+      {usesCgwbFallback && (
+        <div className="space-y-1.5">
+          {rankedCgwb.map(({ well, distKm }) => {
+            const latest = well.readings[well.readings.length - 1];
+            return (
+              <button
+                key={well.name}
+                onClick={() => onSelectCgwbWell(well)}
+                className="w-full text-left border border-slate-200 dark:border-slate-700 rounded-md p-2 hover:border-blue-400 transition-colors"
+              >
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{well.name}</span>
+                  {distKm != null && (
+                    <span className="text-[10px] text-slate-500 shrink-0">{distKm.toFixed(1)} km</span>
+                  )}
+                </div>
+                <div className="text-[10px] text-slate-500">
+                  {well.block}
+                  {latest ? ` · ${latest.depth_m_bgl} m bgl (${latest.year}-${String(latest.month).padStart(2, "0")})` : ""}
+                </div>
+              </button>
+            );
+          })}
+        </div>
       )}
       <div className="space-y-1.5">
         {ranked.map(({ station, distKm }) => (
