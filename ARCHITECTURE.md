@@ -1,6 +1,6 @@
 # Architecture
 
-> Technical overview of Neer Vazhvu - Urban Water Intelligence platform (Chennai, Madurai, and Bengaluru live; multi-city by design).
+> Technical overview of Neer Vazhvu - Urban Water Intelligence platform (Chennai, Madurai, Bengaluru and Mumbai live; multi-city by design; Mumbai is the first region place - the 9-corporation MMR).
 
 ## System Overview
 
@@ -95,23 +95,26 @@ graph TB
 
 ## Multi-city architecture
 
-Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai, Bengaluru, and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/lib/cities/{cityId}.ts` and that config drives:
+Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai, Bengaluru, Mumbai, and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/lib/cities/{cityId}.ts` and that config drives:
 
 - **`heroMode`** (`days-left` | `allocation` | `cauvery-pumping` | `none`) — picks the dashboard hero variant.
     - Chennai (`days-left`): divides total CMWSSB-reservoir storage by urban demand. Works because Chennai's reservoirs ARE the urban supply.
     - Madurai (`allocation`): anchors on Vaigai live storage + the city's published drinking-water allocation since the dams are irrigation-primary and shared across multiple districts.
     - Bengaluru (`cauvery-pumping`): tracks BWSSB's lift volume from T.K. Halli (~1,400-1,450 MLD) against Stage I-V design capacity (~2,225 MLD post-Stage V). Bangalore drinks 100 km away from the Cauvery so reservoir storage is not the right runway metric; pumping volume vs design is. Pairs with the IISc 80-ward stress overlay (April 2025 Outlook) since all 6 Bangalore Urban CGWB blocks are over-exploited and tap deficits show up as tanker dependency, not as reservoir percent.
+    - Mumbai (`days-left`, region place): BMC's 7 lakes ARE the tap (Chennai-pattern), but the card states two caveats from config - `heroNote` labels the figure an upper bound (storage counts whole-dam water in state-owned dams while capacity is BMC's share), and the rain scenarios collapse to one line because the Pravah feed publishes no inflow data. Desal/inflow sliders hide when a city lacks the underlying data.
 - **`waterSources`** — array of reservoirs/dams the city tracks, with `fullCapacityMcft`, `isPrimaryDrinkingSource`, etc. `isPrimaryDrinkingSource` is true only when the reservoir's storage IS the city's runway. Bangalore tracks 4 upstream Cauvery basin reservoirs (KRS, Hemavathi, Kabini, Harangi) but flags them all false because they're shared with irrigation + Mysuru + Mandya + the inter-state release to TN.
 - **`urbanSupply`** (when `heroMode === 'allocation'`) — annual allocation (mcft/yr), recent draw, WTP capacity, supply chain description for the at-a-glance tile.
 - **`groundwaterViews`** — feature flags for the groundwater page (`exploitation` / `depth` / `risk` / `cgwbStations`). Madurai disables `depth` + `risk` because per-ward IDW interpolation would be dishonest with only 4 live stations across the district; instead it surfaces `cgwbStations` (Year Book point overlay) on top of `exploitation` (block-level classification). Bengaluru disables `depth` for the same reason (13 CGWB telemetric stations across 369 GBA wards is too sparse to honestly IDW); it surfaces `exploitation` (6 blocks all Over-Exploited every year on record), `risk` (ward-risk composite), and `cgwbStations`.
 - **`localGovernment`** — ward count + acronym (GCC 200 / MMC 100 / GBA 369) for help-text and authority labels.
 - **`primaryAuthority`** — utility name (CMWSSB / MMC / TWAD / BWSSB) used in MissingDataCard reasons and About-page citations.
-- **`availableLanguages`** — which UI languages render the language toggle for this city. Chennai: `['en', 'ta']`. Madurai: `['en', 'ta']`. Bengaluru: `['en', 'kn']`.
+- **`availableLanguages`** — which UI languages render the language toggle for this city. Chennai: `['en', 'ta']`. Madurai: `['en', 'ta']`. Bengaluru: `['en', 'kn']`. Mumbai: `['en']` with `upcomingLanguages: ['mr']` - the switcher renders a greyed "coming soon" chip until the Marathi pass lands.
+- **`placeKind` + `corporations[]`** — `'region'` models a metropolitan region rather than one corporation (Mumbai: the 9-corporation MMR). Region places render the `RegionalWaterSystem` dashboard section, and `dashboardScopes` supplies the scope badges ("Greater Mumbai · BMC's 7 lakes" vs "Mumbai Metropolitan Region · 9 corporations") so two geographies never blur on one dashboard.
+- **Capability flags** — `hasCommitments`, `hasAllocationLedger`, `hasShoreline`, `hasCascadeOverlay`, etc. gate whole surfaces; `FEATURE_AVAILABILITY` in `src/lib/cities/routing.ts` is the single source of truth for nav, sitemap AND direct-URL 404s (e.g. Mumbai ships without my-ward until the ward build lands).
 - **`sourceNameAliases`** — case-insensitive maps so the news-search query and reservoir-detail-dialog match a source under any spelling (e.g. "vaigai" / "vaigai dam" / "வைகை" → `vaigai`).
 
 Per-city data files use a `-<cityId>` suffix in `public/data/` and `public/geojson/` (e.g. `madurai-supply-overview.json`, `bangalore-iisc-stress-wards-2025.json`, `imd-rainfall-monthly-bangalore.json`). Chennai keeps legacy unsuffixed paths for back-compat.
 
-To add a new city, see the "Adding a new city" walkthrough in [CONTRIBUTING.md](CONTRIBUTING.md). The Bangalore onboarding (PRs through `bangalore_onboarding` branch) is the most recent worked example; the Madurai onboarding (PR #97) is the canonical reference.
+To add a new city, see the "Adding a new city" walkthrough in [CONTRIBUTING.md](CONTRIBUTING.md). The Mumbai onboarding (PR #147) is the most recent worked example and covers the region pattern; Bangalore (`bangalore_onboarding`) covers `cauvery-pumping` + localization; the Madurai onboarding (PR #97) is the canonical reference.
 
 ## Shared utilities
 
@@ -137,6 +140,14 @@ The dashboard component tree forks where each city's data landscape calls for it
 - **`BangaloreDailyBriefing`** (`src/components/dashboard/bangalore-daily-briefing.tsx`) — template-based daily briefing card. Composes prose from `t()` keys against structured `fields` (returned by `buildBangaloreBriefing()` in `src/lib/insights/bangalore-briefing.ts`) so the briefing is fully localised. Five briefing variants pick by reservoir storage + tanker dependency. Open slot for a Claude-pipeline AI uplift via `aiOverride`.
 - **`IIScStressWardsMap`** (`src/components/dashboard/iisc-stress-wards-{leaflet-,}map.tsx`) — the headline groundwater layer on `/bangalore`. Renders 80 critically-over-extracted BBMP wards (April 2025 IISc Outlook) as a percentile-coloured choropleth (0-100 composite score) over the 198 BBMP polygon set. Click any ward for its severity tier + composite score breakdown.
 - **`TankerExpandedContext`** + **`TankerMarketPanel`** + **`TankerPageChrome`** — the `/bangalore/tanker` page composes longitudinal OpenCity survey data (2015 / 2019 / 2024) on what households actually pay vs BWSSB's official tariff, with tier-by-tier breakdowns and corridor-specific sites. All section headings + body fields read from per-language JSON variants (`_kn`, `_ta`) so the page is fully localised.
+
+### Mumbai (region place, `heroMode: 'days-left'`)
+
+- **`RegionalWaterSystem`** (`src/components/dashboard/regional-water-system.tsx`) — the Metropolitan Water System card, rendered only for `placeKind: 'region'`. LPCD-inequality ranking across the 9 corporations (bar chart against the CPHEEO 135 norm), scoreboard chips, per-corporation cards (supply/demand/deficit verdict chip + live Pravah storage pill), augmentation pipeline, numbered citations. Fed by `mmr-corporations-water.json` + `mmr-dam-storage.json`.
+- **`DaysLeftHero` honesty extensions** (shared component; config-driven) — `heroNote` + `heroNoteSource` (upper-bound caveat + linked attribution), collapsed no-inflow scenarios stating the draw rate, slider gating, `scopeLabel` badge.
+- **`FloodLinesSection`** (`src/components/flood/flood-lines-section.tsx`) — WRD red/blue flood-line sheets per river as collapsed rows; self-hides for cities without a `flood-lines-{cityId}.json`.
+- **Accountability surfaces (all four cities)** — `allocations-client.tsx` (Allocation Ledger: entitled vs received per arrangement, instrument links, confidence + gap verdicts incl. "unreported") and `commitments-client.tsx` (Commitments Register: citation-gated statuses, append-only history). Both follow the verdict-first UX contract (scoreboard, collapsed rows, problems float) and deep-link into each other by entry id (hash scroll + auto-expand + highlight after client-side data load).
+- **Data feeds via GitHub Actions (artifact-commit), not the API runtime** — `pravah-dam-refresh.yml` (daily reservoir storage), `rainfall-recent-refresh.yml` (daily provisional rainfall, all cities), `bmc-floodspots-refresh.yml` (weekly), `imd-rainfall-refresh.yml` (quarterly, all cities incl. Mumbai). One-off: `backfill_cwc_reservoirs.py` (Bhatsa + Upper Vaitarna weekly 2015-2025, insert-only-missing).
 
 ## Daily Pipeline
 
@@ -479,7 +490,7 @@ All chips are pre-loaded into the browser cache via `new Image().src = url` on m
 
 ### Lake Catchment Atlas (`/[city]/water-bodies` → "Catchments" view)
 
-A terrain-derived, clickable area-of-influence layer for every lake/tank, live for Chennai, Madurai, and Bengaluru. Where the cascade reconstruction (90 m HydroSHEDS, tank-to-tank edges) is the district-scale skeleton, the atlas delineates the **contributing area** per lake from a 30 m bare-earth DEM. Full methodology: [docs/methodology/catchment-atlas-v1.md](docs/methodology/catchment-atlas-v1.md); original spec: [docs/specs/lake-catchment-atlas.md](docs/specs/lake-catchment-atlas.md).
+A terrain-derived, clickable area-of-influence layer for every lake/tank, live for Chennai, Madurai, Bengaluru and Mumbai. Where the cascade reconstruction (90 m HydroSHEDS, tank-to-tank edges) is the district-scale skeleton, the atlas delineates the **contributing area** per lake from a 30 m bare-earth DEM. Full methodology: [docs/methodology/catchment-atlas-v1.md](docs/methodology/catchment-atlas-v1.md). (Design specs live in local archives; the methodology doc is the maintained record.)
 
 **Build-time pipeline** ([neer-vazhvu-api/app/cascade/catchments.py](neer-vazhvu-api/app/cascade/catchments.py), algorithm `catchments_fabdem_wbt_v1`):
 

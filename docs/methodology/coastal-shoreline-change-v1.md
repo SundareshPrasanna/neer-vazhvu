@@ -1,5 +1,13 @@
 # Mapping shoreline change on the Chennai coast with open satellite data
 
+> **Multi-city note (Jul 2026):** the same pipeline now also runs for Mumbai
+> (west-coast orientation, `public/geojson/mumbai-coastal-transects.geojson`),
+> corroborated against the published record (NCCR 1990-2016 district table +
+> MSMP 2017 risk grades) since no rate-publishing study exists for Mumbai.
+> The annual refresh workflow (`coastal-shoreline-refresh.yml`) is still
+> Chennai-hardcoded - parameterising it for Mumbai is a logged follow-up.
+> The methodology below is written against the Chennai build.
+
 **An independent, transparent reproduction and 2026 extension of a published shoreline-change study**
 
 Version 1 - Neer Vazhvu - June 2026

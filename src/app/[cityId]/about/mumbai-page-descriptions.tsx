@@ -57,14 +57,23 @@ export function MumbaiPageDescriptions({ cityId, cityName }: Props) {
           CMWSSB-style bulletin - its Hydraulic Engineer page is a closed portal applet. The lakes
           sit 30-130 km outside the city; they render as source cards, not map pins.
         </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          The headline figure is labelled an <strong>upper bound</strong>: storage counts the full
+          live water in the five state-owned dams, part of which serves users beyond BMC. And
+          because the Pravah bulletin publishes storage only (no inflows), the rain scenarios other
+          cities carry collapse here to a single at-current-draw figure that states its divisor.
+        </p>
         <div className="rounded-lg border border-amber-200 dark:border-amber-900/40 p-4 bg-amber-50/50 dark:bg-amber-950/20 space-y-2">
-          <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-200">No history chart or forecast yet</h4>
+          <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-200">A decade of history; no forecast yet</h4>
           <p className="text-sm text-slate-600 dark:text-slate-400">
-            The BMC publishes no pre-2020 lake-level archive, so the 9-year history chart and the
-            AutoARIMA forecast that Chennai and Madurai carry are not available at launch. The daily
-            Pravah scrape accumulates a forward record - and harvests the bulletin&apos;s
-            same-date-last-year column, so each day adds two years of context; forecasts follow
-            once enough history banks up.
+            The history chart spans February 2015 to the present for Bhatsa and Upper Vaitarna -
+            weekly readings recovered from the Central Water Commission&apos;s bulletin archive
+            (discontinued May 2025) - and opens on the All-time view. The other three fed lakes have
+            no public archive before July 2026; their record accumulates from the daily Pravah
+            scrape, which also harvests the bulletin&apos;s same-date-last-year column so each run
+            adds two years of context. AutoARIMA forecasts (Chennai-style) follow once the daily
+            history banks up. Rainfall pairs IMD&apos;s gridded history with a daily provisional
+            layer so the current monsoon appears as it happens, asterisked until IMD confirms it.
           </p>
         </div>
       </SubSection>
@@ -99,10 +108,13 @@ export function MumbaiPageDescriptions({ cityId, cityName }: Props) {
 
       <SubSection id="page-rivers" title="Rivers">
         <p className="text-slate-600 dark:text-slate-400">
-          Four rivers - the Mithi, Dahisar, Poisar and Oshiwara - all CPCB Priority-I (most-polluted)
-          stretches, drawn from OpenStreetMap with their monitoring points. The Mithi, an 18 km open
-          drain from the Powai/Vihar overflows to Mahim Creek, is the river that overflowed in the 26
-          July 2005 deluge.
+          Four rivers - the Mithi, Dahisar, Poisar and Oshiwara - drawn from OpenStreetMap with
+          their monitoring points. In CPCB&apos;s October 2025 assessment the Mithi at Mahim is
+          <strong> India&apos;s single worst polluted river stretch</strong> (Priority I, max BOD
+          210 mg/l); the other three do not appear in the national list at all - they are barely
+          monitored as rivers, which is its own finding. The Mithi, an 18 km open drain from the
+          Powai/Vihar overflows to Mahim Creek, is the river that overflowed in the 26 July 2005
+          deluge.
         </p>
         <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Mithi water quality (2018-2023)</h4>
         <p className="text-slate-600 dark:text-slate-400">
@@ -206,19 +218,69 @@ export function MumbaiPageDescriptions({ cityId, cityName }: Props) {
       <SubSection id="page-facts" title="Water facts">
         <p className="text-slate-600 dark:text-slate-400">
           Journalist-ready, sourced facts grouped by category - supply, water equity, groundwater,
-          rivers, floods, and coast &amp; wetlands. Today {cityName} ships 15 hand-curated facts: the
-          supply-demand gap, 34% non-revenue water (BMC audit, 2024), the slum/non-slum LPCD gap and the one ward in 24
-          with 24x7 supply, the groundwater-assessment exclusion, the four Priority-I rivers and
-          Powai&apos;s sewage load, the 26/7/2005 deluge and the locked iFLOWS model, and the
-          mangrove / salt-pan / Mahul / Gargai signature stories.
+          rivers, floods, and coast &amp; wetlands. Today {cityName} ships 21 hand-curated facts,
+          each with a source URL: the supply-demand gap, 34% non-revenue water (BMC audit, 2024),
+          the building-level connections denominator, the slum/non-slum LPCD gap and the one ward
+          in 24 with 24x7 supply, the groundwater-assessment exclusion, the Mithi as India&apos;s
+          worst river stretch (CPCB, Oct 2025) and Powai&apos;s sewage load, the 26/7/2005 deluge,
+          the locked iFLOWS model, the climate budget&apos;s flood bill, and the mangrove /
+          salt-pan / Mahul / Gargai signature stories.
+        </p>
+      </SubSection>
+
+      <SubSection id="page-water-bodies" title="Water bodies & catchments">
+        <p className="text-slate-600 dark:text-slate-400">
+          OSM water-body polygons plus a lost-tank inventory and restoration priority scoring, with
+          the Catchments view (FABDEM terrain-derived) making every lake clickable for its
+          contributing area, feeder streams and downstream flow path - the same pipeline as the
+          other cities. Powai&apos;s NGT record anchors the restoration entries.
+        </p>
+      </SubSection>
+
+      <SubSection id="page-shoreline" title="Shoreline">
+        <p className="text-slate-600 dark:text-slate-400">
+          The same satellite shoreline-change measurement as Chennai (MNDWI transects, Landsat +
+          Sentinel-2), west-coast orientation. No rate-publishing study exists for {cityName}, so
+          the measurement is corroborated against the official record instead: NCCR&apos;s 1990-2016
+          district table and the 2017 Shoreline Management Plan risk grades.
+        </p>
+      </SubSection>
+
+      <SubSection id="page-allocations" title="Allocation Ledger">
+        <p className="text-slate-600 dark:text-slate-400">
+          Who is owed what water: 15 arrangements (source &rarr; authority &rarr; recipient) across
+          the metropolitan region with entitled vs received, the instrument each rests on (WRD
+          Government Resolutions, STEM board minutes, the MMRDA Annual Report) and a confidence
+          grade. Ten of the fifteen carry the &quot;unreported&quot; verdict - a quota exists on
+          paper but nobody publishes what actually flows - which is the ledger&apos;s central
+          finding about how the region&apos;s water is governed.
+        </p>
+      </SubSection>
+
+      <SubSection id="page-commitments" title="Commitments Register">
+        <p className="text-slate-600 dark:text-slate-400">
+          Nineteen dated commitments by named institutions - wastewater-facility commissioning dates
+          from BMC&apos;s own climate budget and ESR, the Gargai / Kalu / Manori source projects,
+          BRIMSTOWAD, flood-spot mitigation - each checked against time. Statuses change only with a
+          dated citation; when a date slips, the old one stays on the record. Cross-linked with the
+          Allocation Ledger entry-to-entry.
+        </p>
+      </SubSection>
+
+      <SubSection id="page-origins" title="Origins">
+        <p className="text-slate-600 dark:text-slate-400">
+          The four-chapter water history - seven islands with no river, the first pipe at Vihar
+          (1860), hydraulic citizenship, and 26/7 with the forty-five litres - with five licensed
+          archival and contemporary images whose provenance is recorded file-by-file in the
+          repository manifest.
         </p>
         <p className="text-xs text-slate-500 dark:text-slate-400 italic">
           See also the dedicated Chennai about page (
           <Link href="/about" className="text-blue-600 dark:text-blue-400 hover:underline">
             /about
           </Link>
-          ) for the canonical methodology pattern this follows. Pages not yet shipped for {cityName}
-          (water bodies, lake restoration) will be documented here as their data layers land. Linked
+          ) for the canonical methodology pattern this follows. My Ward is the one page still in
+          build for {cityName}; it will be documented here when it ships. Linked
           from <Link href={`/${cityId}/facts`} className="text-blue-600 dark:text-blue-400 hover:underline">{`/${cityId}/facts`}</Link>.
         </p>
       </SubSection>
