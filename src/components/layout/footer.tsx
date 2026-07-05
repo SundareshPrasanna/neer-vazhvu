@@ -29,6 +29,11 @@ const CITY_FOOTER_SOURCES: Record<
     { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
     { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
+  mumbai: [
+    { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
+    { label: "MPCB", href: "https://mpcb.gov.in/" },
+    { label: "OpenCity", href: "https://data.opencity.in/" },
+  ],
 };
 
 export function Footer() {
