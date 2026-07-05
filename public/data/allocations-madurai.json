@@ -1,0 +1,95 @@
+{
+  "place_id": "madurai",
+  "updated": "2026-07-04",
+  "headline": "Who owns the water: Madurai's allocation ledger",
+  "intro": "Madurai drinks under one of India's oldest live water instruments: an 1886 lease that sends Periyar water east into the Vaigai, and a 2018 PWD letter granting the city a year-round share of it. This ledger shows what that paper promises, what the city actually draws, and how solid the record is.",
+  "unit_note": "Madurai's entitlement is stated in its native units - cusecs (continuous release) and mcft/year (annual volume) - alongside MLD equivalents where published. Units are never converted silently.",
+  "authorities": [
+    {
+      "id": "tnwrd",
+      "name": "TN Water Resources Department (PWD)",
+      "role": "The state's water department. It operates the dams and canals of the Periyar-Vaigai system - including the Vaigai dam Madurai drinks from - and issues the release orders that decide who gets water, when.",
+      "capacity": "Vaigai dam serves irrigation + Madurai + en-route towns",
+      "committed": "51.09 cusecs (125 MLD) continuous to Madurai Corporation",
+      "tension": "The system exists first for irrigation: the same releases that fill Madurai's intake serve farm turns, so the city's year-round entitlement is a carve-out that must survive every drought-year negotiation.",
+      "source_refs": [
+        "pwd-letter-2018"
+      ]
+    }
+  ],
+  "arrangements": [
+    {
+      "id": "periyar-vaigai-mmc",
+      "source": "Periyar-Vaigai system (Mullaperiyar dam -> diversion tunnel -> Vaigai dam)",
+      "authority_id": "tnwrd",
+      "recipient": "Madurai Corporation",
+      "entitled": {
+        "value": 1500,
+        "unit": "mcft/year",
+        "basis": "PWD release order: 51.09 cusecs (125 MLD) year-round continuous",
+        "note": null
+      },
+      "received": {
+        "value": 900,
+        "unit": "mcft/year",
+        "year": "recent (per Tranche-2 IEE)",
+        "note": "The city draws roughly 900 of its 1,500 mcft allotment - operationally ~115 MLD via the two Vaigai lines against the 125 MLD entitlement"
+      },
+      "instrument": {
+        "label": "PWD letter Lr. No. DB/JD01/384/C.10(P)/2018, dt. 26 Dec 2018",
+        "url": "https://www.adb.org/projects/49107-005/main"
+      },
+      "confidence": "high",
+      "note": "One of the few Indian city entitlements with the actual order number in the public record (via the ADB TNUFIP Tranche-2 IEE)."
+    }
+  ],
+  "events": [
+    {
+      "year": 1886,
+      "title": "The Periyar lease - the ancestor instrument",
+      "note": "The 999-year Periyar Lease Deed between Travancore and the Madras Presidency sent west-flowing Periyar water east through the ghats - the instrument beneath the Mullaperiyar dam, the diversion tunnel, and ultimately Madurai's tap. Still contested between Kerala and Tamil Nadu 140 years on.",
+      "source_refs": [
+        "mullaperiyar-wiki"
+      ]
+    }
+  ],
+  "futures": [
+    {
+      "id": "mullai-periyar-lower-camp-check-dam-pannaipatty-wtp-expansion-adb-tnufip-tranche-2",
+      "project": "Mullai Periyar Lower Camp check dam + Pannaipatty WTP expansion (ADB TNUFIP Tranche 2)",
+      "mld": 125,
+      "earmarked_for": [
+        "Madurai Corporation"
+      ],
+      "status": "Design horizon 2034: new check dam, intake, 16.85 km raw-water main and +125 MLD treatment - effectively doubling the drinking draw on the same entitlement system",
+      "source_refs": [
+        "adb-tranche2"
+      ]
+    }
+  ],
+  "gaps": [
+    "No public daily metering of the corporation's actual draw - the ~900 mcft figure is an annual aggregate from project documents; day-level receipts would need the utility's own records.",
+    "The PWD letter itself is cited in the ADB IEE but not published as a standalone document.",
+    "En-route entitlements (towns drawing from the same conveyance) are not publicly itemised, so Madurai's share cannot be placed within the full system ledger."
+  ],
+  "sources": {
+    "pwd-letter-2018": {
+      "title": "PWD letter Lr. No. DB/JD01/384/C.10(P)/2018 (26 Dec 2018), cited in ADB TNUFIP Tranche-2 IEE Appendix 14",
+      "publisher": "TN PWD / ADB",
+      "year": 2018,
+      "url": "https://www.adb.org/projects/49107-005/main"
+    },
+    "adb-tranche2": {
+      "title": "ADB TNUFIP Tranche 2 Initial Environmental Examination (Madurai water supply)",
+      "publisher": "Asian Development Bank",
+      "year": 2025,
+      "url": "https://www.adb.org/projects/49107-005/main"
+    },
+    "mullaperiyar-wiki": {
+      "title": "Periyar Lease Deed / Mullaperiyar dam (instrument history)",
+      "publisher": "Wikipedia (secondary; primary is the 1886 deed)",
+      "year": 1886,
+      "url": "https://en.wikipedia.org/wiki/Mullaperiyar_Dam"
+    }
+  }
+}

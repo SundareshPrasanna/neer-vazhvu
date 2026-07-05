@@ -1,0 +1,233 @@
+{
+  "place_id": "chennai",
+  "updated": "2026-07-05",
+  "headline": "Who owns the water: Chennai's allocation ledger",
+  "intro": "Chennai's water rests on paper signed far from the city: a 1976 agreement in which three other states each spared 5 TMC of Krishna water for Madras, a 1983 accord that promised 12 TMC a year at the Tamil Nadu border - and a delivery record that has run far below it for most of three decades. This ledger shows what each arrangement promises, what actually arrives, and how solid the paper is.",
+  "unit_note": "Inter-state entitlements are in TMC per year (thousand million cubic feet; 1 TMC is about 28.3 billion litres - 12 TMC/yr is roughly 931 MLD). Plant capacities are in MLD.",
+  "authorities": [
+    {
+      "id": "ap-wrd",
+      "name": "Government of Andhra Pradesh (Telugu Ganga system)",
+      "role": "Operates the canal chain that carries Chennai's Krishna water: Srisailam reservoir to Somasila to Kandaleru, then the 152 km Kandaleru-Poondi canal to the Tamil Nadu border.",
+      "capacity": "12 TMC/yr net due at the border",
+      "committed": "Two spells: 8 TMC (Jul-Oct) + 4 TMC (Jan-Apr)",
+      "tension": "Deliveries have run far below the promise for most years since 1996 - roughly 2-3 TMC in recent years against 12. In wet years part of the shortfall is Chennai's own choice (intake is suspended when city reservoirs are full), so the gap is not all Andhra's doing - the ledger's hardest row to caption fairly.",
+      "source_refs": [
+        "cmwssb-wss",
+        "dtnext-2tmc"
+      ]
+    },
+    {
+      "id": "cmwssb",
+      "name": "CMWSSB (as contract counterparty)",
+      "role": "Chennai's water utility. Beyond operating the city system, it is the buyer under long-term desalination contracts - including a 25-year bulk-water purchase from the privately built Minjur plant.",
+      "capacity": null,
+      "committed": null,
+      "tension": "Desalination is the one entitlement Chennai fully controls - no other state signs it. That is exactly why the city keeps buying more of it (450 MLD built, 400 more coming) despite it being the costliest water in the ledger.",
+      "source_refs": [
+        "cmwssb-wss"
+      ]
+    }
+  ],
+  "arrangements": [
+    {
+      "id": "krishna-1976",
+      "source": "Krishna river (5 TMC each spared by Maharashtra, Karnataka, Andhra Pradesh)",
+      "authority_id": null,
+      "recipient": "Chennai city",
+      "entitled": {
+        "value": 15,
+        "unit": "TMC/yr",
+        "basis": "Tripartite agreement, 14 April 1976 (gross, at Srisailam)",
+        "note": null
+      },
+      "received": {
+        "value": null,
+        "unit": "TMC/yr",
+        "year": null,
+        "note": "Gross figure - the operative promise is the 1983 accord's 12 TMC net at the border (next row)"
+      },
+      "instrument": {
+        "label": "1976 tripartite agreement, as stated on CMWSSB's official Water Supply System page",
+        "url": "https://cmwssb.tn.gov.in/water-supply-system"
+      },
+      "confidence": "high",
+      "note": "The understanding dates to 1963; the 1976 signature made it paper."
+    },
+    {
+      "id": "telugu-ganga-1983",
+      "source": "Krishna via Telugu Ganga (Srisailam -> Somasila -> Kandaleru -> Poondi canal)",
+      "authority_id": "ap-wrd",
+      "recipient": "Chennai city (CMWSSB reservoirs via Poondi)",
+      "entitled": {
+        "value": 12,
+        "unit": "TMC/yr",
+        "basis": "AP-TN accord, 18 April 1983: 15 TMC drawn, 12 net at the border after 3 TMC en-route losses",
+        "note": null
+      },
+      "received": {
+        "value": 2,
+        "unit": "TMC/yr",
+        "year": "2024-25",
+        "note": "'Only 2 TMC in one year against the usual 8 TMC discharge' (WRD, Jan 2025); ~3 TMC in 2022 and 2024. First water reached Poondi only in September 1996, thirteen years after the accord"
+      },
+      "instrument": {
+        "label": "1983 AP-TN accord, as stated on CMWSSB's official page",
+        "url": "https://cmwssb.tn.gov.in/water-supply-system"
+      },
+      "confidence": "high",
+      "note": "The ledger's headline gap: a 12 TMC promise delivering 2-3. Caption fairly - in wet years Chennai itself suspends intake when its reservoirs are full."
+    },
+    {
+      "id": "veeranam",
+      "source": "Veeranam tank (fed by Cauvery releases from Mettur)",
+      "authority_id": null,
+      "recipient": "Chennai city (via ~230 km transmission main)",
+      "entitled": {
+        "value": 180,
+        "unit": "MLD",
+        "basis": "New Veeranam Project design capacity (2004)",
+        "note": null
+      },
+      "received": {
+        "value": null,
+        "unit": "MLD",
+        "year": null,
+        "note": "Operational since 2004; actual draw varies with Mettur releases - ultimately a Cauvery-dependent source, so it inherits that basin's politics"
+      },
+      "instrument": {
+        "label": "CMWSSB Water Supply System page",
+        "url": "https://cmwssb.tn.gov.in/water-supply-system"
+      },
+      "confidence": "high",
+      "note": null
+    },
+    {
+      "id": "minjur-desal",
+      "source": "Bay of Bengal (Minjur desalination plant)",
+      "authority_id": "cmwssb",
+      "recipient": "Chennai city (north)",
+      "entitled": {
+        "value": 100,
+        "unit": "MLD",
+        "basis": "25-year DBOOT bulk-water purchase contract (commissioned 31 July 2010)",
+        "note": null
+      },
+      "received": {
+        "value": null,
+        "unit": "MLD",
+        "year": null,
+        "note": "India's first large municipal desal contract - the entitlement is contractual, not riparian"
+      },
+      "instrument": {
+        "label": "CMWSSB Water Supply System page",
+        "url": "https://cmwssb.tn.gov.in/water-supply-system"
+      },
+      "confidence": "high",
+      "note": null
+    },
+    {
+      "id": "nemmeli-desal",
+      "source": "Bay of Bengal (Nemmeli I + II desalination plants)",
+      "authority_id": "cmwssb",
+      "recipient": "Chennai city (south)",
+      "entitled": {
+        "value": 250,
+        "unit": "MLD",
+        "basis": "Nemmeli I 100 MLD (Feb 2013) + Nemmeli II 150 MLD (Feb 2024)",
+        "note": null
+      },
+      "received": {
+        "value": null,
+        "unit": "MLD",
+        "year": null,
+        "note": "State-funded, CMWSSB-operated"
+      },
+      "instrument": {
+        "label": "CMWSSB Water Supply System page (Nemmeli I); project record (Nemmeli II)",
+        "url": "https://cmwssb.tn.gov.in/water-supply-system"
+      },
+      "confidence": "high",
+      "note": null
+    }
+  ],
+  "events": [
+    {
+      "year": 1963,
+      "title": "The 5-TMC-each understanding",
+      "note": "The riparian states first agree in principle to spare 5 TMC each of Krishna water for Madras - thirteen years before it becomes paper.",
+      "source_refs": [
+        "telugu-ganga-wiki"
+      ]
+    },
+    {
+      "year": 1976,
+      "title": "Tripartite agreement signed (15 TMC)",
+      "note": "Maharashtra, Karnataka and Andhra Pradesh jointly sign on 14 April 1976 to spare 15 TMC of Krishna water for Chennai city.",
+      "source_refs": [
+        "cmwssb-wss"
+      ]
+    },
+    {
+      "year": 1983,
+      "title": "AP-TN accord: 12 TMC net at the border",
+      "note": "The implementation accord of 18 April 1983 sets the operative promise - 15 TMC drawn at Srisailam, 12 net at the Tamil Nadu border after en-route losses, in two seasonal spells.",
+      "source_refs": [
+        "cmwssb-wss"
+      ]
+    },
+    {
+      "year": 1996,
+      "title": "First Krishna water reaches Poondi",
+      "note": "Water first arrives in September 1996, thirteen years after the accord - a delay that foreshadowed the delivery record since.",
+      "source_refs": [
+        "cmwssb-wss"
+      ]
+    }
+  ],
+  "futures": [
+    {
+      "id": "perur-desalination-plant",
+      "project": "Perur desalination plant",
+      "mld": 400,
+      "earmarked_for": [
+        "Chennai city (south)"
+      ],
+      "status": "Under construction (JICA-funded, ~Rs 6,000 cr); target December 2026 - would take desalination to 850 MLD, the largest single entitlement Chennai fully controls",
+      "source_refs": [
+        "perur-project"
+      ]
+    }
+  ],
+  "gaps": [
+    "No public year-wise series of Krishna water actually realised at the border since 1996 - the receipt record here is stitched from per-year press quoting WRD officials. The full series likely sits in TN WRD or CMWSSB policy notes.",
+    "The 1976 and 1983 agreement texts are not online in primary form; the entitlement wording rests on CMWSSB's official paraphrase.",
+    "The seasonal spell split is reported variously as July-October and June-October for the 8 TMC spell."
+  ],
+  "sources": {
+    "cmwssb-wss": {
+      "title": "CMWSSB Water Supply System (official page: 1976 + 1983 instruments, Veeranam, desal plants)",
+      "publisher": "Chennai Metropolitan Water Supply & Sewerage Board",
+      "year": 2022,
+      "url": "https://cmwssb.tn.gov.in/water-supply-system"
+    },
+    "dtnext-2tmc": {
+      "title": "'2 TMC of Krishna water sufficient' - WRD (receipt vs the usual 8 TMC)",
+      "publisher": "DT Next",
+      "year": 2025,
+      "url": "https://www.dtnext.in/news/chennai/upto-75-water-in-chennai-reservoirs-2-tmc-of-krishna-water-sufficient-wrd-819371"
+    },
+    "telugu-ganga-wiki": {
+      "title": "Telugu Ganga project (history of the 1963/1976/1983 chain)",
+      "publisher": "Wikipedia (secondary)",
+      "year": 2026,
+      "url": "https://en.wikipedia.org/wiki/Telugu_Ganga_project"
+    },
+    "perur-project": {
+      "title": "Perur 400 MLD desalination plant project record",
+      "publisher": "Blackridge Research project profile / Business Standard",
+      "year": 2025,
+      "url": "https://www.blackridgeresearch.com/project-profiles/perur-desalination-plant-project-southeast-asias-largest-chennai-tamil-nadu-india"
+    }
+  }
+}
