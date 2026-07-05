@@ -1,0 +1,50 @@
+name: Recent rainfall refresh (daily, provisional)
+
+# Artifact-commit pattern (like pravah-dam-refresh.yml): fills the gap after
+# IMD's last published gridded month with daily reanalysis rainfall from the
+# Open-Meteo archive API, for all four cities, every morning. The rainfall
+# chart renders these months as provisional (asterisked) and IMD's quarterly
+# refresh (imd-rainfall-refresh.yml) supersedes them automatically - the
+# chart's merge always prefers IMD where both cover a month.
+#
+# Why daily: monsoon cities get most of their rain in concentrated bursts
+# (Mumbai: ~250 mm in late June 2026 alone); a chart that lags a quarter
+# misses the entire story while it is happening.
+
+on:
+  schedule:
+    - cron: "45 2 * * *" # 08:15 IST daily; archive covers through yesterday
+  workflow_dispatch:
+
+concurrency:
+  group: rainfall-recent-refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch provisional rainfall (all cities)
+        run: python3 neer-vazhvu-api/scripts/fetch_recent_rainfall.py --all
+
+      - name: Commit refreshed JSON
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/rainfall-recent-*.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "data: daily provisional rainfall refresh (Open-Meteo fill after IMD's last month)"
+            git push
+          fi
