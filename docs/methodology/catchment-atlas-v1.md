@@ -2,7 +2,7 @@
 
 **neer-vazhvu catchment delineation v1**
 **Algorithm: `catchments_fabdem_wbt_v1`**
-**Status: as-built, shipped for Chennai, Madurai, Bengaluru**
+**Status: as-built, shipped for Chennai, Madurai, Bengaluru, Mumbai**
 
 ## Abstract
 

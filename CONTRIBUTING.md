@@ -92,17 +92,19 @@ The multi-city architecture is config-driven. To add (say) Coimbatore:
    - `"cauvery-pumping"` if the city's drinking water is lifted from a distant source via dedicated pumping infrastructure and the headline constraint is pump capacity vs design (Bengaluru-pattern). Track the upstream reservoirs in `waterSources` but flag all of them `isPrimaryDrinkingSource: false` if they're shared with irrigation / other cities. Provide a `cauveryPumping` block with current lift, Stage design capacity, Stage actual delivery.
    - `"none"` to suppress the hero entirely.
 2. Register it in `src/lib/cities/index.ts`.
-3. If the city has a regional language other than EN, set `availableLanguages: ['en', '<iso>']` and add translations for every key in `src/lib/i18n/translations.ts` (validated by `npm run i18n:check`).
+3. If the city has a regional language other than EN, set `availableLanguages: ['en', '<iso>']` and add translations for every key in `src/lib/i18n/translations.ts` (validated by `npm run i18n:check`). If the translation pass will follow later, declare it in `upcomingLanguages` instead - the switcher renders a greyed "coming soon" chip (the Mumbai launch pattern).
 4. Drop city-specific files into `public/data/coimbatore-*.json` and `public/geojson/coimbatore-*.geojson` matching the existing naming convention.
 5. Mirror `compute-ward-profiles.ts` for the new city's ward count + data layers. Emit `_data_status: "not_available"` for sections you don't yet have data for — the UI cards branch on this and render honest "data not yet sourced" disclaimers.
 6. For long-term IMD rainfall, add the city's grid intersection to `CITY_DEFAULTS` in `neer-vazhvu-api/scripts/generate_imd_rainfall.py` and run `python generate_imd_rainfall.py --city coimbatore`.
 7. The routes at `src/app/[cityId]/...` will pick up the new city automatically once `tryGetPlaceConfig(cityId)` resolves it.
 
-Worked examples: Madurai onboarding (`madurai_onboarding`, PR #97) is the canonical reference for the `allocation` pattern; Bengaluru onboarding (`bangalore_onboarding`) is the most recent and covers the `cauvery-pumping` pattern + Kannada localization + 13-body rich-data deep-zoom batch.
+For a **metropolitan region** rather than a single corporation, set `placeKind: 'region'` and a `corporations[]` array (the Mumbai pattern: 9 MMR corporations). The regional dashboard section (`RegionalWaterSystem`), scope badges (`dashboardScopes`) and per-corporation data file (`mmr-corporations-water.json`-style) hang off that structure. Gate any page that is not ready by omitting its feature from `FEATURE_AVAILABILITY` in `src/lib/cities/routing.ts` - nav, sitemap and direct URLs all respect it (the Mumbai my-ward launch pattern).
+
+Worked examples: Madurai onboarding (`madurai_onboarding`, PR #97) is the canonical reference for the `allocation` pattern; Bengaluru onboarding (`bangalore_onboarding`) covers the `cauvery-pumping` pattern + Kannada localization + 13-body rich-data deep-zoom batch; Mumbai onboarding (`mumbai_onboarding`, PR #147) is the most recent and covers the region pattern, the days-left-with-caveats hero, the Allocation Ledger + Commitments Register data files, and workflow-based (GitHub Actions artifact-commit) data feeds.
 
 ## Earth Engine Phase 1
 
-If you are working on the satellite summary layer, also read [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md).
+If you are working on the satellite summary layer, also read [GEE_PHASE2_3_PLAN.md](GEE_PHASE2_3_PLAN.md) and the shipped-method write-ups under [docs/methodology/](docs/methodology/).
 
 Local prerequisites for GEE work:
 
@@ -123,7 +125,7 @@ python scripts/run_gee_phase1.py run-water-body-summaries --write
 Current workflow note:
 
 - `.github/workflows/gee-phase1.yml` is wired for manual dispatch in this branch
-- if you change the GEE data model or methodology, update both [README.md](README.md) and [GEE_PHASE1_METHODS.md](GEE_PHASE1_METHODS.md) in the same PR
+- if you change the GEE data model or methodology, update both [README.md](README.md) and [GEE_PHASE2_3_PLAN.md](GEE_PHASE2_3_PLAN.md) and the shipped-method write-ups under [docs/methodology/](docs/methodology/) in the same PR
 
 ## Development Workflow
 
@@ -182,7 +184,7 @@ Current workflow note:
 - **Kannada prose review** - `src/app/[cityId]/about/bangalore-page-descriptions.tsx`, the BangaloreDailyBriefing variants in `translations.ts`, and the long-form story (`src/content/story-bangalore-kn.tsx`). Native-speaker review wanted.
 - **Localization (UI)** - ~1,500 i18n keys covering EN + TA + KN; `npm run i18n:check` enforces parity.
 - **Testing** - Unit tests for scrapers, calculator, intelligence modules, and the shared `src/lib/utils/river-classification.ts` (CPCB Best-Use classifier).
-- **Adding a fourth city** - see the "Adding a new city" subsection above.
+- **Adding a fifth city** - see the "Adding a new city" subsection above.
 
 ## Submitting a Pull Request
 

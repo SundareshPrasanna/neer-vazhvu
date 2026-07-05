@@ -9,10 +9,11 @@ The detailed source-by-source breakdown lives in per-city files. Each file docum
 - [docs/cities/chennai/data-sources.md](docs/cities/chennai/data-sources.md) - Chennai (CMWSSB reservoirs, OpenCity groundwater, CFLOWS flood, CRRT, etc.)
 - [docs/cities/madurai/data-sources.md](docs/cities/madurai/data-sources.md) - Madurai (TN Agriculture ARS, ADB TNUFIP IEE, CGWB Year Book, Vencatesan/DHAN water bodies, CPCB NWMP Vaigai, etc.)
 - [docs/cities/bangalore/data-sources.md](docs/cities/bangalore/data-sources.md) - Bengaluru (4 upstream Cauvery reservoirs via TN Agriculture / WRIS, IISc Groundwater Outlook 2025, CGWB block GWR via WRIS GEC 2024, OpenCity tanker surveys, IMD gridded rainfall, 13 flagship water bodies, etc.)
+- [docs/cities/mumbai/data-sources.md](docs/cities/mumbai/data-sources.md) - Mumbai/MMR (Maharashtra WRD Pravah daily reservoir bulletin, CWC weekly bulletins 2015-2025 backfill, BMC ESR/Climate Budget/RTI manuals, Praja Foundation RTI ward tables, MPCB water-quality series, WRD red/blue flood-line sheets, allocation instruments incl. WRD GRs + STEM board minutes, etc.)
 
-Per-city *features* live alongside in the same folder: [docs/cities/chennai/features.md](docs/cities/chennai/features.md), [docs/cities/madurai/features.md](docs/cities/madurai/features.md), and [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md).
+Per-city *features* live alongside in the same folder: [docs/cities/chennai/features.md](docs/cities/chennai/features.md), [docs/cities/madurai/features.md](docs/cities/madurai/features.md), [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md), and [docs/cities/mumbai/features.md](docs/cities/mumbai/features.md).
 
-When adding a fourth city, copy the Bengaluru or Madurai folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
+When adding a fifth city, copy the Mumbai or Bengaluru folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
 
 ## Documentation principle: avoid absolute-absence claims
 
@@ -22,36 +23,38 @@ The Madurai documents follow this principle throughout. The Chennai documents pr
 
 ## Cross-city parity matrix
 
-A contributor cheat-sheet for what each city has covered. If you're adding a third city, this is your checklist - replicate the green column items first, then file the red column as known gaps to track.
+A contributor cheat-sheet for what each city has covered. If you're adding a new city, this is your checklist - replicate the green column items first, then file the red column as known gaps to track.
 
-| Domain | Chennai | Madurai | Bengaluru |
-|---|---|---|---|
-| Hero pattern | days-left (reservoirs ARE supply) | allocation (irrigation-primary dams) | cauvery-pumping (lift vs Stage design) |
-| Reservoir daily | CMWSSB scrape | TN Agriculture ARS scrape | TN Agriculture ARS scrape (4 upstream Cauvery: KRS, Hemavathi, Kabini, Harangi; all isPrimaryDrinkingSource=false) |
-| Weather daily | Open-Meteo + NASA POWER | Same | Same |
-| Long-term rainfall | IMD gridded (Chennai grid 13.0/80.0) | IMD gridded (Madurai grid 9.9/78.0) | IMD gridded (Bangalore grid 13.0/77.5; 1970-2025; 843 mm long-term annual mean) |
-| Groundwater wards | OpenCity ward-monthly choropleth | (Not surfaced - too sparse to interpolate) | (Not surfaced - 13 stations across 369 wards too sparse to IDW) |
-| Groundwater stations | India WRIS GWL API daily scrape | India WRIS GWL API daily scrape (Madurai district) | India WRIS GWL API daily scrape (Bangalore Urban + Rural districts; 13 CGWB telemetric stations) |
-| Groundwater blocks | India WRIS / CGWB block GWR | CGWB block GWR (11 MMC blocks of 66 district-wide) | CGWB block GWR via WRIS GEC 2024 (6 Bangalore Urban blocks; ALL Over-Exploited every year on record; Bangalore-East 306% draft/recharge, Yelahanka 140%→260% in 4 yrs) |
-| Headline GW layer | OpenCity ward choropleth | CGWB Year Book + block exploitation | IISc Groundwater Outlook for Bengaluru (April 2025) - 80 critically-over-extracted BBMP wards rendered as a percentile choropleth |
-| Rivers (CPCB NWMP) | Cooum (7 stations) + Adyar (5) + Buckingham (1) | Vaigai (2 stations) | Vrishabhavathi + Arkavathy + Dakshina Pinakini (partial coverage; KSPCB cross-check pending) |
-| Water bodies | OSM (1,635) + Census (305) + Lost (15) | OSM (715, 638 named) + Flagship (19) + Lost (26) | OSM (~900) + Flagship-curated + Lost-tank inventory (T.V. Ramachandra et al.) |
-| Restoration priority | 6-component spatial scoring | 4-component (different algorithm) | Composite incl. encroachment + sewage stress (Bangalore-specific) |
-| Flood hazard | CFLOWS 1.0 (Nov 2019) + 2015/2020 hotspots | Not sourced (narrative-only) | KSNDMC flood-prone zones + BBMP Sept 2022 hotspots (custom flood-risk-bangalore-leaflet-map) |
-| Drainage | GCC 10,308-segment survey | Not sourced (RTI follow-up) | BBMP SWM master plan partial - RTI follow-up for full RWD network |
-| Sewerage | CMWSSB 13 STPs / 745 MLD | Not sourced (RTI follow-up) | BWSSB 33 STPs / ~1,440 MLD design (per Stage V program docs) - RTI for actual treatment volumes |
-| Industrial sources | NGT/TNPCB/CPCB curated | TNPCB + HC PIL curated | KSPCB + The Hindu BlueLine curated (Bellandur/Varthur foam cluster, Peenya cluster) |
-| Tanker market | (Not surfaced) | Not yet sourced | OpenCity longitudinal household survey 2015 / 2019 / 2024 - what households actually pay vs BWSSB tariff |
-| Cauvery pumping | n/a | n/a | BWSSB Stage I-V design capacity (~2,225 MLD) vs current lift (~1,450 MLD); Stage V actual ~400 MLD per The Ken Feb 2026 |
-| Urban supply structure | (Implicit in CMWSSB reservoirs) | ADB TNUFIP Tranche 2 IEE structural extract | BWSSB Stage I-V infrastructure + cauvery-pumping-hero callouts |
-| Ward representatives | GCC councillors / MLAs / MPs | Not yet sourced | BBMP councillors (partial pre-GBA reorganization) |
-| AI narratives | Daily city + monthly per-ward | Not yet wired | Template-based daily briefing (BangaloreDailyBriefing); Claude AI uplift slot |
-| Localities for search | OSM (~500) | OSM (51, Wikidata fallback queued) | OSM + Wikidata SPARQL (Bangalore neighbourhoods + suburbs) |
-| Ward profiles | 200 GCC wards, 5-factor composite | 100 MMC wards, 3-factor composite (reduced) | 198 BBMP wards (pre-GBA), 3-factor reduced composite (no public flood/drainage layer); GBA 369-ward migration pending |
-| Languages | EN + TA | EN + TA | EN + KN |
-| Long-form story | `/origins` (EN + TA) | `/madurai/origins` (EN + TA) | `/bangalore/origins` (EN + KN; 4-chapter, ~4,000 words) |
-| Rich-data deep-zoom (flagship bodies) | 8 onboarded: Pallikaranai (TNSWA gazette) + Sholavaram + Red Hills + Chembarambakkam + Porur + Velachery + Perumbakkam + Chitlapakkam (all OSM). Yearly chips (Landsat 5/7/8 + Sentinel-2), JRC water trend + DW splice 2022+, DW built trend, Overture buildings (monthly) | Not yet wired (flagship candidates: Vandiyur, Anaipatti tanks) | 13 onboarded: Bellandur, Varthur, Hesaraghatta, Hebbal, Ulsoor, Sankey, Madivala, Agara, Jakkur, Rachenahalli, Iblur, Kempambudhi, Puttenahalli, Yelahanka. Same pipeline + JRC/DW splice |
-| Catchment atlas (every lake) | FABDEM 30 m + WhiteboxTools; own/received/total catchment, feeder streams, downstream flow path, rooftop harvest (Overture + IMD normals). River names from `chennai-rivers.geojson`. Lake names: OSM + OpenCity 2019 polygons (~101 recoverable; deferred) | Same pipeline; Vaigai/Varaha/Manjalar river names | Same pipeline; lake names backfilled from the ATREE/CSEI named-lake census (OpenCity, 446 toponyms); rivers Arkavati/Vrishabhavathi/Dakshina Pinakini |
+| Domain | Chennai | Madurai | Bengaluru | Mumbai |
+|---|---|---|---|---|
+| Hero pattern | days-left (reservoirs ARE supply) | allocation (irrigation-primary dams) | cauvery-pumping (lift vs Stage design) | days-left, labelled an upper bound (whole-dam storage vs BMC share); rain scenarios collapsed (no public inflow data) |
+| Reservoir daily | CMWSSB scrape | TN Agriculture ARS scrape | TN Agriculture ARS scrape (4 upstream Cauvery: KRS, Hemavathi, Kabini, Harangi; all isPrimaryDrinkingSource=false) | WRD Pravah daily bulletin (5 of 7 BMC lakes; Vihar/Tulsi have no public feed) + CWC weekly 2015-2025 backfill |
+| Weather daily | Open-Meteo + NASA POWER | Same | Same | Same |
+| Long-term rainfall | IMD gridded (Chennai grid 13.0/80.0) | IMD gridded (Madurai grid 9.9/78.0) | IMD gridded (Bangalore grid 13.0/77.5; 1970-2025; 843 mm long-term annual mean) | IMD gridded (grid 19.0/73.0) + all cities now carry the daily Open-Meteo provisional layer |
+| Groundwater wards | OpenCity ward-monthly choropleth | (Not surfaced - too sparse to interpolate) | (Not surfaced - 13 stations across 369 wards too sparse to IDW) | (Not surfaced - excluded from CGWB assessment; Year Book wells only) |
+| Groundwater stations | India WRIS GWL API daily scrape | India WRIS GWL API daily scrape (Madurai district) | India WRIS GWL API daily scrape (Bangalore Urban + Rural districts; 13 CGWB telemetric stations) | CGWB Year Book transcription (~53 wells, Mumbai/Thane/Palghar/Raigad, incl. chemistry; WRIS wells stale, ending May 2023) |
+| Groundwater blocks | India WRIS / CGWB block GWR | CGWB block GWR (11 MMC blocks of 66 district-wide) | CGWB block GWR via WRIS GEC 2024 (6 Bangalore Urban blocks; ALL Over-Exploited every year on record; Bangalore-East 306% draft/recharge, Yelahanka 140%→260% in 4 yrs) | n/a - Mumbai City + Suburban are the only 2 of Maharashtra's 35 districts excluded from the assessment (stated on-page) |
+| Headline GW layer | OpenCity ward choropleth | CGWB Year Book + block exploitation | IISc Groundwater Outlook for Bengaluru (April 2025) - 80 critically-over-extracted BBMP wards rendered as a percentile choropleth | CGWB Year Book well points (monitored-not-assessed framing) |
+| Rivers (CPCB NWMP) | Cooum (7 stations) + Adyar (5) + Buckingham (1) | Vaigai (2 stations) | Vrishabhavathi + Arkavathy + Dakshina Pinakini (partial coverage; KSPCB cross-check pending) | MPCB annual WQR series (Mithi stn 2168, Ulhas stations; 2019-20 edition never published) + CPCB PRS 2025 (Mithi = India's worst stretch, 210 mg/l) |
+| Water bodies | OSM (1,635) + Census (305) + Lost (15) | OSM (715, 638 named) + Flagship (19) + Lost (26) | OSM (~900) + Flagship-curated + Lost-tank inventory (T.V. Ramachandra et al.) | OSM + flagship + lost-tank inventory (Powai/Vihar/Tulsi + talao record) |
+| Restoration priority | 6-component spatial scoring | 4-component (different algorithm) | Composite incl. encroachment + sewage stress (Bangalore-specific) | Priority scoring + flagship + projects (NGT Powai record) |
+| Flood hazard | CFLOWS 1.0 (Nov 2019) + 2015/2020 hotspots | Not sourced (narrative-only) | KSNDMC flood-prone zones + BBMP Sept 2022 hotspots (custom flood-risk-bangalore-leaflet-map) | BMC chronic-flooding register (weekly scrape) + 26/7/2005 layer + WRD red/blue flood-line sheets (41, six MMR rivers); iFLOWS documented as not public |
+| Drainage | GCC 10,308-segment survey | Not sourced (RTI follow-up) | BBMP SWM master plan partial - RTI follow-up for full RWD network | OSM-traced (labelled community-traced; BRIMSTOWAD as-builts not public) |
+| Sewerage | CMWSSB 13 STPs / 745 MLD | Not sourced (RTI follow-up) | BWSSB 33 STPs / ~1,440 MLD design (per Stage V program docs) - RTI for actual treatment volumes | BMC ESR Table 11.5 (2,723 MLD installed vs 1,313 reaching plants) + WwTF upgrade %s in the Commitments Register |
+| Industrial sources | NGT/TNPCB/CPCB curated | TNPCB + HC PIL curated | KSPCB + The Hindu BlueLine curated (Bellandur/Varthur foam cluster, Peenya cluster) | Curated (Mahul refinery ring, Taloja MIDC) |
+| Tanker market | (Not surfaced) | Not yet sourced | OpenCity longitudinal household survey 2015 / 2019 / 2024 - what households actually pay vs BWSSB tariff | Not surfaced (RTI-gated; Rs 729 vs 25 per-person-month fact from Praja) |
+| Cauvery pumping | n/a | n/a | BWSSB Stage I-V design capacity (~2,225 MLD) vs current lift (~1,450 MLD); Stage V actual ~400 MLD per The Ken Feb 2026 | n/a (gravity-fed lakes) |
+| Urban supply structure | (Implicit in CMWSSB reservoirs) | ADB TNUFIP Tranche 2 IEE structural extract | BWSSB Stage I-V infrastructure + cauvery-pumping-hero callouts | BMC HE RTI manuals + ESR (3 MBRs → 27 service reservoirs → 109 zones; connections with denominator note) |
+| Ward representatives | GCC councillors / MLAs / MPs | Not yet sourced | BBMP councillors (partial pre-GBA reorganization) | Not yet sourced (my-ward withheld at launch) |
+| AI narratives | Daily city + monthly per-ward | Not yet wired | Template-based daily briefing (BangaloreDailyBriefing); Claude AI uplift slot | Not yet wired |
+| Localities for search | OSM (~500) | OSM (51, Wikidata fallback queued) | OSM + Wikidata SPARQL (Bangalore neighbourhoods + suburbs) | OSM |
+| Ward profiles | 200 GCC wards, 5-factor composite | 100 MMC wards, 3-factor composite (reduced) | 198 BBMP wards (pre-GBA), 3-factor reduced composite (no public flood/drainage layer); GBA 369-ward migration pending | 24 BMC wards, equity-first risk model on real Praja supply-hours (my-ward page withheld until ward build completes) |
+| Languages | EN + TA | EN + TA | EN + KN | EN (MR advertised as coming soon) |
+| Long-form story | `/origins` (EN + TA) | `/madurai/origins` (EN + TA) | `/bangalore/origins` (EN + KN; 4-chapter, ~4,000 words) | `/mumbai/origins` (EN; 4-chapter + 5 licensed Wikimedia images with provenance manifest) |
+| Allocation Ledger | Krishna/Telugu Ganga chain + Veeranam + desal contracts | 1,500 mcft/yr PWD-letter entitlement + 1886 Periyar lease ancestry | CWDT award chain (1.75 → +4.75 TMC SC 2018 → 19+10 TMC GoK-BWSSB) | 15 arrangements incl. STEM/MIDC/MMRDA middlemen; 10 of 15 'unreported' (quota on paper, delivery unpublished) |
+| Commitments Register | 16 (metering policy, desal trio, ring main, NGT sewage, Cooum/Adyar/Buckingham) | 7 (Manibharathi HC order, Mullaiperiyar 125 MLD, 24x7, UGSS, Vaigai riverfront/cleanup) | 10 (Bellandur/Varthur NGT, Cauvery Stage V/VI, K-100, reuse, Mekedatu) | 19 (WwTFs, BRIMSTOWAD, Gargai/Kalu/Manori, flood spots, climate budget) |
+| Rich-data deep-zoom (flagship bodies) | 8 onboarded: Pallikaranai (TNSWA gazette) + Sholavaram + Red Hills + Chembarambakkam + Porur + Velachery + Perumbakkam + Chitlapakkam (all OSM). Yearly chips (Landsat 5/7/8 + Sentinel-2), JRC water trend + DW splice 2022+, DW built trend, Overture buildings (monthly) | Not yet wired (flagship candidates: Vandiyur, Anaipatti tanks) | 13 onboarded: Bellandur, Varthur, Hesaraghatta, Hebbal, Ulsoor, Sankey, Madivala, Agara, Jakkur, Rachenahalli, Iblur, Kempambudhi, Puttenahalli, Yelahanka. Same pipeline + JRC/DW splice | Not yet wired (flagship candidates: Powai, Vihar) |
+| Catchment atlas (every lake) | FABDEM 30 m + WhiteboxTools; own/received/total catchment, feeder streams, downstream flow path, rooftop harvest (Overture + IMD normals). River names from `chennai-rivers.geojson`. Lake names: OSM + OpenCity 2019 polygons (~101 recoverable; deferred) | Same pipeline; Vaigai/Varaha/Manjalar river names | Same pipeline; lake names backfilled from the ATREE/CSEI named-lake census (OpenCity, 446 toponyms); rivers Arkavati/Vrishabhavathi/Dakshina Pinakini | Same pipeline; Mithi/Dahisar/Poisar/Oshiwara + supply-lake catchments |
 
 ## Shared utilities (city-agnostic)
 
