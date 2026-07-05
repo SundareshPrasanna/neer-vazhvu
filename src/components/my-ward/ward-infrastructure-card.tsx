@@ -13,6 +13,7 @@ interface Props {
 }
 
 export function WardInfrastructureCard({ wardNumber, profile }: Props) {
+  const { cityId } = useMyWardCity();
   const { t } = useLanguage();
   const { cityPrefix } = useMyWardCity();
   const drain = profile.drainage;
@@ -140,7 +141,7 @@ export function WardInfrastructureCard({ wardNumber, profile }: Props) {
         {/* Source & notes */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 space-y-0.5 border-t border-slate-100 dark:border-slate-800 pt-2">
           {!isSectionUnavailable(sewer) && sewer.stp_count > 0 && <p>{t("my_ward.infra_stp_note")}</p>}
-          <p>{t("my_ward.infra_source")}</p>
+          <p>{t(cityId === "bangalore" || cityId === "mumbai" ? `my_ward.infra_source_${cityId}` : "my_ward.infra_source")}</p>
         </div>
       </CardContent>
     </Card>

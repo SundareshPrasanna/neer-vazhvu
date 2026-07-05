@@ -54,6 +54,46 @@ const ACTIONS_BY_CITY: Record<string, CityActionsConfig> = {
       { labelKey: "my_ward.hl_rwh_info", value: null, href: "https://www.cmwssb.tn.gov.in/rain-water-harvesting" },
     ],
   },
+  bangalore: {
+    quickActions: [
+      {
+        labelKey: "my_ward.report_issue",
+        subLabel: "BWSSB (helpline 1916)",
+        href: "https://bwssb.karnataka.gov.in/",
+        icon: "complaint",
+      },
+      {
+        labelKey: "my_ward.water_supply_portal",
+        subLabel: "BBMP",
+        href: "https://bbmp.gov.in/",
+        icon: "portal",
+      },
+    ],
+    helplines: [
+      { labelKey: "my_ward.hl_water_complaint", value: "1916", href: "tel:1916" },
+      { labelKey: "my_ward.hl_flood_emergency", value: "112", href: "tel:112" },
+    ],
+  },
+  mumbai: {
+    quickActions: [
+      {
+        labelKey: "my_ward.report_issue",
+        subLabel: "BMC central helpline 1916",
+        href: "https://portal.mcgm.gov.in/",
+        icon: "complaint",
+      },
+      {
+        labelKey: "my_ward.water_supply_portal",
+        subLabel: "BMC Hydraulic Engineer (lake levels)",
+        href: "https://portal.mcgm.gov.in/irj/portal/anonymous/qllakelevel",
+        icon: "portal",
+      },
+    ],
+    helplines: [
+      { labelKey: "my_ward.hl_water_complaint", value: "1916", href: "tel:1916" },
+      { labelKey: "my_ward.hl_flood_emergency", value: "1916", href: "tel:1916" },
+    ],
+  },
   madurai: {
     quickActions: [
       {

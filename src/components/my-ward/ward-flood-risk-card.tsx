@@ -21,6 +21,7 @@ interface Props {
 }
 
 export function WardFloodRiskCard({ wardNumber, profile }: Props) {
+  const { cityId } = useMyWardCity();
   const { t } = useLanguage();
   const { cityPrefix } = useMyWardCity();
   const flood = profile.flood;
@@ -185,7 +186,7 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
         {/* Source & caveats */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 space-y-0.5 border-t border-slate-100 dark:border-slate-800 pt-2">
           <p>{t("my_ward.flood_hazard_note")}</p>
-          <p>{t("my_ward.flood_source")}</p>
+          <p>{t(cityId === "bangalore" || cityId === "mumbai" ? `my_ward.flood_source_${cityId}` : "my_ward.flood_source")}</p>
         </div>
       </CardContent>
     </Card>

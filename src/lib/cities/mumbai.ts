@@ -222,6 +222,7 @@ export const MUMBAI: CityConfig = {
       catchmentAreaSqkm: null,
       displayOrder: 6,
       isPrimaryDrinkingSource: true,
+      hasPublicFeed: false,
     },
     {
       sourceCode: 'vihar',
@@ -234,6 +235,7 @@ export const MUMBAI: CityConfig = {
       catchmentAreaSqkm: null,
       displayOrder: 7,
       isPrimaryDrinkingSource: true,
+      hasPublicFeed: false,
     },
   ],
   sourceNameAliases: {

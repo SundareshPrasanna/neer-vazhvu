@@ -42,6 +42,12 @@ export interface WaterSourceConfig {
   catchmentAreaSqkm: number | null;
   displayOrder: number;
   isPrimaryDrinkingSource: boolean;
+  /** False when no public data feed exists for this source (e.g. Mumbai's
+   *  Vihar and Tulsi - BMC-owned, absent from every state/central bulletin).
+   *  Such sources are excluded from ingestion-liveness checks: they can
+   *  never have a reading, so "waiting for first daily ingestion" would
+   *  show forever. Undefined = true. */
+  hasPublicFeed?: boolean;
 }
 
 /**

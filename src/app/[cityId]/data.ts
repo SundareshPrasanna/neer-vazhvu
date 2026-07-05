@@ -322,7 +322,7 @@ async function loadLegacyChennaiSnapshot(config: PlaceConfig): Promise<CitySnaps
   }
 
   const primaryCodes = config.waterSources
-    .filter((s) => s.isPrimaryDrinkingSource)
+    .filter((s) => s.isPrimaryDrinkingSource && s.hasPublicFeed !== false)
     .map((s) => s.sourceCode);
   const liveSources = primaryCodes.filter((c) => readingsBySource[c] !== null);
   const reservoirIsLive =
@@ -496,7 +496,7 @@ export async function loadCitySnapshot(config: PlaceConfig): Promise<CitySnapsho
   // for cities like Bangalore that legitimately have zero primaries, which
   // surfaced a misleading "waiting for first daily ingestion" pill.
   const primaryCodes = config.waterSources
-    .filter((s) => s.isPrimaryDrinkingSource)
+    .filter((s) => s.isPrimaryDrinkingSource && s.hasPublicFeed !== false)
     .map((s) => s.sourceCode);
   const liveSources = primaryCodes.filter((c) => readingsBySource[c] !== null);
   const reservoirIsLive = primaryCodes.length === 0 || liveSources.length === primaryCodes.length;

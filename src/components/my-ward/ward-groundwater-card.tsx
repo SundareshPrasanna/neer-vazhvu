@@ -44,6 +44,7 @@ interface Props {
 }
 
 export function WardGroundwaterCard({ wardNumber, groundwater, profile, loading }: Props) {
+  const { cityId } = useMyWardCity();
   const { t } = useLanguage();
   const { cityPrefix } = useMyWardCity();
 
@@ -205,6 +206,7 @@ function CgwbAssessmentCard({
   assessment: WardGroundwaterAssessment;
   cityPrefix: string;
 }) {
+  const { cityId } = useMyWardCity();
   const { t } = useLanguage();
   const block = assessment.block;
   const well = assessment.nearest_well;
@@ -289,7 +291,7 @@ function CgwbAssessmentCard({
         ) : (
           <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {t("my_ward.gw_no_nearest_well")}
+              {t(cityId === "bangalore" || cityId === "mumbai" ? `my_ward.gw_no_nearest_well_${cityId}` : "my_ward.gw_no_nearest_well")}
             </p>
           </div>
         )}
@@ -297,7 +299,7 @@ function CgwbAssessmentCard({
         {/* Explanatory notes */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 space-y-0.5 border-t border-slate-100 dark:border-slate-800 pt-2">
           <p>{t("my_ward.gw_block_note")}</p>
-          <p>{t("my_ward.gw_source_cgwb_yearbook")}</p>
+          <p>{t(cityId === "bangalore" || cityId === "mumbai" ? `my_ward.gw_source_cgwb_yearbook_${cityId}` : "my_ward.gw_source_cgwb_yearbook")}</p>
         </div>
       </CardContent>
     </Card>
