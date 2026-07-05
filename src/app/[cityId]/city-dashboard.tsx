@@ -17,6 +17,7 @@ import { BangaloreDailyBriefing } from "@/components/dashboard/bangalore-daily-b
 import { buildBangaloreBriefing } from "@/lib/insights/bangalore-briefing";
 import { DataGapPanel, URBAN_SUPPLY_DATA_GAPS } from "@/components/dashboard/data-gap-panel";
 import { UrbanSupplyOverview } from "@/components/dashboard/urban-supply-overview";
+import { RegionalWaterSystem } from "@/components/dashboard/regional-water-system";
 import { DashboardHistorySection } from "@/components/dashboard/dashboard-history-section";
 import { DeferredRainfallTrends } from "@/components/dashboard/deferred-rainfall-trends";
 import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
@@ -362,6 +363,10 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           // null in the city config means "this city has no desalination" -
           // pass 0 so DaysLeftHero doesn't fall back to Chennai's 190 MLD.
           defaultDesalinationMld={config.defaultDesalinationMld ?? 0}
+          runwaySource={config.runwaySource}
+          scopeLabel={config.dashboardScopes?.city}
+          heroNote={config.heroNote}
+          heroNoteSource={config.heroNoteSource}
         />
       )}
       {bangaloreBriefing && <BangaloreDailyBriefing briefing={bangaloreBriefing} />}
@@ -405,6 +410,12 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
         reservoirCatchmentContextRows.length > 0 && (
           <ReservoirCatchmentContext rows={reservoirCatchmentContextRows} />
         )}
+
+      {/* Region places (the MMR): the metropolitan water-system view -
+          per-corporation supply/demand + LPCD inequality + augmentation
+          pipeline. Sits below the days-left hero (which is Greater Mumbai's
+          BMC slice). No-op for single-city places. */}
+      {config.placeKind === "region" && <RegionalWaterSystem cityId={cityId} />}
 
       {/* Structural at-a-glance tile - sits below whichever hero
           the city uses (days-left for Chennai, allocation for

@@ -113,6 +113,7 @@ interface SupplyOverviewData {
       industrial?: number;
       domestic_and_non_domestic_combined?: number;
     };
+    _connections_note?: string;
   };
   demand: {
     population_2011?: number;
@@ -370,6 +371,11 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
                     : ""}
                   .
                 </>
+              )}
+              {data.distribution._connections_note && (
+                <span className="block mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">
+                  {data.distribution._connections_note}
+                </span>
               )}
             </div>
           </div>
