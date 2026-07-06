@@ -66,7 +66,12 @@ export interface CourtOrder {
   writ_petition: string;
   court: string;
   date: string;
-  directive: string;
+  /** Madurai-style: completes "{court} directed the TN Government to {directive}".
+   *  Use `ruling` instead wherever that TN-specific frame doesn't fit. */
+  directive?: string;
+  /** Self-contained ruling sentence, rendered as "{court}: {ruling}".
+   *  The Mumbai orders use this - respondents vary (BMC, NMMC, statewide). */
+  ruling?: string;
   specific_tanks: string[];
   concern: string;
   source: string;
@@ -213,10 +218,24 @@ export function LakeRestorationContent({
             </div>
             <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{order.case}</h2>
             <p className="text-sm text-slate-700 dark:text-slate-300">
-              <span className="font-semibold">{order.court}</span> {t("lake.directed_to")}{" "}
-              {order.directive}. {t("lake.petition_filed")}{" "}
-              <span className="italic">{order.concern}</span> {t("lake.at_word")}{" "}
-              {order.specific_tanks.join(", ")}.
+              {order.ruling ? (
+                <>
+                  <span className="font-semibold">{order.court}</span>: {order.ruling}{" "}
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold">{order.court}</span> {t("lake.directed_to")}{" "}
+                  {order.directive}.{" "}
+                </>
+              )}
+              {t("lake.petition_filed")} <span className="italic">{order.concern}</span>
+              {order.specific_tanks.length > 0 && (
+                <>
+                  {" "}
+                  {t("lake.at_word")} {order.specific_tanks.join(", ")}
+                </>
+              )}
+              .
             </p>
             <a href={order.source} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
               {t("lake.lawbeat_coverage")} →

@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/context";
+import { parsePath } from "@/lib/cities/routing";
 import { interpolate } from "@/lib/utils/format";
 
 interface ConnectedInsightProps {
@@ -34,6 +36,19 @@ export function ConnectedInsight({
   onAction,
 }: ConnectedInsightProps) {
   const { t } = useLanguage();
+  const pathname = usePathname();
+
+  // Call sites pass Chennai-flat paths ("/water-bodies", "/groundwater?ward=..").
+  // Rewrite them for the city we're actually on, or a Bengaluru/Mumbai reader
+  // clicking a connected link lands on Chennai's page. Hash-only targets and
+  // scroll/callback modes never navigate, so they pass through untouched.
+  const { cityId } = parsePath(pathname);
+  const href =
+    cityId !== "chennai" && linkHref.startsWith("/")
+      ? linkHref === "/"
+        ? `/${cityId}`
+        : `/${cityId}${linkHref}`
+      : linkHref;
 
   const message = params
     ? interpolate(t(messageKey), params)
@@ -72,7 +87,7 @@ export function ConnectedInsight({
             {message}
           </p>
           <Link
-            href={linkHref}
+            href={href}
             onClick={handleClick}
             className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium inline-flex items-center gap-1 mt-1"
           >

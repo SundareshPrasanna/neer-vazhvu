@@ -10,7 +10,6 @@
  * baseline.
  */
 
-import Link from "next/link";
 
 function SubSection({
   id,
@@ -275,13 +274,8 @@ export function MumbaiPageDescriptions({ cityId, cityName }: Props) {
           repository manifest.
         </p>
         <p className="text-xs text-slate-500 dark:text-slate-400 italic">
-          See also the dedicated Chennai about page (
-          <Link href="/about" className="text-blue-600 dark:text-blue-400 hover:underline">
-            /about
-          </Link>
-          ) for the canonical methodology pattern this follows. My Ward is the one page still in
-          build for {cityName}; it will be documented here when it ships. Linked
-          from <Link href={`/${cityId}/facts`} className="text-blue-600 dark:text-blue-400 hover:underline">{`/${cityId}/facts`}</Link>.
+          My Ward is the one page still in build for {cityName}; it will be documented here when
+          it ships.
         </p>
       </SubSection>
     </>

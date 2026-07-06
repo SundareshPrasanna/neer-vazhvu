@@ -77,6 +77,9 @@ export function GroundwaterSnapshot({ data, exploreHref = "/groundwater" }: Grou
             <span className="font-semibold">{t("gw_snap.stale_title")}</span>{" "}
             {t("gw_snap.stale_msg")
               .replace("{date}", `${dataDate.toLocaleString("default", { month: "short" })} ${period.year}`)
+              // Chennai-only attribution: this component is gated by
+              // dashboard.groundwaterSnapshot, which only chennai.ts sets.
+              // Parameterize this string before enabling another city.
               .replace("{source}", "OpenCity / CMWSSB")}
           </div>
         )}
