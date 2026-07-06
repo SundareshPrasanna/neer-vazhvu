@@ -502,6 +502,11 @@ export function RiverPanel({
                   <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                     <div className={`h-full rounded-full ${severe ? "bg-red-500" : exceeded ? "bg-orange-400" : "bg-green-400"}`} style={{ width: `${Math.min(ratio * 100, 100)}%` }} />
                   </div>
+                  {latestReading.fecal_coliform_note && (
+                    <p className="mt-1.5 text-[10px] leading-snug text-amber-700 dark:text-amber-400 italic">
+                      ⚠ {latestReading.fecal_coliform_note}
+                    </p>
+                  )}
                 </div>
               );
             })()}
