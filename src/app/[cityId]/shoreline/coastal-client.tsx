@@ -100,11 +100,11 @@ const CITY_COPY: Record<string, CoastalCityCopy> = {
 };
 
 export default function CoastalClient({ cityId = "chennai" }: { cityId?: string }) {
-  // No entry -> render nothing rather than fall back to another city's
-  // coastal copy and statistics. FEATURE_AVAILABILITY gates this page to
-  // cities with an entry, so this only fires on a config mistake.
-  const copy = CITY_COPY[cityId];
-  if (!copy) return null;
+  // No entry -> render nothing (after the hooks - hooks must run
+  // unconditionally) rather than fall back to another city's coastal copy
+  // and statistics. FEATURE_AVAILABILITY gates this page to cities with an
+  // entry, so this only fires on a config mistake.
+  const copy: (typeof CITY_COPY)[string] | undefined = CITY_COPY[cityId];
   useLockBodyScroll();
   const [selected, setSelected] = useState<SelectedCoastal | null>(null);
   const [summary, setSummary] = useState<CoastalSummary | null>(null);
@@ -115,6 +115,8 @@ export default function CoastalClient({ cityId = "chennai" }: { cityId?: string 
   // callback (not an effect), and only the first time; the user is in control
   // after that.
   const didAutoSelect = useRef(false);
+
+  if (!copy) return null;
   const handleSummary = (s: CoastalSummary) => {
     setSummary(s);
     if (!didAutoSelect.current && s.featured) {
