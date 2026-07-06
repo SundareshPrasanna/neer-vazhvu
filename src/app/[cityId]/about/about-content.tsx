@@ -641,7 +641,7 @@ export function CityAboutContent({
             id="catchment-methodology"
             title={`Lake catchment atlas methodology - ${cityName}`}
           >
-            <CatchmentMethodologySection cityDisplayName={cityName} />
+            <CatchmentMethodologySection cityDisplayName={cityName} cityId={config.cityId} />
           </Section>
         )}
 
@@ -922,10 +922,26 @@ export function CityAboutContent({
               />
             </>
           )}
+          {isMumbai && (
+            <>
+              <DataSource
+                name="Maharashtra WRD Pravah - daily dam-safety bulletin"
+                url="https://mwrdpravah.in/damsafety/control/main"
+                description="The state Water Resources Department's daily all-Maharashtra bulletin (139 dams). We parse Bhatsa, Upper and Middle Vaitarna, Modak Sagar and Tansa - about 97% of the BMC lake system's capacity. Vihar and Tulsi (BMC-owned) appear in no public feed anywhere, a named gap the dashboard states. The bulletin's same-date-last-year column is harvested too, so the history grows at both ends every day."
+                frequency="daily (morning bulletin)"
+              />
+              <DataSource
+                name="CWC weekly Reservoir Storage Bulletins (2015-2025 backfill)"
+                url="https://cwc.gov.in/reservoirs-storage-bulletin"
+                description="527 Central Water Commission weekly bulletin PDFs mined one-off for the decade of history the daily feed is too young to hold: ~1,000 weekly readings for Bhatsa and Upper Vaitarna, April 2015 to May 2025 where the archive ends. Insert-only - the backfill never overwrites the live feed. Roughly 20 weeks of 2022 are missing on CWC's own server."
+                frequency="one-off backfill (archive ended May 2025)"
+              />
+            </>
+          )}
           <DataSource
             name="Open-Meteo"
             url="https://open-meteo.com/"
-            description="Free, no-auth daily weather data: precipitation, temperature, humidity, ET0, wind. ECMWF / ERA5-Land base."
+            description="Free, no-auth daily weather data: precipitation, temperature, humidity, ET0, wind. ECMWF / ERA5-Land base. For cities with the provisional-rainfall layer, its archive API also fills the months IMD's gridded series hasn't published yet - rendered as asterisked provisional months that IMD supersedes automatically."
             frequency="daily"
           />
           <DataSource
@@ -935,14 +951,16 @@ export function CityAboutContent({
               ? "India Meteorological Department 0.25-degree gridded rainfall, 1970-2025. Madurai grid cell at 9.9 deg N, 78.0 deg E, 862.6 mm long-term mean. Same imdlib pipeline as Chennai's IMD generator."
               : isBangalore
                 ? "India Meteorological Department 0.25-degree gridded rainfall, 1970-present. Bengaluru grid cell at 12.97 deg N, 77.6 deg E. Used for monsoon-context overlays (Bengaluru is south-west monsoon dominant with a smaller north-east monsoon tail through Oct-Nov; Cauvery basin recharge depends on both)."
-                : "India Meteorological Department 0.25-degree gridded rainfall, 1970-present. Used for monsoon-context overlays."}
+                : isMumbai
+                  ? "India Meteorological Department 0.25-degree gridded rainfall, 1970-present. Mumbai grid cell at 19.0 deg N, 73.0 deg E. The authoritative backbone and normals for the rainfall chart; publishes with a weeks-to-a-year lag, so a daily Open-Meteo provisional layer fills the gap through yesterday."
+                  : "India Meteorological Department 0.25-degree gridded rainfall, 1970-present. Used for monsoon-context overlays."}
             frequency="monthly archive"
           />
           {isMadurai && (
             <DataSource
               name="OSM Nominatim + Overpass - locality search points"
               url="https://overpass-api.de/"
-              description="51 Madurai neighbourhood points (Anna Nagar, Pasumalai, Mattuthavani, KK Nagar, Sellur, Vandiyur, etc.) extracted via scripts/fetch-localities-osm-madurai.ts for the my-ward search box. 49/51 carry Tamil names. Powers locality-name -> ward resolution."
+              description="51 Madurai neighbourhood points (Anna Nagar, Pasumalai, Mattuthavani, KK Nagar, Sellur, Vandiyur, etc.) extracted from OpenStreetMap for the my-ward search box. 49/51 carry Tamil names. Powers locality-name -> ward resolution."
               frequency="periodic (one-off refresh today)"
             />
           )}
@@ -950,7 +968,7 @@ export function CityAboutContent({
             <DataSource
               name="OSM Nominatim + Overpass - locality search points"
               url="https://overpass-api.de/"
-              description="369 Bengaluru neighbourhood points (Whitefield, Indiranagar, Koramangala, HSR Layout, JP Nagar, Yelahanka, Hesaraghatta, Bommanahalli, etc.) - one per GBA ward - in public/data/bangalore-localities.json. Powers locality-name -> ward resolution in the my-ward search box."
+              description="369 Bengaluru neighbourhood points (Whitefield, Indiranagar, Koramangala, HSR Layout, JP Nagar, Yelahanka, Hesaraghatta, Bommanahalli, etc.) - one per GBA ward. Powers locality-name -> ward resolution in the my-ward search box."
               frequency="periodic (one-off refresh today)"
             />
           )}
@@ -968,8 +986,10 @@ export function CityAboutContent({
             description={isMadurai
               ? "Annual block-level Dynamic Groundwater Resource Assessment (Safe / Semi Critical / Critical / Over Exploited). 11 blocks classified across Madurai district (Madurai East/North/South/West, Melur, Peraiyur, Thirupparankundram, Tirumangalam, Usilampatti, Vadipatti, Kallikudi)."
               : isBangalore
-                ? "Annual block-level Dynamic Groundwater Resource Assessment (Safe / Semi Critical / Critical / Over Exploited). 6 canonical blocks across Bangalore Urban district (Bangalore (North), Bangalore-East, Bangalore-South, Bangalore-City, Yelahanka, Anekal) extracted across 7 vintages 2011-2024 from the WRIS ArcGIS REST endpoint by scripts/fetch-wris-groundwater-bangalore.ts. All 6 blocks have been Over-Exploited every year (Bangalore-East worst at 306% draft-vs-recharge in GEC 2024; Yelahanka accelerated 140 -> 260% in 4 years 2020-2024)."
-                : "Annual block-level Dynamic Groundwater Resource Assessment (Safe / Semi Critical / Critical / Over Exploited)."
+                ? "Annual block-level Dynamic Groundwater Resource Assessment (Safe / Semi Critical / Critical / Over Exploited). 6 canonical blocks across Bangalore Urban district (Bangalore (North), Bangalore-East, Bangalore-South, Bangalore-City, Yelahanka, Anekal) extracted across 7 vintages 2011-2024 from the WRIS ArcGIS REST endpoint. All 6 blocks have been Over-Exploited every year (Bangalore-East worst at 306% draft-vs-recharge in GEC 2024; Yelahanka accelerated 140 -> 260% in 4 years 2020-2024)."
+                : isMumbai
+                  ? "Annual block-level Dynamic Groundwater Resource Assessment (Safe / Semi Critical / Critical / Over Exploited). Mumbai City and Mumbai Suburban are the only 2 of Maharashtra's 35 districts EXCLUDED from this assessment - no exploitation categories exist for the city, so the groundwater page says so instead of synthesizing one."
+                  : "Annual block-level Dynamic Groundwater Resource Assessment (Safe / Semi Critical / Critical / Over Exploited)."
             }
             frequency="annual"
           />
@@ -977,7 +997,7 @@ export function CityAboutContent({
             <DataSource
               name="CGWB Ground Water Year Book of Tamil Nadu &amp; Puducherry"
               url="https://cgwb.gov.in/cgwbpnm/search?type=2&cat_id=4&state_id=33"
-              description="Peer-reviewed quarterly depth-to-water-level readings (May / Aug / Nov / Jan) at 21 dug-well stations in Madurai district, sourced from the 2023-24 and 2024-25 Year Books. Replaces an IDW-interpolated ward depth choropleth - Madurai's live WRIS network is too sparse (4 stations) for honest per-ward synthesis. Stitched into a 2-year time series stored in public/data/madurai-cgwb-stations.json."
+              description="Peer-reviewed quarterly depth-to-water-level readings (May / Aug / Nov / Jan) at 21 dug-well stations in Madurai district, sourced from the 2023-24 and 2024-25 Year Books. Replaces an IDW-interpolated ward depth choropleth - Madurai's live WRIS network is too sparse (4 stations) for honest per-ward synthesis. Stitched into a 2-year per-station time series."
               frequency="annual (per Year Book release)"
             />
           )}
@@ -1000,6 +1020,17 @@ export function CityAboutContent({
                 url="https://wellabs.org/"
                 description="Independent academic-grade water balance for Greater Bengaluru: rainfall, runoff, recharge, demand, supply gap, source-mix accounting. Used as a cross-check against JICA Phase 3 numbers; cited in `bangalore-supply-overview.json._secondary_local_source`."
                 frequency="periodic (per WELL Labs release)"
+              />
+            </>
+          )}
+
+          {isMumbai && (
+            <>
+              <DataSource
+                name="CGWB Ground Water Year Book of Maharashtra"
+                url="https://cgwb.gov.in/cgwbpnm/publication-detail"
+                description="~53 National Hydrograph Network wells across Mumbai / Thane / Palghar / Raigad transcribed from the Year Book to January 2025, with water chemistry (EC, chloride, nitrate) - the honest signal for a city excluded from the Dynamic Assessment. India-WRIS also lists ~24 manual wells for the city, but they end in May 2023; we document them rather than plot a stale layer."
+                frequency="annual (per Year Book release)"
               />
             </>
           )}
@@ -1044,7 +1075,7 @@ export function CityAboutContent({
               <DataSource
                 name="OSM bbox extract - 1,897 water-body polygons (BBMP)"
                 url="https://www.openstreetmap.org/"
-                description="OpenStreetMap community-mapped water bodies across BBMP, fetched via Overpass bbox query and committed to public/geojson/bangalore-water-bodies-current.geojson. 1,033 polygons larger than 1 ha become cascade nodes in the round-10 reconstruction; the rest are sub-hectare ponds."
+                description="OpenStreetMap community-mapped water bodies across BBMP, fetched via Overpass bbox query. 1,033 polygons larger than 1 ha become cascade nodes in the round-10 reconstruction; the rest are sub-hectare ponds."
                 frequency="periodic (manual refresh)"
               />
               <DataSource
@@ -1073,9 +1104,26 @@ export function CityAboutContent({
               />
               <DataSource
                 name="Cascade reconstruction (terrain-derived + Layer B curation)"
-                url={`/${config.cityId}/cascades`}
-                description="HydroSHEDS conditioned DEM + D8 flow direction + multi-outflow scoring produces 1,033 cascade nodes / 1,053 edges / 43 river outlets / max depth 11 for the BBMP-wide cascade graph. Layer B curation today: 4 named chains (K&amp;C foam cascade with NGT Forward Foundation anchor / Yelahanka-Hebbal north restoration model with JNNURM Jakkur anchor / Vrishabhavathi headwaters with 1894 Hesaraghatta anchor / Kempegowda old-city heritage fragments). 76 auto-derived chains scored LOW priority pending further Layer B."
+                url={`/${config.cityId}/water-bodies?mode=catchments`}
+                description="HydroSHEDS conditioned DEM + D8 flow direction + multi-outflow scoring produces 1,033 cascade nodes / 1,053 edges / 43 river outlets / max depth 11 for the BBMP-wide cascade graph. Layer B curation today: 4 named chains (K&amp;C foam cascade with NGT Forward Foundation anchor / Yelahanka-Hebbal north restoration model with JNNURM Jakkur anchor / Vrishabhavathi headwaters with 1894 Hesaraghatta anchor / Kempegowda old-city heritage fragments). 76 auto-derived chains scored LOW priority pending further Layer B. Lives as the Catchments view on the water-bodies page."
                 frequency="manual (regenerate after curation updates)"
+              />
+            </>
+          )}
+
+          {isMumbai && (
+            <>
+              <DataSource
+                name="Bombay HC / NGT water-body orders (LawBeat, SANDRP, Live Law)"
+                url={`/${config.cityId}/lake-restoration`}
+                description="Six court anchors curated from legal reporting: the NGT Powai sewage matter (a recommended Rs 5 lakh-per-inlet monthly penalty on BMC), the Banganga Talao immersion refusal, the statewide artificial-ponds immersion order, Lotus Lake (Nerul) protection, the NRI-wetland golf-course reclamation ban, and the Goregaon wetland landfilling notices."
+                frequency="incident-driven (court orders)"
+              />
+              <DataSource
+                name="Lake catchment atlas (FABDEM terrain derivation)"
+                url={`/${config.cityId}/water-bodies?mode=catchments`}
+                description="Forest-and-buildings-removed DEM (FABDEM) + flow-direction analysis derives each BMC lake's contributing catchment - the same pipeline as the other cities. Lives as the Catchments view on the water-bodies page."
+                frequency="static (regenerate on pipeline updates)"
               />
             </>
           )}
@@ -1126,7 +1174,7 @@ export function CityAboutContent({
               <DataSource
                 name="KSPCB / CPCB river quality monitoring"
                 url="https://kspcb.karnataka.gov.in/"
-                description="9 stations across the 3 Bengaluru rivers (Vrishabhavathi / Arkavati / Dakshina Pinakini) extracted from KSPCB monthly water quality reports cross-referenced with CPCB NWMP annual River Water Quality reports. Per-station BOD / COD / DO / pH / fecal coliform readings, 2020-2024 covered. Caveat: OSM polylines for these rivers are partial through built-up BBMP (urban segment flows as storm drains); 8 of 9 sampling stations carry an off_osm_river_polyline flag because they sit at named city places where OSM doesn't trace the river - documented in scripts/snap-river-stations.py."
+                description="9 stations across the 3 Bengaluru rivers (Vrishabhavathi / Arkavati / Dakshina Pinakini) extracted from KSPCB monthly water quality reports cross-referenced with CPCB NWMP annual River Water Quality reports. Per-station BOD / COD / DO / pH / fecal coliform readings, 2020-2024 covered. Caveat: OSM polylines for these rivers are partial through built-up BBMP (urban segment flows as storm drains); 8 of 9 sampling stations carry an off_osm_river_polyline flag because they sit at named city places where OSM doesn't trace the river."
                 frequency="monthly (KSPCB) + annual (CPCB)"
               />
               <DataSource
@@ -1156,6 +1204,23 @@ export function CityAboutContent({
             </>
           )}
 
+          {isMumbai && (
+            <>
+              <DataSource
+                name="MPCB annual Water Quality Status reports"
+                url="https://mpcb.gov.in/water-quality"
+                description="Five editions mined (the 2019-20 report was never published - a named gap). Powers the Mithi BOD series at station 2168: 45.3 -> 18.3 -> 28.2 -> 37.3 -> 53.0 mg/l annual averages to 2023-24 (WQI 32), and the consistently clean Ulhas mainstem. The Waldhuni has no MPCB station at all - no public series exists. Fecal-coliform units are inconsistent across editions, so we treat FC as directional only."
+                frequency="annual"
+              />
+              <DataSource
+                name="CPCB Polluted River Stretches for Restoration - 2025"
+                url="https://cpcb.nic.in/water-quality-data/"
+                description="The October 2025 national PRS list (on 2022-23 data): the Mithi at Mahim is Priority I with max BOD 210 mg/l - India's single worst river stretch. The Ulhas is Priority V (least severe). Dahisar, Poisar, Oshiwara and Waldhuni do not appear in the national list."
+                frequency="periodic (PRS assessment cycles)"
+              />
+            </>
+          )}
+
           <DataSourceGroupHeader title="Flood &amp; civic infrastructure" />
           {isMadurai ? (
             <DataSource
@@ -1169,13 +1234,13 @@ export function CityAboutContent({
               <DataSource
                 name="BWSSB sewerage trunk network (14,121 km)"
                 url={`/${config.cityId}/water-bodies`}
-                description="14,121 km of mapped underground sewerage trunks feeding the 39 BWSSB STPs, extracted from a BWSSB GIS source and shipped as public/geojson/bangalore-sewerage-trunks.geojson. Gravity-fed except across the ridge between valleys, where pumping stations lift to the next basin."
+                description="14,121 km of mapped underground sewerage trunks feeding the 39 BWSSB STPs, extracted from a BWSSB GIS source. Gravity-fed except across the ridge between valleys, where pumping stations lift to the next basin."
                 frequency="static (manual refresh)"
               />
               <DataSource
                 name="BWSSB STP inventory (39 plants)"
                 url={`/${config.cityId}/water-bodies`}
-                description="39 STPs as of 2024 (vs 14 at the JICA Phase 3 baseline in 2017) with locations + design capacity in public/geojson/bangalore-stps.geojson. Aggregate installed capacity ~1,500 MLD against ~1,400 MLD generation; the treatment-meets-generation milestone disguises persistent KSPCB compliance gaps at older plants."
+                description="39 STPs as of 2024 (vs 14 at the JICA Phase 3 baseline in 2017) with locations + design capacity. Aggregate installed capacity ~1,500 MLD against ~1,400 MLD generation; the treatment-meets-generation milestone disguises persistent KSPCB compliance gaps at older plants."
                 frequency="static (manual refresh)"
               />
               <DataSource
@@ -1185,37 +1250,88 @@ export function CityAboutContent({
                 frequency="data gap"
               />
             </>
-          ) : (
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Civic-infrastructure layers (drainage / sewerage / flood hazard) are city-specific. See Chennai&apos;s about page for the canonical layer registry.
-            </p>
+          ) : isMumbai ? (
+            <>
+              <DataSource
+                name="BMC Disaster Management - chronic flood-spot register"
+                url={`/${config.cityId}/flood-risk`}
+                description="BMC's own register of monitored waterlogging spots, refreshed weekly in season. 110 spots carry locations; the full pre-monsoon list (496 in 2026, grown from 386 in 2024) is published only as counts - the ward-wise list is an RTI follow-up. No other MMR corporation publishes an equivalent register (a named gap on the flood page)."
+                frequency="weekly (in-season register scrape)"
+              />
+              <DataSource
+                name="Maharashtra WRD red/blue flood-line map sheets"
+                url="https://wrd.maharashtra.gov.in/Site/1315/Flood-Line-Maps"
+                description="The legal river-floodplain boundaries (blue = 25-year level, construction prohibited; red = 100-year, restricted): 41 sheets covering 6 MMR rivers including the Ulhas 0-84 km flood corridor, from WRD's 494-sheet statewide list. Scanned A0 plots, not georeferenced - linked as cited documents; georeferencing into a map overlay is a logged follow-up. BMC publishes no equivalent for the city's own rivers (Mithi, Dahisar, Poisar, Oshiwara)."
+                frequency="static (official map sheets)"
+              />
+              <DataSource
+                name="Chitale Fact-Finding Committee - 26/7/2005 record"
+                url={`/${config.cityId}/flood-risk`}
+                description="The official inquiry into the 26 July 2005 deluge (944 mm in 24 hours) anchors the reference layer. Point coordinates are estimated locality centroids - no reviewed source publishes exact coordinates, and no official GIS inundation extent is public."
+                frequency="static (historical record)"
+              />
+              <DataSource
+                name="iFLOWS-Mumbai (documented transparency gap)"
+                url={`/${config.cityId}/flood-risk`}
+                description="The Mumbai flood-forecast model built with public money briefs officials only - no public dashboard, API or archive. Documented as a transparency gap rather than silently omitted."
+                frequency="data gap"
+              />
+            </>
+          ) : null}
+
+          <DataSourceGroupHeader title={isMadurai ? "Satellite & remote sensing (planned)" : "Satellite & remote sensing"} />
+          {isMadurai && (
+            <>
+              <DataSource
+                name="JRC Global Surface Water (Monthly Recurrence)"
+                url="https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_MonthlyRecurrence"
+                description="Per-water-body wet/dry history from satellite. Pipeline ready; data layer pending for Madurai's 19 flagships."
+                frequency="historical monthly"
+              />
+              <DataSource
+                name="Copernicus Sentinel-2 (via Earth Engine)"
+                url="https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED"
+                description="NDWI thumbnails + change detection per flagship. Pending for Madurai."
+                frequency="periodic"
+              />
+              <DataSource
+                name="HydroBASINS / MERIT Hydro"
+                url="https://www.hydrosheds.org/products/hydrobasins"
+                description="Catchment polygons for Vaigai dam and its sub-basins, used to ground catchment-rainfall context. Pending wiring for Madurai."
+                frequency="static"
+              />
+            </>
+          )}
+          {isBangalore && (
+            <DataSource
+              name="Google Earth Engine layers (shipped in the rich-lake panels)"
+              url={`/${config.cityId}/water-bodies`}
+              description="Already live for the 14-lake rich cohort rather than planned: 37-year yearly imagery sliders (Landsat + Sentinel-2, 1990-2026), JRC Global Surface Water loss tint (1988-92 vs 2017-21), Dynamic World water-class extension (2022-now) and built-gain tint (2016-18 vs 2023-25), plus Open Buildings and Overture building stats per lake halo."
+              frequency="periodic (per cohort round)"
+            />
+          )}
+          {isMumbai && (
+            <DataSource
+              name="GEE MNDWI shoreline transects (Landsat + Sentinel-2)"
+              url={`/${config.cityId}/shoreline`}
+              description="Our own west-coast shoreline-change measurement, 1990-2026: MNDWI water-index shorelines from annual dry-season composites, sampled along fixed transects. Corroborated against the published record (NCCR's 1990-2016 district table; Maharashtra Shoreline Management Plan 2017 risk grades) because no rate-publishing paper exists for Mumbai. Mumbai's ~3-5 m spring tides add positional noise Chennai's microtidal coast lacks - the page says to lean on the pattern, not single-transect absolutes."
+              frequency="yearly (post dry-season)"
+            />
           )}
 
-          <DataSourceGroupHeader title="Satellite &amp; remote sensing (planned)" />
-          <DataSource
-            name="JRC Global Surface Water (Monthly Recurrence)"
-            url="https://developers.google.com/earth-engine/datasets/catalog/JRC_GSW1_4_MonthlyRecurrence"
-            description="Per-water-body wet/dry history from satellite. Pipeline ready; data layer pending for Madurai's 19 flagships."
-            frequency="historical monthly"
-          />
-          <DataSource
-            name="Copernicus Sentinel-2 (via Earth Engine)"
-            url="https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED"
-            description="NDWI thumbnails + change detection per flagship. Pending for Madurai."
-            frequency="periodic"
-          />
-          <DataSource
-            name="HydroBASINS / MERIT Hydro"
-            url="https://www.hydrosheds.org/products/hydrobasins"
-            description="Catchment polygons for Vaigai dam and its sub-basins, used to ground catchment-rainfall context. Pending wiring for Madurai."
-            frequency="static"
-          />
-
           <DataSourceGroupHeader title="Base geometry &amp; AI" />
+          {isMumbai && (
+            <DataSource
+              name="DataMeet - Mumbai administrative-ward boundaries"
+              url="https://datameet.org/"
+              description="The 24 BMC administrative-ward polygons (2023 vintage) that anchor ward-level joins, plus the 2024 corporation boundaries for the nine-corporation regional view. The other eight corporations' wards have no known public geometry (State Election Commission delimitation PDFs only) - a named gap."
+              frequency="static"
+            />
+          )}
           <DataSource
             name="Anthropic Claude API"
             url="https://docs.anthropic.com/"
-            description="AI city narratives and per-ward profiles. Pending for Madurai."
+            description={`AI city narratives and per-ward profiles. Live for Chennai; pending for ${cityName}.`}
             frequency="daily / monthly"
           />
           </>
@@ -1256,7 +1372,7 @@ export function CityAboutContent({
               </p>
             )}
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
-              Methodology lives in <span className="font-mono">src/lib/utils/river-classification.ts</span>; readings are from CPCB NWMP annual River Water Quality reports.
+              Status thresholds follow CPCB&apos;s published Designated Best-Use criteria; readings are from CPCB NWMP annual River Water Quality reports.
             </p>
           </SubSection>
 
