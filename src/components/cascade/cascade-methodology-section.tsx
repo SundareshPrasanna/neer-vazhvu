@@ -79,10 +79,10 @@ export function CascadeMethodologySection({
             See cascade health scores:
           </strong>{" "}
           <Link
-            href={`/${cityId}/cascades`}
+            href={`/${cityId}/water-bodies?mode=catchments`}
             className="text-blue-600 dark:text-blue-400 hover:underline"
           >
-            Tank cascades at risk - {cityDisplayName} &rarr;
+            The Catchments view on the water-bodies map &rarr;
           </Link>
           {" "}
           ranks every documented and auto-derived cascade by fragility +

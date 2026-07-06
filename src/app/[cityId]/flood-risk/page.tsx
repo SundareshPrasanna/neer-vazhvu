@@ -14,13 +14,29 @@ interface PageProps {
   params: Promise<{ cityId: string }>;
 }
 
+// Per-city SEO description - the fallback must stay city-neutral (the old
+// Madurai-specific "Vaigai dam release thresholds" text leaked into every
+// other city's search snippet).
+const FLOOD_META_DESC: Record<string, string> = {
+  chennai:
+    "Chennai flood risk - interactive ward map, historical floods, drainage and encroachment layers.",
+  madurai:
+    "Vaigai dam release thresholds, historical floods, and external monitoring sources for Madurai.",
+  bangalore:
+    "Bengaluru flood risk - KSRSAC flood hotspots, rajakaluve drainage network, and historical inundation.",
+  mumbai:
+    "Mumbai flood risk - BMC chronic-flooding register, the 26/7/2005 reference layer, and WRD red/blue flood-line sheets.",
+};
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) return { title: "Flood Risk | Neer Vazhvu" };
   return {
     title: `${config.displayName} Flood Risk | Neer Vazhvu`,
-    description: `Vaigai dam release thresholds, historical floods, and external monitoring sources for ${config.displayName}.`,
+    description:
+      FLOOD_META_DESC[cityId] ??
+      `Flood risk, historical floods, and monitoring sources for ${config.displayName}.`,
     alternates: { canonical: `/${cityId}/flood-risk` },
   };
 }

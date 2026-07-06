@@ -224,7 +224,7 @@ function GroundwaterPageContent() {
         </div>
 
         {/* Period + source overlay */}
-        <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
+        <MapInfoButton className="absolute top-20 left-2.5 z-[1000]">
           {viewMode === "exploitation" ? (
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {t("gw_page.source_cgwb")}

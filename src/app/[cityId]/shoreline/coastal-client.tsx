@@ -100,7 +100,11 @@ const CITY_COPY: Record<string, CoastalCityCopy> = {
 };
 
 export default function CoastalClient({ cityId = "chennai" }: { cityId?: string }) {
-  const copy = CITY_COPY[cityId] ?? CITY_COPY.chennai;
+  // No entry -> render nothing (after the hooks - hooks must run
+  // unconditionally) rather than fall back to another city's coastal copy
+  // and statistics. FEATURE_AVAILABILITY gates this page to cities with an
+  // entry, so this only fires on a config mistake.
+  const copy: (typeof CITY_COPY)[string] | undefined = CITY_COPY[cityId];
   useLockBodyScroll();
   const [selected, setSelected] = useState<SelectedCoastal | null>(null);
   const [summary, setSummary] = useState<CoastalSummary | null>(null);
@@ -111,6 +115,8 @@ export default function CoastalClient({ cityId = "chennai" }: { cityId?: string 
   // callback (not an effect), and only the first time; the user is in control
   // after that.
   const didAutoSelect = useRef(false);
+
+  if (!copy) return null;
   const handleSummary = (s: CoastalSummary) => {
     setSummary(s);
     if (!didAutoSelect.current && s.featured) {
@@ -182,7 +188,7 @@ export default function CoastalClient({ cityId = "chennai" }: { cityId?: string 
           </div>
 
           {/* Sources / honesty note */}
-          <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
+          <MapInfoButton className="absolute top-20 left-2.5 z-[1000]">
             <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1.5 max-w-xs">
               <div>
                 <span className="font-semibold text-slate-700 dark:text-slate-300">What you see:</span> each dot is a

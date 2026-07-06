@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 /**
@@ -15,8 +16,11 @@ import type { ReactNode } from "react";
  */
 export function CatchmentMethodologySection({
   cityDisplayName,
+  cityId,
 }: {
   cityDisplayName: string;
+  /** When set, "the Catchments view" becomes a link to it. */
+  cityId?: string;
 }): ReactNode {
   return (
     <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
@@ -25,7 +29,18 @@ export function CatchmentMethodologySection({
         The <strong>catchment atlas</strong> answers the prior question:{" "}
         <strong>where does each lake&apos;s water come from</strong>. Every
         lake sits at the bottom of a catchment - the land whose rain drains
-        toward it. Click any lake on the Catchments view and we draw its area
+        toward it. Click any lake on the{" "}
+        {cityId ? (
+          <Link
+            href={`/${cityId}/water-bodies?mode=catchments`}
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Catchments view
+          </Link>
+        ) : (
+          "Catchments view"
+        )}{" "}
+        and we draw its area
         of influence: the catchment polygon, the feeder streams inside it, the
         tanks upstream and downstream, and where its overflow finally reaches a
         river.

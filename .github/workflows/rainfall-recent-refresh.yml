@@ -46,5 +46,6 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "data: daily provisional rainfall refresh (Open-Meteo fill after IMD's last month)"
+            git pull --rebase origin main
             git push
           fi

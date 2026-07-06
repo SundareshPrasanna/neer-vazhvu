@@ -114,7 +114,7 @@ function ClimateRiskContentInner({ cityId }: { cityId: string }) {
               })}
             />
           </div>
-          <MapInfoButton className="absolute top-2 left-2 sm:top-4 sm:left-4 z-[1000]">
+          <MapInfoButton className="absolute top-20 left-2.5 z-[1000]">
             <div className="max-w-[300px] space-y-2.5">
               <div className="text-xs font-semibold text-slate-700 dark:text-slate-200">
                 {t("climate.info_title")}

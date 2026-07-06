@@ -22,13 +22,29 @@ interface PageProps {
   params: Promise<{ cityId: string }>;
 }
 
+// Per-city SEO description - the fallback must stay city-neutral (the old
+// Madurai-specific text leaked "Vaigai / Mullaperiyar" into every other
+// city's search snippet).
+const RIVERS_META_DESC: Record<string, string> = {
+  chennai:
+    "River-system map for Chennai - Adyar, Cooum and Kosasthalaiyar, with pollution status from official monitoring.",
+  madurai:
+    "River-system map for Madurai - Vaigai mainstem, tributaries, and the cross-state Mullaperiyar feeder.",
+  bangalore:
+    "River-system map for Bengaluru - Vrishabhavathi, Arkavathi and the Cauvery lifeline, with pollution status from official monitoring.",
+  mumbai:
+    "River-system map for Mumbai - Mithi, Dahisar, Poisar, Oshiwara and the regional Ulhas, with MPCB water-quality status.",
+};
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) return { title: "Rivers | Neer Vazhvu" };
   return {
     title: `${config.displayName} Rivers | Neer Vazhvu`,
-    description: `River-system map for ${config.displayName} - Vaigai mainstem, tributaries, and the cross-state Mullaperiyar feeder.`,
+    description:
+      RIVERS_META_DESC[cityId] ??
+      `River-system map for ${config.displayName} - mainstem rivers, tributaries, and pollution status from official monitoring.`,
     alternates: { canonical: `/${cityId}/rivers` },
   };
 }

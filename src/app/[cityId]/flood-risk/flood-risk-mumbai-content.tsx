@@ -205,8 +205,12 @@ export function FloodRiskMumbaiContent({ cityDisplayName }: Props) {
               <li>
                 <strong>No regional flood-spot inventory beyond BMC.</strong> The eastern Ulhas/
                 Waldhuni corridor (Ulhasnagar, Kalyan-Dombivli, Ambernath, Badlapur) and Vasai-Virar
-                flood chronically, but the other corporations publish no equivalent spot list, so
-                only Greater Mumbai is mapped here.
+                flood chronically, but the other corporations publish no equivalent list of observed
+                waterlogging spots, so only Greater Mumbai&apos;s points are mapped here. The state
+                flood-line sheets below are a different kind of record: legal river-floodplain
+                boundaries (where a 25-year or 100-year flood <em>would</em> reach), not registers
+                of where flooding recurs - the two complement rather than substitute for each
+                other.
               </li>
             </ul>
           </section>

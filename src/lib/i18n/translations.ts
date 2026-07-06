@@ -395,7 +395,7 @@ export const translations: Record<string, TranslationEntry> = {
   "lake.cross_water_bodies": { en: "Water bodies map", ta: "நீர்நிலைகள் வரைபடம்", kn: "ಜಲಮೂಲಗಳ ನಕ್ಷೆ" },
   "lake.cross_water_bodies_desc": { en: "Interactive map of the city's water bodies", ta: "நகரின் நீர்நிலைகளின் ஊடாடும் வரைபடம்", kn: "ನಗರದ ಜಲಮೂಲಗಳ ಸಂವಾದಾತ್ಮಕ ನಕ್ಷೆ" },
   "lake.cross_home": { en: "home", ta: "முகப்பு", kn: "ಮುಖಪುಟ" },
-  "lake.cross_home_desc": { en: "Reservoirs, days-of-water-left, Mullaperiyar tracker", ta: "நீர்த்தேக்கங்கள், மீதமுள்ள நீர் நாட்கள், முல்லைப் பெரியார் கண்காணிப்பு", kn: "ಜಲಾಶಯಗಳು, ಉಳಿದ-ನೀರಿನ-ದಿನಗಳು, ಮುಲ್ಲೈಪೆರಿಯಾರ್ ಟ್ರ್ಯಾಕರ್" },
+  "lake.cross_home_desc": { en: "Live reservoir storage and the supply picture at a glance", ta: "நேரடி நீர்த்தேக்க சேமிப்பு மற்றும் நீர் வழங்கல் நிலை ஒரே பார்வையில்", kn: "ನೇರ ಜಲಾಶಯ ಸಂಗ್ರಹ ಮತ್ತು ಪೂರೈಕೆ ಚಿತ್ರಣ ಒಂದೇ ನೋಟದಲ್ಲಿ" },
   "lake.methodology": { en: "Methodology:", ta: "முறையியல்:", kn: "ವಿಧಾನ:" },
   "lake.methodology_text":      {
     en: "Lost-tank list curated from Vencatesan's academic inventory of dying urban tanks. Flagship cards hand-sourced from Wikipedia, INTACH, India Water Portal, Columbia GSAPP's Water Urbanism studio, IAS Gateway, and news reports - confidence flagged per row. Restoration programmes from MMC, TN PWD, Smart City, World Bank, and DHAN Vayalagam public materials.",

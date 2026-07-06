@@ -363,6 +363,9 @@ function STPContent({ props }: { props: STPProperties }) {
         </div>
       )}
       <p className="text-xs text-slate-400 dark:text-slate-500">
+{/* CMWSSB attribution is correct only for Chennai's geojson. This panel
+            renders only for flood.variant === 'interactive' (chennai.ts today);
+            parameterize these source lines before another city adopts it. */}
         Source: CMWSSB Sewerage Collection System
       </p>
       <ConnectedInsight
