@@ -148,6 +148,8 @@ export const CHENNAI: CityConfig = {
   // multi-city reservoir_daily_v2 schema. The shared loaders select the
   // source from this flag.
   reservoirDataSource: 'legacy-v1',
+  // Day Zero anchor: "On this day in 2019" is the whole point in Chennai.
+  heroComparisonYear: 2019,
   historyUnit: 'Mcft',
   // Coastal shoreline-change surface (Mahabalipuram to Pulicat), 1990-2026.
   hasShoreline: true,

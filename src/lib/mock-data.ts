@@ -13,7 +13,8 @@ export interface MockScenario {
   reservoirs: ReservoirSummary[];
   recentAvgInflowMcftPerDay: number;
   seasonalAvgInflowMcftPerDay: number;
-  comparison2019Storage: number | null;
+  comparisonStorage: number | null;
+  comparisonYear: number | null;
   historyStyle: "healthy" | "declining" | "crisis" | "recovering";
 }
 
@@ -30,7 +31,8 @@ export const SCENARIOS: Record<ScenarioKey, MockScenario> = {
     ],
     recentAvgInflowMcftPerDay: 45.0,
     seasonalAvgInflowMcftPerDay: 38.0,
-    comparison2019Storage: 4200,
+    comparisonStorage: 4200,
+    comparisonYear: 2019,
     historyStyle: "healthy",
   },
 
@@ -46,7 +48,8 @@ export const SCENARIOS: Record<ScenarioKey, MockScenario> = {
     ],
     recentAvgInflowMcftPerDay: 0,
     seasonalAvgInflowMcftPerDay: 2.1,
-    comparison2019Storage: 890,
+    comparisonStorage: 890,
+    comparisonYear: 2019,
     historyStyle: "declining",
   },
 
@@ -62,7 +65,8 @@ export const SCENARIOS: Record<ScenarioKey, MockScenario> = {
     ],
     recentAvgInflowMcftPerDay: 0,
     seasonalAvgInflowMcftPerDay: 0.5,
-    comparison2019Storage: 19,
+    comparisonStorage: 19,
+    comparisonYear: 2019,
     historyStyle: "crisis",
   },
 
@@ -78,7 +82,8 @@ export const SCENARIOS: Record<ScenarioKey, MockScenario> = {
     ],
     recentAvgInflowMcftPerDay: 95.0,
     seasonalAvgInflowMcftPerDay: 65.0,
-    comparison2019Storage: 1500,
+    comparisonStorage: 1500,
+    comparisonYear: 2019,
     historyStyle: "recovering",
   },
 };

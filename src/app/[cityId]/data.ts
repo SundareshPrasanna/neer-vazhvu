@@ -91,7 +91,11 @@ export interface CityWaterEstimate {
   totalCapacityMcft: number;
   recentAvgInflowMcftPerDay: number;
   seasonalAvgInflowMcftPerDay: number;
-  comparison2019Storage: number | null;
+  comparisonStorage: number | null;
+  comparisonYear: number | null;
+  /** True when the reference reading is the nearest within a window
+   *  rather than the exact same date (legacy weekly/monthly history). */
+  comparisonIsApprox?: boolean;
   lastUpdated: string | null;
 }
 
@@ -100,7 +104,8 @@ const EMPTY_ESTIMATE: CityWaterEstimate = {
   totalCapacityMcft: 0,
   recentAvgInflowMcftPerDay: 0,
   seasonalAvgInflowMcftPerDay: 0,
-  comparison2019Storage: null,
+  comparisonStorage: null,
+  comparisonYear: null,
   lastUpdated: null,
 };
 
@@ -236,18 +241,27 @@ export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWa
     month,
   );
 
-  // 2019 same-day comparison.
-  const sameDay2019 = `2019-${asOf.slice(5)}`;
-  const { data: data2019 } = await supabase
+  // Same-day storage comparison against the reference year (config
+  // override, else last year). Guard: only comparable when the reference
+  // day covers every source reporting today - Mumbai's 2019 backfill holds
+  // 2 of 5 dams, and summing those against a 5-dam today would read
+  // "(better today)" off a false base.
+  const comparisonYear = config.heroComparisonYear ?? Number(asOf.slice(0, 4)) - 1;
+  const sameDayRef = `${comparisonYear}-${asOf.slice(5)}`;
+  const { data: dataRef } = await supabase
     .from("reservoir_daily_v2")
-    .select("storage_tmc")
+    .select("source_code, storage_tmc")
     .eq("city_id", config.cityId)
     .in("source_code", sourceCodes)
-    .eq("date", sameDay2019);
+    .eq("date", sameDayRef);
 
-  const comparison2019Storage =
-    data2019 && data2019.length > 0
-      ? data2019.reduce((s, r) => s + ((r.storage_tmc as number | null) ?? 0) * TMC_TO_MCFT, 0)
+  const todayCodes = new Set((rows ?? []).map((r) => r.source_code as string));
+  const refCodes = new Set((dataRef ?? []).map((r) => r.source_code as string));
+  const refCoversToday = [...todayCodes].every((c) => refCodes.has(c));
+
+  const comparisonStorage =
+    dataRef && dataRef.length > 0 && refCoversToday
+      ? dataRef.reduce((s, r) => s + ((r.storage_tmc as number | null) ?? 0) * TMC_TO_MCFT, 0)
       : null;
 
   return {
@@ -255,7 +269,9 @@ export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWa
     totalCapacityMcft,
     recentAvgInflowMcftPerDay,
     seasonalAvgInflowMcftPerDay,
-    comparison2019Storage,
+    comparisonStorage,
+    comparisonYear: comparisonStorage !== null ? comparisonYear : null,
+    comparisonIsApprox: false,
     lastUpdated: asOf,
   };
 }
@@ -410,17 +426,39 @@ async function loadLegacyChennaiWaterEstimate(): Promise<CityWaterEstimate> {
   const seasonalAvgInflowMcftPerDay =
     seasonalData?.[0]?.avg_inflow_mcft_per_day || 0;
 
-  // 2019 same-day comparison.
+  // 2019 comparison. The legacy history is weekly today and monthly back
+  // in 2019 (12 dates in the whole year), so an exact same-date match
+  // almost never exists - which is why this line never rendered in
+  // production. Take the nearest 2019 reading within +/-10 days and label
+  // it "around this day" rather than "on this day".
   const today = new Date();
-  const sameDay2019 = `2019-${String(today.getMonth() + 1).padStart(2, "0")}-${String(
+  const mmdd = `${String(today.getMonth() + 1).padStart(2, "0")}-${String(
     today.getDate(),
   ).padStart(2, "0")}`;
-  const { data: data2019 } = await supabase
+  const target2019 = new Date(`2019-${mmdd}T00:00:00Z`).getTime();
+  const lo = new Date(target2019 - 10 * 86_400_000).toISOString().slice(0, 10);
+  const hi = new Date(target2019 + 10 * 86_400_000).toISOString().slice(0, 10);
+  const { data: windowRows } = await supabase
     .from("reservoir_daily")
-    .select("current_storage_mcft")
-    .eq("date", sameDay2019);
+    .select("date, current_storage_mcft")
+    .gte("date", lo)
+    .lte("date", hi);
+  let data2019: { current_storage_mcft: number }[] | null = null;
+  let comparisonIsApprox = false;
+  if (windowRows && windowRows.length > 0) {
+    const dates = [...new Set(windowRows.map((r) => r.date as string))];
+    const nearest = dates.sort(
+      (a, b) =>
+        Math.abs(new Date(a).getTime() - target2019) -
+        Math.abs(new Date(b).getTime() - target2019),
+    )[0];
+    data2019 = windowRows.filter((r) => r.date === nearest);
+    comparisonIsApprox = nearest !== `2019-${mmdd}`;
+  }
 
-  const comparison2019Storage = data2019
+  // Chennai-only path: 2019 IS the anchor (Day Zero) and the legacy table
+  // is complete across all reservoirs back past 2019.
+  const comparisonStorage = data2019
     ? data2019.reduce(
         (sum: number, r: { current_storage_mcft: number }) =>
           sum + (r.current_storage_mcft || 0),
@@ -436,7 +474,9 @@ async function loadLegacyChennaiWaterEstimate(): Promise<CityWaterEstimate> {
     totalCapacityMcft,
     recentAvgInflowMcftPerDay,
     seasonalAvgInflowMcftPerDay,
-    comparison2019Storage,
+    comparisonStorage,
+    comparisonYear: comparisonStorage !== null ? 2019 : null,
+    comparisonIsApprox: comparisonStorage !== null ? comparisonIsApprox : false,
     lastUpdated: mostRecentDate,
   };
 }

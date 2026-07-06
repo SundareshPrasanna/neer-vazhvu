@@ -14,7 +14,9 @@ interface DaysLeftHeroProps {
   recentAvgInflowMcftPerDay: number;
   seasonalAvgInflowMcftPerDay: number;
   lastUpdated: string;
-  comparison2019Storage: number | null;
+  comparisonStorage: number | null;
+  comparisonYear: number | null;
+  comparisonIsApprox?: boolean;
   /** Place-specific default consumption (MLD). Defaults to Chennai's. */
   defaultConsumptionMld?: number;
   /** Place-specific default desalination (MLD). Defaults to Chennai's. */
@@ -108,7 +110,9 @@ export function DaysLeftHero({
   recentAvgInflowMcftPerDay,
   seasonalAvgInflowMcftPerDay,
   lastUpdated,
-  comparison2019Storage,
+  comparisonStorage,
+  comparisonYear,
+  comparisonIsApprox,
   defaultConsumptionMld,
   defaultDesalinationMld,
   consumptionSliderMax,
@@ -265,10 +269,11 @@ export function DaysLeftHero({
             />
           </div>
 
-          {comparison2019Storage !== null && (
+          {comparisonStorage !== null && comparisonYear !== null && (
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-              {t("hero.2019_comparison")} {formatNumber(comparison2019Storage)} mcft
-              {comparison2019Storage < totalStorageMcft ? (
+              {t(comparisonIsApprox ? "hero.around_day_comparison" : "hero.same_day_comparison").replace("{year}", String(comparisonYear))}{" "}
+              {formatNumber(comparisonStorage)} mcft
+              {comparisonStorage < totalStorageMcft ? (
                 <span className="text-green-600 dark:text-green-400 ml-1">{t("hero.better_today")}</span>
               ) : (
                 <span className="text-red-600 dark:text-red-400 ml-1">{t("hero.worse_today")}</span>

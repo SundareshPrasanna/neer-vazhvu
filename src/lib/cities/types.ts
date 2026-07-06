@@ -323,6 +323,14 @@ export interface BasePlaceConfig {
    *  docs/specs/multi-city-component-discipline.md. */
   reservoirDataSource?: 'v2' | 'legacy-v1';
 
+  /** Reference year for the hero's "On this day in {year}" storage
+   *  comparison. Chennai anchors to 2019 (Day Zero). Omit -> same day
+   *  LAST year, which is meaningful for every city. The loader only
+   *  shows the comparison when the reference day covers the same
+   *  sources as today (Mumbai's 2019 backfill holds 2 of 5 dams -
+   *  comparing against it would be false comfort). */
+  heroComparisonYear?: number;
+
   /** Storage unit the history chart + reservoir cards render in. Chennai's
    *  legacy data is stored in Mcft; v2 cities use TMC. Default 'TMC'. */
   historyUnit?: 'TMC' | 'Mcft';
