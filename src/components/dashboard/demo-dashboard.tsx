@@ -87,7 +87,8 @@ export function DemoDashboard() {
         recentAvgInflowMcftPerDay={s.recentAvgInflowMcftPerDay}
         seasonalAvgInflowMcftPerDay={s.seasonalAvgInflowMcftPerDay}
         lastUpdated={formatDate("2026-03-01")}
-        comparison2019Storage={s.comparison2019Storage}
+        comparisonStorage={s.comparisonStorage}
+        comparisonYear={s.comparisonYear}
       />
 
       <ReservoirCards
