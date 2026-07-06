@@ -1,0 +1,85 @@
+name: Data freshness check
+
+# Daily staleness sweep across every city's ingested feeds - reservoir
+# tables in Supabase, the provisional-rainfall artifacts, and the weekly
+# city-specific artifacts. Checks are DERIVED from the city configs by
+# scripts/check-data-freshness.ts, so a newly onboarded city is covered
+# automatically (and CI's data:check gate fails if its feeds aren't
+# checkable).
+#
+# Why this exists: individual scrape steps tolerate failures by design
+# (continue-on-error / skipped bulletins), so job conclusions read
+# "success" while data quietly ages - Chennai went 5 days stale behind
+# green runs in July 2026. This workflow is the alarm that fires on the
+# DATA, not the jobs.
+#
+# Runs after the morning pipelines (rainfall 02:45, Pravah 04:00, daily
+# pipeline 04:51 UTC) so a healthy morning reads fresh.
+
+on:
+  schedule:
+    - cron: '30 6 * * *'   # 06:30 UTC = 12:00 IST daily
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check data freshness
+        id: freshness
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: npx tsx scripts/check-data-freshness.ts --check
+
+      - name: Alert on stale feeds
+        if: steps.freshness.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `Data freshness: stale feeds - ${today}`;
+            const report = fs.existsSync('freshness-report.md')
+              ? fs.readFileSync('freshness-report.md', 'utf-8')
+              : 'freshness-report.md missing - the checker itself errored; see the run log.';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'pipeline-alert',
+              state: 'open',
+            });
+            const existing = issues.find(i => i.title === title);
+            if (!existing) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                labels: ['pipeline-alert', 'data-freshness'],
+                body: [
+                  report,
+                  '',
+                  `**Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                  '',
+                  'Known recovery: CMWSSB and Pravah both intermittently block GitHub',
+                  'runner IPs while responding normally from residential IPs - running the',
+                  'scraper locally recovers the day (see neer-vazhvu-api/scripts/).',
+                  '',
+                  'This issue is created once per day while feeds remain stale.',
+                ].join('\n'),
+              });
+            }
