@@ -95,6 +95,7 @@ export const MADURAI: CityConfig = {
       catchmentAreaSqkm: null,
       displayOrder: 3,
       isPrimaryDrinkingSource: false,
+      hasPublicFeed: false,
     },
   ],
   // Madurai's groundwater data is sparse at the ward scale (only 4 WRIS

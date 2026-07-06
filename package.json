@@ -13,7 +13,7 @@
     "test": "find src -name '*.test.ts' | xargs tsx --test",
     "test:watch": "find src -name '*.test.ts' | xargs tsx --test --watch",
     "i18n:check": "node scripts/check-i18n.mjs",
-    "data:check": "tsx scripts/check-restoration-data.ts"
+    "data:check": "tsx scripts/check-restoration-data.ts && tsx scripts/check-data-freshness.ts --validate"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
