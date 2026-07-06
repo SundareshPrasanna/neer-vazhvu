@@ -100,7 +100,14 @@ function ExploreDropdown({
   const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   // Active when ANY explore link's city-aware href matches the current path.
-  const exploreCityHrefs = new Set(EXPLORE_ITEMS.map((i) => rewriteNavHref(i.href, cityId)));
+  // Only features the city supports: an unsupported feature rewrites to the
+  // city HOME, which would light Explore up alongside Dashboard on /<city>
+  // (seen on Mumbai, which lacks climate-risk).
+  const exploreCityHrefs = new Set(
+    EXPLORE_ITEMS.filter((i) => isFeatureSupportedForCity(i.href, cityId)).map((i) =>
+      rewriteNavHref(i.href, cityId),
+    ),
+  );
   const isExploreActive = exploreCityHrefs.has(pathname) || EXPLORE_PATHS.has(pathname);
 
   // Close on click outside
@@ -199,7 +206,9 @@ export function Header() {
 
   const isExploreActive =
     EXPLORE_PATHS.has(pathname) ||
-    EXPLORE_ITEMS.some((i) => rewriteNavHref(i.href, cityId) === pathname);
+    EXPLORE_ITEMS.filter((i) => isFeatureSupportedForCity(i.href, cityId)).some(
+      (i) => rewriteNavHref(i.href, cityId) === pathname,
+    );
 
   // The root path "/" is the project landing page, not a city. Render a
   // minimal header there: brand + city switcher + toggles, with no
