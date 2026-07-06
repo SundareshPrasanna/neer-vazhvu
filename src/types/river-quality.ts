@@ -41,6 +41,11 @@ export interface RiverQualityReading {
   conductivity_us: number | null; // µS/cm
   cod_mgl: number | null; // Chemical oxygen demand mg/L
   fecal_coliform_mpn: number | null; // Fecal coliform MPN/100ml
+  /** Set when the published figure itself is disputed (e.g. the Mithi's
+   *  2023 CPCB value, publicly flagged by Praja as a likely recording
+   *  error). Rendered as a footnote under the FC tile - the number is
+   *  shown as published, never silently corrected. */
+  fecal_coliform_note?: string | null;
   tds_mgl: number | null; // Total dissolved solids mg/L
   nitrate_mgl: number | null; // Nitrate mg/L
   chromium_mgl: number | null; // Chromium mg/L (heavy metal)
