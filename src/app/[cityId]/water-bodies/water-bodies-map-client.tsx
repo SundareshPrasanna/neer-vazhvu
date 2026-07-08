@@ -327,7 +327,7 @@ export default function WaterBodiesMapClient({
             )}
           </UnifiedMap>
           {elevation.available && (
-            <div className="absolute bottom-8 left-2.5 z-[1000] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-2.5 text-xs max-w-[240px] space-y-1.5">
+            <div className="absolute bottom-2 right-2 md:bottom-8 md:left-2.5 md:right-auto z-[1000] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-2.5 text-xs max-w-[46vw] md:max-w-[240px] space-y-1.5">
               <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-700 dark:text-slate-300">
                 <input
                   type="checkbox"
