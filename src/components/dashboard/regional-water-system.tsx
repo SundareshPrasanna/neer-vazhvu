@@ -224,7 +224,7 @@ export function RegionalWaterSystem({ cityId }: { cityId: string }) {
           const hasSupply = typeof m.supply_mld === "number";
           return (
             <div key={corp.corporationId} className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5">
-              <div className="flex items-baseline justify-between gap-1">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-1 gap-y-0.5">
                 <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-baseline gap-1.5">
                   {corp.acronym}{footnotes(m.source_refs)}
                   {(() => {
@@ -236,12 +236,12 @@ export function RegionalWaterSystem({ cityId }: { cityId: string }) {
                           : null;
                     if (pct === null)
                       return hasSupply ? null : (
-                        <span className="text-[8px] uppercase tracking-wide px-1 py-0.5 rounded bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400">pending</span>
+                        <span className="text-[9px] font-semibold uppercase tracking-wide px-1 py-0.5 rounded bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400">pending</span>
                       );
                     return pct > 0 ? (
-                      <span className="text-[8px] uppercase tracking-wide px-1 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">{pct}% short</span>
+                      <span className="text-[9px] font-semibold uppercase tracking-wide px-1 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">{pct}% short</span>
                     ) : (
-                      <span className="text-[8px] uppercase tracking-wide px-1 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">no deficit</span>
+                      <span className="text-[9px] font-semibold uppercase tracking-wide px-1 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">no deficit</span>
                     );
                   })()}
                 </span>
@@ -272,28 +272,9 @@ export function RegionalWaterSystem({ cityId }: { cityId: string }) {
                   {typeof m.demand_mld === "number" && (
                     <div className="flex justify-between"><span className="text-slate-500">Demand</span><span className="font-mono">{m.demand_mld} MLD</span></div>
                   )}
-                  {(() => {
-                    // Deficit derives from supply/demand when both exist, so a
-                    // corporation never shows the pair without the conclusion;
-                    // a stored deficit_pct (e.g. BMC's published 15%) wins.
-                    const pct =
-                      typeof m.deficit_pct === "number"
-                        ? m.deficit_pct
-                        : typeof m.demand_mld === "number" &&
-                            typeof m.supply_mld === "number" &&
-                            m.demand_mld > 0
-                          ? Math.round(((m.demand_mld - m.supply_mld) / m.demand_mld) * 100)
-                          : null;
-                    if (pct === null) return null;
-                    return (
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Deficit</span>
-                        <span className="font-mono text-amber-600 dark:text-amber-400">
-                          {pct <= 0 ? "none" : `${pct}%`}
-                        </span>
-                      </div>
-                    );
-                  })()}
+                  {/* The deficit verdict lives ONLY in the header badge
+                      ("{pct}% short" / "no deficit") - it was previously
+                      repeated as a body row, which read as two numbers. */}
                 </div>
               ) : (
                 <div className="text-[10px] text-slate-400 italic py-1.5 px-2 rounded bg-slate-50 dark:bg-slate-800/60">
