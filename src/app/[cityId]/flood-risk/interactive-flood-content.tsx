@@ -190,7 +190,10 @@ function InteractiveFloodContentInner({ cityId }: { cityId: string }) {
 
       {/* Map + panel */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        <div className="relative flex-1 h-full">
+        <div className="relative h-[45vh] shrink-0 md:h-full md:flex-1 md:shrink">
+          {/* Mobile: the map needs an explicit height - as a flex-basis-0 item
+              next to the tall text sidebar it collapses to 0px and only its
+              floating controls remain visible. Desktop keeps filling the row. */}
           <FloodRiskMap
             cityId={cityId}
             center={center}

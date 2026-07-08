@@ -63,7 +63,10 @@ export function FloodRiskMumbaiContent({ cityDisplayName }: Props) {
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Map area */}
-        <div className="relative flex-1 h-full">
+        <div className="relative h-[45vh] shrink-0 md:h-full md:flex-1 md:shrink">
+          {/* Mobile: the map needs an explicit height - as a flex-basis-0 item
+              next to the tall text sidebar it collapses to 0px and only its
+              floating controls remain visible. Desktop keeps filling the row. */}
           <FloodMumbaiLeafletMap center={[19.076, 72.8777]} zoom={11} layerState={layerState} />
 
           {/* Layer-toggle panel */}
