@@ -39,6 +39,9 @@ interface Props {
  * now; Marathi follows in the i18n pass.
  */
 export function FloodRiskMumbaiContent({ cityDisplayName }: Props) {
+  // Mobile: the layer panel covered over half the map width and blocked
+  // pinch-zoom gestures; it starts collapsed there. Desktop keeps it open.
+  const [layersOpen, setLayersOpen] = useState(false);
   const [layerState, setLayerState] = useState({
     showChronic: true,
     showSubway: true,
@@ -71,9 +74,16 @@ export function FloodRiskMumbaiContent({ cityDisplayName }: Props) {
 
           {/* Layer-toggle panel */}
           <div className="absolute top-3 right-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-3 space-y-2 text-xs max-w-[230px]">
-            <div className="font-semibold text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wide">
+            <button
+              type="button"
+              onClick={() => setLayersOpen((v) => !v)}
+              aria-expanded={layersOpen}
+              className="md:pointer-events-none flex w-full items-center justify-between gap-2 font-semibold text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wide"
+            >
               Layers
-            </div>
+              <span className="md:hidden text-slate-400">{layersOpen ? "−" : "+"}</span>
+            </button>
+            <div className={`${layersOpen ? "block" : "hidden"} md:block space-y-2`}>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -134,6 +144,7 @@ export function FloodRiskMumbaiContent({ cityDisplayName }: Props) {
                 Drains + nallas (OSM)
               </span>
             </label>
+            </div>
           </div>
         </div>
 

@@ -220,3 +220,13 @@
   color: #e2e8f0;            /* slate-200 */
   text-shadow: 0 0 4px rgba(0, 0, 0, 0.85);
 }
+
+/* Touch devices: Leaflet's default 30px zoom buttons are small tap targets
+   for less technical users - stakeholder feedback on the flood map. */
+.leaflet-touch .leaflet-bar.leaflet-control-zoom a.leaflet-control-zoom-in,
+.leaflet-touch .leaflet-bar.leaflet-control-zoom a.leaflet-control-zoom-out {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 20px;
+}
