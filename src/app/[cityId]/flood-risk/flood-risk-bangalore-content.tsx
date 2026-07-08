@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { elevationLegendEntries, useElevationBands } from "@/components/map/elevation-bands";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
@@ -55,8 +56,10 @@ export function FloodRiskBangaloreContent({ cityDisplayName }: Props) {
     showHotspotsNamedProne: true,
     showHotspotsLowLying: true,
     showHotspotsVulnerable: false,
+    showElevation: false,
   });
 
+  const elevation = useElevationBands("bangalore", layerState.showElevation);
   const toggle = (key: keyof typeof layerState) => () =>
     setLayerState((s) => ({ ...s, [key]: !s[key] }));
 
@@ -82,6 +85,7 @@ export function FloodRiskBangaloreContent({ cityDisplayName }: Props) {
             center={[12.9716, 77.5946]}
             zoom={11}
             layerState={layerState}
+            elevationData={elevation.data}
           />
 
           {/* Layer-toggle panel - top-right overlay */}
@@ -150,6 +154,36 @@ export function FloodRiskBangaloreContent({ cityDisplayName }: Props) {
                   {t("frb.vulnerable")}
                 </span>
               </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={layerState.showElevation}
+                onChange={toggle("showElevation")}
+                className="accent-sky-700"
+              />
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block w-2.5 h-2.5 rounded-sm bg-gradient-to-r from-sky-800 via-lime-400 to-amber-800" />
+                Ground elevation (FABDEM)
+              </span>
+            </label>
+            {layerState.showElevation && (
+              <div className="pl-6 space-y-1">
+                <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-600 dark:text-slate-300">
+                  {elevationLegendEntries(elevation.data).map(({ band, color }) => (
+                    <span key={band} className="inline-flex items-center gap-1">
+                      <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: color }} />
+                      {band}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-[10px] leading-snug text-slate-500 dark:text-slate-400">
+                  Ground height above sea level from satellite (FABDEM 30 m, buildings and
+                  forests removed). Bengaluru&apos;s floods follow its valleys - the blue bands
+                  are the low ground the rajakaluves drain. Read as bands, not spot heights
+                  (~2 m vertical accuracy).
+                </p>
+              </div>
+            )}
             </div>
           </div>
         </div>

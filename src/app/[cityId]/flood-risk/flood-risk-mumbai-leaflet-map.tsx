@@ -8,7 +8,6 @@ import type { Layer, PathOptions } from "leaflet";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { FitToBounds, pointsBounds } from "@/components/map/fit-to-bounds";
 import { ElevationBandsLayer } from "@/components/map/elevation-bands-layer";
-import { useElevationBands } from "@/components/map/elevation-bands";
 
 // Mumbai flood-hotspot categories (public/data/mumbai-flood-hotspots.geojson -
 // BMC's official Disaster Management flood-spot register).
@@ -53,6 +52,7 @@ interface MapProps {
   center: [number, number];
   zoom: number;
   layerState: LayerToggleState;
+  elevationData: import("geojson").FeatureCollection | null;
 }
 
 interface HotspotMarker {
@@ -107,8 +107,7 @@ function onEachDrain(feature: Feature, layer: Layer) {
   if (name) layer.bindTooltip(name, { sticky: true });
 }
 
-export function FloodMumbaiLeafletMap({ center, zoom, layerState }: MapProps) {
-  const elevation = useElevationBands("mumbai", layerState.showElevation);
+export function FloodMumbaiLeafletMap({ center, zoom, layerState , elevationData}: MapProps) {
   const tiles = useMapTiles();
   const [hotspots, setHotspots] = useState<HotspotMarker[] | null>(null);
   const [deluge, setDeluge] = useState<DelugeMarker[] | null>(null);
@@ -195,7 +194,7 @@ export function FloodMumbaiLeafletMap({ center, zoom, layerState }: MapProps) {
   return (
     <MapContainer center={center} zoom={zoom} className="h-full w-full" scrollWheelZoom>
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
-      <ElevationBandsLayer data={elevation.data} />
+      <ElevationBandsLayer data={elevationData} />
       <FitToBounds
         bounds={boundPoints.length > 0 ? pointsBounds(boundPoints) : null}
         resetKey={`hot:${visibleHotspots.length}:${visibleDeluge.length}`}

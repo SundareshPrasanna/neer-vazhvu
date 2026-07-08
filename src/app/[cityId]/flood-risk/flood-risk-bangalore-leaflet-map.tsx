@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import type { Feature, FeatureCollection } from "geojson";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { FitToBounds, pointsBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
+import { ElevationBandsLayer } from "@/components/map/elevation-bands-layer";
 
 interface HotspotProps {
   name?: string;
@@ -37,12 +38,14 @@ interface LayerToggleState {
   showHotspotsNamedProne: boolean;
   showHotspotsLowLying: boolean;
   showHotspotsVulnerable: boolean;
+  showElevation: boolean;
 }
 
 interface MapProps {
   center: [number, number];
   zoom: number;
   layerState: LayerToggleState;
+  elevationData: import("geojson").FeatureCollection | null;
 }
 
 interface HotspotMarker {
@@ -54,7 +57,7 @@ interface HotspotMarker {
   category_label: string;
 }
 
-export function FloodLeafletMap({ center, zoom, layerState }: MapProps) {
+export function FloodLeafletMap({ center, zoom, layerState , elevationData}: MapProps) {
   const tiles = useMapTiles();
   // Pre-flatten hotspot features into a plain marker array on fetch.
   // Earlier attempt rendered <CircleMarker> directly from a typed
@@ -153,6 +156,7 @@ export function FloodLeafletMap({ center, zoom, layerState }: MapProps) {
         url={tiles.url}
         attribution={tiles.attribution}
       />
+      <ElevationBandsLayer data={elevationData} />
       {/* Fit to whichever layer is visible. Hotspot markers are the
           tighter envelope; fall back to the SWD network when only the
           drain layers are on. */}

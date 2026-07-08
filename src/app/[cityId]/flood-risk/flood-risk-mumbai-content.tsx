@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { elevationLegendEntries, useElevationBands } from "@/components/map/elevation-bands";
 import { FloodLinesSection } from "@/components/flood/flood-lines-section";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -50,6 +51,7 @@ export function FloodRiskMumbaiContent({ cityDisplayName }: Props) {
     showDrainage: false,
     showElevation: false,
   });
+  const elevation = useElevationBands("mumbai", layerState.showElevation);
   const toggle = (key: keyof typeof layerState) => () =>
     setLayerState((s) => ({ ...s, [key]: !s[key] }));
 
@@ -71,7 +73,7 @@ export function FloodRiskMumbaiContent({ cityDisplayName }: Props) {
           {/* Mobile: the map needs an explicit height - as a flex-basis-0 item
               next to the tall text sidebar it collapses to 0px and only its
               floating controls remain visible. Desktop keeps filling the row. */}
-          <FloodMumbaiLeafletMap center={[19.076, 72.8777]} zoom={11} layerState={layerState} />
+          <FloodMumbaiLeafletMap center={[19.076, 72.8777]} zoom={11} layerState={layerState} elevationData={elevation.data} />
 
           {/* Layer-toggle panel */}
           <div className="absolute top-3 right-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-3 space-y-2 text-xs max-w-[230px]">
@@ -160,18 +162,10 @@ export function FloodRiskMumbaiContent({ cityDisplayName }: Props) {
             {layerState.showElevation && (
               <div className="pl-6 space-y-1">
                 <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-600 dark:text-slate-300">
-                  {[
-                    ["#075985", "0-2 m"],
-                    ["#0ea5e9", "2-5 m"],
-                    ["#6ee7b7", "5-10 m"],
-                    ["#a3e635", "10-20 m"],
-                    ["#facc15", "20-50 m"],
-                    ["#d97706", "50-100 m"],
-                    ["#92400e", "100 m +"],
-                  ].map(([c, l]) => (
-                    <span key={l} className="inline-flex items-center gap-1">
-                      <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: c }} />
-                      {l}
+                  {elevationLegendEntries(elevation.data).map(({ band, color }) => (
+                    <span key={band} className="inline-flex items-center gap-1">
+                      <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: color }} />
+                      {band}
                     </span>
                   ))}
                 </div>

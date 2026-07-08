@@ -45,6 +45,22 @@ CITIES = {
         # band edges (metres); labels derive from consecutive pairs
         "bands": [0, 2, 5, 10, 20, 50, 100],
     },
+    # Chennai is a coastal alluvial plain - almost everything sits under
+    # 20 m, so the low bands are cut finer than Mumbai's.
+    "chennai": {
+        "bbox": (79.95, 12.75, 80.35, 13.35),  # GCC + flood-relevant fringe
+        "bands": [0, 2, 5, 10, 15, 25, 50],
+    },
+    # Inland cities: sea-level bands are meaningless; bands follow relief
+    # relative to the local terrain envelope instead.
+    "madurai": {
+        "bbox": (77.95, 9.80, 78.30, 10.10),  # city + Vaigai corridor
+        "bands": [60, 130, 145, 160, 180, 220, 300],
+    },
+    "bangalore": {
+        "bbox": (77.40, 12.80, 77.85, 13.20),  # BBMP + GBA fringe
+        "bands": [700, 840, 870, 900, 930, 960, 1000],
+    },
 }
 
 # Sentinel for FABDEM's masked pixels (the sea). Land - including genuinely
