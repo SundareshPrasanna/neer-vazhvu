@@ -41,6 +41,10 @@ interface LostNarrativeEntry {
 interface UnifiedDetailPanelProps {
   selected: SelectedWaterBody;
   restorationData: ScoredWaterBody | null;
+  /** True when this city HAS a scored restoration cohort - lets the panel
+   *  say "not assessed" for bodies outside it (Tansa, Morbe...), so a
+   *  missing priority never reads as an omission or a clean bill. */
+  cityHasRestorationCohort?: boolean;
   /** Optional historical narrative from water-bodies-lost-{cityId}.json
    *  matched by name. Currently Bengaluru-only: renders the rich
    *  "what happened to this kere" note (Bellandur foam-and-fire,
@@ -79,10 +83,25 @@ const COMPONENT_META: Record<
   industrial_proximity:  { tKey: "lr.comp_industrial", max: 14, weight: 0.14 },
   type_bonus:            { tKey: "lr.comp_type",       max: 15, weight: 0.15 },
   census_condition:      { tKey: "lr.comp_census",     max: 15, weight: 0.15 },
-  // Madurai's keys (madurai-flagship-v1)
-  status_severity:       { tKey: "Status severity",    max: 80, weight: 1   },
-  cultural_bonus:        { tKey: "Cultural anchor",    max: 35, weight: 1   },
-  confidence_multiplier: { tKey: "Source confidence",  max: 1,  weight: 1   },
+  // Flagship-scorer keys (Madurai + Mumbai)
+  status_severity:       { tKey: "lr.comp_severity",   max: 80, weight: 1   },
+  cultural_bonus:        { tKey: "lr.comp_cultural",   max: 35, weight: 1   },
+  confidence_multiplier: { tKey: "lr.comp_confidence", max: 1,  weight: 1   },
+};
+
+/** The flagship scorer reuses the key "size" with RAW values (4-25); the
+ *  Chennai shape stores pre-weighting values under the same key (x0.20,
+ *  /20). Rendering flagship size through Chennai's meta showed Powai as
+ *  "5 / 20" instead of 25 / 25 - disambiguate by shape. */
+const FLAGSHIP_SIZE_META = { tKey: "lr.comp_size_flagship", max: 25, weight: 1 };
+
+/** One-line plain-language explainer per flagship component - every
+ *  metric on the panel must explain itself. */
+const FLAGSHIP_EXPLAIN_KEYS: Record<string, string> = {
+  status_severity: "lr.explain_severity",
+  cultural_bonus: "lr.explain_cultural",
+  size: "lr.explain_size",
+  confidence_multiplier: "lr.explain_confidence",
 };
 
 function componentLabel(key: string, t: (k: string) => string): string {
@@ -478,9 +497,16 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
         <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-3">
           {t("lr.score_breakdown")}
         </h4>
+        {"status_severity" in wb.components && (
+          <p className="text-[10px] leading-snug text-slate-400 dark:text-slate-500 mb-2">
+            {t("lr.how_total")}
+          </p>
+        )}
         <div className="space-y-3">
           {Object.entries(wb.components).map(([key, rawValue]) => {
-            const meta = COMPONENT_META[key];
+            const isFlagshipShape = "status_severity" in wb.components;
+            const meta =
+              key === "size" && isFlagshipShape ? FLAGSHIP_SIZE_META : COMPONENT_META[key];
             const max = meta?.max ?? 100;
             const weight = meta?.weight ?? 1;
             const value = Number.isFinite(rawValue) ? rawValue * weight : 0;
@@ -500,6 +526,11 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
                     style={{ width: `${pct}%`, backgroundColor: color }}
                   />
                 </div>
+                {isFlagshipShape && FLAGSHIP_EXPLAIN_KEYS[key] && (
+                  <p className="text-[10px] leading-snug text-slate-400 dark:text-slate-500 mt-0.5">
+                    {t(FLAGSHIP_EXPLAIN_KEYS[key])}
+                  </p>
+                )}
               </div>
             );
           })}
@@ -595,14 +626,14 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
 
       {/* Methodology */}
       <div className="px-4 pb-4 text-xs text-slate-400 dark:text-slate-500 space-y-1">
-        <p>{t("lr.methodology")}</p>
-        <p>{t("lr.source_note")}</p>
+        <p>{t(wb.source === "flagship" ? "lr.methodology_flagship" : "lr.methodology")}</p>
+        <p>{t(wb.source === "flagship" ? "lr.source_note_flagship" : "lr.source_note")}</p>
       </div>
     </>
   );
 }
 
-export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, onClose }: UnifiedDetailPanelProps) {
+export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, cityHasRestorationCohort, onClose }: UnifiedDetailPanelProps) {
   const { t, language } = useLanguage();
   const closeAria = t("common.close_panel");
   const wardLookup = useWardLookup();
@@ -856,8 +887,17 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, o
           );
         })()}
 
-        {/* Restoration data (always shown when available) */}
+        {/* Restoration data (always shown when available); when the city
+            has a scored cohort but this body isn't in it, say so - absence
+            of a priority means "not assessed", never "fine". */}
         {restorationData && <RestorationSection wb={restorationData} />}
+        {!restorationData && cityHasRestorationCohort && (
+          <div className="px-4 pt-3 pb-1 border-t border-slate-100 dark:border-slate-800">
+            <p className="text-xs text-slate-500 dark:text-slate-400 italic">
+              {t("wb_panel.not_assessed")}
+            </p>
+          </div>
+        )}
         {resolvedWard && (
           <div className="px-4">
             <WardContext wardNumber={resolvedWard} />
@@ -1005,10 +1045,12 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, o
       <div className="p-4 grid grid-cols-2 gap-4">
         <Row label={t("wb_panel.type")} value={localizeType(props.type)} />
         <Row label={t("wb_panel.area_lost")} value={`~${pctLost}%`} />
-        <Row
-          label={t("wb_panel.historical_area")}
-          value={`~${props.historical_area_ha.toLocaleString()} ha`}
-        />
+        {typeof props.historical_area_ha === "number" && props.historical_area_ha > 0 && (
+          <Row
+            label={t("wb_panel.historical_area")}
+            value={`~${props.historical_area_ha.toLocaleString()} ha`}
+          />
+        )}
         {props.current_area_ha !== undefined ? (
           <Row
             label={t("wb_panel.surviving_area")}
