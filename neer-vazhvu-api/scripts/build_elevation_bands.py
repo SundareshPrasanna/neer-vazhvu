@@ -30,23 +30,91 @@ from pathlib import Path
 import numpy as np
 import rasterio
 import rasterio.features
-from shapely.geometry import shape, mapping
+from shapely.geometry import mapping, shape
 from shapely.ops import unary_union
 
 API_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = API_ROOT.parent
 sys.path.insert(0, str(API_ROOT))
 
-from app.cascade.catchments import _fetch_fabdem_mosaic  # noqa: E402
+from app.cascade.catchments import FABDEM_ASSET, _FETCH_TILE_DEG  # noqa: E402
 
 CITIES = {
     "mumbai": {
-        "bbox": (72.75, 18.85, 73.35, 19.55),  # the 9-corporation urban MMR
-        "boundary": "public/geojson/mumbai-corporations-2024.geojson",
+        "bbox": (72.75, 18.85, 73.35, 19.55),  # the urban MMR, all 9 corporations
         # band edges (metres); labels derive from consecutive pairs
         "bands": [0, 2, 5, 10, 20, 50, 100],
     },
 }
+
+# Sentinel for FABDEM's masked pixels (the sea). Land - including genuinely
+# 0-1 m reclaimed Mumbai - keeps its real value, so masking by sentinel is
+# the honest land/sea split. (v1 clipped to the official corporation
+# boundaries instead, which left the non-municipal land BETWEEN the nine
+# corporations - Tungareshwar, rural Bhiwandi taluka - without bands.)
+NODATA = -9999.0
+
+
+def fetch_fabdem_unmasked(bbox, out_path):
+    """Tiled FABDEM fetch like catchments._fetch_fabdem_mosaic, but with
+    masked (sea) pixels exported as NODATA instead of silently 0."""
+    import io
+    import math
+    import urllib.request
+    import zipfile
+
+    from rasterio.merge import merge as rio_merge
+
+    from app.gee.client import initialize_earth_engine
+
+    ee = initialize_earth_engine()
+    fab = ee.ImageCollection(FABDEM_ASSET).mosaic().rename("dem").unmask(NODATA)
+
+    minx, miny, maxx, maxy = bbox
+    nx = max(1, math.ceil((maxx - minx) / _FETCH_TILE_DEG))
+    ny = max(1, math.ceil((maxy - miny) / _FETCH_TILE_DEG))
+    tiles = []
+    tmp = out_path.parent / (out_path.stem + "_tiles")
+    tmp.mkdir(parents=True, exist_ok=True)
+    for j in range(ny):
+        for i in range(nx):
+            x0 = minx + i * _FETCH_TILE_DEG
+            y0 = miny + j * _FETCH_TILE_DEG
+            region = ee.Geometry.Rectangle(
+                [
+                    x0,
+                    y0,
+                    min(x0 + _FETCH_TILE_DEG, maxx),
+                    min(y0 + _FETCH_TILE_DEG, maxy),
+                ]
+            )
+            url = fab.clip(region).getDownloadURL(
+                {
+                    "scale": 30,
+                    "region": region,
+                    "format": "GEO_TIFF",
+                    "crs": "EPSG:4326",
+                }
+            )
+            raw = urllib.request.urlopen(url, timeout=300).read()
+            tile = tmp / f"t_{j}_{i}.tif"
+            if raw[:2] == b"PK":
+                z = zipfile.ZipFile(io.BytesIO(raw))
+                name = next(n for n in z.namelist() if n.endswith(".tif"))
+                tile.write_bytes(z.read(name))
+            else:
+                tile.write_bytes(raw)
+            tiles.append(tile)
+            print(f"  tile {j * nx + i + 1}/{nx * ny}")
+    srcs = [rasterio.open(t) for t in tiles]
+    mosaic, transform = rio_merge(srcs)
+    meta = srcs[0].meta.copy()
+    meta.update(height=mosaic.shape[1], width=mosaic.shape[2], transform=transform)
+    with rasterio.open(out_path, "w", **meta) as dst:
+        dst.write(mosaic)
+    for src in srcs:
+        src.close()
+
 
 SIMPLIFY_DEG = 0.0004  # ~44 m - two DEM cells; bands, not spot heights
 MIN_AREA_DEG2 = 4e-7  # ~0.5 ha - drop slivers
@@ -64,22 +132,20 @@ def main() -> int:
     if args.dem:
         dem_path = Path(args.dem)
     else:
-        dem_path = Path(tempfile.gettempdir()) / f"elevation_{args.city}_fabdem.tif"
+        dem_path = Path(tempfile.gettempdir()) / f"elevation_{args.city}_fabdem_v2.tif"
         if not dem_path.exists():
-            print(f"Fetching FABDEM mosaic for {args.city} {cfg['bbox']} ...")
-            _fetch_fabdem_mosaic(cfg["bbox"], dem_path)
+            print(
+                f"Fetching FABDEM mosaic (unmasked) for {args.city} {cfg['bbox']} ..."
+            )
+            fetch_fabdem_unmasked(cfg["bbox"], dem_path)
         else:
             print(f"Reusing cached mosaic {dem_path}")
-
-    boundary_fc = json.loads((REPO_ROOT / cfg["boundary"]).read_text())
-    land = unary_union([shape(f["geometry"]) for f in boundary_fc["features"]])
 
     with rasterio.open(dem_path) as src:
         dem = src.read(1).astype("float32")
         transform = src.transform
-        land_mask = rasterio.features.geometry_mask(
-            [mapping(land)], out_shape=dem.shape, transform=transform, invert=True
-        )
+        # Land = everything FABDEM defines; sea = the NODATA sentinel.
+        land_mask = dem > NODATA + 1
 
     edges = cfg["bands"]
     features = []
