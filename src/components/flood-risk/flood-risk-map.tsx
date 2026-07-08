@@ -9,6 +9,7 @@ import {
   Tooltip,
   useMap,
 } from "react-leaflet";
+import { ElevationBandsLayer } from "@/components/map/elevation-bands-layer";
 import { MapResizer } from "@/components/map-resizer";
 import type { Layer } from "leaflet";
 import L from "leaflet";
@@ -46,6 +47,7 @@ interface FloodRiskMapProps {
   onSelect: (feat: SelectedFloodFeature | null) => void;
   focusCenter?: [number, number];
   hiddenCategories?: Set<string>;
+  elevationData?: import("geojson").FeatureCollection | null;
 }
 
 /** Flies the map to a given center when it changes */
@@ -69,6 +71,7 @@ export function FloodRiskMap({
   onSelect,
   focusCenter,
   hiddenCategories,
+  elevationData,
 }: FloodRiskMapProps) {
   const { t } = useLanguage();
   const tiles = useMapTiles();
@@ -321,6 +324,7 @@ export function FloodRiskMap({
       <MapResizer />
       {focusCenter && <FlyToCenter center={focusCenter} />}
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+      <ElevationBandsLayer data={elevationData ?? null} />
       <FitToBounds
         bounds={geoJsonBounds(wardsGeo) ?? geoJsonBounds(hazardGeo)}
         resetKey={`flood:${wardsGeo?.features?.length ?? 0}`}

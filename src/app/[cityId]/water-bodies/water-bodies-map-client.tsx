@@ -9,7 +9,7 @@ import { ViewModeToggle, type ViewMode } from "@/components/water-bodies/view-mo
 import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { MapInfoButton } from "@/components/map/map-info-button";
-import { useElevationBands } from "@/components/map/elevation-bands";
+import { elevationLegendEntries, useElevationBands } from "@/components/map/elevation-bands";
 
 const ElevationBandsLayer = dynamic(
   () => import("@/components/map/elevation-bands-layer").then((m) => m.ElevationBandsLayer),
@@ -343,21 +343,13 @@ export default function WaterBodiesMapClient({
               {showElevation && (
                 <>
                   <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-600 dark:text-slate-300">
-                    {[
-                      ["#075985", "0-2 m"],
-                      ["#0ea5e9", "2-5 m"],
-                      ["#6ee7b7", "5-10 m"],
-                      ["#a3e635", "10-20 m"],
-                      ["#facc15", "20-50 m"],
-                      ["#d97706", "50-100 m"],
-                      ["#92400e", "100 m +"],
-                    ].map(([c, l]) => (
-                      <span key={l} className="inline-flex items-center gap-1">
-                        <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: c }} />
-                        {l}
-                      </span>
-                    ))}
-                  </div>
+                  {elevationLegendEntries(elevation.data).map(({ band, color }) => (
+                    <span key={band} className="inline-flex items-center gap-1">
+                      <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: color }} />
+                      {band}
+                    </span>
+                  ))}
+                </div>
                   <p className="text-[10px] leading-snug text-slate-500 dark:text-slate-400">
                     Ground height above sea level from satellite (FABDEM 30 m, buildings and
                     forests removed) - the terrain each water body drains. Read as bands, not

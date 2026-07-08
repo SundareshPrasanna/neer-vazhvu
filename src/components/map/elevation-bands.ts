@@ -44,3 +44,23 @@ export function useElevationBands(cityId: string, enabled: boolean) {
 
   return { data: enabled ? data : null, available: available === true };
 }
+
+export interface ElevationLegendEntry {
+  band: string;
+  color: string;
+}
+
+/** Legend entries derived from the loaded bands file - band labels differ
+ *  per city (Mumbai 0-2 m ... Bengaluru 700-840 m), so they must come
+ *  from the data, never be hardcoded at a call site. */
+export function elevationLegendEntries(
+  data: import("geojson").FeatureCollection | null,
+): ElevationLegendEntry[] {
+  if (!data) return [];
+  return [...data.features]
+    .sort((a, b) => Number(a.properties?.order ?? 0) - Number(b.properties?.order ?? 0))
+    .map((f) => ({
+      band: String(f.properties?.band ?? ""),
+      color: ELEVATION_BAND_COLORS[Number(f.properties?.order ?? 0)] ?? "#94a3b8",
+    }));
+}

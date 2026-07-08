@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { MapContainer, TileLayer, GeoJSON, Pane, useMap } from "react-leaflet";
 import { ElevationBandsLayer } from "@/components/map/elevation-bands-layer";
-import { useElevationBands } from "@/components/map/elevation-bands";
+import { elevationLegendEntries, useElevationBands } from "@/components/map/elevation-bands";
 import { CorporationBoundaries } from "@/components/map/corporation-boundaries";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import L from "leaflet";
@@ -344,18 +344,10 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
             {showElevation && (
               <>
                 <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-600 dark:text-slate-300">
-                  {[
-                    ["#075985", "0-2 m"],
-                    ["#0ea5e9", "2-5 m"],
-                    ["#6ee7b7", "5-10 m"],
-                    ["#a3e635", "10-20 m"],
-                    ["#facc15", "20-50 m"],
-                    ["#d97706", "50-100 m"],
-                    ["#92400e", "100 m +"],
-                  ].map(([c, l]) => (
-                    <span key={l} className="inline-flex items-center gap-1">
-                      <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: c }} />
-                      {l}
+                  {elevationLegendEntries(elevation.data).map(({ band, color }) => (
+                    <span key={band} className="inline-flex items-center gap-1">
+                      <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: color }} />
+                      {band}
                     </span>
                   ))}
                 </div>
