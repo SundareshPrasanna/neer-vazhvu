@@ -361,6 +361,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           comparisonStorage={waterEstimate.comparisonStorage}
           comparisonYear={waterEstimate.comparisonYear}
           comparisonIsApprox={waterEstimate.comparisonIsApprox}
+          observedTrendMcftPerDay={waterEstimate.observedTrendMcftPerDay}
           defaultConsumptionMld={config.defaultConsumptionMld ?? undefined}
           // null in the city config means "this city has no desalination" -
           // pass 0 so DaysLeftHero doesn't fall back to Chennai's 190 MLD.

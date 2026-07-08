@@ -62,8 +62,8 @@ export function snapshotToSummaries(
       currentStorage: storageMcft,
       capacity: capacityMcft,
       storagePct: Math.max(0, Math.min(100, pct)),
-      inflowCusecs: (reading?.inflow_cusecs as number | null | undefined) ?? 0,
-      outflowCusecs: (reading?.outflow_cusecs as number | null | undefined) ?? 0,
+      inflowCusecs: (reading?.inflow_cusecs as number | null | undefined) ?? null,
+      outflowCusecs: (reading?.outflow_cusecs as number | null | undefined) ?? null,
       rainfallMm: 0, // not tracked in v2 ingest yet
       isLive,
       noLiveDataReason: isLive
@@ -93,6 +93,10 @@ export interface CityWaterEstimate {
   seasonalAvgInflowMcftPerDay: number;
   comparisonStorage: number | null;
   comparisonYear: number | null;
+  /** Observed storage change (mcft/day, +/-) over the last 7 reporting
+   *  days, net of draw - derived from the daily storage record for feeds
+   *  that publish no inflow column. null when the record is too short. */
+  observedTrendMcftPerDay?: number | null;
   /** True when the reference reading is the nearest within a window
    *  rather than the exact same date (legacy weekly/monthly history). */
   comparisonIsApprox?: boolean;
@@ -241,6 +245,45 @@ export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWa
     month,
   );
 
+  // Observed 7-day storage trend: for storage-only bulletins (Pravah)
+  // the daily record itself shows the monsoon working - sum storage by
+  // date (only dates where every feed source reported) and take the
+  // per-day slope between the earliest and latest complete dates.
+  const eightDaysAgo = new Date(asOf);
+  eightDaysAgo.setDate(eightDaysAgo.getDate() - 7);
+  const { data: trendRows } = await supabase
+    .from("reservoir_daily_v2")
+    .select("date, source_code, storage_tmc")
+    .eq("city_id", config.cityId)
+    .in("source_code", sourceCodes)
+    .gte("date", eightDaysAgo.toISOString().slice(0, 10))
+    .lte("date", asOf);
+  let observedTrendMcftPerDay: number | null = null;
+  // "Complete" = every source that CAN report did (feedless sources like
+  // Vihar/Tulsi never appear in the bulletin and must not gate the trend).
+  const feedSourceCount = primary.filter((p) => p.hasPublicFeed !== false).length;
+  if (trendRows && trendRows.length > 0 && feedSourceCount > 0) {
+    const byDate = new Map<string, { sum: number; n: number }>();
+    for (const r of trendRows) {
+      const e = byDate.get(r.date as string) ?? { sum: 0, n: 0 };
+      e.sum += ((r.storage_tmc as number | null) ?? 0) * TMC_TO_MCFT;
+      e.n += 1;
+      byDate.set(r.date as string, e);
+    }
+    const complete = [...byDate.entries()]
+      .filter(([, v]) => v.n === feedSourceCount)
+      .sort(([a], [b]) => a.localeCompare(b));
+    if (complete.length >= 2) {
+      const [firstDate, first] = complete[0];
+      const [lastDate, last] = complete[complete.length - 1];
+      const spanDays =
+        (new Date(lastDate).getTime() - new Date(firstDate).getTime()) / 86_400_000;
+      if (spanDays >= 1) {
+        observedTrendMcftPerDay = (last.sum - first.sum) / spanDays;
+      }
+    }
+  }
+
   // Same-day storage comparison against the reference year (config
   // override, else last year). Guard: only comparable when the reference
   // day covers every source reporting today - Mumbai's 2019 backfill holds
@@ -272,6 +315,7 @@ export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWa
     comparisonStorage,
     comparisonYear: comparisonStorage !== null ? comparisonYear : null,
     comparisonIsApprox: false,
+    observedTrendMcftPerDay,
     lastUpdated: asOf,
   };
 }

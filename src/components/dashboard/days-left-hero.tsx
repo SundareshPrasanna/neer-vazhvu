@@ -17,6 +17,7 @@ interface DaysLeftHeroProps {
   comparisonStorage: number | null;
   comparisonYear: number | null;
   comparisonIsApprox?: boolean;
+  observedTrendMcftPerDay?: number | null;
   /** Place-specific default consumption (MLD). Defaults to Chennai's. */
   defaultConsumptionMld?: number;
   /** Place-specific default desalination (MLD). Defaults to Chennai's. */
@@ -113,6 +114,7 @@ export function DaysLeftHero({
   comparisonStorage,
   comparisonYear,
   comparisonIsApprox,
+  observedTrendMcftPerDay,
   defaultConsumptionMld,
   defaultDesalinationMld,
   consumptionSliderMax,
@@ -201,7 +203,13 @@ export function DaysLeftHero({
                 <span className="font-semibold">{formatDays(days.pessimistic, t)}</span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
-                {t("hero.no_inflow_note")}
+                {observedTrendMcftPerDay != null && Math.abs(observedTrendMcftPerDay) >= 1
+                  ? t(
+                      observedTrendMcftPerDay > 0
+                        ? "hero.no_inflow_rising"
+                        : "hero.no_inflow_falling",
+                    ).replace("{rate}", formatNumber(Math.round(Math.abs(observedTrendMcftPerDay))))
+                  : t("hero.no_inflow_note")}
               </p>
             </div>
           ) : (

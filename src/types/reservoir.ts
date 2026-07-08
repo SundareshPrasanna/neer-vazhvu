@@ -44,8 +44,10 @@ export interface ReservoirSummary {
   currentStorage: number;
   capacity: number;
   storagePct: number;
-  inflowCusecs: number;
-  outflowCusecs: number;
+  /** null = the source publishes no flow data (e.g. Pravah storage-only
+   *  bulletins) - render "no data", never 0. */
+  inflowCusecs: number | null;
+  outflowCusecs: number | null;
   rainfallMm: number;
   /** False when the city's config registers this reservoir but no live
    *  measurement is published for it (e.g. Madurai's Sothuparai Dam -

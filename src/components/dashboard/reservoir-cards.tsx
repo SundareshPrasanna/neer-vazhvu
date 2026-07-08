@@ -83,10 +83,20 @@ export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsP
               {/* Inflow/outflow */}
               <div className="flex flex-row justify-between mt-1.5 sm:mt-3 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">
                 <span>
-                  {t("dash.in_label")} <span className="font-medium text-green-600 dark:text-green-400">{formatNumber(r.inflowCusecs)}</span>
+                  {t("dash.in_label")}{" "}
+                  {r.inflowCusecs === null ? (
+                    <span className="italic text-slate-400">{t("dash.no_flow_data")}</span>
+                  ) : (
+                    <span className="font-medium text-green-600 dark:text-green-400">{formatNumber(r.inflowCusecs)}</span>
+                  )}
                 </span>
                 <span>
-                  {t("dash.out_label")} <span className="font-medium text-red-600 dark:text-red-400">{formatNumber(r.outflowCusecs)}</span>
+                  {t("dash.out_label")}{" "}
+                  {r.outflowCusecs === null ? (
+                    <span className="italic text-slate-400">{t("dash.no_flow_data")}</span>
+                  ) : (
+                    <span className="font-medium text-red-600 dark:text-red-400">{formatNumber(r.outflowCusecs)}</span>
+                  )}
                 </span>
               </div>
 
