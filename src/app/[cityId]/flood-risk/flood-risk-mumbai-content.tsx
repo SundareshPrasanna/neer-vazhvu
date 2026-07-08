@@ -48,6 +48,7 @@ export function FloodRiskMumbaiContent({ cityDisplayName }: Props) {
     showFlooding: true,
     show2005: false,
     showDrainage: false,
+    showElevation: false,
   });
   const toggle = (key: keyof typeof layerState) => () =>
     setLayerState((s) => ({ ...s, [key]: !s[key] }));
@@ -144,6 +145,44 @@ export function FloodRiskMumbaiContent({ cityDisplayName }: Props) {
                 Drains + nallas (OSM)
               </span>
             </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={layerState.showElevation}
+                onChange={toggle("showElevation")}
+                className="accent-sky-700"
+              />
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block w-2.5 h-2.5 rounded-sm bg-gradient-to-r from-sky-800 via-lime-400 to-amber-800" />
+                Ground elevation (FABDEM)
+              </span>
+            </label>
+            {layerState.showElevation && (
+              <div className="pl-6 space-y-1">
+                <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-600 dark:text-slate-300">
+                  {[
+                    ["#075985", "0-2 m"],
+                    ["#0ea5e9", "2-5 m"],
+                    ["#6ee7b7", "5-10 m"],
+                    ["#a3e635", "10-20 m"],
+                    ["#facc15", "20-50 m"],
+                    ["#d97706", "50-100 m"],
+                    ["#92400e", "100 m +"],
+                  ].map(([c, l]) => (
+                    <span key={l} className="inline-flex items-center gap-1">
+                      <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: c }} />
+                      {l}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-[10px] leading-snug text-slate-500 dark:text-slate-400">
+                  Ground height above sea level from satellite (FABDEM 30 m, buildings and
+                  forests removed). The blue bands are where water collects - most of BMC&apos;s
+                  chronic spots sit below 5 m. Read as bands, not spot heights (~2 m vertical
+                  accuracy).
+                </p>
+              </div>
+            )}
             </div>
           </div>
         </div>

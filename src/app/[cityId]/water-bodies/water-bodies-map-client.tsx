@@ -9,6 +9,12 @@ import { ViewModeToggle, type ViewMode } from "@/components/water-bodies/view-mo
 import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { MapInfoButton } from "@/components/map/map-info-button";
+import { useElevationBands } from "@/components/map/elevation-bands";
+
+const ElevationBandsLayer = dynamic(
+  () => import("@/components/map/elevation-bands-layer").then((m) => m.ElevationBandsLayer),
+  { ssr: false },
+);
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { RichBodyOverlay } from "@/components/water-bodies/rich-body-overlay";
 import { useLanguage } from "@/lib/i18n/context";
@@ -109,6 +115,10 @@ export default function WaterBodiesMapClient({
 
   // Persist toggle to the URL so the chosen view survives refresh and
   // shareable links open in the right mode.
+  // Ground-elevation bands (FABDEM) - self-hides for cities without the file.
+  const [showElevation, setShowElevation] = useState(false);
+  const elevation = useElevationBands(cityId, showElevation);
+
   const handleViewModeChange = (mode: ViewMode) => {
     setViewMode(mode);
     setHiddenCategories(new Set());
@@ -293,7 +303,9 @@ export default function WaterBodiesMapClient({
       ) : (
       /* Map + sidebar layout - identical to Chennai's water-bodies page */
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        <div className="relative flex-1 h-full">
+        <div className="relative h-[45vh] shrink-0 md:h-full md:flex-1 md:shrink">
+          {/* Mobile: explicit height - as a flex-basis-0 item next to the tall
+              sidebar this collapsed to 0px (same fix as the flood maps). */}
           <UnifiedMap
             viewMode={viewMode}
             scoredData={restorationData?.water_bodies ?? []}
@@ -309,10 +321,52 @@ export default function WaterBodiesMapClient({
           >
             {/* Region places (the MMR) overlay their municipal-corporation
                 boundaries as context. No-op for single-city places. */}
+            <ElevationBandsLayer data={elevation.data} />
             {tryGetPlaceConfig(cityId)?.placeKind === "region" && (
               <CorporationBoundaries cityId={cityId} />
             )}
           </UnifiedMap>
+          {elevation.available && (
+            <div className="absolute bottom-2 right-2 md:bottom-8 md:left-2.5 md:right-auto z-[1000] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-2.5 text-xs max-w-[46vw] md:max-w-[240px] space-y-1.5">
+              <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-700 dark:text-slate-300">
+                <input
+                  type="checkbox"
+                  checked={showElevation}
+                  onChange={() => setShowElevation((v) => !v)}
+                  className="accent-sky-700"
+                />
+                <span className="flex items-center gap-1.5">
+                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-gradient-to-r from-sky-800 via-lime-400 to-amber-800" />
+                  Ground elevation (FABDEM)
+                </span>
+              </label>
+              {showElevation && (
+                <>
+                  <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-600 dark:text-slate-300">
+                    {[
+                      ["#075985", "0-2 m"],
+                      ["#0ea5e9", "2-5 m"],
+                      ["#6ee7b7", "5-10 m"],
+                      ["#a3e635", "10-20 m"],
+                      ["#facc15", "20-50 m"],
+                      ["#d97706", "50-100 m"],
+                      ["#92400e", "100 m +"],
+                    ].map(([c, l]) => (
+                      <span key={l} className="inline-flex items-center gap-1">
+                        <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: c }} />
+                        {l}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-[10px] leading-snug text-slate-500 dark:text-slate-400">
+                    Ground height above sea level from satellite (FABDEM 30 m, buildings and
+                    forests removed) - the terrain each water body drains. Read as bands, not
+                    spot heights (~2 m vertical accuracy).
+                  </p>
+                </>
+              )}
+            </div>
+          )}
 
           {/* Legend overlay */}
           <div
