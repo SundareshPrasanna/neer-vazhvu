@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, CircleMarker, Tooltip, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Tooltip, Popup, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { FeatureCollection, Feature } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
@@ -226,6 +226,22 @@ export function FloodMumbaiLeafletMap({ center, zoom, layerState }: MapProps) {
               </>
             )}
           </Tooltip>
+          {/* Tooltips are hover-only; on phones a tap must open something. */}
+          <Popup>
+            <strong>{m.name || "(unnamed)"}</strong>
+            {m.depth_label && (
+              <>
+                <br />
+                <span style={{ fontSize: "11px" }}>26/7/2005: {m.depth_label}</span>
+              </>
+            )}
+            {m.note && (
+              <>
+                <br />
+                <span style={{ fontSize: "11px", color: "#64748b" }}>{m.note}</span>
+              </>
+            )}
+          </Popup>
         </CircleMarker>
       ))}
       {visibleHotspots.map((m) => (
@@ -252,6 +268,23 @@ export function FloodMumbaiLeafletMap({ center, zoom, layerState }: MapProps) {
               </>
             )}
           </Tooltip>
+          <Popup>
+            <strong>{m.name || "(unnamed point)"}</strong>
+            {m.ward && <span style={{ fontSize: "11px" }}> · Ward {m.ward}</span>}
+            <br />
+            <span style={{ fontSize: "11px", color: "#64748b" }}>{m.category_label}</span>
+            {m.location && (
+              <>
+                <br />
+                <span style={{ fontSize: "11px", color: "#64748b" }}>{m.location}</span>
+              </>
+            )}
+            <br />
+            <span style={{ fontSize: "10px", color: "#94a3b8", fontStyle: "italic" }}>
+              BMC publishes this spot inventory, not per-spot flood dates - event
+              history is a named gap we are pursuing.
+            </span>
+          </Popup>
         </CircleMarker>
       ))}
     </MapContainer>
