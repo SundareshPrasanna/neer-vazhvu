@@ -193,7 +193,16 @@ export default function WaterBodiesMapClient({
     if (!selected || !restorationData) return null;
     if (selected.kind === "current") {
       const osmId = selected.props.osm_id;
-      return restorationData.water_bodies.find((w) => w.osm_id === osmId) ?? null;
+      const name = (selected.props.name ?? "").toLowerCase();
+      return (
+        restorationData.water_bodies.find((w) => w.osm_id === osmId) ??
+        // Flagship-sourced rows (Mumbai) carry no osm_id - match the OSM
+        // polygon by name so clicking Powai still shows its score.
+        (name
+          ? restorationData.water_bodies.find((w) => w.name.toLowerCase() === name)
+          : undefined) ??
+        null
+      );
     }
     if (selected.kind === "scored") {
       return selected.scored;
@@ -367,6 +376,7 @@ export default function WaterBodiesMapClient({
             <UnifiedDetailPanel
               selected={selected}
               restorationData={selectedRestoration}
+              cityHasRestorationCohort={!!restorationData && restorationData.water_bodies.length > 0}
               lostNarrative={selectedLostNarrative}
               onClose={() => setSelected(null)}
             />

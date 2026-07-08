@@ -41,6 +41,10 @@ interface LostNarrativeEntry {
 interface UnifiedDetailPanelProps {
   selected: SelectedWaterBody;
   restorationData: ScoredWaterBody | null;
+  /** True when this city HAS a scored restoration cohort - lets the panel
+   *  say "not assessed" for bodies outside it (Tansa, Morbe...), so a
+   *  missing priority never reads as an omission or a clean bill. */
+  cityHasRestorationCohort?: boolean;
   /** Optional historical narrative from water-bodies-lost-{cityId}.json
    *  matched by name. Currently Bengaluru-only: renders the rich
    *  "what happened to this kere" note (Bellandur foam-and-fire,
@@ -595,14 +599,14 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
 
       {/* Methodology */}
       <div className="px-4 pb-4 text-xs text-slate-400 dark:text-slate-500 space-y-1">
-        <p>{t("lr.methodology")}</p>
-        <p>{t("lr.source_note")}</p>
+        <p>{t(wb.source === "flagship" ? "lr.methodology_flagship" : "lr.methodology")}</p>
+        <p>{t(wb.source === "flagship" ? "lr.source_note_flagship" : "lr.source_note")}</p>
       </div>
     </>
   );
 }
 
-export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, onClose }: UnifiedDetailPanelProps) {
+export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, cityHasRestorationCohort, onClose }: UnifiedDetailPanelProps) {
   const { t, language } = useLanguage();
   const closeAria = t("common.close_panel");
   const wardLookup = useWardLookup();
@@ -856,8 +860,17 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, o
           );
         })()}
 
-        {/* Restoration data (always shown when available) */}
+        {/* Restoration data (always shown when available); when the city
+            has a scored cohort but this body isn't in it, say so - absence
+            of a priority means "not assessed", never "fine". */}
         {restorationData && <RestorationSection wb={restorationData} />}
+        {!restorationData && cityHasRestorationCohort && (
+          <div className="px-4 pt-3 pb-1 border-t border-slate-100 dark:border-slate-800">
+            <p className="text-xs text-slate-500 dark:text-slate-400 italic">
+              {t("wb_panel.not_assessed")}
+            </p>
+          </div>
+        )}
         {resolvedWard && (
           <div className="px-4">
             <WardContext wardNumber={resolvedWard} />
