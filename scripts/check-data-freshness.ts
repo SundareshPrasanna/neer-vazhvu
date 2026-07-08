@@ -55,6 +55,14 @@ interface ExtraFeed {
 }
 const EXTRA_FEEDS: ExtraFeed[] = [
   {
+    id: "mmr-dam-storage",
+    cityId: "mumbai",
+    file: "public/data/mmr-dam-storage.json",
+    maxAgeDays: 4, // daily Pravah artifact; same tolerance as the DB feed
+    dateFrom: "json:_fetched",
+    note: "regional corporation cards' source-storage pills",
+  },
+  {
     id: "bmc-flood-spots",
     cityId: "mumbai",
     file: "public/data/mumbai-flood-hotspots.geojson",
