@@ -83,10 +83,25 @@ const COMPONENT_META: Record<
   industrial_proximity:  { tKey: "lr.comp_industrial", max: 14, weight: 0.14 },
   type_bonus:            { tKey: "lr.comp_type",       max: 15, weight: 0.15 },
   census_condition:      { tKey: "lr.comp_census",     max: 15, weight: 0.15 },
-  // Madurai's keys (madurai-flagship-v1)
-  status_severity:       { tKey: "Status severity",    max: 80, weight: 1   },
-  cultural_bonus:        { tKey: "Cultural anchor",    max: 35, weight: 1   },
-  confidence_multiplier: { tKey: "Source confidence",  max: 1,  weight: 1   },
+  // Flagship-scorer keys (Madurai + Mumbai)
+  status_severity:       { tKey: "lr.comp_severity",   max: 80, weight: 1   },
+  cultural_bonus:        { tKey: "lr.comp_cultural",   max: 35, weight: 1   },
+  confidence_multiplier: { tKey: "lr.comp_confidence", max: 1,  weight: 1   },
+};
+
+/** The flagship scorer reuses the key "size" with RAW values (4-25); the
+ *  Chennai shape stores pre-weighting values under the same key (x0.20,
+ *  /20). Rendering flagship size through Chennai's meta showed Powai as
+ *  "5 / 20" instead of 25 / 25 - disambiguate by shape. */
+const FLAGSHIP_SIZE_META = { tKey: "lr.comp_size_flagship", max: 25, weight: 1 };
+
+/** One-line plain-language explainer per flagship component - every
+ *  metric on the panel must explain itself. */
+const FLAGSHIP_EXPLAIN_KEYS: Record<string, string> = {
+  status_severity: "lr.explain_severity",
+  cultural_bonus: "lr.explain_cultural",
+  size: "lr.explain_size",
+  confidence_multiplier: "lr.explain_confidence",
 };
 
 function componentLabel(key: string, t: (k: string) => string): string {
@@ -482,9 +497,16 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
         <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-3">
           {t("lr.score_breakdown")}
         </h4>
+        {"status_severity" in wb.components && (
+          <p className="text-[10px] leading-snug text-slate-400 dark:text-slate-500 mb-2">
+            {t("lr.how_total")}
+          </p>
+        )}
         <div className="space-y-3">
           {Object.entries(wb.components).map(([key, rawValue]) => {
-            const meta = COMPONENT_META[key];
+            const isFlagshipShape = "status_severity" in wb.components;
+            const meta =
+              key === "size" && isFlagshipShape ? FLAGSHIP_SIZE_META : COMPONENT_META[key];
             const max = meta?.max ?? 100;
             const weight = meta?.weight ?? 1;
             const value = Number.isFinite(rawValue) ? rawValue * weight : 0;
@@ -504,6 +526,11 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
                     style={{ width: `${pct}%`, backgroundColor: color }}
                   />
                 </div>
+                {isFlagshipShape && FLAGSHIP_EXPLAIN_KEYS[key] && (
+                  <p className="text-[10px] leading-snug text-slate-400 dark:text-slate-500 mt-0.5">
+                    {t(FLAGSHIP_EXPLAIN_KEYS[key])}
+                  </p>
+                )}
               </div>
             );
           })}
