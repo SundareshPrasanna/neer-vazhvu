@@ -1005,10 +1005,12 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, o
       <div className="p-4 grid grid-cols-2 gap-4">
         <Row label={t("wb_panel.type")} value={localizeType(props.type)} />
         <Row label={t("wb_panel.area_lost")} value={`~${pctLost}%`} />
-        <Row
-          label={t("wb_panel.historical_area")}
-          value={`~${props.historical_area_ha.toLocaleString()} ha`}
-        />
+        {typeof props.historical_area_ha === "number" && props.historical_area_ha > 0 && (
+          <Row
+            label={t("wb_panel.historical_area")}
+            value={`~${props.historical_area_ha.toLocaleString()} ha`}
+          />
+        )}
         {props.current_area_ha !== undefined ? (
           <Row
             label={t("wb_panel.surviving_area")}
