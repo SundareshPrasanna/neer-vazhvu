@@ -37,19 +37,42 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _rich_body_zones import load_body_zones, ZONE_BODY, ZONE_HALO  # noqa: E402
 
-DEFAULT_OVERTURE_RELEASE = "2026-04-15.0"
 DEFAULT_ANOMALY_PCT = 20.0  # any zone changing > this triggers review
+
+# Overture retires old releases from the public bucket (the pinned
+# 2026-04-15.0 vanished and broke the June refresh), so the default is
+# discovered from the bucket's own listing rather than pinned.
+OVERTURE_LIST_URL = (
+    "https://overturemaps-us-west-2.s3.amazonaws.com/"
+    "?list-type=2&prefix=release/&delimiter=/"
+)
+
+
+def latest_overture_release() -> str:
+    """Newest release id in the public bucket (ids sort as dates)."""
+    import re
+    import urllib.request
+
+    with urllib.request.urlopen(OVERTURE_LIST_URL, timeout=60) as resp:
+        xml = resp.read().decode()
+    releases = re.findall(r"<Prefix>release/([^/<]+)/</Prefix>", xml)
+    if not releases:
+        raise RuntimeError(
+            f"no releases found at {OVERTURE_LIST_URL} - bucket layout changed?"
+        )
+    return sorted(releases)[-1]
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--body-id", default="pallikaranai")
-    ap.add_argument("--release", default=DEFAULT_OVERTURE_RELEASE)
+    ap.add_argument("--release", default=None,
+                    help="Overture release id; default = newest in the bucket")
     ap.add_argument("--anomaly-pct", type=float, default=DEFAULT_ANOMALY_PCT,
                     help="Flag any zone whose count changes by more than this percent vs the previous JSON.")
     args = ap.parse_args()
     body_id = args.body_id
-    release = args.release
+    release = args.release or latest_overture_release()
     overture_url = (
         f"s3://overturemaps-us-west-2/release/{release}/"
         f"theme=buildings/type=building/*"
