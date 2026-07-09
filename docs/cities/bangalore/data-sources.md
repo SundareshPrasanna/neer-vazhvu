@@ -110,14 +110,14 @@ Notable entries:
 
 13 of these are onboarded as **rich-data deep-zoom bodies** (see below).
 
-### Lake names - ATREE/CSEI named-lake census (catchment atlas)
+### Lake names - three-source named-lake join (catchment atlas)
 
 | | |
 |---|---|
-| **Source** | ATREE / Centre for Social and Environmental Innovation, "Map of Lakes in Bengaluru Urban and Rural Districts" via [OpenCity](https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area) (1,349 named lake polygons, open license) |
-| **Why** | ~67% of OSM Bengaluru water polygons are unnamed; the Jal Dharohar census carries no name field (only village/ward); Nominatim only yields locality guesses. ATREE/CSEI is the canonical named Bengaluru lake census. |
-| **Method** | `scripts/name-bangalore-water-bodies.py` - polygon-overlap join onto OSM polygons (accept IoU >= 0.2, or OSM-mostly-inside-ref with a reverse-overlap guard). 446 real toponyms backfilled with `name_source = "ATREE-CSEI"` + `name_match_iou`; OSM-native names never overwritten. Bengaluru source 19% -> 43% named. |
-| **Output** | names written into `bangalore-water-bodies-current.geojson`; re-synced onto the cascade lake layer by `app/cascade/enrich_names.py` (no re-delineation needed). Raw KMZ/KML under `scripts/data-raw/bangalore/`. |
+| **Sources** | 1. **ATREE-CSEI** - "Map of Lakes in Bengaluru Urban and Rural Districts" via [OpenCity](https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area) (1,349 named lake polygons, open). 2. **BBMP-Masterlist** - BBMP lake masterlist via OpenCity (181 named polygons inside BBMP limits). 3. **KGIS-MI-Tanks** - Karnataka WRIS (KWRIS) open GeoServer layer `KA:MI_Tanks`, the state Minor Irrigation tank register (3,419 named tank points statewide; 328 in the Bengaluru bbox), from `https://water.karnataka.gov.in/geoserver/KA/ows` (no auth). |
+| **Why** | ~67% of OSM Bengaluru water polygons are unnamed; the Jal Dharohar census carries no name field (only village/ward); Nominatim only yields locality guesses. ATREE/CSEI is the canonical named lake census; BBMP + KWRIS MI_Tanks fill rural/fringe tanks ATREE thins out on. |
+| **Method** | `scripts/name-bangalore-water-bodies.py` - priority-ordered spatial join onto still-unnamed OSM polygons. Polygon sources (ATREE, BBMP): overlap join, accept IoU >= 0.2 or OSM-mostly-inside-ref with a reverse-overlap guard, `name_match_iou`. Point source (MI_Tanks): point-in-polygon or within 15 m, `name_match_m`. Each name carries its `name_source`; OSM-native names never overwritten; higher-priority source wins; idempotent (re-runs touch only changed names). Backfilled 446 ATREE + 1 BBMP + 24 MI_Tanks. |
+| **Output** | names written into `bangalore-water-bodies-current.geojson` (source of truth, 848/1,897 = 44% named); re-synced onto the cascade lake + node layers by `app/cascade/enrich_names.py` (no re-delineation needed; also refreshes `drains_to_name`). Raw sources committed under `scripts/data-raw/bangalore/` (ATREE KMZ, BBMP KML, `kwris-mi-tanks-bengaluru.geojson` snapshot). Still unnamed: rural tanks absent from all three sources; the gated KGIS Tank Information System would extend coverage further. |
 
 Powers the **Lake Catchment Atlas** ("Catchments" view on `/bangalore/water-bodies`): per-lake own/received/total catchment, feeder streams, downstream flow path, and rooftop-harvest potential, delineated from FABDEM 30 m + WhiteboxTools. Downstream rivers (Arkavati / Vrishabhavathi / Dakshina Pinakini) named by snapping each terminal lake's flow path to `bangalore-rivers.geojson`. Full methodology: [docs/methodology/catchment-atlas-v1.md](../../methodology/catchment-atlas-v1.md).
 

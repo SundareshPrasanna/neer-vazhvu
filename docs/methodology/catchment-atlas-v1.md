@@ -30,7 +30,7 @@ The cascade graph is a fast district-scale skeleton; the catchment atlas is the 
 | Buildings | Overture Maps building footprints (via DuckDB over S3 parquet) | rooftop-harvest estimate |
 | Rainfall | IMD long-period annual normals, per district | rooftop-harvest estimate |
 | Rivers | `{city}-rivers.geojson` | downstream-river naming |
-| Lake names | OSM, plus authoritative open sources where available (Bengaluru: ATREE/CSEI named-lake census on OpenCity) | see section 6 |
+| Lake names | OSM, plus authoritative open sources where available (Bengaluru: ATREE/CSEI census + BBMP masterlist on OpenCity, KWRIS `KA:MI_Tanks` GeoServer) | see section 6 |
 
 ## 3. Delineation algorithm (`catchments_fabdem_wbt_v1`)
 
@@ -65,7 +65,7 @@ The API route `src/app/api/cascade/[cityId]/catchment/route.ts` serves `{ catchm
 
 OSM leaves a large share of bodies unnamed (Chennai ~78%, Bengaluru ~67% at ingest; Madurai ~3% after an earlier Nominatim backfill). Two name fixes, both keyed by `osm_id` and reconciled by `app/cascade/enrich_names.py` (called automatically at the end of `build_catchments`, and runnable standalone):
 
-- **Lake names from an authoritative source.** `scripts/name-bangalore-water-bodies.py` joins the ATREE/CSEI named-lake census (1,349 named polygons, open on OpenCity) to OSM polygons by polygon overlap (accept IoU >= 0.2, or OSM-mostly-inside-ref with a reverse-overlap guard so a small pond inside a big lake's outline is not mislabelled). 446 real toponyms backfilled into the Bengaluru source with `name_source` + `name_match_iou` provenance; OSM-native names are never overwritten. Bengaluru source 19% -> 43% named; cascade lakes 332 -> 752 named. Chennai's only named-polygon source (OpenCity 2019) recovers ~101 and is deferred pending Wikidata flagships + the Sep-2025 WELL Labs datajam.
+- **Lake names from authoritative sources.** `scripts/name-bangalore-water-bodies.py` runs a priority-ordered join of three named open sources onto still-unnamed OSM polygons. Polygon sources - ATREE/CSEI named-lake census (1,349 polygons) then BBMP masterlist (181) - join by overlap (accept IoU >= 0.2, or OSM-mostly-inside-ref with a reverse-overlap guard so a small pond inside a big lake's outline is not mislabelled). Point source - KWRIS `KA:MI_Tanks` open GeoServer (3,419 statewide tank points; 328 in the Bengaluru bbox) - joins by point-in-polygon (or within 15 m). Each name carries `name_source` (`ATREE-CSEI` / `BBMP-Masterlist` / `KGIS-MI-Tanks`) plus `name_match_iou` (polygon) or `name_match_m` (point); OSM-native names are never overwritten; the higher-priority source wins; the pass is idempotent. Backfilled 446 ATREE + 1 BBMP + 24 MI_Tanks into the Bengaluru source (44% named); cascade lakes 778/1,025 named. Chennai's only named-polygon source (OpenCity 2019) recovers ~101 and is deferred pending Wikidata flagships + the Sep-2025 WELL Labs datajam.
 - **River names.** For each river-terminal lake, snap its downstream flow path to the nearest named river in `{city}-rivers.geojson` (within 0.5 km - the path follows the real channel, so a true drain meets the river at ~0 m). Names Chennai 133 / Madurai 52 / Bengaluru 109 terminal lakes. Lakes whose path stays far from any named river (off-map flows) honestly show no river name.
 
 ## 7. Validation
@@ -103,5 +103,7 @@ python scripts/name-bangalore-water-bodies.py
 - Hawker L. et al. (2022). FABDEM: a 30 m global map of elevation with forests and buildings removed. *Environmental Research Letters* 17(2). [data.bris FABDEM](https://data.bris.ac.uk/data/dataset/25wfy0f9ukoge2gs7a5mqpq2j7)
 - Lindsay J.B. (2016). WhiteboxTools geospatial analysis. [whiteboxgeo.com](https://www.whiteboxgeo.com/)
 - ATREE / CSEI. Map of Lakes in Bengaluru Urban and Rural Districts. [OpenCity](https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area)
+- BBMP. Lakes Masterlist. [OpenCity](https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area)
+- Karnataka WRIS (KWRIS) / ACIWRM. Minor Irrigation Tanks (`KA:MI_Tanks`), open GeoServer WFS. [water.karnataka.gov.in](https://water.karnataka.gov.in/geoserver/KA/ows)
 - Overture Maps Foundation. Buildings theme. [overturemaps.org](https://overturemaps.org/)
 - Hyderabad Urban Lab. Hyderabad Lake Atlas (quality benchmark). [lakeatlas.hyderabad.urbanobservatory.in](https://lakeatlas.hyderabad.urbanobservatory.in/)

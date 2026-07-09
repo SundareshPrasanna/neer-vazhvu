@@ -1079,6 +1079,12 @@ export function CityAboutContent({
                 frequency="periodic (manual refresh)"
               />
               <DataSource
+                name="Lake names - ATREE/CSEI + BBMP masterlist + KWRIS MI_Tanks"
+                url="https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area"
+                description="~67% of OSM water polygons ship unnamed. Real toponyms are backfilled by a priority-ordered spatial join of three named open sources onto still-unnamed polygons: the ATREE/CSEI named-lake census (1,349 polygons) and BBMP lakes masterlist (181) by polygon overlap, then Karnataka WRIS's KA:MI_Tanks Minor-Irrigation register (open GeoServer, 328 tank points in the Bengaluru bbox) by point-in-polygon. Every name carries its source + match-confidence; OSM-native names are never overwritten. The remaining unnamed bodies are honestly left blank rather than given a guessed name."
+                frequency="periodic (re-run on source refresh)"
+              />
+              <DataSource
                 name="Harini Nagendra - Nature in the City: Bengaluru (OUP 2016)"
                 url="https://global.oup.com/academic/product/nature-in-the-city-9780199465927"
                 description="Canonical academic source for Bengaluru kere history: ~280 named kere in 19th-century Greater Bengaluru gazetteers, ~100 functional today. The 9 fully-lost / severely-reduced bodies surfaced in our lost-narrative overlay (Dharmambudhi -> Majestic, Sampangi -> Sri Kanteerava, Karanji Anjaneya -> Bishop Cotton, etc.) are anchored on Nagendra's documentation."
