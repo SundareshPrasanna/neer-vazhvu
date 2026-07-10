@@ -159,7 +159,10 @@ async def _scrape_with_retries(max_attempts: int) -> ScrapeResult:
 
 
 def _print_readings(result: ScrapeResult) -> None:
-    print(f"  Got {len(result.readings)} reservoir readings (latest {result.date})", flush=True)
+    print(
+        f"  Got {len(result.readings)} reservoir readings (latest {result.date})",
+        flush=True,
+    )
     for r in result.readings:
         print(
             f"    {r.source_code:<10} {r.date}  {r.storage_tmc} TMC  "
