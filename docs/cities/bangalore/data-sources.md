@@ -7,16 +7,17 @@ Bengaluru is the third onboarded city after Chennai and Madurai. The data landsc
 
 Sources below are organised by feature. The Madurai documentation principle on absolute-absence claims (hedge with "no known public X") applies here too.
 
-## Reservoir Levels - TN Agriculture (4 upstream Cauvery reservoirs)
+## Reservoir Levels - KWRIS / Karnataka WRIS (4 upstream Cauvery reservoirs)
 
 | | |
 |---|---|
-| **Source** | [Tamil Nadu Agriculture Reservoir Status](https://tnagriculture.in/ARS/home/reservoir) - same source Madurai uses, scraped for the 4 Karnataka-side Cauvery reservoirs (KRS, Hemavathi, Kabini, Harangi) |
-| **Method** | HTML scrape (handled in `neer-vazhvu-api/app/scrapers/tn_pwd_reservoirs.py`) |
-| **Frequency** | Daily |
+| **Source** | [Karnataka WRIS reservoir feed](https://water.karnataka.gov.in/geoserver/KA/ows) - the open GeoServer layer `KA:reservoir_landing`, Karnataka's own daily storage feed for its reservoirs (KRS, Hemavathi, Kabini, Harangi, keyed on ReservoirID 6/5/7/4) |
+| **Method** | WFS GeoJSON pull (handled in `neer-vazhvu-api/app/scrapers/kwris_reservoirs.py`); each reservoir's own observation `Date` is recorded verbatim, so a stale feed writes its real older date rather than a fake "today" |
+| **Frequency** | Daily, via the local scheduled job (`~/.local/neervazhvu-ops/`) - KWRIS's GeoServer may block datacenter runner IPs, so it runs from a residential IP alongside CMWSSB/Pravah |
 | **Coverage** | KRS (48,400 mcft FRL), Hemavathi/Gorur (35,700), Kabini/Beechanahalli (19,520), Harangi (8,500) |
-| **Fields** | Storage (mcft), level (ft), inflow/outflow (cusecs), gross/dead storage |
-| **Table** | `reservoir_daily` (city-keyed, city_id='bangalore') + `reservoir_history_v2` for the dated archive |
+| **Fields** | Storage (TMC), % of design FRL, level (ft), inflow/outflow (cusecs) |
+| **Table** | `reservoir_daily_v2` (PK `city_id`,`source_code`,`date`; `city_id='bangalore'`, `source='kwris_scrape'`) |
+| **Why KWRIS, not TN Agriculture** | Bengaluru previously drew these from the TN Agriculture page (still used for Madurai's Vaigai/Mullaperiyar). But those are Tamil Nadu's figures for Karnataka's dams, published for downstream Cauvery release-monitoring: they ran ~12-30% below Karnataka's native numbers, and the archive served a stale page for missing dates (fake flatlines). KWRIS is Karnataka's own authority for its own dams. History before the 2026-07 cutover remains from the TN-Agri feed (`source='tn_pwd_scrape'`); KWRIS writes going forward. |
 
 **Why these reservoirs are flagged `isPrimaryDrinkingSource: false`:** they feed irrigation across Karnataka, drinking water for Mysuru and Mandya, Bengaluru drinking water (Stage I-V via T.K. Halli), and the inter-state release to Tamil Nadu under the 2018 Supreme Court order. Bengaluru is one off-take among many. Dividing total upstream storage by Bengaluru's daily demand would overstate runway by an order of magnitude. So the dashboard hero is `cauvery-pumping`, not `days-left`.
 

@@ -8,7 +8,7 @@ The detailed source-by-source breakdown lives in per-city files. Each file docum
 
 - [docs/cities/chennai/data-sources.md](docs/cities/chennai/data-sources.md) - Chennai (CMWSSB reservoirs, OpenCity groundwater, CFLOWS flood, CRRT, etc.)
 - [docs/cities/madurai/data-sources.md](docs/cities/madurai/data-sources.md) - Madurai (TN Agriculture ARS, ADB TNUFIP IEE, CGWB Year Book, Vencatesan/DHAN water bodies, CPCB NWMP Vaigai, etc.)
-- [docs/cities/bangalore/data-sources.md](docs/cities/bangalore/data-sources.md) - Bengaluru (4 upstream Cauvery reservoirs via TN Agriculture / WRIS, IISc Groundwater Outlook 2025, CGWB block GWR via WRIS GEC 2024, OpenCity tanker surveys, IMD gridded rainfall, 13 flagship water bodies, etc.)
+- [docs/cities/bangalore/data-sources.md](docs/cities/bangalore/data-sources.md) - Bengaluru (4 upstream Cauvery reservoirs via KWRIS / Karnataka WRIS, IISc Groundwater Outlook 2025, CGWB block GWR via WRIS GEC 2024, OpenCity tanker surveys, IMD gridded rainfall, 13 flagship water bodies, etc.)
 - [docs/cities/mumbai/data-sources.md](docs/cities/mumbai/data-sources.md) - Mumbai/MMR (Maharashtra WRD Pravah daily reservoir bulletin, CWC weekly bulletins 2015-2025 backfill, BMC ESR/Climate Budget/RTI manuals, Praja Foundation RTI ward tables, MPCB water-quality series, WRD red/blue flood-line sheets, allocation instruments incl. WRD GRs + STEM board minutes, etc.)
 
 Per-city *features* live alongside in the same folder: [docs/cities/chennai/features.md](docs/cities/chennai/features.md), [docs/cities/madurai/features.md](docs/cities/madurai/features.md), [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md), and [docs/cities/mumbai/features.md](docs/cities/mumbai/features.md).
@@ -28,7 +28,7 @@ A contributor cheat-sheet for what each city has covered. If you're adding a new
 | Domain | Chennai | Madurai | Bengaluru | Mumbai |
 |---|---|---|---|---|
 | Hero pattern | days-left (reservoirs ARE supply) | allocation (irrigation-primary dams) | cauvery-pumping (lift vs Stage design) | days-left, labelled an upper bound (whole-dam storage vs BMC share); rain scenarios collapsed (no public inflow data) |
-| Reservoir daily | CMWSSB scrape | TN Agriculture ARS scrape | TN Agriculture ARS scrape (4 upstream Cauvery: KRS, Hemavathi, Kabini, Harangi; all isPrimaryDrinkingSource=false) | WRD Pravah daily bulletin (5 of 7 BMC lakes; Vihar/Tulsi have no public feed) + CWC weekly 2015-2025 backfill |
+| Reservoir daily | CMWSSB scrape | TN Agriculture ARS scrape | KWRIS / Karnataka WRIS GeoServer (4 upstream Cauvery: KRS, Hemavathi, Kabini, Harangi; all isPrimaryDrinkingSource=false; native KA feed replacing the second-hand TN-Agri numbers, 2026-07 cutover) | WRD Pravah daily bulletin (5 of 7 BMC lakes; Vihar/Tulsi have no public feed) + CWC weekly 2015-2025 backfill |
 | Weather daily | Open-Meteo + NASA POWER | Same | Same | Same |
 | Long-term rainfall | IMD gridded (Chennai grid 13.0/80.0) | IMD gridded (Madurai grid 9.9/78.0) | IMD gridded (Bangalore grid 13.0/77.5; 1970-2025; 843 mm long-term annual mean) | IMD gridded (grid 19.0/73.0) + all cities now carry the daily Open-Meteo provisional layer |
 | Groundwater wards | OpenCity ward-monthly choropleth | (Not surfaced - too sparse to interpolate) | (Not surfaced - 13 stations across 369 wards too sparse to IDW) | (Not surfaced - excluded from CGWB assessment; Year Book wells only) |
