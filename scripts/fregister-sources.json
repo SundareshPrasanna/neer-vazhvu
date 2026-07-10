@@ -1,0 +1,14 @@
+{
+  "_note": "KSPCB 'F-register' = the district/Regional-Office register of consented industries (Water/Air Act consent), as on 31-03-2019. Published as scanned PDFs. Used for the Arkavathi-basin industrial-register accountability layer (per-taluk counts on the Gaps layer + basin denominator in the PRS Industrial tab). Counts are OCR-extracted and approximate. See scripts/build_fregister.py.",
+  "base_url": "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/",
+  "as_on": "2019-03-31",
+  "regional_offices": {
+    "Ramanagara":   { "files": ["Ramanagara.pdf"], "basin": true, "maps_to_units": ["ramanagara", "kanakapura", "channapatna", "magadi", "harohalli"], "note": "per-taluk split is clean here" },
+    "Nelamangala":  { "files": ["Nelamangala.pdf", "Nelamangala_1.pdf"], "basin": true, "maps_to_units": ["nelamangala"], "note": "Arkavathi headwaters" },
+    "Doddaballapura": { "files": ["Doddaballapura.pdf", "Doddaballapura_1.pdf", "Doddaballapura_2.pdf"], "basin": true, "maps_to_units": ["doddaballapura"], "note": "Arkavathi headwaters" },
+    "Peenya":       { "files": ["Peenya.pdf", "Peenya_1.pdf", "Peenya_2.pdf"], "basin": true, "maps_to_units": ["bbmp"], "note": "Vrishabhavathi valley - the basin's industrial core" },
+    "Dasarahalli":  { "files": ["Dasarahalli.pdf"], "basin": true, "maps_to_units": ["bbmp"], "note": "Vrishabhavathi valley (NW Bengaluru)" },
+    "Bommanahalli": { "files": ["Bommanahalli.pdf"], "basin": false, "note": "SE Bengaluru -> K&C valley / Dakshina Pinakini, NOT Arkavathi - excluded" },
+    "Yelahanka":    { "files": ["Yelahanka.pdf", "Yalahanka_compressed.pdf"], "basin": false, "note": "N Bengaluru - straddles Arkavathi vs Pennar - excluded pending clean split" }
+  }
+}
