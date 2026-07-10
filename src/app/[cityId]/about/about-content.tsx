@@ -305,7 +305,7 @@ export function CityAboutContent({
                 </li>
               </ul>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
-                What the dashboard <span className="font-semibold">does</span> show: the Cauvery Pumping hero (2,293 MLD installed across Stages I-V / 6 WTPs, ~1,500 MLD delivered, 95 km / 500 m lift, 36% NRW, ~14M served), live daily storage at the 4 upstream Karnataka dams (TN Agri / TNAU reservoir page, which lists them alongside the TN reservoirs because Cauvery is shared), 8 years of daily history per dam (2018-today), 14-day AutoARIMA forecasts per dam, and the Stage V under-delivery flag from The Ken (Feb 2026: ~400 MLD actual vs 775 MLD design).
+                What the dashboard <span className="font-semibold">does</span> show: the Cauvery Pumping hero (2,293 MLD installed across Stages I-V / 6 WTPs, ~1,500 MLD delivered, 95 km / 500 m lift, 36% NRW, ~14M served), live daily storage at the 4 upstream Karnataka dams (from Karnataka&apos;s own KWRIS reservoir feed - the state&apos;s native numbers for its own dams, which read higher and fresher than Tamil Nadu&apos;s downstream-monitoring figures we used earlier), 8 years of daily history per dam (2018-today, pre-2026-07 history from the TN Agriculture feed), 14-day AutoARIMA forecasts per dam, and the Stage V under-delivery flag from The Ken (Feb 2026: ~400 MLD actual vs 775 MLD design).
               </p>
             </SubSection>
           )}

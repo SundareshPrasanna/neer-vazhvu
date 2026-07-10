@@ -328,11 +328,13 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
   // Bengaluru-specific daily briefing - template-based for V1, with an
   // open slot for a later Claude-pipeline AI uplift. Renders just below
   // the city badge row, above the Cauvery Pumping hero.
+  // Freshness = reservoir snapshot date (asOf), not waterEstimate.lastUpdated
+  // which is null for Bengaluru (no primary drinking source).
   const bangaloreBriefing =
     cityId === "bangalore"
       ? buildBangaloreBriefing(
           summaries,
-          waterEstimate.lastUpdated ? formatDate(waterEstimate.lastUpdated) : null,
+          snapshot.asOf ? formatDate(snapshot.asOf) : null,
         )
       : null;
 
