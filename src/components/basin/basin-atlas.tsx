@@ -168,7 +168,29 @@ interface PrsData {
   river: string;
   stretchName: string;
   comparison: { y2020: { length_km: number; priority: string }; y2025: { length_km: number; priority: string } };
-  conclusion: string;
+  /** Legacy lead paragraph. Superseded by statusLine + statusFacts (Paani
+   *  Phase-1 review asked for structured facts over prose); rendered only
+   *  when statusFacts is absent. */
+  conclusion?: string;
+  /** Plain-language one-liner under the 2020/2025 bars, e.g. "The polluted
+   *  stretch has expanded by nearly 38 km while deteriorating from Priority
+   *  III to Priority I." */
+  statusLine?: string;
+  /** Structured Current Status facts (stretch, length, classification,
+   *  restoration target), rendered as label/value rows. */
+  statusFacts?: { label: string; value: string }[];
+  /** "Cite this Data Source" link - the canonical reference for the PRS
+   *  classification (mirrored copy preferred so the link never breaks). */
+  citeSource?: { url: string; label?: string };
+  /** "Key Terms Used on This Page" popup: full forms + context for CPCB,
+   *  PRS, MPR, BOD, priority classes etc. */
+  keyTerms?: { term: string; full: string; note?: string }[];
+  /** Governance block: who is accountable for restoring this stretch. */
+  governance?: {
+    rows: { label: string; value: string }[];
+    actionPlan?: { url: string; label?: string };
+    note?: string;
+  };
   growthNote?: string;
   priorityNote?: string;
   /** One-line "what this is" - the MPR-overview context line. */
@@ -476,6 +498,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     // different floors be combined (e.g. the polluted stretch + treatment gaps).
     // Fall back to defaultOn if the toggle key is missing (a layer added after
     // this state was initialised), so a default-on layer is never silently hidden.
+    // Exception (Paani Phase-1 review): the polluted stretch is not a resting
+    // layer - it renders while the PRS panel is open ("Explore the polluted
+    // stretch"), on top of whatever the checkbox says, and hides again when
+    // the panel closes unless the user has checked it explicitly.
+    if (l.prs && selectedPrs) return true;
     return enabled[l.family] ?? l.defaultOn;
   }
 
@@ -507,8 +534,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         );
       }
     }
+    // selectedPrs is a dep because Explore-the-stretch can be the first thing
+    // that makes the (default-off) PRS layer renderable - see shouldRender.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, focusedFloor, selectedRiverId]);
+  }, [enabled, focusedFloor, selectedRiverId, selectedPrs]);
 
   // What the map frames: the selected river's sub-catchments, or the whole
   // basin boundary when nothing is selected (the default). Depends only on the
@@ -584,6 +613,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   );
 
   const visibleLayers = orderedLayers.filter(shouldRender);
+  // The basin has a PRS story when a prs layer is declared and its panel
+  // content has loaded - this gates the "Explore the polluted stretch" entry
+  // point, which must be offered even while the stretch itself is hidden
+  // (the layer is default-off per Paani's Phase-1 review).
+  const hasPrsStory = manifest.layers.some((l) => l.prs) && prsData !== null;
   // The growth toggle is only meaningful when the PRS layer is on the map AND
   // there is more than one survey year to compare.
   const prsVisible =
@@ -1033,9 +1067,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         {/* Growth toggle: reveal the 2020 stretch under the 2025 one so the
             orange->red growth of the polluted reach reads on the map. Top-right,
             below the Reset button (which only shows when something is selected). */}
-        {prsVisible && (
+        {(hasPrsStory || prsVisible) && (
           <div className={`absolute ${(selectedRiverId || selectedGapUnit || selectedFeature || selectedPrs) ? "top-14" : "top-3"} right-3 z-[500] flex flex-col items-end gap-1`}>
-            {!selectedPrs && (
+            {hasPrsStory && !selectedPrs && (
               <button
                 onClick={() => { setSelectedPrs(true); setSelectedFeature(null); setSelectedGapUnit(null); setGapFromPrs(false); }}
                 className="rounded-md shadow px-3 py-1.5 text-xs font-semibold border bg-rose-600 hover:bg-rose-700 text-white border-rose-700 flex items-center gap-1.5"
@@ -1044,6 +1078,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 Explore the polluted stretch →
               </button>
             )}
+            {prsVisible && (
             <button
               onClick={() => setShowGrowth((v) => !v)}
               aria-pressed={showGrowth}
@@ -1055,6 +1090,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             >
               {showGrowth ? "Hide growth" : "Show how the stretch grew"}
             </button>
+            )}
+            {prsVisible && (
             <div className="flex flex-col items-end gap-1 bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-[10px] text-slate-600 dark:text-slate-300 shadow">
               {showGrowth ? (
                 <>
@@ -1065,6 +1102,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-[2px] rounded" style={{ backgroundColor: "#dc2626" }} />polluted stretch, 2025 (Priority I)</span>
               )}
             </div>
+            )}
           </div>
         )}
 
@@ -1375,6 +1413,17 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, sel
 
 // ── panels ───────────────────────────────────────────────────────────────
 
+// Attribute-card order + labels for the river panel (Paani Phase-1 review:
+// structured attributes over prose; unknown fields say "Details coming soon").
+const RIVER_ATTRIBUTE_ROWS: { key: keyof NonNullable<BasinManifest["rivers"][number]["attributes"]>; label: string }[] = [
+  { key: "origin", label: "Origin" },
+  { key: "length", label: "Length" },
+  { key: "tributaries", label: "Tributaries" },
+  { key: "flowsInto", label: "Flows into" },
+  { key: "pollutedStretch", label: "Polluted river stretch" },
+  { key: "restorationInitiatives", label: "Restoration initiatives" },
+];
+
 function RiverPanel({ river, onClear }: { river: BasinManifest["rivers"][number]; onClear: () => void }) {
   return (
     <div className="space-y-3">
@@ -1385,6 +1434,21 @@ function RiverPanel({ river, onClear }: { river: BasinManifest["rivers"][number]
         </div>
         <span className="inline-block w-3 h-3 rounded-full mt-1.5" style={{ backgroundColor: river.color }} />
       </div>
+      {river.attributes && (
+        <dl className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
+          {RIVER_ATTRIBUTE_ROWS.map(({ key, label }) => {
+            const value = river.attributes?.[key];
+            return (
+              <div key={key} className="flex gap-2 px-2.5 py-1.5">
+                <dt className="text-[12px] text-slate-500 dark:text-slate-400 w-32 shrink-0">{label}</dt>
+                <dd className={`text-[12px] leading-snug ${value ? "font-medium text-slate-800 dark:text-slate-100" : "italic text-slate-400 dark:text-slate-500"}`}>
+                  {value ?? "Details coming soon"}
+                </dd>
+              </div>
+            );
+          })}
+        </dl>
+      )}
       {river.narrative && <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{river.narrative}</p>}
       <p className="text-xs text-slate-500 dark:text-slate-400">
         Every floor is now scoped to this river&apos;s sub-catchment{river.subHydroshedIds.length > 1 ? "s" : ""}. Switch floors on the left to see its monitoring, pressures and treatment.
@@ -1492,6 +1556,7 @@ function PRSPanel({
   const firstSubKey = (t?: PrsTab) => t?.units?.[0]?.key ?? t?.categories?.[0]?.key ?? "";
   const [openArea, setOpenArea] = useState<string | null>(null);
   const [subKey, setSubKey] = useState<string>("");
+  const [showKeyTerms, setShowKeyTerms] = useState(false);
   const openTab = openArea ? prs.tabs.find((t) => t.key === openArea) ?? null : null;
   const subs = openTab ? openTab.units ?? openTab.categories ?? [] : [];
   const unit = openTab?.units?.find((u) => u.key === subKey) ?? openTab?.units?.[0];
@@ -1614,27 +1679,102 @@ function PRSPanel({
         </button>
       </div>
 
-      {/* Conclusion */}
-      <div className="rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-3">
-        <div className="flex items-start gap-2">
-          <span aria-hidden className="mt-0.5 text-rose-500 shrink-0">▶</span>
-          <p className="text-[13px] font-semibold text-rose-900 dark:text-rose-100 leading-relaxed">{prs.conclusion}</p>
+      {/* Glossary + citation affordances (Paani Phase-1 review) */}
+      {(prs.keyTerms || prs.citeSource) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {prs.keyTerms && prs.keyTerms.length > 0 && (
+            <button
+              onClick={() => setShowKeyTerms(true)}
+              className="inline-flex items-center gap-1 rounded-full border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 text-[11px] font-medium text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/50"
+            >
+              <span aria-hidden>?</span> Key terms used on this page
+            </button>
+          )}
+          {prs.citeSource && (
+            <a
+              href={prs.citeSource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1 text-[11px] font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+            >
+              {prs.citeSource.label ?? "Cite this data source"} ↗
+            </a>
+          )}
         </div>
-      </div>
+      )}
+      {showKeyTerms && prs.keyTerms && (
+        <KeyTermsPopup terms={prs.keyTerms} onClose={() => setShowKeyTerms(false)} />
+      )}
 
-      {/* 2020 vs 2025 bars */}
-      <div className="space-y-2">
-        {rows.map((r) => (
-          <div key={r.year} className="flex items-center gap-2">
-            <span className="text-[11px] font-mono text-slate-500 w-9 shrink-0">{r.year}</span>
-            <div className="flex-1 h-4 rounded-sm bg-slate-100 dark:bg-slate-800 overflow-hidden">
-              <div className="h-full rounded-sm" style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
-            </div>
-            <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 w-14 text-right shrink-0">{r.length_km} km</span>
-            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>Pri {r.priority}</span>
+      {/* Legacy prose lead - only when structured facts aren't provided */}
+      {!prs.statusFacts && prs.conclusion && (
+        <div className="rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-3">
+          <div className="flex items-start gap-2">
+            <span aria-hidden className="mt-0.5 text-rose-500 shrink-0">▶</span>
+            <p className="text-[13px] font-semibold text-rose-900 dark:text-rose-100 leading-relaxed">{prs.conclusion}</p>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Current status: 2020 vs 2025 bars + plain-language line + facts */}
+      <section>
+        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Current status</div>
+        <div className="space-y-2">
+          {rows.map((r) => (
+            <div key={r.year} className="flex items-center gap-2">
+              <span className="text-[11px] font-mono text-slate-500 w-9 shrink-0">{r.year}</span>
+              <div className="flex-1 h-4 rounded-sm bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                <div className="h-full rounded-sm" style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
+              </div>
+              <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 w-14 text-right shrink-0">{r.length_km} km</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>Pri {r.priority}</span>
+            </div>
+          ))}
+        </div>
+        {prs.statusLine && (
+          <p className="mt-2 text-[13px] font-semibold text-rose-900 dark:text-rose-100 leading-relaxed rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-2.5">
+            {prs.statusLine}
+          </p>
+        )}
+        {prs.statusFacts && prs.statusFacts.length > 0 && (
+          <dl className="mt-2 rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
+            {prs.statusFacts.map((f) => (
+              <div key={f.label} className="flex gap-2 px-2.5 py-1.5">
+                <dt className="text-[12px] text-slate-500 dark:text-slate-400 w-32 shrink-0">{f.label}</dt>
+                <dd className="text-[12px] font-medium text-slate-800 dark:text-slate-100 leading-snug">{f.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </section>
+
+      {/* Governance: who is accountable for restoring this stretch */}
+      {prs.governance && (
+        <section>
+          <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Governance</div>
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
+            {prs.governance.rows.map((f) => (
+              <div key={f.label} className="flex gap-2 px-2.5 py-1.5">
+                <span className="text-[12px] text-slate-500 dark:text-slate-400 w-32 shrink-0">{f.label}</span>
+                <span className="text-[12px] font-medium text-slate-800 dark:text-slate-100 leading-snug">{f.value}</span>
+              </div>
+            ))}
+            {prs.governance.actionPlan && (
+              <div className="px-2.5 py-1.5">
+                <a
+                  href={prs.governance.actionPlan.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {prs.governance.actionPlan.label ?? "Action Plan"} ↗
+                </a>
+              </div>
+            )}
+          </div>
+          {prs.governance.note && <p className="mt-1 text-[11px] text-slate-400 leading-snug">{prs.governance.note}</p>}
+        </section>
+      )}
 
       {/* Status list - the per-area summary; tap a row for detail + trend */}
       <section>
@@ -1726,6 +1866,35 @@ function PRSPanel({
         </PrsDisclosure>
       )}
       {prs.grievance?.urlNote && <p className="text-[10px] text-slate-400 italic">{prs.grievance.urlNote}</p>}
+    </div>
+  );
+}
+
+/** "Key Terms Used on This Page" popup (Paani Phase-1 review): full forms of
+ *  the acronyms with a line of context each, so the panel stays readable for
+ *  first-time visitors without diluting the summary itself. */
+function KeyTermsPopup({ terms, onClose }: { terms: { term: string; full: string; note?: string }[]; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[900] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Key terms used on this page">
+      <div className="absolute inset-0 bg-slate-950/50" onClick={onClose} />
+      <div className="relative w-full max-w-md max-h-[80vh] overflow-y-auto rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl p-4 space-y-3">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Key terms used on this page</h3>
+          <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+            <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <dl className="space-y-2.5">
+          {terms.map((t) => (
+            <div key={t.term}>
+              <dt className="text-[12px] font-bold text-slate-800 dark:text-slate-100">
+                {t.term} <span className="font-medium text-slate-500 dark:text-slate-400">- {t.full}</span>
+              </dt>
+              {t.note && <dd className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug mt-0.5">{t.note}</dd>}
+            </div>
+          ))}
+        </dl>
+      </div>
     </div>
   );
 }

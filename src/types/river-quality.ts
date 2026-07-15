@@ -104,6 +104,12 @@ export interface RiverQualityData {
   last_updated: string; // "YYYY-MM"
   data_year_range: [number, number];
   source: string;
+  /** Optional override for the panel's source citation link. Cities whose
+   *  canonical reference is a mirrored report (e.g. Bengaluru's CPCB PRS
+   *  October-2025 PDF, self-hosted because the NMCG copy serves corrupted)
+   *  set both; the shared panel falls back to the CPCB NWMP page. */
+  source_url?: string;
+  source_label?: string;
   rivers: RiverData[];
 }
 
