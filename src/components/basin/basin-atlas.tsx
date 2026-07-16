@@ -1201,6 +1201,9 @@ function MapLegend({ layers, notes, raised }: { layers: BasinLayer[]; notes?: st
     } else if (l.family === "pressures") {
       items.push({ sym: "box", color: "#dc2626", label: "Industrial area - no CETP (est.)" });
       items.push({ sym: "box", color: "#64748b", label: "Industrial area - CETP nearby" });
+      // Third CETP state drawn by fillStyle (faint dashed grey) - must be
+      // named here too: every rendered style gets a legend row.
+      items.push({ sym: "outline", color: "#cbd5e1", label: "Industrial area - CETP unknown" });
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["quarry"], label: "Quarry" });
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["waste-facility"], label: "Waste facility" });
       items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "Major industry (17-category)" });

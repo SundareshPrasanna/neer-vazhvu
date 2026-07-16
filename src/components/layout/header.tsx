@@ -174,6 +174,16 @@ function ExploreDropdown({
 }
 
 export function Header() {
+  // /embed/* is the chrome-less namespace for third-party iframes; those
+  // pages carry their own compact credit bar instead of the site chrome.
+  // Checked in this thin wrapper (its only hook) so SiteHeader's own hooks
+  // never run conditionally.
+  const pathname = usePathname();
+  if (pathname.startsWith("/embed")) return null;
+  return <SiteHeader />;
+}
+
+function SiteHeader() {
   const pathname = usePathname();
   const { t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);

@@ -40,6 +40,8 @@ export function Footer() {
   const { t } = useLanguage();
   const pathname = usePathname();
 
+  // /embed/* (third-party iframe namespace) carries its own credit bar.
+  if (pathname.startsWith("/embed")) return null;
   if (FULL_SCREEN_PAGES.some((p) => pathname === p || pathname.endsWith(p))) {
     return null;
   }

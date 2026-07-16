@@ -26,6 +26,28 @@ const securityHeaders = [
   },
 ];
 
+// /embed/* is the ONLY framable namespace: chrome-less atlas pages built for
+// partner sites (Paani Earth's Arkavathi deep dive). Everything else keeps
+// frame-ancestors 'none'. localhost is allowed in dev so embeds are testable.
+const EMBED_FRAME_ANCESTORS = [
+  "'self'",
+  "https://paani.earth",
+  "https://www.paani.earth",
+  ...(process.env.NODE_ENV === "development" ? ["http://localhost:*"] : []),
+].join(" ");
+const embedHeaders = securityHeaders.map((h) => {
+  if (h.key === "Content-Security-Policy") {
+    return { key: h.key, value: h.value.replace("frame-ancestors 'none'", `frame-ancestors ${EMBED_FRAME_ANCESTORS}`) };
+  }
+  if (h.key === "X-Frame-Options") {
+    // XFO can't express an allowlist. Browsers that support CSP
+    // frame-ancestors (all evergreen) ignore XFO when both are present;
+    // SAMEORIGIN is the deny-by-default fallback for legacy browsers.
+    return { key: h.key, value: "SAMEORIGIN" };
+  }
+  return h;
+});
+
 const nextConfig: NextConfig = {
   // Several server routes fs.readFile from public/ with DYNAMIC paths
   // (e.g. `public/${dir}/${filename}`), which Next's file tracer can't
@@ -60,12 +82,20 @@ const nextConfig: NextConfig = {
     "/api/groundwater/wards-interpolated": ["./public/geojson/*-wards-*.geojson"],
     // Rivers page reads the basin inventory (arkavathi PRS surface).
     "/*/rivers": ["./public/data/basins/*/inventory.json"],
+    // Embeddable atlas reads the same inventory.
+    "/embed/basins/*": ["./public/data/basins/*/inventory.json"],
   },
   async headers() {
     return [
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      // Must come after the catch-all: for duplicate keys on a matching
+      // path, the later rule wins.
+      {
+        source: "/embed/:path*",
+        headers: embedHeaders,
       },
     ];
   },
