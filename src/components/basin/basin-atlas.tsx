@@ -203,8 +203,9 @@ interface PrsData {
   reportingCaveat?: string;
   bodCaveat: string;
   /** Promoted "extent of pollution" section, shown above the per-area tabs:
-   *  the evidence that pollution is documented over time and beyond BOD. */
-  evidence?: { headline: string; points: string[]; layerRef?: string };
+   *  the evidence that pollution is documented over time and beyond BOD.
+   *  link = the featured independent study (Paani x ICCW report). */
+  evidence?: { headline: string; points: string[]; layerRef?: string; link?: { url: string; label: string } };
   tabs: PrsTab[];
   grievance?: { label: string; sub?: string; url: string; urlNote?: string };
   knownGaps?: string[];
@@ -1822,6 +1823,16 @@ function PRSPanel({
               <button onClick={() => onShowLayer(prs.evidence!.layerRef!)} className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
                 Show {layerByFamily[prs.evidence.layerRef].label} on the map →
               </button>
+            )}
+            {prs.evidence.link && (
+              <a
+                href={prs.evidence.link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1.5 flex items-center gap-1.5 rounded-md border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1.5 text-[12px] font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+              >
+                {prs.evidence.link.label} ↗
+              </a>
             )}
           </div>
         </details>

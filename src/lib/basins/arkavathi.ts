@@ -141,7 +141,7 @@ export const ARKAVATHI: BasinManifest = {
     "Spatial data: Paani Earth Foundation - Arkavathi River Basin GIS package (Feb 2026).",
     "Polluted river stretch (2020, 2025): Paani Earth, digitised from the CPCB / NGT polluted-river-stretch classification.",
     "Monitoring points: KSPCB, CPCB, CWC, Dept. of Mines & Geology, ATREE and others, compiled by Paani Earth.",
-    "Pollution evidence: Arkavathi Horata Samithi and RTI filings (lab analyses hosted on paani.earth).",
+    "Pollution evidence: Arkavathi Horata Samithi and RTI filings; Paani Earth x ICCW (IIT Madras) 7-site pollution study, Feb-Mar 2024 (lab analyses and report hosted on paani.earth).",
     "Treatment plants (STP/FSTP): BWSSB, KUWS&DB, BDA and KUIDFC, compiled by Paani Earth; locations confirmed against satellite imagery.",
     "Major industries: KSPCB 17-category polluting-industry list (geocoded).",
     "Boundaries: Karnataka GIS (KGIS); sub-watersheds & command areas: India-WRIS.",
