@@ -14,6 +14,7 @@ import type {
   BasinLayer,
   BasinManifest,
 } from "@/lib/basins";
+import { tryGetBasinManifest } from "@/lib/basins";
 import "leaflet/dist/leaflet.css";
 
 interface Props {
@@ -30,6 +31,9 @@ interface Props {
   embedded?: boolean;
   /** Back affordance when embedded. */
   onClose?: () => void;
+  /** Basin-stack navigation (hierarchy): swap to another basin in place -
+   *  used for the "Part of <parent> ↑" affordance when parentBasinId is set. */
+  onNavigateBasin?: (basinId: string) => void;
   /** Optional: render a custom detail panel for a clicked feature (e.g. a
    *  city's rich CPCB quality panel for a monitoring station). Return null to
    *  fall back to the generic key/value FeaturePanel. Keeps the atlas decoupled
@@ -354,7 +358,7 @@ function LocateFlyer({
   return null;
 }
 
-export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, initialFloor, embedded = false, onClose, renderFeatureDetail }: Props) {
+export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, initialFloor, embedded = false, onClose, onNavigateBasin, renderFeatureDetail }: Props) {
   const tiles = useMapTiles();
 
   const [focusedFloor, setFocusedFloor] = useState<BasinFloor>(initialFloor ?? "hydrology");
@@ -736,6 +740,18 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           {manifest.displayNameLocal && (
             <div className="text-xs text-slate-500 dark:text-slate-400">{manifest.displayNameLocal}</div>
           )}
+          {/* Hierarchy up-link: this basin is a sub-basin of a larger one. */}
+          {manifest.parentBasinId && onNavigateBasin && (() => {
+            const parent = tryGetBasinManifest(manifest.parentBasinId!);
+            return parent ? (
+              <button
+                onClick={() => onNavigateBasin(parent.basinId)}
+                className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                <span aria-hidden>↑</span> Part of the {parent.displayName}
+              </button>
+            ) : null;
+          })()}
           {/* Basin intro - desktop rail only, collapsed by default to save space. */}
           <details className="hidden md:block group mt-2">
             <summary className="cursor-pointer list-none flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">

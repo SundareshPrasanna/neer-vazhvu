@@ -267,6 +267,13 @@ def main() -> int:
                         props["subBasin"] = code
             if fam.get("static"):
                 props.update(fam["static"])
+            # config-declared value mapping (e.g. KWRIS ReservoirID -> the
+            # daily-feed source code) - keeps source ids out of components
+            if fam.get("valueMap"):
+                vm = fam["valueMap"]
+                mapped = vm["map"].get(str(props.get(vm["field"], "")))
+                if mapped is not None:
+                    props[vm["out"]] = mapped
             feats.append({"type": "Feature",
                           "geometry": simplify_geom(g, fam.get("simplifyEps", 0)),
                           "properties": props})
