@@ -1,0 +1,130 @@
+{
+  "basinId": "cauvery-ka",
+  "displayName": "Cauvery Basin (Karnataka)",
+  "adapter": "kwris",
+  "endpoint": "https://water.karnataka.gov.in/geoserver/KA/ows",
+  "provenance": "KWRIS / ACIWRM open GeoServer (water.karnataka.gov.in), Karnataka WRD",
+  "boundary": {
+    "typeName": "KA:View_GIS_Basin",
+    "cql": "NAME='Cauvery Basin'",
+    "simplifyEps": 0.002
+  },
+  "subBasins": {
+    "typeName": "KA:Sub_Basin_Boundary",
+    "cql": "Basin='Cauvery Basin'",
+    "nameField": "SB_Name",
+    "codeField": "Code",
+    "simplifyEps": 0.0015,
+    "scoreboardKeyByName": {
+      "Upper Cauvery": 24,
+      "Kabini": 25,
+      "Suvarnavati": 230,
+      "Shimsha": 231,
+      "Arkavati": 232,
+      "Middle Cauvery": 233,
+      "Palar": 234,
+      "Chinnar": 235,
+      "Bhavani": 236
+    }
+  },
+  "families": [
+    {
+      "family": "tanks",
+      "typeName": "KA:MI_Tanks",
+      "clipToBasin": true,
+      "keep": {
+        "TankName": "name",
+        "UniqueTank": "tankId",
+        "TankArea_H": "areaHa",
+        "CATCHMENT": "catchment",
+        "SUBCATCHME": "subCatchment",
+        "Tank_Owner": "custodian"
+      },
+      "provenance": "KWRIS KA:MI_Tanks (Minor Irrigation Department tank register)"
+    },
+    {
+      "family": "prs-stretches",
+      "typeName": "KA:Polluted_River_Stretch",
+      "cql": "River_Name IN ('Arkavathi River','Lakshmanathirtha River','Kabini River or Kapila','Shimsha River','Cauvery River')",
+      "simplifyEps": 0.001,
+      "keep": {
+        "River_Name": "river",
+        "Priority": "priority",
+        "BODValue": "bodValue"
+      },
+      "static": {
+        "vintage": "CPCB assessment as published on KWRIS - predates the October 2025 update (the Arkavathi is Priority I, BOD up to 72 mg/L, in CPCB's October 2025 report)"
+      },
+      "provenance": "KWRIS KA:Polluted_River_Stretch (CPCB classification, earlier vintage)"
+    },
+    {
+      "family": "wq-stations",
+      "typeName": "KA:Surface_Water_Quality_Monitoring_Station",
+      "clipToBasin": true,
+      "keep": {
+        "Monitoring": "name",
+        "River": "river",
+        "Regional_O": "regionalOffice",
+        "Category": "category"
+      },
+      "provenance": "KWRIS KA:Surface_Water_Quality_Monitoring_Station (KSPCB)",
+      "pointFromProps": {
+        "lat": "Latitude",
+        "lon": "Longitude"
+      }
+    },
+    {
+      "family": "reservoirs",
+      "typeName": "KA:mstReservoir_View",
+      "clipToBasin": true,
+      "keep": {
+        "LocationName": "name",
+        "ReservoirID": "liveId",
+        "DistrictName": "district"
+      },
+      "provenance": "KWRIS KA:mstReservoir_View; liveId joins the daily reservoir_landing storage feed"
+    },
+    {
+      "family": "streams",
+      "typeName": "KA:KA_stream",
+      "simplifyEps": 0.001,
+      "keep": {
+        "cwc_subbas": "cwcSubBasin",
+        "length": "lengthM",
+        "cwc_basin": "cwcBasin"
+      },
+      "provenance": "KWRIS KA:KA_stream (CWC basin attribution)",
+      "clientContains": {
+        "field": "cwcBasin",
+        "contains": "Cauvery"
+      }
+    }
+  ],
+  "scoreboard": {
+    "metrics": [
+      {
+        "name": "rainfallDeviationPct",
+        "typeName": "KA:geomGIS_Subbasin_RF",
+        "cql": "BasinID=9",
+        "keyField": "SubBasinID",
+        "valueField": "devper",
+        "unit": "%",
+        "source": "KWRIS geomGIS_Subbasin_RF (KSNDMC/IMD basis - period under verification)"
+      },
+      {
+        "name": "gwLevelM",
+        "typeName": "KA:geomGIS_Subbasin_GW",
+        "cql": "BasinID=9",
+        "keyField": "SubBasinID",
+        "valueField": "WLCurr",
+        "unit": "m bgl",
+        "source": "KWRIS geomGIS_Subbasin_GW (period under verification)"
+      }
+    ],
+    "countFamilies": {
+      "tanks": "tankCount",
+      "wq-stations": "wqStationCount",
+      "reservoirs": "reservoirCount"
+    }
+  }
+}

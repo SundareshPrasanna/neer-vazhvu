@@ -11,6 +11,9 @@ import type { BasinManifest } from "./types";
 export const ARKAVATHI: BasinManifest = {
   basinId: "arkavathi",
   cityIds: ["bangalore"],
+  // Hierarchy: the Arkavati is sub-basin C5 of the Cauvery (Karnataka) -
+  // the atlas renders "Part of the Cauvery Basin" from this link.
+  parentBasinId: "cauvery-ka",
   displayName: "Arkavathi Basin",
   displayNameLocal: "ಅರ್ಕಾವತಿ ಜಲಾನಯನ",
   blurb:

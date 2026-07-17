@@ -12,6 +12,26 @@ export type BasinFloor = "hydrology" | "monitoring" | "pressures" | "governance"
 /** How a layer is drawn; the renderer picks styling/pane from this. */
 export type BasinGeomRole = "line" | "fill" | "point";
 
+/** A child sub-basin reference on an overview-mode basin (see
+ *  docs/specs/cauvery-basin-hierarchy.md). Source-system ids never appear
+ *  here - scoreboardKey is an opaque join into the basin's scoreboard.json. */
+export interface SubBasinRef {
+  /** The source's own sub-basin code (e.g. "C5") - opaque to the UI. */
+  key: string;
+  name: string;
+  nameLocal?: string;
+  /** Joins scoreboard.json subBasins map. */
+  scoreboardKey: string;
+  areaKm2: number;
+  /** When set, this sub-basin has its own deep-dive manifest to drill into. */
+  deepDiveBasinId?: string;
+  /** Depth ladder: 0 profile-only .. 4 full deep dive (the Arkavati bar). */
+  depthLevel: 0 | 1 | 2 | 3 | 4;
+  /** Human text naming what raises the level - the ladder is public UI. */
+  unlocks?: string[];
+  blurb?: string;
+}
+
 export interface BasinRiver {
   /** URL-stable id, e.g. "vrishabhavathi" (used in ?river=). */
   riverId: string;
@@ -71,8 +91,17 @@ export interface BasinLayer {
 
 export interface BasinManifest {
   basinId: string;
-  /** Host cities, for nav + capability gating. */
+  /** Host cities, for nav + capability gating. Empty for basins reached only
+   *  through the hierarchy (e.g. a parent overview like cauvery-ka). */
   cityIds: string[];
+  /** Hierarchy: the basin this one sits inside (arkavathi -> cauvery-ka).
+   *  Chains freely - a future interstate roll-up parents the state segments. */
+  parentBasinId?: string;
+  /** "sub-basins": render the overview mode (sub-basin cards + scoreboard)
+   *  instead of the floor-based deep dive. */
+  overviewMode?: "sub-basins";
+  /** Children shown in overview mode, in display order. */
+  subBasins?: SubBasinRef[];
   displayName: string;
   displayNameLocal?: string;
   /** Landing blurb (plain text). */

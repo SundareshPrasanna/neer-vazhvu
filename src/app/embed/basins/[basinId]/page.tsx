@@ -51,8 +51,10 @@ export default async function BasinEmbedPage({ params, searchParams }: PageProps
   const manifest = tryGetBasinManifest(basinId);
   if (!manifest) notFound();
 
-  const cityId = manifest.cityIds[0];
-  const city = tryGetPlaceConfig(cityId);
+  // Hierarchy-only basins (e.g. cauvery-ka) have no host city; fall back to
+  // the basin's own name and link the site root instead of a city page.
+  const cityId = manifest.cityIds[0] ?? null;
+  const city = cityId ? tryGetPlaceConfig(cityId) : null;
   const inventory = loadBasinInventory(basinId);
   const initialRiverId = manifest.rivers.some((r) => r.riverId === sp.river) ? sp.river! : null;
   const initialFloor = FLOORS.includes(sp.floor as BasinFloor) ? (sp.floor as BasinFloor) : undefined;
@@ -68,7 +70,7 @@ export default async function BasinEmbedPage({ params, searchParams }: PageProps
           <span className="font-normal text-slate-400"> - Neer Vazhvu x Paani Earth Foundation</span>
         </span>
         <a
-          href={`https://neervazhvu.org/${cityId}/rivers`}
+          href={cityId ? `https://neervazhvu.org/${cityId}/rivers` : "https://neervazhvu.org/"}
           target="_blank"
           rel="noopener noreferrer"
           className="shrink-0 text-blue-600 dark:text-blue-400 hover:underline font-medium"
@@ -78,8 +80,8 @@ export default async function BasinEmbedPage({ params, searchParams }: PageProps
       </div>
       <div className="relative flex-1 min-h-0">
         <BasinAtlasClient
-          cityId={cityId}
-          cityDisplayName={city?.displayName ?? cityId}
+          cityId={cityId ?? ""}
+          cityDisplayName={city?.displayName ?? manifest.displayName}
           manifest={manifest}
           inventory={inventory}
           initialRiverId={initialRiverId}
