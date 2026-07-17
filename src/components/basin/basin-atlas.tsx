@@ -121,6 +121,9 @@ interface PrsUnit {
    *  in any MPR edition"). E.g. BBMP: the MPR tracks the V-Valley catchment
    *  in aggregate rather than per-ULB. */
   mprNote?: string;
+  /** Names the specific document(s) behind an other-source unit, rendered
+   *  under the figures ("Source: ..."). */
+  sourceNote?: string;
   /** Links to this unit's full cross-source GapPanel. */
   gapUnit?: string;
   caveat?: string;
@@ -1713,11 +1716,13 @@ function PRSPanel({
                 <UnitTimeline unit={unit} unitLabel={openTab.unitLabel ?? "MLD"} treatedVerb={openTab.treatedVerb ?? "treated"} onOpenUnit={onOpenUnit} />
               )}
             </div>
-            {/* Bucket 2: other sources (DEP, CAG, ...) */}
+            {/* Bucket 2: other sources - the specific document is named in
+                the sourceNote below the figures, never as label shorthand. */}
             {unit.sourceTier === "other" && (
               <div>
-                <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Other sources (DEP, CAG, ...)</div>
+                <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Other sources</div>
                 <UnitTimeline unit={unit} unitLabel={openTab.unitLabel ?? "MLD"} treatedVerb={openTab.treatedVerb ?? "treated"} onOpenUnit={onOpenUnit} />
+                {unit.sourceNote && <p className="mt-1 text-[10px] text-slate-400 leading-snug">Source: {unit.sourceNote}</p>}
               </div>
             )}
           </div>
