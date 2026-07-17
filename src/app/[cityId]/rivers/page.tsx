@@ -288,12 +288,21 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
   },
 };
 
-// Per-city map framing for the rivers page. Madurai needs the Vaigai
-// system view; Bangalore needs the city-centred ridge view.
-const RIVERS_SCOPE_LABEL: Record<string, string> = {
-  madurai: "Vaigai system",
-  bangalore: "Bengaluru ridge (3 drainage valleys)",
-  mumbai: "MMR rivers (urban + eastern Ulhas corridor + source rivers)",
+// Per-city header framing for the rivers page. Madurai needs the Vaigai
+// system view; Bengaluru's framing follows Paani Earth's Phase-1 review:
+// river-system language, no station/source tally, atlas CTA phrased as the
+// state of the river systems (docs/specs/arkavathi-phase2-feedback.md A1-A2).
+const RIVERS_HEADER_BY_CITY: Record<
+  string,
+  { scopeLabel: string; showStats?: boolean; atlasCtaLabel?: string }
+> = {
+  madurai: { scopeLabel: "Vaigai system" },
+  bangalore: {
+    scopeLabel: "Two river systems (Arkavathi and Dakshina Pinakini)",
+    showStats: false,
+    atlasCtaLabel: "State of Bengaluru's River Systems",
+  },
+  mumbai: { scopeLabel: "MMR rivers (urban + eastern Ulhas corridor + source rivers)" },
 };
 
 export default async function CityRiversPage({ params }: PageProps) {
@@ -361,7 +370,7 @@ export default async function CityRiversPage({ params }: PageProps) {
   // too wide. Others keep 9 (Vaigai/Pinakini mainstems + the MMR spread need
   // the wider frame).
   const mapZoom = cityId === "bangalore" ? 11 : 9;
-  const scopeLabel = RIVERS_SCOPE_LABEL[cityId] ?? "Basin system";
+  const header = RIVERS_HEADER_BY_CITY[cityId] ?? { scopeLabel: "Basin system" };
 
   // Additive: if a river on this page has a deep basin atlas, hand it down so
   // clicking that river can open the layered basin view. The standard rivers
@@ -377,7 +386,9 @@ export default async function CityRiversPage({ params }: PageProps) {
       cityDisplayName={config.displayName}
       mapCenter={mapCenter}
       mapZoom={mapZoom}
-      scopeLabel={scopeLabel}
+      scopeLabel={header.scopeLabel}
+      showHeaderStats={header.showStats ?? true}
+      atlasCtaLabel={header.atlasCtaLabel}
       riverInfo={riverInfo}
       basin={basinProp}
     />

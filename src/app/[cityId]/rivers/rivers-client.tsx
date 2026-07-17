@@ -26,6 +26,13 @@ interface ClientProps {
   mapZoom?: number;
   /** Place pill scope label, e.g. "Vaigai system" */
   scopeLabel: string;
+  /** Show the "N rivers - N CPCB stations - ..." tally next to the scope
+   *  label. Cities whose partner review asked for a cleaner header (Bengaluru)
+   *  turn it off in the per-city header config. Default true. */
+  showHeaderStats?: boolean;
+  /** Label for the basin-atlas CTA button; defaults to the treatment-gaps
+   *  framing used by the original Chennai-baseline surface. */
+  atlasCtaLabel?: string;
   /** Per-river narrative metadata, keyed by river_id from the geojson. */
   riverInfo: Record<string, RiverInfo>;
   /** Optional deep basin atlas: when a river on this map belongs to a basin,
@@ -145,6 +152,8 @@ export default function RiversClient({
   mapCenter,
   mapZoom = 9,
   scopeLabel,
+  showHeaderStats = true,
+  atlasCtaLabel,
   riverInfo,
   basin = null,
 }: ClientProps) {
@@ -349,7 +358,6 @@ export default function RiversClient({
           latest_bod: latest?.bod_mgl ?? null,
           latest_do: latest?.do_mgl ?? null,
           latest_year: latest?.year ?? null,
-          off_osm_river_polyline: s.off_osm_river_polyline,
         };
       }),
     );
@@ -362,18 +370,20 @@ export default function RiversClient({
         <span className="font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
           {cityDisplayName} - {scopeLabel}
         </span>
-        <span className="text-xs text-slate-500 dark:text-slate-400">
-          {rivers.length} rivers
-          {cpcbStationMarkers.length > 0 && ` - ${cpcbStationMarkers.length} CPCB stations`}
-          {industrialMarkers.length > 0 && ` - ${industrialMarkers.length} industrial sources`}
-          {" - click for details"}
-        </span>
+        {showHeaderStats && (
+          <span className="text-xs text-slate-500 dark:text-slate-400">
+            {rivers.length} rivers
+            {cpcbStationMarkers.length > 0 && ` - ${cpcbStationMarkers.length} CPCB stations`}
+            {industrialMarkers.length > 0 && ` - ${industrialMarkers.length} industrial sources`}
+            {" - click for details"}
+          </span>
+        )}
         {basin && drillableNames.length > 0 && (
           <button
             onClick={() => { setAtlasFloor("governance"); setOpenBasinRiverId("__gaps__"); }}
             className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1 shadow-sm"
           >
-            Treatment &amp; waste gaps
+            {atlasCtaLabel ?? "Treatment & waste gaps"}
             <span aria-hidden>&rarr;</span>
           </button>
         )}
@@ -397,7 +407,7 @@ export default function RiversClient({
           {drillableNames.length > 0 && !coachDismissed && !openBasinRiverId && (
             <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[600] max-w-[88%] sm:max-w-md bg-slate-900/95 text-white text-xs rounded-xl px-3.5 py-2 shadow-lg flex items-center gap-3">
               <span>
-                Click on the rivers to drill into the basin - pollution, monitoring &amp; infrastructure
+                Click on a river to explore its basin in detail. Pollution &middot; Monitoring &middot; Infrastructure &middot; Governance &middot; Restoration
               </span>
               <button
                 onClick={() => { localStorage.setItem(RIVERS_COACH_KEY, "1"); setCoachDismissed(true); }}

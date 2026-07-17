@@ -111,6 +111,19 @@ interface PrsUnit {
   /** Admin level this unit's figures are reported at (ULB / taluk / district /
    *  catchment), shown as a chip so each number's granularity is explicit. */
   level?: string;
+  /** "other" = figures come from DEP / CAG / F-register etc., not the MPR.
+   *  MPR is the primary baseline: each town's detail renders an MPR bucket
+   *  first, then an Other-sources bucket. Units tagged "other" show an
+   *  explicit no-data state in the MPR bucket and their content moves to
+   *  the Other-sources bucket. */
+  sourceTier?: "mpr" | "other";
+  /** Custom text for the MPR bucket's no-data state (default: "Not itemised
+   *  in any MPR edition"). E.g. BBMP: the MPR tracks the V-Valley catchment
+   *  in aggregate rather than per-ULB. */
+  mprNote?: string;
+  /** Names the specific document(s) behind an other-source unit, rendered
+   *  under the figures ("Source: ..."). */
+  sourceNote?: string;
   /** Links to this unit's full cross-source GapPanel. */
   gapUnit?: string;
   caveat?: string;
@@ -139,6 +152,8 @@ interface PrsCategory {
   points?: string[];
   /** A map layer this category maps to (e.g. "pressures", "evidence-points"). */
   layerRef?: string;
+  /** See PrsUnit.sourceTier - "other" groups this category under Other sources. */
+  sourceTier?: "mpr" | "other";
   /** An external source to open in a new tab (e.g. a live CPCB dashboard the
    *  reader can inspect for themselves). */
   link?: { url: string; label: string };
@@ -168,7 +183,29 @@ interface PrsData {
   river: string;
   stretchName: string;
   comparison: { y2020: { length_km: number; priority: string }; y2025: { length_km: number; priority: string } };
-  conclusion: string;
+  /** Legacy lead paragraph. Superseded by statusLine + statusFacts (Paani
+   *  Phase-1 review asked for structured facts over prose); rendered only
+   *  when statusFacts is absent. */
+  conclusion?: string;
+  /** Plain-language one-liner under the 2020/2025 bars, e.g. "The polluted
+   *  stretch has expanded by nearly 38 km while deteriorating from Priority
+   *  III to Priority I." */
+  statusLine?: string;
+  /** Structured Current Status facts (stretch, length, classification,
+   *  restoration target), rendered as label/value rows. */
+  statusFacts?: { label: string; value: string }[];
+  /** "Cite this Data Source" link - the canonical reference for the PRS
+   *  classification (mirrored copy preferred so the link never breaks). */
+  citeSource?: { url: string; label?: string };
+  /** "Key Terms Used on This Page" popup: full forms + context for CPCB,
+   *  PRS, MPR, BOD, priority classes etc. */
+  keyTerms?: { term: string; full: string; note?: string }[];
+  /** Governance block: who is accountable for restoring this stretch. */
+  governance?: {
+    rows: { label: string; value: string }[];
+    actionPlan?: { url: string; label?: string };
+    note?: string;
+  };
   growthNote?: string;
   priorityNote?: string;
   /** One-line "what this is" - the MPR-overview context line. */
@@ -181,12 +218,52 @@ interface PrsData {
   reportingCaveat?: string;
   bodCaveat: string;
   /** Promoted "extent of pollution" section, shown above the per-area tabs:
-   *  the evidence that pollution is documented over time and beyond BOD. */
-  evidence?: { headline: string; points: string[]; layerRef?: string };
+   *  the evidence that pollution is documented over time and beyond BOD.
+   *  link = the featured independent study (Paani x ICCW report). */
+  evidence?: { headline: string; points: string[]; layerRef?: string; link?: { url: string; label: string } };
   tabs: PrsTab[];
   grievance?: { label: string; sub?: string; url: string; urlNote?: string };
   knownGaps?: string[];
   sources?: string[];
+}
+
+// ── Accountability matrix (accountability.json) ─────────────────────────────
+// Region-first Action-Plan-vs-MPR comparison (Paani Phase-2 agreement):
+// MPR = the primary, monthly-updated baseline; DEP/CAG/F-register = other
+// sources. The verdict encodes what exists at each level - "not reported"
+// is a first-class, citable finding, not a blank.
+interface AccCategory {
+  key: string;
+  label: string;
+  verdict: "tracked" | "in-plan-not-reported" | "reported-not-in-plan" | "silent";
+  actionPlan: { status: "addressed" | "partial" | "absent"; summary: string; cite?: string };
+  mpr: { status: "reported" | "partial" | "not-reported"; summary: string; asOf: string };
+  gaps?: string[];
+  /** Key into legalLibrary. */
+  legalRef?: string;
+  media?: { label: string; url: string }[];
+}
+interface AccRegion {
+  kind: "ulb" | "ia" | "gp";
+  key: string;
+  name: string;
+  inBasinNote?: string;
+  grievance?: { label: string; url: string };
+  /** Regions the documents never itemise carry this instead of categories. */
+  silentNote?: string;
+  categories: AccCategory[];
+}
+interface AccountabilityData {
+  question: string;
+  intro?: string;
+  baseline: {
+    primary: { label: string; asOf: string; note?: string };
+    actionPlan: { label: string; url: string };
+    banner?: string;
+    otherSources?: string[];
+  };
+  legalLibrary?: Record<string, { label: string; url: string }[]>;
+  regions: AccRegion[];
 }
 
 const COACH_KEY = "basin-atlas-coach-dismissed";
@@ -307,6 +384,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // PRS entry-point panel: open when the polluted-stretch line is clicked.
   const [selectedPrs, setSelectedPrs] = useState(false);
   const [prsData, setPrsData] = useState<PrsData | null>(null);
+  const [accData, setAccData] = useState<AccountabilityData | null>(null);
   // True when a gap unit was opened FROM the PRS panel, so the gap panel can
   // offer a "back to PRS" affordance.
   const [gapFromPrs, setGapFromPrs] = useState(false);
@@ -423,6 +501,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     fetchJson(`/data/basins/${manifest.basinId}/prs.json`)
       .then((d) => setPrsData((d as unknown as PrsData) ?? null))
       .catch(() => setPrsData(null));
+    // Accountability matrix rides with the PRS story; absent file = section
+    // simply not rendered (data-only onboarding for other basins).
+    fetchJson(`/data/basins/${manifest.basinId}/accountability.json`)
+      .then((d) => setAccData((d as unknown as AccountabilityData) ?? null))
+      .catch(() => setAccData(null));
   }, [manifest.basinId, manifest.layers]);
 
   // On phones the layers panel is an off-canvas drawer; start it closed so the
@@ -476,6 +559,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     // different floors be combined (e.g. the polluted stretch + treatment gaps).
     // Fall back to defaultOn if the toggle key is missing (a layer added after
     // this state was initialised), so a default-on layer is never silently hidden.
+    // Exception (Paani Phase-1 review): the polluted stretch is not a resting
+    // layer - it renders while the PRS panel is open ("Explore the polluted
+    // stretch"), on top of whatever the checkbox says, and hides again when
+    // the panel closes unless the user has checked it explicitly.
+    if (l.prs && selectedPrs) return true;
     return enabled[l.family] ?? l.defaultOn;
   }
 
@@ -507,8 +595,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         );
       }
     }
+    // selectedPrs is a dep because Explore-the-stretch can be the first thing
+    // that makes the (default-off) PRS layer renderable - see shouldRender.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, focusedFloor, selectedRiverId]);
+  }, [enabled, focusedFloor, selectedRiverId, selectedPrs]);
 
   // What the map frames: the selected river's sub-catchments, or the whole
   // basin boundary when nothing is selected (the default). Depends only on the
@@ -584,6 +674,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   );
 
   const visibleLayers = orderedLayers.filter(shouldRender);
+  // The basin has a PRS story when a prs layer is declared and its panel
+  // content has loaded - this gates the "Explore the polluted stretch" entry
+  // point, which must be offered even while the stretch itself is hidden
+  // (the layer is default-off per Paani's Phase-1 review).
+  const hasPrsStory = manifest.layers.some((l) => l.prs) && prsData !== null;
   // The growth toggle is only meaningful when the PRS layer is on the map AND
   // there is more than one survey year to compare.
   const prsVisible =
@@ -1033,9 +1128,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         {/* Growth toggle: reveal the 2020 stretch under the 2025 one so the
             orange->red growth of the polluted reach reads on the map. Top-right,
             below the Reset button (which only shows when something is selected). */}
-        {prsVisible && (
+        {(hasPrsStory || prsVisible) && (
           <div className={`absolute ${(selectedRiverId || selectedGapUnit || selectedFeature || selectedPrs) ? "top-14" : "top-3"} right-3 z-[500] flex flex-col items-end gap-1`}>
-            {!selectedPrs && (
+            {hasPrsStory && !selectedPrs && (
               <button
                 onClick={() => { setSelectedPrs(true); setSelectedFeature(null); setSelectedGapUnit(null); setGapFromPrs(false); }}
                 className="rounded-md shadow px-3 py-1.5 text-xs font-semibold border bg-rose-600 hover:bg-rose-700 text-white border-rose-700 flex items-center gap-1.5"
@@ -1044,6 +1139,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 Explore the polluted stretch →
               </button>
             )}
+            {prsVisible && (
             <button
               onClick={() => setShowGrowth((v) => !v)}
               aria-pressed={showGrowth}
@@ -1055,6 +1151,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             >
               {showGrowth ? "Hide growth" : "Show how the stretch grew"}
             </button>
+            )}
+            {prsVisible && (
             <div className="flex flex-col items-end gap-1 bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-[10px] text-slate-600 dark:text-slate-300 shadow">
               {showGrowth ? (
                 <>
@@ -1065,6 +1163,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-[2px] rounded" style={{ backgroundColor: "#dc2626" }} />polluted stretch, 2025 (Priority I)</span>
               )}
             </div>
+            )}
           </div>
         )}
 
@@ -1092,6 +1191,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             {selectedPrs && prsData ? (
               <PRSPanel
                 prs={prsData}
+                accountability={accData}
                 layerByFamily={layerByFamily}
                 onOpenUnit={(u) => { setSelectedPrs(false); setSelectedFeature(null); setSelectedGapUnit(u); setGapFromPrs(true); }}
                 onShowLayer={(family) => {
@@ -1163,6 +1263,9 @@ function MapLegend({ layers, notes, raised }: { layers: BasinLayer[]; notes?: st
     } else if (l.family === "pressures") {
       items.push({ sym: "box", color: "#dc2626", label: "Industrial area - no CETP (est.)" });
       items.push({ sym: "box", color: "#64748b", label: "Industrial area - CETP nearby" });
+      // Third CETP state drawn by fillStyle (faint dashed grey) - must be
+      // named here too: every rendered style gets a legend row.
+      items.push({ sym: "outline", color: "#cbd5e1", label: "Industrial area - CETP unknown" });
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["quarry"], label: "Quarry" });
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["waste-facility"], label: "Waste facility" });
       items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "Major industry (17-category)" });
@@ -1375,6 +1478,17 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, sel
 
 // ── panels ───────────────────────────────────────────────────────────────
 
+// Attribute-card order + labels for the river panel (Paani Phase-1 review:
+// structured attributes over prose; unknown fields say "Details coming soon").
+const RIVER_ATTRIBUTE_ROWS: { key: keyof NonNullable<BasinManifest["rivers"][number]["attributes"]>; label: string }[] = [
+  { key: "origin", label: "Origin" },
+  { key: "length", label: "Length" },
+  { key: "tributaries", label: "Tributaries" },
+  { key: "flowsInto", label: "Flows into" },
+  { key: "pollutedStretch", label: "Polluted river stretch" },
+  { key: "restorationInitiatives", label: "Restoration initiatives" },
+];
+
 function RiverPanel({ river, onClear }: { river: BasinManifest["rivers"][number]; onClear: () => void }) {
   return (
     <div className="space-y-3">
@@ -1385,6 +1499,21 @@ function RiverPanel({ river, onClear }: { river: BasinManifest["rivers"][number]
         </div>
         <span className="inline-block w-3 h-3 rounded-full mt-1.5" style={{ backgroundColor: river.color }} />
       </div>
+      {river.attributes && (
+        <dl className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
+          {RIVER_ATTRIBUTE_ROWS.map(({ key, label }) => {
+            const value = river.attributes?.[key];
+            return (
+              <div key={key} className="flex gap-2 px-2.5 py-1.5">
+                <dt className="text-[12px] text-slate-500 dark:text-slate-400 w-32 shrink-0">{label}</dt>
+                <dd className={`text-[12px] leading-snug ${value ? "font-medium text-slate-800 dark:text-slate-100" : "italic text-slate-400 dark:text-slate-500"}`}>
+                  {value ?? "Details coming soon"}
+                </dd>
+              </div>
+            );
+          })}
+        </dl>
+      )}
       {river.narrative && <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{river.narrative}</p>}
       <p className="text-xs text-slate-500 dark:text-slate-400">
         Every floor is now scoped to this river&apos;s sub-catchment{river.subHydroshedIds.length > 1 ? "s" : ""}. Switch floors on the left to see its monitoring, pressures and treatment.
@@ -1478,12 +1607,14 @@ function priorityClass(p: string): string {
  *  loaded, each linking into that unit's full cross-source GapPanel. */
 function PRSPanel({
   prs,
+  accountability,
   layerByFamily,
   onOpenUnit,
   onShowLayer,
   onClose,
 }: {
   prs: PrsData;
+  accountability?: AccountabilityData | null;
   layerByFamily: Record<string, BasinLayer>;
   onOpenUnit: (unit: string) => void;
   onShowLayer: (family: string) => void;
@@ -1492,6 +1623,7 @@ function PRSPanel({
   const firstSubKey = (t?: PrsTab) => t?.units?.[0]?.key ?? t?.categories?.[0]?.key ?? "";
   const [openArea, setOpenArea] = useState<string | null>(null);
   const [subKey, setSubKey] = useState<string>("");
+  const [showKeyTerms, setShowKeyTerms] = useState(false);
   const openTab = openArea ? prs.tabs.find((t) => t.key === openArea) ?? null : null;
   const subs = openTab ? openTab.units ?? openTab.categories ?? [] : [];
   const unit = openTab?.units?.find((u) => u.key === subKey) ?? openTab?.units?.[0];
@@ -1515,7 +1647,7 @@ function PRSPanel({
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-2">
           <button onClick={() => setOpenArea(null)} className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
-            ← All stressors
+            ← All priority areas
           </button>
           <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
             <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1523,29 +1655,77 @@ function PRSPanel({
         </div>
         <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">{openTab.label}</h2>
         {openTab.intro && <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed">{openTab.intro}</p>}
-        {subs.length > 1 && (
-          <div className="flex flex-wrap gap-1">
-            {subs.map((s) => {
-              const name = "name" in s ? s.name : s.label;
-              const on = s.key === (unit?.key ?? cat?.key);
-              return (
-                <button
-                  key={s.key}
-                  onClick={() => setSubKey(s.key)}
-                  className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
-                    on
-                      ? "bg-rose-600 text-white border-rose-600"
+        {subs.length > 1 && (() => {
+          const chip = (s: (typeof subs)[number], muted: boolean) => {
+            const name = "name" in s ? s.name : s.label;
+            const on = s.key === (unit?.key ?? cat?.key);
+            return (
+              <button
+                key={s.key}
+                onClick={() => setSubKey(s.key)}
+                className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
+                  on
+                    ? "bg-rose-600 text-white border-rose-600"
+                    : muted
+                      ? "bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 border-dashed hover:bg-slate-100 dark:hover:bg-slate-700"
                       : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
-                  }`}
-                >
-                  {name}
-                </button>
-              );
-            })}
-          </div>
-        )}
+                }`}
+              >
+                {name}
+              </button>
+            );
+          };
+          // Units (towns) render as one flat row - every town gets both an
+          // MPR bucket and an Other-sources bucket in its detail below, so
+          // the chips don't pre-sort them. Categories (thematic sub-tabs)
+          // keep the register split: MPR-sourced lead, DEP/CAG/F-register/
+          // OCEMS material sits under an explicit "Other sources" group.
+          if (openTab.units) {
+            return <div className="flex flex-wrap gap-1">{subs.map((s) => chip(s, false))}</div>;
+          }
+          const primary = subs.filter((s) => s.sourceTier !== "other");
+          const other = subs.filter((s) => s.sourceTier === "other");
+          return (
+            <div className="space-y-1.5">
+              {primary.length > 0 && (
+                <div className="flex flex-wrap gap-1 items-center">
+                  {other.length > 0 && <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mr-0.5">MPR</span>}
+                  {primary.map((s) => chip(s, false))}
+                </div>
+              )}
+              {other.length > 0 && (
+                <div className="flex flex-wrap gap-1 items-center">
+                  <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mr-0.5">Other sources</span>
+                  {other.map((s) => chip(s, true))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
         {openTab.units && unit && (
-          <UnitTimeline unit={unit} unitLabel={openTab.unitLabel ?? "MLD"} treatedVerb={openTab.treatedVerb ?? "treated"} onOpenUnit={onOpenUnit} />
+          <div className="space-y-2">
+            {/* Bucket 1: MPR - the primary baseline. Towns the MPR doesn't
+                itemise get an explicit no-data state, never a silent blank. */}
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">MPR (primary source)</div>
+              {unit.sourceTier === "other" ? (
+                <p className="text-[12px] leading-snug rounded-md border border-slate-200 dark:border-slate-700 border-dashed bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 px-2.5 py-2">
+                  {unit.mprNote ?? `No data: ${unit.name} is not itemised in any MPR edition we hold.`}
+                </p>
+              ) : (
+                <UnitTimeline unit={unit} unitLabel={openTab.unitLabel ?? "MLD"} treatedVerb={openTab.treatedVerb ?? "treated"} onOpenUnit={onOpenUnit} />
+              )}
+            </div>
+            {/* Bucket 2: other sources - the specific document is named in
+                the sourceNote below the figures, never as label shorthand. */}
+            {unit.sourceTier === "other" && (
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Other sources</div>
+                <UnitTimeline unit={unit} unitLabel={openTab.unitLabel ?? "MLD"} treatedVerb={openTab.treatedVerb ?? "treated"} onOpenUnit={onOpenUnit} />
+                {unit.sourceNote && <p className="mt-1 text-[10px] text-slate-400 leading-snug">Source: {unit.sourceNote}</p>}
+              </div>
+            )}
+          </div>
         )}
         {openTab.categories && cat && (
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-3">
@@ -1614,31 +1794,109 @@ function PRSPanel({
         </button>
       </div>
 
-      {/* Conclusion */}
-      <div className="rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-3">
-        <div className="flex items-start gap-2">
-          <span aria-hidden className="mt-0.5 text-rose-500 shrink-0">▶</span>
-          <p className="text-[13px] font-semibold text-rose-900 dark:text-rose-100 leading-relaxed">{prs.conclusion}</p>
+      {/* Glossary + citation affordances (Paani Phase-1 review) */}
+      {(prs.keyTerms || prs.citeSource) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {prs.keyTerms && prs.keyTerms.length > 0 && (
+            <button
+              onClick={() => setShowKeyTerms(true)}
+              className="inline-flex items-center gap-1 rounded-full border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 text-[11px] font-medium text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/50"
+            >
+              Key terms used on this page
+            </button>
+          )}
+          {prs.citeSource && (
+            <a
+              href={prs.citeSource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1 text-[11px] font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+            >
+              {prs.citeSource.label ?? "Cite this data source"} ↗
+            </a>
+          )}
         </div>
-      </div>
+      )}
+      {showKeyTerms && prs.keyTerms && (
+        <KeyTermsPopup terms={prs.keyTerms} onClose={() => setShowKeyTerms(false)} />
+      )}
 
-      {/* 2020 vs 2025 bars */}
-      <div className="space-y-2">
-        {rows.map((r) => (
-          <div key={r.year} className="flex items-center gap-2">
-            <span className="text-[11px] font-mono text-slate-500 w-9 shrink-0">{r.year}</span>
-            <div className="flex-1 h-4 rounded-sm bg-slate-100 dark:bg-slate-800 overflow-hidden">
-              <div className="h-full rounded-sm" style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
-            </div>
-            <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 w-14 text-right shrink-0">{r.length_km} km</span>
-            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>Pri {r.priority}</span>
+      {/* Legacy prose lead - only when structured facts aren't provided */}
+      {!prs.statusFacts && prs.conclusion && (
+        <div className="rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-3">
+          <div className="flex items-start gap-2">
+            <span aria-hidden className="mt-0.5 text-rose-500 shrink-0">▶</span>
+            <p className="text-[13px] font-semibold text-rose-900 dark:text-rose-100 leading-relaxed">{prs.conclusion}</p>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Current status: 2020 vs 2025 bars + plain-language line + facts */}
+      <section>
+        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Current status</div>
+        <div className="space-y-2">
+          {rows.map((r) => (
+            <div key={r.year} className="flex items-center gap-2">
+              <span className="text-[11px] font-mono text-slate-500 w-9 shrink-0">{r.year}</span>
+              <div className="flex-1 h-4 rounded-sm bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                <div className="h-full rounded-sm" style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
+              </div>
+              <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 w-14 text-right shrink-0">{r.length_km} km</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>Pri {r.priority}</span>
+            </div>
+          ))}
+        </div>
+        {prs.statusLine && (
+          <p className="mt-2 text-[13px] font-semibold text-rose-900 dark:text-rose-100 leading-relaxed rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-2.5">
+            {prs.statusLine}
+          </p>
+        )}
+        {prs.statusFacts && prs.statusFacts.length > 0 && (
+          <dl className="mt-2 rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
+            {prs.statusFacts.map((f) => (
+              <div key={f.label} className="flex gap-2 px-2.5 py-1.5">
+                <dt className="text-[12px] text-slate-500 dark:text-slate-400 w-32 shrink-0">{f.label}</dt>
+                <dd className="text-[12px] font-medium text-slate-800 dark:text-slate-100 leading-snug">{f.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </section>
+
+      {/* Governance: who is accountable for restoring this stretch */}
+      {prs.governance && (
+        <section>
+          <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Governance</div>
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
+            {prs.governance.rows.map((f) => (
+              <div key={f.label} className="flex gap-2 px-2.5 py-1.5">
+                <span className="text-[12px] text-slate-500 dark:text-slate-400 w-32 shrink-0">{f.label}</span>
+                <span className="text-[12px] font-medium text-slate-800 dark:text-slate-100 leading-snug">{f.value}</span>
+              </div>
+            ))}
+            {prs.governance.actionPlan && (
+              <div className="px-2.5 py-1.5">
+                <a
+                  href={prs.governance.actionPlan.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {prs.governance.actionPlan.label ?? "Action Plan"} ↗
+                </a>
+              </div>
+            )}
+          </div>
+          {prs.governance.note && <p className="mt-1 text-[11px] text-slate-400 leading-snug">{prs.governance.note}</p>}
+        </section>
+      )}
+
+      {/* Accountability matrix: Action Plan vs MPR, region-first */}
+      {accountability && <AccountabilityMatrix data={accountability} />}
 
       {/* Status list - the per-area summary; tap a row for detail + trend */}
       <section>
-        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Stressors <span className="normal-case font-normal text-slate-400">(tap for detail &amp; trend)</span></div>
+        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Priority areas <span className="normal-case font-normal text-slate-400">(tap for detail &amp; trend)</span></div>
         <div className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-200 dark:divide-slate-700">
           {prs.tabs.map((t) => (
             <button
@@ -1679,6 +1937,16 @@ function PRSPanel({
               <button onClick={() => onShowLayer(prs.evidence!.layerRef!)} className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
                 Show {layerByFamily[prs.evidence.layerRef].label} on the map →
               </button>
+            )}
+            {prs.evidence.link && (
+              <a
+                href={prs.evidence.link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1.5 flex items-center gap-1.5 rounded-md border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1.5 text-[12px] font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+              >
+                {prs.evidence.link.label} ↗
+              </a>
             )}
           </div>
         </details>
@@ -1726,6 +1994,188 @@ function PRSPanel({
         </PrsDisclosure>
       )}
       {prs.grievance?.urlNote && <p className="text-[10px] text-slate-400 italic">{prs.grievance.urlNote}</p>}
+    </div>
+  );
+}
+
+// Verdict chips for the accountability matrix. Plain-language labels: the
+// value of the matrix is making "exists in MPR vs doesn't" explicit per
+// region x category, so absence reads as a finding, not a blank.
+const ACC_VERDICT: Record<AccCategory["verdict"], { label: string; cls: string }> = {
+  tracked: { label: "In plan + MPR", cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300" },
+  "in-plan-not-reported": { label: "In plan, not in MPR", cls: "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300" },
+  "reported-not-in-plan": { label: "In MPR, not in plan", cls: "bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300" },
+  silent: { label: "Not in plan or MPR", cls: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300" },
+};
+const ACC_KIND_LABEL: Record<AccRegion["kind"], string> = { ulb: "ULBs", ia: "Industrial Areas", gp: "Gram Panchayats" };
+
+function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
+  const kinds = (["ulb", "ia", "gp"] as const).filter((k) => data.regions.some((r) => r.kind === k));
+  const [kind, setKind] = useState<AccRegion["kind"]>(kinds[0] ?? "ulb");
+  const regions = data.regions.filter((r) => r.kind === kind);
+  const [regionKey, setRegionKey] = useState<string | null>(null);
+  const region = regions.find((r) => r.key === regionKey) ?? regions[0];
+
+  return (
+    <section>
+      <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Accountability: plan vs progress reports</div>
+      <p className="text-[12px] font-medium text-slate-700 dark:text-slate-200 leading-snug mb-1.5">{data.question}</p>
+      {data.baseline.banner && (
+        <p className="text-[11px] leading-snug rounded-md border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 px-2 py-1.5 mb-2">
+          {data.baseline.banner}
+        </p>
+      )}
+
+      {/* Region-kind tabs */}
+      <div className="flex gap-1 mb-1.5">
+        {kinds.map((k) => (
+          <button
+            key={k}
+            onClick={() => { setKind(k); setRegionKey(null); }}
+            className={`text-[11px] px-2 py-1 rounded font-semibold border transition-colors ${
+              k === kind
+                ? "bg-slate-900 text-white border-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
+                : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+            }`}
+          >
+            {ACC_KIND_LABEL[k]}
+          </button>
+        ))}
+      </div>
+      {/* Region chips */}
+      {regions.length > 1 && (
+        <div className="flex flex-wrap gap-1 mb-2">
+          {regions.map((r) => (
+            <button
+              key={r.key}
+              onClick={() => setRegionKey(r.key)}
+              className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
+                r.key === region?.key
+                  ? "bg-rose-600 text-white border-rose-600"
+                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+              }`}
+            >
+              {r.name}
+              {r.silentNote && <span aria-hidden className="ml-1 text-[9px] opacity-70">∅</span>}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {region && (
+        <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-2">
+          <div>
+            <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{region.name}</div>
+            {region.inBasinNote && <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{region.inBasinNote}</p>}
+          </div>
+
+          {region.silentNote ? (
+            <p className="text-[12px] leading-snug rounded-md bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 text-rose-900 dark:text-rose-100 px-2 py-1.5">
+              <span className={`inline-block align-middle mr-1.5 text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded ${ACC_VERDICT.silent.cls}`}>{ACC_VERDICT.silent.label}</span>
+              {region.silentNote}
+            </p>
+          ) : (
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              {region.categories.map((c) => (
+                <details key={c.key} className="group py-1.5">
+                  <summary className="cursor-pointer list-none flex items-center gap-2">
+                    <span aria-hidden className="text-slate-400 group-open:rotate-90 transition-transform text-[10px]">▸</span>
+                    <span className="flex-1 text-[13px] font-semibold text-slate-800 dark:text-slate-100">{c.label}</span>
+                    <span className={`text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 ${ACC_VERDICT[c.verdict].cls}`}>{ACC_VERDICT[c.verdict].label}</span>
+                  </summary>
+                  <div className="mt-1.5 ml-4 space-y-1.5">
+                    <div className="rounded-md bg-slate-50 dark:bg-slate-800/60 px-2 py-1.5">
+                      <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Action Plan (2019)</div>
+                      <p className="text-[12px] text-slate-700 dark:text-slate-200 leading-snug">{c.actionPlan.summary}</p>
+                      {c.actionPlan.cite && <p className="text-[10px] text-slate-400 mt-0.5">{c.actionPlan.cite}</p>}
+                    </div>
+                    <div className="rounded-md bg-slate-50 dark:bg-slate-800/60 px-2 py-1.5">
+                      <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">MPR status <span className="normal-case">(as of {c.mpr.asOf})</span></div>
+                      <p className="text-[12px] text-slate-700 dark:text-slate-200 leading-snug">{c.mpr.summary}</p>
+                    </div>
+                    {c.gaps && c.gaps.length > 0 && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-rose-500 font-semibold">Gap identified</div>
+                        <ul className="list-disc pl-4 space-y-0.5">
+                          {c.gaps.map((g, i) => (
+                            <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{g}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {c.legalRef && data.legalLibrary?.[c.legalRef] && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Legal requirement</div>
+                        {data.legalLibrary[c.legalRef].map((l, i) => (
+                          <a key={i} href={l.url} target="_blank" rel="noopener noreferrer" className="block text-[12px] text-blue-600 dark:text-blue-400 hover:underline leading-snug">
+                            {l.label} ↗
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                    {c.media && c.media.length > 0 && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Media reports</div>
+                        {c.media.map((m, i) => (
+                          <a key={i} href={m.url} target="_blank" rel="noopener noreferrer" className="block text-[12px] text-blue-600 dark:text-blue-400 hover:underline leading-snug">
+                            {m.label} ↗
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </details>
+              ))}
+            </div>
+          )}
+
+          {region.grievance && (
+            <a
+              href={region.grievance.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {region.grievance.label} ↗
+            </a>
+          )}
+        </div>
+      )}
+
+      <p className="mt-1.5 text-[10px] text-slate-400 leading-snug">
+        Baseline: {data.baseline.primary.label}, {data.baseline.primary.asOf}.{" "}
+        <a href={data.baseline.actionPlan.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-400 hover:underline">{data.baseline.actionPlan.label} ↗</a>
+        {data.baseline.primary.note && <span> {data.baseline.primary.note}</span>}
+      </p>
+    </section>
+  );
+}
+
+/** "Key Terms Used on This Page" popup (Paani Phase-1 review): full forms of
+ *  the acronyms with a line of context each, so the panel stays readable for
+ *  first-time visitors without diluting the summary itself. */
+function KeyTermsPopup({ terms, onClose }: { terms: { term: string; full: string; note?: string }[]; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[900] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Key terms used on this page">
+      <div className="absolute inset-0 bg-slate-950/50" onClick={onClose} />
+      <div className="relative w-full max-w-md max-h-[80vh] overflow-y-auto rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl p-4 space-y-3">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Key terms used on this page</h3>
+          <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+            <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <dl className="space-y-2.5">
+          {terms.map((t) => (
+            <div key={t.term}>
+              <dt className="text-[12px] font-bold text-slate-800 dark:text-slate-100">
+                {t.term} <span className="font-medium text-slate-500 dark:text-slate-400">- {t.full}</span>
+              </dt>
+              {t.note && <dd className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug mt-0.5">{t.note}</dd>}
+            </div>
+          ))}
+        </dl>
+      </div>
     </div>
   );
 }

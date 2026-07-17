@@ -37,6 +37,14 @@ export const ARKAVATHI: BasinManifest = {
       // hue (keeps the map from becoming a rainbow of hard-to-tell lines).
       narrative:
         "The mainstem. Rises near Nandi Hills, impounded at Hesaraghatta and Thippagondanahalli, and joins the Cauvery below Kanakapura. Both reservoirs are effectively dead as freshwater sources after decades of upstream urbanisation; CPCB lengthened and worsened the Hesaraghatta-Kanakapura stretch to Priority I in 2022.",
+      attributes: {
+        origin: "Near Nandi Hills (Chikkaballapura district)",
+        length: "176 km (mapped course to the Cauvery confluence)",
+        tributaries: "Kumudavathi, Vrishabhavathi, Suvarnamukhi",
+        flowsInto: "Cauvery, below Kanakapura (Sangama)",
+        pollutedStretch: "Hesaraghatta Reservoir to downstream of Kanakapura Town - Priority I (CPCB, Oct 2025)",
+        restorationInitiatives: "KSPCB action plan under NGT OA 673/2018, overseen by the State-level River Rejuvenation Committee",
+      },
     },
     {
       riverId: "vrishabhavathi",
@@ -46,6 +54,13 @@ export const ARKAVATHI: BasinManifest = {
       color: "#2563eb",
       narrative:
         "The foam-and-fire river. Flows south-west out of central Bengaluru through the Vrishabhavathi valley, carrying the untreated overflow of the V-Valley STPs plus industrial effluent, into Byramangala reservoir before joining the Arkavathi. ATREE found heavy metals in fodder, milk and vegetables in villages along it.",
+      attributes: {
+        origin: "Within Bengaluru city (Vrishabhavathi valley)",
+        length: "69 km (mapped course)",
+        tributaries: "Nagarbhavi stream and other urban channels",
+        flowsInto: "Arkavathi, downstream of Byramangala reservoir",
+        pollutedStretch: "Carries the V-Valley catchment load into the Arkavathi Priority-I stretch",
+      },
     },
     {
       riverId: "kumudavathi",
@@ -55,6 +70,11 @@ export const ARKAVATHI: BasinManifest = {
       color: "#2563eb",
       narrative:
         "North-western tributary of the Arkavathi, draining toward Thippagondanahalli reservoir. Its catchment recharge has been a focus of revival efforts.",
+      attributes: {
+        origin: "Near Shivagange hills (Nelamangala side)",
+        length: "48 km (mapped course)",
+        flowsInto: "Arkavathi at Thippagondanahalli (TG Halli) reservoir",
+      },
     },
     {
       riverId: "suvarnamukhi",
@@ -64,6 +84,10 @@ export const ARKAVATHI: BasinManifest = {
       color: "#2563eb",
       narrative:
         "A smaller tributary stream in the basin's system. Shed mapping is provisional pending confirmation with Paani Earth.",
+      attributes: {
+        length: "35 km (mapped course)",
+        flowsInto: "Arkavathi (southern basin)",
+      },
     },
   ],
   // Palette discipline (so simultaneously-visible layers stay distinct):
@@ -78,10 +102,12 @@ export const ARKAVATHI: BasinManifest = {
     // Water family - all mid-tone so they hold contrast on both the light OSM
     // base and the darkened (dark-mode) base; separated by hue + form.
     { family: "rivers", label: "Rivers", floor: "hydrology", geom: "line", color: "#2563eb", defaultOn: true, context: true },
-    // The polluted river stretch (CPCB/NGT), 2020 vs 2025 - the story's entry
-    // point. Clicking either line opens the PRS panel (prs.json). Crimson line,
+    // The polluted river stretch (CPCB/NGT), 2020 vs 2025. Default-OFF per
+    // Paani's Phase-1 review: the stretch renders only while the PRS panel is
+    // open ("Explore the polluted stretch") or when toggled on explicitly.
+    // Clicking either line opens the PRS panel (prs.json). Crimson line,
     // distinct from the blue water family; the component weights 2025 over 2020.
-    { family: "prs", label: "Polluted stretch (PRS)", floor: "hydrology", geom: "line", color: "#b91c1c", defaultOn: true, prs: true },
+    { family: "prs", label: "Polluted stretch (PRS)", floor: "hydrology", geom: "line", color: "#b91c1c", defaultOn: false, prs: true },
     { family: "waterbodies-major", label: "Tanks & reservoirs (named)", floor: "hydrology", geom: "fill", color: "#0284c7", defaultOn: true },
     { family: "waterbodies-minor", label: "Other waterbodies", floor: "hydrology", geom: "fill", color: "#0d9488", defaultOn: false, heavy: true },
     { family: "drainage", label: "Drainage network", floor: "hydrology", geom: "line", color: "#3b82f6", defaultOn: false, heavy: true },
@@ -115,7 +141,7 @@ export const ARKAVATHI: BasinManifest = {
     "Spatial data: Paani Earth Foundation - Arkavathi River Basin GIS package (Feb 2026).",
     "Polluted river stretch (2020, 2025): Paani Earth, digitised from the CPCB / NGT polluted-river-stretch classification.",
     "Monitoring points: KSPCB, CPCB, CWC, Dept. of Mines & Geology, ATREE and others, compiled by Paani Earth.",
-    "Pollution evidence: Arkavathi Horata Samithi and RTI filings (lab analyses hosted on paani.earth).",
+    "Pollution evidence: Arkavathi Horata Samithi and RTI filings; Paani Earth x ICCW (IIT Madras) 7-site pollution study, Feb-Mar 2024 (lab analyses and report hosted on paani.earth).",
     "Treatment plants (STP/FSTP): BWSSB, KUWS&DB, BDA and KUIDFC, compiled by Paani Earth; locations confirmed against satellite imagery.",
     "Major industries: KSPCB 17-category polluting-industry list (geocoded).",
     "Boundaries: Karnataka GIS (KGIS); sub-watersheds & command areas: India-WRIS.",

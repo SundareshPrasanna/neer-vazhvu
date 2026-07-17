@@ -24,6 +24,19 @@ export interface BasinRiver {
   color: string;
   /** One-paragraph narrative shown in the panel when selected. */
   narrative?: string;
+  /** Structured attribute cards (Paani Phase-1 review): rendered above the
+   *  narrative. Any field left undefined renders as "Details coming soon",
+   *  so partial data is publishable without prose rewrites. */
+  attributes?: {
+    origin?: string;
+    /** Display string, e.g. "176 km (mapped course)". */
+    length?: string;
+    tributaries?: string;
+    flowsInto?: string;
+    /** The CPCB polluted-stretch identification for this river, if any. */
+    pollutedStretch?: string;
+    restorationInitiatives?: string;
+  };
 }
 
 export interface BasinLayer {
