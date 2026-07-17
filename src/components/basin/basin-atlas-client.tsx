@@ -29,6 +29,8 @@ export function BasinAtlasClient(props: {
   inventory: BasinInventory | null;
   initialRiverId?: string | null;
   initialFloor?: BasinFloor;
+  /** Overview mode: pre-select a sub-basin profile (embed ?sub= deep link). */
+  initialSubBasinKey?: string | null;
   embedded?: boolean;
   onClose?: () => void;
   renderFeatureDetail?: (args: {
@@ -54,6 +56,12 @@ export function BasinAtlasClient(props: {
   const navigateBasin = (basinId: string) => {
     const manifest = tryGetBasinManifest(basinId);
     if (!manifest) return;
+    // Standalone embeds keep the address bar honest across hierarchy hops so
+    // refresh/share land on the basin being viewed. (In the city-page overlay
+    // the rivers page owns the URL - leave it alone there.)
+    if (props.embedded && typeof window !== "undefined" && window.location.pathname.startsWith("/embed/basins/")) {
+      window.history.replaceState(null, "", `/embed/basins/${basinId}`);
+    }
     setActive({ manifest, inventory: null });
     fetch(`/data/basins/${basinId}/inventory.json`)
       .then((r) => (r.ok ? r.json() : null))
@@ -71,6 +79,7 @@ export function BasinAtlasClient(props: {
         manifest={active.manifest}
         inventory={active.inventory}
         embedded={props.embedded}
+        initialSubBasinKey={props.initialSubBasinKey}
         onClose={props.onClose}
         onNavigateBasin={navigateBasin}
       />

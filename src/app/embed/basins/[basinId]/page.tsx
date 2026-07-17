@@ -31,7 +31,7 @@ function loadBasinInventory(basinId: string): BasinInventory | null {
 
 interface PageProps {
   params: Promise<{ basinId: string }>;
-  searchParams: Promise<{ river?: string; floor?: string }>;
+  searchParams: Promise<{ river?: string; floor?: string; sub?: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -58,6 +58,7 @@ export default async function BasinEmbedPage({ params, searchParams }: PageProps
   const inventory = loadBasinInventory(basinId);
   const initialRiverId = manifest.rivers.some((r) => r.riverId === sp.river) ? sp.river! : null;
   const initialFloor = FLOORS.includes(sp.floor as BasinFloor) ? (sp.floor as BasinFloor) : undefined;
+  const initialSubBasinKey = manifest.subBasins?.some((s) => s.key === sp.sub) ? sp.sub! : null;
 
   return (
     <div className="fixed inset-0 flex flex-col bg-white dark:bg-slate-950">
@@ -86,6 +87,7 @@ export default async function BasinEmbedPage({ params, searchParams }: PageProps
           inventory={inventory}
           initialRiverId={initialRiverId}
           initialFloor={initialFloor}
+          initialSubBasinKey={initialSubBasinKey}
           embedded
         />
       </div>

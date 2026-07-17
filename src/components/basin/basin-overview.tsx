@@ -41,10 +41,15 @@ interface LiveReservoir {
 
 type MetricKey = "rainfallDeviationPct" | "gwLevelM" | "pollution";
 
-const METRIC_OPTIONS: { key: MetricKey; label: string }[] = [
-  { key: "rainfallDeviationPct", label: "Rainfall" },
-  { key: "gwLevelM", label: "Groundwater" },
+// Rainfall/GW render ONLY once their scoreboard values carry verified: true -
+// the M4 cross-check found KWRIS's devper is NOT seasonal deviation
+// (Bengaluru's own Jun 1-Jul 17 total reads ~-35% vs normal while devper says
+// -96%), so unverified values never reach the display. Pollution is computed
+// from the CPCB stretch geometries client-side and is always available.
+const METRIC_OPTIONS: { key: MetricKey; label: string; needsVerified?: boolean }[] = [
   { key: "pollution", label: "Pollution" },
+  { key: "rainfallDeviationPct", label: "Rainfall", needsVerified: true },
+  { key: "gwLevelM", label: "Groundwater", needsVerified: true },
 ];
 
 // Sequential severity ramps (worse = darker/redder), neutral when unknown.
@@ -93,12 +98,15 @@ export function BasinOverview({
   manifest,
   inventory,
   embedded = false,
+  initialSubBasinKey = null,
   onClose,
   onNavigateBasin,
 }: {
   manifest: BasinManifest;
   inventory: BasinInventory | null;
   embedded?: boolean;
+  /** Pre-select a sub-basin profile (embed ?sub= deep link). */
+  initialSubBasinKey?: string | null;
   onClose?: () => void;
   /** Drill into a child deep-dive basin (manifest swap in the host). */
   onNavigateBasin?: (basinId: string) => void;
@@ -112,8 +120,8 @@ export function BasinOverview({
   const [prs, setPrs] = useState<FeatureCollection | null>(null);
   const [scoreboard, setScoreboard] = useState<Scoreboard | null>(null);
   const [live, setLive] = useState<Record<string, LiveReservoir>>({});
-  const [metric, setMetric] = useState<MetricKey>("rainfallDeviationPct");
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [metric, setMetric] = useState<MetricKey>("pollution");
+  const [selectedKey, setSelectedKey] = useState<string | null>(initialSubBasinKey);
 
   useEffect(() => {
     fetchJson(`${base}/boundary.geojson`).then((d) => setBoundary(d as FeatureCollection | null));
@@ -179,35 +187,45 @@ export function BasinOverview({
     return out;
   }, [prs, subBasins]);
 
+  // A scoreboard metric is usable only when verified (see METRIC_OPTIONS).
+  const verifiedMetric = (key: string, ref: SubBasinRef): MetricValue | null => {
+    const m = scoreboard?.subBasins?.[ref.scoreboardKey]?.metrics?.[key];
+    return m && m.verified ? m : null;
+  };
+  const metricAvailable = (key: MetricKey) =>
+    key === "pollution" || refs.some((r) => verifiedMetric(key, r) !== null);
+  const shownOptions = METRIC_OPTIONS.filter((m) => !m.needsVerified || metricAvailable(m.key));
+
   const metricFor = (ref: SubBasinRef): number | null => {
     if (metric === "pollution") return prsCountByKey[ref.key] ?? 0;
-    const m = scoreboard?.subBasins?.[ref.scoreboardKey]?.metrics?.[metric];
+    const m = verifiedMetric(metric, ref);
     return m ? Number(m.value) : null;
   };
 
-  // Problems-first card order: worst rainfall deficit first, unknowns last.
+  // Problems-first card order: polluted sub-basins first, then by size.
   const orderedRefs = useMemo(() => {
     return [...refs].sort((a, b) => {
-      const av = scoreboard?.subBasins?.[a.scoreboardKey]?.metrics?.rainfallDeviationPct?.value;
-      const bv = scoreboard?.subBasins?.[b.scoreboardKey]?.metrics?.rainfallDeviationPct?.value;
-      return (av === undefined ? 999 : Number(av)) - (bv === undefined ? 999 : Number(bv));
+      const diff = (prsCountByKey[b.key] ?? 0) - (prsCountByKey[a.key] ?? 0);
+      return diff !== 0 ? diff : b.areaKm2 - a.areaKm2;
     });
-  }, [refs, scoreboard]);
+  }, [refs, prsCountByKey]);
 
+  // Headline uses only verified facts: stretch counts (computed here) and
+  // the live reservoir feed. Rainfall/GW join once their values verify.
   const headline = useMemo(() => {
-    if (!scoreboard) return null;
-    const devs = refs
-      .map((r) => scoreboard.subBasins?.[r.scoreboardKey]?.metrics?.rainfallDeviationPct?.value)
-      .filter((v): v is number => typeof v === "number");
-    const deficits = devs.filter((v) => v < -20).length;
+    const polluted = Object.values(prsCountByKey).filter((n) => n > 0).length;
     const stretchCount = Object.values(prsCountByKey).reduce((s, n) => s + n, 0);
     const liveVals = Object.values(live).map((r) => r.storagePctFrl).filter((v): v is number => v != null);
     const avgPct = liveVals.length ? Math.round(liveVals.reduce((s, v) => s + v, 0) / liveVals.length) : null;
+    const devs = refs
+      .map((r) => verifiedMetric("rainfallDeviationPct", r)?.value)
+      .filter((v): v is number => typeof v === "number");
     const parts: string[] = [];
-    if (devs.length) parts.push(`${deficits} of ${devs.length} reported sub-basins are in rainfall deficit`);
-    if (stretchCount) parts.push(`${stretchCount} CPCB polluted stretches`);
+    if (stretchCount) parts.push(`${stretchCount} CPCB polluted stretches across ${polluted} of ${refs.length} sub-basins`);
+    if (devs.length) parts.push(`${devs.filter((v) => v < -20).length} of ${devs.length} in rainfall deficit`);
     if (avgPct !== null) parts.push(`major reservoirs average ${avgPct}% of full level`);
     return parts.length ? parts.join("; ") + "." : null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scoreboard, refs, prsCountByKey, live]);
 
   const selected = selectedKey ? refByKey[selectedKey] : null;
@@ -297,7 +315,7 @@ export function BasinOverview({
         {/* Metric switcher + legend */}
         <div className="absolute top-3 right-3 z-[500] flex flex-col items-end gap-1.5">
           <div className="flex rounded-md overflow-hidden border border-slate-300 dark:border-slate-600 shadow bg-white dark:bg-slate-900">
-            {METRIC_OPTIONS.map((m) => (
+            {shownOptions.map((m) => (
               <button
                 key={m.key}
                 onClick={() => setMetric(m.key)}
@@ -383,18 +401,26 @@ export function BasinOverview({
             </div>
             {selected.blurb && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{selected.blurb}</p>}
             <dl className="text-[12px] divide-y divide-slate-100 dark:divide-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
-              {[
-                ["Rainfall deviation", selectedScore?.metrics?.rainfallDeviationPct, (v: number) => `${v}% vs normal`],
-                ["Groundwater level", selectedScore?.metrics?.gwLevelM, (v: number) => `${v} m below ground`],
+              {([
+                ["CPCB polluted stretches", { value: prsCountByKey[selected.key] ?? 0, verified: true } as MetricValue, (v: number) => `${v}`],
                 ["MI tanks", selectedScore?.metrics?.tankCount, (v: number) => `${v}`],
                 ["KSPCB WQ stations", selectedScore?.metrics?.wqStationCount, (v: number) => `${v}`],
                 ["Reservoirs", selectedScore?.metrics?.reservoirCount, (v: number) => `${v}`],
-                ["CPCB polluted stretches", { value: prsCountByKey[selected.key] ?? 0 } as MetricValue, (v: number) => `${v}`],
-              ].map(([label, mv, fmt]) => (
-                <div key={label as string} className="flex justify-between gap-2 px-2 py-1">
-                  <dt className="text-slate-500 dark:text-slate-400">{label as string}</dt>
+                ["Rainfall deviation", selectedScore?.metrics?.rainfallDeviationPct, (v: number) => `${v}% vs normal`],
+                ["Groundwater level", selectedScore?.metrics?.gwLevelM, (v: number) => `${v} m below ground`],
+              ] as [string, MetricValue | undefined, (v: number) => string][]).map(([label, mv, fmt]) => (
+                <div key={label} className="flex justify-between gap-2 px-2 py-1">
+                  <dt className="text-slate-500 dark:text-slate-400">{label}</dt>
                   <dd className="font-medium">
-                    {mv ? (fmt as (v: number) => string)(Number((mv as MetricValue).value)) : <span className="italic text-slate-400">not reported</span>}
+                    {!mv ? (
+                      <span className="italic text-slate-400">not reported</span>
+                    ) : mv.verified === false ? (
+                      // Sourced but the period basis is unconfirmed - say so
+                      // rather than display a possibly-misleading number.
+                      <span className="italic text-slate-400" title="Sourced from KWRIS but the reporting period is unconfirmed; withheld until verified">pending verification</span>
+                    ) : (
+                      fmt(Number(mv.value))
+                    )}
                   </dd>
                 </div>
               ))}
@@ -428,7 +454,9 @@ export function BasinOverview({
           <div className="space-y-1.5">
             {orderedRefs.map((r) => {
               const sc = scoreboard?.subBasins?.[r.scoreboardKey];
-              const dev = sc?.metrics?.rainfallDeviationPct?.value;
+              const devM = verifiedMetric("rainfallDeviationPct", r);
+              const dev = devM ? Number(devM.value) : undefined;
+              const tanks = sc?.metrics?.tankCount?.value;
               const stretches = prsCountByKey[r.key] ?? 0;
               return (
                 <button
@@ -445,7 +473,9 @@ export function BasinOverview({
                     <DepthPips level={r.depthLevel} />
                   </div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
-                    {typeof dev === "number" ? `rain ${dev}% vs normal` : "rain: not reported"}
+                    {r.areaKm2.toLocaleString()} sq km
+                    {typeof tanks === "number" && ` - ${tanks} tanks`}
+                    {typeof dev === "number" && ` - rain ${dev}% vs normal`}
                     {stretches > 0 && <span className="text-rose-600 dark:text-rose-400"> - {stretches} polluted stretch{stretches > 1 ? "es" : ""}</span>}
                     {r.deepDiveBasinId && <span className="text-blue-600 dark:text-blue-400 font-medium"> - full deep dive →</span>}
                   </div>

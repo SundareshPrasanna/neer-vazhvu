@@ -70,6 +70,16 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     dateFrom: "regex:fetched (\\d{4}-\\d{2}-\\d{2})",
     note: "BMC DM register, weekly scrape",
   },
+  {
+    id: "cauvery-ka-scoreboard",
+    cityId: "bangalore",
+    file: "public/data/basins/cauvery-ka/scoreboard.json",
+    // Monthly-ish KWRIS aggregates; refreshed by re-running
+    // scripts/ingest_basin_overview.py scripts/basin-sources/cauvery-ka.json
+    maxAgeDays: 45,
+    dateFrom: "json:asOf",
+    note: "Cauvery basin overview sub-basin scoreboard (KWRIS)",
+  },
 ];
 
 // Cities allowed to skip a derived check, with the reason on record.
