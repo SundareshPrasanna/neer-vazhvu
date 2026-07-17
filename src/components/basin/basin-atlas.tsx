@@ -111,6 +111,10 @@ interface PrsUnit {
   /** Admin level this unit's figures are reported at (ULB / taluk / district /
    *  catchment), shown as a chip so each number's granularity is explicit. */
   level?: string;
+  /** "other" = figures come from DEP / CAG / F-register etc., not the MPR.
+   *  MPR is the primary baseline; other-source sub-tabs render in a separate
+   *  "Other sources" group so the reader always knows which register speaks. */
+  sourceTier?: "mpr" | "other";
   /** Links to this unit's full cross-source GapPanel. */
   gapUnit?: string;
   caveat?: string;
@@ -139,6 +143,8 @@ interface PrsCategory {
   points?: string[];
   /** A map layer this category maps to (e.g. "pressures", "evidence-points"). */
   layerRef?: string;
+  /** See PrsUnit.sourceTier - "other" groups this category under Other sources. */
+  sourceTier?: "mpr" | "other";
   /** An external source to open in a new tab (e.g. a live CPCB dashboard the
    *  reader can inspect for themselves). */
   link?: { url: string; label: string };
@@ -1632,7 +1638,7 @@ function PRSPanel({
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-2">
           <button onClick={() => setOpenArea(null)} className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
-            ← All stressors
+            ← All priority areas
           </button>
           <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
             <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1640,27 +1646,48 @@ function PRSPanel({
         </div>
         <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">{openTab.label}</h2>
         {openTab.intro && <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed">{openTab.intro}</p>}
-        {subs.length > 1 && (
-          <div className="flex flex-wrap gap-1">
-            {subs.map((s) => {
-              const name = "name" in s ? s.name : s.label;
-              const on = s.key === (unit?.key ?? cat?.key);
-              return (
-                <button
-                  key={s.key}
-                  onClick={() => setSubKey(s.key)}
-                  className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
-                    on
-                      ? "bg-rose-600 text-white border-rose-600"
+        {subs.length > 1 && (() => {
+          // MPR is the primary baseline: its sub-tabs lead; DEP / CAG /
+          // F-register / OCEMS material sits under an explicit "Other
+          // sources" group so the reader always knows which register speaks.
+          const primary = subs.filter((s) => s.sourceTier !== "other");
+          const other = subs.filter((s) => s.sourceTier === "other");
+          const chip = (s: (typeof subs)[number], muted: boolean) => {
+            const name = "name" in s ? s.name : s.label;
+            const on = s.key === (unit?.key ?? cat?.key);
+            return (
+              <button
+                key={s.key}
+                onClick={() => setSubKey(s.key)}
+                className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
+                  on
+                    ? "bg-rose-600 text-white border-rose-600"
+                    : muted
+                      ? "bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 border-dashed hover:bg-slate-100 dark:hover:bg-slate-700"
                       : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
-                  }`}
-                >
-                  {name}
-                </button>
-              );
-            })}
-          </div>
-        )}
+                }`}
+              >
+                {name}
+              </button>
+            );
+          };
+          return (
+            <div className="space-y-1.5">
+              {primary.length > 0 && (
+                <div className="flex flex-wrap gap-1 items-center">
+                  {other.length > 0 && <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mr-0.5">MPR</span>}
+                  {primary.map((s) => chip(s, false))}
+                </div>
+              )}
+              {other.length > 0 && (
+                <div className="flex flex-wrap gap-1 items-center">
+                  <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mr-0.5">Other sources</span>
+                  {other.map((s) => chip(s, true))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
         {openTab.units && unit && (
           <UnitTimeline unit={unit} unitLabel={openTab.unitLabel ?? "MLD"} treatedVerb={openTab.treatedVerb ?? "treated"} onOpenUnit={onOpenUnit} />
         )}
@@ -1739,7 +1766,7 @@ function PRSPanel({
               onClick={() => setShowKeyTerms(true)}
               className="inline-flex items-center gap-1 rounded-full border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 text-[11px] font-medium text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/50"
             >
-              <span aria-hidden>?</span> Key terms used on this page
+              Key terms used on this page
             </button>
           )}
           {prs.citeSource && (
@@ -1833,7 +1860,7 @@ function PRSPanel({
 
       {/* Status list - the per-area summary; tap a row for detail + trend */}
       <section>
-        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Stressors <span className="normal-case font-normal text-slate-400">(tap for detail &amp; trend)</span></div>
+        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Priority areas <span className="normal-case font-normal text-slate-400">(tap for detail &amp; trend)</span></div>
         <div className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-200 dark:divide-slate-700">
           {prs.tabs.map((t) => (
             <button
