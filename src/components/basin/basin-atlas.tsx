@@ -112,9 +112,15 @@ interface PrsUnit {
    *  catchment), shown as a chip so each number's granularity is explicit. */
   level?: string;
   /** "other" = figures come from DEP / CAG / F-register etc., not the MPR.
-   *  MPR is the primary baseline; other-source sub-tabs render in a separate
-   *  "Other sources" group so the reader always knows which register speaks. */
+   *  MPR is the primary baseline: each town's detail renders an MPR bucket
+   *  first, then an Other-sources bucket. Units tagged "other" show an
+   *  explicit no-data state in the MPR bucket and their content moves to
+   *  the Other-sources bucket. */
   sourceTier?: "mpr" | "other";
+  /** Custom text for the MPR bucket's no-data state (default: "Not itemised
+   *  in any MPR edition"). E.g. BBMP: the MPR tracks the V-Valley catchment
+   *  in aggregate rather than per-ULB. */
+  mprNote?: string;
   /** Links to this unit's full cross-source GapPanel. */
   gapUnit?: string;
   caveat?: string;
@@ -1647,11 +1653,6 @@ function PRSPanel({
         <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">{openTab.label}</h2>
         {openTab.intro && <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed">{openTab.intro}</p>}
         {subs.length > 1 && (() => {
-          // MPR is the primary baseline: its sub-tabs lead; DEP / CAG /
-          // F-register / OCEMS material sits under an explicit "Other
-          // sources" group so the reader always knows which register speaks.
-          const primary = subs.filter((s) => s.sourceTier !== "other");
-          const other = subs.filter((s) => s.sourceTier === "other");
           const chip = (s: (typeof subs)[number], muted: boolean) => {
             const name = "name" in s ? s.name : s.label;
             const on = s.key === (unit?.key ?? cat?.key);
@@ -1671,6 +1672,16 @@ function PRSPanel({
               </button>
             );
           };
+          // Units (towns) render as one flat row - every town gets both an
+          // MPR bucket and an Other-sources bucket in its detail below, so
+          // the chips don't pre-sort them. Categories (thematic sub-tabs)
+          // keep the register split: MPR-sourced lead, DEP/CAG/F-register/
+          // OCEMS material sits under an explicit "Other sources" group.
+          if (openTab.units) {
+            return <div className="flex flex-wrap gap-1">{subs.map((s) => chip(s, false))}</div>;
+          }
+          const primary = subs.filter((s) => s.sourceTier !== "other");
+          const other = subs.filter((s) => s.sourceTier === "other");
           return (
             <div className="space-y-1.5">
               {primary.length > 0 && (
@@ -1689,7 +1700,27 @@ function PRSPanel({
           );
         })()}
         {openTab.units && unit && (
-          <UnitTimeline unit={unit} unitLabel={openTab.unitLabel ?? "MLD"} treatedVerb={openTab.treatedVerb ?? "treated"} onOpenUnit={onOpenUnit} />
+          <div className="space-y-2">
+            {/* Bucket 1: MPR - the primary baseline. Towns the MPR doesn't
+                itemise get an explicit no-data state, never a silent blank. */}
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">MPR (primary source)</div>
+              {unit.sourceTier === "other" ? (
+                <p className="text-[12px] leading-snug rounded-md border border-slate-200 dark:border-slate-700 border-dashed bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 px-2.5 py-2">
+                  {unit.mprNote ?? `No data: ${unit.name} is not itemised in any MPR edition we hold.`}
+                </p>
+              ) : (
+                <UnitTimeline unit={unit} unitLabel={openTab.unitLabel ?? "MLD"} treatedVerb={openTab.treatedVerb ?? "treated"} onOpenUnit={onOpenUnit} />
+              )}
+            </div>
+            {/* Bucket 2: other sources (DEP, CAG, ...) */}
+            {unit.sourceTier === "other" && (
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Other sources (DEP, CAG, ...)</div>
+                <UnitTimeline unit={unit} unitLabel={openTab.unitLabel ?? "MLD"} treatedVerb={openTab.treatedVerb ?? "treated"} onOpenUnit={onOpenUnit} />
+              </div>
+            )}
+          </div>
         )}
         {openTab.categories && cat && (
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-3">
