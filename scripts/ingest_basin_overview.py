@@ -265,6 +265,19 @@ def main() -> int:
                     code = sub_key_for(lon, lat)
                     if code:
                         props["subBasin"] = code
+            # line families: tag the containing sub-basin by segment midpoint
+            # (good enough for scoping a stream to its sub-basin view). With
+            # clipToBasin, out-of-boundary segments are dropped - e.g. CWC's
+            # Cauvery attribution includes TN/Kerala reaches outside our scope.
+            if g["type"] in ("LineString", "MultiLineString") and "subBasin" not in props:
+                line = g["coordinates"] if g["type"] == "LineString" else g["coordinates"][0]
+                if line:
+                    mx, my = line[len(line) // 2][0], line[len(line) // 2][1]
+                    if fam.get("clipToBasin") and not point_in_geom(mx, my, boundary_geom):
+                        continue
+                    code = sub_key_for(mx, my)
+                    if code:
+                        props["subBasin"] = code
             if fam.get("static"):
                 props.update(fam["static"])
             # config-declared value mapping (e.g. KWRIS ReservoirID -> the

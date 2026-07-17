@@ -11,14 +11,14 @@
 // scoreboard.json, reservoirs.geojson) - no source-system knowledge here.
 
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip as LeafletTooltip } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip as LeafletTooltip, useMap } from "react-leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import "leaflet/dist/leaflet.css";
 import type { BasinInventory, BasinManifest, SubBasinRef } from "@/lib/basins";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 
 interface MetricValue {
-  value: number;
+  value: number | string;
   unit?: string;
   asOf?: string;
   source?: string;
@@ -79,6 +79,37 @@ function fetchJson(url: string): Promise<unknown | null> {
   return fetch(url).then((r) => (r.ok ? r.json() : null)).catch(() => null);
 }
 
+// Use-based class chip colours (A best .. E worst - KSPCB/NWMP verdicts).
+const CLASS_CHIP: Record<string, string> = {
+  A: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
+  B: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
+  C: "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
+  D: "bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300",
+  E: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
+};
+const CLASS_DOT: Record<string, string> = { A: "#10b981", B: "#10b981", C: "#f59e0b", D: "#f97316", E: "#dc2626" };
+
+/** Fit the map to the selected sub-basin polygon (or the whole basin). */
+function FitToSelection({ geom }: { geom: GeoJSON.Geometry | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!geom) return;
+    let minX = 180, minY = 90, maxX = -180, maxY = -90;
+    const scan = (coords: unknown): void => {
+      if (Array.isArray(coords) && typeof coords[0] === "number") {
+        const [x, y] = coords as number[];
+        minX = Math.min(minX, x); maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+      } else if (Array.isArray(coords)) {
+        coords.forEach(scan);
+      }
+    };
+    scan((geom as { coordinates: unknown }).coordinates);
+    if (minX <= maxX) map.fitBounds([[minY, minX], [maxY, maxX]], { padding: [24, 24] });
+  }, [geom, map]);
+  return null;
+}
+
 function DepthPips({ level }: { level: number }) {
   return (
     <span className="inline-flex items-center gap-0.5" title={`Depth level ${level} of 4 (Arkavati = 4)`}>
@@ -116,6 +147,8 @@ export function BasinOverview({
   const [boundary, setBoundary] = useState<FeatureCollection | null>(null);
   const [subBasins, setSubBasins] = useState<FeatureCollection | null>(null);
   const [streams, setStreams] = useState<FeatureCollection | null>(null);
+  const [tanks, setTanks] = useState<FeatureCollection | null>(null);
+  const [stations, setStations] = useState<FeatureCollection | null>(null);
   const [reservoirs, setReservoirs] = useState<FeatureCollection | null>(null);
   const [prs, setPrs] = useState<FeatureCollection | null>(null);
   const [scoreboard, setScoreboard] = useState<Scoreboard | null>(null);
@@ -127,6 +160,8 @@ export function BasinOverview({
     fetchJson(`${base}/boundary.geojson`).then((d) => setBoundary(d as FeatureCollection | null));
     fetchJson(`${base}/sub-basins.geojson`).then((d) => setSubBasins(d as FeatureCollection | null));
     fetchJson(`${base}/streams.geojson`).then((d) => setStreams(d as FeatureCollection | null));
+    fetchJson(`${base}/tanks.geojson`).then((d) => setTanks(d as FeatureCollection | null));
+    fetchJson(`${base}/wq-stations.geojson`).then((d) => setStations(d as FeatureCollection | null));
     fetchJson(`${base}/reservoirs.geojson`).then((d) => setReservoirs(d as FeatureCollection | null));
     fetchJson(`${base}/prs-stretches.geojson`).then((d) => setPrs(d as FeatureCollection | null));
     fetchJson(`${base}/scoreboard.json`).then((d) => setScoreboard(d as Scoreboard | null));
@@ -282,6 +317,48 @@ export function BasinOverview({
               }}
             />
           )}
+          {/* Focus mode: fit to the selected sub-basin and reveal its own
+              tanks + WQ stations (the L1/L2 layers, scoped not statewide). */}
+          <FitToSelection
+            geom={
+              selectedKey
+                ? (subBasins?.features.find((f) => (f.properties as Record<string, unknown>)?.code === selectedKey)?.geometry ?? null)
+                : (boundary?.features[0]?.geometry ?? null)
+            }
+          />
+          {selectedKey &&
+            tanks?.features
+              .filter((f) => (f.properties as Record<string, unknown>)?.subBasin === selectedKey && f.geometry?.type === "Point")
+              .map((f, i) => {
+                const [lon, lat] = (f.geometry as GeoJSON.Point).coordinates as number[];
+                const p = f.properties as Record<string, unknown>;
+                return (
+                  <CircleMarker key={`t${i}`} center={[lat, lon]} radius={2.5} pathOptions={{ color: "#0284c7", weight: 1, fillColor: "#0284c7", fillOpacity: 0.7 }}>
+                    <LeafletTooltip>{String(p.name || p.tankId || "MI tank")}</LeafletTooltip>
+                  </CircleMarker>
+                );
+              })}
+          {selectedKey &&
+            stations?.features
+              .filter((f) => (f.properties as Record<string, unknown>)?.subBasin === selectedKey && f.geometry?.type === "Point")
+              .map((f, i) => {
+                const [lon, lat] = (f.geometry as GeoJSON.Point).coordinates as number[];
+                const p = f.properties as Record<string, unknown>;
+                const worst = p.worstClass as string | undefined;
+                return (
+                  <CircleMarker key={`s${i}`} center={[lat, lon]} radius={5.5} pathOptions={{ color: "#0f172a", weight: 1, fillColor: worst ? CLASS_DOT[worst] : "#94a3b8", fillOpacity: 0.9 }}>
+                    <LeafletTooltip>
+                      <strong>{String(p.name)}</strong> ({String(p.river ?? "")})
+                      {worst && (
+                        <>
+                          <br />
+                          <span style={{ fontSize: 11 }}>worst class {worst} - latest {String(p.latestClass)} ({String(p.readingsPeriod)})</span>
+                        </>
+                      )}
+                    </LeafletTooltip>
+                  </CircleMarker>
+                );
+              })}
           {reservoirs?.features.map((f, i) => {
             const p = f.properties as Record<string, unknown>;
             if (f.geometry?.type !== "Point") return null;
@@ -408,6 +485,7 @@ export function BasinOverview({
                 ["Reservoirs", selectedScore?.metrics?.reservoirCount, (v: number) => `${v}`],
                 ["Rainfall deviation", selectedScore?.metrics?.rainfallDeviationPct, (v: number) => `${v}% vs normal`],
                 ["Groundwater level", selectedScore?.metrics?.gwLevelM, (v: number) => `${v} m below ground`],
+                ["Worst WQ class (NWMP)", selectedScore?.metrics?.wqWorstClass, () => ""],
               ] as [string, MetricValue | undefined, (v: number) => string][]).map(([label, mv, fmt]) => (
                 <div key={label} className="flex justify-between gap-2 px-2 py-1">
                   <dt className="text-slate-500 dark:text-slate-400">{label}</dt>
@@ -418,6 +496,8 @@ export function BasinOverview({
                       // Sourced but the period basis is unconfirmed - say so
                       // rather than display a possibly-misleading number.
                       <span className="italic text-slate-400" title="Sourced from KWRIS but the reporting period is unconfirmed; withheld until verified">pending verification</span>
+                    ) : typeof mv.value === "string" && CLASS_CHIP[mv.value] ? (
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CLASS_CHIP[mv.value]}`}>Class {mv.value}</span>
                     ) : (
                       fmt(Number(mv.value))
                     )}
@@ -425,6 +505,33 @@ export function BasinOverview({
                 </div>
               ))}
             </dl>
+            {/* Stations with their published verdicts (L2 readings) */}
+            {(() => {
+              const rows = stations?.features
+                .filter((f) => (f.properties as Record<string, unknown>)?.subBasin === selected.key)
+                .map((f) => f.properties as Record<string, unknown>) ?? [];
+              if (rows.length === 0) return null;
+              return (
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">WQ stations (KSPCB / NWMP)</div>
+                  <ul className="mt-0.5 space-y-0.5">
+                    {rows.map((p, i) => (
+                      <li key={i} className="flex items-center justify-between gap-2 text-[11px] text-slate-600 dark:text-slate-300">
+                        <span className="truncate">{String(p.name)}{p.river ? ` (${String(p.river)})` : ""}</span>
+                        {typeof p.worstClass === "string" ? (
+                          <span className={`shrink-0 text-[9px] font-bold px-1 py-0.5 rounded ${CLASS_CHIP[p.worstClass as string]}`}>{String(p.worstClass)}</span>
+                        ) : (
+                          <span className="shrink-0 italic text-slate-400 text-[10px]">no classification</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                  {rows.some((p) => p.readingsPeriod) && (
+                    <p className="mt-0.5 text-[10px] text-slate-400">Worst monthly use-based class, {String(rows.find((p) => p.readingsPeriod)?.readingsPeriod)}. A best - E worst.</p>
+                  )}
+                </div>
+              );
+            })()}
             {selected.unlocks && selected.unlocks.length > 0 && (
               <div>
                 <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Next on the ladder</div>
@@ -457,6 +564,7 @@ export function BasinOverview({
               const devM = verifiedMetric("rainfallDeviationPct", r);
               const dev = devM ? Number(devM.value) : undefined;
               const tanks = sc?.metrics?.tankCount?.value;
+              const worst = sc?.metrics?.wqWorstClass?.value as string | undefined;
               const stretches = prsCountByKey[r.key] ?? 0;
               return (
                 <button
@@ -469,7 +577,12 @@ export function BasinOverview({
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[13px] font-semibold">{r.name}</span>
+                    <span className="text-[13px] font-semibold flex items-center gap-1.5">
+                      {r.name}
+                      {worst && CLASS_CHIP[worst] && (
+                        <span className={`text-[9px] font-bold px-1 py-0.5 rounded ${CLASS_CHIP[worst]}`}>{worst}</span>
+                      )}
+                    </span>
                     <DepthPips level={r.depthLevel} />
                   </div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
