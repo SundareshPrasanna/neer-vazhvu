@@ -467,7 +467,8 @@ export function BasinOverview({
                 const p = f.properties as Record<string, unknown>;
                 const tankLabel = String(p.name || p.tankId || "MI tank");
                 return (
-                  <CircleMarker key={`t${i}`} center={[lat, lon]} radius={2.5} pathOptions={{ color: "#0284c7", weight: 1, fillColor: "#0284c7", fillOpacity: 0.7 }}>
+                  // radius 4 = a comfortable hover/tap target (2.5 was a precision game)
+                  <CircleMarker key={`t${i}`} center={[lat, lon]} radius={4} pathOptions={{ color: "#0284c7", weight: 1, fillColor: "#0284c7", fillOpacity: 0.6 }}>
                     <LeafletTooltip>{tankLabel}</LeafletTooltip>
                     <Popup>
                       <strong>{tankLabel}</strong>
