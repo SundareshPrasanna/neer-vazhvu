@@ -284,6 +284,12 @@ def main() -> int:
         feats = []
         for f in raw["features"]:
             props = adapter.clean_props(f["properties"], fam["keep"])
+            # cosmetic fix for ALL-CAPS source registers (e.g. NRSC reservoir
+            # names) - display casing is decided here, not in components
+            for k in fam.get("titleCaseProps", []):
+                v = props.get(k)
+                if isinstance(v, str) and v.isupper():
+                    props[k] = v.title()
             # Some KWRIS layers serve projected-metre geometry but clean
             # decimal-degree Latitude/Longitude properties - rebuild the point.
             if fam.get("pointFromProps"):

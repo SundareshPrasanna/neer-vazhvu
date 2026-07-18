@@ -38,6 +38,7 @@ export const CAUVERY_TN: BasinManifest = {
     { family: "streams", label: "River channels (TNGIS)", floor: "hydrology", geom: "line", color: "#2563eb", defaultOn: true, context: true },
     { family: "tanks", label: "Named tanks", floor: "hydrology", geom: "point", color: "#0284c7", defaultOn: false },
     { family: "prs-stretches", label: "Polluted stretches (CPCB, Oct 2025)", floor: "monitoring", geom: "point", color: "#b91c1c", defaultOn: true },
+    { family: "reservoirs", label: "Reservoirs (TN WRD register)", floor: "hydrology", geom: "point", color: "#0891b2", defaultOn: true },
   ],
   subBasins: [
     { key: "115", name: "Chinnar", scoreboardKey: "115", areaKm2: 1750, depthLevel: 1, blurb: "The TN side of the border sliver Karnataka maps as its C8.", unlocks: ["No TN water-quality or monitoring layers ingested yet - TNWRIS / TNPCB recon pending"] },
@@ -48,7 +49,7 @@ export const CAUVERY_TN: BasinManifest = {
     { key: "114", name: "Upper Bhavani", scoreboardKey: "114", areaKm2: 1807, depthLevel: 1, blurb: "Holds CPCB's Bhavani polluted location at Sirumugai (Priority V) - Sirumugai falls in this polygon on TN WRD's own decomposition.", unlocks: ["Station-level water-quality readings (TNPCB) not yet ingested"] },
     { key: "120", name: "Lower Bhavani", scoreboardKey: "120", areaKm2: 2403, depthLevel: 1, blurb: "Bhavanisagar to the Cauvery confluence at Bhavani. CPCB's Bhavani polluted location (Sirumugai) sits just upstream in the Upper Bhavani sub-basin.", unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
     { key: "126", name: "Noyyal", scoreboardKey: "126", areaKm2: 3536, depthLevel: 1, blurb: "Coimbatore and Tiruppur's river, long synonymous with dyeing-industry pollution - yet the Noyyal does not appear anywhere in CPCB's October 2025 assessment, which covered 13 TN rivers. That absence is itself a monitoring question.", unlocks: ["The Noyyal is not in CPCB's 2025 NWMP assessment - TNPCB's own Noyyal record is the obvious next rung"] },
-    { key: "113", name: "Amaravathi", scoreboardKey: "113", areaKm2: 9254, depthLevel: 1, blurb: "The basin's largest TN sub-basin, from the Anaimalais through Karur.", unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
+    { key: "113", name: "Amaravathi", scoreboardKey: "113", areaKm2: 9254, depthLevel: 1, blurb: "The basin's largest TN sub-basin, from the Anaimalais through Karur - and its densest dam country: 10 WRD reservoirs including the Amaravathi dam itself.", unlocks: ["The Amaravathi is absent from CPCB's October 2025 assessment; CPCB names only the 9 non-complying rivers of 13 monitored in TN, so whether the Amaravathi is monitored at all is not public", "Station-level water-quality readings (TNPCB) not yet ingested"] },
     { key: "112", name: "Ayiaar", scoreboardKey: "112", areaKm2: 1327, depthLevel: 1, unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
     { key: "125", name: "Nandiyar - Kulaiyar", scoreboardKey: "125", areaKm2: 1532, depthLevel: 1, unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
     { key: "128", name: "Pungar (upper Coleroon)", scoreboardKey: "128", areaKm2: 1309, depthLevel: 1, unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
@@ -63,6 +64,7 @@ export const CAUVERY_TN: BasinManifest = {
     "Sub-basins, tanks and river channels: TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement.",
     "Named tanks shown as centre points: 2,527 named tanks within the TN Cauvery; the wider register maps ~42,000 waterspreads, most unnamed.",
     "Polluted stretches: CPCB, Polluted River Stretches in India, October 2025 (mirrored on this site) - placed at CPCB's monitoring locations; TNGIS channels carry no river names, so stretch lines are not drawn.",
+    "Reservoirs: TN WRD reservoir register via TNGIS (25 within the basin, shown at waterspread centre points) - no live storage feed joined yet.",
     "No station-level water-quality or accountability layers are on this atlas yet - TNWRIS / TNPCB sources are the next step and the gaps are stated per sub-basin.",
   ],
 };
