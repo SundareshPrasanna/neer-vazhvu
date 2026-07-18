@@ -80,10 +80,16 @@ export function BasinAtlasClient(props: {
   if (active.manifest.overviewMode === "sub-basins") {
     return (
       <BasinOverview
+        // Remount on basin swap: the Leaflet map ignores center/zoom prop
+        // changes and GeoJSON layers keep their first data, so navigating
+        // KA <-> TN would otherwise leave the old basin on the map.
+        key={active.manifest.basinId}
         manifest={active.manifest}
         inventory={active.inventory}
         embedded={props.embedded}
-        initialSubBasinKey={props.initialSubBasinKey}
+        initialSubBasinKey={
+          active.manifest.basinId === props.manifest.basinId ? props.initialSubBasinKey : null
+        }
         onClose={props.onClose}
         onNavigateBasin={navigateBasin}
       />
