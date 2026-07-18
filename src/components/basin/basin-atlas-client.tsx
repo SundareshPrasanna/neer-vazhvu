@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
 import { tryGetBasinManifest } from "@/lib/basins";
 
@@ -48,10 +48,14 @@ export function BasinAtlasClient(props: {
     { manifest: props.manifest, inventory: props.inventory },
   );
 
-  // Follow the host if it hands us a different entry basin.
-  useEffect(() => {
+  // Follow the host if it hands us a different entry basin - the
+  // adjust-state-during-render reset pattern (react.dev "you might not need
+  // an effect"), so the swap happens before paint instead of cascading.
+  const [entryBasinId, setEntryBasinId] = useState(props.manifest.basinId);
+  if (props.manifest.basinId !== entryBasinId) {
+    setEntryBasinId(props.manifest.basinId);
     setActive({ manifest: props.manifest, inventory: props.inventory });
-  }, [props.manifest, props.inventory]);
+  }
 
   const navigateBasin = (basinId: string) => {
     const manifest = tryGetBasinManifest(basinId);
