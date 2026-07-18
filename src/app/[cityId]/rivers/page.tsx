@@ -176,13 +176,13 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       display_name_ta: "ವೃಷಭಾವತಿ ನದಿ",
       length_km_geom: 68,
       description:
-        "The famous foam-and-fire river. Flows south-west out of central BBMP through the Vrishabhavathi Valley, picking up the untreated overflow from the V Valley STPs (180 + 150 MLD design) plus the Mailasandra catchment. Discharges into Byramangala reservoir (348 ha) before joining the Arkavati, then the Cauvery. The 2015 May Bellandur foam-fire event was downstream of the same sewerage system.",
+        "The famous foam-and-fire river. Flows south-west out of central BBMP through the Vrishabhavathi Valley, picking up the untreated overflow from the V Valley STPs (180 + 150 MLD design) plus the Mailasandra catchment. Discharges into Byramangala reservoir (348 ha) before joining the Arkavathi, then the Cauvery. The 2015 May Bellandur foam-fire event was downstream of the same sewerage system.",
       description_ta: "",
       upstream_terminus: "Central BBMP (Vrishabhavathi Valley)",
       upstream_terminus_ta: "",
-      downstream_terminus: "Byramangala reservoir, then Arkavati / Cauvery",
+      downstream_terminus: "Byramangala reservoir, then Arkavathi / Cauvery",
       downstream_terminus_ta: "",
-      feeds: "Byramangala reservoir; downstream Cauvery via Arkavati",
+      feeds: "Byramangala reservoir; downstream Cauvery via Arkavathi",
       feeds_ta: "",
       status: "KSPCB priority polluted stretch; V Valley STPs over capacity",
       status_ta: "",
@@ -194,7 +194,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       color: "stroke-amber-600",
     },
     arkavati: {
-      display_name: "Arkavati",
+      display_name: "Arkavathi",
       display_name_ta: "ಅರ್ಕಾವತಿ ನದಿ",
       length_km_geom: 102,
       description:

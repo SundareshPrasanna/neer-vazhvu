@@ -1180,7 +1180,7 @@ export function CityAboutContent({
               <DataSource
                 name="KSPCB / CPCB river quality monitoring"
                 url="https://kspcb.karnataka.gov.in/"
-                description="9 stations across the 3 Bengaluru rivers (Vrishabhavathi / Arkavati / Dakshina Pinakini) extracted from KSPCB monthly water quality reports cross-referenced with CPCB NWMP annual River Water Quality reports. Per-station BOD / COD / DO / pH / fecal coliform readings, 2020-2024 covered. Station coordinates are government-record GPS locations, field-verified with Paani Earth (Jul 2026). Note: OSM polylines for these rivers are partial through built-up BBMP (urban segments flow as storm drains), so some markers sit away from the drawn river lines."
+                description="9 stations across the 3 Bengaluru rivers (Vrishabhavathi / Arkavathi / Dakshina Pinakini) extracted from KSPCB monthly water quality reports cross-referenced with CPCB NWMP annual River Water Quality reports. Per-station BOD / COD / DO / pH / fecal coliform readings, 2020-2024 covered. Station coordinates are government-record GPS locations, field-verified with Paani Earth (Jul 2026). Note: OSM polylines for these rivers are partial through built-up BBMP (urban segments flow as storm drains), so some markers sit away from the drawn river lines."
                 frequency="monthly (KSPCB) + annual (CPCB)"
               />
               <DataSource

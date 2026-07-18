@@ -21,7 +21,7 @@ export const CAUVERY_KA: BasinManifest = {
   displayName: "Cauvery Basin (Karnataka)",
   displayNameLocal: "ಕಾವೇರಿ ಜಲಾನಯನ (ಕರ್ನಾಟಕ)",
   blurb:
-    "Karnataka's share of the Cauvery: 34,899 sq km across nine sub-basins, from the Kodagu headwaters to the Tamil Nadu border below Kanakapura. Bengaluru draws its river water from here (KRS, Hemavathi, Kabini, Harangi) and returns its wastewater here (the Arkavati). Tap a sub-basin to see its state; the Arkavati carries the full deep dive.",
+    "Karnataka's share of the Cauvery: 34,899 sq km across nine sub-basins, from the Kodagu headwaters to the Tamil Nadu border below Kanakapura. Bengaluru draws its river water from here (KRS, Hemavathi, Kabini, Harangi) and returns its wastewater here (the Arkavathi). Tap a sub-basin to see its state; the Arkavathi carries the full deep dive.",
   mapCenter: [12.6, 76.6],
   mapZoom: 8,
   areaKm2: 34899,
@@ -88,7 +88,11 @@ export const CAUVERY_KA: BasinManifest = {
     },
     {
       key: "C5",
-      name: "Arkavati",
+      // Display spelling follows the accountability documents we cite
+      // (CPCB, KSPCB, NMCG, Paani Earth: "Arkavathi"). KWRIS's sub-basin
+      // register spells it "Arkavati" - that stays verbatim as the ingest
+      // join key only.
+      name: "Arkavathi",
       nameLocal: "ಅರ್ಕಾವತಿ",
       scoreboardKey: "232",
       areaKm2: 4158,
@@ -102,7 +106,7 @@ export const CAUVERY_KA: BasinManifest = {
       scoreboardKey: "233",
       areaKm2: 2637,
       depthLevel: 2,
-      blurb: "The mainstem reach around Srirangapatna and Ranganathittu, between the KRS and the Arkavati confluence.",
+      blurb: "The mainstem reach around Srirangapatna and Ranganathittu, between the KRS and the Arkavathi confluence.",
       unlocks: ["Not yet mapped here: pressures along the Srirangapatna reach"],
     },
     {
@@ -138,7 +142,7 @@ export const CAUVERY_KA: BasinManifest = {
   credits: [
     "Boundaries, sub-basins, tanks, stations, reservoirs, streams: KWRIS / ACIWRM open GeoServer (water.karnataka.gov.in), Karnataka Water Resources Department.",
     "Sub-basin rainfall deviation and groundwater level: KWRIS geomGIS sub-basin views (KSNDMC/IMD basis; period under verification).",
-    "Polluted river stretches: CPCB classification as published on KWRIS (earlier vintage; the Arkavati is Priority I in CPCB's October 2025 report, mirrored on this site).",
+    "Polluted river stretches: CPCB classification as published on KWRIS (earlier vintage; the Arkavathi is Priority I in CPCB's October 2025 report, mirrored on this site).",
     "Live reservoir storage: KWRIS reservoir_landing daily feed.",
   ],
 };

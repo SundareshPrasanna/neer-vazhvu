@@ -113,7 +113,7 @@ function FitToSelection({ geom }: { geom: GeoJSON.Geometry | null }) {
 
 function DepthPips({ level }: { level: number }) {
   return (
-    <span className="inline-flex items-center gap-0.5" title={`Data depth ${level} of 4 - how much of this sub-basin is mapped on this atlas (the Arkavati has the fullest picture)`}>
+    <span className="inline-flex items-center gap-0.5" title={`Data depth ${level} of 4 - how much of this sub-basin is mapped on this atlas (the Arkavathi has the fullest picture)`}>
       {[0, 1, 2, 3, 4].map((i) => (
         <span
           key={i}
@@ -442,7 +442,10 @@ export function BasinOverview({
                 const p = feat.properties as Record<string, unknown>;
                 const key = p?.code as string;
                 const ref = refByKey[key];
-                layer.bindTooltip(`${p?.name ?? key}${ref?.deepDiveBasinId ? " - tap for the deep dive" : ""}`, { sticky: true });
+                // Prefer the manifest's display name over the source-verbatim
+                // geojson prop (KWRIS spells "Arkavati"; our display standard,
+                // matching CPCB/KSPCB/NMCG/Paani usage, is "Arkavathi").
+                layer.bindTooltip(`${ref?.name ?? p?.name ?? key}${ref?.deepDiveBasinId ? " - tap for the deep dive" : ""}`, { sticky: true });
                 layer.on("click", () => setSelectedKey(key));
               }}
             />
