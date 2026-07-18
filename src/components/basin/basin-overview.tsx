@@ -618,6 +618,22 @@ export function BasinOverview({
 
         <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed">{manifest.blurb}</p>
 
+        {/* Cross-state hop - prominent, not a footer footnote: the seam
+            between state atlases is part of the basin's story. */}
+        {manifest.relatedBasins && onNavigateBasin && (
+          <div className="flex flex-wrap gap-1.5">
+            {manifest.relatedBasins.map((r) => (
+              <button
+                key={r.basinId}
+                onClick={() => onNavigateBasin(r.basinId)}
+                className="inline-flex items-center gap-1 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1 text-[11px] font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+              >
+                {r.label} &rarr;
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Live reservoir strip */}
         {Object.keys(live).length > 0 && reservoirs && (
           <section>
@@ -695,19 +711,6 @@ export function BasinOverview({
 
         {/* Scope + cross-state links + credits */}
         {manifest.areaNote && <p className="text-[11px] text-slate-400 leading-snug border-t border-slate-200 dark:border-slate-700 pt-2">{manifest.areaNote}</p>}
-        {manifest.relatedBasins && onNavigateBasin && (
-          <div className="flex flex-wrap gap-1.5">
-            {manifest.relatedBasins.map((r) => (
-              <button
-                key={r.basinId}
-                onClick={() => onNavigateBasin(r.basinId)}
-                className="inline-flex items-center gap-1 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1 text-[11px] font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
-              >
-                {r.label} &rarr;
-              </button>
-            ))}
-          </div>
-        )}
         {manifest.credits && (
           <details className="text-[11px] text-slate-400">
             <summary className="cursor-pointer font-semibold uppercase tracking-wider text-[10px]">Data on this map</summary>
