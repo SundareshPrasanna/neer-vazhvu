@@ -48,8 +48,8 @@ export const CAUVERY_KA: BasinManifest = {
       depthLevel: 2,
       blurb: "The headwaters and the big reservoirs - Harangi, Hemavathi and KRS. Where Bengaluru's river water actually comes from.",
       unlocks: [
-        "L3: pressure layers - industries, quarries, waste sites for the reach",
-        "L4: a basin partner + document extraction (the Arkavati playbook)",
+        "Not yet mapped here: industries, quarries and waste sites along the reach",
+        "Restoration accountability (plans vs progress reports) not yet compiled for this reach",
       ],
     },
     {
@@ -60,8 +60,8 @@ export const CAUVERY_KA: BasinManifest = {
       depthLevel: 2,
       blurb: "The Wayanad-fed southern arm, impounded at Kabini dam; carries a CPCB polluted stretch below Nanjangud.",
       unlocks: [
-        "L3: pressure layers for the Nanjangud industrial reach",
-        "L4 progress: the Action-Plan-vs-MPR accountability matrix is live in this profile; remaining for L4 - pressure layers, independent evidence, a local partner",
+        "Not yet mapped here: the Nanjangud industrial belt's pressures (industries, waste sites)",
+        "Restoration accountability for this stretch is tracked below; independent lab evidence not yet available",
       ],
     },
     {
@@ -71,7 +71,7 @@ export const CAUVERY_KA: BasinManifest = {
       areaKm2: 1303,
       depthLevel: 2,
       unlocks: [
-        "L3: pressure layers",
+        "Not yet mapped here: industries, quarries and waste sites",
       ],
     },
     {
@@ -82,8 +82,8 @@ export const CAUVERY_KA: BasinManifest = {
       depthLevel: 2,
       blurb: "The basin's largest tank country (222 MI tanks) and a CPCB Priority-IV polluted stretch.",
       unlocks: [
-        "L3: pressure layers for the tank cascade country",
-        "L4 progress: the Action-Plan-vs-MPR accountability matrix is live in this profile; remaining for L4 - pressure layers, independent evidence, a local partner",
+        "Not yet mapped here: pressures on the tank cascades (industries, quarries, waste sites)",
+        "Restoration accountability for this stretch is tracked below; independent lab evidence not yet available",
       ],
     },
     {
@@ -94,7 +94,7 @@ export const CAUVERY_KA: BasinManifest = {
       areaKm2: 4158,
       deepDiveBasinId: "arkavathi",
       depthLevel: 4,
-      blurb: "Bengaluru's river - and the north star: full deep dive with monitoring, evidence, pressures, governance and the Action-Plan-vs-MPR accountability matrix, co-built with Paani Earth.",
+      blurb: "Bengaluru's river, and the most fully mapped part of this atlas: water quality, independent lab evidence, industrial pressures, governance and restoration tracking - built with Paani Earth Foundation.",
     },
     {
       key: "C6",
@@ -103,7 +103,7 @@ export const CAUVERY_KA: BasinManifest = {
       areaKm2: 2637,
       depthLevel: 2,
       blurb: "The mainstem reach around Srirangapatna and Ranganathittu, between the KRS and the Arkavati confluence.",
-      unlocks: ["L3: pressure layers for the Srirangapatna reach"],
+      unlocks: ["Not yet mapped here: pressures along the Srirangapatna reach"],
     },
     {
       key: "C7",
@@ -112,7 +112,7 @@ export const CAUVERY_KA: BasinManifest = {
       areaKm2: 2045,
       depthLevel: 1,
       unlocks: [
-        "L2: no KSPCB WQ station reported in this sub-basin - a monitoring gap in the state network itself",
+        "No KSPCB water-quality station is reported in this sub-basin - a gap in the state monitoring network itself",
       ],
     },
     {
@@ -122,7 +122,7 @@ export const CAUVERY_KA: BasinManifest = {
       areaKm2: 17,
       depthLevel: 0,
       blurb: "A 17 sq km sliver at the state border.",
-      unlocks: ["L0 gap: KWRIS publishes no scoreboard metrics for this sliver"],
+      unlocks: ["Karnataka's water portal publishes no metrics for this sliver"],
     },
     {
       key: "C9",
@@ -131,7 +131,7 @@ export const CAUVERY_KA: BasinManifest = {
       areaKm2: 240,
       depthLevel: 1,
       unlocks: [
-        "L2: no KSPCB WQ station reported in-basin",
+        "No KSPCB water-quality station is reported in this sub-basin",
       ],
     },
   ],
