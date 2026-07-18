@@ -102,6 +102,9 @@ export interface BasinManifest {
   overviewMode?: "sub-basins";
   /** Children shown in overview mode, in display order. */
   subBasins?: SubBasinRef[];
+  /** Sibling basins worth cross-linking (e.g. the other state's share of the
+   *  same river). Rendered as navigation links in overview mode. */
+  relatedBasins?: { basinId: string; label: string }[];
   displayName: string;
   displayNameLocal?: string;
   /** Landing blurb (plain text). */

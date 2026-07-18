@@ -339,7 +339,7 @@ export function BasinOverview({
               {([
                 ["CPCB polluted stretches", isAssessed(selected) ? ({ value: prsCountByKey[selected.key] ?? 0, verified: true } as MetricValue) : undefined, (v: number) => `${v}`],
                 ["MI tanks", selectedScore?.metrics?.tankCount, (v: number) => `${v}`],
-                ["KSPCB WQ stations", selectedScore?.metrics?.wqStationCount, (v: number) => `${v}`],
+                ["Water-quality stations", selectedScore?.metrics?.wqStationCount, (v: number) => `${v}`],
                 ["Reservoirs", selectedScore?.metrics?.reservoirCount, (v: number) => `${v}`],
                 ["Rainfall deviation", selectedScore?.metrics?.rainfallDeviationPct, (v: number) => `${v}% vs normal`],
                 ["Groundwater level", selectedScore?.metrics?.gwLevelM, (v: number) => `${v} m below ground`],
@@ -645,7 +645,7 @@ export function BasinOverview({
         {/* Sub-basin cards, problems first */}
         <section>
           <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">
-            Sub-basins <span className="normal-case font-normal text-slate-400">(most polluted first &middot; more dots = more data on this atlas)</span>
+            Sub-basins <span className="normal-case font-normal text-slate-400">({Object.values(prsCountByKey).some((n) => n > 0) ? "most polluted first" : "largest first"} &middot; more dots = more data on this atlas)</span>
           </div>
           <div className="space-y-1.5">
             {orderedRefs.map((r) => {
@@ -693,8 +693,21 @@ export function BasinOverview({
           </div>
         </section>
 
-        {/* Scope + credits */}
+        {/* Scope + cross-state links + credits */}
         {manifest.areaNote && <p className="text-[11px] text-slate-400 leading-snug border-t border-slate-200 dark:border-slate-700 pt-2">{manifest.areaNote}</p>}
+        {manifest.relatedBasins && onNavigateBasin && (
+          <div className="flex flex-wrap gap-1.5">
+            {manifest.relatedBasins.map((r) => (
+              <button
+                key={r.basinId}
+                onClick={() => onNavigateBasin(r.basinId)}
+                className="inline-flex items-center gap-1 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1 text-[11px] font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+              >
+                {r.label} &rarr;
+              </button>
+            ))}
+          </div>
+        )}
         {manifest.credits && (
           <details className="text-[11px] text-slate-400">
             <summary className="cursor-pointer font-semibold uppercase tracking-wider text-[10px]">Data on this map</summary>

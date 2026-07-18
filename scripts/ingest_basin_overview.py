@@ -25,12 +25,17 @@ never learn source-system ids.
 
 Usage:
     python3 scripts/ingest_basin_overview.py scripts/basin-sources/cauvery-ka.json
+
+NOTE: re-running REGENERATES wq-stations.geojson and scoreboard.json - any
+readings post-step (scripts/build_basin_wq_readings.py) must be re-run after,
+or its classes/worst-class metrics are lost.
 """
 
 from __future__ import annotations
 
 import json
 import math
+import re
 import ssl
 import sys
 import urllib.parse
@@ -116,7 +121,7 @@ class KwrisAdapter:
     def __init__(self, endpoint: str):
         self.endpoint = endpoint
 
-    def fetch(self, type_name: str, cql: str | None = None, max_features: int | None = None) -> dict:
+    def fetch(self, type_name: str, cql: str | None = None, max_features: int | None = None, bbox: list | None = None) -> dict:
         params = {
             "service": "WFS",
             "version": "1.0.0",
@@ -132,6 +137,9 @@ class KwrisAdapter:
             params["CQL_FILTER"] = cql
         if max_features:
             params["maxFeatures"] = str(max_features)
+        if bbox:
+            # WFS 1.0.0 bbox order is lon,lat (minx,miny,maxx,maxy)
+            params["bbox"] = ",".join(str(v) for v in bbox)
         url = f"{self.endpoint}?{urllib.parse.urlencode(params)}"
         for attempt in range(3):
             try:
@@ -157,7 +165,9 @@ class KwrisAdapter:
         return out
 
 
-ADAPTERS = {"kwris": KwrisAdapter}
+# TNGIS (tngis.tn.gov.in/tngismaps) behaves identically to KWRIS - open
+# GeoServer, WFS 1.0.0, JSON output, srsName honoured (recon: spec App. B).
+ADAPTERS = {"kwris": KwrisAdapter, "tngis": KwrisAdapter}
 
 
 # ── ingest ──────────────────────────────────────────────────────────────────
@@ -190,18 +200,22 @@ def main() -> int:
 
     prov = cfg["provenance"]
 
-    # 1. Basin boundary
-    print("boundary…")
-    b = cfg["boundary"]
-    raw = adapter.fetch(b["typeName"], b.get("cql"))
-    feats = [{"type": "Feature",
-              "geometry": simplify_geom(f["geometry"], b.get("simplifyEps", 0.001)),
-              "properties": {"name": cfg["displayName"]}}
-             for f in raw["features"]]
-    if not feats:
-        raise SystemExit("boundary: 0 features - check the filter")
-    boundary_geom = raw["features"][0]["geometry"]  # full precision for joins
-    emit("boundary", feats, prov, b["typeName"])
+    # 1. Basin boundary. Optional: sources without a single basin polygon
+    #    (TNGIS publishes only sub-basins) set boundary.fromSubBasins - the
+    #    in-basin test then becomes membership of ANY sub-basin polygon.
+    b = cfg.get("boundary")
+    boundary_geom = None
+    if b and not b.get("fromSubBasins"):
+        print("boundary…")
+        raw = adapter.fetch(b["typeName"], b.get("cql"))
+        feats = [{"type": "Feature",
+                  "geometry": simplify_geom(f["geometry"], b.get("simplifyEps", 0.001)),
+                  "properties": {"name": cfg["displayName"]}}
+                 for f in raw["features"]]
+        if not feats:
+            raise SystemExit("boundary: 0 features - check the filter")
+        boundary_geom = raw["features"][0]["geometry"]  # full precision for joins
+        emit("boundary", feats, prov, b["typeName"])
 
     # 2. Sub-basins (geometry + names + scoreboardKey join)
     print("sub-basins…")
@@ -209,9 +223,12 @@ def main() -> int:
     raw = adapter.fetch(sb["typeName"], sb.get("cql"))
     key_by_name = sb["scoreboardKeyByName"]
     sub_feats, sub_geoms = [], {}
+    name_clean = re.compile(sb["nameClean"]) if sb.get("nameClean") else None
     for f in raw["features"]:
         p = f["properties"]
         name = str(p.get(sb["nameField"], "")).strip()
+        if name_clean:
+            name = name_clean.sub("", name).strip()
         code = str(p.get(sb["codeField"], "")).strip()
         sk = key_by_name.get(name)
         if sk is None:
@@ -225,17 +242,41 @@ def main() -> int:
         })
     emit("sub-basins", sub_feats, prov, sb["typeName"])
 
+    def geom_bbox(geom: dict) -> tuple:
+        xs, ys = [], []
+        def scan(c):
+            if isinstance(c[0], (int, float)):
+                xs.append(c[0]); ys.append(c[1])
+            else:
+                for cc in c:
+                    scan(cc)
+        scan(geom["coordinates"])
+        return (min(xs), min(ys), max(xs), max(ys))
+
+    sub_bboxes = {code: geom_bbox(g) for code, g in sub_geoms.items()}
+    boundary_bbox = geom_bbox(boundary_geom) if boundary_geom else None
+
     def sub_key_for(lon: float, lat: float) -> str | None:
         for code, geom in sub_geoms.items():
+            bb = sub_bboxes[code]
+            if lon < bb[0] or lon > bb[2] or lat < bb[1] or lat > bb[3]:
+                continue
             if point_in_geom(lon, lat, geom):
                 return code
         return None
+
+    def in_basin(lon: float, lat: float) -> bool:
+        if boundary_geom is not None:
+            if boundary_bbox and (lon < boundary_bbox[0] or lon > boundary_bbox[2] or lat < boundary_bbox[1] or lat > boundary_bbox[3]):
+                return False
+            return point_in_geom(lon, lat, boundary_geom)
+        return sub_key_for(lon, lat) is not None
 
     # 3. Simple point/line families from config
     for fam in cfg.get("families", []):
         print(f"{fam['family']}…")
         try:
-            raw = adapter.fetch(fam["typeName"], fam.get("cql"))
+            raw = adapter.fetch(fam["typeName"], fam.get("cql"), bbox=fam.get("bbox"))
         except SystemExit as e:
             # best-effort family (e.g. the WAF blocks some filters): warn, skip
             print(f"  WARN: {fam['family']} skipped - {e}")
@@ -256,11 +297,21 @@ def main() -> int:
             if f.get("geometry") is None:
                 continue
             g = f["geometry"]
+            # optional slimming for heavy polygon registers (e.g. TN's 41k
+            # tank waterspreads): require named features / reduce to centroid
+            if fam.get("requireProps") and any(not props.get(k) for k in fam["requireProps"]):
+                continue
+            if fam.get("toCentroid") and g["type"] in ("Polygon", "MultiPolygon"):
+                ring0 = g["coordinates"][0][0] if g["type"] == "MultiPolygon" else g["coordinates"][0]
+                cx = sum(pt[0] for pt in ring0) / len(ring0)
+                cy = sum(pt[1] for pt in ring0) / len(ring0)
+                g = {"type": "Point", "coordinates": [round(cx, 5), round(cy, 5)]}
+                f = {**f, "geometry": g}
             if fam.get("clipToBasin"):
                 # point families: keep only in-basin features
                 if g["type"] == "Point":
                     lon, lat = g["coordinates"][0], g["coordinates"][1]
-                    if not point_in_geom(lon, lat, boundary_geom):
+                    if not in_basin(lon, lat):
                         continue
                     code = sub_key_for(lon, lat)
                     if code:
@@ -273,7 +324,7 @@ def main() -> int:
                 line = g["coordinates"] if g["type"] == "LineString" else g["coordinates"][0]
                 if line:
                     mx, my = line[len(line) // 2][0], line[len(line) // 2][1]
-                    if fam.get("clipToBasin") and not point_in_geom(mx, my, boundary_geom):
+                    if fam.get("clipToBasin") and not in_basin(mx, my):
                         continue
                     code = sub_key_for(mx, my)
                     if code:

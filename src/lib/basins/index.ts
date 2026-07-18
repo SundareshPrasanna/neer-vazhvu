@@ -2,6 +2,7 @@ import type { BasinManifest } from "./types";
 import { ARKAVATHI } from "./arkavathi";
 import { CHENNAI_RIVERS } from "./chennai-rivers";
 import { CAUVERY_KA } from "./cauvery-ka";
+import { CAUVERY_TN } from "./cauvery-tn";
 
 export * from "./types";
 
@@ -11,6 +12,7 @@ const BASINS: Record<string, BasinManifest> = {
   arkavathi: ARKAVATHI,
   "chennai-rivers": CHENNAI_RIVERS,
   "cauvery-ka": CAUVERY_KA,
+  "cauvery-tn": CAUVERY_TN,
 };
 
 export function tryGetBasinManifest(basinId: string): BasinManifest | null {

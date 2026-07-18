@@ -26,7 +26,10 @@ export const CAUVERY_KA: BasinManifest = {
   mapZoom: 8,
   areaKm2: 34899,
   areaNote:
-    "Karnataka portion only, per Karnataka WRD's basin decomposition (KWRIS). The Cauvery continues into Tamil Nadu; that reach and the delta are outside this atlas.",
+    "Karnataka portion only, per Karnataka WRD's basin decomposition (KWRIS). The Cauvery continues into Tamil Nadu - that reach has its own atlas, linked below.",
+  relatedBasins: [
+    { basinId: "cauvery-tn", label: "Tamil Nadu side of the Cauvery" },
+  ],
   rivers: [],
   layers: [
     // Overview mode renders its own surface (M2); these declarations drive
