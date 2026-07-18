@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import fs from "node:fs";
 import path from "node:path";
 import { tryGetPlaceConfig } from "@/lib/cities";
-import { basinsForCity, type BasinInventory } from "@/lib/basins";
+import { basinsForCity, tryGetBasinManifest, type BasinInventory } from "@/lib/basins";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { riversVariant } from "@/lib/cities/data-paths";
 import RiversClient, { type RiverInfo } from "./rivers-client";
@@ -294,13 +294,17 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
 // state of the river systems (docs/specs/arkavathi-phase2-feedback.md A1-A2).
 const RIVERS_HEADER_BY_CITY: Record<
   string,
-  { scopeLabel: string; showStats?: boolean; atlasCtaLabel?: string }
+  { scopeLabel: string; showStats?: boolean; atlasCtaLabel?: string; overviewBasinId?: string }
 > = {
   madurai: { scopeLabel: "Vaigai system" },
   bangalore: {
     scopeLabel: "Two river systems (Arkavathi and Dakshina Pinakini)",
     showStats: false,
     atlasCtaLabel: "State of Bengaluru's River Systems",
+    // The basin ABOVE this city's rivers: a header entry point into the
+    // Cauvery (Karnataka) overview, whose Arkavati cell drills back down
+    // into the deep dive (docs/specs/cauvery-basin-hierarchy.md §2).
+    overviewBasinId: "cauvery-ka",
   },
   mumbai: { scopeLabel: "MMR rivers (urban + eastern Ulhas corridor + source rivers)" },
 };
@@ -379,6 +383,11 @@ export default async function CityRiversPage({ params }: PageProps) {
   const basinProp = basin
     ? { manifest: basin, inventory: loadBasinInventory(basin.basinId) }
     : null;
+  // Optional parent-basin overview entry (e.g. Bengaluru -> Cauvery KA).
+  const overviewManifest = header.overviewBasinId ? tryGetBasinManifest(header.overviewBasinId) : null;
+  const overviewBasinProp = overviewManifest
+    ? { manifest: overviewManifest, inventory: loadBasinInventory(overviewManifest.basinId) }
+    : null;
 
   return (
     <RiversClient
@@ -391,6 +400,7 @@ export default async function CityRiversPage({ params }: PageProps) {
       atlasCtaLabel={header.atlasCtaLabel}
       riverInfo={riverInfo}
       basin={basinProp}
+      overviewBasin={overviewBasinProp}
     />
   );
 }

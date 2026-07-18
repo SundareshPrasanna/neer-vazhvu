@@ -38,6 +38,9 @@ interface ClientProps {
   /** Optional deep basin atlas: when a river on this map belongs to a basin,
    *  clicking it opens the layered basin view as an overlay. */
   basin?: { manifest: BasinManifest; inventory: BasinInventory | null } | null;
+  /** Optional parent-basin OVERVIEW (e.g. the Cauvery above Bengaluru's
+   *  Arkavathi): a header button opens it as the same kind of overlay. */
+  overviewBasin?: { manifest: BasinManifest; inventory: BasinInventory | null } | null;
 }
 
 // Rivers-page river_id -> basin riverId, where the two registries spell the
@@ -156,6 +159,7 @@ export default function RiversClient({
   atlasCtaLabel,
   riverInfo,
   basin = null,
+  overviewBasin = null,
 }: ClientProps) {
   useLockBodyScroll();
   const [rivers, setRivers] = useState<RiverGeoFeature[]>([]);
@@ -164,6 +168,8 @@ export default function RiversClient({
   // to this basin river. Clicking a basin river opens it; everything else on
   // the standard rivers page is unchanged.
   const [openBasinRiverId, setOpenBasinRiverId] = useState<string | null>(null);
+  // Parent-basin overview overlay (Cauvery above Bengaluru's rivers).
+  const [overviewOpen, setOverviewOpen] = useState(false);
   // Which floor the atlas opens on (e.g. straight to gaps via the button).
   const [atlasFloor, setAtlasFloor] = useState<BasinFloor | undefined>(undefined);
   // More accurate basin river geometry (Paani), keyed by rivers-page river_id.
@@ -378,14 +384,26 @@ export default function RiversClient({
             {" - click for details"}
           </span>
         )}
-        {basin && drillableNames.length > 0 && (
-          <button
-            onClick={() => { setAtlasFloor("governance"); setOpenBasinRiverId("__gaps__"); }}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1 shadow-sm"
-          >
-            {atlasCtaLabel ?? "Treatment & waste gaps"}
-            <span aria-hidden>&rarr;</span>
-          </button>
+        {(basin || overviewBasin) && (
+          <span className="ml-auto inline-flex items-center gap-1.5">
+            {overviewBasin && (
+              <button
+                onClick={() => setOverviewOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold px-3 py-1 shadow-sm"
+              >
+                <span aria-hidden>&uarr;</span> {overviewBasin.manifest.displayName}
+              </button>
+            )}
+            {basin && drillableNames.length > 0 && (
+              <button
+                onClick={() => { setAtlasFloor("governance"); setOpenBasinRiverId("__gaps__"); }}
+                className="inline-flex items-center gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1 shadow-sm"
+              >
+                {atlasCtaLabel ?? "Treatment & waste gaps"}
+                <span aria-hidden>&rarr;</span>
+              </button>
+            )}
+          </span>
         )}
       </div>
 
@@ -490,6 +508,22 @@ export default function RiversClient({
             initialFloor={atlasFloor}
             embedded
             onClose={() => { setOpenBasinRiverId(null); setAtlasFloor(undefined); }}
+          />
+        </div>
+      )}
+
+      {/* Parent-basin overview overlay (e.g. Cauvery KA above Bengaluru).
+          Same basin-stack client: its Arkavati cell drills into the deep
+          dive in place; closing returns to the rivers map. */}
+      {overviewBasin && overviewOpen && !openBasinRiverId && (
+        <div className="absolute inset-0 z-[1000] bg-white dark:bg-slate-950">
+          <BasinAtlasClient
+            cityId={cityId}
+            cityDisplayName={cityDisplayName}
+            manifest={overviewBasin.manifest}
+            inventory={overviewBasin.inventory}
+            embedded
+            onClose={() => setOverviewOpen(false)}
           />
         </div>
       )}
