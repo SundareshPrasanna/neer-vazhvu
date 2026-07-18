@@ -61,7 +61,7 @@ export const CAUVERY_KA: BasinManifest = {
       blurb: "The Wayanad-fed southern arm, impounded at Kabini dam; carries a CPCB polluted stretch below Nanjangud.",
       unlocks: [
         "L3: pressure layers for the Nanjangud industrial reach",
-        "L4 candidate: CPCB stretch + NMCG MPRs exist - the accountability matrix pattern applies",
+        "L4 progress: the Action-Plan-vs-MPR accountability matrix is live in this profile; remaining for L4 - pressure layers, independent evidence, a local partner",
       ],
     },
     {
@@ -83,7 +83,7 @@ export const CAUVERY_KA: BasinManifest = {
       blurb: "The basin's largest tank country (222 MI tanks) and a CPCB Priority-IV polluted stretch.",
       unlocks: [
         "L3: pressure layers for the tank cascade country",
-        "L4 candidate: CPCB stretch + NMCG MPRs exist - the accountability matrix pattern applies",
+        "L4 progress: the Action-Plan-vs-MPR accountability matrix is live in this profile; remaining for L4 - pressure layers, independent evidence, a local partner",
       ],
     },
     {

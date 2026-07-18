@@ -16,6 +16,7 @@ import type { Feature, FeatureCollection } from "geojson";
 import "leaflet/dist/leaflet.css";
 import type { BasinInventory, BasinManifest, SubBasinRef } from "@/lib/basins";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { AccountabilityMatrix, type AccountabilityData } from "@/components/basin/basin-atlas";
 
 interface MetricValue {
   value: number | string;
@@ -155,6 +156,9 @@ export function BasinOverview({
   const [live, setLive] = useState<Record<string, LiveReservoir>>({});
   const [metric, setMetric] = useState<MetricKey>("pollution");
   const [selectedKey, setSelectedKey] = useState<string | null>(initialSubBasinKey);
+  // Per-sub-basin accountability matrices (the portable Arkavati contract):
+  // fetched on selection; absent file (404 -> null) simply renders nothing.
+  const [accBySub, setAccBySub] = useState<Record<string, AccountabilityData | null>>({});
 
   useEffect(() => {
     fetchJson(`${base}/boundary.geojson`).then((d) => setBoundary(d as FeatureCollection | null));
@@ -179,6 +183,14 @@ export function BasinOverview({
       setLive(Object.fromEntries(rows.map((r) => [r.code, r])));
     });
   }, [reservoirs]);
+
+  useEffect(() => {
+    if (!selectedKey || selectedKey in accBySub) return;
+    fetchJson(`${base}/accountability-${selectedKey}.json`).then((d) =>
+      setAccBySub((cur) => ({ ...cur, [selectedKey]: (d as AccountabilityData | null) })),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedKey, base]);
 
   const refs: SubBasinRef[] = useMemo(() => manifest.subBasins ?? [], [manifest.subBasins]);
   const refByKey = useMemo(() => Object.fromEntries(refs.map((r) => [r.key, r])), [refs]);
@@ -542,6 +554,10 @@ export function BasinOverview({
                 </ul>
               </div>
             )}
+            {/* Portable accountability matrix: the same contract + component
+                as the Arkavati deep dive, fed by this stretch's own
+                Action Plan + MPR extraction. */}
+            {accBySub[selected.key] && <AccountabilityMatrix data={accBySub[selected.key]!} />}
             {selected.deepDiveBasinId && onNavigateBasin && (
               <button
                 onClick={() => onNavigateBasin(selected.deepDiveBasinId!)}

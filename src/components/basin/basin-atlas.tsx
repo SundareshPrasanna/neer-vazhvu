@@ -236,7 +236,7 @@ interface PrsData {
 // MPR = the primary, monthly-updated baseline; DEP/CAG/F-register = other
 // sources. The verdict encodes what exists at each level - "not reported"
 // is a first-class, citable finding, not a blank.
-interface AccCategory {
+export interface AccCategory {
   key: string;
   label: string;
   verdict: "tracked" | "in-plan-not-reported" | "reported-not-in-plan" | "silent";
@@ -247,7 +247,7 @@ interface AccCategory {
   legalRef?: string;
   media?: { label: string; url: string }[];
 }
-interface AccRegion {
+export interface AccRegion {
   kind: "ulb" | "ia" | "gp";
   key: string;
   name: string;
@@ -257,7 +257,7 @@ interface AccRegion {
   silentNote?: string;
   categories: AccCategory[];
 }
-interface AccountabilityData {
+export interface AccountabilityData {
   question: string;
   intro?: string;
   baseline: {
@@ -2025,7 +2025,7 @@ const ACC_VERDICT: Record<AccCategory["verdict"], { label: string; cls: string }
 };
 const ACC_KIND_LABEL: Record<AccRegion["kind"], string> = { ulb: "ULBs", ia: "Industrial Areas", gp: "Gram Panchayats" };
 
-function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
+export function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
   const kinds = (["ulb", "ia", "gp"] as const).filter((k) => data.regions.some((r) => r.kind === k));
   const [kind, setKind] = useState<AccRegion["kind"]>(kinds[0] ?? "ulb");
   const regions = data.regions.filter((r) => r.kind === kind);
