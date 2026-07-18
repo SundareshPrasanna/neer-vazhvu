@@ -90,6 +90,20 @@ const CLASS_CHIP: Record<string, string> = {
 };
 const CLASS_DOT: Record<string, string> = { A: "#10b981", B: "#10b981", C: "#f59e0b", D: "#f97316", E: "#dc2626" };
 
+// CPCB priority chips (I worst - BOD > 30 mg/L - down to V mildest).
+const PRIORITY_CHIP: Record<string, string> = {
+  I: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
+  II: "bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300",
+  III: "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
+  IV: "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
+  V: "bg-yellow-100 text-yellow-700 dark:bg-yellow-950/50 dark:text-yellow-300",
+};
+// Worse priority = higher rank; unknown/absent = 0.
+const priorityRank = (p: unknown): number => {
+  const i = ["V", "IV", "III", "II", "I"].indexOf(String(p));
+  return i === -1 ? 0 : i + 1;
+};
+
 /** Fit the map to the selected sub-basin polygon (or the whole basin). */
 function FitToSelection({ geom }: { geom: GeoJSON.Geometry | null }) {
   const map = useMap();
@@ -192,12 +206,18 @@ export function BasinOverview({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedKey, base]);
 
-  // When a sub-basin is picked on the MAP, bring its expanded card into view
-  // in the panel (list clicks are already at the right scroll position).
+  // When a sub-basin is picked on the MAP, bring its expanded profile to the
+  // top of the panel so the selection visibly "opens on the right" (list
+  // clicks are already at the right scroll position - block: "nearest" is a
+  // no-op there, while a far-away accordion scrolls up into view).
   useEffect(() => {
     if (!selectedKey) return;
     const t = setTimeout(() => {
-      document.getElementById("subbasin-profile")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      const el = document.getElementById("subbasin-profile");
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const fullyVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+      el.scrollIntoView({ behavior: "smooth", block: fullyVisible ? "nearest" : "start" });
     }, 60);
     return () => clearTimeout(t);
   }, [selectedKey]);
@@ -206,9 +226,10 @@ export function BasinOverview({
   const refByKey = useMemo(() => Object.fromEntries(refs.map((r) => [r.key, r])), [refs]);
 
   // Pollution metric: CPCB stretches assigned to sub-basins by sampling a
-  // stretch vertex against the sub-basin polygons (client-side, 5 features).
-  const prsCountByKey = useMemo(() => {
-    const out: Record<string, number> = {};
+  // vertex against the sub-basin polygons (client-side, a handful of
+  // features). Keeps full properties so the profile can list each stretch.
+  const prsBySubKey = useMemo(() => {
+    const out: Record<string, Record<string, unknown>[]> = {};
     if (!prs || !subBasins) return out;
     const polys = subBasins.features.map((f) => ({
       key: (f.properties as Record<string, unknown>)?.code as string,
@@ -229,6 +250,7 @@ export function BasinOverview({
       return false;
     };
     const firstVertex = (g: GeoJSON.Geometry): number[] | null => {
+      if (g.type === "Point") return g.coordinates as number[];
       if (g.type === "LineString") return g.coordinates[Math.floor(g.coordinates.length / 2)] as number[];
       if (g.type === "MultiLineString") return g.coordinates[0][Math.floor(g.coordinates[0].length / 2)] as number[];
       if (g.type === "Polygon") return (g.coordinates[0] as number[][])[0];
@@ -239,10 +261,14 @@ export function BasinOverview({
       const v = f.geometry ? firstVertex(f.geometry) : null;
       if (!v) continue;
       const hit = polys.find((p) => inGeom(v[0], v[1], p.geom));
-      if (hit?.key) out[hit.key] = (out[hit.key] ?? 0) + 1;
+      if (hit?.key) (out[hit.key] ??= []).push((f.properties ?? {}) as Record<string, unknown>);
     }
     return out;
   }, [prs, subBasins]);
+  const prsCountByKey = useMemo(
+    () => Object.fromEntries(Object.entries(prsBySubKey).map(([k, v]) => [k, v.length])),
+    [prsBySubKey],
+  );
 
   // A scoreboard metric is usable only when verified (see METRIC_OPTIONS).
   const verifiedMetric = (key: string, ref: SubBasinRef): MetricValue | null => {
@@ -267,25 +293,33 @@ export function BasinOverview({
   };
 
   // Most-polluted-first card order: worst NWMP class leads (E worst), then
-  // CPCB stretch count, then size; unassessed sub-basins sink to the bottom.
+  // CPCB stretch count, then worst CPCB priority (I worst), then size;
+  // unassessed sub-basins sink to the bottom.
   const orderedRefs = useMemo(() => {
     const classRank = (r: SubBasinRef) => {
       const c = scoreboard?.subBasins?.[r.scoreboardKey]?.metrics?.wqWorstClass?.value;
       return typeof c === "string" ? "ABCDE".indexOf(c) : -1;
     };
+    const worstPriority = (r: SubBasinRef) =>
+      Math.max(0, ...(prsBySubKey[r.key] ?? []).map((p) => priorityRank(p.priority)));
     return [...refs].sort((a, b) => {
       const cls = classRank(b) - classRank(a);
       if (cls !== 0) return cls;
       const diff = (prsCountByKey[b.key] ?? 0) - (prsCountByKey[a.key] ?? 0);
-      return diff !== 0 ? diff : b.areaKm2 - a.areaKm2;
+      if (diff !== 0) return diff;
+      const pri = worstPriority(b) - worstPriority(a);
+      return pri !== 0 ? pri : b.areaKm2 - a.areaKm2;
     });
-  }, [refs, prsCountByKey, scoreboard]);
+  }, [refs, prsBySubKey, prsCountByKey, scoreboard]);
 
   // Headline uses only verified facts: stretch counts (computed here) and
   // the live reservoir feed. Rainfall/GW join once their values verify.
   const headline = useMemo(() => {
     const polluted = Object.values(prsCountByKey).filter((n) => n > 0).length;
-    const stretchCount = Object.values(prsCountByKey).reduce((s, n) => s + n, 0);
+    // A stretch crossing several sub-basins is one feature per sub-basin
+    // (stretchId ties them); count each CPCB entry once in the headline.
+    const allProps = Object.values(prsBySubKey).flat();
+    const stretchCount = new Set(allProps.map((p, i) => String(p.stretchId ?? `f${i}`))).size;
     const liveVals = Object.values(live).map((r) => r.storagePctFrl).filter((v): v is number => v != null);
     const avgPct = liveVals.length ? Math.round(liveVals.reduce((s, v) => s + v, 0) / liveVals.length) : null;
     const devs = refs
@@ -297,7 +331,7 @@ export function BasinOverview({
     if (avgPct !== null) parts.push(`major reservoirs average ${avgPct}% of full level`);
     return parts.length ? parts.join("; ") + "." : null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scoreboard, refs, prsCountByKey, live]);
+  }, [scoreboard, refs, prsBySubKey, prsCountByKey, live]);
 
   const selected = selectedKey ? refByKey[selectedKey] : null;
   const selectedScore = selected ? scoreboard?.subBasins?.[selected.scoreboardKey] : null;
@@ -363,6 +397,33 @@ export function BasinOverview({
                 </div>
               ))}
             </dl>
+            {/* CPCB polluted stretches/locations touching this sub-basin */}
+            {(() => {
+              const rows = prsBySubKey[selected.key] ?? [];
+              if (rows.length === 0) return null;
+              return (
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">CPCB polluted stretches</div>
+                  <ul className="mt-0.5 space-y-1">
+                    {rows.map((p, i) => (
+                      <li key={i} className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-medium truncate">{String(p.river)}</span>
+                          {typeof p.priority === "string" && PRIORITY_CHIP[p.priority] && (
+                            <span className={`shrink-0 text-[9px] font-bold px-1 py-0.5 rounded ${PRIORITY_CHIP[p.priority]}`}>Priority {p.priority}</span>
+                          )}
+                        </div>
+                        {p.stretch ? <div className="text-slate-500 dark:text-slate-400">{String(p.stretch)}</div> : null}
+                        {p.bodValue ? <div className="text-[10px] text-slate-400">BOD {String(p.bodValue)} mg/L{p.kind === "location" ? " - single monitored location; CPCB flags upstream sources for identification" : ""}</div> : null}
+                      </li>
+                    ))}
+                  </ul>
+                  {rows[0]?.vintage ? (
+                    <p className="mt-0.5 text-[10px] text-slate-400">{String(rows[0].vintage)}. Priority I is the most severe (BOD above 30 mg/L).</p>
+                  ) : null}
+                </div>
+              );
+            })()}
             {/* Stations with their published verdicts (L2 readings) */}
             {(() => {
               const rows = stations?.features
@@ -680,6 +741,11 @@ export function BasinOverview({
               const tanks = sc?.metrics?.tankCount?.value;
               const worst = sc?.metrics?.wqWorstClass?.value as string | undefined;
               const stretches = prsCountByKey[r.key] ?? 0;
+              // Where no NWMP class exists, the worst CPCB priority is the
+              // severity signal (I most severe).
+              const worstPri = [...(prsBySubKey[r.key] ?? [])]
+                .map((p) => String(p.priority))
+                .sort((a, b) => priorityRank(b) - priorityRank(a))[0];
               return (
                 <button
                   key={r.key}
@@ -695,6 +761,9 @@ export function BasinOverview({
                       {r.name}
                       {worst && CLASS_CHIP[worst] && (
                         <span className={`text-[9px] font-bold px-1 py-0.5 rounded ${CLASS_CHIP[worst]}`}>{worst}</span>
+                      )}
+                      {!worst && worstPri && PRIORITY_CHIP[worstPri] && (
+                        <span className={`text-[9px] font-bold px-1 py-0.5 rounded ${PRIORITY_CHIP[worstPri]}`} title={`Worst CPCB priority class here (I most severe)`}>P-{worstPri}</span>
                       )}
                     </span>
                     <DepthPips level={r.depthLevel} />
