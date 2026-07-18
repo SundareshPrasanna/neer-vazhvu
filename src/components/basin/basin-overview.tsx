@@ -10,8 +10,8 @@
 // Everything renders from the basin's data files (sub-basins.geojson,
 // scoreboard.json, reservoirs.geojson) - no source-system knowledge here.
 
-import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip as LeafletTooltip, Popup, Pane, useMap } from "react-leaflet";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip as LeafletTooltip, Popup, useMap } from "react-leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import "leaflet/dist/leaflet.css";
 import type { BasinInventory, BasinManifest, SubBasinRef } from "@/lib/basins";
@@ -104,11 +104,13 @@ const priorityRank = (p: unknown): number => {
   return i === -1 ? 0 : i + 1;
 };
 
-/** Fit the map to the selected sub-basin polygon (or the whole basin). */
-function FitToSelection({ geom }: { geom: GeoJSON.Geometry | null }) {
+/** Fit the map to the selected sub-basin polygon (or the whole basin -
+ *  passed as one or more geometries so basins without a boundary file can
+ *  fall back to the union of their sub-basin polygons). */
+function FitToSelection({ geoms }: { geoms: GeoJSON.Geometry[] | null }) {
   const map = useMap();
   useEffect(() => {
-    if (!geom) return;
+    if (!geoms || geoms.length === 0) return;
     let minX = 180, minY = 90, maxX = -180, maxY = -90;
     const scan = (coords: unknown): void => {
       if (Array.isArray(coords) && typeof coords[0] === "number") {
@@ -119,9 +121,9 @@ function FitToSelection({ geom }: { geom: GeoJSON.Geometry | null }) {
         coords.forEach(scan);
       }
     };
-    scan((geom as { coordinates: unknown }).coordinates);
+    geoms.forEach((g) => scan((g as { coordinates: unknown }).coordinates));
     if (minX <= maxX) map.fitBounds([[minY, minX], [maxY, maxX]], { padding: [24, 24] });
-  }, [geom, map]);
+  }, [geoms, map]);
   return null;
 }
 
@@ -336,6 +338,19 @@ export function BasinOverview({
   const selected = selectedKey ? refByKey[selectedKey] : null;
   const selectedScore = selected ? scoreboard?.subBasins?.[selected.scoreboardKey] : null;
 
+  // What the map frames: the selected sub-basin, else the basin boundary,
+  // else (no boundary file - cauvery-tn) the union of all sub-basins, so
+  // deselecting always resets the view.
+  const fitGeoms = useMemo<GeoJSON.Geometry[] | null>(() => {
+    if (selectedKey) {
+      const g = subBasins?.features.find((f) => (f.properties as Record<string, unknown>)?.code === selectedKey)?.geometry;
+      return g ? [g] : null;
+    }
+    if (boundary?.features[0]?.geometry) return [boundary.features[0].geometry];
+    const all = subBasins?.features.map((f) => f.geometry).filter(Boolean);
+    return all && all.length ? all : null;
+  }, [selectedKey, subBasins, boundary]);
+
   const subBasinStyle = (feat?: Feature) => {
     const key = (feat?.properties as Record<string, unknown>)?.code as string;
     const ref = refByKey[key];
@@ -496,7 +511,7 @@ export function BasinOverview({
           )}
           {subBasins && (
             <GeoJSON
-              key={`${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}`}
+              key={`${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}`}
               data={subBasins}
               style={subBasinStyle}
               onEachFeature={(feat, layer) => {
@@ -513,20 +528,15 @@ export function BasinOverview({
           )}
           {/* Focus mode: fit to the selected sub-basin and reveal its own
               tanks + WQ stations (the L1/L2 layers, scoped not statewide). */}
-          <FitToSelection
-            geom={
-              selectedKey
-                ? (subBasins?.features.find((f) => (f.properties as Record<string, unknown>)?.code === selectedKey)?.geometry ?? null)
-                : (boundary?.features[0]?.geometry ?? null)
-            }
-          />
-          {/* Dedicated pane keeps point markers ABOVE the sub-basin
-              polygons: the polygon layer remounts on selection (its key
-              includes selectedKey) and would otherwise be re-added on top,
-              stealing hover/click from the dots (found by Sundaresh -
-              hovering a tank surfaced the sub-basin tooltip). zIndex 620
-              sits above markerPane (600), below tooltips (650). */}
-          <Pane name="overview-markers" style={{ zIndex: 620 }}>
+          <FitToSelection geoms={fitGeoms} />
+          {/* The markers share the sub-basin layer's key so both remount
+              together, in JSX order: polygons re-added first, dots after -
+              within the single canvas renderer, later-added shapes draw on
+              top and win hover/click. (A separate higher-zIndex pane also
+              put the dots on top, but its canvas then swallowed clicks over
+              the WHOLE map, so polygons under it could never be selected or
+              deselected - both interception bugs found by Sundaresh.) */}
+          <Fragment key={`markers-${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}`}>
           {selectedKey &&
             tanks?.features
               .filter((f) => (f.properties as Record<string, unknown>)?.subBasin === selectedKey && f.geometry?.type === "Point")
@@ -614,7 +624,7 @@ export function BasinOverview({
               </CircleMarker>
             );
           })}
-          </Pane>
+          </Fragment>
         </MapContainer>
 
         {/* Metric switcher (only when there is actually a choice) + legend */}
