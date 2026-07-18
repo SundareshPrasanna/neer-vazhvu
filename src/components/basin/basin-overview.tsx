@@ -11,7 +11,7 @@
 // scoreboard.json, reservoirs.geojson) - no source-system knowledge here.
 
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip as LeafletTooltip, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip as LeafletTooltip, Popup, Pane, useMap } from "react-leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import "leaflet/dist/leaflet.css";
 import type { BasinInventory, BasinManifest, SubBasinRef } from "@/lib/basins";
@@ -459,6 +459,13 @@ export function BasinOverview({
                 : (boundary?.features[0]?.geometry ?? null)
             }
           />
+          {/* Dedicated pane keeps point markers ABOVE the sub-basin
+              polygons: the polygon layer remounts on selection (its key
+              includes selectedKey) and would otherwise be re-added on top,
+              stealing hover/click from the dots (found by Sundaresh -
+              hovering a tank surfaced the sub-basin tooltip). zIndex 620
+              sits above markerPane (600), below tooltips (650). */}
+          <Pane name="overview-markers" style={{ zIndex: 620 }}>
           {selectedKey &&
             tanks?.features
               .filter((f) => (f.properties as Record<string, unknown>)?.subBasin === selectedKey && f.geometry?.type === "Point")
@@ -546,6 +553,7 @@ export function BasinOverview({
               </CircleMarker>
             );
           })}
+          </Pane>
         </MapContainer>
 
         {/* Metric switcher (only when there is actually a choice) + legend */}
