@@ -81,7 +81,7 @@ function CommitmentRow({ p, cityId, highlight }: { p: TrackedCommitment; cityId:
       {/* The one-line collapsed view: chip · title · dates. Nothing else. */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center gap-3 px-3 py-2.5 text-left"
+        className="w-full flex flex-wrap sm:flex-nowrap items-center gap-x-3 gap-y-1 px-3 py-2.5 text-left"
         aria-expanded={open}
       >
         <span className={`text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 ${STATUS_STYLE[p.status]}`}>
@@ -90,7 +90,7 @@ function CommitmentRow({ p, cityId, highlight }: { p: TrackedCommitment; cityId:
         <span className="flex-1 text-sm font-medium text-slate-800 dark:text-slate-200 leading-snug">
           {p.title}
         </span>
-        <span className={`text-xs font-mono shrink-0 ${p.revised_due ? "text-amber-600 dark:text-amber-400" : "text-slate-500"}`}>
+        <span className={`text-xs font-mono shrink-0 max-sm:order-last max-sm:basis-full ${p.revised_due ? "text-amber-600 dark:text-amber-400" : "text-slate-500"}`}>
           {fmtDue(p)}
         </span>
         <svg
