@@ -387,6 +387,10 @@ export function BasinOverview({
             <dl className="text-[12px] divide-y divide-slate-100 dark:divide-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
               {([
                 ["CPCB polluted stretches", isAssessed(selected) ? ({ value: prsCountByKey[selected.key] ?? 0, verified: true } as MetricValue) : undefined, (v: number) => `${v}`],
+                ["People living here", selectedScore?.metrics?.populationTotal, (v: number) => v.toLocaleString()],
+                ["Cropland share", selectedScore?.metrics?.lulcCropPct, (v: number) => `${v}% of area`],
+                ["Built-up share", selectedScore?.metrics?.lulcBuiltPct, (v: number) => `${v}% of area`],
+                ["Water surface", selectedScore?.metrics?.lulcWaterPct, (v: number) => `${v}% of area`],
                 ["MI tanks", selectedScore?.metrics?.tankCount, (v: number) => `${v}`],
                 ["Water-quality stations", selectedScore?.metrics?.wqStationCount, (v: number) => `${v}`],
                 ["Reservoirs", selectedScore?.metrics?.reservoirCount, (v: number) => `${v}`],
@@ -430,6 +434,7 @@ export function BasinOverview({
                         </div>
                         {p.stretch ? <div className="text-slate-500 dark:text-slate-400">{String(p.stretch)}</div> : null}
                         {p.bodValue ? <div className="text-[10px] text-slate-400">BOD {String(p.bodValue)} mg/L{p.kind === "location" ? " - single monitored location; CPCB flags upstream sources for identification" : ""}</div> : null}
+                        {p.history ? <div className="text-[10px] text-slate-400 mt-0.5">{String(p.history)}</div> : null}
                       </li>
                     ))}
                   </ul>
