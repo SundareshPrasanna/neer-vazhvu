@@ -171,10 +171,8 @@ interface PrsTab {
   subtabKind?: "units" | "categories";
   source?: string;
   intro?: string;
-  /** "stretch" = an obligation reported for the stretch as a whole (e-flow,
-   *  treated-water reuse, flood plain) - the only tabs listed in the panel.
-   *  Tabs without a scope are per-area source material for the accountability
-   *  matrix and are not rendered as a list (Paani Round-2, deck p8). */
+  /** "stretch" = reported for the stretch as a whole; only these tabs are
+   *  listed in the panel. Unscoped tabs feed the accountability matrix. */
   scope?: "stretch";
   /** Status-list row (summary view): a short badge + one-liner + tone colour. */
   summaryBadge?: string;
@@ -214,8 +212,6 @@ interface PrsData {
   governance?: {
     rows: { label: string; value: string }[];
     actionPlan?: { url: string; label?: string };
-    /** Compliance obligations (NGT-directed reporting: MPR uploads, the CPCB
-     *  river-basin portal). Each row may carry a link and an explanatory note. */
     compliance?: { value: string; link?: { url: string; label: string }; note?: string }[];
     note?: string;
   };
@@ -781,8 +777,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           )}
         </div>
 
+        {/* "River system" is the one grouped category; every other layer is a
+            flat toggle row. The floor model stays underneath (deep links,
+            default-on sets) - only the rail presentation is two-tier. */}
         <div className="block">
-          {FLOORS.map((f, i) => {
+          {(() => {
+            const f = FLOORS[0]; // hydrology = "River system"
             const open = expandedFloors.has(f.id);
             const onCount = floorLayers(f.id).filter((l) => enabled[l.family] ?? l.defaultOn).length;
             return (
@@ -807,7 +807,6 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   <div className="flex items-center justify-between gap-2">
                     <span className={`flex items-center text-sm font-semibold ${open ? "text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-300"}`}>
                       <span aria-hidden className={`mr-1 text-slate-400 transition-transform ${open ? "rotate-90" : ""}`}>▸</span>
-                      <span className="text-[10px] font-mono text-slate-400 mr-1">{i + 1}</span>
                       {f.label}
                     </span>
                     <span className="flex items-center gap-1.5 shrink-0">
@@ -822,9 +821,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   <div className="text-[10px] text-slate-400 dark:text-slate-500 pl-4">{f.sub}{!open && onCount === 0 ? " · open to explore" : ""}</div>
                 </button>
 
-                {/* Per-floor layer toggles, shown when the floor is expanded.
-                    Collapsing only hides the list - enabled layers stay on the
-                    map, so cross-floor combinations persist (checkbox-only). */}
+                {/* Collapsing only hides the list - enabled layers stay on the map. */}
                 {open && (
                 <div className="px-3 pb-2 pt-1 space-y-1">
                     {floorLayers(f.id).map((l) => {
@@ -852,7 +849,36 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 )}
               </div>
             );
-          })}
+          })()}
+
+          {/* Everything else: flat, always-visible toggle rows. */}
+          <div className="px-3 pt-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-700">
+            <div className="text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold pb-0.5">Layers</div>
+            {manifest.layers.filter((l) => l.floor !== "hydrology").map((l) => {
+              const inv = inventory?.families[l.family];
+              return (
+                <label key={l.family} className="flex items-start gap-2 text-xs cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={enabled[l.family] ?? l.defaultOn}
+                    onChange={(e) => {
+                      setFocusedFloor(l.floor);
+                      setEnabled((s) => ({ ...s, [l.family]: e.target.checked }));
+                    }}
+                    className="mt-0.5 accent-blue-600"
+                  />
+                  <span className="flex items-center gap-1.5 leading-tight">
+                    <span className="inline-block w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: l.color }} />
+                    <span className="text-slate-600 dark:text-slate-300">
+                      {l.label}
+                      {inv && <span className="text-slate-400"> ({inv.featureCount})</span>}
+                      {l.heavy && <span className="block text-[10px] text-slate-400">large layer</span>}
+                    </span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
         </div>
 
         {/* Data on this map */}
@@ -1935,11 +1961,8 @@ function PRSPanel({
       {/* Accountability matrix: Action Plan vs MPR, region-first */}
       {accountability && <AccountabilityMatrix data={accountability} />}
 
-      {/* Stretch-level obligations only. Per-area rows (sewage, solid waste,
-          effluent...) are NOT listed here - they live in the accountability
-          matrix per ULB / industrial area (Paani Round-2, deck p8). The tabs
-          without scope:"stretch" stay in prs.json as source material for the
-          per-region matrix rows. */}
+      {/* Stretch-level obligations only; per-area rows live in the
+          accountability matrix. */}
       {prs.tabs.some((t) => t.scope === "stretch") && (
       <section>
         <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Stretch-level obligations <span className="normal-case font-normal text-slate-400">(reported for the stretch as a whole; tap for detail)</span></div>

@@ -120,7 +120,10 @@ export const ARKAVATHI: BasinManifest = {
     { family: "evidence-points", label: "Pollution evidence", floor: "monitoring", geom: "point", color: "#f43f5e", defaultOn: true },
 
     // ── Floor 3: Pressures (warm ramp) ──
-    { family: "pressures", label: "Industry, quarries & waste", floor: "pressures", geom: "fill", color: "#dc2626", defaultOn: true, hasKinds: true },
+    // Major-industry points ride with Industrial areas for now.
+    { family: "pressures-industrial", label: "Industrial areas", floor: "pressures", geom: "fill", color: "#dc2626", defaultOn: true, hasKinds: true },
+    { family: "pressures-quarries", label: "Quarries", floor: "pressures", geom: "fill", color: "#ea580c", defaultOn: false, hasKinds: true },
+    { family: "pressures-waste", label: "Waste processing facilities", floor: "pressures", geom: "fill", color: "#ca8a04", defaultOn: false, hasKinds: true },
 
     // ── Floor 4: Gaps & response ──
     // Treatment-gap intelligence (cross-source; panel content in gaps.json).
@@ -137,7 +140,7 @@ export const ARKAVATHI: BasinManifest = {
     // warm red/orange/amber treatment-gap colours.
     { family: "admin-district", label: "Districts", floor: "governance", geom: "fill", color: "#94a3b8", defaultOn: true, context: true },
     { family: "admin-taluk", label: "Taluks", floor: "governance", geom: "fill", color: "#7570b3", defaultOn: false },
-    { family: "admin-town", label: "Towns", floor: "governance", geom: "fill", color: "#e7298a", defaultOn: false },
+    { family: "admin-town", label: "Urban Local Bodies (ULBs)", floor: "governance", geom: "fill", color: "#e7298a", defaultOn: false },
     { family: "admin-gp", label: "Gram panchayats", floor: "governance", geom: "fill", color: "#1b9e77", defaultOn: false, heavy: true },
   ],
   credits: [

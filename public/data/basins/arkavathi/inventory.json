@@ -169,37 +169,6 @@
       "bytes": 11831,
       "sliced": false
     },
-    "pressures": {
-      "featureCount": 183,
-      "sources": [
-        {
-          "file": "Arkavathi_Industrial_Areas_Ground_Truthed.gpkg",
-          "kind": "industrial-area",
-          "count": 56,
-          "provenance": "Paani Earth ground-truthed industrial areas (KIADB/KSSIDC), Feb 2026"
-        },
-        {
-          "file": "Arkavathi_Quarries_Mapped_with_GoogleEarth_Imagery.gpkg",
-          "kind": "quarry",
-          "count": 101,
-          "provenance": "Paani Earth, quarries digitised from Google Earth imagery (Feb 2026)"
-        },
-        {
-          "file": "Common Facilities for Industrial and Hazardous Waste.csv",
-          "kind": "waste-facility",
-          "count": 13,
-          "provenance": "CPCB common hazardous/industrial waste facilities, compiled by Paani Earth (Feb 2026)"
-        },
-        {
-          "file": "17Category_industries_Karnataka.csv",
-          "kind": "major-industry",
-          "count": 13,
-          "provenance": "KSPCB 17-category polluting-industry list (geocoded), basin-clipped Jun 2026"
-        }
-      ],
-      "bytes": 240606,
-      "sliced": false
-    },
     "command-areas": {
       "featureCount": 3,
       "sources": [
@@ -300,12 +269,51 @@
       ],
       "bytes": 21166,
       "sliced": false
+    },
+    "pressures-industrial": {
+      "featureCount": 69,
+      "sources": [
+        {
+          "file": "Arkavathi_Industrial_Areas_Ground_Truthed.gpkg",
+          "kind": "industrial-area",
+          "count": 56,
+          "provenance": "Paani Earth ground-truthed industrial areas (KIADB/KSSIDC), Feb 2026"
+        },
+        {
+          "file": "17Category_industries_Karnataka.csv",
+          "kind": "major-industry",
+          "count": 13,
+          "provenance": "KSPCB 17-category polluting-industry list (geocoded), basin-clipped Jun 2026"
+        }
+      ]
+    },
+    "pressures-quarries": {
+      "featureCount": 101,
+      "sources": [
+        {
+          "file": "Arkavathi_Quarries_Mapped_with_GoogleEarth_Imagery.gpkg",
+          "kind": "quarry",
+          "count": 101,
+          "provenance": "Paani Earth, quarries digitised from Google Earth imagery (Feb 2026)"
+        }
+      ]
+    },
+    "pressures-waste": {
+      "featureCount": 13,
+      "sources": [
+        {
+          "file": "Common Facilities for Industrial and Hazardous Waste.csv",
+          "kind": "waste-facility",
+          "count": 13,
+          "provenance": "CPCB common hazardous/industrial waste facilities, compiled by Paani Earth (Feb 2026)"
+        }
+      ]
     }
   },
   "skipped": [
     {
       "file": "17Category_industries_Karnataka.csv",
-      "family": "pressures",
+      "family": "pressures-industrial",
       "kind": "industry-17cat",
       "reason": "Revision pending from Paani (2026-06-13): non-canonical classification labels, 1 missing coord. Re-enable when corrected file lands."
     }

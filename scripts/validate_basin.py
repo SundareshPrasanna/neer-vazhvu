@@ -46,7 +46,7 @@ EXPECTED_PROPS = {
 
 
 def _fam_root(fam: str) -> str:
-    return fam.split("-")[0] if fam.split("-")[0] in {"waterbodies", "admin"} else fam
+    return fam.split("-")[0] if fam.split("-")[0] in {"waterbodies", "admin", "pressures"} else fam
 
 
 def main() -> None:
