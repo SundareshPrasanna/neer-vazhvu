@@ -60,6 +60,7 @@ def main(cfg_path):
                     "priority": entry["priority"],
                     "kind": entry["kind"],
                     "bodValue": entry["bodValue"],
+                    "history": entry.get("history"),
                     "subBasin": pt["subBasin"],
                     "locations": pt["locations"],
                     "vintage": cfg["assessment"],

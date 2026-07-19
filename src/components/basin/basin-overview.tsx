@@ -366,7 +366,7 @@ export function BasinOverview({
 
   const legendStops =
     metric === "rainfallDeviationPct"
-      ? [["near normal", "#93c5fd"], ["-20 to -60%", "#fbbf24"], ["-60 to -90%", "#f97316"], ["below -90%", "#dc2626"]]
+      ? [["normal or surplus", "#93c5fd"], ["-20 to -60%", "#fbbf24"], ["-60 to -90%", "#f97316"], ["below -90%", "#dc2626"]]
       : metric === "gwLevelM"
         ? [["< 8 m", "#93c5fd"], ["8-15 m", "#fbbf24"], ["15-22 m", "#f97316"], ["> 22 m", "#dc2626"]]
         : [["none identified (monitored)", "#a7f3d0"], ["1 stretch", "#f97316"], ["2+", "#dc2626"]];
@@ -387,6 +387,10 @@ export function BasinOverview({
             <dl className="text-[12px] divide-y divide-slate-100 dark:divide-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
               {([
                 ["CPCB polluted stretches", isAssessed(selected) ? ({ value: prsCountByKey[selected.key] ?? 0, verified: true } as MetricValue) : undefined, (v: number) => `${v}`],
+                ["People living here", selectedScore?.metrics?.populationTotal, (v: number) => v.toLocaleString()],
+                ["Cropland share", selectedScore?.metrics?.lulcCropPct, (v: number) => `${v}% of area`],
+                ["Built-up share", selectedScore?.metrics?.lulcBuiltPct, (v: number) => `${v}% of area`],
+                ["Water surface", selectedScore?.metrics?.lulcWaterPct, (v: number) => `${v}% of area`],
                 ["MI tanks", selectedScore?.metrics?.tankCount, (v: number) => `${v}`],
                 ["Water-quality stations", selectedScore?.metrics?.wqStationCount, (v: number) => `${v}`],
                 ["Reservoirs", selectedScore?.metrics?.reservoirCount, (v: number) => `${v}`],
@@ -430,6 +434,7 @@ export function BasinOverview({
                         </div>
                         {p.stretch ? <div className="text-slate-500 dark:text-slate-400">{String(p.stretch)}</div> : null}
                         {p.bodValue ? <div className="text-[10px] text-slate-400">BOD {String(p.bodValue)} mg/L{p.kind === "location" ? " - single monitored location; CPCB flags upstream sources for identification" : ""}</div> : null}
+                        {p.history ? <div className="text-[10px] text-slate-400 mt-0.5">{String(p.history)}</div> : null}
                       </li>
                     ))}
                   </ul>
@@ -447,7 +452,7 @@ export function BasinOverview({
               if (rows.length === 0) return null;
               return (
                 <div>
-                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">WQ stations (KSPCB / NWMP)</div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">WQ stations ({String(rows[0]?.agency ?? "KSPCB")} / NWMP)</div>
                   <ul className="mt-0.5 space-y-0.5">
                     {rows.map((p, i) => (
                       <li key={i} className="flex items-center justify-between gap-2 text-[11px] text-slate-600 dark:text-slate-300">
@@ -573,12 +578,12 @@ export function BasinOverview({
                     {worst ? (
                       <>
                         <br />
-                        <span style={{ fontSize: 11 }}>KSPCB water-quality station - worst class {worst}, latest {String(p.latestClass)} ({String(p.readingsPeriod)})</span>
+                        <span style={{ fontSize: 11 }}>{String(p.agency ?? "KSPCB")} water-quality station - worst class {worst}, latest {String(p.latestClass)} ({String(p.readingsPeriod)})</span>
                       </>
                     ) : (
                       <>
                         <br />
-                        <span style={{ fontSize: 11 }}>KSPCB water-quality station - no published classification</span>
+                        <span style={{ fontSize: 11 }}>{String(p.agency ?? "KSPCB")} water-quality station - no published classification</span>
                       </>
                     )}
                   </>
