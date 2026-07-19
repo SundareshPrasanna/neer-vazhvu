@@ -171,6 +171,11 @@ interface PrsTab {
   subtabKind?: "units" | "categories";
   source?: string;
   intro?: string;
+  /** "stretch" = an obligation reported for the stretch as a whole (e-flow,
+   *  treated-water reuse, flood plain) - the only tabs listed in the panel.
+   *  Tabs without a scope are per-area source material for the accountability
+   *  matrix and are not rendered as a list (Paani Round-2, deck p8). */
+  scope?: "stretch";
   /** Status-list row (summary view): a short badge + one-liner + tone colour. */
   summaryBadge?: string;
   summaryLine?: string;
@@ -204,10 +209,14 @@ interface PrsData {
   /** "Key Terms Used on This Page" popup: full forms + context for CPCB,
    *  PRS, MPR, BOD, priority classes etc. */
   keyTerms?: { term: string; full: string; note?: string }[];
-  /** Governance block: who is accountable for restoring this stretch. */
+  /** Governance & compliance block: who is accountable for restoring this
+   *  stretch, and the reporting obligations that make them checkable. */
   governance?: {
     rows: { label: string; value: string }[];
     actionPlan?: { url: string; label?: string };
+    /** Compliance obligations (NGT-directed reporting: MPR uploads, the CPCB
+     *  river-basin portal). Each row may carry a link and an explanatory note. */
+    compliance?: { value: string; link?: { url: string; label: string }; note?: string }[];
     note?: string;
   };
   growthNote?: string;
@@ -227,7 +236,6 @@ interface PrsData {
   evidence?: { headline: string; points: string[]; layerRef?: string; link?: { url: string; label: string } };
   tabs: PrsTab[];
   grievance?: { label: string; sub?: string; url: string; urlNote?: string };
-  knownGaps?: string[];
   sources?: string[];
 }
 
@@ -693,8 +701,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // how many industrial areas have no CETP nearby - computed live from the data.
   const legendNotes = useMemo(() => {
     const out: string[] = [];
-    if (visibleLayers.some((l) => l.family === "pressures")) {
-      const ind = (data["pressures"]?.features ?? []).filter(
+    if (visibleLayers.some((l) => l.family === "pressures-industrial")) {
+      const ind = (data["pressures-industrial"]?.features ?? []).filter(
         (f) => (f.properties as Record<string, unknown>)?.kind === "industrial-area",
       );
       const none = ind.filter((f) => (f.properties as Record<string, unknown>)?.cetp === "none").length;
@@ -1276,15 +1284,17 @@ function MapLegend({ layers, notes, raised }: { layers: BasinLayer[]; notes?: st
     else if (l.family === "monitoring-points") {
       items.push({ sym: "dot", color: l.color, label: "Monitoring (public data)" });
       items.push({ sym: "ring", color: l.color, label: "Monitoring (not in public domain)" });
-    } else if (l.family === "pressures") {
+    } else if (l.family === "pressures-industrial") {
       items.push({ sym: "box", color: "#dc2626", label: "Industrial area - no CETP (est.)" });
       items.push({ sym: "box", color: "#64748b", label: "Industrial area - CETP nearby" });
       // Third CETP state drawn by fillStyle (faint dashed grey) - must be
       // named here too: every rendered style gets a legend row.
       items.push({ sym: "outline", color: "#cbd5e1", label: "Industrial area - CETP unknown" });
-      items.push({ sym: "box", color: PRESSURE_KIND_COLOR["quarry"], label: "Quarry" });
-      items.push({ sym: "box", color: PRESSURE_KIND_COLOR["waste-facility"], label: "Waste facility" });
       items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "Major industry (17-category)" });
+    } else if (l.family === "pressures-quarries") {
+      items.push({ sym: "box", color: PRESSURE_KIND_COLOR["quarry"], label: "Quarry" });
+    } else if (l.family === "pressures-waste") {
+      items.push({ sym: "box", color: PRESSURE_KIND_COLOR["waste-facility"], label: "Waste facility" });
     } else if (l.family === "infrastructure") {
       items.push({ sym: "dot", color: l.color, label: "STP (operational)" });
       items.push({ sym: "ring", color: l.color, label: "STP (not yet functional)" });
@@ -1475,7 +1485,7 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, sel
     const isSel = selectedGapUnit === unit;
     return { color: c, weight: isSel ? 3 : 2, fillColor: c, fillOpacity: faded ? 0.2 : isSel ? 0.55 : 0.4 };
   }
-  if (l.family === "pressures") {
+  if (l.family.startsWith("pressures")) {
     const p = (feat?.properties as Record<string, unknown>) ?? {};
     const kind = String(p.kind ?? "");
     // Industrial areas are sub-coloured by CETP coverage (Madhuri's ask): no
@@ -1858,7 +1868,7 @@ function PRSPanel({
                 <div className="h-full rounded-sm" style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
               </div>
               <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 w-14 text-right shrink-0">{r.length_km} km</span>
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>Pri {r.priority}</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>P{r.priority}</span>
             </div>
           ))}
         </div>
@@ -1879,10 +1889,10 @@ function PRSPanel({
         )}
       </section>
 
-      {/* Governance: who is accountable for restoring this stretch */}
+      {/* Governance & compliance: who is accountable, and what they must report */}
       {prs.governance && (
         <section>
-          <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Governance</div>
+          <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Governance &amp; Compliance</div>
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
             {prs.governance.rows.map((f) => (
               <div key={f.label} className="flex gap-2 px-2.5 py-1.5">
@@ -1902,6 +1912,21 @@ function PRSPanel({
                 </a>
               </div>
             )}
+            {prs.governance.compliance?.map((c) => (
+              <div key={c.value} className="flex gap-2 px-2.5 py-1.5">
+                <span className="text-[12px] text-slate-500 dark:text-slate-400 w-32 shrink-0">Compliance</span>
+                <span className="text-[12px] font-medium text-slate-800 dark:text-slate-100 leading-snug">
+                  {c.value}
+                  {c.link && (
+                    <>
+                      {" "}
+                      <a href={c.link.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap">{c.link.label} ↗</a>
+                    </>
+                  )}
+                  {c.note && <span className="block mt-0.5 font-normal text-[11px] text-slate-500 dark:text-slate-400">{c.note}</span>}
+                </span>
+              </div>
+            ))}
           </div>
           {prs.governance.note && <p className="mt-1 text-[11px] text-slate-400 leading-snug">{prs.governance.note}</p>}
         </section>
@@ -1910,11 +1935,16 @@ function PRSPanel({
       {/* Accountability matrix: Action Plan vs MPR, region-first */}
       {accountability && <AccountabilityMatrix data={accountability} />}
 
-      {/* Status list - the per-area summary; tap a row for detail + trend */}
+      {/* Stretch-level obligations only. Per-area rows (sewage, solid waste,
+          effluent...) are NOT listed here - they live in the accountability
+          matrix per ULB / industrial area (Paani Round-2, deck p8). The tabs
+          without scope:"stretch" stay in prs.json as source material for the
+          per-region matrix rows. */}
+      {prs.tabs.some((t) => t.scope === "stretch") && (
       <section>
-        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Priority areas <span className="normal-case font-normal text-slate-400">(tap for detail &amp; trend)</span></div>
+        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Stretch-level obligations <span className="normal-case font-normal text-slate-400">(reported for the stretch as a whole; tap for detail)</span></div>
         <div className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-200 dark:divide-slate-700">
-          {prs.tabs.map((t) => (
+          {prs.tabs.filter((t) => t.scope === "stretch").map((t) => (
             <button
               key={t.key}
               onClick={() => openAreaFn(t)}
@@ -1932,6 +1962,7 @@ function PRSPanel({
           ))}
         </div>
       </section>
+      )}
 
       {/* Evidence (collapsed; the "beyond BOD" beat) */}
       {prs.evidence && (
@@ -1939,7 +1970,7 @@ function PRSPanel({
           <summary className="cursor-pointer list-none p-2.5 flex items-start gap-1.5">
             <span aria-hidden className="text-slate-400 group-open:rotate-90 transition-transform mt-0.5">▸</span>
             <span className="flex-1">
-              <span className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">Evidence of pollution</span>
+              <span className="text-[13px] uppercase tracking-wider text-rose-700 dark:text-rose-400 font-bold">Evidence of pollution</span>
               <span className="block text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{prs.evidence.headline}</span>
             </span>
           </summary>
@@ -1989,16 +2020,6 @@ function PRSPanel({
         {prs.mprOverview && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed">{prs.mprOverview}</p>}
         {prs.levelCoverage && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed"><span className="font-semibold">Reporting level: </span>{prs.levelCoverage}</p>}
       </PrsDisclosure>
-
-      {prs.knownGaps && prs.knownGaps.length > 0 && (
-        <PrsDisclosure label="Data we don't have yet">
-          <ul className="space-y-1 list-disc pl-4">
-            {prs.knownGaps.map((g, i) => (
-              <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{g}</li>
-            ))}
-          </ul>
-        </PrsDisclosure>
-      )}
 
       {prs.sources && prs.sources.length > 0 && (
         <PrsDisclosure label="Sources">

@@ -354,7 +354,7 @@
             "Harohalli KIADB (1st-4th phases): nearest common ETP >20 km (Neer Vazhvu estimate).",
             "Across the basin ~26 of 56 industrial areas have no CETP within ~5 km (8 of 18 KIADB)."
           ],
-          "layerRef": "pressures",
+          "layerRef": "pressures-industrial",
           "level": "industrial areas (basin)",
           "sourceTier": "other"
         },
@@ -376,7 +376,7 @@
           "label": "Draining into the stretch",
           "level": "spatial estimate",
           "body": "Two industrial areas sit within a few hundred metres of the stretch (near Acchalu Village, Ramanagara taluk); the MPRs name two Red-category units there and report their effluent as treated and recycled. The larger clusters - Peenya, Bidadi, Harohalli, Doddaballapura - lie roughly 6-10 km upstream in the Vrishabhavathi valley and reach the stretch through the valley's drain network, consistent with the MPRs' own note that the Arkavathi's pollution originates mainly upstream in the V-Valley catchment. Open the Pressures floor for the industrial areas and their CETP coverage.",
-          "layerRef": "pressures",
+          "layerRef": "pressures-industrial",
           "sourceTier": "other"
         },
         {
@@ -695,7 +695,8 @@
           ],
           "level": "river stretch"
         }
-      ]
+      ],
+      "scope": "stretch"
     },
     {
       "key": "reuse",
@@ -756,9 +757,9 @@
           "key": "stp-ocems",
           "label": "OCEMS for private STPs",
           "level": "Karnataka (KSPCB)",
-          "body": "KSPCB has mandated online continuous effluent monitoring (OCEMS) for private STPs above 100 KLD, per industry media.",
+          "body": "KSPCB has mandated online continuous effluent monitoring (OCEMS) for private STPs above 500 KLD, per the RTI response obtained by Paani Earth (July 2026).",
           "points": [
-            "No public record of the memo exists - Paani Earth has filed an RTI for a copy (July 2026). Until then, coverage and compliance cannot be publicly verified."
+            "Threshold confirmed by the RTI response Paani Earth received in July 2026; earlier industry media had reported it as 100 KLD. Coverage and compliance data are still not published."
           ],
           "link": {
             "url": "https://www.greenvironmentindia.com/newsroom/kspcb-mandates-ocems-stps-karnataka",
@@ -766,7 +767,8 @@
           },
           "sourceTier": "other"
         }
-      ]
+      ],
+      "scope": "stretch"
     },
     {
       "key": "floodplain",
@@ -787,7 +789,8 @@
           ],
           "level": "stretch / taluk"
         }
-      ]
+      ],
+      "scope": "stretch"
     }
   ],
   "grievance": {
@@ -795,11 +798,6 @@
     "sub": "NMCG's online grievance module (operational since January 2021, set up on NGT direction). State chief secretaries are directed to monitor and resolve within a stipulated period.",
     "url": "https://nmcg.nic.in/"
   },
-  "knownGaps": [
-    "A precise drain-by-drain trace - which drain carries which discharge to the stretch - would need flow-direction data the current drainage network doesn't carry (nearly every area sits near some drain). We show the adjacent units plus the upstream V-Valley clusters as a spatial estimate.",
-    "Per-year sewage and solid-waste series for BBMP/Yelahanka, Magadi and Harohalli need the relevant District Environmental Plans (2021 baseline + a 2024-25 refresh).",
-    "The BWSSB order permitting apartments to sell treated water and the KSPCB memo mandating OCEMS for private STPs above 100 KLD are not in the public record - Paani Earth has filed RTIs for both (July 2026)."
-  ],
   "sources": [
     "Polluted-stretch geometry, lengths and priority bands (2020, 2025): Paani Earth mapping.",
     "CPCB priority: Polluted River Stretches for Restoration of Water Quality - 2025 (CPCB, October 2025, Updated Version), BOD-based, 2022-23 monitoring data; earlier assessments 2011, 2018. Mirrored copy self-hosted (the NMCG-served original downloads corrupted for some readers).",
@@ -816,7 +814,7 @@
     },
     {
       "label": "Length (2025)",
-      "value": "104 km (Paani Earth mapping; CPCB does not specify a length)"
+      "value": "104 km (Paani Earth Foundation)"
     },
     {
       "label": "Classification",
@@ -912,6 +910,23 @@
       "url": "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Arkavathi.pdf",
       "label": "Arkavathi Action Plan (KSPCB)"
     },
+    "compliance": [
+      {
+        "value": "Action plan to be developed by the State Pollution Control Board; monthly progress reports to be uploaded on the NMCG portal.",
+        "link": {
+          "url": "https://nmcg.nic.in/ngtprogressreport.aspx",
+          "label": "NMCG progress reports"
+        }
+      },
+      {
+        "value": "CPCB river-basin-wise portal (India E-track) as per NGT directions.",
+        "link": {
+          "url": "http://103.221.209.84:2001/riverbasin/",
+          "label": "CPCB river-basin portal"
+        },
+        "note": "The portal is login-walled, but this information can be readily compiled by the KSPCB from such a dashboard. In its order dated 28 August 2019 in O.A. No. 593/2017 (Paryavaran Suraksha Samiti), the NGT directed CPCB to prepare a 'river basin-wise macro picture' identifying gaps and required interventions for ETPs, CETPs, STPs, Municipal Solid Waste (MSW) facilities and legacy waste sites."
+      }
+    ],
     "note": "Committee constitution as recorded in the KSPCB action plan and NMCG progress reports, under NGT OA 673/2018."
   }
 }
