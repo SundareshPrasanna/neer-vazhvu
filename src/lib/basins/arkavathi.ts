@@ -131,7 +131,7 @@ export const ARKAVATHI: BasinManifest = {
     // ── Floor 4: Gaps & response ──
     // Treatment-gap intelligence (cross-source; panel content in gaps.json).
     // Demo: Ramanagara. More units are a data-only addition.
-    { family: "gaps", label: "Treatment & waste gaps", floor: "governance", geom: "fill", color: "#dc2626", defaultOn: true, gap: true },
+    { family: "gaps", label: "District Environment Plan (DEP) 2022 Snapshot", floor: "governance", geom: "fill", color: "#dc2626", defaultOn: true, gap: true },
     { family: "infrastructure", label: "Treatment plants (STPs)", floor: "governance", geom: "point", color: "#a855f7", defaultOn: true },
     // Faecal sludge (septage) plants - the treatment route for unsewered towns,
     // a distinct cyan from the purple STPs; the current three are planned/at-tender.
@@ -144,6 +144,7 @@ export const ARKAVATHI: BasinManifest = {
     { family: "admin-district", label: "Districts", floor: "governance", geom: "fill", color: "#94a3b8", defaultOn: true, context: true },
     { family: "admin-taluk", label: "Taluks", floor: "governance", geom: "fill", color: "#7570b3", defaultOn: false },
     { family: "admin-town", label: "Urban Local Bodies (ULBs)", floor: "governance", geom: "fill", color: "#e7298a", defaultOn: false },
+    { family: "gba-boundary", label: "GBA boundary (369 wards, 2025)", floor: "governance", geom: "fill", color: "#0ea5e9", defaultOn: false },
     { family: "admin-gp", label: "Gram panchayats", floor: "governance", geom: "fill", color: "#1b9e77", defaultOn: false, heavy: true },
   ],
   credits: [

@@ -259,11 +259,15 @@ export interface AccRegion {
   grievance?: { label: string; url: string };
   /** Regions the documents never itemise carry this instead of categories. */
   silentNote?: string;
+  /** How to find this region on the map: the layer family plus a property
+   *  match (exact values or substring contains). */
+  mapMatch?: { family: string; prop?: string; values?: string[]; contains?: string[] };
   categories: AccCategory[];
 }
 export interface AccountabilityData {
   question: string;
   intro?: string;
+  portalNote?: string;
   baseline: {
     primary: { label: string; asOf: string; note?: string };
     actionPlan: { label: string; url: string };
@@ -386,9 +390,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     () => new Set<BasinFloor>([initialFloor ?? "hydrology"]),
   );
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(initialRiverId);
+  // Region highlighted from the accountability matrix ("Show X on the map").
+  const [mapHighlight, setMapHighlight] = useState<MapHighlight | null>(null);
   const [selectedFeature, setSelectedFeature] = useState<{ family: string; props: Record<string, unknown> } | null>(null);
   const [selectedGapUnit, setSelectedGapUnit] = useState<string | null>(null);
   const [gapData, setGapData] = useState<Record<string, GapUnit>>({});
+  const [gapNote, setGapNote] = useState<string | null>(null);
   // PRS entry-point panel: open when the polluted-stretch line is clicked.
   const [selectedPrs, setSelectedPrs] = useState(false);
   const [prsData, setPrsData] = useState<PrsData | null>(null);
@@ -499,7 +506,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // Cross-source gap intelligence for the gap layer's click panel (optional).
   useEffect(() => {
     fetchJson(`/data/basins/${manifest.basinId}/gaps.json`)
-      .then((d) => setGapData(((d as unknown as { units?: Record<string, GapUnit> })?.units) ?? {}))
+      .then((d) => {
+        const parsed = d as unknown as { units?: Record<string, GapUnit>; note?: string };
+        setGapData(parsed?.units ?? {});
+        setGapNote(parsed?.note ?? null);
+      })
       .catch(() => setGapData({}));
   }, [manifest.basinId]);
 
@@ -1021,12 +1032,13 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             // place in the hierarchy.
             const isBase = l.family === "boundary" || l.family === "admin-district";
             const isAdmin = l.family.startsWith("admin");
+            const hlActive = mapHighlight?.family === l.family;
             return (
               <GeoJSON
-                key={`${l.family}-${selectedRiverId}-${tiles.isDark}`}
+                key={`${l.family}-${selectedRiverId}-${tiles.isDark}-${hlActive ? "hl" : ""}`}
                 data={fcScoped}
                 interactive={!isBase}
-                style={(feat?: Feature) => fillStyle(l, feat, faded)}
+                style={(feat?: Feature) => fillStyle(l, feat, faded, null, mapHighlight)}
                 pointToLayer={(feat, latlng) => L.circleMarker(latlng, pressurePointStyle(feat, faded))}
                 onEachFeature={(feat: Feature, layer: Layer) => {
                   if (isBase) return;
@@ -1244,6 +1256,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 accountability={accData}
                 layerByFamily={layerByFamily}
                 onOpenUnit={(u) => { setSelectedPrs(false); setSelectedFeature(null); setSelectedGapUnit(u); setGapFromPrs(true); }}
+                depUnit={manifest.defaultGapUnit}
+                onShowRegion={(r) => {
+                  if (!r.mapMatch) return;
+                  setEnabled((s) => ({ ...s, [r.mapMatch!.family]: true }));
+                  setMapHighlight(r.mapMatch);
+                }}
                 onShowLayer={(family) => {
                   const lyr = layerByFamily[family];
                   setEnabled((s) => ({ ...s, [family]: true }));
@@ -1257,6 +1275,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             ) : selectedGapUnit && gapData[selectedGapUnit] ? (
               <GapPanel
                 unit={gapData[selectedGapUnit]}
+                note={gapNote}
                 onClose={() => { setSelectedGapUnit(null); setGapFromPrs(false); }}
                 onBack={gapFromPrs ? () => { setSelectedGapUnit(null); setGapFromPrs(false); setSelectedPrs(true); } : undefined}
               />
@@ -1480,7 +1499,20 @@ const ADMIN_DASH: Record<string, string | undefined> = {
   "admin-gp": "1 4",
 };
 
-function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, selectedGapUnit?: string | null): PathOptions {
+type MapHighlight = { family: string; prop?: string; values?: string[]; contains?: string[] };
+
+function matchesHighlight(hl: MapHighlight | null | undefined, l: BasinLayer, feat: Feature | undefined): boolean {
+  if (!hl || hl.family !== l.family) return false;
+  if (!hl.prop) return true;
+  const v = String((feat?.properties as Record<string, unknown>)?.[hl.prop] ?? "");
+  if (hl.values?.includes(v)) return true;
+  return hl.contains?.some((c) => v.toLowerCase().includes(c.toLowerCase())) ?? false;
+}
+
+function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, selectedGapUnit?: string | null, hl?: MapHighlight | null): PathOptions {
+  if (matchesHighlight(hl, l, feat)) {
+    return { color: SELECTED_SHED_COLOR, weight: 3, fillColor: l.color, fillOpacity: 0.35, opacity: 1 };
+  }
   if (l.family === "boundary") {
     // Bold SOLID line in the manifest color (fuchsia) - a hue the OSM basemap
     // never uses, so the basin edge can't be mistaken for a basemap boundary.
@@ -1663,6 +1695,8 @@ function PRSPanel({
   layerByFamily,
   onOpenUnit,
   onShowLayer,
+  onShowRegion,
+  depUnit,
   onClose,
 }: {
   prs: PrsData;
@@ -1670,6 +1704,9 @@ function PRSPanel({
   layerByFamily: Record<string, BasinLayer>;
   onOpenUnit: (unit: string) => void;
   onShowLayer: (family: string) => void;
+  onShowRegion?: (r: AccRegion) => void;
+  /** Gap unit the DEP cross-link opens; the link renders only when set. */
+  depUnit?: string;
   onClose: () => void;
 }) {
   const firstSubKey = (t?: PrsTab) => t?.units?.[0]?.key ?? t?.categories?.[0]?.key ?? "";
@@ -1959,7 +1996,13 @@ function PRSPanel({
       )}
 
       {/* Accountability matrix: Action Plan vs MPR, region-first */}
-      {accountability && <AccountabilityMatrix data={accountability} />}
+      {accountability && <AccountabilityMatrix data={accountability} onShowRegion={onShowRegion} />}
+
+      {depUnit && (
+        <button onClick={() => onOpenUnit(depUnit)} className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+          Explore treatment and waste gaps (DEP 2022 snapshot) →
+        </button>
+      )}
 
       {/* Stretch-level obligations only; per-area rows live in the
           accountability matrix. */}
@@ -2069,12 +2112,14 @@ const ACC_VERDICT: Record<AccCategory["verdict"], { label: string; cls: string }
 };
 const ACC_KIND_LABEL: Record<AccRegion["kind"], string> = { ulb: "ULBs", ia: "Industrial Areas", gp: "Gram Panchayats" };
 
-export function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
+export function AccountabilityMatrix({ data, onShowRegion }: { data: AccountabilityData; onShowRegion?: (r: AccRegion) => void }) {
   const kinds = (["ulb", "ia", "gp"] as const).filter((k) => data.regions.some((r) => r.kind === k));
-  const [kind, setKind] = useState<AccRegion["kind"]>(kinds[0] ?? "ulb");
-  const regions = data.regions.filter((r) => r.kind === kind);
+  // Nothing pre-selected: the three kind tabs render alone; region chips
+  // appear on tab click, the detail card on chip click.
+  const [kind, setKind] = useState<AccRegion["kind"] | null>(null);
+  const regions = kind ? data.regions.filter((r) => r.kind === kind) : [];
   const [regionKey, setRegionKey] = useState<string | null>(null);
-  const region = regions.find((r) => r.key === regionKey) ?? regions[0];
+  const region = regions.find((r) => r.key === regionKey) ?? (regions.length === 1 ? regions[0] : undefined);
 
   return (
     <section>
@@ -2102,6 +2147,9 @@ export function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
           </button>
         ))}
       </div>
+      {kind && data.portalNote && (
+        <p className="text-[10px] text-slate-400 dark:text-slate-500 italic leading-snug mb-1.5">{data.portalNote}</p>
+      )}
       {/* Region chips */}
       {regions.length > 1 && (
         <div className="flex flex-wrap gap-1 mb-2">
@@ -2127,6 +2175,11 @@ export function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
           <div>
             <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{region.name}</div>
             {region.inBasinNote && <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{region.inBasinNote}</p>}
+            {region.mapMatch && onShowRegion && (
+              <button onClick={() => onShowRegion(region)} className="mt-1 inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                Show {region.name} on the map →
+              </button>
+            )}
           </div>
 
           {region.silentNote ? (
@@ -2380,7 +2433,7 @@ function UnitTimeline({ unit, unitLabel, treatedVerb, onOpenUnit }: { unit: PrsU
 
 /** Cross-source treatment-gap panel: the "why does it persist" view - metrics,
  *  the gap over time, and what each document says, with citations. */
-function GapPanel({ unit, onClose, onBack }: { unit: GapUnit; onClose: () => void; onBack?: () => void }) {
+function GapPanel({ unit, note, onClose, onBack }: { unit: GapUnit; note?: string | null; onClose: () => void; onBack?: () => void }) {
   return (
     <div className="space-y-4">
       {onBack && (
@@ -2390,8 +2443,9 @@ function GapPanel({ unit, onClose, onBack }: { unit: GapUnit; onClose: () => voi
       )}
       <div className="flex items-start justify-between gap-2">
         <div>
-          <div className="text-[11px] uppercase tracking-wider text-rose-500">Treatment &amp; waste gaps{unit.level ? ` - ${unit.level}` : ""}</div>
+          <div className="text-[11px] uppercase tracking-wider text-rose-500">District Environment Plan (DEP) 2022 Snapshot{unit.level ? ` - ${unit.level}` : ""}</div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 leading-snug">{unit.name}</h2>
+          {note && <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{note}</p>}
         </div>
         <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
           <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
