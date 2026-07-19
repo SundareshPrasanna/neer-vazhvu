@@ -10,7 +10,10 @@ import type { BasinManifest } from "./types";
 // cauvery-ka; the two link to each other below - the interstate roll-up
 // composes state segments, it never pretends one seamless dataset.
 //
-// Depth: every sub-basin is L1 (hydrology scoped: named tanks + channels),
+// Depth: sub-basins are L1 (hydrology scoped: named tanks + channels);
+// 123 and 129 are L2 - CPCB stretch findings plus full restoration
+// accountability matrices (accountability-123/129.json, reconstructed from
+// TNPCB action plans, stretch WQ series and NGT case records);
 // plus CPCB's October 2025 polluted-stretch findings placed at CPCB's own
 // monitoring locations (scripts/build_basin_prs_points.py - TNGIS streams
 // carry no river names, so stretch lines cannot be drawn honestly yet).
@@ -43,7 +46,7 @@ export const CAUVERY_TN: BasinManifest = {
   subBasins: [
     { key: "115", name: "Chinnar", scoreboardKey: "115", areaKm2: 1750, depthLevel: 1, blurb: "The TN side of the border sliver Karnataka maps as its C8.", unlocks: ["No TN water-quality or monitoring layers ingested yet - TNWRIS / TNPCB recon pending"] },
     { key: "117", name: "Dodda Halla", scoreboardKey: "117", areaKm2: 836, depthLevel: 1, unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
-    { key: "123", name: "Mettur Reservoir to Noyyal confluence", scoreboardKey: "123", areaKm2: 5405, depthLevel: 1, blurb: "The mainstem reach below Mettur (Stanley Reservoir) - the state's water-sharing barometer. Carries the start of the CPCB Priority-II mainstem stretch (Erode to Pichavaram) and the Priority-I Sarabanga location at Edapadi, downstream of textile dyeing effluent.", unlocks: ["Live Mettur storage feed not yet wired (tnsmart)", "Station-level water-quality readings (TNPCB) not yet ingested"] },
+    { key: "123", name: "Mettur Reservoir to Noyyal confluence", scoreboardKey: "123", areaKm2: 5405, depthLevel: 2, blurb: "The mainstem reach below Mettur (Stanley Reservoir) - the state's water-sharing barometer. Carries the start of the CPCB Priority-II mainstem stretch (Erode to Pichavaram) and the Priority-I Sarabanga location at Edapadi. The Sarabanga's restoration accountability is tracked below: none of the 2019 action plan's four committed works has a public completion record.", unlocks: ["Live Mettur storage feed not yet wired (tnsmart)", "TNPCB's stretch-wise water-quality series stops at December 2023 - later readings exist only in CPCB's October 2025 annexures"] },
     { key: "127", name: "Palar Dodda Halla", scoreboardKey: "127", areaKm2: 1293, depthLevel: 1, unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
     { key: "124", name: "Moyar", scoreboardKey: "124", areaKm2: 2067, depthLevel: 1, blurb: "Nilgiris slopes and the Moyar gorge, upstream of Bhavanisagar.", unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
     { key: "114", name: "Upper Bhavani", scoreboardKey: "114", areaKm2: 1807, depthLevel: 1, blurb: "Holds CPCB's Bhavani polluted location at Sirumugai (Priority V) - Sirumugai falls in this polygon on TN WRD's own decomposition.", unlocks: ["Station-level water-quality readings (TNPCB) not yet ingested"] },
@@ -54,7 +57,7 @@ export const CAUVERY_TN: BasinManifest = {
     { key: "125", name: "Nandiyar - Kulaiyar", scoreboardKey: "125", areaKm2: 1532, depthLevel: 1, unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
     { key: "128", name: "Pungar (upper Coleroon)", scoreboardKey: "128", areaKm2: 1309, depthLevel: 1, unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
     { key: "119", name: "Ponnaniyar", scoreboardKey: "119", areaKm2: 1799, depthLevel: 1, unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
-    { key: "129", name: "Tirumanimuttar", scoreboardKey: "129", areaKm2: 2477, depthLevel: 1, blurb: "Salem and Namakkal's drain to the Cauvery. CPCB's Priority-I Thirumanimutharu location at Salem sits downstream of sago and textile dyeing industries.", unlocks: ["Station-level water-quality readings (TNPCB) not yet ingested"] },
+    { key: "129", name: "Tirumanimuttar", scoreboardKey: "129", areaKm2: 2477, depthLevel: 2, blurb: "Salem and Namakkal's drain to the Cauvery, carrying CPCB's Priority-I Thirumanimutharu location at Salem. Restoration accountability is tracked below: Salem's 98 MLD of STP capacity was built years before the 2019 plan, and the sewer network to feed it was still incomplete in July 2026.", unlocks: ["TNPCB's stretch-wise water-quality series stops at December 2023 - later readings exist only in CPCB's October 2025 annexures and NGT records"] },
     { key: "118", name: "Karaipottanar", scoreboardKey: "118", areaKm2: 1001, depthLevel: 1, unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
     { key: "122", name: "Marudaiyar", scoreboardKey: "122", areaKm2: 877, depthLevel: 1, unlocks: ["No TN water-quality or monitoring layers ingested yet"] },
     { key: "121", name: "Lower Coleroon", scoreboardKey: "121", areaKm2: 1501, depthLevel: 1, blurb: "The flood carrier past Srirangam to the sea.", unlocks: ["No TN water-quality or monitoring layers ingested yet"] },

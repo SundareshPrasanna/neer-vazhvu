@@ -1,56 +1,96 @@
 {
-  "basinId": "cauvery-tn",
-  "source": "CPCB, Polluted River Stretches in India - October 2025 (Table 3.27 + Annexures II/III). Mirrored at /docs/cpcb-polluted-river-stretches-oct-2025.pdf",
-  "assessment": "CPCB NWMP assessment, BOD observed 2022-2023, published October 2025",
-  "note": "TN streams layer (TNGIS) carries no river names, so stretch geometry cannot be drawn as lines. Each entry is placed at CPCB's own monitoring locations (Annexure III), one point per sub-basin the stretch touches; every point is validated against the sub-basin polygons at build time.",
-  "entries": [
+ "basinId": "cauvery-tn",
+ "source": "CPCB, Polluted River Stretches in India - October 2025 (Table 3.27 + Annexures II/III). Mirrored at /docs/cpcb-polluted-river-stretches-oct-2025.pdf",
+ "assessment": "CPCB NWMP assessment, BOD observed 2022-2023, published October 2025",
+ "note": "TN streams layer (TNGIS) carries no river names, so stretch geometry cannot be drawn as lines. Each entry is placed at CPCB's own monitoring locations (Annexure III), one point per sub-basin the stretch touches; every point is validated against the sub-basin polygons at build time.",
+ "entries": [
+  {
+   "stretchId": "cauvery-mainstem-2025",
+   "river": "Cauvery",
+   "stretch": "Erode (near Virapalayam) to Pichavaram",
+   "priority": "II",
+   "kind": "stretch",
+   "bodValue": "2.4 - 9 across monitored locations (2022-23 basis)",
+   "points": [
     {
-      "stretchId": "cauvery-mainstem-2025",
-      "river": "Cauvery",
-      "stretch": "Erode (near Virapalayam) to Pichavaram",
-      "priority": "II",
-      "kind": "stretch",
-      "bodValue": "2.4 - 9",
-      "points": [
-        { "subBasin": "123", "lon": 77.72, "lat": 11.34, "locations": "Cauvery at Erode near Virapalayam" },
-        { "subBasin": "112", "lon": 78.444, "lat": 10.954, "locations": "Cauvery at Musiri" },
-        { "subBasin": "119", "lon": 78.686, "lat": 10.805, "locations": "Cauvery at Tiruchirappalli" },
-        { "subBasin": "116", "lon": 79.14, "lat": 10.79, "locations": "Cauvery at Thanjavur; Cauvery at Mayiladuthurai D/S (max BOD 9 mg/L)" },
-        { "subBasin": "121", "lon": 79.60, "lat": 11.40, "locations": "Coleroon reach to the stretch endpoint at Pichavaram" }
-      ]
+     "subBasin": "123",
+     "lon": 77.72,
+     "lat": 11.34,
+     "locations": "Cauvery at Erode near Virapalayam"
     },
     {
-      "stretchId": "sarabanga-edapadi-2025",
-      "river": "Sarabanga",
-      "stretch": "At Edapadi (Salem), downstream of textile dyeing industries effluent",
-      "priority": "I",
-      "kind": "location",
-      "bodValue": "80",
-      "points": [
-        { "subBasin": "123", "lon": 77.826, "lat": 11.685, "locations": "Sarabanga at Edapadi" }
-      ]
+     "subBasin": "112",
+     "lon": 78.444,
+     "lat": 10.954,
+     "locations": "Cauvery at Musiri"
     },
     {
-      "stretchId": "thirumanimutharu-salem-2025",
-      "river": "Thirumanimutharu",
-      "stretch": "At Salem, downstream of sago and textile dyeing industries",
-      "priority": "I",
-      "kind": "location",
-      "bodValue": "120",
-      "points": [
-        { "subBasin": "129", "lon": 78.146, "lat": 11.664, "locations": "Thirumanimutharu at Salem" }
-      ]
+     "subBasin": "119",
+     "lon": 78.686,
+     "lat": 10.805,
+     "locations": "Cauvery at Tiruchirappalli"
     },
     {
-      "stretchId": "bhavani-sirumugai-2025",
-      "river": "Bhavani",
-      "stretch": "At Sirumugai",
-      "priority": "V",
-      "kind": "location",
-      "bodValue": "2.9 - 3.3",
-      "points": [
-        { "subBasin": "114", "lon": 77.005, "lat": 11.322, "locations": "Bhavani at Sirumugai" }
-      ]
+     "subBasin": "116",
+     "lon": 79.14,
+     "lat": 10.79,
+     "locations": "Cauvery at Thanjavur; Cauvery at Mayiladuthurai D/S (max BOD 9 mg/L)"
+    },
+    {
+     "subBasin": "121",
+     "lon": 79.6,
+     "lat": 11.4,
+     "locations": "Coleroon reach to the stretch endpoint at Pichavaram"
     }
-  ]
+   ]
+  },
+  {
+   "stretchId": "sarabanga-edapadi-2025",
+   "river": "Sarabanga",
+   "stretch": "At Edapadi (Salem), downstream of textile dyeing industries effluent",
+   "priority": "I",
+   "kind": "location",
+   "bodValue": "36 (2022-23 basis) rising to 80 (2024)",
+   "points": [
+    {
+     "subBasin": "123",
+     "lon": 77.826,
+     "lat": 11.685,
+     "locations": "Sarabanga at Edapadi"
+    }
+   ]
+  },
+  {
+   "stretchId": "thirumanimutharu-salem-2025",
+   "river": "Thirumanimutharu",
+   "stretch": "At Salem, downstream of sago and textile dyeing industries",
+   "priority": "I",
+   "kind": "location",
+   "bodValue": "60 (2022-23 basis) rising to 120 (2024)",
+   "points": [
+    {
+     "subBasin": "129",
+     "lon": 78.146,
+     "lat": 11.664,
+     "locations": "Thirumanimutharu at Salem"
+    }
+   ]
+  },
+  {
+   "stretchId": "bhavani-sirumugai-2025",
+   "river": "Bhavani",
+   "stretch": "At Sirumugai",
+   "priority": "V",
+   "kind": "location",
+   "bodValue": "3.3 (2022-23 basis); 2.9 (2024)",
+   "points": [
+    {
+     "subBasin": "114",
+     "lon": 77.005,
+     "lat": 11.322,
+     "locations": "Bhavani at Sirumugai"
+    }
+   ]
+  }
+ ]
 }
