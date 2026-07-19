@@ -80,6 +80,19 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     dateFrom: "json:asOf",
     note: "Cauvery basin overview sub-basin scoreboard (KWRIS)",
   },
+  {
+    id: "cauvery-tn-wq-stations",
+    cityId: "bangalore",
+    file: "public/data/basins/cauvery-tn/scoreboard.json",
+    // TNPCB's stretch-wise WQ series is a CLOSED archive (last edition
+    // Dec 2023, stated in the UI) - this is an edition-watch, not a feed:
+    // it fires roughly yearly as a prompt to re-check the TNPCB PR-Stretches
+    // page (tnpcb.gov.in) for a resumed series or a new vintage, and to
+    // re-check CPCB's next Polluted River Stretches report.
+    maxAgeDays: 400,
+    dateFrom: "json:asOf",
+    note: "TN Cauvery stretch WQ (TNPCB, closed series) + CPCB PRS edition watch",
+  },
 ];
 
 // Cities allowed to skip a derived check, with the reason on record.

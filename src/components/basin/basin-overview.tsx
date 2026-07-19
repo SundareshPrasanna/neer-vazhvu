@@ -447,7 +447,7 @@ export function BasinOverview({
               if (rows.length === 0) return null;
               return (
                 <div>
-                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">WQ stations (KSPCB / NWMP)</div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">WQ stations ({String(rows[0]?.agency ?? "KSPCB")} / NWMP)</div>
                   <ul className="mt-0.5 space-y-0.5">
                     {rows.map((p, i) => (
                       <li key={i} className="flex items-center justify-between gap-2 text-[11px] text-slate-600 dark:text-slate-300">
@@ -573,12 +573,12 @@ export function BasinOverview({
                     {worst ? (
                       <>
                         <br />
-                        <span style={{ fontSize: 11 }}>KSPCB water-quality station - worst class {worst}, latest {String(p.latestClass)} ({String(p.readingsPeriod)})</span>
+                        <span style={{ fontSize: 11 }}>{String(p.agency ?? "KSPCB")} water-quality station - worst class {worst}, latest {String(p.latestClass)} ({String(p.readingsPeriod)})</span>
                       </>
                     ) : (
                       <>
                         <br />
-                        <span style={{ fontSize: 11 }}>KSPCB water-quality station - no published classification</span>
+                        <span style={{ fontSize: 11 }}>{String(p.agency ?? "KSPCB")} water-quality station - no published classification</span>
                       </>
                     )}
                   </>
