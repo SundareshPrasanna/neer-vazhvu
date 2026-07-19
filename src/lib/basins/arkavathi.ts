@@ -111,6 +111,9 @@ export const ARKAVATHI: BasinManifest = {
     // Clicking either line opens the PRS panel (prs.json). Crimson line,
     // distinct from the blue water family; the component weights 2025 over 2020.
     { family: "prs", label: "Polluted stretch (PRS)", floor: "hydrology", geom: "line", color: "#b91c1c", defaultOn: false, prs: true },
+    // The 16 polluting drains KSPCB inspected on the stretch (Dec 2020);
+    // E-176 lacks coordinates in the source, so 15 render.
+    { family: "prs-drains", label: "Polluting drains (KSPCB)", floor: "hydrology", geom: "point", color: "#eab308", defaultOn: true },
     { family: "waterbodies-major", label: "Tanks & reservoirs (named)", floor: "hydrology", geom: "fill", color: "#0284c7", defaultOn: true },
     { family: "waterbodies-minor", label: "Other waterbodies", floor: "hydrology", geom: "fill", color: "#0d9488", defaultOn: false, heavy: true },
     { family: "drainage", label: "Drainage network", floor: "hydrology", geom: "line", color: "#3b82f6", defaultOn: false, heavy: true },
@@ -147,6 +150,7 @@ export const ARKAVATHI: BasinManifest = {
     "Spatial data: Paani Earth Foundation - Arkavathi River Basin GIS package (Feb 2026).",
     "Polluted river stretch (2020, 2025): Paani Earth, digitised from the CPCB / NGT polluted-river-stretch classification.",
     "Monitoring points: KSPCB, CPCB, CWC, Dept. of Mines & Geology, ATREE and others, compiled by Paani Earth.",
+    "Polluting drains: 16 storm-water drains on the PRS from KSPCB's Dec 2020 inspection (NGT OA 673/2018), mapped by Paani Earth with per-drain BOD.",
     "Pollution evidence: Arkavathi Horata Samithi and RTI filings; Paani Earth x ICCW (IIT Madras) 7-site pollution study, Feb-Mar 2024 (lab analyses and report hosted on paani.earth).",
     "Treatment plants (STP/FSTP): BWSSB, KUWS&DB, BDA and KUIDFC, compiled by Paani Earth; locations confirmed against satellite imagery.",
     "Major industries: KSPCB 17-category polluting-industry list (geocoded).",
