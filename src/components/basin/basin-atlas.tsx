@@ -14,6 +14,7 @@ import type {
   BasinLayer,
   BasinManifest,
 } from "@/lib/basins";
+import { tryGetBasinManifest } from "@/lib/basins";
 import "leaflet/dist/leaflet.css";
 
 interface Props {
@@ -30,6 +31,9 @@ interface Props {
   embedded?: boolean;
   /** Back affordance when embedded. */
   onClose?: () => void;
+  /** Basin-stack navigation (hierarchy): swap to another basin in place -
+   *  used for the "Part of <parent> ↑" affordance when parentBasinId is set. */
+  onNavigateBasin?: (basinId: string) => void;
   /** Optional: render a custom detail panel for a clicked feature (e.g. a
    *  city's rich CPCB quality panel for a monitoring station). Return null to
    *  fall back to the generic key/value FeaturePanel. Keeps the atlas decoupled
@@ -232,7 +236,7 @@ interface PrsData {
 // MPR = the primary, monthly-updated baseline; DEP/CAG/F-register = other
 // sources. The verdict encodes what exists at each level - "not reported"
 // is a first-class, citable finding, not a blank.
-interface AccCategory {
+export interface AccCategory {
   key: string;
   label: string;
   verdict: "tracked" | "in-plan-not-reported" | "reported-not-in-plan" | "silent";
@@ -243,7 +247,7 @@ interface AccCategory {
   legalRef?: string;
   media?: { label: string; url: string }[];
 }
-interface AccRegion {
+export interface AccRegion {
   kind: "ulb" | "ia" | "gp";
   key: string;
   name: string;
@@ -253,7 +257,7 @@ interface AccRegion {
   silentNote?: string;
   categories: AccCategory[];
 }
-interface AccountabilityData {
+export interface AccountabilityData {
   question: string;
   intro?: string;
   baseline: {
@@ -354,7 +358,7 @@ function LocateFlyer({
   return null;
 }
 
-export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, initialFloor, embedded = false, onClose, renderFeatureDetail }: Props) {
+export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverId = null, initialFloor, embedded = false, onClose, onNavigateBasin, renderFeatureDetail }: Props) {
   const tiles = useMapTiles();
 
   const [focusedFloor, setFocusedFloor] = useState<BasinFloor>(initialFloor ?? "hydrology");
@@ -736,6 +740,18 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           {manifest.displayNameLocal && (
             <div className="text-xs text-slate-500 dark:text-slate-400">{manifest.displayNameLocal}</div>
           )}
+          {/* Hierarchy up-link: this basin is a sub-basin of a larger one. */}
+          {manifest.parentBasinId && onNavigateBasin && (() => {
+            const parent = tryGetBasinManifest(manifest.parentBasinId!);
+            return parent ? (
+              <button
+                onClick={() => onNavigateBasin(parent.basinId)}
+                className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                <span aria-hidden>↑</span> Part of the {parent.displayName}
+              </button>
+            ) : null;
+          })()}
           {/* Basin intro - desktop rail only, collapsed by default to save space. */}
           <details className="hidden md:block group mt-2">
             <summary className="cursor-pointer list-none flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
@@ -2009,7 +2025,7 @@ const ACC_VERDICT: Record<AccCategory["verdict"], { label: string; cls: string }
 };
 const ACC_KIND_LABEL: Record<AccRegion["kind"], string> = { ulb: "ULBs", ia: "Industrial Areas", gp: "Gram Panchayats" };
 
-function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
+export function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
   const kinds = (["ulb", "ia", "gp"] as const).filter((k) => data.regions.some((r) => r.kind === k));
   const [kind, setKind] = useState<AccRegion["kind"]>(kinds[0] ?? "ulb");
   const regions = data.regions.filter((r) => r.kind === kind);

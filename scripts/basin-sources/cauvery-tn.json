@@ -1,0 +1,101 @@
+{
+ "basinId": "cauvery-tn",
+ "displayName": "Cauvery Basin (Tamil Nadu)",
+ "adapter": "tngis",
+ "endpoint": "https://tngis.tn.gov.in/tngismaps/ows",
+ "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement",
+ "boundary": {
+  "fromSubBasins": true
+ },
+ "subBasins": {
+  "typeName": "generic_viewer:sub_basin",
+  "cql": "basin='Cauvery'",
+  "nameField": "subbasin",
+  "nameClean": "^\\d+\\.\\s*",
+  "codeField": "object_id",
+  "simplifyEps": 0.0015,
+  "scoreboardKeyByName": {
+   "Ayiaar": 112,
+   "Amaravathi": 113,
+   "Upperbhavani": 114,
+   "Chinnar": 115,
+   "Cauvery Delta": 116,
+   "Dodda Halla": 117,
+   "Karaipottanar": 118,
+   "Ponnaniyar": 119,
+   "Lower Bhavani": 120,
+   "Lower Coleroon": 121,
+   "Marudaiyar": 122,
+   "Mettur Reservoir To Noyel Confluence": 123,
+   "Moyar": 124,
+   "Nandiyar - Kulaiyar": 125,
+   "Noyel": 126,
+   "Palar Dodda Halla": 127,
+   "Pungar (upper Coleroon)": 128,
+   "Tirumanimuttar": 129
+  }
+ },
+ "families": [
+  {
+   "family": "tanks",
+   "typeName": "generic_viewer:all_tanks",
+   "bbox": [
+    76.2,
+    10.0,
+    79.95,
+    12.45
+   ],
+   "clipToBasin": true,
+   "keep": {
+    "tank_name": "name",
+    "district": "district",
+    "taluk": "taluk",
+    "village": "village"
+   },
+   "provenance": "TNGIS generic_viewer:all_tanks - named tanks as centre points (2,527 named tanks within the TN Cauvery; the wider register maps ~42,000 waterspreads, most unnamed)",
+   "toCentroid": true,
+   "requireProps": [
+    "name"
+   ]
+  },
+  {
+   "family": "streams",
+   "typeName": "generic_viewer:river",
+   "bbox": [
+    76.2,
+    10.0,
+    79.95,
+    12.45
+   ],
+   "clipToBasin": true,
+   "simplifyEps": 0.001,
+   "keep": {
+    "length": "lengthM"
+   },
+   "provenance": "TNGIS generic_viewer:river (river water channel areas; unnamed segments)"
+  },
+  {
+   "family": "reservoirs",
+   "typeName": "generic_viewer:reservoir",
+   "clipToBasin": true,
+   "toCentroid": true,
+   "keep": {
+    "reservoir_name": "name",
+    "district_name": "district",
+    "basin_name": "wrdBasin"
+   },
+   "clientFilter": {
+    "field": "wrdBasin",
+    "equals": "Cauvery"
+   },
+   "provenance": "TNGIS generic_viewer:reservoir (TN WRD reservoir register) - waterspread polygons reduced to centre points; no live storage feed joined yet"
+  }
+ ],
+ "scoreboard": {
+  "metrics": [],
+  "countFamilies": {
+   "tanks": "tankCount",
+   "reservoirs": "reservoirCount"
+  }
+ }
+}

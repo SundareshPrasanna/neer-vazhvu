@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import fs from "node:fs";
 import path from "node:path";
 import { tryGetPlaceConfig } from "@/lib/cities";
-import { basinsForCity, type BasinInventory } from "@/lib/basins";
+import { basinsForCity, tryGetBasinManifest, type BasinInventory } from "@/lib/basins";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { riversVariant } from "@/lib/cities/data-paths";
 import RiversClient, { type RiverInfo } from "./rivers-client";
@@ -176,13 +176,13 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       display_name_ta: "ವೃಷಭಾವತಿ ನದಿ",
       length_km_geom: 68,
       description:
-        "The famous foam-and-fire river. Flows south-west out of central BBMP through the Vrishabhavathi Valley, picking up the untreated overflow from the V Valley STPs (180 + 150 MLD design) plus the Mailasandra catchment. Discharges into Byramangala reservoir (348 ha) before joining the Arkavati, then the Cauvery. The 2015 May Bellandur foam-fire event was downstream of the same sewerage system.",
+        "The famous foam-and-fire river. Flows south-west out of central BBMP through the Vrishabhavathi Valley, picking up the untreated overflow from the V Valley STPs (180 + 150 MLD design) plus the Mailasandra catchment. Discharges into Byramangala reservoir (348 ha) before joining the Arkavathi, then the Cauvery. The 2015 May Bellandur foam-fire event was downstream of the same sewerage system.",
       description_ta: "",
       upstream_terminus: "Central BBMP (Vrishabhavathi Valley)",
       upstream_terminus_ta: "",
-      downstream_terminus: "Byramangala reservoir, then Arkavati / Cauvery",
+      downstream_terminus: "Byramangala reservoir, then Arkavathi / Cauvery",
       downstream_terminus_ta: "",
-      feeds: "Byramangala reservoir; downstream Cauvery via Arkavati",
+      feeds: "Byramangala reservoir; downstream Cauvery via Arkavathi",
       feeds_ta: "",
       status: "KSPCB priority polluted stretch; V Valley STPs over capacity",
       status_ta: "",
@@ -194,7 +194,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       color: "stroke-amber-600",
     },
     arkavati: {
-      display_name: "Arkavati",
+      display_name: "Arkavathi",
       display_name_ta: "ಅರ್ಕಾವತಿ ನದಿ",
       length_km_geom: 102,
       description:
@@ -294,13 +294,17 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
 // state of the river systems (docs/specs/arkavathi-phase2-feedback.md A1-A2).
 const RIVERS_HEADER_BY_CITY: Record<
   string,
-  { scopeLabel: string; showStats?: boolean; atlasCtaLabel?: string }
+  { scopeLabel: string; showStats?: boolean; atlasCtaLabel?: string; overviewBasinId?: string }
 > = {
   madurai: { scopeLabel: "Vaigai system" },
   bangalore: {
     scopeLabel: "Two river systems (Arkavathi and Dakshina Pinakini)",
     showStats: false,
     atlasCtaLabel: "State of Bengaluru's River Systems",
+    // The basin ABOVE this city's rivers: a header entry point into the
+    // Cauvery (Karnataka) overview, whose Arkavati cell drills back down
+    // into the deep dive (docs/specs/cauvery-basin-hierarchy.md §2).
+    overviewBasinId: "cauvery-ka",
   },
   mumbai: { scopeLabel: "MMR rivers (urban + eastern Ulhas corridor + source rivers)" },
 };
@@ -379,6 +383,11 @@ export default async function CityRiversPage({ params }: PageProps) {
   const basinProp = basin
     ? { manifest: basin, inventory: loadBasinInventory(basin.basinId) }
     : null;
+  // Optional parent-basin overview entry (e.g. Bengaluru -> Cauvery KA).
+  const overviewManifest = header.overviewBasinId ? tryGetBasinManifest(header.overviewBasinId) : null;
+  const overviewBasinProp = overviewManifest
+    ? { manifest: overviewManifest, inventory: loadBasinInventory(overviewManifest.basinId) }
+    : null;
 
   return (
     <RiversClient
@@ -391,6 +400,7 @@ export default async function CityRiversPage({ params }: PageProps) {
       atlasCtaLabel={header.atlasCtaLabel}
       riverInfo={riverInfo}
       basin={basinProp}
+      overviewBasin={overviewBasinProp}
     />
   );
 }
