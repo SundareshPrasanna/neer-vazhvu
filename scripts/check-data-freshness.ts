@@ -81,6 +81,19 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     note: "Cauvery basin overview sub-basin scoreboard (KWRIS)",
   },
   {
+    id: "cauvery-rainfall-deviation",
+    cityId: "bangalore",
+    file: "public/data/basins/cauvery-ka/scoreboard.json",
+    // Self-computed seasonal deviation (scripts/build_basin_rainfall.py,
+    // Open-Meteo/ERA5-Land with cached normals - a refresh costs one small
+    // request per sample point). Manual re-run for now; the budget nudges
+    // a fortnightly refresh during the season. TN piggybacks on the same
+    // run (both scoreboards are written together).
+    maxAgeDays: 15,
+    dateFrom: 'regex:"rainfallDeviationPct":\\s*\\{[^}]*"asOf": "(\\d{4}-\\d{2}-\\d{2})"',
+    note: "Cauvery sub-basin rainfall deviation (self-computed, both states)",
+  },
+  {
     id: "cauvery-tn-wq-stations",
     cityId: "bangalore",
     file: "public/data/basins/cauvery-tn/scoreboard.json",

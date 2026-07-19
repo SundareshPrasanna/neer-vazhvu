@@ -366,7 +366,7 @@ export function BasinOverview({
 
   const legendStops =
     metric === "rainfallDeviationPct"
-      ? [["near normal", "#93c5fd"], ["-20 to -60%", "#fbbf24"], ["-60 to -90%", "#f97316"], ["below -90%", "#dc2626"]]
+      ? [["normal or surplus", "#93c5fd"], ["-20 to -60%", "#fbbf24"], ["-60 to -90%", "#f97316"], ["below -90%", "#dc2626"]]
       : metric === "gwLevelM"
         ? [["< 8 m", "#93c5fd"], ["8-15 m", "#fbbf24"], ["15-22 m", "#f97316"], ["> 22 m", "#dc2626"]]
         : [["none identified (monitored)", "#a7f3d0"], ["1 stretch", "#f97316"], ["2+", "#dc2626"]];

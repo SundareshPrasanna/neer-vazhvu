@@ -70,15 +70,42 @@ def main(basin_ids):
             entry = sb["subBasins"].get(key)
             if entry is None:
                 continue
+            # resume: don't refetch sub-basins already done
+            if "populationTotal" in entry["metrics"]:
+                print(f"  {basin_id}/{key}: already computed, skipped")
+                continue
             g = feat["geometry"]
             parts = g["coordinates"] if g["type"] == "MultiPolygon" else [g["coordinates"]]
             total = 0.0
-            used = 0
+            used = skipped = 0
             for part in parts:
                 if bbox_km2(part[0]) < 1:
                     continue
-                total += pop_for_polygon(part)
-                used += 1
+                try:
+                    total += pop_for_polygon(part)
+                    used += 1
+                except Exception as e:
+                    # simplification artifacts (ring self-intersection) fail
+                    # WorldPop's validator; repair with shapely buffer(0)
+                    # when available, else skip the part and state it
+                    repaired = None
+                    if "Invalid Geometry" in str(e):
+                        try:
+                            from shapely.geometry import Polygon, mapping
+                            fixed = Polygon(part[0], holes=part[1:]).buffer(0)
+                            geoms = list(fixed.geoms) if fixed.geom_type == "MultiPolygon" else [fixed]
+                            repaired = [mapping(g)["coordinates"] for g in geoms if not g.is_empty]
+                        except Exception:
+                            repaired = None
+                    if repaired:
+                        for rc in repaired:
+                            total += pop_for_polygon([list(map(list, ring)) for ring in rc])
+                            time.sleep(1)
+                        used += 1
+                        print(f"  {basin_id}/{key}: part repaired (buffer-0) and computed")
+                    else:
+                        skipped += 1
+                        print(f"  WARN {basin_id}/{key}: part skipped ({e})")
                 time.sleep(1)
             if used == 0:
                 continue
@@ -86,10 +113,14 @@ def main(basin_ids):
                 "value": int(round(total, -3)),
                 "unit": "people",
                 "asOf": "2020",
-                "source": "WorldPop global 100 m population (wpgppop 2020), zonal total via the WorldPop stats API over the sub-basin polygon",
+                "source": "WorldPop global 100 m population (wpgppop 2020), zonal total via the WorldPop stats API over the sub-basin polygon"
+                          + (f"; {skipped} polygon part(s) unprocessable (simplification artifact), total is a slight undercount" if skipped else ""),
                 "verified": True,
             }
-            print(f"  {basin_id}/{key} {entry.get('name','')}: {int(total):,} ({used} part(s))")
+            print(f"  {basin_id}/{key} {entry.get('name','')}: {int(total):,} ({used} part(s), {skipped} skipped)", flush=True)
+            # incremental write: an API failure must not lose prior sub-basins
+            sb["asOf"] = date.today().isoformat()
+            sb_path.write_text(json.dumps(sb, ensure_ascii=False, indent=1))
 
         sb["asOf"] = date.today().isoformat()
         sb_path.write_text(json.dumps(sb, ensure_ascii=False, indent=1))
