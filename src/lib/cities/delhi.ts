@@ -101,8 +101,10 @@ export const DELHI: CityConfig = {
   // - commitments-delhi.json: 8 pre-qualified dated promises (39-drain
   //   trapping deadline 30-Jun-2026, Mission Sahibi, Rs 860 cr DSTPs,
   //   1,250 MGD by Jun 2027, ...).
-  hasAllocationLedger: false,
-  hasCommitments: false,
+  // Seed compilations landed 2026-07-20 (5 arrangements; 8 commitments) -
+  // enabled for preview; content deepens through the build.
+  hasAllocationLedger: true,
+  hasCommitments: true,
   groundwaterViews: {
     // On once public/data/gwr-blocks-delhi.json + geojson land (P1 - CGWB
     // block ArcGIS is NICNET-gated, so this runs via the India-IP path).

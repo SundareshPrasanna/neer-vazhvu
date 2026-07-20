@@ -54,6 +54,33 @@ Exhausted alternates (all checked 2026-07-20): Datameet (pre-2022 vintage, 290 f
 
 **Resolution path:** restore request to OpenCity (draft prepared; owner sends), with SEC Delhi per-ward PDFs as the from-scratch fallback. The MCD zones layer (12 zones, same dataset) is parked with the same ask.
 
+## CAG Performance Audit of DJB (Report No. 3 of 2025)
+
+| | |
+|---|---|
+| **Source** | CAG of India - press release (24 Mar 2026) + full report; tabled in the Delhi Legislature 23 Mar 2026; audit period FY2017-18 to 2021-22 |
+| **File** | `public/data/cag-djb-audit-2025.json` (chapter-organized findings, values + faithful stat sentences; extraction from the press release, full-report page anchors addable per fact) |
+| **Fetched** | 2026-07-20 (both PDFs verified live) |
+| **Headlines** | NRW 51-53% (Rs 4,988 cr revenue impact); Rs 66,595 cr outstanding loans + interest (Mar 2022); only 40% of produced water billed, 66% of that metered; zonal inequity <20 GPCD in 4 zones vs 60 required; ADB withdrew Rs 2,243 cr (Wazirabad WTP rehab); 594 MGD sewage generated / 545 treated / 35 STPs; 212.59 MGD from 1,080 unauthorised colonies untreated into storm drains |
+
+## DUSIB JJ Bastis roster (675 clusters, 306,521 households)
+
+| | |
+|---|---|
+| **Source** | Delhi Urban Shelter Improvement Board - the 2019 "675 JJ Bastis" list (46 pp) joined on cluster code with the 2015 "675 JJ Clusters" list (adds land area sqm, parliamentary constituency, pre-2022 ward no, revenue district) |
+| **Script** | `neer-vazhvu-api/scripts/build_delhi_jj_bastis.py` (pdfplumber; downloads + parses + joins) |
+| **File** | `public/data/dusib-jj-bastis.json` - 675/675 parsed, 675 enriched |
+| **Fetched** | 2026-07-20 |
+| **Correction to the internal audit** | Neither public PDF carries lat/lon (the audit's "lat/lon per cluster" claim does not hold). Geocoding is a follow-up: ward-join once 2022 geometry lands, or Nominatim + manual QA. `ward_no_pre2022` must NOT be joined to 2022 wards without the SEC crosswalk. |
+
+## Allocation Ledger seed (`allocations-delhi.json`)
+
+Authored 2026-07-20 from the verification-refreshed audit: 5 arrangements (1994 MoU 0.724 BCM/yr; Munak carrier 1,050 cusecs fixed May 2018; Bhakra TC-minute shares; Tehri 300 cusecs via UGC; DJB's unregistered groundwater), 4 authorities, 5 events, the Renuka/Lakhwar/Kishau future with the CAG's own "remote" verdict, and 5 named receipt gaps. Delhi's signature asymmetry - crisp entitlements, unmetered receipts - is the ledger's framing. All instrument URLs verified live 2026-07-20 except news pages that bot-block (noted in-file).
+
+## Commitments Register seed (`commitments-delhi.json`)
+
+Authored 2026-07-20: 8 commitments with dated citations and status histories. Highlight: the 39-drain trapping target (30 Jun 2026) is already **overdue** - deadline passed with no known public completion word; first verification venue is the DPCC monthly covering July. Verification calendar documented in-file (DPCC ~25th monthly, Economic Survey Feb-Mar, Flood Control Order June, Chhath season Oct-Nov).
+
 ## Registered but not yet acquired
 
 The audit's full per-page source map (DPCC monthly Yamuna feed, CAG audit PDF, DUSIB 675 JJ bastis, CGWB blocks, CETP monthly WQ PDFs, BBMB/Tehri feeds, drainage master plan, heritage baolis) is research-complete and URL-verified as of 2026-07-20 but not yet ingested. Each source graduates into this file when its data actually lands in the repo.
