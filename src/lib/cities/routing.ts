@@ -82,6 +82,26 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "allocations",
     "commitments",
   ]),
+  // Delhi V1 target set (preview-gated until cutover). No `cascades`
+  // (baoli/hauz heritage is not a tank-cascade geography), no `shoreline`
+  // (landlocked), no `tanker` (DJB booking portal scrape deferred).
+  // `allocations` + `commitments` are the signature surfaces: Delhi's supply
+  // is instrument-governed inter-state transfers, and the Yamuna programme
+  // is a stack of dated deadlines.
+  delhi: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "my-ward",
+    "facts",
+    "origins",
+    "allocations",
+    "commitments",
+  ]),
 };
 
 /**
