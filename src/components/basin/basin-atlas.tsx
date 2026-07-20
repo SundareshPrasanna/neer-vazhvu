@@ -285,6 +285,12 @@ type FC = FeatureCollection;
 /** Draw order on the shared canvas (lower = drawn first = underneath). Base
  *  outlines and sub-catchments sit below thematic fills, lines, and points so
  *  the layers on top receive hover/click, not the catchment beneath them. */
+/** Toggle/state key for a layer: kind-filtered entries get their own key so
+ *  two entries sharing a data family toggle independently. */
+function layerKey(l: BasinLayer): string {
+  return l.kindFilter ? `${l.family}:${l.kindFilter}` : l.family;
+}
+
 function drawRank(l: BasinLayer): number {
   if (l.gap) return -1; // gap choropleth at the very bottom - all data (incl. STPs) sits above it
   if (l.prs) return 5; // polluted stretch always on top so the thin line stays clickable
@@ -378,7 +384,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     const startFloor = initialFloor ?? "hydrology";
     return Object.fromEntries(
       manifest.layers.map((l) => [
-        l.family,
+        layerKey(l),
         l.defaultOn && (l.context || l.prs || l.floor === startFloor),
       ]),
     );
@@ -583,7 +589,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     // stretch"), on top of whatever the checkbox says, and hides again when
     // the panel closes unless the user has checked it explicitly.
     if (l.prs && selectedPrs) return true;
-    return enabled[l.family] ?? l.defaultOn;
+    return enabled[layerKey(l)] ?? l.defaultOn;
   }
 
   // The data key a layer reads from: heavy + river selected -> per-shed merge.
@@ -708,7 +714,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // how many industrial areas have no CETP nearby - computed live from the data.
   const legendNotes = useMemo(() => {
     const out: string[] = [];
-    if (visibleLayers.some((l) => l.family === "pressures-industrial")) {
+    if (visibleLayers.some((l) => l.family === "pressures-industrial" && l.kindFilter !== "major-industry")) {
       const ind = (data["pressures-industrial"]?.features ?? []).filter(
         (f) => (f.properties as Record<string, unknown>)?.kind === "industrial-area",
       );
@@ -795,7 +801,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           {(() => {
             const f = FLOORS[0]; // hydrology = "River system"
             const open = expandedFloors.has(f.id);
-            const onCount = floorLayers(f.id).filter((l) => enabled[l.family] ?? l.defaultOn).length;
+            const onCount = floorLayers(f.id).filter((l) => enabled[layerKey(l)] ?? l.defaultOn).length;
             return (
               <div key={f.id}>
                 <button
@@ -838,18 +844,18 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                     {floorLayers(f.id).map((l) => {
                       const inv = inventory?.families[l.family];
                       return (
-                        <label key={l.family} className="flex items-start gap-2 text-xs cursor-pointer group">
+                        <label key={layerKey(l)} className="flex items-start gap-2 text-xs cursor-pointer group">
                           <input
                             type="checkbox"
-                            checked={enabled[l.family] ?? l.defaultOn}
-                            onChange={(e) => setEnabled((s) => ({ ...s, [l.family]: e.target.checked }))}
+                            checked={enabled[layerKey(l)] ?? l.defaultOn}
+                            onChange={(e) => setEnabled((s) => ({ ...s, [layerKey(l)]: e.target.checked }))}
                             className="mt-0.5 accent-blue-600"
                           />
                           <span className="flex items-center gap-1.5 leading-tight">
                             <span className="inline-block w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: l.color }} />
                             <span className="text-slate-600 dark:text-slate-300">
                               {l.label}
-                              {inv && <span className="text-slate-400"> ({inv.featureCount})</span>}
+                              {inv && <span className="text-slate-400"> ({(l.kindFilter && inv.sources.find((sc) => sc.kind === l.kindFilter)?.count) || inv.featureCount})</span>}
                               {l.heavy && <span className="block text-[10px] text-slate-400">large layer</span>}
                             </span>
                           </span>
@@ -868,13 +874,13 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             {manifest.layers.filter((l) => l.floor !== "hydrology").map((l) => {
               const inv = inventory?.families[l.family];
               return (
-                <label key={l.family} className="flex items-start gap-2 text-xs cursor-pointer group">
+                <label key={layerKey(l)} className="flex items-start gap-2 text-xs cursor-pointer group">
                   <input
                     type="checkbox"
-                    checked={enabled[l.family] ?? l.defaultOn}
+                    checked={enabled[layerKey(l)] ?? l.defaultOn}
                     onChange={(e) => {
                       setFocusedFloor(l.floor);
-                      setEnabled((s) => ({ ...s, [l.family]: e.target.checked }));
+                      setEnabled((s) => ({ ...s, [layerKey(l)]: e.target.checked }));
                     }}
                     className="mt-0.5 accent-blue-600"
                   />
@@ -882,7 +888,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                     <span className="inline-block w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: l.color }} />
                     <span className="text-slate-600 dark:text-slate-300">
                       {l.label}
-                      {inv && <span className="text-slate-400"> ({inv.featureCount})</span>}
+                      {inv && <span className="text-slate-400"> ({(l.kindFilter && inv.sources.find((sc) => sc.kind === l.kindFilter)?.count) || inv.featureCount})</span>}
                       {l.heavy && <span className="block text-[10px] text-slate-400">large layer</span>}
                     </span>
                   </span>
@@ -916,6 +922,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             const fc = data[dataKey(l)];
             if (!fc) return null;
             let feats = scoped(fc, l);
+            if (l.kindFilter) {
+              feats = feats.filter((f) => (f.properties as Record<string, unknown>)?.kind === l.kindFilter);
+            }
             // PRS: by default only the latest year's stretch is shown; the
             // growth toggle reveals the earlier year too. Sort so the EARLIER
             // (2020) line draws on top of the later (2025) one, so the segments
@@ -1008,7 +1017,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (l.geom === "point") {
               return (
                 <GeoJSON
-                  key={`${l.family}-${selectedRiverId}`}
+                  key={`${layerKey(l)}-${selectedRiverId}`}
                   data={fcScoped}
                   pointToLayer={(feat, latlng) =>
                     L.circleMarker(latlng, pointStyle(l, feat, faded))
@@ -1035,7 +1044,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             const hlActive = mapHighlight?.family === l.family;
             return (
               <GeoJSON
-                key={`${l.family}-${selectedRiverId}-${tiles.isDark}-${hlActive ? "hl" : ""}`}
+                key={`${layerKey(l)}-${selectedRiverId}-${tiles.isDark}-${hlActive ? "hl" : ""}`}
                 data={fcScoped}
                 interactive={!isBase}
                 style={(feat?: Feature) => fillStyle(l, feat, faded, null, mapHighlight)}
@@ -1329,13 +1338,17 @@ function MapLegend({ layers, notes, raised }: { layers: BasinLayer[]; notes?: st
     else if (l.family === "monitoring-points") {
       items.push({ sym: "dot", color: l.color, label: "Monitoring (public data)" });
       items.push({ sym: "ring", color: l.color, label: "Monitoring (not in public domain)" });
+    } else if (l.family === "pressures-industrial" && l.kindFilter === "major-industry") {
+      items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "17-category industry (KSPCB)" });
     } else if (l.family === "pressures-industrial") {
       items.push({ sym: "box", color: "#dc2626", label: "Industrial area - no CETP (est.)" });
       items.push({ sym: "box", color: "#64748b", label: "Industrial area - CETP nearby" });
       // Third CETP state drawn by fillStyle (faint dashed grey) - must be
       // named here too: every rendered style gets a legend row.
       items.push({ sym: "outline", color: "#cbd5e1", label: "Industrial area - CETP unknown" });
-      items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "Major industry (17-category)" });
+      // The 17-category dot appears here only when this entry is NOT
+      // kind-split (a split manifest declares its own toggle + legend row).
+      if (!l.kindFilter) items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "Major industry (17-category)" });
     } else if (l.family === "pressures-quarries") {
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["quarry"], label: "Quarry" });
     } else if (l.family === "pressures-waste") {
