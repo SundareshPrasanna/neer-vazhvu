@@ -102,6 +102,15 @@ Authored 2026-07-20 (static pipeline, Madurai/Bangalore pattern). Tier-1 set: An
 | **File** | `public/data/dpcc-monthly-wq-delhi.json` - river series for Jan/Mar/Apr/May 2026 (Feb absent from DPCC's own listing - publication gap) + full May drain network |
 | **Headlines in the seed data** | May 2026: BOD 2.0 at Palla -> 60.0 at Asgarpur (30x across the city, vs 3.0 limit); DO NIL at 5-6 of 8 stations every month; exit faecal coliform 310,000-400,000 MPN/100ml = 124-160x max-permissible. **9 of 39 drain points read NO FLOW - drain-trapping's footprint in DPCC's own data, the verification signal for the overdue 39-drain commitment.** |
 
+## CETP monthly water-quality archive (62 PDF bundles, 2019-2024)
+
+| | |
+|---|---|
+| **Source** | DPCC per-CETP monthly analysis reports (inlet/outlet across 23 parameters incl. heavy metals, EPA standards, measured flow vs design capacity, OLMS status remark) |
+| **Host** | OpenCity datasets `delhi-cetp-monthly-water-quality-data-2019-2022` + `-2022-2024` (archival - the series ends Nov 2024) |
+| **File** | `public/data/delhi-cetp-monthly-index.json` - full 62-resource index + one transcribed schema sample (Wazirpur, Nov 2024: 5.32 MLD measured vs 24 MLD design; "OLMS was non functional" remark on the report itself) |
+| **Fetched** | 2026-07-20 (index + sample); PDFs are image scans - bulk extraction rides the same OCR batch as the DPCC river/drain/STP scans |
+
 ## Registered but not yet acquired
 
 The audit's full per-page source map (DPCC monthly Yamuna feed, CAG audit PDF, DUSIB 675 JJ bastis, CGWB blocks, CETP monthly WQ PDFs, BBMB/Tehri feeds, drainage master plan, heritage baolis) is research-complete and URL-verified as of 2026-07-20 but not yet ingested. Each source graduates into this file when its data actually lands in the repo.
