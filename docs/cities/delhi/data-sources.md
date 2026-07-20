@@ -111,6 +111,20 @@ Authored 2026-07-20 (static pipeline, Madurai/Bangalore pattern). Tier-1 set: An
 | **File** | `public/data/delhi-cetp-monthly-index.json` - full 62-resource index + one transcribed schema sample (Wazirpur, Nov 2024: 5.32 MLD measured vs 24 MLD design; "OLMS was non functional" remark on the report itself) |
 | **Fetched** | 2026-07-20 (index + sample); PDFs are image scans - bulk extraction rides the same OCR batch as the DPCC river/drain/STP scans |
 
+## Rivers surface data (quality panel + events)
+
+- `river-quality-delhi.json` - DERIVED from the DPCC monthly file by `scripts/build-delhi-river-quality.ts` (re-run per new month). 8 stations, yearly rows = latest month of each year; DPCC's "NIL" DO rendered as 0. Delhi is the only city whose river panel runs on a monthly feed.
+- `river-events-delhi.json` - 10-event curated timeline (1994 MoU -> 2026 drain-deadline lapse), each with verified citation; contested Sept-2025 peak figure deliberately unstated.
+
+## Census join + ward representatives
+
+- Census points enriched by `neer-vazhvu-api/scripts/join_delhi_census_water_bodies.py`: 31 inside / 203 near / 659 unmatched of 893 (honest - johads/recharge pits OSM never mapped; stated in metadata). Type codes decoded (525 Pond / 349 Others / 14 Lake / 4 Tank / 1 WCS); 01-06 mapping INFERRED pending the enumeration-schedule PDF.
+- `delhi-ward-representatives.json` via `build_delhi_ward_reps.py` from the OpenCity MCD-2022 results CSV (TCPD schema): 250 councillors, seat totals validate against the known result (AAP 134 / BJP 104 / INC 9 / IND 3). Dec-2022 snapshot; MLA/MP join waits on ward geometry.
+
+## CGWB Delhi Year Book - located, deferred
+
+CGWB Pure hosts the Delhi Year Book series; the directly-locatable edition is **2017-18** (text-extractable, 71 pp) - too old to power a "current groundwater" surface honestly. Delhi runs 162 CGWB monitoring stations (25 dug wells + 137 piezometers). Newer editions (2022-23/2023-24) exist behind the repository's JS search - locate via the publications UI in a browser session, then the Madurai/Mumbai point-extraction pattern applies. The national "Groundwater Quality of Shallow Aquifers 2024" report (downloaded, 115 pp, text-extractable) is a bonus source for the salinity overlay.
+
 ## Registered but not yet acquired
 
 The audit's full per-page source map (DPCC monthly Yamuna feed, CAG audit PDF, DUSIB 675 JJ bastis, CGWB blocks, CETP monthly WQ PDFs, BBMB/Tehri feeds, drainage master plan, heritage baolis) is research-complete and URL-verified as of 2026-07-20 but not yet ingested. Each source graduates into this file when its data actually lands in the repo.
