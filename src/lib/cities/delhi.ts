@@ -92,9 +92,10 @@ export const DELHI: CityConfig = {
   // soon (greyed हि chip) until its translation pass lands.
   availableLanguages: ['en'],
   upcomingLanguages: ['hi'],
-  // Flip to 'cauvery-pumping' in the commit that lands
-  // public/data/delhi-supply-overview.json (P2). See SUPPLY MODEL above.
-  heroMode: 'none',
+  // delhi-supply-overview.json landed 2026-07-20 (CAG + Economic Survey
+  // anchored, with hero_copy overrides replacing the Bangalore-specific
+  // pump.* narrative). See SUPPLY MODEL above.
+  heroMode: 'cauvery-pumping',
   // Both ship as data work in P2, then flip:
   // - allocations-delhi.json: MoU/Munak/Tehri/Bhakra/UGC instruments vs
   //   opaque realizations (audit refresh has the seed table).

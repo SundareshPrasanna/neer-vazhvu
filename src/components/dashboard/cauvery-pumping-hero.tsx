@@ -71,6 +71,25 @@ interface SupplyOverviewMin {
     components?: { name: string; inr_crore: number }[];
     funding_pattern?: { jica_loan_pct?: number };
   };
+  /** Per-city copy overrides. The pump.* i18n strings carry Bangalore's
+   *  specific narrative (Cauvery, TK Halli, Kempe Gowda); a second pumped
+   *  city overrides the story text through its own supply-overview JSON
+   *  instead of forking the component. Overrides are plain strings in the
+   *  city's launch language (English) - when the city's translation pass
+   *  lands, these graduate into city-keyed i18n entries. Absent fields
+   *  fall back to the pump.* strings, so Bangalore is untouched. */
+  hero_copy?: {
+    headline?: string;
+    body?: string;
+    wtp_label?: string;
+    wtp_sub?: string;
+    uphill_label?: string;
+    uphill_sub?: string;
+    nrw_sub?: string;
+    pop_label?: string;
+    pop_sub?: string;
+    footer?: string;
+  };
 }
 
 interface Props {
@@ -127,6 +146,7 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
   const deficit2049 = data.demand?.demand_gap_2049_mld;
   const projectCostCrore = data.project_cost?.total_inr_crore;
   const jicaLoanPct = data.project_cost?.funding_pattern?.jica_loan_pct;
+  const copy = data.hero_copy ?? {};
 
   return (
     <Card className="border-blue-200 dark:border-blue-900 bg-gradient-to-br from-blue-50/50 to-cyan-50/50 dark:from-blue-950/30 dark:to-cyan-950/30">
@@ -136,10 +156,12 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
             {format(t("pump.eyebrow"), { city: cityDisplayName })}
           </p>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
-            {format(t("pump.headline"), { km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
+            {copy.headline ??
+              format(t("pump.headline"), { km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-            {format(t("pump.body"), { city: cityDisplayName, km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
+            {copy.body ??
+              format(t("pump.body"), { city: cityDisplayName, km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
           </p>
         </div>
 
@@ -148,15 +170,18 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
           <Stat
             value={formatNumber(cauveryMld)}
             unit="MLD"
-            label={t("pump.stat.wtp_label")}
-            sub={t("pump.stat.wtp_sub")}
+            label={copy.wtp_label ?? t("pump.stat.wtp_label")}
+            sub={copy.wtp_sub ?? t("pump.stat.wtp_sub")}
           />
           {transmissionKm && (
             <Stat
               value={String(transmissionKm)}
               unit="km"
-              label={t("pump.stat.uphill_label")}
-              sub={format(t("pump.stat.uphill_sub"), { m: transmissionLiftM ?? "~500" })}
+              label={copy.uphill_label ?? t("pump.stat.uphill_label")}
+              sub={
+                copy.uphill_sub ??
+                format(t("pump.stat.uphill_sub"), { m: transmissionLiftM ?? "~500" })
+              }
             />
           )}
           {nrwPct != null && (
@@ -165,9 +190,10 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
               unit="%"
               label={t("pump.stat.nrw_label")}
               sub={
-                lpcdSupply && lpcdConsumption
+                copy.nrw_sub ??
+                (lpcdSupply && lpcdConsumption
                   ? format(t("pump.stat.nrw_sub"), { supply: lpcdSupply, consumer: lpcdConsumption })
-                  : t("pump.stat.nrw_sub_fallback")
+                  : t("pump.stat.nrw_sub_fallback"))
               }
               warn
             />
@@ -176,8 +202,8 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
             <Stat
               value={(populationServed / 1_000_000).toFixed(1)}
               unit={t("pump.stat.unit_m_people")}
-              label={t("pump.stat.pop_label")}
-              sub={t("pump.stat.pop_sub")}
+              label={copy.pop_label ?? t("pump.stat.pop_label")}
+              sub={copy.pop_sub ?? t("pump.stat.pop_sub")}
             />
           )}
         </div>
@@ -235,7 +261,7 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
         </div>
 
         <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
-          {t("pump.footer")}
+          {copy.footer ?? t("pump.footer")}
         </p>
       </CardContent>
     </Card>

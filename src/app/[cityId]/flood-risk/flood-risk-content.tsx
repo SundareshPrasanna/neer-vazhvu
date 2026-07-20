@@ -5,9 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/lib/i18n/context";
 
+/** English is the accessibility floor; other languages are optional and
+ *  fall back to English at render time (Madurai carries ta, Delhi will
+ *  carry hi after its translation pass). */
 interface BilingualText {
   en: string;
-  ta: string;
+  ta?: string;
+  hi?: string;
 }
 
 export interface HistoricalEvent {
@@ -31,6 +35,9 @@ export interface ExternalSource {
 
 export interface FloodConfig {
   headline: BilingualText;
+  /** Scope badge text (e.g. "Vaigai system scope", "Yamuna basin scope").
+   *  Config-driven so no city's system name leaks into another city's page. */
+  scope_label?: BilingualText;
   dam_release_threshold_cusecs: number;
   dam_release_note: BilingualText;
   historical_events: HistoricalEvent[];
@@ -48,13 +55,16 @@ export function FloodRiskContent({
   cfg: FloodConfig;
 }) {
   const { t, language } = useLanguage();
-  const pick = (b: BilingualText) => (language === "ta" ? b.ta : b.en);
+  const pick = (b: BilingualText) =>
+    (language === "ta" ? b.ta : language === "hi" ? b.hi : undefined) ?? b.en;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:py-10 space-y-6">
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant="outline" className="text-xs">{cityDisplayName} - {t("flood.badge_scope")}</Badge>
-        <Badge variant="outline" className="text-xs">Vaigai system scope</Badge>
+        {cfg.scope_label && (
+          <Badge variant="outline" className="text-xs">{pick(cfg.scope_label)}</Badge>
+        )}
         <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
           {t("flood.badge_no_hazard_map")}
         </Badge>
