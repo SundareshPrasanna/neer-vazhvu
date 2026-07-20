@@ -91,6 +91,17 @@ Authored 2026-07-20 (static pipeline, Madurai/Bangalore pattern). Tier-1 set: An
 
 `water-bodies-lost-delhi.json` (7 entries, 3 fully lost / 4 severely reduced): Najafgarh Jheel as-a-lake, Nahar-i-Behisht city reach, Anang Tal, Hauz Rani, Satpula tank, Tughlaqabad southern reservoir, Yamuna floodplain ox-bows. Named follow-up: reconstruct the Najafgarh historic-extent polygon from the 1883 Gazetteer + DPGS EMP maps.
 
+## DPCC Monthly Yamuna + Drain Water Quality (THE Tier-1 feed)
+
+| | |
+|---|---|
+| **Source** | DPCC I/C Water Laboratory monthly analysis reports - 8 Yamuna stations (pH/BOD/COD/DO/faecal coliform/phosphate/ammonical-N, C-class criteria) + ~39 drain points in three series (direct outfalls incl. Najafgarh + Shahdara; Najafgarh subdrains + Jheel upstream/downstream; UP outfalls; Agra-canal drains) + **monthly per-STP compliance reports (~30 pp) that the May audit assumed were RTI-gated** |
+| **Domain migration** | `dpcc.delhigovt.nic.in` -> **`dpcc.delhi.gov.in`** (Drupal). The new domain is reachable from ordinary networks - the DPCC scraper does NOT need the India-IP runner path (constraint note corrected). |
+| **Format reality** | PDFs are IMAGE SCANS, zero text layer - the recurring parser needs OCR (tesseract on the runner is the wiring task). Seed data was transcribed visually from 200-dpi rasters. |
+| **Script** | `neer-vazhvu-api/scripts/fetch_dpcc_monthly_delhi.py` - scrapes both listing pages, classifies (river/drain/stp), archives new PDFs + index (default archive: `~/.local/neervazhvu-ops/dpcc-archive`). First run archived 10 PDFs: river Jan/Mar/Apr/May 2026, drain Mar/Apr/May, STP Mar/Apr/May. |
+| **File** | `public/data/dpcc-monthly-wq-delhi.json` - river series for Jan/Mar/Apr/May 2026 (Feb absent from DPCC's own listing - publication gap) + full May drain network |
+| **Headlines in the seed data** | May 2026: BOD 2.0 at Palla -> 60.0 at Asgarpur (30x across the city, vs 3.0 limit); DO NIL at 5-6 of 8 stations every month; exit faecal coliform 310,000-400,000 MPN/100ml = 124-160x max-permissible. **9 of 39 drain points read NO FLOW - drain-trapping's footprint in DPCC's own data, the verification signal for the overdue 39-drain commitment.** |
+
 ## Registered but not yet acquired
 
 The audit's full per-page source map (DPCC monthly Yamuna feed, CAG audit PDF, DUSIB 675 JJ bastis, CGWB blocks, CETP monthly WQ PDFs, BBMB/Tehri feeds, drainage master plan, heritage baolis) is research-complete and URL-verified as of 2026-07-20 but not yet ingested. Each source graduates into this file when its data actually lands in the repo.
