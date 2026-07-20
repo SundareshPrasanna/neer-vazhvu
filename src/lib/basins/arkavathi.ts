@@ -129,7 +129,10 @@ export const ARKAVATHI: BasinManifest = {
     // 17-category KSPCB points and the ground-truthed area polygons.
     // geom "point" ranks the dots above the area fills on the shared canvas.
     { family: "pressures-industrial", label: "17-category industries (KSPCB)", floor: "pressures", geom: "point", color: "#9d174d", defaultOn: true, kindFilter: "major-industry" },
-    { family: "pressures-industrial", label: "Industrial areas", floor: "pressures", geom: "fill", color: "#dc2626", defaultOn: true, hasKinds: true, kindFilter: "industrial-area" },
+    { family: "pressures-industrial", label: "Industrial areas (KIADB, named)", floor: "pressures", geom: "fill", color: "#dc2626", defaultOn: true, hasKinds: true, kindFilter: "industrial-area" },
+    // Unnamed polygons in the ground-truthed file (likely KSSIDC estates):
+    // marked on the map, but no public effluent details exist for them.
+    { family: "pressures-industrial", label: "Other industrial areas (unnamed, likely KSSIDC)", floor: "pressures", geom: "fill", color: "#94a3b8", defaultOn: true, kindFilter: "industrial-area-other" },
     { family: "pressures-quarries", label: "Quarries", floor: "pressures", geom: "fill", color: "#ea580c", defaultOn: false, hasKinds: true },
     { family: "pressures-waste", label: "Waste processing facilities", floor: "pressures", geom: "fill", color: "#ca8a04", defaultOn: false, hasKinds: true },
 

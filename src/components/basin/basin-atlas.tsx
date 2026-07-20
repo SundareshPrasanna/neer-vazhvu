@@ -1338,6 +1338,8 @@ function MapLegend({ layers, notes, raised }: { layers: BasinLayer[]; notes?: st
     else if (l.family === "monitoring-points") {
       items.push({ sym: "dot", color: l.color, label: "Monitoring (public data)" });
       items.push({ sym: "ring", color: l.color, label: "Monitoring (not in public domain)" });
+    } else if (l.family === "pressures-industrial" && l.kindFilter === "industrial-area-other") {
+      items.push({ sym: "outline", color: "#94a3b8", label: "Industrial area - unnamed (no effluent details)" });
     } else if (l.family === "pressures-industrial" && l.kindFilter === "major-industry") {
       items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "17-category industry (KSPCB)" });
     } else if (l.family === "pressures-industrial") {
@@ -1402,6 +1404,7 @@ function LegendSymbol({ sym, color }: { sym: LegendSym; color: string }) {
 
 /** Short, single-line hover label; full detail lives in the click panel. */
 function tipLabel(p: Record<string, unknown>, l: BasinLayer): string {
+  if (String(p.kind) === "industrial-area-other") return "Industrial area (unnamed) - no effluent details";
   const kind = p.kind ? String(p.kind).replace(/-/g, " ") : "";
   const raw = String(p.name ?? p.contributor ?? kind ?? l.label).trim() || l.label;
   return raw.length > 46 ? `${raw.slice(0, 46)}…` : raw;
@@ -1561,6 +1564,11 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, sel
     const kind = String(p.kind ?? "");
     // Industrial areas are sub-coloured by CETP coverage (Madhuri's ask): no
     // CETP nearby = strong red (the gap), CETP nearby = muted, unlocated = grey.
+    if (kind === "industrial-area-other") {
+      // Unattributed (likely KSSIDC) estates: marked but detail-less, so a
+      // quiet dashed grey - visibly present, visibly not the KIADB story.
+      return { color: "#94a3b8", weight: 1, fillColor: "#94a3b8", fillOpacity: faded ? 0.12 : 0.25, dashArray: "3 3" };
+    }
     if (kind === "industrial-area") {
       const cetp = String(p.cetp ?? "unknown");
       const c = cetp === "none" ? "#dc2626" : cetp === "served" ? "#64748b" : "#cbd5e1";
