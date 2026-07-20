@@ -81,6 +81,16 @@ Authored 2026-07-20 from the verification-refreshed audit: 5 arrangements (1994 
 
 Authored 2026-07-20: 8 commitments with dated citations and status histories. Highlight: the 39-drain trapping target (30 Jun 2026) is already **overdue** - deadline passed with no known public completion word; first verification venue is the DPCC monthly covering July. Verification calendar documented in-file (DPCC ~25th monthly, Economic Survey Feb-Mar, Flood Control Order June, Chhath season Oct-Nov).
 
+## Facts page (`facts-delhi.json`, 35 facts)
+
+Authored 2026-07-20 (static pipeline, Madurai/Bangalore pattern). Tier-1 set: Anangpur dam, Najafgarh Jheel 97% loss, 22 km = ~80% Yamuna load, 75% STPs without disinfection, CAG NRW + debt, Economic Survey "mafia" line, 17x LPCD gap, structural supply deficit, Munak lifeline, 2023 flood record, HC Chhath denial. Every fact carries source_url + source_label; all refresh corrections applied (37 STPs, 226 sq km, AKTC "2007-2020 core phase"). The Sept 2025 Hathnikund peak is deliberately excluded pending the 3,29,313-vs-29,313 cusec discrepancy. Hindi renderings land with the translation pass.
+
+## Flagship + lost water-bodies registers
+
+`water-bodies-flagship-delhi.json` (12 bodies): the hauz-baoli chain (Hauz Khas, Hauz-i-Shamsi, Agrasen/Rajon/Nizamuddin baolis, Tughlaqabad cisterns, Satpula's surviving dam via lost-register cross-ref) + modern anchors (Sanjay, Bhalswa, Najafgarh remnant, YBP wetlands, Neela Hauz, Purana Qila moat). Confidence graded A/B/C; coordinates are monument positions (OSM/ASI), not survey boundaries.
+
+`water-bodies-lost-delhi.json` (7 entries, 3 fully lost / 4 severely reduced): Najafgarh Jheel as-a-lake, Nahar-i-Behisht city reach, Anang Tal, Hauz Rani, Satpula tank, Tughlaqabad southern reservoir, Yamuna floodplain ox-bows. Named follow-up: reconstruct the Najafgarh historic-extent polygon from the 1883 Gazetteer + DPGS EMP maps.
+
 ## Registered but not yet acquired
 
 The audit's full per-page source map (DPCC monthly Yamuna feed, CAG audit PDF, DUSIB 675 JJ bastis, CGWB blocks, CETP monthly WQ PDFs, BBMB/Tehri feeds, drainage master plan, heritage baolis) is research-complete and URL-verified as of 2026-07-20 but not yet ingested. Each source graduates into this file when its data actually lands in the repo.
