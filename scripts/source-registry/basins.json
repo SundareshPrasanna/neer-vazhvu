@@ -19,7 +19,15 @@
         "public/data/basins/arkavathi/prs.json",
         "public/data/basins/arkavathi/gaps.json"
       ],
-      "refreshMethod": "arkavathi-mpr-refresh skill (.claude/skills/) wrapping scripts/refresh-arkavathi-mpr.ts",
+      "refreshMethod": "scripts/refresh-arkavathi-mpr.ts (--status / --extract / --diff), driven by the headwaters-refresh skill",
+      "playbook": [
+        "Collected vs generated: MPR solid-waste tables interleave 'Current MSW Generation' and 'Quantity of MSW generated'; repo reads generated=40, collected=35, processed=15 for Ramanagara (June 2025). Never swap the pair (the 35/20-vs-40/15 mix-up).",
+        "Priority divergence is content, not conflict: CPCB reads Priority I, KSPCB/MPR reads III-IV. MPR values update only MPR-attributed fields; never overwrite the CPCB priority in prs.json comparisons.",
+        "Compound asOf strings ('August 2025 (stretch-wise); April 2026 (STP annexures)') are deliberate - preserve the qualifier structure when bumping.",
+        "Consolidated state-annexure editions have contradicted per-stretch reports before; a SCHEMA BREAK edition may be legitimately unusable - skipping it (recorded in notes) is a valid outcome.",
+        "Absence in the MPR means 'not recorded in the documents', not 'not happening' - keep the reportingCaveat framing intact.",
+        "Year ranges in gaps.json prose ('4.0 MLD (2021-2025)') extend only when the value actually held."
+      ],
       "notes": "NGT Monthly Progress Reports; file IDs are upload-order, not date-guessable - link-set is the only reliable watch. Tables inconsistent report-to-report; prefer per-PRS narrative over consolidated state STP annexures.",
       "lastSeen": {
         "linksHash": "cdde912267ff8257",
