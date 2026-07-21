@@ -26,6 +26,7 @@ const BROWSER_UA =
   "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 const FETCH_TIMEOUT_MS = 30_000;
 const MAX_STORED_LINKS = 500;
+const LOCAL_CHECK_MAX_AGE_DAYS = 90;
 
 /* ── Registry types ────────────────────────────────────────────────────── */
 
@@ -61,6 +62,10 @@ interface SourceEntry {
   url: string;
   /** Skip TLS verification for hosts with broken cert chains (NMCG, CPCB). */
   insecureTLS?: boolean;
+  /** Host blocks CI runner IPs (reason string). Checked from local runs only;
+      CI reports LOCAL-ONLY until the last accept grows older than
+      LOCAL_CHECK_MAX_AGE_DAYS, then escalates to CHECK-FAILED. */
+  ciBlocked?: string;
   license?: string;
   type: "pdf-listing" | "page" | "api" | "file";
   cadence: string;
@@ -275,7 +280,7 @@ async function observeInner(e: SourceEntry): Promise<Observed> {
 
 interface CheckResult {
   entry: SourceEntry;
-  state: "ok" | "new-edition" | "check-failed" | "unbaselined";
+  state: "ok" | "new-edition" | "check-failed" | "unbaselined" | "local-only";
   detail: string;
   /** link-set only: links present now but not in lastSeen. */
   newLinks?: string[];
@@ -349,7 +354,8 @@ const STATE_ORDER: Record<CheckResult["state"], number> = {
   "new-edition": 0,
   "check-failed": 1,
   unbaselined: 2,
-  ok: 3,
+  "local-only": 3,
+  ok: 4,
 };
 
 function writeReport(results: CheckResult[], now: string): string {
@@ -360,10 +366,13 @@ function writeReport(results: CheckResult[], now: string): string {
   const newN = count("new-edition");
   const failN = count("check-failed");
   const baseN = count("unbaselined");
+  const localN = count("local-only");
   lines.push(
     newN + failN + baseN === 0
-      ? `All ${results.length} watched sources unchanged.`
-      : `**${newN} new edition(s), ${failN} check failure(s), ${baseN} unbaselined** of ${results.length} watched sources.`,
+      ? `All ${results.length} watched sources unchanged.` +
+          (localN ? ` (${localN} checked from local runs only - runner IPs blocked.)` : "")
+      : `**${newN} new edition(s), ${failN} check failure(s), ${baseN} unbaselined** of ${results.length} watched sources.` +
+          (localN ? ` ${localN} local-only.` : ""),
   );
   lines.push("");
   lines.push("| source | scope | publisher | cadence | state | detail |");
@@ -488,6 +497,26 @@ async function main() {
   const now = new Date().toISOString().slice(0, 10);
   const results: CheckResult[] = [];
   for (const e of entries) {
+    if (e.ciBlocked && process.env.CI) {
+      const acceptedOn = e.lastSeen?.acceptedOn;
+      const age = acceptedOn
+        ? Math.floor((Date.now() - new Date(acceptedOn + "T00:00:00Z").getTime()) / 86_400_000)
+        : Infinity;
+      results.push(
+        age > LOCAL_CHECK_MAX_AGE_DAYS
+          ? {
+              entry: e,
+              state: "check-failed",
+              detail: `local check OVERDUE (last accept ${acceptedOn ?? "never"}, >${LOCAL_CHECK_MAX_AGE_DAYS}d) - run --check locally. ${e.ciBlocked}`,
+            }
+          : {
+              entry: e,
+              state: "local-only",
+              detail: `${e.ciBlocked} Last local accept ${acceptedOn} (${age}d ago).`,
+            },
+      );
+      continue;
+    }
     try {
       const obs = await observe(e);
       results.push(compare(e, obs));
