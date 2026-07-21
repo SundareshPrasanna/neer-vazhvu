@@ -119,6 +119,12 @@ export function BangalorePageDescriptions({ cityId, cityName }: Props) {
           {t("bpd.rivers.h_industry")}
         </h4>
         <p className="text-slate-600 dark:text-slate-400">{t("bpd.rivers.p4")}</p>
+        <div className="rounded-lg border border-amber-200 dark:border-amber-900/40 p-4 bg-amber-50/50 dark:bg-amber-950/20 space-y-2">
+          <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+            {t("bpd.rivers.gap_title")}
+          </h4>
+          <p className="text-sm text-slate-600 dark:text-slate-400">{t("bpd.rivers.gap_body")}</p>
+        </div>
       </SubSection>
 
       <SubSection id="page-flood" title={t("bpd.flood.title")}>

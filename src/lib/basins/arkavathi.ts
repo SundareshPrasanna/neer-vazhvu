@@ -111,6 +111,10 @@ export const ARKAVATHI: BasinManifest = {
     // Clicking either line opens the PRS panel (prs.json). Crimson line,
     // distinct from the blue water family; the component weights 2025 over 2020.
     { family: "prs", label: "Polluted stretch (PRS)", floor: "hydrology", geom: "line", color: "#b91c1c", defaultOn: false, prs: true },
+    // KSPCB's Dec 2020 inspection speaks of 16 polluting drains, but the
+    // June-2020 MPR itemises only 15 (Paani find) and E-176 lacks
+    // coordinates in the source KMZ - 15 render; discrepancy is in credits.
+    { family: "prs-drains", label: "Polluting drains (KSPCB)", floor: "hydrology", geom: "point", color: "#eab308", defaultOn: true },
     { family: "waterbodies-major", label: "Tanks & reservoirs (named)", floor: "hydrology", geom: "fill", color: "#0284c7", defaultOn: true },
     { family: "waterbodies-minor", label: "Other waterbodies", floor: "hydrology", geom: "fill", color: "#0d9488", defaultOn: false, heavy: true },
     { family: "drainage", label: "Drainage network", floor: "hydrology", geom: "line", color: "#3b82f6", defaultOn: false, heavy: true },
@@ -120,12 +124,22 @@ export const ARKAVATHI: BasinManifest = {
     { family: "evidence-points", label: "Pollution evidence", floor: "monitoring", geom: "point", color: "#f43f5e", defaultOn: true },
 
     // ── Floor 3: Pressures (warm ramp) ──
-    { family: "pressures", label: "Industry, quarries & waste", floor: "pressures", geom: "fill", color: "#dc2626", defaultOn: true, hasKinds: true },
+    // Major-industry points ride with Industrial areas for now.
+    // One data family, two independent toggles (Paani round-2 ask): the
+    // 17-category KSPCB points and the ground-truthed area polygons.
+    // geom "point" ranks the dots above the area fills on the shared canvas.
+    { family: "pressures-industrial", label: "17-category industries (KSPCB)", floor: "pressures", geom: "point", color: "#9d174d", defaultOn: true, kindFilter: "major-industry" },
+    { family: "pressures-industrial", label: "Industrial areas (KIADB, named)", floor: "pressures", geom: "fill", color: "#dc2626", defaultOn: true, hasKinds: true, kindFilter: "industrial-area" },
+    // Unnamed polygons in the ground-truthed file (likely KSSIDC estates):
+    // marked on the map, but no public effluent details exist for them.
+    { family: "pressures-industrial", label: "Other industrial areas (unnamed, likely KSSIDC)", floor: "pressures", geom: "fill", color: "#94a3b8", defaultOn: true, kindFilter: "industrial-area-other" },
+    { family: "pressures-quarries", label: "Quarries", floor: "pressures", geom: "fill", color: "#ea580c", defaultOn: false, hasKinds: true },
+    { family: "pressures-waste", label: "Waste processing facilities", floor: "pressures", geom: "fill", color: "#ca8a04", defaultOn: false, hasKinds: true },
 
     // ── Floor 4: Gaps & response ──
     // Treatment-gap intelligence (cross-source; panel content in gaps.json).
     // Demo: Ramanagara. More units are a data-only addition.
-    { family: "gaps", label: "Treatment & waste gaps", floor: "governance", geom: "fill", color: "#dc2626", defaultOn: true, gap: true },
+    { family: "gaps", label: "District Environment Plan (DEP) 2022 Snapshot", floor: "governance", geom: "fill", color: "#dc2626", defaultOn: true, gap: true },
     { family: "infrastructure", label: "Treatment plants (STPs)", floor: "governance", geom: "point", color: "#a855f7", defaultOn: true },
     // Faecal sludge (septage) plants - the treatment route for unsewered towns,
     // a distinct cyan from the purple STPs; the current three are planned/at-tender.
@@ -137,13 +151,15 @@ export const ARKAVATHI: BasinManifest = {
     // warm red/orange/amber treatment-gap colours.
     { family: "admin-district", label: "Districts", floor: "governance", geom: "fill", color: "#94a3b8", defaultOn: true, context: true },
     { family: "admin-taluk", label: "Taluks", floor: "governance", geom: "fill", color: "#7570b3", defaultOn: false },
-    { family: "admin-town", label: "Towns", floor: "governance", geom: "fill", color: "#e7298a", defaultOn: false },
+    { family: "admin-town", label: "Urban Local Bodies (ULBs)", floor: "governance", geom: "fill", color: "#e7298a", defaultOn: false },
+    { family: "gba-boundary", label: "GBA boundary (369 wards, 2025)", floor: "governance", geom: "fill", color: "#0ea5e9", defaultOn: false },
     { family: "admin-gp", label: "Gram panchayats", floor: "governance", geom: "fill", color: "#1b9e77", defaultOn: false, heavy: true },
   ],
   credits: [
     "Spatial data: Paani Earth Foundation - Arkavathi River Basin GIS package (Feb 2026).",
     "Polluted river stretch (2020, 2025): Paani Earth, digitised from the CPCB / NGT polluted-river-stretch classification.",
     "Monitoring points: KSPCB, CPCB, CWC, Dept. of Mines & Geology, ATREE and others, compiled by Paani Earth.",
+    "Polluting drains: KSPCB's Dec 2020 inspection (NGT OA 673/2018) speaks of 16 storm-water drains on the PRS, but the June-2020 MPR itemises only 15 - the same count mapped here (Paani Earth, per-drain BOD; E-176 at Kelagina kote, Kanakapura also lacks coordinates in the source). The 16th drain is unaccounted in the public record - and the August-2025 MPR still reports \"16 drains identified and monitored\" while its own solid-waste table counts 17.",
     "Pollution evidence: Arkavathi Horata Samithi and RTI filings; Paani Earth x ICCW (IIT Madras) 7-site pollution study, Feb-Mar 2024 (lab analyses and report hosted on paani.earth).",
     "Treatment plants (STP/FSTP): BWSSB, KUWS&DB, BDA and KUIDFC, compiled by Paani Earth; locations confirmed against satellite imagery.",
     "Major industries: KSPCB 17-category polluting-industry list (geocoded).",

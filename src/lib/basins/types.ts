@@ -79,6 +79,10 @@ export interface BasinLayer {
   context?: boolean;
   /** Features carry a `kind` with sub-types worth toggling (pressures). */
   hasKinds?: boolean;
+  /** Render only features whose `kind` equals this value - lets one data
+   *  family back several independent layer toggles (e.g. industrial areas
+   *  vs the 17-category industry points share pressures-industrial). */
+  kindFilter?: string;
   /** Gap layer: a choropleth of treatment-gap severity per admin unit, whose
    *  click opens the cross-source gap panel (see gaps.json) instead of the
    *  generic feature panel. Features carry `gapUnit` + `severity`. */

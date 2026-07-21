@@ -169,37 +169,6 @@
       "bytes": 11831,
       "sliced": false
     },
-    "pressures": {
-      "featureCount": 183,
-      "sources": [
-        {
-          "file": "Arkavathi_Industrial_Areas_Ground_Truthed.gpkg",
-          "kind": "industrial-area",
-          "count": 56,
-          "provenance": "Paani Earth ground-truthed industrial areas (KIADB/KSSIDC), Feb 2026"
-        },
-        {
-          "file": "Arkavathi_Quarries_Mapped_with_GoogleEarth_Imagery.gpkg",
-          "kind": "quarry",
-          "count": 101,
-          "provenance": "Paani Earth, quarries digitised from Google Earth imagery (Feb 2026)"
-        },
-        {
-          "file": "Common Facilities for Industrial and Hazardous Waste.csv",
-          "kind": "waste-facility",
-          "count": 13,
-          "provenance": "CPCB common hazardous/industrial waste facilities, compiled by Paani Earth (Feb 2026)"
-        },
-        {
-          "file": "17Category_industries_Karnataka.csv",
-          "kind": "major-industry",
-          "count": 13,
-          "provenance": "KSPCB 17-category polluting-industry list (geocoded), basin-clipped Jun 2026"
-        }
-      ],
-      "bytes": 240606,
-      "sliced": false
-    },
     "command-areas": {
       "featureCount": 3,
       "sources": [
@@ -300,14 +269,87 @@
       ],
       "bytes": 21166,
       "sliced": false
+    },
+    "pressures-industrial": {
+      "featureCount": 69,
+      "sources": [
+        {
+          "file": "Arkavathi_Industrial_Areas_Ground_Truthed.gpkg",
+          "kind": "industrial-area",
+          "count": 19,
+          "provenance": "Paani Earth ground-truthed industrial areas, Feb 2026 - the named KIADB estates (incl. both Peenya polygons); effluent/CETP detail applies to these"
+        },
+        {
+          "file": "Arkavathi_Industrial_Areas_Ground_Truthed.gpkg",
+          "kind": "industrial-area-other",
+          "count": 37,
+          "provenance": "Paani Earth ground-truthed industrial areas, Feb 2026 - polygons the source leaves unnamed (likely KSSIDC estates); marked on the map but no public details about their effluent"
+        },
+        {
+          "file": "17Category_industries_Karnataka.csv",
+          "kind": "major-industry",
+          "count": 13,
+          "provenance": "KSPCB 17-category polluting-industry list (geocoded), basin-clipped Jun 2026"
+        }
+      ]
+    },
+    "pressures-quarries": {
+      "featureCount": 101,
+      "sources": [
+        {
+          "file": "Arkavathi_Quarries_Mapped_with_GoogleEarth_Imagery.gpkg",
+          "kind": "quarry",
+          "count": 101,
+          "provenance": "Paani Earth, quarries digitised from Google Earth imagery (Feb 2026)"
+        }
+      ]
+    },
+    "pressures-waste": {
+      "featureCount": 13,
+      "sources": [
+        {
+          "file": "Common Facilities for Industrial and Hazardous Waste.csv",
+          "kind": "waste-facility",
+          "count": 13,
+          "provenance": "CPCB common hazardous/industrial waste facilities, compiled by Paani Earth (Feb 2026)"
+        }
+      ]
+    },
+    "prs-drains": {
+      "featureCount": 15,
+      "sources": [
+        {
+          "file": "Arkavathi_PRS_16Drains.kmz",
+          "kind": "polluting-drain",
+          "count": 15,
+          "provenance": "Paani Earth - polluting storm-water drains on the PRS (KSPCB Dec 2020 inspection, NGT OA 673/2018); BOD per drain. KSPCB and the June-2020 MPR both speak of 16 drains, but the MPR itemises only 15; the 16th is unaccounted in the public record."
+        }
+      ]
+    },
+    "gba-boundary": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "gba-369-wards-december-2025.kml",
+          "kind": "gba-boundary",
+          "count": 1,
+          "provenance": "Greater Bengaluru Authority ward map (369 wards, Dec 2025) via OpenCity; wards dissolved to the outer boundary"
+        }
+      ]
     }
   },
   "skipped": [
     {
       "file": "17Category_industries_Karnataka.csv",
-      "family": "pressures",
+      "family": "pressures-industrial",
       "kind": "industry-17cat",
       "reason": "Revision pending from Paani (2026-06-13): non-canonical classification labels, 1 missing coord. Re-enable when corrected file lands."
+    },
+    {
+      "file": "Arkavathi_PRS_16Drains.kmz",
+      "family": "prs-drains",
+      "kind": "polluting-drain",
+      "reason": "E-176 (Kelagina kote, Kanakapura Town) carries no coordinates in the source KMZ - ask Paani for the location; 15 of 16 mapped. Separately, the June-2020 MPR itself itemises only 15 of the 16 drains it mentions."
     }
   ]
 }

@@ -171,6 +171,9 @@ interface PrsTab {
   subtabKind?: "units" | "categories";
   source?: string;
   intro?: string;
+  /** "stretch" = reported for the stretch as a whole; only these tabs are
+   *  listed in the panel. Unscoped tabs feed the accountability matrix. */
+  scope?: "stretch";
   /** Status-list row (summary view): a short badge + one-liner + tone colour. */
   summaryBadge?: string;
   summaryLine?: string;
@@ -204,10 +207,12 @@ interface PrsData {
   /** "Key Terms Used on This Page" popup: full forms + context for CPCB,
    *  PRS, MPR, BOD, priority classes etc. */
   keyTerms?: { term: string; full: string; note?: string }[];
-  /** Governance block: who is accountable for restoring this stretch. */
+  /** Governance & compliance block: who is accountable for restoring this
+   *  stretch, and the reporting obligations that make them checkable. */
   governance?: {
     rows: { label: string; value: string }[];
     actionPlan?: { url: string; label?: string };
+    compliance?: { value: string; link?: { url: string; label: string }; note?: string }[];
     note?: string;
   };
   growthNote?: string;
@@ -227,7 +232,6 @@ interface PrsData {
   evidence?: { headline: string; points: string[]; layerRef?: string; link?: { url: string; label: string } };
   tabs: PrsTab[];
   grievance?: { label: string; sub?: string; url: string; urlNote?: string };
-  knownGaps?: string[];
   sources?: string[];
 }
 
@@ -255,11 +259,15 @@ export interface AccRegion {
   grievance?: { label: string; url: string };
   /** Regions the documents never itemise carry this instead of categories. */
   silentNote?: string;
+  /** How to find this region on the map: the layer family plus a property
+   *  match (exact values or substring contains). */
+  mapMatch?: { family: string; prop?: string; values?: string[]; contains?: string[] };
   categories: AccCategory[];
 }
 export interface AccountabilityData {
   question: string;
   intro?: string;
+  portalNote?: string;
   baseline: {
     primary: { label: string; asOf: string; note?: string };
     actionPlan: { label: string; url: string };
@@ -277,6 +285,12 @@ type FC = FeatureCollection;
 /** Draw order on the shared canvas (lower = drawn first = underneath). Base
  *  outlines and sub-catchments sit below thematic fills, lines, and points so
  *  the layers on top receive hover/click, not the catchment beneath them. */
+/** Toggle/state key for a layer: kind-filtered entries get their own key so
+ *  two entries sharing a data family toggle independently. */
+function layerKey(l: BasinLayer): string {
+  return l.kindFilter ? `${l.family}:${l.kindFilter}` : l.family;
+}
+
 function drawRank(l: BasinLayer): number {
   if (l.gap) return -1; // gap choropleth at the very bottom - all data (incl. STPs) sits above it
   if (l.prs) return 5; // polluted stretch always on top so the thin line stays clickable
@@ -370,7 +384,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     const startFloor = initialFloor ?? "hydrology";
     return Object.fromEntries(
       manifest.layers.map((l) => [
-        l.family,
+        layerKey(l),
         l.defaultOn && (l.context || l.prs || l.floor === startFloor),
       ]),
     );
@@ -382,9 +396,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     () => new Set<BasinFloor>([initialFloor ?? "hydrology"]),
   );
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(initialRiverId);
+  // Region highlighted from the accountability matrix ("Show X on the map").
+  const [mapHighlight, setMapHighlight] = useState<MapHighlight | null>(null);
   const [selectedFeature, setSelectedFeature] = useState<{ family: string; props: Record<string, unknown> } | null>(null);
   const [selectedGapUnit, setSelectedGapUnit] = useState<string | null>(null);
   const [gapData, setGapData] = useState<Record<string, GapUnit>>({});
+  const [gapNote, setGapNote] = useState<string | null>(null);
   // PRS entry-point panel: open when the polluted-stretch line is clicked.
   const [selectedPrs, setSelectedPrs] = useState(false);
   const [prsData, setPrsData] = useState<PrsData | null>(null);
@@ -495,7 +512,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // Cross-source gap intelligence for the gap layer's click panel (optional).
   useEffect(() => {
     fetchJson(`/data/basins/${manifest.basinId}/gaps.json`)
-      .then((d) => setGapData(((d as unknown as { units?: Record<string, GapUnit> })?.units) ?? {}))
+      .then((d) => {
+        const parsed = d as unknown as { units?: Record<string, GapUnit>; note?: string };
+        setGapData(parsed?.units ?? {});
+        setGapNote(parsed?.note ?? null);
+      })
       .catch(() => setGapData({}));
   }, [manifest.basinId]);
 
@@ -568,7 +589,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     // stretch"), on top of whatever the checkbox says, and hides again when
     // the panel closes unless the user has checked it explicitly.
     if (l.prs && selectedPrs) return true;
-    return enabled[l.family] ?? l.defaultOn;
+    return enabled[layerKey(l)] ?? l.defaultOn;
   }
 
   // The data key a layer reads from: heavy + river selected -> per-shed merge.
@@ -693,8 +714,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // how many industrial areas have no CETP nearby - computed live from the data.
   const legendNotes = useMemo(() => {
     const out: string[] = [];
-    if (visibleLayers.some((l) => l.family === "pressures")) {
-      const ind = (data["pressures"]?.features ?? []).filter(
+    if (visibleLayers.some((l) => l.family === "pressures-industrial" && l.kindFilter !== "major-industry")) {
+      const ind = (data["pressures-industrial"]?.features ?? []).filter(
         (f) => (f.properties as Record<string, unknown>)?.kind === "industrial-area",
       );
       const none = ind.filter((f) => (f.properties as Record<string, unknown>)?.cetp === "none").length;
@@ -773,10 +794,14 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           )}
         </div>
 
+        {/* "River system" is the one grouped category; every other layer is a
+            flat toggle row. The floor model stays underneath (deep links,
+            default-on sets) - only the rail presentation is two-tier. */}
         <div className="block">
-          {FLOORS.map((f, i) => {
+          {(() => {
+            const f = FLOORS[0]; // hydrology = "River system"
             const open = expandedFloors.has(f.id);
-            const onCount = floorLayers(f.id).filter((l) => enabled[l.family] ?? l.defaultOn).length;
+            const onCount = floorLayers(f.id).filter((l) => enabled[layerKey(l)] ?? l.defaultOn).length;
             return (
               <div key={f.id}>
                 <button
@@ -799,7 +824,6 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   <div className="flex items-center justify-between gap-2">
                     <span className={`flex items-center text-sm font-semibold ${open ? "text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-300"}`}>
                       <span aria-hidden className={`mr-1 text-slate-400 transition-transform ${open ? "rotate-90" : ""}`}>▸</span>
-                      <span className="text-[10px] font-mono text-slate-400 mr-1">{i + 1}</span>
                       {f.label}
                     </span>
                     <span className="flex items-center gap-1.5 shrink-0">
@@ -814,26 +838,24 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   <div className="text-[10px] text-slate-400 dark:text-slate-500 pl-4">{f.sub}{!open && onCount === 0 ? " · open to explore" : ""}</div>
                 </button>
 
-                {/* Per-floor layer toggles, shown when the floor is expanded.
-                    Collapsing only hides the list - enabled layers stay on the
-                    map, so cross-floor combinations persist (checkbox-only). */}
+                {/* Collapsing only hides the list - enabled layers stay on the map. */}
                 {open && (
                 <div className="px-3 pb-2 pt-1 space-y-1">
                     {floorLayers(f.id).map((l) => {
                       const inv = inventory?.families[l.family];
                       return (
-                        <label key={l.family} className="flex items-start gap-2 text-xs cursor-pointer group">
+                        <label key={layerKey(l)} className="flex items-start gap-2 text-xs cursor-pointer group">
                           <input
                             type="checkbox"
-                            checked={enabled[l.family] ?? l.defaultOn}
-                            onChange={(e) => setEnabled((s) => ({ ...s, [l.family]: e.target.checked }))}
+                            checked={enabled[layerKey(l)] ?? l.defaultOn}
+                            onChange={(e) => setEnabled((s) => ({ ...s, [layerKey(l)]: e.target.checked }))}
                             className="mt-0.5 accent-blue-600"
                           />
                           <span className="flex items-center gap-1.5 leading-tight">
                             <span className="inline-block w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: l.color }} />
                             <span className="text-slate-600 dark:text-slate-300">
                               {l.label}
-                              {inv && <span className="text-slate-400"> ({inv.featureCount})</span>}
+                              {inv && <span className="text-slate-400"> ({(l.kindFilter && inv.sources.find((sc) => sc.kind === l.kindFilter)?.count) || inv.featureCount})</span>}
                               {l.heavy && <span className="block text-[10px] text-slate-400">large layer</span>}
                             </span>
                           </span>
@@ -844,7 +866,36 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 )}
               </div>
             );
-          })}
+          })()}
+
+          {/* Everything else: flat, always-visible toggle rows. */}
+          <div className="px-3 pt-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-700">
+            <div className="text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold pb-0.5">Layers</div>
+            {manifest.layers.filter((l) => l.floor !== "hydrology").map((l) => {
+              const inv = inventory?.families[l.family];
+              return (
+                <label key={layerKey(l)} className="flex items-start gap-2 text-xs cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={enabled[layerKey(l)] ?? l.defaultOn}
+                    onChange={(e) => {
+                      setFocusedFloor(l.floor);
+                      setEnabled((s) => ({ ...s, [layerKey(l)]: e.target.checked }));
+                    }}
+                    className="mt-0.5 accent-blue-600"
+                  />
+                  <span className="flex items-center gap-1.5 leading-tight">
+                    <span className="inline-block w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: l.color }} />
+                    <span className="text-slate-600 dark:text-slate-300">
+                      {l.label}
+                      {inv && <span className="text-slate-400"> ({(l.kindFilter && inv.sources.find((sc) => sc.kind === l.kindFilter)?.count) || inv.featureCount})</span>}
+                      {l.heavy && <span className="block text-[10px] text-slate-400">large layer</span>}
+                    </span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
         </div>
 
         {/* Data on this map */}
@@ -871,6 +922,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             const fc = data[dataKey(l)];
             if (!fc) return null;
             let feats = scoped(fc, l);
+            if (l.kindFilter) {
+              feats = feats.filter((f) => (f.properties as Record<string, unknown>)?.kind === l.kindFilter);
+            }
             // PRS: by default only the latest year's stretch is shown; the
             // growth toggle reveals the earlier year too. Sort so the EARLIER
             // (2020) line draws on top of the later (2025) one, so the segments
@@ -963,7 +1017,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (l.geom === "point") {
               return (
                 <GeoJSON
-                  key={`${l.family}-${selectedRiverId}`}
+                  key={`${layerKey(l)}-${selectedRiverId}`}
                   data={fcScoped}
                   pointToLayer={(feat, latlng) =>
                     L.circleMarker(latlng, pointStyle(l, feat, faded))
@@ -987,12 +1041,13 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             // place in the hierarchy.
             const isBase = l.family === "boundary" || l.family === "admin-district";
             const isAdmin = l.family.startsWith("admin");
+            const hlActive = mapHighlight?.family === l.family;
             return (
               <GeoJSON
-                key={`${l.family}-${selectedRiverId}-${tiles.isDark}`}
+                key={`${layerKey(l)}-${selectedRiverId}-${tiles.isDark}-${hlActive ? "hl" : ""}`}
                 data={fcScoped}
                 interactive={!isBase}
-                style={(feat?: Feature) => fillStyle(l, feat, faded)}
+                style={(feat?: Feature) => fillStyle(l, feat, faded, null, mapHighlight)}
                 pointToLayer={(feat, latlng) => L.circleMarker(latlng, pressurePointStyle(feat, faded))}
                 onEachFeature={(feat: Feature, layer: Layer) => {
                   if (isBase) return;
@@ -1210,6 +1265,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 accountability={accData}
                 layerByFamily={layerByFamily}
                 onOpenUnit={(u) => { setSelectedPrs(false); setSelectedFeature(null); setSelectedGapUnit(u); setGapFromPrs(true); }}
+                depUnit={manifest.defaultGapUnit}
+                onShowRegion={(r) => {
+                  if (!r.mapMatch) return;
+                  setEnabled((s) => ({ ...s, [r.mapMatch!.family]: true }));
+                  setMapHighlight(r.mapMatch);
+                }}
                 onShowLayer={(family) => {
                   const lyr = layerByFamily[family];
                   setEnabled((s) => ({ ...s, [family]: true }));
@@ -1223,6 +1284,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             ) : selectedGapUnit && gapData[selectedGapUnit] ? (
               <GapPanel
                 unit={gapData[selectedGapUnit]}
+                note={gapNote}
                 onClose={() => { setSelectedGapUnit(null); setGapFromPrs(false); }}
                 onBack={gapFromPrs ? () => { setSelectedGapUnit(null); setGapFromPrs(false); setSelectedPrs(true); } : undefined}
               />
@@ -1276,15 +1338,23 @@ function MapLegend({ layers, notes, raised }: { layers: BasinLayer[]; notes?: st
     else if (l.family === "monitoring-points") {
       items.push({ sym: "dot", color: l.color, label: "Monitoring (public data)" });
       items.push({ sym: "ring", color: l.color, label: "Monitoring (not in public domain)" });
-    } else if (l.family === "pressures") {
+    } else if (l.family === "pressures-industrial" && l.kindFilter === "industrial-area-other") {
+      items.push({ sym: "outline", color: "#94a3b8", label: "Industrial area - unnamed (no effluent details)" });
+    } else if (l.family === "pressures-industrial" && l.kindFilter === "major-industry") {
+      items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "17-category industry (KSPCB)" });
+    } else if (l.family === "pressures-industrial") {
       items.push({ sym: "box", color: "#dc2626", label: "Industrial area - no CETP (est.)" });
       items.push({ sym: "box", color: "#64748b", label: "Industrial area - CETP nearby" });
       // Third CETP state drawn by fillStyle (faint dashed grey) - must be
       // named here too: every rendered style gets a legend row.
       items.push({ sym: "outline", color: "#cbd5e1", label: "Industrial area - CETP unknown" });
+      // The 17-category dot appears here only when this entry is NOT
+      // kind-split (a split manifest declares its own toggle + legend row).
+      if (!l.kindFilter) items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "Major industry (17-category)" });
+    } else if (l.family === "pressures-quarries") {
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["quarry"], label: "Quarry" });
+    } else if (l.family === "pressures-waste") {
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["waste-facility"], label: "Waste facility" });
-      items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "Major industry (17-category)" });
     } else if (l.family === "infrastructure") {
       items.push({ sym: "dot", color: l.color, label: "STP (operational)" });
       items.push({ sym: "ring", color: l.color, label: "STP (not yet functional)" });
@@ -1334,6 +1404,7 @@ function LegendSymbol({ sym, color }: { sym: LegendSym; color: string }) {
 
 /** Short, single-line hover label; full detail lives in the click panel. */
 function tipLabel(p: Record<string, unknown>, l: BasinLayer): string {
+  if (String(p.kind) === "industrial-area-other") return "Industrial area (unnamed) - no effluent details";
   const kind = p.kind ? String(p.kind).replace(/-/g, " ") : "";
   const raw = String(p.name ?? p.contributor ?? kind ?? l.label).trim() || l.label;
   return raw.length > 46 ? `${raw.slice(0, 46)}…` : raw;
@@ -1444,7 +1515,20 @@ const ADMIN_DASH: Record<string, string | undefined> = {
   "admin-gp": "1 4",
 };
 
-function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, selectedGapUnit?: string | null): PathOptions {
+type MapHighlight = { family: string; prop?: string; values?: string[]; contains?: string[] };
+
+function matchesHighlight(hl: MapHighlight | null | undefined, l: BasinLayer, feat: Feature | undefined): boolean {
+  if (!hl || hl.family !== l.family) return false;
+  if (!hl.prop) return true;
+  const v = String((feat?.properties as Record<string, unknown>)?.[hl.prop] ?? "");
+  if (hl.values?.includes(v)) return true;
+  return hl.contains?.some((c) => v.toLowerCase().includes(c.toLowerCase())) ?? false;
+}
+
+function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, selectedGapUnit?: string | null, hl?: MapHighlight | null): PathOptions {
+  if (matchesHighlight(hl, l, feat)) {
+    return { color: SELECTED_SHED_COLOR, weight: 3, fillColor: l.color, fillOpacity: 0.35, opacity: 1 };
+  }
   if (l.family === "boundary") {
     // Bold SOLID line in the manifest color (fuchsia) - a hue the OSM basemap
     // never uses, so the basin edge can't be mistaken for a basemap boundary.
@@ -1475,11 +1559,16 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, sel
     const isSel = selectedGapUnit === unit;
     return { color: c, weight: isSel ? 3 : 2, fillColor: c, fillOpacity: faded ? 0.2 : isSel ? 0.55 : 0.4 };
   }
-  if (l.family === "pressures") {
+  if (l.family.startsWith("pressures")) {
     const p = (feat?.properties as Record<string, unknown>) ?? {};
     const kind = String(p.kind ?? "");
     // Industrial areas are sub-coloured by CETP coverage (Madhuri's ask): no
     // CETP nearby = strong red (the gap), CETP nearby = muted, unlocated = grey.
+    if (kind === "industrial-area-other") {
+      // Unattributed (likely KSSIDC) estates: marked but detail-less, so a
+      // quiet dashed grey - visibly present, visibly not the KIADB story.
+      return { color: "#94a3b8", weight: 1, fillColor: "#94a3b8", fillOpacity: faded ? 0.12 : 0.25, dashArray: "3 3" };
+    }
     if (kind === "industrial-area") {
       const cetp = String(p.cetp ?? "unknown");
       const c = cetp === "none" ? "#dc2626" : cetp === "served" ? "#64748b" : "#cbd5e1";
@@ -1627,6 +1716,8 @@ function PRSPanel({
   layerByFamily,
   onOpenUnit,
   onShowLayer,
+  onShowRegion,
+  depUnit,
   onClose,
 }: {
   prs: PrsData;
@@ -1634,6 +1725,9 @@ function PRSPanel({
   layerByFamily: Record<string, BasinLayer>;
   onOpenUnit: (unit: string) => void;
   onShowLayer: (family: string) => void;
+  onShowRegion?: (r: AccRegion) => void;
+  /** Gap unit the DEP cross-link opens; the link renders only when set. */
+  depUnit?: string;
   onClose: () => void;
 }) {
   const firstSubKey = (t?: PrsTab) => t?.units?.[0]?.key ?? t?.categories?.[0]?.key ?? "";
@@ -1858,7 +1952,7 @@ function PRSPanel({
                 <div className="h-full rounded-sm" style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
               </div>
               <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 w-14 text-right shrink-0">{r.length_km} km</span>
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>Pri {r.priority}</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>P{r.priority}</span>
             </div>
           ))}
         </div>
@@ -1879,10 +1973,10 @@ function PRSPanel({
         )}
       </section>
 
-      {/* Governance: who is accountable for restoring this stretch */}
+      {/* Governance & compliance: who is accountable, and what they must report */}
       {prs.governance && (
         <section>
-          <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Governance</div>
+          <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Governance &amp; Compliance</div>
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
             {prs.governance.rows.map((f) => (
               <div key={f.label} className="flex gap-2 px-2.5 py-1.5">
@@ -1902,19 +1996,42 @@ function PRSPanel({
                 </a>
               </div>
             )}
+            {prs.governance.compliance?.map((c) => (
+              <div key={c.value} className="flex gap-2 px-2.5 py-1.5">
+                <span className="text-[12px] text-slate-500 dark:text-slate-400 w-32 shrink-0">Compliance</span>
+                <span className="text-[12px] font-medium text-slate-800 dark:text-slate-100 leading-snug">
+                  {c.value}
+                  {c.link && (
+                    <>
+                      {" "}
+                      <a href={c.link.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap">{c.link.label} ↗</a>
+                    </>
+                  )}
+                  {c.note && <span className="block mt-0.5 font-normal text-[11px] text-slate-500 dark:text-slate-400">{c.note}</span>}
+                </span>
+              </div>
+            ))}
           </div>
           {prs.governance.note && <p className="mt-1 text-[11px] text-slate-400 leading-snug">{prs.governance.note}</p>}
         </section>
       )}
 
       {/* Accountability matrix: Action Plan vs MPR, region-first */}
-      {accountability && <AccountabilityMatrix data={accountability} />}
+      {accountability && <AccountabilityMatrix data={accountability} onShowRegion={onShowRegion} />}
 
-      {/* Status list - the per-area summary; tap a row for detail + trend */}
+      {depUnit && (
+        <button onClick={() => onOpenUnit(depUnit)} className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+          Explore treatment and waste gaps (DEP 2022 snapshot) →
+        </button>
+      )}
+
+      {/* Stretch-level obligations only; per-area rows live in the
+          accountability matrix. */}
+      {prs.tabs.some((t) => t.scope === "stretch") && (
       <section>
-        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Priority areas <span className="normal-case font-normal text-slate-400">(tap for detail &amp; trend)</span></div>
+        <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Stretch-level obligations <span className="normal-case font-normal text-slate-400">(reported for the stretch as a whole; tap for detail)</span></div>
         <div className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-200 dark:divide-slate-700">
-          {prs.tabs.map((t) => (
+          {prs.tabs.filter((t) => t.scope === "stretch").map((t) => (
             <button
               key={t.key}
               onClick={() => openAreaFn(t)}
@@ -1932,6 +2049,7 @@ function PRSPanel({
           ))}
         </div>
       </section>
+      )}
 
       {/* Evidence (collapsed; the "beyond BOD" beat) */}
       {prs.evidence && (
@@ -1939,7 +2057,7 @@ function PRSPanel({
           <summary className="cursor-pointer list-none p-2.5 flex items-start gap-1.5">
             <span aria-hidden className="text-slate-400 group-open:rotate-90 transition-transform mt-0.5">▸</span>
             <span className="flex-1">
-              <span className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">Evidence of pollution</span>
+              <span className="text-[13px] uppercase tracking-wider text-rose-700 dark:text-rose-400 font-bold">Evidence of pollution</span>
               <span className="block text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{prs.evidence.headline}</span>
             </span>
           </summary>
@@ -1990,16 +2108,6 @@ function PRSPanel({
         {prs.levelCoverage && <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed"><span className="font-semibold">Reporting level: </span>{prs.levelCoverage}</p>}
       </PrsDisclosure>
 
-      {prs.knownGaps && prs.knownGaps.length > 0 && (
-        <PrsDisclosure label="Data we don't have yet">
-          <ul className="space-y-1 list-disc pl-4">
-            {prs.knownGaps.map((g, i) => (
-              <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{g}</li>
-            ))}
-          </ul>
-        </PrsDisclosure>
-      )}
-
       {prs.sources && prs.sources.length > 0 && (
         <PrsDisclosure label="Sources">
           <ul className="space-y-0.5">
@@ -2025,12 +2133,14 @@ const ACC_VERDICT: Record<AccCategory["verdict"], { label: string; cls: string }
 };
 const ACC_KIND_LABEL: Record<AccRegion["kind"], string> = { ulb: "ULBs", ia: "Industrial Areas", gp: "Gram Panchayats" };
 
-export function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
+export function AccountabilityMatrix({ data, onShowRegion }: { data: AccountabilityData; onShowRegion?: (r: AccRegion) => void }) {
   const kinds = (["ulb", "ia", "gp"] as const).filter((k) => data.regions.some((r) => r.kind === k));
-  const [kind, setKind] = useState<AccRegion["kind"]>(kinds[0] ?? "ulb");
-  const regions = data.regions.filter((r) => r.kind === kind);
+  // Nothing pre-selected: the three kind tabs render alone; region chips
+  // appear on tab click, the detail card on chip click.
+  const [kind, setKind] = useState<AccRegion["kind"] | null>(null);
+  const regions = kind ? data.regions.filter((r) => r.kind === kind) : [];
   const [regionKey, setRegionKey] = useState<string | null>(null);
-  const region = regions.find((r) => r.key === regionKey) ?? regions[0];
+  const region = regions.find((r) => r.key === regionKey) ?? (regions.length === 1 ? regions[0] : undefined);
 
   return (
     <section>
@@ -2058,6 +2168,9 @@ export function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
           </button>
         ))}
       </div>
+      {kind && data.portalNote && (
+        <p className="text-[10px] text-slate-400 dark:text-slate-500 italic leading-snug mb-1.5">{data.portalNote}</p>
+      )}
       {/* Region chips */}
       {regions.length > 1 && (
         <div className="flex flex-wrap gap-1 mb-2">
@@ -2083,6 +2196,11 @@ export function AccountabilityMatrix({ data }: { data: AccountabilityData }) {
           <div>
             <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{region.name}</div>
             {region.inBasinNote && <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{region.inBasinNote}</p>}
+            {region.mapMatch && onShowRegion && (
+              <button onClick={() => onShowRegion(region)} className="mt-1 inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                Show {region.name} on the map →
+              </button>
+            )}
           </div>
 
           {region.silentNote ? (
@@ -2336,7 +2454,7 @@ function UnitTimeline({ unit, unitLabel, treatedVerb, onOpenUnit }: { unit: PrsU
 
 /** Cross-source treatment-gap panel: the "why does it persist" view - metrics,
  *  the gap over time, and what each document says, with citations. */
-function GapPanel({ unit, onClose, onBack }: { unit: GapUnit; onClose: () => void; onBack?: () => void }) {
+function GapPanel({ unit, note, onClose, onBack }: { unit: GapUnit; note?: string | null; onClose: () => void; onBack?: () => void }) {
   return (
     <div className="space-y-4">
       {onBack && (
@@ -2346,8 +2464,9 @@ function GapPanel({ unit, onClose, onBack }: { unit: GapUnit; onClose: () => voi
       )}
       <div className="flex items-start justify-between gap-2">
         <div>
-          <div className="text-[11px] uppercase tracking-wider text-rose-500">Treatment &amp; waste gaps{unit.level ? ` - ${unit.level}` : ""}</div>
+          <div className="text-[11px] uppercase tracking-wider text-rose-500">District Environment Plan (DEP) 2022 Snapshot{unit.level ? ` - ${unit.level}` : ""}</div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 leading-snug">{unit.name}</h2>
+          {note && <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{note}</p>}
         </div>
         <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
           <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
