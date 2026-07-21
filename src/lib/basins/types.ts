@@ -136,6 +136,22 @@ export interface BasinManifest {
    * while the rest stays a pan away. Selecting a river still fits to it.
    */
   defaultFocus?: { center: [number, number]; zoom: number };
+  /** Collaboration attribution (e.g. "Developed in collaboration with" +
+   *  the partner's logo - the partner's NAME lives inside the logo image;
+   *  alt text carries it for screen readers). Rendered on the atlas
+   *  "Data on this map" block and the embed header. Absent = no partner
+   *  attribution on those surfaces. */
+  collaboration?: {
+    /** Lead-in line, e.g. "Developed in collaboration with". */
+    label: string;
+    /** Partner name (alt text / accessibility - visually in the logo). */
+    name: string;
+    /** Path under public/, e.g. "/partners/paani-earth-foundation.png". */
+    logo: string;
+    url?: string;
+    /** One-line role description under the logo. */
+    sub?: string;
+  };
   /** Attribution lines rendered verbatim in "Data on this map". */
   credits: string[];
 }
