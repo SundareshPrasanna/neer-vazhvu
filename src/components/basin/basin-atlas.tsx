@@ -2725,28 +2725,35 @@ function DataOnThisMap({ manifest, inventory }: { manifest: BasinManifest; inven
       </button>
       {open && (
         <div className="px-3 pb-3 space-y-3 text-[11px] text-slate-500 dark:text-slate-400">
-          {/* Data partner credit - most of this basin's data is Paani Earth's. */}
-          <a
-            href="https://paani.earth"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2.5 group rounded-md border border-slate-200 dark:border-slate-700 p-2 hover:bg-slate-50 dark:hover:bg-slate-800/60"
-          >
-            <span className="leading-tight">
-              <span className="block text-[10px] uppercase tracking-wider text-slate-400">Data partner</span>
-              <span className="block text-slate-700 dark:text-slate-200 font-semibold group-hover:underline">Paani Earth Foundation</span>
-              <span className="block text-slate-400">Basin spatial data &amp; field evidence - paani.earth ↗</span>
-            </span>
-          </a>
+          {/* Collaboration credit - manifest-declared; the partner's name is
+              in the logo itself (alt text carries it). Light chip keeps the
+              colour logo readable in dark mode. */}
+          {manifest.collaboration && (
+            <a
+              href={manifest.collaboration.url ?? "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block group rounded-md border border-slate-200 dark:border-slate-700 p-2 hover:bg-slate-50 dark:hover:bg-slate-800/60"
+            >
+              <span className="block text-[10px] uppercase tracking-wider text-slate-400">{manifest.collaboration.label}</span>
+              <span className="mt-1 block rounded bg-white px-2 py-1.5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={manifest.collaboration.logo} alt={manifest.collaboration.name} className="w-full max-w-[210px] h-auto" />
+              </span>
+              {manifest.collaboration.sub && (
+                <span className="block text-slate-400 group-hover:underline">{manifest.collaboration.sub}</span>
+              )}
+            </a>
+          )}
 
           {/* Consolidated layer inventory (counts only - provenance is in Sources). */}
           <div>
             <div className="text-slate-600 dark:text-slate-300 font-medium mb-1">Layers ({layersWithData.length})</div>
             <div className="space-y-0.5">
               {layersWithData.map((l) => (
-                <div key={l.family} className="flex justify-between gap-2">
+                <div key={layerKey(l)} className="flex justify-between gap-2">
                   <span className="text-slate-600 dark:text-slate-300">{l.label}</span>
-                  <span className="tabular-nums text-slate-400">{inventory.families[l.family].featureCount}</span>
+                  <span className="tabular-nums text-slate-400">{(l.kindFilter && inventory.families[l.family].sources.find((sc) => sc.kind === l.kindFilter)?.count) || inventory.families[l.family].featureCount}</span>
                 </div>
               ))}
             </div>

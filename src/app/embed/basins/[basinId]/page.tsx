@@ -66,9 +66,20 @@ export default async function BasinEmbedPage({ params, searchParams }: PageProps
           target=_blank because inside an iframe an in-frame navigation would
           trap the reader in the embed. */}
       <div className="flex items-center justify-between gap-3 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shrink-0 text-[12px]">
-        <span className="font-semibold text-slate-700 dark:text-slate-200 truncate">
-          {manifest.displayName} Atlas
-          <span className="font-normal text-slate-400"> - Neer Vazhvu x Paani Earth Foundation</span>
+        <span className="font-semibold text-slate-700 dark:text-slate-200 truncate flex items-center gap-1.5 min-w-0">
+          <span className="truncate">
+            {manifest.displayName} Atlas
+            <span className="font-normal text-slate-400"> - Neer Vazhvu</span>
+          </span>
+          {manifest.collaboration && (
+            <>
+              <span className="font-normal text-slate-400 shrink-0 hidden sm:inline">· {manifest.collaboration.label}</span>
+              <span className="shrink-0 rounded bg-white px-1 py-0.5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={manifest.collaboration.logo} alt={manifest.collaboration.name} className="h-8 w-auto" />
+              </span>
+            </>
+          )}
         </span>
         <a
           href={cityId ? `https://neervazhvu.org/${cityId}/rivers` : "https://neervazhvu.org/"}

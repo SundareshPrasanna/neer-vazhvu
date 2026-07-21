@@ -155,6 +155,13 @@ export const ARKAVATHI: BasinManifest = {
     { family: "gba-boundary", label: "GBA boundary (369 wards, 2025)", floor: "governance", geom: "fill", color: "#0ea5e9", defaultOn: false },
     { family: "admin-gp", label: "Gram panchayats", floor: "governance", geom: "fill", color: "#1b9e77", defaultOn: false, heavy: true },
   ],
+  collaboration: {
+    label: "Developed in collaboration with",
+    name: "Paani Earth Foundation",
+    logo: "/partners/paani-earth-foundation.png",
+    url: "https://paani.earth",
+    sub: "Basin spatial data, field evidence and review - paani.earth ↗",
+  },
   credits: [
     "Spatial data: Paani Earth Foundation - Arkavathi River Basin GIS package (Feb 2026).",
     "Polluted river stretch (2020, 2025): Paani Earth, digitised from the CPCB / NGT polluted-river-stretch classification.",
