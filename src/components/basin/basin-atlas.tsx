@@ -260,8 +260,9 @@ export interface AccRegion {
   /** Regions the documents never itemise carry this instead of categories. */
   silentNote?: string;
   /** How to find this region on the map: the layer family plus a property
-   *  match (exact values or substring contains). */
-  mapMatch?: { family: string; prop?: string; values?: string[]; contains?: string[] };
+   *  match (exact values or substring contains). When the family is split into
+   *  kind-filtered layer entries, `kinds` names which entries to switch on. */
+  mapMatch?: { family: string; prop?: string; values?: string[]; contains?: string[]; kinds?: string[] };
   categories: AccCategory[];
 }
 export interface AccountabilityData {
@@ -335,6 +336,24 @@ function MapController({
       map.setView(defaultFocus.center, defaultFocus.zoom);
     }
   }, [fitBounds, defaultFocus, hasSelection, map]);
+  return null;
+}
+
+/** Fly to a freshly highlighted region ("Show X on the map"). Keyed on the
+ *  bbox so other layers streaming in (which recompute the bounds object but
+ *  not its extent) don't re-trigger the flight. */
+function HighlightFlyer({ bounds }: { bounds: L.LatLngBounds | null }) {
+  const map = useMap();
+  const lastRef = useRef<string>("");
+  useEffect(() => {
+    // Highlight cleared (Reset): forget the last flight so re-highlighting
+    // the same region flies again.
+    if (!bounds) { lastRef.current = ""; return; }
+    const key = bounds.toBBoxString();
+    if (key === lastRef.current) return;
+    lastRef.current = key;
+    map.flyToBounds(bounds, { padding: [30, 30], maxZoom: 13, duration: 0.8 });
+  }, [bounds, map]);
   return null;
 }
 
@@ -648,6 +667,18 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     return b.isValid() ? b : null;
   }, [selectedRiverId, shedData, boundaryData, selectedSheds, manifest.defaultFocus]);
 
+  // Frame the region highlighted from the accountability matrix ("Show X on
+  // the map") once its layer data is in. Matching mirrors the highlight style.
+  const highlightBounds = useMemo(() => {
+    if (!mapHighlight) return null;
+    const feats = (data[mapHighlight.family]?.features ?? []).filter((f) =>
+      matchesHighlight(mapHighlight, { family: mapHighlight.family } as BasinLayer, f),
+    );
+    if (!feats.length) return null;
+    const b = L.geoJSON({ type: "FeatureCollection", features: feats } as FC).getBounds();
+    return b.isValid() ? b : null;
+  }, [mapHighlight, data]);
+
   function selectRiver(riverId: string | null) {
     setSelectedRiverId(riverId);
     setSelectedFeature(null);
@@ -908,7 +939,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         <MapContainer center={manifest.mapCenter} zoom={manifest.mapZoom} className="h-full w-full" preferCanvas zoomControl={false}>
           <ZoomControl position="bottomright" />
           <MapResizer />
-          <MapController fitBounds={fitBounds} defaultFocus={manifest.defaultFocus} hasSelection={selectedRiverId != null} />
+          {/* mapHighlight counts as a selection here so Reset (which clears it)
+              flies back to the overview instead of staying zoomed into the
+              estate the HighlightFlyer framed. */}
+          <MapController fitBounds={fitBounds} defaultFocus={manifest.defaultFocus} hasSelection={selectedRiverId != null || mapHighlight != null} />
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
 
           {/* One shared canvas, stacked by DRAW ORDER (not panes): base outlines
@@ -1041,10 +1075,14 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             // place in the hierarchy.
             const isBase = l.family === "boundary" || l.family === "admin-district";
             const isAdmin = l.family.startsWith("admin");
-            const hlActive = mapHighlight?.family === l.family;
+            // The key must encode WHICH region is highlighted, not just that
+            // one is: react-leaflet only re-applies styles on remount, so a
+            // boolean flag would leave the first highlight stuck when the
+            // user picks a different region of the same family.
+            const hlSig = mapHighlight?.family === l.family ? JSON.stringify(mapHighlight) : "";
             return (
               <GeoJSON
-                key={`${layerKey(l)}-${selectedRiverId}-${tiles.isDark}-${hlActive ? "hl" : ""}`}
+                key={`${layerKey(l)}-${selectedRiverId}-${tiles.isDark}-${hlSig}`}
                 data={fcScoped}
                 interactive={!isBase}
                 style={(feat?: Feature) => fillStyle(l, feat, faded, null, mapHighlight)}
@@ -1102,6 +1140,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 ));
             });
           })}
+
+          <HighlightFlyer bounds={highlightBounds} />
 
           {/* Visitor's own location: an accuracy ring + a solid blue dot, drawn
               last so it sits on top of every layer. */}
@@ -1171,12 +1211,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           </button>
         )}
 
-        {/* Reset: clears ANY active selection (river scope, gap unit, or clicked
-            feature) so every layer shows basin-wide and nothing is greyed out,
-            and flies back to the overview. */}
-        {(selectedRiverId || selectedGapUnit || selectedFeature || selectedPrs) && (
+        {/* Reset: clears ANY active selection (river scope, gap unit, clicked
+            feature, or accountability-matrix highlight) so every layer shows
+            basin-wide and nothing is greyed out, and flies back to the overview. */}
+        {(selectedRiverId || selectedGapUnit || selectedFeature || selectedPrs || mapHighlight) && (
           <button
-            onClick={() => { setSelectedGapUnit(null); setSelectedFeature(null); setSelectedPrs(false); setGapFromPrs(false); selectRiver(null); }}
+            onClick={() => { setSelectedGapUnit(null); setSelectedFeature(null); setSelectedPrs(false); setGapFromPrs(false); setMapHighlight(null); selectRiver(null); }}
             className="absolute top-3 right-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-md shadow px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             ↺ Reset{selectedRiver ? " to whole basin" : ""}
@@ -1268,12 +1308,37 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 depUnit={manifest.defaultGapUnit}
                 onShowRegion={(r) => {
                   if (!r.mapMatch) return;
-                  setEnabled((s) => ({ ...s, [r.mapMatch!.family]: true }));
-                  setMapHighlight(r.mapMatch);
+                  const m = r.mapMatch;
+                  // Toggle keys are layerKey(l) (family:kindFilter for split
+                  // families), so enabling the bare family name would miss the
+                  // kind-filtered entries (e.g. pressures-industrial). Which
+                  // kinds to switch on: mapMatch.kinds, else a kind-valued
+                  // property match, else every entry of the family.
+                  const kinds = m.kinds ?? (m.prop === "kind" ? m.values : undefined);
+                  setEnabled((s) => {
+                    const next = { ...s };
+                    for (const l of manifest.layers) {
+                      if (l.family !== m.family) continue;
+                      if (l.kindFilter && kinds && !kinds.includes(l.kindFilter)) continue;
+                      next[layerKey(l)] = true;
+                    }
+                    return next;
+                  });
+                  setMapHighlight(m);
+                  // On phones this sheet covers the map - close it so the
+                  // highlighted region is actually visible.
+                  if (typeof window !== "undefined" && window.innerWidth < 768) setSelectedPrs(false);
                 }}
                 onShowLayer={(family) => {
                   const lyr = layerByFamily[family];
-                  setEnabled((s) => ({ ...s, [family]: true }));
+                  // Enable every entry of the family - kind-split families
+                  // (e.g. pressures-industrial) key their toggles by
+                  // family:kindFilter, so the bare family key would miss them.
+                  setEnabled((s) => {
+                    const next = { ...s };
+                    for (const l of manifest.layers) if (l.family === family) next[layerKey(l)] = true;
+                    return next;
+                  });
                   if (lyr) {
                     setFocusedFloor(lyr.floor);
                     setExpandedFloors((s) => { const n = new Set(s); n.add(lyr.floor); return n; });
@@ -1515,12 +1580,16 @@ const ADMIN_DASH: Record<string, string | undefined> = {
   "admin-gp": "1 4",
 };
 
-type MapHighlight = { family: string; prop?: string; values?: string[]; contains?: string[] };
+type MapHighlight = { family: string; prop?: string; values?: string[]; contains?: string[]; kinds?: string[] };
 
 function matchesHighlight(hl: MapHighlight | null | undefined, l: BasinLayer, feat: Feature | undefined): boolean {
   if (!hl || hl.family !== l.family) return false;
+  const p = (feat?.properties ?? {}) as Record<string, unknown>;
+  // Kind guard: a name-contains match must not leak onto other kinds sharing
+  // the family (e.g. a 17-category industry whose address names the estate).
+  if (hl.kinds && !hl.kinds.includes(String(p.kind ?? ""))) return false;
   if (!hl.prop) return true;
-  const v = String((feat?.properties as Record<string, unknown>)?.[hl.prop] ?? "");
+  const v = String(p[hl.prop] ?? "");
   if (hl.values?.includes(v)) return true;
   return hl.contains?.some((c) => v.toLowerCase().includes(c.toLowerCase())) ?? false;
 }
