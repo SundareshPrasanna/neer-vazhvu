@@ -171,6 +171,50 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
         source_label: "SANDRP - Sept 2025 repeat flood analysis",
       },
       {
+        year: 2013,
+        trigger: {
+          en: "Mid-June upper-basin downpour - an unusually early-season Hathnikund surge",
+        },
+        impact: {
+          en: "207.32 m at the Old Railway Bridge - the highest level between 1978 and 2023 (the comparison every 2023 report reached for). Floodplain settlements evacuated; an early-monsoon warning the 2023 post-mortems would cite.",
+        },
+        source_url: "https://www.tribuneindia.com/news/delhi/yamuna-at-all-time-high-delhi-on-edge-as-low-lying-areas-flooded-525092",
+        source_label: "The Tribune (2023 all-time-high report with historical levels)",
+      },
+      {
+        year: 2010,
+        trigger: {
+          en: "Sustained September flows in a strong-monsoon year, weeks before the Commonwealth Games",
+        },
+        impact: {
+          en: "Annual peak discharge ~3,466 cumecs at the Delhi Railway Bridge (the CWC's model-calibration flood). The river flooded the low floodplain beside the Games-readied embankments, putting the Games Village's floodplain siting into the national argument it has stayed in since.",
+        },
+        source_url: "https://cwc.gov.in/sites/default/files/delhi-floods-2023-case-study.pdf",
+        source_label: "CWC case study (annual peak-discharge table; 2010 calibration event)",
+      },
+      {
+        year: 1995,
+        trigger: {
+          en: "September peak releases from Tajewala (pre-Hathnikund barrage)",
+        },
+        impact: {
+          en: "Annual peak discharge ~7,028 cumecs - the largest flow between 1978 and 2023 in the CWC's series. Trans-Yamuna colonies flooded; with 1988 it pushed the embankment-extension debate.",
+        },
+        source_url: "https://cwc.gov.in/sites/default/files/delhi-floods-2023-case-study.pdf",
+        source_label: "CWC case study (annual peak-discharge table)",
+      },
+      {
+        year: 1988,
+        trigger: {
+          en: "Late-September basin-wide rain - the sharpest late-80s surge",
+        },
+        impact: {
+          en: "Annual peak discharge ~5,642 cumecs; large evacuations from the floodplain and trans-Yamuna. With 1995 it defines the high-flow band the river revisited for three decades before 2023 broke the level record outright.",
+        },
+        source_url: "https://cwc.gov.in/sites/default/files/delhi-floods-2023-case-study.pdf",
+        source_label: "CWC case study (annual peak-discharge table)",
+      },
+      {
         year: 1978,
         trigger: {
           en: "Peak monsoon flows in the undammed upper Yamuna (pre-Tehri era)",
