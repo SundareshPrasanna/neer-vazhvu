@@ -142,16 +142,21 @@ function DataSourceGroupHeader({ title }: { title: string }) {
 function DataSource({ name, url, description, frequency }: DataSourceItem) {
   return (
     <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-      <div className="flex items-start justify-between gap-3">
+      {/* Stack on mobile: a shrink-0 badge with a long frequency string
+          ("static (Nov 2017 baseline; ...)") overflowed the viewport and
+          squeezed the title to one word per line at 390px (QA, Bengaluru). */}
+      <div className="flex flex-col gap-0.5 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
         <a
           href={url}
           target={url.startsWith("/") ? undefined : "_blank"}
           rel={url.startsWith("/") ? undefined : "noopener noreferrer"}
-          className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+          className="font-medium text-blue-600 dark:text-blue-400 hover:underline min-w-0 break-words"
         >
           {name}
         </a>
-        <span className="text-xs text-slate-400 dark:text-slate-500 font-mono shrink-0">{frequency}</span>
+        <span className="text-xs text-slate-400 dark:text-slate-500 font-mono whitespace-normal break-words sm:text-right sm:max-w-[45%] sm:shrink-0">
+          {frequency}
+        </span>
       </div>
       <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{description}</p>
     </div>
