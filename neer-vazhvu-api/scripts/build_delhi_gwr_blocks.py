@@ -3,7 +3,7 @@
 The WRIS ArcGIS polygon service is NICNET-gated, but everything needed is
 publicly downloadable:
   - Assessment VALUES: CGWB Dynamic GWR national compilations, Delhi cuts
-    hosted by OpenCity (2025 district-wise CSV + 2022 CSV for history).
+    hosted by OpenCity (2025/2024/2022 district-wise CSVs (annual assessment began 2022; 2023 has no non-NICNET Delhi cut; pre-2022 = tehsil units, not joinable)).
   - Assessment-unit POLYGONS: the 2025 assessment reports Delhi by
     DISTRICT; Delhi Districts Map KML hosted by OpenCity.
 
@@ -36,7 +36,13 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 
 CSV_2025 = "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/8e39cc66-06a4-417b-8a4f-dbd4a9495ed6/download"
+CSV_2024 = "https://data.opencity.in/dataset/0e2e0a1c-649c-4139-a6ed-a251f7ffca85/resource/2c3acb4f-807d-48a3-bc67-b0ecc516fd57/download"
 CSV_2022 = "https://data.opencity.in/dataset/80115826-a49b-45fc-8050-92b275e153aa/resource/feb08d82-1bed-4e20-9101-afe253154233/download"
+# 2023's national compilation exists but no Delhi district CSV is hosted on
+# a non-NICNET mirror (the report PDF sits on cgwa-noc.gov.in); pre-2022
+# editions assessed Delhi by TEHSIL (~34 units), which cannot honestly join
+# a district series - the 2020 tehsil categorisation is kept aside as input
+# for a future tehsil-level layer, not this one.
 KML_DISTRICTS = "https://data.opencity.in/dataset/2ae48270-ab28-4786-abf1-e36a00f0c761/resource/323dac5c-5783-4241-8e86-84e4a2b88b98/download/e55976b2-ff45-4133-827b-b993fde9e271.kml"
 
 
@@ -61,9 +67,29 @@ def norm(name: str) -> str:
     return {"shahadra": "shahdara"}.get(n, n)
 
 
-def parse_assessment(raw: bytes, year: int, fields: dict[str, str]) -> dict[str, dict]:
+def resolve_fields(hdr: list[str]) -> dict[str, str]:
+    """Column names drift slightly across editions - resolve by substring
+    against each file's own header."""
+    def col(*subs: str) -> str:
+        for sub in subs:
+            for h in hdr:
+                if sub in h.lower():
+                    return h
+        raise KeyError(subs)
+    return {
+        "name": col("name of district", "district", "assessment unit"),
+        "stage": col("stage"),
+        "avail": col("extractable"),
+        "draft": col("total annual extraction", "total extraction", "total draft"),
+    }
+
+
+def parse_assessment(raw: bytes, year: int, fields: dict[str, str] | None = None) -> dict[str, dict]:
+    text = raw.decode("utf-8-sig")
+    if fields is None:
+        fields = resolve_fields(next(csv.reader(io.StringIO(text))))
     out: dict[str, dict] = {}
-    for row in csv.DictReader(io.StringIO(raw.decode("utf-8-sig"))):
+    for row in csv.DictReader(io.StringIO(text)):
         name = (row.get(fields["name"]) or "").strip()
         if not name or name.lower().startswith("total"):
             continue
@@ -122,23 +148,10 @@ def parse_kml_districts(kml: str) -> list[dict]:
 
 
 def main() -> None:
-    a2025 = parse_assessment(
-        fetch(CSV_2025), 2025,
-        {"name": "Name of District", "stage": "Stage of GW extraction (%)",
-         "avail": "Annual Extractable Groundwater Resource", "draft": "Total Annual Extraction"},
-    )
-    raw22 = fetch(CSV_2022).decode("utf-8-sig")
-    hdr = next(csv.reader(io.StringIO(raw22)))
-    def col(sub: str) -> str:
-        for h in hdr:
-            if sub.lower() in h.lower():
-                return h
-        raise KeyError(sub)
-    a2022 = parse_assessment(
-        raw22.encode(), 2022,
-        {"name": hdr[1], "stage": col("stage"), "avail": col("extractable"), "draft": col("total") if "extraction" in col("total").lower() else col("total annual")},
-    )
-    print(f"2025 units: {len(a2025)} | 2022 units: {len(a2022)}")
+    a2025 = parse_assessment(fetch(CSV_2025), 2025)
+    a2024 = parse_assessment(fetch(CSV_2024), 2024)
+    a2022 = parse_assessment(fetch(CSV_2022), 2022)
+    print(f"units: 2025={len(a2025)} 2024={len(a2024)} 2022={len(a2022)}")
 
     districts = parse_kml_districts(fetch(KML_DISTRICTS).decode("utf-8", errors="ignore"))
     print(f"district polygons: {len(districts)}: {[d['name'] for d in districts]}")
@@ -189,12 +202,11 @@ def main() -> None:
     blocks = []
     for k, rec in sorted(a2025.items(), key=lambda kv: kv[1]["name"]):
         history = []
-        if k in a2022:
-            h = a2022[k]
-            history.append({"year": 2022, "class": h["class"], "development_pct": h["development_pct"],
-                            "availability_ham": h["availability_ham"], "draft_total_ham": h["draft_total_ham"]})
-        history.append({"year": 2025, "class": rec["class"], "development_pct": rec["development_pct"],
-                        "availability_ham": rec["availability_ham"], "draft_total_ham": rec["draft_total_ham"]})
+        for yr, series in ((2022, a2022), (2024, a2024), (2025, a2025)):
+            if k in series:
+                h = series[k]
+                history.append({"year": yr, "class": h["class"], "development_pct": h["development_pct"],
+                                "availability_ham": h["availability_ham"], "draft_total_ham": h["draft_total_ham"]})
         # ward-map.tsx consumes {blocks:[{name, history, latest}]} - latest
         # precomputed, class labels spaced ("Semi Critical").
         blocks.append({"name": rec["name"], "history": history,
@@ -204,7 +216,7 @@ def main() -> None:
         "source_url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
         "place_id": "delhi",
         "fetched_at": date.today().isoformat(),
-        "years": [2022, 2025],
+        "years": [2022, 2024, 2025],
         "note": "'Nazul Land' is a non-spatial assessment unit (government estate lands) - in this file but not on the map. Values in hectare-metres.",
         "blocks": blocks,
     }
