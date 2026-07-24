@@ -22,7 +22,7 @@
 import { writeFileSync } from "fs";
 import { join } from "path";
 
-const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
+const OVERPASS_URL = process.env.OVERPASS_URL ?? "https://overpass-api.de/api/interpreter";
 
 // Yamuna basin reach relevant to Delhi: Hathnikund (~30.35N 77.6E) south
 // through NCT to the Okhla exit, west to the Sahibi's Haryana reach, east
@@ -163,6 +163,11 @@ const RIVER_CONFIG: Record<
 function getRiverKey(name: string): string | null {
   const lower = name.toLowerCase();
   // Order matters: the canal names contain "yamuna".
+  // Eastern Yamuna Canal is a UP irrigation diversion running parallel
+  // east of the river (Saharanpur -> Baghpat) - OUT of Delhi's supply
+  // scope; matching it into the yamuna key renders a phantom second
+  // Yamuna on the map (QA finding).
+  if (lower.includes("eastern yamuna")) return null;
   if (lower.includes("western yamuna") || lower.includes("munak") || lower.includes("carrier lined"))
     return "wyc_munak";
   if (lower.includes("najafgarh")) return "najafgarh";

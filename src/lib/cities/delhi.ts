@@ -107,10 +107,12 @@ export const DELHI: CityConfig = {
   hasAllocationLedger: true,
   hasCommitments: true,
   groundwaterViews: {
-    // Honest-off until public/data/gwr-blocks-delhi.json + geojson land
-    // (CGWB block ArcGIS is NICNET-gated - India-IP runner task). Flag ON
-    // with no data renders an empty choropleth shell, which QA caught.
-    exploitation: false,
+    // District-level CGWB Dynamic GWR 2025 choropleth (11 districts +
+    // non-spatial Nazul Land), values + polygons both via OpenCity - no
+    // NICNET dependency (build_delhi_gwr_blocks.py). 2022 history included.
+    // 2025 Over-Exploited: New Delhi 123%, Shahdara 112%, North East 106%,
+    // South 103%; NCT overall 92.1%.
+    exploitation: true,
     depth: false,
     risk: false,
     cgwbStations: false,
