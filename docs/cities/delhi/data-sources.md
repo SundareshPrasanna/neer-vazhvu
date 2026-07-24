@@ -46,84 +46,17 @@ Supply model in one line: Delhi owns no impounded storage - ~90% of raw water ar
 
 **Source quirks (kept verbatim, handle in display code):** district values contain source typos ("SOUH EAST", "SOUH WEST"); `water_body_type` is a coded value (01, 02, ...) - the code table needs to be pulled from the census methodology PDF before the type renders as text.
 
-## MCD Ward Boundaries 2022 - BLOCKED (the one missing geometry)
-
-The 250-ward post-unification delimitation (SEC Delhi 2022; NOT the pre-merger 272/290) has exactly one known public digitization: OpenCity's "Delhi Wards Information" dataset (`delhi_wards.kml`, with ward number/name, AC mapping, and per-ward population attributes). That dataset was **delisted from OpenCity** sometime after mid-2025; the live files 404 and both Wayback captures of the KML are **truncated at exact MiB payload caps** (2024 capture: 1 MiB / 53 wards; 2025 capture: 5 MiB / 191 wards; union 191/250 - the partial stays out of the repo per the honest-data rule).
-
-Exhausted alternates (all checked 2026-07-20): Datameet (pre-2022 vintage, 290 features), ESRI India policymaps item (inaccessible), HT Labs shapefiles (2017), data.gov.in (none), Datawrapper basemaps (none), archive.today (none), OSM admin_level 9/10 (sectors/villages, no MCD wards), Bharatmaps public REST (districts only), MPD-2041 dataset (PDFs). MCD's citizens GIS portal renders wards via MapmyIndia's licensed API - deliberately not scraped (commercial ToS, murky provenance).
-
-**Resolution path:** restore request to OpenCity (draft prepared; owner sends), with SEC Delhi per-ward PDFs as the from-scratch fallback. The MCD zones layer (12 zones, same dataset) is parked with the same ask.
-
-## CAG Performance Audit of DJB (Report No. 3 of 2025)
+## MCD Ward Boundaries 2022 - RECOVERED (2026-07-24)
 
 | | |
 |---|---|
-| **Source** | CAG of India - press release (24 Mar 2026) + full report; tabled in the Delhi Legislature 23 Mar 2026; audit period FY2017-18 to 2021-22 |
-| **File** | `public/data/cag-djb-audit-2025.json` (chapter-organized findings, values + faithful stat sentences; extraction from the press release, full-report page anchors addable per fact) |
-| **Fetched** | 2026-07-20 (both PDFs verified live) |
-| **Headlines** | NRW 51-53% (Rs 4,988 cr revenue impact); Rs 66,595 cr outstanding loans + interest (Mar 2022); only 40% of produced water billed, 66% of that metered; zonal inequity <20 GPCD in 4 zones vs 60 required; ADB withdrew Rs 2,243 cr (Wazirabad WTP rehab); 594 MGD sewage generated / 545 treated / 35 STPs; 212.59 MGD from 1,080 unauthorised colonies untreated into storm drains |
+| **File** | `public/geojson/delhi-wards-2022.geojson` - all 250 post-unification wards, normalized props + AC mapping + delimitation population columns (sum 16.42M = Census-2011 MCD area) |
+| **Original publisher** | SEC Delhi, Delimitation Order 2022 |
+| **Digitization** | OpenCity, dataset "Delhi Wards Information" (delisted ~2025) |
+| **Recovery** | Owner's complete local copy of `delhi_wards.kml` (7,173,765 bytes, sha256 `528f90b258eb41546e485deee7b5f1371be6ef005128a73e08e395a98b84e08a`), verified **byte-identical to the Internet Archive's truncated capture of the OpenCity download URL over its full 5,242,880 bytes** - same origin file, integrity proven. Converted by `neer-vazhvu-api/scripts/convert_delhi_wards_kml.py`; one empty non-ward remainder record excluded |
+| **Validation** | 250/250 ward numbers join `delhi-ward-representatives.json` with zero name mismatches |
 
-## DUSIB JJ Bastis roster (675 clusters, 306,521 households)
-
-| | |
-|---|---|
-| **Source** | Delhi Urban Shelter Improvement Board - the 2019 "675 JJ Bastis" list (46 pp) joined on cluster code with the 2015 "675 JJ Clusters" list (adds land area sqm, parliamentary constituency, pre-2022 ward no, revenue district) |
-| **Script** | `neer-vazhvu-api/scripts/build_delhi_jj_bastis.py` (pdfplumber; downloads + parses + joins) |
-| **File** | `public/data/dusib-jj-bastis.json` - 675/675 parsed, 675 enriched |
-| **Fetched** | 2026-07-20 |
-| **Correction to the internal audit** | Neither public PDF carries lat/lon (the audit's "lat/lon per cluster" claim does not hold). Geocoding is a follow-up: ward-join once 2022 geometry lands, or Nominatim + manual QA. `ward_no_pre2022` must NOT be joined to 2022 wards without the SEC crosswalk. |
-
-## Allocation Ledger seed (`allocations-delhi.json`)
-
-Authored 2026-07-20 from the verification-refreshed audit: 5 arrangements (1994 MoU 0.724 BCM/yr; Munak carrier 1,050 cusecs fixed May 2018; Bhakra TC-minute shares; Tehri 300 cusecs via UGC; DJB's unregistered groundwater), 4 authorities, 5 events, the Renuka/Lakhwar/Kishau future with the CAG's own "remote" verdict, and 5 named receipt gaps. Delhi's signature asymmetry - crisp entitlements, unmetered receipts - is the ledger's framing. All instrument URLs verified live 2026-07-20 except news pages that bot-block (noted in-file).
-
-## Commitments Register seed (`commitments-delhi.json`)
-
-Authored 2026-07-20: 8 commitments with dated citations and status histories. Highlight: the 39-drain trapping target (30 Jun 2026) is already **overdue** - deadline passed with no known public completion word; first verification venue is the DPCC monthly covering July. Verification calendar documented in-file (DPCC ~25th monthly, Economic Survey Feb-Mar, Flood Control Order June, Chhath season Oct-Nov).
-
-## Facts page (`facts-delhi.json`, 35 facts)
-
-Authored 2026-07-20 (static pipeline, Madurai/Bangalore pattern). Tier-1 set: Anangpur dam, Najafgarh Jheel 97% loss, 22 km = ~80% Yamuna load, 75% STPs without disinfection, CAG NRW + debt, Economic Survey "mafia" line, 17x LPCD gap, structural supply deficit, Munak lifeline, 2023 flood record, HC Chhath denial. Every fact carries source_url + source_label; all refresh corrections applied (37 STPs, 226 sq km, AKTC "2007-2020 core phase"). The Sept 2025 Hathnikund peak is deliberately excluded pending the 3,29,313-vs-29,313 cusec discrepancy. Hindi renderings land with the translation pass.
-
-## Flagship + lost water-bodies registers
-
-`water-bodies-flagship-delhi.json` (12 bodies): the hauz-baoli chain (Hauz Khas, Hauz-i-Shamsi, Agrasen/Rajon/Nizamuddin baolis, Tughlaqabad cisterns, Satpula's surviving dam via lost-register cross-ref) + modern anchors (Sanjay, Bhalswa, Najafgarh remnant, YBP wetlands, Neela Hauz, Purana Qila moat). Confidence graded A/B/C; coordinates are monument positions (OSM/ASI), not survey boundaries.
-
-`water-bodies-lost-delhi.json` (7 entries, 3 fully lost / 4 severely reduced): Najafgarh Jheel as-a-lake, Nahar-i-Behisht city reach, Anang Tal, Hauz Rani, Satpula tank, Tughlaqabad southern reservoir, Yamuna floodplain ox-bows. Named follow-up: reconstruct the Najafgarh historic-extent polygon from the 1883 Gazetteer + DPGS EMP maps.
-
-## DPCC Monthly Yamuna + Drain Water Quality (THE Tier-1 feed)
-
-| | |
-|---|---|
-| **Source** | DPCC I/C Water Laboratory monthly analysis reports - 8 Yamuna stations (pH/BOD/COD/DO/faecal coliform/phosphate/ammonical-N, C-class criteria) + ~39 drain points in three series (direct outfalls incl. Najafgarh + Shahdara; Najafgarh subdrains + Jheel upstream/downstream; UP outfalls; Agra-canal drains) + **monthly per-STP compliance reports (~30 pp) that the May audit assumed were RTI-gated** |
-| **Domain migration** | `dpcc.delhigovt.nic.in` -> **`dpcc.delhi.gov.in`** (Drupal). The new domain is reachable from ordinary networks - the DPCC scraper does NOT need the India-IP runner path (constraint note corrected). |
-| **Format reality** | PDFs are IMAGE SCANS, zero text layer - the recurring parser needs OCR (tesseract on the runner is the wiring task). Seed data was transcribed visually from 200-dpi rasters. |
-| **Script** | `neer-vazhvu-api/scripts/fetch_dpcc_monthly_delhi.py` - scrapes both listing pages, classifies (river/drain/stp), archives new PDFs + index (default archive: `~/.local/neervazhvu-ops/dpcc-archive`). First run archived 10 PDFs: river Jan/Mar/Apr/May 2026, drain Mar/Apr/May, STP Mar/Apr/May. |
-| **File** | `public/data/dpcc-monthly-wq-delhi.json` - river series for Jan/Mar/Apr/May 2026 (Feb absent from DPCC's own listing - publication gap) + full May drain network |
-| **Headlines in the seed data** | May 2026: BOD 2.0 at Palla -> 60.0 at Asgarpur (30x across the city, vs 3.0 limit); DO NIL at 5-6 of 8 stations every month; exit faecal coliform 310,000-400,000 MPN/100ml = 124-160x max-permissible. **9 of 39 drain points read NO FLOW - drain-trapping's footprint in DPCC's own data, the verification signal for the overdue 39-drain commitment.** |
-
-## CETP monthly water-quality archive (62 PDF bundles, 2019-2024)
-
-| | |
-|---|---|
-| **Source** | DPCC per-CETP monthly analysis reports (inlet/outlet across 23 parameters incl. heavy metals, EPA standards, measured flow vs design capacity, OLMS status remark) |
-| **Host** | OpenCity datasets `delhi-cetp-monthly-water-quality-data-2019-2022` + `-2022-2024` (archival - the series ends Nov 2024) |
-| **File** | `public/data/delhi-cetp-monthly-index.json` - full 62-resource index + one transcribed schema sample (Wazirpur, Nov 2024: 5.32 MLD measured vs 24 MLD design; "OLMS was non functional" remark on the report itself) |
-| **Fetched** | 2026-07-20 (index + sample); PDFs are image scans - bulk extraction rides the same OCR batch as the DPCC river/drain/STP scans |
-
-## Rivers surface data (quality panel + events)
-
-- `river-quality-delhi.json` - DERIVED from the DPCC monthly file by `scripts/build-delhi-river-quality.ts` (re-run per new month). 8 stations, yearly rows = latest month of each year; DPCC's "NIL" DO rendered as 0. Delhi is the only city whose river panel runs on a monthly feed.
-- `river-events-delhi.json` - 10-event curated timeline (1994 MoU -> 2026 drain-deadline lapse), each with verified citation; contested Sept-2025 peak figure deliberately unstated.
-
-## Census join + ward representatives
-
-- Census points enriched by `neer-vazhvu-api/scripts/join_delhi_census_water_bodies.py`: 31 inside / 203 near / 659 unmatched of 893 (honest - johads/recharge pits OSM never mapped; stated in metadata). Type codes decoded (525 Pond / 349 Others / 14 Lake / 4 Tank / 1 WCS); 01-06 mapping INFERRED pending the enumeration-schedule PDF.
-- `delhi-ward-representatives.json` via `build_delhi_ward_reps.py` from the OpenCity MCD-2022 results CSV (TCPD schema): 250 councillors, seat totals validate against the known result (AAP 134 / BJP 104 / INC 9 / IND 3). Dec-2022 snapshot; MLA/MP join waits on ward geometry.
-
-## CGWB Delhi Year Book - located, deferred
-
-CGWB Pure hosts the Delhi Year Book series; the directly-locatable edition is **2017-18** (text-extractable, 71 pp) - too old to power a "current groundwater" surface honestly. Delhi runs 162 CGWB monitoring stations (25 dug wells + 137 piezometers). Newer editions (2022-23/2023-24) exist behind the repository's JS search - locate via the publications UI in a browser session, then the Madurai/Mumbai point-extraction pattern applies. The national "Groundwater Quality of Shallow Aquifers 2024" report (downloaded, 115 pp, text-extractable) is a bonus source for the salinity overlay.
+Still with OpenCity (restore ask trimmed accordingly): the MCD **zones** KML (11/12 Wayback salvage) and the DJB **water/sewer pipelines** KMLs.
 
 ## Registered but not yet acquired
 
