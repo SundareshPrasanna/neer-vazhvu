@@ -111,6 +111,11 @@ export type GWBlockClass = "Safe" | "Semi Critical" | "Critical" | "Over Exploit
 
 export interface GWBlockHistory {
   year: number;
+  /** Display label for the assessment cycle in the SOURCE's own vocabulary
+   *  (IN-GRES hydrological labels like "2023-24"). `year` stays the numeric
+   *  end-year for sorting; when year_label is present the UI renders it -
+   *  prevents the "which 2023?" confusion between portal and app. */
+  year_label?: string;
   class: GWBlockClass;
   development_pct: number;
   availability_ham: number | null;

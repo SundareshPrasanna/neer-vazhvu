@@ -148,10 +148,23 @@ def parse_kml_districts(kml: str) -> list[dict]:
 
 
 def main() -> None:
+    # 2022-23 (edition 2023) has no OpenCity mirror - it comes from the
+    # committed IN-GRES snapshot (public/data/ingres/delhi-2022-2023.json,
+    # scraped from the portal UI; see the pan-india source playbook).
+    ingres_snap = REPO / "public/data/ingres/delhi-2022-2023.json"
+    a2023: dict[str, dict] = {}
+    if ingres_snap.exists():
+        for name, v in json.loads(ingres_snap.read_text())["districts"].items():
+            stage = round(v["extraction_ham"] / v["avail_ham"] * 100, 2)
+            a2023[norm(name)] = {
+                "year": 2023, "name": name.title().replace("Nazul Land", "Nazul Land"),
+                "class": classify(stage), "development_pct": stage,
+                "availability_ham": round(v["avail_ham"], 2), "draft_total_ham": round(v["extraction_ham"], 2),
+            }
     a2025 = parse_assessment(fetch(CSV_2025), 2025)
     a2024 = parse_assessment(fetch(CSV_2024), 2024)
     a2022 = parse_assessment(fetch(CSV_2022), 2022)
-    print(f"units: 2025={len(a2025)} 2024={len(a2024)} 2022={len(a2022)}")
+    print(f"units: 2025={len(a2025)} 2024={len(a2024)} 2023={len(a2023)} 2022={len(a2022)}")
 
     districts = parse_kml_districts(fetch(KML_DISTRICTS).decode("utf-8", errors="ignore"))
     print(f"district polygons: {len(districts)}: {[d['name'] for d in districts]}")
@@ -202,10 +215,12 @@ def main() -> None:
     blocks = []
     for k, rec in sorted(a2025.items(), key=lambda kv: kv[1]["name"]):
         history = []
-        for yr, series in ((2022, a2022), (2024, a2024), (2025, a2025)):
+        # year = numeric END-year (sorting); year_label = the assessment
+        # cycle in IN-GRES's own vocabulary, which the UI displays.
+        for yr, label, series in ((2022, "2021-22", a2022), (2023, "2022-23", a2023), (2024, "2023-24", a2024), (2025, "2024-25", a2025)):
             if k in series:
                 h = series[k]
-                history.append({"year": yr, "class": h["class"], "development_pct": h["development_pct"],
+                history.append({"year": yr, "year_label": label, "class": h["class"], "development_pct": h["development_pct"],
                                 "availability_ham": h["availability_ham"], "draft_total_ham": h["draft_total_ham"]})
         # ward-map.tsx consumes {blocks:[{name, history, latest}]} - latest
         # precomputed, class labels spaced ("Semi Critical").
@@ -216,7 +231,7 @@ def main() -> None:
         "source_url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
         "place_id": "delhi",
         "fetched_at": date.today().isoformat(),
-        "years": [2022, 2024, 2025],
+        "years": [2022, 2023, 2024, 2025],
         "note": "'Nazul Land' is a non-spatial assessment unit (government estate lands) - in this file but not on the map. Values in hectare-metres.",
         "blocks": blocks,
     }
