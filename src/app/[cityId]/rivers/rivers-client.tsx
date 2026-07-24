@@ -100,7 +100,16 @@ interface CpcbReading {
   fecal_coliform_mpn: number | null;
 }
 
-type EventCategory = "court_order" | "dispute" | "threshold" | "news" | "restoration";
+type EventCategory =
+  | "court_order"
+  | "dispute"
+  | "threshold"
+  | "news"
+  | "restoration"
+  | "instrument"
+  | "flood"
+  | "audit"
+  | "milestone";
 
 interface RiverEvent {
   id: string;
@@ -228,7 +237,7 @@ export default function RiversClient({
         // atlas, and an auto-opened panel would compete with it.
         if (!basin) {
           const mainstem = out.find((r) =>
-            ["vaigai", "cooum", "adyar", "vrishabhavathi"].includes(r.river_id)
+            ["vaigai", "cooum", "adyar", "vrishabhavathi", "yamuna"].includes(r.river_id)
           );
           if (mainstem) setSelectedRiverId(mainstem.river_id);
           else if (out.length > 0) setSelectedRiverId(out[0].river_id);
@@ -336,6 +345,12 @@ export default function RiversClient({
   );
 
   const selectedInfo = selectedRiverId ? riverInfo[selectedRiverId] : null;
+  // The full quality panel only makes sense when the selected channel actually
+  // has an entry in the quality file - Delhi's DPCC feed covers the Yamuna but
+  // not the Munak carrier or the drains; without this guard those render an
+  // empty panel (QA: the "black strip", auto-selected sahibi on load).
+  const selectedHasQuality =
+    !!cpcb && !!selectedRiverId && cpcb.rivers.some((r) => r.id === selectedRiverId);
   const selectedRiver = useMemo(
     () => displayRivers.find((r) => r.river_id === selectedRiverId) ?? null,
     [displayRivers, selectedRiverId],
@@ -454,7 +469,7 @@ export default function RiversClient({
         {selectedRiverId && (
         <div className="hidden md:flex h-full md:w-96 lg:w-[420px] border-l border-slate-200 dark:border-slate-700 flex-col overflow-y-auto">
           {comingSoonNote}
-          {cpcb ? (
+          {selectedHasQuality && cpcb ? (
             <RiverPanel
               selected={{ riverId: selectedRiverId, latlng: mapCenter }}
               qualityData={cpcb}
@@ -475,7 +490,7 @@ export default function RiversClient({
       </div>
 
       {/* Mobile bottom panel - same modes as desktop sidebar */}
-      {selectedRiverId && cpcb && (
+      {selectedRiverId && selectedHasQuality && cpcb && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[40vh] overflow-y-auto">
           {comingSoonNote}
           <RiverPanel
@@ -490,7 +505,7 @@ export default function RiversClient({
           />
         </div>
       )}
-      {selectedRiverId && !cpcb && selectedInfo && (
+      {selectedRiverId && !selectedHasQuality && selectedInfo && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[40vh] overflow-y-auto">
           {comingSoonNote}
           <RiverInfoOnlyPanel info={selectedInfo} cityDisplayName={cityDisplayName} onClose={() => setSelectedRiverId(null)} />
@@ -547,7 +562,15 @@ const EVENT_TONE: Record<EventCategory, { bg: string; text: string; label: strin
   threshold:   { bg: "bg-orange-100 dark:bg-orange-900/40 border-orange-300 dark:border-orange-700", text: "text-orange-800 dark:text-orange-200", label: "Threshold" },
   news:        { bg: "bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600", text: "text-slate-700 dark:text-slate-300",   label: "News" },
   restoration: { bg: "bg-emerald-100 dark:bg-emerald-900/40 border-emerald-300 dark:border-emerald-700", text: "text-emerald-800 dark:text-emerald-200", label: "Restoration" },
+  // Delhi's Yamuna timeline categories (river-events-delhi.json).
+  instrument:  { bg: "bg-blue-100 dark:bg-blue-900/40 border-blue-300 dark:border-blue-700", text: "text-blue-800 dark:text-blue-200", label: "Instrument" },
+  flood:       { bg: "bg-cyan-100 dark:bg-cyan-900/40 border-cyan-300 dark:border-cyan-700", text: "text-cyan-800 dark:text-cyan-200", label: "Flood" },
+  audit:       { bg: "bg-violet-100 dark:bg-violet-900/40 border-violet-300 dark:border-violet-700", text: "text-violet-800 dark:text-violet-200", label: "Audit" },
+  milestone:   { bg: "bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600", text: "text-slate-700 dark:text-slate-300", label: "Milestone" },
 };
+
+/** Unknown categories must degrade to the news tone, never crash the panel. */
+const DEFAULT_TONE = EVENT_TONE.news;
 
 function RiverExtraSections({ events, industrial }: { events: RiverEvent[]; industrial: IndustrialSource[] }) {
   if (events.length === 0 && industrial.length === 0) return null;
@@ -561,7 +584,7 @@ function RiverExtraSections({ events, industrial }: { events: RiverEvent[]; indu
           {[...events]
             .sort((a, b) => (b.date > a.date ? 1 : -1))
             .map((e) => {
-              const tone = EVENT_TONE[e.category];
+              const tone = EVENT_TONE[e.category] ?? DEFAULT_TONE;
               return (
                 <div key={e.id} className={`border rounded-md p-2 ${tone.bg}`}>
                   <div className="flex items-baseline justify-between gap-2 flex-wrap">
