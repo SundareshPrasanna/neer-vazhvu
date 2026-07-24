@@ -34,6 +34,12 @@ const CITY_FOOTER_SOURCES: Record<
     { label: "MPCB", href: "https://mpcb.gov.in/" },
     { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
+  delhi: [
+    { label: "DJB", href: "https://delhijalboard.delhi.gov.in/" },
+    { label: "DPCC", href: "https://dpcc.delhi.gov.in/dpcc/analysis-reports" },
+    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
+    { label: "OpenCity", href: "https://data.opencity.in/" },
+  ],
 };
 
 export function Footer() {
