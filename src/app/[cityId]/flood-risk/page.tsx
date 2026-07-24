@@ -140,6 +140,12 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
   // (3,29,313 vs 29,313 cusecs across sources) is deliberately not stated.
   delhi: {
     scope_label: { en: "Yamuna basin scope" },
+    cross_links: {
+      home_desc: { en: "Supply chain, allocation ledger and the CAG scoreboard" },
+      rivers_label: { en: "Yamuna river system" },
+      rivers_desc: { en: "5 channels in scope - the river, the Munak carrier and the great drains" },
+      water_bodies_desc: { en: "893 census water bodies + the floodplain wetlands that buffer (or amplify) inundation" },
+    },
     headline: {
       en: "Delhi's flood risk is barrage-release-driven with a 36-72 hour fuse: water released at Hathnikund (Haryana) takes two to three days to reach the Old Railway Bridge gauge, where 204.50 m means warning, 205.33 m danger, and 206.00 m evacuation. Only ~7% of the floodplain length is embanked, and the 2018 Drainage Master Plan that was meant to fix internal drainage remains largely on paper.",
     },
@@ -148,17 +154,6 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
       en: "The first flood warning is issued when Hathnikund barrage discharge crosses ~1,00,000 cusecs (Flood Control Order 2026). The July 2023 record showed the thresholds can fail conservative: the river hit 208.66 m - 1.17 m above the 1978 record - at releases the CWC's own post-mortem called moderate, with the ITO barrage's jammed gates deepening the flooding in central Delhi.",
     },
     historical_events: [
-      {
-        year: 2023,
-        trigger: {
-          en: "Record 153 mm July rainfall + sustained Hathnikund releases; ITO barrage gates 1, 2 and 5 jammed shut",
-        },
-        impact: {
-          en: "Yamuna peaked at 208.66 m on 13 July - highest since records began in 1963, breaking 1978's 207.49 m. Ring Road, Civil Lines, ITO and Rajghat inundated; ~27,000 evacuated. CWC's case study is the official post-mortem.",
-        },
-        source_url: "https://cwc.gov.in/sites/default/files/delhi-floods-2023-case-study.pdf",
-        source_label: "CWC - Delhi Floods 2023 case study",
-      },
       {
         year: 2025,
         trigger: {
@@ -169,6 +164,17 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
         },
         source_url: "https://sandrp.in/2025/09/09/sept-2025-why-yamuna-repeated-july-2023-like-flood-spell-in-delhi/",
         source_label: "SANDRP - Sept 2025 repeat flood analysis",
+      },
+      {
+        year: 2023,
+        trigger: {
+          en: "Record 153 mm July rainfall + sustained Hathnikund releases; ITO barrage gates 1, 2 and 5 jammed shut",
+        },
+        impact: {
+          en: "Yamuna peaked at 208.66 m on 13 July - highest since records began in 1963, breaking 1978's 207.49 m. Ring Road, Civil Lines, ITO and Rajghat inundated; ~27,000 evacuated. CWC's case study is the official post-mortem.",
+        },
+        source_url: "https://cwc.gov.in/sites/default/files/delhi-floods-2023-case-study.pdf",
+        source_label: "CWC - Delhi Floods 2023 case study",
       },
       {
         year: 2013,

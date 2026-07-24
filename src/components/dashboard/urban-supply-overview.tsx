@@ -105,7 +105,7 @@ interface SupplyOverviewData {
     distribution_network_km?: number;
     population_served?: number;
 
-    connections: {
+    connections?: {
       total: number;
       domestic?: number;
       non_domestic?: number;
@@ -115,13 +115,16 @@ interface SupplyOverviewData {
     };
     _connections_note?: string;
   };
-  demand: {
+  /** Optional: cities without a published design-horizon demand projection
+   *  (Delhi - the CAG states current shortage, no 2034-style forecast)
+   *  omit the block and the demand-gap section is skipped. */
+  demand?: {
     population_2011?: number;
     population_2034_design?: number;
     population_design?: number;
     demand_2034_mld: number;
     demand_gap_2034_mld: number;
-    city_area_sqkm: number;
+    city_area_sqkm?: number;
   };
   reference_figures?: ReferenceFigure[];
 
@@ -156,16 +159,17 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
   const primaryWtp = data.primary_wtp ?? data.pannaipatty_wtp ?? null;
   const wtpsSummary = data.wtps_summary ?? null;
 
+  const demand = data.demand ?? null;
   const supplyGapPct =
-    data.demand.demand_2034_mld > 0
-      ? Math.round((data.demand.demand_gap_2034_mld / data.demand.demand_2034_mld) * 100)
+    demand && demand.demand_2034_mld > 0
+      ? Math.round((demand.demand_gap_2034_mld / demand.demand_2034_mld) * 100)
       : 0;
   const currentMetPctRaw =
-    data.demand.demand_2034_mld > 0
-      ? Math.round((data.current_supply_total_mld / data.demand.demand_2034_mld) * 100)
+    demand && demand.demand_2034_mld > 0
+      ? Math.round((data.current_supply_total_mld / demand.demand_2034_mld) * 100)
       : 0;
   const currentMetPct = Math.min(100, currentMetPctRaw);
-  const designPopulation = data.demand.population_2034_design ?? data.demand.population_design ?? 0;
+  const designPopulation = demand?.population_2034_design ?? demand?.population_design ?? 0;
 
   const overrideSubtitle = data._view_overrides?.subtitle;
   const overrideWtpLabel = data._view_overrides?.wtp_label;
@@ -355,7 +359,13 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
                 cities with the full domestic/commercial breakdown
                 (Madurai) get the rich version. */}
             <div className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              {data.distribution.connections.domestic != null && data.distribution.connections.commercial != null ? (
+              {data.distribution.connections == null ? (
+                <>
+                  {data.distribution.population_served
+                    ? `Serving ~${formatNumber(data.distribution.population_served)} residents.`
+                    : null}
+                </>
+              ) : data.distribution.connections.domestic != null && data.distribution.connections.commercial != null ? (
                 <>
                   {t("supply_overview.connections_line")
                     .replace("{total}", formatNumber(data.distribution.connections.total))
@@ -381,7 +391,9 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
           </div>
         </div>
 
-        {/* Demand vs supply gap */}
+        {/* Demand vs supply gap (skipped for cities without a published
+            design-horizon projection) */}
+        {demand && (
         <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
           <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
             {t("supply_overview.demand_label")}
@@ -389,12 +401,12 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
           <div className="flex items-baseline justify-between flex-wrap gap-2 mb-2">
             <span className="text-sm text-slate-600 dark:text-slate-400">
               {t("supply_overview.demand_2034")
-                .replace("{demand}", String(data.demand.demand_2034_mld))
+                .replace("{demand}", String(demand.demand_2034_mld))
                 .replace("{pop}", formatNumber(designPopulation))}
             </span>
             <span className="text-sm tabular-nums">
               <span className="text-slate-700 dark:text-slate-300 font-semibold">{data.current_supply_total_mld}</span>
-              <span className="text-slate-400 dark:text-slate-500"> / {data.demand.demand_2034_mld} MLD</span>
+              <span className="text-slate-400 dark:text-slate-500"> / {demand.demand_2034_mld} MLD</span>
               <span className="text-slate-400 dark:text-slate-500"> ({currentMetPctRaw}%)</span>
             </span>
           </div>
@@ -414,10 +426,11 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             {overrideDemandCaption
               ? overrideDemandCaption
               : t("supply_overview.demand_gap_caption")
-                  .replace("{gap}", String(data.demand.demand_gap_2034_mld))
+                  .replace("{gap}", String(demand.demand_gap_2034_mld))
                   .replace("{pct}", String(supplyGapPct))}
           </p>
         </div>
+        )}
 
         {/* Reference figures. Two render modes:
             - src present: link out + render a thumbnail (Chennai/Madurai)

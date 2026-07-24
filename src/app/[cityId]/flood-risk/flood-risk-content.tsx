@@ -43,6 +43,15 @@ export interface FloodConfig {
   historical_events: HistoricalEvent[];
   external_sources: ExternalSource[];
   data_gaps: BilingualText[];
+  /** Cross-link card copy overrides. The flood.cross_link_* i18n defaults
+   *  carry Madurai's specifics (Vaigai dam / Vaigai river system); a second
+   *  narrative city overrides them here instead of leaking them. */
+  cross_links?: {
+    home_desc?: BilingualText;
+    rivers_label?: BilingualText;
+    rivers_desc?: BilingualText;
+    water_bodies_desc?: BilingualText;
+  };
 }
 
 export function FloodRiskContent({
@@ -165,15 +174,23 @@ export function FloodRiskContent({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Link href={`/${cityId}`} className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 transition-colors">
           <div className="text-sm font-semibold">{cityDisplayName} {t("flood.cross_link_home")}</div>
-          <div className="text-xs text-slate-500 mt-1">{t("flood.cross_link_home_desc")}</div>
+          <div className="text-xs text-slate-500 mt-1">
+            {cfg.cross_links?.home_desc ? pick(cfg.cross_links.home_desc) : t("flood.cross_link_home_desc")}
+          </div>
         </Link>
         <Link href={`/${cityId}/rivers`} className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 transition-colors">
-          <div className="text-sm font-semibold">{t("flood.cross_link_rivers")}</div>
-          <div className="text-xs text-slate-500 mt-1">{t("flood.cross_link_rivers_desc")}</div>
+          <div className="text-sm font-semibold">
+            {cfg.cross_links?.rivers_label ? pick(cfg.cross_links.rivers_label) : t("flood.cross_link_rivers")}
+          </div>
+          <div className="text-xs text-slate-500 mt-1">
+            {cfg.cross_links?.rivers_desc ? pick(cfg.cross_links.rivers_desc) : t("flood.cross_link_rivers_desc")}
+          </div>
         </Link>
         <Link href={`/${cityId}/water-bodies`} className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 transition-colors">
           <div className="text-sm font-semibold">{t("flood.cross_link_water_bodies")}</div>
-          <div className="text-xs text-slate-500 mt-1">{t("flood.cross_link_water_bodies_desc")}</div>
+          <div className="text-xs text-slate-500 mt-1">
+            {cfg.cross_links?.water_bodies_desc ? pick(cfg.cross_links.water_bodies_desc) : t("flood.cross_link_water_bodies_desc")}
+          </div>
         </Link>
       </div>
     </div>

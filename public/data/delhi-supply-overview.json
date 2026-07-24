@@ -5,17 +5,20 @@
     {
       "source": "Yamuna (Wazirabad pond + Munak carrier feeding 7 of 9 WTPs)",
       "mld": 1769,
-      "_provenance": "DJB source-wise availability ~389 MGD (Economic Survey 2023-24 Ch. 13)"
+      "_provenance": "DJB source-wise availability ~389 MGD (Economic Survey 2023-24 Ch. 13)",
+      "annual_mcft": null
     },
     {
       "source": "Ganga (Tehri release via Upper Ganga Canal at Muradnagar - Sonia Vihar + Bhagirathi WTPs)",
       "mld": 1150,
-      "_provenance": "~253 MGD (Economic Survey 2023-24 Ch. 13)"
+      "_provenance": "~253 MGD (Economic Survey 2023-24 Ch. 13)",
+      "annual_mcft": null
     },
     {
       "source": "Bhakra storage (BBMB share via the Western Yamuna Canal)",
       "mld": 1005,
-      "_provenance": "~221 MGD (Economic Survey 2023-24 Ch. 13)"
+      "_provenance": "~221 MGD (Economic Survey 2023-24 Ch. 13)",
+      "annual_mcft": null
     }
   ],
   "groundwater": {
@@ -23,12 +26,33 @@
     "_provenance": "DJB tube-wells + Ranney wells ~135 MGD (Economic Survey Ch. 13). No comprehensive tube-well register exists - its absence is a CAG finding; no defensible citywide estimate of private extraction is published, so no estimate_mld is stated."
   },
   "wtps_summary": {
+    "fresh_water_wtps_count": 9,
+    "fresh_water_capacity_mld": 4365,
     "total_installed_capacity_mld": 4365,
-    "_provenance": "9 WTPs (Wazirabad, Chandrawal, Haiderpur, Bhagirathi, Sonia Vihar, Nangloi, Okhla, Dwarka, Bawana) producing ~960 MGD against ~1,290+ MGD assessed requirement (CAG: potable shortage 25.79% in 2021-22)"
+    "average_supply_mld": 4365,
+    "_provenance": "9 WTPs (Wazirabad, Chandrawal, Haiderpur, Bhagirathi, Sonia Vihar, Nangloi, Okhla, Dwarka, Bawana) producing ~960 MGD against ~1,290+ MGD assessed requirement (CAG: potable shortage 25.79% in 2021-22)",
+    "_note": "Capacity and average shown at the CAG-audited ~960 MGD production level; DJB's claimed source-wise availability (~998 MGD) is higher - the gap is a finding, see _note at file top."
   },
   "distribution": {
     "population_served": 21000000,
     "_provenance": "NCT projected population ~2.1 crore (Economic Survey projections); DJB is the retail utility for all of it except the NDMC enclave (~3%) and Cantonment"
+  },
+  "demand": {
+    "population_2011": 16787941,
+    "population_design": 29200000,
+    "_population_design_note": "Draft MPD-2041 projection for 2041 (~2.92 crore; PRS Legislative Research summary of the Master Plan for Delhi 2041).",
+    "demand_2034_mld": 6614,
+    "_demand_2034_note": "Field name kept for the shared component; the figure is the MPD-2041 DESIGN-HORIZON target - 1,455 MGD for 2041 at the plan's reduced 50 GPCD norm (down from MPD-2021's 60 GPCD; Down to Earth on the draft MPD-2041). 1,455 MGD = ~6,614 MLD.",
+    "demand_gap_2034_mld": 2249,
+    "_demand_gap_note": "Gap vs today's ~4,365 MLD (960 MGD) production - i.e. the 2041 target assuming no augmentation, which the CAG's own verdict on Renuka/Lakhwar/Kishau calls 'remote'.",
+    "city_area_sqkm": 1483,
+    "_sources": [
+      "https://www.downtoearth.org.in/water/securing-water-for-delhi-looking-beyond-the-numbers-game-96033",
+      "https://prsindia.org/files/parliamentry-announcement/2021-07-23/Master%20Plan%20for%20Delhi%202041.pdf"
+    ]
+  },
+  "_view_overrides": {
+    "demand_caption": "MPD-2041 sets the 2041 target at 1,455 MGD - and that is with the norm CUT from 60 to 50 gallons per head. Against today's ~960 MGD production the plan-horizon gap is ~2,250 MLD, with the CAG calling augmentation prospects 'remote'."
   },
   "allocation_context": {
     "transmission_distance_km": 240,
@@ -46,5 +70,44 @@
     "pop_label": "People on DJB supply",
     "pop_sub": "all of NCT except the NDMC enclave (~3%) and Cantonment",
     "footer": "Sources: CAG Performance Audit of DJB (Report No. 3 of 2025, tabled 23 Mar 2026); Delhi Economic Survey 2023-24 Ch. 13; DJB water page. Source-wise splits are DJB's published availability; production is the CAG-audited figure. See the Allocation Ledger for the per-instrument entitled-vs-received view."
-  }
+  },
+  "supply_chain": [
+    "Yamuna at Wazirabad + Munak carrier (102 km, Haryana)",
+    "Upper Ganga Canal at Muradnagar (Tehri leg)",
+    "Bhakra storage via the Western Yamuna Canal (~240 km)",
+    "9 DJB WTPs (~960 MGD produced)",
+    "DJB distribution - NRW 51-53% (CAG)"
+  ],
+  "_sources": [
+    {
+      "name": "CAG Report No. 3 of 2025 (DJB performance audit)",
+      "url": "https://cag.gov.in/uploads/PressRelease/PR-Press-Release-on-Report-No-3-of-2025-069c383c1c5b4d3-75064279.pdf",
+      "date": "2026-03-24",
+      "extracted": "2026-07-20"
+    },
+    {
+      "name": "Delhi Economic Survey 2023-24, Ch. 13",
+      "url": "https://delhiplanning.delhi.gov.in/sites/default/files/Planning/chapter_13.pdf",
+      "date": "2024",
+      "extracted": "2026-07-20"
+    },
+    {
+      "name": "DJB water page (WTPs and sources)",
+      "url": "https://delhijalboard.delhi.gov.in/jalboard/water",
+      "date": "2026",
+      "extracted": "2026-07-20"
+    },
+    {
+      "name": "Draft MPD-2041 water target (via Down to Earth)",
+      "url": "https://www.downtoearth.org.in/water/securing-water-for-delhi-looking-beyond-the-numbers-game-96033",
+      "date": "2021",
+      "extracted": "2026-07-24"
+    },
+    {
+      "name": "PRS summary, Master Plan for Delhi 2041",
+      "url": "https://prsindia.org/files/parliamentry-announcement/2021-07-23/Master%20Plan%20for%20Delhi%202041.pdf",
+      "date": "2021",
+      "extracted": "2026-07-24"
+    }
+  ]
 }

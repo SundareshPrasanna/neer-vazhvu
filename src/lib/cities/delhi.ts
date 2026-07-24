@@ -107,9 +107,10 @@ export const DELHI: CityConfig = {
   hasAllocationLedger: true,
   hasCommitments: true,
   groundwaterViews: {
-    // On once public/data/gwr-blocks-delhi.json + geojson land (P1 - CGWB
-    // block ArcGIS is NICNET-gated, so this runs via the India-IP path).
-    exploitation: true,
+    // Honest-off until public/data/gwr-blocks-delhi.json + geojson land
+    // (CGWB block ArcGIS is NICNET-gated - India-IP runner task). Flag ON
+    // with no data renders an empty choropleth shell, which QA caught.
+    exploitation: false,
     depth: false,
     risk: false,
     cgwbStations: false,
