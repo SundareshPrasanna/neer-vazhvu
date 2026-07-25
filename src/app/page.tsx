@@ -40,10 +40,13 @@ const CITY_HOOKS: Record<string, string> = {
     "Vaigai-basin reservoir runway, groundwater, water bodies, and flood context for the temple city.",
   bangalore:
     "Cauvery pumped 100 km uphill, ward groundwater stress, the tanker market, and lake restoration.",
+  // Status belongs to the badge, not the tagline: Mumbai's hook still said
+  // "Onboarding." after it went live, so the card carried a green Live badge
+  // and the word Onboarding at the same time.
   mumbai:
-    "Seven BMC lakes, the Mithi river, and the parallel water systems behind the city's taps. Onboarding.",
+    "Seven BMC lakes, the Mithi river, and the parallel water systems behind the city's taps.",
   delhi:
-    "The Yamuna, the Delhi Jal Board supply network, and one of India's sharpest water-access gaps.",
+    "The Yamuna, 237 groundwater wells, 250 MCD wards, and the five-state paper trail behind the city's taps.",
   kolkata:
     "The Hooghly, groundwater arsenic, and a delta city's drainage and flooding.",
 };
@@ -67,10 +70,9 @@ const STATUS_ORDER: Record<CityStatus, number> = { live: 0, onboarding: 1, upnex
  * registered place with `enabled === false` is ONBOARDING (route 404s, so
  * its card is not a link).
  *
- * Mumbai is publicly known to be onboarding but is not yet in the registry,
- * so it is appended as a static onboarding entry. Once it lands in the
- * registry (enabled: false), the dedupe below drops the static fallback and
- * the registry becomes the single source of truth.
+ * Mumbai and Delhi have both since landed in the registry, so the dedupe
+ * below already drops their static fallbacks and the registry is the single
+ * source of truth for them. Only genuinely unregistered cities remain below.
  */
 function buildCityBoard(): BoardCity[] {
   const fromRegistry: BoardCity[] = listAllPlaces().map((config): BoardCity => ({
@@ -88,8 +90,6 @@ function buildCityBoard(): BoardCity[] {
   // their published authority + state and no link (their routes 404 in
   // prod). "onboarding" = actively being wired up; "upnext" = next in line.
   const staticCities: BoardCity[] = [
-    { cityId: "mumbai", displayName: "Mumbai", authorityAcronym: "BMC", stateCode: "MH", hook: CITY_HOOKS.mumbai, status: "onboarding" },
-    { cityId: "delhi", displayName: "Delhi", authorityAcronym: "DJB", stateCode: "DL", hook: CITY_HOOKS.delhi, status: "upnext" },
     { cityId: "kolkata", displayName: "Kolkata", authorityAcronym: "KMC", stateCode: "WB", hook: CITY_HOOKS.kolkata, status: "upnext" },
   ];
   const STATIC = staticCities.filter((c) => !registeredIds.has(c.cityId));

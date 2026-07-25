@@ -267,5 +267,5 @@ export const DELHI: CityConfig = {
   // [cityId]/layout.tsx and promotes Delhi from "onboarding" to "live" on the
   // landing status board. The backend's list_enabled_places() reads the
   // `cities` table separately - see supabase/migrations/033_delhi_enable.sql.
-  enabled: false,
+  enabled: true,
 };
