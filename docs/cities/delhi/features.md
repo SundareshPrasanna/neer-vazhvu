@@ -29,7 +29,10 @@ Delhi's live layer is therefore **rainfall** (IMD 0.25° gridded history since 1
 - **Four assessment cycles** (2021-22 → 2024-25) with `year_label` carrying the source's own hydrological labels - added because the portal labels editions by span ("2023-2024") while mirrors label them by end year ("2024"), a mismatch that cost real confusion.
 - **`history_caveat` per block** (new field): the shared default explains Bengaluru's compound-block splits, which is not why Delhi's series is short. Delhi states the real reason - annual assessment began only in 2021-22, and pre-2022 editions used ~34 *tehsils* rather than 12 districts, so they cannot be stitched on.
 - The 2022-23 cycle has no mirrored dataset anywhere and was taken from **IN-GRES** directly (`public/data/ingres/delhi-2022-2023.json`). IN-GRES is IIT-Hyderabad hosted and therefore outside the NICNET blockade - see [the pan-India source playbook](../../methodology/pan-india-source-playbook.md).
-- Per-ward depth and ward risk are deliberately **off**: the live WRIS network is India-IP gated, and per-ward precision will not be manufactured from unverified station density.
+- **237 CGWB observation wells as a point overlay**, 2015-2025, from the India-WRIS Ground Water Level API. This corrected a wrong assumption rather than filling a genuine absence: WRIS's `Dataset/*` endpoints are open from any IP (only the ArcGIS tile host is gated), and the endpoint merely *looked* dead because a blank `districtName`/`agencyName` returns zero rows instead of all rows. Delhi is the first city here whose station series comes from an API rather than transcribed Year-Book PDFs, which is why the shared station panel gained per-file `series_label`, `unit_label` and `cadence_note` instead of being forked.
+- Depths validated against known hydrogeology before publication: ridge wells (Gadaipur 68.3 m, Sultanpur 68.6 m) against floodplain wells (Jagatpur 2.0 m, Coronation Pillar 1.9 m) independently reproduce the over-exploited districts. Two sensors are excluded as faulty, and the sign convention is derived per station - see [data-sources.md](data-sources.md).
+- **Interpolated per-ward depth stays off on purpose.** 237 wells is enough to place points honestly but not to paint a continuous surface: the ridge falls from ~2 m to ~68 m within a few kilometres, so IDW between a floodplain well and a ridge well would invent intermediate values no instrument saw.
+- Telemetry across the network **stops 2025-09-20**, the same month BBMB's reservoir page froze. Historical series, not an ingestion source.
 
 ### Rivers (Yamuna-basin scope)
 
@@ -44,6 +47,7 @@ Delhi has **no public flood model** - no CFLOWS/iFLOWS equivalent - so the model
 - Seven events, 1978-2025, each sourced individually. Levels are cited where the record carries levels (2023's record 208.66 m; 1978's 207.49 m benchmark); the CWC case study's historical table carries **discharges, not levels**, so 1988/1995/2010 are stated as peak discharges - 1995 was the largest flow between 1978 and 2023.
 - **Chronic-waterlogging register** in place of hotspot polygons: the named perennial sites (Minto Bridge, Pul Prahladpur, Zakhira, Dhaula Kuan, Moolchand, ...) with the official count hierarchy alongside (448 traffic-police-mapped points, 169 identified locations, 71 nodal-officer sites) - counts that reporting cites but no agency publishes as data.
 - This shape required a new `WardFloodSection` variant (`chronic_hotspots`), since the shared ward card assumed modelled hazard categories and crashed on anything else.
+- **Terrain bands** (FABDEM, 6 bands from 192 m to 330 m) now back the flood and water-bodies maps, as they do for the other four cities. They are deliberately *not* aligned to the gauge ladder: FABDEM reads 212.15 m at the Old Railway Bridge against a 205.33 m danger level, so the two datums differ by about 7 m and must not be overlaid.
 
 ### Water bodies
 
@@ -56,7 +60,10 @@ Delhi has **no public flood model** - no CFLOWS/iFLOWS equivalent - so the model
 - **250 MCD wards** of the post-2022 unified delimitation (not the pre-merger 272 or the commonly-cited 270). The geometry is the only public digitization of that delimitation; its OpenCity dataset was delisted, and the copy in this repo was byte-verified against the Internet Archive's capture before use.
 - Joins water bodies + census records, lost bodies, chronic flood hotspots, mapped drain length, nearest DPCC station, delimitation population, and **councillor with party and seat reservation** from the Dec 2022 election (party split validates: AAP 134 / BJP 104 / INC 9 / IND 3).
 - MLA/MP are **not** shown - the ward→assembly-constituency mapping exists in the geometry but the result sets are not ingested, and this made MLA/MP optional end-to-end in the shared hook, component, header and CSV export.
-- Sewerage marked unavailable (DJB's network dataset was delisted, no copy survives). DUSIB's 675 JJ-basti roster (306,521 households) is in the repo but not ward-attributed: the public PDFs carry no coordinates and use pre-2022 ward numbers.
+- **JJ bastis are now ward-attributed**: DUSIB publishes coordinates in a *second* PDF linked from the same page as the household roster, so all 675 clusters are geocoded and **642 fall inside MCD wards, carrying 252,833 households across 142 wards**. The 33 that do not place are a correctness signal - 21 sit in NDMC and 11 in Delhi Cantonment, neither of which is part of the 250-ward delimitation.
+- Every ward now carries a **groundwater assessment** (district class and extraction stage, plus the nearest CGWB well where one is within 5 km), which the shared ward card already knew how to render. Ward counts by district class: 65 Over-Exploited, 56 Critical, 98 Semi-Critical, 31 Safe.
+- **`risk_v2_dl` ward ranking** (`scripts/compute-delhi-ward-risk.py`): measured well depth 0.35, district extraction stage 0.20, JJ-basti household share 0.25, chronic flood spots 0.10, water-body density 0.10 (inverted). Delhi is the first city where both the groundwater and the equity halves are *measured* rather than proxied - Bengaluru's `gw_depth_m` is null, and Mumbai has no CGWB assessment at all. Wards with no well in range keep a null depth and are scored on the remaining factors renormalised, never on an imputed value.
+- Sewerage remains unavailable (DJB's network dataset was delisted, no copy survives).
 
 ### Accountability surfaces
 
@@ -66,6 +73,10 @@ Delhi has **no public flood model** - no CFLOWS/iFLOWS equivalent - so the model
 ### Origins
 
 Four-chapter long-read with four Wikimedia Commons images (PD/CC, per-file provenance in `public/images/story/delhi/MANIFEST.json`): the thousand-year stored-water city (Anangpur → Hauz-i-Shamsi → Nahar-i-Behisht), the colonial unmaking, the five-state straw, and the instrumented decline. English at launch; Hindi follows the i18n pass.
+
+### Known gap: industrial attribution
+
+Delhi can name its pollution problem but cannot yet attribute it. DPCC's only public consent register is `consentapplicationstatus1991-july_2002.pdf`, stale by 24 years, so there is no current per-unit industrial denominator of the kind KSPCB's F-register provides for Bengaluru. `industrial` therefore stays `not_available` across all 250 wards rather than being filled with a weaker proxy. This is the main thing standing between the DPCC drain readings and naming who discharges into which drain, and it is what makes the 39-drain trapping commitment hard to verify beyond "the drain still flows".
 
 ### Deliberately not shipped for Delhi V1
 

@@ -58,6 +58,51 @@ Supply model in one line: Delhi owns no impounded storage - ~90% of raw water ar
 
 Still with OpenCity (restore ask trimmed accordingly): the MCD **zones** KML (11/12 Wayback salvage) and the DJB **water/sewer pipelines** KMLs.
 
+## CGWB groundwater observation wells (237 stations) - ACQUIRED 2026-07-25
+
+| | |
+|---|---|
+| **Source** | Central Ground Water Board observation-well network (telemetric DWLRs + manual wells) |
+| **Access** | India-WRIS "Ground Water Level" dataset API, `POST https://indiawris.gov.in/Dataset/Ground%20Water%20Level` - **open from any IP**; only `arc.indiawris.gov.in` (ArcGIS tiles) is India-IP gated. The general reusable recipe is in [the pan-India source playbook](../../methodology/pan-india-source-playbook.md) |
+| **Script** | `neer-vazhvu-api/scripts/build_delhi_cgwb_stations.py` (caches raw rows in `.cache/`; `--refresh` re-downloads) |
+| **File** | `public/data/delhi-cgwb-stations.json` |
+| **Coverage** | 237 stations across all 11 districts, 278,830 raw readings for 2015-2025, published as monthly means. Later years 6-hourly telemetric; earlier years periodic manual |
+| **Why it matters** | Delhi's CGWB assessment resolves only to **11 districts**. These resolve to **points**, which is what made the per-ward groundwater card and `risk_v2_dl` possible |
+
+**Handling notes (do not skip if re-running):**
+
+- **Sign convention is per-station, not global.** `dataValue` sign depends on the installing programme: numeric NHN codes and `AAXI*` are positive-down, `CGWBDL*` is negative-down. The build derives the convention per station from the median of its own readings and asserts family agreement (151/39/46, zero disagreement). A blanket `abs()` would erase real water-above-datum readings in floodplain wells and hide sign-faulty sensors.
+- **Two sensors excluded**, not averaged in: `CGWBDL32` (perfectly symmetric ±26.10 m) and `CGWBDL46` (660-890 m, in a city whose deepest true well is ~68 m). Readings outside -5..100 m bgl are dropped and counted in `_excluded`.
+- **Not a live feed.** Telemetry stops **2025-09-20** across the whole network, the same month BBMB's reservoir page froze (04.09.2025).
+- Validated against known hydrogeology: ridge wells (Gadaipur 68.3 m, Sultanpur 68.6 m) vs floodplain wells (Jagatpur 2.0 m, Coronation Pillar 1.9 m) reproduce the published over-exploited districts independently.
+
+## DUSIB JJ bastis - geocoded (675 clusters) - ACQUIRED 2026-07-25
+
+| | |
+|---|---|
+| **Source** | Delhi Urban Shelter Improvement Board, "List of 675 J.J. Bastis with Latitude and Longitude", upload date 16-09-2022, linked from [the Board's JJ Bastis page](https://delhishelterboard.in/main/?page_id=3644) |
+| **File (PDF)** | `JJC_List_675_Geo_Coordinates.pdf`, sha256 `f9dc3767bf904addf1a2ade3de18b90189159bfda24724d0dd80d0c4ccaf38e8` (pinned; the build aborts on mismatch) |
+| **Script** | `neer-vazhvu-api/scripts/build_delhi_jj_bastis_geo.py` |
+| **File** | `public/data/delhi-jj-bastis-geo.json` |
+| **Coverage** | **675/675** clusters with coordinates, zero duplicates, all inside the NCT bounding box |
+
+**Join + jurisdiction notes:**
+
+- The coordinate PDF and the household roster (`dusib-jj-bastis.json`) use **different serial numbering** (geo #1 = F-Block Mangolpuri, roster #1 = LNJP Hospital Ranjeet Road), so households are joined on normalised location text. Every row records `match_method`: 594 exact, 2 fuzzy (difflib >= 0.90, score stored), 79 unmatched. Unmatched rows keep their coordinates and carry **no** household count rather than an inferred one. Household coverage **263,394 of 306,521 (85.9%)**.
+- Long names wrap across up to three lines with coordinates on continuation lines, so records are parsed as blocks anchored on a strictly sequential serial. A naive per-line parse silently lost 137 of 675.
+- **33 clusters fall outside every MCD ward, correctly**: 21 in NDMC (Lutyens - Race Course, Raisina, Talkatora, Pandara Road), 11 in Delhi Cantonment, 1 at the far eastern edge. Neither NDMC nor the Cantonment is part of the 250-ward MCD delimitation. They are reported as out-of-jurisdiction, not dropped.
+
+## Elevation bands (FABDEM) - BUILT 2026-07-25
+
+| | |
+|---|---|
+| **Source** | FABDEM V1-2 via Google Earth Engine (30 m DEM, buildings and forests removed) |
+| **Script** | `neer-vazhvu-api/scripts/build_elevation_bands.py --city delhi` |
+| **File** | `public/data/elevation-bands-delhi.geojson` (6 bands, 2.1 MB) |
+| **Bands** | 192-205, 205-210, 210-214, 214-218, 218-224, 224-330 m, chosen from FABDEM percentiles over the NCT (p5=203.5, p50=214.5, p80=221.4, p100=326.3) - Delhi is a very flat plain with one hard Ridge edge |
+
+**Datum warning:** these are **terrain** bands, not flood-stage bands. Delhi's flood ladder (204.50 m warning / 205.33 m danger / 206.00 m evacuation at the Old Railway Bridge) sits on the gauge's own datum - FABDEM reads **212.15 m** at that bridge, about 7 m off. The two must not be overlaid as if they shared a datum.
+
 ## Registered but not yet acquired
 
 The audit's full per-page source map (DPCC monthly Yamuna feed, CAG audit PDF, DUSIB 675 JJ bastis, CGWB blocks, CETP monthly WQ PDFs, BBMB/Tehri feeds, drainage master plan, heritage baolis) is research-complete and URL-verified as of 2026-07-20 but not yet ingested. Each source graduates into this file when its data actually lands in the repo.

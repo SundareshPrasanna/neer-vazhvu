@@ -113,12 +113,29 @@ export function DelhiPageDescriptions({ cityId, cityName }: Props) {
           taken from IN-GRES directly.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
-          Per-ward depth interpolation and the ward risk composite are deliberately <em>off</em>.
-          Delhi&apos;s live monitoring network reaches us only through India-WRIS, which refuses
-          connections from outside India, and we will not manufacture per-ward precision from a
-          station density we have not verified. The CGWB Year Book point network (162 stations)
-          is a fast-follow: the edition we can currently download is 2017-18, too old to present
-          as current.
+          Underneath the district choropleth sit <strong>237 CGWB observation wells</strong>,
+          each with a monthly depth-to-water series from 2015 to 2025. We had previously recorded
+          that this network was unreachable because India-WRIS refuses connections from outside
+          India. That was wrong, and worth stating plainly: only the map-tile host is
+          geo-restricted, while the data endpoint is open. It merely behaved as though Delhi had
+          no data, because a query that omits a district returns an empty result rather than
+          every district.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          The readings needed care before publication. The sign of a reading depends on which
+          programme installed the well, so depth is resolved per station rather than by taking
+          absolute values, which would have quietly turned two faulty sensors into plausible
+          readings and erased the genuine cases where water sits above the sensor in floodplain
+          wells. The result matches Delhi&apos;s known hydrogeology: about 2 m under Jagatpur on
+          the Yamuna floodplain against about 68 m under Gadaipur on the ridge.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          Per-ward depth <em>interpolation</em> remains deliberately <em>off</em>. A shaded
+          surface between a floodplain well and a ridge well would invent intermediate depths no
+          instrument ever recorded. Points are shown where they were measured, and the ward
+          ranking uses the wells that are actually near a ward. Note also that the network stops
+          reporting on 20 September 2025, the same month the Bhakra Beas Management Board&apos;s
+          reservoir page froze.
         </p>
       </SubSection>
 
@@ -205,9 +222,16 @@ export function DelhiPageDescriptions({ cityId, cityName }: Props) {
           exists in the ward geometry, but we have not ingested the assembly and parliamentary
           result sets, and a half-filled card is worse than an honest one. Sewerage is marked
           unavailable - DJB&apos;s network dataset was delisted from its host and no copy survives.
-          DUSIB&apos;s 675 JJ-basti roster (306,521 households) is in the repository but not
-          ward-attributed: the public PDFs carry no coordinates and use pre-2022 ward numbers, which
-          cannot be joined to today&apos;s wards without the delimitation crosswalk.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          Each ward also carries its <strong>JJ bastis</strong>. DUSIB publishes the household
+          roster and the coordinates as two separate PDFs, linked from the same page and numbered
+          differently, so the two are joined on location name rather than serial: 642 of the 675
+          clusters fall inside an MCD ward, carrying 252,833 households across 142 wards. Where a
+          cluster&apos;s name could not be matched to the roster with confidence, it keeps its
+          location but carries no household count, so a ward&apos;s total is a floor and is
+          labelled as one. The 33 clusters that sit in no ward are not an error: 21 are in the
+          NDMC area and 11 in Delhi Cantonment, neither of which is part of the MCD.
         </p>
       </SubSection>
 
