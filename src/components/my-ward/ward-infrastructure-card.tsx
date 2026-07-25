@@ -141,7 +141,9 @@ export function WardInfrastructureCard({ wardNumber, profile }: Props) {
         {/* Source & notes */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 space-y-0.5 border-t border-slate-100 dark:border-slate-800 pt-2">
           {!isSectionUnavailable(sewer) && sewer.stp_count > 0 && <p>{t("my_ward.infra_stp_note")}</p>}
-          <p>{t(cityId === "bangalore" || cityId === "mumbai" ? `my_ward.infra_source_${cityId}` : "my_ward.infra_source")}</p>
+          {/* Per-city infra provenance; the unsuffixed default is Chennai's
+              (GCC SWD + CMWSSB) and must never render for another city. */}
+          <p>{t(["bangalore", "mumbai", "delhi"].includes(cityId) ? `my_ward.infra_source_${cityId}` : "my_ward.infra_source")}</p>
         </div>
       </CardContent>
     </Card>

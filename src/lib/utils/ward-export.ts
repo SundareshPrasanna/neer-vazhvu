@@ -9,8 +9,13 @@ interface GroundwaterData {
 
 interface RepresentativeData {
   councillor: { name: string; party: string; phone?: string };
-  mla: { name: string; party: string; constituency: string };
-  mp: { name: string; party: string; constituency: string };
+  /** Optional: cities may publish councillors only (Delhi at launch). */
+  mla?: { name: string; party: string; constituency: string };
+  mp?: { name: string; party: string; constituency: string };
+  /** Per-city source labels for the CSV's Source column. Without these the
+   *  export used to stamp Chennai's elections ("GCC 2022", "TN Assembly
+   *  2021", "Lok Sabha 2019") onto every city's download. */
+  sourceLabels?: { councillor?: string; mla?: string; mp?: string };
 }
 
 export function escapeCSV(value: string | number | null | undefined): string {
@@ -63,8 +68,24 @@ export function generateWardCSV(
     }
   }
 
-  // Flood risk - skip when ward profile has no flood data layer for this city
-  if (!("_data_status" in profile.flood)) {
+  // Flood risk - the modelled-hazard export applies only to cities with the
+  // CFLOWS-style layer; chronic-hotspot cities (Delhi) export below instead.
+  if ("chronic_hotspots" in profile.flood) {
+    lines.push(
+      row(
+        "Flood Risk",
+        "Chronic waterlogging hotspots",
+        profile.flood.chronic_hotspots,
+        "sites",
+        "PWD / Traffic Police monsoon reporting",
+      ),
+    );
+    if (profile.flood.hotspot_names.length) {
+      lines.push(
+        row("Flood Risk", "Hotspot names", profile.flood.hotspot_names.join("; "), "", "PWD / Traffic Police monsoon reporting"),
+      );
+    }
+  } else if ("by_category" in profile.flood) {
     if (profile.flood.dominant_hazard) {
       lines.push(row("Flood Risk", "Dominant hazard", profile.flood.dominant_hazard, "", "CFLOWS / OpenCity"));
     }
@@ -105,12 +126,17 @@ export function generateWardCSV(
 
   // Representatives
   if (representatives) {
-    lines.push(row("Representatives", "Councillor", representatives.councillor.name, representatives.councillor.party, "GCC 2022"));
+    const repSrc = representatives.sourceLabels ?? {};
+    lines.push(row("Representatives", "Councillor", representatives.councillor.name, representatives.councillor.party, repSrc.councillor ?? "Municipal election"));
     if (representatives.councillor.phone) {
-      lines.push(row("Representatives", "Councillor phone", representatives.councillor.phone, "", "GCC"));
+      lines.push(row("Representatives", "Councillor phone", representatives.councillor.phone, "", repSrc.councillor ?? "Municipal corporation"));
     }
-    lines.push(row("Representatives", "MLA", representatives.mla.name, representatives.mla.party, "TN Assembly 2021"));
-    lines.push(row("Representatives", "MP", representatives.mp.name, representatives.mp.party, "Lok Sabha 2019"));
+    if (representatives.mla) {
+      lines.push(row("Representatives", "MLA", representatives.mla.name, representatives.mla.party, repSrc.mla ?? "State assembly election"));
+    }
+    if (representatives.mp) {
+      lines.push(row("Representatives", "MP", representatives.mp.name, representatives.mp.party, repSrc.mp ?? "Parliamentary election"));
+    }
   }
 
   // Metadata

@@ -8,16 +8,21 @@ export interface RepresentativeData {
   councillor: {
     name: string;
     party: string;
-    phone: string;
+    phone?: string;
+    /** Seat reservation for the ward (Delhi publishes this per ward). */
+    reservation?: string | null;
   };
-  mla: {
+  /** Optional: a city may publish councillors before MLA/MP mappings exist
+   *  (Delhi at launch - the ward->assembly-constituency join is available
+   *  but the assembly/parliament result sets are not yet ingested). */
+  mla?: {
     name: string;
     name_ta: string;
     party: string;
     constituency: string;
     constituency_ta: string;
   };
-  mp: {
+  mp?: {
     name: string;
     name_ta: string;
     party: string;
@@ -29,8 +34,8 @@ export interface RepresentativeData {
 interface RepsFile {
   meta: {
     councillor_election: string;
-    mla_election: string;
-    mp_election: string;
+    mla_election?: string;
+    mp_election?: string;
     last_updated: string;
     sources: Record<string, string>;
   };

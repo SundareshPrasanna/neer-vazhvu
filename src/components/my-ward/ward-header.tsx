@@ -33,8 +33,13 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
       groundwater ? { depthM: groundwater.depthM, trend: groundwater.trend, riskLevel: groundwater.riskLevel, riskScore: groundwater.riskScore } : null,
       representatives ? {
         councillor: { name: representatives.councillor.name, party: representatives.councillor.party, phone: representatives.councillor.phone },
-        mla: { name: representatives.mla.name, party: representatives.mla.party, constituency: representatives.mla.constituency },
-        mp: { name: representatives.mp.name, party: representatives.mp.party, constituency: representatives.mp.constituency },
+        // MLA/MP are optional - cities may publish councillors only (Delhi).
+        mla: representatives.mla
+          ? { name: representatives.mla.name, party: representatives.mla.party, constituency: representatives.mla.constituency }
+          : undefined,
+        mp: representatives.mp
+          ? { name: representatives.mp.name, party: representatives.mp.party, constituency: representatives.mp.constituency }
+          : undefined,
       } : null,
     );
     downloadCSV(csv, `ward-${wardNumber}-report.csv`);

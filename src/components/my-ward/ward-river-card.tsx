@@ -14,7 +14,7 @@ interface Props {
 
 export function WardRiverCard({ wardNumber, profile, getRiverLabel }: Props) {
   const { t } = useLanguage();
-  const { cityPrefix } = useMyWardCity();
+  const { cityPrefix, cityId } = useMyWardCity();
   const rivers = profile.rivers;
 
   const label = getRiverLabel(rivers.nearest_river_id, rivers.nearest_station_id);
@@ -64,7 +64,8 @@ export function WardRiverCard({ wardNumber, profile, getRiverLabel }: Props) {
 
         {/* Source & notes */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-2">
-          <p>{t("my_ward.river_source")}</p>
+          {/* Delhi's river feed is DPCC monthly, not CPCB's annual NWMP. */}
+          <p>{t(cityId === "delhi" ? "my_ward.river_source_delhi" : "my_ward.river_source")}</p>
         </div>
       </CardContent>
     </Card>

@@ -76,7 +76,30 @@ def main() -> None:
         p = w["councillor"]["party"]
         parties[p] = parties.get(p, 0) + 1
 
+    # Shape per RepsFile in src/lib/hooks/use-ward-representatives.ts:
+    # {meta, wards: {"<ward_no>": {councillor: {...}}}}. MLA/MP are omitted -
+    # the ward->AC mapping exists in the ward geometry, but the assembly and
+    # parliamentary result sets are not ingested yet, and the component
+    # renders councillor-only cleanly.
+    keyed = {
+        str(w["ward_no"]): {
+            "councillor": {
+                "name": w["councillor"]["name"],
+                "party": w["councillor"]["party"],
+                "reservation": w["reservation"],
+            }
+        }
+        for w in wards
+    }
     out = {
+        "meta": {
+            "councillor_election": "2022-12-04",
+            "last_updated": date.today().isoformat(),
+            "sources": {
+                "councillors": "https://data.opencity.in/dataset/delhi-mcd-elections-2022",
+            },
+        },
+        "wards": keyed,
         "place_id": "delhi",
         "compiled_at": date.today().isoformat(),
         "election": "Municipal Corporation of Delhi general election, 4 December 2022 (first post-unification, 250 wards)",
@@ -92,7 +115,7 @@ def main() -> None:
             "builder": "neer-vazhvu-api/scripts/build_delhi_ward_reps.py",
         },
         "summary": {"wards": len(wards), "party_seats": dict(sorted(parties.items(), key=lambda kv: -kv[1]))},
-        "wards": wards,
+        "wards_detail": wards,
     }
     OUT.write_text(json.dumps(out, indent=1, ensure_ascii=False))
     print(f"wrote {OUT}")

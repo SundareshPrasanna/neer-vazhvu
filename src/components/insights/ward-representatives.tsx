@@ -43,41 +43,50 @@ export function WardRepresentatives({ wardNumber }: WardRepresentativesProps) {
           phone={reps.councillor.phone}
         />
 
-        {/* MLA */}
-        <RepRow
-          label={t("reps.mla")}
-          name={useTa ? reps.mla.name_ta : reps.mla.name}
-          party={reps.mla.party}
-          subtitle={
-            t("reps.constituency").replace(
-              "{name}",
-              useTa ? reps.mla.constituency_ta : reps.mla.constituency
-            )
-          }
-        />
+        {/* MLA - omitted for cities publishing councillors only */}
+        {reps.mla && (
+          <RepRow
+            label={t("reps.mla")}
+            name={useTa ? reps.mla.name_ta : reps.mla.name}
+            party={reps.mla.party}
+            subtitle={
+              t("reps.constituency").replace(
+                "{name}",
+                useTa ? reps.mla.constituency_ta : reps.mla.constituency
+              )
+            }
+          />
+        )}
 
         {/* MP */}
-        <RepRow
-          label={t("reps.mp")}
-          name={useTa ? reps.mp.name_ta : reps.mp.name}
-          party={reps.mp.party}
-          subtitle={
-            t("reps.constituency").replace(
-              "{name}",
-              useTa ? reps.mp.constituency_ta : reps.mp.constituency
-            )
-          }
-        />
+        {reps.mp && (
+          <RepRow
+            label={t("reps.mp")}
+            name={useTa ? reps.mp.name_ta : reps.mp.name}
+            party={reps.mp.party}
+            subtitle={
+              t("reps.constituency").replace(
+                "{name}",
+                useTa ? reps.mp.constituency_ta : reps.mp.constituency
+              )
+            }
+          />
+        )}
       </div>
 
       {/* Source disclaimer */}
       {meta && (
         <div className="mt-2 flex flex-wrap items-center gap-x-2 text-[10px] text-slate-400 dark:text-slate-500">
           <span>
-            {t("reps.source_note")
-              .replace("{councillor_year}", meta.councillor_election.slice(0, 4))
-              .replace("{mla_year}", meta.mla_election.slice(0, 4))
-              .replace("{mp_year}", meta.mp_election.slice(0, 4))}
+            {reps.mla || reps.mp
+              ? t("reps.source_note")
+                  .replace("{councillor_year}", meta.councillor_election.slice(0, 4))
+                  .replace("{mla_year}", (meta.mla_election ?? meta.councillor_election).slice(0, 4))
+                  .replace("{mp_year}", (meta.mp_election ?? meta.councillor_election).slice(0, 4))
+              : t("reps.source_note_councillor_only").replace(
+                  "{councillor_year}",
+                  meta.councillor_election.slice(0, 4),
+                )}
           </span>
           <span className="hidden sm:inline">|</span>
           <a

@@ -316,8 +316,10 @@ export function buildProjectedProfile(
         p.water_bodies.current_count = Math.round(value * area);
         break;
       case "flood_risk": {
-        // Cities without a flood layer can't have an uplift applied to it.
-        if ("_data_status" in p.flood) break;
+        // Cities without a MODELLED flood layer can't have an uplift applied
+        // to it - covers both not_available (Madurai) and the
+        // chronic-hotspot shape (Delhi).
+        if (!("by_category" in p.flood)) break;
         const targetSevere = value * area;
         const cat = p.flood.by_category;
         const currentSevere = (cat["very_high"] ?? 0) + (cat["high"] ?? 0);

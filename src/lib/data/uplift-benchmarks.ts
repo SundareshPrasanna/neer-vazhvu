@@ -97,7 +97,9 @@ export const INTERVENTIONS: Intervention[] = [
       // Cap at actual number of high + very_high zones. Cities with no
       // public flood-hazard layer (Madurai) emit a not_available
       // marker in p.flood; treat that as zero capped capacity here.
-      if ("_data_status" in p.flood) return 0;
+      // Cities without a modelled hazard layer - "not_available" (Madurai)
+      // or the chronic-hotspot shape (Delhi) - contribute no capped capacity.
+      if (!("by_category" in p.flood)) return 0;
       const cat = p.flood.by_category;
       return (cat["very_high"] ?? 0) + (cat["high"] ?? 0);
     },

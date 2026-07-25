@@ -25,6 +25,14 @@ export type WardFloodSection =
       hotspot_2015_count: number;
       hotspot_2020_count: number;
     }
+  /** Chronic-waterlogging shape: cities with no modelled hazard layer but a
+   *  documented register of perennial flooding points (Delhi). Kept separate
+   *  from the modelled shape so neither pretends to be the other. */
+  | {
+      chronic_hotspots: number;
+      hotspot_names: string[];
+      _note?: string;
+    }
   | WardSectionNotAvailable;
 
 export type WardDrainageSection =
