@@ -1,0 +1,102 @@
+{
+  "_doc": "Headwaters source registry - Delhi episodic sources. Schema + design notes: docs/specs/headwaters.md (local). Delhi's live-feed story is unusual: its highest-cadence public source (DPCC monthly river + drain analysis) publishes as scanned PDFs on a Drupal listing, so edition detection here is what tells us a new month exists - the extraction itself is manual/OCR until that pipeline lands.",
+  "sources": [
+    {
+      "id": "dpcc-monthly-analysis-delhi",
+      "scope": "delhi",
+      "publisher": "Delhi Pollution Control Committee",
+      "url": "https://dpcc.delhi.gov.in/dpcc/analysis-reports",
+      "license": "GNCTD publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "monthly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "analysis-report/(river_yamuna|analysis_report_of_river|drain|analysis_report_of_drain|stp_analysis)"
+      },
+      "dependsOn": [
+        "public/data/dpcc-monthly-wq-delhi.json",
+        "public/data/river-quality-delhi.json"
+      ],
+      "refreshMethod": "manual (new month's river/drain/STP PDFs -> transcribe into dpcc-monthly-wq-delhi.json, then re-run scripts/build-delhi-river-quality.ts)",
+      "notes": "THE Delhi feed: 8 Yamuna stations + ~39 drain points + STP compliance, sampled monthly and published around the 25th. A new file link = a new month. The drain 'NO FLOW' count in each edition is the verification instrument for the drain-trapping commitment. Feb-2026 is absent from the listing - confirm whether that is a publication gap when the next editions land."
+    },
+    {
+      "id": "cgwb-dynamic-gwr-delhi",
+      "scope": "delhi",
+      "publisher": "CGWB / IN-GRES (via OpenCity national compilations)",
+      "url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
+      "license": "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments",
+      "type": "page",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/resource/|\\.(csv|xlsx|pdf)"
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-delhi.json",
+        "public/geojson/delhi-gwr-blocks.geojson"
+      ],
+      "refreshMethod": "manual (add the new edition's Delhi district CSV URL to neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py and re-run; if the edition is not mirrored, pull it from IN-GRES directly - see docs/methodology/pan-india-source-playbook.md)",
+      "notes": "Assessment is annual since 2021-22. IN-GRES (ingres.iith.ac.in) is the authority and is reachable outside NICNET; OpenCity mirrors most editions. The 2022-23 cycle had no mirror and was taken from IN-GRES itself (public/data/ingres/delhi-2022-2023.json). Watch for the next cycle appearing here or on the portal's year list."
+    },
+    {
+      "id": "cag-djb-audit",
+      "scope": "delhi",
+      "publisher": "Comptroller and Auditor General of India",
+      "url": "https://cag.gov.in/en/audit-report/details/124108",
+      "license": "Government of India publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "download_audit_report|\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/cag-djb-audit-2025.json"
+      ],
+      "refreshMethod": "manual (a new DJB performance/compliance audit -> update cag-djb-audit-2025.json, the dashboard hero stats and the commitments register)",
+      "notes": "Report No. 3 of 2025 (tabled 23 Mar 2026) is the audit-grade spine of Delhi's dashboard: NRW 51-53%, Rs 4,988 cr revenue impact, Rs 66,595 cr debt, 40% of production billed. A follow-up or compliance audit would move several headline numbers at once."
+    },
+    {
+      "id": "delhi-economic-survey-water",
+      "scope": "delhi",
+      "publisher": "Planning Department, GNCTD",
+      "url": "https://delhiplanning.delhi.gov.in/planning/economic-survey",
+      "license": "GNCTD publication, cited with attribution",
+      "type": "page",
+      "cadence": "yearly",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "economic-survey-[0-9]"
+      },
+      "dependsOn": [
+        "public/data/delhi-supply-overview.json"
+      ],
+      "refreshMethod": "manual (new edition's water chapter -> refresh source-wise availability split + the 'wasted or pilfered' figure in delhi-supply-overview.json)",
+      "notes": "Chapter 13 carries DJB's own source-wise raw-water split (Yamuna/Ganga/Bhakra/groundwater) and the state's own '52.35% wasted or pilfered by tanker mafia' line. Published annually alongside the Delhi budget."
+    },
+    {
+      "id": "dpcc-cetp-monthly-delhi",
+      "scope": "delhi",
+      "publisher": "DPCC (via OpenCity)",
+      "url": "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024",
+      "license": "open (per OpenCity dataset page)",
+      "type": "page",
+      "cadence": "monthly",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/resource/|\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/delhi-cetp-monthly-index.json"
+      ],
+      "refreshMethod": "manual (new monthly bundles -> extend delhi-cetp-monthly-index.json; bulk values await the OCR batch)",
+      "notes": "Per-CETP inlet/outlet monitoring across 23 parameters incl. heavy metals, plus measured flow vs design capacity and the plant's OLMS status. Archive currently ends Nov 2024 - new resources here would mean the series resumed."
+    }
+  ]
+}
