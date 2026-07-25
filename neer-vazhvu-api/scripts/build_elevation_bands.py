@@ -241,7 +241,9 @@ def main() -> int:
     pcts = np.percentile(vals, [0, 5, 20, 40, 60, 80, 95, 100])
     print(
         "elevation percentiles (m):",
-        " ".join(f"p{p}={v:.0f}" for p, v in zip([0, 5, 20, 40, 60, 80, 95, 100], pcts)),
+        " ".join(
+            f"p{p}={v:.0f}" for p, v in zip([0, 5, 20, 40, 60, 80, 95, 100], pcts)
+        ),
     )
 
     edges = cfg["bands"]
