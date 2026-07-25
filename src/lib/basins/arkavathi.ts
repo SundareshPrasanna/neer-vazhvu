@@ -102,6 +102,11 @@ export const ARKAVATHI: BasinManifest = {
     // ── Floor 1: Hydrology (surface) - water family ──
     { family: "boundary", label: "Basin boundary", floor: "hydrology", geom: "fill", color: "#d946ef", defaultOn: true, context: true },
     { family: "sub-hydrosheds", label: "Sub-catchments", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: true, context: true },
+    // FABDEM 30 m hypsometric bands - why the water flows the way it does
+    // (Nandi Hills ~1,480 m down to the Sangama confluence ~350 m). Default
+    // OFF: it is a reading aid, not a resting layer, and ~1 MB of GeoJSON
+    // that should only load when asked for.
+    { family: "elevation-bands", label: "Terrain (elevation bands)", floor: "hydrology", geom: "fill", color: "#b45309", defaultOn: false, elevation: true },
     // Water family - all mid-tone so they hold contrast on both the light OSM
     // base and the darkened (dark-mode) base; separated by hue + form.
     { family: "rivers", label: "Rivers", floor: "hydrology", geom: "line", color: "#2563eb", defaultOn: true, context: true },
@@ -171,5 +176,6 @@ export const ARKAVATHI: BasinManifest = {
     "Treatment plants (STP/FSTP): BWSSB, KUWS&DB, BDA and KUIDFC, compiled by Paani Earth; locations confirmed against satellite imagery.",
     "Major industries: KSPCB 17-category polluting-industry list (geocoded).",
     "Boundaries: Karnataka GIS (KGIS); sub-watersheds & command areas: India-WRIS.",
+    "Terrain: FABDEM V1-2 (Hawker et al. 2022, University of Bristol - Copernicus GLO-30 with forests and buildings removed), via Google Earth Engine; CC BY-NC-SA 4.0. Classified into elevation bands at ~30 m resolution, simplified for basin-scale display.",
   ],
 };
