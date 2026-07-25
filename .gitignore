@@ -56,6 +56,9 @@ docs/cpcb/*.pdf
 
 # Local caches written by data-acquisition scripts
 scripts/_cache-*.json
+# Raw API/PDF pulls cached so re-runs skip the download (81 MB for Delhi's
+# 278k WRIS groundwater rows). Rebuildable: `--refresh` re-downloads.
+neer-vazhvu-api/scripts/.cache/
 
 # Rich-body satellite imagery + tints - served from Supabase Storage
 # in production via the `satellite-evidence` bucket. Local files are
