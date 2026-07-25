@@ -22,6 +22,64 @@
       ],
       "refreshMethod": "manual PDF extraction (Madurai: scripts/scrape_cpcb_nwmp_vaigai.py)",
       "notes": "NWMP annual River Water Quality listing; year pages (e.g. nwmp-data-2) appear as new links, typically Jan-Mar. Serves Chennai (4 rivers/10 stations), Bengaluru (Vrishabhavathi/Arkavathy/Dakshina Pinakini), Madurai (Vaigai 10059/10060). Host has broken TLS and was fully unreachable on 2026-07-21 even with curl -k from a residential IP - check-failures expected until CPCB recovers; retry before changing this entry."
+    },
+    {
+      "id": "chennai-reps-tn-assembly",
+      "scope": "chennai",
+      "publisher": "Election Commission of India / TN CEO",
+      "url": "https://www.elections.tn.gov.in/",
+      "license": "public election result, cited with attribution",
+      "type": "page",
+      "cadence": "5-yearly (assembly term)",
+      "tier": 1,
+      "detection": {
+        "method": "term-expiry",
+        "termEndsOn": "2031-05-10"
+      },
+      "dependsOn": [
+        "public/data/ward-representatives.json"
+      ],
+      "refreshMethod": "manual - replace the mla block for each of the 13 constituencies, blank name_ta until Tamil spellings are verified, bump meta.mla_election",
+      "notes": "17th TN Assembly: polled 2026-04-23, results 2026-05-04, TVK won 108 seats. The 2026 refresh landed 2026-07-25, roughly 12 weeks late, because nothing watched the term - that gap is why term-expiry exists. The same election also restaffs Madurai's MLAs if that city ever gets representative data. Tamil names outstanding (good-first-issue)."
+    },
+    {
+      "id": "chennai-reps-gcc-council",
+      "scope": "chennai",
+      "publisher": "TN State Election Commission / GCC",
+      "url": "https://chennaicorporation.gov.in/gcc/pdf/Council.pdf",
+      "license": "public election result, cited with attribution",
+      "type": "page",
+      "cadence": "5-yearly (council term)",
+      "tier": 1,
+      "detection": {
+        "method": "term-expiry",
+        "termEndsOn": "2027-03-04",
+        "leadTimeDays": 90
+      },
+      "dependsOn": [
+        "public/data/ward-representatives.json"
+      ],
+      "refreshMethod": "manual - all 200 councillor blocks (name, party, phone) plus meta.councillor_election",
+      "notes": "Council elected 2022-02-19, councillors sworn in 2022-03-04, nominal 5-year term. This is the big one: 200 rows change at once, hence the deliberate 90-day lead. Phone numbers are only published in the GCC council PDF and lag the result by weeks."
+    },
+    {
+      "id": "chennai-reps-lok-sabha",
+      "scope": "chennai",
+      "publisher": "Election Commission of India",
+      "url": "https://results.eci.gov.in/",
+      "license": "public election result, cited with attribution",
+      "type": "page",
+      "cadence": "5-yearly (Lok Sabha term)",
+      "tier": 1,
+      "detection": {
+        "method": "term-expiry",
+        "termEndsOn": "2029-06-23"
+      },
+      "dependsOn": [
+        "public/data/ward-representatives.json"
+      ],
+      "refreshMethod": "manual - 4 mp blocks (Chennai North / Central / South, Sriperumbudur) plus meta.mp_election",
+      "notes": "18th Lok Sabha first sat 2024-06-24. Verified unchanged on 2026-07-25 (no Chennai by-election; no sitting MP won an assembly seat in 2026). A mid-term by-election will NOT trip this check - term-expiry is a calendar, not a news feed."
     }
   ]
 }
