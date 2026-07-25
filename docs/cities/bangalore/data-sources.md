@@ -122,6 +122,15 @@ Notable entries:
 
 Powers the **Lake Catchment Atlas** ("Catchments" view on `/bangalore/water-bodies`): per-lake own/received/total catchment, feeder streams, downstream flow path, and rooftop-harvest potential, delineated from FABDEM 30 m + WhiteboxTools. Downstream rivers (Arkavati / Vrishabhavathi / Dakshina Pinakini) named by snapping each terminal lake's flow path to `bangalore-rivers.geojson`. Full methodology: [docs/methodology/catchment-atlas-v1.md](../../methodology/catchment-atlas-v1.md).
 
+### Basin atlas terrain layer (Arkavathi elevation bands)
+
+| | |
+|---|---|
+| **Source** | FABDEM V1-2 (Hawker et al. 2022, University of Bristol - Copernicus GLO-30 with forests and buildings removed), GEE asset `projects/sat-io/open-datasets/FABDEM`. Same asset and fetch path as the catchment atlas. |
+| **License** | CC BY-NC-SA 4.0 (non-commercial) - fine for the free civic platform; a commercial-DEM swap is the known follow-up if this surface ever feeds a paid product. |
+| **Method** | `neer-vazhvu-api/scripts/build_elevation_bands.py --basin arkavathi` - 30 m mosaic over the basin bbox, masked to the basin boundary polygon (bands stop at the watershed divide), classified into 7 hypsometric bands whose edges sit on the basin's elevation percentiles (Sangama confluence 366 m -> Nandi Hills 1,452 m, plateau cut finer than the tails), polygonized, simplified ~110 m for basin-scale display. |
+| **Output** | `public/data/basins/arkavathi/elevation-bands.geojson` (~950 KB raw / ~260 KB gzipped), rendered by the shared basin atlas as the default-off "Terrain (elevation bands)" toggle - loaded only when enabled, drawn beneath every data layer, dimmed while a treatment-gap choropleth is visible. |
+
 ## Rich-Data Deep-Zoom Panel (13 Bengaluru flagship bodies)
 
 | | |

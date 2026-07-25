@@ -91,6 +91,13 @@ export interface BasinLayer {
    *  whose click opens the PRS entry-point panel (see prs.json) instead of the
    *  generic feature panel. Features carry `year` + `priority` + `length_km`. */
   prs?: boolean;
+  /** Elevation layer: FABDEM hypsometric bands (elevation-bands.geojson,
+   *  built by scripts/build_elevation_bands.py --basin <id>). Drawn at the
+   *  very bottom of the canvas, non-interactive, colored by the shared
+   *  ELEVATION_BAND_COLORS palette (features carry `band` + `order`), and
+   *  dimmed while a gap choropleth is visible so the choropleth stays
+   *  readable. Exempt from river scoping - terrain is whole-basin context. */
+  elevation?: boolean;
 }
 
 export interface BasinManifest {

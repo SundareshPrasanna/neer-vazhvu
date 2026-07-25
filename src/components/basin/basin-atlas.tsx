@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Circle, Tooltip, ZoomControl, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Circle, Tooltip, ZoomControl, Pane, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { ELEVATION_BAND_COLORS, elevationLegendEntries } from "@/components/map/elevation-bands";
 import type {
   BasinFloor,
   BasinInventory,
@@ -293,6 +294,7 @@ function layerKey(l: BasinLayer): string {
 }
 
 function drawRank(l: BasinLayer): number {
+  if (l.elevation) return -2; // terrain underneath everything, even the gap choropleth
   if (l.gap) return -1; // gap choropleth at the very bottom - all data (incl. STPs) sits above it
   if (l.prs) return 5; // polluted stretch always on top so the thin line stays clickable
   if (l.family === "boundary" || l.family.startsWith("admin")) return 0;
@@ -696,8 +698,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     // across catchments) - in that case show the full layer rather than hiding
     // everything.
     // PRS is exempt too: the polluted stretch spans the whole river (no shedId),
-    // so a river selection must not filter it out.
-    if (!selectedRiverId || layer.context || layer.gap || layer.prs || selectedSheds.size === 0)
+    // so a river selection must not filter it out. Elevation bands likewise -
+    // terrain is whole-basin context with no shedId on its features.
+    if (!selectedRiverId || layer.context || layer.gap || layer.prs || layer.elevation || selectedSheds.size === 0)
       return fc.features;
     return fc.features.filter((f) =>
       selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)),
@@ -730,6 +733,16 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   );
 
   const visibleLayers = orderedLayers.filter(shouldRender);
+
+  // Terrain vs choropleth: hypsometric fills under a gap choropleth muddy its
+  // severity reading (the one fill layer that spans whole admin units), so the
+  // bands drop to a whisper while any gap layer is visible. Other fills
+  // (tanks, industrial areas) are compact features that stay legible on top.
+  const elevationDimmed = visibleLayers.some((l) => l.gap);
+  const elevationLegend = useMemo(
+    () => elevationLegendEntries(data["elevation-bands"] ?? null),
+    [data],
+  );
   // The basin has a PRS story when a prs layer is declared and its panel
   // content has loaded - this gates the "Explore the polluted stretch" entry
   // point, which must be offered even while the stretch itself is hidden
@@ -974,6 +987,34 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (!feats.length) return null;
             const fcScoped: FC = { type: "FeatureCollection", features: feats };
             const faded = dim();
+
+            // Elevation bands: pure background, colored by the shared FABDEM
+            // palette so the atlas terrain reads the same as the city
+            // flood-risk maps. Dimmed while a gap choropleth is up so the
+            // severity fills keep their contrast. Rendered in its OWN pane
+            // below the overlay pane (tiles 200 < 350 < overlays 400): the
+            // shared canvas draws in layer-ADD order, so a layer toggled on
+            // later would paint on top - a DOM-stacked pane pins terrain to
+            // the bottom no matter the toggle sequence. Safe to break the
+            // one-canvas rule here because the bands take no events at all;
+            // the main canvas above still receives every hover/click.
+            if (l.elevation) {
+              return (
+                <Pane key="elevation-pane" name="elevation-bands" style={{ zIndex: 350 }}>
+                  <GeoJSON
+                    key={`elevation-${tiles.isDark}-${elevationDimmed}`}
+                    data={fcScoped}
+                    interactive={false}
+                    style={(feat?: Feature) => ({
+                      fillColor:
+                        ELEVATION_BAND_COLORS[Number((feat?.properties as Record<string, unknown>)?.order ?? 0)] ?? "#94a3b8",
+                      fillOpacity: elevationDimmed ? 0.12 : 0.45,
+                      stroke: false,
+                    })}
+                  />
+                </Pane>
+              );
+            }
 
             // Gap layer: only the choropleth FILL is drawn here (at the very
             // bottom, drawRank -1, non-interactive) so it never sits over or
@@ -1290,7 +1331,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         )}
         {/* Legend - reflects what's currently visible. Raised above the mobile
             bottom sheet when a detail panel is open so it isn't covered. */}
-        <MapLegend layers={visibleLayers} notes={legendNotes} raised={!!(selectedGapUnit || selectedFeature || selectedRiver || selectedPrs)} />
+        <MapLegend layers={visibleLayers} elevation={elevationLegend} notes={legendNotes} raised={!!(selectedGapUnit || selectedFeature || selectedRiver || selectedPrs)} />
       </div>
 
       {/* ── Detail panel: draggable bottom sheet on mobile, sidebar on desktop
@@ -1382,14 +1423,19 @@ type LegendSym = "box" | "dot" | "ring" | "line" | "dash" | "outline";
 /** Dynamic legend: one entry per symbol actually on the map right now,
  *  expanding pressures into its kinds and showing the monitoring public-domain
  *  cue (filled vs hollow). */
-function MapLegend({ layers, notes, raised }: { layers: BasinLayer[]; notes?: string[]; raised?: boolean }) {
+function MapLegend({ layers, elevation, notes, raised }: { layers: BasinLayer[]; elevation?: { band: string; color: string }[]; notes?: string[]; raised?: boolean }) {
   const [open, setOpen] = useState(true);
   // Every entry's color comes from the layer's manifest `color` or the shared
   // PRESSURE_KIND_COLOR map - the same sources the map styles read - so the
   // legend can never disagree with what's drawn.
   const items: { sym: LegendSym; color: string; label: string }[] = [];
   for (const l of layers) {
-    if (l.gap) {
+    if (l.elevation) {
+      // Band labels come from the data (they differ per basin), matching the
+      // city elevation legend: never hardcode edges at a call site.
+      for (const e of elevation ?? []) items.push({ sym: "box", color: e.color, label: e.band });
+    }
+    else if (l.gap) {
       // Severity scale (matches the fill/badge colours) so red vs amber reads
       // as "how bad is the gap", not just decoration.
       items.push({ sym: "box", color: "#dc2626", label: "Waste gap - severe" });
