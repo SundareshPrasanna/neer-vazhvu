@@ -84,11 +84,13 @@ def main() -> None:
             continue
         xs = [p[0] for r in rings for p in r]
         ys = [p[1] for r in rings for p in r]
-        indexed.append({
-            "bbox": (min(xs), min(ys), max(xs), max(ys)),
-            "rings": rings,
-            "props": f["properties"],
-        })
+        indexed.append(
+            {
+                "bbox": (min(xs), min(ys), max(xs), max(ys)),
+                "rings": rings,
+                "props": f["properties"],
+            }
+        )
 
     counts = {"inside": 0, "near": 0, "unmatched": 0}
     for f in census["features"]:
@@ -119,8 +121,10 @@ def main() -> None:
         if hit is not None:
             src = hit["props"]
             props.update(
-                osm_id=src.get("osm_id"), osm_type=src.get("osm_type"),
-                osm_name=src.get("name") or None, osm_area_ha=src.get("area_ha"),
+                osm_id=src.get("osm_id"),
+                osm_type=src.get("osm_type"),
+                osm_name=src.get("name") or None,
+                osm_area_ha=src.get("area_ha"),
                 osm_join="inside",
             )
             counts["inside"] += 1
@@ -128,8 +132,10 @@ def main() -> None:
             d, poly = best_near
             src = poly["props"]
             props.update(
-                osm_id=src.get("osm_id"), osm_type=src.get("osm_type"),
-                osm_name=src.get("name") or None, osm_area_ha=src.get("area_ha"),
+                osm_id=src.get("osm_id"),
+                osm_type=src.get("osm_type"),
+                osm_name=src.get("name") or None,
+                osm_area_ha=src.get("area_ha"),
                 osm_join=f"near-{round(d)}m",
             )
             counts["near"] += 1
@@ -156,7 +162,9 @@ def main() -> None:
 
     by_type: dict[str, int] = {}
     for f in census["features"]:
-        lbl = f["properties"].get("water_body_type_label") or f["properties"].get("water_body_type", "?")
+        lbl = f["properties"].get("water_body_type_label") or f["properties"].get(
+            "water_body_type", "?"
+        )
         by_type[lbl] = by_type.get(lbl, 0) + 1
     print("type distribution:", dict(sorted(by_type.items(), key=lambda kv: -kv[1])))
 

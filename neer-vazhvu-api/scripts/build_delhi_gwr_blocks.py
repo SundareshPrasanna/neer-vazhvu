@@ -47,7 +47,9 @@ KML_DISTRICTS = "https://data.opencity.in/dataset/2ae48270-ab28-4786-abf1-e36a00
 
 
 def fetch(url: str) -> bytes:
-    req = urllib.request.Request(url, headers={"User-Agent": "neer-vazhvu/delhi-onboarding"})
+    req = urllib.request.Request(
+        url, headers={"User-Agent": "neer-vazhvu/delhi-onboarding"}
+    )
     return urllib.request.urlopen(req, timeout=120).read()
 
 
@@ -70,12 +72,14 @@ def norm(name: str) -> str:
 def resolve_fields(hdr: list[str]) -> dict[str, str]:
     """Column names drift slightly across editions - resolve by substring
     against each file's own header."""
+
     def col(*subs: str) -> str:
         for sub in subs:
             for h in hdr:
                 if sub in h.lower():
                     return h
         raise KeyError(subs)
+
     return {
         "name": col("name of district", "district", "assessment unit"),
         "stage": col("stage"),
@@ -84,7 +88,9 @@ def resolve_fields(hdr: list[str]) -> dict[str, str]:
     }
 
 
-def parse_assessment(raw: bytes, year: int, fields: dict[str, str] | None = None) -> dict[str, dict]:
+def parse_assessment(
+    raw: bytes, year: int, fields: dict[str, str] | None = None
+) -> dict[str, dict]:
     text = raw.decode("utf-8-sig")
     if fields is None:
         fields = resolve_fields(next(csv.reader(io.StringIO(text))))
@@ -113,7 +119,9 @@ def parse_assessment(raw: bytes, year: int, fields: dict[str, str] | None = None
 def parse_kml_districts(kml: str) -> list[dict]:
     feats = []
     for pm in re.findall(r"<Placemark>[\s\S]*?</Placemark>", kml):
-        props = dict(re.findall(r'<SimpleData name="([^"]+)">([\s\S]*?)</SimpleData>', pm))
+        props = dict(
+            re.findall(r'<SimpleData name="([^"]+)">([\s\S]*?)</SimpleData>', pm)
+        )
         name = None
         for k, v in props.items():
             if "dist" in k.lower() or k.lower() in ("name", "district"):
@@ -126,7 +134,10 @@ def parse_kml_districts(kml: str) -> list[dict]:
             continue
         polys = []
         for poly_block in re.findall(r"<Polygon>[\s\S]*?</Polygon>", pm):
-            outer = re.search(r"<outerBoundaryIs>[\s\S]*?<coordinates>([\s\S]*?)</coordinates>", poly_block)
+            outer = re.search(
+                r"<outerBoundaryIs>[\s\S]*?<coordinates>([\s\S]*?)</coordinates>",
+                poly_block,
+            )
             if not outer:
                 continue
             ring = []
@@ -157,16 +168,23 @@ def main() -> None:
         for name, v in json.loads(ingres_snap.read_text())["districts"].items():
             stage = round(v["extraction_ham"] / v["avail_ham"] * 100, 2)
             a2023[norm(name)] = {
-                "year": 2023, "name": name.title().replace("Nazul Land", "Nazul Land"),
-                "class": classify(stage), "development_pct": stage,
-                "availability_ham": round(v["avail_ham"], 2), "draft_total_ham": round(v["extraction_ham"], 2),
+                "year": 2023,
+                "name": name.title().replace("Nazul Land", "Nazul Land"),
+                "class": classify(stage),
+                "development_pct": stage,
+                "availability_ham": round(v["avail_ham"], 2),
+                "draft_total_ham": round(v["extraction_ham"], 2),
             }
     a2025 = parse_assessment(fetch(CSV_2025), 2025)
     a2024 = parse_assessment(fetch(CSV_2024), 2024)
     a2022 = parse_assessment(fetch(CSV_2022), 2022)
-    print(f"units: 2025={len(a2025)} 2024={len(a2024)} 2023={len(a2023)} 2022={len(a2022)}")
+    print(
+        f"units: 2025={len(a2025)} 2024={len(a2024)} 2023={len(a2023)} 2022={len(a2022)}"
+    )
 
-    districts = parse_kml_districts(fetch(KML_DISTRICTS).decode("utf-8", errors="ignore"))
+    districts = parse_kml_districts(
+        fetch(KML_DISTRICTS).decode("utf-8", errors="ignore")
+    )
     print(f"district polygons: {len(districts)}: {[d['name'] for d in districts]}")
 
     features = []
@@ -185,17 +203,19 @@ def main() -> None:
             print(f"  UNMATCHED polygon: {d['name']}")
             continue
         matched.add(key)
-        features.append({
-            "type": "Feature",
-            "geometry": d["geometry"],
-            "properties": {
-                "block": rec["name"],
-                "class": rec["class"],
-                "sgw_dev_pe": rec["development_pct"],
-                "na_gwa": rec["availability_ham"],
-                "agwd_tot": rec["draft_total_ham"],
-            },
-        })
+        features.append(
+            {
+                "type": "Feature",
+                "geometry": d["geometry"],
+                "properties": {
+                    "block": rec["name"],
+                    "class": rec["class"],
+                    "sgw_dev_pe": rec["development_pct"],
+                    "na_gwa": rec["availability_ham"],
+                    "agwd_tot": rec["draft_total_ham"],
+                },
+            }
+        )
 
     unmatched_rows = [v["name"] for k, v in a2025.items() if k not in matched]
     geo = {
@@ -210,29 +230,56 @@ def main() -> None:
         },
         "features": features,
     }
-    (REPO / "public/geojson/delhi-gwr-blocks.geojson").write_text(json.dumps(geo, separators=(",", ":")))
+    (REPO / "public/geojson/delhi-gwr-blocks.geojson").write_text(
+        json.dumps(geo, separators=(",", ":"))
+    )
 
     blocks = []
     for k, rec in sorted(a2025.items(), key=lambda kv: kv[1]["name"]):
         history = []
         # year = numeric END-year (sorting); year_label = the assessment
         # cycle in IN-GRES's own vocabulary, which the UI displays.
-        for yr, label, series in ((2022, "2021-22", a2022), (2023, "2022-23", a2023), (2024, "2023-24", a2024), (2025, "2024-25", a2025)):
+        for yr, label, series in (
+            (2022, "2021-22", a2022),
+            (2023, "2022-23", a2023),
+            (2024, "2023-24", a2024),
+            (2025, "2024-25", a2025),
+        ):
             if k in series:
                 h = series[k]
-                history.append({"year": yr, "year_label": label, "class": h["class"], "development_pct": h["development_pct"],
-                                "availability_ham": h["availability_ham"], "draft_total_ham": h["draft_total_ham"]})
+                history.append(
+                    {
+                        "year": yr,
+                        "year_label": label,
+                        "class": h["class"],
+                        "development_pct": h["development_pct"],
+                        "availability_ham": h["availability_ham"],
+                        "draft_total_ham": h["draft_total_ham"],
+                    }
+                )
         # ward-map.tsx consumes {blocks:[{name, history, latest}]} - latest
         # precomputed, class labels spaced ("Semi Critical").
-        blocks.append({"name": rec["name"],
-                       "history_caveat": (
-                           "CGWB assessed groundwater only periodically before 2022 and annually since; "
-                           "Delhi's pre-2022 editions used TEHSIL units (~34) rather than today's 12 districts, "
-                           "so those years cannot be joined to this series. The 2022-23 cycle comes from "
-                           "IN-GRES directly - no mirrored dataset exists for it."
-                       ),
-                       "history": history,
-                       "latest": {kk: history[-1][kk] for kk in ("class", "development_pct", "availability_ham", "draft_total_ham")}})
+        blocks.append(
+            {
+                "name": rec["name"],
+                "history_caveat": (
+                    "CGWB assessed groundwater only periodically before 2022 and annually since; "
+                    "Delhi's pre-2022 editions used TEHSIL units (~34) rather than today's 12 districts, "
+                    "so those years cannot be joined to this series. The 2022-23 cycle comes from "
+                    "IN-GRES directly - no mirrored dataset exists for it."
+                ),
+                "history": history,
+                "latest": {
+                    kk: history[-1][kk]
+                    for kk in (
+                        "class",
+                        "development_pct",
+                        "availability_ham",
+                        "draft_total_ham",
+                    )
+                },
+            }
+        )
     payload = {
         "source": "CGWB Dynamic Ground Water Resources - Delhi district assessments 2022 + 2025 (via OpenCity national-compilation datasets)",
         "source_url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
@@ -242,11 +289,19 @@ def main() -> None:
         "note": "'Nazul Land' is a non-spatial assessment unit (government estate lands) - in this file but not on the map. Values in hectare-metres.",
         "blocks": blocks,
     }
-    (REPO / "public/data/gwr-blocks-delhi.json").write_text(json.dumps(payload, indent=1))
+    (REPO / "public/data/gwr-blocks-delhi.json").write_text(
+        json.dumps(payload, indent=1)
+    )
     data = blocks
 
-    oe = [f["properties"]["block"] for f in features if f["properties"]["class"] == "Over Exploited"]
-    print(f"wrote {len(features)} polygons + {len(data)} data units | Over Exploited: {oe}")
+    oe = [
+        f["properties"]["block"]
+        for f in features
+        if f["properties"]["class"] == "Over Exploited"
+    ]
+    print(
+        f"wrote {len(features)} polygons + {len(data)} data units | Over Exploited: {oe}"
+    )
 
 
 if __name__ == "__main__":

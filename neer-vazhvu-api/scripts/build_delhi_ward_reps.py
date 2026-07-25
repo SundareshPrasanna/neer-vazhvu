@@ -48,7 +48,9 @@ def num(s: str):
 
 
 def main() -> None:
-    req = urllib.request.Request(CSV_URL, headers={"User-Agent": "neer-vazhvu/delhi-onboarding"})
+    req = urllib.request.Request(
+        CSV_URL, headers={"User-Agent": "neer-vazhvu/delhi-onboarding"}
+    )
     raw = urllib.request.urlopen(req, timeout=120).read().decode("utf-8-sig")
     rows = list(csv.DictReader(io.StringIO(raw)))
     winners = [r for r in rows if (r.get("Position") or "").strip() == "1"]
@@ -56,20 +58,22 @@ def main() -> None:
 
     wards = []
     for r in sorted(winners, key=lambda r: int(r["Ward_No"])):
-        wards.append({
-            "ward_no": int(r["Ward_No"]),
-            "ward_name": r["Ward_Name"].strip().title(),
-            "reservation": (r.get("Ward_Reservation") or "").strip() or None,
-            "councillor": {
-                "name": r["Candidate_Name"].strip().title(),
-                "party": r["Party_Name"].strip().title(),
-                "gender": (r.get("Gender") or "").strip() or None,
-                "votes": num(r.get("Votes")),
-                "vote_share_pct": num(r.get("Vote_Share_Percentage")),
-            },
-            "electors": num(r.get("Total_Electors")),
-            "turnout_pct": num(r.get("Voter_Turnout_Percentage")),
-        })
+        wards.append(
+            {
+                "ward_no": int(r["Ward_No"]),
+                "ward_name": r["Ward_Name"].strip().title(),
+                "reservation": (r.get("Ward_Reservation") or "").strip() or None,
+                "councillor": {
+                    "name": r["Candidate_Name"].strip().title(),
+                    "party": r["Party_Name"].strip().title(),
+                    "gender": (r.get("Gender") or "").strip() or None,
+                    "votes": num(r.get("Votes")),
+                    "vote_share_pct": num(r.get("Vote_Share_Percentage")),
+                },
+                "electors": num(r.get("Total_Electors")),
+                "turnout_pct": num(r.get("Voter_Turnout_Percentage")),
+            }
+        )
 
     parties: dict[str, int] = {}
     for w in wards:
@@ -114,7 +118,10 @@ def main() -> None:
             "retrieved": date.today().isoformat(),
             "builder": "neer-vazhvu-api/scripts/build_delhi_ward_reps.py",
         },
-        "summary": {"wards": len(wards), "party_seats": dict(sorted(parties.items(), key=lambda kv: -kv[1]))},
+        "summary": {
+            "wards": len(wards),
+            "party_seats": dict(sorted(parties.items(), key=lambda kv: -kv[1])),
+        },
         "wards_detail": wards,
     }
     OUT.write_text(json.dumps(out, indent=1, ensure_ascii=False))

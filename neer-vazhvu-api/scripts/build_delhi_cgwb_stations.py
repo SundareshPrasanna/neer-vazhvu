@@ -35,6 +35,7 @@ NOT a live feed: telemetry across the network stops 2025-09-20.
 
 Usage:  python scripts/build_delhi_cgwb_stations.py [--refresh]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -57,8 +58,19 @@ CTX = ssl.create_default_context()
 CTX.check_hostname = False
 CTX.verify_mode = ssl.CERT_NONE
 
-DISTRICTS = ["CENTRAL", "EAST", "NEW DELHI", "NORTH", "NORTH EAST", "NORTH WEST",
-             "SHAHDARA", "SOUTH", "SOUTH EAST", "SOUTH WEST", "WEST"]
+DISTRICTS = [
+    "CENTRAL",
+    "EAST",
+    "NEW DELHI",
+    "NORTH",
+    "NORTH EAST",
+    "NORTH WEST",
+    "SHAHDARA",
+    "SOUTH",
+    "SOUTH EAST",
+    "SOUTH WEST",
+    "WEST",
+]
 YEARS = range(2015, 2026)
 
 SUSPECT = {
@@ -76,11 +88,23 @@ SENTINELS = {99.0, 999.0, 9999.0, -999.0}
 
 
 def fetch(d, s, e, page=0, size=9000, tries=4):
-    q = urllib.parse.urlencode({
-        "stateName": "DELHI", "districtName": d, "agencyName": "CGWB",
-        "startdate": s, "enddate": e, "download": "false", "page": page, "size": size})
-    req = urllib.request.Request(f"{BASE}?{q}", method="POST",
-                                 headers={"User-Agent": UA, "Accept": "application/json"})
+    q = urllib.parse.urlencode(
+        {
+            "stateName": "DELHI",
+            "districtName": d,
+            "agencyName": "CGWB",
+            "startdate": s,
+            "enddate": e,
+            "download": "false",
+            "page": page,
+            "size": size,
+        }
+    )
+    req = urllib.request.Request(
+        f"{BASE}?{q}",
+        method="POST",
+        headers={"User-Agent": UA, "Accept": "application/json"},
+    )
     for a in range(tries):
         try:
             with urllib.request.urlopen(req, timeout=120, context=CTX) as r:
@@ -105,10 +129,21 @@ def download_raw() -> list[dict]:
                     for r in got:
                         if r.get("dataValue") is None:
                             continue
-                        rec = {k: r.get(k) for k in
-                               ("stationCode", "stationName", "district", "tehsil",
-                                "latitude", "longitude", "dataValue", "dataTime",
-                                "dataAcquisitionMode", "stationStatus")}
+                        rec = {
+                            k: r.get(k)
+                            for k in (
+                                "stationCode",
+                                "stationName",
+                                "district",
+                                "tehsil",
+                                "latitude",
+                                "longitude",
+                                "dataValue",
+                                "dataTime",
+                                "dataAcquisitionMode",
+                                "stationStatus",
+                            )
+                        }
                         rows.append(rec)
                         fh.write(json.dumps(rec) + "\n")
                     n += len(got)
@@ -122,7 +157,9 @@ def download_raw() -> list[dict]:
 def load_raw(refresh: bool) -> list[dict]:
     if CACHE.exists() and not refresh:
         print(f"using cached raw rows: {CACHE.relative_to(REPO)}")
-        return [json.loads(line) for line in CACHE.read_text().splitlines() if line.strip()]
+        return [
+            json.loads(line) for line in CACHE.read_text().splitlines() if line.strip()
+        ]
     return download_raw()
 
 
@@ -151,15 +188,22 @@ def main() -> None:
             continue
         median_raw = st.median([r["dataValue"] for r in rs])
         convention[code] = "negative-down" if median_raw < 0 else "positive-down"
-        fam = ("AAXI" if code.startswith("AAXI")
-               else "CGWBDL" if code.startswith("CGWB") else "numeric")
+        fam = (
+            "AAXI"
+            if code.startswith("AAXI")
+            else "CGWBDL"
+            if code.startswith("CGWB")
+            else "numeric"
+        )
         families[fam][convention[code]] += 1
     print("sign convention by station-code family (suspect sensors excluded):")
     for fam, counts in sorted(families.items()):
         print(f"  {fam:8s} {dict(counts)}")
         # Guard, not decoration: this is what caught CGWBDL32 as an outlier
         # rather than letting it quietly corrupt the transform.
-        assert len(counts) == 1, f"family {fam} disagrees on sign convention: {dict(counts)}"
+        assert len(counts) == 1, (
+            f"family {fam} disagrees on sign convention: {dict(counts)}"
+        )
 
     # --- aggregate to monthly means -----------------------------------------
     monthly = collections.defaultdict(list)
@@ -183,8 +227,14 @@ def main() -> None:
     wells = []
     for code, m in sorted(meta.items()):
         readings = [
-            {"year": y, "month": mo, "depth_m_bgl": round(st.mean(v), 2), "n_obs": len(v)}
-            for (c, y, mo), v in sorted(monthly.items()) if c == code
+            {
+                "year": y,
+                "month": mo,
+                "depth_m_bgl": round(st.mean(v), 2),
+                "n_obs": len(v),
+            }
+            for (c, y, mo), v in sorted(monthly.items())
+            if c == code
         ]
         w = {
             "name": m["stationName"],
@@ -204,9 +254,12 @@ def main() -> None:
         }
         if readings:
             ds = [r["depth_m_bgl"] for r in readings]
-            w.update(depth_min_m_bgl=min(ds), depth_max_m_bgl=max(ds),
-                     depth_latest_m_bgl=readings[-1]["depth_m_bgl"],
-                     latest_reading=f"{readings[-1]['year']}-{readings[-1]['month']:02d}")
+            w.update(
+                depth_min_m_bgl=min(ds),
+                depth_max_m_bgl=max(ds),
+                depth_latest_m_bgl=readings[-1]["depth_m_bgl"],
+                latest_reading=f"{readings[-1]['year']}-{readings[-1]['month']:02d}",
+            )
         if code in SUSPECT:
             w["_data_status"] = "suspect"
             w["_data_status_reason"] = SUSPECT[code]
@@ -242,8 +295,11 @@ def main() -> None:
             "published here as monthly means. Telemetry stops 2025-09-20."
         ),
         "retrieved": "2026-07-25",
-        "coverage": {"period": f"{min(YEARS)} to 2025", "cadence_raw": "6-hourly (telemetric) / periodic (manual)",
-                     "cadence_published_here": "monthly mean"},
+        "coverage": {
+            "period": f"{min(YEARS)} to 2025",
+            "cadence_raw": "6-hourly (telemetric) / periodic (manual)",
+            "cadence_published_here": "monthly mean",
+        },
         "_feed_status": (
             "NOT a live feed. Telemetry across the Delhi network stops on 2025-09-20, the "
             "same month BBMB's public reservoir page froze (04.09.2025). Treated as a "
@@ -263,9 +319,18 @@ def main() -> None:
             "readings_dropped": dict(dropped),
         },
         "_api_contract": {
-            "method": "POST", "url": BASE,
-            "mandatory_params": ["stateName", "districtName", "agencyName",
-                                 "startdate", "enddate", "download", "page", "size"],
+            "method": "POST",
+            "url": BASE,
+            "mandatory_params": [
+                "stateName",
+                "districtName",
+                "agencyName",
+                "startdate",
+                "enddate",
+                "download",
+                "page",
+                "size",
+            ],
             "gotcha": "blank districtName or agencyName returns zero rows, not all rows",
             "pagination": "page=0,1,2... at size=9000 until a short page",
         },
@@ -285,7 +350,9 @@ def main() -> None:
     print(f"\nwrote {OUT.relative_to(REPO)}")
     print(f"  stations {s['stations']} ({s['stations_with_readings']} with readings)")
     print(f"  monthly readings {s['monthly_readings']:,}")
-    print(f"  depth median {s['depth_median_m_bgl']} m, range {s['depth_min_m_bgl']}..{s['depth_max_m_bgl']} m")
+    print(
+        f"  depth median {s['depth_median_m_bgl']} m, range {s['depth_min_m_bgl']}..{s['depth_max_m_bgl']} m"
+    )
     print(f"  dropped {dict(dropped)}")
 
 

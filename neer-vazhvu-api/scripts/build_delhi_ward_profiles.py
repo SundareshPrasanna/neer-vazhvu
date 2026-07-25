@@ -84,16 +84,22 @@ class WardIndex:
             rings = rings_of(f["geometry"])
             xs = [p[0] for r in rings for p in r]
             ys = [p[1] for r in rings for p in r]
-            self.entries.append({
-                "no": f["properties"][key] if key else f["properties"],
-                "rings": rings,
-                "bbox": (min(xs), min(ys), max(xs), max(ys)),
-            })
+            self.entries.append(
+                {
+                    "no": f["properties"][key] if key else f["properties"],
+                    "rings": rings,
+                    "bbox": (min(xs), min(ys), max(xs), max(ys)),
+                }
+            )
 
     def find(self, lon, lat):
         for e in self.entries:
             x0, y0, x1, y1 = e["bbox"]
-            if x0 <= lon <= x1 and y0 <= lat <= y1 and any(in_ring(lon, lat, r) for r in e["rings"]):
+            if (
+                x0 <= lon <= x1
+                and y0 <= lat <= y1
+                and any(in_ring(lon, lat, r) for r in e["rings"])
+            ):
                 return e["no"]
         return None
 
@@ -114,8 +120,10 @@ def jj_section(clusters):
         # i.e. the figure understates the ward.
         "households_is_floor": len(with_hh) < len(clusters),
         "clusters_without_households": len(clusters) - len(with_hh),
-        "names": [c["location"] for c in
-                  sorted(clusters, key=lambda c: -(c.get("households") or 0))[:5]],
+        "names": [
+            c["location"]
+            for c in sorted(clusters, key=lambda c: -(c.get("households") or 0))[:5]
+        ],
     }
 
 
@@ -192,15 +200,23 @@ def main():
     # CGWB telemetric wells (India-WRIS). Optional: the groundwater card falls
     # back to district class alone if the station file has not been built.
     try:
-        cgwb_wells = [w for w in load(D / "delhi-cgwb-stations.json")["wells"]
-                      if w.get("readings") and w.get("_data_status") != "suspect"]
+        cgwb_wells = [
+            w
+            for w in load(D / "delhi-cgwb-stations.json")["wells"]
+            if w.get("readings") and w.get("_data_status") != "suspect"
+        ]
     except FileNotFoundError:
         cgwb_wells = []
 
     acc = {
         f["properties"]["ward_no"]: {
-            "bodies": [], "census": 0, "lost": [], "hotspots": [],
-            "drain_count": 0, "drain_km": 0.0, "jj": [],
+            "bodies": [],
+            "census": 0,
+            "lost": [],
+            "hotspots": [],
+            "drain_count": 0,
+            "drain_km": 0.0,
+            "jj": [],
         }
         for f in wards
     }
@@ -263,80 +279,101 @@ def main():
         lon, lat = centroid_of(rings)
         a = acc[no]
 
-        scored = [pr_by_osm[b["osm_id"]] for b in a["bodies"] if b.get("osm_id") in pr_by_osm]
+        scored = [
+            pr_by_osm[b["osm_id"]] for b in a["bodies"] if b.get("osm_id") in pr_by_osm
+        ]
         st = min(stations, key=lambda s: dist_m(lon, lat, s["lng"], s["lat"]))
         rep = reps.get(no)
 
-        profiles.append({
-            "ward_number": no,
-            "ward_name": p["ward_name"],
-            "zone_no": "",
-            "zone_name": "",
-            "ac_no": p.get("ac_no"),
-            "ac_name": p.get("ac_name"),
-            "centroid": [lon, lat],
-            "area_sq_km": round(sum(ring_area_km2(r) for r in rings), 3),
-            "population": {"total_2022_delimitation": p.get("total_pop"), "sc": p.get("sc_pop")},
-            "representative": (
-                {"councillor": rep["name"], "party": rep["party"],
-                 "reservation": rep.get("reservation")}
-                if rep else None
-            ),
-            "water_bodies": {
-                "current_count": len(a["bodies"]),
-                "census_records": a["census"],
-                "restoration_critical": sum(1 for s in scored if s["priority_level"] == "critical"),
-                "restoration_high": sum(1 for s in scored if s["priority_level"] == "high"),
-                "avg_restoration_score": (
-                    round(sum(s["priority_score"] for s in scored) / len(scored), 1) if scored else None
-                ),
-                # Shape per WardProfile.water_bodies.top_bodies in
-                # src/lib/hooks/use-ward-profile.ts - the card renders
-                # score/level, so emit those names exactly.
-                # Only SCORED bodies are listed: the card renders a
-                # "score/100 + level" chip, so an unscored OSM polygon would
-                # read as a genuine 0/100. Delhi's priority pass covers the
-                # flagship register, so most wards list none - the count above
-                # still tells the ward's story.
-                "top_bodies": [
+        profiles.append(
+            {
+                "ward_number": no,
+                "ward_name": p["ward_name"],
+                "zone_no": "",
+                "zone_name": "",
+                "ac_no": p.get("ac_no"),
+                "ac_name": p.get("ac_name"),
+                "centroid": [lon, lat],
+                "area_sq_km": round(sum(ring_area_km2(r) for r in rings), 3),
+                "population": {
+                    "total_2022_delimitation": p.get("total_pop"),
+                    "sc": p.get("sc_pop"),
+                },
+                "representative": (
                     {
-                        "name": pr.get("name") or "(unnamed)",
-                        "score": pr["priority_score"],
-                        "level": pr["priority_level"],
+                        "councillor": rep["name"],
+                        "party": rep["party"],
+                        "reservation": rep.get("reservation"),
                     }
-                    for pr in sorted(scored, key=lambda x: -x["priority_score"])[:3]
-                ],
-            },
-            "lost_bodies": {"count": len(a["lost"]), "names": a["lost"]},
-            "flood": {
-                "chronic_hotspots": len(a["hotspots"]),
-                "hotspot_names": a["hotspots"],
-                "_note": "Counts Delhi's named perennial waterlogging sites. The full official lists (169 locations identified for 2025; 448 points mapped from traffic-police data) are referenced in reporting but not published as data.",
-            },
-            "drainage": {
-                "line_count": a["drain_count"],
-                "total_length_km": round(a["drain_km"], 1),
-            },
-            "sewerage": {
-                "_data_status": "not_available",
-                "_data_status_note": "DJB sewer-network KML delisted from OpenCity; restore requested. See /delhi/about data gaps.",
-            },
-            "jj_bastis": jj_section(a["jj"]),
-            # Key + field names per WardProfile.rivers (the card reads
-            # nearest_river_id/nearest_station_id/nearest_km).
-            "rivers": {
-                "nearest_station_id": st["id"],
-                "nearest_river_id": "yamuna",
-                "nearest_km": round(dist_m(lon, lat, st["lng"], st["lat"]) / 1000, 1),
-            },
-            # Delhi's industrial layer is the DPCC CETP archive, not a mapped
-            # zone polygon set - no per-ward zone count exists.
-            "industrial": {
-                "_data_status": "not_available",
-                "_data_status_note": "No per-ward industrial-zone polygons published for Delhi; the DPCC CETP monthly archive (13 plants) is the industrial layer and is not ward-attributed. DPCC's only public consent register covers 1991-2002.",
-            },
-            "groundwater_assessment": groundwater_section(lon, lat, gwr_idx, cgwb_wells),
-        })
+                    if rep
+                    else None
+                ),
+                "water_bodies": {
+                    "current_count": len(a["bodies"]),
+                    "census_records": a["census"],
+                    "restoration_critical": sum(
+                        1 for s in scored if s["priority_level"] == "critical"
+                    ),
+                    "restoration_high": sum(
+                        1 for s in scored if s["priority_level"] == "high"
+                    ),
+                    "avg_restoration_score": (
+                        round(sum(s["priority_score"] for s in scored) / len(scored), 1)
+                        if scored
+                        else None
+                    ),
+                    # Shape per WardProfile.water_bodies.top_bodies in
+                    # src/lib/hooks/use-ward-profile.ts - the card renders
+                    # score/level, so emit those names exactly.
+                    # Only SCORED bodies are listed: the card renders a
+                    # "score/100 + level" chip, so an unscored OSM polygon would
+                    # read as a genuine 0/100. Delhi's priority pass covers the
+                    # flagship register, so most wards list none - the count above
+                    # still tells the ward's story.
+                    "top_bodies": [
+                        {
+                            "name": pr.get("name") or "(unnamed)",
+                            "score": pr["priority_score"],
+                            "level": pr["priority_level"],
+                        }
+                        for pr in sorted(scored, key=lambda x: -x["priority_score"])[:3]
+                    ],
+                },
+                "lost_bodies": {"count": len(a["lost"]), "names": a["lost"]},
+                "flood": {
+                    "chronic_hotspots": len(a["hotspots"]),
+                    "hotspot_names": a["hotspots"],
+                    "_note": "Counts Delhi's named perennial waterlogging sites. The full official lists (169 locations identified for 2025; 448 points mapped from traffic-police data) are referenced in reporting but not published as data.",
+                },
+                "drainage": {
+                    "line_count": a["drain_count"],
+                    "total_length_km": round(a["drain_km"], 1),
+                },
+                "sewerage": {
+                    "_data_status": "not_available",
+                    "_data_status_note": "DJB sewer-network KML delisted from OpenCity; restore requested. See /delhi/about data gaps.",
+                },
+                "jj_bastis": jj_section(a["jj"]),
+                # Key + field names per WardProfile.rivers (the card reads
+                # nearest_river_id/nearest_station_id/nearest_km).
+                "rivers": {
+                    "nearest_station_id": st["id"],
+                    "nearest_river_id": "yamuna",
+                    "nearest_km": round(
+                        dist_m(lon, lat, st["lng"], st["lat"]) / 1000, 1
+                    ),
+                },
+                # Delhi's industrial layer is the DPCC CETP archive, not a mapped
+                # zone polygon set - no per-ward zone count exists.
+                "industrial": {
+                    "_data_status": "not_available",
+                    "_data_status_note": "No per-ward industrial-zone polygons published for Delhi; the DPCC CETP monthly archive (13 plants) is the industrial layer and is not ward-attributed. DPCC's only public consent register covers 1991-2002.",
+                },
+                "groundwater_assessment": groundwater_section(
+                    lon, lat, gwr_idx, cgwb_wells
+                ),
+            }
+        )
 
     out = D / "delhi-ward-profiles.json"
     out.write_text(json.dumps(profiles, ensure_ascii=False, separators=(",", ":")))
@@ -344,15 +381,24 @@ def main():
     n_hot = sum(pf["flood"]["chronic_hotspots"] for pf in profiles)
     n_jj = sum(pf["jj_bastis"]["count"] for pf in profiles)
     n_hh = sum(pf["jj_bastis"]["households"] for pf in profiles)
-    n_well = sum(1 for pf in profiles
-                 if (pf.get("groundwater_assessment") or {}).get("nearest_well"))
-    print(f"wrote {out.name}: {len(profiles)} wards | {n_bodies} bodies attributed | "
-          f"{sum(pf['water_bodies']['census_records'] for pf in profiles)} census records | "
-          f"{n_hot} hotspots | {round(sum(pf['drainage']['total_length_km'] for pf in profiles))} drain km in-ward")
-    print(f"  JJ bastis: {n_jj} clusters in {sum(1 for pf in profiles if pf['jj_bastis']['count'])} wards, "
-          f"{n_hh:,} households | {jj_unplaced} outside MCD (NDMC / Cantonment)")
-    print(f"  groundwater: {sum(1 for pf in profiles if pf.get('groundwater_assessment'))} wards with district class, "
-          f"{n_well} with a CGWB well within {WELL_MAX_KM:g} km")
+    n_well = sum(
+        1
+        for pf in profiles
+        if (pf.get("groundwater_assessment") or {}).get("nearest_well")
+    )
+    print(
+        f"wrote {out.name}: {len(profiles)} wards | {n_bodies} bodies attributed | "
+        f"{sum(pf['water_bodies']['census_records'] for pf in profiles)} census records | "
+        f"{n_hot} hotspots | {round(sum(pf['drainage']['total_length_km'] for pf in profiles))} drain km in-ward"
+    )
+    print(
+        f"  JJ bastis: {n_jj} clusters in {sum(1 for pf in profiles if pf['jj_bastis']['count'])} wards, "
+        f"{n_hh:,} households | {jj_unplaced} outside MCD (NDMC / Cantonment)"
+    )
+    print(
+        f"  groundwater: {sum(1 for pf in profiles if pf.get('groundwater_assessment'))} wards with district class, "
+        f"{n_well} with a CGWB well within {WELL_MAX_KM:g} km"
+    )
 
 
 if __name__ == "__main__":

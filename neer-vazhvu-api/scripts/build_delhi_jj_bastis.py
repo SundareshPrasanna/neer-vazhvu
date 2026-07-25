@@ -32,7 +32,9 @@ from pathlib import Path
 
 import pdfplumber
 
-PDF_2019_URL = "https://delhishelterboard.in/main/wp-content/uploads/2019/10/JJBastisList675.pdf"
+PDF_2019_URL = (
+    "https://delhishelterboard.in/main/wp-content/uploads/2019/10/JJBastisList675.pdf"
+)
 PDF_2015_URL = "https://delhishelterboard.in/main/wp-content/uploads/2015/12/675_JJ_Cluster_List.pdf"
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -43,7 +45,9 @@ def fetch(url: str, dest: Path) -> Path:
     if dest.exists():
         return dest
     print(f"downloading {url}")
-    req = urllib.request.Request(url, headers={"User-Agent": "neer-vazhvu/delhi-onboarding"})
+    req = urllib.request.Request(
+        url, headers={"User-Agent": "neer-vazhvu/delhi-onboarding"}
+    )
     dest.write_bytes(urllib.request.urlopen(req, timeout=120).read())
     return dest
 
@@ -124,7 +128,9 @@ def main() -> None:
     print(f"2019 list: {len(r2019)} clusters | 2015 list: {len(r2015)} clusters")
 
     merged = []
-    for code, row in sorted(r2019.items(), key=lambda kv: int(kv[0]) if kv[0].isdigit() else 10**6):
+    for code, row in sorted(
+        r2019.items(), key=lambda kv: int(kv[0]) if kv[0].isdigit() else 10**6
+    ):
         extra = r2015.get(code, {})
         merged.append({**row, **extra})
     matched = sum(1 for m in merged if "revenue_district" in m)
@@ -143,7 +149,10 @@ def main() -> None:
             "publisher": "Delhi Urban Shelter Improvement Board (DUSIB)",
             "documents": [
                 {"title": "List of 675 JJ Bastis (2019 update)", "url": PDF_2019_URL},
-                {"title": "List of 675 JJ Clusters (2015, with land area / PC / ward / district)", "url": PDF_2015_URL},
+                {
+                    "title": "List of 675 JJ Clusters (2015, with land area / PC / ward / district)",
+                    "url": PDF_2015_URL,
+                },
             ],
             "retrieved": date.today().isoformat(),
             "builder": "neer-vazhvu-api/scripts/build_delhi_jj_bastis.py",

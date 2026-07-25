@@ -47,7 +47,9 @@ def main() -> None:
     features = []
     skipped = []
     for pm in placemarks:
-        props_raw = dict(re.findall(r'<SimpleData name="([^"]+)">([\s\S]*?)</SimpleData>', pm))
+        props_raw = dict(
+            re.findall(r'<SimpleData name="([^"]+)">([\s\S]*?)</SimpleData>', pm)
+        )
         ward_no = int(props_raw.get("Ward_No", "-1"))
         if ward_no < 1:
             skipped.append(props_raw.get("WardName") or props_raw.get("FID") or "?")
@@ -56,13 +58,15 @@ def main() -> None:
         polys = []
         for poly_block in re.findall(r"<Polygon>[\s\S]*?</Polygon>", pm):
             outer = re.search(
-                r"<outerBoundaryIs>[\s\S]*?<coordinates>([\s\S]*?)</coordinates>", poly_block
+                r"<outerBoundaryIs>[\s\S]*?<coordinates>([\s\S]*?)</coordinates>",
+                poly_block,
             )
             if not outer:
                 continue
             rings = [parse_coords(outer.group(1))]
             for inner in re.findall(
-                r"<innerBoundaryIs>[\s\S]*?<coordinates>([\s\S]*?)</coordinates>", poly_block
+                r"<innerBoundaryIs>[\s\S]*?<coordinates>([\s\S]*?)</coordinates>",
+                poly_block,
             ):
                 rings.append(parse_coords(inner))
             polys.append(rings)
@@ -81,11 +85,17 @@ def main() -> None:
             "ward_no": ward_no,
             "ward_name": name,
             "ward_label": f"{ward_no} - {name}",
-            "ac_no": int(props_raw["AC_No"]) if props_raw.get("AC_No", "").isdigit() else None,
+            "ac_no": int(props_raw["AC_No"])
+            if props_raw.get("AC_No", "").isdigit()
+            else None,
             "ac_name": (props_raw.get("AC_Name") or "").strip().title() or None,
             "wno_sec": (props_raw.get("WNo_SEC") or "").strip() or None,
-            "total_pop": int(props_raw["TotalPop"]) if props_raw.get("TotalPop", "").isdigit() else None,
-            "sc_pop": int(props_raw["SC_Pop"]) if props_raw.get("SC_Pop", "").isdigit() else None,
+            "total_pop": int(props_raw["TotalPop"])
+            if props_raw.get("TotalPop", "").isdigit()
+            else None,
+            "sc_pop": int(props_raw["SC_Pop"])
+            if props_raw.get("SC_Pop", "").isdigit()
+            else None,
         }
         features.append({"type": "Feature", "geometry": geometry, "properties": ward})
 

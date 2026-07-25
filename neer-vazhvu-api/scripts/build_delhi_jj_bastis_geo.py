@@ -22,6 +22,7 @@ parsed as a BLOCK anchored on a strictly sequential serial (1..675).
 
 Usage:  python scripts/build_delhi_jj_bastis_geo.py
 """
+
 from __future__ import annotations
 
 import collections
@@ -40,16 +41,18 @@ CACHE = Path(__file__).resolve().parent / ".cache"
 OUT = REPO / "public/data/delhi-jj-bastis-geo.json"
 ROSTER = REPO / "public/data/dusib-jj-bastis.json"
 
-PDF_URL = ("https://delhishelterboard.in/main/wp-content/uploads/2022/09/"
-           "JJC_List_675_Geo_Coordinates.pdf")
+PDF_URL = (
+    "https://delhishelterboard.in/main/wp-content/uploads/2022/09/"
+    "JJC_List_675_Geo_Coordinates.pdf"
+)
 PDF_SHA256 = "f9dc3767bf904addf1a2ade3de18b90189159bfda24724d0dd80d0c4ccaf38e8"
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/126.0 Safari/537.36"
 
 EXPECTED = 675
-LAT = (28.35, 28.95)   # Delhi NCT bounding box, used to reject bad coordinates
+LAT = (28.35, 28.95)  # Delhi NCT bounding box, used to reject bad coordinates
 LNG = (76.80, 77.40)
 NUM = re.compile(r"\d{2}\.\d{3,}")
-THRESHOLD = 0.90       # difflib ratio below which a fuzzy match is discarded
+THRESHOLD = 0.90  # difflib ratio below which a fuzzy match is discarded
 
 
 def fetch_pdf() -> Path:
@@ -61,15 +64,20 @@ def fetch_pdf() -> Path:
             pdf.write_bytes(r.read())
     digest = hashlib.sha256(pdf.read_bytes()).hexdigest()
     if digest != PDF_SHA256:
-        sys.exit(f"FATAL: DUSIB PDF sha256 mismatch\n  expected {PDF_SHA256}\n  got      {digest}\n"
-                 "  DUSIB may have republished the list; re-verify before trusting it.")
+        sys.exit(
+            f"FATAL: DUSIB PDF sha256 mismatch\n  expected {PDF_SHA256}\n  got      {digest}\n"
+            "  DUSIB may have republished the list; re-verify before trusting it."
+        )
     return pdf
 
 
 def pdf_to_text(pdf: Path) -> list[str]:
     txt = CACHE / "dusib-jj-675-geo.txt"
     subprocess.run(["pdftotext", "-layout", str(pdf), str(txt)], check=True)
-    return [line.rstrip() for line in txt.read_text(encoding="utf-8", errors="ignore").splitlines()]
+    return [
+        line.rstrip()
+        for line in txt.read_text(encoding="utf-8", errors="ignore").splitlines()
+    ]
 
 
 def parse_blocks(lines: list[str]) -> list[dict]:
@@ -97,17 +105,34 @@ def parse_blocks(lines: list[str]) -> list[dict]:
         loc = blob
         for n in nums:
             loc = loc.replace(n, " ")
-        out.append({"sno": b["sno"], "location": re.sub(r"\s+", " ", loc).strip(" .,;-"),
-                    "lat": lat, "lng": lng})
+        out.append(
+            {
+                "sno": b["sno"],
+                "location": re.sub(r"\s+", " ", loc).strip(" .,;-"),
+                "lat": lat,
+                "lng": lng,
+            }
+        )
     return out
 
 
 def norm(s: str) -> str:
     s = unicodedata.normalize("NFKD", (s or "").lower())
     s = re.sub(r"[^a-z0-9 ]", " ", s)
-    for a, b in [("jhuggi", "jj"), ("jjc", "jj"), ("cluster", ""), ("camp", ""),
-                 ("colony", ""), ("basti", ""), ("near", ""), ("behind", ""),
-                 ("block", "blk"), ("puri", "pur"), ("road", ""), ("nagar", "ngr")]:
+    for a, b in [
+        ("jhuggi", "jj"),
+        ("jjc", "jj"),
+        ("cluster", ""),
+        ("camp", ""),
+        ("colony", ""),
+        ("basti", ""),
+        ("near", ""),
+        ("behind", ""),
+        ("block", "blk"),
+        ("puri", "pur"),
+        ("road", ""),
+        ("nagar", "ngr"),
+    ]:
         s = s.replace(a, b)
     return " ".join(sorted(set(w for w in s.split() if len(w) > 2)))
 
@@ -119,8 +144,10 @@ def main() -> None:
         sys.exit(f"FATAL: parsed {len(recs)} records, expected {EXPECTED}")
     missing = [r for r in recs if r["lat"] is None or r["lng"] is None]
     if missing:
-        sys.exit(f"FATAL: {len(missing)} records without coordinates: "
-                 f"{[r['sno'] for r in missing][:10]}")
+        sys.exit(
+            f"FATAL: {len(missing)} records without coordinates: "
+            f"{[r['sno'] for r in missing][:10]}"
+        )
 
     roster = json.loads(ROSTER.read_text())["clusters"]
     by_norm: dict[str, list] = collections.defaultdict(list)
@@ -143,11 +170,15 @@ def main() -> None:
                 score = round(difflib.SequenceMatcher(None, key, close[0]).ratio(), 3)
         if method:
             c = hits[0]
-            r.update(roster_code=c["code"], households=c.get("households"),
-                     revenue_district=c.get("revenue_district"),
-                     land_owning_agency=c.get("land_owning_agency"),
-                     ward_no_pre2022=c.get("ward_no_pre2022"),
-                     match_method=method, match_score=score)
+            r.update(
+                roster_code=c["code"],
+                households=c.get("households"),
+                revenue_district=c.get("revenue_district"),
+                land_owning_agency=c.get("land_owning_agency"),
+                ward_no_pre2022=c.get("ward_no_pre2022"),
+                match_method=method,
+                match_score=score,
+            )
             exact += method == "exact"
             fuzzy += method == "fuzzy"
         else:
@@ -184,7 +215,9 @@ def main() -> None:
             "unmatched": sum(1 for r in recs if r["match_method"] == "unmatched"),
             "households_joined": got_hh,
             "households_total_roster": total_hh,
-            "households_coverage_pct": round(got_hh * 100 / total_hh, 1) if total_hh else None,
+            "households_coverage_pct": round(got_hh * 100 / total_hh, 1)
+            if total_hh
+            else None,
         },
         "clusters": recs,
     }
@@ -196,8 +229,10 @@ def main() -> None:
     print(f"  matched exact     {s['matched_exact']}")
     print(f"  matched fuzzy     {s['matched_fuzzy']}")
     print(f"  unmatched         {s['unmatched']}")
-    print(f"  households joined {s['households_joined']:,} / {s['households_total_roster']:,} "
-          f"({s['households_coverage_pct']}%)")
+    print(
+        f"  households joined {s['households_joined']:,} / {s['households_total_roster']:,} "
+        f"({s['households_coverage_pct']}%)"
+    )
 
 
 if __name__ == "__main__":

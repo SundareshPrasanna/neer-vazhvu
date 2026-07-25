@@ -42,10 +42,30 @@ UA = "neer-vazhvu/delhi-onboarding (https://neervazhvu.org; civic water dashboar
 PDF_RE = re.compile(r'"(/sites/default/files/DPCC/analysis-report/[^"]+\.pdf)"')
 
 MONTH_TOKENS = {
-    "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
-    "july": 7, "august": 8, "september": 9, "october": 10, "november": 11,
-    "december": 12, "jan": 1, "feb": 2, "mar": 3, "apr": 4, "jun": 6,
-    "jul": 7, "aug": 8, "sep": 9, "sept": 9, "oct": 10, "nov": 11, "dec": 12,
+    "january": 1,
+    "february": 2,
+    "march": 3,
+    "april": 4,
+    "may": 5,
+    "june": 6,
+    "july": 7,
+    "august": 8,
+    "september": 9,
+    "october": 10,
+    "november": 11,
+    "december": 12,
+    "jan": 1,
+    "feb": 2,
+    "mar": 3,
+    "apr": 4,
+    "jun": 6,
+    "jul": 7,
+    "aug": 8,
+    "sep": 9,
+    "sept": 9,
+    "oct": 10,
+    "nov": 11,
+    "dec": 12,
 }
 
 
@@ -125,7 +145,11 @@ def main() -> None:
             print(f"WARN: download failed {name}: {e}", file=sys.stderr)
             continue
         dest.write_bytes(data)
-        index["files"][name] = {**meta, "bytes": len(data), "fetched": date.today().isoformat()}
+        index["files"][name] = {
+            **meta,
+            "bytes": len(data),
+            "fetched": date.today().isoformat(),
+        }
         new += 1
         print(f"archived {name} ({meta['kind']}, {meta['month']}, {len(data):,} bytes)")
 
@@ -135,7 +159,9 @@ def main() -> None:
     for m in index["files"].values():
         kinds[m["kind"]] = kinds.get(m["kind"], 0) + 1
     print(f"index: {len(index['files'])} files {kinds}; {new} new this run")
-    print("NOTE: PDFs are image scans - transcribe/OCR into public/data/dpcc-monthly-wq-delhi.json")
+    print(
+        "NOTE: PDFs are image scans - transcribe/OCR into public/data/dpcc-monthly-wq-delhi.json"
+    )
 
 
 if __name__ == "__main__":
