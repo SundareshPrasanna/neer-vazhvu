@@ -73,14 +73,19 @@ def dist_m(lon1, lat1, lon2, lat2):
 
 
 class WardIndex:
-    def __init__(self, features):
+    """Point-in-polygon lookup. `key` selects which property find() returns;
+    pass key=None to get the whole properties dict (used for the CGWB
+    district polygons, which carry class + stage inline)."""
+
+    def __init__(self, features, key="ward_no"):
+        self.key = key
         self.entries = []
         for f in features:
             rings = rings_of(f["geometry"])
             xs = [p[0] for r in rings for p in r]
             ys = [p[1] for r in rings for p in r]
             self.entries.append({
-                "no": f["properties"]["ward_no"],
+                "no": f["properties"][key] if key else f["properties"],
                 "rings": rings,
                 "bbox": (min(xs), min(ys), max(xs), max(ys)),
             })
@@ -91,6 +96,68 @@ class WardIndex:
             if x0 <= lon <= x1 and y0 <= lat <= y1 and any(in_ring(lon, lat, r) for r in e["rings"]):
                 return e["no"]
         return None
+
+
+def jj_section(clusters):
+    """Per-ward JJ-basti summary.
+
+    Household counts exist only for clusters whose location name joined to
+    DUSIB's household roster, so the ward total is reported as a floor with
+    the number of clusters it is missing, rather than as a ward census."""
+    if not clusters:
+        return {"count": 0, "households": 0, "households_is_floor": False, "names": []}
+    with_hh = [c for c in clusters if c.get("households")]
+    return {
+        "count": len(clusters),
+        "households": sum(c["households"] for c in with_hh),
+        # True when at least one cluster in this ward has no household count,
+        # i.e. the figure understates the ward.
+        "households_is_floor": len(with_hh) < len(clusters),
+        "clusters_without_households": len(clusters) - len(with_hh),
+        "names": [c["location"] for c in
+                  sorted(clusters, key=lambda c: -(c.get("households") or 0))[:5]],
+    }
+
+
+# A CGWB telemetric well further than this from the ward centroid is not
+# reported: Delhi's network is 140-odd points over 1,483 sq km, and beyond
+# a few km the reading says nothing about the ward.
+WELL_MAX_KM = 5.0
+
+
+def groundwater_section(lon, lat, gwr_idx, wells):
+    """Shape per WardGroundwaterAssessment in src/lib/hooks/use-ward-profile.ts:
+    the district assessment unit (Delhi assesses by district, not block) plus
+    the nearest CGWB telemetric well if one falls within WELL_MAX_KM."""
+    props = gwr_idx.find(lon, lat)
+    block = None
+    if props:
+        block = {
+            "name": props.get("block"),
+            "class": props.get("class"),
+            "development_pct": props.get("sgw_dev_pe"),
+        }
+
+    nearest_well = None
+    if wells:
+        w = min(wells, key=lambda w: dist_m(lon, lat, w["lng"], w["lat"]))
+        km = dist_m(lon, lat, w["lng"], w["lat"]) / 1000
+        if km <= WELL_MAX_KM:
+            last = w["readings"][-1]
+            nearest_well = {
+                "name": w["name"],
+                "block": w.get("district") or "",
+                "distance_km": round(km, 1),
+                "latest": {
+                    "year": last["year"],
+                    "month": last["month"],
+                    "depth_m_bgl": last["depth_m_bgl"],
+                },
+            }
+
+    if not block and not nearest_well:
+        return None
+    return {"block": block, "nearest_well": nearest_well}
 
 
 def main():
@@ -112,13 +179,46 @@ def main():
         for k, v in load(D / "delhi-ward-representatives.json")["wards"].items()
     }
 
+    # DUSIB's 675 JJ bastis, geocoded from the Board's own coordinate PDF
+    # (see build_delhi_jj_bastis_geo.py). Household counts are present only
+    # where the location-name join to the roster succeeded, so a ward's
+    # household total is a FLOOR, not a census - flagged per ward below.
+    jj = load(D / "delhi-jj-bastis-geo.json")["clusters"]
+
+    # District-level CGWB assessment polygons + the latest class/stage per
+    # district, used as the ward's "block" in the shared groundwater card.
+    gwr_idx = WardIndex(load(G / "delhi-gwr-blocks.geojson")["features"], key=None)
+
+    # CGWB telemetric wells (India-WRIS). Optional: the groundwater card falls
+    # back to district class alone if the station file has not been built.
+    try:
+        cgwb_wells = [w for w in load(D / "delhi-cgwb-stations.json")["wells"]
+                      if w.get("readings") and w.get("_data_status") != "suspect"]
+    except FileNotFoundError:
+        cgwb_wells = []
+
     acc = {
         f["properties"]["ward_no"]: {
             "bodies": [], "census": 0, "lost": [], "hotspots": [],
-            "drain_count": 0, "drain_km": 0.0,
+            "drain_count": 0, "drain_km": 0.0, "jj": [],
         }
         for f in wards
     }
+
+    # ~33 of the 675 clusters land outside every MCD ward, and correctly so:
+    # they sit in the NDMC area (Lutyens - Race Course, Raisina, Talkatora,
+    # Pandara Road) or the Delhi Cantonment Board, neither of which is part of
+    # the 250-ward MCD delimitation. They are counted as out-of-jurisdiction
+    # rather than silently dropped.
+    jj_unplaced = 0
+    for c in jj:
+        if c.get("lat") is None or c.get("lng") is None:
+            continue
+        w = idx.find(c["lng"], c["lat"])
+        if w is not None:
+            acc[w]["jj"].append(c)
+        else:
+            jj_unplaced += 1
 
     for f in osm:
         rings = rings_of(f["geometry"])
@@ -221,10 +321,7 @@ def main():
                 "_data_status": "not_available",
                 "_data_status_note": "DJB sewer-network KML delisted from OpenCity; restore requested. See /delhi/about data gaps.",
             },
-            "jj_bastis": {
-                "_data_status": "not_geocoded",
-                "_data_status_note": "DUSIB's 675-cluster roster (306,521 households) has no coordinates in the public PDFs and uses pre-2022 ward numbers; per-ward attribution needs the SEC crosswalk or geocoding.",
-            },
+            "jj_bastis": jj_section(a["jj"]),
             # Key + field names per WardProfile.rivers (the card reads
             # nearest_river_id/nearest_station_id/nearest_km).
             "rivers": {
@@ -236,17 +333,26 @@ def main():
             # zone polygon set - no per-ward zone count exists.
             "industrial": {
                 "_data_status": "not_available",
-                "_data_status_note": "No per-ward industrial-zone polygons published for Delhi; the DPCC CETP monthly archive (13 plants) is the industrial layer and is not ward-attributed.",
+                "_data_status_note": "No per-ward industrial-zone polygons published for Delhi; the DPCC CETP monthly archive (13 plants) is the industrial layer and is not ward-attributed. DPCC's only public consent register covers 1991-2002.",
             },
+            "groundwater_assessment": groundwater_section(lon, lat, gwr_idx, cgwb_wells),
         })
 
     out = D / "delhi-ward-profiles.json"
     out.write_text(json.dumps(profiles, ensure_ascii=False, separators=(",", ":")))
     n_bodies = sum(pf["water_bodies"]["current_count"] for pf in profiles)
     n_hot = sum(pf["flood"]["chronic_hotspots"] for pf in profiles)
+    n_jj = sum(pf["jj_bastis"]["count"] for pf in profiles)
+    n_hh = sum(pf["jj_bastis"]["households"] for pf in profiles)
+    n_well = sum(1 for pf in profiles
+                 if (pf.get("groundwater_assessment") or {}).get("nearest_well"))
     print(f"wrote {out.name}: {len(profiles)} wards | {n_bodies} bodies attributed | "
           f"{sum(pf['water_bodies']['census_records'] for pf in profiles)} census records | "
           f"{n_hot} hotspots | {round(sum(pf['drainage']['total_length_km'] for pf in profiles))} drain km in-ward")
+    print(f"  JJ bastis: {n_jj} clusters in {sum(1 for pf in profiles if pf['jj_bastis']['count'])} wards, "
+          f"{n_hh:,} households | {jj_unplaced} outside MCD (NDMC / Cantonment)")
+    print(f"  groundwater: {sum(1 for pf in profiles if pf.get('groundwater_assessment'))} wards with district class, "
+          f"{n_well} with a CGWB well within {WELL_MAX_KM:g} km")
 
 
 if __name__ == "__main__":
