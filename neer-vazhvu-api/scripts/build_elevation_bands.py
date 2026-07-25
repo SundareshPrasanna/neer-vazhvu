@@ -15,7 +15,13 @@ simplify + drop slivers -> one MultiPolygon feature per band.
 Mumbai bands are tuned to its flood story: nearly all chronic waterlogging
 sits under 5 m.
 
+Basin mode builds public/data/basins/<id>/elevation-bands.geojson for the
+basin atlas terrain layer instead: same FABDEM source, but the bbox derives
+from the basin boundary file, pixels outside the boundary polygon are
+masked out, and simplification is coarser (basin zoom, not street zoom).
+
 Run:  python scripts/build_elevation_bands.py --city mumbai
+      python scripts/build_elevation_bands.py --basin arkavathi
 Needs GEE credentials in .env (same as the cascade/GEE pipelines).
 """
 
@@ -60,6 +66,24 @@ CITIES = {
     "bangalore": {
         "bbox": (77.40, 12.80, 77.85, 13.20),  # BBMP + GBA fringe
         "bands": [700, 840, 870, 900, 930, 960, 1000],
+    },
+}
+
+# Basin-atlas terrain layers. bbox comes from the boundary file; pixels
+# outside the boundary polygon are masked to NODATA so bands stop at the
+# watershed divide (terrain beyond it belongs to a different basin's story).
+BASINS = {
+    "arkavathi": {
+        "boundary": "public/data/basins/arkavathi/boundary.geojson",
+        "out": "public/data/basins/arkavathi/elevation-bands.geojson",
+        # Nandi Hills (1,452 m) down to the Sangama confluence (366 m);
+        # most of the basin is the Bengaluru plateau, so the plateau is cut
+        # finer than the tails. Edges sit on the FABDEM percentiles
+        # (p0=366 p5=623 p20=698 p40=779 p60=860 p80=900 p95=930 p100=1452).
+        "bands": [360, 620, 720, 800, 860, 920, 980],
+        "bbox_buffer_deg": 0.02,
+        "simplify_deg": 0.001,  # ~110 m - basin zoom, not street zoom
+        "min_area_deg2": 1e-5,  # ~12 ha - drop basin-scale slivers
     },
 }
 
@@ -136,24 +160,65 @@ SIMPLIFY_DEG = 0.0004  # ~44 m - two DEM cells; bands, not spot heights
 MIN_AREA_DEG2 = 4e-7  # ~0.5 ha - drop slivers
 
 
+def load_boundary_geom(path: Path):
+    """Union of every polygon in a boundary GeoJSON (Feature or collection)."""
+    d = json.loads(path.read_text())
+    feats = d["features"] if d.get("type") == "FeatureCollection" else [d]
+    return unary_union([shape(f.get("geometry") or f) for f in feats])
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--city", default="mumbai", choices=sorted(CITIES))
+    target = ap.add_mutually_exclusive_group()
+    target.add_argument("--city", choices=sorted(CITIES))
+    target.add_argument("--basin", choices=sorted(BASINS))
     ap.add_argument(
         "--dem", help="reuse an existing mosaic GeoTIFF instead of fetching"
     )
     args = ap.parse_args()
-    cfg = CITIES[args.city]
+    if not args.city and not args.basin:
+        args.city = "mumbai"
+
+    boundary = None
+    if args.basin:
+        name = args.basin
+        cfg = BASINS[name]
+        boundary = load_boundary_geom(REPO_ROOT / cfg["boundary"])
+        buf = cfg["bbox_buffer_deg"]
+        minx, miny, maxx, maxy = boundary.bounds
+        bbox = (minx - buf, miny - buf, maxx + buf, maxy + buf)
+        simplify_deg = cfg["simplify_deg"]
+        min_area_deg2 = cfg["min_area_deg2"]
+        out_path = REPO_ROOT / cfg["out"]
+        provenance = (
+            "FABDEM V1-2 (Hawker et al., University of Bristol; satellite-derived "
+            "30 m DEM with buildings and forests removed) via Google Earth Engine, "
+            "classified into ground-height bands and clipped to the basin "
+            "boundary. Simplified for basin-scale display (~110 m tolerance) - "
+            "read them as bands, not spot heights."
+        )
+    else:
+        name = args.city
+        cfg = CITIES[name]
+        bbox = cfg["bbox"]
+        simplify_deg = SIMPLIFY_DEG
+        min_area_deg2 = MIN_AREA_DEG2
+        out_path = REPO_ROOT / f"public/data/elevation-bands-{name}.geojson"
+        provenance = (
+            "FABDEM V1-2 (Hawker et al., University of Bristol; satellite-derived "
+            "30 m DEM with buildings and forests removed) via Google Earth Engine, "
+            "classified into ground-height bands and clipped to the official "
+            "corporation boundaries. Bands are honest at ~30 m horizontal / "
+            "~2 m vertical accuracy - read them as bands, not spot heights."
+        )
 
     if args.dem:
         dem_path = Path(args.dem)
     else:
-        dem_path = Path(tempfile.gettempdir()) / f"elevation_{args.city}_fabdem_v2.tif"
+        dem_path = Path(tempfile.gettempdir()) / f"elevation_{name}_fabdem_v2.tif"
         if not dem_path.exists():
-            print(
-                f"Fetching FABDEM mosaic (unmasked) for {args.city} {cfg['bbox']} ..."
-            )
-            fetch_fabdem_unmasked(cfg["bbox"], dem_path)
+            print(f"Fetching FABDEM mosaic (unmasked) for {name} {bbox} ...")
+            fetch_fabdem_unmasked(bbox, dem_path)
         else:
             print(f"Reusing cached mosaic {dem_path}")
 
@@ -162,6 +227,24 @@ def main() -> int:
         transform = src.transform
         # Land = everything FABDEM defines; sea = the NODATA sentinel.
         land_mask = dem > NODATA + 1
+
+    if boundary is not None:
+        land_mask &= rasterio.features.geometry_mask(
+            [mapping(boundary)],
+            out_shape=dem.shape,
+            transform=transform,
+            invert=True,
+        )
+
+    # Elevation spread inside the mask - the reference for tuning band edges.
+    vals = dem[land_mask]
+    pcts = np.percentile(vals, [0, 5, 20, 40, 60, 80, 95, 100])
+    print(
+        "elevation percentiles (m):",
+        " ".join(
+            f"p{p}={v:.0f}" for p, v in zip([0, 5, 20, 40, 60, 80, 95, 100], pcts)
+        ),
+    )
 
     edges = cfg["bands"]
     features = []
@@ -183,12 +266,12 @@ def main() -> int:
             if val != 1:
                 continue
             g = shape(geom)
-            if g.area < MIN_AREA_DEG2:
+            if g.area < min_area_deg2:
                 continue
             polys.append(g)
         if not polys:
             continue
-        merged = unary_union(polys).simplify(SIMPLIFY_DEG, preserve_topology=True)
+        merged = unary_union(polys).simplify(simplify_deg, preserve_topology=True)
         label = f"{lo}-{hi} m" if hi is not None else f"{lo} m +"
         features.append(
             {
@@ -202,17 +285,10 @@ def main() -> int:
 
     out = {
         "type": "FeatureCollection",
-        "name": f"elevation-bands-{args.city}",
-        "_provenance": (
-            "FABDEM V1-2 (Hawker et al., University of Bristol; satellite-derived "
-            "30 m DEM with buildings and forests removed) via Google Earth Engine, "
-            "classified into ground-height bands and clipped to the official "
-            "corporation boundaries. Bands are honest at ~30 m horizontal / "
-            "~2 m vertical accuracy - read them as bands, not spot heights."
-        ),
+        "name": f"elevation-bands-{name}",
+        "_provenance": provenance,
         "features": features,
     }
-    out_path = REPO_ROOT / f"public/data/elevation-bands-{args.city}.geojson"
     out_path.write_text(json.dumps(out, separators=(",", ":")))
     mb = out_path.stat().st_size / 1e6
     print(f"wrote {out_path.name}: {len(features)} band features, {mb:.1f} MB")

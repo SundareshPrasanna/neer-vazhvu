@@ -20,7 +20,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-asyncio", "ruff"]
+# ruff pinned to a minor: 0.16.0 promoted new default rules (C408, import
+# ordering) that fail the repo wholesale - adopt new minors deliberately,
+# with the fix sweep in the same PR as the bump.
+dev = ["pytest", "pytest-asyncio", "ruff>=0.15,<0.16"]
 imd = ["imdlib>=0.1", "xarray>=2024.0"]
 cpcb = ["pdfplumber>=0.11"]
 # Catchment delineation (delineate-catchments stage): FABDEM via GEE +

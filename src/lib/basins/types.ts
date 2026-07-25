@@ -79,6 +79,10 @@ export interface BasinLayer {
   context?: boolean;
   /** Features carry a `kind` with sub-types worth toggling (pressures). */
   hasKinds?: boolean;
+  /** Render only features whose `kind` equals this value - lets one data
+   *  family back several independent layer toggles (e.g. industrial areas
+   *  vs the 17-category industry points share pressures-industrial). */
+  kindFilter?: string;
   /** Gap layer: a choropleth of treatment-gap severity per admin unit, whose
    *  click opens the cross-source gap panel (see gaps.json) instead of the
    *  generic feature panel. Features carry `gapUnit` + `severity`. */
@@ -87,6 +91,13 @@ export interface BasinLayer {
    *  whose click opens the PRS entry-point panel (see prs.json) instead of the
    *  generic feature panel. Features carry `year` + `priority` + `length_km`. */
   prs?: boolean;
+  /** Elevation layer: FABDEM hypsometric bands (elevation-bands.geojson,
+   *  built by scripts/build_elevation_bands.py --basin <id>). Drawn at the
+   *  very bottom of the canvas, non-interactive, colored by the shared
+   *  ELEVATION_BAND_COLORS palette (features carry `band` + `order`), and
+   *  dimmed while a gap choropleth is visible so the choropleth stays
+   *  readable. Exempt from river scoping - terrain is whole-basin context. */
+  elevation?: boolean;
 }
 
 export interface BasinManifest {
@@ -132,6 +143,22 @@ export interface BasinManifest {
    * while the rest stays a pan away. Selecting a river still fits to it.
    */
   defaultFocus?: { center: [number, number]; zoom: number };
+  /** Collaboration attribution (e.g. "Developed in collaboration with" +
+   *  the partner's logo - the partner's NAME lives inside the logo image;
+   *  alt text carries it for screen readers). Rendered on the atlas
+   *  "Data on this map" block and the embed header. Absent = no partner
+   *  attribution on those surfaces. */
+  collaboration?: {
+    /** Lead-in line, e.g. "Developed in collaboration with". */
+    label: string;
+    /** Partner name (alt text / accessibility - visually in the logo). */
+    name: string;
+    /** Path under public/, e.g. "/partners/paani-earth-foundation.png". */
+    logo: string;
+    url?: string;
+    /** One-line role description under the logo. */
+    sub?: string;
+  };
   /** Attribution lines rendered verbatim in "Data on this map". */
   credits: string[];
 }

@@ -357,8 +357,12 @@ export function BasinOverview({
     const v = ref ? metricFor(ref) : null;
     const isSel = key === selectedKey;
     return {
-      color: isSel ? "#0f172a" : "#475569",
-      weight: isSel ? 2.5 : 1,
+      // Separators must survive same-colour neighbours (most sub-basins share
+      // a fill class): dark hairlines on the light basemap, light on dark.
+      // The selected outline flips too - near-black vanishes in dark mode.
+      color: isSel ? (tiles.isDark ? "#f8fafc" : "#0f172a") : tiles.isDark ? "#e2e8f0" : "#1e293b",
+      weight: isSel ? 3 : 1.8,
+      opacity: isSel ? 1 : 0.75,
       fillColor: metricColor(metric, v),
       fillOpacity: tiles.isDark ? 0.45 : 0.55,
     };

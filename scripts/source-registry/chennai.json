@@ -1,0 +1,27 @@
+{
+  "_doc": "Headwaters source registry - Chennai episodic sources. Schema + design notes: docs/specs/headwaters.md (local). Validate: npm run data:check. Baseline/accept: scripts/check-upstream-editions.ts --accept <id>.",
+  "sources": [
+    {
+      "id": "cpcb-nwmp-annual",
+      "scope": "chennai",
+      "publisher": "CPCB",
+      "url": "https://cpcb.nic.in/nwmp-data-2/",
+      "insecureTLS": true,
+      "license": "GoI publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "nwmp"
+      },
+      "dependsOn": [
+        "public/data/river-quality.json",
+        "public/data/river-quality-bangalore.json",
+        "public/data/river-quality-madurai.json"
+      ],
+      "refreshMethod": "manual PDF extraction (Madurai: scripts/scrape_cpcb_nwmp_vaigai.py)",
+      "notes": "NWMP annual River Water Quality listing; year pages (e.g. nwmp-data-2) appear as new links, typically Jan-Mar. Serves Chennai (4 rivers/10 stations), Bengaluru (Vrishabhavathi/Arkavathy/Dakshina Pinakini), Madurai (Vaigai 10059/10060). Host has broken TLS and was fully unreachable on 2026-07-21 even with curl -k from a residential IP - check-failures expected until CPCB recovers; retry before changing this entry."
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "_doc": "Headwaters source registry - Bengaluru episodic sources. Schema + design notes: docs/specs/headwaters.md (local).",
+  "sources": [
+    {
+      "id": "atree-opencity-lakes-bengaluru",
+      "scope": "bangalore",
+      "publisher": "ATREE-CSEI (via OpenCity)",
+      "url": "https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area",
+      "license": "open (per OpenCity dataset page)",
+      "type": "page",
+      "cadence": "unknown",
+      "tier": 0,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/resource/|\\.(kmz|kml|zip|geojson)"
+      },
+      "dependsOn": [
+        "public/geojson/bangalore-water-bodies-current.geojson"
+      ],
+      "refreshMethod": "manual (re-run the named-lake spatial join; raw KMZ under scripts/data-raw/bangalore/)",
+      "notes": "Canonical named-lake census (1,349 polygons), one of three sources in the named-lake join. New resource links = a revised lake map edition.",
+      "lastSeen": {
+        "linksHash": "b69b323772eb8bb7",
+        "links": [
+          "https://data.opencity.in/dataset/14aaf1e9-d3a9-4d5a-b698-bb93bd064264/resource/0ab3a8a4-3b1a-4817-853e-376bce810aa7/download/bangalore_urban_rural_lakes_final.kmz",
+          "https://data.opencity.in/dataset/14aaf1e9-d3a9-4d5a-b698-bb93bd064264/resource/733f491b-3e74-49fd-b6fc-dde2fc0fda0e/download/23141cb5-471e-4796-af80-4311819fd031.kml",
+          "https://data.opencity.in/dataset/14aaf1e9-d3a9-4d5a-b698-bb93bd064264/resource/c25e7c1e-f1e0-4dc2-8a6d-216470e363a0/download/dae235c7-89a9-48de-be2c-5c19621b1ecb.kml",
+          "https://data.opencity.in/dataset/14aaf1e9-d3a9-4d5a-b698-bb93bd064264/resource/e86c4bdc-49cf-4b99-ba80-996e8ef31e4e/download/d936310f-aba1-4b2b-aa34-663977917df7.kml",
+          "https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area/resource/0ab3a8a4-3b1a-4817-853e-376bce810aa7",
+          "https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area/resource/733f491b-3e74-49fd-b6fc-dde2fc0fda0e",
+          "https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area/resource/c25e7c1e-f1e0-4dc2-8a6d-216470e363a0",
+          "https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area/resource/e86c4bdc-49cf-4b99-ba80-996e8ef31e4e"
+        ],
+        "acceptedOn": "2026-07-21"
+      }
+    }
+  ]
+}

@@ -93,20 +93,10 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     dateFrom: 'regex:"rainfallDeviationPct":\\s*\\{[^}]*"asOf": "(\\d{4}-\\d{2}-\\d{2})"',
     note: "Cauvery sub-basin rainfall deviation (self-computed, both states)",
   },
-  {
-    id: "cauvery-tn-wq-stations",
-    cityId: "bangalore",
-    file: "public/data/basins/cauvery-tn/scoreboard.json",
-    // TNPCB's stretch-wise WQ series is a CLOSED archive (last edition
-    // Dec 2023, stated in the UI) - this is an edition-watch, not a feed:
-    // it fires roughly yearly as a prompt to re-check the TNPCB PR-Stretches
-    // page (tnpcb.gov.in) for a resumed series or a new vintage, and to
-    // re-check CPCB's next Polluted River Stretches report.
-    maxAgeDays: 400,
-    dateFrom: "json:asOf",
-    note: "TN Cauvery stretch WQ (TNPCB, closed series) + CPCB PRS edition watch",
-  },
 ];
+// Edition-watches (did UPSTREAM publish something new?) do not belong here -
+// register them in scripts/source-registry/ (check-upstream-editions.ts).
+// The TN Cauvery stretch-WQ watch moved there as `tnpcb-prs-cauvery`.
 
 // Cities allowed to skip a derived check, with the reason on record.
 // (Empty today - add `"<cityId>:<feedId>": "reason"` entries only when a
