@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CityHeaderBadges } from "@/components/dashboard/city-header-badges";
 import { getPlaceConfig } from "@/lib/cities";
 import type { PlaceConfig } from "@/lib/cities";
+import { FEATURE_AVAILABILITY } from "@/lib/cities/routing";
 import {
   loadCitySnapshot,
   loadCityWaterEstimate,
@@ -298,8 +299,13 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
   // "waiting for ingestion" would misrepresent the data model. Only consider
   // a city "in preview" if it has a primary source configured AND that
   // source's reading is missing.
+  // ...and only when that primary source can actually RECEIVE a reading.
+  // Delhi's primary sources are a river intake and two canals, all marked
+  // hasPublicFeed:false (no public daily feed exists for the city's share),
+  // so without this the pill would promise an ingestion that can never
+  // arrive - the exact failure the hasPublicFeed flag documents.
   const hasPrimaryDrinkingSource = config.waterSources.some(
-    (s) => s.isPrimaryDrinkingSource,
+    (s) => s.isPrimaryDrinkingSource && s.hasPublicFeed !== false,
   );
   const reservoirIsLive = !hasPrimaryDrinkingSource || snapshot.reservoirIsLive;
 
@@ -468,10 +474,12 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
         />
       )}
 
-      {/* Per-feature deep-dive nav. Tanker-market card only appears for
-          cities that have a tanker-survey JSON (Bangalore today). */}
+      {/* Per-feature deep-dive nav. Tanker-market card gates on the city's
+          FEATURE_AVAILABILITY set, NOT the hero variant - Delhi shares the
+          cauvery-pumping hero but has no tanker surface (DJB portal scrape
+          is ToS-gated), so a heroMode proxy leaks the card. */}
       <div
-        className={`grid grid-cols-1 ${config.heroMode === "cauvery-pumping" ? "sm:grid-cols-4" : "sm:grid-cols-3"} gap-3`}
+        className={`grid grid-cols-1 ${FEATURE_AVAILABILITY[cityId]?.has("tanker") ? "sm:grid-cols-4" : "sm:grid-cols-3"} gap-3`}
       >
         <Link
           href={`/${cityId}/groundwater`}
@@ -505,7 +513,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
             OSM polygons, flagship tanks, restoration priority badges, lost-tank inventory.
           </p>
         </Link>
-        {config.heroMode === "cauvery-pumping" && (
+        {FEATURE_AVAILABILITY[cityId]?.has("tanker") && (
           <Link
             href={`/${cityId}/tanker`}
             className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors"

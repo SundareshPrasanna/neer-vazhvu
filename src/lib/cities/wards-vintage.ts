@@ -20,6 +20,9 @@ const WARDS_VINTAGE: Record<string, string> = {
   // Mumbai uses the 24 BMC administrative wards (A..T), not the 227
   // electoral wards; "2023" tags the DataMeet source vintage.
   mumbai: "2023",
+  // Delhi uses the 250 post-unification MCD wards, final delimitation
+  // notified September 2022 (NOT the pre-merger 272).
+  delhi: "2022",
 };
 
 const DEFAULT_VINTAGE = "2022";

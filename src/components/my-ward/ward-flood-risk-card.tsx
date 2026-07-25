@@ -51,7 +51,77 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
     );
   }
 
-  if (!flood.dominant_hazard && flood.hazard_zone_count === 0 && flood.hotspot_2015_count === 0 && flood.hotspot_2020_count === 0) {
+  if (
+    "by_category" in flood &&
+    !flood.dominant_hazard &&
+    flood.hazard_zone_count === 0 &&
+    flood.hotspot_2015_count === 0 &&
+    flood.hotspot_2020_count === 0
+  ) {
+    return (
+      <Card>
+        <CardHeader>
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
+            {t("my_ward.flood_risk")}
+          </h2>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-slate-400 dark:text-slate-500">{t("my_ward.no_flood_data")}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Chronic-waterlogging cities (Delhi): no modelled hazard polygons, but a
+  // register of perennial flooding points. Render what exists rather than a
+  // zeroed hazard card.
+  if ("chronic_hotspots" in flood) {
+    const names = flood.hotspot_names ?? [];
+    return (
+      <Card>
+        <CardHeader>
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
+            {t("my_ward.flood_risk")}
+          </h2>
+        </CardHeader>
+        <CardContent>
+          {flood.chronic_hotspots > 0 ? (
+            <>
+              <p className="text-sm text-slate-700 dark:text-slate-300">
+                <span className="font-semibold">{flood.chronic_hotspots}</span>{" "}
+                chronic waterlogging {flood.chronic_hotspots === 1 ? "hotspot" : "hotspots"} recorded in this ward
+              </p>
+              {names.length > 0 && (
+                <ul className="mt-2 space-y-1">
+                  {names.map((n) => (
+                    <li key={n} className="text-sm text-slate-600 dark:text-slate-400">- {n}</li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              No perennial waterlogging point recorded in this ward.
+            </p>
+          )}
+          {flood._note && (
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 leading-snug">{flood._note}</p>
+          )}
+          <Link
+            href={`${cityPrefix}/flood-risk`}
+            className="inline-block mt-3 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            {t("my_ward.view_on_map")} &rarr;
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Defensive: an unrecognised flood shape must degrade to the honest
+  // "not sourced" card, never crash the whole ward page (it did - every
+  // Delhi ward 500'd on Object.values(undefined) before this guard).
+  if (!("by_category" in flood) || !flood.by_category) {
     return (
       <Card>
         <CardHeader>

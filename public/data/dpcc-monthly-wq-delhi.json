@@ -1,0 +1,155 @@
+{
+  "_note": "DPCC monthly water-quality series for the Yamuna (8 river stations) and the drain network (direct-outfall drains + Najafgarh subdrains/Jheel + UP outfalls + Agra-canal drains). The highest-cadence public river/drain feed of any Indian metro. DPCC publishes these as SCANNED PDFs on dpcc.delhi.gov.in (Drupal site; the old dpcc.delhigovt.nic.in redirects there) - values below were transcribed from the scans (visual transcription 2026-07-20); the fetcher script archives PDFs monthly and OCR automation is a wiring task. NO FLOW entries are preserved verbatim - they are drain-trapping evidence, not missing data.",
+  "source": {
+    "publisher": "Delhi Pollution Control Committee (I/C Water Laboratory)",
+    "listing_url": "https://dpcc.delhi.gov.in/dpcc/analysis-reports",
+    "archive_url": "https://dpcc.delhi.gov.in/dpcc/archive/analysis-reports",
+    "fetcher": "neer-vazhvu-api/scripts/fetch_dpcc_monthly_delhi.py",
+    "transcription": "manual from scan images @200dpi (values cross-checked against column standards)",
+    "retrieved": "2026-07-20"
+  },
+  "standards": {
+    "river_c_class": { "ph": [6.5, 8.5], "bod_mgl_max": 3, "do_mgl_min": 5, "fecal_coliform_mpn100ml_desirable": 500, "fecal_coliform_mpn100ml_max": 2500 },
+    "drain_effluent": { "ph": [5.5, 9.0], "tss_mgl_max": 100, "cod_mgl_max": 250, "bod_mgl_max": 30 }
+  },
+  "river_stations": [
+    { "id": "palla", "name": "Palla", "lat": 28.8138023, "lng": 77.2100181, "note": "Entry to NCT" },
+    { "id": "wazirabad", "name": "Wazirabad", "lat": 28.713131, "lng": 77.2319304, "note": "Barrage pond; raw-water intake" },
+    { "id": "isbt", "name": "ISBT Bridge", "lat": 28.6713533, "lng": 77.2338207, "note": "Downstream of Najafgarh drain outfall" },
+    { "id": "ito", "name": "ITO Bridge", "lat": 28.6284288, "lng": 77.2534977 },
+    { "id": "nizamuddin", "name": "Nizamuddin Bridge", "lat": 28.5915608, "lng": 77.2715342 },
+    { "id": "hindon-cut", "name": "Hindon Cut", "lat": 28.586049, "lng": 77.300012 },
+    { "id": "okhla", "name": "Okhla Barrage", "lat": 28.545636, "lng": 77.311072 },
+    { "id": "asgarpur", "name": "Asgarpur (Kidwali, Haryana)", "lat": 28.4665895, "lng": 77.3928257, "note": "Exit from NCT" }
+  ],
+  "series_note": "2026 river series backfilled Jan/Mar/Apr/May from the archived scans (drain tables backfilled for May only so far; Feb is not on DPCC's listing pages - recorded as a publication gap, not a scrape failure).",
+  "months": [
+    {
+      "month": "2026-01",
+      "sampled": "2026-01-07",
+      "report_date": "2026-01-30",
+      "report_nos": { "river": "DPCC/W/Y/2026/01-08/2544" },
+      "pdf_urls": { "river": "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/river_yamuna_january_2026.pdf" },
+      "river": [
+        { "station": "palla", "ph": 7.6, "bod": 2.5, "cod": 11, "do": 7.6, "fecal_coliform": 2700, "phosphate": 0.09, "ammonical_n": 0.93 },
+        { "station": "wazirabad", "ph": 7.4, "bod": 3.0, "cod": 15, "do": 6.4, "fecal_coliform": 3300, "phosphate": 0.11, "ammonical_n": 0.99 },
+        { "station": "isbt", "ph": 7.1, "bod": 38.0, "cod": 110, "do": 0, "do_nil": true, "fecal_coliform": 220000, "phosphate": 1.02, "ammonical_n": 2.18 },
+        { "station": "ito", "ph": 7.7, "bod": 30.0, "cod": 92, "do": 0, "do_nil": true, "fecal_coliform": 18000, "phosphate": 0.86, "ammonical_n": 1.95 },
+        { "station": "nizamuddin", "ph": 7.3, "bod": 27.0, "cod": 77, "do": 0.7, "fecal_coliform": 22000, "phosphate": 0.69, "ammonical_n": 1.26 },
+        { "station": "hindon-cut", "ph": 7.8, "bod": 24.0, "cod": 63, "do": 0.4, "fecal_coliform": 17000, "phosphate": 0.20, "ammonical_n": 1.66 },
+        { "station": "okhla", "ph": 7.5, "bod": 26.0, "cod": 66, "do": 0, "do_nil": true, "fecal_coliform": 24000, "phosphate": 0.63, "ammonical_n": 1.39 },
+        { "station": "asgarpur", "ph": 7.9, "bod": 52.0, "cod": 166, "do": 0, "do_nil": true, "fecal_coliform": 350000, "phosphate": 1.28, "ammonical_n": 2.73 }
+      ],
+      "derived": { "river_bod_entry_exit": [2.5, 52.0], "stations_do_nil": 4 }
+    },
+    {
+      "month": "2026-03",
+      "sampled": "2026-03-09",
+      "report_date": "2026-03-23",
+      "report_nos": { "river": "DPCC/W/Y/2026/17-24/2694" },
+      "pdf_urls": { "river": "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/river_yamuna_march-26%29_1%29.pdf" },
+      "river": [
+        { "station": "palla", "ph": 7.4, "bod": 2.0, "cod": 10, "do": 4.0, "fecal_coliform": 3200, "phosphate": 0.07, "ammonical_n": 1.03 },
+        { "station": "wazirabad", "ph": 7.6, "bod": 4.0, "cod": 18, "do": 3.1, "fecal_coliform": 4300, "phosphate": 0.07, "ammonical_n": 1.37 },
+        { "station": "isbt", "ph": 7.2, "bod": 44.0, "cod": 134, "do": 0, "do_nil": true, "fecal_coliform": 160000, "phosphate": 0.48, "ammonical_n": 4.50 },
+        { "station": "ito", "ph": 6.9, "bod": 38.0, "cod": 122, "do": 0, "do_nil": true, "fecal_coliform": 130000, "phosphate": 0.39, "ammonical_n": 4.12 },
+        { "station": "nizamuddin", "ph": 7.5, "bod": 36.0, "cod": 118, "do": 0, "do_nil": true, "fecal_coliform": 120000, "phosphate": 1.18, "ammonical_n": 0.91 },
+        { "station": "hindon-cut", "ph": 7.1, "bod": 25.0, "cod": 74, "do": 0, "do_nil": true, "fecal_coliform": 80000, "phosphate": 0.03, "ammonical_n": 0.73 },
+        { "station": "okhla", "ph": 7.8, "bod": 42.0, "cod": 138, "do": 0, "do_nil": true, "fecal_coliform": 200000, "phosphate": 0.18, "ammonical_n": 4.25 },
+        { "station": "asgarpur", "ph": 7.7, "bod": 60.0, "cod": 226, "do": 0, "do_nil": true, "fecal_coliform": 400000, "phosphate": 0.91, "ammonical_n": 5.06 }
+      ],
+      "derived": { "river_bod_entry_exit": [2.0, 60.0], "stations_do_nil": 6 }
+    },
+    {
+      "month": "2026-04",
+      "sampled": "2026-04-07",
+      "report_date": "2026-05-08",
+      "report_nos": { "river": "DPCC/W/Y/2026/26-33/2810" },
+      "pdf_urls": { "river": "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/analysis_report_of_river_yamuna_april-26%29_0001.pdf" },
+      "river": [
+        { "station": "palla", "ph": 7.3, "bod": 3.0, "cod": 16, "do": 5.2, "fecal_coliform": 2800, "phosphate": 0.14, "ammonical_n": 0.20 },
+        { "station": "wazirabad", "ph": 7.1, "bod": 5.0, "cod": 24, "do": 4.6, "fecal_coliform": 9200, "phosphate": 0.03, "ammonical_n": 1.12 },
+        { "station": "isbt", "ph": 6.8, "bod": 48.0, "cod": 136, "do": 0, "do_nil": true, "fecal_coliform": 170000, "phosphate": 1.52, "ammonical_n": 4.05 },
+        { "station": "ito", "ph": 7.2, "bod": 40.0, "cod": 124, "do": 0, "do_nil": true, "fecal_coliform": 150000, "phosphate": 1.28, "ammonical_n": 4.25 },
+        { "station": "nizamuddin", "ph": 7.0, "bod": 34.0, "cod": 100, "do": 0, "do_nil": true, "fecal_coliform": 140000, "phosphate": 1.23, "ammonical_n": 3.49 },
+        { "station": "hindon-cut", "ph": 7.4, "bod": 30.0, "cod": 72, "do": 0, "do_nil": true, "fecal_coliform": 54000, "phosphate": 0.36, "ammonical_n": 0.75 },
+        { "station": "okhla", "ph": 7.5, "bod": 44.0, "cod": 132, "do": 0, "do_nil": true, "fecal_coliform": 120000, "phosphate": 0.44, "ammonical_n": 2.14 },
+        { "station": "asgarpur", "ph": 6.9, "bod": 58.0, "cod": 160, "do": 0, "do_nil": true, "fecal_coliform": 310000, "phosphate": 1.65, "ammonical_n": 5.48 }
+      ],
+      "derived": { "river_bod_entry_exit": [3.0, 58.0], "stations_do_nil": 6 }
+    },
+    {
+      "month": "2026-05",
+      "sampled": "2026-05-05",
+      "report_date": "2026-06-01",
+      "report_nos": {
+        "river": "DPCC/W/Y/2026/34-41/2871",
+        "drains_direct": "DPCC/W/D/2026/161-182/2872",
+        "drains_najafgarh_up": "DPCC/W/D/2026/183-194/2873",
+        "drains_agra_canal": "DPCC/W/D/2026/195-199/2874"
+      },
+      "pdf_urls": {
+        "river": "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/river_yamuna_may-26%29_0001.pdf",
+        "drains": "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/drain_may-26%29_0001.pdf"
+      },
+      "river": [
+        { "station": "palla", "ph": 7.2, "bod": 2.0, "cod": 12, "do": 5.9, "fecal_coliform": 2200, "phosphate": 0.43, "ammonical_n": 0.10 },
+        { "station": "wazirabad", "ph": 7.4, "bod": 4.0, "cod": 20, "do": 3.1, "fecal_coliform": 3500, "phosphate": 0.11, "ammonical_n": 0.12 },
+        { "station": "isbt", "ph": 7.2, "bod": 50.0, "cod": 128, "do": 0, "do_nil": true, "fecal_coliform": 130000, "phosphate": 0.34, "ammonical_n": 4.32 },
+        { "station": "ito", "ph": 7.1, "bod": 42.0, "cod": 108, "do": 0, "do_nil": true, "fecal_coliform": 120000, "phosphate": 0.16, "ammonical_n": 2.79 },
+        { "station": "nizamuddin", "ph": 7.1, "bod": 40.0, "cod": 104, "do": 0, "do_nil": true, "fecal_coliform": 110000, "phosphate": 0.15, "ammonical_n": 3.65 },
+        { "station": "hindon-cut", "ph": 7.2, "bod": 30.0, "cod": 80, "do": 0.7, "fecal_coliform": 92000, "phosphate": 0.18, "ammonical_n": 1.14 },
+        { "station": "okhla", "ph": 6.9, "bod": 46.0, "cod": 116, "do": 0, "do_nil": true, "fecal_coliform": 140000, "phosphate": 0.17, "ammonical_n": 2.70 },
+        { "station": "asgarpur", "ph": 7.3, "bod": 60.0, "cod": 152, "do": 0, "do_nil": true, "fecal_coliform": 330000, "phosphate": 1.00, "ammonical_n": 4.55 }
+      ],
+      "drains": [
+        { "group": "direct", "name": "Sonia Vihar Drain", "ph": 7.2, "tss": 116, "cod": 176, "bod": 74 },
+        { "group": "direct", "name": "Najafgarh Drain", "ph": 7.1, "tss": 108, "cod": 148, "bod": 64 },
+        { "group": "direct", "name": "Magazine Road Drain", "no_flow": true },
+        { "group": "direct", "name": "Sweeper Colony Drain", "no_flow": true },
+        { "group": "direct", "name": "Khyber Pass Drain", "no_flow": true },
+        { "group": "direct", "name": "Metcalf House Drain", "no_flow": true },
+        { "group": "direct", "name": "ISBT Drain", "ph": 7.4, "tss": 128, "cod": 192, "bod": 85 },
+        { "group": "direct", "name": "Tonga Stand Drain", "no_flow": true },
+        { "group": "direct", "name": "Moat (Vijay Ghat) Drain", "no_flow": true },
+        { "group": "direct", "name": "Shastri Park Drain", "ph": 7.3, "tss": 152, "cod": 176, "bod": 75 },
+        { "group": "direct", "name": "Kailash Nagar Drain", "ph": 7.1, "tss": 130, "cod": 192, "bod": 82 },
+        { "group": "direct", "name": "Civil Mill Drain", "no_flow": true },
+        { "group": "direct", "name": "Power House/Delhi Gate Drain", "ph": 7.2, "tss": 160, "cod": 196, "bod": 84 },
+        { "group": "direct", "name": "SEN Nursing Home Drain", "ph": 7.5, "tss": 204, "cod": 216, "bod": 92 },
+        { "group": "direct", "name": "Drain No. 12A", "no_flow": true },
+        { "group": "direct", "name": "Drain No. 14", "ph": 7.4, "tss": 54.0, "cod": 88.0, "bod": 32.0 },
+        { "group": "direct", "name": "Barapulla Drain", "ph": 7.3, "tss": 212, "cod": 248, "bod": 100 },
+        { "group": "direct", "name": "Maharani Bagh Drain", "ph": 7.5, "tss": 170, "cod": 212, "bod": 90 },
+        { "group": "direct", "name": "Abul Fazal Drain", "ph": 7.1, "tss": 90, "cod": 108, "bod": 44 },
+        { "group": "direct", "name": "Shahdara Drain", "ph": 7.6, "tss": 232, "cod": 252, "bod": 105 },
+        { "group": "direct", "name": "RME/RD - 180", "ph": 6.7, "tss": 160, "cod": 188, "bod": 80 },
+        { "group": "direct", "name": "Jaitpur Drain", "ph": 7.2, "tss": 120, "cod": 136, "bod": 60 },
+        { "group": "najafgarh-subdrain", "name": "Supplementary Drain", "lat": 28.711166, "lng": 77.227446, "ph": 7.3, "tss": 230, "cod": 276, "bod": 115 },
+        { "group": "najafgarh-subdrain", "name": "DD 6 Drain", "lat": 28.857277, "lng": 77.123535, "ph": 7.4, "tss": 220, "cod": 268, "bod": 110 },
+        { "group": "najafgarh-subdrain", "name": "Mungeshpur Drain", "lat": 28.626779, "lng": 77.018498, "ph": 7.3, "tss": 302, "cod": 360, "bod": 140 },
+        { "group": "najafgarh-subdrain", "name": "Bupania Drain", "lat": 28.661968, "lng": 76.953698, "ph": 7.5, "tss": 306, "cod": 328, "bod": 135 },
+        { "group": "najafgarh-jheel", "name": "Najafgarh Jheel Upstream", "ph": 7.6, "tss": 82, "cod": 92, "bod": 38 },
+        { "group": "najafgarh-jheel", "name": "L3 Drain", "ph": 7.3, "tss": 232, "cod": 288, "bod": 120 },
+        { "group": "najafgarh-jheel", "name": "L2 Drain", "ph": 7.4, "tss": 230, "cod": 272, "bod": 115 },
+        { "group": "najafgarh-jheel", "name": "L1 Drain", "ph": 7.5, "tss": 236, "cod": 248, "bod": 100 },
+        { "group": "najafgarh-jheel", "name": "Najafgarh Jheel Downstream", "ph": 7.6, "tss": 196, "cod": 200, "bod": 85 },
+        { "group": "up-outfall-shahdara", "name": "Banthala Drain", "lat": 28.709745, "lng": 77.287447, "ph": 7.1, "tss": 200, "cod": 268, "bod": 110 },
+        { "group": "up-outfall-shahdara", "name": "Indrapuri Drain", "lat": 28.7098, "lng": 77.286677, "ph": 6.8, "tss": 160, "cod": 220, "bod": 95 },
+        { "group": "up-outfall-shahdara", "name": "Sahibabad Drain", "lat": 28.62606, "lng": 77.33105, "ph": 6.9, "tss": 228, "cod": 260, "bod": 105 },
+        { "group": "agra-canal", "name": "Agra Canal Jaitpur", "lat": 28.56246, "lng": 77.29149, "ph": 7.5, "tss": 124, "cod": 240, "bod": 96 },
+        { "group": "agra-canal", "name": "Drain Near LPG Bottling Plant", "lat": 28.53779, "lng": 77.30593, "no_flow": true },
+        { "group": "agra-canal", "name": "Sarita Vihar Pool", "lat": 28.5424277, "lng": 77.3090855, "ph": 7.7, "tss": 110, "cod": 132, "bod": 56 },
+        { "group": "agra-canal", "name": "Drain Near Sarita Vihar Bridge (Mathura Road)", "lat": 28.52511, "lng": 77.29232, "no_flow": true },
+        { "group": "agra-canal", "name": "Tuglakabad Drain", "lat": 28.5114, "lng": 77.31199, "ph": 7.6, "tss": 264, "cod": 292, "bod": 130 }
+      ],
+      "derived": {
+        "river_bod_entry_exit": [2.0, 60.0],
+        "stations_do_nil": 5,
+        "drains_no_flow": 9,
+        "drains_sampled": 30,
+        "note": "BOD multiplies 30x crossing the city (Palla 2.0 -> Asgarpur 60.0, vs 3.0 C-class limit); dissolved oxygen is NIL at 5 of 8 stations; faecal coliform at exit = 330,000 MPN/100ml = 132x the max-permissible bathing criterion. 9 of 39 drain points recorded NO FLOW - the drain-trapping programme's footprint in DPCC's own data (verification signal for the 39-drain commitment)."
+      }
+    }
+  ]
+}

@@ -35,6 +35,9 @@ interface Props {
   scopeLabel?: string;
   /** Initial time-range tab (default '1yr'); config-driven per city. */
   defaultTab?: TabKey;
+  /** True when NO source for this city has a public feed - the empty state
+   *  then says so instead of promising an ingestion that cannot arrive. */
+  noPublicFeed?: boolean;
 }
 
 const TIME_TABS = [
@@ -116,6 +119,7 @@ export function MultiSourceHistoryChart({
   coverageNote,
   scopeLabel,
   defaultTab = "1yr",
+  noPublicFeed = false,
 }: Props) {
   const [tab, setTab] = useState<TabKey>(defaultTab);
   const [view, setView] = useState<ViewMode>("by_source");
@@ -303,9 +307,9 @@ export function MultiSourceHistoryChart({
           Reservoir history pending
         </div>
         <p>
-          {cityDisplayName} reservoir storage history hasn&apos;t been
-          backfilled yet. Once daily storage readings start landing, this
-          chart fills in automatically.
+          {noPublicFeed
+            ? `No authority publishes a daily storage series for ${cityDisplayName}'s sources, so there is no history to chart. Each source card names who would have to publish it.`
+            : `${cityDisplayName} reservoir storage history hasn't been backfilled yet. Once daily storage readings start landing, this chart fills in automatically.`}
         </p>
       </div>
     );

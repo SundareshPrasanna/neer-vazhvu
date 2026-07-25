@@ -93,7 +93,9 @@ export const METRICS: MetricDef[] = [
     unit: "zones/sq km",
     extract: (p) => {
       if (!p.area_sq_km || p.area_sq_km <= 0) return 0;
-      if ("_data_status" in p.flood) return 0;
+      // Only the modelled-hazard shape ranks here; not_available (Madurai)
+      // and chronic-hotspot (Delhi) cities score 0 on this metric.
+      if (!("by_category" in p.flood)) return 0;
       const cat = p.flood.by_category;
       const severe = (cat["very_high"] ?? 0) + (cat["high"] ?? 0);
       return severe / p.area_sq_km;

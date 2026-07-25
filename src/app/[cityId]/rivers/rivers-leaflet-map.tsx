@@ -155,14 +155,19 @@ export function RiversLeafletMap({
               },
             }}
           >
-            <Tooltip sticky>
-              <strong>{localizedName(info, riverId)}</strong>
-              {info?.status && (
-                <>
-                  <br />
-                  <span style={{ fontSize: "11px", color: "#64748b" }}>{localizedStatus(info)}</span>
-                </>
-              )}
+            {/* maxWidth + normal wrapping: status strings can run long
+                (Delhi's Yamuna) and Leaflet tooltips default to nowrap,
+                which overflows the viewport (QA). */}
+            <Tooltip sticky opacity={0.95}>
+              <div style={{ maxWidth: 260, whiteSpace: "normal" }}>
+                <strong>{localizedName(info, riverId)}</strong>
+                {info?.status && (
+                  <>
+                    <br />
+                    <span style={{ fontSize: "11px", color: "#64748b" }}>{localizedStatus(info)}</span>
+                  </>
+                )}
+              </div>
             </Tooltip>
           </Polyline>
         );

@@ -94,6 +94,27 @@ const ACTIONS_BY_CITY: Record<string, CityActionsConfig> = {
       { labelKey: "my_ward.hl_flood_emergency", value: "1916", href: "tel:1916" },
     ],
   },
+  delhi: {
+    quickActions: [
+      {
+        labelKey: "my_ward.report_issue",
+        subLabel: "DJB grievance redressal",
+        href: "https://delhijalboard.delhi.gov.in/jalboard/grievance-redressal-mechanism",
+        icon: "complaint",
+      },
+      {
+        labelKey: "my_ward.water_supply_portal",
+        subLabel: "Delhi Jal Board",
+        href: "https://delhijalboard.delhi.gov.in/",
+        icon: "portal",
+      },
+    ],
+    helplines: [
+      { labelKey: "my_ward.hl_water_complaint", value: "1916", href: "tel:1916" },
+      { labelKey: "my_ward.hl_tanker_booking", value: null, href: "https://djb.gov.in/DJBWaterTanker/" },
+      { labelKey: "my_ward.hl_flood_emergency", value: "1077", href: "tel:1077" },
+    ],
+  },
   madurai: {
     quickActions: [
       {

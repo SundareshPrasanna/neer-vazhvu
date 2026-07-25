@@ -86,8 +86,10 @@ export function BlockDetailPanel({ block, onClose }: BlockDetailPanelProps) {
             const barColor = getBlockClassColor(h.class);
             return (
               <div key={h.year} className="flex items-center gap-2">
-                <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-10 shrink-0">
-                  {h.year}
+                {/* w-16: hydrological cycle labels ("2023-24") are 7 chars;
+                    w-10 fit only the old 4-digit years and wrapped. */}
+                <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-16 shrink-0 whitespace-nowrap">
+                  {h.year_label ?? h.year}
                 </span>
                 <div className="flex-1 h-5 bg-slate-100 dark:bg-slate-800 rounded overflow-hidden relative">
                   <div
@@ -118,9 +120,9 @@ export function BlockDetailPanel({ block, onClose }: BlockDetailPanelProps) {
         <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
           {t("gw_block.cgwb_note")}
         </p>
-        {history.length < 7 && (
+        {(block.history_caveat || history.length < 7) && (
           <p className="text-xs text-amber-600 dark:text-amber-400 leading-relaxed">
-            {t("gw_block.boundary_caveat")}
+            {block.history_caveat ?? t("gw_block.boundary_caveat")}
           </p>
         )}
         <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">

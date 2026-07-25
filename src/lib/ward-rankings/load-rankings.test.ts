@@ -81,7 +81,23 @@ test("chennai metric columns include flood + drainage + sewerage", () => {
   assert.ok(metricKeys.has("sewerage_infra"));
 });
 
+// Was "delhi" until 2026-07-25, when Delhi gained risk_v2_dl and stopped
+// being an unknown city. Use a name that is not a city so the test keeps
+// asserting the fallback rather than a particular city's absence.
 test("unknown city returns null", () => {
-  const bundle = loadWardRankings("delhi");
+  const bundle = loadWardRankings("atlantis");
   assert.equal(bundle, null);
+});
+
+test("delhi returns the risk_v2_dl bundle", () => {
+  const bundle = loadWardRankings("delhi");
+  assert.ok(bundle, "expected a Delhi bundle");
+  assert.equal(bundle.cityId, "delhi");
+  assert.equal(bundle.rows.length, 250);
+  assert.equal(bundle.compositeScoreLowerIsBetter, true);
+  // Wards with no CGWB well within range must stay null, never 0 - a
+  // missing measurement is not water at the surface.
+  const gw = bundle.rows[0].metricColumns.find((c) => c.key === "gw_depth_m");
+  assert.ok(gw, "expected a groundwater-depth column");
+  if (gw.numeric === null) assert.equal(gw.display, "-");
 });

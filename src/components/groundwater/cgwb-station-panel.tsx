@@ -45,12 +45,21 @@ export function CgwbStationPanel({
   station,
   onClose,
   sourceNote,
+  seriesLabel = "CGWB Year Book",
+  unitLabel = "block",
 }: {
   station: CgwbStation;
   onClose: () => void;
   /* Citation line for the foot of the panel. Defaults are wrong outside
      Tamil Nadu, so cities pass their own Year Book label. */
   sourceNote?: string;
+  /* Provenance shown above the hydrograph. Not every city's series is a
+     Year Book transcription - Delhi's wells come from the India-WRIS API -
+     so the label is passed in rather than hardcoded. */
+  seriesLabel?: string;
+  /* CGWB's assessment unit differs by state: blocks in Tamil Nadu and
+     Karnataka, districts in Delhi. */
+  unitLabel?: string;
 }) {
   const sorted = useMemo(
     () => [...station.readings].sort((a, b) => readingDateKey(a.year, a.month) - readingDateKey(b.year, b.month)),
@@ -89,7 +98,7 @@ export function CgwbStationPanel({
             {station.name}
           </h3>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            CGWB Year Book - {station.block} block
+            {seriesLabel} - {station.block} {unitLabel}
             {station.block_inferred && (
               <span className="ml-1 text-amber-600 dark:text-amber-400" title="Block assignment inferred from geographic proximity to other CGWB wells in this block; not directly stated in the source PDF.">
                 (inferred)
@@ -189,7 +198,12 @@ export function CgwbStationPanel({
                 <td className="px-2 py-1.5 text-right font-mono text-slate-900 dark:text-slate-100">
                   {r.depth_m_bgl.toFixed(2)}
                 </td>
-                <td className="px-2 py-1.5 text-[11px] text-slate-500">{r.year_book}</td>
+                {/* Year-Book cities cite the edition; WRIS-sourced series
+                    have no edition, so show how many observations went into
+                    the monthly mean instead of an empty cell. */}
+                <td className="px-2 py-1.5 text-[11px] text-slate-500">
+                  {r.year_book ?? (r.n_obs ? `${r.n_obs} obs` : "-")}
+                </td>
               </tr>
             ))}
           </tbody>

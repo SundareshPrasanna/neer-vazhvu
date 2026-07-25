@@ -111,6 +111,11 @@ export type GWBlockClass = "Safe" | "Semi Critical" | "Critical" | "Over Exploit
 
 export interface GWBlockHistory {
   year: number;
+  /** Display label for the assessment cycle in the SOURCE's own vocabulary
+   *  (IN-GRES hydrological labels like "2023-24"). `year` stays the numeric
+   *  end-year for sorting; when year_label is present the UI renders it -
+   *  prevents the "which 2023?" confusion between portal and app. */
+  year_label?: string;
   class: GWBlockClass;
   development_pct: number;
   availability_ham: number | null;
@@ -119,6 +124,12 @@ export interface GWBlockHistory {
 
 export interface GWBlock {
   name: string;
+  /** Overrides the generic "CGWB changed block boundaries" caveat shown
+   *  under a short history. The default text describes compound-block
+   *  splits (Bengaluru/Chennai); cities whose series is short for another
+   *  reason (Delhi: annual assessment only began 2021-22, and the unit
+   *  changed from tehsil to district) must state their own reason. */
+  history_caveat?: string;
   history: GWBlockHistory[];
   latest: {
     class: GWBlockClass;
@@ -222,7 +233,15 @@ export interface CgwbStationReading {
   year: number;
   month: number;        // 1-12
   depth_m_bgl: number;  // metres below ground level (positive)
-  year_book: string;    // e.g. "2024-25"
+  /** Which Year Book edition this reading was transcribed from, e.g.
+   *  "2024-25". Absent for cities whose series does not come from a Year
+   *  Book at all - Delhi's wells are read from the India-WRIS Ground Water
+   *  Level API, where the provenance is the API, not a published edition.
+   *  The panel falls back to the observation count in that case rather than
+   *  labelling API telemetry as a Year Book. */
+  year_book?: string;
+  /** Observations averaged into this monthly mean (WRIS-sourced series). */
+  n_obs?: number;
   _note?: string;
 }
 
@@ -267,7 +286,22 @@ export interface CgwbStationsFile {
   source_label?: string;
   source_url?: string;
   quality_note?: string;
-  year_book_summaries: Array<{
+  /** Short provenance label shown on each station panel. Defaults to
+   *  "CGWB Year Book" for the transcribed cities; Delhi overrides it
+   *  because its series comes from the India-WRIS API instead. */
+  series_label?: string;
+  /** CGWB's assessment unit: "block" in Tamil Nadu and Karnataka,
+   *  "district" in Delhi. Defaults to "block". */
+  unit_label?: string;
+  /** How to describe the reading cadence in map headers. Defaults to
+   *  "seasonal readings" (the Year-Book cities); Delhi is "monthly means"
+   *  because its series is aggregated 6-hourly telemetry. */
+  reading_kind?: string;
+  /** How the wells are actually read. Defaults to the manual seasonal
+   *  (May/Aug/Nov/Jan) description true of the Year-Book cities; Delhi
+   *  overrides it because its wells are 6-hourly telemetric recorders. */
+  cadence_note?: string;
+  year_book_summaries?: Array<{
     year_book: string;
     report_id?: string;
     publication_date?: string;

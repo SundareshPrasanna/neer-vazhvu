@@ -67,6 +67,21 @@ CITIES = {
         "bbox": (77.40, 12.80, 77.85, 13.20),  # BBMP + GBA fringe
         "bands": [700, 840, 870, 900, 930, 960, 1000],
     },
+    # Delhi is a very flat plain with one hard edge: 80% of the NCT sits
+    # between 203 m and 221 m, then the Ridge quartzite climbs to ~326 m.
+    # So the plain is cut finely and the Ridge is a single top band.
+    # FABDEM percentiles over the NCT bbox at 90 m:
+    #   p0=192.5 p5=203.5 p20=210.5 p50=214.5 p80=221.4 p90=240.5 p100=326.3
+    #
+    # NOTE: these are TERRAIN bands, not flood-stage bands. Delhi's flood
+    # ladder (204.50 m warning / 205.33 m danger / 206.00 m evacuation at the
+    # Old Railway Bridge) is on the gauge's own datum: FABDEM reads 212.15 m
+    # at that bridge, ~7 m off the gauge zero. The two must not be overlaid
+    # as if they shared a datum.
+    "delhi": {
+        "bbox": (76.84, 28.40, 77.35, 28.89),  # NCT + Najafgarh/Yamuna fringe
+        "bands": [192, 205, 210, 214, 218, 224, 330],
+    },
 }
 
 # Basin-atlas terrain layers. bbox comes from the boundary file; pixels

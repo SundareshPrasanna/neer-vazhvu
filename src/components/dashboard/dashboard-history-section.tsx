@@ -125,6 +125,11 @@ export function DashboardHistorySection({
       coverageNote={tryGetPlaceConfig(cityId)?.reservoirHistoryNote}
       scopeLabel={tryGetPlaceConfig(cityId)?.dashboardScopes?.city}
       defaultTab={tryGetPlaceConfig(cityId)?.reservoirHistoryDefaultRange}
+      noPublicFeed={
+        tryGetPlaceConfig(cityId)?.waterSources.every(
+          (s) => s.hasPublicFeed === false,
+        ) ?? false
+      }
       unit={unit}
       series={state.payload.series}
       forecast={state.payload.forecast}

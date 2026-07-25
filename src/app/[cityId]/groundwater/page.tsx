@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import CityGroundwaterClient from "./groundwater-client";
 import ChennaiGroundwaterClient from "./chennai-groundwater-client";
@@ -60,6 +61,32 @@ export default async function CityGroundwaterPage({ params }: PageProps) {
   // and the map hangs on "Loading map...". Such cities fall back to the
   // ward-based "depth" base, over which the CGWB station points render.
   const gv = config.groundwaterViews;
+
+  // No enabled view at all -> honest named-gap state, never a blank map.
+  // (Delhi at onboarding: every layer is India-IP-gated or pending the
+  // current CGWB Year Book edition; the client would otherwise fall back
+  // to the "depth" pipeline with no data behind it.)
+  const anyView = !!gv && !!(gv.iisc || gv.exploitation || gv.depth || gv.risk || gv.cgwbStations);
+  if (gv && !anyView) {
+    return (
+      <FeatureNotYetAvailable
+        config={config}
+        feature="Groundwater"
+        scope="district-admin"
+        parityVerdict="MEDIUM"
+        whatItShowsForChennai="per-ward monthly depth survey, CGWB block exploitation status, and the ward risk composite"
+        dataGapNote={
+          config.groundwaterViews?.gapNote ??
+          "No groundwater layer has publishable data for this city yet."
+        }
+        relatedLinks={[
+          { href: `/${cityId}`, label: `${config.displayName} home` },
+          { href: `/${cityId}/water-bodies`, label: "Water bodies map" },
+        ]}
+      />
+    );
+  }
+
   const initialViewMode = gv?.iisc
     ? "iisc"
     : gv?.exploitation

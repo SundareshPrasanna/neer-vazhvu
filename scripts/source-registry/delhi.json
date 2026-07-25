@@ -1,0 +1,273 @@
+{
+  "_doc": "Headwaters source registry - Delhi episodic sources. Schema + design notes: docs/specs/headwaters.md (local). Delhi's live-feed story is unusual: its highest-cadence public source (DPCC monthly river + drain analysis) publishes as scanned PDFs on a Drupal listing, so edition detection here is what tells us a new month exists - the extraction itself is manual/OCR until that pipeline lands. MANUAL WATCH (not automatable here): the CGWB observation-well network behind public/data/delhi-cgwb-stations.json stopped reporting on 2025-09-20. Resumption would restore Delhi's only high-cadence groundwater signal, but it cannot be expressed as a registry check - the India-WRIS Ground Water Level endpoint needs a POST with mandatory query params, and while dormant it returns an empty array, so any api-date datePath would error rather than report no-change. Re-run neer-vazhvu-api/scripts/build_delhi_cgwb_stations.py --refresh to test.",
+  "sources": [
+    {
+      "id": "dpcc-monthly-analysis-delhi",
+      "scope": "delhi",
+      "publisher": "Delhi Pollution Control Committee",
+      "url": "https://dpcc.delhi.gov.in/dpcc/analysis-reports",
+      "license": "GNCTD publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "monthly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "analysis-report/(river_yamuna|analysis_report_of_river|drain|analysis_report_of_drain|stp_analysis)"
+      },
+      "dependsOn": [
+        "public/data/dpcc-monthly-wq-delhi.json",
+        "public/data/river-quality-delhi.json"
+      ],
+      "refreshMethod": "manual (new month's river/drain/STP PDFs -> transcribe into dpcc-monthly-wq-delhi.json, then re-run scripts/build-delhi-river-quality.ts)",
+      "notes": "THE Delhi feed: 8 Yamuna stations + ~39 drain points + STP compliance, sampled monthly and published around the 25th. A new file link = a new month. The drain 'NO FLOW' count in each edition is the verification instrument for the drain-trapping commitment. Feb-2026 is absent from the listing - confirm whether that is a publication gap when the next editions land.",
+      "lastSeen": {
+        "linksHash": "6db8b14c806a17a9",
+        "links": [
+          "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/analysis_report_of_drain_april-26%29_0001.pdf",
+          "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/analysis_report_of_river_yamuna_april-26%29_0001.pdf",
+          "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/drain_analysis_results_june-26%29_0001.pdf",
+          "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/drain_may-26%29_0001.pdf",
+          "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/river_yamuna_analysis_results_june-2026%29_0001.pdf",
+          "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/river_yamuna_march-26%29_1%29.pdf",
+          "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/river_yamuna_may-26%29_0001.pdf",
+          "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/stp_analysis_report_april-26%29_0001_0001.pdf",
+          "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/stp_analysis_report_june-2026%29_0001.pdf",
+          "https://dpcc.delhi.gov.in/sites/default/files/DPCC/analysis-report/stp_analysis_report_may-26%29_0001.pdf"
+        ],
+        "edition": "2026-07 listing",
+        "acceptedOn": "2026-07-25"
+      }
+    },
+    {
+      "id": "cgwb-dynamic-gwr-delhi",
+      "scope": "delhi",
+      "publisher": "CGWB / IN-GRES (via OpenCity national compilations)",
+      "url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
+      "license": "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments",
+      "type": "page",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/resource/|\\.(csv|xlsx|pdf)"
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-delhi.json",
+        "public/geojson/delhi-gwr-blocks.geojson"
+      ],
+      "refreshMethod": "manual (add the new edition's Delhi district CSV URL to neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py and re-run; if the edition is not mirrored, pull it from IN-GRES directly - see docs/methodology/pan-india-source-playbook.md)",
+      "notes": "Assessment is annual since 2021-22. IN-GRES (ingres.iith.ac.in) is the authority and is reachable outside NICNET; OpenCity mirrors most editions. The 2022-23 cycle had no mirror and was taken from IN-GRES itself (public/data/ingres/delhi-2022-2023.json). Watch for the next cycle appearing here or on the portal's year list.",
+      "lastSeen": {
+        "linksHash": "d168d76eab2f4cfc",
+        "links": [
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/1ebd568d-0d9b-495d-81fd-3101d27e0f64/download/major_cities_2025.csv",
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/5add9730-1838-4781-a072-ce8d303c3844/download/draft_3.0_gwra_2025-10_october_2025.pdf",
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/62220325-6e6b-45c7-89d9-bd197842b7f2/download/goa_gw_2025.csv",
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/8000309b-59d7-4b5e-aeb1-befaaab9c0f8/download/tg_gw_2025.csv",
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/8e39cc66-06a4-417b-8a4f-dbd4a9495ed6/download/del_gw_2025.csv",
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/9f5bad83-69fd-4f61-a501-c5c7fc9d22d5/download/kar_gw_2025.csv",
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/cf526819-7b0c-497a-b681-522d72db9b65/download/india_gw_2025.csv",
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/d8c4c53b-5c73-459c-b137-11c51e8fe8e0/download/tn_gw_2025.csv",
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/d9ca9478-5302-4974-b7c5-ebbea5f5cd03/download/major_cities_taluks_cat_2025.csv",
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/ec046422-448d-4ceb-b422-59d85fa54986/download/mh_gw_2025.csv",
+          "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/f64c4019-ba33-4435-9d07-290ade3c398e/download/guj_gw_2025.csv",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/1ebd568d-0d9b-495d-81fd-3101d27e0f64",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/5add9730-1838-4781-a072-ce8d303c3844",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/62220325-6e6b-45c7-89d9-bd197842b7f2",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/8000309b-59d7-4b5e-aeb1-befaaab9c0f8",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/8e39cc66-06a4-417b-8a4f-dbd4a9495ed6",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/9f5bad83-69fd-4f61-a501-c5c7fc9d22d5",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/cf526819-7b0c-497a-b681-522d72db9b65",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/d8c4c53b-5c73-459c-b137-11c51e8fe8e0",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/d9ca9478-5302-4974-b7c5-ebbea5f5cd03",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/ec046422-448d-4ceb-b422-59d85fa54986",
+          "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025/resource/f64c4019-ba33-4435-9d07-290ade3c398e"
+        ],
+        "edition": "2024-25 assessment (2025 national compilation)",
+        "acceptedOn": "2026-07-25"
+      }
+    },
+    {
+      "id": "cag-djb-audit",
+      "scope": "delhi",
+      "publisher": "Comptroller and Auditor General of India",
+      "url": "https://cag.gov.in/en/audit-report/details/124108",
+      "license": "Government of India publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "download_audit_report|\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/cag-djb-audit-2025.json"
+      ],
+      "refreshMethod": "manual (a new DJB performance/compliance audit -> update cag-djb-audit-2025.json, the dashboard hero stats and the commitments register)",
+      "notes": "Report No. 3 of 2025 (tabled 23 Mar 2026) is the audit-grade spine of Delhi's dashboard: NRW 51-53%, Rs 4,988 cr revenue impact, Rs 66,595 cr debt, 40% of production billed. A follow-up or compliance audit would move several headline numbers at once.",
+      "lastSeen": {
+        "linksHash": "b5745d10075c93a6",
+        "links": [
+          "https://cag.gov.in/uploads/download_audit_report/2025/APPENDICES-0699d3025626ad5.22093219.pdf",
+          "https://cag.gov.in/uploads/download_audit_report/2025/CHAPTER-I---INTRODUCTION-0699d30254985b6.00217665.pdf",
+          "https://cag.gov.in/uploads/download_audit_report/2025/CHAPTER-II---PLANNING-THE-MISSION-0699d3025510da7.02429575.pdf",
+          "https://cag.gov.in/uploads/download_audit_report/2025/CHAPTER-III---FINANCIAL-MANAGEMENT-0699d302556a8b2.83104784.pdf",
+          "https://cag.gov.in/uploads/download_audit_report/2025/CHAPTER-IV---PROJECT-IMPLEMENTATION-0699d30255af021.03377366.pdf",
+          "https://cag.gov.in/uploads/download_audit_report/2025/CHAPTER-V---PROJECT-MONITORING-0699d30255f3247.68714284.pdf",
+          "https://cag.gov.in/uploads/download_audit_report/2025/EXECUTIVE-SUMMARY-0699d3025436f37.50143607.pdf",
+          "https://cag.gov.in/uploads/download_audit_report/2025/GLOSSARY-0699d302564ca00.18443852.pdf",
+          "https://cag.gov.in/uploads/download_audit_report/2025/PREFACE-0699d3025417bf8.36185024.pdf",
+          "https://cag.gov.in/uploads/download_audit_report/2025/Print-version-english_AMRUT_Kerala_10.12.25-with-legislature-date-0699d302521f715.11884185.pdf",
+          "https://cag.gov.in/uploads/download_audit_report/2025/TABLE-OF-CONTENTS-0699d30253c1620.91841812.pdf",
+          "https://cag.gov.in/uploads/guidelines/PIDPI-Policy-for-circulation-069e21b8cc005d3-77984346.pdf",
+          "https://cag.gov.in/uploads/media/Advertisement-for-engagement-of-RA-Grade-II-in-iCED-Jaipur-2025-068bfbcf41e65c8-91730933.pdf",
+          "https://cag.gov.in/uploads/media/Compendium2025-06923d8de573ed3-04024681.pdf",
+          "https://cag.gov.in/uploads/media/DFP-in-IAAD-2025-069d5f2d45a31b6-08833503.pdf",
+          "https://cag.gov.in/uploads/media/Extension-of-last-date-for-apply-for-IO-068807a0ca241f7-61965364.pdf",
+          "https://cag.gov.in/uploads/media/FRS-24-1-24-final-0666be7c8a08a06-37929099.pdf",
+          "https://cag.gov.in/uploads/media/National-Essay-Writing-Competition-2024-066e555a0e84fa7-29784318.pdf",
+          "https://cag.gov.in/uploads/media/Pension-Adalat-2022-062288b1295ed19-55139275.pdf",
+          "https://cag.gov.in/uploads/media/Technology-Innovations-in-Training-064a647a72c4c00-98229279.pdf"
+        ],
+        "edition": "Report No. 3 of 2025 (tabled 2026-03-23)",
+        "acceptedOn": "2026-07-25"
+      }
+    },
+    {
+      "id": "delhi-economic-survey-water",
+      "scope": "delhi",
+      "publisher": "Planning Department, GNCTD",
+      "url": "https://delhiplanning.delhi.gov.in/planning/economic-survey",
+      "license": "GNCTD publication, cited with attribution",
+      "type": "page",
+      "cadence": "yearly",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "economic-survey-[0-9]"
+      },
+      "dependsOn": [
+        "public/data/delhi-supply-overview.json"
+      ],
+      "refreshMethod": "manual (new edition's water chapter -> refresh source-wise availability split + the 'wasted or pilfered' figure in delhi-supply-overview.json)",
+      "notes": "Chapter 13 carries DJB's own source-wise raw-water split (Yamuna/Ganga/Bhakra/groundwater) and the state's own '52.35% wasted or pilfered by tanker mafia' line. Published annually alongside the Delhi budget.",
+      "lastSeen": {
+        "linksHash": "f7356628dd7f4382",
+        "links": [
+          "https://delhiplanning.delhi.gov.in/planning/economic-survey-1999-2000",
+          "https://delhiplanning.delhi.gov.in/planning/economic-survey-2001-02",
+          "https://delhiplanning.delhi.gov.in/planning/economic-survey-2003-04",
+          "https://delhiplanning.delhi.gov.in/planning/economic-survey-2005-06",
+          "https://delhiplanning.delhi.gov.in/planning/economic-survey-2007-08",
+          "https://delhiplanning.delhi.gov.in/planning/economic-survey-2008-09",
+          "https://delhiplanning.delhi.gov.in/planning/economic-survey-2012-13",
+          "https://delhiplanning.delhi.gov.in/planning/economic-survey-2016-17",
+          "https://delhiplanning.delhi.gov.in/planning/economic-survey-2017-18",
+          "https://delhiplanning.delhi.gov.in/planning/economic-survey-2021-22"
+        ],
+        "edition": "Economic Survey of Delhi 2023-24, Ch. 13",
+        "acceptedOn": "2026-07-25"
+      }
+    },
+    {
+      "id": "dpcc-cetp-monthly-delhi",
+      "scope": "delhi",
+      "publisher": "DPCC (via OpenCity)",
+      "url": "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024",
+      "license": "open (per OpenCity dataset page)",
+      "type": "page",
+      "cadence": "monthly",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/resource/|\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/delhi-cetp-monthly-index.json"
+      ],
+      "refreshMethod": "manual (new monthly bundles -> extend delhi-cetp-monthly-index.json; bulk values await the OCR batch)",
+      "notes": "Per-CETP inlet/outlet monitoring across 23 parameters incl. heavy metals, plus measured flow vs design capacity and the plant's OLMS status. Archive currently ends Nov 2024 - new resources here would mean the series resumed.",
+      "lastSeen": {
+        "linksHash": "fe38c8af328e44d0",
+        "links": [
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/166db0fd-37df-40bf-b51a-ecfa98642492/download/457a2096-f9a6-45d3-b5c2-a46e3554ef8d.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/16d48a47-1f7f-4ddf-acab-b62f8be57b6a/download/2ad3d4b1-0f32-42d8-a18d-195a0ac66c48.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/1bbcf0f8-4816-4aed-9e0d-f850003f98fb/download/31cbae95-a1d1-4852-ab8d-e96455126925.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/22de2030-7a70-495f-9db2-79db3140acc2/download/d94722f2-58f3-4530-bf8a-c2f6e968762c.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/23ac662e-eb30-402d-9322-c62d23f297ab/download/11789db4-392b-4ab2-8a4b-ce03623a62a9.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/2a36919c-7ae1-472f-81b7-78184ecbe0db/download/7a027320-41ef-4127-8697-bd9a04d80647.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/2d473652-832a-4e8f-807c-2ab2b3a943e3/download/b1743807-5867-442b-bce0-04a0e11e3970.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/41e2619e-b364-4dfc-bd72-e2f57cde82f0/download/4e479daa-bbab-428f-9542-27c118f3518d.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/7123cdac-8c4f-40ae-931b-ef60fdb8faef/download/bd9d0934-af80-4910-aa58-bf276e5a0c9f.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/77019386-973a-4bb9-b418-bc87d19a4d51/download/79f74571-ad80-4f7b-bbb7-4205f20fc7f3.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/8afc8056-48c5-41b1-9019-ffa963fafe5c/download/1e16d36d-cfde-4c1d-955d-6b2076ca20c1.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/8cee5d4a-c4ba-4558-8d0d-2f5a3076544b/download/48e97441-48e7-4eae-a9ef-9c1fcebadcf5.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/9826e84a-76ca-4d47-9b42-d9b1d85ac555/download/48b02d17-3b14-4a71-b27f-b01a37ecd416.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/9f4b2769-716d-414a-9a40-96c97fd7b3c8/download/6f4b4405-354d-45ca-9e6b-9a56a61d2ead.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/c7e6f15f-bada-4874-9bf6-926462b19c7b/download/c10068bc-2e92-496c-8a93-f1f59c188a9e.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/cc1ded98-30ad-4a20-9245-32e8f360a2ff/download/89bd96c4-8ddb-4c10-8db8-8f059f6ca50e.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/d8dce4de-652a-4da8-92bd-7f8f83775bd9/download/b31735c0-b8bd-4217-acb0-fd348f5a6ef5.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/da5ddd43-6da8-4df7-b2a3-f60b7ad34e44/download/b9dfb609-914c-4841-b3ee-5b3934eec062.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/df4c3b2e-72cd-4888-ad88-1606d78ad032/download/56f4703d-8a47-4ce8-8ffe-37e3a2171d11.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/e464aa39-d432-46e5-85a7-dc37693667cd/download/39852377-78c6-4057-9330-97b51ffd18b8.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/f97cfb7b-6485-4d99-b612-455282f76bbd/download/73daae41-121a-479f-8c42-17e80f44503d.pdf",
+          "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/fd361f0a-a3fa-4456-8678-373de810b2c1/download/bb2e5fc2-90fb-4583-b756-d02e0a78bf9b.pdf",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/166db0fd-37df-40bf-b51a-ecfa98642492",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/16d48a47-1f7f-4ddf-acab-b62f8be57b6a",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/1bbcf0f8-4816-4aed-9e0d-f850003f98fb",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/22de2030-7a70-495f-9db2-79db3140acc2",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/23ac662e-eb30-402d-9322-c62d23f297ab",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/2a36919c-7ae1-472f-81b7-78184ecbe0db",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/2d473652-832a-4e8f-807c-2ab2b3a943e3",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/41e2619e-b364-4dfc-bd72-e2f57cde82f0",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/7123cdac-8c4f-40ae-931b-ef60fdb8faef",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/77019386-973a-4bb9-b418-bc87d19a4d51",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/8afc8056-48c5-41b1-9019-ffa963fafe5c",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/8cee5d4a-c4ba-4558-8d0d-2f5a3076544b",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/9826e84a-76ca-4d47-9b42-d9b1d85ac555",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/9f4b2769-716d-414a-9a40-96c97fd7b3c8",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/c7e6f15f-bada-4874-9bf6-926462b19c7b",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/cc1ded98-30ad-4a20-9245-32e8f360a2ff",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/d8dce4de-652a-4da8-92bd-7f8f83775bd9",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/da5ddd43-6da8-4df7-b2a3-f60b7ad34e44",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/df4c3b2e-72cd-4888-ad88-1606d78ad032",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/e464aa39-d432-46e5-85a7-dc37693667cd",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/f97cfb7b-6485-4d99-b612-455282f76bbd",
+          "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024/resource/fd361f0a-a3fa-4456-8678-373de810b2c1"
+        ],
+        "edition": "2019-2024 monthly archive (62 bundles)",
+        "acceptedOn": "2026-07-25"
+      }
+    },
+    {
+      "id": "dusib-jj-bastis",
+      "scope": "delhi",
+      "publisher": "Delhi Urban Shelter Improvement Board (DUSIB)",
+      "url": "https://delhishelterboard.in/main/?page_id=3644",
+      "license": "GNCTD publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "episodic",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "wp-content/uploads/.*(JJ|JJC|JSC|Basti).*\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/delhi-jj-bastis-geo.json",
+        "public/data/dusib-jj-bastis.json"
+      ],
+      "refreshMethod": "manual (a new list on the page -> update PDF_SHA256 in neer-vazhvu-api/scripts/build_delhi_jj_bastis_geo.py, re-run it, then re-run build_delhi_ward_profiles.py)",
+      "notes": "Delhi's equity layer. The page carries the roster and the lat/long list as SEPARATE PDFs with different serial numbering, so a new link on either is an edition. The geo list is pinned by sha256 and the builder aborts on mismatch, which is the real safety net - this entry is what tells us to look. 675 clusters / 306,521 households as of the 2019 roster + 2022 coordinates.",
+      "lastSeen": {
+        "linksHash": "c55a35372b835814",
+        "links": [
+          "https://delhishelterboard.in/main/wp-content/uploads/2017/11/JSC-641.pdf",
+          "https://delhishelterboard.in/main/wp-content/uploads/2019/10/JJBastisList675.pdf",
+          "https://delhishelterboard.in/main/wp-content/uploads/2022/09/JJC_List_675_Geo_Coordinates.pdf"
+        ],
+        "edition": "2019 roster + 2022 coordinate list (675 clusters)",
+        "acceptedOn": "2026-07-25"
+      }
+    }
+  ]
+}

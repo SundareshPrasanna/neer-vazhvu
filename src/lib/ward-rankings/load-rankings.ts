@@ -78,6 +78,7 @@ export function loadWardRankings(cityId: string): WardRankingsBundle | null {
   if (cityId === "chennai") return loadChennaiRankings();
   if (cityId === "bangalore") return loadBangaloreRankings();
   if (cityId === "mumbai") return loadMumbaiRankings();
+  if (cityId === "delhi") return loadDelhiRankings();
   return null;
 }
 
@@ -415,6 +416,107 @@ function loadMumbaiRankings(): WardRankingsBundle {
     gradeCounts: countsByGrade(rows),
     zones: distinctZones(rows),
     sourceLabel: `Pre-baked ${mumbaiCache.algorithm_version} equity composite from public/data/ward-risk-mumbai.json (per-ward water-supply hours from Praja 2024, chronic flood spots, Priority-I river burden)`,
+    compositeScoreLowerIsBetter: true,
+  };
+}
+
+// ── Delhi: read pre-baked ward-risk-delhi.json (risk_v2_dl) ───────────
+//
+// Groundwater + equity model (scripts/compute-delhi-ward-risk.py). Delhi is
+// the first city here where BOTH halves are measured rather than proxied:
+//   - gw_depth (0.35): mean depth-to-water of CGWB observation wells within
+//     4 km of the ward centroid. Bengaluru's equivalent is null (13 stations,
+//     no interpolation); Delhi has 237 wells via India-WRIS.
+//   - gw_stage (0.20): district groundwater extraction stage % (CGWB 2025)
+//   - jj_share (0.25): DUSIB JJ-basti households per 1,000 ward population,
+//     from the Board's own geocoded 675-cluster list
+//   - flood_exposure (0.10) chronic waterlogging spots; wb_density (0.10,
+//     inverted)
+// Wards with no well within range keep gw_depth_m = null and are scored on
+// the remaining factors renormalised, never on an imputed depth.
+
+interface DelhiWardRisk {
+  ward_number: number;
+  ward_name: string;
+  zone: string;
+  composite_score: number; // higher = worse risk
+  grade: Grade;
+  gw_depth_m: number | null;
+  gw_stage_pct: number | null;
+  gw_class: string | null;
+  jj_households: number;
+  jj_households_per_1000: number;
+  flood_hotspots: number;
+  wb_density_per_sqkm: number | null;
+}
+
+interface DelhiWardRiskFile {
+  algorithm_version: string;
+  weights: Record<string, number>;
+  wards: DelhiWardRisk[];
+}
+
+let delhiCache: DelhiWardRiskFile | null = null;
+
+function loadDelhiRankings(): WardRankingsBundle {
+  if (!delhiCache) {
+    const path = resolve(process.cwd(), "public/data/ward-risk-delhi.json");
+    delhiCache = JSON.parse(readFileSync(path, "utf-8")) as DelhiWardRiskFile;
+  }
+  const localities = loadLocalitiesByWard("delhi");
+
+  // composite_score is risk (higher = worse); sort ascending so the
+  // lowest-risk wards land at the top.
+  const sorted = [...delhiCache.wards].sort(
+    (a, b) => a.composite_score - b.composite_score,
+  );
+  const total = sorted.length;
+
+  const rows: WardRankingRow[] = sorted.map((w, idx) => {
+    const rank = idx + 1;
+    const percentile = total > 1 ? ((total - rank) / (total - 1)) * 100 : 50;
+    return {
+      wardNumber: w.ward_number,
+      wardName: w.ward_name || `Ward ${w.ward_number}`,
+      localities: localities.get(w.ward_number) ?? [],
+      zone: w.zone,
+      grade: w.grade,
+      compositeScore: w.composite_score,
+      rank,
+      totalWards: total,
+      percentile,
+      metricColumns: [
+        {
+          key: "gw_depth_m",
+          label: "Groundwater depth",
+          // null is rendered as "-" rather than 0: no well in range is not
+          // the same as water at the surface.
+          display:
+            w.gw_depth_m === null ? "-" : `${w.gw_depth_m.toFixed(1)} m`,
+          numeric: w.gw_depth_m,
+        },
+        {
+          key: "jj_households_per_1000",
+          label: "JJ households / 1,000",
+          display: w.jj_households_per_1000.toFixed(0),
+          numeric: w.jj_households_per_1000,
+        },
+        {
+          key: "flood_hotspots",
+          label: "Chronic flood spots",
+          display: String(w.flood_hotspots),
+          numeric: w.flood_hotspots,
+        },
+      ],
+    };
+  });
+
+  return {
+    cityId: "delhi",
+    rows,
+    gradeCounts: countsByGrade(rows),
+    zones: distinctZones(rows),
+    sourceLabel: `Pre-baked ${delhiCache.algorithm_version} composite from public/data/ward-risk-delhi.json (measured CGWB well depth, district extraction stage, DUSIB JJ-basti household share, chronic flood spots, water-body density)`,
     compositeScoreLowerIsBetter: true,
   };
 }

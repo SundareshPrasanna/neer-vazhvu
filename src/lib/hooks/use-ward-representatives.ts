@@ -8,29 +8,58 @@ export interface RepresentativeData {
   councillor: {
     name: string;
     party: string;
-    phone: string;
+    phone?: string;
+    /** Seat reservation for the ward (Delhi publishes this per ward). */
+    reservation?: string | null;
   };
-  mla: {
+  /** Optional: a city may publish councillors before MLA/MP mappings exist
+   *  (Delhi at launch - the ward->assembly-constituency join is available
+   *  but the assembly/parliament result sets are not yet ingested). */
+  mla?: {
     name: string;
     name_ta: string;
     party: string;
     constituency: string;
     constituency_ta: string;
   };
-  mp: {
+  mp?: {
     name: string;
     name_ta: string;
     party: string;
     constituency: string;
     constituency_ta: string;
+  };
+  /** Provenance for the CSV export's Source column, derived from the file's
+   *  own meta.*_election dates. Built here rather than in the exporter so the
+   *  labels stay city-agnostic: the export previously stamped Chennai's
+   *  elections onto every city's download, and hardcoding "TN Assembly 2026"
+   *  in a shared util would reintroduce exactly that. */
+  sourceLabels?: { councillor?: string; mla?: string; mp?: string };
+}
+
+/** "2026-04" -> "2026". Returns undefined for missing/!malformed dates so the
+ *  exporter falls back to its generic label instead of printing "undefined". */
+function electionYear(date: string | undefined): string | undefined {
+  const year = (date ?? "").slice(0, 4);
+  return /^\d{4}$/.test(year) ? year : undefined;
+}
+
+function buildSourceLabels(meta: RepsFile["meta"]): RepresentativeData["sourceLabels"] {
+  const councillor = electionYear(meta.councillor_election);
+  const mla = electionYear(meta.mla_election);
+  const mp = electionYear(meta.mp_election);
+  return {
+    councillor: councillor ? `Municipal election ${councillor}` : undefined,
+    mla: mla ? `Assembly election ${mla}` : undefined,
+    mp: mp ? `Parliamentary election ${mp}` : undefined,
   };
 }
 
 interface RepsFile {
   meta: {
     councillor_election: string;
-    mla_election: string;
-    mp_election: string;
+    mla_election?: string;
+    mp_election?: string;
     last_updated: string;
     sources: Record<string, string>;
   };
@@ -88,7 +117,8 @@ export function useWardRepresentatives(
         return;
       }
       setMeta(file.meta);
-      setData(file.wards[String(wardNumber)] ?? null);
+      const ward = file.wards[String(wardNumber)] ?? null;
+      setData(ward ? { ...ward, sourceLabels: buildSourceLabels(file.meta) } : null);
     });
   }, [wardNumber, cityId]);
 
