@@ -263,9 +263,12 @@ export const DELHI: CityConfig = {
     tehri: 'tehri',
     'टिहरी': 'tehri',
   },
-  // Launch cutover 2026-07-26. Gates the /delhi route guard in
-  // [cityId]/layout.tsx and promotes Delhi from "onboarding" to "live" on the
-  // landing status board. The backend's list_enabled_places() reads the
-  // `cities` table separately - see supabase/migrations/033_delhi_enable.sql.
+  // Launch cutover 2026-07-26. THIS is the switch that matters: it gates the
+  // /delhi route guard in [cityId]/layout.tsx and promotes Delhi from
+  // "onboarding" to "live" on the landing status board.
+  // The `cities.enabled` column in Supabase is kept in step by
+  // supabase/migrations/033_delhi_enable.sql, but that column is currently
+  // read by no code - it is a record, not a gate. Bengaluru shipped in June
+  // 2026 and sat at enabled=FALSE there for weeks with nothing breaking.
   enabled: true,
 };

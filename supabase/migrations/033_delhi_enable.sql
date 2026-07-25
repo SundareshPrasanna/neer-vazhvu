@@ -6,15 +6,23 @@
 -- CityConfig, water_sources and ingest could be built against
 -- city_id='delhi' without exposing it. This is the promised follow-up.
 --
--- TWO SWITCHES, BOTH REQUIRED - they gate different surfaces:
---   1. `enabled: true` on the CityConfig in src/lib/cities/delhi.ts, which
---      the frontend route guard ([cityId]/layout.tsx) reads. Without it the
---      /delhi routes 404 and the landing board shows Delhi as "onboarding".
---   2. this migration, which the backend's list_enabled_places() reads.
--- Flipping only one leaves the site and the API disagreeing about whether
--- Delhi exists. Bengaluru and Mumbai were switched on directly in Supabase
--- with no migration recorded; doing it in version control this time so the
--- cutover is reviewable and repeatable on a fresh database.
+-- WHAT ACTUALLY GATES THE SITE (verified 2026-07-26, because the older
+-- comments in this repo get this wrong):
+--   The ONLY functional switch is `enabled: true` on the CityConfig in
+--   src/lib/cities/delhi.ts, read by the frontend route guard in
+--   [cityId]/layout.tsx. Without it /delhi 404s and the landing board shows
+--   Delhi as "onboarding".
+--
+--   This `enabled` COLUMN is currently read by no code at all - neither the
+--   Next.js app nor the Python API queries it. The backend's
+--   list_enabled_places() reads the PYTHON registry in app/cities/, not this
+--   table, and nothing imports that module either.
+--
+-- So this migration is for CONSISTENCY, not for gating: it keeps the seeded
+-- row honest about a city that is live, and keeps the state reproducible on
+-- a fresh database. Do not read it as a launch gate - Bengaluru shipped in
+-- June 2026 and sat at enabled=FALSE here for weeks with nothing breaking
+-- (see 034_bangalore_enable_fix.sql).
 --
 -- PREREQUISITE: 031 and 032 must already be applied. This migration is a
 -- no-op UPDATE if the row is absent, so it fails loudly instead of
