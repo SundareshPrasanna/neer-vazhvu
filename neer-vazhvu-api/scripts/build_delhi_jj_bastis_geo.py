@@ -69,7 +69,7 @@ def fetch_pdf() -> Path:
 def pdf_to_text(pdf: Path) -> list[str]:
     txt = CACHE / "dusib-jj-675-geo.txt"
     subprocess.run(["pdftotext", "-layout", str(pdf), str(txt)], check=True)
-    return [l.rstrip() for l in txt.read_text(encoding="utf-8", errors="ignore").splitlines()]
+    return [line.rstrip() for line in txt.read_text(encoding="utf-8", errors="ignore").splitlines()]
 
 
 def parse_blocks(lines: list[str]) -> list[dict]:

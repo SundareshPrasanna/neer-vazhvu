@@ -122,7 +122,7 @@ def download_raw() -> list[dict]:
 def load_raw(refresh: bool) -> list[dict]:
     if CACHE.exists() and not refresh:
         print(f"using cached raw rows: {CACHE.relative_to(REPO)}")
-        return [json.loads(l) for l in CACHE.read_text().splitlines() if l.strip()]
+        return [json.loads(line) for line in CACHE.read_text().splitlines() if line.strip()]
     return download_raw()
 
 
