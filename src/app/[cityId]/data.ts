@@ -68,7 +68,8 @@ export function snapshotToSummaries(
       isLive,
       noLiveDataReason: isLive
         ? undefined
-        : `${config.primaryAuthority.acronym} does not publish daily levels for this source.`,
+        : (source.noFeedNote ??
+           `${config.primaryAuthority.acronym} does not publish daily levels for this source.`),
     };
   });
 }

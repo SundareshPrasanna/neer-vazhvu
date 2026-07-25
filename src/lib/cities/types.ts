@@ -48,6 +48,12 @@ export interface WaterSourceConfig {
    *  never have a reading, so "waiting for first daily ingestion" would
    *  show forever. Undefined = true. */
   hasPublicFeed?: boolean;
+  /** Shown on the reservoir card in place of the generic
+   *  "<authority> does not publish daily levels" line. Use it when the
+   *  authority that WOULD publish is not the city's own utility, or when a
+   *  feed existed and died - the generic line would then misattribute the
+   *  gap (e.g. Bhakra is BBMB's to publish, not DJB's). */
+  noFeedNote?: string;
 }
 
 /**

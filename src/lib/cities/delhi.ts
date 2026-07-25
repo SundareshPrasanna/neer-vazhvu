@@ -28,13 +28,15 @@ import type { CityConfig } from './types';
 // of 2025). heroMode stays 'none' until public/data/delhi-supply-overview.json
 // is compiled - flip it in the same commit.
 //
-// None of the six sources has a public daily feed for DELHI'S SHARE:
-//   - Bhakra + Tehri reservoir STORAGE is public (BBMB daily HTML; CWC weekly
-//     bulletin / WRIS), so those two carry hasPublicFeed and can show storage
-//     cards like Bangalore's upstream Cauvery dams - but Delhi's realized draw
-//     is not published anywhere.
+// NONE of the six sources has an ingestible public feed - verified 2026-07-25:
+//   - Bhakra: BBMB's reservoir page has not updated since 04.09.2025.
+//   - Tehri + Bhakra via CWC: the weekly Reservoir Storage Bulletin listing
+//     ends 08.05.2025 (the series that fed Mumbai's backfill is dormant).
 //   - Munak Canal flow, Wazirabad pond level, UGC flow: news-NER / RTI only.
 //   - Groundwater: no DJB tube-well census exists (CAG flags its absence).
+// So every source carries hasPublicFeed:false + a noFeedNote naming WHO would
+// have to publish. Delhi's live daily layer is rainfall (IMD gridded history +
+// Open-Meteo provisional, in the daily cron); its monthly layer is DPCC.
 // That entitled-vs-opaque asymmetry is the Allocation Ledger story - Delhi is
 // the strongest instance of the primitive on the platform.
 //
@@ -133,6 +135,8 @@ export const DELHI: CityConfig = {
       displayOrder: 1,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
+      noFeedNote:
+        "No public daily gauge for the Wazirabad pond. Levels surface only in crisis reporting and Supreme Court filings.",
     },
     {
       // 102 km Munak Canal (Carrier-Lined Channel from Munak, Haryana):
@@ -149,6 +153,8 @@ export const DELHI: CityConfig = {
       displayOrder: 2,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
+      noFeedNote:
+        "No public daily flow for the 102-km Munak carrier - the single largest input to Delhi's supply. Carriage figures appear only when a shortfall reaches court (June 2024).",
     },
     {
       // Upper Ganga Canal at Muradnagar (UP) feeds Bhagirathi + Sonia Vihar
@@ -164,6 +170,8 @@ export const DELHI: CityConfig = {
       displayOrder: 3,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
+      noFeedNote:
+        "No public daily release on the Upper Ganga Canal leg; the channel also closes for UP's annual canal maintenance with no Delhi-visible schedule.",
     },
     {
       // Bhakra (Gobind Sagar, Sutlej) - Delhi's furthest source, ~240 km.
@@ -180,6 +188,13 @@ export const DELHI: CityConfig = {
       catchmentAreaSqkm: null,
       displayOrder: 4,
       isPrimaryDrinkingSource: false,
+      // Verified 2026-07-25: BBMB's public reservoir page still reads "Data
+      // as of 6.00 am on 04.09.2025", and CWC's weekly Reservoir Storage
+      // Bulletin listing ends 08.05.2025. Both feeds that would carry Bhakra
+      // are dormant, so this cannot be ingested today.
+      hasPublicFeed: false,
+      noFeedNote:
+        "Bhakra storage is BBMB's to publish, not DJB's - and BBMB's public reservoir page has not updated since September 2025 (CWC's weekly bulletin stopped in May 2025). Delhi's share of it is never published separately.",
     },
     {
       // Tehri (Bhagirathi, THDC) - 300 cusecs / 162 MGD allocated to Delhi.
@@ -195,6 +210,9 @@ export const DELHI: CityConfig = {
       catchmentAreaSqkm: null,
       displayOrder: 5,
       isPrimaryDrinkingSource: false,
+      hasPublicFeed: false,
+      noFeedNote:
+        "THDC publishes Tehri's 300-cusec allocation to Delhi but no daily release against it; the CWC weekly bulletin that carried Tehri storage stopped in May 2025.",
     },
     {
       // ~10% of supply from DJB tube-wells + Ranney wells. No public census -
@@ -210,6 +228,8 @@ export const DELHI: CityConfig = {
       displayOrder: 6,
       isPrimaryDrinkingSource: false,
       hasPublicFeed: false,
+      noFeedNote:
+        "No public tube-well register exists - the CAG's audit records its absence as a finding.",
     },
   ],
   sourceNameAliases: {
