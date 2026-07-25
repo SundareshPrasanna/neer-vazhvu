@@ -120,9 +120,9 @@ export function BlockDetailPanel({ block, onClose }: BlockDetailPanelProps) {
         <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
           {t("gw_block.cgwb_note")}
         </p>
-        {history.length < 7 && (
+        {(block.history_caveat || history.length < 7) && (
           <p className="text-xs text-amber-600 dark:text-amber-400 leading-relaxed">
-            {t("gw_block.boundary_caveat")}
+            {block.history_caveat ?? t("gw_block.boundary_caveat")}
           </p>
         )}
         <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">

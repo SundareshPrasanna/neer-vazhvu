@@ -124,6 +124,12 @@ export interface GWBlockHistory {
 
 export interface GWBlock {
   name: string;
+  /** Overrides the generic "CGWB changed block boundaries" caveat shown
+   *  under a short history. The default text describes compound-block
+   *  splits (Bengaluru/Chennai); cities whose series is short for another
+   *  reason (Delhi: annual assessment only began 2021-22, and the unit
+   *  changed from tehsil to district) must state their own reason. */
+  history_caveat?: string;
   history: GWBlockHistory[];
   latest: {
     class: GWBlockClass;

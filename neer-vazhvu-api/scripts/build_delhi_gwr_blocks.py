@@ -224,7 +224,14 @@ def main() -> None:
                                 "availability_ham": h["availability_ham"], "draft_total_ham": h["draft_total_ham"]})
         # ward-map.tsx consumes {blocks:[{name, history, latest}]} - latest
         # precomputed, class labels spaced ("Semi Critical").
-        blocks.append({"name": rec["name"], "history": history,
+        blocks.append({"name": rec["name"],
+                       "history_caveat": (
+                           "CGWB assessed groundwater only periodically before 2022 and annually since; "
+                           "Delhi's pre-2022 editions used TEHSIL units (~34) rather than today's 12 districts, "
+                           "so those years cannot be joined to this series. The 2022-23 cycle comes from "
+                           "IN-GRES directly - no mirrored dataset exists for it."
+                       ),
+                       "history": history,
                        "latest": {kk: history[-1][kk] for kk in ("class", "development_pct", "availability_ham", "draft_total_ham")}})
     payload = {
         "source": "CGWB Dynamic Ground Water Resources - Delhi district assessments 2022 + 2025 (via OpenCity national-compilation datasets)",

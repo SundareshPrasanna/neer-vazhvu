@@ -135,6 +135,11 @@ interface SupplyOverviewData {
     subtitle?: string;
     wtp_label?: string;
     demand_caption?: string;
+    /** Replaces the "2034 design demand: {demand} MLD for {pop} residents"
+     *  line. The i18n default hard-codes 2034 (Madurai/Chennai's ADB design
+     *  horizon); cities on a different plan horizon (Delhi: MPD-2041) must
+     *  override it or the page states the wrong year. */
+    demand_headline?: string;
   };
 }
 
@@ -400,7 +405,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
           </h3>
           <div className="flex items-baseline justify-between flex-wrap gap-2 mb-2">
             <span className="text-sm text-slate-600 dark:text-slate-400">
-              {t("supply_overview.demand_2034")
+              {(data._view_overrides?.demand_headline ?? t("supply_overview.demand_2034"))
                 .replace("{demand}", String(demand.demand_2034_mld))
                 .replace("{pop}", formatNumber(designPopulation))}
             </span>

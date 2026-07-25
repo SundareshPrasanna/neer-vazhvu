@@ -5,6 +5,21 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/lib/i18n/context";
+import { listAllPlaces } from "@/lib/cities";
+
+/** City roster for site metadata, derived from the registry so it can never
+ *  go stale the way the hard-coded "Chennai and Madurai live, Bengaluru
+ *  onboarding" string did (it survived two launches). */
+function cityRoster(): string {
+  const all = listAllPlaces();
+  const live = all.filter((p) => p.enabled !== false).map((p) => p.displayName);
+  const onboarding = all.filter((p) => p.enabled === false).map((p) => p.displayName);
+  const parts = [`${live.join(", ")} live`];
+  if (onboarding.length) parts.push(`${onboarding.join(", ")} onboarding`);
+  return parts.join("; ");
+}
+
+const ROSTER = cityRoster();
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://neervazhvu.org"),
@@ -30,7 +45,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Neer Vazhvu | Urban Water Intelligence",
-    description: "Reservoirs, groundwater, rivers, flood risk, and water bodies across Indian cities - Chennai and Madurai live, Bengaluru onboarding.",
+    description: `Reservoirs, groundwater, rivers, flood risk, and water bodies across Indian cities - ${ROSTER}.`,
     type: "website",
     locale: "en_IN",
     siteName: "Neer Vazhvu",
@@ -39,7 +54,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Neer Vazhvu | Urban Water Intelligence",
-    description: "Reservoirs, groundwater, rivers, flood risk, and water bodies across Indian cities - Chennai and Madurai live, Bengaluru onboarding.",
+    description: `Reservoirs, groundwater, rivers, flood risk, and water bodies across Indian cities - ${ROSTER}.`,
   },
   icons: {
     icon: [
