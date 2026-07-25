@@ -1,6 +1,6 @@
 # Contributing to Neer Vazhvu
 
-Thanks for your interest in contributing! This project tracks Indian cities' water systems (Chennai, Madurai, and Bengaluru live, more on the way) and aims to make civic data accessible to everyone.
+Thanks for your interest in contributing! This project tracks Indian cities' water systems (Chennai, Madurai, Bengaluru, Mumbai and Delhi live, more on the way) and aims to make civic data accessible to everyone.
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
@@ -46,13 +46,15 @@ neer-vazhvu/
 ├── src/                  # Next.js frontend (App Router)
 │   ├── app/
 │   │   ├── (chennai-flat)/        # Legacy Chennai-only routes (/, /my-ward, /groundwater, /water-bodies, /rivers, /flood-risk, /about, /facts, /origins)
-│   │   └── [cityId]/              # Multi-city parallel routes for Madurai, Bengaluru, and future cities
+│   │   └── [cityId]/              # Multi-city parallel routes for Madurai, Bengaluru, Mumbai, Delhi and future cities
 │   ├── components/                # React components (most are city-agnostic; per-city forks live in dashboard/, my-ward/, water-bodies/)
 │   ├── lib/
 │   │   ├── cities/                # *** Place config registry — add a city by adding a file here ***
 │   │   │   ├── chennai.ts         # CityConfig: GCC 200 wards, CMWSSB reservoirs, days-left hero, etc.
 │   │   │   ├── madurai.ts         # CityConfig: MMC 100 wards, Vaigai/Mullaperiyar/Sothuparai, allocation hero, urbanSupply
 │   │   │   ├── bangalore.ts       # CityConfig: GBA 369 wards, 4 upstream Cauvery reservoirs (all isPrimaryDrinkingSource=false), cauvery-pumping hero, KN locale
+│   │   │   ├── mumbai.ts          # CityConfig: first region place — 9 MMR corporations, 7 BMC lakes, days-left hero with upper-bound heroNote
+│   │   │   ├── delhi.ts           # CityConfig: MCD 250 wards, 6 sources ALL hasPublicFeed=false (no authority publishes daily), cauvery-pumping hero w/ hero_copy overrides, HI upcoming
 │   │   │   ├── kaveri.ts          # RegionConfig (region, not city) — work-in-progress
 │   │   │   └── types.ts           # PlaceConfig union + GroundwaterViewsConfig + UrbanSupplyConfig + heroMode discriminator
 │   │   ├── hooks/                 # Per-city promise caches: use-ward-profile, use-my-ward-data, use-ward-representatives
@@ -60,7 +62,7 @@ neer-vazhvu/
 │   │   └── utils/                 # Shared utils incl. river-classification (CPCB Best-Use thresholds, used by all cities)
 │   └── types/                     # TypeScript definitions
 ├── neer-vazhvu-api/               # Python API (FastAPI)
-│   ├── app/scrapers/              # CMWSSB, NASA POWER, Open-Meteo, OpenCity, WRIS (Madurai + Bangalore), TN Agriculture ARS (Madurai)
+│   ├── app/scrapers/              # CMWSSB, NASA POWER, Open-Meteo, OpenCity, WRIS (Madurai + Bangalore), TN Agriculture ARS (Madurai), KWRIS (Bengaluru), Pravah (Mumbai). Delhi has none - no authority publishes a daily feed for it (see docs/cities/delhi/features.md)
 │   ├── app/etl/                   # Pipeline orchestrator, constants
 │   ├── app/gee/                   # Earth Engine Phase 1 summaries and catchment tooling
 │   ├── app/intelligence/          # ARIMAX forecaster, risk scorer, briefing
