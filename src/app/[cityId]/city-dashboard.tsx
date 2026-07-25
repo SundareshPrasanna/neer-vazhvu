@@ -299,8 +299,13 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
   // "waiting for ingestion" would misrepresent the data model. Only consider
   // a city "in preview" if it has a primary source configured AND that
   // source's reading is missing.
+  // ...and only when that primary source can actually RECEIVE a reading.
+  // Delhi's primary sources are a river intake and two canals, all marked
+  // hasPublicFeed:false (no public daily feed exists for the city's share),
+  // so without this the pill would promise an ingestion that can never
+  // arrive - the exact failure the hasPublicFeed flag documents.
   const hasPrimaryDrinkingSource = config.waterSources.some(
-    (s) => s.isPrimaryDrinkingSource,
+    (s) => s.isPrimaryDrinkingSource && s.hasPublicFeed !== false,
   );
   const reservoirIsLive = !hasPrimaryDrinkingSource || snapshot.reservoirIsLive;
 
