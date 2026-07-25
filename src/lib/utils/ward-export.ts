@@ -109,8 +109,8 @@ export function generateWardCSV(
     if (representatives.councillor.phone) {
       lines.push(row("Representatives", "Councillor phone", representatives.councillor.phone, "", "GCC"));
     }
-    lines.push(row("Representatives", "MLA", representatives.mla.name, representatives.mla.party, "TN Assembly 2021"));
-    lines.push(row("Representatives", "MP", representatives.mp.name, representatives.mp.party, "Lok Sabha 2019"));
+    lines.push(row("Representatives", "MLA", representatives.mla.name, representatives.mla.party, "TN Assembly 2026"));
+    lines.push(row("Representatives", "MP", representatives.mp.name, representatives.mp.party, "Lok Sabha 2024"));
   }
 
   // Metadata
