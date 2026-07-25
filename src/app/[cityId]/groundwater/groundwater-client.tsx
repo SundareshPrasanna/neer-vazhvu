@@ -358,7 +358,9 @@ export default function CityGroundwaterClient({
         )}
         {usesCgwbYearbook && cgwbFile && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
-            {cgwbFile.wells.length} CGWB Year Book stations · seasonal readings{cgwbSpan ? ` ${cgwbSpan}` : ""}
+            {cgwbFile.wells.length} {cgwbFile.series_label ?? "CGWB Year Book"} stations ·{" "}
+            {cgwbFile.reading_kind ?? "seasonal readings"}
+            {cgwbSpan ? ` ${cgwbSpan}` : ""}
           </span>
         )}
         {viewMode === "depth" && interpolated && (
@@ -527,7 +529,8 @@ export default function CityGroundwaterClient({
               <div>{t("gw_page.source_cgwb")}</div>
               {usesCgwbYearbook && cgwbFile ? (
                 <div className="text-emerald-600 dark:text-emerald-400">
-                  {cgwbFile.wells.length} CGWB Year Book stations - quarterly readings, click for hydrograph
+                  {cgwbFile.wells.length} {cgwbFile.series_label ?? "CGWB Year Book"} stations -{" "}
+                  {cgwbFile.reading_kind ?? "quarterly readings"}, click for hydrograph
                 </div>
               ) : wrisStations.length > 0 ? (
                 <div className="text-emerald-600 dark:text-emerald-400">
@@ -568,9 +571,18 @@ export default function CityGroundwaterClient({
             <CgwbStationPanel
               station={selectedCgwbStation}
               onClose={() => setSelectedCgwbStation(null)}
+              seriesLabel={cgwbFile?.series_label}
+              unitLabel={cgwbFile?.unit_label}
               sourceNote={
                 cgwbFile?.source_label
-                  ? `Source: ${cgwbFile.source_label}. Phreatic (unconfined) aquifer dug well, manual seasonal measurement (May / Aug / Nov / Jan). ${cgwbFile.quality_note ?? ""}`
+                  ? // The measurement description is per-file: Madurai and
+                    // Mumbai are manually-read dug wells on the CGWB seasonal
+                    // calendar, Delhi is 6-hourly telemetric piezometers, and
+                    // asserting the former for both would be wrong.
+                    `Source: ${cgwbFile.source_label}. ${
+                      cgwbFile.cadence_note ??
+                      "Phreatic (unconfined) aquifer dug well, manual seasonal measurement (May / Aug / Nov / Jan)."
+                    } ${cgwbFile.quality_note ?? ""}`
                   : undefined
               }
             />

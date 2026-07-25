@@ -48,9 +48,13 @@ import type { CityConfig } from './types';
 // GROUNDWATER - CGWB assesses NCT in ~8 blocks/tehsils; Najafgarh, Mehrauli and
 // Alipur are Over-Exploited (CGWB 2024; NCT extracts >100% of annual
 // availability, reconfirmed in the 2025 national compilation). exploitation
-// choropleth is honest once gwr-blocks-delhi lands. Per-ward depth/risk stay
-// off until a risk_v2_dl composite is built (separate config, NOT Chennai
-// weights - see the audit's risk-methodology section). CGWA does not regulate
+// choropleth is honest once gwr-blocks-delhi lands. risk_v2_dl now ships
+// (own weights, NOT Chennai's) on top of 237 CGWB observation wells pulled
+// from the India-WRIS Ground Water Level API - which is reachable and was
+// never the blocker; the blocker was an undocumented contract in which a
+// blank districtName/agencyName returns zero rows instead of all rows.
+// Interpolated per-ward depth stays off on purpose (see groundwaterViews).
+// CGWA does not regulate
 // Delhi groundwater (NCT NOCs are GNCTD government orders) - a narrative
 // angle, not a data gap.
 //
@@ -115,9 +119,20 @@ export const DELHI: CityConfig = {
     // 2025 Over-Exploited: New Delhi 123%, Shahdara 112%, North East 106%,
     // South 103%; NCT overall 92.1%.
     exploitation: true,
+    // Interpolated per-ward depth stays OFF. 237 wells over 1,483 sq km is
+    // dense enough to place points honestly but not to paint a continuous
+    // surface: the ridge drops from ~2 m to ~68 m over a few km, so IDW
+    // between a floodplain well and a ridge well invents intermediate
+    // values that no instrument saw.
     depth: false,
-    risk: false,
-    cgwbStations: false,
+    // risk_v2_dl (scripts/compute-delhi-ward-risk.py): measured CGWB well
+    // depth + district extraction stage + DUSIB JJ-basti household share +
+    // chronic flood spots + water-body density.
+    risk: true,
+    // 237 CGWB observation wells via the India-WRIS Ground Water Level API
+    // (build_delhi_cgwb_stations.py). Delhi's assessment choropleth resolves
+    // only to 11 districts; these resolve to points.
+    cgwbStations: true,
   },
   reservoirDataSource: 'v2',
   waterSources: [
@@ -248,5 +263,9 @@ export const DELHI: CityConfig = {
     tehri: 'tehri',
     'टिहरी': 'tehri',
   },
+  // Launch cutover 2026-07-26. Gates the /delhi route guard in
+  // [cityId]/layout.tsx and promotes Delhi from "onboarding" to "live" on the
+  // landing status board. The backend's list_enabled_places() reads the
+  // `cities` table separately - see supabase/migrations/033_delhi_enable.sql.
   enabled: false,
 };

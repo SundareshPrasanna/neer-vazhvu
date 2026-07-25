@@ -233,7 +233,15 @@ export interface CgwbStationReading {
   year: number;
   month: number;        // 1-12
   depth_m_bgl: number;  // metres below ground level (positive)
-  year_book: string;    // e.g. "2024-25"
+  /** Which Year Book edition this reading was transcribed from, e.g.
+   *  "2024-25". Absent for cities whose series does not come from a Year
+   *  Book at all - Delhi's wells are read from the India-WRIS Ground Water
+   *  Level API, where the provenance is the API, not a published edition.
+   *  The panel falls back to the observation count in that case rather than
+   *  labelling API telemetry as a Year Book. */
+  year_book?: string;
+  /** Observations averaged into this monthly mean (WRIS-sourced series). */
+  n_obs?: number;
   _note?: string;
 }
 
@@ -278,7 +286,22 @@ export interface CgwbStationsFile {
   source_label?: string;
   source_url?: string;
   quality_note?: string;
-  year_book_summaries: Array<{
+  /** Short provenance label shown on each station panel. Defaults to
+   *  "CGWB Year Book" for the transcribed cities; Delhi overrides it
+   *  because its series comes from the India-WRIS API instead. */
+  series_label?: string;
+  /** CGWB's assessment unit: "block" in Tamil Nadu and Karnataka,
+   *  "district" in Delhi. Defaults to "block". */
+  unit_label?: string;
+  /** How to describe the reading cadence in map headers. Defaults to
+   *  "seasonal readings" (the Year-Book cities); Delhi is "monthly means"
+   *  because its series is aggregated 6-hourly telemetry. */
+  reading_kind?: string;
+  /** How the wells are actually read. Defaults to the manual seasonal
+   *  (May/Aug/Nov/Jan) description true of the Year-Book cities; Delhi
+   *  overrides it because its wells are 6-hourly telemetric recorders. */
+  cadence_note?: string;
+  year_book_summaries?: Array<{
     year_book: string;
     report_id?: string;
     publication_date?: string;
