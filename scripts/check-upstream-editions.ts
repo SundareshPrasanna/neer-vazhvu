@@ -30,7 +30,7 @@ const LOCAL_CHECK_MAX_AGE_DAYS = 90;
 
 /* ── Registry types ────────────────────────────────────────────────────── */
 
-type DetectionMethod = "link-set" | "page-hash" | "http-meta" | "api-date";
+type DetectionMethod = "link-set" | "page-hash" | "http-meta" | "api-date" | "term-expiry";
 
 interface Detection {
   method: DetectionMethod;
@@ -40,7 +40,15 @@ interface Detection {
   selector?: string;
   /** api-date: dot-path into the JSON response (supports [n] indices). */
   datePath?: string;
+  /** term-expiry: YYYY-MM-DD the current term runs out. */
+  termEndsOn?: string;
+  /** term-expiry: days before termEndsOn to start alerting. */
+  leadTimeDays?: number;
 }
+
+/** term-expiry default warning window - enough notice to line up sources
+    before the incumbents change. */
+const DEFAULT_TERM_LEAD_DAYS = 60;
 
 interface LastSeen {
   /** Human edition label ("Year Book 2023-24"), set via --accept. */
@@ -153,6 +161,11 @@ function validate(entries: SourceEntry[]): string[] {
     }
     if (d.method === "api-date" && !d.datePath)
       problems.push(`${where}: api-date needs datePath`);
+    if (d.method === "term-expiry") {
+      if (!d.termEndsOn) problems.push(`${where}: term-expiry needs termEndsOn`);
+      else if (!/^\d{4}-\d{2}-\d{2}$/.test(d.termEndsOn) || Number.isNaN(Date.parse(d.termEndsOn)))
+        problems.push(`${where}: termEndsOn must be a YYYY-MM-DD date, got ${d.termEndsOn}`);
+    }
 
     for (const dep of e.dependsOn ?? []) {
       if (!existsSync(resolve(ROOT, dep)))
@@ -194,6 +207,9 @@ function sha256(s: string): string {
 type Observed = Omit<LastSeen, "edition" | "acceptedOn">;
 
 async function observe(e: SourceEntry): Promise<Observed> {
+  // term-expiry is a calendar check, not a fetch - the registry entry carries
+  // the whole state, so there is nothing upstream to observe.
+  if (e.detection.method === "term-expiry") return {};
   if (!e.insecureTLS) return observeInner(e);
   // Entries run sequentially, so toggling the process-wide TLS flag is safe.
   const prev = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
@@ -288,6 +304,28 @@ interface CheckResult {
 }
 
 function compare(e: SourceEntry, obs: Observed): CheckResult {
+  // Term-expiry carries its own state, so it is answerable before any
+  // baseline exists - an unbaselined entry would otherwise mask a term that
+  // has already run out.
+  if (e.detection.method === "term-expiry") {
+    const endsOn = e.detection.termEndsOn!;
+    const lead = e.detection.leadTimeDays ?? DEFAULT_TERM_LEAD_DAYS;
+    const daysLeft = Math.floor(
+      (new Date(endsOn + "T00:00:00Z").getTime() - Date.now()) / 86_400_000,
+    );
+    const due = daysLeft <= lead;
+    return {
+      entry: e,
+      state: due ? "new-edition" : "ok",
+      detail: due
+        ? daysLeft < 0
+          ? `term ended ${endsOn} (${-daysLeft}d ago) - incumbents may already have changed; verify the result and roll termEndsOn forward`
+          : `term ends ${endsOn} in ${daysLeft}d (lead ${lead}d) - line up the result source now`
+        : `term runs to ${endsOn} (${daysLeft}d left)`,
+      observed: obs,
+    };
+  }
+
   const last = e.lastSeen;
   if (!last || Object.keys(last).length === 0) {
     return {

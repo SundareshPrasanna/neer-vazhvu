@@ -40,6 +40,9 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
         mp: representatives.mp
           ? { name: representatives.mp.name, party: representatives.mp.party, constituency: representatives.mp.constituency }
           : undefined,
+        // Derived from the reps file's own election dates, so each city's
+        // CSV cites its own elections rather than Chennai's.
+        sourceLabels: representatives.sourceLabels,
       } : null,
     );
     downloadCSV(csv, `ward-${wardNumber}-report.csv`);

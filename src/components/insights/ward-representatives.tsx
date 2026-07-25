@@ -10,6 +10,7 @@ interface WardRepresentativesProps {
 
 const PARTY_COLORS: Record<string, string> = {
   DMK: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+  TVK: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400",
   AIADMK: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
   INC: "bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-400",
   BJP: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
@@ -43,11 +44,14 @@ export function WardRepresentatives({ wardNumber }: WardRepresentativesProps) {
           phone={reps.councillor.phone}
         />
 
-        {/* MLA - omitted for cities publishing councillors only */}
+        {/* MLA - omitted for cities publishing councillors only (Delhi).
+            The name falls back to the English name when name_ta is empty:
+            some Chennai records have no Tamil transliteration yet (#182),
+            and `useTa ? name_ta : name` rendered those as blank. */}
         {reps.mla && (
           <RepRow
             label={t("reps.mla")}
-            name={useTa ? reps.mla.name_ta : reps.mla.name}
+            name={(useTa && reps.mla.name_ta) || reps.mla.name}
             party={reps.mla.party}
             subtitle={
               t("reps.constituency").replace(
@@ -62,7 +66,7 @@ export function WardRepresentatives({ wardNumber }: WardRepresentativesProps) {
         {reps.mp && (
           <RepRow
             label={t("reps.mp")}
-            name={useTa ? reps.mp.name_ta : reps.mp.name}
+            name={(useTa && reps.mp.name_ta) || reps.mp.name}
             party={reps.mp.party}
             subtitle={
               t("reps.constituency").replace(
