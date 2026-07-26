@@ -41,6 +41,34 @@ const ROOT = resolve(__dirname, "..");
 const RESERVOIR_MAX_AGE_DAYS = 4;
 const RAINFALL_MAX_AGE_DAYS = 2;
 
+/**
+ * Per-city reservoir tolerance, where 4 days is measurably wrong.
+ *
+ * Calibrated 2026-07-26 from 120 days of observed gaps rather than assumed
+ * cadence - the same mistake that made gee-reservoir-context alarm on a healthy
+ * job. Measured breach counts at the CURRENT tolerance of 4:
+ *
+ *   madurai (TN Agri, CI)        2 in 120d   max gap  9   keep 4
+ *   bangalore x4 (KWRIS, launchd) 2 in 120d   max gap  6   keep 4
+ *   mumbai x5 (Pravah, launchd)   1 in 120d   max gap  8   keep 4
+ *   chennai (CMWSSB, launchd)    10 in 120d   max gap 12   -> 7
+ *
+ * Chennai's gap distribution over those 120 days:
+ *   1x10, 2x5, 3x3, 4x4, 5x3, 6x2, 7, 8, 9, 11, 12
+ * At 4 that is an alert every ~12 days, which is the alarm fatigue the
+ * ciBlocked work existed to remove. At 7 it is ~4 alerts in 120 days and still
+ * catches the 8/9/11/12-day outages.
+ *
+ * This is NOT a claim that week-old reservoir data is fine. It is a concession
+ * to a known-unreliable execution path: CMWSSB runs from the launchd job on one
+ * laptop, so sub-week gaps are laptop jitter rather than a broken pipeline. The
+ * real fix is getting that feed off the laptop (P0-8), not this number. Re-run
+ * the calibration if the execution home changes.
+ */
+const RESERVOIR_MAX_AGE_OVERRIDES: Record<string, number> = {
+  chennai: 7,
+};
+
 /* ── Extra file feeds (weekly / city-specific artifacts) ───────────────── */
 // Register non-uniform feeds here. `dateFrom` supports a JSON field path
 // ("json:generated_at") or a regex over the raw file ("regex:<pattern>",
@@ -223,7 +251,7 @@ function deriveChecks(places: PlaceConfig[]): { checks: Check[]; problems: strin
           cityId,
           kind: "supabase-reservoir",
           table,
-          maxAgeDays: RESERVOIR_MAX_AGE_DAYS,
+          maxAgeDays: RESERVOIR_MAX_AGE_OVERRIDES[cityId] ?? RESERVOIR_MAX_AGE_DAYS,
           note: `${feedSources.length} reservoirs, legacy table`,
         });
       } else {
@@ -236,7 +264,7 @@ function deriveChecks(places: PlaceConfig[]): { checks: Check[]; problems: strin
             kind: "supabase-reservoir",
             table,
             sourceCode: s.sourceCode,
-            maxAgeDays: RESERVOIR_MAX_AGE_DAYS,
+            maxAgeDays: RESERVOIR_MAX_AGE_OVERRIDES[cityId] ?? RESERVOIR_MAX_AGE_DAYS,
             note: s.displayName,
           });
         }
