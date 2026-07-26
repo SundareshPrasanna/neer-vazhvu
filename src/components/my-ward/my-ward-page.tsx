@@ -185,19 +185,48 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
               but ward profiles built for cities without an industrial layer
               (e.g. a Bangalore ward whose profile JSON omits the section)
               come through as undefined at runtime, and `in` throws on undef. */}
-          {profile.industrial && !("_data_status" in profile.industrial) && profile.industrial.zone_count > 0 && (
-            <Link
-              href={
-                profile.rivers.nearest_river_id
-                  ? `${cityPrefix}/rivers?river=${profile.rivers.nearest_river_id}${profile.rivers.nearest_station_id ? `&station=${profile.rivers.nearest_station_id}` : ""}`
-                  : `${cityPrefix}/rivers`
-              }
-              className="block text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 rounded-lg px-4 py-2.5 hover:bg-amber-100 dark:hover:bg-amber-950/40 transition-colors"
-            >
-              {profile.industrial.zone_count} industrial zone{profile.industrial.zone_count !== 1 ? "s" : ""} in this ward - potential pollution source for water bodies and groundwater.
-              <span className="ml-1 text-amber-500 dark:text-amber-300 print:hidden">&rarr;</span>
-            </Link>
-          )}
+          {profile.industrial &&
+            !("_data_status" in profile.industrial) &&
+            (profile.industrial.zone_count > 0 ||
+              (profile.industrial.cetp_count ?? 0) > 0) && (
+              <Link
+                href={
+                  profile.rivers.nearest_river_id
+                    ? `${cityPrefix}/rivers?river=${profile.rivers.nearest_river_id}${profile.rivers.nearest_station_id ? `&station=${profile.rivers.nearest_station_id}` : ""}`
+                    : `${cityPrefix}/rivers`
+                }
+                className="block text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 rounded-lg px-4 py-2.5 hover:bg-amber-100 dark:hover:bg-amber-950/40 transition-colors"
+              >
+                {profile.industrial.zone_count > 0 && (
+                  <>
+                    {profile.industrial.zone_count} industrial zone{profile.industrial.zone_count !== 1 ? "s" : ""} in this ward - potential pollution source for water bodies and groundwater.
+                  </>
+                )}
+                {/* Delhi: the treatment plant serving those estates, and how
+                    much of its capacity the effluent actually reaches. A plant
+                    far below capacity is the finding, not a footnote. */}
+                {profile.industrial.cetps?.map((c) => (
+                  <span key={c.name} className="mt-1 block">
+                    {c.name}
+                    {c.design_capacity_mld != null && ` - ${c.design_capacity_mld} MLD design`}
+                    {c.median_utilisation_pct != null && (
+                      <>
+                        , receiving <strong>{c.median_utilisation_pct}%</strong> of it in a median month
+                      </>
+                    )}
+                    .
+                  </span>
+                ))}
+                {/* Archival caveat sits directly under the figures it applies
+                    to, not in a separate About page. */}
+                {profile.industrial._series_note && (
+                  <span className="mt-1 block text-[11px] text-amber-500/80 dark:text-amber-300/70">
+                    {profile.industrial._series_note}
+                  </span>
+                )}
+                <span className="ml-1 text-amber-500 dark:text-amber-300 print:hidden">&rarr;</span>
+              </Link>
+            )}
 
           {/* Actions & Representatives */}
           <WardActionsCard wardNumber={wardNumber} />

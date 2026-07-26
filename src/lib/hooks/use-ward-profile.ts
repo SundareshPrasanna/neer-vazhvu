@@ -53,7 +53,24 @@ export type WardSewerageSection =
   | WardSectionNotAvailable;
 
 export type WardIndustrialSection =
-  | { zone_count: number }
+  | {
+      /** Named industrial ESTATES in the ward. Deliberately excludes
+       *  treatment plants so the count means the same thing across cities. */
+      zone_count: number;
+      zone_names?: string[];
+      /** Delhi: common effluent treatment plants serving the ward's estates.
+       *  Counted separately from zone_count - a CETP is infrastructure for an
+       *  estate, not an estate. Utilisation is the finding: a plant running
+       *  far below design capacity means the effluent goes elsewhere. */
+      cetp_count?: number;
+      cetps?: {
+        name: string;
+        design_capacity_mld: number | null;
+        median_utilisation_pct: number | null;
+      }[];
+      /** Rendered next to the CETP figures: the DPCC series is archival. */
+      _series_note?: string;
+    }
   | WardSectionNotAvailable;
 
 /** Per-ward CGWB groundwater assessment: block-level extraction class

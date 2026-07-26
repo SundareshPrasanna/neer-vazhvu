@@ -104,6 +104,41 @@ class WardIndex:
         return None
 
 
+def industrial_section(estates, cetps):
+    """Per-ward industrial summary.
+
+    zone_count counts named INDUSTRIAL ESTATES only, so it means the same
+    thing here as in Bengaluru's profiles. CETPs are reported separately:
+    a common effluent treatment plant is infrastructure serving an estate,
+    not an industrial zone, and folding it into zone_count would inflate the
+    count and mislead a ward-to-ward comparison.
+
+    Utilisation is carried through because it is the finding - a plant
+    running far under design capacity means the effluent is going elsewhere.
+    """
+    section = {
+        "zone_count": len(estates),
+        "zone_names": [e["name"] for e in estates[:5]],
+    }
+    if cetps:
+        section["cetp_count"] = len(cetps)
+        section["cetps"] = [
+            {
+                "name": c["name"],
+                "design_capacity_mld": c.get("design_capacity_mld"),
+                "median_utilisation_pct": c.get("median_utilisation_pct"),
+            }
+            for c in cetps
+        ]
+        # Shown next to the figures, per the transparency requirement carried
+        # in industrial-sources-delhi.json's _archival note.
+        section["_series_note"] = (
+            "CETP flow figures are from DPCC's monthly analysis reports; the "
+            "series ends November 2024 and is not live."
+        )
+    return section
+
+
 def jj_section(clusters):
     """Per-ward JJ-basti summary.
 
@@ -193,6 +228,13 @@ def main():
     # household total is a FLOOR, not a census - flagged per ward below.
     jj = load(D / "delhi-jj-bastis-geo.json")["clusters"]
 
+    # Named industrial estates + the 13 CETPs (build_delhi_industrial_sources.py).
+    # Optional so the ward build still runs before that layer is generated.
+    try:
+        ind_sources = load(D / "industrial-sources-delhi.json")["sources"]
+    except FileNotFoundError:
+        ind_sources = []
+
     # District-level CGWB assessment polygons + the latest class/stage per
     # district, used as the ward's "block" in the shared groundwater card.
     gwr_idx = WardIndex(load(G / "delhi-gwr-blocks.geojson")["features"], key=None)
@@ -217,9 +259,26 @@ def main():
             "drain_count": 0,
             "drain_km": 0.0,
             "jj": [],
+            "estates": [],
+            "cetps": [],
         }
         for f in wards
     }
+
+    # SMA CETP has no coordinate (not in OSM) and is skipped here by the
+    # lat/lng guard: it keeps its flow series in the sources file but cannot
+    # belong to a ward without inventing a position for it.
+    ind_unplaced = 0
+    for src in ind_sources:
+        if src.get("lat") is None or src.get("lng") is None:
+            ind_unplaced += 1
+            continue
+        w = idx.find(src["lng"], src["lat"])
+        if w is None:
+            ind_unplaced += 1
+            continue
+        bucket = "cetps" if src.get("type") == "cetp" else "estates"
+        acc[w][bucket].append(src)
 
     # ~33 of the 675 clusters land outside every MCD ward, and correctly so:
     # they sit in the NDMC area (Lutyens - Race Course, Raisina, Talkatora,
@@ -363,12 +422,7 @@ def main():
                         dist_m(lon, lat, st["lng"], st["lat"]) / 1000, 1
                     ),
                 },
-                # Delhi's industrial layer is the DPCC CETP archive, not a mapped
-                # zone polygon set - no per-ward zone count exists.
-                "industrial": {
-                    "_data_status": "not_available",
-                    "_data_status_note": "No per-ward industrial-zone polygons published for Delhi; the DPCC CETP monthly archive (13 plants) is the industrial layer and is not ward-attributed. DPCC's only public consent register covers 1991-2002.",
-                },
+                "industrial": industrial_section(a["estates"], a["cetps"]),
                 "groundwater_assessment": groundwater_section(
                     lon, lat, gwr_idx, cgwb_wells
                 ),
@@ -394,6 +448,13 @@ def main():
     print(
         f"  JJ bastis: {n_jj} clusters in {sum(1 for pf in profiles if pf['jj_bastis']['count'])} wards, "
         f"{n_hh:,} households | {jj_unplaced} outside MCD (NDMC / Cantonment)"
+    )
+    n_est = sum(pf["industrial"].get("zone_count", 0) for pf in profiles)
+    n_cetp = sum(pf["industrial"].get("cetp_count", 0) for pf in profiles)
+    print(
+        f"  industrial: {n_est} estates + {n_cetp} CETPs across "
+        f"{sum(1 for pf in profiles if pf['industrial'].get('zone_count'))} wards | "
+        f"{ind_unplaced} unplaced (no coords / outside MCD)"
     )
     print(
         f"  groundwater: {sum(1 for pf in profiles if pf.get('groundwater_assessment'))} wards with district class, "
