@@ -57,8 +57,8 @@ capacity on same date.
 - **The summary row is mislabelled.** It reads "Total(1 to 5)" but is not the sum of rows 1-5: on
   25-Jul-2026 it printed 2,659.493 MLD while rows 1-5 sum to 1,922.632, the difference being exactly
   Yellampally (row 8, 736.861 MLD). The label predates the Godavari source being added. The script
-  **ignores the printed total** and recomputes from the individual rows against an explicit
-  `is_city_source` set, so the set stays under our control if HMWSSB adds another source.
+  **ignores the printed total** and recomputes from the individual rows, so the set stays under our
+  control if HMWSSB adds another source. Note the Krishna chain needs `max()`, not `sum()` - see below.
 - **Levels are mixed-unit**, declared per row by the source: `AkkamPally[Krishna](M)` is metres,
   every other row is feet. `RESERVOIRS` in the script pins the unit per source and `--check-units`
   validates the pin. Validated 2026-07-26 over the 2022-09-01..2022-10-10 monsoon window: all eight
@@ -69,18 +69,35 @@ capacity on same date.
   barrage elevation) rather than 485 m, but that inference is not independently confirmed - confirm
   against Telangana I&CAD before publishing a level in feet for Yellampally. Storage and percentage
   figures are unaffected either way.
-- **Nagarjuna Sagar and Srisailam are context, not supply.** They are the parent Krishna storages
-  upstream of Akkampally and consistently report a city drawl of 0.000 MLD. Counting them as city
-  sources would double-count the Krishna leg. They are kept because their level is the real
-  constraint on Akkampally.
+- **The Krishna chain needs `max()`, not `sum()`.** Akkampally is a balancing reservoir fed from
+  Nagarjuna Sagar, fed in turn from Srisailam: one physical draw, booked inconsistently. Normally
+  Akkampally carries it and the parents read 0.000, which is why the parents are not primary
+  drinking sources. But **Nagarjuna Sagar carries the full ~1,254 MLD on 15 of 4,514 days** and
+  Srisailam on 7 of 4,444, and on **18 days both report a figure** - sometimes the identical one
+  (2016-05-07: Akkampally and Nagarjuna Sagar both 1,116.807 MLD). So summing only the flagged city
+  sources understates by up to ~47% of a day's total, while summing everything double-counts. The
+  script takes the max across the chain, which is correct in both cases and conservative in the
+  ambiguous ones. 21 of 4,589 days (0.46%) are affected - small, but they are exactly the days a
+  runway chart would otherwise show as an inexplicable cliff.
 - **Politeness:** this is a government IIS box. The backfill runs at `--sleep 0.25` by default.
 
-### Upstream data-entry errors in the archive - 36 rows in 35,975 (0.10%)
+### Upstream data-entry errors in the archive
 
-The 12.5-year archive contains a small number of genuine HMWSSB typos. They are
-**not parse errors** - the feed's own `level_prev_day` column proves it in every case - and they are
-quarantined in two stages rather than silently dropped or silently kept. All excluded rows are
-preserved in the artefact's `_excluded_levels` block with the reason, so nothing is lost.
+The 12.5-year archive contains a small number of genuine HMWSSB errors. They are **not parse
+errors** - the feed's own `level_prev_day` column identifies them - and they are quarantined rather
+than silently dropped or silently kept. Every excluded row is preserved in the artefact's
+`_excluded_levels` block with its reason, so nothing is lost. Totals across 35,975 raw rows:
+
+| Problem | Rows | Effect |
+|---|---|---|
+| Duplicate renders (whole table emitted twice on 16 dates) | 118 | deduplicated; 15 fields disagreed and are reported |
+| Implausible level (physical envelope) | 23 | `level_today` nulled |
+| Implausible level (one-day spike) | 13 | `level_today` nulled |
+| Implausible capacity (>2x capacity-at-FTL) | 14 | `capacity_today_tmc` + `storage_pct_ftl` nulled |
+
+Left unfixed, the duplicates alone produced **91 primary-key collisions** against
+`reservoir_daily_v2`'s `(city_id, source_code, date)` key, which an upsert would have silently
+absorbed, and 8 rows violated the `storage_pct_frl NUMERIC(5,2)` ceiling of 999.99.
 
 **Stage 1, physical envelope (23 rows).** A level outside 0.5-1.05x its own FTL is not a low
 reservoir, it is a data-entry error. Four failure modes seen:
@@ -102,6 +119,16 @@ the next, and the gap is a **round number** because one digit changed in a fixed
 1756.7` (180.0), `1796.136 -> 1696.097` (100.0). A reading is rejected if it differs from **both**
 neighbours by more than 3% of FTL in the same direction; a genuine step change (gates opened,
 monsoon inflow) differs from only one neighbour and survives.
+
+**Stage 3, capacity envelope (14 rows).** The capacity column carries the same family of errors,
+and they matter more: `storage_tmc` is the days-left **numerator**, so a bad capacity corrupts the
+runway itself. Same shapes - cross-column contamination (`osman_sagar` 2023-10-30 capacity
+**485.588 TMC** against a capacity-at-FTL of 3.9, and 485.588 is *Yellampally's FTL*;
+`akkampally` 2025-12-25 capacity 248.54 against 1.499, which is an Akkampally *level* in metres) and
+decimal slips (`srisailam` 2017-07-16 capacity 20,160.0 against 215.807). The threshold is
+deliberately loose at **2x** capacity-at-FTL: a reservoir genuinely can exceed its live capacity
+during a flood surcharge, so `manjira` at 1.3x and `srisailam` at 1.2x are **retained**. Nothing
+physical explains 3.7x and above, and every rejected row sits at 3.7x or higher.
 
 Effect on the retained series: every reservoir's p99 level now sits at 0.999-1.000 of FTL, and the
 minima become physically sensible - Osman Sagar's series minimum moves from 1453.3 (below the
@@ -134,10 +161,14 @@ column.
 
 Two findings computed entirely from this one source, with no other data required.
 
-**City draw has grown ~136% in twelve years.** Mean daily draw across the six city sources, by
-calendar year: 2014 **1,116.6** MLD, 2015 1,120.0, 2016 1,174.4, 2017 1,384.3, 2018 1,509.0,
-2019 2,066.6, 2020 2,013.2, 2021 2,362.9, 2022 2,028.9, 2023 2,497.4, 2024 2,597.0, 2025 2,618.9,
+**City draw has grown ~136% in twelve years.** Mean daily draw, by calendar year:
+2014 **1,116.6** MLD, 2015 1,120.0, 2016 1,177.7, 2017 1,384.3, 2018 1,509.0, 2019 2,043.6,
+2020 1,966.8, 2021 2,362.9, 2022 2,032.4, 2023 2,497.4, 2024 2,597.0, 2025 2,618.9,
 2026 **2,636.4** (to 25 Jul). Every year is a full 365/366-day mean except 2026 (206 days).
+
+Trailing 365 days to 25-Jul-2026: mean **2,628.4** MLD, median 2,647.0, range 1,862.2-4,339.0.
+The 1,862.2 minimum is a genuine low-draw day, not an artefact - it survives both the
+Krishna-chain correction and deduplication.
 
 **The GO 111 question.** GO 111 (1996) barred major construction across the catchment of Osman
 Sagar and Himayat Sagar; Telangana repealed it in 2022, on the stated ground that the city no longer
@@ -147,13 +178,13 @@ depends on the twin reservoirs. The utility's own drawl column tests that direct
 |---|---|---|---|---|
 | 2014 | 123.5 | 1,116.6 | 11.06% | 365/365 |
 | 2015 | 74.6 | 1,120.0 | 6.66% | 365/365 |
-| 2016 | 8.4 | 1,174.4 | 0.72% | 154/366 |
+| 2016 | 8.4 | 1,177.7 | 0.71% | 154/366 |
 | 2017 | 9.6 | 1,384.3 | 0.70% | 107/365 |
 | 2018 | 0.0 | 1,509.0 | 0.00% | **0/365** |
-| 2019 | 97.3 | 2,066.6 | 4.71% | 342/365 |
-| 2020 | 46.1 | 2,013.2 | 2.29% | 366/366 |
+| 2019 | 96.3 | 2,043.6 | 4.71% | 342/365 |
+| 2020 | 45.0 | 1,966.8 | 2.29% | 366/366 |
 | 2021 | 79.9 | 2,362.9 | 3.38% | 365/365 |
-| 2022 | 83.1 | 2,028.9 | 4.10% | 365/365 |
+| 2022 | 83.1 | 2,032.4 | 4.09% | 365/365 |
 | 2023 | 81.1 | 2,497.4 | 3.25% | 365/365 |
 | 2024 | 111.8 | 2,597.0 | 4.31% | 366/366 |
 | 2025 | 165.6 | 2,618.9 | 6.32% | 365/365 |

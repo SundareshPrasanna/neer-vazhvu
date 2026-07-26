@@ -318,6 +318,61 @@ def parse_report(page: str, d: date) -> list:
 LEVEL_ENVELOPE = (0.5, 1.05)
 
 
+# The capacity column has the SAME family of typos as the level column, and
+# they matter more: storage_tmc is the days-left NUMERATOR, so a bad capacity
+# corrupts the runway directly, where a bad level only corrupts a chart.
+#
+# Observed in the 2014-2026 archive (16 rows above 1.05x capacity-at-FTL):
+#   - cross-column contamination: osman_sagar 2023-10-30 capacity 485.588 TMC
+#     against a capacity-at-FTL of 3.9 - 485.588 is YELLAMPALLY'S FTL value.
+#     akkampally 2025-12-25 capacity 248.54 against 1.499 - 248.54 is an
+#     Akkampally LEVEL (metres). yellampally 2017-12-09 capacity 484.51
+#     against 20.175 - again a level, not a storage.
+#   - decimal slips: srisailam 2017-07-16 capacity 20160.0 against 215.807.
+#
+# The threshold is deliberately loose at 2.0x. A reservoir CAN hold more than
+# its live capacity-at-FTL during a flood surcharge - manjira 2024-09-07 at
+# 1.3x and srisailam 2025-11-17 at 1.2x are physically possible and are
+# RETAINED. Nothing physical explains 3.7x and above, and every rejected row
+# sits at 3.7x or higher. This also keeps storage_pct_frl inside the DB's
+# NUMERIC(5,2) ceiling of 999.99, which the raw data violates 8 times.
+CAPACITY_MAX_FRAC_OF_FTL = 2.0
+
+
+def capacity_is_plausible(row: dict) -> bool:
+    cap, cap_ftl = row.get("capacity_today_tmc"), row.get("capacity_at_ftl_tmc")
+    if cap is None or not cap_ftl:
+        return True
+    if cap < 0:
+        return False
+    return cap <= CAPACITY_MAX_FRAC_OF_FTL * cap_ftl
+
+
+def dedupe_rows(rows: list) -> tuple:
+    """
+    Collapse duplicate (source_code, date) rows.
+
+    On 16 dates in the archive HMWSSB renders the ENTIRE table twice - 16 rows
+    instead of 8 - with identical values in both copies. Left alone this
+    produces 91 primary-key collisions against reservoir_daily_v2's
+    (city_id, source_code, date) key, which an upsert would silently absorb.
+    We drop the duplicates explicitly and report any that DISAGREE, because a
+    disagreeing pair would mean something quite different from a repeated render.
+    """
+    out, seen, conflicts = [], {}, []
+    for r in rows:
+        key = (r["source_code"], r["date"])
+        if key in seen:
+            prev = seen[key]
+            for f in ("level_today", "capacity_today_tmc", "drawl_mld"):
+                if prev.get(f) != r.get(f):
+                    conflicts.append((key, f, prev.get(f), r.get(f)))
+            continue
+        seen[key] = r
+        out.append(r)
+    return out, conflicts
+
+
 def level_is_plausible(row: dict) -> bool:
     lvl, ftl = row.get("level_today"), row.get("ftl")
     if lvl is None or not ftl:
@@ -393,15 +448,45 @@ def city_draw_mld(rows: list):
     25-Jul-2026) because that cell in fact totals rows 1-5 plus Yellampally
     despite its label. That coincidence is exactly why reading the cell would
     be dangerous: the label is stale, so the set it covers is undocumented and
-    can drift again when HMWSSB adds a source. Recomputing keeps the set
-    explicit and under our control (see `is_city_source` in RESERVOIRS).
+    can drift again when HMWSSB adds a source.
+
+    THE KRISHNA CHAIN NEEDS max(), NOT sum(). Akkampally is a balancing
+    reservoir fed from Nagarjuna Sagar, which is fed from Srisailam - one
+    physical draw on the Krishna, which HMWSSB books inconsistently. Normally
+    Akkampally carries it and the parents read 0.000, which is why the parents
+    are is_city_source=False. But on 15 of 4,514 days Nagarjuna Sagar carries
+    the full ~1,254 MLD instead (and Srisailam on 7 days), and on 18 days BOTH
+    report a figure - sometimes the IDENTICAL one (2016-05-07: Akkampally and
+    Nagarjuna Sagar both 1,116.807).
+    So:
+      - summing only is_city_source UNDERSTATES by up to ~1,254 MLD (~47% of a
+        day's total) on those days. This is what produced the implausible
+        1,862 MLD minimum in the trailing-365 range against a 2,647 median.
+      - summing everything DOUBLE-COUNTS on the days the parent mirrors
+        Akkampally.
+    Taking the max across the chain is right in both cases and conservative in
+    the ambiguous ones (2016-06-15: Akkampally 1,203.12 vs Srisailam 378.76 ->
+    1,203.12). Affected days are a small share - 21 of 4,589 (0.46%) - but they
+    are exactly the days a runway chart would show as an inexplicable cliff.
     """
-    vals = [
-        r["drawl_mld"]
+    KRISHNA_CHAIN = {"akkampally", "nagarjuna_sagar", "srisailam"}
+    by_code = {
+        r["source_code"]: r["drawl_mld"]
         for r in rows
-        if r["is_city_source"] and r["drawl_mld"] is not None
-    ]
-    return round(sum(vals), 3) if vals else None
+        if r.get("drawl_mld") is not None
+    }
+    if not by_code:
+        return None
+    independent = sum(
+        v
+        for code, v in by_code.items()
+        if code not in KRISHNA_CHAIN
+        and next(
+            (b for _, (c, _u, b) in RESERVOIRS.items() if c == code), False
+        )
+    )
+    krishna = max((by_code.get(c, 0.0) for c in KRISHNA_CHAIN), default=0.0)
+    return round(independent + krishna, 3)
 
 
 def check_units(all_rows: list) -> int:
@@ -558,11 +643,38 @@ def main() -> int:
         print("HMWSSB: no rows parsed for any requested date", file=sys.stderr)
         return 1
 
-    # Quarantine implausible level readings BEFORE anything downstream sees
-    # them. The row is kept (its storage/drawl columns are usually fine) but
-    # `level_today` is nulled and the original preserved, so a chart cannot
-    # inherit a 1,787,150 ft axis and a reader can still audit what happened.
+    # Collapse repeated renders before anything else - otherwise every
+    # downstream count, mean and upsert double-counts those 16 dates.
+    all_rows, dup_conflicts = dedupe_rows(all_rows)
+    if dup_conflicts:
+        print(
+            f"  !! {len(dup_conflicts)} duplicate (source,date) rows DISAGREE - "
+            "this is not a repeated render, investigate before ingesting:",
+            file=sys.stderr,
+        )
+        for key, field, a, b in dup_conflicts[:10]:
+            print(f"     {key} {field}: {a} vs {b}", file=sys.stderr)
+
+    # Quarantine implausible readings BEFORE anything downstream sees them. The
+    # row is kept but the bad field is nulled and the original preserved, so a
+    # chart cannot inherit a 1,787,150 ft axis, a runway cannot inherit a
+    # 485 TMC Osman Sagar, and a reader can still audit what happened.
     excluded = []
+    for r in all_rows:
+        if not capacity_is_plausible(r):
+            excluded.append(
+                {
+                    "date": r["date"],
+                    "source_code": r["source_code"],
+                    "rejected_capacity_tmc": r["capacity_today_tmc"],
+                    "capacity_at_ftl_tmc": r["capacity_at_ftl_tmc"],
+                    "reason": "capacity above "
+                    f"{CAPACITY_MAX_FRAC_OF_FTL}x capacity-at-FTL",
+                }
+            )
+            r["capacity_today_tmc_raw_rejected"] = r["capacity_today_tmc"]
+            r["capacity_today_tmc"] = None
+            r["storage_pct_ftl"] = None
     for r in all_rows:
         if not level_is_plausible(r):
             excluded.append(
