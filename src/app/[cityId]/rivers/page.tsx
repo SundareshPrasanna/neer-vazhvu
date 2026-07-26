@@ -317,8 +317,13 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       downstream_terminus: "Joins the Krishna downstream of the city, in Nalgonda district",
       feeds: "Osman Sagar (Gandipet) - one of six HMWSSB sources, ~4-7% of daily city draw",
       status:
-        "No CPCB NWMP series is published on this site for the Musi yet. CPCB (cpcb.nic.in) refuses non-India IPs, verified 2026-07-26, so the national monitoring data routes through the India-IP runner rather than CI. The reach is named in the state's own sewage-interception and riverfront programmes, neither of which publishes a dated deliverable.",
-      cpcb_nwmp_stations: [],
+        "CPCB Priority-I polluted stretch (Hyderabad to Nalgonda). Dissolved oxygen falls from 6.0 mg/L above the city at Gandipet to 0.3 mg/L at Nagole, while BOD rises from 1.2 to 6-8 mg/L; the river partially recovers downstream at Kasaniguda (DO 6.6). Jan-Mar 2022, TGPCB's own return to the NGT in OA 606 of 2018. The River Rejuvenation Committee recorded the difficulty of reaching the BOD 3 mg/L target in the absence of fresh water flow during the lean period.",
+      cpcb_nwmp_stations: [
+        "U/s of Musi at Gandipet, Osman Sagar (1172)",
+        "River Musi at Nagole (2339)",
+        "D/s of Musi at Pratapasingaram (1173)",
+        "River Musi at Kasaniguda (3082)",
+      ],
       color: "stroke-blue-600",
     },
     esi: {
@@ -345,8 +350,11 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       downstream_terminus: "Joins the Godavari",
       feeds: "Singur (29,917 mcft) and Manjira (1,500 mcft) - two of six HMWSSB sources",
       status:
-        "Tracked here as a supply corridor rather than an urban river. Daily storage and draw for both reservoirs come from HMWSSB's own statement; no water-quality series is published for the reach.",
-      cpcb_nwmp_stations: [],
+        "CPCB Priority-II polluted stretch (Gowdicherla to Nakkavagu), merged with the Nakkavagu action plan on the CPCB task team's recommendation. The two monitored stations bracket the Nakkavagu confluence: DO holds around 6 mg/L and BOD around 2.5-3.0 mg/L on both sides, Jan-Mar 2022. Daily storage and draw for Singur and Manjira come from HMWSSB's own statement.",
+      cpcb_nwmp_stations: [
+        "U/s Manjeera at Gowdicharla, before Nakkavagu confluence (2374)",
+        "D/s Manjeera at Gowdicherla, after Nakkavagu confluence (2375)",
+      ],
       color: "stroke-emerald-600",
     },
   },
