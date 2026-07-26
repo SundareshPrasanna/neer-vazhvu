@@ -187,7 +187,11 @@ export function Figure({
       <figcaption className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
         <span className="text-slate-700 dark:text-slate-300">{caption}</span>
         {" "}
-        <span className="text-slate-400 dark:text-slate-500">
+        {/* break-words: `source` is a raw Wikimedia Commons URL, which has no
+            break opportunity, so it measured 428px and dragged the layout
+            viewport past the device width - shrinking the whole Origins page
+            on a phone. Wrapping the URL keeps the page at device width. */}
+        <span className="text-slate-400 dark:text-slate-500 break-words">
           {credit ? `- ${credit} ` : ""}- {t("story.source")} {source}
         </span>
       </figcaption>
@@ -215,7 +219,8 @@ export function TimeLapse({ src, alt, caption, source }: TimeLapseProps) {
       </div>
       <figcaption className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
         <span className="text-slate-700 dark:text-slate-300">{caption}</span>{" "}
-        <span className="text-slate-400 dark:text-slate-500">- {t("story.source")} {source}</span>
+        {/* Same unbreakable-URL problem as the Hero/Figure credits above. */}
+        <span className="text-slate-400 dark:text-slate-500 break-words">- {t("story.source")} {source}</span>
       </figcaption>
     </figure>
   );
@@ -353,7 +358,11 @@ export function BeforeAfter({
       </div>
       <figcaption className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
         <span className="text-slate-700 dark:text-slate-300">{caption}</span>{" "}
-        <span className="text-slate-400 dark:text-slate-500">
+        {/* break-words: `source` is a raw Wikimedia Commons URL, which has no
+            break opportunity, so it measured 428px and dragged the layout
+            viewport past the device width - shrinking the whole Origins page
+            on a phone. Wrapping the URL keeps the page at device width. */}
+        <span className="text-slate-400 dark:text-slate-500 break-words">
           {credit ? `- ${credit} ` : ""}- {t("story.source")} {source}
         </span>
       </figcaption>
