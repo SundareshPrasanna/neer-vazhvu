@@ -121,8 +121,8 @@ flooding is *modelled* to occur; Kolkata can tell you where it *actually* happen
 | Water-body census map | **PARITY** | 5,526 bodies, 5,365 ha from OSM. |
 | Lost water bodies layer | **SHIPPED, by a different method** | No per-pond inventory exists for Kolkata (Mumbai's came from a named book). Built instead from TOPONYMIC evidence: 21 localities and streets still carrying a pond's name with no water body mapped within 300 m, plus one documented case (Zin-zira Talao, filled for the Indian Museum annexe, recorded only because of a PIL). Independently corroborates the city-wide 44% loss. |
 | Restoration priority scoring | **BUILDABLE** | Shared pipeline; needs a Kolkata run. |
-| Rich-data deep-zoom panel (flagship bodies) | **BUILDABLE** | Rabindra Sarobar and Subhash Sarobar are the natural candidates and are both WBPCB-sampled, so water quality is already in hand. |
-| CRRT restoration projects | **BLOCKED** | No equivalent public restoration project register found. |
+| Rich-data deep-zoom panel (flagship bodies) | **SHIPPED** | 4 bodies: Rabindra Sarobar (192 ac, CIT 1920s, NGT-protected), Subhas Sarobar (73 ac), Lal Dighi (the tank the city was laid out around) and the East Kolkata Wetlands (12,500 ha). Water quality is pulled from **our own WBPCB ingest**, so this page and the rivers page read the same samples. Graded V/N/C per entry. |
+| CRRT restoration projects | **SHIPPED, different in kind** | Kolkata has no restoration *register*; its record is a court docket plus a survey. 4 projects (KMDA's Rabindra Sarobar desilting awaiting NGT clearance after 2-3 decades without one; KMC's Rs 11 cr pond rejuvenation, ~300 restored; EKWMA enforcement) and the NGT's 2017 order appointing KMDA custodian. **The most consequential item is not a restoration**: KMC has commissioned a fresh water-body inventory (DST&BT Boroughs I-X, Jadavpur University XI-XVI) to replace the 1993 list. |
 | *(no Chennai equivalent)* | **BETTER, shipped** | The **East Kolkata Wetlands** now have a first-class dashboard card (`sewage-balance-card.tsx`), placed second, directly under the hero: 910 of 1,400 MLD, 5.1x all five STPs combined, with the 311 MLD untreated remainder and the 30.94 MLD residual gap that survives building all ten planned plants. Deliberately a CARD, not a map layer - EKW is not a feature of the landscape, it is the sewage system. **Boundary geometry is a named gap**: OSM has no EKW polygon (the one protected-area way in its bbox is a 15-node 0-ha stub) and Ramsar's RSIS boundary was not retrievable in this pass. |
 
 **The named gap that is the story:** KMC's own inventory is a **departmental tank list "as prepared on
@@ -180,7 +180,7 @@ still render a shell.
 | `/origins` | 58 | - | 0 | live, thin - long-form not written |
 | `/flood-risk` | 700+ | 0 | 0 | **live** - drainage-capacity framing, 3 events, 5 stated gaps |
 | `/water-bodies` | 71 | **5,547** | 0 | **live** - 5,526 bodies + 21 lost-pond markers |
-| `/lake-restoration` | 122 | 0 | 0 | **honest empty state** - needs curated lake-restoration files |
+| `/lake-restoration` | **2,202** | 0 | 0 | **live** - 4 flagship bodies, 4 projects, 1 NGT order |
 
 **Five defects found and fixed** that no status check would have caught:
 allocations and commitments 404ing on unset config flags; allocations crashing
@@ -213,6 +213,8 @@ Counting the 47 feature rows above, excluding N/A (which are city differences, n
 **Kolkata is BETTER than Chennai on 8 features**, all on the pollution/drainage spine: station count
 and depth, sampling cadence, tidal method, the live waterlogging register, the sewage balance, the
 combined-system framing, sub-daily rainfall, and groundwater network density.
+
+**Status 2026-07-26: all 11 routes live, 0 empty states, 0 console errors.**
 
 **The three gaps worth closing first**, in order:
 1. **IMD rainfall backbone** - the clearest missing Chennai feature, and it unblocks the freshness
