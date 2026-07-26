@@ -118,11 +118,10 @@ function loadRegistry(): { entries: SourceEntry[]; byFile: Map<string, RegistryF
 /* ── Validation (offline, CI) ──────────────────────────────────────────── */
 
 // A city may ship without registry coverage only with the reason on record.
-const ONBOARDING_EXEMPTIONS: Record<string, string> = {
-  delhi:
-    "onboarding in progress (branch delhi-onboarding) - episodic-source " +
-    "registry lands with the onboarding PR",
-};
+// (Empty today. Delhi's exemption was removed 2026-07-26: it shipped in #184
+// with 6 registered sources, so the exemption was masking a city that no longer
+// needed it - and would have hidden a future regression.)
+const ONBOARDING_EXEMPTIONS: Record<string, string> = {};
 
 function validate(entries: SourceEntry[]): string[] {
   const problems: string[] = [];
