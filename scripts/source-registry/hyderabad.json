@@ -232,6 +232,25 @@
       ],
       "refreshMethod": "manual (new census round -> build_hyderabad_opencity_layers.py)",
       "notes": "Jal Dharohar 2023 water-body points for Hyderabad and Rangareddy - 3,116 features carrying district, block/tehsil, village, water_body_type and rural/urban. Held but NOT yet rendered: the points are a different population again from both the OSM polygons (669) and the HMDA gazetted register (2,978), and reconciling the three is open work rather than a wiring task."
+    },
+    {
+      "id": "tg-opendata-hmwssb-billing",
+      "scope": "hyderabad",
+      "publisher": "HMWSSB via data.telangana.gov.in (Telangana Open Data Portal)",
+      "url": "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-billing-and-collection-data",
+      "license": "Government Open Data License - India (GODL-India)",
+      "type": "page",
+      "cadence": "monthly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "billing_and_collection_report_\\d{4}_\\d{1,2}\\.csv"
+      },
+      "dependsOn": [
+        "public/data/hyderabad-billing.json"
+      ],
+      "refreshMethod": "monthly (build_hyderabad_billing.py)",
+      "notes": "RETIRES AN RTI. The supply-overview surface was written off as needing an HMWSSB RTI under 4(1)(b); the utility already publishes billing openly under GODL-India. 54 monthly CSVs Jan 2022 - Jun 2026, 134,688 rows, keyed on the SAME division/section units as the tanker ledger so billed demand and tanker demand are comparable per section. Headline: collection efficiency 69.5% across the period - 75.05bn demanded, 52.16bn collected. TWO TRAPS, both hit during the build: (1) `noofcans` is a STOCK - summing it across months reports a division as bigger than the city; (2) HMWSSB RE-CUT its division/section scheme between Jan and Feb 2026 around the GHMC trifurcation (209 -> 485 sections, 24 new divisions, old divisions left as near-empty shells - division 6 went 100,879 connections to 8), so aggregates are split into pre_recut/post_recut eras and must never be summed across the break. The unit of the rupee columns is NOT stated upstream, so none is asserted."
     }
   ]
 }
