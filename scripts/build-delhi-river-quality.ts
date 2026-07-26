@@ -45,25 +45,33 @@ const monthly = JSON.parse(
   readFileSync(join(root, "public/data/dpcc-monthly-wq-delhi.json"), "utf-8"),
 ) as MonthlyFile;
 
-// Latest month per year that carries river rows.
-const byYear = new Map<number, MonthlyFile["months"][number]>();
-for (const m of monthly.months) {
-  if (!m.river?.length) continue;
-  const year = Number(m.month.slice(0, 4));
-  const prev = byYear.get(year);
-  if (!prev || m.month > prev.month) byYear.set(year, m);
-}
+// ONE ROW PER MONTH, not per year.
+//
+// This used to keep only the latest month of each calendar year, because the
+// shared river panel was built for CPCB's annual NWMP series - which is the
+// true resolution for every other city here. Delhi is the exception: DPCC
+// samples monthly, and every month captured so far falls in 2026, so the
+// yearly collapse rendered the whole feed as a SINGLE point on the chart. The
+// extra resolution was being thrown away at the adapter.
+//
+// RiverQualityReading.month is optional, so annual cities keep plotting by
+// year unchanged; only a feed that supplies a month gets month-level points.
+const withRiver = monthly.months
+  .filter((m) => m.river?.length)
+  .sort((a, b) => (a.month < b.month ? -1 : a.month > b.month ? 1 : 0));
 
-const years = [...byYear.keys()].sort();
+// Distinct calendar years still drive the file-level data_year_range, which
+// the panel header uses; the per-station readings below are monthly.
+const years = [...new Set(withRiver.map((m) => Number(m.month.slice(0, 4))))].sort();
 
 const stations = monthly.river_stations.map((st) => {
-  const readings = years.flatMap((year) => {
-    const m = byYear.get(year)!;
+  const readings = withRiver.flatMap((m) => {
     const row = m.river!.find((r) => r.station === st.id);
     if (!row) return [];
     return [
       {
-        year,
+        year: Number(m.month.slice(0, 4)),
+        month: m.month,
         do_mgl: row.do_nil ? 0 : row.do,
         bod_mgl: row.bod,
         ph: row.ph,
