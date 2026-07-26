@@ -125,15 +125,15 @@ def post(op, path, data, retries=3):
     return ""
 
 
-def get(op, url, retries=3):
+def get(op, url, retries=2, timeout=25):
     for attempt in range(1, retries + 1):
         try:
-            with op.open(url, timeout=60) as r:
+            with op.open(url, timeout=timeout) as r:
                 return r.read().decode("utf-8", errors="replace")
         except Exception:
             if attempt == retries:
                 raise
-            time.sleep(3 * attempt)
+            time.sleep(2)
     return ""
 
 
@@ -245,15 +245,35 @@ def normalise(name: str) -> str:
     return re.sub(r"\s+", " ", n).strip()
 
 
+# WBPCB spells the same station inconsistently ACROSS ITS OWN STATION LIST:
+# "Adi Ganga at Kalighat" (low tide, code 00112) and "Adi ganga at Kalighat"
+# (high tide, code 01313) are the same point. Left alone, three of the six
+# tidal pairs split into six separate single-phase stations, destroying exactly
+# the high-vs-low comparison this dataset is uniquely able to support.
+CANONICAL = [
+    (re.compile(r"\badi\s+ganga\b", re.I), "Adi Ganga"),
+    (re.compile(r"\bganga\b(?!\s*at)", re.I), "Ganga"),
+]
+
+
 def display_name(name: str) -> str:
     """Title-case the shouty ones; leave already-mixed-case names alone."""
-    cleaned = re.sub(r",\s*(WEST BENG\w*|CALCUTTA)\b", "", name, flags=re.I).strip(" ,")
+    # The portal truncates long names mid-word, so a trailing ", WES" or
+    # ", WEST BENGA" is common - match the prefix, not the full word.
+    cleaned = re.sub(r",\s*(W(E(S(T)?)?)?(\s*BENG\w*)?|CALCUTTA|KOLKATA)\s*$", "", name, flags=re.I)
+    cleaned = re.sub(r",\s*(WEST BENG\w*|CALCUTTA|KOLKATA)\b", "", cleaned, flags=re.I).strip(" ,")
+    cleaned = re.sub(r"\s+NATIONAL LAKE\b", "", cleaned, flags=re.I)
+    cleaned = re.sub(r"\bRABINDRASAROVAR\b", "Rabindra Sarobar", cleaned, flags=re.I)
+    cleaned = re.sub(r"\bSUBHAS(H)? SAROVAR\b", "Subhas Sarobar", cleaned, flags=re.I)
     if cleaned.isupper():
         cleaned = cleaned.title()
         # Title-case turns "GANGA AT GARDEN REACH" into "Ganga At Garden
         # Reach"; put the small words back down.
         cleaned = re.sub(r"\b(At|Of|In|On|The|And)\b", lambda m: m.group(1).lower(), cleaned)
-    return re.sub(r"\s+", " ", cleaned).replace("Dakshmineswar", "Dakshineswar")
+    cleaned = re.sub(r"\s+", " ", cleaned).replace("Dakshmineswar", "Dakshineswar")
+    for pat, canon in CANONICAL:
+        cleaned = pat.sub(canon, cleaned)
+    return cleaned
 
 
 def river_of(station_name: str) -> tuple[str, str]:
