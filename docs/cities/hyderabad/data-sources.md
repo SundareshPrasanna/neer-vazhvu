@@ -206,6 +206,65 @@ Caveats to carry into any published version: the twin share is small in every ye
 2014, 6.54% now), and the totals here exclude Nagarjuna Sagar and Srisailam, which report a city
 drawl of 0.000 MLD throughout.
 
+## Layers acquired since the reservoir spine
+
+All landed 2026-07-26. Each names its script; provenance and licence are in the artefact's own
+`_source` / `_licence` block.
+
+| Layer | File | Script | Scale |
+|---|---|---|---|
+| OSM water bodies | `public/geojson/hyderabad-water-bodies-current.geojson` | `scripts/fetch-water-bodies-osm-hyderabad.ts` | 669 polygons, ~10,599 ha |
+| HMDA gazetted lake register | `public/data/hyderabad-lake-register.json` | `neer-vazhvu-api/scripts/fetch_hmda_lake_register.py` | 2,978 lakes; 1,352 finally notified |
+| HMWSSB tankers | `public/data/hyderabad-tankers.json` | `neer-vazhvu-api/scripts/build_hyderabad_tankers.py` | 1,316,215 bookings, 201 sections |
+| CGWB groundwater wells | `public/data/hyderabad-cgwb-stations.json` | `neer-vazhvu-api/scripts/build_hyderabad_cgwb_stations.py` | 481 wells, 10,724 monthly readings |
+| TGDPS weather stations | `public/data/hyderabad-aws-stations.json` | `neer-vazhvu-api/scripts/fetch_tgdps_stations.py` | 161 in-city AWS with coordinates |
+| Rivers (Musi, Esi, Manjira, Haldi) | `public/geojson/hyderabad-rivers.geojson` | `scripts/fetch-rivers-osm-hyderabad.ts` | Musi ~244 km, Esi ~10 km |
+| GHMC nalas | `public/geojson/hyderabad-nalas.geojson` | `neer-vazhvu-api/scripts/build_hyderabad_opencity_layers.py` | 96 nalas, 245 km |
+| Waterlogging points | `public/geojson/hyderabad-waterlogging.geojson` | same | 23 GHMC points |
+| Jal Dharohar census | `public/geojson/hyderabad-water-census.geojson` | same | 3,116 points |
+| GHMC tanks | `public/geojson/hyderabad-tanks-opencity.geojson` | same | 847 features |
+| GHMC canals and drains | `public/geojson/hyderabad-canals-drains.geojson` | same | 3,960 segments |
+| Allocation ledger | `public/data/allocations-hyderabad.json` | authored | 4 arrangements, 8 events |
+| Commitments register | `public/data/commitments-hyderabad.json` | authored | 7 commitments |
+| Facts | `public/data/facts-hyderabad.json` | authored | 17 facts |
+
+### Findings and gaps these produced
+
+- **Lake register, by district.** Rangareddy holds the largest lake estate (891) and has among the
+  weakest legal coverage at **34.5% finally notified**, against Siddipet 68.0% and Hyderabad
+  district 66.7%; Yadadri-Bhongiri is worst at 15.2%. Rangareddy is the ORR growth corridor.
+  Final notifications by year: 2016: 152, 2017: 10, 2019: 60, 2020: 2, 2021: 3, 2023: 2,
+  **2024: 533, 2025: 533**, 2026: 57 - two-thirds of all final notifications ever issued arrived
+  in the two years after HYDRAA was created.
+- **Tankers: the fulfilment metric is a dead end, and that is the finding.** HMWSSB delivered
+  1,315,622 of 1,316,215 bookings (99.95%); the worst of 201 sections is 98.4%. The signal is
+  demand instead - a **3.0x** seasonal swing (Jun 90,946/month vs Oct 30,421) and a geography that
+  cuts against expectation: Madhapur (135,332), Kondapur (125,555), Hafeezpet (79,150),
+  Gachibowli, Manikonda, Nizampet, KPHB, plus Banjara Hills and Jubilee Hills. The western IT
+  corridor, not the old city. Two upstream gaps: the series stops Feb 2024, and **Dec 2022 is an
+  11-byte empty file at source**.
+- **Nala encroachment columns are published EMPTY.** GHMC's drain layer defines `Govt_Encr`,
+  `Pvt_Encr`, `Rel_Encr`, `Total_Encr` and `Court_Case`, and all five hold "0" for all 96 nalas -
+  one distinct value, zero non-zero entries, while `Length_m` carries 94 distinct values. **This
+  must never render as "zero encroachments"** in the city that created HYDRAA to demolish them.
+  The fields are stripped from the artefact and the build asserts the condition, so if GHMC ever
+  populates them the change surfaces.
+- **Groundwater is denser than first assessed.** An early narrow-window probe suggested ~15
+  stations in Hyderabad district; the full pull returns **481 wells** (Ranga Reddy 192, Medak 173,
+  Hyderabad 48, Siddipet 44, Vikarabad 24), so the metro core alone has ~240 - Delhi's density.
+  Two handling notes: families must be derived **generically** from the code prefix (Delhi's
+  classifier hardcoded `AAXI`/`CGWB`, so `CGWHYD*` fell into the numeric catch-all and a clean
+  split looked incoherent), and a station with 2 readings must not vote on a 322-station family's
+  sign convention. `CGWHYD*` (122) and `TSCGWB*` (37) are negative-down; numeric NHN codes are
+  positive-down. **Never `abs()`.**
+- **TGDPS station count is unresolved.** The network's summary table reports 185 AWS inside
+  GHMC_CMC_MMC, the image map exposes 162 hotspots, and 161 parse with coordinates. We publish
+  what resolves to a point. `values.jsp` returns only the latest reading with no archive, so the
+  series accumulates from first collection; historical bulk is on data.telangana.gov.in.
+- **The Esi is under-mapped, not minor.** OSM carries a single 10 km way for the river Himayat
+  Sagar impounds, against 244 km for the Musi - and the Musi appears under three name variants
+  that must be merged. A gap in the public map, not a fact about the river.
+
 ## Registered but not yet acquired
 
 Research-complete and URL-verified as of 2026-07-26, but not yet ingested. Each graduates into this

@@ -96,14 +96,19 @@ export const HYDERABAD: CityConfig = {
   // scenarios are all computable from measured data - Mumbai had to collapse
   // them to one line because Pravah publishes storage only.
   heroMode: 'days-left',
-  // Both are strong here but ship as data work after the reservoir spine:
-  // - allocations: the Krishna (Nagarjuna Sagar -> Akkampally) and Godavari
-  //   (Yellampally) chains, plus the GO 111 catchment protection that was
-  //   repealed in 2022 over the twin reservoirs.
-  // - commitments: the STP programme along the Musi, the Musi riverfront
-  //   project, and HYDRAA's lake-restoration undertakings.
-  hasAllocationLedger: false,
-  hasCommitments: false,
+  // Both landed 2026-07-26 as seeds and deepen through the build.
+  // - allocations-hyderabad.json: the Krishna (Nagarjuna Sagar -> Akkampally),
+  //   Godavari (Yellampally) and Manjira chains plus the Musi twins. Hyderabad
+  //   INVERTS the usual shape of this primitive: receipts are MEASURED daily
+  //   from the HMWSSB feed, and it is the entitlement column that is blank,
+  //   because the governing GOs have not been obtained.
+  // - commitments-hyderabad.json: 7 entries. Most carry status 'unverifiable'
+  //   rather than a hedge - Hyderabad's water promises are typically announced
+  //   without a dated deliverable, so there is nothing to be overdue against.
+  //   The FTL notification programme is the exception and is continuously
+  //   auditable, because HMDA publishes the register that records it.
+  hasAllocationLedger: true,
+  hasCommitments: true,
   groundwaterViews: {
     // IN-GRES (ingres.iith.ac.in) is the standing source for assessment data
     // and is reachable; the Telangana mandal-level pull is not built yet.
