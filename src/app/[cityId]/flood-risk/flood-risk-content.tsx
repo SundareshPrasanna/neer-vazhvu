@@ -87,7 +87,12 @@ export function FloodRiskContent({
         {cfg.scope_label && (
           <Badge variant="outline" className="text-xs">{pick(cfg.scope_label)}</Badge>
         )}
-        <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
+        {/* This badge carries a full sentence, not a chip label, and Badge's
+            base style is `whitespace-nowrap shrink-0`. At 320px that measured
+            337px and dragged the LAYOUT VIEWPORT past the device width, so the
+            browser scaled the whole page down - the same failure #191 fixed on
+            allocations and origins. Allow it to wrap and shrink. */}
+        <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800 whitespace-normal shrink min-w-0 text-left">
           {t("flood.badge_no_hazard_map")}
         </Badge>
       </div>
