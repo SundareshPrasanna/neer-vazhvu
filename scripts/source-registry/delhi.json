@@ -16,10 +16,11 @@
       },
       "dependsOn": [
         "public/data/dpcc-monthly-wq-delhi.json",
-        "public/data/river-quality-delhi.json"
+        "public/data/river-quality-delhi.json",
+        "public/data/delhi-drain-quality.json"
       ],
-      "refreshMethod": "manual (new month's river/drain/STP PDFs -> transcribe into dpcc-monthly-wq-delhi.json, then re-run scripts/build-delhi-river-quality.ts)",
-      "notes": "THE Delhi feed: 8 Yamuna stations + ~39 drain points + STP compliance, sampled monthly and published around the 25th. A new file link = a new month. The drain 'NO FLOW' count in each edition is the verification instrument for the drain-trapping commitment. Feb-2026 is absent from the listing - confirm whether that is a publication gap when the next editions land.",
+      "refreshMethod": "river: transcribe into dpcc-monthly-wq-delhi.json then re-run scripts/build-delhi-river-quality.ts. DRAINS: run neer-vazhvu-api/scripts/extract_delhi_drain_quality.py, which parses the month's PDF automatically (embedded text layer, no OCR).",
+      "notes": "THE Delhi feed: 8 Yamuna stations + ~39 drain points, sampled monthly and published around the 25th. A new file link = a new month. CRITICAL: the listing is a ROLLING ~3-month window and NOBODY archives it - OpenCity mirrors only the CETP datasets and the Wayback Machine has zero captures of this directory. A month that is not captured while it is listed is lost permanently, which is why this entry is tier 1 and why the drain series can only grow forward. The drain NO FLOW count is the verification signal for the 39-drain trapping commitment.",
       "lastSeen": {
         "linksHash": "6db8b14c806a17a9",
         "links": [
