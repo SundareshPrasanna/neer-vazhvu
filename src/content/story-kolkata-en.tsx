@@ -341,9 +341,9 @@ export function KolkataStoryEn() {
         </p>
         <p>
           <strong>Restore the early-warning system.</strong> The programme that
-          built Kolkata&apos;s flood early-warning system still links to it. The
-          domain no longer resolves. A city that floods as a weekly operating
-          condition currently has no public warning surface at all.
+          built Kolkata&apos;s flood early-warning system still links to it. As
+          of July 2026 the domain no longer resolves. A city that floods as a
+          weekly operating condition has no public warning surface at all.
         </p>
         <p>
           None of these require a new dam, a new river, or a new treaty. Kolkata

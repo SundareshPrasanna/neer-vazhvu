@@ -196,7 +196,13 @@ export const KOLKATA: CityConfig = {
     networkNote:
       'Most of the core city drains through a combined system - sewage and stormwater in one conduit - and the main network includes 180 km of century-old brick sewer. Most drainage pumping stations were built 50 to 100 years ago.',
     registerLink: {
-      label: "See where it actually flooded last week",
+      // Deliberately NOT "last week". This is static config on a page a
+      // reader may open months from now, and the register itself is only as
+      // current as the last successful weekly capture - if the job misses a
+      // Monday, "last week" becomes a false claim about data we do not have.
+      // The timeless phrasing stays true whenever it is read, and the register
+      // carries its own period dates for anyone who wants the exact window.
+      label: "See where the city actually floods, week by week",
       href: '/kolkata/flood-risk',
     },
   },

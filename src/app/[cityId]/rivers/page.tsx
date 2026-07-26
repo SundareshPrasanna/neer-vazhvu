@@ -118,7 +118,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       upstream_terminus: "Hooghly offtake near Tribeni",
       downstream_terminus: "Rejoins the Hooghly near Sankrail",
       feeds: "No Kolkata abstraction",
-      status: "No dedicated WBPCB station on this reach; shown for basin context.",
+      status: "No dedicated WBPCB station on this reach; shown for basin context. The line renders in two pieces with a 10.6 km break: through that stretch OpenStreetMap maps the channel not as the Saraswati but as the 'Kana' (Bengali for blind or dead) and as unnamed 'khal' ditches. We do not join them, because that would assert an identity the map itself does not make - the break is where the river stopped being called a river.",
       cpcb_nwmp_stations: [],
       color: "stroke-slate-500",
     },

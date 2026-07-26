@@ -59,6 +59,19 @@ const CITY_LAYERS: Record<string, CityLayerConfig> = {
     // and is the city's signature polluted channel; Tolly's Nullah is its
     // engineered reach and OSM uses both names. Bidyadhari and Kulti drain the
     // wetlands eastward.
+    // KNOWN GAP, left deliberately: the Saraswati renders in two pieces with a
+    // 10.6 km break between 22.6750N and 22.7644N. That is not a fetch bug -
+    // OSM maps the middle reach under a DIFFERENT NAME. Through the gap the
+    // channel is tagged "Kana" / "kana" (waterway=stream) and "Khal"/"khal"
+    // (waterway=ditch), with several unnamed drains and canals between them.
+    // `kana` is Bengali for blind or dead: the stretch where the Saraswati
+    // silted up is literally mapped as the dead river, and the surviving
+    // ditches are just "khal" (canal). Adding Kana|Khal here would join the
+    // line visually but would also sweep in every unrelated "khal" in the
+    // delta, and would assert an identity OSM itself does not make. The
+    // Saraswati is basin context for Kolkata, not a supply or drainage arm,
+    // so the honest render is two pieces. Revisit only with a source that
+    // establishes the Kana reach IS the Saraswati.
     riverNames: "Hooghly|Hugli|Adi Ganga|Tolly|Bidyadhari|Kulti|Ganga|Bhagirathi|Saraswati",
     localNameTag: "name:bn",
     minAreaSqm: 1000,
