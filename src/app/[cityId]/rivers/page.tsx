@@ -297,6 +297,59 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
   // so the `sahibi` geometry carries the natural-river framing and the
   // `najafgarh` entry carries the drain story; the two entries cross-
   // reference each other rather than pretending to be separate waters.
+  // Hyderabad. The page was stubbed for want of THIS block, not for want of
+  // data: hyderabad-rivers.geojson has been in the repo since 26 Jul, and the
+  // shared client treats river-quality / river-events / industrial-sources as
+  // optional overlays ("404 is expected and silent"), which is how Delhi
+  // renders with no industrial-sources file at all.
+  //
+  // length_km_geom values are COMPUTED from the in-repo OSM geometry
+  // (public/geojson/hyderabad-rivers.geojson, fetch-rivers-osm-hyderabad.ts),
+  // the same basis every other city uses - not quoted from a secondary source.
+  hyderabad: {
+    musi: {
+      display_name: "Musi",
+      display_name_te: "\u0c2e\u0c42\u0c38\u0c40 \u0c28\u0c26\u0c3f",
+      length_km_geom: 244,
+      description:
+        "The river Hyderabad was founded on, dammed to survive, and then discharged into. Osman Sagar (begun 1913, completed 1918) impounds it upstream of the city, built as flood control first and water supply second after the Great Musi Flood of 28 September 1908 took roughly 59,000 houses and breached 221 of the 788 tanks strung along the river. Below the city the Musi carries the sewage load: the state's own interception programme covers a 34 km reach from Bapu Ghat to Gowrelly, and the Musi Riverfront Development programme covers 55 km from Gandipet to Gowrelly. The tank cascade the river once organised is still traceable - 428 tanks linked by 411 flow paths, chains running up to nine deep.",
+      upstream_terminus: "Anantagiri hills, Vikarabad district; Osman Sagar impounds the upper reach",
+      downstream_terminus: "Joins the Krishna downstream of the city, in Nalgonda district",
+      feeds: "Osman Sagar (Gandipet) - one of six HMWSSB sources, ~4-7% of daily city draw",
+      status:
+        "No CPCB NWMP series is published on this site for the Musi yet. CPCB (cpcb.nic.in) refuses non-India IPs, verified 2026-07-26, so the national monitoring data routes through the India-IP runner rather than CI. The reach is named in the state's own sewage-interception and riverfront programmes, neither of which publishes a dated deliverable.",
+      cpcb_nwmp_stations: [],
+      color: "stroke-blue-600",
+    },
+    esi: {
+      display_name: "Esi",
+      display_name_te: "\u0c08\u0c38\u0c40 \u0c28\u0c26\u0c3f",
+      length_km_geom: 10,
+      description:
+        "The Musi's tributary, and the reason Hyderabad has two protected catchments rather than one. Himayat Sagar was built on the Esi after Osman Sagar, completing the pair of impounding reservoirs M. Visvesvaraya proposed in 1909 to hold back 'all floods in excess of what the river channel could carry'. Only 10 km of its course falls inside the mapped extent here, which is why it reads as a short line rather than a river system.",
+      upstream_terminus: "Rises west of the city; Himayat Sagar impounds it",
+      downstream_terminus: "Joins the Musi below the twin reservoirs",
+      feeds: "Himayat Sagar - one of six HMWSSB sources",
+      status:
+        "Both Esi and Musi catchments were protected by GO 111 (1996) across 84 villages, repealed in 2022 on the stated ground that the city no longer depends on the twin reservoirs. HMWSSB's own daily draw column shows the twins drawn on every day since 2020, with their share rising rather than falling.",
+      cpcb_nwmp_stations: [],
+      color: "stroke-cyan-600",
+    },
+    manjira: {
+      display_name: "Manjira",
+      display_name_te: "\u0c2e\u0c02\u0c1c\u0c40\u0c30\u0c3e \u0c28\u0c26\u0c3f",
+      length_km_geom: 174,
+      description:
+        "Not a Hyderabad river but a Hyderabad supply line: a Godavari tributary carrying two of HMWSSB's six sources, the Manjira and Singur reservoirs, from well outside the city. It is the oldest of the long-distance transfers the city now runs on, and the reason the twin reservoirs stopped being the whole story long before GO 111 was repealed.",
+      upstream_terminus: "Rises in the Western Ghats, Maharashtra; Singur reservoir on the middle reach",
+      downstream_terminus: "Joins the Godavari",
+      feeds: "Singur (29,917 mcft) and Manjira (1,500 mcft) - two of six HMWSSB sources",
+      status:
+        "Tracked here as a supply corridor rather than an urban river. Daily storage and draw for both reservoirs come from HMWSSB's own statement; no water-quality series is published for the reach.",
+      cpcb_nwmp_stations: [],
+      color: "stroke-emerald-600",
+    },
+  },
   delhi: {
     yamuna: {
       display_name: "Yamuna",

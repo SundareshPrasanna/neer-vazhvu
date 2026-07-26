@@ -87,6 +87,10 @@ export interface RiverInfo {
    *  Display-only, like the ta name line - full hi field overrides come
    *  with Delhi's translation pass. */
   display_name_hi?: string;
+  /** Native-script name shown under the English name (Telugu cities).
+   *  Display-only, same contract as display_name_hi - full te field
+   *  overrides come with Hyderabad's translation pass. */
+  display_name_te?: string;
 }
 
 // CPCB reading shape used by the marker tooltip / colour-coding logic.
@@ -696,9 +700,9 @@ function RiverInfoOnlyPanel({
           <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">
             {info.display_name}
           </h3>
-          {(info.display_name_ta || info.display_name_hi) && (
+          {(info.display_name_ta || info.display_name_hi || info.display_name_te) && (
             <span className="text-sm text-slate-500 dark:text-slate-400">
-              {info.display_name_ta || info.display_name_hi}
+              {info.display_name_ta || info.display_name_hi || info.display_name_te}
             </span>
           )}
         </div>
