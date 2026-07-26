@@ -101,7 +101,21 @@ const EXTRA_FEEDS: ExtraFeed[] = [
 // Cities allowed to skip a derived check, with the reason on record.
 // (Empty today - add `"<cityId>:<feedId>": "reason"` entries only when a
 // feed genuinely cannot exist for that city.)
-const EXEMPTIONS: Record<string, string> = {};
+const EXEMPTIONS: Record<string, string> = {
+  // Hyderabad is mid-onboarding (enabled: false, preview-gated). The rainfall
+  // pipeline is WIRED - the city is registered in
+  // neer-vazhvu-api/scripts/fetch_recent_rainfall.py (CITIES) and
+  // generate_imd_rainfall.py (CITY_DEFAULTS, grid point 17.5/78.5) - but the
+  // IMD gridded history has not been generated yet, and the recent-fill reads
+  // that history to find its start month. Generating it needs imdlib plus a
+  // multi-decade download, which is its own job.
+  //
+  // REMOVE THIS ENTRY in the same commit that lands
+  // public/data/imd-rainfall-monthly-hyderabad.json +
+  // public/data/rainfall-recent-hyderabad.json.
+  "hyderabad:rainfall-recent":
+    "onboarding in progress - rainfall pipeline wired, IMD history not yet generated",
+};
 
 /* ── Derivation ────────────────────────────────────────────────────────── */
 interface Check {

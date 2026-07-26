@@ -102,6 +102,31 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "allocations",
     "commitments",
   ]),
+  // Hyderabad V1 target set (preview-gated until cutover). No `shoreline`
+  // (landlocked). No `my-ward` at launch: the 300-ward delimitation gazetted
+  // 25 Dec 2025 has no public geometry yet, and with the corporations under a
+  // Special Officer there are no sitting councillors to attach to a ward
+  // either - it returns with the ward build, the Mumbai precedent.
+  // `tanker` IS in the set and is a signature surface rather than a
+  // nice-to-have: HMWSSB runs the tanker fleet itself and publishes monthly
+  // bookings AND deliveries per division/section, so Hyderabad can show a
+  // booking-to-delivery fulfilment rate no other city can.
+  // `cascades` is deferred, not ruled out - the Musi tank cascade is a real
+  // cascade geography and a strong candidate once the lake register lands.
+  hyderabad: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "tanker",
+    "facts",
+    "origins",
+    "allocations",
+    "commitments",
+  ]),
 };
 
 /**

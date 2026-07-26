@@ -1,0 +1,74 @@
+{
+  "_doc": "Headwaters source registry - Hyderabad episodic sources. Schema + design notes: docs/specs/headwaters.md (local). Note that Hyderabad's most important watch is NOT here: HMWSSB's capacity-at-FTL column can only be read after an ASP.NET postback, so a GET-based detector would hash a constant 'No Records Found' page forever. That guard lives in neer-vazhvu-api/scripts/scrape_hmwssb_reservoirs.py (EXPECTED_CAPACITY_TMC + --strict-capacity), where the value is actually parsed.",
+  "sources": [
+    {
+      "id": "hmda-lakes-register",
+      "scope": "hyderabad",
+      "publisher": "HMDA (Lake Protection Committee)",
+      "url": "https://lakes.hmda.gov.in/",
+      "license": "Telangana government publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic (final FTL notifications issued in batches)",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash",
+        "selector": "#gv_showlakes"
+      },
+      "dependsOn": [],
+      "refreshMethod": "manual (re-parse the register; new final-notification dates are the signal)",
+      "notes": "The gazetted lake register for the Hyderabad Metropolitan Region. The ENTIRE register renders in a single 4.2 MB ASP.NET GridView on the landing page - no paging - so the grid's own text hash is the edition signal. Baseline 2026-07-26: 2,978 lake rows; preliminary notification on 100%; FINAL notification on only 1,352 (45.4%), leaving 1,626 lakes with no legally settled boundary. Final notifications by year: 2016:152, 2017:10, 2019:60, 2020:2, 2021:3, 2023:2, 2024:533, 2025:533, 2026:57 - the 2024-25 surge coincides with HYDRAA's creation, so this hash firing usually means a new batch of lakes became legally defensible. Per-lake FTL/cadastral/buffer sheets behind the grid are SCANNED RASTER PDFs (pdftotext yields zero characters); the tractable extraction is OCR of the fixed-position LAKE DETAILS title block, not polygon digitisation."
+    },
+    {
+      "id": "opencity-hyderabad-tankers",
+      "scope": "hyderabad",
+      "publisher": "HMWSSB via OpenCity Urban Data Portal",
+      "url": "https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data",
+      "license": "OpenCity (Other/Public Domain); attribute BOTH HMWSSB (data) and OpenCity (digitisation)",
+      "type": "page",
+      "cadence": "monthly (series currently stalled)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/download/.*\\.csv"
+      },
+      "dependsOn": [],
+      "refreshMethod": "manual (new monthly CSV -> tanker fulfilment series)",
+      "notes": "Monthly tanker BOOKINGS and DELIVERIES per HMWSSB division and section - schema year,month,division,section,noofbookings,delivered. This is the feedstock for a booking-to-delivery fulfilment rate by locality, a metric no other city on the platform can produce: Bengaluru's tanker page rests on household surveys because that market is private and RTI-gated, whereas HMWSSB runs the fleet itself. Baseline 2026-07-26: 26 CSVs, Jan 2022 to Feb 2024. THE SERIES HAS STALLED - a new link firing here is exactly the event we want, since it means the gap after Feb 2024 is being filled. Pattern scoped to /download/*.csv (bare .csv would catch CKAN nav junk)."
+    },
+    {
+      "id": "tgdps-annual-weather-reports",
+      "scope": "hyderabad",
+      "publisher": "Telangana Development Planning Society (TGDPS), Planning Department",
+      "url": "https://tgdps.telangana.gov.in/aws.jsp",
+      "license": "Telangana government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "(Annual_Weather_Report|Statistical_Abstract).*\\.pdf"
+      },
+      "dependsOn": [],
+      "refreshMethod": "manual (annual report -> rainfall context and normals cross-check)",
+      "notes": "TGDPS runs the state hydro-met network: 1,097 AWS reporting statewide on 25-Jul-2026, of which 185 sit inside GHMC_CMC_MMC. The live per-station endpoint (values.jsp?s1=<awsId>, returning location, mandal, lat/long, daily cumulative rainfall, temperature, humidity, wind) is the daily feed and is covered by the freshness registry once it lands, not here. This entry watches only the ANNUAL publications. Pattern verified 2026-07-26: matches 4 links (Annual_Weather_Report_2023/2024, Statistical_Abstract_2020/2021); a bare .pdf pattern would catch the daily-weather-report and district PDFs that change constantly."
+    },
+    {
+      "id": "cpcb-prs-musi",
+      "scope": "hyderabad",
+      "publisher": "CPCB",
+      "url": "https://cpcb.nic.in/polluted-river-stretches.php",
+      "license": "Government of India publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "episodic (programme editions and action-plan updates)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "\\.pdf"
+      },
+      "dependsOn": [],
+      "refreshMethod": "manual (PRS edition -> Musi river-quality panel)",
+      "notes": "The Musi is the reason this is tier 1: it is Hyderabad's signature river-pollution story and CPCB's Polluted River Stretches programme is the canonical national classification. NOT YET BASELINED - see ciBlocked. Until this is reachable, Musi river-quality numbers have no primary source in the repo and must not be published; TGPCB is the unprobed alternative route.",
+      "ciBlocked": "cpcb.nic.in is on NICNET (164.100.x.x) and refuses TCP from non-India IPs - verified 2026-07-26 from this network (connection failed, HTTP 000). Runs from the India-IP path (the local scheduled-job pattern used for CMWSSB/Pravah/KWRIS), never from CI runners."
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+import type { CityConfig } from './types';
+
+// Hyderabad is registered DISABLED through the onboarding window. It flips to
+// enabled: true on the cutover commit once data + UI land; the Supabase
+// `cities` table must agree. Until then /hyderabad is reachable only via
+// NEXT_PUBLIC_PREVIEW_CITIES=hyderabad.
+//
+// Research backing every claim below: docs/research/
+// hyderabad-kolkata-onboarding-research-2026-07.md (2026-07-26), with raw
+// evidence artifacts in docs/research/hyd-kol-evidence/. Figures marked there
+// as [R] (news/snippet only) are deliberately NOT used here.
+//
+// SCOPE - standalone city (the Chennai model), NOT a region (the Mumbai MMR
+// model), and this is the counter-intuitive call. GHMC was TRIFURCATED on
+// 11 Feb 2026 into GHMC (150 wards) / Cyberabad (76) / Malkajgiri (74), so at
+// first glance Hyderabad looks like MMR's nine corporations. It is the
+// opposite. MMR needed placeKind:'region' because nine corporations each run
+// their OWN water system off a contested shared pool with no utility above
+// them. Hyderabad merged 27 urban local bodies UPWARD into a Core Urban Region
+// and put ONE utility - HMWSSB - over all three corporations. The water story
+// is therefore unitary: one board, one daily reservoir statement, one tanker
+// fleet, one sewerage network. Only the ward/administrative layer is
+// three-headed, and that is handled with a scope badge on ward surfaces
+// ("Core Urban Region - 3 corporations"), the way Mumbai already badges scope
+// per card. No new place model needed.
+//
+// SUPPLY MODEL - reservoir-impounded and pumped, like Chennai rather than
+// Bangalore/Delhi: HMWSSB draws from six sources every day and publishes the
+// draw. So heroMode is 'days-left', and unusually we can run the FULL
+// interactive hero rather than Mumbai's collapsed variant, because the feed
+// carries INFLOW as well as storage (see reservoirDataSource note below).
+//
+// WARD UNIT - 300 wards across three corporations, per the delimitation
+// gazetted 25 Dec 2025. THE GEOMETRY IS NOT PUBLIC YET. What exists publicly
+// is the superseded 150-ward GHMC 2022 KML on OpenCity (complete and clean for
+// that vintage: 155 placemarks, ward numbers 1-150, none missing, with
+// ward/CIRCLE/ZONE attributes). So `my-ward` and ward profiles ship OFF at
+// launch, exactly as Mumbai's did, until the 300-ward geometry is located.
+// Second consequence: the corporations are currently run by a Special Officer
+// with elections pending, so there are NO sitting councillors - the ward
+// representatives surface is an honest empty state, not a gap to backfill.
+//
+// NETWORK CONSTRAINT - CPCB (cpcb.nic.in) refuses non-India IPs, verified
+// 2026-07-26. Anything needing CPCB NWMP / polluted-river-stretch data for the
+// Musi runs via the India-IP runner path, never from CI. HMWSSB, TGDPS,
+// lakes.hmda.gov.in, India-WRIS and OpenCity are all reachable from anywhere.
+export const HYDERABAD: CityConfig = {
+  cityId: 'hyderabad',
+  displayName: 'Hyderabad',
+  displayNameLocalized: { te: 'హైదరాబాద్' },
+  stateCode: 'TG',
+  timezone: 'Asia/Kolkata',
+  center: { lat: 17.426, lng: 78.43 },
+  // Computed from the GHMC 2022 ward KML (43,510 vertices): the 150-ward
+  // corporation spans 17.2907-17.5610 N, 78.2390-78.6217 E. Padded outward to
+  // cover the Core Urban Region, which absorbed 27 ULBs beyond that outline
+  // and whose own boundary file is not yet public. Tighten once the 300-ward
+  // geometry lands. The supply reservoirs sit far outside (Yellampally ~18.85 N,
+  // Srisailam ~16.09 N) and render as source cards, not on the city map - the
+  // Bangalore/Delhi pattern.
+  bbox: { south: 17.15, north: 17.7, west: 78.1, east: 78.75 },
+  primaryAuthority: {
+    code: 'hmwssb',
+    name: 'Hyderabad Metropolitan Water Supply and Sewerage Board',
+    acronym: 'HMWSSB',
+  },
+  localGovernment: {
+    code: 'ghmc',
+    name: 'Greater Hyderabad Municipal Corporation',
+    acronym: 'GHMC',
+    // The Core Urban Region total across GHMC (150) + Cyberabad (76) +
+    // Malkajgiri (74), per the 25-Dec-2025 delimitation gazette. Copy must not
+    // imply these are all "GHMC wards" post-trifurcation.
+    wardCount: 300,
+  },
+  // MEASURED, not estimated: HMWSSB publishes today's draw-off per reservoir
+  // in MLD. On 25-Jul-2026 the six city sources totalled 2,659.493 MLD. This
+  // default is the fallback divisor only - the hero uses the live daily figure.
+  // TODO(refine): replace with a trailing-365-day mean once the 2014-present
+  // backfill lands (.cache/hyderabad-reservoirs-archive.json). Widely-quoted
+  // service figures (~1,954 MLD supplied, 1,480 sq km, 1.68 crore population)
+  // are news-sourced only and are NOT used until primary-confirmed.
+  defaultConsumptionMld: 2659,
+  defaultDesalinationMld: null,
+  // Landlocked; no desalination is possible or proposed.
+  availableLanguages: ['en'],
+  upcomingLanguages: ['te'],
+  // Full interactive runway. Hyderabad is the only city whose feed carries
+  // BOTH draw and inflow, so the worst-case / current-trend / seasonal
+  // scenarios are all computable from measured data - Mumbai had to collapse
+  // them to one line because Pravah publishes storage only.
+  heroMode: 'days-left',
+  // Both are strong here but ship as data work after the reservoir spine:
+  // - allocations: the Krishna (Nagarjuna Sagar -> Akkampally) and Godavari
+  //   (Yellampally) chains, plus the GO 111 catchment protection that was
+  //   repealed in 2022 over the twin reservoirs.
+  // - commitments: the STP programme along the Musi, the Musi riverfront
+  //   project, and HYDRAA's lake-restoration undertakings.
+  hasAllocationLedger: false,
+  hasCommitments: false,
+  groundwaterViews: {
+    // IN-GRES (ingres.iith.ac.in) is the standing source for assessment data
+    // and is reachable; the Telangana mandal-level pull is not built yet.
+    exploitation: false,
+    // Interpolated per-ward depth stays OFF. The India-WRIS network gives
+    // ~15 stations in Hyderabad district and ~18 in Ranga Reddy - enough to
+    // place points honestly, nowhere near enough to paint a surface across
+    // 300 wards. Telangana's own Ground Water Department runs a far denser
+    // village-level piezometer network; revisit if that pull lands.
+    depth: false,
+    // Depends on ward geometry, which does not exist publicly yet.
+    risk: false,
+    // India-WRIS Ground Water Level API, telemetric and LIVE to 2026-06-04
+    // (verified 2026-07-26) - unlike Delhi's, whose network stopped
+    // 2025-09-20. NOTE the district-name trap: WRIS carries a partly
+    // pre-2016 district set, so 'Ranga Reddy' and 'Medak' return data while
+    // 'Medchal-Malkajgiri', 'Sangareddy' and 'Yadadri Bhuvanagiri' return
+    // zero rows. Enumerate spellings empirically, and probe a WIDE date
+    // window first - a narrow one is indistinguishable from "no stations".
+    cgwbStations: false,
+  },
+  reservoirDataSource: 'v2',
+  // Feed: HMWSSB's daily "Statements of WaterLevels in Reservoirs", scraped by
+  // neer-vazhvu-api/scripts/scrape_hmwssb_reservoirs.py from
+  // https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx
+  // Daily archive runs 01-Jan-2014 to present (~12.5 years).
+  //
+  // fullCapacityMcft and fullTankLevelFt below are the values the feed itself
+  // published on 25-Jul-2026 (1 TMC = 1,000 Mcft). Two cautions:
+  //  1. HMWSSB SILENTLY REVISED the twin reservoirs' capacity on 01-Jul-2026
+  //     (Osman Sagar 3.900 -> 3.518 TMC, Himayat Sagar 2.967 -> 2.521 TMC;
+  //     bisected to the exact day, all other sources unchanged). The cause is
+  //     UNCONFIRMED - it lands on the water-year boundary, so it could be a
+  //     re-survey, a gross-vs-live redefinition, or a correction. Do NOT
+  //     describe it as siltation without a GO. A Headwaters detector watches
+  //     this column.
+  //  2. Levels are mixed-unit and declared per row by the source: Akkampally
+  //     is metres, the rest feet. fullTankLevelFt normalises to feet.
+  waterSources: [
+    {
+      // The Nizam-era twins on the Musi, and the reason GO 111 existed. Small
+      // in volume but drawn on essentially every day in the 12-year record.
+      sourceCode: 'osman_sagar',
+      displayName: 'Osman Sagar',
+      type: 'reservoir',
+      fullCapacityMcft: 3518.0,
+      fullTankLevelFt: 1790.0,
+      latitude: 17.3747,
+      longitude: 78.2997,
+      catchmentAreaSqkm: null,
+      displayOrder: 1,
+      isPrimaryDrinkingSource: true,
+      hasPublicFeed: true,
+    },
+    {
+      sourceCode: 'himayat_sagar',
+      displayName: 'Himayat Sagar',
+      type: 'reservoir',
+      fullCapacityMcft: 2521.0,
+      fullTankLevelFt: 1763.5,
+      latitude: 17.3136,
+      longitude: 78.3572,
+      catchmentAreaSqkm: null,
+      displayOrder: 2,
+      isPrimaryDrinkingSource: true,
+      hasPublicFeed: true,
+    },
+    {
+      // Manjira system, Sangareddy district.
+      sourceCode: 'singur',
+      displayName: 'Singur',
+      type: 'reservoir',
+      fullCapacityMcft: 29917.0,
+      fullTankLevelFt: 1717.93,
+      latitude: 17.7472,
+      longitude: 77.9256,
+      catchmentAreaSqkm: null,
+      displayOrder: 3,
+      isPrimaryDrinkingSource: true,
+      hasPublicFeed: true,
+    },
+    {
+      // The Manjira barrage / Manjira Water Works intake. Coordinates from
+      // OSM way/146343025 "Manjira dam" (waterway=dam). Nominatim's generic
+      // "Manjira" hit was a river point and was rejected. Sanity check: this
+      // sits DOWNSTREAM (south-east) of Singur on the same river, which is
+      // the right relationship - Singur is upstream storage, Manjira is the
+      // intake. OSM dam nodes are community-traced; confirm against
+      // Telangana I&CAD before using for anything but a map pin.
+      sourceCode: 'manjira',
+      displayName: 'Manjira',
+      type: 'reservoir',
+      fullCapacityMcft: 1500.0,
+      fullTankLevelFt: 1651.75,
+      latitude: 17.6568,
+      longitude: 78.0756,
+      catchmentAreaSqkm: null,
+      displayOrder: 4,
+      isPrimaryDrinkingSource: true,
+      hasPublicFeed: true,
+    },
+    {
+      // Akkampally Balancing Reservoir (AMR project), Nalgonda district - the
+      // Krishna leg, and by far the largest single draw (1,253 of 2,659 MLD on
+      // 25-Jul-2026). FTL is published in METRES (245.000 m = 803.81 ft).
+      // Coordinates from OSM node/11031476789 "Akkampally Dam"
+      // (waterway=dam); node/7173815473 "akkampally dam" independently sits
+      // 1.3 km away at 16.7002, 79.1002, so two contributors agree on the
+      // location. Nominatim's "Akkampalli" hit was a village in Anantapur,
+      // Andhra Pradesh ~300 km away and was rejected. Sanity check: this is
+      // ~25 km north-west of Nagarjuna Sagar, consistent with a balancing
+      // reservoir on its left canal.
+      sourceCode: 'akkampally',
+      displayName: 'Akkampally (Krishna)',
+      type: 'reservoir',
+      fullCapacityMcft: 1499.0,
+      fullTankLevelFt: 803.81,
+      latitude: 16.6891,
+      longitude: 79.0957,
+      catchmentAreaSqkm: null,
+      displayOrder: 5,
+      isPrimaryDrinkingSource: true,
+      hasPublicFeed: true,
+    },
+    {
+      // The Godavari leg. Absent from the earliest rows in the archive
+      // (commissioned after 2014), which is why the report's stale
+      // "Total(1 to 5)" label no longer covers the set it sums.
+      sourceCode: 'yellampally',
+      displayName: 'Sripada Yellampally (Godavari)',
+      type: 'reservoir',
+      fullCapacityMcft: 20175.0,
+      fullTankLevelFt: 485.56,
+      latitude: 18.8457,
+      longitude: 79.3764,
+      catchmentAreaSqkm: null,
+      displayOrder: 6,
+      isPrimaryDrinkingSource: true,
+      hasPublicFeed: true,
+    },
+    {
+      // Nagarjuna Sagar and Srisailam are the PARENT Krishna storages upstream
+      // of Akkampally. HMWSSB reports them for context and they consistently
+      // show a city drawl of 0.000 MLD, so they are NOT primary drinking
+      // sources - counting them would double-count the Krishna leg. They are
+      // kept because their level is the real constraint on Akkampally.
+      sourceCode: 'nagarjuna_sagar',
+      displayName: 'Nagarjuna Sagar',
+      type: 'reservoir',
+      fullCapacityMcft: 312045.0,
+      fullTankLevelFt: 590.0,
+      latitude: 16.5417,
+      longitude: 79.3183,
+      catchmentAreaSqkm: null,
+      displayOrder: 7,
+      isPrimaryDrinkingSource: false,
+      hasPublicFeed: true,
+    },
+    {
+      sourceCode: 'srisailam',
+      displayName: 'Srisailam',
+      type: 'reservoir',
+      fullCapacityMcft: 215807.0,
+      fullTankLevelFt: 885.0,
+      latitude: 16.0868,
+      longitude: 78.897,
+      catchmentAreaSqkm: null,
+      displayOrder: 8,
+      isPrimaryDrinkingSource: false,
+      hasPublicFeed: true,
+    },
+  ],
+  // The feed prints these labels; map them to our canonical source codes so a
+  // relabelling upstream does not silently orphan a source.
+  sourceNameAliases: {
+    OsmanSagar: 'osman_sagar',
+    HimayathSagar: 'himayat_sagar',
+    'Singur(Ft./M)': 'singur',
+    Manjira: 'manjira',
+    'AkkamPally[Krishna](M)': 'akkampally',
+    'SriPadaYellampally(Godavari)': 'yellampally',
+    NagarjunSagar: 'nagarjuna_sagar',
+    Srisailam: 'srisailam',
+  },
+  enabled: false,
+};
