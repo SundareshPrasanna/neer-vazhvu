@@ -130,7 +130,16 @@ const EXTRA_TABLE_FEEDS: ExtraTableFeed[] = [
     // No city column - the table is keyed by `reservoir`, and gee-phase1
     // only runs the reservoir-context job for Chennai, so the newest row
     // anywhere is the right signal.
-    maxAgeDays: 4, // gee-phase1.yml daily 06:15 IST, Chennai only
+    //
+    // 60, not 4. THE CRON CADENCE IS NOT THE DATA CADENCE. gee-phase1 runs
+    // this daily, but context_date comes from resolve_chirps_context_date(),
+    // which takes the max image date in UCSB-CHG/CHIRPS/DAILY - and CHIRPS
+    // final lands one month-end at a time, 16-18 days after that month closes:
+    //   2026-06-30 computed 2026-07-16 (16d)   2026-05-31 -> 2026-06-17 (17d)
+    //   2026-04-30 -> 2026-05-18 (18d)         2026-02-28 -> 2026-04-03 (34d)
+    // So the value advances ~monthly and a 4-day tolerance alarms permanently.
+    // 31 (month gap) + ~18 (lag) + grace, with headroom for the 34-day outlier.
+    maxAgeDays: 60,
     note: "GEE catchment rainfall-anomaly strip on the Chennai dashboard",
   },
   {
