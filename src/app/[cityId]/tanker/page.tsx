@@ -13,6 +13,8 @@ import {
 import { IIScStressWardsMap } from "@/components/dashboard/iisc-stress-wards-map";
 import { TankerPageHeader, TankerPageFooter } from "@/components/dashboard/tanker-page-chrome";
 import { TankerLedgerPanel } from "@/components/dashboard/tanker-ledger-panel";
+import { BillingLedgerPanel } from "@/components/dashboard/billing-ledger-panel";
+import type { BillingLedger } from "@/components/dashboard/billing-ledger-panel";
 import type { TankerLedger } from "@/components/dashboard/tanker-ledger-panel";
 
 interface PageProps {
@@ -56,6 +58,13 @@ export default async function CityTankerPage({ params }: PageProps) {
 
   if (kind === "utility-ledger") {
     const ledger = JSON.parse(await readFile(dataPath, "utf-8")) as TankerLedger;
+
+    // Optional: the utility's billing ledger, which shares this page's division
+    // and section units. Absent -> the panel simply does not render.
+    const billingPath = join(process.cwd(), "public", "data", `${cityId}-billing.json`);
+    const billing = existsSync(billingPath)
+      ? (JSON.parse(await readFile(billingPath, "utf-8")) as BillingLedger)
+      : null;
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <nav className="text-xs text-slate-500 dark:text-slate-400">
@@ -81,6 +90,16 @@ export default async function CityTankerPage({ params }: PageProps) {
         </header>
 
         <TankerLedgerPanel ledger={ledger} cityDisplayName={config.displayName} />
+
+        {billing && (
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+            <BillingLedgerPanel
+              billing={billing}
+              tankerSections={ledger.sections}
+              cityDisplayName={config.displayName}
+            />
+          </div>
+        )}
       </div>
     );
   }

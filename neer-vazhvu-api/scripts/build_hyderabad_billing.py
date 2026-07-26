@@ -87,10 +87,19 @@ def main() -> int:
     def era_of(key: str) -> str:
         return "pre_recut" if key < ERA_BREAK else "post_recut"
 
-    by_division: dict[tuple[str, str], dict] = defaultdict(lambda: {"demand": 0.0, "collection": 0.0, "cans_latest": 0, "sections": set()})
-    by_section: dict[tuple[str, str, str], dict] = defaultdict(lambda: {"demand": 0.0, "collection": 0.0, "cans_latest": 0})
-    by_category: dict[str, dict] = defaultdict(lambda: {"demand": 0.0, "collection": 0.0, "cans_latest": 0})
-    era_last = {"pre_recut": "2026-01", "post_recut": "2026-06"}
+    # A FIXED era-end date is the wrong snapshot for connections. Sections that
+    # migrated to the new scheme BEFORE the era boundary report zero in the
+    # final month, which silently drops them: Madhapur, the busiest tanker
+    # section in the city with 2.5bn in billed demand, came out at 0
+    # connections and vanished from a join. Each unit therefore keeps its own
+    # LAST NON-ZERO count plus the month it came from, so the reading is dated
+    # rather than assumed current.
+    def blank():
+        return {"demand": 0.0, "collection": 0.0, "cans": 0, "cans_month": None, "sections": set()}
+
+    by_division: dict[tuple[str, str], dict] = defaultdict(blank)
+    by_section: dict[tuple[str, str, str], dict] = defaultdict(blank)
+    by_category: dict[str, dict] = defaultdict(blank)
     missing: list[str] = []
     total_rows = 0
 
@@ -110,7 +119,6 @@ def main() -> int:
             rows = 0
             mkey = f"{year}-{month:02d}"
             era = era_of(mkey)
-            is_era_last = (mkey == era_last[era])
             for row in rdr:
                 try:
                     demand = float(row.get("demand") or 0)
@@ -135,10 +143,11 @@ def main() -> int:
                 s["demand"] += demand; s["collection"] += collection
                 c = by_category[cat]
                 c["demand"] += demand; c["collection"] += collection
-                if is_era_last:
-                    d["cans_latest"] += cans
-                    s["cans_latest"] += cans
-                    c["cans_latest"] += cans
+                if cans:
+                    for bucket in (d, s, c):
+                        if bucket["cans_month"] != mkey:
+                            bucket["cans"], bucket["cans_month"] = 0, mkey
+                        bucket["cans"] += cans
 
             total_rows += rows
             months.append({
@@ -179,7 +188,10 @@ def main() -> int:
             "Months where total demand is 0 yield collection_pct null rather than 0, to avoid a 0/0 ratio.",
             "Collection in a month can exceed demand in that month because arrears are collected late; "
             "collection_pct above 100% is therefore expected and is not an error.",
-            "`connections_at_era_end` is a point-in-time count, never a sum - connections are a stock.",
+            "`connections_last_known` is a point-in-time count, never a sum, and `connections_as_of` names "
+            "the month it came from. It is the last month that unit reported ANY connections, NOT a fixed "
+            "date: sections that migrated scheme early report zero at the era boundary, which silently "
+            "dropped Madhapur - the busiest tanker section in the city - from a join.",
             "HMWSSB RE-CUT its division/section scheme between Jan and Feb 2026, around the 11 Feb 2026 GHMC "
             "trifurcation: sections went 209 to 485, 24 new divisions appeared, and the old divisions survive "
             "as near-empty shells (division 6: 100,879 connections in Jan-2026, 8 in Jun-2026). Division and "
@@ -200,7 +212,7 @@ def main() -> int:
         "divisions": sorted(
             [{"era": k[0], "division": k[1], "demand": round(v["demand"], 2), "collection": round(v["collection"], 2),
               "collection_pct": round(v["collection"] / v["demand"] * 100, 2) if v["demand"] > 0 else None,
-              "connections_at_era_end": v["cans_latest"], "sections": len(v["sections"])}
+              "connections_last_known": v["cans"], "connections_as_of": v["cans_month"], "sections": len(v["sections"])}
              for k, v in by_division.items()],
             key=lambda x: (x["era"], -x["demand"]),
         ),
@@ -208,13 +220,13 @@ def main() -> int:
             [{"era": k[0], "division": k[1], "section": k[2], "demand": round(v["demand"], 2),
               "collection": round(v["collection"], 2),
               "collection_pct": round(v["collection"] / v["demand"] * 100, 2) if v["demand"] > 0 else None,
-              "connections_at_era_end": v["cans_latest"]}
+              "connections_last_known": v["cans"], "connections_as_of": v["cans_month"]}
              for k, v in by_section.items() if k[2]],
             key=lambda x: (x["era"], -x["demand"]),
         ),
         "categories": sorted(
             [{"category": k or "(blank)", "demand": round(v["demand"], 2),
-              "collection": round(v["collection"], 2), "connections_at_era_end": v["cans_latest"]}
+              "collection": round(v["collection"], 2), "connections_last_known": v["cans"], "connections_as_of": v["cans_month"]}
              for k, v in by_category.items()],
             key=lambda x: -x["demand"],
         ),
