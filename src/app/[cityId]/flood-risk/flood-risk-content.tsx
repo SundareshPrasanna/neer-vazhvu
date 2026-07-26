@@ -38,8 +38,15 @@ export interface FloodConfig {
   /** Scope badge text (e.g. "Vaigai system scope", "Yamuna basin scope").
    *  Config-driven so no city's system name leaks into another city's page. */
   scope_label?: BilingualText;
-  dam_release_threshold_cusecs: number;
-  dam_release_note: BilingualText;
+  /** Dam/barrage-release threshold, for cities whose flooding is
+   *  release-driven (Madurai's Vaigai, Delhi's Hathnikund). OPTIONAL: not
+   *  every flood geography has one. Hyderabad's flooding is rainfall plus
+   *  blocked storm-water drains, and Mumbai's is rainfall plus high tide -
+   *  requiring this field is what pushed Mumbai into its own component
+   *  rather than the shared narrative stack. Omit both and the threshold
+   *  card simply does not render. */
+  dam_release_threshold_cusecs?: number;
+  dam_release_note?: BilingualText;
   historical_events: HistoricalEvent[];
   external_sources: ExternalSource[];
   data_gaps: BilingualText[];
@@ -88,20 +95,22 @@ export function FloodRiskContent({
         </p>
       </header>
 
-      <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/40 dark:bg-blue-950/20">
-        <CardContent className="space-y-2">
-          <div className="text-xs uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">
-            {t("flood.dam_threshold_label")}
-          </div>
-          <div className="text-3xl sm:text-4xl font-bold tracking-tight">
-            ~{cfg.dam_release_threshold_cusecs.toLocaleString()}
-            <span className="text-base font-normal text-slate-400 ml-1">{t("flood.cusecs")}</span>
-          </div>
-          <p className="text-sm text-slate-700 dark:text-slate-300">
-            {pick(cfg.dam_release_note)}
-          </p>
-        </CardContent>
-      </Card>
+      {cfg.dam_release_threshold_cusecs != null && cfg.dam_release_note && (
+        <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/40 dark:bg-blue-950/20">
+          <CardContent className="space-y-2">
+            <div className="text-xs uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">
+              {t("flood.dam_threshold_label")}
+            </div>
+            <div className="text-3xl sm:text-4xl font-bold tracking-tight">
+              ~{cfg.dam_release_threshold_cusecs.toLocaleString()}
+              <span className="text-base font-normal text-slate-400 ml-1">{t("flood.cusecs")}</span>
+            </div>
+            <p className="text-sm text-slate-700 dark:text-slate-300">
+              {pick(cfg.dam_release_note)}
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardContent className="space-y-3">
