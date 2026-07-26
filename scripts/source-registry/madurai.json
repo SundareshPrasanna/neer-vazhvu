@@ -242,16 +242,18 @@
       "cadence": "yearly (budget session)",
       "tier": 1,
       "detection": {
-        "method": "http-meta"
+        "method": "url-template",
+        "urlTemplate": "https://cms.tn.gov.in/cms_migrated/document/docfiles/wrd_e_pn_{YYYY}_{YY}.pdf",
+        "templateFrom": 2023
       },
       "dependsOn": [
         "public/data/commitments-madurai.json",
         "public/data/allocations-madurai.json"
       ],
       "refreshMethod": "manual",
-      "notes": "The WRD Policy Note is the Madurai analogue of maws-policy-note (Chennai): commitments-madurai.json names 'the MAWS and WRD Policy Notes each budget session' as its re-check calendar, and the allocation ledger's 2018 PWD entitlement letter sits in this document family. Verified 2026-07-26: 200 with Last-Modified 24 Mar 2025. SAME LIMIT as the MAWS entry: catches a revision of the current note only. Filename is year-templated (wrd_e_pn_{YYYY}_{YY}.pdf) and TN publishes no policy-note listing page - /en/policy-notes, /policy-notes and tn.gov.in/documents/policy_notes all 404. Bump by hand each budget session until P5-9 lands.",
+      "notes": "The WRD Policy Note is the Madurai analogue of maws-policy-note (Chennai): commitments-madurai.json names 'the MAWS and WRD Policy Notes each budget session' as its re-check calendar, and the allocation ledger's 2018 PWD entitlement letter sits in this document family. Verified 2026-07-26: 200 with Last-Modified 24 Mar 2025. SAME LIMIT as the MAWS entry: catches a revision of the current note only. Filename is year-templated (wrd_e_pn_{YYYY}_{YY}.pdf) and TN publishes no policy-note listing page - /en/policy-notes, /policy-notes and tn.gov.in/documents/policy_notes all 404. Bump by hand each budget session until P5-9 lands. MIGRATED to url-template 2026-07-26 (P5-9 shipped): probes wrd_e_pn_{YYYY}_{YY}.pdf forward, so the next budget-session note is detected on publication. Supersedes the http-meta limitation above.",
       "lastSeen": {
-        "lastModified": "Mon, 24 Mar 2025 06:26:32 GMT",
+        "apiDate": "2025 https://cms.tn.gov.in/cms_migrated/document/docfiles/wrd_e_pn_2025_26.pdf",
         "acceptedOn": "2026-07-26"
       }
     },

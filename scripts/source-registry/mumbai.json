@@ -641,13 +641,15 @@
       "id": "bmc-esr-annual",
       "scope": "mumbai",
       "publisher": "Brihanmumbai Municipal Corporation",
-      "url": "https://www.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Environment/Docs/Environment%20Status%20Report%20%202024-25%20(English).pdf",
+      "url": "https://www.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Environment/Docs/Environment%20Status%20Report%20%202025-26%20(English).pdf",
       "license": "government publication, cited with attribution",
       "type": "file",
       "cadence": "yearly",
       "tier": 1,
       "detection": {
-        "method": "http-meta"
+        "method": "url-template",
+        "urlTemplate": "https://www.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Environment/Docs/Environment%20Status%20Report%20%20{YYYY}-{YY}%20(English).pdf",
+        "templateFrom": 2022
       },
       "dependsOn": [
         "public/data/mumbai-supply-overview.json",
@@ -656,10 +658,9 @@
         "public/data/mmr-corporations-water.json"
       ],
       "refreshMethod": "manual PDF extraction",
-      "notes": "BMC's Environment Status Report is the widest-reach single document on the Mumbai side: the 4,000 vs 4,505 MLD supply pair, per-source yield (Table 9.1) and the sewage figures (Table 11.5: 2,723 MLD installed vs 1,313 reaching plants) all come from it, and it feeds four artifacts. Verified 2026-07-26: 200 with BOTH ETag and Last-Modified (20 Aug 2025), so http-meta is solid. LIMIT: the filename carries the year (Environment Status Report 2024-25), so next year's edition is a NEW url - needs the url-template method (P5-9) or a hand bump. Watch this one closely: it is the highest-fan-out document in the registry.",
+      "notes": "BMC's Environment Status Report is the widest-reach single document on the Mumbai side: the 4,000 vs 4,505 MLD supply pair, per-source yield (Table 9.1) and the sewage figures (Table 11.5: 2,723 MLD installed vs 1,313 reaching plants) all come from it, and it feeds four artifacts. Verified 2026-07-26: 200 with BOTH ETag and Last-Modified (20 Aug 2025), so http-meta is solid. LIMIT: the filename carries the year (Environment Status Report 2024-25), so next year's edition is a NEW url - needs the url-template method (P5-9) or a hand bump. Watch this one closely: it is the highest-fan-out document in the registry. MIGRATED to url-template 2026-07-26 (P5-9 shipped): probes the ESR filename forward by year, so next year's edition is detected on publication. This matters more here than anywhere else - the ESR is the highest fan-out document in the registry, feeding four artifacts.",
       "lastSeen": {
-        "etag": "\"138285062029402\"",
-        "lastModified": "Wed, 20 Aug 2025 11:53:43 GMT",
+        "apiDate": "2024 https://www.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Environment/Docs/Environment%20Status%20Report%20%202024-25%20(English).pdf",
         "acceptedOn": "2026-07-26"
       }
     },

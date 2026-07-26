@@ -15,6 +15,7 @@ import { createHash } from "crypto";
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "fs";
 import { resolve, join } from "path";
 import { listAllPlaces } from "../src/lib/cities";
+import { computeCoverage, cityOf } from "./lib/headwaters-coverage";
 
 const ROOT = resolve(__dirname, "..");
 const REGISTRY_DIR = resolve(ROOT, "scripts/source-registry");
@@ -30,7 +31,13 @@ const LOCAL_CHECK_MAX_AGE_DAYS = 90;
 
 /* ── Registry types ────────────────────────────────────────────────────── */
 
-type DetectionMethod = "link-set" | "page-hash" | "http-meta" | "api-date" | "term-expiry";
+type DetectionMethod =
+  | "link-set"
+  | "page-hash"
+  | "http-meta"
+  | "api-date"
+  | "term-expiry"
+  | "url-template";
 
 interface Detection {
   method: DetectionMethod;
@@ -44,6 +51,15 @@ interface Detection {
   termEndsOn?: string;
   /** term-expiry: days before termEndsOn to start alerting. */
   leadTimeDays?: number;
+  /**
+   * url-template: a url with `{YYYY}` (edition start year), `{YY}` (last two
+   * digits of the following year, for fiscal-year names like `2025_26`) and
+   * `{YYYY1}` (the following year in full). Probed forward from
+   * `templateFrom` to find the highest year that exists.
+   */
+  urlTemplate?: string;
+  /** url-template: first year to probe. Defaults to the current year - 1. */
+  templateFrom?: number;
 }
 
 /** term-expiry default warning window - enough notice to line up sources
@@ -123,6 +139,27 @@ function loadRegistry(): { entries: SourceEntry[]; byFile: Map<string, RegistryF
 // needed it - and would have hidden a future regression.)
 const ONBOARDING_EXEMPTIONS: Record<string, string> = {};
 
+/**
+ * Hosts confirmed dead from our networks (both CI and a residential India IP),
+ * with the replacement. Registering one of these produces a watch that can never
+ * fire - cpcb-nwmp-annual did exactly that and nothing said so for days.
+ *
+ * Verified 2026-07-26. NOT a NICNET-wide rule: nmcg.nic.in is on the same
+ * 164.100.x.x range and returns 200, so membership must be established per host.
+ */
+const UNREACHABLE_HOSTS: Record<string, string> = {
+  "cpcb.nic.in":
+    "cpcb.nic.in (164.100.58.91) has ports 80 and 443 filtered; CPCB serves everything on cpcb.gov.in (49.50.115.127).",
+  "www.cpcb.nic.in": "see cpcb.nic.in - use cpcb.gov.in.",
+  "yamuna-revival.nic.in":
+    "yamuna-revival.nic.in (164.100.68.201) is unreachable on both ports.",
+  "chennaimetrowater.tn.gov.in":
+    "chennaimetrowater.tn.gov.in serves no HTTP; CMWSSB is at cmwssb.tn.gov.in.",
+  "www.bwssb.karnataka.gov.in":
+    "the www host does not resolve over HTTP; use bwssb.karnataka.gov.in.",
+  "wellabs.org": "no DNS record; WELL Labs is welllabs.org (three L's).",
+};
+
 function validate(entries: SourceEntry[]): string[] {
   const problems: string[] = [];
   const seen = new Set<string>();
@@ -177,6 +214,23 @@ function validate(entries: SourceEntry[]): string[] {
       else if (!/^\d{4}-\d{2}-\d{2}$/.test(d.termEndsOn) || Number.isNaN(Date.parse(d.termEndsOn)))
         problems.push(`${where}: termEndsOn must be a YYYY-MM-DD date, got ${d.termEndsOn}`);
     }
+    if (d.method === "url-template") {
+      if (!d.urlTemplate) problems.push(`${where}: url-template needs urlTemplate`);
+      else if (!/\{YYYY\}/.test(d.urlTemplate))
+        problems.push(`${where}: urlTemplate must contain {YYYY}: ${d.urlTemplate}`);
+      if (d.templateFrom !== undefined && !(d.templateFrom > 1900))
+        problems.push(`${where}: templateFrom must be a year, got ${d.templateFrom}`);
+    }
+
+    // P5-8: hosts verified unreachable from our networks. Deliberately a
+    // per-host deny-list, NOT a .nic.in or 164.100.x.x rule: nmcg.nic.in sits in
+    // the same NICNET range (164.100.60.206) and serves 200 today, so the range
+    // is not uniformly blocked. Only add a host here after confirming ports 80
+    // and 443 are both dead from a residential India IP. Validate runs offline,
+    // so this cannot be a DNS or IP test.
+    const host = (e.url ?? "").match(/^https?:\/\/([^/:]+)/)?.[1] ?? "";
+    if (UNREACHABLE_HOSTS[host])
+      problems.push(`${where}: ${UNREACHABLE_HOSTS[host]} Use the reachable equivalent.`);
 
     for (const dep of e.dependsOn ?? []) {
       if (dep.startsWith("supabase:")) {
@@ -240,6 +294,41 @@ async function observe(e: SourceEntry): Promise<Observed> {
 
 async function observeInner(e: SourceEntry): Promise<Observed> {
   const d = e.detection;
+
+  // Several of the highest-value episodic sources publish at a PREDICTABLE path
+  // with no listing page anywhere - TN's policy notes (maws_e_pn_{YYYY}_{YY}.pdf),
+  // BMC's ESR, CPCB's annual river data. link-set has nothing to scrape and
+  // http-meta can only see the edition already named in the url, so neither can
+  // ever detect the NEXT one. This probes the template forward instead.
+  if (d.method === "url-template") {
+    const thisYear = new Date().getUTCFullYear();
+    const from = d.templateFrom ?? thisYear - 1;
+    const expand = (y: number) =>
+      d.urlTemplate!
+        .replace(/\{YYYY\}/g, String(y))
+        .replace(/\{YYYY1\}/g, String(y + 1))
+        .replace(/\{YY\}/g, String((y + 1) % 100).padStart(2, "0"));
+
+    let latest: { year: number; url: string } | null = null;
+    for (let y = from; y <= thisYear + 1; y++) {
+      const url = expand(y);
+      try {
+        let res = await fetchWithTimeout(url, { method: "HEAD" });
+        if (!res.ok) res = await fetchWithTimeout(url);
+        if (res.ok) latest = { year: y, url };
+      } catch {
+        // A single year failing is normal (it simply has not been published).
+        // Only a total miss across the range is an error, handled below.
+      }
+    }
+    if (!latest)
+      throw new Error(
+        `url-template matched no edition from ${from} to ${thisYear + 1} - ` +
+          `check the template or bump templateFrom`,
+      );
+    // apiDate carries "<year> <url>" so the diff report names the new edition.
+    return { apiDate: `${latest.year} ${latest.url}` };
+  }
 
   if (d.method === "http-meta") {
     let res = await fetchWithTimeout(e.url, { method: "HEAD" });
@@ -514,13 +603,48 @@ async function main() {
     return i >= 0 ? argv[i + 1] : undefined;
   };
 
-  if (flag("--validate")) {
+  if (flag("--validate") || flag("--coverage")) {
     const { entries } = loadRegistry();
     const problems = validate(entries);
     console.log(`Headwaters registry: ${entries.length} sources across ${new Set(entries.map((e) => e.scope)).size} scopes.`);
     for (const p of problems) console.error(`  FAIL: ${p}`);
     if (problems.length) process.exit(1);
-    console.log("Registry valid.");
+    if (!flag("--coverage")) console.log("Registry valid.");
+
+    // P5-2 coverage gate. Reported by default; --strict makes it blocking once
+    // the allowlist reflects reality (see the module header).
+    const cov = computeCoverage(
+      ROOT,
+      entries.flatMap((e) => e.dependsOn ?? []),
+    );
+    const pct = cov.total ? Math.round(((cov.covered.length + cov.allowlisted.length) / cov.total) * 100) : 100;
+    console.log(
+      `\nArtifact coverage: ${cov.covered.length} watched + ${cov.allowlisted.length} allowlisted ` +
+        `of ${cov.total} shipped artifacts (${pct}%). ${cov.uncovered.length} with no registered upstream.`,
+    );
+
+    if (flag("--coverage")) {
+      const byCity = new Map<string, string[]>();
+      for (const a of cov.uncovered) {
+        const c = cityOf(a);
+        byCity.set(c, [...(byCity.get(c) ?? []), a]);
+      }
+      for (const [city, list] of [...byCity].sort((a, b) => b[1].length - a[1].length)) {
+        console.log(`\n  ${city} (${list.length} unwatched)`);
+        for (const a of list) console.log(`    ${a}`);
+      }
+      for (const s of cov.staleAllowlist)
+        console.warn(`\n  STALE ALLOWLIST (artifact no longer shipped): ${s}`);
+    } else if (cov.uncovered.length) {
+      console.log(`  Run with --coverage for the per-city list.`);
+    }
+
+    if (flag("--strict") && cov.uncovered.length) {
+      console.error(
+        `\nFAIL: ${cov.uncovered.length} artifacts have no registered upstream and no UNWATCHED reason.`,
+      );
+      process.exit(1);
+    }
     return;
   }
 
