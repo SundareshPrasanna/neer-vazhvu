@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { existsSync } from "fs";
+import { readFile } from "fs/promises";
 import { join } from "path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,6 +12,8 @@ import {
 } from "@/components/dashboard/tanker-expanded-context";
 import { IIScStressWardsMap } from "@/components/dashboard/iisc-stress-wards-map";
 import { TankerPageHeader, TankerPageFooter } from "@/components/dashboard/tanker-page-chrome";
+import { TankerLedgerPanel } from "@/components/dashboard/tanker-ledger-panel";
+import type { TankerLedger } from "@/components/dashboard/tanker-ledger-panel";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -36,17 +39,50 @@ export default async function CityTankerPage({ params }: PageProps) {
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
 
-  // Self-gate: only cities with a tanker-survey JSON expose this page.
-  // Avoids a broken-link surface for Chennai/Madurai where the survey
-  // doesn't exist.
-  const surveyPath = join(
+  // Self-gate: only cities with tanker data expose this page. Which FILE
+  // counts depends on the declared data kind - a utility-ledger city
+  // (Hyderabad) has no household survey and never will, so gating on the
+  // survey alone 404'd a page that was already in the nav.
+  const kind = config.tankerDataKind ?? "household-survey";
+  const dataPath = join(
     process.cwd(),
     "public",
     "data",
-    `${cityId}-tanker-survey.json`,
+    kind === "utility-ledger" ? `${cityId}-tankers.json` : `${cityId}-tanker-survey.json`,
   );
-  if (!existsSync(surveyPath)) {
+  if (!existsSync(dataPath)) {
     notFound();
+  }
+
+  if (kind === "utility-ledger") {
+    const ledger = JSON.parse(await readFile(dataPath, "utf-8")) as TankerLedger;
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <nav className="text-xs text-slate-500 dark:text-slate-400">
+          <Link
+            href={`/${cityId}`}
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            ← {config.displayName} dashboard
+          </Link>
+        </nav>
+
+        <header className="space-y-2">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            {config.displayName} tanker demand
+          </h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+            {config.displayName} is one of the few Indian cities where the water
+            utility runs the tanker fleet itself and publishes the record.
+            HMWSSB logs every booking and every delivery by division and
+            section, so this page shows measured demand rather than a surveyed
+            price.
+          </p>
+        </header>
+
+        <TankerLedgerPanel ledger={ledger} cityDisplayName={config.displayName} />
+      </div>
+    );
   }
 
   return (

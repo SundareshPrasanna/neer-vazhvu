@@ -109,6 +109,7 @@ export const HYDERABAD: CityConfig = {
   //   auditable, because HMDA publishes the register that records it.
   hasAllocationLedger: true,
   hasCommitments: true,
+  tankerDataKind: 'utility-ledger',
   // Hyderabad's tanker data is NOT the Bangalore household-price survey. HMWSSB
   // runs the fleet itself and publishes its own ledger: monthly bookings and
   // deliveries per division/section (26 OpenCity CSVs,

@@ -321,6 +321,16 @@ export interface BasePlaceConfig {
    *  lost bodies). Omit -> the basic map only. */
   waterBodies?: WaterBodiesConfig;
 
+  /** Which KIND of tanker data this city has. The two are not
+   *  interchangeable and must not share a renderer:
+   *  - `household-survey` (default, Bengaluru): longitudinal price surveys of
+   *    what households pay a private market. Reads
+   *    `<cityId>-tanker-survey.json`.
+   *  - `utility-ledger` (Hyderabad): the utility's own booking/delivery
+   *    record, because HMWSSB runs the fleet itself. No prices exist in it.
+   *    Reads `<cityId>-tankers.json`. */
+  tankerDataKind?: 'household-survey' | 'utility-ledger';
+
   /** One-line description of what this city's tanker page actually shows.
    *  The shape of tanker data differs fundamentally by city - Bangalore has
    *  longitudinal HOUSEHOLD PRICE surveys, Hyderabad has the utility's own
