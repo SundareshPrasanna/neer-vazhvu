@@ -13,6 +13,7 @@ import { getPlaceConfig } from "@/lib/cities";
 import {
   restorationPriorityUrl,
   wardProfilesUrl,
+  waterBodiesCurrentUrl,
   waterBodiesLostUrl,
 } from "@/lib/cities/data-paths";
 import { RestorationRankingTable } from "@/components/lake-restoration/restoration-ranking-table";
@@ -79,6 +80,9 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
   const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
   const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
   const [lostStats, setLostStats] = useState<{ lostCount: number; totalHaLost: number } | null>(null);
+  // Existing-body count, COMPUTED per city. This was hardcoded as the literal
+  // "1,787" in two places - Chennai's number, rendered on every city's page.
+  const [existingCount, setExistingCount] = useState<number | null>(null);
   const [censusData, setCensusData] = useState<CensusWaterBodyProperties[]>([]);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [censusSummary, setCensusSummary] = useState<{ total: number; encroached: number; avgStorageLossPct: number | null } | null>(null);
@@ -219,6 +223,15 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Count the existing water bodies for THIS city.
+  useEffect(() => {
+    fetch(waterBodiesCurrentUrl(cityId))
+      .then((r) => (r.ok ? (r.json() as Promise<{ features?: unknown[] }>) : null))
+      .then((d) => setExistingCount(d?.features?.length ?? null))
+      .catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Fetch lost stats
   useEffect(() => {
     if (!hasLostBodies) return;
@@ -287,7 +300,7 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
             onClick={() => setStatsOpen(true)}
             className="sm:hidden w-full px-4 py-1.5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400"
           >
-            <span>{viewMode === "water-bodies" ? `1,787 ${t("wb.existing")} - ${lostStats?.lostCount ?? "-"} ${t("wb.lost")}` : `${restorationData?.total_scored.toLocaleString() ?? "-"} ${t("lr.total_scored")}`}</span>
+            <span>{viewMode === "water-bodies" ? `${existingCount?.toLocaleString() ?? "-"} ${t("wb.existing")}${hasLostBodies ? ` - ${lostStats?.lostCount ?? "-"} ${t("wb.lost")}` : ""}` : `${restorationData?.total_scored.toLocaleString() ?? "-"} ${t("lr.total_scored")}`}</span>
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
@@ -308,19 +321,21 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
               <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
                 <span className="w-3 h-3 rounded-sm bg-blue-500 opacity-70 flex-shrink-0" />
                 <span className="text-xs text-slate-600 dark:text-slate-400">
-                  <span className="font-semibold text-slate-900 dark:text-slate-100">1,787</span>{" "}
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">{existingCount?.toLocaleString() ?? "-"}</span>{" "}
                   {t("wb.existing")}
                 </span>
               </div>
-              <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
-                <span className="w-3 h-3 rounded-sm bg-red-500 opacity-70 flex-shrink-0" />
-                <span className="text-xs text-slate-600 dark:text-slate-400">
-                  <span className="font-semibold text-slate-900 dark:text-slate-100">
-                    {lostStats?.lostCount ?? "-"}
-                  </span>{" "}
-                  {t("wb.lost")}
-                </span>
-              </div>
+              {hasLostBodies && (
+                <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
+                  <span className="w-3 h-3 rounded-sm bg-red-500 opacity-70 flex-shrink-0" />
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                      {lostStats?.lostCount ?? "-"}
+                    </span>{" "}
+                    {t("wb.lost")}
+                  </span>
+                </div>
+              )}
               {lostStats && (
                 <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
                   <span className="w-3 h-3 rounded-sm bg-orange-500 opacity-70 flex-shrink-0" />
@@ -343,9 +358,11 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
                   </span>
                 </div>
               )}
-              <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
-                {t("wb.tagline").replace("{lostCount}", String(lostStats?.lostCount ?? 15))}
-              </p>
+              {lostStats && (
+                <p className="text-xs text-slate-400 dark:text-slate-500 ml-auto hidden sm:block whitespace-nowrap">
+                  {t("wb.tagline").replace("{lostCount}", String(lostStats.lostCount))}
+                </p>
+              )}
             </>
           ) : (
             <>
