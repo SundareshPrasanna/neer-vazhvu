@@ -1,5 +1,5 @@
 {
-  "_doc": "Headwaters source registry - Madurai episodic sources. Schema + design notes: docs/specs/headwaters.md (local).",
+  "_doc": "Headwaters source registry - Madurai episodic sources. Schema + design notes: docs/specs/headwaters.md (local). CADENCE + TIER ARE DOCUMENTATION ONLY - decided 2026-07-26. Neither gates polling: every non-ciBlocked entry is fetched on every weekly run whatever its declared cadence (48 HTTP requests per CI run across ~26 hosts). Deliberate. (1) Cadence is a CLAIM and claims are wrong - CPCB is 'yearly' and shipped a mid-year Yamuna-only file, BBMB was recorded frozen and had resumed, CHIRPS looked daily and publishes monthly; gating polls on a declared cadence inherits every such error and stops looking at exactly the source that surprised you. (2) A conditional check is a check that can silently stop - the WRIS 'green for 39 days while ingesting nothing' bug lives in skip logic. (3) Interval scheduling is maintenance overhead for no real saving at this volume. Cadence earns its place at REVIEW time instead: it tells you whether a detection is plausible - a 'yearly' source producing a new edition three weeks after the last is itself a signal.",
   "sources": [
     {
       "id": "tnpcb-prs-vaigai",
