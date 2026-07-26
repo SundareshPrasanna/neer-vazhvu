@@ -1,5 +1,5 @@
 -- =============================================================
--- 035_hyderabad_seed_disabled.sql
+-- 037_hyderabad_seed_disabled.sql
 -- Seeds Hyderabad (Core Urban Region, standalone city - NOT a region)
 -- as a registered but disabled city.
 --
