@@ -216,17 +216,17 @@ export const DELHI: CityConfig = {
       // storage, because level over FRL is not a volume ratio and Delhi's
       // share is still unpublished).
       //
-      // hasPublicFeed remains FALSE deliberately and temporarily: flipping it
-      // derives a delhi:reservoir:bhakra staleness check against
-      // reservoir_daily_v2, which has no Delhi rows yet. Flip it in the same
-      // change that lands the first `--supabase` run from the launchd job,
-      // otherwise the daily checker files an accurate but premature alert.
+      // FLIPPED TRUE 2026-07-26, once the first --supabase run had actually
+      // landed a row (reservoir_daily_v2, city_id=delhi, 2026-07-26, level
+      // 1592.91 ft) - so the derived delhi:reservoir:bhakra staleness check
+      // has something to measure instead of alerting on an empty table.
+      //
+      // Delhi's FIRST raw-water feed. Every other source here is still
+      // hasPublicFeed:false, and the asymmetry is the Allocation Ledger story.
       //
       // URGENT: BBMB overwrites one file daily with no archive and no dated
-      // URLs. Every day the scraper does not run is lost permanently.
-      hasPublicFeed: false,
-      noFeedNote:
-        "Bhakra storage is BBMB's to publish, not DJB's. BBMB stopped publishing in September 2025 and resumed in 2026 - we now scrape the daily bulletin, though Delhi's share of the dam is still never published separately.",
+      // URLs. Every day the launchd scraper does not run is lost permanently.
+      hasPublicFeed: true,
     },
     {
       // Tehri (Bhagirathi, THDC) - 300 cusecs / 162 MGD allocated to Delhi.
