@@ -59,10 +59,10 @@ non-storage hero. Each was built generic, so other cities inherit them.
 
 | Feature | Chennai | Kolkata | Why thinner |
 |---|---|---|---|
-| Ward geometry | 200 (complete) | **141 of 144** | The 3 missing wards are 18.93 km2 = **9.2% of the city**; no public geometry exists anywhere |
+| Ward geometry | 200 (complete) | **141 of 144** | The 3 missing wards are 18.93 km2 = **9.2% of the city**. Still unmapped, but no longer unknown: KMC-SHARP's IEE places 142/143 in **Borough XVI**, created **2012** (not the 2015 Joka additions previously assumed), ~573 ha of Ward 142 across two catchments, draining via the Keorapukur canal into Tolly Nullah - the Adi Ganga |
 | Flagship deep-zoom bodies | 12 | 4 | Only 4 have sourceable history at V/N grade |
 | Restoration projects | 9 | 4 | Kolkata has no restoration *register*; its record is a court docket plus a survey |
-| Commitments | 16 | 2 | Only 2 carry a dated deadline in a citable document |
+| Commitments | 16 | **10** | Now a tracked programme, not two orphaned promises: 5 KMC-SHARP packages with named contractors and contractual completion dates, plus a semi-annual ADB verification calendar |
 | Allocation arrangements | 5 | 2 | Kolkata has no entitlement for its *own* water - only what KMC sells onward |
 | Groundwater assessment units | 16 blocks | 6 districts | And the core district is `salinity`, so it has no extraction stage at all |
 | Facts | dynamic pipeline | 13 static | No live pipeline; static snapshot |

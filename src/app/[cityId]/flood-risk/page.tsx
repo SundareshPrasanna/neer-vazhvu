@@ -102,6 +102,14 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
         url: "https://www.kmcgov.in/KMCPortal/downloads/Weekly_Drainage_Activity_Chart.pdf",
       },
       {
+        name: "KEIIP Early Warning System (kflood.in) - OFFLINE",
+        description: {
+          en: "KEIIP's own programme site links a flood Early Warning System at kflood.in. The domain does not resolve - NXDOMAIN, checked 26 July 2026. A flood early-warning system built under a publicly-funded programme, still advertised by the programme that built it, with nothing behind the link. Kolkata therefore has no public real-time flood warning surface at all.",
+        },
+        url: "https://www.keiip.in/",
+        cadence: "Dead link - domain does not resolve",
+      },
+      {
         name: "West Bengal flood-line map sheets",
         cadence: "Static scanned sheets, not georeferenced",
         description: {
@@ -125,6 +133,9 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
       },
       {
         en: "The register records where KMC SENT machines, not everywhere the city flooded. It is an operational log, and reading it as a complete flood inventory would understate the problem.",
+      },
+      {
+        en: "There is no working public flood early-warning system. KEIIP's programme site still links one at kflood.in, but the domain does not resolve (checked 26 July 2026). A city that floods as a weekly operating condition has no live public warning surface.",
       },
     ],
     cross_links: {

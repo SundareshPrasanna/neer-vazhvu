@@ -15,6 +15,29 @@ gap is 4.7x that, consistent with 142-144 being the large peri-urban Joka
 additions rather than typical inner wards. This is not a rounding error and not
 a sliver: nearly a tenth of Kolkata has no public ward geometry.
 
+WHAT WE NOW KNOW ABOUT THE MISSING WARDS (2026-07-26, KMC-SHARP IEE via ADB).
+Still no polygons, but they are no longer a blank. From the Julpia/Kabardanga
+Initial Environmental Examination (project 56287-001):
+  - Wards 142 and 143 were CREATED IN 2012 and subsequently incorporated into
+    KMC. (This corrects an earlier assumption here that they were 2015 Joka
+    additions - the Joka framing was wrong.)
+  - They sit in BOROUGH XVI, south-west Kolkata, not in a Joka annexure.
+  - Partial areas, from the subprojects alone: ~360 ha of Ward 142 in the Julpia
+    catchment, plus 213 ha of Ward 142 and 29.9 ha of Ward 143 in Kabardanga.
+    Ward 142 is therefore at least ~573 ha before anything outside these two
+    catchments is counted - consistent with the 18.93 km2 the three wards must
+    account for.
+  - Coordinates cited across the document span 22.430-22.464 N, 88.313-88.345 E,
+    centroid about 22.4495, 88.3351.
+  - Bounded on the north by M.G Road (west-east); Kabardanga-Julpia Road runs
+    north-south through them.
+  - Drained by the Keorapukur canal and the Western channel, which merge and
+    discharge into Tolly Nullah - i.e. into the ADI GANGA, the zero-dissolved-
+    oxygen channel on the rivers page. The missing wards drain into the city's
+    worst water.
+  - Julpia catchment projected population 34,235 by 2028.
+So the honest state is "located, sized and characterised, but not mapped".
+
 EVERY ROUTE TRIED AND EXHAUSTED (2026-07-26):
   - OpenCity: the 2022 KML is the only ward dataset, and it carries 1-141.
   - OSM: zero Kolkata ward relations at ANY admin_level.
@@ -30,9 +53,9 @@ EVERY ROUTE TRIED AND EXHAUSTED (2026-07-26):
 
 KMC has **144 wards** (primary-confirmed from KMC's own District Environment
 Plan 2021). The only public ward geometry carries **141**: wards 142, 143 and
-144 are absent, verified by parsing every placemark in the file. They are the
-wards added to KMC from the Joka area of South 24 Parganas, and no public
-geometry for them was found - not in OpenCity, and not in OSM, which has no
+144 are absent, verified by parsing every placemark in the file. They were
+created in 2012 and lie in Borough XVI (see above); no public geometry for them
+was found - not in OpenCity, and not in OSM, which has no
 Kolkata ward boundaries at any admin_level (probed 2026-07-26, zero relations).
 
 So this script emits 141 polygons AND a machine-readable `missing_wards`
