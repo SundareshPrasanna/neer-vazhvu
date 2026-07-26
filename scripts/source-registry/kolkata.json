@@ -90,6 +90,116 @@
       "dependsOn": [],
       "refreshMethod": "manual",
       "notes": "Counterpart figures to KMC's balance: 12,500 hectares, 254 sewage-fed fisheries, 37 mouzas (30 full, 7 part) across South and North 24 Parganas, constituted under the East Kolkata Wetlands (Conservation and Management) Act, 2006. Publishes an Integrated Management Plan 2021-2026, Supreme Court / Calcutta HC / NGT orders, and FIR-status and charge-sheet pages - an encroachment-enforcement record structurally parallel to HYDRAA's in Hyderabad. The FIR page rendered no HTML table on probe; format still to determine."
+    },
+    {
+      "id": "ingres-groundwater-westbengal",
+      "scope": "kolkata",
+      "publisher": "IN-GRES (CGWB + West Bengal state groundwater department), IIT Hyderabad",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "Government of India assessment portal, cited with attribution",
+      "type": "json-api",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "assessment-year",
+        "note": "a new assessment year appearing in the portal's year list supersedes the current edition"
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-kolkata.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_ingres_gwr.py --city kolkata)",
+      "notes": "IIT-Hyderabad hosted, so OUTSIDE the NICNET gate that blocks CPCB/CGWA. Payload gotchas: lowercase keys, locname with NO spaces ('WESTBENGAL'), view lowercase 'admin', and parentuuid REQUIRED as the discriminator - without it the server returns a well-formed response containing only an empty total row, which reads as 'no data for this state'. WB state uuid 68ecabb4-0ea5-4909-b8e3-20bbaa7b91e8 from the Angular bundle's STATEUUIDLAYERNAME. KOLKATA IS CATEGORISED 'salinity' and carries NO extraction figures - CGWB does not assess saline aquifers on extraction, so an exploitation choropleth is impossible for the district. Watch for North 24 Parganas, which moved safe -> semi_critical in 2024-25."
+    },
+    {
+      "id": "indiawris-gwl-kolkata",
+      "scope": "kolkata",
+      "publisher": "Central Ground Water Board via India-WRIS",
+      "url": "https://indiawris.gov.in/wris/",
+      "license": "Government of India, cited with attribution",
+      "type": "json-api",
+      "cadence": "monthly",
+      "tier": 1,
+      "detection": {
+        "method": "latest-reading",
+        "staleAfterDays": 120
+      },
+      "dependsOn": [
+        "public/data/kolkata-cgwb-stations.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_cgwb_stations.py --city kolkata --kma)",
+      "notes": "703 wells across the six KMA districts. THREE TRAPS, each producing a plausible-but-wrong network rather than an error: (1) page to exhaustion - Kolkata reads as 3 stations unpaged, 23 paged; (2) sign convention is PER STATION - telemetric wells report depth negative, and a naive v<0 reject drops all their readings and reports the city groundwater-dead; (3) take lat/lng from ANY row, not the latest - WRIS nulls them often and keying off the newest row collapsed Nadia from 205 wells to 39. Howrah stale since 2023-04-30 and Hooghly since 2022-11-30 - render stale, never interpolate."
+    },
+    {
+      "id": "imd-gridded-rainfall-kolkata",
+      "scope": "kolkata",
+      "publisher": "India Meteorological Department (0.25-degree gridded)",
+      "url": "https://www.imdpune.gov.in/",
+      "license": "IMD gridded product via imdlib, cited with attribution",
+      "type": "bulk-download",
+      "cadence": "quarterly",
+      "tier": 1,
+      "detection": {
+        "method": "latest-month",
+        "staleAfterDays": 200
+      },
+      "dependsOn": [
+        "public/data/imd-rainfall-monthly-kolkata.json",
+        "public/data/rainfall-recent-kolkata.json"
+      ],
+      "refreshMethod": "automated (.github/workflows/imd-rainfall-refresh.yml, quarterly) + daily Open-Meteo provisional fill",
+      "notes": "56 years, 1970-2025, long-term annual mean 1,659.3 mm at grid point 22.5/88.25. NOT the city centre: Kolkata is deltaic and cells near 22.57/88.36 are classified as water by IMD, returning NaN. Validate any new grid point on two years before a full pull."
+    },
+    {
+      "id": "opencity-kolkata-ward-kml",
+      "scope": "kolkata",
+      "publisher": "OpenCity Urban Data Portal",
+      "url": "https://data.opencity.in/dataset/e1c4f558-eff2-44c3-b703-d9d6ea45c577",
+      "license": "OpenCity, cited with attribution",
+      "type": "kml",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/geojson/kolkata-wards-2022.geojson"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_kolkata_wards.py)",
+      "notes": "WATCH THIS ONE FOR WARDS 142-144. It carries only 1-141; the three missing wards are 18.93 km2 = 9.2% of Kolkata and block every ward-keyed surface. Every other route is exhausted (OSM has zero Kolkata ward relations at any admin_level; KMC's own ward pages 404; nothing on GitHub or DataMeet), so a new edition of THIS file is the most likely way the gap ever closes."
+    },
+    {
+      "id": "opencity-kolkata-water-census",
+      "scope": "kolkata",
+      "publisher": "Ministry of Jal Shakti / Government of West Bengal, digitised by OpenCity",
+      "url": "https://data.opencity.in/dataset/kolkata-water-bodies-census-data",
+      "license": "Government of India census, cited with attribution",
+      "type": "kml",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/geojson/kolkata-water-bodies-census.geojson"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_kolkata_water_census.py)",
+      "notes": "3,051 enumerated water bodies - the ONLY modern per-water-body register Kolkata has, and it is not KMC's (whose working inventory is a 1993 tank list). 48% of census points have no OSM water polygon within 150 m."
+    },
+    {
+      "id": "kmc-water-body-inventory-survey",
+      "scope": "kolkata",
+      "publisher": "KMC Environment Dept with WB Dept of Science & Technology (Boroughs I-X) and Jadavpur University (XI-XVI)",
+      "url": "https://www.kmcgov.in/",
+      "license": "KMC, cited with attribution",
+      "type": "awaited-publication",
+      "cadence": "irregular",
+      "tier": 1,
+      "detection": {
+        "method": "manual-watch"
+      },
+      "dependsOn": [],
+      "refreshMethod": "WATCH - not yet published",
+      "notes": "THE MOST CONSEQUENTIAL PENDING SOURCE FOR KOLKATA. KMC has commissioned a fresh borough-by-borough water-body inventory to replace the departmental tank list compiled in 1993 plus a 2004 NRSA aerial map. Until it lands, every official Kolkata pond count rests on a 33-year-old document and the published counts for 2006 alone range from 3,873 to 8,731. When this publishes it supersedes the 1993 baseline and re-bases the lost-water-bodies work."
     }
   ]
 }

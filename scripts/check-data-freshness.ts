@@ -71,6 +71,20 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     note: "BMC DM register, weekly scrape",
   },
   {
+    id: "kmc-drainage-register",
+    cityId: "kolkata",
+    file: "public/data/kolkata-waterlogging-register.json",
+    // Weekly (Mon-Sun) + 2 days grace, matching the BMC flood-spot tolerance.
+    maxAgeDays: 9,
+    dateFrom: "json:generated_at",
+    // THIS ONE IS LOAD-BEARING, not a convenience check. KMC overwrites the
+    // chart in place at a fixed URL every week, so there is no upstream
+    // archive: a week we fail to capture is permanently lost from the public
+    // record. Staleness here means a hole in the only Kolkata waterlogging
+    // time series that will ever exist.
+    note: "KMC weekly waterlogging register - no upstream archive, a missed week is unrecoverable",
+  },
+  {
     id: "cauvery-ka-scoreboard",
     cityId: "bangalore",
     file: "public/data/basins/cauvery-ka/scoreboard.json",
