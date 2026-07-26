@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import type { Feature, Geometry, LineString, MultiLineString } from "geojson";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { useLanguage } from "@/lib/i18n/context";
+import { TreatmentDischargePanel } from "@/components/rivers/treatment-discharge-panel";
 // Shared types from the Chennai-baseline pollution + river-quality
 // models. Each city's industrial-sources-{cityId}.json conforms to
 // IndustrialPollutionData; PollutionSource is the per-row shape.
@@ -50,6 +51,10 @@ interface ClientProps {
   /** Label for the basin-atlas CTA button; defaults to the treatment-gaps
    *  framing used by the original Chennai-baseline surface. */
   atlasCtaLabel?: string;
+  /** Mount the treatment & discharge panel (per-plant STP capacity and effluent
+   *  compliance joined to the river stations below). Cities without an STP feed
+   *  omit it. Distinct from the basin atlas, which needs a basin manifest. */
+  hasTreatmentDischarge?: boolean;
   /** Per-river narrative metadata, keyed by river_id from the geojson. */
   riverInfo: Record<string, RiverInfo>;
   /** Optional deep basin atlas: when a river on this map belongs to a basin,
@@ -186,6 +191,7 @@ const RiversLeafletMap = dynamic(
 export default function RiversClient({
   cityId,
   cityDisplayName,
+  hasTreatmentDischarge,
   mapCenter,
   mapZoom = 9,
   scopeLabel,
@@ -197,6 +203,7 @@ export default function RiversClient({
 }: ClientProps) {
   useLockBodyScroll();
   const [rivers, setRivers] = useState<RiverGeoFeature[]>([]);
+  const [treatmentOpen, setTreatmentOpen] = useState(false);
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(null);
   // When set, the layered basin atlas is open (over the rivers map), scoped
   // to this basin river. Clicking a basin river opens it; everything else on
@@ -477,6 +484,14 @@ export default function RiversClient({
             {" - click for details"}
           </span>
         )}
+        {hasTreatmentDischarge && (
+          <button
+            onClick={() => setTreatmentOpen(true)}
+            className={`inline-flex items-center gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1 shadow-sm ${basin || overviewBasin ? "" : "ml-auto"}`}
+          >
+            Treatment &amp; discharge <span aria-hidden>&rarr;</span>
+          </button>
+        )}
         {(basin || overviewBasin) && (
           <span className="ml-auto inline-flex items-center gap-1.5">
             {overviewBasin && (
@@ -499,6 +514,14 @@ export default function RiversClient({
           </span>
         )}
       </div>
+
+      {hasTreatmentDischarge && treatmentOpen && (
+        <TreatmentDischargePanel
+          cityId={cityId}
+          cityDisplayName={cityDisplayName}
+          onClose={() => setTreatmentOpen(false)}
+        />
+      )}
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Map */}

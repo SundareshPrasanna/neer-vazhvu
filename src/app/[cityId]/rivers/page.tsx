@@ -549,6 +549,7 @@ export default async function CityRiversPage({ params }: PageProps) {
 
   return (
     <RiversClient
+      hasTreatmentDischarge={config.hasTreatmentDischarge ?? false}
       cityId={cityId}
       cityDisplayName={config.displayName}
       mapCenter={mapCenter}

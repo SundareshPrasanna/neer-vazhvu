@@ -326,6 +326,11 @@ export interface BasePlaceConfig {
    *  lost bodies). Omit -> the basic map only. */
   waterBodies?: WaterBodiesConfig;
 
+  /** Show the treatment & discharge panel on the rivers page: per-plant STP
+   *  capacity and effluent compliance from the state pollution board, joined to
+   *  the river stations downstream. Reads `<cityId>-stps.json`. Omit -> hidden. */
+  hasTreatmentDischarge?: boolean;
+
   /** Which KIND of tanker data this city has. The two are not
    *  interchangeable and must not share a renderer:
    *  - `household-survey` (default, Bengaluru): longitudinal price surveys of

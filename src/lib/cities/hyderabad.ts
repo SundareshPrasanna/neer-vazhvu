@@ -109,6 +109,10 @@ export const HYDERABAD: CityConfig = {
   //   auditable, because HMDA publishes the register that records it.
   hasAllocationLedger: true,
   hasCommitments: true,
+  // TGPCB publishes every STP by name with capacity in MLD and monthly
+  // effluent quality (build_hyderabad_stps.py). This is what corrected the
+  // earlier, wrong claim that Hyderabad's treatment capacity is unpublished.
+  hasTreatmentDischarge: true,
   tankerDataKind: 'utility-ledger',
   // Hyderabad's tanker data is NOT the Bangalore household-price survey. HMWSSB
   // runs the fleet itself and publishes its own ledger: monthly bookings and
