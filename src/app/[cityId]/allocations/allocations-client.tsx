@@ -259,7 +259,13 @@ function AuthorityRow({ auth }: { auth: Authority }) {
         className="w-full flex items-center gap-3 px-3 py-2.5 text-left"
         aria-expanded={open}
       >
-        <span className="shrink-0 text-sm font-medium text-slate-800 dark:text-slate-200 leading-snug">
+        {/* NOT shrink-0. Authority names run long - Delhi's "Haryana
+            Irrigation & Water Resources (Western Yamuna Canal)" measures
+            465px - and refusing to shrink pushed the whole page's layout
+            viewport to 522px on a 393px phone, so the browser scaled every
+            page element down ~25% to fit. min-w-0 lets the flex item shrink
+            below its content width; the name then wraps instead. */}
+        <span className="min-w-0 text-sm font-medium text-slate-800 dark:text-slate-200 leading-snug">
           {auth.name}
         </span>
         <span className="flex-1 min-w-0 text-xs text-slate-500 truncate hidden sm:block">
