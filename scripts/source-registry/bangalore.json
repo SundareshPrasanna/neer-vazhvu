@@ -33,6 +33,279 @@
         ],
         "acceptedOn": "2026-07-21"
       }
+    },
+    {
+      "id": "opencity-bengaluru-tanker-survey",
+      "scope": "bangalore",
+      "publisher": "OpenCity (Bengaluru Tanker Water Survey)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=bengaluru-tanker-water-data",
+      "license": "CC BY (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic (2015, 2019, 2024, 2025 rounds)",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/data/bangalore-tanker-survey.json",
+        "public/data/facts-bangalore.json"
+      ],
+      "refreshMethod": "scripts/build-bangalore-tanker-summary.py",
+      "notes": "The single highest-value unwatched Bengaluru source before 2026-07-26. It is the ONLY longitudinal price/dependency series for the tanker market and it carries the entire /bangalore/tanker page plus 2 facts. Survey rounds are irregular (2015, 2019, 2024, a 2025 round reported via opencity.in/bengaluru-water-tankers-survey-2025-situation-better-than-2024) so a scheduled watch is the only way to catch the next one. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Schemas differ by round - not every field exists for every year and n= counts differ - so a new round is a SCHEMA-BREAK candidate, not a routine roll-forward. NOTE the dataset slug: facts-bangalore.json used to cite opencity.in/data/bengaluru-tanker-water-survey, which 404s; the live path is data.opencity.in/dataset/bengaluru-tanker-water-data (fixed 2026-07-26).",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:36:27.006113",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "iisc-groundwater-outlook",
+      "scope": "bangalore",
+      "publisher": "IISc (via OpenCity mirror)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=groundwater-outlook-of-bengaluru-city-april-2025",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/data/bangalore-iisc-stress-wards-2025.json",
+        "public/data/facts-bangalore.json"
+      ],
+      "refreshMethod": "manual PDF parse + digitization of the critically-over-extracted ward list",
+      "notes": "IISc Groundwater Outlook for Bengaluru (April 2025) - the 80 critically-over-extracted wards that are the city's HEADLINE groundwater layer (rendered directly on /bangalore, not behind /groundwater). Watched via the OpenCity mirror deliberately: IISc's own host wgbis.ces.iisc.ac.in returns 403 to curl even with a browser UA (verified 2026-07-26) and cannot be watched. Verified: 1 resource, metadata_modified 2025-11-27. A new Interim Report or Outlook edition would land as a new resource. Caveat: the mirror lags the publisher, so a detection here is a floor, not a ceiling.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:37:37.533192",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "kspcb-monthly-wq",
+      "scope": "bangalore",
+      "publisher": "KSPCB",
+      "url": "https://kspcb.karnataka.gov.in/environmental-monitoring/water",
+      "ciBlocked": "KSPCB refuses GitHub runner IPs (fetch failed from CI on 2026-07-21 while working from a residential IP the same day)",
+      "license": "government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "monthly-to-quarterly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "inline-files/.*(RWQ|GEMS|MINAR|Bore.?Well|CLASSIFICATION).*\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/river-quality-bangalore.json"
+      ],
+      "refreshMethod": "manual PDF extraction",
+      "notes": "THE SECOND UPSTREAM of river-quality-bangalore.json. That file is a split-source case: its DO/BOD series come from CPCB NWMP (watched by cpcb-nwmp-annual) AND from KSPCB's own monthly water-quality reports, which were unwatched until 2026-07-26 - a KSPCB edition could change the numbers with no alert. Verified 2026-07-26: the page carries the RWQ_GEMS_MINAR period reports, bore-well series and quarterly CLASSIFICATION sheets under /sites/default/files/inline-files/. linkPattern is scoped to those families to keep site-wide boilerplate out.",
+      "lastSeen": {
+        "linksHash": "5ff468a72a7a56b7",
+        "links": [
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/1%20RWQ_GEMS_MINAR_April_20_to_jul_21.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/10%20RWQ_GEMS_MINAR_April_19_to_jan_2020.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/11%20RWQ_GEMS_MINAR_April_19_to_dec_2019.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/12%20RWQ_GEMS_MINAR_April_19_to_nov_2020.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/14%20RWQ_GEMS_MINAR_April_19_to_March_2020.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/16%20RWQ_GEMS_MINAR_April_to_April_2019.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/17%20RWQ_GEMS_MINAR_April_to_March_2019.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/1CLASSIFICATION-JAN%2CFEB%26%20MARCH-2021.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/3%20RWQ_GEMS_MINAR_April_20_to_jun_21.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/5%20RWQ_GEMS_MINAR_April_20_to_Mar_21.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/6%20RWQ_GEMS_MINAR_April_19_to_Mar_2020.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/BCLASSIFICATION-April%20to%20August-2021.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/CLASSIFICATION-April%20%26May-2021.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/CLASSIFICATION-April%20to%20November-2022.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/CLASSIFICATION-April%20to%20September-2021.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/CLASSIFICATION-Borewell.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/CLASSIFICATION-DEC-2020%20BOREWELL.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/CLASSIFICATION-DEC-2020%20LAKERIVERS.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20-Jan-2023.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20for%20month%20July-2023_compressed.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20for%20month%20June-2023_compressed.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20of%20NWMP.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20of%20River%2CLake-AUGUST-2022.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification-Feb-2023.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/GEMS_Minars_March2022.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/GEMS_upto%20Feb2022.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/NWMP%20Classification-April-2023_0.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/NWMP-Classification-April-2022-july-2022_0.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/NWMP-Classification-MAY-2023_compressed_compressed_compressed.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/NWMP-Classification-March-2023.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/RWQ-GEMS-MINAR-APR-21-OCT-21.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/RWQ_GEMS_MINAR_April_20_to_aug_20.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/borewell%20CLASSIFICATION-April%20to%20July-2021%20%281%29.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/borewell%20CLASSIFICATION-April%20to%20June-2021.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/classification_river_lake_sep-2022.pdf"
+        ],
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "ingres-gw-assessment-ka",
+      "scope": "bangalore",
+      "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "GoI publication, cited with attribution",
+      "type": "page",
+      "cadence": "yearly (GEC assessment)",
+      "tier": 1,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-bangalore.json",
+        "public/data/bangalore-cgwb-stations.json"
+      ],
+      "refreshMethod": "manual (WRIS GEC extract; IN-GRES payload capture still open)",
+      "notes": "Karnataka side of the same assessment watched for TN by ingres-gw-assessment-tn - deliberately a separate entry because the dependsOn differ and a GEC round can land per state. Backs the all-6-blocks-Over-Exploited headline, Bangalore-East at 306% draft/recharge and Yelahanka 140% -> 260% over 2020-2024. Same caveat as the TN entry: http-meta watches the IN-GRES SPA build (Last-Modified + ETag verified 2026-07-26), not the assessment data, so expect false positives on redeploy and replace once the payload capture lands.",
+      "lastSeen": {
+        "etag": "W/\"c20-19f18174cc0\"",
+        "lastModified": "Tue, 30 Jun 2026 10:33:28 GMT",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "bwssb-jica-supply-baseline",
+      "scope": "bangalore",
+      "publisher": "JICA / BWSSB (via OpenCity mirror)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=jica-report-for-bwssb-project-phase-3-2017",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 0,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/data/bangalore-supply-overview.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "JICA Bengaluru Water Supply and Sewerage Project Phase 3 Final Report (Nov 2017) is the anchor document behind bangalore-supply-overview.json, which cites 13 sources in total. Watched via the OpenCity mirror because BWSSB's own site is not watchable: bwssb.karnataka.gov.in/info-1/About+BWSSB/en carries no document links at all, only accessibility boilerplate (verified 2026-07-26), and there is no tenders/notifications page with stable hrefs. Verified: 6 resources, metadata_modified 2025-11-27. KNOWN GAP: BWSSB's live announcements (Stage V/VI progress, tariff, connection numbers) are therefore still unwatched - they enter the platform through dated press citations. Also note the host: www.bwssb.karnataka.gov.in does NOT resolve over HTTP; use bwssb.karnataka.gov.in without the www (fixed across citations 2026-07-26).",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:36:27.268681",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "cpcb-prs-report",
+      "scope": "bangalore",
+      "publisher": "CPCB",
+      "url": "https://cpcb.gov.in/polluted-river-stretches/",
+      "license": "GoI publication, cited with attribution",
+      "type": "page",
+      "cadence": "~2-3 yearly",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/river-quality-bangalore.json",
+        "public/data/basins/arkavathi/prs.json",
+        "public/docs/cpcb-polluted-river-stretches-oct-2025.pdf"
+      ],
+      "refreshMethod": "manual (scripts/build_prs.py against the mirrored PDF)",
+      "notes": "Polluted River Stretches for Restoration of Water Quality - the BOD-band Priority I-V classification behind the Arkavathi atlas, the Bengaluru stretch classes, the Chennai Cooum/Adyar Priority I status and the Mumbai 'Mithi at Mahim is India's worst stretch' fact. The Oct 2025 edition is mirrored at public/docs/cpcb-polluted-river-stretches-oct-2025.pdf. WHY page-hash and not link-set: the landing page exposes no report hrefs at all - only CPCB's site-wide boilerplate PDFs (verified 2026-07-26) - and the report itself was published behind an openpdffile.php id that has since expired (it now returns a 146-byte HTML error mislabelled application/pdf). Expect page-hash to be noisier than link-set; tighten with a selector if it false-positives. Host note: cpcb.gov.in, never the NICNET cpcb DOT nic DOT in - see cpcb-nwmp-annual.",
+      "lastSeen": {
+        "pageHash": "2bc5474c47902288",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "opencity-bengaluru-flood",
+      "scope": "bangalore",
+      "publisher": "KSNDMC / BBMP (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=flooding-locations-in-bengaluru-urban",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "seasonal",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/data/bangalore-flood-hotspots.geojson"
+      ],
+      "refreshMethod": "manual",
+      "notes": "398 flood hotspots behind /bangalore/flood-risk. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Bengaluru's flood-spot list moves with the monsoon and with BBMP's rajakaluve works, so a seasonal re-check is the point. The rajakaluve layers themselves (bangalore-swd-primary/secondary.geojson) are covered by opencity-bengaluru-swd.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:38:25.584103",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "opencity-bengaluru-swd",
+      "scope": "bangalore",
+      "publisher": "BBMP (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=bengaluru-stormwater-drains-maps",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 0,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/bangalore-swd-primary.geojson",
+        "public/geojson/bangalore-swd-secondary.geojson"
+      ],
+      "refreshMethod": "manual KML download + conversion",
+      "notes": "BBMP's primary and secondary rajakaluve network. Verified 2026-07-26: 13 resources, metadata_modified 2025-11-25. Both target geojsons ship with NO provenance field at any level (see the coverage audit section 6); this entry is the first record anywhere in the repo of where they came from, and the files should get a _provenance block to match.",
+      "lastSeen": {
+        "apiDate": "2025-11-25T12:19:30.232669",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "opencity-bengaluru-waterbodies-census",
+      "scope": "bangalore",
+      "publisher": "Karnataka / Jal Dharohar (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=bengaluru-urban-and-karnataka-water-bodies-census-data",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic (census)",
+      "tier": 0,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/bangalore-water-bodies-census.geojson"
+      ],
+      "refreshMethod": "manual (scripts/convert-bangalore-water-bodies-census-kml.py)",
+      "notes": "The 718-feature census layer. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Second of the three sources in the named-lake join (with atree-opencity-lakes-bengaluru and KWRIS MI_Tanks) - the ATREE entry's own notes flag that the other two were unregistered; this closes one of them. The census carries no name field (only village/ward), which is why the ATREE layer is canonical for names. This geojson also ships with no provenance field at any level.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:37:46.105863",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "bcap-commitments-calendar",
+      "scope": "bangalore",
+      "publisher": "BBMP Climate Action Cell (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=bengaluru-climate-action-and-resilience-plan-bcap",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/data/commitments-bangalore.json"
+      ],
+      "refreshMethod": "manual - the commitments register names its own re-check calendar in update_model",
+      "notes": "BCAP carries the dated water targets on Bengaluru's commitments register (NRW to 15% by 2050, 50% treated-water reuse by 2030 - see memory reference_bcap_bbmp_sources). commitments-bangalore.json names BDA/GBA lake reviews, NGT filings and BWSSB announcements as its re-check calendar; this entry covers the BCAP leg only. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Watched via the OpenCity mirror rather than apps.bbmpgov.in/bcap/PDF/BCAP_Sector%20Actions_01042024.pdf because that PDF serves neither ETag nor Last-Modified, so http-meta on it fails outright.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:37:38.201035",
+        "acceptedOn": "2026-07-26"
+      }
     }
   ]
 }
