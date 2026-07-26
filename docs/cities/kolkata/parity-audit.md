@@ -44,7 +44,7 @@ The one real gap is the IMD rainfall backbone.
 | Chennai feature | Kolkata | Notes |
 |---|---|---|
 | Ward depth choropleth (200 wards) | **BLOCKED** | Two blockers, either sufficient: ward geometry is 141 of 144, and station spread has not been validated for interpolation. Painting a continuous surface from 23 in-district wells over 206 km² would invent values. |
-| CGWB exploitation blocks (2011-2024) | **BUILDABLE** | IN-GRES covers West Bengal; the standing IN-GRES decision applies. Not yet pulled. ~half a day. |
+| CGWB exploitation blocks (2011-2024) | **BUILDABLE, harder than expected** | Delhi's route was OpenCity-hosted CGWB Dynamic GWR CSVs, but **OpenCity's Dynamic GWR datasets are Karnataka-only** (probed 2026-07-26) - there is no West Bengal cut. So this needs an IN-GRES payload capture against `ingres.iith.ac.in`, which is a research task rather than an ingest. IN-GRES is IIT-Hyderabad hosted and outside the NICNET blockade, so it is reachable; the work is decoding the request, not access. |
 | Live CGWB station overlay (~35 stations) | **BETTER** | **704 stations, 201,276 readings** across the six KMA districts; 23 in Kolkata district alone, live to 2026-06-04. Chennai has ~35. |
 | Sensor data-quality layer (stuck/stale/ok) | **PARTIAL** | Per-**district** liveness ships (live / lagging / stale). Per-**station** stuck detection is not ported. Buildable, ~half a day. |
 | Ward detail panel | **BLOCKED** | Depends on ward choropleth above. |
@@ -94,6 +94,7 @@ million at the same point on the same day.
 
 | Chennai feature | Kolkata | Notes |
 |---|---|---|
+| Narrative flood page | **PARITY** | Shipped. Required generalising `FloodConfig`: `dam_release_threshold_cusecs` was a REQUIRED field, a Madurai/Delhi-era assumption that a city floods when someone upstream opens a gate. Kolkata has no gate, so the dam fields are now optional and a generic `primary_trigger` carries the 6 mm/h standard. |
 | CFLOWS hazard zones (Very High to Very Low) | **BLOCKED** | No public flood model. WRD's legal red/blue flood-line maps exist as **41 scanned A0 sheets**, not georeferenced. Georeferencing is a real project, not an ingest. |
 | Historical flood events (2015 / Nivar) | **BUILDABLE** | Kolkata's analogue is chronic annual waterlogging rather than named catastrophic events; the weekly register is the better primitive. |
 | Storm-water drain network (10,308 GCC segments) | **PARTIAL** | 182 OSM drain segments against Chennai's 10,308 surveyed. KMC publishes **80 per-ward drainage-map PDFs**, so the vector network exists on paper only. |
@@ -176,7 +177,7 @@ still render a shell.
 | `/commitments` | 137 | - | 0 | **live** - 2 dated commitments |
 | `/about` | 143 | - | 0 | live, thin |
 | `/origins` | 58 | - | 0 | live, thin - long-form not written |
-| `/flood-risk` | 119 | 0 | 0 | **honest empty state** - needs a flood-config entry |
+| `/flood-risk` | 700+ | 0 | 0 | **live** - drainage-capacity framing, 3 events, 5 stated gaps |
 | `/water-bodies` | 102 | 0 | 0 | **honest empty state** - needs curated water-body data files |
 | `/lake-restoration` | 122 | 0 | 0 | **honest empty state** - needs curated lake-restoration files |
 
