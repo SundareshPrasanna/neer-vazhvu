@@ -6,6 +6,28 @@ Kolkata ward geometry: OpenCity's "Kolkata Wards Map 2022" KML -> GeoJSON.
 
 THIS LAYER IS DELIBERATELY INCOMPLETE, AND SAYS SO.
 
+HOW BIG THE GAP ACTUALLY IS (measured 2026-07-26, not assumed):
+  141 mapped wards union .... 187.15 km2
+  KMC's stated area ......... 206.08 km2  (District Environment Plan 2021)
+  implied wards 142-144 ..... 18.93 km2 = 9.2% OF THE CITY
+The mean mapped ward is 1.33 km2, so three average wards would be ~4 km2. The
+gap is 4.7x that, consistent with 142-144 being the large peri-urban Joka
+additions rather than typical inner wards. This is not a rounding error and not
+a sliver: nearly a tenth of Kolkata has no public ward geometry.
+
+EVERY ROUTE TRIED AND EXHAUSTED (2026-07-26):
+  - OpenCity: the 2022 KML is the only ward dataset, and it carries 1-141.
+  - OSM: zero Kolkata ward relations at ANY admin_level.
+  - KMC's own ward/borough pages: 404.
+  - GitHub / DataMeet: no Kolkata municipal ward boundaries.
+  - Derivation by subtraction: fetched OSM's KMC boundary (relation 9381363,
+    admin_level 7) and differenced the 141 wards out of it. FAILED, and the
+    failure is informative - OSM's KMC polygon is 184.4 km2, SMALLER than the
+    141 wards themselves, so OSM's boundary predates the 2015 additions too.
+    The residual was 9.83 km2 spread over 600 sliver artefacts whose largest
+    part sits on the river, not in Joka. Deriving the wards this way would have
+    produced a fabricated polygon, so it was abandoned rather than shipped.
+
 KMC has **144 wards** (primary-confirmed from KMC's own District Environment
 Plan 2021). The only public ward geometry carries **141**: wards 142, 143 and
 144 are absent, verified by parsing every placemark in the file. They are the
