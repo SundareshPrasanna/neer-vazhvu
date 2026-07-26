@@ -101,7 +101,24 @@ const EXTRA_FEEDS: ExtraFeed[] = [
 // Cities allowed to skip a derived check, with the reason on record.
 // (Empty today - add `"<cityId>:<feedId>": "reason"` entries only when a
 // feed genuinely cannot exist for that city.)
-const EXEMPTIONS: Record<string, string> = {};
+const EXEMPTIONS: Record<string, string> = {
+  // Kolkata's rainfall backbone is not ingested yet. fetch_recent_rainfall.py
+  // derives its start month from the city's IMD gridded series, so the
+  // provisional fill cannot run until generate_imd_rainfall.py has produced
+  // imd-rainfall-monthly-kolkata.json (an imdlib download, not an API call).
+  //
+  // This is a TEMPORARY exemption for the onboarding window, not a permanent
+  // one: unlike a landlocked city having no shoreline, this feed CAN exist for
+  // Kolkata and should. Remove this entry in the same commit that lands the
+  // IMD series and adds kolkata to fetch_recent_rainfall.py's CITIES map.
+  //
+  // Note Kolkata does already ship an HOURLY rainfall product
+  // (rainfall-intensity-kolkata.json, the drainage-capacity hero's input).
+  // That is a different measure - intensity, not monthly totals - and it does
+  // not substitute for the trend backbone the other cities carry.
+  "kolkata:rainfall-recent":
+    "IMD gridded backbone not yet ingested; provisional fill depends on it. Temporary - remove when imd-rainfall-monthly-kolkata.json lands.",
+};
 
 /* ── Derivation ────────────────────────────────────────────────────────── */
 interface Check {

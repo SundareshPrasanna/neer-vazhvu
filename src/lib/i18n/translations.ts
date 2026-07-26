@@ -534,6 +534,33 @@ export const translations: Record<string, TranslationEntry> = {
   "hero.inflow_hint": { en: "Simulate drought (↓) or heavy rains (↑). 0% = no inflow, 100% = current actual.",  ta: "வறட்சி (↓) அல்லது கனமழை (↑) உருவகப்படுத்தவும். 0% = வரத்து இல்லை, 100% = தற்போதைய நிலை.", kn: "ಬರಗಾಲ (↓) ಅಥವಾ ಭಾರೀ ಮಳೆ (↑) ಅನುಕರಿಸಿ. 0% = ಒಳಹರಿವು ಇಲ್ಲ, 100% = ಪ್ರಸ್ತುತ ವಾಸ್ತವ." },
   "hero.slider_note": { en: "Days left updates in real time as you adjust. Default: {consumption} MLD consumption{desal}.", ta: "சரிசெய்யும்போது மீதமுள்ள நாட்கள் நேரடியாக புதுப்பிக்கப்படும். இயல்புநிலை: {consumption} MLD நுகர்வு{desal}.", kn: "ಹೊಂದಿಸಿದಂತೆ ಉಳಿದ ದಿನಗಳು ತಕ್ಷಣ ನವೀಕರಿಸಲ್ಪಡುತ್ತವೆ. ಡೀಫಾಲ್ಟ್: {consumption} MLD ಬಳಕೆ{desal}." },
 
+  // ── Drainage-capacity hero (Kolkata) ──────────────────────────────────────
+  // English-only for now. Entries are partial by design and fall back to `en`,
+  // so the Bengali toggle renders these in English until a native review pass.
+  // Tracked as a named gap in docs/cities/kolkata/data-sources.md.
+  "hero.drain_title":        { en: "Drains vs the Sky" },
+  "hero.drain_built_for":    { en: "{city}'s drains were built to carry" },
+  "hero.drain_per_hour":     { en: "of rain an hour" },
+  "hero.drain_beaten_for":   { en: "The sky beat that standard for" },
+  "hero.drain_beaten_for_alt": { en: "Rain exceeded {mm} mm an hour for" },
+  "hero.drain_hour_unit":    { en: "hour" },
+  "hero.drain_hours_unit":   { en: "hours" },
+  "hero.drain_hours_short":  { en: "hrs/yr" },
+  "hero.drain_in_year":      { en: "in {year}" },
+  "hero.drain_across_days":  { en: "across {days} separate {unit}" },
+  "hero.drain_day_unit":     { en: "day" },
+  "hero.drain_days_unit":    { en: "days" },
+  "hero.drain_longrun":      { en: "Long-run average" },
+  "hero.drain_longrun_span": { en: "Mean over complete years {from}-{to}" },
+  "hero.drain_halves":       { en: "{earlySpan} averaged {early} hrs/yr; {lateSpan} averaged {late}." },
+  "hero.drain_threshold_label": { en: "Rainfall intensity threshold" },
+  "hero.drain_is_standard":  { en: "the design standard" },
+  "hero.drain_year_label":   { en: "Year" },
+  "hero.drain_worst_hour":   { en: "Wettest hour on record" },
+  "hero.drain_times_over":   { en: "{x}x the design standard" },
+  "hero.drain_standard_from": { en: "Design standard from" },
+  "hero.drain_reanalysis_caveat": { en: "Rainfall is ERA5-family reanalysis, which smooths short convective bursts. These counts are a lower bound on true exceedance, not rain-gauge readings." },
+
   // ── City Story (dashboard narrative) ──────────────────────────────────────
   "city_story.heading": { en: "Chennai's water at a glance",                                      ta: "சென்னையின் நீர் நிலை ஒரு பார்வை", kn: "ಚೆನ್ನೈನ ನೀರು ಒಂದು ನೋಟದಲ್ಲಿ" },
   "city_story.crisis_headline": { en: "Chennai's reservoirs are critically low.",                          ta: "சென்னையின் நீர்த்தேக்கங்கள் மிகவும் குறைவான நிலையில் உள்ளன.", kn: "ಚೆನ್ನೈನ ಜಲಾಶಯಗಳು ಗಂಭೀರವಾಗಿ ಕಡಿಮೆಯಾಗಿವೆ." },

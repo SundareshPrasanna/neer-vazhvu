@@ -1,0 +1,91 @@
+{
+  "_doc": "Headwaters source registry - Kolkata / KMA episodic sources. Schema + design notes: docs/specs/headwaters.md (local).",
+  "sources": [
+    {
+      "id": "kmc-weekly-drainage-register",
+      "scope": "kolkata",
+      "publisher": "Kolkata Municipal Corporation, Sewerage & Drainage Department",
+      "url": "https://www.kmcgov.in/KMCPortal/downloads/Weekly_Drainage_Activity_Chart.pdf",
+      "license": "KMC publication, cited with attribution",
+      "type": "pdf-fixed-url",
+      "cadence": "weekly",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash",
+        "staleAfterDays": 10
+      },
+      "dependsOn": ["public/data/kolkata-waterlogging-register.json"],
+      "refreshMethod": "automated (.github/workflows/kmc-drainage-refresh.yml, Mondays 10:15 IST + Sunday catch-up)",
+      "notes": "KMC OVERWRITES this file in place every week - there is no upstream archive, so a missed week is permanently lost from the public record. That makes the weekly job the only thing building a Kolkata waterlogging time series, and stale-by-Monday a real alert rather than a nicety. Parser is layout-sensitive (pdftotext -layout, 2+ space column split, vertically-centred date cell); the scraper exits non-zero on a zero-row parse so a layout change fails loudly. 2026-07-20 edition: 329 rows, 66 pockets, 53 wards, 15 boroughs."
+    },
+    {
+      "id": "wbpcb-emis-water-quality",
+      "scope": "kolkata",
+      "publisher": "West Bengal Pollution Control Board",
+      "url": "http://emis.wbpcb.gov.in/waterquality/showwqprevdatachoosedist.do",
+      "license": "WBPCB citizen data portal, cited with attribution",
+      "type": "html-form",
+      "cadence": "quarterly",
+      "tier": 1,
+      "detection": {
+        "method": "station-list",
+        "note": "district 013 = Kolkata; station_types R (river & ground water), M (marine), D (channels), I (idol immersion)"
+      },
+      "dependsOn": [],
+      "refreshMethod": "PENDING - scraper not yet built (3-step Struts flow documented in docs/cities/kolkata/data-sources.md). dependsOn stays empty until public/data/river-quality-kolkata.json exists; the registry validator requires declared paths to be real.",
+      "notes": "Plain HTTP, NO login on the citizen path - note the /waterquality/ root IS a login page, so do not generalise the block from the sibling path. 28 Kolkata stations including the Adi Ganga at six points, each sampled separately at HIGH TIDE and LOW TIDE; ~50 samples per station from 2014 to 2026, roughly quarterly. 24 Parganas(N) carries Ganga at Palta, Kolkata's own intake."
+    },
+    {
+      "id": "kmc-district-environment-plan",
+      "scope": "kolkata",
+      "publisher": "Kolkata Municipal Corporation",
+      "url": "https://www.kmcgov.in/KMCPortal/downloads/EnvironmentPlan_KMC_2021.pdf",
+      "license": "KMC statutory filing under the NGT District Environment Plan process, cited with attribution",
+      "type": "pdf-fixed-url",
+      "cadence": "irregular",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/kolkata-sewage-balance.json",
+        "public/data/commitments-kolkata.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py - transcription validated against the document's own printed totals)",
+      "notes": "Carries the platform's strongest sewage finding: 910 of 1,400 MLD treated by the East Kolkata Wetlands, 5.1x all five STPs combined, and the EKW lies outside KMC. Also the 10-plant upcoming-STP table (280.06 MLD, 9 with coordinates) and a blank industrial-wastewater section - KMC declaring a gap in its own statutory plan. A new edition would supersede a 2021 document; worth watching even though the cadence is irregular."
+    },
+    {
+      "id": "kmc-water-distribution-page",
+      "scope": "kolkata",
+      "publisher": "Kolkata Municipal Corporation, Water Supply Department",
+      "url": "http://www.kmc-wd.com/",
+      "license": "KMC publication, cited with attribution",
+      "type": "html-page",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [],
+      "refreshMethod": "manual - BLOCKED on reconciliation, see notes",
+      "notes": "DO NOT PUBLISH A TOTAL FROM THIS PAGE. Plants listed sum to 2,214.7 MLD plus ~110 MLD tube wells = 2,324.7 MLD, while the SAME page describes a target of ~1,900 MLD generation in 2025 and a requirement of ~1,660 MLD. The page is labelled '(DRAFT)' and footered '(c) 2013', and refers to 2025 in the future tense. Either the plant figures are post-expansion design capacities or the page mixes vintages. Reconcile against KMC budget statements (OpenCity kmc-budget-statement, 16 PDFs) before any capacity total enters the product. Watched so we notice if KMC ever republishes it."
+    },
+    {
+      "id": "ekwma-management-authority",
+      "scope": "kolkata",
+      "publisher": "East Kolkata Wetlands Management Authority",
+      "url": "http://ekwma.in/ek/index.php",
+      "license": "West Bengal government publication, cited with attribution",
+      "type": "html-page",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "management[_% ]?plan|action[_% ]?plan|biodiversity|order|fir|charge[_% ]?sheet"
+      },
+      "dependsOn": [],
+      "refreshMethod": "manual",
+      "notes": "Counterpart figures to KMC's balance: 12,500 hectares, 254 sewage-fed fisheries, 37 mouzas (30 full, 7 part) across South and North 24 Parganas, constituted under the East Kolkata Wetlands (Conservation and Management) Act, 2006. Publishes an Integrated Management Plan 2021-2026, Supreme Court / Calcutta HC / NGT orders, and FIR-status and charge-sheet pages - an encroachment-enforcement record structurally parallel to HYDRAA's in Hyderabad. The FIR page rendered no HTML table on probe; format still to determine."
+    }
+  ]
+}

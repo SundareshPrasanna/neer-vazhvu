@@ -14,6 +14,7 @@ import {
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { AllocationHero } from "@/components/dashboard/allocation-hero";
 import { CauveryPumpingHero } from "@/components/dashboard/cauvery-pumping-hero";
+import { DrainageCapacityHero } from "@/components/dashboard/drainage-capacity-hero";
 import { BangaloreDailyBriefing } from "@/components/dashboard/bangalore-daily-briefing";
 import { buildBangaloreBriefing } from "@/lib/insights/bangalore-briefing";
 import { DataGapPanel, URBAN_SUPPLY_DATA_GAPS } from "@/components/dashboard/data-gap-panel";
@@ -383,6 +384,18 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
       {bangaloreBriefing && <BangaloreDailyBriefing briefing={bangaloreBriefing} />}
       {config.heroMode === "cauvery-pumping" && (
         <CauveryPumpingHero cityId={cityId} cityDisplayName={config.displayName} />
+      )}
+      {/* Drainage-capacity hero: for cities with no impounded storage, where
+          the days-left numerator does not exist. Compares the drainage
+          system's published design standard against measured hourly rainfall
+          intensity. Kolkata today. */}
+      {config.heroMode === "drainage-capacity" && config.drainageCapacity && (
+        <DrainageCapacityHero
+          cityId={cityId}
+          cityDisplayName={config.displayName}
+          config={config.drainageCapacity}
+          scopeLabel={config.dashboardScopes?.city}
+        />
       )}
       {config.heroMode === "allocation" && config.urbanSupply && (
         <AllocationHero
