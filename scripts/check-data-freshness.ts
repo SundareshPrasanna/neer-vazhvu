@@ -71,6 +71,16 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     note: "BMC DM register, weekly scrape",
   },
   {
+    id: "bbmb-dam-storage",
+    cityId: "delhi",
+    file: "public/data/bbmb-dam-storage.json",
+    // Daily BBMB bulletin; same tolerance as the other daily dam artifacts.
+    // Delhi's ONLY raw-water feed - every other source is hasPublicFeed:false.
+    maxAgeDays: 4,
+    dateFrom: "json:_fetched",
+    note: "BBMB Bhakra/Pong daily bulletin (launchd; BBMB overwrites daily, no archive)",
+  },
+  {
     id: "cauvery-ka-scoreboard",
     cityId: "bangalore",
     file: "public/data/basins/cauvery-ka/scoreboard.json",

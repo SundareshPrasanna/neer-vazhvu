@@ -29,7 +29,13 @@ import type { CityConfig } from './types';
 // is compiled - flip it in the same commit.
 //
 // NONE of the six sources has an ingestible public feed - verified 2026-07-25:
-//   - Bhakra: BBMB's reservoir page has not updated since 04.09.2025.
+//   - Bhakra: SUPERSEDED 2026-07-26 - BBMB RESUMED daily publication. Its
+//     bulletin served "as on 26-07-2026 06:00 Hrs" (Bhakra 1592.91 ft, inflow
+//     40,363 / outflow 26,132 cusecs). Now scraped by
+//     neer-vazhvu-api/scripts/scrape_bbmb_dams.py into
+//     public/data/bbmb-dam-storage.json. hasPublicFeed stays false below only
+//     until the first launchd run populates reservoir_daily_v2 - see the note
+//     on the bhakra source.
 //   - Tehri + Bhakra via CWC: the weekly Reservoir Storage Bulletin listing
 //     ends 08.05.2025 (the series that fed Mumbai's backfill is dormant).
 //   - Munak Canal flow, Wazirabad pond level, UGC flow: news-NER / RTI only.
@@ -203,13 +209,24 @@ export const DELHI: CityConfig = {
       catchmentAreaSqkm: null,
       displayOrder: 4,
       isPrimaryDrinkingSource: false,
-      // Verified 2026-07-25: BBMB's public reservoir page still reads "Data
-      // as of 6.00 am on 04.09.2025", and CWC's weekly Reservoir Storage
-      // Bulletin listing ends 08.05.2025. Both feeds that would carry Bhakra
-      // are dormant, so this cannot be ingested today.
+      // CORRECTED 2026-07-26. The 2026-07-25 verification recorded BBMB as
+      // frozen since 04.09.2025; it has RESUMED. The bulletin now publishes
+      // daily at https://bbmb.gov.in/writereaddata/Portal/Images/pdf/res_data.pdf
+      // and scrape_bbmb_dams.py parses it (level + inflow + outflow; no
+      // storage, because level over FRL is not a volume ratio and Delhi's
+      // share is still unpublished).
+      //
+      // hasPublicFeed remains FALSE deliberately and temporarily: flipping it
+      // derives a delhi:reservoir:bhakra staleness check against
+      // reservoir_daily_v2, which has no Delhi rows yet. Flip it in the same
+      // change that lands the first `--supabase` run from the launchd job,
+      // otherwise the daily checker files an accurate but premature alert.
+      //
+      // URGENT: BBMB overwrites one file daily with no archive and no dated
+      // URLs. Every day the scraper does not run is lost permanently.
       hasPublicFeed: false,
       noFeedNote:
-        "Bhakra storage is BBMB's to publish, not DJB's - and BBMB's public reservoir page has not updated since September 2025 (CWC's weekly bulletin stopped in May 2025). Delhi's share of it is never published separately.",
+        "Bhakra storage is BBMB's to publish, not DJB's. BBMB stopped publishing in September 2025 and resumed in 2026 - we now scrape the daily bulletin, though Delhi's share of the dam is still never published separately.",
     },
     {
       // Tehri (Bhagirathi, THDC) - 300 cusecs / 162 MGD allocated to Delhi.
