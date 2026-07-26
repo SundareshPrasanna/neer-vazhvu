@@ -317,7 +317,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       downstream_terminus: "Joins the Krishna downstream of the city, in Nalgonda district",
       feeds: "Osman Sagar (Gandipet) - one of six HMWSSB sources, ~4-7% of daily city draw",
       status:
-        "CPCB Priority-I polluted stretch (Hyderabad to Nalgonda). Dissolved oxygen falls from 6.0 mg/L above the city at Gandipet to 0.3 mg/L at Nagole, while BOD rises from 1.2 to 6-8 mg/L; the river partially recovers downstream at Kasaniguda (DO 6.6). Jan-Mar 2022, TGPCB's own return to the NGT in OA 606 of 2018. The River Rejuvenation Committee recorded the difficulty of reaching the BOD 3 mg/L target in the absence of fresh water flow during the lean period.",
+        "CPCB Priority-I polluted stretch (Hyderabad to Nalgonda); DO at or below 0.5 mg/L through the city every year 2019-2024",
       cpcb_nwmp_stations: [
         "U/s of Musi at Gandipet, Osman Sagar (1172)",
         "River Musi at Nagole (2339)",
@@ -336,9 +336,21 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       downstream_terminus: "Joins the Musi below the twin reservoirs",
       feeds: "Himayat Sagar - one of six HMWSSB sources",
       status:
-        "Both Esi and Musi catchments were protected by GO 111 (1996) across 84 villages, repealed in 2022 on the stated ground that the city no longer depends on the twin reservoirs. HMWSSB's own daily draw column shows the twins drawn on every day since 2020, with their share rising rather than falling.",
+        "Catchment protected by GO 111 (1996), repealed 2022; the twins have been drawn on every day since 2020",
       cpcb_nwmp_stations: [],
       color: "stroke-cyan-600",
+    },
+    haldi: {
+      display_name: "Haldi",
+      length_km_geom: 57,
+      description:
+        "Mapped here because OpenStreetMap carries 57 km of it inside our extent, and a river drawn on the map with nothing behind it is worse than one that says so. We hold no monitoring, no narrative and no programme for the Haldi: it appears in no CPCB NWMP station list we have parsed, in no Telangana pollution-board return, and in none of the state's polluted-stretch classifications. The line is OSM geometry and nothing more.",
+      upstream_terminus: "Not established from public sources",
+      downstream_terminus: "Not established from public sources",
+      feeds: "No HMWSSB source draws from it",
+      status: "No monitoring data located; OSM geometry only",
+      cpcb_nwmp_stations: [],
+      color: "stroke-slate-400",
     },
     manjira: {
       display_name: "Manjira",
@@ -350,7 +362,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       downstream_terminus: "Joins the Godavari",
       feeds: "Singur (29,917 mcft) and Manjira (1,500 mcft) - two of six HMWSSB sources",
       status:
-        "CPCB Priority-II polluted stretch (Gowdicherla to Nakkavagu), merged with the Nakkavagu action plan on the CPCB task team's recommendation. The two monitored stations bracket the Nakkavagu confluence: DO holds around 6 mg/L and BOD around 2.5-3.0 mg/L on both sides, Jan-Mar 2022. Daily storage and draw for Singur and Manjira come from HMWSSB's own statement.",
+        "CPCB Priority-II stretch (Gowdicherla to Nakkavagu); DO holds near 6 mg/L either side of the confluence",
       cpcb_nwmp_stations: [
         "U/s Manjeera at Gowdicharla, before Nakkavagu confluence (2374)",
         "D/s Manjeera at Gowdicherla, after Nakkavagu confluence (2375)",

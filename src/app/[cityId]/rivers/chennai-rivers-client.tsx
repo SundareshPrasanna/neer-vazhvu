@@ -13,6 +13,7 @@
 // here); the map center/zoom and cityId are passed down from the shared page.
 
 import { Suspense, useEffect, useState } from "react";
+import { measureWorst } from "@/lib/rivers/measure";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { RiverPanel } from "@/components/rivers/river-panel";
@@ -174,8 +175,9 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
   // Use worst (minimum) DO across all Cooum stations for the latest year
   const cooumLatestDO = cooum?.stations.reduce<number | undefined>((worst, station) => {
     const latest = [...station.readings].sort((a, b) => b.year - a.year)[0];
-    if (latest?.do_mgl == null) return worst;
-    return worst == null ? latest.do_mgl : Math.min(worst, latest.do_mgl);
+    const v = measureWorst(latest?.do_mgl ?? null, "lower-is-worse");
+    if (v == null) return worst;
+    return worst == null ? v : Math.min(worst, v);
   }, undefined);
 
   const hasPanel = selectedRiver !== null || selectedSource !== null;

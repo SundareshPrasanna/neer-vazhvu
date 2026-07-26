@@ -3,6 +3,7 @@ import type {
   RiverQualityReading,
   RiverQualityStatus,
 } from "@/types/river-quality";
+import { measureWorst } from "@/lib/rivers/measure";
 
 /**
  * Map a single NWMP reading to a CPCB Designated Best-Use class.
@@ -24,7 +25,11 @@ import type {
  * Returns null when both DO and BOD are absent (can't classify).
  */
 function classifyReading(r: RiverQualityReading): RiverQualityStatus | null {
-  const { do_mgl: doMg, bod_mgl: bod } = r;
+  // Readings may be point values or annual ranges; classify on the end that
+  // matters for the threshold so a range never reads as healthier than its
+  // worst month.
+  const doMg = measureWorst(r.do_mgl, "lower-is-worse");
+  const bod = measureWorst(r.bod_mgl, "higher-is-worse");
   if (doMg == null && bod == null) return null;
 
   // "Dead" - oxygen has effectively collapsed AND/OR BOD is way past

@@ -6,6 +6,7 @@ import type { Feature, Geometry, LineString, MultiLineString } from "geojson";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { useLanguage } from "@/lib/i18n/context";
 import { TreatmentDischargePanel } from "@/components/rivers/treatment-discharge-panel";
+import { measureWorst } from "@/lib/rivers/measure";
 // Shared types from the Chennai-baseline pollution + river-quality
 // models. Each city's industrial-sources-{cityId}.json conforms to
 // IndustrialPollutionData; PollutionSource is the per-row shape.
@@ -463,8 +464,8 @@ export default function RiversClient({
           lng: s.lng,
           river_id: r.id,
           has_readings: s.readings.length > 0,
-          latest_bod: latest?.bod_mgl ?? null,
-          latest_do: latest?.do_mgl ?? null,
+          latest_bod: measureWorst(latest?.bod_mgl ?? null, "higher-is-worse"),
+          latest_do: measureWorst(latest?.do_mgl ?? null, "lower-is-worse"),
           latest_year: latest?.year ?? null,
         };
       }),

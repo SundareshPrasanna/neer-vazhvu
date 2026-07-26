@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { measureWorst, measureLabel } from "@/lib/rivers/measure";
 import { RiverQualityChart } from "@/components/rivers/river-quality-chart";
 import { ConnectedInsight } from "@/components/insights/connected-insight";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
@@ -30,6 +31,7 @@ interface RiverPanelProps {
    *  filtered to the selected river). */
   additionalSections?: ReactNode;
 }
+
 
 export function RiverPanel({
   selected,
@@ -180,7 +182,7 @@ export function RiverPanel({
 
   // Latest DO reading from active station
   const latestReading = [...activeStation.readings].sort((a, b) => b.year - a.year)[0];
-  const latestDO = latestReading?.do_mgl;
+  const latestDO = measureWorst(latestReading?.do_mgl, "lower-is-worse");
 
   // 3-year trend for the active station
   const trend = computeStationTrend(activeStation.readings);
@@ -413,9 +415,10 @@ export function RiverPanel({
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
             {/* DO - Dissolved Oxygen (inverted: higher = better) */}
-            {latestReading.do_mgl != null && (() => {
+            {measureWorst(latestReading.do_mgl, "lower-is-worse") != null && (() => {
               const minHealthy = 4; // mg/L for aquatic life
-              const val = latestReading.do_mgl;
+              const val = measureWorst(latestReading.do_mgl, "lower-is-worse") as number;
+              const shown = measureLabel(latestReading.do_mgl);
               const dead = val < 1;
               const critical = val < 4;
               return (
@@ -425,7 +428,7 @@ export function RiverPanel({
                     <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {"\u2265"}{minHealthy} mg/L</span>
                   </div>
                   <div className={`font-mono font-bold ${dead ? "text-red-600 dark:text-red-400" : critical ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"}`}>
-                    {val} <span className="font-normal text-slate-400">mg/L</span>
+                    {shown} <span className="font-normal text-slate-400">mg/L</span>
                     {critical && val > 0 && <span className="ml-1.5 text-[10px] font-semibold text-red-500 dark:text-red-400">{(minHealthy / val).toFixed(0)}x {t("rivers.below_min")}</span>}
                     {dead && val === 0 && <span className="ml-1.5 text-[10px] font-semibold text-red-500 dark:text-red-400">{t("rivers.dead_zone")}</span>}
                   </div>
@@ -436,9 +439,10 @@ export function RiverPanel({
               );
             })()}
             {/* BOD - Biochemical Oxygen Demand (higher = worse) */}
-            {latestReading.bod_mgl != null && (() => {
+            {measureWorst(latestReading.bod_mgl, "higher-is-worse") != null && (() => {
               const limit = 3; // Class C standard
-              const val = latestReading.bod_mgl;
+              const val = measureWorst(latestReading.bod_mgl, "higher-is-worse") as number;
+              const shown = measureLabel(latestReading.bod_mgl);
               const ratio = val / limit;
               const exceeded = val > limit;
               const severe = val > 30;
@@ -449,7 +453,7 @@ export function RiverPanel({
                     <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit} mg/L</span>
                   </div>
                   <div className={`font-mono font-bold ${severe ? "text-red-600 dark:text-red-400" : exceeded ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"}`}>
-                    {val} <span className="font-normal text-slate-400">mg/L</span>
+                    {shown} <span className="font-normal text-slate-400">mg/L</span>
                     {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(0)}x</span>}
                   </div>
                   <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
