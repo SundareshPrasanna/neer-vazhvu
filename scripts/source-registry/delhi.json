@@ -268,6 +268,99 @@
         "edition": "2019 roster + 2022 coordinate list (675 clusters)",
         "acceptedOn": "2026-07-25"
       }
+    },
+    {
+      "id": "opencity-delhi-waterbodies-census",
+      "scope": "delhi",
+      "publisher": "GNCTD / Ministry of Jal Shakti (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=delhi-water-bodies-census-data",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic (census)",
+      "tier": 0,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/delhi-water-bodies-census.geojson"
+      ],
+      "refreshMethod": "manual (re-run the point-in-polygon join against the OSM body layer)",
+      "notes": "1st Census of Water Bodies / Jal Dharohar, NCT Delhi - enumeration 2022, map released 2023, 893 census points. Verified 2026-07-26: 1 resource, metadata_modified 2025-11-27. This is the Delhi analogue of datagovin-waterbodies-census-tn; a Second Census has been announced nationally and this watch is how we would learn it landed. The layer's join is honest about its own weakness (inside 31 / near 203 / unmatched 659), so a new edition is worth taking.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:37:47.489871",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "ingres-gw-assessment-delhi",
+      "scope": "delhi",
+      "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "GoI publication, cited with attribution",
+      "type": "page",
+      "cadence": "yearly (GEC assessment)",
+      "tier": 1,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/ingres/delhi-2022-2023.json"
+      ],
+      "refreshMethod": "manual - headless-Chrome render of the portal UI + DOM table parse; the open API's POST contract is still uncaptured",
+      "notes": "Fourth scope on the same IN-GRES source (see ingres-gw-assessment-tn / -ka / -madurai). Delhi's 2022-23 cycle has NO OpenCity mirror, which is why it was acquired by rendering the portal - the most fragile acquisition on the platform. Delhi state uuid a1ac5d18-8c9a-4047-8fdd-4d7d9deaa34e is recorded in the artifact's _provenance. Same caveat as the sibling entries: http-meta watches the SPA build, not the assessment data. Note this is DISTINCT from cgwb-dynamic-gwr-delhi, which watches the OpenCity national compilation (2025 cycle, hectare-metres) feeding gwr-blocks-delhi.json - two cycles, two acquisition routes, two watches.",
+      "lastSeen": {
+        "etag": "W/\"c20-19f18174cc0\"",
+        "lastModified": "Tue, 30 Jun 2026 10:33:28 GMT",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "delhi-reps-mcd",
+      "scope": "delhi",
+      "publisher": "State Election Commission Delhi / MCD (via OpenCity)",
+      "url": "https://data.opencity.in/dataset/delhi-mcd-elections-2022",
+      "license": "open (per OpenCity dataset page)",
+      "type": "page",
+      "cadence": "5-yearly",
+      "tier": 1,
+      "detection": {
+        "method": "term-expiry",
+        "termEndsOn": "2027-12-04",
+        "leadTimeDays": 120
+      },
+      "dependsOn": [
+        "public/data/delhi-ward-representatives.json"
+      ],
+      "refreshMethod": "manual - re-digitise the winners table for all 250 wards",
+      "notes": "MCD general election 4 December 2022, the first post-unification poll across 250 wards; a five-year term ends 2026-12-04 at the earliest and 2027-12-04 on the outside, so termEndsOn is set to the later date with a 120-day lead. This is the Delhi twin of the three chennai-reps-* entries and exists for the same reason the mechanism was built: no listing page changes when a mandate expires. CAVEATS already on the artifact: by-elections and defections since Dec 2022 are NOT reflected, and MLA/MP columns are absent until the 2022 ward geometry with AC mapping is joined. A calendar cannot see a by-election - that stays a manual risk.",
+      "lastSeen": {
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "opencity-delhi-mcd-wards",
+      "scope": "delhi",
+      "publisher": "SEC Delhi Delimitation Order 2022 (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=delhi-mcd-elections-2022",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic (delimitation)",
+      "tier": 0,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/delhi-wards-2022.geojson",
+        "public/data/delhi-ward-profiles.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/convert_delhi_wards_kml.py",
+      "notes": "The 250-ward delimitation geometry, and the denominator under every Delhi ward number on the platform. Verified 2026-07-26: metadata_modified 2025-11-27. WATCH THIS ONE CLOSELY: OpenCity DELISTED the source dataset ('Delhi Wards Information') and our copy survives only because it was verified byte-identical against an Internet Archive capture over its full extent - see the layer's metadata.recovery field. A dataset that has already been delisted once can go again, and there is no second copy.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:38:57.866743",
+        "acceptedOn": "2026-07-26"
+      }
     }
   ]
 }

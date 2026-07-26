@@ -95,6 +95,29 @@ export const UNWATCHED: Record<string, string> = {
   "public/geojson/chennai-coastal-transects.geojson": "our own MNDWI/GEE computation, coastal-shoreline-refresh.yml annual (P5-1)",
   "public/geojson/mumbai-coastal-transects.geojson": "our own MNDWI/GEE computation, coastal-shoreline-refresh.yml annual (P5-1)",
 
+  // Delhi (audited 2026-07-26, after the city shipped in #184 - it was outside
+  // the original sweep entirely).
+  "public/data/restoration-priority-delhi.json": "derived: flagship scorer over covered inputs",
+  "public/data/ward-risk-delhi.json": "derived composite",
+  "public/data/delhi-ward-profiles.json": "derived join; the ward geometry is watched by opencity-delhi-mcd-wards",
+  "public/data/water-bodies-lost-delhi.json": "archival",
+  "public/data/rainfall-recent-delhi.json": "daily feed: owned by check-data-freshness.ts",
+  "public/data/elevation-bands-delhi.geojson": "platform family: FABDEM via GEE (P5-6)",
+  "public/geojson/delhi-rivers.geojson": "platform family: OSM/Overpass (P5-6)",
+  "public/geojson/delhi-water-bodies-current.geojson": "platform family: OSM/Overpass (P5-6)",
+  "public/geojson/delhi-drainage.geojson":
+    "platform family: OSM/Overpass (P5-6). No official Delhi drain GIS is public - the IFC 2018 Drainage Master " +
+    "Plan's 3,737 km across 11 agencies exists only as PDF maps, so these lengths are a floor.",
+  "public/data/delhi-cgwb-stations.json":
+    "historical series, not a live feed: WRIS telemetry across the Delhi network stops 2025-09-20 and the artifact " +
+    "says so in _feed_status. Whether telemetry RESUMES is a feed question for P5-1, not an edition question.",
+  "public/geojson/delhi-microwatersheds.geojson":
+    "ORPHAN - DECISION NEEDED, not a settled exemption. 2,324 features, metadata is null, absent from " +
+    "docs/cities/delhi/data-sources.md, and no reference anywhere in src/ - it ships to production and nothing " +
+    "renders it. The property schema (g_mws ids, BASIN/CATCHMENT/WATERSHED/MWS codes like 2B6B2c1) looks like the " +
+    "NRSC/Bhuvan watershed atlas, but that is an INFERENCE and is not recorded anywhere. Either document the " +
+    "provenance and register the source, or delete the file.",
+
   // Curated search indexes and label lookups. No upstream document exists.
   "public/data/chennai-localities.json": "curated search index, no upstream",
   "public/data/bangalore-localities.json": "curated search index, no upstream",
