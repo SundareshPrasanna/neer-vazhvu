@@ -58,6 +58,7 @@ from __future__ import annotations
 import argparse
 import collections
 import json
+import re
 import ssl
 from datetime import date
 import statistics as st
@@ -106,6 +107,9 @@ SUSPECT: dict[str, str] = {}
 # in Medchal-Malkajgiri. 120 m is a generous ceiling that still catches decimal
 # slips. Slightly negative is real (water above the sensor datum).
 DEPTH_MIN, DEPTH_MAX = -5.0, 120.0
+# Minimum readings before a station may vote on its family's sign convention.
+# 12 = about a year of monthly manual observations.
+MIN_READINGS_FOR_FAMILY_VOTE = 12
 # Classic no-data markers that sit INSIDE a plausible depth envelope and so
 # survive the range check.
 SENTINELS = {99.0, 999.0, 9999.0, -999.0}
@@ -207,27 +211,54 @@ def main() -> None:
     # and trip the family assertion below on a fault we have already
     # diagnosed. A broken sensor must not get a vote on what the fleet means.
     convention, families = {}, collections.defaultdict(collections.Counter)
+    low_n = []
     for code, rs in by_station.items():
         if code in SUSPECT:
             continue
-        median_raw = st.median([r["dataValue"] for r in rs])
+        vals = [r["dataValue"] for r in rs]
+        median_raw = st.median(vals)
         convention[code] = "negative-down" if median_raw < 0 else "positive-down"
-        fam = (
-            "AAXI"
-            if code.startswith("AAXI")
-            else "CGWBDL"
-            if code.startswith("CGWB")
-            else "numeric"
-        )
+        # Family = the leading alphabetic run of the station code, or "numeric"
+        # for the lat/long-encoded NHN codes. Derived GENERICALLY rather than
+        # from a hardcoded list: Delhi's classifier tested for the literal
+        # prefixes AAXI and CGWB, so Telangana's CGWHYD* stations fell through
+        # to the numeric catch-all and made a clean two-family split look like
+        # one mixed family. Any city's families now fall out of the codes.
+        m = re.match(r"^([A-Za-z]+)", code)
+        fam = m.group(1).upper() if m else "numeric"
+        # A station with a handful of readings cannot establish what a family
+        # means, and must not be able to trip the agreement check. Telangana
+        # has exactly one such case - 165225077530701, two readings, median
+        # -0.60 m - which would otherwise contradict 321 agreeing stations.
+        if len(vals) < MIN_READINGS_FOR_FAMILY_VOTE:
+            low_n.append((code, fam, len(vals), median_raw))
+            continue
         families[fam][convention[code]] += 1
-    print("sign convention by station-code family (suspect sensors excluded):")
+
+    print(
+        f"sign convention by station-code family "
+        f"(suspect excluded; {len(low_n)} stations with "
+        f"<{MIN_READINGS_FOR_FAMILY_VOTE} readings excluded from the vote):"
+    )
     for fam, counts in sorted(families.items()):
         print(f"  {fam:8s} {dict(counts)}")
-        # Guard, not decoration: this is what caught CGWBDL32 as an outlier
-        # rather than letting it quietly corrupt the transform.
+        # Guard, not decoration. In Delhi this caught a sign-faulty sensor; in
+        # Telangana it caught a mis-generalised family classifier.
         assert len(counts) == 1, (
             f"family {fam} disagrees on sign convention: {dict(counts)}"
         )
+    disagreeing = [
+        x for x in low_n
+        if families.get(x[1])
+        and ("negative-down" if x[3] < 0 else "positive-down") not in families[x[1]]
+    ]
+    if disagreeing:
+        print(
+            f"  note: {len(disagreeing)} low-reading station(s) disagree with their "
+            "family and keep their own derived convention:"
+        )
+        for code, fam, n, med in disagreeing[:10]:
+            print(f"    {code} ({fam}, n={n}, median={med:.2f})")
 
     # --- aggregate to monthly means -----------------------------------------
     monthly = collections.defaultdict(list)

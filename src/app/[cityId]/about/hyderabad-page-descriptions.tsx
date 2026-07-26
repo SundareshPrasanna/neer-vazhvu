@@ -123,15 +123,28 @@ export function HyderabadPageDescriptions({ cityId, cityName }: Props) {
           2025.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
+          481 wells, with 10,724 monthly readings and a median depth of about
+          8.7 metres below ground level. Ranga Reddy contributes 192 and Medak
+          173, so the metro core alone carries around 240 - a denser network
+          than we expected and comparable to Delhi&apos;s.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
           We show the wells as points and deliberately do <em>not</em>{" "}
-          interpolate a continuous depth surface between them. There are roughly
-          fifty stations across the metro core, against 300 wards, and this is
-          Deccan hard rock - granite and gneiss, where the water table sits in
-          weathered zones and fractures rather than a continuous aquifer.
-          Interpolating between two wells a few kilometres apart would invent
-          values no instrument saw. Telangana&apos;s own Ground Water Department
-          runs a far denser village-level piezometer network; if its live feed
-          can be reached, this page changes.
+          interpolate a continuous depth surface between them. Partly because
+          there is no public ward geometry to interpolate onto, and partly
+          because this is Deccan hard rock - granite and gneiss, where water
+          sits in weathered zones and discrete fractures rather than a
+          continuous water table. A smooth surface drawn between two wells a
+          few kilometres apart would assert groundwater that may not be there.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          One handling note that matters: the national database returns depth
+          with a sign that depends on which programme installed the station,
+          and Hyderabad mixes them - the telemetric recorders report one way
+          and the older manual wells the other. We derive the convention
+          separately for every station from its own record rather than assuming
+          it, because taking absolute values would erase genuine readings of
+          water standing above the sensor.
         </p>
       </SubSection>
 

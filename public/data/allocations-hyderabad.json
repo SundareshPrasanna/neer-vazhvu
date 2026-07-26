@@ -1,0 +1,223 @@
+{
+ "place_id": "hyderabad",
+ "updated": "2026-07-26",
+ "headline": "Who owes Hyderabad water: the inter-basin allocation ledger",
+ "intro": "Hyderabad is not supplied by its own rain. Roughly nine-tenths of the city's daily draw is lifted from two of India's largest river systems - the Krishna and the Godavari - across allocations made in inter-state tribunal awards and state government orders, then carried a hundred kilometres and more. This ledger sets what each arrangement entitles the city to against what it actually received. Unusually, the receipts side is strong here: HMWSSB publishes the draw-off from every source every single day, so the 'received' column is measured rather than reconstructed. It is the ENTITLEMENT side that is thin - most of the governing instruments are not published in full.",
+ "unit_note": "Hyderabad's documents mix units. Tribunal awards and state allocations are in TMC/yr (thousand million cubic feet per year); the utility reports daily draw in MLD (million litres per day); reservoir storage is in TMC. 1 TMC = 28,316.8 million litres. A steady 100 MLD sustained for a year is about 1.29 TMC/yr. Daily figures below are means computed from HMWSSB's own daily reservoir statement for the trailing year to 25 July 2026 unless stated otherwise.",
+ "authorities": [
+  {
+   "id": "hmwssb",
+   "name": "Hyderabad Metropolitan Water Supply and Sewerage Board (HMWSSB)",
+   "role": "Constituted 1 November 1989 under the HMWSSB Act 1989 (Act No. 15 of 1989). Sole water and sewerage utility for the Core Urban Region - it was NOT divided when GHMC was trifurcated into three corporations on 11 February 2026, which is why Hyderabad remains one water system under three municipal governments.",
+   "capacity": "Draws from six sources; trailing-year mean 2,628.4 MLD to 25 July 2026",
+   "committed": "Publishes daily draw-off per source, which makes it one of the few Indian utilities whose deliveries can be audited from public data rather than inferred."
+  },
+  {
+   "id": "tg-icad",
+   "name": "Telangana Irrigation & Command Area Development Department (I&CAD)",
+   "role": "Owns and operates the source reservoirs - Nagarjuna Sagar and the Akkampally balancing reservoir on the Krishna, Sripada Yellampally on the Godavari, Singur and the Manjira barrage. Drinking-water allocations to HMWSSB are made by state government order out of the state's tribunal share.",
+   "capacity": "Holds the state's share of the Krishna and Godavari awards",
+   "committed": "Not published as a consolidated drinking-water allocation schedule; individual GOs exist but are not collected in one place."
+  },
+  {
+   "id": "krishna-tribunal",
+   "name": "Krishna Water Disputes Tribunal (KWDT)",
+   "role": "Apportions the Krishna between the riparian states. Telangana's share, and the drinking-water carve-out within it that reaches Hyderabad via Nagarjuna Sagar and Akkampally, derives from the tribunal awards and the post-2014 reorganisation arrangements between Telangana and Andhra Pradesh.",
+   "capacity": "Not established in this pass",
+   "committed": "The specific quantum earmarked for Hyderabad's drinking water is not confirmed from a primary document - see gaps."
+  },
+  {
+   "id": "hmda",
+   "name": "Hyderabad Metropolitan Development Authority (HMDA)",
+   "role": "Not a water supplier, but the custodian of the lake boundaries that determine what local storage the city retains. Runs the Lake Protection Committee and the gazetted Full Tank Level register.",
+   "capacity": "2,978 lakes in the register",
+   "committed": "1,352 finally notified (45.4%); 1,626 still without a legally settled boundary."
+  }
+ ],
+ "arrangements": [
+  {
+   "id": "krishna-akkampally",
+   "source": "Krishna, via the Akkampally balancing reservoir (AMR project)",
+   "authority_id": "tg-icad",
+   "recipient": "Hyderabad (HMWSSB)",
+   "entitled": {
+    "value": null,
+    "unit": "TMC/yr",
+    "basis": "State allocation out of Telangana's Krishna tribunal share",
+    "note": "NOT ESTABLISHED. The Krishna drinking-water allocation for Hyderabad is routinely quoted in press coverage but we have not obtained the government order or tribunal provision that fixes it, so no figure is entered here rather than repeating a number we cannot source."
+   },
+   "received": {
+    "value": 1253.23,
+    "unit": "MLD",
+    "year": 2026,
+    "note": "Measured. Draw-off on 25 July 2026 - about 47% of the city's total draw that day, making this single balancing reservoir the largest supplier of water to Hyderabad. Source: HMWSSB daily reservoir statement."
+   },
+   "instrument": {
+    "label": "Telangana I&CAD allocation from the state's Krishna share (order not obtained)",
+    "url": "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx"
+   },
+   "confidence": "low",
+   "note": "The inverse of the usual problem: the delivery is measured daily and precisely, and it is the entitlement that is undocumented in public."
+  },
+  {
+   "id": "godavari-yellampally",
+   "source": "Godavari, via Sripada Yellampally",
+   "authority_id": "tg-icad",
+   "recipient": "Hyderabad (HMWSSB)",
+   "entitled": {
+    "value": null,
+    "unit": "TMC/yr",
+    "basis": "State allocation out of Telangana's Godavari share",
+    "note": "NOT ESTABLISHED in this pass. The Godavari drinking-water scheme for Hyderabad was commissioned in phases; the governing GO has not been obtained."
+   },
+   "received": {
+    "value": 736.86,
+    "unit": "MLD",
+    "year": 2026,
+    "note": "Measured, 25 July 2026. Yellampally is absent from the earliest rows of the HMWSSB archive and appears later, consistent with the Godavari phase being commissioned after 2014 - the daily record itself dates the arrival of this source."
+   },
+   "instrument": {
+    "label": "Telangana I&CAD allocation from the state's Godavari share (order not obtained)",
+    "url": "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx"
+   },
+   "confidence": "low",
+   "note": "About 200 km north of the city. The second-largest arm of the supply and the newest."
+  },
+  {
+   "id": "manjira-singur",
+   "source": "Manjira system - Singur reservoir and the Manjira barrage",
+   "authority_id": "tg-icad",
+   "recipient": "Hyderabad (HMWSSB)",
+   "entitled": {
+    "value": null,
+    "unit": "TMC/yr",
+    "basis": "State allocation; Singur is a Godavari-basin tributary storage shared with irrigation",
+    "note": "NOT ESTABLISHED. Singur serves irrigation as well as Hyderabad's drinking supply, so the drinking-water carve-out is the relevant number and it has not been obtained."
+   },
+   "received": {
+    "value": 499.2,
+    "unit": "MLD",
+    "year": 2026,
+    "note": "Measured, 25 July 2026: Singur 316.00 MLD plus the Manjira barrage 183.20 MLD. The Manjira system was the city's principal external source before the Krishna and Godavari arms were built."
+   },
+   "instrument": {
+    "label": "Telangana I&CAD allocation (order not obtained)",
+    "url": "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx"
+   },
+   "confidence": "low",
+   "note": "The middle generation of Hyderabad's supply - built when the Musi lakes stopped being enough and before the city reached the major rivers."
+  },
+  {
+   "id": "musi-twins",
+   "source": "Musi and Esi - Osman Sagar and Himayat Sagar",
+   "authority_id": "hmwssb",
+   "recipient": "Hyderabad (HMWSSB)",
+   "entitled": {
+    "value": 6.039,
+    "unit": "TMC (storage at full tank level)",
+    "basis": "Reservoir capacity as published by HMWSSB from 1 July 2026",
+    "note": "This is a storage capacity rather than an annual allocation - the twins are the city's own impounded water, not an inter-state share. NOTE the capacity was revised downward without notice on 1 July 2026: Osman Sagar 3.900 to 3.518 TMC and Himayat Sagar 2.967 to 2.521. The cause is not established and should not be described as siltation without a government order."
+   },
+   "received": {
+    "value": 170.2,
+    "unit": "MLD",
+    "year": 2026,
+    "note": "Measured, 25 July 2026: Osman Sagar 108.831 plus Himayat Sagar 61.371 - about 6.4% of the day's total draw. Across the full archive the twin share fell to 0.00% for all of 2018 and has risen every year since 2023 to 6.54% in 2026, with 2026's absolute draw the highest in the twelve-year record."
+   },
+   "instrument": {
+    "label": "GO 111 of 1996 protected the catchment across 84 villages and ~1.32 lakh acres; repealed by the Telangana cabinet in 2022 on the ground that the city no longer depended on these lakes",
+    "url": "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx"
+   },
+   "confidence": "high",
+   "note": "The only arrangement in this ledger where both sides are documented - and the one whose governing protection was removed on a premise the daily record has been contradicting a little more every year since."
+  }
+ ],
+ "events": [
+  {
+   "year": 1908,
+   "title": "The Great Musi Flood (28 September 1908)",
+   "note": "Roughly 59,000 houses damaged; 221 of the 788 tanks along the Musi breached. The failure of the tank cascade is what prompted the reservoirs that follow.",
+   "source_refs": ["musi-flood-1908"]
+  },
+  {
+   "year": 1909,
+   "title": "M. Visvesvaraya appointed Special Consulting Engineer (15 April 1909)",
+   "note": "Recommended impounding reservoirs upstream to hold back 'all floods in excess of what the river channel could carry' - flood control first, water supply second.",
+   "source_refs": ["hyderabad-history-project"]
+  },
+  {
+   "year": 1918,
+   "title": "Osman Sagar completed (begun 1913)",
+   "note": "Still the largest water body in the city at about 1,810 hectares. Himayat Sagar on the Esi followed.",
+   "source_refs": ["hyderabad-history-project"]
+  },
+  {
+   "year": 1989,
+   "title": "HMWSSB constituted (1 November 1989)",
+   "note": "Under the HMWSSB Act 1989, Act No. 15 of 1989 - a single utility for water and sewerage across the metropolitan area.",
+   "source_refs": ["hmwssb-profile"]
+  },
+  {
+   "year": 1996,
+   "title": "GO 111 protects the twin-reservoir catchment",
+   "note": "Bars major construction across 84 villages and roughly 1.32 lakh acres in the catchment of Osman Sagar and Himayat Sagar.",
+   "source_refs": ["go111-repeal"]
+  },
+  {
+   "year": 2022,
+   "title": "GO 111 repealed",
+   "note": "The stated ground was that Hyderabad's supply had moved to the Krishna, Godavari and Manjira and the twin reservoirs no longer mattered. In 2018 they had indeed supplied nothing at all; by 2026 they were supplying more, in absolute terms, than in any year of the record.",
+   "source_refs": ["go111-repeal"]
+  },
+  {
+   "year": 2024,
+   "title": "HYDRAA created; lake notifications resume",
+   "note": "Final Full Tank Level notifications had run at single digits a year since 2017. 533 issued in 2024 and 533 again in 2025 - two-thirds of every final notification ever made.",
+   "source_refs": ["hmda-lake-register"]
+  },
+  {
+   "year": 2026,
+   "title": "GHMC trifurcated (11 February 2026); water not divided with it",
+   "note": "300 wards gazetted 25 December 2025, then three corporations - GHMC, Cyberabad, Malkajgiri. HMWSSB continued to serve the whole Core Urban Region.",
+   "source_refs": ["ghmc-trifurcation"]
+  }
+ ],
+ "futures": [],
+ "gaps": [
+  "The entitlement side of this ledger is largely blank, which is the reverse of most cities. HMWSSB publishes what it DREW from every source every day, so receipts are measured; but the government orders and tribunal provisions that fix how much Hyderabad is OWED from the Krishna, Godavari and Manjira have not been obtained. Priority document request.",
+  "No consolidated drinking-water allocation schedule is published by Telangana I&CAD. Individual GOs exist but are not collected, so the total quantum earmarked for Hyderabad cannot be stated.",
+  "The GO repealing GO 111 has not been obtained in full text; the 84 villages / 1.32 lakh acres figures are from news reporting and are marked as such.",
+  "No public reconciliation exists of bulk supply to the peripheral municipalities absorbed into the Core Urban Region in the 2025-26 reorganisation.",
+  "The cause of the 1 July 2026 downward revision of Osman Sagar and Himayat Sagar capacity is not established. It lands exactly on the water-year boundary and could be a re-survey, a gross-versus-live redefinition, or a correction."
+ ],
+ "sources": {
+  "hmwssb-daily": {
+   "label": "HMWSSB daily 'Statements of WaterLevels in Reservoirs' (archive from 1 Jan 2014)",
+   "url": "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx"
+  },
+  "hmwssb-profile": {
+   "label": "HMWSSB profile - constitution under Act No. 15 of 1989",
+   "url": "https://www.hyderabadwater.gov.in/en/index.php/about/profile"
+  },
+  "hmda-lake-register": {
+   "label": "HMDA Lake Protection Committee gazetted lake register",
+   "url": "https://lakes.hmda.gov.in/"
+  },
+  "musi-flood-1908": {
+   "label": "Great Musi Flood of 1908",
+   "url": "https://en.wikipedia.org/wiki/Great_Musi_Flood_of_1908"
+  },
+  "hyderabad-history-project": {
+   "label": "The Hyderabad History Project / Yunus Y. Lasania on the 1908 floods and Visvesvaraya's appointment",
+   "url": "https://medium.com/@hyderabadhistoryproject/yunus-y-lasania-320886c025a8"
+  },
+  "go111-repeal": {
+   "label": "Telangana cabinet scraps GO 111 - 84 villages freed from land-use restrictions",
+   "url": "https://telanganatoday.com/telangana-cabinet-scraps-go-111-84-villages-get-free-from-restrictions-in-land-use"
+  },
+  "ghmc-trifurcation": {
+   "label": "GHMC split into three corporations; 300-ward gazette notification",
+   "url": "https://telanganatoday.com/ghmc-split-into-three-corporations-jayesh-ranjan-appointed-special-officer"
+  }
+ }
+}

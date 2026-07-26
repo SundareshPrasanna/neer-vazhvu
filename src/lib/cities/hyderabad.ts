@@ -108,11 +108,20 @@ export const HYDERABAD: CityConfig = {
     // IN-GRES (ingres.iith.ac.in) is the standing source for assessment data
     // and is reachable; the Telangana mandal-level pull is not built yet.
     exploitation: false,
-    // Interpolated per-ward depth stays OFF. The India-WRIS network gives
-    // ~15 stations in Hyderabad district and ~18 in Ranga Reddy - enough to
-    // place points honestly, nowhere near enough to paint a surface across
-    // 300 wards. Telangana's own Ground Water Department runs a far denser
-    // village-level piezometer network; revisit if that pull lands.
+    // Interpolated per-ward depth stays OFF - but NOT for the reason first
+    // assumed. An early narrow-window probe suggested ~15 stations in
+    // Hyderabad district; the full pull found 481 across the five districts
+    // (Ranga Reddy 192, Medak 173, Hyderabad 48, Siddipet 44, Vikarabad 24),
+    // so the metro core alone has 240 - essentially Delhi's density, which
+    // WAS enough there to carry a per-ward card.
+    //
+    // Two reasons it still stays off. First and decisively, there is no
+    // public 300-ward geometry to interpolate ONTO. Second, this is Deccan
+    // hard rock: granite and gneiss, where water sits in weathered zones and
+    // discrete fractures rather than a continuous aquifer, so a surface
+    // interpolated between two wells a few km apart asserts a water table
+    // that may not exist between them. Revisit the second point with
+    // Telangana GWD's denser village-level piezometer network.
     depth: false,
     // Depends on ward geometry, which does not exist publicly yet.
     risk: false,
@@ -123,7 +132,16 @@ export const HYDERABAD: CityConfig = {
     // 'Medchal-Malkajgiri', 'Sangareddy' and 'Yadadri Bhuvanagiri' return
     // zero rows. Enumerate spellings empirically, and probe a WIDE date
     // window first - a narrow one is indistinguishable from "no stations".
-    cgwbStations: false,
+    //
+    // 481 wells landed 2026-07-26 (public/data/hyderabad-cgwb-stations.json):
+    // 10,724 monthly readings, depth median 8.71 m, range -4.6..99.7 m.
+    // Sign convention is derived PER STATION and the families are clean once
+    // derived generically from the code prefix - CGWHYD* (122) and TSCGWB*
+    // (37) are negative-down, the numeric lat/long-encoded NHN codes are
+    // positive-down. Never abs(): it would erase real water-above-datum
+    // readings. Delhi's classifier hardcoded its own prefixes and had to be
+    // generalised for this to come out right.
+    cgwbStations: true,
   },
   reservoirDataSource: 'v2',
   // Feed: HMWSSB's daily "Statements of WaterLevels in Reservoirs", scraped by
