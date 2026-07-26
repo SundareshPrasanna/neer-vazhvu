@@ -321,6 +321,13 @@ export interface BasePlaceConfig {
    *  lost bodies). Omit -> the basic map only. */
   waterBodies?: WaterBodiesConfig;
 
+  /** One-line description of what this city's tanker page actually shows.
+   *  The shape of tanker data differs fundamentally by city - Bangalore has
+   *  longitudinal HOUSEHOLD PRICE surveys, Hyderabad has the utility's own
+   *  BOOKING/DELIVERY ledger - so the teaser card and the page metadata must
+   *  not assume one shape. Omit -> the household-survey wording. */
+  tankerSummary?: string;
+
   /** Which reservoir tables this city's data lives in.
    *  - `v2` (default): the multi-city `reservoir_daily_v2` schema
    *    (city_id + source_code), used by every city onboarded after the

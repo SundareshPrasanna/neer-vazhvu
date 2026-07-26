@@ -109,6 +109,14 @@ export const HYDERABAD: CityConfig = {
   //   auditable, because HMDA publishes the register that records it.
   hasAllocationLedger: true,
   hasCommitments: true,
+  // Hyderabad's tanker data is NOT the Bangalore household-price survey. HMWSSB
+  // runs the fleet itself and publishes its own ledger: monthly bookings and
+  // deliveries per division/section (26 OpenCity CSVs,
+  // build_hyderabad_tankers.py). Fulfilment turned out flat at 99.95%, so the
+  // page leads on demand volume, ~3.0x summer seasonality and the IT-corridor
+  // geography instead of on a price or a service-failure rate.
+  tankerSummary:
+    "HMWSSB's own tanker ledger - monthly bookings and deliveries by division and section.",
   waterBodies: {
     // OFF: reads the Supabase table `water_bodies_census` (encroachment +
     // storage-capacity fields), which is a different dataset from the Jal

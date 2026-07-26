@@ -24,7 +24,9 @@ export async function generateMetadata({
   if (!config) return { title: "Tanker market | Neer Vazhvu" };
   return {
     title: `${config.displayName} tanker market | Neer Vazhvu`,
-    description: `What households actually pay for water in ${config.displayName} - longitudinal OpenCity tanker surveys (2015 / 2019 / 2024) + 2025 follow-up.`,
+    description:
+      config.tankerSummary ??
+      `What households actually pay for water in ${config.displayName} - longitudinal OpenCity tanker surveys (2015 / 2019 / 2024) + 2025 follow-up.`,
     alternates: { canonical: `/${cityId}/tanker` },
   };
 }

@@ -40,6 +40,12 @@ const CITY_FOOTER_SOURCES: Record<
     { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
     { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
+  hyderabad: [
+    { label: "HMWSSB", href: "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx" },
+    { label: "HMDA Lakes", href: "https://lakes.hmda.gov.in/" },
+    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
+    { label: "OpenCity", href: "https://data.opencity.in/" },
+  ],
 };
 
 export function Footer() {

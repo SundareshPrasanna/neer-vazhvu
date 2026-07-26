@@ -49,6 +49,40 @@ function isSupabaseConfigured(): boolean {
 }
 
 // ---------------------------------------------------------------------------
+// Teaser-card blurbs are DERIVED from the city's declared capability flags,
+// never hardcoded. These cards used to carry Chennai's feature list verbatim
+// for every city, so Bangalore (groundwaterViews.depth = false) advertised a
+// "ward depth (interpolated)" layer it does not render, and Hyderabad
+// (waterBodies.lostBodies = false) advertised a lost-tank inventory that does
+// not exist. A teaser that promises a layer the page cannot show is a
+// correctness bug, not a copy nit. See multi-city-component-discipline.md.
+// ---------------------------------------------------------------------------
+
+function groundwaterBlurb(config: PlaceConfig): string {
+  const gw = config.groundwaterViews;
+  const parts: string[] = [];
+  if (gw?.exploitation !== false) parts.push("CGWB block exploitation");
+  if (gw?.depth) parts.push("ward depth (interpolated)");
+  if (gw?.risk) parts.push("ward risk composite");
+  // Every city surfaces observation points; the NETWORK differs. cgwbStations
+  // means the CGWB Year Book point set; otherwise it is the live WRIS overlay.
+  parts.push(
+    gw?.cgwbStations ? "CGWB Year Book station overlay" : "live WRIS station overlay",
+  );
+  return `${parts.join(", ")}.`;
+}
+
+function waterBodiesBlurb(config: PlaceConfig): string {
+  const wb = config.waterBodies;
+  const parts: string[] = ["OSM polygons"];
+  if (wb?.censusSource) parts.push("encroachment census");
+  if (wb?.rankingTab) parts.push("restoration priority badges");
+  if (wb?.wardSearch) parts.push("ward search");
+  if (wb?.lostBodies) parts.push("lost-tank inventory");
+  return `${parts.join(", ")}.`;
+}
+
+// ---------------------------------------------------------------------------
 // Optional dashboard sections (flag-gated, not cityId-gated).
 //
 // The three loaders below currently assume single-tenant tables (daily_briefing,
@@ -494,7 +528,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
             </svg>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            CGWB block exploitation, ward depth (interpolated), live WRIS station overlay.
+            {groundwaterBlurb(config)}
           </p>
         </Link>
         <Link
@@ -510,7 +544,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
             </svg>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            OSM polygons, flagship tanks, restoration priority badges, lost-tank inventory.
+            {waterBodiesBlurb(config)}
           </p>
         </Link>
         {FEATURE_AVAILABILITY[cityId]?.has("tanker") && (
@@ -527,7 +561,8 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
               </svg>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              What households actually pay - longitudinal OpenCity surveys (2015 / 2019 / 2024).
+              {config.tankerSummary ??
+                "What households actually pay - longitudinal OpenCity surveys (2015 / 2019 / 2024)."}
             </p>
           </Link>
         )}
