@@ -103,6 +103,28 @@ Still with OpenCity (restore ask trimmed accordingly): the MCD **zones** KML (11
 
 **Datum warning:** these are **terrain** bands, not flood-stage bands. Delhi's flood ladder (204.50 m warning / 205.33 m danger / 206.00 m evacuation at the Old Railway Bridge) sits on the gauge's own datum - FABDEM reads **212.15 m** at that bridge, about 7 m off. The two must not be overlaid as if they shared a datum.
 
+## DPCC drain network (39 points) - PARSED 2026-07-26
+
+| | |
+|---|---|
+| **Source** | DPCC monthly drain analysis reports, [analysis-reports listing](https://dpcc.delhi.gov.in/dpcc/analysis-reports) |
+| **Script** | `neer-vazhvu-api/scripts/extract_delhi_drain_quality.py` |
+| **File** | `public/data/delhi-drain-quality.json` |
+| **Coverage** | 2 months (2026-05, 2026-06), 73 readings, 40 with coordinates |
+
+**Why it matters.** The drain network is the verification instrument for the commitment to trap all 39 major drains by 30 June 2026: **a trapped drain reads NO FLOW**. The repo previously carried the network for a single month because the rows were hand-typed off scans, so the pollution surface had one data point.
+
+**THE ARCHIVING PROBLEM - the most important thing on this page.** DPCC's listing is a **rolling ~3-month window**. OpenCity mirrors only the CETP datasets. The Wayback Machine has **zero** captures of the analysis-report directory or the listing page (checked 2026-07-26). **A month not captured while it is listed is lost permanently.** The historical drain series was never archived by anyone and cannot be recovered; this series can only grow forward. That is why the Headwaters entry is tier 1, and it is the strongest candidate for an OpenCity mirror request.
+
+**What the parse adds beyond the hand-typed month:** the reports carry **per-drain coordinates**, which the transcription never captured. That makes the drains a mappable, ward-attributable layer, and May's positions are backfilled from June's parse by canonical name.
+
+**Handling notes:**
+
+- June 2026 has an **embedded text layer** (no OCR needed). **April and May do not** (0 text characters) - they are pure image scans and are not parsed.
+- The reports have no ruled table and records span two or three physical lines, so rows are rebuilt from word positions, with column bands derived **per page** from that page's own header (page 3 sits ~23pt right of page 1).
+- Parsed names arrive mangled by the scanner (`D rain`, `Ll Drain`, or two drains run together). They are matched against the **39 hand-typed canonical names already in `dpcc-monthly-wq-delhi.json`**; **12 fragments did not clear the threshold and are reported, not published under a guessed name**.
+- **`NO FLOW` is set only where DPCC printed it.** A row we failed to read stays null, because reporting an unread row as a trapped drain would fake the trapping programme's own result.
+
 ## CETP flows + industrial sources - ACQUIRED 2026-07-26
 
 | | |

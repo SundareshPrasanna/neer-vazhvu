@@ -158,10 +158,57 @@ export function DelhiPageDescriptions({ cityId, cityName }: Props) {
           bathing standard and leaves at Asgarpur with dissolved oxygen at nil.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
+          The drain table is more than a pollution reading: it is the verification instrument for
+          the promise to trap all 39 major drains, because a trapped drain reads
+          <strong> NO FLOW</strong>. That column is read straight from DPCC&apos;s reports, and only
+          where DPCC actually printed it - a row we could not read is left blank rather than counted
+          as a trapped drain, since that would flatter the programme with our own parsing error. The
+          reports also carry each drain&apos;s coordinates, which is what lets the network be drawn
+          on a map at all.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          One caveat about this feed deserves to be stated loudly, because it is the reason the drain
+          chart is short. <strong>Nobody archives these reports.</strong> DPCC&apos;s page lists only
+          the last three months or so, no open-data portal mirrors them, and the Internet Archive has
+          never captured that part of the site. A month that is not saved while it is listed is gone
+          permanently. The series therefore starts where our capture started and grows forward; it
+          cannot be back-filled, and we have asked for the archive to be mirrored.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
           Known gaps: the Barapullah and Shahdara drains are not mapped under those names in
-          OpenStreetMap, and the DPCC reports are scanned PDFs, so extending the series is an OCR
-          task rather than an API call. The 13 CETP monthly archives (2019-2024) are indexed with a
-          transcribed sample but not yet bulk-extracted.
+          OpenStreetMap, and some monthly reports are pure image scans with no text in them at all,
+          which the parser cannot read. Where a drain&apos;s name comes through the scan garbled, it
+          is matched against the known list of 39 and left out entirely if the match is not
+          confident - never published under a guessed name.
+        </p>
+      </SubSection>
+
+      <SubSection id="page-industrial" title="Industry and effluent">
+        <p className="text-slate-600 dark:text-slate-400">
+          Delhi cannot tell you which factory pollutes which drain, and we would rather say so than
+          imply otherwise. The Pollution Control Committee&apos;s only public register of consented
+          industrial units stops in <strong>July 2002</strong>, so there is no current list of who
+          discharges what. Nothing weaker is substituted in its place.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          What DPCC does publish every month is more useful than a list of names. For each of the 13
+          Common Effluent Treatment Plants it reports the plant&apos;s design capacity alongside the
+          effluent that actually arrived. The gap between those two numbers answers a sharper
+          question: how much of Delhi&apos;s industrial effluent reaches treatment at all. The answer
+          is <strong>about a third</strong>. Delhi built 213.8 million litres a day of treatment
+          capacity; in a median month the plants receive roughly 67. Okhla&apos;s plant runs at
+          <strong> 7%</strong> of what it was built for. The effluent is going somewhere, and it is
+          not the treatment works - and in some months DPCC&apos;s own reports record the sample as
+          having been taken at the plant&apos;s bypass.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          Read the ward-level count for what it is. It counts named industrial estates, so it means
+          the same thing here as in Bengaluru, and treatment plants are counted separately because a
+          plant is infrastructure serving an estate, not an estate. None of it is a census of
+          industry. Plant markers sit on the industrial area each plant serves rather than a surveyed
+          position, because no CETP is mapped in OpenStreetMap; one plant that we could not place at
+          all keeps its figures and is simply left off the map. These figures end in November 2024
+          and are labelled wherever they appear.
         </p>
       </SubSection>
 

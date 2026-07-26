@@ -15,9 +15,26 @@ import type {
   IndustrialPollutionData as IndustrialSourcesFile,
 } from "@/types/industrial-pollution";
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
+
 import { RiverPanel } from "@/components/rivers/river-panel";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
 import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
+/** public/data/<city>-drain-quality.json. Delhi-only today; see
+ *  neer-vazhvu-api/scripts/extract_delhi_drain_quality.py. */
+interface DrainQualityFile {
+  summary?: { months?: string[] };
+  readings: Array<{
+    name: string;
+    group: string | null;
+    lat: number | null;
+    lng: number | null;
+    month: string | null;
+    no_flow: boolean;
+    bod: number | null;
+    cod: number | null;
+  }>;
+}
+
 
 interface ClientProps {
   cityId: string;
@@ -212,6 +229,7 @@ export default function RiversClient({
   const [cpcb, setCpcb] = useState<CpcbFile | null>(null);
   const [events, setEvents] = useState<RiverEvent[]>([]);
   const [industrial, setIndustrial] = useState<IndustrialSource[]>([]);
+  const [drainFile, setDrainFile] = useState<DrainQualityFile | null>(null);
 
   useEffect(() => {
     fetch(`/geojson/${cityId}-rivers.geojson`)
@@ -268,6 +286,16 @@ export default function RiversClient({
       .then((r) => (r.ok ? (r.json() as Promise<IndustrialSourcesFile>) : null))
       .then((data) => setIndustrial(data?.sources ?? []))
       .catch(() => setIndustrial([]));
+  }, [cityId]);
+
+  // Optional monitored-drain overlay. Only Delhi publishes a drain network at
+  // this granularity today; the fetch simply 404s elsewhere and the layer
+  // stays empty, so no city gate is needed.
+  useEffect(() => {
+    fetch(`/data/${cityId}-drain-quality.json`)
+      .then((r) => (r.ok ? (r.json() as Promise<DrainQualityFile>) : null))
+      .then((data) => setDrainFile(data))
+      .catch(() => setDrainFile(null));
   }, [cityId]);
 
   // The basin carries a more accurate river line (Paani) than the OSM rivers
@@ -329,6 +357,35 @@ export default function RiversClient({
         ? industrial.filter((s) => s.rivers_affected.includes(selectedRiverId))
         : [],
     [industrial, selectedRiverId],
+  );
+
+  // Show ONE month - the most recent - rather than every reading stacked on
+  // the same point. A drain that was trapped in June but flowing in May must
+  // read as trapped now, not as two contradictory markers.
+  const drainMarkers = useMemo(() => {
+    const rows = (drainFile?.readings ?? []).filter(
+      (r) => typeof r.lat === "number" && typeof r.lng === "number",
+    );
+    if (rows.length === 0) return [];
+    const latest = rows.reduce((m, r) => (r.month && r.month > m ? r.month : m), "");
+    return rows
+      .filter((r) => r.month === latest)
+      .map((r, i) => ({
+        id: `${r.name}-${i}`,
+        name: r.name,
+        lat: r.lat as number,
+        lng: r.lng as number,
+        group: r.group,
+        noFlow: r.no_flow,
+        bod: r.bod,
+        cod: r.cod,
+        month: r.month,
+      }));
+  }, [drainFile]);
+
+  const drainMonth = useMemo(
+    () => drainMarkers[0]?.month ?? null,
+    [drainMarkers],
   );
 
   const industrialMarkers = useMemo(
@@ -408,6 +465,11 @@ export default function RiversClient({
             {rivers.length} rivers
             {cpcbStationMarkers.length > 0 && ` - ${cpcbStationMarkers.length} CPCB stations`}
             {industrialMarkers.length > 0 && ` - ${industrialMarkers.length} industrial sources`}
+            {/* The month is stated next to the count because this feed is not
+                live and the reader should not assume today's state: DPCC's
+                listing holds only a rolling few months. */}
+            {drainMarkers.length > 0 &&
+              ` - ${drainMarkers.length} monitored drains${drainMonth ? ` (${drainMonth})` : ""}`}
             {" - click for details"}
           </span>
         )}
@@ -446,6 +508,7 @@ export default function RiversClient({
             riverInfo={riverInfo}
             cpcbStations={cpcbStationMarkers}
             industrialSources={industrialMarkers}
+            drains={drainMarkers}
           />
 
           {/* Drill-down hint: shown where at least one river opens a basin atlas. */}
