@@ -446,7 +446,14 @@ export default function RiversClient({
   const cpcbStationMarkers = useMemo(() => {
     if (!cpcb) return [];
     return cpcb.rivers.flatMap((r) =>
-      r.stations.map((s) => {
+      r.stations
+        // A station without a coordinate is still published - CPCB names
+        // stations it does not geolocate, and we would rather carry the
+        // readings than drop them - but it cannot be a map marker. The drain
+        // layer already guards this way; this one did not, and a null lat
+        // crashed the whole map.
+        .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
+        .map((s) => {
         const sorted = [...s.readings].sort((a, b) => b.year - a.year);
         const latest = sorted[0] ?? null;
         return {
@@ -464,6 +471,17 @@ export default function RiversClient({
     );
   }, [cpcb]);
 
+  /** Stations we hold readings for but cannot plot, so the count can be stated
+   *  rather than the stations silently disappearing from the page. */
+  const cpcbStationsWithoutCoords = useMemo(() => {
+    if (!cpcb) return 0;
+    return cpcb.rivers.reduce(
+      (n, r) =>
+        n + r.stations.filter((s) => typeof s.lat !== "number" || typeof s.lng !== "number").length,
+      0,
+    );
+  }, [cpcb]);
+
   return (
     <div className="relative h-[calc(100vh-64px)] flex flex-col">
       {/* Stats bar */}
@@ -475,6 +493,8 @@ export default function RiversClient({
           <span className="text-xs text-slate-500 dark:text-slate-400">
             {rivers.length} rivers
             {cpcbStationMarkers.length > 0 && ` - ${cpcbStationMarkers.length} CPCB stations`}
+            {cpcbStationsWithoutCoords > 0 &&
+              ` (+${cpcbStationsWithoutCoords} without a published coordinate)`}
             {industrialMarkers.length > 0 && ` - ${industrialMarkers.length} industrial sources`}
             {/* The month is stated next to the count because this feed is not
                 live and the reader should not assume today's state: DPCC's

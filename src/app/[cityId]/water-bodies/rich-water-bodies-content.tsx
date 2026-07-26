@@ -15,6 +15,7 @@ import {
   wardProfilesUrl,
   waterBodiesCurrentUrl,
   waterBodiesLostUrl,
+  riversUrl,
 } from "@/lib/cities/data-paths";
 import { RestorationRankingTable } from "@/components/lake-restoration/restoration-ranking-table";
 import { LakeRegisterPanel } from "@/components/water-bodies/lake-register-panel";
@@ -465,6 +466,10 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
               onSelectLost={setSelected}
               focusCenter={focusCenter}
               hiddenCategories={hiddenCategories}
+              currentGeoJsonUrl={waterBodiesCurrentUrl(cityId)}
+              lostGeoJsonUrl={waterBodiesLostUrl(cityId)}
+              riversGeoJsonUrl={riversUrl(cityId)}
+              mapCenter={[config.center.lat, config.center.lng]}
             />
             <div className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${selected ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
               <UnifiedLegend
