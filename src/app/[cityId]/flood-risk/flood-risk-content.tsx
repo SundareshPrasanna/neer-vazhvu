@@ -38,8 +38,21 @@ export interface FloodConfig {
   /** Scope badge text (e.g. "Vaigai system scope", "Yamuna basin scope").
    *  Config-driven so no city's system name leaks into another city's page. */
   scope_label?: BilingualText;
-  dam_release_threshold_cusecs: number;
-  dam_release_note: BilingualText;
+  /** Dam/barrage release trigger, where the city HAS one. Optional: Kolkata's
+   *  flood risk is drainage-capacity-driven, not release-driven - it impounds
+   *  nothing and there is no upstream gate to watch. A city without these
+   *  renders `primary_trigger` instead. */
+  dam_release_threshold_cusecs?: number;
+  dam_release_note?: BilingualText;
+  /** The headline trigger for cities with no dam. Generic on purpose: the
+   *  value + unit + note shape fits any threshold a city actually has
+   *  (mm/hour of rainfall for Kolkata, and whatever the next city carries). */
+  primary_trigger?: {
+    value: number;
+    unit: BilingualText;
+    label: BilingualText;
+    note: BilingualText;
+  };
   historical_events: HistoricalEvent[];
   external_sources: ExternalSource[];
   data_gaps: BilingualText[];
@@ -88,20 +101,24 @@ export function FloodRiskContent({
         </p>
       </header>
 
-      <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/40 dark:bg-blue-950/20">
-        <CardContent className="space-y-2">
-          <div className="text-xs uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">
-            {t("flood.dam_threshold_label")}
-          </div>
-          <div className="text-3xl sm:text-4xl font-bold tracking-tight">
-            ~{cfg.dam_release_threshold_cusecs.toLocaleString()}
-            <span className="text-base font-normal text-slate-400 ml-1">{t("flood.cusecs")}</span>
-          </div>
-          <p className="text-sm text-slate-700 dark:text-slate-300">
-            {pick(cfg.dam_release_note)}
-          </p>
-        </CardContent>
-      </Card>
+      {(cfg.dam_release_threshold_cusecs != null || cfg.primary_trigger) && (
+        <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/40 dark:bg-blue-950/20">
+          <CardContent className="space-y-2">
+            <div className="text-xs uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">
+              {cfg.primary_trigger ? pick(cfg.primary_trigger.label) : t("flood.dam_threshold_label")}
+            </div>
+            <div className="text-3xl sm:text-4xl font-bold tracking-tight">
+              ~{(cfg.primary_trigger?.value ?? cfg.dam_release_threshold_cusecs ?? 0).toLocaleString()}
+              <span className="text-base font-normal text-slate-400 ml-1">
+                {cfg.primary_trigger ? pick(cfg.primary_trigger.unit) : t("flood.cusecs")}
+              </span>
+            </div>
+            <p className="text-sm text-slate-700 dark:text-slate-300">
+              {cfg.primary_trigger ? pick(cfg.primary_trigger.note) : pick(cfg.dam_release_note!)}
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardContent className="space-y-3">
