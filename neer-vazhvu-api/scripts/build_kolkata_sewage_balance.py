@@ -142,9 +142,36 @@ UPCOMING_STPS = [
         "completion_pct": None,
         "timeline_text": "Not yet finalized",
         "due": None,
-        # No coordinates in the source - this plant is a proposal, not a site.
+        # No coordinates in the source - in 2021 this plant was a proposal, not
+        # a site. The 2026 update below supplies them.
         "lat": None,
         "lng": None,
+        # WHAT HAPPENED NEXT, from a primary document five years later. The 2021
+        # figures above are left EXACTLY as transcribed - they are what KMC
+        # filed, and the 280.06 MLD checksum depends on them. This block records
+        # the current state separately rather than editing history.
+        "update_2026": {
+            "as_of": "2026-02-24",
+            "capacity_mld": 41,
+            "site": "Anandapur, Ward 108, Borough XII (adjacent to the existing Anandapur pumping station)",
+            "technology": "Sequencing batch reactor (SBR)",
+            "programme": "KMC SHARP (ADB project 56287-001), package KMC SHARP/OCB/SD 04/2025-26",
+            "land": "3.781 acres available, 2.66 acres allocated; KMDA-owned, currently a non-operational oxidation pond",
+            "effluent_to": "Lead Channel D-D1, to NGT effluent standards",
+            "schedule": "Bids invited March 2026; 3.5-year design-and-construction period, then 15 years O&M",
+            "site_moved_from": (
+                "Originally sited at Hossainpur in the SAME ward under the same package, with a "
+                "draft IEE disclosed via ADB in 2024. Relocated after legal litigation made that "
+                "land parcel unavailable; the new site is within 2.5 km."
+            ),
+            "note_on_double_counting": (
+                "The 'Hossainpur 41 MLD STP' and the 'Anandapur 41 MLD STP' in ADB's document "
+                "library are the SAME plant, relocated - not two plants. Counting both would "
+                "invent 41 MLD of capacity."
+            ),
+            "source_url": "https://www.keiip.in/kmcsharp_report.html",
+            "source_label": "KMC/ADB, Updated Initial Environmental Examination, 24 Feb 2026",
+        },
     },
     {
         "name": "STP Near L.S 10",
@@ -314,6 +341,62 @@ def build_commitments() -> dict:
                 "ledger_id": None,
             }
         )
+    # The Borough-XII plant carried no deadline in 2021 ("not yet finalized"),
+    # so it never became a tracked commitment. A February 2026 ADB-disclosed IEE
+    # gives it one - which is exactly the dated citation the register requires
+    # before a status can move.
+    u = next(
+        (s["update_2026"] for s in UPCOMING_STPS if s.get("update_2026")), None
+    )
+    if u:
+        commitments.append(
+            {
+                "id": "stp-anandapur-borough-xii",
+                "category": "Sewage treatment",
+                "title": f"Commission the {u['capacity_mld']} MLD STP at Anandapur, Ward 108",
+                "committed_by": "Kolkata Municipal Corporation / KMC SHARP, financed by the Asian Development Bank",
+                "what": (
+                    f"KMC's 2021 Environment Plan listed a 70 MLD plant for Borough-XII with no "
+                    f"timeline, to be built 'based on implementation of future loan or from own "
+                    f"resources'. The loan arrived: this is now a {u['capacity_mld']} MLD "
+                    f"{u['technology']} plant under {u['programme']}, with {u['schedule'].lower()}. "
+                    f"{u['site_moved_from']} It is being built on {u['land'].split(';')[1].strip()}, "
+                    f"discharging to {u['effluent_to']}."
+                ),
+                # Bids March 2026 + a 3.5-year design-and-construction period.
+                "due": "2029-09-30",
+                "revised_due": None,
+                "commitment_source": {
+                    "label": u["source_label"],
+                    "url": u["source_url"],
+                    "date": u["as_of"],
+                },
+                "status": "on-track",
+                "status_history": [
+                    {
+                        "date": SOURCE["document_date"],
+                        "status": "unverified",
+                        "note": "Listed at 70 MLD for Borough-XII with no timeline and no committed funding",
+                        "source_label": SOURCE["document"],
+                        "source_url": SOURCE["url"],
+                    },
+                    {
+                        "date": u["as_of"],
+                        "status": "on-track",
+                        "note": (
+                            f"Financed and scheduled: {u['capacity_mld']} MLD at Anandapur, bids "
+                            f"March 2026, 3.5-year build. Capacity is 41 MLD, not the 70 MLD "
+                            f"proposed in 2021, and the site moved after litigation."
+                        ),
+                        "source_label": u["source_label"],
+                        "source_url": u["source_url"],
+                    },
+                ],
+                "next_check": "2026-10-01",
+                "ledger_id": None,
+            }
+        )
+
     return {
         "place_id": "kolkata",
         "updated": date.today().isoformat(),

@@ -209,6 +209,26 @@
       ],
       "refreshMethod": "WATCH - not yet published",
       "notes": "THE MOST CONSEQUENTIAL PENDING SOURCE FOR KOLKATA. KMC has commissioned a fresh borough-by-borough water-body inventory to replace the departmental tank list compiled in 1993 plus a 2004 NRSA aerial map. Until it lands, every official Kolkata pond count rests on a 33-year-old document and the published counts for 2006 alone range from 3,873 to 8,731. When this publishes it supersedes the 1993 baseline and re-bases the lost-water-bodies work."
+    },
+    {
+      "id": "keiip-kmcsharp-reports",
+      "scope": "kolkata",
+      "publisher": "KEIIP / KMC SHARP (Kolkata Municipal Corporation, financed by ADB)",
+      "url": "https://www.keiip.in/kmcsharp_report.html",
+      "license": "ADB-disclosed safeguard documents, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "irregular",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "IEE|SEMR|SSEMP|rp-en|sddr|iee-en"
+      },
+      "dependsOn": [
+        "public/data/kolkata-sewage-balance.json",
+        "public/data/commitments-kolkata.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py after reading the new IEE)",
+      "notes": "THE live source for Kolkata's sewerage programme, and the reason the Borough-XII STP moved from 'unverified' to 'on-track'. ADB-disclosed IEEs carry dated, primary status for each package. GOTCHA: the same plant appears under two names - the 41 MLD STP is documented at BOTH Hossainpur and Anandapur because it was relocated after litigation, same ward, same package SD 04. Counting both invents 41 MLD. The safeguard documents do NOT carry the storm-water design standard in mm/hour (checked the Anandapur and Hossainpur IEEs); that needs a DPR or drainage master plan, so the 6 mm/h hero gate stays open."
     }
   ]
 }
