@@ -14,7 +14,11 @@
         "method": "page-hash",
         "selector": "#gv_showlakes"
       },
-      "dependsOn": [],
+      "dependsOn": [
+        "public/data/hyderabad-lake-register.json",
+        "public/data/water-bodies-flagship-hyderabad.json",
+        "public/data/restoration-priority-hyderabad.json"
+      ],
       "refreshMethod": "manual (re-parse the register; new final-notification dates are the signal)",
       "notes": "The gazetted lake register for the Hyderabad Metropolitan Region. The ENTIRE register renders in a single 4.2 MB ASP.NET GridView on the landing page - no paging - so the grid's own text hash is the edition signal. Baseline 2026-07-26: 2,978 lake rows; preliminary notification on 100%; FINAL notification on only 1,352 (45.4%), leaving 1,626 lakes with no legally settled boundary. Final notifications by year: 2016:152, 2017:10, 2019:60, 2020:2, 2021:3, 2023:2, 2024:533, 2025:533, 2026:57 - the 2024-25 surge coincides with HYDRAA's creation, so this hash firing usually means a new batch of lakes became legally defensible. Per-lake FTL/cadastral/buffer sheets behind the grid are SCANNED RASTER PDFs (pdftotext yields zero characters); the tractable extraction is OCR of the fixed-position LAKE DETAILS title block, not polygon digitisation."
     },
@@ -31,7 +35,9 @@
         "method": "link-set",
         "linkPattern": "/download/.*\\.csv"
       },
-      "dependsOn": [],
+      "dependsOn": [
+        "public/data/hyderabad-tankers.json"
+      ],
       "refreshMethod": "manual (new monthly CSV -> tanker fulfilment series)",
       "notes": "Monthly tanker BOOKINGS and DELIVERIES per HMWSSB division and section - schema year,month,division,section,noofbookings,delivered. This is the feedstock for a booking-to-delivery fulfilment rate by locality, a metric no other city on the platform can produce: Bengaluru's tanker page rests on household surveys because that market is private and RTI-gated, whereas HMWSSB runs the fleet itself. Baseline 2026-07-26: 26 CSVs, Jan 2022 to Feb 2024. THE SERIES HAS STALLED - a new link firing here is exactly the event we want, since it means the gap after Feb 2024 is being filled. Pattern scoped to /download/*.csv (bare .csv would catch CKAN nav junk)."
     },
@@ -48,7 +54,9 @@
         "method": "link-set",
         "linkPattern": "(Annual_Weather_Report|Statistical_Abstract).*\\.pdf"
       },
-      "dependsOn": [],
+      "dependsOn": [
+        "public/data/imd-rainfall-monthly-hyderabad.json"
+      ],
       "refreshMethod": "manual (annual report -> rainfall context and normals cross-check)",
       "notes": "TGDPS runs the state hydro-met network: 1,097 AWS reporting statewide on 25-Jul-2026, of which 185 sit inside GHMC_CMC_MMC. The live per-station endpoint (values.jsp?s1=<awsId>, returning location, mandal, lat/long, daily cumulative rainfall, temperature, humidity, wind) is the daily feed and is covered by the freshness registry once it lands, not here. This entry watches only the ANNUAL publications. Pattern verified 2026-07-26: matches 4 links (Annual_Weather_Report_2023/2024, Statistical_Abstract_2020/2021); a bare .pdf pattern would catch the daily-weather-report and district PDFs that change constantly."
     },
@@ -56,7 +64,7 @@
       "id": "cpcb-prs-musi",
       "scope": "hyderabad",
       "publisher": "CPCB",
-      "url": "https://cpcb.nic.in/polluted-river-stretches.php",
+      "url": "https://cpcb.gov.in/polluted-river-stretches/",
       "license": "Government of India publication, cited with attribution",
       "type": "pdf-listing",
       "cadence": "episodic (programme editions and action-plan updates)",
@@ -65,10 +73,11 @@
         "method": "link-set",
         "linkPattern": "\\.pdf"
       },
-      "dependsOn": [],
+      "dependsOn": [
+        "public/data/river-quality-hyderabad.json"
+      ],
       "refreshMethod": "manual (PRS edition -> Musi river-quality panel)",
-      "notes": "The Musi is the reason this is tier 1: it is Hyderabad's signature river-pollution story and CPCB's Polluted River Stretches programme is the canonical national classification. NOT YET BASELINED - see ciBlocked. TGPCB has since been PROBED (2026-07-26) and is fully reachable: see tgpcb-ngt-oa606-musi. It carries the NGT OA 606/2018 quarterly reports and River Rejuvenation Committee minutes, so the Musi may not need CPCB at all - but those PDFs are scanned rasters, so the blocker changes from network access to OCR. Musi river-quality numbers still have no primary source in the repo and must not be published until one is extracted.",
-      "ciBlocked": "cpcb.nic.in is on NICNET (164.100.x.x) and refuses TCP from non-India IPs - verified 2026-07-26 from this network (connection failed, HTTP 000). Runs from the India-IP path (the local scheduled-job pattern used for CMWSSB/Pravah/KWRIS), never from CI runners."
+      "notes": "The Musi is CPCB Priority-I and this is the canonical national classification. CORRECTION 2026-07-26: this entry previously carried a ciBlocked note claiming CPCB refuses non-India IPs. That was WRONG - the wrong HOSTNAME was being probed. cpcb.nic.in (164.100.58.91) has ports 80 and 443 filtered, but CPCB serves everything on cpcb.gov.in, which answers 200 in ~0.7s from this network. No India-IP runner is needed. Musi quality currently ships from the state board's own NGT return (see tgpcb-ngt-oa606-musi); this entry watches the PRS classification itself, and the CPCB NWMP series at cpcb.gov.in/nwmp-data/ is now reachable and unexploited."
     },
     {
       "id": "tgpcb-ngt-oa606-musi",
@@ -83,7 +92,9 @@
         "method": "link-set",
         "linkPattern": "\\.pdf"
       },
-      "dependsOn": [],
+      "dependsOn": [
+        "public/data/river-quality-hyderabad.json"
+      ],
       "refreshMethod": "manual (OCR of scanned quarterlies -> Musi river-quality panel)",
       "notes": "BASELINED 2026-07-26 and now the primary source for Musi water quality - obtained WITHOUT CPCB access. tspcb.cgg.gov.in JS-redirects to tgpcb.cgg.gov.in (renamed with the state); hosted on cgg.gov.in rather than NICNET, which is why the CPCB block does not reach it. Annexure-VIII of the 1st Quarterly Report 2022-23 (Chief Secretary cover letter 01-08-2022) carries CPCB NWMP station codes and monthly DO/pH/conductivity/BOD/total-coliform/free-ammonia/boron/SAR for Jan-Mar 2022 across six state stretches. Musi stations: Gandipet 1172, Nagole 2339, Pratapasingaram 1173, Kasaniguda 3082. EXTRACTION IS OCR: the PDF is a 204-page scanned raster (0 extractable chars, 631 images); rendered at 400 dpi, tesseract --psm 1 for auto-rotation, then every row eyeballed against the page image - OCR misread one BOD (2.3 vs the printed 2.8). Only the Q1 2022-23 edition is linked from the homepage; filename guesses for other quarters 404, so a listing page is the next thing to find. The CETP monitoring links on /Home/Cetps (including PETL, Patancheru) are all DEAD - 404 on both hosts, link rot from the TSPCB->TGPCB migration."
     },
@@ -100,7 +111,8 @@
         "method": "page-hash"
       },
       "dependsOn": [
-        "neer-vazhvu-api/scripts/scrape_hmwssb_reservoirs.py"
+        "neer-vazhvu-api/scripts/scrape_hmwssb_reservoirs.py",
+        "supabase:reservoir_daily_v2"
       ],
       "refreshMethod": "daily scrape (scrape_hmwssb_reservoirs.py -> reservoir_daily_v2)",
       "notes": "TIER 0 - the load-bearing feed for the whole city and the richest reservoir source on the platform: level, storage AND draw-off per source EVERY day, with an archive back to 2014, which is why Hyderabad can run the full interactive days-left hero rather than Mumbai's collapsed variant. Lands in the multi-city reservoir_daily_v2 table (city_id=hyderabad) rather than a repo file, so dependsOn names the scraper. Eight sources tracked; the Krishna chain (Akkampally / Nagarjuna Sagar / Srisailam) is double-counted upstream-to-downstream so city_draw_mld() takes max() across the chain and sums the independents. GOTCHA recorded in reference_hmwssb_reservoir_feed: the 'Total(1 to 5)' row is mislabelled. Until the DB apply lands the dashboard shows 'HMWSSB does not publish daily levels for this source' x8, which is FALSE - the feed publishes all eight daily."
