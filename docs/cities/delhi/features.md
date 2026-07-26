@@ -74,9 +74,18 @@ Delhi has **no public flood model** - no CFLOWS/iFLOWS equivalent - so the model
 
 Four-chapter long-read with four Wikimedia Commons images (PD/CC, per-file provenance in `public/images/story/delhi/MANIFEST.json`): the thousand-year stored-water city (Anangpur → Hauz-i-Shamsi → Nahar-i-Behisht), the colonial unmaking, the five-state straw, and the instrumented decline. English at launch; Hindi follows the i18n pass.
 
-### Known gap: industrial attribution
+### Industrial: the treatment gap, not a register
 
-Delhi can name its pollution problem but cannot yet attribute it. DPCC's only public consent register is `consentapplicationstatus1991-july_2002.pdf`, stale by 24 years, so there is no current per-unit industrial denominator of the kind KSPCB's F-register provides for Bengaluru. `industrial` therefore stays `not_available` across all 250 wards rather than being filled with a weaker proxy. This is the main thing standing between the DPCC drain readings and naming who discharges into which drain, and it is what makes the 39-drain trapping commitment hard to verify beyond "the drain still flows".
+DPCC's only public consent register ends in **July 2002**, so Delhi has no current per-unit denominator of the kind KSPCB's F-register gives Bengaluru. Rather than substitute a weaker proxy, the layer answers a different and sharper question, using data DPCC does publish monthly: **how much industrial effluent reaches treatment at all.**
+
+- **13 CETPs, 709 readings, 2019-2024**, OCR-extracted from DPCC's scanned monthly analysis reports (`extract_delhi_cetp_flows.py`). The archive had been indexed but never opened because the PDFs are image scans.
+- **Delhi built 213.8 MLD of common effluent treatment capacity and receives about a third of it in a median month.** Okhla runs at **7%** of design, Wazirpur 11%, Lawrence Road 13%; only Bawana (66%) and Mangolpuri (68%) clear half. The effluent is going somewhere, and it is not the works.
+- Some 2019 reports name the sampling location as **"BYPASS OF CETP"**, recorded as a field.
+- **22 named industrial estates** carry the ward `zone_count`, so it means the same thing as Bengaluru's. CETPs are counted separately (`cetp_count`): a treatment plant is infrastructure serving an estate, not an estate, and folding the two together would inflate ward comparisons. **18 wards** now carry industrial data where all 250 previously read `not_available`.
+- The series **ends November 2024** and is archival. The caveat renders directly beneath the figures rather than in About, and travels with the data so a component edit cannot lose it.
+- What this layer is *not*: a census of industry or a list of polluters. It measures the gap between built treatment capacity and effluent received. Naming individual dischargers still needs a register that does not currently exist.
+
+Extraction discipline (median over mean, a hand-transcribed validation page, unresolved names surfaced rather than guessed) is recorded in [data-sources.md](data-sources.md); the reusable recipe is in [the pan-India playbook](../../methodology/pan-india-source-playbook.md).
 
 ### Deliberately not shipped for Delhi V1
 

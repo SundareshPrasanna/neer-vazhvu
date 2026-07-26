@@ -43,6 +43,12 @@ interface Props {
   loading: boolean;
 }
 
+/* Cities with their own groundwater-source citation. The unsuffixed key
+   names Tamil Nadu's Year Book, which is right for Chennai and Madurai and
+   WRONG for everyone else - Delhi was citing Tamil Nadu in production until
+   2026-07-26. Add a city here the moment it gets its own groundwater source. */
+const CITY_GW_SOURCE_KEYS = new Set(["bangalore", "mumbai", "delhi"]);
+
 export function WardGroundwaterCard({ wardNumber, groundwater, profile, loading }: Props) {
   const { cityId } = useMyWardCity();
   const { t } = useLanguage();
@@ -299,7 +305,7 @@ function CgwbAssessmentCard({
         {/* Explanatory notes */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 space-y-0.5 border-t border-slate-100 dark:border-slate-800 pt-2">
           <p>{t("my_ward.gw_block_note")}</p>
-          <p>{t(cityId === "bangalore" || cityId === "mumbai" ? `my_ward.gw_source_cgwb_yearbook_${cityId}` : "my_ward.gw_source_cgwb_yearbook")}</p>
+          <p>{t(CITY_GW_SOURCE_KEYS.has(cityId) ? `my_ward.gw_source_cgwb_yearbook_${cityId}` : "my_ward.gw_source_cgwb_yearbook")}</p>
         </div>
       </CardContent>
     </Card>

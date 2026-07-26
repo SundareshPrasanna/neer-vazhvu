@@ -1,0 +1,664 @@
+{
+  "last_updated": "2026-07-26",
+  "source": "CETP design capacity and measured flow: Delhi Pollution Control Committee monthly analysis reports (OCR-extracted, see delhi-cetp-flows.json). Locations: OpenStreetMap contributors (ODbL), via Overpass.",
+  "_note": "Delhi's industrial layer carries two types. `industrial_estate` are named industrial areas, so the per-ward zone count means what it means in other cities. `cetp` are the 13 common effluent treatment plants, which carry the evidence: DPCC publishes each plant's design capacity and measured monthly inflow, and the shortfall between them is how much industrial effluent never reaches treatment. Delhi has no current per-unit register of polluters - DPCC's only public consent list ends in July 2002 - so this layer measures the treatment gap, not individual dischargers, and should not be read as a census of industry.",
+  "_coordinates": "No CETP is mapped in OpenStreetMap. Plant markers sit on the industrial area or locality each plant serves, never a surveyed plant position; every entry records `location_precision` (industrial_area / locality / road / none). SMA CETP has no coordinate at all and is excluded from the map.",
+  "_archival": "NOT a live feed. The DPCC CETP series ends November 2024. Surfaces showing these numbers must say so next to the figure.",
+  "summary": {
+    "cetps": 13,
+    "cetps_located": 12,
+    "industrial_estates": 22,
+    "total_located": 34
+  },
+  "sources": [
+    {
+      "id": "dl-wazirpur-cetp",
+      "name": "Wazirpur CETP",
+      "type": "cetp",
+      "lat": 28.6994,
+      "lng": 77.1667,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [
+        "yamuna"
+      ],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 24.0,
+      "median_utilisation_pct": 11.1,
+      "months_observed": 54,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 5.32,
+      "location_precision": "industrial_area",
+      "location_source": "OSM locality 'Wazirpur Industrial Area'",
+      "description": "Common effluent treatment plant for the Wazirpur industrial area. Design capacity 24 MLD; measured inflow averaged 11.1% of it across 50 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-bawana-cetp",
+      "name": "Bawana CETP",
+      "type": "cetp",
+      "lat": 28.792,
+      "lng": 77.0533,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [
+        "najafgarh"
+      ],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 35.0,
+      "median_utilisation_pct": 65.6,
+      "months_observed": 53,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 25.38,
+      "location_precision": "industrial_area",
+      "location_source": "OSM 'Bawana Industrial Area'",
+      "description": "Common effluent treatment plant for the Bawana industrial area. Design capacity 35 MLD; measured inflow averaged 65.6% of it across 49 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-badli-cetp",
+      "name": "Badli CETP",
+      "type": "cetp",
+      "lat": 28.7464,
+      "lng": 77.1313,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 12.0,
+      "median_utilisation_pct": 17.9,
+      "months_observed": 55,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 2.82,
+      "location_precision": "industrial_area",
+      "location_source": "OSM 'Badli Industrial Area Phase 2'",
+      "description": "Common effluent treatment plant for the Badli industrial area. Design capacity 12 MLD; measured inflow averaged 17.9% of it across 43 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-g-t-karnal-road-cetp",
+      "name": "G.T. Karnal Road CETP",
+      "type": "cetp",
+      "lat": 28.6951,
+      "lng": 77.1858,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 6.0,
+      "median_utilisation_pct": 36.5,
+      "months_observed": 53,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 2.42,
+      "location_precision": "industrial_area",
+      "location_source": "OSM 'GT Karnal Road Industrial Area'",
+      "description": "Common effluent treatment plant for the G.T. Karnal Road industrial area. Design capacity 6 MLD; measured inflow averaged 36.5% of it across 47 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-mayapuri-cetp",
+      "name": "Mayapuri CETP",
+      "type": "cetp",
+      "lat": 28.6293,
+      "lng": 77.1263,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [
+        "najafgarh"
+      ],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 12.0,
+      "median_utilisation_pct": 29.2,
+      "months_observed": 55,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 3.99,
+      "location_precision": "industrial_area",
+      "location_source": "OSM 'Mayapuri Industrial Area 1'",
+      "description": "Common effluent treatment plant for the Mayapuri industrial area. Design capacity 12 MLD; measured inflow averaged 29.2% of it across 51 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-naraina-cetp",
+      "name": "Naraina CETP",
+      "type": "cetp",
+      "lat": 28.6321,
+      "lng": 77.1371,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [
+        "najafgarh"
+      ],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 21.6,
+      "median_utilisation_pct": 21.1,
+      "months_observed": 52,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 3.8,
+      "location_precision": "industrial_area",
+      "location_source": "OSM 'Naraina Industrial Area - I'",
+      "description": "Common effluent treatment plant for the Naraina industrial area. Design capacity 21.6 MLD; measured inflow averaged 21.1% of it across 44 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-narela-cetp",
+      "name": "Narela CETP",
+      "type": "cetp",
+      "lat": 28.8298,
+      "lng": 77.103,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [
+        "najafgarh"
+      ],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 24.0,
+      "median_utilisation_pct": 44.0,
+      "months_observed": 56,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 7.66,
+      "location_precision": "industrial_area",
+      "location_source": "OSM 'Narela Industrial Complex'",
+      "description": "Common effluent treatment plant for the Narela industrial area. Design capacity 24 MLD; measured inflow averaged 44% of it across 52 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-okhla-cetp",
+      "name": "Okhla CETP",
+      "type": "cetp",
+      "lat": 28.5364,
+      "lng": 77.2748,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [
+        "yamuna"
+      ],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 24.0,
+      "median_utilisation_pct": 7.0,
+      "months_observed": 55,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 1.07,
+      "location_precision": "industrial_area",
+      "location_source": "OSM 'Okhla Phase - II' (of three phases)",
+      "description": "Common effluent treatment plant for the Okhla industrial area. Design capacity 24 MLD; measured inflow averaged 7% of it across 48 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-nangloi-cetp",
+      "name": "Nangloi CETP",
+      "type": "cetp",
+      "lat": 28.6787,
+      "lng": 77.0672,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [
+        "najafgarh"
+      ],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 12.0,
+      "median_utilisation_pct": 24.4,
+      "months_observed": 56,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 3.28,
+      "location_precision": "locality",
+      "location_source": "OSM locality 'Nangloi'",
+      "description": "Common effluent treatment plant for the Nangloi industrial area. Design capacity 12 MLD; measured inflow averaged 24.4% of it across 50 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-jhilmil-cetp",
+      "name": "Jhilmil CETP",
+      "type": "cetp",
+      "lat": 28.6698,
+      "lng": 77.3073,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [
+        "yamuna"
+      ],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 16.8,
+      "median_utilisation_pct": 26.5,
+      "months_observed": 54,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 5.01,
+      "location_precision": "locality",
+      "location_source": "OSM neighbourhood 'Jhilmil Colony'",
+      "description": "Common effluent treatment plant for the Jhilmil industrial area. Design capacity 16.8 MLD; measured inflow averaged 26.5% of it across 48 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-mangolpuri-cetp",
+      "name": "Mangolpuri CETP",
+      "type": "cetp",
+      "lat": 28.6837,
+      "lng": 77.0915,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [
+        "najafgarh"
+      ],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 2.4,
+      "median_utilisation_pct": 67.5,
+      "months_observed": 53,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 1.5,
+      "location_precision": "locality",
+      "location_source": "OSM 'Mangolpuri'",
+      "description": "Common effluent treatment plant for the Mangolpuri industrial area. Design capacity 2.4 MLD; measured inflow averaged 67.5% of it across 45 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-lawrence-road-cetp",
+      "name": "Lawrence Road CETP",
+      "type": "cetp",
+      "lat": 28.6928,
+      "lng": 77.1582,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 12.0,
+      "median_utilisation_pct": 12.5,
+      "months_observed": 53,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 2.03,
+      "location_precision": "road",
+      "location_source": "OSM highway 'Lawrence Road'",
+      "description": "Common effluent treatment plant for the Lawrence Road industrial area. Design capacity 12 MLD; measured inflow averaged 12.5% of it across 46 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works."
+    },
+    {
+      "id": "dl-sma-industrial-area-cetp",
+      "name": "SMA Industrial Area CETP",
+      "type": "cetp",
+      "lat": null,
+      "lng": null,
+      "operator": "Delhi Pollution Control Committee (monitoring); plant operated by the industrial-area society",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent",
+        "cod",
+        "bod",
+        "heavy_metals"
+      ],
+      "design_capacity_mld": 12.0,
+      "median_utilisation_pct": 22.6,
+      "months_observed": 49,
+      "latest_month": "2024-11",
+      "latest_flow_mld": 2.76,
+      "location_precision": "none",
+      "location_source": "not in OSM under 'SMA' or 'Shahzada Bagh'",
+      "description": "Common effluent treatment plant for the SMA Industrial Area industrial area. Design capacity 12 MLD; measured inflow averaged 22.6% of it across 45 monitored months (DPCC, 2019-04 to 2024-11). Utilisation well under 100% means industrial effluent is not reaching the works.",
+      "_data_status": "not_located",
+      "_data_status_note": "Flow series retained; excluded from the map because the plant's industrial area is not in OpenStreetMap. Not placed by guesswork."
+    },
+    {
+      "id": "dl-anand-parvat-industrial-area",
+      "name": "Anand Parvat Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.6643,
+      "lng": 77.1758,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-badli-industrial-area-phase-2",
+      "name": "Badli Industrial Area Phase 2",
+      "type": "industrial_estate",
+      "lat": 28.7464,
+      "lng": 77.1313,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-bawana-industrial-area",
+      "name": "Bawana Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.792,
+      "lng": 77.0533,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-dlf-industrial-area",
+      "name": "DLF Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.6567,
+      "lng": 77.1426,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-doctor-lohia-industrial-area",
+      "name": "Doctor Lohia Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.6809,
+      "lng": 77.147,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-gt-karnal-road-industrial-area",
+      "name": "GT Karnal Road Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.6951,
+      "lng": 77.1858,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-kirti-nagar-industrial-area",
+      "name": "Kirti Nagar Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.6507,
+      "lng": 77.1467,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-mayapuri-industrial-area-i",
+      "name": "Mayapuri Industrial Area I",
+      "type": "industrial_estate",
+      "lat": 28.6293,
+      "lng": 77.1263,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-mayapuri-industrial-area-ii",
+      "name": "Mayapuri Industrial Area II",
+      "type": "industrial_estate",
+      "lat": 28.6187,
+      "lng": 77.1183,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-moti-nagar-industrial-area",
+      "name": "Moti Nagar Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.6573,
+      "lng": 77.1485,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-mundka-industrial-area",
+      "name": "Mundka Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.6834,
+      "lng": 77.0171,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-naraina-industrial-area-i",
+      "name": "Naraina Industrial Area I",
+      "type": "industrial_estate",
+      "lat": 28.6321,
+      "lng": 77.1371,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-naraina-industrial-area-ii",
+      "name": "Naraina Industrial Area II",
+      "type": "industrial_estate",
+      "lat": 28.6444,
+      "lng": 77.146,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-narela-industrial-complex",
+      "name": "Narela Industrial Complex",
+      "type": "industrial_estate",
+      "lat": 28.8298,
+      "lng": 77.103,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-okhla-industrial-area-phase-i",
+      "name": "Okhla Industrial Area Phase I",
+      "type": "industrial_estate",
+      "lat": 28.5239,
+      "lng": 77.279,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-okhla-industrial-area-phase-ii",
+      "name": "Okhla Industrial Area Phase II",
+      "type": "industrial_estate",
+      "lat": 28.5364,
+      "lng": 77.2748,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-okhla-industrial-area-phase-iii",
+      "name": "Okhla Industrial Area Phase III",
+      "type": "industrial_estate",
+      "lat": 28.5514,
+      "lng": 77.2702,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-patparganj-industrial-area",
+      "name": "Patparganj Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.6209,
+      "lng": 77.2874,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-rajasthani-udyog-nagar",
+      "name": "Rajasthani Udyog Nagar",
+      "type": "industrial_estate",
+      "lat": 28.7259,
+      "lng": 77.1597,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-tilak-nagar-industrial-area",
+      "name": "Tilak Nagar Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.6417,
+      "lng": 77.1048,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-udyog-nagar",
+      "name": "Udyog Nagar",
+      "type": "industrial_estate",
+      "lat": 28.681,
+      "lng": 77.0808,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    },
+    {
+      "id": "dl-wazirpur-industrial-area",
+      "name": "Wazirpur Industrial Area",
+      "type": "industrial_estate",
+      "lat": 28.6994,
+      "lng": 77.1667,
+      "operator": "DSIIDC / estate associations",
+      "rivers_affected": [],
+      "pollutants": [
+        "industrial_effluent"
+      ],
+      "location_precision": "industrial_area",
+      "location_source": "OpenStreetMap contributors (ODbL), via Overpass, named landuse=industrial or place polygon",
+      "description": "Named industrial estate inside the NCT. Counted in the ward industrial zone count; effluent load is not separately published per estate."
+    }
+  ]
+}
