@@ -257,32 +257,39 @@ def build_balance() -> dict:
 
 
 def build_commitments() -> dict:
-    """The two Joka/M.G Road plants are a ready-made Commitments Register set:
-    a December 2021 document recording 17% and 14% completion against a March
-    2022 timeline. Dated citation, dated deadline, verifiable slippage."""
+    """Shape fixed by src/app/[cityId]/commitments/commitments-client.tsx.
+    `status` must be one of the six tracked values - there is no "unknown".
+    The honest value for these is `unverified`: the platform's rule is that a
+    status only changes with a dated citation, and we have none for what
+    happened after December 2021."""
     commitments = []
     for stp in UPCOMING_STPS:
         if not stp["due"]:
             continue
+        slug = (
+            stp["name"].lower().replace(" ", "-").replace(",", "").replace("(", "").replace(")", "")
+        )[:40].strip("-")
         commitments.append(
             {
-                "id": f"stp-{stp['name'].lower().replace(' ', '-').replace(',', '')[:40]}",
+                "id": f"stp-{slug}",
                 "category": "Sewage treatment",
                 "title": f"Commission the {stp['capacity_mld']} MLD STP at {stp['name']}",
                 "committed_by": f"Kolkata Municipal Corporation / KEIIP ({stp['programme']})",
                 "what": (
                     f"KMC's District Environment Plan 2021 records this plant at "
                     f"{stp['completion_pct']}% completion with a stated timeline of "
-                    f"{stp['timeline_text']} - a deadline already less than four months "
-                    f"away when the plan was filed on 1 December 2021."
+                    f"{stp['timeline_text']} - a deadline already less than four months away "
+                    f"when the plan was filed on 1 December 2021. No later public document "
+                    f"confirming completion or re-dating has been found."
                 ),
                 "due": stp["due"],
+                "revised_due": None,
                 "commitment_source": {
                     "label": f"{SOURCE['publisher']}, {SOURCE['document']}, p.29",
                     "url": SOURCE["url"],
                     "date": SOURCE["document_date"],
                 },
-                "status": "unknown",
+                "status": "unverified",
                 "status_history": [
                     {
                         "date": SOURCE["document_date"],
@@ -290,13 +297,21 @@ def build_commitments() -> dict:
                         "note": f"{stp['completion_pct']}% complete against a {stp['timeline_text']} timeline",
                         "source_label": SOURCE["document"],
                         "source_url": SOURCE["url"],
-                    }
+                    },
+                    {
+                        "date": date.today().isoformat(),
+                        "status": "unverified",
+                        "note": (
+                            "Deadline is four years past. No KEIIP or KMC document confirming "
+                            "commissioning, slippage or a revised date has been located, so the "
+                            "status cannot move to delivered or overdue without inventing evidence."
+                        ),
+                        "source_label": None,
+                        "source_url": None,
+                    },
                 ],
-                # Deliberately NOT marked overdue: the plan is four years old and
-                # we have no dated citation on what happened after. The platform's
-                # rule is that status changes need a dated source, so this sits at
-                # 'unknown' until a KEIIP progress document is found.
-                "needs_status_refresh": True,
+                "next_check": None,
+                "ledger_id": None,
             }
         )
     return {
@@ -304,12 +319,27 @@ def build_commitments() -> dict:
         "updated": date.today().isoformat(),
         "headline": "Kolkata's sewage-treatment promises",
         "intro": (
-            "Dated commitments from KMC's own statutory filings. Two KEIIP plants were "
-            "recorded at 17% and 14% completion against a March 2022 deadline in a "
-            "document filed December 2021; what happened next is not in the public record "
-            "we have found, so their status reads 'unknown' rather than a guess."
+            "Dated commitments from KMC's own statutory filings. Two KEIIP plants were recorded "
+            "at 17% and 14% completion against a March 2022 deadline in a document filed "
+            "December 2021. What happened next is not in any public record we have found, so "
+            "they read 'unverified' rather than a guess in either direction."
         ),
+        "status_legend": {
+            "delivered": "Done, with a source confirming it",
+            "on-track": "Progressing with no known slippage",
+            "slipped": "Officially or credibly re-dated - both dates kept",
+            "overdue": "Past its promised date with no official word",
+            "stalled": "Years without movement",
+            "unverified": "A change may have happened; awaiting a citable confirmation",
+        },
         "commitments": commitments,
+        "update_model": (
+            "Statuses change only with a dated citation; every change appends to the "
+            "commitment's history, and the slippage trail is the product. Kolkata's "
+            "verification route is KEIIP project documents and KMC budget statements - "
+            "neither publishes on a predictable calendar, which is itself why these sit at "
+            "unverified rather than overdue."
+        ),
         "sources_note": f"{SOURCE['document']} ({SOURCE['document_date']}), {SOURCE['url']}",
     }
 

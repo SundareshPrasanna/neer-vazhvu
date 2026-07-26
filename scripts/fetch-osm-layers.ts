@@ -43,6 +43,8 @@ interface CityLayerConfig {
   localNameTag?: string;
   /** Minimum water-body area in m2. Below this OSM is mostly noise. */
   minAreaSqm?: number;
+  /** Set at dispatch so river-id rules can be looked up. */
+  _cityKey?: string;
 }
 
 const CITY_LAYERS: Record<string, CityLayerConfig> = {
@@ -260,24 +262,86 @@ out body;
 out skel qt;`);
 
   const nodes = buildNodeIndex(els);
-  const features = [];
+  // DISSOLVE to one feature per river. The rivers page keys its curated
+  // narrative off `river_id` and expects a single feature per named channel -
+  // emitting raw OSM segments (52 for Kolkata) renders nothing, because no
+  // segment carries an id the page recognises.
+  const byRiver = new Map<string, { name: string; nameLocal: string | null; waterway: string; lines: [number, number][][]; ids: number[] }>();
   for (const e of els) {
     if (e.type !== "way" || !e.tags?.name) continue;
     const line = wayCoords(e, nodes);
     if (line.length < 2) continue;
-    features.push({
-      type: "Feature" as const,
-      properties: {
-        osm_id: e.id,
-        name: e.tags.name,
-        name_local: cfg.localNameTag ? (e.tags[cfg.localNameTag] ?? null) : null,
-        waterway: e.tags.waterway,
-      },
-      geometry: { type: "LineString" as const, coordinates: line },
-    });
+    const rid = riverIdFor(e.tags.name, cfg);
+    if (!rid) continue;
+    const entry = byRiver.get(rid) ?? {
+      name: cfg.riverNames && RIVER_LABELS[rid] ? RIVER_LABELS[rid] : e.tags.name,
+      nameLocal: cfg.localNameTag ? (e.tags[cfg.localNameTag] ?? null) : null,
+      waterway: e.tags.waterway ?? "river",
+      lines: [],
+      ids: [],
+    };
+    entry.lines.push(line);
+    entry.ids.push(e.id);
+    if (!entry.nameLocal && cfg.localNameTag && e.tags[cfg.localNameTag]) entry.nameLocal = e.tags[cfg.localNameTag]!;
+    byRiver.set(rid, entry);
   }
-  write(`public/geojson/${city}-rivers.geojson`, fc(features, city, "OpenStreetMap named channels"));
+
+  const features = [...byRiver.entries()].map(([rid, r]) => ({
+    type: "Feature" as const,
+    properties: {
+      river_id: rid,
+      name: r.name,
+      name_local: r.nameLocal,
+      waterway: r.waterway,
+      length_km: Math.round(r.lines.reduce((s, l) => s + lineLengthKm(l), 0)),
+      segments: r.lines.length,
+      osm_ids: r.ids,
+    },
+    geometry: { type: "MultiLineString" as const, coordinates: r.lines },
+  }));
+  features.sort((a, b2) => b2.properties.length_km - a.properties.length_km);
+  write(`public/geojson/${city}-rivers.geojson`, fc(features, city, "OpenStreetMap named channels, dissolved per river"));
   return features.length;
+}
+
+/** Canonical river ids per city. OSM name variants ("Adi Ganga" / "Adi ganga",
+ *  "Saraswati" / "Saraswati River") must collapse to one id or the page shows
+ *  the same river several times with no narrative attached to any of them. */
+const RIVER_ID_RULES: Record<string, Array<[RegExp, string]>> = {
+  kolkata: [
+    [/adi\s*ganga|tolly/i, "adi-ganga"],
+    [/hooghly|hugli/i, "hooghly"],
+    [/bidyadhari/i, "bidyadhari"],
+    [/kulti/i, "kulti"],
+    [/saraswati/i, "saraswati"],
+    [/ganga|bhagirathi/i, "hooghly"],
+  ],
+};
+
+const RIVER_LABELS: Record<string, string> = {
+  "adi-ganga": "Adi Ganga",
+  hooghly: "Hooghly",
+  bidyadhari: "Bidyadhari",
+  kulti: "Kulti",
+  saraswati: "Saraswati",
+};
+
+function riverIdFor(name: string, cfg: CityLayerConfig): string | null {
+  const rules = RIVER_ID_RULES[cfg._cityKey ?? ""] ?? [];
+  for (const [re, id] of rules) if (re.test(name)) return id;
+  return null;
+}
+
+function lineLengthKm(line: [number, number][]): number {
+  let km = 0;
+  for (let i = 1; i < line.length; i++) {
+    const [x1, y1] = line[i - 1];
+    const [x2, y2] = line[i];
+    const dy = (y2 - y1) * 111.132;
+    const dx = (x2 - x1) * 111.32 * Math.cos(((y1 + y2) / 2) * Math.PI / 180);
+    km += Math.hypot(dx, dy);
+  }
+  return km;
 }
 
 async function drainage(city: string, cfg: CityLayerConfig) {
@@ -359,6 +423,7 @@ async function main() {
   const city = args[args.indexOf("--city") + 1];
   const layerArg = (args[args.indexOf("--layer") + 1] ?? "all") as LayerName | "all";
   const cfg = CITY_LAYERS[city];
+  if (cfg) cfg._cityKey = city;
   if (!cfg) {
     console.error(`Unknown city '${city}'. Known: ${Object.keys(CITY_LAYERS).join(", ")}`);
     process.exit(2);

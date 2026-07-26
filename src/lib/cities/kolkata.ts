@@ -149,6 +149,17 @@ export const KOLKATA: CityConfig = {
   availableLanguages: ['en'],
   upcomingLanguages: ['bn'],
   heroMode: 'drainage-capacity',
+  // Both ship with verified, primary-sourced content:
+  // - allocations-kolkata.json: the two bulk sales KMC publishes (90 MLD to
+  //   Bidhannagar, 22.7 MLD to Budge Budge). Unusual for this platform in that
+  //   Kolkata has no entitlement document for its OWN water - run-of-river
+  //   abstraction is not a quota with a receipt - so the ledger is entirely
+  //   about what the city sells onward, plus five named gaps.
+  // - commitments-kolkata.json: the two KEIIP plants KMC's own Environment
+  //   Plan recorded at 17% and 14% complete against a March 2022 deadline, in
+  //   a document filed December 2021.
+  hasAllocationLedger: true,
+  hasCommitments: true,
   drainageCapacity: {
     // KMC's own words: the main sewer network "was designed to discharge a
     // rainfall of 6 mm. per hour". This is a DESIGN PROPERTY quoted from a

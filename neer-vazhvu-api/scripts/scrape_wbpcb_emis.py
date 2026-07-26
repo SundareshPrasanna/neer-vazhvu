@@ -276,6 +276,61 @@ def display_name(name: str) -> str:
     return cleaned
 
 
+# Position along the channel, used as the station's `stretch` label. WBPCB
+# publishes no such descriptor, so these are ours, derived from where each
+# sampling point physically sits - north to south down the Adi Ganga, and by
+# role on the Hooghly (the intake matters more than its coordinates).
+STRETCH = {
+    "adi ganga at jirat bridge": "Upper",
+    "adi ganga at kalighat": "Upper",
+    "adi ganga at karunamoyee": "Middle",
+    "adi ganga at kudghat": "Middle",
+    "adi ganga at sahid kshudiram": "Lower",
+    "adi ganga at bansdroni": "Lower",
+    "ganga at palta": "Intake (Palta)",
+    "ganga at dakshineswar": "Upstream of the city",
+    "ganga at garden reach": "Downstream of the city",
+}
+
+
+# Narrative fields the shared river panel renders (length, class, description).
+# Length is measured off our own dissolved OSM geometry, not asserted.
+RIVER_META = {
+    "adi-ganga": {
+        "length_km": 39,
+        "cpcb_class": "Not on the CPCB national polluted-stretch list; WBPCB Use-Based Class E",
+        "description": (
+            "The original course of the Ganga through south Kolkata, past Kalighat, now largely "
+            "the engineered channel also called Tolly's Nullah. Sampled at six points, each "
+            "separately at high and low tide."
+        ),
+        "notes": (
+            "Dissolved oxygen is NIL at every monitored point in the latest round and low tide "
+            "runs worse than high - less dilution, more concentration."
+        ),
+    },
+    "hooghly": {
+        "length_km": 140,
+        "cpcb_class": "WBPCB Use-Based Class B/C at the city's intakes",
+        "description": (
+            "The Ganga distributary Kolkata was built on and draws essentially all its drinking "
+            "water from, abstracted at Palta about 22 km north and at Garden Reach. Tidal this "
+            "far inland."
+        ),
+        "notes": "Comparatively healthy at the intakes; the pollution story is the Adi Ganga, not the mainstem.",
+    },
+    "bidyadhari": {
+        "length_km": 38,
+        "cpcb_class": None,
+        "description": "Drains the East Kolkata Wetlands eastward towards the Sundarbans.",
+        "notes": "Its silting up in the early twentieth century created the wetland fishery system that now treats 910 MLD of Kolkata's sewage.",
+    },
+    "lakes": {"length_km": None, "cpcb_class": None, "description": "Lakes and ponds sampled under the same WBPCB programme.", "notes": None},
+    "groundwater": {"length_km": None, "cpcb_class": None, "description": "WBPCB groundwater monitoring points, sampled under the same programme.", "notes": "Groundwater samples carry no DO or BOD - a different parameter set from the river stations."},
+    "other": {"length_km": None, "cpcb_class": None, "description": None, "notes": None},
+}
+
+
 def river_of(station_name: str) -> tuple[str, str]:
     n = station_name.lower()
     if "adi ganga" in n:
@@ -357,6 +412,7 @@ def build(stations, samples_by_station):
             {
                 "id": s["code"],
                 "name": display_name(s["name"]),
+                "stretch": STRETCH.get(normalise(s["name"])),
                 "tidal_phase": s["tidal_phase"],
                 "district": s["district"],
                 "lat": coords[0] if coords else None,
@@ -369,13 +425,28 @@ def build(stations, samples_by_station):
     rivers = []
     for (rid, rname), sts in sorted(by_river.items()):
         sts.sort(key=lambda x: (x["name"], x["tidal_phase"] or ""))
+        # The map layer dereferences station.lat, so only placeable stations go
+        # in `stations`. WBPCB publishes no coordinates and we refuse to invent
+        # them, but the readings are still real - unplaceable stations are kept
+        # in `unmapped_stations` so the data survives and the omission is
+        # visible, rather than being silently dropped or crashing the panel.
+        mapped = [x for x in sts if x["lat"] is not None and x["lng"] is not None]
+        unmapped = [x for x in sts if x["lat"] is None or x["lng"] is None]
         rivers.append(
             {
                 "id": rid,
                 "name": rname,
+                **{k: v for k, v in RIVER_META.get(rid, {}).items()},
                 "overall_status": None,  # computed by the shared classifier
-                "stations": sts,
-                "tidal": any(x["tidal_phase"] for x in sts),
+                "stations": mapped,
+                "unmapped_stations": unmapped,
+                "unmapped_note": (
+                    f"{len(unmapped)} station(s) have readings but no coordinates: WBPCB "
+                    "publishes none and we do not guess. Their series are retained here."
+                )
+                if unmapped
+                else None,
+                "tidal": any(x["tidal_phase"] for x in mapped),
             }
         )
     return rivers

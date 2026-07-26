@@ -192,28 +192,46 @@ def build(rows):
         if lat is None or lng is None:
             continue
         depths = [v for _, v, _ in obs]
-        series = [{"date": d, "depth_m": round(v, 2)} for d, v, _ in obs]
+        # Monthly means, matching the shape the shared station panel consumes
+        # (readings: {year, month, depth_m_bgl, n_obs}). Raw cadence here is a
+        # mix of 6-hourly telemetric and periodic manual, which would otherwise
+        # put 9,000 points behind one sparkline.
+        monthly: dict[tuple[int, int], list[float]] = defaultdict(list)
+        for d, v, _ in obs:
+            monthly[(int(d[:4]), int(d[5:7]))].append(v)
+        readings = [
+            {
+                "year": y,
+                "month": mo,
+                "depth_m_bgl": round(sum(vals) / len(vals), 2),
+                "n_obs": len(vals),
+            }
+            for (y, mo), vals in sorted(monthly.items())
+        ]
         stations.append(
             {
-                "station_code": code,
                 "name": (meta.get("stationName") or "").strip() or code,
-                "district": meta.get("district"),
+                "station_code": code,
                 "block": meta.get("block"),
+                "district": meta.get("district"),
+                "tehsil": meta.get("tehsil"),
                 "village": meta.get("village"),
                 "lat": float(lat),
                 "lng": float(lng),
+                "acquisition": meta.get("dataAcquisitionMode"),
+                "status": meta.get("stationStatus") or "Active",
                 "well_type": meta.get("wellType"),
                 "aquifer_type": meta.get("wellAquiferType"),
                 "well_depth_m": meta.get("wellDepth"),
-                "acquisition": meta.get("dataAcquisitionMode"),
-                "depth_sign_flipped": code in SIGN_FLIPPED,
-                "readings": len(obs),
+                "sign_convention": "negative-down (flipped)" if code in SIGN_FLIPPED else "positive-down",
+                "readings": readings,
+                "depth_min_m_bgl": round(min(depths), 2),
+                "depth_max_m_bgl": round(max(depths), 2),
+                "depth_latest_m_bgl": round(depths[-1], 2),
+                "latest_reading": f"{obs[-1][0][:7]}",
                 "first_reading": obs[0][0],
                 "last_reading": obs[-1][0],
-                "latest_depth_m": round(depths[-1], 2),
-                "min_depth_m": round(min(depths), 2),
-                "max_depth_m": round(max(depths), 2),
-                "series": series,
+                "raw_observations": len(obs),
             }
         )
     stations.sort(key=lambda s: (s["district"] or "", s["name"]))
@@ -234,7 +252,7 @@ def district_liveness(stations, today: str):
             {
                 "district": d,
                 "stations": len(sts),
-                "readings": sum(s["readings"] for s in sts),
+                "readings": sum(s["raw_observations"] for s in sts),
                 "last_reading": last,
                 "days_since": days,
                 # Quarterly-ish manual networks legitimately lag; a year of
@@ -272,7 +290,29 @@ def main() -> int:
         "scope": "KMA (six districts)" if args.kma else "Kolkata district",
         "window": {"from": START, "to": END},
         "station_count": len(stations),
-        "reading_count": sum(s["readings"] for s in stations),
+        "reading_count": sum(s["raw_observations"] for s in stations),
+        "source_label": "CGWB observation wells via India-WRIS",
+        "series_label": "Depth to water table",
+        "unit_label": "m below ground level",
+        "reading_kind": "monthly mean",
+        "cadence_note": (
+            "Raw cadence is a mix of 6-hourly telemetric and periodic manual readings; "
+            "published here as monthly means."
+        ),
+        "depth_unit": "m",
+        "retrieved": today,
+        "coverage": {
+            "period": f"{START[:4]} to {END[:4]}",
+            "cadence_raw": "6-hourly (telemetric) / periodic (manual)",
+            "cadence_published_here": "monthly mean",
+        },
+        "summary": {
+            "stations": len(stations),
+            "stations_with_readings": sum(1 for s in stations if s["readings"]),
+            "monthly_readings": sum(len(s["readings"]) for s in stations),
+            "depth_min_m_bgl": round(min(s["depth_min_m_bgl"] for s in stations), 2) if stations else None,
+            "depth_max_m_bgl": round(max(s["depth_max_m_bgl"] for s in stations), 2) if stations else None,
+        },
         "district_liveness": liveness,
         "notes": [
             "Kolkata is NOT groundwater-poor: 23 stations in the district and 667 across "
@@ -282,11 +322,12 @@ def main() -> int:
             "A narrow date window or an unpaged request understates the network badly: "
             "Kolkata reads as 3 stations either way, against 23 when paged to exhaustion.",
         ],
-        "stations": stations,
+        "wells": stations,
     }
     path = DATA_DIR / f"{args.city}-cgwb-stations.json"
     path.write_text(json.dumps(out, ensure_ascii=False, indent=1))
     live = [d for d in liveness if d["status"] == "live"]
+    out["district"] = "Kolkata Metropolitan Area" if args.kma else "Kolkata"
     print(
         f"{args.city}: {len(stations)} stations, {out['reading_count']} readings, "
         f"{len(live)}/{len(liveness)} districts live -> {path.name}",
