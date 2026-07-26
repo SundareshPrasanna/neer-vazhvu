@@ -73,14 +73,20 @@ export const HYDERABAD: CityConfig = {
     // imply these are all "GHMC wards" post-trifurcation.
     wardCount: 300,
   },
-  // MEASURED, not estimated: HMWSSB publishes today's draw-off per reservoir
-  // in MLD. On 25-Jul-2026 the six city sources totalled 2,659.493 MLD. This
-  // default is the fallback divisor only - the hero uses the live daily figure.
-  // TODO(refine): replace with a trailing-365-day mean once the 2014-present
-  // backfill lands (.cache/hyderabad-reservoirs-archive.json). Widely-quoted
-  // service figures (~1,954 MLD supplied, 1,480 sq km, 1.68 crore population)
-  // are news-sourced only and are NOT used until primary-confirmed.
-  defaultConsumptionMld: 2659,
+  // MEASURED, not estimated, and now computed over the full archive rather
+  // than a single day: HMWSSB publishes today's draw-off per reservoir in MLD,
+  // and the trailing 365 days to 25-Jul-2026 (365/365 days present) give
+  // mean 2,628.4 MLD, median 2,647.0, range 1,862.2-4,339.0. This default is
+  // the fallback divisor only - the hero uses the live daily figure.
+  //
+  // For context, mean city draw by calendar year from the same feed:
+  //   2014 1,116.6 | 2016 1,174.4 | 2018 1,509.0 | 2020 2,013.2
+  //   2022 2,028.9 | 2024 2,597.0 | 2026 2,636.4 (to 25 Jul)
+  // i.e. the city's daily draw has grown ~136% in twelve years.
+  //
+  // Widely-quoted service figures (~1,954 MLD supplied, 1,480 sq km,
+  // 1.68 crore population) are news-sourced only and are NOT used.
+  defaultConsumptionMld: 2628,
   defaultDesalinationMld: null,
   // Landlocked; no desalination is possible or proposed.
   availableLanguages: ['en'],

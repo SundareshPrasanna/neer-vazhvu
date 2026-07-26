@@ -75,6 +75,41 @@ capacity on same date.
   constraint on Akkampally.
 - **Politeness:** this is a government IIS box. The backfill runs at `--sleep 0.25` by default.
 
+### Upstream data-entry errors in the archive - 36 rows in 35,975 (0.10%)
+
+The 12.5-year archive contains a small number of genuine HMWSSB typos. They are
+**not parse errors** - the feed's own `level_prev_day` column proves it in every case - and they are
+quarantined in two stages rather than silently dropped or silently kept. All excluded rows are
+preserved in the artefact's `_excluded_levels` block with the reason, so nothing is lost.
+
+**Stage 1, physical envelope (23 rows).** A level outside 0.5-1.05x its own FTL is not a low
+reservoir, it is a data-entry error. Four failure modes seen:
+
+- **decimal-point slips** - `osman_sagar` 2017-02-28 level `1780840.0` against a previous day of
+  `1780.86`; `himayat_sagar` 2019-05-05 level `1745100.0` against `1745.2`; `akkampally`
+  2018-01-20 level `243100.0` against `243.45`.
+- **unit flips** - `singur` 2019-09-04 level `509.16` against a previous day of `1670.554` ft, and
+  1670.554 ft *is* 509.18 m. The source printed metres in a feet column for a day.
+- **column duplication** - on 2019-08-09 both `srisailam` and `yellampally` printed level equal to
+  capacity (181.83 and 19.31 respectively).
+- **cross-row contamination** - `nagarjuna_sagar` 2021-11-09 level `862.9` and 2026-02-14 level
+  `870.9`, both Srisailam-scale values (FTL 885) in a reservoir whose FTL is 590.
+
+**Stage 2, one-day spike filter (13 rows).** The envelope cannot catch a single-digit substitution
+that lands inside it. Their signature is unmistakable: the value spikes for exactly one day, reverts
+the next, and the gap is a **round number** because one digit changed in a fixed decimal position -
+`1753.3 -> 1453.3 -> 1753.28` (300.0), `817.7 -> 517.7 -> 817.6` (300.0), `1756.7 -> 1576.7 ->
+1756.7` (180.0), `1796.136 -> 1696.097` (100.0). A reading is rejected if it differs from **both**
+neighbours by more than 3% of FTL in the same direction; a genuine step change (gates opened,
+monsoon inflow) differs from only one neighbour and survives.
+
+Effect on the retained series: every reservoir's p99 level now sits at 0.999-1.000 of FTL, and the
+minima become physically sensible - Osman Sagar's series minimum moves from 1453.3 (below the
+reservoir bed) to 1744.8, Himayat Sagar's from 1576.7 to 1726.34, Srisailam's from 517.7 to 774.8.
+
+**Storage, capacity and drawl columns are unaffected** by either filter - only `level_today` is
+nulled - so the days-left maths and the draw series use the full record.
+
 ### Silent capacity revision, 01-Jul-2026 - watch this
 
 Bisected against the archive, HMWSSB changed the "Storage Capacity at FTL" for the twin reservoirs
@@ -94,6 +129,51 @@ the 1 July water-year boundary, so it could equally be a capacity re-survey, a g
 redefinition, or a correction. What is certain is the consequence: any `days-left` denominator
 cached before 1 Jul 2026 is now wrong by 10-15% for the twins. A Headwaters detector watches this
 column.
+
+### What the feed already shows
+
+Two findings computed entirely from this one source, with no other data required.
+
+**City draw has grown ~136% in twelve years.** Mean daily draw across the six city sources, by
+calendar year: 2014 **1,116.6** MLD, 2015 1,120.0, 2016 1,174.4, 2017 1,384.3, 2018 1,509.0,
+2019 2,066.6, 2020 2,013.2, 2021 2,362.9, 2022 2,028.9, 2023 2,497.4, 2024 2,597.0, 2025 2,618.9,
+2026 **2,636.4** (to 25 Jul). Every year is a full 365/366-day mean except 2026 (206 days).
+
+**The GO 111 question.** GO 111 (1996) barred major construction across the catchment of Osman
+Sagar and Himayat Sagar; Telangana repealed it in 2022, on the stated ground that the city no longer
+depends on the twin reservoirs. The utility's own drawl column tests that directly:
+
+| Year | Twin draw (MLD) | Total city draw (MLD) | Twin share | Days drawn |
+|---|---|---|---|---|
+| 2014 | 123.5 | 1,116.6 | 11.06% | 365/365 |
+| 2015 | 74.6 | 1,120.0 | 6.66% | 365/365 |
+| 2016 | 8.4 | 1,174.4 | 0.72% | 154/366 |
+| 2017 | 9.6 | 1,384.3 | 0.70% | 107/365 |
+| 2018 | 0.0 | 1,509.0 | 0.00% | **0/365** |
+| 2019 | 97.3 | 2,066.6 | 4.71% | 342/365 |
+| 2020 | 46.1 | 2,013.2 | 2.29% | 366/366 |
+| 2021 | 79.9 | 2,362.9 | 3.38% | 365/365 |
+| 2022 | 83.1 | 2,028.9 | 4.10% | 365/365 |
+| 2023 | 81.1 | 2,497.4 | 3.25% | 365/365 |
+| 2024 | 111.8 | 2,597.0 | 4.31% | 366/366 |
+| 2025 | 165.6 | 2,618.9 | 6.32% | 365/365 |
+| 2026 | 172.5 | 2,636.4 | 6.54% | 206/206 |
+
+The honest reading, which is the more interesting one:
+
+- The premise was **not fabricated**. In 2018 the twins supplied nothing at all for a full year, and
+  in 2016-17 they ran on fewer than half the days at under 1% share. Anyone looking at the feed
+  around then would reasonably have called them redundant.
+- But the trend has run the other way ever since. Twin draw in **2026 (172.5 MLD) is the highest in
+  the entire record**, above even 2014, and the share has risen every year since 2023. The twins
+  have been drawn on **every single day** since 2020.
+- **Correlation, not causation.** The rise since the 2022 repeal may reflect restored capacity,
+  better monsoons, or demand growth rather than anything caused by the repeal. State the series;
+  do not claim the repeal caused it.
+
+Caveats to carry into any published version: the twin share is small in every year (peak 11.06% in
+2014, 6.54% now), and the totals here exclude Nagarjuna Sagar and Srisailam, which report a city
+drawl of 0.000 MLD throughout.
 
 ## Registered but not yet acquired
 

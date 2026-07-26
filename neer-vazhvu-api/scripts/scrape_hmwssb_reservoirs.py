@@ -292,6 +292,86 @@ def parse_report(page: str, d: date) -> list:
     return rows
 
 
+# Physically defensible envelope for a level reading, as a fraction of that
+# reservoir's own FTL. A reading outside it is not a low reservoir - it is a
+# data-entry error upstream.
+#
+# WHY THIS EXISTS. The 12.5-year archive contains a small number of genuine
+# HMWSSB typos - 23 rows in 35,975 (0.06%) at the 2026-07-26 backfill. They are
+# NOT parse errors; the level_prev_day column proves it in every case:
+#   - decimal-point slips: osman_sagar 2017-02-28 level 1780840.0 against a
+#     previous day of 1780.86; himayat_sagar 2019-05-05 level 1745100.0 against
+#     1745.2; akkampally 2018-01-20 level 243100.0 against 243.45.
+#   - UNIT FLIPS: singur 2019-09-04 level 509.16 against a previous day of
+#     1670.554 ft - and 1670.554 ft IS 509.18 m, so the source printed metres
+#     in a feet column for a day.
+#   - column duplication: on 2019-08-09 both srisailam and yellampally printed
+#     level == capacity (181.83 and 19.31 respectively).
+#   - cross-row contamination: nagarjuna_sagar 2021-11-09 level 862.9 and
+#     2026-02-14 level 870.9, both Srisailam-scale values (FTL 885) sitting in
+#     a reservoir whose FTL is 590.
+#
+# A single 1,787,150 ft reading destroys any chart axis, any max(), and any
+# level-derived statistic. So these are QUARANTINED into `_excluded` and
+# counted, never silently dropped and never silently kept. Same discipline as
+# the India-WRIS depth envelope in the pan-India playbook.
+LEVEL_ENVELOPE = (0.5, 1.05)
+
+
+def level_is_plausible(row: dict) -> bool:
+    lvl, ftl = row.get("level_today"), row.get("ftl")
+    if lvl is None or not ftl:
+        return True  # nothing to judge against
+    if lvl == 0:
+        return True  # 0.000 = not reported that day, handled downstream
+    lo, hi = LEVEL_ENVELOPE
+    return lo * ftl <= lvl <= hi * ftl
+
+
+# Second-stage filter, for typos the envelope cannot see.
+#
+# The envelope above catches order-of-magnitude slips and unit flips. It does
+# NOT catch a single-digit substitution that lands inside 0.5-1.05 x FTL - e.g.
+# Osman Sagar's 1753.3 printed as 1453.3 on 2016-03-26, or Srisailam's 817.7 as
+# 517.7 on 2017-03-13. Those are still wrong enough to wreck a chart and any
+# min() over the series.
+#
+# Their signature is unmistakable once you look: the value spikes for exactly
+# one day and reverts, and the gap is a ROUND number (300.0, 180.0, 100.0),
+# because a single digit changed in a fixed decimal position. So the test is a
+# classic spike filter: a reading is bad if it differs from BOTH neighbours by
+# more than SPIKE_THRESHOLD_FRAC of FTL *in the same direction*. A genuine step
+# change (gates opened, monsoon inflow) differs from only one neighbour, so it
+# survives.
+#
+# Calibrated against the full 2014-2026 archive on 2026-07-26: catches 13 rows
+# (0.036%), every one a verified single-day digit slip, and correctly leaves
+# the correct reverting neighbours alone. Needs >= 3 consecutive days, so it is
+# a backfill-mode check; single-day runs rely on the envelope alone.
+SPIKE_THRESHOLD_FRAC = 0.03
+
+
+def find_level_spikes(rows: list) -> list:
+    """Return rows whose level is a one-day spike against both neighbours."""
+    by_source = {}
+    for r in rows:
+        lvl, ftl = r.get("level_today"), r.get("ftl")
+        if lvl and ftl and level_is_plausible(r):
+            by_source.setdefault(r["source_code"], []).append(r)
+    spikes = []
+    for seq in by_source.values():
+        seq.sort(key=lambda r: r["date"])
+        for i in range(1, len(seq) - 1):
+            prev, cur, nxt = seq[i - 1], seq[i], seq[i + 1]
+            ftl = cur["ftl"]
+            dp = cur["level_today"] - prev["level_today"]
+            dn = cur["level_today"] - nxt["level_today"]
+            t = SPIKE_THRESHOLD_FRAC * ftl
+            if abs(dp) > t and abs(dn) > t and dp * dn > 0:
+                spikes.append((cur, prev["level_today"], nxt["level_today"]))
+    return spikes
+
+
 def level_ft(row: dict):
     """Level normalised to feet, or None. See gotcha 3."""
     lvl = row.get("level_today")
@@ -356,8 +436,8 @@ def check_units(all_rows: list) -> int:
 
     print("\nUnit / scale check (level column vs FTL column)", file=sys.stderr)
     print(
-        f"{'source':<18}{'unit':>5}{'FTL':>12}{'max lvl':>12}{'min lvl':>12}"
-        f"{'max/FTL':>10}  verdict",
+        f"{'source':<18}{'unit':>5}{'FTL':>12}{'p99 lvl':>12}{'min lvl':>12}"
+        f"{'p99/FTL':>10}{'excl':>6}  verdict",
         file=sys.stderr,
     )
     bad = 0
@@ -365,18 +445,26 @@ def check_units(all_rows: list) -> int:
         lv = [x for x in d["levels"] if x > 0]  # 0.000 = not reported that day
         if not lv:
             continue
-        ratio = max(lv) / d["ftl"]
-        # Same-scale data sits just under FTL. Anything far off means the level
-        # and FTL columns are not in the same unit.
+        lo, hi = LEVEL_ENVELOPE
+        clean = sorted(x for x in lv if lo * d["ftl"] <= x <= hi * d["ftl"])
+        excluded = len(lv) - len(clean)
+        if not clean:
+            print(f"{sc:<18} ALL {len(lv)} readings outside envelope", file=sys.stderr)
+            bad += 1
+            continue
+        # Use a high percentile, NOT max: a handful of upstream typos (see
+        # LEVEL_ENVELOPE) would otherwise mask the real verdict - which is
+        # exactly what happened on the first full-archive run, where every
+        # reservoir read "MIS-PINNED?" off 23 bad rows in 35,975.
+        p99 = clean[min(len(clean) - 1, int(len(clean) * 0.99))]
+        ratio = p99 / d["ftl"]
         ok = 0.5 <= ratio <= 1.02
         if not ok:
             bad += 1
-        unit = next(
-            (u for _, (c, u, _b) in RESERVOIRS.items() if c == sc), "?"
-        )
+        unit = next((u for _, (c, u, _b) in RESERVOIRS.items() if c == sc), "?")
         print(
-            f"{sc:<18}{unit:>5}{d['ftl']:>12.3f}{max(lv):>12.3f}{min(lv):>12.3f}"
-            f"{ratio:>10.3f}  {'ok' if ok else 'MIS-PINNED?'}",
+            f"{sc:<18}{unit:>5}{d['ftl']:>12.3f}{p99:>12.3f}{clean[0]:>12.3f}"
+            f"{ratio:>10.3f}{excluded:>6}  {'ok' if ok else 'MIS-PINNED?'}",
             file=sys.stderr,
         )
     return 1 if bad else 0
@@ -470,6 +558,43 @@ def main() -> int:
         print("HMWSSB: no rows parsed for any requested date", file=sys.stderr)
         return 1
 
+    # Quarantine implausible level readings BEFORE anything downstream sees
+    # them. The row is kept (its storage/drawl columns are usually fine) but
+    # `level_today` is nulled and the original preserved, so a chart cannot
+    # inherit a 1,787,150 ft axis and a reader can still audit what happened.
+    excluded = []
+    for r in all_rows:
+        if not level_is_plausible(r):
+            excluded.append(
+                {
+                    "date": r["date"],
+                    "source_code": r["source_code"],
+                    "rejected_level": r["level_today"],
+                    "ftl": r["ftl"],
+                    "level_prev_day": r["level_prev_day"],
+                    "reason": "level outside "
+                    f"{LEVEL_ENVELOPE[0]}-{LEVEL_ENVELOPE[1]} x FTL",
+                }
+            )
+            r["level_today_raw_rejected"] = r["level_today"]
+            r["level_today"] = None
+
+    # Second stage: one-day spikes that survived the envelope.
+    for row, prev_lvl, next_lvl in find_level_spikes(all_rows):
+        excluded.append(
+            {
+                "date": row["date"],
+                "source_code": row["source_code"],
+                "rejected_level": row["level_today"],
+                "ftl": row["ftl"],
+                "neighbour_levels": [prev_lvl, next_lvl],
+                "reason": "one-day spike vs both neighbours "
+                f"(>{SPIKE_THRESHOLD_FRAC:.0%} of FTL)",
+            }
+        )
+        row["level_today_raw_rejected"] = row["level_today"]
+        row["level_today"] = None
+
     by_date = {}
     for r in all_rows:
         by_date.setdefault(r["date"], []).append(r)
@@ -495,6 +620,8 @@ def main() -> int:
         ),
         "_days_with_data": len(daily),
         "_days_empty": len(empty_days),
+        "_excluded_levels": excluded,
+        "_excluded_count": len(excluded),
         "days": daily,
     }
     payload = json.dumps(out, ensure_ascii=False, indent=2)
@@ -508,7 +635,12 @@ def main() -> int:
     print(
         f"HMWSSB: {len(daily)} day(s) with data, {len(all_rows)} rows; "
         f"latest {latest['date']} draw={latest['city_draw_mld']} MLD "
-        f"({len(latest['reservoirs'])} reservoirs)",
+        f"({len(latest['reservoirs'])} reservoirs)"
+        + (
+            f" | QUARANTINED {len(excluded)} implausible level reading(s)"
+            if excluded
+            else ""
+        ),
         file=sys.stderr,
     )
 
