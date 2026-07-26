@@ -6,6 +6,7 @@ import { ChennaiStory } from "@/content/story-chennai";
 import { BangaloreStory } from "@/content/story-bangalore";
 import { MumbaiStory } from "@/content/story-mumbai";
 import { DelhiStory } from "@/content/story-delhi";
+import { KolkataStory } from "@/content/story-kolkata";
 import { ComingSoonStory } from "@/components/story/coming-soon";
 
 interface PageProps {
@@ -28,6 +29,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             ? "City of seven islands - a place with no river, and the forty-five litres that divide it"
             : cityId === "delhi"
               ? "The city that stored water for a thousand years - and the twenty-two kilometres where its river dies"
+            : cityId === "kolkata"
+              ? "The city that built itself around a pond - and the wetland that takes what it throws away"
               : `${config.displayName} water story`;
 
   return {
@@ -64,6 +67,9 @@ export default async function CityStoryPage({ params }: PageProps) {
     return <MumbaiStory />;
   }
 
+  if (cityId === "kolkata") {
+    return <KolkataStory />;
+  }
   if (cityId === "delhi") {
     return <DelhiStory />;
   }
