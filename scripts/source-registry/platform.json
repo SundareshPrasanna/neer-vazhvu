@@ -1,0 +1,120 @@
+{
+  "_doc": "Headwaters source registry - PLATFORM-SCOPE families (P5-6). Datasets used by every city, registered once here instead of duplicated per city. Only families that actually VERSION belong here: OpenStreetMap and Google Dynamic World are continuously updated with no editions, so they stay in the coverage allowlist as a freshness question (P5-1), not an edition watch. Schema + design notes: docs/specs/headwaters.md (local). CADENCE + TIER ARE DOCUMENTATION ONLY - decided 2026-07-26. Neither gates polling: every non-ciBlocked entry is fetched on every weekly run whatever its declared cadence (48 HTTP requests per CI run across ~26 hosts). Deliberate. (1) Cadence is a CLAIM and claims are wrong - CPCB is 'yearly' and shipped a mid-year Yamuna-only file, BBMB was recorded frozen and had resumed, CHIRPS looked daily and publishes monthly; gating polls on a declared cadence inherits every such error and stops looking at exactly the source that surprised you. (2) A conditional check is a check that can silently stop - the WRIS 'green for 39 days while ingesting nothing' bug lives in skip logic. (3) Interval scheduling is maintenance overhead for no real saving at this volume. Cadence earns its place at REVIEW time instead: it tells you whether a detection is plausible - a 'yearly' source producing a new edition three weeks after the last is itself a signal.",
+  "sources": [
+    {
+      "id": "fabdem-dem",
+      "scope": "platform",
+      "publisher": "Fathom / University of Bristol (Hawker et al.)",
+      "url": "https://www.fathom.global/product/fabdem/",
+      "license": "CC BY-NC-SA 4.0 (non-commercial)",
+      "type": "page",
+      "cadence": "versioned releases",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/elevation-bands-chennai.geojson",
+        "public/data/elevation-bands-bangalore.geojson",
+        "public/data/elevation-bands-madurai.geojson",
+        "public/data/elevation-bands-mumbai.geojson",
+        "public/data/elevation-bands-delhi.geojson"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_elevation_bands.py (GEE), re-run per city",
+      "notes": "FABDEM V1-2 - satellite DEM with buildings and forests removed - underpins the elevation-band layer in all five cities, honest at ~30 m horizontal / ~2 m vertical. A new FABDEM version changes every band boundary at once, which is exactly why this is registered once at platform scope rather than five times. LICENCE FLAG: FABDEM is CC BY-NC-SA, non-commercial - relevant if any BRSR or commercial track ever reuses these layers. The canonical data host is data.bris.ac.uk but its dataset paths need an exact opaque id we do not have; the Fathom product page is the stable, verified surface (200 on 2026-07-26).",
+      "lastSeen": {
+        "pageHash": "13dc5102eb99ef6a",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "hydrosheds-basins",
+      "scope": "platform",
+      "publisher": "WWF / HydroSHEDS",
+      "url": "https://www.hydrosheds.org/products",
+      "license": "HydroSHEDS licence (free for non-commercial and most uses, attribution required)",
+      "type": "page",
+      "cadence": "versioned releases",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/cascade",
+        "public/geojson/chennai-reservoir-catchments.geojson"
+      ],
+      "refreshMethod": "scripts/run_cascade.py; scripts/derive_chennai_subbasins_hydrobasins.py",
+      "notes": "HydroBASINS/HydroRIVERS is the skeleton under every cascade reconstruction (Chennai 755 nodes, Bengaluru 1,033, plus Madurai and Mumbai) and under the Chennai sub-basin climate-risk clip (hybas_12 + state clip). A version bump would move cascade topology everywhere at once - a platform-wide SCHEMA-BREAK candidate, not a routine roll-forward. page-hash may be noisy on a marketing-styled page; tighten with a selector if it false-positives.",
+      "lastSeen": {
+        "pageHash": "879f9748b6f700cc",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "jrc-global-surface-water",
+      "scope": "platform",
+      "publisher": "European Commission JRC (Pekel et al.)",
+      "url": "https://global-surface-water.appspot.com/download",
+      "license": "free and open, attribution required",
+      "type": "page",
+      "cadence": "versioned releases",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/rich-bodies"
+      ],
+      "refreshMethod": "scripts/verify_rich_body_water_trend.py / ingest_rich_body_water_loss_tint.py (GEE)",
+      "notes": "JRC Global Surface Water v1.4 supplies the long-run water-extent trend in every rich-body deep-zoom panel across the 20-body cohort. A new JRC version re-bases those trends, so it is a review event rather than an auto-apply. dependsOn points at the rich-bodies GROUP - the coverage gate collapses that directory to one logical artifact rather than 129 folders.",
+      "lastSeen": {
+        "pageHash": "7f3e9dabecc65908",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "google-open-buildings",
+      "scope": "platform",
+      "publisher": "Google Research",
+      "url": "https://sites.research.google/open-buildings/",
+      "license": "CC BY 4.0 / ODbL",
+      "type": "page",
+      "cadence": "versioned releases",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/rich-bodies"
+      ],
+      "refreshMethod": "scripts/verify_rich_body_open_buildings.py",
+      "notes": "Google Open Buildings v3 is one of the two independent building-footprint sources in the rich-body encroachment verification; Overture is the other, and the artifacts deliberately compare them side by side. A version bump on either changes the verification result, which is why both are registered.",
+      "lastSeen": {
+        "pageHash": "ed60a856025c581e",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "overture-buildings",
+      "scope": "platform",
+      "publisher": "Overture Maps Foundation",
+      "url": "https://overturemaps.org/download/",
+      "license": "ODbL / CDLA depending on theme",
+      "type": "page",
+      "cadence": "monthly releases",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/rich-bodies"
+      ],
+      "refreshMethod": ".github/workflows/overture-buildings-refresh.yml (monthly, 8th)",
+      "notes": "Overture ships MONTHLY, the fastest cadence of any platform family, and a workflow already re-pulls it on the 8th - so this entry is about knowing the release landed, not about triggering the fetch. GAP FOUND 2026-07-26: our overture artifacts record only computed_at, NOT the Overture release version they were built from, so we cannot currently tell which release a given rich-body panel reflects. Worth adding to the ingest script. docs.overturemaps.org/release/ 404s and the GitHub releases API returns an empty list, so overturemaps.org/download is the watchable surface.",
+      "lastSeen": {
+        "pageHash": "e242bbcac0386e77",
+        "acceptedOn": "2026-07-26"
+      }
+    }
+  ]
+}

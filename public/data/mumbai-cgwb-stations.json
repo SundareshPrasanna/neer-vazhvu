@@ -14,17 +14,19 @@
       "publication_date": "2026-03-24",
       "publisher": "Central Ground Water Board, Central Region",
       "source_index_url": "https://cgwb.gov.in/cgwbpnm/",
-      "source_url": "https://cgwb.gov.in/cgwbpnm/download/2016"
+      "source_url_status": "BROKEN - verified 2026-07-26. cgwb.gov.in/cgwbpnm/download/2016 returns 404. OPEN TRACE for the Maharashtra 2024-25 edition."
     },
     {
       "year_book": "2022-23",
       "publisher": "Central Ground Water Board, Central Region",
-      "source_url": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/1703237300342091479file.pdf"
+      "source_url": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/1703237300342091479file.pdf",
+      "source_url_status": "VERIFIED 2026-07-26: resolves to GROUND WATER YEAR BOOK OF MAHARASHTRA (2022-2023), 246 pages."
     },
     {
       "year_book": "GW Quality of Maharashtra (May 2022)",
       "publisher": "Central Ground Water Board, Central Region",
-      "source_url": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/1707983103489626080file.pdf"
+      "source_url": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/1707983103489626080file.pdf",
+      "source_url_status": "VERIFIED 2026-07-26: resolves to TREND REPORT ON GROUND WATER QUALITY OF MAHARASHTRA, Central Region Nagpur, 161 pages."
     }
   ],
   "wells": [
@@ -2581,5 +2583,6 @@
         }
       ]
     }
-  ]
+  ],
+  "_citation_trace_2026_07_26": "The MH 2024-25 edition (publication id 2016, posted 23 Mar 2026) is therefore unretrievable today; these 53 wells stay on the VERIFIED 2022-23 edition, whose direct pdf url does resolve. RETRIEVAL IS BROKEN AT CGWB'S END - established 2026-07-26, do not repeat this. The publications warehouse at cgwb.gov.in/cgwbpnm/ LISTS both 2024-25 Year Books with titles, posting dates and publication ids, but there is no working public route to the PDFs. Eight automated routes were tried and all return the same 33 KB Drupal 404 ('paged nahin mila', plain openresty HTTP/2 404 - no WAF, no captcha, no challenge): download/<id>; publication-detail/<id>; the CSRF POST to publication/<id> followed by the download, replicating the site's own downloadPdf() JS; a cookie-jar session; deriving the path from the thumbnail id; a directory listing on uploads/documents/; search engines (not indexed); and the retired /Regions/<REGION>/Reports/ path. CONFIRMED IN A REAL BROWSER by the maintainer the same day: the page renders and the publications are visible, but the download does not work there either. So this is NOT a bot block, NOT a session problem and NOT something a browser fetch solves - an earlier version of this note said 'fetch it from a browser session', which was wrong. Only /cgwbpnm/ itself and /cgwbpnm/public/* static assets serve; every other route under /cgwbpnm/ 404s, which looks like a reverse-proxy misconfiguration on their side. The id scheme is <unix-seconds><random>, verified three ways (1688105823 = 30 Jun 2023 matches the 2017-18 PDF's own creation timestamp; 1774431953 and 1774326882 match the two 2026 posting dates), but the thumbnail and the PDF get DIFFERENT random suffixes, so the path cannot be derived from anything the listing exposes. NEXT STEPS, in order: (1) the cgwb-yearbook-* registry entries watch the download/<id> link set, so a re-upload or a route fix changes the set and we get told; (2) failing that, email CGWB SECR Chennai / CR Nagpur, or RTI. Not an engineering problem."
 }

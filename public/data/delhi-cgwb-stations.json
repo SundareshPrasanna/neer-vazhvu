@@ -16,7 +16,7 @@
     "cadence_raw": "6-hourly (telemetric) / periodic (manual)",
     "cadence_published_here": "monthly mean"
   },
-  "_feed_status": "NOT a live feed. Telemetry across the Delhi network stops on 2025-09-20, the same month BBMB's public reservoir page froze (04.09.2025). Treated as a historical series, not an ingestion source.",
+  "_feed_status": "NOT a live feed. Telemetry across the Delhi network stops on 2025-09-20, the same month BBMB's public reservoir page froze (04.09.2025). Treated as a historical series, not an ingestion source. CORRECTION 2026-07-26: the BBMB half of this note is STALE. BBMB has RESUMED publishing daily reservoir data - https://bbmb.gov.in/writereaddata/Portal/Images/pdf/res_data.pdf served 'as on 26-07-2026 06:00 Hrs' with Bhakra 1592.91 ft (inflow 40,363 / outflow 26,132 cusecs) and Pong 1329.86 ft. It publishes CURRENT DAY ONLY and overwrites the file daily, so any day not scraped is lost permanently. See the coverage audit for the proposed scraper - this is Delhi's only route to a live raw-water feed.",
   "_sign_convention": "WRIS returns depth-to-water with a programme-dependent sign. Delhi has three station-code families: numeric NHN codes and AAXI* report positive-down, CGWBDL* reports negative-down. The convention is derived per station from the median of its own readings (family agreement asserted at build time), never by abs() - which would erase real water-above-datum readings in floodplain wells and would launder sign-faulty sensors into plausible data.",
   "_excluded": {
     "suspect_stations": {

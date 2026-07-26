@@ -244,7 +244,7 @@ function buildFacts(): Fact[] {
           unit: "mg/L D/S minus U/S",
           interpretation: `CPCB ${usLatest.year} NWMP readings: BOD jumps from ${usLatest.bod_mgl} mg/L upstream of Madurai (Sellur) to ${dsLatest.bod_mgl} mg/L downstream (Anuppanadi). Sewage outfalls and textile dyeing through the city push the river over the 3 mg/L drinkable-after-treatment threshold.`,
           data_date: String(usLatest.year),
-          source_url: "https://cpcb.nic.in/nwmp-data-2/",
+          source_url: "https://cpcb.gov.in/nwmp-data-2/",
           source_label: "CPCB NWMP · Vaigai stations 10059 + 10060",
         });
       }
@@ -258,7 +258,7 @@ function buildFacts(): Fact[] {
           unit: "mg/L (CPCB threshold 5.0)",
           interpretation: `Latest CPCB NWMP reading at Vaigai D/S Madurai (${dsLatest.year}). The 5 mg/L threshold is the cutoff for outdoor bathing and propagation of fish/wildlife under CPCB Class C. ${dsLatest.do_mgl >= 5 ? "Just above" : "Below"} threshold.`,
           data_date: String(dsLatest.year),
-          source_url: "https://cpcb.nic.in/nwmp-data-2/",
+          source_url: "https://cpcb.gov.in/nwmp-data-2/",
           source_label: "CPCB NWMP station 10060",
         });
       }

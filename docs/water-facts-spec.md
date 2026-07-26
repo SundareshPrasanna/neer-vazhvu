@@ -199,7 +199,7 @@ Rules:
 | CMWSSB Lake Level | https://cmwssb.tn.gov.in/lake-level | Reservoir storage (live), total capacity |
 | CMWSSB Water Supply System | https://cmwssb.tn.gov.in/water-supply-system | Piped supply, desalination installed capacity |
 | CMWSSB Sewerage System | https://cmwssb.tn.gov.in/sewerage-system | STP count (13), installed capacity (745 MLD) |
-| CPCB Water Quality Criteria | https://cpcb.nic.in/water-quality-criteria/ | Class D DO threshold (≥ 4 mg/L) |
+| CPCB Water Quality Criteria | https://cpcb.gov.in/water-quality-criteria/ | Class D DO threshold (≥ 4 mg/L) |
 | WHO Drinking Water Guidelines | (cited for fluoride, nitrate, arsenic etc.; DO has no WHO threshold) | Future groundwater quality cards |
 | World Weather Attribution - Chennai floods | https://www.worldweatherattribution.org/chennai-floods-december-2015/ | 2015 station rainfall range 77-494 mm; no climate attribution |
 | TNIE - Nemmeli output cut | https://www.newindianexpress.com/cities/chennai/2026/Feb/09/chennai-metro-water-supply-cuts-nemmeli-plant-output-as-lakes-near-full-capacity | Desalination operating-vs-installed context |

@@ -7,7 +7,7 @@
       "publisher": "Kolkata Municipal Corporation, Sewerage & Drainage Department",
       "url": "https://www.kmcgov.in/KMCPortal/downloads/Weekly_Drainage_Activity_Chart.pdf",
       "license": "KMC publication, cited with attribution",
-      "type": "pdf-fixed-url",
+      "type": "file",
       "cadence": "weekly",
       "tier": 1,
       "detection": {
@@ -26,7 +26,7 @@
       "publisher": "West Bengal Pollution Control Board",
       "url": "http://emis.wbpcb.gov.in/waterquality/showwqprevdatachoosedist.do",
       "license": "WBPCB citizen data portal, cited with attribution",
-      "type": "html-form",
+      "type": "page",
       "cadence": "quarterly",
       "tier": 1,
       "detection": {
@@ -45,7 +45,7 @@
       "publisher": "Kolkata Municipal Corporation",
       "url": "https://www.kmcgov.in/KMCPortal/downloads/EnvironmentPlan_KMC_2021.pdf",
       "license": "KMC statutory filing under the NGT District Environment Plan process, cited with attribution",
-      "type": "pdf-fixed-url",
+      "type": "file",
       "cadence": "irregular",
       "tier": 1,
       "detection": {
@@ -64,13 +64,16 @@
       "publisher": "Kolkata Municipal Corporation, Water Supply Department",
       "url": "http://www.kmc-wd.com/",
       "license": "KMC publication, cited with attribution",
-      "type": "html-page",
+      "type": "page",
       "cadence": "irregular",
       "tier": 2,
       "detection": {
         "method": "content-hash"
       },
-      "dependsOn": [],
+      "dependsOn": [
+        "src/lib/cities/kolkata.ts",
+        "public/data/allocations-kolkata.json"
+      ],
       "refreshMethod": "manual - BLOCKED on reconciliation, see notes",
       "notes": "DO NOT PUBLISH A TOTAL FROM THIS PAGE. Plants listed sum to 2,214.7 MLD plus ~110 MLD tube wells = 2,324.7 MLD, while the SAME page describes a target of ~1,900 MLD generation in 2025 and a requirement of ~1,660 MLD. The page is labelled '(DRAFT)' and footered '(c) 2013', and refers to 2025 in the future tense. Either the plant figures are post-expansion design capacities or the page mixes vintages. Reconcile against KMC budget statements (OpenCity kmc-budget-statement, 16 PDFs) before any capacity total enters the product. Watched so we notice if KMC ever republishes it."
     },
@@ -80,14 +83,17 @@
       "publisher": "East Kolkata Wetlands Management Authority",
       "url": "http://ekwma.in/ek/index.php",
       "license": "West Bengal government publication, cited with attribution",
-      "type": "html-page",
+      "type": "page",
       "cadence": "irregular",
       "tier": 2,
       "detection": {
         "method": "link-set",
         "linkPattern": "management[_% ]?plan|action[_% ]?plan|biodiversity|order|fir|charge[_% ]?sheet"
       },
-      "dependsOn": [],
+      "dependsOn": [
+        "public/data/facts-kolkata.json",
+        "public/data/water-bodies-flagship-kolkata.json"
+      ],
       "refreshMethod": "manual",
       "notes": "Counterpart figures to KMC's balance: 12,500 hectares, 254 sewage-fed fisheries, 37 mouzas (30 full, 7 part) across South and North 24 Parganas, constituted under the East Kolkata Wetlands (Conservation and Management) Act, 2006. Publishes an Integrated Management Plan 2021-2026, Supreme Court / Calcutta HC / NGT orders, and FIR-status and charge-sheet pages - an encroachment-enforcement record structurally parallel to HYDRAA's in Hyderabad. The FIR page rendered no HTML table on probe; format still to determine."
     },
@@ -97,7 +103,7 @@
       "publisher": "IN-GRES (CGWB + West Bengal state groundwater department), IIT Hyderabad",
       "url": "https://ingres.iith.ac.in/",
       "license": "Government of India assessment portal, cited with attribution",
-      "type": "json-api",
+      "type": "api",
       "cadence": "yearly",
       "tier": 1,
       "detection": {
@@ -116,7 +122,7 @@
       "publisher": "Central Ground Water Board via India-WRIS",
       "url": "https://indiawris.gov.in/wris/",
       "license": "Government of India, cited with attribution",
-      "type": "json-api",
+      "type": "api",
       "cadence": "monthly",
       "tier": 1,
       "detection": {
@@ -135,7 +141,7 @@
       "publisher": "India Meteorological Department (0.25-degree gridded)",
       "url": "https://www.imdpune.gov.in/",
       "license": "IMD gridded product via imdlib, cited with attribution",
-      "type": "bulk-download",
+      "type": "file",
       "cadence": "quarterly",
       "tier": 1,
       "detection": {
@@ -197,7 +203,10 @@
       "detection": {
         "method": "manual-watch"
       },
-      "dependsOn": [],
+      "dependsOn": [
+        "public/data/water-bodies-lost-kolkata.json",
+        "public/geojson/kolkata-water-bodies-census.geojson"
+      ],
       "refreshMethod": "WATCH - not yet published",
       "notes": "THE MOST CONSEQUENTIAL PENDING SOURCE FOR KOLKATA. KMC has commissioned a fresh borough-by-borough water-body inventory to replace the departmental tank list compiled in 1993 plus a 2004 NRSA aerial map. Until it lands, every official Kolkata pond count rests on a 33-year-old document and the published counts for 2006 alone range from 3,873 to 8,731. When this publishes it supersedes the 1993 baseline and re-bases the lost-water-bodies work."
     }
