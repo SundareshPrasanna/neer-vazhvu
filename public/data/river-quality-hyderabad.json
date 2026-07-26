@@ -1,128 +1,1380 @@
 {
   "last_updated": "2026-07-26",
-  "data_year_range": "Jan-Mar 2022",
-  "source": "TGPCB, Annexure-VIII (Water Quality Analysis Reports), 1st Quarterly Report 2022-23 to the Hon'ble National Green Tribunal in OA No. 606 of 2018",
-  "source_url": "https://tgpcb.cgg.gov.in/Uploads/PcbDocumentAllUploads/OANo-606of2018--1stQuarterlyReport2022-2023.pdf",
-  "source_label": "TGPCB / NGT OA 606 of 2018, 1st Quarterly Report 2022-23 (cover letter of the Chief Secretary, Government of Telangana, dated 01-08-2022)",
-  "_provenance": "The source PDF is a 204-page SCANNED RASTER with no text layer (0 extractable characters, 631 embedded images). Values here were recovered by OCR (tesseract 5.5.2, pages rendered at 400 dpi, --psm 1 for auto-rotation) and then EVERY row was checked against the page image by eye before being written here. That check mattered: OCR read the Manjeera downstream March BOD as 2.3 where the image shows 2.8. These are CPCB NWMP station codes published by the STATE board. NOTE, corrected later the same day: this route was taken on the belief that CPCB was unreachable, which was WRONG - cpcb.nic.in is a dead host, but CPCB serves everything on cpcb.gov.in, which answers in under a second and publishes the same series with a TEXT LAYER and no OCR required. The TGPCB values below stand on their own and were verified row by row, but the OCR was not necessary. See _cross_validation.",
-  "_units_note": "Column headers are reproduced as printed in the source. The source labels conductivity 'mS/cm' while the values (481-1481) are in the range of uS/cm; we record the number as published and the unit as printed rather than silently correcting the source, so `conductivity_us` carries the printed figure.",
-  "_stations_pending_coordinates": "Two Musi stations in this annexure are not plotted because no coordinate could be sourced honestly: D/s of Musi at Pratapasingaram (NWMP 1173) and River Musi at Kasaniguda (NWMP 3082). Neither is a named place node in OSM and neither resolves in Nominatim, and inventing a point on the river line would be fabricating precision the source does not carry. Their readings are preserved verbatim in the Musi river `notes` so nothing is lost, and they plot the moment a coordinate is sourced.",
+  "data_year_range": "2019-2024",
+  "source": "CPCB National Water Quality Monitoring Programme (NWMP), annual river water quality data",
+  "source_url": "https://cpcb.gov.in/nwmp-data/",
+  "source_label": "CPCB NWMP annual river data, editions 2019, 2020, 2021, 2022, 2023, 2024",
+  "_reading_shape": "CPCB publishes an annual MIN-MAX per parameter per station, not monthly point values. Each reading here is therefore a range for that year, recorded as {min, max}. No midpoint is invented. BDL (below detectable limit) and blank cells become null rather than zero.",
+  "_units": "Conductivity is umhos/cm (= uS/cm) as CPCB labels it. This also settles an ambiguity in the TGPCB annexure this file previously drew on, where the same magnitudes were printed under 'mS/cm'; CPCB's label is the consistent one.",
+  "_provenance": "Parsed from the text layer of CPCB's annual PDFs - no OCR. An earlier version of this file was OCR'd from TGPCB's scanned NGT return on the mistaken belief that CPCB was IP-blocked; in fact cpcb.nic.in is a dead host and CPCB serves everything on cpcb.gov.in. Station coordinates are NOT published by CPCB: the two carried here come from OSM/Nominatim (Nagole) and our own water- sources table cross-checked against Nominatim (Wadapally). The rest are parsed and published without coordinates rather than placed by guesswork - 2 of 11 stations plot.",
+  "_reporting_floor_caveat": "READ LOW DO VALUES AS A FLOOR, NOT A MEASUREMENT. In 9 of 51 station-years the annual MINIMUM dissolved oxygen equals the annual MAXIMUM, which cannot describe a real 12-month range - and 7 of those 9 sit at exactly 0.3 mg/L (the others at 0.0 and 0.1). The same 0.3 recurs across different stations and different years, and it is also the value TGPCB printed for all three months at two stations. The consistent reading is that 0.3 is a reporting or detection floor in this programme rather than an instrument reading. Treat 'DO 0.3' as 'at or below the floor', which is why this site says the Musi is anoxic through the city rather than quoting 0.3 as a measured concentration.",
+  "_cross_check_tgpcb": "Checked against TGPCB's Jan-Mar 2022 monthly figures (Annexure-VIII of its NGT OA 606 of 2018 return), which this file previously carried. The monthly values fall inside CPCB's 2022 annual range at Kasaniguda 3082 and Krishna Wadapally 1465. They do NOT at the two anoxic stations: TGPCB reported DO 0.3 at Nagole 2339 and Pratapasingaram 1173, below CPCB's annual minima of 0.5 and 0.8. An annual minimum cannot exceed a monthly value at the same station, so the two government sources are inconsistent there. See _reporting_floor_caveat: CPCB's OWN data shows 0.3 recurring as an annual min==max across several stations and years, so the likeliest explanation is that both bodies report a floor rather than that either is wrong. Both sources agree on the qualitative finding.",
   "rivers": [
     {
       "id": "musi",
       "name": "Musi",
       "name_te": "మూసీ నది",
       "length_km": 244,
-      "overall_status": "CPCB Priority-I polluted river stretch (Hyderabad to Nalgonda)",
       "cpcb_class": "Priority-I",
-      "description": "The Musi enters the city clean and leaves it anoxic. Dissolved oxygen falls from 6.0 mg/L above the city at Gandipet to 0.3 mg/L at Nagole, and BOD rises from 1.2 mg/L to 6-8 mg/L across the same reach. The river then partially recovers downstream. The River Rejuvenation Committee's own minutes record the difficulty of reaching the BOD 3 mg/L target 'in the absence of fresh water flow in the River Musi during lean period'.",
-      "notes": "Two further stations in the same annexure are not plotted for want of a sourced coordinate; their readings are recorded here in full. D/s of Musi at Pratapasingaram (NWMP station code 1173): Jan-22 DO 0.3, pH 7.93, conductivity 1422, BOD 8.0, total coliform 430 MPN/100ml, free ammonia 0.06, boron 0.5; Feb-22 DO 0.3, pH 7.36, conductivity 1337, BOD 6.0, coliform 430, ammonia 0.02, boron 0.5; Mar-22 DO 0.3, pH 6.58, conductivity 1373, BOD 6.2, coliform 540, ammonia 0.01, boron 0.5. River Musi at Kasaniguda (NWMP station code 3082), the recovery point: Jan-22 DO 6.6, pH 7.72, conductivity 1272, BOD 3.5, coliform 63, ammonia 0.01, boron 0.5, SAR 1.12; Feb-22 DO 6.6, pH 7.40, conductivity 1253, BOD 3.2, coliform 58, ammonia 0.01, boron 0.5, SAR 0.86; Mar-22 DO 6.4, pH 8.01, conductivity 1481, BOD 3.6, coliform 70, ammonia 0.01, boron 0.5, SAR 1.03.",
+      "overall_status": "CPCB Priority-I polluted river stretch (Hyderabad to Nalgonda)",
+      "description": "The Musi enters the city with oxygen and leaves without it. Across CPCB's own annual monitoring the through-city and downstream stations sit at dissolved-oxygen minima below 1 mg/L while BOD maxima run into double figures, and the river recovers only well downstream. The starkest reading is not on the mainstem at all: station 4659, at the outlet of Nalla Cheruvu, recorded dissolved oxygen of 0.0 in 2022 - no oxygen at either end of the year's range.",
+      "notes": "",
       "stations": [
         {
-          "id": "musi-gandipet",
-          "name": "U/s of Musi at Gandipet (Osman Sagar)",
-          "lat": 17.3747,
-          "lng": 78.2997,
-          "stretch": "Upstream of the city (NWMP 1172)",
-          "readings": [
-            {
-              "year": 2022,
-              "month": "Jan",
-              "do_mgl": 6.0,
-              "bod_mgl": 1.2,
-              "ph": 8.13,
-              "conductivity_us": 481,
-              "cod_mgl": null,
-              "fecal_coliform_mpn": null,
-              "total_coliform_mpn": 46,
-              "free_ammonia_mgl": 0.03,
-              "boron_mgl": 0.5,
-              "tds_mgl": null,
-              "nitrate_mgl": null
-            },
-            {
-              "year": 2022,
-              "month": "Feb",
-              "do_mgl": 5.1,
-              "bod_mgl": 1.0,
-              "ph": 7.67,
-              "conductivity_us": 498,
-              "cod_mgl": null,
-              "fecal_coliform_mpn": null,
-              "total_coliform_mpn": 63,
-              "free_ammonia_mgl": 0.01,
-              "boron_mgl": 0.5,
-              "tds_mgl": null,
-              "nitrate_mgl": null
-            },
-            {
-              "year": 2022,
-              "month": "Mar",
-              "do_mgl": 5.4,
-              "bod_mgl": 1.0,
-              "ph": 8.25,
-              "conductivity_us": 502,
-              "cod_mgl": null,
-              "fecal_coliform_mpn": null,
-              "total_coliform_mpn": 20,
-              "free_ammonia_mgl": 0.04,
-              "boron_mgl": 0.5,
-              "tds_mgl": null,
-              "nitrate_mgl": null
-            }
-          ]
-        },
-        {
-          "id": "musi-nagole",
+          "id": "nwmp-2339",
+          "nwmp_code": "2339",
           "name": "River Musi at Nagole",
           "lat": 17.37753,
           "lng": 78.56012,
           "stretch": "Through the city (NWMP 2339)",
           "readings": [
             {
-              "year": 2022,
-              "month": "Jan",
-              "do_mgl": 0.3,
-              "bod_mgl": 6.0,
-              "ph": 7.96,
-              "conductivity_us": 1391,
-              "cod_mgl": null,
-              "fecal_coliform_mpn": null,
-              "total_coliform_mpn": 920,
-              "free_ammonia_mgl": 0.02,
-              "boron_mgl": 0.5,
-              "tds_mgl": null,
-              "nitrate_mgl": null
+              "year": 2019,
+              "temperature_c": {
+                "min": 19.0,
+                "max": 31.0
+              },
+              "do_mgl": {
+                "min": 0.1,
+                "max": 0.1
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.8
+              },
+              "conductivity_umhos": {
+                "min": 1137.0,
+                "max": 1599.0
+              },
+              "bod_mgl": {
+                "min": 22.0,
+                "max": 43.0
+              },
+              "nitrate_mgl": {
+                "min": 8.0,
+                "max": 63.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 26.0,
+                "max": 540.0
+              },
+              "total_coliform_mpn": {
+                "min": 280.0,
+                "max": 1600.0
+              },
+              "fecal_streptococci_mpn": null
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 29.0
+              },
+              "do_mgl": {
+                "min": 0.1,
+                "max": 1.4
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.0
+              },
+              "conductivity_umhos": {
+                "min": 1041.0,
+                "max": 1460.0
+              },
+              "bod_mgl": {
+                "min": 10.0,
+                "max": 44.0
+              },
+              "nitrate_mgl": {
+                "min": 2.2,
+                "max": 16.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 33.0,
+                "max": 920.0
+              },
+              "total_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 220.0,
+                "max": 1600.0
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 30.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.2
+              },
+              "conductivity_umhos": {
+                "min": 947.0,
+                "max": 1702.0
+              },
+              "bod_mgl": {
+                "min": 6.0,
+                "max": 15.0
+              },
+              "nitrate_mgl": {
+                "min": 2.56,
+                "max": 18.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 31.0,
+                "max": 240.0
+              },
+              "total_coliform_mpn": {
+                "min": 430.0,
+                "max": 1600.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 47.0
+              }
             },
             {
               "year": 2022,
-              "month": "Feb",
-              "do_mgl": 0.3,
-              "bod_mgl": 6.0,
-              "ph": 7.42,
-              "conductivity_us": 1341,
-              "cod_mgl": null,
-              "fecal_coliform_mpn": null,
-              "total_coliform_mpn": 920,
-              "free_ammonia_mgl": 0.04,
-              "boron_mgl": 0.5,
-              "tds_mgl": null,
-              "nitrate_mgl": null
+              "temperature_c": {
+                "min": 24.5,
+                "max": 31.0
+              },
+              "do_mgl": {
+                "min": 0.5,
+                "max": 3.6
+              },
+              "ph": {
+                "min": 7.23,
+                "max": 7.96
+              },
+              "conductivity_umhos": {
+                "min": 439.0,
+                "max": 1487.0
+              },
+              "bod_mgl": {
+                "min": 1.8,
+                "max": 29.0
+              },
+              "nitrate_mgl": {
+                "min": 1.8,
+                "max": 11.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 9.0,
+                "max": 58.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 1600.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 26.0
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 28.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              },
+              "ph": {
+                "min": 6.9,
+                "max": 7.8
+              },
+              "conductivity_umhos": {
+                "min": 1027.0,
+                "max": 1621.0
+              },
+              "bod_mgl": {
+                "min": 6.0,
+                "max": 15.0
+              },
+              "nitrate_mgl": {
+                "min": 3.2,
+                "max": 9.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 58.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 12.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 28.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.2
+              },
+              "conductivity_umhos": {
+                "min": 1088.0,
+                "max": 1650.0
+              },
+              "bod_mgl": {
+                "min": 8.0,
+                "max": 18.0
+              },
+              "nitrate_mgl": {
+                "min": 1.6,
+                "max": 13.78
+              },
+              "fecal_coliform_mpn": {
+                "min": 21.0,
+                "max": 110.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 13.0
+              }
+            }
+          ]
+        },
+        {
+          "id": "nwmp-1173",
+          "nwmp_code": "1173",
+          "name": "Musi d/s at Pratapasingaram",
+          "lat": null,
+          "lng": null,
+          "stretch": "Downstream of the city (NWMP 1173)",
+          "readings": [
+            {
+              "year": 2019,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 30.0
+              },
+              "do_mgl": {
+                "min": 0.0,
+                "max": 2.8
+              },
+              "ph": {
+                "min": 6.9,
+                "max": 7.8
+              },
+              "conductivity_umhos": {
+                "min": 1027.0,
+                "max": 1611.0
+              },
+              "bod_mgl": {
+                "min": 8.0,
+                "max": 33.0
+              },
+              "nitrate_mgl": {
+                "min": 4.8,
+                "max": 77.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 1.8,
+                "max": 540.0
+              },
+              "total_coliform_mpn": {
+                "min": 280.0,
+                "max": 1600.0
+              },
+              "fecal_streptococci_mpn": null
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 21.0,
+                "max": 28.0
+              },
+              "do_mgl": {
+                "min": 0.1,
+                "max": 13.0
+              },
+              "ph": {
+                "min": 6.91,
+                "max": 7.9
+              },
+              "conductivity_umhos": {
+                "min": 1084.0,
+                "max": 1410.0
+              },
+              "bod_mgl": {
+                "min": 10.0,
+                "max": 32.0
+              },
+              "nitrate_mgl": {
+                "min": 1.71,
+                "max": 16.01
+              },
+              "fecal_coliform_mpn": {
+                "min": 39.0,
+                "max": 430.0
+              },
+              "total_coliform_mpn": {
+                "min": 540.0,
+                "max": 1600.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 38.0,
+                "max": 920.0
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 22.0,
+                "max": 30.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 2.1
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 7.7
+              },
+              "conductivity_umhos": {
+                "min": 946.0,
+                "max": 1580.0
+              },
+              "bod_mgl": {
+                "min": 4.0,
+                "max": 12.0
+              },
+              "nitrate_mgl": {
+                "min": 3.2,
+                "max": 14.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 32.0,
+                "max": 240.0
+              },
+              "total_coliform_mpn": {
+                "min": 280.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 38.0
+              }
             },
             {
               "year": 2022,
-              "month": "Mar",
-              "do_mgl": 0.3,
-              "bod_mgl": 8.0,
-              "ph": 7.92,
-              "conductivity_us": 1452,
-              "cod_mgl": null,
-              "fecal_coliform_mpn": null,
-              "total_coliform_mpn": 430,
-              "free_ammonia_mgl": 0.07,
-              "boron_mgl": 0.5,
-              "tds_mgl": null,
-              "nitrate_mgl": null
+              "temperature_c": {
+                "min": 24.0,
+                "max": 30.5
+              },
+              "do_mgl": {
+                "min": 0.8,
+                "max": 4.2
+              },
+              "ph": {
+                "min": 6.58,
+                "max": 7.93
+              },
+              "conductivity_umhos": {
+                "min": 605.0,
+                "max": 1446.0
+              },
+              "bod_mgl": {
+                "min": 1.8,
+                "max": 12.0
+              },
+              "nitrate_mgl": {
+                "min": 1.4,
+                "max": 13.8
+              },
+              "fecal_coliform_mpn": {
+                "min": 8.0,
+                "max": 58.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 540.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 31.0
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 28.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 1.2
+              },
+              "ph": {
+                "min": 6.8,
+                "max": 7.7
+              },
+              "conductivity_umhos": {
+                "min": 1005.0,
+                "max": 1488.0
+              },
+              "bod_mgl": {
+                "min": 5.2,
+                "max": 16.0
+              },
+              "nitrate_mgl": {
+                "min": 2.6,
+                "max": 13.6
+              },
+              "fecal_coliform_mpn": {
+                "min": 11.0,
+                "max": 84.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 4.0,
+                "max": 14.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 28.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 3.6
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 7.9
+              },
+              "conductivity_umhos": {
+                "min": 866.0,
+                "max": 1702.0
+              },
+              "bod_mgl": {
+                "min": 4.0,
+                "max": 12.0
+              },
+              "nitrate_mgl": {
+                "min": 3.2,
+                "max": 20.3
+              },
+              "fecal_coliform_mpn": {
+                "min": 17.0,
+                "max": 120.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 1600.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 8.0
+              }
+            }
+          ]
+        },
+        {
+          "id": "nwmp-3082",
+          "nwmp_code": "3082",
+          "name": "River Musi at Solipet (Kasaniguda), Nalgonda",
+          "lat": null,
+          "lng": null,
+          "stretch": "Downstream recovery reach (NWMP 3082)",
+          "readings": [
+            {
+              "year": 2019,
+              "temperature_c": {
+                "min": 17.0,
+                "max": 23.0
+              },
+              "do_mgl": {
+                "min": 5.9,
+                "max": 6.7
+              },
+              "ph": {
+                "min": 6.6,
+                "max": 7.9
+              },
+              "conductivity_umhos": {
+                "min": 1262.0,
+                "max": 2899.0
+              },
+              "bod_mgl": {
+                "min": 3.0,
+                "max": 4.4
+              },
+              "nitrate_mgl": {
+                "min": 11.4,
+                "max": 24.3
+              },
+              "fecal_coliform_mpn": {
+                "min": 1.8,
+                "max": 4.0
+              },
+              "total_coliform_mpn": {
+                "min": 40.0,
+                "max": 70.0
+              },
+              "fecal_streptococci_mpn": null
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 16.0,
+                "max": 27.0
+              },
+              "do_mgl": {
+                "min": 5.0,
+                "max": 7.1
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 7.7
+              },
+              "conductivity_umhos": {
+                "min": 798.0,
+                "max": 1655.0
+              },
+              "bod_mgl": {
+                "min": 3.0,
+                "max": 5.0
+              },
+              "nitrate_mgl": {
+                "min": 4.11,
+                "max": 14.39
+              },
+              "fecal_coliform_mpn": {
+                "min": 1.8,
+                "max": 13.0
+              },
+              "total_coliform_mpn": {
+                "min": 15.0,
+                "max": 94.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 1.8,
+                "max": 1.8
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 17.0,
+                "max": 22.0
+              },
+              "do_mgl": {
+                "min": 5.4,
+                "max": 6.4
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 7.4
+              },
+              "conductivity_umhos": {
+                "min": 989.0,
+                "max": 1704.0
+              },
+              "bod_mgl": {
+                "min": 3.0,
+                "max": 5.6
+              },
+              "nitrate_mgl": {
+                "min": 7.13,
+                "max": 10.13
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 7.0
+              },
+              "total_coliform_mpn": {
+                "min": 43.0,
+                "max": 84.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 4.0
+              }
+            },
+            {
+              "year": 2022,
+              "temperature_c": {
+                "min": 17.0,
+                "max": 20.0
+              },
+              "do_mgl": {
+                "min": 5.8,
+                "max": 6.7
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.57
+              },
+              "conductivity_umhos": {
+                "min": 1061.0,
+                "max": 1699.0
+              },
+              "bod_mgl": {
+                "min": 3.2,
+                "max": 4.8
+              },
+              "nitrate_mgl": {
+                "min": 3.07,
+                "max": 17.08
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 9.0
+              },
+              "total_coliform_mpn": {
+                "min": 58.0,
+                "max": 84.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 6.0
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 25.0
+              },
+              "do_mgl": {
+                "min": 6.3,
+                "max": 7.6
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.5
+              },
+              "conductivity_umhos": {
+                "min": 1101.0,
+                "max": 1724.0
+              },
+              "bod_mgl": {
+                "min": 2.0,
+                "max": 4.7
+              },
+              "nitrate_mgl": {
+                "min": 16.08,
+                "max": 35.08
+              },
+              "fecal_coliform_mpn": {
+                "min": 7.0,
+                "max": 8.0
+              },
+              "total_coliform_mpn": {
+                "min": 49.0,
+                "max": 70.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 5.0,
+                "max": 6.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 17.0,
+                "max": 24.0
+              },
+              "do_mgl": {
+                "min": 6.0,
+                "max": 6.8
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.8
+              },
+              "conductivity_umhos": {
+                "min": 1155.0,
+                "max": 2002.0
+              },
+              "bod_mgl": {
+                "min": 2.8,
+                "max": 3.9
+              },
+              "nitrate_mgl": {
+                "min": 21.02,
+                "max": 53.09
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 8.0
+              },
+              "total_coliform_mpn": {
+                "min": 47.0,
+                "max": 79.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 4.0,
+                "max": 6.0
+              }
+            }
+          ]
+        },
+        {
+          "id": "nwmp-4656",
+          "nwmp_code": "4656",
+          "name": "River Musi at Moosarambagh Bridge, Hyderabad",
+          "lat": null,
+          "lng": null,
+          "stretch": "City centre (NWMP 4656)",
+          "readings": [
+            {
+              "year": 2022,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 31.0
+              },
+              "do_mgl": {
+                "min": 1.7,
+                "max": 3.8
+              },
+              "ph": {
+                "min": 7.16,
+                "max": 7.75
+              },
+              "conductivity_umhos": {
+                "min": 669.0,
+                "max": 1458.0
+              },
+              "bod_mgl": {
+                "min": 3.2,
+                "max": 24.0
+              },
+              "nitrate_mgl": {
+                "min": 1.4,
+                "max": 10.8
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 47.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 1600.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 21.0
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 27.8
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 1.1
+              },
+              "ph": {
+                "min": 6.8,
+                "max": 7.6
+              },
+              "conductivity_umhos": {
+                "min": 784.0,
+                "max": 1474.0
+              },
+              "bod_mgl": {
+                "min": 5.2,
+                "max": 14.0
+              },
+              "nitrate_mgl": {
+                "min": 3.4,
+                "max": 9.2
+              },
+              "fecal_coliform_mpn": {
+                "min": 8.0,
+                "max": 63.0
+              },
+              "total_coliform_mpn": {
+                "min": 430.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 7.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 28.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.5
+              },
+              "conductivity_umhos": {
+                "min": 982.0,
+                "max": 1639.0
+              },
+              "bod_mgl": {
+                "min": 6.2,
+                "max": 16.0
+              },
+              "nitrate_mgl": {
+                "min": 1.5,
+                "max": 12.6
+              },
+              "fecal_coliform_mpn": {
+                "min": 21.0,
+                "max": 120.0
+              },
+              "total_coliform_mpn": {
+                "min": 290.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 11.0
+              }
+            }
+          ]
+        },
+        {
+          "id": "nwmp-4657",
+          "nwmp_code": "4657",
+          "name": "River Musi at Pillaipalli, Rangareddy",
+          "lat": null,
+          "lng": null,
+          "stretch": "Downstream of the city (NWMP 4657)",
+          "readings": [
+            {
+              "year": 2022,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 30.0
+              },
+              "do_mgl": {
+                "min": 1.0,
+                "max": 4.4
+              },
+              "ph": {
+                "min": 6.73,
+                "max": 7.81
+              },
+              "conductivity_umhos": {
+                "min": 702.0,
+                "max": 1469.0
+              },
+              "bod_mgl": {
+                "min": 1.8,
+                "max": 12.0
+              },
+              "nitrate_mgl": {
+                "min": 2.0,
+                "max": 8.6
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 40.0
+              },
+              "total_coliform_mpn": {
+                "min": 35.0,
+                "max": 540.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 12.0
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 27.2
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 3.2
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.5
+              },
+              "conductivity_umhos": {
+                "min": 998.0,
+                "max": 1504.0
+              },
+              "bod_mgl": {
+                "min": 4.0,
+                "max": 6.0
+              },
+              "nitrate_mgl": {
+                "min": 2.6,
+                "max": 11.84
+              },
+              "fecal_coliform_mpn": {
+                "min": 11.0,
+                "max": 70.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 1600.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 15.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 27.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 3.6
+              },
+              "ph": {
+                "min": 6.6,
+                "max": 7.8
+              },
+              "conductivity_umhos": {
+                "min": 890.0,
+                "max": 1729.0
+              },
+              "bod_mgl": {
+                "min": 4.0,
+                "max": 8.0
+              },
+              "nitrate_mgl": {
+                "min": 3.86,
+                "max": 18.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 11.0,
+                "max": 94.0
+              },
+              "total_coliform_mpn": {
+                "min": 280.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 5.0
+              }
+            }
+          ]
+        },
+        {
+          "id": "nwmp-4658",
+          "nwmp_code": "4658",
+          "name": "River Musi at Valigonda Bridge, Nalgonda",
+          "lat": null,
+          "lng": null,
+          "stretch": "Lower reach (NWMP 4658)",
+          "readings": [
+            {
+              "year": 2022,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 20.0
+              },
+              "do_mgl": {
+                "min": 5.6,
+                "max": 6.4
+              },
+              "ph": {
+                "min": 7.19,
+                "max": 8.04
+              },
+              "conductivity_umhos": {
+                "min": 1253.0,
+                "max": 1679.0
+              },
+              "bod_mgl": {
+                "min": 3.7,
+                "max": 8.0
+              },
+              "nitrate_mgl": {
+                "min": 3.13,
+                "max": 4.91
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 13.0
+              },
+              "total_coliform_mpn": {
+                "min": 79.0,
+                "max": 170.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 3.0,
+                "max": 11.0
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 23.0
+              },
+              "do_mgl": {
+                "min": 5.9,
+                "max": 7.6
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 8.3
+              },
+              "conductivity_umhos": {
+                "min": 1159.0,
+                "max": 1802.0
+              },
+              "bod_mgl": {
+                "min": 2.0,
+                "max": 5.8
+              },
+              "nitrate_mgl": {
+                "min": 20.15,
+                "max": 43.15
+              },
+              "fecal_coliform_mpn": {
+                "min": 8.0,
+                "max": 9.0
+              },
+              "total_coliform_mpn": {
+                "min": 79.0,
+                "max": 110.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 6.0,
+                "max": 6.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 24.0
+              },
+              "do_mgl": {
+                "min": 5.1,
+                "max": 6.4
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 7.7
+              },
+              "conductivity_umhos": {
+                "min": 1041.0,
+                "max": 2066.0
+              },
+              "bod_mgl": {
+                "min": 3.0,
+                "max": 4.6
+              },
+              "nitrate_mgl": {
+                "min": 24.16,
+                "max": 52.18
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 9.0
+              },
+              "total_coliform_mpn": {
+                "min": 63.0,
+                "max": 94.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 4.0,
+                "max": 6.0
+              }
+            }
+          ]
+        },
+        {
+          "id": "nwmp-4659",
+          "nwmp_code": "4659",
+          "name": "Musi at outlet of Nalla Cheruvu, Peerajadiguda",
+          "lat": null,
+          "lng": null,
+          "stretch": "Tank outlet, east of the city (NWMP 4659)",
+          "readings": [
+            {
+              "year": 2022,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 31.0
+              },
+              "do_mgl": {
+                "min": 0.0,
+                "max": 0.0
+              },
+              "ph": {
+                "min": 7.34,
+                "max": 7.94
+              },
+              "conductivity_umhos": {
+                "min": 1156.0,
+                "max": 1878.0
+              },
+              "bod_mgl": {
+                "min": 6.0,
+                "max": 18.0
+              },
+              "nitrate_mgl": {
+                "min": 1.4,
+                "max": 14.2
+              },
+              "fecal_coliform_mpn": {
+                "min": 8.0,
+                "max": 46.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 3.0,
+                "max": 13.0
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 28.9
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.9
+              },
+              "conductivity_umhos": {
+                "min": 1040.0,
+                "max": 1794.0
+              },
+              "bod_mgl": {
+                "min": 6.0,
+                "max": 16.0
+              },
+              "nitrate_mgl": {
+                "min": 3.0,
+                "max": 12.5
+              },
+              "fecal_coliform_mpn": {
+                "min": 11.0,
+                "max": 48.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 21.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 28.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              },
+              "ph": {
+                "min": 6.4,
+                "max": 8.1
+              },
+              "conductivity_umhos": {
+                "min": 1048.0,
+                "max": 1734.0
+              },
+              "bod_mgl": {
+                "min": 6.0,
+                "max": 12.0
+              },
+              "nitrate_mgl": {
+                "min": 2.9,
+                "max": 18.69
+              },
+              "fecal_coliform_mpn": {
+                "min": 24.0,
+                "max": 140.0
+              },
+              "total_coliform_mpn": {
+                "min": 430.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 10.0
+              }
+            }
+          ]
+        },
+        {
+          "id": "nwmp-4660",
+          "nwmp_code": "4660",
+          "name": "River Musi at Peerajadiguda, Ranga Reddy",
+          "lat": null,
+          "lng": null,
+          "stretch": "East of the city (NWMP 4660)",
+          "readings": [
+            {
+              "year": 2022,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 30.0
+              },
+              "do_mgl": {
+                "min": 2.0,
+                "max": 2.2
+              },
+              "ph": {
+                "min": 7.21,
+                "max": 7.96
+              },
+              "conductivity_umhos": {
+                "min": 685.0,
+                "max": 1490.0
+              },
+              "bod_mgl": {
+                "min": 2.1,
+                "max": 20.0
+              },
+              "nitrate_mgl": {
+                "min": 1.6,
+                "max": 11.6
+              },
+              "fecal_coliform_mpn": {
+                "min": 10.0,
+                "max": 58.0
+              },
+              "total_coliform_mpn": {
+                "min": 430.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 21.0
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 29.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 0.8
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.4
+              },
+              "conductivity_umhos": {
+                "min": 1022.0,
+                "max": 1502.0
+              },
+              "bod_mgl": {
+                "min": 5.8,
+                "max": 14.0
+              },
+              "nitrate_mgl": {
+                "min": 3.0,
+                "max": 10.8
+              },
+              "fecal_coliform_mpn": {
+                "min": 14.0,
+                "max": 48.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 1600.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 12.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 28.0
+              },
+              "do_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              },
+              "ph": {
+                "min": 6.9,
+                "max": 8.1
+              },
+              "conductivity_umhos": {
+                "min": 952.0,
+                "max": 1687.0
+              },
+              "bod_mgl": {
+                "min": 6.2,
+                "max": 14.0
+              },
+              "nitrate_mgl": {
+                "min": 3.4,
+                "max": 12.4
+              },
+              "fecal_coliform_mpn": {
+                "min": 17.0,
+                "max": 110.0
+              },
+              "total_coliform_mpn": {
+                "min": 350.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 9.0
+              }
             }
           ]
         }
@@ -133,79 +1385,747 @@
       "name": "Manjira",
       "name_te": "మంజీరా నది",
       "length_km": 174,
-      "overall_status": "CPCB Priority-II polluted river stretch (Gowdicherla to Nakkavagu); merged with the Nakkavagu action plan on the CPCB task team's recommendation",
       "cpcb_class": "Priority-II",
-      "description": "A Hyderabad supply corridor rather than an urban river: the Manjira carries the Singur and Manjira reservoirs, two of HMWSSB's six sources. The monitored reach brackets the confluence with the Nakkavagu, and the two stations bracket it deliberately - upstream and downstream of the same junction.",
-      "notes": "Both stations sit at Gowdicharla, above and below the Nakkavagu confluence. Coordinates are not plotted for either because Gowdicharla did not resolve to a sourced point; readings are recorded here. U/s before confluence (NWMP 2374): Jan-22 DO 5.9, pH 7.25, conductivity 656, BOD 2.9, coliform 27, ammonia 0.01, boron 0.5, SAR 0.68; Feb-22 DO 6.2, pH 7.20, conductivity 620, BOD 2.7, coliform 31, SAR 0.70; Mar-22 DO 6.0, pH 7.22, conductivity 676, BOD 3.0, coliform 33, SAR 0.71. D/s after confluence (NWMP 2375): Jan-22 DO 6.1, pH 7.22, conductivity 594, BOD 2.8, coliform 43, SAR 0.69; Feb-22 DO 6.3, pH 7.29, conductivity 576, BOD 2.5, coliform 39, SAR 0.57; Mar-22 DO 6.2, pH 7.31, conductivity 608, BOD 2.8, coliform 41, SAR 0.63.",
-      "stations": []
+      "overall_status": "CPCB Priority-II polluted stretch (Gowdicherla to Nakkavagu), merged with the Nakkavagu action plan",
+      "description": "A Hyderabad supply corridor rather than an urban river: the Manjira carries the Singur and Manjira reservoirs, two of HMWSSB's six sources. The two monitored stations deliberately bracket the Nakkavagu confluence, so the pair reads as a before-and-after on that tributary.",
+      "notes": "",
+      "stations": [
+        {
+          "id": "nwmp-2374",
+          "nwmp_code": "2374",
+          "name": "Manjeera u/s at Gowdicharla, before Nakkavagu",
+          "lat": null,
+          "lng": null,
+          "stretch": "Above the Nakkavagu confluence (NWMP 2374)",
+          "readings": [
+            {
+              "year": 2019,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 26.0
+              },
+              "do_mgl": {
+                "min": 4.9,
+                "max": 6.5
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 7.5
+              },
+              "conductivity_umhos": {
+                "min": 970.0,
+                "max": 1765.0
+              },
+              "bod_mgl": {
+                "min": 2.1,
+                "max": 3.0
+              },
+              "nitrate_mgl": {
+                "min": 6.3,
+                "max": 19.3
+              },
+              "fecal_coliform_mpn": {
+                "min": 1.8,
+                "max": 1.8
+              },
+              "total_coliform_mpn": {
+                "min": 36.0,
+                "max": 40.0
+              },
+              "fecal_streptococci_mpn": null
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 24.0
+              },
+              "do_mgl": {
+                "min": 0.1,
+                "max": 6.9
+              },
+              "ph": {
+                "min": 7.04,
+                "max": 7.41
+              },
+              "conductivity_umhos": {
+                "min": 614.0,
+                "max": 1785.0
+              },
+              "bod_mgl": {
+                "min": 2.4,
+                "max": 3.0
+              },
+              "nitrate_mgl": {
+                "min": null,
+                "max": 17.31
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 2.0
+              },
+              "total_coliform_mpn": {
+                "min": 24.0,
+                "max": 36.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 18.0
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 25.0
+              },
+              "do_mgl": {
+                "min": 5.8,
+                "max": 6.9
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 7.4
+              },
+              "conductivity_umhos": {
+                "min": 710.0,
+                "max": 1572.0
+              },
+              "bod_mgl": {
+                "min": 2.2,
+                "max": 3.0
+              },
+              "nitrate_mgl": {
+                "min": 3.14,
+                "max": 18.19
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 8.0
+              },
+              "total_coliform_mpn": {
+                "min": 22.0,
+                "max": 49.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 6.0
+              }
+            },
+            {
+              "year": 2022,
+              "temperature_c": {
+                "min": 17.0,
+                "max": 25.0
+              },
+              "do_mgl": {
+                "min": 5.6,
+                "max": 6.7
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 7.96
+              },
+              "conductivity_umhos": {
+                "min": 610.0,
+                "max": 996.0
+              },
+              "bod_mgl": {
+                "min": 2.2,
+                "max": 3.2
+              },
+              "nitrate_mgl": {
+                "min": 3.11,
+                "max": 15.1
+              },
+              "fecal_coliform_mpn": {
+                "min": 7.0,
+                "max": 10.0
+              },
+              "total_coliform_mpn": {
+                "min": 27.0,
+                "max": 39.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 6.0,
+                "max": 8.0
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 19.0,
+                "max": 27.0
+              },
+              "do_mgl": {
+                "min": 5.9,
+                "max": 6.9
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 7.9
+              },
+              "conductivity_umhos": {
+                "min": 850.0,
+                "max": 1020.0
+              },
+              "bod_mgl": {
+                "min": 2.0,
+                "max": 3.2
+              },
+              "nitrate_mgl": {
+                "min": 10.06,
+                "max": 29.04
+              },
+              "fecal_coliform_mpn": {
+                "min": 7.0,
+                "max": 8.0
+              },
+              "total_coliform_mpn": {
+                "min": 27.0,
+                "max": 34.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 6.0,
+                "max": 6.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 24.0
+              },
+              "do_mgl": {
+                "min": 6.0,
+                "max": 6.7
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 7.5
+              },
+              "conductivity_umhos": {
+                "min": 910.0,
+                "max": 1197.0
+              },
+              "bod_mgl": {
+                "min": 2.8,
+                "max": 3.6
+              },
+              "nitrate_mgl": {
+                "min": 18.02,
+                "max": 30.06
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 8.0
+              },
+              "total_coliform_mpn": {
+                "min": 30.0,
+                "max": 34.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 4.0,
+                "max": 6.0
+              }
+            }
+          ]
+        },
+        {
+          "id": "nwmp-2375",
+          "nwmp_code": "2375",
+          "name": "Manjeera d/s at Gowdicherla, after Nakkavagu",
+          "lat": null,
+          "lng": null,
+          "stretch": "Below the Nakkavagu confluence (NWMP 2375)",
+          "readings": [
+            {
+              "year": 2019,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 26.0
+              },
+              "do_mgl": {
+                "min": 3.9,
+                "max": 6.7
+              },
+              "ph": {
+                "min": 6.9,
+                "max": 7.5
+              },
+              "conductivity_umhos": {
+                "min": 970.0,
+                "max": 1782.0
+              },
+              "bod_mgl": {
+                "min": 2.1,
+                "max": 31.0
+              },
+              "nitrate_mgl": {
+                "min": 4.2,
+                "max": 15.3
+              },
+              "fecal_coliform_mpn": {
+                "min": 1.8,
+                "max": 1.8
+              },
+              "total_coliform_mpn": {
+                "min": 33.0,
+                "max": 38.0
+              },
+              "fecal_streptococci_mpn": null
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 24.0
+              },
+              "do_mgl": {
+                "min": 0.1,
+                "max": 7.2
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 7.43
+              },
+              "conductivity_umhos": {
+                "min": 621.0,
+                "max": 1863.0
+              },
+              "bod_mgl": {
+                "min": 2.4,
+                "max": 3.0
+              },
+              "nitrate_mgl": {
+                "min": null,
+                "max": 19.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 4.0
+              },
+              "total_coliform_mpn": {
+                "min": 31.0,
+                "max": 40.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 2.8
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 25.0
+              },
+              "do_mgl": {
+                "min": 5.6,
+                "max": 6.6
+              },
+              "ph": {
+                "min": 6.9,
+                "max": 7.3
+              },
+              "conductivity_umhos": {
+                "min": 674.0,
+                "max": 1689.0
+              },
+              "bod_mgl": {
+                "min": 2.3,
+                "max": 3.0
+              },
+              "nitrate_mgl": {
+                "min": 6.15,
+                "max": 20.21
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 8.0
+              },
+              "total_coliform_mpn": {
+                "min": 33.0,
+                "max": 48.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 6.0
+              }
+            },
+            {
+              "year": 2022,
+              "temperature_c": {
+                "min": 17.0,
+                "max": 25.0
+              },
+              "do_mgl": {
+                "min": 5.3,
+                "max": 6.6
+              },
+              "ph": {
+                "min": 7.12,
+                "max": 7.47
+              },
+              "conductivity_umhos": {
+                "min": 576.0,
+                "max": 1468.0
+              },
+              "bod_mgl": {
+                "min": 2.4,
+                "max": 3.4
+              },
+              "nitrate_mgl": {
+                "min": 4.07,
+                "max": 16.16
+              },
+              "fecal_coliform_mpn": {
+                "min": 7.0,
+                "max": 10.0
+              },
+              "total_coliform_mpn": {
+                "min": 38.0,
+                "max": 44.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 4.0,
+                "max": 8.0
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 19.0,
+                "max": 28.0
+              },
+              "do_mgl": {
+                "min": 5.9,
+                "max": 7.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 7.8
+              },
+              "conductivity_umhos": {
+                "min": 1203.0,
+                "max": 1489.0
+              },
+              "bod_mgl": {
+                "min": 2.3,
+                "max": 3.9
+              },
+              "nitrate_mgl": {
+                "min": 14.13,
+                "max": 26.12
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 7.0
+              },
+              "total_coliform_mpn": {
+                "min": 34.0,
+                "max": 41.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 4.0,
+                "max": 5.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 19.0,
+                "max": 24.0
+              },
+              "do_mgl": {
+                "min": 6.2,
+                "max": 6.9
+              },
+              "ph": {
+                "min": 6.9,
+                "max": 7.6
+              },
+              "conductivity_umhos": {
+                "min": 760.0,
+                "max": 1423.0
+              },
+              "bod_mgl": {
+                "min": 3.0,
+                "max": 4.0
+              },
+              "nitrate_mgl": {
+                "min": 16.05,
+                "max": 32.15
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 8.0
+              },
+              "total_coliform_mpn": {
+                "min": 33.0,
+                "max": 43.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 4.0,
+                "max": 5.0
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "krishna",
       "name": "Krishna at Wadapally",
       "name_te": "కృష్ణా నది",
       "length_km": null,
-      "overall_status": "Monitored in the same annexure as the receiving river below the Musi confluence",
       "cpcb_class": null,
-      "description": "The river the Musi joins. Included because it is the receiving water for everything the Musi carries out of Hyderabad, and because Akkampally - one of HMWSSB's six daily sources - draws from the Krishna system.",
-      "notes": "Single station in this annexure.",
+      "overall_status": "Receiving river below the Musi confluence",
+      "description": "The river the Musi joins, and the receiving water for everything the Musi carries out of Hyderabad. Akkampally, one of HMWSSB's six daily sources, draws from the Krishna system.",
+      "notes": "",
       "stations": [
         {
-          "id": "krishna-wadapally",
+          "id": "nwmp-1465",
+          "nwmp_code": "1465",
           "name": "River Krishna at Wadapally",
           "lat": 16.6943,
           "lng": 79.66149,
           "stretch": "Below the Musi confluence (NWMP 1465)",
           "readings": [
             {
-              "year": 2022,
-              "month": "Jan",
-              "do_mgl": 6.0,
-              "bod_mgl": 2.5,
-              "ph": 8.02,
-              "conductivity_us": 816,
-              "cod_mgl": null,
-              "fecal_coliform_mpn": null,
-              "total_coliform_mpn": 27,
-              "free_ammonia_mgl": 0.01,
-              "boron_mgl": 0.5,
-              "tds_mgl": null,
-              "nitrate_mgl": null
+              "year": 2019,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 23.0
+              },
+              "do_mgl": {
+                "min": 5.9,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 7.6
+              },
+              "conductivity_umhos": {
+                "min": 467.0,
+                "max": 1299.0
+              },
+              "bod_mgl": {
+                "min": 2.0,
+                "max": 3.0
+              },
+              "nitrate_mgl": {
+                "min": 6.3,
+                "max": 36.4
+              },
+              "fecal_coliform_mpn": {
+                "min": 1.8,
+                "max": 1.8
+              },
+              "total_coliform_mpn": {
+                "min": 41.0,
+                "max": 48.0
+              },
+              "fecal_streptococci_mpn": null
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 16.0,
+                "max": 25.0
+              },
+              "do_mgl": {
+                "min": 5.9,
+                "max": 7.1
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.76
+              },
+              "conductivity_umhos": {
+                "min": 495.0,
+                "max": 1204.0
+              },
+              "bod_mgl": {
+                "min": 2.2,
+                "max": 3.0
+              },
+              "nitrate_mgl": {
+                "min": 4.14,
+                "max": 9.37
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 280.0
+              },
+              "total_coliform_mpn": {
+                "min": 13.0,
+                "max": 920.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 4.0,
+                "max": 210.0
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 17.0,
+                "max": 22.0
+              },
+              "do_mgl": {
+                "min": 5.5,
+                "max": 6.7
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.5
+              },
+              "conductivity_umhos": {
+                "min": 798.0,
+                "max": 1125.0
+              },
+              "bod_mgl": {
+                "min": 2.2,
+                "max": 3.2
+              },
+              "nitrate_mgl": {
+                "min": 6.1,
+                "max": 12.13
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 9.0
+              },
+              "total_coliform_mpn": {
+                "min": 26.0,
+                "max": 41.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 2.0,
+                "max": 6.0
+              }
             },
             {
               "year": 2022,
-              "month": "Feb",
-              "do_mgl": 6.1,
-              "bod_mgl": 2.8,
-              "ph": 8.17,
-              "conductivity_us": 808,
-              "cod_mgl": null,
-              "fecal_coliform_mpn": null,
-              "total_coliform_mpn": 24,
-              "free_ammonia_mgl": 0.01,
-              "boron_mgl": 0.5,
-              "tds_mgl": null,
-              "nitrate_mgl": null
+              "temperature_c": {
+                "min": 17.0,
+                "max": 21.0
+              },
+              "do_mgl": {
+                "min": 5.5,
+                "max": 6.9
+              },
+              "ph": {
+                "min": 7.31,
+                "max": 8.92
+              },
+              "conductivity_umhos": {
+                "min": 732.0,
+                "max": 1290.0
+              },
+              "bod_mgl": {
+                "min": 2.0,
+                "max": 3.0
+              },
+              "nitrate_mgl": {
+                "min": 2.25,
+                "max": 8.22
+              },
+              "fecal_coliform_mpn": {
+                "min": 5.0,
+                "max": 10.0
+              },
+              "total_coliform_mpn": {
+                "min": 8.0,
+                "max": 39.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 4.0,
+                "max": 6.0
+              }
             },
             {
-              "year": 2022,
-              "month": "Mar",
-              "do_mgl": 6.0,
-              "bod_mgl": 2.4,
-              "ph": 7.9,
-              "conductivity_us": 1172,
-              "cod_mgl": null,
-              "fecal_coliform_mpn": null,
-              "total_coliform_mpn": 26,
-              "free_ammonia_mgl": 0.01,
-              "boron_mgl": 0.5,
-              "tds_mgl": null,
-              "nitrate_mgl": null
+              "year": 2023,
+              "temperature_c": {
+                "min": 17.0,
+                "max": 25.0
+              },
+              "do_mgl": {
+                "min": 5.4,
+                "max": 7.2
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.6
+              },
+              "conductivity_umhos": {
+                "min": 1010.0,
+                "max": 1311.0
+              },
+              "bod_mgl": {
+                "min": 2.1,
+                "max": 4.1
+              },
+              "nitrate_mgl": {
+                "min": 15.22,
+                "max": 35.23
+              },
+              "fecal_coliform_mpn": {
+                "min": 8.0,
+                "max": 9.0
+              },
+              "total_coliform_mpn": {
+                "min": 27.0,
+                "max": 39.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 6.0,
+                "max": 6.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 23.0
+              },
+              "do_mgl": {
+                "min": 5.4,
+                "max": 7.6
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 8.2
+              },
+              "conductivity_umhos": {
+                "min": 857.0,
+                "max": 1545.0
+              },
+              "bod_mgl": {
+                "min": 3.1,
+                "max": 3.9
+              },
+              "nitrate_mgl": {
+                "min": 20.02,
+                "max": 41.3
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 9.0
+              },
+              "total_coliform_mpn": {
+                "min": 31.0,
+                "max": 40.0
+              },
+              "fecal_streptococci_mpn": {
+                "min": 4.0,
+                "max": 6.0
+              }
             }
           ]
         }
       ]
     }
-  ],
-  "_cross_validation": "CROSS-CHECKED 2026-07-26 against CPCB's own NWMP 2022 river data (cpcb.gov.in/wqm/2022/WQuality_River-Data-2022.pdf, 161pp WITH a text layer - no OCR needed). CPCB publishes annual MIN-MAX per station where TGPCB published three monthly points, so the test is whether the monthly values fall inside CPCB's annual range. AGREES at 2 of 4 stations: Kasaniguda 3082 (TGPCB DO 6.4-6.6, BOD 3.2-3.6 sits inside CPCB DO 5.8-6.7, BOD 3.2-4.8) and Krishna Wadapally 1465 (TGPCB DO 6.0-6.1, BOD 2.4-2.8 inside CPCB DO 5.5-6.9, BOD 2-3). DISAGREES at the two anoxic stations, in the same direction: TGPCB reports DO 0.3 at Nagole 2339 and at Pratapasingaram 1173, below CPCB's annual minima of 0.5 and 0.8 respectively. An annual minimum cannot exceed a monthly value at the same station, so the two government sources are inconsistent here. We do not adjudicate. One hypothesis worth recording but NOT asserting: TGPCB prints exactly 0.3 for all three months at both stations, which reads more like a floor or detection-limit placeholder than three independent measurements. Either way the qualitative finding is unchanged and both sources agree on it - the Musi is anoxic through the city and recovers downstream.",
-  "_richer_source_available": "CPCB's NWMP series is BROADER and DEEPER than what this file carries: 15 Musi-context stations in 2022 against our 4, with annual editions from 2012 to 2025. It includes stations we do not have at all - Moosarambagh Bridge 4656, Pillaipalli 4657, Valigonda 4658, Peerajadiguda 4660 - and one that is the starkest reading on the river: station 4659, the Musi at the outlet of Nalla Cheruvu, Peerajadiguda, recorded DO 0.0 to 0.0 across the whole of 2022. Rebuilding this file on the CPCB series (and picking up the 2023-2025 editions) is the obvious next step; it was not done in this pass."
+  ]
 }
