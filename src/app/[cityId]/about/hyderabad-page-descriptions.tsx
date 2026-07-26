@@ -77,10 +77,24 @@ export function HyderabadPageDescriptions({ cityId, cityName }: Props) {
           is not established and we do not describe it as siltation.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
-          Deliberately absent: a supply-overview panel of treatment-plant counts
-          and population served. Those figures exist only in news reporting and
-          contradict each other across sources, so we publish none of them until
-          HMWSSB&apos;s own disclosure is obtained.
+          Those reservoir numbers no longer rest on a single publisher. The
+          Telangana Irrigation &amp; CAD Department publishes its own daily
+          storage record, and five of the eight sources appear in both feeds.
+          The capacities agree: Nagarjuna Sagar, Srisailam and Yellampally match
+          exactly, Singur differs by 0.007 TMC and Akkampalli by 0.001. Osman
+          Sagar, Himayat Sagar and Manjira are absent from the irrigation feed
+          by design - they are HMWSSB drinking-water reservoirs rather than
+          irrigation projects - so the cross-check covers the transferred
+          Krishna and Godavari sources, not the local twins.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          Still absent: population served, and a single headline figure for
+          treatment capacity. Population-served numbers exist only in news
+          reporting and contradict each other. Treatment is a narrower gap than
+          we first described - the pollution board does publish every plant with
+          its capacity, and that is now shown on the rivers page - but the AMRUT
+          programme&apos;s split between commissioned and under-construction
+          plants is still unpublished, so no forward-looking total is given.
         </p>
       </SubSection>
 
@@ -160,12 +174,30 @@ export function HyderabadPageDescriptions({ cityId, cityName }: Props) {
           the page should not be read as saying the Esi is minor.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
-          River <em>quality</em> is not shown. The Musi is among India&apos;s
-          most-cited polluted river stretches, but the canonical national
-          monitoring data sits on a Central Pollution Control Board host that
-          refuses connections from outside India, so it needs a different
-          acquisition path than our other feeds. We would rather show nothing
-          than show a number we cannot source.
+          River quality IS now shown, and the reason it took a while is worth
+          recording plainly: we had the wrong hostname. An earlier version of
+          this page said the national monitoring data sat behind a host that
+          refuses connections from outside India. One CPCB host does; the board
+          serves everything on another that answers in under a second. The page
+          now carries eleven monitoring stations across six annual editions,
+          2019 to 2024, read from the published tables directly.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          Two things to know before quoting the numbers. They are annual
+          minimum-maximum ranges, not monthly readings, so a reading here is a
+          range and we invent no midpoint. And very low dissolved-oxygen values
+          should be read as at-or-below the programme&apos;s reporting floor
+          rather than as exact concentrations: in nine of fifty-one
+          station-years the annual minimum equals the annual maximum, which
+          cannot describe a real twelve-month range, and seven of those nine sit
+          at exactly 0.3 mg/L. That is why this site says the Musi is anoxic
+          through the city rather than quoting a concentration.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          The same page carries a treatment-and-discharge view that joins the
+          pollution board&apos;s per-plant effluent monitoring to those river
+          stations - two datasets from two bodies that were never designed to be
+          read together.
         </p>
       </SubSection>
 
@@ -209,9 +241,24 @@ export function HyderabadPageDescriptions({ cityId, cityName }: Props) {
           98.4%. So the page reports demand instead, which is where the signal
           is. Bookings triple between October and June, and the heaviest demand
           is not in the old city but in Madhapur, Kondapur, Hafeezpet,
-          Gachibowli and Manikonda - the IT corridor. Tanker dependence here
-          tracks where the city outgrew its pipes, not where residents are
-          poorest.
+          Gachibowli and Manikonda - the IT corridor.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          We used to describe that as tanker dependence tracking where the city
+          outgrew its pipes rather than where residents are poorest. That reads
+          more into the data than it can carry, and the page now says so. These
+          tankers are paid for and need storage to receive, so the pattern
+          measures where households can afford and accommodate a tanker at least
+          as much as where the network falls short. A section with almost no
+          bookings is not demonstrably well served; it may simply not be buying.
+        </p>
+        <p className="text-slate-600 dark:text-slate-400">
+          The page also carries HMWSSB&apos;s billing ledger, which uses the
+          same division and section units - 198 of the 201 tanker sections join
+          exactly. That gives bookings per piped connection, and it is the
+          reason the caution above is stated before the table rather than after
+          it. The billing record is also the utility&apos;s own answer on
+          revenue: it collected 69.5% of what it billed over fifty-four months.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
           Two gaps, both upstream: the published series stops at February 2024,
