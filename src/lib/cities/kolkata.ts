@@ -95,6 +95,12 @@ export const KOLKATA: CityConfig = {
     wardCount: 144,
   },
   placeKind: 'region',
+  // Kolkata's region story is the OPPOSITE of Mumbai's. MMR is nine
+  // corporations competing over one contested pool; here KMC abstracts
+  // run-of-river and SELLS water onward, and the units in scope are the ones
+  // whose water relationship to it is individually verified.
+  regionIntro:
+    "The units around the city whose water relationship to it is verified: the wetlands east of Kolkata that treat 65% of its sewage, the Hooghly intake at Palta to the north, and the two municipalities KMC sells bulk water to. Not a contested pool - a corporation that abstracts from a river and sells onward.",
   // See SCOPE above: verified water relationships only, not all of KMA.
   corporations: [
     {
@@ -160,6 +166,15 @@ export const KOLKATA: CityConfig = {
   //   a document filed December 2021.
   hasAllocationLedger: true,
   hasCommitments: true,
+  dashboard: {
+    // The EKW sewage balance sits directly under the hero. For a city whose
+    // emergency is sewage and drainage rather than scarcity, "where does it
+    // go" is the question immediately after "how often do the drains fail".
+    // It is also the only surface that can express the platform's strongest
+    // Kolkata finding: the city's largest treatment asset is a wetland
+    // outside its own boundary.
+    sewageBalance: true,
+  },
   drainageCapacity: {
     // KMC's own words: the main sewer network "was designed to discharge a
     // rainfall of 6 mm. per hour". This is a DESIGN PROPERTY quoted from a

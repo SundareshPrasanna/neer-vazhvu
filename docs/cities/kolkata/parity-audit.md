@@ -123,7 +123,7 @@ flooding is *modelled* to occur; Kolkata can tell you where it *actually* happen
 | Restoration priority scoring | **BUILDABLE** | Shared pipeline; needs a Kolkata run. |
 | Rich-data deep-zoom panel (flagship bodies) | **BUILDABLE** | Rabindra Sarobar and Subhash Sarobar are the natural candidates and are both WBPCB-sampled, so water quality is already in hand. |
 | CRRT restoration projects | **BLOCKED** | No equivalent public restoration project register found. |
-| *(no Chennai equivalent)* | **PARTIAL/BETTER** | The **East Kolkata Wetlands**: 12,500 ha, 254 sewage-fed fisheries, treating 910 MLD. Deserves first-class-place treatment, not a map layer. Not yet built. |
+| *(no Chennai equivalent)* | **BETTER, shipped** | The **East Kolkata Wetlands** now have a first-class dashboard card (`sewage-balance-card.tsx`), placed second, directly under the hero: 910 of 1,400 MLD, 5.1x all five STPs combined, with the 311 MLD untreated remainder and the 30.94 MLD residual gap that survives building all ten planned plants. Deliberately a CARD, not a map layer - EKW is not a feature of the landscape, it is the sewage system. **Boundary geometry is a named gap**: OSM has no EKW polygon (the one protected-area way in its bbox is a 15-node 0-ha stub) and Ramsar's RSIS boundary was not retrievable in this pass. |
 
 **The named gap that is the story:** KMC's own inventory is a **departmental tank list "as prepared on
 1993"** plus a 2004 NRSA aerial map, covering 3,777 ponds. A 33-year-old inventory of a pond-dense

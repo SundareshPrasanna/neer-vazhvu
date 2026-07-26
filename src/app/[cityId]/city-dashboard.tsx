@@ -15,6 +15,7 @@ import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { AllocationHero } from "@/components/dashboard/allocation-hero";
 import { CauveryPumpingHero } from "@/components/dashboard/cauvery-pumping-hero";
 import { DrainageCapacityHero } from "@/components/dashboard/drainage-capacity-hero";
+import { SewageBalanceCard } from "@/components/dashboard/sewage-balance-card";
 import { BangaloreDailyBriefing } from "@/components/dashboard/bangalore-daily-briefing";
 import { buildBangaloreBriefing } from "@/lib/insights/bangalore-briefing";
 import { DataGapPanel, URBAN_SUPPLY_DATA_GAPS } from "@/components/dashboard/data-gap-panel";
@@ -397,6 +398,10 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           scopeLabel={config.dashboardScopes?.city}
         />
       )}
+      {/* Second card, deliberately after the hero: for a city whose emergency
+          is sewage and drainage rather than scarcity, "where does it go" is
+          the question immediately after "how often do the drains fail". */}
+      {config.dashboard?.sewageBalance && <SewageBalanceCard cityId={cityId} />}
       {config.heroMode === "allocation" && config.urbanSupply && (
         <AllocationHero
           cityDisplayName={config.displayName}

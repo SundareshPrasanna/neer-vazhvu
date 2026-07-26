@@ -128,6 +128,13 @@ export interface DashboardSectionsConfig {
    *  balance; Chennai today (TNGCC+CEEW 2026). Links to the climate-risk
    *  surface. */
   weapBalance?: boolean;
+  /** Sewage-balance card: where a city's sewage actually goes, against what
+   *  it generates. Needs `<cityId>-sewage-balance.json`. Kolkata is the first
+   *  city with one, and the reason the card exists: 65% of its sewage is
+   *  treated by a wetland OUTSIDE the corporation's boundary, which no
+   *  supply-side surface can express. Generic - any city that publishes a
+   *  generated-vs-treated balance can turn this on. */
+  sewageBalance?: boolean;
 }
 
 /**
@@ -539,6 +546,12 @@ export interface BasePlaceConfig {
    *  only when this is 'region' and `corporations` is present, so flat
    *  city -> ward behaviour is the untouched default. */
   placeKind?: PlaceKind;
+
+  /** One-line framing for the regional-water-system card. Required in
+   *  practice for any `region` place: the card's default copy used to be
+   *  Mumbai's ("nine corporations drawing from one contested source pool"),
+   *  which leaked onto Kolkata verbatim. Omit and a neutral line is used. */
+  regionIntro?: string;
 
   /** The municipal corporations of a `region` place, in display order.
    *  Present iff placeKind === 'region'. Absent for every `city` (whose

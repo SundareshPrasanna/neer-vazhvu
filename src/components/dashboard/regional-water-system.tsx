@@ -136,10 +136,14 @@ export function RegionalWaterSystem({ cityId }: { cityId: string }) {
           </span>
         )}
       </div>
+      {/* Config-driven, not hardcoded. This paragraph described Mumbai's nine
+          corporations drawing on a contested source pool - correct for MMR and
+          wrong for every other region. It leaked verbatim onto Kolkata, which
+          has three modelled units and no contested pool at all (KMC abstracts
+          run-of-river and SELLS onward). Cities supply their own framing. */}
       <p className="text-sm text-slate-600 dark:text-slate-300 mb-2">
-        The wider region around the city above: 9 municipal corporations drawing
-        from one contested source pool. The same water, distributed unequally -
-        from Greater Mumbai (BMC, the days-of-water card) to the metro&apos;s edge.
+        {config?.regionIntro ??
+          "The wider region around the city above, and how the same water is distributed across it."}
       </p>
 
       {/* The scoreboard: the whole region at one glance (Commitments pattern). */}
