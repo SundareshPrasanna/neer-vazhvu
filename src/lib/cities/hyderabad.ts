@@ -110,9 +110,22 @@ export const HYDERABAD: CityConfig = {
   hasAllocationLedger: true,
   hasCommitments: true,
   groundwaterViews: {
-    // IN-GRES (ingres.iith.ac.in) is the standing source for assessment data
-    // and is reachable; the Telangana mandal-level pull is not built yet.
-    exploitation: false,
+    // CGWB Dynamic GWR district assessments, 2022 / 2024 / 2025, via the
+    // OpenCity mirrors of the national compilations joined to the Telangana
+    // Districts Map KML (build_hyderabad_gwr_blocks.py). 33/33 districts
+    // matched. Telangana assesses by DISTRICT in all three editions, so the
+    // series joins cleanly - no repeat of the Madurai firka-to-block change.
+    //
+    // Latest edition, metro districts: Hyderabad 98.32% CRITICAL (+2.3 pts
+    // since 2022), Medchal-Malkajgiri 73.72% Semi-Critical (+16.7), Medak
+    // 69.55% (+20.1), Siddipet 68.76%, Rangareddy 66.59% (+6.4), Vikarabad
+    // 60.66% (+23.4), Sangareddy 48.13%.
+    //
+    // SOURCE QUIRK: the 2025 Telangana cut is MISLABELLED on OpenCity as
+    // "Tamil Nadu - State of GW Extraction" (filename tg_gw_2025.csv, and its
+    // districts are Adilabad, Bhadradri Kothagudem...). The build asserts the
+    // district set against 2024 so a genuine TN file would fail loudly.
+    exploitation: true,
     // Interpolated per-ward depth stays OFF - but NOT for the reason first
     // assumed. An early narrow-window probe suggested ~15 stations in
     // Hyderabad district; the full pull found 481 across the five districts
