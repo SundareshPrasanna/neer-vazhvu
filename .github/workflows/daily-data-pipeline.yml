@@ -61,6 +61,13 @@ jobs:
       # endpoint; Madurai runs daily here so the live-station overlay on
       # /madurai/groundwater stays fresh. Tolerates failures - upstream
       # India-WRIS API has periodic outages.
+      # NOTE 2026-07-26: this step has been failing from GitHub runners with
+      # ConnectTimeout since ~17 Jun 2026 - silently, because continue-on-error
+      # keeps the workflow green. India-WRIS refuses the runner IPs; the same
+      # scraper succeeds from a residential India IP. Now also run from the
+      # launchd job (refresh-blocked-feeds.sh), which is what actually keeps
+      # groundwater_wris current. Left here in case runner access returns.
+      # Surfaced by the P5-1 supabase-table freshness check.
       - name: Scrape WRIS groundwater (Madurai) -> Supabase
         id: scrape_wris_madurai
         continue-on-error: true
@@ -80,6 +87,13 @@ jobs:
       # history here so the IISc Outlook stress-ward map has live
       # verification data on day-one when /bangalore launches.
       # Tolerates failures - upstream India-WRIS API has periodic outages.
+      # NOTE 2026-07-26: this step has been failing from GitHub runners with
+      # ConnectTimeout since ~17 Jun 2026 - silently, because continue-on-error
+      # keeps the workflow green. India-WRIS refuses the runner IPs; the same
+      # scraper succeeds from a residential India IP. Now also run from the
+      # launchd job (refresh-blocked-feeds.sh), which is what actually keeps
+      # groundwater_wris current. Left here in case runner access returns.
+      # Surfaced by the P5-1 supabase-table freshness check.
       - name: Scrape WRIS groundwater (Bangalore) -> Supabase
         id: scrape_wris_bangalore
         continue-on-error: true
