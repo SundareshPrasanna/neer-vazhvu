@@ -31,6 +31,35 @@ export interface DrainageLayerSpec {
   color: string;
   /** Property to read a feature name from, for tooltips. */
   nameProp?: string;
+  /** For sources that are a plain JSON object rather than GeoJSON: the key
+   *  holding the array of points, plus the lat/lng field names. Lets a live
+   *  station feed mount here without a duplicate GeoJSON build artefact. */
+  arrayProp?: string;
+  latProp?: string;
+  lngProp?: string;
+}
+
+/** Normalise either a GeoJSON FeatureCollection or a {<arrayProp>: [...]}
+ *  payload into a FeatureCollection of points. */
+function toFeatureCollection(raw: unknown, spec: DrainageLayerSpec): FeatureCollection | null {
+  if (!raw || typeof raw !== "object") return null;
+  const obj = raw as Record<string, unknown>;
+  if (obj.type === "FeatureCollection") return raw as FeatureCollection;
+  if (!spec.arrayProp) return null;
+  const arr = obj[spec.arrayProp];
+  if (!Array.isArray(arr)) return null;
+  const latKey = spec.latProp ?? "latitude";
+  const lngKey = spec.lngProp ?? "longitude";
+  return {
+    type: "FeatureCollection",
+    features: arr
+      .filter((r) => typeof r?.[latKey] === "number" && typeof r?.[lngKey] === "number")
+      .map((r) => ({
+        type: "Feature" as const,
+        geometry: { type: "Point" as const, coordinates: [r[lngKey], r[latKey]] },
+        properties: r as Record<string, unknown>,
+      })),
+  };
 }
 
 const LINE_STYLE = (color: string): PathOptions => ({
@@ -59,7 +88,7 @@ export function DrainageNetworkMap({
         fetch(l.url)
           .then((r) => (r.ok ? r.json() : null))
           .catch(() => null)
-          .then((d) => [l.url, d] as const),
+          .then((d) => [l.url, toFeatureCollection(d, l)] as const),
       ),
     ).then((pairs) => {
       if (!live) return;

@@ -89,6 +89,20 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
           color: "#dc2626",
           nameProp: "name",
         },
+        {
+          // TGDPS automatic weather stations - a live feed, not a static
+          // layer. 161 gauges inside one city is the densest urban rain
+          // network on the platform; most Indian cities are measured by a
+          // single IMD grid square.
+          url: "/data/hyderabad-aws-stations.json",
+          label: "Rain gauges (TGDPS)",
+          kind: "point",
+          color: "#059669",
+          nameProp: "location",
+          arrayProp: "stations",
+          latProp: "latitude",
+          lngProp: "longitude",
+        },
       ],
     },
     historical_events: [
