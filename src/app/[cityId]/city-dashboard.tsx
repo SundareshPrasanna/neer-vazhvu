@@ -24,6 +24,8 @@ import { DeferredRainfallTrends } from "@/components/dashboard/deferred-rainfall
 import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
 import { ReservoirCatchmentContext } from "@/components/dashboard/reservoir-catchment-context";
 import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
+import { KeyFindings } from "@/components/dashboard/key-findings";
+import type { Fact } from "@/components/dashboard/key-findings";
 import { WeapBalanceTile } from "@/components/dashboard/weap-balance-tile";
 import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
 import { CityStory } from "@/components/insights/city-story";
@@ -41,6 +43,19 @@ import {
 import { selectNarrative } from "@/lib/insights/select-narrative";
 import { restorationPriorityFile, wardNamesFile } from "@/lib/cities/data-paths";
 import { formatDate } from "@/lib/utils/format";
+
+/** Tier-1 facts for the dashboard strip. Returns [] where the city has no
+ *  static facts file - Chennai runs the dynamic pipeline instead - so the
+ *  component self-hides rather than erroring. */
+async function loadFacts(cityId: string): Promise<Fact[]> {
+  try {
+    const p = join(process.cwd(), "public", "data", `facts-${cityId}.json`);
+    const raw = JSON.parse(await readFile(p, "utf-8")) as { facts?: Fact[] };
+    return raw.facts ?? [];
+  } catch {
+    return [];
+  }
+}
 
 function isSupabaseConfigured(): boolean {
   return !!(
@@ -346,6 +361,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
   // Convert the per-city snapshot into the shared ReservoirSummary[]
   // shape Chennai's ReservoirCards consumes.
   const summaries = snapshotToSummaries(config, snapshot);
+  const facts = await loadFacts(cityId);
 
   // Optional flag-gated sections (Chennai today). The loaders assume
   // single-tenant tables; gate strictly on the config flags so other cities
@@ -468,6 +484,13 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           <cityId>-supply-overview.json, so cities without a
           published engineering document don't render an empty card. */}
       <UrbanSupplyOverview cityId={cityId} cityDisplayName={config.displayName} />
+
+      {/* Curated tier-1 findings. Leads the page's substance because the
+          reservoir grid below can legitimately be empty - a city awaiting its
+          first ingestion, or simply a quiet day - and a dashboard that opens
+          on eight blank cards tells the reader nothing. Self-hides where a
+          city has no static facts file or no tier-1 grades. */}
+      <KeyFindings facts={facts} cityId={cityId} cityDisplayName={config.displayName} />
 
       {/* Reservoir snapshot grid + shared multi-source history chart. */}
       <ReservoirCards reservoirs={summaries} />

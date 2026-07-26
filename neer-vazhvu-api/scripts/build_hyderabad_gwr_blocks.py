@@ -243,7 +243,13 @@ def main() -> int:
         if not hist:
             continue
         is_metro = key in {norm(x) for x in METRO_DISTRICTS}
-        records.append({"name": display, "metro": is_metro, "history": hist})
+        # `latest` is REQUIRED by the shared groundwater client, which sorts and
+        # classifies on block.latest.development_pct. Omitting it crashed the
+        # Hyderabad page at runtime while the route still answered HTTP 200 -
+        # every other city's file carries it, and so must this one.
+        records.append(
+            {"name": display, "metro": is_metro, "latest": hist[0], "history": hist}
+        )
         poly = polys.get(key)
         if poly:
             latest = hist[0]
