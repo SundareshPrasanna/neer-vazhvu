@@ -203,7 +203,8 @@
           "https://crrt.tn.gov.in/ennore_creek_eco_restoration"
         ],
         "acceptedOn": "2026-07-26"
-      }
+      },
+      "ciBlocked": "Blocks GitHub runner IPs (TypeError: fetch failed from CI on 2026-07-26 while working from a residential India IP the same day). Confirmed by the pre-merge dry run of upstream-editions.yml."
     },
     {
       "id": "maws-policy-note",
@@ -228,7 +229,8 @@
       "lastSeen": {
         "apiDate": "2025 https://cms.tn.gov.in/cms_migrated/document/docfiles/maws_e_pn_2025_26.pdf",
         "acceptedOn": "2026-07-26"
-      }
+      },
+      "ciBlocked": "Blocks GitHub runner IPs - every url-template year probe failed from CI on 2026-07-26 while all of them resolve from a residential India IP. Confirmed by the pre-merge dry run."
     },
     {
       "id": "cmwssb-system-pages",
@@ -267,14 +269,15 @@
           "https://www.cmwssb.tn.gov.in/sites/default/files/upload/23Dec2021131416_TTRO-CRZ%26AmendmentinCRZ.pdf"
         ],
         "acceptedOn": "2026-07-26"
-      }
+      },
+      "ciBlocked": "Blocks GitHub runner IPs (TypeError: fetch failed from CI on 2026-07-26 while working from a residential India IP the same day). Confirmed by the pre-merge dry run of upstream-editions.yml."
     },
     {
       "id": "tngcc-ceew-basin-risk",
       "scope": "chennai",
       "publisher": "CEEW + Tamil Nadu Climate Change Mission",
       "url": "https://www.ceew.in/publications/chennai-basin-climate-risk-water-balance-and-water-deficit-explained-by-ceew",
-      "ciBlocked": "ceew.in returns 403 to ALL automation, not just CI runners - verified 2026-07-26 from a residential India IP with a full browser UA, on /publications, the publication page and /sites/default/files. Same class as ADB (likely TLS fingerprinting). The flag is used here to stop weekly false alarms; unlike the other ciBlocked entries a LOCAL run cannot check it either, so a standing CHECK-FAILED on local runs is expected and correct - it is a true statement that we cannot watch this source by fetch. Re-check from a real browser.",
+      "ciBlocked": "ceew.in returns 403 to ALL automation, not just CI runners - verified 2026-07-26 from a residential India IP with a full browser UA, on /publications, the publication page and /sites/default/files. Same class as ADB (likely TLS fingerprinting). The flag is used here to stop weekly false alarms; unlike the other ciBlocked entries a LOCAL run cannot check it either, so a standing CHECK-FAILED on local runs is expected and correct - it is a true statement that we cannot watch this source by fetch. Re-check from a real browser. NOTE: because no fetch can ever succeed, --accept cannot baseline this entry either, and without a lastSeen the 90-day local-overdue rule escalated it to CHECK-FAILED on its first CI run (dry run 2026-07-26). lastSeen is therefore recorded by hand, with pageHash as a sentinel rather than a real hash - it means 'a human confirmed the publication exists', not 'the page matched'. Re-confirm in a browser and bump acceptedOn every 90 days, or the overdue rule will fire again - which is the correct nag.",
       "license": "CC BY-NC 4.0",
       "type": "page",
       "cadence": "episodic",
@@ -288,7 +291,12 @@
         "src/components/dashboard/weap-balance-tile.tsx"
       ],
       "refreshMethod": "manual (browser download; the WEAP figures are hardcoded in weap-balance-tile.tsx)",
-      "notes": "Feb 2026 report behind the whole /chennai/climate-risk surface (6 sub-basins x 4 subthemes, 33 indicators) and the dashboard WEAP water-balance tile (unmet demand 2020 and 2050, business-as-usual). This is the ONLY source for those numbers and one of the few where the figures are hardcoded in a component rather than a data file - see dependsOn. 403 to automation, so treat CI check-failures as expected and re-check from a browser; ciBlocked keeps it from filing weekly false alarms."
+      "notes": "Feb 2026 report behind the whole /chennai/climate-risk surface (6 sub-basins x 4 subthemes, 33 indicators) and the dashboard WEAP water-balance tile (unmet demand 2020 and 2050, business-as-usual). This is the ONLY source for those numbers and one of the few where the figures are hardcoded in a component rather than a data file - see dependsOn. 403 to automation, so treat CI check-failures as expected and re-check from a browser; ciBlocked keeps it from filing weekly false alarms.",
+      "lastSeen": {
+        "edition": "Chennai Basin Climate Risk / Water Balance (CEEW + TNGCC, Feb 2026)",
+        "acceptedOn": "2026-07-26",
+        "pageHash": "manual-browser-verification"
+      }
     },
     {
       "id": "opencity-chennai-flood",

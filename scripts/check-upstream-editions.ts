@@ -310,22 +310,40 @@ async function observeInner(e: SourceEntry): Promise<Observed> {
         .replace(/\{YY\}/g, String((y + 1) % 100).padStart(2, "0"));
 
     let latest: { year: number; url: string } | null = null;
+    let notFound = 0;
+    let unreachable = 0;
+    let lastError = "";
     for (let y = from; y <= thisYear + 1; y++) {
       const url = expand(y);
       try {
         let res = await fetchWithTimeout(url, { method: "HEAD" });
         if (!res.ok) res = await fetchWithTimeout(url);
         if (res.ok) latest = { year: y, url };
-      } catch {
-        // A single year failing is normal (it simply has not been published).
-        // Only a total miss across the range is an error, handled below.
+        else notFound++;
+      } catch (e) {
+        // A single year 404ing is normal (not published yet). A single year
+        // THROWING is not the same thing, and conflating them is how a network
+        // failure gets misread as a config error - see the note below.
+        unreachable++;
+        lastError = String(e).slice(0, 80);
       }
     }
-    if (!latest)
+    if (!latest) {
+      // Distinguish "the host is unreachable" from "the template is wrong".
+      // The first CI dry run (2026-07-26) reported "check the template" for
+      // maws-policy-note and wrd-policy-note-tn when the real cause was
+      // cms.tn.gov.in refusing the runner - exactly the pointer-vs-source
+      // confusion that left cpcb-nwmp-annual broken for days.
       throw new Error(
-        `url-template matched no edition from ${from} to ${thisYear + 1} - ` +
-          `check the template or bump templateFrom`,
+        unreachable > 0 && notFound === 0
+          ? `url-template: every probe from ${from} to ${thisYear + 1} failed to connect ` +
+            `(${lastError}) - the HOST is unreachable, NOT a template problem. ` +
+            `If this is CI-only, add ciBlocked.`
+          : `url-template: no edition found from ${from} to ${thisYear + 1} ` +
+            `(${notFound} not-found, ${unreachable} unreachable) - check the template ` +
+            `or bump templateFrom`,
       );
+    }
     // apiDate carries "<year> <url>" so the diff report names the new edition.
     return { apiDate: `${latest.year} ${latest.url}` };
   }
