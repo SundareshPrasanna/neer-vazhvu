@@ -106,12 +106,32 @@ are **10**, and they sum exactly to the document's printed 280.06 MLD total.
 industrial-wastewater section blank** - every field empty, WBPCB named as responsible. That is the
 corporation declaring a gap in its own statutory plan, and it is surfaced rather than filled.
 
-## Water quality - WBPCB EMIS (scraper NOT yet built)
+## Water quality - WBPCB EMIS (BUILT)
 
 | | |
 |---|---|
 | **Source** | WBPCB EMIS Water Quality Information System, `emis.wbpcb.gov.in/waterquality/showwqprevdatachoosedist.do` - plain HTTP, **no login** |
-| **Status** | Flow fully worked out and re-verified 2026-07-26 (HTTP 200, all district codes present). **Scraper not built.** Registered in Headwaters as `wbpcb-emis-water-quality` with an empty `dependsOn` until it is |
+| **Method** | `neer-vazhvu-api/scripts/scrape_wbpcb_emis.py`, districts 013 (Kolkata) + 001 (N24P, for Palta) |
+| **Result** | **41 stations, 3,209 samples, 2010-2026.** Longest series: Ganga at Dakshineswar, **281 samples**, 2010-01-28 to 2026-07-07 |
+| **Feeds** | `public/data/river-quality-kolkata.json` |
+
+**Parsing gotchas, all found against live data:**
+- WBPCB spells the same station **both "Adi Ganga" and "Adi ganga" in its own station list**, which
+  split three of the six tidal pairs into six single-phase stations and destroyed exactly the
+  comparison this dataset exists for. Canonical-name rules collapse them.
+- Route by the portal's **own kind label** ("River-", "Ground Water-", "Lake-"), not by station name.
+  Guessing from the name put groundwater wells in with rivers, and groundwater samples carry no DO or
+  BOD at all - two different parameter sets silently blended.
+- **"NIL" dissolved oxygen is stored as 0.0, not null.** It is a real measurement and the single most
+  important reading in the dataset; nulling it would erase the finding.
+- WBPCB publishes **no coordinates**. 15 stations are hand-placed from their names against the mapped
+  channel and flagged `coords_approximate`; the other 26 are kept in `unmapped_stations` with their
+  full series rather than dropped or given invented positions.
+- Some older samples are permanently unservable; the retry policy fails fast rather than stalling.
+
+**The tidal finding, which no other city's data supports:** low tide is consistently worse than high.
+At Bansdroni on the same day, BOD 14.53 against 10.75 and faecal coliform 8.4 million against 4.9
+million - less dilution, more concentration.
 
 The citizen path needs no login, but the `/waterquality/` **root is** a login page: do not generalise
 the block from a sibling path. Three-step Struts flow:
@@ -203,6 +223,46 @@ affected** (2,699 of 7,334 habitations). Of 47,062 samples tested across 22 bloc
 
 **Open item before publication:** the underlying data is valid as of 2016. Find PHED IMIS directly or
 JJM-WQMIS (`ejalshakti.gov.in/WQMIS`) for a current source.
+
+## Rivers, water bodies, drainage, localities - OpenStreetMap
+
+| | |
+|---|---|
+| **Method** | `scripts/fetch-osm-layers.ts --city kolkata --layer all` (city-generic, replaces the per-city clone pattern) |
+| **Result** | 5,526 water bodies (5,365 ha), 4 dissolved rivers (Hooghly 140 km, Saraswati 67, Adi Ganga 39, Bidyadhari 38), 182 drain segments, 765 localities (237 with Bengali names) |
+
+**Two bugs worth recording, both of the silent-wrongness kind:**
+- The first pull made **the Hooghly the largest "water body" in Kolkata**: 16 `water=river` polygons
+  carrying 1,828 ha came back tagged `natural=water`, three larger than any genuine lake. Standing-water
+  kinds now pass an explicit **allowlist**, so an unknown future OSM value defaults to excluded.
+- **Rabindra Sarobar and Subhash Sarobar were missing entirely.** Both are OSM *relations*, not ways,
+  and a ways-only pass dropped the city's two most significant named lakes - both WBPCB-sampled.
+  Multipolygon assembly added; 24 relations recovered. Note OSM spells them "Sarobar", not "Sarovar".
+
+**Caveat:** OSM's extent is conservative for some features. Its outer ring for Rabindra Sarobar is
+3.04 ha against a lake usually given as ~29 ha. This layer corroborates KMC's 1993 list; it does not
+replace it.
+
+## Groundwater stations - India-WRIS (BUILT)
+
+| | |
+|---|---|
+| **Method** | `neer-vazhvu-api/scripts/build_cgwb_stations.py --city kolkata --kma` |
+| **Result** | **703 stations, 201,221 readings**, 2010-2026, six KMA districts |
+| **Feeds** | `public/data/kolkata-cgwb-stations.json` |
+
+**Three traps, each of which produced a plausible-but-wrong network rather than an error:**
+1. **Paging.** Kolkata reads as 3 stations over 2024-2025, and still 3 over 2010-2026 if you stop at
+   page 0 - the first page is monopolised by a couple of high-frequency telemetric wells. Paged to
+   exhaustion it is 23.
+2. **Sign convention, per station not global.** Manual wells report depth below ground as positive
+   metres; telemetric piezometers report it as negative. Kolkata's only two live wells (Jadavpur_1,
+   Salt Lake Pz_1) report -22.06 to -8.70 m, so a naive `v < 0` reject dropped all 9,115 of their
+   post-2024 readings and **the city reported stale since May 2023 when it is live to June 2026.**
+   52 stations flipped.
+3. **Metadata from the latest row.** WRIS leaves lat/lng null on many individual readings, so keying
+   coordinates off a station's most recent row deleted whole stations - **Nadia collapsed from 205 to
+   39**, and what remained still looked like a plausible network.
 
 ## Wards
 

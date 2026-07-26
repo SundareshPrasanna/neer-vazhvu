@@ -159,6 +159,43 @@ list; it does not replace it.
 
 ---
 
+## 7A. Live page audit (browser, 2026-07-26)
+
+Every route driven in a real browser, not just checked for HTTP 200 - which
+turned out to matter, because **all 11 routes returned 200 while four were
+broken**. Status codes are worthless here: these pages catch their own errors and
+still render a shell.
+
+| Route | Words | Map features | Console errors | State |
+|---|---|---|---|---|
+| `/kolkata` | 622 | - | 0 | **live** - drainage-capacity hero |
+| `/groundwater` | 54 | **703** | 0 | **live** - every CGWB well renders |
+| `/rivers` | 296 | **67** | 0 | **live** - 4 rivers, 15 mapped stations, BIS profile, 2011-2026 series |
+| `/facts` | 260 | - | 0 | **live** - 13 facts |
+| `/allocations` | 485 | - | 0 | **live** - 2 arrangements, 5 gaps |
+| `/commitments` | 137 | - | 0 | **live** - 2 dated commitments |
+| `/about` | 143 | - | 0 | live, thin |
+| `/origins` | 58 | - | 0 | live, thin - long-form not written |
+| `/flood-risk` | 119 | 0 | 0 | **honest empty state** - needs a flood-config entry |
+| `/water-bodies` | 102 | 0 | 0 | **honest empty state** - needs curated water-body data files |
+| `/lake-restoration` | 122 | 0 | 0 | **honest empty state** - needs curated lake-restoration files |
+
+**Five defects found and fixed** that no status check would have caught:
+allocations and commitments 404ing on unset config flags; allocations crashing
+on a wrong arrangement shape; commitments crashing on an invalid status value;
+groundwater crashing on a wrong station-file shape; and rivers needing a curated
+per-city config plus a dissolved-per-river geojson, then crashing twice more on
+a missing `stretch` field and on null station coordinates.
+
+**The lesson for the next onboarding:** a city's data files landing is roughly
+half the work. Each map page additionally needs a curated per-city config entry
+(`RIVER_INFO_BY_CITY` and its equivalents), and the shared components carry
+Chennai-era assumptions - a required `stretch` descriptor, a `display_name_hi`
+that presumed Hindi - that only surface when a city without them renders.
+
+The three remaining empty states are **honest, not broken**: they name what is
+missing and link to what is live. They are the next unit of work.
+
 ## 8. Scorecard
 
 Counting the 47 feature rows above, excluding N/A (which are city differences, not gaps):
