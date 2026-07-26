@@ -303,7 +303,14 @@ export function RiversLeafletMap({
           </CircleMarker>
         ))}
 
-      {industrialSources.map((s) => {
+      {/* Second guard, deliberately duplicated from the caller: a source with
+          no coordinates (Delhi's SMA CETP is real but unmapped in OSM) would
+          reach Leaflet as center={[null, null]} and throw "Invalid LatLng
+          object", taking the whole map down. Cheap insurance against a future
+          caller that forgets to filter. */}
+      {industrialSources
+        .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
+        .map((s) => {
         const fill = INDUSTRIAL_TYPE_FILL[s.type] ?? "#475569";
         return (
           <CircleMarker

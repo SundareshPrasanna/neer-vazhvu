@@ -390,14 +390,22 @@ export default function RiversClient({
 
   const industrialMarkers = useMemo(
     () =>
-      industrial.map((s) => ({
-        id: s.id,
-        name: s.name,
-        lat: s.lat,
-        lng: s.lng,
-        type: s.type,
-        rivers_affected: s.rivers_affected,
-      })),
+      industrial
+        // A source may legitimately have no coordinates: Delhi's SMA CETP is
+        // real and carries its full flow series, but neither "SMA Industrial
+        // Area" nor "Shahzada Bagh" is in OpenStreetMap, so it was recorded
+        // without a position rather than placed by guesswork. Leaflet throws
+        // "Invalid LatLng object" on a null centre, which would take the whole
+        // rivers map down, so unplaced sources are filtered here instead.
+        .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
+        .map((s) => ({
+          id: s.id,
+          name: s.name,
+          lat: s.lat,
+          lng: s.lng,
+          type: s.type,
+          rivers_affected: s.rivers_affected,
+        })),
     [industrial],
   );
 
