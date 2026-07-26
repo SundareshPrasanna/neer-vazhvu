@@ -119,7 +119,7 @@ flooding is *modelled* to occur; Kolkata can tell you where it *actually* happen
 | Chennai feature | Kolkata | Notes |
 |---|---|---|
 | Water-body census map | **PARITY** | 5,526 bodies, 5,365 ha from OSM. |
-| Lost water bodies layer | **BUILDABLE** | Needs a historical comparison; the satellite pipeline is the route. |
+| Lost water bodies layer | **SHIPPED, by a different method** | No per-pond inventory exists for Kolkata (Mumbai's came from a named book). Built instead from TOPONYMIC evidence: 21 localities and streets still carrying a pond's name with no water body mapped within 300 m, plus one documented case (Zin-zira Talao, filled for the Indian Museum annexe, recorded only because of a PIL). Independently corroborates the city-wide 44% loss. |
 | Restoration priority scoring | **BUILDABLE** | Shared pipeline; needs a Kolkata run. |
 | Rich-data deep-zoom panel (flagship bodies) | **BUILDABLE** | Rabindra Sarobar and Subhash Sarobar are the natural candidates and are both WBPCB-sampled, so water quality is already in hand. |
 | CRRT restoration projects | **BLOCKED** | No equivalent public restoration project register found. |
@@ -179,7 +179,7 @@ still render a shell.
 | `/about` | 143 | - | 0 | live, thin |
 | `/origins` | 58 | - | 0 | live, thin - long-form not written |
 | `/flood-risk` | 700+ | 0 | 0 | **live** - drainage-capacity framing, 3 events, 5 stated gaps |
-| `/water-bodies` | 102 | 0 | 0 | **honest empty state** - needs curated water-body data files |
+| `/water-bodies` | 71 | **5,547** | 0 | **live** - 5,526 bodies + 21 lost-pond markers |
 | `/lake-restoration` | 122 | 0 | 0 | **honest empty state** - needs curated lake-restoration files |
 
 **Five defects found and fixed** that no status check would have caught:
