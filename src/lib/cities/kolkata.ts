@@ -2,7 +2,7 @@ import type { CityConfig } from './types';
 
 // Kolkata is registered DISABLED through the onboarding window (the Delhi
 // pattern): flipped to enabled: true on the cutover commit once data + UI land,
-// with supabase/migrations/035_kolkata_seed_disabled.sql now and an enable
+// with supabase/migrations/037_kolkata_seed_disabled.sql now and an enable
 // migration at cutover. Until then /kolkata is reachable only via
 // NEXT_PUBLIC_PREVIEW_CITIES=kolkata.
 //
@@ -271,7 +271,7 @@ export const KOLKATA: CityConfig = {
     'tube wells': 'kmc_tubewells',
     'tubewells': 'kmc_tubewells',
   },
-  // Flipped at cutover, with supabase/migrations/037_kolkata_enable.sql kept in
+  // Flipped at cutover, with supabase/migrations/039_kolkata_enable.sql kept in
   // step as a record (that column gates nothing today - see delhi.ts).
   enabled: false,
 };
