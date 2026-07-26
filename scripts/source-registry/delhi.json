@@ -183,10 +183,12 @@
         "linkPattern": "/resource/|\\.pdf"
       },
       "dependsOn": [
-        "public/data/delhi-cetp-monthly-index.json"
+        "public/data/delhi-cetp-monthly-index.json",
+        "public/data/delhi-cetp-flows.json",
+        "public/data/industrial-sources-delhi.json"
       ],
-      "refreshMethod": "manual (new monthly bundles -> extend delhi-cetp-monthly-index.json; bulk values await the OCR batch)",
-      "notes": "Per-CETP inlet/outlet monitoring across 23 parameters incl. heavy metals, plus measured flow vs design capacity and the plant's OLMS status. Archive currently ends Nov 2024 - new resources here would mean the series resumed.",
+      "refreshMethod": "automated OCR: re-run neer-vazhvu-api/scripts/extract_delhi_cetp_flows.py (new bundles download + OCR; existing ones read from .cache), then build_delhi_industrial_sources.py and build_delhi_ward_profiles.py",
+      "notes": "Delhi's industrial-attribution layer: per-plant design capacity vs MEASURED monthly inflow for the 13 CETPs. Extracted 2026-07-26 from the scanned PDFs (709 readings, 2019-04 to 2024-11) - the archive was indexed but unopened until then. Series ends Nov 2024; a new bundle on the listing is what tells us DPCC resumed. Utilisation sits near a third of built capacity, which is the finding.",
       "lastSeen": {
         "linksHash": "fe38c8af328e44d0",
         "links": [
