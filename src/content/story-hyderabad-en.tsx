@@ -59,10 +59,10 @@ export function HyderabadStoryEn() {
       lastRevised="July 2026"
     >
       <Hero
-        src="/images/story/hyderabad/musi-flood-1908.jpg"
-        alt="Page from The Illustrated London News, 24 October 1908, headed 'A city crushed by a wall of water: wrecked Hyderabad, after the flood in which many thousands perished'. Six photographs show the wrecked Afzal bridge with the city gate and clock-tower, wreckage in the grounds of the flooded British Residency, the Nizam's troops clearing debris, the ruins of the bridge linking the Residency to Hyderabad, the interior of the Residency, and the remains of a nobleman's palace."
-        source="Wikimedia Commons / The Illustrated London News"
-        credit="The Illustrated London News, 24 October 1908 (public domain)"
+        src="/images/story/hyderabad/osman-sagar-retaining-wall.jpg"
+        alt="The masonry retaining wall of Osman Sagar reservoir at Gandipet, curving away from a pavilion at the near end, with the spillway channel and water to the right."
+        source="Wikimedia Commons"
+        credit="iMahesh, CC BY-SA 4.0"
       />
       <Lede>
         On the night of 28 September 1908 the Musi rose through Hyderabad and
@@ -126,6 +126,7 @@ export function HyderabadStoryEn() {
           source="Wikimedia Commons (public domain)"
           aspect="3/4"
           fit="contain"
+          size="wide"
         />
 
       <PullQuote>
@@ -166,12 +167,14 @@ export function HyderabadStoryEn() {
           eighty-four villages.
         </p>
         <Figure
-          src="/images/story/hyderabad/osman-sagar-retaining-wall.jpg"
-          alt="The masonry retaining wall of Osman Sagar reservoir at Gandipet, curving away from a pavilion at the near end, with the spillway channel and water at the right."
-          caption="Osman Sagar's retaining wall. Begun 1913, completed 1918, and built as flood control first and water supply second. It still supplies the city every day - and its catchment lost the protection of GO 111 in 2022, on the stated ground that Hyderabad no longer depends on it."
-          credit="iMahesh"
-          source="Wikimedia Commons (CC BY-SA 4.0)"
-          aspect="3/2"
+          src="/images/story/hyderabad/musi-flood-1908.jpg"
+          alt="Page from The Illustrated London News, 24 October 1908, headed 'A city crushed by a wall of water: wrecked Hyderabad, after the flood in which many thousands perished'. Six photographs show the wrecked Afzal bridge with the city gate and clock-tower, wreckage in the grounds of the flooded British Residency, the Nizam's troops clearing debris, the ruins of the bridge linking the Residency to Hyderabad, the interior of the Residency, and the remains of a nobleman's palace."
+          caption="The Illustrated London News of 24 October 1908, four weeks after the flood: 'A city crushed by a wall of water.' The wrecked Afzal bridge appears twice, top left and centre right - it carried the link between the British Residency and the city. This is the event that produced Osman Sagar and Himayat Sagar, and the reason both were built as flood control first and water supply second."
+          credit="The Illustrated London News, 24 October 1908"
+          source="Wikimedia Commons (public domain)"
+          aspect="3/4"
+          fit="contain"
+          size="wide"
         />
       </Chapter>
 
