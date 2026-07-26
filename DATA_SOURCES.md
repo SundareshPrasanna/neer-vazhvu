@@ -10,11 +10,23 @@ The detailed source-by-source breakdown lives in per-city files. Each file docum
 - [docs/cities/madurai/data-sources.md](docs/cities/madurai/data-sources.md) - Madurai (TN Agriculture ARS, ADB TNUFIP IEE, CGWB Year Book, Vencatesan/DHAN water bodies, CPCB NWMP Vaigai, etc.)
 - [docs/cities/bangalore/data-sources.md](docs/cities/bangalore/data-sources.md) - Bengaluru (4 upstream Cauvery reservoirs via KWRIS / Karnataka WRIS, IISc Groundwater Outlook 2025, CGWB block GWR via WRIS GEC 2024, OpenCity tanker surveys, IMD gridded rainfall, 13 flagship water bodies, etc.)
 - [docs/cities/delhi/data-sources.md](docs/cities/delhi/data-sources.md) - Delhi (CAG performance audit of DJB, Delhi Economic Survey Ch. 13, DPCC monthly Yamuna + drain analysis, CGWB/IN-GRES district groundwater assessments, Jal Dharohar water-bodies census, DUSIB JJ-basti roster, MCD 2022 ward geometry + election results, IMD gridded rainfall, etc.)
+- [docs/cities/kolkata/data-sources.md](docs/cities/kolkata/data-sources.md) - Kolkata/KMA (WBPCB EMIS water quality with tidal station pairs, KMC's weekly waterlogging register, KMC District Environment Plan 2021 sewage balance, IN-GRES + India-WRIS groundwater, Open-Meteo hourly rainfall intensity, KMC-SHARP/ADB safeguard disclosures, 1st Census of Water Bodies, etc.)
 - [docs/cities/mumbai/data-sources.md](docs/cities/mumbai/data-sources.md) - Mumbai/MMR (Maharashtra WRD Pravah daily reservoir bulletin, CWC weekly bulletins 2015-2025 backfill, BMC ESR/Climate Budget/RTI manuals, Praja Foundation RTI ward tables, MPCB water-quality series, WRD red/blue flood-line sheets, allocation instruments incl. WRD GRs + STEM board minutes, etc.)
 
-Per-city *features* live alongside in the same folder: [docs/cities/chennai/features.md](docs/cities/chennai/features.md), [docs/cities/madurai/features.md](docs/cities/madurai/features.md), [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md), [docs/cities/mumbai/features.md](docs/cities/mumbai/features.md), and [docs/cities/delhi/features.md](docs/cities/delhi/features.md).
+Per-city *features* live alongside in the same folder: [docs/cities/chennai/features.md](docs/cities/chennai/features.md), [docs/cities/madurai/features.md](docs/cities/madurai/features.md), [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md), [docs/cities/mumbai/features.md](docs/cities/mumbai/features.md), [docs/cities/delhi/features.md](docs/cities/delhi/features.md), and [docs/cities/kolkata/features.md](docs/cities/kolkata/features.md). Kolkata additionally ships a graded parity scorecard against Chennai at [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md) - every feature scored XHigh/High/Medium/Low/N-A with the reason recorded wherever parity is not reachable.
 
-When adding a sixth city, copy the Delhi, Mumbai or Bengaluru folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
+When adding a seventh city, copy the Kolkata, Delhi or Mumbai folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
+
+## Documentation principle: record what the source refuses to say
+
+Kolkata added a second discipline alongside the hedging rule below. Where a publisher contradicts
+itself or leaves a statutory field empty, that is a finding to surface rather than a gap to fill from
+weaker sources. Three numbers are therefore absent from Kolkata *on purpose*, each with the reason on
+the page: no total supply capacity (KMC's own page lists plants summing to 2,324.7 MLD beside a
+~1,900 MLD target, labelled DRAFT and footered 2013), no litres-per-capita (KMC contests its own
+denominator - 4.5m residents plus 6m daily floating, against a "static population" of 44.96 lakh),
+and no non-revenue water (never published). The industrial-wastewater section of KMC's statutory
+Environment Plan is blank in the original, and we show it as blank.
 
 ## Documentation principle: avoid absolute-absence claims
 
@@ -25,6 +37,14 @@ The Madurai documents follow this principle throughout. The Chennai documents pr
 ## Cross-city parity matrix
 
 A contributor cheat-sheet for what each city has covered. If you're adding a new city, this is your checklist - replicate the green column items first, then file the red column as known gaps to track.
+
+> **This table is stale by two cities: it predates both Delhi and Kolkata.** Rather than half-fill
+> thirty rows, the modern and more rigorous version of this comparison lives at
+> [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md), which grades
+> every feature XHigh / High / Medium / Low / N-A against Chennai with the reason recorded wherever
+> parity is not reachable, and separates *structural* N-A (the city cannot have this) from a real
+> gap (we have not built it). Use that shape for the next city; this table stays as the historical
+> four-city snapshot.
 
 | Domain | Chennai | Madurai | Bengaluru | Mumbai |
 |---|---|---|---|---|
