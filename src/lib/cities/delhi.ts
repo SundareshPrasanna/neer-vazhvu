@@ -141,6 +141,14 @@ export const DELHI: CityConfig = {
     cgwbStations: true,
   },
   reservoirDataSource: 'v2',
+  // Delhi impounds nothing. It draws a canal share, a river pond and a
+  // borewell field, and its two dam entitlements (Bhakra, Tehri) sit in other
+  // states' reservoirs where the storage published is the whole dam's, never
+  // Delhi's slice. So there is no storage series to chart and there will not
+  // be one until BBMB or THDC publish a share - which is a finding about who
+  // holds the numbers, not a backlog item.
+  reservoirHistoryAbsentNote:
+    "Delhi owns no reservoir storage of its own, so no authority publishes a daily storage series for it. BBMB publishes Bhakra's level, inflow and outflow but not Delhi's share as a volume, and Delhi's share of the dam is set per season in BBMB Technical Committee minutes that are not public. Each source card below names who would have to publish the number.",
   waterSources: [
     {
       // The Yamuna arm: Wazirabad pond feeds Wazirabad + Chandrawal WTPs.

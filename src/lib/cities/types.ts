@@ -383,6 +383,17 @@ export interface BasePlaceConfig {
    *  not a bug. */
   reservoirHistoryNote?: string;
 
+  /** Why no storage history exists for this place, when the answer is "nobody
+   *  publishes one" rather than "we have not backfilled it yet".
+   *
+   *  The chart used to infer this from `hasPublicFeed` across the sources, but
+   *  that is the wrong question: Delhi's BBMB feed is live and still yields no
+   *  storage series, because level over FRL is not a volume and Delhi's share
+   *  of Bhakra is unpublished. With a live feed present the inferred branch
+   *  promised the chart "fills in automatically", which will never happen.
+   *  Set this and that promise is replaced by the actual reason. */
+  reservoirHistoryAbsentNote?: string;
+
   /** Ships /:cityId/commitments - the Commitments Register (dated commitments
    *  by named institutions with a cited status lifecycle; history kept, never
    *  overwritten). Requires public/data/commitments-{cityId}.json. */
