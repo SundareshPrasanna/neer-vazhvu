@@ -67,8 +67,25 @@
       },
       "dependsOn": [],
       "refreshMethod": "manual (PRS edition -> Musi river-quality panel)",
-      "notes": "The Musi is the reason this is tier 1: it is Hyderabad's signature river-pollution story and CPCB's Polluted River Stretches programme is the canonical national classification. NOT YET BASELINED - see ciBlocked. Until this is reachable, Musi river-quality numbers have no primary source in the repo and must not be published; TGPCB is the unprobed alternative route.",
+      "notes": "The Musi is the reason this is tier 1: it is Hyderabad's signature river-pollution story and CPCB's Polluted River Stretches programme is the canonical national classification. NOT YET BASELINED - see ciBlocked. TGPCB has since been PROBED (2026-07-26) and is fully reachable: see tgpcb-ngt-oa606-musi. It carries the NGT OA 606/2018 quarterly reports and River Rejuvenation Committee minutes, so the Musi may not need CPCB at all - but those PDFs are scanned rasters, so the blocker changes from network access to OCR. Musi river-quality numbers still have no primary source in the repo and must not be published until one is extracted.",
       "ciBlocked": "cpcb.nic.in is on NICNET (164.100.x.x) and refuses TCP from non-India IPs - verified 2026-07-26 from this network (connection failed, HTTP 000). Runs from the India-IP path (the local scheduled-job pattern used for CMWSSB/Pravah/KWRIS), never from CI runners."
+    },
+    {
+      "id": "tgpcb-ngt-oa606-musi",
+      "scope": "hyderabad",
+      "publisher": "TGPCB (Telangana Pollution Control Board)",
+      "url": "https://tgpcb.cgg.gov.in/",
+      "license": "Telangana government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "quarterly (NGT OA 606/2018 reporting cycle)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "\\.pdf"
+      },
+      "dependsOn": [],
+      "refreshMethod": "manual (OCR of scanned quarterlies -> Musi river-quality panel)",
+      "notes": "PROBED 2026-07-26 and REACHABLE from any IP, unlike CPCB - tspcb.cgg.gov.in JS-redirects to tgpcb.cgg.gov.in (the board was renamed with the state). Hosted on cgg.gov.in (Centre for Good Governance) rather than NICNET, which is why it is not caught by the CPCB block. Publishes the NGT OA 606/2018 quarterly reports (the same case family that supplies Chennai's treatment-gap layer), River Rejuvenation Committee minutes, CEPI monitoring data and action plans for Patancheru-Bollaram, and CETP monitoring covering PETL. CAVEAT, VERIFIED: the PDFs are SCANNED RASTERS with no text layer - RRCMinutes.pdf is 14 pages / 0 extractable chars / 259 embedded images, and the OA 606 Q1 2022-23 report is 204 pages / 21 MB / 0 chars / 631 images. tesseract is available locally; ocrmypdf and the python OCR bindings are not. So this is an OCR job under our own control, NOT a network-access job."
     }
   ]
 }
