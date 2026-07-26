@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       city:
-        description: 'City id to refresh (chennai / madurai / bangalore / mumbai). Leave empty for all.'
+        description: 'City id to refresh (chennai / madurai / bangalore / mumbai / delhi / kolkata). Leave empty for all.'
         type: string
         default: ''
 
@@ -48,7 +48,11 @@ jobs:
           set -e
           CITIES="${{ inputs.city }}"
           if [ -z "$CITIES" ]; then
-            CITIES="chennai madurai bangalore mumbai"
+            # Keep in lockstep with CITY_DEFAULTS in
+            # neer-vazhvu-api/scripts/generate_imd_rainfall.py. Delhi was
+            # missing here despite shipping an IMD series, so its quarterly
+            # refresh had silently never run; added with Kolkata.
+            CITIES="chennai madurai bangalore mumbai delhi kolkata"
           fi
           for city in $CITIES; do
             echo "=== IMD refresh: $city ==="

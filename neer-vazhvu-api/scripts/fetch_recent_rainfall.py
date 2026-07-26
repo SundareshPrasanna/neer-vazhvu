@@ -38,6 +38,9 @@ CITIES = {
     "bangalore": (12.9716, 77.5946),
     "mumbai": (19.0760, 72.8777),
     "delhi": (28.6100, 77.2100),
+    # Matches the IMD gridded point in generate_imd_rainfall.py, not the city
+    # centre: the provisional months must continue the same series they fill.
+    "kolkata": (22.5000, 88.2500),
 }
 
 API = (

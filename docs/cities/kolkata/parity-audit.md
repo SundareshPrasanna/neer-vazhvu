@@ -31,11 +31,12 @@ actually a difference; scoring it only on its own axes would hide real gaps. Bot
 | Per-reservoir drilldown, 365-day charts | **N/A** | As above. |
 | Historical comparison overlay 2019-2025 | **N/A** | No storage series to overlay. |
 | Storage trend chart | **N/A** | As above. |
-| Rainfall trends, 56-year IMD history | **BLOCKED** | IMD gridded backbone not yet ingested (needs an `imdlib` bulk download, not an API call). Carried as an explicit temporary EXEMPTION in `check-data-freshness.ts` with a removal condition. This is the single clearest Chennai feature Kolkata lacks. |
+| Rainfall trends, 56-year IMD history | **PARITY** | Shipped 2026-07-26. **56 years, 1970-2025, 672 monthly records, long-term annual mean 1,659.3 mm**, at grid point 22.5/88.25 (the city centre sits near deltaic cells IMD classifies as water). Open-Meteo provisional fill runs on top. The temporary freshness EXEMPTION has been REMOVED - its stated removal condition was met. |
 | *(no Chennai equivalent)* | **BETTER** | **`drainage-capacity` hero**: 26 years of hourly rainfall (232,896 hours) against KMC's published 6 mm/h design standard, with a movable threshold and year picker. No other city has a sub-daily rainfall product. |
 
-**Verdict: intentionally divergent.** Five N/A rows are the same underlying fact stated five ways.
-The one real gap is the IMD rainfall backbone.
+**Verdict: intentionally divergent, and now with no outstanding gap.** Five N/A rows are the same
+underlying fact stated five ways - Kolkata stores no water. The one real gap, the IMD rainfall
+backbone, is closed. Everything remaining on this page is structural.
 
 ---
 
