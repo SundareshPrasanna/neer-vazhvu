@@ -194,6 +194,44 @@
       ],
       "refreshMethod": "daily scrape would build the series (fetch_tgdps_stations.py)",
       "notes": "A MEASURED intra-city rainfall surface, which no other city on the platform has - everyone else interpolates from a single IMD 0.25-degree grid cell about 28 km across. GHMC.jsp lists ~185 AWS inside GHMC_CMC_MMC; 161 resolve with coordinates and are what we ship, and the facts card says '161 with coordinates' rather than 185 for that reason. values.jsp?s1=<awsId> exposes only the LATEST reading per station with NO date parameter, so this file is a station registry plus a snapshot - running it daily is what builds a series. Now rendered as a layer on the flood page."
+    },
+    {
+      "id": "cpcb-nwmp-hyderabad",
+      "scope": "hyderabad",
+      "publisher": "CPCB (National Water Quality Monitoring Programme)",
+      "url": "https://cpcb.gov.in/nwmp-data/",
+      "license": "Government of India publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "nwmp-data-20\\d\\d|/wqm/20\\d\\d/"
+      },
+      "dependsOn": [
+        "public/data/river-quality-hyderabad.json"
+      ],
+      "refreshMethod": "manual (annual river-data PDF -> Musi station series)",
+      "notes": "The canonical national series, and reachable on cpcb.gov.in - the earlier 'CPCB is IP-blocked' read was a dead HOSTNAME (cpcb.nic.in), not a geo-fence. Annual editions 2012-2025. The PDFs carry a TEXT LAYER, so no OCR is needed: WQuality_River-Data-2022.pdf is 161pp with 242k extractable chars. RICHER THAN WHAT WE SHIP: 15 Musi-context stations in 2022 against the 4 we carry from TGPCB, including Moosarambagh 4656, Pillaipalli 4657, Valigonda 4658, Peerajadiguda 4660, and station 4659 (Musi at the outlet of Nalla Cheruvu) which recorded DO 0.0-0.0 across all of 2022. CPCB publishes annual MIN-MAX per station where TGPCB published monthly points. Rebuilding river-quality-hyderabad.json on this series is the open work order."
+    },
+    {
+      "id": "opencity-jal-dharohar-hyderabad",
+      "scope": "hyderabad",
+      "publisher": "Jal Dharohar / NWIC Minor Irrigation census, via OpenCity",
+      "url": "https://data.opencity.in/dataset/4becf994-e7f5-4da3-b201-b56b126b57f7",
+      "license": "open (per OpenCity dataset page); underlying census is NWIC/MoJS",
+      "type": "page",
+      "cadence": "episodic (census rounds)",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/resource/|\\.(kml|kmz|geojson|csv|zip)"
+      },
+      "dependsOn": [
+        "public/geojson/hyderabad-water-census.geojson"
+      ],
+      "refreshMethod": "manual (new census round -> build_hyderabad_opencity_layers.py)",
+      "notes": "Jal Dharohar 2023 water-body points for Hyderabad and Rangareddy - 3,116 features carrying district, block/tehsil, village, water_body_type and rural/urban. Held but NOT yet rendered: the points are a different population again from both the OSM polygons (669) and the HMDA gazetted register (2,978), and reconciling the three is open work rather than a wiring task."
     }
   ]
 }

@@ -65,6 +65,8 @@ export const UNWATCHED: Record<string, string> = {
   "public/geojson/chennai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
   "public/geojson/madurai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
   "public/geojson/mumbai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/hyderabad-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/hyderabad-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
   "public/geojson/chennai-industrial-zones.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
   "public/geojson/mumbai-drainage.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
   "public/geojson/mumbai-corporations-2024.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
@@ -134,6 +136,33 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/rainfall-recent-chennai.json": "daily feed: owned by check-data-freshness.ts",
   "public/data/rainfall-recent-bangalore.json": "daily feed: owned by check-data-freshness.ts",
   "public/data/rainfall-recent-madurai.json": "daily feed: owned by check-data-freshness.ts",
+  "public/data/rainfall-recent-hyderabad.json": "daily feed: owned by check-data-freshness.ts",
+  // Hand-compiled editorial artifacts. These are not fetched from anywhere:
+  // each entry is written against its own dated citation, which lives inside
+  // the file next to the claim it supports. There is no upstream publisher and
+  // therefore no edition to detect - watching them would be watching ourselves.
+  // Deliberately NOT extended to layers that DO have a real upstream nobody has
+  // registered yet (ward geometry, sewerage, STPs, industrial registers, coastal
+  // zones); those stay unwatched on purpose so they keep showing up as work.
+  "public/data/allocations-bangalore.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/allocations-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/allocations-hyderabad.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/commitments-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/commitments-hyderabad.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/facts-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/facts-hyderabad.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/facts-madurai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/facts-mumbai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/restoration-projects-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/restoration-projects-hyderabad.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/restoration-projects-madurai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/restoration-projects-mumbai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/river-events-bangalore.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/river-events-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/river-events-madurai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/water-bodies-flagship-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/water-bodies-flagship-madurai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
+  "public/data/water-bodies-flagship-mumbai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
   "public/data/rainfall-recent-mumbai.json": "daily feed: owned by check-data-freshness.ts",
   "public/data/mmr-dam-storage.json": "daily feed: owned by check-data-freshness.ts (EXTRA_FEEDS)",
   "public/data/mumbai-flood-hotspots.geojson": "weekly feed: owned by check-data-freshness.ts (EXTRA_FEEDS)",
@@ -190,7 +219,11 @@ export function computeCoverage(root: string, dependsOn: string[]): CoverageResu
 /** Bucket an artifact path by city, for a per-city readout. */
 export function cityOf(path: string): string {
   const base = path.replace(/^public\/(data|geojson)\//, "");
-  for (const c of ["chennai", "bangalore", "madurai", "mumbai", "delhi"]) {
+  // MUST track src/lib/cities. A city missing here does not error - its
+  // artifacts silently fall through to "shared", and any whose name matches the
+  // legacy-prefix regex below get misfiled to Chennai. Hyderabad hit exactly
+  // that: restoration-projects-hyderabad.json was reported under chennai.
+  for (const c of ["chennai", "bangalore", "madurai", "mumbai", "delhi", "hyderabad"]) {
     if (base.includes(c)) return c;
   }
   if (base.startsWith("basins/")) return "basin";

@@ -4,7 +4,7 @@
   "source": "TGPCB, Annexure-VIII (Water Quality Analysis Reports), 1st Quarterly Report 2022-23 to the Hon'ble National Green Tribunal in OA No. 606 of 2018",
   "source_url": "https://tgpcb.cgg.gov.in/Uploads/PcbDocumentAllUploads/OANo-606of2018--1stQuarterlyReport2022-2023.pdf",
   "source_label": "TGPCB / NGT OA 606 of 2018, 1st Quarterly Report 2022-23 (cover letter of the Chief Secretary, Government of Telangana, dated 01-08-2022)",
-  "_provenance": "The source PDF is a 204-page SCANNED RASTER with no text layer (0 extractable characters, 631 embedded images). Values here were recovered by OCR (tesseract 5.5.2, pages rendered at 400 dpi, --psm 1 for auto-rotation) and then EVERY row was checked against the page image by eye before being written here. That check mattered: OCR read the Manjeera downstream March BOD as 2.3 where the image shows 2.8. These are CPCB NWMP station codes published by the STATE board, which is how they were obtained without CPCB access - cpcb.nic.in drops TCP from this network on both port 80 and 443.",
+  "_provenance": "The source PDF is a 204-page SCANNED RASTER with no text layer (0 extractable characters, 631 embedded images). Values here were recovered by OCR (tesseract 5.5.2, pages rendered at 400 dpi, --psm 1 for auto-rotation) and then EVERY row was checked against the page image by eye before being written here. That check mattered: OCR read the Manjeera downstream March BOD as 2.3 where the image shows 2.8. These are CPCB NWMP station codes published by the STATE board. NOTE, corrected later the same day: this route was taken on the belief that CPCB was unreachable, which was WRONG - cpcb.nic.in is a dead host, but CPCB serves everything on cpcb.gov.in, which answers in under a second and publishes the same series with a TEXT LAYER and no OCR required. The TGPCB values below stand on their own and were verified row by row, but the OCR was not necessary. See _cross_validation.",
   "_units_note": "Column headers are reproduced as printed in the source. The source labels conductivity 'mS/cm' while the values (481-1481) are in the range of uS/cm; we record the number as published and the unit as printed rather than silently correcting the source, so `conductivity_us` carries the printed figure.",
   "_stations_pending_coordinates": "Two Musi stations in this annexure are not plotted because no coordinate could be sourced honestly: D/s of Musi at Pratapasingaram (NWMP 1173) and River Musi at Kasaniguda (NWMP 3082). Neither is a named place node in OSM and neither resolves in Nominatim, and inventing a point on the river line would be fabricating precision the source does not carry. Their readings are preserved verbatim in the Musi river `notes` so nothing is lost, and they plot the moment a coordinate is sourced.",
   "rivers": [
@@ -25,9 +25,51 @@
           "lng": 78.2997,
           "stretch": "Upstream of the city (NWMP 1172)",
           "readings": [
-            { "year": 2022, "month": "Jan", "do_mgl": 6.0, "bod_mgl": 1.2, "ph": 8.13, "conductivity_us": 481, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 46, "free_ammonia_mgl": 0.03, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
-            { "year": 2022, "month": "Feb", "do_mgl": 5.1, "bod_mgl": 1.0, "ph": 7.67, "conductivity_us": 498, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 63, "free_ammonia_mgl": 0.01, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
-            { "year": 2022, "month": "Mar", "do_mgl": 5.4, "bod_mgl": 1.0, "ph": 8.25, "conductivity_us": 502, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 20, "free_ammonia_mgl": 0.04, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null }
+            {
+              "year": 2022,
+              "month": "Jan",
+              "do_mgl": 6.0,
+              "bod_mgl": 1.2,
+              "ph": 8.13,
+              "conductivity_us": 481,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": null,
+              "total_coliform_mpn": 46,
+              "free_ammonia_mgl": 0.03,
+              "boron_mgl": 0.5,
+              "tds_mgl": null,
+              "nitrate_mgl": null
+            },
+            {
+              "year": 2022,
+              "month": "Feb",
+              "do_mgl": 5.1,
+              "bod_mgl": 1.0,
+              "ph": 7.67,
+              "conductivity_us": 498,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": null,
+              "total_coliform_mpn": 63,
+              "free_ammonia_mgl": 0.01,
+              "boron_mgl": 0.5,
+              "tds_mgl": null,
+              "nitrate_mgl": null
+            },
+            {
+              "year": 2022,
+              "month": "Mar",
+              "do_mgl": 5.4,
+              "bod_mgl": 1.0,
+              "ph": 8.25,
+              "conductivity_us": 502,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": null,
+              "total_coliform_mpn": 20,
+              "free_ammonia_mgl": 0.04,
+              "boron_mgl": 0.5,
+              "tds_mgl": null,
+              "nitrate_mgl": null
+            }
           ]
         },
         {
@@ -37,9 +79,51 @@
           "lng": 78.56012,
           "stretch": "Through the city (NWMP 2339)",
           "readings": [
-            { "year": 2022, "month": "Jan", "do_mgl": 0.3, "bod_mgl": 6.0, "ph": 7.96, "conductivity_us": 1391, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 920, "free_ammonia_mgl": 0.02, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
-            { "year": 2022, "month": "Feb", "do_mgl": 0.3, "bod_mgl": 6.0, "ph": 7.42, "conductivity_us": 1341, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 920, "free_ammonia_mgl": 0.04, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
-            { "year": 2022, "month": "Mar", "do_mgl": 0.3, "bod_mgl": 8.0, "ph": 7.92, "conductivity_us": 1452, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 430, "free_ammonia_mgl": 0.07, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null }
+            {
+              "year": 2022,
+              "month": "Jan",
+              "do_mgl": 0.3,
+              "bod_mgl": 6.0,
+              "ph": 7.96,
+              "conductivity_us": 1391,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": null,
+              "total_coliform_mpn": 920,
+              "free_ammonia_mgl": 0.02,
+              "boron_mgl": 0.5,
+              "tds_mgl": null,
+              "nitrate_mgl": null
+            },
+            {
+              "year": 2022,
+              "month": "Feb",
+              "do_mgl": 0.3,
+              "bod_mgl": 6.0,
+              "ph": 7.42,
+              "conductivity_us": 1341,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": null,
+              "total_coliform_mpn": 920,
+              "free_ammonia_mgl": 0.04,
+              "boron_mgl": 0.5,
+              "tds_mgl": null,
+              "nitrate_mgl": null
+            },
+            {
+              "year": 2022,
+              "month": "Mar",
+              "do_mgl": 0.3,
+              "bod_mgl": 8.0,
+              "ph": 7.92,
+              "conductivity_us": 1452,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": null,
+              "total_coliform_mpn": 430,
+              "free_ammonia_mgl": 0.07,
+              "boron_mgl": 0.5,
+              "tds_mgl": null,
+              "nitrate_mgl": null
+            }
           ]
         }
       ]
@@ -72,12 +156,56 @@
           "lng": 79.66149,
           "stretch": "Below the Musi confluence (NWMP 1465)",
           "readings": [
-            { "year": 2022, "month": "Jan", "do_mgl": 6.0, "bod_mgl": 2.5, "ph": 8.02, "conductivity_us": 816, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 27, "free_ammonia_mgl": 0.01, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
-            { "year": 2022, "month": "Feb", "do_mgl": 6.1, "bod_mgl": 2.8, "ph": 8.17, "conductivity_us": 808, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 24, "free_ammonia_mgl": 0.01, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
-            { "year": 2022, "month": "Mar", "do_mgl": 6.0, "bod_mgl": 2.4, "ph": 7.90, "conductivity_us": 1172, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 26, "free_ammonia_mgl": 0.01, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null }
+            {
+              "year": 2022,
+              "month": "Jan",
+              "do_mgl": 6.0,
+              "bod_mgl": 2.5,
+              "ph": 8.02,
+              "conductivity_us": 816,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": null,
+              "total_coliform_mpn": 27,
+              "free_ammonia_mgl": 0.01,
+              "boron_mgl": 0.5,
+              "tds_mgl": null,
+              "nitrate_mgl": null
+            },
+            {
+              "year": 2022,
+              "month": "Feb",
+              "do_mgl": 6.1,
+              "bod_mgl": 2.8,
+              "ph": 8.17,
+              "conductivity_us": 808,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": null,
+              "total_coliform_mpn": 24,
+              "free_ammonia_mgl": 0.01,
+              "boron_mgl": 0.5,
+              "tds_mgl": null,
+              "nitrate_mgl": null
+            },
+            {
+              "year": 2022,
+              "month": "Mar",
+              "do_mgl": 6.0,
+              "bod_mgl": 2.4,
+              "ph": 7.9,
+              "conductivity_us": 1172,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": null,
+              "total_coliform_mpn": 26,
+              "free_ammonia_mgl": 0.01,
+              "boron_mgl": 0.5,
+              "tds_mgl": null,
+              "nitrate_mgl": null
+            }
           ]
         }
       ]
     }
-  ]
+  ],
+  "_cross_validation": "CROSS-CHECKED 2026-07-26 against CPCB's own NWMP 2022 river data (cpcb.gov.in/wqm/2022/WQuality_River-Data-2022.pdf, 161pp WITH a text layer - no OCR needed). CPCB publishes annual MIN-MAX per station where TGPCB published three monthly points, so the test is whether the monthly values fall inside CPCB's annual range. AGREES at 2 of 4 stations: Kasaniguda 3082 (TGPCB DO 6.4-6.6, BOD 3.2-3.6 sits inside CPCB DO 5.8-6.7, BOD 3.2-4.8) and Krishna Wadapally 1465 (TGPCB DO 6.0-6.1, BOD 2.4-2.8 inside CPCB DO 5.5-6.9, BOD 2-3). DISAGREES at the two anoxic stations, in the same direction: TGPCB reports DO 0.3 at Nagole 2339 and at Pratapasingaram 1173, below CPCB's annual minima of 0.5 and 0.8 respectively. An annual minimum cannot exceed a monthly value at the same station, so the two government sources are inconsistent here. We do not adjudicate. One hypothesis worth recording but NOT asserting: TGPCB prints exactly 0.3 for all three months at both stations, which reads more like a floor or detection-limit placeholder than three independent measurements. Either way the qualitative finding is unchanged and both sources agree on it - the Musi is anoxic through the city and recovers downstream.",
+  "_richer_source_available": "CPCB's NWMP series is BROADER and DEEPER than what this file carries: 15 Musi-context stations in 2022 against our 4, with annual editions from 2012 to 2025. It includes stations we do not have at all - Moosarambagh Bridge 4656, Pillaipalli 4657, Valigonda 4658, Peerajadiguda 4660 - and one that is the starkest reading on the river: station 4659, the Musi at the outlet of Nalla Cheruvu, Peerajadiguda, recorded DO 0.0 to 0.0 across the whole of 2022. Rebuilding this file on the CPCB series (and picking up the 2023-2025 editions) is the obvious next step; it was not done in this pass."
 }
