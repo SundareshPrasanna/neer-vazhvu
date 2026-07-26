@@ -16,6 +16,8 @@ import { useTheme } from "@/components/theme-provider";
 import type { RiverQualityReading } from "@/types/river-quality";
 import { useLanguage } from "@/lib/i18n/context";
 
+const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
 interface RiverQualityChartProps {
   readings: RiverQualityReading[];
   stationName: string;
@@ -115,8 +117,20 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
     );
   }
 
-  // Sort by year for clean line rendering
-  const sorted = [...readings].sort((a, b) => a.year - b.year);
+  // Plot by month where the feed is genuinely monthly (Delhi/DPCC), by year
+  // everywhere else (CPCB annual NWMP). `period` is the x-axis key either way,
+  // so a monthly city gets one point per sample instead of its whole series
+  // collapsing onto a single year tick.
+  const sorted = [...readings]
+    .map((r) => ({
+      ...r,
+      period: r.month ?? String(r.year),
+      // "2026-04" -> "Apr 26" keeps the axis readable at 9px.
+      periodLabel: r.month
+        ? `${MONTH_ABBR[Number(r.month.slice(5, 7)) - 1] ?? r.month.slice(5, 7)} ${r.month.slice(2, 4)}`
+        : String(r.year),
+    }))
+    .sort((a, b) => (a.period < b.period ? -1 : a.period > b.period ? 1 : 0));
 
   return (
     <div className="h-44">
@@ -128,7 +142,7 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
           <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
 
           <XAxis
-            dataKey="year"
+            dataKey="periodLabel"
             tick={{ fontSize: 9, fill: isDark ? "#94a3b8" : "#64748b" }}
             tickLine={false}
             axisLine={false}

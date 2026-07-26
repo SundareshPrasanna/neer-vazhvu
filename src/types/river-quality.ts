@@ -35,6 +35,17 @@ export type RiverQualityStatus =
 
 export interface RiverQualityReading {
   year: number;
+  /** "YYYY-MM" for cities whose feed is genuinely monthly.
+   *
+   *  Every other city here is on CPCB's annual NWMP, so a yearly row is the
+   *  true resolution of the data. Delhi is the exception: DPCC samples its
+   *  Yamuna stations every month, and collapsing that to one row a year threw
+   *  the extra resolution away - the chart showed a single point because all
+   *  the captured months fell in one calendar year.
+   *
+   *  Optional on purpose: when absent the chart plots by year exactly as
+   *  before, so annual cities are untouched. */
+  month?: string | null;
   do_mgl: number | null; // Dissolved oxygen mg/L
   bod_mgl: number | null; // Biochemical oxygen demand mg/L
   ph: number | null;

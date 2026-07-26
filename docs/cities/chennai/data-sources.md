@@ -96,7 +96,7 @@
 
 | | |
 |---|---|
-| **Source** | [CPCB National Water Monitoring Programme (NWMP)](https://cpcb.nic.in/nwmp-data-2024/) - "Status of Water Quality in India" annual reports |
+| **Source** | [CPCB National Water Monitoring Programme (NWMP)](https://cpcb.gov.in/nwmp-data-2024/) - "Status of Water Quality in India" annual reports |
 | **Method** | Manual curation (PDF/Excel → JSON) |
 | **Frequency** | Annual (refreshed when CPCB publishes the next report, typically Jan–Mar) |
 | **Coverage** | 4 rivers: Cooum, Adyar, Buckingham Canal, Kosasthalaiyar -10 monitoring stations total |

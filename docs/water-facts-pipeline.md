@@ -83,7 +83,7 @@ The per-card table above shows Tier 2 already "auto-updates" in that any JSON fi
 
 2. **Add a monthly check for OpenCity publication dates.** When the Nov-of-each-year OpenCity release lands, the `LAST_PUBLICATION` constant in `derived-facts.ts` needs updating. A monthly workflow that hits `data.opencity.in/dataset/chennai-ward-wise-groundwater-levels` and opens a PR when the published_date changes would remove the last manual step.
 
-3. **CPCB annual report watcher** is harder because CPCB distributes only PDFs. Consider setting up a cron that fetches the `https://cpcb.nic.in/nwmp-data-2/` directory listing and opens an issue when new file names appear, so a human reviewer can extract into `river-quality.json`.
+3. **CPCB annual report watcher** is harder because CPCB distributes only PDFs. Consider setting up a cron that fetches the `https://cpcb.gov.in/nwmp-data-2/` directory listing and opens an issue when new file names appear, so a human reviewer can extract into `river-quality.json`.
 
 ## Editing a fact
 

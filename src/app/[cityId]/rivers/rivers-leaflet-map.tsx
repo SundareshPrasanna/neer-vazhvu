@@ -33,6 +33,26 @@ export interface IndustrialSourceMarker {
   rivers_affected: string[];
 }
 
+/** A monitored outfall drain. Distinct from an industrial source because the
+ *  question it answers is different: not "who pollutes here" but "is this
+ *  drain still discharging". NO FLOW is the verification signal for a
+ *  drain-trapping programme, so it is carried explicitly rather than being
+ *  inferred from missing values. */
+export interface DrainMarker {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  group: string | null;
+  /** Printed NO FLOW in the source report - i.e. trapped or dry, which is the
+   *  outcome a trapping programme is trying to produce. Never set from an
+   *  unreadable row. */
+  noFlow: boolean;
+  bod: number | null;
+  cod: number | null;
+  month: string | null;
+}
+
 interface RiverGeoFeature {
   river_id: string;
   name: string;
@@ -50,6 +70,20 @@ interface MapProps {
   riverInfo: Record<string, RiverInfo>;
   cpcbStations?: CpcbStationMarker[];
   industrialSources?: IndustrialSourceMarker[];
+  drains?: DrainMarker[];
+}
+
+// Drain fill by BOD against DPCC's 30 mg/l effluent standard. A drain printed
+// NO FLOW is drawn hollow instead: it is the ABSENCE of discharge, which is
+// what a trapping programme is trying to achieve, and colouring it like a
+// clean-but-flowing drain would hide the distinction.
+function drainFill(d: DrainMarker): string {
+  if (d.noFlow) return "#334155";
+  if (d.bod == null) return "#64748b";
+  if (d.bod <= 30) return "#16a34a";
+  if (d.bod <= 60) return "#eab308";
+  if (d.bod <= 120) return "#f97316";
+  return "#dc2626";
 }
 
 const INDUSTRIAL_TYPE_FILL: Record<string, string> = {
@@ -92,6 +126,7 @@ export function RiversLeafletMap({
   riverInfo,
   cpcbStations = [],
   industrialSources = [],
+  drains = [],
 }: MapProps) {
   const tiles = useMapTiles();
   const { language } = useLanguage();
@@ -217,7 +252,65 @@ export function RiversLeafletMap({
         );
       })}
 
-      {industrialSources.map((s) => {
+      {drains
+        // Null-coordinate guard: a drain can be monitored without being
+        // locatable, and Leaflet throws "Invalid LatLng object" on a null centre.
+        .filter((d) => typeof d.lat === "number" && typeof d.lng === "number")
+        .map((d) => (
+          <CircleMarker
+            key={`drain-${d.id}`}
+            center={[d.lat, d.lng]}
+            radius={d.noFlow ? 4 : 6}
+            pathOptions={{
+              color: d.noFlow ? "#64748b" : "#0f172a",
+              weight: d.noFlow ? 1.5 : 1,
+              // Hollow + dashed when NO FLOW: the ABSENCE of discharge is the
+              // outcome the trapping programme exists to produce, so it must
+              // not look like a low-BOD drain that is still running.
+              fillColor: drainFill(d),
+              fillOpacity: d.noFlow ? 0.15 : 0.85,
+              dashArray: d.noFlow ? "2 2" : undefined,
+            }}
+          >
+            <Tooltip>
+              <div style={{ maxWidth: 240, whiteSpace: "normal" }}>
+                <strong>{d.name}</strong>
+                {d.noFlow ? (
+                  <>
+                    <br />
+                    <span style={{ fontSize: "11px", color: "#0f766e" }}>
+                      NO FLOW recorded{d.month ? ` (${d.month})` : ""}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <br />
+                    <span style={{ fontSize: "11px", color: "#64748b" }}>
+                      {d.bod != null ? `BOD ${d.bod} mg/l` : "BOD not read"}
+                      {d.cod != null ? ` - COD ${d.cod} mg/l` : ""}
+                      {d.bod != null && d.bod > 30 ? " - over the 30 mg/l standard" : ""}
+                    </span>
+                  </>
+                )}
+                {d.group && (
+                  <>
+                    <br />
+                    <span style={{ fontSize: "10px", color: "#94a3b8" }}>{d.group}</span>
+                  </>
+                )}
+              </div>
+            </Tooltip>
+          </CircleMarker>
+        ))}
+
+      {/* Second guard, deliberately duplicated from the caller: a source with
+          no coordinates (Delhi's SMA CETP is real but unmapped in OSM) would
+          reach Leaflet as center={[null, null]} and throw "Invalid LatLng
+          object", taking the whole map down. Cheap insurance against a future
+          caller that forgets to filter. */}
+      {industrialSources
+        .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
+        .map((s) => {
         const fill = INDUSTRIAL_TYPE_FILL[s.type] ?? "#475569";
         return (
           <CircleMarker

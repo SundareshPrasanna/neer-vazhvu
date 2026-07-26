@@ -42,6 +42,26 @@
 | Script | `neer-vazhvu-api/scripts/build_delhi_cgwb_stations.py` - copy per city; caches raw rows to `.cache/` so re-runs skip the ~40 min download |
 | Proven in | Delhi (237 wells → station overlay, per-ward groundwater card, and the `risk_v2_dl` composite, 2026-07) |
 
+## Scanned PCB analysis reports: the OCR recipe
+
+**State PCBs publish monthly lab reports as image-only PDFs. They are usually indexed and never extracted, because nobody wants to hand-type them. Partial OCR beats manual transcription and beats leaving the archive shut.**
+
+Proven on Delhi's DPCC CETP archive (62 monthly bundles, ~800 pages, 2019-2024 → 709 readings). `neer-vazhvu-api/scripts/extract_delhi_cetp_flows.py` is the reference implementation.
+
+| | |
+|---|---|
+| Toolchain | `pdftoppm -r 300 -png` then `tesseract --psm 6`. Check for a text layer first (`pdftotext`): if one exists, skip OCR entirely |
+| **Extract prose, not tables** | Header and footer lines ("ANALYSIS REPORT OF X CETP (12 MLD)", "Flow: 2.76 MLD", "Date of Sampling") OCR cleanly. The parameter GRID does not: merged cells, garbled heavy-metal rows. Take the fields you can trust and say in the output file which you skipped. Half-read arsenic is worse than no arsenic |
+| **Cache the OCR text, not just the PDFs** | Rendering + tesseract is the expensive step. Write page text to disk BEFORE returning, so a downstream crash or a parser change costs seconds. This cost two full 40-minute reruns before it existed |
+| **Expect the publisher to change format mid-archive** | DPCC's 2019-22 headers have no month at all; 2023-24 do. Fall back to the bundle/file name, which is machine-generated and reliable |
+| **Fuzzy-match entity names, with a floor** | Bad scans mangle names ("WAZ ron" for WAZIRPUR). Match on BOTH occurrences on the page, add a unique-prefix rule, and leave anything below the floor UNRESOLVED rather than guessing. Reject prefixes that match more than one entity ("NAR" = Naraina or Narela) |
+| **Parse numbers defensively** | Tesseract emits `3.255.`, `2..4`, and lost decimal points. A bare `float()` will crash a whole run. Validate against a physical envelope AND against a related field (flow vs design capacity) |
+| **Use the median, not the mean** | One mis-OCR'd value drags a mean, and you cannot hand-check hundreds of readings. Delhi's Mangolpuri read 254% of capacity on the mean and 67.5% on the median |
+| **Validate against one hand-transcribed page** | Keep a manually typed record in the repo and assert the extractor against it at build time. This caught a regex that silently dropped two plants |
+| Sanity-check thresholds against the distribution | Delhi's flow/design ratios were bimodal with an EMPTY 3x-10x band, which made a 3x cutoff evidence-based rather than arbitrary |
+
+Same recipe applies to any PCB's drain/river/STP monthlies. Delhi's drain tables (39 points/month) are the next target - see [the Delhi data-sources file](../cities/delhi/data-sources.md).
+
 ## Informal settlements / slum rosters
 
 - Housing-board rosters often publish **names and coordinates in two different PDFs** with **different serial numbering**, so they must be joined on normalised location text, not on serial. Delhi: DUSIB's 675 JJ bastis - roster with households in one PDF (2019), lat/long in another (2022), both linked from the same page. Record `match_method` (exact/fuzzy/unmatched) per row and leave low-confidence rows unjoined rather than guessing.

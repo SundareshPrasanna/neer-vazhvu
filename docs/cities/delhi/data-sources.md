@@ -103,6 +103,51 @@ Still with OpenCity (restore ask trimmed accordingly): the MCD **zones** KML (11
 
 **Datum warning:** these are **terrain** bands, not flood-stage bands. Delhi's flood ladder (204.50 m warning / 205.33 m danger / 206.00 m evacuation at the Old Railway Bridge) sits on the gauge's own datum - FABDEM reads **212.15 m** at that bridge, about 7 m off. The two must not be overlaid as if they shared a datum.
 
+## DPCC drain network (39 points) - PARSED 2026-07-26
+
+| | |
+|---|---|
+| **Source** | DPCC monthly drain analysis reports, [analysis-reports listing](https://dpcc.delhi.gov.in/dpcc/analysis-reports) |
+| **Script** | `neer-vazhvu-api/scripts/extract_delhi_drain_quality.py` |
+| **File** | `public/data/delhi-drain-quality.json` |
+| **Coverage** | 2 months (2026-05, 2026-06), 73 readings, 40 with coordinates |
+
+**Why it matters.** The drain network is the verification instrument for the commitment to trap all 39 major drains by 30 June 2026: **a trapped drain reads NO FLOW**. The repo previously carried the network for a single month because the rows were hand-typed off scans, so the pollution surface had one data point.
+
+**THE ARCHIVING PROBLEM - the most important thing on this page.** DPCC's listing is a **rolling ~3-month window**. OpenCity mirrors only the CETP datasets. The Wayback Machine has **zero** captures of the analysis-report directory or the listing page (checked 2026-07-26). **A month not captured while it is listed is lost permanently.** The historical drain series was never archived by anyone and cannot be recovered; this series can only grow forward. That is why the Headwaters entry is tier 1, and it is the strongest candidate for an OpenCity mirror request.
+
+**What the parse adds beyond the hand-typed month:** the reports carry **per-drain coordinates**, which the transcription never captured. That makes the drains a mappable, ward-attributable layer, and May's positions are backfilled from June's parse by canonical name.
+
+**Handling notes:**
+
+- June 2026 has an **embedded text layer** (no OCR needed). **April and May do not** (0 text characters) - they are pure image scans and are not parsed.
+- The reports have no ruled table and records span two or three physical lines, so rows are rebuilt from word positions, with column bands derived **per page** from that page's own header (page 3 sits ~23pt right of page 1).
+- Parsed names arrive mangled by the scanner (`D rain`, `Ll Drain`, or two drains run together). They are matched against the **39 hand-typed canonical names already in `dpcc-monthly-wq-delhi.json`**; **12 fragments did not clear the threshold and are reported, not published under a guessed name**.
+- **`NO FLOW` is set only where DPCC printed it.** A row we failed to read stays null, because reporting an unread row as a trapped drain would fake the trapping programme's own result.
+
+## CETP flows + industrial sources - ACQUIRED 2026-07-26
+
+| | |
+|---|---|
+| **Source** | Delhi Pollution Control Committee, monthly CETP analysis reports (I/C Water Laboratory), via OpenCity |
+| **Scripts** | `neer-vazhvu-api/scripts/extract_delhi_cetp_flows.py` (OCR) → `build_delhi_industrial_sources.py` (register) |
+| **Files** | `public/data/delhi-cetp-flows.json`, `public/data/industrial-sources-delhi.json` |
+| **Coverage** | 13 plants x 60 months, **709 readings** (628 with a flow value), **2019-04 to 2024-11** |
+
+**Why this is Delhi's industrial layer.** DPCC's only public consent register is `consentapplicationstatus1991-july_2002.pdf`, stale by 24 years, so there is no per-unit denominator of who discharges what. But DPCC publishes each CETP's design capacity *and measured monthly inflow*, which answers a sharper question: how much industrial effluent reaches treatment at all. **Delhi built 213.8 MLD of common effluent treatment capacity and receives about a third of it in a median month; Okhla's plant runs at 7% of design.** This layer measures the treatment gap, not individual polluters, and must not be read as a census of industry.
+
+**Extraction caveats (the PDFs are image scans with no text layer):**
+
+- Extracted: plant, design capacity, month, sampling date, measured flow, OLMS remark, sampling location. **Not extracted**: the 23-parameter inlet/outlet grid, whose cells OCR badly. Half-read heavy-metal values would be worse than none.
+- The build **asserts against a hand-transcribed page** (Wazirpur, Nov 2024) and fails on disagreement.
+- **Median, not mean**, for utilisation: one mis-OCR'd flow dragged Mangolpuri to 254% of capacity; the median reads 67.5%.
+- Flow above 3x design is rejected as an OCR artefact. Defensible because the observed ratios are bimodal with an empty 3x-10x band (621 readings at or under design, 6 genuine overloads to 3x, then 29x and 59x).
+- 11 readings (1.5%) have an unresolved plant name and are reported, not silently dropped.
+- Some 2019 reports record the sampling location as **"BYPASS OF CETP"** - captured as a field, because a sample taken at the bypass is a material fact.
+- **NOT a live feed**: the series ends November 2024. Surfaces showing these figures carry that caveat next to the number.
+
+**Coordinates.** No CETP is mapped in OpenStreetMap. Plant markers sit on the industrial area or locality each serves, never a surveyed position; every entry records `location_precision` (`industrial_area` 8, `locality` 3, `road` 1, `none` 1). **SMA CETP has no coordinate** - neither "SMA Industrial Area" nor "Shahzada Bagh" is in OSM - so it keeps its flow series and is excluded from the map rather than placed by guesswork. The 22 named industrial estates come from Overpass, filtered point-in-ward so Noida/Gurgaon/Kundli parcels are excluded (`overpass-api.de` 504s under this load; the kumi mirror worked).
+
 ## Registered but not yet acquired
 
 The audit's full per-page source map (DPCC monthly Yamuna feed, CAG audit PDF, DUSIB 675 JJ bastis, CGWB blocks, CETP monthly WQ PDFs, BBMB/Tehri feeds, drainage master plan, heritage baolis) is research-complete and URL-verified as of 2026-07-20 but not yet ingested. Each source graduates into this file when its data actually lands in the repo.
