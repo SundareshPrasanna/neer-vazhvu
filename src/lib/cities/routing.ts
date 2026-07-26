@@ -109,13 +109,16 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   // either - it returns with the ward build, the Mumbai precedent.
   // `tanker` IS in the set and is a signature surface rather than a
   // nice-to-have: HMWSSB runs the tanker fleet itself and publishes monthly
-  // bookings AND deliveries per division/section, so Hyderabad can show a
-  // booking-to-delivery fulfilment rate no other city can.
-  // `cascades` is deferred, not ruled out - the Musi tank cascade is a real
-  // cascade geography and a strong candidate once the lake register lands.
+  // bookings AND deliveries per division/section. Note the fulfilment rate we
+  // expected to headline turned out flat at 99.95%, so that page leads on
+  // demand volume and seasonality instead.
+  // `cascades` shipped 2026-07-26: 428 nodes, 411 edges, max depth 9. The
+  // Musi is the only cascade on the platform with a documented catastrophic
+  // failure - 221 of 788 tanks breached on 28 September 1908.
   hyderabad: new Set([
     "",
     "about",
+    "cascades",
     "groundwater",
     "water-bodies",
     "rivers",

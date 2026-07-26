@@ -178,6 +178,16 @@ export const HYDERABAD: CityConfig = {
     // generalised for this to come out right.
     cgwbStations: true,
   },
+  // Musi tank cascade, reconstructed 2026-07-26: 428 nodes, 411 edges,
+  // 11 river outlets, 63 isolated tanks, max cascade depth 9. Edge
+  // confidence 321 high / 81 medium / 9 low. Top convergence is Amber
+  // Cheruvu with 8 inflows at cascade position 3.
+  //
+  // This is the only cascade on the platform with a documented catastrophic
+  // failure: on 28 September 1908, 221 of the 788 tanks along the Musi
+  // breached - the chain failing link by link - which is what prompted
+  // Osman Sagar and Himayat Sagar.
+  hasCascadeOverlay: true,
   reservoirDataSource: 'v2',
   // Feed: HMWSSB's daily "Statements of WaterLevels in Reservoirs", scraped by
   // neer-vazhvu-api/scripts/scrape_hmwssb_reservoirs.py from
