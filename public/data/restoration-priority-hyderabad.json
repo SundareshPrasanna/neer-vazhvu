@@ -1,0 +1,333 @@
+{
+ "place_id": "hyderabad",
+ "computed_at": "2026-07-26",
+ "algorithm_version": "hyderabad-v1",
+ "total_scored": 14,
+ "weights": {
+  "status_severity": 0.4,
+  "legal_exposure": 0.25,
+  "cultural_bonus": 0.2,
+  "size": 0.15,
+  "confidence_multiplier": 0.1
+ },
+ "notes": "Hyderabad-specific scorer. The distinguishing component is LEGAL EXPOSURE, computed from HMDA's gazetted Full Tank Level register (in-repo): a lake with a preliminary but no FINAL notification has no legally settled boundary to prosecute encroachment against, and scores highest. Absence from the register is scored NEUTRALLY, not as unprotected - the register covers the Extended HMDA Area survey and omits several of the largest lakes (Hussain Sagar, Himayat Sagar, Shamirpet, Ameenpur), which sit under other authorities. Areas and centroids derive from the in-repo OSM layer; two entries carry null coordinates because no confident polygon match exists and a guessed pin is worse than an absent one.",
+ "water_bodies": [
+  {
+   "id": "flagship:mir-alam-tank",
+   "source": "flagship",
+   "name": "Mir Alam Tank",
+   "water_type": "tank",
+   "area_ha": 142,
+   "centroid": [
+    17.3457,
+    78.4377
+   ],
+   "priority_score": 52,
+   "priority_level": "moderate",
+   "hmda_register": "Mir Alam Tank (ID 4400)",
+   "boundary_legally_final": false,
+   "components": {
+    "status_severity": 55,
+    "legal_exposure": 100,
+    "cultural_bonus": 10,
+    "size": 20,
+    "confidence_multiplier": 1
+   },
+   "rationale": "surviving remnant; gazetted but NO final FTL notification - boundary not legally settled; Asaf Jahi heritage; 351 acres (large); confidence A"
+  },
+  {
+   "id": "flagship:ameenpur-lake",
+   "source": "flagship",
+   "name": "Ameenpur Lake",
+   "water_type": "lake",
+   "area_ha": 37.6,
+   "centroid": [
+    17.5239,
+    78.3343
+   ],
+   "priority_score": 50.2,
+   "priority_level": "moderate",
+   "hmda_register": "not_in_hmda_register",
+   "boundary_legally_final": null,
+   "components": {
+    "status_severity": 80,
+    "legal_exposure": 40,
+    "cultural_bonus": 34,
+    "size": 9,
+    "confidence_multiplier": 1
+   },
+   "rationale": "documented shrinkage / encroachment; not in the HMDA register (Extended-HMDA survey scope; other authority); Biodiversity Heritage Site, Qutb Shahi heritage; 93 acres (small); confidence A"
+  },
+  {
+   "id": "flagship:osman-sagar",
+   "source": "flagship",
+   "name": "Osman Sagar",
+   "water_type": "reservoir",
+   "area_ha": 1809.8,
+   "centroid": [
+    17.3752,
+    78.3032
+   ],
+   "priority_score": 47.2,
+   "priority_level": "moderate",
+   "hmda_register": "Osmansagar Reservoir",
+   "boundary_legally_final": false,
+   "components": {
+    "status_severity": 30,
+    "legal_exposure": 100,
+    "cultural_bonus": 32,
+    "size": 25,
+    "confidence_multiplier": 1
+   },
+   "rationale": "operating supply source; gazetted but NO final FTL notification - boundary not legally settled; GO 111 catchment, Asaf Jahi heritage, 1908 flood-control lineage; 4472 acres (very large); confidence A"
+  },
+  {
+   "id": "flagship:ramanthapur-pedda-cheruvu",
+   "source": "flagship",
+   "name": "Ramanthapur Pedda Cheruvu",
+   "water_type": "tank",
+   "area_ha": null,
+   "centroid": null,
+   "priority_score": 44.3,
+   "priority_level": "moderate",
+   "hmda_register": "Ramanthapur Pedda Cheruvu (ID 3811)",
+   "boundary_legally_final": false,
+   "components": {
+    "status_severity": 45,
+    "legal_exposure": 100,
+    "cultural_bonus": 6,
+    "size": 5,
+    "confidence_multiplier": 0.85
+   },
+   "rationale": "restoration works under way; gazetted but NO final FTL notification - boundary not legally settled; named in HYDRAA's programme; size unknown; confidence B"
+  },
+  {
+   "id": "flagship:nacharam-pedda-cheruvu",
+   "source": "flagship",
+   "name": "Nacharam Pedda Cheruvu",
+   "water_type": "tank",
+   "area_ha": null,
+   "centroid": null,
+   "priority_score": 44.3,
+   "priority_level": "moderate",
+   "hmda_register": "Nacharam Kunta (Erra Kunta) (ID 3806)",
+   "boundary_legally_final": false,
+   "components": {
+    "status_severity": 45,
+    "legal_exposure": 100,
+    "cultural_bonus": 6,
+    "size": 5,
+    "confidence_multiplier": 0.85
+   },
+   "rationale": "restoration works under way; gazetted but NO final FTL notification - boundary not legally settled; named in HYDRAA's programme; size unknown; confidence B"
+  },
+  {
+   "id": "flagship:durgam-cheruvu",
+   "source": "flagship",
+   "name": "Durgam Cheruvu",
+   "water_type": "lake",
+   "area_ha": 37.2,
+   "centroid": [
+    17.4303,
+    78.3903
+   ],
+   "priority_score": 44.1,
+   "priority_level": "moderate",
+   "hmda_register": "Durgam Cheruvu (ID 3706)",
+   "boundary_legally_final": false,
+   "components": {
+    "status_severity": 40,
+    "legal_exposure": 100,
+    "cultural_bonus": 12,
+    "size": 9,
+    "confidence_multiplier": 0.85
+   },
+   "rationale": "status unclear; gazetted but NO final FTL notification - boundary not legally settled; Qutb Shahi heritage; 92 acres (small); confidence B"
+  },
+  {
+   "id": "flagship:fox-sagar",
+   "source": "flagship",
+   "name": "Fox Sagar",
+   "water_type": "lake",
+   "area_ha": 126.3,
+   "centroid": [
+    17.5276,
+    78.4677
+   ],
+   "priority_score": 43.3,
+   "priority_level": "moderate",
+   "hmda_register": "Fox Sagar (ID 2839)",
+   "boundary_legally_final": false,
+   "components": {
+    "status_severity": 40,
+    "legal_exposure": 100,
+    "cultural_bonus": 0,
+    "size": 20,
+    "confidence_multiplier": 0.85
+   },
+   "rationale": "status unclear; gazetted but NO final FTL notification - boundary not legally settled; 312 acres (large); confidence B"
+  },
+  {
+   "id": "flagship:edulabad-lake",
+   "source": "flagship",
+   "name": "Edulabad Lake",
+   "water_type": "lake",
+   "area_ha": 188.6,
+   "centroid": [
+    17.4254,
+    78.7018
+   ],
+   "priority_score": 39.8,
+   "priority_level": "low",
+   "hmda_register": "not_in_hmda_register",
+   "boundary_legally_final": null,
+   "components": {
+    "status_severity": 70,
+    "legal_exposure": 40,
+    "cultural_bonus": 0,
+    "size": 20,
+    "confidence_multiplier": 0.7
+   },
+   "rationale": "sewage-stressed; not in the HMDA register (Extended-HMDA survey scope; other authority); 466 acres (large); confidence C"
+  },
+  {
+   "id": "flagship:saroor-nagar-lake",
+   "source": "flagship",
+   "name": "Saroor Nagar Lake",
+   "water_type": "lake",
+   "area_ha": 37.2,
+   "centroid": [
+    17.3542,
+    78.5271
+   ],
+   "priority_score": 38.2,
+   "priority_level": "low",
+   "hmda_register": "not_in_hmda_register",
+   "boundary_legally_final": null,
+   "components": {
+    "status_severity": 70,
+    "legal_exposure": 40,
+    "cultural_bonus": 0,
+    "size": 9,
+    "confidence_multiplier": 0.7
+   },
+   "rationale": "sewage-stressed; not in the HMDA register (Extended-HMDA survey scope; other authority); 92 acres (small); confidence C"
+  },
+  {
+   "id": "flagship:hussain-sagar",
+   "source": "flagship",
+   "name": "Hussain Sagar",
+   "water_type": "lake",
+   "area_ha": 456.1,
+   "centroid": [
+    17.4246,
+    78.475
+   ],
+   "priority_score": 32.2,
+   "priority_level": "low",
+   "hmda_register": "not_in_hmda_register",
+   "boundary_legally_final": null,
+   "components": {
+    "status_severity": 40,
+    "legal_exposure": 40,
+    "cultural_bonus": 12,
+    "size": 25,
+    "confidence_multiplier": 1
+   },
+   "rationale": "status unclear; not in the HMDA register (Extended-HMDA survey scope; other authority); Qutb Shahi heritage; 1127 acres (very large); confidence A"
+  },
+  {
+   "id": "flagship:shamirpet-lake",
+   "source": "flagship",
+   "name": "Shamirpet Lake",
+   "water_type": "lake",
+   "area_ha": 195.1,
+   "centroid": [
+    17.6099,
+    78.5608
+   ],
+   "priority_score": 30.1,
+   "priority_level": "low",
+   "hmda_register": "not_in_hmda_register",
+   "boundary_legally_final": null,
+   "components": {
+    "status_severity": 40,
+    "legal_exposure": 40,
+    "cultural_bonus": 10,
+    "size": 20,
+    "confidence_multiplier": 0.7
+   },
+   "rationale": "status unclear; not in the HMDA register (Extended-HMDA survey scope; other authority); Asaf Jahi heritage; 482 acres (large); confidence C"
+  },
+  {
+   "id": "flagship:umda-sagar",
+   "source": "flagship",
+   "name": "Umda Sagar",
+   "water_type": "lake",
+   "area_ha": 93.5,
+   "centroid": [
+    17.289,
+    78.4565
+   ],
+   "priority_score": 30,
+   "priority_level": "low",
+   "hmda_register": "not_in_hmda_register",
+   "boundary_legally_final": null,
+   "components": {
+    "status_severity": 40,
+    "legal_exposure": 40,
+    "cultural_bonus": 14,
+    "size": 14,
+    "confidence_multiplier": 0.7
+   },
+   "rationale": "status unclear; not in the HMDA register (Extended-HMDA survey scope; other authority); GO 111 catchment; 231 acres (medium); confidence C"
+  },
+  {
+   "id": "flagship:ibrahimpatnam-cheruvu",
+   "source": "flagship",
+   "name": "Ibrahimpatnam Cheruvu",
+   "water_type": "tank",
+   "area_ha": 163.9,
+   "centroid": [
+    17.19,
+    78.627
+   ],
+   "priority_score": 28.1,
+   "priority_level": "low",
+   "hmda_register": "not_in_hmda_register",
+   "boundary_legally_final": null,
+   "components": {
+    "status_severity": 40,
+    "legal_exposure": 40,
+    "cultural_bonus": 0,
+    "size": 20,
+    "confidence_multiplier": 0.7
+   },
+   "rationale": "status unclear; not in the HMDA register (Extended-HMDA survey scope; other authority); 405 acres (large); confidence C"
+  },
+  {
+   "id": "flagship:himayat-sagar",
+   "source": "flagship",
+   "name": "Himayat Sagar",
+   "water_type": "reservoir",
+   "area_ha": 1492.5,
+   "centroid": [
+    17.3089,
+    78.3595
+   ],
+   "priority_score": 27.3,
+   "priority_level": "low",
+   "hmda_register": "not_in_hmda_register",
+   "boundary_legally_final": null,
+   "components": {
+    "status_severity": 30,
+    "legal_exposure": 40,
+    "cultural_bonus": 10,
+    "size": 25,
+    "confidence_multiplier": 0.85
+   },
+   "rationale": "operating supply source; not in the HMDA register (Extended-HMDA survey scope; other authority); Asaf Jahi heritage; 3688 acres (very large); confidence B"
+  }
+ ],
+ "river_sections": []
+}

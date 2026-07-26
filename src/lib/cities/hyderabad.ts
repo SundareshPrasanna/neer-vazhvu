@@ -109,6 +109,23 @@ export const HYDERABAD: CityConfig = {
   //   auditable, because HMDA publishes the register that records it.
   hasAllocationLedger: true,
   hasCommitments: true,
+  waterBodies: {
+    // OFF: reads the Supabase table `water_bodies_census` (encroachment +
+    // storage-capacity fields), which is a different dataset from the Jal
+    // Dharohar points we hold, and is blocked on the DB apply besides.
+    censusSource: false,
+    // ON: restoration-priority-hyderabad.json (14 flagship bodies,
+    // compute-restoration-priority-hyderabad.ts). The scorer is Hyderabad's
+    // own - its distinguishing component is LEGAL EXPOSURE read from HMDA's
+    // gazetted FTL register, which no other city can compute.
+    rankingTab: true,
+    // OFF: needs hyderabad-ward-profiles.json -> blocked on the 300-ward
+    // geometry.
+    wardSearch: false,
+    // OFF: needs hyderabad-water-bodies-lost.geojson. Hyderabad's lost-tank
+    // literature is substantial; not yet compiled.
+    lostBodies: false,
+  },
   groundwaterViews: {
     // CGWB Dynamic GWR district assessments, 2022 / 2024 / 2025, via the
     // OpenCity mirrors of the national compilations joined to the Telangana
