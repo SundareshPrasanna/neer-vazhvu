@@ -91,6 +91,224 @@
         "acceptedOn": "2026-07-21"
       },
       "ciBlocked": "Blocks GitHub runner IPs (fetch failed from CI 2026-07-21); works from residential IP."
+    },
+    {
+      "id": "cgwb-yearbook-tn",
+      "scope": "madurai",
+      "publisher": "CGWB South Eastern Coastal Region, Chennai",
+      "url": "https://cgwb.gov.in/node/903",
+      "license": "GoI publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "sites/default/files/[0-9]{4}-[0-9]{2}/.*\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/madurai-cgwb-stations.json"
+      ],
+      "refreshMethod": "manual PDF extraction (dug-well annexure -> wells[].readings)",
+      "notes": "CGWB Ground Water Year Book of Tamil Nadu and U.T. of Puducherry - backs 21 Madurai dug wells with 2023/2024/2025 readings. HONEST LIMIT: this is CGWB's Tamil Nadu regional page, NOT a Year Book listing - no such listing exists anywhere. Verified 2026-07-26: the cgwbpnm search UI 404s (search?type=2&cat_id=4&state_id=33...), old_website/GW-Year-Book-State.html is gone, and gwdata.cgwb.gov.in is a JS app with no hrefs. Individual documents ARE retrievable at cgwb.gov.in/cgwbpnm/public/uploads/documents/<opaque-id>file.pdf but the ids are not guessable. /node/903 is the only watchable CGWB TN surface found: it carries dated uploads under /sites/default/files/<YYYY-MM>/, though today those are district aquifer maps rather than the Year Book. Treat a detection here as 'CGWB TN published something', then check by hand. CITATION WARNING: the 2024-25 source_url previously recorded in madurai-cgwb-stations.json resolved 200 but served the 2017-2018 edition - see that file's _citation_audit. Both TN editions are OPEN TRACES. This family is the platform's highest-value unwatched source and deserves the url-template method or a browser-session fetch. TLS: cgwb.gov.in serves an INCOMPLETE CERT CHAIN - Node fetch fails with UNABLE_TO_VERIFY_LEAF_SIGNATURE while curl succeeds (its CA bundle is broader). insecureTLS is required here; discovered when the first --accept errored 'fetch failed' on 2026-07-26.",
+      "insecureTLS": true,
+      "lastSeen": {
+        "linksHash": "e1651fe2f299da65",
+        "links": [
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_10sulur.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_11varapatti.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_1annur_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_2anupparpalayam.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_3coimbatore_south_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_4ganapathi_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_5karumuthampatti_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_6_perur_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_7pn.palayam_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_8selakkarichal.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/coimbatore_district_9singanallur.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dharmapuri_district_10_perumbalai_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dharmapuri_district_1_marandahalli-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dharmapuri_district_2_kadathur-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dharmapuri_district_3_karimangalam_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dharmapuri_district_4_indur_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dharmapuri_district_5_vellichandai-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dharmapuri_district_6_pulikarai-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dharmapuri_district_7_palacode_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dharmapuri_district_8_paprapatti-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dharmapuri_district_9_pennagaram_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_10_puliyurnathamfirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_11_reddiarchatramfirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_12_shanarpattifirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_13_silvathurfirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_14_vadamaduraifirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_15_vedasandurfirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_16_viruveedufirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_1_ayyampalayamfirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_2_bathalagundufirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_3_chinnakkampattifirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_4_eriodufirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_7_oddanchatramfirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_8_palakkanoothufirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/dindigul_district_9_palayamfirka_final9.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/erode_district_1_bhavanisagar_firka.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/erode_district_2_chennimalai_firka_completed.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/erode_district_3_erode_east_firka.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/erode_district_4_erode_north_firka.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/erode_district_5_modakurichi_firka.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/erode_district_6_nambiyur_firka.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/erode_district_7_perundurai_firka.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/erode_district_9_vellode_firka.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/karur_district_1_velliyanai_firka.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/krishnagiri_district_1_guruparapalli-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/krishnagiri_district_2_palepalli-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/krishnagiri_district_3_bargur-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/krishnagiri_district_4_alapatti-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/krishnagiri_district_5_samalpatti-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/krishnagiri_district_6_pochampalli-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/krishnagiri_district_7_krishnagiri-final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/madurai_district_1_usilampattil_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/madurai_district_2_uthappanaickkanur_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/namakkal_district_2_namagiripet_report.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/namakkal_district_3_rasipuram.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/namakkal_district_4_vaiyappamalai.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/salem_district_10_vembadiphalam_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/salem_district_1_attur_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/salem_district_2_kattukottai_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/salem_district_4_semmandapaddi_final_1.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/salem_district_5_suramangalam.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/salem_district_6_tharamangalamfinal.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/salem_district_7_thirumalagirii_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/salem_district_8_vazhapadi_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/salem_district_9_veerapandi_final.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/tiruppur_district_1_avinashipalayam.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/tiruppur_district_2_cheyur.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/tiruppur_district_3_karadivavi.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/tiruppur_district_4_palladam.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/tiruppur_district_5_samalapuram.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/tiruvannamalai_district_1_chengam_firka-completed.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/vellore_district_1_gudiatham_east.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/vellore_district_2_vaniyambadi.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_10_nagalur_firka.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_11_nainarpalayam.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_12_nemili.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_13_sathiyamangalam.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_14_sithalampattu.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_15_thiyagadurgam_firka.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_16_tvnallur.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_17_ulundurpet.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_18_uppuvellur.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_19_vikravandi.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_2_brahmadesam.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_3_chithalingamadam.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_4_elavanasurkottai.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_5_gingee_final_modifie.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_6_indili.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_7_kalamarudur.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_8_kanjanur.pdf",
+          "https://cgwb.gov.in/sites/default/files/2022-10/villupuram_district_9_kiliyanur.pdf"
+        ],
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "adb-tnufip-iee",
+      "scope": "madurai",
+      "publisher": "Asian Development Bank",
+      "url": "https://www.adb.org/sites/default/files/project-documents/49107/49107-005-iee-en_12.pdf",
+      "license": "ADB open access (CC BY 3.0 IGO)",
+      "type": "file",
+      "cadence": "episodic",
+      "tier": 0,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/madurai-supply-overview.json",
+        "public/data/allocations-madurai.json"
+      ],
+      "refreshMethod": "manual PDF extraction",
+      "notes": "TNUFIP Tranche 2 Initial Environmental Examination (project 49107-005) is the anchor behind madurai-supply-overview.json: 192 MLD supply total, the Pannaipatty WTP, 28 existing + 37 new OHTs, the distribution chain. KEY DISCOVERY 2026-07-26: adb.org/projects/49107-005/main returns 403 to curl even with a browser UA (the long-standing ADB gotcha), but the DIRECT document paths under /sites/default/files/project-documents/49107/ serve 200 WITH a Last-Modified header (verified 11 Feb 2026 on iee-en_12.pdf). So watch the document, not the project page. Limit: this catches a revision of THIS part; new tranche parts land at new _NN suffixes and need the url-template method (P5-9). Related Chennai document: 59311-001-iee-en_0.pdf (CCRWSSP), which backs chennai-supply-overview.json and should get the same treatment.",
+      "lastSeen": {
+        "lastModified": "Wed, 11 Feb 2026 08:34:18 GMT",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "wrd-policy-note-tn",
+      "scope": "madurai",
+      "publisher": "TN Water Resources Department",
+      "url": "https://cms.tn.gov.in/cms_migrated/document/docfiles/wrd_e_pn_2025_26.pdf",
+      "license": "government publication, cited with attribution",
+      "type": "file",
+      "cadence": "yearly (budget session)",
+      "tier": 1,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/commitments-madurai.json",
+        "public/data/allocations-madurai.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "The WRD Policy Note is the Madurai analogue of maws-policy-note (Chennai): commitments-madurai.json names 'the MAWS and WRD Policy Notes each budget session' as its re-check calendar, and the allocation ledger's 2018 PWD entitlement letter sits in this document family. Verified 2026-07-26: 200 with Last-Modified 24 Mar 2025. SAME LIMIT as the MAWS entry: catches a revision of the current note only. Filename is year-templated (wrd_e_pn_{YYYY}_{YY}.pdf) and TN publishes no policy-note listing page - /en/policy-notes, /policy-notes and tn.gov.in/documents/policy_notes all 404. Bump by hand each budget session until P5-9 lands.",
+      "lastSeen": {
+        "lastModified": "Mon, 24 Mar 2025 06:26:32 GMT",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "ingres-gw-assessment-madurai",
+      "scope": "madurai",
+      "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "GoI publication, cited with attribution",
+      "type": "page",
+      "cadence": "yearly (GEC assessment)",
+      "tier": 1,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-madurai.json",
+        "public/data/gw-stations-madurai.json",
+        "public/geojson/madurai-gwr-blocks.geojson"
+      ],
+      "refreshMethod": "manual (WRIS GEC extract)",
+      "notes": "Third scope on the same IN-GRES source (see ingres-gw-assessment-tn and -ka); separate entry because the dependsOn differ. PLAYBOOK - GRANULARITY TRAP: CGWB's TN assessment shifted from 66 firka-level units to 11 block-level units, and the two are NOT comparable. gwr-blocks-madurai.json holds 66 blocks while madurai-gwr-blocks.geojson holds 11 - that is the shift, not a bug. A new GEC round that changes units again is a SCHEMA BREAK and must stop the pipeline for a human decision (new series alongside, never overwrite). See memory madurai_groundwater_provenance_gotchas and the fix in PR #130. Same SPA-build caveat as the other two IN-GRES entries.",
+      "lastSeen": {
+        "etag": "W/\"c20-19f18174cc0\"",
+        "lastModified": "Tue, 30 Jun 2026 10:33:28 GMT",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "madurai-corp-projects",
+      "scope": "madurai",
+      "publisher": "Madurai City Municipal Corporation",
+      "url": "https://www.maduraicorporation.co.in/projects/amrut-project-details",
+      "license": "government publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "drive\\.google\\.com/file/"
+      },
+      "dependsOn": [
+        "public/data/commitments-madurai.json",
+        "public/data/madurai-supply-overview.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "MMC's AMRUT project page carries the Rs 1,295.76 cr Mullaiperiyar-to-Pannaipatty scheme by package (Pkg1 head works + raw main from Lower Camp; Pkg2 125 MLD WTP + SCADA), which is the delivered commitment on Madurai's register. Verified 2026-07-26: 200, and the corporation publishes project documents as Google Drive file links rather than site-hosted PDFs - hence the linkPattern. A new Drive link is a new project document. Note the host has two spellings in our citations, maduraicorporation.co.in and www.maduraicorporation.co.in; both resolve.",
+      "lastSeen": {
+        "linksHash": "d3a88cb488649395",
+        "links": [
+          "https://drive.google.com/file/d/1JHMIyUM9m8X91aF-5Nku8gq__0EUQj_C/view",
+          "https://drive.google.com/file/d/1L3J6br6dTaIgxkJb-ONP0-QspgXkZAEJ/view",
+          "https://drive.google.com/file/d/1m0tCk_reZe4gtE05hq_3HaOXebWA9M7B/view",
+          "https://drive.google.com/file/d/1q8XYqHrZePAJC_3TVs7oNws1xgmzKTqH/view"
+        ],
+        "acceptedOn": "2026-07-26"
+      }
     }
   ]
 }

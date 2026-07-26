@@ -636,6 +636,267 @@
         "acceptedOn": "2026-07-21"
       },
       "ciBlocked": "Returns HTTP 401 to GitHub runner IPs (CI 2026-07-21); works from residential IP."
+    },
+    {
+      "id": "bmc-esr-annual",
+      "scope": "mumbai",
+      "publisher": "Brihanmumbai Municipal Corporation",
+      "url": "https://www.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Environment/Docs/Environment%20Status%20Report%20%202024-25%20(English).pdf",
+      "license": "government publication, cited with attribution",
+      "type": "file",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/mumbai-supply-overview.json",
+        "public/data/allocations-mumbai.json",
+        "public/data/commitments-mumbai.json",
+        "public/data/mmr-corporations-water.json"
+      ],
+      "refreshMethod": "manual PDF extraction",
+      "notes": "BMC's Environment Status Report is the widest-reach single document on the Mumbai side: the 4,000 vs 4,505 MLD supply pair, per-source yield (Table 9.1) and the sewage figures (Table 11.5: 2,723 MLD installed vs 1,313 reaching plants) all come from it, and it feeds four artifacts. Verified 2026-07-26: 200 with BOTH ETag and Last-Modified (20 Aug 2025), so http-meta is solid. LIMIT: the filename carries the year (Environment Status Report 2024-25), so next year's edition is a NEW url - needs the url-template method (P5-9) or a hand bump. Watch this one closely: it is the highest-fan-out document in the registry.",
+      "lastSeen": {
+        "etag": "\"138285062029402\"",
+        "lastModified": "Wed, 20 Aug 2025 11:53:43 GMT",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "bmc-rti-manuals",
+      "scope": "mumbai",
+      "publisher": "BMC Hydraulic Engineer (RTI manual)",
+      "url": "https://www.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Hydrallic%20Engineer/RTI%20Manuals/Deputy%20Hydraulic%20Engineer%20(Bhandup%20Complex)/DyHydraulicEngineer_BhandupComplex_RTI_E01.pdf",
+      "license": "government publication, cited with attribution",
+      "type": "file",
+      "cadence": "episodic",
+      "tier": 0,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/mumbai-supply-overview.json",
+        "public/data/allocations-mumbai.json"
+      ],
+      "refreshMethod": "manual PDF extraction",
+      "notes": "The Deputy Hydraulic Engineer (Bhandup Complex) RTI manual is the primary source for Mumbai's water-supply engineering chain in mumbai-supply-overview.json. Verified 2026-07-26: 200 with ETag and Last-Modified (24 May 2021 - the document is stable, which is why tier 0). NOTE the path: BMC's own spelling is 'Hydrallic Engineer', not 'Hydraulic', and the URL needs the full ...(Bhandup Complex)/DyHydraulicEngineer_BhandupComplex_RTI_E01.pdf tail - the directory alone 404s. That truncation is what made this look dead in the first link sweep.",
+      "lastSeen": {
+        "etag": "\"5308579580264\"",
+        "lastModified": "Mon, 24 May 2021 08:23:07 GMT",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "bmc-climate-action-plan",
+      "scope": "mumbai",
+      "publisher": "BMC Climate Action Cell (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=mumbai-climate-action-plan",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/data/commitments-mumbai.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Mumbai Climate Action Plan - the policy parent of the Climate Budget commissioning table that commitments-mumbai.json cites for its on-track statuses. Chosen as the watch target because its CKAN slug is STABLE. The annual Climate Budget itself lands inside year-slugged datasets (bmc-budget-2024-25, -2025-26, -2026-27 - verified 2026-07-26, 22/27/24 resources respectively), so no single url can follow it across years; that needs the url-template method (P5-9). My first attempt at this entry guessed the slug 'mumbai-climate-budget', which 404s - it does not exist. Watched via OpenCity because mcgm.gov.in has no stable budget listing path.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:37:33.898940",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "cgwb-yearbook-maharashtra",
+      "scope": "mumbai",
+      "publisher": "CGWB Central Region, Nagpur",
+      "url": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/1703237300342091479file.pdf",
+      "license": "GoI publication, cited with attribution",
+      "type": "file",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/mumbai-cgwb-stations.json"
+      ],
+      "refreshMethod": "manual PDF extraction (National Hydrograph Network wells + chemistry)",
+      "notes": "Ground Water Year Book of Maharashtra - backs 53 wells across Mumbai City/Suburban/Thane/Palghar/Raigad with water chemistry. Mumbai City and Suburban are the only 2 of Maharashtra's 35 districts EXCLUDED from the CGWB Dynamic Assessment, so this hydrograph series is all we have. Verified 2026-07-26 by opening the PDF: 246 pages, 'GROUND WATER YEAR BOOK OF MAHARASHTRA (2022-2023)', ETag + Last-Modified present, so http-meta works on the document itself. Same family limit as cgwb-yearbook-tn: NO listing page enumerates Year Books, so a NEW edition will not be detected by this entry - it only catches a re-upload of the 2022-23 file. The 2024-25 edition cited in mumbai-cgwb-stations.json (cgwbpnm/download/2016) is 404 and remains an OPEN TRACE. TLS: cgwb.gov.in serves an INCOMPLETE CERT CHAIN - Node fetch fails with UNABLE_TO_VERIFY_LEAF_SIGNATURE while curl succeeds (its CA bundle is broader). insecureTLS is required here; discovered when the first --accept errored 'fetch failed' on 2026-07-26.",
+      "insecureTLS": true,
+      "lastSeen": {
+        "etag": "\"s62ab885rgs\"",
+        "lastModified": "Fri, 22 Dec 2023 09:28:20 GMT",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "mahagr-wrd-resolutions",
+      "scope": "mumbai",
+      "publisher": "Maharashtra WRD (via the orgpedia mahGRs mirror)",
+      "url": "https://github.com/orgpedia/mahGRs/tree/main/GRs/Water_Resources_Department",
+      "license": "government resolutions, mirrored openly",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "mahGRs/blob/main/GRs/Water_Resources_Department/"
+      },
+      "dependsOn": [
+        "public/data/allocations-mumbai.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Government Resolutions are the paper behind the MMR allocation ledger: BMC's Bhatsa share (GR 11-Sep-2019, 427.93 Mm3/yr) and the Barvi sharing GR 18-Sep-2017 among them. The orgpedia mahGRs GitHub mirror is the only way to full-text-search Maharashtra GRs; WRD's own site does not expose them stably. Verified 2026-07-26: the directory listing returns 200. Caveat: GitHub tree pages are partly JS-rendered and paginate above 1,000 files, so if the link-set comes back thin, switch to the GitHub contents API (api.github.com/repos/orgpedia/mahGRs/contents/GRs/Water_Resources_Department) with api-date on the commit date. Named gaps that stay unwatched because they are not public at all: the MWRRA entitlement register (page literally 'Under Construction'), STEM's Thane/Bhiwandi split, MIDC per-buyer quantities.",
+      "lastSeen": {
+        "linksHash": "2dae6573dc4c3000",
+        "links": [
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803091034435527.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803091034435527.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803121236501727.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803121236501727.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803131543559127.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803131543559127.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803141305599427.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803141305599427.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803141507191227.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803141507191227.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803141755207127.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803141755207127.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803151521346927.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803151521346927.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803151651332827.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803151651332827.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803161426580827.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803161426580827.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803191723255627.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803191723255627.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803191730520027.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803191730520027.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803201726583827.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803201726583827.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803221122523527.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803221122523527.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803221252412527.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803221252412527.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803231632002227.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803231632002227.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803261153549627.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803261153549627.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803261453416927.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803261453416927.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803261531033327.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803261531033327.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803271528503927.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803271528503927.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803271538425927.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803271538425927.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803271622168627.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803271622168627.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803271636194027.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803271636194027.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803281355589527.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803281355589527.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803281530047627.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803281530047627.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803281633246027.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803281633246027.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803311812399027.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201803311812399027.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031049065127.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031049065127.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031055388227.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031055388227.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031105152427.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031105152427.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031404317727.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031404317727.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031408099427.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031408099427.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031637174927.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804031637174927.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041155424827.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041155424827.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041512417927.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041512417927.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041522185027.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041522185027.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041542359827.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041542359827.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041553520527.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041553520527.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041720306327.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804041720306327.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051215304527.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051215304527.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051510528827.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051510528827.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051517241027.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051517241027.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051525169627.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051525169627.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051529581727.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051529581727.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051538508427.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051538508427.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051541565327.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051541565327.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051607156927.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051607156927.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051612006927.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051612006927.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051618418027.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051618418027.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051626570627.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051626570627.pdf.mr.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051632506227.pdf.en.txt",
+          "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/201804051632506227.pdf.mr.txt"
+        ],
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "mpcb-stp-inventory",
+      "scope": "mumbai",
+      "publisher": "MPCB",
+      "url": "https://mpcb.gov.in/focus-area/reports-documents/water",
+      "license": "government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "sites/default/files/.*(WQR|water|STP|Water).*\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/industrial-sources-mumbai.json"
+      ],
+      "refreshMethod": "manual PDF extraction",
+      "notes": "MPCB's per-STP inventory plus the annual Water Quality Reports back industrial-sources-mumbai.json: 14 sewage-treatment points across the MMR, with the 9 MCGM plants carrying per-STP inlet/outlet BOD from Praja's 2024 RTI series (four - Versova, Bhandup, Ghatkopar, Malad - consistently fail the discharge standard). Sibling entry mpcb-water-quality-reports already watches the river-quality side; this one covers the STP/discharge side, which was unwatched. Verified 2026-07-26: page 200, and Final_WQR_22_23.pdf is among the linked documents. The pattern is deliberately broad because MPCB files documents under inconsistent directories; tighten if it proves noisy.",
+      "lastSeen": {
+        "linksHash": "0fca91fe183d2d61",
+        "links": [
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/Final_WQR_22_23.pdf",
+          "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/Water_Quality_Maharashtra_2015_16_report_14032017.pdf",
+          "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/Water_Quality_Maharashtra_2016_17_report_28112017.pdf",
+          "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/Water_Quality_Maharashtra_2017_18_report_07022019.pdf",
+          "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/Water_Quality_Report_2011-12_TERI.pdf",
+          "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/Water_Quality_Report_2012-13.pdf",
+          "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/Water_Quality_Report_2013-14.pdf",
+          "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/Water_Quality_Report_2014_15.pdf",
+          "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/Water_Quality_Status_of_Maharashtra_2018_19_30092019.pdf",
+          "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/riverwaterqualitymaha.pdf",
+          "https://mpcb.gov.in/sites/default/files/focus-area-reports-documents/waterreport2007-2011.pdf",
+          "https://mpcb.gov.in/sites/default/files/water-quality/Water%20Quality%20Report%202021-22%20(1).pdf",
+          "https://mpcb.gov.in/sites/default/files/wqr_report_04052022.pdf",
+          "https://www.mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/WQR_2023-24.pdf"
+        ],
+        "acceptedOn": "2026-07-26"
+      }
     }
   ]
 }
