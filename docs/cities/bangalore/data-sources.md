@@ -167,7 +167,7 @@ Surfaces:
 
 | | |
 |---|---|
-| **Source** | [CPCB National Water Monitoring Programme](https://cpcb.nic.in/nwmp-data-2/) annual River Water Quality reports |
+| **Source** | [CPCB National Water Monitoring Programme](https://cpcb.gov.in/nwmp-data-2/) annual River Water Quality reports |
 | **Method** | Annual PDF parse, scoped to Karnataka rivers crossing Bangalore basin |
 | **Frequency** | Annual (refresh when CPCB publishes) |
 | **Coverage** | Partial - Vrishabhavathi, Arkavathy, and the upper reaches of the Dakshina Pinakini. KSPCB-monitored stations on Bellandur/Varthur outflows are tracked separately under the water-bodies overlay |

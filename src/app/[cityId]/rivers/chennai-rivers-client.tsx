@@ -269,7 +269,7 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {t("rivers_page.quality_label")}{" "}
               <a
-                href="https://cpcb.nic.in/nwmp-data-2024/"
+                href="https://cpcb.gov.in/nwmp-data-2024/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-blue-600 dark:text-blue-400 hover:underline"

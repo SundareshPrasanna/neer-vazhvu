@@ -735,7 +735,7 @@ export function CityAboutContent({
               />
               <DataSource
                 name="Care Earth Trust / NGT / CMDA: Lost Water Bodies"
-                url="https://www.careearth.org/"
+                url="https://careearthtrust.org/"
                 description={t("about.ds_careearth_desc")}
                 frequency={t("about.freq_manual")}
               />
@@ -749,7 +749,7 @@ export function CityAboutContent({
               />
               <DataSource
                 name="CPCB National Water Monitoring Programme (NWMP)"
-                url="https://cpcb.nic.in/nwmp-data-2024/"
+                url="https://cpcb.gov.in/nwmp-data-2024/"
                 description={t("about.ds_cpcb_desc")}
                 frequency={t("about.freq_annual")}
               />
@@ -1009,7 +1009,7 @@ export function CityAboutContent({
           {isMadurai && (
             <DataSource
               name="CGWB Ground Water Year Book of Tamil Nadu &amp; Puducherry"
-              url="https://cgwb.gov.in/cgwbpnm/search?type=2&cat_id=4&state_id=33"
+              url="https://cgwb.gov.in/cgwbpnm/"
               description="Peer-reviewed quarterly depth-to-water-level readings (May / Aug / Nov / Jan) at 21 dug-well stations in Madurai district, sourced from the 2023-24 and 2024-25 Year Books. Replaces an IDW-interpolated ward depth choropleth - Madurai's live WRIS network is too sparse (4 stations) for honest per-ward synthesis. Stitched into a 2-year per-station time series."
               frequency="annual (per Year Book release)"
             />
@@ -1024,13 +1024,13 @@ export function CityAboutContent({
               />
               <DataSource
                 name="IISc Groundwater Outlook for Bengaluru (April 2025)"
-                url="https://www.bwssb.karnataka.gov.in/"
+                url="https://bwssb.karnataka.gov.in/"
                 description="BWSSB-commissioned IISc Groundwater Outlook (April 2025) identifies 65 of 198 BBMP wards (~33%) as critically over-extracted - operating beyond CGWB's safe-yield limit. Stage V was designed to relieve these wards via piped supply; the Stage V under-delivery is why most remain on groundwater + tankers. Referenced by the round-7 cgwb-stations file (per-station proximity flag) and surfaced in the dashboard's headline."
                 frequency="periodic (per IISc release)"
               />
               <DataSource
                 name="WELL Labs Bengaluru Urban Water Balance Report (Jan 2024)"
-                url="https://wellabs.org/"
+                url="https://welllabs.org/"
                 description="Independent academic-grade water balance for Greater Bengaluru: rainfall, runoff, recharge, demand, supply gap, source-mix accounting. Used as a cross-check against JICA Phase 3 numbers; cited in `bangalore-supply-overview.json._secondary_local_source`."
                 frequency="periodic (per WELL Labs release)"
               />
@@ -1041,7 +1041,7 @@ export function CityAboutContent({
             <>
               <DataSource
                 name="CGWB Ground Water Year Book of Maharashtra"
-                url="https://cgwb.gov.in/cgwbpnm/publication-detail"
+                url="https://cgwb.gov.in/cgwbpnm/"
                 description="~53 National Hydrograph Network wells across Mumbai / Thane / Palghar / Raigad transcribed from the Year Book to January 2025, with water chemistry (EC, chloride, nitrate) - the honest signal for a city excluded from the Dynamic Assessment. India-WRIS also lists ~24 manual wells for the city, but they end in May 2023; we document them rather than plot a stale layer."
                 frequency="annual (per Year Book release)"
               />
@@ -1152,14 +1152,14 @@ export function CityAboutContent({
             <>
               <DataSource
                 name="CPCB - National Water Monitoring Programme"
-                url="https://cpcb.nic.in/nwmp-data-2/"
+                url="https://cpcb.gov.in/nwmp-data-2/"
                 description="Annual River Water Quality reports (2020-2024 covered today). Vaigai is monitored at two stations - upstream and downstream of Madurai - with min and max readings per parameter; we use the midpoint."
                 frequency="annual"
               />
               <DataSource
                 name="Madras HC Madurai Bench - Vaigai pollution PIL"
                 url="https://www.dtnext.in/news/tamilnadu/madras-hc-directs-tamil-nadu-govt-to-file-report-on-causes-of-pollution-in-vaigai-river-815586"
-                description="December 2024 suo motu order naming 177 sewage and industrial discharge points across 5 districts, 36 samples below CPCB Class D, and a state-government action plan due January 2025."
+                description="December 2024 suo motu order naming 177 sewage and industrial discharge points across 5 districts, sampled stretches graded unfit even for irrigation, and a state-government action plan due January 2025."
                 frequency="incident-driven"
               />
               <DataSource
@@ -1239,7 +1239,7 @@ export function CityAboutContent({
               />
               <DataSource
                 name="CPCB Polluted River Stretches for Restoration - 2025"
-                url="https://cpcb.nic.in/water-quality-data/"
+                url="https://cpcb.gov.in/water-quality-data/"
                 description="The October 2025 national PRS list (on 2022-23 data): the Mithi at Mahim is Priority I with max BOD 210 mg/l - India's single worst river stretch. The Ulhas is Priority V (least severe). Dahisar, Poisar, Oshiwara and Waldhuni do not appear in the national list."
                 frequency="periodic (PRS assessment cycles)"
               />

@@ -18,7 +18,7 @@ Throughout the Madurai sections we hedge gap claims with "no known public X" rat
 | **Frequency** | Daily |
 | **Coverage** | Vaigai Dam + Mullaperiyar (listed as Periyar) + Sothuparai (when published) |
 | **Fields** | Storage (mcft), level (ft), inflow/outflow (cusecs), gross/dead storage |
-| **Table** | `reservoir_daily` (city-keyed) + `reservoir_history_v2` for the dated archive |
+| **Table** | `reservoir_daily_v2` (city_id='madurai', upsert on city_id+source_code+date). Only Chennai uses the legacy `reservoir_daily` table (`reservoirDataSource: 'legacy-v1'`); every other city is v2. |
 | **Historical** | Dated archive on the same site goes back to 2018; backfilled via `scripts/backfill_tn_pwd_reservoirs.py` |
 
 **Why this source for Madurai instead of CMWSSB:** TN Agriculture's ARS portal is the only public daily feed covering Madurai's reservoirs. It's not a Madurai-utility publication - it's a state irrigation department dashboard, and we piggyback on it for surface-water context. MMC publishes nothing daily about urban water supply.
@@ -77,7 +77,7 @@ Same India WRIS Ground Water Level API as Chennai's CGWB station scrape, but sco
 
 | | |
 |---|---|
-| **Source** | [CPCB National Water Monitoring Programme](https://cpcb.nic.in/nwmp-data-2/) annual River Water Quality reports (2021-2024 PDFs in `docs/cpcb/`) |
+| **Source** | [CPCB National Water Monitoring Programme](https://cpcb.gov.in/nwmp-data-2/) annual River Water Quality reports (2021-2024 PDFs in `docs/cpcb/`) |
 | **Method** | Annual PDF parse via `neer-vazhvu-api/scripts/scrape_cpcb_nwmp_vaigai.py` |
 | **Frequency** | Annual (refresh when CPCB publishes) |
 | **Coverage** | 2 stations: Vaigai U/S Madurai (NWMP 10059 / `vaigai-sellur`) and Vaigai D/S Madurai (10060 / `vaigai-anuppanadi`) |

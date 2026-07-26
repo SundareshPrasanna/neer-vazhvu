@@ -1,19 +1,18 @@
 {
-  "_doc": "Headwaters source registry - Chennai episodic sources. Schema + design notes: docs/specs/headwaters.md (local). Validate: npm run data:check. Baseline/accept: scripts/check-upstream-editions.ts --accept <id>.",
+  "_doc": "Headwaters source registry - Chennai episodic sources. Schema + design notes: docs/specs/headwaters.md (local). Validate: npm run data:check. Baseline/accept: scripts/check-upstream-editions.ts --accept <id>. CADENCE + TIER ARE DOCUMENTATION ONLY - decided 2026-07-26. Neither gates polling: every non-ciBlocked entry is fetched on every weekly run whatever its declared cadence (48 HTTP requests per CI run across ~26 hosts). Deliberate. (1) Cadence is a CLAIM and claims are wrong - CPCB is 'yearly' and shipped a mid-year Yamuna-only file, BBMB was recorded frozen and had resumed, CHIRPS looked daily and publishes monthly; gating polls on a declared cadence inherits every such error and stops looking at exactly the source that surprised you. (2) A conditional check is a check that can silently stop - the WRIS 'green for 39 days while ingesting nothing' bug lives in skip logic. (3) Interval scheduling is maintenance overhead for no real saving at this volume. Cadence earns its place at REVIEW time instead: it tells you whether a detection is plausible - a 'yearly' source producing a new edition three weeks after the last is itself a signal.",
   "sources": [
     {
       "id": "cpcb-nwmp-annual",
       "scope": "chennai",
       "publisher": "CPCB",
-      "url": "https://cpcb.nic.in/nwmp-data-2/",
-      "insecureTLS": true,
+      "url": "https://cpcb.gov.in/nwmp-data/",
       "license": "GoI publication, cited with attribution",
       "type": "pdf-listing",
       "cadence": "yearly",
       "tier": 1,
       "detection": {
         "method": "link-set",
-        "linkPattern": "nwmp"
+        "linkPattern": "nwmp-data-\\d{4}|wqm/\\d{4}/"
       },
       "dependsOn": [
         "public/data/river-quality.json",
@@ -21,7 +20,28 @@
         "public/data/river-quality-madurai.json"
       ],
       "refreshMethod": "manual PDF extraction (Madurai: scripts/scrape_cpcb_nwmp_vaigai.py)",
-      "notes": "NWMP annual River Water Quality listing; year pages (e.g. nwmp-data-2) appear as new links, typically Jan-Mar. Serves Chennai (4 rivers/10 stations), Bengaluru (Vrishabhavathi/Arkavathy/Dakshina Pinakini), Madurai (Vaigai 10059/10060). Host has broken TLS and was fully unreachable on 2026-07-21 even with curl -k from a residential IP - check-failures expected until CPCB recovers; retry before changing this entry."
+      "notes": "NWMP annual River Water Quality data. Serves Chennai (4 rivers/10 stations), Bengaluru (Vrishabhavathi/Arkavathy/Dakshina Pinakini), Madurai (Vaigai 10059/10060). HOST CHANGED 2026-07-26: this entry used to point at the CPCB NICNET host (cpcb DOT nic DOT in, 164.100.58.91), which has ports 80 and 443 filtered from a residential India IP - so the watch could never fire. cpcb.gov.in (49.50.115.127) serves the same content over a valid TLS chain, so insecureTLS was removed. This is why the entry never checked successfully and carried no lastSeen; the 2026-07-21 baseline logged it as a CPCB outage, which was the wrong diagnosis. IMPORTANT CORRECTION to an earlier version of this note: the failure is PER HOST, not NICNET-wide. nmcg.nic.in sits on the same range (164.100.60.206) and returns 200 today, and nmcg-ngt-mpr-listing watches it successfully. Do not infer '.nic.in is unwatchable'. Verified-dead hosts are listed in UNREACHABLE_HOSTS in check-upstream-editions.ts and rejected at validate time (P5-8). Watch target is /nwmp-data/, which lists one year page per edition (nwmp-data-2012 ... nwmp-data-2025 as of 2026-07-26). A NEW EDITION SHOWS UP AS A NEW nwmp-data-YYYY LINK - that is the signal. /nwmp-data-2/ is a stub last updated 20 Nov 2018 and /wqm/ has no directory listing, so neither works for link-set. linkPattern matches year pages plus wqm/YYYY/ document paths, and deliberately excludes the site-wide boilerplate PDFs (APPs_CPCB, gst_details, stqc-cert, E-GOVERNANCE, it_technical_activity) that appear on every CPCB page. Annual river data also resolves directly at https://cpcb.gov.in/wqm/{YEAR}/WQuality_River-Data-{YEAR}.pdf (2021-2024 verified, 5-15 MB each). CAUTION on the 2025 edition: the nwmp-data-2025 page exists and links WQuality_River-Data-2025.pdf, but that file is 465 KB / 2 pages of YAMUNA DATA ONLY (created 18 Jun 2026) and contains none of our rivers - grep for Cooum, Adyar, Vaigai, Vrishabhavathi, Mithi returns zero. The full national 2025 edition has not landed. ALWAYS confirm river coverage inside the PDF before treating a new year as actionable; the year page appearing is not sufficient.",
+      "lastSeen": {
+        "linksHash": "554617125ca2b5fb",
+        "links": [
+          "https://cpcb.gov.in/nwmp-data-2012/",
+          "https://cpcb.gov.in/nwmp-data-2013/",
+          "https://cpcb.gov.in/nwmp-data-2014/",
+          "https://cpcb.gov.in/nwmp-data-2016/",
+          "https://cpcb.gov.in/nwmp-data-2017/",
+          "https://cpcb.gov.in/nwmp-data-2018/",
+          "https://cpcb.gov.in/nwmp-data-2019/",
+          "https://cpcb.gov.in/nwmp-data-2020/",
+          "https://cpcb.gov.in/nwmp-data-2021/",
+          "https://cpcb.gov.in/nwmp-data-2022/",
+          "https://cpcb.gov.in/nwmp-data-2023/",
+          "https://cpcb.gov.in/nwmp-data-2024/",
+          "https://cpcb.gov.in/nwmp-data-2025/",
+          "https://cpcb.gov.in/wqm/2015/NWMP_DATA_2015.pdf"
+        ],
+        "edition": "year pages through nwmp-data-2025 (2025 river file is Yamuna-only)",
+        "acceptedOn": "2026-07-26"
+      }
     },
     {
       "id": "chennai-reps-tn-assembly",
@@ -80,6 +100,253 @@
       ],
       "refreshMethod": "manual - 4 mp blocks (Chennai North / Central / South, Sriperumbudur) plus meta.mp_election",
       "notes": "18th Lok Sabha first sat 2024-06-24. Verified unchanged on 2026-07-25 (no Chennai by-election; no sitting MP won an assembly seat in 2026). A mid-term by-election will NOT trip this check - term-expiry is a calendar, not a news feed."
+    },
+    {
+      "id": "opencity-chennai-groundwater",
+      "scope": "chennai",
+      "publisher": "OpenCity (Chennai ward groundwater)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=chennai-ward-wise-groundwater-levels",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "monthly-to-yearly",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "supabase:groundwater_monthly"
+      ],
+      "refreshMethod": "neer-vazhvu-api monthly pipeline (app/scrapers/opencity.py, CKAN datastore_search per year resource)",
+      "notes": "Ward-wise monthly depth-to-water across all 200 GCC wards - the densest groundwater layer on the platform and the only per-ward one. Backs /chennai/groundwater depth view and the dashboard GW snapshot. Lineage is Supabase, not a committed file. As of 2026-07-26 the dataset holds 4 resources covering 2021-2024 only (metadata_modified 2025-11-27); NO 2025 ward data has been published, which is itself worth watching for. A new year resource appearing bumps metadata_modified.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:37:50.242309",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "datagovin-waterbodies-census-tn",
+      "scope": "chennai",
+      "publisher": "Ministry of Jal Shakti (data.gov.in)",
+      "url": "https://data.gov.in/resource/state-wise-data-first-census-water-bodies-tamil-nadu",
+      "license": "Government Open Data License - India",
+      "type": "page",
+      "cadence": "episodic (census)",
+      "tier": 1,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "supabase:water_bodies_census"
+      ],
+      "refreshMethod": "neer-vazhvu-api app/scrapers/data_gov_in.py (REST, needs a free data.gov.in API key)",
+      "notes": "First Census of Water Bodies (2018-19), 305 Chennai-district bodies with encroachment status/%, original vs present storage capacity, construction/renovation year. Backs /chennai/water-bodies census layer. Server sends an ETag (verified 2026-07-26), so http-meta works; the page is the dataset landing page, not the API. A Second Census has been announced nationally - this watch is how we would learn it landed. Lineage is Supabase, not a committed file.",
+      "lastSeen": {
+        "etag": "\"f4140-NW+fL9wK9Cuelt58ZEdDiy2gB/w\"",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "ingres-gw-assessment-tn",
+      "scope": "chennai",
+      "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "GoI publication, cited with attribution",
+      "type": "page",
+      "cadence": "yearly (GEC assessment)",
+      "tier": 1,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks.json",
+        "public/geojson/chennai-gwr-blocks.geojson",
+        "public/data/gw-stations.json"
+      ],
+      "refreshMethod": "manual (scripts/fetch-wris-groundwater.ts for the WRIS side; IN-GRES payload capture still open)",
+      "notes": "Dynamic Ground Water Resources assessment - block-level Safe/Semi-Critical/Critical/Over-Exploited classes and stage-of-extraction %, 16 Chennai-area blocks 2011-2024. IN-GRES is the canonical GW-assessment source for every city by user directive (see memory reference_ingres_groundwater); it is non-NICNET and reachable. CAVEAT: http-meta here watches the SPA build (Last-Modified 30 Jun 2026 + ETag, both verified 2026-07-26), NOT the assessment data itself - a redeploy will false-positive and a data-only update could be missed. Replace with an api-date watch once the IN-GRES payload capture lands. India-WRIS itself is a JS app with no watchable static endpoint, which is why it is not the url here.",
+      "lastSeen": {
+        "etag": "W/\"c20-19f18174cc0\"",
+        "lastModified": "Tue, 30 Jun 2026 10:33:28 GMT",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "crrt-restoration-projects",
+      "scope": "chennai",
+      "publisher": "Chennai Rivers Restoration Trust",
+      "url": "https://crrt.tn.gov.in/",
+      "license": "government publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "crrt\\.tn\\.gov\\.in/(cooum|adyar|adayar|buckingham|ennore|download)"
+      },
+      "dependsOn": [
+        "public/data/restoration-projects.json"
+      ],
+      "refreshMethod": "manual (9 projects with costs; the Rs 4,450 Cr headline fact also cites this source)",
+      "notes": "Backs /chennai/lake-restoration project list and the Rs 4,450 Cr restoration fact in static-facts.ts. Serves no ETag or Last-Modified (verified 2026-07-26), so http-meta is out. linkPattern is scoped to the restoration project pages plus /download; a new river programme or a new document drop shows up as a new link. Known project pages 2026-07-26: cooum_restoration, adyar_river_restoration, adyar_river_restoration_ppp_mode, adayar_phase_one, adayar_phase_two, buckingham_canal_restoration, ennore_creek_eco_restoration. Both 'adyar' and 'adayar' spellings are live on the site, hence both in the pattern.",
+      "lastSeen": {
+        "linksHash": "d4a7a8cd276aab37",
+        "links": [
+          "https://crrt.tn.gov.in/adayar_phase_one",
+          "https://crrt.tn.gov.in/adayar_phase_two",
+          "https://crrt.tn.gov.in/adyar_river_restoration",
+          "https://crrt.tn.gov.in/adyar_river_restoration_ppp_mode",
+          "https://crrt.tn.gov.in/buckingham_canal_restoration",
+          "https://crrt.tn.gov.in/cooum_restoration",
+          "https://crrt.tn.gov.in/download",
+          "https://crrt.tn.gov.in/download-ticket",
+          "https://crrt.tn.gov.in/ennore_creek_eco_restoration"
+        ],
+        "acceptedOn": "2026-07-26"
+      },
+      "ciBlocked": "Blocks GitHub runner IPs (TypeError: fetch failed from CI on 2026-07-26 while working from a residential India IP the same day). Confirmed by the pre-merge dry run of upstream-editions.yml."
+    },
+    {
+      "id": "maws-policy-note",
+      "scope": "chennai",
+      "publisher": "TN Municipal Administration and Water Supply Department",
+      "url": "https://cms.tn.gov.in/cms_migrated/document/docfiles/maws_e_pn_2025_26.pdf",
+      "license": "government publication, cited with attribution",
+      "type": "file",
+      "cadence": "yearly (April, budget session)",
+      "tier": 1,
+      "detection": {
+        "method": "url-template",
+        "urlTemplate": "https://cms.tn.gov.in/cms_migrated/document/docfiles/maws_e_pn_{YYYY}_{YY}.pdf",
+        "templateFrom": 2023
+      },
+      "dependsOn": [
+        "public/data/commitments-chennai.json",
+        "public/data/chennai-supply-overview.json"
+      ],
+      "refreshMethod": "manual - the commitments register names this as its primary re-check document",
+      "notes": "The MAWS Policy Note is the single richest annual statement of what TN says it is doing on urban water, and commitments-chennai.json names it in update_model as the April re-check document. KNOWN LIMIT: this watch catches a REVISION of the current note only. The filename is year-templated (maws_e_pn_{YYYY}_{YY}.pdf) and there is no TN policy-note listing page - /en/policy-notes, /policy-notes and tn.gov.in/documents/policy_notes all 404 (verified 2026-07-26) - so next April's edition needs the url-template detection method (P5-9 in the coverage audit). Until then, bump this url by hand each April. The WRD note (wrd_e_pn_{YYYY}_{YY}.pdf) sits on the same path pattern and is the Madurai analogue. MIGRATED to url-template 2026-07-26 (P5-9 shipped): the entry now probes maws_e_pn_{YYYY}_{YY}.pdf forward each run, so NEXT April's note is detected on publication instead of needing a hand bump. This supersedes the http-meta limitation described above.",
+      "lastSeen": {
+        "apiDate": "2025 https://cms.tn.gov.in/cms_migrated/document/docfiles/maws_e_pn_2025_26.pdf",
+        "acceptedOn": "2026-07-26"
+      },
+      "ciBlocked": "Blocks GitHub runner IPs - every url-template year probe failed from CI on 2026-07-26 while all of them resolve from a residential India IP. Confirmed by the pre-merge dry run."
+    },
+    {
+      "id": "cmwssb-system-pages",
+      "scope": "chennai",
+      "publisher": "CMWSSB",
+      "url": "https://cmwssb.tn.gov.in/water-supply-system",
+      "license": "government publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "sites/default/files/upload/.*\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/allocations-chennai.json",
+        "public/data/chennai-supply-overview.json",
+        "src/lib/facts/static-facts.ts"
+      ],
+      "refreshMethod": "manual",
+      "notes": "CMWSSB's own system pages back the allocation ledger (1976 and 1983 Krishna instruments, Veeranam, the desal contracts), several supply-overview figures, and the 745 MLD / 200 MLD desal / 13,222 Mcft static facts. Upload filenames are date-stamped (e.g. 14Jul2026102630_TNUFIP-T1-UpdatedIEEReport...pdf), so a new board document appears as a new link - a strong, low-noise signal. Verified 2026-07-26: page 200, no ETag/Last-Modified, 12+ upload PDFs matched. The sibling page /sewerage-system carries the 745 MLD installed-treatment figure and should get its own entry if the two diverge. NOTE the host: cmwssb.tn.gov.in is live; chennaimetrowater.tn.gov.in is NOT reachable and was swept out of the citations on 2026-07-26.",
+      "lastSeen": {
+        "linksHash": "c81d18652d24db3f",
+        "links": [
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/04Jan2023143529_CMWSSBMeteringPolicy21-12-2022r1_0.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/05Apr2022152455_CMWSSBUGSSDraftIEE.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/05Apr2022152957_CMWSSB_WSS_FINAL_IEE_May21.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/05Apr2022153854_FinalTNUFIP-T1-RP-CMWSSB-UGSSS-CLEANedit25_10_2021.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/10Mar2022124948_LifeCertificate.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/13Dec2021130507_fin_e_164_2021.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/14Jul2026102630_TNUFIP-T1-UpdatedIEEReportforCMWSSBUGSS%284addedareas%29.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/17Dec2024123401_Hospital_2022.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/20Sep2021133744_NEW-CITYWSS.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/23Dec2021120851_45MLD_TTRO_Kodungaiyur-EIA%26EMP_Report_0.pdf",
+          "https://www.cmwssb.tn.gov.in/sites/default/files/upload/18Feb2026211644_SOP-In_Principle_Approval.pdf",
+          "https://www.cmwssb.tn.gov.in/sites/default/files/upload/23Dec2021131416_TTRO-CRZ%26AmendmentinCRZ.pdf"
+        ],
+        "acceptedOn": "2026-07-26"
+      },
+      "ciBlocked": "Blocks GitHub runner IPs (TypeError: fetch failed from CI on 2026-07-26 while working from a residential India IP the same day). Confirmed by the pre-merge dry run of upstream-editions.yml."
+    },
+    {
+      "id": "tngcc-ceew-basin-risk",
+      "scope": "chennai",
+      "publisher": "CEEW + Tamil Nadu Climate Change Mission",
+      "url": "https://www.ceew.in/publications/chennai-basin-climate-risk-water-balance-and-water-deficit-explained-by-ceew",
+      "ciBlocked": "ceew.in returns 403 to ALL automation, not just CI runners - verified 2026-07-26 from a residential India IP with a full browser UA, on /publications, the publication page and /sites/default/files. Same class as ADB (likely TLS fingerprinting). The flag is used here to stop weekly false alarms; unlike the other ciBlocked entries a LOCAL run cannot check it either, so a standing CHECK-FAILED on local runs is expected and correct - it is a true statement that we cannot watch this source by fetch. Re-check from a real browser. NOTE: because no fetch can ever succeed, --accept cannot baseline this entry either, and without a lastSeen the 90-day local-overdue rule escalated it to CHECK-FAILED on its first CI run (dry run 2026-07-26). lastSeen is therefore recorded by hand, with pageHash as a sentinel rather than a real hash - it means 'a human confirmed the publication exists', not 'the page matched'. Re-confirm in a browser and bump acceptedOn every 90 days, or the overdue rule will fire again - which is the correct nag.",
+      "license": "CC BY-NC 4.0",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/geojson/chennai-sub-basins-risk.geojson",
+        "public/geojson/chennai-sub-basins-risk-geom.json",
+        "src/components/dashboard/weap-balance-tile.tsx"
+      ],
+      "refreshMethod": "manual (browser download; the WEAP figures are hardcoded in weap-balance-tile.tsx)",
+      "notes": "Feb 2026 report behind the whole /chennai/climate-risk surface (6 sub-basins x 4 subthemes, 33 indicators) and the dashboard WEAP water-balance tile (unmet demand 2020 and 2050, business-as-usual). This is the ONLY source for those numbers and one of the few where the figures are hardcoded in a component rather than a data file - see dependsOn. 403 to automation, so treat CI check-failures as expected and re-check from a browser; ciBlocked keeps it from filing weekly false alarms.",
+      "lastSeen": {
+        "edition": "Chennai Basin Climate Risk / Water Balance (CEEW + TNGCC, Feb 2026)",
+        "acceptedOn": "2026-07-26",
+        "pageHash": "manual-browser-verification"
+      }
+    },
+    {
+      "id": "opencity-chennai-flood",
+      "scope": "chennai",
+      "publisher": "OpenCity / NCCR (C-FLOWS model outputs)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=chennai-flooding-data",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 0,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/chennai-flood-hazard-zones.geojson",
+        "public/geojson/chennai-flood-inundation-depth.geojson",
+        "public/geojson/chennai-flood-return-periods.geojson",
+        "public/geojson/chennai-flood-2015-hotspots.geojson"
+      ],
+      "refreshMethod": "manual KML download + scripts/simplify-flood-geojson.ts",
+      "notes": "The 9 resources on this dataset map 1:1 onto our flood layers: Chennai Inundation Points with Depth, Flooding Points in 2015, Flows 5/10/25/50/100/200 Year Return Period, Flood Hazard Zones Map. Underlying model is NCCR's C-FLOWS. Verified 2026-07-26: metadata_modified 2025-11-27T12:37:59. The 2020 hotspots layer comes from a SEPARATE dataset (chennai-floods-2020-data) which is not watched by this entry - register it separately if that layer starts carrying load-bearing numbers.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:37:59.761010",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "opencity-gcc-swd-survey",
+      "scope": "chennai",
+      "publisher": "Greater Chennai Corporation (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=chennai-stormwater-drain-swd-maps",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 0,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/chennai-drainage.geojson",
+        "public/data/ward-profiles.json"
+      ],
+      "refreshMethod": "manual KML download + Python conversion",
+      "notes": "GCC's 2023 storm-water-drain survey: 115 resources (a master 2023 map plus one per ward) behind the 10,308-segment chennai-drainage.geojson, including the Good/Bad condition field that drives the ward drainage profile. Verified 2026-07-26: metadata_modified 2025-11-27T12:36:35. Pair source is chennai-basin-drainage-maps (5 resources: Basin Rivers and Streams, Buckingham Canal, Krishna Water Canal, Macro Drains, Micro Drains) - register separately if the basin layers start carrying numbers.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:36:35.772848",
+        "acceptedOn": "2026-07-26"
+      }
     }
   ]
 }

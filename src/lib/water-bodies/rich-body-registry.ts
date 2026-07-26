@@ -590,7 +590,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
           "Road; international news. NGT constitutes a Bellandur-Varthur " +
           "monitoring committee chaired by retired Justice Santosh Hegde.",
         label_short: "Bellandur burns; NGT committee formed",
-        source_url: "https://www.thehindu.com/news/national/karnataka/foam-from-bellandur-lake-catches-fire/article17319080.ece",
+        source_url: "https://www.downtoearth.org.in/environment/bellandur-lake-a-story-of-toxic-froth-and-fire-57139",
       },
       {
         year: 2018,

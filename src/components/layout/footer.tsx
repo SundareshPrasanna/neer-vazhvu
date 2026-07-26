@@ -22,7 +22,7 @@ const CITY_FOOTER_SOURCES: Record<
   madurai: [
     { label: "TN Agriculture", href: "https://www.tnagrisnet.tn.gov.in/" },
     { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
-    { label: "CPCB NWMP", href: "https://cpcb.nic.in/water-quality-data/" },
+    { label: "CPCB NWMP", href: "https://cpcb.gov.in/water-quality-data/" },
   ],
   bangalore: [
     { label: "BWSSB", href: "https://bwssb.karnataka.gov.in/" },
