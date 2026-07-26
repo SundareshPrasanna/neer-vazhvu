@@ -104,6 +104,64 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     note: "Cauvery sub-basin rainfall deviation (self-computed, both states)",
   },
 ];
+
+/* ── Extra TABLE feeds (P5-1: scheduled workflows that write to Supabase) ──
+ * Artifacts written straight into Supabase by a cron. Before this list they
+ * were the third unwatched class: the edition registry could not see them
+ * (no document to diff) and the file-feed path could not either (no committed
+ * file). If gee-phase1.yml or the WRIS pipeline step silently stopped, nothing
+ * alerted. `cityColumn` is omitted where the table is not city-keyed.
+ */
+interface ExtraTableFeed {
+  id: string;
+  cityId: string;
+  table: string;
+  dateColumn: string;
+  cityColumn?: string;
+  maxAgeDays: number;
+  note?: string;
+}
+const EXTRA_TABLE_FEEDS: ExtraTableFeed[] = [
+  {
+    id: "gee-reservoir-context",
+    cityId: "chennai",
+    table: "reservoir_catchment_context",
+    dateColumn: "context_date",
+    // No city column - the table is keyed by `reservoir`, and gee-phase1
+    // only runs the reservoir-context job for Chennai, so the newest row
+    // anywhere is the right signal.
+    maxAgeDays: 4, // gee-phase1.yml daily 06:15 IST, Chennai only
+    note: "GEE catchment rainfall-anomaly strip on the Chennai dashboard",
+  },
+  {
+    id: "gee-water-body-summaries",
+    cityId: "chennai",
+    table: "water_body_satellite_summary",
+    dateColumn: "summary_date",
+    // Not city-filtered: gee-phase1.yml refreshes every city in one weekly
+    // pass, so the newest row anywhere is the right liveness signal.
+    maxAgeDays: 12, // weekly (Mondays 06:45 IST) + grace
+    note: "GEE water-body extent summaries, all cities (weekly pass)",
+  },
+  {
+    id: "wris-groundwater",
+    cityId: "madurai",
+    table: "groundwater_wris",
+    dateColumn: "reading_date",
+    // Tracks the SERIES, not the scrape. `ingested_at` looks like the better
+    // "did our job run" signal but is not: it only moves on INSERT, so a run
+    // that re-upserts unchanged rows leaves it untouched (verified 2026-07-26).
+    //
+    // CURRENTLY ALERTING, CORRECTLY: WRIS telemetry for Madurai + Bangalore
+    // stops at 2026-06-04. Left alerting on purpose rather than tuned away -
+    // an upstream that stopped publishing is a finding. Delhi shows the same
+    // pattern (its telemetry stopped 2025-09-20), so this may be systemic to
+    // WRIS rather than per-district.
+    maxAgeDays: 21,
+    note: "India-WRIS station series (daily pipeline step, Madurai + Bangalore)",
+  },
+];
+
 // Edition-watches (did UPSTREAM publish something new?) do not belong here -
 // register them in scripts/source-registry/ (check-upstream-editions.ts).
 // The TN Cauvery stretch-WQ watch moved there as `tnpcb-prs-cauvery`.
@@ -117,10 +175,15 @@ const EXEMPTIONS: Record<string, string> = {};
 interface Check {
   id: string;
   cityId: string;
-  kind: "supabase-reservoir" | "file";
+  kind: "supabase-reservoir" | "supabase-table" | "file";
   maxAgeDays: number;
-  // supabase-reservoir
-  table?: "reservoir_daily" | "reservoir_daily_v2";
+  // supabase-table: any table with a date column (GEE outputs, WRIS series)
+  dateColumn?: string;
+  /** Optional city filter; omit for tables that are not city-keyed. */
+  cityColumn?: string;
+  // supabase-reservoir uses the two reservoir tables; supabase-table accepts
+  // any dated table, so this is widened rather than kept as a union.
+  table?: string;
   sourceCode?: string;
   // file
   file?: string;
@@ -197,6 +260,13 @@ function deriveChecks(places: PlaceConfig[]): { checks: Check[]; problems: strin
 
   // 3. Extra feeds.
   const cityIds = new Set(places.map((p) => p.cityId));
+  for (const t of EXTRA_TABLE_FEEDS) {
+    if (!cityIds.has(t.cityId)) {
+      problems.push(`extra table feed ${t.id}: unknown cityId ${t.cityId}`);
+      continue;
+    }
+    checks.push({ ...t, kind: "supabase-table" });
+  }
   for (const f of EXTRA_FEEDS) {
     if (!cityIds.has(f.cityId)) {
       problems.push(`extra feed ${f.id}: unknown cityId ${f.cityId}`);
@@ -249,6 +319,28 @@ function loadEnv(): { url: string; key: string } {
     process.exit(2);
   }
   return { url, key };
+}
+
+/**
+ * Latest date in any dated Supabase table. This is the P5-1 half of the
+ * checker: several artifacts are written by scheduled workflows straight into
+ * Supabase (GEE satellite summaries, reservoir catchment context, WRIS
+ * groundwater), so neither the file-feed path below nor the edition registry
+ * could see them. If one of those workflows silently stops, nothing alerted.
+ */
+async function latestTableDate(
+  env: { url: string; key: string },
+  check: Check,
+): Promise<string | null> {
+  const filter = check.cityColumn ? `&${check.cityColumn}=eq.${check.cityId}` : "";
+  const params = `select=${check.dateColumn}&order=${check.dateColumn}.desc&limit=1${filter}`;
+  const res = await fetch(`${env.url}/rest/v1/${check.table}?${params}`, {
+    headers: { apikey: env.key, Authorization: `Bearer ${env.key}` },
+  });
+  if (!res.ok) throw new Error(`supabase ${res.status} for ${check.id}`);
+  const rows = (await res.json()) as Record<string, string>[];
+  const v = rows[0]?.[check.dateColumn!];
+  return v ? v.slice(0, 10) : null;
 }
 
 async function latestReservoirDate(
@@ -315,7 +407,11 @@ async function main() {
   for (const check of checks) {
     try {
       const last =
-        check.kind === "file" ? extractFileDate(check) : await latestReservoirDate(env, check);
+        check.kind === "file"
+          ? extractFileDate(check)
+          : check.kind === "supabase-table"
+            ? await latestTableDate(env, check)
+            : await latestReservoirDate(env, check);
       if (!last) {
         rows.push({ check, last: null, age: null, stale: true, error: "no date found" });
         continue;
