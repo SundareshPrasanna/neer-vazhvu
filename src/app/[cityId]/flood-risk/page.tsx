@@ -63,6 +63,34 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
     headline: {
       en: "Hyderabad's flood risk is drainage-driven, not release-driven. The city sits on a tank cascade that was engineered to slow water down, and its 96 mapped nalas carry 245 km of what is left of that drainage. GHMC's own data layer defines fields for encroachments on each nala - government, private and religious, plus cases in court - and publishes all five as zero for all 96 drains. In the city that created HYDRAA in 2024 specifically to demolish encroachments, that is an unfilled column, not a clean record.",
     },
+    // Both layers are GHMC's OWN registers, held in the repo since the data
+    // acquisition pass and previously rendered nowhere. The 3,960-segment
+    // canals-drains file is deliberately NOT mounted here: 3,926 of its
+    // features are unnamed generic "Stream" segments from a different source
+    // and would bury the 96 named nalas under noise.
+    drainage_map: {
+      heading: { en: "The drainage network, and where it backs up" },
+      note: {
+        en: "GHMC's 96 named storm-water nalas carry 245 km across five zones, and GHMC separately publishes 23 major water-logging locations. Plotting them together shows what the narrative above describes: the recurring flood points sit on the nala network, not away from it. Names are GHMC's own; the water-logging register carries no dates or depths, so these are locations rather than a severity ranking.",
+      },
+      zoom: 11,
+      layers: [
+        {
+          url: "/geojson/hyderabad-nalas.geojson",
+          label: "Storm-water nalas",
+          kind: "line",
+          color: "#2563eb",
+          nameProp: "Nala_Name",
+        },
+        {
+          url: "/geojson/hyderabad-waterlogging.geojson",
+          label: "Major water-logging points",
+          kind: "point",
+          color: "#dc2626",
+          nameProp: "name",
+        },
+      ],
+    },
     historical_events: [
       {
         year: 2020,
