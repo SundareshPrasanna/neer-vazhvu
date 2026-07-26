@@ -3,10 +3,13 @@
  * then stopped defending the water it had." Composed from the Lede / Chapter /
  * PullQuote / ThenNow / CTA shortcodes.
  *
- * NO IMAGES at launch. Every other city's story carries licensed Wikimedia
- * plates with a provenance MANIFEST.json; sourcing and clearing those for
- * Hyderabad is its own job and is deliberately not faked here. The story reads
- * as text until that lands.
+ * IMAGES: four Wikimedia Commons plates, licence verified against the Commons
+ * API at download time rather than trusted from a search result. Provenance in
+ * public/images/story/hyderabad/MANIFEST.json, attribution rendered next to
+ * each plate as well. Two are public domain (the Illustrated London News page
+ * on the 1908 flood, and a 19th-century view of Mir Alam Tank showing the arch
+ * dam); two are CC BY-SA 4.0 (Osman Sagar's retaining wall, the Musi at Purana
+ * Pul).
  *
  * Source spine for verifiable claims:
  *   - Great Musi Flood of 1908 (Wikipedia, with contemporary references):
@@ -45,16 +48,22 @@
  */
 
 import { StoryPage } from "@/components/story/story-page";
-import { Chapter, CTA, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
+import { Chapter, CTA, Figure, Hero, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
 
 export function HyderabadStoryEn() {
   return (
     <StoryPage
       cityId="hyderabad"
       cityDisplayName="Hyderabad"
-      tagline="The city that dammed its river to survive it - and then stopped defending the water it had"
+      tagline="City of tanks - how Hyderabad engineered its way out of a flood, and what it still owes that system"
       lastRevised="July 2026"
     >
+      <Hero
+        src="/images/story/hyderabad/musi-flood-1908.jpg"
+        alt="Page from The Illustrated London News, 24 October 1908, headed 'A city crushed by a wall of water: wrecked Hyderabad, after the flood in which many thousands perished'. Six photographs show the wrecked Afzal bridge with the city gate and clock-tower, wreckage in the grounds of the flooded British Residency, the Nizam's troops clearing debris, the ruins of the bridge linking the Residency to Hyderabad, the interior of the Residency, and the remains of a nobleman's palace."
+        source="Wikimedia Commons / The Illustrated London News"
+        credit="The Illustrated London News, 24 October 1908 (public domain)"
+      />
       <Lede>
         On the night of 28 September 1908 the Musi rose through Hyderabad and
         took roughly fifty-nine thousand houses with it. Upstream, of the 788
@@ -109,6 +118,16 @@ export function HyderabadStoryEn() {
         </p>
       </Chapter>
 
+        <Figure
+          src="/images/story/hyderabad/mir-alam-tank-historic.jpg"
+          alt="Nineteenth-century view of Mir Alam Tank near Hyderabad, showing the curved masonry dam running across the foreground in a series of linked semicircular arches, with the tank water and hills beyond."
+          caption="Mir Alam Tank, built 1804-06 across a tributary of the Musi. The dam is a chain of semicircular masonry arches roughly 1.5 km long - the engineering idea the city had been using at smaller scale for three centuries, executed at its largest. It still holds water inside the zoo that now surrounds it."
+          credit="J. F. Hurst"
+          source="Wikimedia Commons (public domain)"
+          aspect="3/4"
+          fit="contain"
+        />
+
       <PullQuote>
         The tanks did not fail because they were old. They failed because they
         were a system, and a system fails the way it is connected.
@@ -146,6 +165,14 @@ export function HyderabadStoryEn() {
           and the twin reservoirs no longer mattered enough to justify freezing
           eighty-four villages.
         </p>
+        <Figure
+          src="/images/story/hyderabad/osman-sagar-retaining-wall.jpg"
+          alt="The masonry retaining wall of Osman Sagar reservoir at Gandipet, curving away from a pavilion at the near end, with the spillway channel and water at the right."
+          caption="Osman Sagar's retaining wall. Begun 1913, completed 1918, and built as flood control first and water supply second. It still supplies the city every day - and its catchment lost the protection of GO 111 in 2022, on the stated ground that Hyderabad no longer depends on it."
+          credit="iMahesh"
+          source="Wikimedia Commons (CC BY-SA 4.0)"
+          aspect="3/2"
+        />
       </Chapter>
 
       <Chapter
@@ -270,6 +297,15 @@ export function HyderabadStoryEn() {
           tankers have.
         </p>
       </Chapter>
+
+        <Figure
+          src="/images/story/hyderabad/musi-purana-pul.jpg"
+          alt="The Musi river at Purana Pul, Hyderabad. A long arched stone bridge crosses the frame with shelters and shops built along its parapet; the water below carries visible debris along its edge."
+          caption="The Musi at Purana Pul. This is the reach the interception programme covers between Bapu Ghat and Gowrelly, and the one the riverfront programme is being built along. CPCB's monitoring puts dissolved oxygen at or below 0.5 mg/L through the city every year from 2019 to 2024."
+          credit="Kavali Chandrakanth KCK"
+          source="Wikimedia Commons (CC BY-SA 4.0)"
+          aspect="3/2"
+        />
 
       <CTA href="/hyderabad">
         Every figure in this story is computed from sources you can open -

@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           : cityId === "mumbai"
             ? "City of seven islands - a place with no river, and the forty-five litres that divide it"
             : cityId === "hyderabad"
-              ? "Hyderabad"
+              ? "City of tanks - how Hyderabad engineered its way out of a flood, and what it still owes that system"
               : cityId === "delhi"
               ? "The city that stored water for a thousand years - and the twenty-two kilometres where its river dies"
               : `${config.displayName} water story`;
