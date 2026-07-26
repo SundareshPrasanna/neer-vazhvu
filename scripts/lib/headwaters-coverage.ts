@@ -52,25 +52,29 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/gee-phase1-water-body-targets.json": "our own GEE target manifest, not an upstream",
   "public/data/gee-phase1-water-body-targets-madurai.json": "our own GEE target manifest",
 
-  // Platform-scope families. One registry entry each is the right shape and is
-  // tracked as P5-6; until then they are declared here rather than per city.
-  "public/geojson/chennai-rivers.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/geojson/madurai-rivers.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/geojson/mumbai-rivers.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/geojson/bangalore-rivers.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/geojson/chennai-water-bodies-current.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/geojson/madurai-water-bodies-current.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/geojson/mumbai-water-bodies-current.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/geojson/chennai-industrial-zones.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/geojson/mumbai-drainage.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/geojson/mumbai-corporations-2024.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/data/elevation-bands-chennai.geojson": "platform family: FABDEM via GEE (P5-6)",
-  "public/data/elevation-bands-bangalore.geojson": "platform family: FABDEM via GEE (P5-6)",
-  "public/data/elevation-bands-madurai.geojson": "platform family: FABDEM via GEE (P5-6)",
-  "public/data/elevation-bands-mumbai.geojson": "platform family: FABDEM via GEE (P5-6)",
-  "public/data/rich-bodies": "platform family: JRC GSW + Dynamic World + Overture + Open Buildings (P5-6)",
-  "public/geojson/rich-bodies": "platform family: same GEE cohort (P5-6)",
-  "public/data/cascade": "platform family: HydroSHEDS/MERIT via run_cascade.py (P5-6)",
+  // Platform-scope families (P5-6, shipped 2026-07-26). The five that actually
+  // version are registered once in scripts/source-registry/platform.json and
+  // point back here; the two that do not version stay allowlisted with the
+  // accurate reason. OpenStreetMap is continuously edited and Dynamic World is a
+  // rolling GEE collection - neither has an "edition" to detect, so how often we
+  // re-fetch them is a freshness question (P5-1), not an edition-watch question.
+  "public/geojson/chennai-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/madurai-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/mumbai-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/bangalore-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/chennai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/madurai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/mumbai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/chennai-industrial-zones.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/mumbai-drainage.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/mumbai-corporations-2024.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/data/elevation-bands-chennai.geojson": "covered by the platform-scope entry fabdem-dem",
+  "public/data/elevation-bands-bangalore.geojson": "covered by the platform-scope entry fabdem-dem",
+  "public/data/elevation-bands-madurai.geojson": "covered by the platform-scope entry fabdem-dem",
+  "public/data/elevation-bands-mumbai.geojson": "covered by the platform-scope entry fabdem-dem",
+  "public/data/rich-bodies": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings; Dynamic World alone is continuously updated with no editions",
+  "public/geojson/rich-bodies": "covered by the platform-scope GEE entries",
+  "public/data/cascade": "covered by the platform-scope entry hydrosheds-basins",
 
   // Closed series. The upstream will not publish again; an edition watch would
   // be permanently silent, which is worse than an explicit note.
@@ -102,12 +106,12 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/delhi-ward-profiles.json": "derived join; the ward geometry is watched by opencity-delhi-mcd-wards",
   "public/data/water-bodies-lost-delhi.json": "archival",
   "public/data/rainfall-recent-delhi.json": "daily feed: owned by check-data-freshness.ts",
-  "public/data/elevation-bands-delhi.geojson": "platform family: FABDEM via GEE (P5-6)",
-  "public/geojson/delhi-rivers.geojson": "platform family: OSM/Overpass (P5-6)",
-  "public/geojson/delhi-water-bodies-current.geojson": "platform family: OSM/Overpass (P5-6)",
+  "public/data/elevation-bands-delhi.geojson": "covered by the platform-scope entry fabdem-dem",
+  "public/geojson/delhi-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
+  "public/geojson/delhi-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
   "public/geojson/delhi-drainage.geojson":
-    "platform family: OSM/Overpass (P5-6). No official Delhi drain GIS is public - the IFC 2018 Drainage Master " +
-    "Plan's 3,737 km across 11 agencies exists only as PDF maps, so these lengths are a floor.",
+    "OSM/Overpass: continuously edited, no editions (P5-1). No official Delhi drain GIS is public - the IFC " +
+    "2018 Drainage Master Plan's 3,737 km across 11 agencies exists only as PDF maps, so these lengths are a floor.",
   "public/data/delhi-cgwb-stations.json":
     "historical series, not a live feed: WRIS telemetry across the Delhi network stops 2025-09-20 and the artifact " +
     "says so in _feed_status. Whether telemetry RESUMES is a feed question for P5-1, not an edition question.",
