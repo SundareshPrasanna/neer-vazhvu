@@ -262,9 +262,24 @@ async function fetchWithTimeout(url: string, init: RequestInit = {}): Promise<Re
       clearTimeout(timer);
     }
   };
+  // Retry on THROWN errors (DNS, TLS, timeout) and on the status codes that
+  // mean "a bot filter bounced you", not "this resource is gone".
+  //
+  // Added after the 2026-07-26 pre-merge dry runs: dusib-jj-bastis (403) and
+  // fabdem-dem (415) each passed one run and failed the next, minutes apart,
+  // with no upstream change. Same lesson as the link sweep, where running 8
+  // requests in parallel got Newslaundry rate-limited and reported a live page
+  // as dead. Treating the first bounce as truth manufactures findings.
+  //
+  // 404/410 are NOT retried - those are real answers.
+  const TRANSIENT = new Set([403, 408, 415, 425, 429, 500, 502, 503, 504]);
   try {
+    const res = await attempt();
+    if (!TRANSIENT.has(res.status)) return res;
+    await new Promise((r) => setTimeout(r, 3000));
     return await attempt();
   } catch {
+    await new Promise((r) => setTimeout(r, 3000));
     return await attempt();
   }
 }
