@@ -134,6 +134,11 @@ export const HYDERABAD: CityConfig = {
     // OFF: needs hyderabad-water-bodies-lost.geojson. Hyderabad's lost-tank
     // literature is substantial; not yet compiled.
     lostBodies: false,
+    // ON: hyderabad-lake-register.json - HMDA's gazetted register of 2,978
+    // lakes with FTL notification status. A different POPULATION from the OSM
+    // map layer (669 visible polygons), and the gap between the two is the
+    // point: 1,626 gazetted lakes have no legally settled boundary.
+    legalRegister: true,
   },
   groundwaterViews: {
     // CGWB Dynamic GWR district assessments, 2022 / 2024 / 2025, via the

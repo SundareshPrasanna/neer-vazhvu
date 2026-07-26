@@ -192,6 +192,11 @@ export interface WaterBodiesConfig {
   /** Overlay the lost / vanished water bodies layer
    *  (`<cityId>-water-bodies-lost.geojson`). */
   lostBodies?: boolean;
+  /** Show the gazetted lake-register tab (`<cityId>-lake-register.json`).
+   *  A different POPULATION from the map layer: the map draws visible OSM
+   *  polygons, the register lists every statutorily gazetted lake and whether
+   *  its FTL boundary is legally settled. Hyderabad today (HMDA). */
+  legalRegister?: boolean;
 }
 
 /**

@@ -9,7 +9,7 @@
  * the survey page's price framing.
  *
  * Deliberate editorial choice: fulfilment is NOT the headline. It sits at
- * 100.0% (593 undelivered out of 1.32 million bookings), which is a flat,
+ * 99.95% (593 undelivered out of 1.32 million bookings), which is a flat,
  * uninformative number. The signal is demand volume, seasonality and
  * geographic concentration.
  */
@@ -56,6 +56,11 @@ export function TankerLedgerPanel({
   const swing = peak.mean_bookings / trough.mean_bookings;
   const maxSeason = peak.mean_bookings;
 
+  // Computed here rather than read from totals.fulfilment_pct: the upstream
+  // field is pre-rounded to 100.0, which reads as "nothing was missed" when
+  // 593 bookings went undelivered. Two decimals keep the shortfall visible.
+  const fulfilment = (totals.delivered / totals.bookings) * 100;
+
   const topSections = [...sections].sort((a, b) => b.bookings - a.bookings).slice(0, 10);
   const topDivisions = [...divisions].sort((a, b) => b.bookings - a.bookings).slice(0, 6);
   const top3 = topSections.slice(0, 3).reduce((s, x) => s + x.bookings, 0);
@@ -68,7 +73,7 @@ export function TankerLedgerPanel({
           { label: "Tanker bookings", value: nf.format(totals.bookings), sub: `${totals.months} months, Jan 2022 - Feb 2024` },
           { label: "Peak-to-trough swing", value: `${swing.toFixed(2)}x`, sub: `${peak.label} vs ${trough.label}, mean bookings` },
           { label: "HMWSSB sections", value: nf.format(totals.sections), sub: `across ${divisions.length} divisions` },
-          { label: "Delivered", value: `${totals.fulfilment_pct.toFixed(1)}%`, sub: `${nf.format(totals.shortfall)} undelivered of ${nf.format(totals.bookings)}` },
+          { label: "Delivered", value: `${fulfilment.toFixed(2)}%`, sub: `${nf.format(totals.shortfall)} undelivered of ${nf.format(totals.bookings)}` },
         ].map((c) => (
           <div key={c.label} className="rounded-lg border border-slate-200 dark:border-slate-700 p-3">
             <div className="text-xs text-slate-500 dark:text-slate-400">{c.label}</div>
@@ -81,7 +86,7 @@ export function TankerLedgerPanel({
       {/* Why fulfilment is not the story */}
       <section className="rounded-md border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 p-4 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
         <strong className="font-semibold">Read the fulfilment rate carefully.</strong>{" "}
-        HMWSSB delivered {totals.fulfilment_pct.toFixed(1)}% of bookings over this
+        HMWSSB delivered {fulfilment.toFixed(2)}% of bookings over this
         period - {nf.format(totals.shortfall)} undelivered out of{" "}
         {nf.format(totals.bookings)}. That is a near-flat number and we do not
         headline it: it measures whether a booked tanker arrived, not whether a

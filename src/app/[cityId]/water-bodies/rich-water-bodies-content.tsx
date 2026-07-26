@@ -17,6 +17,7 @@ import {
   waterBodiesLostUrl,
 } from "@/lib/cities/data-paths";
 import { RestorationRankingTable } from "@/components/lake-restoration/restoration-ranking-table";
+import { LakeRegisterPanel } from "@/components/water-bodies/lake-register-panel";
 import type { SelectedWaterBody, LostWaterBodyProperties, CensusWaterBodyProperties } from "@/types/water-bodies";
 import type { RestorationPriorityData, ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
@@ -69,6 +70,7 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
   const hasWardSearch = wb?.wardSearch ?? false;
   const hasLostBodies = wb?.lostBodies ?? false;
   const hasRankingTab = wb?.rankingTab ?? false;
+  const hasLegalRegister = wb?.legalRegister ?? false;
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     const m = searchParams.get("mode");
     if (m === "restoration") return "restoration";
@@ -422,6 +424,14 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
                 {t("lr.tab_ranking")}
               </TabsTrigger>
             )}
+            {hasLegalRegister && (
+              <TabsTrigger
+                value="register"
+                className="px-1 py-2.5 text-sm font-medium border-none rounded-none data-[state=active]:border-none after:!bg-blue-600 after:!h-[2.5px] after:!rounded-full"
+              >
+                Lake register
+              </TabsTrigger>
+            )}
           </TabsList>
           {activeTab === "map" && (
             <div className="flex items-center gap-2">
@@ -551,6 +561,16 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
             </BottomSheet>
           ) : null}
         </TabsContent>
+
+        {/* Gazetted lake register tab. A different POPULATION from the map:
+            the map draws visible OSM polygons, the register lists every
+            statutorily gazetted lake and whether its FTL boundary is legally
+            settled. The gap between the two is the accountability story. */}
+        {hasLegalRegister && (
+          <TabsContent value="register" className="flex-1 m-0 overflow-hidden">
+            <LakeRegisterPanel cityId={cityId} />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
