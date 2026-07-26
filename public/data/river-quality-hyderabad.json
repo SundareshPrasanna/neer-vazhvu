@@ -1,0 +1,83 @@
+{
+  "last_updated": "2026-07-26",
+  "data_year_range": "Jan-Mar 2022",
+  "source": "TGPCB, Annexure-VIII (Water Quality Analysis Reports), 1st Quarterly Report 2022-23 to the Hon'ble National Green Tribunal in OA No. 606 of 2018",
+  "source_url": "https://tgpcb.cgg.gov.in/Uploads/PcbDocumentAllUploads/OANo-606of2018--1stQuarterlyReport2022-2023.pdf",
+  "source_label": "TGPCB / NGT OA 606 of 2018, 1st Quarterly Report 2022-23 (cover letter of the Chief Secretary, Government of Telangana, dated 01-08-2022)",
+  "_provenance": "The source PDF is a 204-page SCANNED RASTER with no text layer (0 extractable characters, 631 embedded images). Values here were recovered by OCR (tesseract 5.5.2, pages rendered at 400 dpi, --psm 1 for auto-rotation) and then EVERY row was checked against the page image by eye before being written here. That check mattered: OCR read the Manjeera downstream March BOD as 2.3 where the image shows 2.8. These are CPCB NWMP station codes published by the STATE board, which is how they were obtained without CPCB access - cpcb.nic.in drops TCP from this network on both port 80 and 443.",
+  "_units_note": "Column headers are reproduced as printed in the source. The source labels conductivity 'mS/cm' while the values (481-1481) are in the range of uS/cm; we record the number as published and the unit as printed rather than silently correcting the source, so `conductivity_us` carries the printed figure.",
+  "_stations_pending_coordinates": "Two Musi stations in this annexure are not plotted because no coordinate could be sourced honestly: D/s of Musi at Pratapasingaram (NWMP 1173) and River Musi at Kasaniguda (NWMP 3082). Neither is a named place node in OSM and neither resolves in Nominatim, and inventing a point on the river line would be fabricating precision the source does not carry. Their readings are preserved verbatim in the Musi river `notes` so nothing is lost, and they plot the moment a coordinate is sourced.",
+  "rivers": [
+    {
+      "id": "musi",
+      "name": "Musi",
+      "name_te": "మూసీ నది",
+      "length_km": 244,
+      "overall_status": "CPCB Priority-I polluted river stretch (Hyderabad to Nalgonda)",
+      "cpcb_class": "Priority-I",
+      "description": "The Musi enters the city clean and leaves it anoxic. Dissolved oxygen falls from 6.0 mg/L above the city at Gandipet to 0.3 mg/L at Nagole, and BOD rises from 1.2 mg/L to 6-8 mg/L across the same reach. The river then partially recovers downstream. The River Rejuvenation Committee's own minutes record the difficulty of reaching the BOD 3 mg/L target 'in the absence of fresh water flow in the River Musi during lean period'.",
+      "notes": "Two further stations in the same annexure are not plotted for want of a sourced coordinate; their readings are recorded here in full. D/s of Musi at Pratapasingaram (NWMP station code 1173): Jan-22 DO 0.3, pH 7.93, conductivity 1422, BOD 8.0, total coliform 430 MPN/100ml, free ammonia 0.06, boron 0.5; Feb-22 DO 0.3, pH 7.36, conductivity 1337, BOD 6.0, coliform 430, ammonia 0.02, boron 0.5; Mar-22 DO 0.3, pH 6.58, conductivity 1373, BOD 6.2, coliform 540, ammonia 0.01, boron 0.5. River Musi at Kasaniguda (NWMP station code 3082), the recovery point: Jan-22 DO 6.6, pH 7.72, conductivity 1272, BOD 3.5, coliform 63, ammonia 0.01, boron 0.5, SAR 1.12; Feb-22 DO 6.6, pH 7.40, conductivity 1253, BOD 3.2, coliform 58, ammonia 0.01, boron 0.5, SAR 0.86; Mar-22 DO 6.4, pH 8.01, conductivity 1481, BOD 3.6, coliform 70, ammonia 0.01, boron 0.5, SAR 1.03.",
+      "stations": [
+        {
+          "id": "musi-gandipet",
+          "name": "U/s of Musi at Gandipet (Osman Sagar)",
+          "lat": 17.3747,
+          "lng": 78.2997,
+          "stretch": "Upstream of the city (NWMP 1172)",
+          "readings": [
+            { "year": 2022, "month": "Jan", "do_mgl": 6.0, "bod_mgl": 1.2, "ph": 8.13, "conductivity_us": 481, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 46, "free_ammonia_mgl": 0.03, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
+            { "year": 2022, "month": "Feb", "do_mgl": 5.1, "bod_mgl": 1.0, "ph": 7.67, "conductivity_us": 498, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 63, "free_ammonia_mgl": 0.01, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
+            { "year": 2022, "month": "Mar", "do_mgl": 5.4, "bod_mgl": 1.0, "ph": 8.25, "conductivity_us": 502, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 20, "free_ammonia_mgl": 0.04, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null }
+          ]
+        },
+        {
+          "id": "musi-nagole",
+          "name": "River Musi at Nagole",
+          "lat": 17.37753,
+          "lng": 78.56012,
+          "stretch": "Through the city (NWMP 2339)",
+          "readings": [
+            { "year": 2022, "month": "Jan", "do_mgl": 0.3, "bod_mgl": 6.0, "ph": 7.96, "conductivity_us": 1391, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 920, "free_ammonia_mgl": 0.02, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
+            { "year": 2022, "month": "Feb", "do_mgl": 0.3, "bod_mgl": 6.0, "ph": 7.42, "conductivity_us": 1341, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 920, "free_ammonia_mgl": 0.04, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
+            { "year": 2022, "month": "Mar", "do_mgl": 0.3, "bod_mgl": 8.0, "ph": 7.92, "conductivity_us": 1452, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 430, "free_ammonia_mgl": 0.07, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "manjira",
+      "name": "Manjira",
+      "name_te": "మంజీరా నది",
+      "length_km": 174,
+      "overall_status": "CPCB Priority-II polluted river stretch (Gowdicherla to Nakkavagu); merged with the Nakkavagu action plan on the CPCB task team's recommendation",
+      "cpcb_class": "Priority-II",
+      "description": "A Hyderabad supply corridor rather than an urban river: the Manjira carries the Singur and Manjira reservoirs, two of HMWSSB's six sources. The monitored reach brackets the confluence with the Nakkavagu, and the two stations bracket it deliberately - upstream and downstream of the same junction.",
+      "notes": "Both stations sit at Gowdicharla, above and below the Nakkavagu confluence. Coordinates are not plotted for either because Gowdicharla did not resolve to a sourced point; readings are recorded here. U/s before confluence (NWMP 2374): Jan-22 DO 5.9, pH 7.25, conductivity 656, BOD 2.9, coliform 27, ammonia 0.01, boron 0.5, SAR 0.68; Feb-22 DO 6.2, pH 7.20, conductivity 620, BOD 2.7, coliform 31, SAR 0.70; Mar-22 DO 6.0, pH 7.22, conductivity 676, BOD 3.0, coliform 33, SAR 0.71. D/s after confluence (NWMP 2375): Jan-22 DO 6.1, pH 7.22, conductivity 594, BOD 2.8, coliform 43, SAR 0.69; Feb-22 DO 6.3, pH 7.29, conductivity 576, BOD 2.5, coliform 39, SAR 0.57; Mar-22 DO 6.2, pH 7.31, conductivity 608, BOD 2.8, coliform 41, SAR 0.63.",
+      "stations": []
+    },
+    {
+      "id": "krishna",
+      "name": "Krishna at Wadapally",
+      "name_te": "కృష్ణా నది",
+      "length_km": null,
+      "overall_status": "Monitored in the same annexure as the receiving river below the Musi confluence",
+      "cpcb_class": null,
+      "description": "The river the Musi joins. Included because it is the receiving water for everything the Musi carries out of Hyderabad, and because Akkampally - one of HMWSSB's six daily sources - draws from the Krishna system.",
+      "notes": "Single station in this annexure.",
+      "stations": [
+        {
+          "id": "krishna-wadapally",
+          "name": "River Krishna at Wadapally",
+          "lat": 16.6943,
+          "lng": 79.66149,
+          "stretch": "Below the Musi confluence (NWMP 1465)",
+          "readings": [
+            { "year": 2022, "month": "Jan", "do_mgl": 6.0, "bod_mgl": 2.5, "ph": 8.02, "conductivity_us": 816, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 27, "free_ammonia_mgl": 0.01, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
+            { "year": 2022, "month": "Feb", "do_mgl": 6.1, "bod_mgl": 2.8, "ph": 8.17, "conductivity_us": 808, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 24, "free_ammonia_mgl": 0.01, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null },
+            { "year": 2022, "month": "Mar", "do_mgl": 6.0, "bod_mgl": 2.4, "ph": 7.90, "conductivity_us": 1172, "cod_mgl": null, "fecal_coliform_mpn": null, "total_coliform_mpn": 26, "free_ammonia_mgl": 0.01, "boron_mgl": 0.5, "tds_mgl": null, "nitrate_mgl": null }
+          ]
+        }
+      ]
+    }
+  ]
+}
