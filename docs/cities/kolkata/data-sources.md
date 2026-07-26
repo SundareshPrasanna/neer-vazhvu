@@ -264,6 +264,38 @@ replace it.
    coordinates off a station's most recent row deleted whole stations - **Nadia collapsed from 205 to
    39**, and what remained still looked like a plausible network.
 
+## Groundwater assessment - IN-GRES (BUILT)
+
+| | |
+|---|---|
+| **Source** | IN-GRES, India Ground Water Resource Estimation System (CGWB + state GW departments), `ingres.iith.ac.in`. IIT-Hyderabad hosted, so **outside the NICNET gate** that blocks CPCB and CGWA |
+| **Method** | `neer-vazhvu-api/scripts/build_ingres_gwr.py --city kolkata`, via `POST /api/gec/getBusinessDataForUserOpen` (no auth) |
+| **Result** | 4 assessment years (2021-22 to 2024-25), all 6 KMA districts |
+| **Feeds** | `public/data/gwr-blocks-kolkata.json` |
+
+**THE FINDING: Kolkata district is not assessed on extraction at all.** It is categorised
+**`salinity`** - a poor-quality category, not a safe/semi-critical/critical/over-exploited stage band
+- and carries no availability, resource or extraction figures, because CGWB does not assess saline
+aquifers on extraction. South 24 Parganas is the same. So the exploitation choropleth Chennai has
+cannot be drawn for Kolkata district: the framework classifies it on a different axis. That is a
+finding rather than a missing file, and it is a third distinct way Kolkata refuses the standard
+framing, after "no storage to run down" and "no dam to release".
+
+The surrounding ring **is** assessed, so the regional picture is real: **North 24 Parganas moved from
+safe to semi-critical in 2024-25** - the district holding both Palta, Kolkata's intake, and the
+arsenic belt - with Nadia semi-critical and Hooghly and Howrah safe.
+
+**Payload gotchas (two prior sessions to solve, do not "simplify"):** keys are lowercase, not
+camelCase; `locname` has **no spaces** ("WESTBENGAL"); `view` is lowercase `"admin"`; `parentuuid` is
+**required** and is the discriminator - without it the server returns a well-formed response
+containing only an empty `total` row, which reads as "no data for this state" rather than an error.
+State UUIDs come from the Angular bundle's `STATEUUIDLAYERNAME` constant (West Bengal =
+`68ecabb4-0ea5-4909-b8e3-20bbaa7b91e8`).
+
+**Naming gotcha:** IN-GRES spells them **KOLKATTA, HAORA, HUGLI**; India-WRIS spells the same
+districts KOLKATA, HOWRAH, HOOGHLY. Two government portals do not agree on district names, so
+spellings are enumerated empirically per portal.
+
 ## Wards
 
 **141 of 144.** OpenCity's "Kolkata Wards Map 2022" KML carries ward numbers 1-141; **142, 143 and 144
