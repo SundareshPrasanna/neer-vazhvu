@@ -735,7 +735,7 @@ export function CityAboutContent({
               />
               <DataSource
                 name="Care Earth Trust / NGT / CMDA: Lost Water Bodies"
-                url="https://www.careearth.org/"
+                url="https://careearthtrust.org/"
                 description={t("about.ds_careearth_desc")}
                 frequency={t("about.freq_manual")}
               />
@@ -1009,7 +1009,7 @@ export function CityAboutContent({
           {isMadurai && (
             <DataSource
               name="CGWB Ground Water Year Book of Tamil Nadu &amp; Puducherry"
-              url="https://cgwb.gov.in/cgwbpnm/search?type=2&cat_id=4&state_id=33"
+              url="https://cgwb.gov.in/cgwbpnm/"
               description="Peer-reviewed quarterly depth-to-water-level readings (May / Aug / Nov / Jan) at 21 dug-well stations in Madurai district, sourced from the 2023-24 and 2024-25 Year Books. Replaces an IDW-interpolated ward depth choropleth - Madurai's live WRIS network is too sparse (4 stations) for honest per-ward synthesis. Stitched into a 2-year per-station time series."
               frequency="annual (per Year Book release)"
             />
@@ -1041,7 +1041,7 @@ export function CityAboutContent({
             <>
               <DataSource
                 name="CGWB Ground Water Year Book of Maharashtra"
-                url="https://cgwb.gov.in/cgwbpnm/publication-detail"
+                url="https://cgwb.gov.in/cgwbpnm/"
                 description="~53 National Hydrograph Network wells across Mumbai / Thane / Palghar / Raigad transcribed from the Year Book to January 2025, with water chemistry (EC, chloride, nitrate) - the honest signal for a city excluded from the Dynamic Assessment. India-WRIS also lists ~24 manual wells for the city, but they end in May 2023; we document them rather than plot a stale layer."
                 frequency="annual (per Year Book release)"
               />
