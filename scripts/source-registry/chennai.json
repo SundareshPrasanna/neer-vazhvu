@@ -5,15 +5,14 @@
       "id": "cpcb-nwmp-annual",
       "scope": "chennai",
       "publisher": "CPCB",
-      "url": "https://cpcb.nic.in/nwmp-data-2/",
-      "insecureTLS": true,
+      "url": "https://cpcb.gov.in/nwmp-data/",
       "license": "GoI publication, cited with attribution",
       "type": "pdf-listing",
       "cadence": "yearly",
       "tier": 1,
       "detection": {
         "method": "link-set",
-        "linkPattern": "nwmp"
+        "linkPattern": "nwmp-data-\\d{4}|wqm/\\d{4}/"
       },
       "dependsOn": [
         "public/data/river-quality.json",
@@ -21,7 +20,28 @@
         "public/data/river-quality-madurai.json"
       ],
       "refreshMethod": "manual PDF extraction (Madurai: scripts/scrape_cpcb_nwmp_vaigai.py)",
-      "notes": "NWMP annual River Water Quality listing; year pages (e.g. nwmp-data-2) appear as new links, typically Jan-Mar. Serves Chennai (4 rivers/10 stations), Bengaluru (Vrishabhavathi/Arkavathy/Dakshina Pinakini), Madurai (Vaigai 10059/10060). Host has broken TLS and was fully unreachable on 2026-07-21 even with curl -k from a residential IP - check-failures expected until CPCB recovers; retry before changing this entry."
+      "notes": "NWMP annual River Water Quality data. Serves Chennai (4 rivers/10 stations), Bengaluru (Vrishabhavathi/Arkavathy/Dakshina Pinakini), Madurai (Vaigai 10059/10060). CPCB MIGRATED DOMAIN (verified 2026-07-26): the old cpcb DOT nic DOT in host is dead (DNS resolves to 164.100.58.91, no HTTP on 80 or 443); everything lives on cpcb.gov.in, which serves a valid TLS chain - insecureTLS is NOT needed here and was removed 2026-07-26. The old entry pointed at the dead host, which is why this source never checked successfully and had no lastSeen; the 2026-07-21 baseline recorded it as a CPCB outage, which was the wrong diagnosis. Watch target is /nwmp-data/, which lists one year page per edition (nwmp-data-2012 ... nwmp-data-2025 as of 2026-07-26). A NEW EDITION SHOWS UP AS A NEW nwmp-data-YYYY LINK - that is the signal. /nwmp-data-2/ is a stub last updated 20 Nov 2018 and /wqm/ has no directory listing, so neither works for link-set. linkPattern matches year pages plus wqm/YYYY/ document paths, and deliberately excludes the site-wide boilerplate PDFs (APPs_CPCB, gst_details, stqc-cert, E-GOVERNANCE, it_technical_activity) that appear on every CPCB page. Annual river data also resolves directly at https://cpcb.gov.in/wqm/{YEAR}/WQuality_River-Data-{YEAR}.pdf (2021-2024 verified, 5-15 MB each). CAUTION on the 2025 edition: the nwmp-data-2025 page exists and links WQuality_River-Data-2025.pdf, but that file is 465 KB / 2 pages of YAMUNA DATA ONLY (created 18 Jun 2026) and contains none of our rivers - grep for Cooum, Adyar, Vaigai, Vrishabhavathi, Mithi returns zero. The full national 2025 edition has not landed. ALWAYS confirm river coverage inside the PDF before treating a new year as actionable; the year page appearing is not sufficient.",
+      "lastSeen": {
+        "linksHash": "554617125ca2b5fb",
+        "links": [
+          "https://cpcb.gov.in/nwmp-data-2012/",
+          "https://cpcb.gov.in/nwmp-data-2013/",
+          "https://cpcb.gov.in/nwmp-data-2014/",
+          "https://cpcb.gov.in/nwmp-data-2016/",
+          "https://cpcb.gov.in/nwmp-data-2017/",
+          "https://cpcb.gov.in/nwmp-data-2018/",
+          "https://cpcb.gov.in/nwmp-data-2019/",
+          "https://cpcb.gov.in/nwmp-data-2020/",
+          "https://cpcb.gov.in/nwmp-data-2021/",
+          "https://cpcb.gov.in/nwmp-data-2022/",
+          "https://cpcb.gov.in/nwmp-data-2023/",
+          "https://cpcb.gov.in/nwmp-data-2024/",
+          "https://cpcb.gov.in/nwmp-data-2025/",
+          "https://cpcb.gov.in/wqm/2015/NWMP_DATA_2015.pdf"
+        ],
+        "edition": "year pages through nwmp-data-2025 (2025 river file is Yamuna-only)",
+        "acceptedOn": "2026-07-26"
+      }
     },
     {
       "id": "chennai-reps-tn-assembly",

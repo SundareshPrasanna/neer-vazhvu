@@ -80,7 +80,14 @@ interface SourceEntry {
   tier: 0 | 1 | 2 | 3;
   detection: Detection;
   lastSeen?: LastSeen;
-  /** Repo files carrying numbers from this source. */
+  /**
+   * Lineage: what in this repo carries numbers from this source. Two forms:
+   *   - a repo-relative file path, checked for existence
+   *   - `supabase:<table>`, for sources whose numbers land in a table rather
+   *     than a committed file (reservoir feeds, groundwater, census). Not
+   *     existence-checked - the freshness checker owns table liveness.
+   * Must be non-empty: an alert with no lineage is not actionable.
+   */
   dependsOn: string[];
   /** Script / Claude skill that re-extracts, or "manual". */
   refreshMethod: string;
@@ -143,6 +150,11 @@ function validate(entries: SourceEntry[]): string[] {
     }
     if (e.tier === undefined) problems.push(`${where}: missing tier`);
     if (!Array.isArray(e.dependsOn)) problems.push(`${where}: dependsOn must be an array`);
+    else if (e.dependsOn.length === 0)
+      problems.push(
+        `${where}: dependsOn is empty - an alert with no lineage is not actionable. ` +
+          `List the repo files, or "supabase:<table>" where the numbers land in a table.`,
+      );
 
     const d = e.detection;
     if (!d?.method) {
@@ -168,6 +180,11 @@ function validate(entries: SourceEntry[]): string[] {
     }
 
     for (const dep of e.dependsOn ?? []) {
+      if (dep.startsWith("supabase:")) {
+        if (!dep.slice("supabase:".length).match(/^[a-z_][a-z0-9_]*$/))
+          problems.push(`${where}: malformed supabase lineage: ${dep}`);
+        continue;
+      }
       if (!existsSync(resolve(ROOT, dep)))
         problems.push(`${where}: dependsOn path not found: ${dep}`);
     }

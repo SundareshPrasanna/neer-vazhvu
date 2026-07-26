@@ -165,7 +165,7 @@ export function RiverPanel({
         <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">
           <p>
             {t("rivers.source")}{" "}
-            <a href={qualityData.source_url ?? "https://cpcb.nic.in/nwmp-data-2024/"} target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-400 hover:underline">
+            <a href={qualityData.source_url ?? "https://cpcb.gov.in/nwmp-data-2024/"} target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-400 hover:underline">
               {qualityData.source_label ?? "NWMP Data by CPCB"}
             </a>
           </p>
@@ -694,7 +694,7 @@ export function RiverPanel({
         <p>
           {t("rivers.source")}{" "}
           <a
-            href={qualityData.source_url ?? "https://cpcb.nic.in/nwmp-data-2024/"}
+            href={qualityData.source_url ?? "https://cpcb.gov.in/nwmp-data-2024/"}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-500 dark:text-blue-400 hover:underline"

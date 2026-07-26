@@ -142,7 +142,7 @@ function English({ cityId, cityName }: Props) {
         </p>
         <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Court orders &amp; key events</h4>
         <p className="text-slate-600 dark:text-slate-400">
-          A hand-curated event log filtered to the selected river. Today it covers the Madras HC&apos;s December 2024 suo motu cognisance of Vaigai pollution (177 sewage / industrial discharge points across 5 districts, 36 samples below CPCB Class D), the Supreme Court&apos;s 2014 Mullaperiyar verdict (142 ft storage cap, still-active Supervisory Committee), and the operational threshold around Vaigai dam release that triggers Madurai-city flood warnings (about 6,000 cusecs).
+          A hand-curated event log filtered to the selected river. Today it covers the Madras HC&apos;s December 2024 suo motu cognisance of Vaigai pollution (177 sewage / industrial discharge points across 5 districts, sampled stretches graded unfit even for irrigation), the Supreme Court&apos;s 2014 Mullaperiyar verdict (142 ft storage cap, still-active Supervisory Committee), and the operational threshold around Vaigai dam release that triggers Madurai-city flood warnings (about 6,000 cusecs).
         </p>
         <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">Industrial pollution sources</h4>
         <p className="text-slate-600 dark:text-slate-400">

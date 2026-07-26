@@ -599,9 +599,11 @@
         "method": "link-set",
         "linkPattern": "\\.pdf"
       },
-      "dependsOn": [],
+      "dependsOn": [
+        "supabase:reservoir_daily_v2"
+      ],
       "refreshMethod": "scripts/backfill_cwc_reservoirs.py (insert-only-missing into reservoir_daily_v2)",
-      "notes": "The 527-bulletin archive used for the Mumbai storage backfill ended 2025-05-08. This watch fires if CWC resumes/extends the listing; expect WEEKLY detections if the bulletin resumes - demote or re-tier then.",
+      "notes": "The 527-bulletin archive used for the Mumbai storage backfill ended 2025-05-08. This watch fires if CWC resumes/extends the listing; expect WEEKLY detections if the bulletin resumes - demote or re-tier then. Lineage is a Supabase table, not a committed file: the 996 backfilled rows (Bhatsa 498 + Upper Vaitarna 502, 2015-2025) live in reservoir_daily_v2. Recorded as 'supabase:reservoir_daily_v2' since 2026-07-26, when dependsOn gained table lineage; before that this entry had an empty dependsOn and its alerts were not actionable.",
       "lastSeen": {
         "linksHash": "1eb4da4404abee36",
         "links": [
