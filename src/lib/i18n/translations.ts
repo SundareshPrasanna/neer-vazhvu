@@ -817,6 +817,9 @@ export const translations: Record<string, TranslationEntry> = {
   "wb.lost_source_value": { en: "Care Earth Trust & NGT records",         ta: "Care Earth Trust & NGT பதிவுகள்", kn: "Care Earth Trust ಮತ್ತು NGT ದಾಖಲೆಗಳು" },
   "wb.view_bodies": { en: "Water Bodies",                          ta: "நீர்நிலைகள்", kn: "ಜಲಮೂಲಗಳು" },
   "wb.view_restoration": { en: "Restoration Priority",                  ta: "மறுசீரமைப்பு முன்னுரிமை", kn: "ಪುನರುಜ್ಜೀವನ ಆದ್ಯತೆ" },
+  // Shown in place of the Catchments toggle for cities whose terrain cannot
+  // support honest catchment delineation. English-only for now; falls back.
+  "wb.catchments_unavailable": { en: "not available for this city - why?" },
   "wb.view_catchments": { en: "Catchments",                          ta: "நீர்ப்பிடிப்பு", kn: "ಜಲಾನಯನ" },
   "wb.census_surveyed": { en: "govt. surveyed (2018-19)",               ta: "அரசு ஆய்வு (2018-19)", kn: "ಸರ್ಕಾರಿ ಸಮೀಕ್ಷೆ (2018-19)" },
   "wb.census_source": { en: "Census data from",                      ta: "கணக்கெடுப்பு தரவு:", kn: "ಜನಗಣತಿ ದತ್ತಾಂಶ:" },

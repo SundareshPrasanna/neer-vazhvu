@@ -94,6 +94,17 @@ export const KOLKATA: CityConfig = {
     acronym: 'KMC',
     wardCount: 144,
   },
+  // NO CATCHMENT ATLAS, and this says why on the page rather than leaving the
+  // view mode silently absent. The atlas delineates each water body's area of
+  // influence by D8 flow accumulation over a 30 m bare-earth DEM. That needs
+  // terrain. Kolkata has 11 m of relief across 40 km - against Chennai's 43 m,
+  // Madurai's 94 m, Bengaluru's 194 m and Mumbai's 338 m, the four cities where
+  // it ships. Over a gradient that shallow, with 5,526 water bodies each
+  // claiming a catchment and surface water actually moving through a combined
+  // sewer network rather than over the ground, the algorithm would return
+  // polygons that look authoritative and are not.
+  catchmentsGapNote:
+    "Kolkata has no catchment view, and that is a deliberate omission rather than a missing dataset. Catchments are delineated by tracing water downhill across a 30 m elevation model - which needs a hill. Kolkata has about 11 metres of fall across 40 kilometres of delta, against 43 m in Chennai and 338 m in Mumbai, the cities where this view ships. At that gradient the method would draw confident-looking boundaries that the ground does not support, and in any case most of Kolkata's runoff travels through a combined sewer network rather than over the surface. We would rather show no catchments than invent them.",
   placeKind: 'region',
   // Kolkata's region story is the OPPOSITE of Mumbai's. MMR is nine
   // corporations competing over one contested pool; here KMC abstracts

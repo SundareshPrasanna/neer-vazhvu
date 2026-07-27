@@ -108,6 +108,7 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
       reducedCount={lostFile.summary.severely_reduced_count}
       namedOsmCount={namedOsmCount}
       hasCascadeOverlay={config.hasCascadeOverlay ?? false}
+      catchmentsGapNote={config.catchmentsGapNote}
     />
   );
 }

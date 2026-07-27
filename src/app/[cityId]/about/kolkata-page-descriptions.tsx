@@ -308,6 +308,30 @@ export function KolkataPageDescriptions({ cityId, cityName }: Props) {
           delta drains rather than cascades; and no dam-release flood trigger because there is no
           dam.
         </p>
+        <Gap title="There is no catchment view, and that is a decision">
+          <p>
+            Four cities here let you click a lake and see its catchment - the area of influence
+            that drains into it. {cityName} does not, and the reason is terrain rather than a
+            missing file. Catchments are delineated by tracing water downhill across a 30 m
+            bare-earth elevation model, which needs a gradient. Kolkata has about{" "}
+            <strong>11 metres of fall across 40 kilometres</strong> of delta, against 43 m in
+            Chennai, 94 m in Madurai, 194 m in Bengaluru and 338 m in Mumbai - the four cities
+            where the view ships.
+          </p>
+          <p>
+            At that gradient, with 5,526 water bodies each claiming a catchment and most of the
+            city&apos;s runoff actually travelling through a combined sewer network rather than
+            over the ground, the algorithm would return polygons that look authoritative and are
+            not. We would rather show nothing than draw boundaries the ground does not support.
+          </p>
+          <p>
+            The consequence worth naming: the rooftop rainwater-harvest estimate is an enrichment
+            of those catchment polygons, so {cityName} does not carry a per-water-body harvest
+            figure either. The inputs for one do exist - Overture building footprints and an IMD
+            annual normal of 1,641 mm - so a ward-level version is buildable against a different
+            boundary.
+          </p>
+        </Gap>
         <p className={P}>
           Ward-level surfaces - <code>my-ward</code>, ward profiles, the per-ward risk composite -
           are switched off for a concrete reason. The only public ward geometry carries 141 of

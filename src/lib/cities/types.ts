@@ -524,6 +524,14 @@ export interface BasePlaceConfig {
    *  produced the corresponding PMTiles. */
   hasCascadeOverlay?: boolean;
 
+  /** Why this city has NO catchment view, shown on the water-bodies page in
+   *  place of the missing toggle. Without it a city that cannot support
+   *  catchment delineation just silently lacks a view mode, which reads as an
+   *  oversight rather than a decision. Set it wherever `hasCascadeOverlay` is
+   *  false for a REASON (Kolkata: 11 m of relief across 40 km of delta);
+   *  omit it where the layer is merely not built yet. */
+  catchmentsGapNote?: string;
+
   /** Basin Atlas surfaces hosted by this city. Each id must have a manifest
    *  in src/lib/basins/ and ingested data under public/data/basins/<id>/.
    *  Drives the /<city>/basins/<id> route guard and any basin nav entry.
