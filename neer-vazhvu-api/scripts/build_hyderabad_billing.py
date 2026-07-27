@@ -26,9 +26,12 @@ CAUTION, and the reason for the guards below:
   - Rows with demand == 0 and collection == 0 are common (inactive sections).
     They are counted but excluded from efficiency ratios, which would otherwise
     be 0/0.
-  - `category` is a tariff class code (C, D, M2, ...) with no published legend,
-    so categories are carried through verbatim and never renamed to guesses
-    like "domestic"/"commercial".
+  - `category` is a tariff class code. CORRECTION: an earlier version of this
+    script said the codes had no published legend. They do - the dataset page
+    lists all of them, and they are decoded in CATEGORY_LEGEND below. That
+    legend is worth having: DS is Domestic-Slums and PS is Public stand post,
+    both of which are equity-relevant, and D / C / I separate domestic from
+    commercial and industrial demand.
 """
 from __future__ import annotations
 
@@ -47,6 +50,24 @@ OUT = Path(__file__).resolve().parents[2] / "public" / "data" / "hyderabad-billi
 
 # (year, month) -> filename. The portal is not perfectly consistent; the 2022_1
 # file carries a _1 suffix pattern that happens to match month numbering.
+
+# Published on the dataset page. Recorded here so the codes are decodable
+# downstream rather than rendered as opaque two-letter strings.
+CATEGORY_LEGEND = {
+    "D": "Domestic", "DP": "Domestic Private", "DM": "Domestic-Municipality",
+    "DS": "Domestic-Slums", "C": "Commercial", "BC": "Bulk Commercial",
+    "C1": "Non Domestic-Bulk", "I": "Industries", "I1": "Industries-Bulk",
+    "IW": "Industries-WATBAS", "MB": "Multi Stored Buildings", "M1": "MSAC-Domestic",
+    "M2": "MASC-Mixed", "M3": "MASC-Non Domestic", "M4": "MSB-individual", "MS": "MASC",
+    "T1": "MASC-MUN-15MM", "T2": "MASC-MUN-20MM", "T3": "MASC-MUN-25MM",
+    "T4": "MASC-MUN>25MM", "PS": "Public stand post", "GP": "Group PSP",
+    "CB": "Cantonment board", "RC": "Religious/charitable institution",
+    "CH": "Supply to charity institutions", "H": "Hospital supply",
+    "G": "Government institutions/schools", "FS": "Filling station",
+    "N": "Construction", "O": "Colonies", "U": "Unmetered", "V": "Gram panchayat",
+    "S": "Surrounding municipality", "X": "Mix category", "XO": "Mix category others",
+}
+
 def url_for(year: int, month: int) -> str:
     return f"{BASE}/billing_and_collection_report_{year}_{month}.csv"
 
@@ -184,7 +205,9 @@ def main() -> int:
             "unit is asserted here and no conversion is applied."
         ),
         "_caveats": [
-            "Tariff `category` codes (C, D, M2, ...) have no published legend; carried verbatim, never renamed.",
+            "Tariff `category` codes are decoded from the legend HMWSSB publishes on the dataset page; an "
+            "earlier build wrongly recorded that no legend existed. Unknown codes keep a null label rather "
+            "than a guess.",
             "Months where total demand is 0 yield collection_pct null rather than 0, to avoid a 0/0 ratio.",
             "Collection in a month can exceed demand in that month because arrears are collected late; "
             "collection_pct above 100% is therefore expected and is not an error.",
@@ -226,7 +249,9 @@ def main() -> int:
         ),
         "categories": sorted(
             [{"category": k or "(blank)", "demand": round(v["demand"], 2),
-              "collection": round(v["collection"], 2), "connections_last_known": v["cans"], "connections_as_of": v["cans_month"]}
+              "collection": round(v["collection"], 2), "connections_last_known": v["cans"],
+              "connections_as_of": v["cans_month"],
+              "label": CATEGORY_LEGEND.get(k, None)}
              for k, v in by_category.items()],
             key=lambda x: -x["demand"],
         ),

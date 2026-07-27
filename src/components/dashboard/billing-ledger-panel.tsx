@@ -36,6 +36,16 @@ export type TankerSection = { section: string; division: string; bookings: numbe
 
 const nf = new Intl.NumberFormat("en-IN");
 
+/** The dataset states no unit for its money columns. Division settles it:
+ *  Jun 2026 billed 1,478,622,872 across 1,546,853 connections, which is 956 per
+ *  connection per month. As rupees that is an ordinary water bill. As thousands
+ *  it would be 9.56 lakh per connection per month, as lakhs 9.56 crore - both
+ *  impossible. So we render rupees, and say on the page that it is an inference
+ *  from magnitude rather than a stated unit. */
+function crore(rupees: number): string {
+  return `${nf.format(Math.round(rupees / 1e7))} crore`;
+}
+
 export function BillingLedgerPanel({
   billing,
   tankerSections,
@@ -93,10 +103,11 @@ export function BillingLedgerPanel({
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: "Collection rate", value: `${t.collection_pct?.toFixed(1)}%`,
-            sub: `over ${t.months} months` },
-          { label: "Billed", value: nf.format(Math.round(t.demand)), sub: "as published, unit not stated upstream" },
-          { label: "Collected", value: nf.format(Math.round(t.collection)),
-            sub: `shortfall ${nf.format(Math.round(t.demand - t.collection))}` },
+            sub: `${first?.label} to ${last?.label}, ${t.months} months` },
+          { label: "Billed per year", value: `Rs ${crore((t.demand / t.months) * 12)}`,
+            sub: `Rs ${crore(t.demand)} across the whole ${t.months} months` },
+          { label: "Uncollected per year", value: `Rs ${crore(((t.demand - t.collection) / t.months) * 12)}`,
+            sub: `Rs ${crore(t.demand - t.collection)} across the whole period` },
           { label: "Connections", value: nf.format(last?.connections ?? 0),
             sub: `from ${nf.format(first?.connections ?? 0)} in ${first?.label}` },
         ].map((c) => (
@@ -108,11 +119,25 @@ export function BillingLedgerPanel({
         ))}
       </section>
 
-      <section className="rounded-md border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 p-4 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-        <strong className="font-semibold">On the rupee figures.</strong> The dataset does not state
-        whether its amounts are rupees, thousands or lakhs, so this page shows them exactly as
-        published and applies no conversion. The ratio between billed and collected is unaffected by
-        that ambiguity, which is why the collection rate leads and the absolute figures do not.
+      <section className="rounded-md border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 p-4 text-xs text-slate-700 dark:text-slate-300 leading-relaxed space-y-1.5">
+        <p>
+          <strong className="font-semibold">These are rupees, but HMWSSB does not say so.</strong>{" "}
+          The dataset labels its columns only &quot;total demand&quot; and &quot;total amount
+          collected&quot;, with no unit anywhere. Division settles it: in {last?.label} the board
+          billed {nf.format(Math.round((last?.demand ?? 0)))} across{" "}
+          {nf.format(last?.connections ?? 0)} connections, which is{" "}
+          <strong>
+            about Rs {nf.format(Math.round((last?.demand ?? 0) / (last?.connections || 1)))} per
+            connection per month
+          </strong>
+          . As rupees that is an ordinary water bill. As thousands it would be over nine lakh a
+          month per connection, as lakhs over nine crore. So rupees is the only reading that
+          survives, and we state it as an inference from magnitude rather than as a published unit.
+        </p>
+        <p>
+          Figures are shown in crore for legibility. The underlying file keeps the raw published
+          numbers with no conversion applied.
+        </p>
       </section>
 
       {joined.length > 0 && (

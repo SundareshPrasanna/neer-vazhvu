@@ -2,10 +2,10 @@
   "_source": "HMWSSB billing and collection data 2022-2026",
   "_source_url": "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-billing-and-collection-data",
   "_licence": "Government Open Data License - India (GODL-India). Attribute HMWSSB and data.telangana.gov.in.",
-  "_fetched": "2026-07-26",
+  "_fetched": "2026-07-27",
   "_note": "Monthly billing demand, collection, connection count and tariff category per HMWSSB division and section. Keys on the SAME division/section units as the tanker ledger, so billed demand and tanker demand are comparable per section. Rupee amounts are published as-is: the dataset does not state whether figures are rupees, thousands or lakhs, so no unit is asserted here and no conversion is applied.",
   "_caveats": [
-    "Tariff `category` codes (C, D, M2, ...) have no published legend; carried verbatim, never renamed.",
+    "Tariff `category` codes are decoded from the legend HMWSSB publishes on the dataset page; an earlier build wrongly recorded that no legend existed. Unknown codes keep a null label rather than a guess.",
     "Months where total demand is 0 yield collection_pct null rather than 0, to avoid a 0/0 ratio.",
     "Collection in a month can exceed demand in that month because arrears are collected late; collection_pct above 100% is therefore expected and is not an error.",
     "`connections_last_known` is a point-in-time count, never a sum, and `connections_as_of` names the month it came from. It is the last month that unit reported ANY connections, NOT a fixed date: sections that migrated scheme early report zero at the era boundary, which silently dropped Madhapur - the busiest tanker section in the city - from a join.",
@@ -12142,189 +12142,216 @@
       "demand": 19710047231.97,
       "collection": 19011085385.03,
       "connections_last_known": 733,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Industries-Bulk"
     },
     {
       "category": "D",
       "demand": 18200119449.09,
       "collection": 8317072722.68,
       "connections_last_known": 990223,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Domestic"
     },
     {
       "category": "C",
       "demand": 7084814603.95,
       "collection": 6464323156.43,
       "connections_last_known": 71311,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Commercial"
     },
     {
       "category": "M1",
       "demand": 5550949657.39,
       "collection": 2379669424.62,
       "connections_last_known": 41514,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "MSAC-Domestic"
     },
     {
       "category": "O",
       "demand": 4258728241.5,
       "collection": 2308973010.8,
       "connections_last_known": 1208,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Colonies"
     },
     {
       "category": "IW",
       "demand": 3085773209.38,
       "collection": 3024700967.34,
       "connections_last_known": 101,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Industries-WATBAS"
     },
     {
       "category": "X",
       "demand": 2696793664.47,
       "collection": 2727904651.0,
       "connections_last_known": 16,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Mix category"
     },
     {
       "category": "V",
       "demand": 2470074606.0,
       "collection": 1773875837.03,
       "connections_last_known": 147,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Gram panchayat"
     },
     {
       "category": "M3",
       "demand": 2413049789.2,
       "collection": 2272555232.11,
       "connections_last_known": 5758,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "MASC-Non Domestic"
     },
     {
       "category": "DM",
       "demand": 2395125614.25,
       "collection": 835389618.74,
       "connections_last_known": 152241,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Domestic-Municipality"
     },
     {
       "category": "DS",
       "demand": 2386883957.45,
       "collection": 120176253.85,
       "connections_last_known": 253102,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Domestic-Slums"
     },
     {
       "category": "M0",
       "demand": 1794656963.6,
       "collection": 983768692.17,
       "connections_last_known": 17097,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": null
     },
     {
       "category": "BC",
       "demand": 1413333678.24,
       "collection": 975988025.27,
       "connections_last_known": 97,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Bulk Commercial"
     },
     {
       "category": "CB",
       "demand": 645022374.21,
       "collection": 229189735.0,
       "connections_last_known": 17,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Cantonment board"
     },
     {
       "category": "I",
       "demand": 345558773.84,
       "collection": 344219981.49,
       "connections_last_known": 1789,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Industries"
     },
     {
       "category": "M2",
       "demand": 153533986.51,
       "collection": 71687456.08,
       "connections_last_known": 1112,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "MASC-Mixed"
     },
     {
       "category": "N",
       "demand": 144631782.25,
       "collection": 108855784.92,
       "connections_last_known": 5105,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Construction"
     },
     {
       "category": "M4",
       "demand": 111076084.65,
       "collection": 86761440.32,
       "connections_last_known": 953,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "MSB-individual"
     },
     {
       "category": "XO",
       "demand": 91063090.3,
       "collection": 91165257.0,
       "connections_last_known": 1,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Mix category others"
     },
     {
       "category": "S",
       "demand": 78202450.0,
       "collection": 33278910.0,
       "connections_last_known": 31,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Surrounding municipality"
     },
     {
       "category": "RC",
       "demand": 18959376.65,
       "collection": 327023.0,
       "connections_last_known": 1125,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Religious/charitable institution"
     },
     {
       "category": "CH",
       "demand": 1814786.25,
       "collection": 274323.89,
       "connections_last_known": 124,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Supply to charity institutions"
     },
     {
       "category": "MB",
       "demand": 188062.5,
       "collection": 176943.0,
       "connections_last_known": 3,
-      "connections_as_of": "2026-03"
+      "connections_as_of": "2026-03",
+      "label": "Multi Stored Buildings"
     },
     {
       "category": "FS",
       "demand": 0.0,
       "collection": 40210.0,
       "connections_last_known": 240,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Filling station"
     },
     {
       "category": "PS",
       "demand": 0.0,
       "collection": 13242.0,
       "connections_last_known": 2807,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Public stand post"
     },
     {
       "category": "MS",
       "demand": 0.0,
       "collection": 0.0,
       "connections_last_known": 1,
-      "connections_as_of": "2026-03"
+      "connections_as_of": "2026-03",
+      "label": "MASC"
     },
     {
       "category": "GP",
       "demand": 0.0,
       "collection": 0.0,
       "connections_last_known": 1,
-      "connections_as_of": "2026-06"
+      "connections_as_of": "2026-06",
+      "label": "Group PSP"
     }
   ]
 }
