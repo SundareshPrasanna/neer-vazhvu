@@ -539,7 +539,7 @@ export const translations: Record<string, TranslationEntry> = {
   // so the Bengali toggle renders these in English until a native review pass.
   // Tracked as a named gap in docs/cities/kolkata/data-sources.md.
   "hero.drain_title":        { en: "Drains vs the Sky" },
-  "hero.drain_built_for":    { en: "{city}'s drains were built to carry" },
+  "hero.drain_built_for":    { en: "{subject} were built to carry" },
   "hero.drain_per_hour":     { en: "of rain an hour" },
   "hero.drain_beaten_for":   { en: "The sky beat that standard for" },
   "hero.drain_beaten_for_alt": { en: "Rain exceeded {mm} mm an hour for" },

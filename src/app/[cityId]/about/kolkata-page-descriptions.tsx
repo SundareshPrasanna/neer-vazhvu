@@ -106,9 +106,11 @@ export function KolkataPageDescriptions({ cityId, cityName }: Props) {
         <p className="text-xs text-slate-500 dark:text-slate-400">
           The rainfall is ERA5-family reanalysis, which smooths short convective bursts, so every
           exceedance count is a <strong>lower bound</strong> rather than a rain-gauge reading. The
-          6 mm/h standard itself comes from a 2009 document describing British-era sewers;
-          post-rehabilitation stretches may carry a different rating, which is why the standard is
-          configuration with a citation rather than a constant.
+          6 mm/h standard comes from a 2009 KMC document, and we hold it to the scope KMC gives
+          it: the British-era brick trunk network, 180 km of it, not every drain in the city. KMC
+          publishes no design standard for the areas added since, so the chart reads on the core
+          city. The standard is configuration with a citation rather than a constant, so a newer
+          published rating is a one-line change.
         </p>
       </SubSection>
 

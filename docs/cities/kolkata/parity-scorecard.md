@@ -132,6 +132,6 @@ is the strongest city on the platform.
 
 | Item | Status |
 |---|---|
-| 6 mm/h hero anchor | **Pre-publication gate.** Needs a KEIIP document. One-line config change; the standard lives in `drainageCapacity.standardMmPerHour` with its citation |
+| 6 mm/h hero anchor | **Closed 2026-07-27** - by re-reading the citation, not by new evidence. KMC scopes the figure to the British-era brick trunk network in the same sentence it states it; our hero had generalised it to "Kolkata's drains". Fixed via `drainageCapacity.standardAppliesTo`. A future KEIIP DPR adds a standard for the *new* sewers - a second number, not a correction |
 | Wards 142-144 | **Blocked.** 9.2% of the city. Every route exhausted; the OpenCity ward KML is registered in Headwaters as the most likely way it ever closes |
 | `enabled: true` + migration 039 | **Your call.** Kolkata is registered disabled and preview-gated |

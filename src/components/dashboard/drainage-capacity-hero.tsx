@@ -185,7 +185,10 @@ export function DrainageCapacityHero({
 
         {/* The promise */}
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-          {t("hero.drain_built_for").replace("{city}", cityDisplayName)}
+          {t("hero.drain_built_for").replace(
+            "{subject}",
+            config.standardAppliesTo ?? `${cityDisplayName}'s drains`,
+          )}
         </p>
         <div className="flex items-baseline gap-2 mb-6">
           <span className="text-3xl font-bold text-slate-800 dark:text-slate-100">

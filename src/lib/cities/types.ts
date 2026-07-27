@@ -204,6 +204,17 @@ export interface DrainageCapacityConfig {
    *  must be able to go check it. */
   standardSource: { publisher: string; document: string; year: number; url?: string };
 
+  /** WHAT the standard actually governs, as the grammatical subject of "___
+   *  were built to carry N mm of rain an hour". Defaults to "<City>'s drains",
+   *  which is almost always broader than the source claims.
+   *
+   *  Set it wherever the citation scopes itself. Kolkata's source says "the
+   *  main sewer network / brick sewer ... was designed to discharge a rainfall
+   *  of 6 mm. per hour" - a statement about a specific 180 km trunk network,
+   *  not about every drain in the city. Rendering the default there would have
+   *  the hero assert something its own citation does not. */
+  standardAppliesTo?: string;
+
   /** What the network is, in one clause ("180 km of century-old brick sewer,
    *  mostly combined"). Gives the standard its physical meaning. */
   networkNote?: string;

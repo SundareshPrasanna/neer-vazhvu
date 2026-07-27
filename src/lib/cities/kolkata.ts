@@ -187,16 +187,32 @@ export const KOLKATA: CityConfig = {
     sewageBalance: true,
   },
   drainageCapacity: {
-    // KMC's own words: the main sewer network "was designed to discharge a
-    // rainfall of 6 mm. per hour". This is a DESIGN PROPERTY quoted from a
-    // document, not a perishable statistic - which is why it lives in config
-    // with its citation rather than as a constant in the component.
+    // KMC's own words: "The main sewer network / brick sewer was laid at time
+    // of British Regime and it was designed to discharge a rainfall of 6 mm.
+    // per hour." This is a DESIGN PROPERTY quoted from a document, not a
+    // perishable statistic - which is why it lives in config with its citation
+    // rather than as a constant in the component.
     //
-    // PRE-PUBLICATION GATE: the figure comes from a 2009 KMC document
-    // describing British-era brick sewers. Post-KEIIP rehabilitated stretches
-    // may carry a different standard. Confirm against a KEIIP document before
-    // this hero goes public (research S5.2 / open item). If it changes, this
-    // is a one-line config edit and a re-cited source.
+    // PRE-PUBLICATION GATE - CLOSED 2026-07-27, but NOT the way it was framed.
+    // The gate asked whether post-KEIIP rehabilitated stretches carry a
+    // different standard, and assumed a KEIIP DPR would settle it. Re-reading
+    // the citation in full shows the premise was mine, not the document's:
+    // KMC scopes the 6 mm/h to the British-era brick TRUNK network (180 km),
+    // and never claims it for the city's drains as a whole. So there is no
+    // conflict for a DPR to resolve - there was an over-broad paraphrase in
+    // our hero. Fixed by `standardAppliesTo` below, which makes the headline
+    // assert exactly what the citation asserts and no more.
+    //
+    // Re-verified live on 2026-07-27: the document still serves 200 from
+    // kmcgov.in and still carries the sentence verbatim. Its PDF creation
+    // date is 19 Dec 2009, consistent with its contents (latest internal
+    // date 15/07/2009, reform table ending 2005-09). Sixteen years old and
+    // still KMC's current public description of its own drainage - which is
+    // itself part of the finding.
+    //
+    // What a future KEIIP/KMC-SHARP DPR would add is a standard for the NEW
+    // sewers, which is a second number to show beside this one, not a
+    // correction to it. Registered in Headwaters against keiip.in.
     standardMmPerHour: 6,
     standardSource: {
       publisher: 'Kolkata Municipal Corporation',
@@ -204,8 +220,9 @@ export const KOLKATA: CityConfig = {
       year: 2009,
       url: 'https://www.kmcgov.in/KMCPortal/downloads/SewerageAndDrainage.pdf',
     },
+    standardAppliesTo: "Kolkata's main brick sewers",
     networkNote:
-      'Most of the core city drains through a combined system - sewage and stormwater in one conduit - and the main network includes 180 km of century-old brick sewer. Most drainage pumping stations were built 50 to 100 years ago.',
+      'The 6 mm/h figure is KMC\'s stated design capacity for the British-era trunk network specifically: 180 km of century-old brick sewer, mostly combined, carrying sewage and stormwater in one conduit, with most pumping stations built 50 to 100 years ago. KMC does not publish a design standard for the newer areas added since, so this chart reads on the core city rather than on all 144 wards.',
     registerLink: {
       // Deliberately NOT "last week". This is static config on a page a
       // reader may open months from now, and the register itself is only as

@@ -32,11 +32,26 @@ Absence claims follow the Madurai hedging rule: "no known public X".
    convective bursts, so every exceedance count is a **lower bound**, not a rain-gauge reading. Where
    a city has in-situ sub-daily gauges these supersede the model. Kolkata has no such public network
    found in this pass; Hyderabad's 185 TGDPS stations are the contrast case.
-2. **The 6 mm/hour figure is from a 2009 document describing British-era brick sewers.** It is a
-   design property rather than a perishable statistic, but post-KEIIP rehabilitated stretches may
-   carry a different rating. **PRE-PUBLICATION GATE: confirm against a KEIIP document before this
-   hero goes public.** The standard lives in config (`drainageCapacity.standardMmPerHour`), so a
-   revision is a one-line edit and a re-cited source, not a code change.
+2. **The 6 mm/hour figure governs the British-era brick trunk network, not every drain in the
+   city.** KMC scopes it in the same sentence it states it: *"The main sewer network / brick sewer
+   was laid at time of British Regime and it was designed to discharge a rainfall of 6 mm. per
+   hour."* The hero says `Kolkata's main brick sewers were built to carry...` for that reason, via
+   `drainageCapacity.standardAppliesTo`. KMC publishes no design standard for the areas added
+   since, so the chart is a statement about the core city.
+
+   **This resolved a pre-publication gate, and not in the direction it was set.** The gate asked
+   whether post-KEIIP rehabilitated stretches carry a different rating, and assumed a KEIIP DPR
+   would settle it. Re-reading the citation in full (2026-07-27) showed the conflict was between
+   the source and *our paraphrase of it*, not between two sources: KMC never claimed the 6 mm/h
+   for the whole city. There was nothing for a DPR to adjudicate. What a future DPR would add is a
+   standard for the **new** sewers - a second number to show beside this one, not a correction to
+   it. Registered in Headwaters against `keiip.in`.
+
+   Re-verified 2026-07-27: the document still serves HTTP 200 from kmcgov.in with the sentence
+   intact. PDF creation date 19 Dec 2009; latest internal date 15/07/2009. Sixteen years old and
+   still KMC's current public description of its own drainage, which is itself part of the
+   finding. The standard lives in config (`drainageCapacity.standardMmPerHour`), so a revision is
+   a one-line edit and a re-cited source, not a code change.
 
 **Independent check.** The modelled exceedance and the KMC waterlogging register below are different
 kinds of evidence. One says the sky beat the standard; the other says which streets KMC actually sent

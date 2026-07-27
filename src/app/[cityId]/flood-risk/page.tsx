@@ -60,7 +60,7 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
       unit: { en: "mm of rain per hour" },
       label: { en: "Drainage design standard" },
       note: {
-        en: "Above roughly 6 mm in an hour the sewers cannot carry the flow and it backs up into the streets. The standard is a design property quoted from KMC's 2009 Sewerage and Drainage document describing British-era brick sewers; post-KEIIP rehabilitated stretches may carry a different rating. The wettest hour on record delivered 40.2 mm - 6.7 times capacity.",
+        en: "Above roughly 6 mm in an hour the sewers cannot carry the flow and it backs up into the streets. The standard is a design property quoted from KMC's 2009 Sewerage and Drainage document, and KMC scopes it precisely: to the British-era brick trunk network, 180 km of it, not to every drain in the city. No design standard is published for the areas added since, so read this as a statement about the core city. The wettest hour on record delivered 40.2 mm - 6.7 times capacity.",
       },
     },
     historical_events: [
