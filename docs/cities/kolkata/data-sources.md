@@ -320,6 +320,32 @@ count is primary-confirmed from KMC's own Environment Plan.
 `my-ward` and all ward surfaces stay **off** until the three missing wards are recovered and a
 name/borough join is built. A partial ward layer that silently drops three wards is worse than none.
 
+**What we know about them anyway.** KMC-SHARP's IEE places wards **142 and 143 in Borough XVI**,
+created in **2012** (not the 2015 Joka additions previously assumed), with ~573 ha of Ward 142
+spread across two catchments draining via the **Keorapukur canal into Tolly Nullah - the Adi
+Ganga**. So they are unmapped, not unknown. It is enough to attribute them in prose, and not
+enough to draw them.
+
+### Routes tried, and why each fails (re-run 2026-07-27, with kmcgov.in back up)
+
+The first exhaustion pass ran while KMC's site was down, so it was re-run once the site returned.
+Two new candidates appeared and both are empty:
+
+| Route | Result |
+|---|---|
+| OpenCity "Kolkata Wards Map 2022" KML | 141 wards. The only public ward geometry that exists |
+| OpenStreetMap | Maps **no** Kolkata ward boundaries at all, for any ward |
+| `kmcgov.in` → `WardwiseSmartMap.jsp` | **Page exists, content does not.** Renders nav chrome and an "Ward Wise Smart Map" heading over an empty body. Footer still reads "@ 2009" |
+| `kmcgov.in` → `DrainageNetworkMap.jsp` | Same stub, byte-identical link set |
+| `kmc.wb.gov.in` (the newer DIGIT/eGov citizen portal) | Service-delivery stack - property tax, water/drainage billing, grievances. Google Maps for pin-drops; **zero** occurrences of geojson/kml/leaflet/geoserver/wfs in its 9.9 MB bundle |
+| `kmc.wb.gov.in/egov-location/.../boundarys/_search` | Live endpoint, `200 OK`, and returns **`TenantBoundary: []`** for every tenant/boundaryType tried |
+
+**The finding is broader than three wards.** KMC publishes no ward geometry through *either* of its
+portals - the boundary service holds nothing for ward 1 any more than for ward 142. The OpenCity
+KML is not one source among several that happens to be short by three; it is the only one there is.
+That reframes the gap: it will not close by finding a better KMC endpoint, only by someone
+digitising the 2012 delimitation. Registered in Headwaters as a watch on the OpenCity KML.
+
 ## The contested denominator
 
 KMC's Environment Plan gives area 206.08 km², population "more than 4.5 million", **floating

@@ -133,5 +133,5 @@ is the strongest city on the platform.
 | Item | Status |
 |---|---|
 | 6 mm/h hero anchor | **Closed 2026-07-27** - by re-reading the citation, not by new evidence. KMC scopes the figure to the British-era brick trunk network in the same sentence it states it; our hero had generalised it to "Kolkata's drains". Fixed via `drainageCapacity.standardAppliesTo`. A future KEIIP DPR adds a standard for the *new* sewers - a second number, not a correction |
-| Wards 142-144 | **Blocked.** 9.2% of the city. Every route exhausted; the OpenCity ward KML is registered in Headwaters as the most likely way it ever closes |
+| Wards 142-144 | **Blocked, and re-confirmed 2026-07-27** once kmcgov.in came back up. Two new candidate routes appeared and both are empty: `WardwiseSmartMap.jsp` is a content-less stub, and the newer DIGIT portal's boundary service returns `TenantBoundary: []`. The broader finding: **KMC publishes no ward geometry at all**, for any ward, through either portal - so this closes by someone digitising the 2012 delimitation, not by a better endpoint. 9.2% of the city; OpenCity ward KML watched in Headwaters |
 | `enabled: true` + migration 039 | **Your call.** Kolkata is registered disabled and preview-gated |
