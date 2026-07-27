@@ -16,6 +16,10 @@ Per-city *features* live alongside in the same folder: [docs/cities/chennai/feat
 
 When adding a sixth city, copy the Delhi, Mumbai or Bengaluru folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
 
+## Corridors (non-city page type)
+
+Industrial corridors are framed around industry and the shared aquifer, not residents. The pilot is the Sriperumbudur-Oragadam corridor (`/corridors/sriperumbudur`): sources, recon evidence and per-source ranks live in [docs/corridors/sriperumbudur/recon.md](docs/corridors/sriperumbudur/recon.md), and every data-handling judgment in [docs/corridors/sriperumbudur/DECISIONS.md](docs/corridors/sriperumbudur/DECISIONS.md). Data build: `scripts/build_corridor_sriperumbudur.py` + the mandatory cross-check gate `scripts/verify_corridor_assessment.py`. Upstreams are registered in `scripts/source-registry/corridors.json`.
+
 ## Documentation principle: avoid absolute-absence claims
 
 When describing layers we don't have data for, hedge with "no known public X" or "we haven't yet found a public daily feed for X" rather than "no public X exists" or "the utility doesn't publish X". Our research is bounded; somewhere a PDF, internal portal, or unindexed dataset might exist. Categorical claims of absolute absence get a counter-example fast and discredit the broader narrative.

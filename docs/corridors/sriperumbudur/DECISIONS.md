@@ -1,0 +1,39 @@
+# Sriperumbudur-Oragadam Corridor: Decision Log
+
+Running log of every data-handling judgment for the corridor page type, so the methodology page can be written from it honestly. Format: dated entries, status PROPOSED (awaiting Sundaresh) / DECIDED / SUPERSEDED. Recon evidence: `docs/corridors/sriperumbudur/recon.md`.
+
+## D1. Corridor extent: two boundaries (2026-07-27, DECIDED; unit list APPROVED subject to intersect)
+Per review: a tight "statutory parks" boundary (SIPCOT estates + Mahindra World City + One Hub) and a wider "functional corridor" of the assessment units containing them; Milestone 1 maps the wider one with parks overlaid. One Hub Chennai has no known public boundary and is excluded from V1 as a named gap. APPROVED taluk list: Sriperumbudur, Kundrathur, Walajabad, Kancheepuram; Chengalpattu, Tambaram, Vandalur, Thirupporur; Avadi, Poonamallee. Final list fixed by spatial intersect of park polygons with firka geometry at build time; if the intersect adds or drops a taluk, the intersect result stands without further review (Sundaresh, 2026-07-27). Intersect result: see D12.
+
+## D2. Assessment geometry and the uuid join (2026-07-27, DECIDED, verify-at-build)
+Assessment-unit polygons come from IN-GRES GeoServer `gec:indgec_vers_tamilnadu` (CGWB's own firka geometry; no other firka source exists). Verified: the assessment API's `reportSummary` firka uuids match the **year=2022** polygon vintage, not year=2025 (5/5 in Sriperumbudur taluk test). Rule: join latest-edition categories to the year=2022 vintage by uuid; assert statewide match at build; fall back to name-within-taluk join only with a logged exception list.
+
+## D3. Trend comparability cut lines (2026-07-27, DECIDED)
+Two discontinuities: the 2019 district split and the firka-to-taluk unit change between editions 2022 and 2023 (state reports stay firka; the served taluk series is the national apportionment). Rules: (a) trend arrows only across editions 2023/2024/2025 (identical taluk units, verified); (b) firka-level history (editions 2020, 2022) shown as context, never arrowed against taluk numbers; (c) edition 2017 (pre-split, firka) only in a clearly labeled historical panel; (d) no cross-discontinuity deltas anywhere. Never mix "last-available" values across editions (the Madurai lesson).
+
+## D4. TNGIS and SIPCOT GIS licensing posture (2026-07-27, DECIDED as posture; confirmations pending)
+Neither publishes operative terms (TNGIS terms modal is literal lorem ipsum; SIPCOT footer says All Rights Reserved). TN Data Policy 2022 s.3.2 + NGP 2022 point open-by-intent. Posture: (a) extracted vectors ship with per-dataset provenance notes and a separate data-license note, never silently under the repo MIT license; (b) confirmation emails to TNGIS (tngis.support@tn.gov.in, citing TNDP 2022 s.3.2) and SIPCOT before launch; (c) the TNGIS tank layer and the SIPCOT allottee plot layer are HELD until confirmation or a documented public-interest decision; park outer boundaries proceed with attribution (official government GIS, factual boundaries, strong public-interest use). No bulk mirroring of either service.
+
+## D5. WRIS station-to-geography assignment (2026-07-27, DECIDED)
+WRIS's district field is pre-split for many stations (Kancheepuram query returns Chengalpattu tehsils; Chengalpattu query returns 8 stations). Stations are assigned to district/taluk/firka by point-in-polygon on coordinates, never by the WRIS district field. Sign convention derived per station from its own median (platform standing method); physical envelope gate with drops reported.
+
+## D6. Regulatory explainer framing (2026-07-27, DECIDED)
+The rules section is TN-specific: SGSWRDC G.O.-regime NOC + TNPCB consent linkage + the 1987 Act only within its village Schedule. The CGWA 2020 tier table appears as national context with an explicit "contested on paper, inoperative in TN practice" label, citing CGWA's own state list and the RS 2971 annexure. The absence of any public permission register is presented as a first-class finding, not a footnote. The unresolved supremacy question is stated, not resolved.
+
+## D7. Park water-source claims (2026-07-27, DECIDED)
+Statements like "supplied by CMWSSB/Chembarambakkam + TTRO" or "groundwater draw prohibited" are cited per park from that park's own EC/HYCR document, with EC ID and date. No generalization across parks; parks without a fetched document get "no known public statement".
+
+## D8. Company naming discipline (2026-07-27, DECIDED)
+Park boundaries and (later) allottee lists are published government records and may be shown as location facts. The page never states or implies that any company depletes the aquifer, is non-compliant, or causes a unit's status; the methodology says explicitly that our data cannot support attribution. Default aggregation is park level; the plot-level allottee layer is an M3 decision gated on D4.
+
+## D9. Salinity-class units (2026-07-27, DECIDED)
+IN-GRES `salinity` category (Tiruvallur's Minjur belt firka) means "not assessed on extraction", carries no stage %. Rendered as its own class with its own legend entry; never coerced to a stage band or colored on the stage ramp.
+
+## D11. Chembarambakkam dependency panel in M1 (2026-07-27, DECIDED, added at review)
+The parks' documented supply is CMWSSB (Chembarambakkam) plus TTRO; the honest risk narrative the data supports is surface-water dependency, not groundwater depletion. M1 adds a compact panel: "the corridor's documented water source is this reservoir", with storage history including 2019, reusing the existing Chennai reservoir data and rich-body assets. Supply claims cited per park per D7.
+
+## D12. M1 review outcomes (2026-07-27, DECIDED by Sundaresh)
+(a) Firka view is the headline, taluk view a prominent toggle; the pair is presented deliberately as "what official tables show" vs "what they hide". (b) 2016-17 pre-split history appears in M1 as prose only in the what-changed section (with the units-and-districts-differ caveat); the historical panel is M2. (c) License emails go out under Sundaresh's name from the neervazhvu.org domain before build completion; holds per D4 until replies. (d) Cross-checks (IN-GRES vs national annexure vs state PDF firka rows) run before any prose is written. (e) The "inoperative in practice" claim about CGWA in TN always ships attached to its citations, never as an unattributed aside. Intersect result for D1 (run 2026-07-27, scripts/build_corridor_sriperumbudur.py): park polygons intersect firkas of exactly three taluks: SRIPERUMBUDUR, KUNDRATHUR, CHENGALPATTU (the containing set). The other seven approved taluks (Kancheepuram, Walajabad, Tambaram, Vandalur, Thirupporur, Avadi, Poonamallee) are the immediate ring and remain in the functional corridor per the approved proposal (containing + ring). No taluk was added or dropped by the intersect. Final list = the approved ten; 47 firka polygons.
+
+## D10. Editorial finding to preserve (2026-07-27, DECIDED)
+The regulator's current data classes the corridor's host units Safe with low stages, stress in the surrounding ring, and shows longer-arc improvement from the 2016-17 firka picture. The page leads with what the data says, including the taluk-averaging caveat (OE/critical firkas inside Safe taluks), and does not construct a depletion narrative the sources do not support.

@@ -1,0 +1,33 @@
+{
+  "_doc": "Industrial Corridor page type sources (docs/corridors/sriperumbudur/DECISIONS.md). CADENCE + TIER ARE DOCUMENTATION ONLY - decided 2026-07-26: neither gates polling; cadence is a CLAIM and claims are wrong.",
+  "sources": [
+    {
+      "id": "ingres-gw-assessment-corridor-tn",
+      "scope": "corridors",
+      "publisher": "CGWB / TN SG&SWRDC via IN-GRES (IIT Hyderabad)",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "GoI publication, cited with attribution",
+      "type": "page",
+      "cadence": "yearly (GEC assessment edition)",
+      "tier": 1,
+      "detection": { "method": "http-meta" },
+      "dependsOn": ["public/data/corridors"],
+      "refreshMethod": "python3 scripts/build_corridor_sriperumbudur.py, then python3 scripts/verify_corridor_assessment.py (cross-check gate, must exit 0 before publish; D12d)",
+      "notes": "Assessment API + GeoServer firka geometry (gec:indgec_vers_tamilnadu). JOIN RULE (D2): the API's reportSummary firka uuids match the year=2022 polygon vintage, asserted by the build script. When a new assessment year appears in the portal year list, add it to TALUK_EDITIONS and re-run both scripts. CAVEAT (shared with ingres-gw-assessment-tn): http-meta watches the SPA build, not the data; a redeploy false-positives and a data-only update could be missed."
+    },
+    {
+      "id": "sipcot-gis-park-boundaries",
+      "scope": "corridors",
+      "publisher": "SIPCOT GIS, Government of Tamil Nadu",
+      "url": "https://sipcotgis.tn.gov.in/",
+      "license": "no stated open license ('All Rights Reserved' footer); reuse confirmation requested 2026-07-27, boundaries shipped with attribution pending reply (D4)",
+      "type": "api",
+      "cadence": "irregular (cadastral updates)",
+      "tier": 1,
+      "detection": { "method": "http-meta" },
+      "dependsOn": ["public/data/corridors"],
+      "refreshMethod": "python3 scripts/build_corridor_sriperumbudur.py (WFS pull of cite:industrial_complex_boundary-<ParkKey>, outer boundaries only; the plot-level allottee layer is deliberately NOT fetched per D4/D8)",
+      "notes": "GeoServer WFS on port 8086, no auth. Park keys are exact database names (e.g. Oragadam_DTA, not Oragadam). Polygon extent exceeds the notified-saleable-area attribute; the attribute must never be presented as the polygon's area."
+    }
+  ]
+}

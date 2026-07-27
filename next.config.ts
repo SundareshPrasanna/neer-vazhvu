@@ -84,6 +84,8 @@ const nextConfig: NextConfig = {
     "/*/rivers": ["./public/data/basins/*/inventory.json"],
     // Embeddable atlas reads the same inventory.
     "/embed/basins/*": ["./public/data/basins/*/inventory.json"],
+    // Corridor pages server-read the assessment table + crosscheck summary.
+    "/corridors/*": ["./public/data/corridors/*/assessment*.json"],
   },
   async headers() {
     return [

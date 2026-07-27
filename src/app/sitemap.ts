@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { listEnabledPlaces } from "@/lib/cities";
+import { listCorridors } from "@/lib/corridors";
 import { FEATURE_AVAILABILITY } from "@/lib/cities/routing";
 
 const BASE = "https://neervazhvu.org";
@@ -51,6 +52,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: hint.priority,
       });
     }
+  }
+
+  // Industrial corridor pages (non-city page type; src/lib/corridors/).
+  for (const corridor of listCorridors()) {
+    entries.push({
+      url: `${BASE}/corridors/${corridor.corridorId}`,
+      lastModified: now,
+      changeFrequency: "yearly", // assessment editions are annual
+      priority: 0.8,
+    });
   }
 
   return entries;
