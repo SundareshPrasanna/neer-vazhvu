@@ -159,13 +159,19 @@ export function Figure({
   fit = "cover",
 }: FigureProps) {
   const { t } = useLanguage();
-  // "wide" breaks well past the prose column. The negative margins are
-  // heavy on large screens so detailed images (maps, diagrams) render
-  // close to viewport width rather than being squeezed into the
-  // 768px reading column.
+  // "wide" breaks well past the prose column so detailed images (maps,
+  // diagrams) render close to viewport width rather than being squeezed into
+  // the reading measure.
+  //
+  // The base value MUST match the article's own horizontal padding, which is
+  // px-4 (16px) on mobile - see story-page.tsx. It was -mx-6 (24px), so every
+  // full-bleed figure hung 8px off each edge of a 393px phone, which dragged
+  // the layout viewport to 402px and made the browser shrink the whole page.
+  // The larger breakpoints keep their existing values: they bleed into the
+  // centring gutter of a max-w-4xl article, which is what "wide" is for.
   const wrapperCls =
     size === "wide"
-      ? "my-8 -mx-6 sm:-mx-12 md:-mx-24 lg:-mx-40 xl:-mx-56"
+      ? "my-8 -mx-4 sm:-mx-12 md:-mx-24 lg:-mx-40 xl:-mx-56"
       : "my-8";
   // For "contain" we add a subtle background so letterboxed sides don't
   // sit awkwardly against the prose - especially noticeable in dark mode.

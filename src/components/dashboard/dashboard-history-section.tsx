@@ -130,6 +130,7 @@ export function DashboardHistorySection({
           (s) => s.hasPublicFeed === false,
         ) ?? false
       }
+      absentNote={tryGetPlaceConfig(cityId)?.reservoirHistoryAbsentNote}
       unit={unit}
       series={state.payload.series}
       forecast={state.payload.forecast}

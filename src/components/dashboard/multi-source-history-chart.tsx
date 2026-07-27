@@ -38,6 +38,11 @@ interface Props {
   /** True when NO source for this city has a public feed - the empty state
    *  then says so instead of promising an ingestion that cannot arrive. */
   noPublicFeed?: boolean;
+  /** Set when no authority publishes a storage series for this place at all.
+   *  Takes precedence over `noPublicFeed`, which infers the same thing from
+   *  the source feed flags and gets it wrong for a place like Delhi that has a
+   *  live feed carrying no storage. */
+  absentNote?: string;
 }
 
 const TIME_TABS = [
@@ -120,6 +125,7 @@ export function MultiSourceHistoryChart({
   scopeLabel,
   defaultTab = "1yr",
   noPublicFeed = false,
+  absentNote,
 }: Props) {
   const [tab, setTab] = useState<TabKey>(defaultTab);
   const [view, setView] = useState<ViewMode>("by_source");
@@ -304,12 +310,15 @@ export function MultiSourceHistoryChart({
     return (
       <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-950/20 p-4 text-sm text-slate-700 dark:text-slate-300">
         <div className="font-semibold text-amber-800 dark:text-amber-300 text-xs uppercase tracking-wider mb-1">
-          Reservoir history pending
+          {absentNote || noPublicFeed
+            ? "No storage history to chart"
+            : "Reservoir history pending"}
         </div>
         <p>
-          {noPublicFeed
-            ? `No authority publishes a daily storage series for ${cityDisplayName}'s sources, so there is no history to chart. Each source card names who would have to publish it.`
-            : `${cityDisplayName} reservoir storage history hasn't been backfilled yet. Once daily storage readings start landing, this chart fills in automatically.`}
+          {absentNote ??
+            (noPublicFeed
+              ? `No authority publishes a daily storage series for ${cityDisplayName}'s sources, so there is no history to chart. Each source card names who would have to publish it.`
+              : `${cityDisplayName} reservoir storage history hasn't been backfilled yet. Once daily storage readings start landing, this chart fills in automatically.`)}
         </p>
       </div>
     );
