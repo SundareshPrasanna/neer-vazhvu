@@ -24,8 +24,8 @@ export interface CorridorTalukRow {
     { category: string | null; stage_pct: number | null; rainfall_mm: number | null }
   >;
   category_change: string | null;
-  stage_trend: "up" | "down" | "flat" | null;
-  firka_categories_2025: [string, string | null][];
+  stage_trend: "up" | "down" | "flat" | "mixed" | null;
+  firka_categories_2025: [string, string | null, number | null][];
 }
 
 export interface CorridorAssessment {

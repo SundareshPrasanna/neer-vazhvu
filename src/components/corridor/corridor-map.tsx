@@ -19,12 +19,18 @@ import {
 } from "./classification";
 
 // Bump when the corridor geojson files are regenerated (cache-buster).
-const GEO_VERSION = 1;
+const GEO_VERSION = 2;
 
 type UnitView = "firka" | "taluk";
 
 interface CorridorMapProps {
   manifest: CorridorManifest;
+  /**
+   * "brief" renders the print variant: firka view only (no toggle), no info
+   * button, shorter frame, and the light palette regardless of site theme so
+   * the generated PDF is print-consistent.
+   */
+  variant?: "full" | "brief";
 }
 
 /**
@@ -34,8 +40,10 @@ interface CorridorMapProps {
  * park outlines overlaid. Geometry and categories come pre-joined from
  * scripts/build_corridor_sriperumbudur.py; nothing is computed client-side.
  */
-export function CorridorMap({ manifest }: CorridorMapProps) {
+export function CorridorMap({ manifest, variant = "full" }: CorridorMapProps) {
   const tiles = useMapTiles();
+  const brief = variant === "brief";
+  const dark = brief ? false : tiles.isDark;
   const [view, setView] = useState<UnitView>("firka");
   const [firkas, setFirkas] = useState<FeatureCollection | null>(null);
   const [taluks, setTaluks] = useState<FeatureCollection | null>(null);
@@ -68,24 +76,35 @@ export function CorridorMap({ manifest }: CorridorMapProps) {
     () => (active ? geoJsonBounds(active) : null),
     [active],
   );
+  // Legend shows only classes present in the rendered layer: a Saline entry
+  // over a corridor with no saline unit would claim data the map doesn't
+  // carry (the nearest saline firka, Minjur, is in Ponneri, outside).
+  const presentCategories = useMemo(() => {
+    const present = new Set<string>();
+    for (const f of active?.features ?? []) {
+      const c = (f.properties as Record<string, unknown> | null)?.[`category_${ed}`];
+      if (typeof c === "string") present.add(c);
+    }
+    return CATEGORY_ORDER.filter((c) => present.has(c));
+  }, [active, ed]);
 
   const unitStyle = (feature?: Feature): PathOptions => {
     const cat = (feature?.properties as Record<string, unknown> | undefined)?.[
       `category_${ed}`
     ] as string | null;
     return {
-      fillColor: categoryColor(cat, tiles.isDark),
+      fillColor: categoryColor(cat, dark),
       fillOpacity: 0.55,
-      color: tiles.isDark ? "#0f172a" : "#ffffff",
+      color: dark ? "#0f172a" : "#ffffff",
       weight: 1,
       dashArray: strokeDashFor(cat as AssessmentCategory | null),
     };
   };
 
   const parkStyle: PathOptions = {
-    fillColor: tiles.isDark ? "#e2e8f0" : "#0f172a",
+    fillColor: dark ? "#e2e8f0" : "#0f172a",
     fillOpacity: 0.08,
-    color: tiles.isDark ? "#e2e8f0" : "#0f172a",
+    color: dark ? "#e2e8f0" : "#0f172a",
     weight: 2,
   };
 
@@ -99,13 +118,11 @@ export function CorridorMap({ manifest }: CorridorMapProps) {
     const stage =
       view === "taluk" && typeof p[`stage_pct_${ed}`] === "number"
         ? `<br/>Stage of extraction: ${p[`stage_pct_${ed}`]}% (${ed} edition)`
-        : "";
-    const firkaNote =
-      view === "firka"
-        ? "<br/><span style='opacity:.75'>Stage % is published at taluk level; toggle to the taluk view.</span>"
-        : "";
+        : view === "firka" && typeof p[`stage_pct_${ed}`] === "number"
+          ? `<br/>Stage of extraction: ${p[`stage_pct_${ed}`]}% (${ed} state report annexure)`
+          : "";
     layer.bindTooltip(
-      `<strong>${name}</strong><br/>${label} (${ed} assessment)${stage}${firkaNote}`,
+      `<strong>${name}</strong><br/>${label} (${ed} assessment)${stage}`,
       { sticky: true },
     );
   };
@@ -122,19 +139,27 @@ export function CorridorMap({ manifest }: CorridorMapProps) {
   };
 
   return (
-    <div className="relative h-[460px] sm:h-[540px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+    <div
+      className={
+        brief
+          ? "relative h-[320px] rounded-lg overflow-hidden border border-slate-200"
+          : "relative h-[460px] sm:h-[540px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700"
+      }
+      style={brief ? { breakInside: "avoid" } : undefined}
+    >
       <MapContainer
         center={manifest.center}
         zoom={manifest.zoom}
         className="h-full w-full"
         scrollWheelZoom={false}
+        zoomControl={!brief}
       >
         <MapResizer />
         <TileLayer url={tiles.url} attribution={tiles.attribution} />
-        <FitToBounds bounds={bounds} resetKey={view} padding={[24, 24]} />
+        <FitToBounds bounds={bounds} resetKey={view} padding={brief ? [6, 6] : [24, 24]} />
         {active && (
           <GeoJSON
-            key={`${view}-${tiles.isDark ? "d" : "l"}`}
+            key={`${view}-${dark ? "d" : "l"}`}
             data={active}
             style={unitStyle}
             onEachFeature={onEachUnit}
@@ -142,7 +167,7 @@ export function CorridorMap({ manifest }: CorridorMapProps) {
         )}
         {parks && (
           <GeoJSON
-            key={`parks-${tiles.isDark ? "d" : "l"}`}
+            key={`parks-${dark ? "d" : "l"}`}
             data={parks}
             style={() => parkStyle}
             onEachFeature={onEachPark}
@@ -151,6 +176,7 @@ export function CorridorMap({ manifest }: CorridorMapProps) {
       </MapContainer>
 
       {/* View toggle: the firka/taluk pair is the page's core argument. */}
+      {!brief && (
       <div className="absolute top-3 left-3 z-[1000] flex rounded-lg overflow-hidden border border-slate-300 dark:border-slate-600 shadow-lg text-xs font-medium">
         <button
           onClick={() => setView("firka")}
@@ -167,32 +193,41 @@ export function CorridorMap({ manifest }: CorridorMapProps) {
           Taluk view
         </button>
       </div>
+      )}
 
       {/* Legend: labels always paired with color; dashed samples mirror the
-          stroke encoding so the scale never rides on hue alone. */}
-      <div className="absolute bottom-3 left-3 z-[1000] bg-white/95 dark:bg-slate-800/95 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-3 space-y-1">
-        <h4 className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          stroke encoding so the scale never rides on hue alone. In the brief
+          variant the box stays light regardless of site theme. */}
+      <div
+        className={`absolute bottom-3 left-3 z-[1000] rounded-lg shadow-lg border p-3 space-y-1 ${
+          brief
+            ? "bg-white/95 border-slate-200"
+            : "bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700"
+        }`}
+      >
+        <h4 className={`text-[10px] font-semibold uppercase tracking-wide ${brief ? "text-slate-500" : "text-slate-500 dark:text-slate-400"}`}>
           CGWB classification, {ed} assessment
         </h4>
-        {CATEGORY_ORDER.map((cat) => (
-          <div key={cat} className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
+        {presentCategories.map((cat) => (
+          <div key={cat} className={`flex items-center gap-2 text-xs ${brief ? "text-slate-600" : "text-slate-600 dark:text-slate-300"}`}>
             <span
               className="w-4 h-3 rounded-sm flex-shrink-0 border"
               style={{
-                backgroundColor: categoryColor(cat, tiles.isDark),
+                backgroundColor: categoryColor(cat, dark),
                 borderStyle: strokeDashFor(cat) ? "dashed" : "solid",
-                borderColor: tiles.isDark ? "#0f172a" : "#ffffff",
+                borderColor: dark ? "#0f172a" : "#ffffff",
               }}
             />
             {CATEGORY_LABELS[cat]}
           </div>
         ))}
-        <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 pt-1 border-t border-slate-200 dark:border-slate-700">
-          <span className="w-4 h-3 flex-shrink-0 border-2" style={{ borderColor: tiles.isDark ? "#e2e8f0" : "#0f172a" }} />
+        <div className={`flex items-center gap-2 text-xs pt-1 border-t ${brief ? "text-slate-600 border-slate-200" : "text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700"}`}>
+          <span className="w-4 h-3 flex-shrink-0 border-2" style={{ borderColor: dark ? "#e2e8f0" : "#0f172a" }} />
           Industrial park boundary
         </div>
       </div>
 
+      {!brief && (
       <MapInfoButton className="absolute top-3 right-3 z-[1000]">
         <div className="space-y-2 text-xs">
           <p className="font-semibold">Sources and method</p>
@@ -209,13 +244,14 @@ export function CorridorMap({ manifest }: CorridorMapProps) {
             notified saleable area.
           </p>
           <p>
-            Stage of extraction is published at taluk level from the 2023
-            edition onward; firka rows carry the classification. The full
-            method and every source line: see the methodology section below
-            the map.
+            Firka stage percentages come from the state report annexure (the
+            served series carries firka classifications only); taluk stages
+            are from the served assessment series. The full method and every
+            source line: see the methodology section below the map.
           </p>
         </div>
       </MapInfoButton>
+      )}
     </div>
   );
 }

@@ -14,32 +14,36 @@ import {
 export function AssessmentTable({
   rows,
   editions,
+  compact = false,
 }: {
   rows: CorridorTalukRow[];
   editions: string[];
+  /** Print/brief variant: tighter cells, symbol-only trend, no firka column. */
+  compact?: boolean;
 }) {
   const latest = editions[editions.length - 1];
   const sorted = [...rows].sort(
     (a, b) =>
       (b.editions[latest]?.stage_pct ?? -1) - (a.editions[latest]?.stage_pct ?? -1),
   );
+  const cell = compact ? "px-2 py-1" : "px-3 py-2";
   return (
     <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
-      <table className="w-full text-sm">
+      <table className={compact ? "w-full text-[11px]" : "w-full text-sm"}>
         <thead>
           <tr className="bg-slate-50 dark:bg-slate-800/60 text-left text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            <th className="px-3 py-2 font-semibold">Taluk</th>
-            <th className="px-3 py-2 font-semibold">District</th>
+            <th className={`${cell} font-semibold`}>Taluk</th>
+            <th className={`${cell} font-semibold`}>District</th>
             {editions.map((ed) => (
-              <th key={ed} className="px-3 py-2 font-semibold whitespace-nowrap">
+              <th key={ed} className={`${cell} font-semibold whitespace-nowrap`}>
                 {ed} stage %
               </th>
             ))}
-            <th className="px-3 py-2 font-semibold">Trend</th>
-            <th className="px-3 py-2 font-semibold whitespace-nowrap">
-              Classification ({latest})
+            <th className={`${cell} font-semibold`}>Trend</th>
+            <th className={`${cell} font-semibold whitespace-nowrap`}>
+              {compact ? "Classification" : `Classification (${latest})`}
             </th>
-            <th className="px-3 py-2 font-semibold">Firkas inside ({latest})</th>
+            {!compact && <th className={`${cell} font-semibold`}>Firkas inside ({latest})</th>}
           </tr>
         </thead>
         <tbody>
@@ -48,26 +52,37 @@ export function AssessmentTable({
             const stressed = row.firka_categories_2025.filter(
               ([, c]) => c === "critical" || c === "over_exploited",
             );
+            const stressedLabel = (name: string, c: string, stage: number | null) =>
+              `${titleCase(name)} is ${CATEGORY_LABELS[c as AssessmentCategory]}${stage != null ? ` (${stage.toFixed(1)}%)` : ""}`;
             return (
               <tr
                 key={row.taluk}
                 className="border-t border-slate-100 dark:border-slate-800 align-top"
               >
-                <td className="px-3 py-2 font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap">
+                <td className={`${cell} font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap`}>
                   {titleCase(row.taluk)}
                 </td>
-                <td className="px-3 py-2 text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                <td className={`${cell} text-slate-600 dark:text-slate-300 whitespace-nowrap`}>
                   {row.district}
                 </td>
                 {editions.map((ed) => (
-                  <td key={ed} className="px-3 py-2 font-mono text-slate-700 dark:text-slate-200">
+                  <td key={ed} className={`${cell} font-mono text-slate-700 dark:text-slate-200`}>
                     {row.editions[ed]?.stage_pct ?? "-"}
                   </td>
                 ))}
-                <td className="px-3 py-2" title="Change in stage of extraction vs the prior edition (more than 1 percentage point)">
-                  {row.stage_trend === "up" ? "▲ rising" : row.stage_trend === "down" ? "▼ falling" : "→ flat"}
+                <td
+                  className={`${cell} whitespace-nowrap`}
+                  title="Net stage change across editions 2023-2025: flat within 2 percentage points net; rising/falling only when both inter-edition steps agree with the net direction; mixed otherwise"
+                >
+                  {row.stage_trend === "up"
+                    ? compact ? "▲" : "▲ rising"
+                    : row.stage_trend === "down"
+                      ? compact ? "▼" : "▼ falling"
+                      : row.stage_trend === "mixed"
+                        ? compact ? "⇄" : "⇄ mixed"
+                        : compact ? "→" : "→ flat"}
                 </td>
-                <td className="px-3 py-2 whitespace-nowrap">
+                <td className={`${cell} whitespace-nowrap`}>
                   <span
                     className="inline-flex items-center gap-1.5"
                     style={{ color: cat ? CATEGORY_COLORS_LIGHT[cat] : undefined }}
@@ -81,20 +96,19 @@ export function AssessmentTable({
                     </span>
                   </span>
                 </td>
-                <td className="px-3 py-2 text-xs text-slate-600 dark:text-slate-300">
+                {!compact && (
+                <td className={`${cell} text-xs text-slate-600 dark:text-slate-300`}>
                   {row.firka_categories_2025.length} firkas
                   {stressed.length > 0 && (
                     <span>
                       {": "}
                       {stressed
-                        .map(
-                          ([name, c]) =>
-                            `${titleCase(name)} is ${CATEGORY_LABELS[c as AssessmentCategory]}`,
-                        )
+                        .map(([name, c, stage]) => stressedLabel(name, c as string, stage))
                         .join("; ")}
                     </span>
                   )}
                 </td>
+                )}
               </tr>
             );
           })}

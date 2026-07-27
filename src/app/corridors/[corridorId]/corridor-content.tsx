@@ -64,14 +64,16 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
           </p>
           <ol className="list-decimal ml-5 space-y-2 text-sm sm:text-base">
             <li>
-              <strong>The corridor&apos;s own taluks are classified Safe.</strong>{" "}
-              Sriperumbudur taluk stands at a 24.5% stage of extraction in the{" "}
-              {latest}{" "}edition; 9 of the corridor&apos;s 10 taluks are Safe, and
-              the two Semi-Critical ones (Avadi 83.2%, Chengalpattu 78.8%) sit
-              on its rim. The longer arc is improvement: the 2017 edition
-              counted 22 over-exploited firkas across undivided Kancheepuram
-              and Tiruvallur; the {latest} edition counts 5 across all three
-              successor districts.
+              <strong>The taluks hosting the parks are classified Safe.</strong>{" "}
+              Every SIPCOT estate here sits in Sriperumbudur taluk (24.5% stage
+              of extraction in the {latest}{" "}edition) or spills into
+              neighbouring Kundrathur (27.9%), and 8 of the corridor&apos;s 10
+              taluks are Safe. The two Semi-Critical taluks are Avadi (83.2%)
+              on the northern rim and Chengalpattu (78.8%), which hosts
+              Mahindra World City. The longer arc is improvement: the 2017
+              edition counted 22 over-exploited firkas across undivided
+              Kancheepuram and Tiruvallur; the {latest} edition counts 5 across
+              all three successor districts.
             </li>
             <li>
               <strong>Taluk averages hide stressed units.</strong>{" "}Of the
@@ -82,13 +84,13 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
             </li>
             <li>
               <strong>
-                No public register of groundwater extraction permissions exists
-                for this corridor.
+                Extraction permission in this corridor is legally dense and
+                publicly untraceable.
               </strong>{" "}
-              Tamil Nadu regulates extraction through a state executive-order
-              scheme, not through CGWA, and neither the state issuer nor CGWA
-              publishes a license register covering these districts. The rules
-              section below documents who actually issues permissions here.
+              Tamil Nadu regulates groundwater through a state executive-order
+              scheme, not through CGWA, and no authority in the chain, state or
+              central, publishes a register of the permissions it has granted
+              here. The rules section below documents who actually issues them.
             </li>
             <li>
               <strong>
@@ -97,16 +99,23 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
               </strong>{" "}
               SIPCOT&apos;s own clearance filings put the estates on CMWSSB
               supply from Chembarambakkam plus treated reuse water, with
-              groundwater drawl prohibited under at least one park&apos;s EC.
-              The corridor&apos;s water risk runs through a reservoir it shares
-              with the city.
+              groundwater &quot;drawl&quot; prohibited under at least one
+              park&apos;s EC. The corridor&apos;s water risk runs through a
+              reservoir it shares with the city.
             </li>
           </ol>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             All data retrieved {retrieved}. Every number on this page carries
             its assessment edition and source; the methodology section lists
             all of them. This is an independent, educational project, not a
-            government tool.
+            government tool.{" "}
+            <a
+              href={`/data/corridors/${manifest.corridorId}/sriperumbudur-corridor-brief.pdf`}
+              className="underline text-slate-600 dark:text-slate-300"
+            >
+              Download the two-page brief (PDF)
+            </a>
+            .
           </p>
         </section>
 
@@ -133,9 +142,12 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-300">
             Editions 2023, 2024 and {latest} use identical taluk units, so the
-            trend column compares like with like. Earlier editions used
-            different units and district boundaries and are deliberately not
-            arrowed against these numbers (see methodology).
+            trend column compares like with like. Arrows follow a fixed rule:
+            flat when the net change across the three editions is within 2
+            percentage points; rising or falling only when both inter-edition
+            steps move in the net direction; mixed otherwise. Earlier editions
+            used different units and district boundaries and are deliberately
+            not arrowed against these numbers (see methodology).
           </p>
           <AssessmentTable rows={assessment.table} editions={manifest.editions} />
           {crosscheck && (
@@ -153,7 +165,7 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
         {/* ---- What changed ---- */}
         <section className="space-y-3">
           <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-            What changed between the last two assessments
+            What changed across recent assessments
           </h2>
           <div className="space-y-3 text-sm sm:text-base text-slate-700 dark:text-slate-300">
             <p>
@@ -168,12 +180,13 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
             </p>
             <p>
               The five stressed firkas are persistent, not new: Chengalpattu
-              and Appur firkas (Chengalpattu taluk), Thirumullaivoyal (Avadi)
-              and Vayalanallur (Poonamallee) have been Over-Exploited, and
-              Walajabad firka Critical, in each of the last three editions.
-              Outside the corridor but in its districts, one real class change:
-              Tiruttani taluk slipped from Safe to Semi-Critical (70.3%) in the{" "}
-              {latest} edition.
+              (108.4% stage in the {latest} state annexure) and Appur (125.9%)
+              in Chengalpattu taluk, Thirumullaivoyal (109.2%) in Avadi and
+              Vayalanallur (101.5%) in Poonamallee have been Over-Exploited,
+              and Walajabad firka (99.2%) Critical, in each of the last three
+              editions. Outside the corridor but in its districts, one real
+              class change: Tiruttani taluk slipped from Safe to Semi-Critical
+              (70.3%) in the {latest} edition.
             </p>
             <p>
               <strong>The longer arc, stated with its caveat:</strong>{" "}in the
@@ -304,11 +317,15 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
               groundwater at revenue-firka level in every state edition (1,202
               firkas in the {latest} edition); from the 2023 cycle the
               national compilation apportions results to taluks. This page
-              renders firka classifications and taluk stage percentages from
-              the same assessment. Trend arrows compare only editions 2023,
-              2024 and {latest}, which use identical units. Earlier editions
-              (firka-based 2020 and 2022; pre-split districts through 2017)
-              appear as context prose only, never as arrows.
+              renders firka classifications, firka stage percentages (from the
+              state report annexure), and taluk stage percentages from the
+              same assessment. Trend arrows compare only editions 2023, 2024
+              and {latest}, which use identical units, under a stated rule:
+              flat when the net change across the three editions is within 2
+              percentage points; rising or falling only when both
+              inter-edition steps move in the net direction; mixed otherwise.
+              Earlier editions (firka-based 2020 and 2022; pre-split districts
+              through 2017) appear as context prose only, never as arrows.
             </p>
             <p>
               <strong>Geometry.</strong>{" "}Firka polygons are CGWB&apos;s own
@@ -321,11 +338,17 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
             </p>
             <p>
               <strong>Verification.</strong>{" "}Before publication, every taluk
-              and firka value was cross-checked against the state report PDF
-              (CGWB SECR and TN SG&amp;SWRDC, {latest} edition) and the
-              national block-wise categorization list
+              value and every firka classification was cross-checked across
+              two independent publications of the same assessment, the state
+              report PDF (CGWB SECR and TN SG&amp;SWRDC, {latest} edition) and
+              the national block-wise categorization list
               {crosscheck ? ` (${crosscheck.taluk_matches} taluk and ${crosscheck.firka_matches} firka matches, ${crosscheck.mismatches} mismatches)` : ""}.
-              Had the publications disagreed, both numbers would be shown.
+              Firka stage percentages come from the state report annexure
+              alone, because the machine-served series does not carry them;
+              the annexure&apos;s classification for each of the 47 firkas is
+              enforced to agree with the served classification, and the build
+              fails rather than publish a disagreement. Had any publications
+              disagreed, both numbers would be shown.
             </p>
             <p>
               <strong>What we do not claim.</strong>{" "}Park locations are facts
@@ -379,6 +402,12 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
                 desc: "The full citation set behind the rules panels, including the Rajya Sabha UQ 2971 annexure (27.03.2023) and CAG Report 9 of 2021 chapter 3.",
               },
               {
+                name: "SG&SWRDC clarification that CGWA's 2022 public notice does not apply to Tamil Nadu (DT Next, 06.07.2022)",
+                url: "https://www.dtnext.in/tamilnadu/2022/07/06/cgwa-notice-on-groundwater-extraction-not-applicable-for-tn",
+                freq: `news record (retrieved ${retrieved})`,
+                desc: "The state data centre's on-record statement that CGWA's extraction notice \"does not apply for TN as we function with our own State department\". This is the specific anchor for the inoperative-in-practice label in panel 2.",
+              },
+              {
                 name: "CMWSSB daily reservoir readings (Chembarambakkam)",
                 url: "https://cmwssb.tn.gov.in/",
                 freq: "daily",
@@ -411,8 +440,10 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
                 section).
               </li>
               <li>
-                Stage of extraction is not published at firka level from the
-                2023 edition onward; firka rows carry classification only.
+                Firka stage percentages exist in one publication only (the
+                state report annexure); the machine-served assessment series
+                carries firka classifications without stages, so no second
+                source exists to cross-check those percentages against.
               </li>
               <li>
                 No known public CGWB district brochure or District Environment

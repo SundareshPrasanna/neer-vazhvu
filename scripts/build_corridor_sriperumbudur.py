@@ -373,12 +373,33 @@ def main():
           f"{outside} reportSummary uuids fall outside the polygon bbox (non-corridor taluks, ignored)")
 
     # ---- 6. Emit firka layer ------------------------------------------------
+    # Firka stage %: single-publication value from the state report annexure,
+    # extracted by scripts/extract_corridor_firka_stages.py. The extraction's
+    # category is a third publication of the classification and must agree
+    # with the API category for every firka (hard fail otherwise).
+    stages_path = os.path.join(OUT_DIR, "firka-stages-2025.json")
+    firka_stages = {}
+    if os.path.exists(stages_path):
+        firka_stages = json.load(open(stages_path)).get("firkas_by_uuid", {})
+        print(f"firka stages: merging {len(firka_stages)} from the state annexure extraction")
+    else:
+        print("firka stages: no extraction file; layer ships classification-only")
+
+    latest_ed = list(TALUK_EDITIONS.values())[-1]
+    district_of = {norm(t): d.title() for d, lst in CANDIDATE_TALUKS.items() for t in lst}
     firka_features = []
     for f in firkas_2022:
         p = f["properties"]
         if norm(p.get("parent_name")) not in final_taluks:
             continue
         cats = firka_cats.get(p["uuid"], {})
+        stage_row = firka_stages.get(p["uuid"])
+        if stage_row and cats.get(latest_ed) and stage_row["category"] != cats.get(latest_ed):
+            sys.exit(
+                f"CATEGORY DISAGREEMENT for firka {p.get('name')}: annexure says "
+                f"{stage_row['category']}, API says {cats.get(latest_ed)}. "
+                "Show both, do not publish silently."
+            )
         firka_features.append({
             "type": "Feature",
             "geometry": f["geometry"],
@@ -386,9 +407,12 @@ def main():
                 "firka": p.get("name"),
                 "uuid": p.get("uuid"),
                 "taluk": p.get("parent_name"),
+                "district": district_of.get(norm(p.get("parent_name"))),
                 "ur_type": p.get("ur_type"),
                 "ext_id": p.get("ext_id"),
                 **{f"category_{ed}": cats.get(ed) for ed in TALUK_EDITIONS.values()},
+                "stage_pct_2025": stage_row["stage_pct"] if stage_row else None,
+                "stage_source": "state-annexure" if stage_row else None,
                 "geometry_vintage": 2022,
             },
         })
@@ -406,16 +430,29 @@ def main():
             continue
         eds = t["editions"]
         cat25, cat24 = (eds.get("2025", {}).get("category"), eds.get("2024", {}).get("category"))
-        s25, s24 = (eds.get("2025", {}).get("stage_pct"), eds.get("2024", {}).get("stage_pct"))
+        # Trend rule (D13, stated in the page methodology): net change across
+        # the three comparable editions; flat within +/-2 percentage points
+        # net; otherwise rising/falling only if BOTH inter-edition intervals
+        # move in the net direction, else mixed.
+        s23, s24, s25 = (eds.get("2023", {}).get("stage_pct"),
+                         eds.get("2024", {}).get("stage_pct"),
+                         eds.get("2025", {}).get("stage_pct"))
         trend = None
-        if s25 is not None and s24 is not None:
-            trend = "up" if s25 - s24 > 1 else "down" if s24 - s25 > 1 else "flat"
+        if s23 is not None and s24 is not None and s25 is not None:
+            net = s25 - s23
+            if abs(net) <= 2:
+                trend = "flat"
+            else:
+                d1, d2 = s24 - s23, s25 - s24
+                same_dir = (d1 > 0 and d2 > 0 and net > 0) or (d1 < 0 and d2 < 0 and net < 0)
+                trend = ("up" if net > 0 else "down") if same_dir else "mixed"
         row = {
             "taluk": t["name"], "district": t["district"].title(),
             "editions": eds, "category_change": None if cat25 == cat24 else f"{cat24} -> {cat25}",
             "stage_trend": trend,
             "firka_categories_2025": sorted(
-                (f["properties"]["firka"], f["properties"]["category_2025"])
+                (f["properties"]["firka"], f["properties"]["category_2025"],
+                 f["properties"]["stage_pct_2025"])
                 for f in firka_features if norm(f["properties"]["taluk"]) == key),
         }
         table_rows.append(row)
