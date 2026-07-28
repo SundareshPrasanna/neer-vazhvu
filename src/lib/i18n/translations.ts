@@ -1310,6 +1310,10 @@ export const translations: Record<string, TranslationEntry> = {
 
   // ── Dashboard ─────────────────────────────────────────────────────────────
   "dash.reservoir_status": { en: "Reservoir Status",          ta: "நீர்த்தேக்க நிலை", kn: "ಜಲಾಶಯ ಸ್ಥಿತಿ" },
+  // For cities that impound nothing (Kolkata: run-of-river intakes + tube
+  // wells). Titling those "Reservoir Status" would assert storage that does
+  // not exist. See ReservoirCards.impounds.
+  "dash.water_sources":    { en: "Water Sources",             ta: "நீர் ஆதாரங்கள்", kn: "ನೀರಿನ ಮೂಲಗಳು" },
   "dash.capacity_of": { en: "of",                        ta: "இல்", kn: "ರಲ್ಲಿ" },
   "dash.capacity_unit": { en: "mcft capacity",             ta: "mcft கொள்ளளவு", kn: "mcft ಸಾಮರ್ಥ್ಯ" },
   "dash.in_label": { en: "In:",                       ta: "வரத்து:", kn: "ಒಳ:" },

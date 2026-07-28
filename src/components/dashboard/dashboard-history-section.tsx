@@ -130,6 +130,11 @@ export function DashboardHistorySection({
           (s) => s.hasPublicFeed === false,
         ) ?? false
       }
+      impounds={
+        tryGetPlaceConfig(cityId)?.waterSources.some(
+          (s) => s.type === "reservoir",
+        ) ?? true
+      }
       unit={unit}
       series={state.payload.series}
       forecast={state.payload.forecast}

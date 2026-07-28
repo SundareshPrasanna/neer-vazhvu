@@ -453,8 +453,15 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           published engineering document don't render an empty card. */}
       <UrbanSupplyOverview cityId={cityId} cityDisplayName={config.displayName} />
 
-      {/* Reservoir snapshot grid + shared multi-source history chart. */}
-      <ReservoirCards reservoirs={summaries} />
+      {/* Source snapshot grid + shared multi-source history chart. Titled
+          "Reservoir Status" only where the city actually impounds: Kolkata
+          abstracts run-of-river from the Hooghly at Palta and pumps tube
+          wells, so calling its four intakes reservoirs would assert storage
+          it does not have. */}
+      <ReservoirCards
+        reservoirs={summaries}
+        impounds={config.waterSources.some((s) => s.type === "reservoir")}
+      />
 
       <DashboardHistorySection
         cityId={cityId}
