@@ -131,7 +131,10 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
             taluk view is what official tables publish from the 2023 edition
             onward. The two views are a deliberate pair: compare them over
             Walajabad or Poonamallee to see a Critical or Over-Exploited firka
-            disappear into a Safe average.
+            disappear into a Safe average. The bold line is the functional
+            corridor, the frame every count on this page refers to; muted
+            units beyond it are surrounding-district context, shown so the
+            ring&apos;s stress is visible rather than cropped away.
           </p>
           <CorridorMap manifest={manifest} />
         </section>

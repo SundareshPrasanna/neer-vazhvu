@@ -482,10 +482,57 @@ def main():
         "decision_log": "docs/corridors/sriperumbudur/DECISIONS.md",
     }
 
+    # ---- 8. Context layer + corridor boundary (D15) -------------------------
+    # Context: firkas of the three districts OUTSIDE the ten corridor taluks,
+    # rendered muted so the ring's stress is visible without polluting the
+    # "47 corridor firkas" counting frame. Only units with a served category
+    # are included (other districts' bbox spillover has no category data).
+    context_features = []
+    for f in firkas_2022:
+        p = f["properties"]
+        if norm(p.get("parent_name")) in final_taluks:
+            continue
+        cats = firka_cats.get(p["uuid"], {})
+        if not cats.get(latest_ed):
+            continue
+        context_features.append({
+            "type": "Feature",
+            "geometry": f["geometry"],
+            "properties": {
+                "firka": p.get("name"),
+                "taluk": p.get("parent_name"),
+                "context": True,
+                **{f"category_{ed}": cats.get(ed) for ed in TALUK_EDITIONS.values()},
+                "geometry_vintage": 2022,
+            },
+        })
+    print(f"context layer: {len(context_features)} muted firkas beyond the corridor")
+
+    boundary_geom = unary_union(
+        [shape(f["geometry"]) for f in firka_features]
+    )
+    boundary_feature = {
+        "type": "Feature",
+        "geometry": mapping(boundary_geom),
+        "properties": {
+            "name": "Functional corridor boundary (ten taluks)",
+            "taluks": sorted(final_taluks),
+        },
+    }
+
     def dump(name, obj):
         with open(os.path.join(OUT_DIR, name), "w") as f:
             json.dump(obj, f, ensure_ascii=False, separators=(",", ":"))
         print(f"wrote {name}")
+
+    dump("assessment-context-firkas.geojson", {
+        "type": "FeatureCollection", "_provenance": provenance,
+        "features": context_features,
+    })
+    dump("corridor-boundary.geojson", {
+        "type": "FeatureCollection", "_provenance": provenance,
+        "features": [boundary_feature],
+    })
 
     dump("parks.geojson", {"type": "FeatureCollection", "_provenance": provenance,
                            "features": park_features})

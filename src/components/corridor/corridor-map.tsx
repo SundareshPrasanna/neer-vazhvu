@@ -19,7 +19,7 @@ import {
 } from "./classification";
 
 // Bump when the corridor geojson files are regenerated (cache-buster).
-const GEO_VERSION = 2;
+const GEO_VERSION = 3;
 
 type UnitView = "firka" | "taluk";
 
@@ -48,6 +48,8 @@ export function CorridorMap({ manifest, variant = "full" }: CorridorMapProps) {
   const [firkas, setFirkas] = useState<FeatureCollection | null>(null);
   const [taluks, setTaluks] = useState<FeatureCollection | null>(null);
   const [parks, setParks] = useState<FeatureCollection | null>(null);
+  const [context, setContext] = useState<FeatureCollection | null>(null);
+  const [boundary, setBoundary] = useState<FeatureCollection | null>(null);
 
   const base = `/data/corridors/${manifest.corridorId}`;
   useEffect(() => {
@@ -65,6 +67,8 @@ export function CorridorMap({ manifest, variant = "full" }: CorridorMapProps) {
     load("assessment-firkas.geojson", setFirkas);
     load("assessment-taluks.geojson", setTaluks);
     load("parks.geojson", setParks);
+    load("assessment-context-firkas.geojson", setContext);
+    load("corridor-boundary.geojson", setBoundary);
     return () => {
       cancelled = true;
     };
@@ -99,6 +103,37 @@ export function CorridorMap({ manifest, variant = "full" }: CorridorMapProps) {
       weight: 1,
       dashArray: strokeDashFor(cat as AssessmentCategory | null),
     };
+  };
+
+  // Context units beyond the corridor: same palette, heavily muted, so the
+  // ring's stress is visible without joining the corridor's counting frame
+  // (the prose counts 47 firkas; the bold boundary is the frame).
+  const contextStyle = (feature?: Feature): PathOptions => {
+    const cat = (feature?.properties as Record<string, unknown> | undefined)?.[
+      `category_${ed}`
+    ] as string | null;
+    return {
+      fillColor: categoryColor(cat, dark),
+      fillOpacity: 0.16,
+      color: dark ? "#334155" : "#cbd5e1",
+      weight: 0.7,
+    };
+  };
+
+  const boundaryStyle: PathOptions = {
+    fill: false,
+    color: dark ? "#f1f5f9" : "#0f172a",
+    weight: 3,
+  };
+
+  const onEachContext = (feature: Feature, layer: Layer) => {
+    const p = (feature.properties ?? {}) as Record<string, unknown>;
+    const cat = p[`category_${ed}`] as string | null;
+    const label = cat ? CATEGORY_LABELS[cat as AssessmentCategory] ?? cat : "No published category";
+    layer.bindTooltip(
+      `<strong>${p.firka} firka, ${titleCase(String(p.taluk))} taluk</strong><br/>${label} (${ed} assessment)<br/><span style='opacity:.7'>Context unit beyond the functional corridor.</span>`,
+      { sticky: true },
+    );
   };
 
   const parkStyle: PathOptions = {
@@ -160,12 +195,27 @@ export function CorridorMap({ manifest, variant = "full" }: CorridorMapProps) {
         <MapResizer />
         <TileLayer url={tiles.url} attribution={tiles.attribution} />
         <FitToBounds bounds={bounds} resetKey={view} padding={brief ? [6, 6] : [24, 24]} />
+        {view === "firka" && context && (
+          <GeoJSON
+            key={`context-${dark ? "d" : "l"}`}
+            data={context}
+            style={contextStyle}
+            onEachFeature={onEachContext}
+          />
+        )}
         {active && (
           <GeoJSON
             key={`${view}-${dark ? "d" : "l"}`}
             data={active}
             style={unitStyle}
             onEachFeature={onEachUnit}
+          />
+        )}
+        {boundary && (
+          <GeoJSON
+            key={`boundary-${dark ? "d" : "l"}`}
+            data={boundary}
+            style={() => boundaryStyle}
           />
         )}
         {parks && (
@@ -230,6 +280,16 @@ export function CorridorMap({ manifest, variant = "full" }: CorridorMapProps) {
           <span className="w-4 h-3 flex-shrink-0 border-2" style={{ borderColor: dark ? "#e2e8f0" : "#0f172a" }} />
           Industrial park boundary
         </div>
+        <div className={`flex items-center gap-2 text-xs ${brief ? "text-slate-600" : "text-slate-600 dark:text-slate-300"}`}>
+          <span className="w-4 h-0 flex-shrink-0 border-t-[3px]" style={{ borderColor: dark ? "#f1f5f9" : "#0f172a" }} />
+          Functional corridor (10 taluks, 47 firkas)
+        </div>
+        {view === "firka" && (
+          <div className={`flex items-center gap-2 text-xs ${brief ? "text-slate-600" : "text-slate-600 dark:text-slate-300"}`}>
+            <span className="w-4 h-3 rounded-sm flex-shrink-0 border" style={{ backgroundColor: categoryColor("safe", dark), opacity: 0.3, borderColor: dark ? "#334155" : "#cbd5e1" }} />
+            Muted: context beyond the corridor
+          </div>
+        )}
       </div>
 
       {!brief && (

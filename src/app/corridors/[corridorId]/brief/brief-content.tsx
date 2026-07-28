@@ -126,9 +126,11 @@ export function BriefContent({ manifest, assessment, crosscheck, mapOnly = false
         />
         <p className="text-[10.5px] text-slate-500">
           CGWB assessment-unit (firka) polygons, {latest} classification, with
-          SIPCOT park outer boundaries. Geometry: IN-GRES GeoServer (CGWB) and
-          SIPCOT GIS; nothing drawn or interpolated by us. Base map ©
-          OpenStreetMap contributors.
+          SIPCOT park outer boundaries. The bold line is the functional
+          corridor (10 taluks, 47 firkas), the frame all counts on this brief
+          refer to; muted units beyond it are surrounding-district context.
+          Geometry: IN-GRES GeoServer (CGWB) and SIPCOT GIS; nothing drawn or
+          interpolated by us. Base map © OpenStreetMap contributors.
         </p>
       </section>
 
