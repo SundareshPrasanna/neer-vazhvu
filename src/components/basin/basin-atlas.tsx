@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Circle, Tooltip, ZoomControl, Pane, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
@@ -102,6 +102,54 @@ function polygonOuterRings(geom: Feature["geometry"] | null | undefined): [numbe
 // the ~0.36 km² Harohalli/Kaggalahalli exclave, excludes hair-thin slivers.
 const GAP_BADGE_MIN_AREA = 1.2e-5;
 interface GapUnit { name: string; level?: string; coverage?: string; conflicts?: string[]; caveats?: string[]; headline: string; streams: GapStream[] }
+
+// ── DEP Snapshot v2 (gaps.json `version: 2`; district-first) ─────────────────
+// One tab per district whose DEP covers part of the basin (Paani review,
+// 28 Jul 2026): DEPs are district documents, so the panel now leads with the
+// district, taluks nest below it, ULBs below that, and the content is re-cut
+// to the 7 NGT thematic areas (OA 360/2018). v1 basins (plain `units`) keep
+// the old single-unit GapPanel untouched.
+/** How to find a region on the map (shared by accountability + DEP panels). */
+type MapMatch = { family: string; prop?: string; values?: string[]; contains?: string[]; kinds?: string[] };
+type DepThemeStatus = "covered" | "district-level" | "not-covered";
+interface DepTheme {
+  theme: string;
+  subtheme?: string;
+  /** covered = unit-specific data; district-level = reported district-wide
+   *  only; not-covered = the plan is silent for this unit. */
+  status: DepThemeStatus;
+  summary?: string;
+  metrics?: { label: string; value: string; emphasis?: boolean | "good" | "bad" }[];
+  /** Action items the plan itself lists for this theme - the accountability
+   *  payload (action point / timeline / responsible agency). */
+  openActions?: string[];
+  /** Source page numbers in the DEP document. */
+  pages?: number[];
+  /** Value read via OCR from a scanned plan; treat as approximate. */
+  ocrUncertain?: boolean;
+}
+interface DepUlb { key: string; name: string; type: string; note?: string; mapMatch?: MapMatch; themes: DepTheme[] }
+interface DepTaluk { key: string; label?: string; mapMatch?: MapMatch; unit: GapUnit }
+interface DepDistrict {
+  key: string;
+  name: string;
+  dep: { label: string; url: string; note?: string };
+  /** Share of the district's area inside the basin (computed from the
+   *  admin-district and boundary layers). */
+  pctInBasin: number;
+  counts?: { label: string; value: string }[];
+  countsNote?: string;
+  mapMatch?: MapMatch;
+  districtThemes: DepTheme[];
+  ulbs: DepUlb[];
+  taluks: DepTaluk[];
+  industrialAreas?: { name: string; mapMatch?: MapMatch }[];
+}
+interface DepGovernance {
+  items: { heading: string; body: string; source?: GapSource }[];
+  gaps: string[];
+}
+interface DepData { version: 2; title?: string; note?: string; governance?: DepGovernance; districts: DepDistrict[] }
 
 // ── PRS (Polluted River Stretch) entry-point panel (prs.json) ────────────────
 // Tabbed surface: each tab is a stressor theme; the subtab axis differs per
@@ -263,7 +311,7 @@ export interface AccRegion {
   /** How to find this region on the map: the layer family plus a property
    *  match (exact values or substring contains). When the family is split into
    *  kind-filtered layer entries, `kinds` names which entries to switch on. */
-  mapMatch?: { family: string; prop?: string; values?: string[]; contains?: string[]; kinds?: string[] };
+  mapMatch?: MapMatch;
   categories: AccCategory[];
 }
 export interface AccountabilityData {
@@ -423,6 +471,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const [selectedGapUnit, setSelectedGapUnit] = useState<string | null>(null);
   const [gapData, setGapData] = useState<Record<string, GapUnit>>({});
   const [gapNote, setGapNote] = useState<string | null>(null);
+  // District-first DEP snapshot (gaps.json version 2); null for v1 basins.
+  const [depData, setDepData] = useState<DepData | null>(null);
   // PRS entry-point panel: open when the polluted-stretch line is clicked.
   const [selectedPrs, setSelectedPrs] = useState(false);
   const [prsData, setPrsData] = useState<PrsData | null>(null);
@@ -456,6 +506,25 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     () => Object.fromEntries(manifest.layers.map((l) => [l.family, l])),
     [manifest.layers],
   );
+  // "Show X on the map": switch on the matched family's layers and highlight
+  // the region. Shared by the accountability matrix and the DEP panel. Toggle
+  // keys are layerKey(l) (family:kindFilter for split families), so enabling
+  // the bare family name would miss kind-filtered entries (e.g.
+  // pressures-industrial). Which kinds to switch on: mapMatch.kinds, else a
+  // kind-valued property match, else every entry of the family.
+  const showOnMap = useCallback((m: MapMatch) => {
+    const kinds = m.kinds ?? (m.prop === "kind" ? m.values : undefined);
+    setEnabled((s) => {
+      const next = { ...s };
+      for (const l of manifest.layers) {
+        if (l.family !== m.family) continue;
+        if (l.kindFilter && kinds && !kinds.includes(l.kindFilter)) continue;
+        next[layerKey(l)] = true;
+      }
+      return next;
+    });
+    setMapHighlight(m);
+  }, [manifest.layers]);
   const shedToRiver = useMemo(() => {
     const m = new Map<string, string>();
     for (const r of manifest.rivers) for (const s of r.subHydroshedIds) m.set(s, r.riverId);
@@ -534,6 +603,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   useEffect(() => {
     fetchJson(`/data/basins/${manifest.basinId}/gaps.json`)
       .then((d) => {
+        const v2 = d as unknown as DepData;
+        if (v2?.version === 2 && Array.isArray(v2.districts)) {
+          setDepData(v2);
+          // The map machinery (badges, dimming, defaultGapUnit) keys on flat
+          // unit ids, which in v2 are the taluks nested under districts.
+          setGapData(Object.fromEntries(v2.districts.flatMap((dist) => dist.taluks.map((t) => [t.key, t.unit]))));
+          setGapNote(v2.note ?? null);
+          return;
+        }
         const parsed = d as unknown as { units?: Record<string, GapUnit>; note?: string };
         setGapData(parsed?.units ?? {});
         setGapNote(parsed?.note ?? null);
@@ -1349,23 +1427,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 depUnit={manifest.defaultGapUnit}
                 onShowRegion={(r) => {
                   if (!r.mapMatch) return;
-                  const m = r.mapMatch;
-                  // Toggle keys are layerKey(l) (family:kindFilter for split
-                  // families), so enabling the bare family name would miss the
-                  // kind-filtered entries (e.g. pressures-industrial). Which
-                  // kinds to switch on: mapMatch.kinds, else a kind-valued
-                  // property match, else every entry of the family.
-                  const kinds = m.kinds ?? (m.prop === "kind" ? m.values : undefined);
-                  setEnabled((s) => {
-                    const next = { ...s };
-                    for (const l of manifest.layers) {
-                      if (l.family !== m.family) continue;
-                      if (l.kindFilter && kinds && !kinds.includes(l.kindFilter)) continue;
-                      next[layerKey(l)] = true;
-                    }
-                    return next;
-                  });
-                  setMapHighlight(m);
+                  showOnMap(r.mapMatch);
                   // On phones this sheet covers the map - close it so the
                   // highlighted region is actually visible.
                   if (typeof window !== "undefined" && window.innerWidth < 768) setSelectedPrs(false);
@@ -1386,6 +1448,20 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   }
                 }}
                 onClose={() => setSelectedPrs(false)}
+              />
+            ) : selectedGapUnit && depData ? (
+              <DepPanel
+                data={depData}
+                focusTaluk={selectedGapUnit}
+                onSelectTaluk={setSelectedGapUnit}
+                onShowMatch={(m) => {
+                  showOnMap(m);
+                  // On phones this sheet covers the map - close it so the
+                  // highlighted region is actually visible.
+                  if (typeof window !== "undefined" && window.innerWidth < 768) { setSelectedGapUnit(null); setGapFromPrs(false); }
+                }}
+                onClose={() => { setSelectedGapUnit(null); setGapFromPrs(false); }}
+                onBack={gapFromPrs ? () => { setSelectedGapUnit(null); setGapFromPrs(false); setSelectedPrs(true); } : undefined}
               />
             ) : selectedGapUnit && gapData[selectedGapUnit] ? (
               <GapPanel
@@ -1626,7 +1702,7 @@ const ADMIN_DASH: Record<string, string | undefined> = {
   "admin-gp": "1 4",
 };
 
-type MapHighlight = { family: string; prop?: string; values?: string[]; contains?: string[]; kinds?: string[] };
+type MapHighlight = MapMatch;
 
 function matchesHighlight(hl: MapHighlight | null | undefined, l: BasinLayer, feat: Feature | undefined): boolean {
   if (!hl || hl.family !== l.family) return false;
@@ -2598,68 +2674,383 @@ function GapPanel({ unit, note, onClose, onBack }: { unit: GapUnit; note?: strin
       {unit.coverage && (
         <p className="text-[11px] text-slate-400">Data coverage: {unit.coverage}</p>
       )}
-      {unit.conflicts && unit.conflicts.length > 0 && (
-        <div className="rounded-md border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 p-2.5">
-          <div className="text-[11px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold mb-1">Points to reconcile across sources</div>
-          <ul className="space-y-1 list-disc pl-4">
-            {unit.conflicts.map((c, i) => (
-              <li key={i} className="text-[12px] text-amber-800 dark:text-amber-200 leading-snug">{c}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {unit.caveats && unit.caveats.length > 0 && (
-        <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 p-2.5">
-          <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1">Notes &amp; caveats</div>
-          <ul className="space-y-1 list-disc pl-4">
-            {unit.caveats.map((c, i) => (
-              <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{c}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <GapConflicts conflicts={unit.conflicts} />
+      <GapCaveats caveats={unit.caveats} />
 
-      {(() => {
-        const media: GapMedium[] = ["liquid", "solid"];
-        const orphans = unit.streams.filter((s) => !s.medium);
-        const presentSectors = SECTOR_ORDER.filter((sec) => unit.streams.some((s) => s.sector === sec));
-        return (
-          <div className="space-y-4">
-            {presentSectors.length > 0 && (
-              <div className="pt-1">
-                <div className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Colour = who generates it</div>
-                <div className="flex flex-wrap gap-x-3 gap-y-1">
-                  {presentSectors.map((sec) => (
-                    <span key={sec} className="flex items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400">
-                      <span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: SECTOR_META[sec].color }} />
-                      {SECTOR_META[sec].label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {media.map((med) => {
-              const ms = unit.streams.filter((s) => s.medium === med);
-              if (!ms.length) return null;
-              return (
-                <section key={med} className="border-t border-slate-200 dark:border-slate-700 pt-3 space-y-3">
-                  <h3 className="text-[13px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{MEDIUM_LABEL[med]}</h3>
-                  <CompositionBar streams={ms} />
-                  <div className="space-y-3.5">
-                    {ms.map((s, i) => <StreamCard key={i} s={s} />)}
-                  </div>
-                </section>
-              );
-            })}
-            {orphans.map((s, i) => (
-              <section key={`x${i}`} className="border-t border-slate-200 dark:border-slate-700 pt-3"><StreamCard s={s} /></section>
-            ))}
-          </div>
-        );
-      })()}
+      <GapStreamsBody unit={unit} />
       <p className="text-[11px] text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-700 leading-relaxed">
         Figures extracted from public documents; each line links to its source. Composition bars show generation by sector; hazardous &amp; biomedical are reported district-wide.
       </p>
+    </div>
+  );
+}
+
+function GapConflicts({ conflicts }: { conflicts?: string[] }) {
+  if (!conflicts?.length) return null;
+  return (
+    <div className="rounded-md border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 p-2.5">
+      <div className="text-[11px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold mb-1">Points to reconcile across sources</div>
+      <ul className="space-y-1 list-disc pl-4">
+        {conflicts.map((c, i) => (
+          <li key={i} className="text-[12px] text-amber-800 dark:text-amber-200 leading-snug">{c}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function GapCaveats({ caveats }: { caveats?: string[] }) {
+  if (!caveats?.length) return null;
+  return (
+    <div className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 p-2.5">
+      <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1">Notes &amp; caveats</div>
+      <ul className="space-y-1 list-disc pl-4">
+        {caveats.map((c, i) => (
+          <li key={i} className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">{c}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** The waste-stream cards for one admin unit, grouped by medium with the
+ *  sector legend and composition bars. Shared by the v1 GapPanel and the
+ *  taluk tier of the v2 DepPanel. */
+function GapStreamsBody({ unit }: { unit: GapUnit }) {
+  const media: GapMedium[] = ["liquid", "solid"];
+  const orphans = unit.streams.filter((s) => !s.medium);
+  const presentSectors = SECTOR_ORDER.filter((sec) => unit.streams.some((s) => s.sector === sec));
+  return (
+    <div className="space-y-4">
+      {presentSectors.length > 0 && (
+        <div className="pt-1">
+          <div className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Colour = who generates it</div>
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            {presentSectors.map((sec) => (
+              <span key={sec} className="flex items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400">
+                <span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: SECTOR_META[sec].color }} />
+                {SECTOR_META[sec].label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      {media.map((med) => {
+        const ms = unit.streams.filter((s) => s.medium === med);
+        if (!ms.length) return null;
+        return (
+          <section key={med} className="border-t border-slate-200 dark:border-slate-700 pt-3 space-y-3">
+            <h3 className="text-[13px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{MEDIUM_LABEL[med]}</h3>
+            <CompositionBar streams={ms} />
+            <div className="space-y-3.5">
+              {ms.map((s, i) => <StreamCard key={i} s={s} />)}
+            </div>
+          </section>
+        );
+      })}
+      {orphans.map((s, i) => (
+        <section key={`x${i}`} className="border-t border-slate-200 dark:border-slate-700 pt-3"><StreamCard s={s} /></section>
+      ))}
+    </div>
+  );
+}
+
+// ── DEP Snapshot v2 panel (district-first) ───────────────────────────────────
+// Display order and labels of the 7 NGT thematic areas (OA 360/2018).
+const DEP_THEME_LABEL: Record<string, string> = {
+  "waste-management": "Waste Management",
+  "water-quality": "Water Quality",
+  "domestic-sewage": "Domestic Sewage",
+  "industrial-wastewater": "Industrial Wastewater",
+  "air-quality": "Air Quality",
+  mining: "Mining Activity",
+  noise: "Noise Pollution",
+};
+const DEP_THEME_ORDER = Object.keys(DEP_THEME_LABEL);
+const DEP_SUBTHEME_LABEL: Record<string, string> = {
+  "solid-waste": "Solid Waste",
+  "plastic-waste": "Plastic Waste",
+  "cd-waste": "C&D Waste",
+  "biomedical-waste": "Biomedical Waste",
+  "hazardous-waste": "Hazardous Waste",
+  "e-waste": "E-Waste",
+};
+const DEP_STATUS: Record<DepThemeStatus, { label: string; cls: string }> = {
+  covered: { label: "In the plan", cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300" },
+  "district-level": { label: "District-level only", cls: "bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300" },
+  "not-covered": { label: "Not covered", cls: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300" },
+};
+
+function depThemeTitle(t: DepTheme): string {
+  const base = DEP_THEME_LABEL[t.theme] ?? t.theme;
+  return t.subtheme ? `${base}: ${DEP_SUBTHEME_LABEL[t.subtheme] ?? t.subtheme}` : base;
+}
+
+/** One thematic-area entry: status chip, summary, metrics, and the plan's own
+ *  action items (the accountability payload). Collapsible - a unit has up to
+ *  12 entries (7 themes, waste split into 6 sub-plans). */
+function DepThemeCard({ t, defaultOpen = false }: { t: DepTheme; defaultOpen?: boolean }) {
+  const hasBody = Boolean(t.summary || t.metrics?.length || t.openActions?.length);
+  return (
+    <details className="group py-1.5" open={defaultOpen && hasBody}>
+      <summary className={`list-none flex items-center gap-2 ${hasBody ? "cursor-pointer" : "cursor-default"}`}>
+        {hasBody && <span aria-hidden className="text-slate-400 text-[10px] transition-transform group-open:rotate-90">▶</span>}
+        <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-200 flex-1">{depThemeTitle(t)}</span>
+        <span className={`text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 ${DEP_STATUS[t.status].cls}`}>{DEP_STATUS[t.status].label}</span>
+      </summary>
+      {hasBody && (
+        <div className="pl-4 pt-1.5 space-y-2">
+          {t.summary && <p className="text-[13px] text-slate-600 dark:text-slate-400 leading-relaxed">{t.summary}</p>}
+          {t.metrics && t.metrics.length > 0 && (
+            <dl className="space-y-1.5">
+              {t.metrics.map((m, j) => (
+                <div key={j} className="flex items-baseline justify-between gap-3">
+                  <dt className="text-[13px] text-slate-500 dark:text-slate-400">{m.label}</dt>
+                  <dd className={`text-[13px] tabular-nums text-right ${m.emphasis === "good" ? "font-bold text-emerald-600 dark:text-emerald-400" : m.emphasis ? "font-bold text-rose-600 dark:text-rose-400" : "text-slate-700 dark:text-slate-300"}`}>{m.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          {t.openActions && t.openActions.length > 0 && (
+            <div className="rounded-md border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 p-2">
+              <div className="text-[10px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold mb-1">Action items in the plan</div>
+              <ul className="space-y-1 list-disc pl-4">
+                {t.openActions.map((a, i) => (
+                  <li key={i} className="text-[12px] text-amber-800 dark:text-amber-200 leading-snug">{a}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {(t.pages?.length || t.ocrUncertain) && (
+            <p className="text-[10px] text-slate-400">
+              {t.pages?.length ? `DEP p. ${t.pages.join(", ")}` : null}
+              {t.ocrUncertain ? `${t.pages?.length ? " - " : ""}read via OCR from a scanned plan; values approximate` : null}
+            </p>
+          )}
+        </div>
+      )}
+    </details>
+  );
+}
+
+/** A unit's thematic areas in canonical NGT order (waste sub-plans inline). */
+function DepThemeList({ themes }: { themes: DepTheme[] }) {
+  const ordered = [...themes].sort((a, b) => DEP_THEME_ORDER.indexOf(a.theme) - DEP_THEME_ORDER.indexOf(b.theme));
+  if (!ordered.length) return null;
+  return <div className="divide-y divide-slate-100 dark:divide-slate-800">{ordered.map((t, i) => <DepThemeCard key={i} t={t} />)}</div>;
+}
+
+function DepShowOnMap({ name, match, onShowMatch }: { name: string; match?: MapMatch; onShowMatch?: (m: MapMatch) => void }) {
+  if (!match || !onShowMatch) return null;
+  return (
+    <button onClick={() => onShowMatch(match)} className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+      Show {name} on the map →
+    </button>
+  );
+}
+
+function DepPanel({ data, focusTaluk, onSelectTaluk, onShowMatch, onClose, onBack }: {
+  data: DepData;
+  focusTaluk: string | null;
+  onSelectTaluk: (key: string) => void;
+  onShowMatch: (m: MapMatch) => void;
+  onClose: () => void;
+  onBack?: () => void;
+}) {
+  // The map badge that opened the panel is a taluk key: land on its district
+  // with that taluk's card open. GOV_TAB is the extra governance tab.
+  const GOV_TAB = "__governance";
+  const homeDistrict = useMemo(
+    () => data.districts.find((d) => d.taluks.some((t) => t.key === focusTaluk)) ?? data.districts[0],
+    [data.districts, focusTaluk],
+  );
+  const [tab, setTab] = useState<string>(homeDistrict?.key ?? GOV_TAB);
+  const [view, setView] = useState<{ kind: "district" } | { kind: "ulb"; key: string } | { kind: "taluk"; key: string }>(
+    focusTaluk && homeDistrict?.taluks.some((t) => t.key === focusTaluk) ? { kind: "taluk", key: focusTaluk } : { kind: "district" },
+  );
+  const district = data.districts.find((d) => d.key === tab) ?? null;
+  const selUlb = district && view.kind === "ulb" ? district.ulbs.find((u) => u.key === view.key) ?? null : null;
+  const selTaluk = district && view.kind === "taluk" ? district.taluks.find((t) => t.key === view.key) ?? null : null;
+
+  const chip = (active: boolean) =>
+    `text-[11px] px-2 py-0.5 rounded border transition-colors ${active
+      ? "bg-rose-600 text-white border-rose-600"
+      : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"}`;
+
+  return (
+    <div className="space-y-4">
+      {onBack && (
+        <button onClick={onBack} className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+          ← Back to polluted stretch
+        </button>
+      )}
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <div className="text-[11px] uppercase tracking-wider text-rose-500">{data.title ?? "District Environment Plan (DEP) 2022 Snapshot"}</div>
+          {data.note && <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{data.note}</p>}
+        </div>
+        <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+          <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+
+      {/* District tabs + governance. DEPs are district documents, so the
+          district - not the taluk - is the entry axis (Paani review). */}
+      <div className="flex flex-wrap gap-1.5">
+        {data.districts.map((d) => (
+          <button key={d.key} onClick={() => { setTab(d.key); setView({ kind: "district" }); }} className={chip(tab === d.key)}>
+            {d.name}
+          </button>
+        ))}
+        {data.governance && (
+          <button onClick={() => { setTab(GOV_TAB); setView({ kind: "district" }); }} className={chip(tab === GOV_TAB)}>
+            Governance &amp; compliance
+          </button>
+        )}
+      </div>
+
+      {tab === GOV_TAB && data.governance ? (
+        <DepGovernanceView gov={data.governance} />
+      ) : district ? (
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 leading-snug">{district.name}</h2>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              <a href={district.dep.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">{district.dep.label} ↗</a>
+              {district.dep.note ? ` - ${district.dep.note}` : ""}
+            </p>
+            <DepShowOnMap name={district.name} match={district.mapMatch} onShowMatch={onShowMatch} />
+          </div>
+
+          {/* Basin-share stat + admin composition of the district. */}
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-1.5">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-[13px] text-slate-500 dark:text-slate-400">Share of the district inside the Arkavathi basin</span>
+              <span className="text-[15px] font-bold tabular-nums text-slate-900 dark:text-slate-100">{district.pctInBasin}%</span>
+            </div>
+            <div className="h-1.5 rounded bg-slate-100 dark:bg-slate-800 overflow-hidden">
+              <div className="h-full bg-rose-500/80" style={{ width: `${Math.min(district.pctInBasin, 100)}%` }} />
+            </div>
+            {district.counts && district.counts.length > 0 && (
+              <dl className="pt-1 space-y-1">
+                {district.counts.map((c, i) => (
+                  <div key={i} className="flex items-baseline justify-between gap-3">
+                    <dt className="text-[12px] text-slate-500 dark:text-slate-400">{c.label}</dt>
+                    <dd className="text-[12px] tabular-nums font-semibold text-slate-700 dark:text-slate-300">{c.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            {district.countsNote && <p className="text-[10px] text-slate-400 leading-snug">{district.countsNote}</p>}
+          </div>
+
+          {/* Sub-navigation: district-wide themes / ULBs / taluks. */}
+          <div className="flex flex-wrap gap-1.5 items-center">
+            <button onClick={() => setView({ kind: "district" })} className={chip(view.kind === "district")}>District-wide</button>
+            {district.ulbs.map((u) => (
+              <button key={u.key} onClick={() => setView({ kind: "ulb", key: u.key })} className={chip(view.kind === "ulb" && view.key === u.key)}>
+                {u.name} ({u.type})
+              </button>
+            ))}
+          </div>
+          {district.taluks.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 items-center">
+              <span className="text-[10px] uppercase tracking-wider text-slate-400">Taluks</span>
+              {district.taluks.map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => { setView({ kind: "taluk", key: t.key }); onSelectTaluk(t.key); }}
+                  className={chip(view.kind === "taluk" && view.key === t.key)}
+                >
+                  {t.label ?? t.unit.name.replace(/ \(taluk.*\)$/i, "")}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {view.kind === "district" && (
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5">
+              <div className="text-[11px] uppercase tracking-wider text-slate-400 mb-1">The 7 NGT thematic areas - district-wide</div>
+              <DepThemeList themes={district.districtThemes} />
+            </div>
+          )}
+          {selUlb && (
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-2">
+              <div>
+                <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{selUlb.name} ({selUlb.type})</div>
+                {selUlb.note && <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{selUlb.note}</p>}
+                <DepShowOnMap name={`${selUlb.name} (${selUlb.type})`} match={selUlb.mapMatch} onShowMatch={onShowMatch} />
+              </div>
+              <DepThemeList themes={selUlb.themes} />
+            </div>
+          )}
+          {selTaluk && (
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-3">
+              <div>
+                <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{selTaluk.unit.name}</div>
+                {selTaluk.unit.headline && <p className="text-[12px] font-semibold text-rose-900 dark:text-rose-100 leading-snug mt-0.5">{selTaluk.unit.headline}</p>}
+                <DepShowOnMap name={selTaluk.unit.name.replace(/ \(taluk.*\)$/i, "")} match={selTaluk.mapMatch} onShowMatch={onShowMatch} />
+              </div>
+              <GapConflicts conflicts={selTaluk.unit.conflicts} />
+              <GapCaveats caveats={selTaluk.unit.caveats} />
+              <GapStreamsBody unit={selTaluk.unit} />
+            </div>
+          )}
+
+          {district.industrialAreas && district.industrialAreas.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 items-center">
+              <span className="text-[10px] uppercase tracking-wider text-slate-400">Industrial areas (in-basin)</span>
+              {district.industrialAreas.map((ia, i) =>
+                ia.mapMatch ? (
+                  <button key={i} onClick={() => onShowMatch(ia.mapMatch!)} className={chip(false)}>{ia.name} ↗</button>
+                ) : (
+                  <span key={i} className="text-[11px] px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-slate-500">{ia.name}</span>
+                ),
+              )}
+            </div>
+          )}
+        </div>
+      ) : null}
+
+      <p className="text-[11px] text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-700 leading-relaxed">
+        Figures extracted from the District Environment Plans; each entry cites its page in the source document. Themes follow the NGT&apos;s 7 thematic areas (OA 360/2018).
+      </p>
+    </div>
+  );
+}
+
+function DepGovernanceView({ gov }: { gov: DepGovernance }) {
+  return (
+    <div className="space-y-3">
+      {gov.items.map((it, i) => (
+        <div key={i} className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5">
+          <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100 mb-1">{it.heading}</div>
+          <p className="text-[13px] text-slate-600 dark:text-slate-400 leading-relaxed">{it.body}</p>
+          {it.source && (
+            <div className="mt-1.5 text-[13px] leading-relaxed">
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{it.source.source}:</span>{" "}
+              <span className="text-slate-600 dark:text-slate-400">{it.source.says}</span>
+              {it.source.url ? (
+                <a href={it.source.url} target="_blank" rel="noopener noreferrer" className="block text-[11px] text-blue-600 dark:text-blue-400 hover:underline mt-0.5">
+                  {it.source.citation} ↗
+                </a>
+              ) : (
+                <span className="block text-[11px] text-slate-400 italic mt-0.5">{it.source.citation}</span>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+      {gov.gaps.length > 0 && (
+        <div className="rounded-md border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 p-2.5">
+          <div className="text-[11px] uppercase tracking-wider text-rose-700 dark:text-rose-400 font-semibold mb-1">The compliance gap</div>
+          <ul className="space-y-1 list-disc pl-4">
+            {gov.gaps.map((g, i) => (
+              <li key={i} className="text-[12px] text-rose-800 dark:text-rose-200 leading-snug">{g}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
