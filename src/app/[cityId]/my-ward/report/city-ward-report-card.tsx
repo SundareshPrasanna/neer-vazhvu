@@ -124,14 +124,30 @@ export function CityWardReportCard({
 
   if (error) {
     return (
+      /* This branch is reachable in production: Chennai has no
+         ward-risk-chennai.json (and no compute script), so every visitor to
+         /chennai/my-ward/report was shown "Run npx tsx
+         scripts/compute-chennai-ward-risk.ts to generate it" - a build
+         instruction addressed to us, rendered to readers. Say what is
+         missing and point somewhere useful instead. */
       <div className="max-w-3xl mx-auto p-6 text-sm text-slate-600 dark:text-slate-400">
-        <p>Ward risk data is not yet available for {cityDisplayName}.</p>
-        <p className="mt-2">
-          Run <code className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 rounded">npx tsx scripts/compute-{cityId}-ward-risk.ts</code> to generate it.
+        <p>
+          The ward report card is not available for {cityDisplayName} yet. The
+          composite ward risk score behind it has not been published for this
+          city.
         </p>
-        <Link href={`/${cityId}/my-ward`} className="text-blue-600 hover:underline mt-3 inline-block">
-          ← Back to ward map
-        </Link>
+        <p className="mt-2">
+          The ward map and the ward rankings cover {cityDisplayName} in the
+          meantime.
+        </p>
+        <div className="mt-3 flex gap-4">
+          <Link href={`/${cityId}/my-ward`} className="text-blue-600 hover:underline">
+            ← Back to ward map
+          </Link>
+          <Link href={`/${cityId}/my-ward/rankings`} className="text-blue-600 hover:underline">
+            Ward rankings →
+          </Link>
+        </div>
       </div>
     );
   }

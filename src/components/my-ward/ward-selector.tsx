@@ -379,9 +379,13 @@ function ResultRow({
         <span className="font-medium text-slate-900 dark:text-slate-100 leading-snug">
           {displayName}
         </span>
+        {/* Not every city publishes a zone per ward - all 250 Delhi wards
+            carry an empty zone_name, because MCD's 12 zones are not in the
+            ward dataset. Rendering the separator unconditionally printed
+            "Ward 16 - " with a dangling dash on every Delhi result. */}
         <span className="text-xs text-slate-400 dark:text-slate-500">
-          {t("ward.ward")} {l.ward_number} -{" "}
-          {getZoneLabel(l.zone_name, language)}
+          {t("ward.ward")} {l.ward_number}
+          {l.zone_name ? ` - ${getZoneLabel(l.zone_name, language)}` : ""}
         </span>
       </button>
     );
@@ -397,9 +401,13 @@ function ResultRow({
         <span className="font-medium text-slate-900 dark:text-slate-100">
           {t("ward.ward")} {w.wardNumber}
         </span>
-        <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
-          {getZoneLabel(w.zone, language)} {t("ward_search.zone_suffix")}
-        </span>
+        {/* Same reason as above: with no zone, this rendered a bare "zone"
+            label sitting next to nothing on every Delhi ward row. */}
+        {w.zone ? (
+          <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
+            {getZoneLabel(w.zone, language)} {t("ward_search.zone_suffix")}
+          </span>
+        ) : null}
       </button>
     );
   }
