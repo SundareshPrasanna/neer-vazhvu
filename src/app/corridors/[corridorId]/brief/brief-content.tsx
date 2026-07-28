@@ -7,7 +7,7 @@ import { AssessmentTable } from "@/components/corridor/assessment-table";
 
 const CorridorMap = dynamic(
   () => import("@/components/corridor/corridor-map").then((m) => m.CorridorMap),
-  { ssr: false, loading: () => <div className="h-[320px] rounded-lg bg-slate-100" /> },
+  { ssr: false, loading: () => <div className="h-[500px] rounded-lg bg-slate-100" /> },
 );
 
 interface CrosscheckSummary {
@@ -22,6 +22,8 @@ interface BriefContentProps {
   manifest: CorridorManifest;
   assessment: CorridorAssessment;
   crosscheck: CrosscheckSummary | null;
+  /** Capture mode: render only the live map at capture size (?maponly=1). */
+  mapOnly?: boolean;
 }
 
 /**
@@ -30,9 +32,22 @@ interface BriefContentProps {
  * the corridor page; every number shares the same build pipeline and
  * cross-check gate, so the brief can never drift from the page.
  */
-export function BriefContent({ manifest, assessment, crosscheck }: BriefContentProps) {
+export function BriefContent({ manifest, assessment, crosscheck, mapOnly = false }: BriefContentProps) {
   const retrieved = assessment._provenance.retrieved;
   const latest = manifest.latestEdition;
+
+  if (mapOnly) {
+    // Capture surface for the committed brief-map.png (see page.tsx header).
+    // The brief is light-only, but the capture browser may run in dark
+    // scheme: neutralize the site's dark-mode tile filter so the exported
+    // image is always the light basemap.
+    return (
+      <div style={{ width: 1420, height: 1000 }} className="bg-white p-0">
+        <style>{".dark .leaflet-tile { filter: none !important; }"}</style>
+        <CorridorMap manifest={manifest} variant="brief" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white text-slate-800 text-[13px] leading-snug">
@@ -65,9 +80,10 @@ export function BriefContent({ manifest, assessment, crosscheck }: BriefContentP
         <ol className="list-decimal ml-4 space-y-1 text-[12.5px]">
           <li>
             <strong>The taluks hosting the parks are classified Safe.</strong>{" "}
-            Every SIPCOT estate sits in Sriperumbudur taluk (24.5% stage of
-            extraction, {latest}{" "}edition) or spills into Kundrathur (27.9%);
-            8 of the corridor&apos;s 10 taluks are Safe. The two Semi-Critical
+            Every SIPCOT estate sits wholly in Sriperumbudur taluk (24.5%
+            stage of extraction, {latest}{" "}edition), except the Oragadam
+            estates, which straddle Sriperumbudur and Kundrathur (27.9%); 8 of
+            the corridor&apos;s 10 taluks are Safe. The two Semi-Critical
             taluks: Avadi (83.2%) on the northern rim, and Chengalpattu
             (78.8%), which hosts Mahindra World City. The 2017 edition counted
             22 over-exploited firkas across these (then-undivided) districts;
@@ -100,7 +116,14 @@ export function BriefContent({ manifest, assessment, crosscheck }: BriefContentP
           </li>
         </ol>
 
-        <CorridorMap manifest={manifest} variant="brief" />
+        {/* Static image, not live Leaflet: print compositors leak Leaflet's
+            transformed panes outside their clip. Regenerated with the PDF. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`/data/corridors/${manifest.corridorId}/brief-map.png`}
+          alt="Map of the corridor's firka-level CGWB classification with SIPCOT park boundaries"
+          className="w-full rounded-lg border border-slate-200"
+        />
         <p className="text-[10.5px] text-slate-500">
           CGWB assessment-unit (firka) polygons, {latest} classification, with
           SIPCOT park outer boundaries. Geometry: IN-GRES GeoServer (CGWB) and

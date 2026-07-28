@@ -65,9 +65,10 @@ export function CorridorContent({ manifest, assessment, crosscheck }: CorridorCo
           <ol className="list-decimal ml-5 space-y-2 text-sm sm:text-base">
             <li>
               <strong>The taluks hosting the parks are classified Safe.</strong>{" "}
-              Every SIPCOT estate here sits in Sriperumbudur taluk (24.5% stage
-              of extraction in the {latest}{" "}edition) or spills into
-              neighbouring Kundrathur (27.9%), and 8 of the corridor&apos;s 10
+              Every SIPCOT estate here sits wholly in Sriperumbudur taluk
+              (24.5% stage of extraction in the {latest}{" "}edition), except
+              the Oragadam estates, which straddle Sriperumbudur and
+              neighbouring Kundrathur (27.9%); 8 of the corridor&apos;s 10
               taluks are Safe. The two Semi-Critical taluks are Avadi (83.2%)
               on the northern rim and Chengalpattu (78.8%), which hosts
               Mahindra World City. The longer arc is improvement: the 2017

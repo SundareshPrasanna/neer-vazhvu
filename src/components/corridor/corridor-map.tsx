@@ -142,10 +142,13 @@ export function CorridorMap({ manifest, variant = "full" }: CorridorMapProps) {
     <div
       className={
         brief
-          ? "relative h-[320px] rounded-lg overflow-hidden border border-slate-200"
+          ? "relative h-full min-h-[400px] rounded-lg overflow-hidden border border-slate-200"
           : "relative h-[460px] sm:h-[540px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700"
       }
-      style={brief ? { breakInside: "avoid" } : undefined}
+      // clip-path hard-clips Leaflet's transformed panes, which escape
+      // overflow:hidden (and contain:paint) in Chrome's print renderer and
+      // leak a duplicated map fragment below the frame on the PDF page.
+      style={brief ? { breakInside: "avoid", clipPath: "inset(0 round 8px)" } : undefined}
     >
       <MapContainer
         center={manifest.center}
@@ -197,9 +200,11 @@ export function CorridorMap({ manifest, variant = "full" }: CorridorMapProps) {
 
       {/* Legend: labels always paired with color; dashed samples mirror the
           stroke encoding so the scale never rides on hue alone. In the brief
-          variant the box stays light regardless of site theme. */}
+          variant the box stays light regardless of site theme. Anchored over
+          the sea on the right so it never covers a western firka (Walajabad's
+          Critical unit renders exactly where a bottom-left box would sit). */}
       <div
-        className={`absolute bottom-3 left-3 z-[1000] rounded-lg shadow-lg border p-3 space-y-1 ${
+        className={`absolute bottom-8 right-3 z-[1000] rounded-lg shadow-lg border p-3 space-y-1 ${
           brief
             ? "bg-white/95 border-slate-200"
             : "bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700"
