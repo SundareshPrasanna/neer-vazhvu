@@ -67,9 +67,12 @@ TEMPLATE_TOKENS = ["${cityId}", "${city}", "{city_id}", "{cityId}", "{city}"]
 BIG_FILE_BYTES = 5 * 1024 * 1024
 
 
-def load_registry() -> tuple[dict[str, list[dict]], int]:
-    """Map repo-relative data path -> [{id, scope, license, refreshMethod}]."""
+def load_registry() -> tuple[dict[str, list[dict]], list[tuple[str, dict]], int]:
+    """Registry lineage in both its forms: exact file paths and directory
+    prefixes (the GROUPS convention - `public/data/cascade` names the whole
+    machine-generated cohort; per-file lineage there would be noise)."""
     by_path: dict[str, list[dict]] = defaultdict(list)
+    dir_prefixes: list[tuple[str, dict]] = []
     n_sources = 0
     for f in sorted((ROOT / "scripts/source-registry").glob("*.json")):
         doc = json.loads(f.read_text())
@@ -82,8 +85,34 @@ def load_registry() -> tuple[dict[str, list[dict]], int]:
                 "refreshMethod": src.get("refreshMethod"),
             }
             for dep in src.get("dependsOn", []):
-                by_path[dep.lstrip("/")].append(entry)
-    return by_path, n_sources
+                dep = dep.lstrip("/")
+                if dep.startswith("supabase:"):
+                    continue
+                if (ROOT / dep).is_dir():
+                    dir_prefixes.append((dep.rstrip("/") + "/", entry))
+                else:
+                    by_path[dep].append(entry)
+    return by_path, dir_prefixes, n_sources
+
+
+def load_coverage_allowlist() -> dict[str, str]:
+    """The UNWATCHED map from scripts/lib/headwaters-coverage.ts: artifacts
+    with no registry entry and an explicit reason on record (continuous
+    sources like OSM/Dynamic World, derived artifacts, closed series). This is
+    the platform's second accountability track; the catalogue must see it or
+    every deliberate allowlist decision reads as a coverage gap.
+
+    Parsed by regex from the TS source - the single source of truth stays in
+    the coverage gate; if the format changes this returns {} and the
+    conformance numbers drop loudly rather than silently lying."""
+    ts = (ROOT / "scripts/lib/headwaters-coverage.ts").read_text()
+    m = re.search(r"UNWATCHED[^=]*=\s*\{(.*?)\n\};", ts, re.S)
+    if not m:
+        return {}
+    return {
+        p: reason
+        for p, reason in re.findall(r'"(public/[^"]+)":\s*"([^"]*)"', m.group(1))
+    }
 
 
 def load_rich_body_cities() -> dict[str, str]:
@@ -256,7 +285,8 @@ def convention_blob() -> str:
 
 
 def main() -> None:
-    registry_by_path, n_sources = load_registry()
+    registry_by_path, registry_prefixes, n_sources = load_registry()
+    allowlist = load_coverage_allowlist()
     rich_slugs = load_rich_body_cities()
     conv_blob = convention_blob()
 
@@ -275,7 +305,21 @@ def main() -> None:
         consumers, producers = refs_for(path.name, hits)
         if not consumers and family_of(rel) in ("basins", "corridors") and f'"{scope}"' in conv_blob:
             consumers = [f"(convention: registry-driven loader for '{scope}')"]
-        sources = registry_by_path.get(str(rel), [])
+        rel_str = str(rel)
+        sources = list(registry_by_path.get(rel_str, []))
+        sources += [e for prefix, e in registry_prefixes if rel_str.startswith(prefix)]
+        # Accountability track (mirrors the headwaters coverage gate):
+        # watched (registry lineage) > allowlisted (explicit reason on record,
+        # exact path or GROUPS directory) > unaccounted.
+        allow_reason = allowlist.get(rel_str) or next(
+            (r for p, r in allowlist.items() if rel_str.startswith(p.rstrip("/") + "/")), None
+        )
+        if sources:
+            track = "watched"
+        elif allow_reason:
+            track = "allowlisted"
+        else:
+            track = "unaccounted"
         rec = {
             "path": str(rel),
             "family": family_of(rel),
@@ -285,14 +329,16 @@ def main() -> None:
             "schema": fingerprint(path),
             "consumers": consumers,
             "producer_refs": producers,
-            "headwaters_sources": [s["id"] for s in sources],
+            "headwaters_sources": sorted({s["id"] for s in sources}),
             "licenses": sorted({s["license"] for s in sources if s.get("license")}),
+            "accountability": track,
+            "accountability_reason": allow_reason,
             "flags": sorted(
                 filter(
                     None,
                     [
                         "chennai-legacy-name" if path.name in CHENNAI_LEGACY else None,
-                        "unregistered" if not sources else None,
+                        "unaccounted" if track == "unaccounted" else None,
                         "orphan" if not consumers and not producers and not sources else None,
                         "big" if path.stat().st_size > BIG_FILE_BYTES else None,
                         "unknown-scope" if scope == "unknown" else None,
@@ -319,7 +365,7 @@ def main() -> None:
                 "scopes": scopes,
                 "bytes": sum(r["bytes"] for r in recs),
                 "schema_variants": len(key_sets),
-                "registered": any(r["headwaters_sources"] for r in recs),
+                "registered": any(r["accountability"] != "unaccounted" for r in recs),
                 "has_consumer": any(r["consumers"] for r in recs),
             }
         )
@@ -330,18 +376,23 @@ def main() -> None:
     # ---- markdown summary ----
     mb = lambda b: f"{b / 1048576:.1f}"  # noqa: E731
     total_bytes = sum(r["bytes"] for r in records)
-    fam_stats: dict[str, dict] = defaultdict(lambda: {"files": 0, "bytes": 0, "registered": 0, "scopes": set()})
+    fam_stats: dict[str, dict] = defaultdict(
+        lambda: {"files": 0, "bytes": 0, "watched": 0, "allowlisted": 0, "scopes": set()}
+    )
     for r in records:
         s = fam_stats[r["family"]]
         s["files"] += 1
         s["bytes"] += r["bytes"]
-        s["registered"] += bool(r["headwaters_sources"])
+        if r["accountability"] == "watched":
+            s["watched"] += 1
+        elif r["accountability"] == "allowlisted":
+            s["allowlisted"] += 1
         s["scopes"].add(r["scope"])
 
     multi = [d for d in ds_rows if len([s for s in d["scopes"] if s in CITY_TOKENS]) >= 2]
     single = [d for d in ds_rows if len([s for s in d["scopes"] if s in CITY_TOKENS]) == 1]
     orphans = [r for r in records if "orphan" in r["flags"]]
-    unregistered = [r for r in records if "unregistered" in r["flags"]]
+    unaccounted = [r for r in records if r["accountability"] == "unaccounted"]
     drift = [d for d in multi if d["schema_variants"] > 1]
 
     lines = [
@@ -351,15 +402,20 @@ def main() -> None:
         "Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints, consumers, producers, Headwaters joins).",
         "",
         f"**{len(records)} files · {mb(total_bytes)} MB · {len(ds_rows)} logical datasets · "
-        f"{n_sources} Headwaters sources, of which {sum(1 for r in records if r['headwaters_sources'])} files are covered by a source.**",
+        f"{n_sources} Headwaters sources. Accountability: "
+        f"{sum(1 for r in records if r['accountability'] == 'watched')} watched · "
+        f"{sum(1 for r in records if r['accountability'] == 'allowlisted')} allowlisted · "
+        f"{sum(1 for r in records if r['accountability'] == 'unaccounted')} unaccounted.**",
         "",
         "## Families",
         "",
-        "| family | files | MB | scopes | files with Headwaters source |",
-        "|---|--:|--:|--:|--:|",
+        "| family | files | MB | scopes | watched | allowlisted |",
+        "|---|--:|--:|--:|--:|--:|",
     ]
     for fam, s in sorted(fam_stats.items(), key=lambda kv: -kv[1]["bytes"]):
-        lines.append(f"| {fam} | {s['files']} | {mb(s['bytes'])} | {len(s['scopes'])} | {s['registered']} |")
+        lines.append(
+            f"| {fam} | {s['files']} | {mb(s['bytes'])} | {len(s['scopes'])} | {s['watched']} | {s['allowlisted']} |"
+        )
 
     lines += [
         "",
@@ -386,7 +442,7 @@ def main() -> None:
     for r in orphans:
         lines.append(f"  - `{r['path']}` ({mb(r['bytes'])} MB)")
     lines += [
-        f"- **Unregistered files** (no Headwaters source): {len(unregistered)} of {len(records)}",
+        f"- **Unaccounted files** (no registry lineage AND no allowlist reason): {len(unaccounted)} of {len(records)}",
         f"- **Chennai legacy unprefixed names**: {sum(1 for r in records if 'chennai-legacy-name' in r['flags'])}",
         f"- **Unknown scope** (city not derivable from path): {sum(1 for r in records if 'unknown-scope' in r['flags'])}",
         "",

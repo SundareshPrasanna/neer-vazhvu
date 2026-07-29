@@ -18,10 +18,11 @@
         "public/data/elevation-bands-bangalore.geojson",
         "public/data/elevation-bands-madurai.geojson",
         "public/data/elevation-bands-mumbai.geojson",
-        "public/data/elevation-bands-delhi.geojson"
+        "public/data/elevation-bands-delhi.geojson",
+        "public/data/cascade"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_elevation_bands.py (GEE), re-run per city",
-      "notes": "FABDEM V1-2 - satellite DEM with buildings and forests removed - underpins the elevation-band layer in all five cities, honest at ~30 m horizontal / ~2 m vertical. A new FABDEM version changes every band boundary at once, which is exactly why this is registered once at platform scope rather than five times. LICENCE FLAG: FABDEM is CC BY-NC-SA, non-commercial - relevant if any BRSR or commercial track ever reuses these layers. The canonical data host is data.bris.ac.uk but its dataset paths need an exact opaque id we do not have; the Fathom product page is the stable, verified surface (200 on 2026-07-26).",
+      "notes": "FABDEM V1-2 - satellite DEM with buildings and forests removed - underpins the elevation-band layer in all five cities, honest at ~30 m horizontal / ~2 m vertical. A new FABDEM version changes every band boundary at once, which is exactly why this is registered once at platform scope rather than five times. LICENCE FLAG: FABDEM is CC BY-NC-SA, non-commercial - relevant if any BRSR or commercial track ever reuses these layers. The canonical data host is data.bris.ac.uk but its dataset paths need an exact opaque id we do not have; the Fathom product page is the stable, verified surface (200 on 2026-07-26). Cascade catchment delineation (catchments_fabdem_wbt_v1 in neer-vazhvu-api/app/cascade/catchments.py) runs on a FABDEM mosaic, so the entire public/data/cascade family is FABDEM-DERIVED - and therefore inherits CC BY-NC-SA (non-commercial) encumbrance. Flagged for the NVDM derivative-licence audit 2026-07-30.",
       "lastSeen": {
         "pageHash": "13dc5102eb99ef6a",
         "acceptedOn": "2026-07-26"

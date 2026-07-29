@@ -159,12 +159,20 @@ def scope_registry_errors(doc: dict, scopes: dict[str, str]) -> list[str]:
     return []
 
 
-def source_accountability_errors(doc: dict, joined: set[str], reg_ids: set[str]) -> list[str]:
+def source_accountability_errors(
+    doc: dict, joined: set[str], reg_ids: set[str], allowlisted: bool = False
+) -> list[str]:
     """L2 half of the cumulative ladder (spec Part 10): every non-methodology
     source either joins the Headwaters registry THROUGH THIS FILE (its id is in
-    a registry entry whose dependsOn names the file) or explicitly declares
-    itself closed AND carries as_of. as_of alone is not an exemption - living
-    sources have evidence dates too."""
+    a registry entry whose dependsOn names the file, directly or via a GROUPS
+    directory) or explicitly declares itself closed AND carries as_of. as_of
+    alone is not an exemption - living sources have evidence dates too.
+
+    Coverage-ALLOWLISTED artifacts (headwaters-coverage.ts UNWATCHED: continuous
+    sources like OSM/Dynamic World with no editions to watch, derived artifacts,
+    closed series) are the platform's second accountability track: their
+    unregistered sources are a recorded decision, so the registration
+    requirement is waived - but any registry id they DO cite must still exist."""
     errs = []
     for i, s in enumerate(doc.get("provenance", {}).get("sources", [])):
         if not isinstance(s, dict) or s.get("role") == "methodology":
@@ -173,7 +181,7 @@ def source_accountability_errors(doc: dict, joined: set[str], reg_ids: set[str])
         if sid:
             if sid not in reg_ids:
                 errs.append(f"provenance.sources[{i}] id '{sid}' is not a known Headwaters registry id")
-            elif sid not in joined:
+            elif sid not in joined and not allowlisted:
                 errs.append(
                     f"provenance.sources[{i}] id '{sid}' exists in the registry but its "
                     "dependsOn does not name this file - add the path so edition alerts reach it"
@@ -181,7 +189,7 @@ def source_accountability_errors(doc: dict, joined: set[str], reg_ids: set[str])
         elif s.get("closed") is True:
             if not s.get("as_of"):
                 errs.append(f"provenance.sources[{i}] is closed but has no as_of (closed sources must be dated)")
-        else:
+        elif not allowlisted:
             errs.append(
                 f"provenance.sources[{i}] '{str(s.get('title', '?'))[:40]}' has no registry id and is "
                 "not declared closed - living sources must be registered, one-time sources must say closed: true"
@@ -273,7 +281,10 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
     path = ROOT / rec["path"]
     level = 0  # L0: it's in the catalogue by construction
     notes: list[str] = []
-    if rec["headwaters_sources"]:
+    # L1 = accounted for: registry lineage (watched) OR an explicit coverage-
+    # allowlist reason (the UNWATCHED track). Only 'unaccounted' fails L1.
+    allowlisted = rec.get("accountability") == "allowlisted"
+    if rec["headwaters_sources"] or allowlisted:
         level = 1
     try:
         doc = json.loads(path.read_text())
@@ -282,10 +293,12 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
     env_errs = envelope_check(doc, rec, schemas)
     if not env_errs:
         # Cumulative ladder: L2 additionally requires scope-registry agreement,
-        # source accountability (registry join or declared-closed), and the
-        # method-dependent provenance rules.
+        # source accountability (registry join, declared-closed, or the
+        # allowlist track), and the method-dependent provenance rules.
         env_errs += scope_registry_errors(doc, scopes)
-        env_errs += source_accountability_errors(doc, set(rec["headwaters_sources"]), reg_ids)
+        env_errs += source_accountability_errors(
+            doc, set(rec["headwaters_sources"]), reg_ids, allowlisted=allowlisted
+        )
         env_errs += provenance_rule_errors(doc)
     if not env_errs:
         level = max(level, 2)
