@@ -1,0 +1,31 @@
+{
+  "$id": "facts.schema.json",
+  "title": "data-root/facts contract (Tier A)",
+  "description": "Curated city facts. Each fact is independently citable: per-record sources refine the envelope's provenance floor (spec 5.1).",
+  "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
+  "type": "object",
+  "required": ["facts"],
+  "properties": {
+    "facts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "title", "value", "interpretation"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "tier": { "type": "integer" },
+          "category": { "type": "string" },
+          "title": { "type": "string" },
+          "value": { "type": ["string", "number"] },
+          "unit": { "type": "string" },
+          "interpretation": { "type": "string" },
+          "sources": {
+            "type": "array",
+            "items": { "$ref": "envelope.schema.json#/$defs/source" }
+          }
+        }
+      }
+    }
+  }
+}

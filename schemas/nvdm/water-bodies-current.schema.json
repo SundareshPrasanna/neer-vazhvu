@@ -1,0 +1,33 @@
+{
+  "$id": "water-bodies-current.schema.json",
+  "title": "geojson-layers/water-bodies-current contract (Tier A)",
+  "description": "Current water bodies layer. Feature identity is (osm_type, osm_id) and must be stable across editions. Local names via name_<lang> keys (spec 7.2); per-city additions beyond the core stay optional.",
+  "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
+  "type": "object",
+  "required": ["type", "features"],
+  "properties": {
+    "type": { "enum": ["FeatureCollection"] },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "geometry", "properties"],
+        "properties": {
+          "type": { "enum": ["Feature"] },
+          "geometry": { "type": ["object", "null"] },
+          "properties": {
+            "type": "object",
+            "required": ["osm_id", "osm_type", "name", "area_ha", "water_type"],
+            "properties": {
+              "osm_id": { "type": ["integer", "string"] },
+              "osm_type": { "enum": ["way", "relation", "node"] },
+              "name": { "type": ["string", "null"] },
+              "area_ha": { "type": "number" },
+              "water_type": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "$id": "cgwb-stations.schema.json",
+  "title": "data-root/cgwb-stations contract (Tier A)",
+  "description": "CGWB/WRIS observation wells with reading series. provenance.conventions.sign is REQUIRED in practice: WRIS depth signs are programme-dependent and a naive reader WILL compute inverted trends (spec 7.5; the per-station sign rule).",
+  "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
+  "type": "object",
+  "required": ["wells"],
+  "properties": {
+    "depth_unit": { "type": "string" },
+    "aquifer": { "type": ["string", "object", "null"] },
+    "district": { "type": ["string", "null"] },
+    "well_type": { "type": ["string", "object", "null"] },
+    "wells": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "lat", "lng", "readings"],
+        "properties": {
+          "name": { "type": "string" },
+          "station_code": { "type": "string" },
+          "block": { "type": ["string", "null"] },
+          "lat": { "type": "number" },
+          "lng": { "type": "number" },
+          "readings": {
+            "type": "array",
+            "description": "Series shape (spec 6.1): ISO dates, unit-suffixed depth keys."
+          }
+        }
+      }
+    }
+  }
+}

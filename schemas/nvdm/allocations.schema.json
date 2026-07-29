@@ -1,0 +1,47 @@
+{
+  "$id": "allocations.schema.json",
+  "title": "data-root/allocations contract (Tier A)",
+  "description": "Allocation ledger: entitled vs received per arrangement. Entitlements stay in native units alongside MLD equivalents; never silently converted (spec 7.1).",
+  "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
+  "type": "object",
+  "required": ["arrangements", "authorities"],
+  "properties": {
+    "headline": { "type": "string" },
+    "intro": { "type": "string" },
+    "unit_note": { "type": "string" },
+    "arrangements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "entitled", "received", "confidence"],
+        "properties": {
+          "id": { "type": "string" },
+          "authority_id": { "type": "string" },
+          "recipient": { "type": "string" },
+          "instrument": { "type": ["string", "object"] },
+          "entitled": { "type": ["string", "object"] },
+          "received": { "type": ["string", "object"] },
+          "confidence": { "enum": ["high", "medium", "low"] },
+          "note": { "type": "string" },
+          "source": { "type": ["string", "object", "array"] }
+        }
+      }
+    },
+    "authorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "role": { "type": "string" }
+        }
+      }
+    },
+    "events": { "type": "array", "items": { "type": "object" } },
+    "futures": { "type": "array", "items": { "type": "object" } },
+    "gaps": { "type": "array" }
+  }
+}

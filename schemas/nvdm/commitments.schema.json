@@ -1,0 +1,37 @@
+{
+  "$id": "commitments.schema.json",
+  "title": "data-root/commitments contract (Tier A)",
+  "description": "Promise tracker. Statuses change only with a dated citation; history is append-only (the update_model discipline, now contract).",
+  "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
+  "type": "object",
+  "required": ["commitments", "status_legend", "update_model"],
+  "properties": {
+    "update_model": { "type": "string" },
+    "status_legend": { "type": "object" },
+    "commitments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "what", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "what": { "type": "string" },
+          "category": { "type": "string" },
+          "committed_by": { "type": "string" },
+          "commitment_source": { "type": ["string", "object"] },
+          "due": { "type": ["string", "null"] },
+          "revised_due": { "type": ["string", "null"] },
+          "next_check": { "type": ["string", "null"] },
+          "status": { "type": "string" },
+          "status_history": {
+            "type": "array",
+            "items": { "type": "object" },
+            "description": "Append-only; each entry needs a date and a citation."
+          }
+        }
+      }
+    }
+  }
+}
