@@ -128,8 +128,22 @@ interface DepTheme {
   /** Value read via OCR from a scanned plan; treat as approximate. */
   ocrUncertain?: boolean;
 }
-interface DepUlb { key: string; name: string; type: string; note?: string; mapMatch?: MapMatch; themes: DepTheme[] }
-interface DepTaluk { key: string; label?: string; mapMatch?: MapMatch; unit: GapUnit }
+interface DepUlb {
+  key: string;
+  name: string;
+  type: string;
+  note?: string;
+  /** The ULB's constituting/upgrading gazette notification (Paani round 4). */
+  gazette?: { label: string; url: string };
+  /** Internal contradictions of the plan at this ULB's level. */
+  conflicts?: string[];
+  mapMatch?: MapMatch;
+  themes: DepTheme[];
+}
+/** A taluk tab carries only what the DEP reports at taluk grain - ULB-level
+ *  data lives on the ULB tabs (Paani round 4: the old cross-source unit here
+ *  duplicated the ULB content). */
+interface DepTaluk { key: string; label: string; mapMatch?: MapMatch; note?: string; themes: DepTheme[] }
 interface DepDistrict {
   key: string;
   name: string;
@@ -139,11 +153,16 @@ interface DepDistrict {
   pctInBasin: number;
   counts?: { label: string; value: string }[];
   countsNote?: string;
+  /** Internal contradictions of the plan at district level. */
+  conflicts?: string[];
   mapMatch?: MapMatch;
   districtThemes: DepTheme[];
   ulbs: DepUlb[];
   taluks: DepTaluk[];
   industrialAreas?: { name: string; mapMatch?: MapMatch }[];
+  industrialAreasNote?: string;
+  /** Cross-source contradictions about the district's industrial areas. */
+  industrialAreasConflicts?: string[];
 }
 interface DepGovernance {
   items: { heading: string; body: string; source?: GapSource }[];
@@ -606,9 +625,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         const v2 = d as unknown as DepData;
         if (v2?.version === 2 && Array.isArray(v2.districts)) {
           setDepData(v2);
-          // The map machinery (badges, dimming, defaultGapUnit) keys on flat
-          // unit ids, which in v2 are the taluks nested under districts.
-          setGapData(Object.fromEntries(v2.districts.flatMap((dist) => dist.taluks.map((t) => [t.key, t.unit]))));
+          // v2 keeps no flat GapUnit map - the DepPanel resolves badge / PRS
+          // keys against its districts' ULBs and taluks directly.
+          setGapData({});
           setGapNote(v2.note ?? null);
           return;
         }
@@ -647,12 +666,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     if (didDefaultGapRef.current) return;
     if (initialFloor !== "governance") return;
     const unit = manifest.defaultGapUnit;
-    if (unit && gapData[unit]) {
+    const inDep = !!depData?.districts.some(
+      (dd) => dd.taluks.some((t) => t.key === unit) || dd.ulbs.some((u) => u.key === unit),
+    );
+    if (unit && (gapData[unit] || inDep)) {
       setSelectedGapUnit(unit);
       setSelectedFeature(null);
       didDefaultGapRef.current = true;
     }
-  }, [gapData, initialFloor, manifest.defaultGapUnit]);
+  }, [gapData, depData, initialFloor, manifest.defaultGapUnit]);
 
   useEffect(() => {
     setCoachDismissed(localStorage.getItem(COACH_KEY) === "1");
@@ -2636,7 +2658,7 @@ function UnitTimeline({ unit, unitLabel, treatedVerb, onOpenUnit }: { unit: PrsU
 
       {unit.gapUnit && (
         <button onClick={() => onOpenUnit(unit.gapUnit!)} className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
-          View full cross-source detail →
+          Open this unit in the DEP snapshot →
         </button>
       )}
     </div>
@@ -2857,17 +2879,38 @@ function DepPanel({ data, focusTaluk, onSelectTaluk, onShowMatch, onClose, onBac
   onClose: () => void;
   onBack?: () => void;
 }) {
-  // The map badge that opened the panel is a taluk key: land on its district
-  // with that taluk's card open. GOV_TAB is the extra governance tab.
+  // The key that opened the panel is a ULB key (PRS "open in the DEP" links)
+  // or a taluk key (map badges): land on its district with that card open.
+  // ULBs win the lookup - 'bbmp' names both the ULB and the city-taluks tab,
+  // and the ULB card carries the substance. GOV_TAB is the governance tab.
   const GOV_TAB = "__governance";
   const homeDistrict = useMemo(
-    () => data.districts.find((d) => d.taluks.some((t) => t.key === focusTaluk)) ?? data.districts[0],
+    () =>
+      data.districts.find((d) => d.ulbs.some((u) => u.key === focusTaluk) || d.taluks.some((t) => t.key === focusTaluk)) ??
+      data.districts[0],
     [data.districts, focusTaluk],
   );
   const [tab, setTab] = useState<string>(homeDistrict?.key ?? GOV_TAB);
-  const [view, setView] = useState<{ kind: "district" } | { kind: "ulb"; key: string } | { kind: "taluk"; key: string }>(
-    focusTaluk && homeDistrict?.taluks.some((t) => t.key === focusTaluk) ? { kind: "taluk", key: focusTaluk } : { kind: "district" },
-  );
+  const [view, setView] = useState<{ kind: "district" } | { kind: "ulb"; key: string } | { kind: "taluk"; key: string }>(() => {
+    if (focusTaluk && homeDistrict?.ulbs.some((u) => u.key === focusTaluk)) return { kind: "ulb", key: focusTaluk };
+    if (focusTaluk && homeDistrict?.taluks.some((t) => t.key === focusTaluk)) return { kind: "taluk", key: focusTaluk };
+    return { kind: "district" };
+  });
+  // Clicking another map badge while the panel is open changes focusTaluk
+  // without remounting - follow it (state-adjustment-during-render pattern).
+  const [lastFocus, setLastFocus] = useState(focusTaluk);
+  if (focusTaluk !== lastFocus) {
+    setLastFocus(focusTaluk);
+    if (focusTaluk && homeDistrict) {
+      if (homeDistrict.ulbs.some((u) => u.key === focusTaluk)) {
+        setTab(homeDistrict.key);
+        setView({ kind: "ulb", key: focusTaluk });
+      } else if (homeDistrict.taluks.some((t) => t.key === focusTaluk)) {
+        setTab(homeDistrict.key);
+        setView({ kind: "taluk", key: focusTaluk });
+      }
+    }
+  }
   const district = data.districts.find((d) => d.key === tab) ?? null;
   const selUlb = district && view.kind === "ulb" ? district.ulbs.find((u) => u.key === view.key) ?? null : null;
   const selTaluk = district && view.kind === "taluk" ? district.taluks.find((t) => t.key === view.key) ?? null : null;
@@ -2962,51 +3005,69 @@ function DepPanel({ data, focusTaluk, onSelectTaluk, onShowMatch, onClose, onBac
                   onClick={() => { setView({ kind: "taluk", key: t.key }); onSelectTaluk(t.key); }}
                   className={chip(view.kind === "taluk" && view.key === t.key)}
                 >
-                  {t.label ?? t.unit.name.replace(/ \(taluk.*\)$/i, "")}
+                  {t.label}
                 </button>
               ))}
             </div>
           )}
 
           {view.kind === "district" && (
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 mb-1">The 7 NGT thematic areas - district-wide</div>
-              <DepThemeList themes={district.districtThemes} />
-            </div>
+            <>
+              <GapConflicts conflicts={district.conflicts} />
+              <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5">
+                <div className="text-[11px] uppercase tracking-wider text-slate-400 mb-1">The 7 NGT thematic areas - district-wide</div>
+                <DepThemeList themes={district.districtThemes} />
+              </div>
+            </>
           )}
           {selUlb && (
             <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-2">
               <div>
                 <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{selUlb.name} ({selUlb.type})</div>
                 {selUlb.note && <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{selUlb.note}</p>}
+                {selUlb.gazette && (
+                  <a href={selUlb.gazette.url} target="_blank" rel="noopener noreferrer" className="block text-[11px] text-blue-600 dark:text-blue-400 hover:underline mt-0.5">
+                    {selUlb.gazette.label} ↗
+                  </a>
+                )}
                 <DepShowOnMap name={`${selUlb.name} (${selUlb.type})`} match={selUlb.mapMatch} onShowMatch={onShowMatch} />
               </div>
+              <GapConflicts conflicts={selUlb.conflicts} />
               <DepThemeList themes={selUlb.themes} />
             </div>
           )}
           {selTaluk && (
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-3">
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-2">
               <div>
-                <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{selTaluk.unit.name}</div>
-                {selTaluk.unit.headline && <p className="text-[12px] font-semibold text-rose-900 dark:text-rose-100 leading-snug mt-0.5">{selTaluk.unit.headline}</p>}
-                <DepShowOnMap name={selTaluk.unit.name.replace(/ \(taluk.*\)$/i, "")} match={selTaluk.mapMatch} onShowMatch={onShowMatch} />
+                <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{selTaluk.label} (taluk)</div>
+                {selTaluk.note && <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{selTaluk.note}</p>}
+                <DepShowOnMap name={`${selTaluk.label} (taluk)`} match={selTaluk.mapMatch} onShowMatch={onShowMatch} />
               </div>
-              <GapConflicts conflicts={selTaluk.unit.conflicts} />
-              <GapCaveats caveats={selTaluk.unit.caveats} />
-              <GapStreamsBody unit={selTaluk.unit} />
+              {selTaluk.themes.length > 0 ? (
+                <>
+                  <div className="text-[11px] uppercase tracking-wider text-slate-400">What the plan reports at taluk level</div>
+                  <DepThemeList themes={selTaluk.themes} />
+                </>
+              ) : (
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-snug">No taluk-level reporting in this plan.</p>
+              )}
             </div>
           )}
 
           {district.industrialAreas && district.industrialAreas.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 items-center">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400">Industrial areas (in-basin)</span>
-              {district.industrialAreas.map((ia, i) =>
-                ia.mapMatch ? (
-                  <button key={i} onClick={() => onShowMatch(ia.mapMatch!)} className={chip(false)}>{ia.name} ↗</button>
-                ) : (
-                  <span key={i} className="text-[11px] px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-slate-500">{ia.name}</span>
-                ),
-              )}
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap gap-1.5 items-center">
+                <span className="text-[10px] uppercase tracking-wider text-slate-400">Industrial areas in the district (falling within Arkavathi Basin)</span>
+                {district.industrialAreas.map((ia, i) =>
+                  ia.mapMatch ? (
+                    <button key={i} onClick={() => onShowMatch(ia.mapMatch!)} className={chip(false)}>{ia.name} ↗</button>
+                  ) : (
+                    <span key={i} className="text-[11px] px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-slate-500">{ia.name}</span>
+                  ),
+                )}
+              </div>
+              {district.industrialAreasNote && <p className="text-[10px] text-slate-400 leading-snug">{district.industrialAreasNote}</p>}
+              <GapConflicts conflicts={district.industrialAreasConflicts} />
             </div>
           )}
         </div>

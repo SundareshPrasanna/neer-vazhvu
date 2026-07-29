@@ -27,8 +27,10 @@ export const ARKAVATHI: BasinManifest = {
   mapZoom: 10,
   areaKm2: 4161,
   areaNote: "Basin boundary area as supplied by Paani Earth (India-WRIS derived).",
-  // Open the gap view on Ramanagara by default so the detail panel is populated.
-  defaultGapUnit: "ramanagara",
+  // Open the gap view on the Ramanagara CMC card by default so the detail
+  // panel is populated (ULB cards carry the DEP's sewage/waste substance;
+  // taluk tabs hold only taluk-grain reporting - Paani round 4).
+  defaultGapUnit: "ramanagara-cmc",
   rivers: [
     {
       riverId: "arkavathi",
