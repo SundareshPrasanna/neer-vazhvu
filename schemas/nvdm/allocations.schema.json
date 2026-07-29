@@ -24,7 +24,17 @@
           "received": { "type": ["string", "object"] },
           "confidence": { "enum": ["high", "medium", "low"] },
           "note": { "type": "string" },
-          "source": { "type": ["string", "object", "array"] }
+          "as_of": { "$ref": "envelope.schema.json#/$defs/date" },
+          "source_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "CLAIM DATASET: every arrangement MUST carry source, source_ids, or inline sources (spec 5.1)."
+          },
+          "source": { "type": ["string", "object", "array"] },
+          "sources": {
+            "type": "array",
+            "items": { "$ref": "envelope.schema.json#/$defs/source" }
+          }
         }
       }
     },

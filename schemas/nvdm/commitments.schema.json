@@ -21,6 +21,15 @@
           "category": { "type": "string" },
           "committed_by": { "type": "string" },
           "commitment_source": { "type": ["string", "object"] },
+          "source_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "CLAIM DATASET: every commitment MUST carry commitment_source, source_ids, or inline sources (spec 5.1)."
+          },
+          "sources": {
+            "type": "array",
+            "items": { "$ref": "envelope.schema.json#/$defs/source" }
+          },
           "due": { "type": ["string", "null"] },
           "revised_due": { "type": ["string", "null"] },
           "next_check": { "type": ["string", "null"] },

@@ -116,6 +116,45 @@ def contract_schema_for(rec: dict, schemas: dict[str, dict]) -> str | None:
     return name if name in schemas else None
 
 
+# Claim datasets (spec 5.1): every record makes an independently quotable claim
+# and MUST carry its own source reference. Maps dataset id -> (collection key,
+# acceptable per-record source keys).
+CLAIM_DATASETS = {
+    "data-root/facts": ("facts", ("source_ids", "sources")),
+    "data-root/commitments": ("commitments", ("source_ids", "sources", "commitment_source")),
+    "data-root/allocations": ("arrangements", ("source_ids", "sources", "source")),
+    "data-root/water-bodies-lost": ("lost_bodies", ("source_ids", "sources", "source")),
+    "data-root/water-bodies-flagship": ("bodies", ("source_ids", "sources", "source")),
+    "data-root/restoration-projects": ("projects", ("source_ids", "sources", "source")),
+}
+
+
+def claim_provenance_errors(doc: dict, dataset: str) -> list[str]:
+    """Spec 5.1: per-record source refs on claim datasets; source_ids must resolve."""
+    if dataset not in CLAIM_DATASETS:
+        return []
+    coll_key, source_keys = CLAIM_DATASETS[dataset]
+    records = doc.get(coll_key)
+    if not isinstance(records, list):
+        return []  # structural problems are the contract schema's job
+    env_ids = {
+        s.get("id")
+        for s in doc.get("provenance", {}).get("sources", [])
+        if isinstance(s, dict) and s.get("id")
+    }
+    errs = []
+    for i, r in enumerate(records):
+        if not isinstance(r, dict):
+            continue
+        if not any(r.get(k) for k in source_keys):
+            errs.append(f"$.{coll_key}[{i}] ({r.get('id', '?')}): no per-record source ref "
+                        f"(needs one of {'/'.join(source_keys)})")
+        for sid in r.get("source_ids", []):
+            if sid not in env_ids:
+                errs.append(f"$.{coll_key}[{i}]: source_ids '{sid}' not found in provenance.sources ids")
+    return errs
+
+
 def assess(rec: dict, schemas: dict[str, dict]) -> dict:
     path = ROOT / rec["path"]
     level = 0  # L0: it's in the catalogue by construction
@@ -134,6 +173,7 @@ def assess(rec: dict, schemas: dict[str, dict]) -> dict:
         contract = contract_schema_for(rec, schemas)
         if contract:
             c_errs = validate(doc, schemas[contract], schemas, contract)
+            c_errs += claim_provenance_errors(doc, f"{rec['family']}/{rec['dataset']}")
             if c_errs:
                 notes += [f"L3 fail: {e}" for e in c_errs[:5]]
             else:
@@ -164,6 +204,18 @@ def selftest(schemas: dict[str, dict]) -> int:
     errs = validate(bad, {"$ref": "envelope.schema.json#/$defs/envelope"}, schemas, "envelope.schema.json")
     print(f"negative case: {'OK (rejected)' if errs else 'FAIL (accepted bad doc)'}")
     ok = ok and bool(errs)
+    # claim-dataset rule (spec 5.1): a fact without a source ref must fail;
+    # a dangling source_ids reference must fail
+    doc = json.loads((SCHEMA_DIR / "examples/example-facts.json").read_text())
+    stripped = json.loads(json.dumps(doc))
+    stripped["facts"][0].pop("sources", None)
+    e1 = claim_provenance_errors(stripped, "data-root/facts")
+    print(f"claim record w/o source: {'OK (rejected)' if e1 else 'FAIL (accepted)'}")
+    dangling = json.loads(json.dumps(doc))
+    dangling["facts"][0]["source_ids"] = ["no-such-source"]
+    e2 = claim_provenance_errors(dangling, "data-root/facts")
+    print(f"dangling source_ids: {'OK (rejected)' if e2 else 'FAIL (accepted)'}")
+    ok = ok and bool(e1) and bool(e2)
     return 0 if ok else 1
 
 
