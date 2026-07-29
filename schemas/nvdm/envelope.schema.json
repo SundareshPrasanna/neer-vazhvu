@@ -48,6 +48,10 @@
           "type": "string",
           "description": "Headwaters source-registry id. REQUIRED for living sources (anything that could publish again)."
         },
+        "role": {
+          "enum": ["asserts", "input", "methodology"],
+          "description": "Who stands behind the values (spec 5.2). 'asserts' (default): publisher stands behind them, we transport. 'input': raw material for values WE derived (shoreline transects, scores). 'methodology': cited method, not data. role+license is the derivative-encumbrance audit."
+        },
         "title": { "type": "string" },
         "publisher": { "type": "string" },
         "url": { "type": "string" },
