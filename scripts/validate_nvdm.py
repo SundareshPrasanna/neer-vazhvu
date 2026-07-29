@@ -90,8 +90,14 @@ def validate(doc, schema: dict, schemas: dict[str, dict], owner: str, path: str 
         if "minItems" in schema and len(doc) < schema["minItems"]:
             errs.append(f"{path}: {len(doc)} items < minItems {schema['minItems']}")
         if "items" in schema:
-            for i, el in enumerate(doc[:500]):
+            # Every element is inspected (a gate that samples is not a gate);
+            # only the error OUTPUT is capped once the artifact is already failing.
+            before = len(errs)
+            for i, el in enumerate(doc):
                 errs += validate(el, schema["items"], schemas, owner, f"{path}[{i}]")
+                if len(errs) - before > 40:
+                    errs.append(f"{path}: further element errors suppressed")
+                    break
     return errs
 
 
@@ -111,9 +117,107 @@ def envelope_check(doc, rec: dict, schemas: dict[str, dict]) -> list[str]:
     return errs
 
 
+# Contracts are keyed by FULL dataset id - a stem alone is ambiguous
+# (geojson-layers/rivers has a contract; basins/rivers is Tier C, envelope-only).
+CONTRACTS = {
+    "data-root/facts": "facts.schema.json",
+    "data-root/commitments": "commitments.schema.json",
+    "data-root/allocations": "allocations.schema.json",
+    "data-root/ward-profiles": "ward-profiles.schema.json",
+    "data-root/cgwb-stations": "cgwb-stations.schema.json",
+    "data-root/restoration-priority": "restoration-priority.schema.json",
+    "geojson-layers/water-bodies-current": "water-bodies-current.schema.json",
+    "geojson-layers/rivers": "rivers.schema.json",
+}
+
+ENVELOPE_KEYS = {"nvdm", "dataset", "scope", "provenance", "projection", "ext"}
+GEOJSON_MEMBERS = {"type", "features", "bbox"}
+
+
+def registry_source_ids() -> set[str]:
+    ids = set()
+    for f in (ROOT / "scripts/source-registry").glob("*.json"):
+        for s in json.loads(f.read_text()).get("sources", []):
+            if s.get("id"):
+                ids.add(s["id"])
+    return ids
+
+
+def load_scopes() -> dict[str, str]:
+    return json.loads((SCHEMA_DIR / "scopes.json").read_text())["scopes"]
+
+
+def scope_registry_errors(doc: dict, scopes: dict[str, str]) -> list[str]:
+    """scope.id must be registered and scope.kind must match the registry -
+    {kind: basin, id: hyderabad} is a lie the enum alone cannot catch."""
+    sc = doc.get("scope", {})
+    registered = scopes.get(sc.get("id"))
+    if registered is None:
+        return [f"scope.id '{sc.get('id')}' is not in the scope registry (schemas/nvdm/scopes.json)"]
+    if registered != sc.get("kind"):
+        return [f"scope.kind '{sc.get('kind')}' contradicts the registry ('{sc.get('id')}' is a {registered})"]
+    return []
+
+
+def source_accountability_errors(doc: dict, joined: set[str], reg_ids: set[str]) -> list[str]:
+    """L2 half of the cumulative ladder (spec Part 10): every non-methodology
+    source either joins the Headwaters registry THROUGH THIS FILE (its id is in
+    a registry entry whose dependsOn names the file) or explicitly declares
+    itself closed AND carries as_of. as_of alone is not an exemption - living
+    sources have evidence dates too."""
+    errs = []
+    for i, s in enumerate(doc.get("provenance", {}).get("sources", [])):
+        if not isinstance(s, dict) or s.get("role") == "methodology":
+            continue
+        sid = s.get("id")
+        if sid:
+            if sid not in reg_ids:
+                errs.append(f"provenance.sources[{i}] id '{sid}' is not a known Headwaters registry id")
+            elif sid not in joined:
+                errs.append(
+                    f"provenance.sources[{i}] id '{sid}' exists in the registry but its "
+                    "dependsOn does not name this file - add the path so edition alerts reach it"
+                )
+        elif s.get("closed") is True:
+            if not s.get("as_of"):
+                errs.append(f"provenance.sources[{i}] is closed but has no as_of (closed sources must be dated)")
+        else:
+            errs.append(
+                f"provenance.sources[{i}] '{str(s.get('title', '?'))[:40]}' has no registry id and is "
+                "not declared closed - living sources must be registered, one-time sources must say closed: true"
+            )
+    return errs
+
+
+def provenance_rule_errors(doc: dict) -> list[str]:
+    """Method-dependent envelope rules (spec 5.2), enforced at L2."""
+    errs = []
+    prov = doc.get("provenance", {})
+    if prov.get("method") in ("derived", "gee"):
+        if not prov.get("produced_by"):
+            errs.append("derived artifact without provenance.produced_by (spec 5.2)")
+        sources = [s for s in prov.get("sources", []) if isinstance(s, dict)]
+        if not any(s.get("role") == "input" for s in sources):
+            errs.append("derived artifact lists no source with role 'input' (spec 5.2)")
+    return errs
+
+
+def unknown_key_errors(doc: dict, contract: dict) -> list[str]:
+    """Top-level keys must be envelope, GeoJSON members, or contract-declared;
+    everything else belongs in ext (spec 6.3). Deliberately NOT recursive:
+    record-level optional fields (name_<lang>, city-optional keys) are legal."""
+    allowed = ENVELOPE_KEYS | GEOJSON_MEMBERS | set(contract.get("properties", {}).keys())
+    return [
+        f"top-level key '{k}' is not envelope, GeoJSON, or contract-declared - "
+        "per-scope additions must live in ext (spec 6.3)"
+        for k in doc
+        if k not in allowed
+    ]
+
+
 def contract_schema_for(rec: dict, schemas: dict[str, dict]) -> str | None:
-    name = f"{rec['dataset']}.schema.json"
-    return name if name in schemas else None
+    name = CONTRACTS.get(f"{rec['family']}/{rec['dataset']}")
+    return name if name and name in schemas else None
 
 
 # Claim datasets (spec 5.1): every record makes an independently quotable claim
@@ -142,6 +246,8 @@ def claim_provenance_errors(doc: dict, dataset: str) -> list[str]:
         for s in doc.get("provenance", {}).get("sources", [])
         if isinstance(s, dict) and s.get("id")
     }
+    env_sources = [s for s in doc.get("provenance", {}).get("sources", []) if isinstance(s, dict)]
+    env_map = {s.get("id"): s for s in env_sources if s.get("id")}
     errs = []
     for i, r in enumerate(records):
         if not isinstance(r, dict):
@@ -152,10 +258,18 @@ def claim_provenance_errors(doc: dict, dataset: str) -> list[str]:
         for sid in r.get("source_ids", []):
             if sid not in env_ids:
                 errs.append(f"$.{coll_key}[{i}]: source_ids '{sid}' not found in provenance.sources ids")
+        # Date signal (spec 5.1): a record's evidence date may live on the
+        # record OR on its cited sources - requiring both would be duplication.
+        # Commitments are exempt (dates live in status_history by design).
+        if coll_key in ("facts", "arrangements") and not r.get("as_of"):
+            resolved = [s for s in r.get("sources", []) if isinstance(s, dict)]
+            resolved += [env_map[sid] for sid in r.get("source_ids", []) if sid in env_map]
+            if resolved and not any(s.get("as_of") or s.get("retrieved") for s in resolved):
+                errs.append(f"$.{coll_key}[{i}]: no date signal - record as_of or a dated source (spec 5.1)")
     return errs
 
 
-def assess(rec: dict, schemas: dict[str, dict]) -> dict:
+def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids: set[str]) -> dict:
     path = ROOT / rec["path"]
     level = 0  # L0: it's in the catalogue by construction
     notes: list[str] = []
@@ -167,13 +281,19 @@ def assess(rec: dict, schemas: dict[str, dict]) -> dict:
         return {"path": rec["path"], "level": level, "notes": [f"unparseable: {e}"][:1]}
     env_errs = envelope_check(doc, rec, schemas)
     if not env_errs:
-        # L2 requires L1 semantics too, but registry coverage is tracked separately;
-        # an enveloped file with an unregistered living source is reported, not demoted.
+        # Cumulative ladder: L2 additionally requires scope-registry agreement,
+        # source accountability (registry join or declared-closed), and the
+        # method-dependent provenance rules.
+        env_errs += scope_registry_errors(doc, scopes)
+        env_errs += source_accountability_errors(doc, set(rec["headwaters_sources"]), reg_ids)
+        env_errs += provenance_rule_errors(doc)
+    if not env_errs:
         level = max(level, 2)
         contract = contract_schema_for(rec, schemas)
         if contract:
             c_errs = validate(doc, schemas[contract], schemas, contract)
             c_errs += claim_provenance_errors(doc, f"{rec['family']}/{rec['dataset']}")
+            c_errs += unknown_key_errors(doc, schemas[contract])
             if c_errs:
                 notes += [f"L3 fail: {e}" for e in c_errs[:5]]
             else:
@@ -186,37 +306,62 @@ def assess(rec: dict, schemas: dict[str, dict]) -> dict:
 
 
 def selftest(schemas: dict[str, dict]) -> int:
-    ok = True
-    cases = {
-        "examples/example-facts.json": "facts.schema.json",
-        "examples/example-water-bodies-current.geojson": "water-bodies-current.schema.json",
-    }
-    for rel, schema_name in cases.items():
-        doc = json.loads((SCHEMA_DIR / rel).read_text())
-        errs = validate(doc, schemas[schema_name], schemas, schema_name)
-        errs += validate(doc, {"$ref": "envelope.schema.json#/$defs/envelope"}, schemas, "envelope.schema.json")
-        print(f"{rel}: {'OK' if not errs else 'FAIL'}")
-        for e in errs:
+    scopes = load_scopes()
+    fails: list[str] = []
+
+    def check(name: str, cond: bool) -> None:
+        print(f"{name}: {'OK' if cond else 'FAIL'}")
+        if not cond:
+            fails.append(name)
+
+    def env(d) -> list[str]:
+        return validate(d, {"$ref": "envelope.schema.json#/$defs/envelope"}, schemas, "envelope.schema.json")
+
+    def dup(d):
+        return json.loads(json.dumps(d))
+
+    facts = json.loads((SCHEMA_DIR / "examples/example-facts.json").read_text())
+    wb = json.loads((SCHEMA_DIR / "examples/example-water-bodies-current.geojson").read_text())
+
+    # Positives: examples must pass the FULL L3 path (envelope + registry
+    # agreement + accountability + contract + claim + unknown-key), with the
+    # examples' own source ids treated as registered-and-joined.
+    for name, doc, schema in (("example-facts", facts, "facts.schema.json"),
+                              ("example-water-bodies", wb, "water-bodies-current.schema.json")):
+        ids = {s["id"] for s in doc["provenance"]["sources"] if s.get("id")}
+        errs = env(doc) + validate(doc, schemas[schema], schemas, schema)
+        errs += scope_registry_errors(doc, scopes)
+        errs += source_accountability_errors(doc, ids, ids)
+        errs += provenance_rule_errors(doc)
+        errs += claim_provenance_errors(doc, doc["dataset"])
+        errs += unknown_key_errors(doc, schemas[schema])
+        check(f"{name} passes full L3 path", not errs)
+        for e in errs[:6]:
             print(f"  {e}")
-        ok = ok and not errs
-    # a deliberately broken doc must fail
+
+    # Negatives: each acceptance gap found in review must stay closed.
     bad = {"nvdm": "1.0", "dataset": "data-root/facts", "scope": {"kind": "city"}}
-    errs = validate(bad, {"$ref": "envelope.schema.json#/$defs/envelope"}, schemas, "envelope.schema.json")
-    print(f"negative case: {'OK (rejected)' if errs else 'FAIL (accepted bad doc)'}")
-    ok = ok and bool(errs)
-    # claim-dataset rule (spec 5.1): a fact without a source ref must fail;
-    # a dangling source_ids reference must fail
-    doc = json.loads((SCHEMA_DIR / "examples/example-facts.json").read_text())
-    stripped = json.loads(json.dumps(doc))
-    stripped["facts"][0].pop("sources", None)
-    e1 = claim_provenance_errors(stripped, "data-root/facts")
-    print(f"claim record w/o source: {'OK (rejected)' if e1 else 'FAIL (accepted)'}")
-    dangling = json.loads(json.dumps(doc))
-    dangling["facts"][0]["source_ids"] = ["no-such-source"]
-    e2 = claim_provenance_errors(dangling, "data-root/facts")
-    print(f"dangling source_ids: {'OK (rejected)' if e2 else 'FAIL (accepted)'}")
-    ok = ok and bool(e1) and bool(e2)
-    return 0 if ok else 1
+    check("incomplete envelope rejected", bool(env(bad)))
+    d = dup(facts); d["facts"][0].pop("sources")
+    check("claim record w/o source rejected", bool(claim_provenance_errors(d, "data-root/facts")))
+    d = dup(facts); d["facts"][0]["source_ids"] = ["no-such-source"]
+    check("dangling source_ids rejected", bool(claim_provenance_errors(d, "data-root/facts")))
+    d = dup(facts); d["scope"] = {"kind": "basin", "id": "hyderabad"}
+    check("scope.kind contradicting registry rejected", bool(scope_registry_errors(d, scopes)))
+    d = dup(facts); d["provenance"]["method"] = "derived"
+    check("derived w/o input-role sources rejected", bool(provenance_rule_errors(d)))
+    d = dup(facts); d["provenance"]["sources"][0].pop("id")
+    check("unregistered living source rejected", bool(source_accountability_errors(d, set(), set())))
+    d = dup(facts); d["provenance"]["produced_at"] = "2026-99-99"
+    check("out-of-range date rejected", bool(env(d)))
+    d = dup(facts); d["hyderabad_special"] = {"leak": True}
+    check("undeclared top-level key rejected", bool(unknown_key_errors(d, schemas["facts.schema.json"])))
+    d = dup(wb); d["features"] = [dup(wb["features"][0]) for _ in range(501)]
+    d["features"].append({"type": "Feature", "geometry": None, "properties": {}})
+    errs = validate(d, schemas["water-bodies-current.schema.json"], schemas, "water-bodies-current.schema.json")
+    check("invalid record beyond position 500 caught", any("[501]" in e for e in errs))
+
+    return 1 if fails else 0
 
 
 def main(argv: list[str]) -> int:
@@ -226,7 +371,9 @@ def main(argv: list[str]) -> int:
 
     cat = json.loads(CATALOGUE.read_text())
     records = cat["files"]
-    results = [assess(r, schemas) for r in records]
+    scopes = load_scopes()
+    reg_ids = registry_source_ids()
+    results = [assess(r, schemas, scopes, reg_ids) for r in records]
     by_path = {r["path"]: r for r in results}
 
     if "--check" in argv:
@@ -282,8 +429,9 @@ def main(argv: list[str]) -> int:
         "",
         "- L2/L3 at zero is the expected starting point: no production artifact predates the spec.",
         "- The L1 number is the Headwaters coverage gap (worst family: cascade).",
-        "- Gate mode (`--check`) is wired for CI to require L2 on NEW artifacts only;",
-        "  legacy files are report-only until migrated (spec 9.4).",
+        "- Gate mode (`--check`) is DESIGNED for CI (require L2 on new artifacts only; legacy",
+        "  files report-only until migrated, spec 9.4). The workflow itself is NOT wired yet -",
+        "  it is a pending deliverable in the spec's Appendix A.",
         "",
     ]
     OUT_MD.write_text("\n".join(lines))

@@ -107,14 +107,19 @@ def detect_scope_and_stem(rel: Path, rich_slugs: dict[str, str]) -> tuple[str, s
     stem_full = re.sub(r"\.(geo)?json$", "", name)
     parts = rel.parts  # e.g. ('public','data','cascade','x.json')
 
-    # Directory-scoped families first.
+    # Directory-scoped families first. Nested layer shards
+    # (basins/<scope>/<layer>/<shard>.geojson) belong to the LAYER dataset -
+    # the shard filename is a chunk id (shed code, river name), not identity.
     if "basins" in parts:
         for scope in BASIN_SCOPES:
             if scope in parts:
-                return scope, stem_full
+                sub = parts[parts.index(scope) + 1 : -1]
+                return scope, ("/".join(sub) if sub else stem_full)
         return "unknown", stem_full
     if "corridors" in parts:
-        return parts[parts.index("corridors") + 1], stem_full
+        i = parts.index("corridors")
+        sub = parts[i + 2 : -1]
+        return parts[i + 1], ("/".join(sub) if sub else stem_full)
     if "rich-bodies" in parts:
         for slug, city in sorted(rich_slugs.items(), key=lambda kv: -len(kv[0])):
             if stem_full == slug or stem_full.startswith(slug + "-"):
@@ -150,7 +155,17 @@ def fingerprint(path: Path) -> dict:
         props = sorted((feats[0].get("properties") or {}).keys()) if feats else []
         return {"kind": "FeatureCollection", "features": len(feats), "geometries": geoms, "property_keys": props[:40]}
     if isinstance(doc, dict):
-        return {"kind": "object", "keys": sorted(doc.keys())[:40]}
+        # Indexed collections (maps keyed by external ids, e.g. cascade
+        # catchment-* keyed by OSM id): fingerprint the RECORD shape, not the
+        # keys - key sets are data, not schema, and comparing them across
+        # cities manufactures fake drift.
+        keys = list(doc.keys())
+        id_like = [k for k in keys if re.fullmatch(r"\d{4,}", k)]
+        if len(keys) >= 5 and len(id_like) / len(keys) >= 0.8:
+            first = doc[id_like[0]]
+            elem = sorted(first.keys())[:40] if isinstance(first, dict) else []
+            return {"kind": "indexed-collection", "records": len(keys), "element_keys": elem}
+        return {"kind": "object", "keys": sorted(keys)[:40]}
     if isinstance(doc, list):
         elem_keys = sorted(doc[0].keys())[:40] if doc and isinstance(doc[0], dict) else []
         return {"kind": "array", "length": len(doc), "element_keys": elem_keys}
@@ -185,8 +200,10 @@ def scan_references(files: list[Path]) -> dict[str, set[str]]:
             if path.suffix not in CODE_EXTS or not path.is_file():
                 continue
             rel = str(path.relative_to(ROOT))
-            if rel.startswith("scripts/source-registry/") or rel.endswith("build_dataset_catalogue.py"):
-                continue
+            if rel.startswith("scripts/source-registry/") or rel.endswith(
+                ("build_dataset_catalogue.py", "validate_nvdm.py")
+            ):
+                continue  # tooling mentions filenames without producing/consuming them
             if "node_modules" in rel or path.stat().st_size > 2_000_000:
                 continue
             try:
