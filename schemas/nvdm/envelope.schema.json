@@ -13,13 +13,31 @@
       "required": ["kind", "id"],
       "properties": {
         "kind": {
-          "enum": ["city", "region", "basin", "corridor", "district", "state", "body"]
+          "enum": ["city", "region", "basin", "corridor", "district", "state", "body"],
+          "description": "Closed for validation strictness; APPENDING a kind is a defined one-line MINOR change (spec 4.1), never an architecture debate. Anticipated: village, gram-panchayat, taluk, block, aquifer."
         },
         "id": {
           "type": "string",
           "pattern": "^[a-z][a-z0-9-]*$",
           "description": "Registered scope id (spec 4.1). Stable forever; no hierarchy encoded."
         }
+      }
+    },
+    "projection": {
+      "type": "object",
+      "required": ["of", "method"],
+      "description": "Present when this artifact is an administrative VIEW of canonical evidence owned by another scope (spec Part 5). Absence asserts the artifact is canonical for its scope.",
+      "properties": {
+        "of": { "$ref": "#/$defs/scope" },
+        "method": {
+          "enum": [
+            "direct-published", "identifier-crosswalk", "spatial-intersection",
+            "area-weighted", "station-assignment", "interpolation",
+            "service-relation", "administrative-rollup", "administrative-proxy",
+            "expert-mapped"
+          ]
+        },
+        "limitations": { "type": "array", "items": { "type": "string" } }
       }
     },
     "source": {
@@ -77,6 +95,7 @@
         },
         "scope": { "$ref": "#/$defs/scope" },
         "provenance": { "$ref": "#/$defs/provenance" },
+        "projection": { "$ref": "#/$defs/projection" },
         "ext": {
           "type": "object",
           "description": "Per-scope extensions, namespaced by concern (spec 6.3)."
