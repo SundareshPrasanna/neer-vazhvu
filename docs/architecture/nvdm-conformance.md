@@ -21,6 +21,6 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 
 - L2/L3 at zero is the expected starting point: no production artifact predates the spec.
 - The L1 number is the Headwaters coverage gap (worst family: cascade).
-- Gate mode (`--check`) is DESIGNED for CI (require L2 on new artifacts only; legacy
-  files report-only until migrated, spec 9.4). The workflow itself is NOT wired yet -
-  it is a pending deliverable in the spec's Appendix A.
+- CI (`.github/workflows/nvdm-conformance.yml`): selftest + catalogue/report freshness
+  are blocking; the `--check` L2 gate on newly added data artifacts is ADVISORY until
+  NVDM v1 is accepted, then flips to enforcing. Legacy files stay report-only (spec 9.4).
