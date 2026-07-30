@@ -1,7 +1,7 @@
--- Preflight checks before applying 031_m0_city_scoped_keys.sql to live Supabase.
+-- Preflight checks before applying 035_m0_city_scoped_keys.sql to live Supabase.
 --
 -- This file is not a migration. Run it manually against the target database
--- after dumping/diffing the live schema and before applying migration 031.
+-- after dumping/diffing the live schema and before applying migration 035.
 --
 -- Run section 1 first.
 --   - If it returns zero rows, sections 2 and 3 can run directly.
@@ -117,7 +117,7 @@ HAVING count(*) > 1;
 
 -- 4. WRIS telemetry district ownership sanity check.
 -- Expected result: Vaigai-system districts map to madurai; any unexpected
--- district/city_id pairing should be reviewed before applying migration 031.
+-- district/city_id pairing should be reviewed before applying migration 035.
 SELECT 'wris_river_level' AS table_name, district, city_id, count(*) AS row_count
 FROM wris_river_level
 GROUP BY district, city_id

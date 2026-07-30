@@ -7,8 +7,8 @@ const migration026 = readFileSync(
   join(root, "supabase/migrations/026_multi_city_city_id.sql"),
   "utf8",
 );
-const migration031 = readFileSync(
-  join(root, "supabase/migrations/031_m0_city_scoped_keys.sql"),
+const migration035 = readFileSync(
+  join(root, "supabase/migrations/035_m0_city_scoped_keys.sql"),
   "utf8",
 );
 const riverLevelScript = readFileSync(
@@ -56,13 +56,13 @@ if (!/DISTINCT\s+ON\s*\(\s*city_id\s*,\s*station_code\s*\)/i.test(migration026))
 }
 
 const migration026MaduraiDistricts = maduraiDistrictList(migration026);
-const migration031MaduraiDistricts = maduraiDistrictList(migration031);
+const migration035MaduraiDistricts = maduraiDistrictList(migration035);
 for (const district of ["madurai", "theni", "dindigul", "virudhunagar"]) {
   if (!migration026MaduraiDistricts.includes(district)) {
     failures.push(`026 must map ${district} district strings to madurai.`);
   }
-  if (!migration031MaduraiDistricts.includes(district)) {
-    failures.push(`031 must map ${district} district strings to madurai.`);
+  if (!migration035MaduraiDistricts.includes(district)) {
+    failures.push(`035 must map ${district} district strings to madurai.`);
   }
 }
 
@@ -71,21 +71,21 @@ for (const indexName of expectedIndexes) {
     `CREATE\\s+UNIQUE\\s+INDEX\\s+IF\\s+NOT\\s+EXISTS\\s+${indexName}\\b`,
     "i",
   );
-  if (!pattern.test(migration031)) {
-    failures.push(`031 is missing city-aware unique index ${indexName}.`);
+  if (!pattern.test(migration035)) {
+    failures.push(`035 is missing city-aware unique index ${indexName}.`);
   }
 }
 
-if (!/DROP\s+VIEW\s+IF\s+EXISTS\s+groundwater_wris_latest/i.test(migration031)) {
-  failures.push("031 must recreate groundwater_wris_latest.");
+if (!/DROP\s+VIEW\s+IF\s+EXISTS\s+groundwater_wris_latest/i.test(migration035)) {
+  failures.push("035 must recreate groundwater_wris_latest.");
 }
 
-if (!/LEFT\s+JOIN\s+recent\s+r\s+USING\s*\(\s*city_id\s*,\s*station_code\s*\)/i.test(migration031)) {
-  failures.push("031 groundwater_wris_latest must join recent readings by city and station.");
+if (!/LEFT\s+JOIN\s+recent\s+r\s+USING\s*\(\s*city_id\s*,\s*station_code\s*\)/i.test(migration035)) {
+  failures.push("035 groundwater_wris_latest must join recent readings by city and station.");
 }
 
-if (/DROP\s+CONSTRAINT/i.test(migration031)) {
-  failures.push("031 must not drop old constraints; writer cutover happens later.");
+if (/DROP\s+CONSTRAINT/i.test(migration035)) {
+  failures.push("035 must not drop old constraints; writer cutover happens later.");
 }
 
 if (!/"city_id":\s*"madurai"/.test(riverLevelScript)) {

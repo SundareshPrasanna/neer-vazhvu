@@ -1,7 +1,7 @@
--- Postflight checks after applying 031_m0_city_scoped_keys.sql to live Supabase.
+-- Postflight checks after applying 035_m0_city_scoped_keys.sql to live Supabase.
 --
 -- This file is not a migration. Run it manually against the target database
--- immediately after applying migration 031. Compare row-count outputs against
+-- immediately after applying migration 035. Compare row-count outputs against
 -- the same queries run during the pre-apply rehearsal on the restored dump.
 --
 -- Section 6 is the next-morning check: run it after the first scheduled

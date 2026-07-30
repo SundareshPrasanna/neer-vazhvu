@@ -20,28 +20,28 @@ Branch base: `4b5a0c035e9008098d37f335bab199a2b15eb7c6`.
 Implemented in this slice:
 
 - Repaired migration `026_multi_city_city_id.sql` for fresh databases by recreating `groundwater_wris_latest` as a city-aware view instead of trying to add a column to a view.
-- Added migration `031_m0_city_scoped_keys.sql`.
-- `031` idempotently ensures `city_id` exists/defaults/backfills on the existing retrofitted tables.
-- `031` recreates `groundwater_wris_latest` with `DISTINCT ON (city_id, station_code)`.
-- `031` adds city-aware unique indexes for the next writer cutover while keeping every old city-blind unique/primary key in place.
-- `026` and `031` map the full Vaigai WRIS telemetry district set (`Madurai`, `Theni`, `Dindigul`, `Virudhunagar`) to `city_id = 'madurai'`.
+- Added migration `035_m0_city_scoped_keys.sql`.
+- `035` idempotently ensures `city_id` exists/defaults/backfills on the existing retrofitted tables.
+- `035` recreates `groundwater_wris_latest` with `DISTINCT ON (city_id, station_code)`.
+- `035` adds city-aware unique indexes for the next writer cutover while keeping every old city-blind unique/primary key in place.
+- `026` and `035` map the full Vaigai WRIS telemetry district set (`Madurai`, `Theni`, `Dindigul`, `Virudhunagar`) to `city_id = 'madurai'`.
 - Madurai WRIS river-level and rainfall scripts now stamp `city_id = 'madurai'` explicitly so new telemetry rows do not rely on the Chennai default.
-- Added `supabase/checks/031_m0_city_scoped_keys_preflight.sql` for manual live schema-drift, null, duplicate, and district-ownership checks before applying `031`.
+- Added `supabase/checks/035_m0_city_scoped_keys_preflight.sql` for manual live schema-drift, null, duplicate, and district-ownership checks before applying `035`.
 - Added `npm run db:check` as a local guard for the M0 city-scoped key migration.
 
 Verified locally:
 
 - `npm run db:check`
-- Full migration replay from `001` through `031` against a throwaway local Postgres database with minimal Supabase role/storage fixtures.
+- Full migration replay from `001` through `035` against a throwaway local Postgres database with minimal Supabase role/storage fixtures.
 - Temp schema confirmed `groundwater_wris_latest.city_id`, all 12 city-aware unique indexes, and non-null `city_id` defaults on the stabilized tables.
 
 Still required before applying to live Supabase:
 
 - Dump/diff the live schema, because production may have been manually reconciled after the original migration `026` view error.
-- Run `supabase/checks/031_m0_city_scoped_keys_preflight.sql` for every new city-aware key. The new unique indexes intentionally fail fast if unexpected duplicate rows already exist.
-- Merge/deploy the Madurai WRIS telemetry script fix in the same release as, or before, applying migration `031`. If the migration backfill runs while old scripts are still deployed, gap rows can still receive the `'chennai'` default; recent rows may self-heal on the next upsert window, but older gap rows would need a manual backfill rerun.
+- Run `supabase/checks/035_m0_city_scoped_keys_preflight.sql` for every new city-aware key. The new unique indexes intentionally fail fast if unexpected duplicate rows already exist.
+- Merge/deploy the Madurai WRIS telemetry script fix in the same release as, or before, applying migration `035`. If the migration backfill runs while old scripts are still deployed, gap rows can still receive the `'chennai'` default; recent rows may self-heal on the next upsert window, but older gap rows would need a manual backfill rerun.
 - Keep backend writer cutover separate. Current deployed writers can keep using old `on_conflict` keys because old city-blind arbiters are still present.
-- The `026` and `031` district helpers are not perfectly identical: `031` includes a few extra Bangalore/Mumbai aliases as live-repair scaffolding. That is inert for current tables because `031` runs after `026` and re-repairs the affected rows.
+- The `026` and `035` district helpers are not perfectly identical: `035` includes a few extra Bangalore/Mumbai aliases as live-repair scaffolding. That is inert for current tables because `035` runs after `026` and re-repairs the affected rows.
 
 ## Live App Constraints
 
