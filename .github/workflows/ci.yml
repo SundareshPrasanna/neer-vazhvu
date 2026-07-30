@@ -1,5 +1,14 @@
 name: CI
 
+# Serving-hardening D4 split (review addendum 2026-07-30): the FULL-corpus
+# jobs validate against the complete corpus (today: from the checkout; after
+# the P2 cutover: fetched via scripts/fetch-corpus.sh, which requires the
+# CORPUS_REPO_TOKEN secret and therefore cannot run on fork PRs). The
+# sample-corpus job needs no secrets and runs everywhere: it prunes the
+# corpus to the licence-clean manifest (scripts/sample-corpus.json) and
+# proves build + tests pass against it. Job names say exactly what they
+# check - there is deliberately NO silent fallback from full to sample.
+
 on:
   pull_request:
     branches: [main]
@@ -8,7 +17,7 @@ on:
 
 jobs:
   frontend:
-    name: Frontend (lint + build + tests)
+    name: Frontend - full corpus from checkout (lint + build + tests + data checks)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +48,35 @@ jobs:
       - run: npm run data:check
       - run: npm run build
       - run: npm run test
+
+  sample-corpus:
+    name: Sample corpus - licence-clean manifest only, no secrets (build + tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: npm ci
+
+      - name: Manifest stays licence-clean (encumbrance report over envelopes)
+        run: python3 scripts/check-sample-corpus.py
+
+      - name: Prune corpus to the sample manifest
+        run: python3 scripts/check-sample-corpus.py --prune
+
+      - name: Build against the sample corpus only
+        run: npm run build
+
+      - name: Tests against the sample corpus only
+        run: npm run test
 
   api:
     name: API (lint + tests)
