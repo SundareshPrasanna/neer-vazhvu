@@ -14,7 +14,7 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 | ingres | 1 | 1 | 0 | 0 |
 | rich-bodies | 127 | 127 | 43 | 0 |
 
-## Enveloped artifacts (≥L2): 172
+## Enveloped artifacts (≥L2): 173
 
 - L3 `public/data/allocations-chennai.json`
 - L3 `public/data/allocations-madurai.json`
@@ -51,6 +51,7 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 - L2 `public/data/delhi-flood-hotspots.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/delhi-jj-bastis-geo.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/delhi-supply-overview.json` - no contract published for this dataset (L3 not applicable yet)
+- L3 `public/data/delhi-ward-profiles.json`
 - L2 `public/data/delhi-ward-representatives.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/dpcc-monthly-wq-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/dusib-jj-bastis.json` - no contract published for this dataset (L3 not applicable yet)

@@ -41,7 +41,6 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 | data-root | localities | bangalore, chennai, delhi, madurai | 3 |
 | data-root | restoration-priority | bangalore, chennai, delhi, madurai, mumbai | 3 |
 | data-root | restoration-projects | chennai, delhi, madurai, mumbai | 3 |
-| data-root | ward-profiles | bangalore, chennai, delhi, madurai | 3 |
 | data-root | water-bodies-flagship | delhi, madurai, mumbai | 3 |
 | geojson-layers | drainage | chennai, delhi, mumbai | 3 |
 | geojson-layers | wards-2022 | chennai, delhi, madurai | 3 |
@@ -56,6 +55,7 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 | data-root | gw-stations | chennai, madurai | 2 |
 | data-root | imd-rainfall-monthly | bangalore, chennai, delhi, madurai, mumbai | 2 |
 | data-root | river-events | bangalore, delhi, madurai | 2 |
+| data-root | ward-profiles | bangalore, chennai, delhi, madurai | 2 |
 | data-root | ward-representatives | chennai, delhi | 2 |
 | geojson-layers | buffer-1000m | bangalore, chennai | 2 |
 | geojson-layers | polygon | bangalore, chennai | 2 |

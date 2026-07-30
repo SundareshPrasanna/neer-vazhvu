@@ -102,7 +102,11 @@ def grade_for(pct):
 
 def main():
     wards = json.loads(WARDS.read_text())["features"]
-    profiles = {p["ward_number"]: p for p in json.loads(PROFILES.read_text())}
+    # Dual-shape during the NVDM migration: legacy bare array or the wrapped
+    # producer-emitted form ({ envelope..., wards: [...] }).
+    profiles_doc = json.loads(PROFILES.read_text())
+    profiles_list = profiles_doc if isinstance(profiles_doc, list) else profiles_doc["wards"]
+    profiles = {p["ward_number"]: p for p in profiles_list}
     wells = [w for w in json.loads(STATIONS.read_text())["wells"]
              if w.get("readings") and w.get("_data_status") != "suspect"]
     print(f"{len(wards)} wards | {len(profiles)} profiles | {len(wells)} usable wells")
