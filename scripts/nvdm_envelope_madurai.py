@@ -49,31 +49,31 @@ HYDROSHEDS = {
     "role": "input",
 }
 OSM_TANKS = {
+    "id": "osm-overpass",
     "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
     "publisher": "OpenStreetMap contributors",
     "license": "ODbL 1.0",
     "role": "input",
-    "continuous": True,
 }
 SENTINEL2 = {
+    "id": "sentinel-2-l2a",
     "title": "Sentinel-2 L2A imagery (channel evidence)",
     "publisher": "ESA Copernicus",
     "license": "Copernicus free and open data, attribution required",
     "role": "input",
-    "continuous": True,
 }
 DYNAMIC_WORLD = {
+    "id": "google-dynamic-world",
     "title": "Google Dynamic World built-up classification",
     "publisher": "Google / World Resources Institute",
     "license": "CC BY 4.0",
     "role": "input",
-    "continuous": True,
 }
 WRIS_GW = {
+    "id": "wris-live-services",
     "title": "India-WRIS Ground Water Level dataset (NWIC ArcGIS services)",
     "publisher": "CGWB / NWIC via India-WRIS",
     "license": "GoI open publication, cited with attribution",
-    "continuous": True,
 }
 OVERTURE = {
     "id": "overture-buildings",
@@ -83,16 +83,17 @@ OVERTURE = {
     "role": "input",
 }
 IMD_NORMALS = {
+    "id": "imd-gridded-rain",
     "title": "IMD monthly rainfall normals (Madurai grid point, via imd-rainfall-monthly-madurai.json)",
     "publisher": "India Meteorological Department",
+    "license": "GoI publication, cited with attribution",
     "role": "input",
-    "continuous": True,
 }
 OSM_SOURCE = {
+    "id": "osm-overpass",
     "title": "OpenStreetMap (Overpass API extract)",
     "publisher": "OpenStreetMap contributors",
     "license": "ODbL 1.0",
-    "continuous": True,
 }
 CASCADE_TOPO = [FABDEM, OSM_TANKS, HYDROSHEDS]
 CASCADE_SCORED = CASCADE_TOPO + [SENTINEL2, DYNAMIC_WORLD]
@@ -145,9 +146,10 @@ PROVENANCE: dict[str, dict] = {
     "cascade/cascades-documented": {
         "method": "mixed",
         "produced_by": "neer-vazhvu-api/app/cascade/health.py",
-        "sources": CASCADE_SCORED
-        + [{"title": "Curated named-cascade documentation (Layer B; per-cascade references inline; edition history = git)", "publisher": "Neer Vazhvu curation", "continuous": True}],
-        "note": CASCADE_NOTE,
+        "sources": CASCADE_SCORED,
+        "note": CASCADE_NOTE
+        + " Layer B named-cascade documentation is internal Neer Vazhvu curation "
+        "(per-cascade references inline; edition history = git) - lineage, not an upstream source.",
     },
     "cascade/cascades-health": cascade(CASCADE_SCORED),
     "cascade/catchment-quality": cascade([FABDEM, OSM_TANKS]),
@@ -160,6 +162,7 @@ PROVENANCE: dict[str, dict] = {
             {
                 "title": "TN PWD letter Lr. No. DB/JD01/384/C.10(P)/2018 (26 Dec 2018), via ADB TNUFIP Tranche-2 IEE Appendix 14",
                 "publisher": "TN PWD / ADB",
+                "license": "GoTN correspondence, cited from ADB IEE Appendix 14 (public project document)",
                 "closed": True,
                 "as_of": "2018-12-26",
             },
@@ -206,13 +209,9 @@ PROVENANCE: dict[str, dict] = {
     },
     "data-root/gee-phase1-water-body-targets": {
         "method": "manual",
-        "sources": [
-            {
-                "title": "Neer Vazhvu GEE Phase-1 target selection (own manifest; edition history = git)",
-                "publisher": "Neer Vazhvu",
-                "continuous": True,
-            }
-        ],
+        "produced_by": "manual",
+        "sources": [],
+        "note": "Self-authored target manifest - no external upstream exists; edition history = git.",
     },
     "data-root/gw-stations": {
         "method": "api",
@@ -230,7 +229,7 @@ PROVENANCE: dict[str, dict] = {
     },
     "data-root/imd-rainfall-monthly": {
         "method": "api",
-        "sources": [{"title": "IMD gridded monthly rainfall (city grid point)", "publisher": "India Meteorological Department", "continuous": True}],
+        "sources": [{"id": "imd-gridded-rain", "title": "IMD gridded monthly rainfall (city grid point)", "publisher": "India Meteorological Department", "license": "GoI publication, cited with attribution"}],
     },
     "data-root/industrial-sources": {
         "method": "manual",
@@ -239,6 +238,7 @@ PROVENANCE: dict[str, dict] = {
                 "title": "Columbia GSAPP 'Water Urbanism: Madurai' studio book (qualitative use only)",
                 "publisher": "Columbia GSAPP",
                 "url": "https://www.arch.columbia.edu/books/reader/192-water-urbanism-madurai-india",
+                "license": "academic publication, cited with attribution (qualitative use only)",
                 "closed": True,
                 "as_of": "2016",
             }
@@ -248,7 +248,7 @@ PROVENANCE: dict[str, dict] = {
     "data-root/rainfall-recent": {
         "method": "api",
         "produced_by": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-        "sources": [{"title": "IMD district daily/monthly rainfall (recent)", "publisher": "India Meteorological Department", "continuous": True}],
+        "sources": [{"id": "imd-gridded-rain", "title": "IMD district daily/monthly rainfall (recent)", "publisher": "India Meteorological Department", "license": "GoI publication, cited with attribution"}],
     },
     "data-root/restoration-priority": {
         "method": "derived",
@@ -263,19 +263,13 @@ PROVENANCE: dict[str, dict] = {
     },
     "data-root/restoration-projects": {
         "method": "manual",
-        "sources": [
-            {
-                "title": "Compiled restoration project records and court orders (per-record citations inline)",
-                "publisher": "Madras HC Madurai Bench, MMC, press reports (various)",
-                "aggregate": True,
-            }
-        ],
+        "sources": [],
+        "note": "Curated compilation - per-record `sources` citations (Madras HC Madurai Bench, MMC, press) carry the accountability; an aggregate description is not an upstream source.",
     },
     "data-root/river-events": {
         "method": "manual",
-        "sources": [
-            {"title": "Compiled Vaigai river event timeline (per-record url citations)", "publisher": "press reports and public records (various)", "aggregate": True}
-        ],
+        "sources": [],
+        "note": "Curated event timeline - per-record url citations carry the accountability.",
     },
     "data-root/river-quality": {
         "method": "scrape",
@@ -291,25 +285,19 @@ PROVENANCE: dict[str, dict] = {
         "method": "derived",
         "produced_by": "scripts/compute-madurai-ward-risk.ts",
         "sources": [
-            {"title": "Madurai ward boundaries 2022 (delimitation KML)", "publisher": "GoTN / Madurai Municipal Corporation", "role": "input", "closed": True, "as_of": "2022"},
+            {"title": "Madurai ward boundaries 2022 (delimitation KML)", "publisher": "GoTN / Madurai Municipal Corporation", "license": "GoTN delimitation record, cited with attribution", "role": "input", "closed": True, "as_of": "2022"},
             OSM_TANKS,
         ],
     },
     "data-root/water-bodies-flagship": {
         "method": "manual",
-        "sources": [
-            {"title": "Curated flagship water-body register (per-record citations inline)", "publisher": "DHAN Foundation reports, MMC, press (various)", "aggregate": True}
-        ],
+        "sources": [],
+        "note": "Curated flagship register - per-record `sources` citations (DHAN, MMC, press) carry the accountability.",
     },
     "data-root/water-bodies-lost": {
         "method": "manual",
-        "sources": [
-            {
-                "title": "Primary + secondary lost water-body documentation (see primary_source / secondary_sources keys)",
-                "publisher": "various (per legacy keys and per-record notes)",
-                "aggregate": True,
-            }
-        ],
+        "sources": [],
+        "note": "Archival compilation - the legacy primary_source / secondary_sources keys and per-record notes carry the citations.",
     },
     # geojson layers
     "geojson-layers/gwr-blocks": {
@@ -325,7 +313,7 @@ PROVENANCE: dict[str, dict] = {
         "method": "manual",
         "produced_by": "scripts/convert-madurai-wards-kml.py",
         "sources": [
-            {"title": "Madurai Corporation ward boundaries, 2022 delimitation (KML)", "publisher": "GoTN / Madurai Municipal Corporation", "closed": True, "as_of": "2022"}
+            {"title": "Madurai Corporation ward boundaries, 2022 delimitation (KML)", "publisher": "GoTN / Madurai Municipal Corporation", "license": "GoTN delimitation record, cited with attribution", "closed": True, "as_of": "2022"}
         ],
     },
     "geojson-layers/water-bodies-current": {
@@ -337,9 +325,8 @@ PROVENANCE: dict[str, dict] = {
     "geojson-layers/water-bodies-lost": {
         "method": "derived",
         "produced_by": "scripts/build-madurai-lost-bodies-geojson.ts",
-        "sources": [
-            {"title": "water-bodies-lost-madurai.json (curated register, itself enveloped; edition history = git)", "publisher": "Neer Vazhvu", "role": "input", "continuous": True}
-        ],
+        "sources": [],
+        "note": "Derived from water-bodies-lost-madurai.json (itself enveloped, citations there) - internal lineage, not an upstream source.",
     },
 }
 

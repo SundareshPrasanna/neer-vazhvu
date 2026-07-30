@@ -52,14 +52,6 @@
           "type": "boolean",
           "description": "Explicit declaration that this upstream will never publish again (a dated letter, a one-time report). Closed sources are exempt from registry membership but MUST carry as_of. as_of alone is NOT a closed-source marker - living sources have evidence dates too."
         },
-        "continuous": {
-          "type": "boolean",
-          "description": "Explicit declaration that this upstream is continuously updated with NO editions to watch: OSM, Dynamic World, live APIs like India-WRIS, and internal Neer-Vazhvu-curated inputs whose edition history is git itself. Continuous sources are exempt from edition-registry membership - their re-fetch cadence is a freshness question (coverage-gate P5-1). Accountability is per source: exactly one of {registry id joined via dependsOn, closed+as_of, continuous, aggregate} - never an artifact-level waiver."
-        },
-        "aggregate": {
-          "type": "boolean",
-          "description": "This entry is an artifact-level SUMMARY of per-record citations, not an independently watchable upstream ('compiled court orders and press, various'). Valid ONLY on claim datasets, where L3 enforces the per-record source refs that actually carry the accountability."
-        },
         "role": {
           "enum": ["asserts", "input", "methodology"],
           "description": "Who stands behind the values (spec 5.2). 'asserts' (default): publisher stands behind them, we transport. 'input': raw material for values WE derived (shoreline transects, scores). 'methodology': cited method, not data. role+license is the derivative-encumbrance audit."
@@ -81,8 +73,8 @@
       "properties": {
         "sources": {
           "type": "array",
-          "minItems": 1,
-          "items": { "$ref": "#/$defs/source" }
+          "items": { "$ref": "#/$defs/source" },
+          "description": "External upstreams only - internal NVDM artifacts consumed as inputs are lineage, described in note, not sources. Non-empty except for self-authored manifests and claim-dataset compilations whose per-record citations carry accountability (validator-enforced: empty requires produced_by-or-claim-contract AND an explanatory note). Per-source accountability: registry id joined via dependsOn (episodic AND continuous upstreams - continuous entries use detection.method 'continuous' and are never polled) OR closed+as_of."
         },
         "method": {
           "enum": ["manual", "scrape", "api", "pdf-extract", "gee", "derived", "mixed"]

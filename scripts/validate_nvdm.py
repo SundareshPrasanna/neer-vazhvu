@@ -194,17 +194,28 @@ def source_accountability_errors(
     doc: dict, joined: set[str], reg_ids: set[str], dataset: str = ""
 ) -> list[str]:
     """L2 half of the cumulative ladder (spec Part 10). Accountability is
-    PER SOURCE - there is deliberately no artifact-level waiver (review
-    2026-07-30 found one artifact-level boolean bypassing every source join).
-    Every non-methodology source satisfies exactly one of:
-      - registry id that exists AND joins this file via dependsOn (episodic)
+    strictly PER SOURCE, exactly two ways to satisfy it (ratification review
+    2026-07-30 removed the continuous/aggregate envelope exemptions - living
+    upstreams incl. OSM/Dynamic World/WRIS are now REGISTRY entries with
+    detection.method 'continuous', registered for lineage and never polled):
+      - registry id that exists AND joins this file via dependsOn
       - closed: true + as_of (one-time documents)
-      - continuous: true (no editions to watch - OSM, Dynamic World, live
-        APIs; re-fetch cadence is the coverage gate's freshness question)
-    as_of alone is never an exemption; a bare declaration-free living source
-    always fails."""
+    Empty sources[] is legal only for self-authored manifests and
+    claim-dataset compilations (per-record citations carry accountability),
+    and always requires an explanatory provenance.note."""
+    prov = doc.get("provenance", {})
+    sources = prov.get("sources", [])
     errs = []
-    for i, s in enumerate(doc.get("provenance", {}).get("sources", [])):
+    if not sources:
+        if not prov.get("note"):
+            errs.append("empty provenance.sources without an explanatory note")
+        elif dataset not in CLAIM_DATASETS and not prov.get("produced_by"):
+            errs.append(
+                "empty provenance.sources is only legal for claim-dataset compilations "
+                "(per-record citations) or self-authored artifacts naming produced_by"
+            )
+        return errs
+    for i, s in enumerate(sources):
         if not isinstance(s, dict) or s.get("role") == "methodology":
             continue
         sid = s.get("id")
@@ -219,20 +230,53 @@ def source_accountability_errors(
         elif s.get("closed") is True:
             if not s.get("as_of"):
                 errs.append(f"provenance.sources[{i}] is closed but has no as_of (closed sources must be dated)")
-        elif s.get("continuous") is True:
-            pass  # explicit continuous-source declaration; freshness-tracked, not edition-tracked
-        elif s.get("aggregate") is True:
-            if dataset not in CLAIM_DATASETS:
-                errs.append(
-                    f"provenance.sources[{i}]: aggregate summaries are only valid on claim datasets "
-                    "(where per-record refs carry the accountability); this dataset has no claim contract"
-                )
         else:
             errs.append(
-                f"provenance.sources[{i}] '{str(s.get('title', '?'))[:40]}' has no registry id and declares "
-                "neither closed nor continuous - episodic sources register, one-time say closed: true, "
-                "edition-less say continuous: true"
+                f"provenance.sources[{i}] '{str(s.get('title', '?'))[:40]}' has no registry id and is not "
+                "closed+as_of - register it (continuous upstreams use detection.method 'continuous')"
             )
+    return errs
+
+
+def calendar_date_errors(doc: dict) -> list[str]:
+    """Bounded patterns admit 2026-02-30; real calendars do not. Checks every
+    envelope date and claim-record data_date/as_of."""
+    from datetime import date
+
+    def bad(v) -> bool:
+        if not isinstance(v, str) or len(v) != 10:
+            return False  # year / year-month forms carry no day to mis-state
+        try:
+            date.fromisoformat(v)
+            return False
+        except ValueError:
+            return True
+
+    errs = []
+    prov = doc.get("provenance", {})
+    if bad(prov.get("produced_at")):
+        errs.append(f"produced_at '{prov.get('produced_at')}' is not a real calendar date")
+    for i, s in enumerate(prov.get("sources", [])):
+        if isinstance(s, dict):
+            for k in ("as_of", "retrieved"):
+                if bad(s.get(k)):
+                    errs.append(f"provenance.sources[{i}].{k} '{s.get(k)}' is not a real calendar date")
+    for coll in ("facts", "commitments", "arrangements"):
+        for i, r in enumerate(doc.get(coll, []) if isinstance(doc.get(coll), list) else []):
+            if isinstance(r, dict):
+                for k in ("as_of", "data_date"):
+                    if bad(r.get(k)):
+                        errs.append(f"$.{coll}[{i}].{k} '{r.get(k)}' is not a real calendar date")
+    return errs
+
+
+def license_errors(doc: dict) -> list[str]:
+    """L3: every asserting or input source must carry its upstream licence
+    terms - this is the per-row resale audit made executable (spec Part 5)."""
+    errs = []
+    for i, s in enumerate(doc.get("provenance", {}).get("sources", [])):
+        if isinstance(s, dict) and s.get("role") != "methodology" and not s.get("license"):
+            errs.append(f"provenance.sources[{i}] '{str(s.get('title', '?'))[:40]}' has no license terms recorded")
     return errs
 
 
@@ -244,7 +288,10 @@ def provenance_rule_errors(doc: dict) -> list[str]:
         if not prov.get("produced_by"):
             errs.append("derived artifact without provenance.produced_by (spec 5.2)")
         sources = [s for s in prov.get("sources", []) if isinstance(s, dict)]
-        if not any(s.get("role") == "input" for s in sources):
+        # Derived-from-internal-artifacts legitimately has no external sources;
+        # the empty-sources rule (note + produced_by) covers that case. When
+        # external sources ARE listed, at least one must be the input.
+        if sources and not any(s.get("role") == "input" for s in sources):
             errs.append("derived artifact lists no source with role 'input' (spec 5.2)")
     return errs
 
@@ -343,6 +390,7 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
             doc, set(rec["headwaters_sources"]), reg_ids, f"{rec['family']}/{rec['dataset']}"
         )
         env_errs += provenance_rule_errors(doc)
+        env_errs += calendar_date_errors(doc)
     if not env_errs:
         if level < 1:
             # The ladder is cumulative for real: a valid envelope on an
@@ -356,6 +404,7 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
             c_errs = validate(doc, schemas[contract], schemas, contract)
             c_errs += claim_provenance_errors(doc, f"{rec['family']}/{rec['dataset']}")
             c_errs += unknown_key_errors(doc, schemas[contract])
+            c_errs += license_errors(doc)
             if c_errs:
                 notes += [f"L3 fail: {e}" for e in c_errs[:5]]
             else:
@@ -415,7 +464,18 @@ def selftest(schemas: dict[str, dict]) -> int:
     d = dup(facts); d["provenance"]["sources"][0].pop("id")
     check("undeclared living source rejected", bool(source_accountability_errors(d, set(), set())))
     d["provenance"]["sources"][0]["continuous"] = True
-    check("continuous declaration accepted", not source_accountability_errors(d, set(), set()))
+    check("envelope-level continuous flag no longer exempts",
+          bool(source_accountability_errors(d, set(), set())))
+    d = dup(facts); d["provenance"]["sources"] = []
+    check("empty sources on claim dataset with note accepted",
+          not source_accountability_errors(d, set(), set(), "data-root/facts"))
+    d["provenance"].pop("note")
+    check("empty sources without note rejected",
+          bool(source_accountability_errors(d, set(), set(), "data-root/facts")))
+    d = dup(facts); d["provenance"]["produced_at"] = "2026-02-30"
+    check("calendar-invalid date rejected", bool(calendar_date_errors(d)))
+    d = dup(facts); d["provenance"]["sources"][0].pop("license")
+    check("missing licence terms rejected at L3", bool(license_errors(d)))
     d = dup(facts); d["_hyderabad_special"] = {"leak": True}
     check("new underscore key rejected (closed census, not namespace)",
           bool(unknown_key_errors(d, schemas["facts.schema.json"])))

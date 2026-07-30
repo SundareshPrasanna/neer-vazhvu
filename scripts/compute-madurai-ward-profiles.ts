@@ -568,16 +568,17 @@ function main() {
         {
           title: "Madurai Corporation ward boundaries, 2022 delimitation (KML)",
           publisher: "GoTN / Madurai Municipal Corporation",
+          license: "GoTN delimitation record, cited with attribution",
           role: "input",
           closed: true,
           as_of: "2022",
         },
         {
+          id: "osm-overpass",
           title: "OpenStreetMap water bodies / rivers (Overpass extracts)",
           publisher: "OpenStreetMap contributors",
           license: "ODbL 1.0",
           role: "input",
-          continuous: true,
         },
         {
           id: "cgwb-yearbook-tn",
