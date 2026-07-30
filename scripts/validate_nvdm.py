@@ -160,9 +160,11 @@ LEGACY_UNDERSCORE = {
     "_report_date", "_secondary_local_source", "_sign_convention", "_source",
     "_source_caveats", "_source_url", "_sources", "_sources_of_truth",
     "_supply_total_note", "_view_overrides", "_wqr_source",
+    # dated audit-trail keys - enumerated, NOT a prefix wildcard (review
+    # 2026-07-30: _citation_trace_totally_new passed under the prefix). New
+    # audit trails belong in provenance.note.
+    "_citation_trace_2026_07_26", "_citation_trace_newslaundry", "_citation_trace_ngt_2018",
 }
-# dated audit-trail keys: _citation_trace_2026_07_26, _citation_trace_newslaundry, ...
-LEGACY_UNDERSCORE_PREFIXES = ("_citation_trace_",)
 
 
 def registry_source_ids() -> set[str]:
@@ -216,8 +218,12 @@ def source_accountability_errors(
             )
         return errs
     for i, s in enumerate(sources):
-        if not isinstance(s, dict) or s.get("role") == "methodology":
+        if not isinstance(s, dict):
             continue
+        # Methodology sources are NOT exempt (review 2026-07-30: the skip let
+        # any unregistered source reach L2 by claiming role methodology). They
+        # satisfy the same two-way rule; only the licence requirement (L3)
+        # exempts them, since a method is cited, not redistributed.
         sid = s.get("id")
         if sid:
             if sid not in reg_ids:
@@ -308,7 +314,7 @@ def unknown_key_errors(doc: dict, contract: dict) -> list[str]:
         f"top-level key '{k}' is not envelope, GeoJSON, contract-declared, or grandfathered legacy - "
         "per-scope additions must live in ext (spec 6.3)"
         for k in doc
-        if k not in allowed and not k.startswith(LEGACY_UNDERSCORE_PREFIXES)
+        if k not in allowed
     ]
 
 
@@ -356,6 +362,13 @@ def claim_provenance_errors(doc: dict, dataset: str) -> list[str]:
         for sid in r.get("source_ids", []):
             if sid not in env_ids:
                 errs.append(f"$.{coll_key}[{i}]: source_ids '{sid}' not found in provenance.sources ids")
+        # Commitments: the dated-citation-only discipline, executable. Every
+        # history entry needs a citation (all 107 existing entries corpus-wide
+        # already have one - the contract now says what practice always did).
+        if coll_key == "commitments":
+            for j, h in enumerate(r.get("status_history") or []):
+                if isinstance(h, dict) and not (h.get("source_label") or h.get("source_url")):
+                    errs.append(f"$.commitments[{i}].status_history[{j}]: no citation (source_label or source_url)")
         # Date signal (spec 5.1): a record's evidence date may live on the
         # record OR on its cited sources - requiring both would be duplication.
         # Commitments are exempt (dates live in status_history by design).
@@ -479,6 +492,22 @@ def selftest(schemas: dict[str, dict]) -> int:
     d = dup(facts); d["_hyderabad_special"] = {"leak": True}
     check("new underscore key rejected (closed census, not namespace)",
           bool(unknown_key_errors(d, schemas["facts.schema.json"])))
+    d = dup(facts); d["_citation_trace_totally_new"] = {}
+    check("new _citation_trace_* key rejected (no prefix wildcard)",
+          bool(unknown_key_errors(d, schemas["facts.schema.json"])))
+    d = dup(facts)
+    d["provenance"]["sources"].append({"title": "Sketchy method", "publisher": "nobody", "role": "methodology"})
+    check("unregistered methodology source rejected",
+          bool(source_accountability_errors(d, set(), set(), "data-root/facts")))
+    d = dup(facts); d["facts"][0].pop("tier")
+    check("fact without tier rejected",
+          bool(validate(d, schemas["facts.schema.json"], schemas, "facts.schema.json")))
+    cm = {"provenance": {"sources": []},
+          "commitments": [{"id": "x", "what": "w", "status": "on-track", "due": "2027",
+                            "commitment_source": "GO 12",
+                            "status_history": [{"date": "2026-07-01", "status": "on-track"}]}]}
+    check("history entry without citation rejected",
+          bool(claim_provenance_errors(cm, "data-root/commitments")))
     d = dup(facts); d["facts"][0]["data_date"] = "2026-99-99"
     check("out-of-range data_date rejected", bool(validate(d, schemas["facts.schema.json"], schemas, "facts.schema.json")))
     d = dup(facts); d["provenance"]["produced_at"] = "2026-99-99"
