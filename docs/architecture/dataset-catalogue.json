@@ -8090,118 +8090,7 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "rainfall-recent",
-   "bytes": 13166,
-   "schema": {
-    "kind": "object",
-    "keys": [
-     "attribution",
-     "daily",
-     "generated_at",
-     "imd_covers_through",
-     "monthly",
-     "provisional_note",
-     "source",
-     "through",
-     "url"
-    ]
-   },
-   "consumers": [
-    "src/components/dashboard/rainfall-trends.tsx"
-   ],
-   "producer_refs": [
-    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-    "scripts/check-data-freshness.ts"
-   ],
-   "headwaters_sources": [
-    "imd-gridded-rain"
-   ],
-   "licenses": [
-    "GoI publication, cited with attribution"
-   ],
-   "accountability": "watched",
-   "accountability_reason": "daily feed: owned by check-data-freshness.ts",
-   "flags": []
-  },
-  {
-   "path": "public/data/rainfall-recent-chennai.json",
-   "family": "data-root",
-   "scope": "chennai",
-   "dataset": "rainfall-recent",
-   "bytes": 13171,
-   "schema": {
-    "kind": "object",
-    "keys": [
-     "attribution",
-     "daily",
-     "generated_at",
-     "imd_covers_through",
-     "monthly",
-     "provisional_note",
-     "source",
-     "through",
-     "url"
-    ]
-   },
-   "consumers": [
-    "src/components/dashboard/rainfall-trends.tsx"
-   ],
-   "producer_refs": [
-    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-    "scripts/check-data-freshness.ts"
-   ],
-   "headwaters_sources": [
-    "imd-gridded-rain"
-   ],
-   "licenses": [
-    "GoI publication, cited with attribution"
-   ],
-   "accountability": "watched",
-   "accountability_reason": "daily feed: owned by check-data-freshness.ts",
-   "flags": []
-  },
-  {
-   "path": "public/data/rainfall-recent-delhi.json",
-   "family": "data-root",
-   "scope": "delhi",
-   "dataset": "rainfall-recent",
-   "bytes": 13175,
-   "schema": {
-    "kind": "object",
-    "keys": [
-     "attribution",
-     "daily",
-     "generated_at",
-     "imd_covers_through",
-     "monthly",
-     "provisional_note",
-     "source",
-     "through",
-     "url"
-    ]
-   },
-   "consumers": [
-    "src/components/dashboard/rainfall-trends.tsx"
-   ],
-   "producer_refs": [
-    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-    "scripts/check-data-freshness.ts"
-   ],
-   "headwaters_sources": [
-    "imd-gridded-rain"
-   ],
-   "licenses": [
-    "GoI publication, cited with attribution"
-   ],
-   "accountability": "watched",
-   "accountability_reason": "daily feed: owned by check-data-freshness.ts",
-   "flags": []
-  },
-  {
-   "path": "public/data/rainfall-recent-madurai.json",
-   "family": "data-root",
-   "scope": "madurai",
-   "dataset": "rainfall-recent",
-   "bytes": 13692,
+   "bytes": 14142,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8228,9 +8117,11 @@
     "scripts/check-data-freshness.ts"
    ],
    "headwaters_sources": [
-    "imd-gridded-rain"
+    "imd-gridded-rain",
+    "open-meteo-archive"
    ],
    "licenses": [
+    "CC BY 4.0",
     "GoI publication, cited with attribution"
    ],
    "accountability": "watched",
@@ -8238,20 +8129,24 @@
    "flags": []
   },
   {
-   "path": "public/data/rainfall-recent-mumbai.json",
+   "path": "public/data/rainfall-recent-chennai.json",
    "family": "data-root",
-   "scope": "mumbai",
+   "scope": "chennai",
    "dataset": "rainfall-recent",
-   "bytes": 13194,
+   "bytes": 14145,
    "schema": {
     "kind": "object",
     "keys": [
      "attribution",
      "daily",
+     "dataset",
      "generated_at",
      "imd_covers_through",
      "monthly",
+     "nvdm",
+     "provenance",
      "provisional_note",
+     "scope",
      "source",
      "through",
      "url"
@@ -8265,9 +8160,140 @@
     "scripts/check-data-freshness.ts"
    ],
    "headwaters_sources": [
-    "imd-gridded-rain"
+    "imd-gridded-rain",
+    "open-meteo-archive"
    ],
    "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "daily feed: owned by check-data-freshness.ts",
+   "flags": []
+  },
+  {
+   "path": "public/data/rainfall-recent-delhi.json",
+   "family": "data-root",
+   "scope": "delhi",
+   "dataset": "rainfall-recent",
+   "bytes": 14147,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "daily feed: owned by check-data-freshness.ts",
+   "flags": []
+  },
+  {
+   "path": "public/data/rainfall-recent-madurai.json",
+   "family": "data-root",
+   "scope": "madurai",
+   "dataset": "rainfall-recent",
+   "bytes": 14146,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "daily feed: owned by check-data-freshness.ts",
+   "flags": []
+  },
+  {
+   "path": "public/data/rainfall-recent-mumbai.json",
+   "family": "data-root",
+   "scope": "mumbai",
+   "dataset": "rainfall-recent",
+   "bytes": 14170,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
     "GoI publication, cited with attribution"
    ],
    "accountability": "watched",
@@ -19197,8 +19223,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 66398,
-   "schema_variants": 2,
+   "bytes": 70750,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },

@@ -245,11 +245,10 @@ PROVENANCE: dict[str, dict] = {
         ],
         "note": "Spring-2016 studio book. See _source_caveats: its statistics failed adversarial checks; locations retained as qualitative evidence only.",
     },
-    "data-root/rainfall-recent": {
-        "method": "api",
-        "produced_by": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-        "sources": [{"id": "imd-gridded-rain", "title": "IMD district daily/monthly rainfall (recent)", "publisher": "India Meteorological Department", "license": "GoI publication, cited with attribution"}],
-    },
+    # data-root/rainfall-recent: envelope OWNED BY ITS PRODUCER
+    # (fetch_recent_rainfall.py) - the daily rewrite would strip anything the
+    # injector added, and the producer's IMD + Open-Meteo source split is the
+    # accurate one. Listed in SKIP below.
     "data-root/restoration-priority": {
         "method": "derived",
         "produced_by": "neer-vazhvu-api/app/gee/cities.py (flagship scorer)",
@@ -336,7 +335,8 @@ SKIP = {
     "cascade/catchment-downstream",
     "cascade/catchment-streams",
     "data-root/localities",
-    "data-root/ward-profiles",
+    "data-root/ward-profiles",   # producer-owned envelope (compute-madurai-ward-profiles.ts)
+    "data-root/rainfall-recent", # producer-owned envelope (fetch_recent_rainfall.py, daily)
 }
 
 

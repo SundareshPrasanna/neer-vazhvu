@@ -1,4 +1,30 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/rainfall-recent",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "imd-gridded-rain",
+        "title": "IMD gridded monthly rainfall (authoritative through imd_covers_through)",
+        "publisher": "India Meteorological Department",
+        "license": "GoI publication, cited with attribution"
+      },
+      {
+        "id": "open-meteo-archive",
+        "title": "Open-Meteo archive API (ERA5-family reanalysis) - provisional fill after IMD's last month",
+        "publisher": "Open-Meteo",
+        "license": "CC BY 4.0"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-07-30",
+    "produced_by": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "note": "Provisional reanalysis fill, replaced by IMD authoritative values as the quarterly refresh catches up (see provisional_note)."
+  },
   "source": "Open-Meteo archive API (ERA5-family reanalysis), daily precipitation",
   "attribution": "Weather data by Open-Meteo.com (CC BY 4.0)",
   "url": "https://open-meteo.com/",
