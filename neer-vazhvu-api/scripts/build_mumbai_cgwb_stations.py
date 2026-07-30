@@ -40,7 +40,6 @@ seawater-poisoned aquifer one might assume for a coastal megacity.
 Run:  cd neer-vazhvu-api && python scripts/build_mumbai_cgwb_stations.py
 """
 
-import json
 import os
 import re
 import sys
@@ -49,6 +48,7 @@ from pathlib import Path
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 OUT_PATH = os.path.join(REPO_ROOT, "public", "data", "mumbai-cgwb-stations.json")
 
 # --- 2024-25 Year Book: WRIS code | district | site | May24 Aug24 Nov24 Jan25
