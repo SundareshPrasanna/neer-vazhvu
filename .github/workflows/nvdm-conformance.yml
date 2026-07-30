@@ -7,9 +7,9 @@ name: NVDM conformance
 #   2. Catalogue + conformance-report freshness - the committed outputs match
 #      the tree (same pattern as the ward-profiles.json CI gate). Regenerate
 #      with: python3 scripts/build_dataset_catalogue.py && python3 scripts/validate_nvdm.py
-#   3. L2 envelope gate on NEWLY ADDED data artifacts - ADVISORY (warns, does
-#      not block) until NVDM v1 is accepted; flips to enforcing then.
-#      See schemas/nvdm/README.md.
+#   3. L2 envelope gate on NEWLY ADDED data artifacts - ENFORCING since NVDM
+#      v1 acceptance (2026-07-30): a new artifact below L2 fails the PR.
+#      Legacy files stay report-only. See schemas/nvdm/README.md.
 
 on:
   pull_request:
@@ -53,9 +53,8 @@ jobs:
           python3 scripts/validate_nvdm.py
           git diff --exit-code docs/architecture/nvdm-conformance.md
 
-      - name: L2 gate on newly added data artifacts (advisory until NVDM v1 acceptance)
+      - name: L2 gate on newly added data artifacts (ENFORCING - NVDM v1 accepted 2026-07-30)
         if: github.event_name == 'pull_request'
-        continue-on-error: true
         run: |
           BASE="${{ github.event.pull_request.base.sha }}"
           NEW=$(git diff --name-only --diff-filter=A "$BASE"...HEAD -- \
@@ -67,6 +66,6 @@ jobs:
           echo "New data artifacts:"; echo "$NEW"
           # shellcheck disable=SC2086
           if ! python3 scripts/validate_nvdm.py --check $NEW; then
-            echo "::warning title=NVDM L2::New data artifacts are below NVDM L2 (no envelope). Advisory until NVDM v1 is accepted - envelope them now to avoid migration debt. See schemas/nvdm/README.md."
+            echo "::error title=NVDM L2::New data artifacts must carry a valid NVDM envelope (L2). NVDM v1 is accepted and this gate is enforcing. See schemas/nvdm/README.md."
             exit 1
           fi

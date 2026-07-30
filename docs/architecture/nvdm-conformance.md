@@ -63,6 +63,6 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
   UNWATCHED reason; 118 artifacts remain unaccounted (largest block: basins packs).
 - L2/L3 progress is the migration meter: the Madurai pilot moved first; each city's
   migration lifts its artifacts (spec Part 9 order).
-- CI (`.github/workflows/nvdm-conformance.yml`): selftest + catalogue/report freshness
-  are blocking; the `--check` L2 gate on newly added data artifacts is ADVISORY until
-  NVDM v1 is accepted, then flips to enforcing. Legacy files stay report-only (spec 9.4).
+- CI (`.github/workflows/nvdm-conformance.yml`): selftest, catalogue/report freshness,
+  and the `--check` L2 gate on newly added data artifacts are all BLOCKING (NVDM v1
+  accepted 2026-07-30). Legacy files stay report-only until migrated (spec 9.4).
