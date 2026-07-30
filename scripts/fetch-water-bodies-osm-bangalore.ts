@@ -18,9 +18,9 @@
  * Madurai/Chennai use Tamil.
  */
 
-import { writeFileSync } from "fs";
 import { join } from "path";
 import osmtogeojson from "osmtogeojson";
+import { writeArtifact } from "./lib/nvdm-write";
 
 // Wider than the GBA 369-ward bbox: extends south past Anekal, north past
 // Yelahanka into Bangalore Rural for the Arkavathi headworks, and west to
@@ -183,7 +183,10 @@ async function main() {
   };
 
   const outPath = join(process.cwd(), "public/geojson/bangalore-water-bodies-current.geojson");
-  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+  // Envelope-preserving write (scripts/lib/nvdm-write.ts). After a re-fetch,
+  // re-run scripts/name-bangalore-water-bodies.py to restore the named-lake
+  // join (the envelope documents both steps).
+  writeArtifact(outPath, geojson as unknown as Record<string, unknown>);
   console.log(`\nSaved ${features.length} features to ${outPath}`);
 
   const totalAreaHa = features.reduce((sum, f) => sum + (f.properties.area_ha || 0), 0);

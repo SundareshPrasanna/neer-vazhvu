@@ -18,8 +18,8 @@
  * M4 will eventually fold all three into a place-aware fetcher.
  */
 
-import { writeFileSync } from "fs";
 import { join } from "path";
+import { writeArtifact } from "./lib/nvdm-write";
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 
@@ -407,7 +407,8 @@ async function main() {
   };
 
   const outPath = join(process.cwd(), "public/geojson/bangalore-rivers.geojson");
-  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+  // Envelope-preserving write (scripts/lib/nvdm-write.ts).
+  writeArtifact(outPath, geojson as unknown as Record<string, unknown>);
 
   console.log(`\nWrote ${features.length} river features to public/geojson/bangalore-rivers.geojson`);
   console.log("Rivers found:", features.map((f) => f.properties.river_id).join(", "));

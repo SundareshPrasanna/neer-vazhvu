@@ -19,8 +19,8 @@
  * Run: npx tsx scripts/fetch-wris-groundwater-bangalore.ts
  */
 
-import { writeFileSync } from "fs";
 import { resolve } from "path";
+import { writeArtifact } from "./lib/nvdm-write";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -241,12 +241,14 @@ async function main() {
     years: GWR_YEARS,
     blocks,
   };
+  // Envelope-preserving writes (scripts/lib/nvdm-write.ts): keep the NVDM
+  // envelopes injected by the Bangalore migration across regenerations.
   const gwrPath = resolve(root, "public/data/gwr-blocks-bangalore.json");
-  writeFileSync(gwrPath, JSON.stringify(gwrOutput, null, 2));
+  writeArtifact(gwrPath, gwrOutput);
   console.log(`  ${gwrPath}`);
 
   const geoPath = resolve(root, "public/geojson/bangalore-gwr-blocks.geojson");
-  writeFileSync(geoPath, JSON.stringify(boundaries, null, 2));
+  writeArtifact(geoPath, boundaries as unknown as Record<string, unknown>);
   console.log(`  ${geoPath}`);
 
   console.log("\nDone!");

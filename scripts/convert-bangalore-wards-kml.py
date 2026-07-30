@@ -22,12 +22,13 @@ journalists can quote either form.
 Run: python scripts/convert-bangalore-wards-kml.py scripts/data-raw/bangalore/gba-369-wards-december-2025.kml
 """
 
-import json
 import math
 import re
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
+from nvdm_write import write_artifact
 
 KML_NS = {"k": "http://www.opengis.net/kml/2.2"}
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -262,8 +263,12 @@ def main() -> None:
 
     GEOJSON_OUT.parent.mkdir(parents=True, exist_ok=True)
     PROFILES_OUT.parent.mkdir(parents=True, exist_ok=True)
-    GEOJSON_OUT.write_text(json.dumps({"type": "FeatureCollection", "features": features}))
-    PROFILES_OUT.write_text(json.dumps(profiles, indent=2))
+    # Envelope-preserving writes (scripts/nvdm_write.py). The profiles file is
+    # emitted in the NVDM wrapped shape ({ envelope..., wards: [...] }); after
+    # a re-conversion, re-run scripts/compute-bangalore-ward-profiles.ts to
+    # restore the analytical sections and the full producer-emitted envelope.
+    write_artifact(GEOJSON_OUT, {"type": "FeatureCollection", "features": features}, compact=True)
+    write_artifact(PROFILES_OUT, {"wards": profiles})
     print(f"Wrote {len(features)} features to {GEOJSON_OUT}")
     print(f"Wrote {len(profiles)} ward profiles to {PROFILES_OUT}")
 

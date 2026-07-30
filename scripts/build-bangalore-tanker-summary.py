@@ -21,10 +21,11 @@ Run: python scripts/build-bangalore-tanker-summary.py
 """
 
 import csv
-import json
 import re
 import statistics
 from pathlib import Path
+
+from nvdm_write import write_artifact
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
@@ -256,7 +257,8 @@ def main():
     }
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(output, indent=2))
+    # Envelope-preserving write (scripts/nvdm_write.py).
+    write_artifact(OUT, output)
     print(f"Wrote {OUT}")
     for y in yearly:
         print(
