@@ -743,8 +743,8 @@ function main() {
         "name-only, no coordinates - it is NOT read by this script); flood " +
         "hotspot_2015/2020 sub-counts stay 0 (no annual snapshots for Bangalore); " +
         "sewerage sps_count stays 0 (no public BWSSB SPS layer). Internal inputs are " +
-        "lineage, not sources - listed machine-readably in internal_inputs, including " +
-        "this artifact itself (admin-field base from the wards KML conversion).",
+        "lineage, not sources - listed machine-readably in internal_inputs; admin " +
+        "fields come from the enveloped bangalore-ward-admin.json seed (KML-derived).",
     },
     wards: output,
   };

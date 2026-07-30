@@ -698,7 +698,8 @@ SKIP = {
     "cascade/catchment-downstream",  # naked indexed map
     "cascade/catchment-streams",     # naked indexed map
     "data-root/localities",          # bare array, wrap follow-up (all cities together)
-    "data-root/ward-profiles",       # producer-owned wrap (compute-bangalore-ward-profiles.ts), own commit
+    "data-root/ward-profiles",
+    "data-root/ward-admin",       # producer-owned wrap (compute-bangalore-ward-profiles.ts), own commit
     "data-root/rainfall-recent",     # producer-owned envelope (fetch_recent_rainfall.py, daily)
 }
 
