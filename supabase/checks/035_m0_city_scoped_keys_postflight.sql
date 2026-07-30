@@ -184,6 +184,7 @@ WITH expected(index_name, table_name, columns_csv) AS (
       tc.relname AS table_name,
       i.indisunique,
       i.indisvalid,
+      (i.indpred IS NOT NULL) AS is_partial,
       (SELECT string_agg(a.attname, ',' ORDER BY k.ord)
          FROM unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
          JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
@@ -198,12 +199,13 @@ WITH expected(index_name, table_name, columns_csv) AS (
            WHEN a.index_name IS NULL THEN 'missing'
            WHEN NOT a.indisunique THEN 'not unique'
            WHEN NOT a.indisvalid THEN 'invalid'
+           WHEN a.is_partial THEN 'partial index (cannot back an unqualified ON CONFLICT)'
            WHEN a.table_name <> e.table_name THEN 'wrong table: ' || a.table_name
            WHEN a.columns_csv <> e.columns_csv THEN 'wrong columns: ' || a.columns_csv
          END AS problem
   FROM expected e
   LEFT JOIN actual a ON a.index_name = e.index_name
   WHERE a.index_name IS NULL
-     OR NOT a.indisunique OR NOT a.indisvalid
+     OR NOT a.indisunique OR NOT a.indisvalid OR a.is_partial
      OR a.table_name <> e.table_name
      OR a.columns_csv <> e.columns_csv;
