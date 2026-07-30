@@ -213,12 +213,15 @@ def reg(source_id: str, role: str | None = None, as_of: str | None = None,
     return s
 
 
-# The district cascade pipeline reads these committed artifacts
-# (districts.py: tank_polygons_path + rivers_path) - internal lineage.
-CASCADE_INPUTS = [
-    "public/geojson/mumbai-water-bodies-current.geojson",
-    "public/geojson/mumbai-rivers.geojson",
-]
+# Cascade lineage per OUTPUT, read out of the pipeline's actual load() calls
+# (round-2 review: the generic tanks+rivers list was only true for topology
+# outputs). Path constants:
+WB = "public/geojson/mumbai-water-bodies-current.geojson"
+RIVERS = "public/geojson/mumbai-rivers.geojson"
+CASCADE_NODES = "public/data/cascade/mumbai-cascade-nodes.geojson"
+CASCADE_EDGES = "public/data/cascade/mumbai-cascade-edges.geojson"
+CASCADE_OUTLETS = "public/data/cascade/mumbai-cascade-river-outlets.geojson"
+CASCADE_DOWNSTREAM = "public/data/cascade/mumbai-catchment-downstream.json"
 CASCADE_NOTE = (
     "Derived by the DISTRICT cascade pipeline (neer-vazhvu-api/app/cascade, "
     "d8_steepest_descent_v1 over FABDEM; inputs_hash in _meta). Mumbai is "
@@ -231,37 +234,75 @@ CASCADE_NOTE = (
 )
 
 
-def cascade(extra_inputs: list[str] | None = None) -> dict:
+def cascade(produced_by: str, internal_inputs: list[str]) -> dict:
     return {
         "method": "derived",
-        "produced_by": "neer-vazhvu-api/app/cascade (district pipeline, districts.py registry)",
-        "internal_inputs": CASCADE_INPUTS + (extra_inputs or []),
+        "produced_by": produced_by,
+        "internal_inputs": internal_inputs,
         "sources": [dict(FABDEM)],
         "note": CASCADE_NOTE,
     }
 
 
+CASCADE_TOPOLOGY_BY = (
+    "neer-vazhvu-api/app/cascade/publish.py write_geojson "
+    "(topology.build_graph over the committed tanks + rivers layers)"
+)
+CASCADE_CATCHMENTS_BY = (
+    "neer-vazhvu-api/app/cascade/catchments.py build_catchments "
+    "(catchments_fabdem_wbt_v1 over the published nodes + tanks layers)"
+)
+
+
 # ---- per-dataset provenance map (the reviewable core) ----------------------
 
 PROVENANCE: dict[str, dict] = {
-    # cascade family (derived; FABDEM-encumbered)
-    "cascade/cascade-catchments": {**cascade(), "produced_by": "neer-vazhvu-api/app/cascade (catchments_fabdem_wbt_v1)"},
-    "cascade/cascade-edges": cascade(),
-    "cascade/cascade-lakes": cascade(),
-    "cascade/cascade-nodes": cascade(),
-    "cascade/cascade-river-outlets": cascade(),
-    "cascade/cascade-stats": cascade(),
+    # cascade family (derived; FABDEM-encumbered). internal_inputs per output
+    # follow the pipeline's ACTUAL load() calls (round-2 review):
+    #   topology outputs read tanks + rivers; build_catchments reads the
+    #   published nodes + tanks; write_stats_manifest reads the three
+    #   published GeoJSONs; enrich_names additionally reads rivers and the
+    #   per-lake downstream paths; _build_meta's inputs_hash reads tanks +
+    #   rivers everywhere.
+    "cascade/cascade-catchments": cascade(CASCADE_CATCHMENTS_BY, [CASCADE_NODES, WB]),
+    "cascade/cascade-edges": cascade(CASCADE_TOPOLOGY_BY, [WB, RIVERS]),
+    "cascade/cascade-lakes": {
+        **cascade(
+            CASCADE_CATCHMENTS_BY + " + enrich_names.enrich_cascade_lakes",
+            [CASCADE_NODES, WB, RIVERS, CASCADE_DOWNSTREAM],
+        ),
+        "note": CASCADE_NOTE + " enrich_names snaps each river-terminal lake's "
+        "traced downstream path (mumbai-catchment-downstream.json, a "
+        "grandfathered naked map) to the named rivers layer - declared as "
+        "lineage even though the naked map cannot itself carry an envelope.",
+    },
+    "cascade/cascade-nodes": {
+        **cascade(CASCADE_TOPOLOGY_BY, [WB, RIVERS]),
+        "note": CASCADE_NOTE + " build_catchments then extends this file IN "
+        "PLACE with catchment_area_sqkm (reads the topology nodes, rewrites "
+        "them enriched) - a same-file enrichment pass, not a second artifact.",
+    },
+    "cascade/cascade-river-outlets": cascade(CASCADE_TOPOLOGY_BY, [WB, RIVERS]),
+    "cascade/cascade-stats": cascade(
+        "neer-vazhvu-api/app/cascade/publish.py write_stats_manifest "
+        "(reads the three published GeoJSONs from disk)",
+        [CASCADE_NODES, CASCADE_EDGES, CASCADE_OUTLETS],
+    ),
     "cascade/cascade-systems": {
-        **cascade(),
-        "produced_by": "neer-vazhvu-api/app/cascade/curation.py",
-        "note": CASCADE_NOTE + " Layer B curation (named systems) is empty for Mumbai "
-        "by design - no historical tank-cascade systems to name.",
+        **cascade(
+            "neer-vazhvu-api/app/cascade/publish.py write_systems_manifest "
+            "(run_cascade.py; Layer B curation.attach_named_cascades is "
+            "NotImplemented - systems written empty)",
+            [WB, RIVERS],
+        ),
+        "note": CASCADE_NOTE + " Layer B curation (named systems) is empty for "
+        "Mumbai by design - no historical tank-cascade systems to name; the "
+        "payload content is the empty manifest plus _meta, whose inputs_hash "
+        "reads the tanks + rivers layers (hence the internal_inputs).",
     },
-    "cascade/catchment-quality": {
-        **cascade(),
-        "internal_inputs": ["public/geojson/mumbai-water-bodies-current.geojson"],
-        "produced_by": "neer-vazhvu-api/app/cascade (catchments_fabdem_wbt_v1 QA report)",
-    },
+    "cascade/catchment-quality": cascade(
+        CASCADE_CATCHMENTS_BY + " (QA summary)", [CASCADE_NODES, WB]
+    ),
     # data-root
     "data-root/allocations": {
         "method": "manual",

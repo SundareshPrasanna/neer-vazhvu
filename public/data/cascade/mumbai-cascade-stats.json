@@ -18,10 +18,11 @@
     "method": "derived",
     "produced_at": "2026-06-23",
     "internal_inputs": [
-      "public/geojson/mumbai-water-bodies-current.geojson",
-      "public/geojson/mumbai-rivers.geojson"
+      "public/data/cascade/mumbai-cascade-nodes.geojson",
+      "public/data/cascade/mumbai-cascade-edges.geojson",
+      "public/data/cascade/mumbai-cascade-river-outlets.geojson"
     ],
-    "produced_by": "neer-vazhvu-api/app/cascade (district pipeline, districts.py registry)",
+    "produced_by": "neer-vazhvu-api/app/cascade/publish.py write_stats_manifest (reads the three published GeoJSONs from disk)",
     "note": "Derived by the DISTRICT cascade pipeline (neer-vazhvu-api/app/cascade, d8_steepest_descent_v1 over FABDEM; inputs_hash in _meta). Mumbai is reservoir-impounded, NOT tank-cascade geography - registered for the lake catchment atlas; the cascade overlay is suppressed when edge_count is negligible (see districts.py). Sentinel/OSM channel cross-checks are NotImplemented (P5) and the buildings/rainfall stages did not run for this district, so those upstreams are deliberately NOT listed. FABDEM input makes this family CC BY-NC-SA (non-commercial) encumbered."
   },
   "district_id": "mumbai",
