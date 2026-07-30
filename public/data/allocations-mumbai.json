@@ -1,4 +1,36 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/allocations",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "bmc-esr-annual",
+        "title": "BMC Environment Status Report (annual)",
+        "publisher": "Brihanmumbai Municipal Corporation",
+        "license": "government publication, cited with attribution"
+      },
+      {
+        "id": "bmc-rti-manuals",
+        "title": "BMC Hydraulic Engineer RTI manuals (Dy HE Bhandup Complex + Water Supply Projects departments, Dec 2024)",
+        "publisher": "BMC Hydraulic Engineer's Department",
+        "license": "government publication, cited with attribution",
+        "as_of": "2024-12"
+      },
+      {
+        "id": "mahagr-wrd-resolutions",
+        "title": "Maharashtra WRD Government Resolutions (via the orgpedia mahGRs mirror)",
+        "publisher": "Maharashtra WRD (via the orgpedia mahGRs mirror)",
+        "license": "government resolutions, mirrored openly"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-07-05",
+    "note": "MMR bulk-water claim register - per-arrangement citations live in the legacy `sources` map (id-keyed source objects: STEM/DRA audit brief, MMRDA scheme pages, WRD GRs, dated press) and per-record `source` fields; an aggregate description is not an upstream source. unit_note declares the native-units discipline (MLD as published, entitlement vs drawal bases never mixed). Five self-supplied arrangements carry authority_id null (the corporation is its own authority) - an honest L3 gap shared with Bangalore and Delhi."
+  },
   "place_id": "mumbai",
   "updated": "2026-07-05",
   "headline": "Who owns the water: the MMR's allocation ledger",

@@ -162,7 +162,9 @@
         "public/geojson/bangalore-water-bodies-current.geojson",
         "public/data/bangalore-ward-profiles.json",
         "public/data/ward-risk-bangalore.json",
-        "public/data/restoration-priority-bangalore.json"
+        "public/data/restoration-priority-bangalore.json",
+        "public/geojson/mumbai-coastal-zones.geojson",
+        "public/data/industrial-sources-mumbai.json"
       ],
       "refreshMethod": "per-city fetch-*-osm-*.ts scripts (Overpass extracts)",
       "notes": "Continuously edited; no editions to detect (NVDM per-source rule 2026-07-30: registered for lineage/licence accountability; formerly 13 UNWATCHED allowlist lines). Re-fetch cadence is a freshness question (P5-1)."
@@ -204,7 +206,8 @@
         "public/data/rich-bodies",
         "public/data/restoration-priority-madurai.json",
         "public/data/restoration-priority-madurai-legacy.json",
-        "public/geojson/chennai-coastal-transects.geojson"
+        "public/geojson/chennai-coastal-transects.geojson",
+        "public/geojson/mumbai-coastal-transects.geojson"
       ],
       "refreshMethod": "neer-vazhvu-api/app/cascade/channels.py + gee imagery chips",
       "notes": "Continuous acquisition; channel evidence + rich-body imagery. Registered 2026-07-30 for NVDM lineage."
@@ -223,7 +226,8 @@
       },
       "dependsOn": [
         "public/data/rich-bodies",
-        "public/geojson/chennai-coastal-transects.geojson"
+        "public/geojson/chennai-coastal-transects.geojson",
+        "public/geojson/mumbai-coastal-transects.geojson"
       ],
       "refreshMethod": "neer-vazhvu-api/app/gee/coastline.py + scripts/ingest_rich_body_imagery.py (GEE Landsat 5/7/8 collections)",
       "notes": "Continuous acquisition archive, no editions; the long-run arm of the shoreline MNDWI series (1990-2011 epochs) and the historical rich-body imagery chips. Registered 2026-07-30 (NVDM Chennai migration) so Landsat-derived artifacts can cite a registry id for lineage/licence instead of an unregistered living source."
@@ -320,6 +324,31 @@
       ],
       "refreshMethod": "manual (re-run the upstream trace against a new MERIT release; catchment candidates are curated)",
       "notes": "Registered 2026-07-30 round-2 review: the reservoir-catchments candidates use a MERIT Hydro upstream trace that had no registry lineage (INVENTORY had wrongly credited FABDEM). Unbaselined until first --accept."
+    },
+    {
+      "id": "cpcb-prs-report",
+      "scope": "platform",
+      "publisher": "CPCB",
+      "url": "https://cpcb.gov.in/polluted-river-stretches/",
+      "license": "GoI publication, cited with attribution",
+      "type": "page",
+      "cadence": "~2-3 yearly",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/river-quality-bangalore.json",
+        "public/data/basins/arkavathi/prs.json",
+        "public/docs/cpcb-polluted-river-stretches-oct-2025.pdf",
+        "public/data/facts-mumbai.json"
+      ],
+      "refreshMethod": "manual (scripts/build_prs.py against the mirrored PDF)",
+      "notes": "MOVED to platform scope 2026-07-31 (#220 review): a national CPCB report whose dependsOn spans Bangalore, the Arkavathi basin pack, the mirrored PDF and the Mumbai facts register - a city-scope entry misfiled cross-city lineage. Polluted River Stretches for Restoration of Water Quality - the BOD-band Priority I-V classification behind the Arkavathi atlas, the Bengaluru stretch classes, the Chennai Cooum/Adyar Priority I status and the Mumbai 'Mithi at Mahim is India's worst stretch' fact. The Oct 2025 edition is mirrored at public/docs/cpcb-polluted-river-stretches-oct-2025.pdf. WHY page-hash and not link-set: the landing page exposes no report hrefs at all - only CPCB's site-wide boilerplate PDFs (verified 2026-07-26) - and the report itself was published behind an openpdffile.php id that has since expired (it now returns a 146-byte HTML error mislabelled application/pdf). Expect page-hash to be noisier than link-set; tighten with a selector if it false-positives. Host note: cpcb.gov.in, never the NICNET cpcb DOT nic DOT in - see cpcb-nwmp-annual.",
+      "lastSeen": {
+        "pageHash": "2bc5474c47902288",
+        "acceptedOn": "2026-07-26"
+      }
     }
   ]
 }

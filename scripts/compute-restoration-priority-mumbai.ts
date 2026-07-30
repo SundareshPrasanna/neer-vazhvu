@@ -16,8 +16,10 @@
  * Run: npx tsx scripts/compute-restoration-priority-mumbai.ts
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
 import { resolve } from "path";
+
+import { writeArtifact } from "./lib/nvdm-write";
 
 const root = process.cwd();
 
@@ -116,10 +118,9 @@ const out = {
   river_sections: [],
 };
 
-writeFileSync(
-  resolve(root, "public/data/restoration-priority-mumbai.json"),
-  JSON.stringify(out, null, 1),
-);
+// Envelope-preserving write (scripts/lib/nvdm-write.ts): keeps the NVDM
+// envelope injected by the migration so a rerun cannot strip it.
+writeArtifact(resolve(root, "public/data/restoration-priority-mumbai.json"), out);
 console.log(
   `wrote restoration-priority-mumbai.json: ${water_bodies.length} bodies`,
   out.water_bodies.slice(0, 5).map((w) => `${w.name}=${w.priority_score}(${w.priority_level})`).join(", "),

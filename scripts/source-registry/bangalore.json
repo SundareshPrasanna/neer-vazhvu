@@ -198,30 +198,6 @@
       }
     },
     {
-      "id": "cpcb-prs-report",
-      "scope": "bangalore",
-      "publisher": "CPCB",
-      "url": "https://cpcb.gov.in/polluted-river-stretches/",
-      "license": "GoI publication, cited with attribution",
-      "type": "page",
-      "cadence": "~2-3 yearly",
-      "tier": 0,
-      "detection": {
-        "method": "page-hash"
-      },
-      "dependsOn": [
-        "public/data/river-quality-bangalore.json",
-        "public/data/basins/arkavathi/prs.json",
-        "public/docs/cpcb-polluted-river-stretches-oct-2025.pdf"
-      ],
-      "refreshMethod": "manual (scripts/build_prs.py against the mirrored PDF)",
-      "notes": "Polluted River Stretches for Restoration of Water Quality - the BOD-band Priority I-V classification behind the Arkavathi atlas, the Bengaluru stretch classes, the Chennai Cooum/Adyar Priority I status and the Mumbai 'Mithi at Mahim is India's worst stretch' fact. The Oct 2025 edition is mirrored at public/docs/cpcb-polluted-river-stretches-oct-2025.pdf. WHY page-hash and not link-set: the landing page exposes no report hrefs at all - only CPCB's site-wide boilerplate PDFs (verified 2026-07-26) - and the report itself was published behind an openpdffile.php id that has since expired (it now returns a 146-byte HTML error mislabelled application/pdf). Expect page-hash to be noisier than link-set; tighten with a selector if it false-positives. Host note: cpcb.gov.in, never the NICNET cpcb DOT nic DOT in - see cpcb-nwmp-annual.",
-      "lastSeen": {
-        "pageHash": "2bc5474c47902288",
-        "acceptedOn": "2026-07-26"
-      }
-    },
-    {
       "id": "opencity-bengaluru-flood",
       "scope": "bangalore",
       "publisher": "KSNDMC / BBMP (via OpenCity)",

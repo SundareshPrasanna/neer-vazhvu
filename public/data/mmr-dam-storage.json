@@ -1,4 +1,27 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/mmr-dam-storage",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "wrd-pravah-dam-feed",
+        "title": "Maharashtra WRD Pravah dam-safety daily bulletin (all-Maharashtra live-storage PDF, 139 dams)",
+        "publisher": "Maharashtra WRD (Pravah dam-safety portal)",
+        "license": "Maharashtra government public feed, no stated licence - cited with attribution"
+      }
+    ],
+    "method": "scrape",
+    "produced_at": "2026-07-29",
+    "produced_by": "neer-vazhvu-api/scripts/scrape_pravah_dams.py",
+    "note": "Daily live storage for MMR source dams from the Pravah bulletin (pravah-dam-refresh.yml cron; the scraper writes through scripts/nvdm_write.py so this envelope survives the daily rewrite). BMC's 7 lakes flow through the separate BMC feed into Supabase; Morbe + Hetawane (CIDCO/NMMC-operated) are NOT in this feed - see the legacy _note.",
+    "conventions": {
+      "dates": "per-dam `date` is the dam's own reading timestamp; Pravah staggers readings by up to a day, so rows in one bulletin can carry two different dates (DB ingestion keys on the newest, see the scraper)"
+    }
+  },
   "_source": "Maharashtra WRD Pravah dam-safety feed",
   "_source_url": "https://mwrdpravah.in/damsafety/control/pdfLatestReportEng",
   "_fetched": "2026-07-29",

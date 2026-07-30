@@ -1,4 +1,29 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/cgwb-stations",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cgwb-yearbook-maharashtra",
+        "title": "CGWB Ground Water Year Book of Maharashtra (2024-25 canonical; 2022-23 stitched for multi-year depth) + GW Quality trend report",
+        "publisher": "CGWB Central Region, Nagpur",
+        "license": "GoI publication, cited with attribution",
+        "as_of": "2025",
+        "retrieved": "2026-07-26"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/scripts/build_mumbai_cgwb_stations.py",
+    "note": "CGWB National Hydrograph Network wells in Mumbai City + Suburban, transcribed from the published Year Books (2024-25 canonical network, 2022-23 stitched by site name) plus the GW Quality trend report chemistry. Mumbai is EXCLUDED from the CGWB Dynamic GWR Assessment (no block safe/critical class), so these wells - not a block choropleth - are the authoritative groundwater render; see _note and _citation_trace_2026_07_26.",
+    "conventions": {
+      "sign": "depth metres below ground level (m bgl), positive down; four seasonal readings per Year Book edition"
+    }
+  },
   "_note": "CGWB National Hydrograph Network wells in Mumbai City + Mumbai Suburban, transcribed from the CGWB Ground Water Year Book of Maharashtra (2024-25 canonical, 2022-23 stitched for multi-year depth). Mumbai is EXCLUDED from the CGWB Dynamic Ground Water Resources Assessment (no block safe/critical/over-exploited class), so these wells - not a block choropleth - are the authoritative groundwater rendering. Levels run May/Aug/Nov + Jan, four seasons per Year Book, current to Jan 2025. The `quality` block (where present) is the major-ion panel from the CGWB Maharashtra groundwater-quality report (Annexure IX, pre-monsoon May 2022); trace Fe/As/U from Annexure VIII (NHS 2019-20). All monitored wells are shallow phreatic dug wells; no DWLR/telemetric stations exist for Mumbai. REGIONAL (MMR): extended beyond the BMC districts with Year Book 2024-25 wells across Thane, Palghar (Vasai) and Raigad (Panvel/Uran), coordinate-filtered to the urban metro, so every non-BMC corporation has nearby groundwater monitoring (levels only for the added districts - chemistry not yet extracted there).",
   "district": "Mumbai City + Suburban + Thane + Palghar + Raigad (MMR)",
   "well_type": "Dug Well",

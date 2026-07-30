@@ -20,6 +20,9 @@ import math
 import sys
 import urllib.parse
 import urllib.request
+from pathlib import Path
+
+from nvdm_write import write_artifact
 
 OVERPASS_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
@@ -210,8 +213,9 @@ def main() -> int:
         "_provenance": "OpenStreetMap administrative boundaries via Overpass API (ODbL).",
         "features": features,
     }
-    with open(OUT_PATH, "w", encoding="utf-8") as fh:
-        json.dump(out, fh, ensure_ascii=False)
+    # Envelope-preserving write (scripts/nvdm_write.py): keeps the NVDM
+    # envelope injected by the migration so a regeneration cannot strip it.
+    write_artifact(Path(OUT_PATH), out, compact=True)
     print(f"\nWrote {len(features)}/9 corporations -> {OUT_PATH}", flush=True)
     return 0 if len(features) == 9 else 2
 

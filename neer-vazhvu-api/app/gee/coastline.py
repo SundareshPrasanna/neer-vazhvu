@@ -35,6 +35,8 @@ import math
 from dataclasses import dataclass
 from pathlib import Path
 
+from app.nvdm_io import merge_envelope
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 ZONES_GEOJSON = REPO_ROOT / "public" / "geojson" / "chennai-coastal-zones.geojson"
 TRANSECTS_GEOJSON = (
@@ -762,6 +764,11 @@ def run(*, city: str = "chennai", write: bool = True, log=print) -> dict:
     fc = transects_to_geojson(rates, period=period, n_epochs=len(years))
     if write:
         out_path = coast["transects"]
-        out_path.write_text(json.dumps(fc, separators=(",", ":")), encoding="utf-8")
+        # merge_envelope: keep the NVDM envelope of the committed artifact (a
+        # rerun must not strip governance - #220 review repro pattern).
+        out_path.write_text(
+            json.dumps(merge_envelope(out_path, fc), separators=(",", ":")),
+            encoding="utf-8",
+        )
         log(f"wrote {out_path} ({len(fc['features'])} transects)")
     return fc

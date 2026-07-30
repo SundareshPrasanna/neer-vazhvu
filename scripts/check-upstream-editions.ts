@@ -16,6 +16,7 @@ import { readFileSync, writeFileSync, existsSync, readdirSync } from "fs";
 import { resolve, join } from "path";
 import { listAllPlaces } from "../src/lib/cities";
 import { computeCoverage, cityOf } from "./lib/headwaters-coverage";
+import { sourceTypeProblem, type SourceType } from "./lib/registry-contract";
 
 const ROOT = resolve(__dirname, "..");
 const REGISTRY_DIR = resolve(ROOT, "scripts/source-registry");
@@ -97,7 +98,7 @@ interface SourceEntry {
       LOCAL_CHECK_MAX_AGE_DAYS, then escalates to CHECK-FAILED. */
   ciBlocked?: string;
   license?: string;
-  type: "pdf-listing" | "page" | "api" | "file";
+  type: SourceType;
   cadence: string;
   tier: 0 | 1 | 2 | 3;
   detection: Detection;
@@ -189,6 +190,12 @@ function validate(entries: SourceEntry[]): string[] {
 
     for (const field of ["scope", "publisher", "url", "type", "cadence", "refreshMethod"] as const) {
       if (!e[field]) problems.push(`${where}: missing ${field}`);
+    }
+    // #220 review: type values outside the union bypassed the TS contract
+    // (JSON is never type-checked) - enforce the allowed set at runtime.
+    if (e.type) {
+      const typeProblem = sourceTypeProblem(e.id ?? "<missing id>", e.type);
+      if (typeProblem) problems.push(typeProblem);
     }
     if (e.tier === undefined) problems.push(`${where}: missing tier`);
     if (!Array.isArray(e.dependsOn)) problems.push(`${where}: dependsOn must be an array`);

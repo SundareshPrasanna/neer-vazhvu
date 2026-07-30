@@ -27,14 +27,13 @@ from pathlib import Path
 ENVELOPE_KEYS = ("nvdm", "dataset", "scope", "provenance", "projection", "ext")
 
 
-def write_artifact(
-    path: Path, payload: dict, *, compact: bool = False, envelope_from: Path | None = None
-) -> None:
-    """Write payload to path, preserving any existing NVDM envelope.
-
-    envelope_from: inherit the envelope from ANOTHER artifact - for candidate/
-    sidecar files that a reviewer later renames over the canonical path
-    (round-2 review: a bare candidate strips governance on acceptance)."""
+def merge_envelope(path: Path, payload: dict, *, envelope_from: Path | None = None) -> dict:
+    """Return payload with any existing NVDM envelope merged ahead of it
+    (provenance.produced_at advanced to today). No-op passthrough when the
+    existing file carries no envelope. For producers that own their own
+    serialization style (the cascade/GEE pipelines write one-line spaced,
+    compact, or indent=2 with trailing newlines): merge here, then dump with
+    the producer's own json.dumps call - byte style stays the producer's."""
     envelope: dict = {}
     src = envelope_from if envelope_from is not None else path
     if src.exists():
@@ -47,9 +46,29 @@ def write_artifact(
             prov = envelope.get("provenance")
             if isinstance(prov, dict):
                 prov["produced_at"] = date.today().isoformat()
-    out = {**envelope, **{k: v for k, v in payload.items() if k not in envelope}}
+    return {**envelope, **{k: v for k, v in payload.items() if k not in envelope}}
+
+
+def write_artifact(
+    path: Path,
+    payload: dict,
+    *,
+    compact: bool = False,
+    envelope_from: Path | None = None,
+    indent: int = 2,
+) -> None:
+    """Write payload to path, preserving any existing NVDM envelope.
+
+    envelope_from: inherit the envelope from ANOTHER artifact - for candidate/
+    sidecar files that a reviewer later renames over the canonical path
+    (round-2 review: a bare candidate strips governance on acceptance).
+
+    indent: pretty-print width when not compact (default 2). Producers whose
+    artifacts are stored indent=1 (the Mumbai scrapers) pass 1 so a scheduled
+    regeneration does not reformat the whole file."""
+    out = merge_envelope(path, payload, envelope_from=envelope_from)
     if compact:
         text = json.dumps(out, ensure_ascii=False, separators=(",", ":"))
     else:
-        text = json.dumps(out, ensure_ascii=False, indent=2)
+        text = json.dumps(out, ensure_ascii=False, indent=indent)
     path.write_text(text)
