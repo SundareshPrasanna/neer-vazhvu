@@ -7192,8 +7192,7 @@
    "consumers": [],
    "producer_refs": [
     "scripts/compute-madurai-ward-risk.ts",
-    "scripts/fetch-wris-groundwater-madurai.ts",
-    "scripts/nvdm_envelope_madurai.py"
+    "scripts/fetch-wris-groundwater-madurai.ts"
    ],
    "headwaters_sources": [
     "wris-live-services"
@@ -14633,7 +14632,7 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "ward-risk",
-   "bytes": 53183,
+   "bytes": 53466,
    "schema": {
     "kind": "object",
     "keys": [
@@ -14665,9 +14664,11 @@
     "scripts/nvdm_envelope_madurai.py"
    ],
    "headwaters_sources": [
-    "osm-overpass"
+    "osm-overpass",
+    "wris-live-services"
    ],
    "licenses": [
+    "GoI open publication, cited with attribution",
     "ODbL 1.0"
    ],
    "accountability": "watched",
@@ -16429,7 +16430,8 @@
     ]
    },
    "consumers": [
-    "src/lib/data/ward-geo.ts"
+    "src/lib/data/ward-geo.ts",
+    "src/lib/utils/nvdm-write.test.ts"
    ],
    "producer_refs": [
     "scripts/compute-madurai-ward-profiles.ts",
@@ -19949,7 +19951,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 428369,
+   "bytes": 428652,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true

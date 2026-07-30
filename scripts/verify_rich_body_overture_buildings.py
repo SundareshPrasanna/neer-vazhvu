@@ -232,7 +232,9 @@ def main():
             )
         print(f"\nWrote candidate to {candidate_path}")
         print(f"Canonical {out_path.name} NOT overwritten - human review required.")
-        print(f"To accept: mv {candidate_path.name} {out_path.name}")
+        rel_cand = candidate_path.relative_to(ROOT)
+        rel_out = out_path.relative_to(ROOT)
+        print(f"To accept: mv {rel_cand} {rel_out} && git add -A")
         sys.exit(2)
 
     write_artifact(out_path, payload)

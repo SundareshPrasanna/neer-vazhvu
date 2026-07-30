@@ -300,11 +300,11 @@ PROVENANCE: dict[str, dict] = {
             "public/data/madurai-ward-profiles.json",
             "public/data/restoration-priority-madurai.json",
             "public/data/water-bodies-flagship-madurai.json",
-            "public/data/gw-stations-madurai.json",
         ],
         "sources": [
             {"title": "Madurai ward boundaries 2022 (delimitation KML)", "publisher": "GoTN / Madurai Municipal Corporation", "license": "GoTN delimitation record, cited with attribution", "role": "input", "closed": True, "as_of": "2022"},
             OSM_TANKS,
+            dict(WRIS_GW, role="input", title="India-WRIS groundwater levels via Supabase groundwater_wris_latest (depth_to_water_m; the only groundwater input)"),
         ],
     },
     "data-root/water-bodies-flagship": {

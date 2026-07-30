@@ -28,17 +28,19 @@
  * Inputs:
  *   public/geojson/madurai-wards-2022.geojson
  *   public/data/madurai-ward-profiles.json (centroids + area)
- *   public/data/gw-stations-madurai.json (CGWB station coords)
  *   public/data/water-bodies-flagship-madurai.json (for flagship coords)
  *   public/data/restoration-priority-madurai.json (priority_score per name)
  *   public/geojson/madurai-water-bodies-current.geojson (715 OSM polygons)
  *   Supabase groundwater_wris_latest filtered by district='Madurai'
+ *   (WRIS-backed DB feed - the ONLY groundwater input; corrected 2026-07-30:
+ *   an earlier header wrongly listed gw-stations-madurai.json)
  *
  * Output:
  *   public/data/ward-risk-madurai.json
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { resolve } from "path";
 import { config as loadEnv } from "dotenv";
 import { createClient } from "@supabase/supabase-js";
@@ -393,7 +395,7 @@ async function main() {
   };
 
   const outPath = resolve(root, "public/data/ward-risk-madurai.json");
-  writeFileSync(outPath, JSON.stringify(output, null, 2));
+  writeArtifact(outPath, output);
   console.log(`\nWrote ${outPath}`);
   console.log(`  Grades: A=${counts.A} B=${counts.B} C=${counts.C} D=${counts.D} F=${counts.F} incomplete=${counts.incomplete}`);
 }
