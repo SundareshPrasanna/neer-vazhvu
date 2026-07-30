@@ -114,7 +114,7 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 - L2 `public/data/river-events-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/river-quality-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/river-quality.json` - no contract published for this dataset (L3 not applicable yet)
-- L2 `public/data/ward-profiles.json` - capped at L2: internal input(s) ungoverned or floor-capped - public/geojson/chennai-wards-2022.geojson
+- L2 `public/data/ward-profiles.json` - capped at L2: lineage rests (transitively) on ungoverned inputs - public/geojson/chennai-wards-2022.geojson
 - L2 `public/data/ward-representatives.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/ward-risk-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/water-bodies-flagship-madurai.json` - no contract published for this dataset (L3 not applicable yet)
