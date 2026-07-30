@@ -52,6 +52,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 CACHE = Path(__file__).resolve().parent / ".cache" / "delhi-wris-gwl.jsonl"
 OUT = REPO / "public/data/delhi-cgwb-stations.json"
 
