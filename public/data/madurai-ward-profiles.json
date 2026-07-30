@@ -40,7 +40,16 @@
     "method": "derived",
     "produced_at": "2026-07-30",
     "produced_by": "scripts/compute-madurai-ward-profiles.ts",
-    "note": "Deterministic join over committed ward-level layers (see script header). flood/drainage/sewerage/industrial are honest not-available placeholders pending sources."
+    "internal_inputs": [
+      "public/geojson/madurai-wards-2022.geojson",
+      "public/geojson/madurai-water-bodies-current.geojson",
+      "public/geojson/madurai-water-bodies-lost.geojson",
+      "public/geojson/madurai-gwr-blocks.geojson",
+      "public/data/madurai-cgwb-stations.json",
+      "public/data/restoration-priority-madurai.json",
+      "public/data/river-quality-madurai.json"
+    ],
+    "note": "Deterministic join over committed ward-level layers (see script header). flood/drainage/sewerage/industrial are honest not-available placeholders pending sources. Internal inputs are lineage, not sources - listed machine-readably in internal_inputs."
   },
   "wards": [
     {

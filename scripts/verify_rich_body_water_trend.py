@@ -13,6 +13,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from nvdm_write import write_artifact
+
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -136,7 +138,7 @@ def main() -> None:
     out_path = (
         ROOT / "public/data/rich-bodies" / f"{args.body_id}-jrc-water-trend.json"
     )
-    out_path.write_text(json.dumps(payload, indent=2))
+    write_artifact(out_path, payload)
     print(f"\nWrote {out_path}")
     print("\n=== Headline ===")
     for line in payload["headline_for_v0"]:

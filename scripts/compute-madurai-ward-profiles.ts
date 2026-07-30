@@ -598,7 +598,19 @@ function main() {
       method: "derived",
       produced_at: PRODUCED_AT,
       produced_by: "scripts/compute-madurai-ward-profiles.ts",
-      note: "Deterministic join over committed ward-level layers (see script header). flood/drainage/sewerage/industrial are honest not-available placeholders pending sources.",
+      // Machine-readable internal lineage - validator caps below L3 while any
+      // listed input is below L2 (all Madurai inputs are enveloped, so this
+      // documents the dependency floor rather than triggering it).
+      internal_inputs: [
+        "public/geojson/madurai-wards-2022.geojson",
+        "public/geojson/madurai-water-bodies-current.geojson",
+        "public/geojson/madurai-water-bodies-lost.geojson",
+        "public/geojson/madurai-gwr-blocks.geojson",
+        "public/data/madurai-cgwb-stations.json",
+        "public/data/restoration-priority-madurai.json",
+        "public/data/river-quality-madurai.json",
+      ],
+      note: "Deterministic join over committed ward-level layers (see script header). flood/drainage/sewerage/industrial are honest not-available placeholders pending sources. Internal inputs are lineage, not sources - listed machine-readably in internal_inputs.",
     },
     wards: output,
   };

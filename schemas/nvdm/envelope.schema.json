@@ -85,6 +85,11 @@
           "description": "Generator script path, or \"manual\"."
         },
         "note": { "type": ["string", "array"] },
+        "internal_inputs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Repo-relative paths of NVDM artifacts this artifact is derived FROM. Machine-readable internal lineage (review 2026-07-30: prose notes do not transfer accountability): the validator caps a derived artifact below L3 while any listed input sits below L2."
+        },
         "conventions": {
           "type": "object",
           "description": "Declared traps: sign conventions, aggregation basis, comparability breaks (spec 7.5)."

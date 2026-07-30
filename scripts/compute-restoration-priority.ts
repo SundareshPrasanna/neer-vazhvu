@@ -9,7 +9,8 @@
  * Requires NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { resolve } from "path";
 import { config } from "dotenv";
 
@@ -656,7 +657,7 @@ async function main() {
   };
 
   const outPath = resolve(root, "public/data/restoration-priority.json");
-  writeFileSync(outPath, JSON.stringify(output, null, 2));
+  writeArtifact(outPath, output);
 
   // Summary
   const counts = { critical: 0, high: 0, moderate: 0, low: 0 };

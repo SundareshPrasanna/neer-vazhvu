@@ -323,6 +323,23 @@ def contract_schema_for(rec: dict, schemas: dict[str, dict]) -> str | None:
     return name if name and name in schemas else None
 
 
+def apply_internal_input_floor(results: list[dict]) -> None:
+    """An L3 claim cannot rest on ungoverned inputs (review 2026-07-30: Chennai
+    ward-profiles reached L3 over an L0 boundary geometry). Any artifact
+    declaring provenance.internal_inputs is capped at L2 while any listed
+    input is below L2 - and an input missing from the catalogue counts as L0."""
+    level_by_path = {r["path"]: r["level"] for r in results}
+    for r in results:
+        if r["level"] < 3 or not r.get("internal_inputs"):
+            continue
+        weak = [p for p in r["internal_inputs"] if level_by_path.get(p, 0) < 2]
+        if weak:
+            r["level"] = 2
+            r["notes"].append(
+                f"capped at L2: internal input(s) below L2 - {', '.join(weak[:3])}"
+            )
+
+
 # Claim datasets (spec 5.1): every record makes an independently quotable claim
 # and MUST carry its own source reference. Maps dataset id -> (collection key,
 # acceptable per-record source keys).
@@ -426,7 +443,11 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
             notes.append("no contract published for this dataset (L3 not applicable yet)")
     else:
         notes += [f"L2 fail: {e}" for e in env_errs[:3]]
-    return {"path": rec["path"], "level": level, "notes": notes}
+    result = {"path": rec["path"], "level": level, "notes": notes}
+    ii = doc.get("provenance", {}).get("internal_inputs") if isinstance(doc, dict) else None
+    if isinstance(ii, list) and ii:
+        result["internal_inputs"] = [str(p) for p in ii]
+    return result
 
 
 def selftest(schemas: dict[str, dict]) -> int:
@@ -567,6 +588,19 @@ def selftest(schemas: dict[str, dict]) -> int:
                     "--check", "public/data/hypothetical-naked-artifact.json"], capture_output=True)
     check("gate rejects an uncatalogued naked artifact", r_bad.returncode != 0)
 
+    # Internal-dependency floor (review 2026-07-30): an L3 artifact declaring
+    # an internal input below L2 - or missing from the catalogue - caps at L2.
+    res = [
+        {"path": "a.json", "level": 3, "notes": [], "internal_inputs": ["b.json", "missing.json"]},
+        {"path": "b.json", "level": 1, "notes": []},
+        {"path": "c.json", "level": 3, "notes": [], "internal_inputs": ["d.json"]},
+        {"path": "d.json", "level": 2, "notes": []},
+    ]
+    apply_internal_input_floor(res)
+    check("L3 capped at L2 over sub-L2/missing internal inputs",
+          res[0]["level"] == 2 and any("capped" in n for n in res[0]["notes"]))
+    check("L3 stands when internal inputs are >= L2", res[2]["level"] == 3)
+
     return 1 if fails else 0
 
 
@@ -580,6 +614,7 @@ def main(argv: list[str]) -> int:
     scopes = load_scopes()
     reg_ids = registry_source_ids()
     results = [assess(r, schemas, scopes, reg_ids) for r in records]
+    apply_internal_input_floor(results)
     by_path = {r["path"]: r for r in results}
 
     if "--check" in argv:

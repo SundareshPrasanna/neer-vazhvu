@@ -63,7 +63,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/mmr-dam-storage.json
+          # NVDM conformance before publishing (review 2026-07-30: direct
+          # pushes bypass the PR gate - so the gate runs here instead;
+          # any failure aborts before commit)
+          python3 scripts/build_dataset_catalogue.py
+          python3 scripts/validate_nvdm.py
+          python3 scripts/validate_nvdm.py --selftest
+          git add public/data/mmr-dam-storage.json docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md
           if git diff --staged --quiet; then
             echo "No storage change to commit"
             exit 0
