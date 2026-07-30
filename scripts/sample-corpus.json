@@ -1,0 +1,92 @@
+{
+  "_doc": [
+    "Public sample corpus manifest (serving-hardening P0, decision D8 as modified",
+    "by the 2026-07-30 review addendum): a deliberately REDUCED, licence-clean",
+    "reference set - NOT a full city. Two sections:",
+    "",
+    "  reference_artifacts - enveloped artifacts whose every non-methodology source",
+    "    is gov-attribution or clean-open per scripts/nvdm-encumbrance-report.py.",
+    "    These are the NVDM public reference artifacts and stay redistributable in",
+    "    a cold public clone after the P2 cutover.",
+    "",
+    "  build_fixtures - files npm run build / npm test cannot pass without, which",
+    "    are NOT provably licence-clean today (share-alike OSM inputs, or not yet",
+    "    enveloped so their licence position is unrecorded). Each entry documents",
+    "    the encumbrance and the decision. They are NOT part of the licence-clean",
+    "    reference set; including one silently (without an entry here) fails CI.",
+    "",
+    "Validated by scripts/check-sample-corpus.py: reference artifacts must stay",
+    "clean as envelopes evolve; fixtures must match their recorded status (a",
+    "fixture that becomes clean must be promoted, one that degrades to NC fails).",
+    "The sample-corpus CI job prunes the corpus to this manifest and runs",
+    "npm run build + npm test against it - coverage is proven by the build."
+  ],
+  "reference_artifacts": [
+    "public/data/facts-madurai.json",
+    "public/data/commitments-madurai.json",
+    "public/data/allocations-chennai.json",
+    "public/data/madurai-cgwb-stations.json",
+    "public/data/restoration-priority-delhi.json",
+    "public/data/restoration-projects-madurai.json",
+    "public/data/gwr-blocks-madurai.json",
+    "public/data/gw-stations-madurai.json",
+    "public/data/river-quality-madurai.json",
+    "public/data/river-events-madurai.json",
+    "public/data/water-bodies-flagship-madurai.json",
+    "public/data/water-bodies-lost-madurai.json",
+    "public/data/imd-rainfall-monthly-madurai.json",
+    "public/data/rainfall-recent-madurai.json",
+    "public/data/gee-phase1-water-body-targets-madurai.json",
+    "public/data/ward-risk-delhi.json",
+    "public/data/ingres/delhi-2022-2023.json",
+    "public/data/rich-bodies/pallikaranai-imagery-manifest.json",
+    "public/data/rich-bodies/pallikaranai-jrc-water-trend.json",
+    "public/data/rich-bodies/pallikaranai-dw-water-trend.json",
+    "public/data/rich-bodies/pallikaranai-dynamic-world-built-trend.json",
+    "public/geojson/rich-bodies/pallikaranai.geojson",
+    "public/geojson/rich-bodies/pallikaranai-buffer-1000m.geojson",
+    "public/geojson/madurai-wards-2022.geojson",
+    "public/geojson/madurai-gwr-blocks.geojson",
+    "public/geojson/madurai-water-bodies-lost.geojson",
+    "public/geojson/delhi-wards-2022.geojson",
+    "public/geojson/chennai-coastal-transects.geojson"
+  ],
+  "build_fixtures": [
+    {
+      "path": "public/data/ward-names.json",
+      "expected_status": "not-enveloped",
+      "required_by": "next build (src/lib server read at build time)",
+      "decision": "retained: compiled ward-name register already published in this repo; licence position unrecorded until it gains an NVDM envelope - envelope it, then promote or re-classify before the P2 cutover"
+    },
+    {
+      "path": "public/data/chennai-localities.json",
+      "expected_status": "not-enveloped",
+      "required_by": "npm test (locality registry tests)",
+      "decision": "retained: OSM-derived locality index (ODbL upstream, redistribution with attribution + share-alike is permitted and already practised); not part of the licence-clean reference set - envelope it to make the ODbL lineage explicit"
+    },
+    {
+      "path": "public/data/delhi-localities.json",
+      "expected_status": "not-enveloped",
+      "required_by": "npm test (locality registry tests)",
+      "decision": "retained: OSM-derived locality index (ODbL upstream, redistribution with attribution + share-alike is permitted and already practised); not part of the licence-clean reference set - envelope it to make the ODbL lineage explicit"
+    },
+    {
+      "path": "public/data/madurai-localities.json",
+      "expected_status": "not-enveloped",
+      "required_by": "npm test (locality registry tests)",
+      "decision": "retained: OSM-derived locality index (ODbL upstream, redistribution with attribution + share-alike is permitted and already practised); not part of the licence-clean reference set - envelope it to make the ODbL lineage explicit"
+    },
+    {
+      "path": "public/data/ward-profiles.json",
+      "expected_status": "share-alike",
+      "required_by": "npm test (ward-uplift tests)",
+      "decision": "retained: composite over an osm-overpass input (ODbL); redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set"
+    },
+    {
+      "path": "public/data/ward-risk-madurai.json",
+      "expected_status": "share-alike",
+      "required_by": "npm test (ward-uplift tests)",
+      "decision": "retained: composite over an osm-overpass input (ODbL); redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set"
+    }
+  ]
+}
