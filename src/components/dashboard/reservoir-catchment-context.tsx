@@ -107,7 +107,8 @@ export function ReservoirCatchmentContext({ rows }: ReservoirCatchmentContextPro
           {interpolate(t("dash.catchment_updated"), {
             date: formatDate(summary.contextDate),
             windowDays: summary.windowDays,
-          })}
+          })}{" "}
+          {t("dash.catchment_provisional")}
         </p>
       </CardContent>
     </Card>

@@ -42,7 +42,7 @@
       },
       "dependsOn": [
         "public/data/cascade",
-        "public/geojson/chennai-reservoir-catchments.geojson"
+        "pipeline-inputs/chennai-reservoir-catchments.geojson"
       ],
       "refreshMethod": "scripts/run_cascade.py; scripts/derive_chennai_subbasins_hydrobasins.py",
       "notes": "HydroBASINS/HydroRIVERS is the skeleton under every cascade reconstruction (Chennai 755 nodes, Bengaluru 1,033, plus Madurai and Mumbai) and under the Chennai sub-basin climate-risk clip (hybas_12 + state clip). A version bump would move cascade topology everywhere at once - a platform-wide SCHEMA-BREAK candidate, not a routine roll-forward. page-hash may be noisy on a marketing-styled page; tighten with a selector if it false-positives.",
