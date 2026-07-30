@@ -3,6 +3,7 @@
 Convert OpenCity GBA 369-ward KML (Dec 2025) to:
   1. public/geojson/bangalore-wards-2025.geojson - 369-feature FeatureCollection
   2. public/data/bangalore-ward-admin.json       - enveloped admin seed (population,
+     electoral and naming fields; geometry-derived fields live in ward-profiles)
 
 Source KML: https://data.opencity.in/dataset/gba-wards-delimitation-2025
 File:       gba-369-wards-december-2025.kml (3.9MB, 369 wards, 5 corporations,

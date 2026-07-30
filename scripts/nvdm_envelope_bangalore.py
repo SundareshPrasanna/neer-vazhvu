@@ -699,7 +699,7 @@ SKIP = {
     "cascade/catchment-streams",     # naked indexed map
     "data-root/localities",          # bare array, wrap follow-up (all cities together)
     "data-root/ward-profiles",
-    "data-root/ward-admin",       # producer-owned wrap (compute-bangalore-ward-profiles.ts), own commit
+    "data-root/ward-admin",       # producer-owned wrap (convert-bangalore-wards-kml.py), own commit
     "data-root/rainfall-recent",     # producer-owned envelope (fetch_recent_rainfall.py, daily)
 }
 
@@ -725,9 +725,14 @@ def produced_at_for(doc: dict, path: Path) -> str:
 def dump(merged: dict, raw: str) -> str:
     """Preserve the artifact's storage style: minified stays one line (a
     9 MB single-line FeatureCollection must not become a 60 MB pretty file),
-    pretty stays indent=2 like the pilot."""
+    pretty stays indent=2 like the pilot. Within the one-line style, match
+    the producer's separators so converter -> refresh is byte-idempotent."""
     if raw.count("\n") <= 3 and len(raw) > 100_000:
-        return json.dumps(merged, ensure_ascii=False)
+        head = raw[:100_000]
+        compact = (head.count('","') + head.count('":"')
+                   >= head.count('", "') + head.count('": "'))
+        sep = (",", ":") if compact else (", ", ": ")
+        return json.dumps(merged, ensure_ascii=False, separators=sep)
     return json.dumps(merged, indent=2, ensure_ascii=False)
 
 
