@@ -14,6 +14,26 @@
     "aquifer": { "type": ["string", "object", "null"] },
     "district": { "type": ["string", "null"] },
     "well_type": { "type": ["string", "object", "null"] },
+    "quality_note": {
+      "type": "string",
+      "description": "Chemistry-panel caption (units, sampling vintage). Declared platform-wide in src/types/groundwater.ts CgwbStationsFile - contract completion 2026-07-30 (Mumbai migration), not a per-scope addition."
+    },
+    "series_label": {
+      "type": "string",
+      "description": "Short provenance label shown on each station panel (defaults to 'CGWB Year Book'; Delhi overrides - its series comes from the India-WRIS API). Declared platform-wide in src/types/groundwater.ts CgwbStationsFile - contract completion 2026-07-30."
+    },
+    "unit_label": {
+      "type": "string",
+      "description": "CGWB assessment-unit label ('block' in TN/KA, 'district' in Delhi). Declared platform-wide in src/types/groundwater.ts CgwbStationsFile - contract completion 2026-07-30."
+    },
+    "reading_kind": {
+      "type": "string",
+      "description": "Reading-cadence phrase for map headers ('seasonal readings' vs Delhi's 'monthly means'). Declared platform-wide in src/types/groundwater.ts CgwbStationsFile - contract completion 2026-07-30."
+    },
+    "cadence_note": {
+      "type": "string",
+      "description": "How the wells are actually read (manual seasonal vs telemetric). Declared platform-wide in src/types/groundwater.ts CgwbStationsFile - contract completion 2026-07-30."
+    },
     "wells": {
       "type": "array",
       "minItems": 1,
