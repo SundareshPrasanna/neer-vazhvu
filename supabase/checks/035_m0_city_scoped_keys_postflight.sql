@@ -125,21 +125,24 @@ GROUP BY district, city_id;
 -- Review 2026-07-30: filtering on recent reading_date alone proves nothing -
 -- migration 035 already repaired historical rows with recent reading dates.
 -- A reading_date STRICTLY AFTER the apply date can only come from a
--- post-apply ingest, so set the apply date below before running:
---   \set apply_date '2026-08-01'
+-- post-apply ingest. EDIT the date literal in the params CTE below before
+-- running (plain SQL - works in the Supabase SQL Editor; no psql required).
 -- Expected: every returned row has city_id = 'madurai' (rows exist only
 -- once the fixed scrapers have run - ALSO confirm the launchd scheduler log
 -- shows the job executed; no tracked workflow invokes these two scripts, so
 -- the run itself needs independent evidence).
-SELECT 'wris_river_level' AS table_name, reading_date, district, city_id, count(*) AS row_count
-FROM wris_river_level
-WHERE reading_date > :'apply_date'::date
-GROUP BY reading_date, district, city_id
+WITH params AS (
+  SELECT DATE '2026-08-01' AS apply_date  -- <<< EDIT: the date 035 was applied
+)
+SELECT 'wris_river_level' AS table_name, w.reading_date, w.district, w.city_id, count(*) AS row_count
+FROM wris_river_level w, params p
+WHERE w.reading_date > p.apply_date
+GROUP BY w.reading_date, w.district, w.city_id
 UNION ALL
-SELECT 'wris_rainfall', reading_date, district, city_id, count(*)
-FROM wris_rainfall
-WHERE reading_date > :'apply_date'::date
-GROUP BY reading_date, district, city_id
+SELECT 'wris_rainfall', w.reading_date, w.district, w.city_id, count(*)
+FROM wris_rainfall w, params p
+WHERE w.reading_date > p.apply_date
+GROUP BY w.reading_date, w.district, w.city_id
 ORDER BY table_name, reading_date DESC, district;
 
 
@@ -154,3 +157,53 @@ WHERE t.relname IN ('groundwater_wris', 'wris_river_level', 'wris_rainfall', 'wa
     SELECT 1 FROM pg_constraint c
     WHERE c.conrelid = t.oid AND c.conname = t.relname || '_city_id_fkey'
   );
+
+
+-- 8. ARBITER DEFINITIONS: the twelve city-aware unique indexes must exist,
+-- be unique AND valid, on the right table with the right ordered columns
+-- (name-existence alone would bless a same-named wrong index).
+-- Expected: zero rows.
+WITH expected(index_name, table_name, columns_csv) AS (
+    VALUES
+      ('weather_daily_city_date_uidx', 'weather_daily', 'city_id,date'),
+      ('water_estimate_daily_city_date_uidx', 'water_estimate_daily', 'city_id,date'),
+      ('daily_briefing_city_briefing_date_uidx', 'daily_briefing', 'city_id,briefing_date'),
+      ('groundwater_monthly_city_ward_year_month_uidx', 'groundwater_monthly', 'city_id,ward_number,year,month'),
+      ('ward_risk_score_city_ward_computed_date_uidx', 'ward_risk_score', 'city_id,ward_number,computed_date'),
+      ('ward_narrative_city_ward_narrative_date_uidx', 'ward_narrative', 'city_id,ward_number,narrative_date'),
+      ('groundwater_wris_city_station_reading_date_uidx', 'groundwater_wris', 'city_id,station_code,reading_date'),
+      ('wris_river_level_city_station_reading_date_uidx', 'wris_river_level', 'city_id,station_code,reading_date'),
+      ('wris_rainfall_city_station_reading_date_uidx', 'wris_rainfall', 'city_id,station_code,reading_date'),
+      ('water_bodies_census_city_census_code_uidx', 'water_bodies_census', 'city_id,census_code'),
+      ('reservoir_catchment_context_city_reservoir_date_window_uidx', 'reservoir_catchment_context', 'city_id,reservoir,context_date,window_days'),
+      ('water_body_satellite_summary_city_target_date_uidx', 'water_body_satellite_summary', 'city_id,gee_target_id,summary_date')
+  ),
+  actual AS (
+    SELECT
+      ic.relname AS index_name,
+      tc.relname AS table_name,
+      i.indisunique,
+      i.indisvalid,
+      (SELECT string_agg(a.attname, ',' ORDER BY k.ord)
+         FROM unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+         JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+      ) AS columns_csv
+    FROM pg_index i
+    JOIN pg_class ic ON ic.oid = i.indexrelid
+    JOIN pg_class tc ON tc.oid = i.indrelid
+    WHERE ic.relnamespace = 'public'::regnamespace
+  )
+  SELECT e.index_name,
+         CASE
+           WHEN a.index_name IS NULL THEN 'missing'
+           WHEN NOT a.indisunique THEN 'not unique'
+           WHEN NOT a.indisvalid THEN 'invalid'
+           WHEN a.table_name <> e.table_name THEN 'wrong table: ' || a.table_name
+           WHEN a.columns_csv <> e.columns_csv THEN 'wrong columns: ' || a.columns_csv
+         END AS problem
+  FROM expected e
+  LEFT JOIN actual a ON a.index_name = e.index_name
+  WHERE a.index_name IS NULL
+     OR NOT a.indisunique OR NOT a.indisvalid
+     OR a.table_name <> e.table_name
+     OR a.columns_csv <> e.columns_csv;
