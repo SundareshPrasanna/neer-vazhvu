@@ -31,6 +31,11 @@ jobs:
           npx tsx scripts/compute-madurai-ward-profiles.ts
           git diff --exit-code public/data/madurai-ward-profiles.json
 
+      - name: Verify bangalore-ward-profiles.json is up-to-date
+        run: |
+          npx tsx scripts/compute-bangalore-ward-profiles.ts
+          git diff --exit-code public/data/bangalore-ward-profiles.json
+
       - run: npm run data:check
       - run: npm run build
       - run: npm run test
