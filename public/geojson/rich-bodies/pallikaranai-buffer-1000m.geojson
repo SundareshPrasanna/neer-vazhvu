@@ -1,4 +1,26 @@
 {
+  "nvdm": "1.0",
+  "dataset": "geojson-layers/buffer-1000m",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tnswa-ramsar-boundary",
+        "title": "TNSWA gazetted Ramsar boundary (RamsarBoundary_2.js, feature 'Pallikaranai Marsh Reserve Forest')",
+        "publisher": "Tamil Nadu State Wetland Authority",
+        "license": "public data from a Tamil Nadu government portal, cited with attribution",
+        "retrieved": "2026-05-17",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-05-19",
+    "produced_by": "scripts/fetch-tnswa-ramsar-polygon.ts",
+    "note": "1 km Minkowski offset of the TNSWA gazetted polygon (@turf/buffer) - the legal anchor is the NGT Sept 2025 construction-freeze order (1 km pending zone-of-influence mapping)."
+  },
   "type": "FeatureCollection",
   "features": [
     {

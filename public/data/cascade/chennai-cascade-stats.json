@@ -1,4 +1,53 @@
 {
+  "nvdm": "1.0",
+  "dataset": "cascade/cascade-stats",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "fabdem-dem",
+        "title": "FABDEM v1-2 30 m bare-earth DEM",
+        "publisher": "University of Bristol (Hawker et al.), via GEE sat-io",
+        "license": "CC BY-NC-SA 4.0 (non-commercial)",
+        "role": "input"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "hydrosheds-basins",
+        "title": "HydroSHEDS basin boundaries",
+        "publisher": "WWF / HydroSHEDS",
+        "license": "HydroSHEDS licence (attribution required)",
+        "role": "input"
+      },
+      {
+        "id": "sentinel-2-l2a",
+        "title": "Sentinel-2 L2A imagery (channel evidence)",
+        "publisher": "ESA Copernicus",
+        "license": "Copernicus free and open data, attribution required",
+        "role": "input"
+      },
+      {
+        "id": "google-dynamic-world",
+        "title": "Google Dynamic World built-up classification",
+        "publisher": "Google / World Resources Institute",
+        "license": "CC BY 4.0",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-05-13",
+    "produced_by": "neer-vazhvu-api/app/cascade (scripts/run_cascade.py)",
+    "note": "Derived by the cascade reconstruction pipeline (neer-vazhvu-api/app/cascade). FABDEM input makes this family CC BY-NC-SA (non-commercial) encumbered - recorded in the fabdem-dem registry entry, 2026-07-30."
+  },
   "district_id": "chennai",
   "label": "Chennai",
   "_meta": {

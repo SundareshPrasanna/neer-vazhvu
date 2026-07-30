@@ -1,4 +1,33 @@
 {
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/boundary-analysis",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tnswa-ramsar-boundary",
+        "title": "TNSWA gazetted Ramsar boundary (RamsarBoundary_2.js, feature 'Pallikaranai Marsh Reserve Forest')",
+        "publisher": "Tamil Nadu State Wetland Authority",
+        "license": "public data from a Tamil Nadu government portal, cited with attribution",
+        "retrieved": "2026-05-17",
+        "role": "input"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap marsh polygon (relation 15046539)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-05-17",
+    "produced_by": "manual",
+    "note": "Shapely/pyproj set algebra over the TNSWA gazetted polygon and the OSM ecological polygon (see methodology key); the run itself was a one-off (no committed script). The 233.06 ha figure is land inside the TNSWA boundary but not mapped as OSM wetland - it cannot distinguish physical conversion from OSM under-mapping (see caveats)."
+  },
   "body_id": "pallikaranai",
   "computed_at": "2026-05-17T07:26:10.856737+00:00",
   "methodology": {

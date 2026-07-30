@@ -1,4 +1,28 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/gw-stations",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "wris-live-services",
+        "title": "India-WRIS Ground Water Level dataset (NWIC ArcGIS services)",
+        "publisher": "CGWB / NWIC via India-WRIS",
+        "license": "GoI open publication, cited with attribution",
+        "retrieved": "2026-03-27"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-03-27",
+    "produced_by": "scripts/fetch-wris-groundwater.ts",
+    "note": "Stations and readings fetched from the arc.indiawris.gov.in NWIC ArcGIS services (GroundwaterLevel_Stations) - a continuous source, freshness-tracked not edition-tracked. NOT IN-GRES assessment data (the legacy `source` string 'India WRIS / CGWB' is the accurate attribution).",
+    "conventions": {
+      "sign": "depth metres below ground level, positive down"
+    }
+  },
   "source": "India WRIS / CGWB",
   "fetched_at": "2026-03-27T05:37:09.713Z",
   "stations": [

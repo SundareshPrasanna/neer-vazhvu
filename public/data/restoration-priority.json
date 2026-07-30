@@ -1,4 +1,32 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/restoration-priority",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap water bodies + rivers (Overpass extracts)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "datagovin-waterbodies-census-tn",
+        "title": "First Census of Water Bodies - Tamil Nadu state table",
+        "publisher": "Ministry of Jal Shakti (data.gov.in)",
+        "license": "Government Open Data License - India",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-03-26",
+    "produced_by": "scripts/compute-restoration-priority.ts",
+    "note": "Scored over OSM extracts, the First Census of Water Bodies table (Supabase water_bodies_census), and internal artifacts (river-quality.json, industrial-sources.json, chennai-water-bodies-lost.geojson) whose citations travel with their own envelopes - internal inputs are lineage, not sources. Algorithm identity in the payload `weights` key. March 2026 vintage; the GEE flagship scorer (neer-vazhvu-api/app/gee) READS this file for target selection, it does not produce it."
+  },
   "computed_at": "2026-03-26T15:41:34.799Z",
   "total_scored": 1787,
   "weights": {
