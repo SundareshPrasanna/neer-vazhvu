@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { isDirect, forAuthority } from "@/lib/utils/allocations-grouping";
 import Link from "next/link";
 
 /* ── The Allocation Ledger (docs/specs/allocation-ledger.md) ────────────
@@ -337,12 +338,12 @@ export default function AllocationsClient({ cityId }: { cityId: string }) {
   const grouped = useMemo(() => {
     if (!data) return [];
     const groups: { key: string; label: string; rows: Arrangement[] }[] = [];
-    const ownerOperated = data.arrangements.filter((a) => a.authority_id == null);
+    const ownerOperated = data.arrangements.filter(isDirect);
     if (ownerOperated.length > 0) {
       groups.push({ key: "_owner", label: "Owner-operated + direct arrangements", rows: ownerOperated });
     }
     for (const auth of data.authorities) {
-      const rows = data.arrangements.filter((a) => a.authority_id === auth.id);
+      const rows = data.arrangements.filter((a) => forAuthority(a, auth.id));
       if (rows.length > 0) groups.push({ key: auth.id, label: `Via ${auth.name}`, rows });
     }
     const decorated = groups.map((g) => {

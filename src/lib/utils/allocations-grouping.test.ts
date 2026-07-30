@@ -8,11 +8,9 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
 
-type Arr = { id: string; authority_id?: string | null };
+import { forAuthority, isDirect } from "./allocations-grouping";
 
-// Mirrors the allocations-client grouping predicates.
-const isDirect = (a: Arr) => a.authority_id == null;
-const forAuthority = (a: Arr, authorityId: string) => a.authority_id === authorityId;
+type Arr = { id: string; authority_id?: string | null };
 
 test("absent and null authority_id both group as direct; every arrangement renders once", () => {
   const arrangements: Arr[] = [
