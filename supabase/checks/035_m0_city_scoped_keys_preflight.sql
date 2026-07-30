@@ -4,7 +4,7 @@
 -- after dumping/diffing the live schema and before applying migration 035.
 --
 -- Run section 1 first.
---   - If it returns zero rows, sections 2 and 3 can run directly.
+--   - If it returns zero rows, sections 2 through 6 can run directly.
 --   - If it returns any rows, stop and reconcile that schema drift first;
 --     the later sections reference city_id and will not run until those
 --     columns exist.
@@ -127,3 +127,46 @@ SELECT 'wris_rainfall' AS table_name, district, city_id, count(*) AS row_count
 FROM wris_rainfall
 GROUP BY district, city_id
 ORDER BY table_name, district, city_id;
+
+
+-- 5. Mislabelled telemetry rows: non-Chennai districts stamped city_id='chennai'.
+-- The Madurai WRIS rainfall / river-level scrapers omitted city_id until the
+-- M0.1 fix, so any manual run since migration 026 wrote Vaigai-system rows with
+-- the 'chennai' column default. groundwater_wris is included because its
+-- scrapers write madurai + bangalore rows daily.
+-- Expected result: all counts 0.
+-- Nonzero counts are NOT a blocker: migration 035's district-map backfill
+-- repairs exactly these rows. Record the counts here so the postflight
+-- district-ownership output can be compared against them.
+SELECT 'wris_river_level' AS table_name, count(*) AS mislabelled_chennai_rows
+FROM wris_river_level
+WHERE city_id = 'chennai'
+  AND district ILIKE ANY (ARRAY['%madurai%', '%theni%', '%dindigul%', '%virudhunagar%'])
+UNION ALL
+SELECT 'wris_rainfall', count(*)
+FROM wris_rainfall
+WHERE city_id = 'chennai'
+  AND district ILIKE ANY (ARRAY['%madurai%', '%theni%', '%dindigul%', '%virudhunagar%'])
+UNION ALL
+SELECT 'groundwater_wris', count(*)
+FROM groundwater_wris
+WHERE city_id = 'chennai'
+  AND district ILIKE ANY (ARRAY['%madurai%', '%theni%', '%dindigul%', '%virudhunagar%', '%bangalore%', '%bengaluru%']);
+
+
+-- 6. FK target sanity: every city the migration 035 district helper can emit
+-- must exist in cities, or the backfill UPDATEs would violate the FK.
+-- Expected result: zero rows.
+WITH expected(city_id) AS (
+  VALUES ('chennai'), ('madurai'), ('bangalore'), ('mumbai'), ('delhi')
+)
+SELECT e.city_id AS missing_cities_row
+FROM expected e
+LEFT JOIN cities c ON c.city_id = e.city_id
+WHERE c.city_id IS NULL;
+
+
+-- 7. (Optional, operator-run) Which migration versions Supabase believes are
+-- applied. Requires the CLI-managed supabase_migrations schema; skip if the
+-- project has only ever been migrated by hand in the SQL editor.
+-- SELECT version FROM supabase_migrations.schema_migrations ORDER BY version;

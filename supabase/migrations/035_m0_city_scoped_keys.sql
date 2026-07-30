@@ -38,6 +38,20 @@ RETURNS TEXT LANGUAGE sql IMMUTABLE AS $$
       'raigad',
       'navi mumbai'
     ) THEN 'mumbai'
+    WHEN lower(btrim(d)) IN (
+      'delhi',
+      'new delhi',
+      'central delhi',
+      'north delhi',
+      'south delhi',
+      'east delhi',
+      'west delhi',
+      'north east delhi',
+      'north west delhi',
+      'south east delhi',
+      'south west delhi',
+      'shahdara'
+    ) THEN 'delhi'
     ELSE 'chennai'
   END;
 $$;
