@@ -15,7 +15,7 @@ metadata_modified re-checked 2026-07-30). Where a fact could not be verified
 it is NOT stated (no fabricated provenance).
 
 Bangalore-specific verifications on record:
-  - opencity-bengaluru-tanker-survey licence is CC BY-NC (CKAN license_id
+  - opencity-bengaluru-tanker-survey licence is CC BY-NC-SA 4.0 (resource pages;
     cc-nc) - the registry's earlier "CC BY" was corrected in the same
     migration; the tanker survey summary is NON-COMMERCIAL encumbered.
   - The BBMP lake masterlist KML is a RESOURCE of the same OpenCity dataset
@@ -178,7 +178,7 @@ REG_IDS = {
     "opencity-bwssb-cauvery-stage-areas": ("BWSSB stage-wise Cauvery water-supply areas CSV (via OpenCity)", "BWSSB (via OpenCity)", "Other (Public Domain) (per OpenCity dataset page)"),
     "kwris-mi-tanks": ("Karnataka WRIS Minor Irrigation tank register (GeoServer layer KA:MI_Tanks)", "Karnataka WRD (KWRIS)", "public Karnataka government data, open WFS, cited with attribution"),
     "atree-opencity-lakes-bengaluru": ("ATREE-CSEI 'Map of Lakes in Bengaluru Urban and Rural Districts' KMZ (via OpenCity)", "ATREE-CSEI (via OpenCity)", "Creative Commons Attribution (per OpenCity dataset page, verified 2026-07-30)"),
-    "opencity-bengaluru-tanker-survey": ("OpenCity Bengaluru Tanker Water surveys (2015, 2019, 2024 rounds)", "OpenCity (Bengaluru Tanker Water Survey)", "CC BY-NC 2.0 (OpenCity license_id cc-nc, verified 2026-07-30)"),
+    "opencity-bengaluru-tanker-survey": ("OpenCity Bengaluru Tanker Water surveys (2015, 2019, 2024 rounds)", "OpenCity (Bengaluru Tanker Water Survey)", "CC BY-NC-SA 4.0 (resource pages state the specific licence; the dataset-level label is the generic 'Creative Commons Non-Commercial (Any)'; verified 2026-07-30)"),
     "iisc-groundwater-outlook": ("IISc Groundwater Outlook of Bengaluru City - Interim Report II (Jan 2025, via OpenCity mirror)", "IISc Bengaluru (Prof. Lakshminarayana & Prof. Sekhar Muddu), via OpenCity", "open (per OpenCity dataset page)"),
     "kspcb-monthly-wq": ("KSPCB monthly/quarterly water-quality reports (RWQ/GEMS/MINAR series)", "Karnataka State Pollution Control Board", "government publication, cited with attribution"),
     "ingres-gw-assessment-ka": ("IN-GRES dynamic groundwater assessment (Bangalore Urban assessment units)", "CGWB / IIT-Hyderabad (IN-GRES)", "GoI publication, cited with attribution"),
@@ -476,7 +476,7 @@ PROVENANCE: dict[str, dict] = {
             "2024) committed under scripts/data-raw/bangalore/ - raw inputs are not "
             "served artifacts, hence internal_inputs []. Schemas differ by round (n= "
             "sample sizes on every stat); 2025 round carried as _2025_context prose. "
-            "LICENCE FLAG: CC BY-NC 2.0 upstream - this summary is NON-COMMERCIAL "
+            "LICENCE FLAG: CC BY-NC-SA 4.0 upstream - this summary is NON-COMMERCIAL and SHARE-ALIKE "
             "encumbered (registry licence corrected 2026-07-30)."
         ),
     },

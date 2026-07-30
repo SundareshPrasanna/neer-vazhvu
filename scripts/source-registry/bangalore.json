@@ -39,7 +39,7 @@
       "scope": "bangalore",
       "publisher": "OpenCity (Bengaluru Tanker Water Survey)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=bengaluru-tanker-water-data",
-      "license": "CC BY-NC (OpenCity license_id cc-nc, verified 2026-07-30; earlier recorded as CC BY)",
+      "license": "CC BY-NC-SA 4.0 (resource pages state the specific licence; the dataset-level label is the generic 'Creative Commons Non-Commercial (Any)'; verified 2026-07-30)",
       "type": "api",
       "cadence": "episodic (2015, 2019, 2024, 2025 rounds)",
       "tier": 1,
@@ -54,7 +54,7 @@
         "public/data/bangalore-supply-overview.json"
       ],
       "refreshMethod": "scripts/build-bangalore-tanker-summary.py",
-      "notes": "The single highest-value unwatched Bengaluru source before 2026-07-26. It is the ONLY longitudinal price/dependency series for the tanker market and it carries the entire /bangalore/tanker page plus 2 facts. Survey rounds are irregular (2015, 2019, 2024, a 2025 round reported via opencity.in/bengaluru-water-tankers-survey-2025-situation-better-than-2024) so a scheduled watch is the only way to catch the next one. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Schemas differ by round - not every field exists for every year and n= counts differ - so a new round is a SCHEMA-BREAK candidate, not a routine roll-forward. NOTE the dataset slug: facts-bangalore.json used to cite opencity.in/data/bengaluru-tanker-water-survey, which 404s; the live path is data.opencity.in/dataset/bengaluru-tanker-water-data (fixed 2026-07-26). NVDM Bangalore migration 2026-07-30: licence corrected to CC BY-NC per the CKAN API (license_id cc-nc) - the survey summary is NON-COMMERCIAL encumbered; dependsOn widened to tanker-context (2025-round rate-gap context) and supply-overview (tanker_market block).",
+      "notes": "The single highest-value unwatched Bengaluru source before 2026-07-26. It is the ONLY longitudinal price/dependency series for the tanker market and it carries the entire /bangalore/tanker page plus 2 facts. Survey rounds are irregular (2015, 2019, 2024, a 2025 round reported via opencity.in/bengaluru-water-tankers-survey-2025-situation-better-than-2024) so a scheduled watch is the only way to catch the next one. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Schemas differ by round - not every field exists for every year and n= counts differ - so a new round is a SCHEMA-BREAK candidate, not a routine roll-forward. NOTE the dataset slug: facts-bangalore.json used to cite opencity.in/data/bengaluru-tanker-water-survey, which 404s; the live path is data.opencity.in/dataset/bengaluru-tanker-water-data (fixed 2026-07-26). NVDM Bangalore migration 2026-07-30: licence corrected TWICE: first to CC BY-NC per the CKAN API generic id, then (review 2026-07-30) to CC BY-NC-SA 4.0 per the resource pages' explicit statement - NON-COMMERCIAL and SHARE-ALIKE encumbered; dependsOn widened to tanker-context (2025-round rate-gap context) and supply-overview (tanker_market block).",
       "lastSeen": {
         "apiDate": "2025-11-27T12:36:27.006113",
         "acceptedOn": "2026-07-26"
