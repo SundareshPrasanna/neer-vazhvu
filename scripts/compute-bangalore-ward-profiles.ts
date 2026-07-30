@@ -665,7 +665,14 @@ function main() {
     };
 
     const existingRec = existingByWard.get(w.ward_number) ?? { ward_number: w.ward_number };
-    output.push({ ...existingRec, ...analytical });
+    // Geometry-derived fields computed here (review 2026-07-30: they used to
+    // ride through the prior-output base; the admin seed carries attributes
+    // only, so a clean rebuild must derive them from the tracked geometry).
+    const geometric = {
+      area_sq_km: roundTo(turfArea(w.feature) / 1_000_000, 6),
+      centroid: w.centroid,
+    };
+    output.push({ ...existingRec, ...geometric, ...analytical });
   }
 
   // NVDM v1 wrapped form (schemas/nvdm/ward-profiles.schema.json): envelope +
