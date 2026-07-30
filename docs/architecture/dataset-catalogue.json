@@ -5,18 +5,22 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "allocations",
-   "bytes": 9030,
+   "bytes": 9702,
    "schema": {
     "kind": "object",
     "keys": [
      "arrangements",
      "authorities",
+     "dataset",
      "events",
      "futures",
      "gaps",
      "headline",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "sources",
      "unit_note",
      "updated"
@@ -30,11 +34,9 @@
    "producer_refs": [],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "claim register; per-arrangement citations in the file's sources map (BWSSB About, JICA appraisal, SC Cauvery verdict, dated press); no watchable listing",
+   "flags": []
   },
   {
    "path": "public/data/allocations-chennai.json",
@@ -213,10 +215,14 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "cauvery-stage-areas",
-   "bytes": 32653,
+   "bytes": 33567,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
      "stage_1",
      "stage_2",
      "stage_3",
@@ -228,27 +234,33 @@
    "producer_refs": [
     "scripts/convert-bangalore-cauvery-stage-areas.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "opencity-bwssb-cauvery-stage-areas"
+   ],
+   "licenses": [
+    "Other (Public Domain) (per OpenCity dataset page)"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/bangalore-cgwb-stations.json",
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "cgwb-stations",
-   "bytes": 4009,
+   "bytes": 5033,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
      "aquifer",
+     "dataset",
      "depth_unit",
      "district",
+     "nvdm",
+     "provenance",
+     "scope",
      "source_label",
      "source_url",
      "well_type",
@@ -266,9 +278,11 @@
     "scripts/compute-bangalore-ward-profiles.ts"
    ],
    "headwaters_sources": [
-    "ingres-gw-assessment-ka"
+    "ingres-gw-assessment-ka",
+    "wris-live-services"
    ],
    "licenses": [
+    "GoI open publication, cited with attribution",
     "GoI publication, cited with attribution"
    ],
    "accountability": "watched",
@@ -280,7 +294,7 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "flood-hotspots",
-   "bytes": 83918,
+   "bytes": 134229,
    "schema": {
     "kind": "FeatureCollection",
     "features": 398,
@@ -314,12 +328,16 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "iisc-stress-wards-2025",
-   "bytes": 20967,
+   "bytes": 21866,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
      "_source",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
      "ward_count",
      "wards"
     ]
@@ -365,7 +383,9 @@
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/ward-rankings/load-rankings.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_bangalore.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "allowlisted",
@@ -377,7 +397,7 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "supply-overview",
-   "bytes": 37107,
+   "bytes": 40466,
    "schema": {
     "kind": "object",
     "keys": [
@@ -389,16 +409,20 @@
      "allocation_context",
      "current_supply_mix_mld",
      "current_supply_total_mld",
+     "dataset",
      "demand",
      "distribution",
      "followup_actions",
      "groundwater",
      "groundwater_expert_committee_2017",
      "household_economics",
+     "nvdm",
      "open_data_gaps",
      "project_cost",
+     "provenance",
      "rainfall_harvesting_potential",
      "reference_figures",
+     "scope",
      "stps",
      "stress_wards_iisc",
      "supply_chain",
@@ -420,9 +444,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "bwssb-jica-supply-baseline"
+    "bwssb-jica-supply-baseline",
+    "iisc-groundwater-outlook",
+    "opencity-bengaluru-tanker-survey"
    ],
    "licenses": [
+    "CC BY-NC-SA 4.0 (resource pages state the specific licence; the dataset-level label is the generic 'Creative Commons Non-Commercial (Any)'; verified 2026-07-30)",
     "open (per OpenCity dataset page)"
    ],
    "accountability": "watched",
@@ -434,7 +461,7 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "tanker-context",
-   "bytes": 44639,
+   "bytes": 46054,
    "schema": {
     "kind": "object",
     "keys": [
@@ -443,9 +470,13 @@
      "compiled_at",
      "crisis_timeline_2024",
      "data_gaps",
+     "dataset",
      "dependency_corridors",
      "extraction_sites",
+     "nvdm",
+     "provenance",
      "rate_gap",
+     "scope",
      "sources",
      "structural_anchor"
     ]
@@ -454,27 +485,35 @@
     "src/components/dashboard/tanker-expanded-context.tsx"
    ],
    "producer_refs": [],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "iisc-groundwater-outlook",
+    "opencity-bengaluru-tanker-survey"
+   ],
+   "licenses": [
+    "CC BY-NC-SA 4.0 (resource pages state the specific licence; the dataset-level label is the generic 'Creative Commons Non-Commercial (Any)'; verified 2026-07-30)",
+    "open (per OpenCity dataset page)"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/bangalore-tanker-survey.json",
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "tanker-survey",
-   "bytes": 3020,
+   "bytes": 4262,
    "schema": {
     "kind": "object",
     "keys": [
      "_2025_context",
      "_note",
      "_source",
-     "by_year"
+     "by_year",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -482,13 +521,45 @@
     "src/components/dashboard/tanker-market-panel.tsx"
    ],
    "producer_refs": [
-    "scripts/build-bangalore-tanker-summary.py"
+    "scripts/build-bangalore-tanker-summary.py",
+    "scripts/nvdm_envelope_bangalore.py"
    ],
    "headwaters_sources": [
     "opencity-bengaluru-tanker-survey"
    ],
    "licenses": [
-    "CC BY (per OpenCity dataset page)"
+    "CC BY-NC-SA 4.0 (resource pages state the specific licence; the dataset-level label is the generic 'Creative Commons Non-Commercial (Any)'; verified 2026-07-30)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/bangalore-ward-admin.json",
+   "family": "data-root",
+   "scope": "bangalore",
+   "dataset": "ward-admin",
+   "bytes": 301173,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
+     "wards"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "scripts/compute-bangalore-ward-profiles.ts",
+    "scripts/convert-bangalore-wards-kml.py"
+   ],
+   "headwaters_sources": [
+    "opencity-gba-wards-2025"
+   ],
+   "licenses": [
+    "Other (Public Domain) (per OpenCity dataset page)"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -499,44 +570,15 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "ward-profiles",
-   "bytes": 756531,
+   "bytes": 825789,
    "schema": {
-    "kind": "array",
-    "length": 369,
-    "element_keys": [
-     "area_sq_km",
-     "aro_code",
-     "aro_sub_division",
-     "assembly_constituency",
-     "assembly_constituency_kn",
-     "assembly_no",
-     "centroid",
-     "corporation",
-     "corporation_id",
-     "corporation_kn",
-     "drainage",
-     "flood",
-     "groundwater_assessment",
-     "industrial",
-     "lost_bodies",
-     "population_female",
-     "population_male",
-     "population_sc",
-     "population_st",
-     "population_total",
-     "rivers",
-     "ro_code",
-     "ro_division",
-     "sewerage",
-     "voter_range_high",
-     "voter_range_low",
-     "ward_id_local",
-     "ward_name",
-     "ward_name_kn",
-     "ward_number",
-     "water_bodies",
-     "zone",
-     "zone_name"
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
+     "wards"
     ]
    },
    "consumers": [
@@ -555,14 +597,24 @@
     "scripts/compute-bangalore-ward-profiles.ts",
     "scripts/compute-bangalore-ward-risk.py",
     "scripts/compute-ward-profiles.ts",
-    "scripts/convert-bangalore-wards-kml.py",
     "scripts/fetch-localities-osm.ts",
     "scripts/generate-narratives.ts",
+    "scripts/nvdm_envelope_bangalore.py",
     "scripts/nvdm_envelope_chennai.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "ingres-gw-assessment-ka",
+    "opencity-gba-wards-2025",
+    "osm-overpass",
+    "wris-live-services"
+   ],
+   "licenses": [
+    "GoI open publication, cited with attribution",
+    "GoI publication, cited with attribution",
+    "ODbL 1.0",
+    "Other (Public Domain) (per OpenCity dataset page)"
+   ],
+   "accountability": "watched",
    "accountability_reason": "derived join",
    "flags": []
   },
@@ -3567,7 +3619,7 @@
   {
    "path": "public/data/bbmb-dam-storage.json",
    "family": "data-root",
-   "scope": "bangalore",
+   "scope": "delhi",
    "dataset": "bbmb-dam-storage",
    "bytes": 1263,
    "schema": {
@@ -3634,7 +3686,7 @@
    "family": "cascade",
    "scope": "bangalore",
    "dataset": "cascade-catchments",
-   "bytes": 9252030,
+   "bytes": 9253052,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1025,
@@ -3688,7 +3740,7 @@
    "family": "cascade",
    "scope": "bangalore",
    "dataset": "cascade-edges",
-   "bytes": 353850,
+   "bytes": 355242,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1053,
@@ -3737,7 +3789,7 @@
    "family": "cascade",
    "scope": "bangalore",
    "dataset": "cascade-lakes",
-   "bytes": 1074052,
+   "bytes": 1075864,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1025,
@@ -3799,7 +3851,7 @@
    "family": "cascade",
    "scope": "bangalore",
    "dataset": "cascade-nodes",
-   "bytes": 493255,
+   "bytes": 494647,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1033,
@@ -3859,7 +3911,7 @@
    "family": "cascade",
    "scope": "bangalore",
    "dataset": "cascade-river-outlets",
-   "bytes": 12225,
+   "bytes": 22188,
    "schema": {
     "kind": "FeatureCollection",
     "features": 43,
@@ -3906,11 +3958,12 @@
    "family": "cascade",
    "scope": "bangalore",
    "dataset": "cascade-stats",
-   "bytes": 723,
+   "bytes": 2435,
    "schema": {
     "kind": "object",
     "keys": [
      "_meta",
+     "dataset",
      "district_id",
      "edge_confidence_counts",
      "edge_count",
@@ -3919,7 +3972,10 @@
      "max_cascade_depth",
      "narrative_anchor",
      "node_count",
+     "nvdm",
+     "provenance",
      "river_outlet_count",
+     "scope",
      "top_convergence"
     ]
    },
@@ -3959,15 +4015,19 @@
    "family": "cascade",
    "scope": "bangalore",
    "dataset": "cascades-documented",
-   "bytes": 13287,
+   "bytes": 15302,
    "schema": {
     "kind": "object",
     "keys": [
      "_sources_of_truth",
      "cascades",
+     "dataset",
      "district_id",
      "note",
-     "schema_version"
+     "nvdm",
+     "provenance",
+     "schema_version",
+     "scope"
     ]
    },
    "consumers": [],
@@ -4002,15 +4062,19 @@
    "family": "cascade",
    "scope": "bangalore",
    "dataset": "cascades-health",
-   "bytes": 321792,
+   "bytes": 323491,
    "schema": {
     "kind": "object",
     "keys": [
      "_meta",
      "auto_cascades",
+     "dataset",
      "district_id",
      "documented_cascades",
      "label",
+     "nvdm",
+     "provenance",
+     "scope",
      "summary"
     ]
    },
@@ -4137,13 +4201,14 @@
    "family": "cascade",
    "scope": "bangalore",
    "dataset": "catchment-quality",
-   "bytes": 1800,
+   "bytes": 2804,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm",
      "area_sqkm",
      "conduit_excluded_count",
+     "dataset",
      "delineated",
      "dem",
      "dem_cache",
@@ -4154,6 +4219,9 @@
      "no_polygon",
      "no_seed_count",
      "nodes_total",
+     "nvdm",
+     "provenance",
+     "scope",
      "utm_epsg"
     ]
    },
@@ -6132,15 +6200,19 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "commitments",
-   "bytes": 38830,
+   "bytes": 39703,
    "schema": {
     "kind": "object",
     "keys": [
      "_citation_trace_ngt_2018",
      "commitments",
+     "dataset",
      "headline",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "sources_note",
      "status_legend",
      "update_model",
@@ -6472,6 +6544,7 @@
     "neer-vazhvu-api/scripts/build_delhi_cgwb_stations.py",
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
     "neer-vazhvu-api/scripts/scrape_bbmb_dams.py",
+    "scripts/check-db-city-scoped-keys.mjs",
     "scripts/compute-delhi-ward-risk.py",
     "scripts/nvdm_envelope_delhi.py"
    ],
@@ -6852,7 +6925,7 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "elevation-bands",
-   "bytes": 1094493,
+   "bytes": 1151466,
    "schema": {
     "kind": "FeatureCollection",
     "features": 6,
@@ -7029,14 +7102,18 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "facts",
-   "bytes": 59430,
+   "bytes": 61113,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "facts",
      "generated_at",
      "note",
-     "place_id"
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -7044,11 +7121,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
+    "bwssb-jica-supply-baseline",
     "iisc-groundwater-outlook",
     "opencity-bengaluru-tanker-survey"
    ],
    "licenses": [
-    "CC BY (per OpenCity dataset page)",
+    "CC BY-NC-SA 4.0 (resource pages state the specific licence; the dataset-level label is the generic 'Creative Commons Non-Commercial (Any)'; verified 2026-07-30)",
     "open (per OpenCity dataset page)"
    ],
    "accountability": "watched",
@@ -7329,13 +7407,17 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "gwr-blocks",
-   "bytes": 8356,
+   "bytes": 9398,
    "schema": {
     "kind": "object",
     "keys": [
      "blocks",
+     "dataset",
      "fetched_at",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "source",
      "source_url",
      "years"
@@ -7474,17 +7556,21 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "imd-rainfall-monthly",
-   "bytes": 31226,
+   "bytes": 56465,
    "schema": {
     "kind": "object",
     "keys": [
      "annual_totals",
+     "dataset",
      "generated_at",
      "grid_point",
      "monthly",
      "normal_period",
      "normals",
      "note",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "year_range"
     ]
@@ -7495,7 +7581,8 @@
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py",
+    "scripts/nvdm_envelope_bangalore.py"
    ],
    "headwaters_sources": [
     "imd-gridded-rain"
@@ -7677,12 +7764,16 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "industrial-sources",
-   "bytes": 15259,
+   "bytes": 15966,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
+     "dataset",
      "last_updated",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "sources"
     ]
@@ -7696,11 +7787,9 @@
    ],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "curated compilation (KSPCB directory via OpenCity, NGT Forward Foundation filings, WELL Labs, IISc CES, press); per-record source fields; no watchable listing",
+   "flags": []
   },
   {
    "path": "public/data/industrial-sources-delhi.json",
@@ -8287,7 +8376,8 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-    "scripts/check-data-freshness.ts"
+    "scripts/check-data-freshness.ts",
+    "scripts/nvdm_envelope_bangalore.py"
    ],
    "headwaters_sources": [
     "imd-gridded-rain",
@@ -8480,15 +8570,19 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "restoration-priority",
-   "bytes": 13639,
+   "bytes": 15075,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm_version",
      "computed_at",
+     "dataset",
      "notes",
+     "nvdm",
      "place_id",
+     "provenance",
      "river_sections",
+     "scope",
      "total_scored",
      "water_bodies",
      "weights"
@@ -8500,11 +8594,16 @@
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
-    "scripts/compute-bangalore-ward-profiles.ts"
+    "scripts/compute-bangalore-ward-profiles.ts",
+    "scripts/nvdm_envelope_bangalore.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
    "accountability_reason": "derived: curated flagship set + scoring",
    "flags": []
   },
@@ -8840,7 +8939,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3419,
+   "bytes": 4118,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8848,7 +8947,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -8881,7 +8984,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5574,
+   "bytes": 6211,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8889,7 +8992,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -8922,7 +9029,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 20018,
+   "bytes": 20989,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8932,8 +9039,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -8966,7 +9077,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31054,
+   "bytes": 31783,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8974,7 +9085,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9007,15 +9122,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1380,
+   "bytes": 2042,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -9047,7 +9166,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1884,
+   "bytes": 2621,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9055,8 +9174,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -9088,7 +9211,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3445,
+   "bytes": 4144,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9096,7 +9219,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9129,7 +9256,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5610,
+   "bytes": 6247,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9137,7 +9264,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9170,7 +9301,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 20988,
+   "bytes": 21959,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9180,8 +9311,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -9214,7 +9349,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31674,
+   "bytes": 32403,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9222,7 +9357,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9255,15 +9394,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1410,
+   "bytes": 2072,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -9295,7 +9438,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1890,
+   "bytes": 2627,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9303,8 +9446,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -9609,7 +9756,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3421,
+   "bytes": 4120,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9617,7 +9764,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9650,7 +9801,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5563,
+   "bytes": 6200,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9658,7 +9809,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9691,7 +9846,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 20162,
+   "bytes": 21133,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9701,8 +9856,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -9735,7 +9894,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31261,
+   "bytes": 31990,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9743,7 +9902,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9776,15 +9939,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1379,
+   "bytes": 2041,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -9816,7 +9983,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1888,
+   "bytes": 2625,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9824,8 +9991,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -9857,7 +10028,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3459,
+   "bytes": 4158,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9865,7 +10036,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9898,7 +10073,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5606,
+   "bytes": 6243,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9906,7 +10081,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9939,7 +10118,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 21435,
+   "bytes": 22406,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9949,8 +10128,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -9983,7 +10166,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31490,
+   "bytes": 32219,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9991,7 +10174,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10024,15 +10211,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1401,
+   "bytes": 2063,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -10064,7 +10255,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1890,
+   "bytes": 2627,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10072,8 +10263,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -10105,7 +10300,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3402,
+   "bytes": 4101,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10113,7 +10308,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10146,7 +10345,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5577,
+   "bytes": 6214,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10154,7 +10353,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10187,7 +10390,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 20392,
+   "bytes": 21363,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10197,8 +10400,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -10231,7 +10438,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31066,
+   "bytes": 31795,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10239,7 +10446,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10272,15 +10483,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1372,
+   "bytes": 2034,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -10312,7 +10527,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1881,
+   "bytes": 2618,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10320,8 +10535,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -10353,7 +10572,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3421,
+   "bytes": 4120,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10361,7 +10580,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10394,7 +10617,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5573,
+   "bytes": 6210,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10402,7 +10625,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10435,7 +10662,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 20541,
+   "bytes": 21512,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10445,8 +10672,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -10479,7 +10710,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31154,
+   "bytes": 31883,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10487,7 +10718,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10520,15 +10755,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1376,
+   "bytes": 2038,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -10560,7 +10799,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1883,
+   "bytes": 2620,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10568,8 +10807,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -10601,7 +10844,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3405,
+   "bytes": 4104,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10609,7 +10852,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10642,7 +10889,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5580,
+   "bytes": 6217,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10650,7 +10897,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10683,7 +10934,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 21285,
+   "bytes": 22256,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10693,8 +10944,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -10727,7 +10982,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 30577,
+   "bytes": 31306,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10735,7 +10990,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10768,15 +11027,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1384,
+   "bytes": 2046,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -10808,7 +11071,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1891,
+   "bytes": 2628,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10816,8 +11079,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -10849,7 +11116,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3420,
+   "bytes": 4119,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10857,7 +11124,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10890,7 +11161,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5589,
+   "bytes": 6226,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10898,7 +11169,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10931,7 +11206,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 20838,
+   "bytes": 21809,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10941,8 +11216,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -10975,7 +11254,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31248,
+   "bytes": 31977,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10983,7 +11262,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -11016,15 +11299,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1383,
+   "bytes": 2045,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -11056,7 +11343,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1889,
+   "bytes": 2626,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11064,8 +11351,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -11971,7 +12262,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3420,
+   "bytes": 4119,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11979,7 +12270,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12012,7 +12307,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5573,
+   "bytes": 6210,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12020,7 +12315,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12053,7 +12352,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 16707,
+   "bytes": 17678,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12063,8 +12362,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -12097,7 +12400,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 30705,
+   "bytes": 31434,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12105,7 +12408,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12138,15 +12445,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1396,
+   "bytes": 2058,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -12178,7 +12489,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1888,
+   "bytes": 2625,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12186,8 +12497,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -12219,7 +12534,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3424,
+   "bytes": 4123,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12227,7 +12542,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12260,7 +12579,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5583,
+   "bytes": 6220,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12268,7 +12587,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12301,7 +12624,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 21433,
+   "bytes": 22404,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12311,8 +12634,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -12345,7 +12672,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31198,
+   "bytes": 31927,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12353,7 +12680,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12386,15 +12717,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1386,
+   "bytes": 2048,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -12426,7 +12761,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1890,
+   "bytes": 2627,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12434,8 +12769,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -12740,7 +13079,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3415,
+   "bytes": 4114,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12748,7 +13087,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12781,7 +13124,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5574,
+   "bytes": 6211,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12789,7 +13132,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12822,7 +13169,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 20540,
+   "bytes": 21511,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12832,8 +13179,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -12866,7 +13217,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 30860,
+   "bytes": 31589,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12874,7 +13225,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12907,15 +13262,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1379,
+   "bytes": 2041,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -12947,7 +13306,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1887,
+   "bytes": 2624,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12955,8 +13314,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -13261,7 +13624,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3424,
+   "bytes": 4123,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13269,7 +13632,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -13302,7 +13669,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5583,
+   "bytes": 6220,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13310,7 +13677,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -13343,7 +13714,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 20541,
+   "bytes": 21512,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13353,8 +13724,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -13387,7 +13762,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31091,
+   "bytes": 31820,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13395,7 +13770,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -13428,15 +13807,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1398,
+   "bytes": 2060,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -13468,7 +13851,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1886,
+   "bytes": 2623,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13476,8 +13859,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -13509,7 +13896,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3433,
+   "bytes": 4132,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13517,7 +13904,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -13550,7 +13941,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5606,
+   "bytes": 6243,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13558,7 +13949,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -13591,7 +13986,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 20688,
+   "bytes": 21659,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13601,8 +13996,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -13635,7 +14034,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31316,
+   "bytes": 32045,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13643,7 +14042,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -13676,15 +14079,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1384,
+   "bytes": 2046,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -13716,7 +14123,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1889,
+   "bytes": 2626,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13724,8 +14131,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -14030,7 +14441,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dw-water-trend",
-   "bytes": 3433,
+   "bytes": 4132,
    "schema": {
     "kind": "object",
     "keys": [
@@ -14038,7 +14449,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -14071,7 +14486,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5576,
+   "bytes": 6213,
    "schema": {
     "kind": "object",
     "keys": [
@@ -14079,7 +14494,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -14112,7 +14531,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "imagery-manifest",
-   "bytes": 20597,
+   "bytes": 21568,
    "schema": {
     "kind": "object",
     "keys": [
@@ -14122,8 +14541,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket"
     ]
    },
@@ -14156,7 +14579,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "jrc-water-trend",
-   "bytes": 31265,
+   "bytes": 31994,
    "schema": {
     "kind": "object",
     "keys": [
@@ -14164,7 +14587,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -14197,15 +14624,19 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "open-buildings-verification",
-   "bytes": 1402,
+   "bytes": 2064,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -14237,7 +14668,7 @@
    "family": "rich-bodies",
    "scope": "bangalore",
    "dataset": "overture-buildings",
-   "bytes": 1889,
+   "bytes": 2626,
    "schema": {
     "kind": "object",
     "keys": [
@@ -14245,8 +14676,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -14278,14 +14713,18 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "river-events",
-   "bytes": 10794,
+   "bytes": 11234,
    "schema": {
     "kind": "object",
     "keys": [
      "compiled_at",
+     "dataset",
      "events",
      "note",
-     "place_id"
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -14294,11 +14733,9 @@
    "producer_refs": [],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "curated event timeline (court orders + named events); per-record citations; no watchable listing",
+   "flags": []
   },
   {
    "path": "public/data/river-events-delhi.json",
@@ -14351,7 +14788,9 @@
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_bangalore.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "allowlisted",
@@ -14363,15 +14802,19 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "river-quality",
-   "bytes": 16471,
+   "bytes": 18312,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
      "_osm_coverage_note",
      "data_year_range",
+     "dataset",
      "last_updated",
+     "nvdm",
+     "provenance",
      "rivers",
+     "scope",
      "source",
      "source_label",
      "source_url"
@@ -14687,11 +15130,15 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "ward-risk",
-   "bytes": 202158,
+   "bytes": 203590,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm_version",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
      "wards",
      "weights"
     ]
@@ -14707,9 +15154,15 @@
     "scripts/compute-delhi-ward-risk.py",
     "scripts/compute-mumbai-ward-risk.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "opencity-gba-wards-2025",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0",
+    "Other (Public Domain) (per OpenCity dataset page)"
+   ],
+   "accountability": "watched",
    "accountability_reason": "derived composite (population, water bodies, density)",
    "flags": []
   },
@@ -14926,14 +15379,18 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "water-bodies-lost",
-   "bytes": 4538,
+   "bytes": 5068,
    "schema": {
     "kind": "object",
     "keys": [
      "compiled_at",
+     "dataset",
      "lost_bodies",
+     "nvdm",
      "place_id",
      "primary_source",
+     "provenance",
+     "scope",
      "secondary_sources",
      "summary"
     ]
@@ -15068,7 +15525,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "corporations-2025",
-   "bytes": 386416,
+   "bytes": 387053,
    "schema": {
     "kind": "FeatureCollection",
     "features": 5,
@@ -15085,20 +15542,22 @@
    "producer_refs": [
     "scripts/convert-bangalore-corporations-kml.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "opencity-gba-corporations-2025"
+   ],
+   "licenses": [
+    "Other (Public Domain) (per OpenCity dataset page)"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/bangalore-gwr-blocks.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "gwr-blocks",
-   "bytes": 1825292,
+   "bytes": 1825844,
    "schema": {
     "kind": "FeatureCollection",
     "features": 6,
@@ -15121,20 +15580,22 @@
     "scripts/compute-bangalore-ward-profiles.ts",
     "scripts/fetch-wris-groundwater-bangalore.ts"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "ingres-gw-assessment-ka"
+   ],
+   "licenses": [
+    "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/bangalore-rivers.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "rivers",
-   "bytes": 296724,
+   "bytes": 297367,
    "schema": {
     "kind": "FeatureCollection",
     "features": 3,
@@ -15180,7 +15641,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "sewerage-trunks",
-   "bytes": 4462511,
+   "bytes": 4463143,
    "schema": {
     "kind": "FeatureCollection",
     "features": 14121,
@@ -15201,20 +15662,22 @@
     "scripts/compute-bangalore-ward-profiles.ts",
     "scripts/convert-bangalore-sewerage-trunks-kml.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "opencity-bwssb-sewerage"
+   ],
+   "licenses": [
+    "Other (Public Domain) (per OpenCity dataset page)"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/bangalore-stps.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "stps",
-   "bytes": 10088,
+   "bytes": 16222,
    "schema": {
     "kind": "FeatureCollection",
     "features": 39,
@@ -15235,20 +15698,22 @@
     "scripts/compute-bangalore-ward-profiles.ts",
     "scripts/convert-bangalore-stps-kml.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "opencity-bwssb-stps"
+   ],
+   "licenses": [
+    "Other (Public Domain) (per OpenCity dataset page)"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/bangalore-swd-primary.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "swd-primary",
-   "bytes": 437928,
+   "bytes": 463541,
    "schema": {
     "kind": "FeatureCollection",
     "features": 163,
@@ -15278,7 +15743,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "swd-secondary",
-   "bytes": 803337,
+   "bytes": 851694,
    "schema": {
     "kind": "FeatureCollection",
     "features": 870,
@@ -15308,7 +15773,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "wards-2025",
-   "bytes": 3944788,
+   "bytes": 3715168,
    "schema": {
     "kind": "FeatureCollection",
     "features": 369,
@@ -15339,22 +15804,25 @@
    "producer_refs": [
     "scripts/compute-bangalore-ward-profiles.ts",
     "scripts/compute-bangalore-ward-risk.py",
-    "scripts/convert-bangalore-wards-kml.py"
+    "scripts/convert-bangalore-wards-kml.py",
+    "scripts/nvdm_envelope_bangalore.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "opencity-gba-wards-2025"
+   ],
+   "licenses": [
+    "Other (Public Domain) (per OpenCity dataset page)"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/bangalore-water-bodies-census.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "water-bodies-census",
-   "bytes": 472524,
+   "bytes": 473367,
    "schema": {
     "kind": "FeatureCollection",
     "features": 718,
@@ -15400,7 +15868,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "water-bodies-current",
-   "bytes": 6777728,
+   "bytes": 6779822,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1897,
@@ -15429,13 +15897,18 @@
     "scripts/compute-bangalore-ward-risk.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-water-bodies-osm-bangalore.ts",
-    "scripts/name-bangalore-water-bodies.py"
+    "scripts/name-bangalore-water-bodies.py",
+    "scripts/nvdm_envelope_bangalore.py"
    ],
    "headwaters_sources": [
-    "atree-opencity-lakes-bengaluru"
+    "atree-opencity-lakes-bengaluru",
+    "kwris-mi-tanks",
+    "osm-overpass"
    ],
    "licenses": [
-    "open (per OpenCity dataset page)"
+    "ODbL 1.0",
+    "open (per OpenCity dataset page)",
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -17018,7 +17491,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 9417,
+   "bytes": 10136,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17054,7 +17527,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 9380,
+   "bytes": 9859,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17101,7 +17574,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 13594,
+   "bytes": 14313,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17137,7 +17610,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 37285,
+   "bytes": 37764,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17267,7 +17740,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 8085,
+   "bytes": 8804,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17303,7 +17776,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 12249,
+   "bytes": 12728,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17350,7 +17823,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 14078,
+   "bytes": 14797,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17386,7 +17859,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 10487,
+   "bytes": 10966,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17433,7 +17906,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 5721,
+   "bytes": 6440,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17469,7 +17942,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 4472,
+   "bytes": 4951,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17516,7 +17989,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 10555,
+   "bytes": 11274,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17552,7 +18025,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 11471,
+   "bytes": 11950,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17599,7 +18072,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 6217,
+   "bytes": 6936,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17635,7 +18108,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 5587,
+   "bytes": 6066,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17682,7 +18155,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 9050,
+   "bytes": 9769,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17718,7 +18191,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 20819,
+   "bytes": 21298,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18065,7 +18538,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 6399,
+   "bytes": 7118,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18101,7 +18574,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 12616,
+   "bytes": 13095,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18148,7 +18621,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 7060,
+   "bytes": 7779,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18184,7 +18657,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 8185,
+   "bytes": 8664,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18314,7 +18787,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 7430,
+   "bytes": 8149,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18350,7 +18823,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 9399,
+   "bytes": 9878,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18480,7 +18953,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 8556,
+   "bytes": 9275,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18516,7 +18989,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 18448,
+   "bytes": 18927,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18563,7 +19036,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 12918,
+   "bytes": 13637,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18599,7 +19072,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 30540,
+   "bytes": 31019,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18729,7 +19202,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "buffer-1000m",
-   "bytes": 7823,
+   "bytes": 8542,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -18765,7 +19238,7 @@
    "family": "geojson-layers",
    "scope": "bangalore",
    "dataset": "polygon",
-   "bytes": 14282,
+   "bytes": 14761,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -19361,7 +19834,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 29730461,
+   "bytes": 29731483,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19376,7 +19849,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 728415,
+   "bytes": 729807,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19391,7 +19864,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 3576197,
+   "bytes": 3578009,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19406,7 +19879,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 1339896,
+   "bytes": 1341288,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19421,7 +19894,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 64948,
+   "bytes": 74911,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19449,7 +19922,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 6408,
+   "bytes": 8120,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19475,8 +19948,8 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 41283,
-   "schema_variants": 2,
+   "bytes": 43298,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": false
   },
@@ -19489,8 +19962,8 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 677766,
-   "schema_variants": 2,
+   "bytes": 679465,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -19533,7 +20006,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 8221,
+   "bytes": 9225,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": false
@@ -19564,7 +20037,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 70322,
+   "bytes": 70994,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19574,7 +20047,7 @@
    "dataset": "bbmb-dam-storage",
    "files": 1,
    "scopes": [
-    "bangalore"
+    "delhi"
    ],
    "bytes": 1263,
    "schema_variants": 1,
@@ -19600,9 +20073,9 @@
    "scopes": [
     "bangalore"
    ],
-   "bytes": 32653,
+   "bytes": 33567,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": false
   },
   {
@@ -19639,7 +20112,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 819809,
+   "bytes": 820833,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -19655,7 +20128,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 148509,
+   "bytes": 149382,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19719,7 +20192,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 12811370,
+   "bytes": 12868343,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19734,7 +20207,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 128318,
+   "bytes": 130001,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19748,7 +20221,7 @@
     "delhi",
     "mumbai"
    ],
-   "bytes": 147492,
+   "bytes": 197803,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19801,8 +20274,8 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 111900,
-   "schema_variants": 4,
+   "bytes": 112942,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -19813,7 +20286,7 @@
    "scopes": [
     "bangalore"
    ],
-   "bytes": 20967,
+   "bytes": 21866,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19829,7 +20302,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 231680,
+   "bytes": 256919,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19845,8 +20318,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 87812,
-   "schema_variants": 4,
+   "bytes": 88519,
+   "schema_variants": 5,
    "registered": true,
    "has_consumer": true
   },
@@ -19928,7 +20401,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 2135717,
+   "bytes": 2137153,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19969,8 +20442,8 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 24418,
-   "schema_variants": 2,
+   "bytes": 24858,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -19985,7 +20458,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 104879,
+   "bytes": 106720,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -20001,7 +20474,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 96438,
+   "bytes": 99797,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -20013,9 +20486,9 @@
    "scopes": [
     "bangalore"
    ],
-   "bytes": 44639,
+   "bytes": 46054,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -20025,10 +20498,22 @@
    "scopes": [
     "bangalore"
    ],
-   "bytes": 3020,
+   "bytes": 4262,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "ward-admin",
+   "files": 1,
+   "scopes": [
+    "bangalore"
+   ],
+   "bytes": 301173,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
   },
   {
    "family": "data-root",
@@ -20052,8 +20537,8 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 1626654,
-   "schema_variants": 2,
+   "bytes": 1695912,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -20080,7 +20565,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 429756,
+   "bytes": 431188,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -20121,8 +20606,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 20484,
-   "schema_variants": 4,
+   "bytes": 21014,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -20134,7 +20619,7 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 216057,
+   "bytes": 226123,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -20196,9 +20681,9 @@
    "scopes": [
     "bangalore"
    ],
-   "bytes": 386416,
+   "bytes": 387053,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": false
   },
   {
@@ -20297,7 +20782,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 4967154,
+   "bytes": 4967706,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20334,7 +20819,7 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 315716,
+   "bytes": 322422,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -20350,7 +20835,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 1937455,
+   "bytes": 1938098,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -20374,9 +20859,9 @@
    "scopes": [
     "bangalore"
    ],
-   "bytes": 4462511,
+   "bytes": 4463143,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": false
   },
   {
@@ -20386,9 +20871,9 @@
    "scopes": [
     "bangalore"
    ],
-   "bytes": 10088,
+   "bytes": 16222,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": false
   },
   {
@@ -20422,7 +20907,7 @@
    "scopes": [
     "bangalore"
    ],
-   "bytes": 437928,
+   "bytes": 463541,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20434,7 +20919,7 @@
    "scopes": [
     "bangalore"
    ],
-   "bytes": 803337,
+   "bytes": 851694,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20484,9 +20969,9 @@
    "scopes": [
     "bangalore"
    ],
-   "bytes": 3944788,
+   "bytes": 3715168,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -20497,7 +20982,7 @@
     "bangalore",
     "delhi"
    ],
-   "bytes": 1768858,
+   "bytes": 1769701,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": false
@@ -20513,7 +20998,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 16955235,
+   "bytes": 16957329,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -20564,8 +21049,8 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 79293,
-   "schema_variants": 2,
+   "bytes": 89079,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -20577,8 +21062,8 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 126682,
-   "schema_variants": 2,
+   "bytes": 135600,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -20590,7 +21075,7 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 468462,
+   "bytes": 482056,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -20603,8 +21088,8 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 693059,
-   "schema_variants": 2,
+   "bytes": 703265,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -20616,8 +21101,8 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 34545,
-   "schema_variants": 2,
+   "bytes": 43813,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -20629,8 +21114,8 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 45242,
-   "schema_variants": 2,
+   "bytes": 55560,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   }

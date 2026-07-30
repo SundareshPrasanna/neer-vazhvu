@@ -267,10 +267,17 @@ function main() {
   wards.sort((a, b) => a.ward_number - b.ward_number);
   const grid = buildGridIndex(wards);
 
-  // 2. Load existing admin profile (kept as base; we enrich in place)
-  const existing = JSON.parse(
-    readFileSync(resolve(root, "public/data/bangalore-ward-profiles.json"), "utf8"),
-  ) as Array<Record<string, unknown> & { ward_number: number }>;
+  // 2. Load the ADMIN SEED as base (review 2026-07-30: reading our own prior
+  //    output made regeneration a fixed point - stale admin edits could
+  //    survive forever). bangalore-ward-admin.json is the enveloped split of
+  //    the GBA 2025 delimitation attributes; this build now rebuilds cleanly
+  //    from tracked sources only.
+  const existingRaw = JSON.parse(
+    readFileSync(resolve(root, "public/data/bangalore-ward-admin.json"), "utf8"),
+  ) as
+    | Array<Record<string, unknown> & { ward_number: number }>
+    | { wards: Array<Record<string, unknown> & { ward_number: number }> };
+  const existing = Array.isArray(existingRaw) ? existingRaw : existingRaw.wards;
   const existingByWard = new Map<number, Record<string, unknown>>();
   for (const e of existing) existingByWard.set(e.ward_number, e);
 
@@ -658,11 +665,91 @@ function main() {
     };
 
     const existingRec = existingByWard.get(w.ward_number) ?? { ward_number: w.ward_number };
-    output.push({ ...existingRec, ...analytical });
+    // Geometry-derived fields computed here (review 2026-07-30: they used to
+    // ride through the prior-output base; the admin seed carries attributes
+    // only, so a clean rebuild must derive them from the tracked geometry).
+    const geometric = {
+      area_sq_km: roundTo(turfArea(w.feature) / 1_000_000, 6),
+      centroid: w.centroid,
+    };
+    output.push({ ...existingRec, ...geometric, ...analytical });
   }
 
+  // NVDM v1 wrapped form (schemas/nvdm/ward-profiles.schema.json): envelope +
+  // wards[]. Loaders accept both shapes during migration. PRODUCED_AT is a
+  // manual constant, bumped on regeneration, so identical inputs still
+  // produce byte-identical output (no wall-clock in the artifact - the CI
+  // determinism gate reruns this script and diffs the file).
+  const PRODUCED_AT = "2026-07-30";
+  const wrapped = {
+    nvdm: "1.0",
+    dataset: "data-root/ward-profiles",
+    scope: { kind: "city", id: "bangalore" },
+    provenance: {
+      sources: [
+        {
+          id: "opencity-gba-wards-2025",
+          title: "GBA 369-ward delimitation 2025 (Dec 2025 KML incl. 01.12.2025 name changes, via OpenCity)",
+          publisher: "GBA / GoK Urban Development Department (via OpenCity)",
+          license: "Other (Public Domain) (per OpenCity dataset page)",
+          role: "input",
+          as_of: "2025-12",
+        },
+        {
+          id: "osm-overpass",
+          title: "OpenStreetMap water bodies / rivers (Overpass extracts)",
+          publisher: "OpenStreetMap contributors",
+          license: "ODbL 1.0",
+          role: "input",
+        },
+        {
+          id: "ingres-gw-assessment-ka",
+          title: "IN-GRES dynamic groundwater assessment (Bangalore Urban assessment units)",
+          publisher: "CGWB / IIT-Hyderabad (IN-GRES)",
+          license: "GoI publication, cited with attribution",
+          role: "input",
+        },
+        {
+          id: "wris-live-services",
+          title: "India-WRIS Ground Water Level dataset (NWIC ArcGIS services)",
+          publisher: "CGWB / NWIC via India-WRIS",
+          license: "GoI open publication, cited with attribution",
+          role: "input",
+        },
+      ],
+      method: "derived",
+      produced_at: PRODUCED_AT,
+      produced_by: "scripts/compute-bangalore-ward-profiles.ts",
+      // Machine-readable internal lineage, verified against the reads above.
+      internal_inputs: [
+        "public/geojson/bangalore-wards-2025.geojson",
+        "public/data/bangalore-ward-admin.json",
+        "public/geojson/bangalore-water-bodies-current.geojson",
+        "public/geojson/bangalore-water-bodies-census.geojson",
+        "public/data/restoration-priority-bangalore.json",
+        "public/data/bangalore-flood-hotspots.geojson",
+        "public/geojson/bangalore-swd-primary.geojson",
+        "public/geojson/bangalore-swd-secondary.geojson",
+        "public/geojson/bangalore-stps.geojson",
+        "public/geojson/bangalore-sewerage-trunks.geojson",
+        "public/data/industrial-sources-bangalore.json",
+        "public/data/river-quality-bangalore.json",
+        "public/geojson/bangalore-gwr-blocks.geojson",
+        "public/data/bangalore-cgwb-stations.json",
+      ],
+      note:
+        "Deterministic join over committed ward-level layers (see script header). " +
+        "lost_bodies is an honest zero per ward (water-bodies-lost-bangalore.json is " +
+        "name-only, no coordinates - it is NOT read by this script); flood " +
+        "hotspot_2015/2020 sub-counts stay 0 (no annual snapshots for Bangalore); " +
+        "sewerage sps_count stays 0 (no public BWSSB SPS layer). Internal inputs are " +
+        "lineage, not sources - listed machine-readably in internal_inputs; admin " +
+        "fields come from the enveloped bangalore-ward-admin.json seed (KML-derived).",
+    },
+    wards: output,
+  };
   const outPath = resolve(root, "public/data/bangalore-ward-profiles.json");
-  writeFileSync(outPath, JSON.stringify(output, null, 2));
+  writeFileSync(outPath, JSON.stringify(wrapped, null, 2));
 
   const totalWB = output.reduce((s, w) => s + (w.water_bodies as AnalyticalSections["water_bodies"]).current_count, 0);
   const totalCensus = output.reduce((s, w) => s + (w.water_bodies as AnalyticalSections["water_bodies"]).census_records, 0);

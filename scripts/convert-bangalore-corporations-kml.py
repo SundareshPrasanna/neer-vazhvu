@@ -16,10 +16,11 @@ truncated name and join with the human-friendly Kannada equivalents.
 Run: python scripts/convert-bangalore-corporations-kml.py scripts/data-raw/bangalore/gba-5-corporations-september-2025.kml
 """
 
-import json
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
+from nvdm_write import write_artifact
 
 KML_NS = {"k": "http://www.opengis.net/kml/2.2"}
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -109,7 +110,8 @@ def main() -> None:
         })
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"type": "FeatureCollection", "features": features}))
+    # Envelope-preserving write (scripts/nvdm_write.py); compact like before.
+    write_artifact(OUT, {"type": "FeatureCollection", "features": features}, compact=True)
     print(f"Wrote {len(features)} corporations to {OUT}")
 
     if len(features) != 5:

@@ -24,10 +24,11 @@ Run: python scripts/convert-bangalore-stps-kml.py scripts/data-raw/bangalore/bws
 """
 
 import csv
-import json
 import re
 import sys
 from pathlib import Path
+
+from nvdm_write import write_artifact
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
@@ -100,7 +101,8 @@ def main() -> None:
         })
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"type": "FeatureCollection", "features": features}))
+    # Envelope-preserving write (scripts/nvdm_write.py); compact like before.
+    write_artifact(OUT, {"type": "FeatureCollection", "features": features}, compact=True)
     print(f"Wrote {len(features)} STPs to {OUT}")
     print(f"  active: {active_count}, inactive: {len(features) - active_count}")
     print(f"  total design capacity: {total_capacity_kld:,} KLD ({total_capacity_kld/1000:.1f} MLD)")

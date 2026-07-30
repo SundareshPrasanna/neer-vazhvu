@@ -3,7 +3,7 @@
 Aggregate OpenCity Bangalore tanker-water survey CSVs (2015, 2019, 2024)
 into a single longitudinal summary JSON.
 
-Source datasets (license: CC BY-NC 2.0 via OpenCity):
+Source datasets (license: CC BY-NC-SA 4.0 via OpenCity resource pages):
   https://data.opencity.in/dataset/bengaluru-tanker-water-data
 
 Each survey year used a slightly different schema. This script:
@@ -21,10 +21,11 @@ Run: python scripts/build-bangalore-tanker-summary.py
 """
 
 import csv
-import json
 import re
 import statistics
 from pathlib import Path
+
+from nvdm_write import write_artifact
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
@@ -241,11 +242,11 @@ def main():
     yearly = [process_year(spec) for spec in YEARS]
 
     output = {
-        "_note": "Longitudinal summary of OpenCity Bengaluru Tanker Water surveys (2015, 2019, 2024). Schemas differ by year so not every field exists for every year; n= counts surface sample sizes per stat. License CC BY-NC 2.0. Surveys are apartment/community-level; rates reflect informal market not BWSSB Kaveriwheels official tariffs.",
+        "_note": "Longitudinal summary of OpenCity Bengaluru Tanker Water surveys (2015, 2019, 2024). Schemas differ by year so not every field exists for every year; n= counts surface sample sizes per stat. License CC BY-NC-SA 4.0 (non-commercial, share-alike). Surveys are apartment/community-level; rates reflect informal market not BWSSB Kaveriwheels official tariffs.",
         "_source": {
             "name": "OpenCity Bengaluru Tanker Water Data",
             "url": "https://data.opencity.in/dataset/bengaluru-tanker-water-data",
-            "license": "CC BY-NC 2.0",
+            "license": "CC BY-NC-SA 4.0",
             "extracted": "2026-05-24",
         },
         "_2025_context": {
@@ -256,7 +257,8 @@ def main():
     }
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(output, indent=2))
+    # Envelope-preserving write (scripts/nvdm_write.py).
+    write_artifact(OUT, output)
     print(f"Wrote {OUT}")
     for y in yearly:
         print(
