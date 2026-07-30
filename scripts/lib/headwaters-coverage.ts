@@ -75,6 +75,12 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/water-bodies-flagship-madurai.json": "curated flagship register; per-record citations (DHAN, MMC, press); no watchable listing",
   "public/data/industrial-sources-madurai.json": "qualitative one-off academic source (Columbia GSAPP studio book, spring 2016); statistics failed adversarial checks - see the file's _source_caveats",
 
+  // Curated compilations (NVDM Bangalore migration, 2026-07-30). Same family
+  // as the Madurai lines above: per-record citations carry the accountability.
+  "public/data/allocations-bangalore.json": "claim register; per-arrangement citations in the file's sources map (BWSSB About, JICA appraisal, SC Cauvery verdict, dated press); no watchable listing",
+  "public/data/industrial-sources-bangalore.json": "curated compilation (KSPCB directory via OpenCity, NGT Forward Foundation filings, WELL Labs, IISc CES, press); per-record source fields; no watchable listing",
+  "public/data/river-events-bangalore.json": "curated event timeline (court orders + named events); per-record citations; no watchable listing",
+
   // Closed series. The upstream will not publish again; an edition watch would
   // be permanently silent, which is worse than an explicit note.
   "public/geojson/madurai-wards-2022.geojson": "closed edition: 2022 ward delimitation KML; boundaries change only at the next delimitation (term-expiry watch would be the upgrade)",
