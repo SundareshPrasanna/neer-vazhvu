@@ -115,14 +115,17 @@ for (const alias of DELHI_ALIASES) {
 const delhiFixture = JSON.parse(
   readFileSync(join(root, "public/data/delhi-cgwb-stations.json"), "utf8"),
 );
-const fixtureDistricts = new Set();
-(function walk(node) {
-  if (Array.isArray(node)) return node.forEach(walk);
-  if (node && typeof node === "object") {
-    if (typeof node.district === "string") fixtureDistricts.add(node.district);
-    for (const v of Object.values(node)) walk(v);
-  }
-})(delhiFixture);
+// Per-well districts only: these model the values that reach the DB's
+// district column. The artifact's top-level `district` is a descriptive
+// label ("Delhi NCT (all 11 districts)"), not row data.
+const fixtureDistricts = new Set(
+  (delhiFixture.wells ?? [])
+    .map((w) => w.district)
+    .filter((d) => typeof d === "string"),
+);
+if (fixtureDistricts.size === 0) {
+  failures.push("Delhi fixture has no per-well districts - guard cannot verify the mapping.");
+}
 for (const d of fixtureDistricts) {
   if (!DELHI_ALIASES.includes(d.trim().toLowerCase())) {
     failures.push(
