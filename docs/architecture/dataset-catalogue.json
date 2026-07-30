@@ -83,18 +83,22 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "allocations",
-   "bytes": 14008,
+   "bytes": 16842,
    "schema": {
     "kind": "object",
     "keys": [
      "arrangements",
      "authorities",
+     "dataset",
      "events",
      "futures",
      "gaps",
      "headline",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "sources",
      "unit_note",
      "updated"
@@ -3598,15 +3602,19 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "cag-djb-audit-2025",
-   "bytes": 6679,
+   "bytes": 8113,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
      "chapters",
+     "dataset",
      "headline",
+     "nvdm",
+     "provenance",
      "recommendations_summary",
-     "report"
+     "report",
+     "scope"
     ]
    },
    "consumers": [],
@@ -6199,14 +6207,18 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "commitments",
-   "bytes": 13023,
+   "bytes": 14614,
    "schema": {
     "kind": "object",
     "keys": [
      "commitments",
+     "dataset",
      "headline",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "sources_note",
      "status_legend",
      "update_model",
@@ -6218,7 +6230,9 @@
     "src/lib/cities/delhi.ts",
     "src/lib/cities/types.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_delhi.py"
+   ],
    "headwaters_sources": [
     "cag-djb-audit",
     "delhi-economic-survey-water",
@@ -6348,14 +6362,18 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "cetp-flows",
-   "bytes": 213219,
+   "bytes": 214401,
    "schema": {
     "kind": "object",
     "keys": [
      "_extraction",
      "_note",
+     "dataset",
+     "nvdm",
      "plants",
+     "provenance",
      "readings",
+     "scope",
      "source",
      "summary"
     ]
@@ -6363,7 +6381,8 @@
    "consumers": [],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_industrial_sources.py",
-    "neer-vazhvu-api/scripts/extract_delhi_cetp_flows.py"
+    "neer-vazhvu-api/scripts/extract_delhi_cetp_flows.py",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "dpcc-cetp-monthly-delhi"
@@ -6380,19 +6399,24 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "cetp-monthly-index",
-   "bytes": 21764,
+   "bytes": 23730,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
+     "dataset",
+     "nvdm",
+     "provenance",
      "resources",
      "schema_sample",
+     "scope",
      "source"
     ]
    },
    "consumers": [],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/extract_delhi_cetp_flows.py"
+    "neer-vazhvu-api/scripts/extract_delhi_cetp_flows.py",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "dpcc-cetp-monthly-delhi"
@@ -6409,7 +6433,7 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "cgwb-stations",
-   "bytes": 721180,
+   "bytes": 722936,
    "schema": {
     "kind": "object",
     "keys": [
@@ -6421,10 +6445,14 @@
      "aquifer",
      "cadence_note",
      "coverage",
+     "dataset",
      "depth_unit",
      "district",
+     "nvdm",
+     "provenance",
      "reading_kind",
      "retrieved",
+     "scope",
      "series_label",
      "source_label",
      "source_url",
@@ -6444,7 +6472,8 @@
     "neer-vazhvu-api/scripts/build_delhi_cgwb_stations.py",
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
     "neer-vazhvu-api/scripts/scrape_bbmb_dams.py",
-    "scripts/compute-delhi-ward-risk.py"
+    "scripts/compute-delhi-ward-risk.py",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "wris-live-services"
@@ -6461,14 +6490,18 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "drain-quality",
-   "bytes": 32648,
+   "bytes": 34082,
    "schema": {
     "kind": "object",
     "keys": [
      "_coverage_limit",
      "_extraction",
      "_note",
+     "dataset",
+     "nvdm",
+     "provenance",
      "readings",
+     "scope",
      "source",
      "standards",
      "summary"
@@ -6478,7 +6511,8 @@
     "src/app/[cityId]/rivers/rivers-client.tsx"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/extract_delhi_drain_quality.py"
+    "neer-vazhvu-api/scripts/extract_delhi_drain_quality.py",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "dpcc-monthly-analysis-delhi"
@@ -6495,15 +6529,19 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "flood-hotspots",
-   "bytes": 7063,
+   "bytes": 7765,
    "schema": {
     "kind": "object",
     "keys": [
      "compiled_at",
+     "dataset",
      "gaps",
      "hotspots",
      "note",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "summary"
     ]
    },
@@ -6522,12 +6560,16 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "jj-bastis-geo",
-   "bytes": 231522,
+   "bytes": 232634,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
      "clusters",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "summary"
     ]
@@ -6536,7 +6578,8 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_jj_bastis_geo.py",
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
-    "scripts/compute-delhi-ward-risk.py"
+    "scripts/compute-delhi-ward-risk.py",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "dusib-jj-bastis"
@@ -6573,7 +6616,8 @@
     "src/lib/ward-rankings/load-rankings.ts"
    ],
    "producer_refs": [
-    "scripts/fetch-localities-osm-delhi.ts"
+    "scripts/fetch-localities-osm-delhi.ts",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -6586,7 +6630,7 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "supply-overview",
-   "bytes": 7490,
+   "bytes": 9558,
    "schema": {
     "kind": "object",
     "keys": [
@@ -6596,10 +6640,14 @@
      "allocation_context",
      "current_supply_mix_mld",
      "current_supply_total_mld",
+     "dataset",
      "demand",
      "distribution",
      "groundwater",
      "hero_copy",
+     "nvdm",
+     "provenance",
+     "scope",
      "supply_chain",
      "wtps_summary"
     ]
@@ -6675,7 +6723,8 @@
     "scripts/fetch-localities-osm-delhi.ts",
     "scripts/fetch-localities-osm.ts",
     "scripts/generate-narratives.ts",
-    "scripts/nvdm_envelope_chennai.py"
+    "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "cgwb-dynamic-gwr-delhi",
@@ -6702,15 +6751,19 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "ward-representatives",
-   "bytes": 109137,
+   "bytes": 126875,
    "schema": {
     "kind": "object",
     "keys": [
      "compiled_at",
+     "dataset",
      "election",
      "meta",
      "note",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "source",
      "summary",
      "wards",
@@ -6739,13 +6792,17 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "dpcc-monthly-wq",
-   "bytes": 14300,
+   "bytes": 21673,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
+     "dataset",
      "months",
+     "nvdm",
+     "provenance",
      "river_stations",
+     "scope",
      "series_note",
      "source",
      "standards"
@@ -6757,7 +6814,8 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/extract_delhi_drain_quality.py",
     "neer-vazhvu-api/scripts/fetch_dpcc_monthly_delhi.py",
-    "scripts/build-delhi-river-quality.ts"
+    "scripts/build-delhi-river-quality.ts",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "dpcc-monthly-analysis-delhi"
@@ -6774,12 +6832,16 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "dusib-jj-bastis",
-   "bytes": 249510,
+   "bytes": 277580,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
      "clusters",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "summary"
     ]
@@ -6787,7 +6849,8 @@
    "consumers": [],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_jj_bastis.py",
-    "neer-vazhvu-api/scripts/build_delhi_jj_bastis_geo.py"
+    "neer-vazhvu-api/scripts/build_delhi_jj_bastis_geo.py",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "dusib-jj-bastis"
@@ -6874,7 +6937,7 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "elevation-bands",
-   "bytes": 2066987,
+   "bytes": 2174277,
    "schema": {
     "kind": "FeatureCollection",
     "features": 6,
@@ -7012,14 +7075,18 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "facts",
-   "bytes": 25992,
+   "bytes": 27949,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "facts",
      "generated_at",
      "note",
-     "place_id"
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -7308,14 +7375,18 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "gwr-blocks",
-   "bytes": 15627,
+   "bytes": 19383,
    "schema": {
     "kind": "object",
     "keys": [
      "blocks",
+     "dataset",
      "fetched_at",
      "note",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "source",
      "source_url",
      "years"
@@ -7323,7 +7394,8 @@
    },
    "consumers": [],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py"
+    "neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "cgwb-dynamic-gwr-delhi"
@@ -7455,17 +7527,21 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "imd-rainfall-monthly",
-   "bytes": 31100,
+   "bytes": 56425,
    "schema": {
     "kind": "object",
     "keys": [
      "annual_totals",
+     "dataset",
      "generated_at",
      "grid_point",
      "monthly",
      "normal_period",
      "normals",
      "note",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "year_range"
     ]
@@ -7646,14 +7722,18 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "industrial-sources",
-   "bytes": 28579,
+   "bytes": 30350,
    "schema": {
     "kind": "object",
     "keys": [
      "_archival",
      "_coordinates",
      "_note",
+     "dataset",
      "last_updated",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "sources",
      "summary"
@@ -7780,17 +7860,22 @@
    "family": "ingres",
    "scope": "delhi",
    "dataset": "2022-2023",
-   "bytes": 1847,
+   "bytes": 2943,
    "schema": {
     "kind": "object",
     "keys": [
      "_provenance",
-     "districts"
+     "dataset",
+     "districts",
+     "nvdm",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py"
+    "neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "ingres-gw-assessment-delhi"
@@ -8304,7 +8389,8 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-    "scripts/check-data-freshness.ts"
+    "scripts/check-data-freshness.ts",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "imd-gridded-rain",
@@ -8442,15 +8528,19 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "restoration-priority",
-   "bytes": 7098,
+   "bytes": 8785,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm_version",
      "computed_at",
+     "dataset",
      "notes",
+     "nvdm",
      "place_id",
+     "provenance",
      "river_sections",
+     "scope",
      "total_scored",
      "water_bodies",
      "weights"
@@ -8637,15 +8727,19 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "restoration-projects",
-   "bytes": 12235,
+   "bytes": 12827,
    "schema": {
     "kind": "object",
     "keys": [
      "compiled_at",
      "court_orders",
+     "dataset",
      "note",
+     "nvdm",
      "place_id",
-     "projects"
+     "projects",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -14226,14 +14320,18 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "river-events",
-   "bytes": 8270,
+   "bytes": 9055,
    "schema": {
     "kind": "object",
     "keys": [
      "compiled_at",
+     "dataset",
      "events",
      "note",
-     "place_id"
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -14322,13 +14420,17 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "river-quality",
-   "bytes": 14080,
+   "bytes": 18888,
    "schema": {
     "kind": "object",
     "keys": [
      "data_year_range",
+     "dataset",
      "last_updated",
+     "nvdm",
+     "provenance",
      "rivers",
+     "scope",
      "source",
      "source_label",
      "source_url"
@@ -14631,13 +14733,17 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "ward-risk",
-   "bytes": 159999,
+   "bytes": 161103,
    "schema": {
     "kind": "object",
     "keys": [
      "_factors",
      "_note",
      "algorithm_version",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
      "sources",
      "wards",
      "weights"
@@ -14740,22 +14846,27 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "water-bodies-flagship",
-   "bytes": 13178,
+   "bytes": 13726,
    "schema": {
     "kind": "object",
     "keys": [
      "_citation_audit",
      "bodies",
      "compiled_at",
+     "dataset",
      "note",
-     "place_id"
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
     "src/app/[cityId]/lake-restoration/page.tsx"
    ],
    "producer_refs": [
-    "scripts/compute-restoration-priority-delhi.ts"
+    "scripts/compute-restoration-priority-delhi.ts",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -14863,16 +14974,20 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "water-bodies-lost",
-   "bytes": 5200,
+   "bytes": 5760,
    "schema": {
     "kind": "object",
     "keys": [
      "_location_note",
      "compiled_at",
+     "dataset",
      "lost_bodies",
      "note",
+     "nvdm",
      "place_id",
      "primary_source",
+     "provenance",
+     "scope",
      "secondary_sources",
      "summary"
     ]
@@ -16080,7 +16195,7 @@
    "family": "geojson-layers",
    "scope": "delhi",
    "dataset": "drainage",
-   "bytes": 337775,
+   "bytes": 370779,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1105,
@@ -16117,7 +16232,7 @@
    "family": "geojson-layers",
    "scope": "delhi",
    "dataset": "gwr-blocks",
-   "bytes": 557027,
+   "bytes": 609150,
    "schema": {
     "kind": "FeatureCollection",
     "features": 11,
@@ -16155,7 +16270,7 @@
    "family": "geojson-layers",
    "scope": "delhi",
    "dataset": "rivers",
-   "bytes": 824011,
+   "bytes": 824462,
    "schema": {
     "kind": "FeatureCollection",
     "features": 5,
@@ -16201,7 +16316,7 @@
    "family": "geojson-layers",
    "scope": "delhi",
    "dataset": "wards-2022",
-   "bytes": 7013505,
+   "bytes": 7659205,
    "schema": {
     "kind": "FeatureCollection",
     "features": 250,
@@ -16225,7 +16340,8 @@
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
     "neer-vazhvu-api/scripts/convert_delhi_wards_kml.py",
     "scripts/compute-delhi-ward-risk.py",
-    "scripts/fetch-localities-osm-delhi.ts"
+    "scripts/fetch-localities-osm-delhi.ts",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "opencity-delhi-mcd-wards"
@@ -16244,7 +16360,7 @@
    "family": "geojson-layers",
    "scope": "delhi",
    "dataset": "water-bodies-census",
-   "bytes": 1147834,
+   "bytes": 1296334,
    "schema": {
     "kind": "FeatureCollection",
     "features": 893,
@@ -16309,7 +16425,7 @@
    "family": "geojson-layers",
    "scope": "delhi",
    "dataset": "water-bodies-current",
-   "bytes": 3451901,
+   "bytes": 3452372,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1845,
@@ -16337,7 +16453,8 @@
     "scripts/compute-restoration-priority-delhi.ts",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-water-bodies-osm-delhi.ts",
-    "scripts/fetch-water-census-delhi.ts"
+    "scripts/fetch-water-census-delhi.ts",
+    "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
     "osm-overpass"
@@ -19486,7 +19603,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 6679,
+   "bytes": 8113,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19510,7 +19627,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 213219,
+   "bytes": 214401,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19522,7 +19639,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 21764,
+   "bytes": 23730,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19537,7 +19654,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 818053,
+   "bytes": 819809,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -19553,7 +19670,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 146918,
+   "bytes": 148509,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19577,7 +19694,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 14300,
+   "bytes": 21673,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19589,7 +19706,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 32648,
+   "bytes": 34082,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19601,7 +19718,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 249510,
+   "bytes": 277580,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19617,7 +19734,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 12704080,
+   "bytes": 12811370,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19632,7 +19749,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 126361,
+   "bytes": 128318,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19646,7 +19763,7 @@
     "delhi",
     "mumbai"
    ],
-   "bytes": 146790,
+   "bytes": 147492,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19699,7 +19816,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 108144,
+   "bytes": 111900,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -19727,7 +19844,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 206355,
+   "bytes": 231680,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19743,7 +19860,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 86041,
+   "bytes": 87812,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -19755,7 +19872,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 231522,
+   "bytes": 232634,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19826,7 +19943,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 2134030,
+   "bytes": 2135717,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19853,7 +19970,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 36070,
+   "bytes": 36662,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19867,7 +19984,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 23633,
+   "bytes": 24418,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19883,7 +20000,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 100071,
+   "bytes": 104879,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -19899,7 +20016,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 94279,
+   "bytes": 96347,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -19963,7 +20080,7 @@
     "chennai",
     "delhi"
    ],
-   "bytes": 248131,
+   "bytes": 265869,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19978,7 +20095,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 428652,
+   "bytes": 429756,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -20004,7 +20121,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 34429,
+   "bytes": 34977,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -20019,8 +20136,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 19924,
-   "schema_variants": 3,
+   "bytes": 20484,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },
@@ -20108,7 +20225,7 @@
     "delhi",
     "mumbai"
    ],
-   "bytes": 5202943,
+   "bytes": 5235947,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -20195,7 +20312,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 4915031,
+   "bytes": 4967154,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20248,7 +20365,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 1937004,
+   "bytes": 1937455,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -20358,7 +20475,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 10515868,
+   "bytes": 11161568,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -20395,7 +20512,7 @@
     "bangalore",
     "delhi"
    ],
-   "bytes": 1620358,
+   "bytes": 1768858,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": false
@@ -20411,7 +20528,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 16954764,
+   "bytes": 16955235,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -20437,7 +20554,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 1847,
+   "bytes": 2943,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false

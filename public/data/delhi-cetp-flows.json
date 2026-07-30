@@ -1,4 +1,32 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/cetp-flows",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "dpcc-cetp-monthly-delhi",
+        "title": "DPCC CETP monthly analysis bundles 2019-2024 (via OpenCity)",
+        "publisher": "Delhi Pollution Control Committee (via OpenCity)",
+        "license": "open (per OpenCity dataset page)",
+        "as_of": "2024-11",
+        "retrieved": "2026-07-26"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-26",
+    "internal_inputs": [
+      "public/data/delhi-cetp-monthly-index.json"
+    ],
+    "produced_by": "neer-vazhvu-api/scripts/extract_delhi_cetp_flows.py",
+    "note": "OCR extraction from image-scan PDFs: plant, design capacity, month, sampling date, measured flow, OLMS remark only - the 23-parameter inlet/outlet grid OCRs badly and is deliberately NOT extracted (see _extraction). Validated against the hand-transcribed Wazirpur page in the index file, which is why that file is an internal input.",
+    "conventions": {
+      "series_end": "NOT a live feed: the DPCC CETP series ends 2024-11; surfaces showing these numbers must say so (_archival discipline)"
+    }
+  },
   "_note": "Design capacity vs MEASURED monthly inflow for Delhi's Common Effluent Treatment Plants, OCR-extracted from DPCC's monthly analysis PDFs. This is Delhi's industrial-attribution layer: DPCC's only public consent register ends in July 2002, so there is no per-unit denominator of who discharges what, but the gap between what these plants were built to treat and what actually reaches them is measurable, monthly, and published. Utilisation well under 100% means industrial effluent is not arriving at the works.",
   "_extraction": "The source PDFs are image scans with no text layer. Extracted here: plant, design capacity, month, sampling date, measured flow, OLMS remark - all prose lines that OCR cleanly. NOT extracted: the 23-parameter inlet/outlet grid, whose cells OCR badly; half-read heavy-metal values would be worse than none. Validated against the hand-transcribed Wazirpur page in delhi-cetp-monthly-index.json (build fails on disagreement).",
   "source": {
@@ -919,7 +947,7 @@
       "measured_flow_mld": 1.25,
       "olms_remark": null,
       "_name_match_confidence": 0.96,
-      "sampling_location": "Inlet and:Outlet of CETP if \u2018 \u2018i ae th",
+      "sampling_location": "Inlet and:Outlet of CETP if ‘ ‘i ae th",
       "source_bundle": "November 2019 CETP Data"
     },
     {
@@ -970,7 +998,7 @@
       "sampled": null,
       "measured_flow_mld": 10.4,
       "olms_remark": null,
-      "sampling_location": "\u201c4 Inlet and Outlet of CETP a She",
+      "sampling_location": "“4 Inlet and Outlet of CETP a She",
       "source_bundle": "November 2019 CETP Data"
     },
     {
@@ -2396,7 +2424,7 @@
       "sampled": "2021-01-13",
       "measured_flow_mld": 2.6,
       "olms_remark": null,
-      "sampling_location": "Inlet and Outlet of CETP\u2019",
+      "sampling_location": "Inlet and Outlet of CETP’",
       "source_bundle": "January 2021 CETP Data"
     },
     {
@@ -4167,7 +4195,7 @@
       "sampled": null,
       "measured_flow_mld": 2.89,
       "olms_remark": null,
-      "sampling_location": "\u2018 Inlet and Outlet of CETP",
+      "sampling_location": "‘ Inlet and Outlet of CETP",
       "source_bundle": "August 2022 CETP Data"
     },
     {
@@ -4399,7 +4427,7 @@
       "sampled": null,
       "measured_flow_mld": 12.73,
       "olms_remark": null,
-      "sampling_location": "\u2018 Inlet and Outiet of CETP",
+      "sampling_location": "‘ Inlet and Outiet of CETP",
       "source_bundle": "October 2022 CETP Data"
     },
     {
@@ -5167,7 +5195,7 @@
       "sampled": "2023-05-16",
       "measured_flow_mld": 1.63,
       "olms_remark": null,
-      "sampling_location": "iniet and Outlet of CETP ~~ : \u2018",
+      "sampling_location": "iniet and Outlet of CETP ~~ : ‘",
       "source_bundle": "May 2023 CETP Data"
     },
     {
@@ -5198,7 +5226,7 @@
       "measured_flow_mld": 3.81,
       "olms_remark": null,
       "_name_match_confidence": 0.667,
-      "sampling_location": "; v7. ints! and Outlet \u00abof Cerp",
+      "sampling_location": "; v7. ints! and Outlet «of Cerp",
       "source_bundle": "June 2023 CETP Data"
     },
     {
@@ -5208,7 +5236,7 @@
       "sampled": null,
       "measured_flow_mld": null,
       "olms_remark": null,
-      "sampling_location": "let and Outlet of CeTP \u2014 \u00a5",
+      "sampling_location": "let and Outlet of CeTP — ¥",
       "source_bundle": "June 2023 CETP Data"
     },
     {
@@ -6882,7 +6910,7 @@
       "sampled": "2024-09-02",
       "measured_flow_mld": 2.73,
       "olms_remark": null,
-      "sampling_location": "\u201d : Inlet and Outlet of CETP",
+      "sampling_location": "” : Inlet and Outlet of CETP",
       "source_bundle": "September 2024 CETP Data"
     },
     {

@@ -14,10 +14,11 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 | ingres | 1 | 1 | 0 | 0 |
 | rich-bodies | 127 | 127 | 43 | 0 |
 
-## Enveloped artifacts (≥L2): 140
+## Enveloped artifacts (≥L2): 172
 
 - L3 `public/data/allocations-chennai.json`
 - L3 `public/data/allocations-madurai.json`
+- L2 `public/data/cag-djb-audit-2025.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/cascade/chennai-cascade-catchments.geojson` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/cascade/chennai-cascade-edges.geojson` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/cascade/chennai-cascade-lakes.geojson` - no contract published for this dataset (L3 not applicable yet)
@@ -40,21 +41,38 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 - L2 `public/data/cascade/madurai-catchment-quality.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/chennai-supply-overview.json` - no contract published for this dataset (L3 not applicable yet)
 - L3 `public/data/commitments-chennai.json`
+- L3 `public/data/commitments-delhi.json`
 - L3 `public/data/commitments-madurai.json`
 - L2 `public/data/cooum-sewage-inlets.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/delhi-cetp-flows.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/delhi-cetp-monthly-index.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/delhi-cgwb-stations.json` - L3 fail: top-level key 'series_label' is not envelope, GeoJSON, contract-declared, or grandfathered legacy - per-scope additions must live in ext (spec 6.3)
+- L2 `public/data/delhi-drain-quality.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/delhi-flood-hotspots.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/delhi-jj-bastis-geo.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/delhi-supply-overview.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/delhi-ward-representatives.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/dpcc-monthly-wq-delhi.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/dusib-jj-bastis.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/elevation-bands-chennai.geojson` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/elevation-bands-delhi.geojson` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/elevation-bands-madurai.geojson` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/facts-delhi.json` - L3 fail: $.facts[0].data_date: 'c. 750-1100 CE' fails pattern ^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?)?$
 - L3 `public/data/facts-madurai.json`
 - L2 `public/data/gee-phase1-water-body-targets-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/gee-phase1-water-body-targets.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/gw-stations-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/gw-stations.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/gwr-blocks-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/gwr-blocks-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/gwr-blocks.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/imd-rainfall-monthly-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/imd-rainfall-monthly-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/imd-rainfall-monthly.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/industrial-sources-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/industrial-sources-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/industrial-sources.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/ingres/delhi-2022-2023.json` - no contract published for this dataset (L3 not applicable yet)
 - L3 `public/data/madurai-cgwb-stations.json`
 - L2 `public/data/madurai-supply-overview.json` - no contract published for this dataset (L3 not applicable yet)
 - L3 `public/data/madurai-ward-profiles.json`
@@ -63,9 +81,11 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 - L2 `public/data/rainfall-recent-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/rainfall-recent-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/rainfall-recent-mumbai.json` - no contract published for this dataset (L3 not applicable yet)
+- L3 `public/data/restoration-priority-delhi.json`
 - L2 `public/data/restoration-priority-madurai-legacy.json` - no contract published for this dataset (L3 not applicable yet)
 - L3 `public/data/restoration-priority-madurai.json`
 - L3 `public/data/restoration-priority.json`
+- L2 `public/data/restoration-projects-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/restoration-projects-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/restoration-projects.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/rich-bodies/chembarambakkam-dw-water-trend.json` - no contract published for this dataset (L3 not applicable yet)
@@ -111,13 +131,18 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 - L2 `public/data/rich-bodies/velachery-jrc-water-trend.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/rich-bodies/velachery-open-buildings-verification.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/rich-bodies/velachery-overture-buildings.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/river-events-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/river-events-madurai.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/river-quality-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/river-quality-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/river-quality.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/ward-profiles.json` - capped at L2: lineage rests (transitively) on ungoverned inputs - public/geojson/chennai-wards-2022.geojson
 - L2 `public/data/ward-representatives.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/ward-risk-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/ward-risk-madurai.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/water-bodies-flagship-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/water-bodies-flagship-madurai.json` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/data/water-bodies-lost-delhi.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/data/water-bodies-lost-madurai.json` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/geojson/chennai-coastal-hotspots.geojson` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/geojson/chennai-coastal-transects.geojson` - no contract published for this dataset (L3 not applicable yet)
@@ -136,6 +161,12 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 - L2 `public/geojson/chennai-sub-basins-risk.geojson` - no contract published for this dataset (L3 not applicable yet)
 - L3 `public/geojson/chennai-water-bodies-current.geojson`
 - L2 `public/geojson/chennai-water-bodies-lost.geojson` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/geojson/delhi-drainage.geojson` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/geojson/delhi-gwr-blocks.geojson` - no contract published for this dataset (L3 not applicable yet)
+- L3 `public/geojson/delhi-rivers.geojson`
+- L2 `public/geojson/delhi-wards-2022.geojson` - no contract published for this dataset (L3 not applicable yet)
+- L2 `public/geojson/delhi-water-bodies-census.geojson` - no contract published for this dataset (L3 not applicable yet)
+- L3 `public/geojson/delhi-water-bodies-current.geojson`
 - L2 `public/geojson/madurai-gwr-blocks.geojson` - no contract published for this dataset (L3 not applicable yet)
 - L3 `public/geojson/madurai-rivers.geojson`
 - L2 `public/geojson/madurai-wards-2022.geojson` - no contract published for this dataset (L3 not applicable yet)

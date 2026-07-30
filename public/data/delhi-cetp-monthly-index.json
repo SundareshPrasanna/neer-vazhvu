@@ -1,452 +1,473 @@
 {
- "_note": "Delhi CETP (Common Effluent Treatment Plant) monthly water-quality archive - DPCC per-plant analysis reports (inlet/outlet across 23 parameters incl. heavy metals, EPA standards, OLMS status remark, and measured flow vs design capacity), digitized as monthly PDF bundles by OpenCity across two datasets covering 2019-2024 (series ends Nov 2024 - archival, not live). The PDFs are image scans; the 62-file index below is the acquisition target for the OCR batch task. One page transcribed 2026-07-20 as the schema sample. Attribute DPCC (analysis) + OpenCity (hosting).",
- "source": {
-  "publisher": "Delhi Pollution Control Committee (I/C Water Laboratory)",
-  "host": "OpenCity Urban Data Portal - datasets delhi-cetp-monthly-water-quality-data-2019-2022 and -2022-2024",
-  "retrieved": "2026-07-20",
-  "resource_count": 62,
-  "coverage": "2019-2024 monthly bundles; one PDF per month, ~13 pages = one page per CETP",
-  "ocr_status": "image scans - bulk extraction pending tesseract wiring (same task as DPCC river/drain/STP scans)"
- },
- "schema_sample": {
-  "plant": "Wazirpur CETP",
-  "design_capacity_mld": 24,
-  "month": "2024-11",
-  "sampled": "2024-11-04",
-  "report_no": "DPCC/W/CETP/24-25/92/1430",
-  "report_date": "2024-12-03",
-  "measured_flow_mld": 5.32,
-  "olms_remark": "OLMS was non functional",
-  "parameters_mgl_except_ph": {
-   "ph": {
-    "inlet": 7.2,
-    "outlet": 7.4,
-    "std_inlet": "5.5-9.0",
-    "std_outlet": "6-9"
-   },
-   "tss": {
-    "inlet": 344,
-    "outlet": 62,
-    "std_inlet": 600,
-    "std_outlet": 100
-   },
-   "cod": {
-    "inlet": 336,
-    "outlet": 92,
-    "std_inlet": 750,
-    "std_outlet": 250
-   },
-   "bod_3d_27c": {
-    "inlet": 180,
-    "outlet": 22,
-    "std_inlet": 300,
-    "std_outlet": 30
-   },
-   "oil_grease": {
-    "inlet": 15.2,
-    "outlet": 2.4,
-    "std_inlet": 20.0,
-    "std_outlet": 10.0
-   },
-   "ammonical_n": {
-    "inlet": 20.1,
-    "outlet": 3.2,
-    "std_inlet": 50,
-    "std_outlet": 50
-   },
-   "sulphide": {
-    "inlet": 4.1,
-    "outlet": 1.3,
-    "std_inlet": 5.0,
-    "std_outlet": 2.0
-   },
-   "phosphate": {
-    "inlet": 10.2,
-    "outlet": 2.8,
-    "std_inlet": 15.0,
-    "std_outlet": 5.0
-   },
-   "tkn": {
-    "inlet": 0.8,
-    "outlet": 0.3,
-    "std_outlet": 50
-   },
-   "metals_note": "Ni/Cu/Zn/Cr/Pb/Cd/As/Hg/Se/F/B/phenolics/cyanide columns present with standards; values '-' (below detection / not analyzed) in this sample"
+  "nvdm": "1.0",
+  "dataset": "data-root/cetp-monthly-index",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
   },
-  "derived_note": "Utilization signal: 5.32 MLD measured vs 24 MLD design at Wazirpur. OLMS non-functional remark = the online-monitoring accountability hook (pairs with the CPCB OCEMS all-NA finding)."
- },
- "resources": [
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "April 2019 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/4533f2c3-1352-4820-8270-aecb18c362dc/download/244dd07e-3028-4636-b140-ddbd0a48529e.pdf"
+  "provenance": {
+    "sources": [
+      {
+        "id": "dpcc-cetp-monthly-delhi",
+        "title": "DPCC CETP monthly analysis bundles 2019-2024 (via OpenCity)",
+        "publisher": "Delhi Pollution Control Committee (via OpenCity)",
+        "license": "open (per OpenCity dataset page)",
+        "as_of": "2024-11",
+        "retrieved": "2026-07-20"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-07-20",
+    "note": "Acquisition index for the 62 monthly PDF bundles (2019-2024) plus one page hand-transcribed 2026-07-20 as the schema sample. Attribute DPCC (analysis) + OpenCity (hosting)."
   },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "May 2019 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/e043924c-32c9-49da-a18e-aa738aae2b50/download/c311cdf8-e64e-4a72-9c31-e41eafca663d.pdf"
+  "_note": "Delhi CETP (Common Effluent Treatment Plant) monthly water-quality archive - DPCC per-plant analysis reports (inlet/outlet across 23 parameters incl. heavy metals, EPA standards, OLMS status remark, and measured flow vs design capacity), digitized as monthly PDF bundles by OpenCity across two datasets covering 2019-2024 (series ends Nov 2024 - archival, not live). The PDFs are image scans; the 62-file index below is the acquisition target for the OCR batch task. One page transcribed 2026-07-20 as the schema sample. Attribute DPCC (analysis) + OpenCity (hosting).",
+  "source": {
+    "publisher": "Delhi Pollution Control Committee (I/C Water Laboratory)",
+    "host": "OpenCity Urban Data Portal - datasets delhi-cetp-monthly-water-quality-data-2019-2022 and -2022-2024",
+    "retrieved": "2026-07-20",
+    "resource_count": 62,
+    "coverage": "2019-2024 monthly bundles; one PDF per month, ~13 pages = one page per CETP",
+    "ocr_status": "image scans - bulk extraction pending tesseract wiring (same task as DPCC river/drain/STP scans)"
   },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "June 2019 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/fe4187bc-f7af-47bc-add4-936a31276e9f/download/b3caf3b9-5b4e-42b6-9bcc-a7937b2d5073.pdf"
+  "schema_sample": {
+    "plant": "Wazirpur CETP",
+    "design_capacity_mld": 24,
+    "month": "2024-11",
+    "sampled": "2024-11-04",
+    "report_no": "DPCC/W/CETP/24-25/92/1430",
+    "report_date": "2024-12-03",
+    "measured_flow_mld": 5.32,
+    "olms_remark": "OLMS was non functional",
+    "parameters_mgl_except_ph": {
+      "ph": {
+        "inlet": 7.2,
+        "outlet": 7.4,
+        "std_inlet": "5.5-9.0",
+        "std_outlet": "6-9"
+      },
+      "tss": {
+        "inlet": 344,
+        "outlet": 62,
+        "std_inlet": 600,
+        "std_outlet": 100
+      },
+      "cod": {
+        "inlet": 336,
+        "outlet": 92,
+        "std_inlet": 750,
+        "std_outlet": 250
+      },
+      "bod_3d_27c": {
+        "inlet": 180,
+        "outlet": 22,
+        "std_inlet": 300,
+        "std_outlet": 30
+      },
+      "oil_grease": {
+        "inlet": 15.2,
+        "outlet": 2.4,
+        "std_inlet": 20.0,
+        "std_outlet": 10.0
+      },
+      "ammonical_n": {
+        "inlet": 20.1,
+        "outlet": 3.2,
+        "std_inlet": 50,
+        "std_outlet": 50
+      },
+      "sulphide": {
+        "inlet": 4.1,
+        "outlet": 1.3,
+        "std_inlet": 5.0,
+        "std_outlet": 2.0
+      },
+      "phosphate": {
+        "inlet": 10.2,
+        "outlet": 2.8,
+        "std_inlet": 15.0,
+        "std_outlet": 5.0
+      },
+      "tkn": {
+        "inlet": 0.8,
+        "outlet": 0.3,
+        "std_outlet": 50
+      },
+      "metals_note": "Ni/Cu/Zn/Cr/Pb/Cd/As/Hg/Se/F/B/phenolics/cyanide columns present with standards; values '-' (below detection / not analyzed) in this sample"
+    },
+    "derived_note": "Utilization signal: 5.32 MLD measured vs 24 MLD design at Wazirpur. OLMS non-functional remark = the online-monitoring accountability hook (pairs with the CPCB OCEMS all-NA finding)."
   },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "July 2019 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/226f7da4-4e8e-46b4-9f95-fe80dbf0eb10/download/81451f5b-543f-47dc-9a26-cb27f1da8233.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "August 2019 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/b90e2d9d-0b7d-4597-ac0c-966af748ffe6/download/75ea1eea-e6b6-471f-af6c-4e7c81965b39.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "September 2019 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/d7781bb8-2ab8-4d6c-8eed-f30b99adcc3c/download/d99acd2f-51c3-4585-853e-b4d6d8b419de.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "October 2019 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/af19cc4f-f46d-4bf6-9e1e-839ff1f712fd/download/8e34436f-1505-4c83-bd38-3551373ef24c.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "November 2019 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/fcf30208-5460-49af-a26a-2babe68d5f9f/download/de140fa7-2397-4709-b845-fb619db9debe.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "December 2019 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/c99db138-30e5-41bf-81a1-ac226303726b/download/5654a4c1-ba9d-4788-9326-6d8742a8b6bd.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "January 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/ff4ec737-63e8-4a5a-a2ad-8966be8d919e/download/fe806ba8-af15-4042-9d9f-b8e07c079d49.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "February 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/1502d2cc-6efc-41b5-bc12-1a378c742f75/download/a56cb481-6a91-4daf-a60d-a6787dace9d3.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "March 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/0142046b-ae32-46ef-9623-671ad01a32ca/download/6ba61fdf-ab76-4b15-b597-c56a278262d0.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "May 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/01f9c2f9-9959-4738-ab8c-1b0222b9b3bc/download/a804de57-848f-4c01-bfd4-2cdd69e97fed.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "June 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/2e47b4e7-2095-4685-b4db-872d1181277e/download/56621164-118f-45dc-ba48-a1a8cff07a6e.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "July 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/60943b5c-725d-4eba-ab3e-a2c0dd061c5b/download/a714071a-e597-421b-866b-9db1daffe16d.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "August 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/907dbc66-8147-4c90-ac9f-8fa7648caddb/download/ad7bab95-1977-4b9c-b73e-ccf2459c00bc.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "September 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/5ce3f91e-fabd-493f-afdf-1e804f4fb418/download/e1f5386b-de17-454a-ae83-a7efd8902c91.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "October 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/cd3b47fb-6181-48d9-a240-6d923f672b37/download/301ca42b-100d-4e1c-878b-485ace3a78cb.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "November 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/6ec22ffb-94d1-458f-a23f-472d496dcadf/download/9a9925d5-f523-4c68-91b1-48e9ea906684.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "December 2020 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/acd95c69-bc0e-40ca-90bf-cfb8dd794ff2/download/b9fc969a-251b-432a-9afd-d705e86279e0.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "January 2021 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/66f11b5b-aed3-446e-929a-3afda74d43fc/download/5f0351c2-37a1-426d-921e-4243bb31b64b.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "February 2021 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/da8480ff-6806-43e1-84a5-0840f17f78eb/download/25ad4a3e-8df2-4388-a26b-ccb57eee2cc5.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "June 2021 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/bf4e291d-31b0-43fd-995b-00d16051f74c/download/8f096995-6fe7-4e0a-ab70-825d8b8928c5.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "July 2021 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/7d179e5f-7a68-495b-ba03-bf4e91ce7956/download/13d7a08e-f03d-4142-b115-984394936c14.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "August 2021 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/cdac5989-d96b-4725-8421-f7fb4d3ca5ea/download/5131b314-b2e2-465c-a089-543223a022b8.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "September 2021 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/ec88e845-78b4-400c-912d-daa49418fa60/download/f4e9ee95-48c2-4443-a1a7-18a8ad0a9a55.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "October 2021 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/1cfd12d5-f066-4a46-8321-af46a1fd7d94/download/e72d0a26-d8a3-4fa4-9a40-cc5bc10bcd00.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "November 2021 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/7472bb0a-86cd-40d4-a3c0-dc97a6424eab/download/9d1cfeee-1cb5-49ba-a117-4ba5ec169dde.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "December 2021 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/4254411a-f58f-49db-98b0-3340b2fd065a/download/b044446b-ef3f-4df1-9b57-7101915918f7.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "February 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/da1116d1-9010-4208-a213-15cf78633557/download/b846290f-fc39-483f-8e3d-14393100d549.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "March 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/fbddea82-355a-44a3-a2c5-4adac4bdbd0e/download/8762d987-43fb-4284-9703-c6b99cc482aa.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "April 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/994a3400-a4cd-4c50-aa9b-ddead64aa9a0/download/1dedc8e4-a500-40bc-a28c-de9b3bfdd35c.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "May 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/a4094b0d-7311-4533-b81b-5d84c2483929/download/9d7f38d8-10ec-4f3d-a529-9087d13b7534.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "June 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/24453b73-7e24-4c9c-b96b-6864dc2c4a82/download/a8b9b54a-2da7-41d9-a3a9-532b31912ea8.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "July 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/65c97557-344b-496d-bc24-c019f27926a9/download/4897ed70-2ea0-47ea-9c75-84b029c6afef.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "August 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/e6d27fd7-e565-4901-bead-7e88f8263c3e/download/000cdbf8-0776-496f-b63a-cb77d6a6353e.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "September 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/210519ab-eae9-4897-a291-f10453e5a384/download/82e46780-d664-4e1e-a17b-6531432a2305.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "October 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/20880c81-269d-4473-af7c-bc24229caf71/download/3da7344b-9241-4cc6-9138-70d3ee32a01a.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "November 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/24fe5aaf-86ad-46be-9936-521cb89a41f8/download/c4abd47c-5fd8-402b-8832-a97629537019.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
-   "name": "December 2022 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/29c4e389-57f8-42e2-b3fb-1fa4ddebf72f/download/ca8a2c8e-2c2e-41d9-885d-814003b16311.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "February 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/2a36919c-7ae1-472f-81b7-78184ecbe0db/download/7a027320-41ef-4127-8697-bd9a04d80647.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "March 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/d8dce4de-652a-4da8-92bd-7f8f83775bd9/download/b31735c0-b8bd-4217-acb0-fd348f5a6ef5.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "April 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/77019386-973a-4bb9-b418-bc87d19a4d51/download/79f74571-ad80-4f7b-bbb7-4205f20fc7f3.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "May 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/23ac662e-eb30-402d-9322-c62d23f297ab/download/11789db4-392b-4ab2-8a4b-ce03623a62a9.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "June 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/8cee5d4a-c4ba-4558-8d0d-2f5a3076544b/download/48e97441-48e7-4eae-a9ef-9c1fcebadcf5.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "July 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/1bbcf0f8-4816-4aed-9e0d-f850003f98fb/download/31cbae95-a1d1-4852-ab8d-e96455126925.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "August 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/8afc8056-48c5-41b1-9019-ffa963fafe5c/download/1e16d36d-cfde-4c1d-955d-6b2076ca20c1.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "September 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/41e2619e-b364-4dfc-bd72-e2f57cde82f0/download/4e479daa-bbab-428f-9542-27c118f3518d.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "October 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/fd361f0a-a3fa-4456-8678-373de810b2c1/download/bb2e5fc2-90fb-4583-b756-d02e0a78bf9b.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "November 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/c7e6f15f-bada-4874-9bf6-926462b19c7b/download/c10068bc-2e92-496c-8a93-f1f59c188a9e.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "December 2023 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/166db0fd-37df-40bf-b51a-ecfa98642492/download/457a2096-f9a6-45d3-b5c2-a46e3554ef8d.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "January 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/2d473652-832a-4e8f-807c-2ab2b3a943e3/download/b1743807-5867-442b-bce0-04a0e11e3970.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "February 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/cc1ded98-30ad-4a20-9245-32e8f360a2ff/download/89bd96c4-8ddb-4c10-8db8-8f059f6ca50e.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "March 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/f97cfb7b-6485-4d99-b612-455282f76bbd/download/73daae41-121a-479f-8c42-17e80f44503d.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "April 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/da5ddd43-6da8-4df7-b2a3-f60b7ad34e44/download/b9dfb609-914c-4841-b3ee-5b3934eec062.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "May 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/7123cdac-8c4f-40ae-931b-ef60fdb8faef/download/bd9d0934-af80-4910-aa58-bf276e5a0c9f.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "June 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/9826e84a-76ca-4d47-9b42-d9b1d85ac555/download/48b02d17-3b14-4a71-b27f-b01a37ecd416.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "July 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/9f4b2769-716d-414a-9a40-96c97fd7b3c8/download/6f4b4405-354d-45ca-9e6b-9a56a61d2ead.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "August 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/16d48a47-1f7f-4ddf-acab-b62f8be57b6a/download/2ad3d4b1-0f32-42d8-a18d-195a0ac66c48.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "September 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/e464aa39-d432-46e5-85a7-dc37693667cd/download/39852377-78c6-4057-9330-97b51ffd18b8.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "October 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/df4c3b2e-72cd-4888-ad88-1606d78ad032/download/56f4703d-8a47-4ce8-8ffe-37e3a2171d11.pdf"
-  },
-  {
-   "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
-   "name": "November 2024 CETP Data",
-   "format": "PDF",
-   "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/22de2030-7a70-495f-9db2-79db3140acc2/download/d94722f2-58f3-4530-bf8a-c2f6e968762c.pdf"
-  }
- ]
+  "resources": [
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "April 2019 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/4533f2c3-1352-4820-8270-aecb18c362dc/download/244dd07e-3028-4636-b140-ddbd0a48529e.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "May 2019 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/e043924c-32c9-49da-a18e-aa738aae2b50/download/c311cdf8-e64e-4a72-9c31-e41eafca663d.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "June 2019 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/fe4187bc-f7af-47bc-add4-936a31276e9f/download/b3caf3b9-5b4e-42b6-9bcc-a7937b2d5073.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "July 2019 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/226f7da4-4e8e-46b4-9f95-fe80dbf0eb10/download/81451f5b-543f-47dc-9a26-cb27f1da8233.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "August 2019 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/b90e2d9d-0b7d-4597-ac0c-966af748ffe6/download/75ea1eea-e6b6-471f-af6c-4e7c81965b39.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "September 2019 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/d7781bb8-2ab8-4d6c-8eed-f30b99adcc3c/download/d99acd2f-51c3-4585-853e-b4d6d8b419de.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "October 2019 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/af19cc4f-f46d-4bf6-9e1e-839ff1f712fd/download/8e34436f-1505-4c83-bd38-3551373ef24c.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "November 2019 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/fcf30208-5460-49af-a26a-2babe68d5f9f/download/de140fa7-2397-4709-b845-fb619db9debe.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "December 2019 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/c99db138-30e5-41bf-81a1-ac226303726b/download/5654a4c1-ba9d-4788-9326-6d8742a8b6bd.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "January 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/ff4ec737-63e8-4a5a-a2ad-8966be8d919e/download/fe806ba8-af15-4042-9d9f-b8e07c079d49.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "February 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/1502d2cc-6efc-41b5-bc12-1a378c742f75/download/a56cb481-6a91-4daf-a60d-a6787dace9d3.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "March 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/0142046b-ae32-46ef-9623-671ad01a32ca/download/6ba61fdf-ab76-4b15-b597-c56a278262d0.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "May 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/01f9c2f9-9959-4738-ab8c-1b0222b9b3bc/download/a804de57-848f-4c01-bfd4-2cdd69e97fed.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "June 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/2e47b4e7-2095-4685-b4db-872d1181277e/download/56621164-118f-45dc-ba48-a1a8cff07a6e.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "July 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/60943b5c-725d-4eba-ab3e-a2c0dd061c5b/download/a714071a-e597-421b-866b-9db1daffe16d.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "August 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/907dbc66-8147-4c90-ac9f-8fa7648caddb/download/ad7bab95-1977-4b9c-b73e-ccf2459c00bc.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "September 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/5ce3f91e-fabd-493f-afdf-1e804f4fb418/download/e1f5386b-de17-454a-ae83-a7efd8902c91.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "October 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/cd3b47fb-6181-48d9-a240-6d923f672b37/download/301ca42b-100d-4e1c-878b-485ace3a78cb.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "November 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/6ec22ffb-94d1-458f-a23f-472d496dcadf/download/9a9925d5-f523-4c68-91b1-48e9ea906684.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "December 2020 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/acd95c69-bc0e-40ca-90bf-cfb8dd794ff2/download/b9fc969a-251b-432a-9afd-d705e86279e0.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "January 2021 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/66f11b5b-aed3-446e-929a-3afda74d43fc/download/5f0351c2-37a1-426d-921e-4243bb31b64b.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "February 2021 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/da8480ff-6806-43e1-84a5-0840f17f78eb/download/25ad4a3e-8df2-4388-a26b-ccb57eee2cc5.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "June 2021 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/bf4e291d-31b0-43fd-995b-00d16051f74c/download/8f096995-6fe7-4e0a-ab70-825d8b8928c5.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "July 2021 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/7d179e5f-7a68-495b-ba03-bf4e91ce7956/download/13d7a08e-f03d-4142-b115-984394936c14.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "August 2021 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/cdac5989-d96b-4725-8421-f7fb4d3ca5ea/download/5131b314-b2e2-465c-a089-543223a022b8.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "September 2021 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/ec88e845-78b4-400c-912d-daa49418fa60/download/f4e9ee95-48c2-4443-a1a7-18a8ad0a9a55.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "October 2021 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/1cfd12d5-f066-4a46-8321-af46a1fd7d94/download/e72d0a26-d8a3-4fa4-9a40-cc5bc10bcd00.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "November 2021 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/7472bb0a-86cd-40d4-a3c0-dc97a6424eab/download/9d1cfeee-1cb5-49ba-a117-4ba5ec169dde.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "December 2021 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/4254411a-f58f-49db-98b0-3340b2fd065a/download/b044446b-ef3f-4df1-9b57-7101915918f7.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "February 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/da1116d1-9010-4208-a213-15cf78633557/download/b846290f-fc39-483f-8e3d-14393100d549.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "March 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/fbddea82-355a-44a3-a2c5-4adac4bdbd0e/download/8762d987-43fb-4284-9703-c6b99cc482aa.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "April 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/994a3400-a4cd-4c50-aa9b-ddead64aa9a0/download/1dedc8e4-a500-40bc-a28c-de9b3bfdd35c.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "May 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/a4094b0d-7311-4533-b81b-5d84c2483929/download/9d7f38d8-10ec-4f3d-a529-9087d13b7534.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "June 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/24453b73-7e24-4c9c-b96b-6864dc2c4a82/download/a8b9b54a-2da7-41d9-a3a9-532b31912ea8.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "July 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/65c97557-344b-496d-bc24-c019f27926a9/download/4897ed70-2ea0-47ea-9c75-84b029c6afef.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "August 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/e6d27fd7-e565-4901-bead-7e88f8263c3e/download/000cdbf8-0776-496f-b63a-cb77d6a6353e.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "September 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/210519ab-eae9-4897-a291-f10453e5a384/download/82e46780-d664-4e1e-a17b-6531432a2305.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "October 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/20880c81-269d-4473-af7c-bc24229caf71/download/3da7344b-9241-4cc6-9138-70d3ee32a01a.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "November 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/24fe5aaf-86ad-46be-9936-521cb89a41f8/download/c4abd47c-5fd8-402b-8832-a97629537019.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2019-2022",
+      "name": "December 2022 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/800c4105-9ab3-4a8d-862b-ef4a302f032a/resource/29c4e389-57f8-42e2-b3fb-1fa4ddebf72f/download/ca8a2c8e-2c2e-41d9-885d-814003b16311.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "February 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/2a36919c-7ae1-472f-81b7-78184ecbe0db/download/7a027320-41ef-4127-8697-bd9a04d80647.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "March 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/d8dce4de-652a-4da8-92bd-7f8f83775bd9/download/b31735c0-b8bd-4217-acb0-fd348f5a6ef5.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "April 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/77019386-973a-4bb9-b418-bc87d19a4d51/download/79f74571-ad80-4f7b-bbb7-4205f20fc7f3.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "May 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/23ac662e-eb30-402d-9322-c62d23f297ab/download/11789db4-392b-4ab2-8a4b-ce03623a62a9.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "June 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/8cee5d4a-c4ba-4558-8d0d-2f5a3076544b/download/48e97441-48e7-4eae-a9ef-9c1fcebadcf5.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "July 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/1bbcf0f8-4816-4aed-9e0d-f850003f98fb/download/31cbae95-a1d1-4852-ab8d-e96455126925.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "August 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/8afc8056-48c5-41b1-9019-ffa963fafe5c/download/1e16d36d-cfde-4c1d-955d-6b2076ca20c1.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "September 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/41e2619e-b364-4dfc-bd72-e2f57cde82f0/download/4e479daa-bbab-428f-9542-27c118f3518d.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "October 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/fd361f0a-a3fa-4456-8678-373de810b2c1/download/bb2e5fc2-90fb-4583-b756-d02e0a78bf9b.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "November 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/c7e6f15f-bada-4874-9bf6-926462b19c7b/download/c10068bc-2e92-496c-8a93-f1f59c188a9e.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "December 2023 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/166db0fd-37df-40bf-b51a-ecfa98642492/download/457a2096-f9a6-45d3-b5c2-a46e3554ef8d.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "January 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/2d473652-832a-4e8f-807c-2ab2b3a943e3/download/b1743807-5867-442b-bce0-04a0e11e3970.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "February 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/cc1ded98-30ad-4a20-9245-32e8f360a2ff/download/89bd96c4-8ddb-4c10-8db8-8f059f6ca50e.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "March 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/f97cfb7b-6485-4d99-b612-455282f76bbd/download/73daae41-121a-479f-8c42-17e80f44503d.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "April 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/da5ddd43-6da8-4df7-b2a3-f60b7ad34e44/download/b9dfb609-914c-4841-b3ee-5b3934eec062.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "May 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/7123cdac-8c4f-40ae-931b-ef60fdb8faef/download/bd9d0934-af80-4910-aa58-bf276e5a0c9f.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "June 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/9826e84a-76ca-4d47-9b42-d9b1d85ac555/download/48b02d17-3b14-4a71-b27f-b01a37ecd416.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "July 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/9f4b2769-716d-414a-9a40-96c97fd7b3c8/download/6f4b4405-354d-45ca-9e6b-9a56a61d2ead.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "August 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/16d48a47-1f7f-4ddf-acab-b62f8be57b6a/download/2ad3d4b1-0f32-42d8-a18d-195a0ac66c48.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "September 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/e464aa39-d432-46e5-85a7-dc37693667cd/download/39852377-78c6-4057-9330-97b51ffd18b8.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "October 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/df4c3b2e-72cd-4888-ad88-1606d78ad032/download/56f4703d-8a47-4ce8-8ffe-37e3a2171d11.pdf"
+    },
+    {
+      "dataset": "delhi-cetp-monthly-water-quality-data-2022-2024",
+      "name": "November 2024 CETP Data",
+      "format": "PDF",
+      "url": "https://data.opencity.in/dataset/248d68a7-fb2b-4362-8b58-dd2a677af6f9/resource/22de2030-7a70-495f-9db2-79db3140acc2/download/d94722f2-58f3-4530-bf8a-c2f6e968762c.pdf"
+    }
+  ]
 }

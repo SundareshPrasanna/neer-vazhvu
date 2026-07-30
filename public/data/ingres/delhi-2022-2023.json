@@ -1,72 +1,94 @@
 {
- "_provenance": {
-  "source": "IN-GRES (India Ground Water Resource Estimation System), CGWB + State GW departments",
-  "url": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=DELHI;loctype=STATE;view=ADMIN;locuuid=a1ac5d18-8c9a-4047-8fdd-4d7d9deaa34e;year=2022-2023",
-  "assessment_cycle": "2022-2023",
-  "acquired": "2026-07-24",
-  "method": "headless-Chrome render of the portal UI + DOM table parse (the open API's POST contract is still uncaptured); the 2022-23 edition has no OpenCity mirror",
-  "fields": "rainfall_mm, avail_ham (Annual Extractable GW Resources), extraction_ham (GW Extraction, all uses)"
- },
- "districts": {
-  "CENTRAL": {
-   "rainfall_mm": 524.25,
-   "avail_ham": 2206.35,
-   "extraction_ham": 1740.96
+  "nvdm": "1.0",
+  "dataset": "ingres/2022-2023",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
   },
-  "EAST": {
-   "rainfall_mm": 586.87,
-   "avail_ham": 1472.41,
-   "extraction_ham": 1392.91
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-delhi",
+        "title": "IN-GRES dynamic groundwater assessment, Delhi districts (2022-23 cycle)",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "GoI publication, cited with attribution",
+        "as_of": "2023",
+        "retrieved": "2026-07-24"
+      }
+    ],
+    "method": "scrape",
+    "produced_at": "2026-07-24",
+    "produced_by": "manual",
+    "note": "2022-23 assessment cycle (as_of 2023 = cycle end year), acquired by headless-Chrome render of the IN-GRES portal UI + DOM table parse - no OpenCity mirror exists for this cycle and the open API's POST contract is uncaptured (the most fragile acquisition on the platform; full detail in the legacy _provenance key, incl. the Delhi state uuid)."
   },
-  "NAZUL LAND": {
-   "rainfall_mm": 586.87,
-   "avail_ham": 458.9,
-   "extraction_ham": 314.04
+  "_provenance": {
+    "source": "IN-GRES (India Ground Water Resource Estimation System), CGWB + State GW departments",
+    "url": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=DELHI;loctype=STATE;view=ADMIN;locuuid=a1ac5d18-8c9a-4047-8fdd-4d7d9deaa34e;year=2022-2023",
+    "assessment_cycle": "2022-2023",
+    "acquired": "2026-07-24",
+    "method": "headless-Chrome render of the portal UI + DOM table parse (the open API's POST contract is still uncaptured); the 2022-23 edition has no OpenCity mirror",
+    "fields": "rainfall_mm, avail_ham (Annual Extractable GW Resources), extraction_ham (GW Extraction, all uses)"
   },
-  "NEW DELHI": {
-   "rainfall_mm": 638.85,
-   "avail_ham": 2621.74,
-   "extraction_ham": 3612.52
-  },
-  "NORTH": {
-   "rainfall_mm": 670.81,
-   "avail_ham": 4208.14,
-   "extraction_ham": 4592.99
-  },
-  "NORTH EAST": {
-   "rainfall_mm": 509.6,
-   "avail_ham": 1597.71,
-   "extraction_ham": 1690.38
-  },
-  "NORTH WEST": {
-   "rainfall_mm": 670.81,
-   "avail_ham": 3454.16,
-   "extraction_ham": 2278.3
-  },
-  "SHAHDARA": {
-   "rainfall_mm": 509.6,
-   "avail_ham": 1447.3,
-   "extraction_ham": 1669.1
-  },
-  "SOUTH": {
-   "rainfall_mm": 661.81,
-   "avail_ham": 4027.02,
-   "extraction_ham": 4541.1
-  },
-  "SOUTH EAST": {
-   "rainfall_mm": 661.81,
-   "avail_ham": 2363.38,
-   "extraction_ham": 2308.26
-  },
-  "SOUTH WEST": {
-   "rainfall_mm": 763.34,
-   "avail_ham": 6944.48,
-   "extraction_ham": 6499.41
-  },
-  "WEST": {
-   "rainfall_mm": 728.24,
-   "avail_ham": 3647.64,
-   "extraction_ham": 3510.58
+  "districts": {
+    "CENTRAL": {
+      "rainfall_mm": 524.25,
+      "avail_ham": 2206.35,
+      "extraction_ham": 1740.96
+    },
+    "EAST": {
+      "rainfall_mm": 586.87,
+      "avail_ham": 1472.41,
+      "extraction_ham": 1392.91
+    },
+    "NAZUL LAND": {
+      "rainfall_mm": 586.87,
+      "avail_ham": 458.9,
+      "extraction_ham": 314.04
+    },
+    "NEW DELHI": {
+      "rainfall_mm": 638.85,
+      "avail_ham": 2621.74,
+      "extraction_ham": 3612.52
+    },
+    "NORTH": {
+      "rainfall_mm": 670.81,
+      "avail_ham": 4208.14,
+      "extraction_ham": 4592.99
+    },
+    "NORTH EAST": {
+      "rainfall_mm": 509.6,
+      "avail_ham": 1597.71,
+      "extraction_ham": 1690.38
+    },
+    "NORTH WEST": {
+      "rainfall_mm": 670.81,
+      "avail_ham": 3454.16,
+      "extraction_ham": 2278.3
+    },
+    "SHAHDARA": {
+      "rainfall_mm": 509.6,
+      "avail_ham": 1447.3,
+      "extraction_ham": 1669.1
+    },
+    "SOUTH": {
+      "rainfall_mm": 661.81,
+      "avail_ham": 4027.02,
+      "extraction_ham": 4541.1
+    },
+    "SOUTH EAST": {
+      "rainfall_mm": 661.81,
+      "avail_ham": 2363.38,
+      "extraction_ham": 2308.26
+    },
+    "SOUTH WEST": {
+      "rainfall_mm": 763.34,
+      "avail_ham": 6944.48,
+      "extraction_ham": 6499.41
+    },
+    "WEST": {
+      "rainfall_mm": 728.24,
+      "avail_ham": 3647.64,
+      "extraction_ham": 3510.58
+    }
   }
- }
 }
