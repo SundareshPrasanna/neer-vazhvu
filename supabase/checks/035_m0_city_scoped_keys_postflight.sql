@@ -122,16 +122,35 @@ GROUP BY district, city_id;
 
 
 -- 6. NEXT-MORNING CHECK: run after the first post-migration daily pipeline.
--- New telemetry rows must arrive already stamped madurai (from the fixed
--- scripts), not repaired after the fact.
--- Expected: recent Vaigai-district rows all have city_id = 'madurai'.
+-- Review 2026-07-30: filtering on recent reading_date alone proves nothing -
+-- migration 035 already repaired historical rows with recent reading dates.
+-- A reading_date STRICTLY AFTER the apply date can only come from a
+-- post-apply ingest, so set the apply date below before running:
+--   \set apply_date '2026-08-01'
+-- Expected: every returned row has city_id = 'madurai' (rows exist only
+-- once the fixed scrapers have run - ALSO confirm the launchd scheduler log
+-- shows the job executed; no tracked workflow invokes these two scripts, so
+-- the run itself needs independent evidence).
 SELECT 'wris_river_level' AS table_name, reading_date, district, city_id, count(*) AS row_count
 FROM wris_river_level
-WHERE reading_date >= CURRENT_DATE - INTERVAL '3 days'
+WHERE reading_date > :'apply_date'::date
 GROUP BY reading_date, district, city_id
 UNION ALL
 SELECT 'wris_rainfall', reading_date, district, city_id, count(*)
 FROM wris_rainfall
-WHERE reading_date >= CURRENT_DATE - INTERVAL '3 days'
+WHERE reading_date > :'apply_date'::date
 GROUP BY reading_date, district, city_id
 ORDER BY table_name, reading_date DESC, district;
+
+
+-- 7. FK GUARANTEE: every city_id column must carry its named FK to cities.
+-- Expected: zero rows (a row = a table whose constraint is missing - the
+-- ADD COLUMN IF NOT EXISTS path skipped REFERENCES on a pre-existing column
+-- and the DO-block guard somehow did not run).
+SELECT t.relname AS table_missing_fk
+FROM pg_class t
+WHERE t.relname IN ('groundwater_wris', 'wris_river_level', 'wris_rainfall', 'water_bodies_census', 'weather_daily', 'water_estimate_daily', 'daily_briefing', 'groundwater_monthly', 'ward_risk_score', 'ward_narrative', 'reservoir_catchment_context', 'water_body_satellite_summary')
+  AND NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    WHERE c.conrelid = t.oid AND c.conname = t.relname || '_city_id_fkey'
+  );

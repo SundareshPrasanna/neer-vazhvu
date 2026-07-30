@@ -96,6 +96,41 @@ if (!/"city_id":\s*"madurai"/.test(rainfallScript)) {
   failures.push("Madurai WRIS rainfall script must stamp city_id='madurai'.");
 }
 
+// Fixture-driven district-mapping check (review 2026-07-30: the suffixed-only
+// Delhi alias list let real WRIS values like 'SOUTH' and 'NORTH EAST' fall
+// through to chennai). Keep DELHI_ALIASES in sync with 035's CASE - the sync
+// itself is asserted below.
+const DELHI_ALIASES = [
+  "delhi", "new delhi", "shahdara",
+  "central", "north", "south", "east", "west",
+  "north east", "north west", "south east", "south west",
+  "central delhi", "north delhi", "south delhi", "east delhi", "west delhi",
+  "north east delhi", "north west delhi", "south east delhi", "south west delhi",
+];
+for (const alias of DELHI_ALIASES) {
+  if (!migration035.includes(`'${alias}'`)) {
+    failures.push(`035 CASE is missing Delhi district alias '${alias}' (guard list out of sync).`);
+  }
+}
+const delhiFixture = JSON.parse(
+  readFileSync(join(root, "public/data/delhi-cgwb-stations.json"), "utf8"),
+);
+const fixtureDistricts = new Set();
+(function walk(node) {
+  if (Array.isArray(node)) return node.forEach(walk);
+  if (node && typeof node === "object") {
+    if (typeof node.district === "string") fixtureDistricts.add(node.district);
+    for (const v of Object.values(node)) walk(v);
+  }
+})(delhiFixture);
+for (const d of fixtureDistricts) {
+  if (!DELHI_ALIASES.includes(d.trim().toLowerCase())) {
+    failures.push(
+      `Delhi fixture district '${d}' would fall through to chennai in 035's mapping.`,
+    );
+  }
+}
+
 if (failures.length > 0) {
   console.error("DB city-scoped key check failed:");
   for (const failure of failures) {

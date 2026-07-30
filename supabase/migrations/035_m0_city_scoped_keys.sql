@@ -41,6 +41,20 @@ RETURNS TEXT LANGUAGE sql IMMUTABLE AS $$
     WHEN lower(btrim(d)) IN (
       'delhi',
       'new delhi',
+      -- Unsuffixed forms: the WRIS/census datasets carry 'SOUTH', 'CENTRAL',
+      -- 'NORTH EAST' etc. (review 2026-07-30: the suffixed-only list let real
+      -- Delhi rows fall through to chennai). Bare compass names are safe here
+      -- because no other onboarded city's district uses them (guarded by the
+      -- fixture check in scripts/check-db-city-scoped-keys.mjs).
+      'central',
+      'north',
+      'south',
+      'east',
+      'west',
+      'north east',
+      'north west',
+      'south east',
+      'south west',
       'central delhi',
       'north delhi',
       'south delhi',
@@ -342,3 +356,142 @@ BEGIN
 END $$;
 
 DROP FUNCTION IF EXISTS _m0_city_id_from_district(TEXT);
+
+
+-- =============================================================
+-- Guarantee the FK exists even where city_id predated this
+-- migration (ADD COLUMN IF NOT EXISTS skips REFERENCES when the
+-- column exists - exactly the hand-reconciled-live-schema path).
+-- =============================================================
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'groundwater_wris_city_id_fkey' AND conrelid = 'groundwater_wris'::regclass
+  ) THEN
+    ALTER TABLE groundwater_wris
+      ADD CONSTRAINT groundwater_wris_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'wris_river_level_city_id_fkey' AND conrelid = 'wris_river_level'::regclass
+  ) THEN
+    ALTER TABLE wris_river_level
+      ADD CONSTRAINT wris_river_level_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'wris_rainfall_city_id_fkey' AND conrelid = 'wris_rainfall'::regclass
+  ) THEN
+    ALTER TABLE wris_rainfall
+      ADD CONSTRAINT wris_rainfall_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'water_bodies_census_city_id_fkey' AND conrelid = 'water_bodies_census'::regclass
+  ) THEN
+    ALTER TABLE water_bodies_census
+      ADD CONSTRAINT water_bodies_census_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'weather_daily_city_id_fkey' AND conrelid = 'weather_daily'::regclass
+  ) THEN
+    ALTER TABLE weather_daily
+      ADD CONSTRAINT weather_daily_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'water_estimate_daily_city_id_fkey' AND conrelid = 'water_estimate_daily'::regclass
+  ) THEN
+    ALTER TABLE water_estimate_daily
+      ADD CONSTRAINT water_estimate_daily_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'daily_briefing_city_id_fkey' AND conrelid = 'daily_briefing'::regclass
+  ) THEN
+    ALTER TABLE daily_briefing
+      ADD CONSTRAINT daily_briefing_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'groundwater_monthly_city_id_fkey' AND conrelid = 'groundwater_monthly'::regclass
+  ) THEN
+    ALTER TABLE groundwater_monthly
+      ADD CONSTRAINT groundwater_monthly_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'ward_risk_score_city_id_fkey' AND conrelid = 'ward_risk_score'::regclass
+  ) THEN
+    ALTER TABLE ward_risk_score
+      ADD CONSTRAINT ward_risk_score_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'ward_narrative_city_id_fkey' AND conrelid = 'ward_narrative'::regclass
+  ) THEN
+    ALTER TABLE ward_narrative
+      ADD CONSTRAINT ward_narrative_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'reservoir_catchment_context_city_id_fkey' AND conrelid = 'reservoir_catchment_context'::regclass
+  ) THEN
+    ALTER TABLE reservoir_catchment_context
+      ADD CONSTRAINT reservoir_catchment_context_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'water_body_satellite_summary_city_id_fkey' AND conrelid = 'water_body_satellite_summary'::regclass
+  ) THEN
+    ALTER TABLE water_body_satellite_summary
+      ADD CONSTRAINT water_body_satellite_summary_city_id_fkey
+      FOREIGN KEY (city_id) REFERENCES cities(city_id) ON DELETE CASCADE;
+  END IF;
+END $$;
