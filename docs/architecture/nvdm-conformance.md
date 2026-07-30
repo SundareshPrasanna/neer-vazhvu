@@ -16,6 +16,7 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 
 ## Enveloped artifacts (≥L2): 173
 
+- L2 `public/data/allocations-bangalore.json` - L3 fail: $.arrangements[0].authority_id: expected ['string'], got NoneType
 - L3 `public/data/allocations-chennai.json`
 - L2 `public/data/allocations-delhi.json` - L3 fail: $.arrangements[4].authority_id: expected ['string'], got NoneType
 - L3 `public/data/allocations-madurai.json`
