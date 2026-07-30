@@ -3321,7 +3321,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/app/gee/cities.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -15212,54 +15214,6 @@
    "flags": []
   },
   {
-   "path": "public/geojson/chennai-reservoir-catchments.geojson",
-   "family": "geojson-layers",
-   "scope": "chennai",
-   "dataset": "reservoir-catchments",
-   "bytes": 58456,
-   "schema": {
-    "kind": "FeatureCollection",
-    "features": 4,
-    "geometries": [
-     "Polygon"
-    ],
-    "property_keys": [
-     "confidence",
-     "derivation_method",
-     "geometry_status",
-     "hydrobasins_level",
-     "main_basin_id",
-     "next_down",
-     "notes",
-     "pfaf_id",
-     "reference_lat",
-     "reference_lng",
-     "reservoir",
-     "source_dataset",
-     "source_hybas_id",
-     "source_type",
-     "sub_area_sqkm",
-     "up_area_sqkm",
-     "upstream_feature_count",
-     "upstream_hybas_ids",
-     "upstream_union"
-    ]
-   },
-   "consumers": [],
-   "producer_refs": [
-    "neer-vazhvu-api/app/gee/cities.py"
-   ],
-   "headwaters_sources": [
-    "hydrosheds-basins"
-   ],
-   "licenses": [
-    "HydroSHEDS licence (free for non-commercial and most uses, attribution required)"
-   ],
-   "accountability": "watched",
-   "accountability_reason": null,
-   "flags": []
-  },
-  {
    "path": "public/geojson/chennai-rivers.geojson",
    "family": "geojson-layers",
    "scope": "chennai",
@@ -15628,41 +15582,6 @@
    "accountability": "watched",
    "accountability_reason": null,
    "flags": []
-  },
-  {
-   "path": "public/geojson/delhi-microwatersheds.geojson",
-   "family": "geojson-layers",
-   "scope": "delhi",
-   "dataset": "microwatersheds",
-   "bytes": 7394238,
-   "schema": {
-    "kind": "FeatureCollection",
-    "features": 2324,
-    "geometries": [
-     "Polygon"
-    ],
-    "property_keys": [
-     "AREA",
-     "BASIN",
-     "CATCHMENT",
-     "MWS",
-     "SUBCATCH",
-     "SUBWATERSH",
-     "WATERSHED",
-     "id",
-     "region"
-    ]
-   },
-   "consumers": [],
-   "producer_refs": [],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
-   "accountability_reason": "ORPHAN - DECISION NEEDED, not a settled exemption. 2,324 features, metadata is null, absent from ",
-   "flags": [
-    "big",
-    "orphan"
-   ]
   },
   {
    "path": "public/geojson/delhi-rivers.geojson",
@@ -19629,18 +19548,6 @@
   },
   {
    "family": "geojson-layers",
-   "dataset": "microwatersheds",
-   "files": 1,
-   "scopes": [
-    "delhi"
-   ],
-   "bytes": 7394238,
-   "schema_variants": 1,
-   "registered": true,
-   "has_consumer": false
-  },
-  {
-   "family": "geojson-layers",
    "dataset": "osm-ecological",
    "files": 1,
    "scopes": [
@@ -19663,18 +19570,6 @@
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
-  },
-  {
-   "family": "geojson-layers",
-   "dataset": "reservoir-catchments",
-   "files": 1,
-   "scopes": [
-    "chennai"
-   ],
-   "bytes": 58456,
-   "schema_variants": 1,
-   "registered": true,
-   "has_consumer": false
   },
   {
    "family": "geojson-layers",

@@ -113,12 +113,6 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/delhi-cgwb-stations.json":
     "historical series, not a live feed: WRIS telemetry across the Delhi network stops 2025-09-20 and the artifact " +
     "says so in _feed_status. Whether telemetry RESUMES is a feed question for P5-1, not an edition question.",
-  "public/geojson/delhi-microwatersheds.geojson":
-    "ORPHAN - DECISION NEEDED, not a settled exemption. 2,324 features, metadata is null, absent from " +
-    "docs/cities/delhi/data-sources.md, and no reference anywhere in src/ - it ships to production and nothing " +
-    "renders it. The property schema (g_mws ids, BASIN/CATCHMENT/WATERSHED/MWS codes like 2B6B2c1) looks like the " +
-    "NRSC/Bhuvan watershed atlas, but that is an INFERENCE and is not recorded anywhere. Either document the " +
-    "provenance and register the source, or delete the file.",
 
   // Curated search indexes and label lookups. No upstream document exists.
   "public/data/chennai-localities.json": "curated search index, no upstream",
