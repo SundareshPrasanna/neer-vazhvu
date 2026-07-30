@@ -23,7 +23,6 @@ Deps: pdfplumber (already in the API environment).
 from __future__ import annotations
 
 import argparse
-import json
 import re
 import sys
 import urllib.request

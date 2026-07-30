@@ -20,7 +20,6 @@ Run: python scripts/convert_delhi_wards_kml.py /path/to/delhi_wards.kml
 
 from __future__ import annotations
 
-import json
 import re
 import sys
 from pathlib import Path
