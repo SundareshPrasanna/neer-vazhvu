@@ -79,6 +79,10 @@ export const UNWATCHED: Record<string, string> = {
   // be permanently silent, which is worse than an explicit note.
   "public/geojson/madurai-wards-2022.geojson": "closed edition: 2022 ward delimitation KML; boundaries change only at the next delimitation (term-expiry watch would be the upgrade)",
   "public/data/cooum-sewage-inlets.json": "closed series: Nethaji Mariappan et al. 2017, single study",
+  "public/geojson/chennai-coastal-hotspots.geojson": "closed series: Anagha, Singh & Frappart 2026, single study",
+  "public/geojson/chennai-coastal-zones.geojson": "closed series: Anagha, Singh & Frappart 2026 seed layer; superseded by computed transects",
+  "public/geojson/chennai-flood-2020-hotspots.geojson": "closed series: Cyclone Nivar Nov 2020 reference layer",
+  "public/data/industrial-sources.json": "curated compilation (NGT orders, CPCB reports, TNPCB consent records, press); no watchable listing; per-record citation backfill tracked",
   "public/geojson/mumbai-flood-2005-hotspots.geojson": "closed series: 26/7/2005 reference layer",
   "public/data/water-bodies-lost-mumbai.json": "archival: Dwivedi & Mehrotra 1995",
   "public/geojson/mumbai-water-bodies-lost.geojson": "archival",

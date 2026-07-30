@@ -41,18 +41,22 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "allocations",
-   "bytes": 9880,
+   "bytes": 10625,
    "schema": {
     "kind": "object",
     "keys": [
      "arrangements",
      "authorities",
+     "dataset",
      "events",
      "futures",
      "gaps",
      "headline",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "sources",
      "unit_note",
      "updated"
@@ -544,7 +548,8 @@
     "scripts/compute-ward-profiles.ts",
     "scripts/convert-bangalore-wards-kml.py",
     "scripts/fetch-localities-osm.ts",
-    "scripts/generate-narratives.ts"
+    "scripts/generate-narratives.ts",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -1819,7 +1824,8 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/enrich_names.py",
-    "scripts/build-mumbai-rivers.py"
+    "scripts/build-mumbai-rivers.py",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -3322,7 +3328,8 @@
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/app/gee/cities.py"
+    "neer-vazhvu-api/app/gee/cities.py",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -3359,7 +3366,8 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/enrich_names.py",
-    "scripts/build-mumbai-rivers.py"
+    "scripts/build-mumbai-rivers.py",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -4212,7 +4220,7 @@
    "family": "cascade",
    "scope": "chennai",
    "dataset": "cascade-catchments",
-   "bytes": 6165350,
+   "bytes": 6166370,
    "schema": {
     "kind": "FeatureCollection",
     "features": 706,
@@ -4266,7 +4274,7 @@
    "family": "cascade",
    "scope": "chennai",
    "dataset": "cascade-edges",
-   "bytes": 143606,
+   "bytes": 144996,
    "schema": {
     "kind": "FeatureCollection",
     "features": 430,
@@ -4315,7 +4323,7 @@
    "family": "cascade",
    "scope": "chennai",
    "dataset": "cascade-lakes",
-   "bytes": 775994,
+   "bytes": 777792,
    "schema": {
     "kind": "FeatureCollection",
     "features": 706,
@@ -4376,7 +4384,7 @@
    "family": "cascade",
    "scope": "chennai",
    "dataset": "cascade-nodes",
-   "bytes": 341759,
+   "bytes": 343149,
    "schema": {
     "kind": "FeatureCollection",
     "features": 720,
@@ -4436,7 +4444,7 @@
    "family": "cascade",
    "scope": "chennai",
    "dataset": "cascade-river-outlets",
-   "bytes": 14689,
+   "bytes": 26064,
    "schema": {
     "kind": "FeatureCollection",
     "features": 50,
@@ -4483,13 +4491,17 @@
    "family": "cascade",
    "scope": "chennai",
    "dataset": "cascade-sensitivity",
-   "bytes": 6791,
+   "bytes": 8024,
    "schema": {
     "kind": "object",
     "keys": [
      "_meta",
+     "dataset",
      "district_id",
      "label",
+     "nvdm",
+     "provenance",
+     "scope",
      "sweeps"
     ]
    },
@@ -4527,11 +4539,12 @@
    "family": "cascade",
    "scope": "chennai",
    "dataset": "cascade-stats",
-   "bytes": 702,
+   "bytes": 2412,
    "schema": {
     "kind": "object",
     "keys": [
      "_meta",
+     "dataset",
      "district_id",
      "edge_confidence_counts",
      "edge_count",
@@ -4540,7 +4553,10 @@
      "max_cascade_depth",
      "narrative_anchor",
      "node_count",
+     "nvdm",
+     "provenance",
      "river_outlet_count",
+     "scope",
      "top_convergence"
     ]
    },
@@ -4580,15 +4596,19 @@
    "family": "cascade",
    "scope": "chennai",
    "dataset": "cascades-documented",
-   "bytes": 10261,
+   "bytes": 13686,
    "schema": {
     "kind": "object",
     "keys": [
      "_sources_of_truth",
      "cascades",
+     "dataset",
      "district_id",
      "note",
-     "schema_version"
+     "nvdm",
+     "provenance",
+     "schema_version",
+     "scope"
     ]
    },
    "consumers": [],
@@ -4623,15 +4643,19 @@
    "family": "cascade",
    "scope": "chennai",
    "dataset": "cascades-health",
-   "bytes": 195642,
+   "bytes": 197339,
    "schema": {
     "kind": "object",
     "keys": [
      "_meta",
      "auto_cascades",
+     "dataset",
      "district_id",
      "documented_cascades",
      "label",
+     "nvdm",
+     "provenance",
+     "scope",
      "summary"
     ]
    },
@@ -4754,13 +4778,14 @@
    "family": "cascade",
    "scope": "chennai",
    "dataset": "catchment-quality",
-   "bytes": 2527,
+   "bytes": 3529,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm",
      "area_sqkm",
      "conduit_excluded_count",
+     "dataset",
      "delineated",
      "dem",
      "dem_cache",
@@ -4771,6 +4796,9 @@
      "no_polygon",
      "no_seed_count",
      "nodes_total",
+     "nvdm",
+     "provenance",
+     "scope",
      "utm_epsg"
     ]
    },
@@ -6030,7 +6058,8 @@
     "src/lib/ward-rankings/load-rankings.ts"
    ],
    "producer_refs": [
-    "scripts/fetch-localities-osm.ts"
+    "scripts/fetch-localities-osm.ts",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -6043,7 +6072,7 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "supply-overview",
-   "bytes": 13683,
+   "bytes": 15716,
    "schema": {
     "kind": "object",
     "keys": [
@@ -6054,10 +6083,14 @@
      "allocation_context",
      "current_supply_mix_mld",
      "current_supply_total_mld",
+     "dataset",
      "demand",
      "distribution",
+     "nvdm",
+     "provenance",
      "reference_figures",
      "rms_project",
+     "scope",
      "supply_chain",
      "tranche_status",
      "wtps_summary"
@@ -6122,14 +6155,18 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "commitments",
-   "bytes": 43814,
+   "bytes": 44541,
    "schema": {
     "kind": "object",
     "keys": [
      "commitments",
+     "dataset",
      "headline",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "sources_note",
      "status_legend",
      "update_model",
@@ -6266,13 +6303,17 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "cooum-sewage-inlets",
-   "bytes": 7232,
+   "bytes": 8137,
    "schema": {
     "kind": "object",
     "keys": [
      "data_year",
+     "dataset",
      "inlets",
      "note",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "source_url",
      "supplementary_ref",
@@ -6618,7 +6659,8 @@
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm-delhi.ts",
     "scripts/fetch-localities-osm.ts",
-    "scripts/generate-narratives.ts"
+    "scripts/generate-narratives.ts",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [
     "opencity-delhi-mcd-wards"
@@ -6772,7 +6814,7 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "elevation-bands",
-   "bytes": 2118674,
+   "bytes": 2228158,
    "schema": {
     "kind": "FeatureCollection",
     "features": 7,
@@ -7101,11 +7143,15 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "gee-phase1-water-body-targets",
-   "bytes": 56448,
+   "bytes": 56785,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "manifest_version",
+     "nvdm",
+     "provenance",
+     "scope",
      "selection_rules",
      "target_count",
      "targets"
@@ -7163,11 +7209,15 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "gw-stations",
-   "bytes": 10940,
+   "bytes": 11877,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "fetched_at",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "stations"
     ]
@@ -7179,9 +7229,11 @@
     "scripts/fetch-wris-groundwater.ts"
    ],
    "headwaters_sources": [
-    "ingres-gw-assessment-tn"
+    "ingres-gw-assessment-tn",
+    "wris-live-services"
    ],
    "licenses": [
+    "GoI open publication, cited with attribution",
     "GoI publication, cited with attribution"
    ],
    "accountability": "watched",
@@ -7292,12 +7344,16 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "gwr-blocks",
-   "bytes": 16897,
+   "bytes": 17808,
    "schema": {
     "kind": "object",
     "keys": [
      "blocks",
+     "dataset",
      "fetched_at",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "source_url",
      "years"
@@ -7484,17 +7540,21 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "imd-rainfall-monthly",
-   "bytes": 31339,
+   "bytes": 56625,
    "schema": {
     "kind": "object",
     "keys": [
      "annual_totals",
+     "dataset",
      "generated_at",
      "grid_point",
      "monthly",
      "normal_period",
      "normals",
      "note",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "year_range"
     ]
@@ -7505,7 +7565,8 @@
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [
     "imd-gridded-rain"
@@ -7651,11 +7712,15 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "industrial-sources",
-   "bytes": 25385,
+   "bytes": 26540,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "last_updated",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "sources"
     ]
@@ -7664,15 +7729,15 @@
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
-    "scripts/compute-restoration-priority.ts"
+    "scripts/compute-restoration-priority.ts",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
+   "accountability": "allowlisted",
+   "accountability_reason": "curated compilation (NGT orders, CPCB reports, TNPCB consent records, press); no watchable listing; per-record citation backfill tracked",
    "flags": [
-    "chennai-legacy-name",
-    "unaccounted"
+    "chennai-legacy-name"
    ]
   },
   {
@@ -7868,6 +7933,7 @@
     "scripts/fetch-localities-osm-madurai.ts",
     "scripts/fetch-localities-osm.ts",
     "scripts/generate-narratives.ts",
+    "scripts/nvdm_envelope_chennai.py",
     "scripts/nvdm_envelope_madurai.py"
    ],
    "headwaters_sources": [
@@ -8159,7 +8225,8 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-    "scripts/check-data-freshness.ts"
+    "scripts/check-data-freshness.ts",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [
     "imd-gridded-rain",
@@ -8493,12 +8560,16 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "restoration-priority",
-   "bytes": 2089920,
+   "bytes": 2091209,
    "schema": {
     "kind": "object",
     "keys": [
      "computed_at",
+     "dataset",
+     "nvdm",
+     "provenance",
      "river_sections",
+     "scope",
      "total_scored",
      "water_bodies",
      "weights"
@@ -8512,9 +8583,15 @@
     "scripts/compute-restoration-priority.ts",
     "scripts/compute-ward-profiles.ts"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "datagovin-waterbodies-census-tn",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "Government Open Data License - India",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
    "accountability_reason": "derived: scored from water-bodies + river layers already covered",
    "flags": [
     "chennai-legacy-name"
@@ -8617,12 +8694,16 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "restoration-projects",
-   "bytes": 9511,
+   "bytes": 11091,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "last_updated",
+     "nvdm",
      "projects",
+     "provenance",
+     "scope",
      "source"
     ]
    },
@@ -8668,13 +8749,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -8707,13 +8790,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -8749,13 +8834,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -8788,13 +8875,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -8826,13 +8915,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -8865,13 +8956,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -8904,13 +8997,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -8943,13 +9038,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -8985,13 +9082,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9024,13 +9123,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9062,13 +9163,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9101,13 +9204,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9119,7 +9224,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dw-water-trend",
-   "bytes": 3484,
+   "bytes": 4181,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9127,7 +9232,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9140,13 +9249,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9158,7 +9269,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5630,
+   "bytes": 6265,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9166,7 +9277,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9179,13 +9294,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9197,7 +9314,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "imagery-manifest",
-   "bytes": 25969,
+   "bytes": 27015,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9207,8 +9324,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket",
      "tints"
     ]
@@ -9222,13 +9343,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9240,7 +9363,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "jrc-water-trend",
-   "bytes": 32083,
+   "bytes": 32810,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9248,7 +9371,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -9261,13 +9388,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9279,15 +9408,19 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "open-buildings-verification",
-   "bytes": 1410,
+   "bytes": 2070,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -9299,13 +9432,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9317,7 +9452,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "overture-buildings",
-   "bytes": 1897,
+   "bytes": 2632,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9325,8 +9460,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -9338,13 +9477,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9377,13 +9518,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9416,13 +9559,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9458,13 +9603,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9497,13 +9644,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9535,13 +9684,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9574,13 +9725,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9613,13 +9766,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9652,13 +9807,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9694,13 +9851,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9733,13 +9892,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9771,13 +9932,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9810,13 +9973,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9849,13 +10014,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9888,13 +10055,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9930,13 +10099,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -9969,13 +10140,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10007,13 +10180,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10046,13 +10221,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10085,13 +10262,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10124,13 +10303,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10166,13 +10347,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10205,13 +10388,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10243,13 +10428,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10282,13 +10469,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10321,13 +10510,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10360,13 +10551,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10402,13 +10595,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10441,13 +10636,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10479,13 +10676,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10518,13 +10717,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10557,13 +10758,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10596,13 +10799,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10638,13 +10843,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10677,13 +10884,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10715,13 +10924,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10754,13 +10965,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10772,7 +10985,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "boundary-analysis",
-   "bytes": 2629,
+   "bytes": 3932,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10780,9 +10993,13 @@
      "buffer",
      "caveats",
      "computed_at",
+     "dataset",
      "headline_stats_for_v0_page",
      "methodology",
+     "nvdm",
      "polygons",
+     "provenance",
+     "scope",
      "set_algebra"
     ]
    },
@@ -10794,15 +11011,21 @@
     "google-dynamic-world",
     "google-open-buildings",
     "jrc-global-surface-water",
+    "osm-overpass",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "tnswa-ramsar-boundary",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
-    "free and open, attribution required"
+    "ODbL 1.0",
+    "USGS public domain, courtesy attribution",
+    "free and open, attribution required",
+    "public data from a Tamil Nadu government portal, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
@@ -10813,7 +11036,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dw-water-trend",
-   "bytes": 5767,
+   "bytes": 6464,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10821,7 +11044,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10834,13 +11061,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10852,7 +11081,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 10417,
+   "bytes": 11052,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10860,7 +11089,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10873,13 +11106,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10891,7 +11126,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "imagery-manifest",
-   "bytes": 25474,
+   "bytes": 26520,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10901,8 +11136,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket",
      "tints"
     ]
@@ -10916,13 +11155,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10934,7 +11175,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "jrc-water-trend",
-   "bytes": 62228,
+   "bytes": 62955,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10942,7 +11183,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -10955,13 +11200,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -10973,15 +11220,19 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "open-buildings-verification",
-   "bytes": 2067,
+   "bytes": 2727,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -10995,13 +11246,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11013,7 +11266,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "overture-buildings",
-   "bytes": 2333,
+   "bytes": 3068,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11021,8 +11274,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -11036,13 +11293,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11054,7 +11313,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dw-water-trend",
-   "bytes": 3434,
+   "bytes": 4131,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11062,7 +11321,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -11075,13 +11338,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11093,7 +11358,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5583,
+   "bytes": 6218,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11101,7 +11366,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -11114,13 +11383,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11132,7 +11403,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "imagery-manifest",
-   "bytes": 25303,
+   "bytes": 26349,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11142,8 +11413,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket",
      "tints"
     ]
@@ -11157,13 +11432,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11175,7 +11452,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "jrc-water-trend",
-   "bytes": 31414,
+   "bytes": 32141,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11183,7 +11460,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -11196,13 +11477,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11214,15 +11497,19 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "open-buildings-verification",
-   "bytes": 1404,
+   "bytes": 2064,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -11234,13 +11521,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11252,7 +11541,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "overture-buildings",
-   "bytes": 1890,
+   "bytes": 2625,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11260,8 +11549,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -11273,13 +11566,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11291,7 +11586,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dw-water-trend",
-   "bytes": 3431,
+   "bytes": 4128,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11299,7 +11594,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -11312,13 +11611,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11330,7 +11631,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5578,
+   "bytes": 6213,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11338,7 +11639,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -11351,13 +11656,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11369,7 +11676,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "imagery-manifest",
-   "bytes": 23930,
+   "bytes": 24976,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11379,8 +11686,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket",
      "tints"
     ]
@@ -11394,13 +11705,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11412,7 +11725,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "jrc-water-trend",
-   "bytes": 31333,
+   "bytes": 32060,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11420,7 +11733,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -11433,13 +11750,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11451,15 +11770,19 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "open-buildings-verification",
-   "bytes": 1399,
+   "bytes": 2059,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -11471,13 +11794,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11489,7 +11814,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "overture-buildings",
-   "bytes": 1884,
+   "bytes": 2619,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11497,8 +11822,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -11510,13 +11839,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11549,13 +11880,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11588,13 +11921,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11630,13 +11965,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11669,13 +12006,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11707,13 +12046,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11746,13 +12087,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11785,13 +12128,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11824,13 +12169,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11866,13 +12213,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11905,13 +12254,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11943,13 +12294,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -11982,13 +12335,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12000,7 +12355,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dw-water-trend",
-   "bytes": 3478,
+   "bytes": 4175,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12008,7 +12363,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12021,13 +12380,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12039,7 +12400,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5653,
+   "bytes": 6288,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12047,7 +12408,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12060,13 +12425,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12078,7 +12445,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "imagery-manifest",
-   "bytes": 24588,
+   "bytes": 25634,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12088,8 +12455,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket",
      "tints"
     ]
@@ -12103,13 +12474,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12121,7 +12494,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "jrc-water-trend",
-   "bytes": 32141,
+   "bytes": 32868,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12129,7 +12502,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12142,13 +12519,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12160,15 +12539,19 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "open-buildings-verification",
-   "bytes": 1410,
+   "bytes": 2070,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -12180,13 +12563,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12198,7 +12583,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "overture-buildings",
-   "bytes": 1893,
+   "bytes": 2628,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12206,8 +12591,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -12219,13 +12608,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12258,13 +12649,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12297,13 +12690,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12339,13 +12734,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12378,13 +12775,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12416,13 +12815,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12455,13 +12856,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12473,7 +12876,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dw-water-trend",
-   "bytes": 3455,
+   "bytes": 4152,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12481,7 +12884,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12494,13 +12901,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12512,7 +12921,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5608,
+   "bytes": 6243,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12520,7 +12929,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12533,13 +12946,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12551,7 +12966,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "imagery-manifest",
-   "bytes": 24747,
+   "bytes": 25793,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12561,8 +12976,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket",
      "tints"
     ]
@@ -12576,13 +12995,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12594,7 +13015,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "jrc-water-trend",
-   "bytes": 31668,
+   "bytes": 32395,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12602,7 +13023,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -12615,13 +13040,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12633,15 +13060,19 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "open-buildings-verification",
-   "bytes": 1404,
+   "bytes": 2064,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -12653,13 +13084,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12671,7 +13104,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "overture-buildings",
-   "bytes": 1886,
+   "bytes": 2621,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12679,8 +13112,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -12692,13 +13129,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12731,13 +13170,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12770,13 +13211,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12812,13 +13255,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12851,13 +13296,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12889,13 +13336,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12928,13 +13377,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -12967,13 +13418,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13006,13 +13459,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13048,13 +13503,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13087,13 +13544,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13125,13 +13584,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13164,13 +13625,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13182,7 +13645,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dw-water-trend",
-   "bytes": 3424,
+   "bytes": 4121,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13190,7 +13653,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -13203,13 +13670,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13221,7 +13690,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "dynamic-world-built-trend",
-   "bytes": 5601,
+   "bytes": 6236,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13229,7 +13698,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -13242,13 +13715,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13260,7 +13735,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "imagery-manifest",
-   "bytes": 24964,
+   "bytes": 26010,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13270,8 +13745,12 @@
      "chip_max_dimension_px",
      "chips",
      "computed_at",
+     "dataset",
      "era_map",
      "license",
+     "nvdm",
+     "provenance",
+     "scope",
      "storage_bucket",
      "tints"
     ]
@@ -13285,13 +13764,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13303,7 +13784,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "jrc-water-trend",
-   "bytes": 31144,
+   "bytes": 31871,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13311,7 +13792,11 @@
      "by_zone",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
      "years"
     ]
    },
@@ -13324,13 +13809,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13342,15 +13829,19 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "open-buildings-verification",
-   "bytes": 1401,
+   "bytes": 2061,
    "schema": {
     "kind": "object",
     "keys": [
      "body_id",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -13362,13 +13853,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13380,7 +13873,7 @@
    "family": "rich-bodies",
    "scope": "chennai",
    "dataset": "overture-buildings",
-   "bytes": 1889,
+   "bytes": 2624,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13388,8 +13881,12 @@
      "comparison_note",
      "computed_at",
      "data_source",
+     "dataset",
      "headline_for_v0",
-     "regions"
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
     ]
    },
    "consumers": [
@@ -13401,13 +13898,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13440,13 +13939,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13479,13 +13980,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13521,13 +14024,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13560,13 +14065,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13598,13 +14105,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13637,13 +14146,15 @@
     "google-open-buildings",
     "jrc-global-surface-water",
     "overture-buildings",
-    "sentinel-2-l2a"
+    "sentinel-2-l2a",
+    "usgs-landsat"
    ],
    "licenses": [
     "CC BY 4.0",
     "CC BY 4.0 / ODbL",
     "Copernicus free and open data, attribution required",
     "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution",
     "free and open, attribution required"
    ],
    "accountability": "watched",
@@ -13896,13 +14407,17 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "river-quality",
-   "bytes": 37372,
+   "bytes": 38534,
    "schema": {
     "kind": "object",
     "keys": [
      "data_year_range",
+     "dataset",
      "last_updated",
+     "nvdm",
+     "provenance",
      "rivers",
+     "scope",
      "source"
     ]
    },
@@ -13916,7 +14431,8 @@
    "producer_refs": [
     "scripts/compute-restoration-priority.ts",
     "scripts/compute-ward-profiles.ts",
-    "scripts/fetch-rivers-osm.ts"
+    "scripts/fetch-rivers-osm.ts",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [
     "cpcb-nwmp-annual"
@@ -13953,6 +14469,7 @@
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
+    "scripts/nvdm_envelope_chennai.py",
     "scripts/qc/verify-ward-zones.ts"
    ],
    "headwaters_sources": [],
@@ -13968,23 +14485,15 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "ward-profiles",
-   "bytes": 256134,
+   "bytes": 281433,
    "schema": {
-    "kind": "array",
-    "length": 200,
-    "element_keys": [
-     "area_sq_km",
-     "centroid",
-     "drainage",
-     "flood",
-     "industrial",
-     "lost_bodies",
-     "rivers",
-     "sewerage",
-     "ward_number",
-     "water_bodies",
-     "zone_name",
-     "zone_no"
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
+     "wards"
     ]
    },
    "consumers": [
@@ -14002,12 +14511,17 @@
    "producer_refs": [
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
-    "scripts/generate-narratives.ts"
+    "scripts/generate-narratives.ts",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [
-    "opencity-gcc-swd-survey"
+    "opencity-chennai-flood",
+    "opencity-cmwssb-sewerage",
+    "opencity-gcc-swd-survey",
+    "osm-overpass"
    ],
    "licenses": [
+    "ODbL 1.0",
     "open (per OpenCity dataset page)"
    ],
    "accountability": "watched",
@@ -14021,11 +14535,15 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "ward-representatives",
-   "bytes": 137722,
+   "bytes": 138994,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "meta",
+     "nvdm",
+     "provenance",
+     "scope",
      "wards"
     ]
    },
@@ -14510,6 +15028,7 @@
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
     "scripts/fetch-rivers-osm-bangalore.ts",
+    "scripts/nvdm_envelope_chennai.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -14795,7 +15314,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "coastal-hotspots",
-   "bytes": 2658,
+   "bytes": 4322,
    "schema": {
     "kind": "FeatureCollection",
     "features": 5,
@@ -14823,18 +15342,16 @@
    ],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "closed series: Anagha, Singh & Frappart 2026, single study",
+   "flags": []
   },
   {
    "path": "public/geojson/chennai-coastal-transects.geojson",
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "coastal-transects",
-   "bytes": 531718,
+   "bytes": 595886,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1137,
@@ -14865,9 +15382,15 @@
     "neer-vazhvu-api/app/gee/coastline.py",
     "neer-vazhvu-api/scripts/run_gee_coastline.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "Copernicus free and open data, attribution required",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
    "accountability_reason": "our own MNDWI/GEE computation, coastal-shoreline-refresh.yml annual (P5-1)",
    "flags": []
   },
@@ -14876,7 +15399,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "coastal-zones",
-   "bytes": 9305,
+   "bytes": 23240,
    "schema": {
     "kind": "FeatureCollection",
     "features": 7,
@@ -14904,20 +15427,22 @@
     "neer-vazhvu-api/app/gee/coastline.py",
     "scripts/build-chennai-coastal-seed.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "closed series: Anagha, Singh & Frappart 2026 seed layer; superseded by computed transects",
+   "flags": []
   },
   {
    "path": "public/geojson/chennai-drainage.geojson",
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "drainage",
-   "bytes": 4481942,
+   "bytes": 4482715,
    "schema": {
     "kind": "FeatureCollection",
     "features": 10308,
@@ -14964,7 +15489,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "flood-2015-hotspots",
-   "bytes": 127408,
+   "bytes": 138774,
    "schema": {
     "kind": "FeatureCollection",
     "features": 327,
@@ -15008,7 +15533,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "flood-2020-hotspots",
-   "bytes": 10684,
+   "bytes": 19393,
    "schema": {
     "kind": "FeatureCollection",
     "features": 53,
@@ -15031,18 +15556,16 @@
    ],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "closed series: Cyclone Nivar Nov 2020 reference layer",
+   "flags": []
   },
   {
    "path": "public/geojson/chennai-flood-hazard-zones.geojson",
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "flood-hazard-zones",
-   "bytes": 3754011,
+   "bytes": 4078923,
    "schema": {
     "kind": "FeatureCollection",
     "features": 15524,
@@ -15076,7 +15599,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "flood-inundation-depth",
-   "bytes": 47214,
+   "bytes": 80214,
    "schema": {
     "kind": "FeatureCollection",
     "features": 192,
@@ -15112,7 +15635,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "flood-return-periods",
-   "bytes": 1130007,
+   "bytes": 1228309,
    "schema": {
     "kind": "FeatureCollection",
     "features": 3550,
@@ -15143,7 +15666,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "gwr-blocks",
-   "bytes": 869851,
+   "bytes": 870378,
    "schema": {
     "kind": "FeatureCollection",
     "features": 16,
@@ -15181,7 +15704,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "industrial-zones",
-   "bytes": 492299,
+   "bytes": 492766,
    "schema": {
     "kind": "FeatureCollection",
     "features": 218,
@@ -15218,7 +15741,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "rivers",
-   "bytes": 141901,
+   "bytes": 142540,
    "schema": {
     "kind": "FeatureCollection",
     "features": 4,
@@ -15249,6 +15772,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/compute-restoration-priority.ts",
     "scripts/fetch-rivers-osm.ts",
+    "scripts/nvdm_envelope_chennai.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -15266,7 +15790,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "sewerage",
-   "bytes": 1218175,
+   "bytes": 1218859,
    "schema": {
     "kind": "FeatureCollection",
     "features": 4188,
@@ -15294,20 +15818,22 @@
     "scripts/compute-ward-profiles.ts",
     "scripts/convert-sewerage-kml.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "opencity-cmwssb-sewerage"
+   ],
+   "licenses": [
+    "open (per OpenCity dataset page)"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/chennai-sub-basins-risk-geom.json",
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "sub-basins-risk-geom",
-   "bytes": 23140,
+   "bytes": 80341,
    "schema": {
     "kind": "FeatureCollection",
     "features": 6,
@@ -15325,10 +15851,12 @@
     "scripts/derive_chennai_subbasins_hydrobasins.py"
    ],
    "headwaters_sources": [
+    "hydrosheds-basins",
     "tngcc-ceew-basin-risk"
    ],
    "licenses": [
-    "CC BY-NC 4.0"
+    "CC BY-NC 4.0",
+    "HydroSHEDS licence (free for non-commercial and most uses, attribution required)"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -15339,7 +15867,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "sub-basins-risk",
-   "bytes": 29962,
+   "bytes": 89580,
    "schema": {
     "kind": "FeatureCollection",
     "features": 6,
@@ -15370,10 +15898,12 @@
     "scripts/build_chennai_subbasin_risk.py"
    ],
    "headwaters_sources": [
+    "hydrosheds-basins",
     "tngcc-ceew-basin-risk"
    ],
    "licenses": [
-    "CC BY-NC 4.0"
+    "CC BY-NC 4.0",
+    "HydroSHEDS licence (free for non-commercial and most uses, attribution required)"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -15409,6 +15939,7 @@
    "producer_refs": [
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
+    "scripts/nvdm_envelope_chennai.py",
     "scripts/qc/verify-ward-zones.ts"
    ],
    "headwaters_sources": [],
@@ -15424,7 +15955,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "water-bodies-current",
-   "bytes": 1923999,
+   "bytes": 1918575,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1636,
@@ -15471,7 +16002,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "water-bodies-lost",
-   "bytes": 26815,
+   "bytes": 27292,
    "schema": {
     "kind": "FeatureCollection",
     "features": 15,
@@ -15500,7 +16031,8 @@
    ],
    "producer_refs": [
     "scripts/compute-restoration-priority.ts",
-    "scripts/compute-ward-profiles.ts"
+    "scripts/compute-ward-profiles.ts",
+    "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -15616,6 +16148,7 @@
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
     "scripts/fetch-rivers-osm-delhi.ts",
+    "scripts/nvdm_envelope_chennai.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -15853,6 +16386,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/fetch-rivers-osm-madurai.ts",
     "scripts/fetch-water-bodies-osm-madurai.ts",
+    "scripts/nvdm_envelope_chennai.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -16218,6 +16752,7 @@
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
     "scripts/compute-mumbai-ward-risk.py",
+    "scripts/nvdm_envelope_chennai.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -16364,10 +16899,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16409,10 +16946,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16443,10 +16982,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16488,10 +17029,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16502,7 +17045,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "buffer-1000m",
-   "bytes": 16906,
+   "bytes": 17522,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -16522,10 +17065,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16536,7 +17081,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "polygon",
-   "bytes": 19821,
+   "bytes": 20298,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -16567,10 +17112,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16601,10 +17148,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16646,10 +17195,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16680,10 +17231,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16725,10 +17278,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16759,10 +17314,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16804,10 +17361,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16838,10 +17397,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16883,10 +17444,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16917,10 +17480,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16962,10 +17527,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -16996,10 +17563,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17041,10 +17610,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17055,7 +17626,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "buffer-1000m",
-   "bytes": 21790,
+   "bytes": 22648,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17074,12 +17645,18 @@
    "consumers": [
     "src/lib/water-bodies/rich-body-registry.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_chennai.py"
+   ],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass",
+    "tnswa-ramsar-boundary"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0",
+    "public data from a Tamil Nadu government portal, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17090,7 +17667,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "osm-ecological",
-   "bytes": 52629,
+   "bytes": 53150,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17121,10 +17698,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17135,7 +17714,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "polygon",
-   "bytes": 51275,
+   "bytes": 52050,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17159,12 +17738,18 @@
    "consumers": [
     "src/lib/water-bodies/rich-body-registry.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_chennai.py"
+   ],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass",
+    "tnswa-ramsar-boundary"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0",
+    "public data from a Tamil Nadu government portal, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17175,7 +17760,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "buffer-1000m",
-   "bytes": 6684,
+   "bytes": 7300,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17195,10 +17780,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17209,7 +17796,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "polygon",
-   "bytes": 4536,
+   "bytes": 5013,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17240,10 +17827,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17254,7 +17843,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "buffer-1000m",
-   "bytes": 5448,
+   "bytes": 6064,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17274,10 +17863,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17288,7 +17879,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "polygon",
-   "bytes": 2867,
+   "bytes": 3344,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17319,10 +17910,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17353,10 +17946,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17398,10 +17993,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17432,10 +18029,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17477,10 +18076,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17491,7 +18092,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "buffer-1000m",
-   "bytes": 17458,
+   "bytes": 18074,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17511,10 +18112,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17525,7 +18128,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "polygon",
-   "bytes": 16252,
+   "bytes": 16729,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17556,10 +18159,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17590,10 +18195,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17635,10 +18242,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17649,7 +18258,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "buffer-1000m",
-   "bytes": 9819,
+   "bytes": 10435,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17669,10 +18278,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17683,7 +18294,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "polygon",
-   "bytes": 8835,
+   "bytes": 9312,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17714,10 +18325,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17748,10 +18361,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17793,10 +18408,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17827,10 +18444,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17872,10 +18491,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17886,7 +18507,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "buffer-1000m",
-   "bytes": 6495,
+   "bytes": 7111,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17906,10 +18527,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17920,7 +18543,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "polygon",
-   "bytes": 3273,
+   "bytes": 3750,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -17951,10 +18574,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -17985,10 +18610,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -18030,10 +18657,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "google-dynamic-world"
+    "google-dynamic-world",
+    "osm-overpass"
    ],
    "licenses": [
-    "CC BY 4.0"
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -18593,7 +19222,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 29729441,
+   "bytes": 29730461,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -18608,7 +19237,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 727025,
+   "bytes": 728415,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -18623,7 +19252,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 3574399,
+   "bytes": 3576197,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -18638,7 +19267,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 1338506,
+   "bytes": 1339896,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -18653,7 +19282,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 53573,
+   "bytes": 64948,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -18666,8 +19295,8 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 14805,
-   "schema_variants": 2,
+   "bytes": 16038,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -18681,7 +19310,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 4698,
+   "bytes": 6408,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -18707,7 +19336,7 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 37858,
+   "bytes": 41283,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": false
@@ -18721,7 +19350,7 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 676069,
+   "bytes": 677766,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -18765,7 +19394,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 7219,
+   "bytes": 8221,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": false
@@ -18796,7 +19425,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 66797,
+   "bytes": 67542,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -18887,7 +19516,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 146191,
+   "bytes": 146918,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -18899,7 +19528,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 7232,
+   "bytes": 8137,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -18951,7 +19580,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 12594596,
+   "bytes": 12704080,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19005,7 +19634,7 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 60991,
+   "bytes": 61328,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19018,7 +19647,7 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 54638,
+   "bytes": 55575,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19033,7 +19662,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 107233,
+   "bytes": 108144,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -19061,7 +19690,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 181069,
+   "bytes": 206355,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19077,7 +19706,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 84886,
+   "bytes": 86041,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -19160,7 +19789,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 2132311,
+   "bytes": 2133600,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19187,7 +19816,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 34490,
+   "bytes": 36070,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19217,8 +19846,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 98909,
-   "schema_variants": 5,
+   "bytes": 100071,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },
@@ -19233,7 +19862,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 92246,
+   "bytes": 94279,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -19284,8 +19913,8 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 1597572,
-   "schema_variants": 4,
+   "bytes": 1622871,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -19297,7 +19926,7 @@
     "chennai",
     "delhi"
    ],
-   "bytes": 246859,
+   "bytes": 248131,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19366,7 +19995,7 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 211503,
+   "bytes": 216057,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19378,9 +20007,9 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 2658,
+   "bytes": 4322,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -19391,7 +20020,7 @@
     "chennai",
     "mumbai"
    ],
-   "bytes": 862884,
+   "bytes": 927052,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19404,9 +20033,9 @@
     "chennai",
     "mumbai"
    ],
-   "bytes": 19551,
+   "bytes": 33486,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -19442,7 +20071,7 @@
     "delhi",
     "mumbai"
    ],
-   "bytes": 5202170,
+   "bytes": 5202943,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19466,7 +20095,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 127408,
+   "bytes": 138774,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19478,9 +20107,9 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 10684,
+   "bytes": 19393,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -19490,7 +20119,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 3754011,
+   "bytes": 4078923,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19502,7 +20131,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 47214,
+   "bytes": 80214,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19514,7 +20143,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 1130007,
+   "bytes": 1228309,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19529,7 +20158,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 4914504,
+   "bytes": 4915031,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19541,7 +20170,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 492299,
+   "bytes": 492766,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19553,7 +20182,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 52629,
+   "bytes": 53150,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19566,7 +20195,7 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 312079,
+   "bytes": 315716,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19582,7 +20211,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 1936365,
+   "bytes": 1937004,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -19594,9 +20223,9 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 1218175,
+   "bytes": 1218859,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -19630,7 +20259,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 29962,
+   "bytes": 89580,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19642,7 +20271,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 23140,
+   "bytes": 80341,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19745,7 +20374,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 16960188,
+   "bytes": 16954764,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -19759,7 +20388,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 49723,
+   "bytes": 50200,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19783,7 +20412,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 2629,
+   "bytes": 3932,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19796,8 +20425,8 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 74414,
-   "schema_variants": 1,
+   "bytes": 79293,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -19809,8 +20438,8 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 122237,
-   "schema_variants": 1,
+   "bytes": 126682,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -19822,7 +20451,7 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 461140,
+   "bytes": 468462,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -19835,8 +20464,8 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 687970,
-   "schema_variants": 1,
+   "bytes": 693059,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -19848,8 +20477,8 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 29925,
-   "schema_variants": 1,
+   "bytes": 34545,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -19861,8 +20490,8 @@
     "bangalore",
     "chennai"
    ],
-   "bytes": 40097,
-   "schema_variants": 1,
+   "bytes": 45242,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   }

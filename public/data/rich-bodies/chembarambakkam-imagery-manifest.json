@@ -1,4 +1,32 @@
 {
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/imagery-manifest",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "usgs-landsat",
+        "title": "Landsat 5/7/8 surface reflectance archive (GEE collections)",
+        "publisher": "USGS / NASA (Landsat program)",
+        "license": "USGS public domain, courtesy attribution",
+        "role": "input"
+      },
+      {
+        "id": "sentinel-2-l2a",
+        "title": "Sentinel-2 L2A imagery (channel evidence)",
+        "publisher": "ESA Copernicus",
+        "license": "Copernicus free and open data, attribution required",
+        "role": "input"
+      }
+    ],
+    "method": "gee",
+    "produced_at": "2026-05-19",
+    "produced_by": "scripts/ingest_rich_body_imagery.py",
+    "note": "Manifest referencing binary imagery chips (the sanctioned pattern - NVDM governs the manifest, not the rasters). Per-mission licences in the legacy license key; NICFI (Planet Labs, reserved licence) applies only if NICFI chips are added."
+  },
   "body_id": "chembarambakkam",
   "computed_at": "2026-05-19T13:43:44.444490+00:00",
   "chip_bbox_wsen": [

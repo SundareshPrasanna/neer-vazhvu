@@ -138,7 +138,8 @@
         "method": "http-meta"
       },
       "dependsOn": [
-        "supabase:water_bodies_census"
+        "supabase:water_bodies_census",
+        "public/data/restoration-priority.json"
       ],
       "refreshMethod": "neer-vazhvu-api app/scrapers/data_gov_in.py (REST, needs a free data.gov.in API key)",
       "notes": "First Census of Water Bodies (2018-19), 305 Chennai-district bodies with encroachment status/%, original vs present storage capacity, construction/renovation year. Backs /chennai/water-bodies census layer. Server sends an ETag (verified 2026-07-26), so http-meta works; the page is the dataset landing page, not the API. A Second Census has been announced nationally - this watch is how we would learn it landed. Lineage is Supabase, not a committed file.",
@@ -316,13 +317,62 @@
         "public/geojson/chennai-flood-hazard-zones.geojson",
         "public/geojson/chennai-flood-inundation-depth.geojson",
         "public/geojson/chennai-flood-return-periods.geojson",
-        "public/geojson/chennai-flood-2015-hotspots.geojson"
+        "public/geojson/chennai-flood-2015-hotspots.geojson",
+        "public/data/ward-profiles.json"
       ],
       "refreshMethod": "manual KML download + scripts/simplify-flood-geojson.ts",
       "notes": "The 9 resources on this dataset map 1:1 onto our flood layers: Chennai Inundation Points with Depth, Flooding Points in 2015, Flows 5/10/25/50/100/200 Year Return Period, Flood Hazard Zones Map. Underlying model is NCCR's C-FLOWS. Verified 2026-07-26: metadata_modified 2025-11-27T12:37:59. The 2020 hotspots layer comes from a SEPARATE dataset (chennai-floods-2020-data) which is not watched by this entry - register it separately if that layer starts carrying load-bearing numbers.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:37:59.761010",
         "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "opencity-cmwssb-sewerage",
+      "scope": "chennai",
+      "publisher": "CMWSSB (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=chennai-sewerage-collection-system",
+      "license": "open (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 0,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/chennai-sewerage.geojson",
+        "public/data/ward-profiles.json"
+      ],
+      "refreshMethod": "manual KML download + scripts/convert-sewerage-kml.py",
+      "notes": "Three OpenCity CMWSSB datasets (chennai-sewerage-collection-system, chennai-sewage-pumping-network, chennai-sewage-treatment-plants) are behind chennai-sewerage.geojson: 9 STPs, 349 SPS, 3,834 trunk mains (the full 237 MB street-level network is deliberately excluded - trunk-only subset). Capacities cross-checked against cmwssb.tn.gov.in/sewerage-system (see docs/cities/chennai/data-sources.md, CMWSSB Sewerage Network). This entry watches the collection-system dataset as the canonical CKAN package; register the two siblings separately if their update cadences diverge. Registered 2026-07-30 (NVDM Chennai migration) - was the last watchable-upstream file on the unaccounted list.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:36:17.260836",
+        "acceptedOn": "2026-07-30"
+      }
+    },
+    {
+      "id": "tnswa-ramsar-boundary",
+      "scope": "chennai",
+      "publisher": "Tamil Nadu State Wetland Authority",
+      "url": "https://tnswa.tn.gov.in/qgis_web/data/RamsarBoundary_2.js",
+      "license": "public data from a Tamil Nadu government portal, cited with attribution",
+      "type": "file",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/geojson/rich-bodies/pallikaranai.geojson",
+        "public/geojson/rich-bodies/pallikaranai-buffer-1000m.geojson",
+        "public/data/rich-bodies/pallikaranai-boundary-analysis.json"
+      ],
+      "refreshMethod": "scripts/fetch-tnswa-ramsar-polygon.ts (qgis2web JS export -> GeoJSON; buffer via @turf/buffer)",
+      "notes": "qgis2web data export behind the TNSWA public web map (tnswa.tn.gov.in/qgis_web/index.html). RamsarBoundary_2.js carries all 20 TN Ramsar sites as MultiPolygon features keyed by 'Wetland'; our Pallikaranai polygon (feature 'Pallikaranai Marsh Reserve Forest', retrieved 2026-05-17) is the gazetted Ramsar Site #2481 boundary used for the boundary set-algebra, the NGT 1 km buffer, and the rich-body map. Matches the official RSIS area (1,247.54 ha) within 0.4%. A hash change means the state re-published the gazetted geometry - review event, not auto-apply (the 233 ha boundary-gap analysis re-runs from it). Registered 2026-07-30 (NVDM Chennai migration): the polygon was previously used with no lineage on record.",
+      "lastSeen": {
+        "pageHash": "30b9f902103c7052",
+        "acceptedOn": "2026-07-30"
       }
     },
     {

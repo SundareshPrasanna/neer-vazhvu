@@ -1,4 +1,27 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/gwr-blocks",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater assessment (Chennai-area blocks)",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "GoI publication, cited with attribution"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-03-27",
+    "produced_by": "scripts/fetch-wris-groundwater.ts",
+    "note": "Block-level dynamic groundwater assessment (GEC classes and stage-of-extraction), acquired via the WRIS NWIC GWR{year}_CGWB ArcGIS services.",
+    "conventions": {
+      "comparability": "CGWB assessment units can change between GEC editions (block/firka/village granularity shifts); year-on-year comparisons must check assessment-unit continuity before differencing."
+    }
+  },
   "source": "India WRIS / CGWB",
   "source_url": "https://indiawris.gov.in/wris/",
   "fetched_at": "2026-03-27T05:37:09.704Z",
