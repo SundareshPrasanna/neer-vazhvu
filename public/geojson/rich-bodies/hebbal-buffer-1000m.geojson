@@ -1,4 +1,26 @@
 {
+  "nvdm": "1.0",
+  "dataset": "geojson-layers/buffer-1000m",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap body polygon (Overpass relation/way extract)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-06-03",
+    "internal_inputs": [],
+    "produced_by": "scripts/fetch-rich-body-polygon.ts",
+    "note": "1 km Minkowski offset of the body polygon (@turf/buffer), not a circle from the centroid; derived in-memory from the same Overpass fetch, hence internal_inputs []."
+  },
   "type": "FeatureCollection",
   "features": [
     {

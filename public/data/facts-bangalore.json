@@ -1,4 +1,36 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "bwssb-jica-supply-baseline",
+        "title": "JICA Bengaluru Water Supply and Sewerage Project Phase 3 Final + Supporting Reports, Nov 2017 (via OpenCity mirror)",
+        "publisher": "JICA / BWSSB (via OpenCity)",
+        "license": "open (per OpenCity dataset page)"
+      },
+      {
+        "id": "iisc-groundwater-outlook",
+        "title": "IISc Groundwater Outlook of Bengaluru City - Interim Report II (Jan 2025, via OpenCity mirror)",
+        "publisher": "IISc Bengaluru (Prof. Lakshminarayana & Prof. Sekhar Muddu), via OpenCity",
+        "license": "open (per OpenCity dataset page)",
+        "as_of": "2025-01"
+      },
+      {
+        "id": "opencity-bengaluru-tanker-survey",
+        "title": "OpenCity Bengaluru Tanker Water surveys (2015, 2019, 2024 rounds)",
+        "publisher": "OpenCity (Bengaluru Tanker Water Survey)",
+        "license": "CC BY-NC 2.0 (OpenCity license_id cc-nc, verified 2026-07-30)"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-05-25",
+    "note": "Hand-curated fact register (no derived-facts script for Bangalore yet); every fact carries its own citation (source_label/source_url/data_date). The envelope lists the registered upstreams; the remaining anchors named in the legacy note (CGWB GWR round-11 extract - travels with gwr-blocks-bangalore's envelope - WELL Labs Urban Water Balance, NGT Forward Foundation OA 222/2014) are cited per fact."
+  },
   "place_id": "bangalore",
   "generated_at": "2026-05-25",
   "note": "Hand-curated Bengaluru water facts. v1 - replaces with dynamic fact-builder once daily live feeds for the upstream Cauvery dams + KSPCB river monitoring + BWSSB tanker logs are wired. Numbers are anchored to: JICA Phase 3 Final Report (Nov 2017), CGWB GWR 2011-2024 (round 11 extract), IISc Groundwater Outlook (April 2025), WELL Labs Urban Water Balance (Jan 2024), Forward Foundation NGT OA 222/2014, and OpenCity Bengaluru Tanker Water Survey 2024-2025.",

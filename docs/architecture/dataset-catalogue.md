@@ -20,17 +20,16 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 
 - Logical datasets present in **2+ cities**: 53
 - Logical datasets in **exactly 1 city** (bespoke): 42
-- Multi-city datasets whose per-city files have **divergent schemas**: 40
+- Multi-city datasets whose per-city files have **divergent schemas**: 33
 
 ### Multi-city datasets with schema drift (fix-first list for NVDM)
 
 | family | dataset | cities | schema variants |
 |---|---|---|--:|
+| data-root | industrial-sources | bangalore, chennai, delhi, madurai, mumbai | 5 |
 | data-root | supply-overview | bangalore, chennai, delhi, madurai, mumbai | 5 |
 | geojson-layers | water-bodies-current | bangalore, chennai, delhi, madurai, mumbai | 5 |
 | data-root | cgwb-stations | bangalore, delhi, madurai, mumbai | 4 |
-| data-root | gwr-blocks | bangalore, chennai, delhi, madurai | 4 |
-| data-root | industrial-sources | bangalore, chennai, delhi, madurai, mumbai | 4 |
 | data-root | river-quality | bangalore, chennai, delhi, madurai, mumbai | 4 |
 | data-root | ward-risk | bangalore, delhi, madurai, mumbai | 4 |
 | data-root | water-bodies-lost | bangalore, delhi, madurai, mumbai | 4 |
@@ -38,6 +37,7 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 | cascade | cascade-lakes | bangalore, chennai, madurai, mumbai | 3 |
 | data-root | commitments | bangalore, chennai, delhi, madurai, mumbai | 3 |
 | data-root | flood-hotspots | bangalore, delhi, mumbai | 3 |
+| data-root | gwr-blocks | bangalore, chennai, delhi, madurai | 3 |
 | data-root | localities | bangalore, chennai, delhi, madurai | 3 |
 | data-root | restoration-priority | bangalore, chennai, delhi, madurai, mumbai | 3 |
 | data-root | restoration-projects | chennai, delhi, madurai, mumbai | 3 |
@@ -46,8 +46,6 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 | geojson-layers | wards-2022 | chennai, delhi, madurai | 3 |
 | geojson-layers | water-bodies-lost | chennai, madurai, mumbai | 3 |
 | cascade | cascade-stats | bangalore, chennai, madurai, mumbai | 2 |
-| cascade | cascades-documented | bangalore, chennai, madurai | 2 |
-| cascade | cascades-health | bangalore, chennai, madurai | 2 |
 | cascade | catchment-quality | bangalore, chennai, madurai, mumbai | 2 |
 | data-root | allocations | bangalore, chennai, delhi, madurai, mumbai | 2 |
 | data-root | facts | bangalore, delhi, madurai, mumbai | 2 |
@@ -57,15 +55,11 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 | data-root | river-events | bangalore, delhi, madurai | 2 |
 | data-root | ward-profiles | bangalore, chennai, delhi, madurai | 2 |
 | data-root | ward-representatives | chennai, delhi | 2 |
+| data-root | water-bodies-lost | bangalore, delhi, madurai, mumbai | 2 |
 | geojson-layers | buffer-1000m | bangalore, chennai | 2 |
 | geojson-layers | polygon | bangalore, chennai | 2 |
 | geojson-layers | water-bodies-census | bangalore, delhi | 2 |
-| rich-bodies | dw-water-trend | bangalore, chennai | 2 |
-| rich-bodies | dynamic-world-built-trend | bangalore, chennai | 2 |
 | rich-bodies | imagery-manifest | bangalore, chennai | 2 |
-| rich-bodies | jrc-water-trend | bangalore, chennai | 2 |
-| rich-bodies | open-buildings-verification | bangalore, chennai | 2 |
-| rich-bodies | overture-buildings | bangalore, chennai | 2 |
 
 ## Hygiene
 
