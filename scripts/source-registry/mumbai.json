@@ -1084,20 +1084,25 @@
       "id": "datameet-mumbai-spatial",
       "scope": "mumbai",
       "publisher": "DataMeet community (Municipal_Spatial_Data, Mumbai folder)",
-      "url": "https://github.com/datameet/Municipal_Spatial_Data/tree/master/Mumbai",
+      "url": "https://api.github.com/repos/datameet/Municipal_Spatial_Data/commits?path=Mumbai&per_page=1",
       "license": "CC BY-SA 2.5 IN (Mumbai folder Readme; the repo default is CC BY 4.0 'unless explicitly stated' and the Mumbai Readme states BY-SA 2.5 India explicitly - verified 2026-07-30). SHARE-ALIKE encumbered.",
-      "type": "repo",
+      "type": "api",
       "cadence": "unknown (static community dataset; BMC ward set last changed with the 2017 electoral revision)",
       "tier": 2,
       "detection": {
-        "method": "continuous"
+        "method": "api-date",
+        "datePath": "[0].commit.committer.date"
       },
       "dependsOn": [
         "public/geojson/mumbai-wards-2023.geojson",
         "public/data/ward-risk-mumbai.json"
       ],
       "refreshMethod": "scripts/build-mumbai-wards.py (BMC_Wards.geojson -> 24 admin wards); slumClusters.geojson fetched at ward-risk build time, not committed",
-      "notes": "24 BMC administrative ward boundaries + SRA-derived slum clusters. Registered for LINEAGE (detection 'continuous': a community GitHub repo has no edition page worth polling). LICENCE CORRECTION on record 2026-07-30: the committed layer's legacy _provenance says ODbL, but the upstream Mumbai Readme states CC BY-SA 2.5 India (slum clusters digitised from the SRA's own PDF map)."
+      "notes": "24 BMC administrative ward boundaries + SRA-derived slum clusters. Watched via the GitHub commits API for the Mumbai folder (latest commit 2023-04-10 at registration - a genuinely static dataset, so this watch should stay silent; a new commit means the geometry changed upstream). LICENCE CORRECTION on record 2026-07-30: the committed layer's legacy _provenance says ODbL, but the upstream Mumbai Readme states CC BY-SA 2.5 India (slum clusters digitised from the SRA's own PDF map). Human-facing folder: https://github.com/datameet/Municipal_Spatial_Data/tree/master/Mumbai",
+      "lastSeen": {
+        "apiDate": "2023-04-10T09:04:37Z",
+        "acceptedOn": "2026-07-31"
+      }
     },
     {
       "id": "wrd-pravah-dam-feed",
@@ -1105,7 +1110,7 @@
       "publisher": "Maharashtra WRD (Pravah dam-safety portal)",
       "url": "https://mwrdpravah.in/damsafety/control/pdfLatestReportEng",
       "license": "Maharashtra government public feed, no stated licence - cited with attribution",
-      "type": "pdf-feed",
+      "type": "file",
       "cadence": "daily",
       "tier": 1,
       "detection": {
@@ -1115,7 +1120,7 @@
         "public/data/mmr-dam-storage.json"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/scrape_pravah_dams.py (pravah-dam-refresh.yml, daily)",
-      "notes": "Daily all-Maharashtra live-storage PDF (139 dams); the MMR rows feed mmr-dam-storage.json. A daily feed has no editions to watch - detection 'continuous', freshness owned by check-data-freshness.ts (EXTRA_FEEDS). Only the 'latest' endpoint works (dated URLs 404) and the TLS chain is incomplete - see the scraper header."
+      "notes": "Daily all-Maharashtra live-storage PDF (139 dams; type 'file' = one live PDF endpoint, no listing page); the MMR rows feed mmr-dam-storage.json. A daily feed has no editions to watch - detection 'continuous', freshness owned by check-data-freshness.ts (EXTRA_FEEDS). Only the 'latest' endpoint works (dated URLs 404) and the TLS chain is incomplete - see the scraper header."
     },
     {
       "id": "bmc-dm-floodspots",
