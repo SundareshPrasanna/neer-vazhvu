@@ -27,7 +27,7 @@
     "intersection_ha": 1013.7,
     "intersection_meaning": "Land that is both gazetted Ramsar AND OSM-mapped marsh - the unambiguous core",
     "tnswa_minus_osm_ha": 233.06,
-    "tnswa_minus_osm_meaning": "Land inside the legal Ramsar boundary that OSM does NOT classify as marsh - implies converted/encroached/disturbed land inside the gazette",
+    "tnswa_minus_osm_meaning": "Land inside the TNSWA boundary but not mapped as OSM wetland - the evidence cannot distinguish physical conversion from OSM under-mapping",
     "osm_minus_tnswa_ha": 59.36,
     "osm_minus_tnswa_meaning": "Marsh visible in OSM outside the gazetted boundary - either ungazetted ecological extent or OSM boundary overshoot"
   },
@@ -40,15 +40,15 @@
   },
   "headline_stats_for_v0_page": {
     "gazetted_area_ha": 1246.76,
-    "actually_marsh_area_ha": 1073.06,
-    "converted_inside_gazette_ha": 233.06,
-    "converted_inside_gazette_pct": 18.7,
+    "osm_mapped_marsh_area_ha": 1073.06,
+    "not_osm_wetland_inside_gazette_ha": 233.06,
+    "not_osm_wetland_inside_gazette_pct": 18.7,
     "no_build_zone_total_ha": 4726.76
   },
   "caveats": [
     "TNSWA polygon is the gazetted legal boundary; it does NOT reflect current ecological state.",
     "OSM polygon is an OSM mapper's interpretation of current marsh extent; precision varies and last-edit dates vary.",
-    "The '233 ha converted inside gazette' figure should be visually corroborated before use in press copy. Some of that may be OSM under-mapping rather than physical conversion.",
+    "The 233.06 ha figure is land inside the TNSWA boundary but not mapped as OSM wetland. It must NOT be read as 'converted' or 'encroached': the evidence cannot distinguish physical conversion from OSM under-mapping. Visually corroborate before any press use.",
     "Buffer is Minkowski-offset from polygon edge (not circular from centroid). Follows jagged boundary; ~1 km on every side."
   ]
 }

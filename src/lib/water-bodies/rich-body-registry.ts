@@ -175,7 +175,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
         },
       ],
       caveats: [
-        "The OSM ecological polygon is one observer's interpretation - the 'gap' between gazette and OSM is indicative of conversion-already-happened, not definitive proof.",
+        "The OSM ecological polygon is one observer's interpretation - the ~233 ha gap is land inside the TNSWA boundary but not mapped as OSM wetland. The evidence cannot distinguish physical conversion from OSM under-mapping.",
       ],
     },
   },

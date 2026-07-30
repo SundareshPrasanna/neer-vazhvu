@@ -1115,7 +1115,7 @@ export const translations: Record<string, TranslationEntry> = {
   "rivers_legend.water_quality": { en: "Water Quality",     ta: "நீர்த்தரம்", kn: "ನೀರಿನ ಗುಣಮಟ್ಟ" },
   "rivers_legend.monitoring_station": { en: "Monitoring station", ta: "கண்காணிப்பு நிலையம்", kn: "ಮೇಲ್ವಿಚಾರಣಾ ನಿಲ್ದಾಣ" },
   "rivers_legend.sewage_inlet": { en: "Sewage inlet, 2017 (size = flow)", ta: "கழிவுநீர் உள்ளீடு, 2017 (அளவு = பாய்வு)", kn: "ಚರಂಡಿ ಒಳಹರಿವು, 2017 (ಗಾತ್ರ = ಹರಿವು)" },
-  "rivers_legend.pollution_sources": { en: "Pollution Sources",  ta: "மாசு ஆதாரங்கள்", kn: "ಮಾಲಿನ್ಯ ಮೂಲಗಳು" },
+  "rivers_legend.pollution_sources": { en: "Reported pollution sources",  ta: "பதிவான மாசு ஆதாரங்கள்", kn: "ವರದಿಯಾದ ಮಾಲಿನ್ಯ ಮೂಲಗಳು" },
   "rivers_legend.industrial_zone": { en: "Industrial zone",    ta: "தொழில் மண்டலம்", kn: "ಕೈಗಾರಿಕಾ ವಲಯ" },
   // River quality status labels (used in legend + river panel badge)
   "rivers_legend.dead": { en: "Dead",               ta: "இறந்தது", kn: "ಮೃತ" },
