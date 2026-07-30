@@ -24,6 +24,13 @@
     ],
     "method": "derived",
     "produced_at": "2026-03-26",
+    "internal_inputs": [
+      "public/geojson/chennai-water-bodies-current.geojson",
+      "public/geojson/chennai-water-bodies-lost.geojson",
+      "public/geojson/chennai-rivers.geojson",
+      "public/data/river-quality.json",
+      "public/data/industrial-sources.json"
+    ],
     "produced_by": "scripts/compute-restoration-priority.ts",
     "note": "Scored over OSM extracts, the First Census of Water Bodies table (Supabase water_bodies_census), and internal artifacts (river-quality.json, industrial-sources.json, chennai-water-bodies-lost.geojson) whose citations travel with their own envelopes - internal inputs are lineage, not sources. Algorithm identity in the payload `weights` key. March 2026 vintage; the GEE flagship scorer (neer-vazhvu-api/app/gee) READS this file for target selection, it does not produce it."
   },

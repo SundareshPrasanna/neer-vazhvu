@@ -252,6 +252,10 @@ PROVENANCE: dict[str, dict] = {
     "data-root/restoration-priority": {
         "method": "derived",
         "produced_by": "neer-vazhvu-api/app/gee/cities.py (flagship scorer)",
+        "internal_inputs": [
+            "public/geojson/madurai-water-bodies-current.geojson",
+            "public/data/water-bodies-flagship-madurai.json",
+        ],
         "sources": [OSM_TANKS, SENTINEL2],
     },
     "data-root/restoration-priority-legacy": {
@@ -387,6 +391,8 @@ def main() -> int:
             "method": spec["method"],
             "produced_at": prior_produced_at or produced_at_for(doc, path),
         }
+        if spec.get("internal_inputs") is not None:
+            provenance["internal_inputs"] = spec["internal_inputs"]
         if spec.get("produced_by"):
             provenance["produced_by"] = spec["produced_by"]
         if spec.get("note"):
