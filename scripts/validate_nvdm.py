@@ -495,10 +495,16 @@ def selftest(schemas: dict[str, dict]) -> int:
     d = dup(facts); d["_citation_trace_totally_new"] = {}
     check("new _citation_trace_* key rejected (no prefix wildcard)",
           bool(unknown_key_errors(d, schemas["facts.schema.json"])))
-    d = dup(facts)
-    d["provenance"]["sources"].append({"title": "Sketchy method", "publisher": "nobody", "role": "methodology"})
-    check("unregistered methodology source rejected",
-          bool(source_accountability_errors(d, set(), set(), "data-root/facts")))
+    # Isolated doc: the methodology source is the ONLY source, so the check
+    # cannot pass on some other source's failure (review 2026-07-30 found the
+    # earlier form was a false positive - the base example's registry id
+    # already errored against empty sets).
+    meth = {"provenance": {"sources": [{"title": "Sketchy method", "publisher": "nobody", "role": "methodology"}]}}
+    check("unregistered methodology source rejected (isolated)",
+          bool(source_accountability_errors(meth, set(), set(), "data-root/facts")))
+    meth["provenance"]["sources"][0].update({"closed": True, "as_of": "2016"})
+    check("closed+as_of methodology source accepted (isolated)",
+          not source_accountability_errors(meth, set(), set(), "data-root/facts"))
     d = dup(facts); d["facts"][0].pop("tier")
     check("fact without tier rejected",
           bool(validate(d, schemas["facts.schema.json"], schemas, "facts.schema.json")))
