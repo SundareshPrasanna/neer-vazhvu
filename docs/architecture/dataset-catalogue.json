@@ -115,18 +115,22 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "allocations",
-   "bytes": 4762,
+   "bytes": 5750,
    "schema": {
     "kind": "object",
     "keys": [
      "arrangements",
      "authorities",
+     "dataset",
      "events",
      "futures",
      "gaps",
      "headline",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "sources",
      "unit_note",
      "updated"
@@ -4597,7 +4601,7 @@
    "family": "cascade",
    "scope": "madurai",
    "dataset": "cascade-catchments",
-   "bytes": 5116991,
+   "bytes": 12593701,
    "schema": {
     "kind": "FeatureCollection",
     "features": 506,
@@ -4632,14 +4636,16 @@
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope entry hydrosheds-basins",
-   "flags": []
+   "flags": [
+    "big"
+   ]
   },
   {
    "path": "public/data/cascade/madurai-cascade-edges.geojson",
    "family": "cascade",
    "scope": "madurai",
    "dataset": "cascade-edges",
-   "bytes": 115634,
+   "bytes": 192494,
    "schema": {
     "kind": "FeatureCollection",
     "features": 345,
@@ -4678,7 +4684,7 @@
    "family": "cascade",
    "scope": "madurai",
    "dataset": "cascade-lakes",
-   "bytes": 580733,
+   "bytes": 1306131,
    "schema": {
     "kind": "FeatureCollection",
     "features": 506,
@@ -4730,7 +4736,7 @@
    "family": "cascade",
    "scope": "madurai",
    "dataset": "cascade-nodes",
-   "bytes": 254887,
+   "bytes": 362797,
    "schema": {
     "kind": "FeatureCollection",
     "features": 506,
@@ -4780,7 +4786,7 @@
    "family": "cascade",
    "scope": "madurai",
    "dataset": "cascade-river-outlets",
-   "bytes": 10626,
+   "bytes": 18739,
    "schema": {
     "kind": "FeatureCollection",
     "features": 34,
@@ -4817,13 +4823,17 @@
    "family": "cascade",
    "scope": "madurai",
    "dataset": "cascade-sensitivity",
-   "bytes": 6781,
+   "bytes": 7984,
    "schema": {
     "kind": "object",
     "keys": [
      "_meta",
+     "dataset",
      "district_id",
      "label",
+     "nvdm",
+     "provenance",
+     "scope",
      "sweeps"
     ]
    },
@@ -4851,11 +4861,12 @@
    "family": "cascade",
    "scope": "madurai",
    "dataset": "cascade-stats",
-   "bytes": 866,
+   "bytes": 2476,
    "schema": {
     "kind": "object",
     "keys": [
      "_meta",
+     "dataset",
      "district_id",
      "edge_confidence_counts",
      "edge_count",
@@ -4864,7 +4875,10 @@
      "max_cascade_depth",
      "narrative_anchor",
      "node_count",
+     "nvdm",
+     "provenance",
      "river_outlet_count",
+     "scope",
      "top_convergence"
     ]
    },
@@ -4894,15 +4908,19 @@
    "family": "cascade",
    "scope": "madurai",
    "dataset": "cascades-documented",
-   "bytes": 10592,
+   "bytes": 14209,
    "schema": {
     "kind": "object",
     "keys": [
      "_sources_of_truth",
      "cascades",
+     "dataset",
      "district_id",
      "note",
-     "schema_version"
+     "nvdm",
+     "provenance",
+     "schema_version",
+     "scope"
     ]
    },
    "consumers": [],
@@ -4927,15 +4945,19 @@
    "family": "cascade",
    "scope": "madurai",
    "dataset": "cascades-health",
-   "bytes": 156923,
+   "bytes": 158535,
    "schema": {
     "kind": "object",
     "keys": [
      "_meta",
      "auto_cascades",
+     "dataset",
      "district_id",
      "documented_cascades",
      "label",
+     "nvdm",
+     "provenance",
+     "scope",
      "summary"
     ]
    },
@@ -5030,13 +5052,14 @@
    "family": "cascade",
    "scope": "madurai",
    "dataset": "catchment-quality",
-   "bytes": 499,
+   "bytes": 1471,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm",
      "area_sqkm",
      "conduit_excluded_count",
+     "dataset",
      "delineated",
      "dem",
      "dem_cache",
@@ -5047,6 +5070,9 @@
      "no_polygon",
      "no_seed_count",
      "nodes_total",
+     "nvdm",
+     "provenance",
+     "scope",
      "utm_epsg"
     ]
    },
@@ -5686,14 +5712,18 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "commitments",
-   "bytes": 23681,
+   "bytes": 24483,
    "schema": {
     "kind": "object",
     "keys": [
      "commitments",
+     "dataset",
      "headline",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "sources_note",
      "status_legend",
      "update_model",
@@ -6342,7 +6372,7 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "elevation-bands",
-   "bytes": 406087,
+   "bytes": 1113091,
    "schema": {
     "kind": "FeatureCollection",
     "features": 7,
@@ -6474,14 +6504,18 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "facts",
-   "bytes": 22073,
+   "bytes": 23606,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "facts",
      "generated_at",
      "note",
-     "place_id"
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -6490,13 +6524,19 @@
    "producer_refs": [
     "scripts/compute-madurai-derived-facts.ts"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "cgwb-yearbook-tn",
+    "cpcb-nwmp-annual",
+    "ingres-gw-assessment-madurai",
+    "madurai-corp-projects"
+   ],
+   "licenses": [
+    "GoI publication, cited with attribution",
+    "government publication, cited with attribution"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/facts-mumbai.json",
@@ -6562,12 +6602,16 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "gee-phase1-water-body-targets",
-   "bytes": 4186,
+   "bytes": 4547,
    "schema": {
     "kind": "object",
     "keys": [
      "city_id",
+     "dataset",
      "manifest_version",
+     "nvdm",
+     "provenance",
+     "scope",
      "selection_rules",
      "target_count",
      "targets"
@@ -6619,12 +6663,16 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "gw-stations",
-   "bytes": 42987,
+   "bytes": 43610,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "fetched_at",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "source",
      "stations"
     ]
@@ -6742,13 +6790,17 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "gwr-blocks",
-   "bytes": 65903,
+   "bytes": 66353,
    "schema": {
     "kind": "object",
     "keys": [
      "blocks",
+     "dataset",
      "fetched_at",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "source",
      "source_url",
      "years"
@@ -6879,17 +6931,21 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "imd-rainfall-monthly",
-   "bytes": 31215,
+   "bytes": 56067,
    "schema": {
     "kind": "object",
     "keys": [
      "annual_totals",
+     "dataset",
      "generated_at",
      "grid_point",
      "monthly",
      "normal_period",
      "normals",
      "note",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "year_range"
     ]
@@ -6901,7 +6957,8 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
     "neer-vazhvu-api/scripts/generate_imd_rainfall.py",
-    "scripts/lib/headwaters-coverage.ts"
+    "scripts/lib/headwaters-coverage.ts",
+    "scripts/nvdm_envelope_madurai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -7051,12 +7108,16 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "industrial-sources",
-   "bytes": 5049,
+   "bytes": 5560,
    "schema": {
     "kind": "object",
     "keys": [
      "_source_caveats",
+     "dataset",
      "last_updated",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "sources"
     ]
@@ -7066,15 +7127,14 @@
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
-    "scripts/compute-restoration-priority-madurai.ts"
+    "scripts/compute-restoration-priority-madurai.ts",
+    "scripts/lib/headwaters-coverage.ts"
    ],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "qualitative one-off academic source (Columbia GSAPP studio book); statistics failed adversarial checks - see the file's _source_caveats",
+   "flags": []
   },
   {
    "path": "public/data/industrial-sources-mumbai.json",
@@ -7167,7 +7227,7 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "cgwb-stations",
-   "bytes": 29539,
+   "bytes": 30378,
    "schema": {
     "kind": "object",
     "keys": [
@@ -7175,8 +7235,12 @@
      "_citation_trace_2026_07_26",
      "_note",
      "aquifer",
+     "dataset",
      "depth_unit",
      "district",
+     "nvdm",
+     "provenance",
+     "scope",
      "well_type",
      "wells",
      "year_book_summaries"
@@ -7229,7 +7293,8 @@
    ],
    "producer_refs": [
     "scripts/fetch-localities-osm-madurai.ts",
-    "scripts/lib/headwaters-coverage.ts"
+    "scripts/lib/headwaters-coverage.ts",
+    "scripts/nvdm_envelope_madurai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -7242,7 +7307,7 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "supply-overview",
-   "bytes": 19151,
+   "bytes": 22624,
    "schema": {
     "kind": "object",
     "keys": [
@@ -7252,12 +7317,16 @@
      "allocation_context",
      "current_supply_mix_mld",
      "current_supply_total_mld",
+     "dataset",
      "demand",
      "distribution",
+     "nvdm",
      "ohts_existing",
      "ohts_new_under_tranche2",
      "pannaipatty_wtp",
+     "provenance",
      "reference_figures",
+     "scope",
      "supply_chain",
      "tranche_status"
     ]
@@ -7287,24 +7356,15 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "ward-profiles",
-   "bytes": 183164,
+   "bytes": 184410,
    "schema": {
-    "kind": "array",
-    "length": 100,
-    "element_keys": [
-     "area_sq_km",
-     "centroid",
-     "drainage",
-     "flood",
-     "groundwater_assessment",
-     "industrial",
-     "lost_bodies",
-     "rivers",
-     "sewerage",
-     "ward_number",
-     "water_bodies",
-     "zone_name",
-     "zone_no"
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
+     "wards"
     ]
    },
    "consumers": [
@@ -7327,11 +7387,17 @@
     "scripts/fetch-localities-osm-madurai.ts",
     "scripts/fetch-localities-osm.ts",
     "scripts/generate-narratives.ts",
-    "scripts/lib/headwaters-coverage.ts"
+    "scripts/lib/headwaters-coverage.ts",
+    "scripts/nvdm_envelope_madurai.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "cgwb-yearbook-tn",
+    "ingres-gw-assessment-madurai"
+   ],
+   "licenses": [
+    "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
    "accountability_reason": "derived join",
    "flags": []
   },
@@ -7648,16 +7714,20 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "rainfall-recent",
-   "bytes": 13172,
+   "bytes": 13596,
    "schema": {
     "kind": "object",
     "keys": [
      "attribution",
      "daily",
+     "dataset",
      "generated_at",
      "imd_covers_through",
      "monthly",
+     "nvdm",
+     "provenance",
      "provisional_note",
+     "scope",
      "source",
      "through",
      "url"
@@ -7785,15 +7855,19 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "restoration-priority-legacy",
-   "bytes": 7232,
+   "bytes": 7853,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm_version",
      "bodies",
+     "dataset",
      "generated_at",
      "notes",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "total_scored"
     ]
    },
@@ -7813,15 +7887,19 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "restoration-priority",
-   "bytes": 11235,
+   "bytes": 11952,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm_version",
      "computed_at",
+     "dataset",
      "notes",
+     "nvdm",
      "place_id",
+     "provenance",
      "river_sections",
+     "scope",
      "total_scored",
      "water_bodies",
      "weights"
@@ -7839,7 +7917,8 @@
     "scripts/compute-madurai-ward-profiles.ts",
     "scripts/compute-madurai-ward-risk.ts",
     "scripts/compute-restoration-priority-madurai.ts",
-    "scripts/lib/headwaters-coverage.ts"
+    "scripts/lib/headwaters-coverage.ts",
+    "scripts/nvdm_envelope_madurai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -7949,15 +8028,19 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "restoration-projects",
-   "bytes": 4142,
+   "bytes": 4684,
    "schema": {
     "kind": "object",
     "keys": [
      "compiled_at",
      "court_orders",
+     "dataset",
      "note",
+     "nvdm",
      "place_id",
-     "projects"
+     "projects",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -7965,14 +8048,14 @@
     "src/components/rivers/river-panel.tsx",
     "src/lib/data/restoration-projects.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/lib/headwaters-coverage.ts"
+   ],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "curated compilation; per-record citations (court orders, MMC, press); no watchable listing",
+   "flags": []
   },
   {
    "path": "public/data/restoration-projects-mumbai.json",
@@ -12593,27 +12676,31 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "river-events",
-   "bytes": 4154,
+   "bytes": 4649,
    "schema": {
     "kind": "object",
     "keys": [
      "compiled_at",
+     "dataset",
      "events",
      "note",
-     "place_id"
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/lib/headwaters-coverage.ts"
+   ],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "curated event timeline; per-record url citations; no watchable listing",
+   "flags": []
   },
   {
    "path": "public/data/river-quality-bangalore.json",
@@ -12700,13 +12787,17 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "river-quality",
-   "bytes": 9686,
+   "bytes": 10443,
    "schema": {
     "kind": "object",
     "keys": [
      "data_year_range",
+     "dataset",
      "last_updated",
+     "nvdm",
+     "provenance",
      "rivers",
+     "scope",
      "source"
     ]
    },
@@ -12994,15 +13085,19 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "ward-risk",
-   "bytes": 52040,
+   "bytes": 52734,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm_version",
+     "dataset",
      "generated_at",
      "grade_counts",
      "notes",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "wards",
      "weights"
     ]
@@ -13093,14 +13188,18 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "water-bodies-flagship",
-   "bytes": 7262,
+   "bytes": 7812,
    "schema": {
     "kind": "object",
     "keys": [
      "bodies",
      "compiled_at",
+     "dataset",
      "note",
-     "place_id"
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -13108,15 +13207,14 @@
    ],
    "producer_refs": [
     "scripts/compute-madurai-ward-risk.ts",
-    "scripts/compute-restoration-priority-madurai.ts"
+    "scripts/compute-restoration-priority-madurai.ts",
+    "scripts/lib/headwaters-coverage.ts"
    ],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "curated flagship register; per-record citations (DHAN, MMC, press); no watchable listing",
+   "flags": []
   },
   {
    "path": "public/data/water-bodies-flagship-mumbai.json",
@@ -13221,14 +13319,18 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "water-bodies-lost",
-   "bytes": 4208,
+   "bytes": 5055,
    "schema": {
     "kind": "object",
     "keys": [
      "compiled_at",
+     "dataset",
      "lost_bodies",
+     "nvdm",
      "place_id",
      "primary_source",
+     "provenance",
+     "scope",
      "secondary_sources",
      "summary"
     ]
@@ -13243,7 +13345,8 @@
     "neer-vazhvu-api/app/cascade/health.py",
     "scripts/build-madurai-lost-bodies-geojson.ts",
     "scripts/compute-madurai-derived-facts.ts",
-    "scripts/lib/headwaters-coverage.ts"
+    "scripts/lib/headwaters-coverage.ts",
+    "scripts/nvdm_envelope_madurai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -14723,7 +14826,7 @@
    "family": "geojson-layers",
    "scope": "madurai",
    "dataset": "gwr-blocks",
-   "bytes": 1661879,
+   "bytes": 1662334,
    "schema": {
     "kind": "FeatureCollection",
     "features": 11,
@@ -14761,7 +14864,7 @@
    "family": "geojson-layers",
    "scope": "madurai",
    "dataset": "rivers",
-   "bytes": 540581,
+   "bytes": 541006,
    "schema": {
     "kind": "FeatureCollection",
     "features": 5,
@@ -14804,7 +14907,7 @@
    "family": "geojson-layers",
    "scope": "madurai",
    "dataset": "wards-2022",
-   "bytes": 619994,
+   "bytes": 1481081,
    "schema": {
     "kind": "FeatureCollection",
     "features": 100,
@@ -14829,22 +14932,21 @@
     "scripts/compute-madurai-ward-profiles.ts",
     "scripts/compute-madurai-ward-risk.ts",
     "scripts/convert-madurai-wards-kml.py",
-    "scripts/fetch-localities-osm-madurai.ts"
+    "scripts/fetch-localities-osm-madurai.ts",
+    "scripts/lib/headwaters-coverage.ts"
    ],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "closed edition: 2022 ward delimitation KML; boundaries change only at the next delimitation (term-expiry watch would be the upgrade)",
+   "flags": []
   },
   {
    "path": "public/geojson/madurai-water-bodies-current.geojson",
    "family": "geojson-layers",
    "scope": "madurai",
    "dataset": "water-bodies-current",
-   "bytes": 2335739,
+   "bytes": 2336279,
    "schema": {
     "kind": "FeatureCollection",
     "features": 715,
@@ -14891,7 +14993,7 @@
    "family": "geojson-layers",
    "scope": "madurai",
    "dataset": "water-bodies-lost",
-   "bytes": 14968,
+   "bytes": 15427,
    "schema": {
     "kind": "FeatureCollection",
     "features": 26,
@@ -17344,7 +17446,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 22252701,
+   "bytes": 29729411,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -17359,7 +17461,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 650065,
+   "bytes": 726925,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -17374,7 +17476,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 2848805,
+   "bytes": 3574203,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -17389,7 +17491,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 1230496,
+   "bytes": 1338406,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -17404,7 +17506,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 45430,
+   "bytes": 53543,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -17417,8 +17519,8 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 13572,
-   "schema_variants": 1,
+   "bytes": 14775,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -17432,8 +17534,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 2988,
-   "schema_variants": 1,
+   "bytes": 4598,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -17458,8 +17560,8 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 34140,
-   "schema_variants": 1,
+   "bytes": 37757,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": false
   },
@@ -17472,8 +17574,8 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 674357,
-   "schema_variants": 1,
+   "bytes": 675969,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -17516,8 +17618,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 6217,
-   "schema_variants": 1,
+   "bytes": 7189,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": false
   },
@@ -17547,8 +17649,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 65709,
-   "schema_variants": 1,
+   "bytes": 66697,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -17622,7 +17724,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 816958,
+   "bytes": 817797,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -17638,8 +17740,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 145389,
-   "schema_variants": 2,
+   "bytes": 146191,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -17702,7 +17804,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 11887592,
+   "bytes": 12594596,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -17717,8 +17819,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 124553,
-   "schema_variants": 1,
+   "bytes": 126086,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -17756,7 +17858,7 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 60634,
+   "bytes": 60995,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -17769,7 +17871,7 @@
     "chennai",
     "madurai"
    ],
-   "bytes": 53927,
+   "bytes": 54550,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -17784,8 +17886,8 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 106783,
-   "schema_variants": 3,
+   "bytes": 107233,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },
@@ -17812,8 +17914,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 156121,
-   "schema_variants": 1,
+   "bytes": 180973,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -17828,7 +17930,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 84131,
+   "bytes": 84642,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -17895,8 +17997,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 65878,
-   "schema_variants": 1,
+   "bytes": 66302,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -17911,8 +18013,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 2131532,
-   "schema_variants": 2,
+   "bytes": 2132249,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -17923,7 +18025,7 @@
    "scopes": [
     "madurai"
    ],
-   "bytes": 7232,
+   "bytes": 7853,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -17938,8 +18040,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 33966,
-   "schema_variants": 2,
+   "bytes": 34508,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -17952,9 +18054,9 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 23218,
-   "schema_variants": 1,
-   "registered": false,
+   "bytes": 23713,
+   "schema_variants": 2,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -17968,8 +18070,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 98152,
-   "schema_variants": 4,
+   "bytes": 98909,
+   "schema_variants": 5,
    "registered": true,
    "has_consumer": true
   },
@@ -17984,7 +18086,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 88773,
+   "bytes": 92246,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -18035,7 +18137,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 1582951,
+   "bytes": 1584197,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -18063,7 +18165,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 427226,
+   "bytes": 427920,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -18089,9 +18191,9 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 33937,
-   "schema_variants": 2,
-   "registered": false,
+   "bytes": 34487,
+   "schema_variants": 3,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -18104,8 +18206,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 19153,
-   "schema_variants": 2,
+   "bytes": 20000,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -18280,7 +18382,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 4914049,
+   "bytes": 4914504,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -18357,7 +18459,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 1935910,
+   "bytes": 1936335,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -18467,7 +18569,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 8198342,
+   "bytes": 9059429,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -18520,7 +18622,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 16959618,
+   "bytes": 16960158,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -18534,7 +18636,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 49294,
+   "bytes": 49753,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true

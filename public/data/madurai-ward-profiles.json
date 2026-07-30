@@ -1,4 +1,20 @@
-[
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/ward-profiles",
+  "scope": { "kind": "city", "id": "madurai" },
+  "provenance": {
+    "sources": [
+      { "title": "Madurai Corporation ward boundaries, 2022 delimitation (KML)", "publisher": "GoTN / Madurai Municipal Corporation", "role": "input", "closed": true, "as_of": "2022" },
+      { "title": "OpenStreetMap water bodies / rivers (Overpass extracts)", "publisher": "OpenStreetMap contributors", "license": "ODbL 1.0", "role": "input" },
+      { "id": "cgwb-yearbook-tn", "title": "CGWB Ground Water Year Book, Tamil Nadu & Puducherry", "publisher": "Central Ground Water Board", "license": "GoI publication, cited with attribution", "role": "input" },
+      { "id": "ingres-gw-assessment-madurai", "title": "IN-GRES dynamic groundwater assessment (Madurai firkas)", "publisher": "CGWB / IN-GRES", "license": "GoI publication, cited with attribution", "role": "input" }
+    ],
+    "method": "derived",
+    "produced_at": "2026-05-09",
+    "produced_by": "scripts/compute-madurai-ward-profiles.ts",
+    "note": "Deterministic join over committed ward-level layers (see script header). flood/drainage/sewerage/industrial are honest not-available placeholders pending sources."
+  },
+  "wards": [
   {
     "ward_number": 1,
     "zone_no": "",
@@ -6084,4 +6100,5 @@
       }
     }
   }
-]
+  ]
+}

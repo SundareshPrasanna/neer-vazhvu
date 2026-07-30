@@ -21,6 +21,12 @@
           "unit": { "type": "string" },
           "interpretation": { "type": "string" },
           "as_of": { "$ref": "envelope.schema.json#/$defs/date" },
+          "source_label": {
+            "type": "string",
+            "description": "Documented legacy per-record citation form (with source_url + data_date). Counts as the per-record source ref (spec 5.1); new facts SHOULD use source_ids/sources instead."
+          },
+          "source_url": { "type": ["string", "null"] },
+          "data_date": { "type": "string" },
           "source_ids": {
             "type": "array",
             "minItems": 1,
