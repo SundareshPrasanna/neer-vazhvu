@@ -10,8 +10,14 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 const ENVELOPE_KEYS = ["nvdm", "dataset", "scope", "provenance", "projection", "ext"] as const;
 
 /** Write payload to path, preserving any existing NVDM envelope and advancing
- *  provenance.produced_at to today (the artifact is being produced now). */
-export function writeArtifact(path: string, payload: Record<string, unknown>): void {
+ *  provenance.produced_at to today (the artifact is being produced now).
+ *  `compact` keeps minified artifacts minified (the Python twin's flag) -
+ *  a single-line geometry layer must not be pretty-printed on regeneration. */
+export function writeArtifact(
+  path: string,
+  payload: Record<string, unknown>,
+  opts: { compact?: boolean } = {},
+): void {
   let envelope: Record<string, unknown> = {};
   if (existsSync(path)) {
     try {
@@ -33,5 +39,5 @@ export function writeArtifact(path: string, payload: Record<string, unknown>): v
   for (const [k, v] of Object.entries(payload)) {
     if (!(k in envelope)) out[k] = v;
   }
-  writeFileSync(path, JSON.stringify(out, null, 2));
+  writeFileSync(path, opts.compact ? JSON.stringify(out) : JSON.stringify(out, null, 2));
 }

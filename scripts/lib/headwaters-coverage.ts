@@ -114,9 +114,23 @@ export const UNWATCHED: Record<string, string> = {
   "public/geojson/delhi-drainage.geojson":
     "OSM/Overpass: continuously edited, no editions (P5-1). No official Delhi drain GIS is public - the IFC " +
     "2018 Drainage Master Plan's 3,737 km across 11 agencies exists only as PDF maps, so these lengths are a floor.",
-  "public/data/delhi-cgwb-stations.json":
-    "historical series, not a live feed: WRIS telemetry across the Delhi network stops 2025-09-20 and the artifact " +
-    "says so in _feed_status. Whether telemetry RESUMES is a feed question for P5-1, not an edition question.",
+  // delhi-cgwb-stations.json moved to the watched track 2026-07-30 (NVDM Delhi
+  // migration): wris-live-services dependsOn now names it, matching the
+  // Madurai/Chennai gw-stations precedent. The frozen-telemetry story (network
+  // stops 2025-09-20; historical series, not a live feed) now travels IN the
+  // artifact's provenance.conventions, where a reader of the data actually
+  // meets it - resumption stays a P5-1 feed question, not an edition question.
+
+  // Curated Delhi compilations (NVDM Delhi migration, 2026-07-30 - the Madurai
+  // pattern). Each record carries its own citation; the upstreams are episodic
+  // press/court/government documents with no watchable listing page.
+  "public/data/restoration-projects-delhi.json": "curated compilation; per-record citations (NGT/court orders, government documents, press); no watchable listing",
+  "public/data/river-events-delhi.json": "curated Yamuna timeline; per-record url citations (court orders, instruments, floods); no watchable listing",
+  "public/data/water-bodies-flagship-delhi.json": "curated flagship register; per-record citations (ASI, DDA, INTACH, press); no watchable listing",
+  "public/data/delhi-flood-hotspots.json":
+    "curated waterlogging register; per-entry landmark/press citations. The official lists (169 identified locations " +
+    "2025, 448 traffic-police-mapped points) are referenced in reporting but not published as data - PWD monsoon " +
+    "action plan / RTI is the named gap in the file itself.",
 
   // Curated search indexes and label lookups. No upstream document exists.
   "public/data/chennai-localities.json": "curated search index, no upstream",

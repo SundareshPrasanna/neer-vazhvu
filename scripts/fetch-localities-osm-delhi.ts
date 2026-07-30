@@ -182,7 +182,10 @@ async function fetchLocalities(): Promise<void> {
   const wardGeo = JSON.parse(readFileSync(wardGeoPath, "utf-8"));
 
   const profilesPath = join(process.cwd(), "public/data/delhi-ward-profiles.json");
-  const profiles: WardProfile[] = JSON.parse(readFileSync(profilesPath, "utf-8"));
+  // Dual-shape during the NVDM migration: legacy bare array or the wrapped
+  // producer-emitted form ({ envelope..., wards: [...] }).
+  const profilesRaw = JSON.parse(readFileSync(profilesPath, "utf-8"));
+  const profiles: WardProfile[] = Array.isArray(profilesRaw) ? profilesRaw : profilesRaw.wards;
   const profileMap = new Map<number, WardProfile>(profiles.map((p) => [p.ward_number, p]));
 
   function getCoords(el: OsmElement): { lat: number; lng: number } | null {

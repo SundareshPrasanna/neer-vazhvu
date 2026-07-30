@@ -1,4 +1,26 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/ward-risk",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
+  },
+  "provenance": {
+    "sources": [],
+    "method": "derived",
+    "produced_at": "2026-07-26",
+    "internal_inputs": [
+      "public/geojson/delhi-wards-2022.geojson",
+      "public/data/delhi-ward-profiles.json",
+      "public/data/delhi-cgwb-stations.json"
+    ],
+    "produced_by": "scripts/compute-delhi-ward-risk.py",
+    "note": "Per-ward composite over committed artifacts only (the legacy `sources` key names the lineage; JJ-basti, flood and water-body factors arrive via the ward profiles). Citations travel with the inputs' own envelopes. Algorithm identity in the payload weights/algorithm_version keys.",
+    "conventions": {
+      "gw_depth": "gw_depth_m is MEASURED: mean latest depth-to-water of CGWB wells within 4 km of the ward centroid; wards with no well in range keep null and are scored on the remaining factors renormalised, never on an imputed depth",
+      "coverage": "NDMC and Delhi Cantonment are outside the 250-ward MCD delimitation and are not scored"
+    }
+  },
   "algorithm_version": "risk_v2_dl",
   "weights": {
     "gw_depth": 0.35,

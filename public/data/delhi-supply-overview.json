@@ -1,4 +1,48 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/supply-overview",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cag-djb-audit",
+        "title": "CAG Performance Audit of the Delhi Jal Board, Report No. 3 of 2025 (tabled 2026-03-23)",
+        "publisher": "Comptroller and Auditor General of India",
+        "license": "GoI publication, cited with attribution",
+        "as_of": "2026-03",
+        "retrieved": "2026-07-20"
+      },
+      {
+        "id": "delhi-economic-survey-water",
+        "title": "Delhi Economic Survey 2023-24, Chapter 13 (Water Supply and Sewerage)",
+        "publisher": "Planning Department, GNCTD",
+        "license": "GNCTD publication, cited with attribution",
+        "as_of": "2024",
+        "retrieved": "2026-07-20"
+      },
+      {
+        "id": "djb-water-pages",
+        "title": "DJB About Us page - WTP roster, capacities, raw-water sources (~900 MGD)",
+        "publisher": "Delhi Jal Board",
+        "license": "GNCTD publication, cited with attribution",
+        "retrieved": "2026-07-20"
+      },
+      {
+        "title": "Draft Master Plan for Delhi 2041 - water targets (via Down to Earth analysis and the PRS summary)",
+        "publisher": "Delhi Development Authority (draft), via Down to Earth / PRS Legislative Research",
+        "url": "https://prsindia.org/files/parliamentry-announcement/2021-07-23/Master%20Plan%20for%20Delhi%202041.pdf",
+        "license": "public policy document, cited with attribution",
+        "closed": true,
+        "as_of": "2021"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-20",
+    "note": "Anchored on the CAG audit (production ~960 MGD, NRW), the Economic Survey Ch. 13 source-wise raw-water split, DJB's own water page (WTP roster) and the draft MPD-2041 targets - per-section citations in the legacy _note/_sources keys. produced_at is the extraction date the file itself asserts (_sources[].extracted 2026-07-20). _view_overrides/hero_copy are grandfathered UI hints (spec 6.4), config-migration follow-up on record."
+  },
   "_note": "Structural at-a-glance facts for Delhi's urban water supply, anchored on CAG Report No. 3 of 2025 (tabled 23 Mar 2026; audit period FY2017-18 to 2021-22), the Delhi Economic Survey 2023-24 Ch. 13, and DJB's own water page. Delhi is the platform's second 'pumped-from-far' city after Bengaluru - except nothing is pumped uphill: it arrives by gravity canal from five states, which is why the story stats emphasise distance and instruments, not lift. Source-wise availability figures are DJB's published raw-water splits (Economic Survey); production (~960 MGD = ~4,365 MLD) is the CAG-audited figure - the gap between claimed availability and audited production is itself a finding. Compiled 2026-07-20.",
   "current_supply_total_mld": 4365,
   "current_supply_mix_mld": [
@@ -72,7 +116,7 @@
     "nrw_sub": "CAG FY18-22: Rs 4,988 crore of revenue lost; only 40% of production is billed",
     "pop_label": "People on DJB supply",
     "pop_sub": "all of NCT except the NDMC enclave (~3%) and Cantonment",
-    "footer": "Sources: CAG Performance Audit of DJB (Report No. 3 of 2025, tabled 23 Mar 2026); Delhi Economic Survey 2023-24 Ch. 13; DJB water page. Source-wise splits are DJB's published availability; production is the CAG-audited figure. See the Allocation Ledger for the per-instrument entitled-vs-received view."
+    "footer": "Sources: CAG Performance Audit of DJB (Report No. 3 of 2025, tabled 23 Mar 2026); Delhi Economic Survey 2023-24 Ch. 13; DJB About Us page (WTP roster + capacities). Source-wise splits are DJB's published availability; production is the CAG-audited figure. See the Allocation Ledger for the per-instrument entitled-vs-received view."
   },
   "supply_chain": [
     "Yamuna at Wazirabad + Munak carrier (102 km, Haryana)",
@@ -95,8 +139,8 @@
       "extracted": "2026-07-20"
     },
     {
-      "name": "DJB water page (WTPs and sources)",
-      "url": "https://delhijalboard.delhi.gov.in/jalboard/water",
+      "name": "DJB About Us page (WTP roster + capacities) (WTPs and sources)",
+      "url": "https://delhijalboard.delhi.gov.in/jalboard/about-us",
       "date": "2026",
       "extracted": "2026-07-20"
     },
