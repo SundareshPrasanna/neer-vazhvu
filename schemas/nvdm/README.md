@@ -5,6 +5,9 @@ standard: the envelope every data artifact carries (identity + scope +
 provenance + conventions), per-dataset payload contracts, the scope registry,
 and worked examples.
 
+**Status: NVDM v1 ACCEPTED 2026-07-30** after four adversarial review rounds.
+The L2 gate on newly added data artifacts is ENFORCING.
+
 The full normative prose specification is maintained privately while its
 publication is decided; for validation purposes **these schemas and the
 validator are authoritative**. Spec section references in schema descriptions
@@ -42,8 +45,7 @@ python3 scripts/validate_nvdm.py                # regenerate the conformance rep
 python3 scripts/validate_nvdm.py --check FILE…  # gate: exit 1 unless FILE reaches L2
 ```
 
-CI (`.github/workflows/nvdm-conformance.yml`) runs the selftest and freshness
-checks as blocking, and the L2 gate on newly added data artifacts as
-**advisory** until NVDM v1 is accepted, after which it becomes enforcing.
-New artifacts should carry the envelope from their first commit regardless -
-retrofit is migration debt.
+CI (`.github/workflows/nvdm-conformance.yml`) runs the selftest, the freshness
+checks, and the L2 gate on newly added data artifacts - all **blocking**
+(v1 accepted 2026-07-30). New artifacts carry the envelope from their first
+commit; legacy files remain report-only until their city migrates.
