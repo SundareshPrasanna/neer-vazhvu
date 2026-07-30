@@ -577,6 +577,7 @@ function main() {
           publisher: "OpenStreetMap contributors",
           license: "ODbL 1.0",
           role: "input",
+          continuous: true,
         },
         {
           id: "cgwb-yearbook-tn",

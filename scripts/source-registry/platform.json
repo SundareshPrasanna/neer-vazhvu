@@ -108,7 +108,8 @@
         "method": "page-hash"
       },
       "dependsOn": [
-        "public/data/rich-bodies"
+        "public/data/rich-bodies",
+        "public/data/cascade"
       ],
       "refreshMethod": ".github/workflows/overture-buildings-refresh.yml (monthly, 8th)",
       "notes": "Overture ships MONTHLY, the fastest cadence of any platform family, and a workflow already re-pulls it on the 8th - so this entry is about knowing the release landed, not about triggering the fetch. GAP FOUND 2026-07-26: our overture artifacts record only computed_at, NOT the Overture release version they were built from, so we cannot currently tell which release a given rich-body panel reflects. Worth adding to the ingest script. docs.overturemaps.org/release/ 404s and the GitHub releases API returns an empty list, so overturemaps.org/download is the watchable surface.",

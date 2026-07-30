@@ -83,7 +83,8 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/restoration-projects-madurai.json": "curated compilation; per-record citations (court orders, MMC, press); no watchable listing",
   "public/data/river-events-madurai.json": "curated event timeline; per-record url citations; no watchable listing",
   "public/data/water-bodies-flagship-madurai.json": "curated flagship register; per-record citations (DHAN, MMC, press); no watchable listing",
-  "public/data/industrial-sources-madurai.json": "qualitative one-off academic source (Columbia GSAPP studio book); statistics failed adversarial checks - see the file's _source_caveats",
+  "public/data/industrial-sources-madurai.json": "qualitative one-off academic source (Columbia GSAPP studio book, spring 2016); statistics failed adversarial checks - see the file's _source_caveats",
+  "public/data/gw-stations-madurai.json": "India-WRIS GroundwaterLevel_Stations (NWIC ArcGIS) - continuous API, no editions to detect; re-fetch cadence is a freshness question (P5-1). Was misattributed to IN-GRES until 2026-07-30 review.",
 
   // Closed series. The upstream will not publish again; an edition watch would
   // be permanently silent, which is worse than an explicit note.

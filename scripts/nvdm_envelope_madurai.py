@@ -53,18 +53,27 @@ OSM_TANKS = {
     "publisher": "OpenStreetMap contributors",
     "license": "ODbL 1.0",
     "role": "input",
+    "continuous": True,
 }
 SENTINEL2 = {
     "title": "Sentinel-2 L2A imagery (channel evidence)",
     "publisher": "ESA Copernicus",
     "license": "Copernicus free and open data, attribution required",
     "role": "input",
+    "continuous": True,
 }
 DYNAMIC_WORLD = {
     "title": "Google Dynamic World built-up classification",
     "publisher": "Google / World Resources Institute",
     "license": "CC BY 4.0",
     "role": "input",
+    "continuous": True,
+}
+WRIS_GW = {
+    "title": "India-WRIS Ground Water Level dataset (NWIC ArcGIS services)",
+    "publisher": "CGWB / NWIC via India-WRIS",
+    "license": "GoI open publication, cited with attribution",
+    "continuous": True,
 }
 OVERTURE = {
     "id": "overture-buildings",
@@ -77,11 +86,13 @@ IMD_NORMALS = {
     "title": "IMD monthly rainfall normals (Madurai grid point, via imd-rainfall-monthly-madurai.json)",
     "publisher": "India Meteorological Department",
     "role": "input",
+    "continuous": True,
 }
 OSM_SOURCE = {
     "title": "OpenStreetMap (Overpass API extract)",
     "publisher": "OpenStreetMap contributors",
     "license": "ODbL 1.0",
+    "continuous": True,
 }
 CASCADE_TOPO = [FABDEM, OSM_TANKS, HYDROSHEDS]
 CASCADE_SCORED = CASCADE_TOPO + [SENTINEL2, DYNAMIC_WORLD]
@@ -135,7 +146,7 @@ PROVENANCE: dict[str, dict] = {
         "method": "mixed",
         "produced_by": "neer-vazhvu-api/app/cascade/health.py",
         "sources": CASCADE_SCORED
-        + [{"title": "Curated named-cascade documentation (Layer B; per-cascade references inline)", "publisher": "Neer Vazhvu curation"}],
+        + [{"title": "Curated named-cascade documentation (Layer B; per-cascade references inline; edition history = git)", "publisher": "Neer Vazhvu curation", "continuous": True}],
         "note": CASCADE_NOTE,
     },
     "cascade/cascades-health": cascade(CASCADE_SCORED),
@@ -157,10 +168,10 @@ PROVENANCE: dict[str, dict] = {
     },
     "data-root/cgwb-stations": {
         "method": "api",
-        "sources": [reg("cgwb-yearbook-tn")],
+        "sources": [reg("cgwb-yearbook-tn"), dict(WRIS_GW)],
         "note": (
             "Well series fetched from the India-WRIS Ground Water Level dataset "
-            "(continuous API - freshness-tracked, not edition-tracked); year-book "
+            "(declared continuous - freshness-tracked, not edition-tracked); year-book "
             "summaries covered by the cgwb-yearbook-tn registry entry."
         ),
         "conventions": {
@@ -195,13 +206,23 @@ PROVENANCE: dict[str, dict] = {
     },
     "data-root/gee-phase1-water-body-targets": {
         "method": "manual",
-        "sources": [{"title": "Neer Vazhvu GEE Phase-1 target selection (own manifest)", "publisher": "Neer Vazhvu"}],
+        "sources": [
+            {
+                "title": "Neer Vazhvu GEE Phase-1 target selection (own manifest; edition history = git)",
+                "publisher": "Neer Vazhvu",
+                "continuous": True,
+            }
+        ],
     },
     "data-root/gw-stations": {
         "method": "api",
         "produced_by": "scripts/fetch-wris-groundwater-madurai.ts",
-        "sources": [reg("ingres-gw-assessment-madurai")],
-        "note": "Station list/readings via India-WRIS Ground Water Level API (continuous; freshness-tracked).",
+        "sources": [dict(WRIS_GW)],
+        "note": (
+            "Stations fetched directly from arc.indiawris.gov.in NWIC services "
+            "(GroundwaterLevel_Stations) - NOT from IN-GRES; review 2026-07-30 "
+            "corrected an earlier misattribution."
+        ),
     },
     "data-root/gwr-blocks": {
         "method": "api",
@@ -209,7 +230,7 @@ PROVENANCE: dict[str, dict] = {
     },
     "data-root/imd-rainfall-monthly": {
         "method": "api",
-        "sources": [{"title": "IMD gridded monthly rainfall (city grid point)", "publisher": "India Meteorological Department"}],
+        "sources": [{"title": "IMD gridded monthly rainfall (city grid point)", "publisher": "India Meteorological Department", "continuous": True}],
     },
     "data-root/industrial-sources": {
         "method": "manual",
@@ -217,14 +238,17 @@ PROVENANCE: dict[str, dict] = {
             {
                 "title": "Columbia GSAPP 'Water Urbanism: Madurai' studio book (qualitative use only)",
                 "publisher": "Columbia GSAPP",
+                "url": "https://www.arch.columbia.edu/books/reader/192-water-urbanism-madurai-india",
+                "closed": True,
+                "as_of": "2016",
             }
         ],
-        "note": "See _source_caveats: the studio book's statistics failed adversarial checks; locations retained as qualitative evidence only.",
+        "note": "Spring-2016 studio book. See _source_caveats: its statistics failed adversarial checks; locations retained as qualitative evidence only.",
     },
     "data-root/rainfall-recent": {
         "method": "api",
         "produced_by": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-        "sources": [{"title": "IMD district daily/monthly rainfall (recent)", "publisher": "India Meteorological Department"}],
+        "sources": [{"title": "IMD district daily/monthly rainfall (recent)", "publisher": "India Meteorological Department", "continuous": True}],
     },
     "data-root/restoration-priority": {
         "method": "derived",
@@ -243,13 +267,14 @@ PROVENANCE: dict[str, dict] = {
             {
                 "title": "Compiled restoration project records and court orders (per-record citations inline)",
                 "publisher": "Madras HC Madurai Bench, MMC, press reports (various)",
+                "aggregate": True,
             }
         ],
     },
     "data-root/river-events": {
         "method": "manual",
         "sources": [
-            {"title": "Compiled Vaigai river event timeline (per-record url citations)", "publisher": "press reports and public records (various)"}
+            {"title": "Compiled Vaigai river event timeline (per-record url citations)", "publisher": "press reports and public records (various)", "aggregate": True}
         ],
     },
     "data-root/river-quality": {
@@ -273,7 +298,7 @@ PROVENANCE: dict[str, dict] = {
     "data-root/water-bodies-flagship": {
         "method": "manual",
         "sources": [
-            {"title": "Curated flagship water-body register (per-record citations inline)", "publisher": "DHAN Foundation reports, MMC, press (various)"}
+            {"title": "Curated flagship water-body register (per-record citations inline)", "publisher": "DHAN Foundation reports, MMC, press (various)", "aggregate": True}
         ],
     },
     "data-root/water-bodies-lost": {
@@ -282,6 +307,7 @@ PROVENANCE: dict[str, dict] = {
             {
                 "title": "Primary + secondary lost water-body documentation (see primary_source / secondary_sources keys)",
                 "publisher": "various (per legacy keys and per-record notes)",
+                "aggregate": True,
             }
         ],
     },
@@ -312,7 +338,7 @@ PROVENANCE: dict[str, dict] = {
         "method": "derived",
         "produced_by": "scripts/build-madurai-lost-bodies-geojson.ts",
         "sources": [
-            {"title": "water-bodies-lost-madurai.json (curated register, itself enveloped)", "publisher": "Neer Vazhvu", "role": "input"}
+            {"title": "water-bodies-lost-madurai.json (curated register, itself enveloped; edition history = git)", "publisher": "Neer Vazhvu", "role": "input", "continuous": True}
         ],
     },
 }
@@ -361,10 +387,19 @@ def main() -> int:
         path = ROOT / rec["path"]
         raw = path.read_text()
         doc = json.loads(raw)
-        if not isinstance(doc, dict) or "nvdm" in doc:
+        refresh = "--refresh" in sys.argv
+        if not isinstance(doc, dict) or ("nvdm" in doc and not refresh):
             skipped += 1
             continue
-        provenance = {"sources": spec["sources"], "method": spec["method"], "produced_at": produced_at_for(doc, path)}
+        # --refresh recomputes the envelope from the current provenance map but
+        # PRESERVES the original produced_at (the artifact's data was not
+        # regenerated; git dates now point at the envelope commit, not the data).
+        prior_produced_at = doc.get("provenance", {}).get("produced_at") if "nvdm" in doc else None
+        provenance = {
+            "sources": spec["sources"],
+            "method": spec["method"],
+            "produced_at": prior_produced_at or produced_at_for(doc, path),
+        }
         if spec.get("produced_by"):
             provenance["produced_by"] = spec["produced_by"]
         if spec.get("note"):
