@@ -19,7 +19,7 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 ## Standardization signal
 
 - Logical datasets present in **2+ cities**: 53
-- Logical datasets in **exactly 1 city** (bespoke): 42
+- Logical datasets in **exactly 1 city** (bespoke): 43
 - Multi-city datasets whose per-city files have **divergent schemas**: 33
 
 ### Multi-city datasets with schema drift (fix-first list for NVDM)

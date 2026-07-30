@@ -267,11 +267,13 @@ function main() {
   wards.sort((a, b) => a.ward_number - b.ward_number);
   const grid = buildGridIndex(wards);
 
-  // 2. Load existing admin profile (kept as base; we enrich in place).
-  //    Accepts both the legacy bare-array shape and the NVDM wrapped form
-  //    this script now emits ({ envelope..., wards: [...] }).
+  // 2. Load the ADMIN SEED as base (review 2026-07-30: reading our own prior
+  //    output made regeneration a fixed point - stale admin edits could
+  //    survive forever). bangalore-ward-admin.json is the enveloped split of
+  //    the GBA 2025 delimitation attributes; this build now rebuilds cleanly
+  //    from tracked sources only.
   const existingRaw = JSON.parse(
-    readFileSync(resolve(root, "public/data/bangalore-ward-profiles.json"), "utf8"),
+    readFileSync(resolve(root, "public/data/bangalore-ward-admin.json"), "utf8"),
   ) as
     | Array<Record<string, unknown> & { ward_number: number }>
     | { wards: Array<Record<string, unknown> & { ward_number: number }> };
@@ -711,13 +713,10 @@ function main() {
       method: "derived",
       produced_at: PRODUCED_AT,
       produced_by: "scripts/compute-bangalore-ward-profiles.ts",
-      // Machine-readable internal lineage, verified against the reads above -
-      // this script reads its own previous output as the admin-field base
-      // (those fields originate from convert-bangalore-wards-kml.py), which
-      // is why the artifact lists itself.
+      // Machine-readable internal lineage, verified against the reads above.
       internal_inputs: [
         "public/geojson/bangalore-wards-2025.geojson",
-        "public/data/bangalore-ward-profiles.json",
+        "public/data/bangalore-ward-admin.json",
         "public/geojson/bangalore-water-bodies-current.geojson",
         "public/geojson/bangalore-water-bodies-census.geojson",
         "public/data/restoration-priority-bangalore.json",
