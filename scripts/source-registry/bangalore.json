@@ -330,7 +330,8 @@
       "dependsOn": [
         "public/geojson/bangalore-wards-2025.geojson",
         "public/data/bangalore-ward-profiles.json",
-        "public/data/ward-risk-bangalore.json"
+        "public/data/ward-risk-bangalore.json",
+        "public/data/bangalore-ward-admin.json"
       ],
       "refreshMethod": "scripts/convert-bangalore-wards-kml.py, then scripts/compute-bangalore-ward-profiles.ts + scripts/compute-bangalore-ward-risk.py",
       "notes": "GBA 369-ward delimitation KML (Dec 2025 file incl. the 01.12.2025 name changes) - the geometry AND the admin/population fields under bangalore-ward-profiles.json. NOT treated as a closed edition: the dataset moved again on 2026-07-27 (metadata_modified), consistent with post-notification corrections. A detection here means ward geometry/names may have shifted under every ward-joined layer.",
