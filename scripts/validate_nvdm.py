@@ -706,16 +706,26 @@ def selftest(schemas: dict[str, dict]) -> int:
         (Path(td) / "public/data").mkdir(parents=True)
         (Path(td) / "public/data/enveloped.json").write_text('{"nvdm": "1.0", "x": 1}')
         (Path(td) / "public/data/bare.json").write_text('{"x": 1}')
+        # Large one-line enveloped artifact (> pipe buffer): under pipefail,
+        # `git show | head -c 400` SIGPIPEs git show and the old gate silently
+        # SKIPPED big enveloped files (found on the 331 KB coastal transects,
+        # 2026-07-31) - pin the fix.
+        (Path(td) / "public/data/big-enveloped.geojson").write_text(
+            '{"nvdm": "1.0", "features": [' + ", ".join(["0"] * 1_000_000) + "]}"
+        )
         g2("add", "-A"); g2("commit", "-qm", "base")
         out = sp.run(["bash", str(ROOT / "scripts/nvdm-refresh-gate.sh"),
-                      "public/data/enveloped.json", "public/data/bare.json"],
+                      "public/data/enveloped.json", "public/data/bare.json",
+                      "public/data/big-enveloped.geojson"],
                      cwd=td, capture_output=True, text=True,
                      env={**__import__("os").environ, "NVDM_CHECK_CMD": "echo ENFORCED"})
         check("refresh gate enforces files enveloped at HEAD",
-              "ENFORCED public/data/enveloped.json" in out.stdout)
+              "public/data/enveloped.json" in out.stdout.split("ENFORCED")[-1])
         check("refresh gate skips unenveloped files without passing them",
               "bare.json not enveloped at HEAD - skipped" in out.stdout
-              and "ENFORCED public/data/enveloped.json public/data/bare.json" not in out.stdout)
+              and "bare.json" not in out.stdout.split("ENFORCED")[-1])
+        check("refresh gate enforces LARGE enveloped files (no SIGPIPE skip)",
+              "big-enveloped.geojson" in out.stdout.split("ENFORCED")[-1])
 
     return 1 if fails else 0
 

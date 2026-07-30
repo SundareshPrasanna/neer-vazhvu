@@ -20,7 +20,13 @@ fi
 
 MUST=()
 for f in "$@"; do
-  if git show "HEAD:$f" 2>/dev/null | head -c 400 | grep -q '"nvdm"'; then
+  # NOTE: no `git show | head -c` pipeline here - under pipefail, head's early
+  # close SIGPIPEs git show on any artifact bigger than a pipe buffer, and the
+  # whole condition reads false: large ENVELOPED files were silently skipped
+  # (found gating the 331 KB coastal transects, 2026-07-31). Command
+  # substitution with `|| true` keeps only grep's verdict.
+  head_bytes=$(git show "HEAD:$f" 2>/dev/null | head -c 400 || true)
+  if printf '%s' "$head_bytes" | grep -q '"nvdm"'; then
     MUST+=("$f")
   else
     echo "refresh-gate: $f not enveloped at HEAD - skipped (unmigrated)"
