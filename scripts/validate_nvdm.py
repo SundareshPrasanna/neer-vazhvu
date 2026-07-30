@@ -337,6 +337,15 @@ def apply_internal_input_floor(results: list[dict]) -> None:
     # first; only then cap tainted L3 nodes.
     by_path = {r["path"]: r for r in results}
     taint: dict[str, bool] = {}
+    # Round-4 review: a derived/gee/mixed node that DOESN'T declare its
+    # lineage is lineage-unknown - conservatively tainted, or an undeclared
+    # L2 intermediary hides an L0 dependency from its L3 consumer. (Asserted
+    # methods - manual/api/scrape/pdf-extract - carry no internal lineage
+    # obligation and are not tainted by omission.)
+    for r in results:
+        if "internal_inputs" not in r and r.get("method") in ("derived", "gee", "mixed"):
+            taint[r["path"]] = True
+            r["_weak"] = ["<lineage undeclared>"]
     changed = True
     while changed:
         changed = False
@@ -481,6 +490,10 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
     ii = doc.get("provenance", {}).get("internal_inputs") if isinstance(doc, dict) else None
     if isinstance(ii, list):
         result["internal_inputs"] = [str(p) for p in ii]
+    if isinstance(doc, dict):
+        m = doc.get("provenance", {}).get("method")
+        if m:
+            result["method"] = m
     return result
 
 
@@ -664,6 +677,23 @@ def selftest(schemas: dict[str, dict]) -> int:
     ]
     apply_internal_input_floor(chain3)
     check("governed L2 intermediary leaves L3 dependent standing", chain3[0]["level"] == 3)
+
+    # Round-4: an UNDECLARED derived intermediary is lineage-unknown ->
+    # tainted; an undeclared asserted-method (api) node carries no lineage
+    # obligation and does not taint by omission.
+    chain4 = [
+        {"path": "A.json", "level": 3, "notes": [], "internal_inputs": ["B.json"]},
+        {"path": "B.json", "level": 2, "notes": [], "method": "derived"},
+    ]
+    apply_internal_input_floor(chain4)
+    check("undeclared derived intermediary taints its L3 dependent (round 4)",
+          chain4[0]["level"] == 2 and any("undeclared" in n or "ungoverned" in n for n in chain4[0]["notes"]))
+    chain5 = [
+        {"path": "A.json", "level": 3, "notes": [], "internal_inputs": ["B.json"]},
+        {"path": "B.json", "level": 2, "notes": [], "method": "api"},
+    ]
+    apply_internal_input_floor(chain5)
+    check("undeclared asserted-method node does not taint by omission", chain5[0]["level"] == 3)
 
     # Refresh gate (round-2 review: report mode cannot fail, so workflows now
     # call scripts/nvdm-refresh-gate.sh): a file enveloped at HEAD is enforced;

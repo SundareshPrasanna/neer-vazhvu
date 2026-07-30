@@ -12,7 +12,8 @@
  * Run: npx tsx scripts/build-madurai-lost-bodies-geojson.ts
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { resolve } from "path";
 
 const root = process.cwd();
@@ -170,7 +171,7 @@ function main() {
     features,
   };
   const outPath = resolve(root, "public/geojson/madurai-water-bodies-lost.geojson");
-  writeFileSync(outPath, JSON.stringify(out, null, 2));
+  writeArtifact(outPath, out as unknown as Record<string, unknown>);
 
   console.log(`Wrote ${features.length} features to ${outPath}`);
   if (skipped.length > 0) {
