@@ -330,31 +330,38 @@ def apply_internal_input_floor(results: list[dict]) -> None:
     input is below L2 - an input missing from the catalogue counts as L0.
     Runs to a FIXPOINT so demotions propagate through chains (round-2 review:
     A(L3)->B(L3)->C(L0) must cap A too, not just B)."""
+    # Round-3 review: taint is a property of LINEAGE, computed for every
+    # declaring node regardless of its own level - an L2 intermediary (no
+    # contract published) over an L0 input must still pass taint upward, or
+    # A(L3)->B(L2)->C(L0) leaves A laundered at L3. Fixpoint over the graph
+    # first; only then cap tainted L3 nodes.
     by_path = {r["path"]: r for r in results}
+    taint: dict[str, bool] = {}
     changed = True
     while changed:
         changed = False
         for r in results:
-            if r["level"] < 3 or "internal_inputs" not in r:
+            if "internal_inputs" not in r or taint.get(r["path"]):
                 continue
-            # An input is weak if below L2 OR itself floor-capped: a cap marks
-            # the whole chain as resting on ungoverned ground, and L2-by-
-            # demotion must not launder into L3-eligibility one hop up.
             weak = [
                 p for p in r["internal_inputs"]
                 if by_path.get(p) is None
                 or by_path[p]["level"] < 2
-                or by_path[p].get("_floor_capped")
+                or taint.get(p, False)
             ]
             if weak:
-                r["level"] = 2
-                r["_floor_capped"] = True
-                r["notes"].append(
-                    f"capped at L2: internal input(s) ungoverned or floor-capped - {', '.join(weak[:3])}"
-                )
+                taint[r["path"]] = True
+                r["_weak"] = weak
                 changed = True
     for r in results:
-        r.pop("_floor_capped", None)
+        if taint.get(r["path"]) and r["level"] >= 3:
+            r["level"] = 2
+            r["notes"].append(
+                "capped at L2: lineage rests (transitively) on ungoverned inputs - "
+                + ", ".join(r.get("_weak", [])[:3])
+            )
+    for r in results:
+        r.pop("_weak", None)
 
 
 # Claim datasets (spec 5.1): every record makes an independently quotable claim
@@ -452,13 +459,14 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
             c_errs += claim_provenance_errors(doc, f"{rec['family']}/{rec['dataset']}")
             c_errs += unknown_key_errors(doc, schemas[contract])
             c_errs += license_errors(doc)
-            # Fail-closed internal lineage (round-2 review: omission kept L3):
-            # derived/gee artifacts must DECLARE internal_inputs - explicitly
-            # empty [] when they truly consume no repo artifacts.
-            if doc.get("provenance", {}).get("method") in ("derived", "gee") and \
+            # Fail-closed internal lineage (rounds 2-3: omission kept L3, and
+            # `mixed` was exempt while its producer read five repo artifacts):
+            # derived/gee/mixed artifacts must DECLARE internal_inputs -
+            # explicitly [] when they truly consume no repo artifacts.
+            if doc.get("provenance", {}).get("method") in ("derived", "gee", "mixed") and \
                     "internal_inputs" not in doc.get("provenance", {}):
                 c_errs.append(
-                    "derived artifact seeking L3 must declare provenance.internal_inputs "
+                    "derived/mixed artifact seeking L3 must declare provenance.internal_inputs "
                     "(explicitly [] if none) - the dependency floor is fail-closed"
                 )
             if c_errs:
@@ -637,6 +645,25 @@ def selftest(schemas: dict[str, dict]) -> int:
     apply_internal_input_floor(chain)
     check("dependency floor propagates transitively (A over B over L0-C)",
           chain[0]["level"] == 2 and chain[1]["level"] == 2)
+
+    # Round-3 regression: an L2 INTERMEDIARY (no contract, legitimately L2)
+    # must still pass taint upward - A(L3)->B(L2, declares C)->C(L0) caps A.
+    chain2 = [
+        {"path": "A.json", "level": 3, "notes": [], "internal_inputs": ["B.json"]},
+        {"path": "B.json", "level": 2, "notes": [], "internal_inputs": ["C.json"]},
+        {"path": "C.json", "level": 0, "notes": []},
+    ]
+    apply_internal_input_floor(chain2)
+    check("L2 intermediary does not launder weak lineage (round 3)",
+          chain2[0]["level"] == 2 and any("capped" in n for n in chain2[0]["notes"]))
+    # And a governed L2 intermediary does NOT taint its dependent.
+    chain3 = [
+        {"path": "A.json", "level": 3, "notes": [], "internal_inputs": ["B.json"]},
+        {"path": "B.json", "level": 2, "notes": [], "internal_inputs": ["D.json"]},
+        {"path": "D.json", "level": 2, "notes": []},
+    ]
+    apply_internal_input_floor(chain3)
+    check("governed L2 intermediary leaves L3 dependent standing", chain3[0]["level"] == 3)
 
     # Refresh gate (round-2 review: report mode cannot fail, so workflows now
     # call scripts/nvdm-refresh-gate.sh): a file enveloped at HEAD is enforced;

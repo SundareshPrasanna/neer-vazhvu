@@ -12,7 +12,7 @@ Anomaly detection: when re-running this script (e.g. on a quarterly
 cron after a new Overture release), the new count is delta-checked
 against the previous JSON. If any zone's building count changes by
 more than ANOMALY_DELTA_PCT, the script exits non-zero AND writes
-the new JSON to a *.candidate.json file instead of overwriting the
+the new payload to a *.candidate file instead of overwriting the
 canonical path - so a CI workflow can fail loudly and require human
 review before publication.
 
@@ -212,7 +212,11 @@ def main():
     }
 
     out_path = ROOT / "public/data/rich-bodies" / f"{body_id}-overture-buildings.json"
-    candidate_path = out_path.with_suffix(".candidate.json")
+    # .candidate (not .json): review candidates stay OUTSIDE the catalogue
+    # walk and the L2 gate pathspecs (round-3 review: a .candidate.json was
+    # catalogued with a mismatched identity, guaranteeing red PRs).
+    # Acceptance = rename over the canonical .json (envelope already inherited).
+    candidate_path = out_path.with_suffix(".candidate")
 
     # Anomaly detection: compare against the previously published JSON
     anomalies = _detect_anomalies(out_path, payload, args.anomaly_pct)

@@ -195,6 +195,13 @@ PROVENANCE: dict[str, dict] = {
     "data-root/facts": {
         "method": "mixed",
         "produced_by": "scripts/compute-madurai-derived-facts.ts (derived facts) + manual curation",
+        "internal_inputs": [
+            "public/data/gwr-blocks-madurai.json",
+            "public/data/restoration-priority-madurai.json",
+            "public/data/river-quality-madurai.json",
+            "public/data/ward-risk-madurai.json",
+            "public/data/water-bodies-lost-madurai.json",
+        ],
         "sources": [
             reg("cgwb-yearbook-tn"),
             reg("ingres-gw-assessment-madurai"),
