@@ -174,18 +174,22 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "allocations",
-   "bytes": 28029,
+   "bytes": 29629,
    "schema": {
     "kind": "object",
     "keys": [
      "arrangements",
      "authorities",
+     "dataset",
      "events",
      "futures",
      "gaps",
      "headline",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "sources",
      "unit_note",
      "updated"
@@ -196,7 +200,9 @@
     "src/lib/cities/mumbai.ts",
     "src/lib/cities/types.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_mumbai.py"
+   ],
    "headwaters_sources": [
     "bmc-esr-annual",
     "bmc-rti-manuals",
@@ -5620,7 +5626,7 @@
    "family": "cascade",
    "scope": "mumbai",
    "dataset": "cascade-catchments",
-   "bytes": 1718330,
+   "bytes": 1719467,
    "schema": {
     "kind": "FeatureCollection",
     "features": 290,
@@ -5672,7 +5678,7 @@
    "family": "cascade",
    "scope": "mumbai",
    "dataset": "cascade-edges",
-   "bytes": 36975,
+   "bytes": 38123,
    "schema": {
     "kind": "FeatureCollection",
     "features": 110,
@@ -5721,7 +5727,7 @@
    "family": "cascade",
    "scope": "mumbai",
    "dataset": "cascade-lakes",
-   "bytes": 418026,
+   "bytes": 419174,
    "schema": {
     "kind": "FeatureCollection",
     "features": 290,
@@ -5779,7 +5785,7 @@
    "family": "cascade",
    "scope": "mumbai",
    "dataset": "cascade-nodes",
-   "bytes": 140595,
+   "bytes": 141743,
    "schema": {
     "kind": "FeatureCollection",
     "features": 297,
@@ -5839,7 +5845,7 @@
    "family": "cascade",
    "scope": "mumbai",
    "dataset": "cascade-river-outlets",
-   "bytes": 7890,
+   "bytes": 9046,
    "schema": {
     "kind": "FeatureCollection",
     "features": 27,
@@ -5886,11 +5892,12 @@
    "family": "cascade",
    "scope": "mumbai",
    "dataset": "cascade-stats",
-   "bytes": 697,
+   "bytes": 1971,
    "schema": {
     "kind": "object",
     "keys": [
      "_meta",
+     "dataset",
      "district_id",
      "edge_confidence_counts",
      "edge_count",
@@ -5899,7 +5906,10 @@
      "max_cascade_depth",
      "narrative_anchor",
      "node_count",
+     "nvdm",
+     "provenance",
      "river_outlet_count",
+     "scope",
      "top_convergence"
     ]
    },
@@ -5939,13 +5949,17 @@
    "family": "cascade",
    "scope": "mumbai",
    "dataset": "cascade-systems",
-   "bytes": 339,
+   "bytes": 1693,
    "schema": {
     "kind": "object",
     "keys": [
      "_meta",
+     "dataset",
      "district_id",
      "label",
+     "nvdm",
+     "provenance",
+     "scope",
      "summary",
      "systems"
     ]
@@ -6025,13 +6039,14 @@
    "family": "cascade",
    "scope": "mumbai",
    "dataset": "catchment-quality",
-   "bytes": 1391,
+   "bytes": 2617,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm",
      "area_sqkm",
      "conduit_excluded_count",
+     "dataset",
      "delineated",
      "dem",
      "dem_cache",
@@ -6042,6 +6057,9 @@
      "no_polygon",
      "no_seed_count",
      "nodes_total",
+     "nvdm",
+     "provenance",
+     "scope",
      "utm_epsg"
     ]
    },
@@ -6363,14 +6381,18 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "commitments",
-   "bytes": 26041,
+   "bytes": 27108,
    "schema": {
     "kind": "object",
     "keys": [
      "commitments",
+     "dataset",
      "headline",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
+     "scope",
      "sources_note",
      "status_legend",
      "update_model",
@@ -7065,7 +7087,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "elevation-bands",
-   "bytes": 6201351,
+   "bytes": 6201891,
    "schema": {
     "kind": "FeatureCollection",
     "features": 7,
@@ -7215,41 +7237,56 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "facts",
-   "bytes": 17058,
+   "bytes": 18977,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "facts",
      "generated_at",
      "note",
-     "place_id"
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
     "src/app/[cityId]/facts/page.tsx"
    ],
    "producer_refs": [],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "bmc-climate-action-plan",
+    "cgwb-yearbook-maharashtra",
+    "cpcb-prs-report",
+    "praja-civic-issues-mumbai"
+   ],
+   "licenses": [
+    "GoI publication, cited with attribution",
+    "open (per OpenCity dataset page)",
+    "report (c) Praja, RTI-sourced tables; OpenCity mirror"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/flood-lines-mumbai.json",
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "flood-lines",
-   "bytes": 9059,
+   "bytes": 9902,
    "schema": {
     "kind": "object",
     "keys": [
+     "dataset",
      "gaps_note",
      "intro",
+     "nvdm",
      "place_id",
+     "provenance",
      "rivers",
+     "scope",
      "source",
      "title",
      "updated"
@@ -7683,17 +7720,21 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "imd-rainfall-monthly",
-   "bytes": 31241,
+   "bytes": 31861,
    "schema": {
     "kind": "object",
     "keys": [
      "annual_totals",
+     "dataset",
      "generated_at",
      "grid_point",
      "monthly",
      "normal_period",
      "normals",
      "note",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "year_range"
     ]
@@ -7871,12 +7912,16 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "industrial-sources",
-   "bytes": 9859,
+   "bytes": 11295,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
+     "dataset",
      "last_updated",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "sources"
     ]
@@ -7887,10 +7932,14 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "mpcb-stp-inventory"
+    "mpcb-stp-inventory",
+    "osm-overpass",
+    "praja-civic-issues-mumbai"
    ],
    "licenses": [
-    "government publication, cited with attribution"
+    "ODbL 1.0",
+    "government publication, cited with attribution",
+    "report (c) Praja, RTI-sourced tables; OpenCity mirror"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -8148,16 +8197,20 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-corporations-water",
-   "bytes": 19442,
+   "bytes": 20657,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
      "as_of",
      "corporations",
+     "dataset",
+     "nvdm",
      "open_gaps",
+     "provenance",
      "region",
      "rivers_creeks",
+     "scope",
      "sources"
     ]
    },
@@ -8166,10 +8219,12 @@
    ],
    "producer_refs": [],
    "headwaters_sources": [
-    "bmc-esr-annual"
+    "bmc-esr-annual",
+    "praja-civic-issues-mumbai"
    ],
    "licenses": [
-    "government publication, cited with attribution"
+    "government publication, cited with attribution",
+    "report (c) Praja, RTI-sourced tables; OpenCity mirror"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -8180,7 +8235,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 3346,
+   "bytes": 4563,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8188,7 +8243,11 @@
      "_note",
      "_source",
      "_source_url",
-     "dams"
+     "dams",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -8197,10 +8256,14 @@
    "producer_refs": [
     "scripts/check-data-freshness.ts"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
-   "accountability_reason": "daily feed: owned by check-data-freshness.ts (EXTRA_FEEDS)",
+   "headwaters_sources": [
+    "wrd-pravah-dam-feed"
+   ],
+   "licenses": [
+    "Maharashtra government public feed, no stated licence - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -8208,16 +8271,20 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "cgwb-stations",
-   "bytes": 62230,
+   "bytes": 63495,
    "schema": {
     "kind": "object",
     "keys": [
      "_citation_trace_2026_07_26",
      "_note",
      "aquifer",
+     "dataset",
      "depth_unit",
      "district",
+     "nvdm",
+     "provenance",
      "quality_note",
+     "scope",
      "source_label",
      "source_url",
      "well_type",
@@ -8249,7 +8316,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "flood-hotspots",
-   "bytes": 55809,
+   "bytes": 56747,
    "schema": {
     "kind": "FeatureCollection",
     "features": 110,
@@ -8274,12 +8341,17 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/scrape_bmc_flood_spots.py",
     "scripts/check-data-freshness.ts",
-    "scripts/compute-mumbai-ward-risk.py"
+    "scripts/compute-mumbai-ward-risk.py",
+    "scripts/nvdm_envelope_mumbai.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
-   "accountability_reason": "weekly feed: owned by check-data-freshness.ts (EXTRA_FEEDS)",
+   "headwaters_sources": [
+    "bmc-dm-floodspots"
+   ],
+   "licenses": [
+    "BMC government portal API, no stated licence - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -8287,7 +8359,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "supply-overview",
-   "bytes": 11342,
+   "bytes": 13316,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8296,8 +8368,12 @@
      "_view_overrides",
      "current_supply_mix_mld",
      "current_supply_total_mld",
+     "dataset",
      "demand",
      "distribution",
+     "nvdm",
+     "provenance",
+     "scope",
      "supply_chain",
      "wtps_summary"
     ]
@@ -8325,12 +8401,16 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "ward-water-praja",
-   "bytes": 12706,
+   "bytes": 13678,
    "schema": {
     "kind": "object",
     "keys": [
      "_note",
      "city",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
      "source",
      "wards"
     ]
@@ -8551,7 +8631,8 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
-    "scripts/check-data-freshness.ts"
+    "scripts/check-data-freshness.ts",
+    "scripts/nvdm_envelope_mumbai.py"
    ],
    "headwaters_sources": [
     "imd-gridded-rain",
@@ -8736,15 +8817,19 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "restoration-priority",
-   "bytes": 9640,
+   "bytes": 11646,
    "schema": {
     "kind": "object",
     "keys": [
      "algorithm_version",
      "computed_at",
+     "dataset",
      "notes",
+     "nvdm",
      "place_id",
+     "provenance",
      "river_sections",
+     "scope",
      "total_scored",
      "water_bodies",
      "weights"
@@ -8756,7 +8841,8 @@
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
-    "scripts/compute-restoration-priority-mumbai.ts"
+    "scripts/compute-restoration-priority-mumbai.ts",
+    "scripts/nvdm_envelope_mumbai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -8875,15 +8961,19 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "restoration-projects",
-   "bytes": 8078,
+   "bytes": 8620,
    "schema": {
     "kind": "object",
     "keys": [
      "compiled_at",
      "court_orders",
+     "dataset",
      "note",
+     "nvdm",
      "place_id",
-     "projects"
+     "projects",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -8894,11 +8984,9 @@
    "producer_refs": [],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "curated compilation; per-record citations (NGT/HC orders, corporation schemes, press); no watchable listing",
+   "flags": []
   },
   {
    "path": "public/data/restoration-projects.json",
@@ -14934,15 +15022,19 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "river-quality",
-   "bytes": 20543,
+   "bytes": 22663,
    "schema": {
     "kind": "object",
     "keys": [
      "_readings_status",
      "_wqr_source",
      "data_year_range",
+     "dataset",
      "last_updated",
+     "nvdm",
+     "provenance",
      "rivers",
+     "scope",
      "source"
     ]
    },
@@ -14952,13 +15044,16 @@
     "src/lib/hooks/use-ward-profile.ts"
    ],
    "producer_refs": [
+    "scripts/nvdm_envelope_mumbai.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
-    "mpcb-water-quality-reports"
+    "mpcb-water-quality-reports",
+    "praja-civic-issues-mumbai"
    ],
    "licenses": [
-    "Maharashtra government publication, cited with attribution"
+    "Maharashtra government publication, cited with attribution",
+    "report (c) Praja, RTI-sourced tables; OpenCity mirror"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -15254,12 +15349,16 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "ward-risk",
-   "bytes": 13029,
+   "bytes": 14813,
    "schema": {
     "kind": "object",
     "keys": [
      "_methodology",
      "algorithm_version",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
      "wards",
      "weights"
     ]
@@ -15273,10 +15372,16 @@
     "scripts/compute-delhi-ward-risk.py",
     "scripts/compute-mumbai-ward-risk.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
-   "accountability_reason": "derived: Praja supply hours + covered inputs",
+   "headwaters_sources": [
+    "datameet-mumbai-spatial",
+    "praja-civic-issues-mumbai"
+   ],
+   "licenses": [
+    "CC BY-SA 2.5 IN (Mumbai folder Readme; the repo default is CC BY 4.0 'unless explicitly stated' and the Mumbai Readme states BY-SA 2.5 India explicitly - verified 2026-07-30). SHARE-ALIKE encumbered.",
+    "report (c) Praja, RTI-sourced tables; OpenCity mirror"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -15350,29 +15455,32 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "water-bodies-flagship",
-   "bytes": 13497,
+   "bytes": 14038,
    "schema": {
     "kind": "object",
     "keys": [
      "bodies",
      "compiled_at",
+     "dataset",
      "note",
-     "place_id"
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
     "src/app/[cityId]/lake-restoration/page.tsx"
    ],
    "producer_refs": [
-    "scripts/compute-restoration-priority-mumbai.ts"
+    "scripts/compute-restoration-priority-mumbai.ts",
+    "scripts/nvdm_envelope_mumbai.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
-   "accountability": "unaccounted",
-   "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "accountability": "allowlisted",
+   "accountability_reason": "curated flagship register; per-record citations (corporation reports, Ramsar/sanctuary records, press); no watchable listing",
+   "flags": []
   },
   {
    "path": "public/data/water-bodies-lost-bangalore.json",
@@ -15493,16 +15601,20 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "water-bodies-lost",
-   "bytes": 5207,
+   "bytes": 5781,
    "schema": {
     "kind": "object",
     "keys": [
      "_location_note",
      "compiled_at",
+     "dataset",
      "lost_bodies",
      "note",
+     "nvdm",
      "place_id",
      "primary_source",
+     "provenance",
+     "scope",
      "secondary_sources",
      "summary"
     ]
@@ -15513,7 +15625,9 @@
     "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
     "src/components/water-bodies/unified-detail-panel.tsx"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_mumbai.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "allowlisted",
@@ -17148,7 +17262,7 @@
    "family": "geojson-layers",
    "scope": "mumbai",
    "dataset": "coastal-transects",
-   "bytes": 331166,
+   "bytes": 332295,
    "schema": {
     "kind": "FeatureCollection",
     "features": 706,
@@ -17178,9 +17292,15 @@
    "producer_refs": [
     "neer-vazhvu-api/app/gee/coastline.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "Copernicus free and open data, attribution required",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
    "accountability_reason": "our own MNDWI/GEE computation, coastal-shoreline-refresh.yml annual (P5-1)",
    "flags": []
   },
@@ -17189,7 +17309,7 @@
    "family": "geojson-layers",
    "scope": "mumbai",
    "dataset": "coastal-zones",
-   "bytes": 10246,
+   "bytes": 11740,
    "schema": {
     "kind": "FeatureCollection",
     "features": 7,
@@ -17214,22 +17334,25 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/app/gee/coastline.py",
-    "scripts/build-mumbai-coastal-seed.py"
+    "scripts/build-mumbai-coastal-seed.py",
+    "scripts/nvdm_envelope_mumbai.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/mumbai-corporations-2024.geojson",
    "family": "geojson-layers",
    "scope": "mumbai",
    "dataset": "corporations-2024",
-   "bytes": 167346,
+   "bytes": 167939,
    "schema": {
     "kind": "FeatureCollection",
     "features": 9,
@@ -17267,7 +17390,7 @@
    "family": "geojson-layers",
    "scope": "mumbai",
    "dataset": "drainage",
-   "bytes": 382453,
+   "bytes": 383137,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1024,
@@ -17305,7 +17428,7 @@
    "family": "geojson-layers",
    "scope": "mumbai",
    "dataset": "flood-2005-hotspots",
-   "bytes": 12746,
+   "bytes": 14220,
    "schema": {
     "kind": "FeatureCollection",
     "features": 35,
@@ -17336,7 +17459,7 @@
    "family": "geojson-layers",
    "scope": "mumbai",
    "dataset": "rivers",
-   "bytes": 132693,
+   "bytes": 133225,
    "schema": {
     "kind": "FeatureCollection",
     "features": 11,
@@ -17365,6 +17488,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/compute-mumbai-ward-risk.py",
     "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_mumbai.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -17382,7 +17506,7 @@
    "family": "geojson-layers",
    "scope": "mumbai",
    "dataset": "wards-2023",
-   "bytes": 920381,
+   "bytes": 921434,
    "schema": {
     "kind": "FeatureCollection",
     "features": 24,
@@ -17399,22 +17523,25 @@
    "consumers": [],
    "producer_refs": [
     "scripts/build-mumbai-wards.py",
-    "scripts/compute-mumbai-ward-risk.py"
+    "scripts/compute-mumbai-ward-risk.py",
+    "scripts/nvdm_envelope_mumbai.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "datameet-mumbai-spatial"
+   ],
+   "licenses": [
+    "CC BY-SA 2.5 IN (Mumbai folder Readme; the repo default is CC BY 4.0 'unless explicitly stated' and the Mumbai Readme states BY-SA 2.5 India explicitly - verified 2026-07-30). SHARE-ALIKE encumbered."
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/mumbai-water-bodies-current.geojson",
    "family": "geojson-layers",
    "scope": "mumbai",
    "dataset": "water-bodies-current",
-   "bytes": 2470251,
+   "bytes": 2470984,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1463,
@@ -17439,7 +17566,8 @@
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/districts.py",
     "scripts/build-mumbai-water-bodies.py",
-    "scripts/convert-bangalore-water-bodies-census-kml.py"
+    "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/nvdm_envelope_mumbai.py"
    ],
    "headwaters_sources": [
     "osm-overpass"
@@ -17456,7 +17584,7 @@
    "family": "geojson-layers",
    "scope": "mumbai",
    "dataset": "water-bodies-lost",
-   "bytes": 7511,
+   "bytes": 8037,
    "schema": {
     "kind": "FeatureCollection",
     "features": 13,
@@ -19834,7 +19962,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 29731483,
+   "bytes": 29732620,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19849,7 +19977,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 729807,
+   "bytes": 730955,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19864,7 +19992,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 3578009,
+   "bytes": 3579157,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19879,7 +20007,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 1341288,
+   "bytes": 1342436,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -19894,7 +20022,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 74911,
+   "bytes": 76067,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -19922,8 +20050,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 8120,
-   "schema_variants": 2,
+   "bytes": 9394,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -19934,7 +20062,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 339,
+   "bytes": 1693,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -20006,8 +20134,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 9225,
-   "schema_variants": 2,
+   "bytes": 10451,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": false
   },
@@ -20037,8 +20165,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 70994,
-   "schema_variants": 2,
+   "bytes": 72594,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -20112,7 +20240,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 820833,
+   "bytes": 822098,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -20128,8 +20256,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 149382,
-   "schema_variants": 3,
+   "bytes": 150449,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -20192,7 +20320,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 12868343,
+   "bytes": 12868883,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20207,8 +20335,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 130001,
-   "schema_variants": 2,
+   "bytes": 131920,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -20221,7 +20349,7 @@
     "delhi",
     "mumbai"
    ],
-   "bytes": 197803,
+   "bytes": 198741,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -20233,7 +20361,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 9059,
+   "bytes": 9902,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20302,8 +20430,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 256919,
-   "schema_variants": 2,
+   "bytes": 257539,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -20318,8 +20446,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 88519,
-   "schema_variants": 5,
+   "bytes": 89955,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },
@@ -20357,7 +20485,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 19442,
+   "bytes": 20657,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20369,7 +20497,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 3346,
+   "bytes": 4563,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20401,8 +20529,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 2137153,
-   "schema_variants": 3,
+   "bytes": 2139159,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -20428,8 +20556,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 36662,
-   "schema_variants": 3,
+   "bytes": 37204,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -20458,7 +20586,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 106720,
+   "bytes": 108840,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -20474,7 +20602,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 99797,
+   "bytes": 101771,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -20565,7 +20693,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 431188,
+   "bytes": 432972,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -20577,7 +20705,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 12706,
+   "bytes": 13678,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -20591,8 +20719,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 34977,
-   "schema_variants": 3,
+   "bytes": 35518,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -20606,8 +20734,8 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 21014,
-   "schema_variants": 3,
+   "bytes": 21588,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -20644,7 +20772,7 @@
     "chennai",
     "mumbai"
    ],
-   "bytes": 927052,
+   "bytes": 928181,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20657,7 +20785,7 @@
     "chennai",
     "mumbai"
    ],
-   "bytes": 33486,
+   "bytes": 34980,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20669,7 +20797,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 167346,
+   "bytes": 167939,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20695,7 +20823,7 @@
     "delhi",
     "mumbai"
    ],
-   "bytes": 5235947,
+   "bytes": 5236631,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -20707,7 +20835,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 12746,
+   "bytes": 14220,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20835,7 +20963,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 1938098,
+   "bytes": 1938630,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -20957,9 +21085,9 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 920381,
+   "bytes": 921434,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": false
   },
   {
@@ -20998,7 +21126,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 16957329,
+   "bytes": 16958062,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -21012,7 +21140,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 50283,
+   "bytes": 50809,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true

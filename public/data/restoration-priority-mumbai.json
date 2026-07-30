@@ -1,336 +1,352 @@
 {
- "place_id": "mumbai",
- "computed_at": "2026-07-08",
- "total_scored": 16,
- "algorithm_version": "mumbai-v1 (mirrors madurai scorer)",
- "weights": {
-  "status_severity": 0.5,
-  "cultural_bonus": 0.25,
-  "size": 0.15,
-  "confidence_multiplier": 0.1
- },
- "notes": "Scored over the 16 hand-curated MMR flagship bodies (water-bodies-flagship-mumbai.json). Components: status severity (0-80) + cultural/ecological bonus (0-35) + size (4-25), scaled by location/source confidence (0.7-1.0). Every rationale quotes the recorded status it is grounded in. Supply reservoirs (Vihar, Tulsi) score low by design - protected, functioning sources are not restoration candidates. Bodies outside this cohort (e.g. Tansa, Morbe) are NOT scored - absence of a priority means 'not assessed', not 'fine'.",
- "water_bodies": [
-  {
-   "id": "flagship:powai-lake",
-   "source": "flagship",
-   "name": "Powai Lake",
-   "water_type": "lake",
-   "area_ha": 210.4,
-   "centroid": [
-    19.1277,
-    72.9062
-   ],
-   "priority_score": 100,
-   "priority_level": "critical",
-   "components": {
-    "status_severity": 70,
-    "cultural_bonus": 10,
-    "size": 25,
-    "confidence_multiplier": 1
-   },
-   "rationale": "eutrophic with ~18 MLD untreated sewage inflow; NGT penalty recommended; STP not due until Dec 2027 · 520 acres (very large) · location high confidence"
+  "nvdm": "1.0",
+  "dataset": "data-root/restoration-priority",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
   },
-  {
-   "id": "flagship:dps-flamingo-lake",
-   "source": "flagship",
-   "name": "DPS Flamingo Lake",
-   "water_type": "lake",
-   "area_ha": 12.1,
-   "centroid": [
-    19.0054,
-    73.0202
-   ],
-   "priority_score": 98,
-   "priority_level": "critical",
-   "components": {
-    "status_severity": 65,
-    "cultural_bonus": 25,
-    "size": 8,
-    "confidence_multiplier": 1
-   },
-   "rationale": "flamingo deaths in 2024 after a water-flow disruption; Conservation Reserve declaration followed within days by a CIDCO de-reservation resolution · 30 acres (small) · location high confidence"
+  "provenance": {
+    "sources": [],
+    "method": "derived",
+    "produced_at": "2026-07-30",
+    "internal_inputs": [
+      "public/data/water-bodies-flagship-mumbai.json"
+    ],
+    "produced_by": "scripts/compute-restoration-priority-mumbai.ts",
+    "note": "Flagship-register scoring (Madurai pattern): 16 hand-curated MMR bodies scored on status severity, cultural anchors, size and source confidence; algorithm identity in the payload weights/algorithm_version keys; every rationale quotes the recorded status it is grounded in. Supply reservoirs (Vihar, Tulsi) score low BY DESIGN. Derived entirely from a committed artifact whose citations travel with its own envelope - internal inputs are lineage, not sources. Masunda and Kacharali carry area_ha null (no reliable recorded area) - an honest L3 gap, not a number to invent."
   },
-  {
-   "id": "flagship:nri-wetland",
-   "source": "flagship",
-   "name": "NRI Wetland",
-   "water_type": "lake",
-   "area_ha": 20.2,
-   "centroid": [
-    19.0062,
-    73.0111
-   ],
-   "priority_score": 97,
-   "priority_level": "critical",
-   "components": {
-    "status_severity": 60,
-    "cultural_bonus": 25,
-    "size": 12,
-    "confidence_multiplier": 1
-   },
-   "rationale": "the golf-course-vs-flamingos wetland; HC reclamation ban won but the developer's SLP is pending in the Supreme Court and reserve status remains undeclared · 50 acres (medium) · location high confidence"
+  "place_id": "mumbai",
+  "computed_at": "2026-07-30",
+  "total_scored": 16,
+  "algorithm_version": "mumbai-v1 (mirrors madurai scorer)",
+  "weights": {
+    "status_severity": 0.5,
+    "cultural_bonus": 0.25,
+    "size": 0.15,
+    "confidence_multiplier": 0.1
   },
-  {
-   "id": "flagship:banganga-talao",
-   "source": "flagship",
-   "name": "Banganga Talao",
-   "water_type": "lake",
-   "area_ha": 0.4,
-   "centroid": [
-    18.9455,
-    72.7936
-   ],
-   "priority_score": 79,
-   "priority_level": "high",
-   "components": {
-    "status_severity": 40,
-    "cultural_bonus": 35,
-    "size": 4,
-    "confidence_multiplier": 1
-   },
-   "rationale": "Grade-II sacred heritage tank; dewatered May 2026 for a ~Rs 20 cr restoration under activist criticism · 1.1 acres (very small) · location high confidence"
-  },
-  {
-   "id": "flagship:thane-creek-flamingo-sanctuary",
-   "source": "flagship",
-   "name": "Thane Creek Flamingo Sanctuary",
-   "water_type": "lake",
-   "area_ha": 1690.4,
-   "centroid": [
-    19.1086,
-    72.965
-   ],
-   "priority_score": 75,
-   "priority_level": "high",
-   "components": {
-    "status_severity": 25,
-    "cultural_bonus": 25,
-    "size": 25,
-    "confidence_multiplier": 1
-   },
-   "rationale": "Ramsar Site 2490 and Wildlife Sanctuary - protected, but the creek receives the region's sewage load · 4177 acres (very large) · location high confidence"
-  },
-  {
-   "id": "flagship:makhmali-talao",
-   "source": "flagship",
-   "name": "Makhmali Talao",
-   "water_type": "lake",
-   "area_ha": 1,
-   "centroid": [
-    19.1985,
-    72.9714
-   ],
-   "priority_score": 68,
-   "priority_level": "high",
-   "components": {
-    "status_severity": 62,
-    "cultural_bonus": 10,
-    "size": 4,
-    "confidence_multiplier": 0.9
-   },
-   "rationale": "severely degraded - slum sewage on three sides, hyacinth, fish kills, shrinking to encroachment; excluded from the City-of-Lakes campaign · 2.5 acres (very small) · location high confidence"
-  },
-  {
-   "id": "flagship:bandra-talao",
-   "source": "flagship",
-   "name": "Bandra Talao",
-   "water_type": "lake",
-   "area_ha": 3,
-   "centroid": [
-    19.0567,
-    72.8378
-   ],
-   "priority_score": 67,
-   "priority_level": "high",
-   "components": {
-    "status_severity": 45,
-    "cultural_bonus": 25,
-    "size": 4,
-    "confidence_multiplier": 0.9
-   },
-   "rationale": "greenish water, foul odour, blocked inlets reported; reduced ~1/3 by a 1950s station road; heritage talao · 7.5 acres (very small) · location high confidence"
-  },
-  {
-   "id": "flagship:siddheshwar-talao",
-   "source": "flagship",
-   "name": "Siddheshwar Talao",
-   "water_type": "lake",
-   "area_ha": 3,
-   "centroid": [
-    19.2013,
-    72.9684
-   ],
-   "priority_score": 64,
-   "priority_level": "high",
-   "components": {
-    "status_severity": 55,
-    "cultural_bonus": 12,
-    "size": 4,
-    "confidence_multiplier": 0.9
-   },
-   "rationale": "degraded and neglected - poor water quality, non-functional aerator, food-dumping - and left out of AMRUT-2 funding · 7.4 acres (very small) · location high confidence"
-  },
-  {
-   "id": "flagship:kavesar-lake",
-   "source": "flagship",
-   "name": "Kavesar Lake",
-   "water_type": "lake",
-   "area_ha": 2.4,
-   "centroid": [
-    19.2603,
-    72.9816
-   ],
-   "priority_score": 62,
-   "priority_level": "high",
-   "components": {
-    "status_severity": 55,
-    "cultural_bonus": 18,
-    "size": 4,
-    "confidence_multiplier": 0.8
-   },
-   "rationale": "Thane's last natural wetland (district's only naturally-growing white lotus); a beautification plan is opposed by the Save Kavesar movement · 6 acres (very small) · location medium confidence"
-  },
-  {
-   "id": "flagship:upvan-lake",
-   "source": "flagship",
-   "name": "Upvan Lake",
-   "water_type": "lake",
-   "area_ha": 6.1,
-   "centroid": [
-    19.2214,
-    72.956
-   ],
-   "priority_score": 59,
-   "priority_level": "moderate",
-   "components": {
-    "status_severity": 48,
-    "cultural_bonus": 10,
-    "size": 8,
-    "confidence_multiplier": 0.9
-   },
-   "rationale": "'beautified' yet still acidic (pH 3.9-4.25), sewage-fed and eutrophic · 15 acres (small) · location high confidence"
-  },
-  {
-   "id": "flagship:masunda-lake",
-   "source": "flagship",
-   "name": "Masunda Lake",
-   "water_type": "lake",
-   "area_ha": null,
-   "centroid": [
-    19.1931,
-    72.9752
-   ],
-   "priority_score": 51,
-   "priority_level": "moderate",
-   "components": {
-    "status_severity": 28,
-    "cultural_bonus": 25,
-    "size": 4,
-    "confidence_multiplier": 0.9
-   },
-   "rationale": "iconic and actively used but greenish water and foul odour reported; historic Thane talao · size unrecorded · location high confidence"
-  },
-  {
-   "id": "flagship:vadale-lake",
-   "source": "flagship",
-   "name": "Vadale Lake",
-   "water_type": "lake",
-   "area_ha": 10.1,
-   "centroid": [
-    18.994,
-    73.1118
-   ],
-   "priority_score": 50,
-   "priority_level": "moderate",
-   "components": {
-    "status_severity": 40,
-    "cultural_bonus": 15,
-    "size": 8,
-    "confidence_multiplier": 0.8
-   },
-   "rationale": "temple tank under weed and encroachment pressure; boating cancelled on ecological grounds; nature-based weevil control underway · 25 acres (small) · location high confidence"
-  },
-  {
-   "id": "flagship:kala-talao",
-   "source": "flagship",
-   "name": "Kala Talao",
-   "water_type": "lake",
-   "area_ha": 9.7,
-   "centroid": [
-    19.246,
-    73.1314
-   ],
-   "priority_score": 40,
-   "priority_level": "moderate",
-   "components": {
-    "status_severity": 30,
-    "cultural_bonus": 12,
-    "size": 8,
-    "confidence_multiplier": 0.8
-   },
-   "rationale": "flagship recreational lake; cited as a hardscape-'beautification' example; area records conflict · 24 acres (small) · location high confidence"
-  },
-  {
-   "id": "flagship:vihar-lake",
-   "source": "flagship",
-   "name": "Vihar Lake",
-   "water_type": "lake",
-   "area_ha": 700.1,
-   "centroid": [
-    19.1547,
-    72.9131
-   ],
-   "priority_score": 36,
-   "priority_level": "low",
-   "components": {
-    "status_severity": 5,
-    "cultural_bonus": 15,
-    "size": 25,
-    "confidence_multiplier": 0.8
-   },
-   "rationale": "protected active supply inside SGNP - not a restoration candidate; 1860 heritage (the city's first piped source) · 1730 acres (very large) · location high confidence"
-  },
-  {
-   "id": "flagship:kacharali-lake",
-   "source": "flagship",
-   "name": "Kacharali Lake",
-   "water_type": "lake",
-   "area_ha": null,
-   "centroid": [
-    19.1961,
-    72.968
-   ],
-   "priority_score": 34,
-   "priority_level": "low",
-   "components": {
-    "status_severity": 22,
-    "cultural_bonus": 12,
-    "size": 4,
-    "confidence_multiplier": 0.9
-   },
-   "rationale": "beautified and well-maintained; on the AMRUT-2 conservation list · size unrecorded · location high confidence"
-  },
-  {
-   "id": "flagship:tulsi-lake",
-   "source": "flagship",
-   "name": "Tulsi Lake",
-   "water_type": "lake",
-   "area_ha": 134.8,
-   "centroid": [
-    19.1911,
-    72.9178
-   ],
-   "priority_score": 28,
-   "priority_level": "low",
-   "components": {
-    "status_severity": 5,
-    "cultural_bonus": 12,
-    "size": 18,
-    "confidence_multiplier": 0.8
-   },
-   "rationale": "forest-buffered supply reservoir, commonly cited as the cleanest - not a restoration candidate · 333 acres (large) · location high confidence"
-  }
- ],
- "river_sections": []
+  "notes": "Scored over the 16 hand-curated MMR flagship bodies (water-bodies-flagship-mumbai.json). Components: status severity (0-80) + cultural/ecological bonus (0-35) + size (4-25), scaled by location/source confidence (0.7-1.0). Every rationale quotes the recorded status it is grounded in. Supply reservoirs (Vihar, Tulsi) score low by design - protected, functioning sources are not restoration candidates. Bodies outside this cohort (e.g. Tansa, Morbe) are NOT scored - absence of a priority means 'not assessed', not 'fine'.",
+  "water_bodies": [
+    {
+      "id": "flagship:powai-lake",
+      "source": "flagship",
+      "name": "Powai Lake",
+      "water_type": "lake",
+      "area_ha": 210.4,
+      "centroid": [
+        19.1277,
+        72.9062
+      ],
+      "priority_score": 100,
+      "priority_level": "critical",
+      "components": {
+        "status_severity": 70,
+        "cultural_bonus": 10,
+        "size": 25,
+        "confidence_multiplier": 1
+      },
+      "rationale": "eutrophic with ~18 MLD untreated sewage inflow; NGT penalty recommended; STP not due until Dec 2027 · 520 acres (very large) · location high confidence"
+    },
+    {
+      "id": "flagship:dps-flamingo-lake",
+      "source": "flagship",
+      "name": "DPS Flamingo Lake",
+      "water_type": "lake",
+      "area_ha": 12.1,
+      "centroid": [
+        19.0054,
+        73.0202
+      ],
+      "priority_score": 98,
+      "priority_level": "critical",
+      "components": {
+        "status_severity": 65,
+        "cultural_bonus": 25,
+        "size": 8,
+        "confidence_multiplier": 1
+      },
+      "rationale": "flamingo deaths in 2024 after a water-flow disruption; Conservation Reserve declaration followed within days by a CIDCO de-reservation resolution · 30 acres (small) · location high confidence"
+    },
+    {
+      "id": "flagship:nri-wetland",
+      "source": "flagship",
+      "name": "NRI Wetland",
+      "water_type": "lake",
+      "area_ha": 20.2,
+      "centroid": [
+        19.0062,
+        73.0111
+      ],
+      "priority_score": 97,
+      "priority_level": "critical",
+      "components": {
+        "status_severity": 60,
+        "cultural_bonus": 25,
+        "size": 12,
+        "confidence_multiplier": 1
+      },
+      "rationale": "the golf-course-vs-flamingos wetland; HC reclamation ban won but the developer's SLP is pending in the Supreme Court and reserve status remains undeclared · 50 acres (medium) · location high confidence"
+    },
+    {
+      "id": "flagship:banganga-talao",
+      "source": "flagship",
+      "name": "Banganga Talao",
+      "water_type": "lake",
+      "area_ha": 0.4,
+      "centroid": [
+        18.9455,
+        72.7936
+      ],
+      "priority_score": 79,
+      "priority_level": "high",
+      "components": {
+        "status_severity": 40,
+        "cultural_bonus": 35,
+        "size": 4,
+        "confidence_multiplier": 1
+      },
+      "rationale": "Grade-II sacred heritage tank; dewatered May 2026 for a ~Rs 20 cr restoration under activist criticism · 1.1 acres (very small) · location high confidence"
+    },
+    {
+      "id": "flagship:thane-creek-flamingo-sanctuary",
+      "source": "flagship",
+      "name": "Thane Creek Flamingo Sanctuary",
+      "water_type": "lake",
+      "area_ha": 1690.4,
+      "centroid": [
+        19.1086,
+        72.965
+      ],
+      "priority_score": 75,
+      "priority_level": "high",
+      "components": {
+        "status_severity": 25,
+        "cultural_bonus": 25,
+        "size": 25,
+        "confidence_multiplier": 1
+      },
+      "rationale": "Ramsar Site 2490 and Wildlife Sanctuary - protected, but the creek receives the region's sewage load · 4177 acres (very large) · location high confidence"
+    },
+    {
+      "id": "flagship:makhmali-talao",
+      "source": "flagship",
+      "name": "Makhmali Talao",
+      "water_type": "lake",
+      "area_ha": 1,
+      "centroid": [
+        19.1985,
+        72.9714
+      ],
+      "priority_score": 68,
+      "priority_level": "high",
+      "components": {
+        "status_severity": 62,
+        "cultural_bonus": 10,
+        "size": 4,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "severely degraded - slum sewage on three sides, hyacinth, fish kills, shrinking to encroachment; excluded from the City-of-Lakes campaign · 2.5 acres (very small) · location high confidence"
+    },
+    {
+      "id": "flagship:bandra-talao",
+      "source": "flagship",
+      "name": "Bandra Talao",
+      "water_type": "lake",
+      "area_ha": 3,
+      "centroid": [
+        19.0567,
+        72.8378
+      ],
+      "priority_score": 67,
+      "priority_level": "high",
+      "components": {
+        "status_severity": 45,
+        "cultural_bonus": 25,
+        "size": 4,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "greenish water, foul odour, blocked inlets reported; reduced ~1/3 by a 1950s station road; heritage talao · 7.5 acres (very small) · location high confidence"
+    },
+    {
+      "id": "flagship:siddheshwar-talao",
+      "source": "flagship",
+      "name": "Siddheshwar Talao",
+      "water_type": "lake",
+      "area_ha": 3,
+      "centroid": [
+        19.2013,
+        72.9684
+      ],
+      "priority_score": 64,
+      "priority_level": "high",
+      "components": {
+        "status_severity": 55,
+        "cultural_bonus": 12,
+        "size": 4,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "degraded and neglected - poor water quality, non-functional aerator, food-dumping - and left out of AMRUT-2 funding · 7.4 acres (very small) · location high confidence"
+    },
+    {
+      "id": "flagship:kavesar-lake",
+      "source": "flagship",
+      "name": "Kavesar Lake",
+      "water_type": "lake",
+      "area_ha": 2.4,
+      "centroid": [
+        19.2603,
+        72.9816
+      ],
+      "priority_score": 62,
+      "priority_level": "high",
+      "components": {
+        "status_severity": 55,
+        "cultural_bonus": 18,
+        "size": 4,
+        "confidence_multiplier": 0.8
+      },
+      "rationale": "Thane's last natural wetland (district's only naturally-growing white lotus); a beautification plan is opposed by the Save Kavesar movement · 6 acres (very small) · location medium confidence"
+    },
+    {
+      "id": "flagship:upvan-lake",
+      "source": "flagship",
+      "name": "Upvan Lake",
+      "water_type": "lake",
+      "area_ha": 6.1,
+      "centroid": [
+        19.2214,
+        72.956
+      ],
+      "priority_score": 59,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 48,
+        "cultural_bonus": 10,
+        "size": 8,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "'beautified' yet still acidic (pH 3.9-4.25), sewage-fed and eutrophic · 15 acres (small) · location high confidence"
+    },
+    {
+      "id": "flagship:masunda-lake",
+      "source": "flagship",
+      "name": "Masunda Lake",
+      "water_type": "lake",
+      "area_ha": null,
+      "centroid": [
+        19.1931,
+        72.9752
+      ],
+      "priority_score": 51,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 28,
+        "cultural_bonus": 25,
+        "size": 4,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "iconic and actively used but greenish water and foul odour reported; historic Thane talao · size unrecorded · location high confidence"
+    },
+    {
+      "id": "flagship:vadale-lake",
+      "source": "flagship",
+      "name": "Vadale Lake",
+      "water_type": "lake",
+      "area_ha": 10.1,
+      "centroid": [
+        18.994,
+        73.1118
+      ],
+      "priority_score": 50,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 40,
+        "cultural_bonus": 15,
+        "size": 8,
+        "confidence_multiplier": 0.8
+      },
+      "rationale": "temple tank under weed and encroachment pressure; boating cancelled on ecological grounds; nature-based weevil control underway · 25 acres (small) · location high confidence"
+    },
+    {
+      "id": "flagship:kala-talao",
+      "source": "flagship",
+      "name": "Kala Talao",
+      "water_type": "lake",
+      "area_ha": 9.7,
+      "centroid": [
+        19.246,
+        73.1314
+      ],
+      "priority_score": 40,
+      "priority_level": "moderate",
+      "components": {
+        "status_severity": 30,
+        "cultural_bonus": 12,
+        "size": 8,
+        "confidence_multiplier": 0.8
+      },
+      "rationale": "flagship recreational lake; cited as a hardscape-'beautification' example; area records conflict · 24 acres (small) · location high confidence"
+    },
+    {
+      "id": "flagship:vihar-lake",
+      "source": "flagship",
+      "name": "Vihar Lake",
+      "water_type": "lake",
+      "area_ha": 700.1,
+      "centroid": [
+        19.1547,
+        72.9131
+      ],
+      "priority_score": 36,
+      "priority_level": "low",
+      "components": {
+        "status_severity": 5,
+        "cultural_bonus": 15,
+        "size": 25,
+        "confidence_multiplier": 0.8
+      },
+      "rationale": "protected active supply inside SGNP - not a restoration candidate; 1860 heritage (the city's first piped source) · 1730 acres (very large) · location high confidence"
+    },
+    {
+      "id": "flagship:kacharali-lake",
+      "source": "flagship",
+      "name": "Kacharali Lake",
+      "water_type": "lake",
+      "area_ha": null,
+      "centroid": [
+        19.1961,
+        72.968
+      ],
+      "priority_score": 34,
+      "priority_level": "low",
+      "components": {
+        "status_severity": 22,
+        "cultural_bonus": 12,
+        "size": 4,
+        "confidence_multiplier": 0.9
+      },
+      "rationale": "beautified and well-maintained; on the AMRUT-2 conservation list · size unrecorded · location high confidence"
+    },
+    {
+      "id": "flagship:tulsi-lake",
+      "source": "flagship",
+      "name": "Tulsi Lake",
+      "water_type": "lake",
+      "area_ha": 134.8,
+      "centroid": [
+        19.1911,
+        72.9178
+      ],
+      "priority_score": 28,
+      "priority_level": "low",
+      "components": {
+        "status_severity": 5,
+        "cultural_bonus": 12,
+        "size": 18,
+        "confidence_multiplier": 0.8
+      },
+      "rationale": "forest-buffered supply reservoir, commonly cited as the cleanest - not a restoration candidate · 333 acres (large) · location high confidence"
+    }
+  ],
+  "river_sections": []
 }
