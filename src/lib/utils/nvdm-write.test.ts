@@ -23,7 +23,7 @@ test("writeArtifact preserves an existing envelope and advances produced_at", ()
         sources: [],
         method: "derived",
         produced_at: "2026-01-01",
-        internal_inputs: ["public/geojson/madurai-wards-2022.geojson"],
+        internal_inputs: ["fixtures/internal-input.geojson"],
         note: "x",
       },
       wards: [1],
@@ -34,7 +34,7 @@ test("writeArtifact preserves an existing envelope and advances produced_at", ()
   assert.equal(out.nvdm, "1.0");
   assert.equal(out.dataset, "data-root/ward-risk");
   assert.deepEqual(out.provenance.internal_inputs, [
-    "public/geojson/madurai-wards-2022.geojson",
+    "fixtures/internal-input.geojson",
   ]);
   assert.notEqual(out.provenance.produced_at, "2026-01-01");
   assert.deepEqual(out.wards, [1, 2]);
