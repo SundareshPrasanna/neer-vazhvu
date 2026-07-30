@@ -16,6 +16,25 @@ Per-city *features* live alongside in the same folder: [docs/cities/chennai/feat
 
 When adding a sixth city, copy the Delhi, Mumbai or Bengaluru folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
 
+## Data licensing
+
+The repository's MIT licence covers the code only. The data corpus under
+`public/data/` and `public/geojson/` is compiled from many upstream publishers
+whose own terms govern each artifact. The authoritative per-artifact record is:
+
+- the artifact's NVDM envelope - `provenance.sources[].license` records each
+  upstream source's licence terms (required for L3 conformance; see
+  [`schemas/nvdm/`](schemas/nvdm/));
+- the Headwaters source registries
+  ([`scripts/source-registry/`](scripts/source-registry/)) - the per-source
+  licence record that envelope source ids join to.
+
+Some upstream sources carry non-commercial (e.g. CC BY-NC) or share-alike
+(e.g. ODbL) terms. `python3 scripts/nvdm-encumbrance-report.py` buckets every
+enveloped artifact by its worst source licence and is the mechanical basis for
+licence-clean corpus editions ([`scripts/sample-corpus.json`](scripts/sample-corpus.json)
+is the first). A data-specific notice is forthcoming.
+
 ## Documentation principle: avoid absolute-absence claims
 
 When describing layers we don't have data for, hedge with "no known public X" or "we haven't yet found a public daily feed for X" rather than "no public X exists" or "the utility doesn't publish X". Our research is bounded; somewhere a PDF, internal portal, or unindexed dataset might exist. Categorical claims of absolute absence get a counter-example fast and discredit the broader narrative.

@@ -381,7 +381,19 @@ Please open an issue first to discuss significant changes.
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE) - for the **code**.
+
+The **data corpus** under `public/data/` and `public/geojson/` is not
+MIT-licensed. It aggregates many upstream publishers, and each publisher's own
+terms govern. The authoritative per-artifact record is the artifact's NVDM
+envelope (`provenance.sources[].license`, see [`schemas/nvdm/`](schemas/nvdm/))
+together with the Headwaters source registries
+([`scripts/source-registry/`](scripts/source-registry/)). Some upstream sources
+carry non-commercial or share-alike terms;
+`python3 scripts/nvdm-encumbrance-report.py` prints the per-artifact position,
+and [`scripts/sample-corpus.json`](scripts/sample-corpus.json) defines the
+reduced licence-clean reference set used by the no-secrets CI job. A
+data-specific notice is forthcoming.
 
 ## Acknowledgments
 
