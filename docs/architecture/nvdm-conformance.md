@@ -160,7 +160,7 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 ## Reading the baseline
 
 - Accountability tracks (L1): watched = registry dependsOn lineage; allowlisted = explicit
-  UNWATCHED reason; 113 artifacts remain unaccounted (largest block: basins packs).
+  UNWATCHED reason; 106 artifacts remain unaccounted (largest block: basins packs).
 - L2/L3 progress is the migration meter: the Madurai pilot moved first; each city's
   migration lifts its artifacts (spec Part 9 order).
 - CI (`.github/workflows/nvdm-conformance.yml`): selftest, catalogue/report freshness,
