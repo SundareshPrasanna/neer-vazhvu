@@ -49,6 +49,8 @@ import math
 import statistics
 from pathlib import Path
 
+from nvdm_write import write_artifact
+
 REPO = Path(__file__).resolve().parent.parent
 WARDS = REPO / "public" / "geojson" / "delhi-wards-2022.geojson"
 PROFILES = REPO / "public" / "data" / "delhi-ward-profiles.json"
@@ -218,7 +220,7 @@ def main():
         },
         "wards": ordered,
     }
-    OUT.write_text(json.dumps(doc, indent=2) + "\n")
+    write_artifact(OUT, doc)
 
     with_gw = sum(1 for r in ordered if r["gw_depth_m"] is not None)
     depths = [r["gw_depth_m"] for r in ordered if r["gw_depth_m"] is not None]

@@ -21,6 +21,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+import sys
 import urllib.request
 from datetime import date
 from pathlib import Path
@@ -31,6 +32,9 @@ CSV_URL = (
     "cf14d147-8120-4c97-a76c-50ace78597c5.csv"
 )
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 OUT = REPO / "public/data/delhi-ward-representatives.json"
 
 
@@ -124,7 +128,7 @@ def main() -> None:
         },
         "wards_detail": wards,
     }
-    OUT.write_text(json.dumps(out, indent=1, ensure_ascii=False))
+    write_artifact(OUT, out)
     print(f"wrote {OUT}")
     print("party seats:", out["summary"]["party_seats"])
 

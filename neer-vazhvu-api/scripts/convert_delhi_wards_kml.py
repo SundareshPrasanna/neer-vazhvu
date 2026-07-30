@@ -26,6 +26,9 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 OUT = REPO / "public/geojson/delhi-wards-2022.geojson"
 
 
@@ -110,7 +113,7 @@ def main() -> None:
         },
         "features": features,
     }
-    OUT.write_text(json.dumps(out, separators=(",", ":")))
+    write_artifact(OUT, out, compact=True)
     pops = [f["properties"]["total_pop"] or 0 for f in features]
     print(f"wrote {OUT.name}: {len(features)} wards, skipped {skipped}")
     print(f"population sum: {sum(pops):,} | min ward {min(pops):,} max {max(pops):,}")

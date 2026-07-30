@@ -16,8 +16,8 @@
  * micro-drainage, noise at city scale). Canals are in the rivers layer.
  */
 
-import { writeFileSync } from "fs";
 import { join } from "path";
+import { writeArtifact } from "./lib/nvdm-write";
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 
@@ -122,7 +122,7 @@ async function main() {
   };
 
   const outPath = join(process.cwd(), "public/geojson/delhi-drainage.geojson");
-  writeFileSync(outPath, JSON.stringify(geojson));
+  writeArtifact(outPath, geojson as unknown as Record<string, unknown>, { compact: true });
   console.log(
     `Saved ${features.length} drain segments (${named} named, ~${Math.round(totalKm)} km) to ${outPath}`,
   );
