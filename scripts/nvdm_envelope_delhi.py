@@ -139,7 +139,7 @@ REG_IDS = {
         "open (per OpenCity dataset page)",
     ),
     "djb-water-pages": (
-        "DJB water page (WTPs, sources, capacities)",
+        "DJB About Us page - WTP roster, capacities, raw-water sources (~900 MGD)",
         "Delhi Jal Board",
         "GNCTD publication, cited with attribution",
     ),
