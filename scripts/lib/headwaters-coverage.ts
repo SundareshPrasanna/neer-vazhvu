@@ -45,7 +45,10 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/restoration-priority-mumbai.json": "derived: flagship scorer",
   "public/data/ward-risk-bangalore.json": "derived composite (population, water bodies, density)",
   "public/data/ward-risk-madurai.json": "derived 3-factor composite",
-  "public/data/ward-risk-mumbai.json": "derived: Praja supply hours + covered inputs",
+  // ward-risk-mumbai.json moved to the watched track 2026-07-30 (NVDM Mumbai
+  // migration): praja-civic-issues-mumbai and datameet-mumbai-spatial dependsOn
+  // now name it (the Praja Table-4 supply hours and the DataMeet slum clusters
+  // are real upstreams of the score, not just "covered inputs").
   "public/data/ward-profiles.json": "derived join over covered ward-level layers",
   "public/data/bangalore-ward-profiles.json": "derived join",
   "public/data/madurai-ward-profiles.json": "derived join",
@@ -131,6 +134,12 @@ export const UNWATCHED: Record<string, string> = {
   // pattern). Each record carries its own citation; the upstreams are episodic
   // press/court/government documents with no watchable listing page.
   "public/data/restoration-projects-delhi.json": "curated compilation; per-record citations (NGT/court orders, government documents, press); no watchable listing",
+
+  // Curated Mumbai compilations (NVDM Mumbai migration, 2026-07-30 - the
+  // Madurai pattern). Each record carries its own citation; the upstreams are
+  // episodic press/court/corporation documents with no watchable listing page.
+  "public/data/restoration-projects-mumbai.json": "curated compilation; per-record citations (NGT/HC orders, corporation schemes, press); no watchable listing",
+  "public/data/water-bodies-flagship-mumbai.json": "curated flagship register; per-record citations (corporation reports, Ramsar/sanctuary records, press); no watchable listing",
   "public/data/river-events-delhi.json": "curated Yamuna timeline; per-record url citations (court orders, instruments, floods); no watchable listing",
   "public/data/water-bodies-flagship-delhi.json": "curated flagship register; per-record citations (ASI, DDA, INTACH, press); no watchable listing",
   "public/data/delhi-flood-hotspots.json":
@@ -151,8 +160,11 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/rainfall-recent-bangalore.json": "daily feed: owned by check-data-freshness.ts",
   "public/data/rainfall-recent-madurai.json": "daily feed: owned by check-data-freshness.ts",
   "public/data/rainfall-recent-mumbai.json": "daily feed: owned by check-data-freshness.ts",
-  "public/data/mmr-dam-storage.json": "daily feed: owned by check-data-freshness.ts (EXTRA_FEEDS)",
-  "public/data/mumbai-flood-hotspots.geojson": "weekly feed: owned by check-data-freshness.ts (EXTRA_FEEDS)",
+  // mmr-dam-storage.json and mumbai-flood-hotspots.geojson moved to the
+  // watched track 2026-07-30 (NVDM Mumbai migration): the living upstream
+  // feeds are now registry entries (wrd-pravah-dam-feed, bmc-dm-floodspots,
+  // detection 'continuous' - registered for lineage, never polled); freshness
+  // stays owned by check-data-freshness.ts (EXTRA_FEEDS).
 };
 
 function walk(dir: string, root: string, out: string[]): void {
