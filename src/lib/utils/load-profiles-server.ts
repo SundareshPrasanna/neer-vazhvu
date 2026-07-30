@@ -18,7 +18,12 @@ function profilesPath(cityId: string): string {
 export function loadProfilesServer(cityId: string = "chennai"): WardProfile[] {
   const hit = cacheByCity.get(cityId);
   if (hit) return hit;
-  const data = JSON.parse(readFileSync(profilesPath(cityId), "utf-8")) as WardProfile[];
+  // Legacy cities ship a bare array; NVDM-migrated cities (Madurai onward)
+  // wrap it as { ...envelope, wards: [...] }. Accept both during migration.
+  const raw = JSON.parse(readFileSync(profilesPath(cityId), "utf-8")) as
+    | WardProfile[]
+    | { wards: WardProfile[] };
+  const data = Array.isArray(raw) ? raw : raw.wards;
   cacheByCity.set(cityId, data);
   return data;
 }

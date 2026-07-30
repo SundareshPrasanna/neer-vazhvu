@@ -58,26 +58,26 @@ export const UNWATCHED: Record<string, string> = {
   // accurate reason. OpenStreetMap is continuously edited and Dynamic World is a
   // rolling GEE collection - neither has an "edition" to detect, so how often we
   // re-fetch them is a freshness question (P5-1), not an edition-watch question.
-  "public/geojson/chennai-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/madurai-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/mumbai-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/bangalore-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/chennai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/madurai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/mumbai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/chennai-industrial-zones.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/mumbai-drainage.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/mumbai-corporations-2024.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
   "public/data/elevation-bands-chennai.geojson": "covered by the platform-scope entry fabdem-dem",
   "public/data/elevation-bands-bangalore.geojson": "covered by the platform-scope entry fabdem-dem",
   "public/data/elevation-bands-madurai.geojson": "covered by the platform-scope entry fabdem-dem",
   "public/data/elevation-bands-mumbai.geojson": "covered by the platform-scope entry fabdem-dem",
-  "public/data/rich-bodies": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings; Dynamic World alone is continuously updated with no editions",
+  "public/data/rich-bodies": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
   "public/geojson/rich-bodies": "covered by the platform-scope GEE entries",
-  "public/data/cascade": "covered by the platform-scope entry hydrosheds-basins",
+  "public/data/cascade": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+
+  // Curated compilations (NVDM Madurai pilot, 2026-07-30). Each record carries
+  // its own citation; the upstreams are episodic news/court/report documents
+  // with no watchable listing page - the accountability lives per record, and
+  // these reasons are the artifact-level decision on record.
+  "public/data/restoration-projects-madurai.json": "curated compilation; per-record citations (court orders, MMC, press); no watchable listing",
+  "public/data/river-events-madurai.json": "curated event timeline; per-record url citations; no watchable listing",
+  "public/data/water-bodies-flagship-madurai.json": "curated flagship register; per-record citations (DHAN, MMC, press); no watchable listing",
+  "public/data/industrial-sources-madurai.json": "qualitative one-off academic source (Columbia GSAPP studio book, spring 2016); statistics failed adversarial checks - see the file's _source_caveats",
 
   // Closed series. The upstream will not publish again; an edition watch would
   // be permanently silent, which is worse than an explicit note.
+  "public/geojson/madurai-wards-2022.geojson": "closed edition: 2022 ward delimitation KML; boundaries change only at the next delimitation (term-expiry watch would be the upgrade)",
   "public/data/cooum-sewage-inlets.json": "closed series: Nethaji Mariappan et al. 2017, single study",
   "public/geojson/mumbai-flood-2005-hotspots.geojson": "closed series: 26/7/2005 reference layer",
   "public/data/water-bodies-lost-mumbai.json": "archival: Dwivedi & Mehrotra 1995",
@@ -107,8 +107,6 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/water-bodies-lost-delhi.json": "archival",
   "public/data/rainfall-recent-delhi.json": "daily feed: owned by check-data-freshness.ts",
   "public/data/elevation-bands-delhi.geojson": "covered by the platform-scope entry fabdem-dem",
-  "public/geojson/delhi-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/delhi-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
   "public/geojson/delhi-drainage.geojson":
     "OSM/Overpass: continuously edited, no editions (P5-1). No official Delhi drain GIS is public - the IFC " +
     "2018 Drainage Master Plan's 3,737 km across 11 agencies exists only as PDF maps, so these lengths are a floor.",

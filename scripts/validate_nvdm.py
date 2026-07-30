@@ -133,6 +133,39 @@ CONTRACTS = {
 ENVELOPE_KEYS = {"nvdm", "dataset", "scope", "provenance", "projection", "ext"}
 GEOJSON_MEMBERS = {"type", "features", "bbox"}
 
+# Spec 9.3/9.4: documented legacy aliases stay in place until their consumers
+# move; they are grandfathered, not undeclared extensions. Underscore-prefixed
+# keys are the legacy metadata idiom and get the same tolerance. NEW payload
+# keys outside the contract still fail - this list is closed.
+LEGACY_GRANDFATHERED = {
+    "place_id", "city_id", "district_id",
+    "generated_at", "compiled_at", "computed_at", "updated", "last_updated",
+    "fetched_at", "retrieved",
+    "source", "sources", "source_label", "source_url", "attribution",
+    "primary_source", "secondary_sources",
+    "note", "unit_note", "provisional_note",
+    "schema_version", "manifest_version",
+}
+
+# Underscore-prefixed grandfathering is a CLOSED census of the keys that exist
+# in the corpus today (generated from the catalogue fingerprints, 2026-07-30),
+# NOT a namespace exemption - review found `_hyderabad_special` passing L3
+# under a wildcard. New underscore keys fail like any other undeclared key.
+LEGACY_UNDERSCORE = {
+    "_2025_context", "_api_contract", "_archival", "_archive_warning",
+    "_citation_audit", "_coordinates", "_coverage_limit",
+    "_data_provenance_caveats", "_excluded", "_extraction", "_factors",
+    "_feed_status", "_fetched", "_location_note", "_meta", "_methodology",
+    "_note", "_osm_coverage_note", "_provenance", "_readings_status",
+    "_report_date", "_secondary_local_source", "_sign_convention", "_source",
+    "_source_caveats", "_source_url", "_sources", "_sources_of_truth",
+    "_supply_total_note", "_view_overrides", "_wqr_source",
+    # dated audit-trail keys - enumerated, NOT a prefix wildcard (review
+    # 2026-07-30: _citation_trace_totally_new passed under the prefix). New
+    # audit trails belong in provenance.note.
+    "_citation_trace_2026_07_26", "_citation_trace_newslaundry", "_citation_trace_ngt_2018",
+}
+
 
 def registry_source_ids() -> set[str]:
     ids = set()
@@ -159,16 +192,38 @@ def scope_registry_errors(doc: dict, scopes: dict[str, str]) -> list[str]:
     return []
 
 
-def source_accountability_errors(doc: dict, joined: set[str], reg_ids: set[str]) -> list[str]:
-    """L2 half of the cumulative ladder (spec Part 10): every non-methodology
-    source either joins the Headwaters registry THROUGH THIS FILE (its id is in
-    a registry entry whose dependsOn names the file) or explicitly declares
-    itself closed AND carries as_of. as_of alone is not an exemption - living
-    sources have evidence dates too."""
+def source_accountability_errors(
+    doc: dict, joined: set[str], reg_ids: set[str], dataset: str = ""
+) -> list[str]:
+    """L2 half of the cumulative ladder (spec Part 10). Accountability is
+    strictly PER SOURCE, exactly two ways to satisfy it (ratification review
+    2026-07-30 removed the continuous/aggregate envelope exemptions - living
+    upstreams incl. OSM/Dynamic World/WRIS are now REGISTRY entries with
+    detection.method 'continuous', registered for lineage and never polled):
+      - registry id that exists AND joins this file via dependsOn
+      - closed: true + as_of (one-time documents)
+    Empty sources[] is legal only for self-authored manifests and
+    claim-dataset compilations (per-record citations carry accountability),
+    and always requires an explanatory provenance.note."""
+    prov = doc.get("provenance", {})
+    sources = prov.get("sources", [])
     errs = []
-    for i, s in enumerate(doc.get("provenance", {}).get("sources", [])):
-        if not isinstance(s, dict) or s.get("role") == "methodology":
+    if not sources:
+        if not prov.get("note"):
+            errs.append("empty provenance.sources without an explanatory note")
+        elif dataset not in CLAIM_DATASETS and not prov.get("produced_by"):
+            errs.append(
+                "empty provenance.sources is only legal for claim-dataset compilations "
+                "(per-record citations) or self-authored artifacts naming produced_by"
+            )
+        return errs
+    for i, s in enumerate(sources):
+        if not isinstance(s, dict):
             continue
+        # Methodology sources are NOT exempt (review 2026-07-30: the skip let
+        # any unregistered source reach L2 by claiming role methodology). They
+        # satisfy the same two-way rule; only the licence requirement (L3)
+        # exempts them, since a method is cited, not redistributed.
         sid = s.get("id")
         if sid:
             if sid not in reg_ids:
@@ -183,9 +238,51 @@ def source_accountability_errors(doc: dict, joined: set[str], reg_ids: set[str])
                 errs.append(f"provenance.sources[{i}] is closed but has no as_of (closed sources must be dated)")
         else:
             errs.append(
-                f"provenance.sources[{i}] '{str(s.get('title', '?'))[:40]}' has no registry id and is "
-                "not declared closed - living sources must be registered, one-time sources must say closed: true"
+                f"provenance.sources[{i}] '{str(s.get('title', '?'))[:40]}' has no registry id and is not "
+                "closed+as_of - register it (continuous upstreams use detection.method 'continuous')"
             )
+    return errs
+
+
+def calendar_date_errors(doc: dict) -> list[str]:
+    """Bounded patterns admit 2026-02-30; real calendars do not. Checks every
+    envelope date and claim-record data_date/as_of."""
+    from datetime import date
+
+    def bad(v) -> bool:
+        if not isinstance(v, str) or len(v) != 10:
+            return False  # year / year-month forms carry no day to mis-state
+        try:
+            date.fromisoformat(v)
+            return False
+        except ValueError:
+            return True
+
+    errs = []
+    prov = doc.get("provenance", {})
+    if bad(prov.get("produced_at")):
+        errs.append(f"produced_at '{prov.get('produced_at')}' is not a real calendar date")
+    for i, s in enumerate(prov.get("sources", [])):
+        if isinstance(s, dict):
+            for k in ("as_of", "retrieved"):
+                if bad(s.get(k)):
+                    errs.append(f"provenance.sources[{i}].{k} '{s.get(k)}' is not a real calendar date")
+    for coll in ("facts", "commitments", "arrangements"):
+        for i, r in enumerate(doc.get(coll, []) if isinstance(doc.get(coll), list) else []):
+            if isinstance(r, dict):
+                for k in ("as_of", "data_date"):
+                    if bad(r.get(k)):
+                        errs.append(f"$.{coll}[{i}].{k} '{r.get(k)}' is not a real calendar date")
+    return errs
+
+
+def license_errors(doc: dict) -> list[str]:
+    """L3: every asserting or input source must carry its upstream licence
+    terms - this is the per-row resale audit made executable (spec Part 5)."""
+    errs = []
+    for i, s in enumerate(doc.get("provenance", {}).get("sources", [])):
+        if isinstance(s, dict) and s.get("role") != "methodology" and not s.get("license"):
+            errs.append(f"provenance.sources[{i}] '{str(s.get('title', '?'))[:40]}' has no license terms recorded")
     return errs
 
 
@@ -197,7 +294,10 @@ def provenance_rule_errors(doc: dict) -> list[str]:
         if not prov.get("produced_by"):
             errs.append("derived artifact without provenance.produced_by (spec 5.2)")
         sources = [s for s in prov.get("sources", []) if isinstance(s, dict)]
-        if not any(s.get("role") == "input" for s in sources):
+        # Derived-from-internal-artifacts legitimately has no external sources;
+        # the empty-sources rule (note + produced_by) covers that case. When
+        # external sources ARE listed, at least one must be the input.
+        if sources and not any(s.get("role") == "input" for s in sources):
             errs.append("derived artifact lists no source with role 'input' (spec 5.2)")
     return errs
 
@@ -206,9 +306,12 @@ def unknown_key_errors(doc: dict, contract: dict) -> list[str]:
     """Top-level keys must be envelope, GeoJSON members, or contract-declared;
     everything else belongs in ext (spec 6.3). Deliberately NOT recursive:
     record-level optional fields (name_<lang>, city-optional keys) are legal."""
-    allowed = ENVELOPE_KEYS | GEOJSON_MEMBERS | set(contract.get("properties", {}).keys())
+    allowed = (
+        ENVELOPE_KEYS | GEOJSON_MEMBERS | LEGACY_GRANDFATHERED | LEGACY_UNDERSCORE
+        | set(contract.get("properties", {}).keys())
+    )
     return [
-        f"top-level key '{k}' is not envelope, GeoJSON, or contract-declared - "
+        f"top-level key '{k}' is not envelope, GeoJSON, contract-declared, or grandfathered legacy - "
         "per-scope additions must live in ext (spec 6.3)"
         for k in doc
         if k not in allowed
@@ -224,12 +327,13 @@ def contract_schema_for(rec: dict, schemas: dict[str, dict]) -> str | None:
 # and MUST carry its own source reference. Maps dataset id -> (collection key,
 # acceptable per-record source keys).
 CLAIM_DATASETS = {
-    "data-root/facts": ("facts", ("source_ids", "sources")),
+    "data-root/facts": ("facts", ("source_ids", "sources", "source_label")),
     "data-root/commitments": ("commitments", ("source_ids", "sources", "commitment_source")),
     "data-root/allocations": ("arrangements", ("source_ids", "sources", "source")),
     "data-root/water-bodies-lost": ("lost_bodies", ("source_ids", "sources", "source")),
     "data-root/water-bodies-flagship": ("bodies", ("source_ids", "sources", "source")),
     "data-root/restoration-projects": ("projects", ("source_ids", "sources", "source")),
+    "data-root/river-events": ("events", ("source_ids", "sources", "source", "url")),
 }
 
 
@@ -258,14 +362,21 @@ def claim_provenance_errors(doc: dict, dataset: str) -> list[str]:
         for sid in r.get("source_ids", []):
             if sid not in env_ids:
                 errs.append(f"$.{coll_key}[{i}]: source_ids '{sid}' not found in provenance.sources ids")
+        # Commitments: the dated-citation-only discipline, executable. Every
+        # history entry needs a citation (all 107 existing entries corpus-wide
+        # already have one - the contract now says what practice always did).
+        if coll_key == "commitments":
+            for j, h in enumerate(r.get("status_history") or []):
+                if isinstance(h, dict) and not (h.get("source_label") or h.get("source_url")):
+                    errs.append(f"$.commitments[{i}].status_history[{j}]: no citation (source_label or source_url)")
         # Date signal (spec 5.1): a record's evidence date may live on the
         # record OR on its cited sources - requiring both would be duplication.
         # Commitments are exempt (dates live in status_history by design).
-        if coll_key in ("facts", "arrangements") and not r.get("as_of"):
+        if coll_key in ("facts", "arrangements") and not r.get("as_of") and not r.get("data_date"):
             resolved = [s for s in r.get("sources", []) if isinstance(s, dict)]
             resolved += [env_map[sid] for sid in r.get("source_ids", []) if sid in env_map]
             if resolved and not any(s.get("as_of") or s.get("retrieved") for s in resolved):
-                errs.append(f"$.{coll_key}[{i}]: no date signal - record as_of or a dated source (spec 5.1)")
+                errs.append(f"$.{coll_key}[{i}]: no date signal - record as_of/data_date or a dated source (spec 5.1)")
     return errs
 
 
@@ -273,7 +384,10 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
     path = ROOT / rec["path"]
     level = 0  # L0: it's in the catalogue by construction
     notes: list[str] = []
-    if rec["headwaters_sources"]:
+    # L1 = accounted for: registry lineage (watched) OR an explicit coverage-
+    # allowlist reason (the UNWATCHED track). Only 'unaccounted' fails L1.
+    allowlisted = rec.get("accountability") == "allowlisted"
+    if rec["headwaters_sources"] or allowlisted:
         level = 1
     try:
         doc = json.loads(path.read_text())
@@ -282,18 +396,28 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
     env_errs = envelope_check(doc, rec, schemas)
     if not env_errs:
         # Cumulative ladder: L2 additionally requires scope-registry agreement,
-        # source accountability (registry join or declared-closed), and the
-        # method-dependent provenance rules.
+        # source accountability (registry join, declared-closed, or the
+        # allowlist track), and the method-dependent provenance rules.
         env_errs += scope_registry_errors(doc, scopes)
-        env_errs += source_accountability_errors(doc, set(rec["headwaters_sources"]), reg_ids)
+        env_errs += source_accountability_errors(
+            doc, set(rec["headwaters_sources"]), reg_ids, f"{rec['family']}/{rec['dataset']}"
+        )
         env_errs += provenance_rule_errors(doc)
+        env_errs += calendar_date_errors(doc)
     if not env_errs:
-        level = max(level, 2)
+        if level < 1:
+            # The ladder is cumulative for real: a valid envelope on an
+            # unaccounted artifact stays L1-blocked until the file gains
+            # registry lineage or an allowlist reason.
+            notes.append("envelope valid but artifact is unaccounted (no registry lineage, no allowlist reason) - L2 blocked")
+            return {"path": rec["path"], "level": level, "notes": notes}
+        level = 2
         contract = contract_schema_for(rec, schemas)
         if contract:
             c_errs = validate(doc, schemas[contract], schemas, contract)
             c_errs += claim_provenance_errors(doc, f"{rec['family']}/{rec['dataset']}")
             c_errs += unknown_key_errors(doc, schemas[contract])
+            c_errs += license_errors(doc)
             if c_errs:
                 notes += [f"L3 fail: {e}" for e in c_errs[:5]]
             else:
@@ -351,7 +475,47 @@ def selftest(schemas: dict[str, dict]) -> int:
     d = dup(facts); d["provenance"]["method"] = "derived"
     check("derived w/o input-role sources rejected", bool(provenance_rule_errors(d)))
     d = dup(facts); d["provenance"]["sources"][0].pop("id")
-    check("unregistered living source rejected", bool(source_accountability_errors(d, set(), set())))
+    check("undeclared living source rejected", bool(source_accountability_errors(d, set(), set())))
+    d["provenance"]["sources"][0]["continuous"] = True
+    check("envelope-level continuous flag no longer exempts",
+          bool(source_accountability_errors(d, set(), set())))
+    d = dup(facts); d["provenance"]["sources"] = []
+    check("empty sources on claim dataset with note accepted",
+          not source_accountability_errors(d, set(), set(), "data-root/facts"))
+    d["provenance"].pop("note")
+    check("empty sources without note rejected",
+          bool(source_accountability_errors(d, set(), set(), "data-root/facts")))
+    d = dup(facts); d["provenance"]["produced_at"] = "2026-02-30"
+    check("calendar-invalid date rejected", bool(calendar_date_errors(d)))
+    d = dup(facts); d["provenance"]["sources"][0].pop("license")
+    check("missing licence terms rejected at L3", bool(license_errors(d)))
+    d = dup(facts); d["_hyderabad_special"] = {"leak": True}
+    check("new underscore key rejected (closed census, not namespace)",
+          bool(unknown_key_errors(d, schemas["facts.schema.json"])))
+    d = dup(facts); d["_citation_trace_totally_new"] = {}
+    check("new _citation_trace_* key rejected (no prefix wildcard)",
+          bool(unknown_key_errors(d, schemas["facts.schema.json"])))
+    # Isolated doc: the methodology source is the ONLY source, so the check
+    # cannot pass on some other source's failure (review 2026-07-30 found the
+    # earlier form was a false positive - the base example's registry id
+    # already errored against empty sets).
+    meth = {"provenance": {"sources": [{"title": "Sketchy method", "publisher": "nobody", "role": "methodology"}]}}
+    check("unregistered methodology source rejected (isolated)",
+          bool(source_accountability_errors(meth, set(), set(), "data-root/facts")))
+    meth["provenance"]["sources"][0].update({"closed": True, "as_of": "2016"})
+    check("closed+as_of methodology source accepted (isolated)",
+          not source_accountability_errors(meth, set(), set(), "data-root/facts"))
+    d = dup(facts); d["facts"][0].pop("tier")
+    check("fact without tier rejected",
+          bool(validate(d, schemas["facts.schema.json"], schemas, "facts.schema.json")))
+    cm = {"provenance": {"sources": []},
+          "commitments": [{"id": "x", "what": "w", "status": "on-track", "due": "2027",
+                            "commitment_source": "GO 12",
+                            "status_history": [{"date": "2026-07-01", "status": "on-track"}]}]}
+    check("history entry without citation rejected",
+          bool(claim_provenance_errors(cm, "data-root/commitments")))
+    d = dup(facts); d["facts"][0]["data_date"] = "2026-99-99"
+    check("out-of-range data_date rejected", bool(validate(d, schemas["facts.schema.json"], schemas, "facts.schema.json")))
     d = dup(facts); d["provenance"]["produced_at"] = "2026-99-99"
     check("out-of-range date rejected", bool(env(d)))
     d = dup(facts); d["hyderabad_special"] = {"leak": True}
@@ -427,8 +591,10 @@ def main(argv: list[str]) -> int:
         "",
         "## Reading the baseline",
         "",
-        "- L2/L3 at zero is the expected starting point: no production artifact predates the spec.",
-        "- The L1 number is the Headwaters coverage gap (worst family: cascade).",
+        f"- Accountability tracks (L1): watched = registry dependsOn lineage; allowlisted = explicit",
+        f"  UNWATCHED reason; {sum(1 for r in results if r['level'] < 1)} artifacts remain unaccounted (largest block: basins packs).",
+        f"- L2/L3 progress is the migration meter: the Madurai pilot moved first; each city's",
+        f"  migration lifts its artifacts (spec Part 9 order).",
         "- CI (`.github/workflows/nvdm-conformance.yml`): selftest + catalogue/report freshness",
         "  are blocking; the `--check` L2 gate on newly added data artifacts is ADVISORY until",
         "  NVDM v1 is accepted, then flips to enforcing. Legacy files stay report-only (spec 9.4).",

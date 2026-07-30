@@ -73,8 +73,8 @@
       "properties": {
         "sources": {
           "type": "array",
-          "minItems": 1,
-          "items": { "$ref": "#/$defs/source" }
+          "items": { "$ref": "#/$defs/source" },
+          "description": "External upstreams only - internal NVDM artifacts consumed as inputs are lineage, described in note, not sources. Non-empty except for self-authored manifests and claim-dataset compilations whose per-record citations carry accountability (validator-enforced: empty requires produced_by-or-claim-contract AND an explanatory note). Per-source accountability: registry id joined via dependsOn (episodic AND continuous upstreams - continuous entries use detection.method 'continuous' and are never polled) OR closed+as_of."
         },
         "method": {
           "enum": ["manual", "scrape", "api", "pdf-extract", "gee", "derived", "mixed"]

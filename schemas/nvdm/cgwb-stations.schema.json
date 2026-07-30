@@ -7,6 +7,10 @@
   "required": ["wells"],
   "properties": {
     "depth_unit": { "type": "string" },
+    "year_book_summaries": {
+      "type": ["object", "array"],
+      "description": "CGWB Year Book district summaries. Promoted from per-city extension: present in 2+ cities (Madurai, Mumbai) - spec 6.3 promotion rule."
+    },
     "aquifer": { "type": ["string", "object", "null"] },
     "district": { "type": ["string", "null"] },
     "well_type": { "type": ["string", "object", "null"] },

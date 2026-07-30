@@ -18,10 +18,11 @@
         "public/data/elevation-bands-bangalore.geojson",
         "public/data/elevation-bands-madurai.geojson",
         "public/data/elevation-bands-mumbai.geojson",
-        "public/data/elevation-bands-delhi.geojson"
+        "public/data/elevation-bands-delhi.geojson",
+        "public/data/cascade"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_elevation_bands.py (GEE), re-run per city",
-      "notes": "FABDEM V1-2 - satellite DEM with buildings and forests removed - underpins the elevation-band layer in all five cities, honest at ~30 m horizontal / ~2 m vertical. A new FABDEM version changes every band boundary at once, which is exactly why this is registered once at platform scope rather than five times. LICENCE FLAG: FABDEM is CC BY-NC-SA, non-commercial - relevant if any BRSR or commercial track ever reuses these layers. The canonical data host is data.bris.ac.uk but its dataset paths need an exact opaque id we do not have; the Fathom product page is the stable, verified surface (200 on 2026-07-26).",
+      "notes": "FABDEM V1-2 - satellite DEM with buildings and forests removed - underpins the elevation-band layer in all five cities, honest at ~30 m horizontal / ~2 m vertical. A new FABDEM version changes every band boundary at once, which is exactly why this is registered once at platform scope rather than five times. LICENCE FLAG: FABDEM is CC BY-NC-SA, non-commercial - relevant if any BRSR or commercial track ever reuses these layers. The canonical data host is data.bris.ac.uk but its dataset paths need an exact opaque id we do not have; the Fathom product page is the stable, verified surface (200 on 2026-07-26). Cascade catchment delineation (catchments_fabdem_wbt_v1 in neer-vazhvu-api/app/cascade/catchments.py) runs on a FABDEM mosaic, so the entire public/data/cascade family is FABDEM-DERIVED - and therefore inherits CC BY-NC-SA (non-commercial) encumbrance. Flagged for the NVDM derivative-licence audit 2026-07-30.",
       "lastSeen": {
         "pageHash": "13dc5102eb99ef6a",
         "acceptedOn": "2026-07-26"
@@ -107,7 +108,8 @@
         "method": "page-hash"
       },
       "dependsOn": [
-        "public/data/rich-bodies"
+        "public/data/rich-bodies",
+        "public/data/cascade"
       ],
       "refreshMethod": ".github/workflows/overture-buildings-refresh.yml (monthly, 8th)",
       "notes": "Overture ships MONTHLY, the fastest cadence of any platform family, and a workflow already re-pulls it on the 8th - so this entry is about knowing the release landed, not about triggering the fetch. GAP FOUND 2026-07-26: our overture artifacts record only computed_at, NOT the Overture release version they were built from, so we cannot currently tell which release a given rich-body panel reflects. Worth adding to the ingest script. docs.overturemaps.org/release/ 404s and the GitHub releases API returns an empty list, so overturemaps.org/download is the watchable surface.",
@@ -115,6 +117,152 @@
         "pageHash": "e242bbcac0386e77",
         "acceptedOn": "2026-07-26"
       }
+    },
+    {
+      "id": "osm-overpass",
+      "scope": "platform",
+      "publisher": "OpenStreetMap contributors",
+      "url": "https://overpass-api.de/",
+      "license": "ODbL 1.0",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/geojson/chennai-rivers.geojson",
+        "public/geojson/madurai-rivers.geojson",
+        "public/geojson/mumbai-rivers.geojson",
+        "public/geojson/bangalore-rivers.geojson",
+        "public/geojson/chennai-water-bodies-current.geojson",
+        "public/geojson/madurai-water-bodies-current.geojson",
+        "public/geojson/mumbai-water-bodies-current.geojson",
+        "public/geojson/chennai-industrial-zones.geojson",
+        "public/geojson/mumbai-drainage.geojson",
+        "public/geojson/mumbai-corporations-2024.geojson",
+        "public/geojson/delhi-rivers.geojson",
+        "public/geojson/delhi-water-bodies-current.geojson",
+        "public/geojson/delhi-drainage.geojson",
+        "public/data/cascade",
+        "public/data/madurai-ward-profiles.json",
+        "public/data/restoration-priority-madurai.json",
+        "public/data/restoration-priority-madurai-legacy.json",
+        "public/data/ward-risk-madurai.json",
+        "public/geojson/madurai-water-bodies-lost.geojson"
+      ],
+      "refreshMethod": "per-city fetch-*-osm-*.ts scripts (Overpass extracts)",
+      "notes": "Continuously edited; no editions to detect (NVDM per-source rule 2026-07-30: registered for lineage/licence accountability; formerly 13 UNWATCHED allowlist lines). Re-fetch cadence is a freshness question (P5-1)."
+    },
+    {
+      "id": "google-dynamic-world",
+      "scope": "platform",
+      "publisher": "Google / World Resources Institute",
+      "url": "https://dynamicworld.app/",
+      "license": "CC BY 4.0",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/rich-bodies",
+        "public/geojson/rich-bodies",
+        "public/data/cascade"
+      ],
+      "refreshMethod": "neer-vazhvu-api/app/gee + app/cascade/encroachment.py (GEE collection)",
+      "notes": "Rolling GEE collection, no editions (formerly allowlist-only per platform _doc). Registered 2026-07-30 for NVDM lineage."
+    },
+    {
+      "id": "sentinel-2-l2a",
+      "scope": "platform",
+      "publisher": "ESA Copernicus",
+      "url": "https://dataspace.copernicus.eu/",
+      "license": "Copernicus free and open data, attribution required",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/cascade",
+        "public/data/rich-bodies",
+        "public/data/restoration-priority-madurai.json",
+        "public/data/restoration-priority-madurai-legacy.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/app/cascade/channels.py + gee imagery chips",
+      "notes": "Continuous acquisition; channel evidence + rich-body imagery. Registered 2026-07-30 for NVDM lineage."
+    },
+    {
+      "id": "wris-live-services",
+      "scope": "platform",
+      "publisher": "CGWB / NWIC via India-WRIS",
+      "url": "https://arc.indiawris.gov.in/",
+      "license": "GoI open publication, cited with attribution",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/gw-stations-madurai.json",
+        "public/data/madurai-cgwb-stations.json"
+      ],
+      "refreshMethod": "scripts/fetch-wris-groundwater-madurai.ts (+ per-city WRIS scripts; DB series via telemetry jobs)",
+      "notes": "Live NWIC ArcGIS services (GroundwaterLevel_Stations etc.). Continuous API - freshness-tracked. Registered 2026-07-30, replacing a gw-stations allowlist line and a false IN-GRES attribution."
+    },
+    {
+      "id": "imd-gridded-rain",
+      "scope": "platform",
+      "publisher": "India Meteorological Department",
+      "url": "https://www.imdpune.gov.in/",
+      "license": "GoI publication, cited with attribution",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/imd-rainfall-monthly-bangalore.json",
+        "public/data/imd-rainfall-monthly-delhi.json",
+        "public/data/imd-rainfall-monthly-madurai.json",
+        "public/data/imd-rainfall-monthly-mumbai.json",
+        "public/data/imd-rainfall-monthly.json",
+        "public/data/rainfall-recent-bangalore.json",
+        "public/data/rainfall-recent-chennai.json",
+        "public/data/rainfall-recent-delhi.json",
+        "public/data/rainfall-recent-madurai.json",
+        "public/data/rainfall-recent-mumbai.json",
+        "public/data/cascade"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py + IMD grid extraction (quarterly refresh workflow)",
+      "notes": "IMD gridded/district rainfall products, updated continuously; artifacts refresh on schedule. Registered 2026-07-30 for NVDM lineage."
+    },
+    {
+      "id": "open-meteo-archive",
+      "scope": "platform",
+      "publisher": "Open-Meteo",
+      "url": "https://open-meteo.com/",
+      "license": "CC BY 4.0",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/rainfall-recent-bangalore.json",
+        "public/data/rainfall-recent-chennai.json",
+        "public/data/rainfall-recent-delhi.json",
+        "public/data/rainfall-recent-madurai.json",
+        "public/data/rainfall-recent-mumbai.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py (daily workflow)",
+      "notes": "ERA5-family reanalysis daily precipitation - the PROVISIONAL fill after IMD's last published gridded month (see each artifact's provisional_note). Registered 2026-07-30 when the envelope's IMD-only attribution was found incomplete against the producer's own source key."
     }
   ]
 }

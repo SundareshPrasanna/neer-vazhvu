@@ -1,4 +1,32 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/ward-risk",
+  "scope": {
+    "kind": "city",
+    "id": "madurai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "title": "Madurai ward boundaries 2022 (delimitation KML)",
+        "publisher": "GoTN / Madurai Municipal Corporation",
+        "license": "GoTN delimitation record, cited with attribution",
+        "role": "input",
+        "closed": true,
+        "as_of": "2022"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-05-06",
+    "produced_by": "scripts/compute-madurai-ward-risk.ts"
+  },
   "place_id": "madurai",
   "generated_at": "2026-05-06",
   "algorithm_version": "madurai-risk-v1-3factor",

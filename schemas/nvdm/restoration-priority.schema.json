@@ -19,7 +19,7 @@
         "required": ["id", "name", "priority_score", "priority_level"],
         "properties": {
           "id": { "type": ["string", "integer"] },
-          "osm_id": { "type": ["integer", "string"] },
+          "osm_id": { "type": ["integer", "string", "null"], "description": "null = scored body with no OSM match" },
           "census_id": { "type": ["string", "integer", "null"] },
           "name": { "type": ["string", "null"] },
           "area_ha": { "type": "number" },
