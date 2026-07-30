@@ -76,8 +76,18 @@ export const UNWATCHED: Record<string, string> = {
   "public/geojson/rich-bodies": "covered by the platform-scope GEE entries",
   "public/data/cascade": "covered by the platform-scope entry hydrosheds-basins",
 
+  // Curated compilations (NVDM Madurai pilot, 2026-07-30). Each record carries
+  // its own citation; the upstreams are episodic news/court/report documents
+  // with no watchable listing page - the accountability lives per record, and
+  // these reasons are the artifact-level decision on record.
+  "public/data/restoration-projects-madurai.json": "curated compilation; per-record citations (court orders, MMC, press); no watchable listing",
+  "public/data/river-events-madurai.json": "curated event timeline; per-record url citations; no watchable listing",
+  "public/data/water-bodies-flagship-madurai.json": "curated flagship register; per-record citations (DHAN, MMC, press); no watchable listing",
+  "public/data/industrial-sources-madurai.json": "qualitative one-off academic source (Columbia GSAPP studio book); statistics failed adversarial checks - see the file's _source_caveats",
+
   // Closed series. The upstream will not publish again; an edition watch would
   // be permanently silent, which is worse than an explicit note.
+  "public/geojson/madurai-wards-2022.geojson": "closed edition: 2022 ward delimitation KML; boundaries change only at the next delimitation (term-expiry watch would be the upgrade)",
   "public/data/cooum-sewage-inlets.json": "closed series: Nethaji Mariappan et al. 2017, single study",
   "public/geojson/mumbai-flood-2005-hotspots.geojson": "closed series: 26/7/2005 reference layer",
   "public/data/water-bodies-lost-mumbai.json": "archival: Dwivedi & Mehrotra 1995",

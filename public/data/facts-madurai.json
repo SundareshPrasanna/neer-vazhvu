@@ -1,4 +1,42 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": {
+    "kind": "city",
+    "id": "madurai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cgwb-yearbook-tn",
+        "title": "CGWB Ground Water Year Book, Tamil Nadu & Puducherry",
+        "publisher": "Central Ground Water Board",
+        "license": "GoI publication, cited with attribution"
+      },
+      {
+        "id": "ingres-gw-assessment-madurai",
+        "title": "IN-GRES dynamic groundwater assessment (Madurai firkas)",
+        "publisher": "CGWB / IN-GRES",
+        "license": "GoI publication, cited with attribution"
+      },
+      {
+        "id": "cpcb-nwmp-annual",
+        "title": "CPCB NWMP water-quality monitoring (Vaigai stations)",
+        "publisher": "Central Pollution Control Board",
+        "license": "GoI publication, cited with attribution"
+      },
+      {
+        "id": "madurai-corp-projects",
+        "title": "Madurai Municipal Corporation project/supply pages",
+        "publisher": "Madurai Municipal Corporation",
+        "license": "public government pages, cited with attribution"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-06-18",
+    "produced_by": "scripts/compute-madurai-derived-facts.ts (derived facts) + manual curation",
+    "note": "Envelope lists the registered upstreams; every fact carries its own citation (source_label/source_url/data_date, migrated to per-record sources), including one-off documents (1886 lease indenture, court reports) not registrable as living sources."
+  },
   "place_id": "madurai",
   "generated_at": "2026-06-18",
   "note": "Hand-curated Madurai water facts. v1 - replaces with dynamic fact-builder when M3 data layers (CPCB river quality, ward profiles, satellite GEE) ship.",

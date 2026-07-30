@@ -1,4 +1,27 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/cgwb-stations",
+  "scope": {
+    "kind": "city",
+    "id": "madurai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cgwb-yearbook-tn",
+        "title": "CGWB Ground Water Year Book, Tamil Nadu & Puducherry",
+        "publisher": "Central Ground Water Board",
+        "license": "GoI publication, cited with attribution"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-07-26",
+    "note": "Well series fetched from the India-WRIS Ground Water Level dataset (continuous API - freshness-tracked, not edition-tracked); year-book summaries covered by the cgwb-yearbook-tn registry entry.",
+    "conventions": {
+      "sign": "depth metres below ground level, positive down",
+      "aggregation": "readings as published by WRIS; see _note for granularity caveats"
+    }
+  },
   "_note": "Madurai-district CGWB ground water monitoring stations, extracted from CGWB's annual Ground Water Year Books for Tamil Nadu & Puducherry. Each well's `readings[]` array is appendable as more years' Year Books are processed - schema accommodates a multi-year time series indexed by lat/lng (well identity is geometric, since Sl No varies year to year and station names sometimes drift). Replaces the IDW-interpolated 100-ward depth view as the authoritative groundwater rendering for Madurai. Each well taps the phreatic (unconfined) aquifer with quarterly readings in metres below ground level (m bgl). Piezometers / tube wells reported in the 2023-24 Year Book annexure tap deeper semi-confined to confined aquifers and are tracked separately when we surface that view; this file is dug-well only.",
   "district": "Madurai",
   "well_type": "dug_well",

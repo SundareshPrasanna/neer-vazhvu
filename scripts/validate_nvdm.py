@@ -133,6 +133,20 @@ CONTRACTS = {
 ENVELOPE_KEYS = {"nvdm", "dataset", "scope", "provenance", "projection", "ext"}
 GEOJSON_MEMBERS = {"type", "features", "bbox"}
 
+# Spec 9.3/9.4: documented legacy aliases stay in place until their consumers
+# move; they are grandfathered, not undeclared extensions. Underscore-prefixed
+# keys are the legacy metadata idiom and get the same tolerance. NEW payload
+# keys outside the contract still fail - this list is closed.
+LEGACY_GRANDFATHERED = {
+    "place_id", "city_id", "district_id",
+    "generated_at", "compiled_at", "computed_at", "updated", "last_updated",
+    "fetched_at", "retrieved",
+    "source", "sources", "source_label", "source_url", "attribution",
+    "primary_source", "secondary_sources",
+    "note", "unit_note", "provisional_note",
+    "schema_version", "manifest_version",
+}
+
 
 def registry_source_ids() -> set[str]:
     ids = set()
@@ -214,12 +228,12 @@ def unknown_key_errors(doc: dict, contract: dict) -> list[str]:
     """Top-level keys must be envelope, GeoJSON members, or contract-declared;
     everything else belongs in ext (spec 6.3). Deliberately NOT recursive:
     record-level optional fields (name_<lang>, city-optional keys) are legal."""
-    allowed = ENVELOPE_KEYS | GEOJSON_MEMBERS | set(contract.get("properties", {}).keys())
+    allowed = ENVELOPE_KEYS | GEOJSON_MEMBERS | LEGACY_GRANDFATHERED | set(contract.get("properties", {}).keys())
     return [
-        f"top-level key '{k}' is not envelope, GeoJSON, or contract-declared - "
+        f"top-level key '{k}' is not envelope, GeoJSON, contract-declared, or grandfathered legacy - "
         "per-scope additions must live in ext (spec 6.3)"
         for k in doc
-        if k not in allowed
+        if k not in allowed and not k.startswith("_")
     ]
 
 
@@ -232,7 +246,7 @@ def contract_schema_for(rec: dict, schemas: dict[str, dict]) -> str | None:
 # and MUST carry its own source reference. Maps dataset id -> (collection key,
 # acceptable per-record source keys).
 CLAIM_DATASETS = {
-    "data-root/facts": ("facts", ("source_ids", "sources")),
+    "data-root/facts": ("facts", ("source_ids", "sources", "source_label")),
     "data-root/commitments": ("commitments", ("source_ids", "sources", "commitment_source")),
     "data-root/allocations": ("arrangements", ("source_ids", "sources", "source")),
     "data-root/water-bodies-lost": ("lost_bodies", ("source_ids", "sources", "source")),
@@ -269,11 +283,11 @@ def claim_provenance_errors(doc: dict, dataset: str) -> list[str]:
         # Date signal (spec 5.1): a record's evidence date may live on the
         # record OR on its cited sources - requiring both would be duplication.
         # Commitments are exempt (dates live in status_history by design).
-        if coll_key in ("facts", "arrangements") and not r.get("as_of"):
+        if coll_key in ("facts", "arrangements") and not r.get("as_of") and not r.get("data_date"):
             resolved = [s for s in r.get("sources", []) if isinstance(s, dict)]
             resolved += [env_map[sid] for sid in r.get("source_ids", []) if sid in env_map]
             if resolved and not any(s.get("as_of") or s.get("retrieved") for s in resolved):
-                errs.append(f"$.{coll_key}[{i}]: no date signal - record as_of or a dated source (spec 5.1)")
+                errs.append(f"$.{coll_key}[{i}]: no date signal - record as_of/data_date or a dated source (spec 5.1)")
     return errs
 
 
@@ -283,7 +297,11 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
     notes: list[str] = []
     # L1 = accounted for: registry lineage (watched) OR an explicit coverage-
     # allowlist reason (the UNWATCHED track). Only 'unaccounted' fails L1.
-    allowlisted = rec.get("accountability") == "allowlisted"
+    # The continuous-source waiver keys off the recorded REASON, not the track:
+    # an artifact can be watched (registry lineage for its episodic inputs) and
+    # still carry an allowlist reason covering its continuous ones (OSM/DW) -
+    # ward-profiles is the worked example.
+    allowlisted = rec.get("accountability") == "allowlisted" or bool(rec.get("accountability_reason"))
     if rec["headwaters_sources"] or allowlisted:
         level = 1
     try:
@@ -301,7 +319,13 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
         )
         env_errs += provenance_rule_errors(doc)
     if not env_errs:
-        level = max(level, 2)
+        if level < 1:
+            # The ladder is cumulative for real: a valid envelope on an
+            # unaccounted artifact stays L1-blocked until the file gains
+            # registry lineage or an allowlist reason.
+            notes.append("envelope valid but artifact is unaccounted (no registry lineage, no allowlist reason) - L2 blocked")
+            return {"path": rec["path"], "level": level, "notes": notes}
+        level = 2
         contract = contract_schema_for(rec, schemas)
         if contract:
             c_errs = validate(doc, schemas[contract], schemas, contract)
