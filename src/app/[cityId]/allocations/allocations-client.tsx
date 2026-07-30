@@ -26,7 +26,9 @@ interface Quantity {
 interface Arrangement {
   id: string;
   source: string;
-  authority_id: string | null;
+  /** Absent or null = direct/owner-operated (NVDM spec 7.6: absence is an
+   *  absent key; legacy files may still carry explicit null). */
+  authority_id?: string | null;
   recipient: string;
   entitled: Quantity;
   received: Quantity;
@@ -335,7 +337,7 @@ export default function AllocationsClient({ cityId }: { cityId: string }) {
   const grouped = useMemo(() => {
     if (!data) return [];
     const groups: { key: string; label: string; rows: Arrangement[] }[] = [];
-    const ownerOperated = data.arrangements.filter((a) => a.authority_id === null);
+    const ownerOperated = data.arrangements.filter((a) => a.authority_id == null);
     if (ownerOperated.length > 0) {
       groups.push({ key: "_owner", label: "Owner-operated + direct arrangements", rows: ownerOperated });
     }
