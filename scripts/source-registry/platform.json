@@ -149,7 +149,12 @@
         "public/data/restoration-priority-madurai.json",
         "public/data/restoration-priority-madurai-legacy.json",
         "public/data/ward-risk-madurai.json",
-        "public/geojson/madurai-water-bodies-lost.geojson"
+        "public/geojson/madurai-water-bodies-lost.geojson",
+        "public/data/restoration-priority.json",
+        "public/data/ward-profiles.json",
+        "public/geojson/chennai-coastal-zones.geojson",
+        "public/geojson/rich-bodies",
+        "public/data/rich-bodies/pallikaranai-boundary-analysis.json"
       ],
       "refreshMethod": "per-city fetch-*-osm-*.ts scripts (Overpass extracts)",
       "notes": "Continuously edited; no editions to detect (NVDM per-source rule 2026-07-30: registered for lineage/licence accountability; formerly 13 UNWATCHED allowlist lines). Re-fetch cadence is a freshness question (P5-1)."
@@ -190,10 +195,30 @@
         "public/data/cascade",
         "public/data/rich-bodies",
         "public/data/restoration-priority-madurai.json",
-        "public/data/restoration-priority-madurai-legacy.json"
+        "public/data/restoration-priority-madurai-legacy.json",
+        "public/geojson/chennai-coastal-transects.geojson"
       ],
       "refreshMethod": "neer-vazhvu-api/app/cascade/channels.py + gee imagery chips",
       "notes": "Continuous acquisition; channel evidence + rich-body imagery. Registered 2026-07-30 for NVDM lineage."
+    },
+    {
+      "id": "usgs-landsat",
+      "scope": "platform",
+      "publisher": "USGS / NASA (Landsat program)",
+      "url": "https://www.usgs.gov/landsat-missions",
+      "license": "USGS public domain, courtesy attribution",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/rich-bodies",
+        "public/geojson/chennai-coastal-transects.geojson"
+      ],
+      "refreshMethod": "neer-vazhvu-api/app/gee/coastline.py + scripts/ingest_rich_body_imagery.py (GEE Landsat 5/7/8 collections)",
+      "notes": "Continuous acquisition archive, no editions; the long-run arm of the shoreline MNDWI series (1990-2011 epochs) and the historical rich-body imagery chips. Registered 2026-07-30 (NVDM Chennai migration) so Landsat-derived artifacts can cite a registry id for lineage/licence instead of an unregistered living source."
     },
     {
       "id": "wris-live-services",
@@ -209,7 +234,8 @@
       },
       "dependsOn": [
         "public/data/gw-stations-madurai.json",
-        "public/data/madurai-cgwb-stations.json"
+        "public/data/madurai-cgwb-stations.json",
+        "public/data/gw-stations.json"
       ],
       "refreshMethod": "scripts/fetch-wris-groundwater-madurai.ts (+ per-city WRIS scripts; DB series via telemetry jobs)",
       "notes": "Live NWIC ArcGIS services (GroundwaterLevel_Stations etc.). Continuous API - freshness-tracked. Registered 2026-07-30, replacing a gw-stations allowlist line and a false IN-GRES attribution."
