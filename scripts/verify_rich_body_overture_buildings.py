@@ -30,6 +30,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from nvdm_write import write_artifact
+
 import duckdb
 from shapely.ops import unary_union
 
@@ -215,7 +217,7 @@ def main():
     # Anomaly detection: compare against the previously published JSON
     anomalies = _detect_anomalies(out_path, payload, args.anomaly_pct)
     if anomalies:
-        candidate_path.write_text(json.dumps(payload, indent=2))
+        write_artifact(candidate_path, payload)
         print(f"\n!! ANOMALY DETECTED in {len(anomalies)} zone(s):")
         for a in anomalies:
             print(
@@ -227,7 +229,7 @@ def main():
         print(f"To accept: mv {candidate_path.name} {out_path.name}")
         sys.exit(2)
 
-    out_path.write_text(json.dumps(payload, indent=2))
+    write_artifact(out_path, payload)
     # Clean up any stale candidate file from a previous failed run
     if candidate_path.exists():
         candidate_path.unlink()

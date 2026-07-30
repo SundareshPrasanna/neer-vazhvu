@@ -1,17 +1,22 @@
 # pipeline-inputs/
 
 Analytical and pipeline input files that are committed to the repo but are
-NOT shipped as public static assets. Nothing in this directory is served by
-the app or reachable at a public URL; nothing in `src/` may read from here.
-Files land here when they are load-bearing for a script, checker, or scheduled
-pipeline but have no place in `public/` (de-publicization ruling, 2026-07-30).
+NOT served by the app; nothing in `src/` may read from here. Files land here
+when they are load-bearing for a script, checker, or scheduled pipeline but
+have no place in `public/` (de-publicization ruling, 2026-07-30).
 
-The dataset catalogue (`scripts/build_dataset_catalogue.py`) walks
-`public/data` and `public/geojson` only, so files here are deliberately
-outside the catalogue. The Headwaters coverage sweep
-(`scripts/lib/headwaters-coverage.ts`) likewise does not scan this directory;
-lineage for files here is carried by `dependsOn` entries in
-`scripts/source-registry/*.json` where an upstream is known.
+**Honest scope of "de-publicized" (corrected 2026-07-30 review):** this
+repository is PUBLIC, so everything here remains downloadable through GitHub
+- the move removes files from production static serving and app URLs, nothing
+more. Treat every file here as published. Files whose publisher or licence is
+unverified (see INVENTORY.md) must not be assumed republishable, and
+licence-safe withdrawal would require private storage and potentially a
+history purge - a pending decision, tracked in the inventory.
+
+Governance for this directory lives in `INVENTORY.md` (purpose, consumer,
+checksum, provenance, licence status, retention decision - one entry per
+file, no exceptions). The dataset catalogue walks `public/` only; registry
+`dependsOn` entries carry upstream lineage where an upstream is known.
 
 ## chennai-reservoir-catchments.geojson
 

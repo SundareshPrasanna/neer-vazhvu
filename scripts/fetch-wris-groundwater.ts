@@ -15,6 +15,7 @@
  */
 
 import { writeFileSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { resolve } from "path";
 
 // WRIS has an incomplete SSL certificate chain - allow connections
@@ -267,11 +268,11 @@ async function main() {
     blocks,
   };
   const gwrPath = resolve(root, "public/data/gwr-blocks.json");
-  writeFileSync(gwrPath, JSON.stringify(gwrOutput, null, 2));
+  writeArtifact(gwrPath, gwrOutput);
   console.log(`  ${gwrPath}`);
 
   const geoPath = resolve(root, "public/geojson/chennai-gwr-blocks.geojson");
-  writeFileSync(geoPath, JSON.stringify(boundaries, null, 2));
+  writeArtifact(geoPath, boundaries as unknown as Record<string, unknown>);
   console.log(`  ${geoPath}`);
 
   const stationsOutput = {
@@ -280,7 +281,7 @@ async function main() {
     stations,
   };
   const stationsPath = resolve(root, "public/data/gw-stations.json");
-  writeFileSync(stationsPath, JSON.stringify(stationsOutput, null, 2));
+  writeArtifact(stationsPath, stationsOutput);
   console.log(`  ${stationsPath}`);
 
   console.log("\nDone!");

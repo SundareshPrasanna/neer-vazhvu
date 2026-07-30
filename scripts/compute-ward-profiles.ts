@@ -679,13 +679,28 @@ function main() {
       method: "derived",
       produced_at: PRODUCED_AT,
       produced_by: "scripts/compute-ward-profiles.ts",
+      // Machine-readable internal lineage: the validator caps this artifact
+      // below L3 while any listed input is below L2 (review 2026-07-30 -
+      // prose notes do not transfer accountability). wards-2022 is the
+      // load-bearing spatial key and currently unaccounted, so ward profiles
+      // hold at L2 until its boundary provenance is settled.
+      internal_inputs: [
+        "public/geojson/chennai-wards-2022.geojson",
+        "public/geojson/chennai-water-bodies-current.geojson",
+        "public/data/restoration-priority.json",
+        "public/geojson/chennai-water-bodies-lost.geojson",
+        "public/geojson/chennai-flood-hazard-zones.geojson",
+        "public/geojson/chennai-flood-2015-hotspots.geojson",
+        "public/geojson/chennai-flood-2020-hotspots.geojson",
+        "public/geojson/chennai-drainage.geojson",
+        "public/geojson/chennai-sewerage.geojson",
+        "public/geojson/chennai-industrial-zones.geojson",
+        "public/data/river-quality.json",
+      ],
       note:
         "Deterministic spatial join over committed ward-level layers (see script header). " +
-        "Internal artifact inputs carry their own envelopes and are lineage, not sources: " +
-        "chennai-wards-2022.geojson (GCC 2022 delimitation geometry; the boundary file's " +
-        "own provenance record is still pending), restoration-priority.json, " +
-        "river-quality.json, chennai-water-bodies-lost.geojson, " +
-        "chennai-flood-2020-hotspots.geojson (closed Cyclone Nivar reference layer).",
+        "Internal inputs are lineage, not sources - listed machine-readably in internal_inputs; " +
+        "chennai-wards-2022.geojson's own provenance record is still pending.",
     },
     wards: output,
   };
