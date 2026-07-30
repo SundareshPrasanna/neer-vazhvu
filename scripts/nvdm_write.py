@@ -28,13 +28,22 @@ ENVELOPE_KEYS = ("nvdm", "dataset", "scope", "provenance", "projection", "ext")
 
 
 def write_artifact(
-    path: Path, payload: dict, *, compact: bool = False, envelope_from: Path | None = None
+    path: Path,
+    payload: dict,
+    *,
+    compact: bool = False,
+    envelope_from: Path | None = None,
+    indent: int = 2,
 ) -> None:
     """Write payload to path, preserving any existing NVDM envelope.
 
     envelope_from: inherit the envelope from ANOTHER artifact - for candidate/
     sidecar files that a reviewer later renames over the canonical path
-    (round-2 review: a bare candidate strips governance on acceptance)."""
+    (round-2 review: a bare candidate strips governance on acceptance).
+
+    indent: pretty-print width when not compact (default 2). Producers whose
+    artifacts are stored indent=1 (the Mumbai scrapers) pass 1 so a scheduled
+    regeneration does not reformat the whole file."""
     envelope: dict = {}
     src = envelope_from if envelope_from is not None else path
     if src.exists():
@@ -51,5 +60,5 @@ def write_artifact(
     if compact:
         text = json.dumps(out, ensure_ascii=False, separators=(",", ":"))
     else:
-        text = json.dumps(out, ensure_ascii=False, indent=2)
+        text = json.dumps(out, ensure_ascii=False, indent=indent)
     path.write_text(text)

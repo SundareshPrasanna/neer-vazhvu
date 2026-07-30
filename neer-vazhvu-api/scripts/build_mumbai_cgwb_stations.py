@@ -43,8 +43,12 @@ Run:  cd neer-vazhvu-api && python scripts/build_mumbai_cgwb_stations.py
 import json
 import os
 import re
+import sys
+from pathlib import Path
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 OUT_PATH = os.path.join(REPO_ROOT, "public", "data", "mumbai-cgwb-stations.json")
 
 # --- 2024-25 Year Book: WRIS code | district | site | May24 Aug24 Nov24 Jan25
@@ -408,8 +412,9 @@ def main() -> int:
     }
 
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
-    with open(OUT_PATH, "w", encoding="utf-8") as fh:
-        json.dump(out, fh, ensure_ascii=False, indent=2)
+    # Envelope-preserving write (scripts/nvdm_write.py): keeps the NVDM
+    # envelope injected by the migration so a rebuild cannot strip it.
+    write_artifact(Path(OUT_PATH), out)
 
     total = sum(len(w["readings"]) for w in wells)
     print(

@@ -39,6 +39,9 @@ import json
 import math
 import os
 import urllib.request
+from pathlib import Path
+
+from nvdm_write import write_artifact
 
 BBOX = (18.85, 72.70, 19.50, 73.00)  # south, west, north, east (Colaba -> Arnala)
 OVERPASS_MIRRORS = [
@@ -270,8 +273,9 @@ def main():
         "features": features,
     }
     path = os.path.join(OUT_DIR, "mumbai-coastal-zones.geojson")
-    with open(path, "w", encoding="utf-8") as fh:
-        json.dump(out, fh, ensure_ascii=False)
+    # Envelope-preserving write (scripts/nvdm_write.py): keeps the NVDM
+    # envelope injected by the migration so a regeneration cannot strip it.
+    write_artifact(Path(path), out, compact=True)
     print(f"Wrote {len(features)} zones -> {path}")
 
 
