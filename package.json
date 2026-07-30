@@ -12,6 +12,7 @@
     "lint": "eslint",
     "test": "find src -name '*.test.ts' | xargs tsx --test",
     "test:watch": "find src -name '*.test.ts' | xargs tsx --test --watch",
+    "db:check": "node scripts/check-db-city-scoped-keys.mjs",
     "i18n:check": "node scripts/check-i18n.mjs",
     "data:check": "tsx scripts/check-restoration-data.ts && tsx scripts/check-data-freshness.ts --validate && tsx scripts/check-upstream-editions.ts --validate"
   },
