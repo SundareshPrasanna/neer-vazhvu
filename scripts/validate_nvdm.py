@@ -327,17 +327,34 @@ def apply_internal_input_floor(results: list[dict]) -> None:
     """An L3 claim cannot rest on ungoverned inputs (review 2026-07-30: Chennai
     ward-profiles reached L3 over an L0 boundary geometry). Any artifact
     declaring provenance.internal_inputs is capped at L2 while any listed
-    input is below L2 - and an input missing from the catalogue counts as L0."""
-    level_by_path = {r["path"]: r["level"] for r in results}
+    input is below L2 - an input missing from the catalogue counts as L0.
+    Runs to a FIXPOINT so demotions propagate through chains (round-2 review:
+    A(L3)->B(L3)->C(L0) must cap A too, not just B)."""
+    by_path = {r["path"]: r for r in results}
+    changed = True
+    while changed:
+        changed = False
+        for r in results:
+            if r["level"] < 3 or "internal_inputs" not in r:
+                continue
+            # An input is weak if below L2 OR itself floor-capped: a cap marks
+            # the whole chain as resting on ungoverned ground, and L2-by-
+            # demotion must not launder into L3-eligibility one hop up.
+            weak = [
+                p for p in r["internal_inputs"]
+                if by_path.get(p) is None
+                or by_path[p]["level"] < 2
+                or by_path[p].get("_floor_capped")
+            ]
+            if weak:
+                r["level"] = 2
+                r["_floor_capped"] = True
+                r["notes"].append(
+                    f"capped at L2: internal input(s) ungoverned or floor-capped - {', '.join(weak[:3])}"
+                )
+                changed = True
     for r in results:
-        if r["level"] < 3 or not r.get("internal_inputs"):
-            continue
-        weak = [p for p in r["internal_inputs"] if level_by_path.get(p, 0) < 2]
-        if weak:
-            r["level"] = 2
-            r["notes"].append(
-                f"capped at L2: internal input(s) below L2 - {', '.join(weak[:3])}"
-            )
+        r.pop("_floor_capped", None)
 
 
 # Claim datasets (spec 5.1): every record makes an independently quotable claim
@@ -435,6 +452,15 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
             c_errs += claim_provenance_errors(doc, f"{rec['family']}/{rec['dataset']}")
             c_errs += unknown_key_errors(doc, schemas[contract])
             c_errs += license_errors(doc)
+            # Fail-closed internal lineage (round-2 review: omission kept L3):
+            # derived/gee artifacts must DECLARE internal_inputs - explicitly
+            # empty [] when they truly consume no repo artifacts.
+            if doc.get("provenance", {}).get("method") in ("derived", "gee") and \
+                    "internal_inputs" not in doc.get("provenance", {}):
+                c_errs.append(
+                    "derived artifact seeking L3 must declare provenance.internal_inputs "
+                    "(explicitly [] if none) - the dependency floor is fail-closed"
+                )
             if c_errs:
                 notes += [f"L3 fail: {e}" for e in c_errs[:5]]
             else:
@@ -445,7 +471,7 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
         notes += [f"L2 fail: {e}" for e in env_errs[:3]]
     result = {"path": rec["path"], "level": level, "notes": notes}
     ii = doc.get("provenance", {}).get("internal_inputs") if isinstance(doc, dict) else None
-    if isinstance(ii, list) and ii:
+    if isinstance(ii, list):
         result["internal_inputs"] = [str(p) for p in ii]
     return result
 
@@ -600,6 +626,39 @@ def selftest(schemas: dict[str, dict]) -> int:
     check("L3 capped at L2 over sub-L2/missing internal inputs",
           res[0]["level"] == 2 and any("capped" in n for n in res[0]["notes"]))
     check("L3 stands when internal inputs are >= L2", res[2]["level"] == 3)
+
+    # Transitive chain (round-2 review): A(L3)->B(L3)->C(L0) must cap BOTH
+    # B and A - the floor runs to a fixpoint, not a single snapshot pass.
+    chain = [
+        {"path": "A.json", "level": 3, "notes": [], "internal_inputs": ["B.json"]},
+        {"path": "B.json", "level": 3, "notes": [], "internal_inputs": ["C.json"]},
+        {"path": "C.json", "level": 0, "notes": []},
+    ]
+    apply_internal_input_floor(chain)
+    check("dependency floor propagates transitively (A over B over L0-C)",
+          chain[0]["level"] == 2 and chain[1]["level"] == 2)
+
+    # Refresh gate (round-2 review: report mode cannot fail, so workflows now
+    # call scripts/nvdm-refresh-gate.sh): a file enveloped at HEAD is enforced;
+    # an unenveloped file is skipped, not silently passed through the checker.
+    with tempfile.TemporaryDirectory() as td:
+        def g2(*args):
+            sp.run(["git", "-c", "user.email=t@t", "-c", "user.name=t", *args],
+                   cwd=td, check=True, capture_output=True)
+        g2("init", "-q")
+        (Path(td) / "public/data").mkdir(parents=True)
+        (Path(td) / "public/data/enveloped.json").write_text('{"nvdm": "1.0", "x": 1}')
+        (Path(td) / "public/data/bare.json").write_text('{"x": 1}')
+        g2("add", "-A"); g2("commit", "-qm", "base")
+        out = sp.run(["bash", str(ROOT / "scripts/nvdm-refresh-gate.sh"),
+                      "public/data/enveloped.json", "public/data/bare.json"],
+                     cwd=td, capture_output=True, text=True,
+                     env={**__import__("os").environ, "NVDM_CHECK_CMD": "echo ENFORCED"})
+        check("refresh gate enforces files enveloped at HEAD",
+              "ENFORCED public/data/enveloped.json" in out.stdout)
+        check("refresh gate skips unenveloped files without passing them",
+              "bare.json not enveloped at HEAD - skipped" in out.stdout
+              and "ENFORCED public/data/enveloped.json public/data/bare.json" not in out.stdout)
 
     return 1 if fails else 0
 

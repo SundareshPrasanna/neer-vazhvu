@@ -291,6 +291,24 @@
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py (daily workflow)",
       "notes": "ERA5-family reanalysis daily precipitation - the PROVISIONAL fill after IMD's last published gridded month (see each artifact's provisional_note). Registered 2026-07-30 when the envelope's IMD-only attribution was found incomplete against the producer's own source key."
+    },
+    {
+      "id": "merit-hydro",
+      "scope": "platform",
+      "publisher": "Yamazaki Lab, University of Tokyo",
+      "url": "http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/",
+      "license": "dual: CC BY-NC 4.0 or ODbL 1.0 - which licence our trace used is UNRECORDED (see pipeline-inputs/INVENTORY.md); presume non-commercial until verified",
+      "type": "page",
+      "cadence": "episodic (versioned releases)",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "pipeline-inputs/chennai-reservoir-catchments.geojson"
+      ],
+      "refreshMethod": "manual (re-run the upstream trace against a new MERIT release; catchment candidates are curated)",
+      "notes": "Registered 2026-07-30 round-2 review: the reservoir-catchments candidates use a MERIT Hydro upstream trace that had no registry lineage (INVENTORY had wrongly credited FABDEM). Unbaselined until first --accept."
     }
   ]
 }

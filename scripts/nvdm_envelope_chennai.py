@@ -376,6 +376,13 @@ PROVENANCE: dict[str, dict] = {
     "data-root/restoration-priority": {
         "method": "derived",
         "produced_by": "scripts/compute-restoration-priority.ts",
+        "internal_inputs": [
+            "public/geojson/chennai-water-bodies-current.geojson",
+            "public/geojson/chennai-water-bodies-lost.geojson",
+            "public/geojson/chennai-rivers.geojson",
+            "public/data/river-quality.json",
+            "public/data/industrial-sources.json",
+        ],
         "sources": [
             dict(OSM_TANKS, title="OpenStreetMap water bodies + rivers (Overpass extracts)"),
             reg("datagovin-waterbodies-census-tn", role="input"),
@@ -779,6 +786,8 @@ def main() -> int:
             "method": spec["method"],
             "produced_at": prior_produced_at or spec.get("produced_at") or produced_at_for(doc, path),
         }
+        if spec.get("internal_inputs") is not None:
+            provenance["internal_inputs"] = spec["internal_inputs"]
         if spec.get("produced_by"):
             provenance["produced_by"] = spec["produced_by"]
         if spec.get("note"):

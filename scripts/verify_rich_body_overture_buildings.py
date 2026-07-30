@@ -217,7 +217,7 @@ def main():
     # Anomaly detection: compare against the previously published JSON
     anomalies = _detect_anomalies(out_path, payload, args.anomaly_pct)
     if anomalies:
-        write_artifact(candidate_path, payload)
+        write_artifact(candidate_path, payload, envelope_from=out_path)
         print(f"\n!! ANOMALY DETECTED in {len(anomalies)} zone(s):")
         for a in anomalies:
             print(

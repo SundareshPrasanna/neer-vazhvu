@@ -63,6 +63,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Refresh gate: files enveloped at HEAD must still certify L2
+          # (report mode below cannot fail; this can - round-2 review)
+          bash scripts/nvdm-refresh-gate.sh public/data/mmr-dam-storage.json
           # NVDM conformance before publishing (review 2026-07-30: direct
           # pushes bypass the PR gate - so the gate runs here instead;
           # any failure aborts before commit)

@@ -27,12 +27,19 @@ from pathlib import Path
 ENVELOPE_KEYS = ("nvdm", "dataset", "scope", "provenance", "projection", "ext")
 
 
-def write_artifact(path: Path, payload: dict, *, compact: bool = False) -> None:
-    """Write payload to path, preserving any existing NVDM envelope."""
+def write_artifact(
+    path: Path, payload: dict, *, compact: bool = False, envelope_from: Path | None = None
+) -> None:
+    """Write payload to path, preserving any existing NVDM envelope.
+
+    envelope_from: inherit the envelope from ANOTHER artifact - for candidate/
+    sidecar files that a reviewer later renames over the canonical path
+    (round-2 review: a bare candidate strips governance on acceptance)."""
     envelope: dict = {}
-    if path.exists():
+    src = envelope_from if envelope_from is not None else path
+    if src.exists():
         try:
-            existing = json.loads(path.read_text())
+            existing = json.loads(src.read_text())
         except (json.JSONDecodeError, OSError):
             existing = None
         if isinstance(existing, dict) and "nvdm" in existing:
