@@ -34,6 +34,7 @@ from shapely.geometry import shape
 from shapely.ops import transform as shp_transform
 
 from app.cascade.districts import DistrictCascadeConfig, get_district_cascade_config
+from app.nvdm_io import merge_envelope
 
 # Path-to-river distance (metres) at which we accept a river as the lake's sink.
 # Deliberately tight: the downstream path follows the channel, so a true drain
@@ -140,7 +141,8 @@ def enrich_cascade_lakes(district: DistrictCascadeConfig) -> dict[str, int]:
     names_synced = _sync_names_from_source(district, lakes)
     rivers_named = _assign_river_names(district, lakes)
     lakes_path.write_text(
-        json.dumps(lakes, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(merge_envelope(lakes_path, lakes), ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
     total_named = sum(
         1 for f in lakes["features"] if (f["properties"].get("name") or "").strip()

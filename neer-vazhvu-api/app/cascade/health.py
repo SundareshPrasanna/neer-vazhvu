@@ -52,6 +52,7 @@ from pathlib import Path
 from typing import Any
 
 from app.cascade import publish
+from app.nvdm_io import merge_envelope
 from app.cascade.districts import (
     CASCADE_OUTPUT_DIR,
     DistrictCascadeConfig,
@@ -634,7 +635,8 @@ def compute_cascade_health(district: DistrictCascadeConfig) -> dict[str, Any]:
 
     out_path = CASCADE_OUTPUT_DIR / f"{district.district_id}-cascades-health.json"
     out_path.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+        json.dumps(merge_envelope(out_path, payload), indent=2, ensure_ascii=False)
+        + "\n",
         encoding="utf-8",
     )
 
