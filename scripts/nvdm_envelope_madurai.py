@@ -294,6 +294,14 @@ PROVENANCE: dict[str, dict] = {
     "data-root/ward-risk": {
         "method": "derived",
         "produced_by": "scripts/compute-madurai-ward-risk.ts",
+        "internal_inputs": [
+            "public/geojson/madurai-wards-2022.geojson",
+            "public/geojson/madurai-water-bodies-current.geojson",
+            "public/data/madurai-ward-profiles.json",
+            "public/data/restoration-priority-madurai.json",
+            "public/data/water-bodies-flagship-madurai.json",
+            "public/data/gw-stations-madurai.json",
+        ],
         "sources": [
             {"title": "Madurai ward boundaries 2022 (delimitation KML)", "publisher": "GoTN / Madurai Municipal Corporation", "license": "GoTN delimitation record, cited with attribution", "role": "input", "closed": True, "as_of": "2022"},
             OSM_TANKS,
@@ -335,6 +343,7 @@ PROVENANCE: dict[str, dict] = {
     "geojson-layers/water-bodies-lost": {
         "method": "derived",
         "produced_by": "scripts/build-madurai-lost-bodies-geojson.ts",
+        "internal_inputs": ["public/data/water-bodies-lost-madurai.json"],
         "sources": [],
         "note": "Derived from water-bodies-lost-madurai.json (itself enveloped, citations there) - internal lineage, not an upstream source.",
     },

@@ -5,7 +5,7 @@ name: Overture buildings refresh
 # within ~30 days of publication (Overture releases ~every 3 months).
 #
 # Anomaly detection in the script: if any zone's count changes by >20%
-# from the previous JSON, the script writes a *.candidate file instead
+# from the previous JSON, the script writes to review-candidates/ instead
 # of overwriting the canonical file and exits non-zero. The workflow
 # then opens a PR with the candidate for human review. Within-threshold
 # changes are committed directly to the working branch.
@@ -111,7 +111,7 @@ jobs:
           body: |
             One or more rich-body building counts changed by more than the
             anomaly threshold vs the previous Overture release. The job has
-            written `*-overture-buildings.candidate` files alongside the
+            written `review-candidates/*-overture-buildings.candidate.json` files for review; accept by moving one over the
             existing canonical JSONs - the canonicals were not overwritten.
 
             Please review the deltas (compare canonical vs candidate JSON)
@@ -127,6 +127,6 @@ jobs:
             workflow run for raw deltas.
           branch: overture-buildings-anomaly-${{ github.run_id }}
           add-paths: |
-            public/data/rich-bodies/*-overture-buildings.candidate.json
+            review-candidates/*-overture-buildings.candidate.json
           commit-message: "Overture refresh candidate ($(date -u +%Y-%m-%d)) - needs review"
           delete-branch: true
