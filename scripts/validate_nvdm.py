@@ -525,6 +525,48 @@ def selftest(schemas: dict[str, dict]) -> int:
     errs = validate(d, schemas["water-bodies-current.schema.json"], schemas, "water-bodies-current.schema.json")
     check("invalid record beyond position 500 caught", any("[501]" in e for e in errs))
 
+    # ---- L2 gate selector regression (2026-07-30 review: --diff-filter=A
+    # missed renames into serving; unprefixed pathspecs missed path shapes).
+    # Selector cases run against a scratch git repo with a stub checker; the
+    # accept/reject semantics run the real --check against this repo.
+    import subprocess as sp
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as td:
+        def g(*args):
+            sp.run(["git", "-c", "user.email=t@t", "-c", "user.name=t", *args],
+                   cwd=td, check=True, capture_output=True)
+        g("init", "-q")
+        (Path(td) / "pipeline-inputs").mkdir()
+        (Path(td) / "pipeline-inputs/moved.geojson").write_text("{}")
+        (Path(td) / "unrelated.txt").write_text("x")
+        g("add", "-A"); g("commit", "-qm", "base")
+        base = sp.run(["git", "rev-parse", "HEAD"], cwd=td, check=True,
+                      capture_output=True, text=True).stdout.strip()
+        (Path(td) / "public/data/nested/deep").mkdir(parents=True)
+        (Path(td) / "public/data/direct.json").write_text("{}")
+        (Path(td) / "public/data/nested/deep/naked.geojson").write_text("{}")
+        (Path(td) / "public/geojson").mkdir()
+        (Path(td) / "docs").mkdir()
+        (Path(td) / "docs/not-served.json").write_text("{}")
+        g("mv", "pipeline-inputs/moved.geojson", "public/geojson/moved.geojson")
+        g("add", "-A"); g("commit", "-qm", "pr")
+        out = sp.run(["bash", str(ROOT / "scripts/nvdm-l2-gate.sh"), base],
+                     cwd=td, capture_output=True, text=True,
+                     env={**__import__("os").environ, "NVDM_CHECK_CMD": "echo SELECTED"})
+        sel = out.stdout
+        check("gate selects direct naked artifact", "public/data/direct.json" in sel)
+        check("gate selects nested naked artifact", "public/data/nested/deep/naked.geojson" in sel)
+        check("gate selects artifact renamed into serving", "public/geojson/moved.geojson" in sel)
+        check("gate ignores non-served paths", "docs/not-served.json" not in sel and "unrelated" not in sel)
+
+    r_ok = sp.run([sys.executable, str(ROOT / "scripts/validate_nvdm.py"),
+                   "--check", "public/data/facts-madurai.json"], capture_output=True)
+    check("gate accepts a valid L2 artifact", r_ok.returncode == 0)
+    r_bad = sp.run([sys.executable, str(ROOT / "scripts/validate_nvdm.py"),
+                    "--check", "public/data/hypothetical-naked-artifact.json"], capture_output=True)
+    check("gate rejects an uncatalogued naked artifact", r_bad.returncode != 0)
+
     return 1 if fails else 0
 
 
