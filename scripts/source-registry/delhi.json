@@ -6,7 +6,7 @@
       "scope": "delhi",
       "publisher": "Delhi Pollution Control Committee",
       "url": "https://dpcc.delhi.gov.in/dpcc/analysis-reports",
-      "license": "GNCTD publication, cited with attribution",
+      "license": "restrictive, permission required: the DPCC website policy states that contents 'may not be reproduced partially or fully, without due permission' - no redistribution without permission",
       "type": "pdf-listing",
       "cadence": "monthly",
       "tier": 1,
@@ -21,7 +21,7 @@
         "public/data/commitments-delhi.json"
       ],
       "refreshMethod": "river: transcribe into dpcc-monthly-wq-delhi.json then re-run scripts/build-delhi-river-quality.ts. DRAINS: run neer-vazhvu-api/scripts/extract_delhi_drain_quality.py, which parses the month's PDF automatically (embedded text layer, no OCR).",
-      "notes": "THE Delhi feed: 8 Yamuna stations + ~39 drain points, sampled monthly and published around the 25th. A new file link = a new month. CRITICAL: the listing is a ROLLING ~3-month window and NOBODY archives it - OpenCity mirrors only the CETP datasets and the Wayback Machine has zero captures of this directory. A month that is not captured while it is listed is lost permanently, which is why this entry is tier 1 and why the drain series can only grow forward. The drain NO FLOW count is the verification signal for the 39-drain trapping commitment.",
+      "notes": "THE Delhi feed: 8 Yamuna stations + ~39 drain points, sampled monthly and published around the 25th. A new file link = a new month. CRITICAL: the listing is a ROLLING ~3-month window and NOBODY archives it - OpenCity mirrors only the CETP datasets and the Wayback Machine has zero captures of this directory. A month that is not captured while it is listed is lost permanently, which is why this entry is tier 1 and why the drain series can only grow forward. The drain NO FLOW count is the verification signal for the 39-drain trapping commitment. LICENCE: read from dpcc.delhi.gov.in/dpcc/copyright-policy (verified 2026-07-31). This is an express refusal of the general reuse permission, not the liberal GIGW template the previous 'GNCTD publication, cited with attribution' implied. Extracted factual values are a separate question; the reports themselves must not be redistributed.",
       "lastSeen": {
         "linksHash": "6db8b14c806a17a9",
         "links": [
@@ -45,7 +45,7 @@
       "scope": "delhi",
       "publisher": "CGWB / IN-GRES (via OpenCity national compilations)",
       "url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
-      "license": "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments",
+      "license": "Other (Public Domain) (per OpenCity dataset page)",
       "type": "page",
       "cadence": "yearly",
       "tier": 1,
@@ -60,7 +60,7 @@
         "public/data/delhi-ward-profiles.json"
       ],
       "refreshMethod": "manual (add the new edition's Delhi district CSV URL to neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py and re-run; if the edition is not mirrored, pull it from IN-GRES directly - see docs/methodology/pan-india-source-playbook.md)",
-      "notes": "Assessment is annual since 2021-22. IN-GRES (ingres.iith.ac.in) is the authority and is reachable outside NICNET; OpenCity mirrors most editions. The 2022-23 cycle had no mirror and was taken from IN-GRES itself (public/data/ingres/delhi-2022-2023.json). Watch for the next cycle appearing here or on the portal's year list.",
+      "notes": "Assessment is annual since 2021-22. IN-GRES (ingres.iith.ac.in) is the authority and is reachable outside NICNET; OpenCity mirrors most editions. The 2022-23 cycle had no mirror and was taken from IN-GRES itself (public/data/ingres/delhi-2022-2023.json). Watch for the next cycle appearing here or on the portal's year list. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication. The underlying assessment is CGWB + state groundwater departments; CGWB's own website policy is the upstream authority.",
       "lastSeen": {
         "linksHash": "d168d76eab2f4cfc",
         "links": [
@@ -185,7 +185,7 @@
       "scope": "delhi",
       "publisher": "DPCC (via OpenCity)",
       "url": "https://data.opencity.in/dataset/delhi-cetp-monthly-water-quality-data-2022-2024",
-      "license": "open (per OpenCity dataset page)",
+      "license": "Other (Public Domain) (per OpenCity dataset page)",
       "type": "page",
       "cadence": "monthly",
       "tier": 2,
@@ -200,7 +200,7 @@
         "public/data/delhi-ward-profiles.json"
       ],
       "refreshMethod": "automated OCR: re-run neer-vazhvu-api/scripts/extract_delhi_cetp_flows.py (new bundles download + OCR; existing ones read from .cache), then build_delhi_industrial_sources.py and build_delhi_ward_profiles.py",
-      "notes": "Delhi's industrial-attribution layer: per-plant design capacity vs MEASURED monthly inflow for the 13 CETPs. Extracted 2026-07-26 from the scanned PDFs (709 readings, 2019-04 to 2024-11) - the archive was indexed but unopened until then. Series ends Nov 2024; a new bundle on the listing is what tells us DPCC resumed. Utilisation sits near a third of built capacity, which is the finding.",
+      "notes": "Delhi's industrial-attribution layer: per-plant design capacity vs MEASURED monthly inflow for the 13 CETPs. Extracted 2026-07-26 from the scanned PDFs (709 readings, 2019-04 to 2024-11) - the archive was indexed but unopened until then. Series ends Nov 2024; a new bundle on the listing is what tells us DPCC resumed. Utilisation sits near a third of built capacity, which is the finding. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
       "lastSeen": {
         "linksHash": "fe38c8af328e44d0",
         "links": [
@@ -290,7 +290,7 @@
       "scope": "delhi",
       "publisher": "GNCTD / Ministry of Jal Shakti (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=delhi-water-bodies-census-data",
-      "license": "open (per OpenCity dataset page)",
+      "license": "Other (Public Domain) (per OpenCity dataset page)",
       "type": "api",
       "cadence": "episodic (census)",
       "tier": 0,
@@ -302,7 +302,7 @@
         "public/geojson/delhi-water-bodies-census.geojson"
       ],
       "refreshMethod": "manual (re-run the point-in-polygon join against the OSM body layer)",
-      "notes": "1st Census of Water Bodies / Jal Dharohar, NCT Delhi - enumeration 2022, map released 2023, 893 census points. Verified 2026-07-26: 1 resource, metadata_modified 2025-11-27. This is the Delhi analogue of datagovin-waterbodies-census-tn; a Second Census has been announced nationally and this watch is how we would learn it landed. The layer's join is honest about its own weakness (inside 31 / near 203 / unmatched 659), so a new edition is worth taking.",
+      "notes": "1st Census of Water Bodies / Jal Dharohar, NCT Delhi - enumeration 2022, map released 2023, 893 census points. Verified 2026-07-26: 1 resource, metadata_modified 2025-11-27. This is the Delhi analogue of datagovin-waterbodies-census-tn; a Second Census has been announced nationally and this watch is how we would learn it landed. The layer's join is honest about its own weakness (inside 31 / near 203 / unmatched 659), so a new edition is worth taking. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:37:47.489871",
         "acceptedOn": "2026-07-26"
@@ -313,7 +313,7 @@
       "scope": "delhi",
       "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
       "url": "https://ingres.iith.ac.in/",
-      "license": "GoI publication, cited with attribution",
+      "license": "IN-GRES publishes no terms of use, disclaimer or licence anywhere on the portal; the upstream authority is CGWB, whose website policy permits reproduction free of charge in any format or media without specific permission, with acknowledgement of the source - GoI publication, cited with attribution",
       "type": "page",
       "cadence": "yearly (GEC assessment)",
       "tier": 1,
@@ -324,7 +324,7 @@
         "public/data/ingres/delhi-2022-2023.json"
       ],
       "refreshMethod": "manual - headless-Chrome render of the portal UI + DOM table parse; the open API's POST contract is still uncaptured",
-      "notes": "Fourth scope on the same IN-GRES source (see ingres-gw-assessment-tn / -ka / -madurai). Delhi's 2022-23 cycle has NO OpenCity mirror, which is why it was acquired by rendering the portal - the most fragile acquisition on the platform. Delhi state uuid a1ac5d18-8c9a-4047-8fdd-4d7d9deaa34e is recorded in the artifact's _provenance. Same caveat as the sibling entries: http-meta watches the SPA build, not the assessment data. Note this is DISTINCT from cgwb-dynamic-gwr-delhi, which watches the OpenCity national compilation (2025 cycle, hectare-metres) feeding gwr-blocks-delhi.json - two cycles, two acquisition routes, two watches.",
+      "notes": "Fourth scope on the same IN-GRES source (see ingres-gw-assessment-tn / -ka / -madurai). Delhi's 2022-23 cycle has NO OpenCity mirror, which is why it was acquired by rendering the portal - the most fragile acquisition on the platform. Delhi state uuid a1ac5d18-8c9a-4047-8fdd-4d7d9deaa34e is recorded in the artifact's _provenance. Same caveat as the sibling entries: http-meta watches the SPA build, not the assessment data. Note this is DISTINCT from cgwb-dynamic-gwr-delhi, which watches the OpenCity national compilation (2025 cycle, hectare-metres) feeding gwr-blocks-delhi.json - two cycles, two acquisition routes, two watches. LICENCE: verified by fetching ingres.iith.ac.in and grepping the full Angular app bundle (main.*.js, 2.0 MB): zero occurrences of a copyright policy, terms of use, disclaimer or licence statement - the only 'Policy' matches are Leaflet's referrerPolicy option and the only 'terms' match is an FAQ sentence about years of data (verified 2026-07-31). CGWB is the fallback authority.",
       "lastSeen": {
         "etag": "W/\"c20-19f18174cc0\"",
         "lastModified": "Tue, 30 Jun 2026 10:33:28 GMT",
@@ -336,7 +336,7 @@
       "scope": "delhi",
       "publisher": "State Election Commission Delhi / MCD (via OpenCity)",
       "url": "https://data.opencity.in/dataset/delhi-mcd-elections-2022",
-      "license": "open (per OpenCity dataset page)",
+      "license": "Other (Public Domain) (per OpenCity dataset page)",
       "type": "page",
       "cadence": "5-yearly",
       "tier": 1,
@@ -350,7 +350,7 @@
         "public/data/delhi-ward-profiles.json"
       ],
       "refreshMethod": "manual - re-digitise the winners table for all 250 wards",
-      "notes": "MCD general election 4 December 2022, the first post-unification poll across 250 wards; a five-year term ends 2026-12-04 at the earliest and 2027-12-04 on the outside, so termEndsOn is set to the later date with a 120-day lead. This is the Delhi twin of the three chennai-reps-* entries and exists for the same reason the mechanism was built: no listing page changes when a mandate expires. CAVEATS already on the artifact: by-elections and defections since Dec 2022 are NOT reflected, and MLA/MP columns are absent until the 2022 ward geometry with AC mapping is joined. A calendar cannot see a by-election - that stays a manual risk.",
+      "notes": "MCD general election 4 December 2022, the first post-unification poll across 250 wards; a five-year term ends 2026-12-04 at the earliest and 2027-12-04 on the outside, so termEndsOn is set to the later date with a 120-day lead. This is the Delhi twin of the three chennai-reps-* entries and exists for the same reason the mechanism was built: no listing page changes when a mandate expires. CAVEATS already on the artifact: by-elections and defections since Dec 2022 are NOT reflected, and MLA/MP columns are absent until the 2022 ward geometry with AC mapping is joined. A calendar cannot see a by-election - that stays a manual risk. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
       "lastSeen": {
         "acceptedOn": "2026-07-26"
       }
@@ -360,7 +360,7 @@
       "scope": "delhi",
       "publisher": "SEC Delhi Delimitation Order 2022 (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=delhi-mcd-elections-2022",
-      "license": "open (per OpenCity dataset page)",
+      "license": "Other (Public Domain) (per OpenCity dataset page)",
       "type": "api",
       "cadence": "episodic (delimitation)",
       "tier": 0,
@@ -373,7 +373,7 @@
         "public/data/delhi-ward-profiles.json"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/convert_delhi_wards_kml.py",
-      "notes": "The 250-ward delimitation geometry, and the denominator under every Delhi ward number on the platform. Verified 2026-07-26: metadata_modified 2025-11-27. WATCH THIS ONE CLOSELY: OpenCity DELISTED the source dataset ('Delhi Wards Information') and our copy survives only because it was verified byte-identical against an Internet Archive capture over its full extent - see the layer's metadata.recovery field. A dataset that has already been delisted once can go again, and there is no second copy.",
+      "notes": "The 250-ward delimitation geometry, and the denominator under every Delhi ward number on the platform. Verified 2026-07-26: metadata_modified 2025-11-27. WATCH THIS ONE CLOSELY: OpenCity DELISTED the source dataset ('Delhi Wards Information') and our copy survives only because it was verified byte-identical against an Internet Archive capture over its full extent - see the layer's metadata.recovery field. A dataset that has already been delisted once can go again, and there is no second copy. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:38:57.866743",
         "acceptedOn": "2026-07-26"
