@@ -16,10 +16,20 @@ material are compiled from many publishers. Each dataset carries the licence of
 its own upstream source or sources. The MIT grant in `LICENSE` does not reach it
 and never did.
 
-Mirrored upstream documents are held to a stricter rule than data: a document is
-mirrored only where its terms establish that we may redistribute it. Where they
-do not, the repository links to the publisher's own copy instead. The register of
-mirrored documents and their basis is `scripts/mirrored-documents.json`.
+Mirrored upstream documents are held to a stricter rule than data, because a
+mirror is a redistributed copy of somebody else's document rather than a dataset
+derived from facts. A document is mirrored only on an affirmative right to
+redistribute it: a recorded permission, a quoted clause that permits
+redistribution, or a source under a canonical open grant. Anything short of that,
+including a government publication we merely cite with attribution, is not
+enough. Where the right is not established, the repository links to the
+publisher's own copy instead.
+
+**As of 2026-07-31 no upstream document is mirrored here.** All seven that were
+have been removed and are cited at their publishers. The register, with the
+reason each one went, is
+[`scripts/mirrored-documents.json`](scripts/mirrored-documents.json), enforced by
+`scripts/check-mirrored-documents.py`.
 
 This matters in both directions. Some artefacts derive from inputs that are
 **non-commercial**, and some from inputs that are **ShareAlike**, which requires
@@ -54,6 +64,32 @@ The report buckets every enveloped artifact as `restricted`, `nc`,
 propagates the worst bucket through declared lineage. It fails closed: an
 unrecognised licence string is a loud error, never a silent pass.
 
+Where the registry and an envelope disagree about a registered source, **the
+registry wins**. The envelope mirrors the registry string so an artifact reads
+standalone, and `scripts/validate_nvdm.py` fails the build if the two drift. An
+envelope's inline `license` is the record only for a source with no registry id.
+
+### Rights determinations
+
+A few artefacts carry `provenance.rights_determination`. This is an audited,
+per-file judgement that a **named** upstream's terms do not encumber that file,
+and it exists because mechanical propagation over-claims for a derived
+indicator: a pollution-control board's policy governs the board's own report,
+not a ward score computed here from the measurements the report states, since
+there is no copyright in facts.
+
+It is deliberately narrow, and the constraints are enforced rather than
+described. A determination can only lift `restricted` to `gov-attribution`; it
+can never clear non-commercial, ShareAlike or unproven-lineage encumbrances, and
+it can never reach `clean-open`. It must name in `clears` exactly which inputs
+it covers, and any restricted input it does not name leaves the artefact
+restricted. The shape is defined in
+[`schemas/nvdm/envelope.schema.json`](schemas/nvdm/envelope.schema.json).
+
+If you are assessing reuse, read the determination's `reasoning` and decide for
+yourself whether you accept it. It is our judgement, recorded openly so it can
+be disagreed with, not a licence anyone granted us.
+
 ## Notable restricted inputs
 
 Not exhaustive. These are the inputs whose terms most change what a reuser must
@@ -73,7 +109,8 @@ date.
 | `dpcc-monthly-analysis-delhi` (DPCC) | Permission required | "Contents of this website may not be reproduced partially or fully, without due permission." |
 | `osm-overpass`, `overture-buildings`, `google-open-buildings` | ODbL 1.0 (Overture varies by theme) | Commercial use permitted. ShareAlike applies to a redistributed derivative database, not to a rendered map or report. |
 | `datameet-mumbai-spatial` (DataMeet) | CC BY-SA 2.5 IN | ShareAlike. |
-| `ingres-gw-assessment-*` (IN-GRES) | None published | The IN-GRES portal publishes no terms of use, disclaimer or licence anywhere. CGWB is the upstream authority. |
+| `ingres-gw-assessment-*` (IN-GRES) | None published | The IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere, verified by reading its full application bundle. Nothing is established about who may redistribute this material. It is not asserted that CGWB's website policy governs a portal hosted by IIT Hyderabad, because no evidence establishes that. |
+| OpenCity-mirrored datasets (20 entries) | Portal metadata only | The OpenCity CKAN metadata labels most of these "Other (Public Domain)" and one "Creative Commons Attribution". Those are records of a **portal's metadata field**, not findings that the material is public domain: no upstream publisher issued a dedication, and OpenCity's own site-wide terms say "Data are licensed under: CC BY-NC-SA 4.0 and ODbL" and permit download "for non-commercial and / or personal use only". Treated as unproven. |
 
 ## Attribution notices
 
