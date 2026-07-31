@@ -83,12 +83,29 @@ def validate(doc, schema: dict, schemas: dict[str, dict], owner: str, path: str 
         for key, sub in schema.get("properties", {}).items():
             if key in doc:
                 errs += validate(doc[key], sub, schemas, owner, f"{path}.{key}")
+        # additionalProperties:false - an undeclared key inside a closed object
+        # is a typo or a smuggled field, and both should fail here rather than
+        # be ignored (PR #227 review: rights_determination is a closed object,
+        # so `approved_by_vibes: true` must not sail past the gate).
+        if schema.get("additionalProperties") is False:
+            for key in doc:
+                if key not in schema.get("properties", {}):
+                    errs.append(f"{path}: undeclared key '{key}'")
     if isinstance(doc, str) and "pattern" in schema:
         if not re.search(schema["pattern"], doc):
             errs.append(f"{path}: '{doc[:40]}' fails pattern {schema['pattern']}")
+    if isinstance(doc, str) and "minLength" in schema:
+        if len(doc) < schema["minLength"]:
+            errs.append(
+                f"{path}: {len(doc)} chars < minLength {schema['minLength']}"
+            )
     if isinstance(doc, list):
         if "minItems" in schema and len(doc) < schema["minItems"]:
             errs.append(f"{path}: {len(doc)} items < minItems {schema['minItems']}")
+        if schema.get("uniqueItems") and len(
+            {json.dumps(x, sort_keys=True) for x in doc}
+        ) != len(doc):
+            errs.append(f"{path}: duplicate items but uniqueItems is set")
         if "items" in schema:
             # Every element is inspected (a gate that samples is not a gate);
             # only the error OUTPUT is capped once the artifact is already failing.
