@@ -152,11 +152,16 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/bangalore-localities.json": "curated search index, no upstream",
   "public/data/madurai-localities.json": "curated search index, no upstream",
   "public/data/delhi-localities.json": "curated search index, no upstream",
-  // ward-names.json moved to the WATCHED track 2026-07-31 (NVDM ward-names
-  // migration): gcc-admin-boundary-gis dependsOn now names it. The reason that
-  // stood here - "derived label lookup over the ward boundary layer" - had it
-  // backwards: the GCC ward layer carries no zone fields at all, and it was
-  // chennai-wards-2022.geojson that took its Zone_No/Zone_Name FROM this file.
+  // Stays UNWATCHED, with the reason corrected 2026-07-31 (NVDM ward-names
+  // migration). The old reason - "derived label lookup over the ward boundary
+  // layer" - had it backwards: the GCC ward layer carries no zone fields at
+  // all, and chennai-wards-2022.geojson takes its Zone_No/Zone_Name FROM this
+  // file. Nor can it be watched via gcc-admin-boundary-gis: that service did
+  // not produce this mapping and contradicts five of its rows, so joining them
+  // would be a false lineage claim. Its only source is a closed 2011 artifact,
+  // so there is genuinely nothing upstream that can change.
+  "public/data/ward-names.json":
+    "hand-maintained ward -> zone mapping; sole source is a closed 2011 artifact, no living upstream to poll (GCC's service is the verification authority and produces chennai-wards-2022.geojson instead)",
 
   // Daily feeds. The freshness checker owns these; an edition watch on a page
   // that changes every day would alert every day.
