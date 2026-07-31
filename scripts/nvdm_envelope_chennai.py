@@ -829,8 +829,14 @@ WRAP_ARRAY_AS = {
     "data-root/ward-names": "wards",
 }
 SKIP_PATHS = {
-    # BLOCKED - provenance unknown (worklist 6.4 item 1): boundary geometry
-    # publisher/licence/retrieval unrecorded; enveloping would fabricate.
+    # DEFERRED, not blocked. The provenance question that blocked this file is
+    # RESOLVED: gcc-admin-boundary-gis records its publisher, licence position,
+    # retrieval method and registry lineage (dependsOn names this file), so
+    # enveloping it would no longer fabricate anything. It stays out of this PR
+    # only because that is a separate L1 -> L2 shape migration, and because its
+    # joined zone attributes come from ward-names.json - whose five wrong rows
+    # must be corrected in the same pass (spec 9.4 keeps value fixes separate).
+    # Do not re-investigate the provenance; it is settled.
     "public/geojson/chennai-wards-2022.geojson",
     # BLOCKED - keep-or-delete decision pending (worklist 6.4 item 5).
     "public/geojson/chennai-reservoir-catchments.geojson",
