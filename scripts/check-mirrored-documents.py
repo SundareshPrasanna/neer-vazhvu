@@ -7,20 +7,36 @@ these trees, so they could carry a publisher's own report while the registry
 entry for that same publisher said redistribution needs their approval. This
 check closes that path.
 
-Rules, in order:
+This is an ALLOWLIST. A mirror ships only on an affirmative right, never on
+the absence of a known objection.
 
-  1. Every file under a mirror tree must appear in scripts/mirrored-documents.json.
-     An unlisted mirror is a failure: a document nobody claimed is a document
-     nobody checked.
-  2. Every listed document must exist, and must name a `source_id` that is
-     registered in scripts/source-registry/.
-  3. That source must not classify 'restricted' under the shared classifier in
-     scripts/nvdm-encumbrance-report.py. Mirroring is redistribution, and a
-     publisher who requires permission for redistribution has not given it.
-     The only way past this is a recorded `permission` (who granted it, when,
-     in what form) - never a note, which is documentation, not permission.
-  4. Entries with status 'unresolved' are reported loudly but do not fail.
-     They are the to-do list of terms nobody has read yet.
+Rules, in order, and the order is load-bearing:
+
+  1. Every file under a mirror tree must appear in scripts/mirrored-documents.json,
+     and every listed document must exist. A document nobody claimed is a
+     document nobody checked.
+  2. IDENTITY FIRST. Every entry must name a `source_id` registered in
+     scripts/source-registry/. This is checked BEFORE any clearance route can
+     return, because a permission or a quoted clause is a claim ABOUT a
+     source: if we cannot say which source, the claim is unattached to
+     anything and clears nothing. (The first version returned on a
+     well-formed `permission` before it ever looked at `source_id`, so a
+     permission with no source id at all - or an unregistered one - passed.)
+  3. Then exactly one of three affirmative routes, each fully validated:
+       a. `permission`           - grantor, granted_on (ISO calendar date),
+                                   form. All non-empty strings.
+       b. `redistribution_basis` - clause, source_url (http/https), verified_on
+                                   (ISO calendar date).
+       c. the source classifies `clean-open` - a canonical open grant.
+     A partially-filled route is not a route; it is a failure, not a fallback
+     to the next one.
+  4. Everything else FAILS. gov-attribution describes how we CITE a government
+     publication, not a licence to republish its PDF. share-alike permits
+     redistribution only on terms a file drop does not offer. nc, third-party,
+     vague, restricted and UNCLASSIFIED are obvious. A `status` field - including
+     'unresolved' or even 'cleared' - is documentation and is never a route.
+
+Run with --selftest to see every state and its verdict.
 
 Stdlib only.
 """
@@ -30,7 +46,9 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
+from datetime import date
 from pathlib import Path
+from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "scripts/mirrored-documents.json"
@@ -83,28 +101,76 @@ def registry_licenses() -> dict[str, str | None]:
 REDISTRIBUTABLE_BUCKETS = {"clean-open"}
 
 
+def _nonempty_str(v) -> bool:
+    return isinstance(v, str) and bool(v.strip())
+
+
+def _iso_date(v) -> bool:
+    """A real calendar date in ISO form. '2026-02-30' is not one."""
+    if not isinstance(v, str):
+        return False
+    try:
+        date.fromisoformat(v)
+    except ValueError:
+        return False
+    return True
+
+
+def _http_url(v) -> bool:
+    if not _nonempty_str(v):
+        return False
+    parts = urlparse(v)
+    return parts.scheme in ("http", "https") and bool(parts.netloc)
+
+
+# route name -> {field: predicate}. Every field is required and validated;
+# a partially-filled route is a failure, never a fall-through to the next.
+ROUTE_FIELDS = {
+    "permission": {
+        "grantor": _nonempty_str,
+        "granted_on": _iso_date,
+        "form": _nonempty_str,
+    },
+    "redistribution_basis": {
+        "clause": _nonempty_str,
+        "source_url": _http_url,
+        "verified_on": _iso_date,
+    },
+}
+
+
 def clearance(d: dict, reg: dict, enc) -> str | None:
     """None if this mirror may ship, else the reason it may not.
 
-    Three affirmative routes, checked in order of strength. A `status` field
-    is documentation and never a route on its own.
+    IDENTITY IS CHECKED FIRST and unconditionally. A permission or a quoted
+    clause is a claim ABOUT a source; with no source, or an unregistered one,
+    it is a claim about nothing. The first version returned on a well-formed
+    permission before it ever read `source_id`, so a permission with no source
+    id passed the gate.
     """
-    perm = d.get("permission")
-    if isinstance(perm, dict) and all(
-        perm.get(k) for k in ("grantor", "granted_on", "form")
-    ):
-        return None
-    basis = d.get("redistribution_basis")
-    if isinstance(basis, dict) and all(
-        basis.get(k) for k in ("clause", "source_url", "verified_on")
-    ):
-        return None
-
     sid = d.get("source_id")
-    if not sid:
-        return "no source_id, no permission and no redistribution_basis - nothing establishes a right to redistribute this"
+    if not _nonempty_str(sid):
+        return (
+            "no source_id - a permission or a quoted clause is a claim about a "
+            "SOURCE, so with no source named there is nothing for it to attach to"
+        )
     if sid not in reg:
         return f"source_id '{sid}' has no registry match - lineage unprovable"
+
+    for route, fields in ROUTE_FIELDS.items():
+        block = d.get(route)
+        if block is None:
+            continue
+        if not isinstance(block, dict):
+            return f"`{route}` must be an object with {', '.join(fields)}"
+        bad = [k for k, ok in fields.items() if not ok(block.get(k))]
+        if bad:
+            return (
+                f"`{route}` is incomplete or malformed: {', '.join(sorted(bad))}. "
+                f"A partially-filled route is not a route"
+            )
+        return None
+
     bucket = enc.classify(reg[sid])
     if bucket in REDISTRIBUTABLE_BUCKETS:
         return None
@@ -303,6 +369,75 @@ def selftest() -> int:
     check(
         "no source_id at all clears nothing",
         clearance({}, reg, enc) is not None,
+    )
+
+    # ---- IDENTITY IS CHECKED FIRST (PR #227 review round 4). Each of these
+    # passed before: the route returned before `source_id` was ever read, so a
+    # complete-looking claim about nothing in particular cleared the gate.
+    good_perm = {"grantor": "CPCB Member Secretary", "granted_on": "2026-07-31", "form": "email"}
+    good_basis = {
+        "clause": "may be reproduced free of charge in any format",
+        "source_url": "https://example.gov.in/policy",
+        "verified_on": "2026-07-31",
+    }
+    check(
+        "a complete permission with NO source_id still fails",
+        clearance({"permission": good_perm}, reg, enc) is not None,
+    )
+    check(
+        "a complete permission with an UNREGISTERED source_id still fails",
+        clearance({"source_id": "nope", "permission": good_perm}, reg, enc) is not None,
+    )
+    check(
+        "a complete redistribution_basis with NO source_id still fails",
+        clearance({"redistribution_basis": good_basis}, reg, enc) is not None,
+    )
+    check(
+        "a complete redistribution_basis with an UNREGISTERED source_id still fails",
+        clearance({"source_id": "nope", "redistribution_basis": good_basis}, reg, enc)
+        is not None,
+    )
+    check(
+        "an empty-string source_id is not a source_id",
+        clearance({"source_id": "   ", "permission": good_perm}, reg, enc) is not None,
+    )
+
+    # ---- FIELD VALIDATION. Present-but-junk is not present.
+    bad_cases = {
+        "blank grantor": {"permission": {**good_perm, "grantor": "  "}},
+        "non-string grantor": {"permission": {**good_perm, "grantor": 42}},
+        "prose date": {"permission": {**good_perm, "granted_on": "last July"}},
+        "impossible date": {"permission": {**good_perm, "granted_on": "2026-02-30"}},
+        "permission not an object": {"permission": "granted, trust me"},
+        "blank clause": {"redistribution_basis": {**good_basis, "clause": ""}},
+        "url without scheme": {
+            "redistribution_basis": {**good_basis, "source_url": "example.gov.in/policy"}
+        },
+        "non-http scheme": {
+            "redistribution_basis": {
+                **good_basis,
+                "source_url": "javascript:alert(1)",
+            }
+        },
+        "bad verified_on": {
+            "redistribution_basis": {**good_basis, "verified_on": "2026-13-01"}
+        },
+    }
+    for name, extra in bad_cases.items():
+        check(
+            f"{name} does not clear",
+            clearance({"source_id": "restricted", **extra}, reg, enc) is not None,
+        )
+    check(
+        "a valid permission on a REGISTERED source does clear",
+        clearance({"source_id": "restricted", "permission": good_perm}, reg, enc) is None,
+    )
+    check(
+        "a valid redistribution_basis on a REGISTERED source does clear",
+        clearance(
+            {"source_id": "restricted", "redistribution_basis": good_basis}, reg, enc
+        )
+        is None,
     )
 
     print(f"{'OK' if not fails else 'FAIL'}: {len(fails)} failures")
