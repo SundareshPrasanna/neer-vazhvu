@@ -34,6 +34,7 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
+import { registryLicense } from "./lib/registry-contract";
 import centroid from "@turf/centroid";
 import bbox from "@turf/bbox";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
@@ -577,24 +578,36 @@ function main() {
           id: "osm-overpass",
           title: "OpenStreetMap water bodies / rivers (Overpass extracts)",
           publisher: "OpenStreetMap contributors",
-          license: "ODbL 1.0",
+          license: registryLicense("osm-overpass"),
           role: "input",
         },
         {
           id: "cgwb-yearbook-tn",
           title: "CGWB Ground Water Year Book, Tamil Nadu & Puducherry",
           publisher: "Central Ground Water Board",
-          license: "GoI publication, cited with attribution",
+          license: registryLicense("cgwb-yearbook-tn"),
           role: "input",
         },
         {
           id: "ingres-gw-assessment-madurai",
           title: "IN-GRES dynamic groundwater assessment (Madurai firkas)",
           publisher: "CGWB / IN-GRES",
-          license: "GoI publication, cited with attribution",
+          license: registryLicense("ingres-gw-assessment-madurai"),
           role: "input",
         },
       ],
+      // Audited artifact-level rights determination (PR #227 review, P1-4).
+      // Mechanical source-term propagation marks this file 'restricted'
+      // because CPCB/DPCC sit in its lineage. Their website policies govern
+      // THEIR reports; they do not reach a ward score computed here from
+      // measured values, because there is no copyright in facts. Scored by
+      // scripts/nvdm-encumbrance-report.py, which will NOT let this clear
+      // the OpenStreetMap share-alike - only the restricted contribution.
+      rights_determination: {
+        "basis": "derived-facts",
+        "reasoning": "The payload of this file is a set of indicators this repository computes: per-ward scores, grades, percentile ranks and densities produced by our own code from measured values. It contains no upstream prose, no upstream table layout and no reproduction of any publisher's document. The restricted contribution in its lineage comes from CPCB's website policy, which requires the Board's approval for uses of CPCB MATERIAL beyond download and print. That policy governs CPCB's report; it does not reach a score derived from the measurements the report states, because there is no copyright in facts (Eastern Book Company v D.B. Modak, (2008) 1 SCC 1: 'there is no copyright in the facts per se'). Madurai ward profiles: same indicator construction as the Chennai file, over 100 wards. Share-alike from OpenStreetMap is unaffected and remains.",
+        "reviewed_on": "2026-07-31"
+      },
       method: "derived",
       produced_at: PRODUCED_AT,
       produced_by: "scripts/compute-madurai-ward-profiles.ts",

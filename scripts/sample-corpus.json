@@ -46,6 +46,33 @@
     "water-bodies-current (OSM lineage), water-bodies-lost (per-record",
     "citations only), and the gee target manifests (share-alike lineage).",
     "",
+    "PR #227 review round 2 (14 -> 9). Two clean verdicts turned out to be",
+    "accidental rather than earned, and both are gone. (1) The four IN-GRES",
+    "groundwater artifacts classified gov-attribution only because the licence",
+    "string ended '- GoI publication, cited with attribution'; the same string",
+    "opened by admitting the portal publishes no terms at all, and the",
+    "classifier was reading the suffix. IN-GRES now fails closed as vague, so",
+    "gwr-blocks-madurai, ingres/delhi-2022-2023, madurai-gwr-blocks.geojson and",
+    "chennai-gwr-blocks.geojson leave the reference set. (2) The OpenCity",
+    "'Other (Public Domain)' label was being read as a public-domain dedication",
+    "and rated clean-open. It is a portal metadata field, no upstream publisher",
+    "dedicated anything, and OpenCity's own site-wide terms say the material is",
+    "CC BY-NC-SA and ODbL - so bangalore-wards-2025.geojson leaves too. The",
+    "reference set is now 9 artifacts and every one of them is clean on",
+    "evidence somebody read.",
+    "",
+    "The three ward composites came BACK to share-alike in the same round, and",
+    "not by relaxing a rule: each now carries an audited",
+    "provenance.rights_determination (basis 'derived-facts') recording, per",
+    "file, why CPCB's or DPCC's permission-required terms do not reach a ward",
+    "score this repo computed from measured values. The determination cannot",
+    "clear nc or share-alike and cannot reach clean-open - it only removes the",
+    "'restricted' contribution - which is why these stay share-alike fixtures",
+    "rather than becoming reference artifacts. river-quality-madurai.json got",
+    "no such determination and stays restricted and out of the sample: it",
+    "restates upstream station readings rather than deriving an indicator, and",
+    "that distinction is the whole point of making the call per artifact.",
+    "",
     "Licence sweep 2026-07-31 (15 -> 14): CPCB's own website policy permits",
     "material to be downloaded to file or printer only, and makes 'any other",
     "proposed use' subject to the approval of its competent authority. That is",
@@ -72,16 +99,11 @@
     "public/data/allocations-chennai.json",
     "public/data/madurai-cgwb-stations.json",
     "public/data/restoration-projects.json",
-    "public/data/gwr-blocks-madurai.json",
     "public/data/gw-stations-madurai.json",
     "public/data/imd-rainfall-monthly-madurai.json",
     "public/data/rainfall-recent-madurai.json",
-    "public/data/ingres/delhi-2022-2023.json",
     "public/geojson/rich-bodies/pallikaranai.geojson",
-    "public/geojson/madurai-wards-2022.geojson",
-    "public/geojson/madurai-gwr-blocks.geojson",
-    "public/geojson/bangalore-wards-2025.geojson",
-    "public/geojson/chennai-gwr-blocks.geojson"
+    "public/geojson/madurai-wards-2022.geojson"
   ],
   "build_fixtures": [
     {
@@ -110,24 +132,21 @@
     },
     {
       "path": "public/data/ward-profiles.json",
-      "expected_status": "restricted",
+      "expected_status": "share-alike",
       "required_by": "npm test (ward-uplift tests)",
-      "decision": "retained: composite over an osm-overpass input (ODbL); redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set",
-      "licence_note": "was share-alike until 2026-07-31. Now restricted through provenance.internal_inputs: it reads public/data/river-quality.json, whose source cpcb-nwmp-annual carries CPCB's website policy - material may be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB'. The ward rows here are derived indicators, not reproductions of CPCB material, but the mechanical audit tracks source terms and this file is not offered as redistributable"
+      "decision": "retained: composite over an osm-overpass input (ODbL); redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set RIGHTS DETERMINATION: the file also carries an audited provenance.rights_determination (basis derived-facts, reviewed 2026-07-31) which clears the CPCB/DPCC restricted contribution in its lineage without touching the OpenStreetMap share-alike - see the envelope for the per-file reasoning"
     },
     {
       "path": "public/data/ward-risk-madurai.json",
-      "expected_status": "restricted",
+      "expected_status": "share-alike",
       "required_by": "npm test (ward-uplift tests)",
-      "decision": "retained: composite over an osm-overpass input (ODbL); redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set",
-      "licence_note": "was share-alike until 2026-07-31. Now restricted through madurai-ward-profiles, which reads river-quality-madurai.json and so inherits the same CPCB permission-required terms described on the ward-profiles fixture"
+      "decision": "retained: composite over an osm-overpass input (ODbL); redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set RIGHTS DETERMINATION: the file also carries an audited provenance.rights_determination (basis derived-facts, reviewed 2026-07-31) which clears the CPCB/DPCC restricted contribution in its lineage without touching the OpenStreetMap share-alike - see the envelope for the per-file reasoning"
     },
     {
       "path": "public/data/ward-risk-delhi.json",
-      "expected_status": "restricted",
+      "expected_status": "share-alike",
       "required_by": "npm test (ward-uplift tests)",
-      "decision": "retained: demoted from the reference set by the lineage-aware audit (PR #221 review round 1) - inherits ODbL share-alike from delhi-ward-profiles via provenance.internal_inputs; redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set",
-      "licence_note": "was share-alike until 2026-07-31. Now restricted through delhi-ward-profiles, which reads Delhi river quality derived from dpcc-monthly-analysis-delhi. DPCC's website policy is an express refusal: contents 'may not be reproduced partially or fully, without due permission'"
+      "decision": "retained: demoted from the reference set by the lineage-aware audit (PR #221 review round 1) - inherits ODbL share-alike from delhi-ward-profiles via provenance.internal_inputs; redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set RIGHTS DETERMINATION: the file also carries an audited provenance.rights_determination (basis derived-facts, reviewed 2026-07-31) which clears the CPCB/DPCC restricted contribution in its lineage without touching the OpenStreetMap share-alike - see the envelope for the per-file reasoning"
     }
   ]
 }

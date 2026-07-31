@@ -28,6 +28,13 @@ jobs:
           node-version: 20
           cache: npm
 
+      # npm run data:check ends with the mirrored-document gate, which is
+      # Python: no upstream document may be redistributed out of public/docs
+      # if its publisher requires permission (scripts/check-mirrored-documents.py).
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - run: npm ci
       - run: npm run lint
 
@@ -69,6 +76,9 @@ jobs:
 
       - name: Encumbrance classifier + lineage selftest
         run: python3 scripts/nvdm-encumbrance-report.py --selftest
+
+      - name: No mirrored upstream document ships from a restricted source
+        run: python3 scripts/check-mirrored-documents.py
 
       - name: Reference set stays licence-clean; fixtures stay as documented
         run: python3 scripts/check-sample-corpus.py

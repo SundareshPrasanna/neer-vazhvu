@@ -6,7 +6,7 @@
       "scope": "bangalore",
       "publisher": "ATREE-CSEI (via OpenCity)",
       "url": "https://data.opencity.in/dataset/map-lakes-streams-bengaluru-urban-within-bbmp-area",
-      "license": "CC BY (per OpenCity dataset page)",
+      "license": "CC BY per OpenCity CKAN metadata (no version stated); not relied on as a grant, because OpenCity's site-wide terms contradict its per-dataset labels",
       "type": "page",
       "cadence": "unknown",
       "tier": 0,
@@ -18,7 +18,7 @@
         "public/geojson/bangalore-water-bodies-current.geojson"
       ],
       "refreshMethod": "manual (re-run the named-lake spatial join; raw KMZ under scripts/data-raw/bangalore/)",
-      "notes": "Canonical named-lake census (1,349 polygons), one of three sources in the named-lake join. New resource links = a revised lake map edition. LICENCE: OpenCity CKAN package_show returns license_id 'cc-by' / license_title 'Creative Commons Attribution' / license_url opendefinition.org/licenses/cc-by, with no version stated (verified 2026-07-31). The previous 'open (per OpenCity dataset page)' understated the grant.",
+      "notes": "Canonical named-lake census (1,349 polygons), one of three sources in the named-lake join. New resource links = a revised lake map edition. LICENCE: OpenCity CKAN package_show returns license_id 'cc-by' / license_title 'Creative Commons Attribution' / license_url opendefinition.org/licenses/cc-by, with no version stated; the resources carry the same 'Creative Commons - Attribution' string (verified 2026-07-31). The previous 'open (per OpenCity dataset page)' understated the grant. Note the same site-wide non-commercial terms conflict recorded on the other OpenCity entries.",
       "lastSeen": {
         "linksHash": "b69b323772eb8bb7",
         "links": [
@@ -65,7 +65,7 @@
       "scope": "bangalore",
       "publisher": "IISc (via OpenCity mirror)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=groundwater-outlook-of-bengaluru-city-april-2025",
-      "license": "CC BY-NC (OpenCity dataset page; non-commercial)",
+      "license": "CC BY-NC-SA 4.0 (non-commercial AND share-alike)",
       "type": "api",
       "cadence": "episodic",
       "tier": 1,
@@ -80,7 +80,7 @@
         "public/data/bangalore-supply-overview.json"
       ],
       "refreshMethod": "manual PDF parse + digitization of the critically-over-extracted ward list",
-      "notes": "IISc Groundwater Outlook for Bengaluru (April 2025) - the 80 critically-over-extracted wards that are the city's HEADLINE groundwater layer (rendered directly on /bangalore, not behind /groundwater). Watched via the OpenCity mirror deliberately: IISc's own host wgbis.ces.iisc.ac.in returns 403 to curl even with a browser UA (verified 2026-07-26) and cannot be watched. Verified: 1 resource, metadata_modified 2025-11-27. A new Interim Report or Outlook edition would land as a new resource. Caveat: the mirror lags the publisher, so a detection here is a floor, not a ceiling. LICENCE: OpenCity CKAN package_show returns license_id 'cc-nc' / license_title 'Creative Commons Non-Commercial (Any)' / license_url creativecommons.org/licenses/by-nc/2.0 (verified 2026-07-31). The registry previously recorded this as 'open (per OpenCity dataset page)', which was wrong: this source carries the Bengaluru groundwater layer rendered on /bangalore (the critically-over-extracted wards), so the non-commercial term reaches the city's headline groundwater surface.",
+      "notes": "IISc Groundwater Outlook for Bengaluru (April 2025) - the 80 critically-over-extracted wards that are the city's HEADLINE groundwater layer (rendered directly on /bangalore, not behind /groundwater). Watched via the OpenCity mirror deliberately: IISc's own host wgbis.ces.iisc.ac.in returns 403 to curl even with a browser UA (verified 2026-07-26) and cannot be watched. Verified: 1 resource, metadata_modified 2025-11-27. A new Interim Report or Outlook edition would land as a new resource. Caveat: the mirror lags the publisher, so a detection here is a floor, not a ceiling. LICENCE: the CKAN PACKAGE label is the generic 'Creative Commons Non-Commercial (Any)' (license_id cc-nc, pointing at CC BY-NC 2.0), but the PDF RESOURCE carries license_id 'CC-BY-NC-SA 4.0' (verified 2026-07-31). Resource-level beats package-level - the same precedent already applied to opencity-bengaluru-tanker-survey. The nc bucket is unchanged, but the SHAREALIKE obligation is new: anything built on this must be redistributed under the same licence. This source carries the Bengaluru groundwater layer rendered on /bangalore (the critically-over-extracted wards). A sweep of the resource-level licence for all 22 OpenCity datasets found this was the only one where resource and package disagree materially.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:37:37.533192",
         "acceptedOn": "2026-07-26"
@@ -152,7 +152,7 @@
       "scope": "bangalore",
       "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
       "url": "https://ingres.iith.ac.in/",
-      "license": "IN-GRES publishes no terms of use, disclaimer or licence anywhere on the portal; the upstream authority is CGWB, whose website policy permits reproduction free of charge in any format or media without specific permission, with acknowledgement of the source - GoI publication, cited with attribution",
+      "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
       "type": "page",
       "cadence": "yearly (GEC assessment)",
       "tier": 1,
@@ -166,7 +166,7 @@
         "public/data/bangalore-ward-profiles.json"
       ],
       "refreshMethod": "manual (WRIS GEC extract; IN-GRES payload capture still open)",
-      "notes": "Karnataka side of the same assessment watched for TN by ingres-gw-assessment-tn - deliberately a separate entry because the dependsOn differ and a GEC round can land per state. Backs the all-6-blocks-Over-Exploited headline, Bangalore-East at 306% draft/recharge and Yelahanka 140% -> 260% over 2020-2024. Same caveat as the TN entry: http-meta watches the IN-GRES SPA build (Last-Modified + ETag verified 2026-07-26), not the assessment data, so expect false positives on redeploy and replace once the payload capture lands. LICENCE: verified by fetching ingres.iith.ac.in and grepping the full Angular app bundle (main.*.js, 2.0 MB): zero occurrences of a copyright policy, terms of use, disclaimer or licence statement - the only 'Policy' matches are Leaflet's referrerPolicy option and the only 'terms' match is an FAQ sentence about years of data (verified 2026-07-31). CGWB is the fallback authority.",
+      "notes": "Karnataka side of the same assessment watched for TN by ingres-gw-assessment-tn - deliberately a separate entry because the dependsOn differ and a GEC round can land per state. Backs the all-6-blocks-Over-Exploited headline, Bangalore-East at 306% draft/recharge and Yelahanka 140% -> 260% over 2020-2024. Same caveat as the TN entry: http-meta watches the IN-GRES SPA build (Last-Modified + ETag verified 2026-07-26), not the assessment data, so expect false positives on redeploy and replace once the payload capture lands. LICENCE: verified by fetching ingres.iith.ac.in and grepping the full Angular app bundle (main.*.js, 2.0 MB): zero occurrences of a copyright policy, terms of use, disclaimer or licence statement - the only 'Policy' matches are Leaflet's referrerPolicy option and the only 'terms' match is an FAQ sentence about years of data (verified 2026-07-31). This entry previously ended '- GoI publication, cited with attribution', which made the classifier read the suffix and return gov-attribution: a clean result the evidence never earned. CGWB is the assessment's upstream authority in the scientific sense, but NO evidence establishes that CGWB's website policy legally governs material delivered by an IIT-Hyderabad-hosted portal, so that is not asserted. Fails closed as vague until somebody reads terms that actually exist.",
       "lastSeen": {
         "etag": "W/\"c20-19f18174cc0\"",
         "lastModified": "Tue, 30 Jun 2026 10:33:28 GMT",
@@ -178,7 +178,7 @@
       "scope": "bangalore",
       "publisher": "JICA / BWSSB (via OpenCity mirror)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=jica-report-for-bwssb-project-phase-3-2017",
-      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic",
       "tier": 0,
@@ -191,7 +191,7 @@
         "public/data/facts-bangalore.json"
       ],
       "refreshMethod": "manual",
-      "notes": "JICA Bengaluru Water Supply and Sewerage Project Phase 3 Final Report (Nov 2017) is the anchor document behind bangalore-supply-overview.json, which cites 13 sources in total. Watched via the OpenCity mirror because BWSSB's own site is not watchable: bwssb.karnataka.gov.in/info-1/About+BWSSB/en carries no document links at all, only accessibility boilerplate (verified 2026-07-26), and there is no tenders/notifications page with stable hrefs. Verified: 6 resources, metadata_modified 2025-11-27. KNOWN GAP: BWSSB's live announcements (Stage V/VI progress, tariff, connection numbers) are therefore still unwatched - they enter the platform through dated press citations. Also note the host: www.bwssb.karnataka.gov.in does NOT resolve over HTTP; use bwssb.karnataka.gov.in without the www (fixed across citations 2026-07-26). LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
+      "notes": "JICA Bengaluru Water Supply and Sewerage Project Phase 3 Final Report (Nov 2017) is the anchor document behind bangalore-supply-overview.json, which cites 13 sources in total. Watched via the OpenCity mirror because BWSSB's own site is not watchable: bwssb.karnataka.gov.in/info-1/About+BWSSB/en carries no document links at all, only accessibility boilerplate (verified 2026-07-26), and there is no tenders/notifications page with stable hrefs. Verified: 6 resources, metadata_modified 2025-11-27. KNOWN GAP: BWSSB's live announcements (Stage V/VI progress, tariff, connection numbers) are therefore still unwatched - they enter the platform through dated press citations. Also note the host: www.bwssb.karnataka.gov.in does NOT resolve over HTTP; use bwssb.karnataka.gov.in without the www (fixed across citations 2026-07-26). LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:36:27.268681",
         "acceptedOn": "2026-07-26"
@@ -202,7 +202,7 @@
       "scope": "bangalore",
       "publisher": "KSNDMC / BBMP (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=flooding-locations-in-bengaluru-urban",
-      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "seasonal",
       "tier": 1,
@@ -214,7 +214,7 @@
         "public/data/bangalore-flood-hotspots.geojson"
       ],
       "refreshMethod": "manual",
-      "notes": "398 flood hotspots behind /bangalore/flood-risk. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Bengaluru's flood-spot list moves with the monsoon and with BBMP's rajakaluve works, so a seasonal re-check is the point. The rajakaluve layers themselves (bangalore-swd-primary/secondary.geojson) are covered by opencity-bengaluru-swd. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
+      "notes": "398 flood hotspots behind /bangalore/flood-risk. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Bengaluru's flood-spot list moves with the monsoon and with BBMP's rajakaluve works, so a seasonal re-check is the point. The rajakaluve layers themselves (bangalore-swd-primary/secondary.geojson) are covered by opencity-bengaluru-swd. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:38:25.584103",
         "acceptedOn": "2026-07-26"
@@ -225,7 +225,7 @@
       "scope": "bangalore",
       "publisher": "BBMP (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=bengaluru-stormwater-drains-maps",
-      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic",
       "tier": 0,
@@ -238,7 +238,7 @@
         "public/geojson/bangalore-swd-secondary.geojson"
       ],
       "refreshMethod": "manual KML download + conversion",
-      "notes": "BBMP's primary and secondary rajakaluve network. Verified 2026-07-26: 13 resources, metadata_modified 2025-11-25. Both target geojsons ship with NO provenance field at any level (see the coverage audit section 6); this entry is the first record anywhere in the repo of where they came from, and the files should get a _provenance block to match. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
+      "notes": "BBMP's primary and secondary rajakaluve network. Verified 2026-07-26: 13 resources, metadata_modified 2025-11-25. Both target geojsons ship with NO provenance field at any level (see the coverage audit section 6); this entry is the first record anywhere in the repo of where they came from, and the files should get a _provenance block to match. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-25T12:19:30.232669",
         "acceptedOn": "2026-07-26"
@@ -249,7 +249,7 @@
       "scope": "bangalore",
       "publisher": "Karnataka / Jal Dharohar (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=bengaluru-urban-and-karnataka-water-bodies-census-data",
-      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic (census)",
       "tier": 0,
@@ -261,7 +261,7 @@
         "public/geojson/bangalore-water-bodies-census.geojson"
       ],
       "refreshMethod": "manual (scripts/convert-bangalore-water-bodies-census-kml.py)",
-      "notes": "The 718-feature census layer. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Second of the three sources in the named-lake join (with atree-opencity-lakes-bengaluru and KWRIS MI_Tanks) - the ATREE entry's own notes flag that the other two were unregistered; this closes one of them. The census carries no name field (only village/ward), which is why the ATREE layer is canonical for names. This geojson also ships with no provenance field at any level. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
+      "notes": "The 718-feature census layer. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Second of the three sources in the named-lake join (with atree-opencity-lakes-bengaluru and KWRIS MI_Tanks) - the ATREE entry's own notes flag that the other two were unregistered; this closes one of them. The census carries no name field (only village/ward), which is why the ATREE layer is canonical for names. This geojson also ships with no provenance field at any level. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:37:46.105863",
         "acceptedOn": "2026-07-26"
@@ -272,7 +272,7 @@
       "scope": "bangalore",
       "publisher": "BBMP Climate Action Cell (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=bengaluru-climate-action-and-resilience-plan-bcap",
-      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic",
       "tier": 1,
@@ -284,7 +284,7 @@
         "public/data/commitments-bangalore.json"
       ],
       "refreshMethod": "manual - the commitments register names its own re-check calendar in update_model",
-      "notes": "BCAP carries the dated water targets on Bengaluru's commitments register (NRW to 15% by 2050, 50% treated-water reuse by 2030 - see memory reference_bcap_bbmp_sources). commitments-bangalore.json names BDA/GBA lake reviews, NGT filings and BWSSB announcements as its re-check calendar; this entry covers the BCAP leg only. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Watched via the OpenCity mirror rather than apps.bbmpgov.in/bcap/PDF/BCAP_Sector%20Actions_01042024.pdf because that PDF serves neither ETag nor Last-Modified, so http-meta on it fails outright. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
+      "notes": "BCAP carries the dated water targets on Bengaluru's commitments register (NRW to 15% by 2050, 50% treated-water reuse by 2030 - see memory reference_bcap_bbmp_sources). commitments-bangalore.json names BDA/GBA lake reviews, NGT filings and BWSSB announcements as its re-check calendar; this entry covers the BCAP leg only. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Watched via the OpenCity mirror rather than apps.bbmpgov.in/bcap/PDF/BCAP_Sector%20Actions_01042024.pdf because that PDF serves neither ETag nor Last-Modified, so http-meta on it fails outright. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:37:38.201035",
         "acceptedOn": "2026-07-26"
@@ -295,7 +295,7 @@
       "scope": "bangalore",
       "publisher": "GBA / GoK Urban Development Department (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=gba-wards-delimitation-2025",
-      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic (delimitation notifications + corrections)",
       "tier": 1,
@@ -310,7 +310,7 @@
         "public/data/bangalore-ward-admin.json"
       ],
       "refreshMethod": "scripts/convert-bangalore-wards-kml.py, then scripts/compute-bangalore-ward-profiles.ts + scripts/compute-bangalore-ward-risk.py",
-      "notes": "GBA 369-ward delimitation KML (Dec 2025 file incl. the 01.12.2025 name changes) - the geometry AND the admin/population fields under bangalore-ward-admin.json (the enveloped admin seed; profiles derive from it). NOT treated as a closed edition: the dataset moved again on 2026-07-27 (metadata_modified), consistent with post-notification corrections. A detection here means ward geometry/names may have shifted under every ward-joined layer. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
+      "notes": "GBA 369-ward delimitation KML (Dec 2025 file incl. the 01.12.2025 name changes) - the geometry AND the admin/population fields under bangalore-ward-admin.json (the enveloped admin seed; profiles derive from it). NOT treated as a closed edition: the dataset moved again on 2026-07-27 (metadata_modified), consistent with post-notification corrections. A detection here means ward geometry/names may have shifted under every ward-joined layer. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2026-07-27T04:25:23.719677",
         "acceptedOn": "2026-07-30"
@@ -321,7 +321,7 @@
       "scope": "bangalore",
       "publisher": "GBA / GoK Urban Development Department (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=greater-bengaluru-authority-corporations-delimitation-2025",
-      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic (delimitation notifications)",
       "tier": 1,
@@ -333,7 +333,7 @@
         "public/geojson/bangalore-corporations-2025.geojson"
       ],
       "refreshMethod": "scripts/convert-bangalore-corporations-kml.py",
-      "notes": "GBA 5-corporation boundaries (September 2025 KML; Karnataka Act 36 of 2025). Registered with the wards entry (NVDM Bangalore migration 2026-07-30) - both were unaccounted despite carrying every /bangalore/my-ward admin join. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
+      "notes": "GBA 5-corporation boundaries (September 2025 KML; Karnataka Act 36 of 2025). Registered with the wards entry (NVDM Bangalore migration 2026-07-30) - both were unaccounted despite carrying every /bangalore/my-ward admin join. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2026-01-07T04:23:50.191710",
         "acceptedOn": "2026-07-30"
@@ -344,7 +344,7 @@
       "scope": "bangalore",
       "publisher": "BWSSB (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=bwssb-sewage-treatment-plant-locations",
-      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic",
       "tier": 1,
@@ -356,7 +356,7 @@
         "public/geojson/bangalore-stps.geojson"
       ],
       "refreshMethod": "scripts/convert-bangalore-stps-kml.py (CSV authoritative for Status; KML cross-check)",
-      "notes": "39 STPs / ~1,371 MLD design capacity. STP count roughly doubled 2017->2024 (JICA 14 plants / 721 MLD), so this list moves; a detection is a real capacity-picture change. Registered in the NVDM Bangalore migration 2026-07-30. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
+      "notes": "39 STPs / ~1,371 MLD design capacity. STP count roughly doubled 2017->2024 (JICA 14 plants / 721 MLD), so this list moves; a detection is a real capacity-picture change. Registered in the NVDM Bangalore migration 2026-07-30. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:36:41.997206",
         "acceptedOn": "2026-07-30"
@@ -367,7 +367,7 @@
       "scope": "bangalore",
       "publisher": "BWSSB (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=bwssb-sewerage-line-maps-for-bengaluru",
-      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic",
       "tier": 1,
@@ -379,7 +379,7 @@
         "public/geojson/bangalore-sewerage-trunks.geojson"
       ],
       "refreshMethod": "scripts/convert-bangalore-sewerage-trunks-kml.py (>=300mm trunk KML only; <300mm collector files deliberately not ingested)",
-      "notes": "BWSSB sewerage line maps split by diameter; our artifact is the >=300mm trunk subset (16,403 LineStrings). Mirror of Chennai's opencity-cmwssb-sewerage entry. Registered in the NVDM Bangalore migration 2026-07-30. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
+      "notes": "BWSSB sewerage line maps split by diameter; our artifact is the >=300mm trunk subset (16,403 LineStrings). Mirror of Chennai's opencity-cmwssb-sewerage entry. Registered in the NVDM Bangalore migration 2026-07-30. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:36:33.222068",
         "acceptedOn": "2026-07-30"
@@ -390,7 +390,7 @@
       "scope": "bangalore",
       "publisher": "BWSSB (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=bwssb-stage-wise-cauvery-water-supply-areas",
-      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic",
       "tier": 2,
@@ -402,7 +402,7 @@
         "public/data/bangalore-cauvery-stage-areas.json"
       ],
       "refreshMethod": "scripts/convert-bangalore-cauvery-stage-areas.py",
-      "notes": "Stage 1-4 Ph 2 supply-area name lists. Stage V (commissioned Oct 2024, the 110 villages) is NOT in the upstream yet - the converter header carries that follow-up; a detection here is the likeliest way Stage V coverage lands. Registered in the NVDM Bangalore migration 2026-07-30. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text (verified 2026-07-31). The site-wide OpenCity terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which conflicts with the per-dataset label; the publisher never issued a public-domain dedication.",
+      "notes": "Stage 1-4 Ph 2 supply-area name lists. Stage V (commissioned Oct 2024, the 110 villages) is NOT in the upstream yet - the converter header carries that follow-up; a detection here is the likeliest way Stage V coverage lands. Registered in the NVDM Bangalore migration 2026-07-30. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:36:40.890693",
         "acceptedOn": "2026-07-30"

@@ -26,7 +26,7 @@
         "id": "wris-live-services",
         "title": "India-WRIS groundwater levels via Supabase groundwater_wris_latest (depth_to_water_m; the only groundwater input)",
         "publisher": "CGWB / NWIC via India-WRIS",
-        "license": "GoI open publication, cited with attribution",
+        "license": "India-WRIS website policy: material 'may be reproduced free of charge in any format or media without requiring specific permission', subject to accurate reproduction and prominent acknowledgement of the source; third-party material on the site excluded - GoI publication, cited with attribution",
         "role": "input"
       }
     ],
@@ -39,7 +39,12 @@
       "public/data/restoration-priority-madurai.json",
       "public/data/water-bodies-flagship-madurai.json"
     ],
-    "produced_by": "scripts/compute-madurai-ward-risk.ts"
+    "produced_by": "scripts/compute-madurai-ward-risk.ts",
+    "rights_determination": {
+      "basis": "derived-facts",
+      "reasoning": "The payload of this file is a set of indicators this repository computes: per-ward scores, grades, percentile ranks and densities produced by our own code from measured values. It contains no upstream prose, no upstream table layout and no reproduction of any publisher's document. The restricted contribution in its lineage comes from CPCB's website policy, which requires the Board's approval for uses of CPCB MATERIAL beyond download and print. That policy governs CPCB's report; it does not reach a score derived from the measurements the report states, because there is no copyright in facts (Eastern Book Company v D.B. Modak, (2008) 1 SCC 1: 'there is no copyright in the facts per se'). Madurai ward risk bundle: ranked composite over the ward profiles above, adding no upstream expression of its own. Share-alike from OpenStreetMap remains.",
+      "reviewed_on": "2026-07-31"
+    }
   },
   "place_id": "madurai",
   "generated_at": "2026-05-06",

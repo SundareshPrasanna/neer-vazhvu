@@ -12,20 +12,20 @@ Two jobs:
                - every build fixture exists and still has exactly its
                  recorded status. A fixture that became licence-clean must
                  be PROMOTED to reference_artifacts; one that degraded
-                 (e.g. to nc) must be re-decided.
+                 (e.g. to nc) must be re-decided. NC and restricted are
+                 never acceptable in the public sample.
 
-             NC is never acceptable anywhere in the sample. `restricted` is
-             never acceptable in reference_artifacts either - that set is
-             the corpus we actually redistribute - but a build FIXTURE may
-             record it, because fixtures are by definition "files the build
-             cannot pass without, which are NOT provably licence-clean".
-             The escape hatch is deliberately narrow: the entry must carry
-             a `licence_note` naming the restrictive source and its terms,
-             so the exception is reviewed rather than inherited silently.
-             Widened 2026-07-31, when reading CPCB's and DPCC's own website
-             policies (permission required for any use beyond download and
-             print) reclassified them from gov-attribution to restricted
-             and tainted the ward/river lineage `npm test` reads.
+             That last rule is absolute and has no note-based exception.
+             PR #227 briefly added one - a fixture could stay `restricted`
+             if it carried a `licence_note` - and it was rejected on review
+             for the right reason: a note is documentation, not permission,
+             and the pruner retains those files for the APPLICATION to read,
+             not merely for tests. Where mechanical source-term propagation
+             genuinely over-claims (a derived ward score is not CPCB's
+             report), the answer is an audited per-artifact
+             `provenance.rights_determination` in the envelope, scored by
+             scripts/nvdm-encumbrance-report.py - a determination with
+             reasoning and a review date, not a manifest annotation.
 
   --prune    Delete every file under public/data and public/geojson that is
              not in the manifest (directories are kept - the build reads
@@ -33,6 +33,14 @@ Two jobs:
              prove the manifest is sufficient for `npm run build` and
              `npm test` on a corpus-less clone. Skips the gitignored
              rich-bodies imagery/tints trees (Supabase-served, dev-only).
+
+             It ALSO prunes the mirrored-document trees (public/docs),
+             keeping only mirrors that scripts/mirrored-documents.json marks
+             as cleared or permission-backed. Those trees were previously
+             invisible to every licence check in the repo, which is how a
+             mirror of a permission-required CPCB report came to ship in
+             every build; a sample corpus we would hand to a stranger must
+             not carry a document whose terms nobody has read.
 
 Stdlib only. Run scripts/build_dataset_catalogue.py first if artifacts moved.
 """
@@ -93,29 +101,10 @@ def check() -> int:
 
     for f in manifest["build_fixtures"]:
         p = f["path"]
-        actual = status.get(p, "not-enveloped")
         if not (ROOT / p).exists():
             errors.append(f"{p}: build fixture missing from tree")
-        elif actual != f["expected_status"]:
-            hint = (
-                "promote it to reference_artifacts"
-                if actual in CLEAN_BUCKETS
-                else "re-decide its entry (nc/restricted are never acceptable in the public sample)"
-            )
-            errors.append(
-                f"{p}: fixture status changed '{f['expected_status']}' -> '{actual}' - {hint}"
-            )
-        elif actual == "nc":
-            errors.append(
-                f"{p}: fixture is nc-encumbered - not acceptable in the public sample"
-            )
-        elif actual == "restricted" and not f.get("licence_note"):
-            errors.append(
-                f"{p}: fixture is restricted-encumbered - allowed only with a "
-                f"licence_note naming the restrictive source and its terms"
-            )
-        if not f.get("decision") or not f.get("required_by"):
-            errors.append(f"{p}: fixture entry must document required_by and decision")
+            continue
+        errors += fixture_errors(f, status.get(p, "not-enveloped"))
 
     if errors:
         print("sample-corpus manifest FAILED:")
@@ -129,12 +118,35 @@ def check() -> int:
     return 0
 
 
+MIRRORS = ROOT / "scripts/mirrored-documents.json"
+MIRROR_TREES = ("public/docs",)
+
+
+def prune_mirrors() -> int:
+    """Drop every mirrored upstream document whose terms are not established."""
+    docs = {
+        d["path"]: d for d in json.loads(MIRRORS.read_text())["documents"]
+    }
+    removed = 0
+    for tree in MIRROR_TREES:
+        for p in sorted((ROOT / tree).rglob("*")):
+            if not p.is_file():
+                continue
+            rel = str(p.relative_to(ROOT))
+            d = docs.get(rel, {})
+            if d.get("permission") or d.get("status") == "cleared":
+                continue
+            p.unlink()
+            removed += 1
+    return removed
+
+
 def prune() -> int:
     manifest = json.loads(MANIFEST.read_text())
     keep = set(manifest["reference_artifacts"]) | {
         f["path"] for f in manifest["build_fixtures"]
     }
-    removed = 0
+    removed = prune_mirrors()
     for top in ("public/data", "public/geojson"):
         for p in sorted((ROOT / top).rglob("*")):
             if not p.is_file():

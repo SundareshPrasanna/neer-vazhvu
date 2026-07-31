@@ -225,6 +225,30 @@ CLEAN_RESIDUAL_SAFE_WORDS = {
 }
 
 
+# An admission that the upstream terms do not exist, were never read, or were
+# never recorded. Matched against the NORMALISED string, ANYWHERE in it, and
+# checked before any rule that can return a clean bucket.
+#
+# The failure this prevents (PR #227 review): a licence string whose prefix
+# concedes there are no terms, and whose suffix reads like a government
+# attribution claim, used to classify gov-attribution because only the suffix
+# was tested. Absence of terms is a property of the whole string, not of its
+# last clause, so it is tested as one.
+ABSENCE_OF_TERMS = re.compile(
+    r"\b(?:"
+    r"publishes?\s+no\b"
+    r"|no\s+(?:stated|explicit|published|declared|recorded)\s+"
+    r"(?:licen[cs]e|terms|policy|grant)"
+    r"|no\s+(?:licen[cs]e|terms\s+of\s+use|copyright\s+policy|disclaimer)\s+"
+    r"(?:is|are|was|were|has|have)?\s*(?:published|stated|given|provided|recorded|anywhere)"
+    r"|no\s+terms\b"
+    r"|terms\s+(?:were\s+)?never\s+read"
+    r"|licen[cs]e\s+not\s+specified"
+    r"|nothing\s+has\s+been\s+established"
+    r")"
+)
+
+
 def _normalise(s: str) -> str:
     """Lowercase and collapse separators so licence identifiers are comparable:
     'CC BY-SA 4.0', 'cc_by_sa_4.0' and 'CC BY SA 4.0' all become 'cc by sa 4.0'."""
@@ -285,6 +309,21 @@ def classify(license_str: str | None) -> str:
     #    before open markers, so "open WFS, no explicit licence stated"
     #    fails closed and portal labels like OpenCity's dataset-page "open"
     #    stay unverifiable until counsel or a named grant upgrades them.
+    #
+    #    PR #227 review: this list used to enumerate three exact phrasings of
+    #    "there are no terms", and an IN-GRES string that admitted the portal
+    #    "publishes no terms of use, disclaimer or licence anywhere" matched
+    #    none of them. It ended "- GoI publication, cited with attribution",
+    #    rule 8 read the SUFFIX, and several groundwater artifacts came out
+    #    gov-attribution. The clean verdict was accidental.
+    #
+    #    ABSENCE_OF_TERMS below is the general form of that admission, and it
+    #    is checked here - ahead of every rule that can return a clean bucket -
+    #    so a reassuring suffix can never override a prefix that says nobody
+    #    knows the terms. If a string says there are no terms, there are no
+    #    terms, whatever else it says.
+    if ABSENCE_OF_TERMS.search(n):
+        return "vague"
     if (
         "no stated licen" in n
         or "no explicit licen" in n
@@ -298,6 +337,18 @@ def classify(license_str: str | None) -> str:
         or "presume" in n
         or "registration gated" in n
         or n.startswith("open per opencity dataset page")
+        # The resolved OpenCity CKAN labels. PR #227 first recorded these as
+        # "Other (Public Domain) (per OpenCity dataset page)", which the
+        # canonical-grant rule below read as a public-domain dedication and
+        # rated clean-open. It is not a dedication: it is a portal's metadata
+        # field, no upstream publisher ever dedicated the material, and
+        # OpenCity's own site-wide terms say the opposite ("Data are licensed
+        # under: CC BY-NC-SA 4.0 and ODbL", download "for non-commercial and /
+        # or personal use only"). Evidence of a label is not a grant, so these
+        # stay vague - same treatment as the older "open" label above, and
+        # listed here deliberately so the decision is visible rather than
+        # silently inherited from the words "public domain".
+        or "per opencity ckan metadata" in n
         or "free and open" in n
         # Known generic PROVIDER access labels: they name an access posture,
         # not a grant. Same treatment as the OpenCity label - deliberately
@@ -448,6 +499,32 @@ def own_assessment(
     return "vague", detail, notes
 
 
+DETERMINATION_BASES = ("derived-facts",)
+
+
+def _valid_determination(det: object, prov: dict) -> bool:
+    """An audited artifact-level rights determination, or nothing.
+
+    Every field is load-bearing. `basis` names the doctrine relied on;
+    `reasoning` states why it applies TO THIS FILE (a generic sentence copied
+    across a directory is exactly what this is meant to stop); `reviewed_on`
+    dates the judgement so it can be re-examined; `produced_by` on the
+    provenance block names the code that computed the derived values, because
+    a determination about derived output is worthless if nothing derived it.
+    """
+    if not isinstance(det, dict):
+        return False
+    producer = (prov.get("produced_by") or "").strip()
+    return bool(
+        det.get("basis") in DETERMINATION_BASES
+        and isinstance(det.get("reasoning"), str)
+        and len(det.get("reasoning", "")) >= 80
+        and det.get("reviewed_on")
+        and producer
+        and producer.lower() != "manual"
+    )
+
+
 def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
     """Returns (artifact results, audit errors, unclassified licence strings).
 
@@ -521,7 +598,47 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
                 )
                 buckets.add("vague")
         visiting.discard(path)
-        final[path] = worst(buckets)
+        result = worst(buckets)
+        # ---- audited per-artifact rights determination (PR #227 review, P1-4).
+        #
+        # Mechanical source-term propagation over-claims for a DERIVED
+        # INDICATOR. CPCB's website policy governs CPCB's report; it does not
+        # govern a ward score this repo computed from measured values, because
+        # there is no copyright in facts (Eastern Book Company v D.B. Modak,
+        # (2008) 1 SCC 1) and the scoring is our own work.
+        #
+        # An artifact may therefore record ONE narrow, audited determination to
+        # that effect. Deliberately narrow, because the previous attempt at
+        # this - a `licence_note` on a sample-corpus fixture - was documentation
+        # masquerading as permission:
+        #
+        #   * it clears ONLY 'restricted' contributions, and only up to
+        #     gov-attribution. It cannot reach clean-open.
+        #   * it CANNOT clear 'nc' or 'share-alike'. Those are contractual terms
+        #     on the input itself, not claims over the facts: CC BY-NC bites at
+        #     the moment the input is used, and ODbL share-alike attaches to the
+        #     database. The facts doctrine is no answer to either.
+        #   * it CANNOT clear 'vague'. A rights claim about facts does not make
+        #     unproven lineage proven.
+        #   * it must be per artifact, with reasoning and a review date. There
+        #     is no blanket form and no directory-level form.
+        #
+        # It is recorded as `provenance.rights_determination`, never as a note.
+        if result == "restricted":
+            det = prov.get("rights_determination")
+            if _valid_determination(det, prov):
+                lineage_notes[path].append(
+                    f"restricted cleared to gov-attribution by audited rights "
+                    f"determination '{det['basis']}' reviewed {det['reviewed_on']}"
+                )
+                result = worst((buckets - {"restricted"}) | {"gov-attribution"})
+            elif det is not None:
+                audit_errors.append(
+                    f"{path}: rights_determination present but incomplete - needs "
+                    f"basis 'derived-facts', a reasoning string, reviewed_on, and a "
+                    f"real produced_by"
+                )
+        final[path] = result
         return final[path]
 
     for p in docs:
@@ -648,6 +765,34 @@ def selftest() -> int:
         "OpenCity 'open' portal label is vague, not clean",
         classify("open (per OpenCity dataset page)") == "vague",
     )
+    # ---- fail-open guards (PR #227 review, P1-5). Both of these classified
+    # CLEAN before the review, and neither had earned it.
+    check(
+        "an absence-of-terms admission beats a reassuring suffix",
+        classify(
+            "IN-GRES publishes no terms of use, disclaimer or licence anywhere on "
+            "the portal; the upstream authority is CGWB - GoI publication, cited "
+            "with attribution"
+        )
+        == "vague",
+    )
+    check(
+        "'publishes no terms' anywhere in the string wins, in any phrasing",
+        all(
+            classify(s) == "vague"
+            for s in (
+                "the portal publishes no licence, cited with attribution",
+                "no stated terms; government publication cited with attribution",
+                "licence not specified in CKAN - GoI publication with attribution",
+                "nothing has been established about the terms; CC BY 4.0 assumed",
+            )
+        ),
+    )
+    check(
+        "a CKAN 'public domain' LABEL is not a public-domain dedication",
+        classify("Public Domain per OpenCity CKAN metadata (no upstream dedication)")
+        == "vague",
+    )
     check(
         "OpenCity 'open' label with ';' qualifier is vague too",
         classify(
@@ -748,14 +893,63 @@ def selftest() -> int:
     by = {r["path"]: r for r in results}
 
     # ward-risk-delhi declares no sources of its own: whatever bucket it lands
-    # in is inherited wholly through internal_inputs. It was share-alike (OSM
-    # via delhi-ward-profiles) until the 2026-07-31 licence sweep read DPCC's
-    # website policy ("may not be reproduced... without due permission") and
-    # reclassified that source as restricted, which is now the worst input.
+    # in is inherited wholly through internal_inputs. DPCC's restricted terms
+    # reach it that way, and its audited derived-facts rights determination
+    # then clears exactly that contribution - leaving the OpenStreetMap
+    # share-alike, which no rights determination is allowed to touch. Both
+    # halves of that sentence are under test here.
     r = by.get("public/data/ward-risk-delhi.json")
     check(
-        "ward-risk-delhi inherits its worst bucket from delhi-ward-profiles",
+        "ward-risk-delhi inherits share-alike, restricted cleared by determination",
+        r is not None and r["status"] == "share-alike",
+    )
+    r = by.get("public/data/river-quality-madurai.json")
+    check(
+        "river-quality-madurai has no determination and stays restricted",
         r is not None and r["status"] == "restricted",
+    )
+    # A determination is an audited claim, not a flag. Each of these is missing
+    # exactly one required part and must not validate.
+    good_prov = {"produced_by": "scripts/compute-ward-profiles.ts"}
+    check(
+        "an incomplete rights determination is not a rights determination",
+        not any(
+            _valid_determination(det, prov)
+            for det, prov in (
+                ({"basis": "derived-facts", "reviewed_on": "2026-07-31"}, good_prov),
+                ({"basis": "derived-facts", "reasoning": "x" * 200}, good_prov),
+                (
+                    {
+                        "basis": "we-think-its-fine",
+                        "reasoning": "x" * 200,
+                        "reviewed_on": "2026-07-31",
+                    },
+                    good_prov,
+                ),
+                (
+                    {
+                        "basis": "derived-facts",
+                        "reasoning": "too short",
+                        "reviewed_on": "2026-07-31",
+                    },
+                    good_prov,
+                ),
+                (
+                    {
+                        "basis": "derived-facts",
+                        "reasoning": "x" * 200,
+                        "reviewed_on": "2026-07-31",
+                    },
+                    {"produced_by": "manual"},
+                ),
+                (True, good_prov),
+            )
+        ),
+    )
+    check(
+        "a determination cannot clear nc or share-alike, only restricted",
+        worst({"nc", "gov-attribution"}) == "nc"
+        and worst({"share-alike", "gov-attribution"}) == "share-alike",
     )
     r = by.get("public/data/restoration-priority-delhi.json")
     check(

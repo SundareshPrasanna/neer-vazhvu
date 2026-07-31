@@ -167,6 +167,12 @@ LEGACY_UNDERSCORE = {
 }
 
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from registry_license import registry_licenses  # noqa: E402
+
+REG_LICENSES = registry_licenses()
+
+
 def registry_source_ids() -> set[str]:
     ids = set()
     for f in (ROOT / "scripts/source-registry").glob("*.json"):
@@ -228,7 +234,25 @@ def source_accountability_errors(
         if sid:
             if sid not in reg_ids:
                 errs.append(f"provenance.sources[{i}] id '{sid}' is not a known Headwaters registry id")
-            elif sid not in joined:
+            else:
+                # PR #227 review (P1-2): the registry OWNS the licence of a
+                # registered source; the envelope mirrors it so an artifact
+                # reads standalone. Without this check the two drift silently -
+                # when the registry was corrected, 32 ids disagreed with the
+                # envelopes naming them, while DATA-LICENSE.md was telling
+                # readers the envelope is the authoritative record. A repo that
+                # contradicts itself about licences is worse than one that says
+                # nothing.
+                want = REG_LICENSES.get(sid)
+                have = s.get("license")
+                if want is not None and have is not None and have != want:
+                    errs.append(
+                        f"provenance.sources[{i}] id '{sid}' records a licence that "
+                        f"disagrees with scripts/source-registry/ - the registry is "
+                        f"authoritative for registered sources. Registry: {want[:80]!r}; "
+                        f"envelope: {have[:80]!r}"
+                    )
+            if sid in reg_ids and sid not in joined:
                 errs.append(
                     f"provenance.sources[{i}] id '{sid}' exists in the registry but its "
                     "dependsOn does not name this file - add the path so edition alerts reach it"

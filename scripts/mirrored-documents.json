@@ -1,0 +1,82 @@
+{
+  "_doc": [
+    "Inventory of upstream source documents mirrored into the repository, and",
+    "therefore redistributed in every checkout and every deployed build.",
+    "",
+    "WHY THIS FILE EXISTS. The corpus licence machinery (NVDM envelopes, the",
+    "Headwaters registry, nvdm-encumbrance-report.py, sample-corpus.json) only",
+    "ever looked at public/data and public/geojson. public/docs was invisible to",
+    "all of it, so a 4.4 MB mirror of CPCB's Polluted River Stretches report",
+    "shipped in every checkout while the registry entry for its own source said",
+    "the publisher requires approval for any use beyond download and print.",
+    "Removing that one file fixes the instance; this manifest plus",
+    "scripts/check-mirrored-documents.py fixes the shape, by making every",
+    "mirrored document name its source and be gated on that source's terms.",
+    "",
+    "THE RULE. A mirrored document may ship only if its upstream source is",
+    "registered in scripts/source-registry/ and does not classify 'restricted'",
+    "under scripts/nvdm-encumbrance-report.py. Mirroring is redistribution: a",
+    "publisher who requires permission for redistribution has not given it, and",
+    "a note in a manifest is not a permission. Extracted factual values are a",
+    "different question and are unaffected - facts carry no copyright - which is",
+    "why removing a mirror does not mean dropping the numbers derived from it.",
+    "",
+    "WHEN A SOURCE TURNS OUT TO BE RESTRICTED. Delete the mirror and cite the",
+    "publisher's own URL. Do not add an exception here. If permission is",
+    "actually obtained, record it in `permission` with who granted it, when, and",
+    "in what form, and the gate will accept it.",
+    "",
+    "UNRESOLVED entries are permitted but are reported loudly by the checker on",
+    "every run. They are a to-do list, not a clearance."
+  ],
+  "documents": [
+    {
+      "path": "public/docs/kspcb-nwmp-classification-2025-26.pdf",
+      "publisher": "KSPCB",
+      "source_id": "kspcb-monthly-wq",
+      "upstream_url": "https://kspcb.karnataka.gov.in/",
+      "status": "unresolved",
+      "note": "KSPCB's own copyright policy page was not retrievable on 2026-07-31 (the Karnataka gov template URL 404s). The Karnataka Open Data Policy 2021 reportedly carries a data-monetisation goal, which is a further unresolved question over every Karnataka state source. Until the policy text is read, this mirror is unproven rather than cleared."
+    },
+    {
+      "path": "public/docs/kspcb-arkavathi-action-plan-jan2019.pdf",
+      "publisher": "KSPCB",
+      "source_id": "kspcb-adi-committee-oa606",
+      "upstream_url": "https://kspcb.karnataka.gov.in/",
+      "status": "unresolved",
+      "note": "NGT OA 606/2018 action plan. Same unread KSPCB policy as above. Note that action plans filed before the NGT are arguably tabled documents, which is a different and stronger basis than the website notice, but that has not been established here."
+    },
+    {
+      "path": "public/docs/kspcb-kabini-action-plan.pdf",
+      "publisher": "KSPCB",
+      "source_id": "kspcb-adi-committee-oa606",
+      "upstream_url": "https://kspcb.karnataka.gov.in/",
+      "status": "unresolved",
+      "note": "Same unread KSPCB policy as above."
+    },
+    {
+      "path": "public/docs/kspcb-shimsha-action-plan.pdf",
+      "publisher": "KSPCB",
+      "source_id": "kspcb-adi-committee-oa606",
+      "upstream_url": "https://kspcb.karnataka.gov.in/",
+      "status": "unresolved",
+      "note": "Same unread KSPCB policy as above."
+    },
+    {
+      "path": "public/docs/kspcb-ocems-private-stps-memo-oct2025.pdf",
+      "publisher": "KSPCB",
+      "source_id": "kspcb-monthly-wq",
+      "upstream_url": "https://kspcb.karnataka.gov.in/",
+      "status": "unresolved",
+      "note": "OCEMS memo on private STPs. Same unread KSPCB policy as above."
+    },
+    {
+      "path": "public/docs/bwssb-stp-corrigendum-2024.pdf",
+      "publisher": "BWSSB",
+      "source_id": "opencity-bwssb-stps",
+      "upstream_url": "https://bwssb.karnataka.gov.in/",
+      "status": "unresolved",
+      "note": "BWSSB's copyright policy page (read 2026-07-31) prints BOTH Karnataka government templates side by side - one permitting republication in any format free of charge with attribution, one requiring prior authorisation - without saying which governs this material. That is not a grant. Separately, BWSSB is a public undertaking and owns its copyright independently under Copyright Act s.17(dd), so the OpenCity CKAN label on the sibling dataset does not reach this PDF. Unproven."
+    }
+  ]
+}
