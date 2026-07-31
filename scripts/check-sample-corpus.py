@@ -74,6 +74,54 @@ def encumbrance() -> dict[str, str]:
     return {a["path"]: a["status"] for a in json.loads(proc.stdout)["artifacts"]}
 
 
+# Statuses a build fixture may never carry. These are KNOWN restrictions, not
+# unproven lineage: a note explaining why we ship them would be documentation,
+# not permission. An artifact that lands here leaves the tree or earns an
+# audited provenance.rights_basis - it does not get an exception.
+FIXTURE_FORBIDDEN = {"nc", "restricted", "third-party"}
+
+
+def fixture_errors(fixture: dict, actual: str) -> list[str]:
+    """Documented build fixtures are exceptions, and exceptions must not drift.
+
+    A fixture declares the bucket it is expected to sit in. We check the
+    declaration against what the classifier actually says, so a fixture that
+    quietly gets worse fails the build instead of riding on its own note.
+    """
+    p = fixture["path"]
+    errors: list[str] = []
+
+    if actual in FIXTURE_FORBIDDEN:
+        errors.append(
+            f"{p}: '{actual}' cannot be carried as a build fixture. Remove it from "
+            f"the tree, replace it with test-only data outside public/, or record an "
+            f"audited provenance.rights_basis - a licence note is not permission"
+        )
+        return errors
+
+    if actual in CLEAN_BUCKETS:
+        errors.append(
+            f"{p}: now classifies '{actual}' and is no longer an exception - "
+            f"promote it to reference_artifacts instead of listing it as a fixture"
+        )
+
+    declared = fixture.get("expected_status")
+    if declared != actual:
+        errors.append(
+            f"{p}: fixture declares '{declared}' but classifies '{actual}' - "
+            f"re-audit the artifact and update the decision, or fix the lineage"
+        )
+
+    for field in ("required_by", "decision"):
+        if not str(fixture.get(field, "")).strip():
+            errors.append(
+                f"{p}: fixture is missing '{field}' - every exception must say what "
+                f"needs it and why it was kept"
+            )
+
+    return errors
+
+
 def check() -> int:
     manifest = json.loads(MANIFEST.read_text())
     status = encumbrance()
