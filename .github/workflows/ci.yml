@@ -50,7 +50,7 @@ jobs:
       - run: npm run test
 
   sample-corpus:
-    name: Sample corpus - licence-clean manifest only, no secrets (build + tests)
+    name: Sample corpus - clean reference set + documented build fixtures, no secrets (build + tests)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -66,7 +66,10 @@ jobs:
 
       - run: npm ci
 
-      - name: Manifest stays licence-clean (encumbrance report over envelopes)
+      - name: Encumbrance classifier + lineage selftest
+        run: python3 scripts/nvdm-encumbrance-report.py --selftest
+
+      - name: Reference set stays licence-clean; fixtures stay as documented
         run: python3 scripts/check-sample-corpus.py
 
       - name: Prune corpus to the sample manifest

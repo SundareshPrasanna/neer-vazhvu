@@ -5,14 +5,15 @@ Two jobs:
 
   (default)  Assert scripts/sample-corpus.json stays honest as envelopes
              evolve:
-               - every reference artifact exists, is enveloped, and every
-                 non-methodology source is gov-attribution or clean-open
-                 per scripts/nvdm-encumbrance-report.py;
+               - every reference artifact exists, is enveloped, and is
+                 licence-clean under the FULL lineage-aware rules of
+                 scripts/nvdm-encumbrance-report.py (own sources AND
+                 recursive internal_inputs inheritance);
                - every build fixture exists and still has exactly its
                  recorded status. A fixture that became licence-clean must
                  be PROMOTED to reference_artifacts; one that degraded
-                 (e.g. to nc) must be re-decided. NC is never acceptable
-                 in the public sample.
+                 (e.g. to nc) must be re-decided. NC and restricted are
+                 never acceptable in the public sample.
 
   --prune    Delete every file under public/data and public/geojson that is
              not in the manifest (directories are kept - the build reads
@@ -87,14 +88,14 @@ def check() -> int:
             hint = (
                 "promote it to reference_artifacts"
                 if actual in CLEAN_BUCKETS
-                else "re-decide its entry (NC is never acceptable in the public sample)"
+                else "re-decide its entry (nc/restricted are never acceptable in the public sample)"
             )
             errors.append(
                 f"{p}: fixture status changed '{f['expected_status']}' -> '{actual}' - {hint}"
             )
-        elif actual == "nc":
+        elif actual in ("nc", "restricted"):
             errors.append(
-                f"{p}: fixture is NC-encumbered - not acceptable in the public sample"
+                f"{p}: fixture is {actual}-encumbered - not acceptable in the public sample"
             )
         if not f.get("decision") or not f.get("required_by"):
             errors.append(f"{p}: fixture entry must document required_by and decision")
