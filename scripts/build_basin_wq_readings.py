@@ -13,7 +13,9 @@ to wq-stations.geojson by the NWMP station code, and writes:
 
 Usage:
     python3 scripts/build_basin_wq_readings.py \
-        public/docs/kspcb-nwmp-classification-2025-26.pdf \
+        <local copy of the KSPCB NWMP classification PDF, fetched from
+        kspcb.karnataka.gov.in - NOT mirrored in the repo, see
+        scripts/mirrored-documents.json> \
         public/data/basins/cauvery-ka \
         "April 2025 - February 2026"
 """

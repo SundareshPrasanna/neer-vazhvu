@@ -77,7 +77,10 @@ jobs:
       - name: Encumbrance classifier + lineage selftest
         run: python3 scripts/nvdm-encumbrance-report.py --selftest
 
-      - name: No mirrored upstream document ships from a restricted source
+      - name: Mirror gate pins a verdict for every licence state it can meet
+        run: python3 scripts/check-mirrored-documents.py --selftest
+
+      - name: No mirrored upstream document ships without an affirmative right
         run: python3 scripts/check-mirrored-documents.py
 
       - name: Reference set stays licence-clean; fixtures stay as documented
