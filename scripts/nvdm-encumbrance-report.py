@@ -542,6 +542,81 @@ def _valid_determination(det: object, prov: dict) -> bool:
     )
 
 
+def _stale_clears(det: dict, restricted_here: set[str]) -> set[str]:
+    """Entries in `clears` that name something not restricting this artifact.
+
+    Computed WHATEVER bucket the artifact ended in. A determination naming an
+    input that no longer restricts the file has stopped describing reality,
+    and the only way to notice is to check when the answer is boring.
+    """
+    return set(det.get("clears") or ()) - set(restricted_here)
+
+
+def apply_determination(
+    prov: dict, result: str, buckets: set[str], restricted_here: set[str]
+) -> tuple[str, set[str], list[str], list[str]]:
+    """Audit an artifact's rights determination and apply it if it earns it.
+
+    Returns (status, remaining restricting ids, lineage notes, audit errors).
+
+    Extracted from resolve() so the CALL SITE is testable, not merely the
+    helpers it calls. PR #227 review round 4 reintroduced the staleness bug
+    here - `stale = ... if result == "restricted" else set()` - and the
+    selftests passed, because they exercised _stale_clears() rather than the
+    code that decides when to consult it. An untested branch is the whole
+    class of defect this file keeps producing.
+
+    VALIDATION and STALENESS are unconditional. Only APPLICATION of the
+    clearance depends on the artifact currently being restricted: a
+    determination that no longer describes reality must be reported however
+    boring the artifact's bucket has become.
+    """
+    notes: list[str] = []
+    errors: list[str] = []
+    det = prov.get("rights_determination")
+    if det is None:
+        return result, restricted_here, notes, errors
+    if not _valid_determination(det, prov):
+        errors.append(
+            "rights_determination present but incomplete - needs basis "
+            "'derived-facts', a reasoning string, reviewed_on, a non-empty "
+            "`clears` list naming the restricted inputs it covers, and a real "
+            "produced_by"
+        )
+        return result, restricted_here, notes, errors
+
+    stale = _stale_clears(det, restricted_here)
+    if stale:
+        errors.append(
+            "rights_determination clears "
+            + ", ".join(sorted(stale))
+            + f" which does not restrict this artifact (current status: {result})"
+            " - re-audit it"
+        )
+    if result != "restricted":
+        return result, restricted_here, notes, errors
+
+    covered = set(det["clears"])
+    if _determination_clears(det, restricted_here):
+        notes.append(
+            f"restricted cleared to gov-attribution by audited rights "
+            f"determination '{det['basis']}' reviewed {det['reviewed_on']}, "
+            "covering " + ", ".join(sorted(covered))
+        )
+        return (
+            worst((buckets - {"restricted"}) | {"gov-attribution"}),
+            set(),
+            notes,
+            errors,
+        )
+    notes.append(
+        "rights determination does not reach "
+        + ", ".join(sorted(restricted_here - covered))
+        + " - still restricted"
+    )
+    return result, restricted_here, notes, errors
+
+
 def _determination_clears(det: dict, restricted_here: set[str]) -> bool:
     """True only if the determination NAMES every restricting contributor.
 
@@ -669,43 +744,20 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
         #     from being broader than the reasoning that justifies it.
         #
         # It is recorded as `provenance.rights_determination`, never as a note.
-        if result == "restricted":
-            det = prov.get("rights_determination")
-            if _valid_determination(det, prov):
-                covered = set(det["clears"])
-                uncovered = restricted_here - covered
-                stale = covered - restricted_here
-                if not _determination_clears(det, restricted_here):
-                    lineage_notes[path].append(
-                        "rights determination does not reach "
-                        + ", ".join(sorted(uncovered))
-                        + " - still restricted"
-                    )
-                else:
-                    lineage_notes[path].append(
-                        f"restricted cleared to gov-attribution by audited rights "
-                        f"determination '{det['basis']}' reviewed "
-                        f"{det['reviewed_on']}, covering "
-                        + ", ".join(sorted(covered))
-                    )
-                    result = worst((buckets - {"restricted"}) | {"gov-attribution"})
-                    restricted_here = set()
-                if stale:
-                    # Naming something that no longer restricts this artifact
-                    # means the determination has drifted from the lineage and
-                    # nobody re-read it. Loud, not silent.
-                    audit_errors.append(
-                        f"{path}: rights_determination clears "
-                        + ", ".join(sorted(stale))
-                        + " which no longer restricts this artifact - re-audit it"
-                    )
-            elif det is not None:
-                audit_errors.append(
-                    f"{path}: rights_determination present but incomplete - needs "
-                    f"basis 'derived-facts', a reasoning string, reviewed_on, a "
-                    f"non-empty `clears` list naming the restricted inputs it "
-                    f"covers, and a real produced_by"
-                )
+        #
+        # VALIDATION AND STALENESS ARE UNCONDITIONAL; only the APPLICATION of
+        # the clearance depends on the artifact currently being restricted.
+        # The first version put the whole block inside `if result ==
+        # "restricted"`, so the moment CPCB or DPCC were reclassified and an
+        # artifact settled at share-alike, an obsolete `clears` entry stopped
+        # being checked and nobody would ever learn the determination had
+        # stopped describing reality. A determination is a claim about this
+        # file; it is audited whenever it exists.
+        result, restricted_here, det_notes, det_errors = apply_determination(
+            prov, result, buckets, restricted_here
+        )
+        lineage_notes[path] += det_notes
+        audit_errors.extend(f"{path}: {e}" for e in det_errors)
         final[path] = result
         restricted_from[path] = restricted_here
         return final[path]
@@ -1037,6 +1089,80 @@ def selftest() -> int:
             {"public/data/x.json#inline"},
         )
         is True,
+    )
+    # ---- STALENESS IS UNCONDITIONAL (PR #227 review round 4). The check used
+    # to live inside `if result == "restricted"`, so once an input was
+    # reclassified and the artifact settled somewhere else, an obsolete
+    # `clears` entry stopped being examined and drifted silently forever.
+    check(
+        "a clears entry naming a non-restricting input is stale",
+        _stale_clears(full, set()) == {"cpcb-nwmp-annual"},
+    )
+    check(
+        "staleness does not depend on the artifact being restricted",
+        # Same determination, same empty restricted set - the caller reports
+        # this whether the file ended restricted, share-alike or clean.
+        all(
+            _stale_clears(full, restricting) == {"cpcb-nwmp-annual"}
+            for restricting in (set(), {"osm-overpass"}, {"dpcc-monthly-analysis-delhi"})
+        ),
+    )
+    check(
+        "a determination covering exactly what restricts it is not stale",
+        _stale_clears(full, {"cpcb-nwmp-annual"}) == set(),
+    )
+    check(
+        "no artifact in the corpus carries a stale determination",
+        not [e for e in audit_errors if "does not restrict this artifact" in e],
+    )
+    # ---- the CALL SITE, not just the helpers. Reintroducing the bug (making
+    # staleness conditional on `result == "restricted"`) leaves every helper
+    # test passing, so these drive apply_determination() directly at each
+    # bucket a real artifact can settle in.
+    det_prov = {
+        "produced_by": "scripts/compute-ward-profiles.ts",
+        "rights_determination": full,
+    }
+    stale_at = {}
+    for bucket in ("share-alike", "nc", "vague", "gov-attribution", "clean-open"):
+        _, _, _, errs = apply_determination(det_prov, bucket, {bucket}, set())
+        stale_at[bucket] = any("does not restrict" in e for e in errs)
+    check(
+        "a stale determination is reported at EVERY bucket, not only restricted",
+        all(stale_at.values()),
+    )
+    _, _, _, errs_r = apply_determination(det_prov, "restricted", {"restricted"}, set())
+    check(
+        "a stale determination is reported when restricted too",
+        any("does not restrict" in e for e in errs_r),
+    )
+    status, remaining, notes_c, errs_c = apply_determination(
+        det_prov, "restricted", {"restricted"}, {"cpcb-nwmp-annual"}
+    )
+    check(
+        "an exactly-covering determination clears to gov-attribution, no errors",
+        status == "gov-attribution" and remaining == set() and not errs_c and notes_c,
+    )
+    status_u, _, _, _ = apply_determination(
+        det_prov, "restricted", {"restricted"}, {"cpcb-nwmp-annual", "some-nd-input"}
+    )
+    check(
+        "an uncovered restricted input keeps the artifact restricted at the call site",
+        status_u == "restricted",
+    )
+    status_sa, _, _, _ = apply_determination(
+        det_prov, "share-alike", {"share-alike"}, {"cpcb-nwmp-annual"}
+    )
+    check(
+        "a determination never upgrades a share-alike artifact",
+        status_sa == "share-alike",
+    )
+    _, _, _, errs_bad = apply_determination(
+        {"produced_by": "manual", "rights_determination": full}, "share-alike", set(), set()
+    )
+    check(
+        "an invalid determination is reported at a non-restricted bucket too",
+        any("incomplete" in e for e in errs_bad),
     )
     r = by.get("public/data/restoration-priority-delhi.json")
     check(
