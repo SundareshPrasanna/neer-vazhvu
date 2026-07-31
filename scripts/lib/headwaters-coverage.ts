@@ -152,7 +152,10 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/bangalore-localities.json": "curated search index, no upstream",
   "public/data/madurai-localities.json": "curated search index, no upstream",
   "public/data/delhi-localities.json": "curated search index, no upstream",
-  "public/data/ward-names.json": "derived label lookup over the ward boundary layer",
+  // public/data/ward-names.json left this allowlist on 2026-07-31: the ward ->
+  // zone value correction made gcc-admin-boundary-gis a real input (its layers
+  // 4 + 5 supplied the five corrected rows), so the file is now covered by that
+  // registry entry's dependsOn instead of by a hand-written reason.
 
   // Daily feeds. The freshness checker owns these; an edition watch on a page
   // that changes every day would alert every day.

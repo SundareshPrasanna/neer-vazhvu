@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+"""Verify Chennai ward -> zone assignments against Greater Chennai Corporation.
+
+Checks public/data/ward-names.json (the mapping) and the Zone_No/Zone_Name
+joined onto public/geojson/chennai-wards-2022.geojson against GCC's own
+GCC_AdminBoundary service: layer 4 Ward_Boundary (200 wards) and layer 5
+Zone_Boundary (15 zones).
+
+The join is AREAL CONTAINMENT, not centroid-in-polygon. Centroids are what
+made commit ebdce3b2 move wards 168/169 into the wrong zone; the fraction of
+each ward's area falling in its best-matching zone is reported so a partial
+match can never be read as a clean one.
+
+The predecessor of this script read its zone polygons from an uncommitted
+/tmp path, so its run could not be reproduced. This one fetches both layers
+from the service itself.
+
+    python3 scripts/qc/verify-ward-zones.py             # fetch from GCC
+    python3 scripts/qc/verify-ward-zones.py --from DIR  # replay saved layers
+
+--from DIR reads gcc_ward.geojson + gcc_zone.geojson from DIR instead of
+fetching (offline audit of a captured pair). Exits non-zero on any
+disagreement, so it doubles as a spot check after a delimitation.
+
+NOT wired into CI: it needs the network, and GCC's boundaries change only
+when the Corporation re-delimits.
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+import urllib.request
+from collections import Counter
+from pathlib import Path
+
+from shapely.geometry import shape
+from shapely.ops import unary_union
+
+ROOT = Path(__file__).resolve().parents[2]
+
+# A ward must sit essentially wholly inside its zone for a label to be
+# verifiable by containment at all. Chennai's 200 wards all measure 1.000000
+# today; anything below this is a real geometry change upstream and must fail
+# the run rather than be silently rounded away.
+MIN_CONTAINMENT = 0.999
+SERVICE = (
+    "https://gisgcc.chennaicorporation.gov.in/server/rest/services/GCCPublic/"
+    "GCC_AdminBoundary/MapServer"
+)
+QUERY = "/query?where=1=1&outFields=*&returnGeometry=true&outSR=4326&f=geojson"
+LAYERS = {"gcc_ward": 4, "gcc_zone": 5}
+
+ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+         "XI", "XII", "XIII", "XIV", "XV"]
+# Zone NAMES are not in the service. They are GCC's own roster at
+# https://chennaicorporation.gov.in/gcc/delimited_ward/ (dropdown "01 -
+# Thiruvottyur" ... "15 - Sholinganallur"), carried in the corpus's existing
+# uppercase transliteration - GCC spells zone I "Thiruvottyur".
+ZONE_NAMES = ["THIRUVOTTIYUR", "MANALI", "MADHAVARAM", "TONDIARPET", "ROYAPURAM",
+              "THIRU-VI-KA NAGAR", "AMBATTUR", "ANNA NAGAR", "TEYNAMPET",
+              "KODAMBAKKAM", "VALASARAVAKKAM", "ALANDUR", "ADYAR", "PERUNGUDI",
+              "SHOLINGANALLUR"]
+
+
+def layer(name: str, src: Path | None) -> list[dict]:
+    if src is not None:
+        raw = (src / f"{name}.geojson").read_text()
+    else:
+        url = f"{SERVICE}/{LAYERS[name]}{QUERY}"
+        print(f"fetching {url}")
+        req = urllib.request.Request(url, headers={"User-Agent": "NeerVazhvu/1.0"})
+        with urllib.request.urlopen(req, timeout=180) as r:  # noqa: S310 - fixed https URL
+            raw = r.read().decode()
+    return json.loads(raw)["features"]
+
+
+def geom(feature: dict):
+    g = shape(feature["geometry"])
+    return g if g.is_valid else g.buffer(0)
+
+
+def main() -> int:
+    src = None
+    if "--from" in sys.argv:
+        src = Path(sys.argv[sys.argv.index("--from") + 1])
+
+    zones = {}
+    for f in layer("gcc_zone", src):
+        zones.setdefault(f["properties"]["zone"], []).append(geom(f))
+    zones = {k: unary_union(v) for k, v in zones.items()}
+    wards = layer("gcc_ward", src)
+    print(f"GCC: {len(wards)} wards, {len(zones)} zones")
+
+    # Upstream duplicates must be caught HERE, before the dict collapses them.
+    # Assigning into gcc[w] silently replaces an earlier feature with the same
+    # ward id, so a service returning 201 features covering 200 ids - one of
+    # them twice, perhaps with conflicting geometry - would survive both the
+    # id-set comparison below and the label check.
+    upstream_counts = Counter(int(f["properties"]["ward"]) for f in wards)
+    upstream_dupes = sorted(w for w, n in upstream_counts.items() if n > 1)
+
+    # ward -> (zone_no roman, zone_name, containment fraction, ambiguous?)
+    gcc: dict[int, tuple[str, str, float, bool]] = {}
+    for f in wards:
+        w = int(f["properties"]["ward"])
+        g = geom(f)
+        frac = {z: g.intersection(zg).area / g.area for z, zg in zones.items()}
+        best = max(frac, key=frac.get)
+        idx = int(best) - 1
+        split = sum(1 for v in frac.values() if v > 0.001) > 1
+        gcc[w] = (ROMAN[idx], ZONE_NAMES[idx], frac[best], split)
+
+    worst = min(gcc.items(), key=lambda kv: kv[1][2])
+    print(f"minimum containment fraction: ward {worst[0]} at {worst[1][2]:.6f}")
+    ambiguous = sorted(w for w, v in gcc.items() if v[3])
+    print(f"wards split across zones (>0.1% in a second zone): {ambiguous or 'none'}")
+
+    # These two conditions must FAIL the run, not merely print. The whole claim
+    # this script makes is "every ward sits wholly inside one zone, so a label
+    # is either right or wrong". If a ward straddles zones, or is only partly
+    # covered by its best zone, that claim no longer holds and a matching label
+    # is luck, not verification: the majority-overlap zone can agree with the
+    # stored value while the ward genuinely belongs to two.
+    structural: list[str] = []
+    if upstream_dupes:
+        structural.append(
+            f"GCC returned {len(wards)} features for {len(gcc)} distinct ward "
+            f"ids - duplicate id(s) "
+            f"{[(w, upstream_counts[w]) for w in upstream_dupes]}; the later "
+            "feature silently wins, so no label here is trustworthy"
+        )
+    if ambiguous:
+        structural.append(
+            f"{len(ambiguous)} ward(s) split across zones: {ambiguous} - "
+            "containment is no longer a single-zone answer, so labels here are "
+            "not verifiable by majority overlap"
+        )
+    under = sorted(w for w, v in gcc.items() if v[2] < MIN_CONTAINMENT)
+    if under:
+        structural.append(
+            f"{len(under)} ward(s) below the {MIN_CONTAINMENT:.3f} containment "
+            f"floor: {[(w, round(gcc[w][2], 6)) for w in under]}"
+        )
+
+    names = json.loads((ROOT / "public/data/ward-names.json").read_text())["wards"]
+    geo = json.loads((ROOT / "public/geojson/chennai-wards-2022.geojson").read_text())
+    ours = {
+        "public/data/ward-names.json":
+            [(r["ward_number"], r["zone_no"], r["zone_name"]) for r in names],
+        "public/geojson/chennai-wards-2022.geojson":
+            [(f["properties"]["ward_number"], f["properties"]["Zone_No"],
+              f["properties"]["Zone_Name"]) for f in geo["features"]],
+    }
+
+    # Compare the ward-ID SETS before comparing labels. Iterating only local
+    # rows cannot see a ward that upstream has and we do not: after a
+    # redelimitation adding ward 201, all 200 existing rows could match and the
+    # run would still pass. Duplicates matter too - two rows for one ward can
+    # disagree with each other while both "match" on the row that is checked.
+    upstream_ids = set(gcc)
+    for path, rows in ours.items():
+        ids = [w for w, _no, _nm in rows]
+        dupes = sorted({w for w in ids if ids.count(w) > 1})
+        missing = sorted(upstream_ids - set(ids))
+        extra = sorted(set(ids) - upstream_ids)
+        if dupes:
+            structural.append(f"{path}: duplicate ward ids {dupes}")
+        if missing:
+            structural.append(
+                f"{path}: {len(missing)} ward(s) in GCC but absent locally "
+                f"{missing} - upstream has re-delimited, or rows were dropped"
+            )
+        if extra:
+            structural.append(
+                f"{path}: {len(extra)} ward(s) local but not in GCC {extra}"
+            )
+
+    bad = 0
+    for path, rows in ours.items():
+        wrong = [(w, no, nm) for w, no, nm in rows
+                 if w not in gcc or (no, nm) != gcc[w][:2]]
+        print(f"\n{path}: {len(rows)} rows, {len(rows) - len(wrong)} agree with GCC, "
+              f"{len(wrong)} disagree")
+        for w, no, nm in wrong:
+            exp = gcc.get(w)
+            print(f"  ward {w}: file {nm} ({no}) | GCC "
+                  f"{exp[1] + ' (' + exp[0] + ')' if exp else 'NOT IN SERVICE'}"
+                  f"{f' containment {exp[2]:.6f}' if exp else ''}")
+        bad += len(wrong)
+
+    if structural:
+        print("\nSTRUCTURAL FAILURES (the containment guarantee does not hold):")
+        for line in structural:
+            print(f"  {line}")
+
+    if bad or structural:
+        parts = []
+        if bad:
+            parts.append(f"{bad} label disagreement(s)")
+        if structural:
+            parts.append(f"{len(structural)} structural failure(s)")
+        print(f"\nFAIL - {' and '.join(parts)}")
+        return 1
+    print("\nOK - every ward matches GCC, wholly inside one zone, ids complete")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

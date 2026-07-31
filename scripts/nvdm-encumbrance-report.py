@@ -288,7 +288,13 @@ def classify(license_str: str | None) -> str:
     if (
         "no stated licen" in n
         or "no explicit licen" in n
+        or "no licence was recorded" in n
+        or "no license was recorded" in n
         or "unrecorded" in n
+        # An artifact whose rights we have affirmatively established we CANNOT
+        # prove (e.g. a superseded layer whose distributor was never captured).
+        # Deliberately vague, never clean.
+        or "unproven" in n
         or "presume" in n
         or "registration gated" in n
         or n.startswith("open per opencity dataset page")
@@ -672,6 +678,15 @@ def selftest() -> int:
         # vague and no check would say so.
         "verified Copernicus wording (Sentinel-2 L2A) stays clean",
         classify(registry_licenses().get("sentinel-2-l2a")) == "clean-open",
+    )
+    check(
+        # An affirmatively unprovable rights position must never read clean.
+        "'UNPROVEN - no licence was recorded' is vague",
+        classify(
+            "UNPROVEN - no licence was recorded for this layer when it entered "
+            "the repo; not assertable as government-clean"
+        )
+        == "vague",
     )
     check(
         "HydroSHEDS wording is nc",

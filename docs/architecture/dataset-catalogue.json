@@ -678,7 +678,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/enrich_arkavathi_industrial_districts.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -987,10 +989,10 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "admin-taluk",
-   "bytes": 422126,
+   "bytes": 102014,
    "schema": {
     "kind": "FeatureCollection",
-    "features": 14,
+    "features": 13,
     "geometries": [
      "MultiPolygon",
      "Polygon"
@@ -1005,7 +1007,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1494,7 +1498,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "gaps",
-   "bytes": 336247,
+   "bytes": 236907,
    "schema": {
     "kind": "object",
     "keys": [
@@ -1512,7 +1516,9 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
-    "scripts/build_fregister.py"
+    "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_fregister.py",
+    "scripts/enrich_arkavathi_industrial_districts.py"
    ],
    "headwaters_sources": [
     "nmcg-ngt-mpr-listing"
@@ -1592,7 +1598,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "inventory",
-   "bytes": 10740,
+   "bytes": 11024,
    "schema": {
     "kind": "object",
     "keys": [
@@ -1609,6 +1615,7 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
     "scripts/ingest_basin.py",
@@ -1664,7 +1671,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "pressures-industrial",
-   "bytes": 156559,
+   "bytes": 144074,
    "schema": {
     "kind": "FeatureCollection",
     "features": 69,
@@ -1682,7 +1689,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/enrich_arkavathi_industrial_districts.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1824,7 +1833,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "prs",
-   "bytes": 45634,
+   "bytes": 45664,
    "schema": {
     "kind": "object",
     "keys": [
@@ -2328,6 +2337,7 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
     "scripts/ingest_basin.py",
@@ -2698,6 +2708,7 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
     "scripts/ingest_basin.py",
@@ -2985,7 +2996,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/enrich_arkavathi_industrial_districts.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -3249,7 +3262,9 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
-    "scripts/build_fregister.py"
+    "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_fregister.py",
+    "scripts/enrich_arkavathi_industrial_districts.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -6141,7 +6156,7 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "localities",
-   "bytes": 107824,
+   "bytes": 107846,
    "schema": {
     "kind": "array",
     "length": 519,
@@ -15146,14 +15161,15 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "ward-names",
-   "bytes": 16803,
+   "bytes": 24577,
    "schema": {
-    "kind": "array",
-    "length": 200,
-    "element_keys": [
-     "ward_number",
-     "zone_name",
-     "zone_no"
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
+     "wards"
     ]
    },
    "consumers": [
@@ -15165,12 +15181,16 @@
    ],
    "producer_refs": [
     "scripts/nvdm_envelope_chennai.py",
-    "scripts/qc/verify-ward-zones.ts"
+    "scripts/qc/verify-ward-zones.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
-   "accountability_reason": "derived label lookup over the ward boundary layer",
+   "headwaters_sources": [
+    "gcc-admin-boundary-gis"
+   ],
+   "licenses": [
+    "public Greater Chennai Corporation government data; the service publishes no explicit licence (copyrightText and description are empty strings on the service root and on both Ward_Boundary and Zone_Boundary, verified 2026-07-31) - cited with attribution to Greater Chennai Corporation (GIS-GCC)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": [
     "chennai-legacy-name"
    ]
@@ -15180,7 +15200,7 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "ward-profiles",
-   "bytes": 281851,
+   "bytes": 281846,
    "schema": {
     "kind": "object",
     "keys": [
@@ -15230,7 +15250,7 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "ward-representatives",
-   "bytes": 138994,
+   "bytes": 146114,
    "schema": {
     "kind": "object",
     "keys": [
@@ -16673,7 +16693,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "wards-2022",
-   "bytes": 2021211,
+   "bytes": 2180893,
    "schema": {
     "kind": "FeatureCollection",
     "features": 200,
@@ -16699,15 +16719,17 @@
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
     "scripts/nvdm_envelope_chennai.py",
-    "scripts/qc/verify-ward-zones.ts"
+    "scripts/qc/verify-ward-zones.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "gcc-admin-boundary-gis"
+   ],
+   "licenses": [
+    "public Greater Chennai Corporation government data; the service publishes no explicit licence (copyrightText and description are empty strings on the service root and on both Ward_Boundary and Zone_Boundary, verified 2026-07-31) - cited with attribution to Greater Chennai Corporation (GIS-GCC)"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/chennai-water-bodies-current.geojson",
@@ -19582,7 +19604,7 @@
    "scopes": [
     "arkavathi"
    ],
-   "bytes": 422126,
+   "bytes": 102014,
    "schema_variants": 1,
    "registered": false,
    "has_consumer": true
@@ -19683,7 +19705,7 @@
     "arkavathi",
     "chennai-rivers"
    ],
-   "bytes": 888216,
+   "bytes": 788876,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19734,7 +19756,7 @@
     "cauvery-ka",
     "cauvery-tn"
    ],
-   "bytes": 15445,
+   "bytes": 15729,
    "schema_variants": 2,
    "registered": false,
    "has_consumer": true
@@ -19759,7 +19781,7 @@
    "scopes": [
     "arkavathi"
    ],
-   "bytes": 156559,
+   "bytes": 144074,
    "schema_variants": 1,
    "registered": false,
    "has_consumer": true
@@ -19795,7 +19817,7 @@
    "scopes": [
     "arkavathi"
    ],
-   "bytes": 66800,
+   "bytes": 66830,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -20524,7 +20546,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 359403,
+   "bytes": 359425,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -20701,7 +20723,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 16803,
+   "bytes": 24577,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20716,7 +20738,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 1695912,
+   "bytes": 1695907,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20729,7 +20751,7 @@
     "chennai",
     "delhi"
    ],
-   "bytes": 265869,
+   "bytes": 272989,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -21124,7 +21146,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 11161568,
+   "bytes": 11321250,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
