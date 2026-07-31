@@ -31,6 +31,7 @@ from __future__ import annotations
 import json
 import sys
 import urllib.request
+from collections import Counter
 from pathlib import Path
 
 from shapely.geometry import shape
@@ -91,6 +92,14 @@ def main() -> int:
     wards = layer("gcc_ward", src)
     print(f"GCC: {len(wards)} wards, {len(zones)} zones")
 
+    # Upstream duplicates must be caught HERE, before the dict collapses them.
+    # Assigning into gcc[w] silently replaces an earlier feature with the same
+    # ward id, so a service returning 201 features covering 200 ids - one of
+    # them twice, perhaps with conflicting geometry - would survive both the
+    # id-set comparison below and the label check.
+    upstream_counts = Counter(int(f["properties"]["ward"]) for f in wards)
+    upstream_dupes = sorted(w for w, n in upstream_counts.items() if n > 1)
+
     # ward -> (zone_no roman, zone_name, containment fraction, ambiguous?)
     gcc: dict[int, tuple[str, str, float, bool]] = {}
     for f in wards:
@@ -114,6 +123,13 @@ def main() -> int:
     # is luck, not verification: the majority-overlap zone can agree with the
     # stored value while the ward genuinely belongs to two.
     structural: list[str] = []
+    if upstream_dupes:
+        structural.append(
+            f"GCC returned {len(wards)} features for {len(gcc)} distinct ward "
+            f"ids - duplicate id(s) "
+            f"{[(w, upstream_counts[w]) for w in upstream_dupes]}; the later "
+            "feature silently wins, so no label here is trustworthy"
+        )
     if ambiguous:
         structural.append(
             f"{len(ambiguous)} ward(s) split across zones: {ambiguous} - "
