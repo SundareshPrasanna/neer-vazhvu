@@ -2915,10 +2915,18 @@ function DepPanel({ data, focusTaluk, onSelectTaluk, onHighlight, onShowMatch, o
   });
   // Clicking another map badge while the panel is open changes focusTaluk
   // without remounting - follow it (state-adjustment-during-render pattern).
+  //
+  // A bare key can't say which kind was meant, and "bbmp" names both a ULB and
+  // a taluk. Our own chips set the view before reporting the key, so if the
+  // panel already shows that exact unit the caller's intent is on screen and
+  // re-resolving would override it - which made the "Bengaluru North & South"
+  // taluk chip bounce to the BBMP ULB card. Only genuinely external focus
+  // changes get resolved, and those keep ULB precedence.
   const [lastFocus, setLastFocus] = useState(focusTaluk);
   if (focusTaluk !== lastFocus) {
     setLastFocus(focusTaluk);
-    if (focusTaluk && homeDistrict) {
+    const alreadyShown = view.kind !== "district" && view.key === focusTaluk;
+    if (focusTaluk && homeDistrict && !alreadyShown) {
       if (homeDistrict.ulbs.some((u) => u.key === focusTaluk)) {
         setTab(homeDistrict.key);
         setView({ kind: "ulb", key: focusTaluk });
