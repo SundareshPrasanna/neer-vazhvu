@@ -73,8 +73,8 @@
       "properties": {
         "sources": {
           "type": "array",
-          "minItems": 1,
-          "items": { "$ref": "#/$defs/source" }
+          "items": { "$ref": "#/$defs/source" },
+          "description": "External upstreams only - internal NVDM artifacts consumed as inputs are lineage, described in note, not sources. Non-empty except for self-authored manifests and claim-dataset compilations whose per-record citations carry accountability (validator-enforced: empty requires produced_by-or-claim-contract AND an explanatory note). Per-source accountability: registry id joined via dependsOn (episodic AND continuous upstreams - continuous entries use detection.method 'continuous' and are never polled) OR closed+as_of."
         },
         "method": {
           "enum": ["manual", "scrape", "api", "pdf-extract", "gee", "derived", "mixed"]
@@ -85,6 +85,11 @@
           "description": "Generator script path, or \"manual\"."
         },
         "note": { "type": ["string", "array"] },
+        "internal_inputs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Repo-relative paths of NVDM artifacts this artifact is derived FROM. Machine-readable internal lineage (review 2026-07-30: prose notes do not transfer accountability): the validator caps a derived artifact below L3 while any listed input sits below L2."
+        },
         "conventions": {
           "type": "object",
           "description": "Declared traps: sign conventions, aggregation basis, comparability breaks (spec 7.5)."

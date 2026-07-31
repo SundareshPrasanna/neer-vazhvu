@@ -1,291 +1,335 @@
 {
- "place_id": "delhi",
- "updated": "2026-07-20",
- "headline": "Who owes Delhi water: the inter-state allocation ledger",
- "intro": "Delhi owns no reservoir. Nearly all of its raw water arrives from other states under a stack of instruments - a 1994 five-state MoU, canal-capacity minutes, dam-allocation resolutions - while the city's own auditor reports that what actually arrives is never metered end-to-end. The entitlements are crisp; the receipts are opaque. This ledger shows both sides, and grades how solid each claim is.",
- "unit_note": "Delhi's supply documents mix units: cusecs (canal flows), MGD (treatment-plant output), BCM/yr (the MoU). Each entry keeps its instrument's native unit with conversions in notes. 1 MGD = 4.55 MLD; 100 cusecs = ~54 MGD sustained.",
- "authorities": [
-  {
-   "id": "uyrb",
-   "name": "Upper Yamuna River Board (UYRB)",
-   "role": "Steward of the 12 May 1994 five-state MoU (Himachal Pradesh, Haryana, Uttar Pradesh, Rajasthan, Delhi) that apportions the upper Yamuna's flows. Its Standing Committee fixes operational quantities like the Munak carrier capacity.",
-   "capacity": "Delhi's MoU share: 0.724 BCM/yr (interim seasonal allocations; ~750 cusecs at peak)",
-   "committed": "In deficit years the MoU serves Delhi's drinking water first, balance pro-rata to the other four states",
-   "tension": "The board's annual reports - the only public record of what was actually delivered against the MoU - are published with a multi-year lag; the latest publicly visible is 2021. The instrument is public; the performance record effectively is not.",
-   "source_refs": [
-    "mou-1994",
-    "uyrb-mirror"
-   ]
+  "nvdm": "1.0",
+  "dataset": "data-root/allocations",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
   },
-  {
-   "id": "haryana-id",
-   "name": "Haryana Irrigation & Water Resources (Western Yamuna Canal system)",
-   "role": "Operates the Munak headworks and the 102-km carrier (Carrier-Lined Channel + Delhi Sub-Branch) that physically delivers most of Delhi's Yamuna share from Tajewala/Hathnikund down to Haiderpur.",
-   "capacity": "Carrier fixed at ~1,050 cusecs for Delhi (53rd UYRB Standing Committee, May 2018)",
-   "committed": "~700+ cusecs typical actual carriage - the lifeline for 5 of Delhi's 9 WTPs",
-   "tension": "No public daily flow data exists for the single most important water conduit in the capital. Delivered quantities surface only in crisis reporting and court filings, most recently the June 2024 Supreme Court proceedings.",
-   "source_refs": [
-    "munak-wiki",
-    "mou-1994"
-   ]
+  "provenance": {
+    "sources": [
+      {
+        "title": "MoU between Himachal Pradesh, Haryana, UP, Rajasthan and NCT Delhi regarding upper Yamuna waters (12 May 1994)",
+        "publisher": "Upper Yamuna River Board / Ministry of Jal Shakti",
+        "url": "https://cdnbbsr.s3waas.gov.in/s3a70dc40477bc2adceef4d2c90f47eb82/uploads/2024/08/20240814107157797.pdf",
+        "license": "GoI public document, cited with attribution",
+        "closed": true,
+        "as_of": "1994-05-12"
+      },
+      {
+        "id": "cag-djb-audit",
+        "title": "CAG Performance Audit of the Delhi Jal Board, Report No. 3 of 2025 (tabled 2026-03-23)",
+        "publisher": "Comptroller and Auditor General of India",
+        "license": "GoI publication, cited with attribution",
+        "as_of": "2026-03",
+        "retrieved": "2026-07-20"
+      },
+      {
+        "id": "delhi-economic-survey-water",
+        "title": "Delhi Economic Survey 2023-24, Chapter 13 (Water Supply and Sewerage)",
+        "publisher": "Planning Department, GNCTD",
+        "license": "GNCTD publication, cited with attribution",
+        "as_of": "2024",
+        "retrieved": "2026-07-20"
+      },
+      {
+        "id": "djb-water-pages",
+        "title": "DJB About Us page - WTP roster, capacities, raw-water sources (~900 MGD)",
+        "publisher": "Delhi Jal Board",
+        "license": "GNCTD publication, cited with attribution",
+        "retrieved": "2026-07-20"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-07-20",
+    "note": "Per-arrangement citations live in the legacy `sources` map (id-keyed source objects: the 1994 MoU full text, UYRB pages, BBMB daily reservoir data, the THDC Tehri FAQ, Munak canal history via Wikipedia) and per-record `source` fields; those living pages stay per-record citations, not envelope sources. unit_note declares the native-units discipline (MGD/cusecs as published)."
   },
-  {
-   "id": "bbmb",
-   "name": "Bhakra Beas Management Board (BBMB)",
-   "role": "Operates Bhakra-Nangal; Delhi's share of Sutlej water rides the WYC into the same Haiderpur/Nangloi WTPs. Shares are set in BBMB Technical Committee meetings, not in a published tariff.",
-   "capacity": "Delhi share appears in TC minutes (e.g. ~496-cusec resolutions), not as a standing published figure",
-   "committed": "Bhakra storage itself is public daily (BBMB bulletins) - the only leg of Delhi's supply with a live upstream feed",
-   "tension": "Storage is public, Delhi's drawdown is not: you can watch the dam but not the city's share of it.",
-   "source_refs": [
-    "bbmb-data"
-   ]
-  },
-  {
-   "id": "thdc",
-   "name": "THDC India (Tehri dam)",
-   "role": "Tehri's drinking-water component allocates 300 cusecs (~162 MGD) to Delhi, delivered down the Ganga and the Upper Ganga Canal to Muradnagar, feeding the Bhagirathi and Sonia Vihar WTPs.",
-   "capacity": "300 cusecs / 162 MGD earmarked for Delhi (THDC's own project documentation)",
-   "committed": "Sonia Vihar (140 MGD design) + Bhagirathi (~110 MGD) run largely on this leg",
-   "tension": "THDC publishes the allocation but no daily release against it; UP's canal closures (annual UGC maintenance) interrupt the leg with no Delhi-visible schedule of record.",
-   "source_refs": [
-    "thdc-faq"
-   ]
+  "place_id": "delhi",
+  "updated": "2026-07-20",
+  "headline": "Who owes Delhi water: the inter-state allocation ledger",
+  "intro": "Delhi owns no reservoir. Nearly all of its raw water arrives from other states under a stack of instruments - a 1994 five-state MoU, canal-capacity minutes, dam-allocation resolutions - while the city's own auditor reports that what actually arrives is never metered end-to-end. The entitlements are crisp; the receipts are opaque. This ledger shows both sides, and grades how solid each claim is.",
+  "unit_note": "Delhi's supply documents mix units: cusecs (canal flows), MGD (treatment-plant output), BCM/yr (the MoU). Each entry keeps its instrument's native unit with conversions in notes. 1 MGD = 4.55 MLD; 100 cusecs = ~54 MGD sustained.",
+  "authorities": [
+    {
+      "id": "uyrb",
+      "name": "Upper Yamuna River Board (UYRB)",
+      "role": "Steward of the 12 May 1994 five-state MoU (Himachal Pradesh, Haryana, Uttar Pradesh, Rajasthan, Delhi) that apportions the upper Yamuna's flows. Its Standing Committee fixes operational quantities like the Munak carrier capacity.",
+      "capacity": "Delhi's MoU share: 0.724 BCM/yr (interim seasonal allocations; ~750 cusecs at peak)",
+      "committed": "In deficit years the MoU serves Delhi's drinking water first, balance pro-rata to the other four states",
+      "tension": "The board's annual reports - the only public record of what was actually delivered against the MoU - are published with a multi-year lag; the latest publicly visible is 2021. The instrument is public; the performance record effectively is not.",
+      "source_refs": [
+        "mou-1994",
+        "uyrb-mirror"
+      ]
+    },
+    {
+      "id": "haryana-id",
+      "name": "Haryana Irrigation & Water Resources (Western Yamuna Canal system)",
+      "role": "Operates the Munak headworks and the 102-km carrier (Carrier-Lined Channel + Delhi Sub-Branch) that physically delivers most of Delhi's Yamuna share from Tajewala/Hathnikund down to Haiderpur.",
+      "capacity": "Carrier fixed at ~1,050 cusecs for Delhi (53rd UYRB Standing Committee, May 2018)",
+      "committed": "~700+ cusecs typical actual carriage - the lifeline for 5 of Delhi's 9 WTPs",
+      "tension": "No public daily flow data exists for the single most important water conduit in the capital. Delivered quantities surface only in crisis reporting and court filings, most recently the June 2024 Supreme Court proceedings.",
+      "source_refs": [
+        "munak-wiki",
+        "mou-1994"
+      ]
+    },
+    {
+      "id": "bbmb",
+      "name": "Bhakra Beas Management Board (BBMB)",
+      "role": "Operates Bhakra-Nangal; Delhi's share of Sutlej water rides the WYC into the same Haiderpur/Nangloi WTPs. Shares are set in BBMB Technical Committee meetings, not in a published tariff.",
+      "capacity": "Delhi share appears in TC minutes (e.g. ~496-cusec resolutions), not as a standing published figure",
+      "committed": "Bhakra storage itself is public daily (BBMB bulletins) - the only leg of Delhi's supply with a live upstream feed",
+      "tension": "Storage is public, Delhi's drawdown is not: you can watch the dam but not the city's share of it.",
+      "source_refs": [
+        "bbmb-data"
+      ]
+    },
+    {
+      "id": "thdc",
+      "name": "THDC India (Tehri dam)",
+      "role": "Tehri's drinking-water component allocates 300 cusecs (~162 MGD) to Delhi, delivered down the Ganga and the Upper Ganga Canal to Muradnagar, feeding the Bhagirathi and Sonia Vihar WTPs.",
+      "capacity": "300 cusecs / 162 MGD earmarked for Delhi (THDC's own project documentation)",
+      "committed": "Sonia Vihar (140 MGD design) + Bhagirathi (~110 MGD) run largely on this leg",
+      "tension": "THDC publishes the allocation but no daily release against it; UP's canal closures (annual UGC maintenance) interrupt the leg with no Delhi-visible schedule of record.",
+      "source_refs": [
+        "thdc-faq"
+      ]
+    }
+  ],
+  "arrangements": [
+    {
+      "id": "yamuna-mou",
+      "source": "Yamuna at Wazirabad (1994 five-state MoU share)",
+      "authority_id": "uyrb",
+      "recipient": "NCT Delhi (DJB)",
+      "entitled": {
+        "value": 0.724,
+        "unit": "BCM/yr",
+        "basis": "inter-state MoU, 12 May 1994",
+        "note": "Interim seasonal allocation pending final apportionment; ~750 cusecs at peak. The MoU's deficit clause puts Delhi's drinking water first before pro-rata cuts."
+      },
+      "received": {
+        "value": null,
+        "unit": "BCM/yr",
+        "year": null,
+        "note": "No public annual reconciliation of delivered-vs-MoU exists; UYRB annual reports (the venue for it) lag by years - latest visible is 2021. Wazirabad pond level, the operational proxy, surfaces only in crisis reporting and court filings."
+      },
+      "instrument": {
+        "label": "MoU between HP, Haryana, UP, Rajasthan and NCT Delhi on upper Yamuna waters, 12 May 1994 (full text, UYRB)",
+        "url": "https://cdnbbsr.s3waas.gov.in/s3a70dc40477bc2adceef4d2c90f47eb82/uploads/2024/08/20240814107157797.pdf"
+      },
+      "confidence": "medium",
+      "note": "The strongest paper in Delhi's stack - a signed five-state MoU - paired with the weakest public delivery record."
+    },
+    {
+      "id": "munak-carrier",
+      "source": "Munak Canal / Carrier-Lined Channel (Haryana, 102 km)",
+      "authority_id": "haryana-id",
+      "recipient": "Haiderpur, Nangloi, Bawana, Dwarka and Okhla WTPs (~70% of Delhi's raw water)",
+      "entitled": {
+        "value": 1050,
+        "unit": "cusecs",
+        "basis": "53rd UYRB Standing Committee (May 2018) carrier fixation",
+        "note": "The operational implementation of the MoU share: Haryana carries Delhi's water in its own canal system to the city gate."
+      },
+      "received": {
+        "value": null,
+        "unit": "cusecs",
+        "year": "2024",
+        "note": "No public daily flow API. June 2024 crisis reporting and Supreme Court filings put actual carriage in the ~840-960 cusec band on successive days - the only recent public numbers, and they exist because the deficit reached court."
+      },
+      "instrument": {
+        "label": "UYRB Standing Committee minutes (53rd meeting, May 2018), via the Upper Yamuna River Board",
+        "url": "https://jalshakti-dowr.gov.in/upper-yamuna-river-board/"
+      },
+      "confidence": "low",
+      "note": "The single most important pipe in the capital has no public meter. Building the news-derived flow series is a Tier-1 Delhi pipeline."
+    },
+    {
+      "id": "bhakra-share",
+      "source": "Bhakra storage (BBMB), via the Western Yamuna Canal",
+      "authority_id": "bbmb",
+      "recipient": "Haiderpur + Nangloi WTPs (blended with the Munak carriage)",
+      "entitled": {
+        "value": null,
+        "unit": "cusecs",
+        "basis": "BBMB Technical Committee resolutions (per-season)",
+        "note": "Delhi's share is fixed meeting-by-meeting (~496-cusec resolutions appear in TC minutes); there is no standing published entitlement figure."
+      },
+      "received": {
+        "value": null,
+        "unit": "cusecs",
+        "year": null,
+        "note": "Not separately published: Bhakra water arrives blended into the WYC carriage. Reservoir storage itself is public daily via BBMB - the only live upstream feed in Delhi's stack."
+      },
+      "instrument": {
+        "label": "BBMB reservoir data (daily) + Technical Committee minutes",
+        "url": "https://bbmb.gov.in/data-reservoir.htm"
+      },
+      "confidence": "low",
+      "note": "Watchable dam, invisible share."
+    },
+    {
+      "id": "tehri-ugc",
+      "source": "Tehri dam (THDC), via the Ganga and Upper Ganga Canal at Muradnagar (UP)",
+      "authority_id": "thdc",
+      "recipient": "Sonia Vihar (140 MGD design) + Bhagirathi WTPs",
+      "entitled": {
+        "value": 300,
+        "unit": "cusecs",
+        "basis": "Tehri project drinking-water allocation (THDC documentation)",
+        "note": "= ~162 MGD. UP holds a parallel 200-cusec allocation from the same component."
+      },
+      "received": {
+        "value": null,
+        "unit": "cusecs",
+        "year": null,
+        "note": "No public daily release against the allocation; the leg goes dark during UP's annual UGC maintenance closures. RTI target."
+      },
+      "instrument": {
+        "label": "THDC India - Tehri project FAQ (allocation stated by the operator)",
+        "url": "https://thdc.co.in/en/faq"
+      },
+      "confidence": "medium",
+      "note": "Documented entitlement, unmetered delivery - the pattern of the whole ledger."
+    },
+    {
+      "id": "djb-groundwater",
+      "source": "DJB's own tube-wells and Ranney wells (NCT groundwater)",
+      "authority_id": null,
+      "recipient": "DJB distribution (supplementary, ~10% of supply)",
+      "entitled": {
+        "value": null,
+        "unit": "MGD",
+        "basis": "own extraction - no external instrument",
+        "note": "Uniquely, no regulator caps this: CGWA's NOC regime does not operate in NCT Delhi (withdrawal is governed by GNCTD orders), even though NCT extracts >100% of its annual recharge (CGWB 2024/2025 assessments)."
+      },
+      "received": {
+        "value": null,
+        "unit": "MGD",
+        "year": null,
+        "note": "The CAG audit found no comprehensive DJB tube-well register and no flow meters on borewells - the Board itself cannot state the number accurately."
+      },
+      "instrument": {
+        "label": "CAG Report No. 3 of 2025 (register absence + metering findings)",
+        "url": "https://cag.gov.in/uploads/PressRelease/PR-Press-Release-on-Report-No-3-of-2025-069c383c1c5b4d3-75064279.pdf"
+      },
+      "confidence": "low",
+      "note": "The most over-exploited urban aquifer in India is drawn on without a public register."
+    }
+  ],
+  "events": [
+    {
+      "year": 1994,
+      "title": "Five-state upper-Yamuna MoU signed (12 May 1994)",
+      "note": "Delhi's 0.724 BCM/yr share fixed as an interim seasonal allocation - still the operative paper three decades later.",
+      "source_refs": [
+        "mou-1994"
+      ]
+    },
+    {
+      "year": 1996,
+      "title": "Supreme Court orders Haryana to keep Wazirabad pond full",
+      "note": "The court, not the MoU, became the enforcement mechanism for Delhi's drinking-water priority - a pattern that repeats every scarcity summer.",
+      "source_refs": [
+        "mou-1994"
+      ]
+    },
+    {
+      "year": 2018,
+      "title": "53rd UYRB Standing Committee fixes the Munak carriage at ~1,050 cusecs",
+      "note": "The operational number behind ~70% of Delhi's raw water.",
+      "source_refs": [
+        "uyrb-mirror"
+      ]
+    },
+    {
+      "year": 2024,
+      "title": "June 2024 Munak crisis reaches the Supreme Court",
+      "note": "Successive-day carriage numbers (~840-960 cusecs) entered the public record only via court filings and crisis reporting - the clearest demonstration that no routine public meter exists.",
+      "source_refs": [
+        "munak-wiki"
+      ]
+    },
+    {
+      "year": 2026,
+      "title": "CAG: augmentation 'remote', measurement absent",
+      "note": "Report No. 3 of 2025 (tabled 23 Mar 2026) finds raw-water shortage widening (22%->24%), no flow meters at WTPs/reservoirs/borewells, and calls prospects of augmentation from Renuka/Lakhwar/Kishau remote.",
+      "source_refs": [
+        "cag-2025"
+      ]
+    }
+  ],
+  "futures": [
+    {
+      "id": "renuka-lakhwar-kishau",
+      "project": "Renuka (HP), Lakhwar and Kishau (UK) storage dams",
+      "mld": null,
+      "earmarked_for": [
+        "Upper-Yamuna storage that would firm up Delhi's MoU share (Delhi has co-funded Renuka's water component)"
+      ],
+      "status": "CAG Report No. 3 of 2025 calls the prospects of augmentation from these projects 'remote' - decades of inter-state negotiation, none delivering water in the audit horizon",
+      "source_refs": [
+        "cag-2025"
+      ],
+      "commitment_id": "renuka-lakhwar-kishau"
+    }
+  ],
+  "gaps": [
+    "No public daily WTP production series (MGD per plant) - the receipts side of every arrangement above is reconstructed, not published. RTI target #1.",
+    "No public daily Munak Canal flow - the ~70% lifeline surfaces in public data only during crises. News-NER series planned.",
+    "No public daily Tehri release against the 300-cusec allocation.",
+    "UYRB annual reports (the delivered-vs-MoU record) lag by multiple years; 2022-2025 editions need RTI.",
+    "No known public DJB tube-well register (its absence is itself a CAG finding)."
+  ],
+  "sources": {
+    "mou-1994": {
+      "title": "MoU between Himachal Pradesh, Haryana, UP, Rajasthan and NCT Delhi regarding upper Yamuna waters (12 May 1994) - full text",
+      "publisher": "Upper Yamuna River Board / Ministry of Jal Shakti",
+      "year": 1994,
+      "url": "https://cdnbbsr.s3waas.gov.in/s3a70dc40477bc2adceef4d2c90f47eb82/uploads/2024/08/20240814107157797.pdf"
+    },
+    "uyrb-mirror": {
+      "title": "Upper Yamuna River Board (constitution, functions, reports)",
+      "publisher": "Ministry of Jal Shakti, Department of Water Resources",
+      "year": 2024,
+      "url": "https://jalshakti-dowr.gov.in/upper-yamuna-river-board/"
+    },
+    "bbmb-data": {
+      "title": "BBMB daily reservoir data (Bhakra/Pong/Ranjit Sagar)",
+      "publisher": "Bhakra Beas Management Board",
+      "year": 2026,
+      "url": "https://bbmb.gov.in/data-reservoir.htm"
+    },
+    "thdc-faq": {
+      "title": "Tehri project FAQ - drinking-water allocations (Delhi 300 cusecs / UP 200 cusecs)",
+      "publisher": "THDC India Limited",
+      "year": 2025,
+      "url": "https://thdc.co.in/en/faq"
+    },
+    "munak-wiki": {
+      "title": "Munak canal (carrier history, capacity, June 2024 crisis)",
+      "publisher": "Wikipedia (tertiary; underlying citations to Tribune/HT June 2024 coverage)",
+      "year": 2024,
+      "url": "https://en.wikipedia.org/wiki/Munak_canal"
+    },
+    "cag-2025": {
+      "title": "Performance Audit of Functioning of Delhi Jal Board (Report No. 3 of 2025) - press release + full report",
+      "publisher": "Comptroller and Auditor General of India",
+      "year": 2026,
+      "url": "https://cag.gov.in/uploads/PressRelease/PR-Press-Release-on-Report-No-3-of-2025-069c383c1c5b4d3-75064279.pdf"
+    },
+    "eco-survey-ch13": {
+      "title": "Delhi Economic Survey 2023-24, Chapter 13 (Water Supply and Sewerage)",
+      "publisher": "Government of NCT of Delhi, Planning Department",
+      "year": 2024,
+      "url": "https://delhiplanning.delhi.gov.in/sites/default/files/Planning/chapter_13.pdf"
+    },
+    "djb-water": {
+      "title": "DJB About Us page (WTP roster + capacities) (WTPs, sources, capacities)",
+      "publisher": "Delhi Jal Board",
+      "year": 2026,
+      "url": "https://delhijalboard.delhi.gov.in/jalboard/about-us"
+    }
   }
- ],
- "arrangements": [
-  {
-   "id": "yamuna-mou",
-   "source": "Yamuna at Wazirabad (1994 five-state MoU share)",
-   "authority_id": "uyrb",
-   "recipient": "NCT Delhi (DJB)",
-   "entitled": {
-    "value": 0.724,
-    "unit": "BCM/yr",
-    "basis": "inter-state MoU, 12 May 1994",
-    "note": "Interim seasonal allocation pending final apportionment; ~750 cusecs at peak. The MoU's deficit clause puts Delhi's drinking water first before pro-rata cuts."
-   },
-   "received": {
-    "value": null,
-    "unit": "BCM/yr",
-    "year": null,
-    "note": "No public annual reconciliation of delivered-vs-MoU exists; UYRB annual reports (the venue for it) lag by years - latest visible is 2021. Wazirabad pond level, the operational proxy, surfaces only in crisis reporting and court filings."
-   },
-   "instrument": {
-    "label": "MoU between HP, Haryana, UP, Rajasthan and NCT Delhi on upper Yamuna waters, 12 May 1994 (full text, UYRB)",
-    "url": "https://cdnbbsr.s3waas.gov.in/s3a70dc40477bc2adceef4d2c90f47eb82/uploads/2024/08/20240814107157797.pdf"
-   },
-   "confidence": "medium",
-   "note": "The strongest paper in Delhi's stack - a signed five-state MoU - paired with the weakest public delivery record."
-  },
-  {
-   "id": "munak-carrier",
-   "source": "Munak Canal / Carrier-Lined Channel (Haryana, 102 km)",
-   "authority_id": "haryana-id",
-   "recipient": "Haiderpur, Nangloi, Bawana, Dwarka and Okhla WTPs (~70% of Delhi's raw water)",
-   "entitled": {
-    "value": 1050,
-    "unit": "cusecs",
-    "basis": "53rd UYRB Standing Committee (May 2018) carrier fixation",
-    "note": "The operational implementation of the MoU share: Haryana carries Delhi's water in its own canal system to the city gate."
-   },
-   "received": {
-    "value": null,
-    "unit": "cusecs",
-    "year": "2024",
-    "note": "No public daily flow API. June 2024 crisis reporting and Supreme Court filings put actual carriage in the ~840-960 cusec band on successive days - the only recent public numbers, and they exist because the deficit reached court."
-   },
-   "instrument": {
-    "label": "UYRB Standing Committee minutes (53rd meeting, May 2018), via the Upper Yamuna River Board",
-    "url": "https://jalshakti-dowr.gov.in/upper-yamuna-river-board/"
-   },
-   "confidence": "low",
-   "note": "The single most important pipe in the capital has no public meter. Building the news-derived flow series is a Tier-1 Delhi pipeline."
-  },
-  {
-   "id": "bhakra-share",
-   "source": "Bhakra storage (BBMB), via the Western Yamuna Canal",
-   "authority_id": "bbmb",
-   "recipient": "Haiderpur + Nangloi WTPs (blended with the Munak carriage)",
-   "entitled": {
-    "value": null,
-    "unit": "cusecs",
-    "basis": "BBMB Technical Committee resolutions (per-season)",
-    "note": "Delhi's share is fixed meeting-by-meeting (~496-cusec resolutions appear in TC minutes); there is no standing published entitlement figure."
-   },
-   "received": {
-    "value": null,
-    "unit": "cusecs",
-    "year": null,
-    "note": "Not separately published: Bhakra water arrives blended into the WYC carriage. Reservoir storage itself is public daily via BBMB - the only live upstream feed in Delhi's stack."
-   },
-   "instrument": {
-    "label": "BBMB reservoir data (daily) + Technical Committee minutes",
-    "url": "https://bbmb.gov.in/data-reservoir.htm"
-   },
-   "confidence": "low",
-   "note": "Watchable dam, invisible share."
-  },
-  {
-   "id": "tehri-ugc",
-   "source": "Tehri dam (THDC), via the Ganga and Upper Ganga Canal at Muradnagar (UP)",
-   "authority_id": "thdc",
-   "recipient": "Sonia Vihar (140 MGD design) + Bhagirathi WTPs",
-   "entitled": {
-    "value": 300,
-    "unit": "cusecs",
-    "basis": "Tehri project drinking-water allocation (THDC documentation)",
-    "note": "= ~162 MGD. UP holds a parallel 200-cusec allocation from the same component."
-   },
-   "received": {
-    "value": null,
-    "unit": "cusecs",
-    "year": null,
-    "note": "No public daily release against the allocation; the leg goes dark during UP's annual UGC maintenance closures. RTI target."
-   },
-   "instrument": {
-    "label": "THDC India - Tehri project FAQ (allocation stated by the operator)",
-    "url": "https://thdc.co.in/en/faq"
-   },
-   "confidence": "medium",
-   "note": "Documented entitlement, unmetered delivery - the pattern of the whole ledger."
-  },
-  {
-   "id": "djb-groundwater",
-   "source": "DJB's own tube-wells and Ranney wells (NCT groundwater)",
-   "authority_id": null,
-   "recipient": "DJB distribution (supplementary, ~10% of supply)",
-   "entitled": {
-    "value": null,
-    "unit": "MGD",
-    "basis": "own extraction - no external instrument",
-    "note": "Uniquely, no regulator caps this: CGWA's NOC regime does not operate in NCT Delhi (withdrawal is governed by GNCTD orders), even though NCT extracts >100% of its annual recharge (CGWB 2024/2025 assessments)."
-   },
-   "received": {
-    "value": null,
-    "unit": "MGD",
-    "year": null,
-    "note": "The CAG audit found no comprehensive DJB tube-well register and no flow meters on borewells - the Board itself cannot state the number accurately."
-   },
-   "instrument": {
-    "label": "CAG Report No. 3 of 2025 (register absence + metering findings)",
-    "url": "https://cag.gov.in/uploads/PressRelease/PR-Press-Release-on-Report-No-3-of-2025-069c383c1c5b4d3-75064279.pdf"
-   },
-   "confidence": "low",
-   "note": "The most over-exploited urban aquifer in India is drawn on without a public register."
-  }
- ],
- "events": [
-  {
-   "year": 1994,
-   "title": "Five-state upper-Yamuna MoU signed (12 May 1994)",
-   "note": "Delhi's 0.724 BCM/yr share fixed as an interim seasonal allocation - still the operative paper three decades later.",
-   "source_refs": [
-    "mou-1994"
-   ]
-  },
-  {
-   "year": 1996,
-   "title": "Supreme Court orders Haryana to keep Wazirabad pond full",
-   "note": "The court, not the MoU, became the enforcement mechanism for Delhi's drinking-water priority - a pattern that repeats every scarcity summer.",
-   "source_refs": [
-    "mou-1994"
-   ]
-  },
-  {
-   "year": 2018,
-   "title": "53rd UYRB Standing Committee fixes the Munak carriage at ~1,050 cusecs",
-   "note": "The operational number behind ~70% of Delhi's raw water.",
-   "source_refs": [
-    "uyrb-mirror"
-   ]
-  },
-  {
-   "year": 2024,
-   "title": "June 2024 Munak crisis reaches the Supreme Court",
-   "note": "Successive-day carriage numbers (~840-960 cusecs) entered the public record only via court filings and crisis reporting - the clearest demonstration that no routine public meter exists.",
-   "source_refs": [
-    "munak-wiki"
-   ]
-  },
-  {
-   "year": 2026,
-   "title": "CAG: augmentation 'remote', measurement absent",
-   "note": "Report No. 3 of 2025 (tabled 23 Mar 2026) finds raw-water shortage widening (22%->24%), no flow meters at WTPs/reservoirs/borewells, and calls prospects of augmentation from Renuka/Lakhwar/Kishau remote.",
-   "source_refs": [
-    "cag-2025"
-   ]
-  }
- ],
- "futures": [
-  {
-   "id": "renuka-lakhwar-kishau",
-   "project": "Renuka (HP), Lakhwar and Kishau (UK) storage dams",
-   "mld": null,
-   "earmarked_for": [
-    "Upper-Yamuna storage that would firm up Delhi's MoU share (Delhi has co-funded Renuka's water component)"
-   ],
-   "status": "CAG Report No. 3 of 2025 calls the prospects of augmentation from these projects 'remote' - decades of inter-state negotiation, none delivering water in the audit horizon",
-   "source_refs": [
-    "cag-2025"
-   ],
-   "commitment_id": "renuka-lakhwar-kishau"
-  }
- ],
- "gaps": [
-  "No public daily WTP production series (MGD per plant) - the receipts side of every arrangement above is reconstructed, not published. RTI target #1.",
-  "No public daily Munak Canal flow - the ~70% lifeline surfaces in public data only during crises. News-NER series planned.",
-  "No public daily Tehri release against the 300-cusec allocation.",
-  "UYRB annual reports (the delivered-vs-MoU record) lag by multiple years; 2022-2025 editions need RTI.",
-  "No known public DJB tube-well register (its absence is itself a CAG finding)."
- ],
- "sources": {
-  "mou-1994": {
-   "title": "MoU between Himachal Pradesh, Haryana, UP, Rajasthan and NCT Delhi regarding upper Yamuna waters (12 May 1994) - full text",
-   "publisher": "Upper Yamuna River Board / Ministry of Jal Shakti",
-   "year": 1994,
-   "url": "https://cdnbbsr.s3waas.gov.in/s3a70dc40477bc2adceef4d2c90f47eb82/uploads/2024/08/20240814107157797.pdf"
-  },
-  "uyrb-mirror": {
-   "title": "Upper Yamuna River Board (constitution, functions, reports)",
-   "publisher": "Ministry of Jal Shakti, Department of Water Resources",
-   "year": 2024,
-   "url": "https://jalshakti-dowr.gov.in/upper-yamuna-river-board/"
-  },
-  "bbmb-data": {
-   "title": "BBMB daily reservoir data (Bhakra/Pong/Ranjit Sagar)",
-   "publisher": "Bhakra Beas Management Board",
-   "year": 2026,
-   "url": "https://bbmb.gov.in/data-reservoir.htm"
-  },
-  "thdc-faq": {
-   "title": "Tehri project FAQ - drinking-water allocations (Delhi 300 cusecs / UP 200 cusecs)",
-   "publisher": "THDC India Limited",
-   "year": 2025,
-   "url": "https://thdc.co.in/en/faq"
-  },
-  "munak-wiki": {
-   "title": "Munak canal (carrier history, capacity, June 2024 crisis)",
-   "publisher": "Wikipedia (tertiary; underlying citations to Tribune/HT June 2024 coverage)",
-   "year": 2024,
-   "url": "https://en.wikipedia.org/wiki/Munak_canal"
-  },
-  "cag-2025": {
-   "title": "Performance Audit of Functioning of Delhi Jal Board (Report No. 3 of 2025) - press release + full report",
-   "publisher": "Comptroller and Auditor General of India",
-   "year": 2026,
-   "url": "https://cag.gov.in/uploads/PressRelease/PR-Press-Release-on-Report-No-3-of-2025-069c383c1c5b4d3-75064279.pdf"
-  },
-  "eco-survey-ch13": {
-   "title": "Delhi Economic Survey 2023-24, Chapter 13 (Water Supply and Sewerage)",
-   "publisher": "Government of NCT of Delhi, Planning Department",
-   "year": 2024,
-   "url": "https://delhiplanning.delhi.gov.in/sites/default/files/Planning/chapter_13.pdf"
-  },
-  "djb-water": {
-   "title": "DJB water page (WTPs, sources, capacities)",
-   "publisher": "Delhi Jal Board",
-   "year": 2026,
-   "url": "https://delhijalboard.delhi.gov.in/jalboard/water"
-  }
- }
 }

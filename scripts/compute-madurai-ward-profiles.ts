@@ -554,8 +554,68 @@ function main() {
     });
   }
 
+  // NVDM v1 wrapped form (schemas/nvdm/ward-profiles.schema.json): envelope +
+  // wards[]. Loaders accept both shapes during migration. PRODUCED_AT is a
+  // manual constant, bumped on regeneration, so identical inputs still
+  // produce byte-identical output (no wall-clock in the artifact).
+  const PRODUCED_AT = "2026-07-30";
+  const wrapped = {
+    nvdm: "1.0",
+    dataset: "data-root/ward-profiles",
+    scope: { kind: "city", id: "madurai" },
+    provenance: {
+      sources: [
+        {
+          title: "Madurai Corporation ward boundaries, 2022 delimitation (KML)",
+          publisher: "GoTN / Madurai Municipal Corporation",
+          license: "GoTN delimitation record, cited with attribution",
+          role: "input",
+          closed: true,
+          as_of: "2022",
+        },
+        {
+          id: "osm-overpass",
+          title: "OpenStreetMap water bodies / rivers (Overpass extracts)",
+          publisher: "OpenStreetMap contributors",
+          license: "ODbL 1.0",
+          role: "input",
+        },
+        {
+          id: "cgwb-yearbook-tn",
+          title: "CGWB Ground Water Year Book, Tamil Nadu & Puducherry",
+          publisher: "Central Ground Water Board",
+          license: "GoI publication, cited with attribution",
+          role: "input",
+        },
+        {
+          id: "ingres-gw-assessment-madurai",
+          title: "IN-GRES dynamic groundwater assessment (Madurai firkas)",
+          publisher: "CGWB / IN-GRES",
+          license: "GoI publication, cited with attribution",
+          role: "input",
+        },
+      ],
+      method: "derived",
+      produced_at: PRODUCED_AT,
+      produced_by: "scripts/compute-madurai-ward-profiles.ts",
+      // Machine-readable internal lineage - validator caps below L3 while any
+      // listed input is below L2 (all Madurai inputs are enveloped, so this
+      // documents the dependency floor rather than triggering it).
+      internal_inputs: [
+        "public/geojson/madurai-wards-2022.geojson",
+        "public/geojson/madurai-water-bodies-current.geojson",
+        "public/geojson/madurai-water-bodies-lost.geojson",
+        "public/geojson/madurai-gwr-blocks.geojson",
+        "public/data/madurai-cgwb-stations.json",
+        "public/data/restoration-priority-madurai.json",
+        "public/data/river-quality-madurai.json",
+      ],
+      note: "Deterministic join over committed ward-level layers (see script header). flood/drainage/sewerage/industrial are honest not-available placeholders pending sources. Internal inputs are lineage, not sources - listed machine-readably in internal_inputs.",
+    },
+    wards: output,
+  };
   const outPath = resolve(root, "public/data/madurai-ward-profiles.json");
-  writeFileSync(outPath, JSON.stringify(output, null, 2));
+  writeFileSync(outPath, JSON.stringify(wrapped, null, 2));
 
   // Summary
   const totalWaterBodies = output.reduce((s, w) => s + w.water_bodies.current_count, 0);

@@ -1,13 +1,34 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/restoration-priority",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-05-25",
+    "produced_by": "manual",
+    "note": "CITATION DEBT (on record since 2026-07-30): scored by a one-off run with NO committed producer script (algorithm_version bangalore-flagship-v0; weights in the payload). The 17-kere flagship set is curated; polygon identity/centroids trace to the OSM extract (osm_id per body; fully-lost bodies carry osm_id null). internal_inputs is deliberately NOT declared - the producer code does not exist to verify against, and the validator's conservative lineage taint correctly holds this artifact below L3 until the scorer is committed."
+  },
   "place_id": "bangalore",
   "computed_at": "2026-05-25",
   "algorithm_version": "bangalore-flagship-v0",
   "total_scored": 17,
   "weights": {
-    "status_severity": 0.40,
-    "cultural_bonus": 0.30,
-    "size": 0.20,
-    "narrative_bonus": 0.10,
+    "status_severity": 0.4,
+    "cultural_bonus": 0.3,
+    "size": 0.2,
+    "narrative_bonus": 0.1,
     "_note": "Bengaluru's V0 scoring leans on named-kere prominence + historical disappearance rather than the Chennai-style 6-factor model (size, lost-proximity, river-pollution, industrial-proximity, type-bonus, census-condition). The Bengaluru data layer we ship doesn't yet support census-condition (no point-in-polygon spatial join) or river-pollution overlay - so the V0 algorithm is intentionally narrative-and-status-led. Will refine when KSPCB lake WQ + restoration-projects data lands."
   },
   "notes": "Scored bodies are a curated set of 17 named kere across BBMP/GBA. Fully-lost bodies (Dharmambudhi, Sampangi, Karanji Anjaneya, Akkithimmanahalli, Domlur) carry osm_id=null because the original tank is now a built-over surface; the score still surfaces them as 'historical priority' on the restoration view. Bellandur carries the highest narrative_bonus because the foam-fire chronology is the city's flagship water story (Forward Foundation v Karnataka, NGT 2018, Rs 500 cr order). Hesaraghatta + TG Halli get an Arkavati-system bonus reflecting BWSSB's IPR pilot.",
@@ -20,8 +41,11 @@
       "name": "Bellandur Lake",
       "name_kn": "ಬೆಳ್ಳಂದೂರು ಕೆರೆ",
       "water_type": "lake",
-      "area_ha": 317.30,
-      "centroid": [12.9364, 77.6728],
+      "area_ha": 317.3,
+      "centroid": [
+        12.9364,
+        77.6728
+      ],
       "priority_score": 100,
       "priority_level": "critical",
       "components": {
@@ -42,7 +66,10 @@
       "name_kn": "ವರ್ತೂರು ಕೆರೆ",
       "water_type": "lake",
       "area_ha": 155.03,
-      "centroid": [12.9492, 77.7394],
+      "centroid": [
+        12.9492,
+        77.7394
+      ],
       "priority_score": 88,
       "priority_level": "critical",
       "components": {
@@ -63,7 +90,10 @@
       "name_kn": "ಧರ್ಮಾಂಬುಧಿ",
       "water_type": "kere",
       "area_ha": null,
-      "centroid": [12.9776, 77.5713],
+      "centroid": [
+        12.9776,
+        77.5713
+      ],
       "priority_score": 86,
       "priority_level": "critical",
       "components": {
@@ -84,7 +114,10 @@
       "name_kn": "ಹೆಸರಘಟ್ಟ ಕೆರೆ",
       "water_type": "reservoir",
       "area_ha": 601.54,
-      "centroid": [13.1613, 77.4914],
+      "centroid": [
+        13.1613,
+        77.4914
+      ],
       "priority_score": 84,
       "priority_level": "critical",
       "components": {
@@ -105,7 +138,10 @@
       "name_kn": "ಸಂಪಂಗಿ ಕೆರೆ",
       "water_type": "kere",
       "area_ha": null,
-      "centroid": [12.9716, 77.5946],
+      "centroid": [
+        12.9716,
+        77.5946
+      ],
       "priority_score": 78,
       "priority_level": "high",
       "components": {
@@ -126,7 +162,10 @@
       "name_kn": "ತಿಪ್ಪಗೊಂಡನಹಳ್ಳಿ",
       "water_type": "reservoir",
       "area_ha": null,
-      "centroid": [13.07, 77.31],
+      "centroid": [
+        13.07,
+        77.31
+      ],
       "priority_score": 76,
       "priority_level": "high",
       "components": {
@@ -147,7 +186,10 @@
       "name_kn": "ಮಡಿವಾಳ ಕೆರೆ",
       "water_type": "lake",
       "area_ha": 83.22,
-      "centroid": [12.9073, 77.6168],
+      "centroid": [
+        12.9073,
+        77.6168
+      ],
       "priority_score": 70,
       "priority_level": "high",
       "components": {
@@ -168,7 +210,10 @@
       "name_kn": "ಹಲಸೂರು ಕೆರೆ",
       "water_type": "lake",
       "area_ha": 38.06,
-      "centroid": [12.9829, 77.6198],
+      "centroid": [
+        12.9829,
+        77.6198
+      ],
       "priority_score": 68,
       "priority_level": "high",
       "components": {
@@ -189,7 +234,10 @@
       "name_kn": "ಹೆಬ್ಬಾಳ ಕೆರೆ",
       "water_type": "lake",
       "area_ha": 45.58,
-      "centroid": [13.0471, 77.5865],
+      "centroid": [
+        13.0471,
+        77.5865
+      ],
       "priority_score": 66,
       "priority_level": "high",
       "components": {
@@ -210,7 +258,10 @@
       "name_kn": "ಜಕ್ಕೂರು ಕೆರೆ",
       "water_type": "lake",
       "area_ha": 49.96,
-      "centroid": [13.0857, 77.6107],
+      "centroid": [
+        13.0857,
+        77.6107
+      ],
       "priority_score": 64,
       "priority_level": "high",
       "components": {
@@ -231,7 +282,10 @@
       "name_kn": "ಕರಂಜಿ ಆಂಜನೇಯ ಕೆರೆ",
       "water_type": "kere",
       "area_ha": null,
-      "centroid": [12.9667, 77.6056],
+      "centroid": [
+        12.9667,
+        77.6056
+      ],
       "priority_score": 62,
       "priority_level": "high",
       "components": {
@@ -252,7 +306,10 @@
       "name_kn": "ಅಕ್ಕಿತಿಮ್ಮನಹಳ್ಳಿ ಕೆರೆ",
       "water_type": "kere",
       "area_ha": null,
-      "centroid": [12.96, 77.5854],
+      "centroid": [
+        12.96,
+        77.5854
+      ],
       "priority_score": 60,
       "priority_level": "high",
       "components": {
@@ -273,7 +330,10 @@
       "name_kn": "ಅಗರ ಕೆರೆ",
       "water_type": "lake",
       "area_ha": 26.89,
-      "centroid": [12.9194, 77.6406],
+      "centroid": [
+        12.9194,
+        77.6406
+      ],
       "priority_score": 58,
       "priority_level": "moderate",
       "components": {
@@ -294,7 +354,10 @@
       "name_kn": "ಸ್ಯಾಂಕಿ ಕೆರೆ",
       "water_type": "reservoir",
       "area_ha": 12.55,
-      "centroid": [13.0096, 77.5745],
+      "centroid": [
+        13.0096,
+        77.5745
+      ],
       "priority_score": 55,
       "priority_level": "moderate",
       "components": {
@@ -315,7 +378,10 @@
       "name_kn": "ಯಲಹಂಕ ಕೆರೆ",
       "water_type": "lake",
       "area_ha": 96.65,
-      "centroid": [13.1109, 77.5951],
+      "centroid": [
+        13.1109,
+        77.5951
+      ],
       "priority_score": 54,
       "priority_level": "moderate",
       "components": {
@@ -336,7 +402,10 @@
       "name_kn": "ಲಾಲ್‌ಬಾಗ್ ಕೊಳ",
       "water_type": "pond",
       "area_ha": 12.48,
-      "centroid": [12.9463, 77.5835],
+      "centroid": [
+        12.9463,
+        77.5835
+      ],
       "priority_score": 48,
       "priority_level": "moderate",
       "components": {
@@ -357,7 +426,10 @@
       "name_kn": "ದೊಮ್ಮಲೂರು ಕೆರೆ",
       "water_type": "kere",
       "area_ha": null,
-      "centroid": [12.96, 77.65],
+      "centroid": [
+        12.96,
+        77.65
+      ],
       "priority_score": 42,
       "priority_level": "moderate",
       "components": {

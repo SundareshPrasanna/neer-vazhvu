@@ -42,8 +42,10 @@ from shapely.ops import unary_union
 API_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = API_ROOT.parent
 sys.path.insert(0, str(API_ROOT))
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from app.cascade.catchments import FABDEM_ASSET, _FETCH_TILE_DEG  # noqa: E402
+from nvdm_write import merge_envelope  # noqa: E402
 
 CITIES = {
     "mumbai": {
@@ -304,7 +306,11 @@ def main() -> int:
         "_provenance": provenance,
         "features": features,
     }
-    out_path.write_text(json.dumps(out, separators=(",", ":")))
+    # merge_envelope: keep the NVDM envelope of the committed artifact (a
+    # rerun must not strip governance - #220 review repro pattern).
+    out_path.write_text(
+        json.dumps(merge_envelope(out_path, out), separators=(",", ":"))
+    )
     mb = out_path.stat().st_size / 1e6
     print(f"wrote {out_path.name}: {len(features)} band features, {mb:.1f} MB")
     if mb > 8:

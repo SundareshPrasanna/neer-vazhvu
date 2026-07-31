@@ -696,7 +696,7 @@ function RiverExtraSections({ events, industrial }: { events: RiverEvent[]; indu
       {industrial.length > 0 && (
         <div className="mb-5 space-y-2">
           <div className="text-[10px] uppercase text-slate-500 tracking-wider">
-            Industrial sources affecting this river ({industrial.length})
+            Industrial sources reported to affect this river ({industrial.length})
           </div>
           {industrial.map((s) => (
             <div key={s.id} className="border border-slate-200 dark:border-slate-700 rounded-md p-2 bg-white/50 dark:bg-slate-900/50">

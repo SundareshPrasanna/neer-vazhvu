@@ -1,4 +1,36 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/industrial-sources",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "mpcb-stp-inventory",
+        "title": "MPCB per-STP inventory (STP_information_on_website_publication)",
+        "publisher": "Maharashtra Pollution Control Board",
+        "license": "government publication, cited with attribution"
+      },
+      {
+        "id": "praja-civic-issues-mumbai",
+        "title": "Praja Foundation, 'Report on the Status of Civic Issues in Mumbai' (RTI-sourced ward tables; May 2025 edition = 2024 data)",
+        "publisher": "Praja Foundation (via OpenCity mirror)",
+        "license": "report (c) Praja, RTI-sourced tables; OpenCity mirror",
+        "as_of": "2024"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap plant locations (eastern-corridor STPs)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-06",
+    "note": "MMR sewage-treatment points: capacities/utilisation from the MPCB per-STP inventory; the 9 BMC plants carry per-STP inlet/outlet BOD from Praja 2024 Table 13 (RTI series, 2020-2024); the 5 eastern-corridor plant locations are OSM. CAUTION: the top-level `sources` key is the facility payload, not citations - per-record `source` strings carry the per-claim citations."
+  },
   "last_updated": "2026-06",
   "source": "MPCB per-STP inventory (STP_information_on_website_publication) + Praja Foundation 'Status of Civic Issues in Mumbai 2024', Table 13 (RTI-obtained per-STP inlet/outlet BOD & TSS, 2020-2024). Capacities/utilisation from MPCB; treatment performance from the Praja/RTI series. Eastern-corridor (non-BMC) plant locations from OpenStreetMap (ODbL). Discharge BOD compared against the 10 mg/l discharge standard.",
   "_note": "Sewage treatment points across the MMR. The 9 MCGM (BMC) plants carry per-STP inlet/outlet BOD from the Praja 2024 RTI series - four (Versova, Bhandup, Ghatkopar, Malad) consistently fail the discharge standard; Malad effectively does not treat (2023 outlet BOD 140.6 vs inlet 144.2). The 5 eastern-corridor plants (Thane/Navi-Mumbai/Panvel) are added with OSM locations and operator/discharge facts only: there is no public per-STP BOD series for the non-BMC corporations equivalent to Praja's BMC table, so their treatment-performance cells are an honest gap. Locations are approximate facility centroids.",

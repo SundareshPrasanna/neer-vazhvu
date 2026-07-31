@@ -18,10 +18,11 @@
         "public/data/elevation-bands-bangalore.geojson",
         "public/data/elevation-bands-madurai.geojson",
         "public/data/elevation-bands-mumbai.geojson",
-        "public/data/elevation-bands-delhi.geojson"
+        "public/data/elevation-bands-delhi.geojson",
+        "public/data/cascade"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_elevation_bands.py (GEE), re-run per city",
-      "notes": "FABDEM V1-2 - satellite DEM with buildings and forests removed - underpins the elevation-band layer in all five cities, honest at ~30 m horizontal / ~2 m vertical. A new FABDEM version changes every band boundary at once, which is exactly why this is registered once at platform scope rather than five times. LICENCE FLAG: FABDEM is CC BY-NC-SA, non-commercial - relevant if any BRSR or commercial track ever reuses these layers. The canonical data host is data.bris.ac.uk but its dataset paths need an exact opaque id we do not have; the Fathom product page is the stable, verified surface (200 on 2026-07-26).",
+      "notes": "FABDEM V1-2 - satellite DEM with buildings and forests removed - underpins the elevation-band layer in all five cities, honest at ~30 m horizontal / ~2 m vertical. A new FABDEM version changes every band boundary at once, which is exactly why this is registered once at platform scope rather than five times. LICENCE FLAG: FABDEM is CC BY-NC-SA, non-commercial - relevant if any BRSR or commercial track ever reuses these layers. The canonical data host is data.bris.ac.uk but its dataset paths need an exact opaque id we do not have; the Fathom product page is the stable, verified surface (200 on 2026-07-26). Cascade catchment delineation (catchments_fabdem_wbt_v1 in neer-vazhvu-api/app/cascade/catchments.py) runs on a FABDEM mosaic, so the entire public/data/cascade family is FABDEM-DERIVED - and therefore inherits CC BY-NC-SA (non-commercial) encumbrance. Flagged for the NVDM derivative-licence audit 2026-07-30.",
       "lastSeen": {
         "pageHash": "13dc5102eb99ef6a",
         "acceptedOn": "2026-07-26"
@@ -41,7 +42,9 @@
       },
       "dependsOn": [
         "public/data/cascade",
-        "public/geojson/chennai-reservoir-catchments.geojson"
+        "pipeline-inputs/chennai-reservoir-catchments.geojson",
+        "public/geojson/chennai-sub-basins-risk.geojson",
+        "public/geojson/chennai-sub-basins-risk-geom.json"
       ],
       "refreshMethod": "scripts/run_cascade.py; scripts/derive_chennai_subbasins_hydrobasins.py",
       "notes": "HydroBASINS/HydroRIVERS is the skeleton under every cascade reconstruction (Chennai 755 nodes, Bengaluru 1,033, plus Madurai and Mumbai) and under the Chennai sub-basin climate-risk clip (hybas_12 + state clip). A version bump would move cascade topology everywhere at once - a platform-wide SCHEMA-BREAK candidate, not a routine roll-forward. page-hash may be noisy on a marketing-styled page; tighten with a selector if it false-positives.",
@@ -55,7 +58,7 @@
       "scope": "platform",
       "publisher": "European Commission JRC (Pekel et al.)",
       "url": "https://global-surface-water.appspot.com/download",
-      "license": "free and open, attribution required",
+      "license": "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
       "type": "page",
       "cadence": "versioned releases",
       "tier": 0,
@@ -107,12 +110,243 @@
         "method": "page-hash"
       },
       "dependsOn": [
-        "public/data/rich-bodies"
+        "public/data/rich-bodies",
+        "public/data/cascade"
       ],
       "refreshMethod": ".github/workflows/overture-buildings-refresh.yml (monthly, 8th)",
       "notes": "Overture ships MONTHLY, the fastest cadence of any platform family, and a workflow already re-pulls it on the 8th - so this entry is about knowing the release landed, not about triggering the fetch. GAP FOUND 2026-07-26: our overture artifacts record only computed_at, NOT the Overture release version they were built from, so we cannot currently tell which release a given rich-body panel reflects. Worth adding to the ingest script. docs.overturemaps.org/release/ 404s and the GitHub releases API returns an empty list, so overturemaps.org/download is the watchable surface.",
       "lastSeen": {
         "pageHash": "e242bbcac0386e77",
+        "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "osm-overpass",
+      "scope": "platform",
+      "publisher": "OpenStreetMap contributors",
+      "url": "https://overpass-api.de/",
+      "license": "ODbL 1.0",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/geojson/chennai-rivers.geojson",
+        "public/geojson/madurai-rivers.geojson",
+        "public/geojson/mumbai-rivers.geojson",
+        "public/geojson/bangalore-rivers.geojson",
+        "public/geojson/chennai-water-bodies-current.geojson",
+        "public/geojson/madurai-water-bodies-current.geojson",
+        "public/geojson/mumbai-water-bodies-current.geojson",
+        "public/geojson/chennai-industrial-zones.geojson",
+        "public/geojson/mumbai-drainage.geojson",
+        "public/geojson/mumbai-corporations-2024.geojson",
+        "public/geojson/delhi-rivers.geojson",
+        "public/geojson/delhi-water-bodies-current.geojson",
+        "public/geojson/delhi-drainage.geojson",
+        "public/data/industrial-sources-delhi.json",
+        "public/data/delhi-ward-profiles.json",
+        "public/data/cascade",
+        "public/data/madurai-ward-profiles.json",
+        "public/data/restoration-priority-madurai.json",
+        "public/data/restoration-priority-madurai-legacy.json",
+        "public/data/ward-risk-madurai.json",
+        "public/geojson/madurai-water-bodies-lost.geojson",
+        "public/data/restoration-priority.json",
+        "public/data/ward-profiles.json",
+        "public/geojson/chennai-coastal-zones.geojson",
+        "public/geojson/rich-bodies",
+        "public/data/rich-bodies/pallikaranai-boundary-analysis.json",
+        "public/geojson/bangalore-water-bodies-current.geojson",
+        "public/data/bangalore-ward-profiles.json",
+        "public/data/ward-risk-bangalore.json",
+        "public/data/restoration-priority-bangalore.json",
+        "public/geojson/mumbai-coastal-zones.geojson",
+        "public/data/industrial-sources-mumbai.json"
+      ],
+      "refreshMethod": "per-city fetch-*-osm-*.ts scripts (Overpass extracts)",
+      "notes": "Continuously edited; no editions to detect (NVDM per-source rule 2026-07-30: registered for lineage/licence accountability; formerly 13 UNWATCHED allowlist lines). Re-fetch cadence is a freshness question (P5-1)."
+    },
+    {
+      "id": "google-dynamic-world",
+      "scope": "platform",
+      "publisher": "Google / World Resources Institute",
+      "url": "https://dynamicworld.app/",
+      "license": "CC BY 4.0",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/rich-bodies",
+        "public/geojson/rich-bodies",
+        "public/data/cascade"
+      ],
+      "refreshMethod": "neer-vazhvu-api/app/gee + app/cascade/encroachment.py (GEE collection)",
+      "notes": "Rolling GEE collection, no editions (formerly allowlist-only per platform _doc). Registered 2026-07-30 for NVDM lineage."
+    },
+    {
+      "id": "sentinel-2-l2a",
+      "scope": "platform",
+      "publisher": "ESA Copernicus",
+      "url": "https://dataspace.copernicus.eu/",
+      "license": "Copernicus free and open data, attribution required",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/cascade",
+        "public/data/rich-bodies",
+        "public/data/restoration-priority-madurai.json",
+        "public/data/restoration-priority-madurai-legacy.json",
+        "public/geojson/chennai-coastal-transects.geojson",
+        "public/geojson/mumbai-coastal-transects.geojson"
+      ],
+      "refreshMethod": "neer-vazhvu-api/app/cascade/channels.py + gee imagery chips",
+      "notes": "Continuous acquisition; channel evidence + rich-body imagery. Registered 2026-07-30 for NVDM lineage."
+    },
+    {
+      "id": "usgs-landsat",
+      "scope": "platform",
+      "publisher": "USGS / NASA (Landsat program)",
+      "url": "https://www.usgs.gov/landsat-missions",
+      "license": "USGS public domain, courtesy attribution",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/rich-bodies",
+        "public/geojson/chennai-coastal-transects.geojson",
+        "public/geojson/mumbai-coastal-transects.geojson"
+      ],
+      "refreshMethod": "neer-vazhvu-api/app/gee/coastline.py + scripts/ingest_rich_body_imagery.py (GEE Landsat 5/7/8 collections)",
+      "notes": "Continuous acquisition archive, no editions; the long-run arm of the shoreline MNDWI series (1990-2011 epochs) and the historical rich-body imagery chips. Registered 2026-07-30 (NVDM Chennai migration) so Landsat-derived artifacts can cite a registry id for lineage/licence instead of an unregistered living source."
+    },
+    {
+      "id": "wris-live-services",
+      "scope": "platform",
+      "publisher": "CGWB / NWIC via India-WRIS",
+      "url": "https://arc.indiawris.gov.in/",
+      "license": "GoI open publication, cited with attribution",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/gw-stations-madurai.json",
+        "public/data/madurai-cgwb-stations.json",
+        "public/data/gw-stations.json",
+        "public/data/ward-risk-madurai.json",
+        "public/data/delhi-cgwb-stations.json",
+        "public/data/delhi-ward-profiles.json",
+        "public/data/bangalore-cgwb-stations.json",
+        "public/data/bangalore-ward-profiles.json"
+      ],
+      "refreshMethod": "scripts/fetch-wris-groundwater-madurai.ts (+ per-city WRIS scripts; DB series via telemetry jobs)",
+      "notes": "Live NWIC ArcGIS services (GroundwaterLevel_Stations etc.). Continuous API - freshness-tracked. Registered 2026-07-30, replacing a gw-stations allowlist line and a false IN-GRES attribution."
+    },
+    {
+      "id": "imd-gridded-rain",
+      "scope": "platform",
+      "publisher": "India Meteorological Department",
+      "url": "https://www.imdpune.gov.in/",
+      "license": "GoI publication, cited with attribution",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/imd-rainfall-monthly-bangalore.json",
+        "public/data/imd-rainfall-monthly-delhi.json",
+        "public/data/imd-rainfall-monthly-madurai.json",
+        "public/data/imd-rainfall-monthly-mumbai.json",
+        "public/data/imd-rainfall-monthly.json",
+        "public/data/rainfall-recent-bangalore.json",
+        "public/data/rainfall-recent-chennai.json",
+        "public/data/rainfall-recent-delhi.json",
+        "public/data/rainfall-recent-madurai.json",
+        "public/data/rainfall-recent-mumbai.json",
+        "public/data/cascade"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py + IMD grid extraction (quarterly refresh workflow)",
+      "notes": "IMD gridded/district rainfall products, updated continuously; artifacts refresh on schedule. Registered 2026-07-30 for NVDM lineage."
+    },
+    {
+      "id": "open-meteo-archive",
+      "scope": "platform",
+      "publisher": "Open-Meteo",
+      "url": "https://open-meteo.com/",
+      "license": "CC BY 4.0",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 3,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/rainfall-recent-bangalore.json",
+        "public/data/rainfall-recent-chennai.json",
+        "public/data/rainfall-recent-delhi.json",
+        "public/data/rainfall-recent-madurai.json",
+        "public/data/rainfall-recent-mumbai.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py (daily workflow)",
+      "notes": "ERA5-family reanalysis daily precipitation - the PROVISIONAL fill after IMD's last published gridded month (see each artifact's provisional_note). Registered 2026-07-30 when the envelope's IMD-only attribution was found incomplete against the producer's own source key."
+    },
+    {
+      "id": "merit-hydro",
+      "scope": "platform",
+      "publisher": "Yamazaki Lab, University of Tokyo",
+      "url": "http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/",
+      "license": "dual: CC BY-NC 4.0 or ODbL 1.0 - which licence our trace used is UNRECORDED (see pipeline-inputs/INVENTORY.md); presume non-commercial until verified",
+      "type": "page",
+      "cadence": "episodic (versioned releases)",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "pipeline-inputs/chennai-reservoir-catchments.geojson"
+      ],
+      "refreshMethod": "manual (re-run the upstream trace against a new MERIT release; catchment candidates are curated)",
+      "notes": "Registered 2026-07-30 round-2 review: the reservoir-catchments candidates use a MERIT Hydro upstream trace that had no registry lineage (INVENTORY had wrongly credited FABDEM). Unbaselined until first --accept."
+    },
+    {
+      "id": "cpcb-prs-report",
+      "scope": "platform",
+      "publisher": "CPCB",
+      "url": "https://cpcb.gov.in/polluted-river-stretches/",
+      "license": "GoI publication, cited with attribution",
+      "type": "page",
+      "cadence": "~2-3 yearly",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/river-quality-bangalore.json",
+        "public/data/basins/arkavathi/prs.json",
+        "public/docs/cpcb-polluted-river-stretches-oct-2025.pdf",
+        "public/data/facts-mumbai.json"
+      ],
+      "refreshMethod": "manual (scripts/build_prs.py against the mirrored PDF)",
+      "notes": "MOVED to platform scope 2026-07-31 (#220 review): a national CPCB report whose dependsOn spans Bangalore, the Arkavathi basin pack, the mirrored PDF and the Mumbai facts register - a city-scope entry misfiled cross-city lineage. Polluted River Stretches for Restoration of Water Quality - the BOD-band Priority I-V classification behind the Arkavathi atlas, the Bengaluru stretch classes, the Chennai Cooum/Adyar Priority I status and the Mumbai 'Mithi at Mahim is India's worst stretch' fact. The Oct 2025 edition is mirrored at public/docs/cpcb-polluted-river-stretches-oct-2025.pdf. WHY page-hash and not link-set: the landing page exposes no report hrefs at all - only CPCB's site-wide boilerplate PDFs (verified 2026-07-26) - and the report itself was published behind an openpdffile.php id that has since expired (it now returns a 146-byte HTML error mislabelled application/pdf). Expect page-hash to be noisier than link-set; tighten with a selector if it false-positives. Host note: cpcb.gov.in, never the NICNET cpcb DOT nic DOT in - see cpcb-nwmp-annual.",
+      "lastSeen": {
+        "pageHash": "2bc5474c47902288",
         "acceptedOn": "2026-07-26"
       }
     }

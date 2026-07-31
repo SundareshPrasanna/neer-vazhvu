@@ -1,4 +1,52 @@
 {
+  "nvdm": "1.0",
+  "dataset": "cascade/cascades-documented",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "fabdem-dem",
+        "title": "FABDEM v1-2 30 m bare-earth DEM",
+        "publisher": "University of Bristol (Hawker et al.), via GEE sat-io",
+        "license": "CC BY-NC-SA 4.0 (non-commercial)",
+        "role": "input"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "hydrosheds-basins",
+        "title": "HydroSHEDS basin boundaries",
+        "publisher": "WWF / HydroSHEDS",
+        "license": "HydroSHEDS licence (attribution required)",
+        "role": "input"
+      },
+      {
+        "id": "sentinel-2-l2a",
+        "title": "Sentinel-2 L2A imagery (channel evidence)",
+        "publisher": "ESA Copernicus",
+        "license": "Copernicus free and open data, attribution required",
+        "role": "input"
+      },
+      {
+        "id": "google-dynamic-world",
+        "title": "Google Dynamic World built-up classification",
+        "publisher": "Google / World Resources Institute",
+        "license": "CC BY 4.0",
+        "role": "input"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-07-26",
+    "note": "Derived by the cascade reconstruction pipeline (neer-vazhvu-api/app/cascade). FABDEM input makes this family CC BY-NC-SA (non-commercial) encumbered - recorded in the fabdem-dem registry entry, 2026-07-30. Layer B named-cascade documentation is internal Neer Vazhvu curation over the auto topology; its own _sources_of_truth key (CMDA Second Master Plan, Care Earth Trust, Citizen Matters, dated press) carries the per-cascade citations - lineage, not an upstream source."
+  },
   "district_id": "chennai",
   "schema_version": "v1",
   "note": "Hand-curated, source-cited documented cascade chains for Chennai. Each chain has an ordered tank list (with OSM IDs resolved where the current OpenStreetMap extract carries the name) and a directed edge set drawn from the cited source. Used by the cascade health scorer at neer-vazhvu-api/app/cascade/health.py to enrich auto-derived cascades. Tanks with osm_id=null could not be matched against the OSM extract under any of the searched name variants and are interpreted by the scorer as a 'missing from OSM' signal contributing to the cascade's fragility score.",
@@ -28,15 +76,52 @@
         "url": "https://cmwssb.tn.gov.in/"
       },
       "tanks_in_order": [
-        { "name": "Poondi Reservoir (Sathyamoorty Sagar)", "osm_id": null, "category": "reservoir", "notes": "1944; OSM may carry under alias Sathyamoorty Sagar. Not resolved in current extract." },
-        { "name": "Cholavaram Lake", "osm_id": null, "category": "reservoir", "notes": "Lake polygon not surfaced in current extract; Cholavaram airstrip dominates the name match." },
-        { "name": "Red Hills Reservoir (Puzhal)", "osm_id": 25394157, "area_ha": 1945.47, "category": "reservoir" },
-        { "name": "Chembarambakkam Lake", "osm_id": 25453624, "area_ha": 2000.44, "category": "reservoir", "is_terminal": true, "notes": "Treated water leaves via Kilpauk distribution shaft, not the polygon itself." }
+        {
+          "name": "Poondi Reservoir (Sathyamoorty Sagar)",
+          "osm_id": null,
+          "category": "reservoir",
+          "notes": "1944; OSM may carry under alias Sathyamoorty Sagar. Not resolved in current extract."
+        },
+        {
+          "name": "Cholavaram Lake",
+          "osm_id": null,
+          "category": "reservoir",
+          "notes": "Lake polygon not surfaced in current extract; Cholavaram airstrip dominates the name match."
+        },
+        {
+          "name": "Red Hills Reservoir (Puzhal)",
+          "osm_id": 25394157,
+          "area_ha": 1945.47,
+          "category": "reservoir"
+        },
+        {
+          "name": "Chembarambakkam Lake",
+          "osm_id": 25453624,
+          "area_ha": 2000.44,
+          "category": "reservoir",
+          "is_terminal": true,
+          "notes": "Treated water leaves via Kilpauk distribution shaft, not the polygon itself."
+        }
       ],
       "edges": [
-        { "from_index": 0, "to_index": 1, "link_type": "engineered", "notes": "Poondi Canal (1972), replaced by closed pipeline c. 2008-09." },
-        { "from_index": 1, "to_index": 2, "link_type": "engineered", "notes": "4 km lower gravity supply channel (1870)." },
-        { "from_index": 2, "to_index": 3, "link_type": "engineered", "notes": "Connecting infrastructure; partially routed through Kilpauk shafts." }
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "engineered",
+          "notes": "Poondi Canal (1972), replaced by closed pipeline c. 2008-09."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "engineered",
+          "notes": "4 km lower gravity supply channel (1870)."
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "engineered",
+          "notes": "Connecting infrastructure; partially routed through Kilpauk shafts."
+        }
       ]
     },
     {
@@ -58,13 +143,39 @@
         "url": "https://urbanacres.in/chennai-water-diversion-project-from-ambattur-lake-advances/"
       },
       "tanks_in_order": [
-        { "name": "Ambattur Lake", "osm_id": 25391800, "area_ha": 161.78, "category": "urban" },
-        { "name": "Korattur Lake", "osm_id": 25474612, "area_ha": 197.03, "category": "urban" },
-        { "name": "Retteri Lake (Madhavaram)", "osm_id": 25474749, "area_ha": 94.98, "category": "urban", "is_terminal": true, "notes": "Drains onward via Otteri Nullah + Lucas TVS canal." }
+        {
+          "name": "Ambattur Lake",
+          "osm_id": 25391800,
+          "area_ha": 161.78,
+          "category": "urban"
+        },
+        {
+          "name": "Korattur Lake",
+          "osm_id": 25474612,
+          "area_ha": 197.03,
+          "category": "urban"
+        },
+        {
+          "name": "Retteri Lake (Madhavaram)",
+          "osm_id": 25474749,
+          "area_ha": 94.98,
+          "category": "urban",
+          "is_terminal": true,
+          "notes": "Drains onward via Otteri Nullah + Lucas TVS canal."
+        }
       ],
       "edges": [
-        { "from_index": 0, "to_index": 1, "link_type": "mixed", "notes": "Original surplus channel; now hybrid with engineered drain components." },
-        { "from_index": 1, "to_index": 2, "link_type": "mixed" }
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "mixed",
+          "notes": "Original surplus channel; now hybrid with engineered drain components."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "mixed"
+        }
       ]
     },
     {
@@ -86,21 +197,89 @@
         "url": "https://www.nature.org/en-us/about-us/where-we-work/india/our-priorities/lake-sembakkam/"
       },
       "tanks_in_order": [
-        { "name": "Pachamalai Hills (runoff source)", "osm_id": null, "category": "watershed_origin", "is_inflow_origin": true },
-        { "name": "Chitlapakkam Lake", "osm_id": 23648229, "area_ha": 21.46, "category": "peri-urban" },
-        { "name": "Sembakkam Lake", "osm_id": 26433707, "area_ha": 35.07, "category": "peri-urban", "notes": "Receives Selaiyur tributary; WRD cut-and-cover drain currently replaces a lost natural channel." },
-        { "name": "Selaiyur Lake (tributary)", "osm_id": 28260577, "area_ha": 32.28, "category": "peri-urban", "is_tributary": true },
-        { "name": "Nanmangalam Lake", "osm_id": 28260431, "area_ha": 39.58, "category": "peri-urban" },
-        { "name": "Keelkattalai Lake", "osm_id": 13671410, "area_ha": 24.52, "category": "peri-urban" },
-        { "name": "Pallikaranai Marsh", "osm_id": 154089347, "area_ha": 0.79, "category": "marsh", "is_terminal": true, "notes": "OSM polygon 154089347 is only one fragment ('Thamarai Kulam'); the full Ramsar relation is OSM relation 15046539 and totals ~700 ha residual from ~2650 ha historical." }
+        {
+          "name": "Pachamalai Hills (runoff source)",
+          "osm_id": null,
+          "category": "watershed_origin",
+          "is_inflow_origin": true
+        },
+        {
+          "name": "Chitlapakkam Lake",
+          "osm_id": 23648229,
+          "area_ha": 21.46,
+          "category": "peri-urban"
+        },
+        {
+          "name": "Sembakkam Lake",
+          "osm_id": 26433707,
+          "area_ha": 35.07,
+          "category": "peri-urban",
+          "notes": "Receives Selaiyur tributary; WRD cut-and-cover drain currently replaces a lost natural channel."
+        },
+        {
+          "name": "Selaiyur Lake (tributary)",
+          "osm_id": 28260577,
+          "area_ha": 32.28,
+          "category": "peri-urban",
+          "is_tributary": true
+        },
+        {
+          "name": "Nanmangalam Lake",
+          "osm_id": 28260431,
+          "area_ha": 39.58,
+          "category": "peri-urban"
+        },
+        {
+          "name": "Keelkattalai Lake",
+          "osm_id": 13671410,
+          "area_ha": 24.52,
+          "category": "peri-urban"
+        },
+        {
+          "name": "Pallikaranai Marsh",
+          "osm_id": 154089347,
+          "area_ha": 0.79,
+          "category": "marsh",
+          "is_terminal": true,
+          "notes": "OSM polygon 154089347 is only one fragment ('Thamarai Kulam'); the full Ramsar relation is OSM relation 15046539 and totals ~700 ha residual from ~2650 ha historical."
+        }
       ],
       "edges": [
-        { "from_index": 0, "to_index": 1, "link_type": "natural", "notes": "Surface runoff from Pachamalai hills." },
-        { "from_index": 1, "to_index": 2, "link_type": "mixed", "notes": "Now via cut-and-cover drain; original natural channel encroached." },
-        { "from_index": 3, "to_index": 2, "link_type": "natural", "notes": "Selaiyur surplus into Sembakkam." },
-        { "from_index": 2, "to_index": 4, "link_type": "engineered", "notes": "Recent WRD restoration; ~90% complete 2024." },
-        { "from_index": 4, "to_index": 5, "link_type": "natural" },
-        { "from_index": 5, "to_index": 6, "link_type": "natural", "notes": "Discharges into Pallikaranai marsh complex." }
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "natural",
+          "notes": "Surface runoff from Pachamalai hills."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "mixed",
+          "notes": "Now via cut-and-cover drain; original natural channel encroached."
+        },
+        {
+          "from_index": 3,
+          "to_index": 2,
+          "link_type": "natural",
+          "notes": "Selaiyur surplus into Sembakkam."
+        },
+        {
+          "from_index": 2,
+          "to_index": 4,
+          "link_type": "engineered",
+          "notes": "Recent WRD restoration; ~90% complete 2024."
+        },
+        {
+          "from_index": 4,
+          "to_index": 5,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 5,
+          "to_index": 6,
+          "link_type": "natural",
+          "notes": "Discharges into Pallikaranai marsh complex."
+        }
       ]
     },
     {
@@ -120,13 +299,40 @@
       "court_anchor": null,
       "restoration_anchor": null,
       "tanks_in_order": [
-        { "name": "Stanley Reservoir (Mettur)", "osm_id": null, "category": "dam", "is_inflow_origin": true, "notes": "Outside Chennai-district OSM extract; on Cauvery." },
-        { "name": "Veeranam Lake (Cuddalore district)", "osm_id": null, "category": "reservoir", "notes": "Outside Chennai-district OSM extract; OSM way 82611270 per external lookup." },
-        { "name": "Porur distribution station", "osm_id": null, "category": "treatment_plant", "is_terminal": true, "notes": "Chennai-end break-pressure + distribution; not a tank." }
+        {
+          "name": "Stanley Reservoir (Mettur)",
+          "osm_id": null,
+          "category": "dam",
+          "is_inflow_origin": true,
+          "notes": "Outside Chennai-district OSM extract; on Cauvery."
+        },
+        {
+          "name": "Veeranam Lake (Cuddalore district)",
+          "osm_id": null,
+          "category": "reservoir",
+          "notes": "Outside Chennai-district OSM extract; OSM way 82611270 per external lookup."
+        },
+        {
+          "name": "Porur distribution station",
+          "osm_id": null,
+          "category": "treatment_plant",
+          "is_terminal": true,
+          "notes": "Chennai-end break-pressure + distribution; not a tank."
+        }
       ],
       "edges": [
-        { "from_index": 0, "to_index": 1, "link_type": "engineered", "notes": "Cauvery river + Kollidam + Lower Anicut + Vadavar Canal." },
-        { "from_index": 1, "to_index": 2, "link_type": "engineered", "notes": "230 km MS pipeline (1500-1875 mm diameter); commissioned 2004." }
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "engineered",
+          "notes": "Cauvery river + Kollidam + Lower Anicut + Vadavar Canal."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "engineered",
+          "notes": "230 km MS pipeline (1500-1875 mm diameter); commissioned 2004."
+        }
       ]
     }
   ]

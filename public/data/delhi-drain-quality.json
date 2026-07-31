@@ -1,4 +1,32 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/drain-quality",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "dpcc-monthly-analysis-delhi",
+        "title": "DPCC monthly analysis reports (river Yamuna, drains, STPs)",
+        "publisher": "Delhi Pollution Control Committee (I/C Water Laboratory)",
+        "license": "GNCTD publication, cited with attribution",
+        "retrieved": "2026-07-26"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-26",
+    "internal_inputs": [
+      "public/data/dpcc-monthly-wq-delhi.json"
+    ],
+    "produced_by": "neer-vazhvu-api/scripts/extract_delhi_drain_quality.py",
+    "note": "Parsed from the embedded text layer of DPCC's analysis-report PDFs (scanner-quality text, records reconstructed from word positions - see _extraction; implausible values dropped rather than published). The parser validates against the hand-transcribed months in dpcc-monthly-wq-delhi.json, hence the internal input.",
+    "conventions": {
+      "no_flow": "A trapped drain reads NO FLOW, captured as `no_flow` rather than as a missing value - it is the verification signal for the 39-drain trapping commitment, not absent data",
+      "coverage": "DPCC's listing is a rolling ~3-month window with NO archive anywhere (_coverage_limit); the series grows forward one month at a time and missed months are unrecoverable"
+    }
+  },
   "_note": "DPCC monthly drain water-quality tables, parsed from the embedded text layer of the Committee's analysis-report PDFs. The drain network is the verification instrument for the commitment to trap all 39 major drains by 30 June 2026: a trapped drain reads NO FLOW, which is captured here as `no_flow` rather than as a missing value.",
   "_coverage_limit": "There is NO deep archive. DPCC's listing carries a rolling window of about three months, OpenCity mirrors only the CETP datasets, and the Wayback Machine has zero captures of the analysis-report directory or the listing page. The historical series was never archived by anyone and cannot be recovered; this grows forward one month at a time, which is why the Headwaters registry watches the listing.",
   "_extraction": "These PDFs carry an embedded text layer, so no OCR is needed - but it is scanner-quality ('Tod' for 100, stray spaces inside numbers), and the reports have no ruled table. Records span two or three physical lines and are reconstructed from word positions, with the value columns derived per page from that page's own header row because the three sections differ in layout. Implausible values are dropped rather than published.",

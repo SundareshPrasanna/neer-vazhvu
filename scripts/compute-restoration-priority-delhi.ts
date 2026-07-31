@@ -23,8 +23,9 @@
  * monument coordinates).
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
 import { join } from "path";
+import { writeArtifact } from "./lib/nvdm-write";
 
 const root = process.cwd();
 
@@ -201,7 +202,7 @@ function main() {
     river_sections: [] as never[],
   };
 
-  writeFileSync(join(root, "public/data/restoration-priority-delhi.json"), JSON.stringify(out, null, 1));
+  writeArtifact(join(root, "public/data/restoration-priority-delhi.json"), out);
   console.log(`scored ${scored.length} bodies`);
   for (const s of scored.slice(0, 6)) {
     console.log(`  ${s.priority_score} (${s.priority_level}) - ${s.name} [${s.source}]`);

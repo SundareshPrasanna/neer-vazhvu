@@ -31,6 +31,7 @@ from shapely.geometry import shape
 from shapely.strtree import STRtree
 
 from app.cascade.districts import DistrictCascadeConfig
+from app.nvdm_io import merge_envelope
 
 OVERTURE_BUCKET = "overturemaps-us-west-2"
 OVERTURE_REGION = "us-west-2"
@@ -170,8 +171,10 @@ def enrich_catchments(district: DistrictCascadeConfig) -> dict[str, Any]:
         s = stats_by_id.get(f["properties"]["osm_id"])
         if s:
             f["properties"].update(s)
-    district.cascade_lakes_geojson_path().write_text(
-        json.dumps(lakes, ensure_ascii=False) + "\n", encoding="utf-8"
+    lakes_out = district.cascade_lakes_geojson_path()
+    lakes_out.write_text(
+        json.dumps(merge_envelope(lakes_out, lakes), ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
 
     nonzero = sum(1 for s in stats_by_id.values() if s["buildings_in_catchment"])

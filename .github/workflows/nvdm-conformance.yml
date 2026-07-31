@@ -3,13 +3,14 @@ name: NVDM conformance
 # Guards the machine-readable arm of the NVDM data-model standard
 # (schemas/nvdm/ + the dataset catalogue). Three checks:
 #   1. Validator selftest - the schemas and rules keep rejecting what they
-#      must reject (11 checks incl. adversarial probes from review).
+#      must reject (29 checks incl. adversarial probes from four review
+#      rounds and the L2 gate selector regressions).
 #   2. Catalogue + conformance-report freshness - the committed outputs match
 #      the tree (same pattern as the ward-profiles.json CI gate). Regenerate
 #      with: python3 scripts/build_dataset_catalogue.py && python3 scripts/validate_nvdm.py
-#   3. L2 envelope gate on NEWLY ADDED data artifacts - ADVISORY (warns, does
-#      not block) until NVDM v1 is accepted; flips to enforcing then.
-#      See schemas/nvdm/README.md.
+#   3. L2 envelope gate on NEWLY ADDED data artifacts - ENFORCING since NVDM
+#      v1 acceptance (2026-07-30): a new artifact below L2 fails the PR.
+#      Legacy files stay report-only. See schemas/nvdm/README.md.
 
 on:
   pull_request:
@@ -20,6 +21,7 @@ on:
       - 'schemas/nvdm/**'
       - 'scripts/build_dataset_catalogue.py'
       - 'scripts/validate_nvdm.py'
+      - 'scripts/nvdm-l2-gate.sh'
       - 'scripts/source-registry/**'
       - 'src/lib/cities/data-paths.ts'
       - 'src/lib/water-bodies/rich-body-registry.ts'
@@ -53,20 +55,10 @@ jobs:
           python3 scripts/validate_nvdm.py
           git diff --exit-code docs/architecture/nvdm-conformance.md
 
-      - name: L2 gate on newly added data artifacts (advisory until NVDM v1 acceptance)
+      - name: L2 gate on new/renamed-in data artifacts (ENFORCING - NVDM v1 accepted 2026-07-30)
         if: github.event_name == 'pull_request'
-        continue-on-error: true
         run: |
-          BASE="${{ github.event.pull_request.base.sha }}"
-          NEW=$(git diff --name-only --diff-filter=A "$BASE"...HEAD -- \
-            'public/data/**/*.json' 'public/data/**/*.geojson' 'public/geojson/**' || true)
-          if [ -z "$NEW" ]; then
-            echo "No new data artifacts in this PR."
-            exit 0
-          fi
-          echo "New data artifacts:"; echo "$NEW"
-          # shellcheck disable=SC2086
-          if ! python3 scripts/validate_nvdm.py --check $NEW; then
-            echo "::warning title=NVDM L2::New data artifacts are below NVDM L2 (no envelope). Advisory until NVDM v1 is accepted - envelope them now to avoid migration debt. See schemas/nvdm/README.md."
+          if ! bash scripts/nvdm-l2-gate.sh "${{ github.event.pull_request.base.sha }}"; then
+            echo "::error title=NVDM L2::New or renamed-in data artifacts must carry a valid NVDM envelope (L2). NVDM v1 is accepted and this gate is enforcing. See schemas/nvdm/README.md."
             exit 1
           fi

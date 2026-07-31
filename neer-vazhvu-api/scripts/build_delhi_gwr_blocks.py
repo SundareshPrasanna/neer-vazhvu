@@ -29,11 +29,14 @@ import csv
 import io
 import json
 import re
+import sys
 import urllib.request
 from datetime import date
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 
 CSV_2025 = "https://data.opencity.in/dataset/3e28a58b-22d4-4f6a-89ac-9738693eb745/resource/8e39cc66-06a4-417b-8a4f-dbd4a9495ed6/download"
 CSV_2024 = "https://data.opencity.in/dataset/0e2e0a1c-649c-4139-a6ed-a251f7ffca85/resource/2c3acb4f-807d-48a3-bc67-b0ecc516fd57/download"
@@ -230,9 +233,7 @@ def main() -> None:
         },
         "features": features,
     }
-    (REPO / "public/geojson/delhi-gwr-blocks.geojson").write_text(
-        json.dumps(geo, separators=(",", ":"))
-    )
+    write_artifact(REPO / "public/geojson/delhi-gwr-blocks.geojson", geo, compact=True)
 
     blocks = []
     for k, rec in sorted(a2025.items(), key=lambda kv: kv[1]["name"]):
@@ -289,9 +290,7 @@ def main() -> None:
         "note": "'Nazul Land' is a non-spatial assessment unit (government estate lands) - in this file but not on the map. Values in hectare-metres.",
         "blocks": blocks,
     }
-    (REPO / "public/data/gwr-blocks-delhi.json").write_text(
-        json.dumps(payload, indent=1)
-    )
+    write_artifact(REPO / "public/data/gwr-blocks-delhi.json", payload)
     data = blocks
 
     oe = [

@@ -1,4 +1,46 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/ward-risk",
+  "scope": {
+    "kind": "city",
+    "id": "madurai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "title": "Madurai ward boundaries 2022 (delimitation KML)",
+        "publisher": "GoTN / Madurai Municipal Corporation",
+        "license": "GoTN delimitation record, cited with attribution",
+        "role": "input",
+        "closed": true,
+        "as_of": "2022"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "wris-live-services",
+        "title": "India-WRIS groundwater levels via Supabase groundwater_wris_latest (depth_to_water_m; the only groundwater input)",
+        "publisher": "CGWB / NWIC via India-WRIS",
+        "license": "GoI open publication, cited with attribution",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-05-06",
+    "internal_inputs": [
+      "public/geojson/madurai-wards-2022.geojson",
+      "public/geojson/madurai-water-bodies-current.geojson",
+      "public/data/madurai-ward-profiles.json",
+      "public/data/restoration-priority-madurai.json",
+      "public/data/water-bodies-flagship-madurai.json"
+    ],
+    "produced_by": "scripts/compute-madurai-ward-risk.ts"
+  },
   "place_id": "madurai",
   "generated_at": "2026-05-06",
   "algorithm_version": "madurai-risk-v1-3factor",

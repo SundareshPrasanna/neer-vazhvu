@@ -68,7 +68,12 @@ async function fetchLocalities(): Promise<void> {
   const res = await fetch(OVERPASS_URL, {
     method: "POST",
     body: new URLSearchParams({ data: QUERY }),
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      // Overpass usage policy asks clients to identify themselves; anonymous
+      // requests started returning 406 Not Acceptable.
+      "User-Agent": "NeerVazhvu/1.0 (contact@neervazhvu.org)",
+    },
   });
   if (!res.ok) throw new Error(`Overpass API error: ${res.status}`);
   const data: OsmResponse = await res.json();

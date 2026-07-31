@@ -26,6 +26,7 @@ from app.cascade.districts import (
     CASCADE_TILE_DIR,
     DistrictCascadeConfig,
 )
+from app.nvdm_io import merge_envelope
 
 
 # Bumped whenever the publish-stage output schema changes. Pure metadata
@@ -137,14 +138,19 @@ def write_geojson(
     nodes_path = district.cascade_nodes_geojson_path()
     edges_path = district.cascade_edges_geojson_path()
     outlets_path = district.cascade_river_outlets_geojson_path()
+    # merge_envelope: keep the NVDM envelope of the committed artifact (a
+    # rerun must not strip governance - #220 review repro).
     nodes_path.write_text(
-        json.dumps(nodes_fc, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(merge_envelope(nodes_path, nodes_fc), ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
     edges_path.write_text(
-        json.dumps(edges_fc, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(merge_envelope(edges_path, edges_fc), ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
     outlets_path.write_text(
-        json.dumps(outlets_fc, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(merge_envelope(outlets_path, outlets_fc), ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
 
     return {
@@ -315,7 +321,8 @@ def write_stats_manifest(district: DistrictCascadeConfig) -> dict[str, Any]:
 
     stats_path = district.cascade_stats_json_path()
     stats_path.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+        json.dumps(merge_envelope(stats_path, payload), indent=2, ensure_ascii=False)
+        + "\n",
         encoding="utf-8",
     )
     return {
@@ -347,7 +354,8 @@ def write_systems_manifest(
     }
     manifest_path = district.cascade_systems_json_path()
     manifest_path.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+        json.dumps(merge_envelope(manifest_path, payload), indent=2, ensure_ascii=False)
+        + "\n",
         encoding="utf-8",
     )
     return {"manifest_path": str(manifest_path)}

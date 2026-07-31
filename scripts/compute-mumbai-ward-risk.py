@@ -25,7 +25,8 @@ first run):
   public/geojson/mumbai-wards-2023.geojson
   public/data/mumbai-flood-hotspots.geojson
   public/geojson/mumbai-rivers.geojson
-  public/geojson/mumbai-slum-clusters.geojson  (DataMeet, ODbL)
+  public/geojson/mumbai-slum-clusters.geojson  (DataMeet, CC BY-SA 2.5 IN per
+  the Mumbai folder Readme; fetched on first run, not committed)
 
 Run: python scripts/compute-mumbai-ward-risk.py
 """
@@ -39,6 +40,8 @@ import sys
 import urllib.request
 from collections import Counter
 from pathlib import Path
+
+from nvdm_write import write_artifact
 
 REPO = Path(__file__).resolve().parent.parent
 WARDS = REPO / "public" / "geojson" / "mumbai-wards-2023.geojson"
@@ -303,7 +306,9 @@ def main() -> int:
         ),
         "wards": sorted(rows, key=lambda r: r["ward_number"] or 0),
     }
-    OUT.write_text(json.dumps(out, indent=2, ensure_ascii=False))
+    # Envelope-preserving write (scripts/nvdm_write.py): keeps the NVDM
+    # envelope injected by the migration so a rerun cannot strip it.
+    write_artifact(OUT, out)
     print(f"Wrote {len(rows)} wards -> {OUT}", flush=True)
     print(f"  grades: {dict(Counter(r['grade'] for r in rows))}", flush=True)
     worst = sorted(rows, key=lambda r: -r["composite_score"])[:6]

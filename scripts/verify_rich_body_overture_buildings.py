@@ -12,7 +12,7 @@ Anomaly detection: when re-running this script (e.g. on a quarterly
 cron after a new Overture release), the new count is delta-checked
 against the previous JSON. If any zone's building count changes by
 more than ANOMALY_DELTA_PCT, the script exits non-zero AND writes
-the new JSON to a *.candidate.json file instead of overwriting the
+the new payload to review-candidates/ instead of overwriting the
 canonical path - so a CI workflow can fail loudly and require human
 review before publication.
 
@@ -29,6 +29,8 @@ import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+from nvdm_write import write_artifact
 
 import duckdb
 from shapely.ops import unary_union
@@ -210,12 +212,18 @@ def main():
     }
 
     out_path = ROOT / "public/data/rich-bodies" / f"{body_id}-overture-buildings.json"
-    candidate_path = out_path.with_suffix(".candidate.json")
+    # Review candidates live OUTSIDE public/ (round-4 review: anything under
+    # public/ is statically served regardless of extension - a suffix trick
+    # kept it out of the catalogue but not out of serving). Acceptance =
+    # move the file over the canonical path (envelope already inherited).
+    candidate_dir = ROOT / "review-candidates"
+    candidate_dir.mkdir(exist_ok=True)
+    candidate_path = candidate_dir / f"{body_id}-overture-buildings.candidate.json"
 
     # Anomaly detection: compare against the previously published JSON
     anomalies = _detect_anomalies(out_path, payload, args.anomaly_pct)
     if anomalies:
-        candidate_path.write_text(json.dumps(payload, indent=2))
+        write_artifact(candidate_path, payload, envelope_from=out_path)
         print(f"\n!! ANOMALY DETECTED in {len(anomalies)} zone(s):")
         for a in anomalies:
             print(
@@ -224,10 +232,12 @@ def main():
             )
         print(f"\nWrote candidate to {candidate_path}")
         print(f"Canonical {out_path.name} NOT overwritten - human review required.")
-        print(f"To accept: mv {candidate_path.name} {out_path.name}")
+        rel_cand = candidate_path.relative_to(ROOT)
+        rel_out = out_path.relative_to(ROOT)
+        print(f"To accept: mv {rel_cand} {rel_out} && git add -A")
         sys.exit(2)
 
-    out_path.write_text(json.dumps(payload, indent=2))
+    write_artifact(out_path, payload)
     # Clean up any stale candidate file from a previous failed run
     if candidate_path.exists():
         candidate_path.unlink()

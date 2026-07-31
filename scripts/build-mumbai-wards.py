@@ -13,13 +13,19 @@ expect (ward_no, ward_name, with ward_code + ward_label extras) and attach
 each ward's well-known primary locality so the map/tooltip reads as a
 Mumbaikar would name the ward, not "Ward 17".
 
-Source (ODbL): https://github.com/datameet/Municipal_Spatial_Data (Mumbai/)
+Source: https://github.com/datameet/Municipal_Spatial_Data (Mumbai/), licensed
+CC BY-SA 2.5 IN per the Mumbai folder Readme (the repo default is CC BY 4.0
+"unless explicitly stated"; verified 2026-07-30 - an earlier ODbL claim here
+was wrong).
 Run:  python scripts/build-mumbai-wards.py
 """
 
 import json
 import sys
 import urllib.request
+from pathlib import Path
+
+from nvdm_write import write_artifact
 
 SRC_URL = (
     "https://raw.githubusercontent.com/datameet/Municipal_Spatial_Data/"
@@ -103,12 +109,13 @@ def main() -> int:
     out = {
         "type": "FeatureCollection",
         "name": "mumbai-wards",
-        "_provenance": "DataMeet Municipal_Spatial_Data/Mumbai (ODbL); "
-        "24 BMC administrative wards.",
+        "_provenance": "DataMeet Municipal_Spatial_Data/Mumbai (CC BY-SA 2.5 IN "
+        "per the Mumbai folder Readme); 24 BMC administrative wards.",
         "features": sorted(out_feats, key=lambda x: x["properties"]["ward_no"] or 0),
     }
-    with open(OUT_PATH, "w", encoding="utf-8") as fh:
-        json.dump(out, fh, ensure_ascii=False)
+    # Envelope-preserving write (scripts/nvdm_write.py): keeps the NVDM
+    # envelope injected by the migration so a regeneration cannot strip it.
+    write_artifact(Path(OUT_PATH), out, compact=True)
     print(f"Wrote {len(out_feats)} wards -> {OUT_PATH}", flush=True)
     return 0
 

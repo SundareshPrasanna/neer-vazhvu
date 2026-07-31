@@ -22,10 +22,11 @@ wire the frontend we should consider PMTiles or simplification.
 Run: python scripts/convert-bangalore-sewerage-trunks-kml.py scripts/data-raw/bangalore/bwssb-sewerage-300mm-plus.kml
 """
 
-import json
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
+from nvdm_write import write_artifact
 
 KML_NS = {"k": "http://www.opengis.net/kml/2.2"}
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -118,7 +119,8 @@ def main() -> None:
         })
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"type": "FeatureCollection", "features": features}))
+    # Envelope-preserving write (scripts/nvdm_write.py); compact like before.
+    write_artifact(OUT, {"type": "FeatureCollection", "features": features}, compact=True)
     print(f"Wrote {len(features)} sewer-trunk segments to {OUT}")
     print(f"  total length: {total_length_m/1000:.1f} km")
     print("  diameter buckets:")

@@ -1,0 +1,117 @@
+{
+  "_doc": [
+    "Public sample corpus manifest (serving-hardening P0, decision D8 as modified",
+    "by the 2026-07-30 review addendum): a deliberately REDUCED, licence-clean",
+    "reference set - NOT a full city. Two sections:",
+    "",
+    "  reference_artifacts - enveloped artifacts that are licence-clean under the",
+    "    FULL encumbrance rules of scripts/nvdm-encumbrance-report.py: every",
+    "    non-methodology source gov-attribution or clean-open AND clean status",
+    "    propagated recursively through provenance.internal_inputs (validator",
+    "    taint semantics - undeclared derived/gee/mixed lineage is never clean;",
+    "    source-empty artifacts are clean only with an explicit audited",
+    "    provenance.rights_basis, since produced_by is accountability, not a",
+    "    rights grant). These are the NVDM public reference artifacts and stay",
+    "    redistributable in a cold public clone after the P2 cutover.",
+    "",
+    "  build_fixtures - files npm run build / npm test cannot pass without, which",
+    "    are NOT provably licence-clean today (share-alike OSM lineage, or not",
+    "    yet enveloped so their licence position is unrecorded). Each entry",
+    "    documents the encumbrance and the decision. They are NOT part of the",
+    "    licence-clean reference set; including one silently (without an entry",
+    "    here) fails CI.",
+    "",
+    "PR #221 review round 1 shrank the reference set 28 -> 18: the lineage-aware",
+    "audit demoted facts-madurai, restoration-priority-delhi and ward-risk-delhi",
+    "(share-alike via OSM-derived internal inputs), the empty-source claim",
+    "compilations (restoration-projects/river-events/water-bodies-flagship/",
+    "water-bodies-lost-madurai and madurai-water-bodies-lost.geojson - licence",
+    "rests on unaudited per-record citations), and the gee/derived artifacts",
+    "with undeclared lineage (pallikaranai rich-body trends + buffer,",
+    "chennai-coastal-transects). Round 2 (18 -> 17): OpenCity's dataset-page",
+    "'open' label is generic portal access language, vague until counsel rules",
+    "on it (counsel brief Q5) - facts-delhi, delhi-wards-2022.geojson and",
+    "delhi-gwr-blocks.geojson dropped; bangalore-wards-2025.geojson and",
+    "chennai-gwr-blocks.geojson replace the geometry exemplars. Round 3",
+    "(17 -> 15): produced_by is accountability, not a rights grant, so",
+    "source-empty artifacts now need an explicit audited rights_basis -",
+    "chennai-water-bodies-lost.geojson (per-feature citations, no rights",
+    "claim) drops to vague, and gee-phase1-water-body-targets-madurai drops to",
+    "share-alike after its envelope was corrected to the truth (derived from",
+    "restoration-priority-madurai, whose rows it copies verbatim). Nothing was",
+    "substituted for them: a smaller honest sample beats a padded one.",
+    "Contracts / layer types with deliberately NO clean reference exemplar",
+    "today: facts (every facts-* file rests on an OpenCity label, an NC survey,",
+    "a (c) report or OSM lineage), restoration-priority and",
+    "water-bodies-current (OSM lineage), water-bodies-lost (per-record",
+    "citations only), and the gee target manifests (share-alike lineage).",
+    "",
+    "Validated by scripts/check-sample-corpus.py: reference artifacts must stay",
+    "clean as envelopes evolve; fixtures must match their recorded status (a",
+    "fixture that becomes clean must be promoted, one that degrades to NC or",
+    "restricted fails). The sample-corpus CI job prunes the corpus to this",
+    "manifest and runs npm run build + npm test against it - coverage is proven",
+    "by the build."
+  ],
+  "reference_artifacts": [
+    "public/data/commitments-madurai.json",
+    "public/data/allocations-chennai.json",
+    "public/data/madurai-cgwb-stations.json",
+    "public/data/restoration-projects.json",
+    "public/data/gwr-blocks-madurai.json",
+    "public/data/gw-stations-madurai.json",
+    "public/data/river-quality-madurai.json",
+    "public/data/imd-rainfall-monthly-madurai.json",
+    "public/data/rainfall-recent-madurai.json",
+    "public/data/ingres/delhi-2022-2023.json",
+    "public/geojson/rich-bodies/pallikaranai.geojson",
+    "public/geojson/madurai-wards-2022.geojson",
+    "public/geojson/madurai-gwr-blocks.geojson",
+    "public/geojson/bangalore-wards-2025.geojson",
+    "public/geojson/chennai-gwr-blocks.geojson"
+  ],
+  "build_fixtures": [
+    {
+      "path": "public/data/ward-names.json",
+      "expected_status": "vague",
+      "required_by": "next build (src/lib server read at build time)",
+      "decision": "retained as a fixture, NOT promoted: enveloped 2026-07-31 and the envelope is what disqualifies it. Its 200 ward-to-zone rows are the Zone_No/Zone_Name attributes of the pre-delimitation 2011 ward layer that shipped in the initial commit, whose distributing publisher and licence were never recorded (the open #207 question), so the lineage is unproven rather than government-clean. The GCC GIS service it was verified against publishes no explicit licence either. Vague is the honest bucket; re-decide if #207's provenance question is ever closed"
+    },
+    {
+      "path": "public/data/chennai-localities.json",
+      "expected_status": "not-enveloped",
+      "required_by": "npm test (locality registry tests)",
+      "decision": "retained: OSM-derived locality index (ODbL upstream, redistribution with attribution + share-alike is permitted and already practised); not part of the licence-clean reference set - envelope it to make the ODbL lineage explicit"
+    },
+    {
+      "path": "public/data/delhi-localities.json",
+      "expected_status": "not-enveloped",
+      "required_by": "npm test (locality registry tests)",
+      "decision": "retained: OSM-derived locality index (ODbL upstream, redistribution with attribution + share-alike is permitted and already practised); not part of the licence-clean reference set - envelope it to make the ODbL lineage explicit"
+    },
+    {
+      "path": "public/data/madurai-localities.json",
+      "expected_status": "not-enveloped",
+      "required_by": "npm test (locality registry tests)",
+      "decision": "retained: OSM-derived locality index (ODbL upstream, redistribution with attribution + share-alike is permitted and already practised); not part of the licence-clean reference set - envelope it to make the ODbL lineage explicit"
+    },
+    {
+      "path": "public/data/ward-profiles.json",
+      "expected_status": "share-alike",
+      "required_by": "npm test (ward-uplift tests)",
+      "decision": "retained: composite over an osm-overpass input (ODbL); redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set"
+    },
+    {
+      "path": "public/data/ward-risk-madurai.json",
+      "expected_status": "share-alike",
+      "required_by": "npm test (ward-uplift tests)",
+      "decision": "retained: composite over an osm-overpass input (ODbL); redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set"
+    },
+    {
+      "path": "public/data/ward-risk-delhi.json",
+      "expected_status": "share-alike",
+      "required_by": "npm test (ward-uplift tests)",
+      "decision": "retained: demoted from the reference set by the lineage-aware audit (PR #221 review round 1) - inherits ODbL share-alike from delhi-ward-profiles via provenance.internal_inputs; redistribution with attribution + share-alike is permitted and already practised; not part of the licence-clean reference set"
+    }
+  ]
+}

@@ -17,7 +17,8 @@
       "dependsOn": [
         "public/data/dpcc-monthly-wq-delhi.json",
         "public/data/river-quality-delhi.json",
-        "public/data/delhi-drain-quality.json"
+        "public/data/delhi-drain-quality.json",
+        "public/data/commitments-delhi.json"
       ],
       "refreshMethod": "river: transcribe into dpcc-monthly-wq-delhi.json then re-run scripts/build-delhi-river-quality.ts. DRAINS: run neer-vazhvu-api/scripts/extract_delhi_drain_quality.py, which parses the month's PDF automatically (embedded text layer, no OCR).",
       "notes": "THE Delhi feed: 8 Yamuna stations + ~39 drain points, sampled monthly and published around the 25th. A new file link = a new month. CRITICAL: the listing is a ROLLING ~3-month window and NOBODY archives it - OpenCity mirrors only the CETP datasets and the Wayback Machine has zero captures of this directory. A month that is not captured while it is listed is lost permanently, which is why this entry is tier 1 and why the drain series can only grow forward. The drain NO FLOW count is the verification signal for the 39-drain trapping commitment.",
@@ -54,7 +55,9 @@
       },
       "dependsOn": [
         "public/data/gwr-blocks-delhi.json",
-        "public/geojson/delhi-gwr-blocks.geojson"
+        "public/geojson/delhi-gwr-blocks.geojson",
+        "public/data/facts-delhi.json",
+        "public/data/delhi-ward-profiles.json"
       ],
       "refreshMethod": "manual (add the new edition's Delhi district CSV URL to neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py and re-run; if the edition is not mirrored, pull it from IN-GRES directly - see docs/methodology/pan-india-source-playbook.md)",
       "notes": "Assessment is annual since 2021-22. IN-GRES (ingres.iith.ac.in) is the authority and is reachable outside NICNET; OpenCity mirrors most editions. The 2022-23 cycle had no mirror and was taken from IN-GRES itself (public/data/ingres/delhi-2022-2023.json). Watch for the next cycle appearing here or on the portal's year list.",
@@ -102,7 +105,11 @@
         "linkPattern": "download_audit_report|\\.pdf"
       },
       "dependsOn": [
-        "public/data/cag-djb-audit-2025.json"
+        "public/data/cag-djb-audit-2025.json",
+        "public/data/delhi-supply-overview.json",
+        "public/data/allocations-delhi.json",
+        "public/data/commitments-delhi.json",
+        "public/data/facts-delhi.json"
       ],
       "refreshMethod": "manual (a new DJB performance/compliance audit -> update cag-djb-audit-2025.json, the dashboard hero stats and the commitments register)",
       "notes": "Report No. 3 of 2025 (tabled 23 Mar 2026) is the audit-grade spine of Delhi's dashboard: NRW 51-53%, Rs 4,988 cr revenue impact, Rs 66,595 cr debt, 40% of production billed. A follow-up or compliance audit would move several headline numbers at once.",
@@ -148,7 +155,10 @@
         "linkPattern": "economic-survey-[0-9]"
       },
       "dependsOn": [
-        "public/data/delhi-supply-overview.json"
+        "public/data/delhi-supply-overview.json",
+        "public/data/allocations-delhi.json",
+        "public/data/commitments-delhi.json",
+        "public/data/facts-delhi.json"
       ],
       "refreshMethod": "manual (new edition's water chapter -> refresh source-wise availability split + the 'wasted or pilfered' figure in delhi-supply-overview.json)",
       "notes": "Chapter 13 carries DJB's own source-wise raw-water split (Yamuna/Ganga/Bhakra/groundwater) and the state's own '52.35% wasted or pilfered by tanker mafia' line. Published annually alongside the Delhi budget.",
@@ -186,7 +196,8 @@
       "dependsOn": [
         "public/data/delhi-cetp-monthly-index.json",
         "public/data/delhi-cetp-flows.json",
-        "public/data/industrial-sources-delhi.json"
+        "public/data/industrial-sources-delhi.json",
+        "public/data/delhi-ward-profiles.json"
       ],
       "refreshMethod": "automated OCR: re-run neer-vazhvu-api/scripts/extract_delhi_cetp_flows.py (new bundles download + OCR; existing ones read from .cache), then build_delhi_industrial_sources.py and build_delhi_ward_profiles.py",
       "notes": "Delhi's industrial-attribution layer: per-plant design capacity vs MEASURED monthly inflow for the 13 CETPs. Extracted 2026-07-26 from the scanned PDFs (709 readings, 2019-04 to 2024-11) - the archive was indexed but unopened until then. Series ends Nov 2024; a new bundle on the listing is what tells us DPCC resumed. Utilisation sits near a third of built capacity, which is the finding.",
@@ -257,7 +268,9 @@
       },
       "dependsOn": [
         "public/data/delhi-jj-bastis-geo.json",
-        "public/data/dusib-jj-bastis.json"
+        "public/data/dusib-jj-bastis.json",
+        "public/data/facts-delhi.json",
+        "public/data/delhi-ward-profiles.json"
       ],
       "refreshMethod": "manual (a new list on the page -> update PDF_SHA256 in neer-vazhvu-api/scripts/build_delhi_jj_bastis_geo.py, re-run it, then re-run build_delhi_ward_profiles.py)",
       "notes": "Delhi's equity layer. The page carries the roster and the lat/long list as SEPARATE PDFs with different serial numbering, so a new link on either is an edition. The geo list is pinned by sha256 and the builder aborts on mismatch, which is the real safety net - this entry is what tells us to look. 675 clusters / 306,521 households as of the 2019 roster + 2022 coordinates.",
@@ -333,7 +346,8 @@
         "leadTimeDays": 120
       },
       "dependsOn": [
-        "public/data/delhi-ward-representatives.json"
+        "public/data/delhi-ward-representatives.json",
+        "public/data/delhi-ward-profiles.json"
       ],
       "refreshMethod": "manual - re-digitise the winners table for all 250 wards",
       "notes": "MCD general election 4 December 2022, the first post-unification poll across 250 wards; a five-year term ends 2026-12-04 at the earliest and 2027-12-04 on the outside, so termEndsOn is set to the later date with a 120-day lead. This is the Delhi twin of the three chennai-reps-* entries and exists for the same reason the mechanism was built: no listing page changes when a mandate expires. CAVEATS already on the artifact: by-elections and defections since Dec 2022 are NOT reflected, and MLA/MP columns are absent until the 2022 ward geometry with AC mapping is joined. A calendar cannot see a by-election - that stays a manual risk.",
@@ -364,6 +378,25 @@
         "apiDate": "2025-11-27T12:38:57.866743",
         "acceptedOn": "2026-07-26"
       }
+    },
+    {
+      "id": "djb-water-pages",
+      "scope": "delhi",
+      "publisher": "Delhi Jal Board",
+      "url": "https://delhijalboard.delhi.gov.in/jalboard/about-us",
+      "license": "GNCTD publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 2,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/delhi-supply-overview.json",
+        "public/data/allocations-delhi.json"
+      ],
+      "refreshMethod": "manual (WTP roster/capacities and source-wise figures -> refresh delhi-supply-overview.json wtps_summary + supply mix; groundwater arrangement figures in allocations-delhi.json)",
+      "notes": "DJB About Us page - carries the WTP roster with capacities and raw-water sources (Sonia Vihar 140 MGD, Bhagirathi 100, Chandrawal 90, Wazirabad 120, Haiderpur 200, Nangloi 40, Okhla 20, Bawana, Dwarka, recycling 45, ranney/tube wells 80; ~900 MGD total production; verified 2026-07-30). REVIEW FIX 2026-07-30: originally registered against /jalboard/water, the consumer connections/tariff page, which carries NONE of this - a false provenance join. lastSeen cleared for re-baseline against the correct page."
     }
   ]
 }

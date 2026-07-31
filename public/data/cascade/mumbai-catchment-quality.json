@@ -1,4 +1,29 @@
 {
+  "nvdm": "1.0",
+  "dataset": "cascade/catchment-quality",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "fabdem-dem",
+        "title": "FABDEM v1-2 30 m bare-earth DEM",
+        "publisher": "University of Bristol (Hawker et al.), via GEE sat-io",
+        "license": "CC BY-NC-SA 4.0 (non-commercial)",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-07-05",
+    "internal_inputs": [
+      "public/data/cascade/mumbai-cascade-nodes.geojson",
+      "public/geojson/mumbai-water-bodies-current.geojson"
+    ],
+    "produced_by": "neer-vazhvu-api/app/cascade/catchments.py build_catchments (catchments_fabdem_wbt_v1 over the published nodes + tanks layers) (QA summary)",
+    "note": "Derived by the DISTRICT cascade pipeline (neer-vazhvu-api/app/cascade, d8_steepest_descent_v1 over FABDEM). Mumbai is reservoir-impounded, NOT tank-cascade geography - registered for the lake catchment atlas; the cascade overlay is suppressed when edge_count is negligible (see districts.py). Sentinel/OSM channel cross-checks are NotImplemented (P5) and the buildings/rainfall stages did not run for this district, so those upstreams are deliberately NOT listed. FABDEM input makes this family CC BY-NC-SA (non-commercial) encumbered."
+  },
   "district_id": "mumbai",
   "algorithm": "catchments_fabdem_wbt_v1",
   "dem": "FABDEM_30m",

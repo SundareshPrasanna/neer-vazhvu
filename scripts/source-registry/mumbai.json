@@ -53,7 +53,12 @@
         "datePath": "result.count"
       },
       "dependsOn": [
-        "public/data/mumbai-ward-water-praja.json"
+        "public/data/mumbai-ward-water-praja.json",
+        "public/data/facts-mumbai.json",
+        "public/data/industrial-sources-mumbai.json",
+        "public/data/mmr-corporations-water.json",
+        "public/data/river-quality-mumbai.json",
+        "public/data/ward-risk-mumbai.json"
       ],
       "refreshMethod": "manual (ward tables -> mumbai-ward-water-praja.json)",
       "notes": "Watches the OpenCity CKAN mirror count for 'Status of Civic Issues in Mumbai' editions (praja.org itself is poorly indexed). 2026 edition launched 30-Jun-2026, PDF expected on the mirror ~late July 2026 - likely the first live detection.",
@@ -702,7 +707,8 @@
         "datePath": "result.metadata_modified"
       },
       "dependsOn": [
-        "public/data/commitments-mumbai.json"
+        "public/data/commitments-mumbai.json",
+        "public/data/facts-mumbai.json"
       ],
       "refreshMethod": "manual",
       "notes": "Mumbai Climate Action Plan - the policy parent of the Climate Budget commissioning table that commitments-mumbai.json cites for its on-track statuses. Chosen as the watch target because its CKAN slug is STABLE. The annual Climate Budget itself lands inside year-slugged datasets (bmc-budget-2024-25, -2025-26, -2026-27 - verified 2026-07-26, 22/27/24 resources respectively), so no single url can follow it across years; that needs the url-template method (P5-9). My first attempt at this entry guessed the slug 'mumbai-climate-budget', which 404s - it does not exist. Watched via OpenCity because mcgm.gov.in has no stable budget listing path.",
@@ -725,7 +731,8 @@
         "linkPattern": "cgwbpnm/download/\\d+"
       },
       "dependsOn": [
-        "public/data/mumbai-cgwb-stations.json"
+        "public/data/mumbai-cgwb-stations.json",
+        "public/data/facts-mumbai.json"
       ],
       "refreshMethod": "manual PDF extraction (National Hydrograph Network wells + chemistry)",
       "notes": "Ground Water Year Book of Maharashtra - backs 53 wells across Mumbai City/Suburban/Thane/Palghar/Raigad with water chemistry. Mumbai City and Suburban are the only 2 of Maharashtra's 35 districts EXCLUDED from the CGWB Dynamic Assessment, so this hydrograph series is all we have. Verified 2026-07-26 by opening the PDF: 246 pages, 'GROUND WATER YEAR BOOK OF MAHARASHTRA (2022-2023)', ETag + Last-Modified present, so http-meta works on the document itself. Same family limit as cgwb-yearbook-tn: NO listing page enumerates Year Books, so a NEW edition will not be detected by this entry - it only catches a re-upload of the 2022-23 file. The 2024-25 edition cited in mumbai-cgwb-stations.json (cgwbpnm/download/2016) is 404 and remains an OPEN TRACE. TLS: cgwb.gov.in serves an INCOMPLETE CERT CHAIN - Node fetch fails with UNABLE_TO_VERIFY_LEAF_SIGNATURE while curl succeeds (its CA bundle is broader). insecureTLS is required here; discovered when the first --accept errored 'fetch failed' on 2026-07-26. LISTING FOUND 2026-07-26 (corrects an earlier note in this entry): cgwb.gov.in/cgwbpnm/ IS a browsable publication warehouse - 171 download/<id> links with titles, dates and a state filter - so a Year Book listing DOES exist and this entry now watches it. A new edition appears as a new download id. RETRIEVAL IS BROKEN THOUGH: every download/<id>, publication-detail/<id> and thumbnail-derived path returns 404, including ids CGWB itself links (verified on 2015/2016/2023 with and without a referer). Only the opaque public/uploads/documents/<id>file.pdf form works, and those ids are not exposed in the listing.  CONFIRMED PRESENT: 'Ground Water Year Book Maharashtra (2024-2025)', posted 23 Mar 2026, publication id 2016 - which is exactly the download/2016 url mumbai-cgwb-stations.json cited. The id was RIGHT; CGWB's download endpoint is what is broken. RETRIEVAL IS BROKEN AT CGWB'S END - established 2026-07-26, do not repeat this. The publications warehouse at cgwb.gov.in/cgwbpnm/ LISTS both 2024-25 Year Books with titles, posting dates and publication ids, but there is no working public route to the PDFs. Eight automated routes were tried and all return the same 33 KB Drupal 404 ('paged nahin mila', plain openresty HTTP/2 404 - no WAF, no captcha, no challenge): download/<id>; publication-detail/<id>; the CSRF POST to publication/<id> followed by the download, replicating the site's own downloadPdf() JS; a cookie-jar session; deriving the path from the thumbnail id; a directory listing on uploads/documents/; search engines (not indexed); and the retired /Regions/<REGION>/Reports/ path. CONFIRMED IN A REAL BROWSER by the maintainer the same day: the page renders and the publications are visible, but the download does not work there either. So this is NOT a bot block, NOT a session problem and NOT something a browser fetch solves - an earlier version of this note said 'fetch it from a browser session', which was wrong. Only /cgwbpnm/ itself and /cgwbpnm/public/* static assets serve; every other route under /cgwbpnm/ 404s, which looks like a reverse-proxy misconfiguration on their side. The id scheme is <unix-seconds><random>, verified three ways (1688105823 = 30 Jun 2023 matches the 2017-18 PDF's own creation timestamp; 1774431953 and 1774326882 match the two 2026 posting dates), but the thumbnail and the PDF get DIFFERENT random suffixes, so the path cannot be derived from anything the listing exposes. NEXT STEPS, in order: (1) the cgwb-yearbook-* registry entries watch the download/<id> link set, so a re-upload or a route fix changes the set and we get told; (2) failing that, email CGWB SECR Chennai / CR Nagpur, or RTI. Not an engineering problem.",
@@ -1072,6 +1079,66 @@
         ],
         "acceptedOn": "2026-07-26"
       }
+    },
+    {
+      "id": "datameet-mumbai-spatial",
+      "scope": "mumbai",
+      "publisher": "DataMeet community (Municipal_Spatial_Data, Mumbai folder)",
+      "url": "https://api.github.com/repos/datameet/Municipal_Spatial_Data/commits?path=Mumbai&per_page=1",
+      "license": "CC BY-SA 2.5 IN (Mumbai folder Readme; the repo default is CC BY 4.0 'unless explicitly stated' and the Mumbai Readme states BY-SA 2.5 India explicitly - verified 2026-07-30). SHARE-ALIKE encumbered.",
+      "type": "api",
+      "cadence": "unknown (static community dataset; BMC ward set last changed with the 2017 electoral revision)",
+      "tier": 2,
+      "detection": {
+        "method": "api-date",
+        "datePath": "[0].commit.committer.date"
+      },
+      "dependsOn": [
+        "public/geojson/mumbai-wards-2023.geojson",
+        "public/data/ward-risk-mumbai.json"
+      ],
+      "refreshMethod": "scripts/build-mumbai-wards.py (BMC_Wards.geojson -> 24 admin wards); slumClusters.geojson fetched at ward-risk build time, not committed",
+      "notes": "24 BMC administrative ward boundaries + SRA-derived slum clusters. Watched via the GitHub commits API for the Mumbai folder (latest commit 2023-04-10 at registration - a genuinely static dataset, so this watch should stay silent; a new commit means the geometry changed upstream). LICENCE CORRECTION on record 2026-07-30: the committed layer's legacy _provenance says ODbL, but the upstream Mumbai Readme states CC BY-SA 2.5 India (slum clusters digitised from the SRA's own PDF map). Human-facing folder: https://github.com/datameet/Municipal_Spatial_Data/tree/master/Mumbai",
+      "lastSeen": {
+        "apiDate": "2023-04-10T09:04:37Z",
+        "acceptedOn": "2026-07-31"
+      }
+    },
+    {
+      "id": "wrd-pravah-dam-feed",
+      "scope": "mumbai",
+      "publisher": "Maharashtra WRD (Pravah dam-safety portal)",
+      "url": "https://mwrdpravah.in/damsafety/control/pdfLatestReportEng",
+      "license": "Maharashtra government public feed, no stated licence - cited with attribution",
+      "type": "file",
+      "cadence": "daily",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/mmr-dam-storage.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/scrape_pravah_dams.py (pravah-dam-refresh.yml, daily)",
+      "notes": "Daily all-Maharashtra live-storage PDF (139 dams; type 'file' = one live PDF endpoint, no listing page); the MMR rows feed mmr-dam-storage.json. A daily feed has no editions to watch - detection 'continuous', freshness owned by check-data-freshness.ts (EXTRA_FEEDS). Only the 'latest' endpoint works (dated URLs 404) and the TLS chain is incomplete - see the scraper header."
+    },
+    {
+      "id": "bmc-dm-floodspots",
+      "scope": "mumbai",
+      "publisher": "BMC Disaster Management (dmwebtwo.mcgm.gov.in)",
+      "url": "https://dmwebtwo.mcgm.gov.in/api/floodSpot/loadAll",
+      "license": "BMC government portal API, no stated licence - cited with attribution",
+      "type": "api",
+      "cadence": "seasonal (pre-monsoon register updates)",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/mumbai-flood-hotspots.geojson"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/scrape_bmc_flood_spots.py (bmc-floodspots-refresh.yml, weekly)",
+      "notes": "BMC's own flood-spot register (~110 chronic/monitored spots with names, wards, coordinates, AWS station ids). The FULL pre-monsoon list (496 spots in 2026) is not published with locations. Weekly scheduled scrape owns the artifact - detection 'continuous', freshness owned by check-data-freshness.ts (EXTRA_FEEDS)."
     }
   ]
 }

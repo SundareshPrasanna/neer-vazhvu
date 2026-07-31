@@ -8,6 +8,9 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 PUBLIC_DIR = REPO_ROOT / "public"
 PUBLIC_DATA_DIR = PUBLIC_DIR / "data"
 PUBLIC_GEOJSON_DIR = PUBLIC_DIR / "geojson"
+# Committed pipeline inputs that are deliberately NOT shipped as public
+# static assets (see pipeline-inputs/README.md).
+PIPELINE_INPUTS_DIR = REPO_ROOT / "pipeline-inputs"
 
 CHIRPS_DAILY_DATASET = "UCSB-CHG/CHIRPS/DAILY"
 CHIRPS_BAND = "precipitation"

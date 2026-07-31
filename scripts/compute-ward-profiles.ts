@@ -634,8 +634,78 @@ function main() {
     });
   }
 
+  // NVDM v1 wrapped form (schemas/nvdm/ward-profiles.schema.json): envelope +
+  // wards[]. Loaders accept both shapes during migration. PRODUCED_AT is a
+  // manual constant, bumped on regeneration, so identical inputs still
+  // produce byte-identical output (no wall-clock in the artifact - the CI
+  // determinism gate reruns this script and diffs the file).
+  const PRODUCED_AT = "2026-07-30";
+  const wrapped = {
+    nvdm: "1.0",
+    dataset: "data-root/ward-profiles",
+    scope: { kind: "city", id: "chennai" },
+    provenance: {
+      sources: [
+        {
+          id: "osm-overpass",
+          title: "OpenStreetMap water bodies / industrial zones (Overpass extracts)",
+          publisher: "OpenStreetMap contributors",
+          license: "ODbL 1.0",
+          role: "input",
+        },
+        {
+          id: "opencity-gcc-swd-survey",
+          title: "GCC 2023 storm-water-drain survey (via OpenCity)",
+          publisher: "Greater Chennai Corporation (via OpenCity)",
+          license: "open (per OpenCity dataset page)",
+          role: "input",
+          as_of: "2023",
+        },
+        {
+          id: "opencity-chennai-flood",
+          title: "Chennai flooding data - NCCR C-FLOWS model outputs (via OpenCity)",
+          publisher: "OpenCity / NCCR",
+          license: "open (per OpenCity dataset page)",
+          role: "input",
+        },
+        {
+          id: "opencity-cmwssb-sewerage",
+          title: "CMWSSB sewerage network datasets (via OpenCity)",
+          publisher: "CMWSSB (via OpenCity)",
+          license: "open (per OpenCity dataset page)",
+          role: "input",
+        },
+      ],
+      method: "derived",
+      produced_at: PRODUCED_AT,
+      produced_by: "scripts/compute-ward-profiles.ts",
+      // Machine-readable internal lineage: the validator caps this artifact
+      // below L3 while any listed input is below L2 (review 2026-07-30 -
+      // prose notes do not transfer accountability). wards-2022 is the
+      // load-bearing spatial key and currently unaccounted, so ward profiles
+      // hold at L2 until its boundary provenance is settled.
+      internal_inputs: [
+        "public/geojson/chennai-wards-2022.geojson",
+        "public/geojson/chennai-water-bodies-current.geojson",
+        "public/data/restoration-priority.json",
+        "public/geojson/chennai-water-bodies-lost.geojson",
+        "public/geojson/chennai-flood-hazard-zones.geojson",
+        "public/geojson/chennai-flood-2015-hotspots.geojson",
+        "public/geojson/chennai-flood-2020-hotspots.geojson",
+        "public/geojson/chennai-drainage.geojson",
+        "public/geojson/chennai-sewerage.geojson",
+        "public/geojson/chennai-industrial-zones.geojson",
+        "public/data/river-quality.json",
+      ],
+      note:
+        "Deterministic spatial join over committed ward-level layers (see script header). " +
+        "Internal inputs are lineage, not sources - listed machine-readably in internal_inputs; " +
+        "chennai-wards-2022.geojson's own provenance record is still pending.",
+    },
+    wards: output,
+  };
   const outPath = resolve(root, "public/data/ward-profiles.json");
-  writeFileSync(outPath, JSON.stringify(output, null, 2));
+  writeFileSync(outPath, JSON.stringify(wrapped, null, 2));
 
   // Summary
   const totalWaterBodies = output.reduce((s, w) => s + w.water_bodies.current_count, 0);

@@ -180,6 +180,11 @@ export function loadProfiles(cityId: string = "chennai"): Promise<WardProfile[]>
   if (!p) {
     p = fetch(profilesUrl(cityId))
       .then((r) => r.json())
+      // Legacy cities ship a bare array; NVDM-migrated cities (Madurai
+      // onward) wrap it as { ...envelope, wards: [...] }. Accept both.
+      .then((raw: WardProfile[] | { wards: WardProfile[] }) =>
+        Array.isArray(raw) ? raw : raw.wards,
+      )
       .catch((err) => {
         profilesPromiseByCity.delete(cityId);
         throw err;

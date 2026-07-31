@@ -42,6 +42,9 @@ import urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 INDEX = REPO / "public/data/delhi-cetp-monthly-index.json"
 CACHE = Path(__file__).resolve().parent / ".cache" / "delhi-cetp-pdfs"
 OCR_CACHE = Path(__file__).resolve().parent / ".cache" / "delhi-cetp-ocr"
@@ -474,7 +477,7 @@ def main() -> None:
         # not orderable against str - the same trap that bit the roster sort.
         "readings": sorted(readings, key=lambda r: (r["month"], r["plant"] or "")),
     }
-    OUT.write_text(json.dumps(doc, indent=2) + "\n")
+    write_artifact(OUT, doc)
 
     print(f"\nwrote {OUT.relative_to(REPO)}")
     s = doc["summary"]

@@ -23,7 +23,6 @@ Deps: pdfplumber (already in the API environment).
 from __future__ import annotations
 
 import argparse
-import json
 import re
 import sys
 import urllib.request
@@ -38,6 +37,9 @@ PDF_2019_URL = (
 PDF_2015_URL = "https://delhishelterboard.in/main/wp-content/uploads/2015/12/675_JJ_Cluster_List.pdf"
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 OUT_PATH = REPO_ROOT / "public" / "data" / "dusib-jj-bastis.json"
 
 
@@ -165,7 +167,7 @@ def main() -> None:
         "clusters": merged,
     }
 
-    OUT_PATH.write_text(json.dumps(out, indent=1, ensure_ascii=False))
+    write_artifact(OUT_PATH, out)
     print(f"wrote {OUT_PATH} ({len(merged)} clusters, {total_hh:,} households)")
 
 

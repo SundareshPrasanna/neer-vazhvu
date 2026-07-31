@@ -39,7 +39,7 @@
       "scope": "bangalore",
       "publisher": "OpenCity (Bengaluru Tanker Water Survey)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=bengaluru-tanker-water-data",
-      "license": "CC BY (per OpenCity dataset page)",
+      "license": "CC BY-NC-SA 4.0 (resource pages state the specific licence; the dataset-level label is the generic 'Creative Commons Non-Commercial (Any)'; verified 2026-07-30)",
       "type": "api",
       "cadence": "episodic (2015, 2019, 2024, 2025 rounds)",
       "tier": 1,
@@ -49,10 +49,12 @@
       },
       "dependsOn": [
         "public/data/bangalore-tanker-survey.json",
-        "public/data/facts-bangalore.json"
+        "public/data/facts-bangalore.json",
+        "public/data/bangalore-tanker-context.json",
+        "public/data/bangalore-supply-overview.json"
       ],
       "refreshMethod": "scripts/build-bangalore-tanker-summary.py",
-      "notes": "The single highest-value unwatched Bengaluru source before 2026-07-26. It is the ONLY longitudinal price/dependency series for the tanker market and it carries the entire /bangalore/tanker page plus 2 facts. Survey rounds are irregular (2015, 2019, 2024, a 2025 round reported via opencity.in/bengaluru-water-tankers-survey-2025-situation-better-than-2024) so a scheduled watch is the only way to catch the next one. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Schemas differ by round - not every field exists for every year and n= counts differ - so a new round is a SCHEMA-BREAK candidate, not a routine roll-forward. NOTE the dataset slug: facts-bangalore.json used to cite opencity.in/data/bengaluru-tanker-water-survey, which 404s; the live path is data.opencity.in/dataset/bengaluru-tanker-water-data (fixed 2026-07-26).",
+      "notes": "The single highest-value unwatched Bengaluru source before 2026-07-26. It is the ONLY longitudinal price/dependency series for the tanker market and it carries the entire /bangalore/tanker page plus 2 facts. Survey rounds are irregular (2015, 2019, 2024, a 2025 round reported via opencity.in/bengaluru-water-tankers-survey-2025-situation-better-than-2024) so a scheduled watch is the only way to catch the next one. Verified 2026-07-26: 3 resources, metadata_modified 2025-11-27. Schemas differ by round - not every field exists for every year and n= counts differ - so a new round is a SCHEMA-BREAK candidate, not a routine roll-forward. NOTE the dataset slug: facts-bangalore.json used to cite opencity.in/data/bengaluru-tanker-water-survey, which 404s; the live path is data.opencity.in/dataset/bengaluru-tanker-water-data (fixed 2026-07-26). NVDM Bangalore migration 2026-07-30: licence corrected TWICE: first to CC BY-NC per the CKAN API generic id, then (review 2026-07-30) to CC BY-NC-SA 4.0 per the resource pages' explicit statement - NON-COMMERCIAL and SHARE-ALIKE encumbered; dependsOn widened to tanker-context (2025-round rate-gap context) and supply-overview (tanker_market block).",
       "lastSeen": {
         "apiDate": "2025-11-27T12:36:27.006113",
         "acceptedOn": "2026-07-26"
@@ -73,7 +75,9 @@
       },
       "dependsOn": [
         "public/data/bangalore-iisc-stress-wards-2025.json",
-        "public/data/facts-bangalore.json"
+        "public/data/facts-bangalore.json",
+        "public/data/bangalore-tanker-context.json",
+        "public/data/bangalore-supply-overview.json"
       ],
       "refreshMethod": "manual PDF parse + digitization of the critically-over-extracted ward list",
       "notes": "IISc Groundwater Outlook for Bengaluru (April 2025) - the 80 critically-over-extracted wards that are the city's HEADLINE groundwater layer (rendered directly on /bangalore, not behind /groundwater). Watched via the OpenCity mirror deliberately: IISc's own host wgbis.ces.iisc.ac.in returns 403 to curl even with a browser UA (verified 2026-07-26) and cannot be watched. Verified: 1 resource, metadata_modified 2025-11-27. A new Interim Report or Outlook edition would land as a new resource. Caveat: the mirror lags the publisher, so a detection here is a floor, not a ceiling.",
@@ -157,7 +161,9 @@
       },
       "dependsOn": [
         "public/data/gwr-blocks-bangalore.json",
-        "public/data/bangalore-cgwb-stations.json"
+        "public/data/bangalore-cgwb-stations.json",
+        "public/geojson/bangalore-gwr-blocks.geojson",
+        "public/data/bangalore-ward-profiles.json"
       ],
       "refreshMethod": "manual (WRIS GEC extract; IN-GRES payload capture still open)",
       "notes": "Karnataka side of the same assessment watched for TN by ingres-gw-assessment-tn - deliberately a separate entry because the dependsOn differ and a GEC round can land per state. Backs the all-6-blocks-Over-Exploited headline, Bangalore-East at 306% draft/recharge and Yelahanka 140% -> 260% over 2020-2024. Same caveat as the TN entry: http-meta watches the IN-GRES SPA build (Last-Modified + ETag verified 2026-07-26), not the assessment data, so expect false positives on redeploy and replace once the payload capture lands.",
@@ -181,36 +187,13 @@
         "datePath": "result.metadata_modified"
       },
       "dependsOn": [
-        "public/data/bangalore-supply-overview.json"
+        "public/data/bangalore-supply-overview.json",
+        "public/data/facts-bangalore.json"
       ],
       "refreshMethod": "manual",
       "notes": "JICA Bengaluru Water Supply and Sewerage Project Phase 3 Final Report (Nov 2017) is the anchor document behind bangalore-supply-overview.json, which cites 13 sources in total. Watched via the OpenCity mirror because BWSSB's own site is not watchable: bwssb.karnataka.gov.in/info-1/About+BWSSB/en carries no document links at all, only accessibility boilerplate (verified 2026-07-26), and there is no tenders/notifications page with stable hrefs. Verified: 6 resources, metadata_modified 2025-11-27. KNOWN GAP: BWSSB's live announcements (Stage V/VI progress, tariff, connection numbers) are therefore still unwatched - they enter the platform through dated press citations. Also note the host: www.bwssb.karnataka.gov.in does NOT resolve over HTTP; use bwssb.karnataka.gov.in without the www (fixed across citations 2026-07-26).",
       "lastSeen": {
         "apiDate": "2025-11-27T12:36:27.268681",
-        "acceptedOn": "2026-07-26"
-      }
-    },
-    {
-      "id": "cpcb-prs-report",
-      "scope": "bangalore",
-      "publisher": "CPCB",
-      "url": "https://cpcb.gov.in/polluted-river-stretches/",
-      "license": "GoI publication, cited with attribution",
-      "type": "page",
-      "cadence": "~2-3 yearly",
-      "tier": 0,
-      "detection": {
-        "method": "page-hash"
-      },
-      "dependsOn": [
-        "public/data/river-quality-bangalore.json",
-        "public/data/basins/arkavathi/prs.json",
-        "public/docs/cpcb-polluted-river-stretches-oct-2025.pdf"
-      ],
-      "refreshMethod": "manual (scripts/build_prs.py against the mirrored PDF)",
-      "notes": "Polluted River Stretches for Restoration of Water Quality - the BOD-band Priority I-V classification behind the Arkavathi atlas, the Bengaluru stretch classes, the Chennai Cooum/Adyar Priority I status and the Mumbai 'Mithi at Mahim is India's worst stretch' fact. The Oct 2025 edition is mirrored at public/docs/cpcb-polluted-river-stretches-oct-2025.pdf. WHY page-hash and not link-set: the landing page exposes no report hrefs at all - only CPCB's site-wide boilerplate PDFs (verified 2026-07-26) - and the report itself was published behind an openpdffile.php id that has since expired (it now returns a 146-byte HTML error mislabelled application/pdf). Expect page-hash to be noisier than link-set; tighten with a selector if it false-positives. Host note: cpcb.gov.in, never the NICNET cpcb DOT nic DOT in - see cpcb-nwmp-annual.",
-      "lastSeen": {
-        "pageHash": "2bc5474c47902288",
         "acceptedOn": "2026-07-26"
       }
     },
@@ -306,6 +289,142 @@
         "apiDate": "2025-11-27T12:37:38.201035",
         "acceptedOn": "2026-07-26"
       }
+    },
+    {
+      "id": "opencity-gba-wards-2025",
+      "scope": "bangalore",
+      "publisher": "GBA / GoK Urban Development Department (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=gba-wards-delimitation-2025",
+      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic (delimitation notifications + corrections)",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/bangalore-wards-2025.geojson",
+        "public/data/bangalore-ward-profiles.json",
+        "public/data/ward-risk-bangalore.json",
+        "public/data/bangalore-ward-admin.json"
+      ],
+      "refreshMethod": "scripts/convert-bangalore-wards-kml.py, then scripts/compute-bangalore-ward-profiles.ts + scripts/compute-bangalore-ward-risk.py",
+      "notes": "GBA 369-ward delimitation KML (Dec 2025 file incl. the 01.12.2025 name changes) - the geometry AND the admin/population fields under bangalore-ward-admin.json (the enveloped admin seed; profiles derive from it). NOT treated as a closed edition: the dataset moved again on 2026-07-27 (metadata_modified), consistent with post-notification corrections. A detection here means ward geometry/names may have shifted under every ward-joined layer.",
+      "lastSeen": {
+        "apiDate": "2026-07-27T04:25:23.719677",
+        "acceptedOn": "2026-07-30"
+      }
+    },
+    {
+      "id": "opencity-gba-corporations-2025",
+      "scope": "bangalore",
+      "publisher": "GBA / GoK Urban Development Department (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=greater-bengaluru-authority-corporations-delimitation-2025",
+      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic (delimitation notifications)",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/bangalore-corporations-2025.geojson"
+      ],
+      "refreshMethod": "scripts/convert-bangalore-corporations-kml.py",
+      "notes": "GBA 5-corporation boundaries (September 2025 KML; Karnataka Act 36 of 2025). Registered with the wards entry (NVDM Bangalore migration 2026-07-30) - both were unaccounted despite carrying every /bangalore/my-ward admin join.",
+      "lastSeen": {
+        "apiDate": "2026-01-07T04:23:50.191710",
+        "acceptedOn": "2026-07-30"
+      }
+    },
+    {
+      "id": "opencity-bwssb-stps",
+      "scope": "bangalore",
+      "publisher": "BWSSB (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=bwssb-sewage-treatment-plant-locations",
+      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/bangalore-stps.geojson"
+      ],
+      "refreshMethod": "scripts/convert-bangalore-stps-kml.py (CSV authoritative for Status; KML cross-check)",
+      "notes": "39 STPs / ~1,371 MLD design capacity. STP count roughly doubled 2017->2024 (JICA 14 plants / 721 MLD), so this list moves; a detection is a real capacity-picture change. Registered in the NVDM Bangalore migration 2026-07-30.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:36:41.997206",
+        "acceptedOn": "2026-07-30"
+      }
+    },
+    {
+      "id": "opencity-bwssb-sewerage",
+      "scope": "bangalore",
+      "publisher": "BWSSB (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=bwssb-sewerage-line-maps-for-bengaluru",
+      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/bangalore-sewerage-trunks.geojson"
+      ],
+      "refreshMethod": "scripts/convert-bangalore-sewerage-trunks-kml.py (>=300mm trunk KML only; <300mm collector files deliberately not ingested)",
+      "notes": "BWSSB sewerage line maps split by diameter; our artifact is the >=300mm trunk subset (16,403 LineStrings). Mirror of Chennai's opencity-cmwssb-sewerage entry. Registered in the NVDM Bangalore migration 2026-07-30.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:36:33.222068",
+        "acceptedOn": "2026-07-30"
+      }
+    },
+    {
+      "id": "opencity-bwssb-cauvery-stage-areas",
+      "scope": "bangalore",
+      "publisher": "BWSSB (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=bwssb-stage-wise-cauvery-water-supply-areas",
+      "license": "Other (Public Domain) (per OpenCity dataset page)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 2,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/data/bangalore-cauvery-stage-areas.json"
+      ],
+      "refreshMethod": "scripts/convert-bangalore-cauvery-stage-areas.py",
+      "notes": "Stage 1-4 Ph 2 supply-area name lists. Stage V (commissioned Oct 2024, the 110 villages) is NOT in the upstream yet - the converter header carries that follow-up; a detection here is the likeliest way Stage V coverage lands. Registered in the NVDM Bangalore migration 2026-07-30.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:36:40.890693",
+        "acceptedOn": "2026-07-30"
+      }
+    },
+    {
+      "id": "kwris-mi-tanks",
+      "scope": "bangalore",
+      "publisher": "Karnataka WRD (KWRIS GeoServer)",
+      "url": "https://water.karnataka.gov.in/geoserver/KA/ows",
+      "license": "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/geojson/bangalore-water-bodies-current.geojson"
+      ],
+      "refreshMethod": "re-fetch layer KA:MI_Tanks (open WFS, no auth), then re-run scripts/name-bangalore-water-bodies.py; snapshot under scripts/data-raw/bangalore/kwris-mi-tanks-bengaluru.geojson (fetched 2026-07-09)",
+      "notes": "State Minor Irrigation tank register (KA:MI_Tanks, 3,419 named points statewide; 328 in the Bengaluru bbox) - third source of the named-lake join (with the ATREE KMZ and BBMP masterlist resources of atree-opencity-lakes-bengaluru). Live GeoServer layer with no edition listing: registered continuous for lineage/licence accountability per the NVDM per-source rule."
     }
   ]
 }
