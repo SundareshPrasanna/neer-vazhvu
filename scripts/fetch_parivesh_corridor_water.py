@@ -1403,6 +1403,24 @@ def cmd_refresh() -> None:
     cmd_download(force=True)
 
 
+def pdftotext_version() -> str:
+    """Identity of the text extractor the variance measurement depends on.
+
+    The dataset's water figures come from the VERIFIED table and are immune to
+    this, but format_variance / auto_match / auto_invented are all measured
+    against `pdftotext` output - so which poppler produced that output is part
+    of what the measurement means, and belongs in the artifact.
+    """
+    try:
+        out = subprocess.run(
+            ["pdftotext", "-v"], capture_output=True, text=True, check=False
+        )
+        first = (out.stderr or out.stdout).strip().splitlines()[0]
+        return first.strip()
+    except Exception:  # extractor identity is metadata, never a build blocker
+        return "unknown"
+
+
 _TEXT_CACHE: dict[str, str] = {}
 
 
@@ -1909,12 +1927,16 @@ def cmd_build() -> None:
             "documents": {no: sha256_of(pdf_path(no)) for no, _ in PILOT},
         },
         "format_variance": {
+            "measured_with": pdftotext_version(),
             "clean_auto_extract": stats["clean"],
             "needed_manual_handling": stats["manual"],
             "no_water_table": stats["absent"],
             "letters_with_invented_values": stats["letters_with_invented_values"],
             "letters_total": len(facilities),
             "note": (
+                "Measured against pdftotext output, so the extractor version above is part of "
+                "what this measurement means; the dataset's water figures come from the "
+                "verified transcription and do not depend on it. "
                 "Scored across every field the unattended extractor emits, counting wrong, "
                 "missed and INVENTED values equally. No letter in the cohort survives "
                 "unattended extraction. The measurement that decides scale is not the miss "
