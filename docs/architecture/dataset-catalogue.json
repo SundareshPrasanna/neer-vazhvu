@@ -15113,14 +15113,15 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "ward-names",
-   "bytes": 16803,
+   "bytes": 23298,
    "schema": {
-    "kind": "array",
-    "length": 200,
-    "element_keys": [
-     "ward_number",
-     "zone_name",
-     "zone_no"
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
+     "wards"
     ]
    },
    "consumers": [
@@ -15137,7 +15138,7 @@
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "allowlisted",
-   "accountability_reason": "derived label lookup over the ward boundary layer",
+   "accountability_reason": "hand-maintained ward -> zone mapping; sole source is a closed 2011 artifact, no living upstream to poll (GCC's service is the verification authority and produces chennai-wards-2022.geojson instead)",
    "flags": [
     "chennai-legacy-name"
    ]
@@ -16668,13 +16669,15 @@
     "scripts/nvdm_envelope_chennai.py",
     "scripts/qc/verify-ward-zones.ts"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "gcc-admin-boundary-gis"
+   ],
+   "licenses": [
+    "public Greater Chennai Corporation government data; the service publishes no explicit licence (copyrightText and description are empty strings on the service root and on both Ward_Boundary and Zone_Boundary, verified 2026-07-31) - cited with attribution to Greater Chennai Corporation (GIS-GCC)"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/chennai-water-bodies-current.geojson",
@@ -20656,7 +20659,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 16803,
+   "bytes": 23298,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
