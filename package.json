@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "bash scripts/fetch-corpus.sh && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "find src -name '*.test.ts' | xargs tsx --test",

@@ -215,10 +215,18 @@ PROVENANCE: dict[str, dict] = {
         ),
     },
     "data-root/gee-phase1-water-body-targets": {
-        "method": "manual",
-        "produced_by": "manual",
+        "method": "derived",
+        "produced_by": "neer-vazhvu-api/app/gee/targets.py::write_phase1_target_manifest",
+        "internal_inputs": ["public/data/restoration-priority-madurai.json"],
         "sources": [],
-        "note": "Self-authored target manifest - no external upstream exists; edition history = git.",
+        "note": (
+            "Target selection manifest: the producer reads restoration-priority-madurai.json "
+            "and copies osm_id/name/area_ha/priority_score/priority_level/centroid verbatim for "
+            "the bodies its selection rules keep. Corrected 2026-07-31 (PR #221 review round 3) "
+            "from an earlier 'manual, self-authored, no external upstream' claim - the payload is "
+            "derived, so the OSM share-alike lineage of its input attaches. Selection rules "
+            "themselves are ours; edition history = git."
+        ),
     },
     "data-root/gw-stations": {
         "method": "api",
