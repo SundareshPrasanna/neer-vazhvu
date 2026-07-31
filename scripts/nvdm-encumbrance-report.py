@@ -665,6 +665,15 @@ def selftest() -> int:
         classify(registry_licenses().get("jrc-global-surface-water")) == "clean-open",
     )
     check(
+        # Every registry entry whose clean status rests on an EXACT audited
+        # wording is pinned here by id. The bare Copernicus grant is the other
+        # one; without this the "registry drift breaks CI" promise above holds
+        # only for JRC - a reworded sentinel entry would quietly demote to
+        # vague and no check would say so.
+        "verified Copernicus wording (Sentinel-2 L2A) stays clean",
+        classify(registry_licenses().get("sentinel-2-l2a")) == "clean-open",
+    )
+    check(
         "HydroSHEDS wording is nc",
         classify(
             "HydroSHEDS licence (free for non-commercial and most uses, attribution required)"
