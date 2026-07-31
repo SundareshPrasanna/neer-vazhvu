@@ -5,9 +5,10 @@ name: CI
 # the P2 cutover: fetched via scripts/fetch-corpus.sh, which requires the
 # CORPUS_REPO_TOKEN secret and therefore cannot run on fork PRs). The
 # sample-corpus job needs no secrets and runs everywhere: it prunes the
-# corpus to the licence-clean manifest (scripts/sample-corpus.json) and
-# proves build + tests pass against it. Job names say exactly what they
-# check - there is deliberately NO silent fallback from full to sample.
+# corpus to the clean reference set plus documented fixtures
+# (scripts/sample-corpus.json) and proves build + tests pass against it.
+# Job names say exactly what they check - there is deliberately NO silent
+# fallback from full to sample.
 
 on:
   pull_request:
