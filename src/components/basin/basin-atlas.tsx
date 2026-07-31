@@ -676,18 +676,18 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     }
   }, [gapData, depData, initialFloor, manifest.defaultGapUnit]);
 
-  // The gap polygons carry taluk keys. A selection can also be a ULB key (the
-  // PRS "open in the DEP snapshot" links, defaultGapUnit), which has no polygon
-  // of its own - dimming on one would grey the whole layer with nothing picked
-  // out. Highlight only when the key really is a polygon's; a ULB's own map cue
-  // is its town boundary, via "Show <ULB> on the map". Deliberately not resolved
-  // to the containing taluk: the taluk tabs and the ULB cards report different
-  // things, and lighting up a taluk for a ULB would blur that line again.
+  // What the gap layer highlights. The selection key alone can't decide this:
+  // it says which unit the panel is focused on, not whether that unit has a
+  // polygon, and "bbmp" is deliberately both a ULB key and a taluk key. So the
+  // DepPanel - the only thing that knows what it is actually showing - reports
+  // the polygon to light up, and null for every view that has no polygon
+  // (district-wide, governance, and ULBs whose own boundary isn't a gap unit).
+  // v1 basins have no DepPanel; there the selection is always a polygon key.
+  const [depHighlight, setDepHighlight] = useState<string | null>(null);
   const mapGapUnit = useMemo(() => {
     if (!selectedGapUnit) return null;
-    if (!depData) return selectedGapUnit;
-    return depData.districts.some((d) => d.taluks.some((t) => t.key === selectedGapUnit)) ? selectedGapUnit : null;
-  }, [selectedGapUnit, depData]);
+    return depData ? depHighlight : selectedGapUnit;
+  }, [selectedGapUnit, depData, depHighlight]);
 
   useEffect(() => {
     setCoachDismissed(localStorage.getItem(COACH_KEY) === "1");
@@ -1489,6 +1489,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 data={depData}
                 focusTaluk={selectedGapUnit}
                 onSelectTaluk={setSelectedGapUnit}
+                onHighlight={setDepHighlight}
                 onShowMatch={(m) => {
                   showOnMap(m);
                   // On phones this sheet covers the map - close it so the
@@ -2885,10 +2886,12 @@ function DepShowOnMap({ name, match, onShowMatch }: { name: string; match?: MapM
   );
 }
 
-function DepPanel({ data, focusTaluk, onSelectTaluk, onShowMatch, onClose, onBack }: {
+function DepPanel({ data, focusTaluk, onSelectTaluk, onHighlight, onShowMatch, onClose, onBack }: {
   data: DepData;
   focusTaluk: string | null;
   onSelectTaluk: (key: string) => void;
+  /** Which gap polygon the map should light up for what this panel is showing. */
+  onHighlight: (key: string | null) => void;
   onShowMatch: (m: MapMatch) => void;
   onClose: () => void;
   onBack?: () => void;
@@ -2928,6 +2931,22 @@ function DepPanel({ data, focusTaluk, onSelectTaluk, onShowMatch, onClose, onBac
   const district = data.districts.find((d) => d.key === tab) ?? null;
   const selUlb = district && view.kind === "ulb" ? district.ulbs.find((u) => u.key === view.key) ?? null : null;
   const selTaluk = district && view.kind === "taluk" ? district.taluks.find((t) => t.key === view.key) ?? null : null;
+
+  // One place decides what the map lights up, so every route in here - chips,
+  // district tabs, governance, and the map-badge sync above - stays honest.
+  // Without this the old taluk stayed lit under unrelated content.
+  const isPolygonKey = (key: string) => data.districts.some((d) => d.taluks.some((t) => t.key === key));
+  useEffect(() => {
+    if (tab === GOV_TAB || !district) return onHighlight(null);
+    if (selTaluk) return onHighlight(selTaluk.key);
+    // A ULB normally has no gap polygon; its map cue is "Show <ULB> on the map".
+    // BBMP is the exception - it is deliberately both a ULB and a taluk key, and
+    // the polygons it names are literally the "BBMP city-wide" pair, so lighting
+    // them for the BBMP card shows exactly the area the card describes.
+    if (selUlb) return onHighlight(isPolygonKey(selUlb.key) ? selUlb.key : null);
+    return onHighlight(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, district, selTaluk, selUlb, data.districts, onHighlight]);
 
   const chip = (active: boolean) =>
     `text-[11px] px-2 py-0.5 rounded border transition-colors ${active
