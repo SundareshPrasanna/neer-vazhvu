@@ -415,12 +415,16 @@ def registry_licenses() -> dict[str, str | None]:
 
 def own_assessment(
     rec: dict, doc: dict, reg: dict, audit_errors: list[str], unclassified: set[str]
-) -> tuple[str, list[dict], list[str]]:
-    """Artifact's own-source bucket (before lineage): (status, source detail, notes)."""
+) -> tuple[str, list[dict], list[str], set[str]]:
+    """Artifact's own-source bucket (before lineage).
+
+    Returns (status, source detail, notes, restricting source identities).
+    """
     prov = doc.get("provenance", {})
     notes: list[str] = []
     source_buckets: set[str] = set()
     detail: list[dict] = []
+    restricted_ids: set[str] = set()
     sources = [
         s
         for s in prov.get("sources", [])
@@ -449,6 +453,12 @@ def own_assessment(
             buckets.add(b)
         w = worst(buckets)
         source_buckets.add(w)
+        if w == "restricted":
+            # Identity of the restricting contributor, so a rights
+            # determination can name it. A source with no registry id is
+            # identified by the artifact it sits on, since there is nothing
+            # else to point at.
+            restricted_ids.add(sid or f"{rec['path']}#inline")
         detail.append(
             {
                 "id": sid,
@@ -458,7 +468,7 @@ def own_assessment(
             }
         )
     if source_buckets:
-        return worst(source_buckets), detail, notes
+        return worst(source_buckets), detail, notes, restricted_ids
     # ---- source-empty artifacts: VAGUE by default (review round 3).
     #
     # ACCOUNTABILITY and RIGHTS are different questions. validate_nvdm.py
@@ -482,7 +492,7 @@ def own_assessment(
         notes.append(
             "claim compilation: licence rests on unaudited per-record citations"
         )
-        return "vague", detail, notes
+        return "vague", detail, notes, restricted_ids
     producer = prov.get("produced_by")
     if (
         prov.get("rights_basis") == "self-authored"
@@ -491,12 +501,12 @@ def own_assessment(
         and producer.strip().lower() != "manual"
     ):
         notes.append(f"rights basis: self-authored ({producer})")
-        return "clean-open", detail, notes
+        return "clean-open", detail, notes, restricted_ids
     notes.append(
         "empty sources without an audited rights_basis - unverifiable "
         "(produced_by alone is accountability, not a rights grant)"
     )
-    return "vague", detail, notes
+    return "vague", detail, notes, restricted_ids
 
 
 DETERMINATION_BASES = ("derived-facts",)
@@ -508,21 +518,37 @@ def _valid_determination(det: object, prov: dict) -> bool:
     Every field is load-bearing. `basis` names the doctrine relied on;
     `reasoning` states why it applies TO THIS FILE (a generic sentence copied
     across a directory is exactly what this is meant to stop); `reviewed_on`
-    dates the judgement so it can be re-examined; `produced_by` on the
+    dates the judgement so it can be re-examined; `clears` enumerates exactly
+    which restricted inputs it covers, by source id (or `<path>#inline` for a
+    source carrying no registry id), so a determination can never reach
+    further than the reasoning that justifies it; `produced_by` on the
     provenance block names the code that computed the derived values, because
     a determination about derived output is worthless if nothing derived it.
     """
     if not isinstance(det, dict):
         return False
     producer = (prov.get("produced_by") or "").strip()
+    clears = det.get("clears")
     return bool(
         det.get("basis") in DETERMINATION_BASES
         and isinstance(det.get("reasoning"), str)
         and len(det.get("reasoning", "")) >= 80
         and det.get("reviewed_on")
+        and isinstance(clears, list)
+        and clears
+        and all(isinstance(c, str) and c for c in clears)
         and producer
         and producer.lower() != "manual"
     )
+
+
+def _determination_clears(det: dict, restricted_here: set[str]) -> bool:
+    """True only if the determination NAMES every restricting contributor.
+
+    The whole scoping rule in one line: coverage is a superset test, not a
+    bucket deletion. One unnamed restricted input and nothing is cleared.
+    """
+    return set(restricted_here) <= set(det.get("clears") or ())
 
 
 def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
@@ -550,7 +576,7 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
             docs[rec["path"]] = doc
             recs[rec["path"]] = rec
 
-    own: dict[str, tuple[str, list[dict], list[str]]] = {
+    own: dict[str, tuple[str, list[dict], list[str], set[str]]] = {
         p: own_assessment(recs[p], docs[p], reg, audit_errors, unclassified)
         for p in docs
     }
@@ -559,6 +585,10 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
     final: dict[str, str] = {}
     lineage_notes: dict[str, list[str]] = defaultdict(list)
     visiting: set[str] = set()
+    # Contributor identity, kept alongside the bucket so a rights
+    # determination can clear only the restricted inputs it names.
+    own_restricted: dict[str, set[str]] = {p: own[p][3] for p in own}
+    restricted_from: dict[str, set[str]] = {}
 
     def resolve(path: str, chain: tuple[str, ...]) -> str:
         if path in final:
@@ -571,7 +601,7 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
         visiting.add(path)
         doc = docs[path]
         prov = doc.get("provenance", {})
-        status, _, _ = own[path]
+        status, _, _, _ = own[path]
         buckets = {status}
         ii = prov.get("internal_inputs")
         if prov.get("method") in LINEAGE_METHODS and ii is None:
@@ -599,6 +629,17 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
                 buckets.add("vague")
         visiting.discard(path)
         result = worst(buckets)
+        # WHO restricted this artifact, not merely THAT something did. The
+        # first version of the determination collapsed lineage into a set of
+        # bucket NAMES and then did `buckets - {"restricted"}`, which removed
+        # every restricted contribution at once - so a determination whose
+        # reasoning discussed CPCB would silently have cleared an unrelated
+        # no-derivatives or research-only input added later. Identity is kept
+        # so a determination can only reach what it actually names.
+        restricted_here = set(own_restricted.get(path, ()))
+        for dep in ii or []:
+            if dep in docs and final.get(dep) == "restricted":
+                restricted_here |= restricted_from.get(dep, set())
         # ---- audited per-artifact rights determination (PR #227 review, P1-4).
         #
         # Mechanical source-term propagation over-claims for a DERIVED
@@ -622,23 +663,51 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
         #     unproven lineage proven.
         #   * it must be per artifact, with reasoning and a review date. There
         #     is no blanket form and no directory-level form.
+        #   * it must NAME the restricted inputs it covers, in `clears`. A
+        #     restricted contributor that is not named survives, and the
+        #     artifact stays restricted. This is what stops a determination
+        #     from being broader than the reasoning that justifies it.
         #
         # It is recorded as `provenance.rights_determination`, never as a note.
         if result == "restricted":
             det = prov.get("rights_determination")
             if _valid_determination(det, prov):
-                lineage_notes[path].append(
-                    f"restricted cleared to gov-attribution by audited rights "
-                    f"determination '{det['basis']}' reviewed {det['reviewed_on']}"
-                )
-                result = worst((buckets - {"restricted"}) | {"gov-attribution"})
+                covered = set(det["clears"])
+                uncovered = restricted_here - covered
+                stale = covered - restricted_here
+                if not _determination_clears(det, restricted_here):
+                    lineage_notes[path].append(
+                        "rights determination does not reach "
+                        + ", ".join(sorted(uncovered))
+                        + " - still restricted"
+                    )
+                else:
+                    lineage_notes[path].append(
+                        f"restricted cleared to gov-attribution by audited rights "
+                        f"determination '{det['basis']}' reviewed "
+                        f"{det['reviewed_on']}, covering "
+                        + ", ".join(sorted(covered))
+                    )
+                    result = worst((buckets - {"restricted"}) | {"gov-attribution"})
+                    restricted_here = set()
+                if stale:
+                    # Naming something that no longer restricts this artifact
+                    # means the determination has drifted from the lineage and
+                    # nobody re-read it. Loud, not silent.
+                    audit_errors.append(
+                        f"{path}: rights_determination clears "
+                        + ", ".join(sorted(stale))
+                        + " which no longer restricts this artifact - re-audit it"
+                    )
             elif det is not None:
                 audit_errors.append(
                     f"{path}: rights_determination present but incomplete - needs "
-                    f"basis 'derived-facts', a reasoning string, reviewed_on, and a "
-                    f"real produced_by"
+                    f"basis 'derived-facts', a reasoning string, reviewed_on, a "
+                    f"non-empty `clears` list naming the restricted inputs it "
+                    f"covers, and a real produced_by"
                 )
         final[path] = result
+        restricted_from[path] = restricted_here
         return final[path]
 
     for p in docs:
@@ -911,37 +980,30 @@ def selftest() -> int:
     # A determination is an audited claim, not a flag. Each of these is missing
     # exactly one required part and must not validate.
     good_prov = {"produced_by": "scripts/compute-ward-profiles.ts"}
+    full = {
+        "basis": "derived-facts",
+        "clears": ["cpcb-nwmp-annual"],
+        "reasoning": "x" * 200,
+        "reviewed_on": "2026-07-31",
+    }
+    check("a complete determination validates", _valid_determination(full, good_prov))
     check(
         "an incomplete rights determination is not a rights determination",
         not any(
             _valid_determination(det, prov)
             for det, prov in (
-                ({"basis": "derived-facts", "reviewed_on": "2026-07-31"}, good_prov),
-                ({"basis": "derived-facts", "reasoning": "x" * 200}, good_prov),
-                (
-                    {
-                        "basis": "we-think-its-fine",
-                        "reasoning": "x" * 200,
-                        "reviewed_on": "2026-07-31",
-                    },
-                    good_prov,
-                ),
-                (
-                    {
-                        "basis": "derived-facts",
-                        "reasoning": "too short",
-                        "reviewed_on": "2026-07-31",
-                    },
-                    good_prov,
-                ),
-                (
-                    {
-                        "basis": "derived-facts",
-                        "reasoning": "x" * 200,
-                        "reviewed_on": "2026-07-31",
-                    },
-                    {"produced_by": "manual"},
-                ),
+                ({**full, "reasoning": None}, good_prov),
+                ({**full, "reviewed_on": None}, good_prov),
+                ({**full, "basis": "we-think-its-fine"}, good_prov),
+                ({**full, "reasoning": "too short"}, good_prov),
+                # Missing, empty, or non-string `clears`: a determination that
+                # names nothing is exactly the unscoped form this replaced.
+                ({k: v for k, v in full.items() if k != "clears"}, good_prov),
+                ({**full, "clears": []}, good_prov),
+                ({**full, "clears": "cpcb-nwmp-annual"}, good_prov),
+                ({**full, "clears": [""]}, good_prov),
+                (full, {"produced_by": "manual"}),
+                (full, {}),
                 (True, good_prov),
             )
         ),
@@ -950,6 +1012,31 @@ def selftest() -> int:
         "a determination cannot clear nc or share-alike, only restricted",
         worst({"nc", "gov-attribution"}) == "nc"
         and worst({"share-alike", "gov-attribution"}) == "share-alike",
+    )
+    # ---- SCOPING (PR #227 review round 3). The first implementation removed
+    # the 'restricted' bucket name wholesale, so any restricted contributor was
+    # cleared whether or not the determination mentioned it. These prove the
+    # decision now turns on contributor IDENTITY.
+    check(
+        "a determination clears exactly the inputs it names",
+        _determination_clears(full, {"cpcb-nwmp-annual"}) is True,
+    )
+    check(
+        "an UNCOVERED restricted input is not cleared by an existing determination",
+        _determination_clears(full, {"cpcb-nwmp-annual", "some-nd-dataset"}) is False,
+    )
+    check(
+        "a determination naming one board does not clear a different board",
+        _determination_clears(full, {"dpcc-monthly-analysis-delhi"}) is False,
+    )
+    check(
+        "an id-less restricted source needs its path named to be cleared",
+        _determination_clears(full, {"public/data/x.json#inline"}) is False
+        and _determination_clears(
+            {**full, "clears": ["public/data/x.json#inline"]},
+            {"public/data/x.json#inline"},
+        )
+        is True,
     )
     r = by.get("public/data/restoration-priority-delhi.json")
     check(
