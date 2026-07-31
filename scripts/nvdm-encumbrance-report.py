@@ -119,18 +119,40 @@ GOV_MARKERS = (
     "tamil nadu government portal",
 )
 
-# Exact verified wordings already present in the registries. Generic access
+# COMPLETE verified wordings already present in the registries, matched in
+# full and never by prefix. Each entry is a specific string somebody audited
+# against the source; a variant of it has NOT been audited. Generic access
 # language ("open", "free", "open access") is NOT clean without one of these
 # or a canonical identifier - it falls through to vague.
+#
+# Review round 4: this list previously matched `startswith(w + ";")`, so any
+# suffix rode in free - "Copernicus ...; commercial licence required" and
+# "; no resale" both classified clean-open. A qualifier we have not read is
+# exactly the case that must fail. Adding a wording here therefore means
+# auditing that exact string; if a registry entry is reworded, this audit
+# demotes it to vague and the every-registry-string selftest says so loudly,
+# which is the intended prompt to re-audit rather than a bug.
 EXACT_CLEAN_WORDINGS = (
-    # Named provider grant, wording verified at the source. Generic access
-    # language ("open", "free and open", portal labels) is NOT here - it
-    # classifies vague until counsel or a source-verified named grant
-    # upgrades the registry string (PR #221 review round 2: the mechanical
-    # gate must not pre-empt the pending counsel question on OpenCity's
-    # dataset-page "open" label).
+    # Named provider grant, wording verified at the source (sentinel-2-l2a).
     "copernicus free and open data, attribution required",
+    # jrc-global-surface-water: the same Copernicus grant, carrying the
+    # quoted download-page evidence and verification date (round 2).
+    "copernicus free and open data, attribution required; gsw download page "
+    "states 'all data here is produced under the copernicus programme and is "
+    "provided free of charge, without restriction of use', required "
+    "attribution 'source: ec jrc/google' plus pekel et al. (2016) citation - "
+    "verified 2026-07-31",
 )
+
+
+def _collapse_ws(text: str) -> str:
+    """Lowercase with runs of whitespace collapsed - so a reflowed registry
+    string still matches its audited wording, while any added CLAUSE does
+    not (that is what the exact match is for)."""
+    return " ".join(text.lower().split())
+
+
+_EXACT_CLEAN_SET = frozenset(_collapse_ws(w) for w in EXACT_CLEAN_WORDINGS)
 
 # Canonical clean grant identifiers, matched against the NORMALISED string
 # (separators collapsed, so "CC BY SA 4.0", "cc-by-sa-4.0" and "CC BY-SA 4.0"
@@ -253,9 +275,11 @@ def classify(license_str: str | None) -> str:
         or "copyleft" in n
     ):
         return "share-alike"
-    # 4. Verified exact provider wordings (full-string / ";"-suffixed match
-    #    only, so they cannot shadow the generic-language rules below).
-    if any(s == w or s.startswith(w + ";") for w in EXACT_CLEAN_WORDINGS):
+    # 4. Verified provider wordings, matched COMPLETE. An unaudited suffix
+    #    ("; no resale", "; commercial licence required") must not ride in on
+    #    an audited prefix, so there is no startswith here: a variant falls
+    #    through to the rules below and fails closed.
+    if _collapse_ws(s) in _EXACT_CLEAN_SET:
         return "clean-open"
     # 5. Explicitly vague / unrecorded terms AND generic access language -
     #    before open markers, so "open WFS, no explicit licence stated"
@@ -535,6 +559,24 @@ def selftest() -> int:
         "restrictive marker beats canonical CC BY",
         classify("CC BY 4.0, for evaluation only") == "restricted",
     )
+    # ---- round 4: an audited wording is clean COMPLETE, never by prefix.
+    _cop = "Copernicus free and open data, attribution required"
+    check("audited Copernicus wording is clean", classify(_cop) == "clean-open")
+    for _suffix in (
+        "; subject to partner embargo",
+        "; no resale",
+        "; commercial licence required",
+        "; verified 2026-07-31",
+    ):
+        check(
+            f"unaudited suffix '{_suffix.strip('; ')}' is not clean",
+            classify(_cop + _suffix) != "clean-open",
+        )
+    check(
+        "reflowed audited wording still matches",
+        classify("Copernicus  free and open data,\n  attribution required")
+        == "clean-open",
+    )
     check("NC beats CC BY", classify("dual: CC BY 4.0 or CC BY-NC 4.0") == "nc")
     check(
         "ODbL in a dual grant stays share-alike",
@@ -616,13 +658,11 @@ def selftest() -> int:
         classify("EC Open / public domain") == "vague",
     )
     check(
+        # Reads the REAL registry entry, not a paraphrase: the audited list
+        # and the registry string must stay in lockstep, and a reworded
+        # registry entry should fail here until someone re-audits it.
         "verified Copernicus wording (JRC GSW) stays clean",
-        classify(
-            "Copernicus free and open data, attribution required; download page: "
-            "'All data here is produced under the Copernicus Programme and is provided "
-            "free of charge, without restriction of use'"
-        )
-        == "clean-open",
+        classify(registry_licenses().get("jrc-global-surface-water")) == "clean-open",
     )
     check(
         "HydroSHEDS wording is nc",
