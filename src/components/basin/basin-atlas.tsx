@@ -676,6 +676,19 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     }
   }, [gapData, depData, initialFloor, manifest.defaultGapUnit]);
 
+  // The gap polygons carry taluk keys. A selection can also be a ULB key (the
+  // PRS "open in the DEP snapshot" links, defaultGapUnit), which has no polygon
+  // of its own - dimming on one would grey the whole layer with nothing picked
+  // out. Highlight only when the key really is a polygon's; a ULB's own map cue
+  // is its town boundary, via "Show <ULB> on the map". Deliberately not resolved
+  // to the containing taluk: the taluk tabs and the ULB cards report different
+  // things, and lighting up a taluk for a ULB would blur that line again.
+  const mapGapUnit = useMemo(() => {
+    if (!selectedGapUnit) return null;
+    if (!depData) return selectedGapUnit;
+    return depData.districts.some((d) => d.taluks.some((t) => t.key === selectedGapUnit)) ? selectedGapUnit : null;
+  }, [selectedGapUnit, depData]);
+
   useEffect(() => {
     setCoachDismissed(localStorage.getItem(COACH_KEY) === "1");
     if (embedded) return;
@@ -1123,10 +1136,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (l.gap) {
               return (
                 <GeoJSON
-                  key={`gapfill-${selectedRiverId}-${tiles.isDark}-${selectedGapUnit ?? ""}`}
+                  key={`gapfill-${selectedRiverId}-${tiles.isDark}-${mapGapUnit ?? ""}`}
                   data={fcScoped}
                   interactive={false}
-                  style={(feat?: Feature) => fillStyle(l, feat, faded, selectedGapUnit)}
+                  style={(feat?: Feature) => fillStyle(l, feat, faded, mapGapUnit)}
                 />
               );
             }
@@ -1249,8 +1262,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
               const sev = String((f.properties as Record<string, unknown>)?.severity ?? "high");
               const sevColor = sev === "high" ? "#dc2626" : sev === "medium" ? "#ea580c" : "#f59e0b";
               // When a unit is selected, dim the others so the choice reads.
-              const dimmed = selectedGapUnit != null && selectedGapUnit !== unit;
-              const isSel = selectedGapUnit === unit;
+              const dimmed = mapGapUnit != null && mapGapUnit !== unit;
+              const isSel = mapGapUnit === unit;
               // Badge each polygon PART, not just the feature as a whole, so a
               // detached fragment (e.g. Harohalli's Kaggalahalli exclave near
               // Hosuru) gets its own labelled, clickable dot instead of an
@@ -1265,7 +1278,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 .filter((p, i) => i === 0 || p.area >= GAP_BADGE_MIN_AREA)
                 .map((p, pi) => (
                   <CircleMarker
-                    key={`gapbadge-${unit}-${idx}-${pi}-${selectedGapUnit ?? ""}`}
+                    key={`gapbadge-${unit}-${idx}-${pi}-${mapGapUnit ?? ""}`}
                     center={p.b.getCenter()}
                     radius={(coarsePointer ? 12 : 6) + (isSel ? 3 : 0)}
                     pathOptions={{
@@ -1738,7 +1751,8 @@ function matchesHighlight(hl: MapHighlight | null | undefined, l: BasinLayer, fe
   return hl.contains?.some((c) => v.toLowerCase().includes(c.toLowerCase())) ?? false;
 }
 
-function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, selectedGapUnit?: string | null, hl?: MapHighlight | null): PathOptions {
+/** `gapUnit` is the polygon-backed selection (see mapGapUnit), never a ULB key. */
+function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, gapUnit?: string | null, hl?: MapHighlight | null): PathOptions {
   if (matchesHighlight(hl, l, feat)) {
     return { color: SELECTED_SHED_COLOR, weight: 3, fillColor: l.color, fillOpacity: 0.35, opacity: 1 };
   }
@@ -1766,10 +1780,10 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, sel
     const sev = String((feat?.properties as Record<string, unknown>)?.severity ?? "high");
     const c = sev === "high" ? "#dc2626" : sev === "medium" ? "#ea580c" : "#f59e0b";
     // When a unit is selected, grey out the others so the selection stands out.
-    if (selectedGapUnit != null && selectedGapUnit !== unit) {
+    if (gapUnit != null && gapUnit !== unit) {
       return { color: "#cbd5e1", weight: 1, fillColor: "#94a3b8", fillOpacity: 0.12 };
     }
-    const isSel = selectedGapUnit === unit;
+    const isSel = gapUnit === unit;
     return { color: c, weight: isSel ? 3 : 2, fillColor: c, fillOpacity: faded ? 0.2 : isSel ? 0.55 : 0.4 };
   }
   if (l.family.startsWith("pressures")) {
@@ -2991,7 +3005,14 @@ function DepPanel({ data, focusTaluk, onSelectTaluk, onShowMatch, onClose, onBac
           <div className="flex flex-wrap gap-1.5 items-center">
             <button onClick={() => setView({ kind: "district" })} className={chip(view.kind === "district")}>District-wide</button>
             {district.ulbs.map((u) => (
-              <button key={u.key} onClick={() => setView({ kind: "ulb", key: u.key })} className={chip(view.kind === "ulb" && view.key === u.key)}>
+              <button
+                key={u.key}
+                // Tell the map too, or it keeps a previously picked taluk lit
+                // while the panel has moved on to a ULB. A ULB key has no gap
+                // polygon, so this clears the highlight rather than moving it.
+                onClick={() => { setView({ kind: "ulb", key: u.key }); onSelectTaluk(u.key); }}
+                className={chip(view.kind === "ulb" && view.key === u.key)}
+              >
                 {u.name} ({u.type})
               </button>
             ))}
