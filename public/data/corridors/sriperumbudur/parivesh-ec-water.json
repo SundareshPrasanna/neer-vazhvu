@@ -21,7 +21,7 @@
     "method": "pdf-extract",
     "produced_at": "2026-07-31",
     "produced_by": "scripts/fetch_parivesh_corridor_water.py",
-    "note": "Pilot extraction (19 EC letters, 13 with water tables) for the Sriperumbudur-Oragadam corridor. Discovery: full TN EC dump via the undocumented advanceSearchData API, filtered on corridor toponyms; certificate PDFs archived under scripts/.cache/parivesh/ (git-ignored). Verification method, 2026-07-31: every record was read field by field against the `pdftotext -layout` rendering of its letter, with the EC date and EC identification number matched and the six amendment/corrigendum letters confirmed water-free by a zero-hit search for 'KLD' across the whole letter. Where a table's labels and values are misaligned by the layout, the reading was settled by the letter's OWN component arithmetic (sub-rows reproducing a stated subtotal exactly), not by eyeballing; those cases are in the review list. The regex extractor's per-field agreement is recorded in extraction.auto_match.",
+    "note": "Pilot extraction (19 EC letters, 13 with water tables) for the Sriperumbudur-Oragadam corridor. Discovery: full TN EC dump via the undocumented advanceSearchData API, filtered on corridor toponyms; certificate PDFs archived under scripts/.cache/parivesh/ (git-ignored). Verification method, 2026-07-31: every record was read field by field against the `pdftotext -layout` rendering of its letter, with the EC date and EC identification number matched and the six amendment/corrigendum letters confirmed water-free by a zero-hit search for 'KLD' across the whole letter. Where a table's labels and values are misaligned by the layout, the reading was settled by the letter's OWN component arithmetic (sub-rows reproducing a stated subtotal exactly), not by eyeballing; those cases are listed in open_readings. The regex extractor's per-field agreement is recorded in extraction.auto_match.",
     "conventions": {
       "claim_basis": "All figures are PROPONENT-ASSERTED quantities as stated in the EC/EIA submission and restated in the SEIAA Tamil Nadu EC letter. They are regulatory filings, not measurements: nothing here is metered, audited, or independently verified. Several letters contain internal inconsistencies, which are preserved verbatim and flagged in checks/notes.",
       "units": "KLD (kilolitres per day) unless a text field quotes the letter otherwise",
@@ -149,7 +149,7 @@
         "Trade effluent and ETP rows are dashes in the letter (no trade effluent stated).",
         "Fresh water breakdown as stated: domestic 27 KLD, greenbelt 112 KLD."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {
         "components_sum_to_total": "pass",
         "wastewater_not_above_intake": "pass",
@@ -260,7 +260,7 @@
         "Wastewater as stated: from STP (sewage) 111 KLD (domestic 71 + flushing 40); from ETP (effluent) 125 KLD (industrial area 31 + production area 94).",
         "The letter's row 26 'Trade Effluent Generation' actually lists TREATED water (treated sewage 106 + treated effluent 119 = 225); trade effluent here is the ETP influent 125 KLD from row 25."
       ],
-      "review": [
+      "open_readings": [
         {
           "question": "Row 21 stacks three labels ('Total Water Requirement' / 'i. Fresh water requirement' / 'ii. Treated recycled water requirement') against only two printed numbers, 137 and 225. Read literally the letter says total = 137 and fresh = 225; read as a one-row shift it says fresh = 137 and treated recycled = 225 with no total printed. Which reading does SEIAA intend?",
           "verbatim": "'21. Total Water Requirement 137 / i. Fresh water requirement 225 / ii. Treated recycled water requirement' ... '22. Fresh water requirement i. Domestic 79.0 ii. Process 58.0' ... '23. Treated Water Requirement i. Flushing use 40.0 ii. Greenbelt 98.0 iii. Process 87.0'",
@@ -317,7 +317,7 @@
       "notes": [
         "Corrigendum correcting survey numbers/plot details; restates no water figures. Water data for this facility lives in the parent EC letter record."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
@@ -355,7 +355,7 @@
       "notes": [
         "Amendment relocates a CSR 'Blue Green Centre' from IIT Madras to Olcott Memorial High School, Besant Nagar; no water figures restated. The plant's water table lives in the parent EC, which predates this pilot's certificate-URL cohort."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
@@ -453,7 +453,7 @@
         "Fresh breakdown as stated: domestic 321.1, flushing 0, gardening 130.01, process 42.99.",
         "Treatment capacities are the letter's p.13 wastewater-management table, which states the END STATE: sewage 373.49 KLD 'collected and treated in STP of 350 KLD + 200 KLD (Proposed) = 550 KLD capacity', and effluent 437.5 KLD 'treated in 468 KLD ETP capacity'. The salient-features rows 26/27 ('Proposed Capacity of STP 200, ETP 0') are the INCREMENT this expansion adds, not the plant's capacity - reading them as the end state manufactures two inconsistencies that are not in the letter."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {
         "components_sum_to_total": "pass",
         "wastewater_not_above_intake": "pass",
@@ -503,7 +503,7 @@
       "notes": [
         "Amendment changes the CER activity to 'Waterbody Rejuvenation Projects' (Rs 2 crore, restore and enhance health of lakes and ponds); no water figures restated."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
@@ -541,7 +541,7 @@
       "notes": [
         "Amendment revises built-up area tables (incl. ETP/STP building rows) for the metal case / mobile phone manufacturing campus at Vallam Vadagal; no water quantities restated."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
@@ -625,9 +625,9 @@
       },
       "notes": [
         "Mobile-phone enclosure/casing manufacturing campus at Varanavasi-Agaram-Alavoor, Walajabad (project cost Rs 12,395 crore as stated).",
-        "Wastewater generation printed as 10874.256 KLD with no domestic/trade split, and no ETP row despite the volume; kept null in the split fields, see review queue."
+        "Wastewater generation printed as 10874.256 KLD with no domestic/trade split, and no ETP row despite the volume; kept null in the split fields - see open_readings."
       ],
-      "review": [
+      "open_readings": [
         {
           "question": "Sub-rows 'Domestic 4,84,900 KLD' and 'Flushing 1,87,500 KLD' under fresh/treated requirement (p.4) are 3 orders of magnitude above the stated totals. Are these litres/day figures mislabelled KLD (i.e. 484.9 / 187.5 KLD)?",
           "verbatim": "'23. Fresh water requirement 5000 KLD; Domestic 4,84,900 KLD; Flushing 1,87,500 KLD; 24. Treated Water Requirement 10426.98 KLD; Flushing use 1,87,500 KLD; Greenbelt & OSR 260 KLD'",
@@ -691,7 +691,7 @@
       "notes": [
         "Corrigendum to the enclosure-plant EC; restates no water figures."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
@@ -794,7 +794,7 @@
         "ETP existing_kld 8.1 is the letter's own parenthetical ('It is being treated through existing ETP (8.1 KLD)'), but it equals the stated trade effluent exactly, so it may be the volume treated rather than a nameplate rating. The after-expansion 10 KLD is unambiguous ('It will be treated in revamped ETP (10 KLD)') and is what the sanity checks use.",
         "Fresh breakdown as stated: domestic 27, greenbelt 30.3, process 7, CFS 10, cooling tower 4.4."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {
         "components_sum_to_total": "pass",
         "wastewater_not_above_intake": "pass",
@@ -903,7 +903,7 @@
         "STP: existing 44 KLD, additional 35 KLD stated as under installation per CTE obtained 2024 (footnote on p.5), 79 KLD after expansion - which covers the 50 KLD of sewage.",
         "ETP capacity is never stated as a number in this letter: rows 27-28 describe the train in prose only ('existing ETP followed by RO', 'existing ETP after revamp along with installation of additional RO'). The 8.75 and 9.6 KLD figures beside it are effluent VOLUMES, existing and after-expansion, not capacities. All three ETP fields left null."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {
         "components_sum_to_total": "pass",
         "wastewater_not_above_intake": "pass",
@@ -996,7 +996,7 @@
         "recycled_kld 318 is the letter's own stated total ('treated sewage of 318 KLD will be reused as follows...').",
         "CER list includes 'Streamlining water flow from Ullavur Periya Eri, Sitheri & Maduvu Eri (as per Collector NOC)' - tank-cascade work adjacent to the park."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {
         "stp_vs_sewage": "pass"
       },
@@ -1043,7 +1043,7 @@
       "notes": [
         "Corrigendum correcting survey numbers in the Oragadam VI park EC; no water figures."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
@@ -1137,7 +1137,7 @@
         "Wastewater generation printed as a single 4537 KLD figure equal to treated-water generation; no domestic/trade split (trade effluent row is a dash), so the split fields stay null.",
         "Surface-water sourced: SIPCOT lake water plus the plant's own ponds - the corridor's largest stated industrial water demand in this cohort."
       ],
-      "review": [
+      "open_readings": [
         {
           "question": "Letter's own components disagree: fresh 1500 + treated recycled 4537 = 6037, but 'Total water' prints 5536 (p.5). Which does SEIAA treat as granted total?",
           "verbatim": "'21. Total water: Existing 5529 KLD, After Expansion/Total 5536 KLD; Fresh water 1493 -> 1500 KLD; Treated recycled water 4530 -> 4537 KLD'",
@@ -1252,7 +1252,7 @@
         "recycled_kld is the letter's two stated components (STP treated 76 + ETP treated 26.97); their sum equals total minus fresh exactly.",
         "STP capacity after expansion 150 KLD (60 existing + 90 proposed); ETP capacities after expansion ETP-1 10 + ETP-2 30 KLD (recorded sum 40)."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {
         "components_sum_to_total": "pass",
         "wastewater_not_above_intake": "pass",
@@ -1358,7 +1358,7 @@
         "Components reconcile exactly: 119 + 890.7 + 225.02 = 1234.72.",
         "First cohort facility whose process water is mostly PURCHASED recycled sewage (Chennai Metro TTRO at Koyambedu) rather than fresh abstraction."
       ],
-      "review": [
+      "open_readings": [
         {
           "question": "Rainwater harvesting sump capacity prints 161,200 cu.m (p.4) - two orders above every other letter in the cohort. Genuine storage lagoon or a units slip?",
           "verbatim": "'32. Rainwater Harvesting Sump Capacity 161200 Cu.m'",
@@ -1485,7 +1485,7 @@
         "Letter's own rows: total 339 vs fresh 187 + recycled 311 = 498. 187 + flushing 152 = 339, so the printed total appears to count fresh + flushing only; recorded verbatim with an arithmetic flag (same pattern as the Vallam Phase-I letter).",
         "Only cohort facility stating groundwater as its operating source - in firkas the regulator's assessment books as SAFE."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {
         "components_sum_to_total": "flag: fresh 187.0 + recycled 311.0 = 498.0 != stated total 339.0 (letter's own figures, kept verbatim)",
         "wastewater_not_above_intake": "pass",
@@ -1584,7 +1584,7 @@
         "No single total-water figure printed (same three-label row pattern as the Knorr-Bremse letter); trade effluent row 'NIL'.",
         "The printed RWH pond capacity '1.6 M3' is implausibly small; recorded verbatim in the rwh text only, not as a number."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {
         "stp_vs_sewage": "pass"
       },
@@ -1679,7 +1679,7 @@
         "Letter's own rows: total 443 vs fresh 287 + recycled 412 = 699. 287 + flushing 156 = 443, the same fresh-plus-flushing pattern as the Oragadam VI letter; recorded verbatim with an arithmetic flag.",
         "STP 450 KLD MBBR."
       ],
-      "review": [],
+      "open_readings": [],
       "checks": {
         "components_sum_to_total": "flag: fresh 287.0 + recycled 412.0 = 699.0 != stated total 443.0 (letter's own figures, kept verbatim)",
         "wastewater_not_above_intake": "pass",

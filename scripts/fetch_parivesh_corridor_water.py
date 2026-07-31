@@ -41,8 +41,8 @@ Two extraction layers, deliberately separate:
      build marks per-field agreement between the two layers in
      `extraction.auto_match`, and any core-field disagreement is reported at
      build time. Ambiguous figures are null with a note quoting the letter -
-     never an inferred number. Genuine judgment calls are queued for human
-     review in the record's `review` list.
+     never an inferred number. Readings that remain genuinely unsettled are
+     recorded in the record's `open_readings` list.
 
 Usage:
     python3 scripts/fetch_parivesh_corridor_water.py discover   # state dump + corridor filter report
@@ -69,8 +69,10 @@ import datetime as _dt
 import hashlib
 import json
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.request
 from pathlib import Path
@@ -99,7 +101,7 @@ UA = (
 # hash that was verified. Without that gate, `refresh` could pull a revised
 # certificate and the next build would happily re-emit the old transcription
 # still marked verified: true - a record asserting human verification of
-# content that has since changed (review 2026-07-31).
+# content that has since changed.
 #
 # Re-verification is an explicit act (`verify <proposal_no>...`), never a flag,
 # because "I looked at the new document" is a claim only a human can make.
@@ -182,9 +184,10 @@ CORE_FIELDS = [
 # A capacity triplet is not three equally-solid numbers. The letters state
 # different subsets: some print an Existing/Proposed/After-Expansion row, some
 # print one number under a "Proposed Capacity of STP" label, some only describe
-# the train in prose. Review 2026-07-31 found the triplets silently mixing the
-# three cases - a stated 45 KLD dropped to null for Mobis, an invented
-# `proposed: 0` for Hyundai whose letter prints no proposed column at all.
+# the train in prose. Letting one triplet stand for all three cases loses the
+# difference: a stated 45 KLD would read as absent for Mobis, and Hyundai -
+# whose letter prints no proposed column at all - would acquire an invented
+# `proposed: 0`.
 #
 # So every capacity carries its own provenance: `stated` lists the keys taken
 # verbatim from the letter, `derived` maps a key to why it was computed. A key
@@ -367,7 +370,7 @@ VERIFIED: dict[str, dict] = {
             "(treated sewage 106 + treated effluent 119 = 225); trade effluent here is the "
             "ETP influent 125 KLD from row 25.",
         ],
-        "review": [
+        "open_readings": [
             {
                 "question": (
                     "Row 21 stacks three labels ('Total Water Requirement' / 'i. Fresh water "
@@ -474,7 +477,7 @@ VERIFIED: dict[str, dict] = {
             "are the INCREMENT this expansion adds, not the plant's capacity - reading them as "
             "the end state manufactures two inconsistencies that are not in the letter.",
         ],
-        "review": [],
+        "open_readings": [],
     },
     "SIA/TN/INFRA2/543039/2025": {
         "proponent": "India Yamaha Motor Private Limited",
@@ -535,9 +538,9 @@ VERIFIED: dict[str, dict] = {
             "Mobile-phone enclosure/casing manufacturing campus at Varanavasi-Agaram-Alavoor, "
             "Walajabad (project cost Rs 12,395 crore as stated).",
             "Wastewater generation printed as 10874.256 KLD with no domestic/trade split, and no "
-            "ETP row despite the volume; kept null in the split fields, see review queue.",
+            "ETP row despite the volume; kept null in the split fields - see open_readings.",
         ],
-        "review": [
+        "open_readings": [
             {
                 "question": (
                     "Sub-rows 'Domestic 4,84,900 KLD' and 'Flushing 1,87,500 KLD' under fresh/treated "
@@ -708,7 +711,7 @@ VERIFIED: dict[str, dict] = {
             "are effluent VOLUMES, existing and after-expansion, not capacities. All three ETP "
             "fields left null.",
         ],
-        "review": [],
+        "open_readings": [],
     },
     "SIA/TN/INFRA2/501457/2024": {
         "proponent": "Indospace Park Oragadam V Phase 1 Private Limited",
@@ -803,7 +806,7 @@ VERIFIED: dict[str, dict] = {
             "Surface-water sourced: SIPCOT lake water plus the plant's own ponds - the corridor's "
             "largest stated industrial water demand in this cohort.",
         ],
-        "review": [
+        "open_readings": [
             {
                 "question": (
                     "Letter's own components disagree: fresh 1500 + treated recycled 4537 = 6037, "
@@ -911,7 +914,7 @@ VERIFIED: dict[str, dict] = {
             "First cohort facility whose process water is mostly PURCHASED recycled sewage "
             "(Chennai Metro TTRO at Koyambedu) rather than fresh abstraction.",
         ],
-        "review": [
+        "open_readings": [
             {
                 "question": (
                     "Rainwater harvesting sump capacity prints 161,200 cu.m (p.4) - two orders above "
@@ -1062,6 +1065,14 @@ def slug(proposal_no: str) -> str:
     return proposal_no.replace("/", "_")
 
 
+def rel(path: Path) -> str:
+    """Repo-relative display path, tolerant of paths outside the repo."""
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def today() -> str:
     return _dt.date.today().isoformat()
 
@@ -1087,11 +1098,13 @@ def save_state(state: dict) -> None:
     STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n")
 
 
-def verification_drift() -> tuple[list[str], list[str]]:
-    """(changed, unrecorded) documents relative to the verification state.
+def verification_drift() -> tuple[list[str], list[str], list[str]]:
+    """(changed, unrecorded, missing) documents relative to the verified state.
 
     changed    - the cached bytes differ from the bytes a human verified
     unrecorded - the document has no verification record at all
+    missing    - the document is not in the cache, so its bytes cannot be
+                 confirmed at all
     """
     state = load_state()
     docs = state.get("documents", {})
@@ -1104,7 +1117,7 @@ def verification_drift() -> tuple[list[str], list[str]]:
             # build would fail later on the absent file. It does not: the
             # cached pdftotext output survives independently, so the build
             # sailed through on stale text and stamped verified: true without
-            # ever seeing the source bytes (reproduced in review 2026-07-31).
+            # ever seeing the source bytes.
             # Any state where the verified bytes cannot be CONFIRMED PRESENT
             # is a blocking state.
             missing.append(no)
@@ -1121,8 +1134,8 @@ def state_dump_drift() -> str | None:
     The dump supplies every record's project name, sector, category, status and
     certificate URL, so it is an input to the output exactly as the letters are
     - and the artifact advertises its digest. Emitting a stored digest while
-    consuming different bytes is a false provenance claim (reproduced in review
-    2026-07-31), so the consumed bytes are gated like any other input.
+    consuming different bytes is a false provenance claim, so the consumed
+    bytes are gated like any other input.
     """
     f = CACHE / "tn-ec-proposals.json"
     cur = sha256_of(f)
@@ -1191,7 +1204,7 @@ def require_verified_documents() -> dict:
     if dump_problem:
         print(
             "\nThe discovery dump supplies every record's project name, category, status and\n"
-            "certificate URL. Review the cohort against the new dump:\n"
+            "certificate URL. Check the cohort against the new dump:\n"
             "  python3 scripts/fetch_parivesh_corridor_water.py discover\n"
             "then record that you have done so:\n"
             "  python3 scripts/fetch_parivesh_corridor_water.py verify state-dump",
@@ -1243,7 +1256,7 @@ def cmd_verify(proposals: list[str]) -> None:
         rec.pop("last_seen_sha256", None)
         print(f"verified {no} @ {cur[:16]}... ({'updated from ' + was[:16] + '...' if was else 'new record'})")
     save_state(state)
-    print(f"wrote {STATE_FILE.relative_to(ROOT)}")
+    print(f"wrote {rel(STATE_FILE)}")
 
 
 def fetch(url: str, dest: Path, post_json: bool = False, force: bool = False) -> bool:
@@ -1367,10 +1380,20 @@ def cmd_download(force: bool = False) -> None:
         # touched: only a human re-reading the letter can move those.
         state = load_state()
         docs = state.setdefault("documents", {})
-        state["state_dump"] = {
-            "sha256": sha256_of(CACHE / "tn-ec-proposals.json"),
-            "retrieved": today(),
-        }
+        # The dump follows the SAME rule as the documents: refresh records what
+        # it saw, and only cmd_verify may move a verified digest. Overwriting
+        # `sha256` here made refresh implicitly verify the new dump, so the
+        # gate added last round could never fire in the normal workflow - the
+        # command meant to trip it was the command that silenced it.
+        dump_rec = state.setdefault("state_dump", {})
+        dump_now = sha256_of(CACHE / "tn-ec-proposals.json")
+        if dump_rec.get("sha256") == dump_now:
+            dump_rec["retrieved"] = today()
+            dump_rec.pop("last_seen_sha256", None)
+            dump_rec.pop("last_seen_on", None)
+        else:
+            dump_rec["last_seen_sha256"] = dump_now
+            dump_rec["last_seen_on"] = today()
         for no in changed + unchanged:
             rec = docs.setdefault(no, {})
             cur = sha256_of(pdf_path(no))
@@ -1385,16 +1408,23 @@ def cmd_download(force: bool = False) -> None:
         print(
             f"\nrefresh: {len(changed)} document(s) changed upstream, "
             f"{len(unchanged)} byte-identical. State recorded in "
-            f"{STATE_FILE.relative_to(ROOT)}."
+            f"{rel(STATE_FILE)}."
         )
-        drifted, unrecorded = verification_drift()
-        if drifted or unrecorded:
+        drifted, unrecorded, absent = verification_drift()
+        dump_problem = state_dump_drift()
+        blockers = (
+            [f"{no} (changed upstream)" for no in drifted]
+            + [f"{no} (no verification record)" for no in unrecorded]
+            + [f"{no} (no cached PDF)" for no in absent]
+            + ([f"discovery dump: {dump_problem}"] if dump_problem else [])
+        )
+        if blockers:
             print(
-                "\nBUILD IS NOW BLOCKED until these are re-read by a human and recorded with "
-                "`verify`:\n  " + "\n  ".join(drifted + unrecorded)
+                "\nBUILD IS NOW BLOCKED until these are re-read and recorded with `verify`:\n  "
+                + "\n  ".join(blockers)
             )
         else:
-            print("Every document still matches the bytes that were verified; build is clear.")
+            print("Every input still matches the bytes that were verified; build is clear.")
 
 
 def cmd_refresh() -> None:
@@ -1430,7 +1460,7 @@ def pdf_text(no: str) -> str:
     The .txt files under scripts/.cache/parivesh/txt/ are an OUTPUT kept for
     human inspection, never an input. Reusing them was an evasion of the
     verification gate: delete a PDF and the stale text still drove the build
-    (review 2026-07-31). Regenerating costs about a second across 19 letters
+    it. Regenerating costs about a second across 19 letters
     and removes the whole class of stale/edited-text failures - what the build
     reads is derived from bytes the gate has just hashed.
     """
@@ -1438,7 +1468,7 @@ def pdf_text(no: str) -> str:
         return _TEXT_CACHE[no]
     pdf = pdf_path(no)
     if not pdf.exists():
-        sys.exit(f"{no}: no cached PDF at {pdf.relative_to(ROOT)} - run `download`")
+        sys.exit(f"{no}: no cached PDF at {rel(pdf)} - run `download`")
     txt = CACHE / "txt" / f"{slug(no)}.txt"
     txt.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(["pdftotext", "-layout", str(pdf), str(txt)], check=True)
@@ -1547,7 +1577,7 @@ def auto_records() -> dict[str, dict]:
 
 # EVERY value the unattended extractor emits and can be judged against the
 # verified reading. Scoring only the five CORE_FIELDS understated the miss rate
-# (review 2026-07-31), so the map covers the extractor's whole numeric output.
+# so the map covers the extractor's whole numeric output.
 AUTO_FIELD_MAP = {
     "ec_date": lambda v: v.get("ec_date"),
     "ec_identification_no": lambda v: v.get("ec_identification_no"),
@@ -1679,9 +1709,9 @@ def sanity_checks(v: dict) -> dict:
     # Capacity checks compare like with like: the wastewater figures the
     # letters state are the AFTER-EXPANSION volumes, so they are checked
     # against the AFTER-EXPANSION capacity, never against the incremental
-    # "proposed" row. (Review 2026-07-31: comparing 373.49 KLD of sewage with
-    # Yamaha's newly-proposed 200 KLD STP manufactured a defect that is not in
-    # the letter - its end-state STP is 350 + 200 = 550 KLD.)
+    # "proposed" row: comparing 373.49 KLD of sewage against Yamaha's
+    # newly-proposed 200 KLD STP would manufacture a defect that is not in the
+    # letter - its end-state STP is 350 + 200 = 550 KLD.
     stp = (v.get("stp") or {}).get("after_expansion_kld")
     if stp is not None and ww is not None:
         checks["stp_vs_sewage"] = (
@@ -1745,7 +1775,7 @@ def cmd_build() -> None:
             "parent_ec": v.get("parent_ec"),
             "water": None,
             "notes": v.get("notes", []),
-            "review": v.get("review", []),
+            "open_readings": v.get("open_readings", []),
             "checks": {},
             # Each record was read against the letter text: the water table
             # transcribed field by field, the EC date and EC identification
@@ -1838,7 +1868,7 @@ def cmd_build() -> None:
                 "whole letter. Where a table's labels and values are misaligned by the "
                 "layout, the reading was settled by the letter's OWN component arithmetic "
                 "(sub-rows reproducing a stated subtotal exactly), not by eyeballing; those "
-                "cases are in the review list. The regex extractor's per-field agreement is "
+                "cases are listed in open_readings. The regex extractor's per-field agreement is "
                 "recorded in extraction.auto_match."
             ),
             "conventions": {
@@ -1950,7 +1980,331 @@ def cmd_build() -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n")
     n_water = sum(1 for f in facilities if f["water"])
-    print(f"wrote {OUT.relative_to(ROOT)} ({len(facilities)} letters, {n_water} with water tables)")
+    print(f"wrote {rel(OUT)} ({len(facilities)} letters, {n_water} with water tables)")
+
+
+# ---------------------------------------------------------------------------
+# SELFTEST - command-surface coverage, no network, no dependence on the cache.
+#
+# The raw cache is git-ignored, so CI has neither PDFs nor a discovery dump.
+# These tests therefore build a synthetic cohort in a temp directory and rebind
+# the module's paths at it, faking exactly two things: the network (`fetch`)
+# and pdftotext (`pdf_text`). Everything else - the gate, the drift rules, the
+# state-file transitions, the refresh workflow - is the real code.
+#
+# This exists because `refresh` shipped crashing on every invocation while all
+# five CI checks passed: nothing exercised the command surface end to end, and
+# the Headwaters registry entry documents that command. An untested documented
+# command is a fiction.
+#
+# NOT COVERED, stated plainly: the real HTTP calls to parivesh.nic.in and the
+# real pdftotext parse of the real letters. Both need network or the raw
+# archive. What is covered is every decision the tool makes about the bytes it
+# is handed.
+# ---------------------------------------------------------------------------
+
+_FAKE_PDF = b"%PDF-1.4 fake certificate for selftest\n"
+_FAKE_TEXT = "WATER\nOperation Phase\nTotal Water Requirement 100 KLD\n"
+
+
+def _fake_dump(marker: str = "v1") -> bytes:
+    rows = []
+    for no, label in PILOT:
+        rows.append(
+            {
+                "proposalNo": no,
+                "projectName": f"{label} [{marker}]",
+                "sector": "INFRA-2",
+                "category": "B2",
+                "proposalStatus": "EC Granted",
+                "issuing_authority": "SEIAA",
+                "certificate_url": f"https://example.invalid/{slug(no)}.pdf",
+            }
+        )
+    return json.dumps({"data": rows}).encode()
+
+
+class _Sandbox:
+    """Temp cache + state file with the module rebound at them."""
+
+    def __init__(self, dump_marker: str = "v1"):
+        self.dir = Path(tempfile.mkdtemp(prefix="parivesh-selftest-"))
+        self.dump_marker = dump_marker
+        self.fetched: list[str] = []
+
+    def __enter__(self):
+        global CACHE, STATE_FILE, OUT, fetch, pdf_text, _TEXT_CACHE
+        self._saved = (CACHE, STATE_FILE, OUT, fetch, pdf_text)
+        CACHE = self.dir / "cache"
+        STATE_FILE = self.dir / "state.json"
+        OUT = self.dir / "out.json"
+        (CACHE / "pdf").mkdir(parents=True)
+        (CACHE / "tn-ec-proposals.json").write_bytes(_fake_dump(self.dump_marker))
+        for no, _ in PILOT:
+            pdf_path(no).write_bytes(_FAKE_PDF + no.encode())
+
+        def _fake_fetch(url, dest, post_json=False, force=False):
+            if dest.exists() and dest.stat().st_size > 0 and not force:
+                return False
+            self.fetched.append(str(dest.name))
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            if dest.name == "tn-ec-proposals.json":
+                body = _fake_dump(self.dump_marker)
+            elif dest.suffix == ".pdf":
+                body = self.pdf_bytes_for(dest)
+            else:
+                body = b"{}"
+            tmp = dest.with_name(dest.name + ".part")
+            tmp.write_bytes(body)
+            tmp.replace(dest)
+            return True
+
+        fetch = _fake_fetch
+        pdf_text = lambda no: _FAKE_TEXT  # noqa: E731 - deliberate stub
+        _TEXT_CACHE = {}
+        # every document verified at its current bytes
+        self.verify_all()
+        return self
+
+    def pdf_bytes_for(self, dest: Path) -> bytes:
+        """What a refresh would pull for this PDF (overridden per scenario)."""
+        for no, _ in PILOT:
+            if slug(no) == dest.stem:
+                return _FAKE_PDF + no.encode()
+        return _FAKE_PDF
+
+    def verify_all(self) -> None:
+        state = {"documents": {}}
+        for no, _ in PILOT:
+            state["documents"][no] = {
+                "verified_sha256": sha256_of(pdf_path(no)),
+                "verified_on": "2026-07-31",
+                "retrieved": "2026-07-31",
+            }
+        state["state_dump"] = {
+            "sha256": sha256_of(CACHE / "tn-ec-proposals.json"),
+            "retrieved": "2026-07-31",
+        }
+        STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        save_state(state)
+
+    def __exit__(self, *exc):
+        global CACHE, STATE_FILE, OUT, fetch, pdf_text
+        CACHE, STATE_FILE, OUT, fetch, pdf_text = self._saved
+        shutil.rmtree(self.dir, ignore_errors=True)
+        return False
+
+
+def _build_refuses() -> tuple[bool, bool]:
+    """(refused, output_untouched) for a build in the current sandbox."""
+    import contextlib
+    import io
+
+    before = OUT.read_bytes() if OUT.exists() else None
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            cmd_build()
+        refused = False
+    except SystemExit as e:
+        refused = bool(e.code)
+    after = OUT.read_bytes() if OUT.exists() else None
+    return refused, before == after
+
+
+def cmd_selftest() -> None:
+    import io
+    import contextlib
+
+    results: list[tuple[bool, str]] = []
+
+    def check(name: str, ok: bool) -> None:
+        results.append((ok, name))
+        print(f"{'OK  ' if ok else 'FAIL'}: {name}")
+
+    quiet = lambda: contextlib.redirect_stdout(io.StringIO())  # noqa: E731
+
+    # ---- refresh completes, unchanged cache -------------------------------
+    with _Sandbox() as sb:
+        out = io.StringIO()
+        crashed = None
+        try:
+            with contextlib.redirect_stdout(out):
+                cmd_refresh()
+        except Exception as e:  # the regression this exists to catch
+            crashed = f"{type(e).__name__}: {e}"
+        check("refresh completes without raising on an unchanged cache", crashed is None)
+        check(
+            "refresh reports the cohort as clear",
+            crashed is None and "build is clear" in out.getvalue(),
+        )
+        st = load_state()
+        check(
+            "refresh leaves every verified document hash untouched",
+            all(
+                st["documents"][no]["verified_sha256"] == sha256_of(pdf_path(no))
+                for no, _ in PILOT
+            ),
+        )
+
+    # ---- refresh against an ALTERED DUMP ----------------------------------
+    with _Sandbox() as sb:
+        verified_dump = load_state()["state_dump"]["sha256"]
+        sb.dump_marker = "v2-altered"  # what the portal now serves
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            cmd_refresh()
+        rec = load_state()["state_dump"]
+        check(
+            "altered dump: refresh does NOT move the verified digest",
+            rec["sha256"] == verified_dump,
+        )
+        check(
+            "altered dump: refresh records it as last-seen",
+            rec.get("last_seen_sha256") == sha256_of(CACHE / "tn-ec-proposals.json"),
+        )
+        check("altered dump: refresh reports the change", "BLOCKED" in out.getvalue())
+        refused, untouched = _build_refuses()
+        check("altered dump: build refuses", refused and untouched)
+        with quiet():
+            cmd_verify(["state-dump"])
+        check(
+            "altered dump: `verify state-dump` moves the digest",
+            load_state()["state_dump"]["sha256"] == sha256_of(CACHE / "tn-ec-proposals.json"),
+        )
+        refused, _ = _build_refuses()
+        check("altered dump: build proceeds once verified", not refused)
+
+    # ---- refresh against an ALTERED DOCUMENT ------------------------------
+    with _Sandbox() as sb:
+        target = PILOT[0][0]
+        verified_hash = load_state()["documents"][target]["verified_sha256"]
+        sb.pdf_bytes_for = lambda dest: (  # noqa: E731
+            _FAKE_PDF + b"REVISED" if dest.stem == slug(target) else _FAKE_PDF + dest.stem.encode()
+        )
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            cmd_refresh()
+        rec = load_state()["documents"][target]
+        check(
+            "altered document: refresh does NOT move the verified hash",
+            rec["verified_sha256"] == verified_hash,
+        )
+        check(
+            "altered document: refresh records it as last-seen",
+            rec.get("last_seen_sha256") == sha256_of(pdf_path(target)),
+        )
+        check("altered document: refresh reports it blocks the build", "BLOCKED" in out.getvalue())
+        refused, untouched = _build_refuses()
+        check("altered document: build refuses", refused and untouched)
+        with quiet():
+            cmd_verify([target])
+        check(
+            "altered document: `verify <proposal>` moves the hash",
+            load_state()["documents"][target]["verified_sha256"] == sha256_of(pdf_path(target)),
+        )
+
+    # ---- build gate: every trusted-input failure ---------------------------
+    def gate_case(name: str, mutate) -> None:
+        with _Sandbox():
+            with quiet():
+                cmd_build()  # establish a baseline output
+            mutate()
+            refused, untouched = _build_refuses()
+            check(f"build refuses: {name}", refused and untouched)
+
+    gate_case("PDF missing", lambda: pdf_path(PILOT[0][0]).unlink())
+    gate_case(
+        "PDF altered",
+        lambda: pdf_path(PILOT[0][0]).write_bytes(_FAKE_PDF + b"tampered"),
+    )
+    gate_case("PDF truncated", lambda: pdf_path(PILOT[0][0]).write_bytes(b"%PDF"))
+    gate_case("discovery dump missing", lambda: (CACHE / "tn-ec-proposals.json").unlink())
+    gate_case(
+        "discovery dump altered",
+        lambda: (CACHE / "tn-ec-proposals.json").write_bytes(_fake_dump("tampered")),
+    )
+    gate_case("state file deleted", lambda: STATE_FILE.unlink())
+
+    def _drop_record():
+        st = load_state()
+        del st["documents"][PILOT[0][0]]
+        save_state(st)
+
+    gate_case("state file record removed", _drop_record)
+
+    def _stale_hash():
+        st = load_state()
+        st["documents"][PILOT[0][0]]["verified_sha256"] = "a" * 64
+        save_state(st)
+
+    gate_case("state file carries a stale hash", _stale_hash)
+
+    # ---- happy path is byte-deterministic ---------------------------------
+    with _Sandbox():
+        with quiet():
+            cmd_build()
+        first = OUT.read_bytes()
+        with quiet():
+            cmd_build()
+        check("happy-path build is byte-deterministic", OUT.read_bytes() == first)
+        check("happy-path build writes all 19 letters", len(json.loads(first)["facilities"]) == 19)
+
+    # ---- the emitted digests describe the bytes actually read -------------
+    with _Sandbox():
+        with quiet():
+            cmd_build()
+        doc = json.loads(OUT.read_text())
+        check(
+            "emitted document digests match the cached bytes",
+            all(
+                doc["input_digests"]["documents"][no] == sha256_of(pdf_path(no)) for no, _ in PILOT
+            ),
+        )
+        check(
+            "emitted dump digest matches the cached bytes",
+            doc["input_digests"]["state_dump_sha256"]
+            == sha256_of(CACHE / "tn-ec-proposals.json"),
+        )
+
+    # ---- digests are COMPUTED, not copied from the state record -----------
+    # The gate normally guarantees the two agree, which means nothing in the
+    # tests above can tell a computed digest from a copied one. This asserts
+    # the property directly, with the gate stubbed out: even handed a state
+    # record that lies, the artifact must describe the bytes it actually read.
+    with _Sandbox():
+        global require_verified_documents
+        real_gate = require_verified_documents
+        st = load_state()
+        st["state_dump"]["sha256"] = "b" * 64
+        for no, _ in PILOT:
+            st["documents"][no]["verified_sha256"] = "c" * 64
+        save_state(st)
+        require_verified_documents = load_state  # bypass, returning the state
+        try:
+            with quiet():
+                cmd_build()
+        finally:
+            require_verified_documents = real_gate
+        doc = json.loads(OUT.read_text())
+        check(
+            "dump digest is computed from the file, not copied from state",
+            doc["input_digests"]["state_dump_sha256"]
+            == sha256_of(CACHE / "tn-ec-proposals.json"),
+        )
+        check(
+            "document digests are computed from the files, not copied from state",
+            all(
+                doc["input_digests"]["documents"][no] == sha256_of(pdf_path(no))
+                for no, _ in PILOT
+            ),
+        )
+
+    failed = [n for ok, n in results if not ok]
+    print(f"\n{len(results) - len(failed)}/{len(results)} checks passed")
+    if failed:
+        for n in failed:
+            print(f"  FAILED: {n}")
+        sys.exit(1)
 
 
 def main() -> None:
@@ -1967,10 +2321,12 @@ def main() -> None:
         cmd_extract()
     elif cmd == "build":
         cmd_build()
+    elif cmd == "selftest":
+        cmd_selftest()
     else:
         sys.exit(
             f"unknown command {cmd!r} "
-            "(discover | download | refresh | verify | extract | build)"
+            "(discover | download | refresh | verify | extract | build | selftest)"
         )
 
 
