@@ -9,10 +9,17 @@ legal advice and it does not assert a position on what you may do with it.
 **The code is MIT.** Application source, scripts, schemas, configuration and the
 documentation of the code are covered by [`LICENSE`](LICENSE), unchanged.
 
-**The data is not.** The corpus under `public/data/` and `public/geojson/`, and
-the inputs under `pipeline-inputs/`, are compiled from many upstream publishers.
-Each dataset carries the licence of its own upstream source or sources. The MIT
-grant in `LICENSE` does not reach it and never did.
+**The data is not.** The corpus under `public/data/` and `public/geojson/`, the
+inputs under `pipeline-inputs/`, the mirrored source documents under
+`public/docs/`, and any other path in this repository that carries upstream
+material are compiled from many publishers. Each dataset carries the licence of
+its own upstream source or sources. The MIT grant in `LICENSE` does not reach it
+and never did.
+
+Mirrored upstream documents are held to a stricter rule than data: a document is
+mirrored only where its terms establish that we may redistribute it. Where they
+do not, the repository links to the publisher's own copy instead. The register of
+mirrored documents and their basis is `scripts/mirrored-documents.json`.
 
 This matters in both directions. Some artefacts derive from inputs that are
 **non-commercial**, and some from inputs that are **ShareAlike**, which requires
@@ -59,7 +66,7 @@ date.
 | `hydrosheds-basins` (HydroBASINS, WWF) | Bespoke WWF licence, HydroSHEDS v1 Appendix A | Not an open licence. Free for non-commercial and commercial use (tech doc s.7.1), but no distribution "as a stand-alone product" (s.2.1.2), mandatory Exhibit B attribution (s.2.2, reproduced below), and WWF asserts ownership of modifications "however developed" (s.3). |
 | `merit-hydro` (MERIT Hydro, Univ. of Tokyo) | Dual: CC BY-NC 4.0 **or** ODbL 1.0 | Under ODbL, commercial use is permitted but derived data must be published under ODbL. Which arm this repo's trace used is unrecorded. |
 | `tngcc-ceew-basin-risk` (CEEW + TN Climate Change Mission) | CC BY-NC 4.0 | Non-commercial only. |
-| `iisc-groundwater-outlook` (IISc, via OpenCity) | CC BY-NC | Non-commercial only. Feeds the Bengaluru groundwater layer. |
+| `iisc-groundwater-outlook` (IISc, via OpenCity) | CC BY-NC-SA 4.0 | Non-commercial **and** ShareAlike: anything built on it must be redistributed under the same licence. The OpenCity package metadata says CC BY-NC 2.0, but the PDF resource itself carries `CC-BY-NC-SA 4.0`, and the resource licence governs. Feeds the Bengaluru groundwater layer. |
 | `opencity-bengaluru-tanker-survey` (OpenCity) | CC BY-NC-SA 4.0 | Non-commercial and ShareAlike. |
 | `praja-civic-issues-mumbai` (Praja Foundation) | CC BY-NC, and third-party copyright | Non-commercial, and the underlying report is Praja's own copyrighted work, not ours to relicense or mirror. |
 | `cpcb-nwmp-annual`, `cpcb-prs-report` (CPCB) | Permission required | CPCB's website policy permits material to be downloaded to file or printer; "Any other proposed use of the material is subject to the approval of competent authority of CPCB." |
