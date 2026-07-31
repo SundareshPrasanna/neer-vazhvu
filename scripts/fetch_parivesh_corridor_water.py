@@ -104,6 +104,14 @@ UA = (
 # Re-verification is an explicit act (`verify <proposal_no>...`), never a flag,
 # because "I looked at the new document" is a claim only a human can make.
 #
+# TRUST BOUNDARY, stated honestly: this file IS the trust root. Editing it to
+# match a tampered document would let the gate pass - no self-checking scheme
+# can close that, since the record and the check would both be under the
+# attacker's hand. What closes it is that this file is COMMITTED: a changed
+# digest or verification date shows up in the diff of any PR that touches it,
+# where a human reviews it. The gate defends against drift and accident; the
+# commit history is what defends against edit.
+#
 # Shape note: per-document input digests keyed to an extraction run is also the
 # direction of the drafted NVDM v1.1 extraction-assurance amendment, so this is
 # deliberately written as a digest set that can be lifted into that contract.
@@ -1087,42 +1095,108 @@ def verification_drift() -> tuple[list[str], list[str]]:
     """
     state = load_state()
     docs = state.get("documents", {})
-    changed, unrecorded = [], []
+    changed, unrecorded, missing = [], [], []
     for no, _label in PILOT:
         rec = docs.get(no)
         cur = sha256_of(pdf_path(no))
         if cur is None:
-            continue  # not downloaded; `build` fails later on the missing PDF
-        if not rec or not rec.get("verified_sha256"):
+            # A missing PDF used to be skipped here, on the assumption that
+            # build would fail later on the absent file. It does not: the
+            # cached pdftotext output survives independently, so the build
+            # sailed through on stale text and stamped verified: true without
+            # ever seeing the source bytes (reproduced in review 2026-07-31).
+            # Any state where the verified bytes cannot be CONFIRMED PRESENT
+            # is a blocking state.
+            missing.append(no)
+        elif not rec or not rec.get("verified_sha256"):
             unrecorded.append(no)
         elif rec["verified_sha256"] != cur:
             changed.append(no)
-    return changed, unrecorded
+    return changed, unrecorded, missing
+
+
+def state_dump_drift() -> str | None:
+    """Reason the discovery dump cannot be trusted, or None.
+
+    The dump supplies every record's project name, sector, category, status and
+    certificate URL, so it is an input to the output exactly as the letters are
+    - and the artifact advertises its digest. Emitting a stored digest while
+    consuming different bytes is a false provenance claim (reproduced in review
+    2026-07-31), so the consumed bytes are gated like any other input.
+    """
+    f = CACHE / "tn-ec-proposals.json"
+    cur = sha256_of(f)
+    if cur is None:
+        return "the Tamil Nadu EC discovery dump is missing from the cache"
+    rec = load_state().get("state_dump") or {}
+    if not rec.get("sha256"):
+        return "the discovery dump has no recorded digest"
+    if rec["sha256"] != cur:
+        return (
+            f"the discovery dump has changed: recorded {rec['sha256'][:16]}... "
+            f"(retrieved {rec.get('retrieved', '?')}), cached {cur[:16]}... now"
+        )
+    return None
 
 
 def require_verified_documents() -> dict:
-    """Build gate. Exits non-zero naming every document that must be re-read."""
-    changed, unrecorded = verification_drift()
-    if not changed and not unrecorded:
+    """Build gate. Exits non-zero naming every input that cannot be trusted.
+
+    The build trusts exactly three kinds of input: the certificate PDFs, the
+    discovery dump, and this state file. Extracted text is NOT among them - it
+    is regenerated from the verified PDF on every run (see pdf_text), so it can
+    never carry stale or edited content into the output.
+    """
+    changed, unrecorded, missing = verification_drift()
+    dump_problem = state_dump_drift()
+    if not changed and not unrecorded and not missing and not dump_problem:
         return load_state()
-    print("REFUSING TO BUILD - the dataset would assert human verification of content", file=sys.stderr)
-    print("that no human has verified.\n", file=sys.stderr)
+    print(
+        "REFUSING TO BUILD - the dataset would make provenance claims about bytes\n"
+        "that cannot be confirmed.\n",
+        file=sys.stderr,
+    )
+    state = load_state()
     for no in changed:
-        rec = load_state()["documents"][no]
+        rec = state["documents"][no]
         print(
             f"  CHANGED    {no}\n"
             f"             verified {rec['verified_sha256'][:16]}... on {rec['verified_on']}\n"
             f"             cached   {sha256_of(pdf_path(no))[:16]}... now",
             file=sys.stderr,
         )
+    for no in missing:
+        print(
+            f"  MISSING    {no} (no cached PDF - the verified bytes cannot be confirmed present)",
+            file=sys.stderr,
+        )
     for no in unrecorded:
         print(f"  UNRECORDED {no} (no verification record)", file=sys.stderr)
-    print(
-        "\nRe-read each document against its VERIFIED entry, correct the entry where the\n"
-        "letter has changed, then record the re-verification explicitly:\n"
-        "  python3 scripts/fetch_parivesh_corridor_water.py verify " + " ".join(changed + unrecorded),
-        file=sys.stderr,
-    )
+    if dump_problem:
+        print(f"  DISCOVERY  {dump_problem}", file=sys.stderr)
+    if missing:
+        print(
+            "\nRestore the missing documents first:\n"
+            "  python3 scripts/fetch_parivesh_corridor_water.py download",
+            file=sys.stderr,
+        )
+    if changed or unrecorded:
+        print(
+            "\nRe-read each document against its VERIFIED entry, correct the entry where the\n"
+            "letter has changed, then record the re-verification explicitly:\n"
+            "  python3 scripts/fetch_parivesh_corridor_water.py verify "
+            + " ".join(changed + unrecorded),
+            file=sys.stderr,
+        )
+    if dump_problem:
+        print(
+            "\nThe discovery dump supplies every record's project name, category, status and\n"
+            "certificate URL. Review the cohort against the new dump:\n"
+            "  python3 scripts/fetch_parivesh_corridor_water.py discover\n"
+            "then record that you have done so:\n"
+            "  python3 scripts/fetch_parivesh_corridor_water.py verify state-dump",
+            file=sys.stderr,
+        )
     sys.exit(1)
 
 
@@ -1130,13 +1204,29 @@ def cmd_verify(proposals: list[str]) -> None:
     """Record that a human has re-read these documents at their current bytes."""
     if not proposals:
         sys.exit(
-            "usage: verify <proposal_no> [<proposal_no>...]\n"
+            "usage: verify <proposal_no|state-dump> [<proposal_no>...]\n"
             "Naming each document is the point: re-verification is an assertion that a "
             "human read THAT letter, so there is deliberately no --all."
         )
     known = {no for no, _ in PILOT}
     state = load_state()
     docs = state.setdefault("documents", {})
+    if "state-dump" in proposals:
+        proposals = [p for p in proposals if p != "state-dump"]
+        cur = sha256_of(CACHE / "tn-ec-proposals.json")
+        if cur is None:
+            sys.exit("no cached discovery dump to verify - run `discover` first")
+        was = (state.get("state_dump") or {}).get("sha256")
+        state["state_dump"] = {
+            "sha256": cur,
+            "retrieved": today(),
+            "note": (
+                "Discovery input: the full Tamil Nadu EC proposal dump the pilot cohort was "
+                "selected from. Supplies each record's project name, sector, category, status "
+                "and certificate URL."
+            ),
+        }
+        print(f"verified state-dump @ {cur[:16]}... ({'was ' + was[:16] + '...' if was else 'new record'})")
     for no in proposals:
         if no not in known:
             sys.exit(f"{no} is not in the pilot cohort")
@@ -1265,8 +1355,6 @@ def cmd_download(force: bool = False) -> None:
                 changed.append(no)
                 verb = "fetched" if before is None else "REPLACED"
                 print(f"{verb} {no} certificate ({len(after)} bytes)")
-            # the cached text belongs to the PDF it came from
-            (CACHE / "txt" / f"{slug(no)}.txt").unlink(missing_ok=True)
         caf = CACHE / "caf" / f"{slug(no)}.json"
         caf_url = f"{API}/proponentApplicant/getCafDataByProposalNo?proposal_no={no}"
         try:
@@ -1315,13 +1403,30 @@ def cmd_refresh() -> None:
     cmd_download(force=True)
 
 
+_TEXT_CACHE: dict[str, str] = {}
+
+
 def pdf_text(no: str) -> str:
-    pdf = CACHE / "pdf" / f"{slug(no)}.pdf"
+    """Extracted text for a letter, ALWAYS regenerated from the PDF.
+
+    The .txt files under scripts/.cache/parivesh/txt/ are an OUTPUT kept for
+    human inspection, never an input. Reusing them was an evasion of the
+    verification gate: delete a PDF and the stale text still drove the build
+    (review 2026-07-31). Regenerating costs about a second across 19 letters
+    and removes the whole class of stale/edited-text failures - what the build
+    reads is derived from bytes the gate has just hashed.
+    """
+    if no in _TEXT_CACHE:
+        return _TEXT_CACHE[no]
+    pdf = pdf_path(no)
+    if not pdf.exists():
+        sys.exit(f"{no}: no cached PDF at {pdf.relative_to(ROOT)} - run `download`")
     txt = CACHE / "txt" / f"{slug(no)}.txt"
-    if not txt.exists():
-        txt.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run(["pdftotext", "-layout", str(pdf), str(txt)], check=True)
-    return txt.read_text(errors="replace")
+    txt.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(["pdftotext", "-layout", str(pdf), str(txt)], check=True)
+    out = txt.read_text(errors="replace")
+    _TEXT_CACHE[no] = out
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -1728,8 +1833,12 @@ def cmd_build() -> None:
                 ),
                 "nulls": (
                     "null means the letter does not state the figure (or states only a "
-                    "dash); values are never inferred, summed across phases, or "
-                    "back-calculated"
+                    "dash). Water quantities - every _kld field outside the capacity "
+                    "objects - are transcribed only: never inferred, never summed across "
+                    "phases, never back-calculated. The ONE exception is deliberate and "
+                    "self-declaring: treatment capacities may carry a computed value, and "
+                    "every such value is named in that capacity's `derived` map with the "
+                    "reasoning. If `derived` is empty, nothing in that object was computed"
                 ),
                 "groundwater_conditions": (
                     "detected per letter by exact-phrase match, never assumed - there is no "
@@ -1746,6 +1855,13 @@ def cmd_build() -> None:
                     "key in neither is null and means the letter does not state it. Nothing is "
                     "silently both - the builder raises if a non-null value is neither stated "
                     "nor marked derived"
+                ),
+                "trusted_inputs": (
+                    "the build trusts exactly three things: the certificate PDF bytes, the "
+                    "discovery dump bytes, and the committed verification state file. Each is "
+                    "hash-gated - missing, altered, truncated or unrecorded all refuse the "
+                    "build. Extracted text is NOT trusted: it is regenerated from the verified "
+                    "PDF on every run, so stale or edited text cannot reach the output"
                 ),
                 "verification_binding": (
                     "each record carries verified_document_sha256, the digest of the exact "
@@ -1784,8 +1900,13 @@ def cmd_build() -> None:
                 "the discovery dump they were selected from. `build` refuses to run when a "
                 "cached document no longer matches its verified digest."
             ),
-            "state_dump_sha256": (state.get("state_dump") or {}).get("sha256"),
-            "documents": {no: docs[no]["verified_sha256"] for no, _ in PILOT},
+            # Computed from the file this run actually read, not copied out of
+            # the state record - an emitted digest must always describe the
+            # bytes that produced the output. The gate has already proved the
+            # two agree; computing it here means they cannot diverge even if
+            # the gate is ever loosened.
+            "state_dump_sha256": sha256_of(CACHE / "tn-ec-proposals.json"),
+            "documents": {no: sha256_of(pdf_path(no)) for no, _ in PILOT},
         },
         "format_variance": {
             "clean_auto_extract": stats["clean"],
