@@ -264,6 +264,33 @@ VERIFIED: dict[str, dict] = {
             "(treated sewage 106 + treated effluent 119 = 225); trade effluent here is the "
             "ETP influent 125 KLD from row 25.",
         ],
+        "review": [
+            {
+                "question": (
+                    "Row 21 stacks three labels ('Total Water Requirement' / 'i. Fresh water "
+                    "requirement' / 'ii. Treated recycled water requirement') against only two "
+                    "printed numbers, 137 and 225. Read literally the letter says total = 137 "
+                    "and fresh = 225; read as a one-row shift it says fresh = 137 and treated "
+                    "recycled = 225 with no total printed. Which reading does SEIAA intend?"
+                ),
+                "verbatim": (
+                    "'21. Total Water Requirement 137 / i. Fresh water requirement 225 / "
+                    "ii. Treated recycled water requirement' ... "
+                    "'22. Fresh water requirement i. Domestic 79.0 ii. Process 58.0' ... "
+                    "'23. Treated Water Requirement i. Flushing use 40.0 ii. Greenbelt 98.0 "
+                    "iii. Process 87.0'"
+                ),
+                "page": "p.3 of SIA/TN/INFRA2/561627/2025 letter",
+                "best_interpretation": (
+                    "One-row shift: fresh 137 = domestic 79 + process 58, and treated recycled "
+                    "225 = flushing 40 + greenbelt 98 + process 87, both exact against the "
+                    "letter's own component rows. Recorded as fresh 137 / recycled 225 with "
+                    "total null (it would be 362, which the never-infer rule forbids "
+                    "recording). Confidence high, but it does invert the literal reading of "
+                    "the fresh-water row, which is why it is queued rather than only noted."
+                ),
+            }
+        ],
     },
     "SIA/TN/INFRA2/574654/2026": {
         "proponent": "Knorr-Bremse India Private Limited",
