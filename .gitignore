@@ -114,6 +114,16 @@ __pycache__/
 # Conference talk decks (local only)
 /talks/
 
+# Corpus fetch cache used by scripts/fetch-corpus.sh in CORPUS_SOURCE=remote
+# mode (serving-hardening P1). Never committed. The stage/old dirs are
+# transient stage-then-swap workspaces; they linger only after a mid-swap
+# failure.
+.corpus-cache/
+public/data.corpus-stage/
+public/data.corpus-old/
+public/geojson.corpus-stage/
+public/geojson.corpus-old/
+
 # Generated freshness / edition reports (CI artifacts, never committed)
 freshness-report.md
 editions-report.md

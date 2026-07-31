@@ -233,7 +233,13 @@ def scan_references(files: list[Path]) -> dict[str, set[str]]:
                 continue
             rel = str(path.relative_to(ROOT))
             if rel.startswith("scripts/source-registry/") or rel.endswith(
-                ("build_dataset_catalogue.py", "validate_nvdm.py", "lib/headwaters-coverage.ts")
+                (
+                    "build_dataset_catalogue.py",
+                    "validate_nvdm.py",
+                    "lib/headwaters-coverage.ts",
+                    "nvdm-encumbrance-report.py",
+                    "check-sample-corpus.py",
+                )
             ):
                 continue  # tooling/governance files mention filenames without producing/consuming
                 # them - counting the coverage allowlist as a producer hid a known orphan
