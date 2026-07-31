@@ -41,7 +41,6 @@ NAME_MAP = {
     "Nelamangala": "Nelamangala",
     "Doddaballapura": "Doddaballapura",
     "Devanahalli": "Devanahalli",
-    "Kollegala(Hanur)": "Hanur",
     "Chikballapur": "Chikkaballapura",
     "Magadi": "Magadi",
     "Ramanagar": "Ramanagara",
@@ -49,6 +48,18 @@ NAME_MAP = {
     "Kanakpura": "Kanakpura",
     "Harohalli": "Harohalli",
 }
+
+# Present in the old basin-clipped file, deliberately not carried over.
+#
+# Hanur (Kollegala) is a Chamarajanagar taluk. It earned a place in the clipped
+# layer through a 0.3 ha sliver - 0.0001% of the taluk - where the C05CAM36
+# sub-catchment grazes it, and it was mislabelled parentDistrict "Bengaluru
+# South" on top of that. Clipped, that sliver was invisible; at full extent it
+# is a 2,401 km2 polygon 60 km south of the basin, which would advertise a
+# Chamarajanagar taluk as an Arkavathi one. Grid-sampling the basin at ~440 m
+# puts 0 of 21,660 points in it, and it appears in none of the four district
+# taluk sets Paani Earth supplied. Nothing in gaps.json references it.
+EXCLUDED = {"Hanur"}
 
 
 def round_coords(coords, nd=5):
@@ -90,7 +101,9 @@ def main() -> None:
             }
         )
 
-    missing = set(prev_props) - {f["properties"]["name"] for f in feats}
+    # EXCLUDED is subtracted so this stays idempotent: it holds whether the
+    # previous file still carries the dropped taluk or has already lost it.
+    missing = set(prev_props) - {f["properties"]["name"] for f in feats} - EXCLUDED
     if missing:
         raise SystemExit(f"taluks missing from KWRIS layer: {sorted(missing)}")
 
@@ -109,9 +122,11 @@ def main() -> None:
                 "count": len(feats),
                 "provenance": (
                     "Full-extent taluk boundaries from the KWRIS open GeoServer "
-                    "(water.karnataka.gov.in, 2023 taluk layer), fetched 2026-07-29; "
+                    "(water.karnataka.gov.in, 2023 taluk layer), fetched 2026-07-31; "
                     "names aligned to the basin's KGIS naming. Replaces the "
-                    "basin-clipped taluks (Paani Earth review, Jul 2026)."
+                    "basin-clipped taluks (Paani Earth review, Jul 2026). Excludes "
+                    "Hanur (Chamarajanagar): its place in the clipped layer came "
+                    "from a 0.3 ha sliver and it has no Arkavathi basin share."
                 ),
             }
         ],
