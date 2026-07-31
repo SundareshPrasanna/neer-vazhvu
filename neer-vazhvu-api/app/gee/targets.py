@@ -5,6 +5,7 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 from app.gee.cities import CityGeeConfig, get_city_config
+from app.nvdm_io import merge_envelope
 
 
 HIGH_PRIORITY_LEVELS = {"critical", "high"}
@@ -156,8 +157,19 @@ def write_phase1_target_manifest(city_id: str | None = None) -> dict[str, Any]:
         "target_count": len(targets),
         "targets": [asdict(target) for target in targets],
     }
+    # Envelope-preserving write: this manifest is a GOVERNED artifact whose
+    # envelope records that it is derived from the city's restoration-priority
+    # file (PR #221 review round 3 corrected an earlier 'self-authored' claim).
+    # A bare rewrite would strip that lineage and silently launder the input's
+    # share-alike terms - merge the existing envelope back in, keeping this
+    # writer's own byte style.
     city.phase1_targets_path.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=True) + "\n",
+        json.dumps(
+            merge_envelope(city.phase1_targets_path, payload),
+            indent=2,
+            ensure_ascii=True,
+        )
+        + "\n",
         encoding="utf-8",
     )
     return payload
