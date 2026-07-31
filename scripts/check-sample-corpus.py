@@ -12,8 +12,20 @@ Two jobs:
                - every build fixture exists and still has exactly its
                  recorded status. A fixture that became licence-clean must
                  be PROMOTED to reference_artifacts; one that degraded
-                 (e.g. to nc) must be re-decided. NC and restricted are
-                 never acceptable in the public sample.
+                 (e.g. to nc) must be re-decided.
+
+             NC is never acceptable anywhere in the sample. `restricted` is
+             never acceptable in reference_artifacts either - that set is
+             the corpus we actually redistribute - but a build FIXTURE may
+             record it, because fixtures are by definition "files the build
+             cannot pass without, which are NOT provably licence-clean".
+             The escape hatch is deliberately narrow: the entry must carry
+             a `licence_note` naming the restrictive source and its terms,
+             so the exception is reviewed rather than inherited silently.
+             Widened 2026-07-31, when reading CPCB's and DPCC's own website
+             policies (permission required for any use beyond download and
+             print) reclassified them from gov-attribution to restricted
+             and tainted the ward/river lineage `npm test` reads.
 
   --prune    Delete every file under public/data and public/geojson that is
              not in the manifest (directories are kept - the build reads
@@ -93,9 +105,14 @@ def check() -> int:
             errors.append(
                 f"{p}: fixture status changed '{f['expected_status']}' -> '{actual}' - {hint}"
             )
-        elif actual in ("nc", "restricted"):
+        elif actual == "nc":
             errors.append(
-                f"{p}: fixture is {actual}-encumbered - not acceptable in the public sample"
+                f"{p}: fixture is nc-encumbered - not acceptable in the public sample"
+            )
+        elif actual == "restricted" and not f.get("licence_note"):
+            errors.append(
+                f"{p}: fixture is restricted-encumbered - allowed only with a "
+                f"licence_note naming the restrictive source and its terms"
             )
         if not f.get("decision") or not f.get("required_by"):
             errors.append(f"{p}: fixture entry must document required_by and decision")

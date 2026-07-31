@@ -747,20 +747,27 @@ def selftest() -> int:
     results, audit_errors, unclassified = assess_corpus()
     by = {r["path"]: r for r in results}
 
+    # ward-risk-delhi declares no sources of its own: whatever bucket it lands
+    # in is inherited wholly through internal_inputs. It was share-alike (OSM
+    # via delhi-ward-profiles) until the 2026-07-31 licence sweep read DPCC's
+    # website policy ("may not be reproduced... without due permission") and
+    # reclassified that source as restricted, which is now the worst input.
     r = by.get("public/data/ward-risk-delhi.json")
     check(
-        "ward-risk-delhi inherits share-alike from delhi-ward-profiles",
-        r is not None and r["status"] == "share-alike",
+        "ward-risk-delhi inherits its worst bucket from delhi-ward-profiles",
+        r is not None and r["status"] == "restricted",
     )
     r = by.get("public/data/restoration-priority-delhi.json")
     check(
         "restoration-priority-delhi inherits share-alike from OSM water bodies",
         r is not None and r["status"] == "share-alike",
     )
+    # Same story one hop further out: facts-madurai reaches CPCB only through
+    # river-quality-madurai, so it tracks that file's bucket transitively.
     r = by.get("public/data/facts-madurai.json")
     check(
-        "facts-madurai transitively inherits share-alike via internal_inputs",
-        r is not None and r["status"] == "share-alike",
+        "facts-madurai transitively inherits its worst bucket via internal_inputs",
+        r is not None and r["status"] == "restricted",
     )
     r = by.get("public/data/water-bodies-lost-madurai.json")
     check(
