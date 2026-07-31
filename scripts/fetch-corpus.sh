@@ -68,38 +68,58 @@ fi
 git -C "$CACHE" -c advice.detachedHead=false checkout -qf "$SHA"
 
 echo "fetch-corpus: syncing data/ geojson/ -> public/"
-python3 - "$CACHE" "$ROOT" <<'EOF'
-import filecmp
+python3 - "$CACHE" "$ROOT" "$LOCK" <<'EOF'
+import json
 import shutil
 import sys
 from pathlib import Path
 
-cache, root = Path(sys.argv[1]), Path(sys.argv[2])
+cache, root, lock_path = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
+lock = json.loads(lock_path.read_text())
+expected = lock["expected_files"]
 # Local-only trees that are gitignored in both repos (Supabase-served
 # imagery); never delete a developer's copies.
 protected = ("rich-bodies/imagery", "rich-bodies/tints")
-copied = deleted = kept = 0
-for src_top, dst_top in (("data", "public/data"), ("geojson", "public/geojson")):
+pairs = (("data", "public/data"), ("geojson", "public/geojson"))
+
+# Preflight BEFORE touching public/: every source root must exist and match
+# the file count pinned in corpus.lock. An absent or truncated root must
+# fail here - it must never empty the destination and report success.
+counts = {}
+for src_top, _ in pairs:
+    src_root = cache / src_top
+    if not src_root.is_dir():
+        sys.exit(f"fetch-corpus: PREFLIGHT FAILED - {src_top}/ missing from the fetched corpus")
+    counts[src_top] = sum(1 for p in src_root.rglob("*") if p.is_file())
+    if counts[src_top] != expected[src_top]:
+        sys.exit(
+            f"fetch-corpus: PREFLIGHT FAILED - {src_top}/ has {counts[src_top]} files, "
+            f"corpus.lock expects {expected[src_top]}; refusing to sync a corpus that "
+            "does not match the lock"
+        )
+
+# Stage-then-swap per root: build the new tree beside the destination, then
+# swap via renames, then restore the protected local-only trees. A failure
+# before the swap leaves the destination untouched; the tiny swap window is
+# two renames, and any interruption leaves an intact '.corpus-old' tree to
+# recover from rather than a half-synced destination.
+for src_top, dst_top in pairs:
     src_root, dst_root = cache / src_top, root / dst_top
-    src_files = {p.relative_to(src_root) for p in src_root.rglob("*") if p.is_file()}
-    for rel in sorted(src_files):
-        src, dst = src_root / rel, dst_root / rel
-        if dst.exists() and filecmp.cmp(src, dst, shallow=False):
-            kept += 1
-            continue
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(src, dst)
-        copied += 1
+    stage = dst_root.with_name(dst_root.name + ".corpus-stage")
+    old = dst_root.with_name(dst_root.name + ".corpus-old")
+    shutil.rmtree(stage, ignore_errors=True)
+    shutil.rmtree(old, ignore_errors=True)
+    shutil.copytree(src_root, stage)
     if dst_root.exists():
-        for p in sorted(dst_root.rglob("*")):
-            if not p.is_file():
-                continue
-            rel = p.relative_to(dst_root)
-            if rel in src_files or str(rel).startswith(protected):
-                continue
-            p.unlink()
-            deleted += 1
-print(f"fetch-corpus: synced (copied {copied}, deleted {deleted}, unchanged {kept})")
+        dst_root.rename(old)
+    stage.rename(dst_root)
+    for rel in protected:
+        keep = old / rel
+        if keep.is_dir():
+            (dst_root / rel).parent.mkdir(parents=True, exist_ok=True)
+            keep.rename(dst_root / rel)
+    shutil.rmtree(old, ignore_errors=True)
+    print(f"fetch-corpus: {dst_top} <- {src_top}/ ({counts[src_top]} files)")
 EOF
 
 echo "fetch-corpus: corpus is now data-repo @ $SHA"

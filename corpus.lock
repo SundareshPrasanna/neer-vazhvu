@@ -5,8 +5,16 @@
     "P1). With CORPUS_SOURCE unset or 'repo' this file is inert and the corpus",
     "comes from the git checkout. The data repo's toolchain.lock is the",
     "mirror-image pin in the other direction. Bump deliberately: deploys stay",
-    "reproducible and rolling back the site rolls back the data."
+    "reproducible and rolling back the site rolls back the data.",
+    "expected_files pins the per-root file counts at the locked commit - the",
+    "fetch script refuses to sync a corpus that does not match them, so a",
+    "missing or truncated root can never wipe the destination and report",
+    "success."
   ],
   "repo": "github.com/SundareshPrasanna/neer-vazhvu-data",
-  "sha": "213162f863898ed608d6eb6d7f7d953b66290284"
+  "sha": "30adf016537a9980b7efa1d7b63f6d59379a8497",
+  "expected_files": {
+    "data": 380,
+    "geojson": 92
+  }
 }
