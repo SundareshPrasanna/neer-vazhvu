@@ -128,8 +128,22 @@ interface DepTheme {
   /** Value read via OCR from a scanned plan; treat as approximate. */
   ocrUncertain?: boolean;
 }
-interface DepUlb { key: string; name: string; type: string; note?: string; mapMatch?: MapMatch; themes: DepTheme[] }
-interface DepTaluk { key: string; label?: string; mapMatch?: MapMatch; unit: GapUnit }
+interface DepUlb {
+  key: string;
+  name: string;
+  type: string;
+  note?: string;
+  /** The ULB's constituting/upgrading gazette notification (Paani round 4). */
+  gazette?: { label: string; url: string };
+  /** Internal contradictions of the plan at this ULB's level. */
+  conflicts?: string[];
+  mapMatch?: MapMatch;
+  themes: DepTheme[];
+}
+/** A taluk tab carries only what the DEP reports at taluk grain - ULB-level
+ *  data lives on the ULB tabs (Paani round 4: the old cross-source unit here
+ *  duplicated the ULB content). */
+interface DepTaluk { key: string; label: string; mapMatch?: MapMatch; note?: string; themes: DepTheme[] }
 interface DepDistrict {
   key: string;
   name: string;
@@ -139,11 +153,16 @@ interface DepDistrict {
   pctInBasin: number;
   counts?: { label: string; value: string }[];
   countsNote?: string;
+  /** Internal contradictions of the plan at district level. */
+  conflicts?: string[];
   mapMatch?: MapMatch;
   districtThemes: DepTheme[];
   ulbs: DepUlb[];
   taluks: DepTaluk[];
   industrialAreas?: { name: string; mapMatch?: MapMatch }[];
+  industrialAreasNote?: string;
+  /** Cross-source contradictions about the district's industrial areas. */
+  industrialAreasConflicts?: string[];
 }
 interface DepGovernance {
   items: { heading: string; body: string; source?: GapSource }[];
@@ -606,9 +625,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         const v2 = d as unknown as DepData;
         if (v2?.version === 2 && Array.isArray(v2.districts)) {
           setDepData(v2);
-          // The map machinery (badges, dimming, defaultGapUnit) keys on flat
-          // unit ids, which in v2 are the taluks nested under districts.
-          setGapData(Object.fromEntries(v2.districts.flatMap((dist) => dist.taluks.map((t) => [t.key, t.unit]))));
+          // v2 keeps no flat GapUnit map - the DepPanel resolves badge / PRS
+          // keys against its districts' ULBs and taluks directly.
+          setGapData({});
           setGapNote(v2.note ?? null);
           return;
         }
@@ -647,12 +666,28 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     if (didDefaultGapRef.current) return;
     if (initialFloor !== "governance") return;
     const unit = manifest.defaultGapUnit;
-    if (unit && gapData[unit]) {
+    const inDep = !!depData?.districts.some(
+      (dd) => dd.taluks.some((t) => t.key === unit) || dd.ulbs.some((u) => u.key === unit),
+    );
+    if (unit && (gapData[unit] || inDep)) {
       setSelectedGapUnit(unit);
       setSelectedFeature(null);
       didDefaultGapRef.current = true;
     }
-  }, [gapData, initialFloor, manifest.defaultGapUnit]);
+  }, [gapData, depData, initialFloor, manifest.defaultGapUnit]);
+
+  // What the gap layer highlights. The selection key alone can't decide this:
+  // it says which unit the panel is focused on, not whether that unit has a
+  // polygon, and "bbmp" is deliberately both a ULB key and a taluk key. So the
+  // DepPanel - the only thing that knows what it is actually showing - reports
+  // the polygon to light up, and null for every view that has no polygon
+  // (district-wide, governance, and ULBs whose own boundary isn't a gap unit).
+  // v1 basins have no DepPanel; there the selection is always a polygon key.
+  const [depHighlight, setDepHighlight] = useState<string | null>(null);
+  const mapGapUnit = useMemo(() => {
+    if (!selectedGapUnit) return null;
+    return depData ? depHighlight : selectedGapUnit;
+  }, [selectedGapUnit, depData, depHighlight]);
 
   useEffect(() => {
     setCoachDismissed(localStorage.getItem(COACH_KEY) === "1");
@@ -1101,10 +1136,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (l.gap) {
               return (
                 <GeoJSON
-                  key={`gapfill-${selectedRiverId}-${tiles.isDark}-${selectedGapUnit ?? ""}`}
+                  key={`gapfill-${selectedRiverId}-${tiles.isDark}-${mapGapUnit ?? ""}`}
                   data={fcScoped}
                   interactive={false}
-                  style={(feat?: Feature) => fillStyle(l, feat, faded, selectedGapUnit)}
+                  style={(feat?: Feature) => fillStyle(l, feat, faded, mapGapUnit)}
                 />
               );
             }
@@ -1227,8 +1262,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
               const sev = String((f.properties as Record<string, unknown>)?.severity ?? "high");
               const sevColor = sev === "high" ? "#dc2626" : sev === "medium" ? "#ea580c" : "#f59e0b";
               // When a unit is selected, dim the others so the choice reads.
-              const dimmed = selectedGapUnit != null && selectedGapUnit !== unit;
-              const isSel = selectedGapUnit === unit;
+              const dimmed = mapGapUnit != null && mapGapUnit !== unit;
+              const isSel = mapGapUnit === unit;
               // Badge each polygon PART, not just the feature as a whole, so a
               // detached fragment (e.g. Harohalli's Kaggalahalli exclave near
               // Hosuru) gets its own labelled, clickable dot instead of an
@@ -1243,7 +1278,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 .filter((p, i) => i === 0 || p.area >= GAP_BADGE_MIN_AREA)
                 .map((p, pi) => (
                   <CircleMarker
-                    key={`gapbadge-${unit}-${idx}-${pi}-${selectedGapUnit ?? ""}`}
+                    key={`gapbadge-${unit}-${idx}-${pi}-${mapGapUnit ?? ""}`}
                     center={p.b.getCenter()}
                     radius={(coarsePointer ? 12 : 6) + (isSel ? 3 : 0)}
                     pathOptions={{
@@ -1454,6 +1489,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 data={depData}
                 focusTaluk={selectedGapUnit}
                 onSelectTaluk={setSelectedGapUnit}
+                onHighlight={setDepHighlight}
                 onShowMatch={(m) => {
                   showOnMap(m);
                   // On phones this sheet covers the map - close it so the
@@ -1716,7 +1752,8 @@ function matchesHighlight(hl: MapHighlight | null | undefined, l: BasinLayer, fe
   return hl.contains?.some((c) => v.toLowerCase().includes(c.toLowerCase())) ?? false;
 }
 
-function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, selectedGapUnit?: string | null, hl?: MapHighlight | null): PathOptions {
+/** `gapUnit` is the polygon-backed selection (see mapGapUnit), never a ULB key. */
+function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, gapUnit?: string | null, hl?: MapHighlight | null): PathOptions {
   if (matchesHighlight(hl, l, feat)) {
     return { color: SELECTED_SHED_COLOR, weight: 3, fillColor: l.color, fillOpacity: 0.35, opacity: 1 };
   }
@@ -1744,10 +1781,10 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, sel
     const sev = String((feat?.properties as Record<string, unknown>)?.severity ?? "high");
     const c = sev === "high" ? "#dc2626" : sev === "medium" ? "#ea580c" : "#f59e0b";
     // When a unit is selected, grey out the others so the selection stands out.
-    if (selectedGapUnit != null && selectedGapUnit !== unit) {
+    if (gapUnit != null && gapUnit !== unit) {
       return { color: "#cbd5e1", weight: 1, fillColor: "#94a3b8", fillOpacity: 0.12 };
     }
-    const isSel = selectedGapUnit === unit;
+    const isSel = gapUnit === unit;
     return { color: c, weight: isSel ? 3 : 2, fillColor: c, fillOpacity: faded ? 0.2 : isSel ? 0.55 : 0.4 };
   }
   if (l.family.startsWith("pressures")) {
@@ -2636,7 +2673,7 @@ function UnitTimeline({ unit, unitLabel, treatedVerb, onOpenUnit }: { unit: PrsU
 
       {unit.gapUnit && (
         <button onClick={() => onOpenUnit(unit.gapUnit!)} className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
-          View full cross-source detail →
+          Open this unit in the DEP snapshot →
         </button>
       )}
     </div>
@@ -2849,28 +2886,75 @@ function DepShowOnMap({ name, match, onShowMatch }: { name: string; match?: MapM
   );
 }
 
-function DepPanel({ data, focusTaluk, onSelectTaluk, onShowMatch, onClose, onBack }: {
+function DepPanel({ data, focusTaluk, onSelectTaluk, onHighlight, onShowMatch, onClose, onBack }: {
   data: DepData;
   focusTaluk: string | null;
   onSelectTaluk: (key: string) => void;
+  /** Which gap polygon the map should light up for what this panel is showing. */
+  onHighlight: (key: string | null) => void;
   onShowMatch: (m: MapMatch) => void;
   onClose: () => void;
   onBack?: () => void;
 }) {
-  // The map badge that opened the panel is a taluk key: land on its district
-  // with that taluk's card open. GOV_TAB is the extra governance tab.
+  // The key that opened the panel is a ULB key (PRS "open in the DEP" links)
+  // or a taluk key (map badges): land on its district with that card open.
+  // ULBs win the lookup - 'bbmp' names both the ULB and the city-taluks tab,
+  // and the ULB card carries the substance. GOV_TAB is the governance tab.
   const GOV_TAB = "__governance";
   const homeDistrict = useMemo(
-    () => data.districts.find((d) => d.taluks.some((t) => t.key === focusTaluk)) ?? data.districts[0],
+    () =>
+      data.districts.find((d) => d.ulbs.some((u) => u.key === focusTaluk) || d.taluks.some((t) => t.key === focusTaluk)) ??
+      data.districts[0],
     [data.districts, focusTaluk],
   );
   const [tab, setTab] = useState<string>(homeDistrict?.key ?? GOV_TAB);
-  const [view, setView] = useState<{ kind: "district" } | { kind: "ulb"; key: string } | { kind: "taluk"; key: string }>(
-    focusTaluk && homeDistrict?.taluks.some((t) => t.key === focusTaluk) ? { kind: "taluk", key: focusTaluk } : { kind: "district" },
-  );
+  const [view, setView] = useState<{ kind: "district" } | { kind: "ulb"; key: string } | { kind: "taluk"; key: string }>(() => {
+    if (focusTaluk && homeDistrict?.ulbs.some((u) => u.key === focusTaluk)) return { kind: "ulb", key: focusTaluk };
+    if (focusTaluk && homeDistrict?.taluks.some((t) => t.key === focusTaluk)) return { kind: "taluk", key: focusTaluk };
+    return { kind: "district" };
+  });
+  // Clicking another map badge while the panel is open changes focusTaluk
+  // without remounting - follow it (state-adjustment-during-render pattern).
+  //
+  // A bare key can't say which kind was meant, and "bbmp" names both a ULB and
+  // a taluk. Our own chips set the view before reporting the key, so if the
+  // panel already shows that exact unit the caller's intent is on screen and
+  // re-resolving would override it - which made the "Bengaluru North & South"
+  // taluk chip bounce to the BBMP ULB card. Only genuinely external focus
+  // changes get resolved, and those keep ULB precedence.
+  const [lastFocus, setLastFocus] = useState(focusTaluk);
+  if (focusTaluk !== lastFocus) {
+    setLastFocus(focusTaluk);
+    const alreadyShown = view.kind !== "district" && view.key === focusTaluk;
+    if (focusTaluk && homeDistrict && !alreadyShown) {
+      if (homeDistrict.ulbs.some((u) => u.key === focusTaluk)) {
+        setTab(homeDistrict.key);
+        setView({ kind: "ulb", key: focusTaluk });
+      } else if (homeDistrict.taluks.some((t) => t.key === focusTaluk)) {
+        setTab(homeDistrict.key);
+        setView({ kind: "taluk", key: focusTaluk });
+      }
+    }
+  }
   const district = data.districts.find((d) => d.key === tab) ?? null;
   const selUlb = district && view.kind === "ulb" ? district.ulbs.find((u) => u.key === view.key) ?? null : null;
   const selTaluk = district && view.kind === "taluk" ? district.taluks.find((t) => t.key === view.key) ?? null : null;
+
+  // One place decides what the map lights up, so every route in here - chips,
+  // district tabs, governance, and the map-badge sync above - stays honest.
+  // Without this the old taluk stayed lit under unrelated content.
+  const isPolygonKey = (key: string) => data.districts.some((d) => d.taluks.some((t) => t.key === key));
+  useEffect(() => {
+    if (tab === GOV_TAB || !district) return onHighlight(null);
+    if (selTaluk) return onHighlight(selTaluk.key);
+    // A ULB normally has no gap polygon; its map cue is "Show <ULB> on the map".
+    // BBMP is the exception - it is deliberately both a ULB and a taluk key, and
+    // the polygons it names are literally the "BBMP city-wide" pair, so lighting
+    // them for the BBMP card shows exactly the area the card describes.
+    if (selUlb) return onHighlight(isPolygonKey(selUlb.key) ? selUlb.key : null);
+    return onHighlight(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, district, selTaluk, selUlb, data.districts, onHighlight]);
 
   const chip = (active: boolean) =>
     `text-[11px] px-2 py-0.5 rounded border transition-colors ${active
@@ -2948,7 +3032,14 @@ function DepPanel({ data, focusTaluk, onSelectTaluk, onShowMatch, onClose, onBac
           <div className="flex flex-wrap gap-1.5 items-center">
             <button onClick={() => setView({ kind: "district" })} className={chip(view.kind === "district")}>District-wide</button>
             {district.ulbs.map((u) => (
-              <button key={u.key} onClick={() => setView({ kind: "ulb", key: u.key })} className={chip(view.kind === "ulb" && view.key === u.key)}>
+              <button
+                key={u.key}
+                // Tell the map too, or it keeps a previously picked taluk lit
+                // while the panel has moved on to a ULB. A ULB key has no gap
+                // polygon, so this clears the highlight rather than moving it.
+                onClick={() => { setView({ kind: "ulb", key: u.key }); onSelectTaluk(u.key); }}
+                className={chip(view.kind === "ulb" && view.key === u.key)}
+              >
                 {u.name} ({u.type})
               </button>
             ))}
@@ -2962,51 +3053,69 @@ function DepPanel({ data, focusTaluk, onSelectTaluk, onShowMatch, onClose, onBac
                   onClick={() => { setView({ kind: "taluk", key: t.key }); onSelectTaluk(t.key); }}
                   className={chip(view.kind === "taluk" && view.key === t.key)}
                 >
-                  {t.label ?? t.unit.name.replace(/ \(taluk.*\)$/i, "")}
+                  {t.label}
                 </button>
               ))}
             </div>
           )}
 
           {view.kind === "district" && (
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 mb-1">The 7 NGT thematic areas - district-wide</div>
-              <DepThemeList themes={district.districtThemes} />
-            </div>
+            <>
+              <GapConflicts conflicts={district.conflicts} />
+              <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5">
+                <div className="text-[11px] uppercase tracking-wider text-slate-400 mb-1">The 7 NGT thematic areas - district-wide</div>
+                <DepThemeList themes={district.districtThemes} />
+              </div>
+            </>
           )}
           {selUlb && (
             <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-2">
               <div>
                 <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{selUlb.name} ({selUlb.type})</div>
                 {selUlb.note && <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{selUlb.note}</p>}
+                {selUlb.gazette && (
+                  <a href={selUlb.gazette.url} target="_blank" rel="noopener noreferrer" className="block text-[11px] text-blue-600 dark:text-blue-400 hover:underline mt-0.5">
+                    {selUlb.gazette.label} ↗
+                  </a>
+                )}
                 <DepShowOnMap name={`${selUlb.name} (${selUlb.type})`} match={selUlb.mapMatch} onShowMatch={onShowMatch} />
               </div>
+              <GapConflicts conflicts={selUlb.conflicts} />
               <DepThemeList themes={selUlb.themes} />
             </div>
           )}
           {selTaluk && (
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-3">
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-2">
               <div>
-                <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{selTaluk.unit.name}</div>
-                {selTaluk.unit.headline && <p className="text-[12px] font-semibold text-rose-900 dark:text-rose-100 leading-snug mt-0.5">{selTaluk.unit.headline}</p>}
-                <DepShowOnMap name={selTaluk.unit.name.replace(/ \(taluk.*\)$/i, "")} match={selTaluk.mapMatch} onShowMatch={onShowMatch} />
+                <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{selTaluk.label} (taluk)</div>
+                {selTaluk.note && <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{selTaluk.note}</p>}
+                <DepShowOnMap name={`${selTaluk.label} (taluk)`} match={selTaluk.mapMatch} onShowMatch={onShowMatch} />
               </div>
-              <GapConflicts conflicts={selTaluk.unit.conflicts} />
-              <GapCaveats caveats={selTaluk.unit.caveats} />
-              <GapStreamsBody unit={selTaluk.unit} />
+              {selTaluk.themes.length > 0 ? (
+                <>
+                  <div className="text-[11px] uppercase tracking-wider text-slate-400">What the plan reports at taluk level</div>
+                  <DepThemeList themes={selTaluk.themes} />
+                </>
+              ) : (
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-snug">No taluk-level reporting in this plan.</p>
+              )}
             </div>
           )}
 
           {district.industrialAreas && district.industrialAreas.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 items-center">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400">Industrial areas (in-basin)</span>
-              {district.industrialAreas.map((ia, i) =>
-                ia.mapMatch ? (
-                  <button key={i} onClick={() => onShowMatch(ia.mapMatch!)} className={chip(false)}>{ia.name} ↗</button>
-                ) : (
-                  <span key={i} className="text-[11px] px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-slate-500">{ia.name}</span>
-                ),
-              )}
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap gap-1.5 items-center">
+                <span className="text-[10px] uppercase tracking-wider text-slate-400">Industrial areas in the district (falling within Arkavathi Basin)</span>
+                {district.industrialAreas.map((ia, i) =>
+                  ia.mapMatch ? (
+                    <button key={i} onClick={() => onShowMatch(ia.mapMatch!)} className={chip(false)}>{ia.name} ↗</button>
+                  ) : (
+                    <span key={i} className="text-[11px] px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-slate-500">{ia.name}</span>
+                  ),
+                )}
+              </div>
+              {district.industrialAreasNote && <p className="text-[10px] text-slate-400 leading-snug">{district.industrialAreasNote}</p>}
+              <GapConflicts conflicts={district.industrialAreasConflicts} />
             </div>
           )}
         </div>
