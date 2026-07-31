@@ -31,10 +31,14 @@ taint semantics (scripts/validate_nvdm.py):
   - a declared internal input that is not an enveloped artifact makes the
     dependent 'vague' (licence unprovable); an input path absent from the
     catalogue entirely, or a lineage cycle, is a LOUD audit error;
-  - empty non-methodology sources are clean ONLY for explicitly
-    self-authored artifacts (provenance.produced_by present, exactly the
-    validator's empty-sources rule); claim-dataset compilations rest on
-    per-record citations this audit does not read, so they stay 'vague'.
+  - source-empty artifacts are 'vague' by DEFAULT. Clean requires an
+    explicit audited rights claim in the envelope: provenance.rights_basis
+    == "self-authored" + provenance.rights_note + a real produced_by (never
+    the placeholder "manual"). produced_by alone is ACCOUNTABILITY (who made
+    the file, which is all validate_nvdm.py asks of it) and is NOT a rights
+    grant over the payload - this audit is deliberately stricter than the
+    validator here, and does not weaken it. Claim-dataset compilations rest
+    on per-record citations this audit does not read, so they stay 'vague'.
 
 Methodology-role sources are skipped: a method is cited, not redistributed
 (same rule the L3 licence check applies).
@@ -100,10 +104,11 @@ BUCKET_DESC = {
 
 LINEAGE_METHODS = ("derived", "gee", "mixed")
 
+# Matched against the NORMALISED string (separators collapsed), so these are
+# whole-word markers rather than punctuation-sensitive fragments.
 GOV_MARKERS = (
     "government",
     "goi ",
-    "goi,",
     "gotn",
     "gnctd",
     "gok",
@@ -127,37 +132,126 @@ EXACT_CLEAN_WORDINGS = (
     "copernicus free and open data, attribution required",
 )
 
+# Canonical clean grant identifiers, matched against the NORMALISED string
+# (separators collapsed, so "CC BY SA 4.0", "cc-by-sa-4.0" and "CC BY-SA 4.0"
+# all reduce to the same token sequence). Restrictive/NC/SA qualifiers are
+# detected before this table is consulted, so a qualified variant can never
+# reach it.
+CANONICAL_CLEAN_PATTERNS = (
+    r"\bcc\s+by\b",
+    r"\bcc\s*0\b",
+    r"\bpublic\s+domain\b",
+    r"\bgovernment\s+open\s+data\s+licen[sc]e\b",
+    r"\bgodl\b",
+    r"\bodc\s+by\b",
+    r"\bcdla\s+permissive\b",
+)
+
+# Words that may legitimately surround a canonical grant without changing it:
+# provider/publisher names, jurisdiction tags, and citation formalities. ANY
+# word outside this vocabulary sitting next to a known grant means we do not
+# understand the grant, and the string fails closed (review round 3: the old
+# substring match let "CC BY 4.0; No Derivatives" through as clean-open).
+CLEAN_RESIDUAL_SAFE_WORDS = {
+    "a",
+    "adb",
+    "access",
+    "and",
+    "attribution",
+    "australia",
+    "by",
+    "cc",
+    "courtesy",
+    "data",
+    "dataset",
+    "domain",
+    "e",
+    "eu",
+    "european",
+    "for",
+    "from",
+    "gov",
+    "govt",
+    "i",
+    "igo",
+    "in",
+    "india",
+    "int",
+    "international",
+    "licence",
+    "license",
+    "of",
+    "open",
+    "opencity",
+    "or",
+    "other",
+    "page",
+    "per",
+    "public",
+    "published",
+    "release",
+    "released",
+    "required",
+    "the",
+    "under",
+    "unported",
+    "usgs",
+    "v",
+    "version",
+    "via",
+    "with",
+}
+
+
+def _normalise(s: str) -> str:
+    """Lowercase and collapse separators so licence identifiers are comparable:
+    'CC BY-SA 4.0', 'cc_by_sa_4.0' and 'CC BY SA 4.0' all become 'cc by sa 4.0'."""
+    return re.sub(r"\s+", " ", re.sub(r"[-_/(),;:]+", " ", s.lower())).strip()
+
 
 def classify(license_str: str | None) -> str:
-    """Map a licence string to a bucket, fail-closed: restrictive markers are
-    checked FIRST, clean requires a canonical grant or a verified exact
-    wording, and anything unmatched is UNCLASSIFIED (a loud audit error)."""
+    """Map a licence string to a bucket, fail-closed.
+
+    Order: restrictive -> NC -> share-alike -> verified exact wording ->
+    vague/generic language -> third-party copyright -> canonical clean
+    identifier WITH a recognised-vocabulary residual -> gov-attribution.
+    Anything else is UNCLASSIFIED (a loud audit error). Qualifier detection
+    runs on the normalised form, so spelling variants ('CC BY 4.0; Non
+    Commercial', 'CC BY SA 4.0') cannot slip past as clean.
+    """
     if not license_str or not license_str.strip():
         return "vague"
     s = license_str.lower()
+    n = _normalise(license_str)
     # 1. Explicitly restrictive terms - before anything that could look open,
     #    so "open access; all rights reserved" and "CC BY-ND" fail closed.
     if (
-        re.search(r"\bnd\b", s)
-        or "no-deriv" in s
-        or "noderiv" in s
-        or "research only" in s
-        or "research-only" in s
-        or "for research" in s
-        or "all rights reserved" in s
-        or "evaluation only" in s
-        or "for evaluation" in s
-        or "no redistribution" in s
-        or "not be redistributed" in s
+        re.search(r"\bnd\b", n)
+        or "no deriv" in n
+        or "noderiv" in n
+        or "research only" in n
+        or "for research" in n
+        or "all rights reserved" in n
+        or "evaluation" in n
+        or "personal use" in n
+        or "internal use" in n
+        or "no redistribution" in n
+        or "not be redistributed" in n
     ):
         return "restricted"
     # 2. Non-commercial family. HydroSHEDS' own wording is "free for
     #    non-commercial and most uses" - NC-encumbered for our purposes.
-    if re.search(r"\bnc\b", s) or "non-commercial" in s or "noncommercial" in s:
+    if re.search(r"\bnc\b", n) or "non commercial" in n or "noncommercial" in n:
         return "nc"
     # 3. Share-alike / database copyleft. A dual grant that INCLUDES ODbL is
     #    treated share-alike unless the trace records which grant was used.
-    if "odbl" in s or "by-sa" in s or "share-alike" in s or "sharealike" in s:
+    if (
+        re.search(r"\bsa\b", n)
+        or "odbl" in n
+        or "share alike" in n
+        or "sharealike" in n
+        or "copyleft" in n
+    ):
         return "share-alike"
     # 4. Verified exact provider wordings (full-string / ";"-suffixed match
     #    only, so they cannot shadow the generic-language rules below).
@@ -168,45 +262,54 @@ def classify(license_str: str | None) -> str:
     #    fails closed and portal labels like OpenCity's dataset-page "open"
     #    stay unverifiable until counsel or a named grant upgrades them.
     if (
-        "no stated licence" in s
-        or "no stated license" in s
-        or "no explicit licence" in s
-        or "no explicit license" in s
-        or "unrecorded" in s
-        or "presume" in s
-        or "registration-gated" in s
-        or s.startswith("open (per opencity dataset page)")
-        or "free and open" in s
+        "no stated licen" in n
+        or "no explicit licen" in n
+        or "unrecorded" in n
+        or "presume" in n
+        or "registration gated" in n
+        or n.startswith("open per opencity dataset page")
+        or "free and open" in n
+        # Known generic PROVIDER access labels: they name an access posture,
+        # not a grant. Same treatment as the OpenCity label - deliberately
+        # listed (so the decision is visible and reviewable) rather than
+        # silently rated clean by the "public domain" substring next to them.
+        # The JRC/Copernicus terms these files actually sit under are
+        # recorded on the registry entry, verified at the source.
+        or n.startswith("ec open")
     ):
         return "vague"
     # 6. Third-party copyright marks.
     if "(c)" in s or "©" in s or "copyright" in s:
         return "third-party"
-    # 7. Canonical open grants ONLY.
-    #    (CC BY-NC/-SA/-ND variants were already caught above.)
-    if (
-        re.search(r"\bcc[-\s]?by\b", s)
-        or re.search(r"\bcc0\b", s)
-        or "public domain" in s
-        or "public-domain" in s
-        or "government open data license" in s
-        or "godl" in s
-        or "odc-by" in s
-        or "cdla-permissive" in s
-    ):
-        return "clean-open"
+    # 7. Canonical clean grant + recognised-vocabulary residual ONLY.
+    #    (NC/SA/ND-qualified variants were already caught above.) Strip the
+    #    identifier and every version number, then require every remaining
+    #    word to be in the safe vocabulary - unknown text next to a known
+    #    grant means we do not understand the grant.
+    residual = n
+    matched = False
+    for pat in CANONICAL_CLEAN_PATTERNS:
+        if re.search(pat, residual):
+            matched = True
+            residual = re.sub(pat, " ", residual)
+    if matched:
+        words = re.findall(r"[a-z]+", re.sub(r"\d+(\.\d+)*", " ", residual))
+        unknown = [w for w in words if w not in CLEAN_RESIDUAL_SAFE_WORDS]
+        if not unknown:
+            return "clean-open"
+        return "UNCLASSIFIED"
     # 8. Government publications cited with attribution.
     cited = (
-        "attribution" in s
-        or "cited" in s
-        or "public data" in s
-        or "public feed" in s
-        or "mirrored openly" in s
-        or "public project document" in s
+        "attribution" in n
+        or "cited" in n
+        or "public data" in n
+        or "public feed" in n
+        or "mirrored openly" in n
+        or "public project document" in n
     )
-    if cited and any(m in s for m in GOV_MARKERS):
+    if cited and any(m in n + " " for m in GOV_MARKERS):
         return "gov-attribution"
-    # 8. Non-government works we cite (academic, IGO, NGO, press).
+    # 9. Non-government works we cite (academic, IGO, NGO, press).
     if cited:
         return "third-party"
     # Fallback: unknown wording is a classification gap, not silently clean.
@@ -275,19 +378,43 @@ def own_assessment(
         )
     if source_buckets:
         return worst(source_buckets), detail, notes
-    # Empty non-methodology sources: clean ONLY for explicitly self-authored
-    # artifacts (validator rule: produced_by names the producer). Claim
-    # compilations rest on per-record citations this audit does not read.
+    # ---- source-empty artifacts: VAGUE by default (review round 3).
+    #
+    # ACCOUNTABILITY and RIGHTS are different questions. validate_nvdm.py
+    # legitimately accepts `produced_by` as accountability for an empty
+    # source array - it answers "who made this file". It says nothing about
+    # who owns the payload: gee-phase1-water-body-targets declared
+    # produced_by "manual" while copying its rows verbatim out of an
+    # OSM-derived artifact. This audit therefore applies a STRICTER rights
+    # test and does not weaken the validator.
+    #
+    # Rights basis rule: a source-empty artifact is clean only when its
+    # envelope makes an explicit, audited rights claim -
+    #   provenance.rights_basis = "self-authored" (the payload originates
+    #   here: rules, thresholds, editorial selections we wrote), AND
+    #   provenance.rights_note explaining why no upstream rights attach, AND
+    #   provenance.produced_by naming a real producer (never the placeholder
+    #   "manual" - a human editing a file is not a rights basis).
+    # Anything short of that is vague: unverifiable, not clean.
     dataset = f"{rec['family']}/{rec['dataset']}"
     if dataset in CLAIM_DATASETS:
         notes.append(
             "claim compilation: licence rests on unaudited per-record citations"
         )
         return "vague", detail, notes
-    if prov.get("produced_by"):
-        notes.append(f"self-authored ({prov.get('produced_by')})")
+    producer = prov.get("produced_by")
+    if (
+        prov.get("rights_basis") == "self-authored"
+        and prov.get("rights_note")
+        and producer
+        and producer.strip().lower() != "manual"
+    ):
+        notes.append(f"rights basis: self-authored ({producer})")
         return "clean-open", detail, notes
-    notes.append("empty sources without produced_by - unverifiable")
+    notes.append(
+        "empty sources without an audited rights_basis - unverifiable "
+        "(produced_by alone is accountability, not a rights grant)"
+    )
     return "vague", detail, notes
 
 
@@ -436,6 +563,36 @@ def selftest() -> int:
         classify("USGS public domain, courtesy attribution") == "clean-open",
     )
     check("CDLA-Permissive clean", classify("CDLA-Permissive 2.0") == "clean-open")
+    # Review round 3: spelling variants must not slip past the clean gate.
+    # Qualifier detection runs on the normalised string; unknown text next to
+    # a known grant fails closed.
+    check(
+        "'CC BY 4.0; No Derivatives' is not clean",
+        classify("CC BY 4.0; No Derivatives") == "restricted",
+    )
+    check(
+        "'CC BY 4.0; Non Commercial' is not clean",
+        classify("CC BY 4.0; Non Commercial") == "nc",
+    )
+    check(
+        "'CC BY 4.0; Share Alike' is not clean",
+        classify("CC BY 4.0; Share Alike") == "share-alike",
+    )
+    check("'CC BY SA 4.0' is not clean", classify("CC BY SA 4.0") == "share-alike")
+    check(
+        "'CC BY 4.0; Personal use only' is not clean",
+        classify("CC BY 4.0; Personal use only") == "restricted",
+    )
+    check(
+        "unknown qualifier next to a known grant fails loudly",
+        classify("CC BY 4.0; subject to partner embargo") == "UNCLASSIFIED",
+    )
+    check(
+        "separator variants normalise to the same grant",
+        classify("cc-by-sa-4.0") == "share-alike"
+        and classify("CC_BY_NC_4.0") == "nc"
+        and classify("cc by 4.0") == "clean-open",
+    )
     # Review round 2: OpenCity's dataset-page "open" label is generic portal
     # access language - vague until counsel rules on it (counsel brief Q5).
     # The mechanical gate must not pre-empt that answer.
@@ -453,6 +610,10 @@ def selftest() -> int:
     check(
         "generic 'free and open, attribution required' is vague",
         classify("free and open, attribution required") == "vague",
+    )
+    check(
+        "provider access label 'EC Open / public domain' is vague",
+        classify("EC Open / public domain") == "vague",
     )
     check(
         "verified Copernicus wording (JRC GSW) stays clean",
@@ -542,10 +703,63 @@ def selftest() -> int:
         "empty-source claim compilation stays vague (not clean)",
         r is not None and r["status"] == "vague",
     )
+    # Review round 3: the gee target manifest is DERIVED from the city's
+    # restoration-priority file (envelope corrected), so it inherits that
+    # file's OSM share-alike lineage instead of riding a produced_by claim.
     r = by.get("public/data/gee-phase1-water-body-targets-madurai.json")
     check(
-        "self-authored empty-source artifact stays clean",
-        r is not None and r["status"] == "clean-open",
+        "gee target manifest inherits share-alike from restoration-priority",
+        r is not None and r["status"] == "share-alike",
+    )
+    # produced_by alone (esp. the placeholder "manual") is accountability,
+    # not a rights grant: source-empty artifacts are vague without an
+    # explicit audited rights_basis.
+    check(
+        "produced_by alone does not make a source-empty artifact clean",
+        own_assessment(
+            {"path": "x", "family": "data-root", "dataset": "not-a-claim-dataset"},
+            {"provenance": {"sources": [], "produced_by": "manual", "note": "n"}},
+            {},
+            [],
+            set(),
+        )[0]
+        == "vague",
+    )
+    check(
+        "explicit audited rights_basis makes a source-empty artifact clean",
+        own_assessment(
+            {"path": "x", "family": "data-root", "dataset": "not-a-claim-dataset"},
+            {
+                "provenance": {
+                    "sources": [],
+                    "produced_by": "scripts/build-thing.ts",
+                    "rights_basis": "self-authored",
+                    "rights_note": "thresholds and selection rules originate here",
+                }
+            },
+            {},
+            [],
+            set(),
+        )[0]
+        == "clean-open",
+    )
+    check(
+        "rights_basis with placeholder produced_by 'manual' stays vague",
+        own_assessment(
+            {"path": "x", "family": "data-root", "dataset": "not-a-claim-dataset"},
+            {
+                "provenance": {
+                    "sources": [],
+                    "produced_by": "manual",
+                    "rights_basis": "self-authored",
+                    "rights_note": "n",
+                }
+            },
+            {},
+            [],
+            set(),
+        )[0]
+        == "vague",
     )
     check(
         "undeclared derived/gee lineage is never clean",
