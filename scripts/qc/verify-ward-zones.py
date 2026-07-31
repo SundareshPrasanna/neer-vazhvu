@@ -37,6 +37,12 @@ from shapely.geometry import shape
 from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parents[2]
+
+# A ward must sit essentially wholly inside its zone for a label to be
+# verifiable by containment at all. Chennai's 200 wards all measure 1.000000
+# today; anything below this is a real geometry change upstream and must fail
+# the run rather than be silently rounded away.
+MIN_CONTAINMENT = 0.999
 SERVICE = (
     "https://gisgcc.chennaicorporation.gov.in/server/rest/services/GCCPublic/"
     "GCC_AdminBoundary/MapServer"
@@ -101,6 +107,26 @@ def main() -> int:
     ambiguous = sorted(w for w, v in gcc.items() if v[3])
     print(f"wards split across zones (>0.1% in a second zone): {ambiguous or 'none'}")
 
+    # These two conditions must FAIL the run, not merely print. The whole claim
+    # this script makes is "every ward sits wholly inside one zone, so a label
+    # is either right or wrong". If a ward straddles zones, or is only partly
+    # covered by its best zone, that claim no longer holds and a matching label
+    # is luck, not verification: the majority-overlap zone can agree with the
+    # stored value while the ward genuinely belongs to two.
+    structural: list[str] = []
+    if ambiguous:
+        structural.append(
+            f"{len(ambiguous)} ward(s) split across zones: {ambiguous} - "
+            "containment is no longer a single-zone answer, so labels here are "
+            "not verifiable by majority overlap"
+        )
+    under = sorted(w for w, v in gcc.items() if v[2] < MIN_CONTAINMENT)
+    if under:
+        structural.append(
+            f"{len(under)} ward(s) below the {MIN_CONTAINMENT:.3f} containment "
+            f"floor: {[(w, round(gcc[w][2], 6)) for w in under]}"
+        )
+
     names = json.loads((ROOT / "public/data/ward-names.json").read_text())["wards"]
     geo = json.loads((ROOT / "public/geojson/chennai-wards-2022.geojson").read_text())
     ours = {
@@ -110,6 +136,29 @@ def main() -> int:
             [(f["properties"]["ward_number"], f["properties"]["Zone_No"],
               f["properties"]["Zone_Name"]) for f in geo["features"]],
     }
+
+    # Compare the ward-ID SETS before comparing labels. Iterating only local
+    # rows cannot see a ward that upstream has and we do not: after a
+    # redelimitation adding ward 201, all 200 existing rows could match and the
+    # run would still pass. Duplicates matter too - two rows for one ward can
+    # disagree with each other while both "match" on the row that is checked.
+    upstream_ids = set(gcc)
+    for path, rows in ours.items():
+        ids = [w for w, _no, _nm in rows]
+        dupes = sorted({w for w in ids if ids.count(w) > 1})
+        missing = sorted(upstream_ids - set(ids))
+        extra = sorted(set(ids) - upstream_ids)
+        if dupes:
+            structural.append(f"{path}: duplicate ward ids {dupes}")
+        if missing:
+            structural.append(
+                f"{path}: {len(missing)} ward(s) in GCC but absent locally "
+                f"{missing} - upstream has re-delimited, or rows were dropped"
+            )
+        if extra:
+            structural.append(
+                f"{path}: {len(extra)} ward(s) local but not in GCC {extra}"
+            )
 
     bad = 0
     for path, rows in ours.items():
@@ -124,8 +173,21 @@ def main() -> int:
                   f"{f' containment {exp[2]:.6f}' if exp else ''}")
         bad += len(wrong)
 
-    print("\nOK - every ward matches GCC" if not bad else f"\nFAIL - {bad} disagreements")
-    return 1 if bad else 0
+    if structural:
+        print("\nSTRUCTURAL FAILURES (the containment guarantee does not hold):")
+        for line in structural:
+            print(f"  {line}")
+
+    if bad or structural:
+        parts = []
+        if bad:
+            parts.append(f"{bad} label disagreement(s)")
+        if structural:
+            parts.append(f"{len(structural)} structural failure(s)")
+        print(f"\nFAIL - {' and '.join(parts)}")
+        return 1
+    print("\nOK - every ward matches GCC, wholly inside one zone, ids complete")
+    return 0
 
 
 if __name__ == "__main__":
