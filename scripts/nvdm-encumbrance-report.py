@@ -118,8 +118,12 @@ GOV_MARKERS = (
 # language ("open", "free", "open access") is NOT clean without one of these
 # or a canonical identifier - it falls through to vague.
 EXACT_CLEAN_WORDINGS = (
-    "open (per opencity dataset page)",
-    "free and open, attribution required",
+    # Named provider grant, wording verified at the source. Generic access
+    # language ("open", "free and open", portal labels) is NOT here - it
+    # classifies vague until counsel or a source-verified named grant
+    # upgrades the registry string (PR #221 review round 2: the mechanical
+    # gate must not pre-empt the pending counsel question on OpenCity's
+    # dataset-page "open" label).
     "copernicus free and open data, attribution required",
 )
 
@@ -155,8 +159,14 @@ def classify(license_str: str | None) -> str:
     #    treated share-alike unless the trace records which grant was used.
     if "odbl" in s or "by-sa" in s or "share-alike" in s or "sharealike" in s:
         return "share-alike"
-    # 4. Explicitly vague / unrecorded terms - before open markers, so
-    #    "open WFS, no explicit licence stated" fails closed.
+    # 4. Verified exact provider wordings (full-string / ";"-suffixed match
+    #    only, so they cannot shadow the generic-language rules below).
+    if any(s == w or s.startswith(w + ";") for w in EXACT_CLEAN_WORDINGS):
+        return "clean-open"
+    # 5. Explicitly vague / unrecorded terms AND generic access language -
+    #    before open markers, so "open WFS, no explicit licence stated"
+    #    fails closed and portal labels like OpenCity's dataset-page "open"
+    #    stay unverifiable until counsel or a named grant upgrades them.
     if (
         "no stated licence" in s
         or "no stated license" in s
@@ -165,12 +175,14 @@ def classify(license_str: str | None) -> str:
         or "unrecorded" in s
         or "presume" in s
         or "registration-gated" in s
+        or s.startswith("open (per opencity dataset page)")
+        or "free and open" in s
     ):
         return "vague"
-    # 5. Third-party copyright marks.
+    # 6. Third-party copyright marks.
     if "(c)" in s or "©" in s or "copyright" in s:
         return "third-party"
-    # 6. Canonical open grants + verified exact registry wordings ONLY.
+    # 7. Canonical open grants ONLY.
     #    (CC BY-NC/-SA/-ND variants were already caught above.)
     if (
         re.search(r"\bcc[-\s]?by\b", s)
@@ -181,10 +193,9 @@ def classify(license_str: str | None) -> str:
         or "godl" in s
         or "odc-by" in s
         or "cdla-permissive" in s
-        or any(s == w or s.startswith(w + ";") for w in EXACT_CLEAN_WORDINGS)
     ):
         return "clean-open"
-    # 7. Government publications cited with attribution.
+    # 8. Government publications cited with attribution.
     cited = (
         "attribution" in s
         or "cited" in s
@@ -425,9 +436,32 @@ def selftest() -> int:
         classify("USGS public domain, courtesy attribution") == "clean-open",
     )
     check("CDLA-Permissive clean", classify("CDLA-Permissive 2.0") == "clean-open")
+    # Review round 2: OpenCity's dataset-page "open" label is generic portal
+    # access language - vague until counsel rules on it (counsel brief Q5).
+    # The mechanical gate must not pre-empt that answer.
     check(
-        "verified OpenCity wording clean",
-        classify("open (per OpenCity dataset page)") == "clean-open",
+        "OpenCity 'open' portal label is vague, not clean",
+        classify("open (per OpenCity dataset page)") == "vague",
+    )
+    check(
+        "OpenCity 'open' label with ';' qualifier is vague too",
+        classify(
+            "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments"
+        )
+        == "vague",
+    )
+    check(
+        "generic 'free and open, attribution required' is vague",
+        classify("free and open, attribution required") == "vague",
+    )
+    check(
+        "verified Copernicus wording (JRC GSW) stays clean",
+        classify(
+            "Copernicus free and open data, attribution required; download page: "
+            "'All data here is produced under the Copernicus Programme and is provided "
+            "free of charge, without restriction of use'"
+        )
+        == "clean-open",
     )
     check(
         "HydroSHEDS wording is nc",
