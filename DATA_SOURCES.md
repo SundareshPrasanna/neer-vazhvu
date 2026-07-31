@@ -31,7 +31,9 @@ whose own terms govern each artifact. The authoritative per-artifact record is:
 
 Some upstream sources carry non-commercial (e.g. CC BY-NC) or share-alike
 (e.g. ODbL) terms. `python3 scripts/nvdm-encumbrance-report.py` buckets every
-enveloped artifact by its worst source licence and is the mechanical basis for
+enveloped artifact by its worst source licence, propagated recursively through
+`provenance.internal_inputs` (an artifact derived from ODbL inputs is
+share-alike even if its own sources are clean), and is the mechanical basis for
 licence-clean corpus editions ([`scripts/sample-corpus.json`](scripts/sample-corpus.json)
 is the first). A data-specific notice is forthcoming.
 
