@@ -489,6 +489,11 @@ VERIFIED: dict[str, dict] = {
         "notes": [
             "After-expansion column recorded (project summary table separately states "
             "104.10 existing + 5.2 addition = 109.30 total).",
+            "ETP existing_kld 8.1 is the letter's own parenthetical ('It is being treated "
+            "through existing ETP (8.1 KLD)'), but it equals the stated trade effluent exactly, "
+            "so it may be the volume treated rather than a nameplate rating. The "
+            "after-expansion 10 KLD is unambiguous ('It will be treated in revamped ETP (10 "
+            "KLD)') and is what the sanity checks use.",
             "Fresh breakdown as stated: domestic 27, greenbelt 30.3, process 7, CFS 10, cooling tower 4.4.",
         ],
     },
@@ -537,8 +542,11 @@ VERIFIED: dict[str, dict] = {
             "fresh column exactly.",
             "STP: existing 44 KLD, additional 35 KLD stated as under installation per CTE obtained "
             "2024 (footnote on p.5), 79 KLD after expansion - which covers the 50 KLD of sewage.",
-            "ETP capacity not stated as a number (prose: 'existing ETP (8.1 KLD)' quotes the "
-            "effluent volume treated, not a nameplate); all three ETP fields left null.",
+            "ETP capacity is never stated as a number in this letter: rows 27-28 describe the "
+            "train in prose only ('existing ETP followed by RO', 'existing ETP after revamp "
+            "along with installation of additional RO'). The 8.75 and 9.6 KLD figures beside it "
+            "are effluent VOLUMES, existing and after-expansion, not capacities. All three ETP "
+            "fields left null.",
         ],
         "review": [],
     },
