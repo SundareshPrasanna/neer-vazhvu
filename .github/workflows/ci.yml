@@ -53,6 +53,23 @@ jobs:
           npx tsx scripts/compute-bangalore-ward-profiles.ts
           git diff --exit-code public/data/bangalore-ward-profiles.json
 
+      # PR #227 review: this producer held stale OpenCity/WRIS licence literals
+      # and emitted no rights_determination, so running it restored three wrong
+      # licences and deleted an audited determination. It had no regeneration
+      # diff, so nothing noticed. It has one now.
+      - name: Verify delhi-ward-profiles.json is up-to-date
+        run: |
+          pip install -e neer-vazhvu-api
+          python3 neer-vazhvu-api/scripts/build_delhi_ward_profiles.py
+          git diff --exit-code public/data/delhi-ward-profiles.json
+
+      # The other ~80 producers fetch from networks, portals or Earth Engine and
+      # cannot run here. This covers the thing that actually drifts in all of
+      # them, statically: no generator may hardcode a registered source's
+      # licence, and a producer must emit the determination its artifact carries.
+      - name: No generator holds its own copy of a registry licence
+        run: python3 scripts/check-generator-drift.py
+
       - run: npm run data:check
       - run: npm run build
       - run: npm run test
