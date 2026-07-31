@@ -48,6 +48,7 @@ Usage:
     python3 scripts/fetch_parivesh_corridor_water.py discover   # state dump + corridor filter report
     python3 scripts/fetch_parivesh_corridor_water.py download   # certificate PDFs + CAF JSONs (network)
     python3 scripts/fetch_parivesh_corridor_water.py refresh    # RE-CONTACT Parivesh, replace the archive
+    python3 scripts/fetch_parivesh_corridor_water.py verify NO… # record a human re-read of NO
     python3 scripts/fetch_parivesh_corridor_water.py extract    # auto-extraction + variance report
     python3 scripts/fetch_parivesh_corridor_water.py build      # write the governed dataset
 
@@ -64,6 +65,8 @@ transcription of specific letters, not a parser.
 
 from __future__ import annotations
 
+import datetime as _dt
+import hashlib
 import json
 import re
 import subprocess
@@ -85,9 +88,27 @@ UA = (
     "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 )
 
-# Snapshot date of the discovery dump + downloads + manual verification pass;
-# keeps `build` deterministic.
-SNAPSHOT = "2026-07-31"
+# ---------------------------------------------------------------------------
+# VERIFICATION STATE - the assurance record, committed to the repo.
+#
+# The cache is git-ignored and rebuildable, so it cannot carry assurance. This
+# file can: for each pilot document it records the sha256 of the exact bytes a
+# human read, the date they read them, and the date those bytes were retrieved.
+#
+# `build` refuses to run when a cached document's current hash differs from the
+# hash that was verified. Without that gate, `refresh` could pull a revised
+# certificate and the next build would happily re-emit the old transcription
+# still marked verified: true - a record asserting human verification of
+# content that has since changed (review 2026-07-31).
+#
+# Re-verification is an explicit act (`verify <proposal_no>...`), never a flag,
+# because "I looked at the new document" is a claim only a human can make.
+#
+# Shape note: per-document input digests keyed to an extraction run is also the
+# direction of the drafted NVDM v1.1 extraction-assurance amendment, so this is
+# deliberately written as a digest set that can be lifted into that contract.
+# ---------------------------------------------------------------------------
+STATE_FILE = ROOT / "scripts" / "parivesh-verification-state.json"
 
 # Corridor membership filter used for the discovery report (toponyms of the
 # Sriperumbudur-Oragadam corridor: taluks, SIPCOT nodes, villages).
@@ -146,6 +167,51 @@ CORE_FIELDS = [
     "wastewater_domestic_kld",
     "stp_capacity_kld",
 ]
+
+# ---------------------------------------------------------------------------
+# Treatment capacity - STATED vs DERIVED, per component.
+#
+# A capacity triplet is not three equally-solid numbers. The letters state
+# different subsets: some print an Existing/Proposed/After-Expansion row, some
+# print one number under a "Proposed Capacity of STP" label, some only describe
+# the train in prose. Review 2026-07-31 found the triplets silently mixing the
+# three cases - a stated 45 KLD dropped to null for Mobis, an invented
+# `proposed: 0` for Hyundai whose letter prints no proposed column at all.
+#
+# So every capacity carries its own provenance: `stated` lists the keys taken
+# verbatim from the letter, `derived` maps a key to why it was computed. A key
+# in neither is null and means the letter does not state it. Nothing is ever
+# both silent and non-null.
+# ---------------------------------------------------------------------------
+def cap(
+    existing: float | None = None,
+    proposed: float | None = None,
+    after: float | None = None,
+    stated: tuple[str, ...] = (),
+    derived: dict[str, str] | None = None,
+    note: str | None = None,
+) -> dict:
+    out = {
+        "existing_kld": existing,
+        "proposed_kld": proposed,
+        "after_expansion_kld": after,
+        "stated": list(stated),
+        "derived": derived or {},
+    }
+    if note:
+        out["note"] = note
+    values = {"existing_kld": existing, "proposed_kld": proposed, "after_expansion_kld": after}
+    for k, v in values.items():
+        if v is not None and k not in out["stated"] and k not in out["derived"]:
+            raise ValueError(f"capacity {k}={v} is neither stated nor marked derived")
+        if v is None and (k in out["stated"] or k in out["derived"]):
+            raise ValueError(f"capacity {k} is null but claims to be stated/derived")
+    return out
+
+
+NO_ETP_ROW = cap(note="The letter's salient-features table has no ETP row at all.")
+ETP_DASH = cap(note="ETP capacity row prints a dash (no trade effluent stated).")
+
 
 # ---------------------------------------------------------------------------
 # Groundwater conditions - DETECTED PER LETTER, never assumed.
@@ -228,8 +294,17 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 37.0,
         "trade_effluent_kld": None,
-        "stp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": 45.0},
-        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
+        "stp": cap(
+            proposed=45.0,
+            after=45.0,
+            stated=("proposed_kld", "after_expansion_kld"),
+            note=(
+                "Row 29 prints a single value under 'Proposed Capacity of STP'; the "
+                "undertaking states the 37 KLD of sewage 'will be treated in STP of 45 KLD "
+                "capacity', so 45 is also the stated end state. No existing capacity stated."
+            ),
+        ),
+        "etp": ETP_DASH,
         "water_source": "SIPCOT supply",
         "reuse_note": "Treated water 35 KLD reused: flushing 15 KLD, greenbelt 20 KLD; surplus nil.",
         "rwh": "1 recharge pit; 500 m3 rainwater harvesting sump.",
@@ -258,8 +333,16 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 111.0,
         "trade_effluent_kld": 125.0,
-        "stp": {"existing_kld": None, "proposed_kld": 145.0, "after_expansion_kld": 145.0},
-        "etp": {"existing_kld": None, "proposed_kld": 145.0, "after_expansion_kld": 145.0},
+        "stp": cap(
+            after=145.0,
+            stated=("after_expansion_kld",),
+            note="Row 28 'Capacity of STP 145 (MBBR Technology)' - one figure, no decomposition.",
+        ),
+        "etp": cap(
+            after=145.0,
+            stated=("after_expansion_kld",),
+            note="Row 29 'Capacity of ETP 145' - one figure, no decomposition.",
+        ),
         "water_source": "Mambakkam SIPCOT",
         "reuse_note": (
             "Treated water available for reuse 225 KLD (flushing, greenbelt & process); "
@@ -344,8 +427,29 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 373.49,
         "trade_effluent_kld": 437.5,
-        "stp": {"existing_kld": 350.0, "proposed_kld": 200.0, "after_expansion_kld": 550.0},
-        "etp": {"existing_kld": 468.0, "proposed_kld": 0.0, "after_expansion_kld": 468.0},
+        "stp": cap(
+            existing=350.0,
+            proposed=200.0,
+            after=550.0,
+            stated=("existing_kld", "proposed_kld", "after_expansion_kld"),
+            note=(
+                "p.13 writes the arithmetic out: sewage 'treated in STP of 350 KLD + 200 KLD "
+                "(Proposed) = 550 KLD capacity'. Row 26's 200 is the increment."
+            ),
+        ),
+        "etp": cap(
+            existing=468.0,
+            proposed=0.0,
+            after=468.0,
+            stated=("existing_kld", "proposed_kld"),
+            derived={
+                "after_expansion_kld": (
+                    "existing 468 + a stated zero increment (row 27 'Proposed Capacity of ETP 0', "
+                    "and p.13 states effluent additional 0). The letter never prints an "
+                    "after-expansion ETP figure."
+                )
+            },
+        ),
         "water_source": "SIPCOT",
         "reuse_note": (
             "Treated water requirement 809.5 KLD: flushing 84.5, process 371.01, boiler makeup 20, "
@@ -404,8 +508,18 @@ VERIFIED: dict[str, dict] = {
         "wastewater_total_kld": 10874.256,
         "wastewater_domestic_kld": None,
         "trade_effluent_kld": None,
-        "stp": {"existing_kld": None, "proposed_kld": 650.0, "after_expansion_kld": 650.0},
-        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
+        "stp": cap(
+            proposed=650.0,
+            after=650.0,
+            stated=("proposed_kld",),
+            derived={
+                "after_expansion_kld": (
+                    "greenfield campus - the letter states no existing plant, so the proposed "
+                    "650 KLD is the end state. Not printed as such."
+                )
+            },
+        ),
+        "etp": NO_ETP_ROW,
         "water_source": "SIPCOT",
         "reuse_note": "Treated water recycled: '1,87,500 (Flushing) + 260 (Gardening)' as printed.",
         "rwh": "50 recharge pits; 40,000 m3 rainwater harvesting pond.",
@@ -478,8 +592,29 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 23.0,
         "trade_effluent_kld": 8.1,
-        "stp": {"existing_kld": 50.0, "proposed_kld": 0.0, "after_expansion_kld": 50.0},
-        "etp": {"existing_kld": 8.1, "proposed_kld": None, "after_expansion_kld": 10.0},
+        "stp": cap(
+            existing=50.0,
+            proposed=0.0,
+            after=50.0,
+            stated=("existing_kld", "after_expansion_kld"),
+            derived={
+                "proposed_kld": (
+                    "row 29 states sewage goes to the 'Existing STP (50 KLD)' and 'Same will be "
+                    "followed after expansion also' - a stated absence of any new unit, not a "
+                    "printed 0."
+                )
+            },
+        ),
+        "etp": cap(
+            existing=8.1,
+            after=10.0,
+            stated=("existing_kld", "after_expansion_kld"),
+            note=(
+                "Row 30 prose: 'existing ETP (8.1 KLD)' and 'revamped ETP (10 KLD)'. The 8.1 "
+                "equals this letter's stated trade effluent exactly, so it may be the volume "
+                "treated rather than a nameplate rating; the 10 KLD end state is unambiguous."
+            ),
+        ),
         "water_source": "SIPCOT",
         "reuse_note": (
             "Treated water 30.6 KLD (STP 23 + ETP 7.6) reused: cooling tower 7.6, greenbelt 23; "
@@ -516,8 +651,25 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 50.0,
         "trade_effluent_kld": 9.6,
-        "stp": {"existing_kld": 44.0, "proposed_kld": 35.0, "after_expansion_kld": 79.0},
-        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
+        "stp": cap(
+            existing=44.0,
+            proposed=35.0,
+            after=79.0,
+            stated=("existing_kld", "proposed_kld"),
+            derived={
+                "after_expansion_kld": (
+                    "44 existing + 35 additional. The letter states both parts ('existing (44 "
+                    "KLD) STP', 'additional STP 35 KLD is under installation as per CTE obtained "
+                    "on 2024') but never prints their sum."
+                )
+            },
+        ),
+        "etp": cap(
+            note=(
+                "ETP capacity never stated as a number: rows 27-28 describe the train in prose "
+                "only. The 8.75 and 9.6 KLD figures beside it are effluent volumes."
+            )
+        ),
         "water_source": "SIPCOT & rainwater harvesting pond",
         "reuse_note": (
             "Treated water available for reuse 52.98 KLD (greenbelt 47.5, process 4.23, chillers "
@@ -565,8 +717,12 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 318.0,
         "trade_effluent_kld": None,
-        "stp": {"existing_kld": None, "proposed_kld": 350.0, "after_expansion_kld": 350.0},
-        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
+        "stp": cap(
+            after=350.0,
+            stated=("after_expansion_kld",),
+            note="Short-form row 17: 'Sewage Treatment Plant Capacity: 350 KLD'.",
+        ),
+        "etp": cap(note="Short-form row 18 greywater/effluent is 'NA'."),
         "water_source": "Local body",
         "reuse_note": (
             "Treated sewage 318 KLD reused: toilet flushing 156, greenbelt & OSR 90, avenue "
@@ -613,8 +769,21 @@ VERIFIED: dict[str, dict] = {
         "wastewater_total_kld": 4537.0,
         "wastewater_domestic_kld": None,
         "trade_effluent_kld": None,
-        "stp": {"existing_kld": 1815.0, "proposed_kld": 0.0, "after_expansion_kld": 1815.0},
-        "etp": {"existing_kld": 4400.0, "proposed_kld": 0.0, "after_expansion_kld": 4400.0},
+        "stp": cap(
+            existing=1815.0,
+            after=1815.0,
+            stated=("existing_kld", "after_expansion_kld"),
+            note=(
+                "Row 29 prints Existing 1815 and After Expansion/Total 1815 and NO proposed "
+                "column - so the increment is unstated, not zero."
+            ),
+        ),
+        "etp": cap(
+            existing=4400.0,
+            after=4400.0,
+            stated=("existing_kld", "after_expansion_kld"),
+            note="Row 30, same two-column shape as the STP row; increment unstated.",
+        ),
         "water_source": "SIPCOT lake water / HMIL pond",
         "reuse_note": "Treated water 4537 KLD; reused industrial usage 2547, greenbelt 1900.",
         "rwh": "No recharge-pit count stated; 3,35,000 m3 storage across 6 existing ponds.",
@@ -661,8 +830,24 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 80.0,
         "trade_effluent_kld": 27.0,
-        "stp": {"existing_kld": 60.0, "proposed_kld": 90.0, "after_expansion_kld": 150.0},
-        "etp": {"existing_kld": 7.0, "proposed_kld": 33.0, "after_expansion_kld": 40.0},
+        "stp": cap(
+            existing=60.0,
+            proposed=90.0,
+            after=150.0,
+            stated=("existing_kld", "proposed_kld", "after_expansion_kld"),
+            note="Row 24 prints all three columns: 60 / 90 / 150.",
+        ),
+        "etp": cap(
+            existing=7.0,
+            proposed=33.0,
+            after=40.0,
+            derived={
+                "existing_kld": "ETP-1 2 + ETP-2 5 (row 25 states the two units separately)",
+                "proposed_kld": "ETP-1 8 + ETP-2 25",
+                "after_expansion_kld": "ETP-1 10 + ETP-2 30",
+            },
+            note="The letter states per-unit capacities only; every total here is a sum of two printed rows.",
+        ),
         "water_source": "Local body",
         "reuse_note": (
             "Treated water (STP 76 + ETP 26.97) reused: flushing 30, greenbelt & OSR 46."
@@ -694,8 +879,18 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 101.7,
         "trade_effluent_kld": 126.0,
-        "stp": {"existing_kld": None, "proposed_kld": 120.0, "after_expansion_kld": 120.0},
-        "etp": {"existing_kld": None, "proposed_kld": 150.0, "after_expansion_kld": 150.0},
+        "stp": cap(
+            proposed=120.0,
+            after=120.0,
+            stated=("proposed_kld",),
+            derived={"after_expansion_kld": "greenfield campus - no existing plant stated, so the proposed 120 KLD is the end state."},
+        ),
+        "etp": cap(
+            proposed=150.0,
+            after=150.0,
+            stated=("proposed_kld",),
+            derived={"after_expansion_kld": "greenfield campus - no existing plant stated, so the proposed 150 KLD is the end state."},
+        ),
         "water_source": "SIPCOT / TTRO Koyambedu (purchased tertiary-treated water)",
         "reuse_note": (
             "Letter's own summary: fresh 119 (SIPCOT), raw process water 890.7 (TTRO Koyambedu), "
@@ -739,8 +934,23 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 311.0,
         "trade_effluent_kld": None,
-        "stp": {"existing_kld": None, "proposed_kld": 350.0, "after_expansion_kld": 350.0},
-        "etp": {"existing_kld": None, "proposed_kld": 0.0, "after_expansion_kld": 0.0},
+        "stp": cap(
+            proposed=350.0,
+            after=350.0,
+            stated=("proposed_kld",),
+            derived={"after_expansion_kld": "greenfield park - no existing plant stated, so the proposed 350 KLD is the end state."},
+            note="Row 26: '350 (1 x 100 KLD & 1 x 250 KLD)'.",
+        ),
+        "etp": cap(
+            proposed=0.0,
+            after=0.0,
+            stated=("proposed_kld",),
+            derived={"after_expansion_kld": "no existing ETP stated and a proposed capacity of Nil."},
+            note=(
+                "Row 27 prints 'Nil', an explicit zero - distinct from the dash used by letters "
+                "that simply have no ETP row to fill (those stay null)."
+            ),
+        ),
         "water_source": "Ground water (borewell)",
         "reuse_note": "Treated water 311 KLD reused: flushing 152, greenbelt & OSR 159; surplus dash.",
         "rwh": "26 recharge pits; 1,300 m3 rainwater harvesting pond.",
@@ -775,8 +985,20 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 223.0,
         "trade_effluent_kld": None,
-        "stp": {"existing_kld": 135.0, "proposed_kld": 100.0, "after_expansion_kld": 235.0},
-        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
+        "stp": cap(
+            existing=135.0,
+            proposed=100.0,
+            after=235.0,
+            stated=("existing_kld", "after_expansion_kld"),
+            derived={
+                "proposed_kld": (
+                    "the row's own unit lists differ by one 1 x 100 KLD unit - existing "
+                    "'135 (1 x 75 KLD, 1 x 60 KLD)' vs after '235 (1 x 75 KLD, 1 x 60 KLD, "
+                    "1 x 100 KLD)' - but no increment column is printed."
+                )
+            },
+        ),
+        "etp": cap(note="Trade effluent row is 'NIL'; the letter has no ETP capacity row."),
         "water_source": "SIPCOT",
         "reuse_note": "Treated water 223 KLD reused: flushing 85, greenbelt 138; surplus 0.",
         "rwh": "40 recharge pits; 'RWH pond capacity - 1.6' as printed (unit column says M3).",
@@ -808,8 +1030,12 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 414.0,
         "trade_effluent_kld": None,
-        "stp": {"existing_kld": None, "proposed_kld": 450.0, "after_expansion_kld": 450.0},
-        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
+        "stp": cap(
+            after=450.0,
+            stated=("after_expansion_kld",),
+            note="Short-form row 16: 'Sewage Treatment Capacity: 450 KLD (MBBR Technology)'.",
+        ),
+        "etp": cap(note="Short-form row 17 greywater/effluent is a dash (logistics park)."),
         "water_source": "Local body",
         "reuse_note": "Treated sewage reused: flushing 156, greenbelt & OSR 256.",
         "rwh": "55 recharge pits; 2 rainwater harvesting ponds.",
@@ -826,6 +1052,108 @@ VERIFIED: dict[str, dict] = {
 
 def slug(proposal_no: str) -> str:
     return proposal_no.replace("/", "_")
+
+
+def today() -> str:
+    return _dt.date.today().isoformat()
+
+
+def sha256_of(path: Path) -> str | None:
+    if not path.exists():
+        return None
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def pdf_path(no: str) -> Path:
+    return CACHE / "pdf" / f"{slug(no)}.pdf"
+
+
+def load_state() -> dict:
+    if not STATE_FILE.exists():
+        return {"documents": {}}
+    return json.loads(STATE_FILE.read_text())
+
+
+def save_state(state: dict) -> None:
+    state["documents"] = dict(sorted(state["documents"].items()))
+    STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n")
+
+
+def verification_drift() -> tuple[list[str], list[str]]:
+    """(changed, unrecorded) documents relative to the verification state.
+
+    changed    - the cached bytes differ from the bytes a human verified
+    unrecorded - the document has no verification record at all
+    """
+    state = load_state()
+    docs = state.get("documents", {})
+    changed, unrecorded = [], []
+    for no, _label in PILOT:
+        rec = docs.get(no)
+        cur = sha256_of(pdf_path(no))
+        if cur is None:
+            continue  # not downloaded; `build` fails later on the missing PDF
+        if not rec or not rec.get("verified_sha256"):
+            unrecorded.append(no)
+        elif rec["verified_sha256"] != cur:
+            changed.append(no)
+    return changed, unrecorded
+
+
+def require_verified_documents() -> dict:
+    """Build gate. Exits non-zero naming every document that must be re-read."""
+    changed, unrecorded = verification_drift()
+    if not changed and not unrecorded:
+        return load_state()
+    print("REFUSING TO BUILD - the dataset would assert human verification of content", file=sys.stderr)
+    print("that no human has verified.\n", file=sys.stderr)
+    for no in changed:
+        rec = load_state()["documents"][no]
+        print(
+            f"  CHANGED    {no}\n"
+            f"             verified {rec['verified_sha256'][:16]}... on {rec['verified_on']}\n"
+            f"             cached   {sha256_of(pdf_path(no))[:16]}... now",
+            file=sys.stderr,
+        )
+    for no in unrecorded:
+        print(f"  UNRECORDED {no} (no verification record)", file=sys.stderr)
+    print(
+        "\nRe-read each document against its VERIFIED entry, correct the entry where the\n"
+        "letter has changed, then record the re-verification explicitly:\n"
+        "  python3 scripts/fetch_parivesh_corridor_water.py verify " + " ".join(changed + unrecorded),
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+
+def cmd_verify(proposals: list[str]) -> None:
+    """Record that a human has re-read these documents at their current bytes."""
+    if not proposals:
+        sys.exit(
+            "usage: verify <proposal_no> [<proposal_no>...]\n"
+            "Naming each document is the point: re-verification is an assertion that a "
+            "human read THAT letter, so there is deliberately no --all."
+        )
+    known = {no for no, _ in PILOT}
+    state = load_state()
+    docs = state.setdefault("documents", {})
+    for no in proposals:
+        if no not in known:
+            sys.exit(f"{no} is not in the pilot cohort")
+        cur = sha256_of(pdf_path(no))
+        if cur is None:
+            sys.exit(f"{no} has no cached PDF to verify - run `download` first")
+        rec = docs.setdefault(no, {})
+        was = rec.get("verified_sha256")
+        rec["verified_sha256"] = cur
+        rec["verified_on"] = today()
+        rec.setdefault("retrieved", today())
+        if rec.get("last_seen_on"):
+            rec["retrieved"] = rec.pop("last_seen_on")
+        rec.pop("last_seen_sha256", None)
+        print(f"verified {no} @ {cur[:16]}... ({'updated from ' + was[:16] + '...' if was else 'new record'})")
+    save_state(state)
+    print(f"wrote {STATE_FILE.relative_to(ROOT)}")
 
 
 def fetch(url: str, dest: Path, post_json: bool = False, force: bool = False) -> bool:
@@ -947,17 +1275,38 @@ def cmd_download(force: bool = False) -> None:
         except Exception as e:  # CAF is nice-to-have archive material
             print(f"WARN {no}: CAF fetch failed: {e}")
     if force:
+        # Record what this refresh SAW. Verified hashes are deliberately not
+        # touched: only a human re-reading the letter can move those.
+        state = load_state()
+        docs = state.setdefault("documents", {})
+        state["state_dump"] = {
+            "sha256": sha256_of(CACHE / "tn-ec-proposals.json"),
+            "retrieved": today(),
+        }
+        for no in changed + unchanged:
+            rec = docs.setdefault(no, {})
+            cur = sha256_of(pdf_path(no))
+            if rec.get("verified_sha256") == cur:
+                rec["retrieved"] = today()  # same bytes, freshly confirmed
+                rec.pop("last_seen_sha256", None)
+                rec.pop("last_seen_on", None)
+            else:
+                rec["last_seen_sha256"] = cur
+                rec["last_seen_on"] = today()
+        save_state(state)
         print(
             f"\nrefresh: {len(changed)} document(s) changed upstream, "
-            f"{len(unchanged)} byte-identical."
+            f"{len(unchanged)} byte-identical. State recorded in "
+            f"{STATE_FILE.relative_to(ROOT)}."
         )
-        if changed:
+        drifted, unrecorded = verification_drift()
+        if drifted or unrecorded:
             print(
-                "CHANGED DOCUMENTS MUST BE RE-READ BY A HUMAN before `build`: the VERIFIED "
-                "table is a transcription of specific letters, and `build` will keep emitting "
-                "the old figures against the new PDFs until it is updated.\n  "
-                + "\n  ".join(changed)
+                "\nBUILD IS NOW BLOCKED until these are re-read by a human and recorded with "
+                "`verify`:\n  " + "\n  ".join(drifted + unrecorded)
             )
+        else:
+            print("Every document still matches the bytes that were verified; build is clear.")
 
 
 def cmd_refresh() -> None:
@@ -1242,6 +1591,8 @@ def sanity_checks(v: dict) -> dict:
 
 
 def cmd_build() -> None:
+    state = require_verified_documents()
+    docs = state["documents"]
     auto = auto_records()
     rows_by_no = {row["proposalNo"]: row for row, _ in pilot_rows()}
     variance_rows, stats = variance_report(auto)
@@ -1273,13 +1624,16 @@ def cmd_build() -> None:
             "notes": v.get("notes", []),
             "review": v.get("review", []),
             "checks": {},
-            # Every record was read against the letter text on SNAPSHOT: the
-            # water table transcribed field by field, the EC date and EC
-            # identification number matched, and (for the six amendment /
-            # corrigendum letters) the absence of any water table confirmed by
-            # a zero-hit search for "KLD" across the whole letter.
+            # Each record was read against the letter text: the water table
+            # transcribed field by field, the EC date and EC identification
+            # number matched, and (for the six amendment / corrigendum letters)
+            # the absence of any water table confirmed by a zero-hit search for
+            # "KLD" across the whole letter. The date and the document digest
+            # come from the verification state file, not from a constant - and
+            # build refuses to run if the cached bytes have drifted from them.
             "verified": True,
-            "verified_on": SNAPSHOT,
+            "verified_on": docs[no]["verified_on"],
+            "verified_document_sha256": docs[no]["verified_sha256"],
             "extraction": {
                 "format": v["format"],
                 "class": var["class"],
@@ -1289,7 +1643,7 @@ def cmd_build() -> None:
             "provenance": {
                 "source_id": "parivesh-seiaa-tn-ec",
                 "as_of": v["ec_date"],
-                "retrieved": SNAPSHOT,
+                "retrieved": docs[no]["retrieved"],
                 "certificate_url": cert_url(row),
             },
         }
@@ -1315,6 +1669,13 @@ def cmd_build() -> None:
         for no, f, a, m in mismatches:
             print(f"  {no} {f}: auto={a} verified={m}")
 
+    # Envelope dates are DERIVED from the verification state, so they can never
+    # drift from the assurance record - and they stay stable across rebuilds
+    # (the CI freshness gate diffs this file), moving only when a document is
+    # actually re-retrieved or re-verified.
+    retrieved_max = max(d["retrieved"] for d in docs.values())
+    verified_max = max(d["verified_on"] for d in docs.values())
+
     doc = {
         "nvdm": "1.0",
         "dataset": "corridors/parivesh-ec-water",
@@ -1334,13 +1695,13 @@ def cmd_build() -> None:
                         "this is not a verified licence grant and is not cleared for "
                         "commercial reuse. Flagged in the registry entry."
                     ),
-                    "as_of": SNAPSHOT,
-                    "retrieved": SNAPSHOT,
+                    "as_of": retrieved_max,
+                    "retrieved": retrieved_max,
                     "role": "asserts",
                 }
             ],
             "method": "pdf-extract",
-            "produced_at": SNAPSHOT,
+            "produced_at": verified_max,
             "produced_by": "scripts/fetch_parivesh_corridor_water.py",
             "note": (
                 "Pilot extraction (19 EC letters, 13 with water tables) for the "
@@ -1379,6 +1740,20 @@ def cmd_build() -> None:
                     "phrase is absent from the letter, not that the obligation does not exist "
                     "elsewhere in law."
                 ),
+                "stated_vs_derived": (
+                    "capacity objects carry their own provenance: `stated` lists the keys taken "
+                    "verbatim from the letter, `derived` maps a key to why it was computed. A "
+                    "key in neither is null and means the letter does not state it. Nothing is "
+                    "silently both - the builder raises if a non-null value is neither stated "
+                    "nor marked derived"
+                ),
+                "verification_binding": (
+                    "each record carries verified_document_sha256, the digest of the exact "
+                    "document bytes a human read, and verified_on, the date they read them. "
+                    "The build refuses to run when a cached document no longer matches its "
+                    "verified digest, so verified:true can never outlive the content it "
+                    "describes. Envelope dates are derived from that record, not hard-coded"
+                ),
                 "treatment_capacity": (
                     "stp_capacity and etp_capacity carry existing_kld / proposed_kld / "
                     "after_expansion_kld separately, because the SEIAA salient-features rows "
@@ -1402,7 +1777,16 @@ def cmd_build() -> None:
                 ),
             },
         },
-        "as_of": SNAPSHOT,
+        "as_of": verified_max,
+        "input_digests": {
+            "note": (
+                "sha256 of the exact document bytes each record was verified against, plus "
+                "the discovery dump they were selected from. `build` refuses to run when a "
+                "cached document no longer matches its verified digest."
+            ),
+            "state_dump_sha256": (state.get("state_dump") or {}).get("sha256"),
+            "documents": {no: docs[no]["verified_sha256"] for no, _ in PILOT},
+        },
         "format_variance": {
             "clean_auto_extract": stats["clean"],
             "needed_manual_handling": stats["manual"],
@@ -1434,12 +1818,17 @@ def main() -> None:
         cmd_download()
     elif cmd == "refresh":
         cmd_refresh()
+    elif cmd == "verify":
+        cmd_verify(sys.argv[2:])
     elif cmd == "extract":
         cmd_extract()
     elif cmd == "build":
         cmd_build()
     else:
-        sys.exit(f"unknown command {cmd!r} (discover | download | refresh | extract | build)")
+        sys.exit(
+            f"unknown command {cmd!r} "
+            "(discover | download | refresh | verify | extract | build)"
+        )
 
 
 if __name__ == "__main__":

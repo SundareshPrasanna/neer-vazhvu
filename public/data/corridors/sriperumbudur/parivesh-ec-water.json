@@ -28,12 +28,39 @@
       "phase": "construction_phase and operation_phase are stated separately by the letters and are NEVER summed or conflated; expansion letters carry the After-Expansion (granted end-state) column",
       "nulls": "null means the letter does not state the figure (or states only a dash); values are never inferred, summed across phases, or back-calculated",
       "groundwater_conditions": "detected per letter by exact-phrase match, never assumed - there is no single 'standard' SEIAA groundwater condition. The CGWA abstraction/dewatering condition appears in only 6 of the 13 water-bearing letters; one letter (Vallam Phase I) carries no groundwater monitoring condition at all. Absence in this list means the phrase is absent from the letter, not that the obligation does not exist elsewhere in law.",
+      "stated_vs_derived": "capacity objects carry their own provenance: `stated` lists the keys taken verbatim from the letter, `derived` maps a key to why it was computed. A key in neither is null and means the letter does not state it. Nothing is silently both - the builder raises if a non-null value is neither stated nor marked derived",
+      "verification_binding": "each record carries verified_document_sha256, the digest of the exact document bytes a human read, and verified_on, the date they read them. The build refuses to run when a cached document no longer matches its verified digest, so verified:true can never outlive the content it describes. Envelope dates are derived from that record, not hard-coded",
       "treatment_capacity": "stp_capacity and etp_capacity carry existing_kld / proposed_kld / after_expansion_kld separately, because the SEIAA salient-features rows labelled 'Proposed Capacity of STP/ETP' are the INCREMENT an expansion adds, not the plant's end-state capacity. Conflating the two invents defects: Yamaha's rows read 200 KLD STP and 0 KLD ETP, while its own wastewater table states an end state of 350 + 200 = 550 KLD STP and a 468 KLD ETP. Sanity checks compare stated wastewater against after_expansion_kld only",
       "checks": "sanity checks annotate, never alter: 'pass' or a 'flag: ...' string quoting the letter's own figures. A flag is a property of the filing, not of the transcription",
       "extraction_scoring": "extraction.auto_match scores the unattended regex extractor against the verified reading across EVERY field it emits, counting three failures equally: wrong, missed, and INVENTED (a number emitted where the letter states none). extraction.auto_invented names the invented fields"
     }
   },
   "as_of": "2026-07-31",
+  "input_digests": {
+    "note": "sha256 of the exact document bytes each record was verified against, plus the discovery dump they were selected from. `build` refuses to run when a cached document no longer matches its verified digest.",
+    "state_dump_sha256": "7ddb6ac666ccb62ade7823350fe5d1c06fae3c96a1c66844d778ccf25bf7b8a2",
+    "documents": {
+      "SIA/TN/INFRA2/561399/2025": "ddf18b78a6eefc0cac7feaf35e31c018a6d47ab6a31bf2d633811fa7d837593a",
+      "SIA/TN/INFRA2/561627/2025": "7c3874c5a8cf2440fe1a01f108cb4f9f0e1d764d69422f98f706368541762922",
+      "SIA/TN/INFRA2/574654/2026": "d798e25524c34d6cc3c16766f50d59e7955635088fb38a0fc807bfdee791d1ec",
+      "SIA/TN/IND3/507163/2024": "d90dc4e6da213c7c8f9e03d18a2b35e2be557be63079cede218cfe482c2bb2ec",
+      "SIA/TN/INFRA2/518129/2025": "e693cec4ec3bceae50d46862a13d9ff00eea77b2cec03f42805bedd22f88e36e",
+      "SIA/TN/INFRA2/543039/2025": "dd3fb1414830e0f772f69336b7b6dd31a7c0c807baf75b1e217da8f6a2e2235e",
+      "SIA/TN/INFRA2/467617/2024": "3cf7d0fad6046632f9a92dc900a7b3d90e8d386cecf8207537d371e2379542d6",
+      "SIA/TN/INFRA2/502376/2024": "b776bb22f8ec87e0233416c452cbeb11f8573a0d154331e74b18fa89fd8bd9e7",
+      "SIA/TN/INFRA2/519363/2025": "ecfa237d65872eab8455cafdefadb6656543c3caa33d229cb0b536a7b7fff3d0",
+      "SIA/TN/INFRA2/557819/2025": "3bdefc31f0807826557a03ad3f7d47185a39e312d00ebdbf4bbc0624e4d3b760",
+      "SIA/TN/INFRA2/539591/2025": "76716d6160f73f160c7f9b3149e38ff6e9ea1676bea9acd03cd60b3437cf507a",
+      "SIA/TN/INFRA2/501457/2024": "ea943ac6b4d87035b36ec34b0e47c2d516c22d39f120b3a64850d692a73a7d32",
+      "SIA/TN/INFRA2/569723/2026": "8b97be4440f2201872f2f93955848fcaafdeb9ecb8ddb5542e366648d7264fef",
+      "SIA/TN/INFRA2/527678/2025": "f1ea5d795e3353e4f582993774fc5034a1ab56ed7ab991c29854aee37979f457",
+      "SIA/TN/INFRA2/539380/2025": "3f8608e21d527d4ed381a3e301bb75eba69c7eb02f1d9da8d080255df13eef81",
+      "SIA/TN/INFRA2/499993/2024": "04ecd94375c1d497db6eee449cac1e10215dd183e1bbee031dd230da2ec4d713",
+      "SIA/TN/INFRA2/558262/2025": "3463b2f979dfefb8ed11fb2f71664b773d73da8bd69e987f15af6dc65c72498c",
+      "SIA/TN/INFRA2/548712/2025": "c13db9324677d79810ce7b83e4f0ea6644d47981ef6548f2a0dc5d7934e58239",
+      "SIA/TN/INFRA2/501050/2024": "d3d420cba23c465370411c2bb07d882475b7e10804a480e9561480dbc16e6e46"
+    }
+  },
   "format_variance": {
     "clean_auto_extract": 0,
     "needed_manual_handling": 13,
@@ -72,13 +99,22 @@
         "trade_effluent_kld": null,
         "stp_capacity": {
           "existing_kld": null,
-          "proposed_kld": null,
-          "after_expansion_kld": 45.0
+          "proposed_kld": 45.0,
+          "after_expansion_kld": 45.0,
+          "stated": [
+            "proposed_kld",
+            "after_expansion_kld"
+          ],
+          "derived": {},
+          "note": "Row 29 prints a single value under 'Proposed Capacity of STP'; the undertaking states the 37 KLD of sewage 'will be treated in STP of 45 KLD capacity', so 45 is also the stated end state. No existing capacity stated."
         },
         "etp_capacity": {
           "existing_kld": null,
           "proposed_kld": null,
-          "after_expansion_kld": null
+          "after_expansion_kld": null,
+          "stated": [],
+          "derived": {},
+          "note": "ETP capacity row prints a dash (no trade effluent stated)."
         },
         "water_source": "SIPCOT supply",
         "reuse_note": "Treated water 35 KLD reused: flushing 15 KLD, greenbelt 20 KLD; surplus nil.",
@@ -119,6 +155,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "ddf18b78a6eefc0cac7feaf35e31c018a6d47ab6a31bf2d633811fa7d837593a",
       "extraction": {
         "format": "standard-expansion",
         "class": "manual",
@@ -172,13 +209,23 @@
         "trade_effluent_kld": 125.0,
         "stp_capacity": {
           "existing_kld": null,
-          "proposed_kld": 145.0,
-          "after_expansion_kld": 145.0
+          "proposed_kld": null,
+          "after_expansion_kld": 145.0,
+          "stated": [
+            "after_expansion_kld"
+          ],
+          "derived": {},
+          "note": "Row 28 'Capacity of STP 145 (MBBR Technology)' - one figure, no decomposition."
         },
         "etp_capacity": {
           "existing_kld": null,
-          "proposed_kld": 145.0,
-          "after_expansion_kld": 145.0
+          "proposed_kld": null,
+          "after_expansion_kld": 145.0,
+          "stated": [
+            "after_expansion_kld"
+          ],
+          "derived": {},
+          "note": "Row 29 'Capacity of ETP 145' - one figure, no decomposition."
         },
         "water_source": "Mambakkam SIPCOT",
         "reuse_note": "Treated water available for reuse 225 KLD (flushing, greenbelt & process); treated sewage 106 + treated effluent 119; surplus 0.",
@@ -225,6 +272,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "7c3874c5a8cf2440fe1a01f108cb4f9f0e1d764d69422f98f706368541762922",
       "extraction": {
         "format": "standard-single",
         "class": "manual",
@@ -271,6 +319,7 @@
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "d798e25524c34d6cc3c16766f50d59e7955635088fb38a0fc807bfdee791d1ec",
       "extraction": {
         "format": "no-water-table",
         "class": "absent",
@@ -308,6 +357,7 @@
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "d90dc4e6da213c7c8f9e03d18a2b35e2be557be63079cede218cfe482c2bb2ec",
       "extraction": {
         "format": "no-water-table",
         "class": "absent",
@@ -354,12 +404,26 @@
         "stp_capacity": {
           "existing_kld": 350.0,
           "proposed_kld": 200.0,
-          "after_expansion_kld": 550.0
+          "after_expansion_kld": 550.0,
+          "stated": [
+            "existing_kld",
+            "proposed_kld",
+            "after_expansion_kld"
+          ],
+          "derived": {},
+          "note": "p.13 writes the arithmetic out: sewage 'treated in STP of 350 KLD + 200 KLD (Proposed) = 550 KLD capacity'. Row 26's 200 is the increment."
         },
         "etp_capacity": {
           "existing_kld": 468.0,
           "proposed_kld": 0.0,
-          "after_expansion_kld": 468.0
+          "after_expansion_kld": 468.0,
+          "stated": [
+            "existing_kld",
+            "proposed_kld"
+          ],
+          "derived": {
+            "after_expansion_kld": "existing 468 + a stated zero increment (row 27 'Proposed Capacity of ETP 0', and p.13 states effluent additional 0). The letter never prints an after-expansion ETP figure."
+          }
         },
         "water_source": "SIPCOT",
         "reuse_note": "Treated water requirement 809.5 KLD: flushing 84.5, process 371.01, boiler makeup 20, cooling tower makeup 45, greenbelt & OSR 288.99 (letter's own component list, which sums to 809.5 exactly).",
@@ -396,6 +460,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "e693cec4ec3bceae50d46862a13d9ff00eea77b2cec03f42805bedd22f88e36e",
       "extraction": {
         "format": "standard-single",
         "class": "manual",
@@ -440,6 +505,7 @@
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "dd3fb1414830e0f772f69336b7b6dd31a7c0c807baf75b1e217da8f6a2e2235e",
       "extraction": {
         "format": "no-water-table",
         "class": "absent",
@@ -477,6 +543,7 @@
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "3cf7d0fad6046632f9a92dc900a7b3d90e8d386cecf8207537d371e2379542d6",
       "extraction": {
         "format": "no-water-table",
         "class": "absent",
@@ -524,12 +591,21 @@
         "stp_capacity": {
           "existing_kld": null,
           "proposed_kld": 650.0,
-          "after_expansion_kld": 650.0
+          "after_expansion_kld": 650.0,
+          "stated": [
+            "proposed_kld"
+          ],
+          "derived": {
+            "after_expansion_kld": "greenfield campus - the letter states no existing plant, so the proposed 650 KLD is the end state. Not printed as such."
+          }
         },
         "etp_capacity": {
           "existing_kld": null,
           "proposed_kld": null,
-          "after_expansion_kld": null
+          "after_expansion_kld": null,
+          "stated": [],
+          "derived": {},
+          "note": "The letter's salient-features table has no ETP row at all."
         },
         "water_source": "SIPCOT",
         "reuse_note": "Treated water recycled: '1,87,500 (Flushing) + 260 (Gardening)' as printed.",
@@ -570,6 +646,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "b776bb22f8ec87e0233416c452cbeb11f8573a0d154331e74b18fa89fd8bd9e7",
       "extraction": {
         "format": "standard-single",
         "class": "manual",
@@ -616,6 +693,7 @@
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "ecfa237d65872eab8455cafdefadb6656543c3caa33d229cb0b536a7b7fff3d0",
       "extraction": {
         "format": "no-water-table",
         "class": "absent",
@@ -663,12 +741,25 @@
         "stp_capacity": {
           "existing_kld": 50.0,
           "proposed_kld": 0.0,
-          "after_expansion_kld": 50.0
+          "after_expansion_kld": 50.0,
+          "stated": [
+            "existing_kld",
+            "after_expansion_kld"
+          ],
+          "derived": {
+            "proposed_kld": "row 29 states sewage goes to the 'Existing STP (50 KLD)' and 'Same will be followed after expansion also' - a stated absence of any new unit, not a printed 0."
+          }
         },
         "etp_capacity": {
           "existing_kld": 8.1,
           "proposed_kld": null,
-          "after_expansion_kld": 10.0
+          "after_expansion_kld": 10.0,
+          "stated": [
+            "existing_kld",
+            "after_expansion_kld"
+          ],
+          "derived": {},
+          "note": "Row 30 prose: 'existing ETP (8.1 KLD)' and 'revamped ETP (10 KLD)'. The 8.1 equals this letter's stated trade effluent exactly, so it may be the volume treated rather than a nameplate rating; the 10 KLD end state is unambiguous."
         },
         "water_source": "SIPCOT",
         "reuse_note": "Treated water 30.6 KLD (STP 23 + ETP 7.6) reused: cooling tower 7.6, greenbelt 23; ETP revamp adds MEE/ATFD, ATFD salt to cement kilns.",
@@ -710,6 +801,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "3bdefc31f0807826557a03ad3f7d47185a39e312d00ebdbf4bbc0624e4d3b760",
       "extraction": {
         "format": "standard-expansion",
         "class": "manual",
@@ -764,12 +856,22 @@
         "stp_capacity": {
           "existing_kld": 44.0,
           "proposed_kld": 35.0,
-          "after_expansion_kld": 79.0
+          "after_expansion_kld": 79.0,
+          "stated": [
+            "existing_kld",
+            "proposed_kld"
+          ],
+          "derived": {
+            "after_expansion_kld": "44 existing + 35 additional. The letter states both parts ('existing (44 KLD) STP', 'additional STP 35 KLD is under installation as per CTE obtained on 2024') but never prints their sum."
+          }
         },
         "etp_capacity": {
           "existing_kld": null,
           "proposed_kld": null,
-          "after_expansion_kld": null
+          "after_expansion_kld": null,
+          "stated": [],
+          "derived": {},
+          "note": "ETP capacity never stated as a number: rows 27-28 describe the train in prose only. The 8.75 and 9.6 KLD figures beside it are effluent volumes."
         },
         "water_source": "SIPCOT & rainwater harvesting pond",
         "reuse_note": "Treated water available for reuse 52.98 KLD (greenbelt 47.5, process 4.23, chillers 1.25); surplus nil. Effluent treated through existing ETP + RO; RO permeate to process, reject to solar evaporation pond (site has one).",
@@ -807,6 +909,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "76716d6160f73f160c7f9b3149e38ff6e9ea1676bea9acd03cd60b3437cf507a",
       "extraction": {
         "format": "standard-expansion",
         "class": "manual",
@@ -856,13 +959,21 @@
         "trade_effluent_kld": null,
         "stp_capacity": {
           "existing_kld": null,
-          "proposed_kld": 350.0,
-          "after_expansion_kld": 350.0
+          "proposed_kld": null,
+          "after_expansion_kld": 350.0,
+          "stated": [
+            "after_expansion_kld"
+          ],
+          "derived": {},
+          "note": "Short-form row 17: 'Sewage Treatment Plant Capacity: 350 KLD'."
         },
         "etp_capacity": {
           "existing_kld": null,
           "proposed_kld": null,
-          "after_expansion_kld": null
+          "after_expansion_kld": null,
+          "stated": [],
+          "derived": {},
+          "note": "Short-form row 18 greywater/effluent is 'NA'."
         },
         "water_source": "Local body",
         "reuse_note": "Treated sewage 318 KLD reused: toilet flushing 156, greenbelt & OSR 90, avenue plantation & village parks 72.",
@@ -889,6 +1000,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "ea943ac6b4d87035b36ec34b0e47c2d516c22d39f120b3a64850d692a73a7d32",
       "extraction": {
         "format": "short-form",
         "class": "manual",
@@ -933,6 +1045,7 @@
       "checks": {},
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "8b97be4440f2201872f2f93955848fcaafdeb9ecb8ddb5542e366648d7264fef",
       "extraction": {
         "format": "no-water-table",
         "class": "absent",
@@ -979,13 +1092,25 @@
         "trade_effluent_kld": null,
         "stp_capacity": {
           "existing_kld": 1815.0,
-          "proposed_kld": 0.0,
-          "after_expansion_kld": 1815.0
+          "proposed_kld": null,
+          "after_expansion_kld": 1815.0,
+          "stated": [
+            "existing_kld",
+            "after_expansion_kld"
+          ],
+          "derived": {},
+          "note": "Row 29 prints Existing 1815 and After Expansion/Total 1815 and NO proposed column - so the increment is unstated, not zero."
         },
         "etp_capacity": {
           "existing_kld": 4400.0,
-          "proposed_kld": 0.0,
-          "after_expansion_kld": 4400.0
+          "proposed_kld": null,
+          "after_expansion_kld": 4400.0,
+          "stated": [
+            "existing_kld",
+            "after_expansion_kld"
+          ],
+          "derived": {},
+          "note": "Row 30, same two-column shape as the STP row; increment unstated."
         },
         "water_source": "SIPCOT lake water / HMIL pond",
         "reuse_note": "Treated water 4537 KLD; reused industrial usage 2547, greenbelt 1900.",
@@ -1025,6 +1150,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "f1ea5d795e3353e4f582993774fc5034a1ab56ed7ab991c29854aee37979f457",
       "extraction": {
         "format": "standard-expansion",
         "class": "manual",
@@ -1081,12 +1207,26 @@
         "stp_capacity": {
           "existing_kld": 60.0,
           "proposed_kld": 90.0,
-          "after_expansion_kld": 150.0
+          "after_expansion_kld": 150.0,
+          "stated": [
+            "existing_kld",
+            "proposed_kld",
+            "after_expansion_kld"
+          ],
+          "derived": {},
+          "note": "Row 24 prints all three columns: 60 / 90 / 150."
         },
         "etp_capacity": {
           "existing_kld": 7.0,
           "proposed_kld": 33.0,
-          "after_expansion_kld": 40.0
+          "after_expansion_kld": 40.0,
+          "stated": [],
+          "derived": {
+            "existing_kld": "ETP-1 2 + ETP-2 5 (row 25 states the two units separately)",
+            "proposed_kld": "ETP-1 8 + ETP-2 25",
+            "after_expansion_kld": "ETP-1 10 + ETP-2 30"
+          },
+          "note": "The letter states per-unit capacities only; every total here is a sum of two printed rows."
         },
         "water_source": "Local body",
         "reuse_note": "Treated water (STP 76 + ETP 26.97) reused: flushing 30, greenbelt & OSR 46.",
@@ -1119,6 +1259,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "3f8608e21d527d4ed381a3e301bb75eba69c7eb02f1d9da8d080255df13eef81",
       "extraction": {
         "format": "standard-expansion",
         "class": "manual",
@@ -1173,12 +1314,24 @@
         "stp_capacity": {
           "existing_kld": null,
           "proposed_kld": 120.0,
-          "after_expansion_kld": 120.0
+          "after_expansion_kld": 120.0,
+          "stated": [
+            "proposed_kld"
+          ],
+          "derived": {
+            "after_expansion_kld": "greenfield campus - no existing plant stated, so the proposed 120 KLD is the end state."
+          }
         },
         "etp_capacity": {
           "existing_kld": null,
           "proposed_kld": 150.0,
-          "after_expansion_kld": 150.0
+          "after_expansion_kld": 150.0,
+          "stated": [
+            "proposed_kld"
+          ],
+          "derived": {
+            "after_expansion_kld": "greenfield campus - no existing plant stated, so the proposed 150 KLD is the end state."
+          }
         },
         "water_source": "SIPCOT / TTRO Koyambedu (purchased tertiary-treated water)",
         "reuse_note": "Letter's own summary: fresh 119 (SIPCOT), raw process water 890.7 (TTRO Koyambedu), recycled 225.02 (greenbelt 101.7 + process 123.32). ETP with MEE; RO rejects to MEE.",
@@ -1219,6 +1372,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "04ecd94375c1d497db6eee449cac1e10215dd183e1bbee031dd230da2ec4d713",
       "extraction": {
         "format": "standard-single",
         "class": "manual",
@@ -1272,12 +1426,26 @@
         "stp_capacity": {
           "existing_kld": null,
           "proposed_kld": 350.0,
-          "after_expansion_kld": 350.0
+          "after_expansion_kld": 350.0,
+          "stated": [
+            "proposed_kld"
+          ],
+          "derived": {
+            "after_expansion_kld": "greenfield park - no existing plant stated, so the proposed 350 KLD is the end state."
+          },
+          "note": "Row 26: '350 (1 x 100 KLD & 1 x 250 KLD)'."
         },
         "etp_capacity": {
           "existing_kld": null,
           "proposed_kld": 0.0,
-          "after_expansion_kld": 0.0
+          "after_expansion_kld": 0.0,
+          "stated": [
+            "proposed_kld"
+          ],
+          "derived": {
+            "after_expansion_kld": "no existing ETP stated and a proposed capacity of Nil."
+          },
+          "note": "Row 27 prints 'Nil', an explicit zero - distinct from the dash used by letters that simply have no ETP row to fill (those stay null)."
         },
         "water_source": "Ground water (borewell)",
         "reuse_note": "Treated water 311 KLD reused: flushing 152, greenbelt & OSR 159; surplus dash.",
@@ -1323,6 +1491,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "3463b2f979dfefb8ed11fb2f71664b773d73da8bd69e987f15af6dc65c72498c",
       "extraction": {
         "format": "standard-single",
         "class": "manual",
@@ -1377,12 +1546,22 @@
         "stp_capacity": {
           "existing_kld": 135.0,
           "proposed_kld": 100.0,
-          "after_expansion_kld": 235.0
+          "after_expansion_kld": 235.0,
+          "stated": [
+            "existing_kld",
+            "after_expansion_kld"
+          ],
+          "derived": {
+            "proposed_kld": "the row's own unit lists differ by one 1 x 100 KLD unit - existing '135 (1 x 75 KLD, 1 x 60 KLD)' vs after '235 (1 x 75 KLD, 1 x 60 KLD, 1 x 100 KLD)' - but no increment column is printed."
+          }
         },
         "etp_capacity": {
           "existing_kld": null,
           "proposed_kld": null,
-          "after_expansion_kld": null
+          "after_expansion_kld": null,
+          "stated": [],
+          "derived": {},
+          "note": "Trade effluent row is 'NIL'; the letter has no ETP capacity row."
         },
         "water_source": "SIPCOT",
         "reuse_note": "Treated water 223 KLD reused: flushing 85, greenbelt 138; surplus 0.",
@@ -1409,6 +1588,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "c13db9324677d79810ce7b83e4f0ea6644d47981ef6548f2a0dc5d7934e58239",
       "extraction": {
         "format": "standard-expansion",
         "class": "manual",
@@ -1466,13 +1646,21 @@
         "trade_effluent_kld": null,
         "stp_capacity": {
           "existing_kld": null,
-          "proposed_kld": 450.0,
-          "after_expansion_kld": 450.0
+          "proposed_kld": null,
+          "after_expansion_kld": 450.0,
+          "stated": [
+            "after_expansion_kld"
+          ],
+          "derived": {},
+          "note": "Short-form row 16: 'Sewage Treatment Capacity: 450 KLD (MBBR Technology)'."
         },
         "etp_capacity": {
           "existing_kld": null,
           "proposed_kld": null,
-          "after_expansion_kld": null
+          "after_expansion_kld": null,
+          "stated": [],
+          "derived": {},
+          "note": "Short-form row 17 greywater/effluent is a dash (logistics park)."
         },
         "water_source": "Local body",
         "reuse_note": "Treated sewage reused: flushing 156, greenbelt & OSR 256.",
@@ -1497,6 +1685,7 @@
       },
       "verified": true,
       "verified_on": "2026-07-31",
+      "verified_document_sha256": "d3d420cba23c465370411c2bb07d882475b7e10804a480e9561480dbc16e6e46",
       "extraction": {
         "format": "short-form",
         "class": "manual",
