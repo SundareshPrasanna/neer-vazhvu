@@ -678,7 +678,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/enrich_arkavathi_industrial_districts.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -987,7 +989,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "admin-taluk",
-   "bytes": 422126,
+   "bytes": 112974,
    "schema": {
     "kind": "FeatureCollection",
     "features": 14,
@@ -1005,7 +1007,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1494,7 +1498,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "gaps",
-   "bytes": 336247,
+   "bytes": 236907,
    "schema": {
     "kind": "object",
     "keys": [
@@ -1512,7 +1516,8 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
-    "scripts/build_fregister.py"
+    "scripts/build_fregister.py",
+    "scripts/enrich_arkavathi_industrial_districts.py"
    ],
    "headwaters_sources": [
     "nmcg-ngt-mpr-listing"
@@ -1592,7 +1597,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "inventory",
-   "bytes": 10740,
+   "bytes": 10897,
    "schema": {
     "kind": "object",
     "keys": [
@@ -1609,6 +1614,7 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
     "scripts/ingest_basin.py",
@@ -1664,7 +1670,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "pressures-industrial",
-   "bytes": 156559,
+   "bytes": 144074,
    "schema": {
     "kind": "FeatureCollection",
     "features": 69,
@@ -1682,7 +1688,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/enrich_arkavathi_industrial_districts.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1824,7 +1832,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "prs",
-   "bytes": 45634,
+   "bytes": 45664,
    "schema": {
     "kind": "object",
     "keys": [
@@ -2328,6 +2336,7 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
     "scripts/ingest_basin.py",
@@ -2698,6 +2707,7 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
     "scripts/ingest_basin.py",
@@ -2985,7 +2995,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/enrich_arkavathi_industrial_districts.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -3249,7 +3261,8 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
-    "scripts/build_fregister.py"
+    "scripts/build_fregister.py",
+    "scripts/enrich_arkavathi_industrial_districts.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -19552,7 +19565,7 @@
    "scopes": [
     "arkavathi"
    ],
-   "bytes": 422126,
+   "bytes": 112974,
    "schema_variants": 1,
    "registered": false,
    "has_consumer": true
@@ -19653,7 +19666,7 @@
     "arkavathi",
     "chennai-rivers"
    ],
-   "bytes": 888216,
+   "bytes": 788876,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -19704,7 +19717,7 @@
     "cauvery-ka",
     "cauvery-tn"
    ],
-   "bytes": 15445,
+   "bytes": 15602,
    "schema_variants": 2,
    "registered": false,
    "has_consumer": true
@@ -19729,7 +19742,7 @@
    "scopes": [
     "arkavathi"
    ],
-   "bytes": 156559,
+   "bytes": 144074,
    "schema_variants": 1,
    "registered": false,
    "has_consumer": true
@@ -19765,7 +19778,7 @@
    "scopes": [
     "arkavathi"
    ],
-   "bytes": 66800,
+   "bytes": 66830,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
