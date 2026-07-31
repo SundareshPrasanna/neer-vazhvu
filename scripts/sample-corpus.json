@@ -73,9 +73,9 @@
   "build_fixtures": [
     {
       "path": "public/data/ward-names.json",
-      "expected_status": "not-enveloped",
+      "expected_status": "vague",
       "required_by": "next build (src/lib server read at build time)",
-      "decision": "retained: compiled ward-name register already published in this repo; licence position unrecorded until it gains an NVDM envelope - envelope it, then promote or re-classify before the P2 cutover"
+      "decision": "retained as a fixture, NOT promoted: enveloped 2026-07-31 and the envelope is what disqualifies it. Its 200 ward-to-zone rows are the Zone_No/Zone_Name attributes of the pre-delimitation 2011 ward layer that shipped in the initial commit, whose distributing publisher and licence were never recorded (the open #207 question), so the lineage is unproven rather than government-clean. The GCC GIS service it was verified against publishes no explicit licence either. Vague is the honest bucket; re-decide if #207's provenance question is ever closed"
     },
     {
       "path": "public/data/chennai-localities.json",

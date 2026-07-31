@@ -16,8 +16,9 @@ verified it is NOT stated (no fabricated provenance).
 Skipped on purpose:
   - catchment-basin / -downstream / -streams: naked indexed-collection maps,
     grandfathered (spec 6.1) - an envelope would change their shape.
-  - chennai-localities.json / ward-names.json: bare arrays, poor
-    wrap-to-value ratio today; tracked follow-up (wrap all cities together).
+  - chennai-localities.json: bare array, poor wrap-to-value ratio today;
+    tracked follow-up (wrap all cities' locality indexes together).
+    ward-names.json was wrapped 2026-07-31 - see WRAP_ARRAY_AS.
   - ward-profiles.json: wrapped by its producer (compute-ward-profiles.ts)
     in its own commit, like the Madurai pilot.
   - rainfall-recent-chennai.json: envelope OWNED BY ITS PRODUCER
@@ -203,6 +204,14 @@ REG_IDS = {
     "chennai-reps-gcc-council": ("GCC Council list (councillor PDF)", "TN State Election Commission / GCC", "public election result, cited with attribution"),
     "chennai-reps-tn-assembly": ("TN Assembly 2026 results (Chennai constituencies)", "Election Commission of India / TN CEO", "public election result, cited with attribution"),
     "chennai-reps-lok-sabha": ("Lok Sabha 2024 results (Chennai constituencies)", "Election Commission of India", "public election result, cited with attribution"),
+    "gcc-admin-boundary-gis": (
+        "GCC ward and zone administrative boundaries (GIS-GCC ArcGIS service)",
+        "Greater Chennai Corporation",
+        "public Greater Chennai Corporation government data; the service publishes "
+        "no explicit licence (copyrightText and description are empty strings on the "
+        "service root and on both Ward_Boundary and Zone_Boundary, verified "
+        "2026-07-31) - cited with attribution to Greater Chennai Corporation (GIS-GCC)",
+    ),
 }
 
 
@@ -442,6 +451,55 @@ PROVENANCE: dict[str, dict] = {
             "pending ECI cross-verification; MP results from results.eci.gov.in. Source "
             "URLs in meta.sources. Tamil-name backfill open (issue #182)."
         ),
+    },
+    "data-root/ward-names": {
+        "method": "manual",
+        "produced_by": "manual",
+        "produced_at": "2026-04-01",
+        "sources": [reg("gcc-admin-boundary-gis", as_of="2011")],
+        "note": [
+            "HAND-MAINTAINED, NO PRODUCER. 200 rows mapping GCC ward number to zone; "
+            "the mapping changes only when the Corporation re-delimits, so there is "
+            "deliberately no refresh script to keep running.",
+            "LINEAGE (git archaeology, 2026-07-31): all 200 zone_no/zone_name values "
+            "are the Zone_No/Zone_Name feature attributes of the PRE-DELIMITATION "
+            "(2011) Chennai ward layer that shipped in this repo's initial commit "
+            "06268809 as public/geojson/chennai-wards-2022.geojson - the file PR #207 "
+            "proved was 2011 geometry mislabeled 2022, archived at "
+            "scripts/data-raw/chennai/chennai-wards-2011-mislabeled.geojson. Every ward "
+            "-> zone assignment is identical to that layer; the only edits since are "
+            "the three zone-NAME spelling normalisations commit 44cf4a20 documents "
+            "(THIRU-VI-KA-NAGAR -> THIRU-VI-KA NAGAR, ANNANAGAR -> ANNA NAGAR, "
+            "SOZHINGANALLUR -> SHOLINGANALLUR). The distributing publisher and licence "
+            "terms of that 2011 layer remain unrecorded - the open pre-GCC provenance "
+            "question from #207 - so this file's rights position is unproven, not "
+            "government-clean. 44cf4a20 credits chennaicentral.in for the ward LOCALITY "
+            "names only; those were dropped as unreliable in d5c233a4 and no "
+            "chennaicentral.in value survives here.",
+            "VERIFIED AGAINST THE AUTHORITY 2026-07-31, AND FIVE ROWS ARE WRONG: GCC's "
+            "own Zone_Boundary layer (GCC_AdminBoundary MapServer layer 5, 15 polygons "
+            "coded 01-15) was fetched and each of the 200 current Ward_Boundary polygons "
+            "(layer 4) tested for areal containment - every ward falls 100% inside "
+            "exactly one zone, so there are no ambiguous cases. 195 of 200 rows agree. "
+            "Ward 22 reads MADHAVARAM (III) here and is inside GCC zone 02 (Manali); "
+            "wards 168 and 169 read PERUNGUDI (XIV) and are inside zone 13 (Adyar); "
+            "wards 181 and 182 read ADYAR (XIII) and are inside zone 14 (Perungudi). "
+            "All five are among the 39 wards PR #207 measured at ZERO overlap between "
+            "the 2011 and 2022 delimitations, so these are pre-delimitation zone labels "
+            "surviving on post-delimitation ward numbers - the last unfixed corner of "
+            "the wards-2022 incident. Values are deliberately UNCHANGED here: NVDM 9.4 "
+            "keeps shape migration and value correction in separate commits.",
+            "Zone names cross-checked against GCC's own roster at "
+            "https://chennaicorporation.gov.in/gcc/delimited_ward/ (zone dropdown, "
+            "fetched 2026-07-31): all 15 names match, except that GCC spells zone I "
+            "'Thiruvottyur' where this file has 'THIRUVOTTIYUR'.",
+        ],
+        "conventions": {
+            "zone_no": "Roman numeral, equal to the Arabic zone code GCC publishes "
+            "(I = 01 Thiruvottyur ... XV = 15 Sholinganallur)",
+            "vintage": "ward -> zone assignments are 2011, pre-delimitation; five rows "
+            "are known to contradict the current GCC zone boundaries (see note)",
+        },
     },
     # geojson layers
     "geojson-layers/coastal-hotspots": {
@@ -720,9 +778,15 @@ SKIP = {
     "cascade/catchment-downstream",  # naked indexed map
     "cascade/catchment-streams",     # naked indexed map
     "data-root/localities",          # bare array, wrap follow-up
-    "data-root/ward-names",          # bare array, wrap follow-up
     "data-root/ward-profiles",       # producer-owned wrap (compute-ward-profiles.ts), own commit
     "data-root/rainfall-recent",     # producer-owned envelope (fetch_recent_rainfall.py, daily)
+}
+# Bare-array artifacts promoted to the record-envelope shape (spec 6.1): the
+# array becomes the named payload key below. This is a SHAPE change, so every
+# consumer moves to the wrapped shape in the same commit - no dual-shape
+# readers, no legacy path left behind.
+WRAP_ARRAY_AS = {
+    "data-root/ward-names": "wards",
 }
 SKIP_PATHS = {
     # BLOCKED - provenance unknown (worklist 6.4 item 1): boundary geometry
@@ -782,6 +846,12 @@ def main() -> int:
         path = ROOT / rec["path"]
         raw = path.read_text()
         doc = json.loads(raw)
+        if isinstance(doc, list):
+            wrap_key = WRAP_ARRAY_AS.get(ds)
+            if wrap_key is None:
+                skipped += 1
+                continue
+            doc = {wrap_key: doc}
         if not isinstance(doc, dict) or ("nvdm" in doc and not refresh):
             skipped += 1
             continue

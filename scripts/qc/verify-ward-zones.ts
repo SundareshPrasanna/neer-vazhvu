@@ -41,8 +41,9 @@ const wardGeoJSON: FeatureCollection = JSON.parse(
 );
 
 // Load our ward-names.json (current zone assignments)
-const wardNames: { ward_number: number; ward_name: string; zone_no: string; zone_name: string }[] =
-  JSON.parse(readFileSync(resolve(process.cwd(), "public/data/ward-names.json"), "utf-8"));
+const { wards: wardNames }: {
+  wards: { ward_number: number; ward_name?: string; zone_no: string; zone_name: string }[];
+} = JSON.parse(readFileSync(resolve(process.cwd(), "public/data/ward-names.json"), "utf-8"));
 
 const currentZoneMap = new Map(wardNames.map((w) => [w.ward_number, w.zone_no]));
 

@@ -7,7 +7,9 @@ import { generateMockGroundwater } from '@/lib/mock-data';
 
 // Load canonical ward data once at module level
 const wardNamesPath = resolve(process.cwd(), 'public/data/ward-names.json');
-const wardNamesData = JSON.parse(readFileSync(wardNamesPath, 'utf-8')) as { ward_number: number; zone_name: string }[];
+const wardNamesData = (JSON.parse(readFileSync(wardNamesPath, 'utf-8')) as {
+  wards: { ward_number: number; zone_name: string }[];
+}).wards;
 const canonicalNames = new Map<number, string>(
   wardNamesData.map((w) => [w.ward_number, `Ward ${w.ward_number}`])
 );

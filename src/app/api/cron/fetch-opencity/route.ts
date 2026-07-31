@@ -7,13 +7,14 @@ import { fetchCKANResource, OPENCITY_RESOURCES } from '@/lib/api-clients/opencit
 import { todayIST, todayISTParts } from '@/lib/utils/date';
 
 // Canonical ward names - use ward number as display name
+const wardNameRows = (JSON.parse(
+  readFileSync(resolve(process.cwd(), 'public/data/ward-names.json'), 'utf-8'),
+) as { wards: { ward_number: number; zone_name: string }[] }).wards;
 const canonicalWardNames = new Map<number, string>(
-  (JSON.parse(readFileSync(resolve(process.cwd(), 'public/data/ward-names.json'), 'utf-8')) as { ward_number: number; zone_name: string }[])
-    .map((w) => [w.ward_number, `Ward ${w.ward_number}`])
+  wardNameRows.map((w) => [w.ward_number, `Ward ${w.ward_number}`])
 );
 const canonicalZoneNames = new Map<number, string>(
-  (JSON.parse(readFileSync(resolve(process.cwd(), 'public/data/ward-names.json'), 'utf-8')) as { ward_number: number; zone_name: string }[])
-    .map((w) => [w.ward_number, w.zone_name])
+  wardNameRows.map((w) => [w.ward_number, w.zone_name])
 );
 
 type CKANValue = string | number | null | undefined;
