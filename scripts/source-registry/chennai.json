@@ -398,6 +398,24 @@
         "apiDate": "2025-11-27T12:36:35.772848",
         "acceptedOn": "2026-07-26"
       }
+    },
+    {
+      "id": "gcc-admin-boundary-gis",
+      "scope": "chennai",
+      "publisher": "Greater Chennai Corporation",
+      "url": "https://gisgcc.chennaicorporation.gov.in/server/rest/services/GCCPublic/GCC_AdminBoundary/MapServer",
+      "license": "public Greater Chennai Corporation government data; the service publishes no explicit licence (copyrightText and description are empty strings on the service root and on both Ward_Boundary and Zone_Boundary, verified 2026-07-31) - cited with attribution to Greater Chennai Corporation (GIS-GCC)",
+      "type": "api",
+      "cadence": "episodic (delimitation)",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/ward-names.json"
+      ],
+      "refreshMethod": "manual ArcGIS query with a browser User-Agent: /<layer>/query?where=1=1&outFields=*&returnGeometry=true&outSR=4326&f=geojson (single page, maxRecordCount 2000)",
+      "notes": "GCC's own admin-boundary service: layer 4 Ward_Boundary (200 features, field 'ward', source CRS EPSG:32644) and layer 5 Zone_Boundary (15 features, field 'zone' coded 01-15). This is where PR #207 re-acquired chennai-wards-2022.geojson after the 2011-geometry incident. NO EDITION SIGNAL EXISTS: the service exposes no editingInfo and no lastEditDate, the layer JSON carries only fields/extent, and the GCC delimited_ward page renders its delimitation PDFs through JS rather than <a href>, so link-set matches zero links. Registered continuous for lineage/licence accountability per the NVDM per-source rule (the kwris-mi-tanks precedent) rather than baselining a watch that cannot fire; the real edition event is a delimitation gazette, which arrives as news, not as a diff. NEITHER LAYER CARRIES A ZONE NAME OR A WARD->ZONE FIELD: zone names come from GCC's own roster on https://chennaicorporation.gov.in/gcc/delimited_ward/ (dropdown 01-Thiruvottyur ... 15-Sholinganallur, fetched 2026-07-31) and the ward->zone join is spatial. Doing that join on 2026-07-31 found five rows of public/data/ward-names.json (wards 22, 168, 169, 181, 182) still carrying pre-delimitation zone labels - see that artifact's provenance note."
     }
   ]
 }
