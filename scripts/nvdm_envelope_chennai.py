@@ -698,6 +698,37 @@ PROVENANCE: dict[str, dict] = {
             "encumbrance travels with the risk layer it serves."
         ),
     },
+    "geojson-layers/wards-2022": {
+        "method": "api",
+        # No committed producer: the layer was fetched and normalised once, in
+        # the PR #207 incident response, and the exact query, the captured
+        # service metadata and the normalisation are recorded in
+        # scripts/data-raw/chennai/README.md. Claiming a produced_by that does
+        # not exist would be worse than saying so in the note.
+        "produced_at": "2026-07-30",
+        "sources": [reg("gcc-admin-boundary-gis", role="input", as_of="2026-07-30")],
+        "internal_inputs": ["public/data/ward-names.json"],
+        "note": (
+            "200 post-delimitation GCC ward polygons, fetched 2026-07-30 from "
+            "GCC_AdminBoundary layer 4 (Ward_Boundary) with a single ArcGIS query and a "
+            "browser User-Agent; captured service metadata sits beside the archive in "
+            "scripts/data-raw/chennai/. Normalisation: coordinates rounded to 8 decimal "
+            "places (6 or 7 dp introduced ring self-intersections; 8 dp keeps all 200 "
+            "features valid), features sorted by ward number, service fields objectid / "
+            "st_area(shape) / st_perimeter(shape) preserved as gcc_objectid / area_sqm / "
+            "perimeter_m. THE ZONE ATTRIBUTES ARE NOT GCC's: the service carries no "
+            "ward->zone field, so Zone_No/Zone_Name are joined from "
+            "public/data/ward-names.json - hence the internal_inputs declaration. Those "
+            "labels were corrected against GCC's own zone layer on 2026-07-31 (five "
+            "wards: 22, 168, 169, 181, 182 - see ward-names.json's provenance note); "
+            "re-verify with scripts/qc/verify-ward-zones.py. This file REPLACED a "
+            "mislabeled layer: what shipped here until 2026-07-30 was 2011 "
+            "pre-delimitation geometry carrying 2022 ward numbers (PR #207), archived at "
+            "scripts/data-raw/chennai/chennai-wards-2011-mislabeled.geojson. The legacy "
+            "crs member is the ArcGIS export's own; RFC 7946 drops it and NVDM treats it "
+            "as legacy, not as a declared extension."
+        ),
+    },
     "geojson-layers/water-bodies-current": {
         "method": "api",
         "produced_by": "scripts/fetch-water-bodies-osm.ts",
@@ -841,15 +872,11 @@ WRAP_ARRAY_AS = {
     "data-root/ward-names": "wards",
 }
 SKIP_PATHS = {
-    # DEFERRED, not blocked. The provenance question that blocked this file is
-    # RESOLVED: gcc-admin-boundary-gis records its publisher, licence position,
-    # retrieval method and registry lineage (dependsOn names this file), so
-    # enveloping it would no longer fabricate anything. It stays out of this PR
-    # only because that is a separate L1 -> L2 shape migration, and because its
-    # joined zone attributes come from ward-names.json - whose five wrong rows
-    # must be corrected in the same pass (spec 9.4 keeps value fixes separate).
-    # Do not re-investigate the provenance; it is settled.
-    "public/geojson/chennai-wards-2022.geojson",
+    # public/geojson/chennai-wards-2022.geojson left this set on 2026-07-31 and
+    # is now enveloped (the last Chennai L1 artifact). Its provenance blocker
+    # was gcc-admin-boundary-gis, which records the publisher, licence position,
+    # retrieval method and lineage; its five stale zone labels were corrected in
+    # the preceding value commit, so the shape migration lands on correct values.
     # BLOCKED - keep-or-delete decision pending (worklist 6.4 item 5).
     "public/geojson/chennai-reservoir-catchments.geojson",
 }
