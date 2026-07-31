@@ -35,8 +35,9 @@ Two extraction layers, deliberately separate:
      generalized extractor gets on real letters (the format-variance question
      that decides whether a ~3,000-document run is viable).
   2. VERIFIED transcription (the `VERIFIED` table): a manual pass done
-     2026-07-31 reading every letter (garbled tables re-checked against the
-     PDF page images). These values are authoritative for the dataset; the
+     2026-07-31 reading every letter field by field against its
+     `pdftotext -layout` rendering; layout-misaligned tables were settled by
+     the letter's own component arithmetic. These values are authoritative; the
      build marks per-field agreement between the two layers in
      `extraction.auto_match`, and any core-field disagreement is reported at
      build time. Ambiguous figures are null with a note quoting the letter -
@@ -1253,10 +1254,15 @@ def cmd_build() -> None:
                 "Sriperumbudur-Oragadam corridor. Discovery: full TN EC dump via the "
                 "undocumented advanceSearchData API, filtered on corridor toponyms; "
                 "certificate PDFs archived under scripts/.cache/parivesh/ (git-ignored). "
-                "Every record's figures were manually re-checked against the letter text "
-                "(garbled tables against the PDF page images) on 2026-07-31; the regex "
-                "extractor's per-field agreement is recorded in extraction.auto_match. "
-                "Genuine judgment calls are queued in each record's review list."
+                "Verification method, 2026-07-31: every record was read field by field "
+                "against the `pdftotext -layout` rendering of its letter, with the EC date "
+                "and EC identification number matched and the six amendment/corrigendum "
+                "letters confirmed water-free by a zero-hit search for 'KLD' across the "
+                "whole letter. Where a table's labels and values are misaligned by the "
+                "layout, the reading was settled by the letter's OWN component arithmetic "
+                "(sub-rows reproducing a stated subtotal exactly), not by eyeballing; those "
+                "cases are in the review list. The regex extractor's per-field agreement is "
+                "recorded in extraction.auto_match."
             ),
             "conventions": {
                 "claim_basis": CLAIM_BASIS,
