@@ -2062,6 +2062,14 @@ class _Sandbox:
         fetch = _fake_fetch
         pdf_text = lambda no: _FAKE_TEXT  # noqa: E731 - deliberate stub
         _TEXT_CACHE = {}
+
+        # Belt and braces: if any code path reaches the real network the test
+        # fails loudly instead of quietly depending on connectivity in CI.
+        def _no_network(*a, **k):
+            raise AssertionError("selftest attempted a real network call")
+
+        self._real_urlopen = urllib.request.urlopen
+        urllib.request.urlopen = _no_network
         # every document verified at its current bytes
         self.verify_all()
         return self
@@ -2091,6 +2099,7 @@ class _Sandbox:
     def __exit__(self, *exc):
         global CACHE, STATE_FILE, OUT, fetch, pdf_text
         CACHE, STATE_FILE, OUT, fetch, pdf_text = self._saved
+        urllib.request.urlopen = self._real_urlopen
         shutil.rmtree(self.dir, ignore_errors=True)
         return False
 
