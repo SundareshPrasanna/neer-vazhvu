@@ -6156,7 +6156,7 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "localities",
-   "bytes": 107824,
+   "bytes": 107846,
    "schema": {
     "kind": "array",
     "length": 519,
@@ -15128,7 +15128,7 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "ward-names",
-   "bytes": 23298,
+   "bytes": 24577,
    "schema": {
     "kind": "object",
     "keys": [
@@ -15148,12 +15148,16 @@
    ],
    "producer_refs": [
     "scripts/nvdm_envelope_chennai.py",
-    "scripts/qc/verify-ward-zones.ts"
+    "scripts/qc/verify-ward-zones.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
-   "accountability_reason": "hand-maintained ward -> zone mapping; sole source is a closed 2011 artifact, no living upstream to poll (GCC's service is the verification authority and produces chennai-wards-2022.geojson instead)",
+   "headwaters_sources": [
+    "gcc-admin-boundary-gis"
+   ],
+   "licenses": [
+    "public Greater Chennai Corporation government data; the service publishes no explicit licence (copyrightText and description are empty strings on the service root and on both Ward_Boundary and Zone_Boundary, verified 2026-07-31) - cited with attribution to Greater Chennai Corporation (GIS-GCC)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": [
     "chennai-legacy-name"
    ]
@@ -15163,7 +15167,7 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "ward-profiles",
-   "bytes": 281851,
+   "bytes": 281846,
    "schema": {
     "kind": "object",
     "keys": [
@@ -16656,7 +16660,7 @@
    "family": "geojson-layers",
    "scope": "chennai",
    "dataset": "wards-2022",
-   "bytes": 2021211,
+   "bytes": 2180893,
    "schema": {
     "kind": "FeatureCollection",
     "features": 200,
@@ -16682,7 +16686,7 @@
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
     "scripts/nvdm_envelope_chennai.py",
-    "scripts/qc/verify-ward-zones.ts"
+    "scripts/qc/verify-ward-zones.py"
    ],
    "headwaters_sources": [
     "gcc-admin-boundary-gis"
@@ -20497,7 +20501,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 359403,
+   "bytes": 359425,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -20674,7 +20678,7 @@
    "scopes": [
     "chennai"
    ],
-   "bytes": 23298,
+   "bytes": 24577,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20689,7 +20693,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 1695912,
+   "bytes": 1695907,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -21097,7 +21101,7 @@
     "delhi",
     "madurai"
    ],
-   "bytes": 11161568,
+   "bytes": 11321250,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
