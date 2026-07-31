@@ -455,14 +455,15 @@ PROVENANCE: dict[str, dict] = {
     "data-root/ward-names": {
         "method": "manual",
         "produced_by": "manual",
-        "produced_at": "2026-04-01",
-        # The source is the LEGACY 2011 layer these values were copied from,
-        # not GCC's current service - that service carries no ward->zone field
-        # and disagrees with five rows, so it cannot be what produced this file.
-        # It is closed (a superseded artifact, archived in-repo), so it carries
-        # its own as_of instead of joining the registry. GCC is the VERIFICATION
-        # authority, described in the note; claiming it as a source here would be
-        # a false lineage join and would stamp a current service with a 2011 date.
+        "produced_at": "2026-07-31",
+        # 195 of the 200 rows are still the LEGACY 2011 layer's values, so that
+        # layer stays the primary source. It is closed (a superseded artifact,
+        # archived in-repo), so it carries its own as_of instead of joining the
+        # registry. GCC's service was the VERIFICATION authority only until
+        # 2026-07-31; on that date the spatial join of its layers 4 + 5 actually
+        # SUPPLIED the five corrected values, so it is now a real input and is
+        # listed as one. It still carries no ward->zone field of its own - the
+        # join is areal containment, described in the note.
         "sources": [
             {
                 "title": (
@@ -481,14 +482,16 @@ PROVENANCE: dict[str, dict] = {
                 ),
                 "closed": True,
                 "as_of": "2011",
-            }
+            },
+            reg("gcc-admin-boundary-gis", role="input", as_of="2026-07-31"),
         ],
         "note": [
             "HAND-MAINTAINED, NO PRODUCER. 200 rows mapping GCC ward number to zone; "
             "the mapping changes only when the Corporation re-delimits, so there is "
             "deliberately no refresh script to keep running.",
-            "LINEAGE (git archaeology, 2026-07-31): all 200 zone_no/zone_name values "
-            "are the Zone_No/Zone_Name feature attributes of the PRE-DELIMITATION "
+            "LINEAGE (git archaeology, 2026-07-31): every zone_no/zone_name value in "
+            "this file except the five corrected below "
+            "is the Zone_No/Zone_Name feature attribute of the PRE-DELIMITATION "
             "(2011) Chennai ward layer that shipped in this repo's initial commit "
             "06268809 as public/geojson/chennai-wards-2022.geojson - the file PR #207 "
             "proved was 2011 geometry mislabeled 2022, archived at "
@@ -504,31 +507,38 @@ PROVENANCE: dict[str, dict] = {
             "non-contiguous zone XIV block {168,169,183-191} in this file. The most "
             "likely explanation is that its check ran against the mislabeled 2011 ward "
             "geometry then in the repo, on which those centroids do fall in Perungudi; "
-            "the shipped checker (scripts/qc/verify-ward-zones.ts, added by that same "
-            "commit) reads its zone polygons from an uncommitted /tmp path, so the "
-            "run is not reproducible. This file's history is therefore NOT an "
+            "the shipped checker (verify-ward-zones, added by that same commit) tested "
+            "CENTROIDS and read its zone polygons from an uncommitted /tmp path, so the "
+            "run cannot be reproduced or audited. Both faults are fixed: the checker is "
+            "now scripts/qc/verify-ward-zones.py, it fetches both GCC layers itself, and "
+            "it tests areal containment. This file's history is therefore NOT an "
             "unchanged copy of the 2011 layer. The distributing publisher and licence "
             "terms of that 2011 layer remain unrecorded - the open pre-GCC provenance "
             "question from #207 - so this file's rights position is unproven, not "
             "government-clean. 44cf4a20 credits chennaicentral.in for the ward LOCALITY "
             "names only; those were dropped as unreliable in d5c233a4 and no "
             "chennaicentral.in value survives here.",
-            "VERIFIED AGAINST THE AUTHORITY 2026-07-31, AND FIVE ROWS ARE WRONG: GCC's "
-            "own Zone_Boundary layer (GCC_AdminBoundary MapServer layer 5, 15 polygons "
-            "coded 01-15) was fetched and each of the 200 current Ward_Boundary polygons "
-            "(layer 4) tested for areal containment - every ward falls 100% inside "
-            "exactly one zone, so there are no ambiguous cases. 195 of 200 rows agree. "
-            "Ward 22 reads MADHAVARAM (III) here and is inside GCC zone 02 (Manali); "
-            "wards 168 and 169 read PERUNGUDI (XIV) and are inside zone 13 (Adyar); "
-            "wards 181 and 182 read ADYAR (XIII) and are inside zone 14 (Perungudi). "
+            "FIVE ROWS WERE WRONG AND ARE NOW CORRECTED (2026-07-31). Method: GCC's own "
+            "Zone_Boundary layer (GCC_AdminBoundary MapServer layer 5, 15 polygons coded "
+            "01-15) and Ward_Boundary layer (layer 4, 200 polygons) were both fetched "
+            "from the service on 2026-07-31 and joined by AREAL CONTAINMENT, not by "
+            "centroid - every ward falls 100% inside exactly one zone (minimum "
+            "containment fraction across all 200 wards = 1.000), so there are no "
+            "ambiguous cases. 195 of 200 rows already agreed. The five that did not, "
+            "with the value each carried BEFORE this correction: ward 22 read "
+            "MADHAVARAM (III) and is inside GCC zone 02, now MANALI (II); wards 168 and "
+            "169 read PERUNGUDI (XIV) and are inside zone 13, now ADYAR (XIII); wards "
+            "181 and 182 read ADYAR (XIII) and are inside zone 14, now PERUNGUDI (XIV). "
             "All five are among the 39 wards PR #207 measured at ZERO overlap between "
             "the 2011 and 2022 delimitations - the last unfixed corner of the "
-            "wards-2022 incident. Ward 22, 181 and 182 are pre-delimitation labels "
-            "surviving on post-delimitation ward numbers; 168 and 169 were instead "
-            "made wrong by commit ebdce3b2 (see the lineage paragraph), which moved "
-            "them off the value GCC now confirms. Values are deliberately UNCHANGED "
-            "here: NVDM 9.4 keeps shape migration and value correction in separate "
-            "commits.",
+            "wards-2022 incident. Ward 22, 181 and 182 were pre-delimitation labels "
+            "surviving on post-delimitation ward numbers; 168 and 169 were instead made "
+            "wrong by commit ebdce3b2 (see the lineage paragraph), which moved them off "
+            "the value GCC confirms. The correction lands as its own value commit, "
+            "separate from any shape migration, per NVDM 9.4, and propagates to the "
+            "three artifacts that copy these labels: chennai-wards-2022.geojson (joined "
+            "Zone_No/Zone_Name), ward-profiles.json and chennai-localities.json (both "
+            "regenerated from it). Re-runnable: scripts/qc/verify-ward-zones.py.",
             "Zone names cross-checked against GCC's own roster at "
             "https://chennaicorporation.gov.in/gcc/delimited_ward/ (zone dropdown, "
             "fetched 2026-07-31): all 15 names match, except that GCC spells zone I "
@@ -537,8 +547,10 @@ PROVENANCE: dict[str, dict] = {
         "conventions": {
             "zone_no": "Roman numeral, equal to the Arabic zone code GCC publishes "
             "(I = 01 Thiruvottyur ... XV = 15 Sholinganallur)",
-            "vintage": "ward -> zone assignments are 2011, pre-delimitation; five rows "
-            "are known to contradict the current GCC zone boundaries (see note)",
+            "vintage": "ward -> zone assignments were copied from the 2011, "
+            "pre-delimitation layer; the five rows that contradicted the current GCC "
+            "zone boundaries were corrected 2026-07-31 and all 200 now agree with "
+            "GCC layers 4 + 5 (see note)",
         },
     },
     # geojson layers
