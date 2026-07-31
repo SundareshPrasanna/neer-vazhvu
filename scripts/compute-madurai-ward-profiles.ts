@@ -596,16 +596,20 @@ function main() {
           role: "input",
         },
       ],
-      // Audited artifact-level rights determination (PR #227 review, P1-4).
-      // Mechanical source-term propagation marks this file 'restricted'
-      // because CPCB/DPCC sit in its lineage. Their website policies govern
-      // THEIR reports; they do not reach a ward score computed here from
-      // measured values, because there is no copyright in facts. Scored by
-      // scripts/nvdm-encumbrance-report.py, which will NOT let this clear
-      // the OpenStreetMap share-alike - only the restricted contribution.
+      // Audited artifact-level rights determination (PR #227 review).
+      // Source-term propagation marks this file 'restricted' because a
+      // pollution-control board sits in its lineage. That board's policy
+      // governs ITS OWN report, not a ward score computed here from the
+      // measurements the report states - there is no copyright in facts.
+      // `clears` names the one input it covers: any other restricted input
+      // would leave this file restricted, and no determination can ever
+      // touch the OpenStreetMap share-alike.
       rights_determination: {
         "basis": "derived-facts",
-        "reasoning": "The payload of this file is a set of indicators this repository computes: per-ward scores, grades, percentile ranks and densities produced by our own code from measured values. It contains no upstream prose, no upstream table layout and no reproduction of any publisher's document. The restricted contribution in its lineage comes from CPCB's website policy, which requires the Board's approval for uses of CPCB MATERIAL beyond download and print. That policy governs CPCB's report; it does not reach a score derived from the measurements the report states, because there is no copyright in facts (Eastern Book Company v D.B. Modak, (2008) 1 SCC 1: 'there is no copyright in the facts per se'). Madurai ward profiles: same indicator construction as the Chennai file, over 100 wards. Share-alike from OpenStreetMap is unaffected and remains.",
+        "clears": [
+          "cpcb-nwmp-annual"
+        ],
+        "reasoning": "The payload of this file is a set of indicators this repository computes: per-ward scores, grades, percentile ranks and densities produced by our own code from measured values. It contains no upstream prose, no upstream table layout and no reproduction of any publisher's document. The restricted input named in `clears` is a pollution-control board whose website policy requires the board's approval to reuse ITS MATERIAL beyond download and print. That policy governs the board's own reports; it does not reach a score derived from the measurements those reports state, because there is no copyright in facts (Eastern Book Company v D.B. Modak, (2008) 1 SCC 1: 'there is no copyright in the facts per se'). This determination is scoped to that named input only and clears nothing else. Madurai ward profiles: the same indicator construction over 100 wards, reaching CPCB only through river-quality-madurai.json. The OpenStreetMap share-alike is untouched.",
         "reviewed_on": "2026-07-31"
       },
       method: "derived",
