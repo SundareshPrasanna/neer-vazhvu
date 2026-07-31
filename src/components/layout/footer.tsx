@@ -48,6 +48,8 @@ export function Footer() {
 
   // /embed/* (third-party iframe namespace) carries its own credit bar.
   if (pathname.startsWith("/embed")) return null;
+  // Corridor pages carry their own footer (non-city surface).
+  if (pathname.startsWith("/corridors")) return null;
   if (FULL_SCREEN_PAGES.some((p) => pathname === p || pathname.endsWith(p))) {
     return null;
   }

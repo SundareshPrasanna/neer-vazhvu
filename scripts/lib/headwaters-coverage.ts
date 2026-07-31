@@ -28,6 +28,9 @@ const GROUPS = [
   "public/geojson/rich-bodies",
   "public/data/cascade",
   "public/data/basins",
+  // Per-corridor artifact sets share one build script + two upstreams
+  // (IN-GRES assessment, SIPCOT GIS), registered in source-registry/corridors.json.
+  "public/data/corridors",
 ];
 
 /**

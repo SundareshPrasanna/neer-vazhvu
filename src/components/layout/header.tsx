@@ -180,6 +180,9 @@ export function Header() {
   // never run conditionally.
   const pathname = usePathname();
   if (pathname.startsWith("/embed")) return null;
+  // Corridor pages carry their own compact chrome: the city-scoped nav would
+  // mislabel a non-city surface (see src/app/corridors/).
+  if (pathname.startsWith("/corridors")) return null;
   return <SiteHeader />;
 }
 
