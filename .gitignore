@@ -59,6 +59,11 @@ scripts/_cache-*.json
 # Raw API/PDF pulls cached so re-runs skip the download (81 MB for Delhi's
 # 278k WRIS groundwater rows). Rebuildable: `--refresh` re-downloads.
 neer-vazhvu-api/scripts/.cache/
+# Same convention on the web side: raw regulatory PDFs and API dumps pulled by
+# scripts/fetch_parivesh_corridor_water.py (19 SEIAA EC letters + the 5,180-row
+# Tamil Nadu EC proposal dump, ~25 MB). Re-downloadable with `download`; the
+# dataset build reads only this cache, so extraction stays reproducible offline.
+scripts/.cache/
 
 # Rich-body satellite imagery + tints - served from Supabase Storage
 # in production via the `satellite-evidence` bucket. Local files are
