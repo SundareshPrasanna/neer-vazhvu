@@ -1,0 +1,1326 @@
+{
+  "nvdm": "1.0",
+  "dataset": "corridors/parivesh-ec-water",
+  "scope": {
+    "kind": "corridor",
+    "id": "sriperumbudur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "parivesh-seiaa-tn-ec",
+        "title": "Parivesh - Tamil Nadu Environmental Clearance proposals and SEIAA EC certificate letters",
+        "publisher": "SEIAA Tamil Nadu / MoEFCC (Parivesh portal)",
+        "url": "https://parivesh.nic.in/",
+        "license": "LICENCE UNVERIFIED - statutory Environmental Clearance letters that the EIA Notification 2006 requires the regulator to publish, served unauthenticated from parivesh.nic.in and cited with attribution. The portal's terms-of-use page renders client-side and was NOT read, so this is not a verified licence grant and is not cleared for commercial reuse. Flagged in the registry entry.",
+        "as_of": "2026-07-31",
+        "retrieved": "2026-07-31",
+        "role": "asserts"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-31",
+    "produced_by": "scripts/fetch_parivesh_corridor_water.py",
+    "note": "Pilot extraction (19 EC letters, 13 with water tables) for the Sriperumbudur-Oragadam corridor. Discovery: full TN EC dump via the undocumented advanceSearchData API, filtered on corridor toponyms; certificate PDFs archived under scripts/.cache/parivesh/ (git-ignored). Every record's figures were manually re-checked against the letter text (garbled tables against the PDF page images) on 2026-07-31; the regex extractor's per-field agreement is recorded in extraction.auto_match. Genuine judgment calls are queued in each record's review list.",
+    "conventions": {
+      "claim_basis": "All figures are PROPONENT-ASSERTED quantities as stated in the EC/EIA submission and restated in the SEIAA Tamil Nadu EC letter. They are regulatory filings, not measurements: nothing here is metered, audited, or independently verified. Several letters contain internal inconsistencies, which are preserved verbatim and flagged in checks/notes.",
+      "units": "KLD (kilolitres per day) unless a text field quotes the letter otherwise",
+      "phase": "construction_phase and operation_phase are stated separately by the letters and are NEVER summed or conflated; expansion letters carry the After-Expansion (granted end-state) column",
+      "nulls": "null means the letter does not state the figure (or states only a dash); values are never inferred, summed across phases, or back-calculated",
+      "groundwater_conditions": "detected per letter by exact-phrase match, never assumed - there is no single 'standard' SEIAA groundwater condition. The CGWA abstraction/dewatering condition appears in only 6 of the 13 water-bearing letters; one letter (Vallam Phase I) carries no groundwater monitoring condition at all. Absence in this list means the phrase is absent from the letter, not that the obligation does not exist elsewhere in law.",
+      "checks": "sanity checks annotate, never alter: 'pass' or a 'flag: ...' string quoting the letter's own figures. A flag is a property of the filing, not of the transcription"
+    }
+  },
+  "as_of": "2026-07-31",
+  "format_variance": {
+    "clean_auto_extract": 2,
+    "needed_manual_handling": 11,
+    "no_water_table": 6,
+    "letters_total": 19
+  },
+  "facilities": [
+    {
+      "proposal_no": "SIA/TN/INFRA2/561399/2025",
+      "label": "Mobis India, SIPCOT Sriperumbudur (Pillaipakkam)",
+      "project_name": "Proposed Construction od the Industrial building for Manufacturing of Power Electrict (PE) Motor System Assy & Integrated Charging control unit (ICCU) Assy by \"M/s Mobis India Limited\" at Plot no. M-1, Sipcot Industrial Park, Pillaipakkam, Survey no. 61/2d1 Part of Irumbedu Village, Sriperumbudur Taluk, Kancheepuram District, Tamil Nadu.",
+      "proponent": "Mobis India Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC25C3803TN5689348N",
+      "ec_date": "2026-02-06",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 11.5,
+          "source": "SIPCOT supply"
+        },
+        "operation_phase": {
+          "total_kld": 174.0,
+          "fresh_kld": 139.0,
+          "recycled_kld": 35.0,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 37.0,
+        "trade_effluent_kld": null,
+        "stp_capacity_kld": 45.0,
+        "etp_capacity_kld": null,
+        "water_source": "SIPCOT supply",
+        "reuse_note": "Treated water 35 KLD reused: flushing 15 KLD, greenbelt 20 KLD; surplus nil.",
+        "rwh": "1 recharge pit; 500 m3 rainwater harvesting sump.",
+        "groundwater_conditions": [
+          {
+            "condition": "cgwa_abstraction_approval",
+            "as_stated": "'Formal approval shall be taken from the CGWA for any ground water abstraction or dewatering.'"
+          },
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          },
+          {
+            "condition": "permission_for_drawl_gw_or_sw",
+            "as_stated": "'The project proponent shall obtain the necessary permission for drawl of ground water / surface water required for the project from the competent authority.'"
+          },
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "Values are the After-Expansion column (existing 139 KLD fresh, no increment sought).",
+        "Trade effluent and ETP rows are dashes in the letter (no trade effluent stated).",
+        "Fresh water breakdown as stated: domestic 27 KLD, greenbelt 112 KLD."
+      ],
+      "review": [],
+      "checks": {
+        "components_sum_to_total": "pass",
+        "wastewater_not_above_intake": "pass",
+        "stp_vs_sewage": "pass"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-expansion",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_total_kld": false,
+          "operation_fresh_kld": true,
+          "wastewater_domestic_kld": true,
+          "stp_capacity_kld": false
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2026-02-06",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/MOBIS_INDIA_LIMITED/5/953131178/V_0_SIA_TN_INFRA2_561399_2025_953131378_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/561627/2025",
+      "label": "Knorr-Bremse, SIPCOT Mambakkam (Sriperumbudur Ph IV)",
+      "project_name": "Proposed Construction of Industrial Building at SIPCOT Industrial Park Mambakkam (Sriperumbudur – Phase IV) by M/s. Knorr Bremse India Private Limited",
+      "proponent": "Knorr-Bremse India Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC25C3806TN5503218N",
+      "ec_date": "2026-02-05",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 20.0,
+          "source": "Private water tanker",
+          "note": "Disposal: septic tank with soak pit."
+        },
+        "operation_phase": {
+          "total_kld": null,
+          "fresh_kld": 137.0,
+          "recycled_kld": 225.0,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 111.0,
+        "trade_effluent_kld": 125.0,
+        "stp_capacity_kld": 145.0,
+        "etp_capacity_kld": 145.0,
+        "water_source": "Mambakkam SIPCOT",
+        "reuse_note": "Treated water available for reuse 225 KLD (flushing, greenbelt & process); treated sewage 106 + treated effluent 119; surplus 0.",
+        "rwh": "46 recharge pits (dia 1.5 m, depth 2.5 m = 203 KL); 300 KL rainwater collection tank.",
+        "groundwater_conditions": [
+          {
+            "condition": "cgwa_abstraction_approval",
+            "as_stated": "'Formal approval shall be taken from the CGWA for any ground water abstraction or dewatering.'"
+          },
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          },
+          {
+            "condition": "permission_for_drawl_gw_or_sw",
+            "as_stated": "'The project proponent shall obtain the necessary permission for drawl of ground water / surface water required for the project from the competent authority.'"
+          },
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "The 'Total Water Requirement' cell prints no number of its own (p.3): the two values printed against the three-label row align to fresh (137, = domestic 79 + process 58) and treated recycled (225, = flushing 40 + greenbelt 98 + process 87). Total left null.",
+        "Wastewater as stated: from STP (sewage) 111 KLD (domestic 71 + flushing 40); from ETP (effluent) 125 KLD (industrial area 31 + production area 94).",
+        "The letter's row 26 'Trade Effluent Generation' actually lists TREATED water (treated sewage 106 + treated effluent 119 = 225); trade effluent here is the ETP influent 125 KLD from row 25."
+      ],
+      "review": [],
+      "checks": {
+        "stp_vs_sewage": "pass",
+        "etp_vs_trade_effluent": "pass"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-single",
+        "class": "clean",
+        "auto_match": {
+          "ec_date": true,
+          "operation_fresh_kld": true,
+          "wastewater_domestic_kld": true,
+          "stp_capacity_kld": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2026-02-05",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/KNORR_BREMSE_INDIA_PRIVATE_LIMITED/5/991264578/V_0_SIA_TN_INFRA2_561627_2025_991264778_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/574654/2026",
+      "label": "Knorr-Bremse, corrigendum to the Mambakkam EC",
+      "project_name": "Proposed Construction of Industrial Building at SIPCOT Industrial Park Mambakkam (Sriperumbudur – Phase IV) by M/s. Knorr Bremse India Private Limited",
+      "proponent": "Knorr-Bremse India Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "corrigendum",
+      "ec_identification_no": "EC25C3806TN5503218N",
+      "ec_date": "2026-05-18",
+      "parent_ec": "EC25C3806TN5503218N dated 2026-02-05 (SIA/TN/INFRA2/561627/2025)",
+      "water": null,
+      "notes": [
+        "Corrigendum correcting survey numbers/plot details; restates no water figures. Water data for this facility lives in the parent EC letter record."
+      ],
+      "review": [],
+      "checks": {},
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "no-water-table",
+        "class": "absent",
+        "auto_match": {
+          "ec_date": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2026-05-18",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/KNORR_BREMSE_INDIA_PRIVATE_LIMITED/229/1223365865/V_null_SIA_TN_INFRA2_574654_2026_1223365869_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/IND3/507163/2024",
+      "label": "Asian Paints, SIPCOT Sriperumbudur (amendment EC)",
+      "project_name": "Proposed Amendment in Existing EC received for Expansion of Existing Paints and Water based Polymers Manufacturing industry in a notified Industrial area at Plot no. E6, E7, F6 pt, F7 pt, F11, F12 & F13, SIPCOT Industrial Park, Pondur Village, Sriperumbudur Taluka, Kancheepuram District, Tamil Nadu",
+      "proponent": "Asian Paints Limited",
+      "sector": "Industrial Projects - 3",
+      "category": "B1",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "amendment",
+      "ec_identification_no": "EC24B2601TN5462973A",
+      "ec_date": "2024-12-22",
+      "parent_ec": "EC24B000TN147478 dated 2024-01-12 (paints & water-based polymers plant, SIPCOT Sriperumbudur)",
+      "water": null,
+      "notes": [
+        "Amendment relocates a CSR 'Blue Green Centre' from IIT Madras to Olcott Memorial High School, Besant Nagar; no water figures restated. The plant's water table lives in the parent EC, which predates this pilot's certificate-URL cohort."
+      ],
+      "review": [],
+      "checks": {},
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "no-water-table",
+        "class": "absent",
+        "auto_match": {
+          "ec_date": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2024-12-22",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/ASIAN_PAINTS_LIMITED_SHRIPERUMUDUR/37/112083841/V_0_SIA_TN_IND3_507163_2024_112083845_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/518129/2025",
+      "label": "India Yamaha Motor, Vallam Vadagal",
+      "project_name": "“INDIA YAMAHA MOTOR PVT LTD”",
+      "proponent": "India Yamaha Motor Private Limited",
+      "sector": "INFRA-2",
+      "category": "B1",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC25B3813TN5181462N",
+      "ec_date": "2025-02-27",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 100.0,
+          "source": "Private tanker"
+        },
+        "operation_phase": {
+          "total_kld": 1303.6,
+          "fresh_kld": 494.1,
+          "recycled_kld": 809.5,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 373.49,
+        "trade_effluent_kld": 437.5,
+        "stp_capacity_kld": 200.0,
+        "etp_capacity_kld": 0.0,
+        "water_source": "SIPCOT",
+        "reuse_note": "Treated water requirement 809.5 KLD: flushing 84.5, process 371.01, boiler makeup 20, cooling tower makeup 45, greenbelt & OSR 288.99 (letter's own component list, which sums to 809.5 exactly).",
+        "rwh": "4 ponds & roof collection system; sump capacity nil.",
+        "groundwater_conditions": [
+          {
+            "condition": "cgwa_abstraction_approval",
+            "as_stated": "'Formal approval shall be taken from the CGWA for any ground water abstraction or dewatering.'"
+          },
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          },
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "Fresh breakdown as stated: domestic 321.1, flushing 0, gardening 130.01, process 42.99."
+      ],
+      "review": [
+        {
+          "question": "Letter states 'Proposed Capacity of ETP: 0 KLD' while also stating trade effluent generation 437.5 KLD and construction-phase mode of disposal '550 KLD Package STP & 468 KLD capacity of ETP' (p.3). Which ETP capacity stands for the operating plant?",
+          "verbatim": "'26. Proposed Capacity of STP 200 KLD; 27. Proposed Capacity of ETP 0 KLD' vs '18. Mode of Disposal: 550 KLD Package STP & 468 KLD capacity of ETP' (construction phase)",
+          "page": "p.3 of SIA/TN/INFRA2/518129/2025 letter",
+          "best_interpretation": "Existing plant already runs larger STP/ETP (550/468 KLD); the '200/0' rows describe only newly proposed units. Recorded as stated; confidence medium."
+        }
+      ],
+      "checks": {
+        "components_sum_to_total": "pass",
+        "wastewater_not_above_intake": "pass",
+        "stp_vs_sewage": "flag: stated sewage 373.49 KLD exceeds stated STP capacity 200.0 KLD",
+        "etp_vs_trade_effluent": "flag: stated trade effluent 437.5 KLD exceeds stated ETP capacity 0.0 KLD"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-single",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_total_kld": true,
+          "operation_fresh_kld": false,
+          "wastewater_domestic_kld": true,
+          "stp_capacity_kld": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2025-02-27",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/INDIA_YAMAHA_MOTOR_PRIVATE_LIMITED_/2/117345510/V_0_SIA_TN_INFRA2_518129_2025_117345516_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/543039/2025",
+      "label": "India Yamaha Motor, amendment (CER change)",
+      "project_name": "“INDIA YAMAHA MOTOR PVT LTD”",
+      "proponent": "India Yamaha Motor Private Limited",
+      "sector": "INFRA-2",
+      "category": "B1",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "amendment",
+      "ec_identification_no": "EC25B3813TN5560696A",
+      "ec_date": "2025-12-19",
+      "parent_ec": "EC25B3813TN5181462N dated 2025-02-27 (SIA/TN/INFRA2/518129/2025)",
+      "water": null,
+      "notes": [
+        "Amendment changes the CER activity to 'Waterbody Rejuvenation Projects' (Rs 2 crore, restore and enhance health of lakes and ponds); no water figures restated."
+      ],
+      "review": [],
+      "checks": {},
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "no-water-table",
+        "class": "absent",
+        "auto_match": {
+          "ec_date": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2025-12-19",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/INDIA_YAMAHA_MOTOR_PRIVATE_LIMITED_/37/130979340/V_0_SIA_TN_INFRA2_543039_2025_131001592_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/467617/2024",
+      "label": "Tata Electronics expansion, amendment (built-up area)",
+      "project_name": "Proposed Expansion of Tata Electronics Private Limited - Manufacturing & Assembly of metal case for mobile phones - 3 Lakh No’s/Day with total built-up area of 5,57,470 Sq. m",
+      "proponent": "Tata Electronics Private Limited (letter addressed via applicant Sriram Kadiyala)",
+      "sector": "INFRA-2",
+      "category": "B1",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "amendment",
+      "ec_identification_no": "EC24B3813TN5308758A",
+      "ec_date": "2024-05-29",
+      "parent_ec": "SEIAA-TN/F.No.9738/2023/8(b)/EC.No:999/2023 dated 2023-12-06",
+      "water": null,
+      "notes": [
+        "Amendment revises built-up area tables (incl. ETP/STP building rows) for the metal case / mobile phone manufacturing campus at Vallam Vadagal; no water quantities restated."
+      ],
+      "review": [],
+      "checks": {},
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "no-water-table",
+        "class": "absent",
+        "auto_match": {
+          "ec_date": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2024-05-29",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/SUBRAMANIAN_SRINIVASAN/37/56916219/SIA_TN_INFRA2_467617_2024_56923183_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/502376/2024",
+      "label": "Mobile-phone enclosure plant, Walajabad (Guindy Warehousing)",
+      "project_name": "Proposed Construction of Manufacturing unit for Enclosure/Casing of mobile phones at Varanavasi village, Walajabad, Kancheepuram Dt. Tamil Nadu",
+      "proponent": "Guindy Warehousing & Industrial Logistics Pvt Ltd",
+      "sector": "INFRA-2",
+      "category": "B1",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC24B3813TN5711613N",
+      "ec_date": "2025-01-08",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 255.0,
+          "source": "SIPCOT",
+          "note": "Stated as fresh water."
+        },
+        "operation_phase": {
+          "total_kld": 15426.98,
+          "fresh_kld": 5000.0,
+          "recycled_kld": 10426.98,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": 10874.256,
+        "wastewater_domestic_kld": null,
+        "trade_effluent_kld": null,
+        "stp_capacity_kld": 650.0,
+        "etp_capacity_kld": null,
+        "water_source": "SIPCOT",
+        "reuse_note": "Treated water recycled: '1,87,500 (Flushing) + 260 (Gardening)' as printed.",
+        "rwh": "50 recharge pits; 40,000 m3 rainwater harvesting pond.",
+        "groundwater_conditions": [
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "Mobile-phone enclosure/casing manufacturing campus at Varanavasi-Agaram-Alavoor, Walajabad (project cost Rs 12,395 crore as stated).",
+        "Wastewater generation printed as 10874.256 KLD with no domestic/trade split, and no ETP row despite the volume; kept null in the split fields, see review queue."
+      ],
+      "review": [
+        {
+          "question": "Sub-rows 'Domestic 4,84,900 KLD' and 'Flushing 1,87,500 KLD' under fresh/treated requirement (p.4) are 3 orders of magnitude above the stated totals. Are these litres/day figures mislabelled KLD (i.e. 484.9 / 187.5 KLD)?",
+          "verbatim": "'23. Fresh water requirement 5000 KLD; Domestic 4,84,900 KLD; Flushing 1,87,500 KLD; 24. Treated Water Requirement 10426.98 KLD; Flushing use 1,87,500 KLD; Greenbelt & OSR 260 KLD'",
+          "page": "p.4 of SIA/TN/INFRA2/502376/2024 letter",
+          "best_interpretation": "Litres/day pasted into a KLD table (484.9 and 187.5 KLD). Headline totals (5000 fresh + 10426.98 recycled = 15426.98 total) are self-consistent and are what the record carries. Confidence high for the totals, medium for the sub-rows."
+        },
+        {
+          "question": "Wastewater generation 10874.256 KLD against STP capacity 650 KLD with no ETP row: is the process-water treatment train simply absent from the letter's table?",
+          "verbatim": "'26. Wastewater Generation 10874.256 KLD; 28. Proposed Capacity of STP 650 KLD'",
+          "page": "p.5 of SIA/TN/INFRA2/502376/2024 letter",
+          "best_interpretation": "The letter's table only covers the domestic STP; the industrial recycle train (10,426.98 KLD treated-recycled) is not enumerated. Recorded as stated with nulls in the split fields. Confidence medium."
+        }
+      ],
+      "checks": {
+        "components_sum_to_total": "pass",
+        "wastewater_not_above_intake": "pass",
+        "treatment_capacity_vs_wastewater": "flag: stated treatment capacity 650.0 KLD (STP+ETP rows) below stated wastewater 10874.256 KLD - the letter's table does not enumerate the remaining treatment train"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-single",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_total_kld": true,
+          "operation_fresh_kld": false,
+          "stp_capacity_kld": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2025-01-08",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/D_ANKUR_PARWANI/2/110069661/V_0_SIA_TN_INFRA2_502376_2024_110069667_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/519363/2025",
+      "label": "Mobile-phone enclosure plant, corrigendum",
+      "project_name": "Proposed Construction of Manufacturing unit for Enclosure/Casing of mobile phones at Varanavasi village, Walajabad, Kancheepuram Dt. Tamil Nadu",
+      "proponent": "Guindy Warehousing & Industrial Logistics Pvt Ltd",
+      "sector": "INFRA-2",
+      "category": "B1",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "corrigendum",
+      "ec_identification_no": "EC24B3813TN5711613N",
+      "ec_date": "2025-02-02",
+      "parent_ec": "EC24B3813TN5711613N dated 2025-01-08 (SIA/TN/INFRA2/502376/2024)",
+      "water": null,
+      "notes": [
+        "Corrigendum to the enclosure-plant EC; restates no water figures."
+      ],
+      "review": [],
+      "checks": {},
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "no-water-table",
+        "class": "absent",
+        "auto_match": {
+          "ec_date": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2025-02-02",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/D_ANKUR_PARWANI/229/117959349/V_null_SIA_TN_INFRA2_519363_2025_117959355_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/557819/2025",
+      "label": "NSK Bearings, Oragadam",
+      "project_name": "Construction of Additional Production Facility at NSK Bearings India Pvt Ltd, Oragadam",
+      "proponent": "NSK Bearings India Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC25C3806TN5549513N",
+      "ec_date": "2026-01-31",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 100.0,
+          "source": "Private tankers",
+          "note": "Construction sewage treated in the existing 50 KLD STP."
+        },
+        "operation_phase": {
+          "total_kld": 109.3,
+          "fresh_kld": 78.7,
+          "recycled_kld": 30.6,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 23.0,
+        "trade_effluent_kld": 8.1,
+        "stp_capacity_kld": 50.0,
+        "etp_capacity_kld": 10.0,
+        "water_source": "SIPCOT",
+        "reuse_note": "Treated water 30.6 KLD (STP 23 + ETP 7.6) reused: cooling tower 7.6, greenbelt 23; ETP revamp adds MEE/ATFD, ATFD salt to cement kilns.",
+        "rwh": "2 existing recharge pits + 27 additional proposed.",
+        "groundwater_conditions": [
+          {
+            "condition": "cgwa_abstraction_approval",
+            "as_stated": "'Formal approval shall be taken from the CGWA for any ground water abstraction or dewatering.'"
+          },
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          },
+          {
+            "condition": "permission_for_drawl_gw_or_sw",
+            "as_stated": "'The project proponent shall obtain the necessary permission for drawl of ground water / surface water required for the project from the competent authority.'"
+          },
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "After-expansion column recorded (project summary table separately states 104.10 existing + 5.2 addition = 109.30 total).",
+        "Fresh breakdown as stated: domestic 27, greenbelt 30.3, process 7, CFS 10, cooling tower 4.4."
+      ],
+      "review": [],
+      "checks": {
+        "components_sum_to_total": "pass",
+        "wastewater_not_above_intake": "pass",
+        "stp_vs_sewage": "pass",
+        "etp_vs_trade_effluent": "pass"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-expansion",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_total_kld": false,
+          "operation_fresh_kld": false,
+          "wastewater_domestic_kld": false,
+          "stp_capacity_kld": false
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2026-01-31",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/nsk_bearings_india_private_limited/5/330070378/V_0_SIA_TN_INFRA2_557819_2025_330070578_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/539591/2025",
+      "label": "Allison Transmission, Oragadam",
+      "project_name": "Construction of New R&D facility and Increase in production capacity at Allison Transmission India Pvt Ltd, Oragadam",
+      "proponent": "Allison Transmission India Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC25C3806TN5568882N",
+      "ec_date": "2025-08-19",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 100.0,
+          "source": "SIPCOT",
+          "note": "Construction sewage 4.1 KLD to existing STP; treated water to greenbelt."
+        },
+        "operation_phase": {
+          "total_kld": 106.13,
+          "fresh_kld": null,
+          "recycled_kld": 52.98,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 50.0,
+        "trade_effluent_kld": 9.6,
+        "stp_capacity_kld": 44.0,
+        "etp_capacity_kld": null,
+        "water_source": "SIPCOT & rainwater harvesting pond",
+        "reuse_note": "Treated water available for reuse 52.98 KLD (greenbelt 47.5, process 4.23, chillers 1.25); surplus nil. Effluent treated through existing ETP + RO; RO permeate to process, reject to solar evaporation pond (site has one).",
+        "rwh": "Recharge-pit row is a dash (no count stated); rainwater harvesting sump capacity 'One Pond of 2000 KL'. The pond is also named as a fresh-water source in row 24.",
+        "groundwater_conditions": [
+          {
+            "condition": "cgwa_abstraction_approval",
+            "as_stated": "'Formal approval shall be taken from the CGWA for any ground water abstraction or dewatering.'"
+          },
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          },
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "STP: existing 44 KLD + additional 35 KLD stated as under installation per CTE obtained 2024 (footnote on p.5). stp_capacity_kld carries the existing 44, the only figure the letter states as a capacity; the stp_vs_sewage flag that follows (sewage 50 > STP 44) is the letter's own gap, closed on paper by the additional 35 KLD unit.",
+        "Row 22's 'Fresh water requirement' component list (domestic 50, flushing 0, process 5.37, greenbelt 50.76, chiller 0) sums to 106.13 - the TOTAL water figure, not a fresh subtotal (existing parts 34.53 + 0 + 3.97 + 64.76 + 1 = 104.26, again the existing total). This is why fresh water is treated as unstated here.",
+        "ETP capacity not stated as a number (prose: 'existing ETP (8.1 KLD)' refers to effluent volume treated, not nameplate capacity); left null."
+      ],
+      "review": [
+        {
+          "question": "Row 21's continuation (p.5) prints one value '52.98 (existing: 38.28 & additional: 14.70)' against the label pair 'i. Fresh water requirement / i. Treated recycled water requirement'. Is 52.98 fresh or treated-recycled? If treated, the letter never states fresh (106.13 - 52.98 = 53.15 by subtraction, which the never-infer rule forbids recording).",
+          "verbatim": "'21. Total Water 106.13 (existing: 104.26 & additional: 1.87) | Requirement 52.98 (existing: 38.28 & additional: 14.70) i. Fresh water requirement i. Treated recycled water requirement' ... '23. Treated Water Requirement 47.5 (existing: 33.5 & additional: 14); i. Greenbelt 4.23; ii. Process 1.25'",
+          "page": "pp.4-5 of SIA/TN/INFRA2/539591/2025 letter",
+          "best_interpretation": "52.98 is the TREATED-recycled figure: row 23's components 47.5 + 4.23 + 1.25 = 52.98 and their existing parts 33.5 + 4.78 + 0 = 38.28 reproduce its decomposition exactly. Fresh therefore unstated (would be 53.15 by subtraction). Confidence high on 52.98 = treated; fresh left null."
+        }
+      ],
+      "checks": {
+        "wastewater_not_above_intake": "pass",
+        "stp_vs_sewage": "flag: stated sewage 50.0 KLD exceeds stated STP capacity 44.0 KLD"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-expansion",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_total_kld": false,
+          "wastewater_domestic_kld": false,
+          "stp_capacity_kld": false
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2025-08-19",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/ALLISON_TRANSMISSION_INDIA_Private_Limited/5/128463022/V_0_SIA_TN_INFRA2_539591_2025_128463023_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/501457/2024",
+      "label": "Indospace Park Oragadam V, Ullavur",
+      "project_name": "Proposed Construction of Industrial/Logistics/Warehouse by M/s. Indospace Park Oragadam V Phase 1 Private Limited & M/s. Indospace Park Oragadam V Phase 2 Private Limited.",
+      "proponent": "Indospace Park Oragadam V Phase 1 Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC24C3806TN5394981N",
+      "ec_date": "2024-12-17",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": null,
+        "operation_phase": {
+          "total_kld": null,
+          "fresh_kld": 190.0,
+          "recycled_kld": 318.0,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 318.0,
+        "trade_effluent_kld": null,
+        "stp_capacity_kld": 350.0,
+        "etp_capacity_kld": null,
+        "water_source": "Local body",
+        "reuse_note": "Treated sewage 318 KLD reused: toilet flushing 156, greenbelt & OSR 90, avenue plantation & village parks 72.",
+        "rwh": "45 recharge pits; 3,700 m3 rainwater harvesting pond.",
+        "groundwater_conditions": [
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "Short-form letter: no single 'total water requirement' figure and no construction-phase water row; greywater/effluent row is 'NA'.",
+        "recycled_kld 318 is the letter's own stated total ('treated sewage of 318 KLD will be reused as follows...').",
+        "CER list includes 'Streamlining water flow from Ullavur Periya Eri, Sitheri & Maduvu Eri (as per Collector NOC)' - tank-cascade work adjacent to the park."
+      ],
+      "review": [],
+      "checks": {
+        "stp_vs_sewage": "pass"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "short-form",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_fresh_kld": false,
+          "wastewater_domestic_kld": false,
+          "stp_capacity_kld": false
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2024-12-17",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/INDOSPACE_PARK_ORAGADAM_V_PHASE_1_PRIVATE_LIMITED/5/109781901/V_0_SIA_TN_INFRA2_501457_2024_109781902_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/569723/2026",
+      "label": "Indospace Park Oragadam VI, corrigendum",
+      "project_name": "Proposed Construction of Industrial/Logistics/Warehouse Park by Indospace Park Oragadam VI Phase 1 Pvt Ltd, Indospace Park Oragadam VI Phase 2 Pvt Ltd & Indospace Park Oragadam VI Phase 3 Pvt Ltd",
+      "proponent": "Indospace Park Oragadam VI Phase 1/2/3 Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "corrigendum",
+      "ec_identification_no": "EC25C3806TN5438877N",
+      "ec_date": "2026-03-09",
+      "parent_ec": "EC25C3806TN5438877N dated 2026-01-31 (SIA/TN/INFRA2/558262/2025)",
+      "water": null,
+      "notes": [
+        "Corrigendum correcting survey numbers in the Oragadam VI park EC; no water figures."
+      ],
+      "review": [],
+      "checks": {},
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "no-water-table",
+        "class": "absent",
+        "auto_match": {
+          "ec_date": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2026-03-09",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/INDOSPACE_PARK_ORAGADAM_VI_PHASE_2_PRIVATE_LIMITED/229/1219772088/V_null_SIA_TN_INFRA2_569723_2026_1219772099_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/527678/2025",
+      "label": "Hyundai Motor India, Irungattukottai",
+      "project_name": "Proposed Revamping and Modernization of HMIL Existing Manufacturing Facility at Hyundai Motor India Limited, Irungattukottai, Kancheepuram Dt.",
+      "proponent": "Hyundai Motor India Limited",
+      "sector": "INFRA-2",
+      "category": "B1",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC25B3813TN5581348N",
+      "ec_date": "2025-07-02",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 43.5,
+          "source": "HMI pond / SIPCOT lake water",
+          "note": "Disposal to existing STP."
+        },
+        "operation_phase": {
+          "total_kld": 5536.0,
+          "fresh_kld": 1500.0,
+          "recycled_kld": 4537.0,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": 4537.0,
+        "wastewater_domestic_kld": null,
+        "trade_effluent_kld": null,
+        "stp_capacity_kld": 1815.0,
+        "etp_capacity_kld": 4400.0,
+        "water_source": "SIPCOT lake water / HMIL pond",
+        "reuse_note": "Treated water 4537 KLD; reused industrial usage 2547, greenbelt 1900.",
+        "rwh": "No recharge-pit count stated; 3,35,000 m3 storage across 6 existing ponds.",
+        "groundwater_conditions": [
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          },
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "After-expansion column recorded (existing 5529 total / 1493 fresh / 4530 recycled).",
+        "Wastewater generation printed as a single 4537 KLD figure equal to treated-water generation; no domestic/trade split (trade effluent row is a dash), so the split fields stay null.",
+        "Surface-water sourced: SIPCOT lake water plus the plant's own ponds - the corridor's largest stated industrial water demand in this cohort."
+      ],
+      "review": [
+        {
+          "question": "Letter's own components disagree: fresh 1500 + treated recycled 4537 = 6037, but 'Total water' prints 5536 (p.5). Which does SEIAA treat as granted total?",
+          "verbatim": "'21. Total water: Existing 5529 KLD, After Expansion/Total 5536 KLD; Fresh water 1493 -> 1500 KLD; Treated recycled water 4530 -> 4537 KLD'",
+          "page": "p.5 of SIA/TN/INFRA2/527678/2025 letter",
+          "best_interpretation": "Recorded all three verbatim with an arithmetic flag. The 501 KLD gap is in the proponent's own table (5529/1493/4530 has the same gap); possibly 'total' excludes a reuse stream counted in the recycled figure. Confidence in the transcription high; in the reconciliation none."
+        }
+      ],
+      "checks": {
+        "components_sum_to_total": "flag: fresh 1500.0 + recycled 4537.0 = 6037.0 != stated total 5536.0 (letter's own figures, kept verbatim)",
+        "wastewater_not_above_intake": "pass",
+        "treatment_capacity_vs_wastewater": "pass"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-expansion",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_total_kld": false,
+          "operation_fresh_kld": true,
+          "stp_capacity_kld": false
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2025-07-02",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/hyundai_motor_india_limited/2/121643276/V_0_SIA_TN_INFRA2_527678_2025_121643278_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/539380/2025",
+      "label": "Hyundai WIA, Oragadam",
+      "project_name": "Proposed Expansion of Existing Factory Buildings for Manufacturing of Automobile Parts by M/s. HYUNDAI WIA INDIA PRIVATE LIMITED",
+      "proponent": "Hyundai WIA India Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC25C3803TN5737017N",
+      "ec_date": "2025-07-30",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 4.5,
+          "source": "Local body",
+          "note": "Disposal: STP & ETP."
+        },
+        "operation_phase": {
+          "total_kld": 210.0,
+          "fresh_kld": 107.03,
+          "recycled_kld": 102.97,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 80.0,
+        "trade_effluent_kld": 27.0,
+        "stp_capacity_kld": 150.0,
+        "etp_capacity_kld": 40.0,
+        "water_source": "Local body",
+        "reuse_note": "Treated water (STP 76 + ETP 26.97) reused: flushing 30, greenbelt & OSR 46.",
+        "rwh": "Recharge pits 22 existing + 239 proposed; sump 548.8 -> 1041.6 KL after expansion.",
+        "groundwater_conditions": [
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          },
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "recycled_kld is the letter's two stated components (STP treated 76 + ETP treated 26.97); their sum equals total minus fresh exactly.",
+        "STP capacity after expansion 150 KLD (60 existing + 90 proposed); ETP capacities after expansion ETP-1 10 + ETP-2 30 KLD (recorded sum 40)."
+      ],
+      "review": [],
+      "checks": {
+        "components_sum_to_total": "pass",
+        "wastewater_not_above_intake": "pass",
+        "stp_vs_sewage": "pass",
+        "etp_vs_trade_effluent": "pass"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-expansion",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_total_kld": false,
+          "operation_fresh_kld": false,
+          "wastewater_domestic_kld": false,
+          "stp_capacity_kld": false
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2025-07-30",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/HYUNDAI_WIA_INDIA_PRIVATE_LIMITED/5/128255375/V_0_SIA_TN_INFRA2_539380_2025_128255376_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/499993/2024",
+      "label": "Saint-Gobain, SIPCOT Oragadam",
+      "project_name": "SAINT-GOBAIN INDUSTRIES INDIA PRIVATE LIMITED",
+      "proponent": "Saint-Gobain Industries India Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC24C3806TN5974153N",
+      "ec_date": "2024-12-24",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 200.0,
+          "source": "Private tankers",
+          "note": "Sewage via 70 KLD package STP; treated sewage to greenbelt."
+        },
+        "operation_phase": {
+          "total_kld": 1234.72,
+          "fresh_kld": 119.0,
+          "recycled_kld": 225.02,
+          "purchased_treated_kld": 890.7
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 101.7,
+        "trade_effluent_kld": 126.0,
+        "stp_capacity_kld": 120.0,
+        "etp_capacity_kld": 150.0,
+        "water_source": "SIPCOT / TTRO Koyambedu (purchased tertiary-treated water)",
+        "reuse_note": "Letter's own summary: fresh 119 (SIPCOT), raw process water 890.7 (TTRO Koyambedu), recycled 225.02 (greenbelt 101.7 + process 123.32). ETP with MEE; RO rejects to MEE.",
+        "rwh": "No recharge-pit count stated; rainwater harvesting sump capacity printed 161,200 cu.m.",
+        "groundwater_conditions": [
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          },
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "Float-glass campus at SIPCOT Oragadam (plot OZ-2, Panruti-A & Vallam-B).",
+        "Components reconcile exactly: 119 + 890.7 + 225.02 = 1234.72.",
+        "First cohort facility whose process water is mostly PURCHASED recycled sewage (Chennai Metro TTRO at Koyambedu) rather than fresh abstraction."
+      ],
+      "review": [
+        {
+          "question": "Rainwater harvesting sump capacity prints 161,200 cu.m (p.4) - two orders above every other letter in the cohort. Genuine storage lagoon or a units slip?",
+          "verbatim": "'32. Rainwater Harvesting Sump Capacity 161200 Cu.m'",
+          "page": "p.4 of SIA/TN/INFRA2/499993/2024 letter",
+          "best_interpretation": "Possibly a real large storage reservoir for a 45-acre glass campus, but unverifiable from the letter. Recorded verbatim in the rwh text field only. Confidence low either way."
+        }
+      ],
+      "checks": {
+        "components_sum_to_total": "pass",
+        "wastewater_not_above_intake": "pass",
+        "stp_vs_sewage": "pass",
+        "etp_vs_trade_effluent": "pass"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-single",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_total_kld": true,
+          "operation_fresh_kld": false,
+          "wastewater_domestic_kld": true,
+          "stp_capacity_kld": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2024-12-24",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/SAINT_GOBAIN_INDUSTRIES_INDIA_PRIVATE_LIMITED_/5/108761693/V_0_SIA_TN_INFRA2_499993_2024_108761694_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/558262/2025",
+      "label": "Indospace Park Oragadam VI, Ullavur (parent EC)",
+      "project_name": "Proposed Construction of Industrial/Logistics/Warehouse Park by Indospace Park Oragadam VI Phase 1 Pvt Ltd, Indospace Park Oragadam VI Phase 2 Pvt Ltd & Indospace Park Oragadam VI Phase 3 Pvt Ltd",
+      "proponent": "Indospace Park Oragadam VI Phase 1/2/3 Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC25C3806TN5438877N",
+      "ec_date": "2026-01-31",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 19.0,
+          "source": "Private tankers"
+        },
+        "operation_phase": {
+          "total_kld": 339.0,
+          "fresh_kld": 187.0,
+          "recycled_kld": 311.0,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 311.0,
+        "trade_effluent_kld": null,
+        "stp_capacity_kld": 350.0,
+        "etp_capacity_kld": null,
+        "water_source": "Ground water (borewell)",
+        "reuse_note": "Treated water 311 KLD reused: flushing 152, greenbelt & OSR 159; surplus dash.",
+        "rwh": "26 recharge pits; 1,300 m3 rainwater harvesting pond.",
+        "groundwater_conditions": [
+          {
+            "condition": "cgwa_abstraction_approval",
+            "as_stated": "'Formal approval shall be taken from the CGWA for any ground water abstraction or dewatering.'"
+          },
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          },
+          {
+            "condition": "permission_for_drawl_gw_or_sw",
+            "as_stated": "'The project proponent shall obtain the necessary permission for drawl of ground water / surface water required for the project from the competent authority.'"
+          },
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          },
+          {
+            "condition": "borewell_noc_before_cto",
+            "as_stated": "Pre-CTO condition: 'The PP shall furnish valid permission/No Objection Certificate (NOC) obtained from the Competent Authority for abstraction of groundwater through borewells.'"
+          }
+        ]
+      },
+      "notes": [
+        "ETP capacity row prints 'Nil'; trade effluent not stated (warehouse park).",
+        "The only cohort letter carrying the pre-CTO borewell NOC condition (2.1), which also requires a groundwater quality report from an accredited lab - consistent with this being the only facility stating groundwater as its operating source.",
+        "Letter's own rows: total 339 vs fresh 187 + recycled 311 = 498. 187 + flushing 152 = 339, so the printed total appears to count fresh + flushing only; recorded verbatim with an arithmetic flag (same pattern as the Vallam Phase-I letter).",
+        "Only cohort facility stating groundwater as its operating source - in firkas the regulator's assessment books as SAFE."
+      ],
+      "review": [],
+      "checks": {
+        "components_sum_to_total": "flag: fresh 187.0 + recycled 311.0 = 498.0 != stated total 339.0 (letter's own figures, kept verbatim)",
+        "wastewater_not_above_intake": "pass",
+        "stp_vs_sewage": "pass"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-single",
+        "class": "clean",
+        "auto_match": {
+          "ec_date": true,
+          "operation_total_kld": true,
+          "operation_fresh_kld": true,
+          "wastewater_domestic_kld": true,
+          "stp_capacity_kld": true
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2026-01-31",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/INDOSPACE_PARK_ORAGADAM_VI_PHASE_2_PRIVATE_LIMITED/5/393268378/V_0_SIA_TN_INFRA2_558262_2025_393268578_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/548712/2025",
+      "label": "Indospace Vallam II, industrial sheds expansion",
+      "project_name": "Proposed Expansion of Existing Industrial Sheds for Industrial/Light and Heavy Engineering/Assembly /Logistics/ Storage units for M/s. Indospace Vallam II Private Limited",
+      "proponent": "Indospace Vallam II Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC25C3806TN5921702N",
+      "ec_date": "2025-09-30",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 7.0,
+          "source": "Private tankers",
+          "note": "Disposal: septic tank with soak pit or mobile STP."
+        },
+        "operation_phase": {
+          "total_kld": null,
+          "fresh_kld": 163.0,
+          "recycled_kld": 85.0,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 223.0,
+        "trade_effluent_kld": null,
+        "stp_capacity_kld": 235.0,
+        "etp_capacity_kld": null,
+        "water_source": "SIPCOT",
+        "reuse_note": "Treated water 223 KLD reused: flushing 85, greenbelt 138; surplus 0.",
+        "rwh": "40 recharge pits; 'RWH pond capacity - 1.6' as printed (unit column says M3).",
+        "groundwater_conditions": [
+          {
+            "condition": "permission_for_drawl_freshwater_before_cto",
+            "as_stated": "'Necessary permission shall be obtained from the competent authority for the drawl / outsourcing of fresh water before obtaining consent from TNPCB.' (applies to bought-in supply, not only abstraction)"
+          },
+          {
+            "condition": "groundwater_level_monitoring",
+            "as_stated": "'The ground water level and its quality should be monitored and recorded regularly in consultation with Ground Water Authority.'"
+          }
+        ]
+      },
+      "notes": [
+        "After-expansion column recorded (existing per CTO: fresh 88, recycled 44, wastewater 119, STP 135).",
+        "No single total-water figure printed (same three-label row pattern as the Knorr-Bremse letter); trade effluent row 'NIL'.",
+        "The printed RWH pond capacity '1.6 M3' is implausibly small; recorded verbatim in the rwh text only, not as a number."
+      ],
+      "review": [],
+      "checks": {
+        "stp_vs_sewage": "pass"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "standard-expansion",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_fresh_kld": false,
+          "wastewater_domestic_kld": true,
+          "stp_capacity_kld": false
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2025-09-30",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/INDOSPACE_VALLAM_II_PRIVATE_LIMITED/5/134372523/V_0_SIA_TN_INFRA2_548712_2025_134372524_-signed.pdf"
+      }
+    },
+    {
+      "proposal_no": "SIA/TN/INFRA2/501050/2024",
+      "label": "Vallam (Phase I) Logistics Park",
+      "project_name": "Proposed construction of Industrial Buildings",
+      "proponent": "Vallam (Phase I) Logistics Park Private Limited",
+      "sector": "INFRA-2",
+      "category": "B2",
+      "status": "EC Granted",
+      "issuing_authority": "SEIAA",
+      "letter_type": "grant",
+      "ec_identification_no": "EC24C3803TN5595770N",
+      "ec_date": "2024-12-23",
+      "parent_ec": null,
+      "water": {
+        "construction_phase": {
+          "water_kld": 18.0,
+          "source": "Local body",
+          "note": "Construction-phase sewage 4 KLD."
+        },
+        "operation_phase": {
+          "total_kld": 443.0,
+          "fresh_kld": 287.0,
+          "recycled_kld": 412.0,
+          "purchased_treated_kld": null
+        },
+        "wastewater_total_kld": null,
+        "wastewater_domestic_kld": 414.0,
+        "trade_effluent_kld": null,
+        "stp_capacity_kld": 450.0,
+        "etp_capacity_kld": null,
+        "water_source": "Local body",
+        "reuse_note": "Treated sewage reused: flushing 156, greenbelt & OSR 256.",
+        "rwh": "55 recharge pits; 2 rainwater harvesting ponds.",
+        "groundwater_conditions": [
+          {
+            "condition": "no_groundwater_in_construction",
+            "as_stated": "'No ground water shall be used during construction phase of the project.'"
+          }
+        ]
+      },
+      "notes": [
+        "Short-form letter; greywater/effluent row is a dash (logistics park).",
+        "Letter's own rows: total 443 vs fresh 287 + recycled 412 = 699. 287 + flushing 156 = 443, the same fresh-plus-flushing pattern as the Oragadam VI letter; recorded verbatim with an arithmetic flag.",
+        "STP 450 KLD MBBR."
+      ],
+      "review": [],
+      "checks": {
+        "components_sum_to_total": "flag: fresh 287.0 + recycled 412.0 = 699.0 != stated total 443.0 (letter's own figures, kept verbatim)",
+        "wastewater_not_above_intake": "pass",
+        "stp_vs_sewage": "pass"
+      },
+      "verified": true,
+      "verified_on": "2026-07-31",
+      "extraction": {
+        "format": "short-form",
+        "class": "manual",
+        "auto_match": {
+          "ec_date": true,
+          "operation_total_kld": false,
+          "operation_fresh_kld": false,
+          "wastewater_domestic_kld": false,
+          "stp_capacity_kld": false
+        }
+      },
+      "provenance": {
+        "source_id": "parivesh-seiaa-tn-ec",
+        "as_of": "2024-12-23",
+        "retrieved": "2026-07-31",
+        "certificate_url": "https://parivesh.nic.in/certificates/VALLAM_(PHASE_I)_LOGISTICS_PARK_PRIVATE_LIMITED/5/109647644/V_0_SIA_TN_INFRA2_501050_2024_109647648_-signed.pdf"
+      }
+    }
+  ]
+}

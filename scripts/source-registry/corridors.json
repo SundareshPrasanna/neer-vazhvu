@@ -1,0 +1,27 @@
+{
+  "_doc": "Headwaters source registry - CORRIDOR-SCOPE sources. Industrial corridors are a scope kind of their own (schemas/nvdm/scopes.json): they cut across taluks and firkas and their water evidence is regulatory-filing evidence, not utility or gauge evidence. Schema + design notes: docs/specs/headwaters.md (local). As with every other registry file, cadence and tier are DOCUMENTATION ONLY and do not gate polling - see the note in basins.json.",
+  "sources": [
+    {
+      "id": "parivesh-seiaa-tn-ec",
+      "scope": "sriperumbudur",
+      "publisher": "SEIAA Tamil Nadu / MoEFCC (Parivesh portal)",
+      "url": "https://parivesh.nic.in/",
+      "license": "LICENCE UNVERIFIED - see notes. Statutory clearance letters published by SEIAA-TN/MoEFCC for public transparency; cited with attribution, values carried as proponent assertions.",
+      "type": "api",
+      "cadence": "continuous (new EC proposals and letters posted as they are decided)",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/corridors/sriperumbudur/parivesh-ec-water.json"
+      ],
+      "refreshMethod": "scripts/fetch_parivesh_corridor_water.py (discover / download / extract / build); the VERIFIED transcription table in that script must be re-read against any newly added letter before build",
+      "notes": "LICENCE UNVERIFIED - FLAGGED FOR REVIEW. The Parivesh terms-of-use page renders client-side (the served HTML is an app shell with no terms text), so the portal's own terms were NOT read before this data entered the repo. What we rely on instead: these are statutory Environmental Clearance letters that the EIA Notification 2006 requires the regulator to publish, and the certificate PDFs are served unauthenticated from parivesh.nic.in. That is a reasonable basis for citation with attribution, NOT a verified licence grant, and it has not been cleared for any commercial/BRSR reuse. Resolve by reading the terms in a real browser or asking MoEFCC.\n\nCONTINUOUS, NOT EDITIONED: Parivesh publishes per-proposal, so there is no edition to watch - registered for lineage, licence and dependsOn accountability, never polled (P5-1). The freshness question is when we re-run discovery, not when the portal changes.\n\nAPI RECIPE (undocumented, verified 2026-07-31): GET /parivesh_api/trackYourProposal/advanceSearchData?majorClearanceType=1&state=33&text= returns ALL Tamil Nadu EC proposals (5,180 rows on 2026-07-31) - free-text search caps at 40 rows, so dump by state and filter locally. Granted ECs carry a direct certificate PDF url under certificate_url / certificateUrl / certificate_url1. POST /parivesh_api/proponentApplicant/getCafDataByProposalNo?proposal_no=<NO> with an empty JSON body returns the structured Common Application Form.\n\nEXTRACTION GOTCHA: the certificate PDF of a granted EC is NOT always the water-bearing document - 6 of the 19 pilot letters are amendment/corrigendum letters that restate no water table at all. Water figures for those facilities live in the parent EC, which may predate the certificate-url era. Never treat a missing water table as a missing water requirement.\n\nCLAIM BASIS: every figure is proponent-asserted regulatory filing data, as stated in the EC/EIA submission. Not metered, not audited. Several letters are internally inconsistent (stated totals that disagree with their own component rows); those are preserved verbatim and flagged, never reconciled.",
+      "lastSeen": {
+        "edition": "Tamil Nadu EC proposal dump + 19 corridor certificate letters",
+        "acceptedOn": "2026-07-31"
+      }
+    }
+  ]
+}
