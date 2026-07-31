@@ -47,8 +47,19 @@ Two extraction layers, deliberately separate:
 Usage:
     python3 scripts/fetch_parivesh_corridor_water.py discover   # state dump + corridor filter report
     python3 scripts/fetch_parivesh_corridor_water.py download   # certificate PDFs + CAF JSONs (network)
+    python3 scripts/fetch_parivesh_corridor_water.py refresh    # RE-CONTACT Parivesh, replace the archive
     python3 scripts/fetch_parivesh_corridor_water.py extract    # auto-extraction + variance report
     python3 scripts/fetch_parivesh_corridor_water.py build      # write the governed dataset
+
+`discover` and `download` are archive-first: once a file exists they never
+contact Parivesh again, which is what keeps re-runs polite and `build`
+reproducible offline. That also means they can never notice an upstream
+change, so `refresh` is the mode the registry documents: it re-fetches the
+state dump and every pilot document, replaces each atomically (temp file +
+rename, so a failed refresh cannot leave a truncated PDF behind), drops the
+stale pdftotext output, and reports which documents actually changed. Changed
+documents must be re-read by a human before `build` - the VERIFIED table is a
+transcription of specific letters, not a parser.
 """
 
 from __future__ import annotations
@@ -217,8 +228,8 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 37.0,
         "trade_effluent_kld": None,
-        "stp_capacity_kld": 45.0,
-        "etp_capacity_kld": None,
+        "stp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": 45.0},
+        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
         "water_source": "SIPCOT supply",
         "reuse_note": "Treated water 35 KLD reused: flushing 15 KLD, greenbelt 20 KLD; surplus nil.",
         "rwh": "1 recharge pit; 500 m3 rainwater harvesting sump.",
@@ -247,8 +258,8 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 111.0,
         "trade_effluent_kld": 125.0,
-        "stp_capacity_kld": 145.0,
-        "etp_capacity_kld": 145.0,
+        "stp": {"existing_kld": None, "proposed_kld": 145.0, "after_expansion_kld": 145.0},
+        "etp": {"existing_kld": None, "proposed_kld": 145.0, "after_expansion_kld": 145.0},
         "water_source": "Mambakkam SIPCOT",
         "reuse_note": (
             "Treated water available for reuse 225 KLD (flushing, greenbelt & process); "
@@ -333,8 +344,8 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 373.49,
         "trade_effluent_kld": 437.5,
-        "stp_capacity_kld": 200.0,
-        "etp_capacity_kld": 0.0,
+        "stp": {"existing_kld": 350.0, "proposed_kld": 200.0, "after_expansion_kld": 550.0},
+        "etp": {"existing_kld": 468.0, "proposed_kld": 0.0, "after_expansion_kld": 468.0},
         "water_source": "SIPCOT",
         "reuse_note": (
             "Treated water requirement 809.5 KLD: flushing 84.5, process 371.01, boiler makeup 20, "
@@ -344,26 +355,14 @@ VERIFIED: dict[str, dict] = {
         "rwh": "4 ponds & roof collection system; sump capacity nil.",
         "notes": [
             "Fresh breakdown as stated: domestic 321.1, flushing 0, gardening 130.01, process 42.99.",
+            "Treatment capacities are the letter's p.13 wastewater-management table, which states "
+            "the END STATE: sewage 373.49 KLD 'collected and treated in STP of 350 KLD + 200 KLD "
+            "(Proposed) = 550 KLD capacity', and effluent 437.5 KLD 'treated in 468 KLD ETP "
+            "capacity'. The salient-features rows 26/27 ('Proposed Capacity of STP 200, ETP 0') "
+            "are the INCREMENT this expansion adds, not the plant's capacity - reading them as "
+            "the end state manufactures two inconsistencies that are not in the letter.",
         ],
-        "review": [
-            {
-                "question": (
-                    "Letter states 'Proposed Capacity of ETP: 0 KLD' while also stating trade "
-                    "effluent generation 437.5 KLD and construction-phase mode of disposal "
-                    "'550 KLD Package STP & 468 KLD capacity of ETP' (p.3). Which ETP capacity "
-                    "stands for the operating plant?"
-                ),
-                "verbatim": (
-                    "'26. Proposed Capacity of STP 200 KLD; 27. Proposed Capacity of ETP 0 KLD' vs "
-                    "'18. Mode of Disposal: 550 KLD Package STP & 468 KLD capacity of ETP' (construction phase)"
-                ),
-                "page": "p.3 of SIA/TN/INFRA2/518129/2025 letter",
-                "best_interpretation": (
-                    "Existing plant already runs larger STP/ETP (550/468 KLD); the '200/0' rows "
-                    "describe only newly proposed units. Recorded as stated; confidence medium."
-                ),
-            }
-        ],
+        "review": [],
     },
     "SIA/TN/INFRA2/543039/2025": {
         "proponent": "India Yamaha Motor Private Limited",
@@ -405,8 +404,8 @@ VERIFIED: dict[str, dict] = {
         "wastewater_total_kld": 10874.256,
         "wastewater_domestic_kld": None,
         "trade_effluent_kld": None,
-        "stp_capacity_kld": 650.0,
-        "etp_capacity_kld": None,
+        "stp": {"existing_kld": None, "proposed_kld": 650.0, "after_expansion_kld": 650.0},
+        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
         "water_source": "SIPCOT",
         "reuse_note": "Treated water recycled: '1,87,500 (Flushing) + 260 (Gardening)' as printed.",
         "rwh": "50 recharge pits; 40,000 m3 rainwater harvesting pond.",
@@ -479,8 +478,8 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 23.0,
         "trade_effluent_kld": 8.1,
-        "stp_capacity_kld": 50.0,
-        "etp_capacity_kld": 10.0,
+        "stp": {"existing_kld": 50.0, "proposed_kld": 0.0, "after_expansion_kld": 50.0},
+        "etp": {"existing_kld": 8.1, "proposed_kld": None, "after_expansion_kld": 10.0},
         "water_source": "SIPCOT",
         "reuse_note": (
             "Treated water 30.6 KLD (STP 23 + ETP 7.6) reused: cooling tower 7.6, greenbelt 23; "
@@ -505,15 +504,15 @@ VERIFIED: dict[str, dict] = {
             "note": "Construction sewage 4.1 KLD to existing STP; treated water to greenbelt.",
         },
         "operation": {
-            "total_kld": 106.13,
-            "fresh_kld": None,
+            "total_kld": 159.11,
+            "fresh_kld": 106.13,
             "recycled_kld": 52.98,
             "purchased_treated_kld": None,
         },
         "wastewater_domestic_kld": 50.0,
         "trade_effluent_kld": 9.6,
-        "stp_capacity_kld": 44.0,
-        "etp_capacity_kld": None,
+        "stp": {"existing_kld": 44.0, "proposed_kld": 35.0, "after_expansion_kld": 79.0},
+        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
         "water_source": "SIPCOT & rainwater harvesting pond",
         "reuse_note": (
             "Treated water available for reuse 52.98 KLD (greenbelt 47.5, process 4.23, chillers "
@@ -525,41 +524,23 @@ VERIFIED: dict[str, dict] = {
             "'One Pond of 2000 KL'. The pond is also named as a fresh-water source in row 24."
         ),
         "notes": [
-            "STP: existing 44 KLD + additional 35 KLD stated as under installation per CTE "
-            "obtained 2024 (footnote on p.5). stp_capacity_kld carries the existing 44, the only "
-            "figure the letter states as a capacity; the stp_vs_sewage flag that follows (sewage "
-            "50 > STP 44) is the letter's own gap, closed on paper by the additional 35 KLD unit.",
-            "Row 22's 'Fresh water requirement' component list (domestic 50, flushing 0, process "
-            "5.37, greenbelt 50.76, chiller 0) sums to 106.13 - the TOTAL water figure, not a "
-            "fresh subtotal (existing parts 34.53 + 0 + 3.97 + 64.76 + 1 = 104.26, again the "
-            "existing total). This is why fresh water is treated as unstated here.",
-            "ETP capacity not stated as a number (prose: 'existing ETP (8.1 KLD)' refers to "
-            "effluent volume treated, not nameplate capacity); left null.",
+            "Operating figures are the letter's p.15 water-balance table and the narrative above "
+            "it: 'Total water requirement after expansion will be 159.11 KLD in which fresh water "
+            "is 106.13 KLD.' The p.15 table's Total row reads existing 104.26 fresh / 38.28 "
+            "recycled / 142.54 total and after-expansion 106.13 / 52.98 / 159.11.",
+            "The salient-features row 21 (pp.4-5) stacks three labels against only two numbers "
+            "(106.13 and 52.98) and so LOOKS like total 106.13 - the p.15 table is what "
+            "disambiguates it: 106.13 is fresh, 52.98 is recycled, and 159.11 is the total that "
+            "row 21 never prints. Row 22's component list (domestic 50, flushing 0, process 5.37, "
+            "greenbelt 50.76, chiller 0 = 106.13) is therefore a genuine FRESH breakdown, and its "
+            "existing parts (34.53 + 0 + 3.97 + 64.76 + 1 = 104.26) match the table's existing "
+            "fresh column exactly.",
+            "STP: existing 44 KLD, additional 35 KLD stated as under installation per CTE obtained "
+            "2024 (footnote on p.5), 79 KLD after expansion - which covers the 50 KLD of sewage.",
+            "ETP capacity not stated as a number (prose: 'existing ETP (8.1 KLD)' quotes the "
+            "effluent volume treated, not a nameplate); all three ETP fields left null.",
         ],
-        "review": [
-            {
-                "question": (
-                    "Row 21's continuation (p.5) prints one value '52.98 (existing: 38.28 & "
-                    "additional: 14.70)' against the label pair 'i. Fresh water requirement / "
-                    "i. Treated recycled water requirement'. Is 52.98 fresh or treated-recycled? "
-                    "If treated, the letter never states fresh (106.13 - 52.98 = 53.15 by "
-                    "subtraction, which the never-infer rule forbids recording)."
-                ),
-                "verbatim": (
-                    "'21. Total Water 106.13 (existing: 104.26 & additional: 1.87) | Requirement "
-                    "52.98 (existing: 38.28 & additional: 14.70) i. Fresh water requirement "
-                    "i. Treated recycled water requirement' ... '23. Treated Water Requirement "
-                    "47.5 (existing: 33.5 & additional: 14); i. Greenbelt 4.23; ii. Process 1.25'"
-                ),
-                "page": "pp.4-5 of SIA/TN/INFRA2/539591/2025 letter",
-                "best_interpretation": (
-                    "52.98 is the TREATED-recycled figure: row 23's components 47.5 + 4.23 + 1.25 "
-                    "= 52.98 and their existing parts 33.5 + 4.78 + 0 = 38.28 reproduce its "
-                    "decomposition exactly. Fresh therefore unstated (would be 53.15 by "
-                    "subtraction). Confidence high on 52.98 = treated; fresh left null."
-                ),
-            }
-        ],
+        "review": [],
     },
     "SIA/TN/INFRA2/501457/2024": {
         "proponent": "Indospace Park Oragadam V Phase 1 Private Limited",
@@ -576,8 +557,8 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 318.0,
         "trade_effluent_kld": None,
-        "stp_capacity_kld": 350.0,
-        "etp_capacity_kld": None,
+        "stp": {"existing_kld": None, "proposed_kld": 350.0, "after_expansion_kld": 350.0},
+        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
         "water_source": "Local body",
         "reuse_note": (
             "Treated sewage 318 KLD reused: toilet flushing 156, greenbelt & OSR 90, avenue "
@@ -624,8 +605,8 @@ VERIFIED: dict[str, dict] = {
         "wastewater_total_kld": 4537.0,
         "wastewater_domestic_kld": None,
         "trade_effluent_kld": None,
-        "stp_capacity_kld": 1815.0,
-        "etp_capacity_kld": 4400.0,
+        "stp": {"existing_kld": 1815.0, "proposed_kld": 0.0, "after_expansion_kld": 1815.0},
+        "etp": {"existing_kld": 4400.0, "proposed_kld": 0.0, "after_expansion_kld": 4400.0},
         "water_source": "SIPCOT lake water / HMIL pond",
         "reuse_note": "Treated water 4537 KLD; reused industrial usage 2547, greenbelt 1900.",
         "rwh": "No recharge-pit count stated; 3,35,000 m3 storage across 6 existing ponds.",
@@ -672,8 +653,8 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 80.0,
         "trade_effluent_kld": 27.0,
-        "stp_capacity_kld": 150.0,
-        "etp_capacity_kld": 40.0,
+        "stp": {"existing_kld": 60.0, "proposed_kld": 90.0, "after_expansion_kld": 150.0},
+        "etp": {"existing_kld": 7.0, "proposed_kld": 33.0, "after_expansion_kld": 40.0},
         "water_source": "Local body",
         "reuse_note": (
             "Treated water (STP 76 + ETP 26.97) reused: flushing 30, greenbelt & OSR 46."
@@ -705,8 +686,8 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 101.7,
         "trade_effluent_kld": 126.0,
-        "stp_capacity_kld": 120.0,
-        "etp_capacity_kld": 150.0,
+        "stp": {"existing_kld": None, "proposed_kld": 120.0, "after_expansion_kld": 120.0},
+        "etp": {"existing_kld": None, "proposed_kld": 150.0, "after_expansion_kld": 150.0},
         "water_source": "SIPCOT / TTRO Koyambedu (purchased tertiary-treated water)",
         "reuse_note": (
             "Letter's own summary: fresh 119 (SIPCOT), raw process water 890.7 (TTRO Koyambedu), "
@@ -750,8 +731,8 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 311.0,
         "trade_effluent_kld": None,
-        "stp_capacity_kld": 350.0,
-        "etp_capacity_kld": None,
+        "stp": {"existing_kld": None, "proposed_kld": 350.0, "after_expansion_kld": 350.0},
+        "etp": {"existing_kld": None, "proposed_kld": 0.0, "after_expansion_kld": 0.0},
         "water_source": "Ground water (borewell)",
         "reuse_note": "Treated water 311 KLD reused: flushing 152, greenbelt & OSR 159; surplus dash.",
         "rwh": "26 recharge pits; 1,300 m3 rainwater harvesting pond.",
@@ -786,8 +767,8 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 223.0,
         "trade_effluent_kld": None,
-        "stp_capacity_kld": 235.0,
-        "etp_capacity_kld": None,
+        "stp": {"existing_kld": 135.0, "proposed_kld": 100.0, "after_expansion_kld": 235.0},
+        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
         "water_source": "SIPCOT",
         "reuse_note": "Treated water 223 KLD reused: flushing 85, greenbelt 138; surplus 0.",
         "rwh": "40 recharge pits; 'RWH pond capacity - 1.6' as printed (unit column says M3).",
@@ -819,8 +800,8 @@ VERIFIED: dict[str, dict] = {
         },
         "wastewater_domestic_kld": 414.0,
         "trade_effluent_kld": None,
-        "stp_capacity_kld": 450.0,
-        "etp_capacity_kld": None,
+        "stp": {"existing_kld": None, "proposed_kld": 450.0, "after_expansion_kld": 450.0},
+        "etp": {"existing_kld": None, "proposed_kld": None, "after_expansion_kld": None},
         "water_source": "Local body",
         "reuse_note": "Treated sewage reused: flushing 156, greenbelt & OSR 256.",
         "rwh": "55 recharge pits; 2 rainwater harvesting ponds.",
@@ -839,9 +820,18 @@ def slug(proposal_no: str) -> str:
     return proposal_no.replace("/", "_")
 
 
-def fetch(url: str, dest: Path, post_json: bool = False) -> bool:
-    """Download url -> dest unless already archived. Returns True if fetched."""
-    if dest.exists() and dest.stat().st_size > 0:
+def fetch(url: str, dest: Path, post_json: bool = False, force: bool = False) -> bool:
+    """Download url -> dest. Returns True if a request was actually made.
+
+    Without `force` an already-archived file short-circuits the request, which
+    is what keeps re-runs polite and the build reproducible offline. With
+    `force` the file is re-fetched and replaced ATOMICALLY: the body lands in a
+    temp file beside the destination and is renamed over it only after the
+    whole response has been read. A refresh that dies mid-download therefore
+    leaves the previous archive intact rather than a truncated PDF that every
+    later run would treat as valid (`dest.exists()` cannot tell the two apart).
+    """
+    if dest.exists() and dest.stat().st_size > 0 and not force:
         return False
     dest.parent.mkdir(parents=True, exist_ok=True)
     if post_json:
@@ -854,20 +844,27 @@ def fetch(url: str, dest: Path, post_json: bool = False) -> bool:
     else:
         req = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=60) as resp:
-        dest.write_bytes(resp.read())
+        body = resp.read()
+    if not body:
+        raise RuntimeError(f"empty response body for {url} - refusing to replace {dest.name}")
+    tmp = dest.with_name(dest.name + ".part")
+    tmp.write_bytes(body)
+    tmp.replace(dest)  # atomic within the same directory
     time.sleep(SLEEP_S)
     return True
 
 
-def load_state_dump() -> list[dict]:
+STATE_DUMP_URL = (
+    f"{API}/trackYourProposal/advanceSearchData"
+    f"?majorClearanceType={EC_CLEARANCE}&state={STATE_TN}&text="
+)
+
+
+def load_state_dump(force: bool = False) -> list[dict]:
     f = CACHE / "tn-ec-proposals.json"
-    if not f.exists():
-        url = (
-            f"{API}/trackYourProposal/advanceSearchData"
-            f"?majorClearanceType={EC_CLEARANCE}&state={STATE_TN}&text="
-        )
-        print(f"fetching TN EC dump: {url}")
-        fetch(url, f)
+    if force or not f.exists():
+        print(f"fetching TN EC dump: {STATE_DUMP_URL}")
+        fetch(STATE_DUMP_URL, f, force=force)
     return json.loads(f.read_text())["data"]
 
 
@@ -875,8 +872,8 @@ def cert_url(row: dict) -> str | None:
     return row.get("certificate_url") or row.get("certificateUrl") or row.get("certificate_url1")
 
 
-def pilot_rows() -> list[tuple[dict, str]]:
-    rows = load_state_dump()
+def pilot_rows(force: bool = False) -> list[tuple[dict, str]]:
+    rows = load_state_dump(force=force)
     by_no: dict[str, list[dict]] = {}
     for r in rows:
         by_no.setdefault(r["proposalNo"], []).append(r)
@@ -906,23 +903,59 @@ def cmd_discover() -> None:
     print("(* = pilot cohort)")
 
 
-def cmd_download() -> None:
-    for row, label in pilot_rows():
+def cmd_download(force: bool = False) -> None:
+    """Archive the pilot cohort's certificate PDFs and CAF JSONs.
+
+    `force` (the `refresh` command) re-fetches everything and replaces it
+    atomically, and re-runs pdftotext so the extracted text can never be left
+    describing a superseded PDF.
+    """
+    rows = pilot_rows(force=force)
+    changed, unchanged = [], []
+    for row, label in rows:
         no = row["proposalNo"]
         url = cert_url(row)
         if not url:
             print(f"SKIP {no} ({label}): no certificate URL")
             continue
         pdf = CACHE / "pdf" / f"{slug(no)}.pdf"
-        if fetch(url, pdf):
-            print(f"fetched {no} certificate ({pdf.stat().st_size} bytes)")
+        before = pdf.read_bytes() if pdf.exists() else None
+        if fetch(url, pdf, force=force):
+            after = pdf.read_bytes()
+            if before is not None and before == after:
+                unchanged.append(no)
+                print(f"re-fetched {no} certificate - byte-identical ({len(after)} bytes)")
+            else:
+                changed.append(no)
+                verb = "fetched" if before is None else "REPLACED"
+                print(f"{verb} {no} certificate ({len(after)} bytes)")
+            # the cached text belongs to the PDF it came from
+            (CACHE / "txt" / f"{slug(no)}.txt").unlink(missing_ok=True)
         caf = CACHE / "caf" / f"{slug(no)}.json"
         caf_url = f"{API}/proponentApplicant/getCafDataByProposalNo?proposal_no={no}"
         try:
-            if fetch(caf_url, caf, post_json=True):
+            if fetch(caf_url, caf, post_json=True, force=force):
                 print(f"fetched {no} CAF")
         except Exception as e:  # CAF is nice-to-have archive material
             print(f"WARN {no}: CAF fetch failed: {e}")
+    if force:
+        print(
+            f"\nrefresh: {len(changed)} document(s) changed upstream, "
+            f"{len(unchanged)} byte-identical."
+        )
+        if changed:
+            print(
+                "CHANGED DOCUMENTS MUST BE RE-READ BY A HUMAN before `build`: the VERIFIED "
+                "table is a transcription of specific letters, and `build` will keep emitting "
+                "the old figures against the new PDFs until it is updated.\n  "
+                + "\n  ".join(changed)
+            )
+
+
+def cmd_refresh() -> None:
+    """Re-contact Parivesh and replace the archive (see cmd_download)."""
+    print("refreshing the Tamil Nadu EC state dump and the pilot cohort's documents...")
+    cmd_download(force=True)
 
 
 def pdf_text(no: str) -> str:
@@ -1032,38 +1065,75 @@ def auto_records() -> dict[str, dict]:
     return out
 
 
+# EVERY value the unattended extractor emits and can be judged against the
+# verified reading. Scoring only the five CORE_FIELDS understated the miss rate
+# (review 2026-07-31), so the map covers the extractor's whole numeric output.
 AUTO_FIELD_MAP = {
     "ec_date": lambda v: v.get("ec_date"),
+    "ec_identification_no": lambda v: v.get("ec_identification_no"),
+    "construction_water_kld": lambda v: (v.get("construction") or {}).get("water_kld"),
     "operation_total_kld": lambda v: (v.get("operation") or {}).get("total_kld"),
     "operation_fresh_kld": lambda v: (v.get("operation") or {}).get("fresh_kld"),
     "wastewater_domestic_kld": lambda v: v.get("wastewater_domestic_kld"),
-    "stp_capacity_kld": lambda v: v.get("stp_capacity_kld"),
+    "trade_effluent_kld": lambda v: v.get("trade_effluent_kld"),
+    # the auto row() takes the rightmost column on expansion layouts, i.e. the
+    # after-expansion capacity - so that is what it is judged against
+    "stp_capacity_kld": lambda v: (v.get("stp") or {}).get("after_expansion_kld"),
+    "etp_capacity_kld": lambda v: (v.get("etp") or {}).get("after_expansion_kld"),
 }
 
 
 def variance_report(auto: dict[str, dict]) -> tuple[list[dict], dict]:
+    """Score the unattended extractor against the verified reading.
+
+    A field counts as agreeing only when the two readings are IDENTICAL,
+    including when both are absent. Three ways to disagree, all equal:
+
+      - wrong   : both state a value and they differ
+      - missed  : the letter states a value the extractor did not find
+      - INVENTED: the extractor emits a number where the verified reading is
+        deliberately null because the letter states none
+
+    The invented case is the one that matters most and the one the first
+    version of this report hid: it excluded every field whose verified value
+    was null, so Knorr-Bremse scored "clean" while the extractor was reporting
+    a total water requirement (137 KLD) that its letter never states. An
+    extractor that invents is worse than one that misses - a miss is visible,
+    an invention looks like data.
+    """
     rows = []
     for no, _label in PILOT:
         v = VERIFIED[no]
         a = auto[no]
+        matches = {f: get(v) == a.get(f) for f, get in AUTO_FIELD_MAP.items()}
+        invented = sorted(
+            f for f, get in AUTO_FIELD_MAP.items() if get(v) is None and a.get(f) is not None
+        )
         if v["format"] == "no-water-table":
+            # For these the only question is whether the extractor correctly
+            # declined to report a water table; it is not asked to fill fields.
             klass = "absent"
-            matches = {"ec_date": a.get("ec_date") == v.get("ec_date")}
-        else:
             matches = {
-                f: AUTO_FIELD_MAP[f](v) == a.get(f)
-                for f in CORE_FIELDS
+                "ec_date": matches["ec_date"],
+                "no_water_table_detected": a.get("has_water_table") is False,
             }
-            # a field the letter itself does not state cannot count against
-            # the extractor
-            applicable = {f: m for f, m in matches.items() if AUTO_FIELD_MAP[f](v) is not None}
-            klass = "clean" if all(applicable.values()) else "manual"
-            matches = applicable
-        rows.append({"proposal_no": no, "format": v["format"], "class": klass, "auto_match": matches})
+            invented = []
+        else:
+            klass = "clean" if all(matches.values()) else "manual"
+        rows.append(
+            {
+                "proposal_no": no,
+                "format": v["format"],
+                "class": klass,
+                "auto_match": matches,
+                "auto_invented": invented,
+            }
+        )
     stats = {
         "clean": sum(1 for r in rows if r["class"] == "clean"),
         "manual": sum(1 for r in rows if r["class"] == "manual"),
         "absent": sum(1 for r in rows if r["class"] == "absent"),
+        "letters_with_invented_values": sum(1 for r in rows if r["auto_invented"]),
     }
     return rows, stats
 
@@ -1073,11 +1143,16 @@ def cmd_extract() -> None:
     rows, stats = variance_report(auto)
     for r in rows:
         misses = [f for f, ok in r["auto_match"].items() if not ok]
-        print(f"{r['proposal_no']} | {r['format']:20} | {r['class']:6} | auto-misses: {misses or '-'}")
+        inv = r["auto_invented"]
+        print(
+            f"{r['proposal_no']} | {r['format']:20} | {r['class']:6} | "
+            f"disagreements: {misses or '-'} | invented: {inv or '-'}"
+        )
     print(
         f"\nFormat variance: {stats['clean']} clean auto-extract, "
         f"{stats['manual']} needed manual handling, {stats['absent']} no water table "
-        f"(of {len(rows)} letters)"
+        f"(of {len(rows)} letters); {stats['letters_with_invented_values']} letters where the "
+        f"extractor INVENTED a value the letter does not state"
     )
 
 
@@ -1121,29 +1196,38 @@ def sanity_checks(v: dict) -> dict:
             checks["wastewater_not_above_intake"] = (
                 f"flag: stated wastewater {effective_ww} > stated total intake {total}"
             )
-    stp = v.get("stp_capacity_kld")
+    # Capacity checks compare like with like: the wastewater figures the
+    # letters state are the AFTER-EXPANSION volumes, so they are checked
+    # against the AFTER-EXPANSION capacity, never against the incremental
+    # "proposed" row. (Review 2026-07-31: comparing 373.49 KLD of sewage with
+    # Yamaha's newly-proposed 200 KLD STP manufactured a defect that is not in
+    # the letter - its end-state STP is 350 + 200 = 550 KLD.)
+    stp = (v.get("stp") or {}).get("after_expansion_kld")
     if stp is not None and ww is not None:
         checks["stp_vs_sewage"] = (
             "pass"
             if ww <= stp
-            else f"flag: stated sewage {ww} KLD exceeds stated STP capacity {stp} KLD"
+            else f"flag: stated sewage {ww} KLD exceeds stated after-expansion STP capacity {stp} KLD"
         )
-    etp = v.get("etp_capacity_kld")
+    etp = (v.get("etp") or {}).get("after_expansion_kld")
     te_stated = v.get("trade_effluent_kld")
     if etp is not None and te_stated is not None:
         checks["etp_vs_trade_effluent"] = (
             "pass"
             if te_stated <= etp
-            else f"flag: stated trade effluent {te_stated} KLD exceeds stated ETP capacity {etp} KLD"
+            else (
+                f"flag: stated trade effluent {te_stated} KLD exceeds stated after-expansion "
+                f"ETP capacity {etp} KLD"
+            )
         )
     if ww_all is not None:
-        cap = (stp or 0) + (v.get("etp_capacity_kld") or 0)
+        cap = (stp or 0) + (etp or 0)
         if cap >= ww_all:
             checks["treatment_capacity_vs_wastewater"] = "pass"
         else:
             checks["treatment_capacity_vs_wastewater"] = (
-                f"flag: stated treatment capacity {cap} KLD (STP+ETP rows) below stated "
-                f"wastewater {ww_all} KLD - the letter's table does not enumerate the "
+                f"flag: stated after-expansion treatment capacity {cap} KLD (STP+ETP) below "
+                f"stated wastewater {ww_all} KLD - the letter's table does not enumerate the "
                 f"remaining treatment train"
             )
     return checks
@@ -1192,6 +1276,7 @@ def cmd_build() -> None:
                 "format": v["format"],
                 "class": var["class"],
                 "auto_match": var["auto_match"],
+                "auto_invented": var["auto_invented"],
             },
             "provenance": {
                 "source_id": "parivesh-seiaa-tn-ec",
@@ -1207,8 +1292,8 @@ def cmd_build() -> None:
                 "wastewater_total_kld": v.get("wastewater_total_kld"),
                 "wastewater_domestic_kld": v.get("wastewater_domestic_kld"),
                 "trade_effluent_kld": v.get("trade_effluent_kld"),
-                "stp_capacity_kld": v.get("stp_capacity_kld"),
-                "etp_capacity_kld": v.get("etp_capacity_kld"),
+                "stp_capacity": v.get("stp"),
+                "etp_capacity": v.get("etp"),
                 "water_source": v.get("water_source"),
                 "reuse_note": v.get("reuse_note"),
                 "rwh": v.get("rwh"),
@@ -1286,10 +1371,26 @@ def cmd_build() -> None:
                     "phrase is absent from the letter, not that the obligation does not exist "
                     "elsewhere in law."
                 ),
+                "treatment_capacity": (
+                    "stp_capacity and etp_capacity carry existing_kld / proposed_kld / "
+                    "after_expansion_kld separately, because the SEIAA salient-features rows "
+                    "labelled 'Proposed Capacity of STP/ETP' are the INCREMENT an expansion "
+                    "adds, not the plant's end-state capacity. Conflating the two invents "
+                    "defects: Yamaha's rows read 200 KLD STP and 0 KLD ETP, while its own "
+                    "wastewater table states an end state of 350 + 200 = 550 KLD STP and a "
+                    "468 KLD ETP. Sanity checks compare stated wastewater against "
+                    "after_expansion_kld only"
+                ),
                 "checks": (
                     "sanity checks annotate, never alter: 'pass' or a 'flag: ...' string "
                     "quoting the letter's own figures. A flag is a property of the filing, "
                     "not of the transcription"
+                ),
+                "extraction_scoring": (
+                    "extraction.auto_match scores the unattended regex extractor against the "
+                    "verified reading across EVERY field it emits, counting three failures "
+                    "equally: wrong, missed, and INVENTED (a number emitted where the letter "
+                    "states none). extraction.auto_invented names the invented fields"
                 ),
             },
         },
@@ -1298,7 +1399,16 @@ def cmd_build() -> None:
             "clean_auto_extract": stats["clean"],
             "needed_manual_handling": stats["manual"],
             "no_water_table": stats["absent"],
+            "letters_with_invented_values": stats["letters_with_invented_values"],
             "letters_total": len(facilities),
+            "note": (
+                "Scored across every field the unattended extractor emits, counting wrong, "
+                "missed and INVENTED values equally. No letter in the cohort survives "
+                "unattended extraction. The measurement that decides scale is not the miss "
+                "rate but the invention rate: on 4 of the 13 water-bearing letters the "
+                "extractor emits a figure the letter does not state, which is indistinguishable "
+                "from data downstream."
+            ),
         },
         "facilities": facilities,
     }
@@ -1314,12 +1424,14 @@ def main() -> None:
         cmd_discover()
     elif cmd == "download":
         cmd_download()
+    elif cmd == "refresh":
+        cmd_refresh()
     elif cmd == "extract":
         cmd_extract()
     elif cmd == "build":
         cmd_build()
     else:
-        sys.exit(f"unknown command {cmd!r} (discover | download | extract | build)")
+        sys.exit(f"unknown command {cmd!r} (discover | download | refresh | extract | build)")
 
 
 if __name__ == "__main__":
