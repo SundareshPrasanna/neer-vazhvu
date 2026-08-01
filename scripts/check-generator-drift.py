@@ -425,6 +425,52 @@ def _targets_an_artifact(src: str, target: str, arts: list[str]) -> bool:
     return True
 
 
+# schemas/nvdm/envelope.schema.json $defs.envelope.required. An `nvdm` token
+# nested somewhere in a payload is not an envelope: a FeatureCollection with
+# metadata.nvdm still loses provenance, scope and lineage on write.
+ENVELOPE_REQUIRED = {"nvdm", "dataset", "scope", "provenance"}
+
+
+def _toplevel_keys(literal: str) -> set[str]:
+    """Keys at depth 1 of an object literal, quoted or bare (JS and Python)."""
+    text = literal.strip()
+    if not text.startswith("{"):
+        return set()
+    keys: set[str] = set()
+    depth = 0
+    i = 0
+    while i < len(text):
+        c = text[i]
+        if c in "{[(":
+            depth += 1
+        elif c in "}])":
+            depth -= 1
+            if depth == 0:
+                break
+        elif c in "\"'" and depth == 1:
+            q = c
+            j = text.find(q, i + 1)
+            if j == -1:
+                break
+            k = j + 1
+            while k < len(text) and text[k] in " \t\n":
+                k += 1
+            if k < len(text) and text[k] == ":":
+                keys.add(text[i + 1 : j])
+            i = j
+        elif depth == 1 and (c.isalpha() or c == "_"):
+            m = re.match(r"[A-Za-z_]\w*", text[i:])
+            if m:
+                k = i + m.end()
+                while k < len(text) and text[k] in " \t\n":
+                    k += 1
+                if k < len(text) and text[k] == ":":
+                    keys.add(m.group(0))
+                i = k - 1
+        i += 1
+    return keys
+
+
 def _assignment_values(src: str, name: str) -> list[str]:
     """Every right-hand side assigned to `name`, whole-value not first-line.
 
@@ -502,7 +548,7 @@ def _emits_envelope(src: str, open_paren: int) -> bool:
             if not expr or expr in seen:
                 continue
             seen.add(expr)
-            if '"nvdm"' in expr or "nvdm:" in expr or "'nvdm'" in expr:
+            if ENVELOPE_REQUIRED <= _toplevel_keys(expr):
                 return True
             for ident in set(re.findall(r"[A-Za-z_]\w*", expr)):
                 nxt.extend(_assignment_values(src, ident))
