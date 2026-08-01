@@ -37,8 +37,6 @@ import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(REPO / "scripts"))
-from nvdm_write import write_artifact  # noqa: E402
 from typing import Any
 
 try:
@@ -53,6 +51,10 @@ except ImportError:
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 DEFAULT_PDF_DIR = REPO_ROOT / "docs" / "cpcb"
 OUTPUT_PATH = REPO_ROOT / "public" / "data" / "river-quality-madurai.json"
 
