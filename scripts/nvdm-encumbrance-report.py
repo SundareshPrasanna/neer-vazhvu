@@ -1012,17 +1012,27 @@ def selftest() -> int:
     # internal_inputs and the empty-source rules.
     results, audit_errors, unclassified = assess_corpus()
     by = {r["path"]: r for r in results}
+    docs_for_selftest = {
+        r["path"]: (json.loads((ROOT / r["path"]).read_text()).get("provenance") or {})
+        for r in results
+        if r["path"].startswith("public/data/ward-risk-")
+    }
 
     # ward-risk-delhi declares no sources of its own: whatever bucket it lands
-    # in is inherited wholly through internal_inputs. DPCC's restricted terms
-    # reach it that way, and its audited derived-facts rights determination
-    # then clears exactly that contribution - leaving the OpenStreetMap
-    # share-alike, which no rights determination is allowed to touch. Both
-    # halves of that sentence are under test here.
+    # in is inherited wholly through internal_inputs. It carries NO rights
+    # determination of its own: DPCC reaches it only via delhi-ward-profiles,
+    # whose determination clears the restriction before it can propagate, so
+    # nothing restricted ever arrives here. What is left is the OpenStreetMap
+    # share-alike, which no determination anywhere is allowed to touch.
     r = by.get("public/data/ward-risk-delhi.json")
     check(
-        "ward-risk-delhi inherits share-alike, restricted cleared by determination",
+        "ward-risk-delhi inherits share-alike through an already-cleared parent",
         r is not None and r["status"] == "share-alike",
+    )
+    check(
+        "ward-risk-delhi carries no determination of its own",
+        "rights_determination"
+        not in (docs_for_selftest.get("public/data/ward-risk-delhi.json") or {}),
     )
     r = by.get("public/data/river-quality-madurai.json")
     check(

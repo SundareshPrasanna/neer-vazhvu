@@ -35,6 +35,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
+from registry_license import registry_license
 from shapely.geometry import box, shape
 from shapely.ops import unary_union
 
@@ -351,7 +352,8 @@ def main():
         },
         "storage_bucket": SATELLITE_EVIDENCE_BUCKET if args.upload else None,
         "license": (
-            "Landsat: USGS public domain. Sentinel-2: Copernicus open licence. "
+            f"Landsat: {registry_license('usgs-landsat')}. "
+            f"Sentinel-2: {registry_license('sentinel-2-l2a')}. "
             "NICFI: when added, Planet Labs PBC under NICFI public licence."
         ),
         "chips": chips,

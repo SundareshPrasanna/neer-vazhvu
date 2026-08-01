@@ -179,7 +179,10 @@ NIVAR_2020 = {
     "title": "OpenCity dataset chennai-floods-2020-data (Cyclone Nivar flooded neighbourhoods)",
     "publisher": "GCC / OpenCity",
     "url": "https://data.opencity.in/dataset/chennai-floods-2020-data",
-    "license": "open (per OpenCity dataset page)",
+    # Closed source, no registry id, so the licence stays inline. Wording
+    # matched to the reviewed OpenCity form: the CKAN metadata is evidence
+    # of a label, not a finding that the material is open.
+    "license": "portal label only (OpenCity dataset page); no upstream grant established",
     "closed": True,
     "as_of": "2020-11",
 }

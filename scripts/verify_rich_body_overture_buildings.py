@@ -30,6 +30,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from registry_license import registry_license
 from nvdm_write import write_artifact
 
 import duckdb
@@ -187,7 +188,7 @@ def main():
             "dataset": f"Overture Maps Foundation - buildings ({release})",
             "release_date": release.split(".")[0],
             "url_root": overture_url,
-            "license": "CDLA-Permissive 2.0",
+            "license": registry_license("overture-buildings"),
             "method": (
                 "Per-building polygon download via DuckDB+spatial+httpfs query on the "
                 "Overture parquet release filtered by chip bbox. Buildings counted "

@@ -25,6 +25,9 @@ import re
 import statistics
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from registry_license import registry_license  # noqa: E402
+
 from nvdm_write import write_artifact
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -246,7 +249,7 @@ def main():
         "_source": {
             "name": "OpenCity Bengaluru Tanker Water Data",
             "url": "https://data.opencity.in/dataset/bengaluru-tanker-water-data",
-            "license": "CC BY-NC-SA 4.0",
+            "license": registry_license("opencity-bengaluru-tanker-survey"),
             "extracted": "2026-05-24",
         },
         "_2025_context": {
