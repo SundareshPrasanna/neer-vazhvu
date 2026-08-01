@@ -7,7 +7,7 @@
  * Output: public/geojson/chennai-industrial-zones.geojson
  */
 
-import { writeFileSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { join } from "path";
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
@@ -189,7 +189,7 @@ async function main() {
   const geojson = { type: "FeatureCollection", features };
 
   const outPath = join(process.cwd(), "public/geojson/chennai-industrial-zones.geojson");
-  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+  writeArtifact(outPath, geojson);
 
   console.log(`\nSaved to ${outPath}`);
   const totalAreaHa = features.reduce((sum, f) => sum + f.properties.area_ha, 0);

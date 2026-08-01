@@ -19,6 +19,11 @@ import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from nvdm_write import write_artifact  # noqa: E402
+
 NS = {"kml": "http://www.opengis.net/kml/2.2"}
 
 # Material codes from sewer-codes.txt
@@ -268,8 +273,7 @@ def main():
     }
 
     out_path = OUT_DIR / "chennai-sewerage.geojson"
-    with open(out_path, "w") as f:
-        json.dump(geojson, f)
+    write_artifact(out_path, geojson, compact=True)
 
     size_mb = os.path.getsize(out_path) / 1024 / 1024
     print(f"\n=== Output ===")

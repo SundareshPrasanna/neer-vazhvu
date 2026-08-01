@@ -9,7 +9,7 @@
  * Output: public/geojson/chennai-rivers.geojson
  */
 
-import { writeFileSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { join } from "path";
 
 const OVERPASS_URL = "https://overpass.kumi.systems/api/interpreter";
@@ -381,7 +381,7 @@ async function main() {
   };
 
   const outPath = join(process.cwd(), "public/geojson/chennai-rivers.geojson");
-  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+  writeArtifact(outPath, geojson);
 
   console.log(`\nWrote ${features.length} river features to public/geojson/chennai-rivers.geojson`);
   console.log("Rivers found:", features.map((f) => f.properties.river_id).join(", "));

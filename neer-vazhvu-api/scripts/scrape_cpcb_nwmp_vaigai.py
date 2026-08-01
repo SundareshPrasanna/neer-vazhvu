@@ -36,6 +36,9 @@ import json
 import re
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 from typing import Any
 
 try:
@@ -340,7 +343,7 @@ def main() -> int:
     seed["last_updated"] = str(max(captured_years))
     seed["data_year_range"] = [min(captured_years), max(captured_years)]
 
-    Path(args.output).write_text(json.dumps(seed, indent=2, ensure_ascii=False))
+    write_artifact(Path(args.output), seed)
     print(f"\nWrote {args.output}")
     print(f"  Years covered: {captured_years}")
     counts = {sid: len(s["readings"]) for sid, s in by_id.items()}

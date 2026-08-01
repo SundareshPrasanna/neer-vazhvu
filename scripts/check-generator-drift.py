@@ -119,40 +119,54 @@ INLINE_LICENCE_ALLOWLIST = {
     "published report, registration-gated download, cited with attribution",
     # TypeScript one-offs, same rule.
     "GoTN delimitation record, cited with attribution ",
-    "Public data from Tamil Nadu State Wetland Authority portal",
-    "ODbL",
+    # REMOVED 2026-08-01: "ODbL" and "Public data from Tamil Nadu State Wetland
+    # Authority portal" sat here and should never have. Their artifacts DECLARE
+    # osm-overpass and tnswa-ramsar-boundary, so the allowlist was excusing
+    # exactly the case it exists to catch. Both producers now call
+    # registryLicense(). An entry belongs here only when the source it describes
+    # has no registry id at all.
 }
 
 
+# `license: "..."` / `"license": "..."` / `'licence': '...'` in ANY language.
+# The Python-only version of this rule is why the TypeScript "ODbL" literal in
+# fetch-rich-body-polygon.ts survived: the scan simply never opened a .ts file.
+TEXT_LICENCE_LITERAL = re.compile(
+    r"""["']?(?:license|licence)["']?\s*:\s*(?P<q>["'])(?P<val>(?:(?!(?P=q)).)*)(?P=q)""",
+    re.S,
+)
+
+
 def literal_allowlist_errors() -> list[str]:
-    """Any licence STRING LITERAL in a generator must be a decided one-off."""
+    """Any licence STRING LITERAL in a generator must be a decided one-off.
+
+    Language-agnostic on purpose. A licence literal is the same mistake in
+    Python, TypeScript, JSON-in-a-heredoc or anything else a producer is
+    written in, and a rule that only reads one language is a rule that fails
+    the moment somebody writes the next producer in the other one.
+    """
     errs: list[str] = []
     for d in GENERATOR_DIRS:
-        for p in sorted((ROOT / d).rglob("*.py")):
+        for p in sorted(ROOT.joinpath(d).rglob("*")):
+            if p.suffix not in (".py", ".ts", ".tsx", ".js", ".mjs") or not p.is_file():
+                continue
             if p.name in EXEMPT:
                 continue
-            try:
-                tree = ast.parse(p.read_text())
-            except SyntaxError:
-                continue
-            for node in ast.walk(tree):
-                if not isinstance(node, ast.Dict):
+            src = p.read_text()
+            for m in TEXT_LICENCE_LITERAL.finditer(src):
+                val = m.group("val")
+                if not val or val in INLINE_LICENCE_ALLOWLIST:
                     continue
-                for k, v in zip(node.keys, node.values):
-                    if not (
-                        isinstance(k, ast.Constant) and k.value in ("license", "licence")
-                    ):
-                        continue
-                    if not (isinstance(v, ast.Constant) and isinstance(v.value, str)):
-                        continue
-                    if v.value in INLINE_LICENCE_ALLOWLIST:
-                        continue
-                    errs.append(
-                        f"{p.relative_to(ROOT)}:{v.lineno}: licence string literal "
-                        f"{v.value[:60]!r} - if it describes a REGISTERED source use "
-                        f"registry_license(); if the source has no registry id, add it "
-                        f"to INLINE_LICENCE_ALLOWLIST with a reason"
-                    )
+                line = src[: m.start()].count("\n") + 1
+                helper = (
+                    "registryLicense()" if p.suffix != ".py" else "registry_license()"
+                )
+                errs.append(
+                    f"{p.relative_to(ROOT)}:{line}: licence string literal "
+                    f"{val[:60]!r} - if it describes a REGISTERED source use "
+                    f"{helper}; if the source has no registry id, add it to "
+                    f"INLINE_LICENCE_ALLOWLIST with a reason"
+                )
     return errs
 
 
@@ -322,6 +336,75 @@ def legacy_licence_errors() -> tuple[list[str], int]:
     return errs, checked
 
 
+# Writers that preserve an existing envelope, or emit a complete one.
+ENVELOPE_SAFE_TOKENS = ("writeArtifact", "write_artifact", "merge_envelope")
+# A write that replaces a file wholesale.
+BARE_WRITE = re.compile(
+    r"(writeFileSync\s*\(|\.write_text\s*\(|json\.dump\s*\(|\.writeFile\s*\()"
+)
+
+# Producers allowed to write bare, with the reason. Empty today: every producer
+# of an enveloped artifact either preserves the envelope or emits its own.
+ENVELOPE_WRITE_ALLOWLIST: dict[str, str] = {}
+
+
+def envelope_destruction_errors() -> tuple[list[str], int]:
+    """A refresh must not replace an enveloped artifact with a bare payload.
+
+    A DIFFERENT failure class from licence drift, and a worse one. A wrong
+    licence string is visible and classifies loudly; an absent envelope is
+    silent - the file simply stops appearing on the conformance ladder, taking
+    provenance, sources, scope and lineage with it.
+
+    scripts/fetch-rich-body-polygon.ts wrote
+    `writeFileSync(path, JSON.stringify({type, features}))` over 40 enveloped
+    artifacts. Nothing in this repo noticed, because every check so far asked
+    what a producer SAYS about licences, never what it does to the wrapper.
+
+    A producer is safe if it writes through an envelope-preserving helper, or
+    emits a complete envelope itself (the ward-profiles pattern).
+    """
+    errs: list[str] = []
+    checked = 0
+    producers: dict[str, list[str]] = {}
+    for top in ("public/data", "public/geojson"):
+        for p in sorted((ROOT / top).rglob("*")):
+            if p.suffix not in (".json", ".geojson") or not p.is_file():
+                continue
+            try:
+                doc = json.loads(p.read_text())
+            except Exception:
+                continue
+            if not isinstance(doc, dict) or "nvdm" not in doc:
+                continue
+            pb = ((doc.get("provenance") or {}).get("produced_by") or "").strip()
+            if pb:
+                producers.setdefault(pb.split()[0], []).append(str(p.relative_to(ROOT)))
+
+    for script, arts in sorted(producers.items()):
+        f = ROOT / script
+        if not f.exists() or not f.is_file():
+            continue
+        checked += 1
+        src = f.read_text()
+        if any(t in src for t in ENVELOPE_SAFE_TOKENS):
+            continue
+        if '"nvdm"' in src or "nvdm:" in src:
+            continue  # emits its own complete envelope
+        if not BARE_WRITE.search(src):
+            continue
+        if script in ENVELOPE_WRITE_ALLOWLIST:
+            continue
+        errs.append(
+            f"{script}: writes {len(arts)} enveloped artifact(s) without an "
+            f"envelope-preserving writer - the next refresh replaces the NVDM "
+            f"wrapper with a bare payload and silently drops "
+            f"{'them' if len(arts) > 1 else 'it'} off the conformance ladder. "
+            f"Use writeArtifact()/write_artifact(), or emit a complete envelope"
+        )
+    return errs, checked
+
+
 def inventory() -> None:
     producers: dict[str, list[str]] = {}
     for top in ("public/data", "public/geojson"):
@@ -355,7 +438,8 @@ def main(argv: list[str]) -> int:
     errs = python_literal_errors() + ts_literal_errors() + literal_allowlist_errors()
     det_errs, det_ok = determination_errors()
     legacy_errs, legacy_checked = legacy_licence_errors()
-    errs += det_errs + legacy_errs
+    env_errs, env_checked = envelope_destruction_errors()
+    errs += det_errs + legacy_errs + env_errs
     if errs:
         print("generator-drift gate FAILED:")
         for e in errs:
@@ -369,7 +453,8 @@ def main(argv: list[str]) -> int:
     print(
         f"generator-drift gate OK: no generator hardcodes a registered source's "
         f"licence; {len(det_ok)} rights determinations are emitted by their "
-        f"producer; {legacy_checked} legacy licence fields agree with their envelope"
+        f"producer; {legacy_checked} legacy licence fields agree with their "
+        f"envelope; {env_checked} producers preserve the envelopes they write"
     )
     return 0
 

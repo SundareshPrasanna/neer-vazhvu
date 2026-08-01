@@ -20,6 +20,9 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from nvdm_write import write_artifact  # noqa: E402
+
 KML_NS = {"k": "http://www.opengis.net/kml/2.2"}
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
@@ -162,8 +165,8 @@ def main() -> None:
 
     profiles.sort(key=lambda p: p["ward_number"])
 
-    GEOJSON_OUT.write_text(json.dumps({"type": "FeatureCollection", "features": features}))
-    PROFILES_OUT.write_text(json.dumps(profiles, indent=2))
+    write_artifact(GEOJSON_OUT, {"type": "FeatureCollection", "features": features}, compact=True)
+    write_artifact(PROFILES_OUT, profiles)
     print(f"Wrote {len(features)} features to {GEOJSON_OUT}")
     print(f"Wrote {len(profiles)} ward profiles to {PROFILES_OUT}")
 

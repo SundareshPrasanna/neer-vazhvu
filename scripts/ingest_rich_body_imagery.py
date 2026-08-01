@@ -34,6 +34,9 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from nvdm_write import write_artifact  # noqa: E402
+
 from dotenv import load_dotenv
 from registry_license import registry_license
 from shapely.geometry import box, shape
@@ -361,7 +364,7 @@ def main():
     # `manifest_path` was already defined earlier (top of main) for the
     # existing-manifest read; reuse it for the write.
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    manifest_path.write_text(json.dumps(manifest, indent=2))
+    write_artifact(manifest_path, manifest)
     print(f"Wrote manifest: {manifest_path}")
 
 

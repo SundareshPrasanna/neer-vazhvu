@@ -5,7 +5,7 @@
  * Run: npx tsx scripts/fetch-water-bodies-osm.ts
  */
 
-import { writeFileSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { join } from "path";
 
 // Chennai metropolitan area bounding box: south, west, north, east
@@ -223,7 +223,7 @@ async function main() {
     process.cwd(),
     "public/geojson/chennai-water-bodies-current.geojson"
   );
-  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+  writeArtifact(outPath, geojson);
   console.log(`\nSaved ${features.length} features to ${outPath}`);
 
   // Summary stats

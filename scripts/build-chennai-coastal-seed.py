@@ -33,7 +33,11 @@ Run:  python scripts/build-chennai-coastal-seed.py
 """
 
 import collections
+from pathlib import Path
 import json
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from nvdm_write import write_artifact  # noqa: E402
 import math
 import os
 import urllib.request
@@ -369,8 +373,7 @@ def main():
         ("chennai-coastal-hotspots", hotspots_fc),
     ]:
         path = os.path.join(OUT_DIR, f"{name}.geojson")
-        with open(path, "w") as fh:
-            json.dump(fc, fh, separators=(",", ":"))
+        write_artifact(Path(path), fc, compact=True)
         print(f"  wrote {path} ({len(fc['features'])} features)")
 
 
