@@ -415,13 +415,7 @@ def _targets_an_artifact(src: str, target: str, arts: list[str]) -> bool:
             if not root:
                 continue
             # Match plain, const/let/var and typed declarations in either language.
-            for m in re.finditer(
-                rf"(?:^|\b)(?:const|let|var)?\s*{re.escape(root.group(1))}"
-                rf"(?:\s*:\s*[\w<>\[\]\.]+)?\s*=\s*(.+)$",
-                src,
-                re.M,
-            ):
-                nxt.append(m.group(1).strip())
+            nxt.extend(_assignment_values(src, root.group(1)))
         if not nxt:
             break
         frontier = nxt
@@ -431,23 +425,91 @@ def _targets_an_artifact(src: str, target: str, arts: list[str]) -> bool:
     return True
 
 
+def _assignment_values(src: str, name: str) -> list[str]:
+    """Every right-hand side assigned to `name`, whole-value not first-line.
+
+    `const wrapped = {\\n  nvdm: "1.0", ...\\n}` spans many lines; capturing only
+    to the newline sees `{` and concludes nothing, which is how a producer that
+    plainly emits an envelope looked like one that erases it.
+    """
+    out: list[str] = []
+    pat = re.compile(
+        rf"(?:^|\b)(?:const|let|var)?\s*{re.escape(name)}"
+        rf"(?:\s*:\s*[\w<>\[\]\.]+)?\s*=\s*",
+        re.M,
+    )
+    for m in pat.finditer(src):
+        i = m.end()
+        while i < len(src) and src[i] in " \t":
+            i += 1
+        if i < len(src) and src[i] in "{[(":
+            pairs = {"{": "}", "[": "]", "(": ")"}
+            opener, closer, depth = src[i], pairs[src[i]], 0
+            for j in range(i, len(src)):
+                if src[j] == opener:
+                    depth += 1
+                elif src[j] == closer:
+                    depth -= 1
+                    if depth == 0:
+                        out.append(src[i : j + 1])
+                        break
+        else:
+            out.append(src[i : src.find("\n", i) if "\n" in src[i:] else len(src)])
+    return out
+
+
+def _call_args(src: str, open_paren: int) -> str:
+    """Text between `open_paren` and its match, or "" if unbalanced."""
+    depth = 0
+    for i in range(open_paren, len(src)):
+        if src[i] == "(":
+            depth += 1
+        elif src[i] == ")":
+            depth -= 1
+            if depth == 0:
+                return src[open_paren : i + 1]
+    return ""
+
+
 def _safe_within_call(src: str, open_paren: int) -> bool:
     """Does the argument list starting at `open_paren` contain a safe writer?
 
-    Scans to the matching close paren so the verdict is about THIS call and not
-    the file. `path.write_text(json.dumps(merge_envelope(path, out)))` is safe;
-    a `writeFileSync` elsewhere in the same file is not made safe by it.
+    Scoped to THIS call, not the file. `path.write_text(json.dumps(
+    merge_envelope(path, out)))` is safe; a `writeFileSync` elsewhere in the
+    same file is not made safe by it.
     """
-    depth = 0
-    for i in range(open_paren, len(src)):
-        c = src[i]
-        if c == "(":
-            depth += 1
-        elif c == ")":
-            depth -= 1
-            if depth == 0:
-                return any(t in src[open_paren : i + 1] for t in ENVELOPE_SAFE_TOKENS)
-    return False  # unbalanced: treat as unsafe rather than pass on a parse failure
+    args = _call_args(src, open_paren)
+    return bool(args) and any(t in args for t in ENVELOPE_SAFE_TOKENS)
+
+
+def _emits_envelope(src: str, open_paren: int) -> bool:
+    """Does THIS write emit a complete envelope of its own?
+
+    Per write call, never per file. A producer with two outputs - one that
+    builds `{"nvdm": "1.0", ...}` and one that writes a bare FeatureCollection -
+    used to have both exempted by the first, which is a silent envelope wipe on
+    the second. Follows the payload's assignments a few hops, so a `doc` built
+    above the write still counts.
+    """
+    args = _call_args(src, open_paren)
+    if not args:
+        return False  # unparseable: do not exempt
+    seen: set[str] = set()
+    frontier = [args]
+    for _ in range(4):
+        nxt: list[str] = []
+        for expr in frontier:
+            if not expr or expr in seen:
+                continue
+            seen.add(expr)
+            if '"nvdm"' in expr or "nvdm:" in expr or "'nvdm'" in expr:
+                return True
+            for ident in set(re.findall(r"[A-Za-z_]\w*", expr)):
+                nxt.extend(_assignment_values(src, ident))
+        if not nxt:
+            break
+        frontier = nxt
+    return False
 
 
 def envelope_destruction_errors() -> tuple[list[str], int]:
@@ -489,10 +551,8 @@ def envelope_destruction_errors() -> tuple[list[str], int]:
             continue
         checked += 1
         src = f.read_text()
-        if '"nvdm"' in src or "nvdm:" in src:
-            continue  # emits its own complete envelope
         if script in ENVELOPE_WRITE_ALLOWLIST:
-            continue
+            continue  # a recorded human decision, per producer by design
 
         # Per-write-site, never per-file. A producer that calls a safe writer
         # somewhere is not thereby safe everywhere: one writeArtifact() beside
@@ -504,6 +564,8 @@ def envelope_destruction_errors() -> tuple[list[str], int]:
         for m in BARE_WRITE.finditer(src):
             if _safe_within_call(src, m.end() - 1):
                 continue  # this call wraps merge_envelope/write_artifact
+            if _emits_envelope(src, m.end() - 1):
+                continue  # this call writes a complete envelope of its own
             if not _targets_an_artifact(src, _write_target(src, m), arts):
                 continue  # writes a cache or side file, not an enveloped artifact
             sites.append((src.count("\n", 0, m.start()) + 1, m.group(1).rstrip("( ")))
