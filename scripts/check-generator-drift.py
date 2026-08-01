@@ -43,9 +43,36 @@ checks it for every producer at once, offline and deterministically:
      f-string or a separate config file, because all of them have to come out
      here eventually.
 
-Rules 1-2 need no producer run; rule 3 needs no producer at all. All three
-cover producers CI can never execute. Run with --list to see the producer
-inventory and which ones have real regeneration-diff coverage.
+  4. A LICENCE LITERAL ANYWHERE IN A GENERATOR must be a decided one-off, in
+     any language. The Python-only version of rule 1 is why a TypeScript
+     `license: "ODbL"` survived a full sweep.
+
+  5. NO PRODUCER MAY ERASE THE ENVELOPE IT REFRESHES. A different failure class
+     from licence drift and a worse one: fetch-rich-body-polygon.ts wrote a
+     bare `{type, features}` over 40 enveloped artifacts, which would have
+     deleted provenance, sources, scope and lineage outright. A wrong licence
+     argues with itself loudly; an absent envelope is silent.
+
+  6. AN ENVELOPE'S INLINE LICENCE MUST EQUAL THE REGISTRY'S, and where a path
+     names a city the scope must be that city. Both come from running the
+     coverage experiment below rather than from reasoning.
+
+WHAT THIS DOES NOT CATCH. Measured, not assumed - scripts in the PR history
+inject each fault into a real artifact and check whether any gate fails:
+
+  - `provenance.sources` emptied on an artifact that still has internal_inputs.
+    Lineage keeps its bucket, and validate_nvdm deliberately accepts an empty
+    source array backed by produced_by. Detecting it needs a baseline of what
+    the file used to declare, which no gate here has.
+  - scope wrong on a path that does not name a city (the Chennai-by-default
+    files). Rule 6 covers 142 of 363 artifacts.
+  - payload VALUES drifting - a producer computing a different number. Nothing
+    here reads values, and only the four regeneration-diffed producers would
+    catch it.
+
+Rules 1-2 and 4-5 need no producer run; rules 3 and 6 need no producer at all.
+Run with --list to see the producer inventory and which ones have real
+regeneration-diff coverage.
 
 Stdlib only.
 """
@@ -405,6 +432,95 @@ def envelope_destruction_errors() -> tuple[list[str], int]:
     return errs, checked
 
 
+def envelope_licence_errors() -> tuple[list[str], int]:
+    """An envelope's inline licence must equal the registry's, corpus-wide.
+
+    validate_nvdm.py has enforced this per artifact since the envelopes were
+    reconciled, but only as an L2 demotion - and `validate_nvdm.py --check`
+    with no target arguments checks nothing at all and exits 0, which is how I
+    came to report it as passing verification twice. The rule needs somewhere
+    that actually fails the build over the WHOLE corpus, so here it is.
+    """
+    errs: list[str] = []
+    checked = 0
+    for top in ("public/data", "public/geojson"):
+        for p in sorted((ROOT / top).rglob("*")):
+            if p.suffix not in (".json", ".geojson") or not p.is_file():
+                continue
+            try:
+                doc = json.loads(p.read_text())
+            except Exception:
+                continue
+            if not isinstance(doc, dict) or "nvdm" not in doc:
+                continue
+            for s in (doc.get("provenance") or {}).get("sources") or []:
+                if not isinstance(s, dict):
+                    continue
+                sid, have = s.get("id"), s.get("license")
+                if not sid or have is None:
+                    continue
+                if sid not in REG:
+                    errs.append(
+                        f"{p.relative_to(ROOT)}: source '{sid}' is not in the registry"
+                    )
+                    continue
+                checked += 1
+                if REG[sid] != have:
+                    errs.append(
+                        f"{p.relative_to(ROOT)}: source '{sid}' records "
+                        f"{have[:50]!r} but the registry says {REG[sid][:50]!r} - "
+                        f"the registry is authoritative for a registered source"
+                    )
+    return errs, checked
+
+
+def scope_path_errors() -> tuple[list[str], int]:
+    """Where a path names a city, the envelope's scope must be that city.
+
+    The empirical coverage test found a producer could write scope.id "chennai"
+    into a Delhi artifact and nothing would notice: the catalogue is derived
+    FROM the file, so both agree afterwards, and any registered city id passes
+    the enum. An independent expectation is needed, and the file path is the
+    one we have.
+
+    Partial by construction: it only fires where the path carries a city id, so
+    the Chennai-by-default files (ward-profiles.json and friends) are not
+    covered. 142 of 363 artifacts are, which is better than none.
+    """
+    errs: list[str] = []
+    checked = 0
+    scopes = json.loads((ROOT / "schemas/nvdm/scopes.json").read_text())["scopes"]
+    cities = sorted(
+        [k for k, v in scopes.items() if v == "city"], key=len, reverse=True
+    )
+    for top in ("public/data", "public/geojson"):
+        for p in sorted((ROOT / top).rglob("*")):
+            if p.suffix not in (".json", ".geojson") or not p.is_file():
+                continue
+            try:
+                doc = json.loads(p.read_text())
+            except Exception:
+                continue
+            if not isinstance(doc, dict) or "nvdm" not in doc:
+                continue
+            rel = str(p.relative_to(ROOT))
+            named = [
+                c
+                for c in cities
+                if re.search(rf"(^|[/_-]){re.escape(c)}([/_.-]|$)", rel)
+            ]
+            if not named:
+                continue
+            checked += 1
+            sid = (doc.get("scope") or {}).get("id")
+            if sid not in named:
+                errs.append(
+                    f"{rel}: scope.id is {sid!r} but the path names "
+                    f"{' or '.join(named)} - one of them is wrong"
+                )
+    return errs, checked
+
+
 def inventory() -> None:
     producers: dict[str, list[str]] = {}
     for top in ("public/data", "public/geojson"):
@@ -439,7 +555,9 @@ def main(argv: list[str]) -> int:
     det_errs, det_ok = determination_errors()
     legacy_errs, legacy_checked = legacy_licence_errors()
     env_errs, env_checked = envelope_destruction_errors()
-    errs += det_errs + legacy_errs + env_errs
+    lic_errs, lic_checked = envelope_licence_errors()
+    scope_errs, scope_checked = scope_path_errors()
+    errs += det_errs + legacy_errs + env_errs + lic_errs + scope_errs
     if errs:
         print("generator-drift gate FAILED:")
         for e in errs:
@@ -454,7 +572,9 @@ def main(argv: list[str]) -> int:
         f"generator-drift gate OK: no generator hardcodes a registered source's "
         f"licence; {len(det_ok)} rights determinations are emitted by their "
         f"producer; {legacy_checked} legacy licence fields agree with their "
-        f"envelope; {env_checked} producers preserve the envelopes they write"
+        f"envelope; {env_checked} producers preserve the envelopes they write; "
+        f"{lic_checked} envelope licences match the registry; "
+        f"{scope_checked} scopes agree with their path"
     )
     return 0
 
