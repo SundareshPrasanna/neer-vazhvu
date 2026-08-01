@@ -26,6 +26,7 @@ ranking text (Figs 3/4/5). Top-5 drivers per component are transcribed from
 Figures ES6-ES11. Per-sub-basin unmet demand (MCM) is given by the report only
 for Adyar, Araniyar, Kosasthalaiyar (Table 4); others are null.
 """
+import sys
 from pathlib import Path
 import json
 

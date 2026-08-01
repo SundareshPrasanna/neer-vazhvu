@@ -91,6 +91,13 @@ jobs:
 
       - run: npm ci
 
+      # scripts/ is outside the API's ruff run, so a producer could ship a
+      # NameError and no job would notice - which is how three did.
+      - name: Root scripts parse and reference only defined names
+        run: |
+          pip install ruff
+          ruff check scripts/ --select F821,F822,E902 --no-cache
+
       - name: Encumbrance classifier + lineage selftest
         run: python3 scripts/nvdm-encumbrance-report.py --selftest
 

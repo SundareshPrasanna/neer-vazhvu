@@ -166,7 +166,7 @@ def main() -> None:
     profiles.sort(key=lambda p: p["ward_number"])
 
     write_artifact(GEOJSON_OUT, {"type": "FeatureCollection", "features": features}, compact=True)
-    write_artifact(PROFILES_OUT, profiles)
+    write_artifact(PROFILES_OUT, {"wards": profiles})
     print(f"Wrote {len(features)} features to {GEOJSON_OUT}")
     print(f"Wrote {len(profiles)} ward profiles to {PROFILES_OUT}")
 

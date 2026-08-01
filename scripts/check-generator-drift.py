@@ -375,6 +375,81 @@ BARE_WRITE = re.compile(
 ENVELOPE_WRITE_ALLOWLIST: dict[str, str] = {}
 
 
+def _write_target(src: str, match: "re.Match[str]") -> str:
+    """The expression a wholesale write is aimed at, as written in the source."""
+    call = match.group(1)
+    if call.startswith("."):  # path.write_text(...)
+        before = src[: match.start()]
+        m = re.search(r"([A-Za-z_][\w\.]*)\s*$", before)
+        return m.group(1) if m else ""
+    # writeFileSync(target, ...) / writeFile(target, ...) / json.dump(obj, target)
+    args = src[match.end() :]
+    parts = args.split(",", 2)
+    idx = 1 if call.startswith("json.dump") else 0
+    return parts[idx].strip() if len(parts) > idx else ""
+
+
+def _targets_an_artifact(src: str, target: str, arts: list[str]) -> bool:
+    """Does `target` resolve to one of this producer's enveloped artifacts?
+
+    Follows assignments a few hops, so `text_cache = OCR_CACHE / ...` is seen to
+    be a cache path rather than an artifact. Unresolvable targets are treated as
+    artifacts: a gate that cannot tell must not wave the write through.
+    """
+    names = {Path(a).name for a in arts}
+    # Paths that are demonstrably not published artifacts.
+    SIDE = (".cache", "/tmp", "tmpdir", "scratch", "node_modules")
+    seen: set[str] = set()
+    frontier = [target]
+    for _ in range(5):
+        nxt: list[str] = []
+        for expr in frontier:
+            if not expr or expr in seen:
+                continue
+            seen.add(expr)
+            if any(n in expr for n in names) or "public/" in expr:
+                return True
+            if any(s in expr for s in SIDE):
+                return False  # resolved to a cache or scratch path
+            root = re.match(r"([A-Za-z_]\w*)", expr)
+            if not root:
+                continue
+            # Match plain, const/let/var and typed declarations in either language.
+            for m in re.finditer(
+                rf"(?:^|\b)(?:const|let|var)?\s*{re.escape(root.group(1))}"
+                rf"(?:\s*:\s*[\w<>\[\]\.]+)?\s*=\s*(.+)$",
+                src,
+                re.M,
+            ):
+                nxt.append(m.group(1).strip())
+        if not nxt:
+            break
+        frontier = nxt
+    # Unresolved. Fail CLOSED: a gate that cannot tell what a write targets must
+    # not wave it through, and must not be swayed by a safe writer elsewhere in
+    # the file - that inference is the very fail-open this check exists to stop.
+    return True
+
+
+def _safe_within_call(src: str, open_paren: int) -> bool:
+    """Does the argument list starting at `open_paren` contain a safe writer?
+
+    Scans to the matching close paren so the verdict is about THIS call and not
+    the file. `path.write_text(json.dumps(merge_envelope(path, out)))` is safe;
+    a `writeFileSync` elsewhere in the same file is not made safe by it.
+    """
+    depth = 0
+    for i in range(open_paren, len(src)):
+        c = src[i]
+        if c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+            if depth == 0:
+                return any(t in src[open_paren : i + 1] for t in ENVELOPE_SAFE_TOKENS)
+    return False  # unbalanced: treat as unsafe rather than pass on a parse failure
+
+
 def envelope_destruction_errors() -> tuple[list[str], int]:
     """A refresh must not replace an enveloped artifact with a bare payload.
 
@@ -414,20 +489,35 @@ def envelope_destruction_errors() -> tuple[list[str], int]:
             continue
         checked += 1
         src = f.read_text()
-        if any(t in src for t in ENVELOPE_SAFE_TOKENS):
-            continue
         if '"nvdm"' in src or "nvdm:" in src:
             continue  # emits its own complete envelope
-        if not BARE_WRITE.search(src):
-            continue
         if script in ENVELOPE_WRITE_ALLOWLIST:
             continue
+
+        # Per-write-site, never per-file. A producer that calls a safe writer
+        # somewhere is not thereby safe everywhere: one writeArtifact() beside
+        # one writeFileSync() used to exempt the whole file, which is exactly
+        # how envelope erasure returns. A wholesale write is safe only when
+        # THAT call wraps a safe writer, as in
+        # path.write_text(json.dumps(merge_envelope(path, payload))).
+        sites = []
+        for m in BARE_WRITE.finditer(src):
+            if _safe_within_call(src, m.end() - 1):
+                continue  # this call wraps merge_envelope/write_artifact
+            if not _targets_an_artifact(src, _write_target(src, m), arts):
+                continue  # writes a cache or side file, not an enveloped artifact
+            sites.append((src.count("\n", 0, m.start()) + 1, m.group(1).rstrip("( ")))
+        if not sites:
+            continue
+        where = ", ".join(f"{call} at line {ln}" for ln, call in sites)
         errs.append(
-            f"{script}: writes {len(arts)} enveloped artifact(s) without an "
-            f"envelope-preserving writer - the next refresh replaces the NVDM "
-            f"wrapper with a bare payload and silently drops "
-            f"{'them' if len(arts) > 1 else 'it'} off the conformance ladder. "
-            f"Use writeArtifact()/write_artifact(), or emit a complete envelope"
+            f"{script}: writes {len(arts)} enveloped artifact(s) and contains "
+            f"{len(sites)} wholesale write(s) ({where}). Each one replaces the "
+            f"NVDM wrapper with a bare payload and silently drops the artifact "
+            f"off the conformance ladder. Route every write of an enveloped "
+            f"artifact through writeArtifact()/write_artifact(), emit a complete "
+            f"envelope, or record the producer in ENVELOPE_WRITE_ALLOWLIST with "
+            f"the reason each site is safe"
         )
     return errs, checked
 

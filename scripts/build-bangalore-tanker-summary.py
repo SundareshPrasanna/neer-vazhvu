@@ -21,6 +21,7 @@ Run: python scripts/build-bangalore-tanker-summary.py
 """
 
 import csv
+import sys
 import re
 import statistics
 from pathlib import Path

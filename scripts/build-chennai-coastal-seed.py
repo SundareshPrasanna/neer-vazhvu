@@ -33,6 +33,7 @@ Run:  python scripts/build-chennai-coastal-seed.py
 """
 
 import collections
+import sys
 from pathlib import Path
 import json
 
