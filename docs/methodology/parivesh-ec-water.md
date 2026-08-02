@@ -40,7 +40,7 @@ transcription faithfully reflects the letter, never that the letter is correct.
 
 The raw PDFs are **not in this repository**. The Parivesh licence is UNVERIFIED,
 so there is no established right to redistribute them, and `scripts/.cache/` stays
-git-ignored as a licence guardrail. `provenance.input_digests` in the artifact
+git-ignored as a licence guardrail. `input_digests` in the artifact
 carries the sha256 of the exact bytes read, so anyone re-retrieving from
 parivesh.nic.in can confirm they hold the same documents.
 
