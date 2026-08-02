@@ -12,7 +12,7 @@
         "title": "Parivesh - Tamil Nadu Environmental Clearance proposals and SEIAA EC certificate letters",
         "publisher": "SEIAA Tamil Nadu / MoEFCC (Parivesh portal)",
         "url": "https://parivesh.nic.in/",
-        "license": "LICENCE UNVERIFIED - statutory Environmental Clearance letters that the EIA Notification 2006 requires the regulator to publish, served unauthenticated from parivesh.nic.in and cited with attribution. The portal's terms-of-use page renders client-side and was NOT read, so this is not a verified licence grant and is not cleared for commercial reuse. Flagged in the registry entry.",
+        "license": "LICENCE UNVERIFIED - see notes. Statutory clearance letters published by SEIAA-TN/MoEFCC for public transparency; cited with attribution, values carried as proponent assertions.",
         "as_of": "2026-07-31",
         "retrieved": "2026-07-31",
         "role": "asserts"
@@ -20,8 +20,8 @@
     ],
     "method": "pdf-extract",
     "produced_at": "2026-07-31",
-    "produced_by": "scripts/fetch_parivesh_corridor_water.py",
-    "note": "Pilot extraction (19 EC letters, 13 with water tables) for the Sriperumbudur-Oragadam corridor. Discovery: full TN EC dump via the undocumented advanceSearchData API, filtered on corridor toponyms; certificate PDFs archived under scripts/.cache/parivesh/ (git-ignored). Verification method, 2026-07-31: every record was read field by field against the `pdftotext -layout` rendering of its letter, with the EC date and EC identification number matched and the six amendment/corrigendum letters confirmed water-free by a zero-hit search for 'KLD' across the whole letter. Where a table's labels and values are misaligned by the layout, the reading was settled by the letter's OWN component arithmetic (sub-rows reproducing a stated subtotal exactly), not by eyeballing; those cases are listed in open_readings. The regex extractor's per-field agreement is recorded in extraction.auto_match.",
+    "produced_by": "manual (hand transcription; method in docs/methodology/parivesh-ec-water.md)",
+    "note": "Pilot extraction (19 EC letters, 13 with water tables) for the Sriperumbudur-Oragadam corridor, captured as a dated manual snapshot on 2026-07-31. Discovery: full Tamil Nadu EC dump via the undocumented advanceSearchData API, filtered on corridor toponyms. Where a table's labels and values are misaligned by the PDF layout, the reading was settled by the letter's OWN component arithmetic (sub-rows reproducing a stated subtotal exactly), not by eyeballing; those cases are listed in open_readings. Method, the measured extractor-failure result and the open readings are in docs/methodology/parivesh-ec-water.md.",
     "conventions": {
       "claim_basis": "All figures are PROPONENT-ASSERTED quantities as stated in the EC/EIA submission and restated in the SEIAA Tamil Nadu EC letter. They are regulatory filings, not measurements: nothing here is metered, audited, or independently verified. Several letters contain internal inconsistencies, which are preserved verbatim and flagged in checks/notes.",
       "units": "KLD (kilolitres per day) unless a text field quotes the letter otherwise",
@@ -34,11 +34,18 @@
       "treatment_capacity": "stp_capacity and etp_capacity carry existing_kld / proposed_kld / after_expansion_kld separately, because the SEIAA salient-features rows labelled 'Proposed Capacity of STP/ETP' are the INCREMENT an expansion adds, not the plant's end-state capacity. Conflating the two invents defects: Yamaha's rows read 200 KLD STP and 0 KLD ETP, while its own wastewater table states an end state of 350 + 200 = 550 KLD STP and a 468 KLD ETP. Sanity checks compare stated wastewater against after_expansion_kld only",
       "checks": "sanity checks annotate, never alter: 'pass' or a 'flag: ...' string quoting the letter's own figures. A flag is a property of the filing, not of the transcription",
       "extraction_scoring": "extraction.auto_match scores the unattended regex extractor against the verified reading across EVERY field it emits, counting three failures equally: wrong, missed, and INVENTED (a number emitted where the letter states none). extraction.auto_invented names the invented fields"
+    },
+    "assurance": {
+      "verified_by": "Sundaresh Chandran",
+      "verified_on": "2026-07-31",
+      "verification_scope": "full-cohort, full-document",
+      "what_that_means": "All 19 letters in the cohort were read, not a sample. Each was read field by field against the `pdftotext -layout` rendering of the whole document, with the EC date and EC identification number matched against the letter, and the six amendment/corrigendum letters confirmed to carry no water table by a zero-hit search for 'KLD' across the entire document. Per-record `verified` and `verified_on` flags record that this was done for that record.",
+      "not_verified": "The underlying quantities. Every figure is proponent-asserted and restated by the regulator; verification here means the transcription faithfully reflects the letter, never that the letter is correct."
     }
   },
   "as_of": "2026-07-31",
   "input_digests": {
-    "note": "sha256 of the exact document bytes each record was verified against, plus the discovery dump they were selected from. `build` refuses to run when a cached document no longer matches its verified digest.",
+    "note": "sha256 of the exact document bytes each record was verified against, plus the discovery dump they were selected from. REPRODUCIBILITY IS CONDITIONAL: these hashes identify the exact source documents, but the documents themselves are not in this repository, so a fresh clone cannot regenerate this artifact from repository contents. They are re-retrievable from parivesh.nic.in, and the hashes are what let anyone confirm they have the same bytes that were read.",
     "state_dump_sha256": "7ddb6ac666ccb62ade7823350fe5d1c06fae3c96a1c66844d778ccf25bf7b8a2",
     "documents": {
       "SIA/TN/INFRA2/561399/2025": "ddf18b78a6eefc0cac7feaf35e31c018a6d47ab6a31bf2d633811fa7d837593a",

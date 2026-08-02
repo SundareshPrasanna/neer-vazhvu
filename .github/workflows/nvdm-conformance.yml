@@ -23,8 +23,6 @@ on:
       - 'scripts/validate_nvdm.py'
       - 'scripts/nvdm-l2-gate.sh'
       - 'scripts/source-registry/**'
-      - 'scripts/fetch_parivesh_corridor_water.py'
-      - 'scripts/parivesh-verification-state.json'
       - 'src/lib/cities/data-paths.ts'
       - 'src/lib/water-bodies/rich-body-registry.ts'
   workflow_dispatch:
@@ -46,12 +44,6 @@ jobs:
 
       - name: Validator selftest
         run: python3 scripts/validate_nvdm.py --selftest
-
-      # The Parivesh extractor's command surface (refresh / verify / build gate).
-      # Hermetic: synthetic cohort in a temp dir, network and pdftotext faked,
-      # so it needs neither the git-ignored raw cache nor outbound access.
-      - name: Parivesh extractor selftest
-        run: python3 scripts/fetch_parivesh_corridor_water.py selftest
 
       - name: Catalogue freshness
         run: |
