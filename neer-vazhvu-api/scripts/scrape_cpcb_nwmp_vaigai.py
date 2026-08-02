@@ -36,6 +36,7 @@ import json
 import re
 import sys
 from pathlib import Path
+
 from typing import Any
 
 try:
@@ -50,6 +51,10 @@ except ImportError:
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 DEFAULT_PDF_DIR = REPO_ROOT / "docs" / "cpcb"
 OUTPUT_PATH = REPO_ROOT / "public" / "data" / "river-quality-madurai.json"
 
@@ -340,7 +345,7 @@ def main() -> int:
     seed["last_updated"] = str(max(captured_years))
     seed["data_year_range"] = [min(captured_years), max(captured_years)]
 
-    Path(args.output).write_text(json.dumps(seed, indent=2, ensure_ascii=False))
+    write_artifact(Path(args.output), seed)
     print(f"\nWrote {args.output}")
     print(f"  Years covered: {captured_years}")
     counts = {sid: len(s["readings"]) for sid, s in by_id.items()}

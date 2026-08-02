@@ -18,7 +18,8 @@
  *   npx tsx scripts/compute-madurai-derived-facts.ts
  */
 
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import { readFileSync, existsSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { resolve } from "path";
 
 const root = process.cwd();
@@ -307,7 +308,7 @@ function main() {
   factsFile.facts = [...handCurated, ...derived];
   factsFile.generated_at = new Date().toISOString().slice(0, 10);
 
-  writeFileSync(factsPath, JSON.stringify(factsFile, null, 2));
+  writeArtifact(factsPath, factsFile);
   console.log(`\nWrote ${factsPath}`);
   console.log("Tier 2 derived ids:");
   for (const f of derived) console.log(`  ${f.id}: ${f.title} = ${f.value} ${f.unit}`);

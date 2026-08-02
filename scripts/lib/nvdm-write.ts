@@ -13,9 +13,14 @@ const ENVELOPE_KEYS = ["nvdm", "dataset", "scope", "provenance", "projection", "
  *  provenance.produced_at to today (the artifact is being produced now).
  *  `compact` keeps minified artifacts minified (the Python twin's flag) -
  *  a single-line geometry layer must not be pretty-printed on regeneration. */
+// `object` rather than Record<string, unknown>: producers pass their own typed
+// interfaces (FactsFile, LegacyShape, FeatureCollection...), and a declared
+// interface has no string index signature, so Record<> rejects it. Widening
+// here is what lets a typed producer use the safe writer instead of reaching
+// for writeFileSync - which is how 42 artifacts nearly lost their envelopes.
 export function writeArtifact(
   path: string,
-  payload: Record<string, unknown>,
+  payload: object,
   opts: { compact?: boolean } = {},
 ): void {
   let envelope: Record<string, unknown> = {};

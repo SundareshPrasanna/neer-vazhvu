@@ -10,6 +10,7 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
+import { registryLicense } from "./lib/registry-contract";
 import centroid from "@turf/centroid";
 import bbox from "@turf/bbox";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
@@ -650,14 +651,14 @@ function main() {
           id: "osm-overpass",
           title: "OpenStreetMap water bodies / industrial zones (Overpass extracts)",
           publisher: "OpenStreetMap contributors",
-          license: "ODbL 1.0",
+          license: registryLicense("osm-overpass"),
           role: "input",
         },
         {
           id: "opencity-gcc-swd-survey",
           title: "GCC 2023 storm-water-drain survey (via OpenCity)",
           publisher: "Greater Chennai Corporation (via OpenCity)",
-          license: "open (per OpenCity dataset page)",
+          license: registryLicense("opencity-gcc-swd-survey"),
           role: "input",
           as_of: "2023",
         },
@@ -665,17 +666,33 @@ function main() {
           id: "opencity-chennai-flood",
           title: "Chennai flooding data - NCCR C-FLOWS model outputs (via OpenCity)",
           publisher: "OpenCity / NCCR",
-          license: "open (per OpenCity dataset page)",
+          license: registryLicense("opencity-chennai-flood"),
           role: "input",
         },
         {
           id: "opencity-cmwssb-sewerage",
           title: "CMWSSB sewerage network datasets (via OpenCity)",
           publisher: "CMWSSB (via OpenCity)",
-          license: "open (per OpenCity dataset page)",
+          license: registryLicense("opencity-cmwssb-sewerage"),
           role: "input",
         },
       ],
+      // Audited artifact-level rights determination (PR #227 review).
+      // Source-term propagation marks this file 'restricted' because a
+      // pollution-control board sits in its lineage. That board's policy
+      // governs ITS OWN report, not a ward score computed here from the
+      // measurements the report states - there is no copyright in facts.
+      // `clears` names the one input it covers: any other restricted input
+      // would leave this file restricted, and no determination can ever
+      // touch the OpenStreetMap share-alike.
+      rights_determination: {
+        "basis": "derived-facts",
+        "clears": [
+          "cpcb-nwmp-annual"
+        ],
+        "reasoning": "The payload of this file is a set of indicators this repository computes: per-ward scores, grades, percentile ranks and densities produced by our own code from measured values. It contains no upstream prose, no upstream table layout and no reproduction of any publisher's document. The restricted input named in `clears` is a pollution-control board whose website policy requires the board's approval to reuse ITS MATERIAL beyond download and print. That policy governs the board's own reports; it does not reach a score derived from the measurements those reports state, because there is no copyright in facts (Eastern Book Company v D.B. Modak, (2008) 1 SCC 1: 'there is no copyright in the facts per se'). This determination is scoped to that named input only and clears nothing else. Chennai ward profiles: 200 rows of water-body health, density, flood risk, drainage and sewerage indicators. CPCB reaches this file only as the BOD/DO band behind river-quality.json and restoration-priority.json; the numbers published here are our normalised scores, not CPCB station readings. The OpenStreetMap share-alike is untouched and this file remains share-alike.",
+        "reviewed_on": "2026-07-31"
+      },
       method: "derived",
       produced_at: PRODUCED_AT,
       produced_by: "scripts/compute-ward-profiles.ts",

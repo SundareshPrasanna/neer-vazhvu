@@ -29,6 +29,9 @@ from datetime import date, timedelta
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from registry_license import registry_license  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 # City centre coordinates - keep in lockstep with src/lib/cities/*.ts.
@@ -128,13 +131,13 @@ def run_city(city: str) -> bool:
                     "id": "imd-gridded-rain",
                     "title": "IMD gridded monthly rainfall (authoritative through imd_covers_through)",
                     "publisher": "India Meteorological Department",
-                    "license": "GoI publication, cited with attribution",
+                    "license": registry_license("imd-gridded-rain"),
                 },
                 {
                     "id": "open-meteo-archive",
                     "title": "Open-Meteo archive API (ERA5-family reanalysis) - provisional fill after IMD's last month",
                     "publisher": "Open-Meteo",
-                    "license": "CC BY 4.0",
+                    "license": registry_license("open-meteo-archive"),
                 },
             ],
             "method": "api",

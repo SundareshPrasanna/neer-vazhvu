@@ -41,6 +41,7 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
+import { registryLicense } from "./lib/registry-contract";
 import centroid from "@turf/centroid";
 import bbox from "@turf/bbox";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
@@ -691,7 +692,7 @@ function main() {
           id: "opencity-gba-wards-2025",
           title: "GBA 369-ward delimitation 2025 (Dec 2025 KML incl. 01.12.2025 name changes, via OpenCity)",
           publisher: "GBA / GoK Urban Development Department (via OpenCity)",
-          license: "Other (Public Domain) (per OpenCity dataset page)",
+          license: registryLicense("opencity-gba-wards-2025"),
           role: "input",
           as_of: "2025-12",
         },
@@ -699,21 +700,21 @@ function main() {
           id: "osm-overpass",
           title: "OpenStreetMap water bodies / rivers (Overpass extracts)",
           publisher: "OpenStreetMap contributors",
-          license: "ODbL 1.0",
+          license: registryLicense("osm-overpass"),
           role: "input",
         },
         {
           id: "ingres-gw-assessment-ka",
           title: "IN-GRES dynamic groundwater assessment (Bangalore Urban assessment units)",
           publisher: "CGWB / IIT-Hyderabad (IN-GRES)",
-          license: "GoI publication, cited with attribution",
+          license: registryLicense("ingres-gw-assessment-ka"),
           role: "input",
         },
         {
           id: "wris-live-services",
           title: "India-WRIS Ground Water Level dataset (NWIC ArcGIS services)",
           publisher: "CGWB / NWIC via India-WRIS",
-          license: "GoI open publication, cited with attribution",
+          license: registryLicense("wris-live-services"),
           role: "input",
         },
       ],

@@ -6,7 +6,7 @@
       "scope": "platform",
       "publisher": "Fathom / University of Bristol (Hawker et al.)",
       "url": "https://www.fathom.global/product/fabdem/",
-      "license": "CC BY-NC-SA 4.0 (non-commercial)",
+      "license": "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
       "type": "page",
       "cadence": "versioned releases",
       "tier": 0,
@@ -22,7 +22,7 @@
         "public/data/cascade"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_elevation_bands.py (GEE), re-run per city",
-      "notes": "FABDEM V1-2 - satellite DEM with buildings and forests removed - underpins the elevation-band layer in all five cities, honest at ~30 m horizontal / ~2 m vertical. A new FABDEM version changes every band boundary at once, which is exactly why this is registered once at platform scope rather than five times. LICENCE FLAG: FABDEM is CC BY-NC-SA, non-commercial - relevant if any BRSR or commercial track ever reuses these layers. The canonical data host is data.bris.ac.uk but its dataset paths need an exact opaque id we do not have; the Fathom product page is the stable, verified surface (200 on 2026-07-26). Cascade catchment delineation (catchments_fabdem_wbt_v1 in neer-vazhvu-api/app/cascade/catchments.py) runs on a FABDEM mosaic, so the entire public/data/cascade family is FABDEM-DERIVED - and therefore inherits CC BY-NC-SA (non-commercial) encumbrance. Flagged for the NVDM derivative-licence audit 2026-07-30.",
+      "notes": "FABDEM V1-2 - satellite DEM with buildings and forests removed - underpins the elevation-band layer in all five cities, honest at ~30 m horizontal / ~2 m vertical. A new FABDEM version changes every band boundary at once, which is exactly why this is registered once at platform scope rather than five times. LICENCE FLAG: FABDEM is CC BY-NC-SA, non-commercial - relevant if any BRSR or commercial track ever reuses these layers. The canonical data host is data.bris.ac.uk but its dataset paths need an exact opaque id we do not have; the Fathom product page is the stable, verified surface (200 on 2026-07-26). Cascade catchment delineation (catchments_fabdem_wbt_v1 in neer-vazhvu-api/app/cascade/catchments.py) runs on a FABDEM mosaic, so the entire public/data/cascade family is FABDEM-DERIVED - and therefore inherits CC BY-NC-SA (non-commercial) encumbrance. Flagged for the NVDM derivative-licence audit 2026-07-30. LICENCE: confirmed at data.bris.ac.uk/data/dataset/s5hqmjcdj8yo2ibzi9b4ew3sn (verified 2026-07-31): 'The FABDEM dataset is licensed under a Creative Commons \"CC BY-NC-SA 4.0\" license. For commercial use queries, please contact fabdem@fathom.global'. ShareAlike is the sharp edge, not just NC: anything built on FABDEM must be redistributed under the same licence, which is why the repo MIT LICENSE cannot reach the cascade artefacts.",
       "lastSeen": {
         "pageHash": "13dc5102eb99ef6a",
         "acceptedOn": "2026-07-26"
@@ -33,7 +33,7 @@
       "scope": "platform",
       "publisher": "WWF / HydroSHEDS",
       "url": "https://www.hydrosheds.org/products",
-      "license": "HydroSHEDS licence (free for non-commercial and most uses, attribution required)",
+      "license": "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
       "type": "page",
       "cadence": "versioned releases",
       "tier": 0,
@@ -47,7 +47,7 @@
         "public/geojson/chennai-sub-basins-risk-geom.json"
       ],
       "refreshMethod": "scripts/run_cascade.py; scripts/derive_chennai_subbasins_hydrobasins.py",
-      "notes": "HydroBASINS/HydroRIVERS is the skeleton under every cascade reconstruction (Chennai 755 nodes, Bengaluru 1,033, plus Madurai and Mumbai) and under the Chennai sub-basin climate-risk clip (hybas_12 + state clip). A version bump would move cascade topology everywhere at once - a platform-wide SCHEMA-BREAK candidate, not a routine roll-forward. page-hash may be noisy on a marketing-styled page; tighten with a selector if it false-positives.",
+      "notes": "HydroBASINS/HydroRIVERS is the skeleton under every cascade reconstruction (Chennai 755 nodes, Bengaluru 1,033, plus Madurai and Mumbai) and under the Chennai sub-basin climate-risk clip (hybas_12 + state clip). A version bump would move cascade topology everywhere at once - a platform-wide SCHEMA-BREAK candidate, not a routine roll-forward. page-hash may be noisy on a marketing-styled page; tighten with a selector if it false-positives. LICENCE: all four clauses read from the HydroSHEDS v1.4 Technical Documentation PDF (verified 2026-07-31). The previous string, 'free for non-commercial and most uses', was wrong in both directions: it invented a commercial bar that the licence does not contain, and omitted the stand-alone-distribution bar, the mandatory Exhibit B attribution and the s.3 ownership claim over modifications - which on its face reaches catchment topology derived here. Still classified non-commercial by scripts/nvdm-encumbrance-report.py, deliberately: a bespoke contract with an ownership claim over our own derivatives is not a clean source, and the audit fails closed.",
       "lastSeen": {
         "pageHash": "879f9748b6f700cc",
         "acceptedOn": "2026-07-26"
@@ -237,7 +237,7 @@
       "scope": "platform",
       "publisher": "CGWB / NWIC via India-WRIS",
       "url": "https://arc.indiawris.gov.in/",
-      "license": "GoI open publication, cited with attribution",
+      "license": "India-WRIS website policy: material 'may be reproduced free of charge in any format or media without requiring specific permission', subject to accurate reproduction and prominent acknowledgement of the source; third-party material on the site excluded - GoI publication, cited with attribution",
       "type": "api",
       "cadence": "continuous",
       "tier": 3,
@@ -255,7 +255,7 @@
         "public/data/bangalore-ward-profiles.json"
       ],
       "refreshMethod": "scripts/fetch-wris-groundwater-madurai.ts (+ per-city WRIS scripts; DB series via telemetry jobs)",
-      "notes": "Live NWIC ArcGIS services (GroundwaterLevel_Stations etc.). Continuous API - freshness-tracked. Registered 2026-07-30, replacing a gw-stations allowlist line and a false IN-GRES attribution."
+      "notes": "Live NWIC ArcGIS services (GroundwaterLevel_Stations etc.). Continuous API - freshness-tracked. Registered 2026-07-30, replacing a gw-stations allowlist line and a false IN-GRES attribution. LICENCE: read verbatim from the India-WRIS site policy text embedded in indiawris.gov.in/wris/main.*.js (verified 2026-07-31; the policies route is client-rendered, so the text is not in the served HTML). CONFLICT worth knowing: the parent body CWC publishes a restrictive policy of its own, and no authority resolves which governs India-WRIS content."
     },
     {
       "id": "imd-gridded-rain",
@@ -312,7 +312,7 @@
       "scope": "platform",
       "publisher": "Yamazaki Lab, University of Tokyo",
       "url": "http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/",
-      "license": "dual: CC BY-NC 4.0 or ODbL 1.0 - which licence our trace used is UNRECORDED (see pipeline-inputs/INVENTORY.md); presume non-commercial until verified",
+      "license": "dual: CC BY-NC 4.0 or ODbL 1.0 - under the ODbL arm commercial use is permitted but derived data must be published under ODbL; which arm our trace used is UNRECORDED (see pipeline-inputs/INVENTORY.md); presume non-commercial until verified",
       "type": "page",
       "cadence": "episodic (versioned releases)",
       "tier": 0,
@@ -323,14 +323,14 @@
         "pipeline-inputs/chennai-reservoir-catchments.geojson"
       ],
       "refreshMethod": "manual (re-run the upstream trace against a new MERIT release; catchment candidates are curated)",
-      "notes": "Registered 2026-07-30 round-2 review: the reservoir-catchments candidates use a MERIT Hydro upstream trace that had no registry lineage (INVENTORY had wrongly credited FABDEM). Unbaselined until first --accept."
+      "notes": "Registered 2026-07-30 round-2 review: the reservoir-catchments candidates use a MERIT Hydro upstream trace that had no registry lineage (INVENTORY had wrongly credited FABDEM). Unbaselined until first --accept. LICENCE: dual grant confirmed at global-hydrodynamics.github.io/MERIT_Hydro (verified 2026-07-31): the ODbL arm permits commercial use provided derived data are made publicly available under the same ODbL licence; the CC BY-NC arm forbids commercial use but imposes no share-alike. Our trace does not record which arm was taken, so this stays presumed non-commercial."
     },
     {
       "id": "cpcb-prs-report",
       "scope": "platform",
       "publisher": "CPCB",
       "url": "https://cpcb.gov.in/polluted-river-stretches/",
-      "license": "GoI publication, cited with attribution",
+      "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
       "type": "page",
       "cadence": "~2-3 yearly",
       "tier": 0,
@@ -340,11 +340,10 @@
       "dependsOn": [
         "public/data/river-quality-bangalore.json",
         "public/data/basins/arkavathi/prs.json",
-        "public/docs/cpcb-polluted-river-stretches-oct-2025.pdf",
         "public/data/facts-mumbai.json"
       ],
-      "refreshMethod": "manual (scripts/build_prs.py against the mirrored PDF)",
-      "notes": "MOVED to platform scope 2026-07-31 (#220 review): a national CPCB report whose dependsOn spans Bangalore, the Arkavathi basin pack, the mirrored PDF and the Mumbai facts register - a city-scope entry misfiled cross-city lineage. Polluted River Stretches for Restoration of Water Quality - the BOD-band Priority I-V classification behind the Arkavathi atlas, the Bengaluru stretch classes, the Chennai Cooum/Adyar Priority I status and the Mumbai 'Mithi at Mahim is India's worst stretch' fact. The Oct 2025 edition is mirrored at public/docs/cpcb-polluted-river-stretches-oct-2025.pdf. WHY page-hash and not link-set: the landing page exposes no report hrefs at all - only CPCB's site-wide boilerplate PDFs (verified 2026-07-26) - and the report itself was published behind an openpdffile.php id that has since expired (it now returns a 146-byte HTML error mislabelled application/pdf). Expect page-hash to be noisier than link-set; tighten with a selector if it false-positives. Host note: cpcb.gov.in, never the NICNET cpcb DOT nic DOT in - see cpcb-nwmp-annual.",
+      "refreshMethod": "manual (fetch the report from CPCB locally, then scripts/build_prs.py against the local copy - the PDF is NOT mirrored in the repo, see scripts/mirrored-documents.json)",
+      "notes": "MOVED to platform scope 2026-07-31 (#220 review): a national CPCB report whose dependsOn spans Bangalore, the Arkavathi basin pack, and the Mumbai facts register - a city-scope entry misfiled cross-city lineage. Polluted River Stretches for Restoration of Water Quality - the BOD-band Priority I-V classification behind the Arkavathi atlas, the Bengaluru stretch classes, the Chennai Cooum/Adyar Priority I status and the Mumbai 'Mithi at Mahim is India's worst stretch' fact. WHY page-hash and not link-set: the landing page exposes no report hrefs at all - only CPCB's site-wide boilerplate PDFs (verified 2026-07-26) - and the report itself was published behind an openpdffile.php id that has since expired (it now returns a 146-byte HTML error mislabelled application/pdf). Expect page-hash to be noisier than link-set; tighten with a selector if it false-positives. Host note: cpcb.gov.in, never the NICNET cpcb DOT nic DOT in - see cpcb-nwmp-annual. LICENCE: read from cpcb.gov.in/copyright-policy/ (verified 2026-07-31). The previous 'GoI publication, cited with attribution' was wrong: CPCB does not use the liberal GIGW template, it uses the permission-required one. Extracted factual values are a separate question (no copyright in facts), but the reports themselves are not redistributable and the artefacts are no longer licence-clean. MIRROR REMOVED 2026-07-31: public/docs/cpcb-polluted-river-stretches-oct-2025.pdf (4.4 MB) was a redistributed copy of a report whose publisher requires approval for any use beyond download and print. Deleted; all citations now point at https://cpcb.gov.in/polluted-river-stretches/. The extracted BOD-band values stay - facts carry no copyright - only the document itself is gone. Operators refreshing this source fetch the PDF locally and must not commit it; scripts/check-mirrored-documents.py enforces that.",
       "lastSeen": {
         "pageHash": "2bc5474c47902288",
         "acceptedOn": "2026-07-26"

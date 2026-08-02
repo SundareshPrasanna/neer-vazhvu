@@ -93,7 +93,38 @@
         "conventions": {
           "type": "object",
           "description": "Declared traps: sign conventions, aggregation basis, comparability breaks (spec 7.5)."
-        }
+        },
+        "rights_determination": { "$ref": "#/$defs/rights_determination" }
+      }
+    },
+    "rights_determination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basis", "clears", "reasoning", "reviewed_on"],
+      "description": "An audited, artifact-level judgement that a NAMED restricted input does not encumber THIS file, scored by scripts/nvdm-encumbrance-report.py. It can only lift 'restricted' to 'gov-attribution'; it can never clear nc, share-alike or vague, and can never reach clean-open. It is not a note and not a blanket policy: every field is checked, and a determination that names an input which no longer restricts the artifact is a loud audit error rather than a silent pass.",
+      "properties": {
+        "basis": {
+          "enum": ["derived-facts"],
+          "description": "The doctrine relied on. 'derived-facts': the payload is an indicator computed here from measured values, and there is no copyright in facts (Eastern Book Company v D.B. Modak, (2008) 1 SCC 1), so the upstream's terms over ITS OWN document do not reach it. New bases require the classifier to be taught what they may clear."
+        },
+        "clears": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^([a-z0-9][a-z0-9-]*|[A-Za-z0-9_./-]+#inline)$",
+            "description": "A Headwaters source id, or '<repo-relative-path>#inline' for a restricting source that carries no registry id."
+          },
+          "description": "Exactly which restricted inputs this determination covers. Coverage is a superset test: any restricted contributor reaching this artifact that is NOT named here leaves it restricted. This is what stops a determination from being broader than its own reasoning."
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 80,
+          "description": "Why the basis applies TO THIS FILE, naming what the payload actually contains. A generic sentence copied across a directory is the failure this length floor exists to discourage."
+        },
+        "reviewed_on": { "$ref": "#/$defs/date" }
       }
     },
     "envelope": {
