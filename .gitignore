@@ -60,6 +60,14 @@ scripts/_cache-*.json
 # 278k WRIS groundwater rows). Rebuildable: `--refresh` re-downloads.
 neer-vazhvu-api/scripts/.cache/
 
+# Raw upstream PDFs pulled by hand for the Parivesh EC pilot (19 SEIAA letters,
+# 17 MB). Ignored as a LICENCE guardrail, not as build config: the Parivesh
+# licence is UNVERIFIED, so we have no established right to redistribute these
+# documents, and the mirrored-document gate only scans public/docs. They are the
+# evidence behind input_digests and are re-retrievable from
+# parivesh.nic.in; the digests are what let anyone confirm the same bytes.
+scripts/.cache/
+
 # Rich-body satellite imagery + tints - served from Supabase Storage
 # in production via the `satellite-evidence` bucket. Local files are
 # kept by the ingest pipeline (scripts/ingest_rich_body_imagery.py
