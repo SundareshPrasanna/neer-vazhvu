@@ -30,6 +30,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from registry_license import registry_license  # noqa: E402
 SCOPE = {"kind": "city", "id": "madurai"}
 
 # ---- source literals (verified) -------------------------------------------
@@ -38,62 +41,62 @@ FABDEM = {
     "id": "fabdem-dem",
     "title": "FABDEM v1-2 30 m bare-earth DEM",
     "publisher": "University of Bristol (Hawker et al.), via GEE sat-io",
-    "license": "CC BY-NC-SA 4.0 (non-commercial)",
+    "license": registry_license("fabdem-dem"),
     "role": "input",
 }
 HYDROSHEDS = {
     "id": "hydrosheds-basins",
     "title": "HydroSHEDS basin boundaries",
     "publisher": "WWF / HydroSHEDS",
-    "license": "HydroSHEDS licence (attribution required)",
+    "license": registry_license("hydrosheds-basins"),
     "role": "input",
 }
 OSM_TANKS = {
     "id": "osm-overpass",
     "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
     "publisher": "OpenStreetMap contributors",
-    "license": "ODbL 1.0",
+    "license": registry_license("osm-overpass"),
     "role": "input",
 }
 SENTINEL2 = {
     "id": "sentinel-2-l2a",
     "title": "Sentinel-2 L2A imagery (channel evidence)",
     "publisher": "ESA Copernicus",
-    "license": "Copernicus free and open data, attribution required",
+    "license": registry_license("sentinel-2-l2a"),
     "role": "input",
 }
 DYNAMIC_WORLD = {
     "id": "google-dynamic-world",
     "title": "Google Dynamic World built-up classification",
     "publisher": "Google / World Resources Institute",
-    "license": "CC BY 4.0",
+    "license": registry_license("google-dynamic-world"),
     "role": "input",
 }
 WRIS_GW = {
     "id": "wris-live-services",
     "title": "India-WRIS Ground Water Level dataset (NWIC ArcGIS services)",
     "publisher": "CGWB / NWIC via India-WRIS",
-    "license": "GoI open publication, cited with attribution",
+    "license": registry_license("wris-live-services"),
 }
 OVERTURE = {
     "id": "overture-buildings",
     "title": "Overture Maps building footprints",
     "publisher": "Overture Maps Foundation",
-    "license": "CDLA-Permissive 2.0",
+    "license": registry_license("overture-buildings"),
     "role": "input",
 }
 IMD_NORMALS = {
     "id": "imd-gridded-rain",
     "title": "IMD monthly rainfall normals (Madurai grid point, via imd-rainfall-monthly-madurai.json)",
     "publisher": "India Meteorological Department",
-    "license": "GoI publication, cited with attribution",
+    "license": registry_license("imd-gridded-rain"),
     "role": "input",
 }
 OSM_SOURCE = {
     "id": "osm-overpass",
     "title": "OpenStreetMap (Overpass API extract)",
     "publisher": "OpenStreetMap contributors",
-    "license": "ODbL 1.0",
+    "license": registry_license("osm-overpass"),
 }
 CASCADE_TOPO = [FABDEM, OSM_TANKS, HYDROSHEDS]
 CASCADE_SCORED = CASCADE_TOPO + [SENTINEL2, DYNAMIC_WORLD]
@@ -116,8 +119,13 @@ REG_IDS = {
 
 
 def reg(source_id: str, role: str | None = None) -> dict:
-    title, publisher, license_ = REG_IDS[source_id]
-    s = {"id": source_id, "title": title, "publisher": publisher, "license": license_}
+    title, publisher, _legacy_license = REG_IDS[source_id]
+    # The third element of the REG_IDS tuple is legacy: the REGISTRY owns a
+    # registered source's licence, and validate_nvdm.py fails the build if an
+    # envelope disagrees with it. Reading it from the table is how the two
+    # drifted apart in the first place.
+    s = {"id": source_id, "title": title, "publisher": publisher,
+         "license": registry_license(source_id)}
     if role:
         s["role"] = role
     return s
@@ -244,7 +252,7 @@ PROVENANCE: dict[str, dict] = {
     },
     "data-root/imd-rainfall-monthly": {
         "method": "api",
-        "sources": [{"id": "imd-gridded-rain", "title": "IMD gridded monthly rainfall (city grid point)", "publisher": "India Meteorological Department", "license": "GoI publication, cited with attribution"}],
+        "sources": [{"id": "imd-gridded-rain", "title": "IMD gridded monthly rainfall (city grid point)", "publisher": "India Meteorological Department", "license": registry_license("imd-gridded-rain")}],
     },
     "data-root/industrial-sources": {
         "method": "manual",

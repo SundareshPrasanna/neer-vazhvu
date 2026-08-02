@@ -28,6 +28,13 @@ jobs:
           node-version: 20
           cache: npm
 
+      # npm run data:check ends with the mirrored-document gate, which is
+      # Python: no upstream document may be redistributed out of public/docs
+      # if its publisher requires permission (scripts/check-mirrored-documents.py).
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - run: npm ci
       - run: npm run lint
 
@@ -45,6 +52,23 @@ jobs:
         run: |
           npx tsx scripts/compute-bangalore-ward-profiles.ts
           git diff --exit-code public/data/bangalore-ward-profiles.json
+
+      # PR #227 review: this producer held stale OpenCity/WRIS licence literals
+      # and emitted no rights_determination, so running it restored three wrong
+      # licences and deleted an audited determination. It had no regeneration
+      # diff, so nothing noticed. It has one now.
+      - name: Verify delhi-ward-profiles.json is up-to-date
+        run: |
+          pip install -e neer-vazhvu-api
+          python3 neer-vazhvu-api/scripts/build_delhi_ward_profiles.py
+          git diff --exit-code public/data/delhi-ward-profiles.json
+
+      # The other ~80 producers fetch from networks, portals or Earth Engine and
+      # cannot run here. This covers the thing that actually drifts in all of
+      # them, statically: no generator may hardcode a registered source's
+      # licence, and a producer must emit the determination its artifact carries.
+      - name: No generator holds its own copy of a registry licence
+        run: python3 scripts/check-generator-drift.py
 
       - run: npm run data:check
       - run: npm run build
@@ -67,8 +91,21 @@ jobs:
 
       - run: npm ci
 
+      # scripts/ is outside the API's ruff run, so a producer could ship a
+      # NameError and no job would notice - which is how three did.
+      - name: Root scripts parse and reference only defined names
+        run: |
+          pip install ruff
+          ruff check scripts/ --select F821,F822,E902 --no-cache
+
       - name: Encumbrance classifier + lineage selftest
         run: python3 scripts/nvdm-encumbrance-report.py --selftest
+
+      - name: Mirror gate pins a verdict for every licence state it can meet
+        run: python3 scripts/check-mirrored-documents.py --selftest
+
+      - name: No mirrored upstream document ships without an affirmative right
+        run: python3 scripts/check-mirrored-documents.py
 
       - name: Reference set stays licence-clean; fixtures stay as documented
         run: python3 scripts/check-sample-corpus.py

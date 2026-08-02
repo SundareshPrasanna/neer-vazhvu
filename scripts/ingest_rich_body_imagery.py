@@ -34,7 +34,11 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from nvdm_write import write_artifact  # noqa: E402
+
 from dotenv import load_dotenv
+from registry_license import registry_license
 from shapely.geometry import box, shape
 from shapely.ops import unary_union
 
@@ -351,7 +355,8 @@ def main():
         },
         "storage_bucket": SATELLITE_EVIDENCE_BUCKET if args.upload else None,
         "license": (
-            "Landsat: USGS public domain. Sentinel-2: Copernicus open licence. "
+            f"Landsat: {registry_license('usgs-landsat')}. "
+            f"Sentinel-2: {registry_license('sentinel-2-l2a')}. "
             "NICFI: when added, Planet Labs PBC under NICFI public licence."
         ),
         "chips": chips,
@@ -359,7 +364,7 @@ def main():
     # `manifest_path` was already defined earlier (top of main) for the
     # existing-manifest read; reuse it for the write.
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    manifest_path.write_text(json.dumps(manifest, indent=2))
+    write_artifact(manifest_path, manifest)
     print(f"Wrote manifest: {manifest_path}")
 
 

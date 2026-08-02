@@ -12,8 +12,8 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 | cascade | 48 | 127.9 | 4 | 48 | 0 |
 | geojson-layers | 92 | 59.4 | 6 | 85 | 6 |
 | basins | 92 | 33.7 | 4 | 4 | 0 |
-| data-root | 112 | 20.4 | 5 | 83 | 28 |
-| rich-bodies | 127 | 1.4 | 2 | 127 | 0 |
+| data-root | 112 | 20.5 | 5 | 83 | 28 |
+| rich-bodies | 127 | 1.5 | 2 | 127 | 0 |
 | ingres | 1 | 0.0 | 1 | 1 | 0 |
 
 ## Standardization signal

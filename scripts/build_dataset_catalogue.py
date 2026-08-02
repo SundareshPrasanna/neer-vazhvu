@@ -239,6 +239,8 @@ def scan_references(files: list[Path]) -> dict[str, set[str]]:
                     "lib/headwaters-coverage.ts",
                     "nvdm-encumbrance-report.py",
                     "check-sample-corpus.py",
+                    "check-generator-drift.py",
+                    "check-mirrored-documents.py",
                 )
             ):
                 continue  # tooling/governance files mention filenames without producing/consuming

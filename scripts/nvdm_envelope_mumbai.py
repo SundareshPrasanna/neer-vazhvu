@@ -73,6 +73,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from registry_license import registry_license  # noqa: E402
 SCOPE = {"kind": "region", "id": "mumbai"}
 
 # ---- source literals (verified) -------------------------------------------
@@ -81,40 +84,40 @@ FABDEM = {
     "id": "fabdem-dem",
     "title": "FABDEM v1-2 30 m bare-earth DEM",
     "publisher": "University of Bristol (Hawker et al.), via GEE sat-io",
-    "license": "CC BY-NC-SA 4.0 (non-commercial)",
+    "license": registry_license("fabdem-dem"),
     "role": "input",
 }
 OSM_SOURCE = {
     "id": "osm-overpass",
     "title": "OpenStreetMap (Overpass API extract)",
     "publisher": "OpenStreetMap contributors",
-    "license": "ODbL 1.0",
+    "license": registry_license("osm-overpass"),
 }
 SENTINEL2 = {
     "id": "sentinel-2-l2a",
     "title": "Sentinel-2 L2A imagery (MNDWI shoreline epochs)",
     "publisher": "ESA Copernicus",
-    "license": "Copernicus free and open data, attribution required",
+    "license": registry_license("sentinel-2-l2a"),
     "role": "input",
 }
 LANDSAT = {
     "id": "usgs-landsat",
     "title": "Landsat 5/7/8 surface reflectance archive (GEE collections)",
     "publisher": "USGS / NASA (Landsat program)",
-    "license": "USGS public domain, courtesy attribution",
+    "license": registry_license("usgs-landsat"),
     "role": "input",
 }
 IMD_GRID = {
     "id": "imd-gridded-rain",
     "title": "IMD gridded monthly rainfall (0.25 deg, Mumbai grid point)",
     "publisher": "India Meteorological Department",
-    "license": "GoI publication, cited with attribution",
+    "license": registry_license("imd-gridded-rain"),
 }
 DATAMEET = {
     "id": "datameet-mumbai-spatial",
     "title": "DataMeet Municipal_Spatial_Data - Mumbai (BMC ward boundaries + SRA-derived slum clusters)",
     "publisher": "DataMeet community (Pune chapter, DataMeet Trust)",
-    "license": "CC BY-SA 2.5 IN (Mumbai folder Readme, verified 2026-07-30; share-alike)",
+    "license": registry_license("datameet-mumbai-spatial"),
 }
 
 # One-time documents (closed + as_of; never registrable as living sources).
@@ -254,8 +257,13 @@ def reg(
     as_of: str | None = None,
     retrieved: str | None = None,
 ) -> dict:
-    title, publisher, license_ = REG_IDS[source_id]
-    s = {"id": source_id, "title": title, "publisher": publisher, "license": license_}
+    title, publisher, _legacy_license = REG_IDS[source_id]
+    # The third element of the REG_IDS tuple is legacy: the REGISTRY owns a
+    # registered source's licence, and validate_nvdm.py fails the build if an
+    # envelope disagrees with it. Reading it from the table is how the two
+    # drifted apart in the first place.
+    s = {"id": source_id, "title": title, "publisher": publisher,
+         "license": registry_license(source_id)}
     if role:
         s["role"] = role
     if as_of:

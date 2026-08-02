@@ -13,6 +13,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from registry_license import registry_license
 from nvdm_write import write_artifact
 
 from dotenv import load_dotenv
@@ -119,7 +120,7 @@ def main() -> None:
         "data_source": {
             "dataset": JRC_YEARLY,
             "version": "JRC Global Surface Water v1.4 (Pekel et al., Nature 2016, updated)",
-            "license": "EC Open / public domain",
+            "license": registry_license("jrc-global-surface-water"),
             "resolution_m": 30,
             "method": "Per-pixel annual water classification from Landsat 5/7/8 archives",
             "classes": CLASS_LABELS,

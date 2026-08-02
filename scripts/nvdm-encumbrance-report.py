@@ -225,6 +225,30 @@ CLEAN_RESIDUAL_SAFE_WORDS = {
 }
 
 
+# An admission that the upstream terms do not exist, were never read, or were
+# never recorded. Matched against the NORMALISED string, ANYWHERE in it, and
+# checked before any rule that can return a clean bucket.
+#
+# The failure this prevents (PR #227 review): a licence string whose prefix
+# concedes there are no terms, and whose suffix reads like a government
+# attribution claim, used to classify gov-attribution because only the suffix
+# was tested. Absence of terms is a property of the whole string, not of its
+# last clause, so it is tested as one.
+ABSENCE_OF_TERMS = re.compile(
+    r"\b(?:"
+    r"publishes?\s+no\b"
+    r"|no\s+(?:stated|explicit|published|declared|recorded)\s+"
+    r"(?:licen[cs]e|terms|policy|grant)"
+    r"|no\s+(?:licen[cs]e|terms\s+of\s+use|copyright\s+policy|disclaimer)\s+"
+    r"(?:is|are|was|were|has|have)?\s*(?:published|stated|given|provided|recorded|anywhere)"
+    r"|no\s+terms\b"
+    r"|terms\s+(?:were\s+)?never\s+read"
+    r"|licen[cs]e\s+not\s+specified"
+    r"|nothing\s+has\s+been\s+established"
+    r")"
+)
+
+
 def _normalise(s: str) -> str:
     """Lowercase and collapse separators so licence identifiers are comparable:
     'CC BY-SA 4.0', 'cc_by_sa_4.0' and 'CC BY SA 4.0' all become 'cc by sa 4.0'."""
@@ -285,6 +309,21 @@ def classify(license_str: str | None) -> str:
     #    before open markers, so "open WFS, no explicit licence stated"
     #    fails closed and portal labels like OpenCity's dataset-page "open"
     #    stay unverifiable until counsel or a named grant upgrades them.
+    #
+    #    PR #227 review: this list used to enumerate three exact phrasings of
+    #    "there are no terms", and an IN-GRES string that admitted the portal
+    #    "publishes no terms of use, disclaimer or licence anywhere" matched
+    #    none of them. It ended "- GoI publication, cited with attribution",
+    #    rule 8 read the SUFFIX, and several groundwater artifacts came out
+    #    gov-attribution. The clean verdict was accidental.
+    #
+    #    ABSENCE_OF_TERMS below is the general form of that admission, and it
+    #    is checked here - ahead of every rule that can return a clean bucket -
+    #    so a reassuring suffix can never override a prefix that says nobody
+    #    knows the terms. If a string says there are no terms, there are no
+    #    terms, whatever else it says.
+    if ABSENCE_OF_TERMS.search(n):
+        return "vague"
     if (
         "no stated licen" in n
         or "no explicit licen" in n
@@ -298,6 +337,18 @@ def classify(license_str: str | None) -> str:
         or "presume" in n
         or "registration gated" in n
         or n.startswith("open per opencity dataset page")
+        # The resolved OpenCity CKAN labels. PR #227 first recorded these as
+        # "Other (Public Domain) (per OpenCity dataset page)", which the
+        # canonical-grant rule below read as a public-domain dedication and
+        # rated clean-open. It is not a dedication: it is a portal's metadata
+        # field, no upstream publisher ever dedicated the material, and
+        # OpenCity's own site-wide terms say the opposite ("Data are licensed
+        # under: CC BY-NC-SA 4.0 and ODbL", download "for non-commercial and /
+        # or personal use only"). Evidence of a label is not a grant, so these
+        # stay vague - same treatment as the older "open" label above, and
+        # listed here deliberately so the decision is visible rather than
+        # silently inherited from the words "public domain".
+        or "per opencity ckan metadata" in n
         or "free and open" in n
         # Known generic PROVIDER access labels: they name an access posture,
         # not a grant. Same treatment as the OpenCity label - deliberately
@@ -364,12 +415,16 @@ def registry_licenses() -> dict[str, str | None]:
 
 def own_assessment(
     rec: dict, doc: dict, reg: dict, audit_errors: list[str], unclassified: set[str]
-) -> tuple[str, list[dict], list[str]]:
-    """Artifact's own-source bucket (before lineage): (status, source detail, notes)."""
+) -> tuple[str, list[dict], list[str], set[str]]:
+    """Artifact's own-source bucket (before lineage).
+
+    Returns (status, source detail, notes, restricting source identities).
+    """
     prov = doc.get("provenance", {})
     notes: list[str] = []
     source_buckets: set[str] = set()
     detail: list[dict] = []
+    restricted_ids: set[str] = set()
     sources = [
         s
         for s in prov.get("sources", [])
@@ -398,6 +453,12 @@ def own_assessment(
             buckets.add(b)
         w = worst(buckets)
         source_buckets.add(w)
+        if w == "restricted":
+            # Identity of the restricting contributor, so a rights
+            # determination can name it. A source with no registry id is
+            # identified by the artifact it sits on, since there is nothing
+            # else to point at.
+            restricted_ids.add(sid or f"{rec['path']}#inline")
         detail.append(
             {
                 "id": sid,
@@ -407,7 +468,7 @@ def own_assessment(
             }
         )
     if source_buckets:
-        return worst(source_buckets), detail, notes
+        return worst(source_buckets), detail, notes, restricted_ids
     # ---- source-empty artifacts: VAGUE by default (review round 3).
     #
     # ACCOUNTABILITY and RIGHTS are different questions. validate_nvdm.py
@@ -431,7 +492,7 @@ def own_assessment(
         notes.append(
             "claim compilation: licence rests on unaudited per-record citations"
         )
-        return "vague", detail, notes
+        return "vague", detail, notes, restricted_ids
     producer = prov.get("produced_by")
     if (
         prov.get("rights_basis") == "self-authored"
@@ -440,12 +501,129 @@ def own_assessment(
         and producer.strip().lower() != "manual"
     ):
         notes.append(f"rights basis: self-authored ({producer})")
-        return "clean-open", detail, notes
+        return "clean-open", detail, notes, restricted_ids
     notes.append(
         "empty sources without an audited rights_basis - unverifiable "
         "(produced_by alone is accountability, not a rights grant)"
     )
-    return "vague", detail, notes
+    return "vague", detail, notes, restricted_ids
+
+
+DETERMINATION_BASES = ("derived-facts",)
+
+
+def _valid_determination(det: object, prov: dict) -> bool:
+    """An audited artifact-level rights determination, or nothing.
+
+    Every field is load-bearing. `basis` names the doctrine relied on;
+    `reasoning` states why it applies TO THIS FILE (a generic sentence copied
+    across a directory is exactly what this is meant to stop); `reviewed_on`
+    dates the judgement so it can be re-examined; `clears` enumerates exactly
+    which restricted inputs it covers, by source id (or `<path>#inline` for a
+    source carrying no registry id), so a determination can never reach
+    further than the reasoning that justifies it; `produced_by` on the
+    provenance block names the code that computed the derived values, because
+    a determination about derived output is worthless if nothing derived it.
+    """
+    if not isinstance(det, dict):
+        return False
+    producer = (prov.get("produced_by") or "").strip()
+    clears = det.get("clears")
+    return bool(
+        det.get("basis") in DETERMINATION_BASES
+        and isinstance(det.get("reasoning"), str)
+        and len(det.get("reasoning", "")) >= 80
+        and det.get("reviewed_on")
+        and isinstance(clears, list)
+        and clears
+        and all(isinstance(c, str) and c for c in clears)
+        and producer
+        and producer.lower() != "manual"
+    )
+
+
+def _stale_clears(det: dict, restricted_here: set[str]) -> set[str]:
+    """Entries in `clears` that name something not restricting this artifact.
+
+    Computed WHATEVER bucket the artifact ended in. A determination naming an
+    input that no longer restricts the file has stopped describing reality,
+    and the only way to notice is to check when the answer is boring.
+    """
+    return set(det.get("clears") or ()) - set(restricted_here)
+
+
+def apply_determination(
+    prov: dict, result: str, buckets: set[str], restricted_here: set[str]
+) -> tuple[str, set[str], list[str], list[str]]:
+    """Audit an artifact's rights determination and apply it if it earns it.
+
+    Returns (status, remaining restricting ids, lineage notes, audit errors).
+
+    Extracted from resolve() so the CALL SITE is testable, not merely the
+    helpers it calls. PR #227 review round 4 reintroduced the staleness bug
+    here - `stale = ... if result == "restricted" else set()` - and the
+    selftests passed, because they exercised _stale_clears() rather than the
+    code that decides when to consult it. An untested branch is the whole
+    class of defect this file keeps producing.
+
+    VALIDATION and STALENESS are unconditional. Only APPLICATION of the
+    clearance depends on the artifact currently being restricted: a
+    determination that no longer describes reality must be reported however
+    boring the artifact's bucket has become.
+    """
+    notes: list[str] = []
+    errors: list[str] = []
+    det = prov.get("rights_determination")
+    if det is None:
+        return result, restricted_here, notes, errors
+    if not _valid_determination(det, prov):
+        errors.append(
+            "rights_determination present but incomplete - needs basis "
+            "'derived-facts', a reasoning string, reviewed_on, a non-empty "
+            "`clears` list naming the restricted inputs it covers, and a real "
+            "produced_by"
+        )
+        return result, restricted_here, notes, errors
+
+    stale = _stale_clears(det, restricted_here)
+    if stale:
+        errors.append(
+            "rights_determination clears "
+            + ", ".join(sorted(stale))
+            + f" which does not restrict this artifact (current status: {result})"
+            " - re-audit it"
+        )
+    if result != "restricted":
+        return result, restricted_here, notes, errors
+
+    covered = set(det["clears"])
+    if _determination_clears(det, restricted_here):
+        notes.append(
+            f"restricted cleared to gov-attribution by audited rights "
+            f"determination '{det['basis']}' reviewed {det['reviewed_on']}, "
+            "covering " + ", ".join(sorted(covered))
+        )
+        return (
+            worst((buckets - {"restricted"}) | {"gov-attribution"}),
+            set(),
+            notes,
+            errors,
+        )
+    notes.append(
+        "rights determination does not reach "
+        + ", ".join(sorted(restricted_here - covered))
+        + " - still restricted"
+    )
+    return result, restricted_here, notes, errors
+
+
+def _determination_clears(det: dict, restricted_here: set[str]) -> bool:
+    """True only if the determination NAMES every restricting contributor.
+
+    The whole scoping rule in one line: coverage is a superset test, not a
+    bucket deletion. One unnamed restricted input and nothing is cleared.
+    """
+    return set(restricted_here) <= set(det.get("clears") or ())
 
 
 def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
@@ -473,7 +651,7 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
             docs[rec["path"]] = doc
             recs[rec["path"]] = rec
 
-    own: dict[str, tuple[str, list[dict], list[str]]] = {
+    own: dict[str, tuple[str, list[dict], list[str], set[str]]] = {
         p: own_assessment(recs[p], docs[p], reg, audit_errors, unclassified)
         for p in docs
     }
@@ -482,6 +660,10 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
     final: dict[str, str] = {}
     lineage_notes: dict[str, list[str]] = defaultdict(list)
     visiting: set[str] = set()
+    # Contributor identity, kept alongside the bucket so a rights
+    # determination can clear only the restricted inputs it names.
+    own_restricted: dict[str, set[str]] = {p: own[p][3] for p in own}
+    restricted_from: dict[str, set[str]] = {}
 
     def resolve(path: str, chain: tuple[str, ...]) -> str:
         if path in final:
@@ -494,7 +676,7 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
         visiting.add(path)
         doc = docs[path]
         prov = doc.get("provenance", {})
-        status, _, _ = own[path]
+        status, _, _, _ = own[path]
         buckets = {status}
         ii = prov.get("internal_inputs")
         if prov.get("method") in LINEAGE_METHODS and ii is None:
@@ -521,7 +703,63 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
                 )
                 buckets.add("vague")
         visiting.discard(path)
-        final[path] = worst(buckets)
+        result = worst(buckets)
+        # WHO restricted this artifact, not merely THAT something did. The
+        # first version of the determination collapsed lineage into a set of
+        # bucket NAMES and then did `buckets - {"restricted"}`, which removed
+        # every restricted contribution at once - so a determination whose
+        # reasoning discussed CPCB would silently have cleared an unrelated
+        # no-derivatives or research-only input added later. Identity is kept
+        # so a determination can only reach what it actually names.
+        restricted_here = set(own_restricted.get(path, ()))
+        for dep in ii or []:
+            if dep in docs and final.get(dep) == "restricted":
+                restricted_here |= restricted_from.get(dep, set())
+        # ---- audited per-artifact rights determination (PR #227 review, P1-4).
+        #
+        # Mechanical source-term propagation over-claims for a DERIVED
+        # INDICATOR. CPCB's website policy governs CPCB's report; it does not
+        # govern a ward score this repo computed from measured values, because
+        # there is no copyright in facts (Eastern Book Company v D.B. Modak,
+        # (2008) 1 SCC 1) and the scoring is our own work.
+        #
+        # An artifact may therefore record ONE narrow, audited determination to
+        # that effect. Deliberately narrow, because the previous attempt at
+        # this - a `licence_note` on a sample-corpus fixture - was documentation
+        # masquerading as permission:
+        #
+        #   * it clears ONLY 'restricted' contributions, and only up to
+        #     gov-attribution. It cannot reach clean-open.
+        #   * it CANNOT clear 'nc' or 'share-alike'. Those are contractual terms
+        #     on the input itself, not claims over the facts: CC BY-NC bites at
+        #     the moment the input is used, and ODbL share-alike attaches to the
+        #     database. The facts doctrine is no answer to either.
+        #   * it CANNOT clear 'vague'. A rights claim about facts does not make
+        #     unproven lineage proven.
+        #   * it must be per artifact, with reasoning and a review date. There
+        #     is no blanket form and no directory-level form.
+        #   * it must NAME the restricted inputs it covers, in `clears`. A
+        #     restricted contributor that is not named survives, and the
+        #     artifact stays restricted. This is what stops a determination
+        #     from being broader than the reasoning that justifies it.
+        #
+        # It is recorded as `provenance.rights_determination`, never as a note.
+        #
+        # VALIDATION AND STALENESS ARE UNCONDITIONAL; only the APPLICATION of
+        # the clearance depends on the artifact currently being restricted.
+        # The first version put the whole block inside `if result ==
+        # "restricted"`, so the moment CPCB or DPCC were reclassified and an
+        # artifact settled at share-alike, an obsolete `clears` entry stopped
+        # being checked and nobody would ever learn the determination had
+        # stopped describing reality. A determination is a claim about this
+        # file; it is audited whenever it exists.
+        result, restricted_here, det_notes, det_errors = apply_determination(
+            prov, result, buckets, restricted_here
+        )
+        lineage_notes[path] += det_notes
+        audit_errors.extend(f"{path}: {e}" for e in det_errors)
+        final[path] = result
+        restricted_from[path] = restricted_here
         return final[path]
 
     for p in docs:
@@ -648,6 +886,34 @@ def selftest() -> int:
         "OpenCity 'open' portal label is vague, not clean",
         classify("open (per OpenCity dataset page)") == "vague",
     )
+    # ---- fail-open guards (PR #227 review, P1-5). Both of these classified
+    # CLEAN before the review, and neither had earned it.
+    check(
+        "an absence-of-terms admission beats a reassuring suffix",
+        classify(
+            "IN-GRES publishes no terms of use, disclaimer or licence anywhere on "
+            "the portal; the upstream authority is CGWB - GoI publication, cited "
+            "with attribution"
+        )
+        == "vague",
+    )
+    check(
+        "'publishes no terms' anywhere in the string wins, in any phrasing",
+        all(
+            classify(s) == "vague"
+            for s in (
+                "the portal publishes no licence, cited with attribution",
+                "no stated terms; government publication cited with attribution",
+                "licence not specified in CKAN - GoI publication with attribution",
+                "nothing has been established about the terms; CC BY 4.0 assumed",
+            )
+        ),
+    )
+    check(
+        "a CKAN 'public domain' LABEL is not a public-domain dedication",
+        classify("Public Domain per OpenCity CKAN metadata (no upstream dedication)")
+        == "vague",
+    )
     check(
         "OpenCity 'open' label with ';' qualifier is vague too",
         classify(
@@ -746,21 +1012,179 @@ def selftest() -> int:
     # internal_inputs and the empty-source rules.
     results, audit_errors, unclassified = assess_corpus()
     by = {r["path"]: r for r in results}
+    docs_for_selftest = {
+        r["path"]: (json.loads((ROOT / r["path"]).read_text()).get("provenance") or {})
+        for r in results
+        if r["path"].startswith("public/data/ward-risk-")
+    }
 
+    # ward-risk-delhi declares no sources of its own: whatever bucket it lands
+    # in is inherited wholly through internal_inputs. It carries NO rights
+    # determination of its own: DPCC reaches it only via delhi-ward-profiles,
+    # whose determination clears the restriction before it can propagate, so
+    # nothing restricted ever arrives here. What is left is the OpenStreetMap
+    # share-alike, which no determination anywhere is allowed to touch.
     r = by.get("public/data/ward-risk-delhi.json")
     check(
-        "ward-risk-delhi inherits share-alike from delhi-ward-profiles",
+        "ward-risk-delhi inherits share-alike through an already-cleared parent",
         r is not None and r["status"] == "share-alike",
+    )
+    check(
+        "ward-risk-delhi carries no determination of its own",
+        "rights_determination"
+        not in (docs_for_selftest.get("public/data/ward-risk-delhi.json") or {}),
+    )
+    r = by.get("public/data/river-quality-madurai.json")
+    check(
+        "river-quality-madurai has no determination and stays restricted",
+        r is not None and r["status"] == "restricted",
+    )
+    # A determination is an audited claim, not a flag. Each of these is missing
+    # exactly one required part and must not validate.
+    good_prov = {"produced_by": "scripts/compute-ward-profiles.ts"}
+    full = {
+        "basis": "derived-facts",
+        "clears": ["cpcb-nwmp-annual"],
+        "reasoning": "x" * 200,
+        "reviewed_on": "2026-07-31",
+    }
+    check("a complete determination validates", _valid_determination(full, good_prov))
+    check(
+        "an incomplete rights determination is not a rights determination",
+        not any(
+            _valid_determination(det, prov)
+            for det, prov in (
+                ({**full, "reasoning": None}, good_prov),
+                ({**full, "reviewed_on": None}, good_prov),
+                ({**full, "basis": "we-think-its-fine"}, good_prov),
+                ({**full, "reasoning": "too short"}, good_prov),
+                # Missing, empty, or non-string `clears`: a determination that
+                # names nothing is exactly the unscoped form this replaced.
+                ({k: v for k, v in full.items() if k != "clears"}, good_prov),
+                ({**full, "clears": []}, good_prov),
+                ({**full, "clears": "cpcb-nwmp-annual"}, good_prov),
+                ({**full, "clears": [""]}, good_prov),
+                (full, {"produced_by": "manual"}),
+                (full, {}),
+                (True, good_prov),
+            )
+        ),
+    )
+    check(
+        "a determination cannot clear nc or share-alike, only restricted",
+        worst({"nc", "gov-attribution"}) == "nc"
+        and worst({"share-alike", "gov-attribution"}) == "share-alike",
+    )
+    # ---- SCOPING (PR #227 review round 3). The first implementation removed
+    # the 'restricted' bucket name wholesale, so any restricted contributor was
+    # cleared whether or not the determination mentioned it. These prove the
+    # decision now turns on contributor IDENTITY.
+    check(
+        "a determination clears exactly the inputs it names",
+        _determination_clears(full, {"cpcb-nwmp-annual"}) is True,
+    )
+    check(
+        "an UNCOVERED restricted input is not cleared by an existing determination",
+        _determination_clears(full, {"cpcb-nwmp-annual", "some-nd-dataset"}) is False,
+    )
+    check(
+        "a determination naming one board does not clear a different board",
+        _determination_clears(full, {"dpcc-monthly-analysis-delhi"}) is False,
+    )
+    check(
+        "an id-less restricted source needs its path named to be cleared",
+        _determination_clears(full, {"public/data/x.json#inline"}) is False
+        and _determination_clears(
+            {**full, "clears": ["public/data/x.json#inline"]},
+            {"public/data/x.json#inline"},
+        )
+        is True,
+    )
+    # ---- STALENESS IS UNCONDITIONAL (PR #227 review round 4). The check used
+    # to live inside `if result == "restricted"`, so once an input was
+    # reclassified and the artifact settled somewhere else, an obsolete
+    # `clears` entry stopped being examined and drifted silently forever.
+    check(
+        "a clears entry naming a non-restricting input is stale",
+        _stale_clears(full, set()) == {"cpcb-nwmp-annual"},
+    )
+    check(
+        "staleness does not depend on the artifact being restricted",
+        # Same determination, same empty restricted set - the caller reports
+        # this whether the file ended restricted, share-alike or clean.
+        all(
+            _stale_clears(full, restricting) == {"cpcb-nwmp-annual"}
+            for restricting in (set(), {"osm-overpass"}, {"dpcc-monthly-analysis-delhi"})
+        ),
+    )
+    check(
+        "a determination covering exactly what restricts it is not stale",
+        _stale_clears(full, {"cpcb-nwmp-annual"}) == set(),
+    )
+    check(
+        "no artifact in the corpus carries a stale determination",
+        not [e for e in audit_errors if "does not restrict this artifact" in e],
+    )
+    # ---- the CALL SITE, not just the helpers. Reintroducing the bug (making
+    # staleness conditional on `result == "restricted"`) leaves every helper
+    # test passing, so these drive apply_determination() directly at each
+    # bucket a real artifact can settle in.
+    det_prov = {
+        "produced_by": "scripts/compute-ward-profiles.ts",
+        "rights_determination": full,
+    }
+    stale_at = {}
+    for bucket in ("share-alike", "nc", "vague", "gov-attribution", "clean-open"):
+        _, _, _, errs = apply_determination(det_prov, bucket, {bucket}, set())
+        stale_at[bucket] = any("does not restrict" in e for e in errs)
+    check(
+        "a stale determination is reported at EVERY bucket, not only restricted",
+        all(stale_at.values()),
+    )
+    _, _, _, errs_r = apply_determination(det_prov, "restricted", {"restricted"}, set())
+    check(
+        "a stale determination is reported when restricted too",
+        any("does not restrict" in e for e in errs_r),
+    )
+    status, remaining, notes_c, errs_c = apply_determination(
+        det_prov, "restricted", {"restricted"}, {"cpcb-nwmp-annual"}
+    )
+    check(
+        "an exactly-covering determination clears to gov-attribution, no errors",
+        status == "gov-attribution" and remaining == set() and not errs_c and notes_c,
+    )
+    status_u, _, _, _ = apply_determination(
+        det_prov, "restricted", {"restricted"}, {"cpcb-nwmp-annual", "some-nd-input"}
+    )
+    check(
+        "an uncovered restricted input keeps the artifact restricted at the call site",
+        status_u == "restricted",
+    )
+    status_sa, _, _, _ = apply_determination(
+        det_prov, "share-alike", {"share-alike"}, {"cpcb-nwmp-annual"}
+    )
+    check(
+        "a determination never upgrades a share-alike artifact",
+        status_sa == "share-alike",
+    )
+    _, _, _, errs_bad = apply_determination(
+        {"produced_by": "manual", "rights_determination": full}, "share-alike", set(), set()
+    )
+    check(
+        "an invalid determination is reported at a non-restricted bucket too",
+        any("incomplete" in e for e in errs_bad),
     )
     r = by.get("public/data/restoration-priority-delhi.json")
     check(
         "restoration-priority-delhi inherits share-alike from OSM water bodies",
         r is not None and r["status"] == "share-alike",
     )
+    # Same story one hop further out: facts-madurai reaches CPCB only through
+    # river-quality-madurai, so it tracks that file's bucket transitively.
     r = by.get("public/data/facts-madurai.json")
     check(
-        "facts-madurai transitively inherits share-alike via internal_inputs",
-        r is not None and r["status"] == "share-alike",
+        "facts-madurai transitively inherits its worst bucket via internal_inputs",
+        r is not None and r["status"] == "restricted",
     )
     r = by.get("public/data/water-bodies-lost-madurai.json")
     check(

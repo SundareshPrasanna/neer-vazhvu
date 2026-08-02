@@ -16,6 +16,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from registry_license import registry_license
 from nvdm_write import write_artifact
 
 from dotenv import load_dotenv
@@ -137,7 +138,7 @@ def main() -> None:
         "computed_at": datetime.now(timezone.utc).isoformat(),
         "data_source": {
             "dataset": DW,
-            "license": "CC-BY-4.0",
+            "license": registry_license("google-dynamic-world"),
             "version": "Dynamic World V1",
             "resolution_m": 10,
             "revisit_days": "2-5 (Sentinel-2)",

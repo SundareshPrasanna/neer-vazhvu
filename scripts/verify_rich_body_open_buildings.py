@@ -29,6 +29,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from registry_license import registry_license
 from nvdm_write import write_artifact
 
 from dotenv import load_dotenv
@@ -131,7 +132,7 @@ def main() -> None:
         "computed_at": datetime.now(timezone.utc).isoformat(),
         "data_source": {
             "dataset": OPEN_BUILDINGS_COLLECTION,
-            "license": "CC-BY-4.0",
+            "license": registry_license("google-open-buildings"),
             "version": "v3 (released June 2023)",
             "method": "Google's tree-based segmentation of high-res satellite imagery",
             "known_limitations": [

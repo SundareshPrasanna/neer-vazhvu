@@ -83,12 +83,29 @@ def validate(doc, schema: dict, schemas: dict[str, dict], owner: str, path: str 
         for key, sub in schema.get("properties", {}).items():
             if key in doc:
                 errs += validate(doc[key], sub, schemas, owner, f"{path}.{key}")
+        # additionalProperties:false - an undeclared key inside a closed object
+        # is a typo or a smuggled field, and both should fail here rather than
+        # be ignored (PR #227 review: rights_determination is a closed object,
+        # so `approved_by_vibes: true` must not sail past the gate).
+        if schema.get("additionalProperties") is False:
+            for key in doc:
+                if key not in schema.get("properties", {}):
+                    errs.append(f"{path}: undeclared key '{key}'")
     if isinstance(doc, str) and "pattern" in schema:
         if not re.search(schema["pattern"], doc):
             errs.append(f"{path}: '{doc[:40]}' fails pattern {schema['pattern']}")
+    if isinstance(doc, str) and "minLength" in schema:
+        if len(doc) < schema["minLength"]:
+            errs.append(
+                f"{path}: {len(doc)} chars < minLength {schema['minLength']}"
+            )
     if isinstance(doc, list):
         if "minItems" in schema and len(doc) < schema["minItems"]:
             errs.append(f"{path}: {len(doc)} items < minItems {schema['minItems']}")
+        if schema.get("uniqueItems") and len(
+            {json.dumps(x, sort_keys=True) for x in doc}
+        ) != len(doc):
+            errs.append(f"{path}: duplicate items but uniqueItems is set")
         if "items" in schema:
             # Every element is inspected (a gate that samples is not a gate);
             # only the error OUTPUT is capped once the artifact is already failing.
@@ -167,6 +184,12 @@ LEGACY_UNDERSCORE = {
 }
 
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from registry_license import registry_licenses  # noqa: E402
+
+REG_LICENSES = registry_licenses()
+
+
 def registry_source_ids() -> set[str]:
     ids = set()
     for f in (ROOT / "scripts/source-registry").glob("*.json"):
@@ -228,7 +251,25 @@ def source_accountability_errors(
         if sid:
             if sid not in reg_ids:
                 errs.append(f"provenance.sources[{i}] id '{sid}' is not a known Headwaters registry id")
-            elif sid not in joined:
+            else:
+                # PR #227 review (P1-2): the registry OWNS the licence of a
+                # registered source; the envelope mirrors it so an artifact
+                # reads standalone. Without this check the two drift silently -
+                # when the registry was corrected, 32 ids disagreed with the
+                # envelopes naming them, while DATA-LICENSE.md was telling
+                # readers the envelope is the authoritative record. A repo that
+                # contradicts itself about licences is worse than one that says
+                # nothing.
+                want = REG_LICENSES.get(sid)
+                have = s.get("license")
+                if want is not None and have is not None and have != want:
+                    errs.append(
+                        f"provenance.sources[{i}] id '{sid}' records a licence that "
+                        f"disagrees with scripts/source-registry/ - the registry is "
+                        f"authoritative for registered sources. Registry: {want[:80]!r}; "
+                        f"envelope: {have[:80]!r}"
+                    )
+            if sid in reg_ids and sid not in joined:
                 errs.append(
                     f"provenance.sources[{i}] id '{sid}' exists in the registry but its "
                     "dependsOn does not name this file - add the path so edition alerts reach it"

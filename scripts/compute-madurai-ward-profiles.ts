@@ -34,6 +34,7 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
+import { registryLicense } from "./lib/registry-contract";
 import centroid from "@turf/centroid";
 import bbox from "@turf/bbox";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
@@ -577,24 +578,40 @@ function main() {
           id: "osm-overpass",
           title: "OpenStreetMap water bodies / rivers (Overpass extracts)",
           publisher: "OpenStreetMap contributors",
-          license: "ODbL 1.0",
+          license: registryLicense("osm-overpass"),
           role: "input",
         },
         {
           id: "cgwb-yearbook-tn",
           title: "CGWB Ground Water Year Book, Tamil Nadu & Puducherry",
           publisher: "Central Ground Water Board",
-          license: "GoI publication, cited with attribution",
+          license: registryLicense("cgwb-yearbook-tn"),
           role: "input",
         },
         {
           id: "ingres-gw-assessment-madurai",
           title: "IN-GRES dynamic groundwater assessment (Madurai firkas)",
           publisher: "CGWB / IN-GRES",
-          license: "GoI publication, cited with attribution",
+          license: registryLicense("ingres-gw-assessment-madurai"),
           role: "input",
         },
       ],
+      // Audited artifact-level rights determination (PR #227 review).
+      // Source-term propagation marks this file 'restricted' because a
+      // pollution-control board sits in its lineage. That board's policy
+      // governs ITS OWN report, not a ward score computed here from the
+      // measurements the report states - there is no copyright in facts.
+      // `clears` names the one input it covers: any other restricted input
+      // would leave this file restricted, and no determination can ever
+      // touch the OpenStreetMap share-alike.
+      rights_determination: {
+        "basis": "derived-facts",
+        "clears": [
+          "cpcb-nwmp-annual"
+        ],
+        "reasoning": "The payload of this file is a set of indicators this repository computes: per-ward scores, grades, percentile ranks and densities produced by our own code from measured values. It contains no upstream prose, no upstream table layout and no reproduction of any publisher's document. The restricted input named in `clears` is a pollution-control board whose website policy requires the board's approval to reuse ITS MATERIAL beyond download and print. That policy governs the board's own reports; it does not reach a score derived from the measurements those reports state, because there is no copyright in facts (Eastern Book Company v D.B. Modak, (2008) 1 SCC 1: 'there is no copyright in the facts per se'). This determination is scoped to that named input only and clears nothing else. Madurai ward profiles: the same indicator construction over 100 wards, reaching CPCB only through river-quality-madurai.json. The OpenStreetMap share-alike is untouched.",
+        "reviewed_on": "2026-07-31"
+      },
       method: "derived",
       produced_at: PRODUCED_AT,
       produced_by: "scripts/compute-madurai-ward-profiles.ts",

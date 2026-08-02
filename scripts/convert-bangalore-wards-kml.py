@@ -36,6 +36,9 @@ from nvdm_write import write_artifact
 KML_NS = {"k": "http://www.opengis.net/kml/2.2"}
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from registry_license import registry_license  # noqa: E402
 GEOJSON_OUT = REPO_ROOT / "public" / "geojson" / "bangalore-wards-2025.geojson"
 ADMIN_OUT = REPO_ROOT / "public" / "data" / "bangalore-ward-admin.json"
 # Bumped on each re-conversion so identical KML input stays byte-identical.
@@ -287,7 +290,7 @@ def main() -> None:
                     "id": "opencity-gba-wards-2025",
                     "title": "GBA ward delimitation 2025 (OpenCity dataset - boundaries + administrative/electoral attributes)",
                     "publisher": "Greater Bengaluru Authority via OpenCity",
-                    "license": "open (per OpenCity dataset page)",
+                    "license": registry_license("opencity-gba-wards-2025"),
                     "role": "input",
                 }
             ],

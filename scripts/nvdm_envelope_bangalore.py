@@ -58,6 +58,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from registry_license import registry_license  # noqa: E402
 SCOPE = {"kind": "city", "id": "bangalore"}
 
 # ---- source literals (verified) -------------------------------------------
@@ -66,82 +69,82 @@ FABDEM = {
     "id": "fabdem-dem",
     "title": "FABDEM v1-2 30 m bare-earth DEM",
     "publisher": "University of Bristol (Hawker et al.), via GEE sat-io",
-    "license": "CC BY-NC-SA 4.0 (non-commercial)",
+    "license": registry_license("fabdem-dem"),
     "role": "input",
 }
 HYDROSHEDS = {
     "id": "hydrosheds-basins",
     "title": "HydroSHEDS basin boundaries",
     "publisher": "WWF / HydroSHEDS",
-    "license": "HydroSHEDS licence (attribution required)",
+    "license": registry_license("hydrosheds-basins"),
     "role": "input",
 }
 OSM_TANKS = {
     "id": "osm-overpass",
     "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
     "publisher": "OpenStreetMap contributors",
-    "license": "ODbL 1.0",
+    "license": registry_license("osm-overpass"),
     "role": "input",
 }
 SENTINEL2 = {
     "id": "sentinel-2-l2a",
     "title": "Sentinel-2 L2A imagery (channel evidence)",
     "publisher": "ESA Copernicus",
-    "license": "Copernicus free and open data, attribution required",
+    "license": registry_license("sentinel-2-l2a"),
     "role": "input",
 }
 DYNAMIC_WORLD = {
     "id": "google-dynamic-world",
     "title": "Google Dynamic World built-up classification",
     "publisher": "Google / World Resources Institute",
-    "license": "CC BY 4.0",
+    "license": registry_license("google-dynamic-world"),
     "role": "input",
 }
 OVERTURE = {
     "id": "overture-buildings",
     "title": "Overture Maps building footprints",
     "publisher": "Overture Maps Foundation",
-    "license": "CDLA-Permissive 2.0",
+    "license": registry_license("overture-buildings"),
     "role": "input",
 }
 IMD_NORMALS = {
     "id": "imd-gridded-rain",
     "title": "IMD monthly rainfall normals (Bangalore grid point, via imd-rainfall-monthly-bangalore.json)",
     "publisher": "India Meteorological Department",
-    "license": "GoI publication, cited with attribution",
+    "license": registry_license("imd-gridded-rain"),
     "role": "input",
 }
 OSM_SOURCE = {
     "id": "osm-overpass",
     "title": "OpenStreetMap (Overpass API extract)",
     "publisher": "OpenStreetMap contributors",
-    "license": "ODbL 1.0",
+    "license": registry_license("osm-overpass"),
 }
 WRIS_GW = {
     "id": "wris-live-services",
     "title": "India-WRIS Ground Water Level dataset (NWIC ArcGIS services)",
     "publisher": "CGWB / NWIC via India-WRIS",
-    "license": "GoI open publication, cited with attribution",
+    "license": registry_license("wris-live-services"),
 }
 LANDSAT = {
     "id": "usgs-landsat",
     "title": "Landsat 5/7/8 surface reflectance archive (GEE collections)",
     "publisher": "USGS / NASA (Landsat program)",
-    "license": "USGS public domain, courtesy attribution",
+    "license": registry_license("usgs-landsat"),
     "role": "input",
 }
 JRC_GSW = {
     "id": "jrc-global-surface-water",
     "title": "JRC Global Surface Water v1.4 yearly history (JRC/GSW1_4/YearlyHistory)",
     "publisher": "European Commission JRC (Pekel et al.)",
-    "license": "EC Open / public domain",
+    "license": registry_license("jrc-global-surface-water"),
     "role": "input",
 }
 OPEN_BUILDINGS = {
     "id": "google-open-buildings",
     "title": "Google Open Buildings v3 polygons",
     "publisher": "Google Research",
-    "license": "CC BY 4.0 / ODbL",
+    "license": registry_license("google-open-buildings"),
     "role": "input",
     "as_of": "2023",
 }
@@ -193,8 +196,13 @@ REG_IDS = {
 
 
 def reg(source_id: str, role: str | None = None, as_of: str | None = None, title: str | None = None) -> dict:
-    title_, publisher, license_ = REG_IDS[source_id]
-    s = {"id": source_id, "title": title or title_, "publisher": publisher, "license": license_}
+    title_, publisher, _legacy_license = REG_IDS[source_id]
+    # The third element of the REG_IDS tuple is legacy: the REGISTRY owns a
+    # registered source's licence, and validate_nvdm.py fails the build if an
+    # envelope disagrees with it. Reading it from the table is how the two
+    # drifted apart in the first place.
+    s = {"id": source_id, "title": title or title_, "publisher": publisher,
+         "license": registry_license(source_id)}
     if role:
         s["role"] = role
     if as_of:
@@ -359,7 +367,7 @@ PROVENANCE: dict[str, dict] = {
                 "id": "imd-gridded-rain",
                 "title": "IMD gridded monthly rainfall (0.25 deg, Bangalore grid point)",
                 "publisher": "India Meteorological Department",
-                "license": "GoI publication, cited with attribution",
+                "license": registry_license("imd-gridded-rain"),
             }
         ],
         "note": (

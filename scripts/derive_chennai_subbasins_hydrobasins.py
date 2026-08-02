@@ -14,6 +14,8 @@ sub_basin). build_chennai_subbasin_risk.py joins the CEEW risk attributes onto i
 
 Requires GEE (uses the repo service-account key).
 """
+import sys
+from pathlib import Path
 import json
 import os
 from collections import defaultdict
@@ -22,6 +24,9 @@ import ee
 from pyproj import Geod
 from shapely.geometry import box, shape, mapping
 from shapely.ops import unary_union
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from nvdm_write import write_artifact  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KEY = os.path.join(ROOT, "motiveloop-play-a6c60c9fa760.json")
@@ -170,8 +175,7 @@ def main():
             "geometry": _round(mapping(gummidi)),
         })
 
-    with open(OUT, "w") as fh:
-        json.dump(out, fh)
+    write_artifact(Path(OUT), out, compact=True)
     print(f"wrote {OUT}")
 
 
