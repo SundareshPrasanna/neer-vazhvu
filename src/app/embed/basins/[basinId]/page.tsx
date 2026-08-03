@@ -6,8 +6,8 @@ import { tryGetBasinManifest, type BasinFloor, type BasinInventory } from "@/lib
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
 
-// Chrome-less basin atlas for third-party embedding (e.g. the Arkavathi deep
-// dive on paani.earth). The site Header/Footer suppress themselves on /embed,
+// Chrome-less basin atlas for third-party embedding (e.g. Paani Earth's
+// Arkavathi deep dive). The site Header/Footer suppress themselves on /embed,
 // and next.config.ts relaxes frame-ancestors for this namespace ONLY - the
 // rest of the site stays unframeable. Generic over the basin registry: a new
 // basin is embeddable the moment its manifest + data exist (data-only add).
