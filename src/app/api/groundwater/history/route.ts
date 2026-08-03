@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import { internalServerError, logRouteError } from "@/lib/api-error";
+import { dataServiceUnavailable, internalServerError, isExplicitDemoMode, logRouteError } from "@/lib/api-error";
 import { generateMockWardHistory } from "@/lib/mock-data";
 
 const wardNamesPath = resolve(process.cwd(), "public/data/ward-names.json");
@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (!isSupabaseConfigured()) {
+    if (!isExplicitDemoMode()) return dataServiceUnavailable();
     return NextResponse.json(generateMockWardHistory(wardNumber));
   }
 

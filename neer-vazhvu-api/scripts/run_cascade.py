@@ -142,15 +142,18 @@ def cmd_curate(district_id: str) -> int:
 
 
 def cmd_publish(district_id: str) -> int:
-    from app.cascade import publish
-    from app.cascade.districts import get_district_cascade_config
-
-    district = get_district_cascade_config(district_id)
-    geo = publish.write_geojson(district, nodes=[], edges=[], river_outlets=[])
-    manifest = publish.write_systems_manifest(district, systems={})
-    stats = publish.write_stats_manifest(district)
-    print(json.dumps({**geo, **manifest, **stats}, indent=2))
-    return 0
+    """Refuse: standalone `publish` had no real inputs and overwrote shipped
+    GeoJSONs with empty FeatureCollections (2026-08 baseline P0.3). The real
+    publish happens inside build-topology; `stats` refreshes manifests from
+    the existing GeoJSONs."""
+    print(
+        f"'publish' is disabled: it would overwrite {district_id}'s shipped "
+        f"cascade artifacts with empty data. Use 'build-topology' to build "
+        f"and publish, or 'stats' to refresh manifests from existing "
+        f"GeoJSONs.",
+        file=sys.stderr,
+    )
+    return 1
 
 
 def cmd_stats(district_id: str) -> int:
@@ -239,7 +242,8 @@ def cmd_run_all(district_id: str) -> int:
     cmd_detect_encroachment(district_id)
     cmd_score(district_id)
     cmd_curate(district_id)
-    cmd_publish(district_id)
+    # publish intentionally absent: build-topology already wrote the
+    # GeoJSONs; the old standalone publish step re-wrote them empty.
     cmd_tile(district_id)
     return 0
 

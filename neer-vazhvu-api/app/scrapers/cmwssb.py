@@ -5,13 +5,16 @@ Ported from src/lib/scrapers/cmwssb.ts.
 Scrapes https://cmwssb.tn.gov.in/lake-level for daily reservoir data.
 """
 
+import logging
 import re
 
 import httpx
 from bs4 import BeautifulSoup
 
-from app.etl.constants import RESERVOIR_NAME_MAP
+from app.etl.constants import RESERVOIR_CAPACITY, RESERVOIR_NAME_MAP
 from app.models.reservoir import ScrapedReservoir, ScrapeResult
+
+logger = logging.getLogger(__name__)
 
 CMWSSB_URL = "https://cmwssb.tn.gov.in/lake-level"
 # The CMWSSB site (Drupal) drops connections from non-browser user agents.
@@ -77,12 +80,39 @@ def _parse_cmwssb_html(html: str) -> ScrapeResult:
         if reservoir_key is None:
             continue
 
+        # An unparseable storage cell ("-", "NIL", blank) means UNREPORTED,
+        # not empty: skip the reservoir so the day reads as partial (the
+        # pipeline's completeness guard then refuses it) instead of storing
+        # a confident 0 that renders as an empty reservoir.
+        storage = _parse_num(cells[4])
+        if storage is None:
+            logger.warning(
+                "CMWSSB: %s storage cell unparseable (%r) — skipping row",
+                reservoir_key,
+                cells[4],
+            )
+            continue
+
+        # Positional-shift guard: columns are identified by position only, so
+        # an inserted/reordered column upstream silently swaps fields. Storage
+        # above known capacity is the cheapest tell.
+        known_capacity = RESERVOIR_CAPACITY.get(reservoir_key)
+        if known_capacity is not None and storage > known_capacity * 1.1:
+            logger.warning(
+                "CMWSSB: %s storage %.1f exceeds capacity %.1f — column shift "
+                "or unit change upstream? Skipping row",
+                reservoir_key,
+                storage,
+                known_capacity,
+            )
+            continue
+
         readings.append(
             ScrapedReservoir(
                 reservoir=reservoir_key,
                 date=date_str,
                 current_level_ft=_parse_num(cells[3]),
-                current_storage_mcft=_parse_num(cells[4]) or 0,
+                current_storage_mcft=storage,
                 capacity_mcft=_parse_num(cells[2]) or 0,
                 storage_pct=_parse_num(cells[5]) or 0,
                 inflow_cusecs=_parse_num(cells[6]) or 0,

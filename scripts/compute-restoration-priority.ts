@@ -283,8 +283,14 @@ async function fetchCensusData(): Promise<CensusRow[]> {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !key) {
-    console.warn("  Supabase credentials not found, skipping census data");
-    return [];
+    // Shipping without census data silently drops ~305 census-only bodies
+    // and neutralizes condition scoring for the rest — a degraded artifact
+    // that would overwrite the good committed one (baseline P0.3).
+    throw new Error(
+      "Supabase credentials not set (NEXT_PUBLIC_SUPABASE_URL / " +
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY) — refusing to build a degraded " +
+        "restoration-priority artifact without census data",
+    );
   }
 
   const { createClient } = await import("@supabase/supabase-js");
