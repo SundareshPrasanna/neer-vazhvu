@@ -4,11 +4,7 @@ import importlib.util
 from pathlib import Path
 
 
-SCRIPT = (
-    Path(__file__).resolve().parents[1]
-    / "scripts"
-    / "extract_delhi_cetp_flows.py"
-)
+SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "extract_delhi_cetp_flows.py"
 SPEC = importlib.util.spec_from_file_location("extract_delhi_cetp_flows", SCRIPT)
 assert SPEC and SPEC.loader
 cetp = importlib.util.module_from_spec(SPEC)
@@ -20,6 +16,23 @@ def test_cached_pages_upgrades_legacy_text_cache_with_stable_page_numbers():
 
     assert [page["page_number"] for page in pages] == [1, 2]
     assert pages[0]["text_sha256"] == cetp.sha256_text("first")
+
+
+def test_cached_pages_reads_the_single_schema_versioned_cache_contract():
+    pages = cetp.cached_pages(
+        {
+            "schema": cetp.OCR_CACHE_SCHEMA,
+            "pages": [{"page_number": 7, "text": "flow"}],
+        }
+    )
+
+    assert pages == [
+        {
+            "page_number": 7,
+            "text": "flow",
+            "text_sha256": cetp.sha256_text("flow"),
+        }
+    ]
 
 
 def test_evidence_identity_is_content_and_page_addressed():

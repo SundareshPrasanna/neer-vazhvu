@@ -51,10 +51,11 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+from registry_license import registry_license  # noqa: E402
 
 INDEX = REPO / "public/data/delhi-cetp-monthly-index.json"
 CACHE = Path(__file__).resolve().parent / ".cache" / "delhi-cetp-pdfs"
-OCR_CACHE = Path(__file__).resolve().parent / ".cache" / "delhi-cetp-ocr-v2"
+OCR_CACHE = Path(__file__).resolve().parent / ".cache" / "delhi-cetp-ocr"
 OUT = REPO / "public/data/delhi-cetp-flows.json"
 MANIFEST_OUT = REPO / "public/data/delhi-cetp-evidence-manifest.json"
 EVIDENCE_ASSETS = (
@@ -62,6 +63,7 @@ EVIDENCE_ASSETS = (
 )
 
 EVIDENCE_SCHEMA = "neer-vazhvu.delhi-cetp-evidence.v1"
+OCR_CACHE_SCHEMA = "neer-vazhvu.delhi-cetp-ocr-pages.v1"
 EXTRACTOR_ID = "extract-delhi-cetp-flows"
 EXTRACTOR_VERSION = "2"
 OCR_DPI = 300
@@ -435,7 +437,11 @@ def parse_page(txt: str, flat: str, bundle_name: str) -> dict | None:
 
 
 def cached_pages(payload: object) -> list[dict]:
-    """Read both the original text-list cache and the versioned page cache."""
+    """Read the canonical cache envelope and upgrade both legacy list shapes."""
+    if isinstance(payload, dict):
+        if payload.get("schema") != OCR_CACHE_SCHEMA:
+            raise ValueError("OCR page cache schema is unsupported")
+        payload = payload.get("pages")
     if not isinstance(payload, list):
         raise ValueError("OCR page cache must be a list")
     pages: list[dict] = []
@@ -509,7 +515,12 @@ def ocr_bundle(
     """
     text_cache = OCR_CACHE / (pdf.stem + ".pages.json")
     if text_cache.exists():
-        pages = cached_pages(json.loads(text_cache.read_text()))
+        cached_payload = json.loads(text_cache.read_text())
+        pages = cached_pages(cached_payload)
+        if not isinstance(cached_payload, dict):
+            text_cache.write_text(
+                json.dumps({"schema": OCR_CACHE_SCHEMA, "pages": pages})
+            )
         return rows_from_pages(pages, bundle_name), pages
 
     work = Path(tempfile.mkdtemp(prefix="cetp_"))
@@ -530,10 +541,12 @@ def ocr_bundle(
         )
         images = sorted(work.glob("p-*.jpg"))
         with ThreadPoolExecutor(max_workers=OCR_WORKERS) as executor:
-            pages = [page for page in executor.map(ocr_image, images) if page is not None]
+            pages = [
+                page for page in executor.map(ocr_image, images) if page is not None
+            ]
         # Written before the return so the OCR survives any later failure.
         OCR_CACHE.mkdir(parents=True, exist_ok=True)
-        text_cache.write_text(json.dumps(pages))
+        text_cache.write_text(json.dumps({"schema": OCR_CACHE_SCHEMA, "pages": pages}))
         return rows_from_pages(pages, bundle_name), pages
     finally:
         if keep:
@@ -696,7 +709,9 @@ def bind_reviewed_baseline(
                 None,
             )
             if page is None:
-                raise RuntimeError(f"manual lineage page {page_number} is missing for {key}")
+                raise RuntimeError(
+                    f"manual lineage page {page_number} is missing for {key}"
+                )
             text_sha256 = page["text_sha256"]
             overrides_used.append(
                 {"source_bundle": key[0], "plant": key[1], "page_number": page_number}
@@ -727,7 +742,7 @@ def bind_reviewed_baseline(
     if missing_lineage:
         rendered = "\n".join(f"  - {key}" for key in missing_lineage)
         raise RuntimeError(
-            "reviewed baseline records have no v2 page lineage:\n" + rendered
+            "reviewed baseline records have no canonical page lineage:\n" + rendered
         )
 
     unused_candidates = [
@@ -884,7 +899,9 @@ def main() -> None:
             None,
         )
         if reviewed_hit is None:
-            sys.exit("FATAL: reference-validated record is absent from the reviewed baseline")
+            sys.exit(
+                "FATAL: reference-validated record is absent from the reviewed baseline"
+            )
         reviewed_hit["evidence_disposition"] = "reference-validated"
 
     with_flow = [r for r in readings if r["measured_flow_mld"] is not None]
@@ -968,7 +985,7 @@ def main() -> None:
                         "id": "dpcc-cetp-monthly-delhi",
                         "title": "DPCC CETP monthly analysis bundles 2019-2024 (via OpenCity)",
                         "publisher": "Delhi Pollution Control Committee (via OpenCity)",
-                        "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
+                        "license": registry_license("dpcc-cetp-monthly-delhi"),
                         "as_of": "2024-11",
                         "retrieved": idx.get("source", {}).get("retrieved"),
                     }
@@ -1030,8 +1047,7 @@ def main() -> None:
                 "evidence_records": len(readings),
                 "records_with_flow": len(with_flow),
                 "reference_validated": sum(
-                    r["evidence_disposition"] == "reference-validated"
-                    for r in readings
+                    r["evidence_disposition"] == "reference-validated" for r in readings
                 ),
                 "needs_review": sum(
                     r["evidence_disposition"] == "needs-review" for r in readings
