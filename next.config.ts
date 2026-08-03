@@ -29,10 +29,12 @@ const securityHeaders = [
 // /embed/* is the ONLY framable namespace: chrome-less atlas pages built for
 // partner sites (Paani Earth's Arkavathi deep dive). Everything else keeps
 // frame-ancestors 'none'. localhost is allowed in dev so embeds are testable.
+// Paani Earth lost edit access to paani.earth; the deep dive now lives on
+// their Hostinger staging origin until forrivers.life goes live (swap it in
+// here when it does). CSP host-sources take no trailing slash or path.
 const EMBED_FRAME_ANCESTORS = [
   "'self'",
-  "https://paani.earth",
-  "https://www.paani.earth",
+  "https://orchid-wildcat-815854.hostingersite.com",
   ...(process.env.NODE_ENV === "development" ? ["http://localhost:*"] : []),
 ].join(" ");
 const embedHeaders = securityHeaders.map((h) => {
