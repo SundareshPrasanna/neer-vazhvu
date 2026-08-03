@@ -178,7 +178,17 @@ def test_publish_write_geojson_embeds_meta_in_each_collection(tmp_path, monkeypa
         lambda self: outlets_path,
     )
 
-    publish.write_geojson(test_district, [], [], [])
+    # write_geojson refuses fully-empty input (it would overwrite shipped
+    # artifacts), so give it one minimal node.
+    minimal_node = {
+        "type": "Feature",
+        "geometry": {"type": "Point", "coordinates": [78.1, 9.9]},
+        "properties": {"id": "tank-1"},
+    }
+    with pytest.raises(ValueError, match="Refusing to write empty"):
+        publish.write_geojson(test_district, [], [], [])
+
+    publish.write_geojson(test_district, [minimal_node], [], [])
 
     expected_meta_keys = {
         "district_id",

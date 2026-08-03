@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { internalServerError, logRouteError } from '@/lib/api-error';
+import { dataServiceUnavailable, internalServerError, isExplicitDemoMode, logRouteError } from '@/lib/api-error';
 import { generateMockRiskScores } from '@/lib/mock-data';
 import type { RiskLevel } from '@/types/groundwater';
 
@@ -8,8 +8,10 @@ function isSupabaseConfigured(): boolean {
 }
 
 export async function GET() {
-  // Demo mode: Supabase not configured  -  use mock data so the full UI is exercisable
+  // Mock data only behind explicit demo mode (NEER_VAZHVU_DEMO_MODE=true);
+  // a bare missing config is an error, not a fallback (baseline P0.4).
   if (!isSupabaseConfigured()) {
+    if (!isExplicitDemoMode()) return dataServiceUnavailable();
     return NextResponse.json(generateMockRiskScores());
   }
 

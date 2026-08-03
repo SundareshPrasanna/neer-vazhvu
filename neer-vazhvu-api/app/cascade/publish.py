@@ -120,7 +120,18 @@ def write_geojson(
     river_outlets is a list of LineString features from a tank centroid
     to its nearest in-flow-direction river point; tanks that drain into
     a river instead of into another tank.
+
+    Refuses empty input: writing zero nodes AND zero edges would replace
+    shipped artifacts with empty FeatureCollections, which is only ever a
+    caller bug (a real district always has nodes).
     """
+    if not nodes and not edges:
+        raise ValueError(
+            f"Refusing to write empty cascade GeoJSON for "
+            f"{district.district_id}: nodes and edges are both empty — this "
+            f"would overwrite shipped artifacts. Run build-topology to "
+            f"produce real inputs."
+        )
     _ensure_dirs()
     river_outlets = river_outlets or []
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { internalServerError, logRouteError } from '@/lib/api-error';
+import { dataServiceUnavailable, internalServerError, isExplicitDemoMode, logRouteError } from '@/lib/api-error';
 import { getGroundwaterStatus } from '@/types/groundwater';
 import { generateMockGroundwater } from '@/lib/mock-data';
 
@@ -22,8 +22,10 @@ function isSupabaseConfigured(): boolean {
 }
 
 export async function GET(request: NextRequest) {
-  // If Supabase is not configured, return mock data
+  // Mock data only behind explicit demo mode; a bare missing config is an
+  // error, not a fallback (baseline P0.4).
   if (!isSupabaseConfigured()) {
+    if (!isExplicitDemoMode()) return dataServiceUnavailable();
     const { searchParams } = new URL(request.url);
     const VALID_STYLES = ['healthy', 'declining', 'crisis', 'recovering'] as const;
     const rawStyle = searchParams.get('style');
