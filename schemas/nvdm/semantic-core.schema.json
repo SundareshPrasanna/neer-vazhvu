@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "semantic-core.schema.json",
+  "title": "NVDM semantic core candidate definitions",
+  "description": "Reusable candidate definitions for canonical subjects, explicit subject sets, evidence and typed water claims. This is an interchange contract, not a persistence schema or source-document model.",
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9.-]*:[A-Za-z0-9][A-Za-z0-9._:-]*$",
+      "description": "Stable namespaced identifier. Labels, source row keys and document-local candidate keys are not canonical identifiers."
+    },
+    "concept": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9.-]*:[a-z][a-z0-9-]*$",
+      "description": "Namespaced semantic concept. The structural contract is public; mapping and crosswalk policy remain outside this schema."
+    },
+    "subject_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "enum": ["subject", "subject-set"] },
+        "id": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "time_interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "$ref": "envelope.schema.json#/$defs/date" },
+        "end": { "$ref": "envelope.schema.json#/$defs/date" }
+      },
+      "description": "Closed interval. An instant uses the same ISO date for start and end."
+    },
+    "semantic_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["quantity", "range", "text", "terms", "date", "boolean"] },
+        "value": { "type": ["number", "string", "boolean"] },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "minimum": { "type": "number" },
+        "maximum": { "type": "number" },
+        "unit": { "type": "string", "minLength": 1 },
+        "qualifier": { "enum": ["exact", "approximate", "less-than", "greater-than"] }
+      },
+      "description": "Tagged value. Graph validation enforces the exact fields allowed for each kind; null never means absent or unreported."
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "preferred_label"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "kind": { "$ref": "#/$defs/concept" },
+        "preferred_label": { "type": "string", "minLength": 1 },
+        "aliases": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "external_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["scheme", "value"],
+            "properties": {
+              "scheme": { "type": "string", "minLength": 1 },
+              "value": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "subject_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "set_kind", "label", "member_subject_ids", "basis", "evidence_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "set_kind": { "enum": ["reported-aggregation", "analytical-cohort"] },
+        "label": { "type": "string", "minLength": 1 },
+        "member_subject_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "basis": { "enum": ["reported", "derived"] },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        }
+      },
+      "description": "An explicit set or reported aggregate, never a fabricated canonical subject."
+    },
+    "evidence_locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "page_number": { "type": "integer" },
+        "table_label": { "type": "string", "minLength": 1 },
+        "row_label": { "type": "string", "minLength": 1 },
+        "column_label": { "type": "string", "minLength": 1 },
+        "record_key": { "type": "string", "minLength": 1 },
+        "field_key": { "type": "string", "minLength": 1 },
+        "uri_fragment": { "type": "string", "minLength": 1 }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "source_id", "source_version_id", "artifact_sha256", "locator"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "kind": {
+          "enum": ["document-fragment", "dataset-record", "api-record", "field-record"]
+        },
+        "source_id": { "type": "string", "minLength": 1 },
+        "source_version_id": { "type": "string", "minLength": 1 },
+        "artifact_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "locator": { "$ref": "#/$defs/evidence_locator" }
+      }
+    },
+    "claim_common": {
+      "type": "object",
+      "required": ["id", "concept", "subject", "basis", "evidence_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "concept": { "$ref": "#/$defs/concept" },
+        "subject": { "$ref": "#/$defs/subject_reference" },
+        "basis": {
+          "enum": ["reported", "observed", "instrument-reported", "laboratory-measured", "estimated", "derived", "reported-assessment"]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "supersedes_claim_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "contradicts_claim_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "derived_from_claim_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    },
+    "relationship": {
+      "unevaluatedProperties": false,
+      "allOf": [
+        { "$ref": "#/$defs/claim_common" },
+        {
+          "type": "object",
+          "required": ["object"],
+          "properties": {
+            "object": { "$ref": "#/$defs/subject_reference" },
+            "valid_time": { "$ref": "#/$defs/time_interval" }
+          }
+        }
+      ]
+    },
+    "standing_fact": {
+      "unevaluatedProperties": false,
+      "allOf": [
+        { "$ref": "#/$defs/claim_common" },
+        {
+          "type": "object",
+          "required": ["value"],
+          "properties": {
+            "value": { "$ref": "#/$defs/semantic_value" },
+            "valid_time": { "$ref": "#/$defs/time_interval" }
+          }
+        }
+      ]
+    },
+    "observation": {
+      "unevaluatedProperties": false,
+      "allOf": [
+        { "$ref": "#/$defs/claim_common" },
+        {
+          "type": "object",
+          "required": ["value", "observed_time"],
+          "properties": {
+            "value": { "$ref": "#/$defs/semantic_value" },
+            "observed_time": { "$ref": "#/$defs/time_interval" },
+            "comparison_claim_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/identifier" },
+              "description": "Standing-fact claims such as an applicable regulatory maximum or range."
+            }
+          }
+        }
+      ]
+    },
+    "assessed_gap": {
+      "unevaluatedProperties": false,
+      "allOf": [
+        { "$ref": "#/$defs/claim_common" },
+        {
+          "type": "object",
+          "required": ["value", "assessed_time"],
+          "properties": {
+            "value": { "$ref": "#/$defs/semantic_value" },
+            "assessed_time": { "$ref": "#/$defs/time_interval" }
+          }
+        }
+      ]
+    }
+  }
+}

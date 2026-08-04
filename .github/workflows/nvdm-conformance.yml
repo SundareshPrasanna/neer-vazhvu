@@ -3,8 +3,8 @@ name: NVDM conformance
 # Guards the machine-readable arm of the NVDM data-model standard
 # (schemas/nvdm/ + the dataset catalogue). Three checks:
 #   1. Validator selftest - the schemas and rules keep rejecting what they
-#      must reject (29 checks incl. adversarial probes from four review
-#      rounds and the L2 gate selector regressions).
+#      must reject (including adversarial probes and L2 gate selector
+#      regressions).
 #   2. Catalogue + conformance-report freshness - the committed outputs match
 #      the tree (same pattern as the ward-profiles.json CI gate). Regenerate
 #      with: python3 scripts/build_dataset_catalogue.py && python3 scripts/validate_nvdm.py

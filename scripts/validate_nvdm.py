@@ -15,16 +15,19 @@ Usage:
 
 Stdlib only. Implements the subset of JSON Schema the NVDM schemas restrict
 themselves to: type (incl. unions), properties, required, items, enum, pattern,
-minItems, allOf, and $ref within schemas/nvdm/ files. Run the catalogue builder
-first; this tool deliberately reuses its output instead of re-walking the tree.
+minItems, minLength, uniqueItems, additionalProperties:false, allOf, and $ref
+within schemas/nvdm/ files. Run the catalogue builder first; this tool
+deliberately reuses its output instead of re-walking the tree.
 """
 
 from __future__ import annotations
 
 import json
+import math
 import re
 import sys
 from collections import defaultdict
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -288,8 +291,6 @@ def source_accountability_errors(
 def calendar_date_errors(doc: dict) -> list[str]:
     """Bounded patterns admit 2026-02-30; real calendars do not. Checks every
     envelope date and claim-record data_date/as_of."""
-    from datetime import date
-
     def bad(v) -> bool:
         if not isinstance(v, str) or len(v) != 10:
             return False  # year / year-month forms carry no day to mis-state
@@ -314,6 +315,417 @@ def calendar_date_errors(doc: dict) -> list[str]:
                 for k in ("as_of", "data_date"):
                     if bad(r.get(k)):
                         errs.append(f"$.{coll}[{i}].{k} '{r.get(k)}' is not a real calendar date")
+    return errs
+
+
+SEMANTIC_CLAIM_COLLECTIONS = (
+    "relationships",
+    "standing_facts",
+    "observations",
+    "assessed_gaps",
+)
+
+
+def semantic_value_errors(value, path: str) -> list[str]:
+    """Candidate semantic-core value rules JSON Schema cannot express cleanly.
+
+    The tagged union is deliberately closed: no unused placeholder fields, no
+    null-as-absence and no quantity without an explicit unit/qualifier.
+    """
+    if not isinstance(value, dict):
+        return [f"{path}: semantic value must be an object"]
+    kind = value.get("kind")
+    expected = {
+        "quantity": {"kind", "value", "unit", "qualifier"},
+        "range": {"kind", "minimum", "maximum", "unit"},
+        "text": {"kind", "value"},
+        "terms": {"kind", "values"},
+        "date": {"kind", "value"},
+        "boolean": {"kind", "value"},
+    }.get(kind)
+    if expected is None:
+        return [f"{path}: unsupported semantic value kind {kind!r}"]
+    actual = set(value)
+    if actual != expected:
+        return [
+            f"{path}: {kind} value keys differ "
+            f"(missing={sorted(expected - actual)}, extra={sorted(actual - expected)})"
+        ]
+    raw = value.get("value")
+    if kind == "quantity" and (
+        not isinstance(raw, (int, float))
+        or isinstance(raw, bool)
+        or not math.isfinite(raw)
+    ):
+        return [f"{path}.value: quantity must be numeric"]
+    if kind == "quantity" and (
+        not isinstance(value.get("unit"), str) or not value["unit"].strip()
+    ):
+        return [f"{path}.unit: quantity unit must be a non-empty string"]
+    if kind == "range":
+        low, high = value.get("minimum"), value.get("maximum")
+        if not all(
+            isinstance(v, (int, float))
+            and not isinstance(v, bool)
+            and math.isfinite(v)
+            for v in (low, high)
+        ):
+            return [f"{path}: range bounds must be numeric"]
+        if low > high:
+            return [f"{path}: range minimum exceeds maximum"]
+        if not isinstance(value.get("unit"), str) or not value["unit"].strip():
+            return [f"{path}.unit: range unit must be a non-empty string"]
+    if kind in ("text", "date") and (not isinstance(raw, str) or not raw.strip()):
+        return [f"{path}.value: {kind} value must be a non-empty string"]
+    if kind == "date" and isinstance(raw, str):
+        try:
+            valid = (
+                (len(raw) == 4 and 1 <= int(raw) <= 9999)
+                or (
+                    len(raw) == 7
+                    and 1 <= int(raw[:4]) <= 9999
+                    and raw[4] == "-"
+                    and 1 <= int(raw[5:]) <= 12
+                )
+                or (len(raw) == 10 and date.fromisoformat(raw).isoformat() == raw)
+            )
+        except (TypeError, ValueError):
+            valid = False
+        if not valid:
+            return [f"{path}.value: date must be an ISO year, year-month or date"]
+    if kind == "terms":
+        terms = value.get("values")
+        if (
+            not isinstance(terms, list)
+            or not terms
+            or not all(isinstance(term, str) and term.strip() for term in terms)
+            or len(terms) != len(set(terms))
+        ):
+            return [f"{path}.values: terms must be a non-empty unique list"]
+    if kind == "boolean" and not isinstance(raw, bool):
+        return [f"{path}.value: boolean value must be true or false"]
+    return []
+
+
+def semantic_graph_errors(doc: dict) -> list[str]:
+    """Cross-record integrity for the candidate semantic release bundle.
+
+    This is intentionally separate from source adapters and concept mapping.
+    It validates the graph the public contract owns: globally unique IDs,
+    resolvable subjects/evidence/lifecycle edges, time/value discipline and
+    source-version custody.
+    """
+    if not isinstance(doc, dict):
+        return ["semantic artifact must be an object"]
+    errs: list[str] = []
+
+    def closed_keys(value, allowed: set[str], path: str) -> None:
+        if not isinstance(value, dict):
+            return
+        extra = set(value) - allowed
+        if extra:
+            errs.append(f"{path}: unsupported keys {sorted(extra)}")
+
+    def records(key: str) -> list:
+        value = doc.get(key)
+        return value if isinstance(value, list) else []
+
+    subjects = records("subjects")
+    subject_sets = records("subject_sets")
+    evidence = records("evidence")
+    claim_groups = {key: records(key) for key in SEMANTIC_CLAIM_COLLECTIONS}
+
+    subject_keys = {"id", "kind", "preferred_label", "aliases", "external_ids"}
+    external_id_keys = {"scheme", "value"}
+    subject_set_keys = {
+        "id", "set_kind", "label", "member_subject_ids", "basis", "evidence_ids",
+    }
+    evidence_keys = {
+        "id", "kind", "source_id", "source_version_id", "artifact_sha256",
+        "locator",
+    }
+    subject_ref_keys = {"kind", "id"}
+    interval_keys = {"start", "end"}
+    claim_common_keys = {
+        "id", "concept", "subject", "basis", "evidence_ids",
+        "supersedes_claim_ids", "contradicts_claim_ids", "derived_from_claim_ids",
+    }
+    claim_keys = {
+        "relationships": claim_common_keys | {"object", "valid_time"},
+        "standing_facts": claim_common_keys | {"value", "valid_time"},
+        "observations": claim_common_keys | {
+            "value", "observed_time", "comparison_claim_ids",
+        },
+        "assessed_gaps": claim_common_keys | {"value", "assessed_time"},
+    }
+
+    for index, row in enumerate(subjects):
+        closed_keys(row, subject_keys, f"$.subjects[{index}]")
+        if isinstance(row, dict):
+            for external_index, external_id in enumerate(row.get("external_ids", [])):
+                closed_keys(
+                    external_id,
+                    external_id_keys,
+                    f"$.subjects[{index}].external_ids[{external_index}]",
+                )
+    for index, row in enumerate(subject_sets):
+        closed_keys(row, subject_set_keys, f"$.subject_sets[{index}]")
+    for index, row in enumerate(evidence):
+        closed_keys(row, evidence_keys, f"$.evidence[{index}]")
+    for collection, rows in claim_groups.items():
+        for index, row in enumerate(rows):
+            closed_keys(row, claim_keys[collection], f"$.{collection}[{index}]")
+
+    external_identity_owner: dict[tuple[str, str], str] = {}
+    for index, row in enumerate(subjects):
+        if not isinstance(row, dict):
+            continue
+        for external_index, external_id in enumerate(row.get("external_ids", [])):
+            if not isinstance(external_id, dict):
+                continue
+            key = (external_id.get("scheme"), external_id.get("value"))
+            if not all(isinstance(part, str) for part in key):
+                continue
+            path = f"$.subjects[{index}].external_ids[{external_index}]"
+            if key in external_identity_owner:
+                errs.append(
+                    f"{path}: external identity {key!r} is already bound to "
+                    f"{external_identity_owner[key]}"
+                )
+            else:
+                external_identity_owner[key] = (
+                    row["id"] if isinstance(row.get("id"), str) else path
+                )
+
+    all_ids: dict[str, str] = {}
+    for collection, rows in (
+        ("subjects", subjects),
+        ("subject_sets", subject_sets),
+        ("evidence", evidence),
+        *((key, rows) for key, rows in claim_groups.items()),
+    ):
+        for index, row in enumerate(rows):
+            if not isinstance(row, dict) or not isinstance(row.get("id"), str):
+                continue
+            rid = row["id"]
+            if rid in all_ids:
+                errs.append(
+                    f"$.{collection}[{index}].id: {rid!r} duplicates {all_ids[rid]}"
+                )
+            else:
+                all_ids[rid] = f"$.{collection}[{index}]"
+
+    subject_ids = {
+        r["id"] for r in subjects
+        if isinstance(r, dict) and isinstance(r.get("id"), str)
+    }
+    set_ids = {
+        r["id"] for r in subject_sets
+        if isinstance(r, dict) and isinstance(r.get("id"), str)
+    }
+    evidence_ids = {
+        r["id"] for r in evidence
+        if isinstance(r, dict) and isinstance(r.get("id"), str)
+    }
+    claims = [
+        (collection, index, row)
+        for collection, rows in claim_groups.items()
+        for index, row in enumerate(rows)
+        if isinstance(row, dict)
+    ]
+    claim_ids = {
+        row["id"] for _, _, row in claims if isinstance(row.get("id"), str)
+    }
+    if not claims:
+        errs.append("semantic artifact must contain at least one typed claim")
+
+    source_ids = {
+        source.get("id")
+        for source in doc.get("provenance", {}).get("sources", [])
+        if isinstance(source, dict) and source.get("id")
+    }
+    locator_keys = {
+        "page_number", "table_label", "row_label", "column_label",
+        "record_key", "field_key", "uri_fragment",
+    }
+    source_version_artifacts: dict[tuple[str, str], str] = {}
+    for index, row in enumerate(evidence):
+        if not isinstance(row, dict):
+            continue
+        if row.get("source_id") not in source_ids:
+            errs.append(
+                f"$.evidence[{index}].source_id: {row.get('source_id')!r} "
+                "does not resolve to provenance.sources"
+            )
+        version_key = (row.get("source_id"), row.get("source_version_id"))
+        artifact_hash = row.get("artifact_sha256")
+        if all(isinstance(part, str) for part in version_key) and isinstance(artifact_hash, str):
+            previous = source_version_artifacts.get(version_key)
+            if previous is not None and previous != artifact_hash:
+                errs.append(
+                    f"$.evidence[{index}].artifact_sha256: source version "
+                    f"{version_key!r} has conflicting artifact hashes"
+                )
+            else:
+                source_version_artifacts[version_key] = artifact_hash
+        locator = row.get("locator")
+        if not isinstance(locator, dict) or not locator:
+            errs.append(f"$.evidence[{index}].locator: at least one locator is required")
+        else:
+            closed_keys(locator, locator_keys, f"$.evidence[{index}].locator")
+            if row.get("kind") == "document-fragment" and (
+                not isinstance(locator.get("page_number"), int)
+                or isinstance(locator.get("page_number"), bool)
+                or locator["page_number"] < 1
+            ):
+                errs.append(
+                    f"$.evidence[{index}].locator.page_number: document fragments require a positive page"
+                )
+
+    def evidence_refs(row: dict, path: str) -> None:
+        for evidence_id in row.get("evidence_ids", []):
+            if evidence_id not in evidence_ids:
+                errs.append(f"{path}.evidence_ids: unknown evidence {evidence_id!r}")
+
+    for index, row in enumerate(subject_sets):
+        if not isinstance(row, dict):
+            continue
+        path = f"$.subject_sets[{index}]"
+        for subject_id in row.get("member_subject_ids", []):
+            if subject_id not in subject_ids:
+                errs.append(f"{path}.member_subject_ids: unknown subject {subject_id!r}")
+        evidence_refs(row, path)
+
+    def subject_ref(ref, path: str) -> None:
+        if not isinstance(ref, dict):
+            return
+        closed_keys(ref, subject_ref_keys, path)
+        rid = ref.get("id")
+        if ref.get("kind") == "subject" and rid not in subject_ids:
+            errs.append(f"{path}: unknown subject {rid!r}")
+        elif ref.get("kind") == "subject-set" and rid not in set_ids:
+            errs.append(f"{path}: unknown subject set {rid!r}")
+
+    def interval(value, path: str) -> None:
+        def valid(part) -> bool:
+            if not isinstance(part, str):
+                return False
+            try:
+                if len(part) == 4:
+                    return 1 <= int(part) <= 9999
+                if len(part) == 7:
+                    year, month = map(int, part.split("-"))
+                    return 1 <= year <= 9999 and 1 <= month <= 12
+                return len(part) == 10 and date.fromisoformat(part).isoformat() == part
+            except (TypeError, ValueError):
+                return False
+
+        if not isinstance(value, dict):
+            return
+        closed_keys(value, interval_keys, path)
+        start, end = value.get("start"), value.get("end")
+        if isinstance(start, str) and isinstance(end, str):
+            if not valid(start) or not valid(end):
+                errs.append(f"{path}: interval contains an invalid calendar date")
+            elif len(start) != len(end):
+                errs.append(f"{path}: interval endpoints must use the same precision")
+            elif end < start:
+                errs.append(f"{path}: interval end precedes start")
+
+    lifecycle = ("supersedes_claim_ids", "contradicts_claim_ids", "derived_from_claim_ids")
+    claim_collections_by_id = {
+        row["id"]: collection
+        for collection, _, row in claims
+        if isinstance(row.get("id"), str)
+    }
+    claims_by_id = {
+        row["id"]: row
+        for _, _, row in claims
+        if isinstance(row.get("id"), str)
+    }
+    supersedes: dict[str, list[str]] = {}
+    derivations: dict[str, list[str]] = {}
+    for collection, index, row in claims:
+        path = f"$.{collection}[{index}]"
+        subject_ref(row.get("subject"), f"{path}.subject")
+        if collection == "relationships":
+            subject_ref(row.get("object"), f"{path}.object")
+            interval(row.get("valid_time"), f"{path}.valid_time")
+            if row.get("basis") not in ("reported", "derived"):
+                errs.append(f"{path}.basis: relationships must be reported or derived")
+        elif collection == "standing_facts":
+            errs += semantic_value_errors(row.get("value"), f"{path}.value")
+            interval(row.get("valid_time"), f"{path}.valid_time")
+            if row.get("basis") not in ("reported", "derived"):
+                errs.append(f"{path}.basis: standing facts must be reported or derived")
+        elif collection == "observations":
+            errs += semantic_value_errors(row.get("value"), f"{path}.value")
+            interval(row.get("observed_time"), f"{path}.observed_time")
+            if row.get("basis") == "reported-assessment":
+                errs.append(f"{path}.basis: reported-assessment belongs in assessed_gaps")
+            for target in row.get("comparison_claim_ids", []):
+                if target not in claim_ids:
+                    errs.append(f"{path}.comparison_claim_ids: unknown claim {target!r}")
+                elif claim_collections_by_id.get(target) != "standing_facts":
+                    errs.append(
+                        f"{path}.comparison_claim_ids: {target!r} is not a standing fact"
+                    )
+        elif collection == "assessed_gaps":
+            errs += semantic_value_errors(row.get("value"), f"{path}.value")
+            interval(row.get("assessed_time"), f"{path}.assessed_time")
+            if row.get("basis") not in ("reported-assessment", "derived"):
+                errs.append(f"{path}.basis: assessed gaps must be reported-assessment or derived")
+            if isinstance(row.get("value"), dict) and row["value"].get("kind") not in ("quantity", "range"):
+                errs.append(f"{path}.value: assessed gaps must be quantities or ranges")
+        evidence_refs(row, path)
+        own_id = row.get("id")
+        if row.get("basis") == "derived" and not row.get("derived_from_claim_ids"):
+            errs.append(
+                f"{path}.derived_from_claim_ids: derived claims must name their inputs"
+            )
+        for key in lifecycle:
+            for target in row.get(key, []):
+                if target == own_id:
+                    errs.append(f"{path}.{key}: a claim cannot reference itself")
+                elif target not in claim_ids:
+                    errs.append(f"{path}.{key}: unknown claim {target!r}")
+                elif key == "supersedes_claim_ids":
+                    older = claims_by_id[target]
+                    if (
+                        claim_collections_by_id[target] != collection
+                        or older.get("concept") != row.get("concept")
+                        or older.get("subject") != row.get("subject")
+                    ):
+                        errs.append(
+                            f"{path}.{key}: superseded claim {target!r} must have "
+                            "the same family, concept and subject"
+                        )
+        if isinstance(own_id, str):
+            supersedes[own_id] = row.get("supersedes_claim_ids", [])
+            derivations[own_id] = row.get("derived_from_claim_ids", [])
+
+    def reject_cycles(edge_name: str, graph: dict[str, list[str]]) -> None:
+        visiting: set[str] = set()
+        visited: set[str] = set()
+
+        def visit(claim_id: str) -> None:
+            if claim_id in visiting:
+                errs.append(f"{edge_name} contains a cycle at {claim_id!r}")
+                return
+            if claim_id in visited:
+                return
+            visiting.add(claim_id)
+            for target in graph.get(claim_id, []):
+                if target in graph:
+                    visit(target)
+            visiting.remove(claim_id)
+            visited.add(claim_id)
+
+        for claim_id in graph:
+            visit(claim_id)
+
+    reject_cycles("supersedes_claim_ids", supersedes)
+    reject_cycles("derived_from_claim_ids", derivations)
     return errs
 
 
@@ -555,6 +967,7 @@ def selftest(schemas: dict[str, dict]) -> int:
 
     facts = json.loads((SCHEMA_DIR / "examples/example-facts.json").read_text())
     wb = json.loads((SCHEMA_DIR / "examples/example-water-bodies-current.geojson").read_text())
+    semantic = json.loads((SCHEMA_DIR / "examples/example-semantic-records.json").read_text())
 
     # Positives: examples must pass the FULL L3 path (envelope + registry
     # agreement + accountability + contract + claim + unknown-key), with the
@@ -571,6 +984,32 @@ def selftest(schemas: dict[str, dict]) -> int:
         check(f"{name} passes full L3 path", not errs)
         for e in errs[:6]:
             print(f"  {e}")
+
+    semantic_ids = {
+        source["id"]
+        for source in semantic["provenance"]["sources"]
+        if source.get("id")
+    }
+    semantic_errs = env(semantic)
+    semantic_errs += validate(
+        semantic,
+        schemas["semantic-records.schema.json"],
+        schemas,
+        "semantic-records.schema.json",
+    )
+    semantic_errs += scope_registry_errors(semantic, scopes)
+    semantic_errs += source_accountability_errors(
+        semantic, semantic_ids, semantic_ids, "semantic-core/records"
+    )
+    semantic_errs += provenance_rule_errors(semantic)
+    semantic_errs += semantic_graph_errors(semantic)
+    semantic_errs += unknown_key_errors(
+        semantic, schemas["semantic-records.schema.json"]
+    )
+    semantic_errs += license_errors(semantic)
+    check("example-semantic-records passes candidate full-graph path", not semantic_errs)
+    for error in semantic_errs[:10]:
+        print(f"  {error}")
 
     # Negatives: each acceptance gap found in review must stay closed.
     bad = {"nvdm": "1.0", "dataset": "data-root/facts", "scope": {"kind": "city"}}
@@ -633,6 +1072,69 @@ def selftest(schemas: dict[str, dict]) -> int:
     d["features"].append({"type": "Feature", "geometry": None, "properties": {}})
     errs = validate(d, schemas["water-bodies-current.schema.json"], schemas, "water-bodies-current.schema.json")
     check("invalid record beyond position 500 caught", any("[501]" in e for e in errs))
+
+    d = dup(semantic); d["observations"][0]["subject"]["id"] = "nv-example:subject:missing"
+    check("semantic dangling subject rejected", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["standing_facts"][0]["evidence_ids"] = ["nv-example:evidence:missing"]
+    check("semantic dangling evidence rejected", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["evidence"][0]["id"] = d["subjects"][0]["id"]
+    check("semantic global duplicate id rejected", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["standing_facts"][0]["value"]["unused"] = "hidden"
+    check("semantic tagged-value placeholder rejected", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["observations"][0]["observed_time"] = {
+        "start": "2025-09-01", "end": "2025-08-31"
+    }
+    check("semantic reverse interval rejected", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["standing_facts"][0]["supersedes_claim_ids"] = [
+        d["standing_facts"][0]["id"]
+    ]
+    check("semantic self-supersession rejected", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["observations"][0]["supersedes_claim_ids"] = [
+        d["standing_facts"][0]["id"]
+    ]
+    check(
+        "semantic supersession stays within claim identity",
+        any("same family, concept and subject" in error for error in semantic_graph_errors(d)),
+    )
+    d = dup(semantic)
+    first, second = d["standing_facts"]
+    first["basis"] = second["basis"] = "derived"
+    first["derived_from_claim_ids"] = [second["id"]]
+    second["derived_from_claim_ids"] = [first["id"]]
+    check(
+        "semantic derivation cycles rejected",
+        any("derived_from_claim_ids contains a cycle" in error for error in semantic_graph_errors(d)),
+    )
+    d = dup(semantic); d["evidence"][0]["source_id"] = "missing-source"
+    check("semantic evidence source custody rejected", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["standing_facts"][0]["undocumented_shortcut"] = True
+    check("semantic nested claim keys are closed", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["observations"][0]["comparison_claim_ids"] = [
+        d["observations"][1]["id"]
+    ]
+    check("semantic comparison target must be a standing fact", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["standing_facts"][0]["basis"] = "derived"
+    check("semantic derived claim requires inputs", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["evidence"][1]["source_version_id"] = d["evidence"][0]["source_version_id"]
+    d["evidence"][1]["artifact_sha256"] = "f" * 64
+    check("semantic source version has one artifact hash", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["subjects"][0]["external_ids"] = [
+        {"scheme": "example-register", "value": "STP-1"}
+    ]
+    d["subjects"][1]["external_ids"] = [
+        {"scheme": "example-register", "value": "STP-1"}
+    ]
+    check("semantic external identity has one subject", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["observations"][0]["observed_time"]["timezone"] = "UTC"
+    check("semantic interval keys are closed", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["standing_facts"][0]["value"] = {
+        "kind": "date", "value": "2026-02-30"
+    }
+    check("semantic date value must be a real date", bool(semantic_graph_errors(d)))
+    d = dup(semantic)
+    for collection in SEMANTIC_CLAIM_COLLECTIONS:
+        d[collection] = []
+    check("semantic empty claim bundle rejected", bool(semantic_graph_errors(d)))
 
     # ---- L2 gate selector regression (2026-07-30 review: --diff-filter=A
     # missed renames into serving; unprefixed pathspecs missed path shapes).
