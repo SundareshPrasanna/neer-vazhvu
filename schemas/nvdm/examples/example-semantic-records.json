@@ -98,6 +98,20 @@
         "column_label": "Result",
         "field_key": "laboratory.outlet.bod"
       }
+    },
+    {
+      "id": "nv-example:evidence:mpr-operational-gap-cell",
+      "kind": "document-fragment",
+      "source_id": "nvdm-semantic-example",
+      "source_version_id": "example-mpr-2025-08",
+      "artifact_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "locator": {
+        "page_number": 5,
+        "table_label": "Example STP status table",
+        "row_label": "Example Ramanagara facility",
+        "column_label": "Reported operational gap",
+        "field_key": "stp.facility.example.operational-gap"
+      }
     }
   ],
   "relationships": [
@@ -116,6 +130,7 @@
       "subject": { "kind": "subject", "id": "nv-example:subject:ramanagara-stp-outlet" },
       "object": { "kind": "subject", "id": "nv-example:subject:ramanagara-stp" },
       "basis": "reported",
+      "valid_time": { "start": "2025-08-15", "end": "2025-08-15" },
       "evidence_ids": ["nv-example:evidence:stp-bod-cell"]
     }
   ],
@@ -194,6 +209,18 @@
       },
       "assessed_time": { "start": "2025-08-31", "end": "2025-08-31" },
       "evidence_ids": ["nv-example:evidence:mpr-total-cell"]
+    },
+    {
+      "id": "nv-example:claim:stp-operational-gap",
+      "concept": "nv:facility-operational-gap",
+      "subject": { "kind": "subject", "id": "nv-example:subject:ramanagara-stp" },
+      "basis": "reported-assessment",
+      "value": {
+        "kind": "terms",
+        "values": ["nv:primary-clarifier-partly-operational"]
+      },
+      "assessed_time": { "start": "2025-08-31", "end": "2025-08-31" },
+      "evidence_ids": ["nv-example:evidence:mpr-operational-gap-cell"]
     }
   ]
 }

@@ -44,7 +44,7 @@
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1 }
+          "items": { "$ref": "#/$defs/concept" }
         },
         "minimum": { "type": "number" },
         "maximum": { "type": "number" },
@@ -87,15 +87,15 @@
       "required": ["id", "set_kind", "label", "member_subject_ids", "basis", "evidence_ids"],
       "properties": {
         "id": { "$ref": "#/$defs/identifier" },
-        "set_kind": { "enum": ["reported-aggregation", "analytical-cohort"] },
+        "set_kind": { "enum": ["reported-aggregation"] },
         "label": { "type": "string", "minLength": 1 },
         "member_subject_ids": {
           "type": "array",
-          "minItems": 1,
+          "minItems": 2,
           "uniqueItems": true,
           "items": { "$ref": "#/$defs/identifier" }
         },
-        "basis": { "enum": ["reported", "derived"] },
+        "basis": { "enum": ["reported"] },
         "evidence_ids": {
           "type": "array",
           "minItems": 1,
@@ -103,7 +103,7 @@
           "items": { "$ref": "#/$defs/identifier" }
         }
       },
-      "description": "An explicit set or reported aggregate, never a fabricated canonical subject."
+      "description": "An explicit publisher-reported aggregate over two or more subjects, never a fabricated canonical subject. Analytical cohorts require a future governed definition contract."
     },
     "evidence_locator": {
       "type": "object",
@@ -172,7 +172,7 @@
         { "$ref": "#/$defs/claim_common" },
         {
           "type": "object",
-          "required": ["object"],
+          "required": ["object", "valid_time"],
           "properties": {
             "object": { "$ref": "#/$defs/subject_reference" },
             "valid_time": { "$ref": "#/$defs/time_interval" }
@@ -186,7 +186,7 @@
         { "$ref": "#/$defs/claim_common" },
         {
           "type": "object",
-          "required": ["value"],
+          "required": ["value", "valid_time"],
           "properties": {
             "value": { "$ref": "#/$defs/semantic_value" },
             "valid_time": { "$ref": "#/$defs/time_interval" }

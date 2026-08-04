@@ -38,9 +38,10 @@ flowchart LR
 
 A subject is a stable real-world thing: a treatment facility, monitoring point,
 local government, river reach or aquifer. A subject set represents an explicit
-reported aggregation or analytical cohort. It prevents labels such as “two
-municipalities combined” from being fabricated into canonical real-world
-entities.
+publisher-reported aggregation over two or more subjects. It prevents labels
+such as “two municipalities combined” from being fabricated into canonical
+real-world entities. Analytical cohorts are deferred until a governed cohort-
+definition contract exists.
 
 The candidate has four claim families:
 
@@ -83,8 +84,15 @@ crosswalks become public remains an explicit product and IP decision.
 
 Values use a closed tagged union: quantity, range, text, terms, date or boolean.
 A quantity always names its unit and qualifier. A range always names its unit.
-Dates are real ISO years, year-months or dates. Time intervals use one precision
-at both ends and cannot run backwards.
+Terms are namespaced controlled codes; free source wording uses text. Dates are
+real ISO years, year-months or dates. Every claim is time-bound; time
+intervals use one precision at both ends and cannot run backwards. Assessed
+gaps may be quantitative or qualitative because source reports contain both
+numeric shortfalls and typed operational/compliance deficiencies.
+
+An assessed gap is a water-domain claim supported by evidence. An extraction
+warning, ambiguous mapping or missing reviewer decision remains private review
+workflow state and never becomes a canonical gap by convenience.
 
 `null` is never shorthand for missing, unreported or not applicable. If a
 source does not report a field, the private review workflow records that
@@ -135,6 +143,7 @@ receipt without changing their subject/claim shape.
 | One document contains several STPs | One canonical facility subject per resolved facility | One-candidate-per-document assumption |
 | STP reading belongs to an inlet or outlet | Monitoring point subject plus `part-of` relationship | Free-text location on the observation |
 | Result must be compared with a standard | Observation references a standing-fact claim | Baking pass/fail into the raw value |
+| A report states an operational deficiency | Qualitative assessed-gap claim with controlled terms | Confusing a domain gap with an extraction-review finding |
 | Two reports disagree | Both claims retained and linked as contradictions | Last-write-wins replacement |
 | A later report corrects an earlier value | New claim supersedes the old claim | Mutating historical evidence |
 | A source field is absent | No canonical claim is emitted | Null-as-unreported convention |

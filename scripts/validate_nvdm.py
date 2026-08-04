@@ -675,8 +675,6 @@ def semantic_graph_errors(doc: dict) -> list[str]:
             interval(row.get("assessed_time"), f"{path}.assessed_time")
             if row.get("basis") not in ("reported-assessment", "derived"):
                 errs.append(f"{path}.basis: assessed gaps must be reported-assessment or derived")
-            if isinstance(row.get("value"), dict) and row["value"].get("kind") not in ("quantity", "range"):
-                errs.append(f"{path}.value: assessed gaps must be quantities or ranges")
         evidence_refs(row, path)
         own_id = row.get("id")
         if row.get("basis") == "derived" and not row.get("derived_from_claim_ids"):
@@ -1081,6 +1079,18 @@ def selftest(schemas: dict[str, dict]) -> int:
     check("semantic global duplicate id rejected", bool(semantic_graph_errors(d)))
     d = dup(semantic); d["standing_facts"][0]["value"]["unused"] = "hidden"
     check("semantic tagged-value placeholder rejected", bool(semantic_graph_errors(d)))
+    d = dup(semantic); d["standing_facts"][0].pop("valid_time")
+    check(
+        "semantic standing facts require time",
+        bool(validate(d, schemas["semantic-records.schema.json"], schemas, "semantic-records.schema.json")),
+    )
+    d = dup(semantic); d["subject_sets"][0]["member_subject_ids"] = [
+        d["subject_sets"][0]["member_subject_ids"][0]
+    ]
+    check(
+        "semantic reported aggregates require multiple subjects",
+        bool(validate(d, schemas["semantic-records.schema.json"], schemas, "semantic-records.schema.json")),
+    )
     d = dup(semantic); d["observations"][0]["observed_time"] = {
         "start": "2025-09-01", "end": "2025-08-31"
     }
