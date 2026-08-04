@@ -1,0 +1,226 @@
+{
+  "nvdm": "1.0",
+  "dataset": "semantic-core/records",
+  "scope": { "kind": "basin", "id": "arkavathi" },
+  "provenance": {
+    "sources": [
+      {
+        "id": "nvdm-semantic-example",
+        "title": "Illustrative treatment-report fixture",
+        "publisher": "Neer Vazhvu",
+        "url": "https://neervazhvu.org/",
+        "license": "CC0-1.0",
+        "as_of": "2025-08-31",
+        "retrieved": "2026-08-04"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-08-04",
+    "produced_by": "schemas/nvdm/examples/example-semantic-records.json",
+    "note": "Schema pressure-test only. Every label and value is synthetic; this artifact does not claim that a publisher reported these records."
+  },
+  "semantic_schema": "0.1-candidate",
+  "subjects": [
+    {
+      "id": "nv-example:subject:ramanagara-cmc",
+      "kind": "nv:local-government",
+      "preferred_label": "Example Ramanagara municipal body",
+      "aliases": ["Example CMC Ramanagara"]
+    },
+    {
+      "id": "nv-example:subject:kanakapura-cmc",
+      "kind": "nv:local-government",
+      "preferred_label": "Example Kanakapura municipal body"
+    },
+    {
+      "id": "nv-example:subject:ramanagara-stp",
+      "kind": "nv:treatment-facility",
+      "preferred_label": "Example Ramanagara STP"
+    },
+    {
+      "id": "nv-example:subject:ramanagara-stp-outlet",
+      "kind": "nv:monitoring-point",
+      "preferred_label": "Example Ramanagara STP outlet"
+    }
+  ],
+  "subject_sets": [
+    {
+      "id": "nv-example:set:two-municipality-total",
+      "set_kind": "reported-aggregation",
+      "label": "Example publisher-reported total for two municipalities",
+      "member_subject_ids": [
+        "nv-example:subject:ramanagara-cmc",
+        "nv-example:subject:kanakapura-cmc"
+      ],
+      "basis": "reported",
+      "evidence_ids": ["nv-example:evidence:mpr-total-cell"]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "nv-example:evidence:mpr-capacity-cell",
+      "kind": "document-fragment",
+      "source_id": "nvdm-semantic-example",
+      "source_version_id": "example-mpr-2025-08",
+      "artifact_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "locator": {
+        "page_number": 5,
+        "table_label": "Example STP table",
+        "row_label": "Example Ramanagara facility",
+        "column_label": "Capacity",
+        "field_key": "stp.facility.example.capacity"
+      }
+    },
+    {
+      "id": "nv-example:evidence:mpr-total-cell",
+      "kind": "document-fragment",
+      "source_id": "nvdm-semantic-example",
+      "source_version_id": "example-mpr-2025-08",
+      "artifact_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "locator": {
+        "page_number": 1,
+        "table_label": "Example municipal summary",
+        "row_label": "Treatment capacity total",
+        "column_label": "Total",
+        "field_key": "stp.summary.example.treatment-capacity.total"
+      }
+    },
+    {
+      "id": "nv-example:evidence:stp-bod-cell",
+      "kind": "document-fragment",
+      "source_id": "nvdm-semantic-example",
+      "source_version_id": "example-inspection-2025-08",
+      "artifact_sha256": "4111111111111111111111111111111111111111111111111111111111111111",
+      "locator": {
+        "page_number": 13,
+        "table_label": "Example outlet analysis",
+        "row_label": "BOD",
+        "column_label": "Result",
+        "field_key": "laboratory.outlet.bod"
+      }
+    },
+    {
+      "id": "nv-example:evidence:mpr-operational-gap-cell",
+      "kind": "document-fragment",
+      "source_id": "nvdm-semantic-example",
+      "source_version_id": "example-mpr-2025-08",
+      "artifact_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "locator": {
+        "page_number": 5,
+        "table_label": "Example STP status table",
+        "row_label": "Example Ramanagara facility",
+        "column_label": "Reported operational gap",
+        "field_key": "stp.facility.example.operational-gap"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "nv-example:claim:stp-local-body-context",
+      "concept": "nv:reported-local-body-context",
+      "subject": { "kind": "subject", "id": "nv-example:subject:ramanagara-stp" },
+      "object": { "kind": "subject", "id": "nv-example:subject:ramanagara-cmc" },
+      "basis": "reported",
+      "valid_time": { "start": "2025-08-31", "end": "2025-08-31" },
+      "evidence_ids": ["nv-example:evidence:mpr-capacity-cell"]
+    },
+    {
+      "id": "nv-example:claim:outlet-part-of-stp",
+      "concept": "nv:part-of",
+      "subject": { "kind": "subject", "id": "nv-example:subject:ramanagara-stp-outlet" },
+      "object": { "kind": "subject", "id": "nv-example:subject:ramanagara-stp" },
+      "basis": "reported",
+      "valid_time": { "start": "2025-08-15", "end": "2025-08-15" },
+      "evidence_ids": ["nv-example:evidence:stp-bod-cell"]
+    }
+  ],
+  "standing_facts": [
+    {
+      "id": "nv-example:claim:stp-design-capacity",
+      "concept": "nv:facility-design-capacity",
+      "subject": { "kind": "subject", "id": "nv-example:subject:ramanagara-stp" },
+      "basis": "reported",
+      "value": {
+        "kind": "quantity",
+        "value": 7.5,
+        "unit": "MLD",
+        "qualifier": "exact"
+      },
+      "valid_time": { "start": "2025-08-31", "end": "2025-08-31" },
+      "evidence_ids": ["nv-example:evidence:mpr-capacity-cell"]
+    },
+    {
+      "id": "nv-example:claim:bod-regulatory-maximum",
+      "concept": "nv:bod-regulatory-maximum",
+      "subject": { "kind": "subject", "id": "nv-example:subject:ramanagara-stp-outlet" },
+      "basis": "reported",
+      "value": {
+        "kind": "quantity",
+        "value": 20,
+        "unit": "mg/L",
+        "qualifier": "exact"
+      },
+      "valid_time": { "start": "2025-08-15", "end": "2025-08-15" },
+      "evidence_ids": ["nv-example:evidence:stp-bod-cell"]
+    }
+  ],
+  "observations": [
+    {
+      "id": "nv-example:claim:reported-treatment-capacity-total",
+      "concept": "nv:treatment-capacity",
+      "subject": { "kind": "subject-set", "id": "nv-example:set:two-municipality-total" },
+      "basis": "reported",
+      "value": {
+        "kind": "quantity",
+        "value": 12.5,
+        "unit": "MLD",
+        "qualifier": "exact"
+      },
+      "observed_time": { "start": "2025-08-31", "end": "2025-08-31" },
+      "evidence_ids": ["nv-example:evidence:mpr-total-cell"]
+    },
+    {
+      "id": "nv-example:claim:outlet-bod",
+      "concept": "nv:bod",
+      "subject": { "kind": "subject", "id": "nv-example:subject:ramanagara-stp-outlet" },
+      "basis": "laboratory-measured",
+      "value": {
+        "kind": "quantity",
+        "value": 18,
+        "unit": "mg/L",
+        "qualifier": "exact"
+      },
+      "observed_time": { "start": "2025-08-15", "end": "2025-08-15" },
+      "comparison_claim_ids": ["nv-example:claim:bod-regulatory-maximum"],
+      "evidence_ids": ["nv-example:evidence:stp-bod-cell"]
+    }
+  ],
+  "assessed_gaps": [
+    {
+      "id": "nv-example:claim:sewage-treatment-gap",
+      "concept": "nv:sewage-treatment-capacity-gap",
+      "subject": { "kind": "subject", "id": "nv-example:subject:ramanagara-cmc" },
+      "basis": "reported-assessment",
+      "value": {
+        "kind": "quantity",
+        "value": 4,
+        "unit": "MLD",
+        "qualifier": "approximate"
+      },
+      "assessed_time": { "start": "2025-08-31", "end": "2025-08-31" },
+      "evidence_ids": ["nv-example:evidence:mpr-total-cell"]
+    },
+    {
+      "id": "nv-example:claim:stp-operational-gap",
+      "concept": "nv:facility-operational-gap",
+      "subject": { "kind": "subject", "id": "nv-example:subject:ramanagara-stp" },
+      "basis": "reported-assessment",
+      "value": {
+        "kind": "terms",
+        "values": ["nv:primary-clarifier-partly-operational"]
+      },
+      "assessed_time": { "start": "2025-08-31", "end": "2025-08-31" },
+      "evidence_ids": ["nv-example:evidence:mpr-operational-gap-cell"]
+    }
+  ]
+}

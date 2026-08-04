@@ -49,3 +49,19 @@ CI (`.github/workflows/nvdm-conformance.yml`) runs the selftest, the freshness
 checks, and the L2 gate on newly added data artifacts - all **blocking**
 (v1 accepted 2026-07-30). New artifacts carry the envelope from their first
 commit; legacy files remain report-only until their city migrates.
+
+## Semantic core candidate
+
+`semantic-core.schema.json` and `semantic-records.schema.json` are a
+**0.1 candidate**, pressure-tested with the synthetic
+`examples/example-semantic-records.json` bundle. They define the interoperable
+shape for canonical subjects, explicit subject sets, immutable evidence and
+typed claims. The validator selftest exercises both schema conformance and
+cross-record graph integrity.
+
+This candidate does **not** change accepted NVDM v1. `semantic-core/records` is
+intentionally absent from `CONTRACTS`, no production artifact uses it, and no
+concept vocabulary has been accepted by implication. Registration is a later
+decision after the public/private ontology boundary, projector compatibility
+and persistence implications have been reviewed. See
+`docs/architecture/nvdm-semantic-core.md`.

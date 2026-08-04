@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "semantic-records.schema.json",
+  "title": "semantic-core/records candidate contract",
+  "description": "Self-contained NVDM semantic release bundle. Typed collections share one subject/evidence graph; this bundle is an interchange and validation unit, not a database layout.",
+  "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
+  "type": "object",
+  "unevaluatedProperties": false,
+  "required": ["semantic_schema", "subjects", "subject_sets", "evidence", "relationships", "standing_facts", "observations", "assessed_gaps"],
+  "properties": {
+    "semantic_schema": { "enum": ["0.1-candidate"] },
+    "subjects": {
+      "type": "array",
+      "items": { "$ref": "semantic-core.schema.json#/$defs/subject" }
+    },
+    "subject_sets": {
+      "type": "array",
+      "items": { "$ref": "semantic-core.schema.json#/$defs/subject_set" }
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "$ref": "semantic-core.schema.json#/$defs/evidence" }
+    },
+    "relationships": {
+      "type": "array",
+      "items": { "$ref": "semantic-core.schema.json#/$defs/relationship" }
+    },
+    "standing_facts": {
+      "type": "array",
+      "items": { "$ref": "semantic-core.schema.json#/$defs/standing_fact" }
+    },
+    "observations": {
+      "type": "array",
+      "items": { "$ref": "semantic-core.schema.json#/$defs/observation" }
+    },
+    "assessed_gaps": {
+      "type": "array",
+      "items": { "$ref": "semantic-core.schema.json#/$defs/assessed_gap" }
+    }
+  }
+}
