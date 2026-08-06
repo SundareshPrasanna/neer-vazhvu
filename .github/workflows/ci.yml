@@ -1,9 +1,9 @@
 name: CI
 
 # Serving-hardening D4 split (review addendum 2026-07-30): the FULL-corpus
-# jobs validate against the complete corpus (today: from the checkout; after
-# the P2 cutover: fetched via scripts/fetch-corpus.sh, which requires the
-# CORPUS_REPO_TOKEN secret and therefore cannot run on fork PRs). The
+# jobs validate against the complete corpus fetched at the immutable
+# corpus.lock commit. This requires the CORPUS_REPO_TOKEN secret and therefore
+# runs only on main pushes and same-repository PRs. The
 # sample-corpus job needs no secrets and runs everywhere: it prunes the
 # corpus to the clean reference set plus documented fixtures
 # (scripts/sample-corpus.json) and proves build + tests pass against it.
@@ -18,8 +18,11 @@ on:
 
 jobs:
   frontend:
-    name: Frontend - full corpus from checkout (lint + build + tests + data checks)
+    name: Frontend - locked full corpus (lint + build + tests + data checks)
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    env:
+      CORPUS_SOURCE: remote
     steps:
       - uses: actions/checkout@v4
 
@@ -34,6 +37,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Fetch exact corpus.lock edition
+        run: bash scripts/fetch-corpus.sh
+        env:
+          CORPUS_REPO_TOKEN: ${{ secrets.CORPUS_REPO_TOKEN }}
 
       - run: npm ci
       - run: npm run lint
