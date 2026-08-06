@@ -5,6 +5,7 @@ import path from "node:path";
 import { tryGetBasinManifest, type BasinFloor, type BasinInventory } from "@/lib/basins";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
+import { ForcedTheme } from "@/components/theme-provider";
 
 // Chrome-less basin atlas for third-party embedding (e.g. Paani Earth's
 // Arkavathi deep dive). The site Header/Footer suppress themselves on /embed,
@@ -17,6 +18,11 @@ import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
 //   <iframe src="https://neervazhvu.org/embed/basins/arkavathi"
 //           style="width:100%;height:80vh;border:0" allow="geolocation"
 //           title="Arkavathi Basin Atlas - Neer Vazhvu x Paani Earth"></iframe>
+//
+// Theme: embeds render LIGHT unless the embedder opts out - an iframe should
+// match its host page, not the visitor's OS (Madhuri's demo got a dark map
+// inside Paani Earth's light site). ?theme=dark pins dark; ?theme=auto
+// restores follow-the-visitor behaviour.
 
 const FLOORS: BasinFloor[] = ["hydrology", "monitoring", "pressures", "governance"];
 
@@ -31,7 +37,7 @@ function loadBasinInventory(basinId: string): BasinInventory | null {
 
 interface PageProps {
   params: Promise<{ basinId: string }>;
-  searchParams: Promise<{ river?: string; floor?: string; sub?: string }>;
+  searchParams: Promise<{ river?: string; floor?: string; sub?: string; theme?: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -59,8 +65,11 @@ export default async function BasinEmbedPage({ params, searchParams }: PageProps
   const initialRiverId = manifest.rivers.some((r) => r.riverId === sp.river) ? sp.river! : null;
   const initialFloor = FLOORS.includes(sp.floor as BasinFloor) ? (sp.floor as BasinFloor) : undefined;
   const initialSubBasinKey = manifest.subBasins?.some((s) => s.key === sp.sub) ? sp.sub! : null;
+  // null = auto (follow the visitor); anything else is pinned. Light unless
+  // the embedder says otherwise - see the theme note in the header comment.
+  const forcedTheme = sp.theme === "auto" ? null : sp.theme === "dark" ? ("dark" as const) : ("light" as const);
 
-  return (
+  const content = (
     <div className="fixed inset-0 flex flex-col bg-white dark:bg-slate-950">
       {/* Compact credit bar: attribution + the route back to the full site.
           target=_blank because inside an iframe an in-frame navigation would
@@ -104,4 +113,6 @@ export default async function BasinEmbedPage({ params, searchParams }: PageProps
       </div>
     </div>
   );
+
+  return forcedTheme ? <ForcedTheme theme={forcedTheme}>{content}</ForcedTheme> : content;
 }

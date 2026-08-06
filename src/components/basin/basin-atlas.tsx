@@ -1203,12 +1203,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             }
 
             if (l.geom === "point") {
+              const treatment = l.family === "infrastructure" || l.family === "fstp";
               return (
                 <GeoJSON
                   key={`${layerKey(l)}-${selectedRiverId}`}
                   data={fcScoped}
                   pointToLayer={(feat, latlng) =>
-                    L.circleMarker(latlng, pointStyle(l, feat, faded))
+                    treatment
+                      ? L.marker(latlng, { icon: treatmentIcon(l, feat), opacity: faded ? 0.4 : 1 })
+                      : L.circleMarker(latlng, pointStyle(l, feat, faded))
                   }
                   onEachFeature={(feat: Feature, layer: Layer) => {
                     const p = (feat.properties ?? {}) as Record<string, unknown>;
@@ -1321,9 +1324,20 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           )}
         </MapContainer>
 
-        {/* "Where am I?" control + status. Bottom-right, lifted above the zoom
-            control; the bottom-left corner is taken by the MapLegend. */}
-        <div className="absolute bottom-24 right-3 z-[500] flex flex-col items-end gap-1.5 max-w-[70%]">
+        {/* "Where am I?" control + status. Upper-left and filled blue so it
+            reads as THE action on the map (Madhuri's review: bottom-right
+            neutral was inconspicuous). Sits below the Back button when the
+            atlas is a city-page overlay, which owns top-3 left-3. */}
+        <div className={`absolute ${embedded && onClose ? "top-14" : "top-3"} left-3 z-[500] flex flex-col items-start gap-1.5 max-w-[70%]`}>
+          <button
+            onClick={locateMe}
+            disabled={locating}
+            aria-label="Show my location on the map"
+            className="rounded-md shadow-lg px-3 py-1.5 text-xs font-semibold border bg-blue-600 hover:bg-blue-700 disabled:hover:bg-blue-600 text-white border-blue-700 disabled:opacity-60 flex items-center gap-1.5"
+          >
+            <span aria-hidden>◎</span>
+            {locating ? "Locating…" : userLocation ? "Recenter on me" : "Where am I?"}
+          </button>
           {locateMsg && (
             <div
               className={`rounded-md shadow px-3 py-1.5 text-[11px] leading-snug flex items-start gap-2 border ${
@@ -1344,15 +1358,6 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
               </button>
             </div>
           )}
-          <button
-            onClick={locateMe}
-            disabled={locating}
-            aria-label="Show my location on the map"
-            className="rounded-md shadow px-3 py-1.5 text-xs font-medium border bg-white/95 dark:bg-slate-900/95 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-60 flex items-center gap-1.5"
-          >
-            <span aria-hidden>◎</span>
-            {locating ? "Locating…" : userLocation ? "Recenter on me" : "Where am I?"}
-          </button>
         </div>
 
         {/* Back to the rivers map (only when opened as an overlay). */}
@@ -1530,7 +1535,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
 // ── legend ───────────────────────────────────────────────────────────────
 
-type LegendSym = "box" | "dot" | "ring" | "line" | "dash" | "outline";
+type LegendSym = "box" | "dot" | "ring" | "line" | "dash" | "outline" | "tri" | "tri-ring";
 
 /** Dynamic legend: one entry per symbol actually on the map right now,
  *  expanding pressures into its kinds and showing the monitoring public-domain
@@ -1566,24 +1571,25 @@ function MapLegend({ layers, elevation, notes, raised }: { layers: BasinLayer[];
     } else if (l.family === "pressures-industrial" && l.kindFilter === "major-industry") {
       items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "17-category industry (KSPCB)" });
     } else if (l.family === "pressures-industrial") {
-      items.push({ sym: "box", color: "#dc2626", label: "Industrial area - no CETP (est.)" });
-      items.push({ sym: "box", color: "#64748b", label: "Industrial area - CETP nearby" });
-      // Third CETP state drawn by fillStyle (faint dashed grey) - must be
-      // named here too: every rendered style gets a legend row.
-      items.push({ sym: "outline", color: "#cbd5e1", label: "Industrial area - CETP unknown" });
+      // The three CETP states are all solid fills (see fillStyle) - the legend
+      // rows must mirror that, one box per state.
+      items.push({ sym: "box", color: "#C62828", label: "Industrial area - no CETP (est.)" });
+      items.push({ sym: "box", color: "#1976D2", label: "Industrial area - CETP available" });
+      items.push({ sym: "box", color: "#F9A825", label: "Industrial area - CETP status to be verified" });
       // The 17-category dot appears here only when this entry is NOT
       // kind-split (a split manifest declares its own toggle + legend row).
       if (!l.kindFilter) items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "Major industry (17-category)" });
     } else if (l.family === "pressures-quarries") {
       items.push({ sym: "box", color: PRESSURE_KIND_COLOR["quarry"], label: "Quarry" });
     } else if (l.family === "pressures-waste") {
-      items.push({ sym: "box", color: PRESSURE_KIND_COLOR["waste-facility"], label: "Waste facility" });
+      items.push({ sym: "box", color: PRESSURE_KIND_COLOR["waste-facility"], label: "Hazardous waste facility" });
     } else if (l.family === "infrastructure") {
-      items.push({ sym: "dot", color: l.color, label: "STP (operational)" });
-      items.push({ sym: "ring", color: l.color, label: "STP (not yet functional)" });
+      // Squares / triangles, echoing the treatmentIcon marker shapes.
+      items.push({ sym: "box", color: l.color, label: "STP (operational)" });
+      items.push({ sym: "outline", color: l.color, label: "STP (not yet functional)" });
     } else if (l.family === "fstp") {
-      items.push({ sym: "dot", color: l.color, label: "FSTP (operational)" });
-      items.push({ sym: "ring", color: l.color, label: "FSTP (not yet functional)" });
+      items.push({ sym: "tri", color: l.color, label: "FSTP (operational)" });
+      items.push({ sym: "tri-ring", color: l.color, label: "FSTP (not yet functional)" });
     } else if (l.family.startsWith("admin")) items.push({ sym: "outline", color: l.color, label: l.label });
     else if (l.geom === "point") items.push({ sym: "dot", color: l.color, label: l.label });
     else items.push({ sym: "box", color: l.color, label: l.label });
@@ -1620,6 +1626,18 @@ function LegendSymbol({ sym, color }: { sym: LegendSym; color: string }) {
   if (sym === "line") return <span className="inline-block w-4 h-[2px] shrink-0" style={{ backgroundColor: color }} />;
   if (sym === "dash") return <span className="inline-block w-4 border-t-2 border-dashed shrink-0" style={{ borderColor: color }} />;
   if (sym === "outline") return <span className="inline-block w-3 h-3 rounded-sm shrink-0 border" style={{ borderColor: color }} />;
+  if (sym === "tri" || sym === "tri-ring")
+    return (
+      <svg viewBox="0 0 12 12" className="w-3 h-3 shrink-0" aria-hidden>
+        <polygon
+          points="6,1 11.5,11 0.5,11"
+          fill={sym === "tri" ? color : "none"}
+          stroke={color}
+          strokeWidth={sym === "tri" ? 0 : 1.8}
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
   return <span className="inline-block w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: color }} />;
 }
 
@@ -1697,12 +1715,9 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
 function pointStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): L.CircleMarkerOptions {
   const p = (feat?.properties ?? {}) as Record<string, unknown>;
   // Monitoring: hollow if not in public domain (honest-gap cue). Treatment
-  // plants (STP + FSTP): hollow if not yet functional (status doesn't say
-  // "operational"), so an unbuilt/under-construction plant reads as not-solid.
-  const treatment = l.family === "infrastructure" || l.family === "fstp";
-  const hollow =
-    (l.family === "monitoring-points" && String(p.publicDomain ?? "").toUpperCase() !== "YES") ||
-    (treatment && !/operational/i.test(String(p.status ?? "")));
+  // plants never reach here - they render as shaped markers (treatmentIcon)
+  // that carry their own solid/hollow status convention.
+  const hollow = l.family === "monitoring-points" && String(p.publicDomain ?? "").toUpperCase() !== "YES";
   return {
     radius: 5,
     color: l.color,
@@ -1713,13 +1728,37 @@ function pointStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): L
   };
 }
 
+// Treatment plants are DOM markers, not canvas circles: STP = square, FSTP =
+// triangle (Madhuri's review - identical small circles were unfindable in a
+// demo), sized well above the 10 px data dots and drawn in the markerPane,
+// which stacks above every canvas fill. Solid = operational, hollow = not yet
+// functional - the same status convention the circles used; the white outline
+// on solid shapes keeps them legible on both the light and darkened basemaps.
+function treatmentIcon(l: BasinLayer, feat: Feature | undefined): L.DivIcon {
+  const p = (feat?.properties ?? {}) as Record<string, unknown>;
+  const operational = /operational/i.test(String(p.status ?? ""));
+  const fill = operational ? l.color : "none";
+  const stroke = operational ? "#ffffff" : l.color;
+  const sw = operational ? 1.5 : 2.5;
+  const shape =
+    l.family === "fstp"
+      ? `<polygon points="9,1.5 17,16 1,16" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`
+      : `<rect x="2" y="2" width="14" height="14" rx="2" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+  return L.divIcon({
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">${shape}</svg>`,
+    className: "",
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
+  });
+}
+
 // ── shared color sources (the map, legend, and rail all read from these +
 //    each layer's manifest `color`, so they can never drift out of sync) ──
 
 // Warm red->orange->amber ramp: reads as "pressure", three steps distinct and
 // each mid-toned so it holds on both the light and dark basemaps.
 const PRESSURE_KIND_COLOR: Record<string, string> = {
-  "industrial-area": "#dc2626",
+  "industrial-area": "#C62828",
   quarry: "#ea580c",
   "waste-facility": "#ca8a04",
   // Named 17-category major polluters (KSPCB) - a deep rose, distinct from the
@@ -1790,8 +1829,10 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, gap
   if (l.family.startsWith("pressures")) {
     const p = (feat?.properties as Record<string, unknown>) ?? {};
     const kind = String(p.kind ?? "");
-    // Industrial areas are sub-coloured by CETP coverage (Madhuri's ask): no
-    // CETP nearby = strong red (the gap), CETP nearby = muted, unlocated = grey.
+    // Industrial areas are sub-coloured by CETP coverage, palette fixed with
+    // Madhuri (Aug 2026): no CETP = red, CETP available = blue, status to be
+    // verified = yellow. All three are SOLID fills at the same opacity - the
+    // old faint/dashed states vanished against the basemap in a live demo.
     if (kind === "industrial-area-other") {
       // Unattributed (likely KSSIDC) estates: marked but detail-less, so a
       // quiet dashed grey - visibly present, visibly not the KIADB story.
@@ -1799,8 +1840,8 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, gap
     }
     if (kind === "industrial-area") {
       const cetp = String(p.cetp ?? "unknown");
-      const c = cetp === "none" ? "#dc2626" : cetp === "served" ? "#64748b" : "#cbd5e1";
-      return { color: c, weight: 1, fillColor: c, fillOpacity: faded ? 0.2 : cetp === "none" ? 0.6 : 0.3, dashArray: cetp === "unknown" ? "3 3" : undefined };
+      const c = cetp === "none" ? "#C62828" : cetp === "served" ? "#1976D2" : "#F9A825";
+      return { color: c, weight: 1, fillColor: c, fillOpacity: faded ? 0.2 : 0.55 };
     }
     const c = PRESSURE_KIND_COLOR[kind] ?? l.color;
     return { color: c, weight: 1, fillColor: c, fillOpacity: faded ? 0.2 : 0.5 };
