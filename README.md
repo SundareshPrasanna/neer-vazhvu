@@ -379,6 +379,18 @@ Areas where help is needed:
 
 Please open an issue first to discuss significant changes.
 
+## Corpus build source
+
+Local development uses the corpus committed under `public/data/` and
+`public/geojson/` by default. Full-corpus CI and hosted deployments can instead
+set `CORPUS_SOURCE=remote` and provide a `CORPUS_REPO_TOKEN` with read-only
+Contents access to `neer-vazhvu-data`. The build then fetches the exact commit
+and file counts recorded in [`corpus.lock`](corpus.lock), and fails rather than
+falling back to partial data. Preview and Production variables are configured
+separately; promote the remote mode to Production only after its Preview build
+and rollback checks pass. The token is removed from the environment before the
+Next.js compiler runs.
+
 ## License
 
 [MIT](LICENSE) - for the **code**.
