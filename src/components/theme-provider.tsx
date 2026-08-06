@@ -110,3 +110,46 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 export function useTheme(): ThemeContextValue {
   return useContext(ThemeContext);
 }
+
+/**
+ * Pin a page to one resolved theme, ignoring the visitor's stored
+ * preference and OS scheme. Built for /embed: an iframe should match its
+ * HOST page's theme (the embedder picks via ?theme=), not the visitor's
+ * OS - Paani Earth's light site was getting a dark map for dark-OS
+ * visitors, with no way to opt out.
+ *
+ * The root ThemeProvider's class effect runs AFTER children's on mount and
+ * re-fires on system flips, so a one-shot child effect would lose the <html>
+ * class race. The MutationObserver settles it: any outside write that
+ * contradicts the forced theme is reverted (one extra mutation, then
+ * stable). setTheme is a no-op inside - a pinned page has no toggle.
+ * Full-page use only: on unmount nothing restores the provider's class
+ * until the visitor's theme next changes.
+ */
+export function ForcedTheme({
+  theme,
+  children,
+}: {
+  theme: ResolvedTheme;
+  children: React.ReactNode;
+}) {
+  useEffect(() => {
+    const root = document.documentElement;
+    const apply = () => {
+      if (theme === "dark") root.classList.add("dark");
+      else root.classList.remove("dark");
+    };
+    apply();
+    const observer = new MutationObserver(() => {
+      if (root.classList.contains("dark") !== (theme === "dark")) apply();
+    });
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, [theme]);
+
+  const value = useMemo<ThemeContextValue>(
+    () => ({ theme, resolvedTheme: theme, setTheme: () => {} }),
+    [theme],
+  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+}
