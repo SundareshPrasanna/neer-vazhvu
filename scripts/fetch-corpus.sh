@@ -41,19 +41,17 @@ esac
 
 REPO="$(python3 -c "import json; print(json.load(open('$LOCK'))['repo'])")"
 SHA="$(python3 -c "import json; print(json.load(open('$LOCK'))['sha'])")"
+EXPECTED_REPO="github.com/SundareshPrasanna/neer-vazhvu-data"
 
-if [[ -n "${CORPUS_REPO_TOKEN:-}" ]]; then
-  URL="https://x-access-token:${CORPUS_REPO_TOKEN}@${REPO}.git"
-elif [[ "${CORPUS_USE_GIT_AUTH:-0}" == "1" ]]; then
-  URL="https://${REPO}.git"
-else
-  cat >&2 <<'EOF'
-fetch-corpus: CORPUS_SOURCE=remote but no credential is configured.
-Set CORPUS_REPO_TOKEN (fine-grained PAT with Contents: Read on the data
-repo) or, on a developer machine with git auth, CORPUS_USE_GIT_AUTH=1.
-Refusing to fall back silently (D4): a build without the real corpus must
-fail, not go green against partial data.
-EOF
+# The read credential must never be sent to a repository selected by a changed
+# lock file. P2 full-corpus CI runs only for branches in this repository, but
+# this allowlist remains the credential's final fail-closed boundary.
+if [[ "$REPO" != "$EXPECTED_REPO" ]]; then
+  echo "fetch-corpus: corpus.lock names unsupported repo '$REPO'" >&2
+  exit 1
+fi
+if [[ ! "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "fetch-corpus: corpus.lock sha must be a full lowercase Git SHA" >&2
   exit 1
 fi
 
@@ -62,6 +60,20 @@ mkdir -p "$CACHE"
 git -C "$CACHE" init -q 2>/dev/null || true
 
 if ! git -C "$CACHE" cat-file -e "$SHA^{commit}" 2>/dev/null; then
+  if [[ -n "${CORPUS_REPO_TOKEN:-}" ]]; then
+    URL="https://x-access-token:${CORPUS_REPO_TOKEN}@${REPO}.git"
+  elif [[ "${CORPUS_USE_GIT_AUTH:-0}" == "1" ]]; then
+    URL="https://${REPO}.git"
+  else
+    cat >&2 <<'EOF'
+fetch-corpus: CORPUS_SOURCE=remote but the locked commit is not cached and no
+credential is configured. Set CORPUS_REPO_TOKEN (fine-grained PAT with
+Contents: Read on the data repo) or, on a developer machine with git auth,
+CORPUS_USE_GIT_AUTH=1. Refusing to fall back silently: a build without the
+real corpus must fail, not go green against partial data.
+EOF
+    exit 1
+  fi
   echo "fetch-corpus: shallow-fetching $REPO @ ${SHA:0:12}"
   git -C "$CACHE" fetch -q --depth 1 "$URL" "$SHA"
 fi

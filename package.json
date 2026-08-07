@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "bash scripts/fetch-corpus.sh && next build",
+    "build": "bash scripts/fetch-corpus.sh && unset CORPUS_REPO_TOKEN && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "find src -name '*.test.ts' | xargs tsx --test",
