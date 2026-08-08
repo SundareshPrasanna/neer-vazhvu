@@ -17,16 +17,16 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-07-08",
+    "produced_at": "2026-08-08",
     "produced_by": "scripts/verify_rich_body_overture_buildings.py",
     "note": "Per-building polygon counts from the Overture 2026-06-17.0 release (the release id is the evidence vintage); independent comparison against Google Open Buildings by design."
   },
   "body_id": "velachery",
-  "computed_at": "2026-07-08T07:22:55.798415+00:00",
+  "computed_at": "2026-08-08T05:21:30.394984+00:00",
   "data_source": {
-    "dataset": "Overture Maps Foundation - buildings (2026-06-17.0)",
-    "release_date": "2026-06-17",
-    "url_root": "s3://overturemaps-us-west-2/release/2026-06-17.0/theme=buildings/type=building/*",
+    "dataset": "Overture Maps Foundation - buildings (2026-07-22.0)",
+    "release_date": "2026-07-22",
+    "url_root": "s3://overturemaps-us-west-2/release/2026-07-22.0/theme=buildings/type=building/*",
     "license": "ODbL / CDLA depending on theme",
     "method": "Per-building polygon download via DuckDB+spatial+httpfs query on the Overture parquet release filtered by chip bbox. Buildings counted as inside a region when their centroid is within the region polygon. Area summed from each footprint's planar area at 13N.",
     "providers": "Microsoft + OpenStreetMap + Google + other partners (combined and deduplicated by Overture)",
@@ -48,16 +48,16 @@
     },
     {
       "region": "Halo: 1km buffer - body",
-      "building_count": 15194,
-      "building_area_ha": 203.21,
+      "building_count": 15187,
+      "building_area_ha": 203.09,
       "with_height_metadata": 1,
       "region_area_ha": 602.86,
-      "built_up_fraction_pct": 33.71
+      "built_up_fraction_pct": 33.69
     }
   ],
   "headline_for_v0": [
     "Inside primary boundary: 0 buildings covering 0 ha (0.0%).",
-    "Inside 1 km halo: 15,194 buildings covering 203 ha (33.7%)."
+    "Inside 1 km halo: 15,187 buildings covering 203 ha (33.7%)."
   ],
   "comparison_note": "Compare side-by-side with the Google Open Buildings v3 numbers in pallikaranai-open-buildings-verification.json (2023 release). Delta indicates construction since 2023."
 }
