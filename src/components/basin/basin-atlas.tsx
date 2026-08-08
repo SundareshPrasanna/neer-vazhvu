@@ -16,6 +16,13 @@ import type {
   BasinManifest,
 } from "@/lib/basins";
 import { tryGetBasinManifest } from "@/lib/basins";
+import {
+  parseReviewedMprSeries,
+  reviewedMprConceptLabel,
+  reviewedMprValueLabel,
+  type ReviewedMprRecord,
+  type ReviewedMprSeries,
+} from "@/lib/basins/reviewed-mpr";
 import "leaflet/dist/leaflet.css";
 
 interface Props {
@@ -496,6 +503,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const [selectedPrs, setSelectedPrs] = useState(false);
   const [prsData, setPrsData] = useState<PrsData | null>(null);
   const [accData, setAccData] = useState<AccountabilityData | null>(null);
+  const [reviewedMpr, setReviewedMpr] = useState<ReviewedMprSeries | null>(null);
   // True when a gap unit was opened FROM the PRS panel, so the gap panel can
   // offer a "back to PRS" affordance.
   const [gapFromPrs, setGapFromPrs] = useState(false);
@@ -649,6 +657,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     fetchJson(`/data/basins/${manifest.basinId}/accountability.json`)
       .then((d) => setAccData((d as unknown as AccountabilityData) ?? null))
       .catch(() => setAccData(null));
+    fetchJson(`/data/basins/${manifest.basinId}/mpr-reviewed.json`)
+      .then((d) => setReviewedMpr(parseReviewedMprSeries(d)))
+      .catch(() => setReviewedMpr(null));
   }, [manifest.basinId, manifest.layers]);
 
   // On phones the layers panel is an off-canvas drawer; start it closed so the
@@ -1462,6 +1473,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
               <PRSPanel
                 prs={prsData}
                 accountability={accData}
+                reviewedMpr={reviewedMpr}
                 layerByFamily={layerByFamily}
                 onOpenUnit={(u) => { setSelectedPrs(false); setSelectedFeature(null); setSelectedGapUnit(u); setGapFromPrs(true); }}
                 depUnit={manifest.defaultGapUnit}
@@ -1982,6 +1994,7 @@ function priorityClass(p: string): string {
 function PRSPanel({
   prs,
   accountability,
+  reviewedMpr,
   layerByFamily,
   onOpenUnit,
   onShowLayer,
@@ -1991,6 +2004,7 @@ function PRSPanel({
 }: {
   prs: PrsData;
   accountability?: AccountabilityData | null;
+  reviewedMpr?: ReviewedMprSeries | null;
   layerByFamily: Record<string, BasinLayer>;
   onOpenUnit: (unit: string) => void;
   onShowLayer: (family: string) => void;
@@ -2242,6 +2256,8 @@ function PRSPanel({
         )}
       </section>
 
+      {reviewedMpr && <ReviewedMprSection series={reviewedMpr} />}
+
       {/* Governance & compliance: who is accountable, and what they must report */}
       {prs.governance && (
         <section>
@@ -2388,6 +2404,94 @@ function PRSPanel({
       )}
       {prs.grievance?.urlNote && <p className="text-[10px] text-slate-400 italic">{prs.grievance.urlNote}</p>}
     </div>
+  );
+}
+
+function ReviewedMprSection({ series }: { series: ReviewedMprSeries }) {
+  const latest = series.editions.at(-1);
+  const [editionId, setEditionId] = useState(latest?.editionId ?? "");
+  const edition = series.editions.find((item) => item.editionId === editionId) ?? latest;
+  const groups = useMemo(() => {
+    const grouped = new Map<string, ReviewedMprRecord[]>();
+    for (const record of edition?.records ?? []) {
+      const current = grouped.get(record.subjectLabel) ?? [];
+      current.push(record);
+      grouped.set(record.subjectLabel, current);
+    }
+    return [...grouped.entries()];
+  }, [edition]);
+  if (!edition) return null;
+
+  const month = (date: string) => new Intl.DateTimeFormat("en-IN", {
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${date}T00:00:00Z`));
+
+  return (
+    <section className="rounded-lg border border-blue-200 dark:border-blue-900/70 bg-blue-50/60 dark:bg-blue-950/20 p-3 space-y-2.5">
+      <div>
+        <div className="text-[11px] uppercase tracking-wider text-blue-700 dark:text-blue-300 font-semibold">Reviewed monthly progress</div>
+        <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-snug">
+          {series.summary.editionCount} report editions · {series.summary.recordCount} source-linked values
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-1" aria-label="Monthly progress report editions">
+        {series.editions.map((item) => (
+          <button
+            key={item.editionId}
+            onClick={() => setEditionId(item.editionId)}
+            className={`text-[11px] px-2 py-1 rounded border font-semibold transition-colors ${
+              item.editionId === edition.editionId
+                ? "bg-blue-700 text-white border-blue-700"
+                : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800"
+            }`}
+          >
+            {month(item.period.end)}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">{month(edition.period.end)}</div>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{edition.source.title}</p>
+        </div>
+        <a
+          href={edition.source.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="shrink-0 text-[11px] font-medium text-blue-700 dark:text-blue-300 hover:underline"
+        >
+          Source PDF ↗
+        </a>
+      </div>
+
+      <div key={edition.editionId} className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
+        {groups.map(([subject, records]) => (
+          <details key={subject} open={edition.records.length <= 15} className="group px-2.5 py-2">
+            <summary className="cursor-pointer list-none flex items-center gap-2">
+              <span aria-hidden className="text-[10px] text-slate-400 group-open:rotate-90 transition-transform">▸</span>
+              <span className="flex-1 text-[12px] font-semibold text-slate-800 dark:text-slate-100 leading-snug">{subject}</span>
+              <span className="text-[10px] text-slate-400">{records.length}</span>
+            </summary>
+            <dl className="mt-2 ml-4 space-y-1.5">
+              {records.map((record) => (
+                <div key={record.claimId} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-0.5">
+                  <dt className="text-[11px] text-slate-500 dark:text-slate-400">{reviewedMprConceptLabel(record.concept)}</dt>
+                  <dd className="text-[11px] font-semibold text-slate-800 dark:text-slate-100 text-right">{reviewedMprValueLabel(record.value)}</dd>
+                  <dd className="col-span-2 text-[10px] text-slate-400">Evidence: page {record.pageNumber}</dd>
+                </div>
+              ))}
+            </dl>
+          </details>
+        ))}
+      </div>
+      <p className="text-[10px] text-slate-400 leading-snug">
+        Values are published only after platform review. Page numbers point back to the named report above.
+      </p>
+    </section>
   );
 }
 
