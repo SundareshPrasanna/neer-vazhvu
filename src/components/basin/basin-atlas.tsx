@@ -9,6 +9,20 @@ import { MapResizer } from "@/components/map-resizer";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { ELEVATION_BAND_COLORS, elevationLegendEntries } from "@/components/map/elevation-bands";
+import { exportBasinAtlasPdf } from "@/lib/basins/export-pdf";
+import {
+  buildAtlasShareUrl,
+  encodeLayersParam,
+  layerKey,
+  parseLayersParam,
+} from "@/lib/basins/atlas-url-state";
+import {
+  ACC_KIND_LABEL,
+  ACC_VERDICT_LABEL,
+  DEP_STATUS_LABEL,
+  DEP_THEME_ORDER,
+  depThemeTitle,
+} from "@/lib/basins/panel-labels";
 import type {
   BasinFloor,
   BasinInventory,
@@ -62,10 +76,10 @@ const FLOORS: { id: BasinFloor; label: string; sub: string }[] = [
 ];
 
 // gaps.json shape (cross-source treatment-gap intelligence per admin unit).
-interface GapSource { source: string; says: string; citation: string; url?: string }
+export interface GapSource { source: string; says: string; citation: string; url?: string }
 type GapMedium = "liquid" | "solid";
 type GapSector = "public" | "industry" | "institutional" | "construction";
-interface GapStream {
+export interface GapStream {
   stream: string;
   summary: string;
   /** Which waste medium this stream belongs to (groups the panel). */
@@ -108,7 +122,7 @@ function polygonOuterRings(geom: Feature["geometry"] | null | undefined): [numbe
 // Min bbox area (deg²) for a detached gap part to earn its own badge: includes
 // the ~0.36 km² Harohalli/Kaggalahalli exclave, excludes hair-thin slivers.
 const GAP_BADGE_MIN_AREA = 1.2e-5;
-interface GapUnit { name: string; level?: string; coverage?: string; conflicts?: string[]; caveats?: string[]; headline: string; streams: GapStream[] }
+export interface GapUnit { name: string; level?: string; coverage?: string; conflicts?: string[]; caveats?: string[]; headline: string; streams: GapStream[] }
 
 // ── DEP Snapshot v2 (gaps.json `version: 2`; district-first) ─────────────────
 // One tab per district whose DEP covers part of the basin (Paani review,
@@ -119,7 +133,7 @@ interface GapUnit { name: string; level?: string; coverage?: string; conflicts?:
 /** How to find a region on the map (shared by accountability + DEP panels). */
 type MapMatch = { family: string; prop?: string; values?: string[]; contains?: string[]; kinds?: string[] };
 type DepThemeStatus = "covered" | "district-level" | "not-covered";
-interface DepTheme {
+export interface DepTheme {
   theme: string;
   subtheme?: string;
   /** covered = unit-specific data; district-level = reported district-wide
@@ -135,7 +149,7 @@ interface DepTheme {
   /** Value read via OCR from a scanned plan; treat as approximate. */
   ocrUncertain?: boolean;
 }
-interface DepUlb {
+export interface DepUlb {
   key: string;
   name: string;
   type: string;
@@ -150,8 +164,8 @@ interface DepUlb {
 /** A taluk tab carries only what the DEP reports at taluk grain - ULB-level
  *  data lives on the ULB tabs (Paani round 4: the old cross-source unit here
  *  duplicated the ULB content). */
-interface DepTaluk { key: string; label: string; mapMatch?: MapMatch; note?: string; themes: DepTheme[] }
-interface DepDistrict {
+export interface DepTaluk { key: string; label: string; mapMatch?: MapMatch; note?: string; themes: DepTheme[] }
+export interface DepDistrict {
   key: string;
   name: string;
   dep: { label: string; url: string; note?: string };
@@ -171,20 +185,20 @@ interface DepDistrict {
   /** Cross-source contradictions about the district's industrial areas. */
   industrialAreasConflicts?: string[];
 }
-interface DepGovernance {
+export interface DepGovernance {
   items: { heading: string; body: string; source?: GapSource }[];
   gaps: string[];
 }
-interface DepData { version: 2; title?: string; note?: string; governance?: DepGovernance; districts: DepDistrict[] }
+export interface DepData { version: 2; title?: string; note?: string; governance?: DepGovernance; districts: DepDistrict[] }
 
 // ── PRS (Polluted River Stretch) entry-point panel (prs.json) ────────────────
 // Tabbed surface: each tab is a stressor theme; the subtab axis differs per
 // theme (Sewage = admin units along the stretch; Industrial/Solid/PRS = named
 // sub-categories). The selected tab+subtab shows two parallel 2021-2025 tracks:
 // generation and the infrastructure built (per the partner's PDF, page 3).
-interface PrsYearPoint { year: number; value: number }
-interface PrsInfraItem { label: string; status: string; tone?: "good" | "bad" | "neutral" }
-interface PrsUnit {
+export interface PrsYearPoint { year: number; value: number }
+export interface PrsInfraItem { label: string; status: string; tone?: "good" | "bad" | "neutral" }
+export interface PrsUnit {
   key: string;
   name: string;
   /** Admin level this unit's figures are reported at (ULB / taluk / district /
@@ -222,7 +236,7 @@ interface PrsUnit {
 }
 /** A narrative sub-theme (Industrial: Discharges/Areas/Clusters; PRS:
  *  PRS/E-flow/Flood/Evidence) - text + key points, not a per-year timeline. */
-interface PrsCategory {
+export interface PrsCategory {
   key: string;
   label: string;
   /** Admin level this category's figures are reported at (shown as a chip). */
@@ -239,7 +253,7 @@ interface PrsCategory {
   /** No known public data yet - shown as an explicit honest gap. */
   noData?: boolean;
 }
-interface PrsTab {
+export interface PrsTab {
   key: string;
   label: string;
   status: "built" | "soon";
@@ -261,7 +275,7 @@ interface PrsTab {
   /** "categories" tabs: narrative sub-themes. */
   categories?: PrsCategory[];
 }
-interface PrsData {
+export interface PrsData {
   river: string;
   stretchName: string;
   comparison: { y2020: { length_km: number; priority: string }; y2025: { length_km: number; priority: string } };
@@ -361,12 +375,6 @@ type FC = FeatureCollection;
 /** Draw order on the shared canvas (lower = drawn first = underneath). Base
  *  outlines and sub-catchments sit below thematic fills, lines, and points so
  *  the layers on top receive hover/click, not the catchment beneath them. */
-/** Toggle/state key for a layer: kind-filtered entries get their own key so
- *  two entries sharing a data family toggle independently. */
-function layerKey(l: BasinLayer): string {
-  return l.kindFilter ? `${l.family}:${l.kindFilter}` : l.family;
-}
-
 function drawRank(l: BasinLayer): number {
   if (l.elevation) return -2; // terrain underneath everything, even the gap choropleth
   if (l.gap) return -1; // gap choropleth at the very bottom - all data (incl. STPs) sits above it
@@ -475,7 +483,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // only the entry floor's default-on layers + always-on context + the PRS
   // spine on. Rendering is then checkbox-only, so the user can freely combine
   // layers from other floors (e.g. PRS + treatment gaps) by toggling them on.
-  const [enabled, setEnabled] = useState<Record<string, boolean>>(() => {
+  // Kept as a memo (not just the useState initialiser) because the URL sync
+  // compares against it: ?layers= is written only once the set is customised.
+  const defaultEnabled = useMemo(() => {
     const startFloor = initialFloor ?? "hydrology";
     return Object.fromEntries(
       manifest.layers.map((l) => [
@@ -483,7 +493,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         l.defaultOn && (l.context || l.prs || l.floor === startFloor),
       ]),
     );
-  });
+  }, [manifest.layers, initialFloor]);
+  const [enabled, setEnabled] = useState<Record<string, boolean>>(defaultEnabled);
   // Which floors' toggle lists are expanded in the rail. Only the entry floor
   // opens by default (a calm landing); others collapse with a chevron so it's
   // clear they open. Collapsing only hides the list - layers stay rendered.
@@ -700,15 +711,37 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     return depData ? depHighlight : selectedGapUnit;
   }, [selectedGapUnit, depData, depHighlight]);
 
+  // ?layers= / ?growth= restore in EVERY context, embedded included - the PDF
+  // export links back to the embed page with these params, and the embed's
+  // server component only forwards ?river/?floor as props. Applied once per
+  // mount: basin-stack navigation swaps the manifest without remounting, and
+  // another basin's layer keys must not be re-parsed against this one.
+  const appliedUrlLayersRef = useRef(false);
   useEffect(() => {
     setCoachDismissed(localStorage.getItem(COACH_KEY) === "1");
-    if (embedded) return;
     const p = new URLSearchParams(window.location.search);
+    if (!appliedUrlLayersRef.current) {
+      appliedUrlLayersRef.current = true;
+      const fromUrl = parseLayersParam(p.get("layers"), manifest.layers);
+      if (fromUrl) setEnabled(fromUrl);
+      if (p.get("growth") === "1") setShowGrowth(true);
+    }
+    if (embedded) return;
     const r = p.get("river");
     const lvl = p.get("level") as BasinFloor | null;
     if (r && manifest.rivers.some((x) => x.riverId === r)) setSelectedRiverId(r);
     if (lvl && FLOORS.some((f) => f.id === lvl)) setFocusedFloor(lvl);
-  }, [manifest.rivers, embedded]);
+  }, [manifest.rivers, manifest.layers, embedded]);
+
+  // The full toggle map with the defaultOn fallback applied for layers added
+  // after `enabled` was initialised - what the URL and the PDF export read.
+  const effectiveEnabled = useMemo(
+    () =>
+      Object.fromEntries(
+        manifest.layers.map((l) => [layerKey(l), enabled[layerKey(l)] ?? l.defaultOn]),
+      ),
+    [manifest.layers, enabled],
+  );
 
   useEffect(() => {
     if (embedded) return;
@@ -716,9 +749,14 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     if (selectedRiverId) p.set("river", selectedRiverId);
     else p.delete("river");
     p.set("level", focusedFloor);
+    const layersParam = encodeLayersParam(effectiveEnabled, defaultEnabled);
+    if (layersParam !== null) p.set("layers", layersParam);
+    else p.delete("layers");
+    if (showGrowth) p.set("growth", "1");
+    else p.delete("growth");
     const qs = p.toString();
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
-  }, [selectedRiverId, focusedFloor, embedded]);
+  }, [selectedRiverId, focusedFloor, effectiveEnabled, defaultEnabled, showGrowth, embedded]);
 
   // A layer is visible iff its checkbox is on (and, for non-context layers,
   // its floor is focused). The checkbox is the single source of truth - zoom
@@ -892,6 +930,72 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     return out;
   }, [visibleLayers, data]);
 
+  // ── One-click PDF export: capture the map as-is, then re-render the PRS
+  // story and the treatment-gap snapshot as text pages (see export-pdf.tsx).
+  const mapWrapRef = useRef<HTMLDivElement | null>(null);
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  async function downloadPdf() {
+    const mapEl = mapWrapRef.current?.querySelector<HTMLElement>(".leaflet-container");
+    if (!mapEl) {
+      setPdfError("The map hasn't finished loading yet - try again in a moment.");
+      return;
+    }
+    setPdfBusy(true);
+    setPdfError(null);
+    try {
+      // The PDF legend = the on-map legend + the PRS-year entries (which the
+      // map shows in their own inline box next to the growth toggle).
+      const items = buildLegendItems(visibleLayers, elevationLegend);
+      if (prsVisible) {
+        if (showGrowth) {
+          items.push(
+            { sym: "line", color: "#f97316", label: "Polluted by 2020 (Priority III)" },
+            { sym: "line", color: "#dc2626", label: "Added by 2025 - now Priority I" },
+          );
+        } else {
+          items.push({ sym: "line", color: "#dc2626", label: "Polluted stretch, 2025 (Priority I)" });
+        }
+      }
+      // Share URL: the ON set spelled out explicitly (not the defaults-elided
+      // form the address bar uses), so the embed page restores this exact view
+      // whatever its own entry-floor defaults are.
+      const layersParam = manifest.layers
+        .map(layerKey)
+        .filter((k) => effectiveEnabled[k])
+        .join(",");
+      await exportBasinAtlasPdf({
+        mapEl,
+        manifest,
+        inventory,
+        scopeLabel: selectedRiver ? `${selectedRiver.displayName} (river-scoped)` : "Whole basin",
+        legendItems: items,
+        legendNotes,
+        selectedRiver,
+        prs: prsData,
+        acc: accData,
+        reviewedMpr,
+        dep: depData,
+        gapUnits: Object.values(gapData),
+        gapNote,
+        includeGaps: visibleLayers.some((l) => l.gap),
+        shareUrl: buildAtlasShareUrl({
+          origin: window.location.origin,
+          basinId: manifest.basinId,
+          riverId: selectedRiverId,
+          floor: focusedFloor,
+          layersParam: layersParam || null,
+          growth: showGrowth,
+        }),
+      });
+    } catch (err) {
+      console.error("Basin atlas PDF export failed", err);
+      setPdfError("Couldn't prepare the PDF. Please try again.");
+    } finally {
+      setPdfBusy(false);
+    }
+  }
+
   return (
     <div className="h-full w-full flex flex-col md:flex-row">
       {/* ── Elevator rail: off-canvas left drawer on mobile, in-flow sidebar on
@@ -952,6 +1056,19 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
               <p className="mt-1 text-[11px] text-slate-400">Basin area ~{manifest.areaKm2.toLocaleString()} km².</p>
             )}
           </details>
+          {/* One-click export: the map exactly as configured + the PRS story
+              + the treatment-gap snapshot as searchable text pages. */}
+          <button
+            onClick={downloadPdf}
+            disabled={pdfBusy}
+            className="mt-2 w-full inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60"
+          >
+            <span aria-hidden>⤓</span>
+            {pdfBusy ? "Preparing PDF…" : "Download as PDF"}
+          </button>
+          {pdfError && (
+            <p role="alert" className="mt-1 text-[10px] leading-snug text-rose-600 dark:text-rose-400">{pdfError}</p>
+          )}
           {selectedRiver && (
             <button
               onClick={() => selectRiver(null)}
@@ -1072,7 +1189,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       )}
 
       {/* ── Map ── */}
-      <div className="relative flex-1 h-full min-h-[320px]">
+      <div ref={mapWrapRef} className="relative flex-1 h-full min-h-[320px]">
         <MapContainer center={manifest.mapCenter} zoom={manifest.mapZoom} className="h-full w-full" preferCanvas zoomControl={false}>
           <ZoomControl position="bottomright" />
           <MapResizer />
@@ -1080,7 +1197,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
               flies back to the overview instead of staying zoomed into the
               estate the HighlightFlyer framed. */}
           <MapController fitBounds={fitBounds} defaultFocus={manifest.defaultFocus} hasSelection={selectedRiverId != null || mapHighlight != null} />
-          <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+          {/* crossOrigin so the tile <img>s load CORS-clean (OSM sends
+              Access-Control-Allow-Origin:*) - required for the PDF export's
+              canvas capture to read them without tainting. */}
+          <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} crossOrigin="anonymous" />
 
           {/* One shared canvas, stacked by DRAW ORDER (not panes): base outlines
               and sub-catchments first (bottom), then thematic fills, lines, and
@@ -1547,17 +1667,17 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
 // ── legend ───────────────────────────────────────────────────────────────
 
-type LegendSym = "box" | "dot" | "ring" | "line" | "dash" | "outline" | "tri" | "tri-ring";
+export type LegendSym = "box" | "dot" | "ring" | "line" | "dash" | "outline" | "tri" | "tri-ring";
+export interface LegendItem { sym: LegendSym; color: string; label: string }
 
-/** Dynamic legend: one entry per symbol actually on the map right now,
- *  expanding pressures into its kinds and showing the monitoring public-domain
- *  cue (filled vs hollow). */
-function MapLegend({ layers, elevation, notes, raised }: { layers: BasinLayer[]; elevation?: { band: string; color: string }[]; notes?: string[]; raised?: boolean }) {
-  const [open, setOpen] = useState(true);
-  // Every entry's color comes from the layer's manifest `color` or the shared
-  // PRESSURE_KIND_COLOR map - the same sources the map styles read - so the
-  // legend can never disagree with what's drawn.
-  const items: { sym: LegendSym; color: string; label: string }[] = [];
+/** One legend entry per symbol actually on the map right now, expanding
+ *  pressures into its kinds and showing the monitoring public-domain cue
+ *  (filled vs hollow). Every entry's color comes from the layer's manifest
+ *  `color` or the shared PRESSURE_KIND_COLOR map - the same sources the map
+ *  styles read - so the legend can never disagree with what's drawn. Shared
+ *  by the on-map MapLegend and the PDF export's page-1 legend. */
+export function buildLegendItems(layers: BasinLayer[], elevation?: { band: string; color: string }[]): LegendItem[] {
+  const items: LegendItem[] = [];
   for (const l of layers) {
     if (l.elevation) {
       // Band labels come from the data (they differ per basin), matching the
@@ -1606,6 +1726,13 @@ function MapLegend({ layers, elevation, notes, raised }: { layers: BasinLayer[];
     else if (l.geom === "point") items.push({ sym: "dot", color: l.color, label: l.label });
     else items.push({ sym: "box", color: l.color, label: l.label });
   }
+  return items;
+}
+
+/** Dynamic legend: reflects what's currently visible on the map. */
+function MapLegend({ layers, elevation, notes, raised }: { layers: BasinLayer[]; elevation?: { band: string; color: string }[]; notes?: string[]; raised?: boolean }) {
+  const [open, setOpen] = useState(true);
+  const items = buildLegendItems(layers, elevation);
   if (!items.length) return null;
   return (
     <div className={`absolute ${raised ? "bottom-[156px] md:bottom-3" : "bottom-3"} left-3 z-[800] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow text-[11px] max-w-[230px] transition-[bottom] duration-200`}>
@@ -2498,13 +2625,12 @@ function ReviewedMprSection({ series }: { series: ReviewedMprSeries }) {
 // Verdict chips for the accountability matrix. Plain-language labels: the
 // value of the matrix is making "exists in MPR vs doesn't" explicit per
 // region x category, so absence reads as a finding, not a blank.
-const ACC_VERDICT: Record<AccCategory["verdict"], { label: string; cls: string }> = {
-  tracked: { label: "In plan + MPR", cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300" },
-  "in-plan-not-reported": { label: "In plan, not in MPR", cls: "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300" },
-  "reported-not-in-plan": { label: "In MPR, not in plan", cls: "bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300" },
-  silent: { label: "Not in plan or MPR", cls: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300" },
+const ACC_VERDICT_CLS: Record<AccCategory["verdict"], string> = {
+  tracked: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
+  "in-plan-not-reported": "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
+  "reported-not-in-plan": "bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300",
+  silent: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
 };
-const ACC_KIND_LABEL: Record<AccRegion["kind"], string> = { ulb: "ULBs", ia: "Industrial Areas", gp: "Gram Panchayats" };
 
 export function AccountabilityMatrix({ data, onShowRegion }: { data: AccountabilityData; onShowRegion?: (r: AccRegion) => void }) {
   const kinds = (["ulb", "ia", "gp"] as const).filter((k) => data.regions.some((r) => r.kind === k));
@@ -2578,7 +2704,7 @@ export function AccountabilityMatrix({ data, onShowRegion }: { data: Accountabil
 
           {region.silentNote ? (
             <p className="text-[12px] leading-snug rounded-md bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 text-rose-900 dark:text-rose-100 px-2 py-1.5">
-              <span className={`inline-block align-middle mr-1.5 text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded ${ACC_VERDICT.silent.cls}`}>{ACC_VERDICT.silent.label}</span>
+              <span className={`inline-block align-middle mr-1.5 text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded ${ACC_VERDICT_CLS.silent}`}>{ACC_VERDICT_LABEL.silent}</span>
               {region.silentNote}
             </p>
           ) : (
@@ -2588,7 +2714,7 @@ export function AccountabilityMatrix({ data, onShowRegion }: { data: Accountabil
                   <summary className="cursor-pointer list-none flex items-center gap-2">
                     <span aria-hidden className="text-slate-400 group-open:rotate-90 transition-transform text-[10px]">▸</span>
                     <span className="flex-1 text-[13px] font-semibold text-slate-800 dark:text-slate-100">{c.label}</span>
-                    <span className={`text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 ${ACC_VERDICT[c.verdict].cls}`}>{ACC_VERDICT[c.verdict].label}</span>
+                    <span className={`text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 ${ACC_VERDICT_CLS[c.verdict]}`}>{ACC_VERDICT_LABEL[c.verdict]}</span>
                   </summary>
                   <div className="mt-1.5 ml-4 space-y-1.5">
                     <div className="rounded-md bg-slate-50 dark:bg-slate-800/60 px-2 py-1.5">
@@ -2938,35 +3064,13 @@ function GapStreamsBody({ unit }: { unit: GapUnit }) {
 }
 
 // ── DEP Snapshot v2 panel (district-first) ───────────────────────────────────
-// Display order and labels of the 7 NGT thematic areas (OA 360/2018).
-const DEP_THEME_LABEL: Record<string, string> = {
-  "waste-management": "Waste Management",
-  "water-quality": "Water Quality",
-  "domestic-sewage": "Domestic Sewage",
-  "industrial-wastewater": "Industrial Wastewater",
-  "air-quality": "Air Quality",
-  mining: "Mining Activity",
-  noise: "Noise Pollution",
+// Theme labels/order live in @/lib/basins/panel-labels (shared with the PDF
+// export); only the Tailwind chip classes are local to this surface.
+const DEP_STATUS_CLS: Record<DepThemeStatus, string> = {
+  covered: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
+  "district-level": "bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300",
+  "not-covered": "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
 };
-const DEP_THEME_ORDER = Object.keys(DEP_THEME_LABEL);
-const DEP_SUBTHEME_LABEL: Record<string, string> = {
-  "solid-waste": "Solid Waste",
-  "plastic-waste": "Plastic Waste",
-  "cd-waste": "C&D Waste",
-  "biomedical-waste": "Biomedical Waste",
-  "hazardous-waste": "Hazardous Waste",
-  "e-waste": "E-Waste",
-};
-const DEP_STATUS: Record<DepThemeStatus, { label: string; cls: string }> = {
-  covered: { label: "In the plan", cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300" },
-  "district-level": { label: "District-level only", cls: "bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300" },
-  "not-covered": { label: "Not covered", cls: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300" },
-};
-
-function depThemeTitle(t: DepTheme): string {
-  const base = DEP_THEME_LABEL[t.theme] ?? t.theme;
-  return t.subtheme ? `${base}: ${DEP_SUBTHEME_LABEL[t.subtheme] ?? t.subtheme}` : base;
-}
 
 /** One thematic-area entry: status chip, summary, metrics, and the plan's own
  *  action items (the accountability payload). Collapsible - a unit has up to
@@ -2978,7 +3082,7 @@ function DepThemeCard({ t, defaultOpen = false }: { t: DepTheme; defaultOpen?: b
       <summary className={`list-none flex items-center gap-2 ${hasBody ? "cursor-pointer" : "cursor-default"}`}>
         {hasBody && <span aria-hidden className="text-slate-400 text-[10px] transition-transform group-open:rotate-90">▶</span>}
         <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-200 flex-1">{depThemeTitle(t)}</span>
-        <span className={`text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 ${DEP_STATUS[t.status].cls}`}>{DEP_STATUS[t.status].label}</span>
+        <span className={`text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 ${DEP_STATUS_CLS[t.status]}`}>{DEP_STATUS_LABEL[t.status]}</span>
       </summary>
       {hasBody && (
         <div className="pl-4 pt-1.5 space-y-2">
