@@ -14,7 +14,7 @@
 // crashing the render. The basin JSON is ASCII + curly quotes today; this is
 // the guard for tomorrow's data edits.
 
-import type { BasinInventory, BasinManifest, BasinRiver } from "@/lib/basins";
+import type { BasinManifest, BasinRiver } from "@/lib/basins";
 import type { ReviewedMprSeries } from "@/lib/basins/reviewed-mpr";
 import type {
   AccountabilityData,
@@ -108,7 +108,8 @@ export interface ExportBasinPdfArgs {
   /** The .leaflet-container element to capture. */
   mapEl: HTMLElement;
   manifest: BasinManifest;
-  inventory: BasinInventory | null;
+  /** Label + feature count for each layer visible at export. */
+  inventoryRows: { label: string; count: number }[];
   scopeLabel: string;
   legendItems: LegendItem[];
   legendNotes: string[];
@@ -143,7 +144,7 @@ export async function exportBasinAtlasPdf(args: ExportBasinPdfArgs): Promise<voi
   // URL-encoded share link are ASCII already and skip the (expensive) walk.
   const data = sanitizeForPdf({
     manifest: args.manifest,
-    inventory: args.inventory,
+    inventoryRows: args.inventoryRows,
     scopeLabel: args.scopeLabel,
     legendItems: args.legendItems,
     legendNotes: args.legendNotes,

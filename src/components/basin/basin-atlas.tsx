@@ -964,17 +964,30 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         .map(layerKey)
         .filter((k) => effectiveEnabled[k])
         .join(",");
+      // State-faithful contract: the data table lists only what is on the
+      // exported map (rail counts), and the PRS pages ship only when the
+      // stretch is actually rendered (toggled on, or its panel open) - the
+      // same rule the gap pages follow.
+      const inventoryRows = visibleLayers.flatMap((l) => {
+        const inv = inventory?.families[l.family];
+        if (!inv) return [];
+        const count =
+          (l.kindFilter && inv.sources.find((sc) => sc.kind === l.kindFilter)?.count) ||
+          inv.featureCount;
+        return [{ label: l.label, count }];
+      });
+      const prsOnMap = visibleLayers.some((l) => l.prs);
       await exportBasinAtlasPdf({
         mapEl,
         manifest,
-        inventory,
+        inventoryRows,
         scopeLabel: selectedRiver ? `${selectedRiver.displayName} (river-scoped)` : "Whole basin",
         legendItems: items,
         legendNotes,
         selectedRiver,
-        prs: prsData,
-        acc: accData,
-        reviewedMpr,
+        prs: prsOnMap ? prsData : null,
+        acc: prsOnMap ? accData : null,
+        reviewedMpr: prsOnMap ? reviewedMpr : null,
         dep: depData,
         gapUnits: Object.values(gapData),
         gapNote,

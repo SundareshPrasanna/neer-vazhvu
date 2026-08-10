@@ -26,7 +26,7 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
-import type { BasinInventory, BasinManifest, BasinRiver } from "@/lib/basins";
+import type { BasinManifest, BasinRiver } from "@/lib/basins";
 import {
   reviewedMprConceptLabel,
   reviewedMprValueLabel,
@@ -54,7 +54,9 @@ import type {
 
 export interface BasinReportProps {
   manifest: BasinManifest;
-  inventory: BasinInventory | null;
+  /** One row per layer VISIBLE at export (label + feature count) - the PDF is
+   *  state-faithful, so the data table never lists layers that aren't shown. */
+  inventoryRows: { label: string; count: number }[];
   generatedAt: string;
   scopeLabel: string;
   mapPng: string;
@@ -959,27 +961,21 @@ function GapsPages(p: BasinReportProps) {
 function CreditsPage(p: BasinReportProps) {
   return (
     <Page size="A4" style={s.page}>
-      <Text style={s.h2}>Data on this map</Text>
+      <Text style={s.h2}>Data on this map - layers in this export</Text>
       {p.manifest.collaboration && (
         <Text style={[s.small, { marginBottom: 4 }]}>
           {p.manifest.collaboration.label} {p.manifest.collaboration.name}
           {p.manifest.collaboration.url ? ` (${p.manifest.collaboration.url})` : ""}.
         </Text>
       )}
-      {p.inventory && (
+      {p.inventoryRows.length > 0 && (
         <View style={s.kvBox}>
-          {p.manifest.layers
-            .filter((l) => !l.kindFilter)
-            .map((l, i) => {
-              const fam = p.inventory!.families[l.family];
-              if (!fam) return null;
-              return (
-                <View key={l.family} style={[s.kvRow, ...(i === 0 ? [s.kvRowFirst] : [])]} wrap={false}>
-                  <Text style={[s.kvLabel, { width: 220 }]}>{l.label}</Text>
-                  <Text style={s.kvValue}>{fam.featureCount.toLocaleString("en-IN")} features</Text>
-                </View>
-              );
-            })}
+          {p.inventoryRows.map((r, i) => (
+            <View key={r.label} style={[s.kvRow, ...(i === 0 ? [s.kvRowFirst] : [])]} wrap={false}>
+              <Text style={[s.kvLabel, { width: 220 }]}>{r.label}</Text>
+              <Text style={s.kvValue}>{r.count.toLocaleString("en-IN")} features</Text>
+            </View>
+          ))}
         </View>
       )}
       <View style={s.section}>

@@ -69,9 +69,17 @@ const legendItems: LegendItem[] = [
 ];
 
 async function main() {
+  // Every manifest layer gets a table row here (broadest coverage); the app
+  // passes only the layers visible at export.
+  const inventoryRows = manifest.layers.flatMap((l) => {
+    const fam = inventory?.families[l.family];
+    if (!fam) return [];
+    const count = (l.kindFilter && fam.sources.find((sc) => sc.kind === l.kindFilter)?.count) || fam.featureCount;
+    return [{ label: l.label, count }];
+  });
   const data = sanitizeForPdf({
     manifest,
-    inventory,
+    inventoryRows,
     scopeLabel: "Whole basin",
     legendItems,
     legendNotes: ["≈8 of 18 industrial areas have no CETP within ~5 km - CAG-flagged gap, spatial estimate"],
