@@ -643,9 +643,11 @@
     ]
    },
    "consumers": [
-    "src/components/basin/basin-atlas.tsx"
+    "src/components/basin/basin-atlas.tsx",
+    "src/components/basin/basin-pdf-report.tsx"
    ],
    "producer_refs": [
+    "scripts/check-basin-pdf-render.tsx",
     "scripts/refresh-arkavathi-mpr.ts"
    ],
    "headwaters_sources": [
@@ -1512,6 +1514,7 @@
    },
    "consumers": [
     "src/components/basin/basin-atlas.tsx",
+    "src/components/basin/basin-pdf-report.tsx",
     "src/lib/basins/arkavathi.ts",
     "src/lib/basins/chennai-rivers.ts",
     "src/lib/basins/types.ts"
@@ -1519,6 +1522,7 @@
    "producer_refs": [
     "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_fregister.py",
+    "scripts/check-basin-pdf-render.tsx",
     "scripts/enrich_arkavathi_industrial_districts.py"
    ],
    "headwaters_sources": [
@@ -1619,6 +1623,7 @@
     "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
+    "scripts/check-basin-pdf-render.tsx",
     "scripts/ingest_basin.py",
     "scripts/ingest_basin_overview.py",
     "scripts/validate_basin.py"
@@ -1860,12 +1865,14 @@
    },
    "consumers": [
     "src/components/basin/basin-atlas.tsx",
+    "src/components/basin/basin-pdf-report.tsx",
     "src/lib/basins/arkavathi.ts",
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
     "scripts/build_basin_prs_points.py",
-    "scripts/build_fregister.py"
+    "scripts/build_fregister.py",
+    "scripts/check-basin-pdf-render.tsx"
    ],
    "headwaters_sources": [
     "cpcb-prs-report",
@@ -2342,6 +2349,7 @@
     "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
+    "scripts/check-basin-pdf-render.tsx",
     "scripts/ingest_basin.py",
     "scripts/ingest_basin_overview.py",
     "scripts/validate_basin.py"
@@ -2713,6 +2721,7 @@
     "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
+    "scripts/check-basin-pdf-render.tsx",
     "scripts/ingest_basin.py",
     "scripts/ingest_basin_overview.py",
     "scripts/validate_basin.py"
@@ -3259,6 +3268,7 @@
    },
    "consumers": [
     "src/components/basin/basin-atlas.tsx",
+    "src/components/basin/basin-pdf-report.tsx",
     "src/lib/basins/arkavathi.ts",
     "src/lib/basins/chennai-rivers.ts",
     "src/lib/basins/types.ts"
@@ -3266,6 +3276,7 @@
    "producer_refs": [
     "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_fregister.py",
+    "scripts/check-basin-pdf-render.tsx",
     "scripts/enrich_arkavathi_industrial_districts.py"
    ],
    "headwaters_sources": [],
@@ -3644,7 +3655,7 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "bbmb-dam-storage",
-   "bytes": 1264,
+   "bytes": 1263,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8330,7 +8341,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 4563,
+   "bytes": 4564,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8527,7 +8538,7 @@
    "family": "data-root",
    "scope": "bangalore",
    "dataset": "rainfall-recent",
-   "bytes": 14874,
+   "bytes": 14932,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8571,7 +8582,7 @@
    "family": "data-root",
    "scope": "chennai",
    "dataset": "rainfall-recent",
-   "bytes": 14873,
+   "bytes": 14930,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8615,7 +8626,7 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "rainfall-recent",
-   "bytes": 14882,
+   "bytes": 14939,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8659,7 +8670,7 @@
    "family": "data-root",
    "scope": "madurai",
    "dataset": "rainfall-recent",
-   "bytes": 14875,
+   "bytes": 14932,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8702,7 +8713,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "rainfall-recent",
-   "bytes": 14905,
+   "bytes": 14962,
    "schema": {
     "kind": "object",
     "keys": [
@@ -20293,7 +20304,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 1264,
+   "bytes": 1263,
    "schema_variants": 1,
    "registered": false,
    "has_consumer": true
@@ -20625,7 +20636,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 4563,
+   "bytes": 4564,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20641,7 +20652,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 74409,
+   "bytes": 74695,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
