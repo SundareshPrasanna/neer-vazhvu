@@ -36,7 +36,6 @@ from __future__ import annotations
 
 import csv
 import io
-import json
 import re
 import statistics
 import sys
@@ -49,6 +48,7 @@ from pathlib import Path
 # a generator is how the registry and the corpus drifted apart (PR #227).
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 from registry_license import registry_license  # noqa: E402
+from nvdm_write import write_artifact  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -203,7 +203,7 @@ def main() -> int:
     if missing:
         payload["_missing_months"] = missing
 
-    OUT.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
+    write_artifact(OUT, payload)
     print(f"\nWrote {OUT} ({OUT.stat().st_size // 1024} KB)")
     t = payload["totals"]
     print(

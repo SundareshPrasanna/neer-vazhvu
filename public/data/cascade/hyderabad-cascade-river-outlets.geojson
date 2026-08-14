@@ -1,1 +1,301 @@
-{"type": "FeatureCollection", "_meta": {"district_id": "hyderabad", "generated_at": "2026-07-26T05:03:42Z", "pipeline_version": "v1.1.0", "algorithm": "d8_steepest_descent_v1", "inputs_hash": "32e0fd2e8aacbdbd8bb12e354fd98c55c9a950bbb38425a4e162f6cce175cabb", "feature_type": "river_outlets"}, "features": [{"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.41586419174313, 17.3803347146789], [78.4117265, 17.3718734]]}, "properties": {"from_osm_id": 1988400, "from_name": "Langar Hauz", "distance_km": 1.038, "bearing_deg": 205.0, "status": "drains_to_river"}}, {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.35954743265845, 17.308853512235913], [78.3552646, 17.310716]]}, "properties": {"from_osm_id": 5411363, "from_name": "Himayat Sagar", "distance_km": 0.5, "bearing_deg": 294.5, "status": "drains_to_river"}}, {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.30318683675799, 17.375178165296806], [78.3168514, 17.3759563]]}, "properties": {"from_osm_id": 28130557, "from_name": "Osman Sagar", "distance_km": 1.453, "bearing_deg": 86.6, "status": "drains_to_river"}}, {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.41506545, 17.38170134642857], [78.4117265, 17.3718734]]}, "properties": {"from_osm_id": 147232592, "from_name": "", "distance_km": 1.149, "bearing_deg": 198.0, "status": "drains_to_river"}}, {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.37017688472223, 17.383947629166666], [78.379096, 17.3739079]]}, "properties": {"from_osm_id": 147232637, "from_name": "Chinna Cheruvu", "distance_km": 1.464, "bearing_deg": 139.7, "status": "drains_to_river"}}, {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.53456250574712, 17.383134086206898], [78.53611835274269, 17.381159763090114]]}, "properties": {"from_osm_id": 238233533, "from_name": "", "distance_km": 0.275, "bearing_deg": 143.1, "status": "drains_to_river"}}, {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.41142557333333, 17.35632507], [78.40936328051212, 17.357772222312]]}, "properties": {"from_osm_id": 269128351, "from_name": "Upparpally Lake", "distance_km": 0.272, "bearing_deg": 306.3, "status": "drains_to_river"}}, {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.37437312105263, 17.3643425], [78.3765373, 17.3722602]]}, "properties": {"from_osm_id": 790655281, "from_name": "Bairagiguda Lake", "distance_km": 0.91, "bearing_deg": 14.6, "status": "drains_to_river"}}, {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.61021268541667, 17.382993940625], [78.6094791, 17.3869904]]}, "properties": {"from_osm_id": 1454092338, "from_name": "", "distance_km": 0.451, "bearing_deg": 350.1, "status": "drains_to_river"}}, {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.57734530909092, 17.387236836363638], [78.57685934931928, 17.38888254814773]]}, "properties": {"from_osm_id": 1454150384, "from_name": "", "distance_km": 0.19, "bearing_deg": 344.3, "status": "drains_to_river"}}, {"type": "Feature", "geometry": {"type": "LineString", "coordinates": [[78.44393524166667, 17.34978893125], [78.4489623, 17.3600186]]}, "properties": {"from_osm_id": 1454387192, "from_name": "Singos Tank", "distance_km": 1.256, "bearing_deg": 25.1, "status": "drains_to_river"}}]}
+{
+  "nvdm": "1.0",
+  "dataset": "cascade/cascade-river-outlets",
+  "scope": {
+    "kind": "city",
+    "id": "hyderabad"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "fabdem-dem",
+        "title": "FABDEM v1-2 30 m bare-earth DEM",
+        "publisher": "University of Bristol (Hawker et al.), via GEE sat-io",
+        "license": "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+        "role": "input"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "hydrosheds-basins",
+        "title": "HydroSHEDS basin boundaries",
+        "publisher": "WWF / HydroSHEDS",
+        "license": "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/app/cascade (scripts/run_cascade.py)",
+    "note": "Derived by the cascade reconstruction pipeline (neer-vazhvu-api/app/cascade). FABDEM input makes this family CC BY-NC-SA encumbered; see DATA-LICENSE.md."
+  },
+  "type": "FeatureCollection",
+  "_meta": {
+    "district_id": "hyderabad",
+    "generated_at": "2026-07-26T05:03:42Z",
+    "pipeline_version": "v1.1.0",
+    "algorithm": "d8_steepest_descent_v1",
+    "inputs_hash": "32e0fd2e8aacbdbd8bb12e354fd98c55c9a950bbb38425a4e162f6cce175cabb",
+    "feature_type": "river_outlets"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.41586419174313,
+            17.3803347146789
+          ],
+          [
+            78.4117265,
+            17.3718734
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 1988400,
+        "from_name": "Langar Hauz",
+        "distance_km": 1.038,
+        "bearing_deg": 205.0,
+        "status": "drains_to_river"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.35954743265845,
+            17.308853512235913
+          ],
+          [
+            78.3552646,
+            17.310716
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 5411363,
+        "from_name": "Himayat Sagar",
+        "distance_km": 0.5,
+        "bearing_deg": 294.5,
+        "status": "drains_to_river"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.30318683675799,
+            17.375178165296806
+          ],
+          [
+            78.3168514,
+            17.3759563
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 28130557,
+        "from_name": "Osman Sagar",
+        "distance_km": 1.453,
+        "bearing_deg": 86.6,
+        "status": "drains_to_river"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.41506545,
+            17.38170134642857
+          ],
+          [
+            78.4117265,
+            17.3718734
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 147232592,
+        "from_name": "",
+        "distance_km": 1.149,
+        "bearing_deg": 198.0,
+        "status": "drains_to_river"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.37017688472223,
+            17.383947629166666
+          ],
+          [
+            78.379096,
+            17.3739079
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 147232637,
+        "from_name": "Chinna Cheruvu",
+        "distance_km": 1.464,
+        "bearing_deg": 139.7,
+        "status": "drains_to_river"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.53456250574712,
+            17.383134086206898
+          ],
+          [
+            78.53611835274269,
+            17.381159763090114
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 238233533,
+        "from_name": "",
+        "distance_km": 0.275,
+        "bearing_deg": 143.1,
+        "status": "drains_to_river"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.41142557333333,
+            17.35632507
+          ],
+          [
+            78.40936328051212,
+            17.357772222312
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 269128351,
+        "from_name": "Upparpally Lake",
+        "distance_km": 0.272,
+        "bearing_deg": 306.3,
+        "status": "drains_to_river"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.37437312105263,
+            17.3643425
+          ],
+          [
+            78.3765373,
+            17.3722602
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 790655281,
+        "from_name": "Bairagiguda Lake",
+        "distance_km": 0.91,
+        "bearing_deg": 14.6,
+        "status": "drains_to_river"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.61021268541667,
+            17.382993940625
+          ],
+          [
+            78.6094791,
+            17.3869904
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 1454092338,
+        "from_name": "",
+        "distance_km": 0.451,
+        "bearing_deg": 350.1,
+        "status": "drains_to_river"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.57734530909092,
+            17.387236836363638
+          ],
+          [
+            78.57685934931928,
+            17.38888254814773
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 1454150384,
+        "from_name": "",
+        "distance_km": 0.19,
+        "bearing_deg": 344.3,
+        "status": "drains_to_river"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.44393524166667,
+            17.34978893125
+          ],
+          [
+            78.4489623,
+            17.3600186
+          ]
+        ]
+      },
+      "properties": {
+        "from_osm_id": 1454387192,
+        "from_name": "Singos Tank",
+        "distance_km": 1.256,
+        "bearing_deg": 25.1,
+        "status": "drains_to_river"
+      }
+    }
+  ]
+}

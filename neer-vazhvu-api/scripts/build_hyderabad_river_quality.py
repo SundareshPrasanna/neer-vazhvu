@@ -30,13 +30,17 @@ Column order in the tables, verified against the printed header:
 
 from __future__ import annotations
 
-import json
 import re
 import subprocess
 import sys
 import time
 import urllib.request
 from pathlib import Path
+
+# Envelope-preserving writer: a bare rewrite would strip the NVDM wrapper
+# off a served artifact on the next scheduled run.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "public" / "data" / "river-quality-hyderabad.json"
@@ -337,7 +341,7 @@ def main() -> int:
         "rivers": [r for r in rivers.values() if r["stations"]],
     }
 
-    OUT.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
+    write_artifact(OUT, payload)
     print(f"\nWrote {OUT} ({OUT.stat().st_size // 1024} KB)")
     for r in payload["rivers"]:
         print(

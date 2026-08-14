@@ -20,6 +20,7 @@
 import { writeFileSync } from "fs";
 import { join } from "path";
 import osmtogeojson from "osmtogeojson";
+import { writeArtifact } from "./lib/nvdm-write";
 
 // Core Urban Region bbox per src/lib/cities/hyderabad.ts. [south, west, north, east]
 const BBOX = "17.15,78.10,17.70,78.75";
@@ -212,7 +213,7 @@ async function main() {
   };
 
   const outPath = join(process.cwd(), "public/geojson/hyderabad-water-bodies-current.geojson");
-  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+  writeArtifact(outPath, geojson as unknown as Record<string, unknown>);
   console.log(`\nSaved ${features.length} features to ${outPath}`);
 
   const totalAreaHa = features.reduce((sum, f) => sum + (f.properties.area_ha || 0), 0);

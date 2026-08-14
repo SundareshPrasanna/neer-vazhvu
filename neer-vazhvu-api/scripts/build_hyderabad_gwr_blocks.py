@@ -42,13 +42,17 @@ from __future__ import annotations
 
 import csv
 import io
-import json
 import re
 import sys
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import date
 from pathlib import Path
+
+# Envelope-preserving writer: a bare rewrite would strip the NVDM wrapper
+# off a served artifact on the next scheduled run.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -291,33 +295,28 @@ def main() -> int:
         "than publish silently."
     )
 
-    (REPO / "public/data/gwr-blocks-hyderabad.json").write_text(
-        json.dumps(
-            {
-                "place_id": "hyderabad",
-                "generated_at": date.today().isoformat(),
-                "unit_label": "district",
-                "source_label": "CGWB Dynamic Ground Water Resources (2022, 2024, 2025) via OpenCity",
-                "source_url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
-                "note": meta_note,
-                "blocks": records,
-            },
-            ensure_ascii=False,
-            indent=1,
-        ),
-        encoding="utf-8",
+    write_artifact(
+        REPO / "public/data/gwr-blocks-hyderabad.json",
+        {
+            "place_id": "hyderabad",
+            "generated_at": date.today().isoformat(),
+            "unit_label": "district",
+            "source_label": "CGWB Dynamic Ground Water Resources (2022, 2024, 2025) via OpenCity",
+            "source_url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
+            "note": meta_note,
+            "blocks": records,
+        },
+        indent=1,
     )
-    (REPO / "public/geojson/hyderabad-gwr-blocks.geojson").write_text(
-        json.dumps(
-            {
-                "type": "FeatureCollection",
-                "_source": "CGWB Dynamic GWR district assessments via OpenCity",
-                "_note": meta_note,
-                "features": features,
-            },
-            ensure_ascii=False,
-        ),
-        encoding="utf-8",
+    write_artifact(
+        REPO / "public/geojson/hyderabad-gwr-blocks.geojson",
+        {
+            "type": "FeatureCollection",
+            "_source": "CGWB Dynamic GWR district assessments via OpenCity",
+            "_note": meta_note,
+            "features": features,
+        },
+        compact=True,
     )
 
     metro = [r for r in records if r["metro"]]

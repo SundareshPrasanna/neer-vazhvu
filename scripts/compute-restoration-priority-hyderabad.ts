@@ -32,6 +32,7 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
+import { writeArtifact } from "./lib/nvdm-write";
 
 const root = process.cwd();
 
@@ -211,9 +212,9 @@ function main() {
     river_sections: [],
   };
 
-  writeFileSync(
+  writeArtifact(
     join(root, "public/data/restoration-priority-hyderabad.json"),
-    JSON.stringify(out, null, 1),
+    out as unknown as Record<string, unknown>,
   );
 
   console.log(`Scored ${scored.length} flagship bodies (${ALGORITHM_VERSION})`);

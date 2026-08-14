@@ -21,6 +21,7 @@
 
 import { writeFileSync } from "fs";
 import { join } from "path";
+import { writeArtifact } from "./lib/nvdm-write";
 
 const OVERPASS_URL = process.env.OVERPASS_URL ?? "https://overpass-api.de/api/interpreter";
 
@@ -413,7 +414,7 @@ async function main() {
   };
 
   const outPath = join(process.cwd(), "public/geojson/hyderabad-rivers.geojson");
-  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+  writeArtifact(outPath, geojson as unknown as Record<string, unknown>);
 
   console.log(`\nWrote ${features.length} river features to public/geojson/hyderabad-rivers.geojson`);
   console.log("Channels found:", features.map((f) => f.properties.river_id).join(", "));

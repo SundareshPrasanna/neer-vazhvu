@@ -1,4 +1,31 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/river-quality",
+  "scope": {
+    "kind": "city",
+    "id": "hyderabad"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cpcb-nwmp-hyderabad",
+        "title": "CPCB National Water Quality Monitoring Programme annual river data, editions 2019-2024 (Musi stations)",
+        "publisher": "CPCB (National Water Quality Monitoring Programme)",
+        "license": "Government of India publication, cited with attribution"
+      },
+      {
+        "id": "tgpcb-ngt-oa606-musi",
+        "title": "TGPCB monthly Musi figures, Annexure-VIII of its NGT OA 606 of 2018 return (cross-check only)",
+        "publisher": "TGPCB (Telangana Pollution Control Board)",
+        "license": "Telangana government publication, cited with attribution",
+        "role": "methodology"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/scripts/build_hyderabad_river_quality.py",
+    "note": "Parsed from the text layer of CPCB's annual PDFs, no OCR. TGPCB's NGT OA 606 return is carried as a methodology source because it was used only to cross-check the CPCB annual ranges, not to supply values. Read low DO figures as a reporting floor: in 9 of 51 station-years the annual minimum equals the annual maximum."
+  },
   "last_updated": "2026-07-26",
   "data_year_range": "2019-2024",
   "source": "CPCB National Water Quality Monitoring Programme (NWMP), annual river water quality data",

@@ -1,4 +1,73 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": {
+    "kind": "city",
+    "id": "hyderabad"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "hmwssb-daily-reservoir-statement",
+        "title": "HMWSSB daily reservoir statement: level, storage, draw-off in MLD and inflow per source",
+        "publisher": "HMWSSB (Hyderabad Metropolitan Water Supply and Sewerage Board)",
+        "license": "Telangana government publication, cited with attribution"
+      },
+      {
+        "id": "hmda-lakes-register",
+        "title": "HMDA Lake Protection Committee gazetted lake register (FTL preliminary and final notifications)",
+        "publisher": "HMDA (Lake Protection Committee)",
+        "license": "Telangana government publication, cited with attribution"
+      },
+      {
+        "id": "opencity-hyderabad-tankers",
+        "title": "HMWSSB tanker bookings and deliveries per division and section, via OpenCity",
+        "publisher": "HMWSSB via OpenCity Urban Data Portal",
+        "license": "open (per OpenCity dataset page); underlying data is HMWSSB's, digitised by OpenCity"
+      },
+      {
+        "id": "cgwb-dynamic-gwr-telangana",
+        "title": "CGWB Dynamic Ground Water Resources, Telangana district assessments (2022, 2024, 2025 editions)",
+        "publisher": "CGWB / IN-GRES (via OpenCity national compilations)",
+        "license": "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments"
+      },
+      {
+        "id": "opencity-ghmc-drainage-layers",
+        "title": "GHMC nala, canal/drain, tank and water-logging layers, via OpenCity",
+        "publisher": "GHMC via OpenCity Urban Data Portal",
+        "license": "open (per OpenCity dataset page); underlying layers are GHMC's"
+      },
+      {
+        "id": "tg-opendata-tgpcb-stp",
+        "title": "TGPCB sewage treatment plant monitoring: per-plant capacity in MLD and monthly effluent quality",
+        "publisher": "TGPCB via data.telangana.gov.in (Telangana Open Data Portal)",
+        "license": "Government Open Data License - India (GODL-India)"
+      },
+      {
+        "id": "tg-opendata-hmwssb-billing",
+        "title": "HMWSSB monthly billing, collection and connection counts by division and section, 2022-2026",
+        "publisher": "HMWSSB via data.telangana.gov.in (Telangana Open Data Portal)",
+        "license": "Government Open Data License - India (GODL-India)"
+      },
+      {
+        "id": "cpcb-nwmp-hyderabad",
+        "title": "CPCB National Water Quality Monitoring Programme annual river data, editions 2019-2024 (Musi stations)",
+        "publisher": "CPCB (National Water Quality Monitoring Programme)",
+        "license": "Government of India publication, cited with attribution"
+      },
+      {
+        "title": "Report on encroachment of water bodies within the Outer Ring Road from 2014 onwards, submitted to the Deputy Chief Minister",
+        "publisher": "Telangana Remote Sensing Applications Centre (TGRAC), Planning Department",
+        "url": "https://tgrac.telangana.gov.in/trac/water-project.php",
+        "license": "Telangana government report, figures cited with attribution; underlying spatial layer is not published",
+        "closed": true,
+        "as_of": "2024-08"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-07-26",
+    "note": "Envelope lists the upstreams the facts draw on; every fact additionally carries its own citation (source_label / source_url / data_date). The TGRAC entry is a closed one-time report: its published figures are used, its spatial layer is not in this repo and must not be - see docs/cities/hyderabad/data-sources.md."
+  },
   "place_id": "hyderabad",
   "generated_at": "2026-07-26",
   "note": "Hand-curated quotable facts for /hyderabad/facts (static pipeline). Every fact carries its own source. STRICT SOURCING RULE applied throughout: figures computed by us from HMWSSB's daily reservoir statement or parsed from the HMDA/OpenCity layers are marked as such and are reproducible from the scripts named in docs/cities/hyderabad/data-sources.md. Hyderabad's widely-quoted service statistics (~1,954 MLD supplied, 1,480 sq km service area, 1.68 crore population, and every published STP count from 25 to 45 plants) are NEWS-SOURCED ONLY and mutually inconsistent, so NONE of them appears here. They land when HMWSSB's RTI 4(1)(b) disclosure or an annual report is obtained. Telugu renderings land with the translation pass.",

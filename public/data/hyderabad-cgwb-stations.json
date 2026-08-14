@@ -1,4 +1,23 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/cgwb-stations",
+  "scope": {
+    "kind": "city",
+    "id": "hyderabad"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "wris-gwl-hyderabad",
+        "title": "India-WRIS 'Ground Water Level' dataset, CGWB observation wells across the Hyderabad metro districts",
+        "publisher": "India-WRIS / CGWB",
+        "license": "Government of India publication, cited with attribution"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/scripts/build_hyderabad_cgwb_stations.py"
+  },
   "_note": "CGWB observation wells across the Hyderabad metro districts, from the India-WRIS 'Ground Water Level' dataset. This is the sub-district groundwater layer Hyderabad otherwise lacks: the CGWB assessment resolves to mandal/district units, these resolve to points. Later years are 6-hourly telemetric (DWLR) readings; earlier years are periodic manual observations. Published here as monthly means.",
   "district": "Hyderabad metro (Hyderabad, Ranga Reddy, Medak, Siddipet, Vikarabad)",
   "well_type": "Observation well / piezometer (manual + telemetric DWLR)",

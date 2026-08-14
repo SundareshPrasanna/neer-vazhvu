@@ -43,7 +43,6 @@ Run
 
 import argparse
 import html
-import json
 import re
 import ssl
 import sys
@@ -56,6 +55,7 @@ from datetime import date
 # a generator is how the registry and the corpus drifted apart (PR #227).
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 from registry_license import registry_license  # noqa: E402
+from nvdm_write import write_artifact  # noqa: E402
 
 
 REGISTER_URL = "https://lakes.hmda.gov.in/"
@@ -190,8 +190,7 @@ def main() -> int:
     }
 
     if args.out:
-        with open(args.out, "w", encoding="utf-8") as fh:
-            json.dump(out, fh, ensure_ascii=False, indent=1)
+        write_artifact(Path(args.out), out, indent=1)
 
     print(
         f"HMDA lake register: {len(lakes):,} lakes, "

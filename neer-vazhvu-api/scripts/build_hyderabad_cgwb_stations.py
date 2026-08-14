@@ -65,7 +65,13 @@ import statistics as st
 import time
 import urllib.parse
 import urllib.request
+import sys
 from pathlib import Path
+
+# Envelope-preserving writer: a bare rewrite would strip the NVDM wrapper
+# off a served artifact on the next scheduled run.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 CACHE = Path(__file__).resolve().parent / ".cache" / "hyderabad-wris-gwl.jsonl"
@@ -411,7 +417,7 @@ def main() -> None:
         },
         "wells": wells,
     }
-    OUT.write_text(json.dumps(doc, indent=2) + "\n")
+    write_artifact(OUT, doc)
 
     s = doc["summary"]
     print(f"\nwrote {OUT.relative_to(REPO)}")

@@ -126,6 +126,48 @@
    "flags": []
   },
   {
+   "path": "public/data/allocations-hyderabad.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "allocations",
+   "bytes": 15771,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "arrangements",
+     "authorities",
+     "dataset",
+     "events",
+     "futures",
+     "gaps",
+     "headline",
+     "intro",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "sources",
+     "unit_note",
+     "updated"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/allocations/allocations-client.tsx",
+    "src/lib/cities/hyderabad.ts",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "hmwssb-daily-reservoir-statement"
+   ],
+   "licenses": [
+    "Telangana government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "claim register; per-arrangement citations inline; no watchable listing",
+   "flags": []
+  },
+  {
    "path": "public/data/allocations-madurai.json",
    "family": "data-root",
    "scope": "madurai",
@@ -525,7 +567,8 @@
    },
    "consumers": [
     "src/app/[cityId]/tanker/page.tsx",
-    "src/components/dashboard/tanker-market-panel.tsx"
+    "src/components/dashboard/tanker-market-panel.tsx",
+    "src/lib/cities/types.ts"
    ],
    "producer_refs": [
     "scripts/build-bangalore-tanker-summary.py",
@@ -594,6 +637,7 @@
     "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/hooks/use-ward-profile.ts",
     "src/lib/utils/load-profiles-server.ts",
@@ -4989,6 +5033,521 @@
    ]
   },
   {
+   "path": "public/data/cascade/hyderabad-cascade-catchments.geojson",
+   "family": "cascade",
+   "scope": "hyderabad",
+   "dataset": "cascade-catchments",
+   "bytes": 4265647,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 427,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "catchment_area_sqkm",
+     "lake_area_sqkm",
+     "osm_id",
+     "quality",
+     "received_sqkm",
+     "total_upstream_sqkm",
+     "touches_edge"
+    ]
+   },
+   "consumers": [
+    "src/app/api/cascade/[cityId]/catchment/route.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "neer-vazhvu-api/scripts/run_cascade.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "google-dynamic-world",
+    "hydrosheds-basins",
+    "imd-gridded-rain",
+    "osm-overpass",
+    "overture-buildings",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "GoI publication, cited with attribution",
+    "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+    "ODbL / CDLA depending on theme",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+   "flags": []
+  },
+  {
+   "path": "public/data/cascade/hyderabad-cascade-edges.geojson",
+   "family": "cascade",
+   "scope": "hyderabad",
+   "dataset": "cascade-edges",
+   "bytes": 140278,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 411,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "confidence",
+     "distance_km",
+     "elevation_drop_m",
+     "from_osm_id",
+     "score_m_per_km",
+     "status",
+     "to_osm_id"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "neer-vazhvu-api/tests/test_cascade_districts.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "google-dynamic-world",
+    "hydrosheds-basins",
+    "imd-gridded-rain",
+    "osm-overpass",
+    "overture-buildings",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "GoI publication, cited with attribution",
+    "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+    "ODbL / CDLA depending on theme",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+   "flags": []
+  },
+  {
+   "path": "public/data/cascade/hyderabad-cascade-lakes.geojson",
+   "family": "cascade",
+   "scope": "hyderabad",
+   "dataset": "cascade-lakes",
+   "bytes": 444491,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 427,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "cascade_position",
+     "catchment_area_sqkm",
+     "degree_in",
+     "degree_out",
+     "drains_to_name",
+     "drains_to_osm_id",
+     "drains_to_river",
+     "lake_area_sqkm",
+     "name",
+     "name_ta",
+     "osm_id",
+     "received_sqkm",
+     "river_outlet_distance_km",
+     "total_upstream_sqkm"
+    ]
+   },
+   "consumers": [
+    "src/components/cascade/catchment-atlas.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "google-dynamic-world",
+    "hydrosheds-basins",
+    "imd-gridded-rain",
+    "osm-overpass",
+    "overture-buildings",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "GoI publication, cited with attribution",
+    "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+    "ODbL / CDLA depending on theme",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+   "flags": []
+  },
+  {
+   "path": "public/data/cascade/hyderabad-cascade-nodes.geojson",
+   "family": "cascade",
+   "scope": "hyderabad",
+   "dataset": "cascade-nodes",
+   "bytes": 203667,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 428,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "area_ha",
+     "cascade_position",
+     "catchment_area_sqkm",
+     "degree_in",
+     "degree_out",
+     "drains_to_river",
+     "elevation_m",
+     "flow_direction_d8",
+     "isolation_reason",
+     "name",
+     "name_ta",
+     "osm_id",
+     "river_outlet_bearing_deg",
+     "river_outlet_distance_km",
+     "water_type"
+    ]
+   },
+   "consumers": [
+    "src/components/cascade/cascade-map-layer.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "neer-vazhvu-api/app/cascade/sensitivity.py",
+    "neer-vazhvu-api/tests/test_cascade_districts.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "google-dynamic-world",
+    "hydrosheds-basins",
+    "imd-gridded-rain",
+    "osm-overpass",
+    "overture-buildings",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "GoI publication, cited with attribution",
+    "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+    "ODbL / CDLA depending on theme",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+   "flags": []
+  },
+  {
+   "path": "public/data/cascade/hyderabad-cascade-river-outlets.geojson",
+   "family": "cascade",
+   "scope": "hyderabad",
+   "dataset": "cascade-river-outlets",
+   "bytes": 7518,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 11,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "bearing_deg",
+     "distance_km",
+     "from_name",
+     "from_osm_id",
+     "status"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "neer-vazhvu-api/tests/test_cascade_districts.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "google-dynamic-world",
+    "hydrosheds-basins",
+    "imd-gridded-rain",
+    "osm-overpass",
+    "overture-buildings",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "GoI publication, cited with attribution",
+    "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+    "ODbL / CDLA depending on theme",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+   "flags": []
+  },
+  {
+   "path": "public/data/cascade/hyderabad-cascade-stats.json",
+   "family": "cascade",
+   "scope": "hyderabad",
+   "dataset": "cascade-stats",
+   "bytes": 3046,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_meta",
+     "dataset",
+     "district_id",
+     "edge_confidence_counts",
+     "edge_count",
+     "isolated_count",
+     "label",
+     "max_cascade_depth",
+     "narrative_anchor",
+     "node_count",
+     "nvdm",
+     "provenance",
+     "river_outlet_count",
+     "scope",
+     "top_convergence"
+    ]
+   },
+   "consumers": [
+    "src/lib/cascade-stats-loader.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "neer-vazhvu-api/app/cascade/publish.py",
+    "neer-vazhvu-api/scripts/run_cascade.py",
+    "neer-vazhvu-api/tests/test_cascade_districts.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "google-dynamic-world",
+    "hydrosheds-basins",
+    "imd-gridded-rain",
+    "osm-overpass",
+    "overture-buildings",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "GoI publication, cited with attribution",
+    "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+    "ODbL / CDLA depending on theme",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+   "flags": []
+  },
+  {
+   "path": "public/data/cascade/hyderabad-cascade-systems.json",
+   "family": "cascade",
+   "scope": "hyderabad",
+   "dataset": "cascade-systems",
+   "bytes": 2197,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_meta",
+     "dataset",
+     "district_id",
+     "label",
+     "nvdm",
+     "provenance",
+     "scope",
+     "summary",
+     "systems"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/curation.py",
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "neer-vazhvu-api/tests/test_cascade_districts.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "google-dynamic-world",
+    "hydrosheds-basins",
+    "imd-gridded-rain",
+    "osm-overpass",
+    "overture-buildings",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "GoI publication, cited with attribution",
+    "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+    "ODbL / CDLA depending on theme",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+   "flags": []
+  },
+  {
+   "path": "public/data/cascade/hyderabad-catchment-downstream.json",
+   "family": "cascade",
+   "scope": "hyderabad",
+   "dataset": "catchment-downstream",
+   "bytes": 7613724,
+   "schema": {
+    "kind": "indexed-collection",
+    "records": 431,
+    "element_keys": [
+     "features",
+     "type"
+    ]
+   },
+   "consumers": [
+    "src/app/api/cascade/[cityId]/catchment/route.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "google-dynamic-world",
+    "hydrosheds-basins",
+    "imd-gridded-rain",
+    "osm-overpass",
+    "overture-buildings",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "GoI publication, cited with attribution",
+    "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+    "ODbL / CDLA depending on theme",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+   "flags": [
+    "big"
+   ]
+  },
+  {
+   "path": "public/data/cascade/hyderabad-catchment-quality.json",
+   "family": "cascade",
+   "scope": "hyderabad",
+   "dataset": "catchment-quality",
+   "bytes": 1790,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "algorithm",
+     "area_sqkm",
+     "conduit_excluded_count",
+     "dataset",
+     "delineated",
+     "dem",
+     "dem_cache",
+     "district_id",
+     "edge_touch_count",
+     "flagged",
+     "flagged_count",
+     "no_polygon",
+     "no_seed_count",
+     "nodes_total",
+     "nvdm",
+     "provenance",
+     "scope",
+     "utm_epsg"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "neer-vazhvu-api/scripts/run_cascade.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "google-dynamic-world",
+    "hydrosheds-basins",
+    "imd-gridded-rain",
+    "osm-overpass",
+    "overture-buildings",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "GoI publication, cited with attribution",
+    "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+    "ODbL / CDLA depending on theme",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+   "flags": []
+  },
+  {
+   "path": "public/data/cascade/hyderabad-catchment-streams.json",
+   "family": "cascade",
+   "scope": "hyderabad",
+   "dataset": "catchment-streams",
+   "bytes": 10409000,
+   "schema": {
+    "kind": "indexed-collection",
+    "records": 431,
+    "element_keys": [
+     "features",
+     "type"
+    ]
+   },
+   "consumers": [
+    "src/app/api/cascade/[cityId]/catchment/route.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "google-dynamic-world",
+    "hydrosheds-basins",
+    "imd-gridded-rain",
+    "osm-overpass",
+    "overture-buildings",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "GoI publication, cited with attribution",
+    "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+    "ODbL / CDLA depending on theme",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+   "flags": [
+    "big"
+   ]
+  },
+  {
    "path": "public/data/cascade/madurai-cascade-catchments.geojson",
    "family": "cascade",
    "scope": "madurai",
@@ -6370,6 +6929,41 @@
    "flags": []
   },
   {
+   "path": "public/data/commitments-hyderabad.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "commitments",
+   "bytes": 12566,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "commitments",
+     "dataset",
+     "headline",
+     "intro",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "sources_note",
+     "status_legend",
+     "update_model",
+     "updated"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/commitments/commitments-client.tsx",
+    "src/lib/cities/hyderabad.ts",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "curated commitment register; per-entry dated citations; no watchable listing",
+   "flags": []
+  },
+  {
    "path": "public/data/commitments-madurai.json",
    "family": "data-root",
    "scope": "madurai",
@@ -6892,6 +7486,7 @@
     "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/hooks/use-ward-profile.ts",
     "src/lib/utils/load-profiles-server.ts",
@@ -7240,6 +7835,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
     "src/app/[cityId]/facts/page.tsx"
    ],
    "producer_refs": [],
@@ -7277,6 +7873,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
     "src/app/[cityId]/facts/page.tsx"
    ],
    "producer_refs": [],
@@ -7293,6 +7890,52 @@
    ],
    "accountability": "watched",
    "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/facts-hyderabad.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "facts",
+   "bytes": 33614,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "facts",
+     "generated_at",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/app/[cityId]/facts/page.tsx"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "cgwb-dynamic-gwr-telangana",
+    "cpcb-nwmp-hyderabad",
+    "hmda-lakes-register",
+    "hmwssb-daily-reservoir-statement",
+    "opencity-ghmc-drainage-layers",
+    "opencity-hyderabad-tankers",
+    "tg-opendata-hmwssb-billing",
+    "tg-opendata-tgpcb-stp"
+   ],
+   "licenses": [
+    "Government Open Data License - India (GODL-India)",
+    "Government of India publication, cited with attribution",
+    "Telangana government publication, cited with attribution",
+    "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments",
+    "open (per OpenCity dataset page); underlying data is HMWSSB's, digitised by OpenCity",
+    "open (per OpenCity dataset page); underlying layers are GHMC's"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "hand-compiled; every fact carries its own source_url; no watchable listing",
    "flags": []
   },
   {
@@ -7315,6 +7958,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
     "src/app/[cityId]/facts/page.tsx"
    ],
    "producer_refs": [
@@ -7356,6 +8000,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
     "src/app/[cityId]/facts/page.tsx"
    ],
    "producer_refs": [],
@@ -7617,6 +8262,42 @@
    "flags": []
   },
   {
+   "path": "public/data/gwr-blocks-hyderabad.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "gwr-blocks",
+   "bytes": 29200,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "blocks",
+     "dataset",
+     "generated_at",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "source_label",
+     "source_url",
+     "unit_label"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_gwr_blocks.py"
+   ],
+   "headwaters_sources": [
+    "cgwb-dynamic-gwr-telangana"
+   ],
+   "licenses": [
+    "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/gwr-blocks-madurai.json",
    "family": "data-root",
    "scope": "madurai",
@@ -7688,6 +8369,315 @@
    ],
    "licenses": [
     "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/hyderabad-aws-stations.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "aws-stations",
+   "bytes": 66753,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_failed",
+     "_fetched",
+     "_licence",
+     "_note",
+     "_source",
+     "_source_url",
+     "bbox",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "reading_dates",
+     "scope",
+     "snapshot",
+     "station_count",
+     "stations"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/flood-risk/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_tgdps_stations.py"
+   ],
+   "headwaters_sources": [
+    "tgdps-aws-stations"
+   ],
+   "licenses": [
+    "Telangana government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/hyderabad-billing.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "billing",
+   "bytes": 326097,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_caveats",
+     "_fetched",
+     "_licence",
+     "_note",
+     "_source",
+     "_source_url",
+     "categories",
+     "dataset",
+     "divisions",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "scope",
+     "sections",
+     "totals"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/tanker/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_billing.py"
+   ],
+   "headwaters_sources": [
+    "tg-opendata-hmwssb-billing"
+   ],
+   "licenses": [
+    "Government Open Data License - India (GODL-India)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/hyderabad-cgwb-stations.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "cgwb-stations",
+   "bytes": 1520629,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_api_contract",
+     "_district_vocabulary_note",
+     "_districts_not_in_wris",
+     "_excluded",
+     "_feed_status",
+     "_note",
+     "_sign_convention",
+     "aquifer",
+     "cadence_note",
+     "coverage",
+     "dataset",
+     "depth_unit",
+     "district",
+     "nvdm",
+     "provenance",
+     "reading_kind",
+     "retrieved",
+     "scope",
+     "series_label",
+     "source_label",
+     "source_url",
+     "summary",
+     "unit_label",
+     "well_type",
+     "wells"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/app/api/groundwater/wards-interpolated/route.ts",
+    "src/lib/cities/hyderabad.ts",
+    "src/lib/cities/types.ts",
+    "src/types/groundwater.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_cgwb_stations.py"
+   ],
+   "headwaters_sources": [
+    "wris-gwl-hyderabad"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/hyderabad-irrigation-reservoirs.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "irrigation-reservoirs",
+   "bytes": 2129389,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_cross_check",
+     "_fetched",
+     "_licence",
+     "_missing_months",
+     "_note",
+     "_source",
+     "_source_url",
+     "_unit_warning",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "reservoirs",
+     "scope",
+     "totals"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_irrigation_reservoirs.py"
+   ],
+   "headwaters_sources": [
+    "tg-opendata-irrigation-reservoirs"
+   ],
+   "licenses": [
+    "Government Open Data License - India (GODL-India)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/hyderabad-lake-register.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "lake-register",
+   "bytes": 879077,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_fetched",
+     "_licence",
+     "_note",
+     "_source",
+     "_source_url",
+     "awaiting_final_notification",
+     "by_district",
+     "dataset",
+     "final_notifications_by_year",
+     "final_notified",
+     "lakes",
+     "nvdm",
+     "pct_final_notified",
+     "provenance",
+     "scope",
+     "total_lakes"
+    ]
+   },
+   "consumers": [
+    "src/components/water-bodies/lake-register-panel.tsx",
+    "src/lib/cities/hyderabad.ts",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_hmda_lake_register.py",
+    "scripts/nvdm_envelope_hyderabad.py"
+   ],
+   "headwaters_sources": [
+    "hmda-lakes-register"
+   ],
+   "licenses": [
+    "Telangana government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/hyderabad-stps.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "stps",
+   "bytes": 536042,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_caveats",
+     "_fetched",
+     "_licence",
+     "_note",
+     "_source",
+     "_source_url",
+     "dataset",
+     "nvdm",
+     "plants",
+     "provenance",
+     "scope",
+     "totals"
+    ]
+   },
+   "consumers": [
+    "src/components/rivers/treatment-discharge-panel.tsx",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_stps.py"
+   ],
+   "headwaters_sources": [
+    "tg-opendata-tgpcb-stp"
+   ],
+   "licenses": [
+    "Government Open Data License - India (GODL-India)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/hyderabad-tankers.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "tankers",
+   "bytes": 50643,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_coverage_gap",
+     "_empty_upstream_months",
+     "_fetched",
+     "_licence",
+     "_note",
+     "_source",
+     "_source_url",
+     "dataset",
+     "divisions",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "scope",
+     "seasonality",
+     "sections",
+     "totals"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/tanker/page.tsx",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_tankers.py"
+   ],
+   "headwaters_sources": [
+    "opencity-hyderabad-tankers"
+   ],
+   "licenses": [
+    "open (per OpenCity dataset page); underlying data is HMWSSB's, digitised by OpenCity"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -7775,6 +8765,50 @@
    ],
    "accountability": "watched",
    "accountability_reason": "scheduled rebuild: imd-rainfall-refresh.yml (P5-1)",
+   "flags": []
+  },
+  {
+   "path": "public/data/imd-rainfall-monthly-hyderabad.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "imd-rainfall-monthly",
+   "bytes": 56405,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "annual_totals",
+     "dataset",
+     "generated_at",
+     "grid_point",
+     "monthly",
+     "normal_period",
+     "normals",
+     "note",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source",
+     "year_range"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "tgdps-annual-weather-reports"
+   ],
+   "licenses": [
+    "GoI publication, cited with attribution",
+    "Telangana government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -8267,6 +9301,7 @@
     "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/hooks/use-ward-profile.ts",
     "src/lib/utils/load-profiles-server.ts",
@@ -8341,7 +9376,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 4563,
+   "bytes": 4559,
    "schema": {
     "kind": "object",
     "keys": [
@@ -8666,6 +9701,49 @@
    "flags": []
   },
   {
+   "path": "public/data/rainfall-recent-hyderabad.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "rainfall-recent",
+   "bytes": 15103,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "daily feed: owned by check-data-freshness.ts",
+   "flags": []
+  },
+  {
    "path": "public/data/rainfall-recent-madurai.json",
    "family": "data-root",
    "scope": "madurai",
@@ -8830,6 +9908,50 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "derived: flagship scorer over covered inputs",
+   "flags": []
+  },
+  {
+   "path": "public/data/restoration-priority-hyderabad.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "restoration-priority",
+   "bytes": 12370,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "algorithm_version",
+     "computed_at",
+     "dataset",
+     "notes",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "river_sections",
+     "scope",
+     "total_scored",
+     "water_bodies",
+     "weights"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/lib/cities/data-paths.ts",
+    "src/lib/cities/hyderabad.ts"
+   ],
+   "producer_refs": [
+    "scripts/compute-restoration-priority-hyderabad.ts"
+   ],
+   "headwaters_sources": [
+    "hmda-lakes-register",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0",
+    "Telangana government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -9029,6 +10151,39 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "curated compilation; per-record citations (NGT/court orders, government documents, press); no watchable listing",
+   "flags": []
+  },
+  {
+   "path": "public/data/restoration-projects-hyderabad.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "restoration-projects",
+   "bytes": 6055,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_court_orders_note",
+     "compiled_at",
+     "court_orders",
+     "dataset",
+     "note",
+     "nvdm",
+     "place_id",
+     "projects",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx",
+    "src/components/rivers/river-panel.tsx",
+    "src/lib/data/restoration-projects.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "curated compilation (HYDRAA, HMDA, MRDCL, dated press); per-record citations; no watchable listing",
    "flags": []
   },
   {
@@ -15017,6 +16172,7 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
     "src/lib/cities/data-paths.ts",
     "src/lib/hooks/use-ward-profile.ts"
    ],
@@ -15061,6 +16217,7 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
     "src/lib/cities/data-paths.ts",
     "src/lib/hooks/use-ward-profile.ts"
    ],
@@ -15068,6 +16225,7 @@
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
     "scripts/build-delhi-river-quality.ts",
     "scripts/fetch-rivers-osm-delhi.ts",
+    "scripts/fetch-rivers-osm-hyderabad.ts",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -15075,6 +16233,55 @@
    ],
    "licenses": [
     "restrictive, permission required: the DPCC website policy states that contents 'may not be reproduced partially or fully, without due permission' - no redistribution without permission"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/river-quality-hyderabad.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "river-quality",
+   "bytes": 60577,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_cross_check_tgpcb",
+     "_provenance",
+     "_reading_shape",
+     "_reporting_floor_caveat",
+     "_units",
+     "data_year_range",
+     "dataset",
+     "last_updated",
+     "nvdm",
+     "provenance",
+     "rivers",
+     "scope",
+     "source",
+     "source_label",
+     "source_url"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
+    "src/lib/cities/data-paths.ts",
+    "src/lib/hooks/use-ward-profile.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_river_quality.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "cpcb-nwmp-hyderabad",
+    "cpcb-prs-musi",
+    "tgpcb-ngt-oa606-musi"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution",
+    "Telangana government publication, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -15101,6 +16308,7 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
     "src/lib/cities/data-paths.ts",
     "src/lib/hooks/use-ward-profile.ts"
    ],
@@ -15147,6 +16355,7 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
     "src/lib/cities/data-paths.ts",
     "src/lib/hooks/use-ward-profile.ts"
    ],
@@ -15271,6 +16480,7 @@
     "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/hooks/use-ward-profile.ts",
     "src/lib/utils/load-profiles-server.ts",
@@ -15527,6 +16737,42 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "curated flagship register; per-record citations (ASI, DDA, INTACH, press); no watchable listing",
+   "flags": []
+  },
+  {
+   "path": "public/data/water-bodies-flagship-hyderabad.json",
+   "family": "data-root",
+   "scope": "hyderabad",
+   "dataset": "water-bodies-flagship",
+   "bytes": 15577,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "bodies",
+     "compiled_at",
+     "dataset",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx"
+   ],
+   "producer_refs": [
+    "scripts/compute-restoration-priority-hyderabad.ts",
+    "scripts/nvdm_envelope_hyderabad.py"
+   ],
+   "headwaters_sources": [
+    "hmda-lakes-register"
+   ],
+   "licenses": [
+    "Telangana government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -16596,7 +17842,6 @@
     "src/components/cascade/cascade-methodology-section.tsx",
     "src/components/flood-risk/flood-risk-map.tsx",
     "src/components/rivers/combined-rivers-map.tsx",
-    "src/components/water-bodies/unified-map.tsx",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -16809,7 +18054,6 @@
    "consumers": [
     "src/app/[cityId]/water-bodies/page.tsx",
     "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
-    "src/components/water-bodies/unified-map.tsx",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -16861,8 +18105,8 @@
    },
    "consumers": [
     "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
-    "src/components/water-bodies/unified-map.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -17153,6 +18397,349 @@
    "flags": []
   },
   {
+   "path": "public/geojson/hyderabad-canals-drains.geojson",
+   "family": "geojson-layers",
+   "scope": "hyderabad",
+   "dataset": "canals-drains",
+   "bytes": 3243470,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3960,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "Categories",
+     "DR_Code",
+     "FID",
+     "Layer",
+     "PI_CODE",
+     "Shape_Leng"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_opencity_layers.py"
+   ],
+   "headwaters_sources": [
+    "opencity-ghmc-drainage-layers"
+   ],
+   "licenses": [
+    "open (per OpenCity dataset page); underlying layers are GHMC's"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/hyderabad-gwr-blocks.geojson",
+   "family": "geojson-layers",
+   "scope": "hyderabad",
+   "dataset": "gwr-blocks",
+   "bytes": 2378574,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 33,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "agwd_tot",
+     "block",
+     "class",
+     "metro",
+     "na_gwa",
+     "sgw_dev_pe"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/groundwater-client.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_gwr_blocks.py"
+   ],
+   "headwaters_sources": [
+    "cgwb-dynamic-gwr-telangana"
+   ],
+   "licenses": [
+    "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/hyderabad-nalas.geojson",
+   "family": "geojson-layers",
+   "scope": "hyderabad",
+   "dataset": "nalas",
+   "bytes": 378876,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 96,
+    "geometries": [
+     "LineString",
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "Circle",
+     "District",
+     "FID",
+     "Length_m",
+     "Mandal",
+     "Nala_ID",
+     "Nala_Name",
+     "SNO",
+     "Total_Seg",
+     "Village",
+     "ZONE_ID",
+     "ZONE_NAME",
+     "length_m"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/flood-risk/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_opencity_layers.py"
+   ],
+   "headwaters_sources": [
+    "opencity-ghmc-drainage-layers"
+   ],
+   "licenses": [
+    "open (per OpenCity dataset page); underlying layers are GHMC's"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/hyderabad-rivers.geojson",
+   "family": "geojson-layers",
+   "scope": "hyderabad",
+   "dataset": "rivers",
+   "bytes": 535023,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 4,
+    "geometries": [
+     "LineString",
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "length_km",
+     "name",
+     "name_te",
+     "osm_ids",
+     "river_id",
+     "waterway"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/page.tsx",
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/components/cascade/cascade-methodology-section.tsx",
+    "src/components/flood-risk/flood-risk-map.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "neer-vazhvu-api/app/cascade/enrich_names.py",
+    "scripts/build-mumbai-rivers.py",
+    "scripts/fetch-rivers-osm-hyderabad.ts",
+    "scripts/nvdm_envelope_chennai.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/hyderabad-tanks-opencity.geojson",
+   "family": "geojson-layers",
+   "scope": "hyderabad",
+   "dataset": "tanks-opencity",
+   "bytes": 1173882,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 847,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "Descr_1",
+     "Descr_2",
+     "Descr_3",
+     "FID",
+     "LU_Code",
+     "PI_CODE",
+     "Shape_Area"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_opencity_layers.py"
+   ],
+   "headwaters_sources": [
+    "opencity-ghmc-drainage-layers"
+   ],
+   "licenses": [
+    "open (per OpenCity dataset page); underlying layers are GHMC's"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/hyderabad-water-bodies-current.geojson",
+   "family": "geojson-layers",
+   "scope": "hyderabad",
+   "dataset": "water-bodies-current",
+   "bytes": 4052403,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 669,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "name",
+     "name_te",
+     "osm_id",
+     "osm_type",
+     "water_type"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/water-bodies/page.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "neer-vazhvu-api/scripts/fetch_hmda_lake_register.py",
+    "scripts/compute-restoration-priority-hyderabad.ts",
+    "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-water-bodies-osm-hyderabad.ts",
+    "scripts/nvdm_envelope_hyderabad.py"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/hyderabad-water-census.geojson",
+   "family": "geojson-layers",
+   "scope": "hyderabad",
+   "dataset": "water-census",
+   "bytes": 3271621,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3116,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "_source_district",
+     "block_tehsil",
+     "district",
+     "district_code",
+     "district_iw",
+     "district_nwic",
+     "enumeration_date",
+     "image_path",
+     "latitude",
+     "longitude",
+     "max_depth_water_body_fully_fill",
+     "mi_id",
+     "objectid",
+     "rural_or_urban",
+     "state",
+     "storage_capacity_water_body_ori",
+     "subdistrict_code",
+     "subdistrict_nwic",
+     "unique_id",
+     "village",
+     "village_code",
+     "village_nwic",
+     "water_body_nature",
+     "water_body_ownership",
+     "water_body_type",
+     "waterbody_encroached",
+     "waterbody_use_notuse"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_opencity_layers.py"
+   ],
+   "headwaters_sources": [
+    "opencity-jal-dharohar-hyderabad"
+   ],
+   "licenses": [
+    "open (per OpenCity dataset page); underlying census is NWIC/MoJS"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/hyderabad-waterlogging.geojson",
+   "family": "geojson-layers",
+   "scope": "hyderabad",
+   "dataset": "waterlogging",
+   "bytes": 12732,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 23,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "AltMode",
+     "Base",
+     "FolderPath",
+     "HasLabel",
+     "LabelID",
+     "OID",
+     "PopupInfo",
+     "Snippet",
+     "SymbolID",
+     "name"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/flood-risk/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_hyderabad_opencity_layers.py"
+   ],
+   "headwaters_sources": [
+    "opencity-ghmc-drainage-layers"
+   ],
+   "licenses": [
+    "open (per OpenCity dataset page); underlying layers are GHMC's"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/geojson/madurai-gwr-blocks.geojson",
    "family": "geojson-layers",
    "scope": "madurai",
@@ -17355,6 +18942,7 @@
    "consumers": [
     "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -17720,6 +19308,7 @@
    "consumers": [
     "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [],
@@ -20070,14 +21659,15 @@
   {
    "family": "cascade",
    "dataset": "cascade-catchments",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 29734867,
+   "bytes": 34000514,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20085,14 +21675,15 @@
   {
    "family": "cascade",
    "dataset": "cascade-edges",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 733222,
+   "bytes": 873500,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -20100,14 +21691,15 @@
   {
    "family": "cascade",
    "dataset": "cascade-lakes",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 3581791,
+   "bytes": 4026282,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -20115,14 +21707,15 @@
   {
    "family": "cascade",
    "dataset": "cascade-nodes",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 1344882,
+   "bytes": 1548549,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20130,14 +21723,15 @@
   {
    "family": "cascade",
    "dataset": "cascade-river-outlets",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 78334,
+   "bytes": 85852,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -20158,14 +21752,15 @@
   {
    "family": "cascade",
    "dataset": "cascade-stats",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 11727,
+   "bytes": 14773,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20173,11 +21768,12 @@
   {
    "family": "cascade",
    "dataset": "cascade-systems",
-   "files": 1,
+   "files": 2,
    "scopes": [
+    "hyderabad",
     "mumbai"
    ],
-   "bytes": 2101,
+   "bytes": 4298,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -20227,14 +21823,15 @@
   {
    "family": "cascade",
    "dataset": "catchment-downstream",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 38561771,
+   "bytes": 46175495,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20242,14 +21839,15 @@
   {
    "family": "cascade",
    "dataset": "catchment-quality",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 11265,
+   "bytes": 13055,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -20257,14 +21855,15 @@
   {
    "family": "cascade",
    "dataset": "catchment-streams",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 38857675,
+   "bytes": 49266675,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20284,15 +21883,28 @@
   {
    "family": "data-root",
    "dataset": "allocations",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 72619,
+   "bytes": 88390,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "aws-stations",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 66753,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20307,6 +21919,18 @@
    "bytes": 1264,
    "schema_variants": 1,
    "registered": false,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "billing",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 326097,
+   "schema_variants": 1,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -20372,30 +21996,32 @@
   {
    "family": "data-root",
    "dataset": "cgwb-stations",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 823346,
-   "schema_variants": 4,
+   "bytes": 2343975,
+   "schema_variants": 5,
    "registered": true,
    "has_consumer": true
   },
   {
    "family": "data-root",
    "dataset": "commitments",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 150679,
+   "bytes": 163245,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -20467,14 +22093,15 @@
   {
    "family": "data-root",
    "dataset": "facts",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 133177,
+   "bytes": 166791,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20534,15 +22161,16 @@
   {
    "family": "data-root",
    "dataset": "gwr-blocks",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai"
    ],
-   "bytes": 113440,
-   "schema_variants": 3,
+   "bytes": 142640,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },
@@ -20561,15 +22189,16 @@
   {
    "family": "data-root",
    "dataset": "imd-rainfall-monthly",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 257539,
+   "bytes": 313944,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20592,6 +22221,18 @@
   },
   {
    "family": "data-root",
+   "dataset": "irrigation-reservoirs",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 2129389,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "data-root",
    "dataset": "jj-bastis-geo",
    "files": 1,
    "scopes": [
@@ -20601,6 +22242,18 @@
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
+  },
+  {
+   "family": "data-root",
+   "dataset": "lake-register",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 879077,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
   },
   {
    "family": "data-root",
@@ -20636,7 +22289,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 4563,
+   "bytes": 4559,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20644,15 +22297,16 @@
   {
    "family": "data-root",
    "dataset": "rainfall-recent",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 75554,
+   "bytes": 90657,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20660,15 +22314,16 @@
   {
    "family": "data-root",
    "dataset": "restoration-priority",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 2139159,
+   "bytes": 2151529,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -20688,15 +22343,16 @@
   {
    "family": "data-root",
    "dataset": "restoration-projects",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 37204,
-   "schema_variants": 2,
+   "bytes": 43259,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -20717,16 +22373,29 @@
   {
    "family": "data-root",
    "dataset": "river-quality",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 110021,
-   "schema_variants": 4,
+   "bytes": 170598,
+   "schema_variants": 5,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "stps",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 536042,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -20766,6 +22435,18 @@
     "bangalore"
    ],
    "bytes": 4407,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "tankers",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 50643,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -20852,13 +22533,14 @@
   {
    "family": "data-root",
    "dataset": "water-bodies-flagship",
-   "files": 3,
+   "files": 4,
    "scopes": [
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 35518,
+   "bytes": 51095,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -20890,6 +22572,18 @@
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
+  },
+  {
+   "family": "geojson-layers",
+   "dataset": "canals-drains",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 3243470,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
   },
   {
    "family": "geojson-layers",
@@ -21042,15 +22736,16 @@
   {
    "family": "geojson-layers",
    "dataset": "gwr-blocks",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai"
    ],
-   "bytes": 4968204,
-   "schema_variants": 1,
+   "bytes": 7346778,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -21062,6 +22757,18 @@
     "chennai"
    ],
    "bytes": 492766,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "geojson-layers",
+   "dataset": "nalas",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 378876,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -21094,16 +22801,17 @@
   {
    "family": "geojson-layers",
    "dataset": "rivers",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 1938630,
-   "schema_variants": 4,
+   "bytes": 2473653,
+   "schema_variants": 5,
    "registered": true,
    "has_consumer": true
   },
@@ -21205,6 +22913,18 @@
   },
   {
    "family": "geojson-layers",
+   "dataset": "tanks-opencity",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 1173882,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "geojson-layers",
    "dataset": "wards-2022",
    "files": 3,
    "scopes": [
@@ -21257,16 +22977,17 @@
   {
    "family": "geojson-layers",
    "dataset": "water-bodies-current",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "hyderabad",
     "madurai",
     "mumbai"
    ],
-   "bytes": 16958233,
-   "schema_variants": 5,
+   "bytes": 21010636,
+   "schema_variants": 6,
    "registered": true,
    "has_consumer": true
   },
@@ -21281,6 +23002,30 @@
    ],
    "bytes": 50809,
    "schema_variants": 3,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "geojson-layers",
+   "dataset": "water-census",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 3271621,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "geojson-layers",
+   "dataset": "waterlogging",
+   "files": 1,
+   "scopes": [
+    "hyderabad"
+   ],
+   "bytes": 12732,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },

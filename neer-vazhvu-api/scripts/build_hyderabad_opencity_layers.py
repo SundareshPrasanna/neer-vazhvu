@@ -72,6 +72,7 @@ from pathlib import Path
 # a generator is how the registry and the corpus drifted apart (PR #227).
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 from registry_license import registry_license  # noqa: E402
+from nvdm_write import write_artifact  # noqa: E402
 
 
 KML_NS = {"k": "http://www.opengis.net/kml/2.2"}
@@ -284,9 +285,7 @@ def main() -> int:
             print(f"  {key}: {len(feats)} features", file=sys.stderr)
 
         fc = {"type": "FeatureCollection", **meta, "features": feats}
-        (outdir / spec["out"]).write_text(
-            json.dumps(fc, ensure_ascii=False), encoding="utf-8"
-        )
+        write_artifact(outdir / spec["out"], fc, compact=True)
         summary[key] = meta.get("summary")
 
     if census_feats:
@@ -318,9 +317,7 @@ def main() -> int:
             },
             "features": census_feats,
         }
-        (outdir / "hyderabad-water-census.geojson").write_text(
-            json.dumps(fc, ensure_ascii=False), encoding="utf-8"
-        )
+        write_artifact(outdir / "hyderabad-water-census.geojson", fc, compact=True)
         print(
             f"  census: {len(census_feats)} points ({wards} with a ward number), "
             f"type codes {dict(types.most_common())}",
