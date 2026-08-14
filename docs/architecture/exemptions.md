@@ -134,7 +134,7 @@ Derived by diffing each city against the union of every route any city ships, so
 | madurai | tanker | Not built for this city. |
 | mumbai | cascades | Not a cascade geography. |
 | mumbai | climate-risk | Not built for this city. |
-| mumbai | my-ward | UNRECORDED: Mumbai holds both the ward geometry (mumbai-wards-2023.geojson) and ward-keyed data (ward-risk-mumbai.json, mumbai-ward-water-praja.json), so this is a product decision rather than a data gap - but no rationale for it was ever recorded in the repo, and none is invented here. Resolve by writing down the real reason or by shipping the route. |
+| mumbai | my-ward | UNRECORDED: Mumbai holds both a 2023 ward-boundary layer and ward-keyed data (a ward risk composite and the Praja per-ward water series), so this is a product decision rather than a data gap - but no rationale for it was ever recorded in the repo, and none is invented here. Resolve by writing down the real reason or by shipping the route. |
 | mumbai | tanker | Not built for this city. |
 
 ## Absences the product states on the page

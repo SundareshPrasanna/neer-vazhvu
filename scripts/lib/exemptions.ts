@@ -128,7 +128,11 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   "delhi:tanker": "Not built for this city.",
 
   // Mumbai
-  "mumbai:my-ward": `${UNRECORDED} Mumbai holds both the ward geometry (mumbai-wards-2023.geojson) and ward-keyed data (ward-risk-mumbai.json, mumbai-ward-water-praja.json), so this is a product decision rather than a data gap - but no rationale for it was ever recorded in the repo, and none is invented here. Resolve by writing down the real reason or by shipping the route.`,
+  // Deliberately describes the artifacts rather than naming their paths: the
+  // dataset catalogue scans scripts/ for artifact paths to infer which script
+  // PRODUCES a file, so a literal path in this prose made the catalogue credit
+  // this register as the producer of Mumbai's ward geometry. It produces nothing.
+  "mumbai:my-ward": `${UNRECORDED} Mumbai holds both a 2023 ward-boundary layer and ward-keyed data (a ward risk composite and the Praja per-ward water series), so this is a product decision rather than a data gap - but no rationale for it was ever recorded in the repo, and none is invented here. Resolve by writing down the real reason or by shipping the route.`,
   "mumbai:cascades": "Not a cascade geography.",
   "mumbai:climate-risk": "Not built for this city.",
   "mumbai:tanker": "Not built for this city.",
