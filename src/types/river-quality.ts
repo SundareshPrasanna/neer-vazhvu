@@ -55,17 +55,23 @@ export interface RiverQualityReading {
   // invent a midpoint to flatten them. Renderers must handle both.
   do_mgl: Measure; // Dissolved oxygen mg/L
   bod_mgl: Measure; // Biochemical oxygen demand mg/L
-  ph: number | null;
+  // CPCB NWMP publishes these as annual min-max too, exactly like DO and BOD.
+  // They were left as `number` when Measure was introduced, so every renderer
+  // treated a {min,max} object as a number: React refused to render one as a
+  // child ("object with keys {min, max}", error #31) and the Hyderabad rivers
+  // panel died on click. The type has to tell the truth or nothing downstream
+  // can be correct.
+  ph: Measure;
   conductivity_us: number | null; // µS/cm
   cod_mgl: number | null; // Chemical oxygen demand mg/L
-  fecal_coliform_mpn: number | null; // Fecal coliform MPN/100ml
+  fecal_coliform_mpn: Measure; // Fecal coliform MPN/100ml
   /** Set when the published figure itself is disputed (e.g. the Mithi's
    *  2023 CPCB value, publicly flagged by Praja as a likely recording
    *  error). Rendered as a footnote under the FC tile - the number is
    *  shown as published, never silently corrected. */
   fecal_coliform_note?: string | null;
   tds_mgl: number | null; // Total dissolved solids mg/L
-  nitrate_mgl: number | null; // Nitrate mg/L
+  nitrate_mgl: Measure; // Nitrate mg/L
   chromium_mgl: number | null; // Chromium mg/L (heavy metal)
   lead_mgl: number | null; // Lead mg/L (heavy metal)
   cadmium_mgl: number | null; // Cadmium mg/L (heavy metal)
