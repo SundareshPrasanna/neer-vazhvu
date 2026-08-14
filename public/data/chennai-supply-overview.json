@@ -1,4 +1,47 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/supply-overview",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "title": "ADB CCRWSSP Initial Environmental Examination - Chennai Ring Main System Subproject (Project 59311-001)",
+        "publisher": "Asian Development Bank",
+        "url": "https://www.adb.org/sites/default/files/project-documents/59311/59311-001-iee-en_0.pdf",
+        "license": "ADB public project document, cited with attribution",
+        "closed": true,
+        "as_of": "2026-03",
+        "retrieved": "2026-05-08"
+      },
+      {
+        "title": "JICA Chennai Seawater Desalination Preparatory Survey - Final Report",
+        "publisher": "Japan International Cooperation Agency",
+        "url": "https://openjicareport.jica.go.jp/pdf/12283743.pdf",
+        "license": "JICA public survey report, cited with attribution",
+        "closed": true,
+        "as_of": "2017",
+        "retrieved": "2026-05-08"
+      },
+      {
+        "id": "cmwssb-system-pages",
+        "title": "CMWSSB water-supply system pages and board documents",
+        "publisher": "CMWSSB",
+        "license": "government publication, cited with attribution"
+      },
+      {
+        "id": "maws-policy-note",
+        "title": "TN MAWS Policy Note (annual, April budget session)",
+        "publisher": "TN Municipal Administration and Water Supply Department",
+        "license": "government publication, cited with attribution"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-05-08",
+    "note": "Extraction detail and per-section citations in the legacy _note/_sources/_supply_total_note keys; produced_at is the extraction date the file itself asserts (_sources[].extracted 2026-05-08); later git touches were editorial. The ADB IEE is carried closed rather than registered: adb.org blocks automation (same TLS class as CEEW) and it is a single project document. _view_overrides is a grandfathered UI hint (spec 6.4), config-migration follow-up on record."
+  },
   "_note": "Structural at-a-glance facts for Chennai's urban water supply, primarily extracted from the ADB Chennai Climate Resilient Water Security and Sewerage Project (CCRWSSP) Initial Environmental Examination (March 2026, Project 59311-001). The CCRWSSP IEE documents Chennai's existing multi-source supply (5 WTPs + 3 DSPs, 1,544 MLD avg supply against 2,287 MLD installed treatment capacity) and the proposed Ring Main System (RMS) - a 97.9 km circular bulk transmission ring connecting all major WTPs/DSPs to eliminate the city's source-zone fragmentation. Numbers refresh per ADB project publication.",
   "_view_overrides": {
     "subtitle": "Structural numbers from CMWSSB and the ADB Chennai Climate Resilient Water Security and Sewerage Project (CCRWSSP). Refreshed when new engineering documents are published.",
@@ -25,7 +68,6 @@
       "extracted": "2026-05-08"
     }
   ],
-
   "supply_chain": [
     "Surface reservoirs (Puzhal, Poondi, Cholavaram, Chembarambakkam, Veeranam) + Krishna canal + Cauvery + Sea water",
     "5 freshwater WTPs (Kilpauk, Puzhal, Surapet, Chembarambakkam, Vadakuthu) + 3 desal plants (Minjur, Nemmeli I, Nemmeli II)",
@@ -35,7 +77,6 @@
     "16 GCC administrative zones",
     "~930,000 service connections (March 2022)"
   ],
-
   "current_supply_mix_mld": [
     {
       "source": "Puzhal + Krishna cluster (Kilpauk WTP)",
@@ -104,7 +145,6 @@
   ],
   "current_supply_total_mld": 1687,
   "_supply_total_note": "1,687 MLD is sum of installed treatment capacity across active WTPs/DSPs. CCRWSSP IEE Table 1 reports the city's average actual supply at 1,544 MLD (capacity utilisation ~67% of 2,287 MLD if Surapet rehab and Perur are included). The gap reflects raw-water availability, plant downtime, and Surapet rehabilitation rather than nominal capacity.",
-
   "wtps_summary": {
     "fresh_water_wtps_count": 5,
     "fresh_water_capacity_mld": 1337,
@@ -116,7 +156,6 @@
     "planned_additions_breakdown": "Perur DSP (+400 MLD, expected 2027) + Orathur/Manimangalam Lake WTP proposed by CMA (+200 MLD)",
     "post_addition_capacity_mld": 2287
   },
-
   "distribution": {
     "_note": "Distribution figures from CCRWSSP IEE March 2026 page 10 (paragraph 21). Chennai's distribution differs from Madurai's: 16 GCC administrative zones (not Madurai's 28 distribution zones), 85 WDSs (water distribution stations), 7 ground-level Clear Water Reservoirs (CWRs), 16 major WDSs as backbone, all fed by 115 km of large-diameter transmission mains.",
     "administrative_zones": 16,
@@ -135,7 +174,6 @@
     "population_served": 8500000,
     "_population_note": "Per CCRWSSP IEE para 14: 'Chennai's water supply system... serves a population of over 8.5 million'. Covers all 16 GCC administrative zones across 426 km^2."
   },
-
   "demand": {
     "population_2011": 4646732,
     "population_design": 8500000,
@@ -151,7 +189,6 @@
     "_demand_gap_note": "Chennai's existing 1,544 MLD avg supply already exceeds the 2042 intermediate-year demand of 1,496 MLD. The structural risk is not headline supply gap but distribution fragmentation (each WTP has its own commanding area with no balancing) - which the proposed Ring Main System addresses. By 2057 ultimate-year demand of 1,766 MLD, capacity additions (Perur 400 + CMA 200 = +600 MLD) will be needed.",
     "city_area_sqkm": 426
   },
-
   "allocation_context": {
     "_note": "Chennai's water sources span four states/basins: Krishna (AP, via Telugu Ganga), Cauvery (TN, via Veeranam), local Tamil Nadu reservoirs, and the Bay of Bengal. No single-source dependency comparable to Madurai's Mullaperiyar - but Krishna allocations have historically been politically contested.",
     "krishna_allocation_mcm_per_year": 339.84,
@@ -163,7 +200,6 @@
     "tracked_reservoirs_full_capacity_mcft": 13213,
     "tracked_reservoirs_note": "Combined live capacity of Poondi + Cholavaram + Red Hills + Chembarambakkam reservoirs (CMWSSB daily reservoir bulletin). These are what Neer Vazhvu's days-of-water-left hero on /chennai operates against."
   },
-
   "rms_project": {
     "_note": "The Ring Main System (RMS) is the headline subproject of the CCRWSSP. It addresses the 'source-based zones' fragmentation problem - each WTP currently supplies its own independent area with no interconnections, so a single source failure (drought, plant shutdown, power issue) cripples its zone. RMS creates a unified circular bulk transmission line tying all 8 WTPs/DSPs into one resilient network.",
     "ring_main_total_km": 97.9,
@@ -201,7 +237,6 @@
     "_pipe_carrying_bridges_note": "17 along ring main (6 within CRZ requiring CRZ clearance) + 7 along transmission mains (all 7 in CRZ). Cross Retteri Lake, Adyar River, Buckingham Canal, Cooum River, Captain Cotton Canal, South Boag Road Nalla, Otteri Nalla, Veerangal Odai, Kosasthalaiyar River.",
     "scada": "New SCADA system with sensors for real-time flow/pressure/pumping/reservoir-level monitoring; one Master Control Center to be added"
   },
-
   "reference_figures": [
     {
       "id": "sources-map",
@@ -228,7 +263,6 @@
       "source_label": "ADB CCRWSSP IEE March 2026, Figure 7"
     }
   ],
-
   "tranche_status": {
     "ccrwssp": {
       "scope": "Climate-resilient water security + sewerage. Includes RMS (97.9 km ring main, 8 surge tanks, 7 new UGTs, 7 pump replacements, 24 pipe-carrying bridges), 10-year performance-based O&M contract, NRW reduction, SCADA + digital twin, robotic CCTV/sonar sewer inspection, gender career-scholarship program",

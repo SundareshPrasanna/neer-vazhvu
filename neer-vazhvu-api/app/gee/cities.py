@@ -5,7 +5,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Mapping
 
-from app.gee.config import PUBLIC_DATA_DIR, PUBLIC_GEOJSON_DIR
+from app.gee.config import PIPELINE_INPUTS_DIR, PUBLIC_DATA_DIR, PUBLIC_GEOJSON_DIR
 
 
 DEFAULT_CITY_ID = "chennai"
@@ -52,7 +52,9 @@ _CHENNAI = CityGeeConfig(
     current_water_bodies_path=PUBLIC_GEOJSON_DIR
     / "chennai-water-bodies-current.geojson",
     phase1_targets_path=PUBLIC_DATA_DIR / "gee-phase1-water-body-targets.json",
-    reservoir_catchments_path=PUBLIC_GEOJSON_DIR
+    # Pipeline input, not a shipped asset (pipeline-inputs/README.md):
+    # candidate catchment polygons, metadata status ready_for_verification.
+    reservoir_catchments_path=PIPELINE_INPUTS_DIR
     / "chennai-reservoir-catchments.geojson",
     phase1_reservoirs=("poondi", "redhills", "chembarambakkam", "cholavaram"),
     reservoir_name_aliases=MappingProxyType(

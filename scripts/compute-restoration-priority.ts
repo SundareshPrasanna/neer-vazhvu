@@ -9,7 +9,8 @@
  * Requires NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { resolve } from "path";
 import { config } from "dotenv";
 
@@ -282,8 +283,14 @@ async function fetchCensusData(): Promise<CensusRow[]> {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !key) {
-    console.warn("  Supabase credentials not found, skipping census data");
-    return [];
+    // Shipping without census data silently drops ~305 census-only bodies
+    // and neutralizes condition scoring for the rest — a degraded artifact
+    // that would overwrite the good committed one (baseline P0.3).
+    throw new Error(
+      "Supabase credentials not set (NEXT_PUBLIC_SUPABASE_URL / " +
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY) — refusing to build a degraded " +
+        "restoration-priority artifact without census data",
+    );
   }
 
   const { createClient } = await import("@supabase/supabase-js");
@@ -656,7 +663,7 @@ async function main() {
   };
 
   const outPath = resolve(root, "public/data/restoration-priority.json");
-  writeFileSync(outPath, JSON.stringify(output, null, 2));
+  writeArtifact(outPath, output);
 
   // Summary
   const counts = { critical: 0, high: 0, moderate: 0, low: 0 };

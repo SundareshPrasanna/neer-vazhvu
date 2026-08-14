@@ -30,10 +30,11 @@ Run: python scripts/convert-bangalore-cauvery-stage-areas.py scripts/data-raw/ba
 """
 
 import csv
-import json
 import re
 import sys
 from pathlib import Path
+
+from nvdm_write import write_artifact
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
@@ -78,7 +79,8 @@ def main() -> None:
                 stages[key].append(name)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(stages, indent=2, ensure_ascii=False))
+    # Envelope-preserving write (scripts/nvdm_write.py).
+    write_artifact(OUT, stages)
 
     print(f"Wrote {OUT}")
     for key, items in stages.items():

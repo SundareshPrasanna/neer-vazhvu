@@ -45,7 +45,10 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/restoration-priority-mumbai.json": "derived: flagship scorer",
   "public/data/ward-risk-bangalore.json": "derived composite (population, water bodies, density)",
   "public/data/ward-risk-madurai.json": "derived 3-factor composite",
-  "public/data/ward-risk-mumbai.json": "derived: Praja supply hours + covered inputs",
+  // ward-risk-mumbai.json moved to the watched track 2026-07-30 (NVDM Mumbai
+  // migration): praja-civic-issues-mumbai and datameet-mumbai-spatial dependsOn
+  // now name it (the Praja Table-4 supply hours and the DataMeet slum clusters
+  // are real upstreams of the score, not just "covered inputs").
   "public/data/ward-profiles.json": "derived join over covered ward-level layers",
   "public/data/bangalore-ward-profiles.json": "derived join",
   "public/data/madurai-ward-profiles.json": "derived join",
@@ -58,29 +61,50 @@ export const UNWATCHED: Record<string, string> = {
   // accurate reason. OpenStreetMap is continuously edited and Dynamic World is a
   // rolling GEE collection - neither has an "edition" to detect, so how often we
   // re-fetch them is a freshness question (P5-1), not an edition-watch question.
-  "public/geojson/chennai-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/madurai-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/mumbai-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/bangalore-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/chennai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/madurai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/mumbai-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/hyderabad-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/hyderabad-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/chennai-industrial-zones.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/mumbai-drainage.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/mumbai-corporations-2024.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
   "public/data/elevation-bands-chennai.geojson": "covered by the platform-scope entry fabdem-dem",
   "public/data/elevation-bands-bangalore.geojson": "covered by the platform-scope entry fabdem-dem",
   "public/data/elevation-bands-madurai.geojson": "covered by the platform-scope entry fabdem-dem",
   "public/data/elevation-bands-mumbai.geojson": "covered by the platform-scope entry fabdem-dem",
-  "public/data/rich-bodies": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings; Dynamic World alone is continuously updated with no editions",
+  "public/data/rich-bodies": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
   "public/geojson/rich-bodies": "covered by the platform-scope GEE entries",
-  "public/data/cascade": "covered by the platform-scope entry hydrosheds-basins",
+  "public/data/cascade": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+
+  // Curated compilations (NVDM Madurai pilot, 2026-07-30). Each record carries
+  // its own citation; the upstreams are episodic news/court/report documents
+  // with no watchable listing page - the accountability lives per record, and
+  // these reasons are the artifact-level decision on record.
+  "public/data/restoration-projects-madurai.json": "curated compilation; per-record citations (court orders, MMC, press); no watchable listing",
+  "public/data/river-events-madurai.json": "curated event timeline; per-record url citations; no watchable listing",
+  "public/data/water-bodies-flagship-madurai.json": "curated flagship register; per-record citations (DHAN, MMC, press); no watchable listing",
+  "public/data/industrial-sources-madurai.json": "qualitative one-off academic source (Columbia GSAPP studio book, spring 2016); statistics failed adversarial checks - see the file's _source_caveats",
+
+  // Curated compilations (NVDM Bangalore migration, 2026-07-30). Same family
+  // as the Madurai lines above: per-record citations carry the accountability.
+  "public/data/allocations-bangalore.json": "claim register; per-arrangement citations in the file's sources map (BWSSB About, JICA appraisal, SC Cauvery verdict, dated press); no watchable listing",
+  "public/data/industrial-sources-bangalore.json": "curated compilation (KSPCB directory via OpenCity, NGT Forward Foundation filings, WELL Labs, IISc CES, press); per-record source fields; no watchable listing",
+  "public/data/river-events-bangalore.json": "curated event timeline (court orders + named events); per-record citations; no watchable listing",
+
+  // Curated compilations (Hyderabad onboarding). Same family as the Madurai and
+  // Bangalore lines above: no upstream EDITION exists, because each entry is
+  // written against its own dated citation sitting inside the file next to the
+  // claim it supports. Watching them would be watching ourselves.
+  // Deliberately NOT extended to Hyderabad layers that DO have a real upstream
+  // nobody has registered yet (ward geometry, sewerage, industrial registers);
+  // those stay unwatched on purpose so they keep showing up as work.
+  "public/data/allocations-hyderabad.json": "claim register; per-arrangement citations inline; no watchable listing",
+  "public/data/commitments-hyderabad.json": "curated commitment register; per-entry dated citations; no watchable listing",
+  "public/data/facts-hyderabad.json": "hand-compiled; every fact carries its own source_url; no watchable listing",
+  "public/data/restoration-projects-hyderabad.json": "curated compilation (HYDRAA, HMDA, MRDCL, dated press); per-record citations; no watchable listing",
+  "public/data/rainfall-recent-hyderabad.json": "daily feed: owned by check-data-freshness.ts",
 
   // Closed series. The upstream will not publish again; an edition watch would
   // be permanently silent, which is worse than an explicit note.
+  "public/geojson/madurai-wards-2022.geojson": "closed edition: 2022 ward delimitation KML; boundaries change only at the next delimitation (term-expiry watch would be the upgrade)",
   "public/data/cooum-sewage-inlets.json": "closed series: Nethaji Mariappan et al. 2017, single study",
+  "public/geojson/chennai-coastal-hotspots.geojson": "closed series: Anagha, Singh & Frappart 2026, single study",
+  "public/geojson/chennai-coastal-zones.geojson": "closed series: Anagha, Singh & Frappart 2026 seed layer; superseded by computed transects",
+  "public/geojson/chennai-flood-2020-hotspots.geojson": "closed series: Cyclone Nivar Nov 2020 reference layer",
+  "public/data/industrial-sources.json": "curated compilation (NGT orders, CPCB reports, TNPCB consent records, press); no watchable listing; per-record citation backfill tracked",
   "public/geojson/mumbai-flood-2005-hotspots.geojson": "closed series: 26/7/2005 reference layer",
   "public/data/water-bodies-lost-mumbai.json": "archival: Dwivedi & Mehrotra 1995",
   "public/geojson/mumbai-water-bodies-lost.geojson": "archival",
@@ -109,63 +133,54 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/water-bodies-lost-delhi.json": "archival",
   "public/data/rainfall-recent-delhi.json": "daily feed: owned by check-data-freshness.ts",
   "public/data/elevation-bands-delhi.geojson": "covered by the platform-scope entry fabdem-dem",
-  "public/geojson/delhi-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/delhi-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
   "public/geojson/delhi-drainage.geojson":
     "OSM/Overpass: continuously edited, no editions (P5-1). No official Delhi drain GIS is public - the IFC " +
     "2018 Drainage Master Plan's 3,737 km across 11 agencies exists only as PDF maps, so these lengths are a floor.",
-  "public/data/delhi-cgwb-stations.json":
-    "historical series, not a live feed: WRIS telemetry across the Delhi network stops 2025-09-20 and the artifact " +
-    "says so in _feed_status. Whether telemetry RESUMES is a feed question for P5-1, not an edition question.",
-  "public/geojson/delhi-microwatersheds.geojson":
-    "ORPHAN - DECISION NEEDED, not a settled exemption. 2,324 features, metadata is null, absent from " +
-    "docs/cities/delhi/data-sources.md, and no reference anywhere in src/ - it ships to production and nothing " +
-    "renders it. The property schema (g_mws ids, BASIN/CATCHMENT/WATERSHED/MWS codes like 2B6B2c1) looks like the " +
-    "NRSC/Bhuvan watershed atlas, but that is an INFERENCE and is not recorded anywhere. Either document the " +
-    "provenance and register the source, or delete the file.",
+  // delhi-cgwb-stations.json moved to the watched track 2026-07-30 (NVDM Delhi
+  // migration): wris-live-services dependsOn now names it, matching the
+  // Madurai/Chennai gw-stations precedent. The frozen-telemetry story (network
+  // stops 2025-09-20; historical series, not a live feed) now travels IN the
+  // artifact's provenance.conventions, where a reader of the data actually
+  // meets it - resumption stays a P5-1 feed question, not an edition question.
+
+  // Curated Delhi compilations (NVDM Delhi migration, 2026-07-30 - the Madurai
+  // pattern). Each record carries its own citation; the upstreams are episodic
+  // press/court/government documents with no watchable listing page.
+  "public/data/restoration-projects-delhi.json": "curated compilation; per-record citations (NGT/court orders, government documents, press); no watchable listing",
+
+  // Curated Mumbai compilations (NVDM Mumbai migration, 2026-07-30 - the
+  // Madurai pattern). Each record carries its own citation; the upstreams are
+  // episodic press/court/corporation documents with no watchable listing page.
+  "public/data/restoration-projects-mumbai.json": "curated compilation; per-record citations (NGT/HC orders, corporation schemes, press); no watchable listing",
+  "public/data/water-bodies-flagship-mumbai.json": "curated flagship register; per-record citations (corporation reports, Ramsar/sanctuary records, press); no watchable listing",
+  "public/data/river-events-delhi.json": "curated Yamuna timeline; per-record url citations (court orders, instruments, floods); no watchable listing",
+  "public/data/water-bodies-flagship-delhi.json": "curated flagship register; per-record citations (ASI, DDA, INTACH, press); no watchable listing",
+  "public/data/delhi-flood-hotspots.json":
+    "curated waterlogging register; per-entry landmark/press citations. The official lists (169 identified locations " +
+    "2025, 448 traffic-police-mapped points) are referenced in reporting but not published as data - PWD monsoon " +
+    "action plan / RTI is the named gap in the file itself.",
 
   // Curated search indexes and label lookups. No upstream document exists.
   "public/data/chennai-localities.json": "curated search index, no upstream",
   "public/data/bangalore-localities.json": "curated search index, no upstream",
   "public/data/madurai-localities.json": "curated search index, no upstream",
   "public/data/delhi-localities.json": "curated search index, no upstream",
-  "public/data/ward-names.json": "derived label lookup over the ward boundary layer",
+  // public/data/ward-names.json left this allowlist on 2026-07-31: the ward ->
+  // zone value correction made gcc-admin-boundary-gis a real input (its layers
+  // 4 + 5 supplied the five corrected rows), so the file is now covered by that
+  // registry entry's dependsOn instead of by a hand-written reason.
 
   // Daily feeds. The freshness checker owns these; an edition watch on a page
   // that changes every day would alert every day.
   "public/data/rainfall-recent-chennai.json": "daily feed: owned by check-data-freshness.ts",
   "public/data/rainfall-recent-bangalore.json": "daily feed: owned by check-data-freshness.ts",
   "public/data/rainfall-recent-madurai.json": "daily feed: owned by check-data-freshness.ts",
-  "public/data/rainfall-recent-hyderabad.json": "daily feed: owned by check-data-freshness.ts",
-  // Hand-compiled editorial artifacts. These are not fetched from anywhere:
-  // each entry is written against its own dated citation, which lives inside
-  // the file next to the claim it supports. There is no upstream publisher and
-  // therefore no edition to detect - watching them would be watching ourselves.
-  // Deliberately NOT extended to layers that DO have a real upstream nobody has
-  // registered yet (ward geometry, sewerage, STPs, industrial registers, coastal
-  // zones); those stay unwatched on purpose so they keep showing up as work.
-  "public/data/allocations-bangalore.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/allocations-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/allocations-hyderabad.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/commitments-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/commitments-hyderabad.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/facts-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/facts-hyderabad.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/facts-madurai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/facts-mumbai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/restoration-projects-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/restoration-projects-hyderabad.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/restoration-projects-madurai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/restoration-projects-mumbai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/river-events-bangalore.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/river-events-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/river-events-madurai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/water-bodies-flagship-delhi.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/water-bodies-flagship-madurai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
-  "public/data/water-bodies-flagship-mumbai.json": "hand-compiled: no upstream EDITION exists - every entry carries its own dated citation inline, so there is nothing to watch for a new version of",
   "public/data/rainfall-recent-mumbai.json": "daily feed: owned by check-data-freshness.ts",
-  "public/data/mmr-dam-storage.json": "daily feed: owned by check-data-freshness.ts (EXTRA_FEEDS)",
-  "public/data/mumbai-flood-hotspots.geojson": "weekly feed: owned by check-data-freshness.ts (EXTRA_FEEDS)",
+  // mmr-dam-storage.json and mumbai-flood-hotspots.geojson moved to the
+  // watched track 2026-07-30 (NVDM Mumbai migration): the living upstream
+  // feeds are now registry entries (wrd-pravah-dam-feed, bmc-dm-floodspots,
+  // detection 'continuous' - registered for lineage, never polled); freshness
+  // stays owned by check-data-freshness.ts (EXTRA_FEEDS).
 };
 
 function walk(dir: string, root: string, out: string[]): void {

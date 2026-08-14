@@ -1,4 +1,49 @@
 {
+ "nvdm": "1.0",
+ "dataset": "data-root/river-quality",
+ "scope": {
+  "kind": "region",
+  "id": "mumbai"
+ },
+ "provenance": {
+  "sources": [
+   {
+    "id": "mpcb-water-quality-reports",
+    "title": "MPCB annual Water Quality Status of Maharashtra reports (WQR series 2007-2024; 2019-20 never published)",
+    "publisher": "Maharashtra Pollution Control Board",
+    "license": "Maharashtra government publication, cited with attribution",
+    "as_of": "2024",
+    "retrieved": "2026-07-05"
+   },
+   {
+    "id": "praja-civic-issues-mumbai",
+    "title": "Praja Foundation, 'Report on the Status of Civic Issues in Mumbai' (RTI-sourced ward tables; May 2025 edition = 2024 data)",
+    "publisher": "Praja Foundation (via OpenCity mirror)",
+    "license": "report (c) Praja, RTI-sourced tables; OpenCity mirror",
+    "as_of": "2024"
+   },
+   {
+    "title": "MPCB Action Plan for Mithi River (2019) - station 2168 series context",
+    "publisher": "Maharashtra Pollution Control Board",
+    "license": "Maharashtra government publication, cited with attribution",
+    "closed": true,
+    "as_of": "2019"
+   },
+   {
+    "title": "MPCB Kalyan Region Environment Status Report 2004-05 (Ulhas/Waldhuni baseline)",
+    "publisher": "Maharashtra Pollution Control Board",
+    "license": "Maharashtra government publication, cited with attribution",
+    "closed": true,
+    "as_of": "2005"
+   }
+  ],
+  "method": "pdf-extract",
+  "produced_at": "2026-06",
+  "note": "Split-vintage regional series: Greater Mumbai's Mithi carries real 2018-2023 WQ (CPCB NWMP station series via Praja 2024 + the MPCB Mithi Action Plan); the eastern Ulhas corridor carries the 2004-05 MPCB Kalyan-Region ESR baseline and remains a CPCB priority/polluted stretch; the source rivers are context-only. _readings_status and _wqr_source carry the per-river population state; FC units are inconsistent across MPCB editions - directional only (registry note).",
+  "conventions": {
+   "comparability": "data_year_range spans 2004-2023 with NON-comparable vintages per river (Mithi 2018-2023 vs Ulhas 2004-05 baseline) - never chart them as one series"
+  }
+ },
  "last_updated": "2026-06",
  "data_year_range": [
   2004,

@@ -37,6 +37,9 @@ import urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 CACHE = Path(__file__).resolve().parent / ".cache"
 OUT = REPO / "public/data/delhi-jj-bastis-geo.json"
 ROSTER = REPO / "public/data/dusib-jj-bastis.json"
@@ -221,7 +224,7 @@ def main() -> None:
         },
         "clusters": recs,
     }
-    OUT.write_text(json.dumps(doc, indent=2) + "\n")
+    write_artifact(OUT, doc)
 
     s = doc["summary"]
     print(f"wrote {OUT.relative_to(REPO)}")

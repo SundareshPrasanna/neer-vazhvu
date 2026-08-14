@@ -1,0 +1,33 @@
+{
+  "$id": "rivers.schema.json",
+  "title": "geojson-layers/rivers contract (Tier A)",
+  "description": "City rivers layer. river_id is the dataset-local stable id; osm_ids records the constituent OSM ways.",
+  "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
+  "type": "object",
+  "required": ["type", "features"],
+  "properties": {
+    "type": { "enum": ["FeatureCollection"] },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "geometry", "properties"],
+        "properties": {
+          "type": { "enum": ["Feature"] },
+          "geometry": { "type": ["object", "null"] },
+          "properties": {
+            "type": "object",
+            "required": ["river_id", "name"],
+            "properties": {
+              "river_id": { "type": "string" },
+              "name": { "type": "string" },
+              "length_km": { "type": "number" },
+              "waterway": { "type": "string" },
+              "osm_ids": { "type": "array" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

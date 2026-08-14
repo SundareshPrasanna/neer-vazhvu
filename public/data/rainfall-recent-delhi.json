@@ -1,11 +1,37 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/rainfall-recent",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "imd-gridded-rain",
+        "title": "IMD gridded monthly rainfall (authoritative through imd_covers_through)",
+        "publisher": "India Meteorological Department",
+        "license": "GoI publication, cited with attribution"
+      },
+      {
+        "id": "open-meteo-archive",
+        "title": "Open-Meteo archive API (ERA5-family reanalysis) - provisional fill after IMD's last month",
+        "publisher": "Open-Meteo",
+        "license": "CC BY 4.0"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-08-14",
+    "produced_by": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "note": "Provisional reanalysis fill, replaced by IMD authoritative values as the quarterly refresh catches up (see provisional_note)."
+  },
   "source": "Open-Meteo archive API (ERA5-family reanalysis), daily precipitation",
   "attribution": "Weather data by Open-Meteo.com (CC BY 4.0)",
   "url": "https://open-meteo.com/",
-  "generated_at": "2026-07-27",
+  "generated_at": "2026-08-14",
   "provisional_note": "These months are provisional: reanalysis-grade daily rainfall filling the gap after IMD's last published gridded month. They are replaced by IMD's authoritative values as the quarterly refresh catches up.",
   "imd_covers_through": "2025-12",
-  "through": "2026-07-26",
+  "through": "2026-08-13",
   "monthly": [
     {
       "year": 2026,
@@ -46,7 +72,13 @@
     {
       "year": 2026,
       "month": 7,
-      "rainfall_mm": 221.2,
+      "rainfall_mm": 262.6,
+      "complete": true
+    },
+    {
+      "year": 2026,
+      "month": 8,
+      "rainfall_mm": 167.9,
       "complete": false
     }
   ],
@@ -878,6 +910,78 @@
     {
       "date": "2026-07-26",
       "mm": 1.4
+    },
+    {
+      "date": "2026-07-27",
+      "mm": 0.6
+    },
+    {
+      "date": "2026-07-28",
+      "mm": 19.5
+    },
+    {
+      "date": "2026-07-29",
+      "mm": 5.6
+    },
+    {
+      "date": "2026-07-30",
+      "mm": 10.8
+    },
+    {
+      "date": "2026-07-31",
+      "mm": 4.9
+    },
+    {
+      "date": "2026-08-01",
+      "mm": 5.5
+    },
+    {
+      "date": "2026-08-02",
+      "mm": 4.8
+    },
+    {
+      "date": "2026-08-03",
+      "mm": 14.3
+    },
+    {
+      "date": "2026-08-04",
+      "mm": 13.6
+    },
+    {
+      "date": "2026-08-05",
+      "mm": 1.9
+    },
+    {
+      "date": "2026-08-06",
+      "mm": 12.8
+    },
+    {
+      "date": "2026-08-07",
+      "mm": 58.3
+    },
+    {
+      "date": "2026-08-08",
+      "mm": 28.9
+    },
+    {
+      "date": "2026-08-09",
+      "mm": 3.0
+    },
+    {
+      "date": "2026-08-10",
+      "mm": 7.7
+    },
+    {
+      "date": "2026-08-11",
+      "mm": 12.5
+    },
+    {
+      "date": "2026-08-12",
+      "mm": 2.0
+    },
+    {
+      "date": "2026-08-13",
+      "mm": 2.6
     }
   ]
 }

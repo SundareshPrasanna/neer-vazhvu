@@ -189,11 +189,10 @@ async function getGroundwaterData(
   let canonicalNames = new Map<number, string>();
   try {
     const wardNamesPath = join(process.cwd(), "public/data", wardNamesFile(cityId));
-    const wardRows = JSON.parse(await readFile(wardNamesPath, "utf-8")) as {
-      ward_number: number;
-      zone_name: string;
-    }[];
-    canonicalNames = new Map(wardRows.map((w) => [w.ward_number, `Ward ${w.ward_number}`]));
+    const { wards } = JSON.parse(await readFile(wardNamesPath, "utf-8")) as {
+      wards: { ward_number: number; zone_name: string }[];
+    };
+    canonicalNames = new Map(wards.map((w) => [w.ward_number, `Ward ${w.ward_number}`]));
   } catch {
     // No ward-names file for this city; fall back to per-row ward names.
   }

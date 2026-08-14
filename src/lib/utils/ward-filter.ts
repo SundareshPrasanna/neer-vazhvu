@@ -95,6 +95,11 @@ export function filterLocalities(
 export function deriveZones(wards: WardEntry[]): ZoneEntry[] {
   const zoneMap = new Map<string, ZoneEntry>();
   for (const w of wards) {
+    // A city with no zone data (Delhi: all 250 wards carry an empty
+    // zone_name) would otherwise contribute a single nameless zone holding
+    // every ward, which surfaces in search as a blank row reading "250
+    // wards". No zone is not a zone.
+    if (!w.zone) continue;
     const existing = zoneMap.get(w.zone);
     if (existing) {
       existing.wardCount++;

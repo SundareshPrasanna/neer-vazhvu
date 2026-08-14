@@ -18,6 +18,9 @@ import math
 import sys
 import urllib.parse
 import urllib.request
+from pathlib import Path
+
+from nvdm_write import write_artifact
 
 OVERPASS_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
@@ -272,12 +275,14 @@ def main() -> int:
 
     out = {
         "type": "FeatureCollection",
-        "name": "mumbai-water-bodies-current",
         "_provenance": "OpenStreetMap via Overpass API (ODbL).",
         "features": sorted(features, key=lambda f: -f["properties"]["area_ha"]),
     }
-    with open(OUT_PATH, "w", encoding="utf-8") as fh:
-        json.dump(out, fh, ensure_ascii=False)
+    # Envelope-preserving write (scripts/nvdm_write.py): keeps the NVDM
+    # envelope injected by the migration so a regeneration cannot strip it.
+    # No top-level "name" member: the layer contract (spec 6.3) treats it as
+    # an undeclared key, and no consumer reads it.
+    write_artifact(Path(OUT_PATH), out, compact=True)
     named = sum(1 for f in features if f["properties"]["name"])
     print(
         f"Wrote {kept} bodies ({named} named) -> {OUT_PATH}  (dropped {dropped} sea/large)",

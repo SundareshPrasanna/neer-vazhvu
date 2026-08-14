@@ -46,6 +46,9 @@ import urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 CACHE = Path(__file__).resolve().parent / ".cache" / "delhi-drain-pdfs"
 OUT = REPO / "public/data/delhi-drain-quality.json"
 LISTING = "https://dpcc.delhi.gov.in/dpcc/analysis-reports"
@@ -566,7 +569,7 @@ def main() -> None:
         },
         "readings": sorted(all_recs, key=lambda r: (r["month"] or "", r["name"])),
     }
-    OUT.write_text(json.dumps(doc, indent=2) + "\n")
+    write_artifact(OUT, doc)
 
     s = doc["summary"]
     print(f"\nwrote {OUT.relative_to(REPO)}")

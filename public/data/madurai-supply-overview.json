@@ -1,15 +1,65 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/supply-overview",
+  "scope": {
+    "kind": "city",
+    "id": "madurai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "adb-tnufip-iee",
+        "title": "ADB TNUFIP IEE documents (Madurai tranches)",
+        "publisher": "Asian Development Bank",
+        "license": "ADB open access (CC BY 3.0 IGO)"
+      },
+      {
+        "id": "madurai-corp-projects",
+        "title": "Madurai Municipal Corporation project/supply pages",
+        "publisher": "Madurai Municipal Corporation",
+        "license": "government publication, cited with attribution"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-05-09",
+    "note": "Extraction detail and per-section citations in the legacy _note/_sources keys."
+  },
   "_note": "Structural at-a-glance facts for Madurai's urban water supply, extracted from the ADB Tamil Nadu Urban Flagship Investment Program (TNUFIP) IEEs. Tranche 2 IEE Parts 1-3 (Project 49107-005, December 2025/February 2026) for Mullai Periyar Lower Camp dedicated supply scheme. Tranche 3 IEE (Project 49107-010, April 2022) for distribution-network improvements with 24x7 supply across all 81 DMAs. Numbers refresh per ADB tranche publication. Where the IEE engineering tables differ from MMC's public water-supply page, this file uses the IEE values (primary engineering record); _secondary_local_source documents the disagreements so future readers can reconcile.",
   "_secondary_local_source": {
     "name": "MMC public water-supply page (cross-reference, not primary)",
     "url": "https://maduraicorporation.co.in/aboutus/water-supply/",
     "notes": "MMC's public-facing summary uses simpler rounded figures than the IEE. We document the disagreements here as a cross-check; the IEE values supersede.",
     "known_disagreements": [
-      {"field": "pannaipatty_wtp.existing_capacity_mld", "iee_value": 118.6, "mmc_page_value": 125, "explanation": "MMC's 125 MLD is the design intermediate-stage demand (2034), not the existing plant capacity. IEE Part 2 Table A14.4 documents the actual installed capacity as 71.6 (Line-I) + 47.0 (Line-II) = 118.6 MLD."},
-      {"field": "distribution.distribution_zones", "iee_value": 28, "mmc_page_value": "81 (referred to as 'distribution zones')", "explanation": "MMC's '81' is actually the DMA count, not the operational distribution-zone count. IEE Part 2 page 13 documents 28 distribution zones (12 N + 16 S); Tranche 3 IEE separately documents 81 DMAs."},
-      {"field": "distribution.mains_km_existing", "iee_value": 764, "mmc_page_value": 467, "explanation": "MMC's 467 km may count only specific main categories or a different vintage; IEE Part 2 documents the full pipe network as ~764 km."},
-      {"field": "distribution.ohts_existing", "iee_value": 28, "mmc_page_value": 23, "explanation": "MMC counts 23 'overhead reservoirs'; IEE Part 2 Table A14.8 enumerates 28 existing OHTs (12 North + 16 South). Difference may be how peripheral/standby OHTs are counted."},
-      {"field": "distribution.connections.total", "iee_value": 95487, "mmc_page_value": 96048, "explanation": "Both come from MMC's connection register; minor revision difference. Likely same dataset at different snapshot dates."}
+      {
+        "field": "pannaipatty_wtp.existing_capacity_mld",
+        "iee_value": 118.6,
+        "mmc_page_value": 125,
+        "explanation": "MMC's 125 MLD is the design intermediate-stage demand (2034), not the existing plant capacity. IEE Part 2 Table A14.4 documents the actual installed capacity as 71.6 (Line-I) + 47.0 (Line-II) = 118.6 MLD."
+      },
+      {
+        "field": "distribution.distribution_zones",
+        "iee_value": 28,
+        "mmc_page_value": "81 (referred to as 'distribution zones')",
+        "explanation": "MMC's '81' is actually the DMA count, not the operational distribution-zone count. IEE Part 2 page 13 documents 28 distribution zones (12 N + 16 S); Tranche 3 IEE separately documents 81 DMAs."
+      },
+      {
+        "field": "distribution.mains_km_existing",
+        "iee_value": 764,
+        "mmc_page_value": 467,
+        "explanation": "MMC's 467 km may count only specific main categories or a different vintage; IEE Part 2 documents the full pipe network as ~764 km."
+      },
+      {
+        "field": "distribution.ohts_existing",
+        "iee_value": 28,
+        "mmc_page_value": 23,
+        "explanation": "MMC counts 23 'overhead reservoirs'; IEE Part 2 Table A14.8 enumerates 28 existing OHTs (12 North + 16 South). Difference may be how peripheral/standby OHTs are counted."
+      },
+      {
+        "field": "distribution.connections.total",
+        "iee_value": 95487,
+        "mmc_page_value": 96048,
+        "explanation": "Both come from MMC's connection register; minor revision difference. Likely same dataset at different snapshot dates."
+      }
     ]
   },
   "_sources": [
@@ -44,7 +94,6 @@
       "extracted": "2026-05-06"
     }
   ],
-
   "supply_chain": [
     "Mullaperiyar Dam (Kerala)",
     "Periyar-Vaigai diversion tunnel",
@@ -56,7 +105,6 @@
     "Distribution mains (~764 km)",
     "~95,487 connections (94,487 domestic + 600 non-domestic + 400 commercial)"
   ],
-
   "current_supply_mix_mld": [
     {
       "source": "Vaigai WSS Line-I (1995, surface)",
@@ -116,7 +164,6 @@
     }
   ],
   "current_supply_total_mld": 192.0,
-
   "pannaipatty_wtp": {
     "existing_capacity_mld": 118.6,
     "_existing_breakdown": "71.6 MLD Line-I (1995) + 47.0 MLD Line-II (2009)",
@@ -125,7 +172,6 @@
     "expansion_source": "Mullai Periyar Lower Camp (ADB TNUFIP Tranche 2, design horizon 2034)",
     "components": "Cascade aerator (2x10m dia) + Stilling basin (2x6x4x3.3m) + Dividing well (6m) + Flash mixers (4) + Clariflocculators (2 with tube settlers) + Rapid sand filter beds (12 dual-media) + Clear water sump 30 LL"
   },
-
   "distribution": {
     "_zone_hierarchy_note": "Madurai's distribution network has multiple overlapping zone schemes. We document each level so readers don't conflate them.",
     "service_zones": 12,
@@ -157,88 +203,502 @@
       "_target_note": "Tranche 3 targets 100% household coverage at 163,958 households via the 115 newly-established DMAs."
     }
   },
-
   "ohts_existing": [
-    {"sno": 1, "side": "North of Vaigai", "name": "Aruldaspuram", "capacity_ll": 20.0, "year": 1992, "staging_height_m": 14},
-    {"sno": 2, "side": "North of Vaigai", "name": "Sellur", "capacity_ll": 13.6, "year": 1975, "staging_height_m": 12},
-    {"sno": 3, "side": "North of Vaigai", "name": "Rajaji Park", "capacity_ll": 18.16, "year": 1975, "staging_height_m": 12},
-    {"sno": 4, "side": "North of Vaigai", "name": "Anna Nagar - I", "capacity_ll": 2.3, "year": 1975, "staging_height_m": 12},
-    {"sno": 5, "side": "North of Vaigai", "name": "Anna Nagar - II", "capacity_ll": 6.0, "year": 1992, "staging_height_m": 12},
-    {"sno": 6, "side": "North of Vaigai", "name": "K.K. Nagar", "capacity_ll": 8.0, "year": 1992, "staging_height_m": 12},
-    {"sno": 7, "side": "North of Vaigai", "name": "Lotus Tank", "capacity_ll": 1.0, "year": 1990, "staging_height_m": 12},
-    {"sno": 8, "side": "North of Vaigai", "name": "K. Pudur", "capacity_ll": 15.0, "year": 1975, "staging_height_m": 12},
-    {"sno": 9, "side": "North of Vaigai", "name": "Race Course", "capacity_ll": 6.8, "year": 1975, "staging_height_m": 12},
-    {"sno": 10, "side": "North of Vaigai", "name": "Reserve Line", "capacity_ll": 20.0, "year": 1992, "staging_height_m": 18},
-    {"sno": 11, "side": "North of Vaigai", "name": "Maruthankulam", "capacity_ll": 5.0, "year": 2005, "staging_height_m": 16},
-    {"sno": 12, "side": "North of Vaigai", "name": "P&T Nagar", "capacity_ll": 10.0, "year": 2005, "staging_height_m": 16},
-    {"sno": 13, "side": "South of Vaigai", "name": "Kochadai", "capacity_ll": 15.0, "year": 1992, "staging_height_m": 15.0},
-    {"sno": 14, "side": "South of Vaigai", "name": "Palanganatham", "capacity_ll": 25.0, "year": 1992, "staging_height_m": 15.0},
-    {"sno": 15, "side": "South of Vaigai", "name": "Arapalayam", "capacity_ll": 30.0, "year": 1992, "staging_height_m": 19.3},
-    {"sno": 16, "side": "South of Vaigai", "name": "Sunday Market I", "capacity_ll": 10.0, "year": 1992, "staging_height_m": 14.0},
-    {"sno": 17, "side": "South of Vaigai", "name": "Sunday Market II", "capacity_ll": 10.0, "year": 1992, "staging_height_m": 14.0},
-    {"sno": 18, "side": "South of Vaigai", "name": "Tamil Sangam Road", "capacity_ll": 20.0, "year": 1992, "staging_height_m": 15.0},
-    {"sno": 19, "side": "South of Vaigai", "name": "East Marret Street", "capacity_ll": 20.0, "year": 1992, "staging_height_m": 14.6},
-    {"sno": 20, "side": "South of Vaigai", "name": "Traveller's Bungalow", "capacity_ll": 30.0, "year": 1992, "staging_height_m": 18.5},
-    {"sno": 21, "side": "South of Vaigai", "name": "Joseph Park I", "capacity_ll": 15.0, "year": 1975, "staging_height_m": 20.0},
-    {"sno": 22, "side": "South of Vaigai", "name": "Joseph Park II", "capacity_ll": 15.0, "year": 1992, "staging_height_m": 19.5},
-    {"sno": 23, "side": "South of Vaigai", "name": "New Ramnad Road", "capacity_ll": 15.0, "year": 1992, "staging_height_m": 14.0},
-    {"sno": 24, "side": "South of Vaigai", "name": "Jhansi Rani Park", "capacity_ll": 20.0, "year": 1975, "staging_height_m": 15.0},
-    {"sno": 25, "side": "South of Vaigai", "name": "Arasaradi", "capacity_ll": 11.5, "year": 1975, "staging_height_m": 10.05},
-    {"sno": 26, "side": "South of Vaigai", "name": "H.M.S. Colony", "capacity_ll": 16.0, "year": 2005, "staging_height_m": 16},
-    {"sno": 27, "side": "South of Vaigai", "name": "Sundararajapuram", "capacity_ll": 16.0, "year": 2005, "staging_height_m": 16},
-    {"sno": 28, "side": "South of Vaigai", "name": "Keeraithurai", "capacity_ll": 16.0, "year": 2005, "staging_height_m": 16}
+    {
+      "sno": 1,
+      "side": "North of Vaigai",
+      "name": "Aruldaspuram",
+      "capacity_ll": 20.0,
+      "year": 1992,
+      "staging_height_m": 14
+    },
+    {
+      "sno": 2,
+      "side": "North of Vaigai",
+      "name": "Sellur",
+      "capacity_ll": 13.6,
+      "year": 1975,
+      "staging_height_m": 12
+    },
+    {
+      "sno": 3,
+      "side": "North of Vaigai",
+      "name": "Rajaji Park",
+      "capacity_ll": 18.16,
+      "year": 1975,
+      "staging_height_m": 12
+    },
+    {
+      "sno": 4,
+      "side": "North of Vaigai",
+      "name": "Anna Nagar - I",
+      "capacity_ll": 2.3,
+      "year": 1975,
+      "staging_height_m": 12
+    },
+    {
+      "sno": 5,
+      "side": "North of Vaigai",
+      "name": "Anna Nagar - II",
+      "capacity_ll": 6.0,
+      "year": 1992,
+      "staging_height_m": 12
+    },
+    {
+      "sno": 6,
+      "side": "North of Vaigai",
+      "name": "K.K. Nagar",
+      "capacity_ll": 8.0,
+      "year": 1992,
+      "staging_height_m": 12
+    },
+    {
+      "sno": 7,
+      "side": "North of Vaigai",
+      "name": "Lotus Tank",
+      "capacity_ll": 1.0,
+      "year": 1990,
+      "staging_height_m": 12
+    },
+    {
+      "sno": 8,
+      "side": "North of Vaigai",
+      "name": "K. Pudur",
+      "capacity_ll": 15.0,
+      "year": 1975,
+      "staging_height_m": 12
+    },
+    {
+      "sno": 9,
+      "side": "North of Vaigai",
+      "name": "Race Course",
+      "capacity_ll": 6.8,
+      "year": 1975,
+      "staging_height_m": 12
+    },
+    {
+      "sno": 10,
+      "side": "North of Vaigai",
+      "name": "Reserve Line",
+      "capacity_ll": 20.0,
+      "year": 1992,
+      "staging_height_m": 18
+    },
+    {
+      "sno": 11,
+      "side": "North of Vaigai",
+      "name": "Maruthankulam",
+      "capacity_ll": 5.0,
+      "year": 2005,
+      "staging_height_m": 16
+    },
+    {
+      "sno": 12,
+      "side": "North of Vaigai",
+      "name": "P&T Nagar",
+      "capacity_ll": 10.0,
+      "year": 2005,
+      "staging_height_m": 16
+    },
+    {
+      "sno": 13,
+      "side": "South of Vaigai",
+      "name": "Kochadai",
+      "capacity_ll": 15.0,
+      "year": 1992,
+      "staging_height_m": 15.0
+    },
+    {
+      "sno": 14,
+      "side": "South of Vaigai",
+      "name": "Palanganatham",
+      "capacity_ll": 25.0,
+      "year": 1992,
+      "staging_height_m": 15.0
+    },
+    {
+      "sno": 15,
+      "side": "South of Vaigai",
+      "name": "Arapalayam",
+      "capacity_ll": 30.0,
+      "year": 1992,
+      "staging_height_m": 19.3
+    },
+    {
+      "sno": 16,
+      "side": "South of Vaigai",
+      "name": "Sunday Market I",
+      "capacity_ll": 10.0,
+      "year": 1992,
+      "staging_height_m": 14.0
+    },
+    {
+      "sno": 17,
+      "side": "South of Vaigai",
+      "name": "Sunday Market II",
+      "capacity_ll": 10.0,
+      "year": 1992,
+      "staging_height_m": 14.0
+    },
+    {
+      "sno": 18,
+      "side": "South of Vaigai",
+      "name": "Tamil Sangam Road",
+      "capacity_ll": 20.0,
+      "year": 1992,
+      "staging_height_m": 15.0
+    },
+    {
+      "sno": 19,
+      "side": "South of Vaigai",
+      "name": "East Marret Street",
+      "capacity_ll": 20.0,
+      "year": 1992,
+      "staging_height_m": 14.6
+    },
+    {
+      "sno": 20,
+      "side": "South of Vaigai",
+      "name": "Traveller's Bungalow",
+      "capacity_ll": 30.0,
+      "year": 1992,
+      "staging_height_m": 18.5
+    },
+    {
+      "sno": 21,
+      "side": "South of Vaigai",
+      "name": "Joseph Park I",
+      "capacity_ll": 15.0,
+      "year": 1975,
+      "staging_height_m": 20.0
+    },
+    {
+      "sno": 22,
+      "side": "South of Vaigai",
+      "name": "Joseph Park II",
+      "capacity_ll": 15.0,
+      "year": 1992,
+      "staging_height_m": 19.5
+    },
+    {
+      "sno": 23,
+      "side": "South of Vaigai",
+      "name": "New Ramnad Road",
+      "capacity_ll": 15.0,
+      "year": 1992,
+      "staging_height_m": 14.0
+    },
+    {
+      "sno": 24,
+      "side": "South of Vaigai",
+      "name": "Jhansi Rani Park",
+      "capacity_ll": 20.0,
+      "year": 1975,
+      "staging_height_m": 15.0
+    },
+    {
+      "sno": 25,
+      "side": "South of Vaigai",
+      "name": "Arasaradi",
+      "capacity_ll": 11.5,
+      "year": 1975,
+      "staging_height_m": 10.05
+    },
+    {
+      "sno": 26,
+      "side": "South of Vaigai",
+      "name": "H.M.S. Colony",
+      "capacity_ll": 16.0,
+      "year": 2005,
+      "staging_height_m": 16
+    },
+    {
+      "sno": 27,
+      "side": "South of Vaigai",
+      "name": "Sundararajapuram",
+      "capacity_ll": 16.0,
+      "year": 2005,
+      "staging_height_m": 16
+    },
+    {
+      "sno": 28,
+      "side": "South of Vaigai",
+      "name": "Keeraithurai",
+      "capacity_ll": 16.0,
+      "year": 2005,
+      "staging_height_m": 16
+    }
   ],
-
   "ohts_new_under_tranche2": [
-    {"new_no": 1, "old_no": 25, "name": "Semparuthi Nagar - NZ1", "ward": "8", "capacity_ll": 18},
-    {"new_no": 2, "old_no": 24, "name": "Muthuramalinga Puram Bykara", "ward": "100", "capacity_ll": 5},
-    {"new_no": 3, "old_no": 51, "name": "Moolakarai Sump - SZ9 (Muthuramalingapuram)", "ward": "99", "capacity_ll": 3},
-    {"new_no": 4, "old_no": 23, "name": "Muniyandi Kovil Street", "ward": "100, 75", "capacity_ll": 4},
-    {"new_no": 5, "old_no": 50, "name": "Balaji Nagar - SZ12", "ward": "99", "capacity_ll": 5},
-    {"new_no": 6, "old_no": 48, "name": "Harvipatti - SZ10", "ward": "97", "capacity_ll": 10},
-    {"new_no": 7, "old_no": 49, "name": "Kurinchi Nagar - SZ11 (Thirunagar)", "ward": "98", "capacity_ll": 5},
-    {"new_no": 8, "old_no": 16, "name": "Muthupatti Nagar near PS", "ward": "93", "capacity_ll": 20},
-    {"new_no": 9, "old_no": 14, "name": "TVS Park Sathya Sai Nagar (1)", "ward": "77", "capacity_ll": 25},
-    {"new_no": 10, "old_no": 15, "name": "TVS Park Sathya Sai Nagar (2)", "ward": "77", "capacity_ll": 25},
-    {"new_no": 11, "old_no": 45, "name": "Villapuram - SZ6", "ward": "61", "capacity_ll": 10},
-    {"new_no": 12, "old_no": 43, "name": "MMC Colony - SZ5", "ward": "94", "capacity_ll": 15},
-    {"new_no": 13, "old_no": 44, "name": "MMC Colony - SZ4", "ward": "94", "capacity_ll": 10},
-    {"new_no": 14, "old_no": 47, "name": "Vellakkal - SZ8", "ward": "94", "capacity_ll": 11},
-    {"new_no": 15, "old_no": 19, "name": "Vaalaithoppu Corporation Ground", "ward": "69", "capacity_ll": 25},
-    {"new_no": 16, "old_no": 41, "name": "Chinna Anuppanadi - SZ2", "ward": "56", "capacity_ll": 15},
-    {"new_no": 17, "old_no": 42, "name": "Gurunathar Koil - SZ3 (Chinnthamani)", "ward": "58", "capacity_ll": 12},
-    {"new_no": 18, "old_no": 17, "name": "Thideer Nagar", "ward": null, "capacity_ll": 30},
-    {"new_no": 19, "old_no": 2, "name": "Sellur Kanmai - Composting yard Sector 6 (1)", "ward": "37", "capacity_ll": 25},
-    {"new_no": 20, "old_no": 4, "name": "Sellur Kanmai - Composting yard Sector 6 (2)", "ward": "41", "capacity_ll": 25},
-    {"new_no": 21, "old_no": 29, "name": "Indranagar - NZ2", "ward": "23", "capacity_ll": 15},
-    {"new_no": 22, "old_no": 30, "name": "Park Town - NZ5", "ward": "5", "capacity_ll": 13},
-    {"new_no": 23, "old_no": 32, "name": "EB Colony - NZ7", "ward": "24", "capacity_ll": 18},
-    {"new_no": 24, "old_no": 37, "name": "Poriyalar Nagar", "ward": "25", "capacity_ll": 7},
-    {"new_no": 25, "old_no": 34, "name": "Bharath Nagar", "ward": "25", "capacity_ll": 20},
-    {"new_no": 26, "old_no": 36, "name": "Island Nagar - NZ8", "ward": "48", "capacity_ll": 12},
-    {"new_no": 27, "old_no": 3, "name": "Sellur Lorry Stand", "ward": "37", "capacity_ll": 30},
-    {"new_no": 28, "old_no": 6, "name": "SMP Colony near Mayor Bungalow (MPS site)", "ward": "33", "capacity_ll": 10},
-    {"new_no": 29, "old_no": 39, "name": "Shenpagathottam - NZ14", "ward": "33, 34", "capacity_ll": 25},
-    {"new_no": 30, "old_no": 7, "name": "KK Nagar (Central Veg. Market)", "ward": "44", "capacity_ll": 12},
-    {"new_no": 31, "old_no": 13, "name": "Kochadai back side of Pumping station", "ward": "22", "capacity_ll": 25},
-    {"new_no": 32, "old_no": 12, "name": "VKP Nagar Madakulam", "ward": "75", "capacity_ll": 20},
-    {"new_no": 33, "old_no": 10, "name": "Arappalayam Two Wheeler Parking", "ward": "15", "capacity_ll": 12},
-    {"new_no": 34, "old_no": 20, "name": "AVSS Hospital behind MPS Santhaipettai", "ward": "52", "capacity_ll": 20},
-    {"new_no": 35, "old_no": 21, "name": "Meenakshi Nagar", "ward": "53, 55", "capacity_ll": 15},
-    {"new_no": 36, "old_no": 53, "name": "Ulaganeri - NZ11", "ward": "28", "capacity_ll": 12},
-    {"new_no": 37, "old_no": 54, "name": "Pandian Nagar - NZ12", "ward": "29", "capacity_ll": 25}
+    {
+      "new_no": 1,
+      "old_no": 25,
+      "name": "Semparuthi Nagar - NZ1",
+      "ward": "8",
+      "capacity_ll": 18
+    },
+    {
+      "new_no": 2,
+      "old_no": 24,
+      "name": "Muthuramalinga Puram Bykara",
+      "ward": "100",
+      "capacity_ll": 5
+    },
+    {
+      "new_no": 3,
+      "old_no": 51,
+      "name": "Moolakarai Sump - SZ9 (Muthuramalingapuram)",
+      "ward": "99",
+      "capacity_ll": 3
+    },
+    {
+      "new_no": 4,
+      "old_no": 23,
+      "name": "Muniyandi Kovil Street",
+      "ward": "100, 75",
+      "capacity_ll": 4
+    },
+    {
+      "new_no": 5,
+      "old_no": 50,
+      "name": "Balaji Nagar - SZ12",
+      "ward": "99",
+      "capacity_ll": 5
+    },
+    {
+      "new_no": 6,
+      "old_no": 48,
+      "name": "Harvipatti - SZ10",
+      "ward": "97",
+      "capacity_ll": 10
+    },
+    {
+      "new_no": 7,
+      "old_no": 49,
+      "name": "Kurinchi Nagar - SZ11 (Thirunagar)",
+      "ward": "98",
+      "capacity_ll": 5
+    },
+    {
+      "new_no": 8,
+      "old_no": 16,
+      "name": "Muthupatti Nagar near PS",
+      "ward": "93",
+      "capacity_ll": 20
+    },
+    {
+      "new_no": 9,
+      "old_no": 14,
+      "name": "TVS Park Sathya Sai Nagar (1)",
+      "ward": "77",
+      "capacity_ll": 25
+    },
+    {
+      "new_no": 10,
+      "old_no": 15,
+      "name": "TVS Park Sathya Sai Nagar (2)",
+      "ward": "77",
+      "capacity_ll": 25
+    },
+    {
+      "new_no": 11,
+      "old_no": 45,
+      "name": "Villapuram - SZ6",
+      "ward": "61",
+      "capacity_ll": 10
+    },
+    {
+      "new_no": 12,
+      "old_no": 43,
+      "name": "MMC Colony - SZ5",
+      "ward": "94",
+      "capacity_ll": 15
+    },
+    {
+      "new_no": 13,
+      "old_no": 44,
+      "name": "MMC Colony - SZ4",
+      "ward": "94",
+      "capacity_ll": 10
+    },
+    {
+      "new_no": 14,
+      "old_no": 47,
+      "name": "Vellakkal - SZ8",
+      "ward": "94",
+      "capacity_ll": 11
+    },
+    {
+      "new_no": 15,
+      "old_no": 19,
+      "name": "Vaalaithoppu Corporation Ground",
+      "ward": "69",
+      "capacity_ll": 25
+    },
+    {
+      "new_no": 16,
+      "old_no": 41,
+      "name": "Chinna Anuppanadi - SZ2",
+      "ward": "56",
+      "capacity_ll": 15
+    },
+    {
+      "new_no": 17,
+      "old_no": 42,
+      "name": "Gurunathar Koil - SZ3 (Chinnthamani)",
+      "ward": "58",
+      "capacity_ll": 12
+    },
+    {
+      "new_no": 18,
+      "old_no": 17,
+      "name": "Thideer Nagar",
+      "ward": null,
+      "capacity_ll": 30
+    },
+    {
+      "new_no": 19,
+      "old_no": 2,
+      "name": "Sellur Kanmai - Composting yard Sector 6 (1)",
+      "ward": "37",
+      "capacity_ll": 25
+    },
+    {
+      "new_no": 20,
+      "old_no": 4,
+      "name": "Sellur Kanmai - Composting yard Sector 6 (2)",
+      "ward": "41",
+      "capacity_ll": 25
+    },
+    {
+      "new_no": 21,
+      "old_no": 29,
+      "name": "Indranagar - NZ2",
+      "ward": "23",
+      "capacity_ll": 15
+    },
+    {
+      "new_no": 22,
+      "old_no": 30,
+      "name": "Park Town - NZ5",
+      "ward": "5",
+      "capacity_ll": 13
+    },
+    {
+      "new_no": 23,
+      "old_no": 32,
+      "name": "EB Colony - NZ7",
+      "ward": "24",
+      "capacity_ll": 18
+    },
+    {
+      "new_no": 24,
+      "old_no": 37,
+      "name": "Poriyalar Nagar",
+      "ward": "25",
+      "capacity_ll": 7
+    },
+    {
+      "new_no": 25,
+      "old_no": 34,
+      "name": "Bharath Nagar",
+      "ward": "25",
+      "capacity_ll": 20
+    },
+    {
+      "new_no": 26,
+      "old_no": 36,
+      "name": "Island Nagar - NZ8",
+      "ward": "48",
+      "capacity_ll": 12
+    },
+    {
+      "new_no": 27,
+      "old_no": 3,
+      "name": "Sellur Lorry Stand",
+      "ward": "37",
+      "capacity_ll": 30
+    },
+    {
+      "new_no": 28,
+      "old_no": 6,
+      "name": "SMP Colony near Mayor Bungalow (MPS site)",
+      "ward": "33",
+      "capacity_ll": 10
+    },
+    {
+      "new_no": 29,
+      "old_no": 39,
+      "name": "Shenpagathottam - NZ14",
+      "ward": "33, 34",
+      "capacity_ll": 25
+    },
+    {
+      "new_no": 30,
+      "old_no": 7,
+      "name": "KK Nagar (Central Veg. Market)",
+      "ward": "44",
+      "capacity_ll": 12
+    },
+    {
+      "new_no": 31,
+      "old_no": 13,
+      "name": "Kochadai back side of Pumping station",
+      "ward": "22",
+      "capacity_ll": 25
+    },
+    {
+      "new_no": 32,
+      "old_no": 12,
+      "name": "VKP Nagar Madakulam",
+      "ward": "75",
+      "capacity_ll": 20
+    },
+    {
+      "new_no": 33,
+      "old_no": 10,
+      "name": "Arappalayam Two Wheeler Parking",
+      "ward": "15",
+      "capacity_ll": 12
+    },
+    {
+      "new_no": 34,
+      "old_no": 20,
+      "name": "AVSS Hospital behind MPS Santhaipettai",
+      "ward": "52",
+      "capacity_ll": 20
+    },
+    {
+      "new_no": 35,
+      "old_no": 21,
+      "name": "Meenakshi Nagar",
+      "ward": "53, 55",
+      "capacity_ll": 15
+    },
+    {
+      "new_no": 36,
+      "old_no": 53,
+      "name": "Ulaganeri - NZ11",
+      "ward": "28",
+      "capacity_ll": 12
+    },
+    {
+      "new_no": 37,
+      "old_no": 54,
+      "name": "Pandian Nagar - NZ12",
+      "ward": "29",
+      "capacity_ll": 25
+    }
   ],
-
   "demand": {
     "population_2011": 1846801,
     "population_2034_design": 1923936,
     "demand_2034_mld": 317,
     "demand_gap_2034_mld": 125,
-    "city_area_sqkm": 51.80,
+    "city_area_sqkm": 51.8,
     "_target_household_coverage_post_tranche3": 163958,
     "_target_household_coverage_pct": 100
   },
-
   "allocation_context": {
     "_note": "From PWD letter Lr. No. DB/JD01/384/C.10(P)/2018, dt. 26 Dec 2018 - water release schedule from Mullaperiyar Dam.",
     "mmc_drinking_cusecs": 51.09,
@@ -248,18 +708,17 @@
     "mmc_recent_annual_draw_mcft": 900,
     "mmc_recent_annual_draw_note": "Per Tranche 2 IEE Appendix 14: 'Out of [the 1,500 MCFT] allotment, 900 MCFT/year is being drawn through raw water gravity main and treated at a full scale of 71.60 MLD WTP at Pannaipatti'.",
     "theni_district_drinking_cusecs": 100,
-    "theni_district_drinking_mld": 84.80,
+    "theni_district_drinking_mld": 84.8,
     "theni_schemes_count": 58,
     "cumbum_valley_irrigation_cusecs": 200,
     "cumbum_valley_irrigation_days": 240,
     "pt_rajan_channel_irrigation_cusecs": 100,
     "pt_rajan_channel_irrigation_days": 100,
-    "combined_drinking_mld": 209.80,
+    "combined_drinking_mld": 209.8,
     "combined_drinking_cusecs": 86.72,
     "mullaperiyar_min_monthly_storage_avg_mcft": 1611.67,
     "mullaperiyar_storage_period": "January 2012 to December 2023"
   },
-
   "reference_figures": [
     {
       "id": "water-supply-zones",
@@ -280,7 +739,6 @@
       "source_label": "ADB TNUFIP Tranche 2 IEE Part 1, Figure 5"
     }
   ],
-
   "tranche_status": {
     "tranche_2": {
       "scope": "Dedicated water supply scheme: new check dam at Mullai Periyar Lower Camp, intake well, 1,067 mm raw-water main (16.85 km), expand Pannaipatty WTP by 125 MLD, 37 new OHTs",

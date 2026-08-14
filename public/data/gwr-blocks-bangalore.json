@@ -1,4 +1,27 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/gwr-blocks",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-ka",
+        "title": "IN-GRES dynamic groundwater assessment (Bangalore Urban assessment units)",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-05-25",
+    "produced_by": "scripts/fetch-wris-groundwater-bangalore.ts",
+    "note": "Block-level dynamic groundwater assessment (GEC classes and stage-of-extraction) for Bangalore Urban's 5 assessment units, acquired via the WRIS NWIC GWR{year}_CGWB ArcGIS services, vintages 2011-2024.",
+    "conventions": {
+      "comparability": "CGWB assessment units can change between GEC editions (WRIS also respells the district 'Bangalore Urban'/'Bengaluru Urban' across vintages); year-on-year comparisons must check assessment-unit continuity before differencing."
+    }
+  },
   "source": "India WRIS / CGWB",
   "source_url": "https://indiawris.gov.in/wris/",
   "place_id": "bangalore",

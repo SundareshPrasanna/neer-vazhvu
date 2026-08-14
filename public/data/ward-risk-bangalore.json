@@ -1,4 +1,38 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/ward-risk",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "opencity-gba-wards-2025",
+        "title": "GBA 369-ward delimitation 2025 (Dec 2025 KML incl. 01.12.2025 name changes, via OpenCity)",
+        "publisher": "GBA / GoK Urban Development Department (via OpenCity)",
+        "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
+        "role": "input",
+        "as_of": "2025-12"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-06-03",
+    "internal_inputs": [
+      "public/geojson/bangalore-wards-2025.geojson",
+      "public/data/bangalore-ward-profiles.json",
+      "public/geojson/bangalore-water-bodies-current.geojson"
+    ],
+    "produced_by": "scripts/compute-bangalore-ward-risk.py",
+    "note": "V0 composite (population density 0.5, inverted water-body density 0.3, inverted flagship health 0.2; algorithm identity in the payload weights key). NO groundwater input today: gw_depth_m is null for every ward - the script header mentions the 13 CGWB stations but the code does not read them, and internal_inputs lists what the code reads."
+  },
   "algorithm_version": "bangalore-v0-pop-wb-density",
   "weights": {
     "pop_density": 0.5,

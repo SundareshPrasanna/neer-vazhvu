@@ -1119,7 +1119,7 @@ export const translations: Record<string, TranslationEntry> = {
   "rivers_legend.water_quality": { en: "Water Quality",     ta: "நீர்த்தரம்", kn: "ನೀರಿನ ಗುಣಮಟ್ಟ" },
   "rivers_legend.monitoring_station": { en: "Monitoring station", ta: "கண்காணிப்பு நிலையம்", kn: "ಮೇಲ್ವಿಚಾರಣಾ ನಿಲ್ದಾಣ" },
   "rivers_legend.sewage_inlet": { en: "Sewage inlet, 2017 (size = flow)", ta: "கழிவுநீர் உள்ளீடு, 2017 (அளவு = பாய்வு)", kn: "ಚರಂಡಿ ಒಳಹರಿವು, 2017 (ಗಾತ್ರ = ಹರಿವು)" },
-  "rivers_legend.pollution_sources": { en: "Pollution Sources",  ta: "மாசு ஆதாரங்கள்", kn: "ಮಾಲಿನ್ಯ ಮೂಲಗಳು" },
+  "rivers_legend.pollution_sources": { en: "Reported pollution sources",  ta: "பதிவான மாசு ஆதாரங்கள்", kn: "ವರದಿಯಾದ ಮಾಲಿನ್ಯ ಮೂಲಗಳು" },
   "rivers_legend.industrial_zone": { en: "Industrial zone",    ta: "தொழில் மண்டலம்", kn: "ಕೈಗಾರಿಕಾ ವಲಯ" },
   // River quality status labels (used in legend + river panel badge)
   "rivers_legend.dead": { en: "Dead",               ta: "இறந்தது", kn: "ಮೃತ" },
@@ -1328,6 +1328,7 @@ export const translations: Record<string, TranslationEntry> = {
   "dash.catchment_label_above": { en: "Above", ta: "அதிகம்", kn: "ಮೇಲೆ" },
   "dash.catchment_label_well_above": { en: "Well above", ta: "மிக அதிகம்", kn: "ತುಂಬಾ ಮೇಲೆ" },
   "dash.catchment_updated": { en: "Catchment rainfall through {date} ({windowDays}-day window).", ta: "{date} வரை நீர்ப்பிடிப்பு மழை ({windowDays} நாள் சாளரம்).", kn: "{date} ವರೆಗಿನ ಜಲಾನಯನ ಮಳೆ ({windowDays}-ದಿನ ವಿಂಡೋ)." },
+  "dash.catchment_provisional": { en: "Catchment boundaries are provisional, pending verification.", ta: "நீர்ப்பிடிப்பு எல்லைகள் தற்காலிகமானவை; சரிபார்ப்பு நிலுவையில் உள்ளது.", kn: "ಜಲಾನಯನ ಗಡಿಗಳು ತಾತ್ಕಾಲಿಕ; ಪರಿಶೀಲನೆ ಬಾಕಿ ಇದೆ." },
   "dash.demo_data_note": { en: "All data in demo mode is simulated. Connect Supabase for real CMWSSB data.", ta: "டெமோ நிலையில் உள்ள அனைத்து தரவும் மாதிரியாக்கப்பட்டவை. உண்மையான CMWSSB தரவுக்கு Supabase-ஐ இணைக்கவும்.", kn: "ಡೆಮೋ ಮೋಡ್‌ನ ಎಲ್ಲಾ ದತ್ತಾಂಶ ಅನುಕರಿಸಿದ್ದು. ನೈಜ CMWSSB ದತ್ತಾಂಶಕ್ಕೆ Supabase ಸಂಪರ್ಕಿಸಿ." },
   "dash.cusecs_unit": { en: "cusecs",                    ta: "கியூசெக்ஸ்", kn: "ಕ್ಯೂಸೆಕ್" },
   "dash.inflow_cusecs": { en: "Inflow (cusecs)",           ta: "வரத்து (cusecs)", kn: "ಒಳಹರಿವು (ಕ್ಯೂಸೆಕ್)" },

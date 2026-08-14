@@ -3,8 +3,13 @@ import type { NextConfig } from "next";
 const securityHeaders = [
   {
     key: "Content-Security-Policy",
+    // connect-src data: + worker-src blob: are for the basin atlas PDF export:
+    // @react-pdf/renderer fetches its wasm layout engine as a data: URL and
+    // renders the document in a blob: worker. Both are self-contained (no
+    // network reach), and script-src already concedes 'unsafe-eval', so the
+    // marginal exposure is nil - without them the export dies at click time.
     value:
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://qlwnafrcfajosvbdswyf.supabase.co https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; font-src 'self'; connect-src 'self' https://qlwnafrcfajosvbdswyf.supabase.co https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; base-uri 'self'; frame-ancestors 'none'; object-src 'none'",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://qlwnafrcfajosvbdswyf.supabase.co https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; font-src 'self'; connect-src 'self' data: https://qlwnafrcfajosvbdswyf.supabase.co https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; worker-src 'self' blob:; base-uri 'self'; frame-ancestors 'none'; object-src 'none'",
   },
   {
     key: "Permissions-Policy",
@@ -29,10 +34,12 @@ const securityHeaders = [
 // /embed/* is the ONLY framable namespace: chrome-less atlas pages built for
 // partner sites (Paani Earth's Arkavathi deep dive). Everything else keeps
 // frame-ancestors 'none'. localhost is allowed in dev so embeds are testable.
+// Paani Earth lost edit access to paani.earth; the deep dive now lives on
+// their Hostinger staging origin until forrivers.life goes live (swap it in
+// here when it does). CSP host-sources take no trailing slash or path.
 const EMBED_FRAME_ANCESTORS = [
   "'self'",
-  "https://paani.earth",
-  "https://www.paani.earth",
+  "https://orchid-wildcat-815854.hostingersite.com",
   ...(process.env.NODE_ENV === "development" ? ["http://localhost:*"] : []),
 ].join(" ");
 const embedHeaders = securityHeaders.map((h) => {

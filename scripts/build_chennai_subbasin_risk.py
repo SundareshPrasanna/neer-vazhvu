@@ -26,7 +26,12 @@ ranking text (Figs 3/4/5). Top-5 drivers per component are transcribed from
 Figures ES6-ES11. Per-sub-basin unmet demand (MCM) is given by the report only
 for Adyar, Araniyar, Kosasthalaiyar (Table 4); others are null.
 """
+import sys
+from pathlib import Path
 import json
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from nvdm_write import write_artifact  # noqa: E402
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -134,8 +139,7 @@ def main():
     feats.sort(key=lambda f: ORDER.index(f["properties"]["risk_class"]))
 
     fc = {"type": "FeatureCollection", "name": "chennai-sub-basins-risk", "features": feats}
-    with open(OUT, "w") as fh:
-        json.dump(fc, fh)
+    write_artifact(Path(OUT), fc, compact=True)
     print(f"wrote {len(feats)} features -> {OUT}")
     for f in feats:
         p = f["properties"]

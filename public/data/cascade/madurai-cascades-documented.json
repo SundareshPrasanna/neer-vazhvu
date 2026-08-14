@@ -1,4 +1,53 @@
 {
+  "nvdm": "1.0",
+  "dataset": "cascade/cascades-documented",
+  "scope": {
+    "kind": "city",
+    "id": "madurai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "fabdem-dem",
+        "title": "FABDEM v1-2 30 m bare-earth DEM",
+        "publisher": "University of Bristol (Hawker et al.), via GEE sat-io",
+        "license": "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+        "role": "input"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "hydrosheds-basins",
+        "title": "HydroSHEDS basin boundaries",
+        "publisher": "WWF / HydroSHEDS",
+        "license": "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+        "role": "input"
+      },
+      {
+        "id": "sentinel-2-l2a",
+        "title": "Sentinel-2 L2A imagery (channel evidence)",
+        "publisher": "ESA Copernicus",
+        "license": "Copernicus free and open data, attribution required",
+        "role": "input"
+      },
+      {
+        "id": "google-dynamic-world",
+        "title": "Google Dynamic World built-up classification",
+        "publisher": "Google / World Resources Institute",
+        "license": "CC BY 4.0",
+        "role": "input"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-05-13",
+    "produced_by": "neer-vazhvu-api/app/cascade/health.py",
+    "note": "Derived by the cascade reconstruction pipeline (neer-vazhvu-api/app/cascade). FABDEM input makes this family CC BY-NC-SA (non-commercial) encumbered - recorded in the fabdem-dem registry entry, 2026-07-30. Layer B named-cascade documentation is internal Neer Vazhvu curation (per-cascade references inline; edition history = git) - lineage, not an upstream source."
+  },
   "district_id": "madurai",
   "schema_version": "v1",
   "note": "Hand-curated, source-cited documented cascade chains for Madurai. Each chain has an ordered tank list (with OSM IDs resolved where the current OpenStreetMap extract carries the name) and a directed edge set drawn from the cited source. Used by the cascade health scorer at neer-vazhvu-api/app/cascade/health.py to enrich auto-derived cascades. Tanks with osm_id=null could not be matched against the OSM extract under any of the searched name variants and are interpreted by the scorer as a 'missing from OSM' signal contributing to the cascade's fragility score.",
@@ -31,23 +80,101 @@
       },
       "restoration_anchor": null,
       "tanks_in_order": [
-        { "name": "Kulamangalam", "osm_id": null, "area_ha": null, "category": "rural" },
-        { "name": "Veerapandi", "osm_id": null, "area_ha": null, "category": "rural" },
-        { "name": "Thiruppalai", "osm_id": 965972946, "area_ha": 24.76, "category": "peri-urban", "notes": "Multiple Thiruppalai-name reservoirs in OSM; the 24.76 ha polygon is the largest plausible match." },
-        { "name": "Siruvour", "osm_id": null, "area_ha": null, "category": "peri-urban" },
-        { "name": "Kosakulam", "osm_id": null, "area_ha": null, "category": "urban", "supernode_group": "T5-T7" },
-        { "name": "Parsurampatti", "osm_id": null, "area_ha": null, "category": "urban", "supernode_group": "T5-T7" },
-        { "name": "Kodikulam", "osm_id": null, "area_ha": null, "category": "urban", "supernode_group": "T5-T7" },
-        { "name": "Vandiyur", "osm_id": 1073092381, "area_ha": 227.94, "category": "urban", "is_terminal": true, "notes": "HC PIL anchor. Currently neer-vazhvu's narrative_anchor for Madurai." }
+        {
+          "name": "Kulamangalam",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "rural"
+        },
+        {
+          "name": "Veerapandi",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "rural"
+        },
+        {
+          "name": "Thiruppalai",
+          "osm_id": 965972946,
+          "area_ha": 24.76,
+          "category": "peri-urban",
+          "notes": "Multiple Thiruppalai-name reservoirs in OSM; the 24.76 ha polygon is the largest plausible match."
+        },
+        {
+          "name": "Siruvour",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "peri-urban"
+        },
+        {
+          "name": "Kosakulam",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "urban",
+          "supernode_group": "T5-T7"
+        },
+        {
+          "name": "Parsurampatti",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "urban",
+          "supernode_group": "T5-T7"
+        },
+        {
+          "name": "Kodikulam",
+          "osm_id": null,
+          "area_ha": null,
+          "category": "urban",
+          "supernode_group": "T5-T7"
+        },
+        {
+          "name": "Vandiyur",
+          "osm_id": 1073092381,
+          "area_ha": 227.94,
+          "category": "urban",
+          "is_terminal": true,
+          "notes": "HC PIL anchor. Currently neer-vazhvu's narrative_anchor for Madurai."
+        }
       ],
       "edges": [
-        { "from_index": 0, "to_index": 1, "link_type": "natural" },
-        { "from_index": 1, "to_index": 2, "link_type": "natural" },
-        { "from_index": 2, "to_index": 3, "link_type": "natural" },
-        { "from_index": 3, "to_index": 4, "link_type": "natural", "notes": "Edge enters the T5-T7 super-node group; internal ordering speculative." },
-        { "from_index": 4, "to_index": 5, "link_type": "natural", "notes": "Within T5-T7 super-node; treat as one logical step." },
-        { "from_index": 5, "to_index": 6, "link_type": "natural", "notes": "Within T5-T7 super-node; treat as one logical step." },
-        { "from_index": 6, "to_index": 7, "link_type": "natural", "notes": "T7 to terminal Vandiyur." }
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 3,
+          "to_index": 4,
+          "link_type": "natural",
+          "notes": "Edge enters the T5-T7 super-node group; internal ordering speculative."
+        },
+        {
+          "from_index": 4,
+          "to_index": 5,
+          "link_type": "natural",
+          "notes": "Within T5-T7 super-node; treat as one logical step."
+        },
+        {
+          "from_index": 5,
+          "to_index": 6,
+          "link_type": "natural",
+          "notes": "Within T5-T7 super-node; treat as one logical step."
+        },
+        {
+          "from_index": 6,
+          "to_index": 7,
+          "link_type": "natural",
+          "notes": "T7 to terminal Vandiyur."
+        }
       ]
     },
     {
@@ -69,17 +196,57 @@
         "url": "https://iamwarm.gov.in/"
       },
       "tanks_in_order": [
-        { "name": "Vaigai river head-sluice (Virahanur regulator)", "osm_id": null, "category": "reservoir", "is_inflow_origin": true },
-        { "name": "Kondagai (Konthagai) tank", "osm_id": null, "category": "rural" },
-        { "name": "Piramanur tank", "osm_id": null, "category": "rural" },
-        { "name": "Palayanur tank", "osm_id": null, "category": "rural" },
-        { "name": "Girudhumal river (via Melavellore Dividing dam)", "osm_id": null, "category": "river", "is_terminal": true }
+        {
+          "name": "Vaigai river head-sluice (Virahanur regulator)",
+          "osm_id": null,
+          "category": "reservoir",
+          "is_inflow_origin": true
+        },
+        {
+          "name": "Kondagai (Konthagai) tank",
+          "osm_id": null,
+          "category": "rural"
+        },
+        {
+          "name": "Piramanur tank",
+          "osm_id": null,
+          "category": "rural"
+        },
+        {
+          "name": "Palayanur tank",
+          "osm_id": null,
+          "category": "rural"
+        },
+        {
+          "name": "Girudhumal river (via Melavellore Dividing dam)",
+          "osm_id": null,
+          "category": "river",
+          "is_terminal": true
+        }
       ],
       "edges": [
-        { "from_index": 0, "to_index": 1, "link_type": "engineered", "notes": "9.6 km link canal, head sluice." },
-        { "from_index": 1, "to_index": 2, "link_type": "natural" },
-        { "from_index": 2, "to_index": 3, "link_type": "natural" },
-        { "from_index": 3, "to_index": 4, "link_type": "engineered", "notes": "Silaman head sluice + Melavellore Dividing dam." }
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "engineered",
+          "notes": "9.6 km link canal, head sluice."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "natural"
+        },
+        {
+          "from_index": 3,
+          "to_index": 4,
+          "link_type": "engineered",
+          "notes": "Silaman head sluice + Melavellore Dividing dam."
+        }
       ]
     },
     {
@@ -98,17 +265,57 @@
       "court_anchor": null,
       "restoration_anchor": null,
       "tanks_in_order": [
-        { "name": "Urapanur", "osm_id": null, "category": "rural" },
-        { "name": "Sekkanurani", "osm_id": null, "category": "rural" },
-        { "name": "Nagamalai Puthukottai", "osm_id": null, "category": "peri-urban" },
-        { "name": "Kongar Puliankulam", "osm_id": null, "category": "urban" },
-        { "name": "Madakulam Kanmai", "osm_id": 18641173, "area_ha": 123.69, "category": "urban", "is_terminal": true, "notes": "12th-century stone sluice + inscription. Wikipedia: Madakulam." }
+        {
+          "name": "Urapanur",
+          "osm_id": null,
+          "category": "rural"
+        },
+        {
+          "name": "Sekkanurani",
+          "osm_id": null,
+          "category": "rural"
+        },
+        {
+          "name": "Nagamalai Puthukottai",
+          "osm_id": null,
+          "category": "peri-urban"
+        },
+        {
+          "name": "Kongar Puliankulam",
+          "osm_id": null,
+          "category": "urban"
+        },
+        {
+          "name": "Madakulam Kanmai",
+          "osm_id": 18641173,
+          "area_ha": 123.69,
+          "category": "urban",
+          "is_terminal": true,
+          "notes": "12th-century stone sluice + inscription. Wikipedia: Madakulam."
+        }
       ],
       "edges": [
-        { "from_index": 0, "to_index": 1, "link_type": "mixed" },
-        { "from_index": 1, "to_index": 2, "link_type": "mixed" },
-        { "from_index": 2, "to_index": 3, "link_type": "mixed" },
-        { "from_index": 3, "to_index": 4, "link_type": "mixed", "notes": "Pandya-era Nattatrupuram channel renamed Viranarayana kulakeel." }
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "mixed"
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "mixed"
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "mixed"
+        },
+        {
+          "from_index": 3,
+          "to_index": 4,
+          "link_type": "mixed",
+          "notes": "Pandya-era Nattatrupuram channel renamed Viranarayana kulakeel."
+        }
       ]
     },
     {
@@ -134,15 +341,51 @@
       },
       "restoration_anchor": null,
       "tanks_in_order": [
-        { "name": "Mullaperiyar Reservoir (Kerala)", "osm_id": null, "category": "dam", "is_inflow_origin": true, "notes": "Outside Madurai-district OSM extract." },
-        { "name": "Periyar-Vaigai diversion tunnel", "osm_id": null, "category": "conduit" },
-        { "name": "Vaigai Dam", "osm_id": 14192817, "area_ha": 2348.06, "category": "dam", "notes": "OSM way 14192817 'Vaigai Reservoir'." },
-        { "name": "Pannaipatty Water Treatment Plant", "osm_id": null, "category": "treatment_plant", "is_terminal": true, "notes": "125 MLD design capacity; serves Madurai Municipal Corporation distribution." }
+        {
+          "name": "Mullaperiyar Reservoir (Kerala)",
+          "osm_id": null,
+          "category": "dam",
+          "is_inflow_origin": true,
+          "notes": "Outside Madurai-district OSM extract."
+        },
+        {
+          "name": "Periyar-Vaigai diversion tunnel",
+          "osm_id": null,
+          "category": "conduit"
+        },
+        {
+          "name": "Vaigai Dam",
+          "osm_id": 14192817,
+          "area_ha": 2348.06,
+          "category": "dam",
+          "notes": "OSM way 14192817 'Vaigai Reservoir'."
+        },
+        {
+          "name": "Pannaipatty Water Treatment Plant",
+          "osm_id": null,
+          "category": "treatment_plant",
+          "is_terminal": true,
+          "notes": "125 MLD design capacity; serves Madurai Municipal Corporation distribution."
+        }
       ],
       "edges": [
-        { "from_index": 0, "to_index": 1, "link_type": "engineered", "notes": "Inter-state tunnel through Western Ghats." },
-        { "from_index": 1, "to_index": 2, "link_type": "engineered" },
-        { "from_index": 2, "to_index": 3, "link_type": "engineered", "notes": "Periyar Main Canal + Thirumangalam Canal + Vaigai bed flow + Pannaipatty intakes." }
+        {
+          "from_index": 0,
+          "to_index": 1,
+          "link_type": "engineered",
+          "notes": "Inter-state tunnel through Western Ghats."
+        },
+        {
+          "from_index": 1,
+          "to_index": 2,
+          "link_type": "engineered"
+        },
+        {
+          "from_index": 2,
+          "to_index": 3,
+          "link_type": "engineered",
+          "notes": "Periyar Main Canal + Thirumangalam Canal + Vaigai bed flow + Pannaipatty intakes."
+        }
       ]
     }
   ]

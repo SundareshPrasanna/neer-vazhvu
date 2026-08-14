@@ -27,9 +27,13 @@ from __future__ import annotations
 
 import json
 import math
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 CENSUS = REPO / "public/geojson/delhi-water-bodies-census.geojson"
 POLYS = REPO / "public/geojson/delhi-water-bodies-current.geojson"
 
@@ -157,7 +161,7 @@ def main() -> None:
         "verify against the enumeration schedule PDF before labels render user-facing."
     )
 
-    CENSUS.write_text(json.dumps(census, indent=1, ensure_ascii=False))
+    write_artifact(CENSUS, census)
     print(f"join: {counts} of {len(census['features'])} points")
 
     by_type: dict[str, int] = {}

@@ -1,4 +1,29 @@
 {
+  "nvdm": "1.0",
+  "dataset": "cascade/cascade-systems",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "fabdem-dem",
+        "title": "FABDEM v1-2 30 m bare-earth DEM",
+        "publisher": "University of Bristol (Hawker et al.), via GEE sat-io",
+        "license": "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-06-18",
+    "internal_inputs": [
+      "public/geojson/mumbai-water-bodies-current.geojson",
+      "public/geojson/mumbai-rivers.geojson"
+    ],
+    "produced_by": "neer-vazhvu-api/app/cascade/publish.py write_systems_manifest (run_cascade.py; Layer B curation.attach_named_cascades is NotImplemented - systems written empty)",
+    "note": "Derived by the DISTRICT cascade pipeline (neer-vazhvu-api/app/cascade, d8_steepest_descent_v1 over FABDEM). Mumbai is reservoir-impounded, NOT tank-cascade geography - registered for the lake catchment atlas; the cascade overlay is suppressed when edge_count is negligible (see districts.py). Sentinel/OSM channel cross-checks are NotImplemented (P5) and the buildings/rainfall stages did not run for this district, so those upstreams are deliberately NOT listed. FABDEM input makes this family CC BY-NC-SA (non-commercial) encumbered. Layer B curation (named systems) is empty for Mumbai by design - no historical tank-cascade systems to name; the payload content is the empty manifest plus _meta, whose inputs_hash reads the tanks + rivers layers (hence the internal_inputs)."
+  },
   "district_id": "mumbai",
   "label": "Mumbai",
   "_meta": {

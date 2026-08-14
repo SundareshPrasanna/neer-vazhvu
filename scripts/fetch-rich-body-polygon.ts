@@ -12,7 +12,9 @@
  *     --name "Pallikaranai Marsh" --buffer-m 1000
  */
 
-import { writeFileSync, mkdirSync } from "fs";
+import { mkdirSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
+import { registryLicense } from "./lib/registry-contract";
 import { join } from "path";
 import buffer from "@turf/buffer";
 import area from "@turf/area";
@@ -281,7 +283,7 @@ async function main() {
       wikipedia: tags["wikipedia"] || null,
       area_ha: Math.round((area(geometry) / 10000) * 100) / 100,
       source: `OSM ${osmType} ${osmId}`,
-      license: "ODbL",
+      license: registryLicense("osm-overpass"),
       fetched_at: new Date().toISOString(),
     },
   };
@@ -290,14 +292,10 @@ async function main() {
   mkdirSync(outDir, { recursive: true });
 
   const bodyPath = join(outDir, `${bodyId}.geojson`);
-  writeFileSync(
-    bodyPath,
-    JSON.stringify(
-      { type: "FeatureCollection", features: [feature] },
-      null,
-      2
-    )
-  );
+  // Envelope-preserving: a bare writeFileSync here replaced the artifact's
+  // whole NVDM wrapper - provenance, sources, scope, conformance - with a
+  // FeatureCollection, silently dropping the file off the governance ladder.
+  writeArtifact(bodyPath, { type: "FeatureCollection", features: [feature] });
   console.log(`\nWrote ${bodyPath}`);
   console.log(`  area: ${feature.properties!.area_ha} ha`);
 
@@ -317,14 +315,7 @@ async function main() {
       },
     };
     const bufPath = join(outDir, `${bodyId}-buffer-${bufferM}m.geojson`);
-    writeFileSync(
-      bufPath,
-      JSON.stringify(
-        { type: "FeatureCollection", features: [bufFeature] },
-        null,
-        2
-      )
-    );
+    writeArtifact(bufPath, { type: "FeatureCollection", features: [bufFeature] });
     console.log(`Wrote ${bufPath}`);
     const bufGeom = bufFeature.geometry as Polygon | MultiPolygon;
     console.log(`  buffer area: ${Math.round(area(bufGeom) / 10000)} ha`);

@@ -20,7 +20,12 @@ export async function GET(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: `No ward profiles for city '${cityId}'` }, { status: 404 });
   }
-  const profiles: { ward_number: number; zone_name: string }[] = JSON.parse(profilesRaw);
+  // Dual-shape during the NVDM migration: legacy bare array or the
+  // wrapped producer-emitted form ({ envelope..., wards: [...] }).
+  const parsed = JSON.parse(profilesRaw);
+  const profiles: { ward_number: number; zone_name: string }[] = Array.isArray(parsed)
+    ? parsed
+    : parsed.wards;
 
   const wards = profiles.map((p) => ({
     wardNumber: p.ward_number,

@@ -1,4 +1,30 @@
 {
+ "nvdm": "1.0",
+ "dataset": "data-root/mmr-corporations-water",
+ "scope": {
+  "kind": "region",
+  "id": "mumbai"
+ },
+ "provenance": {
+  "sources": [
+   {
+    "id": "bmc-esr-annual",
+    "title": "BMC Environment Status Report (annual)",
+    "publisher": "Brihanmumbai Municipal Corporation",
+    "license": "government publication, cited with attribution"
+   },
+   {
+    "id": "praja-civic-issues-mumbai",
+    "title": "Praja Foundation, 'Report on the Status of Civic Issues in Mumbai' (RTI-sourced ward tables; May 2025 edition = 2024 data)",
+    "publisher": "Praja Foundation (via OpenCity mirror)",
+    "license": "report (c) Praja, RTI-sourced tables; OpenCity mirror",
+    "as_of": "2024"
+   }
+  ],
+  "method": "manual",
+  "produced_at": "2026-07-04",
+  "note": "MMR per-corporation water inventory; every figure carries source_refs into the legacy `sources` registry (praja-2021/2024, NMMC/TERI ESR, MMRDA WSRMC operator data, corporation documents - 3 adversarially-verified research passes, see _note). Nulls are genuine gaps, not zeros; vintages differ per record (`year`). The slum 45 vs non-slum 150 LPCD norm distinction (praja-2021, citing MCGM's 24x7 White Paper) is data, never averaged away."
+ },
  "_note": "MMR per-corporation water data inventory. Every figure carries source_refs pointing into the `sources` registry below (document title, publisher, year, page/table, URL). Synthesised 2026-06-22 from 3 adversarially-verified deep-research passes + MMRDA WSRMC operator data. Coverage is deliberately uneven; nulls are genuine gaps, not zeros; vintages differ (see `year`). Built for docs/specs/mumbai-mmr.md P2.",
  "as_of": "2026-07-04",
  "sources": {

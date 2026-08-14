@@ -22,7 +22,11 @@ DAY_ZERO_DATE = "2019-06-19"
 DAY_ZERO_STORAGE_MCFT = 19.0
 
 # --- Reservoir capacities ---
-TOTAL_RESERVOIR_CAPACITY_MCFT = 14_096.0  # All 6 reservoirs
+# Must match src/lib/utils/constants.ts RESERVOIR_METADATA (per CMWSSB lake
+# level page). Cholavaram 881→1081 and Kannankottai 1574→500 corrected
+# 2026-08-03 after the values drifted from the TS side (Apr 2026 correction
+# landed only there); 13,222 is CMWSSB's published 6-reservoir total.
+TOTAL_RESERVOIR_CAPACITY_MCFT = 13_222.0  # All 6 reservoirs
 
 
 class ReservoirName(StrEnum):
@@ -36,11 +40,11 @@ class ReservoirName(StrEnum):
 
 RESERVOIR_CAPACITY: dict[str, float] = {
     "poondi": 3231.0,
-    "cholavaram": 881.0,
+    "cholavaram": 1081.0,
     "redhills": 3300.0,
     "chembarambakkam": 3645.0,
     "veeranam": 1465.0,
-    "kannankottai": 1574.0,
+    "kannankottai": 500.0,
 }
 
 EXPECTED_RESERVOIR_COUNT = len(RESERVOIR_CAPACITY)

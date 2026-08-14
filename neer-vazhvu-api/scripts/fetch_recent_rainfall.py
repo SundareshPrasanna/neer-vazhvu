@@ -29,6 +29,9 @@ from datetime import date, timedelta
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from registry_license import registry_license  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 # City centre coordinates - keep in lockstep with src/lib/cities/*.ts.
@@ -120,6 +123,40 @@ def run_city(city: str) -> bool:
         "monthly": monthly_rows,
         "daily": daily,
     }
+    # NVDM v1 envelope, emitted by the producer so the daily rewrite cannot
+    # strip it (the migration lesson: regenerating producers own their
+    # envelopes). produced_at tracks each refresh; sources split honestly -
+    # IMD is the authoritative base, Open-Meteo the provisional fill.
+    scope_kind = {"mumbai": "region"}.get(city, "city")
+    envelope = {
+        "nvdm": "1.0",
+        "dataset": "data-root/rainfall-recent",
+        "scope": {"kind": scope_kind, "id": city},
+        "provenance": {
+            "sources": [
+                {
+                    "id": "imd-gridded-rain",
+                    "title": "IMD gridded monthly rainfall (authoritative through imd_covers_through)",
+                    "publisher": "India Meteorological Department",
+                    "license": registry_license("imd-gridded-rain"),
+                },
+                {
+                    "id": "open-meteo-archive",
+                    "title": "Open-Meteo archive API (ERA5-family reanalysis) - provisional fill after IMD's last month",
+                    "publisher": "Open-Meteo",
+                    "license": registry_license("open-meteo-archive"),
+                },
+            ],
+            "method": "api",
+            "produced_at": out["generated_at"],
+            "produced_by": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+            "note": (
+                "Provisional reanalysis fill, replaced by IMD authoritative values as the "
+                "quarterly refresh catches up (see provisional_note)."
+            ),
+        },
+    }
+    out = {**envelope, **out}
     path = DATA_DIR / f"rainfall-recent-{city}.json"
     path.write_text(json.dumps(out, ensure_ascii=False, indent=2))
     print(

@@ -33,6 +33,9 @@ import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 API_URL = "https://dmwebtwo.mcgm.gov.in/api/floodSpot/loadAll"
 DEFAULT_OUT = (
     Path(__file__).resolve().parent.parent.parent
@@ -144,8 +147,10 @@ def main() -> int:
         ),
         "features": features,
     }
-    with open(args.out, "w", encoding="utf-8") as fh:
-        json.dump(out, fh, ensure_ascii=False, indent=1)
+    # Envelope-preserving write (scripts/nvdm_write.py): this scraper pushes
+    # to main on a weekly cron, so it MUST keep the NVDM envelope (the decay
+    # bug the helper exists to close). indent=1 matches the stored style.
+    write_artifact(Path(args.out), out, indent=1)
     print(
         f"Wrote {len(features)} official spots -> {args.out} "
         f"({counts}, dropped {dropped})"

@@ -22,7 +22,9 @@
  *     --buffer-m 1000
  */
 
-import { writeFileSync, mkdirSync } from "fs";
+import { mkdirSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
+import { registryLicense } from "./lib/registry-contract";
 import { join } from "path";
 import buffer from "@turf/buffer";
 import area from "@turf/area";
@@ -138,7 +140,7 @@ async function main() {
       ramsar: true,
       source: `Tamil Nadu State Wetland Authority (TNSWA) via ${TNSWA_PAGE_URL}`,
       source_dataset: TNSWA_BOUNDARY_URL,
-      license: "Public data from Tamil Nadu State Wetland Authority portal",
+      license: registryLicense("tnswa-ramsar-boundary"),
       fetched_at: new Date().toISOString(),
     },
   };
@@ -146,10 +148,8 @@ async function main() {
   const outDir = join(process.cwd(), "public/geojson/rich-bodies");
   mkdirSync(outDir, { recursive: true });
   const bodyPath = join(outDir, `${bodyId}.geojson`);
-  writeFileSync(
-    bodyPath,
-    JSON.stringify({ type: "FeatureCollection", features: [feature] }, null, 2)
-  );
+  // Envelope-preserving - see the note in fetch-rich-body-polygon.ts.
+  writeArtifact(bodyPath, { type: "FeatureCollection", features: [feature] });
   console.log(`\nWrote ${bodyPath}`);
 
   if (bufferM > 0) {
@@ -171,10 +171,7 @@ async function main() {
       },
     };
     const bufPath = join(outDir, `${bodyId}-buffer-${bufferM}m.geojson`);
-    writeFileSync(
-      bufPath,
-      JSON.stringify({ type: "FeatureCollection", features: [bufFeature] }, null, 2)
-    );
+    writeArtifact(bufPath, { type: "FeatureCollection", features: [bufFeature] });
     const bufGeom = bufFeature.geometry as Polygon | MultiPolygon;
     console.log(`Wrote ${bufPath}`);
     console.log(`  buffer area: ${Math.round(area(bufGeom) / 10000)} ha`);

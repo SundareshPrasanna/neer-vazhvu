@@ -49,6 +49,8 @@ import numpy as np
 from shapely.geometry import LineString, mapping, shape
 from shapely.ops import transform as shp_transform, unary_union
 
+from app.nvdm_io import merge_envelope
+
 # rasterio (+ GDAL) ships only in the optional `hydro` extra and is used solely
 # by the DEM acquisition / flow-routing functions below. Import it tolerantly so
 # the module - and its shapely-only helpers like _is_river_ribbon / _polsby_popper
@@ -388,8 +390,10 @@ def build_vector_streams(
         ]
         out[oid] = {"type": "FeatureCollection", "features": feats}
 
-    district.cascade_catchment_streams_json_path().write_text(
-        json.dumps(out, separators=(",", ":")) + "\n", encoding="utf-8"
+    streams_path = district.cascade_catchment_streams_json_path()
+    streams_path.write_text(
+        json.dumps(merge_envelope(streams_path, out), separators=(",", ":")) + "\n",
+        encoding="utf-8",
     )
     return {
         "district_id": district.district_id,
@@ -750,11 +754,13 @@ def build_catchments(
         if done % 200 == 0:
             _log(f"  delineated {done}/{len(polys)}")
 
-    # Write catchments GeoJSON.
+    # Write catchments GeoJSON (merge_envelope keeps NVDM governance intact).
     out = district.cascade_catchments_geojson_path()
     out.write_text(
         json.dumps(
-            {"type": "FeatureCollection", "features": catch_features},
+            merge_envelope(
+                out, {"type": "FeatureCollection", "features": catch_features}
+            ),
             ensure_ascii=False,
         )
         + "\n",
@@ -762,17 +768,24 @@ def build_catchments(
     )
 
     # Write the clickable lakes GeoJSON (real polygons, delineated lakes only).
-    district.cascade_lakes_geojson_path().write_text(
+    lakes_path = district.cascade_lakes_geojson_path()
+    lakes_path.write_text(
         json.dumps(
-            {"type": "FeatureCollection", "features": lake_features}, ensure_ascii=False
+            merge_envelope(
+                lakes_path, {"type": "FeatureCollection", "features": lake_features}
+            ),
+            ensure_ascii=False,
         )
         + "\n",
         encoding="utf-8",
     )
 
     # Write per-lake feeder streams, keyed by osm_id (served on click).
-    district.cascade_catchment_streams_json_path().write_text(
-        json.dumps(streams_by_lake, separators=(",", ":")) + "\n", encoding="utf-8"
+    streams_path = district.cascade_catchment_streams_json_path()
+    streams_path.write_text(
+        json.dumps(merge_envelope(streams_path, streams_by_lake), separators=(",", ":"))
+        + "\n",
+        encoding="utf-8",
     )
 
     # Per-lake DOWNSTREAM flow path: chain the one-hop channel segments along
@@ -808,8 +821,13 @@ def build_catchments(
             "type": "FeatureCollection",
             "features": [feat] if feat else [],
         }
-    district.cascade_catchment_downstream_json_path().write_text(
-        json.dumps(downstream_by_lake, separators=(",", ":")) + "\n", encoding="utf-8"
+    downstream_path = district.cascade_catchment_downstream_json_path()
+    downstream_path.write_text(
+        json.dumps(
+            merge_envelope(downstream_path, downstream_by_lake), separators=(",", ":")
+        )
+        + "\n",
+        encoding="utf-8",
     )
 
     # NOTE: per-lake TOTAL basin polygons ({district}-catchment-basin.json) are
@@ -821,8 +839,10 @@ def build_catchments(
         f["properties"]["catchment_area_sqkm"] = area_by_id.get(
             f["properties"]["osm_id"]
         )
-    district.cascade_nodes_geojson_path().write_text(
-        json.dumps(nodes_fc, ensure_ascii=False) + "\n", encoding="utf-8"
+    nodes_path = district.cascade_nodes_geojson_path()
+    nodes_path.write_text(
+        json.dumps(merge_envelope(nodes_path, nodes_fc), ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
 
     areas = sorted(area_by_id.values())
@@ -853,8 +873,11 @@ def build_catchments(
         "flagged": flagged,
         "dem_cache": str(workdir),
     }
-    district.cascade_catchment_quality_json_path().write_text(
-        json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    quality_path = district.cascade_catchment_quality_json_path()
+    quality_path.write_text(
+        json.dumps(merge_envelope(quality_path, summary), indent=2, ensure_ascii=False)
+        + "\n",
+        encoding="utf-8",
     )
 
     # Sync names from the (possibly name-backfilled) source and name the river

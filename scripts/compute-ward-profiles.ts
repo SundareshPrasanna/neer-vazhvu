@@ -10,6 +10,7 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
+import { registryLicense } from "./lib/registry-contract";
 import centroid from "@turf/centroid";
 import bbox from "@turf/bbox";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
@@ -634,8 +635,94 @@ function main() {
     });
   }
 
+  // NVDM v1 wrapped form (schemas/nvdm/ward-profiles.schema.json): envelope +
+  // wards[]. Loaders accept both shapes during migration. PRODUCED_AT is a
+  // manual constant, bumped on regeneration, so identical inputs still
+  // produce byte-identical output (no wall-clock in the artifact - the CI
+  // determinism gate reruns this script and diffs the file).
+  const PRODUCED_AT = "2026-07-30";
+  const wrapped = {
+    nvdm: "1.0",
+    dataset: "data-root/ward-profiles",
+    scope: { kind: "city", id: "chennai" },
+    provenance: {
+      sources: [
+        {
+          id: "osm-overpass",
+          title: "OpenStreetMap water bodies / industrial zones (Overpass extracts)",
+          publisher: "OpenStreetMap contributors",
+          license: registryLicense("osm-overpass"),
+          role: "input",
+        },
+        {
+          id: "opencity-gcc-swd-survey",
+          title: "GCC 2023 storm-water-drain survey (via OpenCity)",
+          publisher: "Greater Chennai Corporation (via OpenCity)",
+          license: registryLicense("opencity-gcc-swd-survey"),
+          role: "input",
+          as_of: "2023",
+        },
+        {
+          id: "opencity-chennai-flood",
+          title: "Chennai flooding data - NCCR C-FLOWS model outputs (via OpenCity)",
+          publisher: "OpenCity / NCCR",
+          license: registryLicense("opencity-chennai-flood"),
+          role: "input",
+        },
+        {
+          id: "opencity-cmwssb-sewerage",
+          title: "CMWSSB sewerage network datasets (via OpenCity)",
+          publisher: "CMWSSB (via OpenCity)",
+          license: registryLicense("opencity-cmwssb-sewerage"),
+          role: "input",
+        },
+      ],
+      // Audited artifact-level rights determination (PR #227 review).
+      // Source-term propagation marks this file 'restricted' because a
+      // pollution-control board sits in its lineage. That board's policy
+      // governs ITS OWN report, not a ward score computed here from the
+      // measurements the report states - there is no copyright in facts.
+      // `clears` names the one input it covers: any other restricted input
+      // would leave this file restricted, and no determination can ever
+      // touch the OpenStreetMap share-alike.
+      rights_determination: {
+        "basis": "derived-facts",
+        "clears": [
+          "cpcb-nwmp-annual"
+        ],
+        "reasoning": "The payload of this file is a set of indicators this repository computes: per-ward scores, grades, percentile ranks and densities produced by our own code from measured values. It contains no upstream prose, no upstream table layout and no reproduction of any publisher's document. The restricted input named in `clears` is a pollution-control board whose website policy requires the board's approval to reuse ITS MATERIAL beyond download and print. That policy governs the board's own reports; it does not reach a score derived from the measurements those reports state, because there is no copyright in facts (Eastern Book Company v D.B. Modak, (2008) 1 SCC 1: 'there is no copyright in the facts per se'). This determination is scoped to that named input only and clears nothing else. Chennai ward profiles: 200 rows of water-body health, density, flood risk, drainage and sewerage indicators. CPCB reaches this file only as the BOD/DO band behind river-quality.json and restoration-priority.json; the numbers published here are our normalised scores, not CPCB station readings. The OpenStreetMap share-alike is untouched and this file remains share-alike.",
+        "reviewed_on": "2026-07-31"
+      },
+      method: "derived",
+      produced_at: PRODUCED_AT,
+      produced_by: "scripts/compute-ward-profiles.ts",
+      // Machine-readable internal lineage: the validator caps this artifact
+      // below L3 while any listed input is below L2 (review 2026-07-30 -
+      // prose notes do not transfer accountability). wards-2022 is the
+      // load-bearing spatial key and currently unaccounted, so ward profiles
+      // hold at L2 until its boundary provenance is settled.
+      internal_inputs: [
+        "public/geojson/chennai-wards-2022.geojson",
+        "public/geojson/chennai-water-bodies-current.geojson",
+        "public/data/restoration-priority.json",
+        "public/geojson/chennai-water-bodies-lost.geojson",
+        "public/geojson/chennai-flood-hazard-zones.geojson",
+        "public/geojson/chennai-flood-2015-hotspots.geojson",
+        "public/geojson/chennai-flood-2020-hotspots.geojson",
+        "public/geojson/chennai-drainage.geojson",
+        "public/geojson/chennai-sewerage.geojson",
+        "public/geojson/chennai-industrial-zones.geojson",
+        "public/data/river-quality.json",
+      ],
+      note:
+        "Deterministic spatial join over committed ward-level layers (see script header). " +
+        "Internal inputs are lineage, not sources - listed machine-readably in internal_inputs; " +
+        "chennai-wards-2022.geojson's own provenance record is still pending.",
+    },
+    wards: output,
+  };
   const outPath = resolve(root, "public/data/ward-profiles.json");
-  writeFileSync(outPath, JSON.stringify(output, null, 2));
+  writeFileSync(outPath, JSON.stringify(wrapped, null, 2));
 
   // Summary
   const totalWaterBodies = output.reduce((s, w) => s + w.water_bodies.current_count, 0);

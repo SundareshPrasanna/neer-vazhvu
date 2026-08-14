@@ -1,4 +1,20 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/gee-phase1-water-body-targets",
+  "scope": {
+    "kind": "city",
+    "id": "madurai"
+  },
+  "provenance": {
+    "sources": [],
+    "method": "derived",
+    "produced_at": "2026-05-08",
+    "internal_inputs": [
+      "public/data/restoration-priority-madurai.json"
+    ],
+    "produced_by": "neer-vazhvu-api/app/gee/targets.py::write_phase1_target_manifest",
+    "note": "Target selection manifest: the producer reads restoration-priority-madurai.json and copies osm_id/name/area_ha/priority_score/priority_level/centroid verbatim for the bodies its selection rules keep. Corrected 2026-07-31 (PR #221 review round 3) from an earlier 'manual, self-authored, no external upstream' claim - the payload is derived, so the OSM share-alike lineage of its input attaches. Selection rules themselves are ours; edition history = git."
+  },
   "manifest_version": 1,
   "city_id": "madurai",
   "selection_rules": {

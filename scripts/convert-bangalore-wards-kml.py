@@ -2,7 +2,8 @@
 """
 Convert OpenCity GBA 369-ward KML (Dec 2025) to:
   1. public/geojson/bangalore-wards-2025.geojson - 369-feature FeatureCollection
-  2. public/data/bangalore-ward-profiles.json    - profile array with population
+  2. public/data/bangalore-ward-admin.json       - enveloped admin seed (population,
+     electoral and naming fields; geometry-derived fields live in ward-profiles)
 
 Source KML: https://data.opencity.in/dataset/gba-wards-delimitation-2025
 File:       gba-369-wards-december-2025.kml (3.9MB, 369 wards, 5 corporations,
@@ -22,18 +23,26 @@ journalists can quote either form.
 Run: python scripts/convert-bangalore-wards-kml.py scripts/data-raw/bangalore/gba-369-wards-december-2025.kml
 """
 
-import json
 import math
 import re
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+import json
+
+from nvdm_write import write_artifact
+
 KML_NS = {"k": "http://www.opengis.net/kml/2.2"}
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from registry_license import registry_license  # noqa: E402
 GEOJSON_OUT = REPO_ROOT / "public" / "geojson" / "bangalore-wards-2025.geojson"
-PROFILES_OUT = REPO_ROOT / "public" / "data" / "bangalore-ward-profiles.json"
+ADMIN_OUT = REPO_ROOT / "public" / "data" / "bangalore-ward-admin.json"
+# Bumped on each re-conversion so identical KML input stays byte-identical.
+CONVERTED_AT = "2026-07-30"
 
 
 def parse_coords(text: str) -> list[list[float]]:
@@ -261,11 +270,49 @@ def main() -> None:
     profiles.sort(key=lambda p: p["ward_number"])
 
     GEOJSON_OUT.parent.mkdir(parents=True, exist_ok=True)
-    PROFILES_OUT.parent.mkdir(parents=True, exist_ok=True)
-    GEOJSON_OUT.write_text(json.dumps({"type": "FeatureCollection", "features": features}))
-    PROFILES_OUT.write_text(json.dumps(profiles, indent=2))
+    ADMIN_OUT.parent.mkdir(parents=True, exist_ok=True)
+    # The admin SEED carries attributes only - centroid/area are derived from
+    # the tracked geometry by compute-bangalore-ward-profiles.ts (review
+    # 2026-07-30: the seed replaced the profiles fixed point; this converter
+    # is the seed's producer, closing the KML -> seed -> profiles chain).
+    # After a re-conversion, re-run compute-bangalore-ward-profiles.ts.
+    admin_records = [
+        {k: v for k, v in rec.items() if k not in ("centroid", "area_sq_km")}
+        for rec in profiles
+    ]
+    seed = {
+        "nvdm": "1.0",
+        "dataset": "data-root/ward-admin",
+        "scope": {"kind": "city", "id": "bangalore"},
+        "provenance": {
+            "sources": [
+                {
+                    "id": "opencity-gba-wards-2025",
+                    "title": "GBA ward delimitation 2025 (OpenCity dataset - boundaries + administrative/electoral attributes)",
+                    "publisher": "Greater Bengaluru Authority via OpenCity",
+                    "license": registry_license("opencity-gba-wards-2025"),
+                    "role": "input",
+                }
+            ],
+            "method": "derived",
+            "produced_at": CONVERTED_AT,
+            "produced_by": "scripts/convert-bangalore-wards-kml.py",
+            "internal_inputs": [],
+            "note": (
+                "Administrative/electoral ward attributes from the GBA 2025 "
+                "delimitation KML (369 wards). Seed for "
+                "compute-bangalore-ward-profiles.ts - split from the profiles "
+                "artifact (review 2026-07-30) so profiles rebuild cleanly from "
+                "tracked sources. Attribute fields change only at "
+                "re-delimitation or roll revision."
+            ),
+        },
+        "wards": admin_records,
+    }
+    write_artifact(GEOJSON_OUT, {"type": "FeatureCollection", "features": features}, compact=True)
+    ADMIN_OUT.write_text(json.dumps(seed, indent=2, ensure_ascii=False))
     print(f"Wrote {len(features)} features to {GEOJSON_OUT}")
-    print(f"Wrote {len(profiles)} ward profiles to {PROFILES_OUT}")
+    print(f"Wrote {len(admin_records)} admin seed records to {ADMIN_OUT}")
 
     expected = 369
     if len(profiles) != expected:

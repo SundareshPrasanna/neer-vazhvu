@@ -1,4 +1,43 @@
 {
+  "nvdm": "1.0",
+  "dataset": "geojson-layers/water-bodies-current",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap water-body polygons (Overpass extract, osmtogeojson assembly)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0"
+      },
+      {
+        "id": "atree-opencity-lakes-bengaluru",
+        "title": "ATREE-CSEI 'Map of Lakes in Bengaluru Urban and Rural Districts' KMZ (via OpenCity)",
+        "publisher": "ATREE-CSEI (via OpenCity)",
+        "license": "CC BY per OpenCity CKAN metadata (no version stated); not relied on as a grant, because OpenCity's site-wide terms contradict its per-dataset labels"
+      },
+      {
+        "id": "atree-opencity-lakes-bengaluru",
+        "title": "BBMP lake masterlist KML - 'Map of Lakes in Bengaluru Urban within BBMP Area' resource of the same OpenCity dataset (181 named polygons)",
+        "publisher": "ATREE-CSEI (via OpenCity)",
+        "license": "CC BY per OpenCity CKAN metadata (no version stated); not relied on as a grant, because OpenCity's site-wide terms contradict its per-dataset labels"
+      },
+      {
+        "id": "kwris-mi-tanks",
+        "title": "Karnataka WRIS Minor Irrigation tank register (GeoServer layer KA:MI_Tanks)",
+        "publisher": "Karnataka WRD (KWRIS)",
+        "license": "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-07-09",
+    "internal_inputs": [],
+    "produced_by": "scripts/fetch-water-bodies-osm-bangalore.ts + scripts/name-bangalore-water-bodies.py",
+    "note": "OSM geometry (incl. name_kn) with real lake names backfilled by priority-ordered spatial join - ATREE-CSEI KMZ, BBMP masterlist, KWRIS MI_Tanks points (snapshot 2026-07-09) - onto unnamed polygons; each backfilled feature carries name_source + name_match_iou/name_match_m and OSM-native names are never overwritten. Both polygon name sources are resources of the one registered OpenCity dataset (verified via CKAN package_show, 2026-07-30). Name-join inputs are raw files under scripts/data-raw/, hence internal_inputs []."
+  },
   "type": "FeatureCollection",
   "features": [
     {

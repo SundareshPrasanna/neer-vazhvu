@@ -25,7 +25,8 @@
  * cluster - Vandiyur etc. - falls in this category today).
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { resolve } from "path";
 
 const root = resolve(new URL(".", import.meta.url).pathname, "..");
@@ -446,9 +447,9 @@ function main() {
     river_sections: [],
     place_id: "madurai",
   };
-  writeFileSync(
+  writeArtifact(
     resolve(root, "public/data/restoration-priority-madurai.json"),
-    JSON.stringify(unifiedOutput, null, 2),
+    unifiedOutput,
   );
 
   // 2) Legacy /[cityId]/lake-restoration page is keyed off "bodies" and
@@ -469,9 +470,9 @@ function main() {
       rationale: s.rationale ?? "",
     })),
   };
-  writeFileSync(
+  writeArtifact(
     resolve(root, "public/data/restoration-priority-madurai-legacy.json"),
-    JSON.stringify(legacy, null, 2),
+    legacy,
   );
 
   console.log(

@@ -1,0 +1,57 @@
+{
+  "$id": "cgwb-stations.schema.json",
+  "title": "data-root/cgwb-stations contract (Tier A)",
+  "description": "CGWB/WRIS observation wells with reading series. provenance.conventions.sign is REQUIRED in practice: WRIS depth signs are programme-dependent and a naive reader WILL compute inverted trends (spec 7.5; the per-station sign rule).",
+  "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
+  "type": "object",
+  "required": ["wells"],
+  "properties": {
+    "depth_unit": { "type": "string" },
+    "year_book_summaries": {
+      "type": ["object", "array"],
+      "description": "CGWB Year Book district summaries. Promoted from per-city extension: present in 2+ cities (Madurai, Mumbai) - spec 6.3 promotion rule."
+    },
+    "aquifer": { "type": ["string", "object", "null"] },
+    "district": { "type": ["string", "null"] },
+    "well_type": { "type": ["string", "object", "null"] },
+    "quality_note": {
+      "type": "string",
+      "description": "Chemistry-panel caption (units, sampling vintage). Declared platform-wide in src/types/groundwater.ts CgwbStationsFile - contract completion 2026-07-30 (Mumbai migration), not a per-scope addition."
+    },
+    "series_label": {
+      "type": "string",
+      "description": "Short provenance label shown on each station panel (defaults to 'CGWB Year Book'; Delhi overrides - its series comes from the India-WRIS API). Declared platform-wide in src/types/groundwater.ts CgwbStationsFile - contract completion 2026-07-30."
+    },
+    "unit_label": {
+      "type": "string",
+      "description": "CGWB assessment-unit label ('block' in TN/KA, 'district' in Delhi). Declared platform-wide in src/types/groundwater.ts CgwbStationsFile - contract completion 2026-07-30."
+    },
+    "reading_kind": {
+      "type": "string",
+      "description": "Reading-cadence phrase for map headers ('seasonal readings' vs Delhi's 'monthly means'). Declared platform-wide in src/types/groundwater.ts CgwbStationsFile - contract completion 2026-07-30."
+    },
+    "cadence_note": {
+      "type": "string",
+      "description": "How the wells are actually read (manual seasonal vs telemetric). Declared platform-wide in src/types/groundwater.ts CgwbStationsFile - contract completion 2026-07-30."
+    },
+    "wells": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "lat", "lng", "readings"],
+        "properties": {
+          "name": { "type": "string" },
+          "station_code": { "type": "string" },
+          "block": { "type": ["string", "null"] },
+          "lat": { "type": "number" },
+          "lng": { "type": "number" },
+          "readings": {
+            "type": "array",
+            "description": "Series shape (spec 6.1): ISO dates, unit-suffixed depth keys."
+          }
+        }
+      }
+    }
+  }
+}

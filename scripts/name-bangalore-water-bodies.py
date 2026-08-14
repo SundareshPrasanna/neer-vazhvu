@@ -63,6 +63,8 @@ from shapely.geometry import MultiPolygon, Point, Polygon, shape
 from shapely.ops import transform as shp_transform
 from shapely.strtree import STRtree
 
+from nvdm_write import write_artifact
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = REPO_ROOT / "scripts" / "data-raw" / "bangalore"
 ATREE_KMZ = RAW_DIR / "atree-csei-bengaluru-urban-rural-lakes.kmz"
@@ -271,9 +273,10 @@ def main() -> None:
     if dry_run:
         print("[name-blr] --dry-run: not writing")
         return
-    # Match the source file's existing pretty-print so the diff is just the
-    # added name fields, not a whole-file reformat.
-    OSM_GEOJSON.write_text(json.dumps(fc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # Envelope-preserving write (scripts/nvdm_write.py): keeps the NVDM
+    # envelope and advances produced_at; indent=2 matches the file's
+    # existing pretty-print so the diff is the name fields, not a reformat.
+    write_artifact(OSM_GEOJSON, fc)
     print(f"[name-blr] wrote {OSM_GEOJSON.name}")
 
 

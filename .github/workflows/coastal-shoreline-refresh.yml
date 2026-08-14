@@ -1,10 +1,13 @@
 name: Coastal shoreline refresh
 
-# Recomputes the Chennai coastal shoreline-change transects
-# (public/geojson/chennai-coastal-transects.geojson) once a year, after the
-# Dec-May dry season is complete. The pipeline (app/gee/coastline.py) auto-
-# appends the new year's Sentinel-2 epoch via active_epoch_config(), so no code
-# edit is needed - the cron just picks up the latest complete dry season.
+# Recomputes the coastal shoreline-change transects
+# (public/geojson/<city>-coastal-transects.geojson, city matrix below) once a
+# year, after the Dec-May dry season is complete. The pipeline
+# (app/gee/coastline.py) auto-appends the new year's Sentinel-2 epoch via
+# active_epoch_config(), so no code edit is needed - the cron just picks up
+# the latest complete dry season. Mumbai joined the matrix 2026-07-31 (#220
+# review: the Mumbai layer claimed this refresh but the workflow only ran
+# Chennai).
 #
 # Cadence is YEARLY by design: the epochs are annual dry-season composites, so
 # re-running quarterly/half-yearly would recompute identical data. Mid-June is
@@ -27,6 +30,10 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        city: [chennai, mumbai]
     permissions:
       contents: write
       pull-requests: write
@@ -60,27 +67,34 @@ jobs:
       - name: Recompute shoreline transects
         env:
           GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
-        run: python scripts/run_gee_coastline.py build-geojson --write
+        run: python scripts/run_gee_coastline.py build-geojson --write --city ${{ matrix.city }}
+
+      - name: NVDM refresh gate (envelope must survive the rewrite)
+        working-directory: .
+        run: bash scripts/nvdm-refresh-gate.sh public/geojson/${{ matrix.city }}-coastal-transects.geojson
 
       - name: Open PR with the refreshed transects
         uses: peter-evans/create-pull-request@v6
         with:
-          title: "Coastal shoreline refresh (${{ github.run_id }})"
+          title: "Coastal shoreline refresh: ${{ matrix.city }} (${{ github.run_id }})"
           body: |
-            Annual recomputation of the Chennai coastal shoreline-change
-            transects (`public/geojson/chennai-coastal-transects.geojson`) from
-            the latest complete dry season.
+            Annual recomputation of the ${{ matrix.city }} coastal
+            shoreline-change transects
+            (`public/geojson/${{ matrix.city }}-coastal-transects.geojson`)
+            from the latest complete dry season.
 
             Please review before merging:
               - Sanity-check the new year's transects against the prior run
-                (overall erosion/accretion split, Zone V extremes, the
-                accelerating-erosion share). A bad cloud year can skew rates.
+                (overall erosion/accretion split, zone extremes, the
+                accelerating-erosion share). A bad cloud year can skew rates;
+                Mumbai's meso-to-macrotidal range adds positional noise the
+                per-transect confidence field flags.
               - Bump the `?v=` query on the GeoJSON fetch in
                 `src/components/coastal/coastal-map.tsx` so browsers/CDN don't
                 serve the stale copy.
 
             Method + validation: `docs/methodology/coastal-shoreline-change-v1.md`.
-          branch: coastal-shoreline-refresh-${{ github.run_id }}
-          add-paths: public/geojson/chennai-coastal-transects.geojson
-          commit-message: "Coastal shoreline refresh (annual dry-season epoch)"
+          branch: coastal-shoreline-refresh-${{ matrix.city }}-${{ github.run_id }}
+          add-paths: public/geojson/${{ matrix.city }}-coastal-transects.geojson
+          commit-message: "Coastal shoreline refresh: ${{ matrix.city }} (annual dry-season epoch)"
           delete-branch: true

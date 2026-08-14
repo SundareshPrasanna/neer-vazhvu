@@ -25,12 +25,14 @@ Usage:
 
 import argparse
 import gc
-import json
 import sys
 import tempfile
 import time
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 
 import numpy as np
 
@@ -222,7 +224,7 @@ def main() -> None:
     }
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(result, separators=(",", ":")))
+    write_artifact(output_path, result, compact=True)
     size_kb = output_path.stat().st_size / 1024
     print(f"\nWritten {output_path} ({size_kb:.0f} KB)")
     print(

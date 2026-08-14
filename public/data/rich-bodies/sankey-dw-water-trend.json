@@ -1,9 +1,30 @@
 {
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/dw-water-trend",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "google-dynamic-world",
+        "title": "Google Dynamic World built-up classification",
+        "publisher": "Google / World Resources Institute",
+        "license": "CC BY 4.0",
+        "role": "input"
+      }
+    ],
+    "method": "gee",
+    "produced_at": "2026-06-02",
+    "produced_by": "scripts/verify_rich_body_dw_water_trend.py",
+    "note": "Extends the JRC v1.4 water trend past its 2021 cutoff; spliced with JRC at 2021/2022 in the panel chart. Method and known_limitations in the legacy data_source key."
+  },
   "body_id": "sankey",
   "computed_at": "2026-06-02T15:14:56.215891+00:00",
   "data_source": {
     "dataset": "GOOGLE/DYNAMICWORLD/V1",
-    "license": "CC-BY-4.0",
+    "license": "CC BY 4.0",
     "version": "Dynamic World V1",
     "resolution_m": 10,
     "revisit_days": "2-5 (Sentinel-2)",

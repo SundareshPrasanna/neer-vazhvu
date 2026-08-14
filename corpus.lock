@@ -1,0 +1,20 @@
+{
+  "_doc": [
+    "Pins the private data repo commit that scripts/fetch-corpus.sh syncs into",
+    "public/data + public/geojson when CORPUS_SOURCE=remote. With",
+    "CORPUS_SOURCE unset or 'repo' this file is inert and the corpus comes",
+    "from the git checkout. The data repo's toolchain.lock is the",
+    "mirror-image pin in the other direction. Bump deliberately: deploys stay",
+    "reproducible and rolling back the site rolls back the data.",
+    "expected_files pins the per-root file counts at the locked commit - the",
+    "fetch script refuses to sync a corpus that does not match them, so a",
+    "missing or truncated root can never wipe the destination and report",
+    "success."
+  ],
+  "repo": "github.com/SundareshPrasanna/neer-vazhvu-data",
+  "sha": "bfc7a26d602a9c0d7abd6c4a42206262874cfc04",
+  "expected_files": {
+    "data": 383,
+    "geojson": 92
+  }
+}

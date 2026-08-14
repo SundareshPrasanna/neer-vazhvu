@@ -1,4 +1,53 @@
 {
+  "nvdm": "1.0",
+  "dataset": "cascade/cascades-documented",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "fabdem-dem",
+        "title": "FABDEM v1-2 30 m bare-earth DEM",
+        "publisher": "University of Bristol (Hawker et al.), via GEE sat-io",
+        "license": "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+        "role": "input"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap tank polygons / waterways (Overpass extract)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "hydrosheds-basins",
+        "title": "HydroSHEDS basin boundaries",
+        "publisher": "WWF / HydroSHEDS",
+        "license": "HydroSHEDS v1 bespoke WWF licence, not an open licence: the technical documentation s.7.1 states the core data are 'free for non-commercial and commercial use', but Appendix A s.2.1.2 bars distributing the Licensed Materials 'as a stand-alone product', s.2.2 makes the Exhibit B attribution mandatory (reproduced in DATA-LICENSE.md), and s.3 asserts that WWF 'shall own and retain all Intellectual Property Rights in the Licensed Materials and any modifications, extensions, or improvements of the Licensed Materials however developed'",
+        "role": "input"
+      },
+      {
+        "id": "sentinel-2-l2a",
+        "title": "Sentinel-2 L2A imagery (channel evidence)",
+        "publisher": "ESA Copernicus",
+        "license": "Copernicus free and open data, attribution required",
+        "role": "input"
+      },
+      {
+        "id": "google-dynamic-world",
+        "title": "Google Dynamic World built-up classification",
+        "publisher": "Google / World Resources Institute",
+        "license": "CC BY 4.0",
+        "role": "input"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/app/cascade/health.py",
+    "note": "Derived by the cascade reconstruction pipeline (neer-vazhvu-api/app/cascade). FABDEM input makes this family CC BY-NC-SA (non-commercial) encumbered - recorded in the fabdem-dem registry entry, 2026-07-30. Layer B named-cascade documentation is internal Neer Vazhvu curation over the auto topology; its own _sources_of_truth key (Nagendra OUP 2016, IISc CES 105-lake survey, NGT Forward Foundation OA 222/2014, JICA Phase 3, BWSSB historical records) carries the per-cascade citations - lineage, not an upstream source."
+  },
   "district_id": "bangalore",
   "schema_version": "v1",
   "note": "Hand-curated, source-cited documented cascade chains for Bengaluru. Four chains are surfaced today: the Koramangala-Challaghatta (K&C) foam cascade, the Yelahanka-Hebbal north cascade, the Vrishabhavathi west headwaters, and the Old-City Kempegowda heritage fragment. Each chain has an ordered tank list with OSM IDs (where the polygon is in our extract); the cascade health stage joins these against the terrain-derived graph and rich-body cohort to produce per-chain health scores in bangalore-cascades-health.json.",

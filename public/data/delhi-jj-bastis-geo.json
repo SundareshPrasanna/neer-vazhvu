@@ -1,4 +1,32 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/jj-bastis-geo",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "dusib-jj-bastis",
+        "title": "DUSIB JJ basti roster and coordinate PDFs",
+        "publisher": "Delhi Urban Shelter Improvement Board",
+        "license": "GNCTD publication, cited with attribution",
+        "as_of": "2022-09-16",
+        "retrieved": "2026-07-20"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-20",
+    "internal_inputs": [
+      "public/data/dusib-jj-bastis.json"
+    ],
+    "produced_by": "neer-vazhvu-api/scripts/build_delhi_jj_bastis_geo.py",
+    "note": "DUSIB's 675 JJ bastis as points from the Board's own coordinates PDF (sha256-pinned; the builder aborts on mismatch), joined to the household roster in dusib-jj-bastis.json on normalised location text.",
+    "conventions": {
+      "join": "match_method per cluster is exact / fuzzy (difflib >= 0.90, score recorded) / unmatched; unmatched points keep coordinates but carry NO household count rather than an inferred one"
+    }
+  },
   "_note": "DUSIB's 675 JJ bastis as point coordinates, parsed from the Board's own 'List of 675 J.J. Bastis with Latitude and Longitude' PDF (upload date 16-09-2022) and joined to the household roster in dusib-jj-bastis.json. All 675 records carry coordinates and all fall inside the Delhi NCT bounding box. Household counts come from the roster, which uses different serial numbering, so the join is on normalised location text: `match_method` is 'exact', 'fuzzy' (difflib ratio >= 0.90, score recorded) or 'unmatched'. Unmatched points keep their coordinates but carry no household count rather than an inferred one.",
   "source": {
     "label": "Delhi Urban Shelter Improvement Board (DUSIB)",

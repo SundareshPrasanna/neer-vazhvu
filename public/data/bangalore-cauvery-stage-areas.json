@@ -1,4 +1,24 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/cauvery-stage-areas",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "opencity-bwssb-cauvery-stage-areas",
+        "title": "BWSSB stage-wise Cauvery water-supply areas CSV (via OpenCity)",
+        "publisher": "BWSSB (via OpenCity)",
+        "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-06-03",
+    "produced_by": "scripts/convert-bangalore-cauvery-stage-areas.py",
+    "note": "BBMP-area name lists served by each Cauvery supply stage (Stages 1 - 4 Ph 2), converted from the OpenCity CSV (Windows-1252 source read latin-1, emitted UTF-8). Stage V (commissioned Oct 2024, the 110 added villages) is NOT in the upstream dataset yet - ingest when OpenCity publishes it (the registry entry watches for exactly that)."
+  },
   "stage_1": [
     "Nethajinagar",
     "Nagamma Nagar",

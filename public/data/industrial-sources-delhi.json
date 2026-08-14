@@ -1,4 +1,40 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/industrial-sources",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "dpcc-cetp-monthly-delhi",
+        "title": "DPCC CETP monthly analysis bundles 2019-2024 (via OpenCity)",
+        "publisher": "Delhi Pollution Control Committee (via OpenCity)",
+        "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
+        "as_of": "2024-11",
+        "retrieved": "2026-07-26"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap industrial-area/locality positions (Overpass)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-07-26",
+    "internal_inputs": [
+      "public/data/delhi-cetp-flows.json"
+    ],
+    "produced_by": "neer-vazhvu-api/scripts/build_delhi_industrial_sources.py",
+    "note": "Two record types by design: named industrial estates (zone_count comparable to other cities) and the 13 CETPs carrying DPCC's design-capacity vs measured-inflow evidence via delhi-cetp-flows.json. Delhi has no current per-unit polluter register (DPCC's public consent list ends July 2002) - this layer measures the treatment gap, not individual dischargers. CAUTION: the top-level `sources` key is the facility payload, not citations.",
+    "conventions": {
+      "series_end": "CETP flow series ends 2024-11 and is not live (_archival) - surfaces must say so next to the figures",
+      "coordinates": "no CETP is mapped in OSM; markers sit on the industrial area or locality each plant serves, never a surveyed plant position (location_precision per entry; SMA CETP has no coordinate and is excluded from the map)"
+    }
+  },
   "last_updated": "2026-07-26",
   "source": "CETP design capacity and measured flow: Delhi Pollution Control Committee monthly analysis reports (OCR-extracted, see delhi-cetp-flows.json). Locations: OpenStreetMap contributors (ODbL), via Overpass.",
   "_note": "Delhi's industrial layer carries two types. `industrial_estate` are named industrial areas, so the per-ward zone count means what it means in other cities. `cetp` are the 13 common effluent treatment plants, which carry the evidence: DPCC publishes each plant's design capacity and measured monthly inflow, and the shortfall between them is how much industrial effluent never reaches treatment. Delhi has no current per-unit register of polluters - DPCC's only public consent list ends in July 2002 - so this layer measures the treatment gap, not individual dischargers, and should not be read as a census of industry.",

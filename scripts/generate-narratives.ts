@@ -460,9 +460,11 @@ async function main() {
   // Monthly: also generate ward narratives
   if (isMonthly) {
     console.log("Loading ward profiles...");
-    const profiles = JSON.parse(
+    // Dual-shape during the NVDM migration: bare array or wrapped { wards: [...] }.
+    const profilesRaw = JSON.parse(
       readFileSync(resolve(root, "public/data/ward-profiles.json"), "utf8")
-    ) as WardProfile[];
+    );
+    const profiles = (Array.isArray(profilesRaw) ? profilesRaw : profilesRaw.wards) as WardProfile[];
 
     console.log(`Generating narratives for ${profiles.length} wards...`);
     const wardNarratives = await generateWardNarratives(profiles);

@@ -15,8 +15,9 @@
  * Run: npx tsx scripts/build-delhi-river-quality.ts
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
 import { join } from "path";
+import { writeArtifact } from "./lib/nvdm-write";
 
 interface MonthlyRiverRow {
   station: string;
@@ -127,7 +128,7 @@ const out = {
 };
 
 const outPath = join(root, "public/data/river-quality-delhi.json");
-writeFileSync(outPath, JSON.stringify(out, null, 1));
+writeArtifact(outPath, out);
 console.log(
   `wrote ${outPath}: ${stations.length} stations, years ${years.join(",")}, latest ${latest.month}`,
 );

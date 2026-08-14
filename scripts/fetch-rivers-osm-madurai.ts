@@ -12,7 +12,7 @@
  * Mirror of fetch-rivers-osm.ts; M4 will fold both into a place-aware script.
  */
 
-import { writeFileSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { join } from "path";
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
@@ -390,7 +390,7 @@ async function main() {
   };
 
   const outPath = join(process.cwd(), "public/geojson/madurai-rivers.geojson");
-  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+  writeArtifact(outPath, geojson);
 
   console.log(`\nWrote ${features.length} river features to public/geojson/madurai-rivers.geojson`);
   console.log("Rivers found:", features.map((f) => f.properties.river_id).join(", "));

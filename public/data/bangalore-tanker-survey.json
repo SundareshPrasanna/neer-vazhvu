@@ -1,9 +1,32 @@
 {
-  "_note": "Longitudinal summary of OpenCity Bengaluru Tanker Water surveys (2015, 2019, 2024). Schemas differ by year so not every field exists for every year; n= counts surface sample sizes per stat. License CC BY-NC 2.0. Surveys are apartment/community-level; rates reflect informal market not BWSSB Kaveriwheels official tariffs.",
+  "nvdm": "1.0",
+  "dataset": "data-root/tanker-survey",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "opencity-bengaluru-tanker-survey",
+        "title": "OpenCity Bengaluru Tanker Water surveys (2015, 2019, 2024 rounds)",
+        "publisher": "OpenCity (Bengaluru Tanker Water Survey)",
+        "license": "CC BY-NC-SA 4.0 (resource pages state the specific licence; the dataset-level label is the generic 'Creative Commons Non-Commercial (Any)'; verified 2026-07-30)",
+        "role": "input",
+        "as_of": "2024"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-07-30",
+    "internal_inputs": [],
+    "produced_by": "scripts/build-bangalore-tanker-summary.py",
+    "note": "Longitudinal medians/counts computed from the raw survey CSVs (2015, 2019, 2024) committed under scripts/data-raw/bangalore/ - raw inputs are not served artifacts, hence internal_inputs []. Schemas differ by round (n= sample sizes on every stat); 2025 round carried as _2025_context prose. LICENCE FLAG: CC BY-NC-SA 4.0 upstream - this summary is NON-COMMERCIAL and SHARE-ALIKE encumbered (registry licence corrected 2026-07-30)."
+  },
+  "_note": "Longitudinal summary of OpenCity Bengaluru Tanker Water surveys (2015, 2019, 2024). Schemas differ by year so not every field exists for every year; n= counts surface sample sizes per stat. License CC BY-NC-SA 4.0 (non-commercial, share-alike). Surveys are apartment/community-level; rates reflect informal market not BWSSB Kaveriwheels official tariffs.",
   "_source": {
     "name": "OpenCity Bengaluru Tanker Water Data",
     "url": "https://data.opencity.in/dataset/bengaluru-tanker-water-data",
-    "license": "CC BY-NC 2.0",
+    "license": "CC BY-NC-SA 4.0 (resource pages state the specific licence; the dataset-level label is the generic 'Creative Commons Non-Commercial (Any)'; verified 2026-07-30)",
     "extracted": "2026-05-24"
   },
   "_2025_context": {

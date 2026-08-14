@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import { internalServerError, logRouteError } from "@/lib/api-error";
+import { dataServiceUnavailable, internalServerError, isExplicitDemoMode, logRouteError } from "@/lib/api-error";
 import { generateMockWardHistory } from "@/lib/mock-data";
 
 const wardNamesPath = resolve(process.cwd(), "public/data/ward-names.json");
 const canonicalNames = new Map<number, string>(
-  (JSON.parse(readFileSync(wardNamesPath, "utf-8")) as { ward_number: number; zone_name: string }[])
-    .map((w) => [w.ward_number, `Ward ${w.ward_number}`])
+  (JSON.parse(readFileSync(wardNamesPath, "utf-8")) as {
+    wards: { ward_number: number; zone_name: string }[];
+  }).wards.map((w) => [w.ward_number, `Ward ${w.ward_number}`])
 );
 
 function isSupabaseConfigured(): boolean {
@@ -28,6 +29,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (!isSupabaseConfigured()) {
+    if (!isExplicitDemoMode()) return dataServiceUnavailable();
     return NextResponse.json(generateMockWardHistory(wardNumber));
   }
 
