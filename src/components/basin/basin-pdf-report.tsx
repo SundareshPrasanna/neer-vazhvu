@@ -37,6 +37,7 @@ import {
   ACC_VERDICT_LABEL,
   DEP_STATUS_LABEL,
   depThemeTitle,
+  withEpochAccents,
 } from "@/lib/basins/panel-labels";
 // Type-only: erased at compile time, so this module never pulls the Leaflet
 // component tree in at runtime (which also keeps it renderable in Node tests).
@@ -469,12 +470,17 @@ function PrsTabDetail({ tab }: { tab: PrsTab }) {
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 2 }}>
             <Text style={[s.h3, { flex: 1, fontSize: 9.5, marginBottom: 0 }]}>{c.label}</Text>
             {c.level && <Chip label={`Reported at: ${c.level}`} fg={C.muted} bg={C.slateChipBg} />}
+            {/* The honest gap is a marker, not a replacement: an author who can
+                say WHAT is missing keeps saying it below. */}
+            {c.noData && <Chip label="No known public data" fg={C.amber} bg={C.amberBg} />}
           </View>
-          {c.noData ? (
-            <Text style={s.small}>No known public data yet for {c.label} along this stretch.</Text>
-          ) : (
+          {(
             <>
-              {c.body && <Text style={[s.small, { color: C.text, marginBottom: 2 }]}>{c.body}</Text>}
+              {c.body ? (
+                <Text style={[s.small, { color: C.text, marginBottom: 2 }]}>{c.body}</Text>
+              ) : c.noData ? (
+                <Text style={s.small}>No known public data yet for {c.label} along this stretch.</Text>
+              ) : null}
               {c.points?.map((pt, i) => (
                 <Bullet key={i} color={C.rose}>
                   {pt}
@@ -552,11 +558,8 @@ function AccRegionBlock({ region, acc }: { region: AccRegion; acc: Accountabilit
 
 function PrsPages(p: BasinReportProps) {
   const prs = p.prs!;
-  const maxKm = Math.max(prs.comparison.y2020.length_km, prs.comparison.y2025.length_km) || 1;
-  const rows = [
-    { year: "2020", ...prs.comparison.y2020, accent: "#fb7185" },
-    { year: "2025", ...prs.comparison.y2025, accent: "#b91c1c" },
-  ];
+  const maxKm = Math.max(...prs.epochs.map((e) => e.length_km), 0) || 1;
+  const rows = withEpochAccents(prs.epochs);
   const stretchTabs = prs.tabs.filter((t) => t.scope === "stretch");
   const latestMpr = p.reviewedMpr?.editions.at(-1);
   return (
@@ -568,14 +571,22 @@ function PrsPages(p: BasinReportProps) {
       {/* Current status: 2020 vs 2025 */}
       <Text style={s.h2}>Current status</Text>
       {rows.map((r) => (
-        <View key={r.year} style={s.barRow} wrap={false}>
-          <Text style={s.barYear}>{r.year}</Text>
-          <View style={s.barTrack}>
-            <View style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
+        <View key={r.year} wrap={false}>
+          <View style={s.barRow}>
+            <Text style={s.barYear}>{r.year}</Text>
+            <View style={s.barTrack}>
+              <View style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
+            </View>
+            <Text style={s.barValue}>
+              {r.length_km} km · P{r.priority}
+            </Text>
           </View>
-          <Text style={s.barValue}>
-            {r.length_km} km · P{r.priority}
-          </Text>
+          {r.note && (
+            <Text style={[s.tiny, { marginLeft: 28, marginBottom: 2 }]}>
+              {r.notMapped ? "Not drawn on the map. " : ""}
+              {r.note}
+            </Text>
+          )}
         </View>
       ))}
       {prs.statusLine && (
