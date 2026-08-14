@@ -769,6 +769,9 @@ export const translations: Record<string, TranslationEntry> = {
   "rivers.north_chennai": { en: "North Chennai", ta: "வட சென்னை", kn: "ಉತ್ತರ ಚೆನ್ನೈ" },
   "rivers.south_chennai": { en: "South Chennai", ta: "தென் சென்னை", kn: "ದಕ್ಷಿಣ ಚೆನ್ನೈ" },
   "rivers.lower_ennore": { en: "Lower (Ennore)", ta: "கீழ் பகுதி (எண்ணூர்)", kn: "ಕೆಳಭಾಗ (ಎನ್ನೋರ್)" },
+  // en only. ta/kn deliberately left for the next translation pass rather
+  // than machine-filled; a missing language falls back to English by design.
+  "rivers.station_no_data": { en: "No CPCB readings published for this station" },
   "rivers_chart.no_readings": { en: "No readings available for this station", ta: "இந்த நிலையத்திற்கு அளவீட்டு தரவு இல்லை", kn: "ಈ ನಿಲ್ದಾಣಕ್ಕೆ ಮಾಪನಗಳು ಲಭ್ಯವಿಲ್ಲ" },
   "rivers_chart.do_min_label": { en: "DO min", ta: "DO குறைந்தபட்சம்", kn: "DO ಕನಿಷ್ಠ" },
   "rivers_chart.bod_clean_label": { en: "BOD clean", ta: "BOD சுத்த நிலை", kn: "BOD ಸ್ವಚ್ಛ ಮಟ್ಟ" },

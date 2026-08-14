@@ -363,7 +363,7 @@ export function RiverPanel({
                   }
                   setFallbackStationId(station.id);
                 }}
-                title={hasReadings ? undefined : t("rivers.station_no_data") || "No CPCB readings published for this station"}
+                title={hasReadings ? undefined : t("rivers.station_no_data")}
                 className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
                   activeStationId === station.id
                     ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900"

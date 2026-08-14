@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
+import { liveCityList } from "@/lib/cities/roster";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Neer Vazhvu - Urban Water Intelligence",
     short_name: "Neer Vazhvu",
     description:
-      "Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, and water bodies across Indian cities - Chennai, Madurai, and onboarding Bengaluru.",
+      `Open-source platform tracking reservoirs, groundwater, river health, flood risk, ` +
+      `drainage, and water bodies across Indian cities - ${liveCityList()}.`,
     start_url: "/",
     display: "standalone",
     background_color: "#0f172a",

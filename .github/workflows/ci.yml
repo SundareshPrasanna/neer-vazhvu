@@ -99,6 +99,15 @@ jobs:
 
       - run: npm ci
 
+      # Same class as the root-scripts ruff step below: a check nobody runs is
+      # a check that rots. check-i18n sat broken for an unknown number of
+      # months because it lived only in package.json - it was hand-stripping
+      # TypeScript with literal string replacement and died on the first
+      # `export` once the dictionary grew past en/ta. Needs no secrets and no
+      # corpus, so it belongs here.
+      - name: Translation dictionary is complete and every used key exists
+        run: npm run i18n:check
+
       # scripts/ is outside the API's ruff run, so a producer could ship a
       # NameError and no job would notice - which is how three did.
       - name: Root scripts parse and reference only defined names
