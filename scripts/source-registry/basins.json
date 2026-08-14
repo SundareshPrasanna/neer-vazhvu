@@ -18,7 +18,8 @@
       "dependsOn": [
         "public/data/basins/arkavathi/prs.json",
         "public/data/basins/arkavathi/gaps.json",
-        "public/data/basins/kabini/accountability.json"
+        "public/data/basins/kabini/accountability.json",
+        "public/data/basins/kabini/prs.json"
       ],
       "refreshMethod": "scripts/refresh-arkavathi-mpr.ts (--status / --extract / --diff), driven by the headwaters-refresh skill",
       "playbook": [
@@ -676,7 +677,15 @@
         "public/data/basins/kabini/rivers.geojson",
         "public/data/basins/kabini/sub-hydrosheds.geojson",
         "public/data/basins/kabini/gaps.geojson",
-        "public/data/basins/kabini/inventory.json"
+        "public/data/basins/kabini/inventory.json",
+        "public/data/basins/kabini/drainage.geojson",
+        "public/data/basins/kabini/waterbodies-major.geojson",
+        "public/data/basins/kabini/waterbodies-minor.geojson",
+        "public/data/basins/kabini/prs.geojson",
+        "public/data/basins/kabini/admin-district.geojson",
+        "public/data/basins/kabini/admin-taluk.geojson",
+        "public/data/basins/kabini/admin-town.geojson",
+        "public/data/basins/kabini/elevation-bands.geojson"
       ],
       "refreshMethod": "scripts/ingest_basin_overview.py for cauvery-ka, then scripts/build_kabini_sources.py -> ingest_basin.py -> build_basin_flow_readings.py for the Kabini carry-over (order matters: re-ingest wipes hasReadings)"
     }
