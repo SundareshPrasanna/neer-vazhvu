@@ -133,6 +133,8 @@ const s = StyleSheet.create({
   titleRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
   title: { fontSize: 19, fontFamily: "Helvetica-Bold", lineHeight: 1.15 },
   brand: { fontSize: 9, color: C.muted, textAlign: "right", lineHeight: 1.3 },
+  brandRow: { flexDirection: "row", alignItems: "center", gap: 5 },
+  brandIcon: { width: 20, height: 20 },
   collabRow: { flexDirection: "row", alignItems: "center", marginTop: 6 },
   collabLabel: { fontSize: 8.5, color: C.muted, marginRight: 6, lineHeight: 1.2 },
   collabLogo: { height: 22, objectFit: "contain" },
@@ -325,7 +327,11 @@ function MapPage(p: BasinReportProps) {
             </View>
           )}
         </View>
-        <Text style={s.brand}>Neer Vazhvu{"\n"}neervazhvu.org</Text>
+        <View style={s.brandRow}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt prop */}
+          <Image src={`${p.origin}/icon-192.png`} style={s.brandIcon} />
+          <Text style={s.brand}>Neer Vazhvu{"\n"}neervazhvu.org</Text>
+        </View>
       </View>
       <Text style={s.metaLine}>
         Generated {p.generatedAt} · Scope: {p.scopeLabel} · Map and layer selection exactly as configured in the atlas at export.
