@@ -1,0 +1,87 @@
+{
+  "basinId": "kabini",
+  "sourceDir": ".cache/kabini-sources",
+  "outDir": "public/data/basins/kabini",
+  "sources": [
+    {
+      "file": "kabini-boundary.geojson",
+      "family": "boundary",
+      "fields": { "name": "name" },
+      "provenance": "Karnataka WRD basin decomposition (KWRIS), sub-basin C2 polygon carried over from the cauvery-ka overview ingest."
+    },
+    {
+      "file": "kabini-sheds.geojson",
+      "family": "sub-hydrosheds",
+      "fields": { "shedId": "shedId", "name": "name" },
+      "provenance": "Single shed equal to the KWRIS C2 boundary - finer sub-hydrosheds are a later-phase unlock."
+    },
+    {
+      "file": "kabini-rivers.geojson",
+      "family": "rivers",
+      "fields": { "riverId": "riverId", "name": "name" },
+      "provenance": "KWRIS stream segments of sub-basin C2 (11 segments, ~323 km) carried over from the cauvery-ka overview ingest."
+    },
+    {
+      "file": "kiadb-areas.geojson",
+      "family": "pressures-industrial",
+      "fields": { "name": "industryname" },
+      "literal": { "kind": "industrial-area" },
+      "provenance": "KIADB industrial areas (KGIS), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
+    },
+    {
+      "file": "kiadb-points.geojson",
+      "family": "pressures-industrial",
+      "fields": { "name": "industryname" },
+      "literal": { "kind": "industrial-area-point" },
+      "provenance": "KIADB industrial area points (KGIS), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
+    },
+    {
+      "file": "quarries.geojson",
+      "family": "pressures-quarries",
+      "fields": { "name": "name", "mineral": "mineral", "operator": "operator" },
+      "literal": { "kind": "quarry" },
+      "provenance": "Quarry polygons digitised from OpenStreetMap (© OpenStreetMap contributors, ODbL), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
+    },
+    {
+      "file": "forests.geojson",
+      "family": "forests",
+      "fields": { "name": "FOREST_NAM", "status": "FL_STATUS" },
+      "literal": { "kind": "notified-forest" },
+      "provenance": "KGIS notified forest boundaries, via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
+    },
+    {
+      "file": "protected-areas.geojson",
+      "family": "protected-areas",
+      "fields": { "name": "WLS_Name", "division": "DIVISION" },
+      "literal": { "kind": "protected-area" },
+      "provenance": "KGIS protected area boundaries (KFDC), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
+    },
+    {
+      "file": "command-areas.geojson",
+      "family": "command-areas",
+      "fields": { "name": "cname", "areaHa": "area_ha" },
+      "provenance": "India-WRIS irrigation command areas, via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
+    },
+    {
+      "file": "dams.geojson",
+      "family": "infrastructure",
+      "fields": { "name": "name", "river": "river", "operator": "operated_maintained", "purpose": "purpose", "completionYear": "completionyear" },
+      "literal": { "kind": "dam" },
+      "provenance": "CWC dam register points, via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
+    },
+    {
+      "file": "cwc-sites.geojson",
+      "family": "flow-stations",
+      "fields": { "stationKey": "site_code_", "name": "stationnam", "siteType": "site_type", "river": "river" },
+      "literal": { "agency": "CWC", "hasReadings": false },
+      "provenance": "CWC hydrological observation sites, via Paani Earth Cauvery GIS package (Aug 2026). hasReadings + packs are attached by scripts/build_basin_flow_readings.py from India-WRIS pulls."
+    },
+    {
+      "file": "nwmp-sites.geojson",
+      "family": "monitoring-points",
+      "fields": { "stationKey": "station_code", "name": "station_name", "agency": "agency_name", "district": "district_name" },
+      "literal": { "purpose": "NWMP water quality" },
+      "provenance": "CPCB NWMP monitoring stations (WRIS station registry), via Paani Earth Cauvery GIS package (Aug 2026); stations within the Kabini boundary."
+    }
+  ]
+}
