@@ -54,6 +54,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 BASE = "http://emis.wbpcb.gov.in/waterquality"
@@ -154,7 +155,9 @@ def parse_stations(html: str) -> list[dict]:
         if not code or not label:
             continue
         kind, _, rest = label.partition("-")
-        rest = re.sub(r"\((?:Kolkata|[^)]*Parganas[^)]*|Hooghly|Howrah|Nadia)\)\s*$", "", rest).strip()
+        rest = re.sub(
+            r"\((?:Kolkata|[^)]*Parganas[^)]*|Hooghly|Howrah|Nadia)\)\s*$", "", rest
+        ).strip()
         phase = None
         m = re.search(r"\((High|Low) Tide\)", rest, re.I)
         if m:
@@ -263,8 +266,12 @@ def display_name(name: str) -> str:
     """Title-case the shouty ones; leave already-mixed-case names alone."""
     # The portal truncates long names mid-word, so a trailing ", WES" or
     # ", WEST BENGA" is common - match the prefix, not the full word.
-    cleaned = re.sub(r",\s*(W(E(S(T)?)?)?(\s*BENG\w*)?|CALCUTTA|KOLKATA)\s*$", "", name, flags=re.I)
-    cleaned = re.sub(r",\s*(WEST BENG\w*|CALCUTTA|KOLKATA)\b", "", cleaned, flags=re.I).strip(" ,")
+    cleaned = re.sub(
+        r",\s*(W(E(S(T)?)?)?(\s*BENG\w*)?|CALCUTTA|KOLKATA)\s*$", "", name, flags=re.I
+    )
+    cleaned = re.sub(
+        r",\s*(WEST BENG\w*|CALCUTTA|KOLKATA)\b", "", cleaned, flags=re.I
+    ).strip(" ,")
     cleaned = re.sub(r"\s+NATIONAL LAKE\b", "", cleaned, flags=re.I)
     cleaned = re.sub(r"\bRABINDRASAROVAR\b", "Rabindra Sarobar", cleaned, flags=re.I)
     cleaned = re.sub(r"\bSUBHAS(H)? SAROVAR\b", "Subhas Sarobar", cleaned, flags=re.I)
@@ -272,7 +279,9 @@ def display_name(name: str) -> str:
         cleaned = cleaned.title()
         # Title-case turns "GANGA AT GARDEN REACH" into "Ganga At Garden
         # Reach"; put the small words back down.
-        cleaned = re.sub(r"\b(At|Of|In|On|The|And)\b", lambda m: m.group(1).lower(), cleaned)
+        cleaned = re.sub(
+            r"\b(At|Of|In|On|The|And)\b", lambda m: m.group(1).lower(), cleaned
+        )
     cleaned = re.sub(r"\s+", " ", cleaned).replace("Dakshmineswar", "Dakshineswar")
     for pat, canon in CANONICAL:
         cleaned = pat.sub(canon, cleaned)
@@ -328,9 +337,24 @@ RIVER_META = {
         "description": "Drains the East Kolkata Wetlands eastward towards the Sundarbans.",
         "notes": "Its silting up in the early twentieth century created the wetland fishery system that now treats 910 MLD of Kolkata's sewage.",
     },
-    "lakes": {"length_km": None, "cpcb_class": None, "description": "Lakes and ponds sampled under the same WBPCB programme.", "notes": None},
-    "groundwater": {"length_km": None, "cpcb_class": None, "description": "WBPCB groundwater monitoring points, sampled under the same programme.", "notes": "Groundwater samples carry no DO or BOD - a different parameter set from the river stations."},
-    "other": {"length_km": None, "cpcb_class": None, "description": None, "notes": None},
+    "lakes": {
+        "length_km": None,
+        "cpcb_class": None,
+        "description": "Lakes and ponds sampled under the same WBPCB programme.",
+        "notes": None,
+    },
+    "groundwater": {
+        "length_km": None,
+        "cpcb_class": None,
+        "description": "WBPCB groundwater monitoring points, sampled under the same programme.",
+        "notes": "Groundwater samples carry no DO or BOD - a different parameter set from the river stations.",
+    },
+    "other": {
+        "length_km": None,
+        "cpcb_class": None,
+        "description": None,
+        "notes": None,
+    },
 }
 
 
@@ -350,13 +374,18 @@ def run(districts, max_samples, sleep_s):
     stations, samples_by_station = [], {}
 
     for dcode in districts:
-        html = post(op, "showwqprevdata.do", {"viewdistcode": dcode, "station_types": "R"})
+        html = post(
+            op, "showwqprevdata.do", {"viewdistcode": dcode, "station_types": "R"}
+        )
         st = parse_stations(html)
         for s in st:
             s["district"] = DISTRICTS.get(dcode, dcode)
             s["district_code"] = dcode
         stations.extend(st)
-        print(f"  district {dcode} ({DISTRICTS.get(dcode)}): {len(st)} stations", file=sys.stderr)
+        print(
+            f"  district {dcode} ({DISTRICTS.get(dcode)}): {len(st)} stations",
+            file=sys.stderr,
+        )
         time.sleep(sleep_s)
 
     total_details = 0
@@ -478,7 +507,13 @@ def main() -> int:
         return 1
 
     rivers = build(stations, samples)
-    years = [r["year"] for rv in rivers for s in rv["stations"] for r in s["readings"] if r.get("year")]
+    years = [
+        r["year"]
+        for rv in rivers
+        for s in rv["stations"]
+        for r in s["readings"]
+        if r.get("year")
+    ]
     out = {
         "last_updated": date.today().isoformat(),
         "data_year_range": [min(years), max(years)] if years else None,

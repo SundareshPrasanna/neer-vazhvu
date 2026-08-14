@@ -63,6 +63,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 GEO_DIR = REPO_ROOT / "public" / "geojson"
 

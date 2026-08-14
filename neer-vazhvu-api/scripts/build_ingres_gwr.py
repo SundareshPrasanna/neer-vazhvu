@@ -50,6 +50,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 API = "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen"
@@ -147,7 +148,7 @@ def main() -> int:
             if name not in wanted:
                 continue
             hits += 1
-            cat = (r.get("category") or {})
+            cat = r.get("category") or {}
             entry = by_district.setdefault(
                 wanted[name],
                 {"district": wanted[name], "ingres_name": name, "history": []},
@@ -170,10 +171,16 @@ def main() -> int:
                     "env_flows_ham": total_of(r.get("envFlows")),
                 }
             )
-        print(f"  {year}: {len(rows)} rows, {hits} of {len(wanted)} target districts", file=sys.stderr)
+        print(
+            f"  {year}: {len(rows)} rows, {hits} of {len(wanted)} target districts",
+            file=sys.stderr,
+        )
 
     if not by_district:
-        print("no districts matched - check the IN-GRES spellings in CITIES", file=sys.stderr)
+        print(
+            "no districts matched - check the IN-GRES spellings in CITIES",
+            file=sys.stderr,
+        )
         return 1
 
     districts = sorted(by_district.values(), key=lambda d: d["district"])
@@ -181,7 +188,11 @@ def main() -> int:
         d["history"].sort(key=lambda h: h["year"])
         d["latest"] = d["history"][-1] if d["history"] else None
 
-    saline = [d["district"] for d in districts if d["latest"] and not d["latest"]["assessed_on_extraction"]]
+    saline = [
+        d["district"]
+        for d in districts
+        if d["latest"] and not d["latest"]["assessed_on_extraction"]
+    ]
 
     out = {
         "place_id": args.city,
@@ -217,7 +228,10 @@ def main() -> int:
     )
     for d in districts:
         lt = d["latest"] or {}
-        print(f"    {d['district']:22} {str(lt.get('category')):16} {lt.get('year')}", file=sys.stderr)
+        print(
+            f"    {d['district']:22} {str(lt.get('category')):16} {lt.get('year')}",
+            file=sys.stderr,
+        )
     return 0
 
 

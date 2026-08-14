@@ -48,6 +48,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 BASE = "https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
@@ -104,7 +105,9 @@ def fetch(state, district, page, size=9000, tries=4):
         }
     )
     req = urllib.request.Request(
-        f"{BASE}?{q}", method="POST", headers={"User-Agent": UA, "Accept": "application/json"}
+        f"{BASE}?{q}",
+        method="POST",
+        headers={"User-Agent": UA, "Accept": "application/json"},
     )
     for a in range(tries):
         try:
@@ -134,7 +137,13 @@ def collect(state, districts, max_pages=25):
             time.sleep(0.5)
         # WRIS echoes district names in its own casing ("Hooghly" for a
         # "HOOGHLY" query), so compare case-insensitively or the count reads 0.
-        stations = len({r.get("stationCode") for r in rows if (r.get("district") or "").upper() == d.upper()})
+        stations = len(
+            {
+                r.get("stationCode")
+                for r in rows
+                if (r.get("district") or "").upper() == d.upper()
+            }
+        )
         print(f"  {d:22} {got_d:7} rows  {stations:4} stations", file=sys.stderr)
     return rows
 
@@ -227,7 +236,9 @@ def build(rows):
                 "well_type": meta.get("wellType"),
                 "aquifer_type": meta.get("wellAquiferType"),
                 "well_depth_m": meta.get("wellDepth"),
-                "sign_convention": "negative-down (flipped)" if code in SIGN_FLIPPED else "positive-down",
+                "sign_convention": "negative-down (flipped)"
+                if code in SIGN_FLIPPED
+                else "positive-down",
                 "readings": readings,
                 "depth_min_m_bgl": round(min(depths), 2),
                 "depth_max_m_bgl": round(max(depths), 2),
@@ -261,7 +272,9 @@ def district_liveness(stations, today: str):
                 "days_since": days,
                 # Quarterly-ish manual networks legitimately lag; a year of
                 # silence is a dead feed, not a slow one.
-                "status": "live" if days <= 120 else ("lagging" if days <= 365 else "stale"),
+                "status": "live"
+                if days <= 120
+                else ("lagging" if days <= 365 else "stale"),
             }
         )
     return out
@@ -270,16 +283,24 @@ def district_liveness(stations, today: str):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--city", default="kolkata", choices=sorted(CITIES))
-    ap.add_argument("--kma", action="store_true", help="all KMA districts, not just the core")
+    ap.add_argument(
+        "--kma", action="store_true", help="all KMA districts, not just the core"
+    )
     args = ap.parse_args()
 
     cfg = CITIES[args.city]
     districts = cfg["kma_districts"] if args.kma else cfg["core_districts"]
-    print(f"India-WRIS CGWB: {cfg['state']} / {len(districts)} districts, {START}..{END}", file=sys.stderr)
+    print(
+        f"India-WRIS CGWB: {cfg['state']} / {len(districts)} districts, {START}..{END}",
+        file=sys.stderr,
+    )
 
     rows = collect(cfg["state"], districts)
     if not rows:
-        print("no rows - check mandatory params (blank district returns zero)", file=sys.stderr)
+        print(
+            "no rows - check mandatory params (blank district returns zero)",
+            file=sys.stderr,
+        )
         return 1
 
     stations = build(rows)
@@ -314,8 +335,12 @@ def main() -> int:
             "stations": len(stations),
             "stations_with_readings": sum(1 for s in stations if s["readings"]),
             "monthly_readings": sum(len(s["readings"]) for s in stations),
-            "depth_min_m_bgl": round(min(s["depth_min_m_bgl"] for s in stations), 2) if stations else None,
-            "depth_max_m_bgl": round(max(s["depth_max_m_bgl"] for s in stations), 2) if stations else None,
+            "depth_min_m_bgl": round(min(s["depth_min_m_bgl"] for s in stations), 2)
+            if stations
+            else None,
+            "depth_max_m_bgl": round(max(s["depth_max_m_bgl"] for s in stations), 2)
+            if stations
+            else None,
         },
         "district_liveness": liveness,
         "notes": [
@@ -338,7 +363,10 @@ def main() -> int:
         file=sys.stderr,
     )
     for d in liveness:
-        print(f"    {d['district']:22} {d['stations']:4} st  last {d['last_reading']}  {d['status']}", file=sys.stderr)
+        print(
+            f"    {d['district']:22} {d['stations']:4} st  last {d['last_reading']}  {d['status']}",
+            file=sys.stderr,
+        )
     return 0
 
 

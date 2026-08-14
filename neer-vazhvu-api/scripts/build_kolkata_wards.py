@@ -89,6 +89,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 GEO_DIR = REPO_ROOT / "public" / "geojson"
 DATA_DIR = REPO_ROOT / "public" / "data"
 
@@ -124,7 +125,10 @@ def borough_map_from_register() -> dict[int, str]:
     evidence, partial coverage: only the wards KMC sent machines to appear."""
     path = DATA_DIR / "kolkata-waterlogging-register.json"
     if not path.exists():
-        print("  (no waterlogging register yet - borough field will be empty)", file=sys.stderr)
+        print(
+            "  (no waterlogging register yet - borough field will be empty)",
+            file=sys.stderr,
+        )
         return {}
     reg = json.loads(path.read_text())
     votes: dict[int, dict[str, int]] = defaultdict(lambda: defaultdict(int))
@@ -183,7 +187,9 @@ def main() -> int:
                     # contiguous ward ranges, so interpolation would invent
                     # administrative facts.
                     "borough": boroughs.get(ward),
-                    "borough_source": "KMC weekly drainage register" if ward in boroughs else None,
+                    "borough_source": "KMC weekly drainage register"
+                    if ward in boroughs
+                    else None,
                 },
                 "geometry": geom,
             }
@@ -208,7 +214,9 @@ def main() -> int:
             "Ward-level surfaces must treat this as partial coverage, not as the city."
         ),
         "_borough_coverage": {
-            "wards_with_borough": sum(1 for f in features if f["properties"]["borough"]),
+            "wards_with_borough": sum(
+                1 for f in features if f["properties"]["borough"]
+            ),
             "of": len(features),
             "source": "KMC weekly drainage activity chart (Br./Wd column)",
             "note": (

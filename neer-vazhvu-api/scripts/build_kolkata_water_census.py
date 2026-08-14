@@ -37,6 +37,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 GEO_DIR = REPO_ROOT / "public" / "geojson"
 
 KML_URL = (
@@ -81,7 +82,10 @@ def main() -> int:
             {
                 "type": "Feature",
                 "properties": props,
-                "geometry": {"type": "Point", "coordinates": [round(lng, 6), round(lat, 6)]},
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [round(lng, 6), round(lat, 6)],
+                },
             }
         )
 

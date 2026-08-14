@@ -53,6 +53,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 PDF_URL = "https://www.kmcgov.in/KMCPortal/downloads/Weekly_Drainage_Activity_Chart.pdf"
 DEFAULT_OUT = REPO_ROOT / "public" / "data" / "kolkata-waterlogging-register.json"
 
@@ -164,9 +165,7 @@ def parse(text: str) -> dict:
 
         # Locate the ward cell; without one this is either a header or the
         # wrapped tail of the previous location.
-        ward_idx = next(
-            (i for i, c in enumerate(cells) if WARD_CELL.match(c)), None
-        )
+        ward_idx = next((i for i, c in enumerate(cells) if WARD_CELL.match(c)), None)
         if ward_idx is None:
             if (
                 entries
@@ -235,16 +234,15 @@ def parse(text: str) -> dict:
         "period": {"from": period_from, "to": period_to},
         "entries": entries,
         "by_ward": sorted(
-            by_ward.values(), key=lambda r: (-len(r["pockets"]), r["borough"], r["ward"])
+            by_ward.values(),
+            key=lambda r: (-len(r["pockets"]), r["borough"], r["ward"]),
         ),
         "summary": {
             "rows": len(entries),
             "distinct_pockets": len(pockets),
             "wards_touched": len(by_ward),
             "boroughs_touched": len({e["borough"] for e in entries if e["borough"]}),
-            "machine_deployments": sum(
-                sum(e["machines"].values()) for e in entries
-            ),
+            "machine_deployments": sum(sum(e["machines"].values()) for e in entries),
         },
     }
 

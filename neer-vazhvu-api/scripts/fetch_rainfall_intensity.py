@@ -40,6 +40,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 # City centre coordinates - keep in lockstep with src/lib/cities/*.ts.
@@ -142,7 +143,9 @@ def run_city(city: str, start_year: int, anchor: int) -> bool:
     complete_years = [y for y in years if y < date.today().year]
 
     anchor_rows = [
-        r for r in rows if r["threshold_mm_per_hour"] == anchor and r["year"] in complete_years
+        r
+        for r in rows
+        if r["threshold_mm_per_hour"] == anchor and r["year"] in complete_years
     ]
     mean_hours = (
         round(sum(r["hours"] for r in anchor_rows) / len(anchor_rows), 1)

@@ -38,6 +38,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 SRC = {
@@ -129,11 +130,14 @@ def commitment(p):
             f"at {p['progress_pct']}% physical progress, with topographical survey and manhole-data "
             f"collection under way."
         )
-        status, note = "on-track", (
-            f"Awarded and commenced; {p['progress_pct']}% physical progress at the first reporting date"
+        status, note = (
+            "on-track",
+            (
+                f"Awarded and commenced; {p['progress_pct']}% physical progress at the first reporting date"
+            ),
         )
     else:
-        what = f"{p['scope']}. {p.get('status_note','')}.{contractor}"
+        what = f"{p['scope']}. {p.get('status_note', '')}.{contractor}"
         status, note = "unverified", p.get("status_note", "Not yet awarded")
 
     return {

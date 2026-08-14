@@ -36,6 +36,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 SOURCE = {
@@ -245,9 +246,13 @@ def validate() -> list[str]:
     # KMC's stated 22.21% is against a denominator it does not name. 311/1400 is
     # 22.21%, so the denominator is total generation - worth pinning, because it
     # means "untreated" is a share of ALL sewage, not of what reaches a plant.
-    pct = round(100 * BALANCE["untreated_or_partial_mld"] / BALANCE["total_generated_mld"], 2)
+    pct = round(
+        100 * BALANCE["untreated_or_partial_mld"] / BALANCE["total_generated_mld"], 2
+    )
     if abs(pct - BALANCE["untreated_pct_stated"]) > 0.01:
-        errs.append(f"311/1400 = {pct}%, document states {BALANCE['untreated_pct_stated']}%")
+        errs.append(
+            f"311/1400 = {pct}%, document states {BALANCE['untreated_pct_stated']}%"
+        )
 
     gap = round(STATED_UPCOMING_TOTAL_MLD - BALANCE["untreated_or_partial_mld"], 2)
     if round(abs(gap), 2) != STATED_RESIDUAL_GAP_MLD:
@@ -265,7 +270,8 @@ def build_balance() -> dict:
         "source": SOURCE,
         "balance": BALANCE,
         "ekw_share_pct": round(
-            100 * BALANCE["treated_ekw_fisheries_mld"] / BALANCE["total_generated_mld"], 1
+            100 * BALANCE["treated_ekw_fisheries_mld"] / BALANCE["total_generated_mld"],
+            1,
         ),
         "ekw_vs_stp_ratio": round(
             BALANCE["treated_ekw_fisheries_mld"] / BALANCE["treated_stps_mld"], 1
@@ -297,7 +303,12 @@ def build_commitments() -> dict:
         if not stp["due"]:
             continue
         slug = (
-            stp["name"].lower().replace(" ", "-").replace(",", "").replace("(", "").replace(")", "")
+            stp["name"]
+            .lower()
+            .replace(" ", "-")
+            .replace(",", "")
+            .replace("(", "")
+            .replace(")", "")
         )[:40].strip("-")
         commitments.append(
             {
@@ -348,9 +359,7 @@ def build_commitments() -> dict:
     # so it never became a tracked commitment. A February 2026 ADB-disclosed IEE
     # gives it one - which is exactly the dated citation the register requires
     # before a status can move.
-    u = next(
-        (s["update_2026"] for s in UPCOMING_STPS if s.get("update_2026")), None
-    )
+    u = next((s["update_2026"] for s in UPCOMING_STPS if s.get("update_2026")), None)
     if u:
         commitments.append(
             {
@@ -433,7 +442,10 @@ def build_commitments() -> dict:
 def main() -> int:
     errs = validate()
     if errs:
-        print("TRANSCRIPTION CHECK FAILED against the document's own totals:", file=sys.stderr)
+        print(
+            "TRANSCRIPTION CHECK FAILED against the document's own totals:",
+            file=sys.stderr,
+        )
         for e in errs:
             print(f"  - {e}", file=sys.stderr)
         return 1

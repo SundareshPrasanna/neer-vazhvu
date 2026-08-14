@@ -33,6 +33,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 WIKI_RS = "https://en.wikipedia.org/wiki/Rabindra_Sarobar"
@@ -121,8 +122,7 @@ def flagship():
             "status": (
                 "About 73 acres including the surrounding parkland. Suffers encroachment and "
                 "irregular maintenance; desilting, aeration and community programmes have been "
-                "run at various points."
-                + wq_sentence(ss, "Subhas Sarobar")
+                "run at various points." + wq_sentence(ss, "Subhas Sarobar")
             ),
             "cultural_note": (
                 "The eastern counterpart to Rabindra Sarobar, and the second of the two lakes "

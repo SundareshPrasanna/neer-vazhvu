@@ -28,6 +28,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 DEP = "https://www.kmcgov.in/KMCPortal/downloads/EnvironmentPlan_KMC_2021.pdf"
@@ -357,7 +358,10 @@ def allocations():
                     "year": None,
                     "note": "Neither KMC nor Bidhannagar publishes a delivered-volume series. The entitlement is on paper; the realisation is not observable.",
                 },
-                "instrument": {"label": "KMC Water Supply Department, bulk supply listing", "url": WD},
+                "instrument": {
+                    "label": "KMC Water Supply Department, bulk supply listing",
+                    "url": WD,
+                },
                 # medium, not high: the figure is published by the seller on a page
                 # that is itself labelled draft and dated 2013. Real, but not audited.
                 "confidence": "medium",
@@ -382,7 +386,10 @@ def allocations():
                     "year": None,
                     "note": "No delivered-volume series is published by either party.",
                 },
-                "instrument": {"label": "KMC Water Supply Department, bulk supply listing", "url": WD},
+                "instrument": {
+                    "label": "KMC Water Supply Department, bulk supply listing",
+                    "url": WD,
+                },
                 "confidence": "medium",
                 "note": "Drawn from Garden Reach rather than Palta, so a different plant carries it.",
             },
@@ -460,8 +467,8 @@ def main() -> int:
     for x in f["facts"]:
         tiers[x["tier"]] = tiers.get(x["tier"], 0) + 1
     print(
-        f"kolkata: {len(f['facts'])} facts (tier1={tiers.get(1,0)} tier2={tiers.get(2,0)} "
-        f"tier3={tiers.get(3,0)}), 2 allocation arrangements, 5 named gaps"
+        f"kolkata: {len(f['facts'])} facts (tier1={tiers.get(1, 0)} tier2={tiers.get(2, 0)} "
+        f"tier3={tiers.get(3, 0)}), 2 allocation arrangements, 5 named gaps"
     )
     return 0
 
