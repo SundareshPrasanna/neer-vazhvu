@@ -192,6 +192,11 @@ export interface WaterBodiesConfig {
   /** Overlay the lost / vanished water bodies layer
    *  (`<cityId>-water-bodies-lost.geojson`). */
   lostBodies?: boolean;
+  /** Show the gazetted lake-register tab (`<cityId>-lake-register.json`).
+   *  A different POPULATION from the map layer: the map draws visible OSM
+   *  polygons, the register lists every statutorily gazetted lake and whether
+   *  its FTL boundary is legally settled. Hyderabad today (HMDA). */
+  legalRegister?: boolean;
 }
 
 /**
@@ -320,6 +325,28 @@ export interface BasePlaceConfig {
   /** Water-bodies capability flags (census, ranking tab, ward search,
    *  lost bodies). Omit -> the basic map only. */
   waterBodies?: WaterBodiesConfig;
+
+  /** Show the treatment & discharge panel on the rivers page: per-plant STP
+   *  capacity and effluent compliance from the state pollution board, joined to
+   *  the river stations downstream. Reads `<cityId>-stps.json`. Omit -> hidden. */
+  hasTreatmentDischarge?: boolean;
+
+  /** Which KIND of tanker data this city has. The two are not
+   *  interchangeable and must not share a renderer:
+   *  - `household-survey` (default, Bengaluru): longitudinal price surveys of
+   *    what households pay a private market. Reads
+   *    `<cityId>-tanker-survey.json`.
+   *  - `utility-ledger` (Hyderabad): the utility's own booking/delivery
+   *    record, because HMWSSB runs the fleet itself. No prices exist in it.
+   *    Reads `<cityId>-tankers.json`. */
+  tankerDataKind?: 'household-survey' | 'utility-ledger';
+
+  /** One-line description of what this city's tanker page actually shows.
+   *  The shape of tanker data differs fundamentally by city - Bangalore has
+   *  longitudinal HOUSEHOLD PRICE surveys, Hyderabad has the utility's own
+   *  BOOKING/DELIVERY ledger - so the teaser card and the page metadata must
+   *  not assume one shape. Omit -> the household-survey wording. */
+  tankerSummary?: string;
 
   /** Which reservoir tables this city's data lives in.
    *  - `v2` (default): the multi-city `reservoir_daily_v2` schema

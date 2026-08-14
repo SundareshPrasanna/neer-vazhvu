@@ -124,6 +124,13 @@ REGEN_COVERED = {
 # "EC Open / public domain" into a nested data_source block through an entire
 # licence sweep. A licence literal is suspect wherever it appears.
 INLINE_LICENCE_ALLOWLIST = {
+    # Closed one-time report, deliberately NOT registered: TGRAC published the
+    # ORR encroachment figures but not the layer, and its site states all rights
+    # reserved. Only the report's numbers are used, on the Hyderabad facts page.
+    # A closed source's inline licence IS the record - there is no registry entry
+    # for registry_license() to read. See docs/cities/hyderabad/data-sources.md.
+    "Telangana government report, figures cited with attribution; "
+    "underlying spatial layer is not published",
     "ADB public project document, cited with attribution",
     "GoI journal publication, cited with attribution",
     "GoI public document, cited with attribution",

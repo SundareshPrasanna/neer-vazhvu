@@ -147,6 +147,8 @@
         "public/geojson/delhi-rivers.geojson",
         "public/geojson/delhi-water-bodies-current.geojson",
         "public/geojson/delhi-drainage.geojson",
+        "public/geojson/hyderabad-rivers.geojson",
+        "public/geojson/hyderabad-water-bodies-current.geojson",
         "public/data/industrial-sources-delhi.json",
         "public/data/delhi-ward-profiles.json",
         "public/data/cascade",
@@ -166,7 +168,8 @@
         "public/data/restoration-priority-bangalore.json",
         "public/geojson/mumbai-coastal-zones.geojson",
         "public/data/industrial-sources-mumbai.json",
-        "public/data/basins/kabini/pressures-quarries.geojson"
+        "public/data/basins/kabini/pressures-quarries.geojson",
+        "public/data/restoration-priority-hyderabad.json"
       ],
       "refreshMethod": "per-city fetch-*-osm-*.ts scripts (Overpass extracts)",
       "notes": "Continuously edited; no editions to detect (NVDM per-source rule 2026-07-30: registered for lineage/licence accountability; formerly 13 UNWATCHED allowlist lines). Re-fetch cadence is a freshness question (P5-1)."
@@ -287,7 +290,9 @@
         "public/data/rainfall-recent-delhi.json",
         "public/data/rainfall-recent-madurai.json",
         "public/data/rainfall-recent-mumbai.json",
-        "public/data/cascade"
+        "public/data/cascade",
+        "public/data/imd-rainfall-monthly-hyderabad.json",
+        "public/data/rainfall-recent-hyderabad.json"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py + IMD grid extraction (quarterly refresh workflow)",
       "notes": "IMD gridded/district rainfall products, updated continuously; artifacts refresh on schedule. Registered 2026-07-30 for NVDM lineage."
@@ -309,7 +314,8 @@
         "public/data/rainfall-recent-chennai.json",
         "public/data/rainfall-recent-delhi.json",
         "public/data/rainfall-recent-madurai.json",
-        "public/data/rainfall-recent-mumbai.json"
+        "public/data/rainfall-recent-mumbai.json",
+        "public/data/rainfall-recent-hyderabad.json"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/fetch_recent_rainfall.py (daily workflow)",
       "notes": "ERA5-family reanalysis daily precipitation - the PROVISIONAL fill after IMD's last published gridded month (see each artifact's provisional_note). Registered 2026-07-30 when the envelope's IMD-only attribution was found incomplete against the producer's own source key."

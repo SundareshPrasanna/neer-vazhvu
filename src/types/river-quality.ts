@@ -33,6 +33,9 @@ export type RiverQualityStatus =
   | "stressed"
   | "healthy";
 
+export type MeasureRange = { min: number | null; max: number | null };
+export type Measure = number | MeasureRange | null;
+
 export interface RiverQualityReading {
   year: number;
   /** "YYYY-MM" for cities whose feed is genuinely monthly.
@@ -46,19 +49,29 @@ export interface RiverQualityReading {
    *  Optional on purpose: when absent the chart plots by year exactly as
    *  before, so annual cities are untouched. */
   month?: string | null;
-  do_mgl: number | null; // Dissolved oxygen mg/L
-  bod_mgl: number | null; // Biochemical oxygen demand mg/L
-  ph: number | null;
+  // A reading is either a POINT value (CPCB monthly / state-board sampling) or
+  // an ANNUAL RANGE. CPCB's national NWMP tables publish min-max per station
+  // per year, so a city built on that source carries ranges and we do not
+  // invent a midpoint to flatten them. Renderers must handle both.
+  do_mgl: Measure; // Dissolved oxygen mg/L
+  bod_mgl: Measure; // Biochemical oxygen demand mg/L
+  // CPCB NWMP publishes these as annual min-max too, exactly like DO and BOD.
+  // They were left as `number` when Measure was introduced, so every renderer
+  // treated a {min,max} object as a number: React refused to render one as a
+  // child ("object with keys {min, max}", error #31) and the Hyderabad rivers
+  // panel died on click. The type has to tell the truth or nothing downstream
+  // can be correct.
+  ph: Measure;
   conductivity_us: number | null; // µS/cm
   cod_mgl: number | null; // Chemical oxygen demand mg/L
-  fecal_coliform_mpn: number | null; // Fecal coliform MPN/100ml
+  fecal_coliform_mpn: Measure; // Fecal coliform MPN/100ml
   /** Set when the published figure itself is disputed (e.g. the Mithi's
    *  2023 CPCB value, publicly flagged by Praja as a likely recording
    *  error). Rendered as a footnote under the FC tile - the number is
    *  shown as published, never silently corrected. */
   fecal_coliform_note?: string | null;
   tds_mgl: number | null; // Total dissolved solids mg/L
-  nitrate_mgl: number | null; // Nitrate mg/L
+  nitrate_mgl: Measure; // Nitrate mg/L
   chromium_mgl: number | null; // Chromium mg/L (heavy metal)
   lead_mgl: number | null; // Lead mg/L (heavy metal)
   cadmium_mgl: number | null; // Cadmium mg/L (heavy metal)
@@ -198,15 +211,27 @@ export function computeStationTrend(
   const latest = sorted[sorted.length - 1];
   const twoYearsAgo = sorted[sorted.length - 3];
 
+  // Trends compare the threshold-relevant end of each reading, so a city on
+  // annual ranges (CPCB NWMP) trends on like-for-like rather than on a mix of
+  // range and point.
+  const worst = (m: Measure, k: "lower-is-worse" | "higher-is-worse"): number | null => {
+    if (m == null) return null;
+    if (typeof m === "number") return m;
+    const lo = typeof m.min === "number" ? m.min : null;
+    const hi = typeof m.max === "number" ? m.max : null;
+    if (lo == null && hi == null) return null;
+    return k === "lower-is-worse" ? (lo ?? hi) : (hi ?? lo);
+  };
+  const dLatest = worst(latest.do_mgl, "lower-is-worse");
+  const dPrev = worst(twoYearsAgo.do_mgl, "lower-is-worse");
+  const bLatest = worst(latest.bod_mgl, "higher-is-worse");
+  const bPrev = worst(twoYearsAgo.bod_mgl, "higher-is-worse");
+
   const do_delta =
-    latest.do_mgl !== null && twoYearsAgo.do_mgl !== null
-      ? +(latest.do_mgl - twoYearsAgo.do_mgl).toFixed(2)
-      : null;
+    dLatest !== null && dPrev !== null ? +(dLatest - dPrev).toFixed(2) : null;
 
   const bod_delta =
-    latest.bod_mgl !== null && twoYearsAgo.bod_mgl !== null
-      ? +(latest.bod_mgl - twoYearsAgo.bod_mgl).toFixed(1)
-      : null;
+    bLatest !== null && bPrev !== null ? +(bLatest - bPrev).toFixed(1) : null;
 
   type Signal = "improving" | "worsening" | "stable";
 

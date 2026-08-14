@@ -84,6 +84,19 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/industrial-sources-bangalore.json": "curated compilation (KSPCB directory via OpenCity, NGT Forward Foundation filings, WELL Labs, IISc CES, press); per-record source fields; no watchable listing",
   "public/data/river-events-bangalore.json": "curated event timeline (court orders + named events); per-record citations; no watchable listing",
 
+  // Curated compilations (Hyderabad onboarding). Same family as the Madurai and
+  // Bangalore lines above: no upstream EDITION exists, because each entry is
+  // written against its own dated citation sitting inside the file next to the
+  // claim it supports. Watching them would be watching ourselves.
+  // Deliberately NOT extended to Hyderabad layers that DO have a real upstream
+  // nobody has registered yet (ward geometry, sewerage, industrial registers);
+  // those stay unwatched on purpose so they keep showing up as work.
+  "public/data/allocations-hyderabad.json": "claim register; per-arrangement citations inline; no watchable listing",
+  "public/data/commitments-hyderabad.json": "curated commitment register; per-entry dated citations; no watchable listing",
+  "public/data/facts-hyderabad.json": "hand-compiled; every fact carries its own source_url; no watchable listing",
+  "public/data/restoration-projects-hyderabad.json": "curated compilation (HYDRAA, HMDA, MRDCL, dated press); per-record citations; no watchable listing",
+  "public/data/rainfall-recent-hyderabad.json": "daily feed: owned by check-data-freshness.ts",
+
   // Closed series. The upstream will not publish again; an edition watch would
   // be permanently silent, which is worse than an explicit note.
   "public/geojson/madurai-wards-2022.geojson": "closed edition: 2022 ward delimitation KML; boundaries change only at the next delimitation (term-expiry watch would be the upgrade)",
@@ -236,7 +249,11 @@ export function computeCoverage(root: string, dependsOn: string[]): CoverageResu
 /** Bucket an artifact path by city, for a per-city readout. */
 export function cityOf(path: string): string {
   const base = path.replace(/^public\/(data|geojson)\//, "");
-  for (const c of ["chennai", "bangalore", "madurai", "mumbai", "delhi"]) {
+  // MUST track src/lib/cities. A city missing here does not error - its
+  // artifacts silently fall through to "shared", and any whose name matches the
+  // legacy-prefix regex below get misfiled to Chennai. Hyderabad hit exactly
+  // that: restoration-projects-hyderabad.json was reported under chennai.
+  for (const c of ["chennai", "bangalore", "madurai", "mumbai", "delhi", "hyderabad"]) {
     if (base.includes(c)) return c;
   }
   if (base.startsWith("basins/")) return "basin";

@@ -1,0 +1,303 @@
+{
+  "_doc": "Headwaters source registry - Hyderabad episodic sources. Schema + design notes: docs/specs/headwaters.md (local). Note that Hyderabad's most important watch is NOT here: HMWSSB's capacity-at-FTL column can only be read after an ASP.NET postback, so a GET-based detector would hash a constant 'No Records Found' page forever. That guard lives in neer-vazhvu-api/scripts/scrape_hmwssb_reservoirs.py (EXPECTED_CAPACITY_TMC + --strict-capacity), where the value is actually parsed.",
+  "sources": [
+    {
+      "id": "hmda-lakes-register",
+      "scope": "hyderabad",
+      "publisher": "HMDA (Lake Protection Committee)",
+      "url": "https://lakes.hmda.gov.in/",
+      "license": "Telangana government publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic (final FTL notifications issued in batches)",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash",
+        "selector": "#gv_showlakes"
+      },
+      "dependsOn": [
+        "public/data/hyderabad-lake-register.json",
+        "public/data/water-bodies-flagship-hyderabad.json",
+        "public/data/restoration-priority-hyderabad.json",
+        "public/data/facts-hyderabad.json"
+      ],
+      "refreshMethod": "manual (re-parse the register; new final-notification dates are the signal)",
+      "notes": "The gazetted lake register for the Hyderabad Metropolitan Region. The ENTIRE register renders in a single 4.2 MB ASP.NET GridView on the landing page - no paging - so the grid's own text hash is the edition signal. Baseline 2026-07-26: 2,978 lake rows; preliminary notification on 100%; FINAL notification on only 1,352 (45.4%), leaving 1,626 lakes with no legally settled boundary. Final notifications by year: 2016:152, 2017:10, 2019:60, 2020:2, 2021:3, 2023:2, 2024:533, 2025:533, 2026:57 - the 2024-25 surge coincides with HYDRAA's creation, so this hash firing usually means a new batch of lakes became legally defensible. Per-lake FTL/cadastral/buffer sheets behind the grid are SCANNED RASTER PDFs (pdftotext yields zero characters); the tractable extraction is OCR of the fixed-position LAKE DETAILS title block, not polygon digitisation."
+    },
+    {
+      "id": "opencity-hyderabad-tankers",
+      "scope": "hyderabad",
+      "publisher": "HMWSSB via OpenCity Urban Data Portal",
+      "url": "https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data",
+      "license": "open (per OpenCity dataset page); underlying data is HMWSSB's, digitised by OpenCity",
+      "type": "page",
+      "cadence": "monthly (series currently stalled)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/download/.*\\.csv"
+      },
+      "dependsOn": [
+        "public/data/hyderabad-tankers.json",
+        "public/data/facts-hyderabad.json"
+      ],
+      "refreshMethod": "manual (new monthly CSV -> tanker fulfilment series)",
+      "notes": "Monthly tanker BOOKINGS and DELIVERIES per HMWSSB division and section - schema year,month,division,section,noofbookings,delivered. This is the feedstock for a booking-to-delivery fulfilment rate by locality, a metric no other city on the platform can produce: Bengaluru's tanker page rests on household surveys because that market is private and RTI-gated, whereas HMWSSB runs the fleet itself. Baseline 2026-07-26: 26 CSVs, Jan 2022 to Feb 2024. THE SERIES HAS STALLED - a new link firing here is exactly the event we want, since it means the gap after Feb 2024 is being filled. Pattern scoped to /download/*.csv (bare .csv would catch CKAN nav junk)."
+    },
+    {
+      "id": "tgdps-annual-weather-reports",
+      "scope": "hyderabad",
+      "publisher": "Telangana Development Planning Society (TGDPS), Planning Department",
+      "url": "https://tgdps.telangana.gov.in/aws.jsp",
+      "license": "Telangana government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "(Annual_Weather_Report|Statistical_Abstract).*\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/imd-rainfall-monthly-hyderabad.json"
+      ],
+      "refreshMethod": "manual (annual report -> rainfall context and normals cross-check)",
+      "notes": "TGDPS runs the state hydro-met network: 1,097 AWS reporting statewide on 25-Jul-2026, of which 185 sit inside GHMC_CMC_MMC. The live per-station endpoint (values.jsp?s1=<awsId>, returning location, mandal, lat/long, daily cumulative rainfall, temperature, humidity, wind) is the daily feed and is covered by the freshness registry once it lands, not here. This entry watches only the ANNUAL publications. Pattern verified 2026-07-26: matches 4 links (Annual_Weather_Report_2023/2024, Statistical_Abstract_2020/2021); a bare .pdf pattern would catch the daily-weather-report and district PDFs that change constantly."
+    },
+    {
+      "id": "cpcb-prs-musi",
+      "scope": "hyderabad",
+      "publisher": "CPCB",
+      "url": "https://cpcb.gov.in/polluted-river-stretches/",
+      "license": "Government of India publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "episodic (programme editions and action-plan updates)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/river-quality-hyderabad.json"
+      ],
+      "refreshMethod": "manual (PRS edition -> Musi river-quality panel)",
+      "notes": "The Musi is CPCB Priority-I and this is the canonical national classification. CORRECTION 2026-07-26: this entry previously carried a ciBlocked note claiming CPCB refuses non-India IPs. That was WRONG - the wrong HOSTNAME was being probed. cpcb.nic.in (164.100.58.91) has ports 80 and 443 filtered, but CPCB serves everything on cpcb.gov.in, which answers 200 in ~0.7s from this network. No India-IP runner is needed. Musi quality currently ships from the state board's own NGT return (see tgpcb-ngt-oa606-musi); this entry watches the PRS classification itself, and the CPCB NWMP series at cpcb.gov.in/nwmp-data/ is now reachable and unexploited."
+    },
+    {
+      "id": "tgpcb-ngt-oa606-musi",
+      "scope": "hyderabad",
+      "publisher": "TGPCB (Telangana Pollution Control Board)",
+      "url": "https://tgpcb.cgg.gov.in/",
+      "license": "Telangana government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "quarterly (NGT OA 606/2018 reporting cycle)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/river-quality-hyderabad.json"
+      ],
+      "refreshMethod": "manual (OCR of scanned quarterlies -> Musi river-quality panel)",
+      "notes": "BASELINED 2026-07-26 and now the primary source for Musi water quality - obtained WITHOUT CPCB access. tspcb.cgg.gov.in JS-redirects to tgpcb.cgg.gov.in (renamed with the state); hosted on cgg.gov.in rather than NICNET, which is why the CPCB block does not reach it. Annexure-VIII of the 1st Quarterly Report 2022-23 (Chief Secretary cover letter 01-08-2022) carries CPCB NWMP station codes and monthly DO/pH/conductivity/BOD/total-coliform/free-ammonia/boron/SAR for Jan-Mar 2022 across six state stretches. Musi stations: Gandipet 1172, Nagole 2339, Pratapasingaram 1173, Kasaniguda 3082. EXTRACTION IS OCR: the PDF is a 204-page scanned raster (0 extractable chars, 631 images); rendered at 400 dpi, tesseract --psm 1 for auto-rotation, then every row eyeballed against the page image - OCR misread one BOD (2.3 vs the printed 2.8). Only the Q1 2022-23 edition is linked from the homepage; filename guesses for other quarters 404, so a listing page is the next thing to find. The CETP monitoring links on /Home/Cetps (including PETL, Patancheru) are all DEAD - 404 on both hosts, link rot from the TSPCB->TGPCB migration."
+    },
+    {
+      "id": "hmwssb-daily-reservoir-statement",
+      "scope": "hyderabad",
+      "publisher": "HMWSSB (Hyderabad Metropolitan Water Supply and Sewerage Board)",
+      "url": "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx",
+      "license": "Telangana government publication, cited with attribution",
+      "type": "page",
+      "cadence": "daily",
+      "tier": 0,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "neer-vazhvu-api/scripts/scrape_hmwssb_reservoirs.py",
+        "supabase:reservoir_daily_v2",
+        "public/data/allocations-hyderabad.json",
+        "public/data/facts-hyderabad.json"
+      ],
+      "refreshMethod": "daily scrape (scrape_hmwssb_reservoirs.py -> reservoir_daily_v2)",
+      "notes": "TIER 0 - the load-bearing feed for the whole city and the richest reservoir source on the platform: level, storage AND draw-off per source EVERY day, with an archive back to 2014, which is why Hyderabad can run the full interactive days-left hero rather than Mumbai's collapsed variant. Lands in the multi-city reservoir_daily_v2 table (city_id=hyderabad) rather than a repo file, so dependsOn names the scraper. Eight sources tracked; the Krishna chain (Akkampally / Nagarjuna Sagar / Srisailam) is double-counted upstream-to-downstream so city_draw_mld() takes max() across the chain and sums the independents. GOTCHA recorded in reference_hmwssb_reservoir_feed: the 'Total(1 to 5)' row is mislabelled. Until the DB apply lands the dashboard shows 'HMWSSB does not publish daily levels for this source' x8, which is FALSE - the feed publishes all eight daily."
+    },
+    {
+      "id": "cgwb-dynamic-gwr-telangana",
+      "scope": "hyderabad",
+      "publisher": "CGWB / IN-GRES (via OpenCity national compilations)",
+      "url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
+      "license": "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments",
+      "type": "page",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/resource/|\\.(csv|xlsx|pdf)"
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-hyderabad.json",
+        "public/geojson/hyderabad-gwr-blocks.geojson",
+        "public/data/facts-hyderabad.json"
+      ],
+      "refreshMethod": "manual (new edition -> build_hyderabad_gwr_blocks.py)",
+      "notes": "Telangana assesses by DISTRICT in all three editions (2022/2024/2025), so the series joins cleanly - no repeat of the Madurai firka-to-block granularity break. 33/33 districts matched. The headline: 30 districts Safe, 2 Semi-Critical, and exactly ONE Critical - Hyderabad at 98.32%. GOTCHA: the 2025 CSV is mislabelled 'Tamil Nadu' on OpenCity."
+    },
+    {
+      "id": "wris-gwl-hyderabad",
+      "scope": "hyderabad",
+      "publisher": "India-WRIS / CGWB",
+      "url": "https://indiawris.gov.in/wris/",
+      "license": "Government of India publication, cited with attribution",
+      "type": "api",
+      "cadence": "quarterly",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/hyderabad-cgwb-stations.json"
+      ],
+      "refreshMethod": "manual (build_hyderabad_cgwb_stations.py)",
+      "notes": "481 observation wells - Ranga Reddy 192, Medak 173, Hyderabad 48, Siddipet 44, Vikarabad 24 - the densest CGWB point network of any city on the platform (Delhi, next best, has 237). Enough to place measured points honestly, NOT enough to paint a continuous per-ward depth surface, which is why groundwaterViews.depth stays off. Per-station sign rule from reference_wris_groundwater_levels_api applies: never abs()."
+    },
+    {
+      "id": "opencity-ghmc-drainage-layers",
+      "scope": "hyderabad",
+      "publisher": "GHMC via OpenCity Urban Data Portal",
+      "url": "https://data.opencity.in/dataset/hyderabad-canals-drains-and-tanks-lakes",
+      "license": "open (per OpenCity dataset page); underlying layers are GHMC's",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/resource/|\\.(kml|kmz|geojson|zip|csv)"
+      },
+      "dependsOn": [
+        "public/geojson/hyderabad-nalas.geojson",
+        "public/geojson/hyderabad-waterlogging.geojson",
+        "public/geojson/hyderabad-canals-drains.geojson",
+        "public/geojson/hyderabad-tanks-opencity.geojson",
+        "public/data/facts-hyderabad.json"
+      ],
+      "refreshMethod": "manual (build_hyderabad_opencity_layers.py)",
+      "notes": "96 named storm-water nalas (245 km across five zones) and GHMC's own register of 23 major water-logging points, both now on the flood page. THE ACCOUNTABILITY GOTCHA: the nala layer DEFINES five encroachment fields - government, private, religious, and cases in court - and publishes all five as ZERO for all 96 drains. In the city that created HYDRAA to demolish encroachments that is an unfilled column, not a clean record; the build asserts the condition so the day it is populated we notice. The 3,960-segment canals-drains file is held but NOT rendered: 3,926 features are unnamed generic 'Stream' segments that would bury the named nalas."
+    },
+    {
+      "id": "tgdps-aws-stations",
+      "scope": "hyderabad",
+      "publisher": "Telangana Development Planning Society (TGDPS)",
+      "url": "https://tgdps.telangana.gov.in/",
+      "license": "Telangana government publication, cited with attribution",
+      "type": "page",
+      "cadence": "daily",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/hyderabad-aws-stations.json"
+      ],
+      "refreshMethod": "daily scrape would build the series (fetch_tgdps_stations.py)",
+      "notes": "A MEASURED intra-city rainfall surface, which no other city on the platform has - everyone else interpolates from a single IMD 0.25-degree grid cell about 28 km across. GHMC.jsp lists ~185 AWS inside GHMC_CMC_MMC; 161 resolve with coordinates and are what we ship, and the facts card says '161 with coordinates' rather than 185 for that reason. values.jsp?s1=<awsId> exposes only the LATEST reading per station with NO date parameter, so this file is a station registry plus a snapshot - running it daily is what builds a series. Now rendered as a layer on the flood page."
+    },
+    {
+      "id": "cpcb-nwmp-hyderabad",
+      "scope": "hyderabad",
+      "publisher": "CPCB (National Water Quality Monitoring Programme)",
+      "url": "https://cpcb.gov.in/nwmp-data/",
+      "license": "Government of India publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "nwmp-data-20\\d\\d|/wqm/20\\d\\d/"
+      },
+      "dependsOn": [
+        "public/data/river-quality-hyderabad.json",
+        "public/data/facts-hyderabad.json"
+      ],
+      "refreshMethod": "manual (annual river-data PDF -> Musi station series)",
+      "notes": "The canonical national series, and reachable on cpcb.gov.in - the earlier 'CPCB is IP-blocked' read was a dead HOSTNAME (cpcb.nic.in), not a geo-fence. Annual editions 2012-2025. The PDFs carry a TEXT LAYER, so no OCR is needed: WQuality_River-Data-2022.pdf is 161pp with 242k extractable chars. RICHER THAN WHAT WE SHIP: 15 Musi-context stations in 2022 against the 4 we carry from TGPCB, including Moosarambagh 4656, Pillaipalli 4657, Valigonda 4658, Peerajadiguda 4660, and station 4659 (Musi at the outlet of Nalla Cheruvu) which recorded DO 0.0-0.0 across all of 2022. CPCB publishes annual MIN-MAX per station where TGPCB published monthly points. Rebuilding river-quality-hyderabad.json on this series is the open work order."
+    },
+    {
+      "id": "opencity-jal-dharohar-hyderabad",
+      "scope": "hyderabad",
+      "publisher": "Jal Dharohar / NWIC Minor Irrigation census, via OpenCity",
+      "url": "https://data.opencity.in/dataset/4becf994-e7f5-4da3-b201-b56b126b57f7",
+      "license": "open (per OpenCity dataset page); underlying census is NWIC/MoJS",
+      "type": "page",
+      "cadence": "episodic (census rounds)",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/resource/|\\.(kml|kmz|geojson|csv|zip)"
+      },
+      "dependsOn": [
+        "public/geojson/hyderabad-water-census.geojson"
+      ],
+      "refreshMethod": "manual (new census round -> build_hyderabad_opencity_layers.py)",
+      "notes": "Jal Dharohar 2023 water-body points for Hyderabad and Rangareddy - 3,116 features carrying district, block/tehsil, village, water_body_type and rural/urban. Held but NOT yet rendered: the points are a different population again from both the OSM polygons (669) and the HMDA gazetted register (2,978), and reconciling the three is open work rather than a wiring task."
+    },
+    {
+      "id": "tg-opendata-hmwssb-billing",
+      "scope": "hyderabad",
+      "publisher": "HMWSSB via data.telangana.gov.in (Telangana Open Data Portal)",
+      "url": "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-billing-and-collection-data",
+      "license": "Government Open Data License - India (GODL-India)",
+      "type": "page",
+      "cadence": "monthly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "billing_and_collection_report_\\d{4}_\\d{1,2}\\.csv"
+      },
+      "dependsOn": [
+        "public/data/hyderabad-billing.json",
+        "public/data/facts-hyderabad.json"
+      ],
+      "refreshMethod": "monthly (build_hyderabad_billing.py)",
+      "notes": "RETIRES AN RTI. The supply-overview surface was written off as needing an HMWSSB RTI under 4(1)(b); the utility already publishes billing openly under GODL-India. 54 monthly CSVs Jan 2022 - Jun 2026, 134,688 rows, keyed on the SAME division/section units as the tanker ledger so billed demand and tanker demand are comparable per section. Headline: collection efficiency 69.5% across the period - 75.05bn demanded, 52.16bn collected. TWO TRAPS, both hit during the build: (1) `noofcans` is a STOCK - summing it across months reports a division as bigger than the city; (2) HMWSSB RE-CUT its division/section scheme between Jan and Feb 2026 around the GHMC trifurcation (209 -> 485 sections, 24 new divisions, old divisions left as near-empty shells - division 6 went 100,879 connections to 8), so aggregates are split into pre_recut/post_recut eras and must never be summed across the break. The unit of the rupee columns is NOT stated upstream, so none is asserted."
+    },
+    {
+      "id": "tg-opendata-tgpcb-stp",
+      "scope": "hyderabad",
+      "publisher": "TGPCB via data.telangana.gov.in (Telangana Open Data Portal)",
+      "url": "https://data.telangana.gov.in/dataset/telangana-pollution-control-board-stp-sewage-treatment-plant-data",
+      "license": "Government Open Data License - India (GODL-India)",
+      "type": "page",
+      "cadence": "monthly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "STP_Data_\\d{2}_\\d{4}\\.csv"
+      },
+      "dependsOn": [
+        "public/data/hyderabad-stps.json",
+        "public/data/facts-hyderabad.json"
+      ],
+      "refreshMethod": "monthly (build_hyderabad_stps.py)",
+      "notes": "CORRECTED A PUBLISHED CLAIM. The facts page asserted Hyderabad's treatment capacity is not published; it is, per plant, with monthly effluent quality. 83 monthly CSVs Jan 2018 - Nov 2024, 83 plants (66 Hyderabad-area), ~1,134 MLD across 53 plants with parseable capacity. Amberpet (339 MLD) exceeded the BOD 10 mg/L norm in 49 of 58 monitored months, Nagole (172 MLD) in 42 of 58. The narrower gap that DOES stand: the AMRUT 39-STP commissioned-vs-under-construction split is still unpublished. Joins to CPCB NWMP: station 4659 monitors the Musi at the outlet of Nalla Cheruvu, where two plants discharge. Capacity is free text upstream (\"339 MLD\", \"13MLD\"); one lake can host several plants (Miralam Tank at 10, 5 and 41.5), so plants key on full name. Series ends Nov 2024."
+    },
+    {
+      "id": "tg-opendata-irrigation-reservoirs",
+      "scope": "hyderabad",
+      "publisher": "Telangana Irrigation & CAD Department via data.telangana.gov.in",
+      "url": "https://data.telangana.gov.in/dataset/telangana-irrigation-cad-department-daily-reservoir-storage-levels",
+      "license": "Government Open Data License - India (GODL-India)",
+      "type": "page",
+      "cadence": "monthly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "reservoir_details_\\d{4}-\\d{2}\\.csv"
+      },
+      "dependsOn": [
+        "public/data/hyderabad-irrigation-reservoirs.json"
+      ],
+      "refreshMethod": "monthly (build_hyderabad_irrigation_reservoirs.py)",
+      "notes": "INDEPENDENT SECOND SOURCE for 5 of the 8 reservoirs the dashboard tracks - Singur, Nagarjuna Sagar, Srisailam, Yellampally, Akkampalli - 1,946 daily rows each, Jan 2021 to May 2026. Osman Sagar, Himayat Sagar and Manjira are absent BY DESIGN: they are HMWSSB drinking-water reservoirs, not Irrigation & CAD projects, so this validates the transferred Krishna/Godavari sources rather than the local twins. CAPACITY CROSS-CHECK PASSED 2026-07-26 against the HMWSSB-derived figures we already publish: Nagarjuna Sagar, Srisailam and Yellampally match EXACTLY; Singur differs 0.007 TMC (0.02%), Akkampalli 0.001. Two departments, same numbers. UNIT TRAP: the publisher's abbreviation block says frl is in METRES while the storage column is NAMED level_in_feet_present - name and description contradict, so that column is carried verbatim and never converted."
+    }
+  ]
+}

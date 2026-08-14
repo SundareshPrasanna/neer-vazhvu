@@ -5,17 +5,17 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/lib/i18n/context";
-import { cityKeywords, cityRoster, liveCityList } from "@/lib/cities/roster";
+import { cityKeywords, liveCityPhrase, liveCityPhraseWithOnboarding } from "@/lib/cities/roster";
 
-const ROSTER = cityRoster();
-const LIVE_CITIES = liveCityList();
+const CITIES = liveCityPhrase();
+const CITIES_WITH_ONBOARDING = liveCityPhraseWithOnboarding();
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://neervazhvu.org"),
   title: "Neer Vazhvu | Urban Water Intelligence",
   description:
     `Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, ` +
-    `and water bodies across Indian cities - ${LIVE_CITIES} - with AI-powered summaries in ` +
+    `and water bodies across ${CITIES}, with AI-powered summaries in ` +
     `English and regional languages.`,
   keywords: [
     "urban water",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Neer Vazhvu | Urban Water Intelligence",
-    description: `Reservoirs, groundwater, rivers, flood risk, and water bodies across Indian cities - ${ROSTER}.`,
+    description: `Reservoirs, groundwater, rivers, flood risk, and water bodies across ${CITIES_WITH_ONBOARDING}.`,
     type: "website",
     locale: "en_IN",
     siteName: "Neer Vazhvu",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Neer Vazhvu | Urban Water Intelligence",
-    description: `Reservoirs, groundwater, rivers, flood risk, and water bodies across Indian cities - ${ROSTER}.`,
+    description: `Reservoirs, groundwater, rivers, flood risk, and water bodies across ${CITIES_WITH_ONBOARDING}.`,
   },
   icons: {
     icon: [
@@ -80,7 +80,7 @@ export default function RootLayout({
               url: "https://neervazhvu.org",
               description:
                 `Open-source platform tracking reservoirs, groundwater, river health, flood ` +
-                `risk, drainage, and water bodies across Indian cities - ${LIVE_CITIES}.`,
+                `risk, drainage, and water bodies across ${CITIES}.`,
               applicationCategory: "UtilitiesApplication",
               operatingSystem: "Any",
               offers: {

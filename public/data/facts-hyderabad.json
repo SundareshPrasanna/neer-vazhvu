@@ -1,0 +1,436 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": {
+    "kind": "city",
+    "id": "hyderabad"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "hmwssb-daily-reservoir-statement",
+        "title": "HMWSSB daily reservoir statement: level, storage, draw-off in MLD and inflow per source",
+        "publisher": "HMWSSB (Hyderabad Metropolitan Water Supply and Sewerage Board)",
+        "license": "Telangana government publication, cited with attribution"
+      },
+      {
+        "id": "hmda-lakes-register",
+        "title": "HMDA Lake Protection Committee gazetted lake register (FTL preliminary and final notifications)",
+        "publisher": "HMDA (Lake Protection Committee)",
+        "license": "Telangana government publication, cited with attribution"
+      },
+      {
+        "id": "opencity-hyderabad-tankers",
+        "title": "HMWSSB tanker bookings and deliveries per division and section, via OpenCity",
+        "publisher": "HMWSSB via OpenCity Urban Data Portal",
+        "license": "open (per OpenCity dataset page); underlying data is HMWSSB's, digitised by OpenCity"
+      },
+      {
+        "id": "cgwb-dynamic-gwr-telangana",
+        "title": "CGWB Dynamic Ground Water Resources, Telangana district assessments (2022, 2024, 2025 editions)",
+        "publisher": "CGWB / IN-GRES (via OpenCity national compilations)",
+        "license": "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments"
+      },
+      {
+        "id": "opencity-ghmc-drainage-layers",
+        "title": "GHMC nala, canal/drain, tank and water-logging layers, via OpenCity",
+        "publisher": "GHMC via OpenCity Urban Data Portal",
+        "license": "open (per OpenCity dataset page); underlying layers are GHMC's"
+      },
+      {
+        "id": "tg-opendata-tgpcb-stp",
+        "title": "TGPCB sewage treatment plant monitoring: per-plant capacity in MLD and monthly effluent quality",
+        "publisher": "TGPCB via data.telangana.gov.in (Telangana Open Data Portal)",
+        "license": "Government Open Data License - India (GODL-India)"
+      },
+      {
+        "id": "tg-opendata-hmwssb-billing",
+        "title": "HMWSSB monthly billing, collection and connection counts by division and section, 2022-2026",
+        "publisher": "HMWSSB via data.telangana.gov.in (Telangana Open Data Portal)",
+        "license": "Government Open Data License - India (GODL-India)"
+      },
+      {
+        "id": "cpcb-nwmp-hyderabad",
+        "title": "CPCB National Water Quality Monitoring Programme annual river data, editions 2019-2024 (Musi stations)",
+        "publisher": "CPCB (National Water Quality Monitoring Programme)",
+        "license": "Government of India publication, cited with attribution"
+      },
+      {
+        "title": "Report on encroachment of water bodies within the Outer Ring Road from 2014 onwards, submitted to the Deputy Chief Minister",
+        "publisher": "Telangana Remote Sensing Applications Centre (TGRAC), Planning Department",
+        "url": "https://tgrac.telangana.gov.in/trac/water-project.php",
+        "license": "Telangana government report, figures cited with attribution; underlying spatial layer is not published",
+        "closed": true,
+        "as_of": "2024-08"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-07-26",
+    "note": "Envelope lists the upstreams the facts draw on; every fact additionally carries its own citation (source_label / source_url / data_date). The TGRAC entry is a closed one-time report: its published figures are used, its spatial layer is not in this repo and must not be - see docs/cities/hyderabad/data-sources.md."
+  },
+  "place_id": "hyderabad",
+  "generated_at": "2026-07-26",
+  "note": "Hand-curated quotable facts for /hyderabad/facts (static pipeline). Every fact carries its own source. STRICT SOURCING RULE applied throughout: figures computed by us from HMWSSB's daily reservoir statement or parsed from the HMDA/OpenCity layers are marked as such and are reproducible from the scripts named in docs/cities/hyderabad/data-sources.md. Hyderabad's widely-quoted service statistics (~1,954 MLD supplied, 1,480 sq km service area, 1.68 crore population, and every published STP count from 25 to 45 plants) are NEWS-SOURCED ONLY and mutually inconsistent, so NONE of them appears here. They land when HMWSSB's RTI 4(1)(b) disclosure or an annual report is obtained. Telugu renderings land with the translation pass.",
+  "facts": [
+    {
+      "id": "hyd-go111-dependence",
+      "tier": 1,
+      "category": "Governance & finance",
+      "title": "GO 111 was repealed because the city 'no longer depends' on the twin reservoirs. It depends on them more each year.",
+      "value": "0.00% to 6.54%",
+      "unit": "twin-reservoir share of city draw, 2018 to 2026",
+      "interpretation": "GO 111 (1996) barred major construction across the catchment of Osman Sagar and Himayat Sagar; Telangana repealed it in 2022 on the stated ground that the city had moved on to the Krishna and Godavari. HMWSSB's own daily draw-off column tests that. The premise was not fabricated - across all 365 days of 2018 the twins supplied nothing whatsoever, and in 2016-17 they ran on fewer than half the days at under 1% share. But the trend has run the other way ever since: the share has risen every year since 2023, the twins have been drawn on every single day since 2020, and 2026's absolute twin draw of 172.5 MLD is the highest in the entire 12-year record - above even 2014. This is a correlation with the repeal, not a demonstrated consequence of it.",
+      "data_date": "2014-01-01 to 2026-07-25",
+      "source_url": "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx",
+      "source_label": "Computed from HMWSSB's daily reservoir statement (12.5-year archive)"
+    },
+    {
+      "id": "hyd-lake-register-unfinished",
+      "tier": 1,
+      "category": "Water bodies",
+      "title": "More than half of the region's gazetted lakes have no legally settled boundary",
+      "value": "1,626 of 2,978",
+      "unit": "lakes without a final FTL notification (54.6%)",
+      "interpretation": "Every lake in the Hyderabad Metropolitan Region is meant to have its Full Tank Level fixed twice over: a preliminary notification, then a final one after objections are heard. All 2,978 have the preliminary. Only 1,352 have the final. Until the final notification issues there is no legally defensible boundary to prosecute an encroachment against, which is exactly the condition encroachment needs.",
+      "data_date": "2026-07-26",
+      "source_url": "https://lakes.hmda.gov.in/",
+      "source_label": "HMDA Lake Protection Committee gazetted lake register"
+    },
+    {
+      "id": "hyd-orr-encroachment-2014-2023",
+      "tier": 1,
+      "category": "Water bodies",
+      "title": "Hyderabad did not lose its tanks in the distant past. It lost 171 of them in nine years.",
+      "value": "171 of 920",
+      "unit": "water bodies inside the ORR encroached, 2014 to 2023",
+      "interpretation": "The Telangana Remote Sensing Applications Centre compared satellite imagery of every water body inside the Outer Ring Road across the two dates and classified each one. Twenty tanks that carried no encroachment at all in 2014 were completely built over by 2023. Another 24 that were partly encroached were lost entirely. On a further 127 the encroached extent grew. The loss is recent, it is measured rather than alleged, and it is the reason HYDRAA was created in 2024.",
+      "data_date": "2014 to 2023",
+      "source_url": "https://www.siasat.com/171-lakes-encroached-in-hyderabad-betwee-2014-and-2023-report-3109650/",
+      "source_label": "TGRAC report on encroachment of water bodies within the ORR, submitted to the Deputy Chief Minister (reported 8 October 2024)"
+    },
+    {
+      "id": "hyd-orr-encroachment-2014-baseline",
+      "tier": 1,
+      "category": "Water bodies",
+      "title": "A quarter of the city's tanks were already gone before the study window opened",
+      "value": "225 of 920",
+      "unit": "water bodies already fully encroached in 2014",
+      "interpretation": "The same survey records the starting position, and it is the more sobering half. When Telangana was formed in 2014, 225 of the 920 water bodies inside the ORR were already fully encroached and 196 more were partly encroached, leaving 499 clear. So the 171 lost since then were taken from a stock that had already been reduced by nearly half. Any restoration target stated against today's count is being measured from a baseline that itself represents a loss no one recorded at the time.",
+      "data_date": "2014",
+      "source_url": "https://www.siasat.com/171-lakes-encroached-in-hyderabad-betwee-2014-and-2023-report-3109650/",
+      "source_label": "TGRAC report on encroachment of water bodies within the ORR, submitted to the Deputy Chief Minister (reported 8 October 2024)"
+    },
+    {
+      "id": "hyd-rangareddy-weakest",
+      "tier": 1,
+      "category": "Water bodies",
+      "title": "The district with the most lakes has the least legal protection for them",
+      "value": "34.5%",
+      "unit": "of Rangareddy's 891 lakes finally notified",
+      "interpretation": "Rangareddy holds the largest lake estate in the region - 891 of the 2,978 - and the weakest legal coverage of any district bar one. Siddipet stands at 68.0% and Hyderabad district at 66.7%; Rangareddy is at 34.5% and Yadadri-Bhongiri at 15.2%. Rangareddy is the Outer Ring Road growth corridor, which is to say the land under the most development pressure is the land whose lake boundaries are least settled.",
+      "data_date": "2026-07-26",
+      "source_url": "https://lakes.hmda.gov.in/",
+      "source_label": "HMDA gazetted lake register, district breakdown"
+    },
+    {
+      "id": "hyd-final-notifications-surge",
+      "tier": 2,
+      "category": "Water bodies",
+      "title": "Two-thirds of all final lake notifications ever issued came in 2024 and 2025",
+      "value": "1,066 of 1,352",
+      "unit": "final FTL notifications, 2024-2025",
+      "interpretation": "Final notifications ran at 152 in 2016, then 10, 60, 2, 3 and 2 across 2017-2023 - effectively a stalled process. Then 533 in 2024 and 533 again in 2025, with 57 more by July 2026. The surge coincides with the creation of HYDRAA, the agency set up in 2024 to protect lakes and remove encroachments.",
+      "data_date": "2016 to 2026",
+      "source_url": "https://lakes.hmda.gov.in/",
+      "source_label": "HMDA gazetted lake register, final-notification dates"
+    },
+    {
+      "id": "hyd-tanker-geography",
+      "tier": 1,
+      "category": "Equity",
+      "title": "Hyderabad's tanker dependence is concentrated in its richest, newest neighbourhoods",
+      "value": "340,037",
+      "unit": "tanker bookings in Madhapur, Kondapur and Hafeezpet alone, Jan 2022 to Feb 2024",
+      "interpretation": "Across 1.32 million bookings and 201 HMWSSB sections, the heaviest tanker demand is not in the old city. It is Madhapur (135,332), Kondapur (125,555) and Hafeezpet (79,150), then Gachibowli, Manikonda, Nizampet and KPHB - the western IT corridor - alongside Banjara Hills and Jubilee Hills. Being built faster than the piped network is part of it, but the data cannot carry that explanation alone: HMWSSB tankers are paid for and need storage to receive, so this also measures where households can afford and accommodate a tanker. A section with almost no bookings is not demonstrably well served - it may simply not be buying. It is also the same geography as the lake register's weakest legal coverage.",
+      "data_date": "Jan 2022 to Feb 2024",
+      "source_url": "https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data",
+      "source_label": "HMWSSB tanker bookings via OpenCity (computed)"
+    },
+    {
+      "id": "hyd-tanker-seasonality",
+      "tier": 2,
+      "category": "Equity",
+      "title": "Tanker demand triples between the monsoon and the summer",
+      "value": "3.0x",
+      "unit": "June average against October average, across Jan 2022 to Feb 2024",
+      "interpretation": "HMWSSB tanker bookings average 90,946 a month in June against 30,421 in October. Tanker demand in Hyderabad is a drought signal rather than a baseline service level - it is what the piped network's shortfall looks like when the reservoirs are low.",
+      "data_date": "Jan 2022 to Feb 2024",
+      "source_url": "https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data",
+      "source_label": "HMWSSB tanker bookings via OpenCity (computed)"
+    },
+    {
+      "id": "hyd-tanker-fulfilment",
+      "tier": 2,
+      "category": "Equity",
+      "title": "The utility delivers essentially every tanker it is asked for",
+      "value": "99.95%",
+      "unit": "of 1,316,215 bookings delivered, Jan 2022 to Feb 2024",
+      "interpretation": "HMWSSB delivered 1,315,622 of 1,316,215 bookings over 25 months, and the worst-performing of 201 sections still ran at 98.4%. The tanker system is not rationed and is not where the failure sits - which is why the meaningful question is how much tanker water a neighbourhood needs, not whether it arrives.",
+      "data_date": "Jan 2022 to Feb 2024",
+      "source_url": "https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data",
+      "source_label": "HMWSSB tanker bookings via OpenCity (computed)"
+    },
+    {
+      "id": "hyd-draw-growth",
+      "tier": 1,
+      "category": "Supply & sources",
+      "title": "The city's daily draw has more than doubled in twelve years",
+      "value": "1,117 to 2,636",
+      "unit": "MLD, mean daily draw 2014 to 2026",
+      "interpretation": "HMWSSB's mean daily draw across its six sources has grown from 1,116.6 MLD in 2014 to 2,636.4 MLD in 2026 - about 136%. The trailing year to 25 July 2026 averages 2,628.4 MLD. Unusually for an Indian utility, this is a measured figure rather than a design capacity: HMWSSB publishes the draw-off from each reservoir every day.",
+      "data_date": "2014 to 2026-07-25",
+      "source_url": "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx",
+      "source_label": "Computed from HMWSSB's daily reservoir statement"
+    },
+    {
+      "id": "hyd-krishna-share",
+      "tier": 2,
+      "category": "Supply & sources",
+      "title": "Nearly half the city's water arrives from a single balancing reservoir on the Krishna",
+      "value": "1,253 of 2,659",
+      "unit": "MLD from Akkampally on 25 July 2026",
+      "interpretation": "Akkampally, a balancing reservoir fed from Nagarjuna Sagar, supplied 1,253.23 MLD of the 2,659.49 MLD drawn that day - about 47%. The Godavari leg at Sripada Yellampally contributed 736.86 MLD, Singur 316.00, Manjira 183.20, and the Nizam-era twins 170.20 between them. Hyderabad's supply is a long-distance lift from two of India's largest river systems.",
+      "data_date": "2026-07-25",
+      "source_url": "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx",
+      "source_label": "HMWSSB daily reservoir statement, 25 July 2026"
+    },
+    {
+      "id": "hyd-capacity-revision",
+      "tier": 2,
+      "category": "Governance & finance",
+      "title": "The twin reservoirs quietly lost a tenth of their stated capacity overnight",
+      "value": "-9.8% and -15.0%",
+      "unit": "Osman Sagar and Himayat Sagar, 1 July 2026",
+      "interpretation": "Between 30 June and 1 July 2026 HMWSSB's published capacity-at-full-tank for Osman Sagar changed from 3.900 to 3.518 TMC and for Himayat Sagar from 2.967 to 2.521 TMC, with the other sources unchanged and no accompanying notice. The change lands exactly on the water-year boundary, so it could be a re-survey, a redefinition of gross versus live storage, or a correction - the cause is not established, and it should not be described as siltation without a government order. What is certain is that any water-runway figure computed before that date is now wrong by a tenth for those two reservoirs.",
+      "data_date": "2026-07-01",
+      "source_url": "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx",
+      "source_label": "Detected by bisecting HMWSSB's own archive"
+    },
+    {
+      "id": "hyd-nala-encroachment-blank",
+      "tier": 1,
+      "category": "Flood",
+      "title": "The city publishes a field for nala encroachments and leaves it empty",
+      "value": "0 of 96",
+      "unit": "nalas with any encroachment recorded",
+      "interpretation": "GHMC's storm-water drain layer defines exactly the dataset Hyderabad's flooding debate needs: encroachments per nala, split into government, private and religious, plus how many are in court. All five fields are published as zero for all 96 nalas. In a city that created HYDRAA in 2024 specifically to demolish encroachments, that is an unfilled column rather than a finding of compliance - and because the schema is already specified, it is an unusually precise thing to ask for.",
+      "data_date": "undated GHMC extract",
+      "source_url": "https://data.opencity.in/dataset/hyderabad-canals-drains-and-tanks-lakes",
+      "source_label": "GHMC nala layer via OpenCity (fields verified empty)"
+    },
+    {
+      "id": "hyd-nala-network",
+      "tier": 2,
+      "category": "Flood",
+      "title": "245 kilometres of named storm-water drains carry the city's runoff",
+      "value": "245",
+      "unit": "km across 96 named nalas",
+      "interpretation": "GHMC's mapped nala network runs to 245,238 m across 96 named drains, from the Kalasiguda nala outward. The nalas are where Hyderabad's flood story is decided: the 2020 events were attributed to blocked and built-over drains rather than to exceptional rainfall alone.",
+      "data_date": "undated GHMC extract",
+      "source_url": "https://data.opencity.in/dataset/hyderabad-canals-drains-and-tanks-lakes",
+      "source_label": "GHMC nala layer via OpenCity (computed)"
+    },
+    {
+      "id": "hyd-aws-network",
+      "tier": 2,
+      "category": "Rainfall",
+      "title": "Hyderabad has 161 rain gauges inside the city. Most Indian cities are measured by one grid square.",
+      "value": "161",
+      "unit": "automatic weather stations with coordinates inside the Core Urban Region",
+      "interpretation": "The Telangana Development Planning Society publishes daily rainfall from individual automatic weather stations, each with its own coordinates, and 161 of them resolve inside Greater Hyderabad. Every other city on this platform infers rainfall from a single 0.25-degree grid cell roughly 28 km across. For a city whose flooding is intensely localised, that difference is the difference between seeing a storm and averaging it away.",
+      "data_date": "2026-07-26",
+      "source_url": "https://tgdps.telangana.gov.in/GHMC.jsp",
+      "source_label": "TGDPS automatic weather station network"
+    },
+    {
+      "id": "hyd-osman-sagar-largest",
+      "tier": 2,
+      "category": "Water bodies",
+      "title": "The two Nizam-era lakes are still the largest water bodies in the city",
+      "value": "1,810 and 1,492",
+      "unit": "hectares (Osman Sagar, Himayat Sagar)",
+      "interpretation": "Osman Sagar covers about 1,810 ha and Himayat Sagar about 1,492 ha, against Hussain Sagar's 456 ha - the three largest of some 669 mapped water bodies totalling around 10,599 ha. Both were built after the catastrophic Musi flood of 1908, on the advice of M. Visvesvaraya, as flood control first and water supply second.",
+      "data_date": "2026-07-26",
+      "source_url": "https://www.openstreetmap.org/",
+      "source_label": "OpenStreetMap water bodies (computed areas), (c) OpenStreetMap contributors"
+    },
+    {
+      "id": "hyd-census-water-bodies",
+      "tier": 2,
+      "category": "Water bodies",
+      "title": "The national water-bodies census counted 3,116 in Hyderabad and Rangareddy",
+      "value": "3,116",
+      "unit": "enumerated water bodies (Jal Dharohar 2023)",
+      "interpretation": "India's first Census of Water Bodies enumerated 3,116 across the two core districts - 94 in Hyderabad district and 3,022 in Rangareddy - each as a located point with an ownership and type code. The count sits alongside 2,978 gazetted lakes in HMDA's register and 669 polygons mapped in OpenStreetMap: three different instruments counting three different things, none of which is a complete inventory on its own.",
+      "data_date": "2023",
+      "source_url": "https://data.opencity.in/dataset/hyderabad-and-telangana-water-bodies-census-data",
+      "source_label": "1st Census of Water Bodies / Jal Dharohar 2023 via OpenCity"
+    },
+    {
+      "id": "hyd-musi-osm-gap",
+      "tier": 2,
+      "category": "Musi",
+      "title": "The river that made Hyderabad is barely mapped",
+      "value": "10 km",
+      "unit": "of the Esi mapped in OpenStreetMap",
+      "interpretation": "Himayat Sagar impounds the Esi exactly as Osman Sagar impounds the Musi, yet OpenStreetMap carries a single 10 km way for it against 244 km for the Musi - and the Musi itself appears under three different names that have to be merged before it renders as one river. Hyderabad's rivers are substantially less mapped than Delhi's or Chennai's, which is a gap in the public record rather than a fact about the rivers.",
+      "data_date": "2026-07-26",
+      "source_url": "https://www.openstreetmap.org/",
+      "source_label": "OpenStreetMap waterway census, (c) OpenStreetMap contributors"
+    },
+    {
+      "id": "hyd-trifurcation",
+      "tier": 1,
+      "category": "Governance & finance",
+      "title": "Hyderabad's municipal map was redrawn twice in two months",
+      "value": "150 to 300",
+      "unit": "wards, across three corporations",
+      "interpretation": "A gazette notification on 25 December 2025 replaced Greater Hyderabad's 150 wards with 300, absorbing 27 urban local bodies. On 11 February 2026 the corporation itself was split into three - GHMC with 150 wards, Cyberabad with 76 and Malkajgiri with 74. Water was not divided with it: HMWSSB continues to serve the whole Core Urban Region, which is why Hyderabad remains one water story under three municipal governments.",
+      "data_date": "2025-12-25 and 2026-02-11",
+      "source_url": "https://telanganatoday.com/gazette-notification-on-300-ghmc-wards-issued",
+      "source_label": "Telangana Today, gazette notification reporting"
+    },
+    {
+      "id": "hyd-only-critical-district",
+      "tier": 1,
+      "category": "Groundwater",
+      "title": "Telangana has 33 districts. Exactly one is Critical for groundwater, and it is Hyderabad.",
+      "value": "98.32%",
+      "unit": "stage of groundwater extraction, Hyderabad district, 2025",
+      "interpretation": "CGWB's 2025 Dynamic assessment classes 30 of Telangana's 33 districts Safe, two Semi-Critical and one Critical. The Critical one is the city itself, extracting 98.32% of what recharges annually - up 2.33 points since 2022. A district that draws essentially all of its annual recharge has no buffer left for a bad monsoon; the surrounding districts still do.",
+      "data_date": "2026-07-26",
+      "source_url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
+      "source_label": "CGWB Dynamic Ground Water Resources 2025 (Telangana district cut) via OpenCity"
+    },
+    {
+      "id": "hyd-vikarabad-fastest",
+      "tier": 2,
+      "category": "Groundwater",
+      "title": "The district losing groundwater fastest is still officially 'Safe'.",
+      "value": "+23.39 points",
+      "unit": "rise in extraction stage, Vikarabad, 2022 to 2025",
+      "interpretation": "Vikarabad's extraction stage climbed from 37.27% to 60.66% in three years, the sharpest deterioration of any Telangana district, and it remains classed Safe because the class threshold sits at 70%. Yadadri-Bhuvanagiri (+20.85) and Medak (+20.12) are close behind, also still Safe. The class label describes where a district IS, not where it is heading, which is why this site plots the trend rather than the badge.",
+      "data_date": "2026-07-26",
+      "source_url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
+      "source_label": "CGWB Dynamic Ground Water Resources 2025 (Telangana district cut) via OpenCity"
+    },
+    {
+      "id": "hyd-it-corridor-groundwater",
+      "tier": 2,
+      "category": "Groundwater",
+      "title": "The IT corridor's district crossed into Semi-Critical while the city was building it.",
+      "value": "73.72%",
+      "unit": "extraction stage, Medchal-Malkajgiri, 2025 (+16.73 since 2022)",
+      "interpretation": "Medchal-Malkajgiri, which carries much of Hyderabad's northern IT and residential expansion, rose 16.73 points in three years to 73.72% and is now Semi-Critical. It is also where tanker demand concentrates: the three busiest HMWSSB tanker sections sit in this growth belt rather than in the historic core.",
+      "data_date": "2026-07-26",
+      "source_url": "https://data.opencity.in/dataset/national-compilation-of-dynamic-ground-water-resources-of-india-2025",
+      "source_label": "CGWB Dynamic Ground Water Resources 2025 (Telangana district cut) via OpenCity"
+    },
+    {
+      "id": "hyd-cgwb-well-density",
+      "tier": 2,
+      "category": "Groundwater",
+      "title": "Hyderabad has more CGWB observation wells behind it than any other city on this platform.",
+      "value": "481",
+      "unit": "CGWB observation wells across the metropolitan districts",
+      "interpretation": "481 wells pulled via the India-WRIS Ground Water Level API across Ranga Reddy (192), Medak (173), Hyderabad (48), Siddipet (44) and Vikarabad (24). Delhi, the next best, has 237. Density matters because it decides what can be said honestly: it is enough to place measured points, and still not enough to paint a continuous per-ward depth surface, which is why that layer stays off.",
+      "data_date": "2026-07-26",
+      "source_url": "https://indiawris.gov.in/wris/",
+      "source_label": "India-WRIS Ground Water Level API (in-repo: build_hyderabad_cgwb_stations.py)"
+    },
+    {
+      "id": "hyd-1908-cascade-failure",
+      "tier": 1,
+      "category": "Heritage",
+      "title": "On one night in 1908 the tank cascade failed in sequence, and the city built two reservoirs so it could never happen again.",
+      "value": "221 of 788",
+      "unit": "tanks along the Musi breached, 28 September 1908",
+      "interpretation": "The Great Musi Flood took roughly 59,000 houses. Upstream, 221 of the 788 tanks strung along the river breached - a cascade engineered to slow water down failing link by link. Nizam VI summoned M. Visvesvaraya, who joined as Special Consulting Engineer on 15 April 1909 and proposed impounding reservoirs for floods in excess of what the channel could carry. Osman Sagar was begun in 1913 and completed in 1918. Both twin reservoirs are flood-control structures first and water supply second.",
+      "data_date": "2026-07-26",
+      "source_url": "https://en.wikipedia.org/wiki/Great_Musi_Flood_of_1908",
+      "source_label": "Great Musi Flood of 1908, with contemporary references; Hyderabad History Project / Siasat Daily on the Visvesvaraya commission"
+    },
+    {
+      "id": "hyd-cascade-reconstructed",
+      "tier": 2,
+      "category": "Heritage",
+      "title": "The Qutb Shahi tank cascade is still traceable: 428 tanks, 411 links, nine deep.",
+      "value": "428 tanks / 411 links",
+      "unit": "reconstructed Musi cascade, maximum depth 9",
+      "interpretation": "Reconstructed from FABDEM elevation and D8 steepest-descent flow routing over the in-repo water-body layer: 428 tank nodes connected by 411 links, with 11 river outlets and chains running up to nine tanks deep. The busiest convergence is Amber Cheruvu, receiving eight upstream inflows. Edge confidence is 321 high, 81 medium, 9 low. This is the same system that failed in 1908, and the only cascade on this platform with a documented catastrophic failure.",
+      "data_date": "2026-07-26",
+      "source_url": "https://www.fathom.global/product/fabdem/",
+      "source_label": "Computed in-repo (run_cascade.py, FABDEM 30 m + WhiteboxTools) over the OSM water-body layer"
+    },
+    {
+      "id": "hyd-hydraa-arithmetic",
+      "tier": 1,
+      "category": "Restoration",
+      "title": "At the stated restoration rate, clearing the lake register takes about three centuries.",
+      "value": "10 a year vs 2,978",
+      "unit": "HYDRAA's stated rate against the gazetted register",
+      "interpretation": "HYDRAA targets ten lake restorations a year toward a vision of 200 rejuvenated lakes - six completed in Phase I, 14 under restoration in Phase II. Against its own 200-lake vision that is twenty years. Against the 2,978 lakes actually in HMDA's gazetted register it is a different order of problem. The programme is real and progressing; the ratio is worth stating alongside it rather than instead of it.",
+      "data_date": "2026-04-25",
+      "source_url": "https://www.theweek.in/theweek/statescan/2026/04/25/telanganas-urban-revival-hydraa-reshapes-hyderabad-through-lake-restoration-land-protection.html",
+      "source_label": "The Week, HYDRAA lake restoration programme; register count from lakes.hmda.gov.in"
+    },
+    {
+      "id": "hyd-amberpet-bod-breach",
+      "tier": 1,
+      "category": "Sewage",
+      "title": "Hyderabad's biggest sewage plant missed the discharge standard in 84% of the months it was monitored.",
+      "value": "49 of 58 months",
+      "unit": "Amberpet STP, 339 MLD, effluent BOD above the 10 mg/L norm",
+      "interpretation": "TGPCB monitors treated effluent leaving each plant. Amberpet, the city's largest at 339 MLD, recorded a median effluent BOD of 17 mg/L against a discharge norm of 10, and peaked at 43. Nagole, the second largest at 172 MLD, exceeded the norm in 42 of 58 months with a peak of 64. This is not a capacity shortfall - both plants were running. It is treated water leaving the works dirtier than the standard allows, and it goes straight into the Musi.",
+      "data_date": "2024-11-30",
+      "source_url": "https://data.telangana.gov.in/dataset/telangana-pollution-control-board-stp-sewage-treatment-plant-data",
+      "source_label": "TGPCB sewage treatment plant monitoring via data.telangana.gov.in (GODL-India)"
+    },
+    {
+      "id": "hyd-stp-capacity",
+      "tier": 2,
+      "category": "Sewage",
+      "title": "Hyderabad has about 1,134 MLD of named sewage treatment capacity, and most of it struggles to meet the standard.",
+      "value": "1,134 MLD",
+      "unit": "across 53 named plants with published capacity",
+      "interpretation": "Telangana's pollution board publishes every plant by name with its capacity and its monthly effluent quality. Adding up the Hyderabad-area plants gives roughly 1,134 MLD across 53 works. Of the 66 Hyderabad-area plants monitored, 39 have exceeded the BOD discharge norm at least once. What is still NOT published is the AMRUT 39-STP programme's split between commissioned and under-construction plants, so the forward-looking number remains unverifiable even though the existing estate is fully itemised.",
+      "data_date": "2024-11-30",
+      "source_url": "https://data.telangana.gov.in/dataset/telangana-pollution-control-board-stp-sewage-treatment-plant-data",
+      "source_label": "TGPCB sewage treatment plant monitoring via data.telangana.gov.in (GODL-India)"
+    },
+    {
+      "id": "hyd-nalla-cheruvu-chain",
+      "tier": 1,
+      "category": "Sewage",
+      "title": "The Musi's deadest reading sits at the outlet of a lake that receives two sewage plants.",
+      "value": "DO 0.0",
+      "unit": "dissolved oxygen at the Nalla Cheruvu outlet, all of 2022",
+      "interpretation": "CPCB station 4659 monitors the Musi at the outlet of Nalla Cheruvu and recorded dissolved oxygen of 0.0 across the whole of 2022 - no oxygen at either end of the year's range. Two treatment plants discharge into that system, of 86.5 MLD and 30 MLD; the smaller one exceeded the BOD norm in 43 of its 58 monitored months. TGPCB monitors the STP outlet on the river as its own station. The two datasets are published by different bodies and were never designed to be read together, which is exactly why the chain is worth showing.",
+      "data_date": "2024-11-30",
+      "source_url": "https://data.telangana.gov.in/dataset/telangana-pollution-control-board-stp-sewage-treatment-plant-data",
+      "source_label": "TGPCB STP monitoring + CPCB NWMP station 4659, both via published open data"
+    },
+    {
+      "id": "hyd-collection-efficiency",
+      "tier": 1,
+      "category": "Governance & finance",
+      "title": "Hyderabad's water utility fails to collect nearly a third of what it bills.",
+      "value": "69.5%",
+      "unit": "collection against billed demand, Jan 2022 to Jun 2026",
+      "interpretation": "HMWSSB's own billing ledger, published monthly, shows 75.05 billion demanded and 52.16 billion collected over 54 months - a shortfall of 22.89 billion. Realisation varies sharply by division, from about 51% to about 95%. Connections grew from 1.41 million to 1.55 million over the same period. The utility publishes this itself; it is not an estimate or an audit finding.",
+      "data_date": "2026-06-30",
+      "source_url": "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-billing-and-collection-data",
+      "source_label": "HMWSSB billing and collection data via data.telangana.gov.in (GODL-India)"
+    }
+  ]
+}

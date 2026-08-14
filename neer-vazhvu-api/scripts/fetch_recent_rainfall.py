@@ -41,6 +41,13 @@ CITIES = {
     "bangalore": (12.9716, 77.5946),
     "mumbai": (19.0760, 72.8777),
     "delhi": (28.6100, 77.2100),
+    # Hyderabad's centroid is the GHMC 2022 ward extent's midpoint. Note that
+    # Hyderabad is the one city where this single point is a fallback rather
+    # than the best available signal: TGDPS runs 185 AWS rain gauges inside
+    # GHMC_CMC_MMC (values.jsp?s1=<awsId>, with lat/long per station), which
+    # would give a measured intra-city surface instead of one interpolated
+    # cell. Keep this entry as the daily backbone; layer TGDPS over it.
+    "hyderabad": (17.4260, 78.4300),
 }
 
 API = (

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { liveCityList } from "@/lib/cities/roster";
+import { liveCityPhrase } from "@/lib/cities/roster";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Neer Vazhvu",
     description:
       `Open-source platform tracking reservoirs, groundwater, river health, flood risk, ` +
-      `drainage, and water bodies across Indian cities - ${liveCityList()}.`,
+      `drainage, and water bodies across ${liveCityPhrase()}.`,
     start_url: "/",
     display: "standalone",
     background_color: "#0f172a",

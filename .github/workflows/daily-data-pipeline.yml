@@ -56,6 +56,31 @@ jobs:
           TN_PWD_MAX_STALE_DAYS: '4'
         run: python scripts/scrape_tn_pwd_reservoirs.py
 
+      # Scrape HMWSSB's daily reservoir statement for Hyderabad. This is the
+      # richest supply feed on the platform - level, storage AND draw-off per
+      # source, every day, archived back to 1 Jan 2014 - and the days-left hero,
+      # the allocation ledger's receipts column and the GO 111 twin-share
+      # analysis are all computed from it.
+      #
+      # Runs from CI rather than the local India-IP job because bms.hyderabadwater.gov.in
+      # answers from any network; it was never one of the IP-gated hosts.
+      - name: Scrape Hyderabad (HMWSSB) -> Supabase
+        id: scrape_hmwssb
+        continue-on-error: true
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        # --supabase is REQUIRED: without it the scraper parses and prints but
+        # writes nothing, which would look like a healthy green step producing
+        # no data. With no --date it walks back up to 8 days from today until it
+        # finds a filed statement, which is the right behaviour for a daily run
+        # because HMWSSB often files late.
+        #
+        # Depends on migration 038 (hyderabad water_sources) being applied; the
+        # upsert targets reservoir_daily_v2 keyed on those source codes.
+        run: python scripts/scrape_hmwssb_reservoirs.py --supabase
+
       # India-WRIS CGWB station readings for Madurai district (last 90 days).
       # Chennai's WRIS is fetched from the monthly orchestrator's run-monthly
       # endpoint; Madurai runs daily here so the live-station overlay on

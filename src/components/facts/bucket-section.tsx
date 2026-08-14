@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FactCard } from "@/components/facts/fact-card";
 import { cn } from "@/lib/utils";
@@ -38,6 +38,30 @@ export function BucketSection({
 }: BucketSectionProps) {
   const { language } = useLanguage();
   const [open, setOpen] = useState(defaultOpen);
+
+  // Deep links from elsewhere on the site (the dashboard's key-findings strip
+  // links to /<city>/facts#<fact-id>) land on a page whose sections are closed
+  // by default. A collapsed section does not render its cards AT ALL, so the
+  // anchor the browser is looking for does not exist and it silently stays at
+  // the top. Open the section that owns the target, then scroll to it.
+  //
+  // Deliberately in an effect rather than in the initial state: window.location
+  // is not available during SSR, and seeding state from it would desync
+  // hydration.
+  useEffect(() => {
+    const reveal = () => {
+      const id = decodeURIComponent(window.location.hash.replace(/^#/, ""));
+      if (!id || !facts.some((f) => f.id === id)) return;
+      setOpen(true);
+      // Wait for the cards to mount before scrolling to one of them.
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ block: "center", behavior: "smooth" });
+      });
+    };
+    reveal();
+    window.addEventListener("hashchange", reveal);
+    return () => window.removeEventListener("hashchange", reveal);
+  }, [facts]);
 
   const label = bucket.label[language] ?? bucket.label.en;
   const description = bucket.description[language] ?? bucket.description.en;

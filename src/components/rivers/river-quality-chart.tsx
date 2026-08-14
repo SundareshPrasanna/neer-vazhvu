@@ -13,7 +13,8 @@ import {
 } from "recharts";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/components/theme-provider";
-import type { RiverQualityReading } from "@/types/river-quality";
+import type { Measure, RiverQualityReading } from "@/types/river-quality";
+import { measureWorst, measureLabel } from "@/lib/rivers/measure";
 import { useLanguage } from "@/lib/i18n/context";
 
 const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -23,11 +24,30 @@ interface RiverQualityChartProps {
   stationName: string;
 }
 
+/** The raw measures for a plotted point, so the tooltip can print the RANGE
+ *  the source published rather than the single end this chart plots. */
+type RawMeasures = {
+  do_mgl: Measure;
+  bod_mgl: Measure;
+  nitrate_mgl: Measure;
+  fecal_coliform_mpn: Measure;
+};
+
 interface TooltipPayloadItem {
   dataKey: string;
   value: number;
   color: string;
   name: string;
+  payload?: { raw?: RawMeasures };
+}
+
+/** What to print for one series: the published range ("22-43") where there is
+ *  one, else the plotted number. Falls back to the number so a point-value
+ *  city is unchanged. */
+function seriesLabel(item: TooltipPayloadItem | undefined, digits: number): string | null {
+  if (!item || item.value == null) return null;
+  const raw = item.payload?.raw?.[item.dataKey as keyof RawMeasures] ?? null;
+  return measureLabel(raw) ?? item.value.toFixed(digits);
 }
 
 function renderTooltip({
@@ -57,7 +77,7 @@ function renderTooltip({
           <span className="text-slate-600 dark:text-slate-400">
             DO:{" "}
             <span className="font-medium text-sky-600 dark:text-sky-400">
-              {do_val.value.toFixed(1)} mg/L
+              {seriesLabel(do_val, 1)} mg/L
             </span>
           </span>
         </div>
@@ -68,7 +88,7 @@ function renderTooltip({
           <span className="text-slate-600 dark:text-slate-400">
             BOD:{" "}
             <span className="font-medium text-orange-600 dark:text-orange-400">
-              {bod_val.value.toFixed(0)} mg/L
+              {seriesLabel(bod_val, 0)} mg/L
             </span>
           </span>
         </div>
@@ -79,7 +99,7 @@ function renderTooltip({
           <span className="text-slate-600 dark:text-slate-400">
             NO₃:{" "}
             <span className="font-medium text-emerald-600 dark:text-emerald-400">
-              {nitrate_val.value.toFixed(1)} mg/L
+              {seriesLabel(nitrate_val, 1)} mg/L
             </span>
           </span>
         </div>
@@ -90,7 +110,7 @@ function renderTooltip({
           <span className="text-slate-600 dark:text-slate-400">
             FC:{" "}
             <span className="font-medium text-rose-600 dark:text-rose-400">
-              {fc_val.value.toLocaleString()} MPN
+              {seriesLabel(fc_val, 0) ?? fc_val.value.toLocaleString()} MPN
             </span>
           </span>
         </div>
@@ -124,6 +144,24 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
   const sorted = [...readings]
     .map((r) => ({
       ...r,
+      // Recharts scales numbers. Hyderabad's CPCB NWMP readings are annual
+      // {min,max} ranges, so spreading them raw handed Recharts an object to
+      // plot and the tooltip an object to call .toFixed() on - which is what
+      // broke the Musi and Manjira panels (the two rivers that HAVE readings;
+      // rivers without any returned early and looked fine). Plot the
+      // threshold-relevant end, per src/lib/rivers/measure.ts, and keep the
+      // raw measures for the tooltip so the reader still sees the published
+      // range. No midpoint is invented - CPCB never measured one.
+      do_mgl: measureWorst(r.do_mgl, "lower-is-worse"),
+      bod_mgl: measureWorst(r.bod_mgl, "higher-is-worse"),
+      nitrate_mgl: measureWorst(r.nitrate_mgl, "higher-is-worse"),
+      fecal_coliform_mpn: measureWorst(r.fecal_coliform_mpn, "higher-is-worse"),
+      raw: {
+        do_mgl: r.do_mgl,
+        bod_mgl: r.bod_mgl,
+        nitrate_mgl: r.nitrate_mgl,
+        fecal_coliform_mpn: r.fecal_coliform_mpn,
+      },
       period: r.month ?? String(r.year),
       // "2026-04" -> "Apr 26" keeps the axis readable at 9px.
       periodLabel: r.month
