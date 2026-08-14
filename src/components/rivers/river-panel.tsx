@@ -491,9 +491,10 @@ export function RiverPanel({
               );
             })()}
             {/* Fecal Coliform */}
-            {latestReading.fecal_coliform_mpn != null && (() => {
+            {measureWorst(latestReading.fecal_coliform_mpn, "higher-is-worse") != null && (() => {
               const limit = 500;
-              const val = latestReading.fecal_coliform_mpn;
+              const val = measureWorst(latestReading.fecal_coliform_mpn, "higher-is-worse") as number;
+              const shown = measureLabel(latestReading.fecal_coliform_mpn);
               const ratio = val / limit;
               const exceeded = val > limit;
               const severe = val > 10000;
@@ -504,7 +505,7 @@ export function RiverPanel({
                     <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit} MPN</span>
                   </div>
                   <div className={`font-mono font-bold ${severe ? "text-red-600 dark:text-red-400" : exceeded ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"}`}>
-                    {val.toLocaleString()} <span className="font-normal text-slate-400">MPN</span>
+                    {shown} <span className="font-normal text-slate-400">MPN</span>
                     {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(0)}x</span>}
                   </div>
                   <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
@@ -542,9 +543,10 @@ export function RiverPanel({
               );
             })()}
             {/* Nitrate */}
-            {latestReading.nitrate_mgl != null && (() => {
+            {measureWorst(latestReading.nitrate_mgl, "higher-is-worse") != null && (() => {
               const limit = 45;
-              const val = latestReading.nitrate_mgl;
+              const val = measureWorst(latestReading.nitrate_mgl, "higher-is-worse") as number;
+              const shown = measureLabel(latestReading.nitrate_mgl);
               const ratio = val / limit;
               const exceeded = val > limit;
               const warning = val > 20;
@@ -555,7 +557,7 @@ export function RiverPanel({
                     <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit} mg/L</span>
                   </div>
                   <div className={`font-mono font-bold ${exceeded ? "text-red-600 dark:text-red-400" : warning ? "text-orange-600 dark:text-orange-400" : "text-slate-900 dark:text-slate-100"}`}>
-                    {val} <span className="font-normal text-slate-400">mg/L</span>
+                    {shown} <span className="font-normal text-slate-400">mg/L</span>
                     {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(1)}x</span>}
                   </div>
                   <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
