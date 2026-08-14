@@ -38,23 +38,26 @@ interface Props {
 }
 
 export function StationReadingsPanel({ basinId, stationKey, name, onClose }: Props) {
-  const [pack, setPack] = useState<StationReadingsPack | null>(null);
-  const [failed, setFailed] = useState(false);
+  // Keyed by station so a stale pack never renders for a newly clicked
+  // station - no synchronous reset in the effect needed.
+  const [loaded, setLoaded] = useState<{ key: string; pack: StationReadingsPack | null } | null>(null);
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
 
   useEffect(() => {
     let live = true;
-    setPack(null);
-    setFailed(false);
     fetch(`/data/basins/${basinId}/readings/${encodeURIComponent(stationKey)}.json`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d) => { if (live) setPack(d); })
-      .catch(() => { if (live) setFailed(true); });
+      .then((d) => { if (live) setLoaded({ key: stationKey, pack: d }); })
+      .catch(() => { if (live) setLoaded({ key: stationKey, pack: null }); });
     return () => { live = false; };
   }, [basinId, stationKey]);
+
+  const pack = loaded?.key === stationKey ? loaded.pack : null;
+  const failed = loaded?.key === stationKey && loaded.pack === null;
 
   const shown = (pack?.series ?? []).filter((s) => s.verified);
   const meta = [pack?.station.agency, pack?.station.siteType, pack?.station.river]
