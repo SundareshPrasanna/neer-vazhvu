@@ -50,7 +50,7 @@ const CITY_HOOKS: Record<string, string> = {
   hyderabad:
     "The Musi and its tank cascade, a 2,978-lake gazetted register, the utility's own tanker ledger, and a daily statement that publishes the draw as well as the storage.",
   kolkata:
-    "The Hooghly, groundwater arsenic, and a delta city's drainage and flooding.",
+    "Victorian sewers rated for 6 mm of rain an hour, KMC's own weekly waterlogging register, the wetlands that treat two-thirds of the city's sewage, and the Adi Ganga at zero dissolved oxygen.",
 };
 
 type CityStatus = "live" | "onboarding" | "upnext";

@@ -1,5 +1,5 @@
 -- =============================================================
--- 039_kolkata_seed_disabled.sql
+-- 040_kolkata_seed_disabled.sql
 -- Seeds Kolkata as a registered but disabled REGION (the MMR model,
 -- not the standalone-city model used for Delhi).
 --
