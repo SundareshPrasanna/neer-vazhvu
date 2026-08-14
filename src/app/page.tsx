@@ -1,19 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listAllPlaces } from "@/lib/cities";
+import { liveCityPhrase } from "@/lib/cities/roster";
 import { CityLandmark, CITY_ACCENT, DEFAULT_ACCENT } from "@/components/landing/city-landmark";
+
+// The landing page kept its OWN three copies of the city roster, so it was
+// still advertising three live cities on the day the sixth launched - the same
+// rot src/lib/cities/roster.ts was written to end, in the one place a reader is
+// most likely to see it. Derived from the registry now, like layout.tsx and
+// manifest.ts. A new city needs no edit here.
+const CITIES = liveCityPhrase();
+const SHORT_DESCRIPTION = `Open-source urban water intelligence across ${CITIES}.`;
 
 export const metadata: Metadata = {
   title: "Neer Vazhvu | Urban Water Intelligence",
   description:
-    "Open-source urban water intelligence across Indian cities. Reservoirs, groundwater, rivers, floods, and water bodies made legible city by city - Chennai, Madurai, and Bengaluru live, more onboarding.",
+    `Open-source urban water intelligence across ${CITIES}. Reservoirs, groundwater, ` +
+    `rivers, floods, and water bodies made legible city by city.`,
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "Neer Vazhvu | Urban Water Intelligence",
-    description:
-      "Open-source urban water intelligence across Indian cities - Chennai, Madurai, and Bengaluru live, more onboarding.",
+    description: SHORT_DESCRIPTION,
     type: "website",
     locale: "en_IN",
     siteName: "Neer Vazhvu",
@@ -22,8 +31,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Neer Vazhvu | Urban Water Intelligence",
-    description:
-      "Open-source urban water intelligence across Indian cities - Chennai, Madurai, and Bengaluru live, more onboarding.",
+    description: SHORT_DESCRIPTION,
   },
 };
 
