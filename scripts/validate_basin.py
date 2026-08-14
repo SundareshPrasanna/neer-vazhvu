@@ -35,6 +35,7 @@ REQUIRED_PROPS = {
     "pressures": ["kind"],
     "admin": ["level"],
     "command-areas": [],
+    "flow-stations": ["stationKey", "name", "agency", "hasReadings"],
 }
 EXPECTED_PROPS = {
     "monitoring-points": ["name", "findings"],
@@ -42,7 +43,50 @@ EXPECTED_PROPS = {
     "infrastructure": ["name", "status"],
     "admin": ["name"],
     "command-areas": ["name"],
+    "flow-stations": ["siteType", "river"],
 }
+
+# Series kinds the station-readings panel knows how to chart (see
+# docs/specs/flow-stations-contract.md). Unknown kinds render as a table,
+# so they are a warning, not an error.
+KNOWN_SERIES_KINDS = {
+    "discharge-monthly", "discharge-daily", "climatology-monthly",
+    "flow-duration", "annual-water-year", "gauge-level-monthly",
+    "wq-param-series", "wq-class-series",
+}
+
+
+def check_readings_packs(out_dir: Path, feats: list, errors: list, warnings: list) -> None:
+    """Every hasReadings station must have a parseable pack; packs must carry
+    provenance and at least one series (the contract's honest-degradation rule
+    is expressed as hasReadings: false, never as an empty pack)."""
+    for f in feats:
+        props = f["properties"]
+        key = props.get("stationKey")
+        if not props.get("hasReadings"):
+            continue
+        pf = out_dir / "readings" / f"{key}.json"
+        if not pf.exists():
+            errors.append(f"flow-stations: {key} has hasReadings but no readings/{key}.json")
+            continue
+        try:
+            pack = json.loads(pf.read_text())
+        except json.JSONDecodeError as e:
+            errors.append(f"readings/{key}.json: not parseable ({e})")
+            continue
+        if pack.get("schemaVersion") != 1:
+            errors.append(f"readings/{key}.json: schemaVersion must be 1")
+        src = pack.get("source") or {}
+        if not src.get("label") or not src.get("fetched"):
+            errors.append(f"readings/{key}.json: source.label + source.fetched are mandatory (provenance rule)")
+        series = pack.get("series") or []
+        if not series:
+            errors.append(f"readings/{key}.json: no series - use hasReadings: false instead of an empty pack")
+        for s in series:
+            if "verified" not in s:
+                errors.append(f"readings/{key}.json: series '{s.get('kind')}' missing verified flag")
+            if s.get("kind") not in KNOWN_SERIES_KINDS:
+                warnings.append(f"readings/{key}.json: unknown series kind '{s.get('kind')}' (renders as a table)")
 
 
 def _fam_root(fam: str) -> str:
@@ -103,6 +147,10 @@ def main() -> None:
         no_geom = sum(1 for f in feats if not f.get("geometry"))
         if no_geom:
             errors.append(f"{fam}: {no_geom} features have no geometry")
+
+        # Station-readings packs (flow-stations contract).
+        if root == "flow-stations":
+            check_readings_packs(out_dir, feats, errors, warnings)
 
         # shedId referential integrity.
         bad = {f["properties"]["shedId"] for f in feats
