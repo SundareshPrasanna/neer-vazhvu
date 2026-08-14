@@ -4,40 +4,52 @@ import { listAllPlaces } from "./index";
  * City roster strings for site-wide metadata, derived from the registry so
  * they can never go stale the way the hard-coded "Chennai, Madurai, and
  * onboarding Bengaluru" string did. That string survived three launches
- * (Bengaluru, Mumbai, Delhi) because it was copied into four places while
- * only one of them read the registry.
+ * because it was copied into several places while only one read the registry.
  *
- * Lives here rather than in layout.tsx because manifest.ts and the JSON-LD
- * blob need the same roster, and a second copy is how the first one rotted.
+ * These return a COUNT, not a list of names. An enumerated roster is stale the
+ * moment it is written and unreadable once the platform passes a handful of
+ * cities: "Chennai, Madurai, Bengaluru, Mumbai, Delhi and Hyderabad" is already
+ * most of a description, and every onboarding adds to it. "six Indian cities"
+ * stays the same length forever and is still true the day the seventh lands.
+ *
+ * City NAMES still belong in `cityKeywords()`, where a search engine wants
+ * them individually and where a list is the right shape.
  */
 
-/** "Chennai, Madurai, Bengaluru live; Hyderabad onboarding" */
-export function cityRoster(): string {
-  const all = listAllPlaces();
-  const live = all.filter((p) => p.enabled !== false).map((p) => p.displayName);
-  const onboarding = all.filter((p) => p.enabled === false).map((p) => p.displayName);
-  const parts = [`${live.join(", ")} live`];
-  if (onboarding.length) parts.push(`${onboarding.join(", ")} onboarding`);
-  return parts.join("; ");
+const NUMBER_WORDS = [
+  "zero", "one", "two", "three", "four", "five", "six",
+  "seven", "eight", "nine", "ten", "eleven", "twelve",
+];
+
+function liveCities() {
+  return listAllPlaces().filter((p) => p.enabled !== false);
+}
+
+/** How many cities are live right now. */
+export function liveCityCount(): number {
+  return liveCities().length;
 }
 
 /**
- * Prose form for the site description, where "live; onboarding" reads as
- * machine output: "Chennai, Madurai, Bengaluru, Mumbai and Delhi".
- * Onboarding cities are omitted - a description is a promise to a reader,
- * and a preview-gated city 404s for them.
+ * "six Indian cities" - the phrase that goes in prose descriptions.
+ * Spelled out through twelve, then numerals, which is ordinary prose style.
  */
-export function liveCityList(): string {
-  const live = listAllPlaces()
-    .filter((p) => p.enabled !== false)
-    .map((p) => p.displayName);
-  if (live.length <= 1) return live[0] ?? "";
-  return `${live.slice(0, -1).join(", ")} and ${live[live.length - 1]}`;
+export function liveCityPhrase(): string {
+  const n = liveCityCount();
+  const word = n < NUMBER_WORDS.length ? NUMBER_WORDS[n] : String(n);
+  return `${word} Indian ${n === 1 ? "city" : "cities"}`;
+}
+
+/**
+ * Same phrase, plus a stable tail when any registered city is still
+ * preview-gated. "more onboarding" does not grow with the roster.
+ */
+export function liveCityPhraseWithOnboarding(): string {
+  const onboarding = listAllPlaces().some((p) => p.enabled === false);
+  return onboarding ? `${liveCityPhrase()}, more onboarding` : liveCityPhrase();
 }
 
 /** Search keywords for the live cities: ["Chennai water", "Madurai water", ...] */
 export function cityKeywords(): string[] {
-  return listAllPlaces()
-    .filter((p) => p.enabled !== false)
-    .map((p) => `${p.displayName} water`);
+  return liveCities().map((p) => `${p.displayName} water`);
 }
