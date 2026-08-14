@@ -1,11 +1,33 @@
 {
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/overture-buildings",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "overture-buildings",
+        "title": "Overture Maps building footprints",
+        "publisher": "Overture Maps Foundation",
+        "license": "ODbL / CDLA depending on theme",
+        "role": "input",
+        "as_of": "2026-06-17"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-08-08",
+    "produced_by": "scripts/verify_rich_body_overture_buildings.py",
+    "note": "Per-building polygon counts from the Overture 2026-06-17.0 release (the release id is the evidence vintage); independent comparison against Google Open Buildings by design."
+  },
   "body_id": "perumbakkam",
-  "computed_at": "2026-07-08T07:25:38.474395+00:00",
+  "computed_at": "2026-08-08T05:25:04.523684+00:00",
   "data_source": {
-    "dataset": "Overture Maps Foundation - buildings (2026-06-17.0)",
-    "release_date": "2026-06-17",
-    "url_root": "s3://overturemaps-us-west-2/release/2026-06-17.0/theme=buildings/type=building/*",
-    "license": "CDLA-Permissive 2.0",
+    "dataset": "Overture Maps Foundation - buildings (2026-07-22.0)",
+    "release_date": "2026-07-22",
+    "url_root": "s3://overturemaps-us-west-2/release/2026-07-22.0/theme=buildings/type=building/*",
+    "license": "ODbL / CDLA depending on theme",
     "method": "Per-building polygon download via DuckDB+spatial+httpfs query on the Overture parquet release filtered by chip bbox. Buildings counted as inside a region when their centroid is within the region polygon. Area summed from each footprint's planar area at 13N.",
     "providers": "Microsoft + OpenStreetMap + Google + other partners (combined and deduplicated by Overture)",
     "known_limitations": [
@@ -27,15 +49,15 @@
     {
       "region": "Halo: 1km buffer - body",
       "building_count": 10723,
-      "building_area_ha": 95.54,
+      "building_area_ha": 95.34,
       "with_height_metadata": 0,
       "region_area_ha": 664.54,
-      "built_up_fraction_pct": 14.38
+      "built_up_fraction_pct": 14.35
     }
   ],
   "headline_for_v0": [
     "Inside primary boundary: 0 buildings covering 0 ha (0.0%).",
-    "Inside 1 km halo: 10,723 buildings covering 96 ha (14.4%)."
+    "Inside 1 km halo: 10,723 buildings covering 95 ha (14.3%)."
   ],
   "comparison_note": "Compare side-by-side with the Google Open Buildings v3 numbers in pallikaranai-open-buildings-verification.json (2023 release). Delta indicates construction since 2023."
 }

@@ -194,14 +194,23 @@ export function RiversLeafletMap({
                 (Delhi's Yamuna) and Leaflet tooltips default to nowrap,
                 which overflows the viewport (QA). */}
             <Tooltip sticky opacity={0.95}>
-              <div style={{ maxWidth: 260, whiteSpace: "normal" }}>
+              <div style={{ maxWidth: 280, whiteSpace: "normal", lineHeight: 1.35 }}>
                 <strong>{localizedName(info, riverId)}</strong>
-                {info?.status && (
-                  <>
-                    <br />
-                    <span style={{ fontSize: "11px", color: "#64748b" }}>{localizedStatus(info)}</span>
-                  </>
-                )}
+                {info?.status && (() => {
+                  // Hover is a one-line orientation, not the story. Config
+                  // authors have written paragraph-length statuses here - the
+                  // Musi's ran to 459 characters against a 38-137 norm - which
+                  // renders as an unreadable strip over a thin polyline. Clamp
+                  // defensively; the full text is on the click panel.
+                  const full = localizedStatus(info) ?? "";
+                  const short = full.length > 150 ? `${full.slice(0, 147).trimEnd()}...` : full;
+                  return (
+                    <>
+                      <br />
+                      <span style={{ fontSize: "11px", color: "#64748b" }}>{short}</span>
+                    </>
+                  );
+                })()}
               </div>
             </Tooltip>
           </Polyline>

@@ -12,7 +12,8 @@
  * place-aware script using this same library.
  */
 
-import { writeFileSync, promises as fsAsync } from "fs";
+import { promises as fsAsync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { join } from "path";
 import osmtogeojson from "osmtogeojson";
 
@@ -251,7 +252,7 @@ async function main() {
   };
 
   const outPath = join(process.cwd(), "public/geojson/madurai-water-bodies-current.geojson");
-  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+  writeArtifact(outPath, geojson);
   console.log(`\nSaved ${features.length} features to ${outPath}`);
 
   const totalAreaHa = features.reduce((sum, f) => sum + (f.properties.area_ha || 0), 0);

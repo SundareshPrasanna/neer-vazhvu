@@ -1,4 +1,41 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/river-quality",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cpcb-nwmp-annual",
+        "title": "CPCB NWMP annual river water-quality reports (Bengaluru stations)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "as_of": "2024"
+      },
+      {
+        "id": "kspcb-monthly-wq",
+        "title": "KSPCB monthly/quarterly water-quality reports (RWQ/GEMS/MINAR series)",
+        "publisher": "Karnataka State Pollution Control Board",
+        "license": "government publication, cited with attribution"
+      },
+      {
+        "id": "cpcb-prs-report",
+        "title": "CPCB Polluted River Stretches report, October 2025",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "as_of": "2025-10"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-14",
+    "note": "Split-source series (2020-2024): CPCB NWMP annual reports AND KSPCB monthly water-quality reports; where the two differ at a station this file uses CPCB's annual mean (platform-wide convention). Station coordinates are government-record GPS locations, field-verified with Paani Earth against the KSPCB station register (Jul 2026). All three rivers are CPCB Priority I polluted stretches (October 2025 PRS report, mirrored under /docs).",
+    "conventions": {
+      "aggregation": "readings are annual means; dry-season/monsoon variance is large (see _note)",
+      "coordinates": "stations within 5 km of the OSM river polyline are snapped to it (lat_original/lng_original preserved); farther stations carry off_osm_river_polyline + osm_coverage_caveat - see _osm_coverage_note"
+    }
+  },
   "last_updated": "2026-07-14",
   "data_year_range": "2020-2024",
   "source": "CPCB NWMP annual reports + KSPCB monthly water quality reports (Karnataka State Pollution Control Board). Bengaluru's 3 rivers are among the most-monitored in India because of the Forward Foundation NGT case + the Cauvery-discharge angle. Station coordinates are government-record GPS locations, field-verified with Paani Earth (KSPCB station register, Jul 2026); markers are NOT snapped to OSM river polylines because OSM does not trace these rivers through built-up BBMP. Where CPCB and KSPCB readings differ at the same station, this file uses CPCB's annual mean (consistent with the rest of the platform). All three rivers are CPCB-classified Priority I polluted stretches (the worst category).",
@@ -470,6 +507,6 @@
     }
   ],
   "_osm_coverage_note": "River-quality stations cross-referenced against the OSM river LineStrings. Stations within 5000 m of the polyline have been snapped to the nearest line point (lat_original / lng_original preserved for audit). Stations farther off carry `off_osm_river_polyline: true` plus an `osm_coverage_caveat` field explaining the disconnect; the `stretch` field stays the editorial physical-stretch description so the UI's primary station label is stable.",
-  "source_url": "/docs/cpcb-polluted-river-stretches-oct-2025.pdf",
+  "source_url": "https://cpcb.gov.in/polluted-river-stretches/",
   "source_label": "CPCB Polluted River Stretches report, October 2025 (mirrored copy)"
 }

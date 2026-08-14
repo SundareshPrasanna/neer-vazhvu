@@ -247,6 +247,12 @@ export const KOLKATA: CityConfig = {
     cgwbStations: true,
   },
   reservoirDataSource: 'v2',
+  // Kolkata is the stronger case for this field than Delhi, which introduced
+  // it: Delhi's share of a reservoir is merely unpublished, whereas Kolkata
+  // impounds nothing at all. There is no storage level to chart even in
+  // principle, so the chart must not promise it "fills in automatically".
+  reservoirHistoryAbsentNote:
+    "Kolkata impounds no water. It abstracts run-of-river from the Hooghly at Palta and pumps groundwater, so there is no storage level to chart even in principle. What would go here is daily abstraction or production volume, and no authority publishes it. Each source card below names who would have to.",
   // NOTE: these are per-plant DESIGN capacities carried for identity and
   // provenance. They are never summed into a published total - see FLAGGED
   // INCONSISTENCY above. None has a daily public feed: Kolkata publishes no

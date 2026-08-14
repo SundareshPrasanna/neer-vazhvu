@@ -33,6 +33,8 @@ import statistics
 from pathlib import Path
 from typing import Any
 
+from nvdm_write import write_artifact
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 WARDS_GEOJSON = REPO_ROOT / "public" / "geojson" / "bangalore-wards-2025.geojson"
 PROFILES_JSON = REPO_ROOT / "public" / "data" / "bangalore-ward-profiles.json"
@@ -147,7 +149,10 @@ def grade_from_quintile(rank: int, total: int) -> str:
 
 def main() -> None:
     wards_fc = json.loads(WARDS_GEOJSON.read_text())
-    profiles = json.loads(PROFILES_JSON.read_text())
+    profiles_raw = json.loads(PROFILES_JSON.read_text())
+    # Accept both the legacy bare-array shape and the NVDM wrapped form
+    # ({ envelope..., wards: [...] }) the profiles producer now emits.
+    profiles = profiles_raw if isinstance(profiles_raw, list) else profiles_raw["wards"]
     wbs_fc = json.loads(WATER_BODIES_GEOJSON.read_text())
 
     # Build a map of profiles by ward_number for fast lookup.
@@ -296,7 +301,9 @@ def main() -> None:
     }
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(output, indent=2))
+    # Envelope-preserving write (scripts/nvdm_write.py): keeps the NVDM
+    # envelope injected by the Bangalore migration and advances produced_at.
+    write_artifact(OUT, output)
     print(f"Wrote {OUT}")
 
     from collections import Counter

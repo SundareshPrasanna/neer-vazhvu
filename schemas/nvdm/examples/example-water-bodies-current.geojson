@@ -1,0 +1,47 @@
+{
+  "type": "FeatureCollection",
+  "nvdm": "1.0",
+  "dataset": "geojson-layers/water-bodies-current",
+  "scope": { "kind": "city", "id": "hyderabad" },
+  "provenance": {
+    "sources": [
+      {
+        "id": "osm-hyderabad-water",
+        "title": "OpenStreetMap water polygons, Hyderabad extract",
+        "publisher": "OpenStreetMap contributors",
+        "url": "https://www.openstreetmap.org/",
+        "license": "ODbL 1.0",
+        "retrieved": "2026-07-28"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-07-29",
+    "produced_by": "scripts/fetch-water-bodies.py",
+    "note": "Example artifact: envelope keys ride as RFC 7946 foreign members."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.474, 17.4239],
+            [78.4755, 17.4239],
+            [78.4755, 17.4249],
+            [78.474, 17.4249],
+            [78.474, 17.4239]
+          ]
+        ]
+      },
+      "properties": {
+        "osm_id": 12345678,
+        "osm_type": "way",
+        "name": "Example Cheruvu",
+        "name_te": "ఉదాహరణ చెరువు",
+        "area_ha": 1.2,
+        "water_type": "lake"
+      }
+    }
+  ]
+}

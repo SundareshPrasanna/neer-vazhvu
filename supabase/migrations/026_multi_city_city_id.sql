@@ -22,9 +22,10 @@
 --      keeps NULLs out of new inserts; the follow-up verifies all
 --      backfilled rows are non-NULL before tightening the constraint.
 --
--- ETL code paired with this migration sets city_id explicitly on new
--- inserts (see app/etl/pipeline.py + scripts/scrape_wris_*.py). The
--- default is just belt-and-braces for any caller we miss.
+-- Some paired ETL code sets city_id explicitly on new inserts; legacy
+-- pipeline paths and older scripts may still rely on the default until their
+-- writer cutover. The default is compatibility scaffolding, not the long-term
+-- ownership model.
 -- =============================================================
 
 -- --- helper: district string -> city_id ---
@@ -35,9 +36,9 @@ CREATE OR REPLACE FUNCTION _city_id_from_district(d TEXT)
 RETURNS TEXT LANGUAGE sql IMMUTABLE AS $$
   SELECT CASE
     WHEN d IS NULL THEN 'chennai'
-    WHEN lower(d) IN ('chennai') THEN 'chennai'
-    WHEN lower(d) IN ('madurai') THEN 'madurai'
-    WHEN lower(d) IN ('bangalore urban', 'bengaluru urban', 'bangalore rural', 'bengaluru rural') THEN 'bangalore'
+    WHEN lower(btrim(d)) IN ('chennai') THEN 'chennai'
+    WHEN lower(btrim(d)) IN ('madurai', 'theni', 'dindigul', 'virudhunagar') THEN 'madurai'
+    WHEN lower(btrim(d)) IN ('bangalore urban', 'bengaluru urban', 'bangalore rural', 'bengaluru rural') THEN 'bangalore'
     ELSE 'chennai'
   END;
 $$;
@@ -54,11 +55,93 @@ ALTER TABLE groundwater_wris ADD COLUMN IF NOT EXISTS city_id TEXT DEFAULT 'chen
 UPDATE groundwater_wris SET city_id = _city_id_from_district(district) WHERE city_id IS NULL OR city_id = 'chennai';
 CREATE INDEX IF NOT EXISTS idx_groundwater_wris_city ON groundwater_wris(city_id, reading_date DESC);
 
--- groundwater_wris_latest (mirror)
-ALTER TABLE groundwater_wris_latest ADD COLUMN IF NOT EXISTS city_id TEXT DEFAULT 'chennai'
-  REFERENCES cities(city_id) ON DELETE CASCADE;
-UPDATE groundwater_wris_latest SET city_id = _city_id_from_district(district) WHERE city_id IS NULL OR city_id = 'chennai';
-CREATE INDEX IF NOT EXISTS idx_groundwater_wris_latest_city ON groundwater_wris_latest(city_id);
+-- groundwater_wris_latest is a view, not a table. Recreate it with city_id
+-- from groundwater_wris instead of trying to add a storage column to the view.
+DROP VIEW IF EXISTS groundwater_wris_latest;
+
+CREATE VIEW groundwater_wris_latest AS
+WITH latest AS (
+  SELECT DISTINCT ON (city_id, station_code)
+    city_id,
+    station_code,
+    station_name,
+    latitude,
+    longitude,
+    reading_date,
+    depth_to_water_m,
+    acquisition_mode,
+    agency,
+    district,
+    well_type,
+    well_depth_m,
+    well_aquifer_type
+  FROM groundwater_wris
+  ORDER BY city_id, station_code, reading_date DESC
+),
+recent_deltas AS (
+  SELECT
+    city_id,
+    station_code,
+    depth_to_water_m,
+    ABS(
+      depth_to_water_m
+      - LAG(depth_to_water_m) OVER (
+          PARTITION BY city_id, station_code
+          ORDER BY reading_date
+        )
+    ) AS delta_m
+  FROM groundwater_wris
+  WHERE reading_date >= CURRENT_DATE - INTERVAL '60 days'
+),
+recent AS (
+  SELECT
+    city_id,
+    station_code,
+    COUNT(*)                                               AS recent_count,
+    MAX(depth_to_water_m) - MIN(depth_to_water_m)          AS recent_range_m,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY delta_m)
+      FILTER (WHERE delta_m IS NOT NULL)                   AS median_daily_delta_m
+  FROM recent_deltas
+  GROUP BY city_id, station_code
+)
+SELECT
+  l.city_id,
+  l.station_code,
+  l.station_name,
+  l.latitude,
+  l.longitude,
+  l.reading_date,
+  l.depth_to_water_m,
+  l.acquisition_mode,
+  l.agency,
+  l.district,
+  l.well_type,
+  l.well_depth_m,
+  l.well_aquifer_type,
+  COALESCE(r.recent_count, 0)::INT AS recent_count,
+  r.recent_range_m,
+  r.median_daily_delta_m,
+  CASE
+    WHEN l.acquisition_mode = 'Telemetric'
+         AND COALESCE(r.recent_count, 0) >= 10
+         AND r.median_daily_delta_m < 0.01
+      THEN 'stuck'
+    WHEN l.acquisition_mode = 'Telemetric'
+         AND l.reading_date < CURRENT_DATE - INTERVAL '14 days'
+      THEN 'stale'
+    WHEN l.acquisition_mode = 'Manual'
+         AND l.reading_date < CURRENT_DATE - INTERVAL '180 days'
+      THEN 'stale'
+    WHEN COALESCE(r.recent_count, 0) >= 1
+      THEN 'ok'
+    WHEN l.acquisition_mode = 'Manual'
+      THEN 'ok'
+    ELSE 'unknown'
+  END AS data_quality_flag
+FROM latest l
+LEFT JOIN recent r USING (city_id, station_code);
+
+GRANT SELECT ON groundwater_wris_latest TO anon, authenticated;
 
 -- wris_river_level
 ALTER TABLE wris_river_level ADD COLUMN IF NOT EXISTS city_id TEXT DEFAULT 'chennai'

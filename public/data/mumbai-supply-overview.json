@@ -1,4 +1,46 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/supply-overview",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "bmc-rti-manuals",
+        "title": "BMC Hydraulic Engineer RTI manuals (Dy HE Bhandup Complex + Water Supply Projects departments, Dec 2024)",
+        "publisher": "BMC Hydraulic Engineer's Department",
+        "license": "government publication, cited with attribution",
+        "as_of": "2024-12",
+        "retrieved": "2026-07-04"
+      },
+      {
+        "id": "bmc-esr-annual",
+        "title": "BMC Environment Status Report (annual)",
+        "publisher": "Brihanmumbai Municipal Corporation",
+        "license": "government publication, cited with attribution"
+      },
+      {
+        "title": "MCGM 'Water Supply Projects and Water Distribution System O&M' handbook (hosted at Somaiya CDEM)",
+        "publisher": "MCGM Hydraulic Engineer's Department",
+        "url": "https://cdem.somaiya.edu/media/pdf/Water%20hand%20book%20.pdf",
+        "license": "government handbook, cited with attribution",
+        "closed": true,
+        "as_of": "2012"
+      },
+      {
+        "title": "'Toward Equitable and 24x7 Water Supply for Greater Mumbai' White Paper - key figures via ORF",
+        "publisher": "MCGM (White Paper) / ORF (secondary carrier)",
+        "license": "public policy document, cited with attribution",
+        "closed": true,
+        "as_of": "2018"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-04",
+    "note": "Structural engineering-chain facts for Greater Mumbai (BMC) water supply, anchored on BMC's own Hydraulic Engineer RTI manuals (Dec 2024) - Mumbai's equivalent of Chennai's ADB IEE - plus the MCGM O&M handbook, the 2018 24x7 White Paper and dated press for the expansion programme; per-section citations in the legacy _sources array. _view_overrides is a grandfathered UI hint (spec 6.4), config-migration follow-up on record."
+  },
   "_note": "Structural at-a-glance facts for Greater Mumbai's (BMC) water supply engineering chain, compiled 2026-07 primarily from BMC's own RTI manuals - the Deputy Hydraulic Engineer (Bhandup Complex) manual and the Water Supply Projects department manual (both updated Dec 2024) - plus the MCGM-authored 'Water Supply Projects and Water Distribution System O&M' handbook (~2012, hosted at Somaiya CDEM), the 2018 'Toward Equitable and 24x7 Water Supply' White Paper (via ORF), and engineering press for the 2025-26 expansion programme. Mumbai has no ADB project document like Chennai/Madurai; the RTI manuals are the equivalent primary engineering source. current_supply_total_mld is the supplied figure (Praja 2024: 3,975 MLD; BMC's own draw statement is 3,850); the supply-mix rows are INSTALLED TREATMENT CAPACITY per stream, which is why they sum higher (~4,283 MLD incl. headroom). Connections are as on March 2025 (551,459; Praja RTI). Supply pairs by source: BMC's own ESR 2024-25 states 4,000 MLD supplied vs 4,505 demanded; Praja's 2024 audit says 3,975 vs 4,664; BMC's older draw statement is 3,850. Praja's Table 2 reconciles the chain: source yield ~4,370 MLD minus ~395 en-route losses = ~3,975 supplied.",
   "_view_overrides": {
     "subtitle": "Structural numbers from BMC's Hydraulic Engineer RTI manuals (Dec 2024), BMC's ESR 2024-25, the MCGM O&M handbook and the 2018 24x7 White Paper. Connections as on March 2025 (Praja RTI). Refreshed when new engineering documents are published.",

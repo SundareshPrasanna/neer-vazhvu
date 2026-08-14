@@ -1,4 +1,20 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/gee-phase1-water-body-targets",
+  "scope": {
+    "kind": "city",
+    "id": "chennai"
+  },
+  "provenance": {
+    "sources": [],
+    "method": "derived",
+    "produced_at": "2026-04-20",
+    "internal_inputs": [
+      "public/data/restoration-priority.json"
+    ],
+    "produced_by": "neer-vazhvu-api/app/gee/targets.py::write_phase1_target_manifest",
+    "note": "Target selection manifest: the producer reads restoration-priority.json and copies osm_id/name/area_ha/priority_score/priority_level/centroid verbatim for the bodies its selection rules keep. Corrected 2026-07-31 (PR #221 review round 3) from an earlier 'manual, self-authored, no external upstream' claim - the payload is derived, so the OSM share-alike lineage of its input attaches. Selection rules themselves are ours; edition history = git."
+  },
   "manifest_version": 1,
   "selection_rules": {
     "priority_levels": [
@@ -2028,7 +2044,7 @@
       "gee_target_id": "osm:102459218",
       "osm_id": 102459218,
       "census_id": null,
-      "name": "\u0b95\u0bcb\u0bb2\u0b9f\u0bbf \u0b8f\u0bb0\u0bbf",
+      "name": "கோலடி ஏரி",
       "water_type": "lake",
       "area_ha": 23.35,
       "priority_level": "moderate",

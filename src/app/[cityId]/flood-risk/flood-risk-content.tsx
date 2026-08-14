@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/i18n/context";
+import type { DrainageLayerSpec } from "@/components/flood/drainage-network-map";
+import { getPlaceConfig } from "@/lib/cities";
 
 /** English is the accessibility floor; other languages are optional and
  *  fall back to English at render time (Madurai carries ta, Delhi will
@@ -38,15 +41,21 @@ export interface FloodConfig {
   /** Scope badge text (e.g. "Vaigai system scope", "Yamuna basin scope").
    *  Config-driven so no city's system name leaks into another city's page. */
   scope_label?: BilingualText;
-  /** Dam/barrage release trigger, where the city HAS one. Optional: Kolkata's
-   *  flood risk is drainage-capacity-driven, not release-driven - it impounds
-   *  nothing and there is no upstream gate to watch. A city without these
-   *  renders `primary_trigger` instead. */
+  /** Dam/barrage-release threshold, for cities whose flooding is
+   *  release-driven (Madurai's Vaigai, Delhi's Hathnikund). OPTIONAL: not
+   *  every flood geography has one. Hyderabad's flooding is rainfall plus
+   *  blocked storm-water drains, and Mumbai's is rainfall plus high tide -
+   *  requiring this field is what pushed Mumbai into its own component
+   *  rather than the shared narrative stack. Omit both and the threshold
+   *  card simply does not render. */
   dam_release_threshold_cusecs?: number;
   dam_release_note?: BilingualText;
   /** The headline trigger for cities with no dam. Generic on purpose: the
    *  value + unit + note shape fits any threshold a city actually has
-   *  (mm/hour of rainfall for Kolkata, and whatever the next city carries). */
+   *  (mm/hour of rainfall for Kolkata, and whatever the next city carries).
+   *  Hyderabad is the case that shows why this stays optional rather than
+   *  becoming the universal replacement: it has no dam release AND no
+   *  published drainage design capacity, so it renders neither card. */
   primary_trigger?: {
     value: number;
     unit: BilingualText;
@@ -54,6 +63,15 @@ export interface FloodConfig {
     note: BilingualText;
   };
   historical_events: HistoricalEvent[];
+  /** Optional storm-water drainage map for narrative cities that HOLD network
+   *  geometry but have none of the modelled hazard/hotspot layers the
+   *  interactive variant defaults to. Omit -> no map renders. */
+  drainage_map?: {
+    heading: BilingualText;
+    note: BilingualText;
+    zoom?: number;
+    layers: DrainageLayerSpec[];
+  };
   external_sources: ExternalSource[];
   data_gaps: BilingualText[];
   /** Cross-link card copy overrides. The flood.cross_link_* i18n defaults
@@ -66,6 +84,16 @@ export interface FloodConfig {
     water_bodies_desc?: BilingualText;
   };
 }
+
+const DrainageNetworkMap = dynamic(
+  () => import("@/components/flood/drainage-network-map").then((m) => m.DrainageNetworkMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[420px] rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800" />
+    ),
+  },
+);
 
 export function FloodRiskContent({
   cityId,
@@ -106,7 +134,27 @@ export function FloodRiskContent({
         </p>
       </header>
 
-      {(cfg.dam_release_threshold_cusecs != null || cfg.primary_trigger) && (
+      {cfg.drainage_map && (
+        <section className="space-y-2">
+          <h2 className="text-lg font-semibold tracking-tight">
+            {pick(cfg.drainage_map.heading)}
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            {pick(cfg.drainage_map.note)}
+          </p>
+          <DrainageNetworkMap
+            center={[
+              getPlaceConfig(cityId).center.lat,
+              getPlaceConfig(cityId).center.lng,
+            ]}
+            zoom={cfg.drainage_map.zoom ?? 11}
+            layers={cfg.drainage_map.layers}
+          />
+        </section>
+      )}
+
+      {((cfg.dam_release_threshold_cusecs != null && cfg.dam_release_note) ||
+        cfg.primary_trigger) && (
         <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/40 dark:bg-blue-950/20">
           <CardContent className="space-y-2">
             <div className="text-xs uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">

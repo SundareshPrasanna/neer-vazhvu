@@ -348,6 +348,10 @@ export const translations: Record<string, TranslationEntry> = {
     ta: "{fully_lost} வரலாற்று நகர்ப்புற கண்மாய்கள் முற்றிலுமாக கட்டப்பட்டுள்ளன - மாவட்ட நீதிமன்ற வளாகம் (செங்குளம் கண்மாயின் மீது) மற்றும் மதுரை மாநகராட்சி அலுவலகங்கள் (தல்லாகுளம் கண்மாயின் மீது) உட்பட. மற்றொரு {reduced} எஞ்சிய கண்மாய்கள் கடுமையாகச் சுருங்கிய அல்லது ஆக்கிரமிக்கப்பட்ட நிலையில் உள்ளன. மொத்தம் இழந்த பகுதி: ~{area} சதுர கி.மீ. (நகரின் {pct}%). {households}+ குடிசை வீடுகள் இப்போது முன்னாள் கண்மாய் படுகைகளில் வாழ்கின்றன.",
     kn: "{fully_lost} ಐತಿಹಾಸಿಕ ನಗರ ಕೆರೆಗಳು ಸಂಪೂರ್ಣವಾಗಿ ಕಟ್ಟಲ್ಪಟ್ಟಿವೆ - ಜಿಲ್ಲಾ ನ್ಯಾಯಾಲಯ ಸಂಕೀರ್ಣ (ಸೆಂಗುಲಂ ಕೆರೆ) ಮತ್ತು ಮಧುರೈ ಮಹಾನಗರಪಾಲಿಕೆ ಕಚೇರಿಗಳು (ತಲ್ಲಾಕುಳಂ ಕೆರೆ) ಸೇರಿದಂತೆ. ಇನ್ನೊಂದು {reduced} ಉಳಿದಿರುವ ಕೆರೆಗಳು ತೀವ್ರವಾಗಿ ಕುಗ್ಗಿವೆ. ಒಟ್ಟು ಕಳೆದ ಪ್ರದೇಶ: ~{area} ಚ.ಕಿ.ಮೀ. (ನಗರದ {pct}%). {households}+ ಕೊಳೆಗೇರಿ ಕುಟುಂಬಗಳು ಮಾಜಿ ಕೆರೆ ಮೈದಾನಗಳಲ್ಲಿ ವಾಸಿಸುತ್ತಿವೆ.",
   },
+  "lake.intro_flagship_clause":     { en: "Flagship water bodies across the region, scored by status severity, cultural prominence and restoration pressure", ta: "பிராந்தியம் முழுவதும் உள்ள முதன்மை நீர்நிலைகள்", kn: "ಪ್ರದೇಶದಾದ್ಯಂತ ಪ್ರಮುಖ ಜಲಮೂಲಗಳು" },
+  "lake.intro_lost_clause":         { en: "the documented lost and shrunken tanks", ta: "ஆவணப்படுத்தப்பட்ட இழந்த மற்றும் சுருங்கிய குளங்கள்", kn: "ದಾಖಲಾದ ಕಳೆದುಹೋದ ಮತ್ತು ಕುಗ್ಗಿದ ಕೆರೆಗಳು" },
+  "lake.intro_programmes_clause":   { en: "the active restoration programmes", ta: "செயலில் உள்ள மறுசீரமைப்பு திட்டங்கள்", kn: "ಸಕ್ರಿಯ ಪುನಶ್ಚೇತನ ಕಾರ್ಯಕ್ರಮಗಳು" },
+  "lake.intro_court_clause":        { en: "the court orders shaping them", ta: "அவற்றை வடிவமைக்கும் நீதிமன்ற உத்தரவுகள்", kn: "ಅವುಗಳನ್ನು ರೂಪಿಸುವ ನ್ಯಾಯಾಲಯದ ಆದೇಶಗಳು" },
   "lake.intro_generic": {
     en: "Flagship water bodies across the region - scored by status severity, cultural prominence and restoration pressure - together with the documented lost and shrunken tanks, the active restoration programmes, and the court orders shaping them.",
     ta: "பகுதி முழுவதிலுமுள்ள முதன்மை நீர்நிலைகள் - அவற்றின் நிலை, பண்பாட்டு முக்கியத்துவம் மற்றும் மீட்பு அழுத்தம் ஆகியவற்றின் அடிப்படையில் மதிப்பிடப்பட்டவை - ஆவணப்படுத்தப்பட்ட இழந்த மற்றும் சுருங்கிய கண்மாய்கள், செயலிலுள்ள மீட்புத் திட்டங்கள் மற்றும் அவற்றை வடிவமைக்கும் நீதிமன்ற உத்தரவுகளுடன்.",
@@ -506,6 +510,10 @@ export const translations: Record<string, TranslationEntry> = {
   "hero.at_current_draw": { en: "At a draw of {mld} MLD:", ta: "நாளொன்றுக்கு {mld} MLD எடுப்பில்:", kn: "ದಿನಕ್ಕೆ {mld} MLD ಬಳಕೆಯಲ್ಲಿ:" },
   "wb_panel.not_assessed": { en: "Not assessed for restoration priority - the scored cohort covers this city's curated flagship bodies. No priority here means not yet assessed, not healthy.", ta: "மறுசீரமைப்பு முன்னுரிமைக்கு மதிப்பிடப்படவில்லை - மதிப்பிடப்பட்ட தொகுப்பு இந்நகரின் தேர்ந்தெடுத்த முதன்மை நீர்நிலைகளை உள்ளடக்கியது. இங்கு முன்னுரிமை இல்லை என்பது இன்னும் மதிப்பிடப்படவில்லை என்று பொருள், நலமாக உள்ளது என்று அல்ல.", kn: "ಪುನಃಸ್ಥಾಪನೆ ಆದ್ಯತೆಗೆ ಮೌಲ್ಯಮಾಪನ ಮಾಡಿಲ್ಲ - ಅಂಕ ನೀಡಿದ ಗುಂಪು ಈ ನಗರದ ಆಯ್ದ ಪ್ರಮುಖ ಜಲಮೂಲಗಳನ್ನು ಒಳಗೊಂಡಿದೆ. ಇಲ್ಲಿ ಆದ್ಯತೆ ಇಲ್ಲದಿರುವುದು ಇನ್ನೂ ಮೌಲ್ಯಮಾಪನವಾಗಿಲ್ಲ ಎಂದರ್ಥ, ಆರೋಗ್ಯಕರ ಎಂದಲ್ಲ." },
   "dash.no_flow_data": { en: "no data", ta: "தரவு இல்லை", kn: "ದತ್ತಾಂಶವಿಲ್ಲ" },
+  // Shown instead of a storage figure when the source publishes flows but
+  // no capacity - e.g. Delhi's share of Bhakra, which BBMB fixes per season
+  // in Technical Committee minutes and never publishes as a capacity.
+  "dash.storage_not_published": { en: "Storage not published for this share", ta: "\u0baa\u0b95\u0bbf\u0bb0\u0bcd\u0bb5\u0bc1\u0b95\u0bcd\u0b95\u0bbe\u0ba9 \u0b9a\u0bc7\u0bae\u0bbf\u0baa\u0bcd\u0baa\u0bc1 \u0bb5\u0bc6\u0bb3\u0bbf\u0baf\u0bbf\u0b9f\u0baa\u0bcd\u0baa\u0b9f\u0bb5\u0bbf\u0bb2\u0bcd\u0bb2\u0bc8", kn: "\u0c88 \u0caa\u0cbe\u0cb2\u0cbf\u0c97\u0cbe\u0c97\u0cbf \u0cb8\u0c82\u0c97\u0cb0\u0cb9\u0cb5\u0ca8\u0ccd\u0ca8\u0cc1 \u0caa\u0ccd\u0cb0\u0c95\u0c9f\u0cbf\u0cb8\u0cbf\u0cb2\u0ccd\u0cb2", hi: "\u0907\u0938 \u0939\u093f\u0938\u094d\u0938\u0947 \u0915\u093e \u092d\u0902\u0921\u093e\u0930\u0923 \u092a\u094d\u0930\u0915\u093e\u0936\u093f\u0924 \u0928\u0939\u0940\u0902" },
   "hero.no_inflow_rising": { en: "Storage divided by the current net draw. These lakes publish no inflow readings, but the storage record shows the monsoon at work: up {rate} mcft/day over the last 7 days. The days figure is a floor - it assumes the rain stopped today.", ta: "தேக்கத்தை தற்போதைய நிகர எடுப்பால் வகுத்தது. இந்த ஏரிகளுக்கு உள்வரவு அளவீடுகள் வெளியிடப்படுவதில்லை, ஆனால் தேக்க பதிவு பருவமழையின் விளைவை காட்டுகிறது: கடந்த 7 நாட்களில் நாளொன்றுக்கு {rate} mcft உயர்வு. இந்த நாட்கள் எண்ணிக்கை குறைந்தபட்சம் - இன்று மழை நின்றுவிட்டது என்ற அனுமானத்தில்.", kn: "ಸಂಗ್ರಹವನ್ನು ಪ್ರಸ್ತುತ ನಿವ್ವಳ ಬಳಕೆಯಿಂದ ಭಾಗಿಸಲಾಗಿದೆ. ಈ ಕೆರೆಗಳಿಗೆ ಒಳಹರಿವಿನ ಮಾಪನಗಳು ಪ್ರಕಟವಾಗುವುದಿಲ್ಲ, ಆದರೆ ಸಂಗ್ರಹ ದಾಖಲೆ ಮುಂಗಾರಿನ ಪರಿಣಾಮ ತೋರಿಸುತ್ತದೆ: ಕಳೆದ 7 ದಿನಗಳಲ್ಲಿ ದಿನಕ್ಕೆ {rate} mcft ಏರಿಕೆ. ಈ ದಿನಗಳ ಸಂಖ್ಯೆ ಕನಿಷ್ಠ ಮಿತಿ - ಇಂದು ಮಳೆ ನಿಂತಿತು ಎಂಬ ಊಹೆಯಲ್ಲಿ." },
   "hero.no_inflow_falling": { en: "Storage divided by the current net draw. These lakes publish no inflow readings; the storage record fell {rate} mcft/day over the last 7 days.", ta: "தேக்கத்தை தற்போதைய நிகர எடுப்பால் வகுத்தது. இந்த ஏரிகளுக்கு உள்வரவு அளவீடுகள் வெளியிடப்படுவதில்லை; கடந்த 7 நாட்களில் தேக்கம் நாளொன்றுக்கு {rate} mcft குறைந்தது.", kn: "ಸಂಗ್ರಹವನ್ನು ಪ್ರಸ್ತುತ ನಿವ್ವಳ ಬಳಕೆಯಿಂದ ಭಾಗಿಸಲಾಗಿದೆ. ಈ ಕೆರೆಗಳಿಗೆ ಒಳಹರಿವಿನ ಮಾಪನಗಳು ಪ್ರಕಟವಾಗುವುದಿಲ್ಲ; ಕಳೆದ 7 ದಿನಗಳಲ್ಲಿ ಸಂಗ್ರಹ ದಿನಕ್ಕೆ {rate} mcft ಇಳಿಯಿತು.", },
   "hero.no_inflow_note": { en: "Storage divided by the current net draw. These lakes publish no inflow data, so rain scenarios can't be computed - the figure assumes no new inflows.", ta: "தேக்கத்தை தற்போதைய நிகர எடுப்பால் வகுத்தது. இந்த ஏரிகளுக்கு உள்வரவு தரவு வெளியிடப்படுவதில்லை, எனவே மழை காட்சிகள் கணக்கிட முடியாது - புதிய உள்வரவு இல்லை என்ற அனுமானத்தில் இந்த எண்.", kn: "ಸಂಗ್ರಹವನ್ನು ಪ್ರಸ್ತುತ ನಿವ್ವಳ ಬಳಕೆಯಿಂದ ಭಾಗಿಸಲಾಗಿದೆ. ಈ ಕೆರೆಗಳಿಗೆ ಒಳಹರಿವಿನ ದತ್ತಾಂಶ ಪ್ರಕಟವಾಗುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಮಳೆ ಸನ್ನಿವೇಶಗಳನ್ನು ಲೆಕ್ಕಹಾಕಲಾಗುವುದಿಲ್ಲ - ಹೊಸ ಒಳಹರಿವು ಇಲ್ಲ ಎಂಬ ಊಹೆಯ ಮೇಲೆ ಈ ಸಂಖ್ಯೆ." },
@@ -792,6 +800,9 @@ export const translations: Record<string, TranslationEntry> = {
   "rivers.north_chennai": { en: "North Chennai", ta: "வட சென்னை", kn: "ಉತ್ತರ ಚೆನ್ನೈ" },
   "rivers.south_chennai": { en: "South Chennai", ta: "தென் சென்னை", kn: "ದಕ್ಷಿಣ ಚೆನ್ನೈ" },
   "rivers.lower_ennore": { en: "Lower (Ennore)", ta: "கீழ் பகுதி (எண்ணூர்)", kn: "ಕೆಳಭಾಗ (ಎನ್ನೋರ್)" },
+  // en only. ta/kn deliberately left for the next translation pass rather
+  // than machine-filled; a missing language falls back to English by design.
+  "rivers.station_no_data": { en: "No CPCB readings published for this station" },
   "rivers_chart.no_readings": { en: "No readings available for this station", ta: "இந்த நிலையத்திற்கு அளவீட்டு தரவு இல்லை", kn: "ಈ ನಿಲ್ದಾಣಕ್ಕೆ ಮಾಪನಗಳು ಲಭ್ಯವಿಲ್ಲ" },
   "rivers_chart.do_min_label": { en: "DO min", ta: "DO குறைந்தபட்சம்", kn: "DO ಕನಿಷ್ಠ" },
   "rivers_chart.bod_clean_label": { en: "BOD clean", ta: "BOD சுத்த நிலை", kn: "BOD ಸ್ವಚ್ಛ ಮಟ್ಟ" },
@@ -1141,7 +1152,7 @@ export const translations: Record<string, TranslationEntry> = {
   "rivers_legend.water_quality": { en: "Water Quality",     ta: "நீர்த்தரம்", kn: "ನೀರಿನ ಗುಣಮಟ್ಟ" },
   "rivers_legend.monitoring_station": { en: "Monitoring station", ta: "கண்காணிப்பு நிலையம்", kn: "ಮೇಲ್ವಿಚಾರಣಾ ನಿಲ್ದಾಣ" },
   "rivers_legend.sewage_inlet": { en: "Sewage inlet, 2017 (size = flow)", ta: "கழிவுநீர் உள்ளீடு, 2017 (அளவு = பாய்வு)", kn: "ಚರಂಡಿ ಒಳಹರಿವು, 2017 (ಗಾತ್ರ = ಹರಿವು)" },
-  "rivers_legend.pollution_sources": { en: "Pollution Sources",  ta: "மாசு ஆதாரங்கள்", kn: "ಮಾಲಿನ್ಯ ಮೂಲಗಳು" },
+  "rivers_legend.pollution_sources": { en: "Reported pollution sources",  ta: "பதிவான மாசு ஆதாரங்கள்", kn: "ವರದಿಯಾದ ಮಾಲಿನ್ಯ ಮೂಲಗಳು" },
   "rivers_legend.industrial_zone": { en: "Industrial zone",    ta: "தொழில் மண்டலம்", kn: "ಕೈಗಾರಿಕಾ ವಲಯ" },
   // River quality status labels (used in legend + river panel badge)
   "rivers_legend.dead": { en: "Dead",               ta: "இறந்தது", kn: "ಮೃತ" },
@@ -1354,6 +1365,7 @@ export const translations: Record<string, TranslationEntry> = {
   "dash.catchment_label_above": { en: "Above", ta: "அதிகம்", kn: "ಮೇಲೆ" },
   "dash.catchment_label_well_above": { en: "Well above", ta: "மிக அதிகம்", kn: "ತುಂಬಾ ಮೇಲೆ" },
   "dash.catchment_updated": { en: "Catchment rainfall through {date} ({windowDays}-day window).", ta: "{date} வரை நீர்ப்பிடிப்பு மழை ({windowDays} நாள் சாளரம்).", kn: "{date} ವರೆಗಿನ ಜಲಾನಯನ ಮಳೆ ({windowDays}-ದಿನ ವಿಂಡೋ)." },
+  "dash.catchment_provisional": { en: "Catchment boundaries are provisional, pending verification.", ta: "நீர்ப்பிடிப்பு எல்லைகள் தற்காலிகமானவை; சரிபார்ப்பு நிலுவையில் உள்ளது.", kn: "ಜಲಾನಯನ ಗಡಿಗಳು ತಾತ್ಕಾಲಿಕ; ಪರಿಶೀಲನೆ ಬಾಕಿ ಇದೆ." },
   "dash.demo_data_note": { en: "All data in demo mode is simulated. Connect Supabase for real CMWSSB data.", ta: "டெமோ நிலையில் உள்ள அனைத்து தரவும் மாதிரியாக்கப்பட்டவை. உண்மையான CMWSSB தரவுக்கு Supabase-ஐ இணைக்கவும்.", kn: "ಡೆಮೋ ಮೋಡ್‌ನ ಎಲ್ಲಾ ದತ್ತಾಂಶ ಅನುಕರಿಸಿದ್ದು. ನೈಜ CMWSSB ದತ್ತಾಂಶಕ್ಕೆ Supabase ಸಂಪರ್ಕಿಸಿ." },
   "dash.cusecs_unit": { en: "cusecs",                    ta: "கியூசெக்ஸ்", kn: "ಕ್ಯೂಸೆಕ್" },
   "dash.inflow_cusecs": { en: "Inflow (cusecs)",           ta: "வரத்து (cusecs)", kn: "ಒಳಹರಿವು (ಕ್ಯೂಸೆಕ್)" },

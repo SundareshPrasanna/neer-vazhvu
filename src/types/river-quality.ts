@@ -33,6 +33,9 @@ export type RiverQualityStatus =
   | "stressed"
   | "healthy";
 
+export type MeasureRange = { min: number | null; max: number | null };
+export type Measure = number | MeasureRange | null;
+
 export interface RiverQualityReading {
   year: number;
   /** "YYYY-MM" for cities whose feed is genuinely monthly.
@@ -46,8 +49,12 @@ export interface RiverQualityReading {
    *  Optional on purpose: when absent the chart plots by year exactly as
    *  before, so annual cities are untouched. */
   month?: string | null;
-  do_mgl: number | null; // Dissolved oxygen mg/L
-  bod_mgl: number | null; // Biochemical oxygen demand mg/L
+  // A reading is either a POINT value (CPCB monthly / state-board sampling) or
+  // an ANNUAL RANGE. CPCB's national NWMP tables publish min-max per station
+  // per year, so a city built on that source carries ranges and we do not
+  // invent a midpoint to flatten them. Renderers must handle both.
+  do_mgl: Measure; // Dissolved oxygen mg/L
+  bod_mgl: Measure; // Biochemical oxygen demand mg/L
   ph: number | null;
   conductivity_us: number | null; // µS/cm
   cod_mgl: number | null; // Chemical oxygen demand mg/L
@@ -198,15 +205,27 @@ export function computeStationTrend(
   const latest = sorted[sorted.length - 1];
   const twoYearsAgo = sorted[sorted.length - 3];
 
+  // Trends compare the threshold-relevant end of each reading, so a city on
+  // annual ranges (CPCB NWMP) trends on like-for-like rather than on a mix of
+  // range and point.
+  const worst = (m: Measure, k: "lower-is-worse" | "higher-is-worse"): number | null => {
+    if (m == null) return null;
+    if (typeof m === "number") return m;
+    const lo = typeof m.min === "number" ? m.min : null;
+    const hi = typeof m.max === "number" ? m.max : null;
+    if (lo == null && hi == null) return null;
+    return k === "lower-is-worse" ? (lo ?? hi) : (hi ?? lo);
+  };
+  const dLatest = worst(latest.do_mgl, "lower-is-worse");
+  const dPrev = worst(twoYearsAgo.do_mgl, "lower-is-worse");
+  const bLatest = worst(latest.bod_mgl, "higher-is-worse");
+  const bPrev = worst(twoYearsAgo.bod_mgl, "higher-is-worse");
+
   const do_delta =
-    latest.do_mgl !== null && twoYearsAgo.do_mgl !== null
-      ? +(latest.do_mgl - twoYearsAgo.do_mgl).toFixed(2)
-      : null;
+    dLatest !== null && dPrev !== null ? +(dLatest - dPrev).toFixed(2) : null;
 
   const bod_delta =
-    latest.bod_mgl !== null && twoYearsAgo.bod_mgl !== null
-      ? +(latest.bod_mgl - twoYearsAgo.bod_mgl).toFixed(1)
-      : null;
+    bLatest !== null && bPrev !== null ? +(bLatest - bPrev).toFixed(1) : null;
 
   type Signal = "improving" | "worsening" | "stable";
 

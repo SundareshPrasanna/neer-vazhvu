@@ -38,10 +38,11 @@ interface Props {
   /** True when NO source for this city has a public feed - the empty state
    *  then says so instead of promising an ingestion that cannot arrive. */
   noPublicFeed?: boolean;
-  /** Whether the city impounds water at all. When false there is no storage
-   *  level to chart even in principle, which is a different statement from
-   *  "the feed is missing" - so the empty state says so. Defaults true. */
-  impounds?: boolean;
+  /** Set when no authority publishes a storage series for this place at all.
+   *  Takes precedence over `noPublicFeed`, which infers the same thing from
+   *  the source feed flags and gets it wrong for a place like Delhi that has a
+   *  live feed carrying no storage. */
+  absentNote?: string;
 }
 
 const TIME_TABS = [
@@ -124,7 +125,7 @@ export function MultiSourceHistoryChart({
   scopeLabel,
   defaultTab = "1yr",
   noPublicFeed = false,
-  impounds = true,
+  absentNote,
 }: Props) {
   const [tab, setTab] = useState<TabKey>(defaultTab);
   const [view, setView] = useState<ViewMode>("by_source");
@@ -309,14 +310,15 @@ export function MultiSourceHistoryChart({
     return (
       <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-950/20 p-4 text-sm text-slate-700 dark:text-slate-300">
         <div className="font-semibold text-amber-800 dark:text-amber-300 text-xs uppercase tracking-wider mb-1">
-          {impounds ? "Reservoir history pending" : "Source history pending"}
+          {absentNote || noPublicFeed
+            ? "No storage history to chart"
+            : "Reservoir history pending"}
         </div>
         <p>
-          {!impounds
-            ? `${cityDisplayName} impounds no water - it abstracts from a river and pumps groundwater - so there is no storage level to chart. What would go here is daily abstraction or production volume, and no authority publishes it. Each source card names who would have to.`
-            : noPublicFeed
+          {absentNote ??
+            (noPublicFeed
               ? `No authority publishes a daily storage series for ${cityDisplayName}'s sources, so there is no history to chart. Each source card names who would have to publish it.`
-              : `${cityDisplayName} reservoir storage history hasn't been backfilled yet. Once daily storage readings start landing, this chart fills in automatically.`}
+              : `${cityDisplayName} reservoir storage history hasn't been backfilled yet. Once daily storage readings start landing, this chart fills in automatically.`)}
         </p>
       </div>
     );

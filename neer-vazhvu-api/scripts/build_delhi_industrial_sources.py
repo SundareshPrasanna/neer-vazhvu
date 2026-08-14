@@ -34,9 +34,13 @@ from __future__ import annotations
 
 import json
 import statistics
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
+
 FLOWS = REPO / "public/data/delhi-cetp-flows.json"
 OUT = REPO / "public/data/industrial-sources-delhi.json"
 
@@ -278,7 +282,7 @@ def main() -> None:
         },
         "sources": sources,
     }
-    OUT.write_text(json.dumps(doc, indent=2) + "\n")
+    write_artifact(OUT, doc)
 
     s = doc["summary"]
     print(f"wrote {OUT.relative_to(REPO)}")

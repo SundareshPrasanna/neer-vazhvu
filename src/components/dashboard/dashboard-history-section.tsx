@@ -130,11 +130,7 @@ export function DashboardHistorySection({
           (s) => s.hasPublicFeed === false,
         ) ?? false
       }
-      impounds={
-        tryGetPlaceConfig(cityId)?.waterSources.some(
-          (s) => s.type === "reservoir",
-        ) ?? true
-      }
+      absentNote={tryGetPlaceConfig(cityId)?.reservoirHistoryAbsentNote}
       unit={unit}
       series={state.payload.series}
       forecast={state.payload.forecast}

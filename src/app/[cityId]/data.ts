@@ -631,11 +631,22 @@ export async function loadCityHistory(config: PlaceConfig): Promise<CityHistory>
     if (error || !data) break;
     if (data.length === 0) break;
     for (const row of data) {
+      const tmc = row.storage_tmc as number | null;
+      const pct = row.storage_pct_frl as number | null;
+      // A reading can exist without a storage volume: BBMB publishes Bhakra's
+      // level, inflow and outflow but never Delhi's share as a volume, so
+      // Delhi's rows land here with both storage fields NULL. Counting those
+      // as points made pointCount 1 while nothing was plottable, so the
+      // chart's honest "no history" branch (pointCount === 0) never fired and
+      // readers got the full chart chrome - title, range tabs, "1 readings" -
+      // wrapped around an empty plot. This chart plots storage only, so a row
+      // with neither field is not a point in it.
+      if (tmc === null && pct === null) continue;
       all.push({
         source_code: row.source_code as string,
         date: row.date as string,
-        storage_tmc: row.storage_tmc as number | null,
-        storage_pct_frl: row.storage_pct_frl as number | null,
+        storage_tmc: tmc,
+        storage_pct_frl: pct,
       });
     }
     if (data.length < PAGE_SIZE) break;

@@ -25,6 +25,9 @@ import re
 import sys
 import urllib.parse
 import urllib.request
+from pathlib import Path
+
+from nvdm_write import write_artifact
 
 OVERPASS_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
@@ -136,8 +139,9 @@ def main() -> int:
         ),
         "features": features,
     }
-    with open(OUT_PATH, "w", encoding="utf-8") as fh:
-        json.dump(out, fh, ensure_ascii=False)
+    # Envelope-preserving write (scripts/nvdm_write.py): keeps the NVDM
+    # envelope injected by the migration so a regeneration cannot strip it.
+    write_artifact(Path(OUT_PATH), out, compact=True)
     print(
         f"Wrote {len(features)} drainage ways ({named} named, ~{total_km:.0f} km) -> {OUT_PATH}",
         flush=True,

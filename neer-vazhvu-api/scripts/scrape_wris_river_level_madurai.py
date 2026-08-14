@@ -101,6 +101,7 @@ async def main() -> int:
 
     rows = [
         {
+            "city_id": "madurai",
             "station_code": r.station_code,
             "station_name": r.station_name,
             "latitude": r.latitude,

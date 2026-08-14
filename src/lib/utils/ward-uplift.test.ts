@@ -11,7 +11,9 @@ import { INTERVENTIONS } from "@/lib/data/uplift-benchmarks";
 /* ── Load real profiles ────────────────────────────────────────────── */
 
 const profilesPath = path.resolve("public/data/ward-profiles.json");
-const allProfiles: WardProfile[] = JSON.parse(readFileSync(profilesPath, "utf-8"));
+const profilesRaw = JSON.parse(readFileSync(profilesPath, "utf-8"));
+// Dual-shape during the NVDM migration: bare array or wrapped { wards: [...] }.
+const allProfiles: WardProfile[] = Array.isArray(profilesRaw) ? profilesRaw : profilesRaw.wards;
 const cityDist = buildCityDistributions(allProfiles);
 
 /* ── Helpers ────────────────────────────────────────────────────────── */

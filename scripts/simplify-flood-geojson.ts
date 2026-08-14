@@ -8,7 +8,8 @@
  * Run: npx tsx scripts/simplify-flood-geojson.ts
  */
 
-import { readFileSync, writeFileSync, statSync } from "fs";
+import { readFileSync, statSync } from "fs";
+import { writeArtifact } from "./lib/nvdm-write";
 import { resolve } from "path";
 import simplify from "@turf/simplify";
 import type {
@@ -167,7 +168,7 @@ function main() {
     type: "FeatureCollection",
     features: simplifiedHazard,
   };
-  writeFileSync(hazardPath, JSON.stringify(hazardOut));
+  writeArtifact(hazardPath, hazardOut, { compact: true });
   const afterSize = fileSizeMB(hazardPath);
   console.log(
     `  -> ${simplifiedHazard.length} features, ${beforeSize} -> ${afterSize}\n`
@@ -211,7 +212,7 @@ function main() {
     type: "FeatureCollection",
     features: mergedFeatures,
   };
-  writeFileSync(mergedPath, JSON.stringify(mergedOut));
+  writeArtifact(mergedPath, mergedOut, { compact: true });
   const mergedSize = fileSizeMB(mergedPath);
   console.log(
     `\n  -> Merged: ${mergedFeatures.length} features, ${mergedSize}\n`

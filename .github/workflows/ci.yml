@@ -1,5 +1,15 @@
 name: CI
 
+# Serving-hardening D4 split (review addendum 2026-07-30): the FULL-corpus
+# jobs validate against the complete corpus fetched at the immutable
+# corpus.lock commit. This requires the CORPUS_REPO_TOKEN secret and therefore
+# runs only on main pushes and same-repository PRs. The
+# sample-corpus job needs no secrets and runs everywhere: it prunes the
+# corpus to the clean reference set plus documented fixtures
+# (scripts/sample-corpus.json) and proves build + tests pass against it.
+# Job names say exactly what they check - there is deliberately NO silent
+# fallback from full to sample.
+
 on:
   pull_request:
     branches: [main]
@@ -8,8 +18,11 @@ on:
 
 jobs:
   frontend:
-    name: Frontend (lint + build + tests)
+    name: Frontend - locked full corpus (lint + build + tests + data checks)
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    env:
+      CORPUS_SOURCE: remote
     steps:
       - uses: actions/checkout@v4
 
@@ -17,6 +30,18 @@ jobs:
         with:
           node-version: 20
           cache: npm
+
+      # npm run data:check ends with the mirrored-document gate, which is
+      # Python: no upstream document may be redistributed out of public/docs
+      # if its publisher requires permission (scripts/check-mirrored-documents.py).
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch exact corpus.lock edition
+        run: bash scripts/fetch-corpus.sh
+        env:
+          CORPUS_REPO_TOKEN: ${{ secrets.CORPUS_REPO_TOKEN }}
 
       - run: npm ci
       - run: npm run lint
@@ -26,9 +51,90 @@ jobs:
           npx tsx scripts/compute-ward-profiles.ts
           git diff --exit-code public/data/ward-profiles.json
 
+      - name: Verify madurai-ward-profiles.json is up-to-date
+        run: |
+          npx tsx scripts/compute-madurai-ward-profiles.ts
+          git diff --exit-code public/data/madurai-ward-profiles.json
+
+      - name: Verify bangalore-ward-profiles.json is up-to-date
+        run: |
+          npx tsx scripts/compute-bangalore-ward-profiles.ts
+          git diff --exit-code public/data/bangalore-ward-profiles.json
+
+      # PR #227 review: this producer held stale OpenCity/WRIS licence literals
+      # and emitted no rights_determination, so running it restored three wrong
+      # licences and deleted an audited determination. It had no regeneration
+      # diff, so nothing noticed. It has one now.
+      - name: Verify delhi-ward-profiles.json is up-to-date
+        run: |
+          pip install -e neer-vazhvu-api
+          python3 neer-vazhvu-api/scripts/build_delhi_ward_profiles.py
+          git diff --exit-code public/data/delhi-ward-profiles.json
+
+      # The other ~80 producers fetch from networks, portals or Earth Engine and
+      # cannot run here. This covers the thing that actually drifts in all of
+      # them, statically: no generator may hardcode a registered source's
+      # licence, and a producer must emit the determination its artifact carries.
+      - name: No generator holds its own copy of a registry licence
+        run: python3 scripts/check-generator-drift.py
+
       - run: npm run data:check
       - run: npm run build
       - run: npm run test
+
+  sample-corpus:
+    name: Sample corpus - clean reference set + documented build fixtures, no secrets (build + tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: npm ci
+
+      # Same class as the root-scripts ruff step below: a check nobody runs is
+      # a check that rots. check-i18n sat broken for an unknown number of
+      # months because it lived only in package.json - it was hand-stripping
+      # TypeScript with literal string replacement and died on the first
+      # `export` once the dictionary grew past en/ta. Needs no secrets and no
+      # corpus, so it belongs here.
+      - name: Translation dictionary is complete and every used key exists
+        run: npm run i18n:check
+
+      # scripts/ is outside the API's ruff run, so a producer could ship a
+      # NameError and no job would notice - which is how three did.
+      - name: Root scripts parse and reference only defined names
+        run: |
+          pip install ruff
+          ruff check scripts/ --select F821,F822,E902 --no-cache
+
+      - name: Encumbrance classifier + lineage selftest
+        run: python3 scripts/nvdm-encumbrance-report.py --selftest
+
+      - name: Mirror gate pins a verdict for every licence state it can meet
+        run: python3 scripts/check-mirrored-documents.py --selftest
+
+      - name: No mirrored upstream document ships without an affirmative right
+        run: python3 scripts/check-mirrored-documents.py
+
+      - name: Reference set stays licence-clean; fixtures stay as documented
+        run: python3 scripts/check-sample-corpus.py
+
+      - name: Prune corpus to the sample manifest
+        run: python3 scripts/check-sample-corpus.py --prune
+
+      - name: Build against the sample corpus only
+        run: npm run build
+
+      - name: Tests against the sample corpus only
+        run: npm run test
 
   api:
     name: API (lint + tests)

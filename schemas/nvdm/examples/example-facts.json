@@ -1,0 +1,48 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": { "kind": "city", "id": "hyderabad" },
+  "provenance": {
+    "sources": [
+      {
+        "id": "hmwssb-reservoir-levels",
+        "title": "HMWSSB daily reservoir levels",
+        "publisher": "Hyderabad Metropolitan Water Supply and Sewerage Board",
+        "url": "https://www.hyderabadwater.gov.in/",
+        "license": "public government publication, cited with attribution",
+        "as_of": "2026-07",
+        "retrieved": "2026-07-28"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-07-29",
+    "produced_by": "manual",
+    "note": "Example artifact demonstrating the NVDM v1 envelope; values are illustrative.",
+    "conventions": {
+      "units": "supply figures in MLD as published; no conversions applied"
+    }
+  },
+  "facts": [
+    {
+      "id": "example-supply-total",
+      "tier": 1,
+      "category": "Supply",
+      "title": "Example headline fact",
+      "value": 580,
+      "unit": "MLD",
+      "interpretation": "Illustrative only: shows a per-record citation refining the envelope's provenance floor.",
+      "sources": [
+        {
+          "title": "HMWSSB daily reservoir levels",
+          "publisher": "HMWSSB",
+          "as_of": "2026-07-15"
+        }
+      ]
+    }
+  ],
+  "ext": {
+    "example-extension": {
+      "note": "Per-scope additions live here, namespaced by concern."
+    }
+  }
+}

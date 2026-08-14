@@ -16,6 +16,7 @@ import { readFileSync, writeFileSync, existsSync, readdirSync } from "fs";
 import { resolve, join } from "path";
 import { listAllPlaces } from "../src/lib/cities";
 import { computeCoverage, cityOf } from "./lib/headwaters-coverage";
+import { sourceTypeProblem, type SourceType } from "./lib/registry-contract";
 
 const ROOT = resolve(__dirname, "..");
 const REGISTRY_DIR = resolve(ROOT, "scripts/source-registry");
@@ -37,7 +38,13 @@ type DetectionMethod =
   | "http-meta"
   | "api-date"
   | "term-expiry"
-  | "url-template";
+  | "url-template"
+  /** Continuously-updated upstream with NO editions to detect (OSM, Dynamic
+      World, live WRIS/IMD services). Registered for lineage, licence, and
+      dependsOn accountability (NVDM per-source rule); never fetched by this
+      checker - re-fetch cadence is the coverage gate's freshness question
+      (P5-1). This replaces keeping such sources registry-less. */
+  | "continuous";
 
 interface Detection {
   method: DetectionMethod;
@@ -91,7 +98,7 @@ interface SourceEntry {
       LOCAL_CHECK_MAX_AGE_DAYS, then escalates to CHECK-FAILED. */
   ciBlocked?: string;
   license?: string;
-  type: "pdf-listing" | "page" | "api" | "file";
+  type: SourceType;
   cadence: string;
   tier: 0 | 1 | 2 | 3;
   detection: Detection;
@@ -183,6 +190,12 @@ function validate(entries: SourceEntry[]): string[] {
 
     for (const field of ["scope", "publisher", "url", "type", "cadence", "refreshMethod"] as const) {
       if (!e[field]) problems.push(`${where}: missing ${field}`);
+    }
+    // #220 review: type values outside the union bypassed the TS contract
+    // (JSON is never type-checked) - enforce the allowed set at runtime.
+    if (e.type) {
+      const typeProblem = sourceTypeProblem(e.id ?? "<missing id>", e.type);
+      if (typeProblem) problems.push(typeProblem);
     }
     if (e.tier === undefined) problems.push(`${where}: missing tier`);
     if (!Array.isArray(e.dependsOn)) problems.push(`${where}: dependsOn must be an array`);
@@ -295,6 +308,8 @@ async function observe(e: SourceEntry): Promise<Observed> {
   // term-expiry is a calendar check, not a fetch - the registry entry carries
   // the whole state, so there is nothing upstream to observe.
   if (e.detection.method === "term-expiry") return {};
+  // Continuous upstreams are never fetched - registered for accountability only.
+  if (e.detection.method === "continuous") return {};
   if (!e.insecureTLS) return observeInner(e);
   // Entries run sequentially, so toggling the process-wide TLS flag is safe.
   const prev = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
@@ -442,6 +457,17 @@ interface CheckResult {
 }
 
 function compare(e: SourceEntry, obs: Observed): CheckResult {
+  // Continuous upstreams have no editions and are never fetched; they exist
+  // for lineage/licence accountability. Always ok, never unbaselined.
+  if (e.detection.method === "continuous") {
+    return {
+      entry: e,
+      state: "ok",
+      detail: "continuous upstream - no editions to watch; freshness-tracked (P5-1)",
+      observed: obs,
+    };
+  }
+
   // Term-expiry carries its own state, so it is answerable before any
   // baseline exists - an unbaselined entry would otherwise mask a term that
   // has already run out.

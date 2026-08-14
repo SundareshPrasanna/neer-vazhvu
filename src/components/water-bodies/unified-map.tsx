@@ -24,11 +24,13 @@ import {
 } from "@/lib/water-bodies/rich-body-registry";
 import "leaflet/dist/leaflet.css";
 
-// Chennai-default GeoJSON URLs and map center. Other cities override via props.
-const DEFAULT_CURRENT_GEOJSON_URL = "/geojson/chennai-water-bodies-current.geojson";
-const DEFAULT_LOST_GEOJSON_URL = "/geojson/chennai-water-bodies-lost.geojson";
-const DEFAULT_RIVERS_GEOJSON_URL = "/geojson/chennai-rivers.geojson";
-const DEFAULT_MAP_CENTER: [number, number] = [13.0827, 80.2707];
+// NO CHENNAI DEFAULTS. These were previously defaulted "for backward compat",
+// which meant any city that mounted this map without passing its own URLs
+// silently rendered CHENNAI's water bodies, rivers and map centre. Chennai was
+// the only caller for a long time so nothing looked wrong; the moment a second
+// city enabled the rich renderer it inherited Chennai's map wholesale.
+// The props below are REQUIRED so that omission is a compile error rather than
+// a plausible-looking wrong city.
 
 interface UnifiedMapProps {
   viewMode: ViewMode;
@@ -38,11 +40,11 @@ interface UnifiedMapProps {
   onSelectLost: (body: SelectedWaterBody) => void;
   focusCenter?: [number, number];
   hiddenCategories?: Set<string>;
-  // City-aware overrides; default to Chennai paths for backward compat.
-  currentGeoJsonUrl?: string;
-  lostGeoJsonUrl?: string;
-  riversGeoJsonUrl?: string;
-  mapCenter?: [number, number];
+  // City-aware, and REQUIRED - see the note above the props.
+  currentGeoJsonUrl: string;
+  lostGeoJsonUrl: string;
+  riversGeoJsonUrl: string;
+  mapCenter: [number, number];
   mapZoom?: number;
   /** Optional extra Leaflet layers rendered as children of the
    *  MapContainer. Used to plug in opt-in overlays (e.g. cascade
@@ -105,10 +107,10 @@ export function UnifiedMap({
   onSelectLost,
   focusCenter,
   hiddenCategories,
-  currentGeoJsonUrl = DEFAULT_CURRENT_GEOJSON_URL,
-  lostGeoJsonUrl = DEFAULT_LOST_GEOJSON_URL,
-  riversGeoJsonUrl = DEFAULT_RIVERS_GEOJSON_URL,
-  mapCenter = DEFAULT_MAP_CENTER,
+  currentGeoJsonUrl,
+  lostGeoJsonUrl,
+  riversGeoJsonUrl,
+  mapCenter,
   mapZoom = 11,
   children,
   suppressLayerTooltips = false,

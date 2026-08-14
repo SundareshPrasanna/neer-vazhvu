@@ -1,4 +1,38 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/ward-risk",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "praja-civic-issues-mumbai",
+        "title": "Praja Foundation, 'Report on the Status of Civic Issues in Mumbai' (RTI-sourced ward tables; May 2025 edition = 2024 data)",
+        "publisher": "Praja Foundation (via OpenCity mirror)",
+        "license": "report (c) Praja, RTI-sourced tables; OpenCity mirror",
+        "role": "input",
+        "as_of": "2024"
+      },
+      {
+        "id": "datameet-mumbai-spatial",
+        "title": "DataMeet Municipal_Spatial_Data - Mumbai (BMC ward boundaries + SRA-derived slum clusters)",
+        "publisher": "DataMeet community (Pune chapter, DataMeet Trust)",
+        "license": "CC BY-SA 2.5 IN (Mumbai folder Readme; the repo default is CC BY 4.0 'unless explicitly stated' and the Mumbai Readme states BY-SA 2.5 India explicitly - verified 2026-07-30). SHARE-ALIKE encumbered.",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-07-05",
+    "internal_inputs": [
+      "public/geojson/mumbai-wards-2023.geojson",
+      "public/data/mumbai-flood-hotspots.geojson",
+      "public/geojson/mumbai-rivers.geojson"
+    ],
+    "produced_by": "scripts/compute-mumbai-ward-risk.py",
+    "note": "Equity-first composite for the 24 BMC admin wards (weights in the payload; _methodology carries the model prose): supply_deficit uses REAL per-ward supply hours (Praja 2024 Table 4, embedded in the producer), flood_exposure counts BMC's own register spots, river_burden counts Priority-I polyline vertices. Mumbai is excluded from the CGWB assessment, so no groundwater factor - by honesty, not omission. The DataMeet slum clusters (slum_area_share, context-only, unweighted) are fetched at build time and not committed - an external source, not an internal input."
+  },
   "algorithm_version": "mumbai-v3-realsupply-2026-06",
   "weights": {
     "supply_deficit": 0.5,

@@ -17,9 +17,9 @@
  * Tamil, per the Origins style guide.
  */
 
-import { writeFileSync } from "fs";
 import { join } from "path";
 import osmtogeojson from "osmtogeojson";
+import { writeArtifact } from "./lib/nvdm-write";
 
 // NCT Delhi bbox per src/lib/cities/delhi.ts. [south, west, north, east]
 const BBOX = "28.40,76.85,28.90,77.40";
@@ -178,7 +178,7 @@ async function main() {
   };
 
   const outPath = join(process.cwd(), "public/geojson/delhi-water-bodies-current.geojson");
-  writeFileSync(outPath, JSON.stringify(geojson, null, 2));
+  writeArtifact(outPath, geojson as unknown as Record<string, unknown>);
   console.log(`\nSaved ${features.length} features to ${outPath}`);
 
   const totalAreaHa = features.reduce((sum, f) => sum + (f.properties.area_ha || 0), 0);

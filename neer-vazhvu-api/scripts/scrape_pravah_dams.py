@@ -36,6 +36,10 @@ import sys
 import tempfile
 import urllib.request
 from datetime import date
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 
 PRAVAH_URL = "https://mwrdpravah.in/damsafety/control/pdfLatestReportEng"
 MCUM_PER_TMC = 28.3168  # 1 thousand-million-cubic-feet = 28.3168 Mm3
@@ -161,10 +165,11 @@ def main() -> int:
         ),
         "dams": sorted(readings, key=lambda r: r["source_code"]),
     }
-    payload = json.dumps(out, ensure_ascii=False, indent=2)
     if args.out:
-        with open(args.out, "w", encoding="utf-8") as fh:
-            fh.write(payload)
+        # Envelope-preserving write (scripts/nvdm_write.py): this scraper
+        # pushes to main on a daily cron, so it MUST keep the NVDM envelope
+        # (the decay bug the helper exists to close).
+        write_artifact(Path(args.out), out)
 
     if args.supabase:
         import os
@@ -245,7 +250,7 @@ def main() -> int:
         file=sys.stderr,
     )
     if not args.out:
-        print(payload)
+        print(json.dumps(out, ensure_ascii=False, indent=2))
     return 0 if readings else 1
 
 

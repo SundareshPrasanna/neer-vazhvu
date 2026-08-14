@@ -6,7 +6,7 @@
       "scope": "chennai",
       "publisher": "CPCB",
       "url": "https://cpcb.gov.in/nwmp-data/",
-      "license": "GoI publication, cited with attribution",
+      "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
       "type": "pdf-listing",
       "cadence": "yearly",
       "tier": 1,
@@ -17,10 +17,11 @@
       "dependsOn": [
         "public/data/river-quality.json",
         "public/data/river-quality-bangalore.json",
-        "public/data/river-quality-madurai.json"
+        "public/data/river-quality-madurai.json",
+        "public/data/facts-madurai.json"
       ],
       "refreshMethod": "manual PDF extraction (Madurai: scripts/scrape_cpcb_nwmp_vaigai.py)",
-      "notes": "NWMP annual River Water Quality data. Serves Chennai (4 rivers/10 stations), Bengaluru (Vrishabhavathi/Arkavathy/Dakshina Pinakini), Madurai (Vaigai 10059/10060). HOST CHANGED 2026-07-26: this entry used to point at the CPCB NICNET host (cpcb DOT nic DOT in, 164.100.58.91), which has ports 80 and 443 filtered from a residential India IP - so the watch could never fire. cpcb.gov.in (49.50.115.127) serves the same content over a valid TLS chain, so insecureTLS was removed. This is why the entry never checked successfully and carried no lastSeen; the 2026-07-21 baseline logged it as a CPCB outage, which was the wrong diagnosis. IMPORTANT CORRECTION to an earlier version of this note: the failure is PER HOST, not NICNET-wide. nmcg.nic.in sits on the same range (164.100.60.206) and returns 200 today, and nmcg-ngt-mpr-listing watches it successfully. Do not infer '.nic.in is unwatchable'. Verified-dead hosts are listed in UNREACHABLE_HOSTS in check-upstream-editions.ts and rejected at validate time (P5-8). Watch target is /nwmp-data/, which lists one year page per edition (nwmp-data-2012 ... nwmp-data-2025 as of 2026-07-26). A NEW EDITION SHOWS UP AS A NEW nwmp-data-YYYY LINK - that is the signal. /nwmp-data-2/ is a stub last updated 20 Nov 2018 and /wqm/ has no directory listing, so neither works for link-set. linkPattern matches year pages plus wqm/YYYY/ document paths, and deliberately excludes the site-wide boilerplate PDFs (APPs_CPCB, gst_details, stqc-cert, E-GOVERNANCE, it_technical_activity) that appear on every CPCB page. Annual river data also resolves directly at https://cpcb.gov.in/wqm/{YEAR}/WQuality_River-Data-{YEAR}.pdf (2021-2024 verified, 5-15 MB each). CAUTION on the 2025 edition: the nwmp-data-2025 page exists and links WQuality_River-Data-2025.pdf, but that file is 465 KB / 2 pages of YAMUNA DATA ONLY (created 18 Jun 2026) and contains none of our rivers - grep for Cooum, Adyar, Vaigai, Vrishabhavathi, Mithi returns zero. The full national 2025 edition has not landed. ALWAYS confirm river coverage inside the PDF before treating a new year as actionable; the year page appearing is not sufficient.",
+      "notes": "NWMP annual River Water Quality data. Serves Chennai (4 rivers/10 stations), Bengaluru (Vrishabhavathi/Arkavathy/Dakshina Pinakini), Madurai (Vaigai 10059/10060). HOST CHANGED 2026-07-26: this entry used to point at the CPCB NICNET host (cpcb DOT nic DOT in, 164.100.58.91), which has ports 80 and 443 filtered from a residential India IP - so the watch could never fire. cpcb.gov.in (49.50.115.127) serves the same content over a valid TLS chain, so insecureTLS was removed. This is why the entry never checked successfully and carried no lastSeen; the 2026-07-21 baseline logged it as a CPCB outage, which was the wrong diagnosis. IMPORTANT CORRECTION to an earlier version of this note: the failure is PER HOST, not NICNET-wide. nmcg.nic.in sits on the same range (164.100.60.206) and returns 200 today, and nmcg-ngt-mpr-listing watches it successfully. Do not infer '.nic.in is unwatchable'. Verified-dead hosts are listed in UNREACHABLE_HOSTS in check-upstream-editions.ts and rejected at validate time (P5-8). Watch target is /nwmp-data/, which lists one year page per edition (nwmp-data-2012 ... nwmp-data-2025 as of 2026-07-26). A NEW EDITION SHOWS UP AS A NEW nwmp-data-YYYY LINK - that is the signal. /nwmp-data-2/ is a stub last updated 20 Nov 2018 and /wqm/ has no directory listing, so neither works for link-set. linkPattern matches year pages plus wqm/YYYY/ document paths, and deliberately excludes the site-wide boilerplate PDFs (APPs_CPCB, gst_details, stqc-cert, E-GOVERNANCE, it_technical_activity) that appear on every CPCB page. Annual river data also resolves directly at https://cpcb.gov.in/wqm/{YEAR}/WQuality_River-Data-{YEAR}.pdf (2021-2024 verified, 5-15 MB each). CAUTION on the 2025 edition: the nwmp-data-2025 page exists and links WQuality_River-Data-2025.pdf, but that file is 465 KB / 2 pages of YAMUNA DATA ONLY (created 18 Jun 2026) and contains none of our rivers - grep for Cooum, Adyar, Vaigai, Vrishabhavathi, Mithi returns zero. The full national 2025 edition has not landed. ALWAYS confirm river coverage inside the PDF before treating a new year as actionable; the year page appearing is not sufficient. LICENCE: read from cpcb.gov.in/copyright-policy/ (verified 2026-07-31). The previous 'GoI publication, cited with attribution' was wrong: CPCB does not use the liberal GIGW template, it uses the permission-required one. Extracted factual values are a separate question (no copyright in facts), but the reports themselves are not redistributable and the artefacts are no longer licence-clean.",
       "lastSeen": {
         "linksHash": "554617125ca2b5fb",
         "links": [
@@ -106,7 +107,7 @@
       "scope": "chennai",
       "publisher": "OpenCity (Chennai ward groundwater)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=chennai-ward-wise-groundwater-levels",
-      "license": "open (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "monthly-to-yearly",
       "tier": 1,
@@ -118,7 +119,7 @@
         "supabase:groundwater_monthly"
       ],
       "refreshMethod": "neer-vazhvu-api monthly pipeline (app/scrapers/opencity.py, CKAN datastore_search per year resource)",
-      "notes": "Ward-wise monthly depth-to-water across all 200 GCC wards - the densest groundwater layer on the platform and the only per-ward one. Backs /chennai/groundwater depth view and the dashboard GW snapshot. Lineage is Supabase, not a committed file. As of 2026-07-26 the dataset holds 4 resources covering 2021-2024 only (metadata_modified 2025-11-27); NO 2025 ward data has been published, which is itself worth watching for. A new year resource appearing bumps metadata_modified.",
+      "notes": "Ward-wise monthly depth-to-water across all 200 GCC wards - the densest groundwater layer on the platform and the only per-ward one. Backs /chennai/groundwater depth view and the dashboard GW snapshot. Lineage is Supabase, not a committed file. As of 2026-07-26 the dataset holds 4 resources covering 2021-2024 only (metadata_modified 2025-11-27); NO 2025 ward data has been published, which is itself worth watching for. A new year resource appearing bumps metadata_modified. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:37:50.242309",
         "acceptedOn": "2026-07-26"
@@ -137,7 +138,8 @@
         "method": "http-meta"
       },
       "dependsOn": [
-        "supabase:water_bodies_census"
+        "supabase:water_bodies_census",
+        "public/data/restoration-priority.json"
       ],
       "refreshMethod": "neer-vazhvu-api app/scrapers/data_gov_in.py (REST, needs a free data.gov.in API key)",
       "notes": "First Census of Water Bodies (2018-19), 305 Chennai-district bodies with encroachment status/%, original vs present storage capacity, construction/renovation year. Backs /chennai/water-bodies census layer. Server sends an ETag (verified 2026-07-26), so http-meta works; the page is the dataset landing page, not the API. A Second Census has been announced nationally - this watch is how we would learn it landed. Lineage is Supabase, not a committed file.",
@@ -151,7 +153,7 @@
       "scope": "chennai",
       "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
       "url": "https://ingres.iith.ac.in/",
-      "license": "GoI publication, cited with attribution",
+      "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
       "type": "page",
       "cadence": "yearly (GEC assessment)",
       "tier": 1,
@@ -164,7 +166,7 @@
         "public/data/gw-stations.json"
       ],
       "refreshMethod": "manual (scripts/fetch-wris-groundwater.ts for the WRIS side; IN-GRES payload capture still open)",
-      "notes": "Dynamic Ground Water Resources assessment - block-level Safe/Semi-Critical/Critical/Over-Exploited classes and stage-of-extraction %, 16 Chennai-area blocks 2011-2024. IN-GRES is the canonical GW-assessment source for every city by user directive (see memory reference_ingres_groundwater); it is non-NICNET and reachable. CAVEAT: http-meta here watches the SPA build (Last-Modified 30 Jun 2026 + ETag, both verified 2026-07-26), NOT the assessment data itself - a redeploy will false-positive and a data-only update could be missed. Replace with an api-date watch once the IN-GRES payload capture lands. India-WRIS itself is a JS app with no watchable static endpoint, which is why it is not the url here.",
+      "notes": "Dynamic Ground Water Resources assessment - block-level Safe/Semi-Critical/Critical/Over-Exploited classes and stage-of-extraction %, 16 Chennai-area blocks 2011-2024. IN-GRES is the canonical GW-assessment source for every city by user directive (see memory reference_ingres_groundwater); it is non-NICNET and reachable. CAVEAT: http-meta here watches the SPA build (Last-Modified 30 Jun 2026 + ETag, both verified 2026-07-26), NOT the assessment data itself - a redeploy will false-positive and a data-only update could be missed. Replace with an api-date watch once the IN-GRES payload capture lands. India-WRIS itself is a JS app with no watchable static endpoint, which is why it is not the url here. LICENCE: verified by fetching ingres.iith.ac.in and grepping the full Angular app bundle (main.*.js, 2.0 MB): zero occurrences of a copyright policy, terms of use, disclaimer or licence statement - the only 'Policy' matches are Leaflet's referrerPolicy option and the only 'terms' match is an FAQ sentence about years of data (verified 2026-07-31). This entry previously ended '- GoI publication, cited with attribution', which made the classifier read the suffix and return gov-attribution: a clean result the evidence never earned. CGWB is the assessment's upstream authority in the scientific sense, but NO evidence establishes that CGWB's website policy legally governs material delivered by an IIT-Hyderabad-hosted portal, so that is not asserted. Fails closed as vague until somebody reads terms that actually exist.",
       "lastSeen": {
         "etag": "W/\"c20-19f18174cc0\"",
         "lastModified": "Tue, 30 Jun 2026 10:33:28 GMT",
@@ -303,7 +305,7 @@
       "scope": "chennai",
       "publisher": "OpenCity / NCCR (C-FLOWS model outputs)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=chennai-flooding-data",
-      "license": "open (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic",
       "tier": 0,
@@ -315,13 +317,62 @@
         "public/geojson/chennai-flood-hazard-zones.geojson",
         "public/geojson/chennai-flood-inundation-depth.geojson",
         "public/geojson/chennai-flood-return-periods.geojson",
-        "public/geojson/chennai-flood-2015-hotspots.geojson"
+        "public/geojson/chennai-flood-2015-hotspots.geojson",
+        "public/data/ward-profiles.json"
       ],
       "refreshMethod": "manual KML download + scripts/simplify-flood-geojson.ts",
-      "notes": "The 9 resources on this dataset map 1:1 onto our flood layers: Chennai Inundation Points with Depth, Flooding Points in 2015, Flows 5/10/25/50/100/200 Year Return Period, Flood Hazard Zones Map. Underlying model is NCCR's C-FLOWS. Verified 2026-07-26: metadata_modified 2025-11-27T12:37:59. The 2020 hotspots layer comes from a SEPARATE dataset (chennai-floods-2020-data) which is not watched by this entry - register it separately if that layer starts carrying load-bearing numbers.",
+      "notes": "The 9 resources on this dataset map 1:1 onto our flood layers: Chennai Inundation Points with Depth, Flooding Points in 2015, Flows 5/10/25/50/100/200 Year Return Period, Flood Hazard Zones Map. Underlying model is NCCR's C-FLOWS. Verified 2026-07-26: metadata_modified 2025-11-27T12:37:59. The 2020 hotspots layer comes from a SEPARATE dataset (chennai-floods-2020-data) which is not watched by this entry - register it separately if that layer starts carrying load-bearing numbers. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:37:59.761010",
         "acceptedOn": "2026-07-26"
+      }
+    },
+    {
+      "id": "opencity-cmwssb-sewerage",
+      "scope": "chennai",
+      "publisher": "CMWSSB (via OpenCity)",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=chennai-sewerage-collection-system",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
+      "type": "api",
+      "cadence": "episodic",
+      "tier": 0,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/chennai-sewerage.geojson",
+        "public/data/ward-profiles.json"
+      ],
+      "refreshMethod": "manual KML download + scripts/convert-sewerage-kml.py",
+      "notes": "Three OpenCity CMWSSB datasets (chennai-sewerage-collection-system, chennai-sewage-pumping-network, chennai-sewage-treatment-plants) are behind chennai-sewerage.geojson: 9 STPs, 349 SPS, 3,834 trunk mains (the full 237 MB street-level network is deliberately excluded - trunk-only subset). Capacities cross-checked against cmwssb.tn.gov.in/sewerage-system (see docs/cities/chennai/data-sources.md, CMWSSB Sewerage Network). This entry watches the collection-system dataset as the canonical CKAN package; register the two siblings separately if their update cadences diverge. Registered 2026-07-30 (NVDM Chennai migration) - was the last watchable-upstream file on the unaccounted list. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
+      "lastSeen": {
+        "apiDate": "2025-11-27T12:36:17.260836",
+        "acceptedOn": "2026-07-30"
+      }
+    },
+    {
+      "id": "tnswa-ramsar-boundary",
+      "scope": "chennai",
+      "publisher": "Tamil Nadu State Wetland Authority",
+      "url": "https://tnswa.tn.gov.in/qgis_web/data/RamsarBoundary_2.js",
+      "license": "public data from a Tamil Nadu government portal, cited with attribution",
+      "type": "file",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/geojson/rich-bodies/pallikaranai.geojson",
+        "public/geojson/rich-bodies/pallikaranai-buffer-1000m.geojson",
+        "public/data/rich-bodies/pallikaranai-boundary-analysis.json"
+      ],
+      "refreshMethod": "scripts/fetch-tnswa-ramsar-polygon.ts (qgis2web JS export -> GeoJSON; buffer via @turf/buffer)",
+      "notes": "qgis2web data export behind the TNSWA public web map (tnswa.tn.gov.in/qgis_web/index.html). RamsarBoundary_2.js carries all 20 TN Ramsar sites as MultiPolygon features keyed by 'Wetland'; our Pallikaranai polygon (feature 'Pallikaranai Marsh Reserve Forest', retrieved 2026-05-17) is the gazetted Ramsar Site #2481 boundary used for the boundary set-algebra, the NGT 1 km buffer, and the rich-body map. Matches the official RSIS area (1,247.54 ha) within 0.4%. A hash change means the state re-published the gazetted geometry - review event, not auto-apply (the 233 ha boundary-gap analysis re-runs from it). Registered 2026-07-30 (NVDM Chennai migration): the polygon was previously used with no lineage on record.",
+      "lastSeen": {
+        "pageHash": "30b9f902103c7052",
+        "acceptedOn": "2026-07-30"
       }
     },
     {
@@ -329,7 +380,7 @@
       "scope": "chennai",
       "publisher": "Greater Chennai Corporation (via OpenCity)",
       "url": "https://data.opencity.in/api/3/action/package_show?id=chennai-stormwater-drain-swd-maps",
-      "license": "open (per OpenCity dataset page)",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
       "type": "api",
       "cadence": "episodic",
       "tier": 0,
@@ -342,11 +393,30 @@
         "public/data/ward-profiles.json"
       ],
       "refreshMethod": "manual KML download + Python conversion",
-      "notes": "GCC's 2023 storm-water-drain survey: 115 resources (a master 2023 map plus one per ward) behind the 10,308-segment chennai-drainage.geojson, including the Good/Bad condition field that drives the ward drainage profile. Verified 2026-07-26: metadata_modified 2025-11-27T12:36:35. Pair source is chennai-basin-drainage-maps (5 resources: Basin Rivers and Streams, Buckingham Canal, Krishna Water Canal, Macro Drains, Micro Drains) - register separately if the basin layers start carrying numbers.",
+      "notes": "GCC's 2023 storm-water-drain survey: 115 resources (a master 2023 map plus one per ward) behind the 10,308-segment chennai-drainage.geojson, including the Good/Bad condition field that drives the ward drainage profile. Verified 2026-07-26: metadata_modified 2025-11-27T12:36:35. Pair source is chennai-basin-drainage-maps (5 resources: Basin Rivers and Streams, Buckingham Canal, Krishna Water Canal, Macro Drains, Micro Drains) - register separately if the basin layers start carrying numbers. LICENCE: OpenCity CKAN package_show returns license_id 'other-pd' / license_title 'Other (Public Domain)' with no license_url and no grant text, and the PDF/data resources carry the same 'Public Domain' string (package AND resource level both checked, verified 2026-07-31). This records what the CKAN metadata SAYS; it is not a finding that the material is in the public domain. No upstream publisher ever issued a public-domain dedication, and OpenCity's own site-wide terms (opencity.in/terms-and-conditions) say 'Data are licensed under: CC BY-NC-SA 4.0 and ODbL' and permit download 'for non-commercial and / or personal use only', which contradicts the per-dataset label.",
       "lastSeen": {
         "apiDate": "2025-11-27T12:36:35.772848",
         "acceptedOn": "2026-07-26"
       }
+    },
+    {
+      "id": "gcc-admin-boundary-gis",
+      "scope": "chennai",
+      "publisher": "Greater Chennai Corporation",
+      "url": "https://gisgcc.chennaicorporation.gov.in/server/rest/services/GCCPublic/GCC_AdminBoundary/MapServer",
+      "license": "public Greater Chennai Corporation government data; the service publishes no explicit licence (copyrightText and description are empty strings on the service root and on both Ward_Boundary and Zone_Boundary, verified 2026-07-31) - cited with attribution to Greater Chennai Corporation (GIS-GCC)",
+      "type": "api",
+      "cadence": "episodic (delimitation)",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/ward-names.json",
+        "public/geojson/chennai-wards-2022.geojson"
+      ],
+      "refreshMethod": "manual ArcGIS query with a browser User-Agent: /<layer>/query?where=1=1&outFields=*&returnGeometry=true&outSR=4326&f=geojson (single page, maxRecordCount 2000)",
+      "notes": "GCC's own admin-boundary service: layer 4 Ward_Boundary (200 features, field 'ward', source CRS EPSG:32644) and layer 5 Zone_Boundary (15 features, field 'zone' coded 01-15). This is where PR #207 re-acquired chennai-wards-2022.geojson after the 2011-geometry incident. NO EDITION SIGNAL EXISTS: the service exposes no editingInfo and no lastEditDate, the layer JSON carries only fields/extent, and the GCC delimited_ward page renders its delimitation PDFs through JS rather than <a href>, so link-set matches zero links. Registered continuous for lineage/licence accountability per the NVDM per-source rule (the kwris-mi-tanks precedent) rather than baselining a watch that cannot fire; the real edition event is a delimitation gazette, which arrives as news, not as a diff. NEITHER LAYER CARRIES A ZONE NAME OR A WARD->ZONE FIELD: zone names come from GCC's own roster on https://chennaicorporation.gov.in/gcc/delimited_ward/ (dropdown 01-Thiruvottyur ... 15-Sholinganallur, fetched 2026-07-31) and the ward->zone join is spatial. Doing that join on 2026-07-31 found five rows of public/data/ward-names.json (wards 22, 168, 169, 181, 182) disagreeing with GCC; those five were CORRECTED the same day from this join and all 200 now agree - see that artifact's provenance note, and re-run scripts/qc/verify-ward-zones.py to reproduce. dependsOn names public/geojson/chennai-wards-2022.geojson because that is the file this service actually produced (re-acquired 2026-07-30 from layer 4, per scripts/data-raw/chennai/README.md). public/data/ward-names.json was ADDED to dependsOn on 2026-07-31, reversing the position taken when the entry was written: this service did not produce the other 195 rows (they are still the closed 2011 layer's) but it did supply those five, so it is a real input and the lineage must be machine-readable. That costs nothing to run - detection stays continuous, nothing is polled - and it means a future delimitation reaches the ward -> zone mapping and not only the geometry."
     }
   ]
 }

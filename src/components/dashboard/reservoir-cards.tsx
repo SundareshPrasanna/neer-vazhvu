@@ -54,6 +54,9 @@ export function ReservoirCards({
               />
             );
           }
+          // Capacity is typed non-nullable, so an unpublished capacity reaches
+          // the card as 0 rather than null - hence the truthiness check.
+          const hasCapacity = r.capacity > 0;
           return (
           <Card
             key={r.name}
@@ -69,27 +72,46 @@ export function ReservoirCards({
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate mr-1">
                   {getReservoirDisplayName(r.name, t, r.displayName)}
                 </h3>
-                <span className="text-xs font-mono text-slate-500 dark:text-slate-400 shrink-0">
-                  {formatPct(r.storagePct)}
-                </span>
+                {hasCapacity && (
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 shrink-0">
+                    {formatPct(r.storagePct)}
+                  </span>
+                )}
               </div>
 
-              <div className="text-lg sm:text-2xl font-bold text-slate-800 dark:text-slate-200">
-                {formatNumber(r.currentStorage)}
-                <span className="text-xs sm:text-sm font-normal text-slate-400 dark:text-slate-500 ml-0.5">mcft</span>
-              </div>
+              {/* A source can be LIVE and still have no capacity: Delhi's share
+                  of Bhakra is fixed per season in BBMB Technical Committee
+                  minutes and never published as a capacity, so capacity arrives
+                  as NULL and lands here as 0. Rendering the usual treatment
+                  then produced "0.0% - 0 mcft of 0 mcft" over a red empty bar,
+                  which reads as "this reservoir is bone dry" rather than "we do
+                  not have this number". Same trap the MissingReservoirCard
+                  above was built for, reached by a different route: not
+                  offline, just uncapacitied. The flows are real, so they stay. */}
+              {hasCapacity ? (
+                <>
+                  <div className="text-lg sm:text-2xl font-bold text-slate-800 dark:text-slate-200">
+                    {formatNumber(r.currentStorage)}
+                    <span className="text-xs sm:text-sm font-normal text-slate-400 dark:text-slate-500 ml-0.5">mcft</span>
+                  </div>
 
-              <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mb-1.5 sm:mb-3">
-                {t("dash.capacity_of")} {formatNumber(r.capacity)} {t("dash.capacity_unit")}
-              </div>
+                  <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mb-1.5 sm:mb-3">
+                    {t("dash.capacity_of")} {formatNumber(r.capacity)} {t("dash.capacity_unit")}
+                  </div>
 
-              {/* Storage bar */}
-              <div className="w-full h-1.5 sm:h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all ${getBarColor(r.storagePct)}`}
-                  style={{ width: `${Math.min(r.storagePct, 100)}%` }}
-                />
-              </div>
+                  {/* Storage bar */}
+                  <div className="w-full h-1.5 sm:h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${getBarColor(r.storagePct)}`}
+                      style={{ width: `${Math.min(r.storagePct, 100)}%` }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 italic mb-1.5 sm:mb-3">
+                  {t("dash.storage_not_published")}
+                </div>
+              )}
 
               {/* Inflow/outflow */}
               <div className="flex flex-row justify-between mt-1.5 sm:mt-3 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">

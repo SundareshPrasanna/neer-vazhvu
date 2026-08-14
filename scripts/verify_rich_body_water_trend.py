@@ -13,6 +13,9 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from registry_license import registry_license
+from nvdm_write import write_artifact
+
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -117,7 +120,7 @@ def main() -> None:
         "data_source": {
             "dataset": JRC_YEARLY,
             "version": "JRC Global Surface Water v1.4 (Pekel et al., Nature 2016, updated)",
-            "license": "EC Open / public domain",
+            "license": registry_license("jrc-global-surface-water"),
             "resolution_m": 30,
             "method": "Per-pixel annual water classification from Landsat 5/7/8 archives",
             "classes": CLASS_LABELS,
@@ -136,7 +139,7 @@ def main() -> None:
     out_path = (
         ROOT / "public/data/rich-bodies" / f"{args.body_id}-jrc-water-trend.json"
     )
-    out_path.write_text(json.dumps(payload, indent=2))
+    write_artifact(out_path, payload)
     print(f"\nWrote {out_path}")
     print("\n=== Headline ===")
     for line in payload["headline_for_v0"]:

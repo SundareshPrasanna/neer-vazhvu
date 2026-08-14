@@ -380,9 +380,38 @@ Areas where help is needed:
 
 Please open an issue first to discuss significant changes.
 
+## Corpus build source
+
+Local development uses the corpus committed under `public/data/` and
+`public/geojson/` by default. Full-corpus CI and hosted deployments can instead
+set `CORPUS_SOURCE=remote` and provide a `CORPUS_REPO_TOKEN` with read-only
+Contents access to `neer-vazhvu-data`. The build then fetches the exact commit
+and file counts recorded in [`corpus.lock`](corpus.lock), and fails rather than
+falling back to partial data. Preview and Production variables are configured
+separately; promote the remote mode to Production only after its Preview build
+and rollback checks pass. The token is removed from the environment before the
+Next.js compiler runs.
+
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE) - for the **code**.
+
+The **data corpus** under `public/data/` and `public/geojson/` is not
+MIT-licensed. It aggregates many upstream publishers, and each publisher's own
+terms govern. **[`DATA-LICENSE.md`](DATA-LICENSE.md) is the data-specific
+notice**: it states the code/data separation, lists the notable restricted
+inputs, and carries the mandatory upstream attributions (HydroSHEDS Exhibit B,
+Copernicus WorldDEM-30, OpenStreetMap, JRC, USGS, GODL-India and others).
+
+The authoritative per-artifact record is the artifact's NVDM envelope
+(`provenance.sources[].license`, see [`schemas/nvdm/`](schemas/nvdm/)) together
+with the Headwaters source registries
+([`scripts/source-registry/`](scripts/source-registry/)). Consult the envelope
+before reuse: some upstream sources are non-commercial, some are ShareAlike, and
+some require the publisher's permission.
+`python3 scripts/nvdm-encumbrance-report.py` prints the per-artifact position,
+and [`scripts/sample-corpus.json`](scripts/sample-corpus.json) defines the
+reduced licence-clean reference set used by the no-secrets CI job.
 
 ## Acknowledgments
 

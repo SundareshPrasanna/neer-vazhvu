@@ -1,4 +1,32 @@
 {
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/imagery-manifest",
+  "scope": {
+    "kind": "city",
+    "id": "bangalore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "usgs-landsat",
+        "title": "Landsat 5/7/8 surface reflectance archive (GEE collections)",
+        "publisher": "USGS / NASA (Landsat program)",
+        "license": "USGS public domain, courtesy attribution",
+        "role": "input"
+      },
+      {
+        "id": "sentinel-2-l2a",
+        "title": "Sentinel-2 L2A imagery (channel evidence)",
+        "publisher": "ESA Copernicus",
+        "license": "Copernicus free and open data, attribution required",
+        "role": "input"
+      }
+    ],
+    "method": "gee",
+    "produced_at": "2026-06-02",
+    "produced_by": "scripts/ingest_rich_body_imagery.py",
+    "note": "Manifest referencing binary imagery chips (the sanctioned pattern - NVDM governs the manifest, not the rasters). Per-mission licences in the legacy license key."
+  },
   "body_id": "puttenahalli",
   "computed_at": "2026-06-02T15:11:33.199737+00:00",
   "chip_bbox_wsen": [
@@ -16,7 +44,7 @@
     "2019-present": "Sentinel-2 SR Harmonized"
   },
   "storage_bucket": "satellite-evidence",
-  "license": "Landsat: USGS public domain. Sentinel-2: Copernicus open licence. NICFI: when added, Planet Labs PBC under NICFI public licence.",
+  "license": "Landsat: USGS public domain, courtesy attribution. Sentinel-2: Copernicus free and open data, attribution required. NICFI: when added, Planet Labs PBC under NICFI public licence.",
   "chips": [
     {
       "year": 1990,

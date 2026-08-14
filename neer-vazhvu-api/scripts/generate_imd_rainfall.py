@@ -25,12 +25,14 @@ Usage:
 
 import argparse
 import gc
-import json
 import sys
 import tempfile
 import time
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 
 import numpy as np
 
@@ -72,6 +74,15 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         "NCT grid point (city centre 28.61 N, 77.21 E; 28.5/77.25 sits on "
         "the urban plain south of the Ridge, inside the 0.25-deg cell "
         "covering most of the MCD area)",
+    ),
+    "hyderabad": (
+        17.5,
+        78.5,
+        "Hyderabad grid point on the Deccan plateau (city centre 17.43 N, "
+        "78.43 E). Landlocked, so none of the coastal ocean-cell trouble "
+        "Chennai and Mumbai have; 17.5/78.5 is the nearest 0.25-deg "
+        "intersection and sits inside the GHMC 2022 ward extent "
+        "(17.29-17.56 N, 78.24-78.62 E)",
     ),
 }
 
@@ -221,7 +232,7 @@ def main() -> None:
     }
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(result, separators=(",", ":")))
+    write_artifact(output_path, result, compact=True)
     size_kb = output_path.stat().st_size / 1024
     print(f"\nWritten {output_path} ({size_kb:.0f} KB)")
     print(

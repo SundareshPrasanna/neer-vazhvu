@@ -243,6 +243,11 @@ export interface WaterBodiesConfig {
   /** Overlay the lost / vanished water bodies layer
    *  (`<cityId>-water-bodies-lost.geojson`). */
   lostBodies?: boolean;
+  /** Show the gazetted lake-register tab (`<cityId>-lake-register.json`).
+   *  A different POPULATION from the map layer: the map draws visible OSM
+   *  polygons, the register lists every statutorily gazetted lake and whether
+   *  its FTL boundary is legally settled. Hyderabad today (HMDA). */
+  legalRegister?: boolean;
 }
 
 /**
@@ -372,6 +377,28 @@ export interface BasePlaceConfig {
    *  lost bodies). Omit -> the basic map only. */
   waterBodies?: WaterBodiesConfig;
 
+  /** Show the treatment & discharge panel on the rivers page: per-plant STP
+   *  capacity and effluent compliance from the state pollution board, joined to
+   *  the river stations downstream. Reads `<cityId>-stps.json`. Omit -> hidden. */
+  hasTreatmentDischarge?: boolean;
+
+  /** Which KIND of tanker data this city has. The two are not
+   *  interchangeable and must not share a renderer:
+   *  - `household-survey` (default, Bengaluru): longitudinal price surveys of
+   *    what households pay a private market. Reads
+   *    `<cityId>-tanker-survey.json`.
+   *  - `utility-ledger` (Hyderabad): the utility's own booking/delivery
+   *    record, because HMWSSB runs the fleet itself. No prices exist in it.
+   *    Reads `<cityId>-tankers.json`. */
+  tankerDataKind?: 'household-survey' | 'utility-ledger';
+
+  /** One-line description of what this city's tanker page actually shows.
+   *  The shape of tanker data differs fundamentally by city - Bangalore has
+   *  longitudinal HOUSEHOLD PRICE surveys, Hyderabad has the utility's own
+   *  BOOKING/DELIVERY ledger - so the teaser card and the page metadata must
+   *  not assume one shape. Omit -> the household-survey wording. */
+  tankerSummary?: string;
+
   /** Which reservoir tables this city's data lives in.
    *  - `v2` (default): the multi-city `reservoir_daily_v2` schema
    *    (city_id + source_code), used by every city onboarded after the
@@ -433,6 +460,17 @@ export interface BasePlaceConfig {
    *  sparse window (e.g. a feed that just started) reads as a known gap,
    *  not a bug. */
   reservoirHistoryNote?: string;
+
+  /** Why no storage history exists for this place, when the answer is "nobody
+   *  publishes one" rather than "we have not backfilled it yet".
+   *
+   *  The chart used to infer this from `hasPublicFeed` across the sources, but
+   *  that is the wrong question: Delhi's BBMB feed is live and still yields no
+   *  storage series, because level over FRL is not a volume and Delhi's share
+   *  of Bhakra is unpublished. With a live feed present the inferred branch
+   *  promised the chart "fills in automatically", which will never happen.
+   *  Set this and that promise is replaced by the actual reason. */
+  reservoirHistoryAbsentNote?: string;
 
   /** Ships /:cityId/commitments - the Commitments Register (dated commitments
    *  by named institutions with a cited status lifecycle; history kept, never

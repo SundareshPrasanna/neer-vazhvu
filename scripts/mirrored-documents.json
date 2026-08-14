@@ -1,0 +1,111 @@
+{
+  "_doc": [
+    "Inventory of upstream source documents mirrored into the repository, and",
+    "therefore redistributed in every checkout and every deployed build.",
+    "",
+    "WHY THIS FILE EXISTS. The corpus licence machinery (NVDM envelopes, the",
+    "Headwaters registry, nvdm-encumbrance-report.py, sample-corpus.json) only",
+    "ever looked at public/data and public/geojson. public/docs was invisible to",
+    "all of it, so a 4.4 MB mirror of CPCB's Polluted River Stretches report",
+    "shipped in every checkout while the registry entry for its own source said",
+    "the publisher requires approval for any use beyond download and print.",
+    "Removing that one file fixed the instance; this manifest plus",
+    "scripts/check-mirrored-documents.py fixes the shape, by making every",
+    "mirrored document name its source and be gated on that source's terms.",
+    "",
+    "THE RULE, and it is an ALLOWLIST. A mirror ships only on an AFFIRMATIVE",
+    "right to redistribute the whole document, by exactly one of three routes:",
+    "",
+    "  1. `permission`           - an actual grant, recording grantor,",
+    "                              granted_on and form.",
+    "  2. `redistribution_basis` - a quoted clause that permits redistribution,",
+    "                              with source_url and verified_on.",
+    "  3. source classifies      - a canonical open grant (CC BY, CC0, GODL,",
+    "     `clean-open`             ODC-BY and friends).",
+    "",
+    "Every other state fails, and the checker enumerates them rather than",
+    "denying them one at a time: gov-attribution is a description of our",
+    "CITATION practice, not a licence to republish a PDF; share-alike permits",
+    "redistribution only on terms a file drop does not offer; nc, third-party,",
+    "vague, restricted and UNCLASSIFIED all obviously fail. A `status` field is",
+    "documentation and is never a route on its own - that was the bug in the",
+    "first version of this gate, which failed only on 'restricted' and let six",
+    "documents with explicitly unproven rights through on a printed warning.",
+    "",
+    "Mirroring is redistribution. Extracted factual VALUES are a different",
+    "question and are unaffected - facts carry no copyright - which is why",
+    "deleting a mirror never means dropping the numbers derived from it.",
+    "",
+    "`documents` is the live inventory and is what the gate checks. `removed`",
+    "is the audit trail: documents that were mirrored here, could not be",
+    "cleared, and are now cited at the publisher instead. Keep the record - the",
+    "next person to consider mirroring one of these should find out why it",
+    "went, rather than re-adding it."
+  ],
+  "documents": [],
+  "removed": [
+    {
+      "path": "public/docs/cpcb-polluted-river-stretches-oct-2025.pdf",
+      "publisher": "CPCB",
+      "source_id": "cpcb-prs-report",
+      "bytes": 4426464,
+      "removed_on": "2026-07-31",
+      "now_cited_at": "https://cpcb.gov.in/polluted-river-stretches/",
+      "reason": "cpcb.gov.in/copyright-policy/ permits material to be downloaded to file or printer and makes 'Any other proposed use of the material is subject to the approval of competent authority of CPCB'. Mirroring is redistribution and no approval was ever sought, so the mirror had no basis. The BOD-band Priority I-V values extracted from it stay: facts carry no copyright."
+    },
+    {
+      "path": "public/docs/kspcb-arkavathi-action-plan-jan2019.pdf",
+      "publisher": "KSPCB",
+      "source_id": "kspcb-adi-committee-oa606",
+      "bytes": 900940,
+      "removed_on": "2026-07-31",
+      "now_cited_at": "https://kspcb.karnataka.gov.in/",
+      "reason": "KSPCB's own copyright policy page was not retrievable on 2026-07-31 (the Karnataka government template URL 404s), so nothing affirmatively permits redistribution. The Karnataka Open Data Policy 2021 is a further unresolved question over every Karnataka state source. Action plans filed before the NGT may well be tabled documents, which would be a stronger and quite different basis - but that has not been established, and an unestablished basis is not a basis."
+    },
+    {
+      "path": "public/docs/kspcb-kabini-action-plan.pdf",
+      "publisher": "KSPCB",
+      "source_id": "kspcb-adi-committee-oa606",
+      "bytes": 1174965,
+      "removed_on": "2026-07-31",
+      "now_cited_at": "https://kspcb.karnataka.gov.in/",
+      "reason": "Same unread KSPCB policy as the Arkavathi action plan above."
+    },
+    {
+      "path": "public/docs/kspcb-shimsha-action-plan.pdf",
+      "publisher": "KSPCB",
+      "source_id": "kspcb-adi-committee-oa606",
+      "bytes": 945082,
+      "removed_on": "2026-07-31",
+      "now_cited_at": "https://kspcb.karnataka.gov.in/",
+      "reason": "Same unread KSPCB policy as the Arkavathi action plan above."
+    },
+    {
+      "path": "public/docs/kspcb-nwmp-classification-2025-26.pdf",
+      "publisher": "KSPCB",
+      "source_id": "kspcb-monthly-wq",
+      "bytes": 738556,
+      "removed_on": "2026-07-31",
+      "now_cited_at": "https://kspcb.karnataka.gov.in/",
+      "reason": "Same unread KSPCB policy. scripts/build_basin_wq_readings.py reads this PDF; operators now fetch it locally and must not commit it."
+    },
+    {
+      "path": "public/docs/kspcb-ocems-private-stps-memo-oct2025.pdf",
+      "publisher": "KSPCB",
+      "source_id": "kspcb-monthly-wq",
+      "bytes": 467415,
+      "removed_on": "2026-07-31",
+      "now_cited_at": "https://kspcb.karnataka.gov.in/",
+      "reason": "Memo PCB/150/Infra/2025, obtained as an RTI response via Paani Earth. An RTI response is supplied to the requester; that it reached us is not a grant to republish it, and it has no public upstream URL to point at. Removed rather than guessed about."
+    },
+    {
+      "path": "public/docs/bwssb-stp-corrigendum-2024.pdf",
+      "publisher": "BWSSB",
+      "source_id": "opencity-bwssb-stps",
+      "bytes": 1832316,
+      "removed_on": "2026-07-31",
+      "now_cited_at": "https://bwssb.karnataka.gov.in/",
+      "reason": "BWSSB's copyright policy page (read 2026-07-31) prints BOTH Karnataka government templates side by side - one permitting republication in any format free of charge with attribution, one requiring prior authorisation - without saying which governs. Two contradictory templates are not a grant. BWSSB is also a public undertaking owning its copyright independently under Copyright Act s.17(dd), so the OpenCity CKAN label on a sibling dataset never reached this PDF."
+    }
+  ]
+}

@@ -1,4 +1,30 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/cgwb-stations",
+  "scope": {
+    "kind": "city",
+    "id": "delhi"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "wris-live-services",
+        "title": "India-WRIS 'Ground Water Level' dataset (POST API, indiawris.gov.in - CGWB observation wells)",
+        "publisher": "CGWB / NWIC via India-WRIS",
+        "license": "India-WRIS website policy: material 'may be reproduced free of charge in any format or media without requiring specific permission', subject to accurate reproduction and prominent acknowledgement of the source; third-party material on the site excluded - GoI publication, cited with attribution",
+        "retrieved": "2026-07-25"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-07-25",
+    "produced_by": "neer-vazhvu-api/scripts/build_delhi_cgwb_stations.py",
+    "note": "CGWB observation wells across all 11 Delhi districts from the India-WRIS 'Ground Water Level' dataset (POST API with mandatory state/district/agency params - see _api_contract). A continuous source, freshness-tracked not edition-tracked. Known-bad sensors are excluded, not averaged in (_excluded).",
+    "conventions": {
+      "sign": "WRIS returns depth-to-water with a programme-dependent sign across three Delhi station-code families (numeric NHN and AAXI* positive-down, CGWBDL* negative-down). The convention is derived PER STATION from the median of its own readings, never by abs() - which would erase real water-above-datum readings in floodplain wells and launder sign-faulty sensors.",
+      "feed_status": "Frozen telemetry: DWLR reporting across the Delhi network stops 2025-09-20 (_feed_status). This is a historical series, not a live feed; resumption is a freshness (P5-1) question and cannot be expressed as a registry edition watch (the dormant endpoint returns an empty array).",
+      "aggregation": "published as monthly means; later years 6-hourly DWLR telemetry, earlier years periodic manual observations"
+    }
+  },
   "_note": "CGWB observation wells across all 11 Delhi districts, from the India-WRIS 'Ground Water Level' dataset. This is the sub-district groundwater layer Delhi previously lacked: the CGWB assessment choropleth resolves only to 11 districts, these resolve to points. Later years are 6-hourly telemetric (DWLR) readings; earlier years are periodic manual observations. Published here as monthly means.",
   "district": "Delhi NCT (all 11 districts)",
   "well_type": "Observation well / piezometer (manual + telemetric DWLR)",

@@ -1,4 +1,49 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": {
+    "kind": "city",
+    "id": "madurai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cgwb-yearbook-tn",
+        "title": "CGWB Ground Water Year Book, Tamil Nadu & Puducherry",
+        "publisher": "Central Ground Water Board",
+        "license": "CGWB website policy: material 'may be reproduced free of charge in any format or media without requiring specific permission', subject to accurate reproduction and prominent acknowledgement of the source; third-party material on the site excluded - GoI publication, cited with attribution"
+      },
+      {
+        "id": "ingres-gw-assessment-madurai",
+        "title": "IN-GRES dynamic groundwater assessment (Madurai firkas)",
+        "publisher": "CGWB / IN-GRES",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+      },
+      {
+        "id": "cpcb-nwmp-annual",
+        "title": "CPCB NWMP water-quality monitoring (Vaigai stations)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+      },
+      {
+        "id": "madurai-corp-projects",
+        "title": "Madurai Municipal Corporation project/supply pages",
+        "publisher": "Madurai Municipal Corporation",
+        "license": "government publication, cited with attribution"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-06-18",
+    "internal_inputs": [
+      "public/data/gwr-blocks-madurai.json",
+      "public/data/restoration-priority-madurai.json",
+      "public/data/river-quality-madurai.json",
+      "public/data/ward-risk-madurai.json",
+      "public/data/water-bodies-lost-madurai.json"
+    ],
+    "produced_by": "scripts/compute-madurai-derived-facts.ts (derived facts) + manual curation",
+    "note": "Envelope lists the registered upstreams; every fact carries its own citation (source_label/source_url/data_date, migrated to per-record sources), including one-off documents (1886 lease indenture, court reports) not registrable as living sources."
+  },
   "place_id": "madurai",
   "generated_at": "2026-06-18",
   "note": "Hand-curated Madurai water facts. v1 - replaces with dynamic fact-builder when M3 data layers (CPCB river quality, ward profiles, satellite GEE) ship.",

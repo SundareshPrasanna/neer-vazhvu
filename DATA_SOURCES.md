@@ -28,6 +28,27 @@ denominator - 4.5m residents plus 6m daily floating, against a "static populatio
 and no non-revenue water (never published). The industrial-wastewater section of KMC's statutory
 Environment Plan is blank in the original, and we show it as blank.
 
+## Data licensing
+
+The repository's MIT licence covers the code only. The data corpus under
+`public/data/` and `public/geojson/` is compiled from many upstream publishers
+whose own terms govern each artifact. The authoritative per-artifact record is:
+
+- the artifact's NVDM envelope - `provenance.sources[].license` records each
+  upstream source's licence terms (required for L3 conformance; see
+  [`schemas/nvdm/`](schemas/nvdm/));
+- the Headwaters source registries
+  ([`scripts/source-registry/`](scripts/source-registry/)) - the per-source
+  licence record that envelope source ids join to.
+
+Some upstream sources carry non-commercial (e.g. CC BY-NC) or share-alike
+(e.g. ODbL) terms. `python3 scripts/nvdm-encumbrance-report.py` buckets every
+enveloped artifact by its worst source licence, propagated recursively through
+`provenance.internal_inputs` (an artifact derived from ODbL inputs is
+share-alike even if its own sources are clean), and is the mechanical basis for
+licence-clean corpus editions ([`scripts/sample-corpus.json`](scripts/sample-corpus.json)
+is the first). A data-specific notice is forthcoming.
+
 ## Documentation principle: avoid absolute-absence claims
 
 When describing layers we don't have data for, hedge with "no known public X" or "we haven't yet found a public daily feed for X" rather than "no public X exists" or "the utility doesn't publish X". Our research is bounded; somewhere a PDF, internal portal, or unindexed dataset might exist. Categorical claims of absolute absence get a counter-example fast and discredit the broader narrative.

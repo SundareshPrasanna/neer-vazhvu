@@ -25,6 +25,11 @@ import math
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+import sys  # noqa: E402
+
+sys.path.insert(0, str(REPO / "scripts"))
+from registry_license import registry_license  # noqa: E402
+
 G = REPO / "public/geojson"
 D = REPO / "public/data"
 
@@ -429,8 +434,117 @@ def main():
             }
         )
 
+    # NVDM v1 wrapped form (schemas/nvdm/ward-profiles.schema.json): envelope +
+    # wards[]. Loaders accept both shapes during the migration (use-ward-profile,
+    # /api/wards, compute-delhi-ward-risk.py, fetch-localities-osm-delhi.ts).
+    # PRODUCED_AT is a manual constant, bumped on regeneration, so identical
+    # inputs still produce byte-identical output (no wall-clock in the artifact).
+    PRODUCED_AT = "2026-07-30"
+    wrapped = {
+        "nvdm": "1.0",
+        "dataset": "data-root/ward-profiles",
+        "scope": {"kind": "city", "id": "delhi"},
+        "provenance": {
+            "sources": [
+                {
+                    "id": "opencity-delhi-mcd-wards",
+                    "title": "SEC Delhi Delimitation Order 2022 ward geometry + delimitation populations (via OpenCity)",
+                    "publisher": "State Election Commission, NCT of Delhi (digitized by OpenCity)",
+                    "license": registry_license("opencity-delhi-mcd-wards"),
+                    "role": "input",
+                    "as_of": "2022",
+                },
+                {
+                    "id": "osm-overpass",
+                    "title": "OpenStreetMap water bodies / drain network (Overpass extracts)",
+                    "publisher": "OpenStreetMap contributors",
+                    "license": registry_license("osm-overpass"),
+                    "role": "input",
+                },
+                {
+                    "id": "wris-live-services",
+                    "title": "India-WRIS 'Ground Water Level' dataset (CGWB observation wells, via delhi-cgwb-stations.json)",
+                    "publisher": "CGWB / NWIC via India-WRIS",
+                    "license": registry_license("wris-live-services"),
+                    "role": "input",
+                },
+                {
+                    "id": "cgwb-dynamic-gwr-delhi",
+                    "title": "CGWB Dynamic Ground Water Resources - Delhi district assessments (via OpenCity)",
+                    "publisher": "CGWB + state GW departments (via OpenCity)",
+                    "license": registry_license("cgwb-dynamic-gwr-delhi"),
+                    "role": "input",
+                },
+                {
+                    "id": "dusib-jj-bastis",
+                    "title": "DUSIB JJ basti roster and coordinate PDFs (via delhi-jj-bastis-geo.json)",
+                    "publisher": "Delhi Urban Shelter Improvement Board",
+                    "license": registry_license("dusib-jj-bastis"),
+                    "role": "input",
+                },
+                {
+                    "id": "dpcc-cetp-monthly-delhi",
+                    "title": "DPCC CETP monthly analysis bundles (capacity/utilisation, via industrial-sources-delhi.json)",
+                    "publisher": "Delhi Pollution Control Committee (via OpenCity)",
+                    "license": registry_license("dpcc-cetp-monthly-delhi"),
+                    "role": "input",
+                },
+                {
+                    "id": "delhi-reps-mcd",
+                    "title": "MCD general election 2022 results (councillor per ward, via OpenCity)",
+                    "publisher": "State Election Commission, NCT of Delhi (via OpenCity)",
+                    "license": registry_license("delhi-reps-mcd"),
+                    "role": "input",
+                    "as_of": "2022-12-04",
+                },
+            ],
+            # Audited artifact-level rights determination (PR #227 review).
+            # Source-term propagation marks this file 'restricted' because
+            # DPCC sits in its lineage. DPCC's policy governs DPCC's own
+            # reports, not a ward score computed here from the measurements
+            # those reports state - there is no copyright in facts. `clears`
+            # names the one input it covers; anything else restricting this
+            # file would leave it restricted, and no determination can touch
+            # the OpenStreetMap share-alike.
+            "rights_determination": {
+                "basis": "derived-facts",
+                "clears": ["dpcc-monthly-analysis-delhi"],
+                "reasoning": "The payload of this file is a set of indicators this repository computes: per-ward scores, grades, percentile ranks and densities produced by our own code from measured values. It contains no upstream prose, no upstream table layout and no reproduction of any publisher's document. The restricted input named in `clears` is a pollution-control board whose website policy requires the board's approval to reuse ITS MATERIAL beyond download and print. That policy governs the board's own reports; it does not reach a score derived from the measurements those reports state, because there is no copyright in facts (Eastern Book Company v D.B. Modak, (2008) 1 SCC 1: 'there is no copyright in the facts per se'). This determination is scoped to that named input only and clears nothing else. Delhi ward profiles: the same indicator construction. The restricted input here is DPCC, whose policy refuses reproduction of its website contents; these are our derived scores, not DPCC's monitoring reports. The OpenStreetMap share-alike is untouched.",
+                "reviewed_on": "2026-07-31",
+            },
+            "method": "derived",
+            "produced_at": PRODUCED_AT,
+            "produced_by": "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
+            # Machine-readable internal lineage: exactly the artifacts main()
+            # loads above - the validator caps below L3 while any input is
+            # below L2.
+            "internal_inputs": [
+                "public/geojson/delhi-wards-2022.geojson",
+                "public/geojson/delhi-water-bodies-current.geojson",
+                "public/geojson/delhi-water-bodies-census.geojson",
+                "public/data/water-bodies-lost-delhi.json",
+                "public/data/restoration-priority-delhi.json",
+                "public/data/delhi-flood-hotspots.json",
+                "public/geojson/delhi-drainage.geojson",
+                "public/data/river-quality-delhi.json",
+                "public/data/delhi-ward-representatives.json",
+                "public/data/delhi-jj-bastis-geo.json",
+                "public/data/industrial-sources-delhi.json",
+                "public/geojson/delhi-gwr-blocks.geojson",
+                "public/data/delhi-cgwb-stations.json",
+            ],
+            "note": (
+                "Deterministic per-ward join over committed layers (see script "
+                "header). sewerage is an honest not_available placeholder (DJB "
+                "KML delisted from OpenCity); JJ-basti household totals are "
+                "floors, flagged per ward. Internal inputs are lineage, not "
+                "sources - listed machine-readably in internal_inputs."
+            ),
+        },
+        "wards": profiles,
+    }
     out = D / "delhi-ward-profiles.json"
-    out.write_text(json.dumps(profiles, ensure_ascii=False, separators=(",", ":")))
+    out.write_text(json.dumps(wrapped, ensure_ascii=False, separators=(",", ":")))
     n_bodies = sum(pf["water_bodies"]["current_count"] for pf in profiles)
     n_hot = sum(pf["flood"]["chronic_hotspots"] for pf in profiles)
     n_jj = sum(pf["jj_bastis"]["count"] for pf in profiles)
