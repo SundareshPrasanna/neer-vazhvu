@@ -370,11 +370,64 @@ _MUMBAI = DistrictCascadeConfig(
 )
 
 
+_HYDERABAD = DistrictCascadeConfig(
+    district_id="hyderabad",
+    label="Hyderabad",
+    state="telangana",
+    tank_polygons_path=PUBLIC_GEOJSON_DIR / "hyderabad-water-bodies-current.geojson",
+    rivers_path=PUBLIC_GEOJSON_DIR / "hyderabad-rivers.geojson",
+    imd_rainfall_path=PUBLIC_DATA_DIR / "imd-rainfall-monthly-hyderabad.json",
+    # Hyderabad straddles the UTM 43N/44N boundary at 78E. The Core Urban
+    # Region runs 78.10-78.75 E, so the bulk of the area and the centroid
+    # (78.43) sit in 44N - the module default, stated here explicitly because
+    # the western edge genuinely falls in 43N and a future widening of the
+    # bbox should revisit it.
+    utm_epsg=32644,
+    # Deccan tank cascades branch: a tank's surplus weir feeds the next tank
+    # down the chain while a separate sluice serves its own command. Scoring a
+    # single outflow would collapse that, the same reason Bengaluru's kere
+    # chains need it.
+    allow_multi_outflow=True,
+    historical_eras=(
+        HistoricalEra(
+            era="Qutb Shahi",
+            period_start=1518,
+            period_end=1687,
+            notes=(
+                "The dynasty that founded Hyderabad in 1591 built its water "
+                "first: Hussain Sagar was excavated in 1562 and completed in "
+                "1563 under Ibrahim Quli Qutb Shah, on a tributary of the "
+                "Musi, more than two decades before the city itself. The "
+                "Deccan vocabulary is cheruvu (tank), kunta (pond) and sagar "
+                "(a lake grand enough to carry a ruler's name)."
+            ),
+        ),
+        HistoricalEra(
+            era="Asaf Jahi",
+            period_start=1724,
+            period_end=1948,
+            notes=(
+                "Mir Alam Tank (1804-1806) carried twenty-one semicircular "
+                "masonry arches over roughly 1.5 km. After the Great Musi "
+                "Flood of 28 September 1908 - in which 221 of the 788 tanks "
+                "along the river breached, a cascade failing link by link - "
+                "M. Visvesvaraya was appointed Special Consulting Engineer "
+                "(15 April 1909) and the twin reservoirs followed: Osman "
+                "Sagar begun 1913 and completed 1918, then Himayat Sagar on "
+                "the Esi. They were built as FLOOD CONTROL first and water "
+                "supply second."
+            ),
+        ),
+    ),
+)
+
+
 _REGISTRY: dict[str, DistrictCascadeConfig] = {
     _MADURAI.district_id: _MADURAI,
     _CHENNAI.district_id: _CHENNAI,
     _BANGALORE.district_id: _BANGALORE,
     _MUMBAI.district_id: _MUMBAI,
+    _HYDERABAD.district_id: _HYDERABAD,
 }
 
 

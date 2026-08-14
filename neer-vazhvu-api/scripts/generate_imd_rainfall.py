@@ -67,6 +67,15 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         "the urban plain south of the Ridge, inside the 0.25-deg cell "
         "covering most of the MCD area)",
     ),
+    "hyderabad": (
+        17.5,
+        78.5,
+        "Hyderabad grid point on the Deccan plateau (city centre 17.43 N, "
+        "78.43 E). Landlocked, so none of the coastal ocean-cell trouble "
+        "Chennai and Mumbai have; 17.5/78.5 is the nearest 0.25-deg "
+        "intersection and sits inside the GHMC 2022 ward extent "
+        "(17.29-17.56 N, 78.24-78.62 E)",
+    ),
 }
 
 

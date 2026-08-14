@@ -120,7 +120,10 @@ const PRIORITY_TONE: Record<PriorityLevel, string> = {
 interface Props {
   cityId: string;
   cityDisplayName: string;
-  lostFile: LostFile;
+  /** Optional: a compiled lost/vanished water-body register. Cities without
+   *  one (the research is historical and city-specific) render every other
+   *  section and simply omit the lost-bodies cards. */
+  lostFile: LostFile | null;
   flagshipFile: FlagshipFile;
   projectsFile: ProjectsFile;
   priorityFile: RestorationPriorityFile | null;
@@ -139,7 +142,7 @@ export function LakeRestorationContent({
   const priorityByName = new Map<string, ScoredBody>();
   for (const b of priorityFile?.bodies ?? []) priorityByName.set(b.name, b);
 
-  const lost = lostFile.lost_bodies;
+  const lost = lostFile?.lost_bodies ?? [];
   const fullyLost = lost.filter((b) => b.status === "Fully lost");
   const reduced = lost.filter((b) => b.status !== "Fully lost");
 
@@ -156,10 +159,21 @@ export function LakeRestorationContent({
   // those aggregates (Madurai today) get it; others (e.g. the MMR, which still
   // lists its lost tanks but has no aggregate stats) get a generic intro. This
   // also avoids reading summary fields those cities don't carry.
-  const s = lostFile.summary;
+  const s = lostFile?.summary;
   const hasAggregateLostStats =
+    s != null &&
     s.slum_households_on_former_tank_beds_estimate != null &&
     s.combined_area_lost_sqkm_estimate != null;
+  // The generic intro names the lost-tank register AND the court orders. Both
+  // are optional sections, so a city with neither was being promised two
+  // things the page then did not show. Compose the sentence from what will
+  // actually render instead of asserting a fixed feature list.
+  const introParts = [
+    t("lake.intro_flagship_clause"),
+    ...(lost.length > 0 ? [t("lake.intro_lost_clause")] : []),
+    ...(projectsFile.projects.length > 0 ? [t("lake.intro_programmes_clause")] : []),
+    ...(projectsFile.court_orders.length > 0 ? [t("lake.intro_court_clause")] : []),
+  ];
   const introText = hasAggregateLostStats
     ? t("lake.intro_template_madurai")
         .replace("{fully_lost}", String(s.fully_lost_count))
@@ -167,7 +181,9 @@ export function LakeRestorationContent({
         .replace("{area}", String(s.combined_area_lost_sqkm_estimate))
         .replace("{pct}", String(s.share_of_city_estimate_pct))
         .replace("{households}", s.slum_households_on_former_tank_beds_estimate.toLocaleString())
-    : t("lake.intro_generic");
+    : introParts.length > 1
+      ? `${introParts.slice(0, -1).join(", ")} and ${introParts[introParts.length - 1]}.`
+      : `${introParts[0]}.`;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:py-10 space-y-6">
@@ -186,16 +202,20 @@ export function LakeRestorationContent({
       </header>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Card><CardContent>
-          <div className="text-xs uppercase tracking-wider text-slate-500">{t("lake.card_fully_lost")}</div>
-          <div className="text-3xl font-bold text-red-600 dark:text-red-400 mt-1">{fullyLost.length}</div>
-          <div className="text-xs text-slate-500">{t("lake.card_fully_lost_sub")}</div>
-        </CardContent></Card>
-        <Card><CardContent>
-          <div className="text-xs uppercase tracking-wider text-slate-500">{t("lake.card_at_risk")}</div>
-          <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-1">{reduced.length}</div>
-          <div className="text-xs text-slate-500">{t("lake.card_at_risk_sub")}</div>
-        </CardContent></Card>
+        {lostFile && (
+          <>
+            <Card><CardContent>
+              <div className="text-xs uppercase tracking-wider text-slate-500">{t("lake.card_fully_lost")}</div>
+              <div className="text-3xl font-bold text-red-600 dark:text-red-400 mt-1">{fullyLost.length}</div>
+              <div className="text-xs text-slate-500">{t("lake.card_fully_lost_sub")}</div>
+            </CardContent></Card>
+            <Card><CardContent>
+              <div className="text-xs uppercase tracking-wider text-slate-500">{t("lake.card_at_risk")}</div>
+              <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-1">{reduced.length}</div>
+              <div className="text-xs text-slate-500">{t("lake.card_at_risk_sub")}</div>
+            </CardContent></Card>
+          </>
+        )}
         <Card><CardContent>
           <div className="text-xs uppercase tracking-wider text-slate-500">{t("lake.card_flagships")}</div>
           <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">{flagshipFile.bodies.length}</div>
@@ -368,6 +388,7 @@ export function LakeRestorationContent({
         </CardContent>
       </Card>
 
+      {lostFile && (
       <Card>
         <CardContent className="space-y-3">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -390,7 +411,9 @@ export function LakeRestorationContent({
           </div>
         </CardContent>
       </Card>
+      )}
 
+      {lostFile && (
       <Card>
         <CardContent className="space-y-3">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -409,6 +432,7 @@ export function LakeRestorationContent({
           </div>
         </CardContent>
       </Card>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Link href={`/${cityId}/water-bodies`} className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-600 transition-colors">

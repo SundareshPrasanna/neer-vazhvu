@@ -48,7 +48,12 @@ export default async function CityLakeRestorationPage({ params }: PageProps) {
     loadJson<RestorationPriorityFile>(`restoration-priority-${cityId}.json`),
   ]);
 
-  if (!lostFile || !flagshipFile || !projectsFile) {
+  // Gate on what the page NEEDS to say something: a flagship register and the
+  // active programmes. The lost/vanished register is genuinely optional - it is
+  // historical, city-specific research that several cities will never have -
+  // and requiring it stubbed out cities that had everything else. Its cards
+  // self-hide when the file is absent.
+  if (!flagshipFile || !projectsFile) {
     return (
       <FeatureNotYetAvailable
         config={config}

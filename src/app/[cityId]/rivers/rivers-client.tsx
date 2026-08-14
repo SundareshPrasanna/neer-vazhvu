@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 import type { Feature, Geometry, LineString, MultiLineString } from "geojson";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { useLanguage } from "@/lib/i18n/context";
+import { TreatmentDischargePanel } from "@/components/rivers/treatment-discharge-panel";
+import { measureWorst } from "@/lib/rivers/measure";
 // Shared types from the Chennai-baseline pollution + river-quality
 // models. Each city's industrial-sources-{cityId}.json conforms to
 // IndustrialPollutionData; PollutionSource is the per-row shape.
@@ -50,6 +52,10 @@ interface ClientProps {
   /** Label for the basin-atlas CTA button; defaults to the treatment-gaps
    *  framing used by the original Chennai-baseline surface. */
   atlasCtaLabel?: string;
+  /** Mount the treatment & discharge panel (per-plant STP capacity and effluent
+   *  compliance joined to the river stations below). Cities without an STP feed
+   *  omit it. Distinct from the basin atlas, which needs a basin manifest. */
+  hasTreatmentDischarge?: boolean;
   /** Per-river narrative metadata, keyed by river_id from the geojson. */
   riverInfo: Record<string, RiverInfo>;
   /** Optional deep basin atlas: when a river on this map belongs to a basin,
@@ -104,6 +110,10 @@ export interface RiverInfo {
    *  Display-only, like the ta name line - full hi field overrides come
    *  with Delhi's translation pass. */
   display_name_hi?: string;
+  /** Native-script name shown under the English name (Telugu cities).
+   *  Display-only, same contract as display_name_hi - full te field
+   *  overrides come with Hyderabad's translation pass. */
+  display_name_te?: string;
 }
 
 // CPCB reading shape used by the marker tooltip / colour-coding logic.
@@ -182,6 +192,7 @@ const RiversLeafletMap = dynamic(
 export default function RiversClient({
   cityId,
   cityDisplayName,
+  hasTreatmentDischarge,
   mapCenter,
   mapZoom = 9,
   scopeLabel,
@@ -193,6 +204,7 @@ export default function RiversClient({
 }: ClientProps) {
   useLockBodyScroll();
   const [rivers, setRivers] = useState<RiverGeoFeature[]>([]);
+  const [treatmentOpen, setTreatmentOpen] = useState(false);
   const [selectedRiverId, setSelectedRiverId] = useState<string | null>(null);
   // When set, the layered basin atlas is open (over the rivers map), scoped
   // to this basin river. Clicking a basin river opens it; everything else on
@@ -435,7 +447,14 @@ export default function RiversClient({
   const cpcbStationMarkers = useMemo(() => {
     if (!cpcb) return [];
     return cpcb.rivers.flatMap((r) =>
-      r.stations.map((s) => {
+      r.stations
+        // A station without a coordinate is still published - CPCB names
+        // stations it does not geolocate, and we would rather carry the
+        // readings than drop them - but it cannot be a map marker. The drain
+        // layer already guards this way; this one did not, and a null lat
+        // crashed the whole map.
+        .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
+        .map((s) => {
         const sorted = [...s.readings].sort((a, b) => b.year - a.year);
         const latest = sorted[0] ?? null;
         return {
@@ -445,11 +464,22 @@ export default function RiversClient({
           lng: s.lng,
           river_id: r.id,
           has_readings: s.readings.length > 0,
-          latest_bod: latest?.bod_mgl ?? null,
-          latest_do: latest?.do_mgl ?? null,
+          latest_bod: measureWorst(latest?.bod_mgl ?? null, "higher-is-worse"),
+          latest_do: measureWorst(latest?.do_mgl ?? null, "lower-is-worse"),
           latest_year: latest?.year ?? null,
         };
       }),
+    );
+  }, [cpcb]);
+
+  /** Stations we hold readings for but cannot plot, so the count can be stated
+   *  rather than the stations silently disappearing from the page. */
+  const cpcbStationsWithoutCoords = useMemo(() => {
+    if (!cpcb) return 0;
+    return cpcb.rivers.reduce(
+      (n, r) =>
+        n + r.stations.filter((s) => typeof s.lat !== "number" || typeof s.lng !== "number").length,
+      0,
     );
   }, [cpcb]);
 
@@ -464,6 +494,8 @@ export default function RiversClient({
           <span className="text-xs text-slate-500 dark:text-slate-400">
             {rivers.length} rivers
             {cpcbStationMarkers.length > 0 && ` - ${cpcbStationMarkers.length} CPCB stations`}
+            {cpcbStationsWithoutCoords > 0 &&
+              ` (+${cpcbStationsWithoutCoords} without a published coordinate)`}
             {industrialMarkers.length > 0 && ` - ${industrialMarkers.length} industrial sources`}
             {/* The month is stated next to the count because this feed is not
                 live and the reader should not assume today's state: DPCC's
@@ -472,6 +504,14 @@ export default function RiversClient({
               ` - ${drainMarkers.length} monitored drains${drainMonth ? ` (${drainMonth})` : ""}`}
             {" - click for details"}
           </span>
+        )}
+        {hasTreatmentDischarge && (
+          <button
+            onClick={() => setTreatmentOpen(true)}
+            className={`inline-flex items-center gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1 shadow-sm ${basin || overviewBasin ? "" : "ml-auto"}`}
+          >
+            Treatment &amp; discharge <span aria-hidden>&rarr;</span>
+          </button>
         )}
         {(basin || overviewBasin) && (
           <span className="ml-auto inline-flex items-center gap-1.5">
@@ -495,6 +535,14 @@ export default function RiversClient({
           </span>
         )}
       </div>
+
+      {hasTreatmentDischarge && treatmentOpen && (
+        <TreatmentDischargePanel
+          cityId={cityId}
+          cityDisplayName={cityDisplayName}
+          onClose={() => setTreatmentOpen(false)}
+        />
+      )}
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Map */}
@@ -767,9 +815,9 @@ function RiverInfoOnlyPanel({
           <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">
             {info.display_name}
           </h3>
-          {(info.display_name_ta || info.display_name_hi) && (
+          {(info.display_name_ta || info.display_name_hi || info.display_name_te) && (
             <span className="text-sm text-slate-500 dark:text-slate-400">
-              {info.display_name_ta || info.display_name_hi}
+              {info.display_name_ta || info.display_name_hi || info.display_name_te}
             </span>
           )}
         </div>

@@ -24,6 +24,8 @@ import { DeferredRainfallTrends } from "@/components/dashboard/deferred-rainfall
 import { ReservoirCards } from "@/components/dashboard/reservoir-cards";
 import { ReservoirCatchmentContext } from "@/components/dashboard/reservoir-catchment-context";
 import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot";
+import { KeyFindings } from "@/components/dashboard/key-findings";
+import type { Fact } from "@/components/dashboard/key-findings";
 import { WeapBalanceTile } from "@/components/dashboard/weap-balance-tile";
 import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
 import { CityStory } from "@/components/insights/city-story";
@@ -42,10 +44,57 @@ import { selectNarrative } from "@/lib/insights/select-narrative";
 import { restorationPriorityFile, wardNamesFile } from "@/lib/cities/data-paths";
 import { formatDate } from "@/lib/utils/format";
 
+/** Tier-1 facts for the dashboard strip. Returns [] where the city has no
+ *  static facts file - Chennai runs the dynamic pipeline instead - so the
+ *  component self-hides rather than erroring. */
+async function loadFacts(cityId: string): Promise<Fact[]> {
+  try {
+    const p = join(process.cwd(), "public", "data", `facts-${cityId}.json`);
+    const raw = JSON.parse(await readFile(p, "utf-8")) as { facts?: Fact[] };
+    return raw.facts ?? [];
+  } catch {
+    return [];
+  }
+}
+
 function isSupabaseConfigured(): boolean {
   return !!(
     process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
+}
+
+// ---------------------------------------------------------------------------
+// Teaser-card blurbs are DERIVED from the city's declared capability flags,
+// never hardcoded. These cards used to carry Chennai's feature list verbatim
+// for every city, so Bangalore (groundwaterViews.depth = false) advertised a
+// "ward depth (interpolated)" layer it does not render, and Hyderabad
+// (waterBodies.lostBodies = false) advertised a lost-tank inventory that does
+// not exist. A teaser that promises a layer the page cannot show is a
+// correctness bug, not a copy nit. See multi-city-component-discipline.md.
+// ---------------------------------------------------------------------------
+
+function groundwaterBlurb(config: PlaceConfig): string {
+  const gw = config.groundwaterViews;
+  const parts: string[] = [];
+  if (gw?.exploitation !== false) parts.push("CGWB block exploitation");
+  if (gw?.depth) parts.push("ward depth (interpolated)");
+  if (gw?.risk) parts.push("ward risk composite");
+  // Every city surfaces observation points; the NETWORK differs. cgwbStations
+  // means the CGWB Year Book point set; otherwise it is the live WRIS overlay.
+  parts.push(
+    gw?.cgwbStations ? "CGWB Year Book station overlay" : "live WRIS station overlay",
+  );
+  return `${parts.join(", ")}.`;
+}
+
+function waterBodiesBlurb(config: PlaceConfig): string {
+  const wb = config.waterBodies;
+  const parts: string[] = ["OSM polygons"];
+  if (wb?.censusSource) parts.push("encroachment census");
+  if (wb?.rankingTab) parts.push("restoration priority badges");
+  if (wb?.wardSearch) parts.push("ward search");
+  if (wb?.lostBodies) parts.push("lost-tank inventory");
+  return `${parts.join(", ")}.`;
 }
 
 // ---------------------------------------------------------------------------
@@ -311,6 +360,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
   // Convert the per-city snapshot into the shared ReservoirSummary[]
   // shape Chennai's ReservoirCards consumes.
   const summaries = snapshotToSummaries(config, snapshot);
+  const facts = await loadFacts(cityId);
 
   // Optional flag-gated sections (Chennai today). The loaders assume
   // single-tenant tables; gate strictly on the config flags so other cities
@@ -434,6 +484,13 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           published engineering document don't render an empty card. */}
       <UrbanSupplyOverview cityId={cityId} cityDisplayName={config.displayName} />
 
+      {/* Curated tier-1 findings. Leads the page's substance because the
+          reservoir grid below can legitimately be empty - a city awaiting its
+          first ingestion, or simply a quiet day - and a dashboard that opens
+          on eight blank cards tells the reader nothing. Self-hides where a
+          city has no static facts file or no tier-1 grades. */}
+      <KeyFindings facts={facts} cityId={cityId} cityDisplayName={config.displayName} />
+
       {/* Reservoir snapshot grid + shared multi-source history chart. */}
       <ReservoirCards reservoirs={summaries} />
 
@@ -493,7 +550,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
             </svg>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            CGWB block exploitation, ward depth (interpolated), live WRIS station overlay.
+            {groundwaterBlurb(config)}
           </p>
         </Link>
         <Link
@@ -509,7 +566,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
             </svg>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            OSM polygons, flagship tanks, restoration priority badges, lost-tank inventory.
+            {waterBodiesBlurb(config)}
           </p>
         </Link>
         {FEATURE_AVAILABILITY[cityId]?.has("tanker") && (
@@ -526,7 +583,8 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
               </svg>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              What households actually pay - longitudinal OpenCity surveys (2015 / 2019 / 2024).
+              {config.tankerSummary ??
+                "What households actually pay - longitudinal OpenCity surveys (2015 / 2019 / 2024)."}
             </p>
           </Link>
         )}
