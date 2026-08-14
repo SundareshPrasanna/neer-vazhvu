@@ -304,9 +304,13 @@ def main() -> None:
                 key = f["properties"].get("shedId") or "_unassigned"
                 by_shed.setdefault(key, []).append(f)
             for key, sfeats in by_shed.items():
-                (sdir / f"{key}.geojson").write_text(
-                    json.dumps({"type": "FeatureCollection", "features": sfeats},
-                               separators=(",", ":")))
+                # A shard is served on its own, so it carries its family's
+                # envelope - same dataset, same sources, same provenance.
+                spath = sdir / f"{key}.geojson"
+                sfc = {"type": "FeatureCollection", "features": sfeats}
+                spath.write_text(json.dumps(
+                    merge_envelope(spath, sfc, envelope_from=fpath),
+                    separators=(",", ":")))
             inv["shedKeys"] = sorted(by_shed)
 
     inventory = {

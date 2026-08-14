@@ -184,6 +184,20 @@ def main() -> None:
         else:
             fp.write_text(json.dumps(doc, indent=2) + "\n")
         print(f"  enveloped {rel:28} -> {dataset}")
+
+        # Heavy families are sliced per sub-hydroshed by the ingest engine and
+        # each shard is fetched on its own, so every shard carries the same
+        # envelope as its family file. (The engine preserves these on re-ingest;
+        # this is what puts them there the first time.)
+        shard_dir = fp.parent / fp.stem
+        n_shards = 0
+        if fp.suffix == ".geojson" and shard_dir.is_dir():
+            for shard in sorted(shard_dir.glob("*.geojson")):
+                sp = json.loads(shard.read_text())
+                sp = {k: v for k, v in sp.items() if k not in ENVELOPE_KEYS}
+                shard.write_text(json.dumps({**envelope, **sp}, separators=(",", ":")))
+                n_shards += 1
+            print(f"    + {n_shards} sliced shards")
     print(f"{len(ARTIFACTS)} artifacts enveloped.")
 
 
