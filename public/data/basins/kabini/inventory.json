@@ -1,4 +1,34 @@
 {
+  "nvdm": "1.0",
+  "dataset": "basins/inventory",
+  "scope": {
+    "kind": "basin",
+    "id": "kabini"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "title": "All partner layers - Cauvery Basin GIS package (GeoPackages, Aug 2026 delivery)",
+        "publisher": "Paani Earth Foundation",
+        "closed": true,
+        "as_of": "2026-08",
+        "role": "input",
+        "license": "partner-supplied compilation, cited with attribution; underlying government layers as attributed per layer"
+      },
+      {
+        "id": "kwris-basin-geoserver",
+        "title": "Karnataka WRD basin decomposition, sub-basin C2 (KWRIS GeoServer, via the cauvery-ka atlas ingest)",
+        "publisher": "ACIWRM / Karnataka Water Resources Department",
+        "url": "https://kwris.karnataka.gov.in/",
+        "license": "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution",
+        "role": "input",
+        "as_of": "2026-07"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-08-14",
+    "produced_by": "scripts/build_kabini_sources.py + scripts/ingest_basin.py (scripts/basin-sources/kabini-ingest.json)"
+  },
   "basinId": "kabini",
   "generatedFrom": "kabini-ingest.json",
   "families": {
@@ -12,7 +42,7 @@
           "provenance": "Karnataka WRD basin decomposition (KWRIS), sub-basin C2 polygon carried over from the cauvery-ka overview ingest."
         }
       ],
-      "bytes": 80830,
+      "bytes": 81481,
       "sliced": false
     },
     "sub-hydrosheds": {
@@ -25,7 +55,7 @@
           "provenance": "Single shed equal to the KWRIS C2 boundary - finer sub-hydrosheds are a later-phase unlock."
         }
       ],
-      "bytes": 80844,
+      "bytes": 81501,
       "sliced": false
     },
     "rivers": {
@@ -38,7 +68,7 @@
           "provenance": "KWRIS stream segments of sub-basin C2 (11 segments, ~323 km) carried over from the cauvery-ka overview ingest."
         }
       ],
-      "bytes": 9632,
+      "bytes": 10281,
       "sliced": false
     },
     "pressures-industrial": {
@@ -57,7 +87,7 @@
           "provenance": "KIADB industrial area points (KGIS), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 59811,
+      "bytes": 60385,
       "sliced": false
     },
     "pressures-quarries": {
@@ -70,7 +100,7 @@
           "provenance": "Quarry polygons digitised from OpenStreetMap (\u00a9 OpenStreetMap contributors, ODbL), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 2400,
+      "bytes": 3140,
       "sliced": false
     },
     "forests": {
@@ -83,7 +113,7 @@
           "provenance": "KGIS notified forest boundaries, via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 349423,
+      "bytes": 349975,
       "sliced": false
     },
     "protected-areas": {
@@ -96,7 +126,7 @@
           "provenance": "KGIS protected area boundaries (KFDC), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 271386,
+      "bytes": 271952,
       "sliced": false
     },
     "command-areas": {
@@ -109,7 +139,7 @@
           "provenance": "India-WRIS irrigation command areas, via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 418836,
+      "bytes": 419398,
       "sliced": false
     },
     "infrastructure": {
@@ -122,7 +152,7 @@
           "provenance": "CWC dam register points, via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 2084,
+      "bytes": 2635,
       "sliced": false
     },
     "flow-stations": {
@@ -135,7 +165,7 @@
           "provenance": "CWC hydrological observation sites, via Paani Earth Cauvery GIS package (Aug 2026). hasReadings + packs are attached by scripts/build_basin_flow_readings.py from India-WRIS pulls."
         }
       ],
-      "bytes": 497,
+      "bytes": 1673,
       "sliced": false
     },
     "gaps": {
@@ -148,7 +178,7 @@
           "provenance": "District polygons (KGIS via Paani Earth's Admin GeoPackage) intersected with the KWRIS C2 boundary; severity from each district DEP's own sewage-gap figures (see gaps.json)."
         }
       ],
-      "bytes": 106570,
+      "bytes": 107512,
       "sliced": false
     },
     "monitoring-points": {
@@ -161,7 +191,7 @@
           "provenance": "CPCB NWMP monitoring stations (WRIS station registry), via Paani Earth Cauvery GIS package (Aug 2026); stations within the Kabini boundary."
         }
       ],
-      "bytes": 3119,
+      "bytes": 3703,
       "sliced": false
     }
   },

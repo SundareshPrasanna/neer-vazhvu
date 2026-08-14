@@ -29,6 +29,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
 from ingest_basin import _read_vector  # noqa: E402  (shared GDAL reader, 4326 output)
+from nvdm_write import merge_envelope  # noqa: E402  (envelopes survive re-runs)
 
 from shapely.geometry import shape  # noqa: E402
 from shapely.prepared import prep  # noqa: E402
@@ -140,7 +141,8 @@ def main() -> None:
     acc_src = CAUVERY_KA / "accountability-C2.json"
     acc_dst = REPO / "public/data/basins/kabini/accountability.json"
     acc_dst.parent.mkdir(parents=True, exist_ok=True)
-    acc_dst.write_text(acc_src.read_text())
+    acc_payload = json.loads(acc_src.read_text())
+    acc_dst.write_text(json.dumps(merge_envelope(acc_dst, acc_payload), indent=2) + "\n")
     print(f"  accountability matrix       carried over from {acc_src.name}")
 
     print(f"\nStaged to {out}. Next: ingest_basin.py scripts/basin-sources/kabini-ingest.json")

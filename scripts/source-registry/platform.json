@@ -164,7 +164,8 @@
         "public/data/ward-risk-bangalore.json",
         "public/data/restoration-priority-bangalore.json",
         "public/geojson/mumbai-coastal-zones.geojson",
-        "public/data/industrial-sources-mumbai.json"
+        "public/data/industrial-sources-mumbai.json",
+        "public/data/basins/kabini/pressures-quarries.geojson"
       ],
       "refreshMethod": "per-city fetch-*-osm-*.ts scripts (Overpass extracts)",
       "notes": "Continuously edited; no editions to detect (NVDM per-source rule 2026-07-30: registered for lineage/licence accountability; formerly 13 UNWATCHED allowlist lines). Re-fetch cadence is a freshness question (P5-1)."
@@ -252,7 +253,11 @@
         "public/data/delhi-cgwb-stations.json",
         "public/data/delhi-ward-profiles.json",
         "public/data/bangalore-cgwb-stations.json",
-        "public/data/bangalore-ward-profiles.json"
+        "public/data/bangalore-ward-profiles.json",
+        "public/data/basins/kabini/flow-stations.geojson",
+        "public/data/basins/kabini/readings/CCP00B1.json",
+        "public/data/basins/kabini/readings/0043-CDBNG.json",
+        "public/data/basins/kabini/readings/0033-cdbng.json"
       ],
       "refreshMethod": "scripts/fetch-wris-groundwater-madurai.ts (+ per-city WRIS scripts; DB series via telemetry jobs)",
       "notes": "Live NWIC ArcGIS services (GroundwaterLevel_Stations etc.). Continuous API - freshness-tracked. Registered 2026-07-30, replacing a gw-stations allowlist line and a false IN-GRES attribution. LICENCE: read verbatim from the India-WRIS site policy text embedded in indiawris.gov.in/wris/main.*.js (verified 2026-07-31; the policies route is client-rendered, so the text is not in the served HTML). CONFLICT worth knowing: the parent body CWC publishes a restrictive policy of its own, and no authority resolves which governs India-WRIS content."

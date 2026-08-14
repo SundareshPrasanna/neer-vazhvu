@@ -27,6 +27,8 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import merge_envelope  # noqa: E402  (envelopes survive re-ingest)
 
 # Every family is tagged with its sub-hydroshed id (shedId) - so the map can
 # scope it to a selected river and slice heavy ones per shed - EXCEPT these
@@ -288,7 +290,7 @@ def main() -> None:
     for fam, feats in families.items():
         fc = {"type": "FeatureCollection", "features": feats}
         fpath = out_dir / f"{fam}.geojson"
-        fpath.write_text(json.dumps(fc, separators=(",", ":")))
+        fpath.write_text(json.dumps(merge_envelope(fpath, fc), separators=(",", ":")))
         inv = inventory_families[fam]
         inv["bytes"] = fpath.stat().st_size
 
@@ -313,7 +315,8 @@ def main() -> None:
         "families": inventory_families,
         "skipped": skipped,
     }
-    (out_dir / "inventory.json").write_text(json.dumps(inventory, indent=2))
+    inv_path = out_dir / "inventory.json"
+    inv_path.write_text(json.dumps(merge_envelope(inv_path, inventory), indent=2))
 
     # Report.
     print(f"basin '{manifest['basinId']}' -> {out_dir.relative_to(REPO)}")

@@ -17,7 +17,8 @@
       },
       "dependsOn": [
         "public/data/basins/arkavathi/prs.json",
-        "public/data/basins/arkavathi/gaps.json"
+        "public/data/basins/arkavathi/gaps.json",
+        "public/data/basins/kabini/accountability.json"
       ],
       "refreshMethod": "scripts/refresh-arkavathi-mpr.ts (--status / --extract / --diff), driven by the headwaters-refresh skill",
       "playbook": [
@@ -656,6 +657,28 @@
         "acceptedOn": "2026-07-21"
       },
       "ciBlocked": "Blocks GitHub runner IPs (fetch failed from CI 2026-07-21); works from residential IP."
+    },
+    {
+      "id": "kwris-basin-geoserver",
+      "scope": "cauvery-ka",
+      "publisher": "ACIWRM / Karnataka WRD (KWRIS GeoServer)",
+      "url": "https://water.karnataka.gov.in/geoserver/KA/ows",
+      "license": "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/basins/cauvery-ka/sub-basins.geojson",
+        "public/data/basins/kabini/boundary.geojson",
+        "public/data/basins/kabini/rivers.geojson",
+        "public/data/basins/kabini/sub-hydrosheds.geojson",
+        "public/data/basins/kabini/gaps.geojson",
+        "public/data/basins/kabini/inventory.json"
+      ],
+      "refreshMethod": "scripts/ingest_basin_overview.py for cauvery-ka, then scripts/build_kabini_sources.py -> ingest_basin.py -> build_basin_flow_readings.py for the Kabini carry-over (order matters: re-ingest wipes hasReadings)"
     }
   ]
 }

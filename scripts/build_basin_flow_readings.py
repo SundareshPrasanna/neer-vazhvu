@@ -31,6 +31,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
+from nvdm_write import merge_envelope  # noqa: E402  (envelopes survive re-runs)
 from registry_license import registry_license  # noqa: E402
 
 API = "https://indiawris.gov.in/Dataset/"
@@ -44,10 +45,15 @@ LEVEL_TYPES = {"HHS", "HZS", "HHT", "HZF"}
 
 
 def fetch_year(cache_dir: Path, dataset: str, state: str, district: str, year: int) -> list[dict]:
-    """One (dataset, district, year) pull, paginated + cached."""
+    """One (dataset, district, year) pull, paginated + cached.
+
+    Closed years are cached forever; the current AND previous year are always
+    re-fetched - CWC publishes discharge in arrears, so both can still grow.
+    Without this, a scheduled re-run would serve the stale cache and never see
+    new data (docs/specs/deep-dive-maintenance-model.md)."""
     key = f"{dataset.replace(' ', '_')}--{district.replace(' ', '_')}--{year}"
     cf = cache_dir / f"{key}.json"
-    if cf.exists():
+    if cf.exists() and year < dt.date.today().year - 1:
         return json.loads(cf.read_text())
     rows: list[dict] = []
     for page in range(MAX_PAGES):
@@ -270,14 +276,14 @@ def main() -> None:
                        "waterYear": f"starts month {cfg.get('waterYearStartMonth', 6):02d}"},
             "series": series,
         }
-        (basin_dir / "readings" / f"{props['stationKey']}.json").write_text(
-            json.dumps(pack, separators=(",", ":")))
+        pack_path = basin_dir / "readings" / f"{props['stationKey']}.json"
+        pack_path.write_text(json.dumps(merge_envelope(pack_path, pack), separators=(",", ":")))
         props["hasReadings"] = True
         props["readingsFrom"], props["readingsTo"] = all_dates[0], all_dates[-1]
         print(f"  pack {props['stationKey']:12} {props['name']:22} "
               f"{len(series)} series, {len(daily):5} discharge days, {len(level):6} level rows")
 
-    stations_fp.write_text(json.dumps(fc, separators=(",", ":")))
+    stations_fp.write_text(json.dumps(merge_envelope(stations_fp, fc), separators=(",", ":")))
     n_ready = sum(1 for f in fc["features"] if f["properties"].get("hasReadings"))
     print(f"\n{n_ready}/{len(fc['features'])} stations have readings -> {stations_fp.relative_to(REPO)}")
 

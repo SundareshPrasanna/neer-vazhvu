@@ -32,7 +32,7 @@ OUT_JSON = ROOT / "docs/architecture/dataset-catalogue.json"
 OUT_MD = ROOT / "docs/architecture/dataset-catalogue.md"
 
 CITY_TOKENS = ["chennai", "bangalore", "madurai", "mumbai", "delhi", "hyderabad", "kolkata"]
-BASIN_SCOPES = {"arkavathi", "cauvery-ka", "cauvery-tn", "chennai-rivers"}
+BASIN_SCOPES = {"arkavathi", "cauvery-ka", "cauvery-tn", "chennai-rivers", "kabini"}
 
 # Chennai-era unprefixed filenames (see src/lib/cities/data-paths.ts).
 CHENNAI_LEGACY = {

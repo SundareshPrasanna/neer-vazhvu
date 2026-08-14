@@ -142,6 +142,10 @@ INLINE_LICENCE_ALLOWLIST = {
     "government plan document, cited with attribution",
     "portal label only (OpenCity dataset page); no upstream grant established",
     "public policy document, cited with attribution",
+    # Closed partner deliveries (Paani Earth GeoPackages, Kabini build): the
+    # delivery itself has no registry id; each layer's underlying government
+    # origin is attributed in the source title.
+    "partner-supplied compilation, cited with attribution; underlying government layers as attributed per layer",
     "published civil-society report, cited with attribution",
     "published report, registration-gated download, cited with attribution",
     # TypeScript one-offs, same rule.
@@ -372,7 +376,13 @@ BARE_WRITE = re.compile(
 
 # Producers allowed to write bare, with the reason. Empty today: every producer
 # of an enveloped artifact either preserves the envelope or emits its own.
-ENVELOPE_WRITE_ALLOWLIST: dict[str, str] = {}
+ENVELOPE_WRITE_ALLOWLIST: dict[str, str] = {
+    "scripts/build_kabini_sources.py": (
+        "the bare _write() targets STAGING files under .cache/kabini-sources/ "
+        "(inputs to ingest_basin.py), never serving artifacts; its one serving "
+        "write (kabini/accountability.json) goes through merge_envelope"
+    ),
+}
 
 
 def _write_target(src: str, match: "re.Match[str]") -> str:
