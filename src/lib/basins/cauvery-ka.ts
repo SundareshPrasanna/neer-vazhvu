@@ -60,6 +60,7 @@ export const CAUVERY_KA: BasinManifest = {
       name: "Kabini",
       scoreboardKey: "25",
       areaKm2: 4883,
+      deepDiveBasinId: "kabini",
       depthLevel: 2,
       blurb: "The Wayanad-fed southern arm, impounded at Kabini dam; carries a CPCB polluted stretch below Nanjangud.",
       unlocks: [

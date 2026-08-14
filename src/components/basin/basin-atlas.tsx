@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Circle, Tooltip, ZoomControl, Pane, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -38,6 +39,13 @@ import {
   type ReviewedMprSeries,
 } from "@/lib/basins/reviewed-mpr";
 import "leaflet/dist/leaflet.css";
+
+// Station-readings panel (contract v1): loaded on demand so recharts only
+// ships when a readings-enabled station is actually clicked.
+const StationReadingsPanel = dynamic(
+  () => import("@/components/basin/station-readings-panel").then((m) => m.StationReadingsPanel),
+  { ssr: false, loading: () => <p className="text-xs text-slate-400">Loading readings…</p> },
+);
 
 interface Props {
   cityId: string;
@@ -1657,7 +1665,14 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 onBack={gapFromPrs ? () => { setSelectedGapUnit(null); setGapFromPrs(false); setSelectedPrs(true); } : undefined}
               />
             ) : selectedFeature ? (
-              renderFeatureDetail?.({
+              layerByFamily[selectedFeature.family]?.readings && selectedFeature.props.hasReadings ? (
+                <StationReadingsPanel
+                  basinId={manifest.basinId}
+                  stationKey={String(selectedFeature.props.stationKey)}
+                  name={selectedFeature.props.name != null ? String(selectedFeature.props.name) : undefined}
+                  onClose={() => setSelectedFeature(null)}
+                />
+              ) : renderFeatureDetail?.({
                 family: selectedFeature.family,
                 props: selectedFeature.props,
                 onClose: () => setSelectedFeature(null),
