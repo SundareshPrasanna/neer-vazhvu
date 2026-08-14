@@ -39,36 +39,111 @@
           "file": "kabini-boundary.geojson",
           "kind": null,
           "count": 1,
-          "provenance": "Karnataka WRD basin decomposition (KWRIS), sub-basin C2 polygon carried over from the cauvery-ka overview ingest."
+          "provenance": "Karnataka WRD basin decomposition (KWRIS), sub-basin C2 polygon carried over from the cauvery-ka overview ingest. Every other layer here is clipped to it, so the atlas covers the Karnataka portion of the Kabini only - the Wayanad (Kerala) headwaters are out of scope."
         }
       ],
       "bytes": 81481,
       "sliced": false
     },
     "sub-hydrosheds": {
-      "featureCount": 1,
+      "featureCount": 9,
       "sources": [
         {
           "file": "kabini-sheds.geojson",
           "kind": null,
-          "count": 1,
-          "provenance": "Single shed equal to the KWRIS C2 boundary - finer sub-hydrosheds are a later-phase unlock."
+          "count": 9,
+          "provenance": "India-WRIS watershed polygons (Watersheds_in_CauveryBasin), via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026), clipped to the KWRIS C2 boundary: the nine watersheds that each hold at least 0.2% of the sub-basin, together 99.6% of it. India-WRIS publishes these with codes (wsconc) and no names, so the code is the label; areaKm2 is the watershed's full area as published, before the clip."
         }
       ],
-      "bytes": 81501,
+      "bytes": 220384,
       "sliced": false
     },
     "rivers": {
-      "featureCount": 11,
+      "featureCount": 2,
       "sources": [
         {
           "file": "kabini-rivers.geojson",
           "kind": null,
-          "count": 11,
-          "provenance": "KWRIS stream segments of sub-basin C2 (11 segments, ~323 km) carried over from the cauvery-ka overview ingest."
+          "count": 2,
+          "provenance": "India-WRIS named river centrelines (Kabini ~155 km in-basin, Gundal ~83 km), via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026), clipped to the C2 boundary. Replaces the 11 unnamed KWRIS C2 stream segments the first build carried; the Nugu, Taraka and the other tributaries are in the drainage layer, which the partner package names but does not publish as river centrelines."
         }
       ],
-      "bytes": 10281,
+      "bytes": 70579,
+      "sliced": false
+    },
+    "drainage": {
+      "featureCount": 10274,
+      "sources": [
+        {
+          "file": "kabini-drainage.geojson",
+          "kind": null,
+          "count": 10274,
+          "provenance": "India-WRIS stream network for the Kabini (Kabini_Drainage, 19,615 segments basin-wide), via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026); clipped to the C2 boundary and simplified to ~11 m. Names are the source's rivname where it carries one - most first- and second-order segments are unnamed."
+        }
+      ],
+      "bytes": 5334035,
+      "sliced": true,
+      "shedKeys": [
+        "C05CAM14",
+        "C05CAM15",
+        "C05CAM16",
+        "C05CAM17",
+        "C05CAM18",
+        "C05CAM19",
+        "C05CAM20",
+        "C05CAM21",
+        "C05CAM22",
+        "_unassigned"
+      ]
+    },
+    "waterbodies-major": {
+      "featureCount": 5,
+      "sources": [
+        {
+          "file": "kabini-waterbodies-major.geojson",
+          "kind": null,
+          "count": 5,
+          "provenance": "India-WRIS major waterbodies, via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026); the five inside the C2 boundary."
+        }
+      ],
+      "bytes": 72315,
+      "sliced": false
+    },
+    "waterbodies-minor": {
+      "featureCount": 653,
+      "sources": [
+        {
+          "file": "kabini-waterbodies-minor.geojson",
+          "kind": null,
+          "count": 653,
+          "provenance": "Karnataka GIS minor-irrigation tank inventory (KGIS TIS), via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026); the 653 tanks inside the C2 boundary."
+        }
+      ],
+      "bytes": 1831611,
+      "sliced": true,
+      "shedKeys": [
+        "C05CAM15",
+        "C05CAM16",
+        "C05CAM17",
+        "C05CAM18",
+        "C05CAM19",
+        "C05CAM20",
+        "C05CAM21",
+        "C05CAM22",
+        "_unassigned"
+      ]
+    },
+    "prs": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "kabini-prs.geojson",
+          "kind": "prs",
+          "count": 1,
+          "provenance": "CPCB's 2025 polluted stretch - 'River Kabini from Saragur village D/S to water supply intake point to Narasipura town', Priority V (Polluted River Stretches for Restoration of Water Quality 2025, CPCB, October 2025, p.15; max BOD 6 mg/L, p.77). Geometry digitised by Paani Earth (PRS_Stretches_Since_1993.gpkg, Aug 2026); length is her delivered distance attribute, 104.34 km. The 2018 and 2020 stretch lines in the same package are NOT ingested: KSPCB's own action plan puts that stretch at about 9 km and the delivered geometry maps only ~3 km of it, so the earlier epochs are reported in prs.json from the documents rather than drawn short."
+        }
+      ],
+      "bytes": 25771,
       "sliced": false
     },
     "pressures-industrial": {
@@ -87,7 +162,7 @@
           "provenance": "KIADB industrial area points (KGIS), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 60385,
+      "bytes": 60530,
       "sliced": false
     },
     "pressures-quarries": {
@@ -100,7 +175,7 @@
           "provenance": "Quarry polygons digitised from OpenStreetMap (\u00a9 OpenStreetMap contributors, ODbL), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 3140,
+      "bytes": 3183,
       "sliced": false
     },
     "forests": {
@@ -113,7 +188,7 @@
           "provenance": "KGIS notified forest boundaries, via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 349975,
+      "bytes": 350486,
       "sliced": false
     },
     "protected-areas": {
@@ -126,7 +201,7 @@
           "provenance": "KGIS protected area boundaries (KFDC), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 271952,
+      "bytes": 271989,
       "sliced": false
     },
     "command-areas": {
@@ -139,20 +214,26 @@
           "provenance": "India-WRIS irrigation command areas, via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
         }
       ],
-      "bytes": 419398,
+      "bytes": 419459,
       "sliced": false
     },
     "infrastructure": {
-      "featureCount": 8,
+      "featureCount": 10,
       "sources": [
         {
-          "file": "dams.geojson",
+          "file": "kabini-dams.geojson",
           "kind": "dam",
           "count": 8,
-          "provenance": "CWC dam register points, via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
+          "provenance": "India-WRIS National Register of Large Dams extract dated 14 April 2026, via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026); the eight dams inside the Kabini boundary. Replaces the older CWC MLRD list the first build used - the two registers disagree on completion year for four minor tanks (Hebballa 1972 here vs 1965; Kamarahalli 1962 vs 1967; Kalikatte 1965 vs 1968; Karimuddenahalli 1973 vs 1972); the newer, dated register is the one shown."
+        },
+        {
+          "file": "kabini-barrages.geojson",
+          "kind": "barrage",
+          "count": 2,
+          "provenance": "India-WRIS barrage/weir/anicut register extract dated 14 April 2026, via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026); the two anicuts inside the Kabini boundary (Hullhalli on the Kabini, Halsur on the Nugu)."
         }
       ],
-      "bytes": 2635,
+      "bytes": 3907,
       "sliced": false
     },
     "flow-stations": {
@@ -165,7 +246,7 @@
           "provenance": "CWC hydrological observation sites, via Paani Earth Cauvery GIS package (Aug 2026). hasReadings + packs are attached by scripts/build_basin_flow_readings.py from India-WRIS pulls."
         }
       ],
-      "bytes": 1673,
+      "bytes": 1710,
       "sliced": false
     },
     "gaps": {
@@ -178,7 +259,7 @@
           "provenance": "District polygons (KGIS via Paani Earth's Admin GeoPackage) intersected with the KWRIS C2 boundary; severity from each district DEP's own sewage-gap figures (see gaps.json)."
         }
       ],
-      "bytes": 107512,
+      "bytes": 107555,
       "sliced": false
     },
     "monitoring-points": {
@@ -191,7 +272,46 @@
           "provenance": "CPCB NWMP monitoring stations (WRIS station registry), via Paani Earth Cauvery GIS package (Aug 2026); stations within the Kabini boundary."
         }
       ],
-      "bytes": 3703,
+      "bytes": 3806,
+      "sliced": false
+    },
+    "admin-district": {
+      "featureCount": 4,
+      "sources": [
+        {
+          "file": "admin-district.geojson",
+          "kind": null,
+          "count": 4,
+          "provenance": "Karnataka district boundaries (KGIS), via Paani Earth's Admin GeoPackage (Aug 2026), clipped to the C2 boundary."
+        }
+      ],
+      "bytes": 106904,
+      "sliced": false
+    },
+    "admin-taluk": {
+      "featureCount": 13,
+      "sources": [
+        {
+          "file": "admin-taluk.geojson",
+          "kind": null,
+          "count": 13,
+          "provenance": "Karnataka taluk (subdistrict) boundaries (KGIS), via Paani Earth's Admin GeoPackage (Aug 2026), clipped to the C2 boundary."
+        }
+      ],
+      "bytes": 246423,
+      "sliced": false
+    },
+    "admin-town": {
+      "featureCount": 12,
+      "sources": [
+        {
+          "file": "admin-town.geojson",
+          "kind": null,
+          "count": 12,
+          "provenance": "Karnataka urban local body boundaries (KGIS Towns in the Cauvery basin), via Paani Earth's Admin GeoPackage (Aug 2026), clipped to the C2 boundary."
+        }
+      ],
+      "bytes": 148631,
       "sliced": false
     }
   },
