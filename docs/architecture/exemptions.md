@@ -9,11 +9,11 @@ This exists because a platform that treats data gaps as first-class has to be ab
 
 | Kind | Entries |
 |---|---|
-| Suppressed freshness checks | 0 |
+| Suppressed freshness checks | 1 |
 | Artifacts with no registered upstream | 76 |
-| Routes a city deliberately does not ship | 22 |
-| Absences the product states on the page | 18 |
-| **Total** | **116** |
+| Routes a city deliberately does not ship | 33 |
+| Absences the product states on the page | 20 |
+| **Total** | **130** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -23,7 +23,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 
 A city skipping a derived staleness check. This is the only kind that suppresses a CI failure, which is why the map is owned by `scripts/lib/exemptions.ts` rather than by the checker. **Empty is the correct steady state.** Every entry should carry the condition that would retire it.
 
-_None._
+| Scope | Subject | Reason |
+|---|---|---|
+| gurugram | rainfall-recent | No IMD gridded base series exists for Gurugram yet, and rainfall-recent is the provisional fill on top of one. Retire this by generating imd-rainfall-monthly-gurugram.json and wiring the city into fetch_recent_rainfall.py. |
 
 ## Artifacts with no registered upstream
 
@@ -121,6 +123,17 @@ Derived by diffing each city against the union of every route any city ships, so
 | delhi | climate-risk | Not built for this city. |
 | delhi | shoreline | Landlocked. |
 | delhi | tanker | Not built for this city. |
+| gurugram | allocations | No published entitlement instrument has been located. Gurugram's canal share of Yamuna water is governed by inter-state arrangements that GMDA does not publish, and the ledger's primitive is entitled-vs-received against a named instrument - without the paper there is no row to write. |
+| gurugram | cascades | Not a cascade geography. Aravalli johads and village ponds are a real water heritage, but no chained-surplus system was engineered here the way it was in the Tamil kanmoi districts or the Bengaluru kere chains, so the cascade story must not be told about this city. Catchment delineation itself is buildable - GMDA publishes a 10-polygon watershed layer and a natural-flow-direction layer - and is a separate question from the cascade narrative. |
+| gurugram | climate-risk | Chennai's sub-basin climate risk comes from HydroBASINS level 12, a global product that would transfer here. Genuinely buildable and simply not built, so this is backlog rather than refusal. |
+| gurugram | commitments | Buildable and not built. The dated commitments exist and are citable (the NGT's February 2026 orders on illegal extraction and rainwater harvesting, GMDA's Chandu Budhera fifth-unit target), but each needs primary-source verification before it goes in the register, and none has had it yet. |
+| gurugram | facts | Needs a facts-gurugram.json, which needs the supply and demand numbers that are the very ones still unverified - every figure in circulation for this city is press-sourced, and GMDA's own GIS already contradicts two of them. Ships when the numbers do. |
+| gurugram | flood-risk | Gurugram floods by waterlogging on a paved catchment, not by river. The inputs exist on GMDA OneMap (117 GMUC waterlogging sites, the master storm-water network, natural flow direction) and only the drain legs are harvested so far, so this is a backlog item with a known path rather than a refusal. |
+| gurugram | groundwater | The signature issue is the thinnest data, which is why this is off rather than empty. Gurugram has been a CGWA dark zone since 2008, but the India-WRIS level record is 37 stations that stop in June 2020 and the Haryana telemetry network does not cover this district at all - 95 MB of the state export contains zero Gurugram rows. 37 stations across 36 wards would not carry honest per-ward interpolation even if they were current. Closes on IN-GRES block assessment plus the HSPCB 2016-2024 quality series, both identified and neither wired up. |
+| gurugram | lake-restoration | Needs a restoration-priority-gurugram.json, which needs a scorer. The water-body register is harvested and carries ownership, area and GMDA's own cross-survey flags, so the inputs are present and the ranking is simply not built. |
+| gurugram | origins | Not built for this city yet. The spine is identified - GMDA OneMap publishes the MCG limit at 1985, 1996, 2008, 2010, 2015 and 2020, which is the city eating its own catchment in six dated steps - but the narrative is unwritten. |
+| gurugram | rivers | Gurugram has no river. Its NWMP monitoring stations are all lakes and borewells, and its surface water leaves the city as drain flow into the Najafgarh jheel and then Delhi's Najafgarh drain. There is nothing to put on a rivers page that would not be an invention. |
+| gurugram | shoreline | Landlocked. |
 | hyderabad | climate-risk | Not built for this city. |
 | hyderabad | my-ward | The 300-ward delimitation gazetted 25 Dec 2025 has no public geometry, and with the corporations under a Special Officer there are no sitting councillors to attach to a ward either. Returns with the ward build, following the Mumbai precedent. |
 | hyderabad | shoreline | Landlocked. |
@@ -150,6 +163,8 @@ Gaps the UI itself renders rather than hiding: the reason below is the copy a re
 | delhi | water source: Tehri (Delhi share) | THDC publishes Tehri's 300-cusec allocation to Delhi but no daily release against it; the CWC weekly bulletin that carried Tehri storage stopped in May 2025. |
 | delhi | water source: Upper Ganga Canal | No public daily release on the Upper Ganga Canal leg; the channel also closes for UP's annual canal maintenance with no Delhi-visible schedule. |
 | delhi | water source: Yamuna at Wazirabad | No public daily gauge for the Wazirabad pond. Levels surface only in crisis reporting and Supreme Court filings. |
+| gurugram | storage history chart | Gurugram impounds no water of its own. It has no reservoir and no dam, so no storage series exists to chart - here or anywhere else. Its supply is canal water from the Yamuna, groundwater from municipal tubewells, and tankers. |
+| gurugram | UI language: hi | Advertised as coming soon and rendered as a disabled chip. The hi dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 | hyderabad | UI language: te | Advertised as coming soon and rendered as a disabled chip. The te dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 | hyderabad | water source: Nagarjuna Sagar | HMWSSB publishes this level daily, but Nagarjuna Sagar is a parent Krishna storage reported for context, not a city source: it records a city draw of 0 MLD. Its level is the real constraint on Akkampally, which is why it is listed here. |
 | hyderabad | water source: Srisailam | HMWSSB publishes this level daily, but Srisailam is a parent Krishna storage reported for context, not a city source: it records a city draw of 0 MLD. Its level is the real constraint on Akkampally, which is why it is listed here. |
