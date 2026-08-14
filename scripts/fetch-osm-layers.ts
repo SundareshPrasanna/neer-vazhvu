@@ -251,13 +251,18 @@ out skel qt;`);
         osm_type: e.type,
         name: t.name ?? null,
         name_local: cfg.localNameTag ? (t[cfg.localNameTag] ?? null) : null,
-        kind,
-        area_sqm: Math.round(area),
+        // `water_type` and `area_ha`, NOT `kind`/`area_sqm`. The water-bodies
+        // detail panel is one shared component across every city and reads
+        // these two names; this fetcher invented its own, so every Kolkata
+        // body rendered "AREA Unknown" and a generic type label. A shared
+        // component means a shared property contract.
+        water_type: kind,
+        area_ha: Math.round((area / 10_000) * 100) / 100,
       },
       geometry: { type: "Polygon" as const, coordinates: [ring] },
     });
   }
-  features.sort((a, b2) => b2.properties.area_sqm - a.properties.area_sqm);
+  features.sort((a, b2) => b2.properties.area_ha - a.properties.area_ha);
   write(`public/geojson/${city}-water-bodies-current.geojson`, fc(features, city, "OpenStreetMap water bodies"));
   return features.length;
 }

@@ -379,7 +379,7 @@ Levels per `docs/specs/nvdm-v1.md` Part 10: L0 catalogued, L1 registered, L2 env
 - L2 `public/geojson/kolkata-rivers.geojson` - L3 fail: top-level key '_what' is not envelope, GeoJSON, contract-declared, or grandfathered legacy - per-scope additions must live in ext (spec 6.3)
 - L2 `public/geojson/kolkata-wards-2022.geojson` - no contract published for this dataset (L3 not applicable yet)
 - L2 `public/geojson/kolkata-water-bodies-census.geojson` - no contract published for this dataset (L3 not applicable yet)
-- L2 `public/geojson/kolkata-water-bodies-current.geojson` - L3 fail: $.features[0].properties: missing required key 'area_ha'
+- L2 `public/geojson/kolkata-water-bodies-current.geojson` - L3 fail: top-level key '_what' is not envelope, GeoJSON, contract-declared, or grandfathered legacy - per-scope additions must live in ext (spec 6.3)
 - L2 `public/geojson/madurai-gwr-blocks.geojson` - no contract published for this dataset (L3 not applicable yet)
 - L3 `public/geojson/madurai-rivers.geojson`
 - L2 `public/geojson/madurai-wards-2022.geojson` - no contract published for this dataset (L3 not applicable yet)
