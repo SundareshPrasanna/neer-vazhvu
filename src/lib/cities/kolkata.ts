@@ -337,7 +337,9 @@ export const KOLKATA: CityConfig = {
     'tube wells': 'kmc_tubewells',
     'tubewells': 'kmc_tubewells',
   },
-  // Flipped at cutover, with supabase/migrations/042_kolkata_enable.sql kept in
-  // step as a record (that column gates nothing today - see delhi.ts).
-  enabled: false,
+  // LIVE 2026-08-14 as the seventh city. This flag is the only functional gate
+  // (route guard in [cityId]/layout.tsx); supabase/migrations/042_kolkata_enable.sql
+  // keeps the seeded row in step as a record, but that column gates nothing
+  // today - see delhi.ts.
+  enabled: true,
 };
