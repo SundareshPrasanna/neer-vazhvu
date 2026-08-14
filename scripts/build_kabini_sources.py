@@ -110,6 +110,30 @@ def main() -> None:
                 kept.append(f)
         _write(out / fname, _fc(kept), layer[:26])
 
+    # ── 3b. District clips for the DEP gaps choropleth: districts intersected
+    # with the Kabini polygon, carrying gapUnit/severity for gaps.json.
+    kab_geom = shape(c2["geometry"]).buffer(0)
+    # GPKG spells the district "Chamarajanagar"; the platform uses the -a form.
+    sev = {"Mysuru": "high", "Chamarajanagar": "medium", "Kodagu": "medium"}
+    slug = {"Mysuru": "mysuru", "Chamarajanagar": "chamarajanagara", "Kodagu": "kodagu"}
+    display = {"Mysuru": "Mysuru", "Chamarajanagar": "Chamarajanagara", "Kodagu": "Kodagu"}
+    admin_gpkg = Path(args.gpkg_dir) / "Admin-Geopackages.gpkg"
+    clips = []
+    if admin_gpkg.exists():
+        from shapely.geometry import mapping
+        for f in _read_vector(admin_gpkg, "Karnataka_All_Districts", None):
+            name = (f["properties"].get("district") or "").strip()
+            if name not in sev:
+                continue
+            g = shape(f["geometry"]).buffer(0)
+            inter = g.intersection(kab_geom)
+            if inter.is_empty:
+                continue
+            clips.append({"type": "Feature", "geometry": mapping(inter),
+                          "properties": {"gapUnit": slug[name], "name": display[name], "severity": sev[name],
+                                         "pctInBasin": round(100.0 * inter.area / g.area, 1)}})
+        _write(out / "kabini-district-clips.geojson", _fc(clips), "district clips (gaps)")
+
     # ── 4. Accountability matrix: the deep dive reuses the overview's C2 file
     # verbatim (same contract, same component). The overview file stays the
     # single place the matrix is authored; re-run this script after editing it.

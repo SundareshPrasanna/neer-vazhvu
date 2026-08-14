@@ -1,0 +1,283 @@
+#!/usr/bin/env python3
+"""Attach India-WRIS flow/level series to a basin's flow-stations family
+(station-readings contract v1 - docs/specs/flow-stations-contract.md).
+
+Pulls River Water Discharge + River Water Level from the WRIS Dataset API
+(district-looped, year-chunked, cached), joins rows to flow-stations by the
+station NAME the API uses (its CDBNG-style codes never match classic CWC site
+codes), precomputes every series kind, and writes:
+  - <basin-dir>/readings/<stationKey>.json   (one pack per station)
+  - <basin-dir>/flow-stations.geojson        (hasReadings/readingsFrom/To updated,
+                                              reservoir gauges appended from config)
+
+Generic: a new basin is a new flow-config, not new code.
+
+Usage:
+    python3 scripts/build_basin_flow_readings.py \
+        public/data/basins/kabini scripts/basin-sources/kabini-flow.json
+"""
+
+from __future__ import annotations
+
+import datetime as dt
+import json
+import statistics
+import sys
+import time
+import urllib.parse
+import urllib.request
+from collections import defaultdict
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+API = "https://indiawris.gov.in/Dataset/"
+SOURCE_LABEL = "India-WRIS Dataset API, CWC hydrological observations"
+SOURCE_URL = "https://indiawris.gov.in/wris/"
+PAGE_SIZE = 9000
+MAX_PAGES = 12
+
+DISCHARGE_TYPES = {"QOB", "QCO"}  # observed preferred over computed per day
+LEVEL_TYPES = {"HHS", "HZS", "HHT", "HZF"}
+
+
+def fetch_year(cache_dir: Path, dataset: str, state: str, district: str, year: int) -> list[dict]:
+    """One (dataset, district, year) pull, paginated + cached."""
+    key = f"{dataset.replace(' ', '_')}--{district.replace(' ', '_')}--{year}"
+    cf = cache_dir / f"{key}.json"
+    if cf.exists():
+        return json.loads(cf.read_text())
+    rows: list[dict] = []
+    for page in range(MAX_PAGES):
+        qs = urllib.parse.urlencode({
+            "stateName": state, "districtName": district, "agencyName": "CWC",
+            "startdate": f"{year}-01-01", "enddate": f"{year}-12-31",
+            "download": "false", "page": page, "size": PAGE_SIZE,
+        })
+        req = urllib.request.Request(f"{API}{urllib.parse.quote(dataset)}?{qs}",
+                                     method="POST", headers={"accept": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=90) as r:
+                batch = json.loads(r.read().decode()).get("data") or []
+        except Exception as e:  # noqa: BLE001 - a failed year is retried next run
+            print(f"    ! {dataset} {district} {year} p{page}: {e}")
+            return rows  # do NOT cache partial years
+        rows += batch
+        if len(batch) < PAGE_SIZE:
+            break
+        time.sleep(0.3)
+    cf.write_text(json.dumps(rows))
+    time.sleep(0.3)
+    return rows
+
+
+def water_year(d: dt.date, start_month: int) -> str:
+    y = d.year if d.month >= start_month else d.year - 1
+    return f"{y}-{str(y + 1)[2:]}"
+
+
+def month_key(d: dt.date) -> str:
+    return f"{d.year}-{d.month:02d}"
+
+
+def build_series(daily_q: dict, level_rows: list, cfg: dict, today: dt.date) -> list[dict]:
+    """Precompute every series kind from per-day discharge + raw level rows."""
+    series: list[dict] = []
+    wy_start = cfg.get("waterYearStartMonth", 6)
+    freshness = cfg.get("levelFreshnessNote")
+
+    if daily_q:
+        days = sorted(daily_q)
+        values = [daily_q[d] for d in days]
+
+        by_month: dict[str, list[float]] = defaultdict(list)
+        by_cal_month: dict[int, list[float]] = defaultdict(list)
+        by_wy: dict[str, list[float]] = defaultdict(list)
+        for d in days:
+            by_month[month_key(d)].append(daily_q[d])
+            by_cal_month[d.month].append(daily_q[d])
+            by_wy[water_year(d, wy_start)].append(daily_q[d])
+
+        series.append({
+            "kind": "discharge-monthly", "unit": "cumec", "verified": True,
+            "label": "Monthly mean discharge",
+            "note": "Mean of daily CWC observed/computed discharge; months with any data shown.",
+            "points": [[m, round(statistics.fmean(v), 2)] for m, v in sorted(by_month.items())],
+        })
+
+        cutoff = today.replace(year=today.year - 3)
+        recent = [(d, q) for d, q in zip(days, values) if d >= cutoff]
+        if recent:
+            series.append({
+                "kind": "discharge-daily", "unit": "cumec", "verified": True,
+                "label": "Daily discharge (last 3 years)",
+                "note": "CWC publishes discharge in arrears - recent months may be empty at the source.",
+                "points": [[d.isoformat(), round(q, 2)] for d, q in recent],
+            })
+
+        months = []
+        for m in range(1, 13):
+            vals = sorted(by_cal_month.get(m, []))
+            if len(vals) < 5:
+                continue
+            months.append({"m": m,
+                           "p25": round(vals[len(vals) // 4], 2),
+                           "median": round(statistics.median(vals), 2),
+                           "p75": round(vals[(3 * len(vals)) // 4], 2)})
+        if months:
+            series.append({
+                "kind": "climatology-monthly", "unit": "cumec", "verified": True,
+                "label": "Seasonality (daily discharge by calendar month)",
+                "note": f"p25/median/p75 of daily discharge, {days[0].year}-{days[-1].year}.",
+                "months": months,
+            })
+
+        ranked = sorted(values, reverse=True)
+        n = len(ranked)
+        if n >= 50:
+            exceed = []
+            for pct in (1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 99):
+                exceed.append([pct, round(ranked[min(n - 1, max(0, int(n * pct / 100) - 1))], 2)])
+            series.append({
+                "kind": "flow-duration", "unit": "cumec", "verified": True,
+                "label": "Flow-duration curve",
+                "note": f"Exceedance of {n} daily values, {days[0].year}-{days[-1].year}.",
+                "exceedance": exceed,
+            })
+
+        wy_pts = [[wy, round(statistics.fmean(v), 2)]
+                  for wy, v in sorted(by_wy.items()) if len(v) >= 60]
+        if len(wy_pts) >= 2:
+            lta = round(statistics.fmean(p[1] for p in wy_pts), 2)
+            series.append({
+                "kind": "annual-water-year", "unit": "cumec", "verified": True,
+                "label": "Water-year mean discharge vs long-term average",
+                "note": f"Water year starts 01-{wy_start:02d}; long-term average {lta} cumec "
+                        "over the years shown; years with under 60 daily readings omitted.",
+                "points": wy_pts,
+            })
+
+    if level_rows:
+        by_month_lvl: dict[str, list[float]] = defaultdict(list)
+        for row in level_rows:
+            d = dt.date.fromisoformat(row["dataTime"][:10])
+            by_month_lvl[month_key(d)].append(row["dataValue"])
+        pts = [[m, round(statistics.fmean(v), 2)] for m, v in sorted(by_month_lvl.items())]
+        if pts:
+            series.append({
+                "kind": "gauge-level-monthly", "unit": "m", "verified": True,
+                "label": "Monthly mean gauge level",
+                "note": freshness or "Hourly CWC telemetry averaged per month.",
+                "points": pts,
+            })
+    return series
+
+
+def main() -> None:
+    if len(sys.argv) < 3:
+        sys.exit("usage: build_basin_flow_readings.py <basin-dir> <flow-config.json>")
+    basin_dir = REPO / sys.argv[1]
+    cfg = json.loads((REPO / sys.argv[2]).read_text())
+    stations_fp = basin_dir / "flow-stations.geojson"
+    fc = json.loads(stations_fp.read_text())
+    today = dt.date.today()
+
+    cache_dir = REPO / ".cache" / "wris-flow" / basin_dir.name
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # stationKey -> the name the WRIS API uses (join is by name, never by code).
+    name_of = {s["stationKey"]: s["wrisName"] for s in cfg["stations"]}
+
+    # Reservoir gauges etc. that the partner file does not carry: append them.
+    existing = {f["properties"]["stationKey"] for f in fc["features"]}
+    for extra in cfg.get("extraStations", []):
+        if extra["stationKey"] not in existing:
+            fc["features"].append({
+                "type": "Feature", "geometry": None,  # filled from the first API row
+                "properties": {"stationKey": extra["stationKey"], "name": extra["name"],
+                               "agency": "CWC", "siteType": extra.get("siteType", ""),
+                               "river": extra.get("river", ""), "hasReadings": False},
+            })
+            name_of[extra["stationKey"]] = extra["wrisName"]
+
+    # Pull everything once, bucketing rows per WRIS station name.
+    start_q = int(cfg.get("dischargeFrom", "2015")[:4])
+    start_l = int(cfg.get("levelFrom", "2023")[:4])
+    q_rows: dict[str, list] = defaultdict(list)
+    l_rows: dict[str, list] = defaultdict(list)
+    wanted = {v.upper() for v in name_of.values()}
+    basin_name = cfg.get("majorBasin", "Cauvery")
+
+    for district in cfg["districts"]:
+        for dataset, start, sink in (("River Water Discharge", start_q, q_rows),
+                                     ("River Water Level", start_l, l_rows)):
+            for year in range(start, today.year + 1):
+                rows = fetch_year(cache_dir, dataset, cfg["state"], district, year)
+                n = 0
+                for row in rows:
+                    if row.get("majorBasin") != basin_name:
+                        continue
+                    nm = (row.get("stationName") or "").upper()
+                    if nm in wanted and isinstance(row.get("dataValue"), (int, float)):
+                        sink[nm].append(row)
+                        n += 1
+                if rows:
+                    print(f"  {dataset[:23]:23} {district:14} {year}: {len(rows):6} rows, {n:5} kept")
+
+    (basin_dir / "readings").mkdir(exist_ok=True)
+    fetched = today.isoformat()
+    for feat in fc["features"]:
+        props = feat["properties"]
+        wname = (name_of.get(props["stationKey"]) or "").upper()
+        rows_q = q_rows.get(wname, [])
+        rows_l = l_rows.get(wname, [])
+        if not rows_q and not rows_l:
+            continue
+
+        if feat.get("geometry") is None:
+            r0 = (rows_q or rows_l)[0]
+            feat["geometry"] = {"type": "Point",
+                                "coordinates": [round(r0["longitude"], 5), round(r0["latitude"], 5)]}
+
+        # One value per day: observed (QOB) wins over computed (QCO).
+        daily: dict[dt.date, float] = {}
+        pref: dict[dt.date, str] = {}
+        for row in rows_q:
+            if row.get("datatypeCode") not in DISCHARGE_TYPES:
+                continue
+            d = dt.date.fromisoformat(row["dataTime"][:10])
+            code = row["datatypeCode"]
+            if d not in daily or (code == "QOB" and pref[d] != "QOB"):
+                daily[d], pref[d] = float(row["dataValue"]), code
+
+        level = [r for r in rows_l if r.get("datatypeCode") in LEVEL_TYPES]
+        series = build_series(daily, level, cfg, today)
+        if not series:
+            continue
+
+        all_dates = sorted([d.isoformat() for d in daily] +
+                           [r["dataTime"][:10] for r in level])
+        pack = {
+            "schemaVersion": 1,
+            "station": {"stationKey": props["stationKey"], "name": props["name"],
+                        "agency": props.get("agency", "CWC"),
+                        "siteType": props.get("siteType"), "river": props.get("river")},
+            "source": {"label": SOURCE_LABEL, "url": SOURCE_URL,
+                       "fetched": fetched, "licence": "Government of India data; WRIS public Dataset API"},
+            "period": {"from": all_dates[0], "to": all_dates[-1],
+                       "waterYear": f"starts month {cfg.get('waterYearStartMonth', 6):02d}"},
+            "series": series,
+        }
+        (basin_dir / "readings" / f"{props['stationKey']}.json").write_text(
+            json.dumps(pack, separators=(",", ":")))
+        props["hasReadings"] = True
+        props["readingsFrom"], props["readingsTo"] = all_dates[0], all_dates[-1]
+        print(f"  pack {props['stationKey']:12} {props['name']:22} "
+              f"{len(series)} series, {len(daily):5} discharge days, {len(level):6} level rows")
+
+    stations_fp.write_text(json.dumps(fc, separators=(",", ":")))
+    n_ready = sum(1 for f in fc["features"] if f["properties"].get("hasReadings"))
+    print(f"\n{n_ready}/{len(fc['features'])} stations have readings -> {stations_fp.relative_to(REPO)}")
+
+
+if __name__ == "__main__":
+    main()

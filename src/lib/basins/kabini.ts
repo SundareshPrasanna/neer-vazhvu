@@ -20,6 +20,9 @@ export const KABINI: BasinManifest = {
   areaKm2: 4883,
   areaNote:
     "Karnataka portion of the Kabini sub-basin (C2), per Karnataka WRD's basin decomposition (KWRIS). The headwaters rise in Wayanad, Kerala - that reach is not yet mapped here.",
+  // Open the DEP view on Mysuru by default (54.6% of the district is in-basin
+  // and it carries the Kabini-side ULB cards).
+  defaultGapUnit: "mysuru",
   rivers: [
     {
       riverId: "kabini",
@@ -55,6 +58,7 @@ export const KABINI: BasinManifest = {
     { family: "protected-areas", label: "Protected areas (Nagarahole & Bandipur fringes)", floor: "pressures", geom: "fill", color: "#15803d", defaultOn: false },
 
     // ── Floor 4: Governance & infrastructure ──
+    { family: "gaps", label: "District Environment Plan (DEP) Snapshot", floor: "governance", geom: "fill", color: "#dc2626", defaultOn: true, gap: true },
     { family: "infrastructure", label: "Dams & reservoirs", floor: "governance", geom: "point", color: "#a855f7", defaultOn: true },
     { family: "command-areas", label: "Irrigation command areas", floor: "governance", geom: "fill", color: "#65a30d", defaultOn: false },
   ],

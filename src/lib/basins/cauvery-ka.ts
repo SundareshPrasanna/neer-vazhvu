@@ -61,11 +61,11 @@ export const CAUVERY_KA: BasinManifest = {
       scoreboardKey: "25",
       areaKm2: 4883,
       deepDiveBasinId: "kabini",
-      depthLevel: 2,
-      blurb: "The Wayanad-fed southern arm, impounded at Kabini dam; carries a CPCB polluted stretch below Nanjangud.",
+      depthLevel: 3,
+      blurb: "The Wayanad-fed southern arm, impounded at Kabini dam; carries a CPCB polluted stretch below Nanjangud. Its deep dive carries CWC flow readings, the Nanjangud pressures and a three-district DEP snapshot.",
       unlocks: [
-        "Not yet mapped here: the Nanjangud industrial belt's pressures (industries, waste sites)",
-        "Restoration accountability for this stretch is tracked below; independent lab evidence not yet available",
+        "Independent lab evidence for the Nanjangud stretch not yet available",
+        "Arkavathi-grade per-ULB DEP depth and the Kerala (Wayanad) headwaters are later phases",
       ],
     },
     {
