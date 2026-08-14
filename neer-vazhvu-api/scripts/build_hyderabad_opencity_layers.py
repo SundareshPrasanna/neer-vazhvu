@@ -68,6 +68,12 @@ from collections import Counter
 from datetime import date
 from pathlib import Path
 
+# The registry owns every registered source's licence string; a second copy in
+# a generator is how the registry and the corpus drifted apart (PR #227).
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from registry_license import registry_license  # noqa: E402
+
+
 KML_NS = {"k": "http://www.opengis.net/kml/2.2"}
 
 LAYERS = {
@@ -206,7 +212,7 @@ def main() -> int:
         meta = {
             "_source": spec["label"],
             "_source_url": spec["url"],
-            "_licence": "OpenCity (Other/Public Domain); attribute GHMC/HMDA (data) and OpenCity (digitisation)",
+            "_licence": registry_license("opencity-ghmc-drainage-layers"),
             "_fetched": date.today().isoformat(),
             "_vintage_unknown": (
                 "The KML carries no edition or survey date. Treat as an undated GHMC "
@@ -284,7 +290,9 @@ def main() -> int:
         summary[key] = meta.get("summary")
 
     if census_feats:
-        types = Counter(f["properties"].get("water_body_type", "") for f in census_feats)
+        types = Counter(
+            f["properties"].get("water_body_type", "") for f in census_feats
+        )
         wards = sum(
             1
             for f in census_feats
@@ -294,7 +302,7 @@ def main() -> int:
             "type": "FeatureCollection",
             "_source": "1st Census of Water Bodies / Jal Dharohar 2023, Telangana",
             "_source_url": "https://data.opencity.in/dataset/hyderabad-and-telangana-water-bodies-census-data",
-            "_licence": "Census data (Ministry of Jal Shakti / Telangana); OpenCity digitisation - attribute both",
+            "_licence": registry_license("opencity-jal-dharohar-hyderabad"),
             "_fetched": date.today().isoformat(),
             "_note": (
                 "Point layer joining onto the OSM polygon base. water_body_type is a CODED "

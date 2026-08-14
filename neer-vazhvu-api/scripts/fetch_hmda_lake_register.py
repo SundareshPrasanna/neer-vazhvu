@@ -47,9 +47,16 @@ import json
 import re
 import ssl
 import sys
+from pathlib import Path
 import urllib.request
 from collections import Counter
 from datetime import date
+
+# The registry owns every registered source's licence string; a second copy in
+# a generator is how the registry and the corpus drifted apart (PR #227).
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from registry_license import registry_license  # noqa: E402
+
 
 REGISTER_URL = "https://lakes.hmda.gov.in/"
 
@@ -128,7 +135,11 @@ def main() -> int:
     ap.add_argument("--html", help="parse this saved page instead of fetching")
     args = ap.parse_args()
 
-    page = open(args.html, encoding="utf8", errors="ignore").read() if args.html else _fetch(REGISTER_URL)
+    page = (
+        open(args.html, encoding="utf8", errors="ignore").read()
+        if args.html
+        else _fetch(REGISTER_URL)
+    )
     print(f"Fetched {len(page):,} bytes", file=sys.stderr)
 
     lakes = parse_register(page)
@@ -157,7 +168,7 @@ def main() -> int:
         "_source": "HMDA Lake Protection Committee gazetted lake register",
         "_source_url": REGISTER_URL,
         "_fetched": date.today().isoformat(),
-        "_licence": "Telangana government publication, cited with attribution",
+        "_licence": registry_license("hmda-lakes-register"),
         "_note": (
             "FTL = Full Tank Level, the gazetted boundary of a lake. A lake gets a "
             "PRELIMINARY notification, then a FINAL one after objections. Until the "
@@ -173,7 +184,9 @@ def main() -> int:
         "awaiting_final_notification": len(lakes) - len(final),
         "by_district": districts,
         "final_notifications_by_year": dict(sorted(final_by_year.items())),
-        "lakes": sorted(lakes, key=lambda x: (x["district"], x["mandal"], x["lake_name"])),
+        "lakes": sorted(
+            lakes, key=lambda x: (x["district"], x["mandal"], x["lake_name"])
+        ),
     }
 
     if args.out:
@@ -192,7 +205,10 @@ def main() -> int:
             f"{d['final_notified']:>7} final  {d['pct_final']:>6}%",
             file=sys.stderr,
         )
-    print(f"   final notifications by year: {out['final_notifications_by_year']}", file=sys.stderr)
+    print(
+        f"   final notifications by year: {out['final_notifications_by_year']}",
+        file=sys.stderr,
+    )
     return 0
 
 

@@ -31,6 +31,7 @@ CAUTION
     Vikarabad plants too. Hyderabad-area plants are flagged, not filtered out,
     so the denominator stays honest.
 """
+
 from __future__ import annotations
 
 import csv
@@ -44,6 +45,12 @@ import urllib.request
 from collections import defaultdict
 from pathlib import Path
 
+# The registry owns every registered source's licence string; a second copy in
+# a generator is how the registry and the corpus drifted apart (PR #227).
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from registry_license import registry_license  # noqa: E402
+
+
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "public" / "data" / "hyderabad-stps.json"
 BASE = "https://data.telangana.gov.in/sites/default/files/uploaded_resources"
@@ -51,12 +58,17 @@ DATASET = "https://data.telangana.gov.in/dataset/telangana-pollution-control-boa
 
 CAP = re.compile(r"([\d.]+)\s*MLD", re.I)
 # Plants outside the Hyderabad metropolitan area, by the town named in the row.
-NON_HYD = re.compile(r"karimnagar|nizambad|nizamabad|siddipet|vikarabad|warangal|khammam|ramagundam", re.I)
+NON_HYD = re.compile(
+    r"karimnagar|nizambad|nizamabad|siddipet|vikarabad|warangal|khammam|ramagundam",
+    re.I,
+)
 
 
 def fetch(url: str) -> str | None:
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "NeerVazhvu/1.0 (contact@neervazhvu.org)"})
+        req = urllib.request.Request(
+            url, headers={"User-Agent": "NeerVazhvu/1.0 (contact@neervazhvu.org)"}
+        )
         with urllib.request.urlopen(req, timeout=90) as r:
             return r.read().decode("utf-8", "replace") if r.status == 200 else None
     except Exception:
@@ -77,8 +89,14 @@ def num(v):
 
 
 def main() -> int:
-    plants: dict[str, dict] = defaultdict(lambda: {"capacity_mld": None, "capacity_raw": None,
-                                                   "readings": [], "in_hyderabad_area": True})
+    plants: dict[str, dict] = defaultdict(
+        lambda: {
+            "capacity_mld": None,
+            "capacity_raw": None,
+            "readings": [],
+            "in_hyderabad_area": True,
+        }
+    )
     months_seen: list[str] = []
     missing: list[str] = []
 
@@ -106,16 +124,21 @@ def main() -> int:
                         except ValueError:
                             pass
                 p["in_hyderabad_area"] = not bool(NON_HYD.search(name))
-                p["readings"].append({
-                    "month": f"{year}-{month:02d}",
-                    "bod_mgl": num(row.get("BOD")),
-                    "cod_mgl": num(row.get("COD")),
-                    "do_mgl": num(row.get("DO")),
-                    "ph": num(row.get("pH")),
-                    "tss_mgl": num(row.get("TSS")),
-                    "ammonical_n_mgl": num(row.get("Ammonical Nitrogen")),
-                })
-            print(f"  {year}-{month:02d}: {len(plants)} plants cumulative", file=sys.stderr)
+                p["readings"].append(
+                    {
+                        "month": f"{year}-{month:02d}",
+                        "bod_mgl": num(row.get("BOD")),
+                        "cod_mgl": num(row.get("COD")),
+                        "do_mgl": num(row.get("DO")),
+                        "ph": num(row.get("pH")),
+                        "tss_mgl": num(row.get("TSS")),
+                        "ammonical_n_mgl": num(row.get("Ammonical Nitrogen")),
+                    }
+                )
+            print(
+                f"  {year}-{month:02d}: {len(plants)} plants cumulative",
+                file=sys.stderr,
+            )
 
     if not plants:
         print("FATAL: no STP rows", file=sys.stderr)
@@ -124,18 +147,20 @@ def main() -> int:
     out_plants = []
     for name, p in plants.items():
         bods = [r["bod_mgl"] for r in p["readings"] if r["bod_mgl"] is not None]
-        out_plants.append({
-            "name": name,
-            "capacity_mld": p["capacity_mld"],
-            "capacity_raw": p["capacity_raw"],
-            "in_hyderabad_area": p["in_hyderabad_area"],
-            "months_monitored": len(p["readings"]),
-            "bod_median_mgl": round(statistics.median(bods), 2) if bods else None,
-            "bod_max_mgl": max(bods) if bods else None,
-            # CPCB/MoEF discharge norm for STPs is BOD <= 10 mg/L.
-            "months_bod_over_10": sum(1 for b in bods if b > 10),
-            "readings": sorted(p["readings"], key=lambda r: r["month"]),
-        })
+        out_plants.append(
+            {
+                "name": name,
+                "capacity_mld": p["capacity_mld"],
+                "capacity_raw": p["capacity_raw"],
+                "in_hyderabad_area": p["in_hyderabad_area"],
+                "months_monitored": len(p["readings"]),
+                "bod_median_mgl": round(statistics.median(bods), 2) if bods else None,
+                "bod_max_mgl": max(bods) if bods else None,
+                # CPCB/MoEF discharge norm for STPs is BOD <= 10 mg/L.
+                "months_bod_over_10": sum(1 for b in bods if b > 10),
+                "readings": sorted(p["readings"], key=lambda r: r["month"]),
+            }
+        )
     out_plants.sort(key=lambda x: -(x["capacity_mld"] or 0))
 
     hyd = [p for p in out_plants if p["in_hyderabad_area"]]
@@ -146,7 +171,7 @@ def main() -> int:
     payload = {
         "_source": "Telangana Pollution Control Board - Sewage Treatment Plant monitoring data",
         "_source_url": DATASET,
-        "_licence": "Government Open Data License - India (GODL-India). Attribute TGPCB and data.telangana.gov.in.",
+        "_licence": registry_license("tg-opendata-tgpcb-stp"),
         "_fetched": time.strftime("%Y-%m-%d"),
         "_note": (
             "Per-plant capacity in MLD and monitored effluent quality, monthly. This dataset CORRECTS an "
@@ -155,7 +180,7 @@ def main() -> int:
             "under-construction split, which is a narrower gap than the one previously stated."
         ),
         "_caveats": [
-            "Capacity is free text upstream (\"339 MLD\", \"13MLD\"); unparseable values are kept as "
+            'Capacity is free text upstream ("339 MLD", "13MLD"); unparseable values are kept as '
             "capacity_raw and excluded from the total rather than guessed.",
             "One lake can host several distinct plants - Miralam Tank appears at 10, 5 and 41.5 MLD - so "
             "plants are keyed on the full name and never collapsed by lake.",
@@ -181,10 +206,14 @@ def main() -> int:
     OUT.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
     print(f"\nWrote {OUT} ({OUT.stat().st_size // 1024} KB)")
     t = payload["totals"]
-    print(f"  {t['months']} months, {t['plants_all_telangana']} plants "
-          f"({t['plants_hyderabad_area']} Hyderabad-area)")
-    print(f"  Hyderabad-area capacity: {t['hyderabad_capacity_mld']} MLD across "
-          f"{t['plants_with_parsed_capacity']} plants")
+    print(
+        f"  {t['months']} months, {t['plants_all_telangana']} plants "
+        f"({t['plants_hyderabad_area']} Hyderabad-area)"
+    )
+    print(
+        f"  Hyderabad-area capacity: {t['hyderabad_capacity_mld']} MLD across "
+        f"{t['plants_with_parsed_capacity']} plants"
+    )
     print(f"  ever exceeded BOD 10 mg/L: {t['hyderabad_plants_ever_over_bod_norm']}")
     return 0
 

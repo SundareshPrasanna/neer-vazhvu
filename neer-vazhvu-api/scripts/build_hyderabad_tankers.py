@@ -62,16 +62,36 @@ import csv
 import io
 import json
 import sys
+from pathlib import Path
 import urllib.parse
 import urllib.request
 from collections import defaultdict
 from datetime import date
 
+# The registry owns every registered source's licence string; a second copy in
+# a generator is how the registry and the corpus drifted apart (PR #227).
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from registry_license import registry_license  # noqa: E402
+
+
 CKAN = "https://data.opencity.in/api/3/action/package_show?id="
 DATASET = "hyderabad-water-supply-through-tankers-data"
 
-MONTHS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+MONTHS = [
+    "",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+]
 
 
 def _get(url: str, timeout: int = 90) -> bytes:
@@ -161,7 +181,9 @@ def main() -> int:
     ]
 
     # Per-section totals across the whole series.
-    by_section = defaultdict(lambda: {"bookings": 0, "delivered": 0, "months": 0, "division": ""})
+    by_section = defaultdict(
+        lambda: {"bookings": 0, "delivered": 0, "months": 0, "division": ""}
+    )
     for r in rows:
         s = by_section[r["section"]]
         s["bookings"] += r["bookings"]
@@ -225,7 +247,7 @@ def main() -> int:
     out = {
         "_source": "HMWSSB tanker bookings and deliveries",
         "_source_url": f"https://data.opencity.in/dataset/{DATASET}",
-        "_licence": "HMWSSB data, OpenCity digitisation - attribute both",
+        "_licence": registry_license("opencity-hyderabad-tankers"),
         "_fetched": date.today().isoformat(),
         "_note": (
             "Monthly tanker bookings AND deliveries per HMWSSB division and section. "
@@ -271,7 +293,10 @@ def main() -> int:
     print(f"   range: {monthly[0]['label']} .. {monthly[-1]['label']}", file=sys.stderr)
     print("   top sections by demand:", file=sys.stderr)
     for s in sections[:8]:
-        print(f"      {s['section'][:30]:<32}{s['bookings']:>9,}  (div {s['division']})", file=sys.stderr)
+        print(
+            f"      {s['section'][:30]:<32}{s['bookings']:>9,}  (div {s['division']})",
+            file=sys.stderr,
+        )
     peak = max(seasonality, key=lambda x: x["mean_bookings"])
     trough = min(seasonality, key=lambda x: x["mean_bookings"])
     print(

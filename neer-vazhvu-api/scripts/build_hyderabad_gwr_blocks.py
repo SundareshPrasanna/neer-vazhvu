@@ -63,9 +63,9 @@ EDITIONS = [(2025, CSV_2025), (2024, CSV_2024), (2022, CSV_2022)]
 
 # Column positions in the district rows (all three editions share the layout).
 COL_DISTRICT = 1
-COL_AVAILABILITY = 8   # Annual Extractable Groundwater Resource (ham)
-COL_EXTRACTION = 12    # Total Annual Extraction (ham)
-COL_STAGE = 15         # Stage of GW extraction (%)
+COL_AVAILABILITY = 8  # Annual Extractable Groundwater Resource (ham)
+COL_EXTRACTION = 12  # Total Annual Extraction (ham)
+COL_STAGE = 15  # Stage of GW extraction (%)
 
 # Districts that make up the Hyderabad metropolitan footprint. The Core Urban
 # Region sits inside Hyderabad + Rangareddy + Medchal-Malkajgiri + Sangareddy;
@@ -87,7 +87,9 @@ KML_NS = "{http://www.opengis.net/kml/2.2}"
 
 
 def fetch(url: str) -> bytes:
-    req = urllib.request.Request(url, headers={"User-Agent": "neer-vazhvu/hyderabad-onboarding"})
+    req = urllib.request.Request(
+        url, headers={"User-Agent": "neer-vazhvu/hyderabad-onboarding"}
+    )
     return urllib.request.urlopen(req, timeout=180).read()
 
 
@@ -164,7 +166,10 @@ def parse_district_kml(raw: bytes) -> dict:
     root = ET.fromstring(raw)
     polys = {}
     for pm in root.iter(f"{KML_NS}Placemark"):
-        props = {sd.get("name"): (sd.text or "").strip() for sd in pm.iter(f"{KML_NS}SimpleData")}
+        props = {
+            sd.get("name"): (sd.text or "").strip()
+            for sd in pm.iter(f"{KML_NS}SimpleData")
+        }
         nm = props.get("district") or props.get("DISTRICT") or props.get("Name") or ""
         if not nm:
             n = pm.find(f"{KML_NS}name")
@@ -216,7 +221,10 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    print(f"  district-set overlap 2025 vs 2024: {overlap:.0%} (guard passed)", file=sys.stderr)
+    print(
+        f"  district-set overlap 2025 vs 2024: {overlap:.0%} (guard passed)",
+        file=sys.stderr,
+    )
 
     polys = parse_district_kml(fetch(KML_DISTRICTS))
     print(f"  KML: {len(polys)} district polygons", file=sys.stderr)
@@ -324,7 +332,11 @@ def main() -> int:
     for r in sorted(metro, key=lambda x: -(x["history"][0]["development_pct"] or 0)):
         h = r["history"][0]
         trend = ""
-        if len(r["history"]) > 1 and h["development_pct"] and r["history"][-1]["development_pct"]:
+        if (
+            len(r["history"]) > 1
+            and h["development_pct"]
+            and r["history"][-1]["development_pct"]
+        ):
             d = h["development_pct"] - r["history"][-1]["development_pct"]
             trend = f"  ({d:+.1f} pts since {r['history'][-1]['year']})"
         print(

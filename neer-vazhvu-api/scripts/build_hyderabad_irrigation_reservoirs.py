@@ -29,6 +29,7 @@ cusecs. The column is named `level_in_feet_present` but the description says
 metres - the name and the description contradict each other, so that column is
 carried through verbatim under its published name and is NOT converted.
 """
+
 from __future__ import annotations
 
 import csv
@@ -39,6 +40,12 @@ import time
 import urllib.request
 from collections import defaultdict
 from pathlib import Path
+
+# The registry owns every registered source's licence string; a second copy in
+# a generator is how the registry and the corpus drifted apart (PR #227).
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from registry_license import registry_license  # noqa: E402
+
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "public" / "data" / "hyderabad-irrigation-reservoirs.json"
@@ -55,14 +62,19 @@ TRACKED = {
 }
 # What we publish, from HMWSSB. Used for the capacity cross-check only.
 OUR_CAPACITY_TMC = {
-    "singur": 29.917, "nagarjuna_sagar": 312.045, "srisailam": 215.807,
-    "yellampally": 20.175, "akkampally": 1.499,
+    "singur": 29.917,
+    "nagarjuna_sagar": 312.045,
+    "srisailam": 215.807,
+    "yellampally": 20.175,
+    "akkampally": 1.499,
 }
 
 
 def fetch(url: str) -> str | None:
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "NeerVazhvu/1.0 (contact@neervazhvu.org)"})
+        req = urllib.request.Request(
+            url, headers={"User-Agent": "NeerVazhvu/1.0 (contact@neervazhvu.org)"}
+        )
         with urllib.request.urlopen(req, timeout=120) as r:
             return r.read().decode("utf-8", "replace") if r.status == 200 else None
     except Exception:
@@ -101,13 +113,15 @@ def main() -> int:
                 if cap:
                     caps[code].add(round(cap, 3))
                 basins.setdefault(code, (row.get("basin_name") or "").strip())
-                series[code].append({
-                    "date": (row.get("date") or "").strip(),
-                    "gross_storage_tmc": f(row.get("gross_storage")),
-                    "inflow_cusecs": f(row.get("inflow")),
-                    "outflow_cusecs": f(row.get("outflow")),
-                    "level_in_feet_present": f(row.get("level_in_feet_present")),
-                })
+                series[code].append(
+                    {
+                        "date": (row.get("date") or "").strip(),
+                        "gross_storage_tmc": f(row.get("gross_storage")),
+                        "inflow_cusecs": f(row.get("inflow")),
+                        "outflow_cusecs": f(row.get("outflow")),
+                        "level_in_feet_present": f(row.get("level_in_feet_present")),
+                    }
+                )
             print(f"  {year}-{month:02d} ok", file=sys.stderr)
 
     if not series:
@@ -120,24 +134,28 @@ def main() -> int:
         cap_list = sorted(caps[code])
         pub = OUR_CAPACITY_TMC.get(code)
         cap = cap_list[-1] if cap_list else None
-        reservoirs.append({
-            "source_code": code,
-            "irrigation_feed_name": next(k for k, v in TRACKED.items() if v == code),
-            "basin": basins.get(code),
-            "capacity_tmc_irrigation": cap,
-            "capacity_tmc_hmwssb_as_published_by_us": pub,
-            "capacity_delta_tmc": round(cap - pub, 4) if (cap and pub) else None,
-            "days": len(rows),
-            "first_date": rows[0]["date"],
-            "last_date": rows[-1]["date"],
-            "daily": rows,
-        })
+        reservoirs.append(
+            {
+                "source_code": code,
+                "irrigation_feed_name": next(
+                    k for k, v in TRACKED.items() if v == code
+                ),
+                "basin": basins.get(code),
+                "capacity_tmc_irrigation": cap,
+                "capacity_tmc_hmwssb_as_published_by_us": pub,
+                "capacity_delta_tmc": round(cap - pub, 4) if (cap and pub) else None,
+                "days": len(rows),
+                "first_date": rows[0]["date"],
+                "last_date": rows[-1]["date"],
+                "daily": rows,
+            }
+        )
     reservoirs.sort(key=lambda r: -(r["capacity_tmc_irrigation"] or 0))
 
     payload = {
         "_source": "Telangana Irrigation & CAD Department - Daily Reservoir Storage Levels",
         "_source_url": DATASET,
-        "_licence": "Government Open Data License - India (GODL-India). Attribute Telangana Irrigation & CAD Department and data.telangana.gov.in.",
+        "_licence": registry_license("tg-opendata-irrigation-reservoirs"),
         "_fetched": time.strftime("%Y-%m-%d"),
         "_note": (
             "An INDEPENDENT second source for five of the eight reservoirs Hyderabad's dashboard tracks. "
@@ -170,8 +188,10 @@ def main() -> int:
     OUT.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
     print(f"\nWrote {OUT} ({OUT.stat().st_size // 1024} KB)")
     for r in reservoirs:
-        print(f"  {r['source_code']:<17} {r['days']:>5} days  cap {r['capacity_tmc_irrigation']} TMC "
-              f"(delta {r['capacity_delta_tmc']})  {r['basin']}")
+        print(
+            f"  {r['source_code']:<17} {r['days']:>5} days  cap {r['capacity_tmc_irrigation']} TMC "
+            f"(delta {r['capacity_delta_tmc']})  {r['basin']}"
+        )
     return 0
 
 

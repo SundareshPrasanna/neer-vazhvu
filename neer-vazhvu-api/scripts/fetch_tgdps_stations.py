@@ -52,9 +52,16 @@ import json
 import re
 import ssl
 import sys
+from pathlib import Path
 import time
 import urllib.request
 from datetime import date
+
+# The registry owns every registered source's licence string; a second copy in
+# a generator is how the registry and the corpus drifted apart (PR #227).
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from registry_license import registry_license  # noqa: E402
+
 
 MAP_URL = "https://tgdps.telangana.gov.in/GHMC.jsp"
 STATION_URL = "https://tgdps.telangana.gov.in/values.jsp?s1={sid}"
@@ -199,7 +206,7 @@ def main() -> int:
     out = {
         "_source": "Telangana Development Planning Society (TGDPS) automatic weather stations",
         "_source_url": MAP_URL,
-        "_licence": "Telangana government publication, cited with attribution",
+        "_licence": registry_license("tgdps-aws-stations"),
         "_fetched": date.today().isoformat(),
         "_note": (
             "185-odd AWS inside GHMC_CMC_MMC, each with coordinates and daily cumulative "
@@ -212,8 +219,10 @@ def main() -> int:
         "station_count": len(stations),
         "reading_dates": dates,
         "bbox": {
-            "south": min(lats), "north": max(lats),
-            "west": min(lons), "east": max(lons),
+            "south": min(lats),
+            "north": max(lats),
+            "west": min(lons),
+            "east": max(lons),
         },
         "snapshot": {
             "stations_reporting_rain": sum(1 for r in rain if r > 0),

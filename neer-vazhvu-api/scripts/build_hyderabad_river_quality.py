@@ -27,6 +27,7 @@ Column order in the tables, verified against the printed header:
   Temperature, Dissolved Oxygen, pH, Conductivity, BOD, Nitrate,
   Fecal Coliform, Total Coliform, Fecal Streptococci -- each as MIN then MAX.
 """
+
 from __future__ import annotations
 
 import json
@@ -46,31 +47,88 @@ PDF_URL = "https://cpcb.gov.in/wqm/{y}/WQuality_River-Data-{y}.pdf"
 # Musi-system stations we publish, with the coordinates we can source honestly.
 # Anything without a coordinate is still parsed and kept, just not plotted.
 STATIONS: dict[str, dict] = {
-    "2339": {"name": "River Musi at Nagole", "lat": 17.37753, "lng": 78.56012,
-             "stretch": "Through the city", "river": "musi"},
-    "1173": {"name": "Musi d/s at Pratapasingaram", "lat": None, "lng": None,
-             "stretch": "Downstream of the city", "river": "musi"},
-    "3082": {"name": "River Musi at Solipet (Kasaniguda), Nalgonda", "lat": None, "lng": None,
-             "stretch": "Downstream recovery reach", "river": "musi"},
-    "4656": {"name": "River Musi at Moosarambagh Bridge, Hyderabad", "lat": None, "lng": None,
-             "stretch": "City centre", "river": "musi"},
-    "4657": {"name": "River Musi at Pillaipalli, Rangareddy", "lat": None, "lng": None,
-             "stretch": "Downstream of the city", "river": "musi"},
-    "4658": {"name": "River Musi at Valigonda Bridge, Nalgonda", "lat": None, "lng": None,
-             "stretch": "Lower reach", "river": "musi"},
-    "4659": {"name": "Musi at outlet of Nalla Cheruvu, Peerajadiguda", "lat": None, "lng": None,
-             "stretch": "Tank outlet, east of the city", "river": "musi"},
-    "4660": {"name": "River Musi at Peerajadiguda, Ranga Reddy", "lat": None, "lng": None,
-             "stretch": "East of the city", "river": "musi"},
-    "1465": {"name": "River Krishna at Wadapally", "lat": 16.6943, "lng": 79.66149,
-             "stretch": "Below the Musi confluence", "river": "krishna"},
-    "2374": {"name": "Manjeera u/s at Gowdicharla, before Nakkavagu", "lat": None, "lng": None,
-             "stretch": "Above the Nakkavagu confluence", "river": "manjira"},
-    "2375": {"name": "Manjeera d/s at Gowdicherla, after Nakkavagu", "lat": None, "lng": None,
-             "stretch": "Below the Nakkavagu confluence", "river": "manjira"},
+    "2339": {
+        "name": "River Musi at Nagole",
+        "lat": 17.37753,
+        "lng": 78.56012,
+        "stretch": "Through the city",
+        "river": "musi",
+    },
+    "1173": {
+        "name": "Musi d/s at Pratapasingaram",
+        "lat": None,
+        "lng": None,
+        "stretch": "Downstream of the city",
+        "river": "musi",
+    },
+    "3082": {
+        "name": "River Musi at Solipet (Kasaniguda), Nalgonda",
+        "lat": None,
+        "lng": None,
+        "stretch": "Downstream recovery reach",
+        "river": "musi",
+    },
+    "4656": {
+        "name": "River Musi at Moosarambagh Bridge, Hyderabad",
+        "lat": None,
+        "lng": None,
+        "stretch": "City centre",
+        "river": "musi",
+    },
+    "4657": {
+        "name": "River Musi at Pillaipalli, Rangareddy",
+        "lat": None,
+        "lng": None,
+        "stretch": "Downstream of the city",
+        "river": "musi",
+    },
+    "4658": {
+        "name": "River Musi at Valigonda Bridge, Nalgonda",
+        "lat": None,
+        "lng": None,
+        "stretch": "Lower reach",
+        "river": "musi",
+    },
+    "4659": {
+        "name": "Musi at outlet of Nalla Cheruvu, Peerajadiguda",
+        "lat": None,
+        "lng": None,
+        "stretch": "Tank outlet, east of the city",
+        "river": "musi",
+    },
+    "4660": {
+        "name": "River Musi at Peerajadiguda, Ranga Reddy",
+        "lat": None,
+        "lng": None,
+        "stretch": "East of the city",
+        "river": "musi",
+    },
+    "1465": {
+        "name": "River Krishna at Wadapally",
+        "lat": 16.6943,
+        "lng": 79.66149,
+        "stretch": "Below the Musi confluence",
+        "river": "krishna",
+    },
+    "2374": {
+        "name": "Manjeera u/s at Gowdicharla, before Nakkavagu",
+        "lat": None,
+        "lng": None,
+        "stretch": "Above the Nakkavagu confluence",
+        "river": "manjira",
+    },
+    "2375": {
+        "name": "Manjeera d/s at Gowdicherla, after Nakkavagu",
+        "lat": None,
+        "lng": None,
+        "stretch": "Below the Nakkavagu confluence",
+        "river": "manjira",
+    },
 }
 
-ROW = re.compile(r"^\s*(\d{2,5})\s+(.*?)\s+(TELANGANA|ANDHRA[A-Z ]*)\s+([\d.\sA-Za-z-]+)$")
+ROW = re.compile(
+    r"^\s*(\d{2,5})\s+(.*?)\s+(TELANGANA|ANDHRA[A-Z ]*)\s+([\d.\sA-Za-z-]+)$"
+)
 NUM = re.compile(r"^-?\d+(?:\.\d+)?$")
 
 
@@ -80,8 +138,10 @@ def fetch(year: int) -> Path | None:
     if p.exists() and p.stat().st_size > 10000:
         return p
     try:
-        req = urllib.request.Request(PDF_URL.format(y=year),
-                                     headers={"User-Agent": "NeerVazhvu/1.0 (contact@neervazhvu.org)"})
+        req = urllib.request.Request(
+            PDF_URL.format(y=year),
+            headers={"User-Agent": "NeerVazhvu/1.0 (contact@neervazhvu.org)"},
+        )
         with urllib.request.urlopen(req, timeout=240) as r:
             if r.status != 200:
                 return None
@@ -93,8 +153,11 @@ def fetch(year: int) -> Path | None:
 
 
 def parse(pdf: Path, year: int) -> dict[str, dict]:
-    txt = subprocess.run(["pdftotext", "-layout", str(pdf), "-"],
-                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL).stdout.decode("utf-8", "replace")
+    txt = subprocess.run(
+        ["pdftotext", "-layout", str(pdf), "-"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+    ).stdout.decode("utf-8", "replace")
     if len(txt.strip()) < 500:
         print(f"  {year}: NO TEXT LAYER - refusing to guess", file=sys.stderr)
         return {}
@@ -107,7 +170,9 @@ def parse(pdf: Path, year: int) -> dict[str, dict]:
         code = m.group(1)
         if code not in STATIONS:
             continue
-        toks = [t for t in m.group(4).split() if NUM.match(t) or t.upper() in ("BDL", "-")]
+        toks = [
+            t for t in m.group(4).split() if NUM.match(t) or t.upper() in ("BDL", "-")
+        ]
         vals = [None if (t.upper() in ("BDL", "-")) else float(t) for t in toks]
         if len(vals) < 10:
             continue
@@ -150,35 +215,60 @@ def main() -> int:
         return 1
 
     rivers: dict[str, dict] = {
-        "musi": {"id": "musi", "name": "Musi", "name_te": "మూసీ నది",
-                 "length_km": 244, "cpcb_class": "Priority-I",
-                 "overall_status": "CPCB Priority-I polluted river stretch (Hyderabad to Nalgonda)",
-                 "description": "", "notes": "", "stations": []},
-        "manjira": {"id": "manjira", "name": "Manjira", "name_te": "మంజీరా నది",
-                    "length_km": 174, "cpcb_class": "Priority-II",
-                    "overall_status": "CPCB Priority-II polluted stretch (Gowdicherla to Nakkavagu), merged with the Nakkavagu action plan",
-                    "description": "", "notes": "", "stations": []},
-        "krishna": {"id": "krishna", "name": "Krishna at Wadapally", "name_te": "కృష్ణా నది",
-                    "length_km": None, "cpcb_class": None,
-                    "overall_status": "Receiving river below the Musi confluence",
-                    "description": "", "notes": "", "stations": []},
+        "musi": {
+            "id": "musi",
+            "name": "Musi",
+            "name_te": "మూసీ నది",
+            "length_km": 244,
+            "cpcb_class": "Priority-I",
+            "overall_status": "CPCB Priority-I polluted river stretch (Hyderabad to Nalgonda)",
+            "description": "",
+            "notes": "",
+            "stations": [],
+        },
+        "manjira": {
+            "id": "manjira",
+            "name": "Manjira",
+            "name_te": "మంజీరా నది",
+            "length_km": 174,
+            "cpcb_class": "Priority-II",
+            "overall_status": "CPCB Priority-II polluted stretch (Gowdicherla to Nakkavagu), merged with the Nakkavagu action plan",
+            "description": "",
+            "notes": "",
+            "stations": [],
+        },
+        "krishna": {
+            "id": "krishna",
+            "name": "Krishna at Wadapally",
+            "name_te": "కృష్ణా నది",
+            "length_km": None,
+            "cpcb_class": None,
+            "overall_status": "Receiving river below the Musi confluence",
+            "description": "",
+            "notes": "",
+            "stations": [],
+        },
     }
 
     for code, meta in STATIONS.items():
         readings = [per_year[y][code] for y in sorted(per_year) if code in per_year[y]]
         if not readings:
             continue
-        rivers[meta["river"]]["stations"].append({
-            "id": f"nwmp-{code}",
-            "nwmp_code": code,
-            "name": meta["name"],
-            "lat": meta["lat"],
-            "lng": meta["lng"],
-            "stretch": f'{meta["stretch"]} (NWMP {code})',
-            "readings": readings,
-        })
+        rivers[meta["river"]]["stations"].append(
+            {
+                "id": f"nwmp-{code}",
+                "nwmp_code": code,
+                "name": meta["name"],
+                "lat": meta["lat"],
+                "lng": meta["lng"],
+                "stretch": f"{meta['stretch']} (NWMP {code})",
+                "readings": readings,
+            }
+        )
 
-    plotted = sum(1 for r in rivers.values() for s in r["stations"] if s["lat"] is not None)
+    plotted = sum(
+        1 for r in rivers.values() for s in r["stations"] if s["lat"] is not None
+    )
     total_st = sum(len(r["stations"]) for r in rivers.values())
 
     rivers["musi"]["description"] = (
@@ -204,7 +294,7 @@ def main() -> int:
         "source": "CPCB National Water Quality Monitoring Programme (NWMP), annual river water quality data",
         "source_url": "https://cpcb.gov.in/nwmp-data/",
         "source_label": "CPCB NWMP annual river data, editions "
-                        + ", ".join(str(y) for y in sorted(per_year)),
+        + ", ".join(str(y) for y in sorted(per_year)),
         "_reading_shape": (
             "CPCB publishes an annual MIN-MAX per parameter per station, not monthly point values. Each "
             "reading here is therefore a range for that year, recorded as {min, max}. No midpoint is "
@@ -250,8 +340,10 @@ def main() -> int:
     OUT.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
     print(f"\nWrote {OUT} ({OUT.stat().st_size // 1024} KB)")
     for r in payload["rivers"]:
-        print(f"  {r['name']}: {len(r['stations'])} stations, "
-              f"{sum(len(s['readings']) for s in r['stations'])} station-years")
+        print(
+            f"  {r['name']}: {len(r['stations'])} stations, "
+            f"{sum(len(s['readings']) for s in r['stations'])} station-years"
+        )
     print(f"  plotted: {plotted}/{total_st}")
     return 0
 

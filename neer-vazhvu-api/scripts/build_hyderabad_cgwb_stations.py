@@ -248,7 +248,8 @@ def main() -> None:
             f"family {fam} disagrees on sign convention: {dict(counts)}"
         )
     disagreeing = [
-        x for x in low_n
+        x
+        for x in low_n
         if families.get(x[1])
         and ("negative-down" if x[3] < 0 else "positive-down") not in families[x[1]]
     ]

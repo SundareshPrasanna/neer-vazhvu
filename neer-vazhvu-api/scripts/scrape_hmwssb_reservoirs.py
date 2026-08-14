@@ -148,6 +148,7 @@ def check_capacity_drift(rows: list) -> list:
             )
     return drifts
 
+
 # Column order in the report table, after the leading serial number.
 COLS = [
     "reservoir",
@@ -162,8 +163,20 @@ COLS = [
     "capacity_last_year_tmc",
 ]
 
-_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+_MONTHS = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+]
 
 
 def _fmt_date(d: date) -> str:
@@ -471,9 +484,7 @@ def city_draw_mld(rows: list):
     """
     KRISHNA_CHAIN = {"akkampally", "nagarjuna_sagar", "srisailam"}
     by_code = {
-        r["source_code"]: r["drawl_mld"]
-        for r in rows
-        if r.get("drawl_mld") is not None
+        r["source_code"]: r["drawl_mld"] for r in rows if r.get("drawl_mld") is not None
     }
     if not by_code:
         return None
@@ -481,9 +492,7 @@ def city_draw_mld(rows: list):
         v
         for code, v in by_code.items()
         if code not in KRISHNA_CHAIN
-        and next(
-            (b for _, (c, _u, b) in RESERVOIRS.items() if c == code), False
-        )
+        and next((b for _, (c, _u, b) in RESERVOIRS.items() if c == code), False)
     )
     krishna = max((by_code.get(c, 0.0) for c in KRISHNA_CHAIN), default=0.0)
     return round(independent + krishna, 3)
@@ -812,9 +821,7 @@ def main() -> int:
             sb.table("reservoir_daily_v2").upsert(
                 db_rows[i : i + 500], on_conflict="city_id,source_code,date"
             ).execute()
-        print(
-            f"Upserted {len(db_rows)} rows to reservoir_daily_v2", file=sys.stderr
-        )
+        print(f"Upserted {len(db_rows)} rows to reservoir_daily_v2", file=sys.stderr)
 
     return rc
 
