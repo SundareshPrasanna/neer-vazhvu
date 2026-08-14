@@ -30,6 +30,9 @@ from collections import defaultdict
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO / "scripts"))
+from registry_license import registry_license  # noqa: E402
+
 API = "https://indiawris.gov.in/Dataset/"
 SOURCE_LABEL = "India-WRIS Dataset API, CWC hydrological observations"
 SOURCE_URL = "https://indiawris.gov.in/wris/"
@@ -262,7 +265,7 @@ def main() -> None:
                         "agency": props.get("agency", "CWC"),
                         "siteType": props.get("siteType"), "river": props.get("river")},
             "source": {"label": SOURCE_LABEL, "url": SOURCE_URL,
-                       "fetched": fetched, "licence": "Government of India data; WRIS public Dataset API"},
+                       "fetched": fetched, "licence": registry_license("wris-live-services")},
             "period": {"from": all_dates[0], "to": all_dates[-1],
                        "waterYear": f"starts month {cfg.get('waterYearStartMonth', 6):02d}"},
             "series": series,
