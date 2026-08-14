@@ -118,6 +118,28 @@ Per-city data files use a `-<cityId>` suffix in `public/data/` and `public/geojs
 
 To add a new city, see the "Adding a new city" walkthrough in [CONTRIBUTING.md](CONTRIBUTING.md). The Kolkata onboarding is the most recent worked example and the best reference for a city that does NOT fit the existing shape - it added a hero mode, made `FloodConfig`'s dam fields optional in favour of a generic `primary_trigger`, generalised `RiverInfo`'s native-name field beyond Hindi, and added a `regionIntro` after Mumbai's nine-corporation copy leaked verbatim onto a three-unit region. Mumbai (PR #147) covers the region pattern; Bangalore (`bangalore_onboarding`) covers `cauvery-pumping` + localization; the Madurai onboarding (PR #97) is the canonical reference.
 
+### The exemption register
+
+Every deliberate omission on the platform is collected in one generated document,
+[docs/architecture/exemptions.md](docs/architecture/exemptions.md), from
+`scripts/lib/exemptions.ts`. Four kinds: a city skipping a freshness check, an artifact with no
+Headwaters upstream to watch, a route a city does not ship, and an absence the product states on the
+page (a catchment atlas refused on terrain grounds, a storage chart for a city that impounds
+nothing, an untranslated UI language, a water source whose authority publishes no daily figure).
+
+The register is derived rather than hand-listed, so it cannot drift: routes-off come from diffing
+each city against the union of every route any city ships, and `npm run data:check` fails if the
+committed copy is stale **or if any omission has no reason recorded**. That second gate is the point
+- a page quietly dropped from `FEATURE_AVAILABILITY` now fails CI until someone writes down why.
+
+The one exemption kind that suppresses a CI failure - a freshness check a city is allowed to skip -
+is *owned* by that module rather than by the checker, so it cannot be edited without touching the
+file that lists every omission. It is empty today, and empty is the correct steady state.
+
+Omissions whose original rationale was never recorded are marked `UNRECORDED:` rather than
+back-filled with a plausible guess, and counted separately. An invented justification reads as
+authoritative and is worse than an admitted blank.
+
 ## Shared utilities
 
 A few classifiers / scorers are city-agnostic and used across both cities:

@@ -14,7 +14,7 @@
     "test:watch": "find src -name '*.test.ts' | xargs tsx --test --watch",
     "db:check": "node scripts/check-db-city-scoped-keys.mjs",
     "i18n:check": "tsx scripts/check-i18n.ts",
-    "data:check": "tsx scripts/check-restoration-data.ts && tsx scripts/check-data-freshness.ts --validate && tsx scripts/check-upstream-editions.ts --validate && python3 scripts/check-mirrored-documents.py"
+    "data:check": "tsx scripts/check-restoration-data.ts && tsx scripts/check-data-freshness.ts --validate && tsx scripts/check-upstream-editions.ts --validate && python3 scripts/check-mirrored-documents.py && tsx scripts/build-exemptions-register.ts --check"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",

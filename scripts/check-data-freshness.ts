@@ -32,6 +32,7 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import { resolve } from "path";
 import { listAllPlaces } from "../src/lib/cities";
 import type { PlaceConfig } from "../src/lib/cities/types";
+import { FRESHNESS_EXEMPTIONS } from "./lib/exemptions";
 
 const ROOT = resolve(__dirname, "..");
 
@@ -217,15 +218,12 @@ const EXTRA_TABLE_FEEDS: ExtraTableFeed[] = [
 // register them in scripts/source-registry/ (check-upstream-editions.ts).
 // The TN Cauvery stretch-WQ watch moved there as `tnpcb-prs-cauvery`.
 
-// Cities allowed to skip a derived check, with the reason on record.
-// (Empty today - add `"<cityId>:<feedId>": "reason"` entries only when a
-// feed genuinely cannot exist for that city.)
-//
-// Kolkata's `kolkata:rainfall-recent` exemption was REMOVED 2026-07-26 when the
-// IMD gridded backbone landed (56 years, 1970-2025, long-term mean 1,659.3 mm)
-// and the provisional Open-Meteo fill started running. It was always marked
-// temporary with a removal condition; this is that condition being met.
-const EXEMPTIONS: Record<string, string> = {};
+// Cities allowed to skip a derived check. The map itself lives in
+// scripts/lib/exemptions.ts, the central register, because an exemption that
+// SUPPRESSES A CI FAILURE is the dangerous kind and should not be editable
+// without touching the one file that lists every deliberate omission on the
+// platform. Add entries there, with a removal condition in the reason.
+const EXEMPTIONS = FRESHNESS_EXEMPTIONS;
 
 /* ── Derivation ────────────────────────────────────────────────────────── */
 interface Check {
