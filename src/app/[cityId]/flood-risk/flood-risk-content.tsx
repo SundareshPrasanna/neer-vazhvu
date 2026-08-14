@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/i18n/context";
 import type { DrainageLayerSpec } from "@/components/flood/drainage-network-map";
+import { LiveRegisterCard } from "@/components/flood/live-register-card";
 import { getPlaceConfig } from "@/lib/cities";
 
 /** English is the accessibility floor; other languages are optional and
@@ -72,6 +73,18 @@ export interface FloodConfig {
     zoom?: number;
     layers: DrainageLayerSpec[];
   };
+  /** Optional live operational register: a city that publishes, week by week,
+   *  where it actually sent crews. Counts are read from the artifact at render
+   *  rather than written into copy, because the artifact refreshes on a
+   *  schedule and hand-written counts would be wrong within the week. */
+  live_register?: {
+    heading: BilingualText;
+    note: BilingualText;
+    /** Artifact under public/ carrying `period` and `summary`. */
+    src: string;
+    sourceLabel: string;
+    sourceHref: string;
+  };
   external_sources: ExternalSource[];
   data_gaps: BilingualText[];
   /** Cross-link card copy overrides. The flood.cross_link_* i18n defaults
@@ -133,6 +146,16 @@ export function FloodRiskContent({
           {pick(cfg.headline)}
         </p>
       </header>
+
+      {cfg.live_register && (
+        <LiveRegisterCard
+          heading={pick(cfg.live_register.heading)}
+          note={pick(cfg.live_register.note)}
+          src={cfg.live_register.src}
+          sourceLabel={cfg.live_register.sourceLabel}
+          sourceHref={cfg.live_register.sourceHref}
+        />
+      )}
 
       {cfg.drainage_map && (
         <section className="space-y-2">

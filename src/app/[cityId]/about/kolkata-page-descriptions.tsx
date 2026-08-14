@@ -167,10 +167,10 @@ export function KolkataPageDescriptions({ cityId, cityName }: Props) {
         <p className={P}>
           The page is anchored on KMC&apos;s own <strong>weekly waterlogging register</strong> -
           the chart its Mechanical Sewer Cleansing wing publishes listing every pocket it sent
-          de-silting machines to, with a borough/ward attribution on every row. The week of
-          20-26 July 2026 named 66 pockets across 53 wards and 15 boroughs, with 469 machine
-          deployments. Flooding in {cityName} is not an annual event; it is a weekly operating
-          condition.
+          de-silting machines to, with a borough/ward attribution on every row. The counts on
+          the flood page are read from the register itself and change as it does, because KMC
+          republishes it weekly and overwrites the previous week in place. Flooding in{" "}
+          {cityName} is not an annual event; it is a weekly operating condition.
         </p>
         <Gap title="No flood model, and no working warning system">
           <p>

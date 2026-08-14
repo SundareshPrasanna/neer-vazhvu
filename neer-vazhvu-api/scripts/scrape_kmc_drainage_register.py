@@ -39,6 +39,7 @@ Run:  python3 neer-vazhvu-api/scripts/scrape_kmc_drainage_register.py
 
 import argparse
 import re
+import ssl
 import subprocess
 import sys
 import tempfile
@@ -73,9 +74,27 @@ PERIOD = re.compile(
 DIVISION = re.compile(r"\(([A-Za-z\s]+Division)\)")
 
 
+def kmc_ssl_context() -> ssl.SSLContext:
+    """kmcgov.in negotiates only legacy RSA key-exchange suites (no ECDHE), and
+    OpenSSL 3 rejects those at its default security level - so a plain urlopen
+    dies with SSLV3_ALERT_HANDSHAKE_FAILURE while curl on the same machine gets
+    a 200. That would have failed silently on the weekly refresh runner, which
+    is worse than it sounds: this register is overwritten in place upstream, so
+    a week we fail to fetch is a week nobody can ever recover.
+
+    Lowering the security level is scoped to this host and buys interoperability
+    with a government server we do not control. Certificate verification and
+    hostname checking stay ON; only the cipher acceptance floor moves, and the
+    negotiated connection is still TLS 1.2 with AES-256-GCM.
+    """
+    ctx = ssl.create_default_context()
+    ctx.set_ciphers("DEFAULT:@SECLEVEL=1")
+    return ctx
+
+
 def fetch_pdf(dest: Path) -> None:
     req = urllib.request.Request(PDF_URL, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=120) as resp:
+    with urllib.request.urlopen(req, timeout=120, context=kmc_ssl_context()) as resp:
         dest.write_bytes(resp.read())
 
 

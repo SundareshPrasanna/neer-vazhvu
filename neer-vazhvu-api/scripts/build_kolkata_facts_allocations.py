@@ -19,6 +19,7 @@ Run:  python3 neer-vazhvu-api/scripts/build_kolkata_facts_allocations.py
 """
 
 from datetime import date
+import json
 import sys
 from pathlib import Path
 
@@ -37,6 +38,41 @@ EKWMA = "http://ekwma.in/ek/index.php"
 WBPCB = "http://emis.wbpcb.gov.in/waterquality/showwqprevdatachoosedist.do"
 ADB_AS = "https://www.adb.org/sites/default/files/linked-documents/49107-006-sd-01.pdf"
 WEEKLY = "https://www.kmcgov.in/KMCPortal/downloads/Weekly_Drainage_Activity_Chart.pdf"
+
+
+def waterlogging_fact() -> dict:
+    """Read the register rather than restate it.
+
+    This fact used to hardcode one week's counts ("66 pockets across 53 wards",
+    week of 20-26 July 2026). The register refreshes WEEKLY and KMC overwrites
+    the upstream PDF in place, so a frozen count is right for seven days and
+    silently wrong after that - and it had already drifted from the shipped
+    artifact by the time anyone looked. Derived here so the two cannot disagree.
+    """
+    reg = json.loads((DATA_DIR / "kolkata-waterlogging-register.json").read_text())
+    s = reg["summary"]
+    period = reg.get("period") or {}
+    pockets, wards = s["distinct_pockets"], s["wards_touched"]
+    return {
+        "id": "waterlogging-register",
+        "tier": 2,
+        "category": "Flood",
+        "title": f"{pockets} waterlogging pockets in a single week",
+        "value": str(wards),
+        "unit": "wards receiving de-silting machines",
+        "interpretation": (
+            "KMC's Sewerage and Drainage department publishes a weekly chart of where it "
+            f"sent de-silting machines. The week of {period.get('from')} to "
+            f"{period.get('to')} lists {pockets} named waterlogging pockets across "
+            f"{wards} wards and {s['boroughs_touched']} boroughs, with "
+            f"{s['machine_deployments']} machine deployments. KMC overwrites this file in "
+            "place every week, so there is no public archive: the series only exists "
+            "because we capture it."
+        ),
+        "data_date": period.get("from"),
+        "source_url": WEEKLY,
+        "source_label": "KMC, Weekly Drainage Activity Chart",
+    }
 
 
 def facts():
@@ -208,24 +244,7 @@ def facts():
             "source_url": EKWMA,
             "source_label": "East Kolkata Wetlands Management Authority",
         },
-        {
-            "id": "waterlogging-register",
-            "tier": 2,
-            "category": "Flood",
-            "title": "66 waterlogging pockets in a single week",
-            "value": "53",
-            "unit": "wards receiving de-silting machines",
-            "interpretation": (
-                "KMC's Sewerage and Drainage department publishes a weekly chart of where it "
-                "sent de-silting machines. The week of 20-26 July 2026 lists 66 named "
-                "waterlogging pockets across 53 wards and 15 boroughs, with 469 machine "
-                "deployments. KMC overwrites this file in place every week, so there is no "
-                "public archive: the series only exists because we capture it."
-            ),
-            "data_date": "2026-07-20",
-            "source_url": WEEKLY,
-            "source_label": "KMC, Weekly Drainage Activity Chart",
-        },
+        waterlogging_fact(),
         {
             "id": "arsenic-n24p",
             "tier": 2,

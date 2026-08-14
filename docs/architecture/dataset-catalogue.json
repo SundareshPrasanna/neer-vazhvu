@@ -8036,7 +8036,7 @@
    "family": "data-root",
    "scope": "kolkata",
    "dataset": "facts",
-   "bytes": 12575,
+   "bytes": 12584,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9499,7 +9499,7 @@
    "family": "data-root",
    "scope": "kolkata",
    "dataset": "waterlogging-register",
-   "bytes": 127514,
+   "bytes": 108801,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9518,8 +9518,11 @@
      "url"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/app/[cityId]/flood-risk/page.tsx"
+   ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_facts_allocations.py",
     "neer-vazhvu-api/scripts/build_kolkata_wards.py",
     "neer-vazhvu-api/scripts/scrape_kmc_drainage_register.py",
     "scripts/check-data-freshness.ts"
@@ -10181,7 +10184,7 @@
    "family": "data-root",
    "scope": "kolkata",
    "dataset": "rainfall-recent",
-   "bytes": 13955,
+   "bytes": 15155,
    "schema": {
     "kind": "object",
     "keys": [
@@ -22976,7 +22979,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 179366,
+   "bytes": 179375,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -23197,7 +23200,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 104612,
+   "bytes": 105812,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -23474,10 +23477,10 @@
    "scopes": [
     "kolkata"
    ],
-   "bytes": 127514,
+   "bytes": 108801,
    "schema_variants": 1,
    "registered": true,
-   "has_consumer": false
+   "has_consumer": true
   },
   {
    "family": "geojson-layers",

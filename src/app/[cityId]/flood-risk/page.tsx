@@ -178,6 +178,20 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
   // capacity. Hence `primary_trigger` rather than dam_release_*.
   kolkata: {
     scope_label: { en: "KMC drainage area" },
+    // The independent check on the hero. The hero says reanalysis rainfall beat
+    // the 6 mm/h standard for N hours a year; this says which streets actually
+    // flooded and where KMC actually sent a machine. Modelled exceedance and
+    // observed failure are different evidence and the page carries both.
+    live_register: {
+      heading: { en: "Where the city actually flooded, this week" },
+      note: {
+        en: "KMC's Mechanical Sewer Cleansing wing publishes, every week, the waterlogging pockets it sent de-silting machines to, with a borough and ward attribution on every row. KMC overwrites the file in place, so no upstream archive exists and our weekly capture is the only record of past weeks.",
+      },
+      src: "/data/kolkata-waterlogging-register.json",
+      sourceLabel: "KMC Weekly Drainage Activity Chart",
+      sourceHref:
+        "https://www.kmcgov.in/KMCPortal/downloads/Weekly_Drainage_Activity_Chart.pdf",
+    },
     headline: {
       en: "Kolkata's flood risk is drainage-capacity-driven, not release-driven. KMC's own sewerage document states the main network 'was designed to discharge a rainfall of 6 mm. per hour' - across 180 km of century-old brick sewer, with most drainage pumping stations built 50 to 100 years ago. Measured hourly rainfall beat that standard for a mean of 31.8 hours a year over 2000-2025, and the record splits sharply: 19.2 hours a year in 2000-2012 against 44.5 in 2013-2025. Most of the core city is on a COMBINED system, carrying sewage and stormwater in one conduit, which is the single fact tying the city's flooding, its river pollution and its dependence on the East Kolkata Wetlands together.",
     },
@@ -194,7 +208,7 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
         year: 2026,
         trigger: { en: "Routine monsoon week, 20-26 July" },
         impact: {
-          en: "KMC's own weekly register recorded 66 named waterlogging pockets across 53 wards and 15 boroughs in a single ordinary week, with 469 machine deployments. Kolkata's flooding is not an event, it is a weekly operating condition.",
+          en: "KMC's own weekly register names waterlogging pockets across most of the city's boroughs in an ordinary week, machine deployments and all. The current week's counts are above, read from the register itself. Kolkata's flooding is not an event, it is a weekly operating condition.",
         },
         source_url: "https://www.kmcgov.in/KMCPortal/downloads/Weekly_Drainage_Activity_Chart.pdf",
         source_label: "KMC Weekly Drainage Activity Chart, 20-26 Jul 2026",

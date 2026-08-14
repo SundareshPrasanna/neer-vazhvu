@@ -137,9 +137,10 @@ export function KolkataStoryEn() {
           What that looks like on the ground is not an annual catastrophe but a
           weekly routine. KMC publishes a chart every week listing the
           waterlogging pockets it has sent de-silting machines to. In one
-          ordinary week of July 2026 it named{" "}
+          ordinary week of July 2026 our capture recorded{" "}
           <strong>66 pockets across 53 wards and 15 boroughs</strong>, with 469
-          machine deployments. The corporation lists its own causes without
+          machine deployments; the week we captured in August named 60 pockets
+          across 55. Neither is a spike. The corporation lists its own causes without
           flinching: siltation, collapsing brick sewers, century-old pumps,
           silted outfall canals - and the destruction of wetlands increasing
           runoff.
