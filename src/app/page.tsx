@@ -47,6 +47,8 @@ const CITY_HOOKS: Record<string, string> = {
     "Seven BMC lakes, the Mithi river, and the parallel water systems behind the city's taps.",
   delhi:
     "The Yamuna, 237 groundwater wells, 250 MCD wards, and the five-state paper trail behind the city's taps.",
+  hyderabad:
+    "The Musi and its tank cascade, a 2,978-lake gazetted register, the utility's own tanker ledger, and a daily statement that publishes the draw as well as the storage.",
   kolkata:
     "The Hooghly, groundwater arsenic, and a delta city's drainage and flooding.",
 };

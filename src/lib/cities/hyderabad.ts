@@ -1,9 +1,10 @@
 import type { CityConfig } from './types';
 
-// Hyderabad is registered DISABLED through the onboarding window. It flips to
-// enabled: true on the cutover commit once data + UI land; the Supabase
-// `cities` table must agree. Until then /hyderabad is reachable only via
-// NEXT_PUBLIC_PREVIEW_CITIES=hyderabad.
+// Hyderabad went LIVE on 2026-08-14 as the sixth city. This flag is the only
+// functional switch: the route guard in [cityId]/layout.tsx reads it, and the
+// `enabled` column in the Supabase `cities` table is read by no code at all
+// (039_hyderabad_enable.sql keeps that row honest for a fresh rebuild, but it
+// is consistency, not a gate).
 //
 // Research backing every claim below: docs/research/
 // hyderabad-kolkata-onboarding-research-2026-07.md (2026-07-26), with raw
@@ -383,5 +384,5 @@ export const HYDERABAD: CityConfig = {
     NagarjunSagar: 'nagarjuna_sagar',
     Srisailam: 'srisailam',
   },
-  enabled: false,
+  enabled: true,
 };
