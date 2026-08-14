@@ -341,7 +341,19 @@ export const HYDERABAD: CityConfig = {
       catchmentAreaSqkm: null,
       displayOrder: 7,
       isPrimaryDrinkingSource: false,
-      hasPublicFeed: true,
+      // FALSE, and deliberately so. HMWSSB does publish this level daily - it
+      // was in today's statement. What does not happen is INGESTION: the
+      // scraper writes only `is_city_source` rows, because at 312,045 mcft
+      // this parent storage is five times the city's entire impounded volume
+      // and would swamp every total it entered. `hasPublicFeed` drives the
+      // ingestion-liveness check, so leaving it true derives a feed check that
+      // can never be satisfied and alarms forever - the exact failure its
+      // docstring warns about. noFeedNote replaces the generic
+      // "<authority> does not publish daily levels" line, which would be an
+      // untrue statement about HMWSSB.
+      hasPublicFeed: false,
+      noFeedNote:
+        'HMWSSB publishes this level daily, but Nagarjuna Sagar is a parent Krishna storage reported for context, not a city source: it records a city draw of 0 MLD. Its level is the real constraint on Akkampally, which is why it is listed here.',
     },
     {
       sourceCode: 'srisailam',
@@ -354,7 +366,9 @@ export const HYDERABAD: CityConfig = {
       catchmentAreaSqkm: null,
       displayOrder: 8,
       isPrimaryDrinkingSource: false,
-      hasPublicFeed: true,
+      hasPublicFeed: false,
+      noFeedNote:
+        'HMWSSB publishes this level daily, but Srisailam is a parent Krishna storage reported for context, not a city source: it records a city draw of 0 MLD. Its level is the real constraint on Akkampally, which is why it is listed here.',
     },
   ],
   // The feed prints these labels; map them to our canonical source codes so a
