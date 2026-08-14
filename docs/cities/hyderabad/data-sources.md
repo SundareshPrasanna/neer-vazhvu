@@ -315,7 +315,21 @@ file when its data actually lands in the repo.
   ~1,954 MLD supplied, Core Urban Region 2,053 sq km). Not used until primary-confirmed.
 - **Telangana state remote-sensing WebGIS is login-gated** (`tgrac.telangana.gov.in`) - including
   "Water Bodies (ORR): Encroachment of Water bodies from 2014 onwards", which would be an
-  exceptional lake dataset. RTI or partnership ask, not a scrape.
+  exceptional lake dataset. RTI or partnership ask, not a scrape. **Position as of 2026-08-14:**
+  the REPORT's published figures are now carried as facts (`hyd-orr-encroachment-2014-2023`,
+  `hyd-orr-encroachment-2014-baseline`), cited to the dated press account of the report TGRAC
+  submitted to the Deputy Chief Minister. The GEOMETRY is still not ingested and should not be.
+  TGRAC's own project page (`/trac/water-project.php`) describes the waterbody encroachment
+  classification for 2014 and 2023 but publishes no downloadable file, and the site's only rights
+  statement is "Copyright © TGRAC. All rights reserved." A shapefile export of this layer reached
+  us through a third party with no source URL attached; it was checked and NOT ingested. What that
+  check established is worth recording, because it is why the published figures are trustworthy
+  enough to state: the layer contains exactly 920 distinct water bodies, its `Classi171` field
+  marks exactly 171 of them as encroached, its 2014 classes split exactly 225 fully encroached /
+  196 partly / 499 clear, and its 2014-to-2023 transitions are exactly 20 clear-to-fully-built,
+  24 partly-to-fully and 57 clear-to-partly. Every one of those reproduces the report's published
+  headline. The numbers are sound; the licence is the obstacle, and it is the only obstacle.
+  Ask route: Planning Department / TGRAC, bundled with the Hyderabad Urban Observatory approach.
 - **Musi river quality needs the India-IP runner** (CPCB blocked). TGPCB is an unprobed alternative.
 - **Patancheru-Bollaram pharmaceutical effluent / AMR** is researched only to NGO-report level. The
   government-grade route is CPCB's Comprehensive Environmental Pollution Index for critically
