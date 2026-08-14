@@ -145,8 +145,23 @@ export function UnifiedMap({
   // on the map if we draw an explicit Circle for each. Render in a
   // dedicated high-z pane so they sit above polygons and stay
   // clickable.
+  // A scored body needs a CENTROID to be drawn as a Circle: Leaflet resolves
+  // `center` through L.latLng(), which throws "Cannot read properties of null
+  // (reading 'lng')" on a null and takes the whole Restoration Priority view
+  // down with it. Hyderabad is the first city to carry any - Ramanthapur and
+  // Nacharam Pedda Cheruvu are scored off the HMDA register but never matched
+  // to a polygon, so the producer left the centroid null rather than inventing
+  // one. Every other city has zero.
+  //
+  // These are DROPPED FROM THE MAP ONLY. They keep their score and stay in the
+  // ranking table, which reads restorationData directly - a body we cannot
+  // place is still a body we ranked, and silently deleting it would be worse
+  // than not drawing it.
   const orphanScored = useMemo(
-    () => scoredData.filter((wb) => wb.osm_id == null && wb.census_id == null),
+    () =>
+      scoredData.filter(
+        (wb) => wb.osm_id == null && wb.census_id == null && wb.centroid != null,
+      ),
     [scoredData],
   );
 
