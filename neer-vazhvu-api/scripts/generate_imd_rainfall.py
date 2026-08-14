@@ -60,6 +60,14 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         "Nearest valid land grid point to Mumbai (coastal/island cells "
         "classified as ocean by IMD; city centre 19.08 N, 72.88 E)",
     ),
+    "kolkata": (
+        22.5,
+        88.25,
+        "Nearest valid land grid point to Kolkata. The city centre is 22.57 N, "
+        "88.36 E, but the Hooghly and the deltaic channels mean several nearby "
+        "0.25-deg cells are classified as water by IMD; 22.5/88.25 sits on land "
+        "west of the river and covers the KMC plain",
+    ),
     "delhi": (
         28.5,
         77.25,

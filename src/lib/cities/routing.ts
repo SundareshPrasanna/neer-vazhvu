@@ -130,6 +130,26 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "allocations",
     "commitments",
   ]),
+  // Kolkata V1 target set (preview-gated until cutover). Drainage-and-sewage
+  // first, which is what the city's data actually supports.
+  // No `cascades` (not a cascade geography), no `shoreline` (the riverbank /
+  // estuary variant is a different surface and is unbuilt), no `tanker`
+  // (KMC runs a municipal tanker service with published per-trip rates but
+  // publishes no volumes). `my-ward` is OFF until wards 142-144 are recovered
+  // and a ward-name/borough join exists - the KML carries bare numbers only.
+  kolkata: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "facts",
+    "origins",
+    "allocations",
+    "commitments",
+  ]),
 };
 
 /**

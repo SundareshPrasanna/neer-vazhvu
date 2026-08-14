@@ -48,6 +48,9 @@ CITIES = {
     # would give a measured intra-city surface instead of one interpolated
     # cell. Keep this entry as the daily backbone; layer TGDPS over it.
     "hyderabad": (17.4260, 78.4300),
+    # Matches the IMD gridded point in generate_imd_rainfall.py, not the city
+    # centre: the provisional months must continue the same series they fill.
+    "kolkata": (22.5000, 88.2500),
 }
 
 API = (
@@ -127,7 +130,11 @@ def run_city(city: str) -> bool:
     # strip it (the migration lesson: regenerating producers own their
     # envelopes). produced_at tracks each refresh; sources split honestly -
     # IMD is the authoritative base, Open-Meteo the provisional fill.
-    scope_kind = {"mumbai": "region"}.get(city, "city")
+    # Scope kind must agree with schemas/nvdm/scopes.json or the artifact fails
+    # L2. Regions are the exception, so they are named here: Mumbai (full MMR)
+    # and Kolkata (KMA - KMC is 206 of ~1,851 km2, and the East Kolkata
+    # Wetlands, Palta and the arsenic belt all sit outside it).
+    scope_kind = {"mumbai": "region", "kolkata": "region"}.get(city, "city")
     envelope = {
         "nvdm": "1.0",
         "dataset": "data-root/rainfall-recent",

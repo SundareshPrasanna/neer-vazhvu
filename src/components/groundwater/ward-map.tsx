@@ -422,7 +422,7 @@ export function WardMap({
               fill and a dashed stroke so they're visually distinct from
               the WRIS live network (solid stroke). The latest reading is
               the marker's depth signal. */}
-          {cgwbStations && cgwbStations.length > 0 && cgwbStations.map((s) => {
+          {cgwbStations && cgwbStations.length > 0 && cgwbStations.map((s, i) => {
             const sorted = [...s.readings].sort(
               (a, b) => (a.year * 100 + a.month) - (b.year * 100 + b.month),
             );
@@ -433,7 +433,13 @@ export function WardMap({
             const fillColor = getGroundwaterColor(depth);
             return (
               <CircleMarker
-                key={`cgwb-${s.name}-${s.lat}-${s.lng}`}
+                // name+lat+lng is NOT unique: WRIS issues separate station
+                // codes for co-located piezometers, so Kolkata ships two
+                // 'Jafarpur_1' wells at 22.6736,88.7933 (codes ...501/...502)
+                // and React saw a duplicate key. Prefer the station code,
+                // which is unique per well; fall back to the index for the
+                // transcribed Year-Book cities that carry no code.
+                key={s.station_code ?? `cgwb-${s.name}-${s.lat}-${s.lng}-${i}`}
                 center={[s.lat, s.lng]}
                 radius={isSelected ? 7 : 5}
                 pathOptions={{

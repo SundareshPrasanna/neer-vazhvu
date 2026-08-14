@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/i18n/context";
 import type { DrainageLayerSpec } from "@/components/flood/drainage-network-map";
+import { LiveRegisterCard } from "@/components/flood/live-register-card";
 import { getPlaceConfig } from "@/lib/cities";
 
 /** English is the accessibility floor; other languages are optional and
@@ -50,6 +51,18 @@ export interface FloodConfig {
    *  card simply does not render. */
   dam_release_threshold_cusecs?: number;
   dam_release_note?: BilingualText;
+  /** The headline trigger for cities with no dam. Generic on purpose: the
+   *  value + unit + note shape fits any threshold a city actually has
+   *  (mm/hour of rainfall for Kolkata, and whatever the next city carries).
+   *  Hyderabad is the case that shows why this stays optional rather than
+   *  becoming the universal replacement: it has no dam release AND no
+   *  published drainage design capacity, so it renders neither card. */
+  primary_trigger?: {
+    value: number;
+    unit: BilingualText;
+    label: BilingualText;
+    note: BilingualText;
+  };
   historical_events: HistoricalEvent[];
   /** Optional storm-water drainage map for narrative cities that HOLD network
    *  geometry but have none of the modelled hazard/hotspot layers the
@@ -59,6 +72,18 @@ export interface FloodConfig {
     note: BilingualText;
     zoom?: number;
     layers: DrainageLayerSpec[];
+  };
+  /** Optional live operational register: a city that publishes, week by week,
+   *  where it actually sent crews. Counts are read from the artifact at render
+   *  rather than written into copy, because the artifact refreshes on a
+   *  schedule and hand-written counts would be wrong within the week. */
+  live_register?: {
+    heading: BilingualText;
+    note: BilingualText;
+    /** Artifact under public/ carrying `period` and `summary`. */
+    src: string;
+    sourceLabel: string;
+    sourceHref: string;
   };
   external_sources: ExternalSource[];
   data_gaps: BilingualText[];
@@ -103,7 +128,12 @@ export function FloodRiskContent({
         {cfg.scope_label && (
           <Badge variant="outline" className="text-xs">{pick(cfg.scope_label)}</Badge>
         )}
-        <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
+        {/* This badge carries a full sentence, not a chip label, and Badge's
+            base style is `whitespace-nowrap shrink-0`. At 320px that measured
+            337px and dragged the LAYOUT VIEWPORT past the device width, so the
+            browser scaled the whole page down - the same failure #191 fixed on
+            allocations and origins. Allow it to wrap and shrink. */}
+        <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800 whitespace-normal shrink min-w-0 text-left">
           {t("flood.badge_no_hazard_map")}
         </Badge>
       </div>
@@ -116,6 +146,16 @@ export function FloodRiskContent({
           {pick(cfg.headline)}
         </p>
       </header>
+
+      {cfg.live_register && (
+        <LiveRegisterCard
+          heading={pick(cfg.live_register.heading)}
+          note={pick(cfg.live_register.note)}
+          src={cfg.live_register.src}
+          sourceLabel={cfg.live_register.sourceLabel}
+          sourceHref={cfg.live_register.sourceHref}
+        />
+      )}
 
       {cfg.drainage_map && (
         <section className="space-y-2">
@@ -136,18 +176,21 @@ export function FloodRiskContent({
         </section>
       )}
 
-      {cfg.dam_release_threshold_cusecs != null && cfg.dam_release_note && (
+      {((cfg.dam_release_threshold_cusecs != null && cfg.dam_release_note) ||
+        cfg.primary_trigger) && (
         <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/40 dark:bg-blue-950/20">
           <CardContent className="space-y-2">
             <div className="text-xs uppercase tracking-wider text-blue-700 dark:text-blue-400 font-semibold">
-              {t("flood.dam_threshold_label")}
+              {cfg.primary_trigger ? pick(cfg.primary_trigger.label) : t("flood.dam_threshold_label")}
             </div>
             <div className="text-3xl sm:text-4xl font-bold tracking-tight">
-              ~{cfg.dam_release_threshold_cusecs.toLocaleString()}
-              <span className="text-base font-normal text-slate-400 ml-1">{t("flood.cusecs")}</span>
+              ~{(cfg.primary_trigger?.value ?? cfg.dam_release_threshold_cusecs ?? 0).toLocaleString()}
+              <span className="text-base font-normal text-slate-400 ml-1">
+                {cfg.primary_trigger ? pick(cfg.primary_trigger.unit) : t("flood.cusecs")}
+              </span>
             </div>
             <p className="text-sm text-slate-700 dark:text-slate-300">
-              {pick(cfg.dam_release_note)}
+              {cfg.primary_trigger ? pick(cfg.primary_trigger.note) : pick(cfg.dam_release_note!)}
             </p>
           </CardContent>
         </Card>

@@ -1,14 +1,17 @@
 "use client";
 
 /**
- * The Metropolitan Water System - the regional (placeKind: 'region') dashboard
- * surface for the MMR. Renders the per-corporation water inventory
- * (public/data/mmr-corporations-water.json, synthesised from the deep-research
- * passes) as: the LPCD-inequality ranking (the headline), a card per municipal
- * corporation (verified supply/demand where we have it, an honest "data pending"
- * where we don't), and the augmentation-project pipeline. Corporation names +
- * order come from the place config; metrics come from the data file, joined on
- * corporation_id. Additive: only rendered for region places.
+ * The Metropolitan Water System - the dashboard surface for a
+ * `placeKind: 'region'` place that has a multi-corporation supply inventory.
+ * Renders it as: the LPCD-inequality ranking (the headline), a card per
+ * municipal corporation (verified supply/demand where we have it, an honest
+ * "data pending" where we don't), and the augmentation-project pipeline.
+ * Corporation names + order come from the place config; metrics come from the
+ * region's data file, joined on corporation_id.
+ *
+ * The MMR is the only region with such an inventory today, so REGION_FILES has
+ * one entry. A region absent from it renders nothing - see the note there for
+ * why that is a feature rather than a gap.
  */
 
 import Link from "next/link";
@@ -59,16 +62,45 @@ function lpcdColor(lpcd: number): string {
 interface DamStorage { source_code: string; storage_pct_live: number | null; pravah_name: string }
 interface DamStorageFile { _fetched: string; dams: DamStorage[] }
 
+/**
+ * Which region owns which inventory file. Keyed, NOT hardcoded, because this
+ * component mounts for every `placeKind: 'region'` place and the MMR files
+ * were previously fetched unconditionally: Kolkata became the second region
+ * and its dashboard rendered Mumbai's augmentation pipeline as its own -
+ * Gargai, Kalu, Surya, Deharji, the Damanganga-Pinjal link and a 200 MLD
+ * desalination plant, none of which have anything to do with West Bengal.
+ * The corporation cards looked right (those names come from the place config)
+ * which is exactly what made the rest look plausible.
+ *
+ * A region with no entry renders nothing at all: `data` stays null and the
+ * component already returns null on that. That is the correct outcome for
+ * Kolkata, whose regional story is told by the sewage-balance card above
+ * instead - it abstracts run-of-river and sells onward, so it has no
+ * multi-corporation supply inventory and no augmentation pipeline to show.
+ * `damStorage` is optional for the same reason: Kolkata impounds nothing.
+ */
+const REGION_FILES: Record<string, { corporations: string; damStorage?: string }> = {
+  mumbai: {
+    corporations: "/data/mmr-corporations-water.json",
+    damStorage: "/data/mmr-dam-storage.json",
+  },
+};
+
 export function RegionalWaterSystem({ cityId }: { cityId: string }) {
   const [data, setData] = useState<RegionData | null>(null);
   const [storage, setStorage] = useState<DamStorageFile | null>(null);
   const config = tryGetPlaceConfig(cityId);
 
+  const files = REGION_FILES[cityId];
+
   useEffect(() => {
     let cancelled = false;
+    if (!files) return;
     Promise.all([
-      fetch("/data/mmr-corporations-water.json").then((r) => (r.ok ? r.json() : null)),
-      fetch("/data/mmr-dam-storage.json").then((r) => (r.ok ? r.json() : null)),
+      fetch(files.corporations).then((r) => (r.ok ? r.json() : null)),
+      files.damStorage
+        ? fetch(files.damStorage).then((r) => (r.ok ? r.json() : null))
+        : Promise.resolve(null),
     ])
       .then(([d, s]) => {
         if (cancelled) return;
@@ -79,10 +111,13 @@ export function RegionalWaterSystem({ cityId }: { cityId: string }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [files]);
 
   const corps = config?.corporations ?? [];
-  if (!data || corps.length === 0) return null;
+  // `files` is checked as well as `data` so a region with no inventory renders
+  // nothing even for the frame before the effect runs, and never inherits a
+  // previous region's data if this ever mounts across a city change.
+  if (!files || !data || corps.length === 0) return null;
 
   // Join config (names/order) + metrics; LPCD ranking = known LPCDs, desc.
   const rows = corps.map((c) => ({ corp: c, m: data.corporations[c.corporationId] ?? {} }));
@@ -136,10 +171,14 @@ export function RegionalWaterSystem({ cityId }: { cityId: string }) {
           </span>
         )}
       </div>
+      {/* Config-driven, not hardcoded. This paragraph described Mumbai's nine
+          corporations drawing on a contested source pool - correct for MMR and
+          wrong for every other region. It leaked verbatim onto Kolkata, which
+          has three modelled units and no contested pool at all (KMC abstracts
+          run-of-river and SELLS onward). Cities supply their own framing. */}
       <p className="text-sm text-slate-600 dark:text-slate-300 mb-2">
-        The wider region around the city above: 9 municipal corporations drawing
-        from one contested source pool. The same water, distributed unequally -
-        from Greater Mumbai (BMC, the days-of-water card) to the metro&apos;s edge.
+        {config?.regionIntro ??
+          "The wider region around the city above, and how the same water is distributed across it."}
       </p>
 
       {/* The scoreboard: the whole region at one glance (Commitments pattern). */}

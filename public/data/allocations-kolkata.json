@@ -1,0 +1,151 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/allocations",
+  "scope": {
+    "kind": "region",
+    "id": "kolkata"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "kmc-water-distribution-page",
+        "title": "KMC Water Supply Department: bulk water sold onward to neighbouring municipal bodies",
+        "publisher": "Kolkata Municipal Corporation, Water Supply Department",
+        "license": "KMC publication, cited with attribution"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-08-14",
+    "produced_by": "neer-vazhvu-api/scripts/build_kolkata_facts_allocations.py",
+    "note": "Two arrangements only, and both run the other way from every other city on the platform: Kolkata has no entitlement for its OWN water - it abstracts run-of-river from the Hooghly under no published allocation - so what is recorded is what KMC SELLS onward (90 MLD to Bidhannagar, 22.7 MLD to Budge Budge)."
+  },
+  "place_id": "kolkata",
+  "updated": "2026-08-14",
+  "headline": "Who is entitled to Kolkata's water, and who actually receives it",
+  "intro": "Kolkata's supply is run-of-river abstraction from the Hooghly, not a dam quota, so there is no entitlement document holding the city to a share of its own water. What does exist on paper is the water KMC sells onward: two bulk arrangements with neighbouring municipal bodies, both published by KMC itself. Those two sales are also why Bidhannagar and Budge Budge sit inside this platform's Kolkata scope at all - they are the verified water relationships in a metropolitan area whose administrative structure is otherwise unresolved.",
+  "unit_note": "MLD = million litres per day. Entitlements here are published bulk-sale volumes, not adjudicated shares.",
+  "authorities": [
+    {
+      "id": "kmc",
+      "name": "Kolkata Municipal Corporation, Water Supply Department",
+      "role": "Abstracts from the Hooghly, treats, distributes, and sells bulk water onward.",
+      "capacity": null,
+      "committed": "112.7 MLD sold on to two neighbouring bodies",
+      "tension": "KMC publishes plant capacities summing to 2,324.7 MLD beside a ~1,900 MLD target and a ~1,660 MLD requirement, on a page labelled DRAFT and footered 2013. Until that reconciles, no total-capacity figure can be stated - so what KMC owes onward is known while what it actually has is not.",
+      "source_refs": [
+        "kmc-wd"
+      ]
+    }
+  ],
+  "arrangements": [
+    {
+      "id": "kmc-bidhannagar",
+      "source": "Hooghly at Palta (Indira Gandhi WTP)",
+      "authority_id": "kmc",
+      "recipient": "Bidhannagar Municipal Corporation (Salt Lake)",
+      "entitled": {
+        "value": 90,
+        "unit": "MLD",
+        "basis": "bulk sale published by KMC",
+        "year": null,
+        "note": "Listed on KMC's water-supply department page as a bulk sale to Bidhannagar."
+      },
+      "received": {
+        "value": null,
+        "unit": "MLD",
+        "basis": null,
+        "year": null,
+        "note": "Neither KMC nor Bidhannagar publishes a delivered-volume series. The entitlement is on paper; the realisation is not observable."
+      },
+      "instrument": {
+        "label": "KMC Water Supply Department, bulk supply listing",
+        "url": "http://www.kmc-wd.com/"
+      },
+      "confidence": "medium",
+      "note": "The larger of KMC's two bulk sales, and the reason Bidhannagar is in scope."
+    },
+    {
+      "id": "kmc-budge-budge",
+      "source": "Garden Reach Water Works",
+      "authority_id": "kmc",
+      "recipient": "Budge Budge Municipality",
+      "entitled": {
+        "value": 22.7,
+        "unit": "MLD",
+        "basis": "bulk sale published by KMC",
+        "year": null,
+        "note": "Listed on KMC's water-supply department page as a bulk sale to Budge Budge."
+      },
+      "received": {
+        "value": null,
+        "unit": "MLD",
+        "basis": null,
+        "year": null,
+        "note": "No delivered-volume series is published by either party."
+      },
+      "instrument": {
+        "label": "KMC Water Supply Department, bulk supply listing",
+        "url": "http://www.kmc-wd.com/"
+      },
+      "confidence": "medium",
+      "note": "Drawn from Garden Reach rather than Palta, so a different plant carries it."
+    }
+  ],
+  "events": [
+    {
+      "year": 2021,
+      "title": "KMC files its District Environment Plan",
+      "note": "The NGT-mandated filing that put Kolkata's sewage balance on the record: 910 of 1,400 MLD treated by the East Kolkata Wetlands, outside KMC's own boundary, against 179 MLD across all five city STPs.",
+      "source_refs": [
+        "kmc-dep"
+      ]
+    }
+  ],
+  "futures": [
+    {
+      "id": "grww-225",
+      "project": "Garden Reach Water Works expansion",
+      "mld": 225,
+      "earmarked_for": [
+        "Kolkata Municipal Corporation"
+      ],
+      "status": "Under construction, no dated completion published",
+      "source_refs": [
+        "kmc-wd"
+      ]
+    },
+    {
+      "id": "igwtp-90",
+      "project": "Indira Gandhi WTP (Palta) expansion",
+      "mld": 90,
+      "earmarked_for": [
+        "Kolkata Municipal Corporation"
+      ],
+      "status": "Under construction, no dated completion published",
+      "source_refs": [
+        "kmc-wd"
+      ]
+    }
+  ],
+  "gaps": [
+    "No abstraction or production series exists for any Kolkata plant. The intake that supplies most of the city publishes no daily figure.",
+    "No non-revenue-water figure for Kolkata was found in this research pass at all.",
+    "Delivered volumes against both bulk sales are unpublished by seller and buyers alike.",
+    "The current tariff schedule has not been located; the one in hand is 2010-11.",
+    "KMDA's role in metropolitan supply is not established to primary sources, and the number of municipal corporations in the KMA is itself unresolved."
+  ],
+  "sources": {
+    "kmc-wd": {
+      "title": "Water Supply Department (draft page, footered 2013)",
+      "publisher": "Kolkata Municipal Corporation",
+      "year": 2013,
+      "url": "http://www.kmc-wd.com/"
+    },
+    "kmc-dep": {
+      "title": "District Environment Plan 2021 - Kolkata",
+      "publisher": "Kolkata Municipal Corporation",
+      "year": 2021,
+      "url": "https://www.kmcgov.in/KMCPortal/downloads/EnvironmentPlan_KMC_2021.pdf"
+    }
+  }
+}

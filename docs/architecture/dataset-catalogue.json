@@ -168,6 +168,50 @@
    "flags": []
   },
   {
+   "path": "public/data/allocations-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "allocations",
+   "bytes": 6282,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "arrangements",
+     "authorities",
+     "dataset",
+     "events",
+     "futures",
+     "gaps",
+     "headline",
+     "intro",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "sources",
+     "unit_note",
+     "updated"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/allocations/allocations-client.tsx",
+    "src/lib/cities/kolkata.ts",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_facts_allocations.py"
+   ],
+   "headwaters_sources": [
+    "kmc-water-distribution-page"
+   ],
+   "licenses": [
+    "KMC publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/allocations-madurai.json",
    "family": "data-root",
    "scope": "madurai",
@@ -323,6 +367,7 @@
     "src/types/groundwater.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
     "scripts/compute-bangalore-ward-profiles.ts"
    ],
    "headwaters_sources": [
@@ -432,6 +477,7 @@
     "src/lib/ward-rankings/load-rankings.ts"
    ],
    "producer_refs": [
+    "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_bangalore.py"
    ],
    "headwaters_sources": [],
@@ -6749,6 +6795,7 @@
    ],
    "producer_refs": [
     "scripts/fetch-localities-osm.ts",
+    "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [],
@@ -6961,6 +7008,50 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "curated commitment register; per-entry dated citations; no watchable listing",
+   "flags": []
+  },
+  {
+   "path": "public/data/commitments-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "commitments",
+   "bytes": 18229,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "commitments",
+     "dataset",
+     "headline",
+     "intro",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "sources_note",
+     "status_legend",
+     "update_model",
+     "updated"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/commitments/commitments-client.tsx",
+    "src/lib/cities/kolkata.ts",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_kmcsharp_commitments.py",
+    "neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py"
+   ],
+   "headwaters_sources": [
+    "keiip-kmcsharp-reports",
+    "kmc-district-environment-plan"
+   ],
+   "licenses": [
+    "ADB-disclosed safeguard documents, cited with attribution",
+    "KMC statutory filing under the NGT District Environment Plan process, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -7259,6 +7350,7 @@
     "src/types/groundwater.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
     "neer-vazhvu-api/scripts/build_delhi_cgwb_stations.py",
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
     "neer-vazhvu-api/scripts/scrape_bbmb_dams.py",
@@ -7408,6 +7500,7 @@
    ],
    "producer_refs": [
     "scripts/fetch-localities-osm-delhi.ts",
+    "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [],
@@ -7939,6 +8032,46 @@
    "flags": []
   },
   {
+   "path": "public/data/facts-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "facts",
+   "bytes": 12584,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "facts",
+     "generated_at",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/app/[cityId]/facts/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_facts_allocations.py"
+   ],
+   "headwaters_sources": [
+    "ekwma-management-authority",
+    "kmc-district-environment-plan",
+    "kmc-water-distribution-page"
+   ],
+   "licenses": [
+    "KMC publication, cited with attribution",
+    "KMC statutory filing under the NGT District Environment Plan process, cited with attribution",
+    "West Bengal government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "derived: compiled from sources already covered upstream",
+   "flags": []
+  },
+  {
    "path": "public/data/facts-madurai.json",
    "family": "data-root",
    "scope": "madurai",
@@ -8298,6 +8431,44 @@
    "flags": []
   },
   {
+   "path": "public/data/gwr-blocks-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "gwr-blocks",
+   "bytes": 13077,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "acquired_via",
+     "assessment_years",
+     "dataset",
+     "districts",
+     "generated_at",
+     "not_assessed_on_extraction",
+     "notes",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "source",
+     "source_url",
+     "state",
+     "unit_note"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ingres-groundwater-westbengal"
+   ],
+   "licenses": [
+    "Government of India assessment portal, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/gwr-blocks-madurai.json",
    "family": "data-root",
    "scope": "madurai",
@@ -8502,6 +8673,7 @@
     "src/types/groundwater.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
     "neer-vazhvu-api/scripts/build_hyderabad_cgwb_stations.py"
    ],
    "headwaters_sources": [
@@ -8806,6 +8978,47 @@
    "licenses": [
     "GoI publication, cited with attribution",
     "Telangana government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/imd-rainfall-monthly-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "imd-rainfall-monthly",
+   "bytes": 56752,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "annual_totals",
+     "dataset",
+     "generated_at",
+     "grid_point",
+     "monthly",
+     "normal_period",
+     "normals",
+     "note",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source",
+     "year_range"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rainfall-kolkata"
+   ],
+   "licenses": [
+    "IMD gridded product via imdlib, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -9150,6 +9363,181 @@
    "flags": []
   },
   {
+   "path": "public/data/kolkata-cgwb-stations.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "cgwb-stations",
+   "bytes": 1405255,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "cadence_note",
+     "coverage",
+     "dataset",
+     "depth_unit",
+     "district_liveness",
+     "generated_at",
+     "notes",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "reading_count",
+     "reading_kind",
+     "retrieved",
+     "scope",
+     "series_label",
+     "source",
+     "source_label",
+     "source_url",
+     "station_count",
+     "summary",
+     "unit_label",
+     "wells",
+     "window"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/app/api/groundwater/wards-interpolated/route.ts",
+    "src/lib/cities/types.ts",
+    "src/types/groundwater.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py"
+   ],
+   "headwaters_sources": [
+    "indiawris-gwl-kolkata"
+   ],
+   "licenses": [
+    "Government of India, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/kolkata-localities.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "localities",
+   "bytes": 100522,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "localities",
+     "nvdm",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/api/localities/route.ts",
+    "src/components/my-ward/ward-selector.tsx",
+    "src/lib/ward-rankings/load-rankings.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_lost_water_bodies.py",
+    "scripts/fetch-osm-layers.ts"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/kolkata-sewage-balance.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "sewage-balance",
+   "bytes": 7678,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "balance",
+     "dataset",
+     "ekw_share_pct",
+     "ekw_vs_stp_ratio",
+     "generated_at",
+     "notes",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "residual_gap_mld",
+     "scope",
+     "source",
+     "upcoming_stps",
+     "upcoming_total_mld"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/sewage-balance-card.tsx",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py"
+   ],
+   "headwaters_sources": [
+    "keiip-kmcsharp-reports",
+    "kmc-district-environment-plan"
+   ],
+   "licenses": [
+    "ADB-disclosed safeguard documents, cited with attribution",
+    "KMC statutory filing under the NGT District Environment Plan process, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/kolkata-waterlogging-register.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "waterlogging-register",
+   "bytes": 108801,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "by_ward",
+     "dataset",
+     "entries",
+     "generated_at",
+     "limitation",
+     "nvdm",
+     "period",
+     "provenance",
+     "scope",
+     "source",
+     "summary",
+     "title",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/flood-risk/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_facts_allocations.py",
+    "neer-vazhvu-api/scripts/build_kolkata_wards.py",
+    "neer-vazhvu-api/scripts/scrape_kmc_drainage_register.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "kmc-weekly-drainage-register"
+   ],
+   "licenses": [
+    "KMC publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/madurai-cgwb-stations.json",
    "family": "data-root",
    "scope": "madurai",
@@ -9181,6 +9569,7 @@
     "src/types/groundwater.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
     "scripts/compute-madurai-ward-profiles.ts"
    ],
    "headwaters_sources": [
@@ -9222,6 +9611,7 @@
    ],
    "producer_refs": [
     "scripts/fetch-localities-osm-madurai.ts",
+    "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_madurai.py"
    ],
    "headwaters_sources": [],
@@ -9440,6 +9830,7 @@
     "src/types/groundwater.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
     "neer-vazhvu-api/scripts/build_mumbai_cgwb_stations.py"
    ],
    "headwaters_sources": [
@@ -9563,6 +9954,51 @@
    ],
    "licenses": [
     "report (c) Praja, RTI-sourced tables; OpenCity mirror"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/rainfall-intensity-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "rainfall-intensity",
+   "bytes": 31378,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "anchor_threshold_mm_per_hour",
+     "attribution",
+     "city",
+     "coverage",
+     "dataset",
+     "exceedance",
+     "generated_at",
+     "grid_point",
+     "limitation",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source",
+     "summary",
+     "thresholds_mm_per_hour",
+     "url",
+     "wettest_hours"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/drainage-capacity-hero.tsx",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_rainfall_intensity.py"
+   ],
+   "headwaters_sources": [
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -9738,6 +10174,51 @@
    "licenses": [
     "CC BY 4.0",
     "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "daily feed: owned by check-data-freshness.ts",
+   "flags": []
+  },
+  {
+   "path": "public/data/rainfall-recent-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "rainfall-recent",
+   "bytes": 15155,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "imd-gridded-rainfall-kolkata",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution",
+    "IMD gridded product via imdlib, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": "daily feed: owned by check-data-freshness.ts",
@@ -10184,6 +10665,40 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "curated compilation (HYDRAA, HMDA, MRDCL, dated press); per-record citations; no watchable listing",
+   "flags": []
+  },
+  {
+   "path": "public/data/restoration-projects-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "restoration-projects",
+   "bytes": 4777,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "compiled_at",
+     "court_orders",
+     "dataset",
+     "note",
+     "nvdm",
+     "place_id",
+     "projects",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx",
+    "src/components/rivers/river-panel.tsx",
+    "src/lib/data/restoration-projects.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_restoration.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "curated compilation from named court/news sources, graded per entry",
    "flags": []
   },
   {
@@ -16288,6 +16803,54 @@
    "flags": []
   },
   {
+   "path": "public/data/river-quality-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "river-quality",
+   "bytes": 1251134,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "coords_note",
+     "data_year_range",
+     "dataset",
+     "last_updated",
+     "mapped_station_count",
+     "notes",
+     "nvdm",
+     "provenance",
+     "rivers",
+     "sample_count",
+     "scope",
+     "source",
+     "source_label",
+     "source_url",
+     "station_count",
+     "unmapped_station_count"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
+    "src/lib/cities/data-paths.ts",
+    "src/lib/hooks/use-ward-profile.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_restoration.py",
+    "neer-vazhvu-api/scripts/scrape_wbpcb_emis.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "wbpcb-emis-water-quality"
+   ],
+   "licenses": [
+    "WBPCB citizen data portal, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/river-quality-madurai.json",
    "family": "data-root",
    "scope": "madurai",
@@ -16776,6 +17339,41 @@
    "flags": []
   },
   {
+   "path": "public/data/water-bodies-flagship-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "water-bodies-flagship",
+   "bytes": 6092,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "bodies",
+     "compiled_at",
+     "dataset",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_restoration.py"
+   ],
+   "headwaters_sources": [
+    "ekwma-management-authority"
+   ],
+   "licenses": [
+    "West Bengal government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "curated compilation, graded V/N/C per entry",
+   "flags": []
+  },
+  {
    "path": "public/data/water-bodies-flagship-madurai.json",
    "family": "data-root",
    "scope": "madurai",
@@ -16913,6 +17511,51 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "archival",
+   "flags": []
+  },
+  {
+   "path": "public/data/water-bodies-lost-kolkata.json",
+   "family": "data-root",
+   "scope": "kolkata",
+   "dataset": "water-bodies-lost",
+   "bytes": 14367,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_location_note",
+     "city_wide_loss",
+     "compiled_at",
+     "dataset",
+     "legal_context",
+     "lost_bodies",
+     "note",
+     "nvdm",
+     "place_id",
+     "primary_source",
+     "primary_source_url",
+     "provenance",
+     "scope",
+     "secondary_sources",
+     "summary"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx",
+    "src/app/[cityId]/water-bodies/page.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/components/water-bodies/unified-detail-panel.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_lost_water_bodies.py"
+   ],
+   "headwaters_sources": [
+    "kmc-water-body-inventory-survey"
+   ],
+   "licenses": [
+    "KMC, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -17094,6 +17737,7 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-bangalore.ts",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/snap-river-stations.py"
@@ -17368,6 +18012,7 @@
     "scripts/compute-bangalore-ward-profiles.ts",
     "scripts/compute-bangalore-ward-risk.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/fetch-water-bodies-osm-bangalore.ts",
     "scripts/name-bangalore-water-bodies.py",
     "scripts/nvdm_envelope_bangalore.py"
@@ -17551,7 +18196,8 @@
     "scripts/build-mumbai-drainage.py",
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-drainage-osm-delhi.ts",
-    "scripts/fetch-drainage-osm.ts"
+    "scripts/fetch-drainage-osm.ts",
+    "scripts/fetch-osm-layers.ts"
    ],
    "headwaters_sources": [
     "opencity-gcc-swd-survey"
@@ -17849,6 +18495,7 @@
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
     "scripts/compute-restoration-priority.ts",
+    "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm.ts",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/snap-river-stations.py"
@@ -18063,6 +18710,7 @@
     "scripts/compute-restoration-priority.ts",
     "scripts/compute-ward-profiles.ts",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/fetch-water-bodies-osm.ts",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/resolve-unnamed-water-bodies.ts"
@@ -18145,7 +18793,8 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
-    "scripts/fetch-drainage-osm-delhi.ts"
+    "scripts/fetch-drainage-osm-delhi.ts",
+    "scripts/fetch-osm-layers.ts"
    ],
    "headwaters_sources": [
     "osm-overpass"
@@ -18227,6 +18876,7 @@
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-delhi.ts",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/snap-river-stations.py"
@@ -18382,6 +19032,7 @@
     "neer-vazhvu-api/scripts/join_delhi_census_water_bodies.py",
     "scripts/compute-restoration-priority-delhi.ts",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/fetch-water-bodies-osm-delhi.ts",
     "scripts/fetch-water-census-delhi.ts",
     "scripts/nvdm_envelope_delhi.py"
@@ -18547,6 +19198,7 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-hyderabad.ts",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/snap-river-stations.py"
@@ -18629,6 +19281,7 @@
     "neer-vazhvu-api/scripts/fetch_hmda_lake_register.py",
     "scripts/compute-restoration-priority-hyderabad.ts",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/fetch-water-bodies-osm-hyderabad.ts",
     "scripts/nvdm_envelope_hyderabad.py"
    ],
@@ -18740,6 +19393,222 @@
    "flags": []
   },
   {
+   "path": "public/geojson/kolkata-drainage.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "drainage",
+   "bytes": 199092,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 182,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "name",
+     "osm_id",
+     "waterway"
+    ]
+   },
+   "consumers": [
+    "src/components/flood-risk/flood-risk-map.tsx"
+   ],
+   "producer_refs": [
+    "scripts/fetch-osm-layers.ts"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/kolkata-rivers.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "rivers",
+   "bytes": 200290,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 4,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "length_km",
+     "name",
+     "name_local",
+     "osm_ids",
+     "river_id",
+     "segments",
+     "waterway"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/components/cascade/cascade-methodology-section.tsx",
+    "src/components/flood-risk/flood-risk-map.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/enrich_names.py",
+    "scripts/build-mumbai-rivers.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/nvdm_envelope_chennai.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/kolkata-wards-2022.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "wards-2022",
+   "bytes": 2422329,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 141,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "borough",
+     "borough_source",
+     "ward_no"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_wards.py"
+   ],
+   "headwaters_sources": [
+    "opencity-kolkata-ward-kml"
+   ],
+   "licenses": [
+    "OpenCity, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/kolkata-water-bodies-census.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "water-bodies-census",
+   "bytes": 2950149,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3051,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "block_tehsil",
+     "district",
+     "district_code",
+     "district_iw",
+     "district_nwic",
+     "enumeration_date",
+     "image_path",
+     "latitude",
+     "longitude",
+     "max_depth_water_body_fully_fill",
+     "mi_id",
+     "objectid",
+     "osm_match",
+     "rural_or_urban",
+     "state",
+     "storage_capacity_water_body_ori",
+     "subdistrict_code",
+     "subdistrict_nwic",
+     "unique_id",
+     "village",
+     "village_code",
+     "village_nwic",
+     "water_body_nature",
+     "water_body_ownership",
+     "water_body_type",
+     "water_spread_area_of_water_body",
+     "waterbody_encroached",
+     "waterbody_use_notuse"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_water_census.py"
+   ],
+   "headwaters_sources": [
+    "kmc-water-body-inventory-survey",
+    "opencity-kolkata-water-census"
+   ],
+   "licenses": [
+    "Government of India census, cited with attribution",
+    "KMC, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/kolkata-water-bodies-current.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "water-bodies-current",
+   "bytes": 10272983,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 5526,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "name",
+     "name_local",
+     "osm_id",
+     "osm_type",
+     "water_type"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/water-bodies/page.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_kolkata_lost_water_bodies.py",
+    "neer-vazhvu-api/scripts/build_kolkata_water_census.py",
+    "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": [
+    "big"
+   ]
+  },
+  {
    "path": "public/geojson/madurai-gwr-blocks.geojson",
    "family": "geojson-layers",
    "scope": "madurai",
@@ -18809,6 +19678,7 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-madurai.ts",
     "scripts/fetch-water-bodies-osm-madurai.ts",
     "scripts/nvdm_envelope_chennai.py",
@@ -18900,6 +19770,7 @@
     "scripts/compute-madurai-ward-risk.ts",
     "scripts/compute-restoration-priority-madurai.ts",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/fetch-water-bodies-osm-madurai.ts",
     "scripts/name-madurai-water-bodies.ts",
     "scripts/nvdm_envelope_madurai.py"
@@ -19113,7 +19984,8 @@
     "src/components/flood-risk/flood-risk-map.tsx"
    ],
    "producer_refs": [
-    "scripts/build-mumbai-drainage.py"
+    "scripts/build-mumbai-drainage.py",
+    "scripts/fetch-osm-layers.ts"
    ],
    "headwaters_sources": [
     "osm-overpass"
@@ -19189,6 +20061,7 @@
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
     "scripts/compute-mumbai-ward-risk.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/nvdm_envelope_mumbai.py",
     "scripts/snap-river-stations.py"
@@ -19270,6 +20143,7 @@
     "neer-vazhvu-api/tests/test_nvdm_io.py",
     "scripts/build-mumbai-water-bodies.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_mumbai.py"
    ],
    "headwaters_sources": [
@@ -21883,16 +22757,17 @@
   {
    "family": "data-root",
    "dataset": "allocations",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 88390,
+   "bytes": 94672,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -21996,32 +22871,34 @@
   {
    "family": "data-root",
    "dataset": "cgwb-stations",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 2343975,
-   "schema_variants": 5,
+   "bytes": 3749230,
+   "schema_variants": 6,
    "registered": true,
    "has_consumer": true
   },
   {
    "family": "data-root",
    "dataset": "commitments",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 163245,
+   "bytes": 181474,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -22093,15 +22970,16 @@
   {
    "family": "data-root",
    "dataset": "facts",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 166791,
+   "bytes": 179375,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -22161,16 +23039,17 @@
   {
    "family": "data-root",
    "dataset": "gwr-blocks",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai"
    ],
-   "bytes": 142640,
-   "schema_variants": 4,
+   "bytes": 155717,
+   "schema_variants": 5,
    "registered": true,
    "has_consumer": true
   },
@@ -22189,16 +23068,17 @@
   {
    "family": "data-root",
    "dataset": "imd-rainfall-monthly",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 313944,
+   "bytes": 370696,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -22258,15 +23138,16 @@
   {
    "family": "data-root",
    "dataset": "localities",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "kolkata",
     "madurai"
    ],
-   "bytes": 359425,
-   "schema_variants": 3,
+   "bytes": 459947,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },
@@ -22296,17 +23177,30 @@
   },
   {
    "family": "data-root",
+   "dataset": "rainfall-intensity",
+   "files": 1,
+   "scopes": [
+    "kolkata"
+   ],
+   "bytes": 31378,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
    "dataset": "rainfall-recent",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 90657,
+   "bytes": 105812,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -22343,15 +23237,16 @@
   {
    "family": "data-root",
    "dataset": "restoration-projects",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "chennai",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 43259,
+   "bytes": 48036,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -22373,17 +23268,30 @@
   {
    "family": "data-root",
    "dataset": "river-quality",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 170598,
-   "schema_variants": 5,
+   "bytes": 1421732,
+   "schema_variants": 6,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "sewage-balance",
+   "files": 1,
+   "scopes": [
+    "kolkata"
+   ],
+   "bytes": 7678,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -22533,14 +23441,15 @@
   {
    "family": "data-root",
    "dataset": "water-bodies-flagship",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 51095,
+   "bytes": 57187,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -22548,15 +23457,28 @@
   {
    "family": "data-root",
    "dataset": "water-bodies-lost",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "bangalore",
     "delhi",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 21588,
-   "schema_variants": 2,
+   "bytes": 35955,
+   "schema_variants": 3,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "waterlogging-register",
+   "files": 1,
+   "scopes": [
+    "kolkata"
+   ],
+   "bytes": 108801,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -22650,14 +23572,15 @@
   {
    "family": "geojson-layers",
    "dataset": "drainage",
-   "files": 3,
+   "files": 4,
    "scopes": [
     "chennai",
     "delhi",
+    "kolkata",
     "mumbai"
    ],
-   "bytes": 5236664,
-   "schema_variants": 3,
+   "bytes": 5435756,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },
@@ -22801,17 +23724,18 @@
   {
    "family": "geojson-layers",
    "dataset": "rivers",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 2473653,
-   "schema_variants": 5,
+   "bytes": 2673943,
+   "schema_variants": 6,
    "registered": true,
    "has_consumer": true
   },
@@ -22926,14 +23850,15 @@
   {
    "family": "geojson-layers",
    "dataset": "wards-2022",
-   "files": 3,
+   "files": 4,
    "scopes": [
     "chennai",
     "delhi",
+    "kolkata",
     "madurai"
    ],
-   "bytes": 11321283,
-   "schema_variants": 3,
+   "bytes": 13743612,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },
@@ -22964,30 +23889,32 @@
   {
    "family": "geojson-layers",
    "dataset": "water-bodies-census",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "bangalore",
-    "delhi"
+    "delhi",
+    "kolkata"
    ],
-   "bytes": 1769767,
-   "schema_variants": 2,
+   "bytes": 4719916,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": false
   },
   {
    "family": "geojson-layers",
    "dataset": "water-bodies-current",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 21010636,
-   "schema_variants": 6,
+   "bytes": 31283619,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
   },

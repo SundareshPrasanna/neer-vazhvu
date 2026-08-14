@@ -270,6 +270,10 @@ export interface CgwbStationQuality {
 
 export interface CgwbStation {
   name: string;
+  /** WRIS station code. Unique per well, and the only reliable React key:
+   *  name+lat+lng collides where WRIS registers co-located piezometers.
+   *  Optional because the transcribed Year-Book cities have no code. */
+  station_code?: string;
   lat: number;
   lng: number;
   block: string;

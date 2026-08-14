@@ -14,6 +14,8 @@ import {
 import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { AllocationHero } from "@/components/dashboard/allocation-hero";
 import { CauveryPumpingHero } from "@/components/dashboard/cauvery-pumping-hero";
+import { DrainageCapacityHero } from "@/components/dashboard/drainage-capacity-hero";
+import { SewageBalanceCard } from "@/components/dashboard/sewage-balance-card";
 import { BangaloreDailyBriefing } from "@/components/dashboard/bangalore-daily-briefing";
 import { buildBangaloreBriefing } from "@/lib/insights/bangalore-briefing";
 import { DataGapPanel, URBAN_SUPPLY_DATA_GAPS } from "@/components/dashboard/data-gap-panel";
@@ -433,6 +435,22 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
       {config.heroMode === "cauvery-pumping" && (
         <CauveryPumpingHero cityId={cityId} cityDisplayName={config.displayName} />
       )}
+      {/* Drainage-capacity hero: for cities with no impounded storage, where
+          the days-left numerator does not exist. Compares the drainage
+          system's published design standard against measured hourly rainfall
+          intensity. Kolkata today. */}
+      {config.heroMode === "drainage-capacity" && config.drainageCapacity && (
+        <DrainageCapacityHero
+          cityId={cityId}
+          cityDisplayName={config.displayName}
+          config={config.drainageCapacity}
+          scopeLabel={config.dashboardScopes?.city}
+        />
+      )}
+      {/* Second card, deliberately after the hero: for a city whose emergency
+          is sewage and drainage rather than scarcity, "where does it go" is
+          the question immediately after "how often do the drains fail". */}
+      {config.dashboard?.sewageBalance && <SewageBalanceCard cityId={cityId} />}
       {config.heroMode === "allocation" && config.urbanSupply && (
         <AllocationHero
           cityDisplayName={config.displayName}
@@ -491,8 +509,16 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           city has no static facts file or no tier-1 grades. */}
       <KeyFindings facts={facts} cityId={cityId} cityDisplayName={config.displayName} />
 
-      {/* Reservoir snapshot grid + shared multi-source history chart. */}
-      <ReservoirCards reservoirs={summaries} />
+      {/* Source snapshot grid + shared multi-source history chart. Titled
+          "Reservoir Status" only where the city actually impounds: Kolkata
+          abstracts run-of-river from the Hooghly at Palta and pumps tube
+          wells, so calling its four intakes reservoirs would assert storage
+          it does not have. */}
+      <ReservoirCards
+        reservoirs={summaries}
+        impounds={config.waterSources.some((s) => s.type === "reservoir")}
+      />
+
 
       <DashboardHistorySection
         cityId={cityId}

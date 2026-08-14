@@ -32,6 +32,7 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import { resolve } from "path";
 import { listAllPlaces } from "../src/lib/cities";
 import type { PlaceConfig } from "../src/lib/cities/types";
+import { FRESHNESS_EXEMPTIONS } from "./lib/exemptions";
 
 const ROOT = resolve(__dirname, "..");
 
@@ -97,6 +98,20 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     maxAgeDays: 9, // weekly (Mondays) + 2 days grace
     dateFrom: "regex:fetched (\\d{4}-\\d{2}-\\d{2})",
     note: "BMC DM register, weekly scrape",
+  },
+  {
+    id: "kmc-drainage-register",
+    cityId: "kolkata",
+    file: "public/data/kolkata-waterlogging-register.json",
+    // Weekly (Mon-Sun) + 2 days grace, matching the BMC flood-spot tolerance.
+    maxAgeDays: 9,
+    dateFrom: "json:generated_at",
+    // THIS ONE IS LOAD-BEARING, not a convenience check. KMC overwrites the
+    // chart in place at a fixed URL every week, so there is no upstream
+    // archive: a week we fail to capture is permanently lost from the public
+    // record. Staleness here means a hole in the only Kolkata waterlogging
+    // time series that will ever exist.
+    note: "KMC weekly waterlogging register - no upstream archive, a missed week is unrecoverable",
   },
   {
     id: "bbmb-dam-storage",
@@ -203,10 +218,12 @@ const EXTRA_TABLE_FEEDS: ExtraTableFeed[] = [
 // register them in scripts/source-registry/ (check-upstream-editions.ts).
 // The TN Cauvery stretch-WQ watch moved there as `tnpcb-prs-cauvery`.
 
-// Cities allowed to skip a derived check, with the reason on record.
-// (Empty today - add `"<cityId>:<feedId>": "reason"` entries only when a
-// feed genuinely cannot exist for that city.)
-const EXEMPTIONS: Record<string, string> = {};
+// Cities allowed to skip a derived check. The map itself lives in
+// scripts/lib/exemptions.ts, the central register, because an exemption that
+// SUPPRESSES A CI FAILURE is the dangerous kind and should not be editable
+// without touching the one file that lists every deliberate omission on the
+// platform. Add entries there, with a removal condition in the reason.
+const EXEMPTIONS = FRESHNESS_EXEMPTIONS;
 
 /* ── Derivation ────────────────────────────────────────────────────────── */
 interface Check {

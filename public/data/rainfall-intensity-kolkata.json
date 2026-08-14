@@ -1,0 +1,1805 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/rainfall-intensity",
+  "scope": {
+    "kind": "region",
+    "id": "kolkata"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "open-meteo-archive",
+        "title": "Open-Meteo hourly reanalysis archive, 2000-2025: 232,896 hourly rainfall values",
+        "publisher": "Open-Meteo",
+        "license": "CC BY 4.0",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/scripts/fetch_rainfall_intensity.py",
+    "conventions": {
+      "lower_bound": "Exceedance counts are a LOWER BOUND. These are reanalysis values, not gauges, and ERA5-family products smooth short convective bursts - the very events that beat a 6 mm/hour drainage standard. Kolkata has no public sub-daily rain-gauge network."
+    },
+    "note": "The exceedance ladder is our computation over the archive, not an upstream product. First sub-daily rainfall artifact on the platform."
+  },
+  "city": "kolkata",
+  "source": "Open-Meteo archive API (ERA5-family reanalysis), hourly precipitation",
+  "attribution": "Weather data by Open-Meteo.com (CC BY 4.0)",
+  "url": "https://open-meteo.com/",
+  "generated_at": "2026-07-26",
+  "grid_point": {
+    "latitude": 22.601053,
+    "longitude": 88.31776,
+    "elevation_m": 12.0
+  },
+  "coverage": {
+    "from": "2000-01-01T00:00",
+    "to": "2026-07-26T23:00",
+    "hours": 232896,
+    "complete_years": [
+      2000,
+      2001,
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "limitation": "Reanalysis smooths short convective bursts, so these hourly rates under-represent the extremes this measure is about. Every count is a LOWER BOUND on true exceedance, not a rain-gauge reading.",
+  "anchor_threshold_mm_per_hour": 6,
+  "summary": {
+    "mean_hours_per_year": 31.8,
+    "mean_days_per_year": 21.6,
+    "wettest_hour": {
+      "hour": "2017-07-22T23:00",
+      "mm": 40.2
+    },
+    "monthly_hours": [
+      {
+        "month": 1,
+        "hours": 1
+      },
+      {
+        "month": 2,
+        "hours": 8
+      },
+      {
+        "month": 3,
+        "hours": 21
+      },
+      {
+        "month": 4,
+        "hours": 54
+      },
+      {
+        "month": 5,
+        "hours": 111
+      },
+      {
+        "month": 6,
+        "hours": 169
+      },
+      {
+        "month": 7,
+        "hours": 173
+      },
+      {
+        "month": 8,
+        "hours": 134
+      },
+      {
+        "month": 9,
+        "hours": 89
+      },
+      {
+        "month": 10,
+        "hours": 80
+      },
+      {
+        "month": 11,
+        "hours": 14
+      },
+      {
+        "month": 12,
+        "hours": 13
+      }
+    ]
+  },
+  "thresholds_mm_per_hour": [
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    15,
+    20,
+    25,
+    30
+  ],
+  "exceedance": [
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2000,
+      "hours": 174,
+      "days": 74
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2001,
+      "hours": 219,
+      "days": 90
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2002,
+      "hours": 222,
+      "days": 87
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2003,
+      "hours": 202,
+      "days": 78
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2004,
+      "hours": 182,
+      "days": 91
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2005,
+      "hours": 194,
+      "days": 77
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2006,
+      "hours": 193,
+      "days": 80
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2007,
+      "hours": 272,
+      "days": 96
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2008,
+      "hours": 258,
+      "days": 104
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2009,
+      "hours": 171,
+      "days": 70
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2010,
+      "hours": 143,
+      "days": 70
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2011,
+      "hours": 230,
+      "days": 75
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2012,
+      "hours": 147,
+      "days": 68
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2013,
+      "hours": 186,
+      "days": 74
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2014,
+      "hours": 175,
+      "days": 68
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2015,
+      "hours": 247,
+      "days": 87
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2016,
+      "hours": 198,
+      "days": 83
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2017,
+      "hours": 309,
+      "days": 115
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2018,
+      "hours": 230,
+      "days": 102
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2019,
+      "hours": 231,
+      "days": 96
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2020,
+      "hours": 251,
+      "days": 119
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2021,
+      "hours": 324,
+      "days": 117
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2022,
+      "hours": 246,
+      "days": 117
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2023,
+      "hours": 254,
+      "days": 116
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2024,
+      "hours": 303,
+      "days": 118
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2025,
+      "hours": 277,
+      "days": 132
+    },
+    {
+      "threshold_mm_per_hour": 2,
+      "year": 2026,
+      "hours": 154,
+      "days": 68
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2000,
+      "hours": 53,
+      "days": 27
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2001,
+      "hours": 72,
+      "days": 42
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2002,
+      "hours": 90,
+      "days": 49
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2003,
+      "hours": 55,
+      "days": 31
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2004,
+      "hours": 43,
+      "days": 32
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2005,
+      "hours": 47,
+      "days": 27
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2006,
+      "hours": 60,
+      "days": 33
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2007,
+      "hours": 100,
+      "days": 49
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2008,
+      "hours": 75,
+      "days": 49
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2009,
+      "hours": 50,
+      "days": 30
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2010,
+      "hours": 38,
+      "days": 27
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2011,
+      "hours": 75,
+      "days": 39
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2012,
+      "hours": 40,
+      "days": 29
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2013,
+      "hours": 66,
+      "days": 35
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2014,
+      "hours": 44,
+      "days": 20
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2015,
+      "hours": 84,
+      "days": 43
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2016,
+      "hours": 87,
+      "days": 41
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2017,
+      "hours": 156,
+      "days": 85
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2018,
+      "hours": 93,
+      "days": 53
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2019,
+      "hours": 80,
+      "days": 48
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2020,
+      "hours": 82,
+      "days": 54
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2021,
+      "hours": 110,
+      "days": 57
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2022,
+      "hours": 98,
+      "days": 60
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2023,
+      "hours": 116,
+      "days": 80
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2024,
+      "hours": 132,
+      "days": 73
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2025,
+      "hours": 127,
+      "days": 84
+    },
+    {
+      "threshold_mm_per_hour": 4,
+      "year": 2026,
+      "hours": 70,
+      "days": 48
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2000,
+      "hours": 13,
+      "days": 9
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2001,
+      "hours": 27,
+      "days": 18
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2002,
+      "hours": 31,
+      "days": 16
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2003,
+      "hours": 18,
+      "days": 14
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2004,
+      "hours": 15,
+      "days": 11
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2005,
+      "hours": 17,
+      "days": 10
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2006,
+      "hours": 24,
+      "days": 14
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2007,
+      "hours": 28,
+      "days": 17
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2008,
+      "hours": 14,
+      "days": 12
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2009,
+      "hours": 13,
+      "days": 9
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2010,
+      "hours": 9,
+      "days": 7
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2011,
+      "hours": 31,
+      "days": 15
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2012,
+      "hours": 9,
+      "days": 7
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2013,
+      "hours": 23,
+      "days": 13
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2014,
+      "hours": 18,
+      "days": 11
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2015,
+      "hours": 30,
+      "days": 18
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2016,
+      "hours": 34,
+      "days": 16
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2017,
+      "hours": 71,
+      "days": 45
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2018,
+      "hours": 47,
+      "days": 35
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2019,
+      "hours": 32,
+      "days": 21
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2020,
+      "hours": 41,
+      "days": 28
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2021,
+      "hours": 45,
+      "days": 31
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2022,
+      "hours": 48,
+      "days": 38
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2023,
+      "hours": 74,
+      "days": 58
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2024,
+      "hours": 57,
+      "days": 38
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2025,
+      "hours": 59,
+      "days": 50
+    },
+    {
+      "threshold_mm_per_hour": 6,
+      "year": 2026,
+      "hours": 39,
+      "days": 31
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2000,
+      "hours": 6,
+      "days": 4
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2001,
+      "hours": 7,
+      "days": 4
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2002,
+      "hours": 9,
+      "days": 6
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2003,
+      "hours": 8,
+      "days": 6
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2004,
+      "hours": 7,
+      "days": 5
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2005,
+      "hours": 9,
+      "days": 5
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2006,
+      "hours": 9,
+      "days": 5
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2007,
+      "hours": 5,
+      "days": 5
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2008,
+      "hours": 3,
+      "days": 3
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2009,
+      "hours": 7,
+      "days": 6
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2010,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2011,
+      "hours": 21,
+      "days": 9
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2012,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2013,
+      "hours": 10,
+      "days": 4
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2014,
+      "hours": 9,
+      "days": 5
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2015,
+      "hours": 10,
+      "days": 8
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2016,
+      "hours": 9,
+      "days": 7
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2017,
+      "hours": 38,
+      "days": 26
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2018,
+      "hours": 28,
+      "days": 21
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2019,
+      "hours": 16,
+      "days": 11
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2020,
+      "hours": 22,
+      "days": 17
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2021,
+      "hours": 18,
+      "days": 14
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2022,
+      "hours": 22,
+      "days": 17
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2023,
+      "hours": 37,
+      "days": 31
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2024,
+      "hours": 24,
+      "days": 19
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2025,
+      "hours": 29,
+      "days": 26
+    },
+    {
+      "threshold_mm_per_hour": 8,
+      "year": 2026,
+      "hours": 22,
+      "days": 20
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2000,
+      "hours": 3,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2001,
+      "hours": 4,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2002,
+      "hours": 2,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2003,
+      "hours": 3,
+      "days": 3
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2004,
+      "hours": 3,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2005,
+      "hours": 5,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2006,
+      "hours": 5,
+      "days": 3
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2007,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2008,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2009,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2010,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2011,
+      "hours": 11,
+      "days": 5
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2012,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2013,
+      "hours": 7,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2014,
+      "hours": 3,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2015,
+      "hours": 2,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2016,
+      "hours": 4,
+      "days": 3
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2017,
+      "hours": 20,
+      "days": 16
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2018,
+      "hours": 14,
+      "days": 13
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2019,
+      "hours": 9,
+      "days": 7
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2020,
+      "hours": 17,
+      "days": 13
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2021,
+      "hours": 6,
+      "days": 6
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2022,
+      "hours": 10,
+      "days": 10
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2023,
+      "hours": 21,
+      "days": 19
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2024,
+      "hours": 17,
+      "days": 14
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2025,
+      "hours": 12,
+      "days": 12
+    },
+    {
+      "threshold_mm_per_hour": 10,
+      "year": 2026,
+      "hours": 12,
+      "days": 12
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2000,
+      "hours": 3,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2001,
+      "hours": 3,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2002,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2003,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2004,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2005,
+      "hours": 3,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2006,
+      "hours": 3,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2007,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2008,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2009,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2010,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2011,
+      "hours": 7,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2012,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2013,
+      "hours": 3,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2014,
+      "hours": 2,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2015,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2016,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2017,
+      "hours": 14,
+      "days": 11
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2018,
+      "hours": 8,
+      "days": 7
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2019,
+      "hours": 8,
+      "days": 7
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2020,
+      "hours": 11,
+      "days": 8
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2021,
+      "hours": 4,
+      "days": 4
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2022,
+      "hours": 5,
+      "days": 5
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2023,
+      "hours": 13,
+      "days": 12
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2024,
+      "hours": 10,
+      "days": 9
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2025,
+      "hours": 4,
+      "days": 4
+    },
+    {
+      "threshold_mm_per_hour": 12,
+      "year": 2026,
+      "hours": 7,
+      "days": 7
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2000,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2001,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2002,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2003,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2004,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2005,
+      "hours": 2,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2006,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2007,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2008,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2009,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2010,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2011,
+      "hours": 5,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2012,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2013,
+      "hours": 3,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2014,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2015,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2016,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2017,
+      "hours": 8,
+      "days": 6
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2018,
+      "hours": 6,
+      "days": 5
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2019,
+      "hours": 5,
+      "days": 5
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2020,
+      "hours": 4,
+      "days": 3
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2021,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2022,
+      "hours": 3,
+      "days": 3
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2023,
+      "hours": 3,
+      "days": 3
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2024,
+      "hours": 7,
+      "days": 6
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2025,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 15,
+      "year": 2026,
+      "hours": 2,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2000,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2001,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2002,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2003,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2004,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2005,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2006,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2007,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2008,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2009,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2010,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2011,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2012,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2013,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2014,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2015,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2016,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2017,
+      "hours": 6,
+      "days": 5
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2018,
+      "hours": 3,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2019,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2020,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2021,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2022,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2023,
+      "hours": 2,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2024,
+      "hours": 3,
+      "days": 3
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2025,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 20,
+      "year": 2026,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2000,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2001,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2002,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2003,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2004,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2005,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2006,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2007,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2008,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2009,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2010,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2011,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2012,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2013,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2014,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2015,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2016,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2017,
+      "hours": 3,
+      "days": 2
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2018,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2019,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2020,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2021,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2022,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2023,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2024,
+      "hours": 1,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2025,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 25,
+      "year": 2026,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2000,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2001,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2002,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2003,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2004,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2005,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2006,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2007,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2008,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2009,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2010,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2011,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2012,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2013,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2014,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2015,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2016,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2017,
+      "hours": 2,
+      "days": 1
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2018,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2019,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2020,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2021,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2022,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2023,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2024,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2025,
+      "hours": 0,
+      "days": 0
+    },
+    {
+      "threshold_mm_per_hour": 30,
+      "year": 2026,
+      "hours": 0,
+      "days": 0
+    }
+  ],
+  "wettest_hours": [
+    {
+      "hour": "2017-07-22T23:00",
+      "mm": 40.2
+    },
+    {
+      "hour": "2017-07-22T22:00",
+      "mm": 39.1
+    },
+    {
+      "hour": "2017-04-19T17:00",
+      "mm": 28.1
+    },
+    {
+      "hour": "2020-05-20T19:00",
+      "mm": 25.9
+    },
+    {
+      "hour": "2024-05-06T16:00",
+      "mm": 25.4
+    },
+    {
+      "hour": "2018-05-11T16:00",
+      "mm": 24.4
+    },
+    {
+      "hour": "2018-05-10T11:00",
+      "mm": 23.6
+    },
+    {
+      "hour": "2024-08-05T03:00",
+      "mm": 23.6
+    },
+    {
+      "hour": "2018-05-11T15:00",
+      "mm": 22.6
+    },
+    {
+      "hour": "2017-08-04T12:00",
+      "mm": 22.3
+    }
+  ]
+}
