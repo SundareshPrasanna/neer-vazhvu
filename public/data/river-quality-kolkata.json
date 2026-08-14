@@ -1,4 +1,27 @@
 {
+ "nvdm": "1.0",
+ "dataset": "data-root/river-quality",
+ "scope": {
+  "kind": "region",
+  "id": "kolkata"
+ },
+ "provenance": {
+  "sources": [
+   {
+    "id": "wbpcb-emis-water-quality",
+    "title": "WBPCB EMIS citizen water-quality portal: 41 stations, quarterly sampling 2010-2026, high and low tide pairs",
+    "publisher": "West Bengal Pollution Control Board",
+    "license": "WBPCB citizen data portal, cited with attribution"
+   }
+  ],
+  "method": "scrape",
+  "produced_at": "2026-07-26",
+  "produced_by": "neer-vazhvu-api/scripts/scrape_wbpcb_emis.py",
+  "conventions": {
+   "tidal_phase": "Six stations are sampled at both high and low tide and reported as separate rows. Tidal phase is carried per sample and must not be averaged away - it is the only such pairing on the platform."
+  },
+  "note": "Adi Ganga returns dissolved oxygen of NIL at multiple stations; that is the upstream's own value, not a missing reading."
+ },
  "last_updated": "2026-07-26",
  "data_year_range": [
   2010,

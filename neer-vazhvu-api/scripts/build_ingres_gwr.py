@@ -46,6 +46,10 @@ from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 API = "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen"
@@ -205,7 +209,7 @@ def main() -> int:
         ],
     }
     path = DATA_DIR / f"gwr-blocks-{args.city}.json"
-    path.write_text(json.dumps(out, ensure_ascii=False, indent=1))
+    write_artifact(path, out, indent=1)
     print(
         f"{args.city}: {len(districts)} districts, years {years_seen}; "
         f"not assessed on extraction: {saline or 'none'} -> {path.name}",

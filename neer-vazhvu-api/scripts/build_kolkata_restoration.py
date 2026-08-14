@@ -29,6 +29,10 @@ from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 WIKI_RS = "https://en.wikipedia.org/wiki/Rabindra_Sarobar"
@@ -289,12 +293,8 @@ def main() -> int:
         "projects": projects(),
         "court_orders": court_orders(),
     }
-    (DATA_DIR / "water-bodies-flagship-kolkata.json").write_text(
-        json.dumps(fl, ensure_ascii=False, indent=1)
-    )
-    (DATA_DIR / "restoration-projects-kolkata.json").write_text(
-        json.dumps(pj, ensure_ascii=False, indent=1)
-    )
+    write_artifact(DATA_DIR / "water-bodies-flagship-kolkata.json", fl, indent=1)
+    write_artifact(DATA_DIR / "restoration-projects-kolkata.json", pj, indent=1)
     grades = {}
     for b in fl["bodies"]:
         grades[b["confidence"]] = grades.get(b["confidence"], 0) + 1

@@ -181,16 +181,13 @@ export const UNWATCHED: Record<string, string> = {
   // feeds are now registry entries (wrd-pravah-dam-feed, bmc-dm-floodspots,
   // detection 'continuous' - registered for lineage, never polled); freshness
   // stays owned by check-data-freshness.ts (EXTRA_FEEDS).
-  // Kolkata (city 7). OSM-derived layers follow the same reasoning as every
-  // other city's: continuously edited, so there is no edition to detect.
-  "public/geojson/kolkata-rivers.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/kolkata-water-bodies-current.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/geojson/kolkata-drainage.geojson": "OSM/Overpass: continuously edited, no editions to detect - re-fetch cadence is a freshness question (P5-1)",
-  "public/data/kolkata-localities.json": "curated search index, no upstream",
+  // Kolkata (city 7). Its OSM layers, localities and rainfall-intensity are
+  // NOT allowlisted: they carry NVDM envelopes citing osm-overpass and
+  // open-meteo-archive, and the L2 gate requires the cited registry entry to
+  // name the artifact back, so they are on the watched track with every other
+  // city's equivalents. Allowlisting them would have asserted "no upstream"
+  // about files that plainly have one.
   "public/data/rainfall-recent-kolkata.json": "daily feed: owned by check-data-freshness.ts",
-  // Derived from the Open-Meteo archive already registered for the city's
-  // rainfall backbone; the exceedance ladder is our computation, not an upstream.
-  "public/data/rainfall-intensity-kolkata.json": "derived: exceedance ladder computed from the Open-Meteo archive",
   // Curated compilations from named, dated sources, graded V/N/C per entry.
   // There is no single upstream to watch - Kolkata has no restoration register.
   "public/data/restoration-projects-kolkata.json": "curated compilation from named court/news sources, graded per entry",

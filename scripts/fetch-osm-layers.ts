@@ -24,8 +24,8 @@
  *   public/data/{city}-localities.json
  */
 
-import { writeFileSync } from "fs";
 import { join } from "path";
+import { writeArtifact } from "./lib/nvdm-write";
 
 const OVERPASS_URL = process.env.OVERPASS_URL ?? "https://overpass-api.de/api/interpreter";
 
@@ -426,7 +426,10 @@ function fc(features: unknown[], city: string, what: string) {
 }
 
 function write(rel: string, data: unknown) {
-  writeFileSync(join(process.cwd(), rel), JSON.stringify(data, null, 1));
+  // Envelope-preserving: this fetcher is generic across cities and is re-run on
+  // demand, so it must hand back any NVDM envelope it finds rather than
+  // overwrite the artifact with a bare Overpass payload.
+  writeArtifact(join(process.cwd(), rel), data as Record<string, unknown>);
 }
 
 /* ── CLI ──────────────────────────────────────────────────────────────────── */

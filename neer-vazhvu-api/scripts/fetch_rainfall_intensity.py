@@ -36,6 +36,10 @@ from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 # City centre coordinates - keep in lockstep with src/lib/cities/*.ts.
@@ -186,7 +190,7 @@ def run_city(city: str, start_year: int, anchor: int) -> bool:
     }
 
     path = DATA_DIR / f"rainfall-intensity-{city}.json"
-    path.write_text(json.dumps(out, ensure_ascii=False, indent=2))
+    write_artifact(path, out)
     print(
         f"{city}: {len(times)} hours {times[0][:10]}..{times[-1][:10]}; "
         f"at {anchor} mm/h mean {mean_hours} h/yr over {len(complete_years)} "

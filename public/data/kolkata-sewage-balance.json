@@ -1,4 +1,30 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/sewage-balance",
+  "scope": {
+    "kind": "region",
+    "id": "kolkata"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "kmc-district-environment-plan",
+        "title": "KMC District Environment Plan 2021: sewage generated and treated, STP inventory",
+        "publisher": "Kolkata Municipal Corporation",
+        "license": "KMC statutory filing under the NGT District Environment Plan process, cited with attribution"
+      },
+      {
+        "id": "keiip-kmcsharp-reports",
+        "title": "KEIIP / KMC SHARP programme reports: STP packages, capacities and completion dates",
+        "publisher": "KEIIP / KMC SHARP (Kolkata Municipal Corporation, financed by ADB)",
+        "license": "ADB-disclosed safeguard documents, cited with attribution"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py",
+    "note": "The East Kolkata Wetlands treat roughly 65% of the city's sewage, about five times what all five STPs manage combined, and lie OUTSIDE KMC. Transcription is self-validating: the producer re-derives the balance and fails on mismatch."
+  },
   "place_id": "kolkata",
   "generated_at": "2026-07-26",
   "source": {

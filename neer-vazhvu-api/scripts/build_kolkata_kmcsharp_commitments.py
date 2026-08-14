@@ -31,10 +31,13 @@ Run:  python3 neer-vazhvu-api/scripts/build_kolkata_kmcsharp_commitments.py
 
 import json
 import sys
-from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 SRC = {
@@ -185,7 +188,7 @@ def main() -> int:
         "KMC District Environment Plan 2021 (2021-12-01); KMC-SHARP Semi Annual Environment "
         "Monitoring Report Jul-Dec 2025, ADB Loan 4584-IND, via keiip.in"
     )
-    path.write_text(json.dumps(d, ensure_ascii=False, indent=2))
+    write_artifact(path, d)
 
     by = {}
     for c in d["commitments"]:

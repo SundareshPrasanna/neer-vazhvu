@@ -35,6 +35,17 @@ export async function GET(request: NextRequest) {
       { status: 404 },
     );
   }
-  const localities: LocalityEntry[] = JSON.parse(raw);
+  const localities = parseLocalities(JSON.parse(raw));
   return NextResponse.json({ localities });
+}
+
+/** Accept both artifact shapes. The pre-NVDM files (Chennai, Madurai, Delhi,
+ *  Bangalore, Mumbai) are bare arrays and stay legal until those cities'
+ *  localities are enveloped; anything added since NVDM v1 must carry an
+ *  envelope, and an envelope needs an object to hang off, so the rows move
+ *  under a `localities` key. Kolkata is the first of the second kind. */
+function parseLocalities(doc: unknown): LocalityEntry[] {
+  if (Array.isArray(doc)) return doc as LocalityEntry[];
+  const rows = (doc as { localities?: unknown }).localities;
+  return Array.isArray(rows) ? (rows as LocalityEntry[]) : [];
 }

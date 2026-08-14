@@ -1,9 +1,31 @@
 {
+ "nvdm": "1.0",
+ "dataset": "data-root/cgwb-stations",
+ "scope": {
+  "kind": "region",
+  "id": "kolkata"
+ },
+ "provenance": {
+  "sources": [
+   {
+    "id": "indiawris-gwl-kolkata",
+    "title": "India-WRIS Ground Water Level API: 703 CGWB observation wells across the KMA, 201,221 readings",
+    "publisher": "Central Ground Water Board via India-WRIS",
+    "license": "Government of India, cited with attribution"
+   }
+  ],
+  "method": "api",
+  "produced_at": "2026-07-26",
+  "produced_by": "neer-vazhvu-api/scripts/build_cgwb_stations.py",
+  "conventions": {
+   "depth_sign": "WRIS sign convention is PER STATION, not per dataset: telemetric wells report depth-to-water NEGATIVE while manual wells report it positive. Rejecting v<0 as invalid drops 9,115 readings and makes Kolkata look groundwater-dead since 2023. Sign is normalised per station, never globally.",
+   "station_metadata": "Station lat/lng is taken from the first row that carries it, NOT the latest row: WRIS leaves coordinates null on many recent rows, and a latest-row read collapses Nadia from 205 wells to 39 while the remainder still look plausible."
+  }
+ },
  "place_id": "kolkata",
  "generated_at": "2026-07-26",
  "source": "Central Ground Water Board, via the India-WRIS Ground Water Level API",
  "source_url": "https://indiawris.gov.in/wris/",
- "scope": "KMA (six districts)",
  "window": {
   "from": "2010-01-01",
   "to": "2026-07-26"

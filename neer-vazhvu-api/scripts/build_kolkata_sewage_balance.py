@@ -27,12 +27,15 @@ KMC's own printed 280.06 MLD total and the build fails loudly.
 Run:  python3 neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py
 """
 
-import json
 import sys
 from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 SOURCE = {
@@ -436,13 +439,9 @@ def main() -> int:
         return 1
 
     bal = build_balance()
-    (DATA_DIR / "kolkata-sewage-balance.json").write_text(
-        json.dumps(bal, ensure_ascii=False, indent=2)
-    )
+    write_artifact(DATA_DIR / "kolkata-sewage-balance.json", bal)
     com = build_commitments()
-    (DATA_DIR / "commitments-kolkata.json").write_text(
-        json.dumps(com, ensure_ascii=False, indent=2)
-    )
+    write_artifact(DATA_DIR / "commitments-kolkata.json", com)
 
     with_coords = sum(1 for s in UPCOMING_STPS if s["lat"] is not None)
     print(

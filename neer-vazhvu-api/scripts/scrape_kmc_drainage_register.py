@@ -38,7 +38,6 @@ Run:  python3 neer-vazhvu-api/scripts/scrape_kmc_drainage_register.py
 """
 
 import argparse
-import json
 import re
 import subprocess
 import sys
@@ -49,6 +48,10 @@ from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 PDF_URL = "https://www.kmcgov.in/KMCPortal/downloads/Weekly_Drainage_Activity_Chart.pdf"
 DEFAULT_OUT = REPO_ROOT / "public" / "data" / "kolkata-waterlogging-register.json"
 
@@ -260,7 +263,7 @@ def main() -> int:
     )
 
     out = Path(args.out)
-    out.write_text(json.dumps(parsed, ensure_ascii=False, indent=2))
+    write_artifact(out, parsed)
     s = parsed["summary"]
     print(
         f"KMC register {parsed['period']['from']}..{parsed['period']['to']}: "

@@ -1,4 +1,24 @@
 {
+ "nvdm": "1.0",
+ "dataset": "data-root/gwr-blocks",
+ "scope": {
+  "kind": "region",
+  "id": "kolkata"
+ },
+ "provenance": {
+  "sources": [
+   {
+    "id": "ingres-groundwater-westbengal",
+    "title": "IN-GRES Dynamic Ground Water Resources, West Bengal district assessments",
+    "publisher": "IN-GRES (CGWB + West Bengal state groundwater department), IIT Hyderabad",
+    "license": "Government of India assessment portal, cited with attribution"
+   }
+  ],
+  "method": "api",
+  "produced_at": "2026-07-26",
+  "produced_by": "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+  "note": "Six districts, not blocks: West Bengal's assessment is published at district grain. The core district is categorised SALINITY, which has no extraction stage at all - so Kolkata carries no exploitation percentage, and that is the upstream's classification rather than a gap in ours. OpenCity's Dynamic GWR cuts are Karnataka-only; this needed an IN-GRES payload capture."
+ },
  "place_id": "kolkata",
  "generated_at": "2026-07-26",
  "source": "IN-GRES - India Ground Water Resource Estimation System (CGWB + State groundwater departments)",

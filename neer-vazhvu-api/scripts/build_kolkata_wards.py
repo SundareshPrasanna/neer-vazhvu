@@ -85,6 +85,10 @@ from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 GEO_DIR = REPO_ROOT / "public" / "geojson"
 DATA_DIR = REPO_ROOT / "public" / "data"
 
@@ -216,7 +220,7 @@ def main() -> int:
     }
 
     path = GEO_DIR / "kolkata-wards-2022.geojson"
-    path.write_text(json.dumps(out, ensure_ascii=False))
+    write_artifact(path, out, compact=True)
     if not args.kml and kml.exists():
         kml.unlink()
 

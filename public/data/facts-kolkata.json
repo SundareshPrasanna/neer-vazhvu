@@ -1,4 +1,36 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": {
+    "kind": "region",
+    "id": "kolkata"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ekwma-management-authority",
+        "title": "East Kolkata Wetlands Management Authority: Ramsar extent and the wetlands' treatment role",
+        "publisher": "East Kolkata Wetlands Management Authority",
+        "license": "West Bengal government publication, cited with attribution"
+      },
+      {
+        "id": "kmc-district-environment-plan",
+        "title": "KMC District Environment Plan 2021: the statutory water and sewage baseline",
+        "publisher": "Kolkata Municipal Corporation",
+        "license": "KMC statutory filing under the NGT District Environment Plan process, cited with attribution"
+      },
+      {
+        "id": "kmc-water-distribution-page",
+        "title": "KMC Water Supply Department: plant-level design capacities",
+        "publisher": "Kolkata Municipal Corporation, Water Supply Department",
+        "license": "KMC publication, cited with attribution"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/scripts/build_kolkata_facts_allocations.py",
+    "note": "13 static facts. Deliberately carries NO total supply capacity and NO per-capita figure: KMC's own distribution page sums to 2,324.7 MLD beside a ~1,900 MLD target, is labelled DRAFT and footered 2013, and KMC contests its own population denominator (4.5m plus 6m floating against a 44.96 lakh 'static' figure)."
+  },
   "place_id": "kolkata",
   "generated_at": "2026-07-26",
   "note": "Compiled from primary sources only. Figures sourced to news reports or unreachable documents in the pre-onboarding research are excluded by rule. Two headline numbers are deliberately absent - total supply capacity and litres-per-capita - because KMC's own publications contradict themselves on both; each appears as a gap fact instead.",

@@ -18,11 +18,15 @@ Both appear as GAP facts instead, which is the honest version of the number.
 Run:  python3 neer-vazhvu-api/scripts/build_kolkata_facts_allocations.py
 """
 
-import json
 from datetime import date
+import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 DEP = "https://www.kmcgov.in/KMCPortal/downloads/EnvironmentPlan_KMC_2021.pdf"
@@ -431,10 +435,8 @@ def main() -> int:
         ),
         "facts": facts(),
     }
-    (DATA_DIR / "facts-kolkata.json").write_text(json.dumps(f, ensure_ascii=False, indent=2))
-    (DATA_DIR / "allocations-kolkata.json").write_text(
-        json.dumps(allocations(), ensure_ascii=False, indent=2)
-    )
+    write_artifact(DATA_DIR / "facts-kolkata.json", f)
+    write_artifact(DATA_DIR / "allocations-kolkata.json", allocations())
     tiers = {}
     for x in f["facts"]:
         tiers[x["tier"]] = tiers.get(x["tier"], 0) + 1

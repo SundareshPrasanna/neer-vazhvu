@@ -44,6 +44,10 @@ from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 BASE = "https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
@@ -325,7 +329,7 @@ def main() -> int:
         "wells": stations,
     }
     path = DATA_DIR / f"{args.city}-cgwb-stations.json"
-    path.write_text(json.dumps(out, ensure_ascii=False, indent=1))
+    write_artifact(path, out, indent=1)
     live = [d for d in liveness if d["status"] == "live"]
     out["district"] = "Kolkata Metropolitan Area" if args.kma else "Kolkata"
     print(

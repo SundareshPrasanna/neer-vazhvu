@@ -40,7 +40,6 @@ Run:
 
 import argparse
 import http.cookiejar
-import json
 import re
 import sys
 import time
@@ -51,6 +50,10 @@ from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 BASE = "http://emis.wbpcb.gov.in/waterquality"
@@ -498,7 +501,7 @@ def main() -> int:
         "sample_count": n,
         "rivers": rivers,
     }
-    Path(args.out).write_text(json.dumps(out, ensure_ascii=False, indent=1))
+    write_artifact(Path(args.out), out, indent=1)
     print(
         f"WBPCB: {len(stations)} stations, {n} samples, "
         f"{out['data_year_range']} -> {Path(args.out).name}",

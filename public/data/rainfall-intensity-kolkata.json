@@ -1,4 +1,28 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/rainfall-intensity",
+  "scope": {
+    "kind": "region",
+    "id": "kolkata"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "open-meteo-archive",
+        "title": "Open-Meteo hourly reanalysis archive, 2000-2025: 232,896 hourly rainfall values",
+        "publisher": "Open-Meteo",
+        "license": "CC BY 4.0",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/scripts/fetch_rainfall_intensity.py",
+    "conventions": {
+      "lower_bound": "Exceedance counts are a LOWER BOUND. These are reanalysis values, not gauges, and ERA5-family products smooth short convective bursts - the very events that beat a 6 mm/hour drainage standard. Kolkata has no public sub-daily rain-gauge network."
+    },
+    "note": "The exceedance ladder is our computation over the archive, not an upstream product. First sub-daily rainfall artifact on the platform."
+  },
   "city": "kolkata",
   "source": "Open-Meteo archive API (ERA5-family reanalysis), hourly precipitation",
   "attribution": "Weather data by Open-Meteo.com (CC BY 4.0)",

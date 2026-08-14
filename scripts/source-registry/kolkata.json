@@ -53,7 +53,8 @@
       },
       "dependsOn": [
         "public/data/kolkata-sewage-balance.json",
-        "public/data/commitments-kolkata.json"
+        "public/data/commitments-kolkata.json",
+        "public/data/facts-kolkata.json"
       ],
       "refreshMethod": "manual (neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py - transcription validated against the document's own printed totals)",
       "notes": "Carries the platform's strongest sewage finding: 910 of 1,400 MLD treated by the East Kolkata Wetlands, 5.1x all five STPs combined, and the EKW lies outside KMC. Also the 10-plant upcoming-STP table (280.06 MLD, 9 with coordinates) and a blank industrial-wastewater section - KMC declaring a gap in its own statutory plan. A new edition would supersede a 2021 document; worth watching even though the cadence is irregular."
@@ -72,7 +73,8 @@
       },
       "dependsOn": [
         "src/lib/cities/kolkata.ts",
-        "public/data/allocations-kolkata.json"
+        "public/data/allocations-kolkata.json",
+        "public/data/facts-kolkata.json"
       ],
       "refreshMethod": "manual - BLOCKED on reconciliation, see notes",
       "notes": "DO NOT PUBLISH A TOTAL FROM THIS PAGE. Plants listed sum to 2,214.7 MLD plus ~110 MLD tube wells = 2,324.7 MLD, while the SAME page describes a target of ~1,900 MLD generation in 2025 and a requirement of ~1,660 MLD. The page is labelled '(DRAFT)' and footered '(c) 2013', and refers to 2025 in the future tense. Either the plant figures are post-expansion design capacities or the page mixes vintages. Reconcile against KMC budget statements (OpenCity kmc-budget-statement, 16 PDFs) before any capacity total enters the product. Watched so we notice if KMC ever republishes it."

@@ -59,6 +59,10 @@ from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Every producer writing under public/ goes through the envelope-preserving
+# writer: a scheduled rewrite must not strip the NVDM envelope it finds.
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402
 DATA_DIR = REPO_ROOT / "public" / "data"
 GEO_DIR = REPO_ROOT / "public" / "geojson"
 
@@ -129,18 +133,22 @@ def root_name(name: str) -> str:
 def main() -> int:
     roads_path = Path("/tmp/kol_roads.json")
     tree, n_bodies = load_geoms()
-    localities = json.loads((DATA_DIR / "kolkata-localities.json").read_text())
+    # The localities artifact carries an NVDM envelope, so the rows sit under a
+    # key rather than at the top level. Both shapes are accepted: the older
+    # cities' files are still bare arrays.
+    loc_doc = json.loads((DATA_DIR / "kolkata-localities.json").read_text())
+    localities = loc_doc if isinstance(loc_doc, list) else loc_doc["localities"]
 
     candidates: dict[str, dict] = {}
 
-    for l in localities:
-        if not TOPONYM.search(l["name"]):
+    for loc in localities:
+        if not TOPONYM.search(loc["name"]):
             continue
-        if water_within(tree, l["lat"], l["lng"]):
+        if water_within(tree, loc["lat"], loc["lng"]):
             continue
         candidates.setdefault(
-            root_name(l["name"]),
-            {"name": l["name"], "lat": l["lat"], "lng": l["lng"], "kinds": set()},
+            root_name(loc["name"]),
+            {"name": loc["name"], "lat": loc["lat"], "lng": loc["lng"], "kinds": set()},
         )["kinds"].add("locality")
 
     if roads_path.exists():
@@ -238,7 +246,7 @@ def main() -> int:
     }
 
     path = DATA_DIR / "water-bodies-lost-kolkata.json"
-    path.write_text(json.dumps(out, ensure_ascii=False, indent=1))
+    write_artifact(path, out, indent=1)
     print(
         f"kolkata: {len(bodies)} entries "
         f"({out['summary']['fully_lost_count']} fully lost, "

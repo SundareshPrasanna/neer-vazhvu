@@ -1,4 +1,24 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/waterlogging-register",
+  "scope": {
+    "kind": "region",
+    "id": "kolkata"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "kmc-weekly-drainage-register",
+        "title": "KMC Weekly Drainage Activity Chart: waterlogging pockets attended, by borough and ward",
+        "publisher": "Kolkata Municipal Corporation, Sewerage & Drainage Department",
+        "license": "KMC publication, cited with attribution"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/scripts/scrape_kmc_drainage_register.py",
+    "note": "KMC overwrites this PDF in place every week, so no upstream archive exists and our weekly capture is the only record of past weeks. It records where KMC SENT machines, not everywhere the city flooded - an operational log, not a flood inventory."
+  },
   "period": {
     "from": "2026-07-20",
     "to": "2026-07-26"
