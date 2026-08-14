@@ -5,32 +5,21 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/lib/i18n/context";
-import { listAllPlaces } from "@/lib/cities";
-
-/** City roster for site metadata, derived from the registry so it can never
- *  go stale the way the hard-coded "Chennai and Madurai live, Bengaluru
- *  onboarding" string did (it survived two launches). */
-function cityRoster(): string {
-  const all = listAllPlaces();
-  const live = all.filter((p) => p.enabled !== false).map((p) => p.displayName);
-  const onboarding = all.filter((p) => p.enabled === false).map((p) => p.displayName);
-  const parts = [`${live.join(", ")} live`];
-  if (onboarding.length) parts.push(`${onboarding.join(", ")} onboarding`);
-  return parts.join("; ");
-}
+import { cityKeywords, cityRoster, liveCityList } from "@/lib/cities/roster";
 
 const ROSTER = cityRoster();
+const LIVE_CITIES = liveCityList();
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://neervazhvu.org"),
   title: "Neer Vazhvu | Urban Water Intelligence",
   description:
-    "Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, and water bodies across Indian cities - Chennai, Madurai, and onboarding Bengaluru - with AI-powered summaries in English and regional languages.",
+    `Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, ` +
+    `and water bodies across Indian cities - ${LIVE_CITIES} - with AI-powered summaries in ` +
+    `English and regional languages.`,
   keywords: [
     "urban water",
-    "Chennai water",
-    "Madurai water",
-    "Bengaluru water",
+    ...cityKeywords(),
     "reservoir levels",
     "groundwater",
     "water crisis",
@@ -90,7 +79,8 @@ export default function RootLayout({
               name: "Neer Vazhvu",
               url: "https://neervazhvu.org",
               description:
-                "Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, and water bodies across Indian cities - Chennai, Madurai, and onboarding Bengaluru.",
+                `Open-source platform tracking reservoirs, groundwater, river health, flood ` +
+                `risk, drainage, and water bodies across Indian cities - ${LIVE_CITIES}.`,
               applicationCategory: "UtilitiesApplication",
               operatingSystem: "Any",
               offers: {
