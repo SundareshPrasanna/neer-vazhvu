@@ -94,19 +94,15 @@ function buildCityBoard(): BoardCity[] {
     status: config.enabled !== false ? "live" : "onboarding",
   }));
 
-  const registeredIds = new Set(fromRegistry.map((c) => c.cityId));
-
-  // Cities not yet in the registry. Kept minimal and honest: shown with
-  // their published authority + state and no link (their routes 404 in
-  // prod). "onboarding" = actively being wired up; "upnext" = next in line.
-  const staticCities: BoardCity[] = [
-    { cityId: "kolkata", displayName: "Kolkata", authorityAcronym: "KMC", stateCode: "WB", hook: CITY_HOOKS.kolkata, status: "upnext" },
-  ];
-  const STATIC = staticCities.filter((c) => !registeredIds.has(c.cityId));
-
-  const all = [...fromRegistry, ...STATIC];
+  // The static fallback list is now EMPTY, and that is the point of it. It
+  // existed so a city being worked on could appear before it was registered,
+  // and Kolkata was its last remaining entry - registering Kolkata is exactly
+  // what retires it. The dedupe against the registry has been removed with it:
+  // a list of nothing needs no filtering. Add an entry here only to advertise
+  // a city that has no registry config at all yet, and delete it again the
+  // moment that config lands, or the board will show the city twice.
   // Live first, then onboarding, then up next; stable within each group.
-  return all.sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
+  return fromRegistry.sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
 }
 
 const CAPABILITIES: { label: string; detail: string }[] = [
