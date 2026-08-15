@@ -50,21 +50,42 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+from registry_license import registry_license  # noqa: E402
 
 DATA_DIR = REPO_ROOT / "public" / "data"
 
 API = "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen"
 INDIA_UUID = "ffce954d-24e1-494b-ba7e-0931d8ad6085"
 
-# From the bundle constant STATEUUIDLAYERNAME (main.js). Add states as needed.
+# DO NOT source these from the bundle. Ask the API instead: a COUNTRY-level
+# call returns all 38 states WITH their uuids, which is authoritative and
+# takes one request:
+#
+#   locname=INDIA, loctype=COUNTRY, locuuid=parentuuid=INDIA_UUID
+#
+# The bundle route (constant STATEUUIDLAYERNAME) is how West Bengal's was
+# found and it is a trap for the next state. It is a GIS-LAYER table, it is
+# INCOMPLETE - 27 of 36 states, and Haryana is one of the missing ones - and
+# main.js carries a SECOND table of the same shape
+# (`HR:{ST_CENSUS:6,name:"HARYANA",UUID:...}`) whose uuids are a different
+# namespace entirely. That decoy gave a well-formed uuid that returned an
+# empty list for every year, which reads exactly like "no data published"
+# rather than "wrong id". Caught only because West Bengal, run as a control
+# through the same code, still worked.
 STATE_UUIDS = {
     "WESTBENGAL": "68ecabb4-0ea5-4909-b8e3-20bbaa7b91e8",
+    "HARYANA": "648a95f6-9249-4c92-8ae4-a9d93eb7c898",
 }
+
+# Scope kinds must agree with schemas/nvdm/scopes.json or the artifact fails
+# L2. Kolkata is a region (the KMA); Gurugram is a plain city.
+SCOPE_KIND = {"kolkata": "region"}
 
 CITIES = {
     "kolkata": {
         "state": "WESTBENGAL",
         "state_label": "West Bengal",
+        "source_id": "ingres-groundwater-westbengal",
         # IN-GRES spells it KOLKATTA. Its district vocabulary also differs from
         # India-WRIS's (HAORA vs HOWRAH, HUGLI vs HOOGHLY), which is exactly the
         # trap the pan-India playbook records: enumerate spellings empirically,
@@ -77,6 +98,57 @@ CITIES = {
             "HUGLI": "Hooghly",
             "NADIA": "Nadia",
         },
+        "notes": [
+            "Kolkata district and South 24 Parganas are categorised 'salinity' - a "
+            "POOR-QUALITY category, not a stage-of-extraction band. They carry no "
+            "availability, resource or extraction figures because CGWB does not assess "
+            "saline aquifers on extraction. This is why no exploitation choropleth is "
+            "drawn for Kolkata district: the framework classifies it on a different axis, "
+            "which is a finding rather than a missing file.",
+            "The surrounding KMA ring IS assessed on extraction, so the regional picture "
+            "is real even where the core district's is categorically absent.",
+            "IN-GRES district spellings differ from India-WRIS's (KOLKATTA / HAORA / "
+            "HUGLI). Two government portals do not agree on district names; enumerate "
+            "empirically rather than assuming.",
+        ],
+    },
+    "gurugram": {
+        "state": "HARYANA",
+        "state_label": "Haryana",
+        "source_id": "ingres-groundwater-haryana",
+        # IN-GRES still spells it GURGAON, the pre-2016 name. Third portal,
+        # third vocabulary: India-WRIS says GURUGRAM, LGD says Gurugram, this
+        # says GURGAON. Enumerate per portal, never share one spelling map.
+        #
+        # The neighbours are included because Gurugram's water problem does
+        # not stop at the district line: Mewat and Palwal sit on the same
+        # aquifer south-east, Rewari and Jhajjar west and north.
+        "districts": {
+            "GURGAON": "Gurugram",
+            "MEWAT": "Nuh (Mewat)",
+            "PALWAL": "Palwal",
+            "REWARI": "Rewari",
+            "JHAJJAR": "Jhajjar",
+            "FARIDABAD": "Faridabad",
+        },
+        "notes": [
+            "Gurugram district extracts 194.59% of its annual recharge and is categorised "
+            "over-exploited. That figure is the primary source for the '~195%' that "
+            "circulates in secondary write-ups about the city without one.",
+            "Every one of the district's five assessment blocks is over-exploited, and the "
+            "built city is the worst: GURGAON_URBAN stands at 326.26% of recharge, against "
+            "PATAUDI 168.48, SOHNA 156.86, FARRUKH NAGAR 143.39 and rural GURGAON 106.91. "
+            "Haryana as a whole is at 136.75%.",
+            "The neighbouring districts are carried because the aquifer does not stop at "
+            "the district line, and because Jhajjar being SAFE is what makes the rest "
+            "legible as a local failure rather than a regional condition. Rewari and "
+            "Faridabad are over-exploited, Palwal critical, Nuh (Mewat) semi-critical.",
+            "IN-GRES still spells the district GURGAON, the pre-2016 name, where "
+            "India-WRIS and LGD both say GURUGRAM. Enumerate spellings per portal.",
+            "This assessment is the CURRENT groundwater picture for Gurugram. The measured "
+            "LEVEL series is not: India-WRIS carries 37 Gurugram stations that stop in "
+            "June 2020, and the Haryana telemetry network does not cover this district.",
+        ],
     },
 }
 
@@ -205,22 +277,49 @@ def main() -> int:
         "unit_note": "ham = hectare-metres.",
         "districts": districts,
         "not_assessed_on_extraction": saline,
-        "notes": [
-            "Kolkata district and South 24 Parganas are categorised 'salinity' - a "
-            "POOR-QUALITY category, not a stage-of-extraction band. They carry no "
-            "availability, resource or extraction figures because CGWB does not assess "
-            "saline aquifers on extraction. This is why no exploitation choropleth is "
-            "drawn for Kolkata district: the framework classifies it on a different axis, "
-            "which is a finding rather than a missing file.",
-            "The surrounding KMA ring IS assessed on extraction, so the regional picture "
-            "is real even where the core district's is categorically absent.",
-            "IN-GRES district spellings differ from India-WRIS's (KOLKATTA / HAORA / "
-            "HUGLI). Two government portals do not agree on district names; enumerate "
-            "empirically rather than assuming.",
-        ],
+        # Per-city, NOT shared. These were hardcoded Kolkata prose until
+        # Gurugram became the second city through here and its artifact shipped
+        # three notes about Kolkata's saline aquifer and Kolkata's district
+        # spellings. A builder is not city-generic because its CONFIG is
+        # parameterised; its OUTPUT TEXT has to be too. Same failure as the
+        # footer that told every city CMWSSB was one of their sources.
+        "notes": cfg["notes"],
+    }
+    # NVDM v1 envelope emitted by the PRODUCER. Kolkata's copy was enveloped by
+    # a separate per-city injector, which meant a fresh run of this script
+    # produced a sub-L2 artifact for any new city - Gurugram's first build came
+    # out at L0. A regenerating producer owns its envelope.
+    envelope = {
+        "nvdm": "1.0",
+        "dataset": "data-root/gwr-blocks",
+        "scope": {"kind": SCOPE_KIND.get(args.city, "city"), "id": args.city},
+        "provenance": {
+            "sources": [
+                {
+                    "id": cfg["source_id"],
+                    "title": (
+                        f"IN-GRES dynamic ground water resource assessment, "
+                        f"{cfg['state_label']} districts"
+                    ),
+                    "publisher": (
+                        "IN-GRES (CGWB + State groundwater departments), IIT Hyderabad"
+                    ),
+                    "license": registry_license(cfg["source_id"]),
+                }
+            ],
+            "method": "api",
+            "produced_at": out["generated_at"],
+            "produced_by": "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+            "note": (
+                "Assessment (extraction against availability, stage %, category) per "
+                "district, across every published assessment year. This is NOT "
+                "depth-to-water - IN-GRES does not carry it; measured levels are a "
+                "separate India-WRIS series."
+            ),
+        },
     }
     path = DATA_DIR / f"gwr-blocks-{args.city}.json"
-    write_artifact(path, out, indent=1)
+    write_artifact(path, {**envelope, **out}, indent=1)
     print(
         f"{args.city}: {len(districts)} districts, years {years_seen}; "
         f"not assessed on extraction: {saline or 'none'} -> {path.name}",

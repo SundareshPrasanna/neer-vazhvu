@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 1 |
 | Artifacts with no registered upstream | 76 |
-| Routes a city deliberately does not ship | 33 |
+| Routes a city deliberately does not ship | 32 |
 | Absences the product states on the page | 20 |
-| **Total** | **130** |
+| **Total** | **129** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -129,7 +129,6 @@ Derived by diffing each city against the union of every route any city ships, so
 | gurugram | commitments | Buildable and not built. The dated commitments exist and are citable (the NGT's February 2026 orders on illegal extraction and rainwater harvesting, GMDA's Chandu Budhera fifth-unit target), but each needs primary-source verification before it goes in the register, and none has had it yet. |
 | gurugram | facts | Needs a facts-gurugram.json, which needs the supply and demand numbers that are the very ones still unverified - every figure in circulation for this city is press-sourced, and GMDA's own GIS already contradicts two of them. Ships when the numbers do. |
 | gurugram | flood-risk | Gurugram floods by waterlogging on a paved catchment, not by river. The inputs exist on GMDA OneMap (117 GMUC waterlogging sites, the master storm-water network, natural flow direction) and only the drain legs are harvested so far, so this is a backlog item with a known path rather than a refusal. |
-| gurugram | groundwater | The signature issue is the thinnest data, which is why this is off rather than empty. Gurugram has been a CGWA dark zone since 2008, but the India-WRIS level record is 37 stations that stop in June 2020 and the Haryana telemetry network does not cover this district at all - 95 MB of the state export contains zero Gurugram rows. 37 stations across 36 wards would not carry honest per-ward interpolation even if they were current. Closes on IN-GRES block assessment plus the HSPCB 2016-2024 quality series, both identified and neither wired up. |
 | gurugram | lake-restoration | Needs a restoration-priority-gurugram.json, which needs a scorer. The water-body register is harvested and carries ownership, area and GMDA's own cross-survey flags, so the inputs are present and the ranking is simply not built. |
 | gurugram | origins | Not built for this city yet. The spine is identified - GMDA OneMap publishes the MCG limit at 1985, 1996, 2008, 2010, 2015 and 2020, which is the city eating its own catchment in six dated steps - but the narrative is unwritten. |
 | gurugram | rivers | Gurugram has no river. Its NWMP monitoring stations are all lakes and borewells, and its surface water leaves the city as drain flow into the Najafgarh jheel and then Delhi's Najafgarh drain. There is nothing to put on a rivers page that would not be an invention. |

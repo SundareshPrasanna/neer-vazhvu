@@ -108,19 +108,36 @@ export const GURUGRAM: CityConfig = {
     lostBodies: false,
   },
   groundwaterViews: {
-    // ALL OFF at preview, and the reason is the uncomfortable one: the
-    // signature issue is the thinnest data. Gurugram's WRIS groundwater
-    // LEVEL record is 37 stations that stop in June 2020, and the city has
-    // no WRIS telemetry at all - the Haryana telemetry exports cover 14
-    // districts and Gurugram is not one of them. 37 stations over 36 wards
-    // would not carry honest per-ward interpolation even if they were
-    // current.
-    exploitation: false,
+    // ON. IN-GRES is the canonical assessment source (standing decision), and
+    // it turns out to carry Gurugram at full depth: four assessment years to
+    // 2024-25, district AND block level, all current.
+    //
+    // This is the number the city is about. Gurugram district extracts
+    // 194.59% of its annual recharge - almost exactly the "~195%" the research
+    // drop asserted with no source behind it, now replaced by the primary one.
+    // At block level it is worse and more specific: GURGAON_URBAN is at
+    // 326.26%, the built city extracting more than three times what it takes
+    // in, with Pataudi 168.48, Sohna 156.86, Farrukh Nagar 143.39 and rural
+    // Gurgaon 106.91. Every one of the five is over-exploited. For context the
+    // Haryana state figure is 136.75%.
+    //
+    // The neighbours are carried deliberately: Nuh (Mewat) semi-critical,
+    // Palwal critical, Rewari and Faridabad over-exploited, Jhajjar safe. The
+    // aquifer does not stop at the district line, and Jhajjar being safe is
+    // what makes the rest legible as a local failure rather than a regional
+    // condition.
+    exploitation: true,
+    // OFF, and NOT for lack of a pipeline. The India-WRIS LEVEL series for
+    // Gurugram is 37 stations that stop in June 2020, and the district has no
+    // WRIS telemetry at all - the two Haryana telemetry exports cover 14
+    // districts and Gurugram is not one of them. So there is no current depth
+    // surface to interpolate, and 37 stations across 36 wards would not carry
+    // honest per-ward precision even if there were.
     depth: false,
     risk: false,
+    // OFF for the same reason: the point network exists but ends June 2020.
+    // Revisit if HWRA or a CGWB Year Book yields a post-2020 series.
     cgwbStations: false,
-    gapNote:
-      'Gurugram is a Central Ground Water Authority dark zone, declared in 2008, and it is also the city on this platform with the weakest published groundwater record. The India-WRIS level series covers 37 stations and stops in June 2020; the Haryana telemetry network does not include this district at all. The current picture has to come from IN-GRES block assessment and the state pollution board’s 2016-2024 water-quality series instead, and neither is wired up yet.',
   },
   // OFF because the pipeline has not run here, NOT because Gurugram cannot
   // support it - GMDA's own GIS carries a 10-polygon Watershed_Gurugram layer
