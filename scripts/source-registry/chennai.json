@@ -149,31 +149,6 @@
       }
     },
     {
-      "id": "ingres-gw-assessment-tn",
-      "scope": "chennai",
-      "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
-      "url": "https://ingres.iith.ac.in/",
-      "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
-      "type": "page",
-      "cadence": "yearly (GEC assessment)",
-      "tier": 1,
-      "detection": {
-        "method": "http-meta"
-      },
-      "dependsOn": [
-        "public/data/gwr-blocks.json",
-        "public/geojson/chennai-gwr-blocks.geojson",
-        "public/data/gw-stations.json"
-      ],
-      "refreshMethod": "manual (scripts/fetch-wris-groundwater.ts for the WRIS side; IN-GRES payload capture still open)",
-      "notes": "Dynamic Ground Water Resources assessment - block-level Safe/Semi-Critical/Critical/Over-Exploited classes and stage-of-extraction %, 16 Chennai-area blocks 2011-2024. IN-GRES is the canonical GW-assessment source for every city by user directive (see memory reference_ingres_groundwater); it is non-NICNET and reachable. CAVEAT: http-meta here watches the SPA build (Last-Modified 30 Jun 2026 + ETag, both verified 2026-07-26), NOT the assessment data itself - a redeploy will false-positive and a data-only update could be missed. Replace with an api-date watch once the IN-GRES payload capture lands. India-WRIS itself is a JS app with no watchable static endpoint, which is why it is not the url here. LICENCE: verified by fetching ingres.iith.ac.in and grepping the full Angular app bundle (main.*.js, 2.0 MB): zero occurrences of a copyright policy, terms of use, disclaimer or licence statement - the only 'Policy' matches are Leaflet's referrerPolicy option and the only 'terms' match is an FAQ sentence about years of data (verified 2026-07-31). This entry previously ended '- GoI publication, cited with attribution', which made the classifier read the suffix and return gov-attribution: a clean result the evidence never earned. CGWB is the assessment's upstream authority in the scientific sense, but NO evidence establishes that CGWB's website policy legally governs material delivered by an IIT-Hyderabad-hosted portal, so that is not asserted. Fails closed as vague until somebody reads terms that actually exist.",
-      "lastSeen": {
-        "etag": "W/\"c20-19f18174cc0\"",
-        "lastModified": "Tue, 30 Jun 2026 10:33:28 GMT",
-        "acceptedOn": "2026-07-26"
-      }
-    },
-    {
       "id": "crrt-restoration-projects",
       "scope": "chennai",
       "publisher": "Chennai Rivers Restoration Trust",

@@ -342,32 +342,6 @@
       "ciBlocked": "Blocks GitHub runner IPs - every url-template year probe failed from CI on 2026-07-26 while all of them resolve from a residential India IP. Confirmed by the pre-merge dry run."
     },
     {
-      "id": "ingres-gw-assessment-madurai",
-      "scope": "madurai",
-      "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
-      "url": "https://ingres.iith.ac.in/",
-      "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
-      "type": "page",
-      "cadence": "yearly (GEC assessment)",
-      "tier": 1,
-      "detection": {
-        "method": "http-meta"
-      },
-      "dependsOn": [
-        "public/data/gwr-blocks-madurai.json",
-        "public/geojson/madurai-gwr-blocks.geojson",
-        "public/data/facts-madurai.json",
-        "public/data/madurai-ward-profiles.json"
-      ],
-      "refreshMethod": "manual (WRIS GEC extract)",
-      "notes": "Third scope on the same IN-GRES source (see ingres-gw-assessment-tn and -ka); separate entry because the dependsOn differ. PLAYBOOK - GRANULARITY TRAP: CGWB's TN assessment shifted from 66 firka-level units to 11 block-level units, and the two are NOT comparable. gwr-blocks-madurai.json holds 66 blocks while madurai-gwr-blocks.geojson holds 11 - that is the shift, not a bug. A new GEC round that changes units again is a SCHEMA BREAK and must stop the pipeline for a human decision (new series alongside, never overwrite). See memory madurai_groundwater_provenance_gotchas and the fix in PR #130. Same SPA-build caveat as the other two IN-GRES entries. LICENCE: verified by fetching ingres.iith.ac.in and grepping the full Angular app bundle (main.*.js, 2.0 MB): zero occurrences of a copyright policy, terms of use, disclaimer or licence statement - the only 'Policy' matches are Leaflet's referrerPolicy option and the only 'terms' match is an FAQ sentence about years of data (verified 2026-07-31). This entry previously ended '- GoI publication, cited with attribution', which made the classifier read the suffix and return gov-attribution: a clean result the evidence never earned. CGWB is the assessment's upstream authority in the scientific sense, but NO evidence establishes that CGWB's website policy legally governs material delivered by an IIT-Hyderabad-hosted portal, so that is not asserted. Fails closed as vague until somebody reads terms that actually exist.",
-      "lastSeen": {
-        "etag": "W/\"c20-19f18174cc0\"",
-        "lastModified": "Tue, 30 Jun 2026 10:33:28 GMT",
-        "acceptedOn": "2026-07-26"
-      }
-    },
-    {
       "id": "madurai-corp-projects",
       "scope": "madurai",
       "publisher": "Madurai City Municipal Corporation",

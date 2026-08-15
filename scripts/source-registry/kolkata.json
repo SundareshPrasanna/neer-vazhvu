@@ -100,25 +100,6 @@
       "notes": "Counterpart figures to KMC's balance: 12,500 hectares, 254 sewage-fed fisheries, 37 mouzas (30 full, 7 part) across South and North 24 Parganas, constituted under the East Kolkata Wetlands (Conservation and Management) Act, 2006. Publishes an Integrated Management Plan 2021-2026, Supreme Court / Calcutta HC / NGT orders, and FIR-status and charge-sheet pages - an encroachment-enforcement record structurally parallel to HYDRAA's in Hyderabad. The FIR page rendered no HTML table on probe; format still to determine."
     },
     {
-      "id": "ingres-groundwater-westbengal",
-      "scope": "kolkata",
-      "publisher": "IN-GRES (CGWB + West Bengal state groundwater department), IIT Hyderabad",
-      "url": "https://ingres.iith.ac.in/",
-      "license": "Government of India assessment portal, cited with attribution",
-      "type": "api",
-      "cadence": "yearly",
-      "tier": 1,
-      "detection": {
-        "method": "human-review",
-        "reviewEveryDays": 180
-      },
-      "dependsOn": [
-        "public/data/gwr-blocks-kolkata.json"
-      ],
-      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_ingres_gwr.py --city kolkata)",
-      "notes": "DETECTION CORRECTED 2026-08-15. This entry shipped with a method name the checker does not implement, so it fell through to the link-set branch and reported 'linkPattern matched 0 links' every week - which reads as an upstream fault and was ours. Cannot be machine-watched: IN-GRES is a JS portal whose year list is not in the served markup; a new assessment year is a judgement call on a rendered page. Carries a 180-day review cadence instead, which escalates to REVIEW-DUE when it lapses. IIT-Hyderabad hosted, so OUTSIDE the NICNET gate that blocks CPCB/CGWA. Payload gotchas: lowercase keys, locname with NO spaces ('WESTBENGAL'), view lowercase 'admin', and parentuuid REQUIRED as the discriminator - without it the server returns a well-formed response containing only an empty total row, which reads as 'no data for this state'. WB state uuid 68ecabb4-0ea5-4909-b8e3-20bbaa7b91e8 from the Angular bundle's STATEUUIDLAYERNAME. KOLKATA IS CATEGORISED 'salinity' and carries NO extraction figures - CGWB does not assess saline aquifers on extraction, so an exploitation choropleth is impossible for the district. Watch for North 24 Parganas, which moved safe -> semi_critical in 2024-25."
-    },
-    {
       "id": "indiawris-gwl-kolkata",
       "scope": "kolkata",
       "publisher": "Central Ground Water Board via India-WRIS",

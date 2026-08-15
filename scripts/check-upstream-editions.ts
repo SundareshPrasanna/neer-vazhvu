@@ -64,6 +64,21 @@ type DetectionMethod =
       number of cities. */
   | "human-review";
 
+/** Single source of truth for what the dispatch below can actually execute.
+ *  Keep in lockstep with DetectionMethod - the type guards TypeScript callers,
+ *  this guards the JSON registry, and the registry is where the bugs came from. */
+const IMPLEMENTED_METHODS = new Set<string>([
+  "link-set",
+  "page-hash",
+  "http-meta",
+  "api-date",
+  "term-expiry",
+  "url-template",
+  "continuous",
+  "content-hash",
+  "human-review",
+]);
+
 interface Detection {
   method: DetectionMethod;
   /** link-set: regex tested against each absolute href on the page. */
@@ -232,6 +247,20 @@ function validate(entries: SourceEntry[]): string[] {
     const d = e.detection;
     if (!d?.method) {
       problems.push(`${where}: missing detection.method`);
+      continue;
+    }
+    // The registry is JSON, so nothing stopped a new city inventing a method
+    // name. Kolkata shipped six that do not exist; Hyderabad shipped three
+    // aimed at markup a React SPA never serves. Both look like coverage on the
+    // registry and are dead - they reported an upstream fault that was ours,
+    // weekly, for weeks. Fail the registry at onboarding, where it is cheap.
+    if (!IMPLEMENTED_METHODS.has(d.method)) {
+      problems.push(
+        `${where}: detection.method "${d.method}" is not implemented by this checker. ` +
+          `Implemented: ${[...IMPLEMENTED_METHODS].sort().join(", ")}. ` +
+          `A method the checker cannot run is a source that is never watched - ` +
+          `use human-review with a reviewEveryDays cadence if it genuinely cannot be automated.`,
+      );
       continue;
     }
     if (d.method === "link-set") {

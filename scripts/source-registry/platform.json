@@ -361,6 +361,42 @@
         "pageHash": "2bc5474c47902288",
         "acceptedOn": "2026-07-26"
       }
+    },
+    {
+      "id": "ingres-gw-assessment",
+      "scope": "platform",
+      "publisher": "CGWB + state groundwater departments (IN-GRES, hosted at IIT Hyderabad)",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "Government of India publication, cited with attribution",
+      "type": "api",
+      "cadence": "yearly (GEC assessment)",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "lastSeen": {
+        "edition": "2024-2025",
+        "acceptedOn": "2026-08-15",
+        "reviewedOn": "2026-08-15"
+      },
+      "dependsOn": [
+        "public/data/bangalore-cgwb-stations.json",
+        "public/data/bangalore-ward-profiles.json",
+        "public/data/facts-madurai.json",
+        "public/data/gw-stations.json",
+        "public/data/gwr-blocks-bangalore.json",
+        "public/data/gwr-blocks-kolkata.json",
+        "public/data/gwr-blocks-madurai.json",
+        "public/data/gwr-blocks.json",
+        "public/data/ingres/delhi-2022-2023.json",
+        "public/data/madurai-ward-profiles.json",
+        "public/geojson/bangalore-gwr-blocks.geojson",
+        "public/geojson/chennai-gwr-blocks.geojson",
+        "public/geojson/madurai-gwr-blocks.geojson"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_ingres_gwr.py (city-generic; re-run per state for the new year)",
+      "notes": "COLLAPSED 2026-08-15 from five per-city entries (ka, tn, corridor-tn, delhi, madurai, plus the West Bengal one) that ALL pointed at the same url - the ingres.iith.ac.in front page - watched with http-meta. They fired together on one homepage Last-Modified bump and said nothing about any state's assessment, so the channel carried five identical non-events. IN-GRES is ONE upstream serving every state; it is one entry. WHY human-review: the edition is an ASSESSMENT YEAR and the year list is not in the served markup (Angular bundle). It IS machine-answerable via the solved open API, which is the review procedure: POST /api/gec/getBusinessDataForUserOpen with lowercase keys, locname with no spaces, view 'admin', and parentuuid REQUIRED (INDIA = ffce954d-24e1-494b-ba7e-0931d8ad6085), varying `year`. A year that exists returns the state's districts; one that does not returns a single empty 'total' row. BASELINE 2026-08-15, verified by that probe against Tamil Nadu: 2024-2025 returns 38 districts, 2025-2026 returns the empty total. 2024-2025 is the current edition and there is no newer one. When 2025-2026 starts returning districts it re-bases groundwater for every city at once. FOLLOW-UP: deserves a real api-probe detector (POST a candidate year, count named rows); the recipe above is complete enough to implement."
     }
   ]
 }
