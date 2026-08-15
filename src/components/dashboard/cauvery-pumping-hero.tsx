@@ -155,23 +155,48 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
           <p className="text-[11px] font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400">
             {format(t("pump.eyebrow"), { city: cityDisplayName })}
           </p>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
-            {copy.headline ??
-              format(t("pump.headline"), { km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
-          </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-            {copy.body ??
-              format(t("pump.body"), { city: cityDisplayName, km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
-          </p>
+          {/* The pump.* fallbacks are BANGALORE'S narrative - the Cauvery, TK
+              Halli, Kempe Gowda's kere network, the three valleys - not a
+              generic pumped-city story. Falling back to them for another city
+              does not render something bland, it renders Bengaluru's water
+              system under that city's name. Gurugram's first draft did exactly
+              that in preview, claiming its water climbs 500 m from a river
+              600 km away.
+
+              So the narrative is city-keyed: Bengaluru keeps the i18n strings
+              it was written for, and any other city renders its own hero_copy
+              or renders no narrative at all. Nothing is better than another
+              city's story. The stat tiles below are safe either way - each is
+              already conditional on its own datum. */}
+          {(copy.headline || cityId === "bangalore") && (
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
+              {copy.headline ??
+                format(t("pump.headline"), { km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
+            </h2>
+          )}
+          {(copy.body || cityId === "bangalore") && (
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+              {copy.body ??
+                format(t("pump.body"), { city: cityDisplayName, km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
+            </p>
+          )}
         </div>
 
         {/* Top row: 4 big stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {/* Unlike the narrative above, this tile carries a real number for
+              any city, so it stays - but its default label says "Cauvery" and
+              its sub-label names TK Halli. Those are facts about Bengaluru, so
+              a city without overrides gets a neutral label rather than a wrong
+              one, and no sub-label at all rather than an invented provenance. */}
           <Stat
             value={formatNumber(cauveryMld)}
             unit="MLD"
-            label={copy.wtp_label ?? t("pump.stat.wtp_label")}
-            sub={copy.wtp_sub ?? t("pump.stat.wtp_sub")}
+            label={
+              copy.wtp_label ??
+              (cityId === "bangalore" ? t("pump.stat.wtp_label") : "Treatment capacity")
+            }
+            sub={copy.wtp_sub ?? (cityId === "bangalore" ? t("pump.stat.wtp_sub") : undefined)}
           />
           {transmissionKm && (
             <Stat

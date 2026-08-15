@@ -161,6 +161,7 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   gurugram: new Set([
     "",
     "about",
+    "origins",
     "groundwater",
     "water-bodies",
     "my-ward",
