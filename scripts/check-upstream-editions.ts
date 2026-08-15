@@ -44,7 +44,40 @@ type DetectionMethod =
       dependsOn accountability (NVDM per-source rule); never fetched by this
       checker - re-fetch cadence is the coverage gate's freshness question
       (P5-1). This replaces keeping such sources registry-less. */
-  | "continuous";
+  | "continuous"
+  /** Byte hash of the response body itself, for upstreams that are a FILE
+      rather than a page - a PDF republished in place at a stable URL, where
+      there is no listing to diff and no Last-Modified worth trusting. */
+  | "content-hash"
+  /** NOT a detector. An explicit, dated promise that a human will look.
+      Some upstreams cannot be watched by machine at all: a portal behind a
+      login, a page whose "new edition" is a judgement call, a site that
+      refuses every automated client. The honest options are to drop the
+      source or to commit to a cadence, and dropping it means the numbers
+      rot invisibly.
+
+      So this method never claims a detection. It records reviewEveryDays
+      and the date of the last human review, and goes REVIEW-DUE when that
+      lapses - the same escalation ciBlocked entries already get after
+      LOCAL_CHECK_MAX_AGE_DAYS. Manual work does not scale, but a BOUNDED,
+      NAGGING amount of manual work does: cost tracks the cadence, not the
+      number of cities. */
+  | "human-review";
+
+/** Single source of truth for what the dispatch below can actually execute.
+ *  Keep in lockstep with DetectionMethod - the type guards TypeScript callers,
+ *  this guards the JSON registry, and the registry is where the bugs came from. */
+const IMPLEMENTED_METHODS = new Set<string>([
+  "link-set",
+  "page-hash",
+  "http-meta",
+  "api-date",
+  "term-expiry",
+  "url-template",
+  "continuous",
+  "content-hash",
+  "human-review",
+]);
 
 interface Detection {
   method: DetectionMethod;
@@ -67,6 +100,8 @@ interface Detection {
   urlTemplate?: string;
   /** url-template: first year to probe. Defaults to the current year - 1. */
   templateFrom?: number;
+  /** human-review: how often a person must re-check this upstream. */
+  reviewEveryDays?: number;
   /**
    * url-template: require this Content-Type prefix before counting a year as
    * published. For hosts that SOFT-404 - answering a missing edition with a
@@ -100,6 +135,10 @@ interface LastSeen {
   etag?: string;
   lastModified?: string;
   apiDate?: string;
+  /** content-hash: sha of the response body. */
+  contentHash?: string;
+  /** human-review: YYYY-MM-DD a human last confirmed the edition on record. */
+  reviewedOn?: string;
 }
 
 interface SourceEntry {
@@ -243,6 +282,20 @@ function validate(entries: SourceEntry[]): string[] {
       problems.push(`${where}: missing detection.method`);
       continue;
     }
+    // The registry is JSON, so nothing stopped a new city inventing a method
+    // name. Kolkata shipped six that do not exist; Hyderabad shipped three
+    // aimed at markup a React SPA never serves. Both look like coverage on the
+    // registry and are dead - they reported an upstream fault that was ours,
+    // weekly, for weeks. Fail the registry at onboarding, where it is cheap.
+    if (!IMPLEMENTED_METHODS.has(d.method)) {
+      problems.push(
+        `${where}: detection.method "${d.method}" is not implemented by this checker. ` +
+          `Implemented: ${[...IMPLEMENTED_METHODS].sort().join(", ")}. ` +
+          `A method the checker cannot run is a source that is never watched - ` +
+          `use human-review with a reviewEveryDays cadence if it genuinely cannot be automated.`,
+      );
+      continue;
+    }
     if (d.method === "link-set") {
       if (!d.linkPattern) problems.push(`${where}: link-set needs linkPattern`);
       else {
@@ -255,6 +308,11 @@ function validate(entries: SourceEntry[]): string[] {
     }
     if (d.method === "api-date" && !d.datePath)
       problems.push(`${where}: api-date needs datePath`);
+    if (d.method === "human-review" && !d.reviewEveryDays)
+      problems.push(
+        `${where}: human-review needs reviewEveryDays - an unautomatable source ` +
+          `may ship without a detector, but not without a cadence, or it rots silently`,
+      );
     if (d.method === "term-expiry") {
       if (!d.termEndsOn) problems.push(`${where}: term-expiry needs termEndsOn`);
       else if (!/^\d{4}-\d{2}-\d{2}$/.test(d.termEndsOn) || Number.isNaN(Date.parse(d.termEndsOn)))
@@ -447,6 +505,20 @@ async function observeInner(e: SourceEntry): Promise<Observed> {
     return { apiDate: `${latest.year} ${latest.url}` };
   }
 
+  if (d.method === "content-hash") {
+    const res = await fetchWithTimeout(e.url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.length === 0) throw new Error("empty body - nothing to hash");
+    return { contentHash: sha256(buf.toString("binary")) };
+  }
+
+  if (d.method === "human-review") {
+    // Deliberately no fetch. This method asserts nothing about the upstream;
+    // the state comes entirely from when a person last looked.
+    return {};
+  }
+
   if (d.method === "http-meta") {
     let res = await fetchWithTimeout(e.url, { method: "HEAD" });
     if (!res.ok) res = await fetchWithTimeout(e.url); // some servers reject HEAD
@@ -518,7 +590,7 @@ async function observeInner(e: SourceEntry): Promise<Observed> {
 
 interface CheckResult {
   entry: SourceEntry;
-  state: "ok" | "new-edition" | "check-failed" | "unbaselined" | "local-only";
+  state: "ok" | "new-edition" | "check-failed" | "unbaselined" | "local-only" | "review-due";
   detail: string;
   /** link-set only: links present now but not in lastSeen. */
   newLinks?: string[];
@@ -560,6 +632,33 @@ function compare(e: SourceEntry, obs: Observed): CheckResult {
   }
 
   const last = e.lastSeen;
+  const m = e.detection.method;
+  if (m === "human-review") {
+    const every = e.detection.reviewEveryDays ?? 90;
+    // `last` is undefined for an entry that has never been accepted, which is
+    // the normal starting state here - human-review deliberately skips the
+    // unbaselined short-circuit so it can say "nobody has ever looked".
+    const on = last?.reviewedOn ?? last?.acceptedOn;
+    if (!on) {
+      return {
+        entry: e,
+        state: "review-due",
+        detail: `never reviewed - look at the source, then --accept ${e.id} --edition "<what you saw>"`,
+        observed: obs,
+      };
+    }
+    const age = Math.floor((Date.now() - new Date(on).getTime()) / 86_400_000);
+    const due = age >= every;
+    return {
+      entry: e,
+      state: due ? "review-due" : "ok",
+      detail: due
+        ? `last reviewed ${on} (${age}d ago, cadence ${every}d) - re-check and --accept`
+        : `reviewed ${on} (${age}d ago, next in ${every - age}d)`,
+      observed: obs,
+    };
+  }
+  // Every other method needs a baseline before it can say anything.
   if (!last || Object.keys(last).length === 0) {
     return {
       entry: e,
@@ -568,7 +667,6 @@ function compare(e: SourceEntry, obs: Observed): CheckResult {
       observed: obs,
     };
   }
-  const m = e.detection.method;
   if (m === "http-meta") {
     const changed =
       (obs.etag && last.etag && obs.etag !== last.etag) ||
@@ -580,6 +678,17 @@ function compare(e: SourceEntry, obs: Observed): CheckResult {
       detail: changed
         ? `Last-Modified ${last.lastModified ?? "-"} -> ${obs.lastModified ?? "-"}`
         : `unchanged (${obs.lastModified ?? obs.etag})`,
+      observed: obs,
+    };
+  }
+  if (m === "content-hash") {
+    const changed = obs.contentHash !== last.contentHash;
+    return {
+      entry: e,
+      state: changed ? "new-edition" : "ok",
+      detail: changed
+        ? `file content changed (hash ${last.contentHash} -> ${obs.contentHash})`
+        : `unchanged (${obs.contentHash})`,
       observed: obs,
     };
   }
@@ -624,9 +733,12 @@ function compare(e: SourceEntry, obs: Observed): CheckResult {
 const STATE_ORDER: Record<CheckResult["state"], number> = {
   "new-edition": 0,
   "check-failed": 1,
-  unbaselined: 2,
-  "local-only": 3,
-  ok: 4,
+  // Above unbaselined: a lapsed review is a commitment we made and missed,
+  // where an unbaselined entry is only ever setup we have not finished.
+  "review-due": 2,
+  unbaselined: 3,
+  "local-only": 4,
+  ok: 5,
 };
 
 function writeReport(results: CheckResult[], now: string): string {
@@ -638,11 +750,13 @@ function writeReport(results: CheckResult[], now: string): string {
   const failN = count("check-failed");
   const baseN = count("unbaselined");
   const localN = count("local-only");
+  const reviewN = count("review-due");
   lines.push(
-    newN + failN + baseN === 0
+    newN + failN + baseN + reviewN === 0
       ? `All ${results.length} watched sources unchanged.` +
           (localN ? ` (${localN} checked from local runs only - runner IPs blocked.)` : "")
-      : `**${newN} new edition(s), ${failN} check failure(s), ${baseN} unbaselined** of ${results.length} watched sources.` +
+      : `**${newN} new edition(s), ${failN} check failure(s), ${reviewN} review(s) due, ` +
+          `${baseN} unbaselined** of ${results.length} watched sources.` +
           (localN ? ` ${localN} local-only.` : ""),
   );
   lines.push("");
@@ -655,7 +769,7 @@ function writeReport(results: CheckResult[], now: string): string {
     );
   }
 
-  const actionable = results.filter((r) => r.state === "new-edition" || r.state === "check-failed");
+  const actionable = results.filter((r) => r.state === "new-edition" || r.state === "check-failed" || r.state === "review-due");
   for (const r of actionable) {
     lines.push("");
     lines.push(`### ${r.entry.id} - ${r.state}`);
@@ -678,6 +792,19 @@ function writeReport(results: CheckResult[], now: string): string {
   }
   const report = lines.join("\n");
   writeFileSync(REPORT_FILE, report);
+  // Machine-readable companion for .github/workflows/lib/rolling-alert.js:
+  // the alert channel notifies on CHANGE, so it diffs these stable keys
+  // rather than scraping the table above. Only actionable states are keyed -
+  // an `ok` source is not news, and `unbaselined`/`local-only` are chores
+  // rather than upstream events.
+  writeFileSync(
+    REPORT_FILE.replace(/\.md$/, "-keys.json"),
+    JSON.stringify(
+      actionable.map((r) => `${r.entry.id} (${r.state})`),
+      null,
+      2,
+    ) + "\n",
+  );
   return report;
 }
 
@@ -838,7 +965,7 @@ async function main() {
   const report = writeReport(results, now);
   console.log(report);
   const alerting = results.filter(
-    (r) => r.state === "new-edition" || r.state === "check-failed",
+    (r) => r.state === "new-edition" || r.state === "check-failed" || r.state === "review-due",
   );
   if (alerting.length || problems.length) process.exit(1);
 }

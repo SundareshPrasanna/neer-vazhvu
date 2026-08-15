@@ -503,6 +503,25 @@ async function main() {
 
   const report = lines.join("\n");
   writeFileSync(resolve(ROOT, "freshness-report.md"), report);
+  // Machine-readable companion for .github/workflows/lib/rolling-alert.js.
+  // The alert channel notifies on CHANGE, which means it needs stable keys to
+  // diff rather than prose to scrape. Registry problems are keyed separately
+  // so a checker fault is never mistaken for a stale feed.
+  writeFileSync(
+    resolve(ROOT, "freshness-keys.json"),
+    JSON.stringify(
+      [
+        // NOTE the key is the feed id plus, at most, the ERROR - never the age.
+        // Age changes every day, and a key that changes every day would make
+        // the channel comment every day, which is the exact noise this
+        // replaces. "Still stale, one day staler" is not news.
+        ...stale.map((r) => (r.error ? `${r.check.id} (${r.error})` : r.check.id)),
+        ...problems.map((p) => `registry: ${p}`),
+      ],
+      null,
+      2,
+    ) + "\n",
+  );
   console.log(report);
   if (stale.length || problems.length) process.exit(1);
 }

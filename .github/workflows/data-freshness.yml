@@ -47,39 +47,29 @@ jobs:
         run: npx tsx scripts/check-data-freshness.ts --check
 
       - name: Alert on stale feeds
-        if: steps.freshness.outcome == 'failure'
+        # Always runs, including on success: the rolling alert must be able to
+        # CLOSE its issue when everything comes back fresh. Gating this on
+        # failure is why a recovered feed never cleared its alert.
+        if: always()
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const today = new Date().toISOString().slice(0, 10);
-            const title = `Data freshness: stale feeds - ${today}`;
+            const { rollingAlert } = require('./.github/workflows/lib/rolling-alert.js');
+            const keys = fs.existsSync('freshness-keys.json')
+              ? JSON.parse(fs.readFileSync('freshness-keys.json', 'utf-8'))
+              : ['freshness-keys.json missing - the checker itself errored'];
             const report = fs.existsSync('freshness-report.md')
               ? fs.readFileSync('freshness-report.md', 'utf-8')
               : 'freshness-report.md missing - the checker itself errored; see the run log.';
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'pipeline-alert',
-              state: 'open',
+            await rollingAlert({
+              github, context,
+              title: 'Data freshness: stale feeds',
+              labels: ['pipeline-alert', 'data-freshness'],
+              report, keys,
+              footer: [
+                'Known recovery: CMWSSB and Pravah both intermittently block GitHub',
+                'runner IPs while responding normally from residential IPs - running the',
+                'scraper locally recovers the day (see neer-vazhvu-api/scripts/).',
+              ].join('\n'),
             });
-            const existing = issues.find(i => i.title === title);
-            if (!existing) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title,
-                labels: ['pipeline-alert', 'data-freshness'],
-                body: [
-                  report,
-                  '',
-                  `**Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-                  '',
-                  'Known recovery: CMWSSB and Pravah both intermittently block GitHub',
-                  'runner IPs while responding normally from residential IPs - running the',
-                  'scraper locally recovers the day (see neer-vazhvu-api/scripts/).',
-                  '',
-                  'This issue is created once per day while feeds remain stale.',
-                ].join('\n'),
-              });
-            }
