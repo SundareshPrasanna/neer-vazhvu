@@ -59,6 +59,13 @@ const CITY_HOOKS: Record<string, string> = {
     "The Musi and its tank cascade, a 2,978-lake gazetted register, the utility's own tanker ledger, and a daily statement that publishes the draw as well as the storage.",
   kolkata:
     "Victorian sewers rated for 6 mm of rain an hour, KMC's own weekly waterlogging register, the wetlands that treat two-thirds of the city's sewage, and the Adi Ganga at zero dissolved oxygen.",
+  // Added with the city itself, NOT after cutover. buildCityBoard() maps over
+  // listAllPlaces(), so a registered-but-disabled city already renders a card
+  // here - a missing hook shows as an Onboarding badge above an empty line.
+  // That is exactly how Hyderabad and Mumbai both shipped a blank card, and
+  // this map is not derived from the registry, so nothing catches it for you.
+  gurugram:
+    "No river, no reservoir, and a dark zone since 2008 - plus GMDA's own ledger of every tanker load it sold, naming who bought it and at what price.",
 };
 
 type CityStatus = "live" | "onboarding" | "upnext";
