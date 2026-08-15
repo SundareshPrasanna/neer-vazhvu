@@ -1,9 +1,18 @@
 import type { CityConfig } from './types';
 
-// Gurugram, city nine. PREVIEW-GATED: `enabled: false` keeps it out of
-// listEnabledPlaces(), the [cityId] route guard, the switcher and the nav
-// until the surfaces below are actually worth reading. Reach it with
-// NEXT_PUBLIC_PREVIEW_CITIES=gurugram.
+// Gurugram went LIVE on 2026-08-15 as the ninth city. `enabled: true` is the
+// only functional switch: the route guard in [cityId]/layout.tsx reads it, and
+// the `enabled` column in the Supabase `cities` table is read by no code at all
+// (043 keeps that row honest for a fresh rebuild, but it is consistency, not a
+// gate).
+//
+// SHIPPED THIN, ON PURPOSE AND ON RECORD. Six nav routes against Hyderabad's
+// thirteen. Two things are missing and neither is a bug to hunt: there is no
+// Origins narrative yet, and there is no hero, because every supply figure in
+// circulation for this city is press-sourced and GMDA's own GIS contradicts
+// the most-quoted pair. Both are named in the exemption register rather than
+// left to look like oversights. What IS here is the signature issue, sourced
+// properly, and a tanker ledger no other city on the platform can match.
 //
 // Plan and source verification: docs/specs/gurugram-onboarding.md (local).
 // Data acquisition landed in neer-vazhvu#264; this file is the config that
@@ -154,5 +163,5 @@ export const GURUGRAM: CityConfig = {
   hasCascadeOverlay: false,
   // Landlocked.
   hasShoreline: false,
-  enabled: false,
+  enabled: true,
 };
