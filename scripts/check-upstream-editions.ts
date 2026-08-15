@@ -609,6 +609,19 @@ function writeReport(results: CheckResult[], now: string): string {
   }
   const report = lines.join("\n");
   writeFileSync(REPORT_FILE, report);
+  // Machine-readable companion for .github/workflows/lib/rolling-alert.js:
+  // the alert channel notifies on CHANGE, so it diffs these stable keys
+  // rather than scraping the table above. Only actionable states are keyed -
+  // an `ok` source is not news, and `unbaselined`/`local-only` are chores
+  // rather than upstream events.
+  writeFileSync(
+    REPORT_FILE.replace(/\.md$/, "-keys.json"),
+    JSON.stringify(
+      actionable.map((r) => `${r.entry.id} (${r.state})`),
+      null,
+      2,
+    ) + "\n",
+  );
   return report;
 }
 
