@@ -382,15 +382,27 @@ export interface BasePlaceConfig {
    *  the river stations downstream. Reads `<cityId>-stps.json`. Omit -> hidden. */
   hasTreatmentDischarge?: boolean;
 
-  /** Which KIND of tanker data this city has. The two are not
-   *  interchangeable and must not share a renderer:
+  /** Which KIND of tanker data this city has. The three are not
+   *  interchangeable and must not share a renderer - they answer different
+   *  questions off different evidence:
    *  - `household-survey` (default, Bengaluru): longitudinal price surveys of
-   *    what households pay a private market. Reads
+   *    what households pay a private market. Sampled, demand-side. Reads
    *    `<cityId>-tanker-survey.json`.
    *  - `utility-ledger` (Hyderabad): the utility's own booking/delivery
    *    record, because HMWSSB runs the fleet itself. No prices exist in it.
-   *    Reads `<cityId>-tankers.json`. */
-  tankerDataKind?: 'household-survey' | 'utility-ledger';
+   *    Reads `<cityId>-tankers.json`.
+   *  - `utility-sales-ledger` (Gurugram): the utility's own SALES record -
+   *    every tanker load GMDA sold, from which dispensing point, of which
+   *    water grade, to which named buyer, at which tariff. A census of
+   *    priced transactions. There is no delivery confirmation to measure
+   *    because a booking here IS a collection, and no ward or section unit
+   *    because the analytical dimensions are station, water type and buyer.
+   *    Reads `<cityId>-tanker-sales.json`.
+   *
+   *  Adding a fourth kind is cheaper than bending one of these: forcing a
+   *  city through the wrong panel means making its required fields optional
+   *  and gutting its copy, which damages the city the panel was written for. */
+  tankerDataKind?: 'household-survey' | 'utility-ledger' | 'utility-sales-ledger';
 
   /** One-line description of what this city's tanker page actually shows.
    *  The shape of tanker data differs fundamentally by city - Bangalore has

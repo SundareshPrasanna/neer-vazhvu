@@ -51,6 +51,15 @@ CITIES = {
     # Matches the IMD gridded point in generate_imd_rainfall.py, not the city
     # centre: the provisional months must continue the same series they fill.
     "kolkata": (22.5000, 88.2500),
+    # Gurugram is NOT here yet, deliberately. Its grid point is (28.4360,
+    # 77.0560), the centroid of MCG's 36-ward extent, but this fetcher only
+    # fills provisional months AFTER an IMD authoritative base series, and
+    # imd-rainfall-monthly-gurugram.json does not exist. Adding the city
+    # before that base is generated would fail `--all` - and `--all` is what
+    # the daily rainfall-recent-refresh workflow runs, so the whole job would
+    # go red every day for every city. Add it in the same change as the IMD
+    # backfill, not before. Tracked by the freshness exemption
+    # "gurugram:rainfall-recent".
 }
 
 API = (

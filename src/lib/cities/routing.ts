@@ -150,6 +150,21 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "allocations",
     "commitments",
   ]),
+  // Gurugram preview set, deliberately small. Only the surfaces with data
+  // behind them are listed: the tanker sales ledger, the water-body register
+  // and the ward map. No `groundwater` - the signature issue is the thinnest
+  // data (37 WRIS stations ending June 2020, no telemetry) and an empty
+  // groundwater page on a dark-zone city would read as a bug rather than as
+  // the gap it is. No `rivers`, because Gurugram has no river. Features fill
+  // in as their artifacts land; this set drives nav while the city is
+  // preview-gated (NEXT_PUBLIC_PREVIEW_CITIES=gurugram).
+  gurugram: new Set([
+    "",
+    "about",
+    "water-bodies",
+    "my-ward",
+    "tanker",
+  ]),
 };
 
 /**
