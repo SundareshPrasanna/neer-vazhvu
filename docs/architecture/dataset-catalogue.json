@@ -8258,6 +8258,51 @@
    "flags": []
   },
   {
+   "path": "public/data/gurugram-supply-overview.json",
+   "family": "data-root",
+   "scope": "gurugram",
+   "dataset": "supply-overview",
+   "bytes": 6462,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_data_provenance_caveats",
+     "_note",
+     "_sources",
+     "_supply_total_note",
+     "current_supply_mix_mld",
+     "current_supply_total_mld",
+     "dataset",
+     "distribution",
+     "groundwater",
+     "hero_copy",
+     "nvdm",
+     "provenance",
+     "scope",
+     "supply_chain"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/components/dashboard/cauvery-pumping-hero.tsx",
+    "src/components/dashboard/urban-supply-overview.tsx",
+    "src/lib/cities/gurugram.ts",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_supply.py"
+   ],
+   "headwaters_sources": [
+    "gmda-onemap-arcgis"
+   ],
+   "licenses": [
+    "restrictive, permission required: no licence or access-constraint statement is served with the ArcGIS REST directory, and the parent gmda.gov.in asserts 'All rights reserved' - open in the ACCESS sense, unlicensed in the REUSE sense"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/gurugram-tanker-sales.json",
    "family": "data-root",
    "scope": "gurugram",
@@ -8288,6 +8333,7 @@
    },
    "consumers": [
     "src/app/[cityId]/tanker/page.tsx",
+    "src/content/story-gurugram-en.tsx",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -8471,7 +8517,9 @@
      "unit_note"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/content/story-gurugram-en.tsx"
+   ],
    "producer_refs": [],
    "headwaters_sources": [
     "ingres-groundwater-haryana"
@@ -23523,16 +23571,17 @@
   {
    "family": "data-root",
    "dataset": "supply-overview",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "gurugram",
     "madurai",
     "mumbai"
    ],
-   "bytes": 101838,
-   "schema_variants": 5,
+   "bytes": 108300,
+   "schema_variants": 6,
    "registered": true,
    "has_consumer": true
   },

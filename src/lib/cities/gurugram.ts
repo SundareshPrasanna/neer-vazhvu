@@ -84,7 +84,24 @@ export const GURUGRAM: CityConfig = {
   sourceNameAliases: {},
   defaultConsumptionMld: null,
   defaultDesalinationMld: null,
-  heroMode: 'none',
+  // 'cauvery-pumping' - whose own docstring describes "we pump it from a long
+  // way away + local groundwater + tankers", a literal description of this
+  // city. Switched on 2026-08-15 once the numbers behind it were the
+  // publisher's own rather than a newspaper's.
+  //
+  // The hero reads gurugram-supply-overview.json, built by
+  // build_gurugram_supply.py, which reads GMDA's OneMap asset register AT BUILD
+  // TIME rather than transcribing it - so the headline cannot drift from what
+  // the authority publishes.
+  //
+  // WHAT IT DELIBERATELY DOES NOT SHOW: a deficit. GMDA's register puts
+  // installed treatment at 572 MLD (Chandu Budhera 300, Basai 272) where the
+  // press consistently says 670, and the "675-700 MLD peak demand" figure has
+  // no primary source we could reach - the Final Development Plan and Social
+  // Infrastructure Development Plan are scanned PDFs with no text layer. Both
+  // capacity figures are on the page with their sourcing; the subtraction is
+  // not, because it is exactly the number that would be quoted back at us.
+  heroMode: 'cauvery-pumping',
   // Says WHY there is no storage history instead of promising one will
   // appear. Gurugram impounds nothing: there is no dam to publish a level
   // for, so this is a permanent property of the city, not a backfill gap.

@@ -150,8 +150,10 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   "gurugram:shoreline": "Landlocked.",
   "gurugram:lake-restoration":
     "Needs a restoration-priority-gurugram.json, which needs a scorer. The water-body register is harvested and carries ownership, area and GMDA's own cross-survey flags, so the inputs are present and the ranking is simply not built.",
-  "gurugram:origins":
-    "Not built for this city yet. The spine is identified - GMDA OneMap publishes the MCG limit at 1985, 1996, 2008, 2010, 2015 and 2020, which is the city eating its own catchment in six dated steps - but the narrative is unwritten.",
+  // RETIRED 2026-08-15: written, on exactly the spine this entry named - the
+  // MCG limit at 1985/1996/2008/2010/2015/2020, paired with the 2008 dark-zone
+  // notification. Kept as a comment because a retired exemption is the evidence
+  // that these removal conditions are real.
   "gurugram:cascades":
     "Not a cascade geography. Aravalli johads and village ponds are a real water heritage, but no chained-surplus system was engineered here the way it was in the Tamil kanmoi districts or the Bengaluru kere chains, so the cascade story must not be told about this city. Catchment delineation itself is buildable - GMDA publishes a 10-polygon watershed layer and a natural-flow-direction layer - and is a separate question from the cascade narrative.",
   "gurugram:allocations":
