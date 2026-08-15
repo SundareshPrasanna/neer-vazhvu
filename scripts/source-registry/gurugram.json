@@ -51,6 +51,30 @@
         "apiDate": "11.2",
         "acceptedOn": "2026-08-14"
       }
+    },
+    {
+      "id": "ingres-groundwater-haryana",
+      "scope": "gurugram",
+      "publisher": "IN-GRES (CGWB + Haryana state groundwater department), IIT Hyderabad",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "Government of India assessment portal, cited with attribution",
+      "type": "api",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-gurugram.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_ingres_gwr.py --city gurugram)",
+      "notes": "IN-GRES is ONE upstream serving every state, and there are six of these entries all pointing at the same ingres.iith.ac.in front page. Watched with http-meta they fired together on a single homepage Last-Modified bump and reported six identical non-events. The ids are kept per-city on purpose: they carry lineage and are cited by name in 12 shipped artifact envelopes and 7 producers, so collapsing them is a DATA change needing a corpus release, not a registry tidy-up. Follow-up, on its own PR. What changes here is the method. The edition is an ASSESSMENT YEAR and the year list is not in the served markup (Angular bundle), so no page watch can see it. It IS machine-answerable via the solved open API: POST /api/gec/getBusinessDataForUserOpen with lowercase keys, locname with no spaces, view 'admin', parentuuid REQUIRED (INDIA = ffce954d-24e1-494b-ba7e-0931d8ad6085), varying `year`. A year that exists returns the state's districts; one that does not returns a single empty 'total' row. BASELINE 2026-08-15, verified against Tamil Nadu: 2024-2025 returns 38 districts, 2025-2026 returns the empty total. 2024-2025 is current; there is no newer edition. When 2025-2026 starts returning districts it re-bases groundwater for every city at once. IIT-Hyderabad hosted, so OUTSIDE the NICNET gate that blocks CPCB/CGWA. This is the source that closes Gurugram's signature issue: four assessment years to 2024-25, and unlike the WRIS LEVEL series (37 stations, stops June 2020, no telemetry for this district at all) it is current.\n\nTHE NUMBERS. Gurugram district extracts 194.59% of annual recharge, over_exploited - the primary source for the '~195%' the research drop asserted without one. Block level is worse and more specific: GURGAON_URBAN 326.26%, PATAUDI 168.48, SOHNA 156.86, FARRUKH NAGAR 143.39, GURGAON (rural) 106.91 - all five over_exploited. Haryana state total 136.75%. Neighbours carried for context: Rewari and Faridabad over_exploited, Palwal critical, Nuh (Mewat) semi_critical, Jhajjar safe.\n\nSTATE UUID TRAP - do not repeat it. Haryana is 648a95f6-9249-4c92-8ae4-a9d93eb7c898, obtained BY ASKING THE API: a COUNTRY-level call (locname=INDIA, loctype=COUNTRY, locuuid=parentuuid=INDIA_UUID) returns all 38 states with their uuids in one request. Do NOT source it from the Angular bundle the way West Bengal's was. That table (STATEUUIDLAYERNAME) is GIS-layer-scoped, INCOMPLETE - 27 of 36 states, Haryana absent - and main.js carries a SECOND table of the same shape (HR:{ST_CENSUS:6,name:'HARYANA',UUID:...}) in a different namespace. The decoy uuid is well-formed and returns an empty list for every year, which is indistinguishable from 'this state publishes nothing'. Only running West Bengal as a control through the same code proved the code was fine and the id was wrong.\n\nNAMING: IN-GRES still spells the district GURGAON, the pre-2016 name, where India-WRIS and LGD both say GURUGRAM. Third portal, third vocabulary - enumerate per portal.\n\nPayload gotchas inherited from the WB entry: lowercase keys, locname with NO spaces, view lowercase 'admin', parentuuid REQUIRED as the discriminator.",
+      "lastSeen": {
+        "edition": "2024-2025",
+        "acceptedOn": "2026-08-15",
+        "reviewedOn": "2026-08-15"
+      }
     }
   ]
 }

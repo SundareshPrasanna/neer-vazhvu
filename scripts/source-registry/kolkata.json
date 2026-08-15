@@ -100,6 +100,30 @@
       "notes": "Counterpart figures to KMC's balance: 12,500 hectares, 254 sewage-fed fisheries, 37 mouzas (30 full, 7 part) across South and North 24 Parganas, constituted under the East Kolkata Wetlands (Conservation and Management) Act, 2006. Publishes an Integrated Management Plan 2021-2026, Supreme Court / Calcutta HC / NGT orders, and FIR-status and charge-sheet pages - an encroachment-enforcement record structurally parallel to HYDRAA's in Hyderabad. The FIR page rendered no HTML table on probe; format still to determine."
     },
     {
+      "id": "ingres-groundwater-westbengal",
+      "scope": "kolkata",
+      "publisher": "IN-GRES (CGWB + West Bengal state groundwater department), IIT Hyderabad",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "Government of India assessment portal, cited with attribution",
+      "type": "api",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-kolkata.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_ingres_gwr.py --city kolkata)",
+      "notes": "IN-GRES is ONE upstream serving every state, and there are six of these entries all pointing at the same ingres.iith.ac.in front page. Watched with http-meta they fired together on a single homepage Last-Modified bump and reported six identical non-events. The ids are kept per-city on purpose: they carry lineage and are cited by name in 12 shipped artifact envelopes and 7 producers, so collapsing them is a DATA change needing a corpus release, not a registry tidy-up. Follow-up, on its own PR. What changes here is the method. The edition is an ASSESSMENT YEAR and the year list is not in the served markup (Angular bundle), so no page watch can see it. It IS machine-answerable via the solved open API: POST /api/gec/getBusinessDataForUserOpen with lowercase keys, locname with no spaces, view 'admin', parentuuid REQUIRED (INDIA = ffce954d-24e1-494b-ba7e-0931d8ad6085), varying `year`. A year that exists returns the state's districts; one that does not returns a single empty 'total' row. BASELINE 2026-08-15: West Bengal is on the same 2024-2025 assessment as every other state; the portal is one national release, not per-state.",
+      "lastSeen": {
+        "edition": "2024-2025",
+        "acceptedOn": "2026-08-15",
+        "reviewedOn": "2026-08-15"
+      }
+    },
+    {
       "id": "indiawris-gwl-kolkata",
       "scope": "kolkata",
       "publisher": "Central Ground Water Board via India-WRIS",
