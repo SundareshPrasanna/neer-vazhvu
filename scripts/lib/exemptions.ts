@@ -138,8 +138,13 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   // absences are properties of the city rather than backlog.
   "gurugram:rivers":
     "Gurugram has no river. Its NWMP monitoring stations are all lakes and borewells, and its surface water leaves the city as drain flow into the Najafgarh jheel and then Delhi's Najafgarh drain. There is nothing to put on a rivers page that would not be an invention.",
-  "gurugram:groundwater":
-    "The signature issue is the thinnest data, which is why this is off rather than empty. Gurugram has been a CGWA dark zone since 2008, but the India-WRIS level record is 37 stations that stop in June 2020 and the Haryana telemetry network does not cover this district at all - 95 MB of the state export contains zero Gurugram rows. 37 stations across 36 wards would not carry honest per-ward interpolation even if they were current. Closes on IN-GRES block assessment plus the HSPCB 2016-2024 quality series, both identified and neither wired up.",
+  // RETIRED 2026-08-15. The removal condition written into this entry was
+  // "closes on IN-GRES block assessment", and that is exactly what closed it:
+  // four assessment years to 2024-25, district and block level, all five
+  // Gurugram blocks over-exploited and GURGAON_URBAN at 326.26% of recharge.
+  // Kept as a comment rather than deleted because a retired exemption is the
+  // evidence that these removal conditions are real, which is how Kolkata's
+  // rainfall entry was handled above.
   "gurugram:flood-risk":
     "Gurugram floods by waterlogging on a paved catchment, not by river. The inputs exist on GMDA OneMap (117 GMUC waterlogging sites, the master storm-water network, natural flow direction) and only the drain legs are harvested so far, so this is a backlog item with a known path rather than a refusal.",
   "gurugram:shoreline": "Landlocked.",

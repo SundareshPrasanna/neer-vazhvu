@@ -532,6 +532,7 @@
     "src/app/[cityId]/city-dashboard.tsx",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
+    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts",
     "src/lib/i18n/translations.ts",
     "src/lib/insights/bangalore-briefing.ts"
@@ -683,6 +684,7 @@
     "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/gurugram.ts",
     "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/hooks/use-ward-profile.ts",
@@ -6837,6 +6839,7 @@
     "src/app/[cityId]/city-dashboard.tsx",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
+    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [],
@@ -7541,6 +7544,7 @@
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
     "src/lib/cities/delhi.ts",
+    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [],
@@ -7579,6 +7583,7 @@
     "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/gurugram.ts",
     "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/hooks/use-ward-profile.ts",
@@ -8281,7 +8286,10 @@
      "water_types"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/app/[cityId]/tanker/page.tsx",
+    "src/lib/cities/types.ts"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_gurugram_tankers.py"
    ],
@@ -8432,6 +8440,44 @@
    ],
    "licenses": [
     "Public Domain per OpenCity CKAN metadata (no upstream dedication)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/gwr-blocks-gurugram.json",
+   "family": "data-root",
+   "scope": "gurugram",
+   "dataset": "gwr-blocks",
+   "bytes": 13196,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "acquired_via",
+     "assessment_years",
+     "dataset",
+     "districts",
+     "generated_at",
+     "not_assessed_on_extraction",
+     "notes",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "source",
+     "source_url",
+     "state",
+     "unit_note"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ingres-groundwater-haryana"
+   ],
+   "licenses": [
+    "Government of India assessment portal, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -9697,6 +9743,7 @@
     "src/app/[cityId]/city-dashboard.tsx",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
+    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [],
@@ -9734,6 +9781,7 @@
     "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/gurugram.ts",
     "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/hooks/use-ward-profile.ts",
@@ -9809,7 +9857,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 4559,
+   "bytes": 4561,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9957,6 +10005,7 @@
     "src/app/[cityId]/city-dashboard.tsx",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
+    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [],
@@ -17086,6 +17135,7 @@
     "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
+    "src/lib/cities/gurugram.ts",
     "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/hooks/use-ward-profile.ts",
@@ -19144,7 +19194,9 @@
      "zone_code"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/cities/gurugram.ts"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/harvest_arcgis_rest.py"
    ],
@@ -23199,16 +23251,17 @@
   {
    "family": "data-root",
    "dataset": "gwr-blocks",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "gurugram",
     "hyderabad",
     "kolkata",
     "madurai"
    ],
-   "bytes": 155717,
+   "bytes": 168913,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -23330,7 +23383,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 4559,
+   "bytes": 4561,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -23505,7 +23558,7 @@
    "bytes": 17063,
    "schema_variants": 1,
    "registered": true,
-   "has_consumer": false
+   "has_consumer": true
   },
   {
    "family": "data-root",
@@ -24069,7 +24122,7 @@
    "bytes": 510539,
    "schema_variants": 1,
    "registered": true,
-   "has_consumer": false
+   "has_consumer": true
   },
   {
    "family": "geojson-layers",

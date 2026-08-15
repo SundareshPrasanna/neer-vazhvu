@@ -17,6 +17,7 @@ export const CITY_ACCENT: Record<string, string> = {
   mumbai: "from-indigo-500 to-violet-600",
   delhi: "from-rose-500 to-red-600",
   kolkata: "from-fuchsia-500 to-pink-600",
+  gurugram: "from-lime-500 to-emerald-600",
 };
 
 export const DEFAULT_ACCENT = "from-slate-500 to-slate-600";
