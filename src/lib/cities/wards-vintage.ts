@@ -23,6 +23,11 @@ const WARDS_VINTAGE: Record<string, string> = {
   // Delhi uses the 250 post-unification MCD wards, final delimitation
   // notified September 2022 (NOT the pre-merger 272).
   delhi: "2022",
+  // Gurugram uses MCG's 36 wards as published on GMDA OneMap
+  // (harvest_arcgis_rest.py). "2026" tags the harvest vintage, not a
+  // delimitation year: the layer carries ward_no and a zone code but no
+  // delimitation date, and GMDA publishes none alongside it.
+  gurugram: "2026",
 };
 
 const DEFAULT_VINTAGE = "2022";

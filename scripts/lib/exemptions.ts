@@ -46,7 +46,25 @@ import { UNWATCHED } from "./headwaters-coverage";
  * here rather than deleted silently because "an exemption we retired" is the
  * evidence that the removal conditions are real.
  */
-export const FRESHNESS_EXEMPTIONS: Record<string, string> = {};
+export const FRESHNESS_EXEMPTIONS: Record<string, string> = {
+  // TEMPORARY, and the same exemption Kolkata carried for the same reason
+  // (see the note above, which records its retirement). rainfall-recent is a
+  // PROVISIONAL fill layered on top of an IMD authoritative base, so it cannot
+  // exist before imd-rainfall-monthly-gurugram.json does, and generating that
+  // base is a multi-decade gridded download that belongs in its own change
+  // rather than bolted onto the city scaffold.
+  //
+  // Gurugram is deliberately absent from CITIES in fetch_recent_rainfall.py
+  // meanwhile: the daily workflow runs `--all`, which exits non-zero if any
+  // one city fails, so adding the grid point early would turn the whole job
+  // red every day for every city.
+  //
+  // REMOVAL CONDITION: run generate_imd_rainfall.py for the Gurugram grid
+  // point (28.4360, 77.0560), add "gurugram" to CITIES in
+  // fetch_recent_rainfall.py, and delete this entry in the same change.
+  "gurugram:rainfall-recent":
+    "No IMD gridded base series exists for Gurugram yet, and rainfall-recent is the provisional fill on top of one. Retire this by generating imd-rainfall-monthly-gurugram.json and wiring the city into fetch_recent_rainfall.py.",
+};
 
 /* ── 2. Reported: declared absences owned by their consumers ────────────── */
 
@@ -114,6 +132,36 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
     "KMC runs a municipal tanker service and publishes per-trip rates, but no volumes, trips or coverage - so there is nothing to chart that would not be invented.",
   "kolkata:climate-risk":
     "Chennai's sub-basin climate risk comes from HydroBASINS level 12, a global product that would transfer here. It is genuinely buildable and simply not built yet, so this is a backlog item rather than a refusal.",
+
+  // Gurugram - preview-gated, city nine. The set is deliberately small: only
+  // the surfaces with data behind them are on, and the two most conspicuous
+  // absences are properties of the city rather than backlog.
+  "gurugram:rivers":
+    "Gurugram has no river. Its NWMP monitoring stations are all lakes and borewells, and its surface water leaves the city as drain flow into the Najafgarh jheel and then Delhi's Najafgarh drain. There is nothing to put on a rivers page that would not be an invention.",
+  // RETIRED 2026-08-15. The removal condition written into this entry was
+  // "closes on IN-GRES block assessment", and that is exactly what closed it:
+  // four assessment years to 2024-25, district and block level, all five
+  // Gurugram blocks over-exploited and GURGAON_URBAN at 326.26% of recharge.
+  // Kept as a comment rather than deleted because a retired exemption is the
+  // evidence that these removal conditions are real, which is how Kolkata's
+  // rainfall entry was handled above.
+  "gurugram:flood-risk":
+    "Gurugram floods by waterlogging on a paved catchment, not by river. The inputs exist on GMDA OneMap (117 GMUC waterlogging sites, the master storm-water network, natural flow direction) and only the drain legs are harvested so far, so this is a backlog item with a known path rather than a refusal.",
+  "gurugram:shoreline": "Landlocked.",
+  "gurugram:lake-restoration":
+    "Needs a restoration-priority-gurugram.json, which needs a scorer. The water-body register is harvested and carries ownership, area and GMDA's own cross-survey flags, so the inputs are present and the ranking is simply not built.",
+  "gurugram:origins":
+    "Not built for this city yet. The spine is identified - GMDA OneMap publishes the MCG limit at 1985, 1996, 2008, 2010, 2015 and 2020, which is the city eating its own catchment in six dated steps - but the narrative is unwritten.",
+  "gurugram:cascades":
+    "Not a cascade geography. Aravalli johads and village ponds are a real water heritage, but no chained-surplus system was engineered here the way it was in the Tamil kanmoi districts or the Bengaluru kere chains, so the cascade story must not be told about this city. Catchment delineation itself is buildable - GMDA publishes a 10-polygon watershed layer and a natural-flow-direction layer - and is a separate question from the cascade narrative.",
+  "gurugram:allocations":
+    "No published entitlement instrument has been located. Gurugram's canal share of Yamuna water is governed by inter-state arrangements that GMDA does not publish, and the ledger's primitive is entitled-vs-received against a named instrument - without the paper there is no row to write.",
+  "gurugram:commitments":
+    "Buildable and not built. The dated commitments exist and are citable (the NGT's February 2026 orders on illegal extraction and rainwater harvesting, GMDA's Chandu Budhera fifth-unit target), but each needs primary-source verification before it goes in the register, and none has had it yet.",
+  "gurugram:facts":
+    "Needs a facts-gurugram.json, which needs the supply and demand numbers that are the very ones still unverified - every figure in circulation for this city is press-sourced, and GMDA's own GIS already contradicts two of them. Ships when the numbers do.",
+  "gurugram:climate-risk":
+    "Chennai's sub-basin climate risk comes from HydroBASINS level 12, a global product that would transfer here. Genuinely buildable and simply not built, so this is backlog rather than refusal.",
 
   // Hyderabad
   "hyderabad:my-ward":

@@ -13,9 +13,11 @@ import {
 import { IIScStressWardsMap } from "@/components/dashboard/iisc-stress-wards-map";
 import { TankerPageHeader, TankerPageFooter } from "@/components/dashboard/tanker-page-chrome";
 import { TankerLedgerPanel } from "@/components/dashboard/tanker-ledger-panel";
+import { TankerSalesPanel } from "@/components/dashboard/tanker-sales-panel";
 import { BillingLedgerPanel } from "@/components/dashboard/billing-ledger-panel";
 import type { BillingLedger } from "@/components/dashboard/billing-ledger-panel";
 import type { TankerLedger } from "@/components/dashboard/tanker-ledger-panel";
+import type { TankerSales } from "@/components/dashboard/tanker-sales-panel";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -46,14 +48,46 @@ export default async function CityTankerPage({ params }: PageProps) {
   // (Hyderabad) has no household survey and never will, so gating on the
   // survey alone 404'd a page that was already in the nav.
   const kind = config.tankerDataKind ?? "household-survey";
-  const dataPath = join(
-    process.cwd(),
-    "public",
-    "data",
-    kind === "utility-ledger" ? `${cityId}-tankers.json` : `${cityId}-tanker-survey.json`,
-  );
+  const FILE_FOR_KIND: Record<string, string> = {
+    "household-survey": `${cityId}-tanker-survey.json`,
+    "utility-ledger": `${cityId}-tankers.json`,
+    "utility-sales-ledger": `${cityId}-tanker-sales.json`,
+  };
+  const dataPath = join(process.cwd(), "public", "data", FILE_FOR_KIND[kind]);
   if (!existsSync(dataPath)) {
     notFound();
+  }
+
+  if (kind === "utility-sales-ledger") {
+    const sales = JSON.parse(await readFile(dataPath, "utf-8")) as TankerSales;
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <nav className="text-xs text-slate-500 dark:text-slate-400">
+          <Link
+            href={`/${cityId}`}
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            ← {config.displayName} dashboard
+          </Link>
+        </nav>
+
+        <header className="space-y-2">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            {config.displayName} bulk water sales
+          </h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+            {config.displayName} is the rare city where the authority sells
+            bulk water by the tanker load and publishes the transaction record.
+            GMDA logged every load it dispensed for three years - the point it
+            came from, the grade of water, the buyer, and the price - so this
+            page shows what a dark-zone city actually sold, rather than a
+            surveyed household price.
+          </p>
+        </header>
+
+        <TankerSalesPanel sales={sales} cityDisplayName={config.displayName} />
+      </div>
+    );
   }
 
   if (kind === "utility-ledger") {

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import fs from "node:fs";
 import path from "node:path";
 import { tryGetPlaceConfig } from "@/lib/cities";
+import { isFeatureSupportedForCity } from "@/lib/cities/routing";
 import { basinsForCity, tryGetBasinManifest, type BasinInventory } from "@/lib/basins";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { riversVariant } from "@/lib/cities/data-paths";
@@ -550,6 +551,17 @@ export default async function CityRiversPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
+
+  // Cities whose FEATURE_AVAILABILITY set omits "rivers" 404 here, the same
+  // gate my-ward uses. Without it this page fell through to the generic
+  // not-yet-available state, which tells the reader the page "hasn't shipped
+  // yet" and lists what is needed to ship it - true for a city awaiting a
+  // data layer, FALSE for one that has no river at all. Gurugram is the
+  // first: its NWMP stations are all lakes and borewells, and its surface
+  // water leaves as drain flow into the Najafgarh jheel. Promising a page
+  // that can never exist is the same defect as Delhi's storage chart
+  // promising to "fill in automatically" for a city that impounds nothing.
+  if (!isFeatureSupportedForCity("/rivers", cityId)) notFound();
 
   // Renderer is selected by declared data-layout variant, not a city-id
   // branch in render code (see multi-city-component-discipline.md rule 3).
