@@ -244,60 +244,60 @@
       "id": "tg-opendata-hmwssb-billing",
       "scope": "hyderabad",
       "publisher": "HMWSSB via data.telangana.gov.in (Telangana Open Data Portal)",
-      "url": "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-billing-and-collection-data",
+      "url": "https://data.telangana.gov.in/api/1/metastore/schemas/dataset/items/3485ce9d-4a9c-4293-b7e9-02e6697b9a75",
       "license": "Government Open Data License - India (GODL-India)",
       "type": "page",
       "cadence": "monthly",
       "tier": 1,
       "detection": {
-        "method": "link-set",
-        "linkPattern": "billing_and_collection_report_\\d{4}_\\d{1,2}\\.csv"
+        "method": "api-date",
+        "datePath": "modified"
       },
       "dependsOn": [
         "public/data/hyderabad-billing.json",
         "public/data/facts-hyderabad.json"
       ],
       "refreshMethod": "monthly (build_hyderabad_billing.py)",
-      "notes": "RETIRES AN RTI. The supply-overview surface was written off as needing an HMWSSB RTI under 4(1)(b); the utility already publishes billing openly under GODL-India. 54 monthly CSVs Jan 2022 - Jun 2026, 134,688 rows, keyed on the SAME division/section units as the tanker ledger so billed demand and tanker demand are comparable per section. Headline: collection efficiency 69.5% across the period - 75.05bn demanded, 52.16bn collected. TWO TRAPS, both hit during the build: (1) `noofcans` is a STOCK - summing it across months reports a division as bigger than the city; (2) HMWSSB RE-CUT its division/section scheme between Jan and Feb 2026 around the GHMC trifurcation (209 -> 485 sections, 24 new divisions, old divisions left as near-empty shells - division 6 went 100,879 connections to 8), so aggregates are split into pre_recut/post_recut eras and must never be summed across the break. The unit of the rupee columns is NOT stated upstream, so none is asserted."
+      "notes": "DETECTION CORRECTED 2026-08-15. This entry shipped with a link-set pattern against the dataset's HTML page, which can never fire: data.telangana.gov.in is a React SPA and serves a JS shell with zero links in the markup, so the checker read 0 links and reported CHECK-FAILED every week. A detector that cannot fire is worse than no detector - it looks like coverage. Watches the DKAN metastore item's `modified` instead. RETIRES AN RTI. The supply-overview surface was written off as needing an HMWSSB RTI under 4(1)(b); the utility already publishes billing openly under GODL-India. 54 monthly CSVs Jan 2022 - Jun 2026, 134,688 rows, keyed on the SAME division/section units as the tanker ledger so billed demand and tanker demand are comparable per section. Headline: collection efficiency 69.5% across the period - 75.05bn demanded, 52.16bn collected. TWO TRAPS, both hit during the build: (1) `noofcans` is a STOCK - summing it across months reports a division as bigger than the city; (2) HMWSSB RE-CUT its division/section scheme between Jan and Feb 2026 around the GHMC trifurcation (209 -> 485 sections, 24 new divisions, old divisions left as near-empty shells - division 6 went 100,879 connections to 8), so aggregates are split into pre_recut/post_recut eras and must never be summed across the break. The unit of the rupee columns is NOT stated upstream, so none is asserted."
     },
     {
       "id": "tg-opendata-tgpcb-stp",
       "scope": "hyderabad",
       "publisher": "TGPCB via data.telangana.gov.in (Telangana Open Data Portal)",
-      "url": "https://data.telangana.gov.in/dataset/telangana-pollution-control-board-stp-sewage-treatment-plant-data",
+      "url": "https://data.telangana.gov.in/api/1/metastore/schemas/dataset/items/58a8181b-301f-4216-a2d6-96eb725ea048",
       "license": "Government Open Data License - India (GODL-India)",
       "type": "page",
       "cadence": "monthly",
       "tier": 1,
       "detection": {
-        "method": "link-set",
-        "linkPattern": "STP_Data_\\d{2}_\\d{4}\\.csv"
+        "method": "api-date",
+        "datePath": "modified"
       },
       "dependsOn": [
         "public/data/hyderabad-stps.json",
         "public/data/facts-hyderabad.json"
       ],
       "refreshMethod": "monthly (build_hyderabad_stps.py)",
-      "notes": "CORRECTED A PUBLISHED CLAIM. The facts page asserted Hyderabad's treatment capacity is not published; it is, per plant, with monthly effluent quality. 83 monthly CSVs Jan 2018 - Nov 2024, 83 plants (66 Hyderabad-area), ~1,134 MLD across 53 plants with parseable capacity. Amberpet (339 MLD) exceeded the BOD 10 mg/L norm in 49 of 58 monitored months, Nagole (172 MLD) in 42 of 58. The narrower gap that DOES stand: the AMRUT 39-STP commissioned-vs-under-construction split is still unpublished. Joins to CPCB NWMP: station 4659 monitors the Musi at the outlet of Nalla Cheruvu, where two plants discharge. Capacity is free text upstream (\"339 MLD\", \"13MLD\"); one lake can host several plants (Miralam Tank at 10, 5 and 41.5), so plants key on full name. Series ends Nov 2024."
+      "notes": "DETECTION CORRECTED 2026-08-15. Shipped with a link-set pattern against the dataset's HTML page, which can never fire: data.telangana.gov.in is a React SPA serving a JS shell with zero links in the markup, so the checker read 0 links and reported CHECK-FAILED every week. Watches the DKAN metastore item's `modified` instead. CORRECTED A PUBLISHED CLAIM. The facts page asserted Hyderabad's treatment capacity is not published; it is, per plant, with monthly effluent quality. 83 monthly CSVs Jan 2018 - Nov 2024, 83 plants (66 Hyderabad-area), ~1,134 MLD across 53 plants with parseable capacity. Amberpet (339 MLD) exceeded the BOD 10 mg/L norm in 49 of 58 monitored months, Nagole (172 MLD) in 42 of 58. The narrower gap that DOES stand: the AMRUT 39-STP commissioned-vs-under-construction split is still unpublished. Joins to CPCB NWMP: station 4659 monitors the Musi at the outlet of Nalla Cheruvu, where two plants discharge. Capacity is free text upstream (\"339 MLD\", \"13MLD\"); one lake can host several plants (Miralam Tank at 10, 5 and 41.5), so plants key on full name. Series ends Nov 2024."
     },
     {
       "id": "tg-opendata-irrigation-reservoirs",
       "scope": "hyderabad",
       "publisher": "Telangana Irrigation & CAD Department via data.telangana.gov.in",
-      "url": "https://data.telangana.gov.in/dataset/telangana-irrigation-cad-department-daily-reservoir-storage-levels",
+      "url": "https://data.telangana.gov.in/api/1/metastore/schemas/dataset/items/9df04c5f-6558-4c4f-a802-d8b71faaa917",
       "license": "Government Open Data License - India (GODL-India)",
       "type": "page",
       "cadence": "monthly",
       "tier": 1,
       "detection": {
-        "method": "link-set",
-        "linkPattern": "reservoir_details_\\d{4}-\\d{2}\\.csv"
+        "method": "api-date",
+        "datePath": "modified"
       },
       "dependsOn": [
         "public/data/hyderabad-irrigation-reservoirs.json"
       ],
       "refreshMethod": "monthly (build_hyderabad_irrigation_reservoirs.py)",
-      "notes": "INDEPENDENT SECOND SOURCE for 5 of the 8 reservoirs the dashboard tracks - Singur, Nagarjuna Sagar, Srisailam, Yellampally, Akkampalli - 1,946 daily rows each, Jan 2021 to May 2026. Osman Sagar, Himayat Sagar and Manjira are absent BY DESIGN: they are HMWSSB drinking-water reservoirs, not Irrigation & CAD projects, so this validates the transferred Krishna/Godavari sources rather than the local twins. CAPACITY CROSS-CHECK PASSED 2026-07-26 against the HMWSSB-derived figures we already publish: Nagarjuna Sagar, Srisailam and Yellampally match EXACTLY; Singur differs 0.007 TMC (0.02%), Akkampalli 0.001. Two departments, same numbers. UNIT TRAP: the publisher's abbreviation block says frl is in METRES while the storage column is NAMED level_in_feet_present - name and description contradict, so that column is carried verbatim and never converted."
+      "notes": "DETECTION CORRECTED 2026-08-15. Shipped with a link-set pattern against the dataset's HTML page, which can never fire: data.telangana.gov.in is a React SPA serving a JS shell with zero links in the markup, so the checker read 0 links and reported CHECK-FAILED every week. Watches the DKAN metastore item's `modified` instead. INDEPENDENT SECOND SOURCE for 5 of the 8 reservoirs the dashboard tracks - Singur, Nagarjuna Sagar, Srisailam, Yellampally, Akkampalli - 1,946 daily rows each, Jan 2021 to May 2026. Osman Sagar, Himayat Sagar and Manjira are absent BY DESIGN: they are HMWSSB drinking-water reservoirs, not Irrigation & CAD projects, so this validates the transferred Krishna/Godavari sources rather than the local twins. CAPACITY CROSS-CHECK PASSED 2026-07-26 against the HMWSSB-derived figures we already publish: Nagarjuna Sagar, Srisailam and Yellampally match EXACTLY; Singur differs 0.007 TMC (0.02%), Akkampalli 0.001. Two departments, same numbers. UNIT TRAP: the publisher's abbreviation block says frl is in METRES while the storage column is NAMED level_in_feet_present - name and description contradict, so that column is carried verbatim and never converted."
     }
   ]
 }
