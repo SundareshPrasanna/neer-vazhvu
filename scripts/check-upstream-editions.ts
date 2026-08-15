@@ -67,6 +67,22 @@ interface Detection {
   urlTemplate?: string;
   /** url-template: first year to probe. Defaults to the current year - 1. */
   templateFrom?: number;
+  /**
+   * url-template: require this Content-Type prefix before counting a year as
+   * published. For hosts that SOFT-404 - answering a missing edition with a
+   * redirect to an HTML error page served as 200 instead of a 404 - `res.ok`
+   * alone is true for every year probed, so the detector would report an
+   * edition that does not exist, forever, and would do it silently.
+   *
+   * GMDA is the case that forced this (`gmda-tanker-mis`): its real editions
+   * answer `application/xlsx`, while 2022 onward 302 to a 38,291-byte
+   * `text/html` page under a 200. Content type is the only field that
+   * separates them - status, length and body are all indistinguishable from a
+   * successful fetch of some other resource.
+   *
+   * Omit for well-behaved hosts, which is most of them.
+   */
+  expectContentType?: string;
 }
 
 /** term-expiry default warning window - enough notice to line up sources
@@ -93,6 +109,23 @@ interface SourceEntry {
   url: string;
   /** Skip TLS verification for hosts with broken cert chains (NMCG, CPCB). */
   insecureTLS?: boolean;
+  /**
+   * Allow legacy (pre-RFC-5746) TLS renegotiation. A DIFFERENT problem from
+   * `insecureTLS` and a strictly narrower concession: certificate and hostname
+   * verification stay fully ON, and only the renegotiation handshake is
+   * relaxed.
+   *
+   * Do not reach for `insecureTLS` when you see this failure - it does not fix
+   * it. Verified against onemapdepts.gmda.gov.in on 2026-08-14:
+   * NODE_TLS_REJECT_UNAUTHORIZED=0 still fails with
+   * `SSL routines:final_renegotiate`, because the certificate was never the
+   * problem; an undici dispatcher carrying SSL_OP_LEGACY_SERVER_CONNECT
+   * succeeds. Python shows the same split - it names the error
+   * UNSAFE_LEGACY_RENEGOTIATION_DISABLED - while curl's broader defaults hide
+   * it, which is why a host can look reachable from the shell and be
+   * unreachable from the checker.
+   */
+  legacyTLS?: boolean;
   /** Host blocks CI runner IPs (reason string). Checked from local runs only;
       CI reports LOCAL-ONLY until the last accept grows older than
       LOCAL_CHECK_MAX_AGE_DAYS, then escalates to CHECK-FAILED. */
@@ -233,7 +266,13 @@ function validate(entries: SourceEntry[]): string[] {
         problems.push(`${where}: urlTemplate must contain {YYYY}: ${d.urlTemplate}`);
       if (d.templateFrom !== undefined && !(d.templateFrom > 1900))
         problems.push(`${where}: templateFrom must be a year, got ${d.templateFrom}`);
+      if (d.expectContentType !== undefined && !d.expectContentType.trim())
+        problems.push(`${where}: expectContentType must be a non-empty Content-Type prefix`);
     }
+    if (d.expectContentType !== undefined && d.method !== "url-template")
+      problems.push(
+        `${where}: expectContentType only applies to url-template, not ${d.method}`,
+      );
 
     // P5-8: hosts verified unreachable from our networks. Deliberately a
     // per-host deny-list, NOT a .nic.in or 164.100.x.x rule: nmcg.nic.in sits in
@@ -260,6 +299,11 @@ function validate(entries: SourceEntry[]): string[] {
 
 /* ── Fetching ──────────────────────────────────────────────────────────── */
 
+/** Set for the duration of a `legacyTLS` entry's observation; see observe().
+ *  Entries run sequentially, which is what makes a module-level handle safe -
+ *  the same argument the insecureTLS env toggle relies on. */
+let legacyTLSDispatcher: unknown;
+
 async function fetchWithTimeout(url: string, init: RequestInit = {}): Promise<Response> {
   const attempt = async () => {
     const ctrl = new AbortController();
@@ -270,7 +314,9 @@ async function fetchWithTimeout(url: string, init: RequestInit = {}): Promise<Re
         ...init,
         headers: { "User-Agent": BROWSER_UA, ...(init.headers ?? {}) },
         signal: ctrl.signal,
-      });
+        // `dispatcher` is undici's, not in the DOM RequestInit type.
+        ...(legacyTLSDispatcher ? { dispatcher: legacyTLSDispatcher } : {}),
+      } as RequestInit);
     } finally {
       clearTimeout(timer);
     }
@@ -310,6 +356,20 @@ async function observe(e: SourceEntry): Promise<Observed> {
   if (e.detection.method === "term-expiry") return {};
   // Continuous upstreams are never fetched - registered for accountability only.
   if (e.detection.method === "continuous") return {};
+  if (e.legacyTLS) {
+    // Certificate verification stays on - only the renegotiation handshake is
+    // relaxed. See SourceEntry.legacyTLS for why insecureTLS does not do this.
+    const { Agent } = await import("undici");
+    const { constants } = await import("node:crypto");
+    legacyTLSDispatcher = new Agent({
+      connect: { secureOptions: constants.SSL_OP_LEGACY_SERVER_CONNECT },
+    });
+    try {
+      return await observeInner(e);
+    } finally {
+      legacyTLSDispatcher = undefined;
+    }
+  }
   if (!e.insecureTLS) return observeInner(e);
   // Entries run sequentially, so toggling the process-wide TLS flag is safe.
   const prev = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
@@ -348,7 +408,16 @@ async function observeInner(e: SourceEntry): Promise<Observed> {
       try {
         let res = await fetchWithTimeout(url, { method: "HEAD" });
         if (!res.ok) res = await fetchWithTimeout(url);
-        if (res.ok) latest = { year: y, url };
+        // A soft-404 host answers every year with 200, so `ok` alone would
+        // pin `latest` to the last year probed and never move. Where the
+        // entry declares the content type a real edition serves, a mismatch
+        // is a not-found, not a hit. See Detection.expectContentType.
+        const typeOk =
+          !d.expectContentType ||
+          (res.headers.get("content-type") ?? "")
+            .toLowerCase()
+            .startsWith(d.expectContentType.toLowerCase());
+        if (res.ok && typeOk) latest = { year: y, url };
         else notFound++;
       } catch (e) {
         // A single year 404ing is normal (not published yet). A single year

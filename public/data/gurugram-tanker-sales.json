@@ -1,0 +1,714 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/tanker-sales",
+  "scope": {
+    "kind": "city",
+    "id": "gurugram"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "gmda-tanker-mis",
+        "title": "GMDA bulk-water tanker booking ledger (Water Tanker MIS Report, one XLSX per year)",
+        "publisher": "Gurugram Metropolitan Development Authority",
+        "license": "restrictive, permission required: gmda.gov.in asserts 'All rights reserved' and publishes no reuse or redistribution policy - derived aggregates only, no republication of upstream rows"
+      }
+    ],
+    "method": "scrape",
+    "produced_at": "2026-08-14",
+    "produced_by": "neer-vazhvu-api/scripts/build_gurugram_tankers.py",
+    "note": "Aggregated on build, never republished row-for-row: the publisher asserts all rights reserved and states no reuse policy, so the artifact carries counts, sums and shares only, the delivery-address column is dropped, and buyers appear solely as a ranked top-15 by volume. Two corrupt upstream rows were refused rather than coerced; see _caveats and by_year[].rows_rejected."
+  },
+  "_source": "Gurugram Metropolitan Development Authority - Water Tanker MIS Report",
+  "_source_url": "https://www.gmda.gov.in/onlineservices/water-tanker.html",
+  "_licence": "restrictive, permission required: gmda.gov.in asserts 'All rights reserved' and publishes no reuse or redistribution policy - derived aggregates only, no republication of upstream rows",
+  "_fetched": "2026-08-14",
+  "_note": "GMDA's own bulk-water tanker booking ledger, published as one XLSX per year. Every booking is a collection from a GMDA dispensing point, so unlike Hyderabad's utility ledger there is no separate delivery confirmation to measure, and unlike Bengaluru's household survey the prices here are the utility's own tariff rather than a private market's. Aggregated on build: GMDA asserts all rights reserved and publishes no reuse policy, so no upstream row is republished and the delivery-address column is dropped entirely.",
+  "_coverage_gap": "The published series stops after 2021. Verified 2026-08-14: 2022 through 2026 do not 404 but redirect to an HTML error page served as HTTP 200, so they are absent rather than empty. Watched by the Headwaters entry gmda-tanker-mis.",
+  "_caveats": [
+    "Do not read the falling volume as falling tanker dependence. Bookings drop 12,337 to 7,208 across 2019-2021, but this is a construction-driven market and 2020-21 are COVID years. The composition trend below is the finding that survives, because it is a ratio measured inside the same disrupted period.",
+    "Buyer counts are after normalising corporate-form and site-suffix variants of the same name; the raw column carries more distinct strings than there are buyers.",
+    "Two upstream rows across the three years are corrupt and were refused rather than coerced: one carries an epoch-millisecond value in the tanker-size column with zero litres, the other has an unescaped comma in the delivery address that shifts the whole row. Counted per year as rows_rejected."
+  ],
+  "totals": {
+    "bookings": 29284,
+    "litres": 1722822000,
+    "amount_inr": 87249778,
+    "years": 3,
+    "months": 36,
+    "buyers": 259,
+    "delivery_sites": 5287,
+    "stations": 7,
+    "first_booking": "2019-01-01",
+    "last_booking": "2021-12-31",
+    "non_potable_pct_first_year": 29.7,
+    "non_potable_pct_last_year": 51.2
+  },
+  "by_year": [
+    {
+      "year": 2019,
+      "bookings": 12336,
+      "litres": 799428000,
+      "amount_inr": 44925758,
+      "buyers": 169,
+      "non_potable_litres": 237067000,
+      "non_potable_pct": 29.7,
+      "rows_rejected": 1
+    },
+    {
+      "year": 2020,
+      "bookings": 9740,
+      "litres": 508532000,
+      "amount_inr": 24367320,
+      "buyers": 173,
+      "non_potable_litres": 214519000,
+      "non_potable_pct": 42.2,
+      "rows_rejected": 1
+    },
+    {
+      "year": 2021,
+      "bookings": 7208,
+      "litres": 414862000,
+      "amount_inr": 17956700,
+      "buyers": 157,
+      "non_potable_litres": 212459000,
+      "non_potable_pct": 51.2,
+      "rows_rejected": 0
+    }
+  ],
+  "water_types": [
+    {
+      "water_type": "Potable/Drinking Water",
+      "potable": true,
+      "bookings": 16643,
+      "litres": 1058777000,
+      "amount_inr": 74803000,
+      "rate_inr_per_kl": 70.65,
+      "by_year": [
+        {
+          "year": 2019,
+          "litres": 562361000,
+          "rate_inr_per_kl": 70.76
+        },
+        {
+          "year": 2020,
+          "litres": 294013000,
+          "rate_inr_per_kl": 70.54
+        },
+        {
+          "year": 2021,
+          "litres": 202403000,
+          "rate_inr_per_kl": 70.51
+        }
+      ]
+    },
+    {
+      "water_type": "CETP-Treated Water",
+      "potable": false,
+      "bookings": 5037,
+      "litres": 367756000,
+      "amount_inr": 2942048,
+      "rate_inr_per_kl": 8.0,
+      "by_year": [
+        {
+          "year": 2019,
+          "litres": 117996000,
+          "rate_inr_per_kl": 8.0
+        },
+        {
+          "year": 2020,
+          "litres": 127575000,
+          "rate_inr_per_kl": 8.0
+        },
+        {
+          "year": 2021,
+          "litres": 122185000,
+          "rate_inr_per_kl": 8.0
+        }
+      ]
+    },
+    {
+      "water_type": "Recycle Water",
+      "potable": false,
+      "bookings": 7425,
+      "litres": 281071000,
+      "amount_inr": 8432130,
+      "rate_inr_per_kl": 30.0,
+      "by_year": [
+        {
+          "year": 2019,
+          "litres": 103853000,
+          "rate_inr_per_kl": 30.0
+        },
+        {
+          "year": 2020,
+          "litres": 86944000,
+          "rate_inr_per_kl": 30.0
+        },
+        {
+          "year": 2021,
+          "litres": 90274000,
+          "rate_inr_per_kl": 30.0
+        }
+      ]
+    },
+    {
+      "water_type": "Raw/Canal Water",
+      "potable": false,
+      "bookings": 179,
+      "litres": 15218000,
+      "amount_inr": 1072600,
+      "rate_inr_per_kl": 70.48,
+      "by_year": [
+        {
+          "year": 2019,
+          "litres": 15218000,
+          "rate_inr_per_kl": 70.48
+        },
+        {
+          "year": 2020,
+          "litres": 0,
+          "rate_inr_per_kl": null
+        },
+        {
+          "year": 2021,
+          "litres": 0,
+          "rate_inr_per_kl": null
+        }
+      ]
+    }
+  ],
+  "monthly": [
+    {
+      "month": "2019-01",
+      "label": "Jan 2019",
+      "bookings": 951,
+      "litres": 64458000,
+      "non_potable_pct": 22.7
+    },
+    {
+      "month": "2019-02",
+      "label": "Feb 2019",
+      "bookings": 886,
+      "litres": 53995000,
+      "non_potable_pct": 22.2
+    },
+    {
+      "month": "2019-03",
+      "label": "Mar 2019",
+      "bookings": 850,
+      "litres": 50807000,
+      "non_potable_pct": 29.8
+    },
+    {
+      "month": "2019-04",
+      "label": "Apr 2019",
+      "bookings": 1144,
+      "litres": 64054000,
+      "non_potable_pct": 33.8
+    },
+    {
+      "month": "2019-05",
+      "label": "May 2019",
+      "bookings": 1188,
+      "litres": 73012000,
+      "non_potable_pct": 34.7
+    },
+    {
+      "month": "2019-06",
+      "label": "Jun 2019",
+      "bookings": 1163,
+      "litres": 75643000,
+      "non_potable_pct": 37.9
+    },
+    {
+      "month": "2019-07",
+      "label": "Jul 2019",
+      "bookings": 1237,
+      "litres": 77158000,
+      "non_potable_pct": 27.1
+    },
+    {
+      "month": "2019-08",
+      "label": "Aug 2019",
+      "bookings": 1082,
+      "litres": 66439000,
+      "non_potable_pct": 25.2
+    },
+    {
+      "month": "2019-09",
+      "label": "Sep 2019",
+      "bookings": 1091,
+      "litres": 71908000,
+      "non_potable_pct": 28.0
+    },
+    {
+      "month": "2019-10",
+      "label": "Oct 2019",
+      "bookings": 1043,
+      "litres": 68897000,
+      "non_potable_pct": 31.2
+    },
+    {
+      "month": "2019-11",
+      "label": "Nov 2019",
+      "bookings": 803,
+      "litres": 66825000,
+      "non_potable_pct": 28.6
+    },
+    {
+      "month": "2019-12",
+      "label": "Dec 2019",
+      "bookings": 898,
+      "litres": 66232000,
+      "non_potable_pct": 32.0
+    },
+    {
+      "month": "2020-01",
+      "label": "Jan 2020",
+      "bookings": 1002,
+      "litres": 57686000,
+      "non_potable_pct": 33.4
+    },
+    {
+      "month": "2020-02",
+      "label": "Feb 2020",
+      "bookings": 1153,
+      "litres": 64609000,
+      "non_potable_pct": 39.0
+    },
+    {
+      "month": "2020-03",
+      "label": "Mar 2020",
+      "bookings": 821,
+      "litres": 49380000,
+      "non_potable_pct": 33.5
+    },
+    {
+      "month": "2020-04",
+      "label": "Apr 2020",
+      "bookings": 299,
+      "litres": 22930000,
+      "non_potable_pct": 23.1
+    },
+    {
+      "month": "2020-05",
+      "label": "May 2020",
+      "bookings": 483,
+      "litres": 27602000,
+      "non_potable_pct": 50.4
+    },
+    {
+      "month": "2020-06",
+      "label": "Jun 2020",
+      "bookings": 681,
+      "litres": 32817000,
+      "non_potable_pct": 52.4
+    },
+    {
+      "month": "2020-07",
+      "label": "Jul 2020",
+      "bookings": 808,
+      "litres": 36908000,
+      "non_potable_pct": 47.6
+    },
+    {
+      "month": "2020-08",
+      "label": "Aug 2020",
+      "bookings": 717,
+      "litres": 33094000,
+      "non_potable_pct": 47.2
+    },
+    {
+      "month": "2020-09",
+      "label": "Sep 2020",
+      "bookings": 1001,
+      "litres": 47599000,
+      "non_potable_pct": 45.1
+    },
+    {
+      "month": "2020-10",
+      "label": "Oct 2020",
+      "bookings": 992,
+      "litres": 53110000,
+      "non_potable_pct": 44.2
+    },
+    {
+      "month": "2020-11",
+      "label": "Nov 2020",
+      "bookings": 918,
+      "litres": 46064000,
+      "non_potable_pct": 43.9
+    },
+    {
+      "month": "2020-12",
+      "label": "Dec 2020",
+      "bookings": 865,
+      "litres": 36733000,
+      "non_potable_pct": 51.0
+    },
+    {
+      "month": "2021-01",
+      "label": "Jan 2021",
+      "bookings": 682,
+      "litres": 29234000,
+      "non_potable_pct": 49.4
+    },
+    {
+      "month": "2021-02",
+      "label": "Feb 2021",
+      "bookings": 775,
+      "litres": 34448000,
+      "non_potable_pct": 50.1
+    },
+    {
+      "month": "2021-03",
+      "label": "Mar 2021",
+      "bookings": 787,
+      "litres": 41483000,
+      "non_potable_pct": 53.6
+    },
+    {
+      "month": "2021-04",
+      "label": "Apr 2021",
+      "bookings": 681,
+      "litres": 39807000,
+      "non_potable_pct": 59.6
+    },
+    {
+      "month": "2021-05",
+      "label": "May 2021",
+      "bookings": 448,
+      "litres": 28517000,
+      "non_potable_pct": 54.9
+    },
+    {
+      "month": "2021-06",
+      "label": "Jun 2021",
+      "bookings": 624,
+      "litres": 39554000,
+      "non_potable_pct": 52.5
+    },
+    {
+      "month": "2021-07",
+      "label": "Jul 2021",
+      "bookings": 724,
+      "litres": 48677000,
+      "non_potable_pct": 48.2
+    },
+    {
+      "month": "2021-08",
+      "label": "Aug 2021",
+      "bookings": 536,
+      "litres": 38583000,
+      "non_potable_pct": 40.4
+    },
+    {
+      "month": "2021-09",
+      "label": "Sep 2021",
+      "bookings": 576,
+      "litres": 34267000,
+      "non_potable_pct": 43.3
+    },
+    {
+      "month": "2021-10",
+      "label": "Oct 2021",
+      "bookings": 553,
+      "litres": 33911000,
+      "non_potable_pct": 56.6
+    },
+    {
+      "month": "2021-11",
+      "label": "Nov 2021",
+      "bookings": 460,
+      "litres": 28000000,
+      "non_potable_pct": 57.6
+    },
+    {
+      "month": "2021-12",
+      "label": "Dec 2021",
+      "bookings": 362,
+      "litres": 18381000,
+      "non_potable_pct": 50.0
+    }
+  ],
+  "seasonality": [
+    {
+      "month": 1,
+      "label": "Jan",
+      "mean_litres": 50459333,
+      "years": 3
+    },
+    {
+      "month": 2,
+      "label": "Feb",
+      "mean_litres": 51017333,
+      "years": 3
+    },
+    {
+      "month": 3,
+      "label": "Mar",
+      "mean_litres": 47223333,
+      "years": 3
+    },
+    {
+      "month": 4,
+      "label": "Apr",
+      "mean_litres": 42263667,
+      "years": 3
+    },
+    {
+      "month": 5,
+      "label": "May",
+      "mean_litres": 43043667,
+      "years": 3
+    },
+    {
+      "month": 6,
+      "label": "Jun",
+      "mean_litres": 49338000,
+      "years": 3
+    },
+    {
+      "month": 7,
+      "label": "Jul",
+      "mean_litres": 54247667,
+      "years": 3
+    },
+    {
+      "month": 8,
+      "label": "Aug",
+      "mean_litres": 46038667,
+      "years": 3
+    },
+    {
+      "month": 9,
+      "label": "Sep",
+      "mean_litres": 51258000,
+      "years": 3
+    },
+    {
+      "month": 10,
+      "label": "Oct",
+      "mean_litres": 51972667,
+      "years": 3
+    },
+    {
+      "month": 11,
+      "label": "Nov",
+      "mean_litres": 46963000,
+      "years": 3
+    },
+    {
+      "month": 12,
+      "label": "Dec",
+      "mean_litres": 40448667,
+      "years": 3
+    }
+  ],
+  "stations": [
+    {
+      "station": "Boosting Station Sector 16",
+      "bookings": 9230,
+      "litres": 740761000,
+      "water_types": [
+        "Potable/Drinking Water"
+      ],
+      "years": [
+        2019,
+        2020,
+        2021
+      ],
+      "active_all_years": true
+    },
+    {
+      "station": "Common Effluent Treatment Plant",
+      "bookings": 5037,
+      "litres": 367756000,
+      "water_types": [
+        "CETP-Treated Water"
+      ],
+      "years": [
+        2019,
+        2020,
+        2021
+      ],
+      "active_all_years": true
+    },
+    {
+      "station": "Water Works Basai",
+      "bookings": 7258,
+      "litres": 315486000,
+      "water_types": [
+        "Potable/Drinking Water"
+      ],
+      "years": [
+        2019,
+        2020,
+        2021
+      ],
+      "active_all_years": true
+    },
+    {
+      "station": "STP Dhanwapur",
+      "bookings": 3292,
+      "litres": 144696000,
+      "water_types": [
+        "Recycle Water"
+      ],
+      "years": [
+        2019,
+        2020,
+        2021
+      ],
+      "active_all_years": true
+    },
+    {
+      "station": "STP Beharampur",
+      "bookings": 4133,
+      "litres": 136375000,
+      "water_types": [
+        "Recycle Water"
+      ],
+      "years": [
+        2019,
+        2020,
+        2021
+      ],
+      "active_all_years": true
+    },
+    {
+      "station": "Water Works Chandu Bhudera",
+      "bookings": 179,
+      "litres": 15218000,
+      "water_types": [
+        "Raw/Canal Water"
+      ],
+      "years": [
+        2019
+      ],
+      "active_all_years": false
+    },
+    {
+      "station": "Boosting Station Sector 51",
+      "bookings": 155,
+      "litres": 2530000,
+      "water_types": [
+        "Potable/Drinking Water"
+      ],
+      "years": [
+        2019,
+        2020,
+        2021
+      ],
+      "active_all_years": true
+    }
+  ],
+  "top_buyers": [
+    {
+      "buyer": "DLF PRIMUS SECTOR-82A, GURUGRAM, HARYANA",
+      "bookings": 526,
+      "litres": 124125000,
+      "share_pct": 7.2,
+      "potable_pct": 100.0
+    },
+    {
+      "buyer": "Candor Gurgaon Two Developers & projects private limited",
+      "bookings": 1567,
+      "litres": 123008000,
+      "share_pct": 7.14,
+      "potable_pct": 100.0
+    },
+    {
+      "buyer": "TRL RICELAND PRIVATE LIMITED",
+      "bookings": 1364,
+      "litres": 77310000,
+      "share_pct": 4.49,
+      "potable_pct": 2.2
+    },
+    {
+      "buyer": "Sunbeam Lightweighting Solutions Pvt. Ltd",
+      "bookings": 483,
+      "litres": 73515000,
+      "share_pct": 4.27,
+      "potable_pct": 100.0
+    },
+    {
+      "buyer": "Chintel India Ltd. 86",
+      "bookings": 328,
+      "litres": 58695000,
+      "share_pct": 3.41,
+      "potable_pct": 0.0
+    },
+    {
+      "buyer": "Candor Tech Space",
+      "bookings": 496,
+      "litres": 50045000,
+      "share_pct": 2.9,
+      "potable_pct": 100.0
+    },
+    {
+      "buyer": "JTEKT INDIA LIMITED",
+      "bookings": 364,
+      "litres": 46860000,
+      "share_pct": 2.72,
+      "potable_pct": 100.0
+    },
+    {
+      "buyer": "Candor Techspace",
+      "bookings": 359,
+      "litres": 43110000,
+      "share_pct": 2.5,
+      "potable_pct": 100.0
+    },
+    {
+      "buyer": "NARAIN DASS R ISRANI & .CO PVT.LTD",
+      "bookings": 1292,
+      "litres": 39718000,
+      "share_pct": 2.31,
+      "potable_pct": 18.5
+    },
+    {
+      "buyer": "DLF HOME DEVLOPERS",
+      "bookings": 193,
+      "litres": 38650000,
+      "share_pct": 2.24,
+      "potable_pct": 100.0
+    },
+    {
+      "buyer": "M/S Tata Projects Ltd.C/o Krisumi",
+      "bookings": 316,
+      "litres": 36795000,
+      "share_pct": 2.14,
+      "potable_pct": 22.4
+    },
+    {
+      "buyer": "Raheja devlopers",
+      "bookings": 503,
+      "litres": 36647000,
+      "share_pct": 2.13,
+      "potable_pct": 49.8
+    },
+    {
+      "buyer": "Lemon tree land and developers",
+      "bookings": 272,
+      "litres": 35400000,
+      "share_pct": 2.05,
+      "potable_pct": 100.0
+    },
+    {
+      "buyer": "DLF home developers",
+      "bookings": 488,
+      "litres": 33680000,
+      "share_pct": 1.95,
+      "potable_pct": 100.0
+    },
+    {
+      "buyer": "DLF ULTIMA",
+      "bookings": 216,
+      "litres": 28940000,
+      "share_pct": 1.68,
+      "potable_pct": 0.0
+    }
+  ]
+}
