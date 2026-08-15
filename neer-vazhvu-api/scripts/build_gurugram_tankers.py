@@ -100,7 +100,9 @@ from registry_license import registry_license  # noqa: E402
 from nvdm_write import write_artifact  # noqa: E402
 
 SOURCE_ID = "gmda-tanker-mis"
-URL = "https://www.gmda.gov.in/static/report/Water%20Tanker%20MIS%20Report%20{year}.xlsx"
+URL = (
+    "https://www.gmda.gov.in/static/report/Water%20Tanker%20MIS%20Report%20{year}.xlsx"
+)
 SOURCE_PAGE = "https://www.gmda.gov.in/onlineservices/water-tanker.html"
 YEARS = (2019, 2020, 2021)
 
@@ -145,7 +147,10 @@ def _fetch_year(year: int, timeout: int = 120) -> bytes | None:
         print(f"  {year}: fetch failed ({exc})", file=sys.stderr)
         return None
     if not body.startswith((b"PK\x03\x04", b"PK\x05\x06")):
-        print(f"  {year}: not a spreadsheet ({len(body)} bytes) - soft-404", file=sys.stderr)
+        print(
+            f"  {year}: not a spreadsheet ({len(body)} bytes) - soft-404",
+            file=sys.stderr,
+        )
         return None
     return body
 
@@ -161,7 +166,9 @@ def _norm_buyer(name: str) -> str:
     different developers would be worse than leaving both in the tail.
     """
     s = name.casefold()
-    s = re.sub(r"\bm/?s\b|\bpvt\b|\bprivate\b|\bltd\b|\blimited\b|\bthe\b|\bllp\b", " ", s)
+    s = re.sub(
+        r"\bm/?s\b|\bpvt\b|\bprivate\b|\bltd\b|\blimited\b|\bthe\b|\bllp\b", " ", s
+    )
     s = re.sub(r"[^a-z0-9 ]+", " ", s)
     parts = [p for p in s.split() if p]
     return " ".join(parts[:3])
@@ -200,10 +207,19 @@ def _rows(book: bytes, year: int) -> tuple[list[dict], int]:
     header = [str(c).strip() if c is not None else "" for c in next(it)]
     idx = {name: i for i, name in enumerate(header)}
 
-    required = ["Date", "Water Station", "Type", "Name", "Amount", "Total Water QTY Drawn in Liters"]
+    required = [
+        "Date",
+        "Water Station",
+        "Type",
+        "Name",
+        "Amount",
+        "Total Water QTY Drawn in Liters",
+    ]
     missing = [c for c in required if c not in idx]
     if missing:
-        raise RuntimeError(f"{year}: workbook is missing columns {missing}; header was {header}")
+        raise RuntimeError(
+            f"{year}: workbook is missing columns {missing}; header was {header}"
+        )
 
     out: list[dict] = []
     rejected = 0
@@ -276,7 +292,9 @@ def build(rows: list[dict], years_present: list[int], rejected: dict[int, int]) 
                 "amount_inr": int(round(sum(r["amount"] for r in yr))),
                 "buyers": len({_norm_buyer(r["buyer"]) for r in yr if r["buyer"]}),
                 "non_potable_litres": int(sum(r["litres"] for r in nonpot)),
-                "non_potable_pct": round(100.0 * sum(r["litres"] for r in nonpot) / yl, 1)
+                "non_potable_pct": round(
+                    100.0 * sum(r["litres"] for r in nonpot) / yl, 1
+                )
                 if yl
                 else None,
                 # Malformed upstream rows refused on parse. Reported per year
@@ -302,8 +320,12 @@ def build(rows: list[dict], years_present: list[int], rejected: dict[int, int]) 
                 "by_year": [
                     {
                         "year": y,
-                        "litres": int(sum(r["litres"] for r in sel if r["when"].year == y)),
-                        "rate_inr_per_kl": _rate([r for r in sel if r["when"].year == y]),
+                        "litres": int(
+                            sum(r["litres"] for r in sel if r["when"].year == y)
+                        ),
+                        "rate_inr_per_kl": _rate(
+                            [r for r in sel if r["when"].year == y]
+                        ),
                     }
                     for y in years_present
                 ],
@@ -318,7 +340,7 @@ def build(rows: list[dict], years_present: list[int], rejected: dict[int, int]) 
     buckets: dict[tuple[int, int], list[dict]] = defaultdict(list)
     for r in rows:
         buckets[(r["when"].year, r["when"].month)].append(r)
-    for (y, m) in sorted(buckets):
+    for y, m in sorted(buckets):
         sel = buckets[(y, m)]
         nonpot = sum(r["litres"] for r in sel if r["wtype"] != POTABLE)
         ml = sum(r["litres"] for r in sel)
@@ -343,7 +365,12 @@ def build(rows: list[dict], years_present: list[int], rejected: dict[int, int]) 
             {
                 "month": m,
                 "label": MONTHS[m],
-                "mean_litres": int(round(sum(sum(r["litres"] for r in buckets[k]) for k in sel) / len(sel))),
+                "mean_litres": int(
+                    round(
+                        sum(sum(r["litres"] for r in buckets[k]) for k in sel)
+                        / len(sel)
+                    )
+                ),
                 "years": len(sel),
             }
         )
@@ -374,7 +401,15 @@ def build(rows: list[dict], years_present: list[int], rejected: dict[int, int]) 
         if not r["buyer"]:
             continue
         k = _norm_buyer(r["buyer"])
-        e = merged.setdefault(k, {"litres": 0.0, "bookings": 0, "variants": defaultdict(int), "potable": 0.0})
+        e = merged.setdefault(
+            k,
+            {
+                "litres": 0.0,
+                "bookings": 0,
+                "variants": defaultdict(int),
+                "potable": 0.0,
+            },
+        )
         e["litres"] += r["litres"]
         e["bookings"] += 1
         e["variants"][r["buyer"]] += 1
@@ -386,7 +421,9 @@ def build(rows: list[dict], years_present: list[int], rejected: dict[int, int]) 
             "bookings": e["bookings"],
             "litres": int(e["litres"]),
             "share_pct": round(100.0 * e["litres"] / total_l, 2) if total_l else None,
-            "potable_pct": round(100.0 * e["potable"] / e["litres"], 1) if e["litres"] else None,
+            "potable_pct": round(100.0 * e["potable"] / e["litres"], 1)
+            if e["litres"]
+            else None,
         }
         for e in sorted(merged.values(), key=lambda x: -x["litres"])[:15]
     ]
@@ -471,8 +508,12 @@ def build(rows: list[dict], years_present: list[int], rejected: dict[int, int]) 
             "stations": len(stations),
             "first_booking": first.date().isoformat(),
             "last_booking": last.date().isoformat(),
-            "non_potable_pct_first_year": by_year[0]["non_potable_pct"] if by_year else None,
-            "non_potable_pct_last_year": by_year[-1]["non_potable_pct"] if by_year else None,
+            "non_potable_pct_first_year": by_year[0]["non_potable_pct"]
+            if by_year
+            else None,
+            "non_potable_pct_last_year": by_year[-1]["non_potable_pct"]
+            if by_year
+            else None,
         },
         "by_year": by_year,
         "water_types": types,

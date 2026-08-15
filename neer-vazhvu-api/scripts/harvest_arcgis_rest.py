@@ -100,8 +100,19 @@ LAYERS: dict[str, list[dict]] = {
             "out": "public/geojson/gurugram-water-bodies-current.geojson",
             "expect": 824,
             "fields": [
-                "waterbody", "tehsil_nam", "village_na", "area__acre", "ownershi_1",
-                "final_rema", "mcg_bounda", "gmda_bound", "ror", "soi", "wv_12", "drone", "ge",
+                "waterbody",
+                "tehsil_nam",
+                "village_na",
+                "area__acre",
+                "ownershi_1",
+                "final_rema",
+                "mcg_bounda",
+                "gmda_bound",
+                "ror",
+                "soi",
+                "wv_12",
+                "drone",
+                "ge",
             ],
             "rename": {
                 "waterbody": "wb_id",
@@ -126,7 +137,12 @@ LAYERS: dict[str, list[dict]] = {
             "out": "public/geojson/gurugram-drainage.geojson",
             "expect": 3,
             "fields": ["Id", "Name", "length", "Discharge"],
-            "rename": {"Id": "drain_id", "Name": "name", "length": "length_m", "Discharge": "discharge"},
+            "rename": {
+                "Id": "drain_id",
+                "Name": "name",
+                "length": "length_m",
+                "Discharge": "discharge",
+            },
             "note": "GMDA's drain legs under the GMUC area. Gurugram has no river, so this network plus the Najafgarh outfall IS the city's surface drainage.",
         },
     ],
@@ -147,7 +163,9 @@ def _get(url: str, timeout: int = 120) -> dict:
     the status code alone tells you nothing. Without this check an error
     document reads as a page with no features.
     """
-    req = urllib.request.Request(url, headers={"User-Agent": "neervazhvu-arcgis-harvest"})
+    req = urllib.request.Request(
+        url, headers={"User-Agent": "neervazhvu-arcgis-harvest"}
+    )
     with urllib.request.urlopen(req, timeout=timeout, context=_CTX) as resp:
         doc = json.loads(resp.read())
     if isinstance(doc, dict) and doc.get("error"):
@@ -262,16 +280,22 @@ def harvest(city: str, only: str | None) -> int:
         }
         path = ROOT / spec["out"]
         write_artifact(path, {**envelope, **payload}, compact=True)
-        print(f"  {spec['key']}: {len(feats)} features -> {spec['out']}", file=sys.stderr)
+        print(
+            f"  {spec['key']}: {len(feats)} features -> {spec['out']}", file=sys.stderr
+        )
 
     return 1 if failures else 0
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--city", choices=sorted(LAYERS), help="city whose layer set to harvest")
+    ap.add_argument(
+        "--city", choices=sorted(LAYERS), help="city whose layer set to harvest"
+    )
     ap.add_argument("--only", help="harvest a single layer by key")
-    ap.add_argument("--list", action="store_true", help="list configured layers and exit")
+    ap.add_argument(
+        "--list", action="store_true", help="list configured layers and exit"
+    )
     args = ap.parse_args()
 
     if args.list:
