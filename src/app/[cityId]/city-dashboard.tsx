@@ -81,17 +81,27 @@ function groundwaterBlurb(config: PlaceConfig): string {
   if (gw?.exploitation !== false) parts.push("CGWB block exploitation");
   if (gw?.depth) parts.push("ward depth (interpolated)");
   if (gw?.risk) parts.push("ward risk composite");
-  // Every city surfaces observation points; the NETWORK differs. cgwbStations
-  // means the CGWB Year Book point set; otherwise it is the live WRIS overlay.
-  parts.push(
-    gw?.cgwbStations ? "CGWB Year Book station overlay" : "live WRIS station overlay",
-  );
+  // NOT every city surfaces observation points, and this used to assume they
+  // all do: the else-branch asserted a "live WRIS station overlay" for any city
+  // without the CGWB Year Book set. Gurugram has NEITHER - its WRIS level
+  // series stops in June 2020 and Haryana's telemetry network does not cover
+  // the district - so the card promised a live overlay that cannot exist. A
+  // city running the exploitation choropleth ALONE has no point network to
+  // advertise.
+  if (gw?.cgwbStations) {
+    parts.push("CGWB Year Book station overlay");
+  } else if (gw?.depth || gw?.risk) {
+    parts.push("live WRIS station overlay");
+  }
   return `${parts.join(", ")}.`;
 }
 
 function waterBodiesBlurb(config: PlaceConfig): string {
   const wb = config.waterBodies;
-  const parts: string[] = ["OSM polygons"];
+  // "OSM polygons" was hardcoded and is not true everywhere: Gurugram's layer
+  // is GMDA's own NGT water-body register, not OpenStreetMap. The generic
+  // wording is accurate for every city; the flags below add what differs.
+  const parts: string[] = ["mapped water bodies"];
   if (wb?.censusSource) parts.push("encroachment census");
   if (wb?.rankingTab) parts.push("restoration priority badges");
   if (wb?.wardSearch) parts.push("ward search");

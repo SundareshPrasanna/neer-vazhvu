@@ -164,7 +164,6 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "origins",
     "groundwater",
     "water-bodies",
-    "my-ward",
     "tanker",
   ]),
 };

@@ -176,7 +176,14 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
   const currentMetPct = Math.min(100, currentMetPctRaw);
   const designPopulation = demand?.population_2034_design ?? demand?.population_design ?? 0;
 
-  const overrideSubtitle = data._view_overrides?.subtitle;
+  // The supply_overview.subtitle i18n string names MMC and the ADB Tamil Nadu
+  // programme - facts about MADURAI, which is the city this panel was written
+  // for. A city without an override was being told its structural numbers came
+  // from a Tamil Nadu investment programme. Same failure as the hero's
+  // Bengaluru narrative and the footer's Chennai sources: fall back to nothing
+  // rather than to another city.
+  const overrideSubtitle =
+    data._view_overrides?.subtitle ?? (cityId === "madurai" ? t("supply_overview.subtitle") : null);
   const overrideWtpLabel = data._view_overrides?.wtp_label;
   const overrideDemandCaption = data._view_overrides?.demand_caption;
 
@@ -187,7 +194,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
           {t("supply_overview.title").replace("{city}", cityDisplayName)}
         </h2>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          {overrideSubtitle ?? t("supply_overview.subtitle")}
+          {overrideSubtitle}
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -224,7 +231,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
                 const colors = ["bg-blue-600", "bg-blue-400", "bg-cyan-500", "bg-teal-500", "bg-emerald-500", "bg-lime-500", "bg-amber-500", "bg-orange-500"];
                 return (
                   <div
-                    key={item.source}
+                    key={`${item.source}|${item.scheme}`}
                     className={colors[i % colors.length]}
                     style={{ width: `${pct}%` }}
                     title={`${item.source}: ${item.mld} MLD`}
@@ -237,7 +244,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
                 const pct = ((item.mld / data.current_supply_total_mld) * 100).toFixed(0);
                 const colors = ["bg-blue-600", "bg-blue-400", "bg-cyan-500", "bg-teal-500", "bg-emerald-500", "bg-lime-500", "bg-amber-500", "bg-orange-500"];
                 return (
-                  <div key={item.source} className="flex items-center gap-2 text-xs">
+                  <div key={`${item.source}|${item.scheme}`} className="flex items-center gap-2 text-xs">
                     <span className={`w-2 h-2 rounded-sm shrink-0 ${colors[i % colors.length]}`} />
                     <span className="text-slate-700 dark:text-slate-300 flex-1">{item.source}</span>
                     <span className="text-slate-500 dark:text-slate-400 tabular-nums">
