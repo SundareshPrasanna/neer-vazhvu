@@ -170,12 +170,24 @@ function SeriesChart({ s, isDark }: { s: ReadingsSeries; isDark: boolean }) {
 
     case "flow-duration": {
       const data = (s.exceedance ?? []).map(([pct, v]) => ({ pct, v }));
+      // A log axis cannot hold a zero, and recharts does not degrade: given a
+      // domain containing 0 it draws no ticks and no line, so the chart comes
+      // out blank under a caption still claiming N values. Rivers that run dry
+      // are exactly the ones worth plotting - T. Narasipur reads 0 cumec at the
+      // 95th and 99th percentile - so fall back to a linear axis whenever the
+      // series touches zero, and keep log for the perennial stations where it
+      // earns its keep across three orders of magnitude.
+      const positive = data.every((d) => Number.isFinite(d.v) && d.v > 0);
       return (
         <ResponsiveContainer width="100%" height={150}>
           <LineChart data={data} margin={{ top: 6, right: 6, bottom: 0, left: -18 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis dataKey="pct" tick={tickStyle} unit="%" type="number" domain={[0, 100]} />
-            <YAxis tick={tickStyle} width={54} scale="log" domain={["auto", "auto"]} allowDataOverflow />
+            {positive ? (
+              <YAxis tick={tickStyle} width={54} scale="log" domain={["auto", "auto"]} allowDataOverflow />
+            ) : (
+              <YAxis tick={tickStyle} width={54} />
+            )}
             <Tooltip contentStyle={tooltipStyle} labelFormatter={(v) => `exceeded ${v}% of days`} />
             <Line type="monotone" dataKey="v" stroke="#0d9488" strokeWidth={1.5} dot={false} name={s.unit ?? ""} />
           </LineChart>
