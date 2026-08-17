@@ -217,6 +217,29 @@
         "acceptedOn": "2026-08-17",
         "reviewedOn": "2026-08-17"
       }
+    },
+    {
+      "id": "pmc-tanker-register",
+      "scope": "pune",
+      "publisher": "Pune Municipal Corporation, Water Supply Department",
+      "url": "https://webadmin.pmc.gov.in/en/jsonapi/node/water_tanker",
+      "license": "published openly by the corporation through its own JSON:API without stated terms; cited with attribution. Published here ONLY as counts - the source rows carry recipient society names, street addresses and phone numbers, and none of that is republished",
+      "type": "api",
+      "cadence": "daily",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/pune-tankers.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_pune_tankers.py)",
+      "notes": "THE KILLER DATASET FOR THIS CITY. PMC publishes, every working day, one spreadsheet per tanker filling point listing the deliveries made from it - one row per tanker sent. Not a booking system, not a survey: the corporation's own operational record. 409 registers as of 17 Aug 2026, 56,514 delivery rows, 46+ distinct days, 1,408 distinct vehicles. No other city on this platform has tanker data at this resolution.\n\nPRIVACY POSTURE, and it differs from Gurugram's deliberately. 54,235 of the rows carry a street address and 26,326 carry a phone number. NONE of that is republished, and neither are the recipient names. Gurugram's ledger names its buyers (DLF, Shapoorji Pallonji, Tata Projects) because those are COMPANIES buying water at a published tariff and naming them is reporting on a market. Pune's recipients are private housing societies; naming one with its address publishes where identifiable residents do not have water. Counts only.\n\nACCESS: www.pmc.gov.in is a JS shell. Use webadmin.pmc.gov.in, an open Drupal JSON:API with no auth. `links.next` is emitted as http:// and HANGS rather than redirecting - rewrite to https on every page.\n\nFIVE PARSING TRAPS, all of which corrupt silently rather than erroring:\n(1) THE DATE IS IN DEVANAGARI NUMERALS - 'दिनांक:२८-५-२०२६' is 28-05-2026. A Latin-digit regex finds nothing and the file reads as undated. Prabhag values carry the same ('४' for ward 4).\n(2) THE PRABHAG COLUMN IS HALF-POPULATED AND DIRTY - 52% of rows have one, values include '4', '४', '4.0', ',4', '-' and the non-numeric 'NAGAR PARISHAD'. So the per-prabhag table is a PARTIAL attribution and must never be presented as a full ward ranking.\n(3) THE FILLING POINT IS IN THE NODE TITLE, not the sheet, and titles are hand-typed: 'bund', 'BUND GAREDN', 'RAMTEKADI TENAKAR POINT', 'SNDT-13-07-2026'. Normalised against a known-points table; unmatched titles are counted on the artifact rather than binned.\n(4) THE HEADER ROW IS NOT AT A FIXED INDEX - found by looking for the Marathi column labels. 11 of 409 files have no findable header and are counted as unparsed, never assumed empty.\n(5) SPARSE CELLS - xlsx omits empty cells, so a positional read shifts every column left. Cell refs are decoded to column indices.\n\nA FINDING IN THE WARD COLUMN: 'NAGAR PARISHAD' is PMC still running tankers to Uruli Devachi and Fursungi, the area it EXCLUDED from the corporation in 2024 to form a separate nagar parishad. Carried as its own bucket.\n\nDO NOT USE node/water_tanker_information - the STRUCTURED sibling feed is broken: 289 rows, 126 of them dated 2027-2035, 10 vehicles, one source well. Report as a data-quality finding, never as data. The upstream feeds_feed is 403.",
+      "lastSeen": {
+        "edition": "2026-08-03",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
     }
   ]
 }

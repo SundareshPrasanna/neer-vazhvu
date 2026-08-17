@@ -12008,6 +12008,53 @@
    "flags": []
   },
   {
+   "path": "public/data/pune-tankers.json",
+   "family": "data-root",
+   "scope": "pune",
+   "dataset": "tankers",
+   "bytes": 12631,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_fetched",
+     "_note",
+     "_source",
+     "_source_url",
+     "busiest_day",
+     "coverage",
+     "daily",
+     "data_quality",
+     "dataset",
+     "filling_points",
+     "kind",
+     "nvdm",
+     "on_demand_split",
+     "outside_corporation",
+     "prabhags",
+     "provenance",
+     "scope",
+     "totals"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/tanker/page.tsx",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_tankers.py",
+    "scripts/lib/exemptions.ts"
+   ],
+   "headwaters_sources": [
+    "pmc-tanker-register"
+   ],
+   "licenses": [
+    "published openly by the corporation through its own JSON:API without stated terms; cited with attribution. Published here ONLY as counts - the source rows carry recipient society names, street addresses and phone numbers, and none of that is republished"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/rainfall-intensity-kolkata.json",
    "family": "data-root",
    "scope": "kolkata",
@@ -25933,12 +25980,13 @@
   {
    "family": "data-root",
    "dataset": "tankers",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "hyderabad"
+    "hyderabad",
+    "pune"
    ],
-   "bytes": 50643,
-   "schema_variants": 1,
+   "bytes": 63274,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },

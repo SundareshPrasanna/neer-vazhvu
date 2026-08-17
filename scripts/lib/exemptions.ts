@@ -170,8 +170,26 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   // below are properties of what Maharashtra publishes rather than backlog.
   "pune:flood-risk":
     "The event register is not the problem - 1961 Panshet, the 2019 Ambil Odha flash flood, 25 July and 4 August 2024, 21 August 2025 are all dated and sourced. The HAZARD LAYER is. Maharashtra WRD publishes Pune's red (100-year) and blue (25-year) flood lines as SCANNED PDF MAP SHEETS ONLY: 518 PDFs on the flood-line page and zero shapefiles, GeoJSON or KML anywhere. pdftotext extracts no characters from the Mutha sheets - they are raster. Digitising them is a georeferencing project, not a fetch. Retire this when a vector flood line exists, or when the Bombay High Court's June 2025 order to redraw Pune's flood lines produces one.",
+  // NARROWED 2026-08-17. The DATA now ships: public/data/pune-tankers.json,
+  // 57,370 delivery rows across 411 published registers, 7 filling points,
+  // 1,956 distinct vehicles, 84,886 trips. What is still missing is a
+  // RENDERER, and that is a deliberate hold rather than laziness.
+  //
+  // src/lib/cities/types.ts states the rule: "Adding a fourth kind is cheaper
+  // than bending one of these: forcing a city through the wrong panel means
+  // making its required fields optional and gutting its copy, which damages
+  // the city the panel was written for." Pune is exactly that case. The
+  // `utility-ledger` panel is HMWSSB-shaped - it renders bookings against
+  // deliveries, a fulfilment rate, and divisions and sections. Pune's register
+  // has none of those: every row IS a delivery so there is nothing to fulfil,
+  // and its units are filling point, prabhag and vehicle. Routing Pune through
+  // that panel would mean making bookings/delivered/fulfilment optional and
+  // rewriting Hyderabad's copy, which damages Hyderabad.
+  //
+  // So this needs a FIFTH kind, `utility-delivery-register`, with its own
+  // panel. Retire this entry when that lands.
   "pune:tanker":
-    "Buildable, high value, and simply not built yet - this is the single largest piece of remaining work for the city. PMC publishes a genuine DAILY TANKER REGISTER through an open Drupal JSON:API at webadmin.pmc.gov.in/en/jsonapi/node/water_tanker: 409 XLSX files since 25 April 2026, one per filling point per day, each row carrying prabhag number, recipient society, address, tanker vehicle number and scheduled vs on-demand trips. Bund Garden logged 153 deliveries on 12 August 2026 and Ramtekadi 424 on 13 August - and those are monsoon figures from two of at least seven points. Retire this by writing the producer.",
+    "The data ships and the renderer does not. public/data/pune-tankers.json carries 57,370 delivery rows from PMC's daily registers - 7 filling points, 1,956 vehicles, 84,886 trips, 58.4% of them on-demand - but the existing utility-ledger panel is HMWSSB-shaped (bookings vs deliveries, divisions and sections) and Pune's register has no bookings, no fulfilment rate and different units. Per the rule in types.ts, a fifth tankerDataKind with its own panel is cheaper than bending Hyderabad's. Retire this when that panel lands.",
   "pune:allocations":
     "The instrument chain exists and is unusually well documented - MWRRA Orders 19/2018 and 01/2025, the 1 March 2013 PMC-WRD agreement, the 2 July 2021 Superintending Engineer letter for the merged villages - but the ledger's primitive is entitled-vs-RECEIVED, and no measured annual draw has been published since 2017-18. For that year the utility and the regulator disagree by 4.15 TMC (PMC's affidavit 14.56 TMC against WRD's 18.71). A ledger whose received column is eight years old and contested is worse than no ledger.",
   "pune:commitments":
