@@ -33,7 +33,7 @@ export default async function CityClimateRiskPage({ params }: PageProps) {
         config={config}
         feature="Climate risk"
         scope="basin-system"
-        parityVerdict="HARD"
+        routeKey="climate-risk"
         whatItShowsForChennai="sub-basin climate-risk index (hazard x exposure x vulnerability) across the six Chennai sub-basins, with per-sub-basin driver breakdowns"
         dataGapNote="No published sub-basin risk index for this city yet."
         relatedLinks={[

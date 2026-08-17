@@ -5,7 +5,7 @@
  * panel answers "what do households PAY?" because that market is private and
  * RTI-gated. Hyderabad's ledger panel answers "who ASKS, and when?" because
  * HMWSSB runs the fleet but records no tariff. Gurugram is neither: GMDA sells
- * bulk water by the tanker load from six named points, at a published tariff
+ * bulk water by the tanker load from seven named points, at a published tariff
  * that differs by water grade, to buyers it names - so this panel answers
  * "what did the utility SELL, to whom, and at what price?"
  *

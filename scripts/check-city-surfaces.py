@@ -101,6 +101,11 @@ ADJUDICATED: dict[str, str] = {
     "gurugram:origins:Delhi": "Load-bearing and true. Chapter 6 is about Gurugram being upstream of Delhi: its "
     "outflow goes to the Najafgarh jheel, then the Najafgarh drain - the Sahibi under "
     "another name - and into the Yamuna in Delhi. Removing the word would remove the point.",
+    "gurugram:about:Delhi": "Load-bearing and true, and the same fact the origins entry below adjudicates. The "
+    "Origins subsection on the about page says Gurugram's runoff drains north into the Najafgarh "
+    "jheel and then into Delhi's Najafgarh drain, the Sahibi under another name. Gurugram is "
+    "upstream of somebody, and that is the point of the chapter - removing the word would remove "
+    "the only place the page says where the water goes.",
     "gurugram:about:chennai": "No visible occurrence. The term appears in markup (a cross-city href) and never in "
     "rendered text - checked by printing every match's surrounding context and getting "
     "nothing back. Kept as an entry rather than silenced globally so the next reader sees "

@@ -150,14 +150,28 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "allocations",
     "commitments",
   ]),
-  // Gurugram preview set, deliberately small. Only the surfaces with data
-  // behind them are listed: the tanker sales ledger, the water-body register
-  // and the ward map. No `groundwater` - the signature issue is the thinnest
-  // data (37 WRIS stations ending June 2020, no telemetry) and an empty
-  // groundwater page on a dark-zone city would read as a bug rather than as
-  // the gap it is. No `rivers`, because Gurugram has no river. Features fill
-  // in as their artifacts land; this set drives nav while the city is
-  // preview-gated (NEXT_PUBLIC_PREVIEW_CITIES=gurugram).
+  // Gurugram's live set, deliberately small: six of the platform's sixteen
+  // routes. Only surfaces with measured content behind them are listed - see
+  // docs/cities/gurugram/parity-scorecard.md, which records the count for each
+  // (824 water-body features, 6 groundwater polygons, 29,284 tanker bookings).
+  //
+  // `groundwater` IS here, and it is here on the IN-GRES *assessment* (six
+  // districts, four years, Gurugram at 194.6% extraction), not on water-level
+  // depth. The depth series is the thinnest data in the city - 37 India-WRIS
+  // stations ending June 2020, and zero telemetry rows - so the page shows the
+  // stage-of-extraction choropleth and says plainly that current depth is not
+  // published. That distinction is the whole reason the page is honest.
+  //
+  // `rivers` is absent because Gurugram HAS no river: every NWMP station in
+  // the district is a lake or a borewell. That is N/A, not a gap - and it is
+  // the entry that exposed the hardcoded "parity: EASY" badge.
+  //
+  // `my-ward` is absent although the 36 ward polygons are harvested: nothing
+  // is joined to them yet, and the page rendered 296 characters. A route in
+  // the nav must have something in it.
+  //
+  // Features fill in as their artifacts land. Adding one here without content
+  // behind it is the failure mode this comment exists to prevent.
   gurugram: new Set([
     "",
     "about",

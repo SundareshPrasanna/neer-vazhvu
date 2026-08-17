@@ -596,7 +596,7 @@ export default async function CityRiversPage({ params }: PageProps) {
         config={config}
         feature="Rivers"
         scope="basin-system"
-        parityVerdict="EASY"
+        routeKey="rivers"
         whatItShowsForChennai="3 rivers (Cooum, Adyar, Kosasthalaiyar) with CPCB NWMP annual quality samples, sewage inlets, pollution overlays from industrial sources"
         dataGapNote="No curated river-info config for this city yet."
         relatedLinks={[

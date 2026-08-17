@@ -12,10 +12,14 @@ The detailed source-by-source breakdown lives in per-city files. Each file docum
 - [docs/cities/delhi/data-sources.md](docs/cities/delhi/data-sources.md) - Delhi (CAG performance audit of DJB, Delhi Economic Survey Ch. 13, DPCC monthly Yamuna + drain analysis, CGWB/IN-GRES district groundwater assessments, Jal Dharohar water-bodies census, DUSIB JJ-basti roster, MCD 2022 ward geometry + election results, IMD gridded rainfall, etc.)
 - [docs/cities/kolkata/data-sources.md](docs/cities/kolkata/data-sources.md) - Kolkata/KMA (WBPCB EMIS water quality with tidal station pairs, KMC's weekly waterlogging register, KMC District Environment Plan 2021 sewage balance, IN-GRES + India-WRIS groundwater, Open-Meteo hourly rainfall intensity, KMC-SHARP/ADB safeguard disclosures, 1st Census of Water Bodies, etc.)
 - [docs/cities/mumbai/data-sources.md](docs/cities/mumbai/data-sources.md) - Mumbai/MMR (Maharashtra WRD Pravah daily reservoir bulletin, CWC weekly bulletins 2015-2025 backfill, BMC ESR/Climate Budget/RTI manuals, Praja Foundation RTI ward tables, MPCB water-quality series, WRD red/blue flood-line sheets, allocation instruments incl. WRD GRs + STEM board minutes, etc.)
+- [docs/cities/hyderabad/data-sources.md](docs/cities/hyderabad/data-sources.md) - Hyderabad (HMWSSB daily reservoir statement incl. its upstream data-entry errors and a silent capacity revision, HMDA gazetted lake register 2,978 lakes, HMWSSB tanker bookings, CGWB wells, TGDPS AWS network, GHMC nalas/canals/waterlogging via OpenCity, Jal Dharohar census, etc.)
+- [docs/cities/gurugram/data-sources.md](docs/cities/gurugram/data-sources.md) - Gurugram (three upstreams only: GMDA's unauthenticated OneMap ArcGIS REST directory behind the 824-body NGT water-body register, 36 ward polygons and the plant register; GMDA's per-year bulk-water tanker MIS, 29,284 priced transactions; and IN-GRES district groundwater. Both GMDA sources are **unlicensed for reuse**, so tanker data ships as aggregates only)
 
-Per-city *features* live alongside in the same folder: [docs/cities/chennai/features.md](docs/cities/chennai/features.md), [docs/cities/madurai/features.md](docs/cities/madurai/features.md), [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md), [docs/cities/mumbai/features.md](docs/cities/mumbai/features.md), [docs/cities/delhi/features.md](docs/cities/delhi/features.md), and [docs/cities/kolkata/features.md](docs/cities/kolkata/features.md). Kolkata additionally ships a graded parity scorecard against Chennai at [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md) - every feature scored XHigh/High/Medium/Low/N-A with the reason recorded wherever parity is not reachable.
+Per-city *features* live alongside in the same folder: [docs/cities/chennai/features.md](docs/cities/chennai/features.md), [docs/cities/madurai/features.md](docs/cities/madurai/features.md), [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md), [docs/cities/mumbai/features.md](docs/cities/mumbai/features.md), [docs/cities/delhi/features.md](docs/cities/delhi/features.md), [docs/cities/kolkata/features.md](docs/cities/kolkata/features.md), and [docs/cities/gurugram/features.md](docs/cities/gurugram/features.md).
 
-When adding a seventh city, copy the Kolkata, Delhi or Mumbai folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
+**Kolkata and Gurugram additionally ship a graded parity scorecard and a page-by-page audit against Chennai** ([kolkata](docs/cities/kolkata/parity-scorecard.md), [gurugram](docs/cities/gurugram/parity-scorecard.md)) - every feature scored XHigh/High/Medium/Low/N-A with the reason recorded wherever parity is not reachable, and every route classified PARITY/BETTER/PARTIAL/BUILDABLE/BLOCKED/N-A with the blocker named. These are not optional colour: `src/lib/cities/parity-audits.ts` renders the "parity:" badge on not-yet-available pages **only** for cities with an audit on disk, and a test pins the two together. Before that gate, the verdict was a hardcoded literal identical for every city, and `/gurugram/rivers` advertised "parity: EASY" for a city with no river.
+
+When adding a tenth city, copy the Gurugram or Kolkata folder as a template - those are the only two with the full four-file set (data-sources, features, parity-audit, parity-scorecard), and they reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat. Hyderabad currently has only `data-sources.md`; its features and parity docs were never written and remain a known gap.
 
 ## Documentation principle: record what the source refuses to say
 
@@ -59,11 +63,12 @@ The Madurai documents follow this principle throughout. The Chennai documents pr
 
 A contributor cheat-sheet for what each city has covered. If you're adding a new city, this is your checklist - replicate the green column items first, then file the red column as known gaps to track.
 
-> **This table is stale by two cities: it predates both Delhi and Kolkata.** Rather than half-fill
-> thirty rows, the modern and more rigorous version of this comparison lives at
-> [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md), which grades
+> **This table is stale by four cities: it predates Delhi, Hyderabad, Kolkata and Gurugram.** Rather
+> than half-fill thirty rows, the modern and more rigorous version of this comparison lives at
+> [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md) and
+> [docs/cities/gurugram/parity-scorecard.md](docs/cities/gurugram/parity-scorecard.md), which grade
 > every feature XHigh / High / Medium / Low / N-A against Chennai with the reason recorded wherever
-> parity is not reachable, and separates *structural* N-A (the city cannot have this) from a real
+> parity is not reachable, and separate *structural* N-A (the city cannot have this) from a real
 > gap (we have not built it). Use that shape for the next city; this table stays as the historical
 > four-city snapshot.
 

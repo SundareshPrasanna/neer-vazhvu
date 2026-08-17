@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { PlaceConfig } from "@/lib/cities";
 import { isFeatureSupportedForCity } from "@/lib/cities/routing";
+import { parityVerdictFor } from "@/lib/cities/parity-audits";
 
 export type FeatureScope =
   | "city-admin"
@@ -33,8 +34,13 @@ interface FeatureNotYetAvailableProps {
   whatItShowsForChennai: string;
   /** What data is needed for this place; null = not blocked, just not built yet. */
   dataGapNote?: string;
-  /** Source URL or research-memo reference for the parity status. */
-  parityVerdict?: "FULL" | "EASY" | "MEDIUM" | "HARD" | "GAP";
+  /** This page's route key, e.g. "rivers" - the `src/app/[cityId]/<key>`
+   *  directory name. Used to look up the parity verdict this city's audit
+   *  actually published for this route. There is deliberately no way to pass
+   *  a verdict directly: it used to be a literal here, identical for every
+   *  city, which is how /gurugram/rivers came to advertise "parity: EASY" for
+   *  a city with no river. See src/lib/cities/parity-audits.ts. */
+  routeKey?: string;
   /** Cross-link back to a related page that's live, e.g. /madurai or /madurai/groundwater. */
   relatedLinks?: { href: string; label: string }[];
 }
@@ -45,9 +51,12 @@ export function FeatureNotYetAvailable({
   scope,
   whatItShowsForChennai,
   dataGapNote,
-  parityVerdict,
+  routeKey,
   relatedLinks,
 }: FeatureNotYetAvailableProps) {
+  const parityVerdict = routeKey
+    ? parityVerdictFor(config.cityId, routeKey)
+    : null;
   // Callers hardcode their cross-links, and for most cities every target is
   // live so nothing showed. Gurugram is the first city where they are not:
   // its flood-risk page offered a "Groundwater stress map" and its
@@ -73,6 +82,10 @@ export function FeatureNotYetAvailable({
         <Badge variant="outline" className="text-xs">
           {SCOPE_LABEL[scope]}
         </Badge>
+        {/* Null unless this city's audit published a verdict for this route.
+            A verdict with no audit behind it is a claim we cannot stand behind
+            - same rule as the hero narrative, the footer sources and the
+            supply subtitle. No borrowed defaults. */}
         {parityVerdict && (
           <Badge variant="outline" className="text-xs">
             parity: {parityVerdict}

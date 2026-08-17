@@ -1,6 +1,6 @@
 # Architecture
 
-> Technical overview of Neer Vazhvu - Urban Water Intelligence platform (Chennai, Madurai, Bengaluru, Mumbai, Delhi and Kolkata live; multi-city by design; Mumbai is the first region place - the 9-corporation MMR, Delhi the first city with no ingestible daily supply feed, and Kolkata the first with no impounded storage at all, which is why it needed a fourth hero mode).
+> Technical overview of Neer Vazhvu - Urban Water Intelligence platform (Chennai, Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata and Gurugram live; multi-city by design; Mumbai is the first region place - the 9-corporation MMR, Delhi the first city with no ingestible daily supply feed, Kolkata the first with no impounded storage at all, which is why it needed a fourth hero mode, and Gurugram the first that owns no water source of any kind - no reservoir, no river, no abstraction of its own - which is why it needed a third `tankerDataKind` instead).
 
 ## System Overview
 
@@ -95,7 +95,7 @@ graph TB
 
 ## Multi-city architecture
 
-Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai, Bengaluru, Mumbai, Delhi, Kolkata and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/lib/cities/{cityId}.ts` and that config drives:
+Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata, Gurugram and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/lib/cities/{cityId}.ts` and that config drives:
 
 - **`heroMode`** (`days-left` | `allocation` | `cauvery-pumping` | `drainage-capacity` | `none`) — picks the dashboard hero variant.
     - Chennai (`days-left`): divides total CMWSSB-reservoir storage by urban demand. Works because Chennai's reservoirs ARE the urban supply.
@@ -104,19 +104,21 @@ Every page that the user sees is keyed on a `cityId`. Chennai's pages live at th
     - Mumbai (`days-left`, region place): BMC's 7 lakes ARE the tap (Chennai-pattern), but the card states two caveats from config - `heroNote` labels the figure an upper bound (storage counts whole-dam water in state-owned dams while capacity is BMC's share), and the rain scenarios collapse to one line because the Pravah feed publishes no inflow data. Desal/inflow sliders hide when a city lacks the underlying data.
     - Delhi (`cauvery-pumping`, no live feed): the same variant as Bengaluru but a different story - nothing is pumped uphill; ~90% of raw water arrives by gravity canal from five other states under legal instruments (1994 Yamuna MoU, the 102-km Munak carrier, a BBMB-resolved Bhakra share, Tehri via the Upper Ganga Canal). Because the shared `pump.*` strings carry Bengaluru's specifics, Delhi overrides them through `hero_copy` in `delhi-supply-overview.json` rather than forking the component - the same escape hatch `_view_overrides` provides for the supply tile (incl. `demand_headline`, since Delhi's horizon is MPD-2041, not the ADB 2034 the default hard-codes).
     - Kolkata (`drainage-capacity`): the fourth mode, and the one that exists because a city can refuse the question entirely. Kolkata impounds NOTHING - run-of-river Hooghly abstraction plus tube wells - so `days-left` is not awkward here but *undefined*: there is no numerator. `cauvery-pumping` is equally wrong (it tells a lift-vs-design story; Palta is 22 km away on flat delta), and `allocation` needs a dam quota that does not exist. So the hero anchors on KMC's published drainage design standard - "designed to discharge a rainfall of 6 mm. per hour" - against measured HOURLY rainfall from `rainfall-intensity-<cityId>.json`, precomputed as a 10-threshold exceedance ladder so the slider moves without shipping ~230k hourly values. The standard is config (`drainageCapacity.standardMmPerHour`) with a citation, not a constant, because it varies by city (modern Indian codes use 12-25 mm/h) - so the mode is generic to any city that publishes one.
+    - Gurugram (`cauvery-pumping`, no lift story): reused rather than extended. The mode's real shape is *water hauled a long way, measured against installed capacity*, and Gurugram lifts from the Yamuna at Kakroi ~70 km away into two plants totalling 572 MLD. The mode name is Bengaluru-coded; the mechanic is not. Both the plant figures and the narrative come from `gurugram-supply-overview.json` - and it carries **both** `hero_copy` (which the hero reads) and `_view_overrides` (which the supply tile reads), because supplying only one leaves the other rendering another city's defaults. That is not belt-and-braces: shipping only `_view_overrides` is exactly how Gurugram's dashboard went live narrating Bengaluru's Cauvery, TK Halli and Kempe Gowda's kere network.
+- **`tankerDataKind`** (`household-survey` | `utility-ledger` | `utility-sales-ledger`) — picks the tanker page variant, because tanker data differs in *kind*, not just depth. `household-survey` (Bengaluru) answers "what do households pay?" from longitudinal OpenCity price panels, because that market is private and RTI-gated. `utility-ledger` (Hyderabad) answers "who asks, and when?" from HMWSSB's own booking/delivery records, which carry no tariff. `utility-sales-ledger` (Gurugram) answers "what did the utility sell, to whom, and at what price?" - GMDA sells bulk water by the load from seven named stations at a published per-grade tariff to buyers it names, so the rows are priced transactions and the price is the finding. Omitting the field falls back to the household-survey wording.
 - **`waterSources`** — array of reservoirs/dams the city tracks, with `fullCapacityMcft`, `isPrimaryDrinkingSource`, etc. `isPrimaryDrinkingSource` is true only when the reservoir's storage IS the city's runway. Bangalore tracks 4 upstream Cauvery basin reservoirs (KRS, Hemavathi, Kabini, Harangi) but flags them all false because they're shared with irrigation + Mysuru + Mandya + the inter-state release to TN. Two honesty fields hang off each source: **`hasPublicFeed: false`** when no feed can ever deliver a reading (Mumbai's Vihar/Tulsi; *all six* of Delhi's sources), which excludes it from ingestion-liveness checks and from the "waiting for first daily ingestion" pill; and **`noFeedNote`**, which replaces the generic "<authority> does not publish daily levels" line when the authority that *would* publish is not the city's own utility - Bhakra is BBMB's to publish, not DJB's.
 - **`urbanSupply`** (when `heroMode === 'allocation'`) — annual allocation (mcft/yr), recent draw, WTP capacity, supply chain description for the at-a-glance tile.
-- **`groundwaterViews`** — feature flags for the groundwater page (`exploitation` / `depth` / `risk` / `cgwbStations`). Madurai disables `depth` + `risk` because per-ward IDW interpolation would be dishonest with only 4 live stations across the district; instead it surfaces `cgwbStations` (Year Book point overlay) on top of `exploitation` (block-level classification). Bengaluru disables `depth` for the same reason (13 CGWB telemetric stations across 369 GBA wards is too sparse to honestly IDW); it surfaces `exploitation` (6 blocks all Over-Exploited every year on record), `risk` (ward-risk composite), and `cgwbStations`.
-- **`localGovernment`** — ward count + acronym (GCC 200 / MMC 100 / GBA 369 / BMC 24 / MCD 250) for help-text and authority labels.
-- **`primaryAuthority`** — utility name (CMWSSB / MMC / TWAD / BWSSB / BMC / DJB) used in MissingDataCard reasons and About-page citations.
-- **`availableLanguages`** — which UI languages render the language toggle for this city. Chennai: `['en', 'ta']`. Madurai: `['en', 'ta']`. Bengaluru: `['en', 'kn']`. Mumbai: `['en']` with `upcomingLanguages: ['mr']` - the switcher renders a greyed "coming soon" chip until the Marathi pass lands. Delhi follows the same posture with `upcomingLanguages: ['hi']`, and Kolkata with `upcomingLanguages: ['bn']`.
+- **`groundwaterViews`** — feature flags for the groundwater page (`exploitation` / `depth` / `risk` / `cgwbStations`). Madurai disables `depth` + `risk` because per-ward IDW interpolation would be dishonest with only 4 live stations across the district; instead it surfaces `cgwbStations` (Year Book point overlay) on top of `exploitation` (block-level classification). Bengaluru disables `depth` for the same reason (13 CGWB telemetric stations across 369 GBA wards is too sparse to honestly IDW); it surfaces `exploitation` (6 blocks all Over-Exploited every year on record), `risk` (ward-risk composite), and `cgwbStations`. Gurugram enables `exploitation` **only**, and the reason is worth recording because it is the sharpest case on the platform: this is a dark-zone city whose water level has not been published since June 2020 (37 India-WRIS stations, and a 95 MB Haryana telemetry export returning zero rows for it). So the page shows the current IN-GRES *assessment* - Gurugram district at 194.6% of annual recharge - and does not show *depth*, because a contoured surface drawn from five-year-old readings would look authoritative and mean nothing.
+- **`localGovernment`** — ward count + acronym (GCC 200 / MMC 100 / GBA 369 / BMC 24 / MCD 250 / MCG 36) for help-text and authority labels.
+- **`primaryAuthority`** — utility name (CMWSSB / MMC / TWAD / BWSSB / BMC / DJB / GMDA) used in MissingDataCard reasons and About-page citations. It is not always the corporation: Gurugram follows Hyderabad's HMWSSB-over-GHMC shape, with GMDA as the authority over MCG as the local government.
+- **`availableLanguages`** — which UI languages render the language toggle for this city. Chennai: `['en', 'ta']`. Madurai: `['en', 'ta']`. Bengaluru: `['en', 'kn']`. Mumbai: `['en']` with `upcomingLanguages: ['mr']` - the switcher renders a greyed "coming soon" chip until the Marathi pass lands. Delhi follows the same posture with `upcomingLanguages: ['hi']`, Kolkata with `upcomingLanguages: ['bn']`, and Gurugram with `upcomingLanguages: ['hi']`.
 - **`placeKind` + `corporations[]`** — `'region'` models a metropolitan region rather than one corporation (Mumbai: the 9-corporation MMR). Region places render the `RegionalWaterSystem` dashboard section, and `dashboardScopes` supplies the scope badges ("Greater Mumbai · BMC's 7 lakes" vs "Mumbai Metropolitan Region · 9 corporations") so two geographies never blur on one dashboard.
 - **Capability flags** — `hasCommitments`, `hasAllocationLedger`, `hasShoreline`, `hasCascadeOverlay`, etc. gate whole surfaces; `FEATURE_AVAILABILITY` in `src/lib/cities/routing.ts` is the single source of truth for nav, sitemap AND direct-URL 404s (e.g. Mumbai ships without my-ward until the ward build lands).
 - **`sourceNameAliases`** — case-insensitive maps so the news-search query and reservoir-detail-dialog match a source under any spelling (e.g. "vaigai" / "vaigai dam" / "வைகை" → `vaigai`).
 
 Per-city data files use a `-<cityId>` suffix in `public/data/` and `public/geojson/` (e.g. `madurai-supply-overview.json`, `bangalore-iisc-stress-wards-2025.json`, `imd-rainfall-monthly-bangalore.json`). Chennai keeps legacy unsuffixed paths for back-compat.
 
-To add a new city, see the "Adding a new city" walkthrough in [CONTRIBUTING.md](CONTRIBUTING.md). The Kolkata onboarding is the most recent worked example and the best reference for a city that does NOT fit the existing shape - it added a hero mode, made `FloodConfig`'s dam fields optional in favour of a generic `primary_trigger`, generalised `RiverInfo`'s native-name field beyond Hindi, and added a `regionIntro` after Mumbai's nine-corporation copy leaked verbatim onto a three-unit region. Mumbai (PR #147) covers the region pattern; Bangalore (`bangalore_onboarding`) covers `cauvery-pumping` + localization; the Madurai onboarding (PR #97) is the canonical reference.
+To add a new city, see the "Adding a new city" walkthrough in [CONTRIBUTING.md](CONTRIBUTING.md). The Kolkata onboarding is the most recent worked example and the best reference for a city that does NOT fit the existing shape - it added a hero mode, made `FloodConfig`'s dam fields optional in favour of a generic `primary_trigger`, generalised `RiverInfo`'s native-name field beyond Hindi, and added a `regionIntro` after Mumbai's nine-corporation copy leaked verbatim onto a three-unit region. Mumbai (PR #147) covers the region pattern; Bangalore (`bangalore_onboarding`) covers `cauvery-pumping` + localization; the Madurai onboarding (PR #97) is the canonical reference. Gurugram is the most recent, and the best reference for the opposite situation - a city that fits the existing shape almost entirely (it added one `tankerDataKind` and nothing else) and still shipped seven defects, all of them shared-component defaults inherited from earlier cities. Read "Parity verdicts, and the defect class behind them" above before onboarding city ten, and run `scripts/check-city-surfaces.py` before cutover rather than after.
 
 ### The exemption register
 
@@ -131,6 +133,37 @@ The register is derived rather than hand-listed, so it cannot drift: routes-off 
 each city against the union of every route any city ships, and `npm run data:check` fails if the
 committed copy is stale **or if any omission has no reason recorded**. That second gate is the point
 - a page quietly dropped from `FEATURE_AVAILABILITY` now fails CI until someone writes down why.
+
+### Parity verdicts, and the defect class behind them
+
+`src/lib/cities/parity-audits.ts` holds the "parity: EASY|MEDIUM|HARD|N/A" verdict the
+not-yet-available pages render, keyed by **(city, route)**, with every entry citing a row in that
+city's `docs/cities/<id>/parity-audit.md`. Cities without an audit get no badge; audited cities get
+no badge on routes their audit did not examine. `parity-audits.test.ts` pins the table against the
+filesystem and against the real route directories, in both directions.
+
+It works this way because it previously did not. The verdict was a prop, and all seven caller pages
+passed a **literal** - so the verdict was a property of the route and identical for every city, and
+`/gurugram/rivers` advertised "parity: EASY" for a city with **no river**, where parity with Chennai
+is not easy but undefined. The prop is now a route key; there is no way to pass a verdict.
+
+That is one instance of the platform's most persistent defect class, worth stating plainly for the
+next city: **a shared component whose default is a fact about one specific city.** "One shared
+component per feature" is the right rule, but each component accumulates a default written for
+whoever it was built for, and a new city inherits all of them at once. Gurugram's launch surfaced
+seven - a hero narrating Bengaluru's Cauvery, a supply panel citing Madurai's ADB programme, a
+footer naming Chennai's CMWSSB, a groundwater card promising a live station overlay for a series
+that stopped in 2020, a water-bodies card saying "OSM polygons" for a statutory register, a nav
+entry leading to 296 characters, and the parity badge.
+
+Every one of them returned HTTP 200, passed lint, `tsc`, the test suite and every CI job. Status
+codes cannot catch a page that renders the wrong city's story; text-presence assertions ask whether
+the right strings appear and never whether wrong ones do; a hand-written blocklist can only catch
+leaks someone already found. `scripts/check-city-surfaces.py` is the pre-cutover gate that can:
+it renders every route a city advertises and checks for LEAK / EMPTY / CONSOLE / NULLISH, deriving
+its forbidden vocabulary **from the city registry** so it catches leaks from cities added after it
+was written, and running everything against a control city so a finding on both reads as a harness
+bug. It needs a browser, so it is a human-run gate rather than a CI job.
 
 The one exemption kind that suppresses a CI failure - a freshness check a city is allowed to skip -
 is *owned* by that module rather than by the checker, so it cannot be edited without touching the

@@ -73,7 +73,7 @@ export default async function CityGroundwaterPage({ params }: PageProps) {
         config={config}
         feature="Groundwater"
         scope="district-admin"
-        parityVerdict="MEDIUM"
+        routeKey="groundwater"
         whatItShowsForChennai="per-ward monthly depth survey, CGWB block exploitation status, and the ward risk composite"
         dataGapNote={
           config.groundwaterViews?.gapNote ??
