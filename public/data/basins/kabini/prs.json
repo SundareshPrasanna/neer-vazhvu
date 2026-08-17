@@ -107,9 +107,8 @@
   "tabs": [
     {
       "key": "sewage",
-      "label": "Sewage from the towns on the stretch",
+      "label": "Sewage",
       "status": "built",
-      "scope": "stretch",
       "subtabKind": "units",
       "unitLabel": "MLD",
       "treatedVerb": "treated",
@@ -143,7 +142,8 @@
           ],
           "capacity": "None. No sewerage network, and no facility marked as planned in the plan's STP-requirement table.",
           "gapValue": 1.2339,
-          "gapNote": "the whole of it, on the plan's own arithmetic"
+          "gapNote": "the whole of it, on the plan's own arithmetic",
+          "dashboard": "No public dashboard reported"
         },
         {
           "key": "nanjangud",
@@ -187,8 +187,14 @@
               "label": "8 MLD SBT upgrade at Goluru",
               "status": "Consent to establish 31/07/2025; operational and complying, April 2026 annexure",
               "tone": "good"
+            },
+            {
+              "label": "Rs 80 crore restoration cost (action plan, section 6 and Table-3)",
+              "status": "Rs 2.5 crore per MLD of capital cost for primary, secondary and tertiary treatment, asked for as Rs 80 crore of budgetary provision: Rs 1.18 crore a year of O&M for the existing 7 MLD STP plus Rs 78.82 crore for UGD to the 60% of the town still uncovered and house connections for the whole of it. Every rupee is Nanjangud - Sargur and T. Narasipura, both on the 2025 stretch, are not costed - and the table is headed 'Cost Component involved in the Rejuvenation of Polluted Stretch of Bhadra', another river's name left in the Kabini plan.",
+              "tone": "bad"
             }
-          ]
+          ],
+          "dashboard": "No public dashboard reported"
         },
         {
           "key": "tn-pura",
@@ -207,54 +213,8 @@
           ],
           "generationNote": "The plan's own figure for the town; UGD covers 50% of its area.",
           "treated": [],
-          "capacity": "5.5 MLD per pp.57 and 60; 0 MLD per the p.59 table."
-        }
-      ]
-    },
-    {
-      "key": "water-quality",
-      "label": "Water quality along the stretch",
-      "status": "built",
-      "scope": "stretch",
-      "subtabKind": "categories",
-      "source": "CPCB, Polluted River Stretches for Restoration of Water Quality 2025 (October 2025), pp.48, 77 and 144; KSPCB Action Plan for Rejuvenation of River Kabini, Table-2",
-      "intro": "Five CPCB stations sit on the 2025 stretch. Their BOD readings are what set the Priority band - and they place the worst reading at the downstream end, where T. Narasipura draws its water.",
-      "summaryBadge": "worst at intake",
-      "summaryLine": "BOD rises down the stretch to 6 mg/L at the T. Narasipura water-supply intake, in both rounds",
-      "summaryTone": "bad",
-      "categories": [
-        {
-          "key": "stations-2024",
-          "label": "The five stations, 2022-23 and 2024",
-          "level": "monitoring station",
-          "layerRef": "monitoring-points",
-          "body": "Maximum BOD observed, in mg/L. The 3 mg/L line is the Primary Water Quality Criteria for Bathing Water; every station on the stretch is above it in both rounds.",
-          "points": [
-            "Kabini at Saragur village D/S - 4.0 (2022-23), 4.0 (2024)",
-            "Kabini at causeway, Sattur - 4.0 (2022-23), 3.5 (2024)",
-            "Kabini u/s intake point to Nanjangud & Gundlupet at Debur - 3.5 (2022-23), 3.8 (2024)",
-            "Kabini at bathing ghat, Nanjangud - 4.5 (2022-23), 5.0 (2024)",
-            "Kabini at water-supply intake point to T. Narasipura - 6.0 (2022-23), 6.0 (2024)"
-          ]
-        },
-        {
-          "key": "classes-2017-18",
-          "label": "What the board recorded before the stretch was redrawn",
-          "level": "monitoring station",
-          "body": "The action plan's own Table-2 covers just two stations for 2017 and 2018, and reads the pollution as coming from Nanjangud town.",
-          "points": [
-            "Bathing ghat, Nanjangud: Class D in 2017 (BOD 2.4-6.5, faecal coliform 320-790 MPN/100ml), Class E in 2018.",
-            "Water-supply intake, T. Narasipura: Class C in both 2017 and 2018 (BOD 1.2-3.0, then 1.04-2.0).",
-            "The plan's reading: 'The results indicate that the water is polluted due to sewage from Nanjungud Town.'",
-            "By CPCB's 2022-23 and 2024 rounds the intake is the worst point on the stretch, not the best."
-          ]
-        },
-        {
-          "key": "parameters",
-          "label": "What is not measured",
-          "level": "stretch",
-          "body": "The classification runs on BOD alone. No public monitoring we hold reports heavy metals, pesticides or pharmaceutical residues on this river - which matters upstream of a belt that includes distilleries, pulp and paper, and pharmaceutical units.",
-          "noData": true
+          "capacity": "5.5 MLD per pp.57 and 60; 0 MLD per the p.59 table.",
+          "dashboard": "No public dashboard reported"
         }
       ]
     },
@@ -262,7 +222,6 @@
       "key": "industrial",
       "label": "Industrial effluent",
       "status": "built",
-      "scope": "stretch",
       "subtabKind": "categories",
       "source": "KSPCB Action Plan for Rejuvenation of River Kabini, section 2.5; NMCG Monthly Progress Report, August 2025",
       "intro": "The Nanjangud industrial belt sits at the head of the original polluted reach. Both the action plan and the progress reports report it as discharging nothing to the river.",
@@ -288,50 +247,181 @@
           "label": "What would let anyone check it",
           "level": "stretch",
           "body": "The zero-discharge position is the board's own assertion. For a sugar, distillery, pulp-and-paper and pharmaceutical cluster upstream of a polluted stretch, no published effluent data exists to test it: there is no public OCEMS-style feed for these units, and the compliance table reports a count, not a measurement.",
+          "noData": true,
+          "sourceTier": "other",
+          "link": {
+            "url": "https://cems.cpcb.gov.in/public/#/l/realtime-connectivity-status-dashboard",
+            "label": "Open CPCB's live connectivity dashboard"
+          }
+        }
+      ]
+    },
+    {
+      "key": "solid",
+      "label": "Solid waste",
+      "status": "built",
+      "subtabKind": "units",
+      "unitLabel": "TPD",
+      "treatedVerb": "processed",
+      "source": "KSPCB Action Plan for Rejuvenation of River Kabini, section 2.2; NMCG Monthly Progress Report, August 2025; Revised District Environmental Plan of Mysuru District (May 2022)",
+      "intro": "Municipal solid waste generated vs processed (tonnes/day) and the processing and landfill infrastructure, for the towns along the stretch. Bank dumping is one of the few pollution sources the action plan names outright. It is also the one with no closure status in any report since.",
+      "summaryBadge": "unclosed",
+      "summaryLine": "Plan records dumping on the banks; no edition since says it stopped",
+      "summaryTone": "warn",
+      "units": [
+        {
+          "key": "sargur",
+          "name": "Sargur (TP)",
+          "level": "ULB (Town Panchayat) - one DEP snapshot",
+          "sourceTier": "other",
+          "gapUnit": "mysuru",
+          "mprNote": "Not itemised in any MPR edition - the Kabini stretch section covered Nanjangud only.",
+          "sourceNote": "Revised District Environmental Plan of Mysuru District, May 2022, pp.8-9.",
+          "caveat": "Neither this town's waste destinations nor bank-side dumping are reported anywhere we hold.",
+          "generation": [
+            {
+              "year": 2022,
+              "value": 4.57
+            }
+          ],
+          "generationNote": "The plan's own figure for the town.",
+          "treated": [],
+          "infrastructure": [
+            {
+              "label": "Source segregation",
+              "status": "10 of 12 wards at 100% source segregation (DEP 2022)",
+              "tone": "neutral"
+            }
+          ],
+          "dashboard": "No public dashboard reported"
+        },
+        {
+          "key": "nanjangud",
+          "name": "Nanjangud (CMC)",
+          "level": "ULB (City Municipal Council) - yearly (MPR)",
+          "sourceTier": "mpr",
+          "gapUnit": "mysuru",
+          "generation": [
+            {
+              "year": 2025,
+              "value": 26
+            }
+          ],
+          "generationNote": "26 TPD in the August 2025 MPR. The action plan records about 20 TPD and that the waste is not being segregated.",
+          "treated": [
+            {
+              "year": 2025,
+              "value": 6
+            }
+          ],
+          "gapValue": 20,
+          "gapNote": "26 generated, about 6 composted (NMCG August 2025); the report's own figures are a composting gap of 4.66 TPD and a landfill gap of 6.24 TPD.",
+          "capacity": "No functional sanitary landfill; a Rs 5.16 crore DPR is approved and construction reported 'in progress'.",
+          "infrastructure": [
+            {
+              "label": "Dumping on the river banks",
+              "status": "The action plan records that 'apart from dumping the solid wastes in the MSW site, some quantity is also dumped on banks of the river' (section 2.2); its remedy is disposal only at MSW sites. No edition since reports whether it stopped.",
+              "tone": "bad"
+            },
+            {
+              "label": "Sanitary landfill",
+              "status": "Rs 5.16 crore DPR approved, construction 'in progress'; the proposed-facility timeline is still printed as 31.03.2021.",
+              "tone": "bad"
+            },
+            {
+              "label": "Collection and segregation",
+              "status": "Door-to-door collection in all 31 wards; source segregation in 24 of them, against the DEP's count of 31 of 31.",
+              "tone": "neutral"
+            }
+          ],
+          "dashboard": "No public dashboard reported",
+          "otherStreams": [
+            {
+              "label": "Biomedical",
+              "value": "0.217 kg/day across 35 bedded and 50 non-bedded health-care facilities, disposal via CBMWTF (NMCG, unchanged through August 2025) - implausibly low as stated, likely a units error in the report itself"
+            }
+          ]
+        },
+        {
+          "key": "tn-pura",
+          "name": "T. Narasipura (TMC)",
+          "level": "ULB (Town Municipal Council) - one DEP snapshot",
+          "sourceTier": "other",
+          "gapUnit": "mysuru",
+          "mprNote": "Not itemised in any MPR edition, though the stretch now ends at this town's water-supply intake.",
+          "sourceNote": "Revised District Environmental Plan of Mysuru District, May 2022, pp.8-9.",
+          "caveat": "Neither this town's waste destinations nor bank-side dumping are reported anywhere we hold.",
+          "generation": [
+            {
+              "year": 2022,
+              "value": 13
+            }
+          ],
+          "generationNote": "The plan's own figure for the town.",
+          "treated": [],
+          "infrastructure": [
+            {
+              "label": "Source segregation",
+              "status": "22 of 23 wards at 100% source segregation (DEP 2022)",
+              "tone": "neutral"
+            }
+          ],
+          "dashboard": "No public dashboard reported"
+        }
+      ]
+    },
+    {
+      "key": "hazardous",
+      "label": "Hazardous waste",
+      "status": "built",
+      "subtabKind": "categories",
+      "source": "NMCG Monthly Progress Reports (Karnataka, Kabini stretch, to August 2025); Revised District Environmental Plan of Mysuru District (May 2022)",
+      "summaryBadge": "not reported",
+      "summaryLine": "No hazardous-waste figure reported for the stretch in any edition held",
+      "summaryTone": "neutral",
+      "categories": [
+        {
+          "key": "hazardous",
+          "label": "Hazardous waste",
+          "level": "stretch / district",
+          "body": "Hazardous waste is not reported for this stretch.",
+          "points": [
+            "No hazardous-waste generation, treatment or TSDF figure appears in any NMCG progress report edition for the Kabini stretch through August 2025.",
+            "The Mysuru District Environment Plan (May 2022) inventories solid waste, domestic sewage, industrial wastewater, air, mining and noise; no known public hazardous-waste inventory covers the district's Kabini-side towns.",
+            "Biomedical waste is the one special stream reported here, and only for Nanjangud - see Solid waste."
+          ],
           "noData": true
         }
       ]
     },
     {
-      "key": "solid-waste",
-      "label": "Solid waste on the river banks",
+      "key": "fstp",
+      "label": "FSTP",
       "status": "built",
-      "scope": "stretch",
       "subtabKind": "categories",
-      "source": "KSPCB Action Plan for Rejuvenation of River Kabini, section 2.2; NMCG Monthly Progress Report, August 2025; Revised District Environmental Plan of Mysuru District (May 2022)",
-      "intro": "Bank dumping is one of the few pollution sources the action plan names outright. It is also the one with no closure status in any report since.",
-      "summaryBadge": "unclosed",
-      "summaryLine": "Plan records dumping on the banks; no edition since says it stopped",
+      "source": "KSPCB Action Plan for Rejuvenation of River Kabini; NMCG Monthly Progress Reports (to August 2025); Revised District Environmental Plan of Mysuru District (May 2022)",
+      "summaryBadge": "not reported",
+      "summaryLine": "No faecal-sludge plant on the stretch; the unsewered share's septage route is unreported",
       "summaryTone": "warn",
       "categories": [
         {
-          "key": "banks",
-          "label": "Dumping on the banks",
-          "level": "ULB",
-          "body": "The action plan records about 20 TPD generated at Nanjangud, that waste is not being segregated, and that 'apart from dumping the solid wastes in the MSW site, some quantity is also dumped on banks of the river' (section 2.2). Its remedy is that municipal waste, including poultry and slaughterhouse waste, shall be disposed of only at MSW sites.",
+          "key": "fstp",
+          "label": "FSTP",
+          "level": "ULB / district",
+          "body": "Faecal-sludge treatment for the unsewered load:",
           "points": [
-            "August 2025 MPR: 26 TPD generated, about 6 TPD composted - a composting gap of 4.66 TPD and a landfill gap of 6.24 TPD.",
-            "A Rs 5.16 crore sanitary-landfill DPR is approved and construction reported 'in progress'; the proposed-facility timeline is still printed as 31.03.2021.",
-            "Door-to-door collection in all 31 wards; source segregation in 24 of them, against the DEP's count of 31 of 31.",
-            "No edition since the plan reports whether the bank dumping it acknowledged has stopped."
-          ]
-        },
-        {
-          "key": "other-towns",
-          "label": "The other towns on the stretch",
-          "level": "ULB",
-          "body": "T. Narasipura generates 13 TPD across 23 wards and Sargur 4.57 TPD across 12; both fall outside the MPR's stretch reporting entirely. Their figures come from the district plan (pp.8-9).",
-          "points": [
-            "T. Narasipura: 13 TPD, 22 of 23 wards at 100% source segregation.",
-            "Sargur: 4.57 TPD, 10 of 12 wards at 100% source segregation.",
-            "Neither town's waste destinations or bank-side dumping are reported anywhere we hold."
-          ]
+            "Faecal sludge and septage do not appear in the KSPCB Kabini action plan.",
+            "With 40% of Nanjangud's households unconnected to the UGD, their septage route is not reported in any edition through August 2025 - the unsewered share's septage is the unaccounted flow between the town and the river.",
+            "Sargur has no sewerage network and no facility marked as planned; T. Narasipura's UGD covers half the town. No faecal-sludge plant is reported for either.",
+            "The Mysuru District Environment Plan lists an FSTP approved for HD Kote, a Kabini-side town off the 2025 stretch; no plant is reported operational anywhere on the stretch itself."
+          ],
+          "noData": true
         }
       ]
     },
     {
       "key": "eflow",
-      "label": "Environmental flow (E-flow)",
+      "label": "E-flow",
       "status": "built",
       "scope": "stretch",
       "subtabKind": "categories",
@@ -361,51 +451,56 @@
             "Water-year mean discharge swings from 8.7 cumec in 2014-15 and 51.9 in 2023-24 to 1,072 in 2018-19, against a long-term average of 199.3 cumec.",
             "Priority bands are set on BOD from grab samples, so a dry year and a wet year of the same effluent load do not read the same.",
             "Discharge is published in arrears; the telemetric level feed has been frozen at source since 04 June 2026."
-          ]
+          ],
+          "sourceTier": "other"
         }
       ]
     },
     {
-      "key": "cost",
-      "label": "What restoration was costed at",
+      "key": "reuse",
+      "label": "Treated-water reuse",
       "status": "built",
-      "scope": "stretch",
       "subtabKind": "categories",
-      "source": "KSPCB Action Plan for Rejuvenation of River Kabini, section 6 and Table-3",
-      "intro": "The plan puts a number on restoring the stretch. It is a sewerage number, for one town.",
-      "summaryBadge": "Rs 80 crore",
-      "summaryLine": "Costed entirely as Nanjangud sewerage; the table is headed with another river's name",
-      "summaryTone": "warn",
-      "categories": [
-        {
-          "key": "table",
-          "label": "The Rs 80 crore",
-          "level": "stretch",
-          "body": "Section 6 estimates Rs 2.5 crore of capital cost per MLD for primary, secondary and tertiary treatment, and asks for Rs 80 crore of budgetary provision for the towns along the Kabini.",
-          "points": [
-            "Table-3 splits it as Rs 1.18 crore a year of O&M for the existing 7 MLD STP, and Rs 78.82 crore for UGD to the 60% of Nanjangud still uncovered plus house connections for the whole town.",
-            "Every rupee of it is Nanjangud. Sargur and T. Narasipura, both on the 2025 stretch, are not costed.",
-            "The table is headed 'Cost Component involved in the Rejuvenation of Polluted Stretch of Bhadra' - another river's name, left in the Kabini plan; its only column is Nanjangud."
-          ]
-        }
-      ]
-    },
-    {
-      "key": "evidence",
-      "label": "Independent evidence",
-      "status": "built",
-      "scope": "stretch",
-      "subtabKind": "categories",
-      "intro": "On the Arkavathi, independent lab work and citizen documentation sit alongside the official record. On the Kabini there is no such body of evidence in what we hold.",
-      "summaryBadge": "none held",
-      "summaryLine": "No independent study, citizen record or lab analysis for this stretch in our sources",
+      "source": "KSPCB Action Plan for Rejuvenation of River Kabini, section 2.5; NMCG Monthly Progress Reports (to August 2025; STP annexure April 2026)",
+      "summaryBadge": "not reported",
+      "summaryLine": "Industrial on-land gardening is the only reuse reported; no municipal reuse in any edition",
       "summaryTone": "neutral",
+      "scope": "stretch",
       "categories": [
         {
-          "key": "none",
-          "label": "No independent record held",
+          "key": "reuse",
+          "label": "Treated-water reuse",
+          "level": "taluk / ULB",
+          "body": "Reuse of treated water as reported for this stretch:",
+          "points": [
+            "The action plan reports that industries in Nanjangud taluk use their treated water on land for gardening inside their premises (section 2.5). No volume is given, and the statement covers the taluk rather than named units.",
+            "No municipal treated-water reuse is reported for Nanjangud, Sargur or T. Narasipura in any edition through August 2025. Nanjangud's 7 MLD plant is reported at 2 MLD utilised in August 2025 and 3.5 MLD in April 2026, but where the treated water goes is not reported."
+          ],
+          "noData": true
+        }
+      ]
+    },
+    {
+      "key": "floodplain",
+      "label": "Flood plain",
+      "status": "built",
+      "subtabKind": "categories",
+      "source": "KSPCB Action Plan for Rejuvenation of River Kabini; NMCG Monthly Progress Reports (Karnataka, Kabini stretch, to August 2025)",
+      "summaryBadge": "not reported",
+      "summaryLine": "No flood-plain-zone commitment in the plan or in any progress report edition held",
+      "summaryTone": "neutral",
+      "scope": "stretch",
+      "categories": [
+        {
+          "key": "floodplain",
+          "label": "Flood plain",
           "level": "stretch",
-          "body": "Everything on this page comes from CPCB, KSPCB, NMCG and the district administration - the bodies being held to account. We hold no independent sampling, no citizen-collected record and no academic study for this stretch. That absence is itself worth stating: on this river, the official record has no second opinion.",
+          "body": "The flood plain does not appear as an obligation in this stretch's record.",
+          "points": [
+            "No flood-plain-zone commitment - notification, encroachment check, plantation, or a prohibition on dumping in the zone - appears in the KSPCB Kabini action plan or in any MPR edition through August 2025 in what we hold.",
+            "The plan's named executing agencies cover sewerage and solid waste (CMC Nanjangud), monitoring and consent (KSPCB), and the bathing ghat and offerings in the river (the temple authority at Nanjangud). The river's banks appear only as the place solid waste is dumped (section 2.2).",
+            "The 2025 stretch runs 104 km past three towns and a largely rural reach; no encroachment count, demarcation or plantation figure exists for any of it in the documents here."
+          ],
           "noData": true
         }
       ]
@@ -528,5 +623,16 @@
     "Town-level sewage and solid-waste figures for Sargur and T. Narasipura: Revised District Environmental Plan of Mysuru District, May 2022.",
     "Flow: India-WRIS Dataset API, CWC hydrological observations at T. Narasipur.",
     "Towns on the stretch: computed from the KGIS urban local body boundaries in Paani Earth's Admin GeoPackage against the mapped 2025 stretch."
-  ]
+  ],
+  "evidence": {
+    "headline": "The worst reading on the stretch sits at the point a town draws its drinking water - and the official record has no second opinion.",
+    "points": [
+      "CPCB monitoring, maximum BOD in mg/L (2022-23, then 2024): Kabini at Saragur village D/S 4.0, 4.0; at the causeway, Sattur 4.0, 3.5; u/s the intake to Nanjangud & Gundlupet at Debur 3.5, 3.8; at the bathing ghat, Nanjangud 4.5, 5.0; at the water-supply intake to T. Narasipura 6.0, 6.0. Every station is above 3 mg/L, the Primary Water Quality Criteria for Bathing Water, in both rounds.",
+      "The action plan's own Table-2 covers two stations for 2017 and 2018: the bathing ghat at Nanjangud reads Class D in 2017 (BOD 2.4-6.5, faecal coliform 320-790 MPN/100ml) and Class E in 2018; the water-supply intake at T. Narasipura reads Class C in both years (BOD 1.2-3.0, then 1.04-2.0). By CPCB's 2022-23 and 2024 rounds the intake is the worst point on the stretch, not the best.",
+      "The plan's own reading of that table: 'The results indicate that the water is polluted due to sewage from Nanjungud Town.'",
+      "The classification runs on BOD alone. No known public monitoring reports heavy metals, pesticides or pharmaceutical residues on this river - which matters upstream of a belt that includes distilleries, pulp and paper, and pharmaceutical units.",
+      "Everything on this page comes from CPCB, KSPCB, NMCG and the district administration - the bodies being held to account. We hold no independent sampling, no citizen-collected record and no academic study for this stretch. That absence is itself worth stating: on this river, the official record has no second opinion."
+    ],
+    "layerRef": "monitoring-points"
+  }
 }
