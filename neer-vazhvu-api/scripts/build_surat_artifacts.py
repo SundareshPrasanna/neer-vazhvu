@@ -43,9 +43,19 @@ import argparse
 import csv
 import json
 import re
+import sys
 from collections import defaultdict
 from datetime import date
 from pathlib import Path
+
+# The platform's envelope-preserving writer. A bare write_text replaces the
+# NVDM wrapper with a raw payload and silently drops the artifact off the
+# conformance ladder, which is exactly what the generator-drift gate exists to
+# catch. Root scripts/ is not importable by default from here.
+REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+from nvdm_write import write_artifact  # noqa: E402
 
 CITY = "surat"
 TODAY = date.today().isoformat()
@@ -122,14 +132,10 @@ def registry_sources(root: Path, ids: list[str]) -> list[dict]:
 
 def write(path: Path, payload: dict, compact: bool = False) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    text = (
-        json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-        if compact
-        else json.dumps(payload, ensure_ascii=False, indent=2)
+    write_artifact(path, payload, compact=compact)
+    print(
+        f"  wrote {path.relative_to(path.parents[2])} ({path.stat().st_size:,} bytes)"
     )
-    path.write_text(text + "\n")
-    size = len(text)
-    print(f"  wrote {path.relative_to(path.parents[2])} ({size:,} bytes)")
 
 
 # ---------------------------------------------------------------- groundwater
@@ -731,15 +737,7 @@ def build_rivers(root: Path, offline: Path | None = None) -> int:
     payload = {
         **envelope(
             "geojson-layers/rivers",
-            [
-                {
-                    "id": "osm-surat-waterways",
-                    "title": "OpenStreetMap waterways in the Surat area",
-                    "publisher": "OpenStreetMap contributors",
-                    "license": "Open Database License (ODbL) 1.0",
-                    "url": "https://www.openstreetmap.org/copyright",
-                }
-            ],
+            registry_sources(root, ["osm-surat-waterways"]),
             "api",
             "Overpass API query for named river and stream ways in the Surat "
             "bounding box, grouped into one feature per named watercourse.",

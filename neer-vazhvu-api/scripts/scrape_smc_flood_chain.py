@@ -53,6 +53,15 @@ from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
+# Root scripts/ is not importable from here by default, so the path shim has to
+# precede the import. Envelope-preserving writer: a bare json.dump replaces the
+# NVDM wrapper with a raw payload and drops the artifact off the conformance
+# ladder, which is what the generator-drift gate exists to catch.
+REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+from nvdm_write import write_artifact  # noqa: E402
+
 SMC_URL = "https://www.suratmunicipal.gov.in/Home/RainfallInfo"
 
 IST = timezone(timedelta(hours=5, minutes=30))
@@ -406,10 +415,12 @@ def build(html: str) -> dict[str, Any]:
             "first ran and can never be backfilled.",
         ],
         "generatedAt": datetime.now(IST).isoformat(),
+        # No `licence` key here on purpose. The envelope's provenance.sources
+        # already carries it, read from the registry; a second copy beside the
+        # envelope is how the registry and the corpus drifted apart before.
         "source": {
             "publisher": "Surat Municipal Corporation",
             "url": SMC_URL,
-            "licence": "Public government website",
             "attribution": "Dam and weir rows: SMC cites Irrigation Dept / Collector Office.",
             "lastUpdatedOnPage": lu.group(1).strip() if lu else None,
         },
@@ -523,9 +534,7 @@ def main() -> int:
         )
         return 1
 
-    with open(args.out, "w", encoding="utf-8") as fh:
-        json.dump(snapshot, fh, indent=2, ensure_ascii=False)
-        fh.write("\n")
+    write_artifact(Path(args.out), snapshot)
     print(f"wrote {args.out}")
 
     if args.history:
@@ -535,9 +544,7 @@ def main() -> int:
         except FileNotFoundError:
             existing = None
         merged = merge_history(existing, snapshot)
-        with open(args.history, "w", encoding="utf-8") as fh:
-            json.dump(merged, fh, indent=2, ensure_ascii=False)
-            fh.write("\n")
+        write_artifact(Path(args.history), merged)
         counts = {k: len(v) for k, v in merged["series"].items()}
         print(f"wrote {args.history} ({counts})")
 
