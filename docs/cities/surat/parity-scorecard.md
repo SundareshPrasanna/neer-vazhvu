@@ -22,16 +22,16 @@
 | Route | Surat | Chennai | Ratio | State |
 |---|---|---|---|---|
 | Dashboard | 823w | 811w | **1.01** | Renders, hero live |
-| Rivers | 172w | 102w | **1.69** | Renders, 2 rivers, 8 stations |
+| Rivers | 172w | 102w | **1.69** | Renders, 2 rivers, 8 stations, 6 editions |
 | Commitments | 145w | n/a | - | Renders, 3 dated commitments |
 | Flood risk | 87w | 102w | 0.85 | Renders |
 | Facts | 250w | 407w | 0.61 | Renders, 7 facts |
 | About | 120w | 208w | 0.58 | Renders |
 | Groundwater | 13w | 23w | 0.57 | Renders (both are map-only shells) |
-| Water bodies | 73w | 241w | 0.30 | Renders, 3,401 polygons |
+| Water bodies | 73w | 241w | 0.30 | Renders, 3,418 polygons |
 | Origins | 48w | 3,928w | 0.01 | **Stub. Not written.** |
 
-## XHigh - Surat exceeds Chennai (4)
+## XHigh - Surat exceeds Chennai (5)
 
 | Feature | Chennai | Surat |
 |---|---|---|
@@ -55,7 +55,6 @@ Three of these are platform firsts. Each was built generic, so other cities inhe
 
 | Feature | Chennai | Surat | Why thinner |
 |---|---|---|---|
-
 | River geometry | 4 rivers | 2 rivers | OSM names only the Tapi and Mindhola; the five monitored khadis have no geometry anywhere public |
 | Groundwater stations | ~35 | **94** (but district-wide) | More stations, but spread across the district rather than the city, so no interpolated surface |
 | River quality readings | 51 across 13 stations | **45 across 8 stations** | Fewer stations, one more year of span. CPCB monitors 8 in this reach; that is the network, not our coverage |

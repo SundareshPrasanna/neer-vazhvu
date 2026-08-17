@@ -16,7 +16,7 @@ Surat is registered `enabled: false` and reachable only behind
 | Threshold data | Published by the operator alongside every reading | Headroom is stated as a subtraction, never modelled |
 | Analytical unit | 9 zones | Ward surfaces off; zones carry live data and an official 2024 denominator |
 | Groundwater | 94 stations over a district, 1970-2026 | Points, not an interpolated surface |
-| Water bodies | 3,401 SAC polygons, 34 named | Basic map; no census, ranking, lost or cascade layers |
+| Water bodies | 3,418 polygons (SAC atlas + OSM), 44 named | Basic map; no census, ranking, lost or cascade layers |
 | Language | Gujarati | `gu` added to `LanguageCode`, carried in `upcomingLanguages` |
 
 ## Dashboard - the `flood-headroom` hero
@@ -62,8 +62,8 @@ the Wikimedia Commons API at download time rather than trusted from a search res
 ## Rivers
 
 The Tapi and the Mindhola, with CPCB NWMP across **six editions (2019-2024), 45 station-years** at
-eight stations. The Tapi's seven Gujarat stations
-form an upstream-to-sea profile, and reading them in order produces the finding the page leads on:
+eight stations. The Tapi's seven Gujarat stations form an upstream-to-sea profile, and reading them
+in order produces the finding the page leads on:
 **BOD at or below detection limit through the city while conductivity climbs to 49,720 umhos/cm at
 Hazira.** A salinity story, not a sewage one.
 
@@ -128,6 +128,7 @@ Each carries a written reason in `scripts/lib/exemptions.ts`, surfaced in
 | Script | Cadence | Notes |
 |---|---|---|
 | `scrape_smc_flood_chain.py` | **Daily, launchd noon IST** | Rolling ~10-reading window with no archive. Every missed day is lost permanently. |
-| `build_surat_artifacts.py` | Manual | Groundwater, water bodies, river quality, supply, rivers, facts, commitments. Asserts the two synthetic open-data ratios still hold. |
+| `build_surat_artifacts.py` | Manual | Groundwater, water bodies, supply, rivers, facts, commitments. Asserts the two synthetic open-data ratios still hold. |
+| `extract_cpcb_nwmp_tapi.py` | On a new CPCB edition | River quality across every available annual edition. Uses `pdftotext -layout`; handles both the leading-code and trailing-code table layouts. |
 | `generate_imd_rainfall.py` | Quarterly | Grid point 21.25/72.75, chosen inland because the westward cells fall over the Arabian Sea |
 | `fetch_recent_rainfall.py` | Daily | Open-Meteo provisional fill after IMD's last month |

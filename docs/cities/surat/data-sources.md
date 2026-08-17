@@ -95,11 +95,12 @@ SMC's Hydraulic page (980 MLD gross daily, 1,300 MLD installed, 95% piped) is ex
 
 ## Rivers - the Tapi profile, and a finding that inverts the assumption
 
-CPCB NWMP 2022, Table 9, gives seven Gujarat Tapi stations that happen to form a clean
+CPCB's NWMP river tables give seven Gujarat Tapi stations that happen to form a clean
 upstream-to-sea profile: Ukai (Sherula Bridge), Mandavi, Bardoli/Kakrapar, Kathore NH-8, Surat u/s
-Kathore, Rander Bridge, ONGC Bridge at Hazira.
+Kathore, Rander Bridge, ONGC Bridge at Hazira - plus the Mindhola at Sachin in the medium/minor
+tables.
 
-The profile says something counter-intuitive and worth checking again before it is leaned on. BOD
+The profile says something counter-intuitive, and it now holds across six years rather than one. BOD
 is at or below detection limit at most Surat stations, so the Tapi is **not** organically polluted
 through the city the way the Musi or the Adi Ganga are. What climbs is conductivity: 369-513
 umhos/cm at Ukai, 363-7,656 at Kathore, and 1,537-49,720 at Hazira, which is seawater. Surat's river
