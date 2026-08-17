@@ -7138,6 +7138,45 @@
    "flags": []
   },
   {
+   "path": "public/data/commitments-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "commitments",
+   "bytes": 4133,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "commitments",
+     "dataset",
+     "headline",
+     "intro",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "status_legend",
+     "update_model",
+     "updated"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/commitments/commitments-client.tsx",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+   ],
+   "headwaters_sources": [
+    "smc-reuse-programme"
+   ],
+   "licenses": [
+    "Government presentation published for a public CSE convening; used as the corporation's own statement of its programme."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/cooum-sewage-inlets.json",
    "family": "data-root",
    "scope": "chennai",
@@ -8153,6 +8192,42 @@
     "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
     "report (c) Praja, RTI-sourced tables; OpenCity mirror",
     "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/facts-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "facts",
+   "bytes": 7941,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "facts",
+     "generated_at",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/app/[cityId]/facts/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+   ],
+   "headwaters_sources": [
+    "smc-reuse-programme"
+   ],
+   "licenses": [
+    "Government presentation published for a public CSE convening; used as the corporation's own statement of its programme."
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -22449,6 +22524,47 @@
    "flags": []
   },
   {
+   "path": "public/geojson/surat-rivers.geojson",
+   "family": "geojson-layers",
+   "scope": "surat",
+   "dataset": "rivers",
+   "bytes": 26977,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 2,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "name",
+     "segments",
+     "waterway"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/components/cascade/cascade-methodology-section.tsx",
+    "src/components/flood-risk/flood-risk-map.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/enrich_names.py",
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py",
+    "scripts/build-mumbai-rivers.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/nvdm_envelope_chennai.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "unaccounted",
+   "accountability_reason": null,
+   "flags": [
+    "unaccounted"
+   ]
+  },
+  {
    "path": "public/geojson/surat-water-bodies-current.geojson",
    "family": "geojson-layers",
    "scope": "surat",
@@ -23394,7 +23510,7 @@
   {
    "family": "data-root",
    "dataset": "commitments",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -23402,10 +23518,11 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 181474,
-   "schema_variants": 2,
+   "bytes": 185607,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -23476,16 +23593,17 @@
   {
    "family": "data-root",
    "dataset": "facts",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "delhi",
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 179375,
+   "bytes": 187316,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -24271,7 +24389,7 @@
   {
    "family": "geojson-layers",
    "dataset": "rivers",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -24279,10 +24397,11 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 2673943,
-   "schema_variants": 6,
+   "bytes": 2700920,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
   },

@@ -581,6 +581,354 @@ def build_supply(drop: Path, root: Path) -> None:
     print(f"    {len(monthly)} monthly points, {len(coverage)} coverage years")
 
 
+
+# ---------------------------------------------------------------- rivers/OSM
+
+
+OVERPASS = "https://overpass-api.de/api/interpreter"
+OVERPASS_QUERY = """
+[out:json][timeout:90];
+(
+  way["waterway"="river"]["name"~"Tapi|Tapti",i](20.95,72.55,21.40,73.10);
+  way["waterway"~"river|stream"]["name"~"Khadi|khadi|Mindhola",i](21.00,72.60,21.35,73.00);
+);
+out geom;
+"""
+
+
+def build_rivers(root: Path, offline: Path | None = None) -> int:
+    """OSM -> river geometry for the rivers map.
+
+    OSM rather than SMC's GIS, deliberately: the SMC WMS carries tapi_river and
+    creek layers but WFS is disabled there, so its geometry cannot be
+    downloaded - only rendered. OSM is the licensed, redistributable option.
+
+    NOTE what is missing. OSM names none of the five khadis that SMC monitors
+    against danger levels, so the creeks that matter most for the flood chain
+    have no geometry here. They are a named gap, not an oversight.
+    """
+    import urllib.parse
+    import urllib.request
+
+    if offline and offline.exists():
+        doc = json.loads(offline.read_text())
+    else:
+        req = urllib.request.Request(
+            OVERPASS,
+            data=urllib.parse.urlencode({"data": OVERPASS_QUERY}).encode(),
+            headers={"User-Agent": "neer-vazhvu/1.0 (water data platform)"},
+        )
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            doc = json.load(resp)
+
+    by_name: dict[str, list] = defaultdict(list)
+    for el in doc.get("elements", []):
+        geom = el.get("geometry") or []
+        if len(geom) < 2:
+            continue
+        name = (el.get("tags") or {}).get("name") or "Unnamed watercourse"
+        by_name[name].append([[round(p["lon"], 6), round(p["lat"], 6)] for p in geom])
+
+    features = []
+    for name, lines in sorted(by_name.items()):
+        features.append(
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": name,
+                    "waterway": "river",
+                    "segments": len(lines),
+                },
+                "geometry": {"type": "MultiLineString", "coordinates": lines},
+            }
+        )
+
+    payload = {
+        **envelope(
+            "geojson-layers/rivers",
+            [
+                {
+                    "id": "osm-surat-waterways",
+                    "title": "OpenStreetMap waterways in the Surat area",
+                    "publisher": "OpenStreetMap contributors",
+                    "license": "Open Database License (ODbL) 1.0",
+                    "url": "https://www.openstreetmap.org/copyright",
+                }
+            ],
+            "api",
+            "Overpass API query for named river and stream ways in the Surat "
+            "bounding box, grouped into one feature per named watercourse.",
+            produced_by="neer-vazhvu-api/scripts/build_surat_artifacts.py",
+            note=(
+                "GAP: OpenStreetMap names none of the five khadis SMC monitors against "
+                "published danger levels (Kakara, Bhedwad, Mithi, Bhatena, Simada), so "
+                "the creeks central to the flood chain have no geometry in this layer. "
+                "SMC's own GIS holds a creek layer but serves WMS only - WFS is "
+                "disabled, so its geometry cannot be redistributed."
+            ),
+        ),
+        "type": "FeatureCollection",
+        "features": features,
+    }
+    write(root / "public/geojson/surat-rivers.geojson", payload, compact=True)
+    print(f"    {len(features)} named watercourses: {', '.join(sorted(by_name))}")
+    return len(features)
+
+
+# --------------------------------------------------------- facts, commitments
+
+
+def build_facts(root: Path) -> int:
+    """The static fact snapshot.
+
+    Every value here is primary-sourced and dated. Nothing from press coverage,
+    nothing derived from the open-data release's two synthetic columns, and
+    nothing from the 2006 flood until its figures are replaced from the
+    committee reports.
+    """
+    facts = [
+        {
+            "id": "surat-treated-wastewater-reused",
+            "tier": 1,
+            "category": "Reuse",
+            "title": "Treated wastewater reused",
+            "value": "330",
+            "unit": "MLD",
+            "interpretation": (
+                "SMC reuses 330 MLD of the roughly 1,018 MLD of sewage it collects and "
+                "treats, about a third, itemised across eleven named uses from textile "
+                "clusters (115 MLD) to lake rejuvenation (2 MLD). This is the number "
+                "that makes Surat unusual: most utilities treat sewage as a cost, and "
+                "this one runs it as a revenue line."
+            ),
+            "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024",
+            "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf",
+        },
+        {
+            "id": "surat-reuse-revenue",
+            "tier": 1,
+            "category": "Reuse",
+            "title": "Cumulative revenue from selling treated water to industry",
+            "value": "496.23",
+            "unit": "Rs crore to January 2024",
+            "interpretation": (
+                "Against a capital cost of Rs 314.39 crore for three tertiary treatment "
+                "plants. The tariff started at Rs 18.20 per kilolitre in 2014 and is now "
+                "Rs 36.2, indexed to RBI. Annual revenue runs about Rs 120 crore. Press "
+                "coverage of this programme reports different figures (Rs 340 crore, "
+                "Rs 140 crore annually); these are the corporation's own."
+            ),
+            "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024",
+            "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf",
+        },
+        {
+            "id": "surat-industrial-buyers",
+            "tier": 2,
+            "category": "Reuse",
+            "title": "Industrial units buying tertiary-treated sewage",
+            "value": "249",
+            "unit": "units across Pandesara and Sachin",
+            "interpretation": (
+                "178 units in Pandesara Industrial Estate and 71 in the Sachin Textile "
+                "Process Industries association, taking 115 MLD of tertiary-treated "
+                "water from three plants (Bamroli 40 and 35 MLD, Dindoli 40 MLD). Surat "
+                "is a textile city; these are the dyeing and printing houses that would "
+                "otherwise be drawing fresh water."
+            ),
+            "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024",
+            "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf",
+        },
+        {
+            "id": "surat-no-measured-nrw",
+            "tier": 1,
+            "category": "Supply",
+            "title": "Measured non-revenue water",
+            "value": "Not published",
+            "unit": "",
+            "interpretation": (
+                "The national open-data release for Surat contains a 'losses including "
+                "NRW' column, but it is exactly 20.0000% of total supply on all 48 "
+                "monthly rows, and the accompanying 'actual supplied' column equals "
+                "total supply on every row, which contradicts it. It is an assumption "
+                "carried in a measurement column. Surat publishes no measured NRW, and "
+                "we will not republish a constant as though it were a meter reading."
+            ),
+            "source_label": "Smart Cities Mission (Surat) open-data release D53, via data.gov.in",
+            "source_url": "https://www.data.gov.in/resource/water-supply-surat",
+        },
+        {
+            "id": "surat-city-growth",
+            "tier": 2,
+            "category": "Governance",
+            "title": "Municipal area, 1961 to today",
+            "value": "8 to 462.149",
+            "unit": "sq km",
+            "interpretation": (
+                "SMC's own wardwise table records the city growing from 8 sq km across "
+                "12 wards to 462.149 sq km across 134, in six annexations, the most "
+                "recent in June 2020. A city that grew fifty-fold onto an estuarine "
+                "flood plain in sixty years is the precondition for everything on the "
+                "flood page."
+            ),
+            "source_label": "Surat Municipal Corporation, wardwise area and population (1961-2011 census and after the 2020 extension)",
+            "source_url": "https://www.suratmunicipal.gov.in/TheCity/City/Stml2",
+        },
+        {
+            "id": "surat-tapi-salinity",
+            "tier": 2,
+            "category": "Rivers",
+            "title": "Tapi conductivity, Ukai to the sea",
+            "value": "513 to 49,720",
+            "unit": "umhos/cm (2022 maxima)",
+            "interpretation": (
+                "The Tapi's problem at Surat is not sewage. CPCB's 2022 monitoring finds "
+                "BOD at or below detection limit at most Surat stations, while "
+                "conductivity climbs from 369-513 at Ukai to 1,537-49,720 at the ONGC "
+                "bridge at Hazira, which is seawater. This is an estuary and a salinity "
+                "story, not an organic pollution one."
+            ),
+            "source_label": "CPCB National Water Quality Monitoring Programme 2022, Table 9 (River Tapi)",
+            "source_url": "https://cpcb.gov.in/nwmp-data-2022/",
+        },
+        {
+            "id": "surat-groundwater-record",
+            "tier": 3,
+            "category": "Groundwater",
+            "title": "Groundwater observation record",
+            "value": "94 stations, 6,563 readings",
+            "unit": "1970 to 2026",
+            "interpretation": (
+                "A 56-year record across Surat district, from manual quarterly "
+                "observations starting in 1970 to six-hourly telemetry in 2026. Deep in "
+                "time, thin in space: too few stations to interpolate a per-zone depth "
+                "surface honestly, so the groundwater page renders the points "
+                "themselves."
+            ),
+            "source_label": "India-WRIS groundwater level exports, District = Surat",
+            "source_url": "https://indiawris.gov.in/Dataset/Ground%20Water%20Level",
+        },
+    ]
+
+    payload = {
+        **envelope(
+            "data-root/facts",
+            registry_sources(
+                root,
+                ["smc-reuse-programme", "ogd-surat-water-supply", "cpcb-nwmp-2022",
+                 "smc-wardwise-area-population", "wris-groundwater-gujarat"],
+            ),
+            "manual",
+            "Hand-compiled from primary sources, each fact carrying its own citation. "
+            "No press figures and no values derived from the open-data release's two "
+            "synthetic columns.",
+            produced_by="neer-vazhvu-api/scripts/build_surat_artifacts.py",
+        ),
+        "place_id": CITY,
+        "generated_at": TODAY,
+        "note": (
+            "A static snapshot rather than a live pipeline. Surat's one live feed is the "
+            "flood chain, which has its own surface."
+        ),
+        "facts": facts,
+    }
+    write(root / "public/data/facts-surat.json", payload)
+    print(f"    {len(facts)} facts")
+    return len(facts)
+
+
+def build_commitments(root: Path) -> int:
+    """The commitments register.
+
+    Surat qualifies for this surface on the strength of one programme: the
+    reuse targets are dated, institutionally owned, and published by the
+    institution that has to meet them, which is exactly the register's shape.
+    """
+    commitments = [
+        {
+            "id": "surat-reuse-70-by-2030",
+            "category": "Wastewater reuse",
+            "title": "Reuse 70% of treated wastewater by 2030",
+            "committed_by": "Surat Municipal Corporation",
+            "what": (
+                "SMC states a vision to raise reuse of treated wastewater from the "
+                "present level, which it puts at more than 30%, to 70% by 2030. At the "
+                "1,018 MLD it currently collects and treats, 70% is roughly 713 MLD "
+                "against the 330 MLD reused today."
+            ),
+            "status": "stated",
+            "target_date": "2030",
+            "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024, slide 'Way Forward'",
+            "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf",
+        },
+        {
+            "id": "surat-reuse-100-by-2035",
+            "category": "Wastewater reuse",
+            "title": "Reuse 100% of treated wastewater by 2035, zero liquid discharge",
+            "committed_by": "Surat Municipal Corporation",
+            "what": (
+                "The same document commits to 100% reuse and zero liquid discharge by "
+                "2035. SMC names the projects it expects to get there: 340 MLD to "
+                "Hazira-based industries from the Bhesan-Asarma-Variav-Kosad plants, and "
+                "140 MLD to industries at Kadodara and Palsana from the "
+                "Varachha-Valak-Kamrej plant."
+            ),
+            "status": "stated",
+            "target_date": "2035",
+            "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024, slide 'Way Forward'",
+            "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf",
+        },
+        {
+            "id": "surat-sewerage-100-by-2033",
+            "category": "Sewerage coverage",
+            "title": "Comprehensive sewerage coverage of 100% of area and population by 2033",
+            "committed_by": "Surat Municipal Corporation, Drainage Department",
+            "what": (
+                "The drainage department states a commitment to 100% coverage in terms "
+                "of geographical area and population by 2033. Its stated position at the "
+                "time was 202 sq km covered, which it put at 99% of the then-habitable "
+                "area, and 99.5% of population - but explicitly 'before city limit "
+                "extension in June 2020', which took the corporation to 462.149 sq km. "
+                "The denominator moved after the percentage was calculated."
+            ),
+            "status": "stated",
+            "target_date": "2033",
+            "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024, slides 'Sewerage System' and 'Sewerage Scenario'",
+            "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf",
+        },
+    ]
+
+    payload = {
+        **envelope(
+            "data-root/commitments",
+            registry_sources(root, ["smc-reuse-programme"]),
+            "manual",
+            "Transcribed from the corporation's own dated presentation. Each entry "
+            "names the institution, the target date and the slide it came from.",
+            produced_by="neer-vazhvu-api/scripts/build_surat_artifacts.py",
+        ),
+        "place_id": CITY,
+        "updated": TODAY,
+        "headline": "What Surat has promised about its water, and by when",
+        "intro": (
+            "Three dated commitments, all from one document and all owned by the "
+            "corporation itself. Surat's register is short because its promises are "
+            "concentrated: the reuse programme is the thing SMC has publicly bound "
+            "itself to, and it has bound itself twice, at 2030 and 2035."
+        ),
+        "status_legend": {
+            "stated": "Publicly stated by the institution, with a date. Not independently verified as on track.",
+        },
+        "update_model": (
+            "History is kept, never overwritten. A status changes only against a dated "
+            "citation."
+        ),
+        "commitments": commitments,
+    }
+    write(root / "public/data/commitments-surat.json", payload)
+    print(f"    {len(commitments)} commitments")
+    return len(commitments)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--drop", required=True, help="path to the acquired source folder")
@@ -595,6 +943,9 @@ def main() -> int:
     print("  water bodies:"); build_water_bodies(drop, root)
     print("  river quality:"); build_river_quality(root)
     print("  supply:"); build_supply(drop, root)
+    print("  rivers:"); build_rivers(root, offline=Path("/tmp/surat_osm.json"))
+    print("  facts:"); build_facts(root)
+    print("  commitments:"); build_commitments(root)
     return 0
 
 
