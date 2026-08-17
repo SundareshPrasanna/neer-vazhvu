@@ -556,6 +556,79 @@ def build_supply(drop: Path, root: Path) -> None:
             "exactly 0.750000 x capacity on all 233 rows. Surat publishes no measured "
             "non-revenue water and no measured per-ward consumption."
         ),
+        # WITHOUT THESE, the shared component falls back to i18n defaults that
+        # are Madurai-specific ("Structural numbers from MMC and the ADB Tamil
+        # Nadu Urban Flagship Investment Program", "Pannaipatty WTP capacity").
+        # Any city that ships a supply overview without overrides inherits
+        # Madurai's copy; that default is a cross-city leak worth fixing at the
+        # source, and until it is, every city must override.
+        "_view_overrides": {
+            "subtitle": (
+                "Structural numbers from SMC's Hydraulic Department and the Smart Cities "
+                "Mission open-data releases. The corporation's own headline figures are "
+                "dated 2015; the monthly series runs to December 2021."
+            ),
+            "wtp_label": "Installed works capacity",
+        },
+        "_sources": [
+            {
+                "name": "SMC Hydraulic Department, present scenario",
+                "url": "https://www.suratmunicipal.gov.in/Departments/HydraulicPresentScenario",
+                "date": "2015",
+                "extracted": TODAY,
+            },
+            {
+                "name": "Smart Cities Mission (Surat) water supply releases, data.gov.in",
+                "url": "https://www.data.gov.in/resource/water-supply-surat",
+                "date": "2018-2021",
+                "extracted": TODAY,
+            },
+        ],
+        # The shape UrbanSupplyOverview reads. Surat is a SINGLE-SOURCE city -
+        # everything comes off the Tapi at one weir - so the "mix" has one
+        # entry and reads 100%. That is the true picture, not a placeholder.
+        "supply_chain": [
+            "Ukai dam, released by the Gujarat Water Resources Department",
+            "River Tapi, ~100 km downstream",
+            "Weir-cum-causeway at Singanpor (the city's intake)",
+            "Six water works, 1,300 MLD installed (SMC, 2015)",
+            "Nine administrative zones",
+        ],
+        "current_supply_mix_mld": [
+            {
+                "source": "River Tapi at the Singanpor weir-cum-causeway",
+                "scheme": "Run-of-river abstraction from the weir pond, fed by Ukai releases",
+                "mld": 1249.81,
+                "annual_mcft": None,
+                "supplies": "All nine SMC zones",
+                "note": (
+                    "Surat has one raw-water source. The figure is the last MEASURED "
+                    "month in the national open-data series (December 2021), not a "
+                    "design capacity and not the corporation's 2015 headline of 980 MLD."
+                ),
+            }
+        ],
+        "current_supply_total_mld": 1250,
+        "_supply_total_note": (
+            "December 2021, the final month of the open-data series, rounded. Two other "
+            "figures circulate and neither is used here as the headline: SMC's Hydraulic "
+            "page gives 980 MLD gross daily average and 1,300 MLD installed works "
+            "capacity, both explicitly for 2015."
+        ),
+        "wtps_summary": {
+            "fresh_water_wtps_count": 6,
+            "fresh_water_capacity_mld": 1300,
+            "total_installed_capacity_mld": 1300,
+            "average_supply_mld": 980,
+        },
+        "distribution": {
+            "_note": (
+                "Zone counts come from SMC's own Zones page. Note the vintage conflict "
+                "the platform records elsewhere: that page lists nine zones (South split "
+                "into A and B) while the live rainfall feed still reports eight."
+            ),
+            "administrative_zones": 9,
+        },
         "infrastructure": {
             "source_river": "Tapi",
             "intake": "Weir-cum-causeway at Singanpor",

@@ -84,6 +84,16 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         "intersection and sits inside the GHMC 2022 ward extent "
         "(17.29-17.56 N, 78.24-78.62 E)",
     ),
+    "surat": (
+        21.25,
+        72.75,
+        "Surat grid point on the lower Tapi (city centre 21.17 N, 72.83 E). "
+        "The nearest 0.25-deg intersection is 21.25/72.75, which sits inside "
+        "the SMC extent (21.03-21.32 N, 72.68-72.97 E) and, importantly, on "
+        "land: Surat is 20 km from the Arabian Sea and the westward "
+        "intersections at 72.50 fall over water, which is the same coastal "
+        "ocean-cell trap Chennai and Mumbai had to avoid",
+    ),
 }
 
 

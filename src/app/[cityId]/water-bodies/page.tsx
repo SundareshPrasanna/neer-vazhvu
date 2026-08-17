@@ -65,8 +65,12 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
     loadJson<CurrentGeoJson>(`${cityId}-water-bodies-current.geojson`, "geojson"),
   ]);
 
-  // For cities without curated lost-tank data, fall back to the empty-state stub.
-  if (!lostFile) {
+  // Fall back to the empty-state stub only when there is NOTHING to show.
+  // Previously this required the lost-bodies study specifically, which hid a
+  // perfectly good current-bodies map from any city whose vanished tanks had
+  // not been researched yet (Surat: 3,401 mapped polygons, no lost study).
+  // Losing a layer should cost that layer, not the page.
+  if (!lostFile && !currentGeoJson) {
     return (
       <FeatureNotYetAvailable
         config={config}
@@ -104,8 +108,8 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
       cityState={config.stateCode}
       mapCenter={view ? view.center : [config.center.lat, config.center.lng]}
       mapZoom={view ? view.zoom : 11}
-      fullyLostCount={lostFile.summary.fully_lost_count}
-      reducedCount={lostFile.summary.severely_reduced_count}
+      fullyLostCount={lostFile?.summary.fully_lost_count}
+      reducedCount={lostFile?.summary.severely_reduced_count}
       namedOsmCount={namedOsmCount}
       hasCascadeOverlay={config.hasCascadeOverlay ?? false}
       catchmentsGapNote={config.catchmentsGapNote}

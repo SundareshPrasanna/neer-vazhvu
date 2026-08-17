@@ -204,6 +204,15 @@ export const SURAT: CityConfig = {
   reservoirDataSource: 'v2',
   historyUnit: 'TMC',
 
+  // Surat will never have a storage history, and the chart must say so rather
+  // than promising one that "fills in automatically". Neither tracked point is
+  // a reservoir: Ukai's storage is the Gujarat WRD's to publish and Surat's
+  // share of it is not published at all, and the weir pond is a river reach
+  // with no impounded volume. This is the Delhi lesson - a live feed does not
+  // imply a storage series.
+  reservoirHistoryAbsentNote:
+    'Surat has no storage history and will not grow one. The city impounds nothing: it abstracts from a weir pond on the Tapi, which is a river reach rather than a reservoir, and the dam upstream belongs to the state irrigation department, which publishes a level but no volume and no Surat share. Level over a full-reservoir mark is not a quantity of water, so there is nothing here to chart. What Surat does have is the live flood chain at the top of this page.',
+
   // Off by editorial decision, not for want of data. See NO TANK-CASCADE
   // HERITAGE above, and say so on the page rather than leaving the toggle
   // silently absent.

@@ -121,6 +121,23 @@ function allRoutes(): string[] {
  * than deliberate; those are honest too, just less interesting.
  */
 const ROUTE_OFF_REASONS: Record<string, string> = {
+  // Surat - the analytical unit is the zone, not the ward, and several
+  // omissions follow directly from that.
+  "surat:my-ward":
+    "Ward surfaces are off because \"ward\" in Surat means three incompatible things and none of them has usable geometry. There are 30 electoral wards (120 corporators), about 134 census/administrative wards in SMC's own 1961-2011 area table, and a third scheme inside SMC's GIS ward_boundary layer. That GIS layer is the authoritative one and it serves WMS only - WFS is disabled, so its geometry cannot be downloaded, only rendered. The analytical unit is instead the zone, which does carry live data, an official 2024 population and the city's own supply breakdown. This closes when SMC enables WFS or publishes ward boundaries, not by a better join.",
+  "surat:cascades":
+    "Not a cascade geography. Tank cascades are chained systems where each tank's surplus feeds the next; Surat's water bodies are coastal wetlands, tidal creeks and urban talavs on a flat estuarine plain. Rendering a cascade here would assert an inheritance the city does not have.",
+  "surat:shoreline":
+    "Surat is genuinely coastal - Dumas, Hazira, the Tapi estuary - so this is a backlog item rather than a refusal. The shoreline surface currently reads Chennai coastal data and has not been parametrised, and shipping a map of another city's coast would be worse than shipping none.",
+  "surat:tanker":
+    "No tanker economy established. SMC reports 95% piped coverage and the national open-data release records tanker-served properties as NA in every year. There is nothing to chart that would not be invented.",
+  "surat:allocations":
+    "Surat has no published drinking-water entitlement to render. The research pass found infrastructure and treatment capacities but no sanctioned allocation instrument from Ukai or the Tapi - the ledger's whole subject is entitled-versus-received, and the entitled half does not exist in public.",
+  "surat:lake-restoration":
+    "SMC restores lakes and says so - its reuse programme routes 2 MLD of treated water to lake rejuvenation - but publishes no restoration register: no project list, no dates, no budgets, no per-body status. A ranking surface needs a denominator the corporation has not published.",
+  "surat:climate-risk":
+    "Buildable but not built. Chennai's sub-basin risk comes from HydroBASINS level 12, a global product that covers the lower Tapi as well, so this is a backlog item rather than a refusal.",
+
   // Kolkata - every omission is a decision, and each has a reason on the page.
   "kolkata:my-ward":
     "Ward-keyed surfaces are off until KMC wards 142-144 exist as geometry. 141 of 144 are mapped; the missing three are 18.93 km2, 9.2% of the city. KMC publishes no ward geometry through either its own portal or the newer DIGIT one, and OSM has no Kolkata ward relations at any admin_level, so this closes when someone digitises the 2012 delimitation, not by a better endpoint.",

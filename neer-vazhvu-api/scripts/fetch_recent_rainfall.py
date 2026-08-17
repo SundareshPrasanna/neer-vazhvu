@@ -51,6 +51,10 @@ CITIES = {
     # Matches the IMD gridded point in generate_imd_rainfall.py, not the city
     # centre: the provisional months must continue the same series they fill.
     "kolkata": (22.5000, 88.2500),
+    # Matches the IMD gridded point in generate_imd_rainfall.py for the same
+    # reason as Kolkata: the provisional months have to continue the series
+    # they are filling, not start a parallel one at the city centre.
+    "surat": (21.2500, 72.7500),
     # Gurugram is NOT here yet, deliberately. Its grid point is (28.4360,
     # 77.0560), the centroid of MCG's 36-ward extent, but this fetcher only
     # fills provisional months AFTER an IMD authoritative base series, and

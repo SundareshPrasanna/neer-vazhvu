@@ -9330,6 +9330,45 @@
    "flags": []
   },
   {
+   "path": "public/data/imd-rainfall-monthly-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "imd-rainfall-monthly",
+   "bytes": 56687,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "annual_totals",
+     "dataset",
+     "generated_at",
+     "grid_point",
+     "monthly",
+     "normal_period",
+     "normals",
+     "note",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source",
+     "year_range"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "unaccounted",
+   "accountability_reason": null,
+   "flags": [
+    "unaccounted"
+   ]
+  },
+  {
    "path": "public/data/imd-rainfall-monthly.json",
    "family": "data-root",
    "scope": "chennai",
@@ -10533,6 +10572,45 @@
    "accountability": "watched",
    "accountability_reason": "daily feed: owned by check-data-freshness.ts",
    "flags": []
+  },
+  {
+   "path": "public/data/rainfall-recent-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "rainfall-recent",
+   "bytes": 15285,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "unaccounted",
+   "accountability_reason": null,
+   "flags": [
+    "unaccounted"
+   ]
   },
   {
    "path": "public/data/restoration-priority-bangalore.json",
@@ -17370,19 +17448,27 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "supply-overview",
-   "bytes": 6529,
+   "bytes": 8809,
    "schema": {
     "kind": "object",
     "keys": [
      "_coverage_note",
      "_excluded_columns_note",
+     "_sources",
+     "_supply_total_note",
+     "_view_overrides",
      "connection_coverage",
+     "current_supply_mix_mld",
+     "current_supply_total_mld",
      "dataset",
+     "distribution",
      "infrastructure",
      "monthly_supply",
      "nvdm",
      "provenance",
-     "scope"
+     "scope",
+     "supply_chain",
+     "wtps_summary"
     ]
    },
    "consumers": [
@@ -17402,6 +17488,38 @@
    "licenses": [
     "Government Open Data License - India (NDSAP)",
     "Public government website."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/surat-zones.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "zones",
+   "bytes": 5546,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_cross_checks",
+     "_note",
+     "_vintage_conflict",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
+     "zone_count",
+     "zones"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "smc-gis-wms"
+   ],
+   "licenses": [
+    "Public government WMS; GetCapabilities declares no fees and no access constraints."
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -23727,7 +23845,7 @@
   {
    "family": "data-root",
    "dataset": "imd-rainfall-monthly",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -23735,9 +23853,10 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 370696,
+   "bytes": 427383,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -23849,7 +23968,7 @@
   {
    "family": "data-root",
    "dataset": "rainfall-recent",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -23857,9 +23976,10 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 107015,
+   "bytes": 122300,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -23980,7 +24100,7 @@
     "mumbai",
     "surat"
    ],
-   "bytes": 114829,
+   "bytes": 117109,
    "schema_variants": 7,
    "registered": true,
    "has_consumer": true
@@ -24155,6 +24275,18 @@
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "zones",
+   "files": 1,
+   "scopes": [
+    "surat"
+   ],
+   "bytes": 5546,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
   },
   {
    "family": "geojson-layers",
