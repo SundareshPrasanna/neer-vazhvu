@@ -15,6 +15,7 @@ import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { AllocationHero } from "@/components/dashboard/allocation-hero";
 import { CauveryPumpingHero } from "@/components/dashboard/cauvery-pumping-hero";
 import { DrainageCapacityHero } from "@/components/dashboard/drainage-capacity-hero";
+import { FloodHeadroomHero } from "@/components/dashboard/flood-headroom-hero";
 import { SewageBalanceCard } from "@/components/dashboard/sewage-balance-card";
 import { BangaloreDailyBriefing } from "@/components/dashboard/bangalore-daily-briefing";
 import { buildBangaloreBriefing } from "@/lib/insights/bangalore-briefing";
@@ -445,6 +446,16 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           cityDisplayName={config.displayName}
           config={config.drainageCapacity}
           scopeLabel={config.dashboardScopes?.city}
+        />
+      )}
+      {/* Cities that impound nothing but whose publisher states the trigger
+          levels: the chain rain -> dam -> weir -> creek, rendered as distance
+          to each published threshold. Surat today. */}
+      {config.heroMode === "flood-headroom" && config.floodChain && (
+        <FloodHeadroomHero
+          cityId={cityId}
+          cityDisplayName={config.displayName}
+          config={config.floodChain}
         />
       )}
       {/* Second card, deliberately after the hero: for a city whose emergency

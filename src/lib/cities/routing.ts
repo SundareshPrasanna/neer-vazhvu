@@ -167,6 +167,23 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "my-ward",
     "tanker",
   ]),
+  // Surat V1 target set. No `cascades` (no tank-cascade heritage), no
+  // `my-ward` (zone is the analytical unit and ward geometry is unresolved),
+  // no `allocations` (no published entitlement instrument found), no
+  // `shoreline` (the surface still reads Chennai coastal data), no `tanker`
+  // (99% piped coverage; no tanker economy established). Fills in across
+  // M1-M3 while the city is preview-gated.
+  surat: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "facts",
+    "origins",
+    "commitments",
+  ]),
 };
 
 /**

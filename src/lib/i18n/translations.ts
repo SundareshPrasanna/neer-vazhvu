@@ -17,7 +17,8 @@ export type LanguageCode =
   | "hi" // Hindi (Delhi, MP, UP, etc.)
   | "te" // Telugu (Andhra, Telangana)
   | "ml" // Malayalam (Kerala)
-  | "bn"; // Bengali (West Bengal)
+  | "bn" // Bengali (West Bengal)
+  | "gu"; // Gujarati (Gujarat)
 
 /** Back-compat alias - many imports still use `Language`. */
 export type Language = LanguageCode;
@@ -36,6 +37,7 @@ export const LANGUAGE_LABELS: Record<
   te: { native: "తెలుగు", english: "Telugu", toggle: "తె" },
   ml: { native: "മലയാളം", english: "Malayalam", toggle: "മ" },
   bn: { native: "বাংলা", english: "Bengali", toggle: "ব" },
+  gu: { native: "ગુજરાતી", english: "Gujarati", toggle: "ગુ" },
 };
 
 /** All language codes the platform recognises. Useful for runtime
@@ -49,6 +51,7 @@ export const ALL_LANGUAGES: readonly LanguageCode[] = [
   "te",
   "ml",
   "bn",
+  "gu",
 ] as const;
 
 export function isLanguageCode(value: unknown): value is LanguageCode {

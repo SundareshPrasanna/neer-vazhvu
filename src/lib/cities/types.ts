@@ -192,6 +192,33 @@ export interface FloodViewConfig {
  * what it does have is a published, falsifiable engineering promise that the
  * sky routinely breaks.
  */
+/**
+ * Editorial framing for the `flood-headroom` hero.
+ *
+ * Deliberately thin. Unlike `drainageCapacity`, this config carries NO
+ * thresholds: every number the hero renders (full reservoir level, causeway
+ * overflow level, each khadi's danger level) is scraped from the publisher's
+ * own page into `<cityId>-flood-chain.json`. Putting a threshold here would
+ * let config and source drift apart silently, and the whole point of this
+ * hero is that we did not choose the thresholds.
+ *
+ * What lives here is the framing the data cannot supply: what the chain is,
+ * who operates the top of it, and where the reader goes to check.
+ */
+export interface FloodChainConfig {
+  /** One clause naming the chain, e.g. "rain over the city, releases from
+   *  Ukai, the weir it backs up behind, and five creeks through the middle
+   *  of Surat". Rendered as the hero's subtitle. */
+  chainNote: string;
+  /** Who operates the upstream control the city does not. Surfaced because
+   *  the single most important fact about Surat's flood risk is that the
+   *  release decision is not the city's to make. */
+  upstreamOperator?: { name: string; note?: string };
+  /** Deep link to the publisher's live page, so a reader can verify the
+   *  reading against the source within one click. */
+  sourceLink?: { label: string; href: string };
+}
+
 export interface DrainageCapacityConfig {
   /** The design standard, in mm of rainfall per hour. Must be one of the
    *  thresholds on the ladder precomputed by
@@ -513,6 +540,15 @@ export interface BasePlaceConfig {
    *    impounded storage at all, so it is the honest choice for
    *    run-of-river cities where `days-left` is undefined rather than
    *    merely awkward. Requires `drainageCapacity`.
+   *  - `flood-headroom`: Surat-style story for cities whose emergency is
+   *    arrival rather than scarcity, and whose publisher hands us BOTH a
+   *    live reading and the threshold it is measured against. Renders the
+   *    chain rain -> dam -> weir -> creek as distance-to-threshold at each
+   *    link, from `<cityId>-flood-chain.json`. Like `drainage-capacity` it
+   *    needs no impounded storage; unlike it, the thresholds are published
+   *    operational trigger levels rather than a design standard, so the
+   *    hero states headroom as fact rather than modelling exceedance.
+   *    Requires `floodChain`.
    *  - `none`: suppress hero entirely (cities with no useful summary
    *    yet). Reservoir cards + history chart still render below.
    *
@@ -522,6 +558,7 @@ export interface BasePlaceConfig {
     | 'allocation'
     | 'cauvery-pumping'
     | 'drainage-capacity'
+    | 'flood-headroom'
     | 'none';
 
   /** Drainage design standard for the `drainage-capacity` hero.
@@ -535,6 +572,12 @@ export interface BasePlaceConfig {
    *  carry a different rating, that is a config edit and a re-cited
    *  source, not a code change. */
   drainageCapacity?: DrainageCapacityConfig;
+
+  /** Editorial framing for the `flood-headroom` hero.
+   *  Required when heroMode === 'flood-headroom'; ignored otherwise.
+   *  Thresholds are NOT here - they are scraped from the publisher into
+   *  `<cityId>-flood-chain.json`. See FloodChainConfig. */
+  floodChain?: FloodChainConfig;
 
   /** When the days-left runway is ALREADY published by the source (e.g. BMC's
    *  Mumbai-lakes feed states "days of supply left"), set this so the shared
