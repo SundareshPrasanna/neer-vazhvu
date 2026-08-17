@@ -168,6 +168,13 @@ rendering on a flood-risk page that was being withheld for the wrong reason, the
 backfill** (item 6, wired as `--city pune` on the existing Mumbai producer rather than a second
 script), and the water-bodies bbox correction below.
 
+The CWC backfill delivered **less than item 6 promised, and the shortfall is worth stating**: the
+full 527-bulletin walk yields **503 weekly readings for Khadakwasla back to February 2015** but only
+**110 for Panshet, starting March 2023**, because CWC added Panshet to its monitored set that year -
+the string does not occur in the 2018, 2021 or 2022 bulletins at all. So one chain dam gets a decade
+and one gets two years, and the four-dam chain total still begins at onboarding. The **WRD dated
+Marathi archive** remains the route that would fix all of that at once.
+
 ---
 
 ## The correction this audit produced

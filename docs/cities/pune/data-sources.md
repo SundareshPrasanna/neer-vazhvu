@@ -138,6 +138,23 @@ India-WRIS writes Khadakwasala_1. The match table is keyed on what CWC prints.
 301.61 (0.13%). Two independent central and state publications agreeing to a fifth of a percent is
 a check on both.
 
+**THEY DO NOT REACH BACK EQUALLY FAR, and the earlier note here said they did.** Measured over the
+full 527-bulletin archive rather than assumed:
+
+| Dam | Weekly readings | Span | Calendar years |
+|---|---|---|---|
+| Khadakwasla | **503** | 09 Feb 2015 to 08 May 2025 | 11 |
+| Panshet | **110** | 30 Mar 2023 to 08 May 2025 | 3 |
+
+Panshet is not thin because the parser misses it. **The string `PANSHET` does not occur anywhere in
+the 2018, 2021 or 2022 bulletins** - CWC added the dam to its monitored set in early 2023, and the
+six parse warnings the run emitted are all January and February 2023 bulletins, right at that
+boundary. The lesson worth keeping: **checking that a dam is PRESENT in a recent bulletin says
+nothing about its DEPTH**, and that is exactly the check that produced the wrong claim here.
+
+So the honest summary is that this backfill gives Khadakwasla a decade and Panshet two years, and
+the chain total still begins at onboarding.
+
 **Mulshi is excluded deliberately even though it IS a data row** (row 16). It is Tata hydro rather
 than a PMC source, and it fails the agreement test the other two pass: CWC gives it 572 Mcum against
 Pravah's 522.76, **9.4% apart** - the same unexplained class of disagreement already recorded for

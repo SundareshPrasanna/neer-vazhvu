@@ -9,9 +9,12 @@ PDFs (cwc.gov.in/reservoirs-storage-bulletin).
 
 Why: the Pravah daily feed (scrape_pravah_dams.py) only started for us in
 July 2026 and its same-date-last-year column reaches back one year at best.
-The CWC bulletins list these dams weekly from 16 Apr 2015 to 8 May 2025 (the
-listing stops there), which is ~10 years of history the reservoir charts
-otherwise lack.
+The CWC bulletins run to 8 May 2025, where the listing stops. HOW FAR BACK
+EACH DAM GOES IS PER DAM AND MUST NOT BE ASSUMED: measured over the full
+527-bulletin archive, Bhatsa and Upper Vaitarna and Khadakwasla reach back to
+2015, but PANSHET ONLY APPEARS FROM MARCH 2023 - CWC added it to its monitored
+set then, and the word does not occur anywhere in the 2018, 2021 or 2022
+bulletins. So this buys ~10 years for three dams and ~2 for the fourth.
 
 ONE BULLETIN COVERS ALL OF INDIA, so --city is a filter on what we take out of
 each PDF rather than a different fetch. See DAMS_BY_CITY for which dams each
@@ -93,6 +96,14 @@ TMC_PER_BCM = 1000.0 / MCUM_PER_TMC  # 35.3147
 # The two that ARE taken agree closely, which is the check worth having: CWC's
 # capacity-at-FRL is 56.0 Mcum for Khadakwasla against Pravah's 55.91 (0.16%) and
 # 302.0 Mcum for Panshet against 301.61 (0.13%).
+#
+# THEY DO NOT GO BACK EQUALLY FAR, and the first version of this comment said
+# they did. Measured over the full archive: Khadakwasla 503 weekly readings from
+# 09 Feb 2015, Panshet 110 from 30 Mar 2023. Panshet is not missing because the
+# parser fails on it - the string PANSHET does not occur ANYWHERE in the 2018,
+# 2021 or 2022 bulletins, so CWC added the dam to its monitored set in early
+# 2023. Checking that a dam is PRESENT in a recent bulletin says nothing about
+# its DEPTH, which is the mistake that produced the wrong claim.
 DAMS_BY_CITY = {
     "mumbai": {
         "bhatsa": ("bhatsa", 142.07),
