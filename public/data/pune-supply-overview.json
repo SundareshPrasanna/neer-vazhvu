@@ -1,0 +1,388 @@
+{
+ "nvdm": "1.0",
+ "dataset": "data-root/supply-overview",
+ "scope": {
+  "kind": "city",
+  "id": "pune"
+ },
+ "provenance": {
+  "sources": [
+   {
+    "id": "pmc-esr",
+    "title": "PMC Draft Environment Status Report 2025-26, chapter 5 (water and wastewater management)",
+    "publisher": "Pune Municipal Corporation, Environment Department",
+    "license": "public government report published by the corporation; cited with attribution"
+   }
+  ],
+  "method": "manual",
+  "produced_at": "2026-08-17",
+  "produced_by": "neer-vazhvu-api/scripts/build_pune_supply.py",
+  "note": "Transcribed from PMC's own published report, then checked against PMC's own stated totals at build time: the water-budget rows must sum to 1,110.18 MLD / 14.308 TMC, the abstraction points to 1,681.5 MLD and the WTP list to 1,854 MLD, or the build fails. The entitlement figures are cross-checked against MWRRA Orders 19/2018 and 01/2025."
+ },
+ "_note": "Pune's supply story is an arithmetic one and PMC publishes both halves of it. Its own water budget asks for 21.03 TMC a year against a sanctioned 16.36 TMC, a shortfall of 4.67 TMC - and books 6.73 TMC of that demand as distribution losses. The gap is smaller than the leak.",
+ "hero_copy": {
+  "headline": "The shortfall is smaller than the leak",
+  "body": "Pune draws its water from four dams on the Mutha, lifts it 1,681.5 MLD at a time, and treats it at eighteen plants rated 1,854 MLD. By PMC's own water budget it needs 21.03 TMC a year and is entitled to 16.36 - a shortfall of 4.67 TMC. In the same table PMC books 6.73 TMC as system losses, 32% non-revenue water. The entire entitlement gap sits inside the leakage, and closing it would leave the city 2.05 TMC in surplus without a drop of new water. Meanwhile the average Punekar gets four hours of supply a day against PMC's own 24-hour benchmark - the same four hours reported in every edition since 2021-22.",
+  "wtp_label": "PMC treatment capacity",
+  "wtp_sub": "1,854 MLD across the plants PMC lists in its ESR 2025-26. The report's text says 17 plants while the table holds 18 rows; the capacities are the table's.",
+  "nrw_sub": "32% in 2025-26, down from the 35% PMC reported in each of the four preceding editions. Worth 6.73 TMC a year.",
+  "pop_label": "People on PMC water",
+  "pop_sub": "8,164,868 across the old city, 34 merged villages and a floating population PMC puts at 5%.",
+  "footer": "Every figure from PMC's Draft Environment Status Report 2025-26 and MWRRA Orders 19/2018 and 01/2025."
+ },
+ "supply_chain": [
+  "Khadakwasla chain: Temghar, Warasgaon and Panshet release into Khadakwasla",
+  "New Mutha Right Bank Canal and the closed mains to the city",
+  "18 water treatment plants totalling 1,854 MLD (Parvati alone is 767)",
+  "~2,600 km of distribution mains, 23 major pumping stations",
+  "8,164,868 people, at an average 4 hours of supply a day"
+ ],
+ "_view_overrides": {
+  "subtitle": "Structural numbers from PMC's own Environment Status Report 2025-26 and from MWRRA's orders on the Khadakwasla entitlement. Refreshed when PMC publishes a new edition.",
+  "wtp_label": "PMC treatment capacity"
+ },
+ "current_supply_mix_mld": [
+  {
+   "source": "Khadakwasla chain (Khadakwasla, Panshet, Warasgaon, Temghar)",
+   "scheme": "Parvati, Warje, Lashkar, Holkar, Vadgaon and the other city WTPs",
+   "mld": 1500,
+   "supplies": "PMC's old limits and most of the merged villages",
+   "annual_mcft": null,
+   "note": "The four dams hold 29.15 TMC (825.43 MCM) of live storage between them. Independently confirmed: the Maharashtra WRD daily bulletin's own live capacities sum to 825.66 Mcum, 0.03% from PMC's figure."
+  },
+  {
+   "source": "Bhama Askhed dam",
+   "scheme": "Bhama Askhed / Kuruli WTP, 200 MLD",
+   "mld": 150,
+   "supplies": "eastern Pune (Nagar Road, Vadgaon Sheri, Kharadi belt)",
+   "annual_mcft": null,
+   "note": "PMC's newer eastern source, long delayed by a farmer agitation."
+  },
+  {
+   "source": "Pavana river",
+   "scheme": "Ravet intake",
+   "mld": 27,
+   "supplies": "north-western fringe",
+   "annual_mcft": null,
+   "note": "Pavana dam is PCMC's principal source; PMC's draw here is small."
+  },
+  {
+   "source": "Bhima river",
+   "scheme": "Wadhu intake, 5 MLD WTP",
+   "mld": 4.5,
+   "supplies": "eastern villages",
+   "annual_mcft": null,
+   "note": "The smallest of the four, and the only one on the Bhima itself."
+  }
+ ],
+ "current_supply_total_mld": 1681.5,
+ "_supply_total_note": "1,681.5 MLD is PMC's INSTALLED LIFTING capacity across four abstraction points, not measured delivery. PMC states no measured daily abstraction, and explicitly excludes groundwater, private tankers and other alternative sources from these accounts.",
+ "wtps_summary": {
+  "fresh_water_wtps_count": 18,
+  "fresh_water_capacity_mld": 1854,
+  "total_installed_capacity_mld": 1854,
+  "plant_count_listed": 18,
+  "plants": [
+   {
+    "name": "Parvati New",
+    "capacity_mld": 500
+   },
+   {
+    "name": "Parvati Old",
+    "capacity_mld": 267
+   },
+   {
+    "name": "Warje Phase 2",
+    "capacity_mld": 200
+   },
+   {
+    "name": "Bhama Askhed (Kuruli)",
+    "capacity_mld": 200
+   },
+   {
+    "name": "Warje Phase 1",
+    "capacity_mld": 180
+   },
+   {
+    "name": "Vadgaon Phase 1",
+    "capacity_mld": 125
+   },
+   {
+    "name": "Vadgaon Phase 2",
+    "capacity_mld": 125
+   },
+   {
+    "name": "Lashkar New",
+    "capacity_mld": 100
+   },
+   {
+    "name": "Holkar New",
+    "capacity_mld": 40
+   },
+   {
+    "name": "Fursungi-Uruli",
+    "capacity_mld": 33
+   },
+   {
+    "name": "Chikhali",
+    "capacity_mld": 27
+   },
+   {
+    "name": "Manjari",
+    "capacity_mld": 12
+   },
+   {
+    "name": "Holkar Old",
+    "capacity_mld": 10
+   },
+   {
+    "name": "Warje Malwadi",
+    "capacity_mld": 10
+   },
+   {
+    "name": "Kondhwe-Dhawade",
+    "capacity_mld": 10
+   },
+   {
+    "name": "Fursungi Old",
+    "capacity_mld": 5
+   },
+   {
+    "name": "Wagholi",
+    "capacity_mld": 5
+   },
+   {
+    "name": "Wadhu",
+    "capacity_mld": 5
+   }
+  ],
+  "note": "PMC's text says 17 plants; its own table lists 18. The 2024-25 edition said 15 plants totalling 1,914 MLD. Flagged, not resolved."
+ },
+ "distribution": {
+  "population_served": 8164868,
+  "transmission_mains_km": 2600,
+  "pumping_stations": 23,
+  "note": "ESR 2025-26. Network length is PMC's approximate figure."
+ },
+ "water_budget_2025_26": {
+  "rows": [
+   {
+    "segment": "Piped area (old municipal limits)",
+    "population": 5865554,
+    "norm_lpcd": 150,
+    "mld": 879.83,
+    "tmc": 11.34,
+    "mcum": 321.12
+   },
+   {
+    "segment": "9 merged villages with sewerage",
+    "population": 829855,
+    "norm_lpcd": 120,
+    "mld": 99.58,
+    "tmc": 1.283,
+    "mcum": 36.33
+   },
+   {
+    "segment": "25 outer villages, no sewerage",
+    "population": 1080656,
+    "norm_lpcd": 70,
+    "mld": 75.65,
+    "tmc": 0.975,
+    "mcum": 27.61
+   },
+   {
+    "segment": "Tanker supply",
+    "population": null,
+    "norm_lpcd": null,
+    "mld": 15.0,
+    "tmc": 0.193,
+    "mcum": 5.47
+   },
+   {
+    "segment": "Floating population",
+    "population": 388803,
+    "norm_lpcd": 35,
+    "mld": 13.61,
+    "tmc": 0.175,
+    "mcum": 4.96
+   },
+   {
+    "segment": "Commercial / non-domestic",
+    "population": null,
+    "norm_lpcd": null,
+    "mld": 26.51,
+    "tmc": 0.342,
+    "mcum": 9.68
+   }
+  ],
+  "net_demand_mld": 1110.18,
+  "net_demand_tmc": 14.308,
+  "system_loss_mld": 522.19,
+  "system_loss_tmc": 6.73,
+  "nrw_pct": 32,
+  "total_requirement_mld": 1631.84,
+  "total_requirement_tmc": 21.03,
+  "sanctioned_quota_tmc": 16.36,
+  "shortfall_tmc": 4.67,
+  "_finding": "The shortfall (4.67 TMC) is smaller than the system loss (6.73 TMC). Eliminating non-revenue water would take total requirement to 14.31 TMC against a 16.36 TMC entitlement - a 2.05 TMC surplus. This is a subtraction across two rows of one PMC table, not a modelled claim.",
+  "_table_does_not_close": "PMC's own budget is internally inconsistent by 0.53 MLD (0.03%). The six segment rows sum to 1,110.18 MLD, while the loss row is exactly 32% of the stated 1,631.84 total, which implies a net of 1,109.65. The TMC column shows the same gap: 14.308 + 6.730 = 21.038 against a stated 21.030. Both of PMC's figures are reproduced here as published rather than one being quietly corrected to make the arithmetic close. The discrepancy is far too small to affect the finding above."
+ },
+ "entitlement": {
+  "sanctioned_tmc": 16.36,
+  "sanctioned_basis": "MWRRA Order 01/2025: 14.61 TMC by agreement plus 1.75 TMC authorised for the merged villages by the Superintending Engineer's letter of 2 July 2021.",
+  "khadakwasla_only_reservation_tmc": 11.5,
+  "khadakwasla_reservation_basis": "State High Power Committee, 10 March 2005; carried into the PMC-WRD agreement of 1 March 2013 as 11.0 domestic + 0.5 commercial. THIS IS THE 11.5 TMC THAT CIRCULATES, and it is one reservoir's share, not PMC's total entitlement.",
+  "history": [
+   {
+    "date": "2005-03-10",
+    "event": "State High Power Committee approves an 11.5 TMC/yr reservation for PMC from Khadakwasla.",
+    "source_url": "http://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-14-of-2018.pdf"
+   },
+   {
+    "date": "2013-03-01",
+    "event": "PMC-WRD water supply agreement signed: 11.0 TMC domestic + 0.5 TMC commercial, six-year term.",
+    "source_url": "http://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-14-of-2018.pdf"
+   },
+   {
+    "date": "2017-10-23",
+    "event": "Pune District Regulatory Officer fixes PMC's entitlement at 8.19 TMC/yr.",
+    "source_url": "http://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-14-of-2018.pdf"
+   },
+   {
+    "date": "2018-12-13",
+    "event": "MWRRA sets the PDRO order aside, deems 11.5 TMC an entitlement under s.31(B), and finds PMC's use far in excess of the project's 8.3 TMC drinking provision, with farmers on the Khadakwasla Complex 'deprived of their share'.",
+    "source_url": "http://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-14-of-2018.pdf"
+   },
+   {
+    "date": "2021-07-02",
+    "event": "Superintending Engineer authorises a further 1.75 TMC for the merged villages.",
+    "source_url": "https://mwrra.maharashtra.gov.in/wp-content/uploads/2025/11/85.pdf"
+   },
+   {
+    "date": "2025-05-19",
+    "event": "MWRRA finds the officer who issued the impugned order was not the competent PDRO and remits the matter to the Chief Engineer (I), WRD Pune, for disposal within three months. The entitlement remains formally unresolved.",
+    "source_url": "https://mwrra.maharashtra.gov.in/wp-content/uploads/2025/11/85.pdf"
+   }
+  ],
+  "recorded_actual_use_tmc": {
+   "2011-12": 15.9,
+   "2012-13": 15.39,
+   "2013-14": 15.95,
+   "2014-15": 15.83,
+   "2015-16": 16.5,
+   "2016-17": 16.71,
+   "2017-18": 18.71,
+   "_note": "WRD's affidavit figures as recorded in MWRRA Order 19/2018; the seven-year average is 17.3 TMC. PMC's own affidavit put 2017-18 at 14.56 TMC (412.36 MCM) - the utility and the regulator disagree by 4.15 TMC about how much water the utility took. NO MEASURED ANNUAL DRAW HAS BEEN PUBLISHED SINCE 2017-18."
+  },
+  "khadakwasla_complex_context_tmc": {
+   "total_use": 33.77,
+   "irrigation_provision": 22.55,
+   "evaporation_loss": 2.92,
+   "pmc_drinking_provision_in_project_planning": 8.3,
+   "_note": "Ex. Engineer, Khadakwasla Irrigation Division, affidavit of 1 December 2018, via MWRRA Order 19/2018. The complex is an IRRIGATION project with a drinking-water share, which is why no days-of-water-left runway is computed for Pune: most of that storage is not the city's to drink."
+  }
+ },
+ "service_levels": {
+  "rows": [
+   {
+    "indicator": "Coverage of water supply",
+    "unit": "%",
+    "target": 100,
+    "reported_2021_22_to_2024_25": 98,
+    "reported_2025_26": 98
+   },
+   {
+    "indicator": "Average supply duration",
+    "unit": "hours/day",
+    "target": 24,
+    "reported_2021_22_to_2024_25": 4,
+    "reported_2025_26": 4
+   },
+   {
+    "indicator": "Non-revenue water",
+    "unit": "%",
+    "target": 20,
+    "reported_2021_22_to_2024_25": 35,
+    "reported_2025_26": 32
+   },
+   {
+    "indicator": "Per-capita supply",
+    "unit": "LPCD",
+    "target": 150,
+    "reported_2021_22_to_2024_25": 250,
+    "reported_2025_26": 199.86
+   },
+   {
+    "indicator": "Metered connections",
+    "unit": "%",
+    "target": 100,
+    "reported_2021_22_to_2024_25": 30,
+    "reported_2025_26": 72
+   },
+   {
+    "indicator": "Collection efficiency",
+    "unit": "%",
+    "target": 90,
+    "reported_2021_22_to_2024_25": 88,
+    "reported_2025_26": 88
+   }
+  ],
+  "_slb_note": "PMC REPUBLISHED AN IDENTICAL SERVICE-LEVEL-BENCHMARK TABLE FOR FOUR CONSECUTIVE YEARS. The 2021-22, 2022-23, 2023-24 and 2024-25 editions all report coverage 98%, supply 4 hours, NRW 35%, per-capita 250 LPCD, metered 30% and collection 88%. Only 2025-26 moves. Treat the first column as ONE observation, never as a four-year trend.",
+  "_lpcd_note": "199.86 LPCD is gross at source (1,631.84 MLD over 8,164,868 people). Net at the tap on PMC's own net-demand row is 135.97 LPCD - our arithmetic on PMC's numbers, not a PMC figure."
+ },
+ "equitable_supply_project": {
+  "name": "Equitable (24x7) Water Supply Project",
+  "sanctioned_cost_inr_crore": 2818.46,
+  "spent_inr_crore": 1557.89,
+  "physical_progress_pct": 85,
+  "storage_tanks_planned": 82,
+  "storage_tanks_built": 67,
+  "storage_tanks_commissioned": 35,
+  "amr_meters_installed": 199553,
+  "amr_meters_target": 235048,
+  "feeder_mains_km": 98.9,
+  "distribution_mains_km": 1039.48,
+  "pmc_stated_time_remaining": "12 to 14 months, as of the 2025-26 ESR",
+  "blocked_on_permissions": "29.417 km at 158 sites awaiting traffic police permission, 2 km awaiting Irrigation, 2.352 km awaiting Defence/Cantonment.",
+  "local_gains_claimed": "Where the project is complete PMC reports leakage down from 40% to 29%, and private tankers in Baner-Balewadi down from about 170 a day to about 75.",
+  "_note": "67 tanks are BUILT and 35 are COMMISSIONED. The difference is the honest measure of what has actually reached anybody. No PMC source claims continuous 24-hour supply anywhere in the city."
+ },
+ "sewage": {
+  "generated_mld": 980,
+  "generated_breakdown_mld": {
+   "old city": 744,
+   "11 villages merged 2017": 139,
+   "23 villages merged 2021": 97
+  },
+  "installed_capacity_mld": 477,
+  "operating_stp_count": 9,
+  "untreated_mld": 503,
+  "untreated_pct": 51,
+  "jica_programme_mld": 396,
+  "_note": "980 generated against 477 MLD of operating capacity leaves 503 MLD, 51% of what the city produces, reaching the Mula-Mutha untreated. The untreated figure is our subtraction of PMC's two published numbers. A 567 MLD capacity figure also circulates and reconciles: it counts the 90 MLD Old Naidu plant, which CPCB's inventory marks non-operational. The 11 proposed plants of the JICA programme total 396 MLD, which the OpenCity STP layer reproduces independently."
+ },
+ "groundwater": {
+  "official_mld": null,
+  "_note": "PMC PUBLISHES NO GROUNDWATER NUMBER AT ALL, and says so: its supply accounts 'do not include groundwater sources (e.g. borewells), private tanker supply or other alternative sources'. Its 2025-26 ESR recommends CREATING seasonal borewell monitoring, city groundwater maps and a licensing regime for commercial borewells - confirming none exists. The only municipal survey is a 320-borewell pilot across five clusters. The independent estimate is ACWADAM's (2019): roughly 4 TMC a year from perhaps 80,000 to 125,000 borewells, about a quarter of formal municipal supply. That is a modelled estimate from a research NGO, carried here as the only number anyone has published and NOT as a measurement."
+ },
+ "_sources": [
+  {
+   "name": "PMC Draft Environment Status Report 2025-26",
+   "url": "https://webadmin.pmc.gov.in/sites/default/files/2026-08/PMC%20Draft%20ESR%202025-26_compressed.pdf",
+   "date": "2026-08",
+   "extracted": "2026-08-17"
+  },
+  {
+   "name": "MWRRA Order, Case 14 of 2018 (PMC entitlement, Khadakwasla Complex)",
+   "url": "http://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-14-of-2018.pdf",
+   "date": "2018-12-13",
+   "extracted": "2026-08-17"
+  },
+  {
+   "name": "MWRRA Order 01/2025 (PMC appeal; total authorisation 16.36 TMC)",
+   "url": "https://mwrra.maharashtra.gov.in/wp-content/uploads/2025/11/85.pdf",
+   "date": "2025-05-19",
+   "extracted": "2026-08-17"
+  }
+ ]
+}

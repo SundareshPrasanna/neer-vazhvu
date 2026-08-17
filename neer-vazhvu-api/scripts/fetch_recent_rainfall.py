@@ -51,6 +51,12 @@ CITIES = {
     # Matches the IMD gridded point in generate_imd_rainfall.py, not the city
     # centre: the provisional months must continue the same series they fill.
     "kolkata": (22.5000, 88.2500),
+    # Matches generate_imd_rainfall.py's grid point (18.5, 74.0), NOT the city
+    # centre - the provisional months have to continue the same series they
+    # fill. That cell is east of Pune on purpose: the district's 4.7x
+    # west-east rainfall gradient makes the western cell 31% high against
+    # IMD's own Shivajinagar observatory normal.
+    "pune": (18.5000, 74.0000),
     # Gurugram is NOT here yet, deliberately. Its grid point is (28.4360,
     # 77.0560), the centroid of MCG's 36-ward extent, but this fetcher only
     # fills provisional months AFTER an IMD authoritative base series, and

@@ -116,6 +116,8 @@ export interface RiverInfo {
    *  overrides come with Hyderabad's translation pass. */
   display_name_te?: string;
   display_name_bn?: string;
+  /** Native-script name shown under the English name (Marathi cities). */
+  display_name_mr?: string;
 }
 
 // CPCB reading shape used by the marker tooltip / colour-coding logic.
@@ -820,12 +822,14 @@ function RiverInfoOnlyPanel({
           {(info.display_name_ta ||
             info.display_name_hi ||
             info.display_name_te ||
-            info.display_name_bn) && (
+            info.display_name_bn ||
+            info.display_name_mr) && (
             <span className="text-sm text-slate-500 dark:text-slate-400">
               {info.display_name_ta ||
                 info.display_name_hi ||
                 info.display_name_te ||
-                info.display_name_bn}
+                info.display_name_bn ||
+                info.display_name_mr}
             </span>
           )}
         </div>

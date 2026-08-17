@@ -167,6 +167,29 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "my-ward",
     "tanker",
   ]),
+  // Pune preview set. Only surfaces with real artifacts behind them.
+  //
+  // `groundwater` is in and is the strongest layer: 14 talukas x 6 IN-GRES
+  // editions, reproducing CGWB's National Compilation 2025 exactly, with
+  // Shirur critical at 95.71% inside a district that reads SAFE at 63.73%.
+  // `rivers` is in because Pune has five and CPCB rates four of those
+  // stretches Priority I or II. `my-ward` is in because all 41 prabhags of
+  // the 2025 delimitation carry names.
+  //
+  // NOT in, each for a stated reason rather than pending work:
+  // `flood-risk` - the event register is solid (1961 Panshet, 2019 Ambil
+  //   Odha, 25 Jul 2024, 4 Aug 2024, 21 Aug 2025) but Maharashtra WRD
+  //   publishes Pune's red and blue flood lines as SCANNED PDF map sheets
+  //   only, with no vector form anywhere, so the hazard layer the
+  //   interactive variant needs does not exist machine-readable.
+  // `tanker` - PMC publishes a genuine daily tanker register (409 XLSX files
+  //   since 25 Apr 2026, per filling point, with ward, society and vehicle
+  //   number). Real killer dataset, producer not written yet.
+  // `lake-restoration`, `facts`, `origins`, `allocations`, `commitments` -
+  //   no artifacts built.
+  // `cascades` - the cascade pipeline has not been run for Pune district.
+  // `shoreline` - landlocked.
+  pune: new Set(["", "about", "groundwater", "water-bodies", "rivers", "my-ward"]),
 };
 
 /**

@@ -165,6 +165,28 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   "gurugram:climate-risk":
     "Chennai's sub-basin climate risk comes from HydroBASINS level 12, a global product that would transfer here. Genuinely buildable and simply not built, so this is backlog rather than refusal.",
 
+  // Pune - preview-gated, city ten. The set is small on purpose: only the
+  // surfaces with real artifacts behind them are on. Two of the absences
+  // below are properties of what Maharashtra publishes rather than backlog.
+  "pune:flood-risk":
+    "The event register is not the problem - 1961 Panshet, the 2019 Ambil Odha flash flood, 25 July and 4 August 2024, 21 August 2025 are all dated and sourced. The HAZARD LAYER is. Maharashtra WRD publishes Pune's red (100-year) and blue (25-year) flood lines as SCANNED PDF MAP SHEETS ONLY: 518 PDFs on the flood-line page and zero shapefiles, GeoJSON or KML anywhere. pdftotext extracts no characters from the Mutha sheets - they are raster. Digitising them is a georeferencing project, not a fetch. Retire this when a vector flood line exists, or when the Bombay High Court's June 2025 order to redraw Pune's flood lines produces one.",
+  "pune:tanker":
+    "Buildable, high value, and simply not built yet - this is the single largest piece of remaining work for the city. PMC publishes a genuine DAILY TANKER REGISTER through an open Drupal JSON:API at webadmin.pmc.gov.in/en/jsonapi/node/water_tanker: 409 XLSX files since 25 April 2026, one per filling point per day, each row carrying prabhag number, recipient society, address, tanker vehicle number and scheduled vs on-demand trips. Bund Garden logged 153 deliveries on 12 August 2026 and Ramtekadi 424 on 13 August - and those are monsoon figures from two of at least seven points. Retire this by writing the producer.",
+  "pune:allocations":
+    "The instrument chain exists and is unusually well documented - MWRRA Orders 19/2018 and 01/2025, the 1 March 2013 PMC-WRD agreement, the 2 July 2021 Superintending Engineer letter for the merged villages - but the ledger's primitive is entitled-vs-RECEIVED, and no measured annual draw has been published since 2017-18. For that year the utility and the regulator disagree by 4.15 TMC (PMC's affidavit 14.56 TMC against WRD's 18.71). A ledger whose received column is eight years old and contested is worse than no ledger.",
+  "pune:commitments":
+    "Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register.",
+  "pune:facts":
+    "Needs a facts-pune.json. The numbers are verified and sitting in pune-supply-overview.json and river-quality-pune.json already; the compilation is the work.",
+  "pune:origins":
+    "Not written. The material is strong - the 12 July 1961 Panshet breach that flooded half the city and has no official death toll by the state's own admission, through the Khadakwasla chain to the 2025 entitlement remittal - but Origins is narrative work and gets its own pass.",
+  "pune:lake-restoration":
+    "No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere.",
+  "pune:cascades":
+    "The cascade pipeline has not been run for Pune district. Backlog, not refusal.",
+  "pune:climate-risk": "Not built for this city.",
+  "pune:shoreline": "Landlocked.",
+
   // Hyderabad
   "hyderabad:my-ward":
     "The 300-ward delimitation gazetted 25 Dec 2025 has no public geometry, and with the corporations under a Special Officer there are no sitting councillors to attach to a ward either. Returns with the ward build, following the Mumbai precedent.",
