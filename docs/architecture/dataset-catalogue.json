@@ -722,7 +722,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "accountability",
-   "bytes": 67450,
+   "bytes": 67586,
    "schema": {
     "kind": "object",
     "keys": [
@@ -739,7 +739,9 @@
     "src/components/basin/basin-pdf-report.tsx"
    ],
    "producer_refs": [
+    "scripts/build_kabini_sources.py",
     "scripts/check-basin-pdf-render.tsx",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/refresh-arkavathi-mpr.ts"
    ],
    "headwaters_sources": [
@@ -774,7 +776,9 @@
     "(convention: registry-driven loader for 'arkavathi')"
    ],
    "producer_refs": [
-    "scripts/enrich_arkavathi_industrial_districts.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/enrich_arkavathi_industrial_districts.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -1103,7 +1107,9 @@
     "(convention: registry-driven loader for 'arkavathi')"
    ],
    "producer_refs": [
-    "scripts/build_arkavathi_taluks_full.py"
+    "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -1136,7 +1142,10 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1164,7 +1173,9 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_elevation_bands.py",
-    "scripts/ingest_basin_overview.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/ingest_basin_overview.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -1196,7 +1207,10 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1446,7 +1460,10 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1479,7 +1496,8 @@
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_elevation_bands.py"
+    "neer-vazhvu-api/scripts/build_elevation_bands.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -1579,7 +1597,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1614,8 +1634,10 @@
    "producer_refs": [
     "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_fregister.py",
+    "scripts/build_kabini_sources.py",
     "scripts/check-basin-pdf-render.tsx",
-    "scripts/enrich_arkavathi_industrial_districts.py"
+    "scripts/enrich_arkavathi_industrial_districts.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [
     "nmcg-ngt-mpr-listing"
@@ -1681,7 +1703,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1718,6 +1742,7 @@
     "scripts/check-basin-pdf-render.tsx",
     "scripts/ingest_basin.py",
     "scripts/ingest_basin_overview.py",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/validate_basin.py"
    ],
    "headwaters_sources": [],
@@ -1755,7 +1780,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1788,7 +1815,8 @@
     "(convention: registry-driven loader for 'arkavathi')"
    ],
    "producer_refs": [
-    "scripts/enrich_arkavathi_industrial_districts.py"
+    "scripts/enrich_arkavathi_industrial_districts.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -1818,7 +1846,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -1916,7 +1946,9 @@
     "(convention: registry-driven loader for 'arkavathi')"
    ],
    "producer_refs": [
-    "scripts/build_prs.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/build_prs.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -1931,13 +1963,13 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "prs",
-   "bytes": 45619,
+   "bytes": 45654,
    "schema": {
     "kind": "object",
     "keys": [
      "bodCaveat",
      "citeSource",
-     "comparison",
+     "epochs",
      "evidence",
      "governance",
      "grievance",
@@ -1964,7 +1996,9 @@
    "producer_refs": [
     "scripts/build_basin_prs_points.py",
     "scripts/build_fregister.py",
-    "scripts/check-basin-pdf-render.tsx"
+    "scripts/build_kabini_sources.py",
+    "scripts/check-basin-pdf-render.tsx",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [
     "cpcb-prs-report",
@@ -2002,7 +2036,9 @@
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
-    "scripts/nvdm_envelope_chennai.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -2034,6 +2070,7 @@
     "(convention: registry-driven loader for 'arkavathi')"
    ],
    "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/validate_basin.py"
    ],
    "headwaters_sources": [],
@@ -2068,7 +2105,10 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -2320,7 +2360,10 @@
    "consumers": [
     "(convention: registry-driven loader for 'arkavathi')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -2334,7 +2377,7 @@
    "family": "basins",
    "scope": "cauvery-ka",
    "dataset": "accountability-C2",
-   "bytes": 9783,
+   "bytes": 9800,
    "schema": {
     "kind": "object",
     "keys": [
@@ -2348,7 +2391,10 @@
    "consumers": [
     "(convention: registry-driven loader for 'cauvery-ka')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -2362,7 +2408,7 @@
    "family": "basins",
    "scope": "cauvery-ka",
    "dataset": "accountability-C4",
-   "bytes": 9898,
+   "bytes": 9915,
    "schema": {
     "kind": "object",
     "keys": [
@@ -2406,7 +2452,9 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_elevation_bands.py",
-    "scripts/ingest_basin_overview.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/ingest_basin_overview.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -2444,6 +2492,7 @@
     "scripts/check-basin-pdf-render.tsx",
     "scripts/ingest_basin.py",
     "scripts/ingest_basin_overview.py",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/validate_basin.py"
    ],
    "headwaters_sources": [],
@@ -2617,15 +2666,18 @@
     "scripts/build_basin_rainfall.py",
     "scripts/build_basin_wq_readings.py",
     "scripts/build_cauvery_tn_wq.py",
+    "scripts/build_kabini_sources.py",
     "scripts/ingest_basin_overview.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "unaccounted",
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unaccounted"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/basins/cauvery-ka/tanks.geojson",
@@ -2816,6 +2868,7 @@
     "scripts/check-basin-pdf-render.tsx",
     "scripts/ingest_basin.py",
     "scripts/ingest_basin_overview.py",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/validate_basin.py"
    ],
    "headwaters_sources": [],
@@ -2995,6 +3048,7 @@
     "scripts/build_basin_rainfall.py",
     "scripts/build_basin_wq_readings.py",
     "scripts/build_cauvery_tn_wq.py",
+    "scripts/build_kabini_sources.py",
     "scripts/ingest_basin_overview.py"
    ],
    "headwaters_sources": [],
@@ -3100,7 +3154,9 @@
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
    "producer_refs": [
-    "scripts/enrich_arkavathi_industrial_districts.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/enrich_arkavathi_industrial_districts.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -3131,7 +3187,9 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_elevation_bands.py",
-    "scripts/ingest_basin_overview.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/ingest_basin_overview.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -3272,7 +3330,10 @@
    "consumers": [
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -3337,7 +3398,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -3368,8 +3431,10 @@
    "producer_refs": [
     "scripts/build_arkavathi_taluks_full.py",
     "scripts/build_fregister.py",
+    "scripts/build_kabini_sources.py",
     "scripts/check-basin-pdf-render.tsx",
-    "scripts/enrich_arkavathi_industrial_districts.py"
+    "scripts/enrich_arkavathi_industrial_districts.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -3440,7 +3505,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -3481,7 +3548,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -3554,7 +3623,9 @@
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
-    "scripts/nvdm_envelope_chennai.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -3589,6 +3660,7 @@
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
    "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/validate_basin.py"
    ],
    "headwaters_sources": [],
@@ -3699,7 +3771,10 @@
    "consumers": [
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -3733,7 +3808,10 @@
    "consumers": [
     "(convention: registry-driven loader for 'chennai-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "unaccounted",
@@ -3741,6 +3819,1614 @@
    "flags": [
     "unaccounted"
    ]
+  },
+  {
+   "path": "public/data/basins/kabini/accountability.json",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "accountability",
+   "bytes": 10869,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "baseline",
+     "dataset",
+     "intro",
+     "legalLibrary",
+     "nvdm",
+     "provenance",
+     "question",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-atlas.tsx",
+    "src/components/basin/basin-pdf-report.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/check-basin-pdf-render.tsx",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/refresh-arkavathi-mpr.ts"
+   ],
+   "headwaters_sources": [
+    "nmcg-ngt-mpr-listing"
+   ],
+   "licenses": [
+    "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/admin-district.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "admin-district",
+   "bytes": 107862,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 4,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "level",
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/enrich_arkavathi_industrial_districts.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/admin-taluk.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "admin-taluk",
+   "bytes": 247389,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 13,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "level",
+     "name",
+     "parentDistrict",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/admin-town.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "admin-town",
+   "bytes": 149593,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 12,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "level",
+     "name",
+     "shedId",
+     "townType"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/boundary.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "boundary",
+   "bytes": 81481,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "name"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_elevation_bands.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/ingest_basin_overview.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/command-areas.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "command-areas",
+   "bytes": 419459,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 7,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani Aug 2026); India-WRIS command-area registration queued in the maintenance model",
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage/C05CAM14.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 15786,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 58,
+    "geometries": [
+     "LineString",
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage/C05CAM15.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 452132,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1252,
+    "geometries": [
+     "LineString",
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage/C05CAM16.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 799146,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1905,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage/C05CAM17.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 916893,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1573,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage/C05CAM18.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 153097,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 422,
+    "geometries": [
+     "LineString",
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage/C05CAM19.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 664495,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1269,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage/C05CAM20.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 575173,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1104,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage/C05CAM21.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 780660,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1173,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage/C05CAM22.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 984615,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1511,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage/_unassigned.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 2267,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 7,
+    "geometries": [
+     "LineString",
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "name"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/drainage.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "drainage",
+   "bytes": 5335021,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 10274,
+    "geometries": [
+     "LineString",
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": [
+    "big"
+   ]
+  },
+  {
+   "path": "public/data/basins/kabini/elevation-bands.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "elevation-bands",
+   "bytes": 1058802,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 7,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "band",
+     "max_m",
+     "min_m",
+     "order"
+    ]
+   },
+   "consumers": [
+    "src/lib/basins/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_elevation_bands.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem",
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/flow-stations.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "flow-stations",
+   "bytes": 2084,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "agency",
+     "hasReadings",
+     "name",
+     "readingsFrom",
+     "readingsTo",
+     "river",
+     "shedId",
+     "siteType",
+     "stationKey"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_flow_readings.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "wris-live-services"
+   ],
+   "licenses": [
+    "India-WRIS website policy: material 'may be reproduced free of charge in any format or media without requiring specific permission', subject to accurate reproduction and prominent acknowledgement of the source; third-party material on the site excluded - GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/forests.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "forests",
+   "bytes": 350486,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 101,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "kind",
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model",
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/gaps.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "gaps",
+   "bytes": 107555,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "gapUnit",
+     "name",
+     "severity",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/gaps.json",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "gaps",
+   "bytes": 37981,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "districts",
+     "governance",
+     "note",
+     "nvdm",
+     "provenance",
+     "scope",
+     "title",
+     "version"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-atlas.tsx",
+    "src/components/basin/basin-pdf-report.tsx",
+    "src/lib/basins/arkavathi.ts",
+    "src/lib/basins/chennai-rivers.ts",
+    "src/lib/basins/types.ts"
+   ],
+   "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_fregister.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/check-basin-pdf-render.tsx",
+    "scripts/enrich_arkavathi_industrial_districts.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "authored from three closed DEP editions (2021/2022); district DEP pages queued for Headwaters registration in the maintenance model",
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/infrastructure.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "infrastructure",
+   "bytes": 3956,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 10,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "completionYear",
+     "district",
+     "grossStorageMcm",
+     "heightM",
+     "kind",
+     "name",
+     "operator",
+     "purpose",
+     "river",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani Aug 2026); CWC dam register registration queued in the maintenance model",
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/inventory.json",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "inventory",
+   "bytes": 11686,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "basinId",
+     "dataset",
+     "families",
+     "generatedFrom",
+     "nvdm",
+     "provenance",
+     "scope",
+     "skipped"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/page.tsx",
+    "src/app/embed/basins/[basinId]/page.tsx",
+    "src/components/basin/basin-atlas-client.tsx",
+    "src/lib/basins/types.ts"
+   ],
+   "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_basin_prs_points.py",
+    "scripts/build_cauvery_tn_wq.py",
+    "scripts/check-basin-pdf-render.tsx",
+    "scripts/ingest_basin.py",
+    "scripts/ingest_basin_overview.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/validate_basin.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/monitoring-points.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "monitoring-points",
+   "bytes": 3806,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 13,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "agency",
+     "district",
+     "name",
+     "purpose",
+     "shedId",
+     "stationKey"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani Aug 2026); station registry rides WRIS - registration queued in the maintenance model",
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/pressures-industrial.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "pressures-industrial",
+   "bytes": 60530,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 22,
+    "geometries": [
+     "MultiPolygon",
+     "Point"
+    ],
+    "property_keys": [
+     "kind",
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/enrich_arkavathi_industrial_districts.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model",
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/pressures-quarries.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "pressures-quarries",
+   "bytes": 3183,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "kind",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/protected-areas.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "protected-areas",
+   "bytes": 271989,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 5,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "division",
+     "kind",
+     "name"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model",
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/prs.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "prs",
+   "bytes": 27431,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "kind",
+     "label",
+     "length_km",
+     "priority",
+     "river",
+     "shedId",
+     "source",
+     "year"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/build_prs.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "cpcb-prs-report",
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution",
+    "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/prs.json",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "prs",
+   "bytes": 31622,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "bodCaveat",
+     "citeSource",
+     "dataset",
+     "epochs",
+     "governance",
+     "grievance",
+     "growthNote",
+     "keyTerms",
+     "levelCoverage",
+     "mprOverview",
+     "nvdm",
+     "priorityNote",
+     "provenance",
+     "reportingCaveat",
+     "river",
+     "scope",
+     "sources",
+     "statusFacts",
+     "statusLine",
+     "stretchName",
+     "tabs"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-atlas.tsx",
+    "src/components/basin/basin-pdf-report.tsx",
+    "src/lib/basins/arkavathi.ts",
+    "src/lib/basins/types.ts"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_prs_points.py",
+    "scripts/build_fregister.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/check-basin-pdf-render.tsx",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "cpcb-prs-report",
+    "nmcg-ngt-mpr-listing",
+    "wris-live-services"
+   ],
+   "licenses": [
+    "GoI publication, cited with attribution",
+    "India-WRIS website policy: material 'may be reproduced free of charge in any format or media without requiring specific permission', subject to accurate reproduction and prominent acknowledgement of the source; third-party material on the site excluded - GoI publication, cited with attribution",
+    "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/readings/0033-cdbng.json",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "readings",
+   "bytes": 2522,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "wris-live-services"
+   ],
+   "licenses": [
+    "India-WRIS website policy: material 'may be reproduced free of charge in any format or media without requiring specific permission', subject to accurate reproduction and prominent acknowledgement of the source; third-party material on the site excluded - GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/readings/0043-CDBNG.json",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "readings",
+   "bytes": 22864,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "wris-live-services"
+   ],
+   "licenses": [
+    "India-WRIS website policy: material 'may be reproduced free of charge in any format or media without requiring specific permission', subject to accurate reproduction and prominent acknowledgement of the source; third-party material on the site excluded - GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/readings/CCP00B1.json",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "readings",
+   "bytes": 24007,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "wris-live-services"
+   ],
+   "licenses": [
+    "India-WRIS website policy: material 'may be reproduced free of charge in any format or media without requiring specific permission', subject to accurate reproduction and prominent acknowledgement of the source; third-party material on the site excluded - GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/rivers.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "rivers",
+   "bytes": 70907,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 2,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "name",
+     "riverId"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/enrich_names.py",
+    "scripts/build-mumbai-rivers.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/sub-hydrosheds.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "sub-hydrosheds",
+   "bytes": 220719,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 9,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaKm2",
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/validate_basin.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-major.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-major",
+   "bytes": 73280,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 5,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "name",
+     "shedId",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-minor/C05CAM15.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-minor",
+   "bytes": 204012,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 30,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "category",
+     "name",
+     "shedId",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-minor/C05CAM16.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-minor",
+   "bytes": 327242,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 80,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "category",
+     "name",
+     "shedId",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-minor/C05CAM17.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-minor",
+   "bytes": 321567,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 142,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "category",
+     "name",
+     "shedId",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-minor/C05CAM18.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-minor",
+   "bytes": 10887,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 14,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "category",
+     "shedId",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-minor/C05CAM19.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-minor",
+   "bytes": 125441,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 45,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "category",
+     "name",
+     "shedId",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-minor/C05CAM20.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-minor",
+   "bytes": 329182,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 145,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "category",
+     "name",
+     "shedId",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-minor/C05CAM21.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-minor",
+   "bytes": 353986,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 114,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "category",
+     "name",
+     "shedId",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-minor/C05CAM22.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-minor",
+   "bytes": 165370,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 81,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "category",
+     "name",
+     "shedId",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-minor/_unassigned.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-minor",
+   "bytes": 3108,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 2,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "category",
+     "name",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/waterbodies-minor.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "waterbodies-minor",
+   "bytes": 1832595,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 653,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "category",
+     "name",
+     "shedId",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
   },
   {
    "path": "public/data/bbmb-dam-storage.json",
@@ -9905,7 +11591,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 4563,
+   "bytes": 4564,
    "schema": {
     "kind": "object",
     "keys": [
@@ -17878,9 +19564,11 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/build_kabini_sources.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-bangalore.ts",
     "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -18335,10 +20023,12 @@
    ],
    "producer_refs": [
     "scripts/build-mumbai-drainage.py",
+    "scripts/build_kabini_sources.py",
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-drainage-osm-delhi.ts",
     "scripts/fetch-drainage-osm.ts",
-    "scripts/fetch-osm-layers.ts"
+    "scripts/fetch-osm-layers.ts",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [
     "opencity-gcc-swd-survey"
@@ -18635,10 +20325,12 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/build_kabini_sources.py",
     "scripts/compute-restoration-priority.ts",
     "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm.ts",
     "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -18934,8 +20626,10 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
+    "scripts/build_kabini_sources.py",
     "scripts/fetch-drainage-osm-delhi.ts",
-    "scripts/fetch-osm-layers.ts"
+    "scripts/fetch-osm-layers.ts",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [
     "osm-overpass"
@@ -19017,9 +20711,11 @@
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/build_kabini_sources.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-delhi.ts",
     "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -19213,7 +20909,9 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/harvest_arcgis_rest.py",
-    "scripts/fetch-osm-layers.ts"
+    "scripts/build_kabini_sources.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [
     "gmda-onemap-arcgis"
@@ -19458,9 +21156,11 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/build_kabini_sources.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-hyderabad.ts",
     "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -19674,7 +21374,9 @@
     "src/components/flood-risk/flood-risk-map.tsx"
    ],
    "producer_refs": [
-    "scripts/fetch-osm-layers.ts"
+    "scripts/build_kabini_sources.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [
     "osm-overpass"
@@ -19718,8 +21420,10 @@
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/build_kabini_sources.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -19938,10 +21642,12 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/build_kabini_sources.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-madurai.ts",
     "scripts/fetch-water-bodies-osm-madurai.ts",
     "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -20245,7 +21951,9 @@
    ],
    "producer_refs": [
     "scripts/build-mumbai-drainage.py",
-    "scripts/fetch-osm-layers.ts"
+    "scripts/build_kabini_sources.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [
     "osm-overpass"
@@ -20320,9 +22028,11 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/app/cascade/enrich_names.py",
     "scripts/build-mumbai-rivers.py",
+    "scripts/build_kabini_sources.py",
     "scripts/compute-mumbai-ward-risk.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py",
     "scripts/nvdm_envelope_mumbai.py",
     "scripts/snap-river-stations.py"
    ],
@@ -22280,12 +23990,13 @@
   {
    "family": "basins",
    "dataset": "accountability",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "arkavathi"
+    "arkavathi",
+    "kabini"
    ],
-   "bytes": 67450,
-   "schema_variants": 1,
+   "bytes": 78455,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -22332,7 +24043,7 @@
    "scopes": [
     "cauvery-ka"
    ],
-   "bytes": 9783,
+   "bytes": 9800,
    "schema_variants": 1,
    "registered": false,
    "has_consumer": true
@@ -22344,7 +24055,7 @@
    "scopes": [
     "cauvery-ka"
    ],
-   "bytes": 9898,
+   "bytes": 9915,
    "schema_variants": 1,
    "registered": false,
    "has_consumer": true
@@ -22352,14 +24063,15 @@
   {
    "family": "basins",
    "dataset": "admin-district",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "arkavathi",
-    "chennai-rivers"
+    "chennai-rivers",
+    "kabini"
    ],
-   "bytes": 621502,
-   "schema_variants": 2,
-   "registered": false,
+   "bytes": 729364,
+   "schema_variants": 3,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -22377,76 +24089,82 @@
   {
    "family": "basins",
    "dataset": "admin-taluk",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "arkavathi"
+    "arkavathi",
+    "kabini"
    ],
-   "bytes": 102014,
+   "bytes": 349403,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "admin-town",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "arkavathi"
+    "arkavathi",
+    "kabini"
    ],
-   "bytes": 304816,
-   "schema_variants": 1,
-   "registered": false,
+   "bytes": 454409,
+   "schema_variants": 2,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "boundary",
-   "files": 3,
+   "files": 4,
    "scopes": [
     "arkavathi",
     "cauvery-ka",
-    "chennai-rivers"
+    "chennai-rivers",
+    "kabini"
    ],
-   "bytes": 517583,
+   "bytes": 599064,
    "schema_variants": 2,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "command-areas",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "arkavathi"
+    "arkavathi",
+    "kabini"
    ],
-   "bytes": 51562,
-   "schema_variants": 1,
-   "registered": false,
+   "bytes": 471021,
+   "schema_variants": 2,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "drainage",
-   "files": 13,
+   "files": 24,
    "scopes": [
     "arkavathi",
-    "chennai-rivers"
+    "chennai-rivers",
+    "kabini"
    ],
-   "bytes": 15411745,
-   "schema_variants": 3,
-   "registered": false,
+   "bytes": 26091030,
+   "schema_variants": 5,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "elevation-bands",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "arkavathi"
+    "arkavathi",
+    "kabini"
    ],
-   "bytes": 970313,
+   "bytes": 2029115,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -22464,6 +24182,30 @@
   },
   {
    "family": "basins",
+   "dataset": "flow-stations",
+   "files": 1,
+   "scopes": [
+    "kabini"
+   ],
+   "bytes": 2084,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
+   "dataset": "forests",
+   "files": 1,
+   "scopes": [
+    "kabini"
+   ],
+   "bytes": 350486,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
    "dataset": "fstp",
    "files": 1,
    "scopes": [
@@ -22477,13 +24219,14 @@
   {
    "family": "basins",
    "dataset": "gaps",
-   "files": 4,
+   "files": 6,
    "scopes": [
     "arkavathi",
-    "chennai-rivers"
+    "chennai-rivers",
+    "kabini"
    ],
-   "bytes": 788876,
-   "schema_variants": 3,
+   "bytes": 934412,
+   "schema_variants": 5,
    "registered": true,
    "has_consumer": true
   },
@@ -22514,65 +24257,70 @@
   {
    "family": "basins",
    "dataset": "infrastructure",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "arkavathi",
-    "chennai-rivers"
+    "chennai-rivers",
+    "kabini"
    ],
-   "bytes": 15055,
-   "schema_variants": 2,
-   "registered": false,
+   "bytes": 19011,
+   "schema_variants": 3,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "inventory",
-   "files": 3,
+   "files": 4,
    "scopes": [
     "arkavathi",
     "cauvery-ka",
-    "cauvery-tn"
+    "cauvery-tn",
+    "kabini"
    ],
-   "bytes": 15667,
-   "schema_variants": 2,
-   "registered": false,
+   "bytes": 27353,
+   "schema_variants": 3,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "monitoring-points",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "arkavathi",
-    "chennai-rivers"
+    "chennai-rivers",
+    "kabini"
    ],
-   "bytes": 51175,
-   "schema_variants": 2,
-   "registered": false,
+   "bytes": 54981,
+   "schema_variants": 3,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "pressures-industrial",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "arkavathi"
+    "arkavathi",
+    "kabini"
    ],
-   "bytes": 144074,
-   "schema_variants": 1,
-   "registered": false,
+   "bytes": 204604,
+   "schema_variants": 2,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "pressures-quarries",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "arkavathi"
+    "arkavathi",
+    "kabini"
    ],
-   "bytes": 79835,
+   "bytes": 83018,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -22589,13 +24337,26 @@
   },
   {
    "family": "basins",
-   "dataset": "prs",
-   "files": 2,
+   "dataset": "protected-areas",
+   "files": 1,
    "scopes": [
-    "arkavathi"
+    "kabini"
    ],
-   "bytes": 66785,
-   "schema_variants": 2,
+   "bytes": 271989,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
+   "dataset": "prs",
+   "files": 4,
+   "scopes": [
+    "arkavathi",
+    "kabini"
+   ],
+   "bytes": 125873,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },
@@ -22626,6 +24387,18 @@
   },
   {
    "family": "basins",
+   "dataset": "readings",
+   "files": 3,
+   "scopes": [
+    "kabini"
+   ],
+   "bytes": 49393,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
    "dataset": "reservoir-catchments",
    "files": 1,
    "scopes": [
@@ -22652,14 +24425,15 @@
   {
    "family": "basins",
    "dataset": "rivers",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "arkavathi",
-    "chennai-rivers"
+    "chennai-rivers",
+    "kabini"
    ],
-   "bytes": 326666,
+   "bytes": 397573,
    "schema_variants": 2,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -22698,20 +24472,21 @@
    ],
    "bytes": 1540397,
    "schema_variants": 1,
-   "registered": false,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "sub-hydrosheds",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "arkavathi",
-    "chennai-rivers"
+    "chennai-rivers",
+    "kabini"
    ],
-   "bytes": 319688,
-   "schema_variants": 2,
-   "registered": false,
+   "bytes": 540407,
+   "schema_variants": 3,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -22754,27 +24529,29 @@
   {
    "family": "basins",
    "dataset": "waterbodies-major",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "arkavathi",
-    "chennai-rivers"
+    "chennai-rivers",
+    "kabini"
    ],
-   "bytes": 1225403,
-   "schema_variants": 2,
-   "registered": false,
+   "bytes": 1298683,
+   "schema_variants": 3,
+   "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "waterbodies-minor",
-   "files": 10,
+   "files": 20,
    "scopes": [
     "arkavathi",
-    "chennai-rivers"
+    "chennai-rivers",
+    "kabini"
    ],
-   "bytes": 6397122,
-   "schema_variants": 3,
-   "registered": false,
+   "bytes": 10070512,
+   "schema_variants": 6,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -23431,7 +25208,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 4563,
+   "bytes": 4564,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true

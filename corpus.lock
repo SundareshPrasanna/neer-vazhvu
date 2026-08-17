@@ -9,12 +9,17 @@
     "expected_files pins the per-root file counts at the locked commit - the",
     "fetch script refuses to sync a corpus that does not match them, so a",
     "missing or truncated root can never wipe the destination and report",
-    "success."
+    "success.",
+    "2026-08-17: the Kabini release, corpus-2026-08-17-kabini. Neither side of",
+    "the main merge was right on its own - main pinned the Gurugram release",
+    "(no Kabini), this branch pinned the Kabini release (cut before Kolkata and",
+    "Gurugram, so it would have rolled two live cities back out). This is the",
+    "union: 474 under data/ (410 + 18 city + 46 Kabini), 108 under geojson/."
   ],
   "repo": "github.com/SundareshPrasanna/neer-vazhvu-data",
-  "sha": "8632dd82c833736104c29cb56e6f2923910b5fe7",
+  "sha": "9e558abb5046d2ca2ad3a59081ff83d8f708bf77",
   "expected_files": {
-    "data": 428,
+    "data": 474,
     "geojson": 108
   }
 }
