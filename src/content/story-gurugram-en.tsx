@@ -24,17 +24,37 @@
  * areas. The ratios are sound; the absolutes are ours and are described that
  * way. Replace them if GMDA publishes its own figures.
  *
- * NO IMAGES, deliberately. Every other city story carries a Hero and Figures
- * with licence provenance recorded in a MANIFEST.json beside the files. No
- * licence-cleared photograph of Gurugram's water infrastructure has been
- * sourced yet, and inventing provenance would be worse than running text-only.
- * The images are a known gap, not an oversight.
+ * IMAGES: /public/images/story/gurugram/* - provenance, licence and the
+ * reason each one is here are in MANIFEST.json beside the files. All from
+ * Wikimedia Commons, CC BY-SA or public domain.
+ *
+ * EVERY CANDIDATE WAS OPENED AND LOOKED AT before selection, and the alt text
+ * below describes the pixels rather than the Commons caption. That is not
+ * pedantry: one candidate's Commons description advertises "multi story
+ * buildings ... on the other side villages and construction", and there is no
+ * tower anywhere in the frame. Two further candidates were fetched and then
+ * rejected outright - a johad that turned out to be geotagged in Charkhi
+ * Dadri 90 km away, and an aerial whose identification as the Najafgarh drain
+ * rests only on its uploader's title. Both are recorded in MANIFEST.json under
+ * _rejected so nobody re-fetches them.
+ *
+ * Chapters 3 and 5 run WITHOUT images. Commons has no borewell, tubewell or
+ * water-tanker photograph for Haryana that we could find, and an illustrative
+ * stand-in from another state would be worse than nothing.
  *
  * English-only; Hindi follows in the i18n pass.
  */
 
 import { StoryPage } from "@/components/story/story-page";
-import { Chapter, CTA, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
+import {
+  Chapter,
+  CTA,
+  Figure,
+  Hero,
+  Lede,
+  PullQuote,
+  ThenNow,
+} from "@/components/story/story-shortcodes";
 
 export function GurugramStoryEn() {
   return (
@@ -44,6 +64,12 @@ export function GurugramStoryEn() {
       tagline="The city that outgrew its water in twelve years"
       lastRevised="August 2026"
     >
+      <Hero
+        src="/images/story/gurugram/basai-wetland-urbanising.jpg"
+        alt="Basai wetland in Gurugram, seen across a surface completely covered by a dense mat of water hyacinth with no open water visible. Two white egrets stand in the middle distance. Along the far bank lies a long row of very large concrete water pipes waiting to be laid, with an electricity transmission tower above them, and behind that a wall of residential high-rise blocks fading into haze."
+        source="Wikimedia Commons"
+        credit="T. R. Shankar Raman (CC BY-SA 3.0)"
+      />
       <Lede>
         Gurugram has no river. It has no reservoir, no dam, and no water it
         impounds itself. What it has is a canal that brings the Yamuna across
@@ -60,6 +86,13 @@ export function GurugramStoryEn() {
         title="A town on a seasonal river"
         thesis="Before the glass towers, Gurgaon was a district town on the Sahibi, drinking from village ponds and johads."
       >
+        <Figure
+          src="/images/story/gurugram/baoli-ghaus-ali-shah-farrukhnagar.jpg"
+          alt="The interior of the Baoli Ghaus Ali Shah, an eighteenth-century stepwell at Farrukhnagar in Gurugram district. Curved sandstone galleries of cusped arches run around the upper level, flights of steps descend to a broad landing, and a circular well shaft opens in the floor at the bottom. The structure is completely dry."
+          caption="The Baoli Ghaus Ali Shah at Farrukhnagar, a tehsil that still appears in GMDA's water-body register. The stepwell was how a town on a seasonal river reached water it could not see. It holds none now."
+          source="Wikimedia Commons"
+          credit="Ekabhishek (CC BY-SA 3.0)"
+        />
         <p>
           The Sahibi rises in the Aravalli in Rajasthan and runs north-east
           across Haryana toward the Yamuna. It is seasonal, and it has been
@@ -89,6 +122,13 @@ export function GurugramStoryEn() {
         title="Twelve years, eight times the ground"
         thesis="Between 1996 and 2008 the municipal limit went from about 21 square kilometres to about 164. The Central Ground Water Authority declared Gurugram a dark zone in the same year that expansion finished."
       >
+        <Figure
+          src="/images/story/gurugram/behrampur-village-construction.jpg"
+          alt="A black and white photograph of an unpaved, rutted lane in the village of Behrampur in Gurugram. On the right a terrace of half-built brick houses runs into the distance, unrendered, with reinforcing bars projecting from the unfinished roof and a satellite dish already mounted. Rubble and building debris line both sides of the track. A plastered compound wall closes the left side."
+          caption="Behrampur, inside Gurugram, in 2019. This is what the municipal limit growing eight times over looks like from the ground: not a skyline, but a village lane with a brick terrace going up on it and no drainage under it."
+          source="Wikimedia Commons"
+          credit="Shivangshi Mitra (CC BY-SA 4.0)"
+        />
         <p>
           The boundary GMDA publishes for 2008 encloses roughly 164 square
           kilometres. The one it publishes for 1996 encloses roughly 21. In
@@ -234,6 +274,13 @@ export function GurugramStoryEn() {
         title="Gurugram is Delhi's problem too"
         thesis="What the city does not drink leaves north, into the Najafgarh jheel and then into the Yamuna."
       >
+        <Figure
+          src="/images/story/gurugram/najafgarh-jheel-survey-1840.jpg"
+          alt="A hand-drawn manuscript survey map from 1840 to 1841 titled 'General Plan of Villages Surveyed in the Nujufsghur Jheel', at a scale of one mile to an inch, signed by William Brown. Village boundaries are inked across the sheet with names in copperplate, several marked 'Deserted'. The jheel itself and its feeder channels are washed in blue watercolour, widening into open water at the bottom of the sheet, with a canal running off the top right corner annotated 'to Dihlee'. A note at the lower right places the survey 'West of Georgaon & S.W. of Dihlee'."
+          caption="William Brown's survey of the Najafgarh Jheel, 1840-41. The surveyor placed it for his readers as lying west of Gurgaon and south-west of Delhi, which is still the geography that matters: this is where Gurugram's water goes, and it goes there before it reaches anyone in Delhi."
+          source="Wikimedia Commons (public domain)"
+          credit="William Brown, 1840-41"
+        />
         <p>
           Gurugram&apos;s treated and untreated flow leaves the city northward
           toward the Najafgarh jheel, a transboundary wetland on the

@@ -219,10 +219,15 @@ export function GurugramPageDescriptions({ cityId, cityName }: Props) {
           city is upstream of somebody.
         </p>
         <p className="text-xs text-slate-500 dark:text-slate-400">
-          This story runs <strong>without images</strong>, unlike every other city&apos;s. No
-          photograph of {cityName}&apos;s water history has yet been sourced with a licence we can
-          record in the provenance manifest, and inventing that provenance would be worse than
-          running as text. Images follow when the clearances do.
+          Four images, all Wikimedia Commons under CC BY-SA or public domain, with licence and
+          photographer recorded in a manifest beside the files. Every candidate was opened and
+          looked at before selection and the alt text describes what is in the frame rather than
+          what the Commons caption claims, because one candidate&apos;s caption advertises towers
+          that do not appear in it. Two were fetched and then rejected: a johad that turned out to
+          be geotagged 90 km away in Charkhi Dadri, and an aerial whose identification rests only
+          on its uploader&apos;s title. Chapters 3 and 5 carry no image at all - there is no
+          Haryana borewell or water-tanker photograph on Commons, and borrowing one from another
+          state would be worse than a gap.
         </p>
       </SubSection>
 

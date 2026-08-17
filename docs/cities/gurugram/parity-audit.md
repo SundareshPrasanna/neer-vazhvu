@@ -68,7 +68,7 @@ strongest city on this platform.
 | Chennai feature | Gurugram | Notes |
 |---|---|---|
 | Long-form water story | **PARITY** | Six chapters on the municipal limit 1985-2020 against the 2008 dark-zone notification. |
-| Licence-cleared imagery | **PARTIAL** | **Text-only.** Every other city story carries images with provenance in a `MANIFEST.json`; none has been sourced for Gurugram. Fabricating provenance would be worse than running without, so it runs without. |
+| Licence-cleared imagery | **PARITY** | 4 images, provenance in `MANIFEST.json`: a hero (Basai wetland under total hyacinth cover, water pipes stacked on the bank, towers behind), the dry Farrukhnagar stepwell, village-edge construction at Behrampur, and William Brown's 1840-41 manuscript survey of the Najafgarh Jheel. Chapters 3 and 5 run imageless - Commons has no Haryana borewell or water-tanker photograph, and a stand-in from another state would be worse than none. |
 | Regional-language rendering | **PARTIAL** | Hindi is in `upcomingLanguages`; the story renders in English. Same posture as Kannada, Marathi and Bengali at their launches. |
 
 ## 6. My Ward

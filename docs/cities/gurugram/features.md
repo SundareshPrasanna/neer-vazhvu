@@ -13,7 +13,7 @@ and the reason is worth stating precisely.
 | Hero | `heroMode: 'cauvery-pumping'` | The hero's actual shape is *water hauled a long way against installed capacity*. Gurugram lifts from the Yamuna at Kakroi ~70 km away into two plants. The mode name is Bengaluru-coded; the mechanic is not. |
 | Groundwater | `groundwaterViews.exploitation` | The existing stage-of-extraction choropleth, at district rather than block unit. |
 | Water bodies | the shared register + lost-bodies pair | No new component. |
-| Origins | the shared chaptered story surface | Text-only, see below. |
+| Origins | the shared chaptered story surface | 6 chapters, 4 Commons images with provenance in `MANIFEST.json`. |
 | Place kind | `city` | Municipal Corporation of Gurugram, 36 wards. Not a region: unlike Mumbai's MMR or Kolkata's wetlands, Gurugram's water infrastructure is not outside its own boundary. |
 
 The one thing that could not be reused was the tanker surface.

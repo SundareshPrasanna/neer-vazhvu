@@ -69,7 +69,7 @@ dropped at build time.
 | **Groundwater spatial unit** | block | **district, 6 polygons** | The map draws 6 features, not ~30. Correct at the resolution IN-GRES publishes for Haryana; still coarser than Chennai's. |
 | **Supply mix** | 6 reservoirs + desal + wells | **2 plants, 572 MLD** | Chandu Budhera 300 + Basai 272, read from GMDA's asset register at build time. Real and current, but a two-row mix. |
 | **Lost-body confidence** | named ponds with litigation history | **29 bodies, 1 fully lost** | Only 1 of the 29 is absent from *both* the 2012 satellite pass and Google Earth. The other 28 are "not seen in 2012 imagery", which is a statement about imagery, not destruction. The scorecard grades the strong signal, not the headline. |
-| **Origins imagery** | licence-cleared photos + `MANIFEST.json` | **text only** | No image has been sourced with provenance. Running without beats inventing a licence. |
+| **Origins imagery** | licence-cleared photos + `MANIFEST.json` | **4 images, 2 of 6 chapters bare** | Chapters 3 (groundwater) and 5 (the tanker market) carry no image, because Commons has no Haryana borewell, tubewell or water-tanker photograph. Two further candidates were fetched and rejected - one geotagged 90 km away in Charkhi Dadri, one whose subject rests only on its uploader's title - and both are recorded in `MANIFEST.json` under `_rejected`. |
 
 ---
 
