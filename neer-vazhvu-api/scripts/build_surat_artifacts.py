@@ -265,10 +265,114 @@ def build_groundwater(drop: Path, root: Path) -> int:
     return len(wells)
 
 
+# ---- SAC wetland code, decoded ---------------------------------------------
+#
+# The Gujarat wetland atlas leaves level_iii and l4type empty for every Surat
+# feature, but `wetcode` is populated on all of them, and its structure is
+# recoverable FROM THE DATA rather than from an external table: across all
+# 18,279 Gujarat features the first digit maps one-to-one onto level_i
+# (1 = Inland, 2 = Coastal) and the second onto level_ii (1 = Natural,
+# 2 = Man-made), with 9999 reserved for unclassified. That mapping was tested
+# for ambiguity and is exact - no code appears against two different pairs.
+#
+# The LEAF digits identify the specific wetland type in SAC's National Wetland
+# Inventory scheme. We do NOT decode those here. The published code table was
+# not obtained from a primary SAC document during this pass, and a secondary
+# summary of it contradicted the data (it gives 1201 as a natural lake, while
+# every 1201 feature in this file is flagged man-made). Asserting a leaf type
+# on that basis would be exactly the kind of borrowed precision this project
+# refuses. The raw code is carried so a reader with the table can decode it,
+# and so the day someone verifies the table this becomes a data change rather
+# than a re-extraction.
+WETCODE_AXES = {"1": "Inland", "2": "Coastal"}
+WETCODE_ORIGIN = {"1": "Natural", "2": "Man-made"}
+
+
+def decode_wetcode(code: str) -> dict:
+    """Return the two axes the code provably encodes, and nothing more."""
+    if not code or code == "9999" or len(code) < 2:
+        return {"setting": None, "origin": None, "classified": False}
+    return {
+        "setting": WETCODE_AXES.get(code[0]),
+        "origin": WETCODE_ORIGIN.get(code[1]),
+        "classified": True,
+    }
+
+
+def osm_polygons(path: Path) -> list[dict]:
+    """Every OSM water polygon in the Surat box, as ring + tags.
+
+    Used for two things: lending names to atlas polygons, and CONTRIBUTING
+    bodies the atlas missed. The SAC atlas is mapped at a national scale with a
+    minimum mapping unit, so small urban talavs can fall below it while being
+    perfectly well known on the ground - which is exactly the kind of water body
+    a city reader cares about.
+    """
+    if not path.exists():
+        return []
+    doc = json.loads(path.read_text())
+    out = []
+    for el in doc.get("elements", []):
+        tags = el.get("tags") or {}
+        geom = el.get("geometry") or []
+        if len(geom) < 4:
+            continue
+        # Rivers are handled by the rivers layer, not here.
+        if tags.get("water") == "river" or tags.get("waterway"):
+            continue
+        ring = [[round(p["lon"], 6), round(p["lat"], 6)] for p in geom]
+        if ring[0] != ring[-1]:
+            ring.append(ring[0])
+        lons = [c[0] for c in ring]
+        lats = [c[1] for c in ring]
+        out.append(
+            {
+                "osm_id": el.get("id"),
+                "name": tags.get("name"),
+                "kind": tags.get("water") or tags.get("natural") or tags.get("landuse"),
+                "ring": ring,
+                "lon": sum(lons) / len(lons),
+                "lat": sum(lats) / len(lats),
+                "bbox": (min(lons), min(lats), max(lons), max(lats)),
+            }
+        )
+    return out
+
+
+def osm_names(path: Path) -> list[dict]:
+    """Named water bodies from OpenStreetMap, as (name, centroid) points.
+
+    OSM is thin here - about a hundred water features in the Surat box and ten
+    with names - but those ten are the talavs a resident would actually name,
+    and the atlas polygons carry no names at all for them.
+    """
+    if not path.exists():
+        return []
+    doc = json.loads(path.read_text())
+    out = []
+    for el in doc.get("elements", []):
+        tags = el.get("tags") or {}
+        name = tags.get("name")
+        geom = el.get("geometry") or []
+        if not name or not geom:
+            continue
+        lons = [p["lon"] for p in geom]
+        lats = [p["lat"] for p in geom]
+        out.append(
+            {
+                "name": name,
+                "kind": tags.get("water") or tags.get("natural") or tags.get("landuse"),
+                "lon": sum(lons) / len(lons),
+                "lat": sum(lats) / len(lats),
+            }
+        )
+    return out
+
+
 # --------------------------------------------------------------- water bodies
 
 
-def build_water_bodies(drop: Path, root: Path) -> int:
+def build_water_bodies(drop: Path, root: Path, osm_path: Path | None = None) -> int:
     """SAC Gujarat wetland atlas -> Surat water bodies.
 
     The source arrived as an interrupted Chrome download (`.crdownload`) whose
@@ -295,6 +399,8 @@ def build_water_bodies(drop: Path, root: Path) -> int:
         )
         return 0
 
+    osm = osm_names(osm_path) if osm_path else []
+    osm_polys = osm_polygons(osm_path) if osm_path else []
     raw = kml.open(encoding="utf-8", errors="replace").read()
     marks = [m for m in raw.split("<Placemark>")[1:] if "</Placemark>" in m]
 
@@ -329,14 +435,35 @@ def build_water_bodies(drop: Path, root: Path) -> int:
         except ValueError:
             area_ha = None
         name = field(mark, "wetname")
+        wetcode = field(mark, "wetcode")
+        axes = decode_wetcode(wetcode)
+        # Nearest named OSM water body, if one sits inside this polygon's
+        # bounding box. Deliberately conservative: a name is only borrowed when
+        # the OSM centroid falls INSIDE the atlas polygon's extent, never by
+        # nearest-neighbour, because a wrong name is worse than none.
+        osm_name = None
+        if osm:
+            xs = [c[0] for c in ring]
+            ys = [c[1] for c in ring]
+            for cand in osm:
+                if min(xs) <= cand["lon"] <= max(xs) and min(ys) <= cand["lat"] <= max(
+                    ys
+                ):
+                    osm_name = cand
+                    break
         features.append(
             {
                 "type": "Feature",
                 "properties": {
                     "id": field(mark, "id") or None,
-                    "name": name or None,
+                    "name": name or (osm_name["name"] if osm_name else None),
+                    "name_source": ("atlas" if name else ("osm" if osm_name else None)),
                     "category": field(mark, "level_i") or None,
                     "origin": field(mark, "level_ii") or None,
+                    "wetcode": wetcode or None,
+                    "setting": axes["setting"],
+                    "wetcode_classified": axes["classified"],
+                    "osm_kind": osm_name["kind"] if osm_name else None,
                     "area_ha": area_ha,
                     "turbidity": field(mark, "turbidity") or None,
                     "aquatic_vegetation": field(mark, "aqveg") or None,
@@ -346,23 +473,81 @@ def build_water_bodies(drop: Path, root: Path) -> int:
             }
         )
 
+    # Bodies the atlas missed. An OSM polygon whose centroid falls inside no
+    # atlas polygon's extent is a body the national-scale atlas did not map,
+    # so it is ADDED rather than discarded. Containment, not proximity: two
+    # adjacent tanks must not collapse into one.
+    atlas_boxes = [
+        (
+            min(c[0] for c in f["geometry"]["coordinates"][0]),
+            min(c[1] for c in f["geometry"]["coordinates"][0]),
+            max(c[0] for c in f["geometry"]["coordinates"][0]),
+            max(c[1] for c in f["geometry"]["coordinates"][0]),
+        )
+        for f in features
+    ]
+    added = 0
+    for poly in osm_polys:
+        if not in_box(poly["lat"], poly["lon"], DISTRICT_BOX):
+            continue
+        inside = any(
+            x0 <= poly["lon"] <= x1 and y0 <= poly["lat"] <= y1
+            for (x0, y0, x1, y1) in atlas_boxes
+        )
+        if inside:
+            continue
+        features.append(
+            {
+                "type": "Feature",
+                "properties": {
+                    "id": f"osm-{poly['osm_id']}",
+                    "name": poly["name"],
+                    "name_source": "osm" if poly["name"] else None,
+                    "category": None,
+                    "origin": None,
+                    "wetcode": None,
+                    "setting": None,
+                    "wetcode_classified": False,
+                    "osm_kind": poly["kind"],
+                    "area_ha": None,
+                    "turbidity": None,
+                    "aquatic_vegetation": None,
+                    "in_city_limits": in_box(poly["lat"], poly["lon"], CITY_BOX),
+                    "source": "openstreetmap",
+                },
+                "geometry": {"type": "Polygon", "coordinates": [poly["ring"]]},
+            }
+        )
+        added += 1
+
     named = sum(1 for f in features if f["properties"]["name"])
+    from_atlas = sum(1 for f in features if f["properties"]["name_source"] == "atlas")
+    from_osm = sum(1 for f in features if f["properties"]["name_source"] == "osm")
+    classified = sum(1 for f in features if f["properties"]["wetcode_classified"])
     in_city = sum(1 for f in features if f["properties"]["in_city_limits"])
 
     payload = {
         **envelope(
             "geojson-layers/water-bodies-current",
-            registry_sources(root, ["sac-wetland-atlas-gujarat"]),
-            "manual",
+            registry_sources(
+                root, ["sac-wetland-atlas-gujarat", "osm-surat-waterways"]
+            ),
+            "mixed",
             "SAC National Wetland Atlas hydrological layer for Gujarat, clipped to a "
             "Surat district bounding box; complete placemarks only, because the source "
             "download was interrupted mid-record.",
             produced_by="neer-vazhvu-api/scripts/build_surat_artifacts.py",
             note=(
                 f"{len(features)} polygons in the district box, {in_city} inside city "
-                f"limits. THIN SEMANTICS: only {named} carry a name, and the source's "
-                "level_iii and l4type classification fields are empty for every Surat "
-                "feature, so category is limited to Inland/Coastal and Man-made/Natural."
+                f"limits. Names: {from_atlas} from the atlas, {from_osm} recovered from "
+                "OpenStreetMap by bounding-box containment (never nearest-neighbour, "
+                f"because a wrong name is worse than none), {len(features) - named} still "
+                "unnamed. The atlas's level_iii and l4type fields are empty for every "
+                f"Surat feature; the wetcode is populated on {classified} and its first "
+                "two digits are decoded here into setting and origin, a mapping verified "
+                "as exact against level_i/level_ii across all 18,279 Gujarat features. "
+                "The leaf digits are NOT decoded: no primary SAC code table was obtained, "
+                "and a secondary summary of it contradicted the data."
             ),
         ),
         "type": "FeatureCollection",
@@ -373,119 +558,21 @@ def build_water_bodies(drop: Path, root: Path) -> int:
         payload,
         compact=True,
     )
-    print(f"    {len(features)} polygons ({in_city} in city, {named} named)")
+    print(
+        f"    {len(features)} polygons ({added} added from OSM beyond the atlas; "
+        f"{in_city} in city; {named} named = {from_atlas} atlas + {from_osm} OSM; "
+        f"{classified} wetcode-classified)"
+    )
     return len(features)
 
 
 # -------------------------------------------------------------- river quality
-
-
-# The Gujarat Tapi stations from the CPCB NWMP 2022 river table, in
-# UPSTREAM-TO-SEA order, which is the whole point: the profile is the story.
-# Coordinates are placed on the named crossing/landmark; the source table
-# carries no coordinates of its own.
-TAPI_STATIONS = [
-    ("46", "River Tapi at Ukai, Sherula Bridge", 21.2483, 73.5903),
-    ("1247", "River Tapi at Mandavi", 21.2600, 73.3000),
-    ("1983", "River Tapi near Bardoli (Kapp Bridge), Kakrapar", 21.1400, 73.1200),
-    ("47", "River Tapi at Kathore (NH-8 Bridge), u/s of Surat", 21.2260, 72.9560),
-    ("1248", "River Tapi at Surat u/s Kathore (Limdeshwar Mahadev)", 21.2200, 72.9300),
-    ("1982", "River Tapi at Rander Bridge, Surat", 21.2050, 72.8000),
-    ("2071", "River Tapi at ONGC Bridge, Hazira", 21.1180, 72.6600),
-]
-
-
-def build_river_quality(root: Path) -> int:
-    """CPCB NWMP 2022 -> the Tapi longitudinal profile.
-
-    Values are the min-max ranges CPCB publishes per station per year, carried
-    as ranges rather than being collapsed to a midpoint, because the range is
-    what the source measured.
-
-    The finding this profile carries is counter-intuitive and worth preserving:
-    BOD sits at or below detection limit at most Surat Tapi stations, so the
-    river is NOT organically polluted through the city the way the Musi or the
-    Adi Ganga are. What climbs downstream is conductivity - 369-513 at Ukai,
-    363-7,656 at Kathore, 1,537-49,720 at Hazira, which is seawater. The Tapi's
-    problem at Surat is the estuary, not sewage.
-    """
-    # (station_code, do_min, do_max, ph_min, ph_max, cond_min, cond_max,
-    #  bod_min, bod_max) as printed in Table 9 of the 2022 edition.
-    READINGS = {
-        "46": (6.9, 7.5, 7.91, 8.5, 369, 513, None, None),
-        "1247": (7.0, 7.8, 8.1, 8.43, 352, 3552, None, None),
-        "1983": (6.8, 7.3, 7.22, 8.45, 356, 4884, None, None),
-        "47": (6.8, 7.3, 7.84, 8.5, 363, 7656, 1.1, 1.1),
-        "1248": (6.7, 7.2, 7.74, 8.48, 375, 4412, 1.1, 1.2),
-        "1982": (6.8, 7.4, 7.9, 8.5, 370, 780, 1.1, 1.2),
-        "2071": (5.8, 6.6, 7.22, 8.54, 1537, 49720, 1.4, 2.5),
-    }
-
-    stations = []
-    for order, (code, name, lat, lng) in enumerate(TAPI_STATIONS, start=1):
-        do_lo, do_hi, ph_lo, ph_hi, c_lo, c_hi, b_lo, b_hi = READINGS[code]
-        stations.append(
-            {
-                "id": f"tapi-{code}",
-                "station_code": code,
-                "name": name,
-                "lat": lat,
-                "lng": lng,
-                "downstream_order": order,
-                "readings": [
-                    {
-                        "year": 2022,
-                        "dissolved_oxygen_mgl": {"min": do_lo, "max": do_hi},
-                        "ph": {"min": ph_lo, "max": ph_hi},
-                        "conductivity_umhos_cm": {"min": c_lo, "max": c_hi},
-                        "bod_mgl": (
-                            {"min": b_lo, "max": b_hi}
-                            if b_lo is not None
-                            else {"below_detection_limit": True}
-                        ),
-                    }
-                ],
-            }
-        )
-
-    payload = {
-        **envelope(
-            "data-root/river-quality",
-            registry_sources(root, ["cpcb-nwmp-2022"]),
-            "pdf-extract",
-            "Transcribed from Table 9 (Water Quality of River Tapi) of the CPCB NWMP "
-            "2022 national compilation, Gujarat stations only, ordered upstream to sea. "
-            "Ranges are carried as published; no midpoint is derived.",
-            produced_by="neer-vazhvu-api/scripts/build_surat_artifacts.py",
-            note=(
-                "ONE EDITION ONLY (2022). CPCB publishes annually and a multi-edition "
-                "backfill runs on the same pipeline used for the Hyderabad Musi rebuild. "
-                "Station coordinates are placed on the named crossing or landmark; the "
-                "source table publishes no coordinates."
-            ),
-        ),
-        "last_updated": "2022",
-        "data_year_range": "2022",
-        "source_label": "CPCB National Water Quality Monitoring Programme, 2022",
-        "source_url": "https://cpcb.gov.in/nwmp-data-2022/",
-        "_note": (
-            "The profile's headline finding: BOD is at or below detection limit at most "
-            "Surat Tapi stations, so the river is not organically polluted through the "
-            "city. Conductivity is what climbs, from 369-513 at Ukai to 1,537-49,720 at "
-            "the Hazira estuary mouth. The problem here is salinity, not sewage."
-        ),
-        "rivers": [
-            {
-                "id": "tapi",
-                "name": "Tapi",
-                "name_gu": "તાપી",
-                "stations": stations,
-            }
-        ],
-    }
-    write(root / "public/data/river-quality-surat.json", payload)
-    print(f"    {len(stations)} Tapi stations, upstream to sea")
-    return len(stations)
+#
+# SUPERSEDED. River quality was hand-transcribed here from the single 2022
+# edition; it is now extracted across every available annual edition by
+# neer-vazhvu-api/scripts/extract_cpcb_nwmp_tapi.py, which reads six of them
+# (2019-2024) and yields 45 station-years instead of 7. Kept out of this file
+# rather than left dead in it.
 
 
 # --------------------------------------------------------------------- supply
@@ -900,7 +987,7 @@ def build_facts(root: Path) -> int:
                 [
                     "smc-reuse-programme",
                     "ogd-surat-water-supply",
-                    "cpcb-nwmp-2022",
+                    "cpcb-nwmp",
                     "smc-wardwise-area-population",
                     "wris-groundwater-gujarat",
                 ],
@@ -1030,9 +1117,8 @@ def main() -> int:
     print("  groundwater:")
     build_groundwater(drop, root)
     print("  water bodies:")
-    build_water_bodies(drop, root)
-    print("  river quality:")
-    build_river_quality(root)
+    build_water_bodies(drop, root, osm_path=Path("/tmp/surat_osm_wb.json"))
+    # River quality: see extract_cpcb_nwmp_tapi.py (multi-edition).
     print("  supply:")
     build_supply(drop, root)
     print("  rivers:")

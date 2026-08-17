@@ -105,8 +105,19 @@ through the city the way the Musi or the Adi Ganga are. What climbs is conductiv
 umhos/cm at Ukai, 363-7,656 at Kathore, and 1,537-49,720 at Hazira, which is seawater. Surat's river
 problem is salinity and the estuary, not sewage.
 
-One edition ingested. CPCB publishes annually and a multi-edition backfill runs on the same
-pipeline built for the Hyderabad Musi rebuild.
+**Six editions ingested (2019-2024), 45 station-years.** That is one year MORE span than Chennai
+carries, across 8 stations rather than 13 - and 8 is what CPCB monitors in this reach, so the
+station count is the network's limit rather than ours.
+
+Two extraction notes worth keeping. The editions are not laid out consistently: major-river tables
+lead each row with the station code, while the 2022 medium/minor table trails it, so the extractor
+matches on a unique name keyword as well. And `pdftotext -layout` is used rather than a Python PDF
+parser, because pdfplumber spent over thirty minutes of CPU on these six files without finishing
+while pdftotext does one in under two seconds.
+
+The Mindhola is the counterpoint that makes the Tapi finding legible: at Sachin it runs BOD 2.2-7.0
+against the Tapi's at-or-below-detection. The textile belt's river IS organically loaded; the city's
+river is not.
 
 River geometry is OSM, not SMC: the GIS holds `tapi_river` and `creek` layers but serves WMS only,
 so its geometry cannot be redistributed. **OSM names none of the five khadis SMC monitors against
@@ -128,16 +139,34 @@ Three traps in the source:
 
 ## Water bodies
 
-SAC National Wetland Atlas hydrological layer for Gujarat, clipped to a Surat district box: 3,401
-polygons, 1,434 inside city limits.
+SAC National Wetland Atlas hydrological layer for Gujarat clipped to a Surat district box (3,401
+polygons), plus **17 more contributed by OpenStreetMap** where the national-scale atlas missed a
+body - small urban talavs fall below its minimum mapping unit while being perfectly well known on
+the ground. 3,418 total, 1,451 inside city limits.
 
 Two things about the drop it arrived in. Three of its four files were **Himachal Pradesh** (2,045
 features, 657 pro-glacial lakes) and are discarded; `hp` in the filename was the state, not a data
 grade. The usable Gujarat file arrived as an interrupted Chrome download and is parsed to its last
 complete placemark, 18,279 of 18,280.
 
-Thin semantics: `level_iii` and `l4type` are empty for every Surat feature and only 34 of 3,401
-carry a name. Good geometric base, poor classifier.
+Thin semantics, partly recovered. `level_iii` and `l4type` are empty for every Surat feature, and
+only 34 carry a name; OpenStreetMap lends 10 more by bounding-box containment (never
+nearest-neighbour - a wrong name is worse than none), giving **44 named of 3,418**. That is still
+about one in eighty, and it is the source's limit rather than a processing choice.
+
+What IS recoverable is the `wetcode`, populated on 3,084 of them. Its structure was derived from
+the data rather than an external table: across all 18,279 Gujarat features the first digit maps
+one-to-one onto `level_i` (1 = Inland, 2 = Coastal) and the second onto `level_ii` (1 = Natural,
+2 = Man-made), with no code ever appearing against two different pairs. Those two axes are decoded
+and published. **The leaf digits are not**, because no primary SAC code table was obtained this
+pass and a secondary summary of it contradicted the data - it gives 1201 as a natural lake while
+every 1201 feature in this file is flagged man-made. The raw code is carried so that verifying the
+table later is a data change rather than a re-extraction.
+
+Two avenues tried and not landed: SMC's own GIS `water_body` layer would be authoritative for
+names, but the server throttles a GetFeatureInfo sweep beyond usability and a probe of that layer
+returned empty; and the First Census of Water Bodies would give a district denominator, but its
+state volume is a scanned PDF that did not yield text this pass.
 
 ## Reuse - the thing Surat is actually known for
 

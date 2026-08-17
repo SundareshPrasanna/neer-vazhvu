@@ -61,7 +61,8 @@ the Wikimedia Commons API at download time rather than trusted from a search res
 
 ## Rivers
 
-The Tapi and the Mindhola, with CPCB NWMP 2022 at eight stations. The Tapi's seven Gujarat stations
+The Tapi and the Mindhola, with CPCB NWMP across **six editions (2019-2024), 45 station-years** at
+eight stations. The Tapi's seven Gujarat stations
 form an upstream-to-sea profile, and reading them in order produces the finding the page leads on:
 **BOD at or below detection limit through the city while conductivity climbs to 49,720 umhos/cm at
 Hazira.** A salinity story, not a sewage one.
@@ -78,9 +79,10 @@ unaltered so the mixed-sign correction stays visible.
 
 ## Water bodies
 
-3,401 SAC wetland-atlas polygons, 1,434 inside city limits, with area, inland/coastal,
-man-made/natural and turbidity. Only 34 are named and the source's type fields are empty for every
-Surat feature, so this is a strong geometric base and a weak semantic one.
+3,418 polygons - the SAC wetland atlas plus 17 bodies OpenStreetMap maps and the atlas missed -
+with area, inland/coastal, man-made/natural, turbidity and a decoded wetcode. 44 are named
+(34 atlas, 10 from OSM by containment). Strong geometric base, weak semantic one, and the naming
+gap is the source's.
 
 `catchmentsGapNote` explains the absent cascade view as an editorial judgement rather than a
 missing file: Surat's bodies are coastal wetlands, tidal creeks and urban talavs, not a chained

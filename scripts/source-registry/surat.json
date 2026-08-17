@@ -128,10 +128,10 @@
       "notes": "Three releases. D53 monthly total supply Jan-2018 to Dec-2021 (48 real points) and D52 property connection coverage 2018-19 to 2020-21 are usable. D42 gives per-sub-ward CAPACITY across 233 sub-wards, 8 zones, 1,342 MLD. DO NOT PUBLISH the derived columns: D53's 'Losses including NRW' is exactly 20.0000% of total on all 48 rows while 'actual supplied' equals total (self-contradictory), and D42's 'domestic consumption' is exactly 0.750000 x capacity on all 233 rows. Both are assumptions presented as measurements."
     },
     {
-      "id": "cpcb-nwmp-2022",
+      "id": "cpcb-nwmp",
       "scope": "surat",
       "publisher": "Central Pollution Control Board",
-      "url": "https://cpcb.gov.in/nwmp-data-2022/",
+      "url": "https://cpcb.gov.in/water-quality-data/",
       "license": "Government of India publication, cited with attribution",
       "type": "pdf-listing",
       "cadence": "annual",
@@ -145,7 +145,7 @@
         "public/data/facts-surat.json"
       ],
       "refreshMethod": "manual; same extraction pipeline as the Hyderabad Musi rebuild",
-      "notes": "2022 edition holds 7 Gujarat Tapi stations forming an upstream-to-sea profile (Ukai, Mandavi, Bardoli/Kakrapar, Kathore, Surat u/s, Rander, ONGC Hazira), plus Mindhola at Sachin, Purna, Masma Khadi creek, Moticher and Olpad ponds, and 8 NWMP groundwater stations in the industrial belt. Only one edition ingested; CPCB publishes annually and a 6-edition backfill runs on the same pipeline."
+      "notes": "Annual national NWMP compilation. SIX editions ingested (2019-2024) giving 45 station-years: seven Gujarat Tapi stations forming an upstream-to-sea profile (Ukai, Mandavi, Bardoli/Kakrapar, Kathore, Surat u/s, Rander, ONGC Hazira) plus the Mindhola at Sachin from 2022. LAYOUT VARIES BY EDITION: major-river tables lead each row with the station code, while the 2022 medium/minor table trails it, so the extractor also matches on a unique name keyword. Editions are sometimes served truncated by CPCB and must be re-downloaded, not skipped."
     },
     {
       "id": "sac-wetland-atlas-gujarat",
@@ -163,7 +163,7 @@
         "public/geojson/surat-water-bodies-current.geojson"
       ],
       "refreshMethod": "manual download",
-      "notes": "Gujarat statewide layer; 3,401 polygons fall in the Surat district box. Carries level_i (Inland/Coastal), level_ii (Man-made/Natural), area_ha, turbidity and aquatic-vegetation flags. THIN SEMANTICS: level_iii and l4type are empty for every Surat feature and only 34 of 3,401 carry a name, so this is a good geometric base and a poor classifier."
+      "notes": "Gujarat statewide layer; 3,401 polygons fall in the Surat district box, with 17 more contributed by OpenStreetMap where the national-scale atlas missed a body. Carries level_i/level_ii, area_ha, turbidity, aquatic vegetation and wetcode. THIN SEMANTICS: level_iii and l4type are empty for every Surat feature and only 34 carry a name. The wetcode's first two digits ARE decodable and are decoded (1/2 = Inland/Coastal, 1/2 = Natural/Man-made), verified exact against level_i/level_ii across all 18,279 Gujarat features; the leaf digits are not, because no primary SAC code table was obtained and a secondary summary of it contradicted the data."
     },
     {
       "id": "wris-groundwater-gujarat",
@@ -197,7 +197,8 @@
         "method": "content-hash"
       },
       "dependsOn": [
-        "public/geojson/surat-rivers.geojson"
+        "public/geojson/surat-rivers.geojson",
+        "public/geojson/surat-water-bodies-current.geojson"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_surat_artifacts.py (Overpass query)",
       "notes": "Named river and stream ways in the Surat box. GAP: OSM names none of the five khadis SMC monitors against published danger levels, so the creeks central to the flood chain have no geometry. SMC's GIS holds a creek layer but serves WMS only, with WFS disabled, so its geometry cannot be redistributed."

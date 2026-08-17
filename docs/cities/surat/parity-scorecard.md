@@ -35,6 +35,7 @@
 
 | Feature | Chennai | Surat |
 |---|---|---|
+| **River-quality span** | 2020-2024 (5 editions) | **2019-2024 (6 editions)** |
 | **Live threshold-referenced flood chain** | none | **4 links, hourly, every threshold published by the operator** |
 | **Published operational danger levels** | none | **5 khadis, each with its own D.L.** |
 | **Reuse ledger** | none | **330 MLD reused, Rs 496.23 Cr cumulative, tariff history, 249 industrial buyers** |
@@ -54,10 +55,11 @@ Three of these are platform firsts. Each was built generic, so other cities inhe
 
 | Feature | Chennai | Surat | Why thinner |
 |---|---|---|---|
-| River quality readings | 51 | 8 stations x 1 edition | One CPCB edition ingested; annual backfill available on the Musi pipeline |
+
 | River geometry | 4 rivers | 2 rivers | OSM names only the Tapi and Mindhola; the five monitored khadis have no geometry anywhere public |
 | Groundwater stations | ~35 | **94** (but district-wide) | More stations, but spread across the district rather than the city, so no interpolated surface |
-| Water bodies | 1,636 OSM + 305 census | 3,401 SAC polygons | More polygons, far thinner attributes: 34 named, no type classification |
+| River quality readings | 51 across 13 stations | **45 across 8 stations** | Fewer stations, one more year of span. CPCB monitors 8 in this reach; that is the network, not our coverage |
+| Water bodies | 1,636 OSM + 305 census | **3,418** (SAC atlas + 17 OSM-only) | Twice the polygons, a fraction of the names: 44 named. The naming gap is the source's |
 | Facts | dynamic pipeline | 7 static | No live fact pipeline; static snapshot |
 
 ## Low - minimal or absent (4)

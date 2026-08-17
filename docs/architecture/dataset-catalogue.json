@@ -9888,7 +9888,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "facts",
-   "bytes": 8017,
+   "bytes": 8013,
    "schema": {
     "kind": "object",
     "keys": [
@@ -9910,7 +9910,7 @@
     "neer-vazhvu-api/scripts/build_surat_artifacts.py"
    ],
    "headwaters_sources": [
-    "cpcb-nwmp-2022",
+    "cpcb-nwmp",
     "ogd-surat-water-supply",
     "smc-reuse-programme",
     "smc-wardwise-area-population",
@@ -18935,10 +18935,11 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "river-quality",
-   "bytes": 7058,
+   "bytes": 35418,
    "schema": {
     "kind": "object",
     "keys": [
+     "_coverage",
      "_note",
      "data_year_range",
      "dataset",
@@ -18959,11 +18960,11 @@
     "src/lib/hooks/use-ward-profile.ts"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_surat_artifacts.py",
+    "neer-vazhvu-api/scripts/extract_cpcb_nwmp_tapi.py",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
-    "cpcb-nwmp-2022"
+    "cpcb-nwmp"
    ],
    "licenses": [
     "Government of India publication, cited with attribution"
@@ -24419,10 +24420,10 @@
    "family": "geojson-layers",
    "scope": "surat",
    "dataset": "water-bodies-current",
-   "bytes": 3073512,
+   "bytes": 3415565,
    "schema": {
     "kind": "FeatureCollection",
-    "features": 3401,
+    "features": 3418,
     "geometries": [
      "Polygon"
     ],
@@ -24433,8 +24434,13 @@
      "id",
      "in_city_limits",
      "name",
+     "name_source",
      "origin",
-     "turbidity"
+     "osm_kind",
+     "setting",
+     "turbidity",
+     "wetcode",
+     "wetcode_classified"
     ]
    },
    "consumers": [
@@ -24448,10 +24454,12 @@
     "scripts/fetch-osm-layers.ts"
    ],
    "headwaters_sources": [
+    "osm-surat-waterways",
     "sac-wetland-atlas-gujarat"
    ],
    "licenses": [
-    "Government of India publication, cited with attribution"
+    "Government of India publication, cited with attribution",
+    "Open Database License (ODbL) 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -25520,7 +25528,7 @@
     "mumbai",
     "surat"
    ],
-   "bytes": 187392,
+   "bytes": 187388,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -25847,7 +25855,7 @@
     "mumbai",
     "surat"
    ],
-   "bytes": 1428790,
+   "bytes": 1457150,
    "schema_variants": 7,
    "registered": true,
    "has_consumer": true
@@ -26524,7 +26532,7 @@
     "mumbai",
     "surat"
    ],
-   "bytes": 35828719,
+   "bytes": 36170772,
    "schema_variants": 9,
    "registered": true,
    "has_consumer": true

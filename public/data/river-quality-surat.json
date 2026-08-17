@@ -8,7 +8,7 @@
   "provenance": {
     "sources": [
       {
-        "id": "cpcb-nwmp-2022",
+        "id": "cpcb-nwmp",
         "title": "2022 edition holds 7 Gujarat Tapi stations forming an upstream-to-sea profile (Ukai, Mandavi, Bardoli/Kakrapar, Kathore, Surat u/s, Rander, ONGC Hazira), plus Mindhola at Sachin, Purna, Masma Khadi creek, Moticher and Olpad ponds, and 8 NWMP groundwater stations in the industrial belt",
         "publisher": "Central Pollution Control Board",
         "license": "Government of India publication, cited with attribution",
@@ -20,11 +20,23 @@
     "note": "Transcribed from Table 9 (Water Quality of River Tapi) of the CPCB NWMP 2022 national compilation, Gujarat stations only, ordered upstream to sea. Ranges are carried as published; no midpoint is derived. ONE EDITION ONLY (2022). CPCB publishes annually and a multi-edition backfill runs on the same pipeline used for the Hyderabad Musi rebuild. Station coordinates are placed on the named crossing or landmark; the source table publishes no coordinates.",
     "produced_by": "neer-vazhvu-api/scripts/build_surat_artifacts.py"
   },
-  "last_updated": "2022",
-  "data_year_range": "2022",
-  "source_label": "CPCB National Water Quality Monitoring Programme, 2022",
-  "source_url": "https://cpcb.gov.in/nwmp-data-2022/",
-  "_note": "The profile's headline finding: BOD is at or below detection limit at most Surat Tapi stations, so the river is not organically polluted through the city. Conductivity is what climbs, from 369-513 at Ukai to 1,537-49,720 at the Hazira estuary mouth. The problem here is salinity, not sewage.",
+  "last_updated": "2024",
+  "data_year_range": "2019-2024",
+  "source_label": "CPCB National Water Quality Monitoring Programme",
+  "source_url": "https://cpcb.gov.in/water-quality-data/",
+  "_note": "The profile's headline finding, now visible across editions rather than in a single year: BOD stays at or below detection limit at most Surat Tapi stations while conductivity climbs downstream to seawater levels at the Hazira estuary. Surat's river problem is salinity, not sewage.",
+  "_coverage": {
+    "editions": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+    ],
+    "readings": 45,
+    "unreadable_editions": []
+  },
   "rivers": [
     {
       "id": "tapi",
@@ -40,7 +52,92 @@
           "downstream_order": 1,
           "readings": [
             {
+              "year": 2019,
+              "temperature_c": {
+                "min": 22.0,
+                "max": 35.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.4,
+                "max": 7.2
+              },
+              "ph": {
+                "min": 6.3,
+                "max": 8.4
+              },
+              "conductivity_umhos_cm": {
+                "min": 217.0,
+                "max": 640.0
+              },
+              "bod_mgl": {
+                "min": 0.6,
+                "max": 1.1
+              },
+              "nitrate_n_mgl": {
+                "min": 0.03,
+                "max": 0.14
+              }
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 34.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.6,
+                "max": 7.5
+              },
+              "ph": {
+                "min": 6.8,
+                "max": 8.4
+              },
+              "conductivity_umhos_cm": {
+                "min": 320.0,
+                "max": 4848.0
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 1.2
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.19
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 27.0,
+                "max": 31.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.9,
+                "max": 7.6
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.2
+              },
+              "conductivity_umhos_cm": {
+                "min": 347.0,
+                "max": 4312.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.6
+              },
+              "nitrate_n_mgl": {
+                "min": 0.32,
+                "max": 1.03
+              }
+            },
+            {
               "year": 2022,
+              "temperature_c": {
+                "min": 28.0,
+                "max": 32.0
+              },
               "dissolved_oxygen_mgl": {
                 "min": 6.9,
                 "max": 7.5
@@ -50,11 +147,69 @@
                 "max": 8.5
               },
               "conductivity_umhos_cm": {
-                "min": 369,
-                "max": 513
+                "min": 369.0,
+                "max": 513.0
               },
               "bod_mgl": {
                 "below_detection_limit": true
+              },
+              "nitrate_n_mgl": {
+                "min": 0.32,
+                "max": 0.41
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 27.0,
+                "max": 30.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.6,
+                "max": 8.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 295.0,
+                "max": 537.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.9
+              },
+              "nitrate_n_mgl": {
+                "min": 0.32,
+                "max": 1.14
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 26.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 7.2,
+                "max": 8.1
+              },
+              "ph": {
+                "min": 6.8,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 327.0,
+                "max": 1030.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.9
+              },
+              "nitrate_n_mgl": {
+                "min": 0.32,
+                "max": 0.38
               }
             }
           ]
@@ -68,7 +223,92 @@
           "downstream_order": 2,
           "readings": [
             {
+              "year": 2019,
+              "temperature_c": {
+                "min": 26.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.0,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.2
+              },
+              "conductivity_umhos_cm": {
+                "min": 326.0,
+                "max": 3795.0
+              },
+              "bod_mgl": {
+                "min": 0.6,
+                "max": 1.0
+              },
+              "nitrate_n_mgl": {
+                "min": 0.2,
+                "max": 0.2
+              }
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 26.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 7.0,
+                "max": 7.6
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.3
+              },
+              "conductivity_umhos_cm": {
+                "min": 321.0,
+                "max": 4128.0
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 1.2
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.81
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.4,
+                "max": 7.7
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.3
+              },
+              "conductivity_umhos_cm": {
+                "min": 370.0,
+                "max": 639.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.3
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.32
+              }
+            },
+            {
               "year": 2022,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 30.0
+              },
               "dissolved_oxygen_mgl": {
                 "min": 7.0,
                 "max": 7.8
@@ -78,11 +318,68 @@
                 "max": 8.43
               },
               "conductivity_umhos_cm": {
-                "min": 352,
-                "max": 3552
+                "min": 352.0,
+                "max": 3552.0
               },
               "bod_mgl": {
                 "below_detection_limit": true
+              },
+              "nitrate_n_mgl": {
+                "below_detection_limit": true
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 32.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 7.0,
+                "max": 7.7
+              },
+              "ph": {
+                "min": 6.9,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 337.0,
+                "max": 600.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 2.0
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.52
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 27.0,
+                "max": 30.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.2,
+                "max": 8.0
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 345.0,
+                "max": 536.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 2.5
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.34
               }
             }
           ]
@@ -96,7 +393,92 @@
           "downstream_order": 3,
           "readings": [
             {
+              "year": 2019,
+              "temperature_c": {
+                "min": 26.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.2,
+                "max": 7.3
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.0
+              },
+              "conductivity_umhos_cm": {
+                "min": 315.0,
+                "max": 494.0
+              },
+              "bod_mgl": {
+                "min": 0.7,
+                "max": 0.9
+              },
+              "nitrate_n_mgl": {
+                "min": 0.2,
+                "max": 0.1
+              }
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 30.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.5,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.9
+              },
+              "conductivity_umhos_cm": {
+                "min": 335.0,
+                "max": 553.0
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 0.9
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.19
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 30.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.0,
+                "max": 7.5
+              },
+              "ph": {
+                "min": 7.5,
+                "max": 8.2
+              },
+              "conductivity_umhos_cm": {
+                "min": 379.0,
+                "max": 507.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.8
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.32
+              }
+            },
+            {
               "year": 2022,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 30.0
+              },
               "dissolved_oxygen_mgl": {
                 "min": 6.8,
                 "max": 7.3
@@ -106,11 +488,68 @@
                 "max": 8.45
               },
               "conductivity_umhos_cm": {
-                "min": 356,
-                "max": 4884
+                "min": 356.0,
+                "max": 4884.0
               },
               "bod_mgl": {
                 "below_detection_limit": true
+              },
+              "nitrate_n_mgl": {
+                "below_detection_limit": true
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 30.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 7.0,
+                "max": 7.6
+              },
+              "ph": {
+                "min": 6.8,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 348.0,
+                "max": 535.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.9
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 6.0
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 28.0,
+                "max": 31.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.9,
+                "max": 7.8
+              },
+              "ph": {
+                "min": 7.5,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 361.0,
+                "max": 545.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.3
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 10.0
               }
             }
           ]
@@ -124,7 +563,92 @@
           "downstream_order": 4,
           "readings": [
             {
+              "year": 2019,
+              "temperature_c": {
+                "min": 26.0,
+                "max": 30.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.2,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.0
+              },
+              "conductivity_umhos_cm": {
+                "min": 170.0,
+                "max": 657.0
+              },
+              "bod_mgl": {
+                "min": 0.5,
+                "max": 1.1
+              },
+              "nitrate_n_mgl": {
+                "min": 0.02,
+                "max": 0.53
+              }
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 7.0,
+                "max": 7.6
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.0
+              },
+              "conductivity_umhos_cm": {
+                "min": 232.0,
+                "max": 4708.0
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 1.2
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.36
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.8,
+                "max": 7.3
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.3
+              },
+              "conductivity_umhos_cm": {
+                "min": 338.0,
+                "max": 755.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.3
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.32
+              }
+            },
+            {
               "year": 2022,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 30.0
+              },
               "dissolved_oxygen_mgl": {
                 "min": 6.8,
                 "max": 7.3
@@ -134,12 +658,70 @@
                 "max": 8.5
               },
               "conductivity_umhos_cm": {
-                "min": 363,
-                "max": 7656
+                "min": 363.0,
+                "max": 7656.0
               },
               "bod_mgl": {
                 "min": 1.1,
                 "max": 1.1
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.38
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 31.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 7.1,
+                "max": 8.0
+              },
+              "ph": {
+                "min": 6.8,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 404.0,
+                "max": 4723.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.9
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.8,
+                "max": 8.0
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 409.0,
+                "max": 652.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.7
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.34
               }
             }
           ]
@@ -153,7 +735,92 @@
           "downstream_order": 5,
           "readings": [
             {
+              "year": 2019,
+              "temperature_c": {
+                "min": 26.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.4,
+                "max": 7.3
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 7.9
+              },
+              "conductivity_umhos_cm": {
+                "min": 302.0,
+                "max": 584.0
+              },
+              "bod_mgl": {
+                "min": 0.6,
+                "max": 1.2
+              },
+              "nitrate_n_mgl": {
+                "min": 0.2,
+                "max": 0.2
+              }
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 7.0,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.0
+              },
+              "conductivity_umhos_cm": {
+                "min": 240.0,
+                "max": 678.0
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 1.8
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.54
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.6,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.4
+              },
+              "conductivity_umhos_cm": {
+                "min": 436.0,
+                "max": 655.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.4
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.39
+              }
+            },
+            {
               "year": 2022,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 30.0
+              },
               "dissolved_oxygen_mgl": {
                 "min": 6.7,
                 "max": 7.2
@@ -163,12 +830,70 @@
                 "max": 8.48
               },
               "conductivity_umhos_cm": {
-                "min": 375,
-                "max": 4412
+                "min": 375.0,
+                "max": 4412.0
               },
               "bod_mgl": {
                 "min": 1.1,
                 "max": 1.2
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.9
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 18.0,
+                "max": 31.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 7.0,
+                "max": 8.0
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 406.0,
+                "max": 775.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 2.4
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.84
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.8,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 377.0,
+                "max": 669.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 2.0
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.34
               }
             }
           ]
@@ -182,7 +907,92 @@
           "downstream_order": 6,
           "readings": [
             {
+              "year": 2019,
+              "temperature_c": {
+                "min": 26.0,
+                "max": 30.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.5,
+                "max": 7.2
+              },
+              "ph": {
+                "min": 6.8,
+                "max": 8.4
+              },
+              "conductivity_umhos_cm": {
+                "min": 315.0,
+                "max": 1871.0
+              },
+              "bod_mgl": {
+                "min": 0.6,
+                "max": 1.6
+              },
+              "nitrate_n_mgl": {
+                "min": 0.2,
+                "max": 0.2
+              }
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 7.0,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.4
+              },
+              "conductivity_umhos_cm": {
+                "min": 216.0,
+                "max": 813.0
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 1.3
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.47
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 20.0,
+                "max": 31.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 4.1,
+                "max": 7.6
+              },
+              "ph": {
+                "min": 7.7,
+                "max": 8.4
+              },
+              "conductivity_umhos_cm": {
+                "min": 445.0,
+                "max": 835.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.6
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.32
+              }
+            },
+            {
               "year": 2022,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 31.0
+              },
               "dissolved_oxygen_mgl": {
                 "min": 6.8,
                 "max": 7.4
@@ -192,12 +1002,70 @@
                 "max": 8.5
               },
               "conductivity_umhos_cm": {
-                "min": 370,
-                "max": 780
+                "min": 370.0,
+                "max": 780.0
               },
               "bod_mgl": {
                 "min": 1.1,
                 "max": 1.2
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.34
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 22.0,
+                "max": 31.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.9,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 418.0,
+                "max": 6192.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 2.6
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 32.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.5,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 398.0,
+                "max": 933.0
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 2.0
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.34
               }
             }
           ]
@@ -211,7 +1079,92 @@
           "downstream_order": 7,
           "readings": [
             {
+              "year": 2019,
+              "temperature_c": {
+                "min": 26.0,
+                "max": 29.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 5.4,
+                "max": 6.9
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.8
+              },
+              "conductivity_umhos_cm": {
+                "min": 1371.0,
+                "max": 57169.0
+              },
+              "bod_mgl": {
+                "min": 0.9,
+                "max": 2.8
+              },
+              "nitrate_n_mgl": {
+                "min": 0.2,
+                "max": 0.6
+              }
+            },
+            {
+              "year": 2020,
+              "temperature_c": {
+                "min": 26.0,
+                "max": 32.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 0.7,
+                "max": 7.0
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 7.7
+              },
+              "conductivity_umhos_cm": {
+                "min": 2005.0,
+                "max": 61120.0
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 2.3
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.34
+              }
+            },
+            {
+              "year": 2021,
+              "temperature_c": {
+                "min": 22.0,
+                "max": 31.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 5.1,
+                "max": 6.6
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.0
+              },
+              "conductivity_umhos_cm": {
+                "min": 5314.0,
+                "max": 50380.0
+              },
+              "bod_mgl": {
+                "min": 1.4,
+                "max": 2.4
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.63
+              }
+            },
+            {
               "year": 2022,
+              "temperature_c": {
+                "min": 28.0,
+                "max": 33.0
+              },
               "dissolved_oxygen_mgl": {
                 "min": 5.8,
                 "max": 6.6
@@ -221,12 +1174,168 @@
                 "max": 8.54
               },
               "conductivity_umhos_cm": {
-                "min": 1537,
-                "max": 49720
+                "min": 1537.0,
+                "max": 49720.0
               },
               "bod_mgl": {
                 "min": 1.4,
                 "max": 2.5
+              },
+              "nitrate_n_mgl": {
+                "min": null,
+                "max": 0.45
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 32.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 5.5,
+                "max": 7.0
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 8.3
+              },
+              "conductivity_umhos_cm": {
+                "min": 5908.0,
+                "max": 53650.0
+              },
+              "bod_mgl": {
+                "min": 1.6,
+                "max": 2.5
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 24.0,
+                "max": 32.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 6.2,
+                "max": 7.3
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 8.5
+              },
+              "conductivity_umhos_cm": {
+                "min": 419.0,
+                "max": 46770.0
+              },
+              "bod_mgl": {
+                "min": 1.3,
+                "max": 2.8
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.39
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mindhola",
+      "name": "Mindhola",
+      "name_gu": "મીંઢોળા",
+      "stations": [
+        {
+          "id": "mindhola-1438",
+          "station_code": "1438",
+          "name": "River Mindhola at State Highway Bridge, Sachin",
+          "lat": 21.08,
+          "lng": 72.88,
+          "downstream_order": 1,
+          "readings": [
+            {
+              "year": 2022,
+              "temperature_c": {
+                "min": 25.0,
+                "max": 32.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 3.2,
+                "max": 6.2
+              },
+              "ph": {
+                "min": 7.5,
+                "max": 8.7
+              },
+              "conductivity_umhos_cm": {
+                "min": 587.0,
+                "max": 2593.0
+              },
+              "bod_mgl": {
+                "min": 2.2,
+                "max": 7.0
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.76
+              }
+            },
+            {
+              "year": 2023,
+              "temperature_c": {
+                "min": 23.0,
+                "max": 32.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 5.0,
+                "max": 6.9
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.4
+              },
+              "conductivity_umhos_cm": {
+                "min": 261.0,
+                "max": 1727.0
+              },
+              "bod_mgl": {
+                "min": 1.9,
+                "max": 3.0
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.66
+              }
+            },
+            {
+              "year": 2024,
+              "temperature_c": {
+                "min": 29.0,
+                "max": 31.0
+              },
+              "dissolved_oxygen_mgl": {
+                "min": 5.1,
+                "max": 7.9
+              },
+              "ph": {
+                "min": 7.11,
+                "max": 8.48
+              },
+              "conductivity_umhos_cm": {
+                "min": 438.0,
+                "max": 1874.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 2.9
+              },
+              "nitrate_n_mgl": {
+                "min": 0.3,
+                "max": 0.32
               }
             }
           ]
