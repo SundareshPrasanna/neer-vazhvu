@@ -17081,8 +17081,8 @@
   {
    "path": "public/data/river-quality-surat.json",
    "family": "data-root",
-   "scope": "unknown",
-   "dataset": "river-quality-surat",
+   "scope": "surat",
+   "dataset": "river-quality",
    "bytes": 7040,
    "schema": {
     "kind": "object",
@@ -17099,9 +17099,15 @@
      "source_url"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
+    "src/lib/cities/data-paths.ts",
+    "src/lib/hooks/use-ward-profile.ts"
+   ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py",
+    "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
     "cpcb-nwmp-2022"
@@ -17111,9 +17117,7 @@
    ],
    "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/river-quality.json",
@@ -17162,8 +17166,8 @@
   {
    "path": "public/data/surat-cgwb-stations.json",
    "family": "data-root",
-   "scope": "unknown",
-   "dataset": "surat-cgwb-stations",
+   "scope": "surat",
+   "dataset": "cgwb-stations",
    "bytes": 778334,
    "schema": {
     "kind": "object",
@@ -17184,8 +17188,14 @@
      "wells"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/app/api/groundwater/wards-interpolated/route.ts",
+    "src/lib/cities/types.ts",
+    "src/types/groundwater.ts"
+   ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
     "neer-vazhvu-api/scripts/build_surat_artifacts.py"
    ],
    "headwaters_sources": [
@@ -17196,15 +17206,13 @@
    ],
    "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/surat-flood-chain-history.json",
    "family": "data-root",
-   "scope": "unknown",
-   "dataset": "surat-flood-chain-history",
+   "scope": "surat",
+   "dataset": "flood-chain-history",
    "bytes": 12252,
    "schema": {
     "kind": "object",
@@ -17232,15 +17240,13 @@
    ],
    "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/surat-flood-chain.json",
    "family": "data-root",
-   "scope": "unknown",
-   "dataset": "surat-flood-chain",
+   "scope": "surat",
+   "dataset": "flood-chain",
    "bytes": 13775,
    "schema": {
     "kind": "object",
@@ -17260,7 +17266,8 @@
     ]
    },
    "consumers": [
-    "src/components/dashboard/flood-headroom-hero.tsx"
+    "src/components/dashboard/flood-headroom-hero.tsx",
+    "src/lib/cities/types.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py"
@@ -17273,15 +17280,13 @@
    ],
    "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/surat-supply-overview.json",
    "family": "data-root",
-   "scope": "unknown",
-   "dataset": "surat-supply-overview",
+   "scope": "surat",
+   "dataset": "supply-overview",
    "bytes": 6529,
    "schema": {
     "kind": "object",
@@ -17297,7 +17302,13 @@
      "scope"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/components/dashboard/cauvery-pumping-hero.tsx",
+    "src/components/dashboard/urban-supply-overview.tsx",
+    "src/lib/cities/gurugram.ts",
+    "src/lib/cities/types.ts"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_surat_artifacts.py"
    ],
@@ -17311,9 +17322,7 @@
    ],
    "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/ward-names.json",
@@ -22442,9 +22451,9 @@
   {
    "path": "public/geojson/surat-water-bodies-current.geojson",
    "family": "geojson-layers",
-   "scope": "unknown",
-   "dataset": "surat-water-bodies-current",
-   "bytes": 3073484,
+   "scope": "surat",
+   "dataset": "water-bodies-current",
+   "bytes": 3073486,
    "schema": {
     "kind": "FeatureCollection",
     "features": 3401,
@@ -22462,9 +22471,15 @@
      "turbidity"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/app/[cityId]/water-bodies/page.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py",
+    "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts"
    ],
    "headwaters_sources": [
     "sac-wetland-atlas-gujarat"
@@ -22474,9 +22489,7 @@
    ],
    "accountability": "watched",
    "accountability_reason": null,
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/tamil-nadu-boundary.geojson",
@@ -23363,17 +23376,18 @@
   {
    "family": "data-root",
    "dataset": "cgwb-stations",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "delhi",
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 3749230,
-   "schema_variants": 6,
+   "bytes": 4527564,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
   },
@@ -23475,6 +23489,30 @@
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "flood-chain",
+   "files": 1,
+   "scopes": [
+    "surat"
+   ],
+   "bytes": 13775,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "flood-chain-history",
+   "files": 1,
+   "scopes": [
+    "surat"
+   ],
+   "bytes": 12252,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
   },
   {
    "family": "data-root",
@@ -23761,7 +23799,7 @@
   {
    "family": "data-root",
    "dataset": "river-quality",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -23769,24 +23807,13 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 1421732,
-   "schema_variants": 6,
+   "bytes": 1428772,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
-  },
-  {
-   "family": "data-root",
-   "dataset": "river-quality-surat",
-   "files": 1,
-   "scopes": [
-    "unknown"
-   ],
-   "bytes": 7040,
-   "schema_variants": 1,
-   "registered": true,
-   "has_consumer": false
   },
   {
    "family": "data-root",
@@ -23815,67 +23842,20 @@
   {
    "family": "data-root",
    "dataset": "supply-overview",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "gurugram",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 108300,
-   "schema_variants": 6,
+   "bytes": 114829,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
-  },
-  {
-   "family": "data-root",
-   "dataset": "surat-cgwb-stations",
-   "files": 1,
-   "scopes": [
-    "unknown"
-   ],
-   "bytes": 778334,
-   "schema_variants": 1,
-   "registered": true,
-   "has_consumer": false
-  },
-  {
-   "family": "data-root",
-   "dataset": "surat-flood-chain",
-   "files": 1,
-   "scopes": [
-    "unknown"
-   ],
-   "bytes": 13775,
-   "schema_variants": 1,
-   "registered": true,
-   "has_consumer": true
-  },
-  {
-   "family": "data-root",
-   "dataset": "surat-flood-chain-history",
-   "files": 1,
-   "scopes": [
-    "unknown"
-   ],
-   "bytes": 12252,
-   "schema_variants": 1,
-   "registered": true,
-   "has_consumer": false
-  },
-  {
-   "family": "data-root",
-   "dataset": "surat-supply-overview",
-   "files": 1,
-   "scopes": [
-    "unknown"
-   ],
-   "bytes": 6529,
-   "schema_variants": 1,
-   "registered": true,
-   "has_consumer": false
   },
   {
    "family": "data-root",
@@ -24368,18 +24348,6 @@
   },
   {
    "family": "geojson-layers",
-   "dataset": "surat-water-bodies-current",
-   "files": 1,
-   "scopes": [
-    "unknown"
-   ],
-   "bytes": 3073484,
-   "schema_variants": 1,
-   "registered": true,
-   "has_consumer": false
-  },
-  {
-   "family": "geojson-layers",
    "dataset": "swd-primary",
    "files": 1,
    "scopes": [
@@ -24494,7 +24462,7 @@
   {
    "family": "geojson-layers",
    "dataset": "water-bodies-current",
-   "files": 8,
+   "files": 9,
    "scopes": [
     "bangalore",
     "chennai",
@@ -24503,10 +24471,11 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 32755207,
-   "schema_variants": 8,
+   "bytes": 35828693,
+   "schema_variants": 9,
    "registered": true,
    "has_consumer": true
   },

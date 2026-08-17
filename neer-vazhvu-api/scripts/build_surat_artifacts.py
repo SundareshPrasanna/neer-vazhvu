@@ -344,7 +344,7 @@ def build_water_bodies(drop: Path, root: Path) -> int:
 
     payload = {
         **envelope(
-            "geojson-root/water-bodies-current",
+            "geojson-layers/water-bodies-current",
             registry_sources(root, ["sac-wetland-atlas-gujarat"]),
             "manual",
             "SAC National Wetland Atlas hydrological layer for Gujarat, clipped to a "
