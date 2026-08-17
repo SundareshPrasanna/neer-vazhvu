@@ -182,12 +182,14 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   // panel: PMC's register is a DISPATCH record with no bookings in it, so the
   // fulfilment rate that page is built on does not exist here.
   //
+  // `flood-risk` is in on the NARRATIVE variant, which needs no hazard
+  // polygons. It was off on the reasoning that WRD publishes Pune's flood lines
+  // as 518 scanned PDF sheets so the hazard layer does not exist - true, but
+  // that was an argument about the INTERACTIVE variant. The narrative stack
+  // carries the event register plus PMC's 1,014 km nalla network, and the
+  // flood-line absence ships as a data gap on the page.
+  //
   // NOT in, each for a stated reason rather than pending work:
-  // `flood-risk` - the event register is solid (1961 Panshet, 2019 Ambil
-  //   Odha, 25 Jul 2024, 4 Aug 2024, 21 Aug 2025) but Maharashtra WRD
-  //   publishes Pune's red and blue flood lines as SCANNED PDF map sheets
-  //   only, with no vector form anywhere, so the hazard layer the
-  //   interactive variant needs does not exist machine-readable.
   // `lake-restoration`, `allocations`, `commitments` - no artifacts built.
   // `cascades` - the cascade pipeline has not been run for Pune district.
   // `shoreline` - landlocked.
@@ -199,6 +201,7 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "groundwater",
     "water-bodies",
     "rivers",
+    "flood-risk",
     "tanker",
     "my-ward",
   ]),

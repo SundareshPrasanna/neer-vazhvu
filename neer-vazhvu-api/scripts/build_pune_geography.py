@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Base geography for Pune: PMC wards, water bodies, rivers and sewage treatment
-plants. Four layers, three publishers, one script.
+Base geography for Pune: PMC wards, water bodies, rivers, the nalla drainage
+network and sewage treatment plants. Five layers, three publishers, one script.
 
 WARDS - THE VINTAGE IS THE WHOLE PROBLEM. OpenCity's `pune-wards-info` carries
 SEVEN ward files and only one of them is current. PMC has two unrelated ward
@@ -50,14 +50,22 @@ no vector layer), and OSM has no PCMC corporation polygon - a bbox query for
 admin_level 7-10 returns one village relation and nothing else. So this city
 ships PMC ward geometry only, and that is a named gap, not an oversight.
 
+THE NALLA NETWORK is the one PMC layer that is unambiguously worth having: 3,075
+open storm-water drain segments, about 1,010 km, and a nalla is where this city
+actually floods. See build_drainage() for why the 141,341-segment buried pipe
+register on the same dataset page is not taken, and for the length cross-check
+that tests the geometry rather than trusting it.
+
 Run:  python3 neer-vazhvu-api/scripts/build_pune_geography.py
       python3 neer-vazhvu-api/scripts/build_pune_geography.py --layer wards
+      python3 neer-vazhvu-api/scripts/build_pune_geography.py --layer drainage
 """
 
 import argparse
 import csv
 import io
 import json
+import math
 import sys
 import time
 import urllib.parse
@@ -83,6 +91,13 @@ WARDS_KML = (
 WARDS_NAMES_CSV = (
     f"{OPENCITY}/98f28dac-9158-46ee-a91e-a514d9af427c/resource/"
     "ac74e3a3-0fce-4ce5-bcdf-b3b6271ae722/download/pmc-election-results.csv"
+)
+# Same OpenCity dataset page as the "Pune River Map" already cited for the
+# 12-polygon river-channel file. This is the useful resource on that page.
+NALLA_KML = (
+    f"{OPENCITY}/a83b2053-2250-4e3c-9759-521c81679d24/resource/"
+    "b9bdda98-a0d1-4e2e-aca3-36c6445751b5/download/"
+    "3f7228b1-092e-4c66-a62f-6895cf33fbcd.kml"
 )
 STP_KML = (
     f"{OPENCITY}/eb12f642-e1bb-4475-840e-4c4746d98fe0/resource/"
@@ -211,6 +226,23 @@ def _centroid(geom) -> tuple[float, float]:
         round(sum(p[0] for p in pts) / len(pts), 6),
         round(sum(p[1] for p in pts) / len(pts), 6),
     )
+
+
+def _line_length_m(pts: list[list[float]]) -> float:
+    """Length of a lon/lat polyline in metres.
+
+    Equirectangular at each segment's own mid-latitude. Over a nalla segment -
+    the longest here is 6.7 km, the median 79 m - the error against a proper
+    geodesic is far below the 5% band the drainage build asserts on, and this
+    keeps the producer dependency-free.
+    """
+    total = 0.0
+    for i in range(len(pts) - 1):
+        lon1, lat1 = pts[i]
+        lon2, lat2 = pts[i + 1]
+        k = math.cos(math.radians((lat1 + lat2) / 2))
+        total += math.hypot((lon2 - lon1) * k, lat2 - lat1) * 111_320
+    return total
 
 
 def _envelope(dataset: str, source_id: str, title: str, publisher: str, note: str):
@@ -708,6 +740,152 @@ def build_gwr_blocks() -> int:
     return 1 if (unmatched or missing) else 0
 
 
+def build_drainage() -> int:
+    """PMC's nalla network: 3,075 segments, about 1,010 km.
+
+    The SAME OpenCity dataset page that carries PMC's twelve-polygon "river map"
+    also carries this, which is the better half of it by a wide margin. Two
+    other resources on that page are deliberately NOT taken:
+
+      - the SWD map (141,341 pipe segments) is the buried pipe register. Far too
+        dense to draw on a web map, and it answers a maintenance question rather
+        than a flooding one.
+      - the SWD chamber layers are point assets with no attributes worth
+        surfacing.
+
+    The nalla layer is the one worth rendering because a nalla is where the city
+    floods. It is the surface drainage the storm water actually runs in, and
+    every Pune flood in the event register happened in one - the 2019 Ambil Odha
+    flash flood most directly.
+
+    THE LAYER CHECKS ITSELF. PMC ships a per-segment st_length_ computed in its
+    own projected CRS, so summing our own geodesic lengths against theirs tests
+    the geometry rather than trusting it: the two agree to 0.34% overall (1,013.3
+    km computed against 1,009.9 km stated), and the small consistent bias is what
+    a projected-versus-geodesic difference looks like. A real geometry problem -
+    a dropped coordinate, a degrees/metres mix-up, a CRS mislabel - would show up
+    here as a ratio nowhere near 1, so the build fails if it does.
+
+    WHAT THE LAYER DOES NOT HAVE: names. Not one of the 3,075 segments is named,
+    so Ambil Odha, Nagzari and Bhairoba nalla cannot be picked out of it even
+    though they are what the flood reporting is about. Recorded rather than
+    papered over with a guess from a basemap.
+    """
+    root = ET.fromstring(_get(NALLA_KML))
+    feats = []
+    stated_total = 0.0
+    computed_total = 0.0
+    phases: dict[str, dict] = {}
+    for pm in root.findall(".//k:Placemark", KML_NS):
+        sd = {s.get("name"): s.text for s in pm.findall(".//k:SimpleData", KML_NS)}
+        parts = []
+        for coords in pm.findall(".//k:LineString//k:coordinates", KML_NS):
+            pts = []
+            for tok in (coords.text or "").split():
+                bits = tok.split(",")
+                if len(bits) >= 2:
+                    pts.append([round(float(bits[0]), 5), round(float(bits[1]), 5)])
+            if len(pts) >= 2:
+                parts.append(pts)
+        if not parts:
+            continue
+        try:
+            stated = float(sd.get("st_length_") or "")
+        except ValueError:
+            stated = None
+        computed = sum(_line_length_m(p) for p in parts)
+        stated_total += stated or 0.0
+        computed_total += computed
+        phase = (sd.get("phase") or "").strip() or None
+        ph = phases.setdefault(phase or "unstated", {"segments": 0, "length_m": 0.0})
+        ph["segments"] += 1
+        ph["length_m"] += computed
+        feats.append(
+            {
+                "type": "Feature",
+                "properties": {
+                    "nalla_id": (sd.get("id") or "").strip() or None,
+                    # PMC's project phasing, the only classifying attribute the
+                    # layer carries. Phase-I is the bulk; Phase-II is 217
+                    # segments, which is the later tranche rather than a
+                    # different kind of channel.
+                    "phase": phase,
+                    "length_m": round(computed, 1),
+                },
+                "geometry": (
+                    {"type": "LineString", "coordinates": parts[0]}
+                    if len(parts) == 1
+                    else {"type": "MultiLineString", "coordinates": parts}
+                ),
+            }
+        )
+
+    if not feats:
+        print("drainage: NO features parsed from the nalla KML", file=sys.stderr)
+        return 1
+    # See the docstring: this is a geometry check, not a formality.
+    ratio = stated_total / computed_total if computed_total else 0
+    if not 0.95 <= ratio <= 1.05:
+        print(
+            f"drainage: PMC's stated lengths sum to {stated_total / 1000:.1f} km against "
+            f"{computed_total / 1000:.1f} km computed from the geometry (ratio {ratio:.3f}). "
+            f"That is too far apart to be a projection difference - check the CRS before "
+            f"shipping.",
+            file=sys.stderr,
+        )
+        return 1
+
+    out = {
+        **_envelope(
+            "drainage",
+            "opencity-pune-swd",
+            "PMC nalla (storm-water drain) network",
+            "Pune Municipal Corporation, via OpenCity",
+            f"{len(feats)} nalla segments totalling {computed_total / 1000:.0f} km of open "
+            f"storm-water drain across the PMC area. Chosen over the same dataset's "
+            f"141,341-segment buried pipe register, which is too dense to render and "
+            f"answers a maintenance question rather than a flooding one. Segment lengths "
+            f"are computed from the geometry and agree with PMC's own st_length_ column "
+            f"to {abs(1 - ratio) * 100:.2f}%, which is a check on the geometry rather "
+            f"than a restatement of it. NO SEGMENT IS NAMED in the source, so Ambil Odha "
+            f"and the other nallas the flood reporting is about cannot be identified from "
+            f"this layer.",
+        ),
+        "type": "FeatureCollection",
+        "_source": "PMC Nalla Map (KML) via OpenCity, same dataset page as the SWD register",
+        "summary": {
+            "segments": len(feats),
+            "length_km": round(computed_total / 1000, 1),
+            "length_km_stated_by_pmc": round(stated_total / 1000, 1),
+            "stated_vs_computed_ratio": round(ratio, 4),
+            "named_segments": 0,
+            "by_phase": {
+                k: {
+                    "segments": v["segments"],
+                    "length_km": round(v["length_m"] / 1000, 1),
+                }
+                for k, v in sorted(phases.items())
+            },
+            "_note": (
+                "length_km is computed from the shipped geometry; "
+                "length_km_stated_by_pmc is the sum of the source's own st_length_ "
+                "column, computed in PMC's projected CRS. They are reported separately "
+                "on purpose - agreement between them is the evidence the geometry "
+                "survived conversion."
+            ),
+        },
+        "features": feats,
+    }
+    write_artifact(GEO_DIR / "pune-drainage.geojson", out, indent=None)
+    print(
+        f"drainage: {len(feats)} nalla segments, {computed_total / 1000:.1f} km "
+        f"(PMC states {stated_total / 1000:.1f} km, ratio {ratio:.4f}) "
+        f"-> pune-drainage.geojson",
+        file=sys.stderr,
+    )
+    return 0
+
+
 def build_stps() -> int:
     root = ET.fromstring(_get(STP_KML))
     feats = []
@@ -790,7 +968,7 @@ def main() -> int:
     ap.add_argument(
         "--layer",
         default="all",
-        choices=["all", "wards", "water", "stps", "gwr"],
+        choices=["all", "wards", "water", "drainage", "stps", "gwr"],
     )
     args = ap.parse_args()
     rc = 0
@@ -798,6 +976,8 @@ def main() -> int:
         rc |= build_wards()
     if args.layer in ("all", "water"):
         rc |= build_water_bodies_and_rivers()
+    if args.layer in ("all", "drainage"):
+        rc |= build_drainage()
     if args.layer in ("all", "stps"):
         rc |= build_stps()
     if args.layer in ("all", "gwr"):

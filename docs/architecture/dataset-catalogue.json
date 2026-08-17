@@ -12091,7 +12091,6 @@
    },
    "consumers": [
     "src/app/[cityId]/tanker/page.tsx",
-    "src/lib/cities/routing.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -22582,6 +22581,44 @@
    "flags": []
   },
   {
+   "path": "public/geojson/pune-drainage.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "drainage",
+   "bytes": 1537796,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3075,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "length_m",
+     "nalla_id",
+     "phase"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/flood-risk/page.tsx",
+    "src/components/flood-risk/flood-risk-map.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_geography.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "opencity-pune-swd"
+   ],
+   "licenses": [
+    "Public Domain per OpenCity CKAN metadata (no upstream dedication)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/geojson/pune-gwr-blocks.geojson",
    "family": "geojson-layers",
    "scope": "pune",
@@ -22641,6 +22678,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/flood-risk/page.tsx",
     "src/app/[cityId]/rivers/rivers-client.tsx",
     "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
     "src/components/cascade/cascade-methodology-section.tsx",
@@ -26260,16 +26298,17 @@
   {
    "family": "geojson-layers",
    "dataset": "drainage",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "chennai",
     "delhi",
     "gurugram",
     "kolkata",
-    "mumbai"
+    "mumbai",
+    "pune"
    ],
-   "bytes": 5455542,
-   "schema_variants": 5,
+   "bytes": 6993338,
+   "schema_variants": 6,
    "registered": true,
    "has_consumer": true
   },

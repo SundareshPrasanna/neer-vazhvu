@@ -168,8 +168,17 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   // Pune - preview-gated, city ten. The set is small on purpose: only the
   // surfaces with real artifacts behind them are on. Two of the absences
   // below are properties of what Maharashtra publishes rather than backlog.
-  "pune:flood-risk":
-    "The event register is not the problem - 1961 Panshet, the 2019 Ambil Odha flash flood, 25 July and 4 August 2024, 21 August 2025 are all dated and sourced. The HAZARD LAYER is. Maharashtra WRD publishes Pune's red (100-year) and blue (25-year) flood lines as SCANNED PDF MAP SHEETS ONLY: 518 PDFs on the flood-line page and zero shapefiles, GeoJSON or KML anywhere. pdftotext extracts no characters from the Mutha sheets - they are raster. Digitising them is a georeferencing project, not a fetch. Retire this when a vector flood line exists, or when the Bombay High Court's June 2025 order to redraw Pune's flood lines produces one.",
+  // RETIRED 2026-08-17. The recorded reason was that Maharashtra WRD
+  // publishes Pune's statutory red and blue flood lines as 518 SCANNED PDF map
+  // sheets with no vector form, so the hazard layer does not exist
+  // machine-readable. That is still true and now ships as the first data gap
+  // ON the page - but it was an argument about the INTERACTIVE variant, and
+  // the route was being withheld on it. Pune now renders the NARRATIVE variant,
+  // which needs no hazard polygons: the event register (1961 Panshet with no
+  // official death toll by the state's own admission, the 2019 Ambil Odha
+  // cloudburst, 25 Jul and 4 Aug 2024, 21 Aug 2025) plus PMC's own nalla
+  // network, 3,075 open storm-water channels carrying 1,014 km, which was in
+  // the repo's reach and rendering nowhere.
   // NARROWED 2026-08-17. The DATA now ships: public/data/pune-tankers.json,
   // 57,370 delivery rows across 411 published registers, 7 filling points,
   // 1,956 distinct vehicles, 84,886 trips. What is still missing is a

@@ -247,6 +247,30 @@
         "acceptedOn": "2026-08-17",
         "reviewedOn": "2026-08-17"
       }
+    },
+    {
+      "id": "opencity-pune-swd",
+      "scope": "pune",
+      "publisher": "Pune Municipal Corporation, via OpenCity",
+      "url": "https://data.opencity.in/dataset/pune-stormwater-drains",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
+      "type": "file",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/geojson/pune-drainage.geojson"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_pune_geography.py --layer drainage)",
+      "notes": "PMC's storm-water drainage page, and FIVE RESOURCES OF WHICH ONE IS TAKEN. Taken: the Pune Nalla Map, 3,075 LineStrings totalling about 1,010 km of OPEN storm-water drain, attributes id/objectid/phase/st_length_ (Phase-I 2,858 segments, Phase-II 217). A nalla is where Pune actually floods - the 2019 Ambil Odha flash flood most directly - so this is the layer worth rendering. NOT taken, each for a stated reason: the SWD map KMZ is the BURIED PIPE register at 141,341 segments, far too dense for a web map and answering a maintenance question rather than a flooding one; the two SWD chamber KMLs are point assets with no attribute worth surfacing (and both carry NO resource-level licence, unlike the three that do); and the Pune River Map on this same page is the 12-polygon river-CHANNEL file already recorded under osm-pune-water as the reason OSM carries this city's water bodies. THE LAYER CHECKS ITSELF, which is the reason to prefer it over a redraw: PMC ships a per-segment st_length_ computed in its own projected CRS, so summing our own geodesic lengths against theirs TESTS the geometry instead of trusting it - they agree to 0.34% (1,013.3 km computed against 1,009.9 km stated), and the producer FAILS outside a 5% band, which is what would catch a dropped coordinate or a CRS mislabel. KNOWN GAP: NOT ONE OF THE 3,075 SEGMENTS IS NAMED, so Ambil Odha, Nagzari and Bhairoba nalla cannot be picked out of this layer even though they are what the flood reporting is about; naming them would need a separate join that does not exist publicly. Same OpenCity 406-without-an-Accept-header trap as the other entries here.",
+      "lastSeen": {
+        "edition": "2025-12-08",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
     }
   ]
 }

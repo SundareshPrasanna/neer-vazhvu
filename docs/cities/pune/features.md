@@ -21,6 +21,7 @@ exactly that.
 | `/pune/water-bodies` | shared map | 791 OSM polygons, 84 named (7 pools/tanks excluded and counted) |
 | `/pune/rivers` | shared `RiversClient` | 8 rivers with CPCB priority class and 2024 BOD per station |
 | `/pune/my-ward` | shared | 41 named prabhags (needs ward/locality seeding to work) |
+| `/pune/flood-risk` | shared narrative stack + `DrainageNetworkMap` | 3,075 nalla segments (1,014 km) over 8 rivers, 4 dated events, 6 stated gaps |
 | `/pune/tanker` | **`delivery-register`** (new 4th kind) | 57,370 deliveries, the scheduled-vs-on-demand split, 7 filling points, partial prabhag attribution |
 | `/pune/facts` | shared `FactsPage` (static snapshot) | 22 quotable cards across all four tiers, every figure read from a shipped artifact |
 | `/pune/about` | shared + Pune section | Supply chain, what we track, what we do not |

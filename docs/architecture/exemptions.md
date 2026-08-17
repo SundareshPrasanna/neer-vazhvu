@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 1 |
 | Artifacts with no registered upstream | 83 |
-| Routes a city deliberately does not ship | 38 |
+| Routes a city deliberately does not ship | 37 |
 | Absences the product states on the page | 21 |
-| **Total** | **143** |
+| **Total** | **142** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -158,7 +158,6 @@ Derived by diffing each city against the union of every route any city ships, so
 | pune | cascades | The cascade pipeline has not been run for Pune district. Backlog, not refusal. |
 | pune | climate-risk | Not built for this city. |
 | pune | commitments | Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register. |
-| pune | flood-risk | The event register is not the problem - 1961 Panshet, the 2019 Ambil Odha flash flood, 25 July and 4 August 2024, 21 August 2025 are all dated and sourced. The HAZARD LAYER is. Maharashtra WRD publishes Pune's red (100-year) and blue (25-year) flood lines as SCANNED PDF MAP SHEETS ONLY: 518 PDFs on the flood-line page and zero shapefiles, GeoJSON or KML anywhere. pdftotext extracts no characters from the Mutha sheets - they are raster. Digitising them is a georeferencing project, not a fetch. Retire this when a vector flood line exists, or when the Bombay High Court's June 2025 order to redraw Pune's flood lines produces one. |
 | pune | lake-restoration | No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere. |
 | pune | shoreline | Landlocked. |
 

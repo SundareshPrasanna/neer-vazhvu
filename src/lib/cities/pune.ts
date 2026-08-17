@@ -256,6 +256,16 @@ export const PUNE: CityConfig = {
   reservoirHistoryNote:
     'Daily storage comes from the Maharashtra WRD Pravah bulletin, which publishes only a latest report and no archive. Our own record starts at onboarding; each run also back-fills the same date a year earlier from the bulletin’s own comparison column, so the window widens from both ends. CWC’s weekly bulletins carry Khadakwasla and Panshet back to 2015 and are the backfill route for those two.',
 
+  // NARRATIVE, not interactive. Pune's flooding is drainage-driven and the
+  // hazard layers the interactive variant defaults to do not exist for this
+  // city: Maharashtra WRD publishes the statutory red and blue flood lines as
+  // 518 SCANNED PDF SHEETS with no vector form anywhere. The narrative stack
+  // needs none of them, and Pune holds the thing that matters here instead -
+  // PMC's own nalla network, 3,075 open storm-water channels carrying 1,014 km,
+  // which the drainage_map section renders. The flood-line absence ships as a
+  // data gap ON the page rather than as a reason to hide the page.
+  flood: { variant: 'narrative' },
+
   // The FOURTH tanker kind, and Pune is why it exists. PMC runs the fleet and
   // publishes the DISPATCH record: one spreadsheet per filling point per working
   // day, one row per tanker already sent. Hyderabad's utility-ledger panel could

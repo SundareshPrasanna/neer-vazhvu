@@ -326,6 +326,40 @@ GetCapabilities 403, REST 401; the open WMTS carries five raster basemaps and no
 OSM has no PCMC corporation polygon at all. This is why Pune is a `city` and not an MMR-style
 `region`.
 
+### Drainage - PMC's nalla network, and the pipe register we left alone
+
+**Source:** `https://data.opencity.in/dataset/pune-stormwater-drains` (PMC, via OpenCity)
+**Producer:** `neer-vazhvu-api/scripts/build_pune_geography.py --layer drainage`
+**Output:** `public/geojson/pune-drainage.geojson` (3,075 segments, 1,014 km)
+**Licence:** Public Domain per OpenCity CKAN metadata (no upstream dedication)
+**Rendered on:** `/pune/flood-risk`, the narrative variant's `drainage_map` section
+
+**Five resources on that page, one taken.** The **Pune Nalla Map** is 3,075 LineStrings of OPEN
+storm-water channel across the PMC area, attributes `id` / `objectid` / `phase` / `st_length_`
+(Phase-I 2,858 segments and 838.3 km, Phase-II 217 and 176.0 km). A nalla is where Pune actually
+floods - the 2019 Ambil Odha cloudburst most directly - so this is the layer worth having.
+
+Not taken, each for a reason rather than by omission:
+
+- The **SWD map** KMZ is the BURIED PIPE register, 141,341 segments. Far too dense for a web map,
+  and it answers a maintenance question rather than a flooding one.
+- The two **SWD chamber** KMLs are point assets with no attribute worth surfacing. Both also carry
+  no resource-level licence, unlike the three that do.
+- The **Pune River Map** on this same page is the 12-polygon river-*channel* file already recorded
+  above as the reason OSM carries this city's water bodies.
+
+**THE LAYER CHECKS ITSELF, which is why it is preferable to a redraw.** PMC ships a per-segment
+`st_length_` computed in its own projected CRS. Summing our own geodesic lengths against that column
+tests the geometry rather than restating it: 1,014.2 km computed against 1,009.9 km stated, a ratio
+of 0.9957, and the small consistent bias is what a projected-versus-geodesic difference looks like.
+**The producer fails outside a 5% band**, which is what would catch a dropped coordinate, a
+degrees/metres mix-up or a CRS mislabel - the failure modes that otherwise produce a map that looks
+fine.
+
+**Known gap: not one of the 3,075 segments is named.** Ambil Odha, Nagzari and Bhairoba nalla are
+what the flood reporting is about and none of them can be identified from this layer. Recorded on the
+artifact and on the page rather than guessed at from a basemap.
+
 ### Water bodies and rivers - OSM, and that is a finding
 
 **Source:** OpenStreetMap via Overpass, bbox `18.3,73.4,18.95,74.05` (PMC + PCMC, wider than the ward
