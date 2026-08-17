@@ -382,7 +382,7 @@ export interface BasePlaceConfig {
    *  the river stations downstream. Reads `<cityId>-stps.json`. Omit -> hidden. */
   hasTreatmentDischarge?: boolean;
 
-  /** Which KIND of tanker data this city has. The three are not
+  /** Which KIND of tanker data this city has. The four are not
    *  interchangeable and must not share a renderer - they answer different
    *  questions off different evidence:
    *  - `household-survey` (default, Bengaluru): longitudinal price surveys of
@@ -398,11 +398,28 @@ export interface BasePlaceConfig {
    *    because a booking here IS a collection, and no ward or section unit
    *    because the analytical dimensions are station, water type and buyer.
    *    Reads `<cityId>-tanker-sales.json`.
+   *  - `delivery-register` (Pune): the corporation's DISPATCH record. One
+   *    spreadsheet per filling point per working day, one row per tanker
+   *    already sent. THERE ARE NO BOOKINGS IN IT, so there is no fulfilment
+   *    rate - the measure that carries the utility-ledger page does not exist
+   *    here, which is exactly why this is a separate kind rather than Pune
+   *    pushed through Hyderabad's panel. No prices and no volumes either
+   *    (tanker capacity is not on the row). What it does carry is a
+   *    scheduled-vs-on-demand flag per trip, which is the finding, and units
+   *    of filling point, prabhag and vehicle. Reads `<cityId>-tankers.json`,
+   *    discriminated from utility-ledger by this flag rather than by filename.
    *
-   *  Adding a fourth kind is cheaper than bending one of these: forcing a
+   *  Adding a fifth kind is cheaper than bending one of these: forcing a
    *  city through the wrong panel means making its required fields optional
-   *  and gutting its copy, which damages the city the panel was written for. */
-  tankerDataKind?: 'household-survey' | 'utility-ledger' | 'utility-sales-ledger';
+   *  and gutting its copy, which damages the city the panel was written for.
+   *  `delivery-register` is the worked example - it was added rather than
+   *  reusing utility-ledger, whose bookings/fulfilment copy would have had to
+   *  be deleted for a city that has neither. */
+  tankerDataKind?:
+    | 'household-survey'
+    | 'utility-ledger'
+    | 'utility-sales-ledger'
+    | 'delivery-register';
 
   /** One-line description of what this city's tanker page actually shows.
    *  The shape of tanker data differs fundamentally by city - Bangalore has

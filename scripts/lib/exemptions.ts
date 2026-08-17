@@ -188,8 +188,17 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   //
   // So this needs a FIFTH kind, `utility-delivery-register`, with its own
   // panel. Retire this entry when that lands.
-  "pune:tanker":
-    "The data ships and the renderer does not. public/data/pune-tankers.json carries 57,370 delivery rows from PMC's daily registers - 7 filling points, 1,956 vehicles, 84,886 trips, 58.4% of them on-demand - but the existing utility-ledger panel is HMWSSB-shaped (bookings vs deliveries, divisions and sections) and Pune's register has no bookings, no fulfilment rate and different units. Per the rule in types.ts, a fifth tankerDataKind with its own panel is cheaper than bending Hyderabad's. Retire this when that panel lands.",
+  // RETIRED 2026-08-17. It read "the data ships and the renderer does not ...
+  // retire this when that panel lands", and the panel landed:
+  // src/components/dashboard/tanker-delivery-register-panel.tsx behind the
+  // fourth tankerDataKind, `delivery-register`. Added rather than bending
+  // Hyderabad's utility-ledger panel, whose bookings-against-deliveries
+  // copy and fulfilment rate would have had to be deleted for a city whose
+  // register contains no bookings at all. The panel refuses three things on
+  // purpose: no daily series as the headline (two thirds of rows cannot be
+  // dated), no prabhag ranking (the ward column is filled on 52.8% of rows,
+  // so ordering it would read recording practice as need), and no
+  // recipients at all.
   "pune:allocations":
     "The instrument chain exists and is unusually well documented - MWRRA Orders 19/2018 and 01/2025, the 1 March 2013 PMC-WRD agreement, the 2 July 2021 Superintending Engineer letter for the merged villages - but the ledger's primitive is entitled-vs-RECEIVED, and no measured annual draw has been published since 2017-18. For that year the utility and the regulator disagree by 4.15 TMC (PMC's affidavit 14.56 TMC against WRD's 18.71). A ledger whose received column is eight years old and contested is worse than no ledger.",
   "pune:commitments":

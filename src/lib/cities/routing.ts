@@ -177,7 +177,10 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   // the 2025 delimitation carry names. `facts` is in because facts-pune.json
   // ships 22 cards, every figure of which is READ from an artifact already in
   // the repo rather than transcribed again, so a quoted card cannot drift from
-  // the dashboard it came from.
+  // the dashboard it came from. `tanker` is in on the fourth tankerDataKind,
+  // `delivery-register`, added rather than bending Hyderabad's utility-ledger
+  // panel: PMC's register is a DISPATCH record with no bookings in it, so the
+  // fulfilment rate that page is built on does not exist here.
   //
   // NOT in, each for a stated reason rather than pending work:
   // `flood-risk` - the event register is solid (1961 Panshet, 2019 Ambil
@@ -185,12 +188,6 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   //   publishes Pune's red and blue flood lines as SCANNED PDF map sheets
   //   only, with no vector form anywhere, so the hazard layer the
   //   interactive variant needs does not exist machine-readable.
-  // `tanker` - THE DATA SHIPS AND THE RENDERER DOES NOT. pune-tankers.json
-  //   carries 57,370 delivery rows from PMC's own daily registers, but the
-  //   utility-ledger panel is HMWSSB-shaped (bookings against deliveries, a
-  //   fulfilment rate, divisions and sections) and Pune's register has none of
-  //   those. Per the rule in types.ts a fifth tankerDataKind with its own
-  //   panel is cheaper than bending Hyderabad's copy.
   // `lake-restoration`, `allocations`, `commitments` - no artifacts built.
   // `cascades` - the cascade pipeline has not been run for Pune district.
   // `shoreline` - landlocked.
@@ -202,6 +199,7 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "groundwater",
     "water-bodies",
     "rivers",
+    "tanker",
     "my-ward",
   ]),
 };

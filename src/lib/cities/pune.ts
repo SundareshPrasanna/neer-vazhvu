@@ -256,6 +256,23 @@ export const PUNE: CityConfig = {
   reservoirHistoryNote:
     'Daily storage comes from the Maharashtra WRD Pravah bulletin, which publishes only a latest report and no archive. Our own record starts at onboarding; each run also back-fills the same date a year earlier from the bulletin’s own comparison column, so the window widens from both ends. CWC’s weekly bulletins carry Khadakwasla and Panshet back to 2015 and are the backfill route for those two.',
 
+  // The FOURTH tanker kind, and Pune is why it exists. PMC runs the fleet and
+  // publishes the DISPATCH record: one spreadsheet per filling point per working
+  // day, one row per tanker already sent. Hyderabad's utility-ledger panel could
+  // not carry it, because that page is built on bookings against deliveries and
+  // the fulfilment rate between them, and PMC'S REGISTER HAS NO BOOKINGS AT ALL
+  // - no fulfilment rate, no division or section unit, no prices, and no volumes
+  // (tanker capacity is not on the row). Pushing Pune through it would have meant
+  // deleting Hyderabad's copy for a city that has none of what it describes,
+  // which is the trade types.ts warns against.
+  //
+  // What the register does carry is a scheduled-vs-on-demand flag per trip, and
+  // that is the finding rather than the volume: 58.4% of trips are on demand, so
+  // most of this water is a response rather than a planned route.
+  tankerDataKind: 'delivery-register',
+  tankerSummary:
+    "PMC's own tanker dispatch register: 57,370 deliveries from 7 filling points, one row per tanker sent, 58.4% of trips on demand rather than scheduled. Counts only - the source rows carry recipient addresses and phone numbers and none of that is republished.",
+
   groundwaterViews: {
     // ON, and this city is the first to drill BELOW the district. Pune
     // district reads 63.73% and SAFE in aggregate, while Shirur taluka inside

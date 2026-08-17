@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 1 |
 | Artifacts with no registered upstream | 83 |
-| Routes a city deliberately does not ship | 39 |
+| Routes a city deliberately does not ship | 38 |
 | Absences the product states on the page | 21 |
-| **Total** | **144** |
+| **Total** | **143** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -161,7 +161,6 @@ Derived by diffing each city against the union of every route any city ships, so
 | pune | flood-risk | The event register is not the problem - 1961 Panshet, the 2019 Ambil Odha flash flood, 25 July and 4 August 2024, 21 August 2025 are all dated and sourced. The HAZARD LAYER is. Maharashtra WRD publishes Pune's red (100-year) and blue (25-year) flood lines as SCANNED PDF MAP SHEETS ONLY: 518 PDFs on the flood-line page and zero shapefiles, GeoJSON or KML anywhere. pdftotext extracts no characters from the Mutha sheets - they are raster. Digitising them is a georeferencing project, not a fetch. Retire this when a vector flood line exists, or when the Bombay High Court's June 2025 order to redraw Pune's flood lines produces one. |
 | pune | lake-restoration | No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere. |
 | pune | shoreline | Landlocked. |
-| pune | tanker | The data ships and the renderer does not. public/data/pune-tankers.json carries 57,370 delivery rows from PMC's daily registers - 7 filling points, 1,956 vehicles, 84,886 trips, 58.4% of them on-demand - but the existing utility-ledger panel is HMWSSB-shaped (bookings vs deliveries, divisions and sections) and Pune's register has no bookings, no fulfilment rate and different units. Per the rule in types.ts, a fifth tankerDataKind with its own panel is cheaper than bending Hyderabad's. Retire this when that panel lands. |
 
 ## Absences the product states on the page
 

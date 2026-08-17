@@ -15,9 +15,9 @@
 | **Low** | Minimal or absent. Reason stated; several are not ours to fix |
 | **N/A** | Structurally inapplicable. **Not a deficiency** - a difference in the city |
 
-**Headline: 8 of 15 routes live. 0 empty states, 0 console errors, 0 crashes on the 8 that ship.**
+**Headline: 9 of 15 routes live. 0 empty states, 0 console errors, 0 crashes on the 9 that ship.**
 
-7 XHigh · 5 High · 6 Medium · 6 Low · 2 N/A
+8 XHigh · 5 High · 6 Medium · 5 Low · 2 N/A
 
 The honest one-line summary: **Pune's depth is in its groundwater and its supply governance, and its
 thinness is in physical asset geometry.** Where a central regulator or the corporation's own report
@@ -27,11 +27,12 @@ either absent or too dense to render.
 
 ---
 
-## XHigh - Pune exceeds Chennai (7)
+## XHigh - Pune exceeds Chennai (8)
 
 | Feature | Chennai | Pune | Multiple |
 |---|---|---|---|
 | **Tanker delivery records** | household survey (sample) | **57,370 individual deliveries** | platform-first: nobody else here has a per-delivery municipal register |
+| **Tanker page** | survey panel (sampled prices) | **dispatch panel** on a new 4th `tankerDataKind` | answers a question no other city's data can: was the trip planned? |
 | **Groundwater telemetry stations** | 49 | **120** | **2.4x** |
 | **Groundwater readings retained** | metadata only | **306,231** (6-hourly, 2022-2026) | platform-first at this density |
 | **Rivers with narrative + quality** | 4 | **7** | 1.8x |
@@ -95,11 +96,10 @@ observatory normal. See `data-sources.md` §7.
 
 ---
 
-## Low - minimal or absent (6)
+## Low - minimal or absent (5)
 
 | Feature | Chennai | Pune | Ours to fix? |
 |---|---|---|---|
-| **Tanker page** | household survey | **data ships, renderer does not** | Partly, and deliberately. `pune-tankers.json` now carries PMC's own delivery register (see the XHigh table above). What is missing is a panel: the existing `utility-ledger` renderer is HMWSSB-shaped - bookings against deliveries, a fulfilment rate, divisions and sections - and Pune's register has no bookings and no fulfilment rate. `types.ts` says a fifth `tankerDataKind` is cheaper than bending an existing one, so this waits for its own panel rather than gutting Hyderabad's copy. |
 | **Localities** | 519 | 0 | Yes. Needs a locality gazetteer; `/pune/my-ward` also needs ward + locality seeding in the DB before it functions. |
 | **Commitments** | register | none | Yes. The dated commitments are citable and sharp (JICA loan signed 13 Jan 2016 for a May 2023 completion, now targeting 2026; the 24x7 project's slide from Dec 2024 to "12-14 months" as of Aug 2026), but each needs primary-source verification of attribution first. |
 | **Allocations** | ledger | none | **Partly not ours.** The instrument chain is unusually well documented, but the ledger's primitive is entitled-vs-*received* and **no measured annual draw has been published since 2017-18** - a year for which PMC and the state water department disagree by 4.15 TMC. A ledger whose received column is eight years old and contested is worse than none. |
@@ -150,18 +150,16 @@ Three things Pune ships that have no Chennai equivalent and are not captured by 
 
 In rough order of value per unit of work:
 
-1. **A fifth `tankerDataKind` and its panel.** The data is shipped; only the renderer is missing, and
-   it is the single highest-value surface this city could add.
-2. **Ward + locality seeding.** Makes `/pune/my-ward` function and closes the localities row.
-3. **The nalla layer** (3,075 features) for a renderable drainage surface.
-4. **Commitments**, once each attribution is primary-verified.
-5. **CWC weekly backfill** for Khadakwasla and Panshet, which would give the reservoir chart a
+1. **Ward + locality seeding.** Makes `/pune/my-ward` function and closes the localities row.
+2. **The nalla layer** (3,075 features) for a renderable drainage surface.
+3. **Commitments**, once each attribution is primary-verified.
+4. **CWC weekly backfill** for Khadakwasla and Panshet, which would give the reservoir chart a
    decade instead of starting at onboarding. The dated WRD archive route is documented in
    `data-sources.md` §2 and not yet wired.
 
-**Done since this scorecard was first written:** the tanker producer (item 1 in the original list,
-now the XHigh row above), `facts-pune.json` (item 3, now the Medium row above), and the water-bodies
-bbox correction below.
+**Done since this scorecard was first written:** the tanker producer *and* its panel (item 1 in the
+original list, now two XHigh rows), `facts-pune.json` (item 3, now the Medium row above), and the
+water-bodies bbox correction below.
 
 ---
 
