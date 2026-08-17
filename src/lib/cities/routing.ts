@@ -174,7 +174,10 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   // Shirur critical at 95.71% inside a district that reads SAFE at 63.73%.
   // `rivers` is in because Pune has five and CPCB rates four of those
   // stretches Priority I or II. `my-ward` is in because all 41 prabhags of
-  // the 2025 delimitation carry names.
+  // the 2025 delimitation carry names. `facts` is in because facts-pune.json
+  // ships 22 cards, every figure of which is READ from an artifact already in
+  // the repo rather than transcribed again, so a quoted card cannot drift from
+  // the dashboard it came from.
   //
   // NOT in, each for a stated reason rather than pending work:
   // `flood-risk` - the event register is solid (1961 Panshet, 2019 Ambil
@@ -182,17 +185,20 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   //   publishes Pune's red and blue flood lines as SCANNED PDF map sheets
   //   only, with no vector form anywhere, so the hazard layer the
   //   interactive variant needs does not exist machine-readable.
-  // `tanker` - PMC publishes a genuine daily tanker register (409 XLSX files
-  //   since 25 Apr 2026, per filling point, with ward, society and vehicle
-  //   number). Real killer dataset, producer not written yet.
-  // `lake-restoration`, `facts`, `allocations`, `commitments` - no artifacts
-  //   built.
+  // `tanker` - THE DATA SHIPS AND THE RENDERER DOES NOT. pune-tankers.json
+  //   carries 57,370 delivery rows from PMC's own daily registers, but the
+  //   utility-ledger panel is HMWSSB-shaped (bookings against deliveries, a
+  //   fulfilment rate, divisions and sections) and Pune's register has none of
+  //   those. Per the rule in types.ts a fifth tankerDataKind with its own
+  //   panel is cheaper than bending Hyderabad's copy.
+  // `lake-restoration`, `allocations`, `commitments` - no artifacts built.
   // `cascades` - the cascade pipeline has not been run for Pune district.
   // `shoreline` - landlocked.
   pune: new Set([
     "",
     "about",
     "origins",
+    "facts",
     "groundwater",
     "water-bodies",
     "rivers",

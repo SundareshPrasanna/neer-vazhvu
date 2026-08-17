@@ -194,8 +194,18 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
     "The instrument chain exists and is unusually well documented - MWRRA Orders 19/2018 and 01/2025, the 1 March 2013 PMC-WRD agreement, the 2 July 2021 Superintending Engineer letter for the merged villages - but the ledger's primitive is entitled-vs-RECEIVED, and no measured annual draw has been published since 2017-18. For that year the utility and the regulator disagree by 4.15 TMC (PMC's affidavit 14.56 TMC against WRD's 18.71). A ledger whose received column is eight years old and contested is worse than no ledger.",
   "pune:commitments":
     "Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register.",
-  "pune:facts":
-    "Needs a facts-pune.json. The numbers are verified and sitting in pune-supply-overview.json and river-quality-pune.json already; the compilation is the work.",
+  // RETIRED 2026-08-17, same day it was written. It read "needs a
+  // facts-pune.json; the compilation is the work", and the compilation
+  // happened. public/data/facts-pune.json ships 22 facts across all four
+  // tiers, built by neer-vazhvu-api/scripts/build_pune_facts.py, which READS
+  // every figure out of the already-shipped artifacts rather than transcribing
+  // them a second time - so a quoted card cannot drift from the dashboard it
+  // came from. Two numbers a reader would expect are deliberately absent and
+  // ship as gap facts instead: litres-per-capita (PMC's own accounts exclude
+  // groundwater and tankers, so the denominator does not support the claim)
+  // and any measured annual draw (none published since 2017-18, and the two
+  // published figures for that year differ by 4.15 TMC).
+  //
   // RETIRED 2026-08-17, same day it was written. The removal condition was
   // "Origins is narrative work and gets its own pass", and the pass happened
   // in the same PR rather than a later one. Kept as a comment rather than

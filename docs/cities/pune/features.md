@@ -21,6 +21,7 @@ exactly that.
 | `/pune/water-bodies` | shared map | 791 OSM polygons, 84 named (7 pools/tanks excluded and counted) |
 | `/pune/rivers` | shared `RiversClient` | 8 rivers with CPCB priority class and 2024 BOD per station |
 | `/pune/my-ward` | shared | 41 named prabhags (needs ward/locality seeding to work) |
+| `/pune/facts` | shared `FactsPage` (static snapshot) | 22 quotable cards across all four tiers, every figure read from a shipped artifact |
 | `/pune/about` | shared + Pune section | Supply chain, what we track, what we do not |
 
 ## The hero: "The shortfall is smaller than the leak"

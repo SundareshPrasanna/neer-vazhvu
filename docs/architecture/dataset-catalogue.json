@@ -9846,6 +9846,56 @@
    "flags": []
   },
   {
+   "path": "public/data/facts-pune.json",
+   "family": "data-root",
+   "scope": "pune",
+   "dataset": "facts",
+   "bytes": 24346,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "facts",
+     "generated_at",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/app/[cityId]/facts/page.tsx",
+    "src/lib/cities/routing.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_facts.py",
+    "scripts/lib/exemptions.ts"
+   ],
+   "headwaters_sources": [
+    "cpcb-polluted-river-stretches",
+    "ingres-groundwater-maharashtra",
+    "osm-pune-water",
+    "pmc-esr",
+    "pmc-tanker-register",
+    "wrd-pravah-pune-dams",
+    "wris-telemetry-pune"
+   ],
+   "licenses": [
+    "Government of India / Government of Maharashtra data portal, cited with attribution; published here only as derived aggregates, never as republished rows",
+    "Government of India publication, cited with attribution",
+    "Open Database License (ODbL) v1.0 - share-alike, (c) OpenStreetMap contributors",
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution",
+    "public government daily bulletin, served without terms of use - cited with attribution",
+    "public government report published by the corporation; cited with attribution",
+    "published openly by the corporation through its own JSON:API without stated terms; cited with attribution. Published here ONLY as counts - the source rows carry recipient society names, street addresses and phone numbers, and none of that is republished"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/flood-lines-mumbai.json",
    "family": "data-root",
    "scope": "mumbai",
@@ -10094,6 +10144,7 @@
    },
    "consumers": [],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_facts.py",
     "neer-vazhvu-api/scripts/build_pune_gw_stations.py"
    ],
    "headwaters_sources": [
@@ -10406,6 +10457,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_pune_facts.py",
     "neer-vazhvu-api/scripts/build_pune_geography.py"
    ],
    "headwaters_sources": [
@@ -11941,6 +11993,7 @@
     "src/content/story-pune-en.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_facts.py",
     "neer-vazhvu-api/scripts/scrape_pravah_dams.py"
    ],
    "headwaters_sources": [
@@ -11994,8 +12047,8 @@
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_pune_supply.py",
-    "scripts/lib/exemptions.ts"
+    "neer-vazhvu-api/scripts/build_pune_facts.py",
+    "neer-vazhvu-api/scripts/build_pune_supply.py"
    ],
    "headwaters_sources": [
     "pmc-esr"
@@ -12038,9 +12091,11 @@
    },
    "consumers": [
     "src/app/[cityId]/tanker/page.tsx",
+    "src/lib/cities/routing.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_facts.py",
     "neer-vazhvu-api/scripts/build_pune_tankers.py",
     "scripts/lib/exemptions.ts"
    ],
@@ -19114,8 +19169,8 @@
     "src/lib/hooks/use-ward-profile.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_facts.py",
     "neer-vazhvu-api/scripts/build_pune_river_quality.py",
-    "scripts/lib/exemptions.ts",
     "scripts/snap-river-stations.py"
    ],
    "headwaters_sources": [
@@ -22709,6 +22764,7 @@
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_facts.py",
     "neer-vazhvu-api/scripts/build_pune_geography.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-osm-layers.ts"
@@ -25580,16 +25636,17 @@
   {
    "family": "data-root",
    "dataset": "facts",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "delhi",
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "pune"
    ],
-   "bytes": 179375,
+   "bytes": 203721,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
