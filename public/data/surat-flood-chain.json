@@ -1,4 +1,25 @@
 {
+  "nvdm": "1.0",
+  "dataset": "data-root/flood-chain",
+  "scope": {
+    "kind": "city",
+    "id": "surat"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "smc-flood-chain",
+        "title": "SMC live rainfall, Ukai dam, weir-cum-causeway and khadi water levels",
+        "publisher": "Surat Municipal Corporation",
+        "license": "Public government website; no explicit open licence asserted. Used as a public record of the corporation's own operational readings.",
+        "url": "https://www.suratmunicipal.gov.in/Home/RainfallInfo"
+      }
+    ],
+    "method": "scrape",
+    "note": "Five tables parsed from SMC's public rainfall page: Ukai dam, the weir-cum-causeway, zone-wise rainfall, the season total, and five khadis with their published danger levels. Headroom is the only derived value and it is a subtraction.",
+    "produced_at": "2026-08-17",
+    "produced_by": "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py"
+  },
   "_doc": [
     "Surat's live flood chain, scraped from SMC's public rainfall page.",
     "Every threshold here is SMC's own published figure, not ours: the",
@@ -9,13 +30,13 @@
     "archive, so `history` accumulates only from the day this scraper",
     "first ran and can never be backfilled."
   ],
-  "generatedAt": "2026-08-17T09:23:41.090724+05:30",
+  "generatedAt": "2026-08-17T09:36:00.176564+05:30",
   "source": {
     "publisher": "Surat Municipal Corporation",
     "url": "https://www.suratmunicipal.gov.in/Home/RainfallInfo",
     "licence": "Public government website",
     "attribution": "Dam and weir rows: SMC cites Irrigation Dept / Collector Office.",
-    "lastUpdatedOnPage": "17-08-2026 09:23:14 AM"
+    "lastUpdatedOnPage": "17-08-2026 09:35:44 AM"
   },
   "ukai": {
     "name": "Ukai dam",

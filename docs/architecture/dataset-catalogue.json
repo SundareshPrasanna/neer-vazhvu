@@ -17079,6 +17079,43 @@
    "flags": []
   },
   {
+   "path": "public/data/river-quality-surat.json",
+   "family": "data-root",
+   "scope": "unknown",
+   "dataset": "river-quality-surat",
+   "bytes": 7040,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_note",
+     "data_year_range",
+     "dataset",
+     "last_updated",
+     "nvdm",
+     "provenance",
+     "rivers",
+     "scope",
+     "source_label",
+     "source_url"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+   ],
+   "headwaters_sources": [
+    "cpcb-nwmp-2022"
+   ],
+   "licenses": [
+    "Official Government of India report."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
    "path": "public/data/river-quality.json",
    "family": "data-root",
    "scope": "chennai",
@@ -17120,6 +17157,162 @@
    "accountability_reason": null,
    "flags": [
     "chennai-legacy-name"
+   ]
+  },
+  {
+   "path": "public/data/surat-cgwb-stations.json",
+   "family": "data-root",
+   "scope": "unknown",
+   "dataset": "surat-cgwb-stations",
+   "bytes": 778334,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_note",
+     "_sign_convention_note",
+     "_source_files",
+     "coverage",
+     "dataset",
+     "depth_unit",
+     "district",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source_label",
+     "source_url",
+     "well_type",
+     "wells"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+   ],
+   "headwaters_sources": [
+    "wris-groundwater-gujarat"
+   ],
+   "licenses": [
+    "Government open data."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
+   "path": "public/data/surat-flood-chain-history.json",
+   "family": "data-root",
+   "scope": "unknown",
+   "dataset": "surat-flood-chain-history",
+   "bytes": 12252,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_doc",
+     "dataset",
+     "firstObserved",
+     "lastObserved",
+     "nvdm",
+     "provenance",
+     "scope",
+     "series",
+     "stations"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py"
+   ],
+   "headwaters_sources": [
+    "smc-flood-chain"
+   ],
+   "licenses": [
+    "Public government website; no explicit open licence asserted. Used as a public record of the corporation's own operational readings."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
+   "path": "public/data/surat-flood-chain.json",
+   "family": "data-root",
+   "scope": "unknown",
+   "dataset": "surat-flood-chain",
+   "bytes": 13775,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_doc",
+     "dataset",
+     "generatedAt",
+     "khadis",
+     "nvdm",
+     "provenance",
+     "rainfall",
+     "scope",
+     "source",
+     "ukai",
+     "weir",
+     "window"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/flood-headroom-hero.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py"
+   ],
+   "headwaters_sources": [
+    "smc-flood-chain"
+   ],
+   "licenses": [
+    "Public government website; no explicit open licence asserted. Used as a public record of the corporation's own operational readings."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
+   "path": "public/data/surat-supply-overview.json",
+   "family": "data-root",
+   "scope": "unknown",
+   "dataset": "surat-supply-overview",
+   "bytes": 6529,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_coverage_note",
+     "_excluded_columns_note",
+     "connection_coverage",
+     "dataset",
+     "infrastructure",
+     "monthly_supply",
+     "nvdm",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+   ],
+   "headwaters_sources": [
+    "ogd-surat-water-supply",
+    "smc-hydraulic-scenario"
+   ],
+   "licenses": [
+    "Government Open Data License - India (NDSAP)",
+    "Public government website."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": [
+    "unknown-scope"
    ]
   },
   {
@@ -22247,6 +22440,45 @@
    "flags": []
   },
   {
+   "path": "public/geojson/surat-water-bodies-current.geojson",
+   "family": "geojson-layers",
+   "scope": "unknown",
+   "dataset": "surat-water-bodies-current",
+   "bytes": 3073484,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3401,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "aquatic_vegetation",
+     "area_ha",
+     "category",
+     "id",
+     "in_city_limits",
+     "name",
+     "origin",
+     "turbidity"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+   ],
+   "headwaters_sources": [
+    "sac-wetland-atlas-gujarat"
+   ],
+   "licenses": [
+    "Government open data (NWDP)."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
    "path": "public/geojson/tamil-nadu-boundary.geojson",
    "family": "geojson-layers",
    "scope": "tamil-nadu",
@@ -23546,6 +23778,18 @@
   },
   {
    "family": "data-root",
+   "dataset": "river-quality-surat",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 7040,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "data-root",
    "dataset": "sewage-balance",
    "files": 1,
    "scopes": [
@@ -23584,6 +23828,54 @@
    "schema_variants": 6,
    "registered": true,
    "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "surat-cgwb-stations",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 778334,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "data-root",
+   "dataset": "surat-flood-chain",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 13775,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "surat-flood-chain-history",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 12252,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "data-root",
+   "dataset": "surat-supply-overview",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 6529,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
   },
   {
    "family": "data-root",
@@ -24070,6 +24362,18 @@
     "chennai"
    ],
    "bytes": 80835,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "geojson-layers",
+   "dataset": "surat-water-bodies-current",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 3073484,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false

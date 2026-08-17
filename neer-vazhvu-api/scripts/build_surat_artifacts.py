@@ -79,11 +79,19 @@ def in_box(lat: float, lng: float, box: dict) -> bool:
     return box["south"] <= lat <= box["north"] and box["west"] <= lng <= box["east"]
 
 
-def envelope(dataset: str, sources: list[dict], method: str, **extra) -> dict:
+# NVDM's closed vocabulary for provenance.method. Prose describing HOW a
+# specific artifact was built belongs in provenance.note; this field says only
+# which acquisition family it came from.
+METHODS = {"manual", "scrape", "api", "pdf-extract", "gee", "derived", "mixed"}
+
+
+def envelope(dataset: str, sources: list[dict], method: str, how: str, **extra) -> dict:
     """The NVDM v1 envelope. New artifacts are born enveloped rather than
     being injected later - the injector pattern exists to migrate legacy
     files, and Surat has none."""
+    assert method in METHODS, f"{method!r} is not an NVDM provenance.method"
     prov = {"sources": sources, "method": method, "produced_at": TODAY}
+    prov["note"] = how if "note" not in extra else f"{how} {extra.pop('note')}"
     prov.update({k: v for k, v in extra.items() if v is not None})
     return {
         "nvdm": "1.0",
@@ -215,6 +223,7 @@ def build_groundwater(drop: Path, root: Path) -> int:
         **envelope(
             "data-root/cgwb-stations",
             registry_sources(root, ["wris-groundwater-gujarat"]),
+            "manual",
             "India-WRIS Gujarat groundwater-level exports filtered to District == SURAT, "
             "grouped by station. Coverage is derived from the readings, not from the "
             "export filenames, which misstate their own ranges.",
@@ -337,6 +346,7 @@ def build_water_bodies(drop: Path, root: Path) -> int:
         **envelope(
             "geojson-root/water-bodies-current",
             registry_sources(root, ["sac-wetland-atlas-gujarat"]),
+            "manual",
             "SAC National Wetland Atlas hydrological layer for Gujarat, clipped to a "
             "Surat district bounding box; complete placemarks only, because the source "
             "download was interrupted mid-record.",
@@ -431,6 +441,7 @@ def build_river_quality(root: Path) -> int:
         **envelope(
             "data-root/river-quality",
             registry_sources(root, ["cpcb-nwmp-2022"]),
+            "pdf-extract",
             "Transcribed from Table 9 (Water Quality of River Tapi) of the CPCB NWMP "
             "2022 national compilation, Gujarat stations only, ordered upstream to sea. "
             "Ranges are carried as published; no midpoint is derived.",
@@ -530,6 +541,7 @@ def build_supply(drop: Path, root: Path) -> None:
         **envelope(
             "data-root/supply-overview",
             registry_sources(root, ["ogd-surat-water-supply", "smc-hydraulic-scenario"]),
+            "manual",
             "Monthly total supply and property-connection coverage from the Smart Cities "
             "Mission open-data releases for Surat, plus SMC's own infrastructure "
             "description. The releases' derived columns are excluded, not carried.",

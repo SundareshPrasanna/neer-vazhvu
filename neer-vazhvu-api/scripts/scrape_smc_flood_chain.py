@@ -95,6 +95,40 @@ _CAUSEWAY_STATE = re.compile(r"Causeway\s+is\s*<[^>]*>\s*([A-Z]+)", re.I)
 _LAST_UPDATED = re.compile(r"Last\s+Updated\s+on\s*<[^>]*>\s*([0-9\-]+\s+[0-9:]+\s*[AP]M)", re.I)
 
 
+def _envelope(dataset: str, how: str) -> dict[str, Any]:
+    """NVDM v1 envelope, written by the producer rather than injected later.
+
+    provenance.method is a closed vocabulary; the prose describing how this
+    particular artifact was built belongs in provenance.note. The licence
+    string is the registry's (scripts/source-registry/surat.json owns it) and
+    is restated here only because this producer runs outside the repo-root
+    scripts that can import registry_license.
+    """
+    return {
+        "nvdm": "1.0",
+        "dataset": dataset,
+        "scope": {"kind": "city", "id": "surat"},
+        "provenance": {
+            "sources": [
+                {
+                    "id": "smc-flood-chain",
+                    "title": "SMC live rainfall, Ukai dam, weir-cum-causeway and khadi water levels",
+                    "publisher": "Surat Municipal Corporation",
+                    "license": (
+                        "Public government website; no explicit open licence asserted. "
+                        "Used as a public record of the corporation's own operational readings."
+                    ),
+                    "url": SMC_URL,
+                }
+            ],
+            "method": "scrape",
+            "note": how,
+            "produced_at": datetime.now(IST).date().isoformat(),
+            "produced_by": "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py",
+        },
+    }
+
+
 def fetch(url: str = SMC_URL, timeout: int = 60) -> str:
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -325,6 +359,13 @@ def build(html: str) -> dict[str, Any]:
         )
 
     return {
+        **_envelope(
+            "data-root/flood-chain",
+            "Five tables parsed from SMC's public rainfall page: Ukai dam, the "
+            "weir-cum-causeway, zone-wise rainfall, the season total, and five khadis "
+            "with their published danger levels. Headroom is the only derived value "
+            "and it is a subtraction.",
+        ),
         "_doc": [
             "Surat's live flood chain, scraped from SMC's public rainfall page.",
             "Every threshold here is SMC's own published figure, not ours: the",
@@ -401,6 +442,11 @@ def merge_history(existing: dict[str, Any] | None, snapshot: dict[str, Any]) -> 
             by_ts[reading["observedAt"]] = reading
         series[key] = sorted(by_ts.values(), key=lambda r: r["observedAt"])
     return {
+        **_envelope(
+            "data-root/flood-chain-history",
+            "Append-only union of every rolling window this scraper has caught, keyed "
+            "by observation timestamp so re-runs are idempotent.",
+        ),
         "_doc": [
             "Durable archive of SMC's rolling flood-chain window.",
             "SMC publishes ~10 readings and no archive, so this file is the",
