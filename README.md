@@ -1,6 +1,6 @@
 # Neer Vazhvu
 
-**Urban Water Intelligence** - An open-source platform that turns public water data into actionable intelligence for Indian cities. Live for Chennai, Madurai, Bengaluru, Mumbai, Delhi and Kolkata today, with more cities on the way.
+**Urban Water Intelligence** - An open-source platform that turns public water data into actionable intelligence for Indian cities. Live for Chennai, Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata and Gurugram today, with Surat onboarding.
 
 **Live:** [neervazhvu.org](https://neervazhvu.org)
 
@@ -30,6 +30,7 @@ Per-city deep-dives:
 - [docs/cities/chennai/features.md](docs/cities/chennai/features.md) - Chennai feature inventory + risk-score, ward-report-card, uplift-planner, and restoration-priority methodologies
 - [docs/cities/madurai/features.md](docs/cities/madurai/features.md) - Madurai-specific surfaces (allocation hero, supply-overview tile, transparency-gap panel, missing-data card) and how Madurai differs from Chennai
 - [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md) - Bengaluru-specific surfaces (cauvery-pumping hero, daily briefing, IISc stress overlay, tanker market, 13 rich-body lakes) and Kannada localization
+- [docs/cities/surat/features.md](docs/cities/surat/features.md) - Surat-specific surfaces (flood-headroom hero, the live khadi chain against published danger levels, the reuse commitments) and why it has no ward surfaces
 - [docs/cities/mumbai/features.md](docs/cities/mumbai/features.md) - Mumbai/MMR-specific surfaces (region model + scope badges, upper-bound days-left hero, Metropolitan Water System, WRD flood lines, Pravah/CWC reservoir feeds) and what is deliberately absent at launch
 - City-specific long-form water stories: [`/origins`](https://neervazhvu.org/origins) (Chennai), [`/madurai/origins`](https://neervazhvu.org/madurai/origins), [`/bangalore/origins`](https://neervazhvu.org/bangalore/origins) (EN + KN), [`/mumbai/origins`](https://neervazhvu.org/mumbai/origins)
 
